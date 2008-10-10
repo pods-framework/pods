@@ -4,7 +4,7 @@ Donate link: http://wp-pods.googlecode.com
 Tags: pods, wordpress, cms, plugin, module, datatype
 Requires at least: 2.7
 Tested up to: 2.7
-Stable tag: 2008.10.10
+Stable tag: trunk
 
 Pods is a Wordpress plugin that adds CMS abilities to blog posts.
 

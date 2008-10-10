@@ -4,7 +4,7 @@ Donate link: http://wp-pods.googlecode.com
 Tags: pods, wordpress, cms, plugin, module, datatype
 Requires at least: 2.7
 Tested up to: 2.7
-Stable tag: 2008.10.09
+Stable tag: 2008.10.10
 
 Pods is a Wordpress plugin that adds CMS abilities to blog posts.
 
@@ -63,21 +63,21 @@ Posts can be interrelated with other posts of that same content type, as well as
 * Supports full HTML, as well as magic tags
 * If the pod has a column called summary, then entering the magic tag **{@summary}** will display the value
 
-= List Filter field =
+= List Filter =
 * Enter a comma-separated list of (PICK type) column names
 * Dropdown filters are generated on the pod's [list page](http://pods.uproot.us/list/?type=animal)
 * On custom list pages, the filters are optionally enabled by using **Record->getFilters()**
 
 == Frequently Asked Questions ==
 
-= How Can I Reach You? =
+= How can I reach you? =
 Feel free to email me at **logikal16@gmail.com** with improvement ideas, bug fix requests, and anything else that comes to mind.
 
-= How Do I See List Views? =
+= How do I see list views? =
 1. You created a pod called **news** and your .htaccess is set properly
 2. The list view is located at: **http://domain.com/list/?type=news**
 
-= Can I Add List Views to Any Wordpress Page? =
+= Can I add list views to any Wordpress page? =
 Yes. Let's start with an example. On your blog, you have a page called "Latest News" at **http://domain.com/resources/latest**. To add a custom list view to that page, create a file at this path: **wp-content/plugins/pods/pages/resources/latest.tpl**. Note how the file path corresponds to the URL. In the latest.tpl file, enter the following code: 
 `
 <?php
@@ -86,6 +86,12 @@ $Record->findRecords('id DESC'); // change the sort order if needed
 echo $Record->getFilters(); // show the search box and any available filters
 echo $Record->getPagination(); // show the pagination controls
 echo $Record->showTemplate('list'); // build the list view`
+
+= Can I have more than 1 list or detail template for each Pod? =
+Yes. You can specify template code as the 2nd parameter in **showTemplate()**.
+`
+$custom_tpl = '<p><a href="{@detail_url}">{@name}</a></p>';
+$Record->showTemplate('list', $custom_tpl);`
 
 == Screenshots ==
 

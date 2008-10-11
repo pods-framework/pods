@@ -22,8 +22,7 @@ var column_val;
 jQuery(function() {
     jQuery(".tab").click(function() {
         jQuery(".tab").removeClass("active");
-        var classname = jQuery(this).attr("class").split(" ");
-        datatype = classname[1].substr(1);
+        datatype = jQuery(this).attr("class").split(" ")[1].substr(1);
         jQuery(this).addClass("active");
         jQuery(".idle").attr("disabled", false);
         loadPod();
@@ -97,9 +96,15 @@ function addPod() {
             }
             else {
                 var id = msg;
-                var html = '<div class="tab '+id+'">'+name+'</div>';
+                var html = '<div class="tab t'+id+'">'+name+'</div>';
                 jQuery(".tabs").append(html);
                 jQuery("#dialog").jqmHide();
+                jQuery(".t"+id).click(function() {
+                    jQuery(".tab").removeClass("active");
+                    datatype = jQuery(this).attr("class").split(" ")[1].substr(1);
+                    jQuery(this).addClass("active");
+                    loadPod();
+                });
             }
         }
     });

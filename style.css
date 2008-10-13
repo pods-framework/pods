@@ -7,7 +7,7 @@
     width: 30%;
 }
 
-.active {
+.tabs .active {
     background: #EAF3FA;
 }
 
@@ -77,6 +77,7 @@
     background: url(/wp-content/plugins/pods/images/action_delete.gif) no-repeat;
 }
 
+#dialog input,
 .data-form input,
 .data-form textarea {
     border: 1px solid #DADADA;
@@ -89,7 +90,6 @@
 
 div#content p {
     padding: 5px 0;
-    line-height: 1.0;
 }
 
 #pod_description,
@@ -118,6 +118,16 @@ div#content p {
     cursor: default;
 }
 
+.extras {
+    cursor: pointer;
+    padding-left: 20px;
+    background: url(/wp-admin/images/menu-closed.png) no-repeat;
+}
+
+.extras.open {
+    background: url(/wp-admin/images/menu-open.png) no-repeat;
+}
+
 span.list {
 
 }
@@ -134,8 +144,8 @@ span.first {
 
 }
 
-.wrap h2 {
-    border-bottom: 0;
+h3 {
+    margin: 0 0 10px 0;
 }
 
 /* jqModal */
@@ -146,9 +156,9 @@ span.first {
     left: 25%;
     width: 400px;
 
-    background: #fff;
+    background: #E4F2FD;
     color: #333;
-    border: 10px solid #999;
+    border: 1px solid #C6D9E9;
     padding: 10px;
 }
 

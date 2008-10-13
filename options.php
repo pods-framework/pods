@@ -27,16 +27,9 @@ jQuery(function() {
         jQuery(".idle").attr("disabled", false);
         loadPod();
     });
-    jQuery("#info").jqm();
     jQuery("#dialog").jqm();
     jQuery(".idle").attr("disabled", true);
 });
-
-function showTip(name) {
-    jQuery(".tip").hide();
-    jQuery(".tip."+name).show();
-    jQuery("#info").jqmShow();
-}
 
 function doDropdown(val) {
     if ('pick' == val) {
@@ -289,16 +282,11 @@ Begin HTML code
 
 <div class="jqmWindow" id="dialog">
     Add New Pod: <input type="text" id="new_pod" /> <input type="button" value="Save" onclick="addPod()" />
-    <p>Please use lowercase letters, dashes or underscores only. If numbers are required, they must not be the first character in the datatype name.</p>
-</div>
-<div class="jqmWindow" id="info">
-    <p class="tip list"><b>This box defines how the LIST pages will appear.</b> HTML and "magic tags" are accepted in this box. For example, entering the magic tag <b>{@author}</b> will display the value of the "author" column. Also, <b>{@detail_url}</b> will automatically return the item's DETAIL page URL.</p>
-    <p class="tip detail"><b>This box defines how the DETAIL pages will appear.</b> HTML and "magic tags" are accepted in this box. For example, entering the magic tag <b>{@author}</b> will display the value of the "author" column.</p>
-    <p class="tip filters"><b>Select dropdown filters to appear on the LIST page.</b> You may use any <b><u>pick</u></b> column to build a dropdown filter. Let's say that you have 2 pick columns: "country" and "doctype". To display these filters, you would simply enter <b>country,doctype</b> into this box.</p>
+    <p>Please use lowercase letters, dashes or underscores only.</p>
 </div>
 
 <div class="wrap">
-    <h2>Manage Pods (<a href="javascript:;" onclick="jQuery('#dialog').jqmShow()">add new</a>)</h2>
+    <h3>Manage Pods (<a href="javascript:;" onclick="jQuery('#dialog').jqmShow()">add new</a>)</h3>
 
     <table style="width:100%" cellpadding="0" cellspacing="0">
         <tr>
@@ -316,7 +304,7 @@ if (isset($datatypes))
 ?>
             </td>
             <td valign="top" class="data-form">
-                <h2 id="pod_name">Choose a Content Type</h2>
+                <h2 id="pod_name">Choose a Pod</h2>
                 <p><input class="popup" type="text" id="pod_description" style="display:none" /></p>
                 <p id="column_list"><p>
                 <p>
@@ -365,12 +353,16 @@ while ($row = mysql_fetch_array($result))
                     <select id="column_sister_field_id" style="display:none"></select>
                     <input type="button" class="idle" value="Add column" onclick="addColumn()" />
                 </p>
-                <p class="title">Detail Template (<span onclick="showTip('detail')">help</span>)</p>
-                <p><textarea id="tpl_detail"></textarea></p>
-                <p class="title">List Template (<span onclick="showTip('list')">help</span>)</p>
-                <p><textarea id="tpl_list"></textarea></p>
-                <p class="title">List Filters (<span onclick="showTip('filters')">help</span>)</p>
-                <p><input type="text" id="list_filters" /></p>
+
+                <p class="extras" onclick="jQuery('#tpl_detail').toggle(); jQuery(this).toggleClass('open')">Detail Template</p>
+                <textarea id="tpl_detail" class="hidden"></textarea>
+
+                <p class="extras" onclick="jQuery('#tpl_list').toggle(); jQuery(this).toggleClass('open')">List Template</p>
+                <textarea id="tpl_list" class="hidden"></textarea>
+
+                <p class="extras" onclick="jQuery('#list_filters').toggle(); jQuery(this).toggleClass('open')">List Filters</p>
+                <input type="text" id="list_filters" class="hidden" />
+
                 <p>
                     <input type="button" class="idle" value="SAVE CHANGES" onclick="editPod()" />
                     <input type="button" class="idle" value="DROP TABLE" onclick="dropPod()" />

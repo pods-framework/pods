@@ -17,7 +17,8 @@ Begin Pods Javascript code
 <script type="text/javascript" src="/wp-content/plugins/pods/js/jqmodal.js"></script>
 <script type="text/javascript">
 var datatype;
-var column_val;
+var column_id;
+var add_or_edit;
 
 jQuery(function() {
     jQuery(".tab").click(function() {
@@ -28,8 +29,26 @@ jQuery(function() {
         loadPod();
     });
     jQuery("#dialog").jqm();
+    jQuery("#change").jqm();
     jQuery(".idle").attr("disabled", true);
 });
+
+function reset() {
+    jQuery("#column_type").val("");
+    jQuery("#column_pickval").val("");
+    jQuery("#column_sister_field_id").val("");
+    jQuery("#column_sister_field_id").hide();
+    jQuery("#column_pickval").hide();
+}
+
+function addOrEditColumn() {
+    if ("add" == add_or_edit) {
+        addColumn();
+    }
+    else {
+        editColumn(column_id);
+    }
+}
 
 function doDropdown(val) {
     if ('pick' == val) {
@@ -43,16 +62,6 @@ function doDropdown(val) {
     jQuery("#column_sister_field_id").hide();
 }
 
-function reset() {
-    jQuery("#column_type").val("");
-    jQuery("#column_pickval").val("");
-    jQuery("#column_sister_field_id").val("");
-    jQuery("#column_sister_field_id").hide();
-    jQuery("#column_pickval").hide();
-    
-    
-}
-
 function sisterFields() {
     var pickval = jQuery("#column_pickval").val();
     jQuery.ajax({
@@ -63,7 +72,7 @@ function sisterFields() {
                 alert(msg);
             }
             else if ("" != msg) {
-                var html = '<option value="">-- Rel Field --</option>';
+                var html = '<option value="">-- relationship --</option>';
                 jQuery("#column_sister_field_id").html("");
                 var items = eval("("+msg+")");
                 for (var i = 0; i < items.length; i++) {
@@ -73,31 +82,6 @@ function sisterFields() {
                 }
                 jQuery("#column_sister_field_id").html(html);
                 jQuery("#column_sister_field_id").show();
-            }
-        }
-    });
-}
-
-function addPod() {
-    var name = jQuery("#new_pod").val();
-    jQuery.ajax({
-        url: "/wp-content/plugins/pods/ajax/add.php",
-        data: "type=pod&name="+name,
-        success: function(msg) {
-            if ("Error" == msg.substr(0, 5)) {
-                alert(msg);
-            }
-            else {
-                var id = msg;
-                var html = '<div class="tab t'+id+'">'+name+'</div>';
-                jQuery(".tabs").append(html);
-                jQuery("#dialog").jqmHide();
-                jQuery(".t"+id).click(function() {
-                    jQuery(".tab").removeClass("active");
-                    datatype = jQuery(this).attr("class").split(" ")[1].substr(1);
-                    jQuery(this).addClass("active");
-                    loadPod();
-                });
             }
         }
     });
@@ -131,12 +115,15 @@ function loadPod() {
                     var name = fields[i].name;
                     var coltype = fields[i].coltype;
                     var pickval = fields[i].pickval;
-                    coltype = (null == pickval) ? coltype : coltype+" "+pickval;
+                    if ("" != pickval && null != pickval) {
+                        coltype += " "+pickval;
+                    }
                     html += '<div class="col'+id+'">';
                     html += '<div class="btn moveup"></div> ';
                     html += '<div class="btn movedown"></div> ';
                     html += '<div class="btn dropme"></div> ';
-                    html += '<span class="btn editme">'+name+"</span> ("+coltype+")</div>";
+                    html += '<div class="btn editme"></div> ';
+                    html += name+" ("+coltype+")</div>";
                     jQuery("#column_list").html(html);
                 }
 
@@ -153,7 +140,7 @@ function loadPod() {
                         dropColumn(field_id);
                     }
                     else if ('editme' == classname) {
-                        editColumn(field_id);
+                        loadColumn(field_id);
                     }
                 });
             }
@@ -162,30 +149,37 @@ function loadPod() {
     });
 }
 
-function editPod() {
-    var desc = jQuery("#pod_description").val();
-    var list_filters = jQuery("#list_filters").val();
-    var tpl_detail = jQuery("#tpl_detail").val();
-    var tpl_list = jQuery("#tpl_list").val();
+function addPod() {
+    var name = jQuery("#new_pod").val();
     jQuery.ajax({
-        url: "/wp-content/plugins/pods/ajax/edit.php",
-        data: "datatype="+datatype+"&desc="+desc+"&list_filters="+encodeURIComponent(list_filters)+"&tpl_detail="+encodeURIComponent(tpl_detail)+"&tpl_list="+encodeURIComponent(tpl_list),
+        url: "/wp-content/plugins/pods/ajax/add.php",
+        data: "type=pod&name="+name,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
             }
             else {
-                alert("Success!");
+                var id = msg;
+                var html = '<div class="tab t'+id+'">'+name+'</div>';
+                jQuery(".tabs").append(html);
+                jQuery("#dialog").jqmHide();
+                jQuery(".t"+id).click(function() {
+                    jQuery(".tab").removeClass("active");
+                    datatype = jQuery(this).attr("class").split(" ")[1].substr(1);
+                    jQuery(this).addClass("active");
+                    loadPod();
+                });
             }
         }
     });
 }
 
 function dropPod() {
-    if (confirm("Are you really sure?")) {
+    if (confirm("Do you really want to drop this pod?")) {
+        var dtname = jQuery(".tab.active").html();
         jQuery.ajax({
             url: "/wp-content/plugins/pods/ajax/drop.php",
-            data: "pod="+datatype,
+            data: "pod="+datatype+"&dtname="+dtname,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);
@@ -198,44 +192,52 @@ function dropPod() {
     }
 }
 
+function loadColumn(col) {
+    jQuery.ajax({
+        url: "/wp-content/plugins/pods/ajax/load.php",
+        data: "col="+col,
+        success: function(msg) {
+            var col_data = eval("("+msg+")");
+            var name = (null == col_data.name) ? "" : col_data.name;
+            var coltype = (null == col_data.coltype) ? "" : col_data.coltype;
+            var pickval = (null == col_data.pickval) ? "" : col_data.pickval;
+            var sister_field_id = (null == col_data.sister_field_id) ? "" : col_data.sister_field_id;
+            jQuery("#column_name").val(name);
+            jQuery("#column_type").val(coltype);
+            jQuery("#column_pickval").val(pickval);
+            jQuery("#column_sister_field_id").val(sister_field_id);
+            jQuery("#column_sister_field_id").hide();
+            jQuery("#column_pickval").hide();
+            if ("" != pickval) {
+                jQuery("#column_pickval").show();
+            }
+            if ("" != sister_field_id) {
+                sisterFields();
+            }
+            column_id = col;
+            add_or_edit = "edit";
+            jQuery('#change').jqmShow();
+        }
+    });
+}
+
 function addColumn() {
     var name = jQuery("#column_name").val();
+    var dtname = jQuery(".tab.active").html();
     var coltype = jQuery("#column_type").val();
     var pickval = jQuery("#column_pickval").val();
     var sister_field_id = jQuery("#column_sister_field_id").val();
     jQuery.ajax({
         url: "/wp-content/plugins/pods/ajax/add.php",
-        data: "datatype="+datatype+"&name="+name+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id,
+        data: "datatype="+datatype+"&dtname="+dtname+"&name="+name+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
             }
             else {
+                jQuery("#change").jqmHide();
                 loadPod();
                 reset();
-            }
-        }
-    });
-}
-
-function editColumn(col) {
-    column_val = jQuery(".col"+col+" .editme").html();
-    var html = '<input type="text" class="editable" value="'+column_val+'" /> <input type="button" value="OK" onclick="renameColumn('+col+')" /><input type="button" value="Cancel" onclick="loadPod()" />';
-    jQuery(".col"+col+" .editme").html(html);
-    jQuery(".col"+col+" .editme").unbind("click");
-}
-
-function renameColumn(col) {
-    var name = jQuery(".editable").val();
-    jQuery.ajax({
-        url: "/wp-content/plugins/pods/ajax/edit.php",
-        data: "action=rename&field_id="+col+"&name="+name,
-        success: function(msg) {
-            if ("Error" == msg.substr(0, 5)) {
-                alert(msg);
-            }
-            else {
-                loadPod();
             }
         }
     });
@@ -256,11 +258,34 @@ function moveColumn(col, dir) {
     });
 }
 
+function editColumn(col) {
+    var name = jQuery("#column_name").val();
+    var dtname = jQuery(".tab.active").html();
+    var coltype = jQuery("#column_type").val();
+    var pickval = jQuery("#column_pickval").val();
+    var sister_field_id = jQuery("#column_sister_field_id").val();
+    jQuery.ajax({
+        url: "/wp-content/plugins/pods/ajax/edit.php",
+        data: "action=edit&datatype="+datatype+"&dtname="+dtname+"&field_id="+col+"&name="+name+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id,
+        success: function(msg) {
+            if ("Error" == msg.substr(0, 5)) {
+                alert(msg);
+            }
+            else {
+                jQuery("#change").jqmHide();
+                loadPod();
+                reset();
+            }
+        }
+    });
+}
+
 function dropColumn(col) {
-    if (confirm("Are you really sure?")) {
+    if (confirm("Do you really want to drop this column?")) {
+        var dtname = jQuery(".tab.active").html();
         jQuery.ajax({
             url: "/wp-content/plugins/pods/ajax/drop.php",
-            data: "col="+col,
+            data: "col="+col+"&dtname="+dtname,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);
@@ -284,6 +309,63 @@ Begin HTML code
     Add New Pod: <input type="text" id="new_pod" /> <input type="button" value="Save" onclick="addPod()" />
     <p>Please use lowercase letters, dashes or underscores only.</p>
 </div>
+<div class="jqmWindow" id="change">
+    <input type="hidden" id="add_or_edit" value="" />
+    <input type="text" id="column_name" value="column_name" />
+    <select id="column_type" class="idle" onchange="doDropdown(this.value)">
+        <option value="date">date</option>
+        <option value="num">number</option>
+        <option value="bool">boolean (true, false)</option>
+        <option value="txt">text (title, caption, email, phone, url)</option>
+        <option value="desc">desc (body, summary, long text)</option>
+        <option value="file">file (document, photo, media)</option>
+        <option value="pick">pick</option>
+    </select>
+    <select id="column_pickval" style="display:none" onchange="sisterFields()">
+        <option value="" style="font-weight:bold; font-style:italic">-- Category --</option>
+<?php
+/*
+==================================================
+Get the category dropdown list
+==================================================
+*/
+$sql = "
+SELECT DISTINCT
+    t.term_id AS id, t.name
+FROM
+    wp_term_taxonomy tx
+INNER JOIN
+    wp_terms t ON t.term_id = tx.parent
+";
+$result = mysql_query($sql) or trigger_error(mysql_error(), E_USER_ERROR);
+while ($row = mysql_fetch_assoc($result))
+{
+?>
+        <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
+<?php
+}
+?>
+        <option value="" style="font-weight:bold; font-style:italic">-- Table --</option>
+<?php
+/*
+==================================================
+Get all Pods, including country & state
+==================================================
+*/
+$result = mysql_query("SHOW TABLES LIKE 'tbl_%'");
+while ($row = mysql_fetch_array($result))
+{
+    $table_name = substr($row[0], 4);
+?>
+        <option value="<?php echo $table_name; ?>"><?php echo $table_name; ?></option>
+<?php
+}
+?>
+    </select>
+    <select id="column_sister_field_id" style="display:none"></select>
+    <input type="button" class="idle" value="Save column" onclick="addOrEditColumn()" />
+    <p><b>*CAUTION*</b> changing column types can result in data loss!</p>
+</div>
 
 <div class="wrap">
     <h3>Manage Pods (<a href="javascript:;" onclick="jQuery('#dialog').jqmShow()">add new</a>)</h3>
@@ -292,6 +374,11 @@ Begin HTML code
         <tr>
             <td valign="top" class="tabs">
 <?php
+/*
+==================================================
+Build the left tabs
+==================================================
+*/
 if (isset($datatypes))
 {
     foreach ($datatypes as $key => $val)
@@ -306,52 +393,9 @@ if (isset($datatypes))
             <td valign="top" class="data-form">
                 <h2 id="pod_name">Choose a Pod</h2>
                 <p><input class="popup" type="text" id="pod_description" style="display:none" /></p>
-                <p id="column_list"><p>
+                <p id="column_list">Need some help? Check out the <a href="http://wordpress.org/extend/plugins/pods/installation/" target="blank">User Guide</a> to get started.</p>
                 <p>
-                    <input type="text" id="column_name" value="column_name" />
-                    <select id="column_type" class="idle" onchange="doDropdown(this.value)">
-                        <option value="date">date</option>
-                        <option value="num">number</option>
-                        <option value="bool">boolean (true, false)</option>
-                        <option value="txt">text (title, caption, email, phone, url)</option>
-                        <option value="desc">desc (body, summary, long text)</option>
-                        <option value="file">file (document, photo, media)</option>
-                        <option value="pick">pick</option>
-                    </select>
-                    <select id="column_pickval" style="display:none" onchange="sisterFields()">
-                        <option value="" style="font-weight:bold; font-style:italic">-- Category --</option>
-<?php
-// Get the category dropdown list
-$sql = "
-SELECT DISTINCT
-    t.term_id AS id, t.name
-FROM
-    wp_term_taxonomy tx
-INNER JOIN
-    wp_terms t ON t.term_id = tx.parent
-";
-$result = mysql_query($sql) or trigger_error(mysql_error(), E_USER_ERROR);
-while ($row = mysql_fetch_assoc($result))
-{
-?>
-                        <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
-<?php
-}
-?>
-                        <option value="" style="font-weight:bold; font-style:italic">-- Table --</option>
-<?php
-$result = mysql_query("SHOW TABLES LIKE 'tbl_%'");
-while ($row = mysql_fetch_array($result))
-{
-    $table_name = substr($row[0], 4);
-?>
-                        <option value="<?php echo $table_name; ?>"><?php echo $table_name; ?></option>
-<?php
-}
-?>
-                    </select>
-                    <select id="column_sister_field_id" style="display:none"></select>
-                    <input type="button" class="idle" value="Add column" onclick="addColumn()" />
+                    <span onclick="add_or_edit='add'; jQuery('#change').jqmShow()" style="font-weight:bold; text-decoration:underline">Add a column</span>
                 </p>
 
                 <p class="extras" onclick="jQuery('#tpl_detail').toggle(); jQuery(this).toggleClass('open')">Detail Template</p>
@@ -364,8 +408,8 @@ while ($row = mysql_fetch_array($result))
                 <input type="text" id="list_filters" class="hidden" />
 
                 <p>
-                    <input type="button" class="idle" value="SAVE CHANGES" onclick="editPod()" />
-                    <input type="button" class="idle" value="DROP TABLE" onclick="dropPod()" />
+                    <input type="button" class="idle" value="Save Changes" onclick="editPod()" />
+                    or <a href="javascript:;" onclick="dropPod()">drop table</a>
                 </p>
             </td>
         </tr>

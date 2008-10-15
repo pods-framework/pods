@@ -43,13 +43,6 @@ else
 
     if (empty($pickval))
     {
-        $result = mysql_query("SELECT name FROM wp_pod_types WHERE id = $datatype LIMIT 1");
-        if (0 < mysql_num_rows($result))
-        {
-            $row = mysql_fetch_assoc($result);
-            $datatype_name = $row['name'];
-        }
-
         $dbtypes = array(
             'bool' => 'bool',
             'date' => 'datetime',
@@ -59,7 +52,7 @@ else
             'desc' => 'text'
         );
         $dbtype = $dbtypes[$coltype];
-        mysql_query("ALTER TABLE tbl_$datatype_name ADD COLUMN $name $dbtype") or die('Error: Could not create column!');
+        mysql_query("ALTER TABLE tbl_$dtname ADD COLUMN $name $dbtype") or die('Error: Could not create column!');
     }
     else
     {

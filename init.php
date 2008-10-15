@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://wp-pods.googlecode.com
 Description: Allows posts to be treated like CMS modules.
-Version: 1.0.4
+Version: 1.0.5
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 

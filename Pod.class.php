@@ -7,7 +7,7 @@ This class generates the display values.
 
 USAGE:
 $Record = new Pod('news');
-$Record->findRecords('id DESC');
+$Record->findRecords('id DESC', 10);
 
 echo $Record->getFilters();
 echo $Record->getPagination();

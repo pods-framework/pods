@@ -21,11 +21,10 @@ Posts can be interrelated with other posts of that same content type, as well as
 == Installation ==
 
 = Installation =
-1. Download the latest release
-2. Unzip the contents to wp-content/plugins/ (resulting in wp-content/plugins/pods)
-3. Move the .htaccess file from wp-content/plugins/pods to the Wordpress root directory
-4. In Settings > Permalinks, set the Custom Structure to /%postname%/
-5. Enable the plugin through Plugins > Installed
+1. Unzip the `pods` folder into `/wp-content/plugins/`
+2. Move .htaccess from `/wp-content/plugins/pods/` to the Wordpress root directory
+3. In Settings > Permalinks, set the Custom Structure to `/%postname%/`
+4. Enable the plugin through Plugins > Installed
 
 = Adding a New Pod =
 1. In Admin, click on Tools > Pods
@@ -77,23 +76,41 @@ Feel free to email me at **logikal16@gmail.com** with improvement ideas, bug fix
 1. You created a pod called **news** and your .htaccess is set properly
 2. The list view is located at: **http://domain.com/list/?type=news**
 
+
 = Can I add list views to any Wordpress page? =
 Yes. Let's start with an example. On your blog, you have a page called "Latest News" at **http://domain.com/resources/latest**. To add a custom list view to that page, create a file at this path: **wp-content/plugins/pods/pages/resources/latest.tpl**. Note how the file path corresponds to the URL. In the latest.tpl file, enter the following code: 
-`
-<?php
+`<?php
 $Record = new Pod('news'); // change "news" with any pod name
 $Record->findRecords('id DESC'); // change the sort order if needed
 echo $Record->getFilters(); // show the search box and any available filters
 echo $Record->getPagination(); // show the pagination controls
 echo $Record->showTemplate('list'); // build the list view`
 
+
 = Can I have more than 1 list or detail template for each Pod? =
 Yes. You can specify template code as the 2nd parameter in **showTemplate()**.
-`
-$custom_tpl = '<p><a href="{@detail_url}">{@name}</a></p>';
+`$custom_tpl = '<p><a href="{@detail_url}">{@name}</a></p>';
 $Record->showTemplate('list', $custom_tpl);`
 
-== Screenshots ==
+== History ==
 
-Please visit the [author's plugin page](http://wp-pods.googlecode.com) for screenshots.
+**1.0.5**
+ADDED: allow editing of column types
+DROPPED: unnecessary icons
+
+**1.0.4**
+ADDED: panel toggles on management page
+
+**1.0.3**
+FIXED: after adding a pod, the new tab is now clickable without refresh
+
+**1.0.2**
+ADDED: state & country tables to init.php
+
+**1.0.1**
+ADDED: readme.txt
+FIXED: boolean type
+
+**1.0.0**
+Initial import
 

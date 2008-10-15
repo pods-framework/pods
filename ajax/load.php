@@ -2,7 +2,7 @@
 // Include the MySQL connection
 include(realpath('../../../../wp-config.php'));
 
-// Declare the $_GET variables
+// Get all Pod columns
 if ($id = (int) $_GET['id'])
 {
     $result = mysql_query("SELECT * FROM wp_pod_types WHERE id = $id LIMIT 1");
@@ -31,3 +31,10 @@ if ($id = (int) $_GET['id'])
     // Encode the array to JSON
     echo json_encode($module);
 }
+// Get a single Pod columnelseif ($field_id = (int) $_GET['col'])
+{
+    $result = mysql_query("SELECT name, coltype, pickval, sister_field_id FROM wp_pod_fields WHERE id = $field_id LIMIT 1");
+    $row = mysql_fetch_assoc($result);
+    echo json_encode($row);
+}
+

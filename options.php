@@ -174,6 +174,25 @@ function addPod() {
     });
 }
 
+function editPod() {
+    var desc = jQuery("#pod_description").val();
+    var list_filters = jQuery("#list_filters").val();
+    var tpl_detail = jQuery("#tpl_detail").val();
+    var tpl_list = jQuery("#tpl_list").val();
+    jQuery.ajax({
+        url: "/wp-content/plugins/pods/ajax/edit.php",
+        data: "datatype="+datatype+"&desc="+desc+"&list_filters="+encodeURIComponent(list_filters)+"&tpl_detail="+encodeURIComponent(tpl_detail)+"&tpl_list="+encodeURIComponent(tpl_list),
+        success: function(msg) {
+            if ("Error" == msg.substr(0, 5)) {
+                alert(msg);
+            }
+            else {
+                alert("Success!");
+            }
+        }
+    });
+}
+
 function dropPod() {
     if (confirm("Do you really want to drop this pod?")) {
         var dtname = jQuery(".tab.active").html();

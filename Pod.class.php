@@ -557,7 +557,9 @@ class Pod
         elseif ('file' == $coltype)
         {
 ?>
-    <input type="text" class="form file <?php echo $name; ?>" value="<?php echo $data; ?>" onclick="jQuery('#add-media-link').click()" />
+    <input type="text" class="form file <?php echo $name; ?>" value="<?php echo $data; ?>" />
+    <a href="javascript:;" onclick="active_file = '<?php echo $name; ?>'; jQuery('#dialog').jqmShow()">select</a> after
+    <a href="javascript:;" onclick="jQuery('#add-media-link').click()">uploading</a>
 <?php
         }
         // Standard text box
@@ -634,18 +636,29 @@ class Pod
     */
     function magic_swap($in)
     {
-        if ('detail_url' == $in[2])
+        $field = $in[2];
+        $before = $after = '';
+        if (false !== strpos($field, ','))
+        {
+            list($field, $before, $after, $extra) = explode(',', $field);
+        }
+        if ('detail_url' == $field)
         {
             return '/detail/?type=' . $this->datatype . '&id=' . $this->print_field('id');
         }
-        elseif ('date' == $in[2])
-        {
-            $date = $this->print_field('date');
-            return date("m/d/Y", strtotime($date));
-        }
         else
         {
-            return $this->print_field($in[2]);
+            $field = $this->print_field($field);
+            if (!empty($field))
+            {
+                // Date format
+                if (preg_match("/^(\d{4})-([01][0-9])-([0-3][0-9]) ([0-2][0-9]:[0-5][0-9]:[0-5][0-9])$/", $field))
+                {
+                    $date_format = empty($extra) ? 'm/d/Y' : $extra;
+                    $field = date($date_format, strtotime($field));
+                }
+                return $before . $field . $after;
+            }
         }
     }
 }

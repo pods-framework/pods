@@ -38,11 +38,6 @@
     cursor: pointer;
 }
 
-.file {
-    padding-left: 25px;
-    background: #fff url(/wp-content/plugins/pods/images/folder_open.gif) 5px no-repeat;
-}
-
 .moveup, .movedown, .editme, .dropme {
     float: left;
     width: 16px;
@@ -152,6 +147,48 @@ span.first {
 
 h3 {
     margin: 0 0 10px 0;
+}
+
+/* File Tree */
+UL.jqueryFileTree {
+    font-family: Verdana, sans-serif;
+    font-size: 11px;
+    line-height: 18px;
+    padding: 0px;
+    margin: 0px;
+}
+
+UL.jqueryFileTree LI {
+    list-style: none;
+    padding: 0px;
+    padding-left: 20px;
+    margin: 0px;
+    white-space: nowrap;
+}
+
+UL.jqueryFileTree A {
+    color: #333;
+    text-decoration: none;
+    display: block;
+    padding: 0px 2px;
+}
+
+UL.jqueryFileTree A:hover {
+    background: #BDF;
+}
+
+.jqueryFileTree li.directory {
+    background: url(/wp-content/plugins/pods/images/folder.gif) left top no-repeat;
+}
+.jqueryFileTree li.expanded {
+    background: url(/wp-content/plugins/pods/images/folder_open.gif) left top no-repeat;
+}
+.jqueryFileTree li.file {
+    background: url(/wp-content/plugins/pods/images/file.gif) left top no-repeat;
+}
+
+.jqueryFileTree LI.wait {
+    background: url(/wp-content/plugins/pods/images/ajax-loader.gif) left top no-repeat;
 }
 
 /* jqModal */

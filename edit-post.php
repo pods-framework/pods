@@ -22,10 +22,26 @@ if (0 < mysql_num_rows($result))
 ?>
 
 <link rel="stylesheet" type="text/css" href="/wp-content/plugins/pods/style.css" />
+<script type="text/javascript" src="/wp-content/plugins/pods/js/jqmodal.js"></script>
+<script type="text/javascript" src="/wp-content/plugins/pods/js/jqFileTree.js"></script>
 <script type="text/javascript" src="/wp-content/plugins/pods/js/ui.datepicker.js"></script>
 <script type="text/javascript">
 var datatype;
 var post_id = <?php echo $post_id; ?>;
+var active_file;
+
+jQuery(function() {
+    jQuery(".filebox").fileTree({
+        root: '/wp-content/uploads/',
+        script: '/wp-content/plugins/pods/ajax/filetree.php',
+        multiFolder: false
+    },
+    function(file) {
+        jQuery("."+active_file).val(file);
+        jQuery("#dialog").jqmHide();
+    });
+    jQuery("#dialog").jqm();
+});
 
 function showform(dt) {
     datatype = dt;
@@ -91,6 +107,12 @@ function savePost() {
     });
 }
 </script>
+
+<div class="jqmWindow" id="dialog">
+    <h2 style="margin-top:0">Pick a File:</h2>
+    <div class="filebox" style="height:160px; overflow-x:hidden; overflow-y:auto"></div>
+</div>
+
 <table class="form-table">
     <tr valign="top">
         <th scope="row">Select One:</th>

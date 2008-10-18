@@ -1,7 +1,7 @@
 === Pods ===
 Contributors: logikal16
 Donate link: http://wp-pods.googlecode.com
-Tags: pods, wordpress, cms, plugin, module, datatype
+Tags: pods, wordpress, cms, plugin, module, datatype, posts, pages
 Requires at least: 2.7
 Tested up to: 2.7
 Stable tag: trunk
@@ -52,15 +52,22 @@ Posts can be interrelated with other posts of that same content type, as well as
 
 = List Template =
 * Determines how each item on a [list page](http://pods.uproot.us/list/?type=animal) appears
-* Supports full HTML, as well as magic tags
-* If the pod has a column called address, then entering the magic tag **{@address}** will display the value
+* Supports full HTML, as well as magic tags (see below)
 * The **{@detail_url}** magic tag will display the detail page URL of any list item
 * Ex: **`<p><a href="{@detail_url}">{@name}</a> - {@date}</p>`**
 
 = Detail Template =
 * Determines how an item's [detail page](http://pods.uproot.us/detail/?type=animal&id=4) appears
-* Supports full HTML, as well as magic tags
-* If the pod has a column called summary, then entering the magic tag **{@summary}** will display the value
+* Supports full HTML, as well as magic tags (see below)
+
+= Magic Tags =
+* Allows for dynamic column values to be inserted in List and Detail templates
+* Format: `{@column_name[,text_before][,text_after][,extras]}`
+* Ex: `{@start_date}` or `{@summary,Summary: }` or `{@start_date,<p>in ,</p>,m/d/Y}`
+1. **column_name** - a column name in the current Pod
+2. **text_before** - text/html inserted before the column value (will **not** appear for empty columns)
+3. **text_after** - text/html inserted after the column value (will **not** appear for empty columns)
+4. **extras** - for DATE types, allows for custom PHP [date formats](http://us2.php.net/date) (e.g. m/d/Y)
 
 = List Filter =
 * Enter a comma-separated list of (PICK type) column names
@@ -76,41 +83,45 @@ Feel free to email me at **logikal16@gmail.com** with improvement ideas, bug fix
 1. You created a pod called **news** and your .htaccess is set properly
 2. The list view is located at: **http://domain.com/list/?type=news**
 
+
 = Can I add list views to any Wordpress page? =
 Yes. Let's start with an example. On your blog, you have a page called "Latest News" at **http://domain.com/resources/latest**. To add a custom list view to that page, create a file at this path: **wp-content/plugins/pods/pages/resources/latest.tpl**. Note how the file path corresponds to the URL. In the latest.tpl file, enter the following code: 
-`
-<?php
+`<?php
 $Record = new Pod('news'); // change "news" with any pod name
 $Record->findRecords('id DESC'); // change the sort order if needed
 echo $Record->getFilters(); // show the search box and any available filters
 echo $Record->getPagination(); // show the pagination controls
 echo $Record->showTemplate('list'); // build the list view`
 
+
 = Can I have more than 1 list or detail template for each Pod? =
 Yes. You can specify template code as the 2nd parameter in **showTemplate()**.
-`
-$custom_tpl = '<p><a href="{@detail_url}">{@name}</a></p>';
+`$custom_tpl = '<p><a href="{@detail_url}">{@name}</a></p>';
 $Record->showTemplate('list', $custom_tpl);`
 
 == History ==
 
+**1.0.6**
+ADDED: fully-functional AJAX file picker
+ADDED: improved magic tags - "text_before", "text_after", "extras" parameters
+
 **1.0.5**
-* ADDED: allow editing of column types
-* DROPPED: unnecessary icons
+ADDED: allow editing of column types
+DROPPED: unnecessary icons
 
 **1.0.4**
-* ADDED: panel toggles on management page
+ADDED: panel toggles on management page
 
 **1.0.3**
-* FIXED: after adding a pod, the new tab is now clickable without refresh
+FIXED: after adding a pod, the new tab is now clickable without refresh
 
 **1.0.2**
-* ADDED: state & country tables to init.php
+ADDED: state & country tables to init.php
 
 **1.0.1**
-* ADDED: readme.txt
-* FIXED: boolean type
+ADDED: readme.txt
+FIXED: boolean type
 
 **1.0.0**
-* Initial import
+Initial import
 

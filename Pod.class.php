@@ -201,7 +201,8 @@ class Pod
         $page = $this->page;
         $datatype = $this->datatype;
         $datatype_id = $this->datatype_id;
-        $rows_per_page = is_numeric($rpp) ? $rpp : $this->rpp;
+        $this->rpp = is_numeric($rpp) ? $rpp : $this->rpp;
+        $rows_per_page = $this->rpp;
         $limit = ($rows_per_page * ($page - 1)) . ', ' . $rows_per_page;
 
         // Get this datatype's fields

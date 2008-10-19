@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://wp-pods.googlecode.com
 Description: Allows posts to be treated like CMS modules.
-Version: 1.0.6
+Version: 1.0.7
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -101,6 +101,26 @@ function edit_options_page()
 
 function deletePost($post_ID)
 {
+    // Get the datatype, dtname, and row_id from the post id
+    $sql = "
+    SELECT
+        t.name AS dtname, p.row_id AS row_id
+    FROM
+        wp_pod p
+    INNER JOIN
+        wp_pod_types t ON t.id = p.datatype
+    WHERE
+        p.post_id = $post_ID
+    LIMIT
+        1
+    ";
+    $result = mysql_query($sql);
+    $row = mysql_fetch_assoc($result);
+    $dtname = $row['dtname'];
+    $row_id = $row['row_id'];
+
+    mysql_query("DELETE FROM tbl_$dtname WHERE id = $row_id LIMIT 1");
+    mysql_query("UPDATE wp_pod_rel SET sister_post_id = NULL WHERE sister_post_id = $post_ID");
     mysql_query("DELETE FROM wp_pod WHERE post_id = $post_ID LIMIT 1");
     mysql_query("DELETE FROM wp_pod_rel WHERE post_id = $post_ID");
 }

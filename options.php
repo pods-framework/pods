@@ -169,6 +169,7 @@ function addPod() {
                     jQuery(this).addClass("active");
                     loadPod();
                 });
+                jQuery(".t"+id).click();
             }
         }
     });

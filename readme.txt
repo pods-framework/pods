@@ -10,13 +10,11 @@ Pods is a CMS (Content Management System) plugin for Wordpress.
 
 == Description ==
 
-Pods is a CMS (Content Management System) plugin for Wordpress. It allows users to add **content types**, associate content types with posts, and form relationships among blog posts.
+Document library. Photo gallery. Event calendar. Newsroom. Pods is a CMS (Content Management System) plugin that allows you to create almost any imaginable structure in Wordpress using normal blog posts.
 
-A content type, or **pod**, is a simply a container of information. It allows items to be categorized in a much more structured and flexible manner than through tagging alone.
+A **pod** is simply a container of fields. If you created a pod called **event**, it could contain fields like *date*, *address*, and *attendees*. With Pods, any field can be a relationship with another pod or category.
 
-For example, we'll create 2 pods: **person** and **event**. The **event** pod could contain relevant fields (*date*, *address*, and *attendees*). The cool part about Pods is that we could set the *attendees* field as a relationship with the **person** content type.
-
-Posts can be interrelated with other posts of that same content type, as well as with any other content type(s). This aspect of a "web of related content" is the heart of any modern CMS.
+You also have full control over what gets displayed on the list and detail pages.
 
 [View the Demo](http://pods.uproot.us)
 
@@ -39,7 +37,7 @@ Posts can be interrelated with other posts of that same content type, as well as
 
 = Adding a New Pod Column =
 1. In Admin, click on Tools > Pods
-2. On the left side, click on the Pod you want to change (background turns blue)
+2. On the left side, click on the pod you want to change (background turns blue)
 3. Click on the "Add a Column" link
 
 = Column Types =
@@ -49,7 +47,7 @@ Posts can be interrelated with other posts of that same content type, as well as
  - **text** - short text (name, caption, URL)
  - **desc** - long text (article body)
  - **file** - uses the default Wordpress file manager, simply saves the file URL
- - **pick** - relationship with a Pod (or parent category having children)
+ - **pick** - relationship with a pod (or parent category having children)
 
 = Relating Posts to Pods =
  - In the "Edit Post" page, you'll see a "Choose a Pod" tab
@@ -70,7 +68,7 @@ Posts can be interrelated with other posts of that same content type, as well as
  - Allows for column values to be inserted in List and Detail templates
  - Format: `{@column_name[,before][,after][,extras]}`
  - Ex: `{@start_date}` or `{@summary,Summary: }` or `{@start_date,<p>in ,</p>,m/d/Y}`
- - **column_name** - a column name in the current Pod
+ - **column_name** - a column name in the current pod
  - **before** - text/html inserted before the column value (will **not** appear if the column is empty)
  - **after** - text/html inserted after the column value (will **not** appear if the column is empty)
  - **extras** - for DATE types, allows for custom PHP [date formats](http://us2.php.net/date) (e.g. m/d/Y)
@@ -113,28 +111,18 @@ $Record->showTemplate('list', $override);
 
 == Changelog ==
 
-= 1.0.7 =
- - Fixed post deletion hook
- - Fixed pagination for when rows_per_page <> 15
+**NEW in 1.0.8:** Fixed bug when deleting pods
 
-= 1.0.6 =
- - added 100% working AJAX file picker
- - improved magic tags: "text_before", "text_after", "extras" parameters
- - added screenshots
+**NEW in 1.0.7:** Fixed post deletion hook, pagination when rpp <> 15
 
-= 1.0.5 =
- - added editing of column types
- - removed unnecessary icons
+**NEW in 1.0.6:** AJAX file picker, improved magic tags, screenshots
 
-= 1.0.4 =
- - added hide/show for management page options
+**NEW in 1.0.5:** Allowed column type editing, removed excess icons
 
-= 1.0.3 =
- - new pod tabs now clickable without refresh
+**NEW in 1.0.4:** Show/hide controls for management page options
 
-= 1.0.2 =
- - added state & country tables to init.php
+**NEW in 1.0.3:** New pod tabs now clickable without refresh
 
-= 1.0.1 =
- - added readme.txt
- - fixed boolean type
+**NEW in 1.0.2:** Added state & country tables to init.php
+
+**NEW in 1.0.1:** Fixed boolean type, added readme.txt

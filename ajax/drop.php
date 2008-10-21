@@ -2,6 +2,11 @@
 // Include the MySQL connection
 include(realpath('../../../../wp-config.php'));
 
+foreach ($_GET as $key => $val)
+{
+    ${$key} = mysql_real_escape_string(stripslashes(trim($val)));
+}
+
 // Delete a single column
 if ($field_id = (int) $_GET['col'])
 {

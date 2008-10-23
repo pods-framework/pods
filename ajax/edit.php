@@ -58,7 +58,7 @@ elseif ('edit' == $action)
         die("Error: The $name column is not editable.");
     }
 
-    $result = mysql_query("SELECT id FROM wp_pod_fields WHERE id != $field_id AND name = '$name' LIMIT 1");
+    $result = mysql_query("SELECT id FROM wp_pod_fields WHERE datatype = $datatype AND id != $field_id AND name = '$name' LIMIT 1");
     if (0 < mysql_num_rows($result))
     {
         die("Error: The $name column cannot be cloned.");

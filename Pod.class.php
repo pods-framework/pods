@@ -116,6 +116,49 @@ class Pod
 
     /*
     ==================================================
+    Get pod or category dropdown values
+    ==================================================
+    */
+    function get_dropdown_values($table = null, $field_name = null, $term_ids = null)
+    {
+        // Category dropdown
+        if (is_numeric($table))
+        {
+            $sql = "
+            SELECT
+                t.term_id AS id, t.name
+            FROM
+                wp_term_taxonomy tx
+            INNER JOIN
+                wp_terms t ON t.term_id = tx.term_id
+            WHERE
+                tx.parent = $table AND tx.taxonomy = 'category'
+            ";
+        }
+        // Pod table dropdown
+        else
+        {
+            $sql = "SELECT id, name FROM tbl_$table ORDER BY name ASC";
+        }
+
+        $result = mysql_query($sql) or die(mysql_error());
+        while ($row = mysql_fetch_assoc($result))
+        {
+            if (!empty($term_ids))
+            {
+                $row['active'] = in_array($row['id'], $term_ids);
+            }
+            else
+            {
+                $row['active'] = ($row['id'] == $_GET[$field_name]) ? true : false;
+            }
+            $val[] = $row;
+        }
+        return $val;
+    }
+
+    /*
+    ==================================================
     Lookup values from a single relationship field
     ==================================================
     */
@@ -382,21 +425,15 @@ class Pod
                 $row = mysql_fetch_assoc($result);
                 if (!empty($row['pickval']))
                 {
-                    $data = array();
                     $rel_table = $row['pickval'];
-                    $result = mysql_query("SELECT id, name FROM tbl_$rel_table ORDER BY name ASC");
-                    while ($row = mysql_fetch_assoc($result))
-                    {
-                        $row['active'] = ($row['id'] == $_GET[$field_name]) ? true : false;
-                        $data[] = $row;
-                    }
+                    $data = $this->get_dropdown_values($rel_table, $field_name);
 ?>
     <select name="<?php echo $field_name; ?>" class="filter <?php echo $field_name; ?>" style="width:180px">
         <option value="">-- <?php echo strtoupper($field_name); ?> --</option>
 <?php
                     foreach ($data as $key => $val)
                     {
-                        $active = empty($val['active']) ? '' : ' active';
+                        $active = empty($val['active']) ? '' : ' selected';
 ?>
         <option value="<?php echo $val['id']; ?>"<?php echo $active; ?>><?php echo $val['name']; ?></option>
 <?php
@@ -480,36 +517,7 @@ class Pod
                     {
                         $term_ids[] = $row['term_id'];
                     }
-
-                    if (is_numeric($table))
-                    {
-                        $sql = "
-                        SELECT
-                            t.term_id AS id, t.name
-                        FROM
-                            wp_term_taxonomy tx
-                        INNER JOIN
-                            wp_terms t ON t.term_id = tx.term_id
-                        WHERE
-                            tx.parent = $table AND tx.taxonomy = 'category'
-                        ";
-                        $result = mysql_query($sql) or die(mysql_error());
-                        while ($row = mysql_fetch_assoc($result))
-                        {
-                            $row['active'] = in_array($row['id'], $term_ids);
-                            $val[] = $row;
-                        }
-                    }
-                    else
-                    {
-                        $result = mysql_query("SELECT id, name FROM tbl_$table ORDER BY name ASC") or die(mysql_error());
-                        while ($row = mysql_fetch_assoc($result))
-                        {
-                            $row['active'] = in_array($row['id'], $term_ids);
-                            $val[] = $row;
-                        }
-                    }
-                    $this->data[$key] = $val;
+                    $this->data[$key] = $this->get_dropdown_values($table, null, $term_ids);
                 }
                 else
                 {

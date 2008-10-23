@@ -26,11 +26,6 @@ You also have full control over what gets displayed on the list and detail pages
 3. In Settings > Permalinks, set the Custom Structure to `/%postname%/`
 4. Enable the plugin through Plugins > Installed
 
-= Subversion Access (optional) =
-1. Using the shell (unix) or TortoiseSVN (win), browse to **wp-content/plugins/**
-2. `svn checkout http://wp-pods.googlecode.com/svn/trunk/ pods`
-3. To get the latest release: `svn update`
-
 = Adding a New Pod =
 1. In Admin, click on Tools > Pods
 2. Click on the add new link next to the "Manage Pods" header
@@ -111,18 +106,12 @@ $Record->showTemplate('list', $override);
 
 == Changelog ==
 
-**NEW in 1.0.8:** Fixed bug when deleting pods
-
-**NEW in 1.0.7:** Fixed post deletion hook, pagination when rpp <> 15
-
-**NEW in 1.0.6:** AJAX file picker, improved magic tags, screenshots
-
-**NEW in 1.0.5:** Allowed column type editing, removed excess icons
-
-**NEW in 1.0.4:** Show/hide controls for management page options
-
-**NEW in 1.0.3:** New pod tabs now clickable without refresh
-
-**NEW in 1.0.2:** Added state & country tables to init.php
-
-**NEW in 1.0.1:** Fixed boolean type, added readme.txt
+ - **v1.0.9:** Fixed column editing + dropdown filters
+ - **v1.0.8:** Fixed bug when deleting pods
+ - **v1.0.7:** Fixed post deletion hook, pagination when rpp <> 15
+ - **v1.0.6:** AJAX file picker, improved magic tags, screenshots
+ - **v1.0.5:** Allowed column type editing, removed excess icons
+ - **v1.0.4:** Show/hide controls for management page options
+ - **v1.0.3:** New pod tabs now clickable without refresh
+ - **v1.0.2:** Added state & country tables to init.php
+ - **v1.0.1:** Fixed boolean type, added readme.txt

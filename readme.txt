@@ -106,6 +106,7 @@ $Record->showTemplate('list', $override);
 
 == Changelog ==
 
+ - ***v1.1.0:* Added "edit_url" magic tag, better dropdown formatting
  - **v1.0.9:** Fixed column editing + dropdown filters
  - **v1.0.8:** Fixed bug when deleting pods
  - **v1.0.7:** Fixed post deletion hook, pagination when rpp <> 15

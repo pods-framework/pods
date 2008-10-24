@@ -18,6 +18,7 @@ class Pod
 {
     var $data;
     var $result;
+    var $post_id;
     var $datatype;
     var $datatype_id;
     var $total_rows;
@@ -112,6 +113,24 @@ class Pod
             $data = $out;
         }
         return $data;
+    }
+
+    /*
+    ==================================================
+    Get the post id
+    ==================================================
+    */
+    function get_post_id()
+    {
+        if (empty($this->post_id))
+        {
+            $dt = $this->datatype_id;
+            $row_id = $this->print_field('id');
+            $result = mysql_query("SELECT post_id FROM wp_pod WHERE datatype = $dt AND row_id = $row_id LIMIT 1");
+            $row = mysql_fetch_assoc($result);
+            $this->post_id = $row['post_id'];
+        }
+        return $this->post_id;
     }
 
     /*
@@ -429,7 +448,7 @@ class Pod
                     $data = $this->get_dropdown_values($rel_table, $field_name);
 ?>
     <select name="<?php echo $field_name; ?>" class="filter <?php echo $field_name; ?>" style="width:180px">
-        <option value="">-- <?php echo strtoupper($field_name); ?> --</option>
+        <option value="">-- <?php echo ucwords(str_replace('_', ' ', $field_name)); ?> --</option>
 <?php
                     foreach ($data as $key => $val)
                     {
@@ -654,6 +673,10 @@ class Pod
         if ('detail_url' == $field)
         {
             return '/detail/?type=' . $this->datatype . '&id=' . $this->print_field('id');
+        }
+        elseif ('edit_url' == $field)
+        {
+            return '/wp-admin/post.php?action=edit&post=' . $this->get_post_id();
         }
         else
         {

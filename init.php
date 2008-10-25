@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Pods
-Plugin URI: http://wp-pods.googlecode.com
-Description: Allows posts to be treated like CMS modules.
-Version: 1.1.0
+Plugin URI: http://pods.uproot.us/
+Description: The Wordpress CMS Plugin
+Version: 1.1.1
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 

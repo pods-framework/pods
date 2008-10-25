@@ -422,7 +422,7 @@ class Pod
     Display the list filters
     ==================================================
     */
-    function getFilters()
+    function getFilters($list_filters = null)
     {
         $datatype = $this->datatype;
         $datatype_id = $this->datatype_id;
@@ -430,10 +430,13 @@ class Pod
     <form method="get" action="/list/">
         <input type="hidden" name="type" value="<?php echo $datatype; ?>" />
 <?php
-        // Get the datatype's list_filters
-        $result = mysql_query("SELECT list_filters FROM wp_pod_types WHERE id = $datatype_id LIMIT 1");
-        $row = mysql_fetch_assoc($result);
-        $list_filters = $row['list_filters'];
+        if (empty($list_filters))
+        {
+            $result = mysql_query("SELECT list_filters FROM wp_pod_types WHERE id = $datatype_id LIMIT 1");
+            $row = mysql_fetch_assoc($result);
+            $list_filters = $row['list_filters'];
+        }
+
         if (!empty($list_filters))
         {
             $list_filters = explode(',', $list_filters);

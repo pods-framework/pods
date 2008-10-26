@@ -21,6 +21,12 @@ if ($field_id = (int) $_GET['col'])
     mysql_query("DELETE FROM wp_pod_rel WHERE field_id = $field_id");
 }
 
+// Delete a single page
+elseif ($page_id = (int) $_GET['page'])
+{
+    mysql_query("DELETE FROM wp_pod_pages WHERE id = $page_id LIMIT 1");
+}
+
 // Delete an entire datatype
 elseif ($datatype_id = (int) $_GET['pod'])
 {

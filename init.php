@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The Wordpress CMS Plugin
-Version: 1.1.1
+Version: 1.1.2
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -64,6 +64,13 @@ function initialize()
     )";
     mysql_query($sql) or trigger_error(mysql_error(), E_USER_ERROR);
 
+    $sql = "CREATE TABLE IF NOT EXISTS wp_pod_pages (
+        id INT unsigned auto_increment primary key,
+        uri VARCHAR(128),
+        phpcode TEXT
+    )";
+    mysql_query($sql) or trigger_error(mysql_error(), E_USER_ERROR);
+
     // Add the country and state tables
     $result = mysql_query("SHOW TABLES LIKE '%tbl_country'");
     if (1 > mysql_num_rows($result))
@@ -78,6 +85,15 @@ function initialize()
         mysql_query("CREATE TABLE tbl_state (id int unsigned auto_increment primary key, name varchar(64))");
         mysql_query("INSERT INTO tbl_state (name) VALUES ('$states')");
     }
+
+    // Add the list and detail templates if needed (*TEMPORARY*)
+    $result = mysql_query("SELECT id FROM wp_pod_pages LIMIT 1");
+    if (1 > mysql_num_rows($result))
+    {
+        $list = mysql_real_escape_string(str_replace("<?php", '', file_get_contents(realpath(dirname(__FILE__) . '/pages/list.tpl'))));
+        $detail = mysql_real_escape_string(str_replace("<?php", '', file_get_contents(realpath(dirname(__FILE__) . '/pages/detail.tpl'))));
+        mysql_query("INSERT INTO wp_pod_pages (uri, phpcode) VALUES ('/list/', '$list'), ('/detail/', '$detail')");
+    }
 }
 
 function adminMenu()
@@ -85,8 +101,11 @@ function adminMenu()
     // Add new box under Manage > Posts
     add_meta_box('pod', 'Choose a Pod', 'edit_post_page', 'post', 'normal', 'high');
 
-    // Add a new submenu under Manage
+    // Add new submenu under Tools
     add_management_page('Pods', 'Pods', 8, 'pods', 'edit_options_page');
+
+    // Add new submenu under Tools
+    add_management_page('Pods Pages', 'Pods Pages', 8, 'pods_pages', 'edit_custom_pages');
 }
 
 function edit_post_page()
@@ -97,6 +116,11 @@ function edit_post_page()
 function edit_options_page()
 {
     include realpath(dirname(__FILE__) . '/options.php');
+}
+
+function edit_custom_pages()
+{
+    include realpath(dirname(__FILE__) . '/pages.php');
 }
 
 function deletePost($post_ID)
@@ -130,22 +154,18 @@ function redirect()
     if (is_page() || is_404())
     {
         $uri = explode('?', $_SERVER['REQUEST_URI']);
-        $uri = ('/' == substr($uri[0], 0, 1)) ? substr($uri[0], 1) : $uri[0];
-        $uri = ('/' == substr($uri, -1)) ? substr($uri, 0, -1) : $uri;
-        $uri = empty($uri) ? array('home') : explode('/', $uri);
+        $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri[0]);
+        $uri = empty($uri) ? '/' : "/$uri/";
 
-        // See if the hierarchical template exists
-        for ($i = count($uri); $i > 0; $i--)
+        // See if the custom template exists
+        $result = mysql_query("SELECT phpcode FROM wp_pod_pages WHERE uri = '$uri' LIMIT 1");
+        if (0 < mysql_num_rows($result))
         {
-            $uri_string = implode('/', $uri);
-            $tpl_path = realpath(dirname(__FILE__) . "/pages/$uri_string.tpl");
-            if (file_exists($tpl_path))
-            {
-                include realpath(dirname(__FILE__) . '/router.php');
-                return;
-            }
-            array_pop($uri);
+            $row = mysql_fetch_assoc($result);
+            $phpcode = $row['phpcode'];
         }
+        include realpath(dirname(__FILE__) . '/router.php');
+        return;
     }
 }
 

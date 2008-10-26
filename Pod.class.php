@@ -190,9 +190,7 @@ class Pod
         // Find the post ID
         if (empty($post_id))
         {
-            $result = mysql_query("SELECT post_id FROM wp_pod WHERE datatype = $datatype_id AND row_id = $row_id LIMIT 1") or die(mysql_error());
-            $row = mysql_fetch_assoc($result);
-            $post_id = $row['post_id'];
+            $post_id = $this->get_post_id();
         }
         $result = mysql_query("SELECT term_id FROM wp_pod_rel WHERE post_id = $post_id AND field_id = $field_id") or die(mysql_error());
 
@@ -354,12 +352,13 @@ class Pod
                 $request_uri .= $key . '=' . urlencode($val) . '&';
             }
         }
-
-        echo 'Go to page: ';
+?>
+    <span class="pager">Go to page: 
+<?php
         if (1 < $page)
         {
 ?>
-    <a href="<?php echo $request_uri; ?>page=1" class="fringePage">1</a>
+    <a href="<?php echo $request_uri; ?>page=1" class="pageNum firstPage">1</a>
 <?php
         }
         if (1 < ($page - 100))
@@ -384,7 +383,7 @@ class Pod
             }
         }
 ?>
-    <span class="currentPage"><?= $page ?></span>
+    <span class="pageNum currentPage"><?= $page ?></span>
 <?php
         for ($i = 1; $i < 3; $i++)
         {
@@ -410,9 +409,12 @@ class Pod
         if ($page < $total_pages)
         {
 ?>
-    <a href="<?php echo $request_uri; ?>page=<?= $total_pages ?>" class="fringePage"><?= $total_pages ?></a>
+    <a href="<?php echo $request_uri; ?>page=<?= $total_pages ?>" class="pageNum lastPage"><?= $total_pages ?></a>
 <?php
         }
+?>
+    </span>
+<?php
         $output = ob_get_clean();
         return $output;
     }
@@ -422,7 +424,7 @@ class Pod
     Display the list filters
     ==================================================
     */
-    function getFilters($list_filters = null)
+    function getFilters($filters = null)
     {
         $datatype = $this->datatype;
         $datatype_id = $this->datatype_id;
@@ -430,17 +432,17 @@ class Pod
     <form method="get" action="/list/">
         <input type="hidden" name="type" value="<?php echo $datatype; ?>" />
 <?php
-        if (empty($list_filters))
+        if (empty($filters))
         {
             $result = mysql_query("SELECT list_filters FROM wp_pod_types WHERE id = $datatype_id LIMIT 1");
             $row = mysql_fetch_assoc($result);
-            $list_filters = $row['list_filters'];
+            $filters = $row['list_filters'];
         }
 
-        if (!empty($list_filters))
+        if (!empty($filters))
         {
-            $list_filters = explode(',', $list_filters);
-            foreach ($list_filters as $key => $val)
+            $filters = explode(',', $filters);
+            foreach ($filters as $key => $val)
             {
                 $field_name = trim($val);
                 $result = mysql_query("SELECT pickval FROM wp_pod_fields WHERE datatype = $datatype_id AND name = '$field_name' LIMIT 1");

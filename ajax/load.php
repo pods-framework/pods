@@ -37,4 +37,11 @@ if ($id = (int) $_GET['id'])
     $row = mysql_fetch_assoc($result);
     echo json_encode($row);
 }
+// Get a custom page
+elseif ($page_id = (int) $_GET['page'])
+{
+    $result = mysql_query("SELECT phpcode FROM wp_pod_pages WHERE id = $page_id LIMIT 1");
+    $row = mysql_fetch_assoc($result);
+    echo $row['phpcode'];
+}
 

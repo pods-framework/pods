@@ -62,7 +62,7 @@ function doDropdown(val) {
     jQuery("#column_sister_field_id").hide();
 }
 
-function sisterFields() {
+function sisterFields(sister_field_id) {
     var pickval = jQuery("#column_pickval").val();
     jQuery.ajax({
         url: "/wp-content/plugins/pods/ajax/sister_fields.php",
@@ -72,7 +72,7 @@ function sisterFields() {
                 alert(msg);
             }
             else if ("" != msg) {
-                var html = '<option value="">-- relationship --</option>';
+                var html = '<option value="">-- rel column --</option>';
                 jQuery("#column_sister_field_id").html("");
                 var items = eval("("+msg+")");
                 for (var i = 0; i < items.length; i++) {
@@ -81,6 +81,7 @@ function sisterFields() {
                     html += '<option value="'+id+'">'+name+'</option>';
                 }
                 jQuery("#column_sister_field_id").html(html);
+                jQuery("#column_sister_field_id option[@value="+sister_field_id+"]").attr("selected", "selected");
                 jQuery("#column_sister_field_id").show();
             }
         }
@@ -121,8 +122,12 @@ function loadPod() {
                     html += '<div class="col'+id+'">';
                     html += '<div class="btn moveup"></div> ';
                     html += '<div class="btn movedown"></div> ';
-                    html += '<div class="btn dropme"></div> ';
-                    html += '<div class="btn editme"></div> ';
+
+                    // Default columns
+                    if ("name" != name && "body" != name) {
+                        html += '<div class="btn dropme"></div> ';
+                        html += '<div class="btn editme"></div> ';
+                    }
                     html += name+" ("+coltype+")</div>";
                     jQuery("#column_list").html(html);
                 }
@@ -225,14 +230,13 @@ function loadColumn(col) {
             jQuery("#column_name").val(name);
             jQuery("#column_type").val(coltype);
             jQuery("#column_pickval").val(pickval);
-            jQuery("#column_sister_field_id").val(sister_field_id);
             jQuery("#column_sister_field_id").hide();
             jQuery("#column_pickval").hide();
             if ("" != pickval) {
                 jQuery("#column_pickval").show();
             }
             if ("" != sister_field_id) {
-                sisterFields();
+                sisterFields(sister_field_id);
             }
             column_id = col;
             add_or_edit = "edit";

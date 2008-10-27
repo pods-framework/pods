@@ -163,9 +163,10 @@ function redirect()
         {
             $row = mysql_fetch_assoc($result);
             $phpcode = $row['phpcode'];
+
+            include realpath(dirname(__FILE__) . '/router.php');
+            return;
         }
-        include realpath(dirname(__FILE__) . '/router.php');
-        return;
     }
 }
 

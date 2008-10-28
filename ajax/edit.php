@@ -53,9 +53,9 @@ if ('move' == $action)
 }
 elseif ('edit' == $action)
 {
-    if ('id' == $name || 'name' == $name || 'body' == $name)
+    if ('id' == $name || 'name' == $name || 'body' == $name || 'type' == $name || 'page' == $name)
     {
-        die("Error: The $name column is not editable.");
+        die("Error: $name is not editable.");
     }
 
     $result = mysql_query("SELECT id FROM wp_pod_fields WHERE datatype = $datatype AND id != $field_id AND name = '$name' LIMIT 1");

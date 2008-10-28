@@ -18,7 +18,6 @@ class Pod
 {
     var $data;
     var $result;
-    var $post_id;
     var $datatype;
     var $datatype_id;
     var $total_rows;
@@ -122,15 +121,15 @@ class Pod
     */
     function get_post_id()
     {
-        if (empty($this->post_id))
+        if (empty($this->data['post_id']))
         {
             $dt = $this->datatype_id;
             $row_id = $this->print_field('id');
             $result = mysql_query("SELECT post_id FROM wp_pod WHERE datatype = $dt AND row_id = $row_id LIMIT 1");
             $row = mysql_fetch_assoc($result);
-            $this->post_id = $row['post_id'];
+            $this->data['post_id'] = $row['post_id'];
         }
-        return $this->post_id;
+        return $this->data['post_id'];
     }
 
     /*
@@ -184,14 +183,9 @@ class Pod
     function rel_lookup($field_id, $table = null)
     {
         $datatype_id = $this->datatype_id;
-        $post_id = $this->data['post_id'];
+        $post_id = $this->get_post_id();
         $row_id = $this->data['id'];
 
-        // Find the post ID
-        if (empty($post_id))
-        {
-            $post_id = $this->get_post_id();
-        }
         $result = mysql_query("SELECT term_id FROM wp_pod_rel WHERE post_id = $post_id AND field_id = $field_id") or die(mysql_error());
 
         // Find all related IDs

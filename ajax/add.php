@@ -50,6 +50,11 @@ elseif ('page' == $type)
 // Add new column
 else
 {
+    if ('type' == $name || 'page' == $name)
+    {
+        die("Error: $name is a reserved name.");
+    }
+
     $result = mysql_query("SELECT id FROM wp_pod_fields WHERE datatype = $datatype AND name = '$name' LIMIT 1");
     if (0 < mysql_num_rows($result))
     {

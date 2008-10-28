@@ -99,7 +99,7 @@ Begin HTML code
 </div>
 
 <div class="wrap">
-    <h3>Manage Pages (<a href="javascript:;" onclick="jQuery('#dialog').jqmShow()">add new</a>)</h3>
+    <h2>Manage Pages (<a href="javascript:;" onclick="jQuery('#dialog').jqmShow()">add new</a>)</h2>
 <?php
 if (isset($pages))
 {
@@ -107,7 +107,7 @@ if (isset($pages))
     {
 ?>
     <div class="extras" id="<?php echo $id; ?>">
-        <span class="uri"><?php echo $val['uri']; ?></span>
+        <div class="uri"><?php echo $val['uri']; ?></div>
         <div class="box hidden">
             <textarea style="width:80%; height:140px"><?php echo $val['phpcode']; ?></textarea>
             <input type="submit" value="Save" onclick="editPage(<?php echo $id; ?>)" />

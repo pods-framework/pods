@@ -392,7 +392,7 @@ while ($row = mysql_fetch_array($result))
 </div>
 
 <div class="wrap">
-    <h3>Manage Pods (<a href="javascript:;" onclick="jQuery('#dialog').jqmShow()">add new</a>)</h3>
+    <h2>Manage Pods (<a href="javascript:;" onclick="jQuery('#dialog').jqmShow()">add new</a>)</h2>
 
     <table style="width:100%" cellpadding="0" cellspacing="0">
         <tr>

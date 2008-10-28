@@ -25,12 +25,11 @@ jQuery(function() {
         jQuery(".tab").removeClass("active");
         datatype = jQuery(this).attr("class").split(" ")[1].substr(1);
         jQuery(this).addClass("active");
-        jQuery(".idle").attr("disabled", false);
+        jQuery(".idle").show();
         loadPod();
     });
     jQuery("#dialog").jqm();
     jQuery("#change").jqm();
-    jQuery(".idle").attr("disabled", true);
 });
 
 function reset() {
@@ -330,13 +329,14 @@ Begin HTML code
 -->
 
 <div class="jqmWindow" id="dialog">
-    Add New Pod: <input type="text" id="new_pod" /> <input type="button" value="Save" onclick="addPod()" />
+    Add New Pod: <input type="text" id="new_pod" />
+    <input type="button" class="button" onclick="addPod()" value="Save" />
     <p>Please use lowercase letters, dashes or underscores only.</p>
 </div>
 <div class="jqmWindow" id="change">
     <input type="hidden" id="add_or_edit" value="" />
     <input type="text" id="column_name" value="column_name" />
-    <select id="column_type" class="idle" onchange="doDropdown(this.value)">
+    <select id="column_type" onchange="doDropdown(this.value)">
         <option value="date">date</option>
         <option value="num">number</option>
         <option value="bool">boolean (true, false)</option>
@@ -387,7 +387,7 @@ while ($row = mysql_fetch_array($result))
 ?>
     </select>
     <select id="column_sister_field_id" style="display:none"></select>
-    <input type="button" class="idle" value="Save column" onclick="addOrEditColumn()" />
+    <input type="button" class="button" onclick="addOrEditColumn()" value="Save column" />
     <p><b>*CAUTION*</b> changing column types can result in data loss!</p>
 </div>
 
@@ -416,25 +416,27 @@ if (isset($datatypes))
             </td>
             <td valign="top" class="data-form">
                 <h2 id="pod_name">Choose a Pod</h2>
-                <p><input class="popup" type="text" id="pod_description" style="display:none" /></p>
-                <p id="column_list">Need some help? Check out the <a href="http://wordpress.org/extend/plugins/pods/installation/" target="blank">User Guide</a> to get started.</p>
-                <p>
-                    <span onclick="add_or_edit='add'; jQuery('#change').jqmShow()" style="font-weight:bold; text-decoration:underline">Add a column</span>
-                </p>
+                <p><input class="popup hidden" type="text" id="pod_description" /></p>
+                <p id="column_list">Need some help? Check out the <a href="http://pods.uproot.us/" target="blank">User Guide</a> to get started.</p>
+                <div class="idle hidden">
+                    <p>
+                        <input type="button" class="button" onclick="add_or_edit='add'; jQuery('#change').jqmShow()" value="Add a column" />
+                    </p>
 
-                <p class="extras" onclick="jQuery('#tpl_detail').toggle(); jQuery(this).toggleClass('open')">Detail Template</p>
-                <textarea id="tpl_detail" class="hidden"></textarea>
+                    <p class="extras" onclick="jQuery('#tpl_detail').toggle(); jQuery(this).toggleClass('open')">Detail Template</p>
+                    <textarea id="tpl_detail" class="hidden"></textarea>
 
-                <p class="extras" onclick="jQuery('#tpl_list').toggle(); jQuery(this).toggleClass('open')">List Template</p>
-                <textarea id="tpl_list" class="hidden"></textarea>
+                    <p class="extras" onclick="jQuery('#tpl_list').toggle(); jQuery(this).toggleClass('open')">List Template</p>
+                    <textarea id="tpl_list" class="hidden"></textarea>
 
-                <p class="extras" onclick="jQuery('#list_filters').toggle(); jQuery(this).toggleClass('open')">List Filters</p>
-                <input type="text" id="list_filters" class="hidden" />
+                    <p class="extras" onclick="jQuery('#list_filters').toggle(); jQuery(this).toggleClass('open')">List Filters</p>
+                    <input type="text" id="list_filters" class="hidden" />
 
-                <p>
-                    <input type="button" class="idle" value="Save Changes" onclick="editPod()" />
-                    or <a href="javascript:;" onclick="dropPod()">drop table</a>
-                </p>
+                    <p>
+                        <input type="button" class="button" onclick="editPod()" value="Save changes" /> or
+                        <a href="javascript:;" onclick="dropPod()">drop table</a>
+                    </p>
+                </div>
             </td>
         </tr>
     </table>

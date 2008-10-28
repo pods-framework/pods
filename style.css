@@ -76,9 +76,6 @@
     background: url(/wp-content/plugins/pods/images/reply.gif) no-repeat;
 }
 
-#dialog input,
-#change input,
-.data-form input,
 .data-form textarea {
     border: 1px solid #DADADA;
 }

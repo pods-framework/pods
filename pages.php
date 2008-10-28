@@ -37,7 +37,8 @@ function addPage() {
                 var html = '<div class="extras" id="'+msg+'"><span class="uri">'+uri+'</span>';
                 html += '<div class="box hidden">';
                 html += '<textarea style="width:80%; height:140px"></textarea>';
-                html += '<input type="submit" value="save" onclick="editPage('+msg+')" /> or <a href="javascript:;" onclick="dropPage('+msg+')">drop page</a>';
+                html += '<input type="button" class="button" onclick="editPage('+msg+')" value="Save" /> or ';
+                html += '<a href="javascript:;" onclick="dropPage('+msg+')">drop page</a>';
                 html += '</div>'
                 jQuery(".wrap").append(html);
 
@@ -110,7 +111,7 @@ if (isset($pages))
         <div class="uri"><?php echo $val['uri']; ?></div>
         <div class="box hidden">
             <textarea style="width:80%; height:140px"><?php echo $val['phpcode']; ?></textarea>
-            <input type="submit" value="Save" onclick="editPage(<?php echo $id; ?>)" />
+            <input type="button" class="button" onclick="editPage(<?php echo $id; ?>)" value="Save" />
 <?php
         if (!in_array($val['uri'], array('/list/', '/detail/')))
         {

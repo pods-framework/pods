@@ -113,42 +113,32 @@ function savePost() {
     <div class="filebox" style="height:160px; overflow-x:hidden; overflow-y:auto"></div>
 </div>
 
-<table class="form-table">
-    <tr valign="top">
-        <th scope="row">Select One:</th>
-        <td>
-            <select class="pick_module" onchange="showform(this.value)">
-                <option value="">-- Pick One --</option>
+<p>
+    Select One:
+    <select class="pick_module" onchange="showform(this.value)">
+        <option value="">-- Pick One --</option>
 <?php
 foreach ($datatypes as $key => $name)
 {
     $selected = ($name == $datatype) ? ' selected' : '';
 ?>
-                <option value="<?php echo $name; ?>"<?php echo $selected; ?>><?php echo $name; ?></option>
+        <option value="<?php echo $name; ?>"<?php echo $selected; ?>><?php echo $name; ?></option>
 <?php
 }
 ?>
-            </select>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="2">
-            <span id="module_form">
+    </select>
+</p>
+
+<p id="module_form">
 <?php
 if (!empty($datatype))
 {
 ?>
-                <script type="text/javascript">showform('<?php echo $datatype; ?>')</script>
+    <script type="text/javascript">showform('<?php echo $datatype; ?>')</script>
 <?php
 }
 ?>
-            </span>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="2" align="right">
-            <input type="button" value="Save Pod Data" onclick="savePost()" />
-        </td>
-    </tr>
-</table>
+</p>
+
+<input type="button" class="button" onclick="savePost()" value="Save pod data" />
 

@@ -586,7 +586,7 @@ class Pod
 ?>
     <input type="text" class="form file <?php echo $name; ?>" value="<?php echo $data; ?>" />
     <a href="javascript:;" onclick="active_file = '<?php echo $name; ?>'; jQuery('#dialog').jqmShow()">select</a> after
-    <a href="javascript:;" onclick="jQuery('#add-media-link').click()">uploading</a>
+    <a href="javascript:;" onclick="jQuery('#add_media').click()">uploading</a>
 <?php
         }
         // Standard text box

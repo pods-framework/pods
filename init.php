@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The Wordpress CMS Plugin
-Version: 1.1.4
+Version: 1.1.5
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 

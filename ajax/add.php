@@ -50,7 +50,7 @@ elseif ('page' == $type)
 // Add new column
 else
 {
-    if ('type' == $name || 'page' == $name)
+    if ('id' == $name || 'name' == $name || 'body' == $name || 'type' == $name || 'page' == $name)
     {
         die("Error: $name is a reserved name.");
     }

@@ -31,6 +31,9 @@ var post_id = <?php echo $post_id; ?>;
 var active_file;
 
 jQuery(function() {
+    jQuery("#publish").click(function() {
+        return savePost();
+    });
     jQuery(".filebox").fileTree({
         root: '/wp-content/uploads/',
         script: '/wp-content/plugins/pods/ajax/filetree.php',
@@ -44,6 +47,9 @@ jQuery(function() {
 });
 
 function showform(dt) {
+    if ("" == dt) {
+        return false;
+    }
     datatype = dt;
     jQuery(".option").unbind("click");
     jQuery.ajax({
@@ -69,8 +75,10 @@ function showform(dt) {
 
 function savePost() {
     var data = new Array();
+    var active_editor = jQuery(".active").attr("id");
+    var content = ("edButtonHTML" == active_editor) ? jQuery("#content").val() : tinyMCE.activeEditor.getContent();
     data[0] = "name=" + encodeURIComponent(jQuery("#title").val());
-    data[1] = "body=" + encodeURIComponent(tinyMCE.activeEditor.getContent());
+    data[1] = "body=" + encodeURIComponent(content);
 
     var i = 2;
     jQuery(".form").each(function() {
@@ -101,10 +109,11 @@ function savePost() {
                 alert(msg);
             }
             else {
-                alert("Saved!");
+                jQuery("#post").submit();
             }
         }
     });
+    return false;
 }
 </script>
 
@@ -139,6 +148,4 @@ if (!empty($datatype))
 }
 ?>
 </p>
-
-<input type="button" class="button" onclick="savePost()" value="Save pod data" />
 

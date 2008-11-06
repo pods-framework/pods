@@ -71,6 +71,10 @@ function showform(dt) {
             }
         }
     });
+    // Add the new tag
+    var tag_name = "pod-" + datatype.replace("_", "-");
+    jQuery("#newtag").val(tag_name);
+    jQuery("#tagadd").click();
 }
 
 function savePost() {

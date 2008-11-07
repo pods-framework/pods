@@ -12,8 +12,6 @@ Pods is a CMS (Content Management System) plugin for Wordpress.
 
 The Pods plugin lets you create content types, or **pods**, that can be used to build event calendars, photo galleries, document libraries, and practically any other type. This plugin allows you to easily configure **list and detail pages** for each pod. Pagination, search, and list filters (automatic dropdowns) also come standard.
 
-This plugin is being developed on Wordpress 2.7 beta. It will probably work on 2.6+, but no guarantees.
-
 Visit the [Pods homepage](http://pods.uproot.us)
 
 == Installation ==

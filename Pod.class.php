@@ -423,7 +423,7 @@ class Pod
         $datatype = $this->datatype;
         $datatype_id = $this->datatype_id;
 ?>
-    <form method="get" action="/list/">
+    <form method="get" action="">
         <input type="hidden" name="type" value="<?php echo $datatype; ?>" />
 <?php
         if (empty($filters))

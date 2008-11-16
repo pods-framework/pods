@@ -99,9 +99,11 @@ elseif ('edit' == $action)
             wp_pod_fields
         SET
             name = '$name',
+            label = '$label',
             coltype = '$coltype',
             pickval = $pickval,
-            sister_field_id = $sister_field_id
+            sister_field_id = $sister_field_id,
+            required = '$required'
         WHERE
             id = $field_id
         LIMIT

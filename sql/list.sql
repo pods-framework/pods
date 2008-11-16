@@ -1,4 +1,3 @@
-<?php
 $type = empty($type) ? 'news' : $type;
 
 $Record = new Pod($type);

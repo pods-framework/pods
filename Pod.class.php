@@ -485,7 +485,7 @@ class Pod
 
             $sql = "
             SELECT
-                f.name, f.coltype, f.pickval
+                f.name, f.label, f.coltype, f.pickval, f.required
             FROM
                 wp_pod_types t
             INNER JOIN
@@ -498,7 +498,7 @@ class Pod
             $result = mysql_query($sql) or die(mysql_error());
             while ($row = mysql_fetch_assoc($result))
             {
-                $fields[$row['name']] = array('coltype' => $row['coltype'], 'pickval' => $row['pickval']);
+                $fields[$row['name']] = $row;
             }
             $sql = "
             SELECT
@@ -517,8 +517,14 @@ class Pod
 
             foreach ($fields as $key => $field_array)
             {
+                $label = $field_array['label'];
                 $coltype = $field_array['coltype'];
                 $pickval = $field_array['pickval'];
+
+                if (1 == $field_array['required'])
+                {
+                    $label .= ' <span class="red">*</span>';
+                }
 
                 if (!empty($pickval))
                 {
@@ -544,7 +550,7 @@ class Pod
                 }
                 if ('id' != $key && 'name' != $key && 'body' != $key)
                 {
-                    $this->build_field_html($key, $coltype);
+                    $this->build_field_html($key, $label, $coltype);
                 }
             }
         }
@@ -559,11 +565,11 @@ class Pod
     Build HTML for a single field
     ==================================================
     */
-    function build_field_html($name, $coltype)
+    function build_field_html($name, $label, $coltype)
     {
         $data = is_array($this->data[$name]) ? $this->data[$name] : stripslashes($this->data[$name]);
 ?>
-    <div class="leftside"><?php echo $name; ?></div>
+    <div class="leftside"><?php echo $label; ?></div>
     <div class="rightside">
 <?php
         // Boolean checkbox
@@ -576,6 +582,7 @@ class Pod
         }
         elseif ('date' == $coltype)
         {
+            $data = empty($data) ? date("Y-m-d H:i:s") : $data;
 ?>
     <input type="text" class="form date <?php echo $name; ?>" value="<?php echo $data; ?>" />
 <?php
@@ -609,12 +616,15 @@ class Pod
 ?>
     <div class="form pick <?php echo $name; ?>">
 <?php
-            foreach ($data as $key => $val)
+            if (!empty($data))
             {
-                $active = empty($val['active']) ? '' : ' active';
+                foreach ($data as $key => $val)
+                {
+                    $active = empty($val['active']) ? '' : ' active';
 ?>
         <div class="option<?php echo $active; ?>" value="<?php echo $val['id']; ?>"><?php echo $val['name']; ?></div>
 <?php
+                }
             }
 ?>
     </div>

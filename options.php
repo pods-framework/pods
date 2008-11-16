@@ -71,7 +71,7 @@ function sisterFields(sister_field_id) {
                 alert(msg);
             }
             else if ("" != msg) {
-                var html = '<option value="">-- rel column --</option>';
+                var html = '<option value="">-- Related to --</option>';
                 jQuery("#column_sister_field_id").html("");
                 var items = eval("("+msg+")");
                 for (var i = 0; i < items.length; i++) {
@@ -171,6 +171,7 @@ function addPod() {
                     jQuery(".tab").removeClass("active");
                     datatype = jQuery(this).attr("class").split(" ")[1].substr(1);
                     jQuery(this).addClass("active");
+                    jQuery(".idle").show();
                     loadPod();
                 });
                 jQuery(".t"+id).click();
@@ -209,7 +210,10 @@ function dropPod() {
                     alert(msg);
                 }
                 else {
+                    jQuery("#pod_name").html("Choose a Pod");
+                    jQuery("#column_list").html('Need some help? Check out the <a href="http://pods.uproot.us/" target="blank">User Guide</a> to get started.');
                     jQuery(".t"+datatype).remove();
+                    jQuery(".idle").hide();
                 }
             }
         });
@@ -223,13 +227,17 @@ function loadColumn(col) {
         success: function(msg) {
             var col_data = eval("("+msg+")");
             var name = (null == col_data.name) ? "" : col_data.name;
+            var label = (null == col_data.label) ? "" : col_data.label;
             var coltype = (null == col_data.coltype) ? "" : col_data.coltype;
             var pickval = (null == col_data.pickval) ? "" : col_data.pickval;
             var sister_field_id = (null == col_data.sister_field_id) ? "" : col_data.sister_field_id;
+            var required = parseInt(col_data.required);
             jQuery("#column_name").val(name);
+            jQuery("#column_label").val(label);
             jQuery("#column_type").val(coltype);
             jQuery("#column_pickval").val(pickval);
             jQuery("#column_sister_field_id").hide();
+            jQuery("#column_required").attr("checked", required);
             jQuery("#column_pickval").hide();
             if ("" != pickval) {
                 jQuery("#column_pickval").show();
@@ -246,13 +254,15 @@ function loadColumn(col) {
 
 function addColumn() {
     var name = jQuery("#column_name").val();
+    var label = jQuery("#column_label").val();
     var dtname = jQuery(".tab.active").html();
     var coltype = jQuery("#column_type").val();
     var pickval = jQuery("#column_pickval").val();
     var sister_field_id = jQuery("#column_sister_field_id").val();
+    var required = (true == jQuery("#column_required").is(":checked")) ? 1 : 0;
     jQuery.ajax({
         url: "/wp-content/plugins/pods/ajax/add.php",
-        data: "datatype="+datatype+"&dtname="+dtname+"&name="+name+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id,
+        data: "datatype="+datatype+"&dtname="+dtname+"&name="+name+"&label="+label+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -283,13 +293,15 @@ function moveColumn(col, dir) {
 
 function editColumn(col) {
     var name = jQuery("#column_name").val();
+    var label = jQuery("#column_label").val();
     var dtname = jQuery(".tab.active").html();
     var coltype = jQuery("#column_type").val();
     var pickval = jQuery("#column_pickval").val();
     var sister_field_id = jQuery("#column_sister_field_id").val();
+    var required = (true == jQuery("#column_required").is(":checked")) ? 1 : 0;
     jQuery.ajax({
         url: "/wp-content/plugins/pods/ajax/edit.php",
-        data: "action=edit&datatype="+datatype+"&dtname="+dtname+"&field_id="+col+"&name="+name+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id,
+        data: "action=edit&datatype="+datatype+"&dtname="+dtname+"&field_id="+col+"&name="+name+"&label="+label+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -335,18 +347,31 @@ Begin HTML code
 </div>
 <div class="jqmWindow" id="change">
     <input type="hidden" id="add_or_edit" value="" />
-    <input type="text" id="column_name" value="column_name" />
-    <select id="column_type" onchange="doDropdown(this.value)">
-        <option value="date">date</option>
-        <option value="num">number</option>
-        <option value="bool">boolean (true, false)</option>
-        <option value="txt">text (title, caption, email, phone, url)</option>
-        <option value="desc">desc (body, summary, long text)</option>
-        <option value="file">file (document, photo, media)</option>
-        <option value="pick">pick</option>
-    </select>
-    <select id="column_pickval" style="display:none" onchange="sisterFields()">
-        <option value="" style="font-weight:bold; font-style:italic">-- Category --</option>
+    <div class="leftside">Name</div>
+    <div class="rightside">
+        <input type="text" id="column_name" value="" />
+        <input type="checkbox" id="column_required" /> required?
+    </div>
+
+    <div class="leftside">Label</div>
+    <div class="rightside">
+        <input type="text" id="column_label" value="" />
+        <input type="button" class="button" onclick="addOrEditColumn()" value="Save column" />
+    </div>
+
+    <div class="leftside">Column Type</div>
+    <div class="rightside">
+        <select id="column_type" onchange="doDropdown(this.value)">
+            <option value="date">date</option>
+            <option value="num">number</option>
+            <option value="bool">boolean (true, false)</option>
+            <option value="txt">text (title, caption, email, phone, url)</option>
+            <option value="desc">desc (body, summary, long text)</option>
+            <option value="file">file (document, media)</option>
+            <option value="pick">pick</option>
+        </select>
+        <select id="column_pickval" style="display:none" onchange="sisterFields()">
+            <option value="" style="font-weight:bold; font-style:italic">-- Category --</option>
 <?php
 /*
 ==================================================
@@ -365,11 +390,11 @@ $result = mysql_query($sql) or trigger_error(mysql_error(), E_USER_ERROR);
 while ($row = mysql_fetch_assoc($result))
 {
 ?>
-        <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
+            <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
 <?php
 }
 ?>
-        <option value="" style="font-weight:bold; font-style:italic">-- Table --</option>
+            <option value="" style="font-weight:bold; font-style:italic">-- Table --</option>
 <?php
 /*
 ==================================================
@@ -381,20 +406,21 @@ while ($row = mysql_fetch_array($result))
 {
     $table_name = substr($row[0], 4);
 ?>
-        <option value="<?php echo $table_name; ?>"><?php echo $table_name; ?></option>
+            <option value="<?php echo $table_name; ?>"><?php echo $table_name; ?></option>
 <?php
 }
 ?>
-    </select>
-    <select id="column_sister_field_id" style="display:none"></select>
-    <input type="button" class="button" onclick="addOrEditColumn()" value="Save column" />
+        </select>
+        <select id="column_sister_field_id" class="hidden"></select>
+    </div>
+    <div class="clear"><!--clear--></div>
     <p><b>*CAUTION*</b> changing column types can result in data loss!</p>
 </div>
 
 <div class="wrap">
     <h2>Manage Pods (<a href="javascript:;" onclick="jQuery('#dialog').jqmShow()">add new</a>)</h2>
 
-    <table style="width:100%" cellpadding="0" cellspacing="0">
+    <table style="width:700px" cellpadding="0" cellspacing="0">
         <tr>
             <td valign="top" class="tabs">
 <?php
@@ -433,7 +459,7 @@ if (isset($datatypes))
                     <input type="text" id="list_filters" class="hidden" />
 
                     <p>
-                        <input type="button" class="button" onclick="editPod()" value="Save changes" /> or
+                        <input type="button" class="button-primary" onclick="editPod()" value="Save changes" /> or
                         <a href="javascript:;" onclick="dropPod()">drop table</a>
                     </p>
                 </div>

@@ -110,7 +110,7 @@ if (isset($pages))
     <div class="extras" id="<?php echo $id; ?>">
         <div class="uri"><?php echo $val['uri']; ?></div>
         <div class="box hidden">
-            <textarea style="width:80%; height:140px"><?php echo $val['phpcode']; ?></textarea>
+            <textarea style="width:80%; height:140px"><?php echo $val['phpcode']; ?></textarea><br />
             <input type="button" class="button" onclick="editPage(<?php echo $id; ?>)" value="Save" />
 <?php
         if (!in_array($val['uri'], array('/list/', '/detail/')))

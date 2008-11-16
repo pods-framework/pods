@@ -8,7 +8,7 @@
 }
 
 .tabs .active {
-    background: #EAF3FA;
+    background: #F1F1F1;
 }
 
 .pick .active {
@@ -18,7 +18,7 @@
 .data-form {
     width: 70%;
     padding: 10px;
-    background: #EAF3FA;
+    background: #F1F1F1;
     border: 1px solid #DADADA;
     border-left: 0;
 }
@@ -76,28 +76,27 @@
     background: url(/wp-content/plugins/pods/images/reply.gif) no-repeat;
 }
 
-.data-form textarea {
-    border: 1px solid #DADADA;
-}
-
 .data-form textarea, .desc {
     width: 98%;
     height: 80px;
+    border: 1px solid #DADADA;
 }
 
 div#content p {
     padding: 5px 0;
 }
 
-#pod_description,
-#list_filters {
+#list_filters,
+#pod_description {
     width: 300px;
 }
 
 #column_name,
+#column_label,
 #column_type,
-#column_category {
-    width: 140px;
+#column_pickval,
+#column_sister_field_id {
+    width: 125px;
 }
 
 .pick {
@@ -116,14 +115,14 @@ div#content p {
 }
 
 .extras {
-    cursor: pointer;
     margin: 0;
+    cursor: pointer;
     padding-left: 20px;
-    background: url(/wp-admin/images/menu-closed.png) no-repeat;
+    background: url(/wp-content/plugins/pods/images/menu-closed.png) no-repeat;
 }
 
 .extras.open {
-    background: url(/wp-admin/images/menu-open.png) no-repeat;
+    background: url(/wp-content/plugins/pods/images/menu-open.png) no-repeat;
 }
 
 span.list {
@@ -144,6 +143,16 @@ span.first {
 
 h3 {
     margin: 0 0 10px 0;
+}
+
+input[type='text'] {
+    border: 1px solid #DADADA;
+    padding: 2px;
+}
+
+.red {
+    color: red;
+    font-weight: bold;
 }
 
 /* File Tree */

@@ -24,10 +24,33 @@ if ($save)
             $datatype_id = $datatypes[$datatype];
 
             // Get the datatype fields
-            $result = mysql_query("SELECT id, name, coltype, pickval, sister_field_id FROM wp_pod_fields WHERE datatype = $datatype_id") or die('Error: Could not get datatype fields');
+            $result = mysql_query("SELECT id, label, name, coltype, pickval, sister_field_id, required FROM wp_pod_fields WHERE datatype = $datatype_id") or die('Error: Could not get datatype fields');
             while ($row = mysql_fetch_assoc($result))
             {
+                if (1 == $row['required'])
+                {
+                    $req[$row['name']] = $row['coltype'];
+                }
                 $fields[$row['name']] = $row;
+            }
+
+            // Verify all required fields
+            foreach ($req as $name => $type)
+            {
+                $val = $_POST[$name];
+
+                if (empty($val))
+                {
+                    die("Error: The $name column is empty.");
+                }
+                elseif ('date' == $type && false === preg_match("/^(\d{4})-([01][0-9])-([0-3][0-9]) ([0-2][0-9]:[0-5][0-9]:[0-5][0-9])$/", $val))
+                {
+                    die("Error: The $name column is an invalid date.");
+                }
+                elseif ('num' == $type && !is_numeric($val))
+                {
+                    die("Error: The $name column is an invalid number.");
+                }
             }
 
             // See if this post_ID already has a module (removing previous module data)

@@ -1,4 +1,3 @@
-<?php
 if (ctype_digit($id))
 {
     $type = empty($type) ? 'news' : $type;

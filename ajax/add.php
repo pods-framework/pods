@@ -19,7 +19,12 @@ if ('pod' == $type)
         {
             die('Error: Pod by this name already exists!');
         }
-        mysql_query("INSERT INTO wp_pod_types (name) VALUES ('$name')") or die('Error: Problem adding new pod.');
+
+        // Add list and detail template presets
+        $tpl_list = '<p><a href="{@detail_url}">{@name}</a></p>';
+        $tpl_detail = "<h2>{@name}</h2>\n{@body}";
+
+        mysql_query("INSERT INTO wp_pod_types (name, tpl_list, tpl_detail) VALUES ('$name', '$tpl_list', '$tpl_detail')") or die('Error: Problem adding new pod.');
         $pod_id = mysql_insert_id();
 
         mysql_query("CREATE TABLE tbl_$name (id int unsigned auto_increment primary key, name varchar(128), body text)") or die('Error: Problem adding pod database table.');
@@ -60,7 +65,7 @@ else
     {
         die('Error: Column by this name already exists!');
     }
-    mysql_query("INSERT INTO wp_pod_fields (datatype, name, coltype, pickval, sister_field_id) VALUES ('$datatype', '$name', '$coltype', '$pickval', '$sister_field_id')");
+    mysql_query("INSERT INTO wp_pod_fields (datatype, name, label, coltype, pickval, sister_field_id, required) VALUES ('$datatype', '$name', '$label', '$coltype', '$pickval', '$sister_field_id', '$required')");
     $field_id = mysql_insert_id();
 
     if (empty($pickval))

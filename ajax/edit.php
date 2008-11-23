@@ -79,12 +79,10 @@ elseif ('edit' == $action)
 
         if ($coltype != $old_coltype && 'pick' == $coltype)
         {
-            // remove tbl_$dtname
             mysql_query("ALTER TABLE tbl_$dtname DROP COLUMN $field_name");
         }
         elseif ($coltype != $old_coltype && 'pick' == $old_coltype)
         {
-            // create tbl_$dtname
             mysql_query("ALTER TABLE tbl_$dtname ADD COLUMN $name $dbtype") or die('Error: Could not create column!');
             mysql_query("ALTER TABLE wp_pod_fields SET sister_field_id = NULL WHERE sister_field_id = $field_id");
             mysql_query("DELETE FROM wp_pod_rel WHERE field_id = $field_id");
@@ -122,7 +120,6 @@ else
     UPDATE
         wp_pod_types
     SET
-        description = '$desc',
         list_filters = '$list_filters',
         tpl_detail = '$tpl_detail',
         tpl_list = '$tpl_list'

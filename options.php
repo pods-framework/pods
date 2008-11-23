@@ -5,22 +5,36 @@ while ($row = mysql_fetch_assoc($result))
 {
     $datatypes[$row['id']] = $row['name'];
 }
+
+// Get all pages
+$result = mysql_query("SELECT * FROM wp_pod_pages ORDER BY uri");
+while ($row = mysql_fetch_assoc($result))
+{
+    $pages[$row['id']] = array('uri' => $row['uri'], 'phpcode' => $row['phpcode']);
+}
 ?>
 
 <!--
 ==================================================
-Begin Pods Javascript code
+Begin javascript code
 ==================================================
 -->
-
-<link rel="stylesheet" type="text/css" href="/wp-content/plugins/pods/style.css" />
-<script type="text/javascript" src="/wp-content/plugins/pods/js/jqmodal.js"></script>
+<link rel="stylesheet" type="text/css" href="<?php echo $pods_url; ?>/style.css" />
+<script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqmodal.js"></script>
 <script type="text/javascript">
 var datatype;
 var column_id;
 var add_or_edit;
 
 jQuery(function() {
+    jQuery(".navTab").click(function() {
+        jQuery(".navTab").removeClass("active");
+        jQuery(this).addClass("active");
+        var activeArea = jQuery(this).attr("rel");
+        jQuery(".area").hide();
+        jQuery("#"+activeArea).show();
+    });
+
     jQuery(".tab").click(function() {
         jQuery(".tab").removeClass("active");
         datatype = jQuery(this).attr("class").split(" ")[1].substr(1);
@@ -28,8 +42,15 @@ jQuery(function() {
         jQuery(".idle").show();
         loadPod();
     });
-    jQuery("#dialog").jqm();
-    jQuery("#change").jqm();
+
+    jQuery(".uri").click(function() {
+        jQuery(this).parent(".extras").toggleClass("open");
+        jQuery(this).siblings(".box").toggleClass("hidden");
+    });
+
+    jQuery("#podBox").jqm();
+    jQuery("#columnBox").jqm();
+    jQuery("#pageBox").jqm();
 });
 
 function reset() {
@@ -64,7 +85,7 @@ function doDropdown(val) {
 function sisterFields(sister_field_id) {
     var pickval = jQuery("#column_pickval").val();
     jQuery.ajax({
-        url: "/wp-content/plugins/pods/ajax/sister_fields.php",
+        url: "<?php echo $pods_url; ?>/ajax/sister_fields.php",
         data: "datatype="+datatype+"&pickval="+pickval,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -89,7 +110,7 @@ function sisterFields(sister_field_id) {
 
 function loadPod() {
     jQuery.ajax({
-        url: "/wp-content/plugins/pods/ajax/load.php",
+        url: "<?php echo $pods_url; ?>/ajax/load.php",
         data: "id="+datatype,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -97,12 +118,10 @@ function loadPod() {
             }
             else {
                 var pod_type = eval("("+msg+")");
-                var description = (null == pod_type.description) ? "" : pod_type.description;
                 var list_filters = (null == pod_type.list_filters) ? "" : pod_type.list_filters;
                 var tpl_detail = (null == pod_type.tpl_detail) ? "" : pod_type.tpl_detail;
                 var tpl_list = (null == pod_type.tpl_list) ? "" : pod_type.tpl_list;
                 jQuery("#pod_name").html(pod_type.name);
-                jQuery("#pod_description").val(description);
                 jQuery("#list_filters").val(list_filters);
                 jQuery("#tpl_detail").val(tpl_detail);
                 jQuery("#tpl_list").val(tpl_list);
@@ -156,7 +175,7 @@ function loadPod() {
 function addPod() {
     var name = jQuery("#new_pod").val();
     jQuery.ajax({
-        url: "/wp-content/plugins/pods/ajax/add.php",
+        url: "<?php echo $pods_url; ?>/ajax/add.php",
         data: "type=pod&name="+name,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -166,7 +185,7 @@ function addPod() {
                 var id = msg;
                 var html = '<div class="tab t'+id+'">'+name+'</div>';
                 jQuery(".tabs").append(html);
-                jQuery("#dialog").jqmHide();
+                jQuery("#podBox").jqmHide();
                 jQuery(".t"+id).click(function() {
                     jQuery(".tab").removeClass("active");
                     datatype = jQuery(this).attr("class").split(" ")[1].substr(1);
@@ -181,13 +200,12 @@ function addPod() {
 }
 
 function editPod() {
-    var desc = jQuery("#pod_description").val();
     var list_filters = jQuery("#list_filters").val();
     var tpl_detail = jQuery("#tpl_detail").val();
     var tpl_list = jQuery("#tpl_list").val();
     jQuery.ajax({
-        url: "/wp-content/plugins/pods/ajax/edit.php",
-        data: "datatype="+datatype+"&desc="+desc+"&list_filters="+encodeURIComponent(list_filters)+"&tpl_detail="+encodeURIComponent(tpl_detail)+"&tpl_list="+encodeURIComponent(tpl_list),
+        url: "<?php echo $pods_url; ?>/ajax/edit.php",
+        data: "datatype="+datatype+"&list_filters="+encodeURIComponent(list_filters)+"&tpl_detail="+encodeURIComponent(tpl_detail)+"&tpl_list="+encodeURIComponent(tpl_list),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -203,7 +221,7 @@ function dropPod() {
     if (confirm("Do you really want to drop this pod?")) {
         var dtname = jQuery(".tab.active").html();
         jQuery.ajax({
-            url: "/wp-content/plugins/pods/ajax/drop.php",
+            url: "<?php echo $pods_url; ?>/ajax/drop.php",
             data: "pod="+datatype+"&dtname="+dtname,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
@@ -222,7 +240,7 @@ function dropPod() {
 
 function loadColumn(col) {
     jQuery.ajax({
-        url: "/wp-content/plugins/pods/ajax/load.php",
+        url: "<?php echo $pods_url; ?>/ajax/load.php",
         data: "col="+col,
         success: function(msg) {
             var col_data = eval("("+msg+")");
@@ -247,7 +265,7 @@ function loadColumn(col) {
             }
             column_id = col;
             add_or_edit = "edit";
-            jQuery('#change').jqmShow();
+            jQuery("#columnBox").jqmShow();
         }
     });
 }
@@ -261,14 +279,14 @@ function addColumn() {
     var sister_field_id = jQuery("#column_sister_field_id").val();
     var required = (true == jQuery("#column_required").is(":checked")) ? 1 : 0;
     jQuery.ajax({
-        url: "/wp-content/plugins/pods/ajax/add.php",
+        url: "<?php echo $pods_url; ?>/ajax/add.php",
         data: "datatype="+datatype+"&dtname="+dtname+"&name="+name+"&label="+label+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
             }
             else {
-                jQuery("#change").jqmHide();
+                jQuery("#columnBox").jqmHide();
                 loadPod();
                 reset();
             }
@@ -278,7 +296,7 @@ function addColumn() {
 
 function moveColumn(col, dir) {
     jQuery.ajax({
-        url: "/wp-content/plugins/pods/ajax/edit.php",
+        url: "<?php echo $pods_url; ?>/ajax/edit.php",
         data: "action=move&datatype="+datatype+"&col="+col+"&dir="+dir,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -300,14 +318,14 @@ function editColumn(col) {
     var sister_field_id = jQuery("#column_sister_field_id").val();
     var required = (true == jQuery("#column_required").is(":checked")) ? 1 : 0;
     jQuery.ajax({
-        url: "/wp-content/plugins/pods/ajax/edit.php",
+        url: "<?php echo $pods_url; ?>/ajax/edit.php",
         data: "action=edit&datatype="+datatype+"&dtname="+dtname+"&field_id="+col+"&name="+name+"&label="+label+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
             }
             else {
-                jQuery("#change").jqmHide();
+                jQuery("#columnBox").jqmHide();
                 loadPod();
                 reset();
             }
@@ -319,7 +337,7 @@ function dropColumn(col) {
     if (confirm("Do you really want to drop this column?")) {
         var dtname = jQuery(".tab.active").html();
         jQuery.ajax({
-            url: "/wp-content/plugins/pods/ajax/drop.php",
+            url: "<?php echo $pods_url; ?>/ajax/drop.php",
             data: "col="+col+"&dtname="+dtname,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
@@ -332,20 +350,94 @@ function dropColumn(col) {
         });
     }
 }
+
+function addPage() {
+    var uri = jQuery("#new_uri").val();
+    jQuery.ajax({
+        url: "<?php echo $pods_url; ?>/ajax/add.php",
+        data: "type=page&uri="+uri,
+        success: function(msg) {
+            if ("Error" == msg.substr(0, 5)) {
+                alert(msg);
+            }
+            else {
+                var html = '<div class="extras" id="'+msg+'"><span class="uri">'+uri+'</span>';
+                html += '<div class="box hidden">';
+                html += '<textarea style="width:80%; height:140px"></textarea>';
+                html += '<input type="button" class="button" onclick="editPage('+msg+')" value="Save" /> or ';
+                html += '<a href="javascript:;" onclick="dropPage('+msg+')">drop page</a>';
+                html += '</div>'
+                jQuery("#pageArea").append(html);
+
+                jQuery("#"+msg+" > .uri").click(function() {
+                    jQuery(this).parent(".extras").toggleClass("open");
+                    jQuery(this).siblings(".box").toggleClass("hidden");
+                });
+                jQuery("#"+msg).click();
+                jQuery("#pageBox").jqmHide();
+            }
+        }
+    });
+}
+
+function editPage(page) {
+    var phpcode = jQuery("#"+page+" > .box > textarea").val();
+    jQuery.ajax({
+        url: "<?php echo $pods_url; ?>/ajax/edit.php",
+        data: "action=editpage&page_id="+page+"&phpcode="+encodeURIComponent(phpcode),
+        success: function(msg) {
+            if ("Error" == msg.substr(0, 5)) {
+                alert(msg);
+            }
+            else {
+                alert("Success!");
+            }
+        }
+    });
+}
+
+function dropPage(page) {
+    if (confirm("Do you really want to drop this page?")) {
+        jQuery.ajax({
+            url: "<?php echo $pods_url; ?>/ajax/drop.php",
+            data: "page="+page,
+            success: function(msg) {
+                if ("Error" == msg.substr(0, 5)) {
+                    alert(msg);
+                }
+                else {
+                    jQuery("#"+page).remove();
+                }
+            }
+        });
+    }
+}
+
+function addWidget() {
+
+}
+
+function editWidget() {
+
+}
+
+function dropWidget() {
+
+}
 </script>
 
 <!--
 ==================================================
-Begin HTML code
+Begin popups
 ==================================================
 -->
-
-<div class="jqmWindow" id="dialog">
-    Add New Pod: <input type="text" id="new_pod" />
-    <input type="button" class="button" onclick="addPod()" value="Save" />
+<div id="podBox" class="jqmWindow">
+    <input type="text" id="new_pod" />
+    <input type="button" class="button" onclick="addPod()" value="Add Pod" />
     <p>Please use lowercase letters, dashes or underscores only.</p>
 </div>
-<div class="jqmWindow" id="change">
+
+<div id="columnBox" class="jqmWindow">
     <input type="hidden" id="add_or_edit" value="" />
     <div class="leftside">Name</div>
     <div class="rightside">
@@ -373,11 +465,7 @@ Begin HTML code
         <select id="column_pickval" style="display:none" onchange="sisterFields()">
             <option value="" style="font-weight:bold; font-style:italic">-- Category --</option>
 <?php
-/*
-==================================================
-Get the category dropdown list
-==================================================
-*/
+// Category dropdown list
 $sql = "
 SELECT DISTINCT
     t.term_id AS id, t.name
@@ -396,11 +484,7 @@ while ($row = mysql_fetch_assoc($result))
 ?>
             <option value="" style="font-weight:bold; font-style:italic">-- Table --</option>
 <?php
-/*
-==================================================
-Get all Pods, including country & state
-==================================================
-*/
+// Get pods, including country and state
 $result = mysql_query("SHOW TABLES LIKE 'tbl_%'");
 while ($row = mysql_fetch_array($result))
 {
@@ -417,12 +501,36 @@ while ($row = mysql_fetch_array($result))
     <p><b>*CAUTION*</b> changing column types can result in data loss!</p>
 </div>
 
-<div class="wrap">
-    <h2>Manage Pods (<a href="javascript:;" onclick="jQuery('#dialog').jqmShow()">add new</a>)</h2>
+<div id="pageBox" class="jqmWindow">
+    <input type="text" id="new_uri" style="width:280px" />
+    <input type="button" class="button" onclick="addPage()" value="Add Page" />
+    <p>Ex: <b>/resources/events/latest/</b></p>
+</div>
 
-    <table style="width:700px" cellpadding="0" cellspacing="0">
-        <tr>
-            <td valign="top" class="tabs">
+<div id="widgetBox" class="jqmWindow">
+
+</div>
+
+<!--
+==================================================
+Begin tabbed navigation
+==================================================
+-->
+<div id="nav">
+    <div class="navTab active" rel="podArea">Manage Pods</div>
+    <div class="navTab" rel="pageArea">Manage Pages</div>
+    <div class="navTab" rel="widgetArea">Manage Widgets</div>
+    <div class="clear"><!--clear--></div>
+</div>
+
+<!--
+==================================================
+Begin pod area
+==================================================
+-->
+<div id="podArea" class="area">
+    <div class="tabs">
+        <input type="button" class="button" onclick="jQuery('#podBox').jqmShow()" value="Add new pod" />
 <?php
 /*
 ==================================================
@@ -434,37 +542,75 @@ if (isset($datatypes))
     foreach ($datatypes as $key => $val)
     {
 ?>
-                <div class="tab t<?php echo $key; ?>"><?php echo $val; ?></div>
+        <div class="tab t<?php echo $key; ?>"><?php echo $val; ?></div>
 <?php
     }
 }
 ?>
-            </td>
-            <td valign="top" class="data-form">
-                <h2 id="pod_name">Choose a Pod</h2>
-                <p><input class="popup hidden" type="text" id="pod_description" /></p>
-                <p id="column_list">Need some help? Check out the <a href="http://pods.uproot.us/" target="blank">User Guide</a> to get started.</p>
-                <div class="idle hidden">
-                    <p>
-                        <input type="button" class="button" onclick="add_or_edit='add'; jQuery('#change').jqmShow()" value="Add a column" />
-                    </p>
+    </div>
+    <div class="rightside">
+        <h2 class="title" id="pod_name">Choose a Pod</h2>
+        <p id="column_list">Need some help? Check out the <a href="http://pods.uproot.us/" target="blank">User Guide</a> to get started.</p>
+        <div class="idle hidden">
+            <p>
+                <input type="button" class="button" onclick="add_or_edit='add'; jQuery('#columnBox').jqmShow()" value="Add a column" />
+                <input type="button" class="button" onclick="editPod()" value="Save changes" /> or
+                <a href="javascript:;" onclick="dropPod()">drop table</a>
+            </p>
 
-                    <p class="extras" onclick="jQuery('#tpl_detail').toggle(); jQuery(this).toggleClass('open')">Detail Template</p>
-                    <textarea id="tpl_detail" class="hidden"></textarea>
+            <p class="extras" onclick="jQuery('#tpl_detail').toggle(); jQuery(this).toggleClass('open')">Detail Template</p>
+            <textarea id="tpl_detail" class="hidden"></textarea>
 
-                    <p class="extras" onclick="jQuery('#tpl_list').toggle(); jQuery(this).toggleClass('open')">List Template</p>
-                    <textarea id="tpl_list" class="hidden"></textarea>
+            <p class="extras" onclick="jQuery('#tpl_list').toggle(); jQuery(this).toggleClass('open')">List Template</p>
+            <textarea id="tpl_list" class="hidden"></textarea>
 
-                    <p class="extras" onclick="jQuery('#list_filters').toggle(); jQuery(this).toggleClass('open')">List Filters</p>
-                    <input type="text" id="list_filters" class="hidden" />
+            <p class="extras" onclick="jQuery('#list_filters').toggle(); jQuery(this).toggleClass('open')">List Filters</p>
+            <input type="text" id="list_filters" class="hidden" />
+        </div>
+    </div>
+    <div class="clear"><!--clear--></div>
+</div>
 
-                    <p>
-                        <input type="button" class="button-primary" onclick="editPod()" value="Save changes" /> or
-                        <a href="javascript:;" onclick="dropPod()">drop table</a>
-                    </p>
-                </div>
-            </td>
-        </tr>
-    </table>
+<!--
+==================================================
+Begin custom page area
+==================================================
+-->
+<div id="pageArea" class="area hidden">
+    <div><input type="button" class="button" onclick="jQuery('#pageBox').jqmShow()" value="Add new page" /></div>
+<?php
+if (isset($pages))
+{
+    foreach ($pages as $id => $val)
+    {
+?>
+    <div class="extras" id="<?php echo $id; ?>">
+        <div class="uri"><?php echo $val['uri']; ?></div>
+        <div class="box hidden">
+            <textarea style="width:100%; height:140px"><?php echo $val['phpcode']; ?></textarea><br />
+            <input type="button" class="button" onclick="editPage(<?php echo $id; ?>)" value="Save" />
+<?php
+        if (!in_array($val['uri'], array('/list/', '/detail/')))
+        {
+?>
+            or <a href="javascript:;" onclick="dropPage(<?php echo $id; ?>)">drop page</a>
+<?php
+        }
+?>
+        </div>
+    </div>
+<?php
+    }
+}
+?>
+</div>
+
+<!--
+==================================================
+Begin widget area
+==================================================
+-->
+<div id="widgetArea" class="area hidden">
+    Coming soon!
 </div>
 

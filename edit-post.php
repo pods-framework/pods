@@ -1,4 +1,6 @@
 <?php
+$upload_dir = wp_upload_dir();
+$upload_dir = str_replace(get_option('siteurl'), '', $upload_dir['baseurl']);
 $post_id = $_GET['post'];
 
 if (empty($post_id))
@@ -21,10 +23,10 @@ if (0 < mysql_num_rows($result))
 }
 ?>
 
-<link rel="stylesheet" type="text/css" href="/wp-content/plugins/pods/style.css" />
-<script type="text/javascript" src="/wp-content/plugins/pods/js/jqmodal.js"></script>
-<script type="text/javascript" src="/wp-content/plugins/pods/js/jqFileTree.js"></script>
-<script type="text/javascript" src="/wp-content/plugins/pods/js/ui.datepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="<?php echo $pods_url; ?>/style.css" />
+<script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqmodal.js"></script>
+<script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqFileTree.js"></script>
+<script type="text/javascript" src="<?php echo $pods_url; ?>/js/ui.datepicker.js"></script>
 <script type="text/javascript">
 var datatype;
 var post_id = <?php echo $post_id; ?>;
@@ -35,8 +37,8 @@ jQuery(function() {
         return savePost();
     });
     jQuery(".filebox").fileTree({
-        root: '/wp-content/uploads/',
-        script: '/wp-content/plugins/pods/ajax/filetree.php',
+        root: "<?php echo $upload_dir; ?>/",
+        script: "<?php echo $pods_url; ?>/ajax/filetree.php",
         multiFolder: false
     },
     function(file) {
@@ -54,7 +56,7 @@ function showform(dt) {
     jQuery(".option").unbind("click");
     jQuery.ajax({
         type: "post",
-        url: "/wp-content/plugins/pods/ajax/showform.php",
+        url: "<?php echo $pods_url; ?>/ajax/showform.php",
         data: "post_id="+post_id+"&datatype="+datatype,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -106,7 +108,7 @@ function savePost() {
 
     jQuery.ajax({
         type: "post",
-        url: "/wp-content/plugins/pods/ajax/showform.php",
+        url: "<?php echo $pods_url; ?>/ajax/showform.php",
         data: "datatype="+datatype+"&post_id="+post_id+"&save=1&"+data.join("&"),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {

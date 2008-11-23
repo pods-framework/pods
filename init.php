@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The Wordpress CMS Plugin
-Version: 1.1.8
+Version: 1.1.9
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 function initialize()
 {
-    $dir = realpath(dirname(__FILE__) . '/sql');
+    $dir = WP_PLUGIN_DIR . '/pods/sql';
 
     // Add core tables
     multi_query("$dir/core.sql");
@@ -64,29 +64,23 @@ function multi_query($sql)
 
 function adminMenu()
 {
-    // Add new box under Manage > Posts
+    // Add panel under Manage > Posts
     add_meta_box('pod', 'Choose a Pod', 'edit_post_page', 'post', 'normal', 'high');
 
-    // Add new submenu under Tools
+    // Add submenu under Tools
     add_management_page('Pods', 'Pods', 8, 'pods', 'edit_options_page');
-
-    // Add new submenu under Tools
-    add_management_page('Pods Pages', 'Pods Pages', 8, 'pods_pages', 'edit_custom_pages');
 }
 
 function edit_post_page()
 {
-    include realpath(dirname(__FILE__) . '/edit-post.php');
+    global $pods_url;
+    include WP_PLUGIN_DIR . '/pods/edit-post.php';
 }
 
 function edit_options_page()
 {
-    include realpath(dirname(__FILE__) . '/options.php');
-}
-
-function edit_custom_pages()
-{
-    include realpath(dirname(__FILE__) . '/pages.php');
+    global $pods_url;
+    include WP_PLUGIN_DIR . '/pods/options.php';
 }
 
 function deletePost($post_ID)
@@ -128,14 +122,16 @@ function redirect()
             $row = mysql_fetch_assoc($result);
             $phpcode = $row['phpcode'];
 
-            include realpath(dirname(__FILE__) . '/router.php');
+            include WP_PLUGIN_DIR . '/pods/router.php';
             return;
         }
     }
 }
 
-// Create the DB tables, get the gears turning
+// Setup DB tables, get the gears turning
 initialize();
+
+$pods_url = WP_PLUGIN_URL . '/pods';
 
 // Hook for adding admin menus
 add_action('admin_menu', 'adminMenu');

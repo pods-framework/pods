@@ -1,41 +1,55 @@
-.tab {
-    padding: 5px 10px;
-    border-top: 1px solid #DADADA;
-}
-
-.tabs {
-    width: 30%;
-}
-
-.tabs .active {
+/* Admin-facing */
+.area {
+    padding: 5px;
+    margin: 5px 15px 5px 0;
+    border: 1px solid #ccc;
     background: #F1F1F1;
 }
 
-.pick .active {
-    background: #FFD799;
+.title {
+    color: #464646;
+    font-family: Georgia, "Times New Roman", "Bitstream Charter", Times, serif;
+    font-style: italic;
+    font-size: 24px;
+    margin: 0;
 }
 
-.data-form {
-    width: 70%;
-    padding: 10px;
-    background: #F1F1F1;
-    border: 1px solid #DADADA;
-    border-left: 0;
-}
-
-.leftside {
+.navTab {
     float: left;
-    width: 30%;
-    font-weight: bold;
+    padding: 5px;
+    margin-right: 20px;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
-.rightside {
-    float: left;
-    width: 70%;
+.navTab.active {
+    color: white;
+    background: #464646;
+    text-decoration: none;
+}
+
+.clear {
+    clear: both;
 }
 
 .btn {
     cursor: pointer;
+}
+
+.moveup {
+    background: url(images/arrow_top.gif) no-repeat;
+}
+
+.movedown {
+    background: url(images/arrow_down.gif) no-repeat;
+}
+
+.dropme {
+    background: url(images/action_delete.gif) no-repeat;
+}
+
+.editme {
+    background: url(images/reply.gif) no-repeat;
 }
 
 .moveup, .movedown, .editme, .dropme {
@@ -45,58 +59,91 @@
     margin-right: 8px;
 }
 
-.title {
-    font-weight: bold;
-}
-
-.title span {
-    color: #D54E21;
-    font-weight: normal;
-    border-bottom: 1px dashed #D54E21;
-    cursor: pointer;
-}
-
-.clear {
-    clear: both;
-}
-
-.moveup {
-    background: url(/wp-content/plugins/pods/images/arrow_top.gif) no-repeat;
-}
-
-.movedown {
-    background: url(/wp-content/plugins/pods/images/arrow_down.gif) no-repeat;
-}
-
-.dropme {
-    background: url(/wp-content/plugins/pods/images/action_delete.gif) no-repeat;
-}
-
-.editme {
-    background: url(/wp-content/plugins/pods/images/reply.gif) no-repeat;
-}
-
-.data-form textarea, .desc {
-    width: 98%;
-    height: 80px;
-    border: 1px solid #DADADA;
-}
-
-div#content p {
-    padding: 5px 0;
-}
-
-#list_filters,
-#pod_description {
-    width: 300px;
-}
-
 #column_name,
 #column_label,
 #column_type,
 #column_pickval,
 #column_sister_field_id {
     width: 125px;
+}
+
+.extras {
+    margin: 0;
+    cursor: pointer;
+    padding: 5px 20px;
+    border-top: 1px solid #DADADA;
+    background: url(images/menu-closed.png) 0 5px no-repeat;
+}
+
+.extras.open {
+    background: url(images/menu-open.png) 0 5px no-repeat;
+}
+
+#podArea .button,
+#pageArea .button {
+    margin-bottom: 5px;
+}
+
+#podArea .tabs {
+    float: left;
+    width: 30%;
+}
+
+#podArea .tabs .active {
+    background: white;
+}
+
+#podArea .tab {
+    margin-right: 20px;
+}
+
+#podArea .rightside {
+    float: left;
+    width: 70%;
+}
+
+/* Public-facing */
+.red {
+    color: red;
+    font-weight: bold;
+}
+
+.tab {
+    padding: 5px 10px;
+    border-top: 1px solid #DADADA;
+}
+
+.pick .active {
+    background: #FFD799;
+}
+
+.leftside {
+    width: 30%;
+    float: left;
+    font-weight: bold;
+}
+
+.rightside {
+    float: left;
+    width: 70%;
+}
+
+#podArea textarea,
+#pageArea textarea,
+#widgetArea textarea,
+.desc {
+    width: 100%;
+    height: 80px;
+    border: 1px solid #DADADA;
+    margin-bottom: 5px;
+}
+
+div#content p {
+    padding: 5px 0;
+}
+
+#list_filters {
+    width: 300px;
 }
 
 .pick {
@@ -112,17 +159,6 @@ div#content p {
     white-space: nowrap;
     overflow: hidden;
     cursor: default;
-}
-
-.extras {
-    margin: 0;
-    cursor: pointer;
-    padding-left: 20px;
-    background: url(/wp-content/plugins/pods/images/menu-closed.png) no-repeat;
-}
-
-.extras.open {
-    background: url(/wp-content/plugins/pods/images/menu-open.png) no-repeat;
 }
 
 span.list {
@@ -148,11 +184,6 @@ h3 {
 input[type='text'] {
     border: 1px solid #DADADA;
     padding: 2px;
-}
-
-.red {
-    color: red;
-    font-weight: bold;
 }
 
 /* File Tree */
@@ -184,17 +215,17 @@ UL.jqueryFileTree A:hover {
 }
 
 .jqueryFileTree li.directory {
-    background: url(/wp-content/plugins/pods/images/folder.gif) left top no-repeat;
+    background: url(images/folder.gif) left top no-repeat;
 }
 .jqueryFileTree li.expanded {
-    background: url(/wp-content/plugins/pods/images/folder_open.gif) left top no-repeat;
+    background: url(images/folder_open.gif) left top no-repeat;
 }
 .jqueryFileTree li.file {
-    background: url(/wp-content/plugins/pods/images/file.gif) left top no-repeat;
+    background: url(images/file.gif) left top no-repeat;
 }
 
 .jqueryFileTree LI.wait {
-    background: url(/wp-content/plugins/pods/images/ajax-loader.gif) left top no-repeat;
+    background: url(images/ajax-loader.gif) left top no-repeat;
 }
 
 /* jqModal */

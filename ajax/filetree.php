@@ -1,6 +1,6 @@
 <?php
 $dir = urldecode($_POST['dir']);
-$realpath = realpath("../../../../") . $dir;
+$realpath = realpath('../../../../') . $dir;
 $items = scandir($realpath);
 natcasesort($items);
 

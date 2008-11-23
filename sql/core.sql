@@ -9,7 +9,6 @@ CREATE TABLE IF NOT EXISTS wp_pod_types (
     id INT unsigned auto_increment primary key,
     name VARCHAR(32),
     label VARCHAR(32),
-    description VARCHAR(128),
     list_filters TEXT,
     tpl_detail TEXT,
     tpl_list TEXT

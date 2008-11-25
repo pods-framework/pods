@@ -80,7 +80,8 @@
 }
 
 #podArea .button,
-#pageArea .button {
+#pageArea .button,
+#widgetArea .button {
     margin-bottom: 5px;
 }
 

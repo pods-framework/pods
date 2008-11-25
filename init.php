@@ -28,38 +28,15 @@ function initialize()
 {
     $dir = WP_PLUGIN_DIR . '/pods/sql';
 
-    // Add core tables
-    multi_query("$dir/core.sql");
-
-    // Add region tables
-    $result = mysql_query("SHOW TABLES LIKE 'tbl_country'");
-    if (1 > mysql_num_rows($result))
-    {
-        multi_query("$dir/regions.sql");
-    }
-
-    // Add defaults
+    // Setup initial tables
     $result = mysql_query("SELECT id FROM wp_pod_pages LIMIT 1");
     if (1 > mysql_num_rows($result))
     {
-        $list = mysql_real_escape_string(file_get_contents("$dir/list.sql"));
-        $detail = mysql_real_escape_string(file_get_contents("$dir/detail.sql"));
-        mysql_query("INSERT INTO wp_pod_pages (uri, phpcode) VALUES ('/list/','$list'),('/detail/','$detail')");
-
-        // Add default pods
+        exec('mysql -u' . DB_USER . ' -p' . DB_PASSWORD . ' -D' . DB_NAME . " < $dir/dump.sql");
     }
 
     // Update tables
     include("$dir/update.php");
-}
-
-function multi_query($sql)
-{
-    $sql = explode(';', file_get_contents($sql));
-    for ($i = 0, $cnt = count($sql) - 1; $i < $cnt; $i++)
-    {
-        mysql_query($sql[$i]) or trigger_error(mysql_error(), E_USER_ERROR);
-    }
 }
 
 function adminMenu()

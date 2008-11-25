@@ -12,6 +12,13 @@ while ($row = mysql_fetch_assoc($result))
 {
     $pages[$row['id']] = array('uri' => $row['uri'], 'phpcode' => $row['phpcode']);
 }
+
+// Get all widgets
+$result = mysql_query("SELECT * FROM wp_pod_widgets ORDER BY name");
+while ($row = mysql_fetch_assoc($result))
+{
+    $widgets[$row['id']] = array('name' => $row['name'], 'phpcode' => $row['phpcode']);
+}
 ?>
 
 <!--
@@ -51,6 +58,7 @@ jQuery(function() {
     jQuery("#podBox").jqm();
     jQuery("#columnBox").jqm();
     jQuery("#pageBox").jqm();
+    jQuery("#widgetBox").jqm();
 });
 
 function reset() {
@@ -369,11 +377,11 @@ function addPage() {
                 html += '</div>'
                 jQuery("#pageArea").append(html);
 
-                jQuery("#"+msg+" > .uri").click(function() {
+                jQuery("#pageArea #"+msg+" > .uri").click(function() {
                     jQuery(this).parent(".extras").toggleClass("open");
                     jQuery(this).siblings(".box").toggleClass("hidden");
                 });
-                jQuery("#"+msg).click();
+                jQuery("#pageArea #"+msg).click();
                 jQuery("#pageBox").jqmHide();
             }
         }
@@ -381,7 +389,7 @@ function addPage() {
 }
 
 function editPage(page) {
-    var phpcode = jQuery("#"+page+" > .box > textarea").val();
+    var phpcode = jQuery("#pageArea #"+page+" > .box > textarea").val();
     jQuery.ajax({
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
         data: "action=editpage&page_id="+page+"&phpcode="+encodeURIComponent(phpcode),
@@ -406,7 +414,7 @@ function dropPage(page) {
                     alert(msg);
                 }
                 else {
-                    jQuery("#"+page).remove();
+                    jQuery("#pageArea #"+page).remove();
                 }
             }
         });
@@ -414,15 +422,65 @@ function dropPage(page) {
 }
 
 function addWidget() {
+    var name = jQuery("#new_name").val();
+    jQuery.ajax({
+        url: "<?php echo $pods_url; ?>/ajax/add.php",
+        data: "type=widget&name="+name,
+        success: function(msg) {
+            if ("Error" == msg.substr(0, 5)) {
+                alert(msg);
+            }
+            else {
+                var html = '<div class="extras" id="'+msg+'"><span class="uri">'+name+'</span>';
+                html += '<div class="box hidden">';
+                html += '<textarea style="width:80%; height:140px"></textarea>';
+                html += '<input type="button" class="button" onclick="editWidget('+msg+')" value="Save" /> or ';
+                html += '<a href="javascript:;" onclick="dropWidget('+msg+')">drop page</a>';
+                html += '</div>'
+                jQuery("#widgetArea").append(html);
 
+                jQuery("#widgetArea #"+msg+" > .uri").click(function() {
+                    jQuery(this).parent(".extras").toggleClass("open");
+                    jQuery(this).siblings(".box").toggleClass("hidden");
+                });
+                jQuery("#widgetArea #"+msg).click();
+                jQuery("#widgetBox").jqmHide();
+            }
+        }
+    });
 }
 
-function editWidget() {
-
+function editWidget(widget) {
+    var phpcode = jQuery("#widgetArea #"+widget+" > .box > textarea").val();
+    jQuery.ajax({
+        url: "<?php echo $pods_url; ?>/ajax/edit.php",
+        data: "action=editwidget&widget_id="+widget+"&phpcode="+encodeURIComponent(phpcode),
+        success: function(msg) {
+            if ("Error" == msg.substr(0, 5)) {
+                alert(msg);
+            }
+            else {
+                alert("Success!");
+            }
+        }
+    });
 }
 
-function dropWidget() {
-
+function dropWidget(widget) {
+    if (confirm("Do you really want to drop this widget?")) {
+        jQuery.ajax({
+            url: "<?php echo $pods_url; ?>/ajax/drop.php",
+            data: "widget="+widget,
+            success: function(msg) {
+                if ("Error" == msg.substr(0, 5)) {
+                    alert(msg);
+                }
+                else {
+                    jQuery("#widgetArea #"+widget).remove();
+                }
+            }
+        });
+    }
 }
 </script>
 
@@ -508,7 +566,9 @@ while ($row = mysql_fetch_array($result))
 </div>
 
 <div id="widgetBox" class="jqmWindow">
-
+    <input type="text" id="new_name" style="width:280px" />
+    <input type="button" class="button" onclick="addWidget()" value="Add Widget" />
+    <p>Ex: <b>format_date</b> or <b>mp3_player</b></p>
 </div>
 
 <!--
@@ -611,6 +671,24 @@ Begin widget area
 ==================================================
 -->
 <div id="widgetArea" class="area hidden">
-    Coming soon!
+    <div><input type="button" class="button" onclick="jQuery('#widgetBox').jqmShow()" value="Add new widget" /></div>
+<?php
+if (isset($widgets))
+{
+    foreach ($widgets as $id => $val)
+    {
+?>
+    <div class="extras" id="<?php echo $id; ?>">
+        <div class="uri"><?php echo $val['name']; ?></div>
+        <div class="box hidden">
+            <textarea style="width:100%; height:140px"><?php echo $val['phpcode']; ?></textarea><br />
+            <input type="button" class="button" onclick="editWidget(<?php echo $id; ?>)" value="Save" />
+            or <a href="javascript:;" onclick="dropWidget(<?php echo $id; ?>)">drop widget</a>
+        </div>
+    </div>
+<?php
+    }
+}
+?>
 </div>
 

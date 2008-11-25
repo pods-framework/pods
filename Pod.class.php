@@ -673,32 +673,41 @@ class Pod
     */
     function magic_swap($in)
     {
-        $field = $in[2];
+        $name = $in[2];
         $before = $after = '';
-        if (false !== strpos($field, ','))
+        if (false !== strpos($name, ','))
         {
-            list($field, $before, $after, $extra) = explode(',', $field);
+            list($name, $widget, $before, $after) = explode(',', $name);
         }
-        if ('detail_url' == $field)
+        if ('detail_url' == $name)
         {
             return '/detail/?type=' . $this->datatype . '&id=' . $this->print_field('id');
         }
-        elseif ('edit_url' == $field)
+        elseif ('edit_url' == $name)
         {
             return '/wp-admin/post.php?action=edit&post=' . $this->get_post_id();
         }
         else
         {
-            $field = $this->print_field($field);
-            if (!empty($field))
+            $value = $this->print_field($name);
+            if (!empty($value))
             {
-                // Date format
-                if (preg_match("/^(\d{4})-([01][0-9])-([0-3][0-9]) ([0-2][0-9]:[0-5][0-9]:[0-5][0-9])$/", $field))
+                // Use widget if necessary
+                if (!empty($widget))
                 {
-                    $date_format = empty($extra) ? 'm/d/Y' : $extra;
-                    $field = date($date_format, strtotime($field));
+                    $widget = mysql_real_escape_string(trim($widget));
+                    $result = mysql_query("SELECT phpcode FROM wp_pod_widgets WHERE name = '$widget' LIMIT 1");
+                    if (0 < mysql_num_rows($result))
+                    {
+                        $row = mysql_fetch_assoc($result);
+                        $phpcode = $row['phpcode'];
+
+                        ob_start();
+                        eval($phpcode);
+                        $value = ob_get_clean();
+                    }
                 }
-                return $before . $field . $after;
+                return $before . $value . $after;
             }
         }
     }

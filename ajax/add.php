@@ -34,6 +34,7 @@ if ('pod' == $type)
     }
     die('Error: Enter a pod name!');
 }
+// Add new page
 elseif ('page' == $type)
 {
     if (!empty($uri))
@@ -41,7 +42,7 @@ elseif ('page' == $type)
         $result = mysql_query("SELECT id FROM wp_pod_pages WHERE uri = '$uri' LIMIT 1");
         if (0 < mysql_num_rows($result))
         {
-            die('Error: Page by this name already exists!');
+            die('Error: Page by this URI already exists!');
         }
         mysql_query("INSERT INTO wp_pod_pages (uri, phpcode) VALUES ('$uri', '$phpcode')") or die('Error: Problem adding new page.');
         $page_id = mysql_insert_id();
@@ -49,6 +50,23 @@ elseif ('page' == $type)
         die("$page_id"); // return as string
     }
     die('Error: Enter a page URI!');
+}
+// Add new widget
+elseif ('widget' == $type)
+{
+    if (!empty($name))
+    {
+        $result = mysql_query("SELECT id FROM wp_pod_widgets WHERE name = '$name' LIMIT 1");
+        if (0 < mysql_num_rows($result))
+        {
+            die('Error: Widget by this name already exists!');
+        }
+        mysql_query("INSERT INTO wp_pod_widgets (name, phpcode) VALUES ('$name', '$phpcode')") or die('Error: Problem adding new widget.');
+        $widget_id = mysql_insert_id();
+
+        die("$widget_id"); // return as string
+    }
+    die('Error: Enter a widget name!');
 }
 // Add new column
 else

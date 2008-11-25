@@ -114,6 +114,10 @@ elseif ('editpage' == $action)
 {
     mysql_query("UPDATE wp_pod_pages SET phpcode = '$phpcode' WHERE id = $page_id LIMIT 1");
 }
+elseif ('editwidget' == $action)
+{
+    mysql_query("UPDATE wp_pod_widgets SET phpcode = '$phpcode' WHERE id = $widget_id LIMIT 1");
+}
 else
 {
     $sql = "

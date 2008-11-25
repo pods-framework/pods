@@ -27,6 +27,12 @@ elseif ($page_id = (int) $_GET['page'])
     mysql_query("DELETE FROM wp_pod_pages WHERE id = $page_id LIMIT 1");
 }
 
+// Delete a single widget
+elseif ($widget_id = (int) $_GET['widget'])
+{
+    mysql_query("DELETE FROM wp_pod_widgets WHERE id = $widget_id LIMIT 1");
+}
+
 // Delete an entire datatype
 elseif ($datatype_id = (int) $_GET['pod'])
 {

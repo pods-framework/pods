@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The Wordpress CMS Plugin
-Version: 1.2.0
+Version: 1.2.1
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -29,7 +29,7 @@ function initialize()
     $dir = WP_PLUGIN_DIR . '/pods/sql';
 
     // Setup initial tables
-    $result = mysql_query("SELECT id FROM wp_pod_pages LIMIT 1");
+    $result = mysql_query("SHOW TABLES LIKE 'wp_pod_widgets'");
     if (1 > mysql_num_rows($result))
     {
         exec('mysql -u' . DB_USER . ' -p' . DB_PASSWORD . ' -D' . DB_NAME . " < $dir/dump.sql");

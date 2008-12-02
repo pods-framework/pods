@@ -55,7 +55,8 @@ if ($save)
         // Add data from a public form
         if (empty($post_id))
         {
-            $post_name = str_replace(' ', '_', $_POST['name']);
+            $post_name = mysql_real_escape_string(trim($_POST['name']));
+            $post_name = str_replace(' ', '_', $post_name);
 
             $sql = "
             INSERT INTO

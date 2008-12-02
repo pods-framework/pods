@@ -4,9 +4,8 @@
 
 <div id="content">
 
-<div class="main">
+<div class="post">
     <?php echo $post->post_content; ?>
-</div>
 
 <?php
 require 'Pod.class.php';
@@ -19,6 +18,7 @@ foreach ($_GET as $key => $val)
 eval($phpcode);
 ?>
 
+</div>
 </div>
 
 <?php get_sidebar(); ?>

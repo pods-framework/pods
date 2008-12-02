@@ -99,14 +99,8 @@ class Pod
             $datatype = $this->rel_table;
             foreach ($data as $key => $val)
             {
-                if (is_numeric($datatype))
-                {
-                    $out .= "<span class='{$first}list list_$datatype'>$val</span>";
-                }
-                else
-                {
-                    $out .= "<span class='{$first}list list_$datatype'><a href='/detail/?type=$datatype&id=$key'>$val</a></span>";
-                }
+                $val = is_numeric($datatype) ? $val : "<a href='/detail/?type=$datatype&id=$key'>$val</a>";
+                $out .= "<span class='{$first}list list_$datatype'>$val</span>";
                 $first = '';
             }
             $data = $out;
@@ -123,11 +117,16 @@ class Pod
     {
         if (empty($this->data['post_id']))
         {
+            $this->data['post_id'] = -1;
+
             $dt = $this->datatype_id;
             $row_id = $this->print_field('id');
-            $result = mysql_query("SELECT post_id FROM wp_pod WHERE datatype = $dt AND row_id = $row_id LIMIT 1");
-            $row = mysql_fetch_assoc($result);
-            $this->data['post_id'] = $row['post_id'];
+            $result = mysql_query("SELECT post_id FROM wp_pod WHERE datatype = $dt AND row_id = '$row_id' LIMIT 1");
+            if (0 < mysql_num_rows($result))
+            {
+                $row = mysql_fetch_assoc($result);
+                $this->data['post_id'] = $row['post_id'];
+            }
         }
         return $this->data['post_id'];
     }
@@ -475,13 +474,20 @@ class Pod
     Display HTML for all datatype fields
     ==================================================
     */
-    function showform($post_id = null)
+    function showform($post_id = null, $public_columns = null)
     {
-        if (!empty($post_id))
+        if (!empty($post_id) || !empty($public_columns))
         {
             $datatype = $this->datatype;
             $datatype_id = $this->datatype_id;
             $this->data['post_id'] = $post_id;
+
+            $where = '';
+            if (!empty($public_columns))
+            {
+                $public_columns = "'name','" . str_replace(',', "','", $public_columns) . "'";
+                $where = "AND f.name IN ($public_columns)";
+            }
 
             $sql = "
             SELECT
@@ -492,6 +498,7 @@ class Pod
                 wp_pod_fields f ON f.datatype = t.id
             WHERE
                 t.name = '$datatype'
+                $where
             ORDER BY
                 f.weight ASC
             ";
@@ -500,6 +507,7 @@ class Pod
             {
                 $fields[$row['name']] = $row;
             }
+
             $sql = "
             SELECT
                 t.*
@@ -548,8 +556,14 @@ class Pod
                     $this->data[$key] = $tbl_cols[$key];
                     $this->get_field($key);
                 }
+
                 if ('id' != $key && 'name' != $key && 'body' != $key)
                 {
+                    $this->build_field_html($key, $label, $coltype);
+                }
+                elseif (-1 == $this->get_post_id())
+                {
+                    $label = ucwords($key);
                     $this->build_field_html($key, $label, $coltype);
                 }
             }
@@ -558,6 +572,16 @@ class Pod
         {
             die('Error: The form generator needs a post ID!');
         }
+    }
+
+    /*
+    ==================================================
+    Build public input form
+    ==================================================
+    */
+    function publicForm($columns)
+    {
+        include realpath(dirname(__FILE__) . '/form.php');
     }
 
     /*

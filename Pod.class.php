@@ -526,6 +526,7 @@ class Pod
             foreach ($fields as $key => $field_array)
             {
                 $label = $field_array['label'];
+                $label = empty($label) ? $key : $label;
                 $coltype = $field_array['coltype'];
                 $pickval = $field_array['pickval'];
 

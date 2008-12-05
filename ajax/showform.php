@@ -6,7 +6,9 @@ require_once(realpath(dirname(__FILE__) . '/../Pod.class.php'));
 $save = (int) $_POST['save'];
 $post_id = (int) $_POST['post_id'];
 $datatype = $_POST['datatype'];
-$columns = $_POST['columns'];
+
+// Determine whether the form is public
+$is_public = (int) $_POST['public'];
 
 if ($save)
 {
@@ -22,8 +24,24 @@ if ($save)
         // Get the datatype ID
         $datatype_id = $datatypes[$datatype];
 
+        // Add data from a public form
+        $where = '';
+        if (empty($post_id))
+        {
+            $public_columns = unserialize(stripslashes($_POST['columns']));
+
+            if (!empty($public_columns))
+            {
+                foreach ($public_columns as $key => $val)
+                {
+                    $where[] = is_array($public_columns[$key]) ? $key : $val;
+                }
+                $where = "AND name IN ('" . implode("','", $where) . "')";
+            }
+        }
+
         // Get the datatype fields
-        $result = mysql_query("SELECT id, label, name, coltype, pickval, sister_field_id, required FROM wp_pod_fields WHERE datatype = $datatype_id") or die('Error: Could not get datatype fields');
+        $result = mysql_query("SELECT id, label, name, coltype, pickval, sister_field_id, required FROM wp_pod_fields WHERE datatype = $datatype_id $where") or die('Error: Could not get datatype fields');
         while ($row = mysql_fetch_assoc($result))
         {
             if (1 == $row['required'])
@@ -52,17 +70,18 @@ if ($save)
             }
         }
 
-        // Add data from a public form
+        // Add the new post
         if (empty($post_id))
         {
-            $post_name = mysql_real_escape_string(trim($_POST['name']));
-            $post_name = str_replace(' ', '_', $post_name);
+            $post_title = mysql_real_escape_string(trim($_POST['name']));
+            $post_name = str_replace(' ', '-', strtolower($post_title));
+            $post_content = mysql_real_escape_string($_POST['body']);
 
             $sql = "
             INSERT INTO
-                wp_posts (post_author, post_date, post_date_gmt, post_title, post_name)
+                wp_posts (post_author, post_date, post_date_gmt, post_title, post_name, post_content)
             VALUES
-                (1, NOW(), UTC_TIMESTAMP(), '$post_name', '$post_name')
+                (1, NOW(), UTC_TIMESTAMP(), '$post_title', '$post_name', '$post_content')
             ";
             mysql_query($sql) or die('Error: Could not add public form data');
             $post_id = mysql_insert_id();
@@ -145,7 +164,7 @@ if ($save)
                     mysql_query("INSERT INTO wp_pod_rel (post_id, sister_post_id, field_id, term_id) VALUES ($post_id, $sister_post_id, $field_id, $term_id)") or die('Error: Unable to add relationships');
                 }
             }
-            elseif ('datatype' != $key && 'post_id' != $key && 'save' != $key)
+            elseif ('datatype' != $key && 'post_id' != $key && 'columns' != $key && 'public' != $key && 'save' != $key)
             {
                 if (isset($table_row_id))
                 {
@@ -175,5 +194,5 @@ else
 {
     // Show the input form
     $obj = new Pod($datatype);
-    echo $obj->showform($post_id, $columns);
+    echo $obj->showform($post_id, $is_public, $public_columns);
 }

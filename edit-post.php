@@ -144,7 +144,7 @@ foreach ($datatypes as $key => $name)
     </select>
 </p>
 
-<p id="module_form">
+<div id="module_form">
 <?php
 if (!empty($datatype))
 {
@@ -153,5 +153,5 @@ if (!empty($datatype))
 <?php
 }
 ?>
-</p>
+</div>
 

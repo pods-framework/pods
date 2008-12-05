@@ -6,7 +6,6 @@ $pods_url = WP_PLUGIN_URL . '/pods';
 <script type="text/javascript" src="<?php echo $pods_url; ?>/js/ui.datepicker.js"></script>
 <script type="text/javascript">
 jQuery(function() {
-    jQuery("#module_form").html(msg);
     jQuery(".date").datepicker({dateFormat: "yy-mm-dd 12:00:00"});
     jQuery(".option").click(function() {
         jQuery(this).toggleClass("active");
@@ -15,6 +14,7 @@ jQuery(function() {
 
 function savePost() {
     var data = new Array();
+    var columns = '<?php echo serialize($public_columns); ?>';
     var i = 0;
     jQuery(".form").each(function() {
         var theval = "";
@@ -38,13 +38,13 @@ function savePost() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/showform.php",
-        data: "datatype=<?php echo $datatype; ?>&save=1&"+data.join("&"),
+        data: "datatype=<?php echo $datatype; ?>&save=1&public=1&columns="+columns+"&"+data.join("&"),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
             }
             else {
-                jQuery("#module_form").empty().html("Thanks for your support!");
+                jQuery("#module_form").html("Thanks for your support!");
             }
         }
     });
@@ -52,12 +52,12 @@ function savePost() {
 }
 </script>
 
-<p id="module_form">
+<div id="module_form">
 <?php
+$_POST['public'] = true;
 $_POST['datatype'] = $datatype;
-$_POST['columns'] = $columns;
 include realpath(dirname(__FILE__) . '/ajax/showform.php');
 ?>
     <input type="button" onclick="savePost()" value="Submit" />
-</p>
+</div>
 

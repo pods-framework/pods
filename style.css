@@ -28,6 +28,10 @@
     text-decoration: none;
 }
 
+.hidden {
+    display: none;
+}
+
 .clear {
     clear: both;
 }
@@ -65,6 +69,7 @@
 #column_pickval,
 #column_sister_field_id {
     width: 125px;
+    border: 1px solid #E3E3E3;
 }
 
 .extras {
@@ -136,15 +141,17 @@ h3 {
 #widgetArea textarea,
 .desc {
     width: 99%;
-    height: 120px;
+    height: 140px;
+    border: 1px solid #E3E3E3;
+}
+
+#podArea #list_filters {
+    width: 99%;
+    border: 1px solid #E3E3E3;
 }
 
 div#content p {
     padding: 5px 0;
-}
-
-#list_filters {
-    width: 300px;
 }
 
 .pick {

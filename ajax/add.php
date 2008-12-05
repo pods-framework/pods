@@ -28,7 +28,7 @@ if ('pod' == $type)
         $pod_id = mysql_insert_id();
 
         mysql_query("CREATE TABLE tbl_$name (id int unsigned auto_increment primary key, name varchar(128), body text)") or die('Error: Problem adding pod database table.');
-        mysql_query("INSERT INTO wp_pod_fields (datatype, name, coltype) VALUES ($pod_id, 'name', 'txt'),($pod_id, 'body', 'desc')") or die('Error: Problem adding name and body columns.');
+        mysql_query("INSERT INTO wp_pod_fields (datatype, name, coltype, required) VALUES ($pod_id, 'name', 'txt', 1),($pod_id, 'body', 'desc', 0)") or die('Error: Problem adding name and body columns.');
 
         die("$pod_id"); // return as string
     }

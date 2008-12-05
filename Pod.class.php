@@ -99,7 +99,7 @@ class Pod
             $datatype = $this->rel_table;
             foreach ($data as $key => $val)
             {
-                $val = is_numeric($datatype) ? $val : "<a href='/detail/?type=$datatype&id=$key'>$val</a>";
+                $val = is_numeric($datatype) ? $val['name'] : "<a href='/detail/?type=$datatype&id=$key'>" . $val['name'] . '</a>';
                 $out .= "<span class='{$first}list list_$datatype'>$val</span>";
                 $first = '';
             }
@@ -209,13 +209,13 @@ class Pod
         }
         else
         {
-            $result = mysql_query("SELECT id, name FROM tbl_$table WHERE id IN ($term_ids)");
+            $result = mysql_query("SELECT * FROM tbl_$table WHERE id IN ($term_ids)");
         }
 
         // Put all related items into an array
         while ($row = mysql_fetch_assoc($result))
         {
-            $data[$row['id']] = $row['name'];
+            $data[$row['id']] = $row;
         }
         return $data;
     }
@@ -474,9 +474,9 @@ class Pod
     Display HTML for all datatype fields
     ==================================================
     */
-    function showform($post_id = null, $public_columns = null)
+    function showform($post_id = null, $is_public = false, $public_columns = null)
     {
-        if (!empty($post_id) || !empty($public_columns))
+        if (!empty($post_id) || $is_public)
         {
             $datatype = $this->datatype;
             $datatype_id = $this->datatype_id;
@@ -485,8 +485,19 @@ class Pod
             $where = '';
             if (!empty($public_columns))
             {
-                $public_columns = "'name','" . str_replace(',', "','", $public_columns) . "'";
-                $where = "AND f.name IN ($public_columns)";
+                foreach ($public_columns as $key => $val)
+                {
+                    if (is_array($public_columns[$key]))
+                    {
+                        $where[] = $key;
+                        $attribute[$key] = $val;
+                    }
+                    else
+                    {
+                        $where[] = $val;
+                    }
+                }
+                $where = "AND f.name IN ('" . implode("','", $where) . "')";
             }
 
             $sql = "
@@ -502,7 +513,7 @@ class Pod
             ORDER BY
                 f.weight ASC
             ";
-            $result = mysql_query($sql) or die(mysql_error());
+            $result = mysql_query($sql) or die($sql);
             while ($row = mysql_fetch_assoc($result))
             {
                 $fields[$row['name']] = $row;
@@ -526,9 +537,10 @@ class Pod
             foreach ($fields as $key => $field_array)
             {
                 $label = $field_array['label'];
-                $label = empty($label) ? $key : $label;
+                $label = empty($label) ? ucwords($key) : $label;
                 $coltype = $field_array['coltype'];
                 $pickval = $field_array['pickval'];
+                $attr = $attribute[$key];
 
                 if (1 == $field_array['required'])
                 {
@@ -550,6 +562,20 @@ class Pod
                     {
                         $term_ids[] = $row['term_id'];
                     }
+
+                    // Use default values for public forms
+                    if (empty($term_ids) && !empty($attr['default']))
+                    {
+                        $term_ids = $attr['default'];
+                        if (!is_array($default))
+                        {
+                            $term_ids = explode(',', $term_ids);
+                            foreach ($term_ids as $term_key => $term_val)
+                            {
+                                $term_ids[$term_key] = trim($term_val);
+                            }
+                        }
+                    }
                     $this->data[$key] = $this->get_dropdown_values($table, null, $term_ids);
                 }
                 else
@@ -558,14 +584,9 @@ class Pod
                     $this->get_field($key);
                 }
 
-                if ('id' != $key && 'name' != $key && 'body' != $key)
+                if (('id' != $key && 'name' != $key && 'body' != $key) || -1 == $this->get_post_id())
                 {
-                    $this->build_field_html($key, $label, $coltype);
-                }
-                elseif (-1 == $this->get_post_id())
-                {
-                    $label = ucwords($key);
-                    $this->build_field_html($key, $label, $coltype);
+                    $this->build_field_html($key, $label, $coltype, $attr);
                 }
             }
         }
@@ -580,7 +601,7 @@ class Pod
     Build public input form
     ==================================================
     */
-    function publicForm($columns)
+    function publicForm($public_columns = null)
     {
         include realpath(dirname(__FILE__) . '/form.php');
     }
@@ -590,12 +611,13 @@ class Pod
     Build HTML for a single field
     ==================================================
     */
-    function build_field_html($name, $label, $coltype)
+    function build_field_html($name, $label, $coltype, $attr)
     {
         $data = is_array($this->data[$name]) ? $this->data[$name] : stripslashes($this->data[$name]);
+        $hidden = empty($attr['hidden']) ? '' : ' hidden';
 ?>
-    <div class="leftside"><?php echo $label; ?></div>
-    <div class="rightside">
+    <div class="leftside<?php echo $hidden; ?>"><?php echo $label; ?></div>
+    <div class="rightside<?php echo $hidden; ?>">
 <?php
         // Boolean checkbox
         if ('bool' == $coltype)
@@ -720,6 +742,7 @@ class Pod
                 // Use widget if necessary
                 if (!empty($widget))
                 {
+                    $value = $this->get_field($name);
                     $widget = mysql_real_escape_string(trim($widget));
                     $result = mysql_query("SELECT phpcode FROM wp_pod_widgets WHERE name = '$widget' LIMIT 1");
                     if (0 < mysql_num_rows($result))

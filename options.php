@@ -647,7 +647,7 @@ if (isset($pages))
     <div class="extras" id="<?php echo $id; ?>">
         <div class="uri"><?php echo $val['uri']; ?></div>
         <div class="box hidden">
-            <textarea style="width:100%; height:140px"><?php echo $val['phpcode']; ?></textarea><br />
+            <textarea><?php echo $val['phpcode']; ?></textarea><br />
             <input type="button" class="button" onclick="editPage(<?php echo $id; ?>)" value="Save" />
 <?php
         if (!in_array($val['uri'], array('/list/', '/detail/')))
@@ -681,7 +681,7 @@ if (isset($widgets))
     <div class="extras" id="<?php echo $id; ?>">
         <div class="uri"><?php echo $val['name']; ?></div>
         <div class="box hidden">
-            <textarea style="width:100%; height:140px"><?php echo $val['phpcode']; ?></textarea><br />
+            <textarea><?php echo $val['phpcode']; ?></textarea><br />
             <input type="button" class="button" onclick="editWidget(<?php echo $id; ?>)" value="Save" />
             or <a href="javascript:;" onclick="dropWidget(<?php echo $id; ?>)">drop widget</a>
         </div>

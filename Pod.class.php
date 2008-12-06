@@ -328,7 +328,7 @@ class Pod
     Display the pagination controls
     ==================================================
     */
-    function getPagination()
+    function getPagination($label = 'Go to page:')
     {
         $page = $this->page;
         $rows_per_page = $this->rpp;
@@ -346,7 +346,7 @@ class Pod
             }
         }
 ?>
-    <span class="pager">Go to page: 
+    <span class="pager"><?php echo $label; ?>
 <?php
         if (1 < $page)
         {
@@ -513,7 +513,7 @@ class Pod
             ORDER BY
                 f.weight ASC
             ";
-            $result = mysql_query($sql) or die($sql);
+            $result = mysql_query($sql) or die(mysql_error());
             while ($row = mysql_fetch_assoc($result))
             {
                 $fields[$row['name']] = $row;

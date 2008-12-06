@@ -4,7 +4,7 @@ $realpath = realpath('../../../../') . $dir;
 $items = scandir($realpath);
 natcasesort($items);
 
-$data = '<ul class="jqueryFileTree" style="display:none">';
+$data = '<ul class="jqueryFileTree hidden">';
 foreach ($items as $item)
 {
     if ('.' != $item && '..' != $item && 'base' != $item)

@@ -360,7 +360,7 @@ function dropColumn(col) {
 }
 
 function addPage() {
-    var uri = jQuery("#new_uri").val();
+    var uri = jQuery("#new_page").val();
     jQuery.ajax({
         url: "<?php echo $pods_url; ?>/ajax/add.php",
         data: "type=page&uri="+uri,
@@ -422,7 +422,7 @@ function dropPage(page) {
 }
 
 function addWidget() {
-    var name = jQuery("#new_name").val();
+    var name = jQuery("#new_widget").val();
     jQuery.ajax({
         url: "<?php echo $pods_url; ?>/ajax/add.php",
         data: "type=widget&name="+name,
@@ -560,13 +560,13 @@ while ($row = mysql_fetch_array($result))
 </div>
 
 <div id="pageBox" class="jqmWindow">
-    <input type="text" id="new_uri" style="width:280px" />
+    <input type="text" id="new_page" style="width:280px" />
     <input type="button" class="button" onclick="addPage()" value="Add Page" />
     <p>Ex: <b>/resources/events/latest/</b></p>
 </div>
 
 <div id="widgetBox" class="jqmWindow">
-    <input type="text" id="new_name" style="width:280px" />
+    <input type="text" id="new_widget" style="width:280px" />
     <input type="button" class="button" onclick="addWidget()" value="Add Widget" />
     <p>Ex: <b>format_date</b> or <b>mp3_player</b></p>
 </div>

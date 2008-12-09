@@ -19,20 +19,24 @@ class Pod
     var $data;
     var $result;
     var $datatype;
+    var $table_prefix;
     var $datatype_id;
     var $total_rows;
     var $rel_table;
     var $rpp = 15;
+    var $prefix;
     var $page;
 
     function Pod($datatype = null, $id = null)
     {
+        global $table_prefix;
+        $this->prefix = $table_prefix;
         $this->page = empty($_GET['page']) ? 1 : $_GET['page'];
 
         if (null != $datatype)
         {
             $this->datatype = trim($datatype);
-            $result = mysql_query("SELECT id FROM wp_pod_types WHERE name = '$datatype' LIMIT 1");
+            $result = mysql_query("SELECT id FROM {$this->prefix}pod_types WHERE name = '$datatype' LIMIT 1");
             $row = mysql_fetch_assoc($result);
             $this->datatype_id = $row['id'];
 
@@ -69,7 +73,7 @@ class Pod
             $datatype = $this->datatype;
             $datatype_id = $this->datatype_id;
 
-            $result = mysql_query("SELECT id, pickval FROM wp_pod_fields WHERE datatype = $datatype_id AND name = '$name' LIMIT 1") or die(mysql_error());
+            $result = mysql_query("SELECT id, pickval FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND name = '$name' LIMIT 1") or die(mysql_error());
             if (0 < mysql_num_rows($result))
             {
                 $row = mysql_fetch_assoc($result);
@@ -121,7 +125,7 @@ class Pod
 
             $dt = $this->datatype_id;
             $row_id = $this->print_field('id');
-            $result = mysql_query("SELECT post_id FROM wp_pod WHERE datatype = $dt AND row_id = '$row_id' LIMIT 1");
+            $result = mysql_query("SELECT post_id FROM {$this->prefix}pod WHERE datatype = $dt AND row_id = '$row_id' LIMIT 1");
             if (0 < mysql_num_rows($result))
             {
                 $row = mysql_fetch_assoc($result);
@@ -145,9 +149,9 @@ class Pod
             SELECT
                 t.term_id AS id, t.name
             FROM
-                wp_term_taxonomy tx
+                {$this->prefix}term_taxonomy tx
             INNER JOIN
-                wp_terms t ON t.term_id = tx.term_id
+                {$this->prefix}terms t ON t.term_id = tx.term_id
             WHERE
                 tx.parent = $table AND tx.taxonomy = 'category'
             ";
@@ -155,7 +159,7 @@ class Pod
         // Pod table dropdown
         else
         {
-            $sql = "SELECT id, name FROM tbl_$table ORDER BY name ASC";
+            $sql = "SELECT id, name FROM {$this->prefix}tbl_$table ORDER BY name ASC";
         }
 
         $result = mysql_query($sql) or die(mysql_error());
@@ -185,7 +189,7 @@ class Pod
         $post_id = $this->get_post_id();
         $row_id = $this->data['id'];
 
-        $result = mysql_query("SELECT term_id FROM wp_pod_rel WHERE post_id = $post_id AND field_id = $field_id") or die(mysql_error());
+        $result = mysql_query("SELECT term_id FROM {$this->prefix}pod_rel WHERE post_id = $post_id AND field_id = $field_id") or die(mysql_error());
 
         // Find all related IDs
         if (0 < mysql_num_rows($result))
@@ -205,11 +209,11 @@ class Pod
         // The default table is wp_posts
         if (is_numeric($table))
         {
-            $result = mysql_query("SELECT term_id AS id, name FROM wp_terms WHERE term_id IN ($term_ids)");
+            $result = mysql_query("SELECT term_id AS id, name FROM {$this->prefix}terms WHERE term_id IN ($term_ids)");
         }
         else
         {
-            $result = mysql_query("SELECT * FROM tbl_$table WHERE id IN ($term_ids)");
+            $result = mysql_query("SELECT * FROM {$this->prefix}tbl_$table WHERE id IN ($term_ids)");
         }
 
         // Put all related items into an array
@@ -229,7 +233,7 @@ class Pod
         $datatype = $this->datatype;
         if (!empty($datatype))
         {
-            $result = mysql_query("SELECT * FROM tbl_$datatype WHERE id = $id LIMIT 1");
+            $result = mysql_query("SELECT * FROM {$this->prefix}tbl_$datatype WHERE id = $id LIMIT 1");
             if (0 < mysql_num_rows($result))
             {
                 $row = mysql_fetch_assoc($result);
@@ -259,7 +263,7 @@ class Pod
         $limit = ($rows_per_page * ($page - 1)) . ', ' . $rows_per_page;
 
         // Get this datatype's fields
-        $result = mysql_query("SELECT name FROM wp_pod_fields WHERE datatype = $datatype_id");
+        $result = mysql_query("SELECT name FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id");
         while ($row = mysql_fetch_assoc($result))
         {
             $fields[] = $row['name'];
@@ -283,7 +287,7 @@ class Pod
                 {
                     $join .= "
                     INNER JOIN
-                        wp_pod_rel r$i ON r$i.field_id = (SELECT id FROM wp_pod_fields WHERE datatype = $datatype_id AND name = '$key') AND r$i.term_id = $val AND r$i.post_id = p.post_id
+                        {$this->prefix}pod_rel r$i ON r$i.field_id = (SELECT id FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND name = '$key') AND r$i.term_id = $val AND r$i.post_id = p.post_id
                     ";
                     $i++;
                 }
@@ -294,10 +298,10 @@ class Pod
         SELECT
             SQL_CALC_FOUND_ROWS DISTINCT t.*
         FROM
-            wp_pod p
+            {$this->prefix}pod p
         $join
         INNER JOIN
-            tbl_$datatype t ON t.id = p.row_id
+            {$this->prefix}tbl_$datatype t ON t.id = p.row_id
         WHERE
             p.datatype = $datatype_id
             $search
@@ -306,7 +310,7 @@ class Pod
         LIMIT
             $limit
         ";
-        $this->result = mysql_query($sql) or die(mysql_error());
+        $this->result = mysql_query($sql) or die('A'.mysql_error());
         $this->total_rows = mysql_query("SELECT FOUND_ROWS()");
     }
 
@@ -427,7 +431,7 @@ class Pod
 <?php
         if (empty($filters))
         {
-            $result = mysql_query("SELECT list_filters FROM wp_pod_types WHERE id = $datatype_id LIMIT 1");
+            $result = mysql_query("SELECT list_filters FROM {$this->prefix}pod_types WHERE id = $datatype_id LIMIT 1");
             $row = mysql_fetch_assoc($result);
             $filters = $row['list_filters'];
         }
@@ -438,7 +442,7 @@ class Pod
             foreach ($filters as $key => $val)
             {
                 $field_name = trim($val);
-                $result = mysql_query("SELECT pickval FROM wp_pod_fields WHERE datatype = $datatype_id AND name = '$field_name' LIMIT 1");
+                $result = mysql_query("SELECT pickval FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND name = '$field_name' LIMIT 1");
                 $row = mysql_fetch_assoc($result);
                 if (!empty($row['pickval']))
                 {
@@ -504,9 +508,9 @@ class Pod
             SELECT
                 f.name, f.label, f.coltype, f.pickval, f.required
             FROM
-                wp_pod_types t
+                {$this->prefix}pod_types t
             INNER JOIN
-                wp_pod_fields f ON f.datatype = t.id
+                {$this->prefix}pod_fields f ON f.datatype = t.id
             WHERE
                 t.name = '$datatype'
                 $where
@@ -523,9 +527,9 @@ class Pod
             SELECT
                 t.*
             FROM
-                wp_pod p
+                {$this->prefix}pod p
             INNER JOIN
-                tbl_$datatype t ON t.id = p.row_id
+                {$this->prefix}tbl_$datatype t ON t.id = p.row_id
             WHERE
                 p.post_id = $post_id
             LIMIT
@@ -553,11 +557,11 @@ class Pod
                     $term_ids = array();
                     $table = $pickval;
 
-                    $result = mysql_query("SELECT id FROM wp_pod_fields WHERE datatype = $datatype_id AND name = '$key' LIMIT 1") or die(mysql_error());
+                    $result = mysql_query("SELECT id FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND name = '$key' LIMIT 1") or die(mysql_error());
                     $row = mysql_fetch_assoc($result);
                     $field_id = $row['id'];
 
-                    $result = mysql_query("SELECT term_id FROM wp_pod_rel WHERE post_id = $post_id AND field_id = $field_id");
+                    $result = mysql_query("SELECT term_id FROM {$this->prefix}pod_rel WHERE post_id = $post_id AND field_id = $field_id");
                     while ($row = mysql_fetch_assoc($result))
                     {
                         $term_ids[] = $row['term_id'];
@@ -694,7 +698,7 @@ class Pod
         {
             if (empty($code))
             {
-                $result = mysql_query("SELECT tpl_$tpl AS template FROM wp_pod_types WHERE name = '{$this->datatype}' LIMIT 1");
+                $result = mysql_query("SELECT tpl_$tpl AS template FROM {$this->prefix}pod_types WHERE name = '{$this->datatype}' LIMIT 1");
                 $row = mysql_fetch_assoc($result);
                 $code = $row['template'];
             }
@@ -744,7 +748,7 @@ class Pod
                 {
                     $value = $this->get_field($name);
                     $widget = mysql_real_escape_string(trim($widget));
-                    $result = mysql_query("SELECT phpcode FROM wp_pod_widgets WHERE name = '$widget' LIMIT 1");
+                    $result = mysql_query("SELECT phpcode FROM {$this->prefix}pod_widgets WHERE name = '$widget' LIMIT 1");
                     if (0 < mysql_num_rows($result))
                     {
                         $row = mysql_fetch_assoc($result);

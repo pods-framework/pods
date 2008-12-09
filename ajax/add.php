@@ -14,7 +14,7 @@ if ('pod' == $type)
 {
     if (!empty($name))
     {
-        $result = mysql_query("SELECT id FROM wp_pod_types WHERE name = '$name' LIMIT 1");
+        $result = mysql_query("SELECT id FROM {$table_prefix}pod_types WHERE name = '$name' LIMIT 1");
         if (0 < mysql_num_rows($result))
         {
             die('Error: Pod by this name already exists!');
@@ -24,11 +24,11 @@ if ('pod' == $type)
         $tpl_list = '<p><a href="{@detail_url}">{@name}</a></p>';
         $tpl_detail = "<h2>{@name}</h2>\n{@body}";
 
-        mysql_query("INSERT INTO wp_pod_types (name, tpl_list, tpl_detail) VALUES ('$name', '$tpl_list', '$tpl_detail')") or die('Error: Problem adding new pod.');
+        mysql_query("INSERT INTO {$table_prefix}pod_types (name, tpl_list, tpl_detail) VALUES ('$name', '$tpl_list', '$tpl_detail')") or die('Error: Problem adding new pod.');
         $pod_id = mysql_insert_id();
 
-        mysql_query("CREATE TABLE tbl_$name (id int unsigned auto_increment primary key, name varchar(128), body text)") or die('Error: Problem adding pod database table.');
-        mysql_query("INSERT INTO wp_pod_fields (datatype, name, coltype, required) VALUES ($pod_id, 'name', 'txt', 1),($pod_id, 'body', 'desc', 0)") or die('Error: Problem adding name and body columns.');
+        mysql_query("CREATE TABLE {$table_prefix}tbl_$name (id int unsigned auto_increment primary key, name varchar(128), body text)") or die('Error: Problem adding pod database table.');
+        mysql_query("INSERT INTO {$table_prefix}pod_fields (datatype, name, coltype, required) VALUES ($pod_id, 'name', 'txt', 1),($pod_id, 'body', 'desc', 0)") or die('Error: Problem adding name and body columns.');
 
         die("$pod_id"); // return as string
     }
@@ -39,12 +39,12 @@ elseif ('page' == $type)
 {
     if (!empty($uri))
     {
-        $result = mysql_query("SELECT id FROM wp_pod_pages WHERE uri = '$uri' LIMIT 1");
+        $result = mysql_query("SELECT id FROM {$table_prefix}pod_pages WHERE uri = '$uri' LIMIT 1");
         if (0 < mysql_num_rows($result))
         {
             die('Error: Page by this URI already exists!');
         }
-        mysql_query("INSERT INTO wp_pod_pages (uri, phpcode) VALUES ('$uri', '$phpcode')") or die('Error: Problem adding new page.');
+        mysql_query("INSERT INTO {$table_prefix}pod_pages (uri, phpcode) VALUES ('$uri', '$phpcode')") or die('Error: Problem adding new page.');
         $page_id = mysql_insert_id();
 
         die("$page_id"); // return as string
@@ -56,12 +56,12 @@ elseif ('widget' == $type)
 {
     if (!empty($name))
     {
-        $result = mysql_query("SELECT id FROM wp_pod_widgets WHERE name = '$name' LIMIT 1");
+        $result = mysql_query("SELECT id FROM {$table_prefix}pod_widgets WHERE name = '$name' LIMIT 1");
         if (0 < mysql_num_rows($result))
         {
             die('Error: Widget by this name already exists!');
         }
-        mysql_query("INSERT INTO wp_pod_widgets (name, phpcode) VALUES ('$name', '$phpcode')") or die('Error: Problem adding new widget.');
+        mysql_query("INSERT INTO {$table_prefix}pod_widgets (name, phpcode) VALUES ('$name', '$phpcode')") or die('Error: Problem adding new widget.');
         $widget_id = mysql_insert_id();
 
         die("$widget_id"); // return as string
@@ -76,12 +76,12 @@ else
         die("Error: $name is a reserved name.");
     }
 
-    $result = mysql_query("SELECT id FROM wp_pod_fields WHERE datatype = $datatype AND name = '$name' LIMIT 1");
+    $result = mysql_query("SELECT id FROM {$table_prefix}pod_fields WHERE datatype = $datatype AND name = '$name' LIMIT 1");
     if (0 < mysql_num_rows($result))
     {
         die('Error: Column by this name already exists!');
     }
-    mysql_query("INSERT INTO wp_pod_fields (datatype, name, label, coltype, pickval, sister_field_id, required) VALUES ('$datatype', '$name', '$label', '$coltype', '$pickval', '$sister_field_id', '$required')");
+    mysql_query("INSERT INTO {$table_prefix}pod_fields (datatype, name, label, coltype, pickval, sister_field_id, required) VALUES ('$datatype', '$name', '$label', '$coltype', '$pickval', '$sister_field_id', '$required')");
     $field_id = mysql_insert_id();
 
     if (empty($pickval))
@@ -95,11 +95,11 @@ else
             'desc' => 'text'
         );
         $dbtype = $dbtypes[$coltype];
-        mysql_query("ALTER TABLE tbl_$dtname ADD COLUMN $name $dbtype") or die('Error: Could not create column!');
+        mysql_query("ALTER TABLE {$table_prefix}tbl_$dtname ADD COLUMN $name $dbtype") or die('Error: Could not create column!');
     }
     else
     {
-        mysql_query("UPDATE wp_pod_fields SET sister_field_id = '$field_id' WHERE id = '$sister_field_id' LIMIT 1");
+        mysql_query("UPDATE {$table_prefix}pod_fields SET sister_field_id = '$field_id' WHERE id = '$sister_field_id' LIMIT 1");
     }
 }
 

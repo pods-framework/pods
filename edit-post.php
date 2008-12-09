@@ -9,13 +9,13 @@ if (empty($post_id))
     return;
 }
 
-$result = mysql_query("SELECT id, name FROM wp_pod_types");
+$result = mysql_query("SELECT id, name FROM {$table_prefix}pod_types");
 while ($row = mysql_fetch_assoc($result))
 {
     $datatypes[$row['id']] = $row['name'];
 }
 
-$result = mysql_query("SELECT datatype FROM wp_pod WHERE post_id = $post_id LIMIT 1");
+$result = mysql_query("SELECT datatype FROM {$table_prefix}pod WHERE post_id = $post_id LIMIT 1");
 if (0 < mysql_num_rows($result))
 {
     $row = mysql_fetch_assoc($result);
@@ -26,7 +26,6 @@ if (0 < mysql_num_rows($result))
 <link rel="stylesheet" type="text/css" href="<?php echo $pods_url; ?>/style.css" />
 <script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqmodal.js"></script>
 <script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqFileTree.js"></script>
-<script type="text/javascript" src="<?php echo $pods_url; ?>/js/ui.datepicker.js"></script>
 <script type="text/javascript">
 var datatype;
 var post_id = <?php echo $post_id; ?>;
@@ -66,10 +65,12 @@ function showform(dt) {
                 jQuery("#module_form").hide();
                 jQuery("#module_form").html(msg);
                 jQuery("#module_form").show();
-                jQuery(".date").datepicker({dateFormat: "yy-mm-dd 12:00:00"});
                 jQuery(".option").click(function() {
                     jQuery(this).toggleClass("active");
                 });
+                /*jQuery(".datepicker").each(function() {
+                    alert(jQuery(this).attr("rel"));
+                });*/
             }
         }
     });

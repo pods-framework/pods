@@ -1,20 +1,20 @@
 <?php
 // Get all datatypes
-$result = mysql_query("SELECT * FROM wp_pod_types ORDER BY name");
+$result = mysql_query("SELECT * FROM {$table_prefix}pod_types ORDER BY name");
 while ($row = mysql_fetch_assoc($result))
 {
     $datatypes[$row['id']] = $row['name'];
 }
 
 // Get all pages
-$result = mysql_query("SELECT * FROM wp_pod_pages ORDER BY uri");
+$result = mysql_query("SELECT * FROM {$table_prefix}pod_pages ORDER BY uri");
 while ($row = mysql_fetch_assoc($result))
 {
     $pages[$row['id']] = array('uri' => $row['uri'], 'phpcode' => $row['phpcode']);
 }
 
 // Get all widgets
-$result = mysql_query("SELECT * FROM wp_pod_widgets ORDER BY name");
+$result = mysql_query("SELECT * FROM {$table_prefix}pod_widgets ORDER BY name");
 while ($row = mysql_fetch_assoc($result))
 {
     $widgets[$row['id']] = array('name' => $row['name'], 'phpcode' => $row['phpcode']);
@@ -528,9 +528,9 @@ $sql = "
 SELECT DISTINCT
     t.term_id AS id, t.name
 FROM
-    wp_term_taxonomy tx
+    {$table_prefix}term_taxonomy tx
 INNER JOIN
-    wp_terms t ON t.term_id = tx.parent
+    {$table_prefix}terms t ON t.term_id = tx.parent
 ";
 $result = mysql_query($sql) or trigger_error(mysql_error(), E_USER_ERROR);
 while ($row = mysql_fetch_assoc($result))
@@ -543,7 +543,7 @@ while ($row = mysql_fetch_assoc($result))
             <option value="" style="font-weight:bold; font-style:italic">-- Table --</option>
 <?php
 // Get pods, including country and state
-$result = mysql_query("SHOW TABLES LIKE 'tbl_%'");
+$result = mysql_query("SHOW TABLES LIKE '{$table_prefix}tbl_%'");
 while ($row = mysql_fetch_array($result))
 {
     $table_name = substr($row[0], 4);

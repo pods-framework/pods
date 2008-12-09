@@ -15,7 +15,7 @@ if ($save)
     if ($datatype)
     {
         // Get array of datatypes
-        $result = mysql_query("SELECT id, name FROM wp_pod_types");
+        $result = mysql_query("SELECT id, name FROM {$table_prefix}pod_types");
         while ($row = mysql_fetch_assoc($result))
         {
             $datatypes[$row['name']] = $row['id'];
@@ -41,7 +41,7 @@ if ($save)
         }
 
         // Get the datatype fields
-        $result = mysql_query("SELECT id, label, name, coltype, pickval, sister_field_id, required FROM wp_pod_fields WHERE datatype = $datatype_id $where") or die('Error: Could not get datatype fields');
+        $result = mysql_query("SELECT id, label, name, coltype, pickval, sister_field_id, required FROM {$table_prefix}pod_fields WHERE datatype = $datatype_id $where") or die('Error: Could not get datatype fields');
         while ($row = mysql_fetch_assoc($result))
         {
             if (1 == $row['required'])
@@ -79,7 +79,7 @@ if ($save)
 
             $sql = "
             INSERT INTO
-                wp_posts (post_author, post_date, post_date_gmt, post_title, post_name, post_content)
+                {$table_prefix}posts (post_author, post_date, post_date_gmt, post_title, post_name, post_content)
             VALUES
                 (1, NOW(), UTC_TIMESTAMP(), '$post_title', '$post_name', '$post_content')
             ";
@@ -88,13 +88,13 @@ if ($save)
         }
 
         // See if this post_ID already has a module (removing previous module data)
-        $result = mysql_query("SELECT row_id, datatype FROM wp_pod WHERE post_id = $post_id LIMIT 1");
+        $result = mysql_query("SELECT row_id, datatype FROM {$table_prefix}pod WHERE post_id = $post_id LIMIT 1");
         if (0 < mysql_num_rows($result))
         {
             $row = mysql_fetch_assoc($result);
             if ($datatype_id != $row['datatype'])
             {
-                mysql_query("DELETE FROM wp_pod WHERE post_id = $post_id");
+                mysql_query("DELETE FROM {$table_prefix}pod WHERE post_id = $post_id");
             }
             else
             {
@@ -130,7 +130,7 @@ if ($save)
                 if ('NULL' != $sister_field_id)
                 {
                     // Get sister post IDs (a sister post's sister post is the parent post)
-                    $result = mysql_query("SELECT post_id FROM wp_pod_rel WHERE sister_post_id = $post_id");
+                    $result = mysql_query("SELECT post_id FROM {$table_prefix}pod_rel WHERE sister_post_id = $post_id");
                     if (0 < mysql_num_rows($result))
                     {
                         while ($row = mysql_fetch_assoc($result))
@@ -140,10 +140,10 @@ if ($save)
                         $sister_post_ids = implode(',', $sister_post_ids);
 
                         // Delete the sister post relationship
-                        mysql_query("DELETE FROM wp_pod_rel WHERE post_id IN ($sister_post_ids) AND sister_post_id = $post_id AND field_id = $sister_field_id") or die("Error: Unable to drop sister relationships");
+                        mysql_query("DELETE FROM {$table_prefix}pod_rel WHERE post_id IN ($sister_post_ids) AND sister_post_id = $post_id AND field_id = $sister_field_id") or die("Error: Unable to drop sister relationships");
                     }
                 }
-                mysql_query("DELETE FROM wp_pod_rel WHERE post_id = $post_id AND field_id = $field_id") or die("Error: Unable to drop relationships");
+                mysql_query("DELETE FROM {$table_prefix}pod_rel WHERE post_id = $post_id AND field_id = $field_id") or die("Error: Unable to drop relationships");
                 /*
                 ==================================================
                 Add relationship values
@@ -153,15 +153,15 @@ if ($save)
                 {
                     if (!empty($sister_datatype_id))
                     {
-                        $result = mysql_query("SELECT post_id FROM wp_pod WHERE datatype = $sister_datatype_id AND row_id = $term_id LIMIT 1") or die('Error: term_id=' . $val);
+                        $result = mysql_query("SELECT post_id FROM {$table_prefix}pod WHERE datatype = $sister_datatype_id AND row_id = $term_id LIMIT 1") or die('Error: term_id=' . $val);
                         if (0 < mysql_num_rows($result))
                         {
                             $row = mysql_fetch_assoc($result);
                             $sister_post_id = $row['post_id'];
-                            mysql_query("INSERT INTO wp_pod_rel (post_id, sister_post_id, field_id, term_id) VALUES ($sister_post_id, $post_id, $sister_field_id, $table_row_id)") or die('Error: Unable to add sister relationships');
+                            mysql_query("INSERT INTO {$table_prefix}pod_rel (post_id, sister_post_id, field_id, term_id) VALUES ($sister_post_id, $post_id, $sister_field_id, $table_row_id)") or die('Error: Unable to add sister relationships');
                         }
                     }
-                    mysql_query("INSERT INTO wp_pod_rel (post_id, sister_post_id, field_id, term_id) VALUES ($post_id, $sister_post_id, $field_id, $term_id)") or die('Error: Unable to add relationships');
+                    mysql_query("INSERT INTO {$table_prefix}pod_rel (post_id, sister_post_id, field_id, term_id) VALUES ($post_id, $sister_post_id, $field_id, $term_id)") or die('Error: Unable to add relationships');
                 }
             }
             elseif ('datatype' != $key && 'post_id' != $key && 'columns' != $key && 'public' != $key && 'save' != $key)
@@ -169,21 +169,21 @@ if ($save)
                 if (isset($table_row_id))
                 {
                     // Update existing row
-                    mysql_query("UPDATE tbl_$datatype SET $key = '$val' WHERE id = $table_row_id LIMIT 1") or die('Error: ' . mysql_error());
+                    mysql_query("UPDATE {$table_prefix}tbl_$datatype SET $key = '$val' WHERE id = $table_row_id LIMIT 1") or die('Error: ' . mysql_error());
                 }
                 else
                 {
                     // Insert new row to data table
-                    mysql_query("INSERT INTO tbl_$datatype ($key) VALUES ('$val')") or die('Error: Unable to add new table row');
+                    mysql_query("INSERT INTO {$table_prefix}tbl_$datatype ($key) VALUES ('$val')") or die('Error: Unable to add new table row');
                     $table_row_id = mysql_insert_id();
 
                     // Insert new row to wp_pod table
-                    mysql_query("INSERT INTO wp_pod (row_id, post_id, datatype) VALUES ('$table_row_id', '$post_id', '$datatype_id')") or die('Error: Unable to add new Pod row');
+                    mysql_query("INSERT INTO {$table_prefix}pod (row_id, post_id, datatype) VALUES ('$table_row_id', '$post_id', '$datatype_id')") or die('Error: Unable to add new Pod row');
                 }
             }
         }
         // Update wp_pod datatype
-        mysql_query("UPDATE wp_pod SET datatype = $datatype_id WHERE row_id = $table_row_id AND post_id = $post_id LIMIT 1") or die('Error: Unable to modify datatype row');
+        mysql_query("UPDATE {$table_prefix}pod SET datatype = $datatype_id WHERE row_id = $table_row_id AND post_id = $post_id LIMIT 1") or die('Error: Unable to modify datatype row');
     }
     else
     {

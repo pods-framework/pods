@@ -18,7 +18,7 @@ $dbtypes = array(
 
 if ('move' == $action)
 {
-    $result = mysql_query("SELECT id FROM wp_pod_fields WHERE datatype = $datatype ORDER BY weight");
+    $result = mysql_query("SELECT id FROM {$table_prefix}pod_fields WHERE datatype = $datatype ORDER BY weight");
     while ($row = mysql_fetch_assoc($result))
     {
         $fields[] = $row['id'];
@@ -48,7 +48,7 @@ if ('move' == $action)
     foreach ($fields as $key => $val)
     {
         $weight = ($key * 1);
-        mysql_query("UPDATE wp_pod_fields SET weight = $weight WHERE id = $val LIMIT 1");
+        mysql_query("UPDATE {$table_prefix}pod_fields SET weight = $weight WHERE id = $val LIMIT 1");
     }
 }
 elseif ('edit' == $action)
@@ -58,13 +58,13 @@ elseif ('edit' == $action)
         die("Error: $name is not editable.");
     }
 
-    $result = mysql_query("SELECT id FROM wp_pod_fields WHERE datatype = $datatype AND id != $field_id AND name = '$name' LIMIT 1");
+    $result = mysql_query("SELECT id FROM {$table_prefix}pod_fields WHERE datatype = $datatype AND id != $field_id AND name = '$name' LIMIT 1");
     if (0 < mysql_num_rows($result))
     {
         die("Error: The $name column cannot be cloned.");
     }
 
-    $sql = "SELECT name, coltype FROM wp_pod_fields WHERE id = $field_id LIMIT 1";
+    $sql = "SELECT name, coltype FROM {$table_prefix}pod_fields WHERE id = $field_id LIMIT 1";
     $result = mysql_query($sql) or die(mysql_error());
 
     if (0 < mysql_num_rows($result))
@@ -79,22 +79,22 @@ elseif ('edit' == $action)
 
         if ($coltype != $old_coltype && 'pick' == $coltype)
         {
-            mysql_query("ALTER TABLE tbl_$dtname DROP COLUMN $field_name");
+            mysql_query("ALTER TABLE {$table_prefix}tbl_$dtname DROP COLUMN $field_name");
         }
         elseif ($coltype != $old_coltype && 'pick' == $old_coltype)
         {
-            mysql_query("ALTER TABLE tbl_$dtname ADD COLUMN $name $dbtype") or die('Error: Could not create column!');
-            mysql_query("ALTER TABLE wp_pod_fields SET sister_field_id = NULL WHERE sister_field_id = $field_id");
-            mysql_query("DELETE FROM wp_pod_rel WHERE field_id = $field_id");
+            mysql_query("ALTER TABLE {$table_prefix}tbl_$dtname ADD COLUMN $name $dbtype") or die('Error: Could not create column!');
+            mysql_query("ALTER TABLE {$table_prefix}pod_fields SET sister_field_id = NULL WHERE sister_field_id = $field_id");
+            mysql_query("DELETE FROM {$table_prefix}pod_rel WHERE field_id = $field_id");
         }
         else
         {
-            mysql_query("ALTER TABLE tbl_$dtname CHANGE $old_name $name $dbtype");
+            mysql_query("ALTER TABLE {$table_prefix}tbl_$dtname CHANGE $old_name $name $dbtype");
         }
 
         $sql = "
         UPDATE
-            wp_pod_fields
+            {$table_prefix}pod_fields
         SET
             name = '$name',
             label = '$label',
@@ -112,17 +112,17 @@ elseif ('edit' == $action)
 }
 elseif ('editpage' == $action)
 {
-    mysql_query("UPDATE wp_pod_pages SET phpcode = '$phpcode' WHERE id = $page_id LIMIT 1");
+    mysql_query("UPDATE {$table_prefix}pod_pages SET phpcode = '$phpcode' WHERE id = $page_id LIMIT 1");
 }
 elseif ('editwidget' == $action)
 {
-    mysql_query("UPDATE wp_pod_widgets SET phpcode = '$phpcode' WHERE id = $widget_id LIMIT 1");
+    mysql_query("UPDATE {$table_prefix}pod_widgets SET phpcode = '$phpcode' WHERE id = $widget_id LIMIT 1");
 }
 else
 {
     $sql = "
     UPDATE
-        wp_pod_types
+        {$table_prefix}pod_types
     SET
         list_filters = '$list_filters',
         tpl_detail = '$tpl_detail',

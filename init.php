@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The Wordpress CMS Plugin
-Version: 1.2.4
+Version: 1.2.5
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -26,13 +26,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 function initialize()
 {
+    global $table_prefix;
     $dir = WP_PLUGIN_DIR . '/pods/sql';
 
     // Setup initial tables
-    $result = mysql_query("SHOW TABLES LIKE 'wp_pod_widgets'");
+    $result = mysql_query("SHOW TABLES LIKE '{$table_prefix}pod_widgets'");
     if (1 > mysql_num_rows($result))
     {
-        $sql = explode(";\n", file_get_contents("$dir/dump.sql"));
+        $sql = file_get_contents("$dir/dump.sql");
+        $sql = explode(";\n", str_replace('wp_', $table_prefix, $sql));
         for ($i = 0, $z = count($sql); $i < $z - 1; $i++)
         {
             mysql_query($sql[$i]) or die(mysql_error());
@@ -54,26 +56,27 @@ function adminMenu()
 
 function edit_post_page()
 {
-    global $pods_url;
+    global $pods_url, $table_prefix;
     include WP_PLUGIN_DIR . '/pods/edit-post.php';
 }
 
 function edit_options_page()
 {
-    global $pods_url;
+    global $pods_url, $table_prefix;
     include WP_PLUGIN_DIR . '/pods/options.php';
 }
 
 function deletePost($post_ID)
 {
-    // Get the dtname and row_id from the post id
+    global $table_prefix;
+
     $sql = "
     SELECT
         t.name, p.row_id
     FROM
-        wp_pod p
+        {$table_prefix}pod p
     INNER JOIN
-        wp_pod_types t ON t.id = p.datatype
+        {$table_prefix}pod_types t ON t.id = p.datatype
     WHERE
         p.post_id = $post_ID
     LIMIT
@@ -82,14 +85,16 @@ function deletePost($post_ID)
     $result = mysql_query($sql);
     $row = mysql_fetch_assoc($result);
 
-    mysql_query("DELETE FROM tbl_$row[0] WHERE id = $row[1] LIMIT 1");
-    mysql_query("UPDATE wp_pod_rel SET sister_post_id = NULL WHERE sister_post_id = $post_ID");
-    mysql_query("DELETE FROM wp_pod WHERE post_id = $post_ID LIMIT 1");
-    mysql_query("DELETE FROM wp_pod_rel WHERE post_id = $post_ID");
+    mysql_query("DELETE FROM {$table_prefix}tbl_$row[0] WHERE id = $row[1] LIMIT 1");
+    mysql_query("UPDATE {$table_prefix}pod_rel SET sister_post_id = NULL WHERE sister_post_id = $post_ID");
+    mysql_query("DELETE FROM {$table_prefix}pod WHERE post_id = $post_ID LIMIT 1");
+    mysql_query("DELETE FROM {$table_prefix}pod_rel WHERE post_id = $post_ID");
 }
 
 function redirect()
 {
+    global $table_prefix;
+
     if (is_page() || is_404())
     {
         $uri = explode('?', $_SERVER['REQUEST_URI']);
@@ -97,7 +102,7 @@ function redirect()
         $uri = empty($uri) ? '/' : "/$uri/";
 
         // See if the custom template exists
-        $result = mysql_query("SELECT phpcode FROM wp_pod_pages WHERE uri = '$uri' LIMIT 1");
+        $result = mysql_query("SELECT phpcode FROM {$table_prefix}pod_pages WHERE uri = '$uri' LIMIT 1");
         if (0 < mysql_num_rows($result))
         {
             $row = mysql_fetch_assoc($result);

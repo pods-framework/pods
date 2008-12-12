@@ -27,6 +27,31 @@ elseif ($page_id = (int) $_GET['page'])
     mysql_query("DELETE FROM {$table_prefix}pod_pages WHERE id = $page_id LIMIT 1");
 }
 
+// Delete a single content item
+elseif ($post_id = (int) $_GET['post_id'])
+{
+    $sql = "
+    SELECT
+        t.name, p.row_id
+    FROM
+        {$table_prefix}pod p
+    INNER JOIN
+        {$table_prefix}pod_types t ON t.id = p.datatype
+    WHERE
+        p.post_id = $post_id
+    LIMIT
+        1
+    ";
+    $result = mysql_query($sql);
+    $row = mysql_fetch_assoc($result);
+
+    mysql_query("DELETE FROM {$table_prefix}tbl_$row[0] WHERE id = $row[1] LIMIT 1");
+    mysql_query("UPDATE {$table_prefix}pod_rel SET sister_post_id = NULL WHERE sister_post_id = $post_id");
+    mysql_query("DELETE FROM {$table_prefix}pod WHERE post_id = $post_id LIMIT 1");
+    mysql_query("DELETE FROM {$table_prefix}posts WHERE ID = $post_id LIMIT 1");
+    mysql_query("DELETE FROM {$table_prefix}pod_rel WHERE post_id = $post_id");
+}
+
 // Delete a single widget
 elseif ($widget_id = (int) $_GET['widget'])
 {

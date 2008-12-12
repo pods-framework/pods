@@ -75,15 +75,14 @@ if ($save)
         {
             $post_title = mysql_real_escape_string(trim($_POST['name']));
             $post_name = str_replace(' ', '-', strtolower($post_title));
-            $post_content = mysql_real_escape_string($_POST['body']);
 
             $sql = "
             INSERT INTO
-                {$table_prefix}posts (post_author, post_date, post_date_gmt, post_title, post_name, post_content)
+                {$table_prefix}posts (post_author, post_date, post_date_gmt, post_type, post_title, post_name)
             VALUES
-                (1, NOW(), UTC_TIMESTAMP(), '$post_title', '$post_name', '$post_content')
+                (1, NOW(), UTC_TIMESTAMP(), '$datatype', '$post_title', '$post_name')
             ";
-            mysql_query($sql) or die('Error: Could not add public form data');
+            mysql_query($sql) or die('Error: Could not add new content');
             $post_id = mysql_insert_id();
         }
 

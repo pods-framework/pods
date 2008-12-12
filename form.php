@@ -3,16 +3,14 @@ $datatype = $this->datatype;
 $pods_url = WP_PLUGIN_URL . '/pods';
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo $pods_url; ?>/style.css" />
-<script type="text/javascript" src="<?php echo $pods_url; ?>/js/ui.datepicker.js"></script>
 <script type="text/javascript">
 jQuery(function() {
-    jQuery(".date").datepicker({dateFormat: "yy-mm-dd 12:00:00"});
     jQuery(".option").click(function() {
         jQuery(this).toggleClass("active");
     });
 });
 
-function savePost() {
+function saveForm() {
     var data = new Array();
     var columns = '<?php echo serialize($public_columns); ?>';
     var i = 0;
@@ -58,6 +56,5 @@ $_POST['public'] = true;
 $_POST['datatype'] = $datatype;
 include realpath(dirname(__FILE__) . '/ajax/showform.php');
 ?>
-    <input type="button" onclick="savePost()" value="Submit" />
 </div>
 

@@ -131,6 +131,18 @@
     border: 1px solid #E3E3E3;
 }
 
+#browseArea #browseTable {
+    padding: 10px 0;
+}
+
+#browseArea #browseTable th {
+    text-align: left;
+}
+
+#browseArea #browseTable td {
+    padding: 5px 0;
+}
+
 /* Public-facing */
 h3 {
     margin: 0 0 10px 0;

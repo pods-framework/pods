@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The Wordpress CMS Plugin
-Version: 1.2.5
+Version: 1.2.6
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -47,48 +47,33 @@ function initialize()
 
 function adminMenu()
 {
-    // Add panel under Manage > Posts
-    add_meta_box('pod', 'Choose a Pod', 'edit_post_page', 'post', 'normal', 'high');
+    global $menu, $submenu, $table_prefix, $admin_page_hooks;
 
-    // Add submenu under Tools
-    add_management_page('Pods', 'Pods', 8, 'pods', 'edit_options_page');
+    $menu[30] = array('Pods', 8, 'pods', 'Pods', 'menu-top toplevel_page_pods', 'toplevel_page_pods', 'images/plugins.png');
+    add_submenu_page('pods', 'Manage Pods', 'Manage Pods', 8, 'pods', 'edit_options_page');
+    add_submenu_page('pods', 'Browse Content', 'Browse Content', 8, 'pods-browse', 'edit_content_page');
+
+    $result = mysql_query("SELECT name FROM {$table_prefix}pod_types ORDER BY name");
+    if (0 < mysql_num_rows($result))
+    {
+        while ($row = mysql_fetch_array($result))
+        {
+            add_submenu_page('pods', "Add $row[0]", "Add $row[0]", 8, "pod-$row[0]", 'edit_content_page');
+        }
+    }
+    add_thickbox();
 }
 
-function edit_post_page()
+function edit_content_page()
 {
     global $pods_url, $table_prefix;
-    include WP_PLUGIN_DIR . '/pods/edit-post.php';
+    include WP_PLUGIN_DIR . '/pods/content.php';
 }
 
 function edit_options_page()
 {
     global $pods_url, $table_prefix;
     include WP_PLUGIN_DIR . '/pods/options.php';
-}
-
-function deletePost($post_ID)
-{
-    global $table_prefix;
-
-    $sql = "
-    SELECT
-        t.name, p.row_id
-    FROM
-        {$table_prefix}pod p
-    INNER JOIN
-        {$table_prefix}pod_types t ON t.id = p.datatype
-    WHERE
-        p.post_id = $post_ID
-    LIMIT
-        1
-    ";
-    $result = mysql_query($sql);
-    $row = mysql_fetch_assoc($result);
-
-    mysql_query("DELETE FROM {$table_prefix}tbl_$row[0] WHERE id = $row[1] LIMIT 1");
-    mysql_query("UPDATE {$table_prefix}pod_rel SET sister_post_id = NULL WHERE sister_post_id = $post_ID");
-    mysql_query("DELETE FROM {$table_prefix}pod WHERE post_id = $post_ID LIMIT 1");
-    mysql_query("DELETE FROM {$table_prefix}pod_rel WHERE post_id = $post_ID");
 }
 
 function redirect()
@@ -121,9 +106,6 @@ $pods_url = WP_PLUGIN_URL . '/pods';
 
 // Hook for adding admin menus
 add_action('admin_menu', 'adminMenu');
-
-// Hook for post deletion
-add_action('delete_post', 'deletePost');
 
 // Hook for redirection
 add_action('template_redirect', 'redirect');

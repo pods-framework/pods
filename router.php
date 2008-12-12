@@ -5,7 +5,6 @@
 <div id="content">
 
 <div class="post">
-    <?php echo $post->post_content; ?>
 
 <?php
 require 'Pod.class.php';

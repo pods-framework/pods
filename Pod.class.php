@@ -19,7 +19,6 @@ class Pod
     var $data;
     var $result;
     var $datatype;
-    var $table_prefix;
     var $datatype_id;
     var $total_rows;
     var $rel_table;
@@ -310,7 +309,7 @@ class Pod
         LIMIT
             $limit
         ";
-        $this->result = mysql_query($sql) or die('A'.mysql_error());
+        $this->result = mysql_query($sql) or die(mysql_error());
         $this->total_rows = mysql_query("SELECT FOUND_ROWS()");
     }
 
@@ -321,10 +320,14 @@ class Pod
     */
     function getTotalRows()
     {
-        if ($row = mysql_fetch_array($this->total_rows))
+        if (false === is_numeric($this->total_rows))
         {
-            return $row[0];
+            if ($row = mysql_fetch_array($this->total_rows))
+            {
+                $this->total_rows = $row[0];
+            }
         }
+        return $this->total_rows;
     }
 
     /*
@@ -344,7 +347,7 @@ class Pod
         $request_uri = "?type=$type&";
         foreach ($_GET as $key => $val)
         {
-            if ('page' != $key && 'type' != $key && !empty($val))
+            if ('p' != $key && 'type' != $key && !empty($val))
             {
                 $request_uri .= $key . '=' . urlencode($val) . '&';
             }
@@ -355,19 +358,19 @@ class Pod
         if (1 < $page)
         {
 ?>
-    <a href="<?php echo $request_uri; ?>page=1" class="pageNum firstPage">1</a>
+    <a href="<?php echo $request_uri; ?>p=1" class="pageNum firstPage">1</a>
 <?php
         }
         if (1 < ($page - 100))
         {
 ?>
-    <a href="<?php echo $request_uri; ?>page=<?= ($page - 100) ?>" class="pageNum"><?= ($page - 100) ?></a>
+    <a href="<?php echo $request_uri; ?>p=<?= ($page - 100) ?>" class="pageNum"><?= ($page - 100) ?></a>
 <?php
         }
         if (1 < ($page - 10))
         {
 ?>
-    <a href="<?php echo $request_uri; ?>page=<?= ($page - 10) ?>" class="pageNum"><?= ($page - 10) ?></a>
+    <a href="<?php echo $request_uri; ?>p=<?= ($page - 10) ?>" class="pageNum"><?= ($page - 10) ?></a>
 <?php
         }
         for ($i = 2; $i > 0; $i--)
@@ -375,7 +378,7 @@ class Pod
             if (1 < ($page - $i))
             {
 ?>
-    <a href="<?php echo $request_uri; ?>page=<?= ($page - $i) ?>" class="pageNum"><?= ($page - $i) ?></a>
+    <a href="<?php echo $request_uri; ?>p=<?= ($page - $i) ?>" class="pageNum"><?= ($page - $i) ?></a>
 <?php
             }
         }
@@ -387,26 +390,26 @@ class Pod
             if ($total_pages > ($page + $i))
             {
 ?>
-    <a href="<?php echo $request_uri; ?>page=<?= ($page + $i) ?>" class="pageNum"><?= ($page + $i) ?></a>
+    <a href="<?php echo $request_uri; ?>p=<?= ($page + $i) ?>" class="pageNum"><?= ($page + $i) ?></a>
 <?php
             }
         }
         if ($total_pages > ($page + 10))
         {
 ?>
-    <a href="<?php echo $request_uri; ?>page=<?= ($page + 10) ?>" class="pageNum"><?= ($page + 10) ?></a>
+    <a href="<?php echo $request_uri; ?>p=<?= ($page + 10) ?>" class="pageNum"><?= ($page + 10) ?></a>
 <?php
         }
         if ($total_pages > ($page + 100))
         {
 ?>
-    <a href="<?php echo $request_uri; ?>page=<?= ($page + 100) ?>" class="pageNum"><?= ($page + 100) ?></a>
+    <a href="<?php echo $request_uri; ?>p=<?= ($page + 100) ?>" class="pageNum"><?= ($page + 100) ?></a>
 <?php
         }
         if ($page < $total_pages)
         {
 ?>
-    <a href="<?php echo $request_uri; ?>page=<?= $total_pages ?>" class="pageNum lastPage"><?= $total_pages ?></a>
+    <a href="<?php echo $request_uri; ?>p=<?= $total_pages ?>" class="pageNum lastPage"><?= $total_pages ?></a>
 <?php
         }
 ?>
@@ -480,124 +483,122 @@ class Pod
     */
     function showform($post_id = null, $is_public = false, $public_columns = null)
     {
-        if (!empty($post_id) || $is_public)
+        $datatype = $this->datatype;
+        $datatype_id = $this->datatype_id;
+        $this->data['post_id'] = $post_id;
+
+        $where = '';
+        if (!empty($public_columns))
         {
-            $datatype = $this->datatype;
-            $datatype_id = $this->datatype_id;
-            $this->data['post_id'] = $post_id;
-
-            $where = '';
-            if (!empty($public_columns))
+            foreach ($public_columns as $key => $val)
             {
-                foreach ($public_columns as $key => $val)
+                if (is_array($public_columns[$key]))
                 {
-                    if (is_array($public_columns[$key]))
-                    {
-                        $where[] = $key;
-                        $attribute[$key] = $val;
-                    }
-                    else
-                    {
-                        $where[] = $val;
-                    }
-                }
-                $where = "AND f.name IN ('" . implode("','", $where) . "')";
-            }
-
-            $sql = "
-            SELECT
-                f.name, f.label, f.coltype, f.pickval, f.required
-            FROM
-                {$this->prefix}pod_types t
-            INNER JOIN
-                {$this->prefix}pod_fields f ON f.datatype = t.id
-            WHERE
-                t.name = '$datatype'
-                $where
-            ORDER BY
-                f.weight ASC
-            ";
-            $result = mysql_query($sql) or die(mysql_error());
-            while ($row = mysql_fetch_assoc($result))
-            {
-                $fields[$row['name']] = $row;
-            }
-
-            $sql = "
-            SELECT
-                t.*
-            FROM
-                {$this->prefix}pod p
-            INNER JOIN
-                {$this->prefix}tbl_$datatype t ON t.id = p.row_id
-            WHERE
-                p.post_id = $post_id
-            LIMIT
-                1
-            ";
-            $result = mysql_query($sql) or die(mysql_error());
-            $tbl_cols = mysql_fetch_assoc($result);
-
-            foreach ($fields as $key => $field_array)
-            {
-                $label = $field_array['label'];
-                $label = empty($label) ? ucwords($key) : $label;
-                $coltype = $field_array['coltype'];
-                $pickval = $field_array['pickval'];
-                $attr = $attribute[$key];
-
-                if (1 == $field_array['required'])
-                {
-                    $label .= ' <span class="red">*</span>';
-                }
-
-                if (!empty($pickval))
-                {
-                    $val = array();
-                    $term_ids = array();
-                    $table = $pickval;
-
-                    $result = mysql_query("SELECT id FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND name = '$key' LIMIT 1") or die(mysql_error());
-                    $row = mysql_fetch_assoc($result);
-                    $field_id = $row['id'];
-
-                    $result = mysql_query("SELECT term_id FROM {$this->prefix}pod_rel WHERE post_id = $post_id AND field_id = $field_id");
-                    while ($row = mysql_fetch_assoc($result))
-                    {
-                        $term_ids[] = $row['term_id'];
-                    }
-
-                    // Use default values for public forms
-                    if (empty($term_ids) && !empty($attr['default']))
-                    {
-                        $term_ids = $attr['default'];
-                        if (!is_array($default))
-                        {
-                            $term_ids = explode(',', $term_ids);
-                            foreach ($term_ids as $term_key => $term_val)
-                            {
-                                $term_ids[$term_key] = trim($term_val);
-                            }
-                        }
-                    }
-                    $this->data[$key] = $this->get_dropdown_values($table, null, $term_ids);
+                    $where[] = $key;
+                    $attribute[$key] = $val;
                 }
                 else
                 {
-                    $this->data[$key] = $tbl_cols[$key];
-                    $this->get_field($key);
-                }
-
-                if (('id' != $key && 'name' != $key && 'body' != $key) || -1 == $this->get_post_id())
-                {
-                    $this->build_field_html($key, $label, $coltype, $attr);
+                    $where[] = $val;
                 }
             }
+            $where = "AND f.name IN ('" . implode("','", $where) . "')";
         }
-        else
+
+        $sql = "
+        SELECT
+            f.name, f.label, f.coltype, f.pickval, f.required
+        FROM
+            {$this->prefix}pod_types t
+        INNER JOIN
+            {$this->prefix}pod_fields f ON f.datatype = t.id
+        WHERE
+            t.name = '$datatype'
+            $where
+        ORDER BY
+            f.weight ASC
+        ";
+        $result = mysql_query($sql) or die(mysql_error());
+        while ($row = mysql_fetch_assoc($result))
         {
-            die('Error: The form generator needs a post ID!');
+            $fields[$row['name']] = $row;
         }
+
+        $sql = "
+        SELECT
+            t.*
+        FROM
+            {$this->prefix}pod p
+        INNER JOIN
+            {$this->prefix}tbl_$datatype t ON t.id = p.row_id
+        WHERE
+            p.post_id = $post_id
+        LIMIT
+            1
+        ";
+        $result = mysql_query($sql) or die(mysql_error());
+        $tbl_cols = mysql_fetch_assoc($result);
+?>
+    <div><input type="hidden" class="form num post_id" value="<?php echo $post_id; ?>" /></div>
+<?php
+        foreach ($fields as $key => $field_array)
+        {
+            $label = $field_array['label'];
+            $label = empty($label) ? ucwords($key) : $label;
+            $coltype = $field_array['coltype'];
+            $pickval = $field_array['pickval'];
+            $attr = $attribute[$key];
+
+            if (1 == $field_array['required'])
+            {
+                $label .= ' <span class="red">*</span>';
+            }
+
+            if (!empty($pickval))
+            {
+                $val = array();
+                $term_ids = array();
+                $table = $pickval;
+
+                $result = mysql_query("SELECT id FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND name = '$key' LIMIT 1") or die(mysql_error());
+                $row = mysql_fetch_assoc($result);
+                $field_id = $row['id'];
+
+                $result = mysql_query("SELECT term_id FROM {$this->prefix}pod_rel WHERE post_id = $post_id AND field_id = $field_id");
+                while ($row = mysql_fetch_assoc($result))
+                {
+                    $term_ids[] = $row['term_id'];
+                }
+
+                // Use default values for public forms
+                if (empty($term_ids) && !empty($attr['default']))
+                {
+                    $term_ids = $attr['default'];
+                    if (!is_array($default))
+                    {
+                        $term_ids = explode(',', $term_ids);
+                        foreach ($term_ids as $term_key => $term_val)
+                        {
+                            $term_ids[$term_key] = trim($term_val);
+                        }
+                    }
+                }
+                $this->data[$key] = $this->get_dropdown_values($table, null, $term_ids);
+            }
+            else
+            {
+                $this->data[$key] = $tbl_cols[$key];
+                $this->get_field($key);
+            }
+
+            if ('id' != $key || -1 == $this->get_post_id())
+            {
+                $this->build_field_html($key, $label, $coltype, $attr);
+            }
+        }
+?>
+    <div><input type="button" class="button" value="Save changes" onclick="saveForm()" /></div>
+<?php
     }
 
     /*
@@ -644,7 +645,7 @@ class Pod
 ?>
     <input type="text" class="form file <?php echo $name; ?>" value="<?php echo $data; ?>" />
     <a href="javascript:;" onclick="active_file = '<?php echo $name; ?>'; jQuery('#dialog').jqmShow()">select</a> after
-    <a href="javascript:;" onclick="jQuery('#add_media').click()">uploading</a>
+    <a href="media-upload.php" class="thickbox">uploading</a>
 <?php
         }
         // Standard text box

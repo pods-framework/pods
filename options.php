@@ -546,7 +546,8 @@ while ($row = mysql_fetch_assoc($result))
 $result = mysql_query("SHOW TABLES LIKE '{$table_prefix}tbl_%'");
 while ($row = mysql_fetch_array($result))
 {
-    $table_name = substr($row[0], 4);
+    $offset = strlen($table_prefix) + 4;
+    $table_name = substr($row[0], $offset);
 ?>
             <option value="<?php echo $table_name; ?>"><?php echo $table_name; ?></option>
 <?php

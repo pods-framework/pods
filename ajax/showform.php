@@ -70,35 +70,42 @@ if ($save)
             }
         }
 
-        // Add the new post
+        // Add or edit the post
+        $post_title = mysql_real_escape_string(trim($_POST['name']));
+        $post_title = stripslashes($post_title);
+
         if (empty($post_id))
         {
-            $post_title = mysql_real_escape_string(trim($_POST['name']));
-            $post_name = str_replace(' ', '-', strtolower($post_title));
-
             $sql = "
             INSERT INTO
-                {$table_prefix}posts (post_author, post_date, post_date_gmt, post_type, post_title, post_name)
+                {$table_prefix}posts (post_date, post_date_gmt, post_type, post_title)
             VALUES
-                (1, NOW(), UTC_TIMESTAMP(), '$datatype', '$post_title', '$post_name')
+                (NOW(), UTC_TIMESTAMP(), '$datatype', '$post_title', '$post_name')
             ";
             mysql_query($sql) or die('Error: Could not add new content');
             $post_id = mysql_insert_id();
         }
+        else
+        {
+            $sql = "
+            UPDATE
+                {$table_prefix}posts
+            SET
+                post_modified = NOW(), post_modified_gmt = UTC_TIMESTAMP(), post_title = '$post_title'
+            WHERE
+                ID = $post_id
+            LIMIT
+                1
+            ";
+            mysql_query($sql) or die('Error: Could not edit posts table');
+        }
 
         // See if this post_ID already has a module (removing previous module data)
-        $result = mysql_query("SELECT row_id, datatype FROM {$table_prefix}pod WHERE post_id = $post_id LIMIT 1");
+        $result = mysql_query("SELECT row_id FROM {$table_prefix}pod WHERE post_id = $post_id LIMIT 1");
         if (0 < mysql_num_rows($result))
         {
             $row = mysql_fetch_assoc($result);
-            if ($datatype_id != $row['datatype'])
-            {
-                mysql_query("DELETE FROM {$table_prefix}pod WHERE post_id = $post_id");
-            }
-            else
-            {
-                $table_row_id = $row['row_id'];
-            }
+            $table_row_id = $row['row_id'];
         }
 
         // Cleanse the $_POST variables

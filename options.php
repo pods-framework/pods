@@ -148,11 +148,11 @@ function loadPod() {
                     html += '<div class="col'+id+'">';
                     html += '<div class="btn moveup"></div> ';
                     html += '<div class="btn movedown"></div> ';
+                    html += '<div class="btn editme"></div> ';
 
                     // Default columns
                     if ("name" != name && "body" != name) {
                         html += '<div class="btn dropme"></div> ';
-                        html += '<div class="btn editme"></div> ';
                     }
                     html += name+" ("+coltype+")</div>";
                     jQuery("#column_list").html(html);
@@ -267,6 +267,16 @@ function loadColumn(col) {
             jQuery("#column_sister_field_id").hide();
             jQuery("#column_required").attr("checked", required);
             jQuery("#column_pickval").hide();
+            if ("name" == name || "body" == name) {
+                jQuery("#column_name").attr("disabled", true);
+                jQuery("#column_type").attr("disabled", true);
+                jQuery("#column_required").attr("disabled", true);
+            }
+            else {
+                jQuery("#column_name").attr("disabled", false);
+                jQuery("#column_type").attr("disabled", false);
+                jQuery("#column_required").attr("disabled", false);
+            }
             if ("" != pickval) {
                 jQuery("#column_pickval").show();
             }

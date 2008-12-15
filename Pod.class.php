@@ -663,7 +663,7 @@ class Pod
         elseif ('num' == $coltype || 'txt' == $coltype)
         {
 ?>
-    <input type="text" class="form <?php echo $coltype . ' ' . $name; ?>" value="<?php echo $data; ?>" />
+    <input type="text" class="form <?php echo $coltype . ' ' . $name; ?>" value="<?php echo str_replace('"', '&quot;', $data); ?>" />
 <?php
         }
         // Textarea box

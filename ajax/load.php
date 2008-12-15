@@ -33,7 +33,7 @@ if ($id = (int) $_GET['id'])
 }
 // Get a single Pod columnelseif ($field_id = (int) $_GET['col'])
 {
-    $result = mysql_query("SELECT name, label, coltype, pickval, sister_field_id, required FROM {$table_prefix}pod_fields WHERE id = $field_id LIMIT 1");
+    $result = mysql_query("SELECT name, label, comment, coltype, pickval, sister_field_id, required FROM {$table_prefix}pod_fields WHERE id = $field_id LIMIT 1");
     $row = mysql_fetch_assoc($result);
     echo json_encode($row);
 }

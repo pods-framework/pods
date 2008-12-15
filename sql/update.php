@@ -1,5 +1,5 @@
 <?php
-$latest = 126;
+$latest = 127;
 $installed = 0;
 
 // Get the installed version
@@ -12,47 +12,46 @@ if (0 < mysql_num_rows($result))
 
 if ($installed < $latest)
 {
-    // Add the "required" feature
-    $result = mysql_query("SHOW COLUMNS FROM {$table_prefix}pod_fields LIKE 'required'");
-
-    if (1 > mysql_num_rows($result))
+    if ($installed < 126)
     {
+        // Add the "required" option
         mysql_query("ALTER TABLE {$table_prefix}pod_fields ADD COLUMN required BOOL default 0 AFTER sister_field_id");
-    }
 
-    // Add the "label" feature
-    $result = mysql_query("SHOW COLUMNS FROM {$table_prefix}pod_fields LIKE 'label'");
-
-    if (1 > mysql_num_rows($result))
-    {
+        // Add the "label" option
         mysql_query("ALTER TABLE {$table_prefix}pod_fields ADD COLUMN label VARCHAR(32) AFTER name");
-    }
 
-    // Fix table prefixes
-    if (!empty($table_prefix))
-    {
-        $result = mysql_query("SHOW TABLES LIKE 'tbl_%'");
-
-        if (0 < mysql_num_rows($result))
+        // Fix table prefixes
+        if (!empty($table_prefix))
         {
-            while ($row = mysql_fetch_array($result))
+            $result = mysql_query("SHOW TABLES LIKE 'tbl_%'");
+
+            if (0 < mysql_num_rows($result))
             {
-                mysql_query("RENAME TABLE $row[0] TO {$table_prefix}$row[0]");
+                while ($row = mysql_fetch_array($result))
+                {
+                    mysql_query("RENAME TABLE $row[0] TO {$table_prefix}$row[0]");
+                }
             }
+        }
+
+        // Change the "post_type" of all pod items
+        $result = mysql_query("SELECT id, name FROM {$table_prefix}pod_types");
+        while ($row = mysql_fetch_assoc($result))
+        {
+            $datatypes[$row['id']] = $row['name'];
+        }
+        $result = mysql_query("SELECT post_id, datatype FROM {$table_prefix}pod");
+        while ($row = mysql_fetch_array($result))
+        {
+            $datatype = $datatypes[$row['datatype']];
+            mysql_query("UPDATE {$table_prefix}posts SET post_type = '$datatype' WHERE ID = $row[0] LIMIT 1");
         }
     }
 
-    // v1.2.6: change the "post_type" of all pod items
-    $result = mysql_query("SELECT id, name FROM {$table_prefix}pod_types");
-    while ($row = mysql_fetch_assoc($result))
+    if ($installed < 127)
     {
-        $datatypes[$row['id']] = $row['name'];
-    }
-    $result = mysql_query("SELECT post_id, datatype FROM {$table_prefix}pod");
-    while ($row = mysql_fetch_array($result))
-    {
-        $datatype = $datatypes[$row['datatype']];
-        mysql_query("UPDATE {$table_prefix}posts SET post_type = '$datatype' WHERE ID = $row[0] LIMIT 1");
+        // Add the "comment" option
+        mysql_query("ALTER TABLE {$table_prefix}pod_fields ADD COLUMN comment VARCHAR(128) AFTER label");
     }
 
     // Save this version

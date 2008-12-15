@@ -254,12 +254,14 @@ function loadColumn(col) {
             var col_data = eval("("+msg+")");
             var name = (null == col_data.name) ? "" : col_data.name;
             var label = (null == col_data.label) ? "" : col_data.label;
+            var comment = (null == col_data.comment) ? "" : col_data.comment;
             var coltype = (null == col_data.coltype) ? "" : col_data.coltype;
             var pickval = (null == col_data.pickval) ? "" : col_data.pickval;
             var sister_field_id = (null == col_data.sister_field_id) ? "" : col_data.sister_field_id;
             var required = parseInt(col_data.required);
             jQuery("#column_name").val(name);
             jQuery("#column_label").val(label);
+            jQuery("#column_comment").val(comment);
             jQuery("#column_type").val(coltype);
             jQuery("#column_pickval").val(pickval);
             jQuery("#column_sister_field_id").hide();
@@ -281,6 +283,7 @@ function loadColumn(col) {
 function addColumn() {
     var name = jQuery("#column_name").val();
     var label = jQuery("#column_label").val();
+    var comment = jQuery("#column_comment").val();
     var dtname = jQuery(".tab.active").html();
     var coltype = jQuery("#column_type").val();
     var pickval = jQuery("#column_pickval").val();
@@ -288,7 +291,7 @@ function addColumn() {
     var required = (true == jQuery("#column_required").is(":checked")) ? 1 : 0;
     jQuery.ajax({
         url: "<?php echo $pods_url; ?>/ajax/add.php",
-        data: "datatype="+datatype+"&dtname="+dtname+"&name="+name+"&label="+label+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required,
+        data: "datatype="+datatype+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -320,6 +323,7 @@ function moveColumn(col, dir) {
 function editColumn(col) {
     var name = jQuery("#column_name").val();
     var label = jQuery("#column_label").val();
+    var comment = jQuery("#column_comment").val();
     var dtname = jQuery(".tab.active").html();
     var coltype = jQuery("#column_type").val();
     var pickval = jQuery("#column_pickval").val();
@@ -327,7 +331,7 @@ function editColumn(col) {
     var required = (true == jQuery("#column_required").is(":checked")) ? 1 : 0;
     jQuery.ajax({
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "action=edit&datatype="+datatype+"&dtname="+dtname+"&field_id="+col+"&name="+name+"&label="+label+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required,
+        data: "action=edit&datatype="+datatype+"&dtname="+dtname+"&field_id="+col+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -556,6 +560,12 @@ while ($row = mysql_fetch_array($result))
         </select>
         <select id="column_sister_field_id" class="hidden"></select>
     </div>
+
+    <div class="leftside">Comment</div>
+    <div class="rightside">
+        <input type="text" id="column_comment" value="" />
+    </div>
+
     <div class="clear"><!--clear--></div>
     <p><b>*CAUTION*</b> changing column types can result in data loss!</p>
 </div>

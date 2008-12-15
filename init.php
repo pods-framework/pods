@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The Wordpress CMS Plugin
-Version: 1.2.6
+Version: 1.2.7
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -41,6 +41,15 @@ function initialize()
         }
     }
 
+    // Check for .htaccess
+    if (!file_exists(ABSPATH . '.htaccess'))
+    {
+        if (!copy(WP_PLUGIN_DIR . '/pods/.htaccess', ABSPATH . '.htaccess'))
+        {
+            echo 'Please copy the .htaccess file from plugins/pods/ to the Wordpress root folder!';
+        }
+    }
+
     // Update tables
     include("$dir/update.php");
 }
@@ -49,8 +58,8 @@ function adminMenu()
 {
     global $menu, $submenu, $table_prefix, $admin_page_hooks;
 
-    $menu[30] = array('Pods', 8, 'pods', 'Pods', 'menu-top toplevel_page_pods', 'toplevel_page_pods', 'images/plugins.png');
-    add_submenu_page('pods', 'Manage Pods', 'Manage Pods', 8, 'pods', 'edit_options_page');
+    $menu[30] = array('Pods', 8, 'pods', 'Pods', 'menu-top toplevel_page_pods', 'toplevel_page_pods', 'images/generic.png');
+    add_submenu_page('pods', 'Setup', 'Setup', 8, 'pods', 'edit_options_page');
     add_submenu_page('pods', 'Browse Content', 'Browse Content', 8, 'pods-browse', 'edit_content_page');
 
     $result = mysql_query("SELECT name FROM {$table_prefix}pod_types ORDER BY name");
@@ -61,7 +70,6 @@ function adminMenu()
             add_submenu_page('pods', "Add $row[0]", "Add $row[0]", 8, "pod-$row[0]", 'edit_content_page');
         }
     }
-    add_thickbox();
 }
 
 function edit_content_page()
@@ -88,6 +96,24 @@ function redirect()
 
         // See if the custom template exists
         $result = mysql_query("SELECT phpcode FROM {$table_prefix}pod_pages WHERE uri = '$uri' LIMIT 1");
+        if (1 > mysql_num_rows($result))
+        {
+            // Find any wildcards
+            $sql = "
+            SELECT
+                phpcode
+            FROM
+                {$table_prefix}pod_pages
+            WHERE
+                '$uri' LIKE REPLACE(uri, '*', '%')
+            ORDER BY
+                uri DESC
+            LIMIT
+                1
+            ";
+            $result = mysql_query($sql) or die(mysql_error());
+        }
+
         if (0 < mysql_num_rows($result))
         {
             $row = mysql_fetch_assoc($result);

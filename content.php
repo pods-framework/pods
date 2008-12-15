@@ -43,9 +43,6 @@ jQuery(function() {
         jQuery(".navTab").click();
         jQuery("#editTitle").html("Add new <?php echo $dtname; ?>");
     }
-    jQuery("#publish").click(function() {
-        return savePost();
-    });
     jQuery(".filebox").fileTree({
         root: "<?php echo $upload_dir; ?>/",
         script: "<?php echo $pods_url; ?>/ajax/filetree.php",

@@ -30,7 +30,7 @@ class Pod
     {
         global $table_prefix;
         $this->prefix = $table_prefix;
-        $this->page = empty($_GET['page']) ? 1 : $_GET['page'];
+        $this->page = empty($_GET['p']) ? 1 : $_GET['p'];
 
         if (null != $datatype)
         {
@@ -507,7 +507,7 @@ class Pod
 
         $sql = "
         SELECT
-            f.name, f.label, f.coltype, f.pickval, f.required
+            f.name, f.label, f.comment, f.coltype, f.pickval, f.required
         FROM
             {$this->prefix}pod_types t
         INNER JOIN
@@ -545,6 +545,7 @@ class Pod
         {
             $label = $field_array['label'];
             $label = empty($label) ? ucwords($key) : $label;
+            $comment = $field_array['comment'];
             $coltype = $field_array['coltype'];
             $pickval = $field_array['pickval'];
             $attr = $attribute[$key];
@@ -593,7 +594,7 @@ class Pod
 
             if ('id' != $key || -1 == $this->get_post_id())
             {
-                $this->build_field_html($key, $label, $coltype, $attr);
+                $this->build_field_html($key, $label, $comment, $coltype, $attr);
             }
         }
 ?>
@@ -616,12 +617,22 @@ class Pod
     Build HTML for a single field
     ==================================================
     */
-    function build_field_html($name, $label, $coltype, $attr)
+    function build_field_html($name, $label, $comment, $coltype, $attr)
     {
         $data = is_array($this->data[$name]) ? $this->data[$name] : stripslashes($this->data[$name]);
         $hidden = empty($attr['hidden']) ? '' : ' hidden';
 ?>
-    <div class="leftside<?php echo $hidden; ?>"><?php echo $label; ?></div>
+    <div class="leftside<?php echo $hidden; ?>">
+        <?php echo $label; ?>
+<?php
+        if (!empty($comment))
+        {
+?>
+        <div class="comment"><?php echo $comment; ?></div>
+<?php
+        }
+?>
+    </div>
     <div class="rightside<?php echo $hidden; ?>">
 <?php
         // Boolean checkbox

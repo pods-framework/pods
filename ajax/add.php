@@ -71,7 +71,7 @@ elseif ('widget' == $type)
 // Add new column
 else
 {
-    if ('id' == $name || 'name' == $name || 'body' == $name || 'type' == $name || 'page' == $name)
+    if ('id' == $name || 'name' == $name || 'body' == $name || 'type' == $name)
     {
         die("Error: $name is a reserved name.");
     }

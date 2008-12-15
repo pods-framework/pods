@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS wp_pod_fields (
     datatype TINYINT unsigned,
     name VARCHAR(32),
     label VARCHAR(32),
+    comment VARCHAR(128),
     coltype VARCHAR(4),
     pickval VARCHAR(32),
     sister_field_id INT unsigned,

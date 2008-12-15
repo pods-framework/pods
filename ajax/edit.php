@@ -53,7 +53,7 @@ if ('move' == $action)
 }
 elseif ('edit' == $action)
 {
-    if ('id' == $name || 'name' == $name || 'body' == $name || 'type' == $name || 'page' == $name)
+    if ('id' == $name || 'name' == $name || 'body' == $name || 'type' == $name)
     {
         die("Error: $name is not editable.");
     }
@@ -98,6 +98,7 @@ elseif ('edit' == $action)
         SET
             name = '$name',
             label = '$label',
+            comment = '$comment',
             coltype = '$coltype',
             pickval = $pickval,
             sister_field_id = $sister_field_id,

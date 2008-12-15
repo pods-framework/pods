@@ -65,11 +65,16 @@
 
 #column_name,
 #column_label,
+#column_comment,
 #column_type,
 #column_pickval,
 #column_sister_field_id {
     width: 125px;
     border: 1px solid #E3E3E3;
+}
+
+#column_comment {
+    width: 255px;
 }
 
 .extras {
@@ -157,6 +162,12 @@ h3 {
     width: 30%;
     float: left;
     font-weight: bold;
+}
+
+.leftside .comment {
+    font-weight: normal;
+    font-size: 11px;
+    color: #999;
 }
 
 .rightside {

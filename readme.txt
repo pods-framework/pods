@@ -18,8 +18,7 @@ Visit the [Pods homepage](http://pods.uproot.us)
 
 = Installation =
 1. Unzip the `pods` folder into `wp-content/plugins/`
-2. Move .htaccess from `wp-content/plugins/pods/` to the Wordpress root directory
-3. Enable the plugin through Plugins > Installed
+2. Enable the plugin through Plugins > Installed
 
 == Frequently Asked Questions ==
 

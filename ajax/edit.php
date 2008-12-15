@@ -53,7 +53,7 @@ if ('move' == $action)
 }
 elseif ('edit' == $action)
 {
-    if ('id' == $name || 'name' == $name || 'body' == $name || 'type' == $name)
+    if ('id' == $name || 'type' == $name)
     {
         die("Error: $name is not editable.");
     }

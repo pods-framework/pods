@@ -445,11 +445,11 @@ function addWidget() {
                 alert(msg);
             }
             else {
-                var html = '<div class="extras" id="'+msg+'"><span class="uri">'+name+'</span>';
+                var html = '<div class="extras" id="'+msg+'"><div class="uri">'+name+'</div>';
                 html += '<div class="box hidden">';
-                html += '<textarea style="width:80%; height:140px"></textarea>';
+                html += '<textarea></textarea><br />';
                 html += '<input type="button" class="button" onclick="editWidget('+msg+')" value="Save" /> or ';
-                html += '<a href="javascript:;" onclick="dropWidget('+msg+')">drop page</a>';
+                html += '<a href="javascript:;" onclick="dropWidget('+msg+')">drop widget</a>';
                 html += '</div>'
                 jQuery("#widgetArea").append(html);
 

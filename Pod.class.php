@@ -588,7 +588,14 @@ class Pod
             }
             else
             {
-                $this->data[$key] = $tbl_cols[$key];
+                if (empty($this->data[$key]) && !empty($attr['default']))
+                {
+                    $this->data[$key] = $attr['default'];
+                }
+                else
+                {
+                    $this->data[$key] = $tbl_cols[$key];
+                }
                 $this->get_field($key);
             }
 

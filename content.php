@@ -207,9 +207,9 @@ SELECT
     SQL_CALC_FOUND_ROWS
     p.ID AS post_id, r.row_id, p.post_title, p.post_type, p.post_date
 FROM
-    wp_posts p
+    {$table_prefix}posts p
 INNER JOIN
-    wp_pod r ON r.post_id = p.ID
+    {$table_prefix}pod r ON r.post_id = p.ID
 WHERE
     $where
 ORDER BY

@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The Wordpress CMS Plugin
-Version: 1.2.8
+Version: 1.2.9
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -130,7 +130,7 @@ initialize();
 
 $pods_url = WP_PLUGIN_URL . '/pods';
 
-// Hook for adding admin menus
+// Hook for admin menu
 add_action('admin_menu', 'adminMenu');
 
 // Hook for redirection

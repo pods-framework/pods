@@ -1,5 +1,5 @@
 <?php
-$latest = 127;
+$latest = 130;
 $installed = 0;
 
 // Get the installed version

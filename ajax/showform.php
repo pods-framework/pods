@@ -78,9 +78,9 @@ if ($save)
         {
             $sql = "
             INSERT INTO
-                {$table_prefix}posts (post_date, post_date_gmt, post_type, post_title)
+                {$table_prefix}posts (post_date, post_date_gmt, post_modified, post_modified_gmt, post_type, post_title)
             VALUES
-                (NOW(), UTC_TIMESTAMP(), '$datatype', '$post_title')
+                (NOW(), UTC_TIMESTAMP(), NOW(), UTC_TIMESTAMP(), '$datatype', '$post_title')
             ";
             mysql_query($sql) or die('Error: Could not add new content');
             $post_id = mysql_insert_id();

@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The Wordpress CMS Plugin
-Version: 1.3.0
+Version: 1.3.1
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -29,9 +29,18 @@ function initialize()
     global $table_prefix;
     $dir = WP_PLUGIN_DIR . '/pods/sql';
 
+    $latest = 131;
+    $installed = 0;
+
+    // Get the installed version
+    $result = mysql_query("SELECT option_value FROM {$table_prefix}options WHERE option_name = 'pods_version' LIMIT 1");
+    if (0 < mysql_num_rows($result))
+    {
+        $row = mysql_fetch_assoc($result);
+        $installed = $row['option_value'];
+    }
     // Setup initial tables
-    $result = mysql_query("SHOW TABLES LIKE '{$table_prefix}pod_widgets'");
-    if (1 > mysql_num_rows($result))
+    else
     {
         $sql = file_get_contents("$dir/dump.sql");
         $sql = explode(";\n", str_replace('wp_', $table_prefix, $sql));
@@ -41,6 +50,9 @@ function initialize()
         }
     }
 
+    // Update tables
+    include("$dir/update.php");
+
     // Check for .htaccess
     if (!file_exists(ABSPATH . '.htaccess'))
     {
@@ -49,9 +61,6 @@ function initialize()
             echo 'Please copy the .htaccess file from plugins/pods/ to the Wordpress root folder!';
         }
     }
-
-    // Update tables
-    include("$dir/update.php");
 }
 
 function adminMenu()

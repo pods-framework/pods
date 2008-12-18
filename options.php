@@ -557,11 +557,11 @@ while ($row = mysql_fetch_assoc($result))
             <option value="" style="font-weight:bold; font-style:italic">-- Table --</option>
 <?php
 // Get pods, including country and state
-$result = mysql_query("SHOW TABLES LIKE '{$table_prefix}tbl_%'");
+$result = mysql_query("SHOW TABLES LIKE '{$table_prefix}pod_tbl_%'");
 while ($row = mysql_fetch_array($result))
 {
-    $offset = strlen($table_prefix) + 4;
-    $table_name = substr($row[0], $offset);
+    $table_name = explode('tbl_', $row[0]);
+    $table_name = $table_name[1];
 ?>
             <option value="<?php echo $table_name; ?>"><?php echo $table_name; ?></option>
 <?php

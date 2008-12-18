@@ -158,7 +158,7 @@ class Pod
         // Pod table dropdown
         else
         {
-            $sql = "SELECT id, name FROM {$this->prefix}tbl_$table ORDER BY name ASC";
+            $sql = "SELECT id, name FROM {$this->prefix}pod_tbl_$table ORDER BY name ASC";
         }
 
         $result = mysql_query($sql) or die(mysql_error());
@@ -212,7 +212,7 @@ class Pod
         }
         else
         {
-            $result = mysql_query("SELECT * FROM {$this->prefix}tbl_$table WHERE id IN ($term_ids)");
+            $result = mysql_query("SELECT * FROM {$this->prefix}pod_tbl_$table WHERE id IN ($term_ids)");
         }
 
         // Put all related items into an array
@@ -232,7 +232,7 @@ class Pod
         $datatype = $this->datatype;
         if (!empty($datatype))
         {
-            $result = mysql_query("SELECT * FROM {$this->prefix}tbl_$datatype WHERE id = $id LIMIT 1");
+            $result = mysql_query("SELECT * FROM {$this->prefix}pod_tbl_$datatype WHERE id = $id LIMIT 1");
             if (0 < mysql_num_rows($result))
             {
                 $row = mysql_fetch_assoc($result);
@@ -300,7 +300,7 @@ class Pod
             {$this->prefix}pod p
         $join
         INNER JOIN
-            {$this->prefix}tbl_$datatype t ON t.id = p.row_id
+            {$this->prefix}pod_tbl_$datatype t ON t.id = p.row_id
         WHERE
             p.datatype = $datatype_id
             $search
@@ -530,7 +530,7 @@ class Pod
         FROM
             {$this->prefix}pod p
         INNER JOIN
-            {$this->prefix}tbl_$datatype t ON t.id = p.row_id
+            {$this->prefix}pod_tbl_$datatype t ON t.id = p.row_id
         WHERE
             p.post_id = $post_id
         LIMIT
@@ -677,7 +677,7 @@ class Pod
         elseif ('desc' == $coltype)
         {
 ?>
-    <textarea class="form desc <?php echo $name; ?>"><?php echo $data; ?></textarea>
+    <textarea class="form desc <?php echo $name; ?>" id="desc-<?php echo $name; ?>"><?php echo $data; ?></textarea>
 <?php
         }
         // Multi-select list

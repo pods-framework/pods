@@ -79,17 +79,17 @@ elseif ('edit' == $action)
 
         if ($coltype != $old_coltype && 'pick' == $coltype)
         {
-            mysql_query("ALTER TABLE {$table_prefix}tbl_$dtname DROP COLUMN $field_name");
+            mysql_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname DROP COLUMN $field_name");
         }
         elseif ($coltype != $old_coltype && 'pick' == $old_coltype)
         {
-            mysql_query("ALTER TABLE {$table_prefix}tbl_$dtname ADD COLUMN $name $dbtype") or die('Error: Could not create column!');
+            mysql_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname ADD COLUMN $name $dbtype") or die('Error: Could not create column!');
             mysql_query("ALTER TABLE {$table_prefix}pod_fields SET sister_field_id = NULL WHERE sister_field_id = $field_id");
             mysql_query("DELETE FROM {$table_prefix}pod_rel WHERE field_id = $field_id");
         }
         else
         {
-            mysql_query("ALTER TABLE {$table_prefix}tbl_$dtname CHANGE $old_name $name $dbtype");
+            mysql_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname CHANGE $old_name $name $dbtype");
         }
 
         $sql = "

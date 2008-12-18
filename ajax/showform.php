@@ -175,12 +175,12 @@ if ($save)
                 if (isset($table_row_id))
                 {
                     // Update existing row
-                    mysql_query("UPDATE {$table_prefix}tbl_$datatype SET $key = '$val' WHERE id = $table_row_id LIMIT 1") or die('Error: ' . mysql_error());
+                    mysql_query("UPDATE {$table_prefix}pod_tbl_$datatype SET $key = '$val' WHERE id = $table_row_id LIMIT 1") or die('Error: ' . mysql_error());
                 }
                 else
                 {
                     // Insert new row to data table
-                    mysql_query("INSERT INTO {$table_prefix}tbl_$datatype ($key) VALUES ('$val')") or die('Error: Unable to add new table row');
+                    mysql_query("INSERT INTO {$table_prefix}pod_tbl_$datatype ($key) VALUES ('$val')") or die('Error: Unable to add new table row');
                     $table_row_id = mysql_insert_id();
 
                     // Insert new row to wp_pod table

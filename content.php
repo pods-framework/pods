@@ -26,6 +26,7 @@ Begin javascript code
 <link rel="stylesheet" type="text/css" href="<?php echo $pods_url; ?>/style.css" />
 <script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqmodal.js"></script>
 <script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqFileTree.js"></script>
+<script type="text/javascript" src="<?php echo $pods_url; ?>/js/nicEdit.js"></script>
 <script type="text/javascript">
 var datatype;
 var active_file;
@@ -80,6 +81,10 @@ function dropItem(post_id) {
 }
 
 function saveForm() {
+    for (i = 0; i < elements.length; i++) {
+        nicEditors.findEditor(elements[i].id).saveContent();
+    }
+
     var data = new Array();
 
     var i = 0;
@@ -139,6 +144,16 @@ function showform(dt, post_id) {
                 jQuery(".option").click(function() {
                     jQuery(this).toggleClass("active");
                 });
+
+                elements = jQuery(".desc");
+                var config = {
+                    iconsPath : "../wp-content/plugins/pods/images/nicEditorIcons.gif",
+                    buttonList : ['bold','italic','underline','fontFormat','left','center','right','justify','ol','ul','indent','outdent','image','xhtml']
+                };
+
+                for (i = 0; i < elements.length; i++) {
+                    new nicEditor(config).panelInstance(elements[i].id);
+                }
             }
         }
     });
@@ -187,7 +202,7 @@ if (!empty($_GET['keywords']))
     $where[] = "p.post_title LIKE '%" . mysql_real_escape_string(trim($_GET['keywords'])) . "%'";
 }
 
-$orderby = 'post_date DESC';
+$orderby = 'post_modified DESC';
 foreach ($_GET as $key => $val)
 {
     if ('orderby' != $key)
@@ -205,7 +220,7 @@ $where = implode(' AND ', $where);
 $sql = "
 SELECT
     SQL_CALC_FOUND_ROWS
-    p.ID AS post_id, r.row_id, p.post_title, p.post_type, p.post_date
+    p.ID AS post_id, r.row_id, p.post_title, p.post_type, p.post_modified
 FROM
     {$table_prefix}posts p
 INNER JOIN
@@ -252,7 +267,7 @@ foreach ($datatypes as $key => $name)
 ==================================================
 */
 $get_vals = implode('&', $get_vals);
-$order = array('post_title' => 'post_title', 'post_type' => 'post_type', 'post_date' => 'post_date');
+$order = array('post_title' => 'post_title', 'post_type' => 'post_type', 'post_modified' => 'post_modified');
 if (!empty($orderby))
 {
     if ('DESC' != substr($orderby, -4))
@@ -266,7 +281,7 @@ if (!empty($orderby))
             <th></th>
             <th><a href="?<?php echo $get_vals . '&orderby=' . $order['post_title']; ?>">Name</a></th>
             <th><a href="?<?php echo $get_vals . '&orderby=' . $order['post_type']; ?>">Pod</a></th>
-            <th><a href="?<?php echo $get_vals . '&orderby=' . $order['post_date']; ?>">Date</a></th>
+            <th><a href="?<?php echo $get_vals . '&orderby=' . $order['post_modified']; ?>">Modified</a></th>
             <th></th>
         </tr>
 <?php
@@ -282,7 +297,7 @@ while ($row = mysql_fetch_assoc($result))
                 <a href="/detail/?type=<?php echo $row['post_type']; ?>&id=<?php echo $row['row_id']; ?>" target="blank"><?php echo $row['post_title']; ?></a>
             </td>
             <td><?php echo $row['post_type']; ?></td>
-            <td><?php echo date("M d, Y", strtotime($row['post_date'])); ?></td>
+            <td><?php echo date("m/d/Y g:i A", strtotime($row['post_modified'])); ?></td>
             <td width="20"><div class="btn dropme" onclick="dropItem(<?php echo $row['post_id']; ?>)"></div></td>
         </tr>
 <?php

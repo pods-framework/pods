@@ -1,15 +1,4 @@
 <?php
-$latest = 130;
-$installed = 0;
-
-// Get the installed version
-$result = mysql_query("SELECT option_value FROM {$table_prefix}options WHERE option_name = 'pods_version' LIMIT 1");
-if (0 < mysql_num_rows($result))
-{
-    $row = mysql_fetch_assoc($result);
-    $installed = $row['option_value'];
-}
-
 if ($installed < $latest)
 {
     if ($installed < 126)
@@ -52,6 +41,20 @@ if ($installed < $latest)
     {
         // Add the "comment" option
         mysql_query("ALTER TABLE {$table_prefix}pod_fields ADD COLUMN comment VARCHAR(128) AFTER label");
+    }
+
+    if ($installed < 131)
+    {
+        $result = mysql_query("SHOW TABLES LIKE '{$table_prefix}tbl_%'");
+
+        if (0 < mysql_num_rows($result))
+        {
+            while ($row = mysql_fetch_array($result))
+            {
+                $rename = explode('tbl_', $row[0]);
+                mysql_query("RENAME TABLE $row[0] TO {$table_prefix}pod_tbl_$rename[1]");
+            }
+        }
     }
 
     // Save this version

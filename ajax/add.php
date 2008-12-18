@@ -27,7 +27,7 @@ if ('pod' == $type)
         mysql_query("INSERT INTO {$table_prefix}pod_types (name, tpl_list, tpl_detail) VALUES ('$name', '$tpl_list', '$tpl_detail')") or die('Error: Problem adding new pod.');
         $pod_id = mysql_insert_id();
 
-        mysql_query("CREATE TABLE {$table_prefix}tbl_$name (id int unsigned auto_increment primary key, name varchar(128), body text)") or die('Error: Problem adding pod database table.');
+        mysql_query("CREATE TABLE {$table_prefix}pod_tbl_$name (id int unsigned auto_increment primary key, name varchar(128), body text)") or die('Error: Problem adding pod database table.');
         mysql_query("INSERT INTO {$table_prefix}pod_fields (datatype, name, coltype, required) VALUES ($pod_id, 'name', 'txt', 1),($pod_id, 'body', 'desc', 0)") or die('Error: Problem adding name and body columns.');
 
         die("$pod_id"); // return as string
@@ -95,7 +95,7 @@ else
             'desc' => 'text'
         );
         $dbtype = $dbtypes[$coltype];
-        mysql_query("ALTER TABLE {$table_prefix}tbl_$dtname ADD COLUMN $name $dbtype") or die('Error: Could not create column!');
+        mysql_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname ADD COLUMN $name $dbtype") or die('Error: Could not create column!');
     }
     else
     {

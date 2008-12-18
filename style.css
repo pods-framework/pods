@@ -124,11 +124,6 @@
     border-top: 1px solid #E3E3E3;
 }
 
-#podArea .rightside {
-    float: left;
-    width: 70%;
-}
-
 #podBox #new_pod,
 #pageBox #new_page,
 #widgetBox #new_widget {
@@ -148,13 +143,25 @@
     padding: 5px 0;
 }
 
+/* NicEdit */
+.nicEdit-panel {
+    background: #F9F9F9;
+}
+
+.nicEdit-button {
+    background: #F9F9F9;
+}
+
+.nicEdit-main {
+    background: #fff;
+}
+
 /* Public-facing */
 h3 {
     margin: 0 0 10px 0;
 }
 
 .form {
-    margin: 0 0 5px 0;
     border: 1px solid #E3E3E3;
 }
 
@@ -172,6 +179,7 @@ h3 {
 
 .rightside {
     float: left;
+    margin: 0 0 5px 0;
     width: 70%;
 }
 

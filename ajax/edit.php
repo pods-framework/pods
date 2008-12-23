@@ -18,7 +18,7 @@ $dbtypes = array(
 
 if ('move' == $action)
 {
-    $result = mysql_query("SELECT id FROM {$table_prefix}pod_fields WHERE datatype = $datatype ORDER BY weight");
+    $result = pod_query("SELECT id FROM {$table_prefix}pod_fields WHERE datatype = $datatype ORDER BY weight");
     while ($row = mysql_fetch_assoc($result))
     {
         $fields[] = $row['id'];
@@ -48,7 +48,7 @@ if ('move' == $action)
     foreach ($fields as $key => $val)
     {
         $weight = ($key * 1);
-        mysql_query("UPDATE {$table_prefix}pod_fields SET weight = $weight WHERE id = $val LIMIT 1");
+        pod_query("UPDATE {$table_prefix}pod_fields SET weight = $weight WHERE id = $val LIMIT 1");
     }
 }
 elseif ('edit' == $action)
@@ -58,14 +58,14 @@ elseif ('edit' == $action)
         die("Error: $name is not editable.");
     }
 
-    $result = mysql_query("SELECT id FROM {$table_prefix}pod_fields WHERE datatype = $datatype AND id != $field_id AND name = '$name' LIMIT 1");
+    $result = pod_query("SELECT id FROM {$table_prefix}pod_fields WHERE datatype = $datatype AND id != $field_id AND name = '$name' LIMIT 1");
     if (0 < mysql_num_rows($result))
     {
         die("Error: The $name column cannot be cloned.");
     }
 
     $sql = "SELECT name, coltype FROM {$table_prefix}pod_fields WHERE id = $field_id LIMIT 1";
-    $result = mysql_query($sql) or die(mysql_error());
+    $result = pod_query($sql) or die(mysql_error());
 
     if (0 < mysql_num_rows($result))
     {
@@ -75,21 +75,21 @@ elseif ('edit' == $action)
 
         $dbtype = $dbtypes[$coltype];
         $pickval = ('pick' != $coltype || empty($pickval)) ? 'NULL' : "'$pickval'";
-        $sister_field_id = ('pick' != $coltype || empty($sister_field_id)) ? 'NULL' : "'$sister_field_id'";
+        $sister_field_id = ('pick' != $coltype || empty($sister_field_id)) ? 0 : "'$sister_field_id'";
 
         if ($coltype != $old_coltype && 'pick' == $coltype)
         {
-            mysql_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname DROP COLUMN $field_name");
+            pod_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname DROP COLUMN $field_name");
         }
         elseif ($coltype != $old_coltype && 'pick' == $old_coltype)
         {
-            mysql_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname ADD COLUMN $name $dbtype") or die('Error: Could not create column!');
-            mysql_query("ALTER TABLE {$table_prefix}pod_fields SET sister_field_id = NULL WHERE sister_field_id = $field_id");
-            mysql_query("DELETE FROM {$table_prefix}pod_rel WHERE field_id = $field_id");
+            pod_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname ADD COLUMN $name $dbtype", 'Cannot create column');
+            pod_query("ALTER TABLE {$table_prefix}pod_fields SET sister_field_id = NULL WHERE sister_field_id = $field_id");
+            pod_query("DELETE FROM {$table_prefix}pod_rel WHERE field_id = $field_id");
         }
         else
         {
-            mysql_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname CHANGE $old_name $name $dbtype");
+            pod_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname CHANGE $old_name $name $dbtype");
         }
 
         $sql = "
@@ -108,16 +108,16 @@ elseif ('edit' == $action)
         LIMIT
             1
         ";
-        mysql_query($sql) or die('Error: Problem editing the column.');
+        pod_query($sql, 'Cannot edit column');
     }
 }
 elseif ('editpage' == $action)
 {
-    mysql_query("UPDATE {$table_prefix}pod_pages SET phpcode = '$phpcode' WHERE id = $page_id LIMIT 1");
+    pod_query("UPDATE {$table_prefix}pod_pages SET phpcode = '$phpcode' WHERE id = $page_id LIMIT 1");
 }
 elseif ('editwidget' == $action)
 {
-    mysql_query("UPDATE {$table_prefix}pod_widgets SET phpcode = '$phpcode' WHERE id = $widget_id LIMIT 1");
+    pod_query("UPDATE {$table_prefix}pod_widgets SET phpcode = '$phpcode' WHERE id = $widget_id LIMIT 1");
 }
 else
 {
@@ -133,6 +133,6 @@ else
     LIMIT
         1
     ";
-    mysql_query($sql) or die('Error: Problem changing the pod description.');
+    pod_query($sql, 'Cannot change Pod details');
 }
 

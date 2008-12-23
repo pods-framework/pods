@@ -2,7 +2,7 @@
 $upload_dir = wp_upload_dir();
 $upload_dir = str_replace(get_option('siteurl'), '', $upload_dir['baseurl']);
 
-$result = mysql_query("SELECT id, name FROM {$table_prefix}pod_types");
+$result = pod_query("SELECT id, name FROM {$table_prefix}pod_types");
 while ($row = mysql_fetch_assoc($result))
 {
     $datatypes[$row['id']] = $row['name'];
@@ -186,7 +186,7 @@ Begin browse area
 require('Pod.class.php');
 
 $Record = new Pod();
-$Record->page = empty($_GET['p']) ? 1 : $_GET['p'];
+$Record->page = empty($_GET['pg']) ? 1 : $_GET['pg'];
 $limit = (15 * ($Record->page - 1)) . ',15';
 $Record->type = '';
 
@@ -232,22 +232,22 @@ ORDER BY
 LIMIT
     $limit
 ";
-$result = mysql_query($sql) or die(mysql_error());
+$result = pod_query($sql);
 
-$Record->total_rows = mysql_query("SELECT FOUND_ROWS()");
+$Record->total_rows = pod_query("SELECT FOUND_ROWS()");
 ?>
     <div style="float:left; width:50%">
         <?php echo $Record->getPagination(); ?>
     </div>
     <div id="filterForm" style="float:left; width:50%; text-align:right">
-        <form name="filters" method="get">
+        <form method="get">
             Filter by:
             <select class="pick_module" name="pod">
                 <option value="">-- All pods --</option>
 <?php
 foreach ($datatypes as $key => $name)
 {
-    $selected = ($name == $datatype) ? ' selected' : '';
+    $selected = ($name == $_GET['pod']) ? ' selected' : '';
 ?>
                 <option value="<?php echo $name; ?>"<?php echo $selected; ?>><?php echo $name; ?></option>
 <?php
@@ -294,7 +294,7 @@ while ($row = mysql_fetch_assoc($result))
                 <div class="btn editme" onclick="editItem('<?php echo $row['post_type']; ?>', <?php echo $row['post_id']; ?>)"></div>
             </td>
             <td>
-                <a href="/detail/?type=<?php echo $row['post_type']; ?>&id=<?php echo $row['row_id']; ?>" target="blank"><?php echo $row['post_title']; ?></a>
+                <?php echo $row['post_title']; ?>
             </td>
             <td><?php echo $row['post_type']; ?></td>
             <td><?php echo date("m/d/Y g:i A", strtotime($row['post_modified'])); ?></td>

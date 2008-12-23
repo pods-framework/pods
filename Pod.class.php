@@ -30,12 +30,12 @@ class Pod
     {
         global $table_prefix;
         $this->prefix = $table_prefix;
-        $this->page = empty($_GET['p']) ? 1 : $_GET['p'];
+        $this->page = empty($_GET['pg']) ? 1 : $_GET['pg'];
 
         if (null != $datatype)
         {
             $this->datatype = trim($datatype);
-            $result = mysql_query("SELECT id FROM {$this->prefix}pod_types WHERE name = '$datatype' LIMIT 1");
+            $result = pod_query("SELECT id FROM {$this->prefix}pod_types WHERE name = '$datatype' LIMIT 1");
             $row = mysql_fetch_assoc($result);
             $this->datatype_id = $row['id'];
 
@@ -72,7 +72,7 @@ class Pod
             $datatype = $this->datatype;
             $datatype_id = $this->datatype_id;
 
-            $result = mysql_query("SELECT id, pickval FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND name = '$name' LIMIT 1") or die(mysql_error());
+            $result = pod_query("SELECT id, pickval FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND name = '$name' LIMIT 1");
             if (0 < mysql_num_rows($result))
             {
                 $row = mysql_fetch_assoc($result);
@@ -124,7 +124,7 @@ class Pod
 
             $dt = $this->datatype_id;
             $row_id = $this->print_field('id');
-            $result = mysql_query("SELECT post_id FROM {$this->prefix}pod WHERE datatype = $dt AND row_id = '$row_id' LIMIT 1");
+            $result = pod_query("SELECT post_id FROM {$this->prefix}pod WHERE datatype = $dt AND row_id = '$row_id' LIMIT 1");
             if (0 < mysql_num_rows($result))
             {
                 $row = mysql_fetch_assoc($result);
@@ -161,7 +161,7 @@ class Pod
             $sql = "SELECT id, name FROM {$this->prefix}pod_tbl_$table ORDER BY name ASC";
         }
 
-        $result = mysql_query($sql) or die(mysql_error());
+        $result = pod_query($sql);
         while ($row = mysql_fetch_assoc($result))
         {
             if (!empty($term_ids))
@@ -188,7 +188,7 @@ class Pod
         $post_id = $this->get_post_id();
         $row_id = $this->data['id'];
 
-        $result = mysql_query("SELECT term_id FROM {$this->prefix}pod_rel WHERE post_id = $post_id AND field_id = $field_id") or die(mysql_error());
+        $result = pod_query("SELECT term_id FROM {$this->prefix}pod_rel WHERE post_id = $post_id AND field_id = $field_id");
 
         // Find all related IDs
         if (0 < mysql_num_rows($result))
@@ -208,11 +208,11 @@ class Pod
         // The default table is wp_posts
         if (is_numeric($table))
         {
-            $result = mysql_query("SELECT term_id AS id, name FROM {$this->prefix}terms WHERE term_id IN ($term_ids)");
+            $result = pod_query("SELECT term_id AS id, name FROM {$this->prefix}terms WHERE term_id IN ($term_ids)");
         }
         else
         {
-            $result = mysql_query("SELECT * FROM {$this->prefix}pod_tbl_$table WHERE id IN ($term_ids)");
+            $result = pod_query("SELECT * FROM {$this->prefix}pod_tbl_$table WHERE id IN ($term_ids)");
         }
 
         // Put all related items into an array
@@ -232,7 +232,7 @@ class Pod
         $datatype = $this->datatype;
         if (!empty($datatype))
         {
-            $result = mysql_query("SELECT * FROM {$this->prefix}pod_tbl_$datatype WHERE id = $id LIMIT 1");
+            $result = pod_query("SELECT * FROM {$this->prefix}pod_tbl_$datatype WHERE id = $id LIMIT 1");
             if (0 < mysql_num_rows($result))
             {
                 $row = mysql_fetch_assoc($result);
@@ -252,7 +252,7 @@ class Pod
     Search and filter records
     ==================================================
     */
-    function findRecords($orderby = 'id DESC', $rpp = null)
+    function findRecords($orderby = 'id DESC', $rpp = null, $where = null)
     {
         $page = $this->page;
         $datatype = $this->datatype;
@@ -260,9 +260,10 @@ class Pod
         $this->rpp = is_numeric($rpp) ? $rpp : $this->rpp;
         $rows_per_page = $this->rpp;
         $limit = ($rows_per_page * ($page - 1)) . ', ' . $rows_per_page;
+        $where = empty($where) ? null : "AND t.$where";
 
         // Get this datatype's fields
-        $result = mysql_query("SELECT name FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id");
+        $result = pod_query("SELECT name FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id");
         while ($row = mysql_fetch_assoc($result))
         {
             $fields[] = $row['name'];
@@ -279,7 +280,7 @@ class Pod
                 {
                     if (!empty($search))
                     {
-                        $search = "AND t.name LIKE '%$search%'";
+                        $search = "AND (t.name LIKE '%$search%' OR t.body LIKE '%$search%')";
                     }
                 }
                 elseif (in_array($key, $fields))
@@ -304,13 +305,14 @@ class Pod
         WHERE
             p.datatype = $datatype_id
             $search
+            $where
         ORDER BY
             t.$orderby
         LIMIT
             $limit
         ";
-        $this->result = mysql_query($sql) or die(mysql_error());
-        $this->total_rows = mysql_query("SELECT FOUND_ROWS()");
+        $this->result = pod_query($sql);
+        $this->total_rows = pod_query("SELECT FOUND_ROWS()");
     }
 
     /*
@@ -347,7 +349,7 @@ class Pod
         $request_uri = "?type=$type&";
         foreach ($_GET as $key => $val)
         {
-            if ('p' != $key && 'type' != $key && !empty($val))
+            if ('pg' != $key && 'type' != $key && !empty($val))
             {
                 $request_uri .= $key . '=' . urlencode($val) . '&';
             }
@@ -358,19 +360,19 @@ class Pod
         if (1 < $page)
         {
 ?>
-    <a href="<?php echo $request_uri; ?>p=1" class="pageNum firstPage">1</a>
+    <a href="<?php echo $request_uri; ?>pg=1" class="pageNum firstPage">1</a>
 <?php
         }
         if (1 < ($page - 100))
         {
 ?>
-    <a href="<?php echo $request_uri; ?>p=<?= ($page - 100) ?>" class="pageNum"><?= ($page - 100) ?></a>
+    <a href="<?php echo $request_uri; ?>pg=<?= ($page - 100) ?>" class="pageNum"><?= ($page - 100) ?></a>
 <?php
         }
         if (1 < ($page - 10))
         {
 ?>
-    <a href="<?php echo $request_uri; ?>p=<?= ($page - 10) ?>" class="pageNum"><?= ($page - 10) ?></a>
+    <a href="<?php echo $request_uri; ?>pg=<?= ($page - 10) ?>" class="pageNum"><?= ($page - 10) ?></a>
 <?php
         }
         for ($i = 2; $i > 0; $i--)
@@ -378,7 +380,7 @@ class Pod
             if (1 < ($page - $i))
             {
 ?>
-    <a href="<?php echo $request_uri; ?>p=<?= ($page - $i) ?>" class="pageNum"><?= ($page - $i) ?></a>
+    <a href="<?php echo $request_uri; ?>pg=<?= ($page - $i) ?>" class="pageNum"><?= ($page - $i) ?></a>
 <?php
             }
         }
@@ -390,26 +392,26 @@ class Pod
             if ($total_pages > ($page + $i))
             {
 ?>
-    <a href="<?php echo $request_uri; ?>p=<?= ($page + $i) ?>" class="pageNum"><?= ($page + $i) ?></a>
+    <a href="<?php echo $request_uri; ?>pg=<?= ($page + $i) ?>" class="pageNum"><?= ($page + $i) ?></a>
 <?php
             }
         }
         if ($total_pages > ($page + 10))
         {
 ?>
-    <a href="<?php echo $request_uri; ?>p=<?= ($page + 10) ?>" class="pageNum"><?= ($page + 10) ?></a>
+    <a href="<?php echo $request_uri; ?>pg=<?= ($page + 10) ?>" class="pageNum"><?= ($page + 10) ?></a>
 <?php
         }
         if ($total_pages > ($page + 100))
         {
 ?>
-    <a href="<?php echo $request_uri; ?>p=<?= ($page + 100) ?>" class="pageNum"><?= ($page + 100) ?></a>
+    <a href="<?php echo $request_uri; ?>pg=<?= ($page + 100) ?>" class="pageNum"><?= ($page + 100) ?></a>
 <?php
         }
         if ($page < $total_pages)
         {
 ?>
-    <a href="<?php echo $request_uri; ?>p=<?= $total_pages ?>" class="pageNum lastPage"><?= $total_pages ?></a>
+    <a href="<?php echo $request_uri; ?>pg=<?= $total_pages ?>" class="pageNum lastPage"><?= $total_pages ?></a>
 <?php
         }
 ?>
@@ -434,7 +436,7 @@ class Pod
 <?php
         if (empty($filters))
         {
-            $result = mysql_query("SELECT list_filters FROM {$this->prefix}pod_types WHERE id = $datatype_id LIMIT 1");
+            $result = pod_query("SELECT list_filters FROM {$this->prefix}pod_types WHERE id = $datatype_id LIMIT 1");
             $row = mysql_fetch_assoc($result);
             $filters = $row['list_filters'];
         }
@@ -445,7 +447,7 @@ class Pod
             foreach ($filters as $key => $val)
             {
                 $field_name = trim($val);
-                $result = mysql_query("SELECT pickval FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND name = '$field_name' LIMIT 1");
+                $result = pod_query("SELECT pickval FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND name = '$field_name' LIMIT 1");
                 $row = mysql_fetch_assoc($result);
                 if (!empty($row['pickval']))
                 {
@@ -518,7 +520,7 @@ class Pod
         ORDER BY
             f.weight ASC
         ";
-        $result = mysql_query($sql) or die(mysql_error());
+        $result = pod_query($sql);
         while ($row = mysql_fetch_assoc($result))
         {
             $fields[$row['name']] = $row;
@@ -536,7 +538,7 @@ class Pod
         LIMIT
             1
         ";
-        $result = mysql_query($sql) or die(mysql_error());
+        $result = pod_query($sql);
         $tbl_cols = mysql_fetch_assoc($result);
 ?>
     <div><input type="hidden" class="form num post_id" value="<?php echo $post_id; ?>" /></div>
@@ -561,11 +563,11 @@ class Pod
                 $term_ids = array();
                 $table = $pickval;
 
-                $result = mysql_query("SELECT id FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND name = '$key' LIMIT 1") or die(mysql_error());
+                $result = pod_query("SELECT id FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND name = '$key' LIMIT 1");
                 $row = mysql_fetch_assoc($result);
                 $field_id = $row['id'];
 
-                $result = mysql_query("SELECT term_id FROM {$this->prefix}pod_rel WHERE post_id = $post_id AND field_id = $field_id");
+                $result = pod_query("SELECT term_id FROM {$this->prefix}pod_rel WHERE post_id = $post_id AND field_id = $field_id");
                 while ($row = mysql_fetch_assoc($result))
                 {
                     $term_ids[] = $row['term_id'];
@@ -663,7 +665,7 @@ class Pod
 ?>
     <input type="text" class="form file <?php echo $name; ?>" value="<?php echo $data; ?>" />
     <a href="javascript:;" onclick="active_file = '<?php echo $name; ?>'; jQuery('#dialog').jqmShow()">select</a> after
-    <a href="media-upload.php" class="thickbox">uploading</a>
+    <a href="media-upload.php" class="thickbox" target="blank">uploading</a>
 <?php
         }
         // Standard text box
@@ -717,7 +719,7 @@ class Pod
         {
             if (empty($code))
             {
-                $result = mysql_query("SELECT tpl_$tpl AS template FROM {$this->prefix}pod_types WHERE name = '{$this->datatype}' LIMIT 1");
+                $result = pod_query("SELECT tpl_$tpl AS template FROM {$this->prefix}pod_types WHERE name = '{$this->datatype}' LIMIT 1");
                 $row = mysql_fetch_assoc($result);
                 $code = $row['template'];
             }
@@ -767,14 +769,14 @@ class Pod
                 {
                     $value = $this->get_field($name);
                     $widget = mysql_real_escape_string(trim($widget));
-                    $result = mysql_query("SELECT phpcode FROM {$this->prefix}pod_widgets WHERE name = '$widget' LIMIT 1");
+                    $result = pod_query("SELECT phpcode FROM {$this->prefix}pod_widgets WHERE name = '$widget' LIMIT 1");
                     if (0 < mysql_num_rows($result))
                     {
                         $row = mysql_fetch_assoc($result);
                         $phpcode = $row['phpcode'];
 
                         ob_start();
-                        eval($phpcode);
+                        eval("?>$phpcode");
                         $value = ob_get_clean();
                     }
                 }

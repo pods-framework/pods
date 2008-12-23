@@ -42,7 +42,7 @@ function saveForm() {
                 alert(msg);
             }
             else {
-                jQuery("#module_form").html("Thanks for your support!");
+                window.location = "";
             }
         }
     });

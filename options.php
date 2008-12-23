@@ -1,20 +1,20 @@
 <?php
 // Get all datatypes
-$result = mysql_query("SELECT * FROM {$table_prefix}pod_types ORDER BY name");
+$result = pod_query("SELECT * FROM {$table_prefix}pod_types ORDER BY name");
 while ($row = mysql_fetch_assoc($result))
 {
     $datatypes[$row['id']] = $row['name'];
 }
 
 // Get all pages
-$result = mysql_query("SELECT * FROM {$table_prefix}pod_pages ORDER BY uri");
+$result = pod_query("SELECT * FROM {$table_prefix}pod_pages ORDER BY uri");
 while ($row = mysql_fetch_assoc($result))
 {
     $pages[$row['id']] = array('uri' => $row['uri'], 'phpcode' => $row['phpcode']);
 }
 
 // Get all widgets
-$result = mysql_query("SELECT * FROM {$table_prefix}pod_widgets ORDER BY name");
+$result = pod_query("SELECT * FROM {$table_prefix}pod_widgets ORDER BY name");
 while ($row = mysql_fetch_assoc($result))
 {
     $widgets[$row['id']] = array('name' => $row['name'], 'phpcode' => $row['phpcode']);
@@ -546,7 +546,7 @@ FROM
 INNER JOIN
     {$table_prefix}terms t ON t.term_id = tx.parent
 ";
-$result = mysql_query($sql) or trigger_error(mysql_error(), E_USER_ERROR);
+$result = pod_query($sql);
 while ($row = mysql_fetch_assoc($result))
 {
 ?>
@@ -557,7 +557,7 @@ while ($row = mysql_fetch_assoc($result))
             <option value="" style="font-weight:bold; font-style:italic">-- Table --</option>
 <?php
 // Get pods, including country and state
-$result = mysql_query("SHOW TABLES LIKE '{$table_prefix}pod_tbl_%'");
+$result = pod_query("SHOW TABLES LIKE '{$table_prefix}pod_tbl_%'");
 while ($row = mysql_fetch_array($result))
 {
     $table_name = explode('tbl_', $row[0]);
@@ -598,9 +598,11 @@ Begin tabbed navigation
 ==================================================
 -->
 <div id="nav">
-    <div class="navTab active" rel="podArea">Manage Pods</div>
-    <div class="navTab" rel="pageArea">Manage Pages</div>
-    <div class="navTab" rel="widgetArea">Manage Widgets</div>
+    <div class="navTab active" rel="podArea">Pods</div>
+    <div class="navTab" rel="blockArea">Blocks</div>
+    <div class="navTab" rel="pageArea">PodPages</div>
+    <div class="navTab" rel="widgetArea">Widgets</div>
+    <div class="navTab" rel="settingsArea">Settings</div>
     <div class="clear"><!--clear--></div>
 </div>
 
@@ -654,11 +656,41 @@ if (isset($datatypes))
 
 <!--
 ==================================================
-Begin custom page area
+Begin block area
+==================================================
+-->
+<div id="blockArea" class="area hidden">
+    <div><input type="button" class="button" onclick="jQuery('#blockBox').jqmShow()" value="Add new block" /></div>
+    <div class="helper">Blocks are chunks of code or content that are placed into layout areas.</div>
+    <p>Coming soon!</p>
+<?php
+if (isset($blocks))
+{
+    foreach ($blocks as $id => $val)
+    {
+?>
+    <div class="extras" id="<?php echo $id; ?>">
+        <div class="uri"><?php echo $val['uri']; ?></div>
+        <div class="box hidden">
+            <textarea><?php echo $val['phpcode']; ?></textarea><br />
+            <input type="button" class="button" onclick="editBlock(<?php echo $id; ?>)" value="Save" />
+            or <a href="javascript:;" onclick="dropBlock(<?php echo $id; ?>)">drop block</a>
+        </div>
+    </div>
+<?php
+    }
+}
+?>
+</div>
+
+<!--
+==================================================
+Begin page area
 ==================================================
 -->
 <div id="pageArea" class="area hidden">
     <div><input type="button" class="button" onclick="jQuery('#pageBox').jqmShow()" value="Add new page" /></div>
+    <div class="helper">Create custom pages and define the layout for each page.</div>
 <?php
 if (isset($pages))
 {
@@ -670,14 +702,7 @@ if (isset($pages))
         <div class="box hidden">
             <textarea><?php echo $val['phpcode']; ?></textarea><br />
             <input type="button" class="button" onclick="editPage(<?php echo $id; ?>)" value="Save" />
-<?php
-        if (!in_array($val['uri'], array('/list/', '/detail/')))
-        {
-?>
             or <a href="javascript:;" onclick="dropPage(<?php echo $id; ?>)">drop page</a>
-<?php
-        }
-?>
         </div>
     </div>
 <?php
@@ -693,6 +718,7 @@ Begin widget area
 -->
 <div id="widgetArea" class="area hidden">
     <div><input type="button" class="button" onclick="jQuery('#widgetBox').jqmShow()" value="Add new widget" /></div>
+    <div class="helper">Used in combination with magic tags, widgets allow you to modify column values.</div>
 <?php
 if (isset($widgets))
 {
@@ -711,5 +737,14 @@ if (isset($widgets))
     }
 }
 ?>
+</div>
+
+<!--
+==================================================
+Begin settings area
+==================================================
+-->
+<div id="settingsArea" class="area hidden">
+    <p>Coming soon!</p>
 </div>
 

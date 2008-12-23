@@ -89,15 +89,24 @@
     background: url(images/menu-open.png) 0 5px no-repeat;
 }
 
+.helper {
+    font-weight: bold;
+    font-style: italic;
+    margin-bottom: 5px;
+}
+
 #podArea .button,
 #pageArea .button,
-#widgetArea .button {
+#blockArea .button,
+#widgetArea .button,
+#layoutArea .button {
     margin-bottom: 5px;
 }
 
 #podArea textarea,
 #pageArea textarea,
 #widgetArea textarea,
+#blockArea textarea,
 .desc {
     width: 99%;
     height: 140px;
@@ -109,16 +118,19 @@
     border: 1px solid #E3E3E3;
 }
 
-#podArea .tabs {
+#podArea .tabs,
+#layoutArea .tabs {
     float: left;
     width: 30%;
 }
 
-#podArea .tabs .active {
+#podArea .tabs .active,
+#layoutArea .tabs .active {
     background: white;
 }
 
-#podArea .tab {
+#podArea .tab,
+#layoutArea .tab {
     padding: 5px 10px;
     margin-right: 20px;
     border-top: 1px solid #E3E3E3;

@@ -103,8 +103,8 @@ INSERT INTO wp_pod_fields VALUES (12,2,'job_title','Job Title',NULL,'txt','',0,0
 INSERT INTO wp_pod_fields VALUES (13,2,'employer','Employer',NULL,'txt','',0,0,4);
 INSERT INTO wp_pod_fields VALUES (14,2,'phone','phone',NULL,'txt','',0,0,5);
 INSERT INTO wp_pod_fields VALUES (15,2,'email','email',NULL,'txt','',0,0,6);
-INSERT INTO wp_pod_pages VALUES (1,'/list/','$type = empty($type) ? \'news\' : $type;\n\n$Record = new Pod($type);\n$Record->findRecords(\'id DESC\');\n?>\n\n<h2><?php echo ucwords($type); ?> Listing</h2>\n\n<?php\necho $Record->getFilters();\necho $Record->getPagination();\necho $Record->showTemplate(\'list\');');
-INSERT INTO wp_pod_pages VALUES (2,'/detail/','if (ctype_digit($id))\n{\n    $type = empty($type) ? \'news\' : $type;\n    $Record = new Pod($type, $id);\n    echo $Record->showTemplate(\'detail\');\n}');
-INSERT INTO wp_pod_widgets VALUES (1,'format_date','echo date(\"m/d/Y\", strtotime($value));');
-INSERT INTO wp_pod_widgets VALUES (2,'mp3_player','?>\n<object type=\"application/x-shockwave-flash\" data=\"http://flash-mp3-player.net/medias/player_mp3_maxi.swf\" width=\"25\" height=\"20\"><param name=\"movie\" value=\"http://flash-mp3-player.net/medias/player_mp3_maxi.swf\" /><param name=\"FlashVars\" value=\"mp3=<?php echo $value; ?>&width=25&showslider=0\" /></object>');
+INSERT INTO wp_pod_pages VALUES (1,'/list/','<?php\n$type = empty($type) ? \'news\' : $type;\n\n$Record = new Pod($type);\n$Record->findRecords(\'id DESC\');\n?>\n\n<h2><?php echo ucwords($type); ?> Listing</h2>\n\n<?php\necho $Record->getFilters();\necho $Record->getPagination();\necho $Record->showTemplate(\'list\');');
+INSERT INTO wp_pod_pages VALUES (2,'/detail/','<?php\nif (ctype_digit($id))\n{\n    $type = empty($type) ? \'news\' : $type;\n    $Record = new Pod($type, $id);\n    echo $Record->showTemplate(\'detail\');\n}');
+INSERT INTO wp_pod_widgets VALUES (1,'format_date','<?php\necho date(\"m/d/Y\", strtotime($value));');
+INSERT INTO wp_pod_widgets VALUES (2,'mp3_player','<object type=\"application/x-shockwave-flash\" data=\"http://flash-mp3-player.net/medias/player_mp3_maxi.swf\" width=\"25\" height=\"20\"><param name=\"movie\" value=\"http://flash-mp3-player.net/medias/player_mp3_maxi.swf\" /><param name=\"FlashVars\" value=\"mp3=<?php echo $value; ?>&width=25&showslider=0\" /></object>');
 

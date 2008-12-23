@@ -270,7 +270,9 @@ function loadColumn(col) {
             if ("name" == name || "body" == name) {
                 jQuery("#column_name").attr("disabled", true);
                 jQuery("#column_type").attr("disabled", true);
-                jQuery("#column_required").attr("disabled", true);
+                if ("name" == name) {
+                    jQuery("#column_required").attr("disabled", true);
+                }
             }
             else {
                 jQuery("#column_name").attr("disabled", false);
@@ -280,7 +282,7 @@ function loadColumn(col) {
             if ("" != pickval) {
                 jQuery("#column_pickval").show();
             }
-            if ("" != sister_field_id) {
+            if ("0" != sister_field_id) {
                 sisterFields(sister_field_id);
             }
             column_id = col;

@@ -12,7 +12,7 @@ $no_results_error   Triggered when results = 0
 function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_results_error = null)
 {
     $result = mysql_query($sql) or die("Error: $error; SQL: $sql; Response: " . mysql_error());
-    if (0 < mysql_num_rows($result))
+    if (0 < @mysql_num_rows($result))
     {
         if (!empty($results_error))
         {

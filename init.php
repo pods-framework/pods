@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The Wordpress CMS Plugin
-Version: 1.3.2
+Version: 1.3.3
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,12 +23,13 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+$latest = 133;
 
 function initialize()
 {
-    global $pods_url, $table_prefix;
+    global $table_prefix, $latest;
+    $dir = WP_PLUGIN_DIR . '/pods/sql';
 
-    $latest = 132;
     $installed = 0;
 
     // Get the installed version
@@ -41,7 +42,7 @@ function initialize()
         // Update tables
         if ($installed < $latest)
         {
-            include("$pods_url/sql/update.php");
+            include("$dir/update.php");
         }
     }
     // Setup initial tables
@@ -101,6 +102,17 @@ function edit_content_page()
 {
     global $pods_url, $table_prefix;
     include WP_PLUGIN_DIR . '/pods/content.php';
+}
+
+function add_pods_meta()
+{
+    global $latest;
+
+    $latest = "$latest";
+    $latest = $latest[0] . '.' . $latest[1] . '.' . $latest[2];
+?>
+<meta name="cms" content="Pods <?php echo $latest; ?>" />
+<?php
 }
 
 function pods_title($title, $sep, $seplocation)
@@ -171,6 +183,9 @@ $pods_url = WP_PLUGIN_URL . '/pods';
 
 // Hook for admin menu
 add_action('admin_menu', 'adminMenu');
+
+// Hook for Pods branding
+add_action('wp_head', 'add_pods_meta');
 
 // Hook for redirection
 add_action('template_redirect', 'redirect');

@@ -12,10 +12,10 @@ if ($field_id = (int) $_GET['col'])
 {
     $result = pod_query("SELECT name FROM {$table_prefix}pod_fields WHERE id = $field_id LIMIT 1");
     $row = mysql_fetch_assoc($result);
-    $field_name = $row['field_name'];
+    $field_name = $row['name'];
 
     pod_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname DROP COLUMN $field_name");
-    pod_query("ALTER TABLE {$table_prefix}pod_fields SET sister_field_id = NULL WHERE sister_field_id = $field_id");
+    pod_query("UPDATE {$table_prefix}pod_fields SET sister_field_id = NULL WHERE sister_field_id = $field_id");
     pod_query("DELETE FROM {$table_prefix}pod_fields WHERE id = $field_id LIMIT 1");
     pod_query("DELETE FROM {$table_prefix}pod_rel WHERE field_id = $field_id");
 }
@@ -67,7 +67,7 @@ elseif ($datatype_id = (int) $_GET['pod'])
     {
         $fields .= ', ' . $row['id'];
     }
-    pod_query("ALTER TABLE {$table_prefix}pod_fields SET sister_field_id = NULL WHERE sister_field_id IN ($fields)");
+    pod_query("UPDATE {$table_prefix}pod_fields SET sister_field_id = NULL WHERE sister_field_id IN ($fields)");
     pod_query("DELETE FROM {$table_prefix}pod_fields WHERE datatype = $datatype_id");
     pod_query("DELETE FROM {$table_prefix}pod_rel WHERE field_id IN ($fields)");
     pod_query("DROP TABLE {$table_prefix}pod_tbl_$dtname");

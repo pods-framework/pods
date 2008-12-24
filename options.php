@@ -498,6 +498,27 @@ function dropWidget(widget) {
         });
     }
 }
+
+function resetDB() {
+    if (confirm("This will completely remove Pods from the database. Are you sure?")) {
+        if (confirm("Did you already make a database backup?")) {
+            if (confirm("There's no undo. Is that your final answer?")) {
+                jQuery.ajax({
+                    url: "<?php echo $pods_url; ?>/sql/reset.php",
+                    data: "auth=<?php echo md5(AUTH_KEY); ?>",
+                    success: function(msg) {
+                        if ("Error" == msg.substr(0, 5)) {
+                            alert(msg);
+                        }
+                        else {
+                            alert("Done. Please refresh this page to re-install.");
+                        }
+                    }
+                });
+            }
+        }
+    }
+}
 </script>
 
 <!--
@@ -747,6 +768,6 @@ Begin settings area
 ==================================================
 -->
 <div id="settingsArea" class="area hidden">
-    <p>Coming soon!</p>
+    <input type="button" class="button" onclick="resetDB()" value="Reset database" />
 </div>
 

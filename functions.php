@@ -27,7 +27,7 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
         }
     }
 
-    if (false !== strpos($sql, 'INSERT'))
+    if ('INSERT' == substr(trim($sql), 0, 6))
     {
         $result = mysql_insert_id();
     }

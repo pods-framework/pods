@@ -2,7 +2,7 @@
 // Include the MySQL connection
 include(realpath('../../../../wp-config.php'));
 
-foreach ($_GET as $key => $val)
+foreach ($_POST as $key => $val)
 {
     ${$key} = mysql_real_escape_string(stripslashes(trim($val)));
 }

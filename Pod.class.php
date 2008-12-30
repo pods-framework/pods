@@ -762,7 +762,7 @@ class Pod
         else
         {
             $value = $this->print_field($name);
-            if (!empty($value))
+            if (!empty($value) && 0 !== $value)
             {
                 // Use widget if necessary
                 if (!empty($widget))

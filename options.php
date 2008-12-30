@@ -93,6 +93,7 @@ function doDropdown(val) {
 function sisterFields(sister_field_id) {
     var pickval = jQuery("#column_pickval").val();
     jQuery.ajax({
+        type: "post",
         url: "<?php echo $pods_url; ?>/ajax/sister_fields.php",
         data: "datatype="+datatype+"&pickval="+pickval,
         success: function(msg) {
@@ -118,6 +119,7 @@ function sisterFields(sister_field_id) {
 
 function loadPod() {
     jQuery.ajax({
+        type: "post",
         url: "<?php echo $pods_url; ?>/ajax/load.php",
         data: "id="+datatype,
         success: function(msg) {
@@ -183,6 +185,7 @@ function loadPod() {
 function addPod() {
     var name = jQuery("#new_pod").val();
     jQuery.ajax({
+        type: "post",
         url: "<?php echo $pods_url; ?>/ajax/add.php",
         data: "type=pod&name="+name,
         success: function(msg) {
@@ -212,6 +215,7 @@ function editPod() {
     var tpl_detail = jQuery("#tpl_detail").val();
     var tpl_list = jQuery("#tpl_list").val();
     jQuery.ajax({
+        type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
         data: "datatype="+datatype+"&list_filters="+encodeURIComponent(list_filters)+"&tpl_detail="+encodeURIComponent(tpl_detail)+"&tpl_list="+encodeURIComponent(tpl_list),
         success: function(msg) {
@@ -229,6 +233,7 @@ function dropPod() {
     if (confirm("Do you really want to drop this pod?")) {
         var dtname = jQuery(".tab.active").html();
         jQuery.ajax({
+            type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
             data: "pod="+datatype+"&dtname="+dtname,
             success: function(msg) {
@@ -248,6 +253,7 @@ function dropPod() {
 
 function loadColumn(col) {
     jQuery.ajax({
+        type: "post",
         url: "<?php echo $pods_url; ?>/ajax/load.php",
         data: "col="+col,
         success: function(msg) {
@@ -302,6 +308,7 @@ function addColumn() {
     var sister_field_id = jQuery("#column_sister_field_id").val();
     var required = (true == jQuery("#column_required").is(":checked")) ? 1 : 0;
     jQuery.ajax({
+        type: "post",
         url: "<?php echo $pods_url; ?>/ajax/add.php",
         data: "datatype="+datatype+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required,
         success: function(msg) {
@@ -319,6 +326,7 @@ function addColumn() {
 
 function moveColumn(col, dir) {
     jQuery.ajax({
+        type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
         data: "action=move&datatype="+datatype+"&col="+col+"&dir="+dir,
         success: function(msg) {
@@ -342,6 +350,7 @@ function editColumn(col) {
     var sister_field_id = jQuery("#column_sister_field_id").val();
     var required = (true == jQuery("#column_required").is(":checked")) ? 1 : 0;
     jQuery.ajax({
+        type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
         data: "action=edit&datatype="+datatype+"&dtname="+dtname+"&field_id="+col+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required,
         success: function(msg) {
@@ -361,6 +370,7 @@ function dropColumn(col) {
     if (confirm("Do you really want to drop this column?")) {
         var dtname = jQuery(".tab.active").html();
         jQuery.ajax({
+            type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
             data: "col="+col+"&dtname="+dtname,
             success: function(msg) {
@@ -378,6 +388,7 @@ function dropColumn(col) {
 function addPage() {
     var uri = jQuery("#new_page").val();
     jQuery.ajax({
+        type: "post",
         url: "<?php echo $pods_url; ?>/ajax/add.php",
         data: "type=page&uri="+uri,
         success: function(msg) {
@@ -407,6 +418,7 @@ function addPage() {
 function editPage(page) {
     var phpcode = jQuery("#pageArea #"+page+" > .box > textarea").val();
     jQuery.ajax({
+        type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
         data: "action=editpage&page_id="+page+"&phpcode="+encodeURIComponent(phpcode),
         success: function(msg) {
@@ -423,6 +435,7 @@ function editPage(page) {
 function dropPage(page) {
     if (confirm("Do you really want to drop this page?")) {
         jQuery.ajax({
+            type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
             data: "page="+page,
             success: function(msg) {
@@ -440,6 +453,7 @@ function dropPage(page) {
 function addWidget() {
     var name = jQuery("#new_widget").val();
     jQuery.ajax({
+        type: "post",
         url: "<?php echo $pods_url; ?>/ajax/add.php",
         data: "type=widget&name="+name,
         success: function(msg) {
@@ -469,6 +483,7 @@ function addWidget() {
 function editWidget(widget) {
     var phpcode = jQuery("#widgetArea #"+widget+" > .box > textarea").val();
     jQuery.ajax({
+        type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
         data: "action=editwidget&widget_id="+widget+"&phpcode="+encodeURIComponent(phpcode),
         success: function(msg) {
@@ -485,6 +500,7 @@ function editWidget(widget) {
 function dropWidget(widget) {
     if (confirm("Do you really want to drop this widget?")) {
         jQuery.ajax({
+            type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
             data: "widget="+widget,
             success: function(msg) {
@@ -504,6 +520,7 @@ function resetDB() {
         if (confirm("Did you already make a database backup?")) {
             if (confirm("There's no undo. Is that your final answer?")) {
                 jQuery.ajax({
+                    type: "post",
                     url: "<?php echo $pods_url; ?>/sql/reset.php",
                     data: "auth=<?php echo md5(AUTH_KEY); ?>",
                     success: function(msg) {
@@ -511,7 +528,7 @@ function resetDB() {
                             alert(msg);
                         }
                         else {
-                            alert("Done. Please refresh this page to re-install.");
+                            alert("Done. Please refresh this page to begin.");
                         }
                     }
                 });
@@ -622,7 +639,6 @@ Begin tabbed navigation
 -->
 <div id="nav">
     <div class="navTab active" rel="podArea">Pods</div>
-    <div class="navTab" rel="blockArea">Blocks</div>
     <div class="navTab" rel="pageArea">PodPages</div>
     <div class="navTab" rel="widgetArea">Widgets</div>
     <div class="navTab" rel="settingsArea">Settings</div>
@@ -675,35 +691,6 @@ if (isset($datatypes))
         </div>
     </div>
     <div class="clear"><!--clear--></div>
-</div>
-
-<!--
-==================================================
-Begin block area
-==================================================
--->
-<div id="blockArea" class="area hidden">
-    <div><input type="button" class="button" onclick="jQuery('#blockBox').jqmShow()" value="Add new block" /></div>
-    <div class="helper">Blocks are chunks of code or content that are placed into layout areas.</div>
-    <p>Coming soon!</p>
-<?php
-if (isset($blocks))
-{
-    foreach ($blocks as $id => $val)
-    {
-?>
-    <div class="extras" id="<?php echo $id; ?>">
-        <div class="uri"><?php echo $val['uri']; ?></div>
-        <div class="box hidden">
-            <textarea><?php echo $val['phpcode']; ?></textarea><br />
-            <input type="button" class="button" onclick="editBlock(<?php echo $id; ?>)" value="Save" />
-            or <a href="javascript:;" onclick="dropBlock(<?php echo $id; ?>)">drop block</a>
-        </div>
-    </div>
-<?php
-    }
-}
-?>
 </div>
 
 <!--

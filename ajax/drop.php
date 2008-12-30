@@ -2,13 +2,13 @@
 // Include the MySQL connection
 include(realpath('../../../../wp-config.php'));
 
-foreach ($_GET as $key => $val)
+foreach ($_POST as $key => $val)
 {
     ${$key} = mysql_real_escape_string(stripslashes(trim($val)));
 }
 
 // Delete a single column
-if ($field_id = (int) $_GET['col'])
+if ($field_id = (int) $_POST['col'])
 {
     $result = pod_query("SELECT name FROM {$table_prefix}pod_fields WHERE id = $field_id LIMIT 1");
     $row = mysql_fetch_assoc($result);
@@ -21,13 +21,13 @@ if ($field_id = (int) $_GET['col'])
 }
 
 // Delete a single page
-elseif ($page_id = (int) $_GET['page'])
+elseif ($page_id = (int) $_POST['page'])
 {
     pod_query("DELETE FROM {$table_prefix}pod_pages WHERE id = $page_id LIMIT 1");
 }
 
 // Delete a single content item
-elseif ($post_id = (int) $_GET['post_id'])
+elseif ($post_id = (int) $_POST['post_id'])
 {
     $sql = "
     SELECT
@@ -52,13 +52,13 @@ elseif ($post_id = (int) $_GET['post_id'])
 }
 
 // Delete a single widget
-elseif ($widget_id = (int) $_GET['widget'])
+elseif ($widget_id = (int) $_POST['widget'])
 {
     pod_query("DELETE FROM {$table_prefix}pod_widgets WHERE id = $widget_id LIMIT 1");
 }
 
 // Delete an entire datatype
-elseif ($datatype_id = (int) $_GET['pod'])
+elseif ($datatype_id = (int) $_POST['pod'])
 {
     $fields = '0';
     pod_query("DELETE FROM {$table_prefix}pod_types WHERE id = $datatype_id LIMIT 1");

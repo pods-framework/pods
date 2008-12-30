@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The Wordpress CMS Plugin
-Version: 1.3.4
+Version: 1.3.5
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,21 +23,19 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$latest = 134;
+$latest = 135;
 
 function initialize()
 {
     global $table_prefix, $latest;
     $dir = WP_PLUGIN_DIR . '/pods/sql';
 
-    $installed = 0;
-
     // Get the installed version
     $result = pod_query("SELECT option_value FROM {$table_prefix}options WHERE option_name = 'pods_version' ORDER BY option_value DESC LIMIT 1");
     if (0 < mysql_num_rows($result))
     {
         $row = mysql_fetch_assoc($result);
-        $installed = $row['option_value'];
+        $installed = (int) $row['option_value'];
 
         // Update tables
         if ($installed < $latest)
@@ -73,7 +71,6 @@ function adminMenu()
 
     $menu[30] = array('Pods', 8, 'pods', 'Pods', 'menu-top toplevel_page_pods', 'toplevel_page_pods', 'images/generic.png');
     add_submenu_page('pods', 'Setup', 'Setup', 8, 'pods', 'edit_options_page');
-    add_submenu_page('pods', 'Layout Editor', 'Layout Editor', 8, 'pods-layout', 'edit_layout_page');
     add_submenu_page('pods', 'Browse Content', 'Browse Content', 8, 'pods-browse', 'edit_content_page');
 
     $result = mysql_query("SELECT name FROM {$table_prefix}pod_types ORDER BY name");
@@ -175,7 +172,7 @@ function redirect()
 }
 
 // Setup DB tables, get the gears turning
-require_once WP_PLUGIN_DIR . '/pods/pod_query.php';
+require_once WP_PLUGIN_DIR . '/pods/functions.php';
 
 initialize();
 

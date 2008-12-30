@@ -65,6 +65,7 @@ function editItem(datatype, post_id) {
 function dropItem(post_id) {
     if (confirm("Do you really want to drop this item?")) {
         jQuery.ajax({
+            type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
             data: "post_id="+post_id,
             success: function(msg) {

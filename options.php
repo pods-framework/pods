@@ -638,9 +638,9 @@ Begin tabbed navigation
 ==================================================
 -->
 <div id="nav">
-    <div class="navTab active" rel="podArea">Pods</div>
-    <div class="navTab" rel="pageArea">PodPages</div>
-    <div class="navTab" rel="widgetArea">Widgets</div>
+    <div class="navTab active" rel="podArea">Manage Pods</div>
+    <div class="navTab" rel="pageArea">Manage PodPages</div>
+    <div class="navTab" rel="widgetArea">Manage Widgets</div>
     <div class="navTab" rel="settingsArea">Settings</div>
     <div class="clear"><!--clear--></div>
 </div>
@@ -700,7 +700,7 @@ Begin page area
 -->
 <div id="pageArea" class="area hidden">
     <div><input type="button" class="button" onclick="jQuery('#pageBox').jqmShow()" value="Add new page" /></div>
-    <div class="helper">Create custom pages and define the layout for each page.</div>
+    <div class="helper">Create custom pages, optionally using * as the wildcard.</div>
 <?php
 if (isset($pages))
 {
@@ -755,6 +755,7 @@ Begin settings area
 ==================================================
 -->
 <div id="settingsArea" class="area hidden">
+    <div class="helper">*WARNING* This cannot be undone. Please backup your database!</div>
     <input type="button" class="button" onclick="resetDB()" value="Reset database" />
 </div>
 

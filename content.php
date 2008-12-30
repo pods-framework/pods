@@ -117,7 +117,7 @@ function saveForm() {
                 alert(msg);
             }
             else {
-                window.location="?page=pods-browse";
+                window.location="";
             }
         }
     });

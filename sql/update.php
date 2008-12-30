@@ -64,5 +64,5 @@ if ($installed < 132)
 }
 
 // Save this version
-pod_query("UPDATE {$table_prefix}options SET option_value = '$latest' WHERE option_name = 'pods_version' LIMIT 1");
+update_option('pods_version', $latest);
 

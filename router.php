@@ -1,27 +1,33 @@
 <?php
-require 'Pod.class.php';
-
-foreach ($_GET as $key => $val)
-{
-    ${$key} = mysql_real_escape_string($val);
-}
-
 /*
 ==================================================
-Modify the code below to match your theme
+1. Create pods.php in your theme directory
+2. Style it to suit your needs
+
+header      <?php get_header(); ?>
+content     <?php get_content(); ?>
+sidebar     <?php get_sidebar(); ?>
+footer      <?php get_footer(); ?>
 ==================================================
 */
+$pods_theme_path = TEMPLATEPATH . '/pods.php';
+
+if (file_exists($pods_theme_path))
+{
+    include $pods_theme_path;
+}
+else
+{
 ?>
 
 <?php get_header(); ?>
 
-<div id="content">
-    <div class="post"><?php eval("?>$phpcode"); ?></div>
-</div>
+<?php get_content(); ?>
 
 <?php get_sidebar(); ?>
 
 <?php get_footer(); ?>
 
-<?php die(); ?>
+<?php
+}
 

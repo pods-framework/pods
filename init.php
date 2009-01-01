@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The Wordpress CMS Plugin
-Version: 1.3.6
+Version: 1.3.7
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$latest = 136;
+$latest = 137;
 
 function initialize()
 {
@@ -31,7 +31,7 @@ function initialize()
     $dir = WP_PLUGIN_DIR . '/pods/sql';
 
     // Get the installed version
-    if ($installed = get_option('pods_version'))
+    if ($installed = (int) get_option('pods_version'))
     {
         if ($installed < $latest)
         {
@@ -43,10 +43,11 @@ function initialize()
     {
         $sql = file_get_contents("$dir/dump.sql");
         $sql = explode(";\n", str_replace('wp_', $table_prefix, $sql));
-        for ($i = 0, $z = count($sql); $i < $z - 1; $i++)
+        for ($i = 0, $z = count($sql) - 1; $i < $z; $i++)
         {
             pod_query($sql[$i]);
         }
+        delete_option('pods_version');
         add_option('pods_version', $latest);
     }
 
@@ -103,7 +104,7 @@ function add_pods_meta()
     $latest = "$latest";
     $latest = $latest[0] . '.' . $latest[1] . '.' . $latest[2];
 ?>
-<meta name="cms" content="Pods <?php echo $latest; ?>" />
+<meta name="CMS" content="Pods <?php echo $latest; ?>" />
 <?php
 }
 
@@ -111,8 +112,7 @@ function pods_title($title, $sep, $seplocation)
 {
     $pieces = explode('?', $_SERVER['REQUEST_URI']);
     $pieces = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $pieces[0]);
-    $pieces = str_replace('_', ' ', $pieces);
-    $pieces = str_replace('-', ' ', $pieces);
+    $pieces = preg_replace("(-|_)", "", $pieces);
     $pieces = explode('/', $pieces);
     $title = str_replace(" $sep Page not found", '', $title);
 
@@ -123,9 +123,23 @@ function pods_title($title, $sep, $seplocation)
     return $title;
 }
 
+function get_content()
+{
+    global $phpcode, $post;
+
+    if (!empty($phpcode))
+    {
+        eval("?>$phpcode");
+    }
+    elseif (!empty($post))
+    {
+        echo $post->post_content;
+    }
+}
+
 function redirect()
 {
-    global $table_prefix;
+    global $table_prefix, $phpcode;
 
     $uri = explode('?', $_SERVER['REQUEST_URI']);
     $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri[0]);
@@ -148,21 +162,28 @@ function redirect()
         LIMIT
             1
         ";
-        $result = mysql_query($sql) or die(mysql_error());
+        $result = pod_query($sql);
     }
 
     if (0 < mysql_num_rows($result))
     {
+        require 'Pod.class.php';
+
+        $row = mysql_fetch_assoc($result);
+        $phpcode = $row['phpcode'];
+
+        foreach ($_GET as $key => $val)
+        {
+            ${$key} = mysql_real_escape_string($val);
+        }
+
         if (is_404())
         {
             add_filter('wp_title', 'pods_title', 8, 3);
         }
 
-        $row = mysql_fetch_assoc($result);
-        $phpcode = $row['phpcode'];
-
         include WP_PLUGIN_DIR . '/pods/router.php';
-        return;
+        die();
     }
 }
 

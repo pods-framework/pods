@@ -127,6 +127,14 @@ function get_content()
 {
     global $phpcode, $post;
 
+    require 'Pod.class.php';
+
+    // Cleanse the GET variables
+    foreach ($_GET as $key => $val)
+    {
+        ${$key} = mysql_real_escape_string($val);
+    }
+
     if (!empty($phpcode))
     {
         eval("?>$phpcode");
@@ -146,7 +154,7 @@ function redirect()
     $uri = empty($uri) ? '/' : "/$uri/";
 
     // See if the custom template exists
-    $result = mysql_query("SELECT phpcode FROM {$table_prefix}pod_pages WHERE uri = '$uri' LIMIT 1");
+    $result = pod_query("SELECT phpcode FROM {$table_prefix}pod_pages WHERE uri = '$uri' LIMIT 1");
     if (1 > mysql_num_rows($result))
     {
         // Find any wildcards
@@ -167,15 +175,8 @@ function redirect()
 
     if (0 < mysql_num_rows($result))
     {
-        require 'Pod.class.php';
-
         $row = mysql_fetch_assoc($result);
         $phpcode = $row['phpcode'];
-
-        foreach ($_GET as $key => $val)
-        {
-            ${$key} = mysql_real_escape_string($val);
-        }
 
         if (is_404())
         {

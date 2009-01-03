@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The Wordpress CMS Plugin
-Version: 1.3.7
+Version: 1.3.8
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,9 +23,9 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$latest = 137;
+$latest = 138;
 
-function initialize()
+function pods_init()
 {
     global $table_prefix, $latest;
     $dir = WP_PLUGIN_DIR . '/pods/sql';
@@ -69,7 +69,7 @@ function adminMenu()
     add_submenu_page('pods', 'Setup', 'Setup', 8, 'pods', 'edit_options_page');
     add_submenu_page('pods', 'Browse Content', 'Browse Content', 8, 'pods-browse', 'edit_content_page');
 
-    $result = mysql_query("SELECT name FROM {$table_prefix}pod_types ORDER BY name");
+    $result = pod_query("SELECT name FROM {$table_prefix}pod_types ORDER BY name");
     if (0 < mysql_num_rows($result))
     {
         while ($row = mysql_fetch_array($result))
@@ -191,7 +191,7 @@ function redirect()
 // Setup DB tables, get the gears turning
 require_once WP_PLUGIN_DIR . '/pods/functions.php';
 
-initialize();
+pods_init();
 
 $pods_url = WP_PLUGIN_URL . '/pods';
 

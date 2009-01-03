@@ -1,6 +1,6 @@
 <?php
 // Get all layouts
-/*$result = mysql_query("SELECT * FROM {$table_prefix}pod_types ORDER BY name");
+/*$result = pod_query("SELECT * FROM {$table_prefix}pod_types ORDER BY name");
 while ($row = mysql_fetch_assoc($result))
 {
     $datatypes[$row['id']] = $row['name'];

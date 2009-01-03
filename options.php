@@ -521,7 +521,7 @@ function resetDB() {
             if (confirm("There's no undo. Is that your final answer?")) {
                 jQuery.ajax({
                     type: "post",
-                    url: "<?php echo $pods_url; ?>/sql/reset.php",
+                    url: "<?php echo $pods_url; ?>/uninstall.php",
                     data: "auth=<?php echo md5(AUTH_KEY); ?>",
                     success: function(msg) {
                         if ("Error" == msg.substr(0, 5)) {

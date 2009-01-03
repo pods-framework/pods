@@ -50,7 +50,7 @@ function saveForm() {
 }
 </script>
 
-<div id="module_form">
+<div id="module_form" class="form_<?php echo $datatype; ?>">
 <?php
 $_POST['public'] = true;
 $_POST['datatype'] = $datatype;

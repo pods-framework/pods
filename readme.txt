@@ -10,15 +10,13 @@ Pods is a CMS (Content Management System) plugin for Wordpress.
 
 == Description ==
 
-Wordpress lets you add blog posts and pages. Pods lets you add everything else.
+Create more than just blog posts and pages. Add new content types with only the fields you need. Customize exactly how each content type's list and detail pages appear. Automatic pagination, filtering, public forms and more are possible with the Pods CMS plugin.
 
 Visit the [Pods homepage](http://pods.uproot.us)
 
 == Installation ==
 
-= Installation =
-1. Unzip the `pods` folder into `wp-content/plugins/`
-2. Enable the plugin through Plugins > Installed
+Visit the [Pods homepage](http://pods.uproot.us)
 
 == Frequently Asked Questions ==
 

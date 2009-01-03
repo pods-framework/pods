@@ -1,6 +1,6 @@
 <?php
 // Include the MySQL connection
-include(realpath('../../../../wp-config.php'));
+include(realpath('../../../wp-config.php'));
 
 if ($_POST['auth'] == md5(AUTH_KEY))
 {

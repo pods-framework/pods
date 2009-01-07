@@ -25,6 +25,7 @@ Begin javascript code
 -->
 <link rel="stylesheet" type="text/css" href="<?php echo $pods_url; ?>/style.css" />
 <script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqmodal.js"></script>
+<script type="text/javascript" src="<?php echo $pods_url; ?>/js/date_input.js"></script>
 <script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqFileTree.js"></script>
 <script type="text/javascript" src="<?php echo $pods_url; ?>/js/nicEdit.js"></script>
 <script type="text/javascript">
@@ -155,6 +156,7 @@ function showform(dt, post_id) {
                 for (i = 0; i < elements.length; i++) {
                     new nicEditor(config).panelInstance(elements[i].id);
                 }
+                jQuery("input.date").date_input();
             }
         }
     });

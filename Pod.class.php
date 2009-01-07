@@ -252,7 +252,7 @@ class Pod
     Search and filter records
     ==================================================
     */
-    function findRecords($orderby = 'id DESC', $rpp = null, $where = null)
+    function findRecords($orderby = 'id DESC', $rpp = null, $where = null, $sql = null)
     {
         $page = $this->page;
         $datatype = $this->datatype;
@@ -294,23 +294,26 @@ class Pod
             }
         }
 
-        $sql = "
-        SELECT
-            SQL_CALC_FOUND_ROWS DISTINCT t.*
-        FROM
-            {$this->prefix}pod p
-        $join
-        INNER JOIN
-            {$this->prefix}pod_tbl_$datatype t ON t.id = p.row_id
-        WHERE
-            p.datatype = $datatype_id
-            $search
-            $where
-        ORDER BY
-            t.$orderby
-        LIMIT
-            $limit
-        ";
+        if (empty($sql))
+        {
+            $sql = "
+            SELECT
+                SQL_CALC_FOUND_ROWS DISTINCT t.*
+            FROM
+                {$this->prefix}pod p
+            $join
+            INNER JOIN
+                {$this->prefix}pod_tbl_$datatype t ON t.id = p.row_id
+            WHERE
+                p.datatype = $datatype_id
+                $search
+                $where
+            ORDER BY
+                t.$orderby
+            LIMIT
+                $limit
+            ";
+        }
         $this->result = pod_query($sql);
         $this->total_rows = pod_query("SELECT FOUND_ROWS()");
     }
@@ -665,7 +668,7 @@ class Pod
 ?>
     <input type="text" class="form file <?php echo $name; ?>" value="<?php echo $data; ?>" />
     <a href="javascript:;" onclick="active_file = '<?php echo $name; ?>'; jQuery('#dialog').jqmShow()">select</a> after
-    <a href="media-upload.php" class="thickbox" target="blank">uploading</a>
+    <a href="media-upload.php" target="blank">uploading</a>
 <?php
         }
         // Standard text box

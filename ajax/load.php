@@ -2,6 +2,11 @@
 // Include the MySQL connection
 include(realpath('../../../../wp-config.php'));
 
+if ($_POST['auth'] != md5(AUTH_KEY))
+{
+    die('Error: Authentication failed');
+}
+
 // Get all Pod columns
 if ($id = (int) $_POST['id'])
 {

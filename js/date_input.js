@@ -32,7 +32,7 @@ DateInput = (function($) { // Localise the $ function
         $.extend(this, DateInput.DEFAULT_OPTS, opts);
 
         this.input = $(el);
-        this.bindMethodsToObj("show", "hide", "hideOnEsc", "selectMonth", "selectDate", "prevMonth", "nextMonth");
+        this.bindMethodsToObj("show", "hide", "hideOnEsc", "hideIfClickOutside", "selectMonth", "selectDate", "prevMonth", "nextMonth");
         this.build();
         this.hide();
     };
@@ -50,11 +50,11 @@ DateInput = (function($) { // Localise the $ function
                 $('<a href="#" class="prev">&laquo;</a>').click(this.prevMonth), " ", this.monthNameSpan, " ", $('<a href="#" class="next">&raquo;</a>').click(this.nextMonth)
             );
 
-            var table = "<table><thead><tr>";
+            var table = this.showTime() + "<table><thead><tr>";
             $(this.adjustDays(this.short_day_names)).each(function() {
                 table += "<th>" + this + "</th>";
             });
-            table += "</tr><tr><td colspan='7'>"+this.showTime()+"</td></tr></thead><tbody></tbody></table>";
+            table += "</tr></thead><tbody></tbody></table>";
             this.dateSelector = this.rootLayers = $('<div class="date_selector"></div>').append(monthNav, table).insertAfter(this.input);
             this.tbody = $("tbody", this.dateSelector);
             this.input.click(this.bindToObj(function() {
@@ -83,9 +83,10 @@ DateInput = (function($) { // Localise the $ function
 
             $("a", this.tbody).click(this.bindToObj(function(event) {
                 var parent = $(event.target).parent();
-                var hour = parent.parent().parent().parent().find(".date_hour").val();
-                var minute = parent.parent().parent().parent().find(".date_minute").val();
-                this.input.val(parent.attr("date") + " " + hour + ":" + minute + ":00");
+                var hour = parent.parent().parent().parent().parent().find(".date_hour").val();
+                var minute = parent.parent().parent().parent().parent().find(".date_minute").val();
+                var second = parent.parent().parent().parent().parent().find(".date_second").val();
+                this.input.val(parent.attr("date") + " " + hour + ":" + minute + ":" + second);
                 this.hide();
                 return false;
             }));
@@ -113,28 +114,37 @@ DateInput = (function($) { // Localise the $ function
             var ymd = this.getYMD(date);
             var hrs = date.getHours().toString();
             var mins = date.getMinutes().toString();
+            var secs = date.getSeconds().toString();
             if (hrs.length == 1) hrs = "0" + hrs;
             if (mins.length == 1) mins = "0" + mins;
-            return ymd + " " + hrs + ":" + mins + ":00";
+            if (secs.length == 1) secs = "0" + secs;
+            return ymd + " " + hrs + ":" + mins + ":" + secs;
         },
 
         showTime: function() {
             var val = this.input.val().split(" ")[1].split(":");
             var active_hour = val[0].toString();
             var active_minute = val[1].toString();
-            var output = "<select class='date_hour'>";
+            var active_second = val[2].toString();
 
+            var output = "<select class='date_hour'>";
             for (var i = 0; i < 24; i++) {
                 var hour = (10 > i) ? "0" + i : i;
                 var hour_fmt = (0 == i) ? "12am" : (12 > i) ? i + "am" : (12 == i) ? "12pm" : (i - 12) + "pm";
                 var selected = (active_hour == hour.toString()) ? " selected" : "";
-                output += "<option value='"+hour+"'"+selected+">"+hour_fmt+"</option>";
+                output += "<option rel='class' value='"+hour+"'"+selected+">"+hour_fmt+"</option>";
             }
             output += "</select> <select class='date_minute'>";
-            for (i = 0; i < 60; i = i + 15) {
+            for (i = 0; i < 60; i++) {
                 var minute = (10 > i) ? "0" + i : i;
                 var selected = (active_minute == minute.toString()) ? " selected" : "";
-                output += "<option value='"+minute+"'"+selected+">"+minute+"</option>";
+                output += "<option class='opt' value='"+minute+"'"+selected+">"+minute+"</option>";
+            }
+            output += "</select> <select class='date_second'>";
+            for (i = 0; i < 60; i++) {
+                var second = (10 > i) ? "0" + i : i;
+                var selected = (active_second == second.toString()) ? " selected" : "";
+                output += "<option class='opt' value='"+second+"'"+selected+">"+second+"</option>";
             }
             return output + "</select>";
         },
@@ -143,13 +153,19 @@ DateInput = (function($) { // Localise the $ function
             this.rootLayers.css("display", "block");
             this.setPosition();
             this.input.unbind("focus", this.show);
-            $([window, document.body]).keyup(this.hideOnEsc);
+            $([window, document.body]).click(this.hideIfClickOutside).keyup(this.hideOnEsc);
         },
 
         hide: function() {
             this.rootLayers.css("display", "none");
-            $([window, document.body]).unbind("keyup", this.hideOnEsc);
+            $([window, document.body]).unbind("click", this.hideIfClickOutside).unbind("keyup", this.hideOnEsc);
             this.input.focus(this.show);
+        },
+
+        hideIfClickOutside: function(event) {
+            if (event.target != this.input[0] && !this.insideSelector(event) && "opt" != event.target.className) {
+                this.hide();
+            };
         },
 
         hideOnEsc: function(event) {
@@ -187,6 +203,17 @@ DateInput = (function($) { // Localise the $ function
 
         monthName: function(date) {
             return this.month_names[date.getMonth()];
+        },
+
+        insideSelector: function(event) {
+            var offset = this.dateSelector.offset();
+            offset.right = offset.left + this.dateSelector.outerWidth();
+            offset.bottom = offset.top + this.dateSelector.outerHeight();
+
+            return event.pageY < offset.bottom &&
+            event.pageY > offset.top &&
+            event.pageX < offset.right &&
+            event.pageX > offset.left;
         },
 
         bindToObj: function(fn) {

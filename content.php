@@ -32,6 +32,7 @@ Begin javascript code
 var datatype;
 var active_file;
 var add_or_edit = '<?php echo $add_or_edit; ?>';
+var auth = '<?php echo md5(AUTH_KEY); ?>';
 
 jQuery(function() {
     jQuery(".navTab").click(function() {
@@ -68,7 +69,7 @@ function dropItem(post_id) {
         jQuery.ajax({
             type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
-            data: "post_id="+post_id,
+            data: "auth="+auth+"&post_id="+post_id,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);

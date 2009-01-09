@@ -32,6 +32,7 @@ Begin javascript code
 var datatype;
 var column_id;
 var add_or_edit;
+var auth = '<?php echo md5(AUTH_KEY); ?>';
 
 jQuery(function() {
     jQuery(".navTab").click(function() {
@@ -95,7 +96,7 @@ function sisterFields(sister_field_id) {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/sister_fields.php",
-        data: "datatype="+datatype+"&pickval="+pickval,
+        data: "auth="+auth+"&datatype="+datatype+"&pickval="+pickval,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -121,7 +122,7 @@ function loadPod() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/load.php",
-        data: "id="+datatype,
+        data: "auth="+auth+"&id="+datatype,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -153,7 +154,7 @@ function loadPod() {
                     html += '<div class="btn editme"></div> ';
 
                     // Default columns
-                    if ("name" != name && "body" != name) {
+                    if ("name" != name) {
                         html += '<div class="btn dropme"></div> ';
                     }
                     html += name+" ("+coltype+")</div>";
@@ -187,7 +188,7 @@ function addPod() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/add.php",
-        data: "type=pod&name="+name,
+        data: "auth="+auth+"&type=pod&name="+name,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -217,7 +218,7 @@ function editPod() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "datatype="+datatype+"&list_filters="+encodeURIComponent(list_filters)+"&tpl_detail="+encodeURIComponent(tpl_detail)+"&tpl_list="+encodeURIComponent(tpl_list),
+        data: "auth="+auth+"&datatype="+datatype+"&list_filters="+encodeURIComponent(list_filters)+"&tpl_detail="+encodeURIComponent(tpl_detail)+"&tpl_list="+encodeURIComponent(tpl_list),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -235,14 +236,14 @@ function dropPod() {
         jQuery.ajax({
             type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
-            data: "pod="+datatype+"&dtname="+dtname,
+            data: "auth="+auth+"&pod="+datatype+"&dtname="+dtname,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);
                 }
                 else {
                     jQuery("#pod_name").html("Choose a Pod");
-                    jQuery("#column_list").html('Need some help? Check out the <a href="http://pods.uproot.us/" target="blank">User Guide</a> to get started.');
+                    jQuery("#column_list").html('Need some help? Check out the <a href="http://pods.uproot.us/" target="_blank">User Guide</a> to get started.');
                     jQuery(".t"+datatype).remove();
                     jQuery(".idle").hide();
                 }
@@ -255,7 +256,7 @@ function loadColumn(col) {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/load.php",
-        data: "col="+col,
+        data: "auth="+auth+"&col="+col,
         success: function(msg) {
             var col_data = eval("("+msg+")");
             var name = (null == col_data.name) ? "" : col_data.name;
@@ -273,12 +274,10 @@ function loadColumn(col) {
             jQuery("#column_sister_field_id").hide();
             jQuery("#column_required").attr("checked", required);
             jQuery("#column_pickval").hide();
-            if ("name" == name || "body" == name) {
+            if ("name" == name) {
                 jQuery("#column_name").attr("disabled", true);
                 jQuery("#column_type").attr("disabled", true);
-                if ("name" == name) {
-                    jQuery("#column_required").attr("disabled", true);
-                }
+                jQuery("#column_required").attr("disabled", true);
             }
             else {
                 jQuery("#column_name").attr("disabled", false);
@@ -310,7 +309,7 @@ function addColumn() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/add.php",
-        data: "datatype="+datatype+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required,
+        data: "auth="+auth+"&datatype="+datatype+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -328,7 +327,7 @@ function moveColumn(col, dir) {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "action=move&datatype="+datatype+"&col="+col+"&dir="+dir,
+        data: "auth="+auth+"&action=move&datatype="+datatype+"&col="+col+"&dir="+dir,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -352,7 +351,7 @@ function editColumn(col) {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "action=edit&datatype="+datatype+"&dtname="+dtname+"&field_id="+col+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required,
+        data: "auth="+auth+"&action=edit&datatype="+datatype+"&dtname="+dtname+"&field_id="+col+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -372,7 +371,7 @@ function dropColumn(col) {
         jQuery.ajax({
             type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
-            data: "col="+col+"&dtname="+dtname,
+            data: "auth="+auth+"&col="+col+"&dtname="+dtname,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);
@@ -390,7 +389,7 @@ function addPage() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/add.php",
-        data: "type=page&uri="+uri,
+        data: "auth="+auth+"&type=page&uri="+uri,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -420,7 +419,7 @@ function editPage(page) {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "action=editpage&page_id="+page+"&phpcode="+encodeURIComponent(phpcode),
+        data: "auth="+auth+"&action=editpage&page_id="+page+"&phpcode="+encodeURIComponent(phpcode),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -437,7 +436,7 @@ function dropPage(page) {
         jQuery.ajax({
             type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
-            data: "page="+page,
+            data: "auth="+auth+"&page="+page,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);
@@ -455,7 +454,7 @@ function addWidget() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/add.php",
-        data: "type=widget&name="+name,
+        data: "auth="+auth+"&type=widget&name="+name,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -485,7 +484,7 @@ function editWidget(widget) {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "action=editwidget&widget_id="+widget+"&phpcode="+encodeURIComponent(phpcode),
+        data: "auth="+auth+"&action=editwidget&widget_id="+widget+"&phpcode="+encodeURIComponent(phpcode),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -502,7 +501,7 @@ function dropWidget(widget) {
         jQuery.ajax({
             type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
-            data: "widget="+widget,
+            data: "auth="+auth+"&widget="+widget,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);
@@ -522,7 +521,7 @@ function resetDB() {
                 jQuery.ajax({
                     type: "post",
                     url: "<?php echo $pods_url; ?>/uninstall.php",
-                    data: "auth=<?php echo md5(AUTH_KEY); ?>",
+                    data: "auth="+auth,
                     success: function(msg) {
                         if ("Error" == msg.substr(0, 5)) {
                             alert(msg);
@@ -571,6 +570,7 @@ Begin popups
             <option value="bool">boolean (true, false)</option>
             <option value="txt">text (title, caption, email, phone, url)</option>
             <option value="desc">desc (body, summary, long text)</option>
+            <option value="code">code (no WYSIWYG editor)</option>
             <option value="file">file (document, media)</option>
             <option value="pick">pick</option>
         </select>
@@ -672,7 +672,7 @@ if (isset($datatypes))
     </div>
     <div class="rightside">
         <h2 class="title" id="pod_name">Choose a Pod</h2>
-        <p id="column_list">Need some help? Check out the <a href="http://pods.uproot.us/" target="blank">User Guide</a> to get started.</p>
+        <p id="column_list">Need some help? Check out the <a href="http://pods.uproot.us/" target="_blank">User Guide</a> to get started.</p>
         <div class="idle hidden">
             <p>
                 <input type="button" class="button" onclick="add_or_edit='add'; jQuery('#columnBox').jqmShow()" value="Add a column" />

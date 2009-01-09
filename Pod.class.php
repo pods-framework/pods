@@ -668,7 +668,7 @@ class Pod
 ?>
     <input type="text" class="form file <?php echo $name; ?>" value="<?php echo $data; ?>" />
     <a href="javascript:;" onclick="active_file = '<?php echo $name; ?>'; jQuery('#dialog').jqmShow()">select</a> after
-    <a href="media-upload.php" target="blank">uploading</a>
+    <a href="media-upload.php" target="_blank">uploading</a>
 <?php
         }
         // Standard text box
@@ -683,6 +683,13 @@ class Pod
         {
 ?>
     <textarea class="form desc <?php echo $name; ?>" id="desc-<?php echo $name; ?>"><?php echo $data; ?></textarea>
+<?php
+        }
+        // Textarea box (without WYSIWYG)
+        elseif ('code' == $coltype)
+        {
+?>
+    <textarea class="form code <?php echo $name; ?>" id="code-<?php echo $name; ?>"><?php echo $data; ?></textarea>
 <?php
         }
         // Multi-select list
@@ -756,11 +763,7 @@ class Pod
         }
         if ('detail_url' == $name)
         {
-            return '/detail/?type=' . $this->datatype . '&id=' . $this->print_field('id');
-        }
-        elseif ('edit_url' == $name)
-        {
-            return '/wp-admin/post.php?action=edit&post=' . $this->get_post_id();
+            return get_bloginfo('url') . '/detail/?type=' . $this->datatype . '&id=' . $this->print_field('id');
         }
         else
         {

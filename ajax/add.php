@@ -2,6 +2,11 @@
 // Include the MySQL connection
 include(realpath('../../../../wp-config.php'));
 
+if ($_POST['auth'] != md5(AUTH_KEY))
+{
+    die('Error: Authentication failed');
+}
+
 foreach ($_POST as $key => $val)
 {
     ${$key} = mysql_real_escape_string(stripslashes(trim($val)));
@@ -75,6 +80,7 @@ else
             'num' => 'decimal(9,2)',
             'txt' => 'varchar(128)',
             'file' => 'varchar(128)',
+            'code' => 'text',
             'desc' => 'text'
         );
         $dbtype = $dbtypes[$coltype];

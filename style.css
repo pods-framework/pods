@@ -107,7 +107,7 @@
 #pageArea textarea,
 #widgetArea textarea,
 #blockArea textarea,
-.desc {
+.desc, .code {
     width: 99%;
     height: 140px;
     border: 1px solid #E3E3E3;
@@ -327,6 +327,7 @@ UL.jqueryFileTree A:hover {
     background: #f2f2f2;
     border: 1px solid #ccc;
     position: absolute;
+    text-align: center;
     z-index: 99999;
     display: none;
 }
@@ -350,8 +351,7 @@ UL.jqueryFileTree A:hover {
     text-align: center;
 }
 
-.date_selector .date_hour, .date_selector .date_minute {
-    margin-top: 2px;
+.date_selector .date_hour, .date_selector .date_minute, .date_selector .date_second {
     border: 1px solid #ccc;
 }
 

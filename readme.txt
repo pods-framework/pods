@@ -1,7 +1,6 @@
 === Pods ===
 Contributors: logikal16
-Donate link: http://wp-pods.googlecode.com
-Tags: pods, cms, content types, posts, pages, widgets, modules, datatypes
+Tags: cms, content, content types, pods, posts, pages, widgets, modules, datatypes
 Requires at least: 2.7
 Tested up to: 2.7
 Stable tag: trunk

@@ -64,5 +64,5 @@ if ($installed < 132)
 }
 
 // Save this version
-update_option('pods_version', $latest);
+update_option('pods_version', $pods_latest);
 

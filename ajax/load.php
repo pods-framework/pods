@@ -36,7 +36,8 @@ if ($id = (int) $_POST['id'])
     // Encode the array to JSON
     echo json_encode($module);
 }
-// Get a single Pod columnelseif ($field_id = (int) $_POST['col'])
+// Get a single Pod column
+elseif ($field_id = (int) $_POST['col'])
 {
     $result = pod_query("SELECT name, label, comment, coltype, pickval, sister_field_id, required FROM {$table_prefix}pod_fields WHERE id = $field_id LIMIT 1");
     $row = mysql_fetch_assoc($result);

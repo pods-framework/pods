@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The Wordpress CMS Plugin
-Version: 1.4.0.
+Version: 1.4.1
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,17 +23,17 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$latest = 140;
+$pods_latest = 141;
 
 function pods_init()
 {
-    global $table_prefix, $latest;
+    global $table_prefix, $pods_latest;
     $dir = WP_PLUGIN_DIR . '/pods/sql';
 
     // Get the installed version
     if ($installed = (int) get_option('pods_version'))
     {
-        if ($installed < $latest)
+        if ($installed < $pods_latest)
         {
             include("$dir/update.php");
         }
@@ -48,7 +48,7 @@ function pods_init()
             pod_query($sql[$i]);
         }
         delete_option('pods_version');
-        add_option('pods_version', $latest);
+        add_option('pods_version', $pods_latest);
     }
 
     // Check for .htaccess
@@ -99,12 +99,12 @@ function pods_content_page()
 
 function pods_meta()
 {
-    global $latest;
+    global $pods_latest;
 
-    $latest = "$latest";
-    $latest = $latest[0] . '.' . $latest[1] . '.' . $latest[2];
+    $pods_latest = "$pods_latest";
+    $pods_latest = $pods_latest[0] . '.' . $pods_latest[1] . '.' . $pods_latest[2];
 ?>
-<meta name="CMS" content="Pods <?php echo $latest; ?>" />
+<meta name="CMS" content="Pods <?php echo $pods_latest; ?>" />
 <?php
 }
 

@@ -2,8 +2,8 @@
 /*
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
-Description: The Wordpress CMS Plugin
-Version: 1.4.1
+Description: The WordPress CMS Plugin
+Version: 1.4.2
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$pods_latest = 141;
+$pods_latest = 142;
 
 function pods_init()
 {
@@ -56,7 +56,7 @@ function pods_init()
     {
         if (!copy(WP_PLUGIN_DIR . '/pods/.htaccess', ABSPATH . '.htaccess'))
         {
-            echo 'Please copy the .htaccess file from plugins/pods/ to the Wordpress root folder!';
+            echo 'Please copy the .htaccess file from plugins/pods/ to the WordPress root folder!';
         }
     }
 }

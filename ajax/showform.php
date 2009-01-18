@@ -125,7 +125,6 @@ if ($save)
                 $sister_field_id = $fields[$key]['sister_field_id'];
                 $sister_field_id = empty($sister_field_id) ? 0 : $sister_field_id;
                 $sister_post_ids = array();
-                $sister_post_id = 0;
 
                 /*
                 ==================================================
@@ -156,7 +155,8 @@ if ($save)
                 */
                 foreach ($term_ids as $term_id)
                 {
-                    if (!empty($sister_datatype_id))
+                    $sister_post_id = 0;
+                    if (!empty($sister_field_id) && !empty($sister_datatype_id))
                     {
                         $result = pod_query("SELECT post_id FROM {$table_prefix}pod WHERE datatype = $sister_datatype_id AND row_id = $term_id LIMIT 1");
                         if (0 < mysql_num_rows($result))

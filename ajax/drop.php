@@ -15,11 +15,15 @@ foreach ($_POST as $key => $val)
 // Delete a single column
 if ($field_id = (int) $_POST['col'])
 {
-    $result = pod_query("SELECT name FROM {$table_prefix}pod_fields WHERE id = $field_id LIMIT 1");
+    $result = pod_query("SELECT name, coltype FROM {$table_prefix}pod_fields WHERE id = $field_id LIMIT 1");
     $row = mysql_fetch_assoc($result);
     $field_name = $row['name'];
 
-    pod_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname DROP COLUMN $field_name");
+    if ('pick' != $row['coltype'])
+    {
+        pod_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname DROP COLUMN $field_name");
+    }
+
     pod_query("UPDATE {$table_prefix}pod_fields SET sister_field_id = NULL WHERE sister_field_id = $field_id");
     pod_query("DELETE FROM {$table_prefix}pod_fields WHERE id = $field_id LIMIT 1");
     pod_query("DELETE FROM {$table_prefix}pod_rel WHERE field_id = $field_id");

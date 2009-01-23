@@ -2,7 +2,7 @@
 $upload_dir = wp_upload_dir();
 $upload_dir = str_replace(get_option('siteurl'), '', $upload_dir['baseurl']);
 
-$result = pod_query("SELECT id, name FROM {$table_prefix}pod_types");
+$result = pod_query("SELECT id, name FROM {$table_prefix}pod_types ORDER BY name ASC");
 while ($row = mysql_fetch_assoc($result))
 {
     $datatypes[$row['id']] = $row['name'];
@@ -15,6 +15,10 @@ if ('pod' == $page[0])
     $dtname = strtolower($page[1]);
     $datatype = array_search($dtname, $datatypes);
     $add_or_edit = 'add';
+}
+else
+{
+    $dtname = isset($page[2]) ? $page[2] : $_GET['pod'];
 }
 ?>
 
@@ -187,8 +191,6 @@ Begin browse area
 -->
 <div id="browseArea" class="area">
 <?php
-require('Pod.class.php');
-
 $Record = new Pod();
 $Record->page = empty($_GET['pg']) ? 1 : $_GET['pg'];
 $limit = (15 * ($Record->page - 1)) . ',15';
@@ -196,9 +198,9 @@ $Record->type = '';
 
 $where[] = "p.post_type NOT IN ('post', 'page', 'revision', 'attachment')";
 
-if (!empty($_GET['pod']))
+if (!empty($dtname))
 {
-    $where[] = "p.post_type = '" . mysql_real_escape_string(trim($_GET['pod'])) . "'";
+    $where[] = "p.post_type = '" . mysql_real_escape_string(trim($dtname)) . "'";
 }
 
 if (!empty($_GET['keywords']))
@@ -251,7 +253,7 @@ $Record->total_rows = pod_query("SELECT FOUND_ROWS()");
 <?php
 foreach ($datatypes as $key => $name)
 {
-    $selected = ($name == $_GET['pod']) ? ' selected' : '';
+    $selected = ($name == $dtname) ? ' selected' : '';
 ?>
                 <option value="<?php echo $name; ?>"<?php echo $selected; ?>><?php echo $name; ?></option>
 <?php
@@ -325,7 +327,14 @@ Begin edit area
     <div class="clear"><!--clear--></div>
 
     <div id="module_form">
+<?php
+if ('add' == $add_or_edit)
+{
+?>
         <script type="text/javascript">showform('<?php echo $dtname; ?>')</script>
+<?php
+}
+?>
     </div>
 </div>
 

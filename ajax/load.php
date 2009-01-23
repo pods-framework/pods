@@ -15,7 +15,7 @@ if ($id = (int) $_POST['id'])
 
     $sql = "
         SELECT
-            id, name, coltype, pickval, weight
+            id, name, coltype, pickval, required, weight
         FROM
             {$table_prefix}pod_fields
         WHERE

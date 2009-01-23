@@ -34,3 +34,15 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
     return $result;
 }
 
+/*
+==================================================
+Return a lowercase alphanumeric name (with underscores)
+==================================================
+*/
+function pods_clean_name($name)
+{
+    $name = preg_replace("/([- ])/", "_", $name);
+    $name = preg_replace("/([^0-9a-z_])/", "", strtolower($name));
+    return $name;
+}
+

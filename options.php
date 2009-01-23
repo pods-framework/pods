@@ -62,9 +62,15 @@ jQuery(function() {
     jQuery("#widgetBox").jqm();
 });
 
-function reset() {
+function resetForm() {
+    jQuery("#column_name").val("");
+    jQuery("#column_name").attr("disabled", false);
+    jQuery("#column_label").val("");
     jQuery("#column_type").val("");
+    jQuery("#column_type").attr("disabled", false);
     jQuery("#column_pickval").val("");
+    jQuery("#column_required").attr("checked", 0);
+    jQuery("#column_required").attr("disabled", false);
     jQuery("#column_sister_field_id").val("");
     jQuery("#column_sister_field_id").hide();
     jQuery("#column_pickval").hide();
@@ -129,10 +135,14 @@ function loadPod() {
             }
             else {
                 var pod_type = eval("("+msg+")");
+                var label = (null == pod_type.label) ? "" : pod_type.label;
+                var is_toplevel = parseInt(pod_type.is_toplevel);
                 var list_filters = (null == pod_type.list_filters) ? "" : pod_type.list_filters;
                 var tpl_detail = (null == pod_type.tpl_detail) ? "" : pod_type.tpl_detail;
                 var tpl_list = (null == pod_type.tpl_list) ? "" : pod_type.tpl_list;
                 jQuery("#pod_name").html(pod_type.name);
+                jQuery("#pod_label").val(pod_type.label);
+                jQuery("#is_toplevel").attr("checked", is_toplevel);
                 jQuery("#list_filters").val(list_filters);
                 jQuery("#tpl_detail").val(tpl_detail);
                 jQuery("#tpl_list").val(tpl_list);
@@ -145,7 +155,7 @@ function loadPod() {
                     var name = fields[i].name;
                     var coltype = fields[i].coltype;
                     var pickval = fields[i].pickval;
-                    if ("" != pickval && null != pickval) {
+                    if ("" != pickval && null != pickval && "NULL" != pickval) {
                         coltype += " "+pickval;
                     }
                     html += '<div class="col'+id+'">';
@@ -153,11 +163,15 @@ function loadPod() {
                     html += '<div class="btn movedown"></div> ';
                     html += '<div class="btn editme"></div> ';
 
+                    // Mark required fields
+                    var required = parseInt(fields[i].required);
+                    required = (1 == required) ? ' <span class="red">*</span>' : "";
+
                     // Default columns
                     if ("name" != name) {
                         html += '<div class="btn dropme"></div> ';
                     }
-                    html += name+" ("+coltype+")</div>";
+                    html += name+" ("+coltype+")"+required+"</div>";
                     jQuery("#column_list").html(html);
                 }
 
@@ -178,7 +192,6 @@ function loadPod() {
                     }
                 });
             }
-            reset();
         }
     });
 }
@@ -212,13 +225,15 @@ function addPod() {
 }
 
 function editPod() {
+    var label = jQuery("#pod_label").val();
+    var is_toplevel = (true == jQuery("#is_toplevel").is(":checked")) ? 1 : 0;
     var list_filters = jQuery("#list_filters").val();
     var tpl_detail = jQuery("#tpl_detail").val();
     var tpl_list = jQuery("#tpl_list").val();
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "auth="+auth+"&datatype="+datatype+"&list_filters="+encodeURIComponent(list_filters)+"&tpl_detail="+encodeURIComponent(tpl_detail)+"&tpl_list="+encodeURIComponent(tpl_list),
+        data: "auth="+auth+"&datatype="+datatype+"&label="+label+"&is_toplevel="+is_toplevel+"&list_filters="+encodeURIComponent(list_filters)+"&tpl_detail="+encodeURIComponent(tpl_detail)+"&tpl_list="+encodeURIComponent(tpl_list),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -231,8 +246,8 @@ function editPod() {
 }
 
 function dropPod() {
-    if (confirm("Do you really want to drop this pod?")) {
-        var dtname = jQuery(".tab.active").html();
+    if (confirm("Do you really want to drop this pod AND all its items?")) {
+        var dtname = jQuery("#pod_name").html();
         jQuery.ajax({
             type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
@@ -253,6 +268,8 @@ function dropPod() {
 }
 
 function loadColumn(col) {
+    resetForm();
+
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/load.php",
@@ -279,11 +296,6 @@ function loadColumn(col) {
                 jQuery("#column_type").attr("disabled", true);
                 jQuery("#column_required").attr("disabled", true);
             }
-            else {
-                jQuery("#column_name").attr("disabled", false);
-                jQuery("#column_type").attr("disabled", false);
-                jQuery("#column_required").attr("disabled", false);
-            }
             if ("" != pickval) {
                 jQuery("#column_pickval").show();
             }
@@ -301,7 +313,7 @@ function addColumn() {
     var name = jQuery("#column_name").val();
     var label = jQuery("#column_label").val();
     var comment = jQuery("#column_comment").val();
-    var dtname = jQuery(".tab.active").html();
+    var dtname = jQuery("#pod_name").html();
     var coltype = jQuery("#column_type").val();
     var pickval = jQuery("#column_pickval").val();
     var sister_field_id = jQuery("#column_sister_field_id").val();
@@ -317,7 +329,6 @@ function addColumn() {
             else {
                 jQuery("#columnBox").jqmHide();
                 loadPod();
-                reset();
             }
         }
     });
@@ -359,7 +370,6 @@ function editColumn(col) {
             else {
                 jQuery("#columnBox").jqmHide();
                 loadPod();
-                reset();
             }
         }
     });
@@ -367,7 +377,7 @@ function editColumn(col) {
 
 function dropColumn(col) {
     if (confirm("Do you really want to drop this column?")) {
-        var dtname = jQuery(".tab.active").html();
+        var dtname = jQuery("#pod_name").html();
         jQuery.ajax({
             type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
@@ -527,7 +537,7 @@ function resetDB() {
                             alert(msg);
                         }
                         else {
-                            alert("Done. Please refresh this page to begin.");
+                            window.location="";
                         }
                     }
                 });
@@ -617,19 +627,19 @@ while ($row = mysql_fetch_array($result))
     </div>
 
     <div class="clear"><!--clear--></div>
-    <p><b>*CAUTION*</b> changing column types can result in data loss!</p>
+    <p><strong>*CAUTION*</strong> changing column types can result in data loss!</p>
 </div>
 
 <div id="pageBox" class="jqmWindow">
     <input type="text" id="new_page" style="width:280px" />
     <input type="button" class="button" onclick="addPage()" value="Add Page" />
-    <p>Ex: <b>/resources/events/latest/</b></p>
+    <p>Ex: <strong>/resources/events/latest/</strong></p>
 </div>
 
 <div id="widgetBox" class="jqmWindow">
     <input type="text" id="new_widget" style="width:280px" />
     <input type="button" class="button" onclick="addWidget()" value="Add Widget" />
-    <p>Ex: <b>format_date</b> or <b>mp3_player</b></p>
+    <p>Ex: <strong>format_date</strong> or <strong>mp3_player</strong></p>
 </div>
 
 <!--
@@ -675,10 +685,16 @@ if (isset($datatypes))
         <p id="column_list">Need some help? Check out the <a href="http://pods.uproot.us/" target="_blank">User Guide</a> to get started.</p>
         <div class="idle hidden">
             <p>
-                <input type="button" class="button" onclick="add_or_edit='add'; jQuery('#columnBox').jqmShow()" value="Add a column" />
+                <input type="button" class="button" onclick="add_or_edit='add'; resetForm(); jQuery('#columnBox').jqmShow()" value="Add a column" />
                 <input type="button" class="button" onclick="editPod()" value="Save changes" /> or
-                <a href="javascript:;" onclick="dropPod()">drop table</a>
+                <a href="javascript:;" onclick="dropPod()">drop pod</a>
             </p>
+
+            <p class="extras" onclick="jQuery('#pod_settings').toggle(); jQuery(this).toggleClass('open')">Pod Settings</p>
+            <div id="pod_settings" class="hidden">
+                <p><input type="checkbox" id="is_toplevel" /> Add to Top Level menu?</p>
+                <p><input type="text" id="pod_label" value="" /> Label (for Top Level menu)</p>
+            </div>
 
             <p class="extras" onclick="jQuery('#tpl_detail').toggle(); jQuery(this).toggleClass('open')">Detail Template</p>
             <textarea id="tpl_detail" class="hidden"></textarea>

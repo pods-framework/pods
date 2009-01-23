@@ -68,7 +68,8 @@
 #column_comment,
 #column_type,
 #column_pickval,
-#column_sister_field_id {
+#column_sister_field_id,
+#pod_label {
     width: 125px;
     border: 1px solid #E3E3E3;
 }
@@ -98,8 +99,7 @@
 #podArea .button,
 #pageArea .button,
 #blockArea .button,
-#widgetArea .button,
-#layoutArea .button {
+#widgetArea .button {
     margin-bottom: 5px;
 }
 
@@ -118,19 +118,16 @@
     border: 1px solid #E3E3E3;
 }
 
-#podArea .tabs,
-#layoutArea .tabs {
+#podArea .tabs {
     float: left;
     width: 30%;
 }
 
-#podArea .tabs .active,
-#layoutArea .tabs .active {
+#podArea .tabs .active {
     background: white;
 }
 
-#podArea .tab,
-#layoutArea .tab {
+#podArea .tab {
     padding: 5px 10px;
     margin-right: 20px;
     border-top: 1px solid #E3E3E3;

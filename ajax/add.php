@@ -12,7 +12,7 @@ foreach ($_POST as $key => $val)
     ${$key} = mysql_real_escape_string(stripslashes(trim($val)));
 }
 
-$name = strtolower(str_replace(' ', '_', $name));
+$name = pods_clean_name($name);
 
 // Add new datatype
 if ('pod' == $type)
@@ -28,7 +28,7 @@ if ('pod' == $type)
 
         $pod_id = pod_query("INSERT INTO {$table_prefix}pod_types (name, tpl_list, tpl_detail) VALUES ('$name', '$tpl_list', '$tpl_detail')", 'Cannot add new pod');
         pod_query("CREATE TABLE {$table_prefix}pod_tbl_$name (id int unsigned auto_increment primary key, name varchar(128), body text)", 'Cannot add pod database table');
-        pod_query("INSERT INTO {$table_prefix}pod_fields (datatype, name, coltype, required) VALUES ($pod_id, 'name', 'txt', 1),($pod_id, 'body', 'desc', 0)", 'Cannot add name and body columns');
+        pod_query("INSERT INTO {$table_prefix}pod_fields (datatype, name, coltype, required, weight) VALUES ($pod_id, 'name', 'txt', 1, 0),($pod_id, 'body', 'desc', 0, 1)", 'Cannot add name and body columns');
 
         die("$pod_id"); // return as string
     }
@@ -63,14 +63,24 @@ elseif ('widget' == $type)
 // Add new column
 else
 {
-    if ('id' == $name || 'name' == $name || 'body' == $name || 'type' == $name)
+    if ('id' == $name || 'name' == $name || 'type' == $name)
     {
         die("Error: $name is a reserved name");
     }
 
     $sql = "SELECT id FROM {$table_prefix}pod_fields WHERE datatype = $datatype AND name = '$name' LIMIT 1";
     pod_query($sql, 'Cannot get fields', 'Column by this name already exists');
-    $field_id = pod_query("INSERT INTO {$table_prefix}pod_fields (datatype, name, label, coltype, pickval, sister_field_id, required) VALUES ('$datatype', '$name', '$label', '$coltype', '$pickval', '$sister_field_id', '$required')", 'Cannot add new field');
+
+    // Sink the new column to the bottom of the list
+    $weight = 0;
+    $result = pod_query("SELECT weight FROM {$table_prefix}pod_fields WHERE datatype = $datatype ORDER BY weight DESC LIMIT 1");
+    if (0 < mysql_num_rows($result))
+    {
+        $row = mysql_fetch_assoc($result);
+        $weight = intval($row['weight']) + 1;
+    }
+
+    $field_id = pod_query("INSERT INTO {$table_prefix}pod_fields (datatype, name, label, coltype, pickval, sister_field_id, required, weight) VALUES ('$datatype', '$name', '$label', '$coltype', '$pickval', '$sister_field_id', '$required', '$weight')", 'Cannot add new field');
 
     if (empty($pickval))
     {

@@ -12,6 +12,8 @@ foreach ($_POST as $key => $val)
     ${$key} = mysql_real_escape_string(stripslashes(trim($val)));
 }
 
+$name = pods_clean_name($name);
+
 $dbtypes = array(
     'bool' => 'bool',
     'date' => 'datetime',
@@ -85,15 +87,15 @@ elseif ('edit' == $action)
 
         if ($coltype != $old_coltype && 'pick' == $coltype)
         {
-            pod_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname DROP COLUMN $field_name");
+            pod_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname DROP COLUMN $old_name");
         }
         elseif ($coltype != $old_coltype && 'pick' == $old_coltype)
         {
             pod_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname ADD COLUMN $name $dbtype", 'Cannot create column');
-            pod_query("ALTER TABLE {$table_prefix}pod_fields SET sister_field_id = NULL WHERE sister_field_id = $field_id");
+            pod_query("UPDATE {$table_prefix}pod_fields SET sister_field_id = NULL WHERE sister_field_id = $field_id");
             pod_query("DELETE FROM {$table_prefix}pod_rel WHERE field_id = $field_id");
         }
-        else
+        elseif ('pick' != $coltype)
         {
             pod_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname CHANGE $old_name $name $dbtype");
         }
@@ -131,6 +133,8 @@ else
     UPDATE
         {$table_prefix}pod_types
     SET
+        label = '$label',
+        is_toplevel = '$is_toplevel',
         list_filters = '$list_filters',
         tpl_detail = '$tpl_detail',
         tpl_list = '$tpl_list'

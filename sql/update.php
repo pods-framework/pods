@@ -63,6 +63,16 @@ if ($installed < 132)
     pod_query("UPDATE {$table_prefix}pod_widgets SET phpcode = SUBSTR(phpcode, 3) WHERE phpcode LIKE '?>%'");
 }
 
+if ($installed < 143)
+{
+    $result = pod_query("SHOW COLUMNS FROM {$table_prefix}pod_types WHERE field = 'description'");
+    if (0 < mysql_num_rows($result))
+    {
+        pod_query("ALTER TABLE {$table_prefix}pod_types CHANGE description label VARCHAR(32)");
+    }
+    pod_query("ALTER TABLE {$table_prefix}pod_types ADD COLUMN is_toplevel BOOL default 0 AFTER label");
+}
+
 // Save this version
 update_option('pods_version', $pods_latest);
 

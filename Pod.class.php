@@ -280,7 +280,7 @@ class Pod
                 {
                     if (!empty($search))
                     {
-                        $search = "AND (t.name LIKE '%$search%' OR t.body LIKE '%$search%')";
+                        $search = "AND (t.name LIKE '%$search%')";
                     }
                 }
                 elseif (in_array($key, $fields))

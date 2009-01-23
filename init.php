@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The WordPress CMS Plugin
-Version: 1.4.2
+Version: 1.4.3
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$pods_latest = 142;
+$pods_latest = 143;
 
 function pods_init()
 {
@@ -45,7 +45,7 @@ function pods_init()
         $sql = explode(";\n", str_replace('wp_', $table_prefix, $sql));
         for ($i = 0, $z = count($sql) - 1; $i < $z; $i++)
         {
-            pod_query($sql[$i]);
+            pod_query($sql[$i], 'Cannot setup SQL tables');
         }
         delete_option('pods_version');
         add_option('pods_version', $pods_latest);
@@ -63,19 +63,39 @@ function pods_init()
 
 function pods_menu()
 {
-    global $menu, $table_prefix;
+    global $table_prefix;
 
-    $menu[30] = array('Pods', 8, 'pods', 'Pods', 'menu-top toplevel_page_pods', 'toplevel_page_pods', 'images/generic.png');
-    add_submenu_page('pods', 'Setup', 'Setup', 8, 'pods', 'pods_options_page');
-    add_submenu_page('pods', 'Browse Content', 'Browse Content', 8, 'pods-browse', 'pods_content_page');
-
-    $result = pod_query("SELECT name FROM {$table_prefix}pod_types ORDER BY name");
+    $submenu = array();
+    $result = pod_query("SELECT name, label, is_toplevel FROM {$table_prefix}pod_types ORDER BY name");
     if (0 < mysql_num_rows($result))
     {
         while ($row = mysql_fetch_array($result))
         {
-            add_submenu_page('pods', "Add $row[0]", "Add $row[0]", 8, "pod-$row[0]", 'pods_content_page');
+            $name = $row['name'];
+            $label = trim($row['label']);
+            $label = ('' != $label) ? $label : $name;
+
+            if (1 != $row['is_toplevel'])
+            {
+                $submenu[] = $row;
+            }
+            else
+            {
+                add_object_page($label, $label, 8, "pod-$name");
+                add_submenu_page("pod-$name", 'Add new', 'Add new', 8, "pod-$name", 'pods_content_page');
+                add_submenu_page("pod-$name", 'Browse Content', 'Browse Content', 8, "pods-browse-$name", 'pods_content_page');
+            }
         }
+    }
+
+    add_object_page('Pods', 'Pods', 8, 'pods');
+    add_submenu_page('pods', 'Setup', 'Setup', 8, 'pods', 'pods_options_page');
+    add_submenu_page('pods', 'Browse Content', 'Browse Content', 8, 'pods-browse', 'pods_content_page');
+
+    foreach ($submenu as $item)
+    {
+        $name = $item['name'];
+        add_submenu_page('pods', "Add $name", "Add $name", 8, "pod-$name", 'pods_content_page');
     }
 }
 
@@ -127,8 +147,6 @@ function get_content()
 {
     global $phpcode, $post;
 
-    require_once WP_PLUGIN_DIR . '/pods/Pod.class.php';
-
     // Cleanse the GET variables
     foreach ($_GET as $key => $val)
     {
@@ -149,9 +167,8 @@ function pods_redirect()
 {
     global $phpcode, $podpage_exists;
 
-    if ($result = $podpage_exists)
+    if ($row = $podpage_exists)
     {
-        $row = mysql_fetch_assoc($result);
         $phpcode = $row['phpcode'];
 
         include WP_PLUGIN_DIR . '/pods/router.php';
@@ -161,7 +178,15 @@ function pods_redirect()
 
 function pods_404($vars = false)
 {
-    return false;
+    $remove = array_search('page', $vars);
+    unset($vars[$remove]);
+    $remove = array_search('category_name', $vars);
+    unset($vars[$remove]);
+    $remove = array_search('error', $vars);
+    unset($vars[$remove]);
+    $remove = array_search('name', $vars);
+    unset($vars[$remove]);
+    return $vars;
 }
 
 function podpage_exists()
@@ -172,6 +197,11 @@ function podpage_exists()
     $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri[0]);
     $uri = empty($uri) ? '/' : "/$uri/";
 
+    if (false !== strpos($uri, 'wp-admin'))
+    {
+        return false;
+    }
+
     // Handle subdirectory installations
     $baseuri = get_bloginfo('url');
     $baseuri = substr($baseuri, strpos($baseuri, '//') + 2);
@@ -179,13 +209,13 @@ function podpage_exists()
     $baseuri = str_replace($baseuri, '', $uri);
 
     // See if the custom template exists
-    $result = pod_query("SELECT phpcode FROM {$table_prefix}pod_pages WHERE uri IN('$uri', '$baseuri') LIMIT 1");
+    $result = pod_query("SELECT * FROM {$table_prefix}pod_pages WHERE uri IN('$uri', '$baseuri') LIMIT 1");
     if (1 > mysql_num_rows($result))
     {
         // Find any wildcards
         $sql = "
         SELECT
-            phpcode
+            *
         FROM
             {$table_prefix}pod_pages
         WHERE
@@ -200,13 +230,14 @@ function podpage_exists()
 
     if (0 < mysql_num_rows($result))
     {
-        return $result;
+        return mysql_fetch_assoc($result);
     }
     return false;
 }
 
 // Setup DB tables, get the gears turning
 require_once WP_PLUGIN_DIR . '/pods/functions.php';
+require_once WP_PLUGIN_DIR . '/pods/Pod.class.php';
 
 pods_init();
 
@@ -214,10 +245,10 @@ $podpage_exists = podpage_exists();
 $pods_url = WP_PLUGIN_URL . '/pods';
 
 // Hook for admin menu
-add_action('admin_menu', 'pods_menu');
+add_action('admin_menu', 'pods_menu', 9999);
 
 // Hook for Pods branding
-add_action('wp_head', 'pods_meta');
+add_action('wp_head', 'pods_meta', 0);
 
 // Hook for redirection
 add_action('template_redirect', 'pods_redirect');

@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The WordPress CMS Plugin
-Version: 1.4.3
+Version: 1.4.4
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$pods_latest = 143;
+$pods_latest = 144;
 
 function pods_init()
 {
@@ -63,39 +63,47 @@ function pods_init()
 
 function pods_menu()
 {
-    global $table_prefix;
+    global $table_prefix, $current_user;
 
-    $submenu = array();
-    $result = pod_query("SELECT name, label, is_toplevel FROM {$table_prefix}pod_types ORDER BY name");
-    if (0 < mysql_num_rows($result))
+    // Editors and Admins can add/edit items
+    if (4 < $current_user->user_level)
     {
-        while ($row = mysql_fetch_array($result))
+        $submenu = array();
+        $result = pod_query("SELECT name, label, is_toplevel FROM {$table_prefix}pod_types ORDER BY name");
+        if (0 < mysql_num_rows($result))
         {
-            $name = $row['name'];
-            $label = trim($row['label']);
-            $label = ('' != $label) ? $label : $name;
+            while ($row = mysql_fetch_array($result))
+            {
+                $name = $row['name'];
+                $label = trim($row['label']);
+                $label = ('' != $label) ? $label : $name;
 
-            if (1 != $row['is_toplevel'])
-            {
-                $submenu[] = $row;
-            }
-            else
-            {
-                add_object_page($label, $label, 8, "pod-$name");
-                add_submenu_page("pod-$name", 'Add new', 'Add new', 8, "pod-$name", 'pods_content_page');
-                add_submenu_page("pod-$name", 'Browse Content', 'Browse Content', 8, "pods-browse-$name", 'pods_content_page');
+                if (1 != $row['is_toplevel'])
+                {
+                    $submenu[] = $row;
+                }
+                else
+                {
+                    add_object_page($label, $label, 5, "pods-browse-$name");
+                    add_submenu_page("pods-browse-$name", 'Edit', 'Edit', 5, "pods-browse-$name", 'pods_content_page');
+                    add_submenu_page("pods-browse-$name", 'Add New', 'Add New', 5, "pod-$name", 'pods_content_page');
+                }
             }
         }
     }
 
-    add_object_page('Pods', 'Pods', 8, 'pods');
-    add_submenu_page('pods', 'Setup', 'Setup', 8, 'pods', 'pods_options_page');
-    add_submenu_page('pods', 'Browse Content', 'Browse Content', 8, 'pods-browse', 'pods_content_page');
-
-    foreach ($submenu as $item)
+    // Admins can manage Pods
+    if (7 < $current_user->user_level)
     {
-        $name = $item['name'];
-        add_submenu_page('pods', "Add $name", "Add $name", 8, "pod-$name", 'pods_content_page');
+        add_object_page('Pods', 'Pods', 8, 'pods');
+        add_submenu_page('pods', 'Setup', 'Setup', 8, 'pods', 'pods_options_page');
+        add_submenu_page('pods', 'Browse Content', 'Browse Content', 8, 'pods-browse', 'pods_content_page');
+
+        foreach ($submenu as $item)
+        {
+            $name = $item['name'];
+            add_submenu_page('pods', "Add $name", "Add $name", 8, "pod-$name", 'pods_content_page');
+        }
     }
 }
 
@@ -103,12 +111,6 @@ function pods_options_page()
 {
     global $pods_url, $table_prefix;
     include WP_PLUGIN_DIR . '/pods/options.php';
-}
-
-function pods_layout_page()
-{
-    global $pods_url, $table_prefix;
-    include WP_PLUGIN_DIR . '/pods/layout.php';
 }
 
 function pods_content_page()
@@ -176,17 +178,9 @@ function pods_redirect()
     }
 }
 
-function pods_404($vars = false)
+function pods_404()
 {
-    $remove = array_search('page', $vars);
-    unset($vars[$remove]);
-    $remove = array_search('category_name', $vars);
-    unset($vars[$remove]);
-    $remove = array_search('error', $vars);
-    unset($vars[$remove]);
-    $remove = array_search('name', $vars);
-    unset($vars[$remove]);
-    return $vars;
+    return 'HTTP/1.1 200 OK';
 }
 
 function podpage_exists()
@@ -256,7 +250,7 @@ add_action('template_redirect', 'pods_redirect');
 // Filters for 404 handling
 if (false !== $podpage_exists)
 {
-    add_filter('query_vars', 'pods_404');
+    add_filter('status_header', 'pods_404');
     add_filter('wp_title', 'pods_title', 8, 3);
 }
 

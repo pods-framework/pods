@@ -155,7 +155,7 @@ function showform(dt, post_id) {
                 elements = jQuery(".desc");
                 var config = {
                     iconsPath : "../wp-content/plugins/pods/images/nicEditorIcons.gif",
-                    buttonList : ['bold','italic','underline','fontFormat','left','center','right','justify','ol','ul','indent','outdent','image','xhtml']
+                    buttonList : ['bold','italic','underline','fontFormat','left','center','right','justify','ol','ul','indent','outdent','image','link','unlink','xhtml']
                 };
 
                 for (i = 0; i < elements.length; i++) {
@@ -247,21 +247,28 @@ $Record->total_rows = pod_query("SELECT FOUND_ROWS()");
     </div>
     <div id="filterForm" style="float:left; width:50%; text-align:right">
         <form method="get">
-            Filter by:
+            Narrow results:
+<?php
+if ('pods-browse' == $_GET['page'])
+{
+?>
             <select class="pick_module" name="pod">
                 <option value="">-- All pods --</option>
 <?php
-foreach ($datatypes as $key => $name)
-{
-    $selected = ($name == $dtname) ? ' selected' : '';
+    foreach ($datatypes as $key => $name)
+    {
+        $selected = ($name == $dtname) ? ' selected' : '';
 ?>
                 <option value="<?php echo $name; ?>"<?php echo $selected; ?>><?php echo $name; ?></option>
 <?php
-}
+    }
 ?>
             </select>
+<?php
+}
+?>
             <input type="text" id="column_name" name="keywords" />
-            <input type="hidden" name="page" value="pods-browse" />
+            <input type="hidden" name="page" value="<?php echo $_GET['page']; ?>" />
             <input type="button" class="button" value="Go" onclick="this.form.submit()" />
         </form>
     </div>

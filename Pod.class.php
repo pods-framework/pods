@@ -369,13 +369,13 @@ class Pod
         if (1 < ($page - 100))
         {
 ?>
-    <a href="<?php echo $request_uri; ?>pg=<?= ($page - 100) ?>" class="pageNum"><?= ($page - 100) ?></a>
+    <a href="<?php echo $request_uri; ?>pg=<?php echo ($page - 100); ?>" class="pageNum"><?php echo ($page - 100); ?></a>
 <?php
         }
         if (1 < ($page - 10))
         {
 ?>
-    <a href="<?php echo $request_uri; ?>pg=<?= ($page - 10) ?>" class="pageNum"><?= ($page - 10) ?></a>
+    <a href="<?php echo $request_uri; ?>pg=<?php echo ($page - 10); ?>" class="pageNum"><?php echo ($page - 10); ?></a>
 <?php
         }
         for ($i = 2; $i > 0; $i--)
@@ -383,38 +383,38 @@ class Pod
             if (1 < ($page - $i))
             {
 ?>
-    <a href="<?php echo $request_uri; ?>pg=<?= ($page - $i) ?>" class="pageNum"><?= ($page - $i) ?></a>
+    <a href="<?php echo $request_uri; ?>pg=<?php echo ($page - $i); ?>" class="pageNum"><?php echo ($page - $i); ?></a>
 <?php
             }
         }
 ?>
-    <span class="pageNum currentPage"><?= $page ?></span>
+    <span class="pageNum currentPage"><?php echo $page; ?></span>
 <?php
         for ($i = 1; $i < 3; $i++)
         {
             if ($total_pages > ($page + $i))
             {
 ?>
-    <a href="<?php echo $request_uri; ?>pg=<?= ($page + $i) ?>" class="pageNum"><?= ($page + $i) ?></a>
+    <a href="<?php echo $request_uri; ?>pg=<?php echo ($page + $i); ?>" class="pageNum"><?php echo ($page + $i); ?></a>
 <?php
             }
         }
         if ($total_pages > ($page + 10))
         {
 ?>
-    <a href="<?php echo $request_uri; ?>pg=<?= ($page + 10) ?>" class="pageNum"><?= ($page + 10) ?></a>
+    <a href="<?php echo $request_uri; ?>pg=<?php echo ($page + 10); ?>" class="pageNum"><?php echo ($page + 10); ?></a>
 <?php
         }
         if ($total_pages > ($page + 100))
         {
 ?>
-    <a href="<?php echo $request_uri; ?>pg=<?= ($page + 100) ?>" class="pageNum"><?= ($page + 100) ?></a>
+    <a href="<?php echo $request_uri; ?>pg=<?php echo ($page + 100); ?>" class="pageNum"><?php echo ($page + 100); ?></a>
 <?php
         }
         if ($page < $total_pages)
         {
 ?>
-    <a href="<?php echo $request_uri; ?>pg=<?= $total_pages ?>" class="pageNum lastPage"><?= $total_pages ?></a>
+    <a href="<?php echo $request_uri; ?>pg=<?php echo $total_pages; ?>" class="pageNum lastPage"><?php echo $total_pages; ?></a>
 <?php
         }
 ?>

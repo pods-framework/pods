@@ -13,6 +13,18 @@ if (0 < mysql_num_rows($result))
     while ($row = mysql_fetch_array($result))
     {
         pod_query("DROP TABLE $row[0]");
+
+        // Remember all pod tables
+        if ($pos = strpos($row[0], 'pod_tbl_'))
+        {
+            $dtnames[] = substr($row[0], $pos + 8);
+        }
+    }
+    // Drop all associated "posts" table rows
+    if (isset($dtnames))
+    {
+        $dtnames = implode("','", $dtnames);
+        pod_query("DELETE FROM {$table_prefix}posts WHERE post_type IN ('$dtnames')");
     }
 }
 pod_query("DELETE FROM {$table_prefix}options WHERE option_name = 'pods_version'");

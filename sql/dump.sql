@@ -99,31 +99,31 @@ INSERT INTO wp_pod_tbl_country (name) VALUES
 INSERT INTO wp_pod_tbl_state (name) VALUES
 ('Alabama'),('Alaska'),('Arizona'),('Arkansas'),('California'),('Colorado'),('Connecticut'),('Delaware'),('District of Columbia'),('Florida'),('Georgia'),('Hawaii'),('Idaho'),('Illinois'),('Indiana'),('Iowa'),('Kansas'),('Kentucky'),('Louisiana'),('Maine'),('Maryland'),('Massachussetts'),('Michigan'),('Minnesota'),('Mississippi'),('Missouri'),('Montana'),('Nebraska'),('Nevada'),('New Hampshire'),('New Mexico'),('New Jersey'),('New York'),('North Carolina'),('North Dakota'),('Ohio'),('Oklahoma'),('Oregon'),('Pennsylvania'),('Rhode Island'),('South Carolina'),('South Dakota'),('Tennessee'),('Texas'),('Utah'),('Virginia'),('Vermont'),('Washington'),('West Virginia'),('Wisconsin'),('Wyoming');
 
-INSERT INTO wp_pod_types VALUES
-(1,'event',NULL,'','<h2>{@name}</h2>\n<p><b>Start Date:</b> {@start_date,format_date}</p>\n<p><b>End Date:</b> {@end_date,format_date}</p>\n<p><b>Contact Name:</b> {@contact_name}</p>\n<p>{@body}</p>','<p><a href=\"{@detail_url}\">{@name}</a> - {@start_date,format_date}</p>'),
-(2,'person',NULL,'','<h2>{@name}</h2>\n<img src=\"{@photo}\" alt=\"{@name}\" />\n<p>{@job_title}</p>\n<p>{@body}</p>','<p><a href=\"{@detail_url}\">{@name}</a></p>');
+INSERT INTO wp_pod_types (name, label, list_filters, tpl_detail, tpl_list) VALUES
+('event',NULL,'','<h2>{@name}</h2>\n<p><b>Start Date:</b> {@start_date,format_date}</p>\n<p><b>End Date:</b> {@end_date,format_date}</p>\n<p><b>Contact Name:</b> {@contact_name}</p>\n<p>{@body}</p>','<p><a href=\"{@detail_url}\">{@name}</a> - {@start_date,format_date}</p>'),
+('person',NULL,'','<h2>{@name}</h2>\n<img src=\"{@photo}\" alt=\"{@name}\" />\n<p>{@job_title}</p>\n<p>{@body}</p>','<p><a href=\"{@detail_url}\">{@name}</a></p>');
 
-INSERT INTO wp_pod_fields VALUES
-(1,1,'name',NULL,NULL,'txt',NULL,NULL,0,0),
-(2,1,'body',NULL,NULL,'desc',NULL,NULL,0,1),
-(3,2,'name',NULL,NULL,'txt',NULL,NULL,0,0),
-(4,2,'body',NULL,NULL,'desc',NULL,NULL,0,1),
-(5,1,'start_date','Start Date',NULL,'date','',0,1,2),
-(6,1,'end_date','End Date',NULL,'date','',0,1,3),
-(7,1,'address','Address',NULL,'desc','',0,0,4),
-(8,1,'country','Country',NULL,'pick','country',0,0,5),
-(9,1,'contact_name','Contact Name',NULL,'pick','person',0,0,6),
-(10,1,'contact_phone','Contact Phone',NULL,'txt','',0,0,7),
-(11,2,'photo','Photo',NULL,'file','',0,0,2),
-(12,2,'job_title','Job Title',NULL,'txt','',0,0,3),
-(13,2,'employer','Employer',NULL,'txt','',0,0,4),
-(14,2,'phone','phone',NULL,'txt','',0,0,5),
-(15,2,'email','email',NULL,'txt','',0,0,6);
+INSERT INTO wp_pod_fields (datatype, name, label, comment, coltype, pickval, sister_field_id, required, weight) VALUES
+(1,'name',NULL,NULL,'txt',NULL,NULL,0,0),
+(1,'body',NULL,NULL,'desc',NULL,NULL,0,1),
+(2,'name',NULL,NULL,'txt',NULL,NULL,0,0),
+(2,'body',NULL,NULL,'desc',NULL,NULL,0,1),
+(1,'start_date','Start Date',NULL,'date','',0,1,2),
+(1,'end_date','End Date',NULL,'date','',0,1,3),
+(1,'address','Address',NULL,'desc','',0,0,4),
+(1,'country','Country',NULL,'pick','country',0,0,5),
+(1,'contact_name','Contact Name',NULL,'pick','person',0,0,6),
+(1,'contact_phone','Contact Phone',NULL,'txt','',0,0,7),
+(2,'photo','Photo',NULL,'file','',0,0,2),
+(2,'job_title','Job Title',NULL,'txt','',0,0,3),
+(2,'employer','Employer',NULL,'txt','',0,0,4),
+(2,'phone','phone',NULL,'txt','',0,0,5),
+(2,'email','email',NULL,'txt','',0,0,6);
 
-INSERT INTO wp_pod_pages VALUES
-(1,'/list/','<?php\n$type = empty($type) ? \'news\' : $type;\n\n$Record = new Pod($type);\n$Record->findRecords(\'id DESC\');\n?>\n\n<h2><?php echo ucwords($type); ?> Listing</h2>\n\n<?php\necho $Record->getFilters();\necho $Record->getPagination();\necho $Record->showTemplate(\'list\');'),
-(2,'/detail/','<?php\nif (ctype_digit($id))\n{\n    $type = empty($type) ? \'news\' : $type;\n    $Record = new Pod($type, $id);\n    echo $Record->showTemplate(\'detail\');\n}');
+INSERT INTO wp_pod_pages (uri, phpcode) VALUES
+('/list/','<?php\n$type = empty($type) ? \'news\' : $type;\n\n$Record = new Pod($type);\n$Record->findRecords(\'id DESC\');\n?>\n\n<h2><?php echo ucwords($type); ?> Listing</h2>\n\n<?php\necho $Record->getFilters();\necho $Record->getPagination();\necho $Record->showTemplate(\'list\');'),
+('/detail/','<?php\nif (ctype_digit($id))\n{\n    $type = empty($type) ? \'news\' : $type;\n    $Record = new Pod($type, $id);\n    echo $Record->showTemplate(\'detail\');\n}');
 
-INSERT INTO wp_pod_widgets VALUES
-(1,'format_date','<?php\necho date(\"m/d/Y\", strtotime($value));'),
-(2,'mp3_player','<object type=\"application/x-shockwave-flash\" data=\"http://flash-mp3-player.net/medias/player_mp3_maxi.swf\" width=\"25\" height=\"20\"><param name=\"movie\" value=\"http://flash-mp3-player.net/medias/player_mp3_maxi.swf\" /><param name=\"FlashVars\" value=\"mp3=<?php echo $value; ?>&width=25&showslider=0\" /></object>');
+INSERT INTO wp_pod_widgets (name, phpcode) VALUES
+('format_date','<?php\necho date(\"m/d/Y\", strtotime($value));'),
+('mp3_player','<object type=\"application/x-shockwave-flash\" data=\"http://flash-mp3-player.net/medias/player_mp3_maxi.swf\" width=\"25\" height=\"20\"><param name=\"movie\" value=\"http://flash-mp3-player.net/medias/player_mp3_maxi.swf\" /><param name=\"FlashVars\" value=\"mp3=<?php echo $value; ?>&width=25&showslider=0\" /></object>');

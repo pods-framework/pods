@@ -5,7 +5,7 @@ CREATE TABLE wp_pod (
     id INT unsigned auto_increment primary key,
     row_id INT unsigned,
     post_id INT unsigned,
-    datatype TINYINT unsigned
+    datatype SMALLINT unsigned
 );
 
 DROP TABLE IF EXISTS wp_pod_types;
@@ -22,7 +22,7 @@ CREATE TABLE wp_pod_types (
 DROP TABLE IF EXISTS wp_pod_fields;
 CREATE TABLE wp_pod_fields (
     id INT unsigned auto_increment primary key,
-    datatype TINYINT unsigned,
+    datatype SMALLINT unsigned,
     name VARCHAR(32),
     label VARCHAR(32),
     comment VARCHAR(128),
@@ -30,7 +30,7 @@ CREATE TABLE wp_pod_fields (
     pickval VARCHAR(32),
     sister_field_id INT unsigned,
     required BOOL default 0,
-    weight TINYINT
+    weight TINYINT unsigned
 );
 
 DROP TABLE IF EXISTS wp_pod_rel;
@@ -46,6 +46,7 @@ DROP TABLE IF EXISTS wp_pod_pages;
 CREATE TABLE wp_pod_pages (
     id INT unsigned auto_increment primary key,
     uri VARCHAR(128),
+    title VARCHAR(128),
     phpcode TEXT
 );
 
@@ -54,6 +55,16 @@ CREATE TABLE wp_pod_widgets (
     id INT unsigned auto_increment primary key,
     name VARCHAR(32),
     phpcode TEXT
+);
+
+DROP TABLE IF EXISTS wp_pod_menu;
+CREATE TABLE wp_pod_menu (
+    id INT unsigned auto_increment primary key,
+    uri VARCHAR(128),
+    title VARCHAR(128),
+    lft INT unsigned,
+    rgt INT unsigned,
+    weight TINYINT unsigned default 0
 );
 
 /* Load some default pods */
@@ -103,17 +114,20 @@ INSERT INTO wp_pod_types (name, label, list_filters, tpl_detail, tpl_list) VALUE
 ('event',NULL,'','<h2>{@name}</h2>\n<p><b>Start Date:</b> {@start_date,format_date}</p>\n<p><b>End Date:</b> {@end_date,format_date}</p>\n<p><b>Contact Name:</b> {@contact_name}</p>\n<p>{@body}</p>','<p><a href=\"{@detail_url}\">{@name}</a> - {@start_date,format_date}</p>'),
 ('person',NULL,'','<h2>{@name}</h2>\n<img src=\"{@photo}\" alt=\"{@name}\" />\n<p>{@job_title}</p>\n<p>{@body}</p>','<p><a href=\"{@detail_url}\">{@name}</a></p>');
 
+INSERT INTO wp_pod_menu (uri, title, lft, rgt) VALUES
+('/', 'Home', 1, 2);
+
 INSERT INTO wp_pod_fields (datatype, name, label, comment, coltype, pickval, sister_field_id, required, weight) VALUES
-(1,'name',NULL,NULL,'txt',NULL,NULL,0,0),
+(1,'name',NULL,NULL,'txt',NULL,NULL,1,0),
 (1,'body',NULL,NULL,'desc',NULL,NULL,0,1),
-(2,'name',NULL,NULL,'txt',NULL,NULL,0,0),
-(2,'body',NULL,NULL,'desc',NULL,NULL,0,1),
 (1,'start_date','Start Date',NULL,'date','',0,1,2),
 (1,'end_date','End Date',NULL,'date','',0,1,3),
 (1,'address','Address',NULL,'desc','',0,0,4),
 (1,'country','Country',NULL,'pick','country',0,0,5),
 (1,'contact_name','Contact Name',NULL,'pick','person',0,0,6),
 (1,'contact_phone','Contact Phone',NULL,'txt','',0,0,7),
+(2,'name',NULL,NULL,'txt',NULL,NULL,1,0),
+(2,'body',NULL,NULL,'desc',NULL,NULL,0,1),
 (2,'photo','Photo',NULL,'file','',0,0,2),
 (2,'job_title','Job Title',NULL,'txt','',0,0,3),
 (2,'employer','Employer',NULL,'txt','',0,0,4),

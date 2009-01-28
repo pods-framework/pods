@@ -12,7 +12,11 @@ foreach ($_POST as $key => $val)
     ${$key} = mysql_real_escape_string(stripslashes(trim($val)));
 }
 
-// Delete a single column
+/*
+==================================================
+Drop a single column
+==================================================
+*/
 if ($field_id = (int) $_POST['col'])
 {
     $result = pod_query("SELECT name, coltype FROM {$table_prefix}pod_fields WHERE id = $field_id LIMIT 1");
@@ -29,13 +33,39 @@ if ($field_id = (int) $_POST['col'])
     pod_query("DELETE FROM {$table_prefix}pod_rel WHERE field_id = $field_id");
 }
 
-// Delete a single page
+/*
+==================================================
+Drop a single page
+==================================================
+*/
 elseif ($page_id = (int) $_POST['page'])
 {
     pod_query("DELETE FROM {$table_prefix}pod_pages WHERE id = $page_id LIMIT 1");
 }
 
-// Delete a single content item
+/*
+==================================================
+Drop a menu item and all children
+==================================================
+*/
+elseif ($menu_id = (int) $_POST['menu_id'])
+{
+    $result = pod_query("SELECT lft, rgt, (rgt - lft + 1) AS width FROM wp_pod_menu WHERE id = $menu_id LIMIT 1");
+    $row = mysql_fetch_assoc($result);
+    $lft = $row['lft'];
+    $rgt = $row['rgt'];
+    $width = $row['width'];
+
+    pod_query("DELETE from wp_pod_menu WHERE lft BETWEEN $lft AND $rgt");
+    pod_query("UPDATE wp_pod_menu SET rgt = rgt - $width WHERE rgt > $rgt");
+    pod_query("UPDATE wp_pod_menu SET lft = lft - $width WHERE lft > $rgt");
+}
+
+/*
+==================================================
+Drop a single content item
+==================================================
+*/
 elseif ($post_id = (int) $_POST['post_id'])
 {
     $sql = "
@@ -60,13 +90,21 @@ elseif ($post_id = (int) $_POST['post_id'])
     pod_query("DELETE FROM {$table_prefix}pod_rel WHERE post_id = $post_id");
 }
 
-// Delete a single widget
+/*
+==================================================
+Drop a single widget
+==================================================
+*/
 elseif ($widget_id = (int) $_POST['widget'])
 {
     pod_query("DELETE FROM {$table_prefix}pod_widgets WHERE id = $widget_id LIMIT 1");
 }
 
-// Delete an entire datatype
+/*
+==================================================
+Drop an entire datatype
+==================================================
+*/
 elseif ($datatype_id = (int) $_POST['pod'])
 {
     $fields = '0';

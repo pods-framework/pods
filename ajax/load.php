@@ -7,7 +7,11 @@ if ($_POST['auth'] != md5(AUTH_KEY))
     die('Error: Authentication failed');
 }
 
-// Get all Pod columns
+/*
+==================================================
+Get all pod columns
+==================================================
+*/
 if ($id = (int) $_POST['id'])
 {
     $result = pod_query("SELECT * FROM {$table_prefix}pod_types WHERE id = $id LIMIT 1");
@@ -36,7 +40,24 @@ if ($id = (int) $_POST['id'])
     // Encode the array to JSON
     echo json_encode($module);
 }
-// Get a single Pod column
+
+/*
+==================================================
+Get a single menu item
+==================================================
+*/
+elseif ($menu_id = (int) $_POST['menu_id'])
+{
+    $result = pod_query("SELECT uri, title FROM {$table_prefix}pod_menu WHERE id = $menu_id LIMIT 1");
+    $row = mysql_fetch_assoc($result);
+    echo json_encode($row);
+}
+
+/*
+==================================================
+Get a single pod column
+==================================================
+*/
 elseif ($field_id = (int) $_POST['col'])
 {
     $result = pod_query("SELECT name, label, comment, coltype, pickval, sister_field_id, required FROM {$table_prefix}pod_fields WHERE id = $field_id LIMIT 1");

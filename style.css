@@ -56,7 +56,11 @@
     background: url(images/reply.gif) no-repeat;
 }
 
-.moveup, .movedown, .editme, .dropme {
+.addnew {
+    background: url(images/file.gif) no-repeat;
+}
+
+.moveup, .movedown, .editme, .dropme, .addnew {
     float: left;
     width: 16px;
     height: 16px;
@@ -71,6 +75,13 @@
 #column_sister_field_id,
 #pod_label {
     width: 125px;
+    border: 1px solid #E3E3E3;
+}
+
+#menu_uri,
+#menu_title,
+#page_title {
+    width: 200px;
     border: 1px solid #E3E3E3;
 }
 
@@ -98,7 +109,6 @@
 
 #podArea .button,
 #pageArea .button,
-#blockArea .button,
 #widgetArea .button {
     margin-bottom: 5px;
 }
@@ -106,7 +116,6 @@
 #podArea textarea,
 #pageArea textarea,
 #widgetArea textarea,
-#blockArea textarea,
 .desc, .code {
     width: 99%;
     height: 140px;
@@ -192,6 +201,14 @@ h3 {
     width: 70%;
 }
 
+#menuBox .leftside {
+    width: 20%;
+}
+
+#menuBox .rightside {
+    width: 80%;
+}
+
 .red {
     color: red;
     font-weight: bold;
@@ -234,6 +251,11 @@ span.first:before {
 
 span.first {
 
+}
+
+.menu-item {
+    margin-top: 5px;
+    margin-left: 20px;
 }
 
 /* File Tree */
@@ -285,7 +307,6 @@ UL.jqueryFileTree A:hover {
     top: 25%;
     left: 25%;
     width: 400px;
-
     background: #E4F2FD;
     color: #333;
     border: 1px solid #C6D9E9;

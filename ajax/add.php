@@ -14,7 +14,11 @@ foreach ($_POST as $key => $val)
 
 $name = pods_clean_name($name);
 
-// Add new datatype
+/*
+==================================================
+Add new datatype
+==================================================
+*/
 if ('pod' == $type)
 {
     if (!empty($name))
@@ -34,7 +38,12 @@ if ('pod' == $type)
     }
     die('Error: Enter a pod name!');
 }
-// Add new page
+
+/*
+==================================================
+Add new page
+==================================================
+*/
 elseif ('page' == $type)
 {
     if (!empty($uri))
@@ -47,7 +56,12 @@ elseif ('page' == $type)
     }
     die('Error: Enter a page URI');
 }
-// Add new widget
+
+/*
+==================================================
+Add new widget
+==================================================
+*/
 elseif ('widget' == $type)
 {
     if (!empty($name))
@@ -60,7 +74,38 @@ elseif ('widget' == $type)
     }
     die('Error: Enter a widget name');
 }
-// Add new column
+
+/*
+==================================================
+Add new menu item
+==================================================
+*/
+elseif ('menu' == $type)
+{
+    // get the "rgt" value of the parent
+    $result = pod_query("SELECT rgt FROM {$table_prefix}pod_menu WHERE id = $parent_menu_id LIMIT 1");
+    $row = mysql_fetch_assoc($result);
+    $rgt = $row['rgt'];
+
+    // Increase all "lft" values by 2 if > "rgt"
+    pod_query("UPDATE {$table_prefix}pod_menu SET lft = lft + 2 WHERE lft > $rgt");
+
+    // Increase all "rgt" values by 2 if >= "rgt"
+    pod_query("UPDATE {$table_prefix}pod_menu SET rgt = rgt + 2 WHERE rgt >= $rgt");
+
+    // Add new item: "lft" = rgt, "rgt" = rgt + 1
+    $lft = $rgt;
+    $rgt = ($rgt + 1);
+    $menu_id = pod_query("INSERT INTO {$table_prefix}pod_menu (uri, title, lft, rgt) VALUES ('$menu_uri', '$menu_title', $lft, $rgt)");
+
+    die("$menu_id"); // return as string
+}
+
+/*
+==================================================
+Add new column
+==================================================
+*/
 else
 {
     if ('id' == $name || 'name' == $name || 'type' == $name)
@@ -90,8 +135,8 @@ else
             'num' => 'decimal(9,2)',
             'txt' => 'varchar(128)',
             'file' => 'varchar(128)',
-            'code' => 'text',
-            'desc' => 'text'
+            'code' => 'mediumtext',
+            'desc' => 'mediumtext'
         );
         $dbtype = $dbtypes[$coltype];
         pod_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname ADD COLUMN $name $dbtype", 'Cannot create new column');

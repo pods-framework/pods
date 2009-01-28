@@ -73,6 +73,21 @@ if ($installed < 143)
     pod_query("ALTER TABLE {$table_prefix}pod_types ADD COLUMN is_toplevel BOOL default 0 AFTER label");
 }
 
+if ($installed < 145)
+{
+    pod_query("ALTER TABLE {$table_prefix}pod_pages ADD COLUMN title VARCHAR(128) AFTER uri");
+    $sql = "
+    CREATE TABLE {$table_prefix}pod_menu (
+        id INT unsigned auto_increment primary key,
+        uri VARCHAR(128),
+        title VARCHAR(128),
+        lft INT unsigned,
+        rgt INT unsigned,
+        weight TINYINT unsigned default 0)";
+    pod_query($sql);
+    pod_query("INSERT INTO {$table_prefix}pod_menu (uri, title, lft, rgt) VALUES ('/', 'Home', 1, 2)");
+}
+
 // Save this version
 update_option('pods_version', $pods_latest);
 

@@ -20,10 +20,15 @@ $dbtypes = array(
     'num' => 'decimal(9,2)',
     'txt' => 'varchar(128)',
     'file' => 'varchar(128)',
-    'code' => 'text',
-    'desc' => 'text'
+    'code' => 'mediumtext',
+    'desc' => 'mediumtext'
 );
 
+/*
+==================================================
+Change a column's weight
+==================================================
+*/
 if ('move' == $action)
 {
     $result = pod_query("SELECT id FROM {$table_prefix}pod_fields WHERE datatype = $datatype ORDER BY weight");
@@ -59,6 +64,12 @@ if ('move' == $action)
         pod_query("UPDATE {$table_prefix}pod_fields SET weight = $weight WHERE id = $val LIMIT 1");
     }
 }
+
+/*
+==================================================
+Edit a column
+==================================================
+*/
 elseif ('edit' == $action)
 {
     if ('id' == $name || 'type' == $name)
@@ -119,14 +130,42 @@ elseif ('edit' == $action)
         pod_query($sql, 'Cannot edit column');
     }
 }
+
+/*
+==================================================
+Edit a page
+==================================================
+*/
 elseif ('editpage' == $action)
 {
-    pod_query("UPDATE {$table_prefix}pod_pages SET phpcode = '$phpcode' WHERE id = $page_id LIMIT 1");
+    pod_query("UPDATE {$table_prefix}pod_pages SET title = '$page_title', phpcode = '$phpcode' WHERE id = $page_id LIMIT 1");
 }
+
+/*
+==================================================
+Edit a menu item
+==================================================
+*/
+elseif ('editmenu' == $action)
+{
+    pod_query("UPDATE {$table_prefix}pod_menu SET uri = '$menu_uri', title = '$menu_title' WHERE id = $menu_id LIMIT 1");
+}
+
+/*
+==================================================
+Edit a widget
+==================================================
+*/
 elseif ('editwidget' == $action)
 {
     pod_query("UPDATE {$table_prefix}pod_widgets SET phpcode = '$phpcode' WHERE id = $widget_id LIMIT 1");
 }
+
+/*
+==================================================
+Edit a pod
+==================================================
+*/
 else
 {
     $sql = "

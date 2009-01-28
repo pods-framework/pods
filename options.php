@@ -10,7 +10,7 @@ while ($row = mysql_fetch_assoc($result))
 $result = pod_query("SELECT * FROM {$table_prefix}pod_pages ORDER BY uri");
 while ($row = mysql_fetch_assoc($result))
 {
-    $pages[$row['id']] = array('uri' => $row['uri'], 'phpcode' => $row['phpcode']);
+    $pages[$row['id']] = $row;
 }
 
 // Get all widgets
@@ -125,6 +125,8 @@ function sisterFields(sister_field_id) {
 }
 
 function loadPod() {
+jQuery(".pod_actions").attr("disabled", true);
+
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/load.php",
@@ -134,6 +136,8 @@ function loadPod() {
                 alert(msg);
             }
             else {
+                jQuery(".pod_actions").attr("disabled", false);
+
                 var pod_type = eval("("+msg+")");
                 var label = (null == pod_type.label) ? "" : pod_type.label;
                 var is_toplevel = parseInt(pod_type.is_toplevel);
@@ -407,10 +411,11 @@ function addPage() {
             else {
                 var html = '<div class="extras" id="'+msg+'"><span class="uri">'+uri+'</span>';
                 html += '<div class="box hidden">';
+                html += '<input type="text" id="page_title" value="" /> Page Title<br />';
                 html += '<textarea style="width:80%; height:140px"></textarea>';
                 html += '<input type="button" class="button" onclick="editPage('+msg+')" value="Save" /> or ';
                 html += '<a href="javascript:;" onclick="dropPage('+msg+')">drop page</a>';
-                html += '</div>'
+                html += '</div>';
                 jQuery("#pageArea").append(html);
 
                 jQuery("#pageArea #"+msg+" > .uri").click(function() {
@@ -425,11 +430,13 @@ function addPage() {
 }
 
 function editPage(page) {
+    var page_template = jQuery("#pageArea #"+page+" > .box > #page_template").val();
+    var page_title = jQuery("#pageArea #"+page+" > .box > #page_title").val();
     var phpcode = jQuery("#pageArea #"+page+" > .box > textarea").val();
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "auth="+auth+"&action=editpage&page_id="+page+"&phpcode="+encodeURIComponent(phpcode),
+        data: "auth="+auth+"&action=editpage&page_id="+page+"&page_title="+encodeURIComponent(page_title)+"&page_template="+page_template+"&phpcode="+encodeURIComponent(phpcode),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -685,8 +692,8 @@ if (isset($datatypes))
         <p id="column_list">Need some help? Check out the <a href="http://pods.uproot.us/" target="_blank">User Guide</a> to get started.</p>
         <div class="idle hidden">
             <p>
-                <input type="button" class="button" onclick="add_or_edit='add'; resetForm(); jQuery('#columnBox').jqmShow()" value="Add a column" />
-                <input type="button" class="button" onclick="editPod()" value="Save changes" /> or
+                <input type="button" class="button pod_actions" onclick="add_or_edit='add'; resetForm(); jQuery('#columnBox').jqmShow()" value="Add a column" />
+                <input type="button" class="button pod_actions" onclick="editPod()" value="Save changes" /> or
                 <a href="javascript:;" onclick="dropPod()">drop pod</a>
             </p>
 
@@ -726,7 +733,21 @@ if (isset($pages))
     <div class="extras" id="<?php echo $id; ?>">
         <div class="uri"><?php echo $val['uri']; ?></div>
         <div class="box hidden">
+            <input type="text" id="page_title" value="<?php echo $val['title']; ?>" /> Page Title<br />
             <textarea><?php echo $val['phpcode']; ?></textarea><br />
+            <select id="page_template">
+                <option value="">-- Page Template (Default) --</option>
+<?php
+        $page_templates = get_page_templates();
+        foreach ($page_templates as $template => $file)
+        {
+            $selected = ($file == $val['page_templage']) ? ' selected' : '';
+?>
+                <option value="<?php echo $file; ?>"<?php echo $selected; ?>><?php echo $template; ?></option>
+<?php
+        }
+?>
+            </select>
             <input type="button" class="button" onclick="editPage(<?php echo $id; ?>)" value="Save" />
             or <a href="javascript:;" onclick="dropPage(<?php echo $id; ?>)">drop page</a>
         </div>

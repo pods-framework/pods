@@ -1,5 +1,5 @@
 === Pods ===
-Contributors: logikal16, sc0ttclark
+Contributors: logikal16, sc0ttkclark
 Donate link: http://pods.uproot.us
 Tags: cms, pods, content types, posts, pages, widgets, modules, datatypes
 Requires at least: 2.7

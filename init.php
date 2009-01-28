@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The WordPress CMS Plugin
-Version: 1.4.4
+Version: 1.4.5
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$pods_latest = 144;
+$pods_latest = 145;
 
 function pods_init()
 {
@@ -66,7 +66,7 @@ function pods_menu()
     global $table_prefix, $current_user;
 
     // Editors and Admins can add/edit items
-    if (4 < $current_user->user_level)
+    if (4 < intval($current_user->user_level))
     {
         $submenu = array();
         $result = pod_query("SELECT name, label, is_toplevel FROM {$table_prefix}pod_types ORDER BY name");
@@ -93,11 +93,12 @@ function pods_menu()
     }
 
     // Admins can manage Pods
-    if (7 < $current_user->user_level)
+    if (7 < intval($current_user->user_level))
     {
         add_object_page('Pods', 'Pods', 8, 'pods');
         add_submenu_page('pods', 'Setup', 'Setup', 8, 'pods', 'pods_options_page');
         add_submenu_page('pods', 'Browse Content', 'Browse Content', 8, 'pods-browse', 'pods_content_page');
+        add_submenu_page('pods', 'Menu Editor', 'Menu Editor', 8, 'pods-menu', 'pods_menu_page');
 
         foreach ($submenu as $item)
         {
@@ -119,6 +120,12 @@ function pods_content_page()
     include WP_PLUGIN_DIR . '/pods/content.php';
 }
 
+function pods_menu_page()
+{
+    global $pods_url, $table_prefix;
+    include WP_PLUGIN_DIR . '/pods/menu.php';
+}
+
 function pods_meta()
 {
     global $pods_latest;
@@ -132,15 +139,29 @@ function pods_meta()
 
 function pods_title($title, $sep, $seplocation)
 {
-    $pieces = explode('?', $_SERVER['REQUEST_URI']);
-    $pieces = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $pieces[0]);
-    $pieces = preg_replace("(-|_)", "", $pieces);
-    $pieces = explode('/', $pieces);
-    $title = str_replace(" $sep Page not found", '', $title);
-
-    foreach ($pieces as $key => $page_title)
+    if (false !== strpos($title, 'Page not found'))
     {
-        $title .= " $sep " . ucwords($page_title);
+        global $podpage_exists;
+
+        $page_title = trim($podpage_exists['page_title']);
+
+        if (0 < strlen($page_title))
+        {
+            $title = str_replace('Page not found', $page_title, $title);
+        }
+        else
+        {
+            $uri = explode('?', $_SERVER['REQUEST_URI']);
+            $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri[0]);
+            $uri = preg_replace("@(-|_)@", "", $uri);
+            $uri = explode('/', $uri);
+
+            $title = '';
+            foreach ($uri as $key => $page_title)
+            {
+                $title .= ('right' == $seplocation) ? ucwords($page_title) . " $sep " : " $sep " . ucwords($page_title);
+            }
+        }
     }
     return $title;
 }
@@ -172,6 +193,7 @@ function pods_redirect()
     if ($row = $podpage_exists)
     {
         $phpcode = $row['phpcode'];
+        $page_template = $row['page_template'];
 
         include WP_PLUGIN_DIR . '/pods/router.php';
         die();
@@ -250,7 +272,7 @@ add_action('template_redirect', 'pods_redirect');
 // Filters for 404 handling
 if (false !== $podpage_exists)
 {
-    add_filter('status_header', 'pods_404');
     add_filter('wp_title', 'pods_title', 8, 3);
+    add_filter('status_header', 'pods_404');
 }
 

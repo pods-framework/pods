@@ -50,15 +50,15 @@ Drop a menu item and all children
 */
 elseif ($menu_id = (int) $_POST['menu_id'])
 {
-    $result = pod_query("SELECT lft, rgt, (rgt - lft + 1) AS width FROM wp_pod_menu WHERE id = $menu_id LIMIT 1");
+    $result = pod_query("SELECT lft, rgt, (rgt - lft + 1) AS width FROM {$table_prefix}pod_menu WHERE id = $menu_id LIMIT 1");
     $row = mysql_fetch_assoc($result);
     $lft = $row['lft'];
     $rgt = $row['rgt'];
     $width = $row['width'];
 
-    pod_query("DELETE from wp_pod_menu WHERE lft BETWEEN $lft AND $rgt");
-    pod_query("UPDATE wp_pod_menu SET rgt = rgt - $width WHERE rgt > $rgt");
-    pod_query("UPDATE wp_pod_menu SET lft = lft - $width WHERE lft > $rgt");
+    pod_query("DELETE from {$table_prefix}pod_menu WHERE lft BETWEEN $lft AND $rgt");
+    pod_query("UPDATE {$table_prefix}pod_menu SET rgt = rgt - $width WHERE rgt > $rgt");
+    pod_query("UPDATE {$table_prefix}pod_menu SET lft = lft - $width WHERE lft > $rgt");
 }
 
 /*

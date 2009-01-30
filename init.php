@@ -3,11 +3,11 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The WordPress CMS Plugin
-Version: 1.4.5
+Version: 1.4.6
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
-Copyright 2008  Matt Gibbs  (email : logikal16@gmail.com)
+Copyright 2009  Matt Gibbs  (email : logikal16@gmail.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$pods_latest = 145;
+$pods_latest = 146;
 
 function pods_init()
 {
@@ -65,8 +65,12 @@ function pods_menu()
 {
     global $table_prefix, $current_user;
 
+    // Determine the user's role
+    $is_admin = in_array('administrator', $current_user->roles);
+    $is_editor = in_array('editor', $current_user->roles);
+
     // Editors and Admins can add/edit items
-    if (4 < intval($current_user->user_level))
+    if ($is_admin || $is_editor)
     {
         $submenu = array();
         $result = pod_query("SELECT name, label, is_toplevel FROM {$table_prefix}pod_types ORDER BY name");
@@ -93,7 +97,7 @@ function pods_menu()
     }
 
     // Admins can manage Pods
-    if (7 < intval($current_user->user_level))
+    if ($is_admin)
     {
         add_object_page('Pods', 'Pods', 8, 'pods');
         add_submenu_page('pods', 'Setup', 'Setup', 8, 'pods', 'pods_options_page');
@@ -123,6 +127,8 @@ function pods_content_page()
 function pods_menu_page()
 {
     global $pods_url, $table_prefix;
+
+    define('WP_INC_URL', str_replace('wp-content', 'wp-includes', WP_CONTENT_URL));
     include WP_PLUGIN_DIR . '/pods/menu.php';
 }
 

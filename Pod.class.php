@@ -102,13 +102,24 @@ class Pod
             $datatype = $this->rel_table;
             foreach ($data as $key => $val)
             {
-                $val = is_numeric($datatype) ? $val['name'] : "<a href='/detail/?type=$datatype&id=$key'>" . $val['name'] . '</a>';
+                $detail_url = get_bloginfo('url') . "/detail/?type=$datatype&id=$key";
+                $val = is_numeric($datatype) ? $val['name'] : '<a href="' . $detail_url . '">' . $val['name'] . '</a>';
                 $out .= "<span class='{$first}list list_$datatype'>$val</span>";
                 $first = '';
             }
             $data = $out;
         }
         return $data;
+    }
+
+    /*
+    ==================================================
+    Store user-generated data
+    ==================================================
+    */
+    function set_field($name, $data)
+    {
+        return $this->data[$name] = $data;
     }
 
     /*
@@ -768,7 +779,7 @@ class Pod
         else
         {
             $value = $this->print_field($name);
-            if (!empty($value) || 0 === $value)
+            if (!empty($value) || 0 !== $value)
             {
                 // Use widget if necessary
                 if (!empty($widget))

@@ -5,7 +5,7 @@ Begin javascript code
 -->
 <link rel="stylesheet" type="text/css" href="<?php echo $pods_url; ?>/style.css" />
 <script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqmodal.js"></script>
-<script type="text/javascript" src="/wp-includes/js/jquery/suggest.js"></script>
+<script type="text/javascript" src="<?php echo WP_INC_URL; ?>/js/jquery/suggest.js"></script>
 <script type="text/javascript">
 var menu_id;
 var add_or_edit;

@@ -36,6 +36,27 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
 
 /*
 ==================================================
+Run a widget within a PodPage or WP template
+==================================================
+*/
+function pod_widget($widget, $value = null, $name = null)
+{
+    global $table_prefix;
+
+    $widget = mysql_real_escape_string(trim($widget));
+    $result = pod_query("SELECT phpcode FROM {$table_prefix}pod_widgets WHERE name = '$widget' LIMIT 1");
+    if (0 < mysql_num_rows($result))
+    {
+        $phpcode = mysql_result($result, 0);
+
+        ob_start();
+        eval("?>$phpcode");
+        return ob_get_clean();
+    }
+}
+
+/*
+==================================================
 Return a lowercase alphanumeric name (with underscores)
 ==================================================
 */

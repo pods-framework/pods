@@ -124,25 +124,6 @@ class Pod
 
     /*
     ==================================================
-    Run a widget within a PodPage or WP template
-    ==================================================
-    */
-    function pod_widget($widget, $value = null, $name = null)
-    {
-        $widget = mysql_real_escape_string(trim($widget));
-        $result = pod_query("SELECT phpcode FROM {$this->prefix}pod_widgets WHERE name = '$widget' LIMIT 1");
-        if (0 < mysql_num_rows($result))
-        {
-            $phpcode = mysql_result($result, 0);
-
-            ob_start();
-            eval("?>$phpcode");
-            return ob_get_clean();
-        }
-    }
-
-    /*
-    ==================================================
     Get the post id
     ==================================================
     */
@@ -803,7 +784,7 @@ class Pod
                 // Use widget if necessary
                 if (!empty($widget))
                 {
-                    $value = $this->pod_widget($widget, $this->get_field($name), $name);
+                    $value = pod_widget($widget, $this->get_field($name), $name);
                 }
                 return $before . $value . $after;
             }

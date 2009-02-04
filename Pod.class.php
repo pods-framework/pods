@@ -803,7 +803,7 @@ class Pod
                 // Use widget if necessary
                 if (!empty($widget))
                 {
-                    $value = pod_widget($widget, $this->get_field($name), $name);
+                    $value = $this->pod_widget($widget, $this->get_field($name), $name);
                 }
                 return $before . $value . $after;
             }

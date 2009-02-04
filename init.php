@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The WordPress CMS Plugin
-Version: 1.4.6
+Version: 1.4.7
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$pods_latest = 146;
+$pods_latest = 147;
 
 function pods_init()
 {
@@ -159,7 +159,7 @@ function pods_title($title, $sep, $seplocation)
         {
             $uri = explode('?', $_SERVER['REQUEST_URI']);
             $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri[0]);
-            $uri = preg_replace("@(-|_)@", "", $uri);
+            $uri = preg_replace("@(-|_)@", " ", $uri);
             $uri = explode('/', $uri);
 
             $title = '';

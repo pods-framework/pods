@@ -43,7 +43,7 @@ if ($id = (int) $_POST['id'])
 
 /*
 ==================================================
-Get a single menu item
+Get a menu item
 ==================================================
 */
 elseif ($menu_id = (int) $_POST['menu_id'])
@@ -55,12 +55,36 @@ elseif ($menu_id = (int) $_POST['menu_id'])
 
 /*
 ==================================================
-Get a single pod column
+Get a pod column
 ==================================================
 */
 elseif ($field_id = (int) $_POST['col'])
 {
     $result = pod_query("SELECT name, label, comment, coltype, pickval, sister_field_id, required FROM {$table_prefix}pod_fields WHERE id = $field_id LIMIT 1");
+    $row = mysql_fetch_assoc($result);
+    echo json_encode($row);
+}
+
+/*
+==================================================
+Get a pod page
+==================================================
+*/
+elseif ($page_id = (int) $_POST['page_id'])
+{
+    $result = pod_query("SELECT * FROM {$table_prefix}pod_pages WHERE id = $page_id LIMIT 1");
+    $row = mysql_fetch_assoc($result);
+    echo json_encode($row);
+}
+
+/*
+==================================================
+Get a widget
+==================================================
+*/
+elseif ($widget_id = (int) $_POST['widget_id'])
+{
+    $result = pod_query("SELECT * FROM {$table_prefix}pod_widgets WHERE id = $widget_id LIMIT 1");
     $row = mysql_fetch_assoc($result);
     echo json_encode($row);
 }

@@ -1,23 +1,23 @@
 <?php
 // Get all datatypes
-$result = pod_query("SELECT * FROM {$table_prefix}pod_types ORDER BY name");
+$result = pod_query("SELECT id, name FROM {$table_prefix}pod_types ORDER BY name");
 while ($row = mysql_fetch_assoc($result))
 {
     $datatypes[$row['id']] = $row['name'];
 }
 
 // Get all pages
-$result = pod_query("SELECT * FROM {$table_prefix}pod_pages ORDER BY uri");
+$result = pod_query("SELECT id, uri FROM {$table_prefix}pod_pages ORDER BY uri");
 while ($row = mysql_fetch_assoc($result))
 {
-    $pages[$row['id']] = $row;
+    $pages[$row['id']] = $row['uri'];
 }
 
 // Get all widgets
-$result = pod_query("SELECT * FROM {$table_prefix}pod_widgets ORDER BY name");
+$result = pod_query("SELECT id, name FROM {$table_prefix}pod_widgets ORDER BY name");
 while ($row = mysql_fetch_assoc($result))
 {
-    $widgets[$row['id']] = array('name' => $row['name'], 'phpcode' => $row['phpcode']);
+    $widgets[$row['id']] = $row['name'];
 }
 ?>
 
@@ -32,6 +32,8 @@ Begin javascript code
 var datatype;
 var column_id;
 var add_or_edit;
+var widget_id;
+var page_id;
 var auth = '<?php echo md5(AUTH_KEY); ?>';
 
 jQuery(function() {
@@ -43,17 +45,28 @@ jQuery(function() {
         jQuery("#"+activeArea).show();
     });
 
-    jQuery(".tab").click(function() {
-        jQuery(".tab").removeClass("active");
+    jQuery("#podArea .tab").click(function() {
+        jQuery("#podArea .tab").removeClass("active");
         datatype = jQuery(this).attr("class").split(" ")[1].substr(1);
         jQuery(this).addClass("active");
-        jQuery(".idle").show();
+        jQuery("#podArea .idle").show();
         loadPod();
     });
 
-    jQuery(".uri").click(function() {
-        jQuery(this).parent(".extras").toggleClass("open");
-        jQuery(this).siblings(".box").toggleClass("hidden");
+    jQuery("#pageArea .tab").click(function() {
+        jQuery("#pageArea .tab").removeClass("active");
+        page_id = jQuery(this).attr("class").split(" ")[1].substr(1);
+        jQuery(this).addClass("active");
+        jQuery("#pageArea .idle").show();
+        loadPage();
+    });
+    
+    jQuery("#widgetArea .tab").click(function() {
+        jQuery("#widgetArea .tab").removeClass("active");
+        widget_id = jQuery(this).attr("class").split(" ")[1].substr(1);
+        jQuery(this).addClass("active");
+        jQuery("#widgetArea .idle").show();
+        loadWidget();
     });
 
     jQuery("#podBox").jqm();
@@ -125,8 +138,6 @@ function sisterFields(sister_field_id) {
 }
 
 function loadPod() {
-jQuery(".pod_actions").attr("disabled", true);
-
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/load.php",
@@ -136,16 +147,15 @@ jQuery(".pod_actions").attr("disabled", true);
                 alert(msg);
             }
             else {
-                jQuery(".pod_actions").attr("disabled", false);
-
                 var pod_type = eval("("+msg+")");
+                var name = (null == pod_type.name) ? "" : pod_type.name;
                 var label = (null == pod_type.label) ? "" : pod_type.label;
                 var is_toplevel = parseInt(pod_type.is_toplevel);
                 var list_filters = (null == pod_type.list_filters) ? "" : pod_type.list_filters;
                 var tpl_detail = (null == pod_type.tpl_detail) ? "" : pod_type.tpl_detail;
                 var tpl_list = (null == pod_type.tpl_list) ? "" : pod_type.tpl_list;
-                jQuery("#pod_name").html(pod_type.name);
-                jQuery("#pod_label").val(pod_type.label);
+                jQuery("#pod_name").html(name);
+                jQuery("#pod_label").val(label);
                 jQuery("#is_toplevel").attr("checked", is_toplevel);
                 jQuery("#list_filters").val(list_filters);
                 jQuery("#tpl_detail").val(tpl_detail);
@@ -176,22 +186,22 @@ jQuery(".pod_actions").attr("disabled", true);
                         html += '<div class="btn dropme"></div> ';
                     }
                     html += name+" ("+coltype+")"+required+"</div>";
-                    jQuery("#column_list").html(html);
+                    jQuery("#podArea #column_list").html(html);
                 }
 
-                jQuery("#column_list .btn").click(function() {
+                jQuery("#podArea #column_list .btn").click(function() {
                     var field_id = jQuery(this).parent().attr("class").substr(3);
                     var classname = jQuery(this).attr("class").substr(4);
-                    if ('moveup' == classname) {
-                        moveColumn(field_id, 'up');
+                    if ("moveup" == classname) {
+                        moveColumn(field_id, "up");
                     }
-                    else if ('movedown' == classname) {
-                        moveColumn(field_id, 'down');
+                    else if ("movedown" == classname) {
+                        moveColumn(field_id, "down");
                     }
-                    else if ('dropme' == classname) {
+                    else if ("dropme" == classname) {
                         dropColumn(field_id);
                     }
-                    else if ('editme' == classname) {
+                    else if ("editme" == classname) {
                         loadColumn(field_id);
                     }
                 });
@@ -213,16 +223,16 @@ function addPod() {
             else {
                 var id = msg;
                 var html = '<div class="tab t'+id+'">'+name+'</div>';
-                jQuery(".tabs").append(html);
+                jQuery("#podArea .tabs").append(html);
                 jQuery("#podBox").jqmHide();
-                jQuery(".t"+id).click(function() {
-                    jQuery(".tab").removeClass("active");
+                jQuery("#podArea .t"+id).click(function() {
+                    jQuery("#podArea .tab").removeClass("active");
                     datatype = jQuery(this).attr("class").split(" ")[1].substr(1);
                     jQuery(this).addClass("active");
-                    jQuery(".idle").show();
+                    jQuery("#podArea .idle").show();
                     loadPod();
                 });
-                jQuery(".t"+id).click();
+                jQuery("#podArea .t"+id).click();
             }
         }
     });
@@ -250,7 +260,7 @@ function editPod() {
 }
 
 function dropPod() {
-    if (confirm("Do you really want to drop this pod AND all its items?")) {
+    if (confirm("Do you really want to drop this pod and its contents?")) {
         var dtname = jQuery("#pod_name").html();
         jQuery.ajax({
             type: "post",
@@ -262,9 +272,9 @@ function dropPod() {
                 }
                 else {
                     jQuery("#pod_name").html("Choose a Pod");
-                    jQuery("#column_list").html('Need some help? Check out the <a href="http://pods.uproot.us/" target="_blank">User Guide</a> to get started.');
-                    jQuery(".t"+datatype).remove();
-                    jQuery(".idle").hide();
+                    jQuery("#podArea #column_list").html('Need some help? Check out the <a href="http://pods.uproot.us/user_guide" target="_blank">User Guide</a> to get started.');
+                    jQuery("#podArea .t"+datatype).remove();
+                    jQuery("#podArea .idle").hide();
                 }
             }
         });
@@ -398,6 +408,28 @@ function dropColumn(col) {
     }
 }
 
+function loadPage() {
+    jQuery.ajax({
+        type: "post",
+        url: "<?php echo $pods_url; ?>/ajax/load.php",
+        data: "auth="+auth+"&page_id="+page_id,
+        success: function(msg) {
+            if ("Error" == msg.substr(0, 5)) {
+                alert(msg);
+            }
+            else {
+                var page_data = eval("("+msg+")");
+                var uri = (null == page_data.uri) ? "" : page_data.uri;
+                var title = (null == page_data.title) ? "" : page_data.title;
+                var phpcode = (null == page_data.phpcode) ? "" : page_data.phpcode;
+                jQuery("#page_name").html(uri);
+                jQuery("#page_title").val(title);
+                jQuery("#page_content").val(phpcode);
+            }
+        }
+    });
+}
+
 function addPage() {
     var uri = jQuery("#new_page").val();
     jQuery.ajax({
@@ -409,34 +441,30 @@ function addPage() {
                 alert(msg);
             }
             else {
-                var html = '<div class="extras" id="'+msg+'"><span class="uri">'+uri+'</span>';
-                html += '<div class="box hidden">';
-                html += '<input type="text" id="page_title" value="" /> Page Title<br />';
-                html += '<textarea style="width:80%; height:140px"></textarea>';
-                html += '<input type="button" class="button" onclick="editPage('+msg+')" value="Save" /> or ';
-                html += '<a href="javascript:;" onclick="dropPage('+msg+')">drop page</a>';
-                html += '</div>';
-                jQuery("#pageArea").append(html);
-
-                jQuery("#pageArea #"+msg+" > .uri").click(function() {
-                    jQuery(this).parent(".extras").toggleClass("open");
-                    jQuery(this).siblings(".box").toggleClass("hidden");
-                });
-                jQuery("#pageArea #"+msg).click();
+                var id = msg;
+                var html = '<div class="tab t'+id+'">'+uri+'</div>';
+                jQuery("#pageArea .tabs").append(html);
                 jQuery("#pageBox").jqmHide();
+                jQuery("#pageArea .t"+id).click(function() {
+                    jQuery("#pageArea .tab").removeClass("active");
+                    page_id = jQuery(this).attr("class").split(" ")[1].substr(1);
+                    jQuery(this).addClass("active");
+                    jQuery("#pageArea .idle").show();
+                    loadPage();
+                });
+                jQuery("#pageArea .t"+id).click();
             }
         }
     });
 }
 
-function editPage(page) {
-    var page_template = jQuery("#pageArea #"+page+" > .box > #page_template").val();
-    var page_title = jQuery("#pageArea #"+page+" > .box > #page_title").val();
-    var phpcode = jQuery("#pageArea #"+page+" > .box > textarea").val();
+function editPage() {
+    var title = jQuery("#page_title").val();
+    var content = jQuery("#page_content").val();
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "auth="+auth+"&action=editpage&page_id="+page+"&page_title="+encodeURIComponent(page_title)+"&page_template="+page_template+"&phpcode="+encodeURIComponent(phpcode),
+        data: "auth="+auth+"&action=editpage&page_id="+page_id+"&page_title="+encodeURIComponent(title)+"&phpcode="+encodeURIComponent(content),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -448,22 +476,45 @@ function editPage(page) {
     });
 }
 
-function dropPage(page) {
+function dropPage() {
     if (confirm("Do you really want to drop this page?")) {
         jQuery.ajax({
             type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
-            data: "auth="+auth+"&page="+page,
+            data: "auth="+auth+"&page="+page_id,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);
                 }
                 else {
-                    jQuery("#pageArea #"+page).remove();
+                    jQuery("#page_name").html("Choose a PodPage");
+                    jQuery("#pageArea #column_list").html('Need some help? Check out the <a href="http://pods.uproot.us/user_guide" target="_blank">User Guide</a> to get started.');
+                    jQuery("#pageArea .t"+page_id).remove();
+                    jQuery("#pageArea .idle").hide();
                 }
             }
         });
     }
+}
+
+function loadWidget() {
+    jQuery.ajax({
+        type: "post",
+        url: "<?php echo $pods_url; ?>/ajax/load.php",
+        data: "auth="+auth+"&widget_id="+widget_id,
+        success: function(msg) {
+            if ("Error" == msg.substr(0, 5)) {
+                alert(msg);
+            }
+            else {
+                var widget_data = eval("("+msg+")");
+                var name = (null == widget_data.name) ? "" : widget_data.name;
+                var phpcode = (null == widget_data.phpcode) ? "" : widget_data.phpcode;
+                jQuery("#widget_name").html(name);
+                jQuery("#widget_content").val(phpcode);
+            }
+        }
+    });
 }
 
 function addWidget() {
@@ -477,31 +528,29 @@ function addWidget() {
                 alert(msg);
             }
             else {
-                var html = '<div class="extras" id="'+msg+'"><div class="uri">'+name+'</div>';
-                html += '<div class="box hidden">';
-                html += '<textarea></textarea><br />';
-                html += '<input type="button" class="button" onclick="editWidget('+msg+')" value="Save" /> or ';
-                html += '<a href="javascript:;" onclick="dropWidget('+msg+')">drop widget</a>';
-                html += '</div>'
-                jQuery("#widgetArea").append(html);
-
-                jQuery("#widgetArea #"+msg+" > .uri").click(function() {
-                    jQuery(this).parent(".extras").toggleClass("open");
-                    jQuery(this).siblings(".box").toggleClass("hidden");
-                });
-                jQuery("#widgetArea #"+msg).click();
+                var id = msg;
+                var html = '<div class="tab t'+id+'">'+name+'</div>';
+                jQuery("#widgetArea .tabs").append(html);
                 jQuery("#widgetBox").jqmHide();
+                jQuery("#widgetArea .t"+id).click(function() {
+                    jQuery("#widgetArea .tab").removeClass("active");
+                    widget_id = jQuery(this).attr("class").split(" ")[1].substr(1);
+                    jQuery(this).addClass("active");
+                    jQuery("#widgetArea .idle").show();
+                    loadWidget();
+                });
+                jQuery("#widgetArea .t"+id).click();
             }
         }
     });
 }
 
-function editWidget(widget) {
-    var phpcode = jQuery("#widgetArea #"+widget+" > .box > textarea").val();
+function editWidget() {
+    var content = jQuery("#widget_content").val();
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "auth="+auth+"&action=editwidget&widget_id="+widget+"&phpcode="+encodeURIComponent(phpcode),
+        data: "auth="+auth+"&action=editwidget&widget_id="+widget_id+"&phpcode="+encodeURIComponent(content),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -513,18 +562,21 @@ function editWidget(widget) {
     });
 }
 
-function dropWidget(widget) {
+function dropWidget() {
     if (confirm("Do you really want to drop this widget?")) {
         jQuery.ajax({
             type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
-            data: "auth="+auth+"&widget="+widget,
+            data: "auth="+auth+"&widget="+widget_id,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);
                 }
                 else {
-                    jQuery("#widgetArea #"+widget).remove();
+                    jQuery("#widget_name").html("Choose a Widget");
+                    jQuery("#widgetArea #column_list").html('Need some help? Check out the <a href="http://pods.uproot.us/user_guide" target="_blank">User Guide</a> to get started.');
+                    jQuery("#widgetArea .t"+widget_id).remove();
+                    jQuery("#widgetArea .idle").hide();
                 }
             }
         });
@@ -633,8 +685,9 @@ while ($row = mysql_fetch_array($result))
         <input type="text" id="column_comment" value="" />
     </div>
 
-    <div class="clear"><!--clear--></div>
-    <p><strong>*CAUTION*</strong> changing column types can result in data loss!</p>
+    <div class="clear">
+        <span class="red">*CAUTION*</span> changing column types can result in data loss!
+    </div>
 </div>
 
 <div id="pageBox" class="jqmWindow">
@@ -671,11 +724,6 @@ Begin pod area
     <div class="tabs">
         <input type="button" class="button" onclick="jQuery('#podBox').jqmShow()" value="Add new pod" />
 <?php
-/*
-==================================================
-Build the left tabs
-==================================================
-*/
 if (isset($datatypes))
 {
     foreach ($datatypes as $key => $val)
@@ -689,11 +737,11 @@ if (isset($datatypes))
     </div>
     <div class="rightside">
         <h2 class="title" id="pod_name">Choose a Pod</h2>
-        <p id="column_list">Need some help? Check out the <a href="http://pods.uproot.us/" target="_blank">User Guide</a> to get started.</p>
+        <p id="column_list">Need some help? Check out the <a href="http://pods.uproot.us/user_guide" target="_blank">User Guide</a> to get started.</p>
         <div class="idle hidden">
             <p>
-                <input type="button" class="button pod_actions" onclick="add_or_edit='add'; resetForm(); jQuery('#columnBox').jqmShow()" value="Add a column" />
-                <input type="button" class="button pod_actions" onclick="editPod()" value="Save changes" /> or
+                <input type="button" class="button" onclick="add_or_edit='add'; resetForm(); jQuery('#columnBox').jqmShow()" value="Add a column" />
+                <input type="button" class="button" onclick="editPod()" value="Save changes" /> or
                 <a href="javascript:;" onclick="dropPod()">drop pod</a>
             </p>
 
@@ -722,40 +770,32 @@ Begin page area
 ==================================================
 -->
 <div id="pageArea" class="area hidden">
-    <div><input type="button" class="button" onclick="jQuery('#pageBox').jqmShow()" value="Add new page" /></div>
-    <div class="helper">Create custom pages, optionally using * as the wildcard.</div>
+    <div class="tabs">
+        <input type="button" class="button" onclick="jQuery('#pageBox').jqmShow()" value="Add new page" />
 <?php
 if (isset($pages))
 {
-    foreach ($pages as $id => $val)
+    foreach ($pages as $key => $val)
     {
 ?>
-    <div class="extras" id="<?php echo $id; ?>">
-        <div class="uri"><?php echo $val['uri']; ?></div>
-        <div class="box hidden">
-            <input type="text" id="page_title" value="<?php echo $val['title']; ?>" /> Page Title<br />
-            <textarea><?php echo $val['phpcode']; ?></textarea><br />
-            <select id="page_template">
-                <option value="">-- Page Template (Default) --</option>
-<?php
-        $page_templates = get_page_templates();
-        foreach ($page_templates as $template => $file)
-        {
-            $selected = ($file == $val['page_templage']) ? ' selected' : '';
-?>
-                <option value="<?php echo $file; ?>"<?php echo $selected; ?>><?php echo $template; ?></option>
-<?php
-        }
-?>
-            </select>
-            <input type="button" class="button" onclick="editPage(<?php echo $id; ?>)" value="Save" />
-            or <a href="javascript:;" onclick="dropPage(<?php echo $id; ?>)">drop page</a>
-        </div>
-    </div>
+        <div class="tab t<?php echo $key; ?>"><?php echo $val; ?></div>
 <?php
     }
 }
 ?>
+    </div>
+    <div class="rightside">
+        <h2 class="title" id="page_name">Choose a PodPage</h2>
+        <textarea id="page_content"></textarea><br />
+        <input type="text" id="page_title" /> Page Title
+        <div class="idle hidden">
+            <p>
+                <input type="button" class="button" onclick="editPage()" value="Save changes" /> or
+                <a href="javascript:;" onclick="dropPage()">drop page</a>
+            </p>
+        </div>
+    </div>
+    <div class="clear"><!--clear--></div>
 </div>
 
 <!--
@@ -764,26 +804,31 @@ Begin widget area
 ==================================================
 -->
 <div id="widgetArea" class="area hidden">
-    <div><input type="button" class="button" onclick="jQuery('#widgetBox').jqmShow()" value="Add new widget" /></div>
-    <div class="helper">Used in combination with magic tags, widgets allow you to modify column values.</div>
+    <div class="tabs">
+        <input type="button" class="button" onclick="jQuery('#widgetBox').jqmShow()" value="Add new widget" />
 <?php
 if (isset($widgets))
 {
-    foreach ($widgets as $id => $val)
+    foreach ($widgets as $key => $val)
     {
 ?>
-    <div class="extras" id="<?php echo $id; ?>">
-        <div class="uri"><?php echo $val['name']; ?></div>
-        <div class="box hidden">
-            <textarea><?php echo $val['phpcode']; ?></textarea><br />
-            <input type="button" class="button" onclick="editWidget(<?php echo $id; ?>)" value="Save" />
-            or <a href="javascript:;" onclick="dropWidget(<?php echo $id; ?>)">drop widget</a>
-        </div>
-    </div>
+        <div class="tab t<?php echo $key; ?>"><?php echo $val; ?></div>
 <?php
     }
 }
 ?>
+    </div>
+    <div class="rightside">
+        <h2 class="title" id="widget_name">Choose a Widget</h2>
+        <textarea id="widget_content"></textarea>
+        <div class="idle hidden">
+            <p>
+                <input type="button" class="button" onclick="editWidget()" value="Save changes" /> or
+                <a href="javascript:;" onclick="dropWidget()">drop widget</a>
+            </p>
+        </div>
+    </div>
+    <div class="clear"><!--clear--></div>
 </div>
 
 <!--

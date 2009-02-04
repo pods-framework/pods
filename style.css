@@ -3,7 +3,7 @@
     padding: 5px;
     margin: 5px 15px 5px 0;
     border: 1px solid #E3E3E3;
-    background: #F1F1F1;
+    background: #fff;
 }
 
 .title {
@@ -78,13 +78,6 @@
     border: 1px solid #E3E3E3;
 }
 
-#menu_uri,
-#menu_title,
-#page_title {
-    width: 200px;
-    border: 1px solid #E3E3E3;
-}
-
 #column_comment {
     width: 255px;
 }
@@ -107,19 +100,31 @@
     margin-bottom: 5px;
 }
 
-#podArea .button,
-#pageArea .button,
-#widgetArea .button {
+.area .button {
+    border: 1px solid #E3E3E3;
     margin-bottom: 5px;
 }
 
-#podArea textarea,
-#pageArea textarea,
-#widgetArea textarea,
-.desc, .code {
+.area textarea, .desc, .code {
     width: 99%;
     height: 140px;
     border: 1px solid #E3E3E3;
+}
+
+.area .tabs {
+    float: left;
+    width: 30%;
+}
+
+.area .tabs .active {
+    background: #F9F9F9;
+}
+
+.area .tab {
+    padding: 4px 8px;
+    margin-right: 20px;
+    border-top: 1px solid #E3E3E3;
+    cursor: pointer;
 }
 
 #podArea #list_filters {
@@ -127,21 +132,9 @@
     border: 1px solid #E3E3E3;
 }
 
-#podArea .tabs {
-    float: left;
-    width: 30%;
-}
-
-#podArea .tabs .active {
-    background: white;
-}
-
-#podArea .tab {
-    padding: 5px 10px;
-    margin-right: 20px;
-    border-top: 1px solid #E3E3E3;
-}
-
+#menu_uri,
+#menu_title,
+#page_title,
 #podBox #new_pod,
 #pageBox #new_page,
 #widgetBox #new_widget {

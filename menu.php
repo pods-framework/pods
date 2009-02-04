@@ -151,20 +151,20 @@ Begin popups
 <div id="menuBox" class="jqmWindow">
     <input type="hidden" id="add_or_edit" value="" />
 
-    <div align="center">
-        <input type="radio" id="menu_add" name="addedit" value="add" onclick="add_or_edit='add'"> Add child &nbsp; &nbsp; &nbsp;
-        <input type="radio" id="menu_edit" name="addedit" value="edit" onclick="add_or_edit='edit'"> Edit
-    </div>
-
     <div class="leftside">Link</div>
     <div class="rightside">
-        <input type="text" id="menu_uri" value="" /> (autocomplete)
+        <input type="text" id="menu_uri" value="" />
         <input type="hidden" id="menu_id" value="" />
     </div>
 
     <div class="leftside">Title</div>
     <div class="rightside">
         <input type="text" id="menu_title" value="" />
+    </div>
+
+    <div align="center">
+        <input type="radio" id="menu_add" name="addedit" value="add" onclick="add_or_edit='add'"> Add child &nbsp; &nbsp;
+        <input type="radio" id="menu_edit" name="addedit" value="edit" onclick="add_or_edit='edit'"> Edit current &nbsp; &nbsp;
         <input type="button" class="button" onclick="addOrEditMenu()" value="Save item" />
     </div>
 

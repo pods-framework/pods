@@ -1,13 +1,31 @@
 <?php
 $datatype = $this->datatype;
 $pods_url = WP_PLUGIN_URL . '/pods';
+$upload_dir = wp_upload_dir();
+$upload_dir = str_replace(get_option('siteurl'), '', $upload_dir['baseurl']);
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo $pods_url; ?>/style.css" />
+<script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqmodal.js"></script>
+<script type="text/javascript" src="<?php echo $pods_url; ?>/js/date_input.js"></script>
+<script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqFileTree.js"></script>
+<script type="text/javascript" src="<?php echo $pods_url; ?>/js/nicEdit.js"></script>
 <script type="text/javascript">
+var active_file;
+
 jQuery(function() {
     jQuery(".option").click(function() {
         jQuery(this).toggleClass("active");
     });
+    jQuery(".filebox").fileTree({
+        root: "<?php echo $upload_dir; ?>/",
+        script: "<?php echo $pods_url; ?>/ajax/filetree.php",
+        multiFolder: false
+    },
+    function(file) {
+        jQuery("."+active_file).val(file);
+        jQuery("#dialog").jqmHide();
+    });
+    jQuery("#dialog").jqm();
 });
 
 function saveForm() {
@@ -49,6 +67,11 @@ function saveForm() {
     return false;
 }
 </script>
+
+<div class="jqmWindow" id="dialog">
+    <h2 style="margin-top:0">Pick a File:</h2>
+    <div class="filebox"></div>
+</div>
 
 <div id="module_form" class="form_<?php echo $datatype; ?>">
 <?php

@@ -19,6 +19,9 @@ while ($row = mysql_fetch_assoc($result))
 {
     $widgets[$row['id']] = $row['name'];
 }
+
+// Get all available WP roles
+$user_roles = get_option('wp_user_roles');
 ?>
 
 <!--
@@ -37,6 +40,10 @@ var page_id;
 var auth = '<?php echo md5(AUTH_KEY); ?>';
 
 jQuery(function() {
+    jQuery(".option").click(function() {
+        jQuery(this).toggleClass("active");
+    });
+
     jQuery(".navTab").click(function() {
         jQuery(".navTab").removeClass("active");
         jQuery(this).addClass("active");
@@ -101,10 +108,13 @@ function addOrEditColumn() {
 function doDropdown(val) {
     if ('pick' == val) {
         jQuery("#column_pickval").show();
+        //jQuery("#column_options").show();
     }
     else {
         jQuery("#column_pickval").val("");
         jQuery("#column_pickval").hide();
+        //jQuery("#column_options").val("");
+        //jQuery("#column_options").hide();
     }
     jQuery("#column_sister_field_id").val("");
     jQuery("#column_sister_field_id").hide();
@@ -310,8 +320,9 @@ function loadColumn(col) {
                 jQuery("#column_type").attr("disabled", true);
                 jQuery("#column_required").attr("disabled", true);
             }
-            if ("" != pickval) {
+            if ("pick" == coltype) {
                 jQuery("#column_pickval").show();
+                //jQuery("#column_options").show();
             }
             if ("0" != sister_field_id) {
                 sisterFields(sister_field_id);
@@ -583,6 +594,37 @@ function dropWidget() {
     }
 }
 
+function editRoles() {
+    var data = new Array();
+
+    var i = 0;
+    jQuery("#roleArea .form").each(function() {
+        var theval = "";
+        var classname = jQuery(this).attr("class").split(" ");
+        jQuery("." + classname[2] + " .active").each(function() {
+            theval += jQuery(this).attr("value") + ",";
+        });
+        theval = theval.substr(0, theval.length - 1);
+        data[i] = classname[2] + "=" + encodeURIComponent(theval);
+        i++;
+    });
+
+    jQuery.ajax({
+        type: "post",
+        url: "<?php echo $pods_url; ?>/ajax/edit.php",
+        data: "action=editroles&auth="+auth+"&"+data.join("&"),
+        success: function(msg) {
+            if ("Error" == msg.substr(0, 5)) {
+                alert(msg);
+            }
+            else {
+                alert("Success!");
+            }
+        }
+    });
+    return false;
+}
+
 function resetDB() {
     if (confirm("This will completely remove Pods from the database. Are you sure?")) {
         if (confirm("Did you already make a database backup?")) {
@@ -643,7 +685,20 @@ Begin popups
             <option value="file">file (document, media)</option>
             <option value="pick">pick</option>
         </select>
-        <select id="column_pickval" style="display:none" onchange="sisterFields()">
+        <select id="column_pickval" class="hidden" onchange="sisterFields()">
+            <option value="" style="font-weight:bold; font-style:italic">-- Pods --</option>
+<?php
+// Get pods, including country and state
+$result = pod_query("SHOW TABLES LIKE '{$table_prefix}pod_tbl_%'");
+while ($row = mysql_fetch_array($result))
+{
+    $table_name = explode('tbl_', $row[0]);
+    $table_name = $table_name[1];
+?>
+            <option value="<?php echo $table_name; ?>"><?php echo $table_name; ?></option>
+<?php
+}
+?>
             <option value="" style="font-weight:bold; font-style:italic">-- Category --</option>
 <?php
 // Category dropdown list
@@ -663,19 +718,10 @@ while ($row = mysql_fetch_assoc($result))
 <?php
 }
 ?>
-            <option value="" style="font-weight:bold; font-style:italic">-- Table --</option>
-<?php
-// Get pods, including country and state
-$result = pod_query("SHOW TABLES LIKE '{$table_prefix}pod_tbl_%'");
-while ($row = mysql_fetch_array($result))
-{
-    $table_name = explode('tbl_', $row[0]);
-    $table_name = $table_name[1];
-?>
-            <option value="<?php echo $table_name; ?>"><?php echo $table_name; ?></option>
-<?php
-}
-?>
+            <!--<option value="" style="font-weight:bold; font-style:italic">-- WordPress --</option>
+            <option value="wp_page">WP Page</option>
+            <option value="wp_post">WP Post</option>
+            <option value="wp_user">WP User</option>-->
         </select>
         <select id="column_sister_field_id" class="hidden"></select>
     </div>
@@ -708,10 +754,33 @@ Begin tabbed navigation
 ==================================================
 -->
 <div id="nav">
-    <div class="navTab active" rel="podArea">Manage Pods</div>
-    <div class="navTab" rel="pageArea">Manage PodPages</div>
-    <div class="navTab" rel="widgetArea">Manage Widgets</div>
+    <div class="navTab active" rel="podArea">Pods</div>
+<?php
+if (pods_access('manage_podpages'))
+{
+?>
+    <div class="navTab" rel="pageArea">PodPages</div>
+<?php
+}
+if (pods_access('manage_widgets'))
+{
+?>
+    <div class="navTab" rel="widgetArea">Widgets</div>
+<?php
+}
+if (pods_access('manage_roles'))
+{
+?>
+    <div class="navTab" rel="roleArea">Roles</div>
+<?php
+}
+if (pods_access('manage_settings'))
+{
+?>
     <div class="navTab" rel="settingsArea">Settings</div>
+<?php
+}
+?>
     <div class="clear"><!--clear--></div>
 </div>
 
@@ -829,6 +898,56 @@ if (isset($widgets))
         </div>
     </div>
     <div class="clear"><!--clear--></div>
+</div>
+
+<!--
+==================================================
+Begin role area
+==================================================
+-->
+<div id="roleArea" class="area hidden">
+    <div class="helper">Use the Role Manager plugin to add new roles. Admins have total access.</div>
+<?php
+$all_privs = array(
+    array('name' => 'manage_pods', 'label' => 'Manage Pods'),
+    array('name' => 'manage_podpages', 'label' => 'Manage PodPages'),
+    array('name' => 'manage_widgets', 'label' => 'Manage Widgets'),
+    array('name' => 'manage_settings', 'label' => 'Manage Settings'),
+    array('name' => 'manage_content', 'label' => 'Manage All Content'),
+    array('name' => 'manage_roles', 'label' => 'Manage Roles'),
+    array('name' => 'manage_menu', 'label' => 'Manage Menu')
+);
+
+foreach ($datatypes as $id => $dtname)
+{
+    $all_privs[] = array('name' => "pod_$dtname", 'label' => "Access: $dtname");
+}
+
+foreach ($user_roles as $role => $junk)
+{
+    if ('administrator' != $role)
+    {
+?>
+    <div style="float:left; width:32%; margin:0 5px 5px 0">
+        <h4><?php echo $role; ?></h4>
+        <div class="form pick <?php echo $role; ?>">
+<?php
+        foreach ($all_privs as $priv)
+        {
+            $active = (false !== array_search($priv['name'], $pods_roles[$role])) ? ' active' : '';
+?>
+            <div class="option<?php echo $active; ?>" value="<?php echo $priv['name']; ?>"><?php echo $priv['label']; ?></div>
+<?php
+        }
+?>
+        </div>
+    </div>
+<?php
+    }
+}
+?>
+    <div class="clear"><!--clear--></div>
+    <input type="button" class="button" onclick="editRoles()" value="Save roles" />
 </div>
 
 <!--

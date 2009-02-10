@@ -170,7 +170,7 @@ function showform(dt, post_id) {
 
 <div class="jqmWindow" id="dialog">
     <h2 style="margin-top:0">Pick a File:</h2>
-    <div class="filebox" style="height:160px; overflow-x:hidden; overflow-y:auto"></div>
+    <div class="filebox"></div>
 </div>
 
 <!--
@@ -300,9 +300,9 @@ if (!empty($orderby))
 <?php
 while ($row = mysql_fetch_assoc($result))
 {
-    $zebra = ('none' == $zebra) ? 'fff' : 'none';
+    $zebra = ('' == $zebra) ? ' class="zebra"' : '';
 ?>
-        <tr id="row<?php echo $row['post_id']; ?>" style="background:#<?php echo $zebra; ?>">
+        <tr id="row<?php echo $row['post_id']; ?>"<?php echo $zebra; ?>>
             <td width="20">
                 <div class="btn editme" onclick="editItem('<?php echo $row['post_type']; ?>', <?php echo $row['post_id']; ?>)"></div>
             </td>

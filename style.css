@@ -154,6 +154,16 @@
     padding: 5px 0;
 }
 
+.filebox {
+    height: 160px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.zebra {
+    background: #F9F9F9;
+}
+
 /* NicEdit */
 .nicEdit-panel {
     background: #F9F9F9;

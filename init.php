@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The WordPress CMS Plugin
-Version: 1.4.7
+Version: 1.4.8
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,12 +23,18 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$pods_latest = 147;
+$pods_latest = 148;
 
 function pods_init()
 {
     global $table_prefix, $pods_latest;
     $dir = WP_PLUGIN_DIR . '/pods/sql';
+
+    // Check for PHP 5.2+
+    if (!function_exists('json_encode'))
+    {
+        die('Please upgrade to PHP 5.2+ before installing Pods!');
+    }
 
     // Get the installed version
     if ($installed = (int) get_option('pods_version'))
@@ -63,58 +69,63 @@ function pods_init()
 
 function pods_menu()
 {
-    global $table_prefix, $current_user;
+    global $table_prefix;
 
-    // Determine the user's role
-    $is_admin = in_array('administrator', $current_user->roles);
-    $is_editor = in_array('editor', $current_user->roles);
-
-    // Editors and Admins can add/edit items
-    if ($is_admin || $is_editor)
+    $submenu = array();
+    $result = pod_query("SELECT name, label, is_toplevel FROM {$table_prefix}pod_types ORDER BY name");
+    if (0 < mysql_num_rows($result))
     {
-        $submenu = array();
-        $result = pod_query("SELECT name, label, is_toplevel FROM {$table_prefix}pod_types ORDER BY name");
-        if (0 < mysql_num_rows($result))
+        while ($row = mysql_fetch_array($result))
         {
-            while ($row = mysql_fetch_array($result))
-            {
-                $name = $row['name'];
-                $label = trim($row['label']);
-                $label = ('' != $label) ? $label : $name;
+            $name = $row['name'];
+            $label = trim($row['label']);
+            $label = ('' != $label) ? $label : $name;
 
+            if (pods_access("pod_$name"))
+            {
                 if (1 != $row['is_toplevel'])
                 {
                     $submenu[] = $row;
                 }
                 else
                 {
-                    add_object_page($label, $label, 5, "pods-browse-$name");
-                    add_submenu_page("pods-browse-$name", 'Edit', 'Edit', 5, "pods-browse-$name", 'pods_content_page');
-                    add_submenu_page("pods-browse-$name", 'Add New', 'Add New', 5, "pod-$name", 'pods_content_page');
+                    add_object_page($label, $label, 0, "pods-browse-$name");
+                    add_submenu_page("pods-browse-$name", 'Edit', 'Edit', 0, "pods-browse-$name", 'pods_content_page');
+                    add_submenu_page("pods-browse-$name", 'Add New', 'Add New', 0, "pod-$name", 'pods_content_page');
                 }
             }
         }
     }
 
-    // Admins can manage Pods
-    if ($is_admin)
-    {
-        add_object_page('Pods', 'Pods', 8, 'pods');
-        add_submenu_page('pods', 'Setup', 'Setup', 8, 'pods', 'pods_options_page');
-        add_submenu_page('pods', 'Browse Content', 'Browse Content', 8, 'pods-browse', 'pods_content_page');
-        add_submenu_page('pods', 'Menu Editor', 'Menu Editor', 8, 'pods-menu', 'pods_menu_page');
+    add_object_page('Pods', 'Pods', 0, 'pods');
 
-        foreach ($submenu as $item)
+    if (pods_access('manage_pods'))
+    {
+        add_submenu_page('pods', 'Setup', 'Setup', 0, 'pods', 'pods_options_page');
+    }
+    if (pods_access('manage_content'))
+    {
+        add_submenu_page('pods', 'Browse Content', 'Browse Content', 0, 'pods-browse', 'pods_content_page');
+    }
+    if (pods_access('manage_menu'))
+    {
+        add_submenu_page('pods', 'Menu Editor', 'Menu Editor', 0, 'pods-menu', 'pods_menu_page');
+    }
+
+    foreach ($submenu as $item)
+    {
+        $name = $item['name'];
+
+        if (pods_access("pod_$name"))
         {
-            $name = $item['name'];
-            add_submenu_page('pods', "Add $name", "Add $name", 8, "pod-$name", 'pods_content_page');
+            add_submenu_page('pods', "Add $name", "Add $name", 0, "pod-$name", 'pods_content_page');
         }
     }
 }
 
 function pods_options_page()
 {
-    global $pods_url, $table_prefix;
+    global $pods_url, $pods_roles, $table_prefix;
     include WP_PLUGIN_DIR . '/pods/options.php';
 }
 
@@ -263,8 +274,9 @@ require_once WP_PLUGIN_DIR . '/pods/Pod.class.php';
 
 pods_init();
 
-$podpage_exists = podpage_exists();
 $pods_url = WP_PLUGIN_URL . '/pods';
+$pods_roles = unserialize(get_option('pods_roles'));
+$podpage_exists = podpage_exists();
 
 // Hook for admin menu
 add_action('admin_menu', 'pods_menu', 9999);

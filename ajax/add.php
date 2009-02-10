@@ -125,7 +125,8 @@ else
         $weight = intval($row['weight']) + 1;
     }
 
-    $field_id = pod_query("INSERT INTO {$table_prefix}pod_fields (datatype, name, label, coltype, pickval, sister_field_id, required, weight) VALUES ('$datatype', '$name', '$label', '$coltype', '$pickval', '$sister_field_id', '$required', '$weight')", 'Cannot add new field');
+    $sister_field_id = ('null' == $sister_field_id) ? 'NULL' : "'$sister_field_id'";
+    $field_id = pod_query("INSERT INTO {$table_prefix}pod_fields (datatype, name, label, coltype, pickval, sister_field_id, required, weight) VALUES ('$datatype', '$name', '$label', '$coltype', '$pickval', $sister_field_id, '$required', '$weight')", 'Cannot add new field');
 
     if (empty($pickval))
     {

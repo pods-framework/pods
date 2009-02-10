@@ -163,6 +163,27 @@ elseif ('editwidget' == $action)
 
 /*
 ==================================================
+Edit roles
+==================================================
+*/
+elseif ('editroles' == $action)
+{
+    $roles = array();
+    foreach ($_POST as $key => $val)
+    {
+        if ('action' != $key && 'auth' != $key)
+        {
+            $tmp = empty($val) ? array() : explode(',', $val);
+            $roles[$key] = $tmp;
+        }
+    }
+    $roles = serialize($roles);
+    delete_option('pods_roles');
+    add_option('pods_roles', $roles);
+}
+
+/*
+==================================================
 Edit a pod
 ==================================================
 */

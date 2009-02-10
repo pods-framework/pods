@@ -48,6 +48,31 @@ function pods_clean_name($name)
 
 /*
 ==================================================
+Access control
+==================================================
+*/
+function pods_access($priv)
+{
+    global $pods_roles, $current_user;
+
+    if (in_array('administrator', $current_user->roles))
+    {
+        return true;
+    }
+
+    // Loop through the user's roles
+    foreach ($pods_roles as $role => $privs)
+    {
+        if (false !== array_search($priv, $privs))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+/*
+==================================================
 Build the navigation array
 ==================================================
 */

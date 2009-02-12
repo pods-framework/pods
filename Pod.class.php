@@ -124,13 +124,13 @@ class Pod
 
     /*
     ==================================================
-    Run a widget within a PodPage or WP template
+    Run a helper within a PodPage or WP template
     ==================================================
     */
-    function pod_widget($widget, $value = null, $name = null)
+    function pod_helper($helper, $value = null, $name = null)
     {
-        $widget = mysql_real_escape_string(trim($widget));
-        $result = pod_query("SELECT phpcode FROM {$this->prefix}pod_widgets WHERE name = '$widget' LIMIT 1");
+        $helper = mysql_real_escape_string(trim($helper));
+        $result = pod_query("SELECT phpcode FROM {$this->prefix}pod_helpers WHERE name = '$helper' LIMIT 1");
         if (0 < mysql_num_rows($result))
         {
             $phpcode = mysql_result($result, 0);
@@ -185,6 +185,21 @@ class Pod
                 tx.parent = $table AND tx.taxonomy = 'category'
             ";
         }
+        // WP page dropdown
+        elseif ('wp_page' == $table)
+        {
+            $sql = "SELECT ID as id, post_title AS name FROM {$this->prefix}posts WHERE post_type = 'page' ORDER BY name ASC";
+        }
+        // WP post dropdown
+        elseif ('wp_post' == $table)
+        {
+            $sql = "SELECT ID as id, post_title AS name FROM {$this->prefix}posts WHERE post_type = 'post' ORDER BY name ASC";
+        }
+        // WP user dropdown
+        elseif ('wp_user' == $table)
+        {
+            $sql = "SELECT ID as id, display_name AS name FROM {$this->prefix}users ORDER BY name ASC";
+        }
         // Pod table dropdown
         else
         {
@@ -235,11 +250,22 @@ class Pod
             return false;
         }
 
-        // The default table is wp_posts
+        // WP category
         if (is_numeric($table))
         {
             $result = pod_query("SELECT term_id AS id, name FROM {$this->prefix}terms WHERE term_id IN ($term_ids)");
         }
+        // WP page or post
+        elseif ('wp_page' == $table || 'wp_post' == $table)
+        {
+            $result = pod_query("SELECT ID as id, post_title AS name FROM {$this->prefix}posts WHERE ID IN ($term_ids)");
+        }
+        // WP user
+        elseif ('wp_user' == $table)
+        {
+            $result = pod_query("SELECT ID as id, display_name AS name FROM {$this->prefix}users WHERE ID IN ($term_ids)");
+        }
+        // Pod table
         else
         {
             $result = pod_query("SELECT * FROM {$this->prefix}pod_tbl_$table WHERE id IN ($term_ids)");
@@ -789,7 +815,7 @@ class Pod
         $before = $after = '';
         if (false !== strpos($name, ','))
         {
-            list($name, $widget, $before, $after) = explode(',', $name);
+            list($name, $helper, $before, $after) = explode(',', $name);
         }
         if ('detail_url' == $name)
         {
@@ -800,10 +826,10 @@ class Pod
             $value = $this->print_field($name);
             if (!empty($value) || 0 === $value)
             {
-                // Use widget if necessary
-                if (!empty($widget))
+                // Use helper if necessary
+                if (!empty($helper))
                 {
-                    $value = $this->pod_widget($widget, $this->get_field($name), $name);
+                    $value = $this->pod_helper($helper, $this->get_field($name), $name);
                 }
                 return $before . $value . $after;
             }

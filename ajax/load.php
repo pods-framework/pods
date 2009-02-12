@@ -79,12 +79,12 @@ elseif ($page_id = (int) $_POST['page_id'])
 
 /*
 ==================================================
-Get a widget
+Get a helper
 ==================================================
 */
-elseif ($widget_id = (int) $_POST['widget_id'])
+elseif ($helper_id = (int) $_POST['helper_id'])
 {
-    $result = pod_query("SELECT * FROM {$table_prefix}pod_widgets WHERE id = $widget_id LIMIT 1");
+    $result = pod_query("SELECT * FROM {$table_prefix}pod_helpers WHERE id = $helper_id LIMIT 1");
     $row = mysql_fetch_assoc($result);
     echo json_encode($row);
 }

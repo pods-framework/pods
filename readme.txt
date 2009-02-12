@@ -1,7 +1,7 @@
 === Pods ===
 Contributors: logikal16, sc0ttkclark
 Donate link: http://pods.uproot.us
-Tags: cms, pods, content types, posts, pages, widgets, modules, datatypes
+Tags: cms, pods, content types, posts, pages, modules, datatypes
 Requires at least: 2.7
 Tested up to: 2.7
 Stable tag: trunk
@@ -10,7 +10,7 @@ Pods is a CMS (Content Management System) plugin for WordPress.
 
 == Description ==
 
-Create more than just blog posts and pages. Add new content types with only the fields you need. Customize exactly how each content type's list and detail pages appear. Automatic pagination, filtering, public forms and more are possible with the Pods CMS plugin.
+Create more than just blog posts and pages. Add new content types with only the fields you need. Customize exactly how each content type's list and detail pages appear. Automatic pagination, filtering, public forms, access control and more are possible with the Pods CMS plugin.
 
 Visit the [Pods homepage](http://pods.uproot.us)
 

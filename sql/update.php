@@ -59,13 +59,13 @@ if ($installed < 132)
 {
     pod_query("UPDATE {$table_prefix}pod_pages SET phpcode = CONCAT('<?php\n', phpcode) WHERE phpcode NOT LIKE '?>%'");
     pod_query("UPDATE {$table_prefix}pod_pages SET phpcode = SUBSTR(phpcode, 3) WHERE phpcode LIKE '?>%'");
-    pod_query("UPDATE {$table_prefix}pod_widgets SET phpcode = CONCAT('<?php\n', phpcode) WHERE phpcode NOT LIKE '?>%'");
-    pod_query("UPDATE {$table_prefix}pod_widgets SET phpcode = SUBSTR(phpcode, 3) WHERE phpcode LIKE '?>%'");
+    pod_query("UPDATE {$table_prefix}pod_helpers SET phpcode = CONCAT('<?php\n', phpcode) WHERE phpcode NOT LIKE '?>%'");
+    pod_query("UPDATE {$table_prefix}pod_helpers SET phpcode = SUBSTR(phpcode, 3) WHERE phpcode LIKE '?>%'");
 }
 
 if ($installed < 143)
 {
-    $result = pod_query("SHOW COLUMNS FROM {$table_prefix}pod_types WHERE field = 'description'");
+    $result = pod_query("SHOW COLUMNS FROM {$table_prefix}pod_types LIKE 'description'");
     if (0 < mysql_num_rows($result))
     {
         pod_query("ALTER TABLE {$table_prefix}pod_types CHANGE description label VARCHAR(32)");
@@ -86,6 +86,16 @@ if ($installed < 145)
         weight TINYINT unsigned default 0)";
     pod_query($sql);
     pod_query("INSERT INTO {$table_prefix}pod_menu (uri, title, lft, rgt) VALUES ('/', 'Home', 1, 2)");
+}
+
+if ($installed < 148)
+{
+    add_option('pods_roles');
+}
+
+if ($installed < 149)
+{
+    pod_query("RENAME TABLE {$table_prefix}pod_widgets TO {$table_prefix}pod_helpers");
 }
 
 // Save this version

@@ -153,12 +153,12 @@ elseif ('editmenu' == $action)
 
 /*
 ==================================================
-Edit a widget
+Edit a helper
 ==================================================
 */
-elseif ('editwidget' == $action)
+elseif ('edithelper' == $action)
 {
-    pod_query("UPDATE {$table_prefix}pod_widgets SET phpcode = '$phpcode' WHERE id = $widget_id LIMIT 1");
+    pod_query("UPDATE {$table_prefix}pod_helpers SET phpcode = '$phpcode' WHERE id = $helper_id LIMIT 1");
 }
 
 /*

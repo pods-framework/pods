@@ -13,11 +13,11 @@ while ($row = mysql_fetch_assoc($result))
     $pages[$row['id']] = $row['uri'];
 }
 
-// Get all widgets
-$result = pod_query("SELECT id, name FROM {$table_prefix}pod_widgets ORDER BY name");
+// Get all helpers
+$result = pod_query("SELECT id, name FROM {$table_prefix}pod_helpers ORDER BY name");
 while ($row = mysql_fetch_assoc($result))
 {
-    $widgets[$row['id']] = $row['name'];
+    $helpers[$row['id']] = $row['name'];
 }
 
 // Get all available WP roles
@@ -35,7 +35,7 @@ Begin javascript code
 var datatype;
 var column_id;
 var add_or_edit;
-var widget_id;
+var helper_id;
 var page_id;
 var auth = '<?php echo md5(AUTH_KEY); ?>';
 
@@ -68,18 +68,18 @@ jQuery(function() {
         loadPage();
     });
     
-    jQuery("#widgetArea .tab").click(function() {
-        jQuery("#widgetArea .tab").removeClass("active");
-        widget_id = jQuery(this).attr("class").split(" ")[1].substr(1);
+    jQuery("#helperArea .tab").click(function() {
+        jQuery("#helperArea .tab").removeClass("active");
+        helper_id = jQuery(this).attr("class").split(" ")[1].substr(1);
         jQuery(this).addClass("active");
-        jQuery("#widgetArea .idle").show();
-        loadWidget();
+        jQuery("#helperArea .idle").show();
+        loadHelper();
     });
 
     jQuery("#podBox").jqm();
     jQuery("#columnBox").jqm();
     jQuery("#pageBox").jqm();
-    jQuery("#widgetBox").jqm();
+    jQuery("#helperBox").jqm();
 });
 
 function resetForm() {
@@ -108,13 +108,10 @@ function addOrEditColumn() {
 function doDropdown(val) {
     if ('pick' == val) {
         jQuery("#column_pickval").show();
-        //jQuery("#column_options").show();
     }
     else {
         jQuery("#column_pickval").val("");
         jQuery("#column_pickval").hide();
-        //jQuery("#column_options").val("");
-        //jQuery("#column_options").hide();
     }
     jQuery("#column_sister_field_id").val("");
     jQuery("#column_sister_field_id").hide();
@@ -322,7 +319,6 @@ function loadColumn(col) {
             }
             if ("pick" == coltype) {
                 jQuery("#column_pickval").show();
-                //jQuery("#column_options").show();
             }
             if ("0" != sister_field_id) {
                 sisterFields(sister_field_id);
@@ -508,32 +504,32 @@ function dropPage() {
     }
 }
 
-function loadWidget() {
+function loadHelper() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/load.php",
-        data: "auth="+auth+"&widget_id="+widget_id,
+        data: "auth="+auth+"&helper_id="+helper_id,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
             }
             else {
-                var widget_data = eval("("+msg+")");
-                var name = (null == widget_data.name) ? "" : widget_data.name;
-                var phpcode = (null == widget_data.phpcode) ? "" : widget_data.phpcode;
-                jQuery("#widget_name").html(name);
-                jQuery("#widget_content").val(phpcode);
+                var helper_data = eval("("+msg+")");
+                var name = (null == helper_data.name) ? "" : helper_data.name;
+                var phpcode = (null == helper_data.phpcode) ? "" : helper_data.phpcode;
+                jQuery("#helper_name").html(name);
+                jQuery("#helper_content").val(phpcode);
             }
         }
     });
 }
 
-function addWidget() {
-    var name = jQuery("#new_widget").val();
+function addHelper() {
+    var name = jQuery("#new_helper").val();
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/add.php",
-        data: "auth="+auth+"&type=widget&name="+name,
+        data: "auth="+auth+"&type=helper&name="+name,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -541,27 +537,27 @@ function addWidget() {
             else {
                 var id = msg;
                 var html = '<div class="tab t'+id+'">'+name+'</div>';
-                jQuery("#widgetArea .tabs").append(html);
-                jQuery("#widgetBox").jqmHide();
-                jQuery("#widgetArea .t"+id).click(function() {
-                    jQuery("#widgetArea .tab").removeClass("active");
-                    widget_id = jQuery(this).attr("class").split(" ")[1].substr(1);
+                jQuery("#helperArea .tabs").append(html);
+                jQuery("#helperBox").jqmHide();
+                jQuery("#helperArea .t"+id).click(function() {
+                    jQuery("#helperArea .tab").removeClass("active");
+                    helper_id = jQuery(this).attr("class").split(" ")[1].substr(1);
                     jQuery(this).addClass("active");
-                    jQuery("#widgetArea .idle").show();
-                    loadWidget();
+                    jQuery("#helperArea .idle").show();
+                    loadHelper();
                 });
-                jQuery("#widgetArea .t"+id).click();
+                jQuery("#helperArea .t"+id).click();
             }
         }
     });
 }
 
-function editWidget() {
-    var content = jQuery("#widget_content").val();
+function editHelper() {
+    var content = jQuery("#helper_content").val();
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "auth="+auth+"&action=editwidget&widget_id="+widget_id+"&phpcode="+encodeURIComponent(content),
+        data: "auth="+auth+"&action=edithelper&helper_id="+helper_id+"&phpcode="+encodeURIComponent(content),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -573,21 +569,21 @@ function editWidget() {
     });
 }
 
-function dropWidget() {
-    if (confirm("Do you really want to drop this widget?")) {
+function dropHelper() {
+    if (confirm("Do you really want to drop this helper?")) {
         jQuery.ajax({
             type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
-            data: "auth="+auth+"&widget="+widget_id,
+            data: "auth="+auth+"&helper="+helper_id,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);
                 }
                 else {
-                    jQuery("#widget_name").html("Choose a Widget");
-                    jQuery("#widgetArea #column_list").html('Need some help? Check out the <a href="http://pods.uproot.us/user_guide" target="_blank">User Guide</a> to get started.');
-                    jQuery("#widgetArea .t"+widget_id).remove();
-                    jQuery("#widgetArea .idle").hide();
+                    jQuery("#helper_name").html("Choose a Helper");
+                    jQuery("#helperArea #column_list").html('Need some help? Check out the <a href="http://pods.uproot.us/user_guide" target="_blank">User Guide</a> to get started.');
+                    jQuery("#helperArea .t"+helper_id).remove();
+                    jQuery("#helperArea .idle").hide();
                 }
             }
         });
@@ -718,10 +714,10 @@ while ($row = mysql_fetch_assoc($result))
 <?php
 }
 ?>
-            <!--<option value="" style="font-weight:bold; font-style:italic">-- WordPress --</option>
+            <option value="" style="font-weight:bold; font-style:italic">-- WordPress --</option>
             <option value="wp_page">WP Page</option>
             <option value="wp_post">WP Post</option>
-            <option value="wp_user">WP User</option>-->
+            <option value="wp_user">WP User</option>
         </select>
         <select id="column_sister_field_id" class="hidden"></select>
     </div>
@@ -739,13 +735,13 @@ while ($row = mysql_fetch_assoc($result))
 <div id="pageBox" class="jqmWindow">
     <input type="text" id="new_page" style="width:280px" />
     <input type="button" class="button" onclick="addPage()" value="Add Page" />
-    <p>Ex: <strong>/resources/events/latest/</strong></p>
+    <div>Ex: <strong>/resources/latest/</strong> or <strong>/events/*</strong></div>
 </div>
 
-<div id="widgetBox" class="jqmWindow">
-    <input type="text" id="new_widget" style="width:280px" />
-    <input type="button" class="button" onclick="addWidget()" value="Add Widget" />
-    <p>Ex: <strong>format_date</strong> or <strong>mp3_player</strong></p>
+<div id="helperBox" class="jqmWindow">
+    <input type="text" id="new_helper" style="width:280px" />
+    <input type="button" class="button" onclick="addHelper()" value="Add Helper" />
+    <div>Ex: <strong>format_date</strong> or <strong>mp3_player</strong></div>
 </div>
 
 <!--
@@ -754,18 +750,24 @@ Begin tabbed navigation
 ==================================================
 -->
 <div id="nav">
-    <div class="navTab active" rel="podArea">Pods</div>
+    <div class="navTab active" rel="welcomeArea">Welcome</div>
 <?php
+if (pods_access('manage_pods'))
+{
+?>
+    <div class="navTab" rel="podArea">Pods</div>
+<?php
+}
 if (pods_access('manage_podpages'))
 {
 ?>
     <div class="navTab" rel="pageArea">PodPages</div>
 <?php
 }
-if (pods_access('manage_widgets'))
+if (pods_access('manage_helpers'))
 {
 ?>
-    <div class="navTab" rel="widgetArea">Widgets</div>
+    <div class="navTab" rel="helperArea">Helpers</div>
 <?php
 }
 if (pods_access('manage_roles'))
@@ -786,10 +788,32 @@ if (pods_access('manage_settings'))
 
 <!--
 ==================================================
+Begin welcome area
+==================================================
+-->
+<div id="welcomeArea" class="area">
+    <div id="welcome">
+        <img src="<?php echo $pods_url; ?>/images/header-logo.png" alt="Pods" />
+    </div>
+    <h2 align="center">Thanks for using the Pods CMS plugin.</h2>
+    <p align="center">See the <a href="http://pods.uproot.us/user_guide" target="_blank">User Guide</a> and <a href="http://pods.uproot.us/forum" target="_blank">Forum</a> to get started.</p>
+    <p style="margin:0 20px">
+        Now you can create and manage content types, otherwise known as pods.
+        Configure what to display with <strong>Templates</strong>, and <strong>Magic Tags</strong> are helpful for pulling column values into templates.
+        Use <strong>Helpers</strong> if you need to modify column values before displaying.
+        Stick your templates into <strong>PodPages</strong> (with PHP and wildcard URL support) or WP template files.
+        Control user access using the built-in <strong>Role Manager</strong>.
+        Build breadcrumbs, top and local navigation with help from the <strong>Menu Editor</strong>.
+        Finally, you can manage all this content using the <strong>Browse Content</strong> menu.
+    </p>
+</div>
+
+<!--
+==================================================
 Begin pod area
 ==================================================
 -->
-<div id="podArea" class="area">
+<div id="podArea" class="area hidden">
     <div class="tabs">
         <input type="button" class="button" onclick="jQuery('#podBox').jqmShow()" value="Add new pod" />
 <?php
@@ -869,16 +893,16 @@ if (isset($pages))
 
 <!--
 ==================================================
-Begin widget area
+Begin helper area
 ==================================================
 -->
-<div id="widgetArea" class="area hidden">
+<div id="helperArea" class="area hidden">
     <div class="tabs">
-        <input type="button" class="button" onclick="jQuery('#widgetBox').jqmShow()" value="Add new widget" />
+        <input type="button" class="button" onclick="jQuery('#helperBox').jqmShow()" value="Add new helper" />
 <?php
-if (isset($widgets))
+if (isset($helpers))
 {
-    foreach ($widgets as $key => $val)
+    foreach ($helpers as $key => $val)
     {
 ?>
         <div class="tab t<?php echo $key; ?>"><?php echo $val; ?></div>
@@ -888,12 +912,12 @@ if (isset($widgets))
 ?>
     </div>
     <div class="rightside">
-        <h2 class="title" id="widget_name">Choose a Widget</h2>
-        <textarea id="widget_content"></textarea>
+        <h2 class="title" id="helper_name">Choose a Helper</h2>
+        <textarea id="helper_content"></textarea>
         <div class="idle hidden">
             <p>
-                <input type="button" class="button" onclick="editWidget()" value="Save changes" /> or
-                <a href="javascript:;" onclick="dropWidget()">drop widget</a>
+                <input type="button" class="button" onclick="editHelper()" value="Save changes" /> or
+                <a href="javascript:;" onclick="dropHelper()">drop helper</a>
             </p>
         </div>
     </div>
@@ -906,12 +930,12 @@ Begin role area
 ==================================================
 -->
 <div id="roleArea" class="area hidden">
-    <div class="helper">Use the Role Manager plugin to add new roles. Admins have total access.</div>
+    <div class="tips">Use the Role Manager plugin to add new roles. Admins have total access.</div>
 <?php
 $all_privs = array(
     array('name' => 'manage_pods', 'label' => 'Manage Pods'),
     array('name' => 'manage_podpages', 'label' => 'Manage PodPages'),
-    array('name' => 'manage_widgets', 'label' => 'Manage Widgets'),
+    array('name' => 'manage_helpers', 'label' => 'Manage Helpers'),
     array('name' => 'manage_settings', 'label' => 'Manage Settings'),
     array('name' => 'manage_content', 'label' => 'Manage All Content'),
     array('name' => 'manage_roles', 'label' => 'Manage Roles'),
@@ -956,7 +980,7 @@ Begin settings area
 ==================================================
 -->
 <div id="settingsArea" class="area hidden">
-    <div class="helper">*WARNING* This cannot be undone. Please backup your database!</div>
+    <div class="tips">*WARNING* This cannot be undone. Please backup your database!</div>
     <input type="button" class="button" onclick="resetDB()" value="Reset database" />
 </div>
 

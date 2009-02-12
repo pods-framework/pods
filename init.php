@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The WordPress CMS Plugin
-Version: 1.4.8
+Version: 1.4.9
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$pods_latest = 148;
+$pods_latest = 149;
 
 function pods_init()
 {
@@ -98,11 +98,8 @@ function pods_menu()
     }
 
     add_object_page('Pods', 'Pods', 0, 'pods');
+    add_submenu_page('pods', 'Setup', 'Setup', 0, 'pods', 'pods_options_page');
 
-    if (pods_access('manage_pods'))
-    {
-        add_submenu_page('pods', 'Setup', 'Setup', 0, 'pods', 'pods_options_page');
-    }
     if (pods_access('manage_content'))
     {
         add_submenu_page('pods', 'Browse Content', 'Browse Content', 0, 'pods-browse', 'pods_content_page');

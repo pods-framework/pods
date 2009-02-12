@@ -67,6 +67,10 @@
     margin-right: 8px;
 }
 
+#welcome {
+    background: url(images/header-bg.png) repeat-x;
+}
+
 #column_name,
 #column_label,
 #column_comment,
@@ -94,7 +98,7 @@
     background: url(images/menu-open.png) 0 5px no-repeat;
 }
 
-.helper {
+.tips {
     font-weight: bold;
     font-style: italic;
     margin-bottom: 5px;
@@ -137,7 +141,7 @@
 #page_title,
 #podBox #new_pod,
 #pageBox #new_page,
-#widgetBox #new_widget {
+#helperBox #new_helper {
     width: 300px;
     border: 1px solid #E3E3E3;
 }

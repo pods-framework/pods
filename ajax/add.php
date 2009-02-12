@@ -59,20 +59,20 @@ elseif ('page' == $type)
 
 /*
 ==================================================
-Add new widget
+Add new helper
 ==================================================
 */
-elseif ('widget' == $type)
+elseif ('helper' == $type)
 {
     if (!empty($name))
     {
-        $sql = "SELECT id FROM {$table_prefix}pod_widgets WHERE name = '$name' LIMIT 1";
-        pod_query($sql, 'Cannot get Widgets', 'Widget by this name already exists');
-        $widget_id = pod_query("INSERT INTO {$table_prefix}pod_widgets (name, phpcode) VALUES ('$name', '$phpcode')", 'Cannot add new widget');
+        $sql = "SELECT id FROM {$table_prefix}pod_helpers WHERE name = '$name' LIMIT 1";
+        pod_query($sql, 'Cannot get helpers', 'helper by this name already exists');
+        $helper_id = pod_query("INSERT INTO {$table_prefix}pod_helpers (name, phpcode) VALUES ('$name', '$phpcode')", 'Cannot add new helper');
 
-        die("$widget_id"); // return as string
+        die("$helper_id"); // return as string
     }
-    die('Error: Enter a widget name');
+    die('Error: Enter a helper name');
 }
 
 /*

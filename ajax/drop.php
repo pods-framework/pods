@@ -92,12 +92,12 @@ elseif ($post_id = (int) $_POST['post_id'])
 
 /*
 ==================================================
-Drop a single widget
+Drop a single helper
 ==================================================
 */
-elseif ($widget_id = (int) $_POST['widget'])
+elseif ($helper_id = (int) $_POST['helper'])
 {
-    pod_query("DELETE FROM {$table_prefix}pod_widgets WHERE id = $widget_id LIMIT 1");
+    pod_query("DELETE FROM {$table_prefix}pod_helpers WHERE id = $helper_id LIMIT 1");
 }
 
 /*

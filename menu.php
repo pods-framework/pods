@@ -151,7 +151,7 @@ Begin popups
 <div id="menuBox" class="jqmWindow">
     <input type="hidden" id="add_or_edit" value="" />
 
-    <div class="leftside">Link</div>
+    <div class="leftside">Link/URI</div>
     <div class="rightside">
         <input type="text" id="menu_uri" value="" />
         <input type="hidden" id="menu_id" value="" />
@@ -187,7 +187,7 @@ Begin edit area
 ==================================================
 -->
 <div id="menuArea" class="area">
-    <div class="helper">Define your site's menu structure, and display it using pods_navigation($uri, $max_depth)</div>
+    <div class="tips">Define your site's menu structure, and display it using pods_navigation($uri, $max_depth)</div>
 <?php
 $last_depth = -1;
 if ($menu = build_nav_array('/', 0))

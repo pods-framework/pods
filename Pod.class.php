@@ -241,7 +241,7 @@ class Pod
             $term_ids = array();
             while ($row = mysql_fetch_assoc($result))
             {
-                $term_ids[] = $row['term_id'];
+                $term_ids[] = $row['tbl_row_id'];
             }
             $term_ids = implode(', ', $term_ids);
         }

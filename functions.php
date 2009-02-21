@@ -48,6 +48,38 @@ function pods_clean_name($name)
 
 /*
 ==================================================
+Filter input. Escape output.
+==================================================
+*/
+function pods_sanitize($input)
+{
+    $output = array();
+
+    if (is_object($input))
+    {
+        $input = get_object_vars($input);
+        foreach ($input as $key => $val)
+        {
+            $output[$key] = pods_sanitize($val);
+        }
+        $output = (object) $output;
+    }
+    elseif (is_array($input))
+    {
+        foreach ($input as $key => $val)
+        {
+            $output[$key] = pods_sanitize($val);
+        }
+    }
+    else
+    {
+        $output = mysql_real_escape_string(trim($input));
+    }
+    return $output;
+}
+
+/*
+==================================================
 Access control
 ==================================================
 */

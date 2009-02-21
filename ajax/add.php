@@ -68,7 +68,7 @@ elseif ('helper' == $type)
     {
         $sql = "SELECT id FROM {$table_prefix}pod_helpers WHERE name = '$name' LIMIT 1";
         pod_query($sql, 'Cannot get helpers', 'helper by this name already exists');
-        $helper_id = pod_query("INSERT INTO {$table_prefix}pod_helpers (name, phpcode) VALUES ('$name', '$phpcode')", 'Cannot add new helper');
+        $helper_id = pod_query("INSERT INTO {$table_prefix}pod_helpers (name, helper_type, phpcode) VALUES ('$name', '$helper_type', '$phpcode')", 'Cannot add new helper');
 
         die("$helper_id"); // return as string
     }
@@ -116,6 +116,12 @@ else
     $sql = "SELECT id FROM {$table_prefix}pod_fields WHERE datatype = $datatype AND name = '$name' LIMIT 1";
     pod_query($sql, 'Cannot get fields', 'Column by this name already exists');
 
+    if ('slug' == $coltype)
+    {
+        $sql = "SELECT id FROM {$table_prefix}pod_fields WHERE datatype = $datatype AND coltype = 'slug' LIMIT 1";
+        pod_query($sql, 'Too many permalinks', 'This pod already has a permalink column');
+    }
+
     // Sink the new column to the bottom of the list
     $weight = 0;
     $result = pod_query("SELECT weight FROM {$table_prefix}pod_fields WHERE datatype = $datatype ORDER BY weight DESC LIMIT 1");
@@ -125,8 +131,8 @@ else
         $weight = intval($row['weight']) + 1;
     }
 
-    $sister_field_id = ('null' == $sister_field_id) ? 'NULL' : "'$sister_field_id'";
-    $field_id = pod_query("INSERT INTO {$table_prefix}pod_fields (datatype, name, label, coltype, pickval, sister_field_id, required, weight) VALUES ('$datatype', '$name', '$label', '$coltype', '$pickval', $sister_field_id, '$required', '$weight')", 'Cannot add new field');
+    $sister_field_id = ('null' == $sister_field_id) ? 'NULL' : "$sister_field_id";
+    $field_id = pod_query("INSERT INTO {$table_prefix}pod_fields (datatype, name, label, coltype, pickval, sister_field_id, required, `unique`, `multiple`, weight) VALUES ('$datatype', '$name', '$label', '$coltype', '$pickval', $sister_field_id, '$required', '$unique', '$multiple', '$weight')", 'Cannot add new field');
 
     if (empty($pickval))
     {
@@ -135,6 +141,7 @@ else
             'date' => 'datetime',
             'num' => 'decimal(9,2)',
             'txt' => 'varchar(128)',
+            'slug' => 'varchar(128)',
             'file' => 'varchar(128)',
             'code' => 'mediumtext',
             'desc' => 'mediumtext'
@@ -144,7 +151,7 @@ else
     }
     else
     {
-        pod_query("UPDATE {$table_prefix}pod_fields SET sister_field_id = '$field_id' WHERE id = '$sister_field_id' LIMIT 1", 'Cannot update sister field');
+        pod_query("UPDATE {$table_prefix}pod_fields SET sister_field_id = '$field_id' WHERE id = $sister_field_id LIMIT 1", 'Cannot update sister field');
     }
 }
 

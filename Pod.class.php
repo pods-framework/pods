@@ -39,7 +39,7 @@ class Pod
             $row = mysql_fetch_assoc($result);
             $this->datatype_id = $row['id'];
 
-            if (null != $id && is_numeric($id))
+            if (null != $id)
             {
                 return $this->getRecordById($id);
             }
@@ -146,22 +146,22 @@ class Pod
     Get the post id
     ==================================================
     */
-    function get_post_id()
+    function get_pod_id()
     {
-        if (empty($this->data['post_id']))
+        if (empty($this->data['pod_id']))
         {
-            $this->data['post_id'] = -1;
+            $this->data['pod_id'] = -1;
 
             $dt = $this->datatype_id;
-            $row_id = $this->print_field('id');
-            $result = pod_query("SELECT post_id FROM {$this->prefix}pod WHERE datatype = $dt AND row_id = '$row_id' LIMIT 1");
+            $tbl_row_id = $this->print_field('id');
+            $result = pod_query("SELECT id FROM {$this->prefix}pod WHERE datatype = $dt AND tbl_row_id = '$tbl_row_id' LIMIT 1");
             if (0 < mysql_num_rows($result))
             {
                 $row = mysql_fetch_assoc($result);
-                $this->data['post_id'] = $row['post_id'];
+                $this->data['pod_id'] = $row['pod_id'];
             }
         }
-        return $this->data['post_id'];
+        return $this->data['pod_id'];
     }
 
     /*
@@ -230,10 +230,10 @@ class Pod
     function rel_lookup($field_id, $table = null)
     {
         $datatype_id = $this->datatype_id;
-        $post_id = $this->get_post_id();
+        $pod_id = $this->get_pod_id();
         $row_id = $this->data['id'];
 
-        $result = pod_query("SELECT term_id FROM {$this->prefix}pod_rel WHERE post_id = $post_id AND field_id = $field_id");
+        $result = pod_query("SELECT tbl_row_id FROM {$this->prefix}pod_rel WHERE pod_id = $pod_id AND field_id = $field_id");
 
         // Find all related IDs
         if (0 < mysql_num_rows($result))
@@ -288,7 +288,21 @@ class Pod
         $datatype = $this->datatype;
         if (!empty($datatype))
         {
-            $result = pod_query("SELECT * FROM {$this->prefix}pod_tbl_$datatype WHERE id = $id LIMIT 1");
+            if (is_numeric($id))
+            {
+                $result = pod_query("SELECT * FROM {$this->prefix}pod_tbl_$datatype WHERE id = $id LIMIT 1");
+            }
+            else
+            {
+                // Get the slug column
+                $result = pod_query("SELECT name FROM {$this->prefix}pod_fields WHERE coltype = 'slug' LIMIT 1");
+                if (0 < mysql_num_rows($result))
+                {
+                    $field_name = mysql_result($result, 0);
+                    $result = pod_query("SELECT * FROM {$this->prefix}pod_tbl_$datatype WHERE $field_name = '$id' LIMIT 1");
+                }
+            }
+
             if (0 < mysql_num_rows($result))
             {
                 $row = mysql_fetch_assoc($result);
@@ -343,7 +357,7 @@ class Pod
                 {
                     $join .= "
                     INNER JOIN
-                        {$this->prefix}pod_rel r$i ON r$i.field_id = (SELECT id FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND name = '$key') AND r$i.term_id = $val AND r$i.post_id = p.post_id
+                        {$this->prefix}pod_rel r$i ON r$i.field_id = (SELECT id FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND name = '$key') AND r$i.tbl_row_id = $val AND r$i.pod_id = p.id
                     ";
                     $i++;
                 }
@@ -359,7 +373,7 @@ class Pod
                 {$this->prefix}pod p
             $join
             INNER JOIN
-                {$this->prefix}pod_tbl_$datatype t ON t.id = p.row_id
+                {$this->prefix}pod_tbl_$datatype t ON t.id = p.tbl_row_id
             WHERE
                 p.datatype = $datatype_id
                 $search
@@ -542,11 +556,11 @@ class Pod
     Display HTML for all datatype fields
     ==================================================
     */
-    function showform($post_id = null, $is_public = false, $public_columns = null)
+    function showform($pod_id = null, $is_public = false, $public_columns = null)
     {
         $datatype = $this->datatype;
         $datatype_id = $this->datatype_id;
-        $this->data['post_id'] = $post_id;
+        $this->data['pod_id'] = $pod_id;
 
         $where = '';
         if (!empty($public_columns))
@@ -568,7 +582,7 @@ class Pod
 
         $sql = "
         SELECT
-            f.name, f.label, f.comment, f.coltype, f.pickval, f.required
+            f.name, f.label, f.comment, f.coltype, f.pickval, f.required, f.`unique`, f.`multiple`
         FROM
             {$this->prefix}pod_types t
         INNER JOIN
@@ -591,16 +605,16 @@ class Pod
         FROM
             {$this->prefix}pod p
         INNER JOIN
-            {$this->prefix}pod_tbl_$datatype t ON t.id = p.row_id
+            {$this->prefix}pod_tbl_$datatype t ON t.id = p.tbl_row_id
         WHERE
-            p.post_id = $post_id
+            p.id = $pod_id
         LIMIT
             1
         ";
         $result = pod_query($sql);
         $tbl_cols = mysql_fetch_assoc($result);
 ?>
-    <div><input type="hidden" class="form num post_id" value="<?php echo $post_id; ?>" /></div>
+    <div><input type="hidden" class="form num pod_id" value="<?php echo $pod_id; ?>" /></div>
 <?php
         foreach ($fields as $key => $field_array)
         {
@@ -610,6 +624,9 @@ class Pod
             $coltype = $field_array['coltype'];
             $pickval = $field_array['pickval'];
             $attr = $attribute[$key];
+            $attr['required'] = $field_array['required'];
+            $attr['unique'] = $field_array['unique'];
+            $attr['multiple'] = $field_array['multiple'];
 
             if (1 == $field_array['required'])
             {
@@ -619,33 +636,33 @@ class Pod
             if (!empty($pickval))
             {
                 $val = array();
-                $term_ids = array();
+                $tbl_row_ids = array();
                 $table = $pickval;
 
                 $result = pod_query("SELECT id FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND name = '$key' LIMIT 1");
                 $row = mysql_fetch_assoc($result);
                 $field_id = $row['id'];
 
-                $result = pod_query("SELECT term_id FROM {$this->prefix}pod_rel WHERE post_id = $post_id AND field_id = $field_id");
+                $result = pod_query("SELECT tbl_row_id FROM {$this->prefix}pod_rel WHERE pod_id = $pod_id AND field_id = $field_id");
                 while ($row = mysql_fetch_assoc($result))
                 {
-                    $term_ids[] = $row['term_id'];
+                    $tbl_row_ids[] = $row['tbl_row_id'];
                 }
 
                 // Use default values for public forms
-                if (empty($term_ids) && !empty($attr['default']))
+                if (empty($tbl_row_ids) && !empty($attr['default']))
                 {
-                    $term_ids = $attr['default'];
+                    $tbl_row_ids = $attr['default'];
                     if (!is_array($default))
                     {
-                        $term_ids = explode(',', $term_ids);
-                        foreach ($term_ids as $term_key => $term_val)
+                        $tbl_row_ids = explode(',', $tbl_row_ids);
+                        foreach ($tbl_row_ids as $row_key => $row_val)
                         {
-                            $term_ids[$term_key] = trim($term_val);
+                            $tbl_row_ids[$row_key] = trim($row_val);
                         }
                     }
                 }
-                $this->data[$key] = $this->get_dropdown_values($table, null, $term_ids);
+                $this->data[$key] = $this->get_dropdown_values($table, null, $tbl_row_ids);
             }
             else
             {
@@ -660,7 +677,7 @@ class Pod
                 $this->get_field($key);
             }
 
-            if ('id' != $key || -1 == $this->get_post_id())
+            if ('id' != $key || -1 == $this->get_pod_id())
             {
                 $this->build_field_html($key, $label, $comment, $coltype, $attr);
             }
@@ -728,7 +745,7 @@ class Pod
 <?php
         }
         // Standard text box
-        elseif ('num' == $coltype || 'txt' == $coltype)
+        elseif ('num' == $coltype || 'txt' == $coltype || 'slug' == $coltype)
         {
 ?>
     <input type="text" class="form <?php echo $coltype . ' ' . $name; ?>" value="<?php echo str_replace('"', '&quot;', $data); ?>" />
@@ -748,25 +765,49 @@ class Pod
     <textarea class="form code <?php echo $name; ?>" id="code-<?php echo $name; ?>"><?php echo $data; ?></textarea>
 <?php
         }
-        // Multi-select list
         else
         {
+            // Multi-select list
+            if (1 == $attr['multiple'])
+            {
 ?>
     <div class="form pick <?php echo $name; ?>">
 <?php
-            if (!empty($data))
-            {
-                foreach ($data as $key => $val)
+                if (!empty($data))
                 {
-                    $active = empty($val['active']) ? '' : ' active';
+                    foreach ($data as $key => $val)
+                    {
+                        $active = empty($val['active']) ? '' : ' active';
 ?>
         <div class="option<?php echo $active; ?>" value="<?php echo $val['id']; ?>"><?php echo $val['name']; ?></div>
 <?php
+                    }
                 }
-            }
 ?>
     </div>
 <?php
+            }
+            // Single-select list
+            else
+            {
+?>
+    <select class="form pick1 <?php echo $name; ?>">
+        <option value="">-- Select one --</option>
+<?php
+                if (!empty($data))
+                {
+                    foreach ($data as $key => $val)
+                    {
+                        $selected = empty($val['active']) ? '' : ' selected';
+?>
+        <option value="<?php echo $val['id']; ?>"<?php echo $selected; ?>><?php echo $val['name']; ?></option>
+<?php
+                    }
+                }
+?>
+    </select>
+<?php
+            }
         }
 ?>
     </div>

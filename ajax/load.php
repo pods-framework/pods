@@ -60,7 +60,7 @@ Get a pod column
 */
 elseif ($field_id = (int) $_POST['col'])
 {
-    $result = pod_query("SELECT name, label, comment, coltype, pickval, sister_field_id, required FROM {$table_prefix}pod_fields WHERE id = $field_id LIMIT 1");
+    $result = pod_query("SELECT name, label, comment, coltype, pickval, sister_field_id, required, `unique`, `multiple` FROM {$table_prefix}pod_fields WHERE id = $field_id LIMIT 1");
     $row = mysql_fetch_assoc($result);
     echo json_encode($row);
 }

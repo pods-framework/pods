@@ -62,25 +62,25 @@ jQuery(function() {
     jQuery("#dialog").jqm();
 });
 
-function editItem(datatype, post_id) {
+function editItem(datatype, pod_id) {
     jQuery(".navTab").click();
     jQuery("#editTitle").html("Edit "+datatype);
-    showform(datatype, post_id);
+    showform(datatype, pod_id);
 }
 
-function dropItem(post_id) {
+function dropItem(pod_id) {
     if (confirm("Do you really want to drop this item?")) {
         jQuery.ajax({
             type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
-            data: "auth="+auth+"&post_id="+post_id,
+            data: "auth="+auth+"&pod_id="+pod_id,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);
                 }
                 else {
-                    jQuery("#browseTable tr#row"+post_id).css("background", "red");
-                    jQuery("#browseTable tr#row"+post_id).fadeOut("slow");
+                    jQuery("#browseTable tr#row"+pod_id).css("background", "red");
+                    jQuery("#browseTable tr#row"+pod_id).fadeOut("slow");
                 }
             }
         });
@@ -130,7 +130,7 @@ function saveForm() {
     return false;
 }
 
-function showform(dt, post_id) {
+function showform(dt, pod_id) {
     if ("" == dt) {
         return false;
     }
@@ -139,7 +139,7 @@ function showform(dt, post_id) {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/showform.php",
-        data: "post_id="+post_id+"&datatype="+datatype,
+        data: "pod_id="+pod_id+"&datatype="+datatype,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -179,8 +179,8 @@ Begin tabbed navigation
 ==================================================
 -->
 <div id="nav">
-    <div class="navTab active" rel="browseArea">Browse</div>
-    <div class="navTab" rel="editArea">Edit</div>
+    <div class="navTab active" rel="browseArea"><a href="javascript:;">Browse</a></div>
+    <div class="navTab" rel="editArea"><a href="javascript:;">Edit</a></div>
     <div class="clear"><!--clear--></div>
 </div>
 
@@ -196,19 +196,19 @@ $Record->page = empty($_GET['pg']) ? 1 : $_GET['pg'];
 $limit = (15 * ($Record->page - 1)) . ',15';
 $Record->type = '';
 
-$where[] = "p.post_type NOT IN ('post', 'page', 'revision', 'attachment')";
+$where[] = 1;
 
 if (!empty($dtname))
 {
-    $where[] = "p.post_type = '" . mysql_real_escape_string(trim($dtname)) . "'";
+    $where[] = "t.name = '" . mysql_real_escape_string(trim($dtname)) . "'";
 }
 
 if (!empty($_GET['keywords']))
 {
-    $where[] = "p.post_title LIKE '%" . mysql_real_escape_string(trim($_GET['keywords'])) . "%'";
+    $where[] = "p.name LIKE '%" . mysql_real_escape_string(trim($_GET['keywords'])) . "%'";
 }
 
-$orderby = 'post_modified DESC';
+$orderby = 'modified desc';
 foreach ($_GET as $key => $val)
 {
     if ('orderby' != $key)
@@ -226,15 +226,15 @@ $where = implode(' AND ', $where);
 $sql = "
 SELECT
     SQL_CALC_FOUND_ROWS
-    p.ID AS post_id, r.row_id, p.post_title, p.post_type, p.post_modified
+    p.id, p.name, p.datatype, t.name AS dtname, p.modified
 FROM
-    {$table_prefix}posts p
+    {$table_prefix}pod p
 INNER JOIN
-    {$table_prefix}pod r ON r.post_id = p.ID
+    {$table_prefix}pod_types t ON t.id = p.datatype
 WHERE
     $where
 ORDER BY
-    p.$orderby, p.post_title
+    $orderby, name
 LIMIT
     $limit
 ";
@@ -280,21 +280,21 @@ if ('pods-browse' == $_GET['page'])
 ==================================================
 */
 $get_vals = implode('&', $get_vals);
-$order = array('post_title' => 'post_title', 'post_type' => 'post_type', 'post_modified' => 'post_modified');
+$order = array('name' => 'name', 'dtname' => 'dtname', 'modified' => 'modified');
 if (!empty($orderby))
 {
-    if ('DESC' != substr($orderby, -4))
+    if ('desc' != substr($orderby, -4))
     {
-        $order[$orderby] = "$orderby DESC";
+        $order[$orderby] = "$orderby+desc";
     }
 }
 ?>
     <table id="browseTable" style="width:100%" cellpadding="0" cellspacing="0">
         <tr>
             <th></th>
-            <th><a href="?<?php echo $get_vals . '&orderby=' . $order['post_title']; ?>">Name</a></th>
-            <th><a href="?<?php echo $get_vals . '&orderby=' . $order['post_type']; ?>">Pod</a></th>
-            <th><a href="?<?php echo $get_vals . '&orderby=' . $order['post_modified']; ?>">Modified</a></th>
+            <th><a href="?<?php echo $get_vals . '&orderby=' . $order['name']; ?>">Name</a></th>
+            <th><a href="?<?php echo $get_vals . '&orderby=' . $order['dtname']; ?>">Pod</a></th>
+            <th><a href="?<?php echo $get_vals . '&orderby=' . $order['modified']; ?>">Modified</a></th>
             <th></th>
         </tr>
 <?php
@@ -302,16 +302,16 @@ while ($row = mysql_fetch_assoc($result))
 {
     $zebra = ('' == $zebra) ? ' class="zebra"' : '';
 ?>
-        <tr id="row<?php echo $row['post_id']; ?>"<?php echo $zebra; ?>>
+        <tr id="row<?php echo $row['id']; ?>"<?php echo $zebra; ?>>
             <td width="20">
-                <div class="btn editme" onclick="editItem('<?php echo $row['post_type']; ?>', <?php echo $row['post_id']; ?>)"></div>
+                <div class="btn editme" onclick="editItem('<?php echo $row['dtname']; ?>', <?php echo $row['id']; ?>)"></div>
             </td>
             <td>
-                <?php echo $row['post_title']; ?>
+                <?php echo $row['name']; ?>
             </td>
-            <td><?php echo $row['post_type']; ?></td>
-            <td><?php echo date("m/d/Y g:i A", strtotime($row['post_modified'])); ?></td>
-            <td width="20"><div class="btn dropme" onclick="dropItem(<?php echo $row['post_id']; ?>)"></div></td>
+            <td><?php echo $datatypes[$row['datatype']]; ?></td>
+            <td><?php echo date("m/d/Y g:i A", strtotime($row['modified'])); ?></td>
+            <td width="20"><div class="btn dropme" onclick="dropItem(<?php echo $row['id']; ?>)"></div></td>
         </tr>
 <?php
 }

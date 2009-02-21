@@ -66,28 +66,29 @@ elseif ($menu_id = (int) $_POST['menu_id'])
 Drop a single content item
 ==================================================
 */
-elseif ($post_id = (int) $_POST['post_id'])
+elseif ($pod_id = (int) $_POST['pod_id'])
 {
     $sql = "
     SELECT
-        t.name, p.row_id
+        p.tbl_row_id, t.name
     FROM
         {$table_prefix}pod p
     INNER JOIN
         {$table_prefix}pod_types t ON t.id = p.datatype
     WHERE
-        p.post_id = $post_id
+        p.id = $pod_id
     LIMIT
         1
     ";
     $result = pod_query($sql);
-    $row = mysql_fetch_array($result);
+    $row = mysql_fetch_assoc($result);
+    $dtname = $row['name'];
+    $tbl_row_id = $row['tbl_row_id'];
 
-    pod_query("DELETE FROM {$table_prefix}pod_tbl_$row[0] WHERE id = $row[1] LIMIT 1");
-    pod_query("UPDATE {$table_prefix}pod_rel SET sister_post_id = NULL WHERE sister_post_id = $post_id");
-    pod_query("DELETE FROM {$table_prefix}pod WHERE post_id = $post_id LIMIT 1");
-    pod_query("DELETE FROM {$table_prefix}posts WHERE ID = $post_id LIMIT 1");
-    pod_query("DELETE FROM {$table_prefix}pod_rel WHERE post_id = $post_id");
+    pod_query("DELETE FROM {$table_prefix}pod_tbl_$dtname WHERE id = $tbl_row_id LIMIT 1");
+    pod_query("UPDATE {$table_prefix}pod_rel SET sister_pod_id = NULL WHERE sister_pod_id = $pod_id");
+    pod_query("DELETE FROM {$table_prefix}pod WHERE id = $pod_id LIMIT 1");
+    pod_query("DELETE FROM {$table_prefix}pod_rel WHERE pod_id = $pod_id");
 }
 
 /*
@@ -118,7 +119,7 @@ elseif ($datatype_id = (int) $_POST['pod'])
     pod_query("UPDATE {$table_prefix}pod_fields SET sister_field_id = NULL WHERE sister_field_id IN ($fields)");
     pod_query("DELETE FROM {$table_prefix}pod_fields WHERE datatype = $datatype_id");
     pod_query("DELETE FROM {$table_prefix}pod_rel WHERE field_id IN ($fields)");
-    pod_query("DELETE FROM {$table_prefix}posts WHERE post_type = '$dtname'");
+    pod_query("DELETE FROM {$table_prefix}pod WHERE datatype = $datatype_id");
     pod_query("DROP TABLE {$table_prefix}pod_tbl_$dtname");
 }
 

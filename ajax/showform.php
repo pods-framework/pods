@@ -4,7 +4,7 @@ require_once(realpath(dirname(__FILE__) . '/../../../../wp-config.php'));
 require_once(realpath(dirname(__FILE__) . '/../Pod.class.php'));
 
 $save = (int) $_POST['save'];
-$post_id = (int) $_POST['post_id'];
+$pod_id = (int) $_POST['pod_id'];
 $datatype = $_POST['datatype'];
 
 // Determine whether the form is public
@@ -26,7 +26,7 @@ if ($save)
 
         // Add data from a public form
         $where = '';
-        if (empty($post_id))
+        if (empty($pod_id))
         {
             $public_columns = unserialize(stripslashes($_POST['columns']));
 
@@ -41,12 +41,23 @@ if ($save)
         }
 
         // Get the datatype fields
-        $result = pod_query("SELECT id, label, name, coltype, pickval, sister_field_id, required FROM {$table_prefix}pod_fields WHERE datatype = $datatype_id $where", 'Cannot get datatype fields');
+        $result = pod_query("SELECT id, label, name, coltype, pickval, sister_field_id, required, `unique`, `multiple` FROM {$table_prefix}pod_fields WHERE datatype = $datatype_id $where", 'Cannot get datatype fields');
         while ($row = mysql_fetch_assoc($result))
         {
             if (1 == $row['required'])
             {
                 $req[$row['name']] = $row['coltype'];
+            }
+            if (1 == $row['unique'])
+            {
+                $unique[] = $row['name'];
+            }
+            if ('slug' == $row['coltype'])
+            {
+                $slug_column = $row['name'];
+                $slug_value = empty($_POST[$slug_column]) ? $_POST['name'] : $_POST[$slug_column];
+                $slug_value = sanitize_title($slug_value);
+                $_POST[$slug_column] = $slug_value;
             }
             $fields[$row['name']] = $row;
         }
@@ -70,41 +81,40 @@ if ($save)
             }
         }
 
-        // Add or edit the post
-        $post_title = mysql_real_escape_string(trim($_POST['name']));
-        $post_title = stripslashes($post_title);
+        // Ensure unique values
+        if (isset($unique))
+        {
+            foreach ($unique as $key => $name)
+            {
+                $val = $_POST[$name];
 
-        if (empty($post_id))
-        {
-            $sql = "
-            INSERT INTO
-                {$table_prefix}posts (post_date, post_date_gmt, post_modified, post_modified_gmt, post_type, post_title)
-            VALUES
-                (NOW(), UTC_TIMESTAMP(), NOW(), UTC_TIMESTAMP(), '$datatype', '$post_title')
-            ";
-            $post_id = pod_query($sql, 'Cannot add new content');
-        }
-        else
-        {
-            $sql = "
-            UPDATE
-                {$table_prefix}posts
-            SET
-                post_modified = NOW(), post_modified_gmt = UTC_TIMESTAMP(), post_title = '$post_title'
-            WHERE
-                ID = $post_id
-            LIMIT
-                1
-            ";
-            pod_query($sql, 'Cannot edit posts table');
+                $exclude = '';
+                if (!empty($pod_id))
+                {
+                    $result = pod_query("SELECT tbl_row_id FROM {$table_prefix}pod WHERE id = $pod_id LIMIT 1");
+                    $tbl_row_id = mysql_result($result, 0);
+                    $exclude = "AND id != $tbl_row_id";
+                }
+                $sql = "SELECT id FROM {$table_prefix}pod_tbl_$datatype WHERE $name = '$val' $exclude LIMIT 1";
+                pod_query($sql, 'Not a unique value', "The $name value needs to be unique.");
+            }
         }
 
-        // See if this post_ID already has a module (removing previous module data)
-        $result = pod_query("SELECT row_id FROM {$table_prefix}pod WHERE post_id = $post_id LIMIT 1");
+        // Add or edit the pod
+        $name = mysql_real_escape_string(trim($_POST['name']));
+        $name = stripslashes($name);
+
+        if (empty($pod_id))
+        {
+            $sql = "INSERT INTO {$table_prefix}pod (datatype, name, created, modified) VALUES ('$datatype_id', '$name', NOW(), NOW())";
+            $pod_id = pod_query($sql, 'Cannot add new content');
+        }
+
+        // See if this pod_id already has a module (removing previous module data)
+        $result = pod_query("SELECT tbl_row_id FROM {$table_prefix}pod WHERE id = $pod_id LIMIT 1");
         if (0 < mysql_num_rows($result))
         {
-            $row = mysql_fetch_assoc($result);
-            $table_row_id = $row['row_id'];
+            $tbl_row_id = mysql_result($result, 0);
         }
 
         // Cleanse the $_POST variables
@@ -124,7 +134,7 @@ if ($save)
                 $sister_datatype_id = $datatypes[$pickval];
                 $sister_field_id = $fields[$key]['sister_field_id'];
                 $sister_field_id = empty($sister_field_id) ? 0 : $sister_field_id;
-                $sister_post_ids = array();
+                $sister_pod_ids = array();
 
                 /*
                 ==================================================
@@ -133,21 +143,21 @@ if ($save)
                 */
                 if (!empty($sister_field_id))
                 {
-                    // Get sister post IDs (a sister post's sister post is the parent post)
-                    $result = pod_query("SELECT post_id FROM {$table_prefix}pod_rel WHERE sister_post_id = $post_id");
+                    // Get sister pod IDs (a sister pod's sister pod is the parent pod)
+                    $result = pod_query("SELECT pod_id FROM {$table_prefix}pod_rel WHERE sister_pod_id = $pod_id");
                     if (0 < mysql_num_rows($result))
                     {
                         while ($row = mysql_fetch_assoc($result))
                         {
-                            $sister_post_ids[] = $row['post_id'];
+                            $sister_pod_ids[] = $row['pod_id'];
                         }
-                        $sister_post_ids = implode(',', $sister_post_ids);
+                        $sister_pod_ids = implode(',', $sister_pod_ids);
 
-                        // Delete the sister post relationship
-                        pod_query("DELETE FROM {$table_prefix}pod_rel WHERE post_id IN ($sister_post_ids) AND sister_post_id = $post_id AND field_id = $sister_field_id", 'Cannot drop sister relationships');
+                        // Delete the sister pod relationship
+                        pod_query("DELETE FROM {$table_prefix}pod_rel WHERE pod_id IN ($sister_pod_ids) AND sister_pod_id = $pod_id AND field_id = $sister_field_id", 'Cannot drop sister relationships');
                     }
                 }
-                pod_query("DELETE FROM {$table_prefix}pod_rel WHERE post_id = $post_id AND field_id = $field_id", 'Cannot drop relationships');
+                pod_query("DELETE FROM {$table_prefix}pod_rel WHERE pod_id = $pod_id AND field_id = $field_id", 'Cannot drop relationships');
                 /*
                 ==================================================
                 Add relationship values
@@ -155,44 +165,38 @@ if ($save)
                 */
                 foreach ($term_ids as $term_id)
                 {
-                    $sister_post_id = 0;
+                    $sister_pod_id = 0;
                     if (!empty($sister_field_id) && !empty($sister_datatype_id))
                     {
-                        $result = pod_query("SELECT post_id FROM {$table_prefix}pod WHERE datatype = $sister_datatype_id AND row_id = $term_id LIMIT 1");
+                        $result = pod_query("SELECT id FROM {$table_prefix}pod WHERE datatype = $sister_datatype_id AND tbl_row_id = $term_id LIMIT 1");
                         if (0 < mysql_num_rows($result))
                         {
-                            $row = mysql_fetch_assoc($result);
-                            $sister_post_id = $row['post_id'];
-                            pod_query("INSERT INTO {$table_prefix}pod_rel (post_id, sister_post_id, field_id, term_id) VALUES ($sister_post_id, $post_id, $sister_field_id, $table_row_id)", 'Cannot add sister relationships');
+                            $sister_pod_id = mysql_result($result, 0);
+                            pod_query("INSERT INTO {$table_prefix}pod_rel (pod_id, sister_pod_id, field_id, tbl_row_id) VALUES ($sister_pod_id, $pod_id, $sister_field_id, $tbl_row_id)", 'Cannot add sister relationships');
                         }
                     }
-                    pod_query("INSERT INTO {$table_prefix}pod_rel (post_id, sister_post_id, field_id, term_id) VALUES ($post_id, $sister_post_id, $field_id, $term_id)", 'Cannot add relationships');
+                    pod_query("INSERT INTO {$table_prefix}pod_rel (pod_id, sister_pod_id, field_id, tbl_row_id) VALUES ($pod_id, $sister_pod_id, $field_id, $term_id)", 'Cannot add relationships');
                 }
             }
-            elseif ('datatype' != $key && 'post_id' != $key && 'columns' != $key && 'public' != $key && 'save' != $key)
+            elseif ('datatype' != $key && 'pod_id' != $key && 'columns' != $key && 'public' != $key && 'save' != $key)
             {
-                if (isset($table_row_id))
+                if (isset($tbl_row_id))
                 {
                     // Update existing row
-                    pod_query("UPDATE {$table_prefix}pod_tbl_$datatype SET $key = '$val' WHERE id = $table_row_id LIMIT 1");
+                    pod_query("UPDATE {$table_prefix}pod_tbl_$datatype SET $key = '$val' WHERE id = $tbl_row_id LIMIT 1");
                 }
                 else
                 {
                     // Insert new row to data table
-                    $table_row_id = pod_query("INSERT INTO {$table_prefix}pod_tbl_$datatype ($key) VALUES ('$val')", 'Cannot add new table row');
-
-                    // Insert new row to wp_pod table
-                    pod_query("INSERT INTO {$table_prefix}pod (row_id, post_id, datatype) VALUES ('$table_row_id', '$post_id', '$datatype_id')", 'Cannot add new Pod row');
+                    $tbl_row_id = pod_query("INSERT INTO {$table_prefix}pod_tbl_$datatype ($key) VALUES ('$val')", 'Cannot add new table row');
                 }
-                $post_content .= $val;
             }
         }
         // Update wp_pod datatype
-        pod_query("UPDATE {$table_prefix}pod SET datatype = $datatype_id WHERE row_id = $table_row_id AND post_id = $post_id LIMIT 1", 'Cannot modify datatype row');
+        pod_query("UPDATE {$table_prefix}pod SET tbl_row_id = $tbl_row_id, datatype = $datatype_id, name = '$name', modified = NOW() WHERE id = $pod_id LIMIT 1", 'Cannot modify datatype row');
 
-        // Update "post_content", which is used for pod searching
-        //$sql = "UPDATE {$table_prefix}posts SET post_content = '$post_content' WHERE ID = $post_id LIMIT 1";
-        //pod_query($sql) or die('Error: Could not save post_content data');
+        // Insert "after helpers"
+        
     }
     else
     {
@@ -203,5 +207,6 @@ else
 {
     // Show the input form
     $obj = new Pod($datatype);
-    echo $obj->showform($post_id, $is_public, $public_columns);
+    echo $obj->showform($pod_id, $is_public, $public_columns);
 }
+

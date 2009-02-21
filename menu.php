@@ -177,7 +177,7 @@ Begin tabbed navigation
 ==================================================
 -->
 <div id="nav">
-    <div class="navTab active" rel="menuArea">Menu Editor</div>
+    <div class="navTab active" rel="menuArea"><a href="javascript:;">Menu Editor</a></div>
     <div class="clear"><!--clear--></div>
 </div>
 

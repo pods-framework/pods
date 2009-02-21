@@ -19,6 +19,7 @@ $dbtypes = array(
     'date' => 'datetime',
     'num' => 'decimal(9,2)',
     'txt' => 'varchar(128)',
+    'slug' => 'varchar(128)',
     'file' => 'varchar(128)',
     'code' => 'mediumtext',
     'desc' => 'mediumtext'
@@ -121,7 +122,9 @@ elseif ('edit' == $action)
             coltype = '$coltype',
             pickval = $pickval,
             sister_field_id = $sister_field_id,
-            required = '$required'
+            required = '$required',
+            `unique` = '$unique',
+            `multiple` = '$multiple'
         WHERE
             id = $field_id
         LIMIT
@@ -138,7 +141,7 @@ Edit a page
 */
 elseif ('editpage' == $action)
 {
-    pod_query("UPDATE {$table_prefix}pod_pages SET title = '$page_title', phpcode = '$phpcode' WHERE id = $page_id LIMIT 1");
+    pod_query("UPDATE {$table_prefix}pod_pages SET title = '$page_title', page_template = '$page_template', phpcode = '$phpcode' WHERE id = $page_id LIMIT 1");
 }
 
 /*

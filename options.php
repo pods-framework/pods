@@ -14,10 +14,11 @@ while ($row = mysql_fetch_assoc($result))
 }
 
 // Get all helpers
-$result = pod_query("SELECT id, name FROM {$table_prefix}pod_helpers ORDER BY name");
+$result = pod_query("SELECT id, name, helper_type FROM {$table_prefix}pod_helpers ORDER BY name");
 while ($row = mysql_fetch_assoc($result))
 {
-    $helpers[$row['id']] = $row['name'];
+    $helpers[$row['id']] = $row;
+    $helper_types[$row['helper_type']][] = $row['name'];
 }
 
 // Get all available WP roles
@@ -67,20 +68,55 @@ jQuery(function() {
         jQuery("#pageArea .idle").show();
         loadPage();
     });
-    
-    jQuery("#helperArea .tab").click(function() {
-        jQuery("#helperArea .tab").removeClass("active");
-        helper_id = jQuery(this).attr("class").split(" ")[1].substr(1);
-        jQuery(this).addClass("active");
-        jQuery("#helperArea .idle").show();
+
+    jQuery("#helperArea .editme").click(function() {
+        helper_id = jQuery(this).parent("td").parent("tr").attr("id").substr(3);
+        var theform = jQuery("#helper_form").html();
+        jQuery("#helperArea .hform").html("");
+        jQuery("#helperArea .htr").hide();
+        jQuery("#helperArea #htr"+helper_id).show();
+        jQuery("#hform"+helper_id).html(theform);
         loadHelper();
     });
+
+    jQuery("#helperArea .dropme").click(function() {
+        helper_id = jQuery(this).parent("td").parent("tr").attr("id").substr(3);
+        var theform = jQuery("#hform"+helper_id).html();
+        dropHelper();
+    });
+
+    jQuery("#pageArea .editme").click(function() {
+        page_id = jQuery(this).parent("td").parent("tr").attr("id").substr(3);
+        var theform = jQuery("#page_form").html();
+        jQuery("#pageArea .pform").html("");
+        jQuery("#pageArea .ptr").hide();
+        jQuery("#pageArea #ptr"+page_id).show();
+        jQuery("#pform"+page_id).html(theform);
+        loadPage();
+    });
+
+    jQuery("#pageArea .dropme").click(function() {
+        page_id = jQuery(this).parent("td").parent("tr").attr("id").substr(3);
+        var theform = jQuery("#pform"+page_id).html();
+        dropPage();
+    });
+
+    // Remember the tab selection
+    var thetab = window.location.href.split("#")[1];
+    thetab = ("undefined" == typeof(thetab)) ? "welcome" : thetab;
+    jQuery(".navTab[@rel="+thetab+"Area]").click();
 
     jQuery("#podBox").jqm();
     jQuery("#columnBox").jqm();
     jQuery("#pageBox").jqm();
     jQuery("#helperBox").jqm();
 });
+
+function colorFade(area, id) {
+    var bgcolor = jQuery("#"+area+"Area #row"+id).css("background-color");
+    jQuery("#"+area+"Area #row"+id).css("background-color", "#88FFC0");
+    jQuery("#"+area+"Area #row"+id).animate({backgroundColor:bgcolor}, 1000);
+}
 
 function resetForm() {
     jQuery("#column_name").val("");
@@ -91,6 +127,10 @@ function resetForm() {
     jQuery("#column_pickval").val("");
     jQuery("#column_required").attr("checked", 0);
     jQuery("#column_required").attr("disabled", false);
+    jQuery("#column_unique").attr("checked", 0);
+    jQuery("#column_unique").attr("disabled", false);
+    jQuery("#column_multiple").attr("checked", 0);
+    jQuery("#column_multiple").attr("disabled", false);
     jQuery("#column_sister_field_id").val("");
     jQuery("#column_sister_field_id").hide();
     jQuery("#column_pickval").hide();
@@ -304,6 +344,8 @@ function loadColumn(col) {
             var pickval = (null == col_data.pickval) ? "" : col_data.pickval;
             var sister_field_id = (null == col_data.sister_field_id) ? "" : col_data.sister_field_id;
             var required = parseInt(col_data.required);
+            var unique = parseInt(col_data.unique);
+            var multiple = parseInt(col_data.multiple);
             jQuery("#column_name").val(name);
             jQuery("#column_label").val(label);
             jQuery("#column_comment").val(comment);
@@ -311,6 +353,8 @@ function loadColumn(col) {
             jQuery("#column_pickval").val(pickval);
             jQuery("#column_sister_field_id").hide();
             jQuery("#column_required").attr("checked", required);
+            jQuery("#column_unique").attr("checked", unique);
+            jQuery("#column_multiple").attr("checked", multiple);
             jQuery("#column_pickval").hide();
             if ("name" == name) {
                 jQuery("#column_name").attr("disabled", true);
@@ -339,10 +383,12 @@ function addColumn() {
     var pickval = jQuery("#column_pickval").val();
     var sister_field_id = jQuery("#column_sister_field_id").val();
     var required = (true == jQuery("#column_required").is(":checked")) ? 1 : 0;
+    var unique = (true == jQuery("#column_unique").is(":checked")) ? 1 : 0;
+    var multiple = (true == jQuery("#column_multiple").is(":checked")) ? 1 : 0;
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/add.php",
-        data: "auth="+auth+"&datatype="+datatype+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required,
+        data: "auth="+auth+"&datatype="+datatype+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required+"&unique="+unique+"&multiple="+multiple,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -380,10 +426,12 @@ function editColumn(col) {
     var pickval = jQuery("#column_pickval").val();
     var sister_field_id = jQuery("#column_sister_field_id").val();
     var required = (true == jQuery("#column_required").is(":checked")) ? 1 : 0;
+    var unique = (true == jQuery("#column_unique").is(":checked")) ? 1 : 0;
+    var multiple = (true == jQuery("#column_multiple").is(":checked")) ? 1 : 0;
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "auth="+auth+"&action=edit&datatype="+datatype+"&dtname="+dtname+"&field_id="+col+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required,
+        data: "auth="+auth+"&action=edit&datatype="+datatype+"&dtname="+dtname+"&field_id="+col+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required+"&unique="+unique+"&multiple="+multiple,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -429,9 +477,11 @@ function loadPage() {
                 var uri = (null == page_data.uri) ? "" : page_data.uri;
                 var title = (null == page_data.title) ? "" : page_data.title;
                 var phpcode = (null == page_data.phpcode) ? "" : page_data.phpcode;
+                var template = (null == page_data.page_template) ? "" : page_data.page_template;
                 jQuery("#page_name").html(uri);
                 jQuery("#page_title").val(title);
                 jQuery("#page_content").val(phpcode);
+                jQuery("#page_template").val(template);
             }
         }
     });
@@ -448,36 +498,27 @@ function addPage() {
                 alert(msg);
             }
             else {
-                var id = msg;
-                var html = '<div class="tab t'+id+'">'+uri+'</div>';
-                jQuery("#pageArea .tabs").append(html);
-                jQuery("#pageBox").jqmHide();
-                jQuery("#pageArea .t"+id).click(function() {
-                    jQuery("#pageArea .tab").removeClass("active");
-                    page_id = jQuery(this).attr("class").split(" ")[1].substr(1);
-                    jQuery(this).addClass("active");
-                    jQuery("#pageArea .idle").show();
-                    loadPage();
-                });
-                jQuery("#pageArea .t"+id).click();
+                var rand = Math.round(Math.random()*9999);
+                window.location="?page=pods&"+rand+"#page";
             }
         }
     });
 }
 
 function editPage() {
-    var title = jQuery("#page_title").val();
-    var content = jQuery("#page_content").val();
+    var title = jQuery("#pform"+page_id+" #page_title").val();
+    var content = jQuery("#pform"+page_id+" #page_content").val();
+    var template = jQuery("#pform"+page_id+" #page_template").val();
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "auth="+auth+"&action=editpage&page_id="+page_id+"&page_title="+encodeURIComponent(title)+"&phpcode="+encodeURIComponent(content),
+        data: "auth="+auth+"&action=editpage&page_id="+page_id+"&page_title="+encodeURIComponent(title)+"&page_template="+encodeURIComponent(template)+"&phpcode="+encodeURIComponent(content),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
             }
             else {
-                alert("Success!");
+                colorFade('page', page_id);
             }
         }
     });
@@ -494,10 +535,9 @@ function dropPage() {
                     alert(msg);
                 }
                 else {
-                    jQuery("#page_name").html("Choose a PodPage");
-                    jQuery("#pageArea #column_list").html('Need some help? Check out the <a href="http://pods.uproot.us/user_guide" target="_blank">User Guide</a> to get started.');
-                    jQuery("#pageArea .t"+page_id).remove();
-                    jQuery("#pageArea .idle").hide();
+                    jQuery("#pageArea #ptr"+page_id).remove();
+                    jQuery("#pageArea tr#row"+page_id).css("background", "red");
+                    jQuery("#pageArea tr#row"+page_id).fadeOut("slow");
                 }
             }
         });
@@ -515,10 +555,10 @@ function loadHelper() {
             }
             else {
                 var helper_data = eval("("+msg+")");
-                var name = (null == helper_data.name) ? "" : helper_data.name;
                 var phpcode = (null == helper_data.phpcode) ? "" : helper_data.phpcode;
-                jQuery("#helper_name").html(name);
+                var helper_type = (null == helper_data.helper_type) ? "display" : helper_data.helper_type;
                 jQuery("#helper_content").val(phpcode);
+                jQuery("#helper_type").val(helper_type);
             }
         }
     });
@@ -526,34 +566,25 @@ function loadHelper() {
 
 function addHelper() {
     var name = jQuery("#new_helper").val();
+    var helper_type = jQuery("#helper_type").val();
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/add.php",
-        data: "auth="+auth+"&type=helper&name="+name,
+        data: "auth="+auth+"&type=helper&name="+name+"&helper_type="+helper_type,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
             }
             else {
-                var id = msg;
-                var html = '<div class="tab t'+id+'">'+name+'</div>';
-                jQuery("#helperArea .tabs").append(html);
-                jQuery("#helperBox").jqmHide();
-                jQuery("#helperArea .t"+id).click(function() {
-                    jQuery("#helperArea .tab").removeClass("active");
-                    helper_id = jQuery(this).attr("class").split(" ")[1].substr(1);
-                    jQuery(this).addClass("active");
-                    jQuery("#helperArea .idle").show();
-                    loadHelper();
-                });
-                jQuery("#helperArea .t"+id).click();
+                var rand = Math.round(Math.random()*9999);
+                window.location="?page=pods&"+rand+"#helper";
             }
         }
     });
 }
 
 function editHelper() {
-    var content = jQuery("#helper_content").val();
+    var content = jQuery("#hform"+helper_id+" #helper_content").val();
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
@@ -563,7 +594,7 @@ function editHelper() {
                 alert(msg);
             }
             else {
-                alert("Success!");
+                colorFade('helper', helper_id);
             }
         }
     });
@@ -580,10 +611,9 @@ function dropHelper() {
                     alert(msg);
                 }
                 else {
-                    jQuery("#helper_name").html("Choose a Helper");
-                    jQuery("#helperArea #column_list").html('Need some help? Check out the <a href="http://pods.uproot.us/user_guide" target="_blank">User Guide</a> to get started.');
-                    jQuery("#helperArea .t"+helper_id).remove();
-                    jQuery("#helperArea .idle").hide();
+                    jQuery("#helperArea #htr"+helper_id).remove();
+                    jQuery("#helperArea tr#row"+helper_id).css("background", "red");
+                    jQuery("#helperArea tr#row"+helper_id).fadeOut("slow");
                 }
             }
         });
@@ -660,13 +690,12 @@ Begin popups
     <div class="leftside">Name</div>
     <div class="rightside">
         <input type="text" id="column_name" value="" />
-        <input type="checkbox" id="column_required" /> required?
+        <input type="button" class="button" onclick="addOrEditColumn()" value="Save column" />
     </div>
 
     <div class="leftside">Label</div>
     <div class="rightside">
         <input type="text" id="column_label" value="" />
-        <input type="button" class="button" onclick="addOrEditColumn()" value="Save column" />
     </div>
 
     <div class="leftside">Column Type</div>
@@ -676,9 +705,10 @@ Begin popups
             <option value="num">number</option>
             <option value="bool">boolean (true, false)</option>
             <option value="txt">text (title, caption, email, phone, url)</option>
-            <option value="desc">desc (body, summary, long text)</option>
+            <option value="desc">desc (summary, fulltext)</option>
             <option value="code">code (no WYSIWYG editor)</option>
             <option value="file">file (document, media)</option>
+            <option value="slug">slug (permalink)</option>
             <option value="pick">pick</option>
         </select>
         <select id="column_pickval" class="hidden" onchange="sisterFields()">
@@ -722,6 +752,13 @@ while ($row = mysql_fetch_assoc($result))
         <select id="column_sister_field_id" class="hidden"></select>
     </div>
 
+    <div class="leftside">Options</div>
+    <div class="rightside">
+        <input type="checkbox" id="column_required" /> required &nbsp;
+        <input type="checkbox" id="column_unique" /> unique &nbsp;
+        <input type="checkbox" id="column_multiple" /> multiple
+    </div>
+
     <div class="leftside">Comment</div>
     <div class="rightside">
         <input type="text" id="column_comment" value="" />
@@ -741,6 +778,11 @@ while ($row = mysql_fetch_assoc($result))
 <div id="helperBox" class="jqmWindow">
     <input type="text" id="new_helper" style="width:280px" />
     <input type="button" class="button" onclick="addHelper()" value="Add Helper" />
+    <select id="helper_type">
+        <option value="display">Display (pre-output hook)</option>
+        <option value="before">Before (pre-save hook)</option>
+        <option value="after">After (post-save hook)</option>
+    </select>
     <div>Ex: <strong>format_date</strong> or <strong>mp3_player</strong></div>
 </div>
 
@@ -750,36 +792,36 @@ Begin tabbed navigation
 ==================================================
 -->
 <div id="nav">
-    <div class="navTab active" rel="welcomeArea">Welcome</div>
+    <div class="navTab active" rel="welcomeArea"><a href="#welcome">Welcome</a></div>
 <?php
 if (pods_access('manage_pods'))
 {
 ?>
-    <div class="navTab" rel="podArea">Pods</div>
+    <div class="navTab" rel="podArea"><a href="#pod">Pods</a></div>
 <?php
 }
 if (pods_access('manage_podpages'))
 {
 ?>
-    <div class="navTab" rel="pageArea">PodPages</div>
+    <div class="navTab" rel="pageArea"><a href="#page">PodPages</a></div>
 <?php
 }
 if (pods_access('manage_helpers'))
 {
 ?>
-    <div class="navTab" rel="helperArea">Helpers</div>
+    <div class="navTab" rel="helperArea"><a href="#helper">Helpers</a></div>
 <?php
 }
 if (pods_access('manage_roles'))
 {
 ?>
-    <div class="navTab" rel="roleArea">Roles</div>
+    <div class="navTab" rel="roleArea"><a href="#role">Roles</a></div>
 <?php
 }
 if (pods_access('manage_settings'))
 {
 ?>
-    <div class="navTab" rel="settingsArea">Settings</div>
+    <div class="navTab" rel="settingsArea"><a href="#settings">Settings</a></div>
 <?php
 }
 ?>
@@ -791,21 +833,12 @@ if (pods_access('manage_settings'))
 Begin welcome area
 ==================================================
 -->
-<div id="welcomeArea" class="area">
-    <div id="welcome">
+<div id="welcomeArea" class="area hidden">
+    <div id="logo">
         <img src="<?php echo $pods_url; ?>/images/header-logo.png" alt="Pods" />
     </div>
     <h2 align="center">Thanks for using the Pods CMS plugin.</h2>
     <p align="center">See the <a href="http://pods.uproot.us/user_guide" target="_blank">User Guide</a> and <a href="http://pods.uproot.us/forum" target="_blank">Forum</a> to get started.</p>
-    <p style="margin:0 20px">
-        Now you can create and manage content types, otherwise known as pods.
-        Configure what to display with <strong>Templates</strong>, and <strong>Magic Tags</strong> are helpful for pulling column values into templates.
-        Use <strong>Helpers</strong> if you need to modify column values before displaying.
-        Stick your templates into <strong>PodPages</strong> (with PHP and wildcard URL support) or WP template files.
-        Control user access using the built-in <strong>Role Manager</strong>.
-        Build breadcrumbs, top and local navigation with help from the <strong>Menu Editor</strong>.
-        Finally, you can manage all this content using the <strong>Browse Content</strong> menu.
-    </p>
 </div>
 
 <!--
@@ -840,8 +873,8 @@ if (isset($datatypes))
 
             <p class="extras" onclick="jQuery('#pod_settings').toggle(); jQuery(this).toggleClass('open')">Pod Settings</p>
             <div id="pod_settings" class="hidden">
-                <p><input type="checkbox" id="is_toplevel" /> Add to Top Level menu?</p>
-                <p><input type="text" id="pod_label" value="" /> Label (for Top Level menu)</p>
+                <input type="text" id="pod_label" value="" />
+                <input type="checkbox" id="is_toplevel" /> Top-level menu? (if so, add a label)
             </div>
 
             <p class="extras" onclick="jQuery('#tpl_detail').toggle(); jQuery(this).toggleClass('open')">Detail Template</p>
@@ -852,6 +885,39 @@ if (isset($datatypes))
 
             <p class="extras" onclick="jQuery('#list_filters').toggle(); jQuery(this).toggleClass('open')">List Filters</p>
             <input type="text" id="list_filters" class="hidden" />
+
+            <p class="extras" onclick="jQuery('#pod_helpers').toggle(); jQuery(this).toggleClass('open')">Pod Helpers (work in progress)</p>
+            <div id="pod_helpers" class="hidden">
+                <select id="before_helpers">
+                    <option value="">-- Helpers that run right before data is saved --</option>
+<?php
+if (isset($helper_types['before']))
+{
+    foreach ($helper_types['before'] as $key => $helper_name)
+    {
+?>
+                    <option value="<?php echo $helper_name; ?>"><?php echo $helper_name; ?></option>
+<?php
+    }
+}
+?>
+                </select><br />
+
+                <select id="after_helpers">
+                    <option value="">-- Helpers that run right after data is saved --</option>
+<?php
+if (isset($helper_types['after']))
+{
+    foreach ($helper_types['after'] as $key => $helper_name)
+    {
+?>
+                    <option value="<?php echo $helper_name; ?>"><?php echo $helper_name; ?></option>
+<?php
+    }
+}
+?>
+                </select>
+            </div>
         </div>
     </div>
     <div class="clear"><!--clear--></div>
@@ -863,32 +929,60 @@ Begin page area
 ==================================================
 -->
 <div id="pageArea" class="area hidden">
-    <div class="tabs">
+    <div style="float:left; width:50%">
         <input type="button" class="button" onclick="jQuery('#pageBox').jqmShow()" value="Add new page" />
+    </div>
+    <div id="filterForm" style="float:left; width:50%; text-align:right">
+        Filters coming soon!
+    </div>
+    <div class="clear"><!--clear--></div>
+
+    <table id="browseTable" style="width:100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <th></th>
+            <th>URI</th>
+            <th></th>
+        </tr>
 <?php
 if (isset($pages))
 {
-    foreach ($pages as $key => $val)
+    foreach ($pages as $id => $uri)
     {
+        $zebra = ('' == $zebra) ? ' class="zebra"' : '';
 ?>
-        <div class="tab t<?php echo $key; ?>"><?php echo $val; ?></div>
+        <tr id="row<?php echo $id; ?>"<?php echo $zebra; ?>>
+            <td width="20">
+                <div class="btn editme"></div>
+            </td>
+            <td><?php echo $uri; ?></td>
+            <td width="20"><div class="btn dropme"></div></td>
+        </tr>
+        <tr id="ptr<?php echo $id; ?>" class="ptr hidden">
+            <td id="pform<?php echo $id; ?>" class="pform" colspan="3"></td>
+        </tr>
 <?php
     }
 }
 ?>
-    </div>
-    <div class="rightside">
-        <h2 class="title" id="page_name">Choose a PodPage</h2>
+    </table>
+
+    <div id="page_form" class="hidden">
+        <input type="text" id="page_title" /> Page Title<br />
         <textarea id="page_content"></textarea><br />
-        <input type="text" id="page_title" /> Page Title
-        <div class="idle hidden">
-            <p>
-                <input type="button" class="button" onclick="editPage()" value="Save changes" /> or
-                <a href="javascript:;" onclick="dropPage()">drop page</a>
-            </p>
-        </div>
+        <select id="page_template">
+            <option value="">-- Page Template --</option>
+<?php
+$page_templates = get_page_templates();
+foreach ($page_templates as $template => $file)
+{
+?>
+            <option value="<?php echo $file; ?>"><?php echo $template; ?></option>
+<?php
+}
+?>
+        </select>
+        <input type="button" class="button" onclick="editPage()" value="Save changes" /> or <a href="javascript:;" onclick="jQuery('.ptr').hide()">close</a>
     </div>
-    <div class="clear"><!--clear--></div>
 </div>
 
 <!--
@@ -897,31 +991,53 @@ Begin helper area
 ==================================================
 -->
 <div id="helperArea" class="area hidden">
-    <div class="tabs">
+    <div style="float:left; width:50%">
         <input type="button" class="button" onclick="jQuery('#helperBox').jqmShow()" value="Add new helper" />
+    </div>
+    <div id="filterForm" style="float:left; width:50%; text-align:right">
+        Filters coming soon!
+    </div>
+    <div class="clear"><!--clear--></div>
+
+    <table id="browseTable" style="width:100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Helper Type</th>
+            <th></th>
+        </tr>
 <?php
 if (isset($helpers))
 {
-    foreach ($helpers as $key => $val)
+    $zebra = '';
+    foreach ($helpers as $id => $val)
     {
+        $id = $val['id'];
+        $name = $val['name'];
+        $helper_type = $val['helper_type'];
+        $zebra = ('' == $zebra) ? ' class="zebra"' : '';
 ?>
-        <div class="tab t<?php echo $key; ?>"><?php echo $val; ?></div>
+        <tr id="row<?php echo $id; ?>"<?php echo $zebra; ?>>
+            <td width="20">
+                <div class="btn editme"></div>
+            </td>
+            <td><?php echo $name; ?></td>
+            <td><?php echo $helper_type; ?></td>
+            <td width="20"><div class="btn dropme"></div></td>
+        </tr>
+        <tr id="htr<?php echo $id; ?>" class="htr hidden">
+            <td id="hform<?php echo $id; ?>" class="hform" colspan="4"></td>
+        </tr>
 <?php
     }
 }
 ?>
-    </div>
-    <div class="rightside">
-        <h2 class="title" id="helper_name">Choose a Helper</h2>
+    </table>
+
+    <div id="helper_form" class="hidden">
         <textarea id="helper_content"></textarea>
-        <div class="idle hidden">
-            <p>
-                <input type="button" class="button" onclick="editHelper()" value="Save changes" /> or
-                <a href="javascript:;" onclick="dropHelper()">drop helper</a>
-            </p>
-        </div>
+        <input type="button" class="button" onclick="editHelper()" value="Save changes" /> or <a href="javascript:;" onclick="jQuery('.htr').hide()">close</a>
     </div>
-    <div class="clear"><!--clear--></div>
 </div>
 
 <!--
@@ -947,26 +1063,29 @@ foreach ($datatypes as $id => $dtname)
     $all_privs[] = array('name' => "pod_$dtname", 'label' => "Access: $dtname");
 }
 
-foreach ($user_roles as $role => $junk)
+if (isset($user_roles))
 {
-    if ('administrator' != $role)
+    foreach ($user_roles as $role => $junk)
     {
+        if ('administrator' != $role)
+        {
 ?>
     <div style="float:left; width:32%; margin:0 5px 5px 0">
         <h4><?php echo $role; ?></h4>
         <div class="form pick <?php echo $role; ?>">
 <?php
-        foreach ($all_privs as $priv)
-        {
+            foreach ($all_privs as $priv)
+            {
             $active = (false !== array_search($priv['name'], $pods_roles[$role])) ? ' active' : '';
 ?>
             <div class="option<?php echo $active; ?>" value="<?php echo $priv['name']; ?>"><?php echo $priv['label']; ?></div>
 <?php
-        }
+            }
 ?>
         </div>
     </div>
 <?php
+        }
     }
 }
 ?>

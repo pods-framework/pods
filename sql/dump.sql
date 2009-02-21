@@ -3,9 +3,11 @@
 DROP TABLE IF EXISTS wp_pod;
 CREATE TABLE wp_pod (
     id INT unsigned auto_increment primary key,
-    row_id INT unsigned,
-    post_id INT unsigned,
-    datatype SMALLINT unsigned
+    tbl_row_id INT unsigned,
+    datatype SMALLINT unsigned,
+    name VARCHAR(128),
+    created DATETIME,
+    modified TIMESTAMP
 );
 
 DROP TABLE IF EXISTS wp_pod_types;
@@ -30,16 +32,18 @@ CREATE TABLE wp_pod_fields (
     pickval VARCHAR(32),
     sister_field_id INT unsigned,
     required BOOL default 0,
+    `unique` BOOL default 0,
+    `multiple` BOOL default 0,
     weight TINYINT unsigned
 );
 
 DROP TABLE IF EXISTS wp_pod_rel;
 CREATE TABLE wp_pod_rel (
     id INT unsigned auto_increment primary key,
-    post_id INT unsigned,
-    sister_post_id INT unsigned,
+    pod_id INT unsigned,
+    sister_pod_id INT unsigned,
     field_id INT unsigned,
-    term_id INT unsigned
+    tbl_row_id INT unsigned
 );
 
 DROP TABLE IF EXISTS wp_pod_pages;
@@ -47,13 +51,15 @@ CREATE TABLE wp_pod_pages (
     id INT unsigned auto_increment primary key,
     uri VARCHAR(128),
     title VARCHAR(128),
-    phpcode TEXT
+    phpcode TEXT,
+    page_template VARCHAR(128)
 );
 
 DROP TABLE IF EXISTS wp_pod_helpers;
 CREATE TABLE wp_pod_helpers (
     id INT unsigned auto_increment primary key,
     name VARCHAR(32),
+    helper_type VARCHAR(16) not null default 'display',
     phpcode TEXT
 );
 

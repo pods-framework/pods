@@ -14,15 +14,15 @@
     margin: 0;
 }
 
-.navTab {
+.navTab a {
     float: left;
     padding: 5px;
     margin-right: 20px;
     text-decoration: underline;
-    cursor: pointer;
+    color: black;
 }
 
-.navTab.active {
+.navTab.active a {
     color: white;
     background: #464646;
     text-decoration: none;
@@ -67,7 +67,7 @@
     margin-right: 8px;
 }
 
-#welcome {
+#logo {
     background: url(images/header-bg.png) repeat-x;
 }
 
@@ -90,7 +90,6 @@
     margin: 0;
     cursor: pointer;
     padding: 5px 20px;
-    border-top: 1px solid #E3E3E3;
     background: url(images/menu-closed.png) 0 5px no-repeat;
 }
 
@@ -146,16 +145,21 @@
     border: 1px solid #E3E3E3;
 }
 
-#browseArea #browseTable {
+#browseTable {
     padding: 10px 0;
 }
 
-#browseArea #browseTable th {
+#browseTable th {
     text-align: left;
 }
 
-#browseArea #browseTable td {
+#browseTable th a {
+    text-decoration: none;
+}
+
+#browseTable td {
     padding: 5px 0;
+    border-top: 1px solid #E3E3E3;
 }
 
 .filebox {
@@ -214,6 +218,11 @@ h3 {
 
 #menuBox .rightside {
     width: 80%;
+}
+
+#columnBox .pick {
+    width: 120px;
+    height: 60px;
 }
 
 .red {

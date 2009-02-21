@@ -158,7 +158,7 @@ class Pod
             if (0 < mysql_num_rows($result))
             {
                 $row = mysql_fetch_assoc($result);
-                $this->data['pod_id'] = $row['pod_id'];
+                $this->data['pod_id'] = $row['id'];
             }
         }
         return $this->data['pod_id'];

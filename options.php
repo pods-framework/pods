@@ -22,7 +22,7 @@ while ($row = mysql_fetch_assoc($result))
 }
 
 // Get all available WP roles
-$user_roles = get_option('wp_user_roles');
+$user_roles = get_option($table_prefix . 'user_roles');
 ?>
 
 <!--
@@ -157,6 +157,12 @@ function doDropdown(val) {
     jQuery("#column_sister_field_id").hide();
 }
 
+function addPodHelper(div_id, select_id) {
+    var val = jQuery("#"+select_id).val();
+    var html = '<div class="helper" id="'+val+'">'+val+' (<a onclick="jQuery(this).parent().remove()">drop</a>)</div>';
+    jQuery("#"+div_id).append(html);
+}
+
 function sisterFields(sister_field_id) {
     var pickval = jQuery("#column_pickval").val();
     jQuery.ajax({
@@ -201,12 +207,16 @@ function loadPod() {
                 var list_filters = (null == pod_type.list_filters) ? "" : pod_type.list_filters;
                 var tpl_detail = (null == pod_type.tpl_detail) ? "" : pod_type.tpl_detail;
                 var tpl_list = (null == pod_type.tpl_list) ? "" : pod_type.tpl_list;
+                var before_helpers = (null == pod_type.before_helpers) ? "" : pod_type.before_helpers;
+                var after_helpers = (null == pod_type.after_helpers) ? "" : pod_type.after_helpers;
                 jQuery("#pod_name").html(name);
                 jQuery("#pod_label").val(label);
                 jQuery("#is_toplevel").attr("checked", is_toplevel);
                 jQuery("#list_filters").val(list_filters);
                 jQuery("#tpl_detail").val(tpl_detail);
                 jQuery("#tpl_list").val(tpl_list);
+                jQuery("#list_before_helpers").html("");
+                jQuery("#list_after_helpers").html("");
 
                 // Build the column list
                 var html = "";
@@ -252,6 +262,26 @@ function loadPod() {
                         loadColumn(field_id);
                     }
                 });
+
+                var html = "";
+                if ("" != before_helpers) {
+                    before_helpers = before_helpers.split(",");
+                    for (var i = 0; i < before_helpers.length; i++) {
+                        var val = before_helpers[i];
+                        html += '<div class="helper" id="'+val+'">'+val+' (<a onclick="jQuery(this).parent().remove()">drop</a>)</div>';
+                    }
+                    jQuery("#list_before_helpers").html(html);
+                }
+
+                var html = "";
+                if ("" != after_helpers) {
+                    after_helpers = after_helpers.split(",");
+                    for (var i = 0; i < after_helpers.length; i++) {
+                        var val = after_helpers[i];
+                        html += '<div class="helper" id="'+val+'">'+val+' (<a onclick="jQuery(this).parent().remove()">drop</a>)</div>';
+                    }
+                    jQuery("#list_after_helpers").html(html);
+                }
             }
         }
     });
@@ -277,6 +307,7 @@ function addPod() {
                     datatype = jQuery(this).attr("class").split(" ")[1].substr(1);
                     jQuery(this).addClass("active");
                     jQuery("#podArea .idle").show();
+                    jQuery("#podBox #new_pod").val("");
                     loadPod();
                 });
                 jQuery("#podArea .t"+id).click();
@@ -291,10 +322,20 @@ function editPod() {
     var list_filters = jQuery("#list_filters").val();
     var tpl_detail = jQuery("#tpl_detail").val();
     var tpl_list = jQuery("#tpl_list").val();
+    var before_helpers = "";
+    jQuery("#list_before_helpers .helper").each(function() {
+        var new_helper = jQuery(this).attr("id");
+        before_helpers += ("" == before_helpers) ? new_helper : "," + new_helper;
+    });
+    var after_helpers = "";
+    jQuery("#list_after_helpers .helper").each(function() {
+        var new_helper = jQuery(this).attr("id");
+        after_helpers += ("" == after_helpers) ? new_helper : "," + new_helper;
+    });
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "auth="+auth+"&datatype="+datatype+"&label="+label+"&is_toplevel="+is_toplevel+"&list_filters="+encodeURIComponent(list_filters)+"&tpl_detail="+encodeURIComponent(tpl_detail)+"&tpl_list="+encodeURIComponent(tpl_list),
+        data: "auth="+auth+"&datatype="+datatype+"&label="+label+"&is_toplevel="+is_toplevel+"&list_filters="+encodeURIComponent(list_filters)+"&tpl_detail="+encodeURIComponent(tpl_detail)+"&tpl_list="+encodeURIComponent(tpl_list)+"&before_helpers="+before_helpers+"&after_helpers="+after_helpers,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -339,6 +380,7 @@ function loadColumn(col) {
             var col_data = eval("("+msg+")");
             var name = (null == col_data.name) ? "" : col_data.name;
             var label = (null == col_data.label) ? "" : col_data.label;
+            var helper = (null == col_data.helper) ? "" : col_data.helper;
             var comment = (null == col_data.comment) ? "" : col_data.comment;
             var coltype = (null == col_data.coltype) ? "" : col_data.coltype;
             var pickval = (null == col_data.pickval) ? "" : col_data.pickval;
@@ -348,6 +390,7 @@ function loadColumn(col) {
             var multiple = parseInt(col_data.multiple);
             jQuery("#column_name").val(name);
             jQuery("#column_label").val(label);
+            jQuery("#column_helper").val(helper);
             jQuery("#column_comment").val(comment);
             jQuery("#column_type").val(coltype);
             jQuery("#column_pickval").val(pickval);
@@ -377,6 +420,7 @@ function loadColumn(col) {
 function addColumn() {
     var name = jQuery("#column_name").val();
     var label = jQuery("#column_label").val();
+    var helper = jQuery("#column_helper").val();
     var comment = jQuery("#column_comment").val();
     var dtname = jQuery("#pod_name").html();
     var coltype = jQuery("#column_type").val();
@@ -388,7 +432,7 @@ function addColumn() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/add.php",
-        data: "auth="+auth+"&datatype="+datatype+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required+"&unique="+unique+"&multiple="+multiple,
+        data: "auth="+auth+"&datatype="+datatype+"&dtname="+dtname+"&name="+name+"&label="+label+"&helper="+helper+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required+"&unique="+unique+"&multiple="+multiple,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -420,6 +464,7 @@ function moveColumn(col, dir) {
 function editColumn(col) {
     var name = jQuery("#column_name").val();
     var label = jQuery("#column_label").val();
+    var helper = jQuery("#column_helper").val();
     var comment = jQuery("#column_comment").val();
     var dtname = jQuery(".tab.active").html();
     var coltype = jQuery("#column_type").val();
@@ -431,7 +476,7 @@ function editColumn(col) {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "auth="+auth+"&action=edit&datatype="+datatype+"&dtname="+dtname+"&field_id="+col+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required+"&unique="+unique+"&multiple="+multiple,
+        data: "auth="+auth+"&action=edit&datatype="+datatype+"&dtname="+dtname+"&field_id="+col+"&name="+name+"&label="+label+"&helper="+helper+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required+"&unique="+unique+"&multiple="+multiple,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -696,6 +741,19 @@ Begin popups
     <div class="leftside">Label</div>
     <div class="rightside">
         <input type="text" id="column_label" value="" />
+        <select id="column_helper">
+            <option value="">-- Helper --</option>
+<?php
+// Get all display helpers
+$result = pod_query("SELECT name FROM {$table_prefix}pod_helpers WHERE helper_type = 'display'");
+while ($row = mysql_fetch_assoc($result))
+{
+?>
+            <option value="<?php echo $row['name']; ?>"><?php echo $row['name']; ?></option>
+<?php
+}
+?>
+        </select>
     </div>
 
     <div class="leftside">Column Type</div>
@@ -871,52 +929,55 @@ if (isset($datatypes))
                 <a href="javascript:;" onclick="dropPod()">drop pod</a>
             </p>
 
-            <p class="extras" onclick="jQuery('#pod_settings').toggle(); jQuery(this).toggleClass('open')">Pod Settings</p>
-            <div id="pod_settings" class="hidden">
-                <input type="text" id="pod_label" value="" />
-                <input type="checkbox" id="is_toplevel" /> Top-level menu? (if so, add a label)
-            </div>
-
             <p class="extras" onclick="jQuery('#tpl_detail').toggle(); jQuery(this).toggleClass('open')">Detail Template</p>
             <textarea id="tpl_detail" class="hidden"></textarea>
 
             <p class="extras" onclick="jQuery('#tpl_list').toggle(); jQuery(this).toggleClass('open')">List Template</p>
             <textarea id="tpl_list" class="hidden"></textarea>
 
-            <p class="extras" onclick="jQuery('#list_filters').toggle(); jQuery(this).toggleClass('open')">List Filters</p>
-            <input type="text" id="list_filters" class="hidden" />
-
-            <p class="extras" onclick="jQuery('#pod_helpers').toggle(); jQuery(this).toggleClass('open')">Pod Helpers (work in progress)</p>
-            <div id="pod_helpers" class="hidden">
-                <select id="before_helpers">
-                    <option value="">-- Helpers that run right before data is saved --</option>
+            <p class="extras" onclick="jQuery('#pod_settings').toggle(); jQuery(this).toggleClass('open')">Pod Settings</p>
+            <div id="pod_settings" class="hidden">
+                <input type="text" id="pod_label" value="" />
+                <input type="checkbox" id="is_toplevel" /> Top-level menu? (if so, add a label)
+                <p>List Filters:<br /><input type="text" id="list_filters" /></p>
+                <p>
+                    Pre-save Helpers:<br />
+                    <select id="before_helpers">
+                        <option value="">-- Select --</option>
 <?php
 if (isset($helper_types['before']))
 {
     foreach ($helper_types['before'] as $key => $helper_name)
     {
 ?>
-                    <option value="<?php echo $helper_name; ?>"><?php echo $helper_name; ?></option>
+                        <option value="<?php echo $helper_name; ?>"><?php echo $helper_name; ?></option>
 <?php
     }
 }
 ?>
-                </select><br />
-
-                <select id="after_helpers">
-                    <option value="">-- Helpers that run right after data is saved --</option>
+                    </select>
+                    <input type="button" class="button" value="Add" onclick="addPodHelper('list_before_helpers', 'before_helpers')" />
+                    <div id="list_before_helpers"></div>
+                </p>
+                <p>
+                    Post-save Helpers:<br />
+                    <select id="after_helpers">
+                        <option value="">-- Select --</option>
 <?php
 if (isset($helper_types['after']))
 {
     foreach ($helper_types['after'] as $key => $helper_name)
     {
 ?>
-                    <option value="<?php echo $helper_name; ?>"><?php echo $helper_name; ?></option>
+                        <option value="<?php echo $helper_name; ?>"><?php echo $helper_name; ?></option>
 <?php
     }
 }
 ?>
-                </select>
+                    </select>
+                    <input type="button" class="button" value="Add" onclick="addPodHelper('list_after_helpers', 'after_helpers')" />
+                    <div id="list_after_helpers"></div>
+                </p>
             </div>
         </div>
     </div>
@@ -1076,7 +1137,12 @@ if (isset($user_roles))
 <?php
             foreach ($all_privs as $priv)
             {
-            $active = (false !== array_search($priv['name'], $pods_roles[$role])) ? ' active' : '';
+                $active = '';
+                $pods_role = $pods_roles[$role];
+                if (isset($pods_role) && false !== array_search($priv['name'], $pods_role))
+                {
+                    $active = ' active';
+                }
 ?>
             <div class="option<?php echo $active; ?>" value="<?php echo $priv['name']; ?>"><?php echo $priv['label']; ?></div>
 <?php

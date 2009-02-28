@@ -1,9 +1,9 @@
 === Pods ===
 Contributors: logikal16, sc0ttkclark
 Donate link: http://pods.uproot.us
-Tags: cms, pods, content types, posts, pages, modules, datatypes
+Tags: cms, pods, cck, drupal, content types, pages, datatypes
 Requires at least: 2.7
-Tested up to: 2.7
+Tested up to: 2.7.1
 Stable tag: trunk
 
 Pods is a CMS (Content Management System) plugin for WordPress.

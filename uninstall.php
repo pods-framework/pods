@@ -20,12 +20,6 @@ if (0 < mysql_num_rows($result))
             $dtnames[] = substr($row[0], $pos + 8);
         }
     }
-    // Drop all associated "posts" table rows
-    if (isset($dtnames))
-    {
-        $dtnames = implode("','", $dtnames);
-        pod_query("DELETE FROM {$table_prefix}posts WHERE post_type IN ('$dtnames')");
-    }
 }
 pod_query("DELETE FROM {$table_prefix}options WHERE option_name = 'pods_version'");
 

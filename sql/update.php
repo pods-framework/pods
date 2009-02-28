@@ -156,6 +156,13 @@ if ($installed < 150)
     pod_query("DELETE FROM {$table_prefix}posts WHERE ID IN ($posts_to_delete)");
 }
 
+if ($installed < 151)
+{
+    pod_query("ALTER TABLE {$table_prefix}pod_fields ADD COLUMN helper VARCHAR(32) AFTER label");
+    pod_query("ALTER TABLE {$table_prefix}pod_types ADD COLUMN before_helpers TEXT AFTER tpl_list");
+    pod_query("ALTER TABLE {$table_prefix}pod_types ADD COLUMN after_helpers TEXT AFTER before_helpers");
+}
+
 // Save this version
 update_option('pods_version', $pods_latest);
 

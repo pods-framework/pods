@@ -18,7 +18,9 @@ CREATE TABLE wp_pod_types (
     is_toplevel BOOL default 0,
     list_filters TEXT,
     tpl_detail TEXT,
-    tpl_list TEXT
+    tpl_list TEXT,
+    before_helpers TEXT,
+    after_helpers TEXT
 );
 
 DROP TABLE IF EXISTS wp_pod_fields;
@@ -27,6 +29,7 @@ CREATE TABLE wp_pod_fields (
     datatype SMALLINT unsigned,
     name VARCHAR(32),
     label VARCHAR(32),
+    helper VARCHAR(32),
     comment VARCHAR(128),
     coltype VARCHAR(4),
     pickval VARCHAR(32),

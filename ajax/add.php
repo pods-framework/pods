@@ -132,7 +132,7 @@ else
     }
 
     $sister_field_id = ('null' == $sister_field_id) ? 'NULL' : "$sister_field_id";
-    $field_id = pod_query("INSERT INTO {$table_prefix}pod_fields (datatype, name, label, coltype, pickval, sister_field_id, required, `unique`, `multiple`, weight) VALUES ('$datatype', '$name', '$label', '$coltype', '$pickval', $sister_field_id, '$required', '$unique', '$multiple', '$weight')", 'Cannot add new field');
+    $field_id = pod_query("INSERT INTO {$table_prefix}pod_fields (datatype, name, label, helper, coltype, pickval, sister_field_id, required, `unique`, `multiple`, weight) VALUES ('$datatype', '$name', '$label', '$helper', '$coltype', '$pickval', $sister_field_id, '$required', '$unique', '$multiple', '$weight')", 'Cannot add new field');
 
     if (empty($pickval))
     {
@@ -147,7 +147,7 @@ else
             'desc' => 'mediumtext'
         );
         $dbtype = $dbtypes[$coltype];
-        pod_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname ADD COLUMN $name $dbtype", 'Cannot create new column');
+        pod_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname ADD COLUMN `$name` $dbtype", 'Cannot create new column');
     }
     else
     {

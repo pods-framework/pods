@@ -169,11 +169,12 @@ class Pod
     Get pod or category dropdown values
     ==================================================
     */
-    function get_dropdown_values($table = null, $field_name = null, $term_ids = null)
+    function get_dropdown_values($table = null, $field_name = null, $tbl_row_ids = null, $unique_vals = false)
     {
         // Category dropdown
         if (is_numeric($table))
         {
+            $where = (false !== $unique_vals) ? "AND id NOT IN ($unique_vals)" : '';
             $sql = "
             SELECT
                 t.term_id AS id, t.name
@@ -182,36 +183,40 @@ class Pod
             INNER JOIN
                 {$this->prefix}terms t ON t.term_id = tx.term_id
             WHERE
-                tx.parent = $table AND tx.taxonomy = 'category'
+                tx.parent = $table AND tx.taxonomy = 'category' $where
             ";
         }
         // WP page dropdown
         elseif ('wp_page' == $table)
         {
-            $sql = "SELECT ID as id, post_title AS name FROM {$this->prefix}posts WHERE post_type = 'page' ORDER BY name ASC";
+            $where = (false !== $unique_vals) ? "AND id NOT IN ($unique_vals)" : '';
+            $sql = "SELECT ID as id, post_title AS name FROM {$this->prefix}posts WHERE post_type = 'page' $where ORDER BY name ASC";
         }
         // WP post dropdown
         elseif ('wp_post' == $table)
         {
-            $sql = "SELECT ID as id, post_title AS name FROM {$this->prefix}posts WHERE post_type = 'post' ORDER BY name ASC";
+            $where = (false !== $unique_vals) ? "AND id NOT IN ($unique_vals)" : '';
+            $sql = "SELECT ID as id, post_title AS name FROM {$this->prefix}posts WHERE post_type = 'post' $where ORDER BY name ASC";
         }
         // WP user dropdown
         elseif ('wp_user' == $table)
         {
-            $sql = "SELECT ID as id, display_name AS name FROM {$this->prefix}users ORDER BY name ASC";
+            $where = (false !== $unique_vals) ? "WHERE id NOT IN ($unique_vals)" : '';
+            $sql = "SELECT ID as id, display_name AS name FROM {$this->prefix}users $where ORDER BY name ASC";
         }
         // Pod table dropdown
         else
         {
-            $sql = "SELECT id, name FROM {$this->prefix}pod_tbl_$table ORDER BY name ASC";
+            $where = (false !== $unique_vals) ? "WHERE id NOT IN ($unique_vals)" : '';
+            $sql = "SELECT id, name FROM {$this->prefix}pod_tbl_$table $where ORDER BY name ASC";
         }
 
         $result = pod_query($sql);
         while ($row = mysql_fetch_assoc($result))
         {
-            if (!empty($term_ids))
+            if (!empty($tbl_row_ids))
             {
-                $row['active'] = in_array($row['id'], $term_ids);
+                $row['active'] = in_array($row['id'], $tbl_row_ids);
             }
             else
             {
@@ -662,7 +667,24 @@ class Pod
                         }
                     }
                 }
-                $this->data[$key] = $this->get_dropdown_values($table, null, $tbl_row_ids);
+
+                // If the PICK column is unique, get values already chosen
+                $unique_vals = false;
+                if (1 == $attr['unique'])
+                {
+                    $exclude = empty($pod_id) ? '' : "pod_id != $pod_id AND";
+                    $result = pod_query("SELECT tbl_row_id FROM {$this->prefix}pod_rel WHERE $exclude field_id = $field_id");
+                    if (0 < mysql_num_rows($result))
+                    {
+                        $unique_vals = array();
+                        while ($row = mysql_fetch_assoc($result))
+                        {
+                            $unique_vals[] = $row['tbl_row_id'];
+                        }
+                        $unique_vals = implode(',', $unique_vals);
+                    }
+                }
+                $this->data[$key] = $this->get_dropdown_values($table, null, $tbl_row_ids, $unique_vals);
             }
             else
             {

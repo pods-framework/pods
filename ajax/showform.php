@@ -103,10 +103,7 @@ if ($save)
 
             if ('pick' == $type)
             {
-                if (!empty($val))
-                {
-                    $pick_columns[$key] = explode(',', $val);
-                }
+                $pick_columns[$key] = empty($val) ? array() : explode(',', $val);
             }
             elseif ('datatype' != $key && 'pod_id' != $key && 'columns' != $key && 'public' != $key && 'save' != $key)
             {
@@ -114,11 +111,13 @@ if ($save)
             }
         }
 
+        // Get the item name
+        $name = stripslashes($_POST['name']);
+        $name = mysql_real_escape_string(trim($name));
+
         // Make sure the pod_id exists
         if (empty($pod_id))
         {
-            $name = stripslashes($_POST['name']);
-            $name = mysql_real_escape_string(trim($name));
             $sql = "INSERT INTO {$table_prefix}pod (datatype, name, created, modified) VALUES ('$datatype_id', '$name', NOW(), NOW())";
             $pod_id = pod_query($sql, 'Cannot add new content');
             $tbl_row_id = pod_query("INSERT INTO {$table_prefix}pod_tbl_$datatype (name) VALUES (NULL)", 'Cannot add new table row');

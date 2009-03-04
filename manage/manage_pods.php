@@ -445,11 +445,10 @@ Pod popups
             <option value="">-- Helper --</option>
 <?php
 // Get all display helpers
-$result = pod_query("SELECT name FROM {$table_prefix}pod_helpers WHERE helper_type = 'display'");
-while ($row = mysql_fetch_assoc($result))
+foreach ($helper_types['display'] as $key => $name)
 {
 ?>
-            <option value="<?php echo $row['name']; ?>"><?php echo $row['name']; ?></option>
+            <option value="<?php echo $name; ?>"><?php echo $name; ?></option>
 <?php
 }
 ?>

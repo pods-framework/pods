@@ -1,3 +1,13 @@
+<?php
+// Get all helpers
+$result = pod_query("SELECT id, name, helper_type FROM {$table_prefix}pod_helpers ORDER BY name");
+while ($row = mysql_fetch_assoc($result))
+{
+    $helpers[$row['id']] = $row;
+    $helper_types[$row['helper_type']][] = $row['name'];
+}
+?>
+
 <!--
 ==================================================
 Begin javascript code

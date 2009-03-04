@@ -89,16 +89,16 @@ if ($save)
                     $tbl_row_id = mysql_result($result, 0);
                     $exclude = "AND id != $tbl_row_id";
                 }
-                $sql = "SELECT id FROM {$table_prefix}pod_tbl_$datatype WHERE $name = '$val' $exclude LIMIT 1";
+                $sql = "SELECT id FROM {$table_prefix}pod_tbl_$datatype WHERE $key = '$val' $exclude LIMIT 1";
                 pod_query($sql, 'Not a unique value', "The $key value needs to be unique.");
             }
 
             // Verify slug columns
             if ('slug' == $type)
             {
-                $slug_value = empty($_POST[$key]) ? $_POST['name'] : $_POST[$key];
-                $slug_value = sanitize_title($slug_value);
-                $_POST[$key] = $slug_value;
+                $slug_val = empty($_POST[$key]) ? $_POST['name'] : $_POST[$key];
+                $slug_val = sanitize_title($slug_val);
+                $val = $slug_val;
             }
 
             if ('pick' == $type)

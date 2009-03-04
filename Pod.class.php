@@ -55,6 +55,7 @@ class Pod
     {
         if ($this->data = mysql_fetch_assoc($this->result))
         {
+            $this->data['type'] = $this->datatype;
             return $this->data;
         }
         return false;
@@ -310,9 +311,9 @@ class Pod
 
             if (0 < mysql_num_rows($result))
             {
-                $row = mysql_fetch_assoc($result);
-                $this->data = $row;
-                return $row;
+                $this->data = mysql_fetch_assoc($result);
+                $this->data['type'] = $datatype;
+                return $this->data;
             }
             $this->data = false;
         }

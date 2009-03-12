@@ -15,7 +15,7 @@ foreach ($_POST as $key => $val)
 $name = pods_clean_name($name);
 
 $dbtypes = array(
-    'bool' => 'bool',
+    'bool' => 'bool default 0',
     'date' => 'datetime',
     'num' => 'decimal(9,2)',
     'txt' => 'varchar(128)',

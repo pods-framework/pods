@@ -137,7 +137,7 @@ else
     if (empty($pickval))
     {
         $dbtypes = array(
-            'bool' => 'bool',
+            'bool' => 'bool default 0',
             'date' => 'datetime',
             'num' => 'decimal(9,2)',
             'txt' => 'varchar(128)',

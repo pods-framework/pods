@@ -328,45 +328,70 @@ class Pod
     Search and filter records
     ==================================================
     */
-    function findRecords($orderby = 'id DESC', $rpp = null, $where = null, $sql = null)
+    function findRecords($orderby = 'id DESC', $rows_per_page = 15, $where = null, $sql = null)
     {
         $page = $this->page;
         $datatype = $this->datatype;
         $datatype_id = $this->datatype_id;
-        $this->rpp = is_numeric($rpp) ? $rpp : $this->rpp;
-        $rows_per_page = $this->rpp;
         $limit = ($rows_per_page * ($page - 1)) . ', ' . $rows_per_page;
-        $where = empty($where) ? null : "AND t.$where";
+        $where = empty($where) ? null : "AND $where";
+        $i = 0;
 
-        // Get this datatype's fields
-        $result = pod_query("SELECT name FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id");
-        while ($row = mysql_fetch_assoc($result))
+        // Handle search
+        if (isset($_GET['search']))
         {
-            $fields[] = $row['name'];
+            $search = "AND (t.name LIKE '%$search%')";
         }
 
-        $i = 1;
-        foreach ($_GET as $key => $val)
+        // Add "t." prefix to $orderby if needed
+        if (false !== strpos($orderby, ',') && false === strpos($orderby, '.'))
         {
-            $val = mysql_real_escape_string(trim($val));
-            if (!empty($val))
+            $orderby = 't.' . $orderby;
+        }
+
+        // Get this pod's fields
+        $result = pod_query("SELECT id, name, pickval FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND coltype = 'pick' ORDER BY weight");
+        while ($row = mysql_fetch_assoc($result))
+        {
+            $i++;
+            $field_id = $row['id'];
+            $field_name = $row['name'];
+            $table = $row['pickval'];
+
+            // Handle any $_GET variables
+            $narrow = '';
+            if (isset($_GET[$field_name]))
             {
-                ${$key} = $val;
-                if ('search' == $key)
-                {
-                    if (!empty($search))
-                    {
-                        $search = "AND (t.name LIKE '%$search%')";
-                    }
-                }
-                elseif (in_array($key, $fields))
-                {
-                    $join .= "
-                    INNER JOIN
-                        {$this->prefix}pod_rel r$i ON r$i.field_id = (SELECT id FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND name = '$key') AND r$i.tbl_row_id = $val AND r$i.pod_id = p.id
-                    ";
-                    $i++;
-                }
+                $val = mysql_real_escape_string(trim($_GET[$field_name]));
+                $narrow = "AND r$i.tbl_row_id = $val";
+            }
+
+            if ('wp_page' == $table || 'wp_post' == $table)
+            {
+                $join .= "
+                LEFT JOIN
+                    {$this->prefix}pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $narrow
+                LEFT JOIN
+                    {$this->prefix}posts $field_name ON $field_name.ID = r$i.tbl_row_id
+                ";
+            }
+            elseif ('wp_user' == $table)
+            {
+                $join .= "
+                LEFT JOIN
+                    {$this->prefix}pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $narrow
+                LEFT JOIN
+                    {$this->prefix}users $field_name ON $field_name.ID = r$i.tbl_row_id
+                ";
+            }
+            else
+            {
+                $join .= "
+                LEFT JOIN
+                    {$this->prefix}pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $narrow
+                LEFT JOIN
+                    {$this->prefix}pod_tbl_$table $field_name ON $field_name.id = r$i.tbl_row_id
+                ";
             }
         }
 
@@ -385,7 +410,7 @@ class Pod
                 $search
                 $where
             ORDER BY
-                t.$orderby
+                $orderby
             LIMIT
                 $limit
             ";

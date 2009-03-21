@@ -53,9 +53,10 @@ $all_privs = array(
     array('name' => 'manage_pods', 'label' => 'Manage Pods'),
     array('name' => 'manage_podpages', 'label' => 'Manage PodPages'),
     array('name' => 'manage_helpers', 'label' => 'Manage Helpers'),
+    array('name' => 'manage_roles', 'label' => 'Manage Roles'),
     array('name' => 'manage_settings', 'label' => 'Manage Settings'),
     array('name' => 'manage_content', 'label' => 'Manage All Content'),
-    array('name' => 'manage_roles', 'label' => 'Manage Roles'),
+    array('name' => 'manage_packages', 'label' => 'Manage Packages'),
     array('name' => 'manage_menu', 'label' => 'Manage Menu')
 );
 

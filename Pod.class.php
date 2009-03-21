@@ -66,9 +66,9 @@ class Pod
     Return the value of a single field (return arrays)
     ==================================================
     */
-    function get_field($name)
+    function get_field($name, $orderby = null)
     {
-        if (false === isset($this->data[$name]))
+        if (false === isset($this->data[$name]) || !empty($orderby))
         {
             $datatype = $this->datatype;
             $datatype_id = $this->datatype_id;
@@ -78,7 +78,7 @@ class Pod
             {
                 $row = mysql_fetch_assoc($result);
                 $this->rel_table = $row['pickval'];
-                $this->data[$name] = $this->rel_lookup($row['id'], $this->rel_table);
+                $this->data[$name] = $this->rel_lookup($row['id'], $this->rel_table, $orderby);
                 return $this->data[$name];
             }
             return false;
@@ -233,8 +233,9 @@ class Pod
     Lookup values from a single relationship field
     ==================================================
     */
-    function rel_lookup($field_id, $table = null)
+    function rel_lookup($field_id, $table = null, $orderby = null)
     {
+        $orderby = empty($orderby) ? '' : "ORDER BY $orderby";
         $datatype_id = $this->datatype_id;
         $pod_id = $this->get_pod_id();
         $row_id = $this->data['id'];
@@ -259,22 +260,22 @@ class Pod
         // WP category
         if (is_numeric($table))
         {
-            $result = pod_query("SELECT term_id AS id, name FROM {$this->prefix}terms WHERE term_id IN ($term_ids)");
+            $result = pod_query("SELECT term_id AS id, name FROM {$this->prefix}terms WHERE term_id IN ($term_ids) $orderby");
         }
         // WP page or post
         elseif ('wp_page' == $table || 'wp_post' == $table)
         {
-            $result = pod_query("SELECT ID as id, post_title AS name FROM {$this->prefix}posts WHERE ID IN ($term_ids)");
+            $result = pod_query("SELECT ID as id, post_title AS name FROM {$this->prefix}posts WHERE ID IN ($term_ids) $orderby");
         }
         // WP user
         elseif ('wp_user' == $table)
         {
-            $result = pod_query("SELECT ID as id, display_name AS name FROM {$this->prefix}users WHERE ID IN ($term_ids)");
+            $result = pod_query("SELECT ID as id, display_name AS name FROM {$this->prefix}users WHERE ID IN ($term_ids) $orderby");
         }
         // Pod table
         else
         {
-            $result = pod_query("SELECT * FROM {$this->prefix}pod_tbl_$table WHERE id IN ($term_ids)");
+            $result = pod_query("SELECT * FROM {$this->prefix}pod_tbl_$table WHERE id IN ($term_ids) $orderby");
         }
 
         // Put all related items into an array
@@ -301,7 +302,7 @@ class Pod
             else
             {
                 // Get the slug column
-                $result = pod_query("SELECT name FROM {$this->prefix}pod_fields WHERE coltype = 'slug' LIMIT 1");
+                $result = pod_query("SELECT name FROM {$this->prefix}pod_fields WHERE coltype = 'slug' AND datatype = $this->datatype_id LIMIT 1");
                 if (0 < mysql_num_rows($result))
                 {
                     $field_name = mysql_result($result, 0);
@@ -366,7 +367,16 @@ class Pod
                 $narrow = "AND r$i.tbl_row_id = $val";
             }
 
-            if ('wp_page' == $table || 'wp_post' == $table)
+            if (is_numeric($table))
+            {
+                $join .= "
+                LEFT JOIN
+                    {$this->prefix}pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $narrow
+                LEFT JOIN
+                    {$this->prefix}terms $field_name ON $field_name.term_id = r$i.tbl_row_id
+                ";
+            }
+            elseif ('wp_page' == $table || 'wp_post' == $table)
             {
                 $join .= "
                 LEFT JOIN

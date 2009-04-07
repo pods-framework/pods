@@ -97,16 +97,8 @@ Begin welcome area
 ==================================================
 -->
 <div id="welcomeArea" class="area hidden">
-    <div id="logo">
-        <img src="<?php echo $pods_url; ?>/images/header-logo.png" alt="Pods" />
-    </div>
     <h2 align="center">Thanks for using the Pods CMS plugin.</h2>
     <p align="center">See the <a href="http://pods.uproot.us/user_guide" target="_blank">User Guide</a> and <a href="http://pods.uproot.us/forum" target="_blank">Forum</a> to get started.</p>
-    <p align="center">
-        <strong>PHP:</strong> <?php echo phpversion(); ?><br />
-        <strong>MySQL:</strong> <?php $result = pod_query("SELECT VERSION()"); echo mysql_result($result, 0); ?><br />
-        <strong>Web server:</strong> <?php echo $_SERVER['SERVER_SOFTWARE']; ?>
-    </p>
 </div>
 
 <?php

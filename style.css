@@ -67,10 +67,6 @@
     margin-right: 8px;
 }
 
-#logo {
-    background: url(images/header-bg.png) repeat-x;
-}
-
 #column_name,
 #column_label,
 #column_comment,

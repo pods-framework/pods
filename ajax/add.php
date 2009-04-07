@@ -108,7 +108,7 @@ Add new column
 */
 else
 {
-    if ('id' == $name || 'name' == $name || 'type' == $name)
+    if ('id' == $name || 'name' == $name || 'type' == $name || 'created' == $name || 'modified' == $name)
     {
         die("Error: $name is a reserved name");
     }

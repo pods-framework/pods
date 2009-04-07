@@ -68,7 +68,20 @@ class Pod
     */
     function get_field($name, $orderby = null)
     {
-        if (false === isset($this->data[$name]) || !empty($orderby))
+        if (isset($this->data[$name]))
+        {
+            return $this->data[$name];
+        }
+        elseif ('created' == $name || 'modified' == $name)
+        {
+            $pod_id = $this->get_pod_id();
+            $result = pod_query("SELECT created, modified FROM {$this->prefix}pod WHERE id = $pod_id LIMIT 1");
+            $row = mysql_fetch_assoc($result);
+            $this->data['created'] = $row['created'];
+            $this->data['modified'] = $row['modified'];
+            return $this->data[$name];
+        }
+        else
         {
             $datatype = $this->datatype;
             $datatype_id = $this->datatype_id;
@@ -82,10 +95,6 @@ class Pod
                 return $this->data[$name];
             }
             return false;
-        }
-        else
-        {
-            return $this->data[$name];
         }
     }
 
@@ -335,13 +344,15 @@ class Pod
         $datatype = $this->datatype;
         $datatype_id = $this->datatype_id;
         $limit = ($rows_per_page * ($page - 1)) . ', ' . $rows_per_page;
-        $where = empty($where) ? null : "AND $where";
+        $where = empty($where) ? '' : "AND $where";
+        $this->rpp = $rows_per_page;
         $i = 0;
 
         // Handle search
-        if (isset($_GET['search']))
+        if (!empty($_GET['search']))
         {
-            $search = "AND (t.name LIKE '%$search%')";
+            $val = mysql_real_escape_string(trim($_GET['search']));
+            $search = "AND (t.name LIKE '%$val%')";
         }
 
         // Add "t." prefix to $orderby if needed
@@ -360,11 +371,10 @@ class Pod
             $table = $row['pickval'];
 
             // Handle any $_GET variables
-            $narrow = '';
-            if (isset($_GET[$field_name]))
+            if (!empty($_GET[$field_name]))
             {
                 $val = mysql_real_escape_string(trim($_GET[$field_name]));
-                $narrow = "AND r$i.tbl_row_id = $val";
+                $where .= " AND $field_name.id = $val";
             }
 
             if (is_numeric($table))

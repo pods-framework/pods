@@ -95,7 +95,7 @@ elseif ('edit' == $action)
 
         $dbtype = $dbtypes[$coltype];
         $pickval = ('pick' != $coltype || empty($pickval)) ? 'NULL' : "'$pickval'";
-        $sister_field_id = ('pick' != $coltype || empty($sister_field_id)) ? 0 : "'$sister_field_id'";
+        $sister_field_id = ('pick' != $coltype || empty($sister_field_id) || 'null' == $sister_field_id) ? 0 : "'$sister_field_id'";
 
         if ($coltype != $old_coltype && 'pick' == $coltype)
         {

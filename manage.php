@@ -1,6 +1,6 @@
 <?php
 // Get all helpers
-$result = pod_query("SELECT id, name, helper_type FROM {$table_prefix}pod_helpers ORDER BY name");
+$result = pod_query("SELECT id, name, helper_type FROM @wp_pod_helpers ORDER BY name");
 while ($row = mysql_fetch_assoc($result))
 {
     $helpers[$row['id']] = $row;

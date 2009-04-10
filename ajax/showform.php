@@ -15,7 +15,7 @@ if ($save)
     if ($datatype)
     {
         // Get array of datatypes
-        $result = pod_query("SELECT id, name FROM {$table_prefix}pod_types");
+        $result = pod_query("SELECT id, name FROM @wp_pod_types");
         while ($row = mysql_fetch_assoc($result))
         {
             $datatypes[$row['name']] = $row['id'];
@@ -41,7 +41,7 @@ if ($save)
         }
 
         // Get the datatype fields
-        $result = pod_query("SELECT * FROM {$table_prefix}pod_fields WHERE datatype = $datatype_id $where", 'Cannot get datatype fields');
+        $result = pod_query("SELECT * FROM @wp_pod_fields WHERE datatype = $datatype_id $where", 'Cannot get datatype fields');
         while ($row = mysql_fetch_assoc($result))
         {
             $fields[$row['name']] = $row;
@@ -85,11 +85,11 @@ if ($save)
                 $exclude = '';
                 if (!empty($pod_id))
                 {
-                    $result = pod_query("SELECT tbl_row_id FROM {$table_prefix}pod WHERE id = $pod_id LIMIT 1");
+                    $result = pod_query("SELECT tbl_row_id FROM @wp_pod WHERE id = $pod_id LIMIT 1");
                     $tbl_row_id = mysql_result($result, 0);
                     $exclude = "AND id != $tbl_row_id";
                 }
-                $sql = "SELECT id FROM {$table_prefix}pod_tbl_$datatype WHERE $key = '$val' $exclude LIMIT 1";
+                $sql = "SELECT id FROM @wp_pod_tbl_$datatype WHERE $key = '$val' $exclude LIMIT 1";
                 pod_query($sql, 'Not a unique value', "The $key value needs to be unique.");
             }
 
@@ -118,24 +118,24 @@ if ($save)
         // Make sure the pod_id exists
         if (empty($pod_id))
         {
-            $sql = "INSERT INTO {$table_prefix}pod (datatype, name, created, modified) VALUES ('$datatype_id', '$name', NOW(), NOW())";
+            $sql = "INSERT INTO @wp_pod (datatype, name, created, modified) VALUES ('$datatype_id', '$name', NOW(), NOW())";
             $pod_id = pod_query($sql, 'Cannot add new content');
-            $tbl_row_id = pod_query("INSERT INTO {$table_prefix}pod_tbl_$datatype (name) VALUES (NULL)", 'Cannot add new table row');
+            $tbl_row_id = pod_query("INSERT INTO @wp_pod_tbl_$datatype (name) VALUES (NULL)", 'Cannot add new table row');
         }
         else
         {
-            $result = pod_query("SELECT tbl_row_id FROM {$table_prefix}pod WHERE id = $pod_id LIMIT 1");
+            $result = pod_query("SELECT tbl_row_id FROM @wp_pod WHERE id = $pod_id LIMIT 1");
             $tbl_row_id = mysql_result($result, 0);
         }
 
         // Get helper code
-        $result = pod_query("SELECT before_helpers, after_helpers FROM {$table_prefix}pod_types WHERE id = $datatype_id");
+        $result = pod_query("SELECT before_helpers, after_helpers FROM @wp_pod_types WHERE id = $datatype_id");
         $row = mysql_fetch_assoc($result);
         $before = str_replace(',', "','", $row['before_helpers']);
         $after = str_replace(',', "','", $row['after_helpers']);
 
         // Call any "before" helpers
-        $result = pod_query("SELECT phpcode FROM {$table_prefix}pod_helpers WHERE name IN ('$before')");
+        $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name IN ('$before')");
         while ($row = mysql_fetch_assoc($result))
         {
             eval('?>' . $row['phpcode']);
@@ -153,10 +153,10 @@ if ($save)
         $set_data = implode(',', $set_data);
 
         // Insert table row
-        pod_query("UPDATE {$table_prefix}pod_tbl_$datatype SET $set_data WHERE id = $tbl_row_id LIMIT 1");
+        pod_query("UPDATE @wp_pod_tbl_$datatype SET $set_data WHERE id = $tbl_row_id LIMIT 1");
 
         // Update wp_pod
-        pod_query("UPDATE {$table_prefix}pod SET tbl_row_id = $tbl_row_id, datatype = $datatype_id, name = '$name', modified = NOW() WHERE id = $pod_id LIMIT 1", 'Cannot modify datatype row');
+        pod_query("UPDATE @wp_pod SET tbl_row_id = $tbl_row_id, datatype = $datatype_id, name = '$name', modified = NOW() WHERE id = $pod_id LIMIT 1", 'Cannot modify datatype row');
 
         /*
         ==================================================
@@ -180,7 +180,7 @@ if ($save)
             if (!empty($sister_field_id))
             {
                 // Get sister pod IDs (a sister pod's sister pod is the parent pod)
-                $result = pod_query("SELECT pod_id FROM {$table_prefix}pod_rel WHERE sister_pod_id = $pod_id");
+                $result = pod_query("SELECT pod_id FROM @wp_pod_rel WHERE sister_pod_id = $pod_id");
                 if (0 < mysql_num_rows($result))
                 {
                     while ($row = mysql_fetch_assoc($result))
@@ -190,10 +190,10 @@ if ($save)
                     $sister_pod_ids = implode(',', $sister_pod_ids);
 
                     // Delete the sister pod relationship
-                    pod_query("DELETE FROM {$table_prefix}pod_rel WHERE pod_id IN ($sister_pod_ids) AND sister_pod_id = $pod_id AND field_id = $sister_field_id", 'Cannot drop sister relationships');
+                    pod_query("DELETE FROM @wp_pod_rel WHERE pod_id IN ($sister_pod_ids) AND sister_pod_id = $pod_id AND field_id = $sister_field_id", 'Cannot drop sister relationships');
                 }
             }
-            pod_query("DELETE FROM {$table_prefix}pod_rel WHERE pod_id = $pod_id AND field_id = $field_id", 'Cannot drop relationships');
+            pod_query("DELETE FROM @wp_pod_rel WHERE pod_id = $pod_id AND field_id = $field_id", 'Cannot drop relationships');
 
             /*
             ==================================================
@@ -205,19 +205,19 @@ if ($save)
                 $sister_pod_id = 0;
                 if (!empty($sister_field_id) && !empty($sister_datatype_id))
                 {
-                    $result = pod_query("SELECT id FROM {$table_prefix}pod WHERE datatype = $sister_datatype_id AND tbl_row_id = $rel_id LIMIT 1");
+                    $result = pod_query("SELECT id FROM @wp_pod WHERE datatype = $sister_datatype_id AND tbl_row_id = $rel_id LIMIT 1");
                     if (0 < mysql_num_rows($result))
                     {
                         $sister_pod_id = mysql_result($result, 0);
-                        pod_query("INSERT INTO {$table_prefix}pod_rel (pod_id, sister_pod_id, field_id, tbl_row_id) VALUES ($sister_pod_id, $pod_id, $sister_field_id, $tbl_row_id)", 'Cannot add sister relationships');
+                        pod_query("INSERT INTO @wp_pod_rel (pod_id, sister_pod_id, field_id, tbl_row_id) VALUES ($sister_pod_id, $pod_id, $sister_field_id, $tbl_row_id)", 'Cannot add sister relationships');
                     }
                 }
-                pod_query("INSERT INTO {$table_prefix}pod_rel (pod_id, sister_pod_id, field_id, tbl_row_id) VALUES ($pod_id, $sister_pod_id, $field_id, $rel_id)", 'Cannot add relationships');
+                pod_query("INSERT INTO @wp_pod_rel (pod_id, sister_pod_id, field_id, tbl_row_id) VALUES ($pod_id, $sister_pod_id, $field_id, $rel_id)", 'Cannot add relationships');
             }
         }
 
         // Call any "after" helpers
-        $result = pod_query("SELECT phpcode FROM {$table_prefix}pod_helpers WHERE name IN ('$after')");
+        $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name IN ('$after')");
         while ($row = mysql_fetch_assoc($result))
         {
             eval('?>' . $row['phpcode']);

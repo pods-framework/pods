@@ -95,7 +95,6 @@
 }
 
 .tips {
-    font-weight: bold;
     font-style: italic;
     margin-bottom: 5px;
 }
@@ -167,6 +166,14 @@
 
 .zebra {
     background: #F9F9F9;
+}
+
+.filter {
+    width: 180px;
+}
+
+.pod_search {
+    width: 120px;
 }
 
 /* NicEdit */

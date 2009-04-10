@@ -28,14 +28,12 @@ class Pod
 
     function Pod($datatype = null, $id = null)
     {
-        global $table_prefix;
-        $this->prefix = $table_prefix;
         $this->page = empty($_GET['pg']) ? 1 : $_GET['pg'];
 
         if (null != $datatype)
         {
             $this->datatype = trim($datatype);
-            $result = pod_query("SELECT id FROM {$this->prefix}pod_types WHERE name = '$datatype' LIMIT 1");
+            $result = pod_query("SELECT id FROM @wp_pod_types WHERE name = '$datatype' LIMIT 1");
             $row = mysql_fetch_assoc($result);
             $this->datatype_id = $row['id'];
 
@@ -75,7 +73,7 @@ class Pod
         elseif ('created' == $name || 'modified' == $name)
         {
             $pod_id = $this->get_pod_id();
-            $result = pod_query("SELECT created, modified FROM {$this->prefix}pod WHERE id = $pod_id LIMIT 1");
+            $result = pod_query("SELECT created, modified FROM @wp_pod WHERE id = $pod_id LIMIT 1");
             $row = mysql_fetch_assoc($result);
             $this->data['created'] = $row['created'];
             $this->data['modified'] = $row['modified'];
@@ -86,7 +84,7 @@ class Pod
             $datatype = $this->datatype;
             $datatype_id = $this->datatype_id;
 
-            $result = pod_query("SELECT id, pickval FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND name = '$name' LIMIT 1");
+            $result = pod_query("SELECT id, pickval FROM @wp_pod_fields WHERE datatype = $datatype_id AND name = '$name' LIMIT 1");
             if (0 < mysql_num_rows($result))
             {
                 $row = mysql_fetch_assoc($result);
@@ -140,7 +138,7 @@ class Pod
     function pod_helper($helper, $value = null, $name = null)
     {
         $helper = mysql_real_escape_string(trim($helper));
-        $result = pod_query("SELECT phpcode FROM {$this->prefix}pod_helpers WHERE name = '$helper' LIMIT 1");
+        $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name = '$helper' LIMIT 1");
         if (0 < mysql_num_rows($result))
         {
             $phpcode = mysql_result($result, 0);
@@ -160,11 +158,11 @@ class Pod
     {
         if (empty($this->data['pod_id']))
         {
-            $this->data['pod_id'] = -1;
+            $this->data['pod_id'] = 0;
 
             $dt = $this->datatype_id;
             $tbl_row_id = $this->print_field('id');
-            $result = pod_query("SELECT id FROM {$this->prefix}pod WHERE datatype = $dt AND tbl_row_id = '$tbl_row_id' LIMIT 1");
+            $result = pod_query("SELECT id FROM @wp_pod WHERE datatype = $dt AND tbl_row_id = '$tbl_row_id' LIMIT 1");
             if (0 < mysql_num_rows($result))
             {
                 $row = mysql_fetch_assoc($result);
@@ -189,9 +187,9 @@ class Pod
             SELECT
                 t.term_id AS id, t.name
             FROM
-                {$this->prefix}term_taxonomy tx
+                @wp_term_taxonomy tx
             INNER JOIN
-                {$this->prefix}terms t ON t.term_id = tx.term_id
+                @wp_terms t ON t.term_id = tx.term_id
             WHERE
                 tx.parent = $table AND tx.taxonomy = 'category' $where
             ";
@@ -200,25 +198,25 @@ class Pod
         elseif ('wp_page' == $table)
         {
             $where = (false !== $unique_vals) ? "AND id NOT IN ($unique_vals)" : '';
-            $sql = "SELECT ID as id, post_title AS name FROM {$this->prefix}posts WHERE post_type = 'page' $where ORDER BY name ASC";
+            $sql = "SELECT ID as id, post_title AS name FROM @wp_posts WHERE post_type = 'page' $where ORDER BY name ASC";
         }
         // WP post dropdown
         elseif ('wp_post' == $table)
         {
             $where = (false !== $unique_vals) ? "AND id NOT IN ($unique_vals)" : '';
-            $sql = "SELECT ID as id, post_title AS name FROM {$this->prefix}posts WHERE post_type = 'post' $where ORDER BY name ASC";
+            $sql = "SELECT ID as id, post_title AS name FROM @wp_posts WHERE post_type = 'post' $where ORDER BY name ASC";
         }
         // WP user dropdown
         elseif ('wp_user' == $table)
         {
             $where = (false !== $unique_vals) ? "WHERE id NOT IN ($unique_vals)" : '';
-            $sql = "SELECT ID as id, display_name AS name FROM {$this->prefix}users $where ORDER BY name ASC";
+            $sql = "SELECT ID as id, display_name AS name FROM @wp_users $where ORDER BY name ASC";
         }
         // Pod table dropdown
         else
         {
             $where = (false !== $unique_vals) ? "WHERE id NOT IN ($unique_vals)" : '';
-            $sql = "SELECT id, name FROM {$this->prefix}pod_tbl_$table $where ORDER BY name ASC";
+            $sql = "SELECT id, name FROM @wp_pod_tbl_$table $where ORDER BY name ASC";
         }
 
         $result = pod_query($sql);
@@ -249,7 +247,7 @@ class Pod
         $pod_id = $this->get_pod_id();
         $row_id = $this->data['id'];
 
-        $result = pod_query("SELECT tbl_row_id FROM {$this->prefix}pod_rel WHERE pod_id = $pod_id AND field_id = $field_id");
+        $result = pod_query("SELECT tbl_row_id FROM @wp_pod_rel WHERE pod_id = $pod_id AND field_id = $field_id");
 
         // Find all related IDs
         if (0 < mysql_num_rows($result))
@@ -269,22 +267,22 @@ class Pod
         // WP category
         if (is_numeric($table))
         {
-            $result = pod_query("SELECT term_id AS id, name FROM {$this->prefix}terms WHERE term_id IN ($term_ids) $orderby");
+            $result = pod_query("SELECT term_id AS id, name FROM @wp_terms WHERE term_id IN ($term_ids) $orderby");
         }
         // WP page or post
         elseif ('wp_page' == $table || 'wp_post' == $table)
         {
-            $result = pod_query("SELECT ID as id, post_title AS name FROM {$this->prefix}posts WHERE ID IN ($term_ids) $orderby");
+            $result = pod_query("SELECT ID as id, post_title AS name FROM @wp_posts WHERE ID IN ($term_ids) $orderby");
         }
         // WP user
         elseif ('wp_user' == $table)
         {
-            $result = pod_query("SELECT ID as id, display_name AS name FROM {$this->prefix}users WHERE ID IN ($term_ids) $orderby");
+            $result = pod_query("SELECT ID as id, display_name AS name FROM @wp_users WHERE ID IN ($term_ids) $orderby");
         }
         // Pod table
         else
         {
-            $result = pod_query("SELECT * FROM {$this->prefix}pod_tbl_$table WHERE id IN ($term_ids) $orderby");
+            $result = pod_query("SELECT * FROM @wp_pod_tbl_$table WHERE id IN ($term_ids) $orderby");
         }
 
         // Put all related items into an array
@@ -306,16 +304,16 @@ class Pod
         {
             if (is_numeric($id))
             {
-                $result = pod_query("SELECT * FROM {$this->prefix}pod_tbl_$datatype WHERE id = $id LIMIT 1");
+                $result = pod_query("SELECT * FROM @wp_pod_tbl_$datatype WHERE id = $id LIMIT 1");
             }
             else
             {
                 // Get the slug column
-                $result = pod_query("SELECT name FROM {$this->prefix}pod_fields WHERE coltype = 'slug' AND datatype = $this->datatype_id LIMIT 1");
+                $result = pod_query("SELECT name FROM @wp_pod_fields WHERE coltype = 'slug' AND datatype = $this->datatype_id LIMIT 1");
                 if (0 < mysql_num_rows($result))
                 {
                     $field_name = mysql_result($result, 0);
-                    $result = pod_query("SELECT * FROM {$this->prefix}pod_tbl_$datatype WHERE $field_name = '$id' LIMIT 1");
+                    $result = pod_query("SELECT * FROM @wp_pod_tbl_$datatype WHERE $field_name = '$id' LIMIT 1");
                 }
             }
 
@@ -362,7 +360,7 @@ class Pod
         }
 
         // Get this pod's fields
-        $result = pod_query("SELECT id, name, pickval FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND coltype = 'pick' ORDER BY weight");
+        $result = pod_query("SELECT id, name, pickval FROM @wp_pod_fields WHERE datatype = $datatype_id AND coltype = 'pick' ORDER BY weight");
         while ($row = mysql_fetch_assoc($result))
         {
             $i++;
@@ -381,36 +379,36 @@ class Pod
             {
                 $join .= "
                 LEFT JOIN
-                    {$this->prefix}pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $narrow
+                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $narrow
                 LEFT JOIN
-                    {$this->prefix}terms $field_name ON $field_name.term_id = r$i.tbl_row_id
+                    @wp_terms $field_name ON $field_name.term_id = r$i.tbl_row_id
                 ";
             }
             elseif ('wp_page' == $table || 'wp_post' == $table)
             {
                 $join .= "
                 LEFT JOIN
-                    {$this->prefix}pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $narrow
+                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $narrow
                 LEFT JOIN
-                    {$this->prefix}posts $field_name ON $field_name.ID = r$i.tbl_row_id
+                    @wp_posts $field_name ON $field_name.ID = r$i.tbl_row_id
                 ";
             }
             elseif ('wp_user' == $table)
             {
                 $join .= "
                 LEFT JOIN
-                    {$this->prefix}pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $narrow
+                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $narrow
                 LEFT JOIN
-                    {$this->prefix}users $field_name ON $field_name.ID = r$i.tbl_row_id
+                    @wp_users $field_name ON $field_name.ID = r$i.tbl_row_id
                 ";
             }
             else
             {
                 $join .= "
                 LEFT JOIN
-                    {$this->prefix}pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $narrow
+                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $narrow
                 LEFT JOIN
-                    {$this->prefix}pod_tbl_$table $field_name ON $field_name.id = r$i.tbl_row_id
+                    @wp_pod_tbl_$table $field_name ON $field_name.id = r$i.tbl_row_id
                 ";
             }
         }
@@ -421,10 +419,10 @@ class Pod
             SELECT
                 SQL_CALC_FOUND_ROWS DISTINCT t.*
             FROM
-                {$this->prefix}pod p
+                @wp_pod p
             $join
             INNER JOIN
-                {$this->prefix}pod_tbl_$datatype t ON t.id = p.tbl_row_id
+                @wp_pod_tbl_$datatype t ON t.id = p.tbl_row_id
             WHERE
                 p.datatype = $datatype_id
                 $search
@@ -550,17 +548,17 @@ class Pod
     Display the list filters
     ==================================================
     */
-    function getFilters($filters = null)
+    function getFilters($filters = null, $label = 'Filter')
     {
         $datatype = $this->datatype;
         $datatype_id = $this->datatype_id;
 ?>
-    <form method="get" action="">
+    <form method="get" class="filterbox filterbox_<?php echo $datatype; ?>" action="">
         <input type="hidden" name="type" value="<?php echo $datatype; ?>" />
 <?php
         if (empty($filters))
         {
-            $result = pod_query("SELECT list_filters FROM {$this->prefix}pod_types WHERE id = $datatype_id LIMIT 1");
+            $result = pod_query("SELECT list_filters FROM @wp_pod_types WHERE id = $datatype_id LIMIT 1");
             $row = mysql_fetch_assoc($result);
             $filters = $row['list_filters'];
         }
@@ -571,14 +569,14 @@ class Pod
             foreach ($filters as $key => $val)
             {
                 $field_name = trim($val);
-                $result = pod_query("SELECT pickval FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND name = '$field_name' LIMIT 1");
+                $result = pod_query("SELECT pickval FROM @wp_pod_fields WHERE datatype = $datatype_id AND name = '$field_name' LIMIT 1");
                 $row = mysql_fetch_assoc($result);
                 if (!empty($row['pickval']))
                 {
                     $rel_table = $row['pickval'];
                     $data = $this->get_dropdown_values($rel_table, $field_name);
 ?>
-    <select name="<?php echo $field_name; ?>" class="filter <?php echo $field_name; ?>" style="width:180px">
+    <select name="<?php echo $field_name; ?>" class="filter <?php echo $field_name; ?>">
         <option value="">-- <?php echo ucwords(str_replace('_', ' ', $field_name)); ?> --</option>
 <?php
                     foreach ($data as $key => $val)
@@ -595,9 +593,10 @@ class Pod
             }
         }
         // Display the search box and submit button
+        $search = empty($_GET['search']) ? '' : $_GET['search'];
 ?>
-        <input type="text" name="search" value="<?php echo empty($_GET['search']) ? '' : $_GET['search']; ?>" style="width:120px" />
-        <input type="submit" value="Filter" />
+        <input type="text" class="pod_search" name="search" value="<?php echo $search; ?>" />
+        <input type="submit" class="pod_submit" value="<?php echo $label; ?>" />
     </form>
 <?php
     }
@@ -635,9 +634,9 @@ class Pod
         SELECT
             f.name, f.label, f.comment, f.coltype, f.pickval, f.required, f.`unique`, f.`multiple`
         FROM
-            {$this->prefix}pod_types t
+            @wp_pod_types t
         INNER JOIN
-            {$this->prefix}pod_fields f ON f.datatype = t.id
+            @wp_pod_fields f ON f.datatype = t.id
         WHERE
             t.name = '$datatype'
             $where
@@ -654,9 +653,9 @@ class Pod
         SELECT
             t.*
         FROM
-            {$this->prefix}pod p
+            @wp_pod p
         INNER JOIN
-            {$this->prefix}pod_tbl_$datatype t ON t.id = p.tbl_row_id
+            @wp_pod_tbl_$datatype t ON t.id = p.tbl_row_id
         WHERE
             p.id = $pod_id
         LIMIT
@@ -690,11 +689,11 @@ class Pod
                 $tbl_row_ids = array();
                 $table = $pickval;
 
-                $result = pod_query("SELECT id FROM {$this->prefix}pod_fields WHERE datatype = $datatype_id AND name = '$key' LIMIT 1");
+                $result = pod_query("SELECT id FROM @wp_pod_fields WHERE datatype = $datatype_id AND name = '$key' LIMIT 1");
                 $row = mysql_fetch_assoc($result);
                 $field_id = $row['id'];
 
-                $result = pod_query("SELECT tbl_row_id FROM {$this->prefix}pod_rel WHERE pod_id = $pod_id AND field_id = $field_id");
+                $result = pod_query("SELECT tbl_row_id FROM @wp_pod_rel WHERE pod_id = $pod_id AND field_id = $field_id");
                 while ($row = mysql_fetch_assoc($result))
                 {
                     $tbl_row_ids[] = $row['tbl_row_id'];
@@ -719,7 +718,7 @@ class Pod
                 if (1 == $attr['unique'])
                 {
                     $exclude = empty($pod_id) ? '' : "pod_id != $pod_id AND";
-                    $result = pod_query("SELECT tbl_row_id FROM {$this->prefix}pod_rel WHERE $exclude field_id = $field_id");
+                    $result = pod_query("SELECT tbl_row_id FROM @wp_pod_rel WHERE $exclude field_id = $field_id");
                     if (0 < mysql_num_rows($result))
                     {
                         $unique_vals = array();
@@ -745,10 +744,7 @@ class Pod
                 $this->get_field($key);
             }
 
-            if ('id' != $key || -1 == $this->get_pod_id())
-            {
-                $this->build_field_html($key, $label, $comment, $coltype, $attr);
-            }
+            $this->build_field_html($key, $label, $comment, $coltype, $attr);
         }
 ?>
     <div><input type="button" class="button" value="Save changes" onclick="saveForm()" /></div>
@@ -894,7 +890,7 @@ class Pod
         {
             if (empty($code))
             {
-                $result = pod_query("SELECT tpl_$tpl AS template FROM {$this->prefix}pod_types WHERE name = '{$this->datatype}' LIMIT 1");
+                $result = pod_query("SELECT tpl_$tpl AS template FROM @wp_pod_types WHERE name = '{$this->datatype}' LIMIT 1");
                 $row = mysql_fetch_assoc($result);
                 $code = $row['template'];
             }

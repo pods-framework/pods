@@ -32,7 +32,7 @@ Change a column's weight
 */
 if ('move' == $action)
 {
-    $result = pod_query("SELECT id FROM {$table_prefix}pod_fields WHERE datatype = $datatype ORDER BY weight");
+    $result = pod_query("SELECT id FROM @wp_pod_fields WHERE datatype = $datatype ORDER BY weight");
     while ($row = mysql_fetch_assoc($result))
     {
         $fields[] = $row['id'];
@@ -62,7 +62,7 @@ if ('move' == $action)
     foreach ($fields as $key => $val)
     {
         $weight = ($key * 1);
-        pod_query("UPDATE {$table_prefix}pod_fields SET weight = $weight WHERE id = $val LIMIT 1");
+        pod_query("UPDATE @wp_pod_fields SET weight = $weight WHERE id = $val LIMIT 1");
     }
 }
 
@@ -78,13 +78,13 @@ elseif ('edit' == $action)
         die("Error: $name is not editable.");
     }
 
-    $result = pod_query("SELECT id FROM {$table_prefix}pod_fields WHERE datatype = $datatype AND id != $field_id AND name = '$name' LIMIT 1");
+    $result = pod_query("SELECT id FROM @wp_pod_fields WHERE datatype = $datatype AND id != $field_id AND name = '$name' LIMIT 1");
     if (0 < mysql_num_rows($result))
     {
         die("Error: The $name column cannot be cloned.");
     }
 
-    $sql = "SELECT name, coltype FROM {$table_prefix}pod_fields WHERE id = $field_id LIMIT 1";
+    $sql = "SELECT name, coltype FROM @wp_pod_fields WHERE id = $field_id LIMIT 1";
     $result = pod_query($sql) or die(mysql_error());
 
     if (0 < mysql_num_rows($result))
@@ -99,22 +99,22 @@ elseif ('edit' == $action)
 
         if ($coltype != $old_coltype && 'pick' == $coltype)
         {
-            pod_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname DROP COLUMN `$old_name`");
+            pod_query("ALTER TABLE @wp_pod_tbl_$dtname DROP COLUMN `$old_name`");
         }
         elseif ($coltype != $old_coltype && 'pick' == $old_coltype)
         {
-            pod_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname ADD COLUMN `$name` $dbtype", 'Cannot create column');
-            pod_query("UPDATE {$table_prefix}pod_fields SET sister_field_id = NULL WHERE sister_field_id = $field_id");
-            pod_query("DELETE FROM {$table_prefix}pod_rel WHERE field_id = $field_id");
+            pod_query("ALTER TABLE @wp_pod_tbl_$dtname ADD COLUMN `$name` $dbtype", 'Cannot create column');
+            pod_query("UPDATE @wp_pod_fields SET sister_field_id = NULL WHERE sister_field_id = $field_id");
+            pod_query("DELETE FROM @wp_pod_rel WHERE field_id = $field_id");
         }
         elseif ('pick' != $coltype)
         {
-            pod_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname CHANGE `$old_name` `$name` $dbtype");
+            pod_query("ALTER TABLE @wp_pod_tbl_$dtname CHANGE `$old_name` `$name` $dbtype");
         }
 
         $sql = "
         UPDATE
-            {$table_prefix}pod_fields
+            @wp_pod_fields
         SET
             name = '$name',
             label = '$label',
@@ -142,7 +142,7 @@ Edit a page
 */
 elseif ('editpage' == $action)
 {
-    pod_query("UPDATE {$table_prefix}pod_pages SET title = '$page_title', page_template = '$page_template', phpcode = '$phpcode' WHERE id = $page_id LIMIT 1");
+    pod_query("UPDATE @wp_pod_pages SET title = '$page_title', page_template = '$page_template', phpcode = '$phpcode' WHERE id = $page_id LIMIT 1");
 }
 
 /*
@@ -152,7 +152,7 @@ Edit a menu item
 */
 elseif ('editmenu' == $action)
 {
-    pod_query("UPDATE {$table_prefix}pod_menu SET uri = '$menu_uri', title = '$menu_title' WHERE id = $menu_id LIMIT 1");
+    pod_query("UPDATE @wp_pod_menu SET uri = '$menu_uri', title = '$menu_title' WHERE id = $menu_id LIMIT 1");
 }
 
 /*
@@ -162,7 +162,7 @@ Edit a helper
 */
 elseif ('edithelper' == $action)
 {
-    pod_query("UPDATE {$table_prefix}pod_helpers SET phpcode = '$phpcode' WHERE id = $helper_id LIMIT 1");
+    pod_query("UPDATE @wp_pod_helpers SET phpcode = '$phpcode' WHERE id = $helper_id LIMIT 1");
 }
 
 /*
@@ -195,7 +195,7 @@ else
 {
     $sql = "
     UPDATE
-        {$table_prefix}pod_types
+        @wp_pod_types
     SET
         label = '$label',
         is_toplevel = '$is_toplevel',

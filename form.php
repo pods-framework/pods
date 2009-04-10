@@ -5,6 +5,7 @@ $upload_dir = wp_upload_dir();
 $upload_dir = str_replace(get_option('siteurl'), '', $upload_dir['baseurl']);
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo $pods_url; ?>/style.css" />
+<script type="text/javascript" src="<?php echo get_option('siteurl'); ?>/wp-includes/js/jquery/jquery.js"></script>
 <script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqmodal.js"></script>
 <script type="text/javascript" src="<?php echo $pods_url; ?>/js/date_input.js"></script>
 <script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqFileTree.js"></script>
@@ -75,9 +76,7 @@ function saveForm() {
 
 <div id="module_form" class="form_<?php echo $datatype; ?>">
 <?php
-$_POST['public'] = true;
-$_POST['datatype'] = $datatype;
-include realpath(dirname(__FILE__) . '/ajax/showform.php');
+$this->showForm($this->get_pod_id(), true, $public_columns);
 ?>
 </div>
 

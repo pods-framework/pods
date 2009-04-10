@@ -7,7 +7,7 @@ if ($_POST['auth'] != md5(AUTH_KEY))
     die('Error: Authentication failed');
 }
 
-$result = pod_query("SHOW TABLES LIKE '{$table_prefix}pod%'");
+$result = pod_query("SHOW TABLES LIKE '@wp_pod%'");
 if (0 < mysql_num_rows($result))
 {
     while ($row = mysql_fetch_array($result))
@@ -21,5 +21,5 @@ if (0 < mysql_num_rows($result))
         }
     }
 }
-pod_query("DELETE FROM {$table_prefix}options WHERE option_name = 'pods_version'");
+pod_query("DELETE FROM @wp_options WHERE option_name = 'pods_version'");
 

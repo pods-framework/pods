@@ -14,14 +14,14 @@ Get all pod columns
 */
 if ($id = (int) $_POST['id'])
 {
-    $result = pod_query("SELECT * FROM {$table_prefix}pod_types WHERE id = $id LIMIT 1");
+    $result = pod_query("SELECT * FROM @wp_pod_types WHERE id = $id LIMIT 1");
     $module = mysql_fetch_assoc($result);
 
     $sql = "
         SELECT
             id, name, coltype, pickval, required, weight
         FROM
-            {$table_prefix}pod_fields
+            @wp_pod_fields
         WHERE
             datatype = " . $module['id'] . "
         ORDER BY
@@ -48,7 +48,7 @@ Get a menu item
 */
 elseif ($menu_id = (int) $_POST['menu_id'])
 {
-    $result = pod_query("SELECT uri, title FROM {$table_prefix}pod_menu WHERE id = $menu_id LIMIT 1");
+    $result = pod_query("SELECT uri, title FROM @wp_pod_menu WHERE id = $menu_id LIMIT 1");
     $row = mysql_fetch_assoc($result);
     echo json_encode($row);
 }
@@ -60,7 +60,7 @@ Get a pod column
 */
 elseif ($field_id = (int) $_POST['col'])
 {
-    $result = pod_query("SELECT name, label, helper, comment, coltype, pickval, sister_field_id, required, `unique`, `multiple` FROM {$table_prefix}pod_fields WHERE id = $field_id LIMIT 1");
+    $result = pod_query("SELECT name, label, helper, comment, coltype, pickval, sister_field_id, required, `unique`, `multiple` FROM @wp_pod_fields WHERE id = $field_id LIMIT 1");
     $row = mysql_fetch_assoc($result);
     echo json_encode($row);
 }
@@ -72,7 +72,7 @@ Get a pod page
 */
 elseif ($page_id = (int) $_POST['page_id'])
 {
-    $result = pod_query("SELECT * FROM {$table_prefix}pod_pages WHERE id = $page_id LIMIT 1");
+    $result = pod_query("SELECT * FROM @wp_pod_pages WHERE id = $page_id LIMIT 1");
     $row = mysql_fetch_assoc($result);
     echo json_encode($row);
 }
@@ -84,7 +84,7 @@ Get a helper
 */
 elseif ($helper_id = (int) $_POST['helper_id'])
 {
-    $result = pod_query("SELECT * FROM {$table_prefix}pod_helpers WHERE id = $helper_id LIMIT 1");
+    $result = pod_query("SELECT * FROM @wp_pod_helpers WHERE id = $helper_id LIMIT 1");
     $row = mysql_fetch_assoc($result);
     echo json_encode($row);
 }

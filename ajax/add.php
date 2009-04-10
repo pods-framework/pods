@@ -23,16 +23,16 @@ if ('pod' == $type)
 {
     if (!empty($name))
     {
-        $sql = "SELECT id FROM {$table_prefix}pod_types WHERE name = '$name' LIMIT 1";
+        $sql = "SELECT id FROM @wp_pod_types WHERE name = '$name' LIMIT 1";
         pod_query($sql, 'Cannot get pod type', 'Pod by this name already exists');
 
         // Add list and detail template presets
         $tpl_list = '<p><a href="{@detail_url}">{@name}</a></p>';
         $tpl_detail = "<h2>{@name}</h2>\n{@body}";
 
-        $pod_id = pod_query("INSERT INTO {$table_prefix}pod_types (name, tpl_list, tpl_detail) VALUES ('$name', '$tpl_list', '$tpl_detail')", 'Cannot add new pod');
-        pod_query("CREATE TABLE {$table_prefix}pod_tbl_$name (id int unsigned auto_increment primary key, name varchar(128), body text)", 'Cannot add pod database table');
-        pod_query("INSERT INTO {$table_prefix}pod_fields (datatype, name, coltype, required, weight) VALUES ($pod_id, 'name', 'txt', 1, 0),($pod_id, 'body', 'desc', 0, 1)", 'Cannot add name and body columns');
+        $pod_id = pod_query("INSERT INTO @wp_pod_types (name, tpl_list, tpl_detail) VALUES ('$name', '$tpl_list', '$tpl_detail')", 'Cannot add new pod');
+        pod_query("CREATE TABLE @wp_pod_tbl_$name (id int unsigned auto_increment primary key, name varchar(128), body text)", 'Cannot add pod database table');
+        pod_query("INSERT INTO @wp_pod_fields (datatype, name, coltype, required, weight) VALUES ($pod_id, 'name', 'txt', 1, 0),($pod_id, 'body', 'desc', 0, 1)", 'Cannot add name and body columns');
 
         die("$pod_id"); // return as string
     }
@@ -48,9 +48,9 @@ elseif ('page' == $type)
 {
     if (!empty($uri))
     {
-        $sql = "SELECT id FROM {$table_prefix}pod_pages WHERE uri = '$uri' LIMIT 1";
+        $sql = "SELECT id FROM @wp_pod_pages WHERE uri = '$uri' LIMIT 1";
         pod_query($sql, 'Cannot get PodPages', 'Page by this URI already exists');
-        $page_id = pod_query("INSERT INTO {$table_prefix}pod_pages (uri, phpcode) VALUES ('$uri', '$phpcode')", 'Cannot add new page');
+        $page_id = pod_query("INSERT INTO @wp_pod_pages (uri, phpcode) VALUES ('$uri', '$phpcode')", 'Cannot add new page');
 
         die("$page_id"); // return as string
     }
@@ -66,9 +66,9 @@ elseif ('helper' == $type)
 {
     if (!empty($name))
     {
-        $sql = "SELECT id FROM {$table_prefix}pod_helpers WHERE name = '$name' LIMIT 1";
+        $sql = "SELECT id FROM @wp_pod_helpers WHERE name = '$name' LIMIT 1";
         pod_query($sql, 'Cannot get helpers', 'helper by this name already exists');
-        $helper_id = pod_query("INSERT INTO {$table_prefix}pod_helpers (name, helper_type, phpcode) VALUES ('$name', '$helper_type', '$phpcode')", 'Cannot add new helper');
+        $helper_id = pod_query("INSERT INTO @wp_pod_helpers (name, helper_type, phpcode) VALUES ('$name', '$helper_type', '$phpcode')", 'Cannot add new helper');
 
         die("$helper_id"); // return as string
     }
@@ -83,20 +83,20 @@ Add new menu item
 elseif ('menu' == $type)
 {
     // get the "rgt" value of the parent
-    $result = pod_query("SELECT rgt FROM {$table_prefix}pod_menu WHERE id = $parent_menu_id LIMIT 1");
+    $result = pod_query("SELECT rgt FROM @wp_pod_menu WHERE id = $parent_menu_id LIMIT 1");
     $row = mysql_fetch_assoc($result);
     $rgt = $row['rgt'];
 
     // Increase all "lft" values by 2 if > "rgt"
-    pod_query("UPDATE {$table_prefix}pod_menu SET lft = lft + 2 WHERE lft > $rgt");
+    pod_query("UPDATE @wp_pod_menu SET lft = lft + 2 WHERE lft > $rgt");
 
     // Increase all "rgt" values by 2 if >= "rgt"
-    pod_query("UPDATE {$table_prefix}pod_menu SET rgt = rgt + 2 WHERE rgt >= $rgt");
+    pod_query("UPDATE @wp_pod_menu SET rgt = rgt + 2 WHERE rgt >= $rgt");
 
     // Add new item: "lft" = rgt, "rgt" = rgt + 1
     $lft = $rgt;
     $rgt = ($rgt + 1);
-    $menu_id = pod_query("INSERT INTO {$table_prefix}pod_menu (uri, title, lft, rgt) VALUES ('$menu_uri', '$menu_title', $lft, $rgt)");
+    $menu_id = pod_query("INSERT INTO @wp_pod_menu (uri, title, lft, rgt) VALUES ('$menu_uri', '$menu_title', $lft, $rgt)");
 
     die("$menu_id"); // return as string
 }
@@ -113,18 +113,18 @@ else
         die("Error: $name is a reserved name");
     }
 
-    $sql = "SELECT id FROM {$table_prefix}pod_fields WHERE datatype = $datatype AND name = '$name' LIMIT 1";
+    $sql = "SELECT id FROM @wp_pod_fields WHERE datatype = $datatype AND name = '$name' LIMIT 1";
     pod_query($sql, 'Cannot get fields', 'Column by this name already exists');
 
     if ('slug' == $coltype)
     {
-        $sql = "SELECT id FROM {$table_prefix}pod_fields WHERE datatype = $datatype AND coltype = 'slug' LIMIT 1";
+        $sql = "SELECT id FROM @wp_pod_fields WHERE datatype = $datatype AND coltype = 'slug' LIMIT 1";
         pod_query($sql, 'Too many permalinks', 'This pod already has a permalink column');
     }
 
     // Sink the new column to the bottom of the list
     $weight = 0;
-    $result = pod_query("SELECT weight FROM {$table_prefix}pod_fields WHERE datatype = $datatype ORDER BY weight DESC LIMIT 1");
+    $result = pod_query("SELECT weight FROM @wp_pod_fields WHERE datatype = $datatype ORDER BY weight DESC LIMIT 1");
     if (0 < mysql_num_rows($result))
     {
         $row = mysql_fetch_assoc($result);
@@ -132,7 +132,7 @@ else
     }
 
     $sister_field_id = ('null' == $sister_field_id) ? 'NULL' : "$sister_field_id";
-    $field_id = pod_query("INSERT INTO {$table_prefix}pod_fields (datatype, name, label, helper, coltype, pickval, sister_field_id, required, `unique`, `multiple`, weight) VALUES ('$datatype', '$name', '$label', '$helper', '$coltype', '$pickval', $sister_field_id, '$required', '$unique', '$multiple', '$weight')", 'Cannot add new field');
+    $field_id = pod_query("INSERT INTO @wp_pod_fields (datatype, name, label, helper, coltype, pickval, sister_field_id, required, `unique`, `multiple`, weight) VALUES ('$datatype', '$name', '$label', '$helper', '$coltype', '$pickval', $sister_field_id, '$required', '$unique', '$multiple', '$weight')", 'Cannot add new field');
 
     if (empty($pickval))
     {
@@ -147,11 +147,11 @@ else
             'desc' => 'mediumtext'
         );
         $dbtype = $dbtypes[$coltype];
-        pod_query("ALTER TABLE {$table_prefix}pod_tbl_$dtname ADD COLUMN `$name` $dbtype", 'Cannot create new column');
+        pod_query("ALTER TABLE @wp_pod_tbl_$dtname ADD COLUMN `$name` $dbtype", 'Cannot create new column');
     }
     else
     {
-        pod_query("UPDATE {$table_prefix}pod_fields SET sister_field_id = '$field_id' WHERE id = $sister_field_id LIMIT 1", 'Cannot update sister field');
+        pod_query("UPDATE @wp_pod_fields SET sister_field_id = '$field_id' WHERE id = $sister_field_id LIMIT 1", 'Cannot update sister field');
     }
 }
 

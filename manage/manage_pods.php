@@ -1,6 +1,6 @@
 <?php
 // Get all datatypes
-$result = pod_query("SELECT id, name FROM {$table_prefix}pod_types ORDER BY name");
+$result = pod_query("SELECT id, name FROM @wp_pod_types ORDER BY name");
 while ($row = mysql_fetch_assoc($result))
 {
     $datatypes[$row['id']] = $row['name'];
@@ -472,7 +472,7 @@ foreach ($helper_types['display'] as $key => $name)
             <option value="" style="font-weight:bold; font-style:italic">-- Pods --</option>
 <?php
 // Get pods, including country and state
-$result = pod_query("SHOW TABLES LIKE '{$table_prefix}pod_tbl_%'");
+$result = pod_query("SHOW TABLES LIKE '@wp_pod_tbl_%'");
 while ($row = mysql_fetch_array($result))
 {
     $table_name = explode('tbl_', $row[0]);
@@ -489,9 +489,9 @@ $sql = "
 SELECT DISTINCT
     t.term_id AS id, t.name
 FROM
-    {$table_prefix}term_taxonomy tx
+    @wp_term_taxonomy tx
 INNER JOIN
-    {$table_prefix}terms t ON t.term_id = tx.parent
+    @wp_terms t ON t.term_id = tx.parent
 ";
 $result = pod_query($sql);
 while ($row = mysql_fetch_assoc($result))

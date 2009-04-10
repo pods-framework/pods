@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The WordPress CMS Plugin
-Version: 1.5.6
+Version: 1.5.7
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$pods_latest = 156;
+$pods_latest = 157;
 
 function pods_init()
 {
@@ -69,10 +69,8 @@ function pods_init()
 
 function pods_menu()
 {
-    global $table_prefix;
-
     $submenu = array();
-    $result = pod_query("SELECT name, label, is_toplevel FROM {$table_prefix}pod_types ORDER BY name");
+    $result = pod_query("SELECT name, label, is_toplevel FROM @wp_pod_types ORDER BY name");
     if (0 < mysql_num_rows($result))
     {
         while ($row = mysql_fetch_array($result))
@@ -132,19 +130,19 @@ function pods_options_page()
 
 function pods_content_page()
 {
-    global $pods_url, $table_prefix;
+    global $pods_url;
     include WP_PLUGIN_DIR . '/pods/manage/manage_content.php';
 }
 
 function pods_package_page()
 {
-    global $pods_url, $table_prefix;
+    global $pods_url;
     include WP_PLUGIN_DIR . '/pods/packages.php';
 }
 
 function pods_menu_page()
 {
-    global $pods_url, $table_prefix;
+    global $pods_url;
 
     define('WP_INC_URL', str_replace('wp-content', 'wp-includes', WP_CONTENT_URL));
     include WP_PLUGIN_DIR . '/pods/manage/manage_menu.php';
@@ -231,8 +229,6 @@ function pods_404()
 
 function podpage_exists()
 {
-    global $table_prefix;
-
     $uri = explode('?', $_SERVER['REQUEST_URI']);
     $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri[0]);
     $uri = empty($uri) ? '/' : "/$uri/";
@@ -249,7 +245,7 @@ function podpage_exists()
     $baseuri = str_replace($baseuri, '', $uri);
 
     // See if the custom template exists
-    $result = pod_query("SELECT * FROM {$table_prefix}pod_pages WHERE uri IN('$uri', '$baseuri') LIMIT 1");
+    $result = pod_query("SELECT * FROM @wp_pod_pages WHERE uri IN('$uri', '$baseuri') LIMIT 1");
     if (1 > mysql_num_rows($result))
     {
         // Find any wildcards
@@ -257,7 +253,7 @@ function podpage_exists()
         SELECT
             *
         FROM
-            {$table_prefix}pod_pages
+            @wp_pod_pages
         WHERE
             '$uri' LIKE REPLACE(uri, '*', '%') OR '$baseuri' LIKE REPLACE(uri, '*', '%')
         ORDER BY

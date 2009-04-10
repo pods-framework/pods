@@ -11,6 +11,10 @@ $no_results_error   Triggered when results = 0
 */
 function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_results_error = null)
 {
+    global $table_prefix;
+
+    $sql = str_replace('@wp_', $table_prefix, $sql);
+
     $result = mysql_query($sql) or die("Error: $error; SQL: $sql; Response: " . mysql_error());
     if (0 < @mysql_num_rows($result))
     {
@@ -110,23 +114,21 @@ Build the navigation array
 */
 function build_nav_array($uri = '/', $max_depth = 1)
 {
-    global $table_prefix;
-
     $having = (0 < $max_depth) ? "HAVING depth <= $max_depth" : '';
 
     $sql = "
     SELECT
         node.id, node.uri, node.title, (COUNT(parent.title) - (sub_tree.depth + 1)) AS depth
     FROM
-        {$table_prefix}pod_menu AS node,
-        {$table_prefix}pod_menu AS parent,
-        {$table_prefix}pod_menu AS sub_parent,
+        @wp_pod_menu AS node,
+        @wp_pod_menu AS parent,
+        @wp_pod_menu AS sub_parent,
         (
             SELECT
                 node.uri, (COUNT(parent.uri) - 1) AS depth
             FROM
-                {$table_prefix}pod_menu AS node,
-                {$table_prefix}pod_menu AS parent
+                @wp_pod_menu AS node,
+                @wp_pod_menu AS parent
             WHERE
                 node.lft BETWEEN parent.lft AND parent.rgt AND
                 node.uri = '$uri'
@@ -184,7 +186,7 @@ function pods_navigation($uri = '/', $max_depth = 1)
             {
                 for ($i = $diff; $i < 0; $i++)
                 {
-                    echo '</li></ul>';
+                    echo '</li></ul></li>';
                 }
                 echo '<li>';
             }

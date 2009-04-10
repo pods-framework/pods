@@ -1,6 +1,6 @@
 <?php
 // Get all pages
-$result = pod_query("SELECT id, uri FROM {$table_prefix}pod_pages ORDER BY uri");
+$result = pod_query("SELECT id, uri FROM @wp_pod_pages ORDER BY uri");
 while ($row = mysql_fetch_assoc($result))
 {
     $pages[$row['id']] = $row['uri'];

@@ -2,7 +2,7 @@
 $upload_dir = wp_upload_dir();
 $upload_dir = str_replace(get_option('siteurl'), '', $upload_dir['baseurl']);
 
-$result = pod_query("SELECT id, name FROM {$table_prefix}pod_types ORDER BY name ASC");
+$result = pod_query("SELECT id, name FROM @wp_pod_types ORDER BY name ASC");
 while ($row = mysql_fetch_assoc($result))
 {
     $datatypes[$row['id']] = $row['name'];
@@ -228,9 +228,9 @@ SELECT
     SQL_CALC_FOUND_ROWS
     p.id, p.name, p.datatype, t.name AS dtname, p.modified
 FROM
-    {$table_prefix}pod p
+    @wp_pod p
 INNER JOIN
-    {$table_prefix}pod_types t ON t.id = p.datatype
+    @wp_pod_types t ON t.id = p.datatype
 WHERE
     $where
 ORDER BY

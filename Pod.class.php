@@ -3,15 +3,7 @@
 ==================================================
 Pod.class.php
 
-This class generates the display values.
-
-USAGE:
-$Record = new Pod('news');
-$Record->findRecords('id DESC', 10);
-
-echo $Record->getFilters();
-echo $Record->getPagination();
-echo $Record->showTemplate('list');
+http://pods.uproot.us/user_guide/
 ==================================================
 */
 class Pod
@@ -66,7 +58,7 @@ class Pod
     */
     function get_field($name, $orderby = null)
     {
-        if (isset($this->data[$name]))
+        if (isset($this->data[$name]) && empty($orderby))
         {
             return $this->data[$name];
         }
@@ -288,7 +280,7 @@ class Pod
         // Put all related items into an array
         while ($row = mysql_fetch_assoc($result))
         {
-            $data[$row['id']] = $row;
+            $data[] = $row;
         }
         return $data;
     }
@@ -367,19 +359,27 @@ class Pod
             $field_id = $row['id'];
             $field_name = $row['name'];
             $table = $row['pickval'];
+            $and_join = '';
 
             // Handle any $_GET variables
             if (!empty($_GET[$field_name]))
             {
                 $val = mysql_real_escape_string(trim($_GET[$field_name]));
-                $where .= " AND $field_name.id = $val";
+                if (is_numeric($table))
+                {
+                    $and_join = " AND $field_name.term_id = $val";
+                }
+                else
+                {
+                    $and_join = " AND $field_name.id = $val";
+                }
             }
 
             if (is_numeric($table))
             {
                 $join .= "
                 LEFT JOIN
-                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $narrow
+                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $and_join
                 LEFT JOIN
                     @wp_terms $field_name ON $field_name.term_id = r$i.tbl_row_id
                 ";
@@ -388,7 +388,7 @@ class Pod
             {
                 $join .= "
                 LEFT JOIN
-                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $narrow
+                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $and_join
                 LEFT JOIN
                     @wp_posts $field_name ON $field_name.ID = r$i.tbl_row_id
                 ";
@@ -397,7 +397,7 @@ class Pod
             {
                 $join .= "
                 LEFT JOIN
-                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $narrow
+                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $and_join
                 LEFT JOIN
                     @wp_users $field_name ON $field_name.ID = r$i.tbl_row_id
                 ";
@@ -406,7 +406,7 @@ class Pod
             {
                 $join .= "
                 LEFT JOIN
-                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $narrow
+                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $and_join
                 LEFT JOIN
                     @wp_pod_tbl_$table $field_name ON $field_name.id = r$i.tbl_row_id
                 ";
@@ -805,7 +805,7 @@ class Pod
 ?>
     <input type="text" class="form file <?php echo $name; ?>" value="<?php echo $data; ?>" />
     <a href="javascript:;" onclick="active_file = '<?php echo $name; ?>'; jQuery('#dialog').jqmShow()">select</a> after
-    <a href="media-upload.php" target="_blank">uploading</a>
+    <a href="<?php echo get_bloginfo('url'); ?>/wp-admin/media-upload.php" target="_blank">uploading</a>
 <?php
         }
         // Standard text box

@@ -31,7 +31,7 @@ if ('pod' == $type)
         $tpl_detail = "<h2>{@name}</h2>\n{@body}";
 
         $pod_id = pod_query("INSERT INTO @wp_pod_types (name, tpl_list, tpl_detail) VALUES ('$name', '$tpl_list', '$tpl_detail')", 'Cannot add new pod');
-        pod_query("CREATE TABLE @wp_pod_tbl_$name (id int unsigned auto_increment primary key, name varchar(128), body text)", 'Cannot add pod database table');
+        pod_query("CREATE TABLE `@wp_pod_tbl_$name` (id int unsigned auto_increment primary key, name varchar(128), body text)", 'Cannot add pod database table');
         pod_query("INSERT INTO @wp_pod_fields (datatype, name, coltype, required, weight) VALUES ($pod_id, 'name', 'txt', 1, 0),($pod_id, 'body', 'desc', 0, 1)", 'Cannot add name and body columns');
 
         die("$pod_id"); // return as string
@@ -147,7 +147,7 @@ else
             'desc' => 'mediumtext'
         );
         $dbtype = $dbtypes[$coltype];
-        pod_query("ALTER TABLE @wp_pod_tbl_$dtname ADD COLUMN `$name` $dbtype", 'Cannot create new column');
+        pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` ADD COLUMN `$name` $dbtype", 'Cannot create new column');
     }
     else
     {

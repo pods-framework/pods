@@ -208,7 +208,7 @@ class Pod
         else
         {
             $where = (false !== $unique_vals) ? "WHERE id NOT IN ($unique_vals)" : '';
-            $sql = "SELECT id, name FROM @wp_pod_tbl_$table $where ORDER BY name ASC";
+            $sql = "SELECT id, name FROM `@wp_pod_tbl_$table` $where ORDER BY name ASC";
         }
 
         $result = pod_query($sql);
@@ -274,7 +274,7 @@ class Pod
         // Pod table
         else
         {
-            $result = pod_query("SELECT * FROM @wp_pod_tbl_$table WHERE id IN ($term_ids) $orderby");
+            $result = pod_query("SELECT * FROM `@wp_pod_tbl_$table` WHERE id IN ($term_ids) $orderby");
         }
 
         // Put all related items into an array
@@ -296,7 +296,7 @@ class Pod
         {
             if (is_numeric($id))
             {
-                $result = pod_query("SELECT * FROM @wp_pod_tbl_$datatype WHERE id = $id LIMIT 1");
+                $result = pod_query("SELECT * FROM `@wp_pod_tbl_$datatype` WHERE id = $id LIMIT 1");
             }
             else
             {
@@ -305,7 +305,7 @@ class Pod
                 if (0 < mysql_num_rows($result))
                 {
                     $field_name = mysql_result($result, 0);
-                    $result = pod_query("SELECT * FROM @wp_pod_tbl_$datatype WHERE $field_name = '$id' LIMIT 1");
+                    $result = pod_query("SELECT * FROM `@wp_pod_tbl_$datatype` WHERE `$field_name` = '$id' LIMIT 1");
                 }
             }
 
@@ -359,7 +359,6 @@ class Pod
             $field_id = $row['id'];
             $field_name = $row['name'];
             $table = $row['pickval'];
-            $and_join = '';
 
             // Handle any $_GET variables
             if (!empty($_GET[$field_name]))
@@ -367,11 +366,11 @@ class Pod
                 $val = mysql_real_escape_string(trim($_GET[$field_name]));
                 if (is_numeric($table))
                 {
-                    $and_join = " AND $field_name.term_id = $val";
+                    $where .= " AND `$field_name`.term_id = $val";
                 }
                 else
                 {
-                    $and_join = " AND $field_name.id = $val";
+                    $where .= " AND `$field_name`.id = $val";
                 }
             }
 
@@ -379,36 +378,36 @@ class Pod
             {
                 $join .= "
                 LEFT JOIN
-                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $and_join
+                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id
                 LEFT JOIN
-                    @wp_terms $field_name ON $field_name.term_id = r$i.tbl_row_id
+                    @wp_terms `$field_name` ON `$field_name`.term_id = r$i.tbl_row_id
                 ";
             }
             elseif ('wp_page' == $table || 'wp_post' == $table)
             {
                 $join .= "
                 LEFT JOIN
-                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $and_join
+                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id
                 LEFT JOIN
-                    @wp_posts $field_name ON $field_name.ID = r$i.tbl_row_id
+                    @wp_posts `$field_name` ON `$field_name`.ID = r$i.tbl_row_id
                 ";
             }
             elseif ('wp_user' == $table)
             {
                 $join .= "
                 LEFT JOIN
-                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $and_join
+                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id
                 LEFT JOIN
-                    @wp_users $field_name ON $field_name.ID = r$i.tbl_row_id
+                    @wp_users `$field_name` ON `$field_name`.ID = r$i.tbl_row_id
                 ";
             }
             else
             {
                 $join .= "
                 LEFT JOIN
-                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id $and_join
+                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id
                 LEFT JOIN
-                    @wp_pod_tbl_$table $field_name ON $field_name.id = r$i.tbl_row_id
+                    `@wp_pod_tbl_$table` `$field_name` ON `$field_name`.id = r$i.tbl_row_id
                 ";
             }
         }
@@ -422,7 +421,7 @@ class Pod
                 @wp_pod p
             $join
             INNER JOIN
-                @wp_pod_tbl_$datatype t ON t.id = p.tbl_row_id
+                `@wp_pod_tbl_$datatype` t ON t.id = p.tbl_row_id
             WHERE
                 p.datatype = $datatype_id
                 $search
@@ -655,7 +654,7 @@ class Pod
         FROM
             @wp_pod p
         INNER JOIN
-            @wp_pod_tbl_$datatype t ON t.id = p.tbl_row_id
+            `@wp_pod_tbl_$datatype` t ON t.id = p.tbl_row_id
         WHERE
             p.id = $pod_id
         LIMIT

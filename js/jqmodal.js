@@ -1,13 +1,13 @@
 /*
  * jqModal - Minimalist Modaling with jQuery
- *   (http://dev.iceburg.net/jquery/jqmodal/)
+ *   (http://dev.iceburg.net/jquery/jqModal/)
  *
  * Copyright (c) 2007,2008 Brice Burgess <bhb@iceburg.net>
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  * 
- * $Version: 07/06/2008 +r13
+ * $Version: 03/01/2009 +r14
  */
 (function($) {
 $.fn.jqm=function(o){
@@ -32,8 +32,8 @@ if(p.trigger)$(this).jqmAddTrigger(p.trigger);
 
 $.fn.jqmAddClose=function(e){return hs(this,e,'jqmHide');};
 $.fn.jqmAddTrigger=function(e){return hs(this,e,'jqmShow');};
-$.fn.jqmShow=function(t){return this.each(function(){$.jqm.open(this._jqm,t);});};
-$.fn.jqmHide=function(t){return this.each(function(){$.jqm.close(this._jqm,t)});};
+$.fn.jqmShow=function(t){return this.each(function(){t=t||window.event;$.jqm.open(this._jqm,t);});};
+$.fn.jqmHide=function(t){return this.each(function(){t=t||window.event;$.jqm.close(this._jqm,t)});};
 
 $.jqm = {
 hash:{},

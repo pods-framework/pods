@@ -509,7 +509,7 @@ while ($row = mysql_fetch_assoc($result))
         <select id="column_sister_field_id" class="hidden"></select>
     </div>
 
-    <div class="leftside">Options</div>
+    <div class="leftside">&nbsp;</div>
     <div class="rightside">
         <input type="checkbox" id="column_required" /> required &nbsp;
         <input type="checkbox" id="column_unique" /> unique &nbsp;

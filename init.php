@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The WordPress CMS Plugin
-Version: 1.5.8
+Version: 1.5.9
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$pods_latest = 158;
+$pods_latest = 159;
 
 function pods_init()
 {
@@ -60,9 +60,9 @@ function pods_init()
     // Check for .htaccess
     if (!file_exists(ABSPATH . '.htaccess'))
     {
-        if (!copy(WP_PLUGIN_DIR . '/pods/.htaccess', ABSPATH . '.htaccess'))
+        if (!copy(WP_PLUGIN_DIR . '/pods/htaccess.txt', ABSPATH . '.htaccess'))
         {
-            echo 'Please copy the .htaccess file from plugins/pods/ to the WordPress root folder!';
+            echo 'Please copy "htaccess.txt" to "' . ABSPATH . '.htaccess"';
         }
     }
 }
@@ -124,7 +124,7 @@ function pods_menu()
 
 function pods_options_page()
 {
-    global $pods_url, $pods_roles, $table_prefix;
+    global $pods_url, $pods_latest, $pods_roles, $table_prefix;
     include WP_PLUGIN_DIR . '/pods/manage.php';
 }
 
@@ -152,8 +152,7 @@ function pods_meta()
 {
     global $pods_latest;
 
-    $pods_latest = "$pods_latest";
-    $pods_latest = $pods_latest[0] . '.' . $pods_latest[1] . '.' . $pods_latest[2];
+    $pods_latest = implode('.', str_split($pods_latest));
 ?>
 <meta name="CMS" content="Pods <?php echo $pods_latest; ?>" />
 <?php
@@ -192,20 +191,22 @@ function get_content()
 {
     global $phpcode, $post;
 
-    // Cleanse the GET variables
-    foreach ($_GET as $key => $val)
-    {
-        ${$key} = mysql_real_escape_string($val);
-    }
-
     if (!empty($phpcode))
     {
+        ob_start();
         eval("?>$phpcode");
+        $content = ob_get_clean();
+        remove_filter('the_content', 'st_add_widget');
+        remove_filter('the_content', 'prepend_attachment');
+        remove_filter('the_content', 'wpautop');
+        remove_filter('the_content', 'convert_chars');
+        remove_filter('the_content', 'wptexturize');
     }
     elseif (!empty($post))
     {
-        echo $post->post_content;
+        $content = $post->post_content;
     }
+    echo apply_filters('the_content', $content);
 }
 
 function pods_redirect()

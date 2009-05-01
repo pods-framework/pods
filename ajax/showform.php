@@ -89,7 +89,7 @@ if ($save)
                     $tbl_row_id = mysql_result($result, 0);
                     $exclude = "AND id != $tbl_row_id";
                 }
-                $sql = "SELECT id FROM @wp_pod_tbl_$datatype WHERE $key = '$val' $exclude LIMIT 1";
+                $sql = "SELECT id FROM `@wp_pod_tbl_$datatype` WHERE `$key` = '$val' $exclude LIMIT 1";
                 pod_query($sql, 'Not a unique value', "The $key value needs to be unique.");
             }
 
@@ -111,23 +111,6 @@ if ($save)
             }
         }
 
-        // Get the item name
-        $name = stripslashes($_POST['name']);
-        $name = mysql_real_escape_string(trim($name));
-
-        // Make sure the pod_id exists
-        if (empty($pod_id))
-        {
-            $sql = "INSERT INTO @wp_pod (datatype, name, created, modified) VALUES ('$datatype_id', '$name', NOW(), NOW())";
-            $pod_id = pod_query($sql, 'Cannot add new content');
-            $tbl_row_id = pod_query("INSERT INTO @wp_pod_tbl_$datatype (name) VALUES (NULL)", 'Cannot add new table row');
-        }
-        else
-        {
-            $result = pod_query("SELECT tbl_row_id FROM @wp_pod WHERE id = $pod_id LIMIT 1");
-            $tbl_row_id = mysql_result($result, 0);
-        }
-
         // Get helper code
         $result = pod_query("SELECT before_helpers, after_helpers FROM @wp_pod_types WHERE id = $datatype_id");
         $row = mysql_fetch_assoc($result);
@@ -141,6 +124,19 @@ if ($save)
             eval('?>' . $row['phpcode']);
         }
 
+        // Make sure the pod_id exists
+        if (empty($pod_id))
+        {
+            $sql = "INSERT INTO @wp_pod (datatype, name, created, modified) VALUES ('$datatype_id', '$name', NOW(), NOW())";
+            $pod_id = pod_query($sql, 'Cannot add new content');
+            $tbl_row_id = pod_query("INSERT INTO `@wp_pod_tbl_$datatype` (name) VALUES (NULL)", 'Cannot add new table row');
+        }
+        else
+        {
+            $result = pod_query("SELECT tbl_row_id FROM @wp_pod WHERE id = $pod_id LIMIT 1");
+            $tbl_row_id = mysql_result($result, 0);
+        }
+
         /*
         ==================================================
         Save table row data
@@ -148,12 +144,16 @@ if ($save)
         */
         foreach ($table_columns as $key => $val)
         {
-            $set_data[] = "$key = '$val'";
+            $set_data[] = "`$key` = '$val'";
         }
         $set_data = implode(',', $set_data);
 
+        // Get the item name
+        $name = stripslashes($_POST['name']);
+        $name = mysql_real_escape_string(trim($name));
+
         // Insert table row
-        pod_query("UPDATE @wp_pod_tbl_$datatype SET $set_data WHERE id = $tbl_row_id LIMIT 1");
+        pod_query("UPDATE `@wp_pod_tbl_$datatype` SET $set_data WHERE id = $tbl_row_id LIMIT 1");
 
         // Update wp_pod
         pod_query("UPDATE @wp_pod SET tbl_row_id = $tbl_row_id, datatype = $datatype_id, name = '$name', modified = NOW() WHERE id = $pod_id LIMIT 1", 'Cannot modify datatype row');

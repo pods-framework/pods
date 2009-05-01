@@ -16,7 +16,7 @@ if ($installed < 126)
         {
             while ($row = mysql_fetch_array($result))
             {
-                pod_query("RENAME TABLE $row[0] TO @wp_$row[0]");
+                pod_query("RENAME TABLE `$row[0]` TO `@wp_$row[0]`");
             }
         }
     }
@@ -50,7 +50,7 @@ if ($installed < 131)
         while ($row = mysql_fetch_array($result))
         {
             $rename = explode('tbl_', $row[0]);
-            pod_query("RENAME TABLE $row[0] TO @wp_pod_tbl_$rename[1]");
+            pod_query("RENAME TABLE `$row[0]` TO `@wp_pod_tbl_$rename[1]`");
         }
     }
 }

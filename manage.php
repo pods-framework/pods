@@ -63,6 +63,12 @@ if (pods_access('manage_pods'))
     <div class="navTab" rel="podArea"><a href="#pod">Pods</a></div>
 <?php
 }
+if (pods_access('manage_templates'))
+{
+?>
+    <div class="navTab" rel="templateArea"><a href="#template">Templates</a></div>
+<?php
+}
 if (pods_access('manage_podpages'))
 {
 ?>
@@ -97,7 +103,7 @@ Begin welcome area
 ==================================================
 -->
 <div id="welcomeArea" class="area hidden">
-    <h2 align="center">Thanks for using the Pods CMS plugin.</h2>
+    <h2 align="center">You're running Pods <?php echo implode('.', str_split($pods_latest)); ?></h2>
     <p align="center">See the <a href="http://pods.uproot.us/user_guide" target="_blank">User Guide</a> and <a href="http://pods.uproot.us/forum" target="_blank">Forum</a> to get started.</p>
 </div>
 
@@ -107,6 +113,10 @@ $pods_manage_dir = WP_PLUGIN_DIR . '/pods/manage/';
 if (pods_access('manage_pods'))
 {
     include $pods_manage_dir . 'manage_pods.php';
+}
+if (pods_access('manage_templates'))
+{
+    include $pods_manage_dir . 'manage_templates.php';
 }
 if (pods_access('manage_podpages'))
 {

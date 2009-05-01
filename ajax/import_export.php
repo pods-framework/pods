@@ -36,7 +36,7 @@ if ('export' == $action)
     // Get pods
     if (!empty($pod_ids))
     {
-        $result = pod_query("SELECT * FROM {$table_prefix}pod_types WHERE id IN ($pod_ids)");
+        $result = pod_query("SELECT * FROM @wp_pod_types WHERE id IN ($pod_ids)");
         while ($row = mysql_fetch_assoc($result))
         {
             $dt = $row['id'];
@@ -45,7 +45,7 @@ if ('export' == $action)
         }
 
         // Get pod fields
-        $result = pod_query("SELECT * FROM {$table_prefix}pod_fields WHERE datatype IN ($pod_ids)");
+        $result = pod_query("SELECT * FROM @wp_pod_fields WHERE datatype IN ($pod_ids)");
         while ($row = mysql_fetch_assoc($result))
         {
             unset($row['id']);
@@ -58,7 +58,7 @@ if ('export' == $action)
     // Get pod pages
     if (!empty($podpage_ids))
     {
-        $result = pod_query("SELECT * FROM {$table_prefix}pod_pages WHERE id IN ($podpage_ids)");
+        $result = pod_query("SELECT * FROM @wp_pod_pages WHERE id IN ($podpage_ids)");
         while ($row = mysql_fetch_assoc($result))
         {
             unset($row['id']);
@@ -69,7 +69,7 @@ if ('export' == $action)
     // Get helpers
     if (!empty($helper_ids))
     {
-        $result = pod_query("SELECT * FROM {$table_prefix}pod_helpers WHERE id IN ($helper_ids)");
+        $result = pod_query("SELECT * FROM @wp_pod_helpers WHERE id IN ($helper_ids)");
         while ($row = mysql_fetch_assoc($result))
         {
             unset($row['id']);

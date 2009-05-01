@@ -49,7 +49,7 @@ function podsImport(action) {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/import_export.php",
-        data: "action="+action+"&auth="+auth+"&data="+data,
+        data: "action="+action+"&auth="+auth+"&data="+encodeURIComponent(data),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);

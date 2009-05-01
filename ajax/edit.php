@@ -99,17 +99,17 @@ elseif ('edit' == $action)
 
         if ($coltype != $old_coltype && 'pick' == $coltype)
         {
-            pod_query("ALTER TABLE @wp_pod_tbl_$dtname DROP COLUMN `$old_name`");
+            pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` DROP COLUMN `$old_name`");
         }
         elseif ($coltype != $old_coltype && 'pick' == $old_coltype)
         {
-            pod_query("ALTER TABLE @wp_pod_tbl_$dtname ADD COLUMN `$name` $dbtype", 'Cannot create column');
+            pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` ADD COLUMN `$name` $dbtype", 'Cannot create column');
             pod_query("UPDATE @wp_pod_fields SET sister_field_id = NULL WHERE sister_field_id = $field_id");
             pod_query("DELETE FROM @wp_pod_rel WHERE field_id = $field_id");
         }
         elseif ('pick' != $coltype)
         {
-            pod_query("ALTER TABLE @wp_pod_tbl_$dtname CHANGE `$old_name` `$name` $dbtype");
+            pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` CHANGE `$old_name` `$name` $dbtype");
         }
 
         $sql = "

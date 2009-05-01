@@ -307,7 +307,7 @@ while ($row = mysql_fetch_assoc($result))
                 <div class="btn editme" onclick="editItem('<?php echo $row['dtname']; ?>', <?php echo $row['id']; ?>)"></div>
             </td>
             <td>
-                <?php echo $row['name']; ?>
+                <?php echo htmlspecialchars($row['name']); ?>
             </td>
             <td><?php echo $datatypes[$row['datatype']]; ?></td>
             <td><?php echo date("m/d/Y g:i A", strtotime($row['modified'])); ?></td>

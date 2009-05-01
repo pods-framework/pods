@@ -25,7 +25,7 @@ if ($field_id = (int) $_POST['col'])
 
     if ('pick' != $row['coltype'])
     {
-        pod_query("ALTER TABLE @wp_pod_tbl_$dtname DROP COLUMN $field_name");
+        pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` DROP COLUMN `$field_name`");
     }
 
     pod_query("UPDATE @wp_pod_fields SET sister_field_id = NULL WHERE sister_field_id = $field_id");
@@ -85,7 +85,7 @@ elseif ($pod_id = (int) $_POST['pod_id'])
     $dtname = $row['name'];
     $tbl_row_id = $row['tbl_row_id'];
 
-    pod_query("DELETE FROM @wp_pod_tbl_$dtname WHERE id = $tbl_row_id LIMIT 1");
+    pod_query("DELETE FROM `@wp_pod_tbl_$dtname` WHERE id = $tbl_row_id LIMIT 1");
     pod_query("UPDATE @wp_pod_rel SET sister_pod_id = NULL WHERE sister_pod_id = $pod_id");
     pod_query("DELETE FROM @wp_pod WHERE id = $pod_id LIMIT 1");
     pod_query("DELETE FROM @wp_pod_rel WHERE pod_id = $pod_id");
@@ -120,6 +120,6 @@ elseif ($datatype_id = (int) $_POST['pod'])
     pod_query("DELETE FROM @wp_pod_fields WHERE datatype = $datatype_id");
     pod_query("DELETE FROM @wp_pod_rel WHERE field_id IN ($fields)");
     pod_query("DELETE FROM @wp_pod WHERE datatype = $datatype_id");
-    pod_query("DROP TABLE @wp_pod_tbl_$dtname");
+    pod_query("DROP TABLE `@wp_pod_tbl_$dtname`");
 }
 

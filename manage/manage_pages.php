@@ -140,14 +140,7 @@ Page HTML
 ==================================================
 -->
 <div id="pageArea" class="area hidden">
-    <div style="float:left; width:50%">
-        <input type="button" class="button" onclick="jQuery('#pageBox').jqmShow()" value="Add new page" />
-    </div>
-    <div id="filterForm" style="float:left; width:50%; text-align:right">
-        Filters coming soon!
-    </div>
-    <div class="clear"><!--clear--></div>
-
+    <input type="button" class="button" onclick="jQuery('#pageBox').jqmShow()" value="Add new page" />
     <table id="browseTable" style="width:100%" cellpadding="0" cellspacing="0">
         <tr>
             <th></th>

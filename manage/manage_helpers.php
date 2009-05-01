@@ -129,14 +129,7 @@ Helper HTML
 ==================================================
 -->
 <div id="helperArea" class="area hidden">
-    <div style="float:left; width:50%">
-        <input type="button" class="button" onclick="jQuery('#helperBox').jqmShow()" value="Add new helper" />
-    </div>
-    <div id="filterForm" style="float:left; width:50%; text-align:right">
-        Filters coming soon!
-    </div>
-    <div class="clear"><!--clear--></div>
-
+    <input type="button" class="button" onclick="jQuery('#helperBox').jqmShow()" value="Add new helper" />
     <table id="browseTable" style="width:100%" cellpadding="0" cellspacing="0">
         <tr>
             <th></th>

@@ -28,7 +28,7 @@ jQuery(function() {
         jQuery("#pageArea .pform").html("");
         jQuery("#pageArea .ptr").hide();
         jQuery("#pageArea #ptr"+page_id).show();
-        jQuery("#pform"+page_id).html(theform);
+        jQuery("#pageArea #pform"+page_id).html(theform);
         loadPage();
     });
 
@@ -84,9 +84,9 @@ function addPage() {
 }
 
 function editPage() {
-    var title = jQuery("#pform"+page_id+" #page_title").val();
-    var content = jQuery("#pform"+page_id+" #page_content").val();
-    var template = jQuery("#pform"+page_id+" #page_template").val();
+    var title = jQuery("#pageArea #pform"+page_id+" #page_title").val();
+    var content = jQuery("#pageArea #pform"+page_id+" #page_content").val();
+    var template = jQuery("#pageArea #pform"+page_id+" #page_template").val();
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",

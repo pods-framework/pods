@@ -122,6 +122,7 @@ elseif ('edit' == $action)
             comment = '$comment',
             coltype = '$coltype',
             pickval = $pickval,
+            pick_filter = '$pick_filter',
             sister_field_id = $sister_field_id,
             required = '$required',
             `unique` = '$unique',
@@ -133,6 +134,16 @@ elseif ('edit' == $action)
         ";
         pod_query($sql, 'Cannot edit column');
     }
+}
+
+/*
+==================================================
+Edit a template
+==================================================
+*/
+elseif ('edittemplate' == $action)
+{
+    pod_query("UPDATE @wp_pod_templates SET code = '$code' WHERE id = $template_id LIMIT 1");
 }
 
 /*
@@ -200,8 +211,6 @@ else
         label = '$label',
         is_toplevel = '$is_toplevel',
         list_filters = '$list_filters',
-        tpl_detail = '$tpl_detail',
-        tpl_list = '$tpl_list',
         before_helpers = '$before_helpers',
         after_helpers = '$after_helpers'
     WHERE

@@ -39,7 +39,7 @@ jQuery(function() {
     // Remember the tab selection
     var thetab = window.location.href.split("#")[1];
     thetab = ("undefined" == typeof(thetab)) ? "welcome" : thetab;
-    jQuery(".navTab[@rel="+thetab+"Area]").click();
+    jQuery(".navTab[rel="+thetab+"Area]").click();
 });
 
 function colorFade(area, id) {
@@ -103,8 +103,18 @@ Begin welcome area
 ==================================================
 -->
 <div id="welcomeArea" class="area hidden">
-    <h2 align="center">You're running Pods <?php echo implode('.', str_split($pods_latest)); ?></h2>
-    <p align="center">See the <a href="http://pods.uproot.us/user_guide" target="_blank">User Guide</a> and <a href="http://pods.uproot.us/forum" target="_blank">Forum</a> to get started.</p>
+    <div id="logo">
+        <div id="version">
+            <?php echo implode('.', str_split($pods_latest)); ?>
+        </div>
+    </div>
+    <div id="overview">
+        <h3>This server is running...</h3>
+        &nbsp; &raquo; &nbsp; PHP <?php echo phpversion(); ?><br />
+        &nbsp; &raquo; &nbsp; <?php echo $_SERVER['SERVER_SOFTWARE']; ?><br />
+        &nbsp; &raquo; &nbsp; MySQL <?php echo mysql_result(pod_query("SELECT VERSION()"), 0); ?>
+    </div>
+    <div class="clear"><!--clear--></div>
 </div>
 
 <?php

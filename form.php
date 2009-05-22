@@ -26,6 +26,7 @@ jQuery(function() {
         jQuery("."+active_file).val(file);
         jQuery("#dialog").jqmHide();
     });
+    jQuery("#module_form input.date").date_input();
     jQuery("#dialog").jqm();
 });
 

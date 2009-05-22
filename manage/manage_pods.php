@@ -41,6 +41,8 @@ function resetForm() {
     jQuery("#column_multiple").attr("disabled", false);
     jQuery("#column_sister_field_id").val("");
     jQuery("#column_sister_field_id").hide();
+    jQuery("#column_pick_filter").val("");
+    jQuery("#pick_filter_block").hide();
     jQuery("#column_pickval").hide();
 }
 
@@ -56,10 +58,13 @@ function addOrEditColumn() {
 function doDropdown(val) {
     if ('pick' == val) {
         jQuery("#column_pickval").show();
+        jQuery("#pick_filter_block").show();
     }
     else {
         jQuery("#column_pickval").val("");
         jQuery("#column_pickval").hide();
+        jQuery("#column_pick_filter").val("");
+        jQuery("#pick_filter_block").hide();
     }
     jQuery("#column_sister_field_id").val("");
     jQuery("#column_sister_field_id").hide();
@@ -85,7 +90,7 @@ function sisterFields(sister_field_id) {
                     html += '<option value="'+id+'">'+name+'</option>';
                 }
                 jQuery("#column_sister_field_id").html(html);
-                jQuery("#column_sister_field_id option[@value="+sister_field_id+"]").attr("selected", "selected");
+                jQuery("#column_sister_field_id option[value="+sister_field_id+"]").attr("selected", "selected");
                 jQuery("#column_sister_field_id").show();
             }
         }
@@ -107,16 +112,12 @@ function loadPod() {
                 var label = (null == pod_type.label) ? "" : pod_type.label;
                 var is_toplevel = parseInt(pod_type.is_toplevel);
                 var list_filters = (null == pod_type.list_filters) ? "" : pod_type.list_filters;
-                var tpl_detail = (null == pod_type.tpl_detail) ? "" : pod_type.tpl_detail;
-                var tpl_list = (null == pod_type.tpl_list) ? "" : pod_type.tpl_list;
                 var before_helpers = (null == pod_type.before_helpers) ? "" : pod_type.before_helpers;
                 var after_helpers = (null == pod_type.after_helpers) ? "" : pod_type.after_helpers;
                 jQuery("#pod_name").html(name);
                 jQuery("#pod_label").val(label);
                 jQuery("#is_toplevel").attr("checked", is_toplevel);
                 jQuery("#list_filters").val(list_filters);
-                jQuery("#tpl_detail").val(tpl_detail);
-                jQuery("#tpl_list").val(tpl_list);
                 jQuery("#list_before_helpers").html("");
                 jQuery("#list_after_helpers").html("");
 
@@ -222,8 +223,6 @@ function editPod() {
     var label = jQuery("#pod_label").val();
     var is_toplevel = (true == jQuery("#is_toplevel").is(":checked")) ? 1 : 0;
     var list_filters = jQuery("#list_filters").val();
-    var tpl_detail = jQuery("#tpl_detail").val();
-    var tpl_list = jQuery("#tpl_list").val();
     var before_helpers = "";
     jQuery("#list_before_helpers .helper").each(function() {
         var new_helper = jQuery(this).attr("id");
@@ -237,7 +236,7 @@ function editPod() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "auth="+auth+"&datatype="+datatype+"&label="+label+"&is_toplevel="+is_toplevel+"&list_filters="+encodeURIComponent(list_filters)+"&tpl_detail="+encodeURIComponent(tpl_detail)+"&tpl_list="+encodeURIComponent(tpl_list)+"&before_helpers="+before_helpers+"&after_helpers="+after_helpers,
+        data: "auth="+auth+"&datatype="+datatype+"&label="+label+"&is_toplevel="+is_toplevel+"&list_filters="+encodeURIComponent(list_filters)+"&before_helpers="+before_helpers+"&after_helpers="+after_helpers,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -262,7 +261,7 @@ function dropPod() {
                 }
                 else {
                     jQuery("#pod_name").html("Choose a Pod");
-                    jQuery("#podArea #column_list").html('Need some help? Check out the <a href="http://pods.uproot.us/user_guide" target="_blank">User Guide</a> to get started.');
+                    jQuery("#podArea #column_list").html('Need some help? Check out the <a href="http://codex.uproot.us" target="_blank">Codex</a> to get started.');
                     jQuery("#podArea .t"+datatype).remove();
                     jQuery("#podArea .idle").hide();
                 }
@@ -287,6 +286,7 @@ function loadColumn(col) {
             var coltype = (null == col_data.coltype) ? "" : col_data.coltype;
             var pickval = (null == col_data.pickval) ? "" : col_data.pickval;
             var sister_field_id = (null == col_data.sister_field_id) ? "" : col_data.sister_field_id;
+            var pick_filter = (null == col_data.pick_filter) ? "" : col_data.pick_filter;
             var required = parseInt(col_data.required);
             var unique = parseInt(col_data.unique);
             var multiple = parseInt(col_data.multiple);
@@ -296,7 +296,9 @@ function loadColumn(col) {
             jQuery("#column_comment").val(comment);
             jQuery("#column_type").val(coltype);
             jQuery("#column_pickval").val(pickval);
+            jQuery("#column_pick_filter").val(pick_filter);
             jQuery("#column_sister_field_id").hide();
+            jQuery("#pick_filter_block").hide();
             jQuery("#column_required").attr("checked", required);
             jQuery("#column_unique").attr("checked", unique);
             jQuery("#column_multiple").attr("checked", multiple);
@@ -308,6 +310,7 @@ function loadColumn(col) {
             }
             if ("pick" == coltype) {
                 jQuery("#column_pickval").show();
+                jQuery("#pick_filter_block").show();
             }
             if ("0" != sister_field_id) {
                 sisterFields(sister_field_id);
@@ -327,6 +330,7 @@ function addColumn() {
     var dtname = jQuery("#pod_name").html();
     var coltype = jQuery("#column_type").val();
     var pickval = jQuery("#column_pickval").val();
+    var pick_filter = jQuery("#column_pick_filter").val();
     var sister_field_id = jQuery("#column_sister_field_id").val();
     var required = (true == jQuery("#column_required").is(":checked")) ? 1 : 0;
     var unique = (true == jQuery("#column_unique").is(":checked")) ? 1 : 0;
@@ -338,7 +342,7 @@ function addColumn() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/add.php",
-        data: "auth="+auth+"&datatype="+datatype+"&dtname="+dtname+"&name="+name+"&label="+label+"&helper="+helper+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required+"&unique="+unique+"&multiple="+multiple,
+        data: "auth="+auth+"&datatype="+datatype+"&dtname="+dtname+"&name="+name+"&label="+label+"&helper="+helper+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&sister_field_id="+sister_field_id+"&required="+required+"&unique="+unique+"&multiple="+multiple,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -375,6 +379,7 @@ function editColumn(col) {
     var dtname = jQuery(".tab.active").html();
     var coltype = jQuery("#column_type").val();
     var pickval = jQuery("#column_pickval").val();
+    var pick_filter = jQuery("#column_pick_filter").val();
     var sister_field_id = jQuery("#column_sister_field_id").val();
     var required = (true == jQuery("#column_required").is(":checked")) ? 1 : 0;
     var unique = (true == jQuery("#column_unique").is(":checked")) ? 1 : 0;
@@ -386,7 +391,7 @@ function editColumn(col) {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "auth="+auth+"&action=edit&datatype="+datatype+"&dtname="+dtname+"&field_id="+col+"&name="+name+"&label="+label+"&helper="+helper+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&sister_field_id="+sister_field_id+"&required="+required+"&unique="+unique+"&multiple="+multiple,
+        data: "auth="+auth+"&action=edit&datatype="+datatype+"&dtname="+dtname+"&field_id="+col+"&name="+name+"&label="+label+"&helper="+helper+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&sister_field_id="+sister_field_id+"&required="+required+"&unique="+unique+"&multiple="+multiple,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -509,6 +514,11 @@ while ($row = mysql_fetch_assoc($result))
         <select id="column_sister_field_id" class="hidden"></select>
     </div>
 
+    <div id="pick_filter_block">
+        <div class="leftside">Pick Filter</div>
+        <div class="rightside"><input type="text" id="column_pick_filter" value="" /></div>
+    </div>
+
     <div class="leftside">&nbsp;</div>
     <div class="rightside">
         <input type="checkbox" id="column_required" /> required &nbsp;
@@ -517,13 +527,9 @@ while ($row = mysql_fetch_assoc($result))
     </div>
 
     <div class="leftside">Comment</div>
-    <div class="rightside">
-        <input type="text" id="column_comment" value="" />
-    </div>
+    <div class="rightside"><input type="text" id="column_comment" value="" /></div>
 
-    <div class="clear">
-        <span class="red">*CAUTION*</span> changing column types can result in data loss!
-    </div>
+    <div class="clear"><!--clear--></div>
 </div>
 
 <!--
@@ -546,21 +552,15 @@ if (isset($datatypes))
 }
 ?>
     </div>
-    <div class="rightside">
+    <div class="edit-pane">
         <h2 class="title" id="pod_name">Choose a Pod</h2>
-        <p id="column_list">Need some help? Check out the <a href="http://pods.uproot.us/user_guide" target="_blank">User Guide</a> to get started.</p>
+        <p id="column_list">Need some help? Check out the <a href="http://codex.uproot.us" target="_blank">Codex</a> to get started.</p>
         <div class="idle hidden">
             <p>
                 <input type="button" class="button" onclick="add_or_edit='add'; resetForm(); jQuery('#columnBox').jqmShow()" value="Add a column" />
                 <input type="button" class="button" onclick="editPod()" value="Save changes" /> or
                 <a href="javascript:;" onclick="dropPod()">drop pod</a>
             </p>
-
-            <p class="extras" onclick="jQuery('#tpl_detail').toggle(); jQuery(this).toggleClass('open')">Detail Template</p>
-            <textarea id="tpl_detail" class="hidden"></textarea>
-
-            <p class="extras" onclick="jQuery('#tpl_list').toggle(); jQuery(this).toggleClass('open')">List Template</p>
-            <textarea id="tpl_list" class="hidden"></textarea>
 
             <p class="extras" onclick="jQuery('#pod_settings').toggle(); jQuery(this).toggleClass('open')">Pod Settings</p>
             <div id="pod_settings" class="hidden">

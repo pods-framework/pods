@@ -35,6 +35,16 @@ if ($field_id = (int) $_POST['col'])
 
 /*
 ==================================================
+Drop a single template
+==================================================
+*/
+elseif ($template_id = (int) $_POST['template'])
+{
+    pod_query("DELETE FROM @wp_pod_templates WHERE id = $template_id LIMIT 1");
+}
+
+/*
+==================================================
 Drop a single page
 ==================================================
 */

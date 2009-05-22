@@ -17,8 +17,6 @@ CREATE TABLE wp_pod_types (
     label VARCHAR(32),
     is_toplevel BOOL default 0,
     list_filters TEXT,
-    tpl_detail TEXT,
-    tpl_list TEXT,
     before_helpers TEXT,
     after_helpers TEXT
 );
@@ -33,6 +31,7 @@ CREATE TABLE wp_pod_fields (
     comment VARCHAR(128),
     coltype VARCHAR(4),
     pickval VARCHAR(32),
+    pick_filter VARCHAR(128),
     sister_field_id INT unsigned,
     required BOOL default 0,
     `unique` BOOL default 0,
@@ -47,6 +46,13 @@ CREATE TABLE wp_pod_rel (
     sister_pod_id INT unsigned,
     field_id INT unsigned,
     tbl_row_id INT unsigned
+);
+
+DROP TABLE IF EXISTS wp_pod_templates;
+CREATE TABLE wp_pod_templates (
+    id INT unsigned auto_increment primary key,
+    name VARCHAR(32),
+    code TEXT
 );
 
 DROP TABLE IF EXISTS wp_pod_pages;
@@ -119,9 +125,9 @@ INSERT INTO wp_pod_tbl_country (name) VALUES
 INSERT INTO wp_pod_tbl_state (name) VALUES
 ('Alabama'),('Alaska'),('Arizona'),('Arkansas'),('California'),('Colorado'),('Connecticut'),('Delaware'),('District of Columbia'),('Florida'),('Georgia'),('Hawaii'),('Idaho'),('Illinois'),('Indiana'),('Iowa'),('Kansas'),('Kentucky'),('Louisiana'),('Maine'),('Maryland'),('Massachussetts'),('Michigan'),('Minnesota'),('Mississippi'),('Missouri'),('Montana'),('Nebraska'),('Nevada'),('New Hampshire'),('New Mexico'),('New Jersey'),('New York'),('North Carolina'),('North Dakota'),('Ohio'),('Oklahoma'),('Oregon'),('Pennsylvania'),('Rhode Island'),('South Carolina'),('South Dakota'),('Tennessee'),('Texas'),('Utah'),('Virginia'),('Vermont'),('Washington'),('West Virginia'),('Wisconsin'),('Wyoming');
 
-INSERT INTO wp_pod_types (name, label, list_filters, tpl_detail, tpl_list) VALUES
-('event',NULL,'','<h2>{@name}</h2>\n<p><b>Start Date:</b> {@start_date,format_date}</p>\n<p><b>End Date:</b> {@end_date,format_date}</p>\n<p><b>Contact Name:</b> {@contact_name}</p>\n<p>{@body}</p>','<p><a href=\"{@detail_url}\">{@name}</a> - {@start_date,format_date}</p>'),
-('person',NULL,'','<h2>{@name}</h2>\n<img src=\"{@photo}\" alt=\"{@name}\" />\n<p>{@job_title}</p>\n<p>{@body}</p>','<p><a href=\"{@detail_url}\">{@name}</a></p>');
+INSERT INTO wp_pod_types (name, label, list_filters) VALUES
+('event',NULL,''),
+('person',NULL,'');
 
 INSERT INTO wp_pod_menu (uri, title, lft, rgt) VALUES
 ('/', 'Home', 1, 2);
@@ -142,6 +148,10 @@ INSERT INTO wp_pod_fields (datatype, name, label, comment, coltype, pickval, sis
 (2,'employer','Employer',NULL,'txt','',0,0,4),
 (2,'phone','phone',NULL,'txt','',0,0,5),
 (2,'email','email',NULL,'txt','',0,0,6);
+
+INSERT INTO wp_pod_templates (name, code) VALUES
+('list','<p><a href="{@detail_url}">{@name}</a></p>'),
+('detail','<h2>{@name}</h2>\n{@body}');
 
 INSERT INTO wp_pod_pages (uri, phpcode) VALUES
 ('/list/','<?php\n$type = empty($type) ? \'news\' : $type;\n\n$Record = new Pod($type);\n$Record->findRecords(\'id DESC\');\n?>\n\n<h2><?php echo ucwords($type); ?> Listing</h2>\n\n<?php\necho $Record->getFilters();\necho $Record->getPagination();\necho $Record->showTemplate(\'list\');'),

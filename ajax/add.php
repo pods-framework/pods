@@ -26,17 +26,31 @@ if ('pod' == $type)
         $sql = "SELECT id FROM @wp_pod_types WHERE name = '$name' LIMIT 1";
         pod_query($sql, 'Cannot get pod type', 'Pod by this name already exists');
 
-        // Add list and detail template presets
-        $tpl_list = '<p><a href="{@detail_url}">{@name}</a></p>';
-        $tpl_detail = "<h2>{@name}</h2>\n{@body}";
-
-        $pod_id = pod_query("INSERT INTO @wp_pod_types (name, tpl_list, tpl_detail) VALUES ('$name', '$tpl_list', '$tpl_detail')", 'Cannot add new pod');
+        $pod_id = pod_query("INSERT INTO @wp_pod_types (name) VALUES ('$name')", 'Cannot add new pod');
         pod_query("CREATE TABLE `@wp_pod_tbl_$name` (id int unsigned auto_increment primary key, name varchar(128), body text)", 'Cannot add pod database table');
         pod_query("INSERT INTO @wp_pod_fields (datatype, name, coltype, required, weight) VALUES ($pod_id, 'name', 'txt', 1, 0),($pod_id, 'body', 'desc', 0, 1)", 'Cannot add name and body columns');
 
         die("$pod_id"); // return as string
     }
     die('Error: Enter a pod name!');
+}
+
+/*
+==================================================
+Add new template
+==================================================
+*/
+elseif ('template' == $type)
+{
+    if (!empty($name))
+    {
+        $sql = "SELECT id FROM @wp_pod_templates WHERE name = '$name' LIMIT 1";
+        pod_query($sql, 'Cannot get Templates', 'Template by this name already exists');
+        $template_id = pod_query("INSERT INTO @wp_pod_templates (name, code) VALUES ('$name', '$code')", 'Cannot add new template');
+
+        die("$template_id"); // return as string
+    }
+    die('Error: Enter a template name');
 }
 
 /*
@@ -49,7 +63,7 @@ elseif ('page' == $type)
     if (!empty($uri))
     {
         $sql = "SELECT id FROM @wp_pod_pages WHERE uri = '$uri' LIMIT 1";
-        pod_query($sql, 'Cannot get PodPages', 'Page by this URI already exists');
+        pod_query($sql, 'Cannot get Pod Pages', 'Page by this URI already exists');
         $page_id = pod_query("INSERT INTO @wp_pod_pages (uri, phpcode) VALUES ('$uri', '$phpcode')", 'Cannot add new page');
 
         die("$page_id"); // return as string
@@ -132,7 +146,7 @@ else
     }
 
     $sister_field_id = ('null' == $sister_field_id) ? 'NULL' : "$sister_field_id";
-    $field_id = pod_query("INSERT INTO @wp_pod_fields (datatype, name, label, helper, coltype, pickval, sister_field_id, required, `unique`, `multiple`, weight) VALUES ('$datatype', '$name', '$label', '$helper', '$coltype', '$pickval', $sister_field_id, '$required', '$unique', '$multiple', '$weight')", 'Cannot add new field');
+    $field_id = pod_query("INSERT INTO @wp_pod_fields (datatype, name, label, helper, coltype, pickval, pick_filter, sister_field_id, required, `unique`, `multiple`, weight) VALUES ('$datatype', '$name', '$label', '$helper', '$coltype', '$pickval', '$pick_filter', $sister_field_id, '$required', '$unique', '$multiple', '$weight')", 'Cannot add new field');
 
     if (empty($pickval))
     {

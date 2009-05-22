@@ -1,68 +1,4 @@
 <?php
-if ($installed < 126)
-{
-    // Add the "required" option
-    pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN required BOOL default 0 AFTER sister_field_id");
-
-    // Add the "label" option
-    pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN label VARCHAR(32) AFTER name");
-
-    // Fix table prefixes
-    if (!empty($table_prefix))
-    {
-        $result = pod_query("SHOW TABLES LIKE 'tbl_%'");
-
-        if (0 < mysql_num_rows($result))
-        {
-            while ($row = mysql_fetch_array($result))
-            {
-                pod_query("RENAME TABLE `$row[0]` TO `@wp_$row[0]`");
-            }
-        }
-    }
-
-    // Change the "post_type" of all pod items
-    $result = pod_query("SELECT id, name FROM @wp_pod_types");
-    while ($row = mysql_fetch_assoc($result))
-    {
-        $datatypes[$row['id']] = $row['name'];
-    }
-    $result = pod_query("SELECT post_id, datatype FROM @wp_pod");
-    while ($row = mysql_fetch_array($result))
-    {
-        $datatype = $datatypes[$row['datatype']];
-        pod_query("UPDATE @wp_posts SET post_type = '$datatype' WHERE ID = $row[0] LIMIT 1");
-    }
-}
-
-if ($installed < 127)
-{
-    // Add the "comment" option
-    pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN comment VARCHAR(128) AFTER label");
-}
-
-if ($installed < 131)
-{
-    $result = pod_query("SHOW TABLES LIKE '@wp_tbl_%'");
-
-    if (0 < mysql_num_rows($result))
-    {
-        while ($row = mysql_fetch_array($result))
-        {
-            $rename = explode('tbl_', $row[0]);
-            pod_query("RENAME TABLE `$row[0]` TO `@wp_pod_tbl_$rename[1]`");
-        }
-    }
-}
-
-if ($installed < 132)
-{
-    pod_query("UPDATE @wp_pod_pages SET phpcode = CONCAT('<?php\n', phpcode) WHERE phpcode NOT LIKE '?>%'");
-    pod_query("UPDATE @wp_pod_pages SET phpcode = SUBSTR(phpcode, 3) WHERE phpcode LIKE '?>%'");
-    pod_query("UPDATE @wp_pod_widgets SET phpcode = CONCAT('<?php\n', phpcode) WHERE phpcode NOT LIKE '?>%'");
-    pod_query("UPDATE @wp_pod_widgets SET phpcode = SUBSTR(phpcode, 3) WHERE phpcode LIKE '?>%'");
-}
-
 if ($installed < 143)
 {
     $result = pod_query("SHOW COLUMNS FROM @wp_pod_types LIKE 'description'");
@@ -161,6 +97,40 @@ if ($installed < 151)
     pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN helper VARCHAR(32) AFTER label");
     pod_query("ALTER TABLE @wp_pod_types ADD COLUMN before_helpers TEXT AFTER tpl_list");
     pod_query("ALTER TABLE @wp_pod_types ADD COLUMN after_helpers TEXT AFTER before_helpers");
+}
+
+if ($installed < 160)
+{
+    // Add the "templates" table
+    $sql = "
+    CREATE TABLE @wp_pod_templates (
+        id INT unsigned auto_increment primary key,
+        name VARCHAR(32),
+        code TEXT)";
+    pod_query($sql);
+
+    // Add list and detail template presets
+    $tpl_list = '<p><a href="{@detail_url}">{@name}</a></p>';
+    $tpl_detail = "<h2>{@name}</h2>\n{@body}";
+    pod_query("INSERT INTO @wp_pod_templates (name, code) VALUES ('detail', '$tpl_detail'),('list', '$tpl_list')");
+
+    // Try to route old templates as best as possible
+    $result = pod_query("SELECT name, tpl_detail, tpl_list FROM @wp_pod_types");
+    while ($row = mysql_fetch_assoc($result))
+    {
+        // Create the new template, e.g. "dtname_list" or "dtname_detail"
+        foreach ($row as $key => $val)
+        {
+            ${$key} = mysql_real_escape_string($val);
+        }
+        pod_query("INSERT INTO @wp_pod_templates (name, code) VALUES ('{$name}_detail', '$tpl_detail'),('{$name}_list', '$tpl_list')");
+    }
+
+    // Drop the "tpl_detail" and "tpl_list" columns
+    pod_query("ALTER TABLE @wp_pod_types DROP COLUMN tpl_detail, DROP COLUMN tpl_list");
+
+    // Add the "pick_filter" column
+    pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN pick_filter VARCHAR(128) AFTER pickval");
 }
 
 // Save this version

@@ -8,6 +8,7 @@ http://pods.uproot.us/user_guide/
 */
 class Pod
 {
+    var $id;
     var $data;
     var $result;
     var $datatype;
@@ -15,7 +16,6 @@ class Pod
     var $total_rows;
     var $rel_table;
     var $rpp = 15;
-    var $prefix;
     var $page;
 
     function Pod($datatype = null, $id = null)
@@ -31,6 +31,7 @@ class Pod
 
             if (null != $id)
             {
+                $this->id = $id;
                 return $this->getRecordById($id);
             }
         }
@@ -102,7 +103,7 @@ class Pod
             $datatype = $this->rel_table;
             foreach ($data as $key => $val)
             {
-                $detail_url = get_bloginfo('url') . "/detail/?type=$datatype&id=$key";
+                $detail_url = get_bloginfo('url') . "/{$datatype}_detail/" . $val['id'];
                 $val = is_numeric($datatype) ? $val['name'] : '<a href="' . $detail_url . '">' . $val['name'] . '</a>';
                 $out .= "<span class='{$first}list list_$datatype'>$val</span>";
                 $first = '';
@@ -169,12 +170,21 @@ class Pod
     Get pod or category dropdown values
     ==================================================
     */
-    function get_dropdown_values($table = null, $field_name = null, $tbl_row_ids = null, $unique_vals = false)
+    function get_dropdown_values($table = null, $field_name = null, $tbl_row_ids = null, $unique_vals = false, $pick_filter = null)
     {
         // Category dropdown
         if (is_numeric($table))
         {
             $where = (false !== $unique_vals) ? "AND id NOT IN ($unique_vals)" : '';
+            if (!empty($pick_filter))
+            {
+                if (!empty($where))
+                {
+                    $where .= ' AND ';
+                }
+                $where .= $pick_filter;
+            }
+
             $sql = "
             SELECT
                 t.term_id AS id, t.name
@@ -190,24 +200,44 @@ class Pod
         elseif ('wp_page' == $table)
         {
             $where = (false !== $unique_vals) ? "AND id NOT IN ($unique_vals)" : '';
+            if (!empty($pick_filter))
+            {
+                $where .= (empty($where) ? ' WHERE ' : ' AND ') . $pick_filter;
+            }
+
             $sql = "SELECT ID as id, post_title AS name FROM @wp_posts WHERE post_type = 'page' $where ORDER BY name ASC";
         }
         // WP post dropdown
         elseif ('wp_post' == $table)
         {
             $where = (false !== $unique_vals) ? "AND id NOT IN ($unique_vals)" : '';
+            if (!empty($pick_filter))
+            {
+                $where .= (empty($where) ? ' WHERE ' : ' AND ') . $pick_filter;
+            }
+
             $sql = "SELECT ID as id, post_title AS name FROM @wp_posts WHERE post_type = 'post' $where ORDER BY name ASC";
         }
         // WP user dropdown
         elseif ('wp_user' == $table)
         {
             $where = (false !== $unique_vals) ? "WHERE id NOT IN ($unique_vals)" : '';
+            if (!empty($pick_filter))
+            {
+                $where .= (empty($where) ? ' WHERE ' : ' AND ') . $pick_filter;
+            }
+
             $sql = "SELECT ID as id, display_name AS name FROM @wp_users $where ORDER BY name ASC";
         }
         // Pod table dropdown
         else
         {
             $where = (false !== $unique_vals) ? "WHERE id NOT IN ($unique_vals)" : '';
+            if (!empty($pick_filter))
+            {
+                $where .= (empty($where) ? ' WHERE ' : ' AND ') . $pick_filter;
+            }
+
             $sql = "SELECT id, name FROM `@wp_pod_tbl_$table` $where ORDER BY name ASC";
         }
 
@@ -631,7 +661,7 @@ class Pod
 
         $sql = "
         SELECT
-            f.name, f.label, f.comment, f.coltype, f.pickval, f.required, f.`unique`, f.`multiple`
+            f.name, f.label, f.comment, f.coltype, f.pickval, f.pick_filter, f.required, f.`unique`, f.`multiple`
         FROM
             @wp_pod_types t
         INNER JOIN
@@ -672,6 +702,7 @@ class Pod
             $comment = $field_array['comment'];
             $coltype = $field_array['coltype'];
             $pickval = $field_array['pickval'];
+            $pick_filter = $field_array['pick_filter'];
             $attr = $attribute[$key];
             $attr['required'] = $field_array['required'];
             $attr['unique'] = $field_array['unique'];
@@ -728,7 +759,7 @@ class Pod
                         $unique_vals = implode(',', $unique_vals);
                     }
                 }
-                $this->data[$key] = $this->get_dropdown_values($table, null, $tbl_row_ids, $unique_vals);
+                $this->data[$key] = $this->get_dropdown_values($table, null, $tbl_row_ids, $unique_vals, $pick_filter);
             }
             else
             {
@@ -885,25 +916,34 @@ class Pod
     */
     function showTemplate($tpl, $code = null)
     {
-        if ('list' == $tpl || 'detail' == $tpl)
+        if (!empty($tpl))
         {
             if (empty($code))
             {
-                $result = pod_query("SELECT tpl_$tpl AS template FROM @wp_pod_types WHERE name = '{$this->datatype}' LIMIT 1");
+                // Backwards compatibility
+                if ('list' == $tpl || 'detail' == $tpl)
+                {
+                    $tpl = $this->datatype . "_$tpl";
+                }
+
+                $result = pod_query("SELECT code FROM @wp_pod_templates WHERE name = '$tpl' LIMIT 1");
                 $row = mysql_fetch_assoc($result);
-                $code = $row['template'];
+                $code = $row['code'];
             }
 
-            if ('list' == $tpl)
+            // List templates don't use $this->id
+            if (empty($this->id))
             {
                 while ($this->fetchRecord())
                 {
-                    echo preg_replace_callback("/({@(.*?)})/m", array($this, "magic_swap"), $code);
+                    $out = preg_replace_callback("/({@(.*?)})/m", array($this, "magic_swap"), $code);
+                    eval("?>$out");
                 }
             }
-            elseif ('detail' == $tpl)
+            else
             {
-                echo preg_replace_callback("/({@(.*?)})/m", array($this, "magic_swap"), $code);
+                $out = preg_replace_callback("/({@(.*?)})/m", array($this, "magic_swap"), $code);
+                eval("?>$ouut");
             }
         }
     }
@@ -928,7 +968,7 @@ class Pod
         else
         {
             $value = $this->print_field($name);
-            if (!empty($value) || 0 === $value)
+            if (null != $value && '' != $value)
             {
                 // Use helper if necessary
                 if (!empty($helper))

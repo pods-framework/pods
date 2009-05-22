@@ -19,7 +19,7 @@ if ($id = (int) $_POST['id'])
 
     $sql = "
         SELECT
-            id, name, coltype, pickval, required, weight
+            id, name, coltype, pickval, pick_filter, required, weight
         FROM
             @wp_pod_fields
         WHERE
@@ -60,7 +60,19 @@ Get a pod column
 */
 elseif ($field_id = (int) $_POST['col'])
 {
-    $result = pod_query("SELECT name, label, helper, comment, coltype, pickval, sister_field_id, required, `unique`, `multiple` FROM @wp_pod_fields WHERE id = $field_id LIMIT 1");
+    $result = pod_query("SELECT * FROM @wp_pod_fields WHERE id = $field_id LIMIT 1");
+    $row = mysql_fetch_assoc($result);
+    echo json_encode($row);
+}
+
+/*
+==================================================
+Get a pod template
+==================================================
+*/
+elseif ($template_id = (int) $_POST['template_id'])
+{
+    $result = pod_query("SELECT * FROM @wp_pod_templates WHERE id = $template_id LIMIT 1");
     $row = mysql_fetch_assoc($result);
     echo json_encode($row);
 }

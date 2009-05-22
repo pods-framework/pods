@@ -1,31 +1,37 @@
 /* Admin-facing */
 .area {
-    padding: 5px;
-    margin: 5px 15px 5px 0;
-    border: 1px solid #E3E3E3;
-    background: #fff;
+    margin: 0 15px 0 0;
+    border-top: 1px solid #E3E3E3;
+    padding: 10px 0;
 }
 
 .title {
     color: #464646;
     font-family: Georgia, "Times New Roman", "Bitstream Charter", Times, serif;
+    font-weight: normal;
     font-style: italic;
     font-size: 24px;
-    margin: 0;
+    margin: 10px 0 0;
+}
+
+#nav {
+    margin-top: 10px;
 }
 
 .navTab a {
     float: left;
     padding: 5px;
-    margin-right: 20px;
-    text-decoration: underline;
-    color: black;
+    margin-right: 10px;
+    margin-bottom: -1px;
+    border-bottom: 1px solid #E3E3E3;
+    color: #464646;
 }
 
 .navTab.active a {
-    color: white;
-    background: #464646;
+    color: #fff;
+    background: #3b4452;
     text-decoration: none;
+    border-bottom: 1px solid #3b4452;
 }
 
 .hidden {
@@ -106,29 +112,58 @@
 
 .area textarea, .desc, .code {
     width: 99%;
-    height: 140px;
+    height: 200px;
     border: 1px solid #E3E3E3;
 }
 
-.area .tabs {
+#podArea .tabs {
     float: left;
-    width: 30%;
+    width: 200px;
 }
 
-.area .tabs .active {
-    background: #F9F9F9;
+#podArea .edit-pane {
+    width: auto;
+    float: none;
+    padding: 10px;
+    margin-left: 200px;
 }
 
-.area .tab {
-    padding: 4px 8px;
-    margin-right: 20px;
-    border-top: 1px solid #E3E3E3;
+#podArea .tab {
+    text-decoration: underline;
+    border-top: 1px solid #f9f9f9;
+    border-bottom: 1px solid #f9f9f9;
+    padding: 2px 8px;
     cursor: pointer;
+}
+
+#podArea .tab.active {
+    background: #fff;
+    border-top: 1px solid #E3E3E3;
+    border-bottom: 1px solid #E3E3E3;
+    text-decoration: none;
 }
 
 #podArea #list_filters {
     width: 99%;
     border: 1px solid #E3E3E3;
+}
+
+#welcomeArea {
+    color: #fff;
+    background: #262e3b url(images/header-bg.png) repeat-x;
+}
+
+#welcomeArea #logo {
+    height: 60px;
+    background: url(images/header-logo.png) no-repeat;
+}
+
+#welcomeArea #version {
+    padding: 40px 0 0 180px;
+}
+
+#welcomeArea #overview {
+    padding: 20px 10px 0 10px;
 }
 
 #menu_uri,
@@ -141,8 +176,12 @@
     border: 1px solid #E3E3E3;
 }
 
+#module_form {
+    margin-top: 10px;
+}
+
 #browseTable {
-    padding: 10px 0;
+    margin: 10px 0;
 }
 
 #browseTable th {
@@ -154,7 +193,7 @@
 }
 
 #browseTable td {
-    padding: 5px 0;
+    padding: 2px 0;
     border-top: 1px solid #E3E3E3;
 }
 
@@ -165,7 +204,7 @@
 }
 
 .zebra {
-    background: #F9F9F9;
+    background: #fff;
 }
 
 .filter {

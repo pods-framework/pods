@@ -11,13 +11,13 @@ jQuery(function() {
         jQuery("#helperArea .hform").html("");
         jQuery("#helperArea .htr").hide();
         jQuery("#helperArea #htr"+helper_id).show();
-        jQuery("#hform"+helper_id).html(theform);
+        jQuery("#helperArea #hform"+helper_id).html(theform);
         loadHelper();
     });
 
     jQuery("#helperArea .dropme").click(function() {
         helper_id = jQuery(this).parent("td").parent("tr").attr("id").substr(3);
-        var theform = jQuery("#hform"+helper_id).html();
+        var theform = jQuery("#helperArea #hform"+helper_id).html();
         dropHelper();
     });
 
@@ -70,7 +70,7 @@ function addHelper() {
 }
 
 function editHelper() {
-    var content = jQuery("#hform"+helper_id+" #helper_content").val();
+    var content = jQuery("#helperArea #hform"+helper_id+" #helper_content").val();
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",

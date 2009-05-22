@@ -34,6 +34,6 @@ Settings HTML
 -->
 <div id="settingsArea" class="area hidden">
     <div class="tips">*WARNING* This cannot be undone. Please backup your database!</div>
-    <input type="button" class="button" onclick="resetDB()" value="Reset database" />
+    <input type="button" class="button" onclick="resetDB()" value="Reset Pods data" />
 </div>
 

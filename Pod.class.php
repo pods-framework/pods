@@ -943,7 +943,7 @@ class Pod
             else
             {
                 $out = preg_replace_callback("/({@(.*?)})/m", array($this, "magic_swap"), $code);
-                eval("?>$ouut");
+                eval("?>$out");
             }
         }
     }

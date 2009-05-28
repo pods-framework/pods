@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The WordPress CMS Plugin
-Version: 1.6.1
+Version: 1.6.2
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$pods_latest = 161;
+$pods_latest = 162;
 
 function pods_init()
 {
@@ -160,15 +160,16 @@ function pods_meta()
 
 function pods_title($title, $sep, $seplocation)
 {
-    if (false !== strpos($title, 'Page not found'))
+    $title_i8n = __('Page not found');
+    if (false !== strpos($title, $title_i8n))
     {
         global $podpage_exists;
 
-        $page_title = trim($podpage_exists['page_title']);
+        $page_title = trim($podpage_exists['title']);
 
         if (0 < strlen($page_title))
         {
-            $title = str_replace('Page not found', $page_title, $title);
+            $title = str_replace($title_i8n, $page_title, $title);
         }
         else
         {
@@ -237,7 +238,7 @@ function podpage_exists()
 {
     $uri = explode('?', $_SERVER['REQUEST_URI']);
     $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri[0]);
-    $uri = empty($uri) ? '/' : "/$uri/";
+    $uri = empty($uri) ? '/' : $uri;
 
     if (false !== strpos($uri, 'wp-admin'))
     {
@@ -300,7 +301,7 @@ add_action('template_redirect', 'pods_redirect');
 if (false !== $podpage_exists)
 {
     add_filter('redirect_canonical', 'kill_redirect');
-    add_filter('wp_title', 'pods_title', 8, 3);
+    add_filter('wp_title', 'pods_title', 0, 3);
     add_filter('status_header', 'pods_404');
 }
 

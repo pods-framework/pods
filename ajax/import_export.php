@@ -23,13 +23,13 @@ if ('export' == $action)
 {
     $export = array(
         'meta' => array(
-            'author' => wp_get_current_user()->user_email,
             'version' => get_option('pods_version'),
             'build' => date('U'),
         )
     );
 
     $pod_ids = $pod;
+    $template_ids = $template;
     $podpage_ids = $podpage;
     $helper_ids = $helper;
 
@@ -52,6 +52,17 @@ if ('export' == $action)
             $dt = $row['datatype'];
             unset($row['datatype']);
             $export['pods'][$dt]['fields'][] = $row;
+        }
+    }
+
+    // Get templates
+    if (!empty($template_ids))
+    {
+        $result = pod_query("SELECT * FROM @wp_pod_templates WHERE id IN ($template_ids)");
+        while ($row = mysql_fetch_assoc($result))
+        {
+            unset($row['id']);
+            $export['templates'][] = $row;
         }
     }
 
@@ -157,6 +168,28 @@ elseif ('finalize' == $action)
             $definitions = implode(',', $definitions);
             pod_query("CREATE TABLE @wp_pod_tbl_{$val['name']} ($definitions)");
         }
+    }
+
+    if (isset($data['templates']))
+    {
+        $columns = '';
+        $tupples = array();
+        foreach ($data['templates'] as $key => $val)
+        {
+            // Escape the values
+            foreach ($val as $k => $v)
+            {
+                $val[$k] = mysql_real_escape_string($v);
+            }
+
+            if (empty($columns))
+            {
+                $columns = implode("`,`", array_keys($val));
+            }
+            $tupples[] = implode("','", $val);
+        }
+        $tupples = implode("'),('", $tupples);
+        pod_query("INSERT INTO @wp_pod_templates (`$columns`) VALUES ('$tupples')");
     }
 
     if (isset($data['pod_pages']))

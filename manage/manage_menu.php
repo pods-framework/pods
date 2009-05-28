@@ -22,7 +22,7 @@ jQuery(function() {
             jQuery("#menu_title").val(val[2]);
         }
     });
-    jQuery(".btn").click(function() {
+    jQuery(".btn").live("click", function() {
         menu_id = jQuery(this).parent("div").attr("mid");
         var classname = jQuery(this).attr("class").substr(4);
 

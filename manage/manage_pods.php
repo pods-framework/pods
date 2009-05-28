@@ -406,11 +406,10 @@ function editColumn(col) {
 
 function dropColumn(col) {
     if (confirm("Do you really want to drop this column?")) {
-        var dtname = jQuery("#pod_name").html();
         jQuery.ajax({
             type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
-            data: "auth="+auth+"&col="+col+"&dtname="+dtname,
+            data: "auth="+auth+"&col="+col,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);
@@ -539,7 +538,7 @@ Pod HTML
 -->
 <div id="podArea" class="area hidden">
     <div class="tabs">
-        <input type="button" class="button" onclick="jQuery('#podBox').jqmShow()" value="Add new pod" />
+        <input type="button" class="button-primary" onclick="jQuery('#podBox').jqmShow()" value="Add new pod" />
 <?php
 if (isset($datatypes))
 {

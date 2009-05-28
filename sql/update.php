@@ -133,6 +133,12 @@ if ($installed < 160)
     pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN pick_filter VARCHAR(128) AFTER pickval");
 }
 
+if ($installed < 162)
+{
+    // Remove all beginning and ending slashes from Pod Pages
+    pod_query("UPDATE @wp_pod_pages SET uri = TRIM(BOTH '/' FROM uri)");
+}
+
 // Save this version
 update_option('pods_version', $pods_latest);
 

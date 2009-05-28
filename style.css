@@ -11,7 +11,11 @@
     font-weight: normal;
     font-style: italic;
     font-size: 24px;
-    margin: 10px 0 0;
+    margin: 0;
+}
+
+#editTitle {
+    margin-top: 10px;
 }
 
 #nav {
@@ -29,9 +33,9 @@
 
 .navTab.active a {
     color: #fff;
-    background: #3b4452;
+    background: #262e3b;
     text-decoration: none;
-    border-bottom: 1px solid #3b4452;
+    border-bottom: 1px solid #262e3b;
 }
 
 .hidden {
@@ -124,7 +128,7 @@
 #podArea .edit-pane {
     width: auto;
     float: none;
-    padding: 10px;
+    padding: 0 0 0 10px;
     margin-left: 200px;
 }
 
@@ -143,14 +147,9 @@
     text-decoration: none;
 }
 
-#podArea #list_filters {
-    width: 99%;
-    border: 1px solid #E3E3E3;
-}
-
 #welcomeArea {
     color: #fff;
-    background: #262e3b url(images/header-bg.png) repeat-x;
+    background: #262e3b;
 }
 
 #welcomeArea #logo {
@@ -192,9 +191,9 @@
     text-decoration: none;
 }
 
-#browseTable td {
+#browseTable th, td {
     padding: 2px 0;
-    border-top: 1px solid #E3E3E3;
+    border-bottom: 1px solid #E3E3E3;
 }
 
 .filebox {

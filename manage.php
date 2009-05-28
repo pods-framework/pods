@@ -43,9 +43,10 @@ jQuery(function() {
 });
 
 function colorFade(area, id) {
-    var bgcolor = jQuery("#"+area+"Area #row"+id).css("background-color");
-    jQuery("#"+area+"Area #row"+id).css("background-color", "#88FFC0");
-    jQuery("#"+area+"Area #row"+id).animate({backgroundColor:bgcolor}, 1000);
+    var firstLetter = area.substr(0, 1);
+    var bgcolor = jQuery("#"+area+"Area #"+firstLetter+"row"+id).css("background-color");
+    jQuery("#"+area+"Area #"+firstLetter+"row"+id).css("background-color", "#88FFC0");
+    jQuery("#"+area+"Area #"+firstLetter+"row"+id).animate({backgroundColor:bgcolor}, 1000);
 }
 </script>
 

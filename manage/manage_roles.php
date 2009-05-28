@@ -74,7 +74,7 @@ if (isset($user_roles))
         {
 ?>
     <div style="float:left; width:32%; margin:0 5px 5px 0">
-        <h4><?php echo $role; ?></h4>
+        <h3><?php echo $role; ?></h3>
         <div class="form pick <?php echo $role; ?>">
 <?php
             foreach ($all_privs as $priv)

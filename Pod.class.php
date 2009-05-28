@@ -3,7 +3,7 @@
 ==================================================
 Pod.class.php
 
-http://pods.uproot.us/user_guide/
+http://codex.uproot.us/
 ==================================================
 */
 class Pod
@@ -963,20 +963,17 @@ class Pod
         }
         if ('detail_url' == $name)
         {
-            return get_bloginfo('url') . '/detail/?type=' . $this->datatype . '&id=' . $this->print_field('id');
+            return get_bloginfo('url') . '/' . $this->datatype . '_detail/' . $this->print_field('id');
         }
         else
         {
             $value = $this->print_field($name);
-            if (null != $value && '' != $value)
+            // Use helper if necessary
+            if (!empty($helper))
             {
-                // Use helper if necessary
-                if (!empty($helper))
-                {
-                    $value = $this->pod_helper($helper, $this->get_field($name), $name);
-                }
-                return $before . $value . $after;
+                $value = $this->pod_helper($helper, $this->get_field($name), $name);
             }
+            return $before . $value . $after;
         }
     }
 }

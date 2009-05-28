@@ -14,16 +14,8 @@ Begin page area
 -->
 <script type="text/javascript">
 jQuery(function() {
-    jQuery("#pageArea .tab").click(function() {
-        jQuery("#pageArea .tab").removeClass("active");
-        page_id = jQuery(this).attr("class").split(" ")[1].substr(1);
-        jQuery(this).addClass("active");
-        jQuery("#pageArea .idle").show();
-        loadPage();
-    });
-
     jQuery("#pageArea .editme").click(function() {
-        page_id = jQuery(this).parent("td").parent("tr").attr("id").substr(3);
+        page_id = jQuery(this).parent("td").parent("tr").attr("id").substr(4);
         var theform = jQuery("#page_form").html();
         jQuery("#pageArea .pform").html("");
         jQuery("#pageArea .ptr").hide();
@@ -33,8 +25,8 @@ jQuery(function() {
     });
 
     jQuery("#pageArea .dropme").click(function() {
-        page_id = jQuery(this).parent("td").parent("tr").attr("id").substr(3);
-        var theform = jQuery("#pform"+page_id).html();
+        page_id = jQuery(this).parent("td").parent("tr").attr("id").substr(4);
+        var theform = jQuery("#pageArea #pform"+page_id).html();
         dropPage();
     });
 
@@ -114,8 +106,8 @@ function dropPage() {
                 }
                 else {
                     jQuery("#pageArea #ptr"+page_id).remove();
-                    jQuery("#pageArea tr#row"+page_id).css("background", "red");
-                    jQuery("#pageArea tr#row"+page_id).fadeOut("slow");
+                    jQuery("#pageArea tr#prow"+page_id).css("background", "red");
+                    jQuery("#pageArea tr#prow"+page_id).fadeOut("slow");
                 }
             }
         });
@@ -129,9 +121,10 @@ Page popups
 ==================================================
 -->
 <div id="pageBox" class="jqmWindow">
+    <?php echo bloginfo('siteurl'); ?>/<br />
     <input type="text" id="new_page" style="width:280px" />
     <input type="button" class="button" onclick="addPage()" value="Add Page" />
-    <div>Ex: <strong>/resources/latest/</strong> or <strong>/events/*</strong></div>
+    <div>Ex: <strong>resources/latest</strong> or <strong>events/*</strong></div>
 </div>
 
 <!--
@@ -140,7 +133,7 @@ Page HTML
 ==================================================
 -->
 <div id="pageArea" class="area hidden">
-    <input type="button" class="button" onclick="jQuery('#pageBox').jqmShow()" value="Add new page" />
+    <input type="button" class="button-primary" onclick="jQuery('#pageBox').jqmShow()" value="Add new page" />
     <table id="browseTable" style="width:100%" cellpadding="0" cellspacing="0">
         <tr>
             <th></th>
@@ -154,10 +147,8 @@ if (isset($pages))
     {
         $zebra = ('' == $zebra) ? ' class="zebra"' : '';
 ?>
-        <tr id="row<?php echo $id; ?>"<?php echo $zebra; ?>>
-            <td width="20">
-                <div class="btn editme"></div>
-            </td>
+        <tr id="prow<?php echo $id; ?>"<?php echo $zebra; ?>>
+            <td width="20"><div class="btn editme"></div></td>
             <td><?php echo $uri; ?></td>
             <td width="20"><div class="btn dropme"></div></td>
         </tr>

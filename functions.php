@@ -52,6 +52,47 @@ function pods_clean_name($name)
 
 /*
 ==================================================
+Return either a GET var or URI string segment
+==================================================
+*/
+function pods_url_variable($key = 'last', $type = 'uri')
+{
+    if ('uri' == strtolower($type))
+    {
+        $uri = explode('?', $_SERVER['REQUEST_URI']);
+        $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri[0]);
+        $uri = explode('/', $uri);
+
+        if ('first' == $key)
+        {
+            $key = 0;
+        }
+        elseif ('last' == $key)
+        {
+            $key = -1;
+        }
+
+        if (is_numeric($key))
+        {
+            if (0 > $key)
+            {
+                return $uri[count($uri)+$key];
+            }
+            else
+            {
+                return $uri[$key];
+            }
+        }
+    }
+    elseif ('get' == strtolower($type))
+    {
+        return $_GET[$key];
+    }
+    return false;
+}
+
+/*
+==================================================
 Filter input. Escape output.
 ==================================================
 */

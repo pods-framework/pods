@@ -6,7 +6,7 @@ Begin helper area
 <script type="text/javascript">
 jQuery(function() {
     jQuery("#helperArea .editme").click(function() {
-        helper_id = jQuery(this).parent("td").parent("tr").attr("id").substr(3);
+        helper_id = jQuery(this).parent("td").parent("tr").attr("id").substr(4);
         var theform = jQuery("#helper_form").html();
         jQuery("#helperArea .hform").html("");
         jQuery("#helperArea .htr").hide();
@@ -16,7 +16,7 @@ jQuery(function() {
     });
 
     jQuery("#helperArea .dropme").click(function() {
-        helper_id = jQuery(this).parent("td").parent("tr").attr("id").substr(3);
+        helper_id = jQuery(this).parent("td").parent("tr").attr("id").substr(4);
         var theform = jQuery("#helperArea #hform"+helper_id).html();
         dropHelper();
     });
@@ -98,8 +98,8 @@ function dropHelper() {
                 }
                 else {
                     jQuery("#helperArea #htr"+helper_id).remove();
-                    jQuery("#helperArea tr#row"+helper_id).css("background", "red");
-                    jQuery("#helperArea tr#row"+helper_id).fadeOut("slow");
+                    jQuery("#helperArea tr#hrow"+helper_id).css("background", "red");
+                    jQuery("#helperArea tr#hrow"+helper_id).fadeOut("slow");
                 }
             }
         });
@@ -117,6 +117,7 @@ Helper popups
     <input type="button" class="button" onclick="addHelper()" value="Add Helper" />
     <select id="helper_type">
         <option value="display">Display (pre-output hook)</option>
+        <option value="input">Input (alter input fields)</option>
         <option value="before">Before (pre-save hook)</option>
         <option value="after">After (post-save hook)</option>
     </select>
@@ -129,7 +130,7 @@ Helper HTML
 ==================================================
 -->
 <div id="helperArea" class="area hidden">
-    <input type="button" class="button" onclick="jQuery('#helperBox').jqmShow()" value="Add new helper" />
+    <input type="button" class="button-primary" onclick="jQuery('#helperBox').jqmShow()" value="Add new helper" />
     <table id="browseTable" style="width:100%" cellpadding="0" cellspacing="0">
         <tr>
             <th></th>
@@ -148,7 +149,7 @@ if (isset($helpers))
         $helper_type = $val['helper_type'];
         $zebra = ('' == $zebra) ? ' class="zebra"' : '';
 ?>
-        <tr id="row<?php echo $id; ?>"<?php echo $zebra; ?>>
+        <tr id="hrow<?php echo $id; ?>"<?php echo $zebra; ?>>
             <td width="20">
                 <div class="btn editme"></div>
             </td>

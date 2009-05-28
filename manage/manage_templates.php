@@ -23,19 +23,19 @@ jQuery(function() {
     });
 
     jQuery("#templateArea .editme").click(function() {
-        template_id = jQuery(this).parent("td").parent("tr").attr("id").substr(3);
+        template_id = jQuery(this).parent("td").parent("tr").attr("id").substr(4);
         var theform = jQuery("#template_form").html();
-        jQuery("#templateArea .pform").html("");
-        jQuery("#templateArea .ptr").hide();
-        jQuery("#templateArea #ptr"+template_id).show();
-        jQuery("#templateArea #pform"+template_id).html(theform);
+        jQuery("#templateArea .tform").html("");
+        jQuery("#templateArea .ttr").hide();
+        jQuery("#templateArea #ttr"+template_id).show();
+        jQuery("#templateArea #tform"+template_id).html(theform);
         loadTemplate();
     });
 
     jQuery("#templateArea .dropme").click(function() {
-        template_id = jQuery(this).parent("td").parent("tr").attr("id").substr(3);
-        var theform = jQuery("#templateArea #pform"+template_id).html();
-        dropPage();
+        template_id = jQuery(this).parent("td").parent("tr").attr("id").substr(4);
+        var theform = jQuery("#templateArea #tform"+template_id).html();
+        dropTemplate();
     });
 
     jQuery("#templateBox").jqm();
@@ -80,8 +80,8 @@ function addTemplate() {
 }
 
 function editTemplate() {
-    var name = jQuery("#templateArea #pform"+template_id+" #template_name").val();
-    var code = jQuery("#templateArea #pform"+template_id+" #template_code").val();
+    var name = jQuery("#templateArea #tform"+template_id+" #template_name").val();
+    var code = jQuery("#templateArea #tform"+template_id+" #template_code").val();
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
@@ -108,9 +108,9 @@ function dropTemplate() {
                     alert(msg);
                 }
                 else {
-                    jQuery("#templateArea #ptr"+template_id).remove();
-                    jQuery("#templateArea tr#row"+template_id).css("background", "red");
-                    jQuery("#templateArea tr#row"+template_id).fadeOut("slow");
+                    jQuery("#templateArea #ttr"+template_id).remove();
+                    jQuery("#templateArea tr#trow"+template_id).css("background", "red");
+                    jQuery("#templateArea tr#trow"+template_id).fadeOut("slow");
                 }
             }
         });
@@ -135,7 +135,7 @@ Template HTML
 ==================================================
 -->
 <div id="templateArea" class="area hidden">
-    <input type="button" class="button" onclick="jQuery('#templateBox').jqmShow()" value="Add new template" />
+    <input type="button" class="button-primary" onclick="jQuery('#templateBox').jqmShow()" value="Add new template" />
     <table id="browseTable" style="width:100%" cellpadding="0" cellspacing="0">
         <tr>
             <th></th>
@@ -149,15 +149,13 @@ if (isset($templates))
     {
         $zebra = ('' == $zebra) ? ' class="zebra"' : '';
 ?>
-        <tr id="row<?php echo $id; ?>"<?php echo $zebra; ?>>
-            <td width="20">
-                <div class="btn editme"></div>
-            </td>
+        <tr id="trow<?php echo $id; ?>"<?php echo $zebra; ?>>
+            <td width="20"><div class="btn editme"></div></td>
             <td><?php echo $name; ?></td>
             <td width="20"><div class="btn dropme"></div></td>
         </tr>
-        <tr id="ptr<?php echo $id; ?>" class="ptr hidden">
-            <td id="pform<?php echo $id; ?>" class="pform" colspan="3"></td>
+        <tr id="ttr<?php echo $id; ?>" class="ttr hidden">
+            <td id="tform<?php echo $id; ?>" class="tform" colspan="3"></td>
         </tr>
 <?php
     }
@@ -167,7 +165,7 @@ if (isset($templates))
 
     <div id="template_form" class="hidden">
         <textarea id="template_code"></textarea><br />
-        <input type="button" class="button" onclick="editTemplate()" value="Save changes" /> or <a href="javascript:;" onclick="jQuery('.ptr').hide()">close</a>
+        <input type="button" class="button" onclick="editTemplate()" value="Save changes" /> or <a href="javascript:;" onclick="jQuery('.ttr').hide()">close</a>
     </div>
 </div>
 

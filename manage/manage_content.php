@@ -59,6 +59,8 @@ jQuery(function() {
         jQuery("."+active_file).val(file);
         jQuery("#dialog").jqmHide();
     });
+
+    jQuery("#browseTable tr:odd").addClass("zebra");
     jQuery("#dialog").jqm();
 });
 
@@ -300,15 +302,12 @@ if (!empty($orderby))
 <?php
 while ($row = mysql_fetch_assoc($result))
 {
-    $zebra = ('' == $zebra) ? ' class="zebra"' : '';
 ?>
-        <tr id="row<?php echo $row['id']; ?>"<?php echo $zebra; ?>>
+        <tr id="row<?php echo $row['id']; ?>">
             <td width="20">
                 <div class="btn editme" onclick="editItem('<?php echo $row['dtname']; ?>', <?php echo $row['id']; ?>)"></div>
             </td>
-            <td>
-                <?php echo htmlspecialchars($row['name']); ?>
-            </td>
+            <td><?php echo htmlspecialchars($row['name']); ?></td>
             <td><?php echo $datatypes[$row['datatype']]; ?></td>
             <td><?php echo date("m/d/Y g:i A", strtotime($row['modified'])); ?></td>
             <td width="20"><div class="btn dropme" onclick="dropItem(<?php echo $row['id']; ?>)"></div></td>

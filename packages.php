@@ -78,6 +78,18 @@ while ($row = mysql_fetch_assoc($result))
 ?>
 </div>
 
+<div class="form pick template" style="width:250px; height:100px">
+<?php
+$result = pod_query("SELECT id, name FROM @wp_pod_templates");
+while ($row = mysql_fetch_assoc($result))
+{
+?>
+    <div class="option" value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></div>
+<?php
+}
+?>
+</div>
+
 <div class="form pick podpage" style="width:250px; height:100px">
 <?php
 $result = pod_query("SELECT id, uri FROM @wp_pod_pages");

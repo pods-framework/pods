@@ -15,5 +15,5 @@ if (0 < mysql_num_rows($result))
         pod_query("DROP TABLE $row[0]");
     }
 }
-pod_query("DELETE FROM @wp_options WHERE option_name = 'pods_version'");
+pod_query("DELETE FROM @wp_options WHERE option_name LIKE 'pods%'");
 

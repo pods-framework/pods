@@ -406,10 +406,11 @@ function editColumn(col) {
 
 function dropColumn(col) {
     if (confirm("Do you really want to drop this column?")) {
+        var dtname = jQuery("#pod_name").html();
         jQuery.ajax({
             type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
-            data: "auth="+auth+"&col="+col,
+            data: "auth="+auth+"&col="+col+"&dtname="+dtname,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);

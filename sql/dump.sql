@@ -7,7 +7,8 @@ CREATE TABLE wp_pod (
     datatype SMALLINT unsigned,
     name VARCHAR(128),
     created DATETIME,
-    modified TIMESTAMP
+    modified TIMESTAMP,
+    INDEX datatype_idx (datatype)
 );
 
 DROP TABLE IF EXISTS wp_pod_types;
@@ -27,16 +28,18 @@ CREATE TABLE wp_pod_fields (
     datatype SMALLINT unsigned,
     name VARCHAR(32),
     label VARCHAR(32),
-    helper VARCHAR(32),
     comment VARCHAR(128),
     coltype VARCHAR(4),
     pickval VARCHAR(32),
-    pick_filter VARCHAR(128),
     sister_field_id INT unsigned,
-    required BOOL default 0,
-    `unique` BOOL default 0,
-    `multiple` BOOL default 0,
-    weight TINYINT unsigned
+    weight TINYINT unsigned,
+    helper TEXT,
+    pick_filter TEXT,
+    `required` TINYINT,
+    `unique` TINYINT,
+    `multiple` TINYINT,
+    meta TEXT, /* required, unique, multiple, pick_filter, pick_orderby, display_helper, input_helper */
+    INDEX datatype_idx (datatype)
 );
 
 DROP TABLE IF EXISTS wp_pod_rel;
@@ -45,7 +48,8 @@ CREATE TABLE wp_pod_rel (
     pod_id INT unsigned,
     sister_pod_id INT unsigned,
     field_id INT unsigned,
-    tbl_row_id INT unsigned
+    tbl_row_id INT unsigned,
+    INDEX field_id_idx (field_id)
 );
 
 DROP TABLE IF EXISTS wp_pod_templates;
@@ -107,7 +111,8 @@ INSERT INTO wp_pod_types (name, label, list_filters) VALUES
 
 INSERT INTO wp_pod_pages (uri, phpcode) VALUES
 ('states', "<?php\n$Record = new Pod('state');\n$Record->findRecords('name ASC', 10);\necho $Record->getPagination();\necho $Record->showTemplate('state_list');\n?>"),
-('states/*', "<?php\n// Get the last URL variable\n$id = pods_url_variable('last');\n\n$Record = new Pod('state', $id);\necho $Record->showTemplate('state_detail');\n?>");
+('states/*', "<?php\n// Get the last URL variable\n$id = pods_url_variable('last');\n\n$Record = new Pod('state', $id);\necho $Record->showTemplate('state_detail');\n?>"),
+('pod/*', "<?php\n$id = pods_url_variable(-1);\n$type = pods_url_variable(-2);\n\n$Record = new Pod($type, $id);\necho $Record->showTemplate($type . '_detail');\n?>");
 
 INSERT INTO wp_pod_templates (name, code) VALUES
 ('state_list', '<p><a href="/states/{@abbrev}">{@name}</a></p>'),

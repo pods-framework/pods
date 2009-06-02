@@ -139,6 +139,12 @@ if ($installed < 162)
     pod_query("UPDATE @wp_pod_pages SET uri = TRIM(BOTH '/' FROM uri)");
 }
 
+if ($installed < 163)
+{
+    // Add the new "pod" detail page
+    pod_query("INSERT INTO @wp_pod_pages (uri, phpcode) VALUES ('pod/*', \"<?php\n$id = pods_url_variable(-1);\n$type = pods_url_variable(-2);\n\n$Record = new Pod($type, $id);\necho $Record->showTemplate($type . '_detail');\n?>\"");
+}
+
 // Save this version
 update_option('pods_version', $pods_latest);
 

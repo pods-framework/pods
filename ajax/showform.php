@@ -1,14 +1,11 @@
 <?php
 // Include the MySQL connection
 require_once(realpath(dirname(__FILE__) . '/../../../../wp-config.php'));
-require_once(realpath(dirname(__FILE__) . '/../Pod.class.php'));
+require_once(realpath(dirname(__FILE__) . '/../core/Pod.class.php'));
 
 $save = (int) $_POST['save'];
 $pod_id = (int) $_POST['pod_id'];
 $datatype = $_POST['datatype'];
-
-// Determine whether the form is public
-$is_public = (int) $_POST['public'];
 
 if ($save)
 {
@@ -105,7 +102,7 @@ if ($save)
             {
                 $pick_columns[$key] = empty($val) ? array() : explode(',', $val);
             }
-            elseif ('datatype' != $key && 'pod_id' != $key && 'columns' != $key && 'public' != $key && 'save' != $key)
+            elseif (!in_array($key, array('datatype', 'pod_id', 'columns', 'public', 'save')))
             {
                 $table_columns[$key] = $val;
             }
@@ -232,6 +229,6 @@ else
 {
     // Show the input form
     $obj = new Pod($datatype);
-    echo $obj->showform($pod_id, $is_public, $public_columns);
+    echo $obj->showform($pod_id, $public_columns);
 }
 

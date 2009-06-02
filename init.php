@@ -3,7 +3,7 @@
 Plugin Name: Pods
 Plugin URI: http://pods.uproot.us/
 Description: The WordPress CMS Plugin
-Version: 1.6.2
+Version: 1.6.3
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$pods_latest = 162;
+$pods_latest = 163;
 
 function pods_init()
 {
@@ -125,19 +125,19 @@ function pods_menu()
 function pods_options_page()
 {
     global $pods_url, $pods_latest, $pods_roles, $table_prefix;
-    include WP_PLUGIN_DIR . '/pods/manage.php';
+    include WP_PLUGIN_DIR . '/pods/core/manage.php';
 }
 
 function pods_content_page()
 {
     global $pods_url;
-    include WP_PLUGIN_DIR . '/pods/manage/manage_content.php';
+    include WP_PLUGIN_DIR . '/pods/core/manage_content.php';
 }
 
 function pods_package_page()
 {
     global $pods_url;
-    include WP_PLUGIN_DIR . '/pods/packages.php';
+    include WP_PLUGIN_DIR . '/pods/core/packages.php';
 }
 
 function pods_menu_page()
@@ -145,7 +145,7 @@ function pods_menu_page()
     global $pods_url;
 
     define('WP_INC_URL', str_replace('wp-content', 'wp-includes', WP_CONTENT_URL));
-    include WP_PLUGIN_DIR . '/pods/manage/manage_menu.php';
+    include WP_PLUGIN_DIR . '/pods/core/manage_menu.php';
 }
 
 function pods_meta()
@@ -219,7 +219,7 @@ function pods_redirect()
         $phpcode = $row['phpcode'];
         $page_template = $row['page_template'];
 
-        include WP_PLUGIN_DIR . '/pods/router.php';
+        include WP_PLUGIN_DIR . '/pods/core/router.php';
         die();
     }
 }
@@ -279,8 +279,8 @@ function podpage_exists()
 }
 
 // Setup DB tables, get the gears turning
-require_once WP_PLUGIN_DIR . '/pods/functions.php';
-require_once WP_PLUGIN_DIR . '/pods/Pod.class.php';
+require_once WP_PLUGIN_DIR . '/pods/core/functions.php';
+require_once WP_PLUGIN_DIR . '/pods/core/Pod.class.php';
 
 pods_init();
 

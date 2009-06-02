@@ -26,8 +26,7 @@ class Pod
         {
             $this->datatype = trim($datatype);
             $result = pod_query("SELECT id FROM @wp_pod_types WHERE name = '$datatype' LIMIT 1");
-            $row = mysql_fetch_assoc($result);
-            $this->datatype_id = $row['id'];
+            $this->datatype_id = mysql_result($result, 0);
 
             if (null != $id)
             {
@@ -158,8 +157,7 @@ class Pod
             $result = pod_query("SELECT id FROM @wp_pod WHERE datatype = $dt AND tbl_row_id = '$tbl_row_id' LIMIT 1");
             if (0 < mysql_num_rows($result))
             {
-                $row = mysql_fetch_assoc($result);
-                $this->data['pod_id'] = $row['id'];
+                $this->data['pod_id'] = mysql_result($result, 0);
             }
         }
         return $this->data['pod_id'];
@@ -635,7 +633,7 @@ class Pod
     Display HTML for all datatype fields
     ==================================================
     */
-    function showform($pod_id = null, $is_public = false, $public_columns = null)
+    function showform($pod_id = null, $public_columns = null)
     {
         $datatype = $this->datatype;
         $datatype_id = $this->datatype_id;
@@ -798,115 +796,7 @@ class Pod
     */
     function build_field_html($name, $label, $comment, $coltype, $attr)
     {
-        $data = is_array($this->data[$name]) ? $this->data[$name] : stripslashes($this->data[$name]);
-        $hidden = empty($attr['hidden']) ? '' : ' hidden';
-?>
-    <div class="leftside<?php echo $hidden; ?>">
-        <?php echo $label; ?>
-<?php
-        if (!empty($comment))
-        {
-?>
-        <div class="comment"><?php echo $comment; ?></div>
-<?php
-        }
-?>
-    </div>
-    <div class="rightside<?php echo $hidden; ?>">
-<?php
-        // Boolean checkbox
-        if ('bool' == $coltype)
-        {
-            $data = empty($data) ? '' : ' checked';
-?>
-    <input type="checkbox" class="form bool <?php echo $name; ?>"<?php echo $data; ?> />
-<?php
-        }
-        elseif ('date' == $coltype)
-        {
-            $data = empty($data) ? date("Y-m-d H:i:s") : $data;
-?>
-    <input type="text" class="form date <?php echo $name; ?>" value="<?php echo $data; ?>" />
-<?php
-        }
-        // File upload box
-        elseif ('file' == $coltype)
-        {
-?>
-    <input type="text" class="form file <?php echo $name; ?>" value="<?php echo $data; ?>" />
-    <a href="javascript:;" onclick="active_file = '<?php echo $name; ?>'; jQuery('#dialog').jqmShow()">select</a> after
-    <a href="<?php echo get_bloginfo('url'); ?>/wp-admin/media-upload.php" target="_blank">uploading</a>
-<?php
-        }
-        // Standard text box
-        elseif ('num' == $coltype || 'txt' == $coltype || 'slug' == $coltype)
-        {
-?>
-    <input type="text" class="form <?php echo $coltype . ' ' . $name; ?>" value="<?php echo str_replace('"', '&quot;', $data); ?>" />
-<?php
-        }
-        // Textarea box
-        elseif ('desc' == $coltype)
-        {
-?>
-    <textarea class="form desc <?php echo $name; ?>" id="desc-<?php echo $name; ?>"><?php echo $data; ?></textarea>
-<?php
-        }
-        // Textarea box (without WYSIWYG)
-        elseif ('code' == $coltype)
-        {
-?>
-    <textarea class="form code <?php echo $name; ?>" id="code-<?php echo $name; ?>"><?php echo $data; ?></textarea>
-<?php
-        }
-        else
-        {
-            // Multi-select list
-            if (1 == $attr['multiple'])
-            {
-?>
-    <div class="form pick <?php echo $name; ?>">
-<?php
-                if (!empty($data))
-                {
-                    foreach ($data as $key => $val)
-                    {
-                        $active = empty($val['active']) ? '' : ' active';
-?>
-        <div class="option<?php echo $active; ?>" value="<?php echo $val['id']; ?>"><?php echo $val['name']; ?></div>
-<?php
-                    }
-                }
-?>
-    </div>
-<?php
-            }
-            // Single-select list
-            else
-            {
-?>
-    <select class="form pick1 <?php echo $name; ?>">
-        <option value="">-- Select one --</option>
-<?php
-                if (!empty($data))
-                {
-                    foreach ($data as $key => $val)
-                    {
-                        $selected = empty($val['active']) ? '' : ' selected';
-?>
-        <option value="<?php echo $val['id']; ?>"<?php echo $selected; ?>><?php echo $val['name']; ?></option>
-<?php
-                    }
-                }
-?>
-    </select>
-<?php
-            }
-        }
-?>
-    </div>
-    <div class="clear"></div>
-<?php
+        include realpath(dirname(__FILE__) . '/input_fields.php');
     }
 
     /*
@@ -963,11 +853,12 @@ class Pod
         }
         if ('detail_url' == $name)
         {
-            return get_bloginfo('url') . '/' . $this->datatype . '_detail/' . $this->print_field('id');
+            return get_bloginfo('url') . '/pod/' . $this->datatype . '/' . $this->print_field('id');
         }
         else
         {
             $value = $this->print_field($name);
+
             // Use helper if necessary
             if (!empty($helper))
             {

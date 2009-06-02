@@ -119,7 +119,7 @@ Begin welcome area
 </div>
 
 <?php
-$pods_manage_dir = WP_PLUGIN_DIR . '/pods/manage/';
+$pods_manage_dir = WP_PLUGIN_DIR . '/pods/core/';
 
 if (pods_access('manage_pods'))
 {

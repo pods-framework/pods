@@ -142,7 +142,7 @@ if ($installed < 162)
 if ($installed < 163)
 {
     // Add the new "pod" detail page
-    pod_query("INSERT INTO @wp_pod_pages (uri, phpcode) VALUES ('pod/*', \"<?php\n$id = pods_url_variable(-1);\n$type = pods_url_variable(-2);\n\n$Record = new Pod($type, $id);\necho $Record->showTemplate($type . '_detail');\n?>\"");
+    //pod_query("INSERT INTO @wp_pod_pages (uri, phpcode) VALUES ('pod/*', \"<?php\n$id = pods_url_variable(-1);\n$type = pods_url_variable(-2);\n\n$Record = new Pod($type, $id);\necho $Record->showTemplate($type . '_detail');\n?>\"");
 }
 
 // Save this version

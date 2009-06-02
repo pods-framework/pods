@@ -77,7 +77,7 @@ function saveForm() {
 
 <div id="module_form" class="form_<?php echo $datatype; ?>">
 <?php
-$this->showForm($this->get_pod_id(), true, $public_columns);
+$this->showForm($this->get_pod_id(), $public_columns);
 ?>
 </div>
 

@@ -168,8 +168,10 @@ class Pod
     Get pod or category dropdown values
     ==================================================
     */
-    function get_dropdown_values($table = null, $field_name = null, $tbl_row_ids = null, $unique_vals = false, $pick_filter = null)
+    function get_dropdown_values($table = null, $field_name = null, $tbl_row_ids = null, $unique_vals = false, $pick_filter = null, $pick_orderby = null)
     {
+        $orderby = empty($pick_orderby) ? 'name ASC' : $pick_orderby;
+
         // Category dropdown
         if (is_numeric($table))
         {
@@ -203,7 +205,7 @@ class Pod
                 $where .= (empty($where) ? ' WHERE ' : ' AND ') . $pick_filter;
             }
 
-            $sql = "SELECT ID as id, post_title AS name FROM @wp_posts WHERE post_type = 'page' $where ORDER BY name ASC";
+            $sql = "SELECT ID as id, post_title AS name FROM @wp_posts WHERE post_type = 'page' $where ORDER BY $orderby";
         }
         // WP post dropdown
         elseif ('wp_post' == $table)
@@ -214,7 +216,7 @@ class Pod
                 $where .= (empty($where) ? ' WHERE ' : ' AND ') . $pick_filter;
             }
 
-            $sql = "SELECT ID as id, post_title AS name FROM @wp_posts WHERE post_type = 'post' $where ORDER BY name ASC";
+            $sql = "SELECT ID as id, post_title AS name FROM @wp_posts WHERE post_type = 'post' $where ORDER BY $orderby";
         }
         // WP user dropdown
         elseif ('wp_user' == $table)
@@ -225,7 +227,7 @@ class Pod
                 $where .= (empty($where) ? ' WHERE ' : ' AND ') . $pick_filter;
             }
 
-            $sql = "SELECT ID as id, display_name AS name FROM @wp_users $where ORDER BY name ASC";
+            $sql = "SELECT ID as id, display_name AS name FROM @wp_users $where ORDER BY $orderby";
         }
         // Pod table dropdown
         else
@@ -236,7 +238,7 @@ class Pod
                 $where .= (empty($where) ? ' WHERE ' : ' AND ') . $pick_filter;
             }
 
-            $sql = "SELECT id, name FROM `@wp_pod_tbl_$table` $where ORDER BY name ASC";
+            $sql = "SELECT id, name FROM `@wp_pod_tbl_$table` $where ORDER BY $orderby";
         }
 
         $result = pod_query($sql);
@@ -483,153 +485,6 @@ class Pod
 
     /*
     ==================================================
-    Display the pagination controls
-    ==================================================
-    */
-    function getPagination($label = 'Go to page:')
-    {
-        $page = $this->page;
-        $rows_per_page = $this->rpp;
-        $total_rows = $this->getTotalRows();
-        $total_pages = ceil($total_rows / $rows_per_page);
-        $type = $this->datatype;
-        ob_start();
-
-        $request_uri = "?type=$type&";
-        foreach ($_GET as $key => $val)
-        {
-            if ('pg' != $key && 'type' != $key && !empty($val))
-            {
-                $request_uri .= $key . '=' . urlencode($val) . '&';
-            }
-        }
-?>
-    <span class="pager"><?php echo $label; ?>
-<?php
-        if (1 < $page)
-        {
-?>
-    <a href="<?php echo $request_uri; ?>pg=1" class="pageNum firstPage">1</a>
-<?php
-        }
-        if (1 < ($page - 100))
-        {
-?>
-    <a href="<?php echo $request_uri; ?>pg=<?php echo ($page - 100); ?>" class="pageNum"><?php echo ($page - 100); ?></a>
-<?php
-        }
-        if (1 < ($page - 10))
-        {
-?>
-    <a href="<?php echo $request_uri; ?>pg=<?php echo ($page - 10); ?>" class="pageNum"><?php echo ($page - 10); ?></a>
-<?php
-        }
-        for ($i = 2; $i > 0; $i--)
-        {
-            if (1 < ($page - $i))
-            {
-?>
-    <a href="<?php echo $request_uri; ?>pg=<?php echo ($page - $i); ?>" class="pageNum"><?php echo ($page - $i); ?></a>
-<?php
-            }
-        }
-?>
-    <span class="pageNum currentPage"><?php echo $page; ?></span>
-<?php
-        for ($i = 1; $i < 3; $i++)
-        {
-            if ($total_pages > ($page + $i))
-            {
-?>
-    <a href="<?php echo $request_uri; ?>pg=<?php echo ($page + $i); ?>" class="pageNum"><?php echo ($page + $i); ?></a>
-<?php
-            }
-        }
-        if ($total_pages > ($page + 10))
-        {
-?>
-    <a href="<?php echo $request_uri; ?>pg=<?php echo ($page + 10); ?>" class="pageNum"><?php echo ($page + 10); ?></a>
-<?php
-        }
-        if ($total_pages > ($page + 100))
-        {
-?>
-    <a href="<?php echo $request_uri; ?>pg=<?php echo ($page + 100); ?>" class="pageNum"><?php echo ($page + 100); ?></a>
-<?php
-        }
-        if ($page < $total_pages)
-        {
-?>
-    <a href="<?php echo $request_uri; ?>pg=<?php echo $total_pages; ?>" class="pageNum lastPage"><?php echo $total_pages; ?></a>
-<?php
-        }
-?>
-    </span>
-<?php
-        $output = ob_get_clean();
-        return $output;
-    }
-
-    /*
-    ==================================================
-    Display the list filters
-    ==================================================
-    */
-    function getFilters($filters = null, $label = 'Filter')
-    {
-        $datatype = $this->datatype;
-        $datatype_id = $this->datatype_id;
-?>
-    <form method="get" class="filterbox filterbox_<?php echo $datatype; ?>" action="">
-        <input type="hidden" name="type" value="<?php echo $datatype; ?>" />
-<?php
-        if (empty($filters))
-        {
-            $result = pod_query("SELECT list_filters FROM @wp_pod_types WHERE id = $datatype_id LIMIT 1");
-            $row = mysql_fetch_assoc($result);
-            $filters = $row['list_filters'];
-        }
-
-        if (!empty($filters))
-        {
-            $filters = explode(',', $filters);
-            foreach ($filters as $key => $val)
-            {
-                $field_name = trim($val);
-                $result = pod_query("SELECT pickval FROM @wp_pod_fields WHERE datatype = $datatype_id AND name = '$field_name' LIMIT 1");
-                $row = mysql_fetch_assoc($result);
-                if (!empty($row['pickval']))
-                {
-                    $rel_table = $row['pickval'];
-                    $data = $this->get_dropdown_values($rel_table, $field_name);
-?>
-    <select name="<?php echo $field_name; ?>" class="filter <?php echo $field_name; ?>">
-        <option value="">-- <?php echo ucwords(str_replace('_', ' ', $field_name)); ?> --</option>
-<?php
-                    foreach ($data as $key => $val)
-                    {
-                        $active = empty($val['active']) ? '' : ' selected';
-?>
-        <option value="<?php echo $val['id']; ?>"<?php echo $active; ?>><?php echo $val['name']; ?></option>
-<?php
-                    }
-?>
-    </select>
-<?php
-                }
-            }
-        }
-        // Display the search box and submit button
-        $search = empty($_GET['search']) ? '' : $_GET['search'];
-?>
-        <input type="text" class="pod_search" name="search" value="<?php echo $search; ?>" />
-        <input type="submit" class="pod_submit" value="<?php echo $label; ?>" />
-    </form>
-<?php
-    }
-
-    /*
-    ==================================================
     Display HTML for all datatype fields
     ==================================================
     */
@@ -647,7 +502,7 @@ class Pod
                 if (is_array($public_columns[$key]))
                 {
                     $where[] = $key;
-                    $attribute[$key] = $val;
+                    $attributes[$key] = $val;
                 }
                 else
                 {
@@ -657,20 +512,7 @@ class Pod
             $where = "AND f.name IN ('" . implode("','", $where) . "')";
         }
 
-        $sql = "
-        SELECT
-            f.name, f.label, f.comment, f.coltype, f.pickval, f.pick_filter, f.required, f.`unique`, f.`multiple`
-        FROM
-            @wp_pod_types t
-        INNER JOIN
-            @wp_pod_fields f ON f.datatype = t.id
-        WHERE
-            t.name = '$datatype'
-            $where
-        ORDER BY
-            f.weight ASC
-        ";
-        $result = pod_query($sql);
+        $result = pod_query("SELECT * FROM @wp_pod_fields WHERE datatype = $datatype_id");
         while ($row = mysql_fetch_assoc($result))
         {
             $fields[$row['name']] = $row;
@@ -693,29 +535,37 @@ class Pod
 ?>
     <div><input type="hidden" class="form num pod_id" value="<?php echo $pod_id; ?>" /></div>
 <?php
-        foreach ($fields as $key => $field_array)
+        foreach ($fields as $key => $field)
         {
-            $label = $field_array['label'];
-            $label = empty($label) ? ucwords($key) : $label;
-            $comment = $field_array['comment'];
-            $coltype = $field_array['coltype'];
-            $pickval = $field_array['pickval'];
-            $pick_filter = $field_array['pick_filter'];
-            $attr = $attribute[$key];
-            $attr['required'] = $field_array['required'];
-            $attr['unique'] = $field_array['unique'];
-            $attr['multiple'] = $field_array['multiple'];
+            // Replace the input helper name with the helper code
+            $input_helper = $field['input_helper'];
+            if (!empty($input_helper))
+            {
+                $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name = '$input_helper' LIMIT 1");
+                $field['input_helper'] = mysql_result($result, 0);
+            }
 
-            if (1 == $field_array['required'])
+            // Replace any field attributes with those ones through the public form
+            if (is_array($attributes[$key]))
+            {
+                $field = array_merge($field, $attributes);
+            }
+
+            if (empty($field['label']))
+            {
+                $field['label'] = ucwords($key);
+            }
+
+            if (1 == $field['required'])
             {
                 $label .= ' <span class="red">*</span>';
             }
 
-            if (!empty($pickval))
+            if (!empty($field['pickval']))
             {
                 $val = array();
                 $tbl_row_ids = array();
-                $table = $pickval;
+                $table = $field['pickval'];
 
                 $result = pod_query("SELECT id FROM @wp_pod_fields WHERE datatype = $datatype_id AND name = '$key' LIMIT 1");
                 $row = mysql_fetch_assoc($result);
@@ -728,10 +578,10 @@ class Pod
                 }
 
                 // Use default values for public forms
-                if (empty($tbl_row_ids) && !empty($attr['default']))
+                if (empty($tbl_row_ids) && !empty($field['default']))
                 {
-                    $tbl_row_ids = $attr['default'];
-                    if (!is_array($default))
+                    $tbl_row_ids = $field['default'];
+                    if (!is_array($field['default']))
                     {
                         $tbl_row_ids = explode(',', $tbl_row_ids);
                         foreach ($tbl_row_ids as $row_key => $row_val)
@@ -743,7 +593,7 @@ class Pod
 
                 // If the PICK column is unique, get values already chosen
                 $unique_vals = false;
-                if (1 == $attr['unique'])
+                if (1 == $field['unique'])
                 {
                     $exclude = empty($pod_id) ? '' : "pod_id != $pod_id AND";
                     $result = pod_query("SELECT tbl_row_id FROM @wp_pod_rel WHERE $exclude field_id = $field_id");
@@ -757,13 +607,14 @@ class Pod
                         $unique_vals = implode(',', $unique_vals);
                     }
                 }
-                $this->data[$key] = $this->get_dropdown_values($table, null, $tbl_row_ids, $unique_vals, $pick_filter);
+                $this->data[$key] = $this->get_dropdown_values($table, null, $tbl_row_ids, $unique_vals, $field['pick_filter'], $field['pick_orderby']);
             }
             else
             {
-                if (empty($this->data[$key]) && !empty($attr['default']))
+                // Set a default value if no value is entered
+                if (empty($this->data[$key]) && !empty($field['default']))
                 {
-                    $this->data[$key] = $attr['default'];
+                    $this->data[$key] = $field['default'];
                 }
                 else
                 {
@@ -771,12 +622,31 @@ class Pod
                 }
                 $this->get_field($key);
             }
-
-            $this->build_field_html($key, $label, $comment, $coltype, $attr);
+            $this->build_field_html($field);
         }
 ?>
     <div><input type="button" class="button" value="Save changes" onclick="saveForm()" /></div>
 <?php
+    }
+
+    /*
+    ==================================================
+    Display the pagination controls
+    ==================================================
+    */
+    function getPagination($label = 'Go to page:')
+    {
+        include realpath(dirname(__FILE__) . '/pagination.php');
+    }
+
+    /*
+    ==================================================
+    Display the list filters
+    ==================================================
+    */
+    function getFilters($filters = null, $label = 'Filter')
+    {
+        include realpath(dirname(__FILE__) . '/list_filters.php');
     }
 
     /*
@@ -794,7 +664,7 @@ class Pod
     Build HTML for a single field
     ==================================================
     */
-    function build_field_html($name, $label, $comment, $coltype, $attr)
+    function build_field_html($field)
     {
         include realpath(dirname(__FILE__) . '/input_fields.php');
     }
@@ -868,4 +738,3 @@ class Pod
         }
     }
 }
-

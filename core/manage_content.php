@@ -156,7 +156,7 @@ function showform(dt, pod_id) {
 
                 elements = jQuery(".desc");
                 var config = {
-                    iconsPath : "../wp-content/plugins/pods/images/nicEditorIcons.gif",
+                    iconsPath : "<?php echo $pods_url; ?>/images/nicEditorIcons.gif",
                     buttonList : ['bold','italic','underline','fontFormat','left','center','right','justify','ol','ul','indent','outdent','image','link','unlink','xhtml']
                 };
 
@@ -244,10 +244,7 @@ $result = pod_query($sql);
 
 $Record->total_rows = pod_query("SELECT FOUND_ROWS()");
 ?>
-    <div style="float:left; width:50%">
-        <?php echo $Record->getPagination(); ?>
-    </div>
-    <div id="filterForm" style="float:left; width:50%; text-align:right">
+    <div id="filterForm">
         <form method="get">
             Narrow results:
 <?php

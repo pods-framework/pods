@@ -122,7 +122,7 @@ Add new column
 */
 else
 {
-    if ('id' == $name || 'name' == $name || 'type' == $name || 'created' == $name || 'modified' == $name)
+    if (in_array($name, array('id', 'name', 'type', 'created', 'modified')))
     {
         die("Error: $name is a reserved name");
     }
@@ -146,7 +146,7 @@ else
     }
 
     $sister_field_id = ('null' == $sister_field_id) ? 'NULL' : "$sister_field_id";
-    $field_id = pod_query("INSERT INTO @wp_pod_fields (datatype, name, label, helper, coltype, pickval, pick_filter, sister_field_id, required, `unique`, `multiple`, weight) VALUES ('$datatype', '$name', '$label', '$helper', '$coltype', '$pickval', '$pick_filter', $sister_field_id, '$required', '$unique', '$multiple', '$weight')", 'Cannot add new field');
+    $field_id = pod_query("INSERT INTO @wp_pod_fields (datatype, name, label, display_helper, input_helper, coltype, pickval, pick_filter, pick_orderby, sister_field_id, required, `unique`, `multiple`, weight) VALUES ('$datatype', '$name', '$label', '$display_helper', '$input_helper', '$coltype', '$pickval', '$pick_filter', '$pick_orderby', $sister_field_id, '$required', '$unique', '$multiple', '$weight')", 'Cannot add new field');
 
     if (empty($pickval))
     {

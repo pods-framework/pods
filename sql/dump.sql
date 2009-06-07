@@ -33,12 +33,13 @@ CREATE TABLE wp_pod_fields (
     pickval VARCHAR(32),
     sister_field_id INT unsigned,
     weight TINYINT unsigned,
-    helper TEXT,
+    display_helper TEXT,
+    input_helper TEXT,
     pick_filter TEXT,
+    pick_orderby TEXT,
     `required` TINYINT,
     `unique` TINYINT,
     `multiple` TINYINT,
-    meta TEXT, /* required, unique, multiple, pick_filter, pick_orderby, display_helper, input_helper */
     INDEX datatype_idx (datatype)
 );
 

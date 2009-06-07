@@ -14,22 +14,18 @@ Begin page area
 -->
 <script type="text/javascript">
 jQuery(function() {
-    jQuery("#pageArea .editme").click(function() {
-        page_id = jQuery(this).parent("td").parent("tr").attr("id").substr(4);
-        var theform = jQuery("#page_form").html();
-        jQuery("#pageArea .pform").html("");
-        jQuery("#pageArea .ptr").hide();
-        jQuery("#pageArea #ptr"+page_id).show();
-        jQuery("#pageArea #pform"+page_id).html(theform);
-        loadPage();
+    jQuery(".select-page").change(function() {
+        page_id = jQuery(this).val();
+        if ("" == page_id) {
+            jQuery("#pageContent").hide();
+            jQuery("#page_code").val("");
+        }
+        else {
+            jQuery("#pageContent").show();
+            loadPage();
+        }
     });
-
-    jQuery("#pageArea .dropme").click(function() {
-        page_id = jQuery(this).parent("td").parent("tr").attr("id").substr(4);
-        var theform = jQuery("#pageArea #pform"+page_id).html();
-        dropPage();
-    });
-
+    jQuery(".select-page").change();
     jQuery("#pageBox").jqm();
 });
 
@@ -43,14 +39,12 @@ function loadPage() {
                 alert(msg);
             }
             else {
-                var page_data = eval("("+msg+")");
-                var uri = (null == page_data.uri) ? "" : page_data.uri;
-                var title = (null == page_data.title) ? "" : page_data.title;
-                var phpcode = (null == page_data.phpcode) ? "" : page_data.phpcode;
-                var template = (null == page_data.page_template) ? "" : page_data.page_template;
-                jQuery("#page_name").html(uri);
+                var json = eval("("+msg+")");
+                var title = (null == json.title) ? "" : json.title;
+                var code = (null == json.phpcode) ? "" : json.phpcode;
+                var template = (null == json.page_template) ? "" : json.page_template;
+                jQuery("#page_code").val(code);
                 jQuery("#page_title").val(title);
-                jQuery("#page_content").val(phpcode);
                 jQuery("#page_template").val(template);
             }
         }
@@ -68,27 +62,32 @@ function addPage() {
                 alert(msg);
             }
             else {
-                var rand = Math.round(Math.random()*9999);
-                window.location="?page=pods&"+rand+"#page";
+                var id = msg;
+                var html = '<option value="'+id+'">'+uri+'</option>';
+                jQuery(".select-page").append(html);
+                jQuery("#pageBox #new_page").val("");
+                jQuery(".select-page > option[value="+id+"]").attr("selected", "selected");
+                jQuery(".select-page").change();
+                jQuery("#pageBox").jqmHide();
             }
         }
     });
 }
 
 function editPage() {
-    var title = jQuery("#pageArea #pform"+page_id+" #page_title").val();
-    var content = jQuery("#pageArea #pform"+page_id+" #page_content").val();
-    var template = jQuery("#pageArea #pform"+page_id+" #page_template").val();
+    var code = jQuery("#page_code").val();
+    var title = jQuery("#page_title").val();
+    var template = jQuery("#page_template").val();
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "auth="+auth+"&action=editpage&page_id="+page_id+"&page_title="+encodeURIComponent(title)+"&page_template="+encodeURIComponent(template)+"&phpcode="+encodeURIComponent(content),
+        data: "auth="+auth+"&action=editpage&page_id="+page_id+"&page_title="+encodeURIComponent(title)+"&page_template="+encodeURIComponent(template)+"&phpcode="+encodeURIComponent(code),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
             }
             else {
-                colorFade('page', page_id);
+                alert("Success!");
             }
         }
     });
@@ -105,9 +104,8 @@ function dropPage() {
                     alert(msg);
                 }
                 else {
-                    jQuery("#pageArea #ptr"+page_id).remove();
-                    jQuery("#pageArea tr#prow"+page_id).css("background", "red");
-                    jQuery("#pageArea tr#prow"+page_id).fadeOut("slow");
+                    jQuery(".select-page > option[value="+page_id+"]").remove();
+                    jQuery(".select-page").change();
                 }
             }
         });
@@ -121,10 +119,9 @@ Page popups
 ==================================================
 -->
 <div id="pageBox" class="jqmWindow">
-    <?php echo bloginfo('siteurl'); ?>/<br />
     <input type="text" id="new_page" style="width:280px" />
     <input type="button" class="button" onclick="addPage()" value="Add Page" />
-    <div>Ex: <strong>resources/latest</strong> or <strong>events/*</strong></div>
+    <div>Ex: <strong>events</strong> or <strong>events/latest/*</strong></div>
 </div>
 
 <!--
@@ -133,37 +130,24 @@ Page HTML
 ==================================================
 -->
 <div id="pageArea" class="area hidden">
-    <input type="button" class="button-primary" onclick="jQuery('#pageBox').jqmShow()" value="Add new page" />
-    <table id="browseTable" style="width:100%" cellpadding="0" cellspacing="0">
-        <tr>
-            <th></th>
-            <th>URI</th>
-            <th></th>
-        </tr>
+    <select class="area-select select-page">
+        <option value="">Choose a Page</option>
 <?php
 if (isset($pages))
 {
-    foreach ($pages as $id => $uri)
+    foreach ($pages as $key => $val)
     {
-        $zebra = ('' == $zebra) ? ' class="zebra"' : '';
 ?>
-        <tr id="prow<?php echo $id; ?>"<?php echo $zebra; ?>>
-            <td width="20"><div class="btn editme"></div></td>
-            <td><?php echo $uri; ?></td>
-            <td width="20"><div class="btn dropme"></div></td>
-        </tr>
-        <tr id="ptr<?php echo $id; ?>" class="ptr hidden">
-            <td id="pform<?php echo $id; ?>" class="pform" colspan="3"></td>
-        </tr>
+        <option value="<?php echo $key; ?>"><?php echo $val; ?></option>
 <?php
     }
 }
 ?>
-    </table>
-
-    <div id="page_form" class="hidden">
-        <input type="text" id="page_title" /> Page Title<br />
-        <textarea id="page_content"></textarea><br />
+    </select>
+    <input type="button" class="button-primary" onclick="jQuery('#pageBox').jqmShow()" value="Add new page" />
+    <div id="pageContent">
+        <textarea id="page_code"></textarea><br />
+        Page Title: <input id="page_title" type="text" />
         <select id="page_template">
             <option value="">-- Page Template --</option>
 <?php
@@ -175,8 +159,8 @@ foreach ($page_templates as $template => $file)
 <?php
 }
 ?>
-        </select>
-        <input type="button" class="button" onclick="editPage()" value="Save changes" /> or <a href="javascript:;" onclick="jQuery('.ptr').hide()">close</a>
+        </select><br />
+        <input type="button" class="button" onclick="editPage()" value="Save changes" /> or
+        <a href="javascript:;" onclick="dropPage()">drop page</a>
     </div>
 </div>
-

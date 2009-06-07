@@ -14,30 +14,18 @@ Begin template area
 -->
 <script type="text/javascript">
 jQuery(function() {
-    jQuery("#templateArea .tab").click(function() {
-        jQuery("#templateArea .tab").removeClass("active");
-        template_id = jQuery(this).attr("class").split(" ")[1].substr(1);
-        jQuery(this).addClass("active");
-        jQuery("#templateArea .idle").show();
-        loadTemplate();
+    jQuery(".select-template").change(function() {
+        template_id = jQuery(this).val();
+        if ("" == template_id) {
+            jQuery("#templateContent").hide();
+            jQuery("#template_code").val("");
+        }
+        else {
+            jQuery("#templateContent").show();
+            loadTemplate();
+        }
     });
-
-    jQuery("#templateArea .editme").click(function() {
-        template_id = jQuery(this).parent("td").parent("tr").attr("id").substr(4);
-        var theform = jQuery("#template_form").html();
-        jQuery("#templateArea .tform").html("");
-        jQuery("#templateArea .ttr").hide();
-        jQuery("#templateArea #ttr"+template_id).show();
-        jQuery("#templateArea #tform"+template_id).html(theform);
-        loadTemplate();
-    });
-
-    jQuery("#templateArea .dropme").click(function() {
-        template_id = jQuery(this).parent("td").parent("tr").attr("id").substr(4);
-        var theform = jQuery("#templateArea #tform"+template_id).html();
-        dropTemplate();
-    });
-
+    jQuery(".select-template").change();
     jQuery("#templateBox").jqm();
 });
 
@@ -51,10 +39,8 @@ function loadTemplate() {
                 alert(msg);
             }
             else {
-                var template_data = eval("("+msg+")");
-                var name = (null == template_data.name) ? "" : template_data.name;
-                var code = (null == template_data.code) ? "" : template_data.code;
-                jQuery("#template_name").html(name);
+                var json = eval("("+msg+")");
+                var code = (null == json.code) ? "" : json.code;
                 jQuery("#template_code").val(code);
             }
         }
@@ -72,16 +58,20 @@ function addTemplate() {
                 alert(msg);
             }
             else {
-                var rand = Math.round(Math.random()*9999);
-                window.location="?page=pods&"+rand+"#template";
+                var id = msg;
+                var html = '<option value="'+id+'">'+name+'</option>';
+                jQuery(".select-template").append(html);
+                jQuery("#templateBox #new_template").val("");
+                jQuery(".select-template > option[value="+id+"]").attr("selected", "selected");
+                jQuery(".select-template").change();
+                jQuery("#templateBox").jqmHide();
             }
         }
     });
 }
 
 function editTemplate() {
-    var name = jQuery("#templateArea #tform"+template_id+" #template_name").val();
-    var code = jQuery("#templateArea #tform"+template_id+" #template_code").val();
+    var code = jQuery("#template_code").val();
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
@@ -91,7 +81,7 @@ function editTemplate() {
                 alert(msg);
             }
             else {
-                colorFade('template', template_id);
+                alert("Success!");
             }
         }
     });
@@ -108,9 +98,8 @@ function dropTemplate() {
                     alert(msg);
                 }
                 else {
-                    jQuery("#templateArea #ttr"+template_id).remove();
-                    jQuery("#templateArea tr#trow"+template_id).css("background", "red");
-                    jQuery("#templateArea tr#trow"+template_id).fadeOut("slow");
+                    jQuery(".select-template > option[value="+template_id+"]").remove();
+                    jQuery(".select-template").change();
                 }
             }
         });
@@ -135,37 +124,24 @@ Template HTML
 ==================================================
 -->
 <div id="templateArea" class="area hidden">
-    <input type="button" class="button-primary" onclick="jQuery('#templateBox').jqmShow()" value="Add new template" />
-    <table id="browseTable" style="width:100%" cellpadding="0" cellspacing="0">
-        <tr>
-            <th></th>
-            <th>Name</th>
-            <th></th>
-        </tr>
+    <select class="area-select select-template">
+        <option value="">Choose a Template</option>
 <?php
 if (isset($templates))
 {
-    foreach ($templates as $id => $name)
+    foreach ($templates as $key => $val)
     {
-        $zebra = ('' == $zebra) ? ' class="zebra"' : '';
 ?>
-        <tr id="trow<?php echo $id; ?>"<?php echo $zebra; ?>>
-            <td width="20"><div class="btn editme"></div></td>
-            <td><?php echo $name; ?></td>
-            <td width="20"><div class="btn dropme"></div></td>
-        </tr>
-        <tr id="ttr<?php echo $id; ?>" class="ttr hidden">
-            <td id="tform<?php echo $id; ?>" class="tform" colspan="3"></td>
-        </tr>
+        <option value="<?php echo $key; ?>"><?php echo $val; ?></option>
 <?php
     }
 }
 ?>
-    </table>
-
-    <div id="template_form" class="hidden">
+    </select>
+    <input type="button" class="button-primary" onclick="jQuery('#templateBox').jqmShow()" value="Add new template" />
+    <div id="templateContent">
         <textarea id="template_code"></textarea><br />
-        <input type="button" class="button" onclick="editTemplate()" value="Save changes" /> or <a href="javascript:;" onclick="jQuery('.ttr').hide()">close</a>
+        <input type="button" class="button" onclick="editTemplate()" value="Save changes" /> or
+        <a href="javascript:;" onclick="dropTemplate()">drop template</a>
     </div>
 </div>
-

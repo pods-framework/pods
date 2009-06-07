@@ -19,11 +19,11 @@ if ($id = (int) $_POST['id'])
 
     $sql = "
         SELECT
-            id, name, coltype, pickval, pick_filter, required, weight
+            id, name, coltype, pickval, required, weight
         FROM
             @wp_pod_fields
         WHERE
-            datatype = " . $module['id'] . "
+            datatype = $id
         ORDER BY
             weight
         ";

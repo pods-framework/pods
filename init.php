@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: Pods
+Plugin Name: Pods CMS
 Plugin URI: http://pods.uproot.us/
 Description: The WordPress CMS Plugin
-Version: 1.6.3
+Version: 1.6.4
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$pods_latest = 163;
+$pods_latest = 164;
 
 function pods_init()
 {
@@ -151,10 +151,8 @@ function pods_menu_page()
 function pods_meta()
 {
     global $pods_latest;
-
-    $pods_latest = implode('.', str_split($pods_latest));
 ?>
-<meta name="CMS" content="Pods <?php echo $pods_latest; ?>" />
+<meta name="CMS" content="Pods <?php echo implode('.', str_split($pods_latest)); ?>" />
 <?php
 }
 

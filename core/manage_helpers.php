@@ -5,30 +5,20 @@ Begin helper area
 -->
 <script type="text/javascript">
 jQuery(function() {
-    jQuery("#helperArea .editme").click(function() {
-        helper_id = jQuery(this).parent("td").parent("tr").attr("id").substr(4);
-        var theform = jQuery("#helper_form").html();
-        jQuery("#helperArea .hform").html("");
-        jQuery("#helperArea .htr").hide();
-        jQuery("#helperArea #htr"+helper_id).show();
-        jQuery("#helperArea #hform"+helper_id).html(theform);
-        loadHelper();
+    jQuery(".select-helper").change(function() {
+        helper_id = jQuery(this).val();
+        if ("" == helper_id) {
+            jQuery("#helperContent").hide();
+            jQuery("#helper_code").val("");
+        }
+        else {
+            jQuery("#helperContent").show();
+            loadHelper();
+        }
     });
-
-    jQuery("#helperArea .dropme").click(function() {
-        helper_id = jQuery(this).parent("td").parent("tr").attr("id").substr(4);
-        var theform = jQuery("#helperArea #hform"+helper_id).html();
-        dropHelper();
-    });
-
+    jQuery(".select-helper").change();
     jQuery("#helperBox").jqm();
 });
-
-function addPodHelper(div_id, select_id) {
-    var val = jQuery("#"+select_id).val();
-    var html = '<div class="helper" id="'+val+'">'+val+' (<a onclick="jQuery(this).parent().remove()">drop</a>)</div>';
-    jQuery("#"+div_id).append(html);
-}
 
 function loadHelper() {
     jQuery.ajax({
@@ -40,11 +30,10 @@ function loadHelper() {
                 alert(msg);
             }
             else {
-                var helper_data = eval("("+msg+")");
-                var phpcode = (null == helper_data.phpcode) ? "" : helper_data.phpcode;
-                var helper_type = (null == helper_data.helper_type) ? "display" : helper_data.helper_type;
-                jQuery("#helper_content").val(phpcode);
-                jQuery("#helper_type").val(helper_type);
+                var json = eval("("+msg+")");
+                var code = (null == json.phpcode) ? "" : json.phpcode;
+                var helper_type = (null == json.helper_type) ? "display" : json.helper_type;
+                jQuery("#helper_code").val(code);
             }
         }
     });
@@ -62,25 +51,30 @@ function addHelper() {
                 alert(msg);
             }
             else {
-                var rand = Math.round(Math.random()*9999);
-                window.location="?page=pods&"+rand+"#helper";
+                var id = msg;
+                var html = '<option value="'+id+'">'+name+'</option>';
+                jQuery(".select-helper").append(html);
+                jQuery("#helperBox #new_helper").val("");
+                jQuery(".select-helper > option[value="+id+"]").attr("selected", "selected");
+                jQuery(".select-helper").change();
+                jQuery("#helperBox").jqmHide();
             }
         }
     });
 }
 
 function editHelper() {
-    var content = jQuery("#helperArea #hform"+helper_id+" #helper_content").val();
+    var code = jQuery("#helper_code").val();
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "auth="+auth+"&action=edithelper&helper_id="+helper_id+"&phpcode="+encodeURIComponent(content),
+        data: "auth="+auth+"&action=edithelper&helper_id="+helper_id+"&phpcode="+encodeURIComponent(code),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
             }
             else {
-                colorFade('helper', helper_id);
+                alert("Success!");
             }
         }
     });
@@ -97,9 +91,8 @@ function dropHelper() {
                     alert(msg);
                 }
                 else {
-                    jQuery("#helperArea #htr"+helper_id).remove();
-                    jQuery("#helperArea tr#hrow"+helper_id).css("background", "red");
-                    jQuery("#helperArea tr#hrow"+helper_id).fadeOut("slow");
+                    jQuery(".select-helper > option[value="+helper_id+"]").remove();
+                    jQuery(".select-helper").change();
                 }
             }
         });
@@ -130,45 +123,27 @@ Helper HTML
 ==================================================
 -->
 <div id="helperArea" class="area hidden">
-    <input type="button" class="button-primary" onclick="jQuery('#helperBox').jqmShow()" value="Add new helper" />
-    <table id="browseTable" style="width:100%" cellpadding="0" cellspacing="0">
-        <tr>
-            <th></th>
-            <th>Name</th>
-            <th>Helper Type</th>
-            <th></th>
-        </tr>
+    <select class="area-select select-helper">
+        <option value="">Choose a Helper</option>
 <?php
 if (isset($helpers))
 {
-    $zebra = '';
-    foreach ($helpers as $id => $val)
+    foreach ($helpers as $key => $helper)
     {
-        $id = $val['id'];
-        $name = $val['name'];
-        $helper_type = $val['helper_type'];
-        $zebra = ('' == $zebra) ? ' class="zebra"' : '';
+        $helper_id = $helper['id'];
+        $helper_name = $helper['name'];
+        $helper_type = $helper['helper_type'];
 ?>
-        <tr id="hrow<?php echo $id; ?>"<?php echo $zebra; ?>>
-            <td width="20">
-                <div class="btn editme"></div>
-            </td>
-            <td><?php echo $name; ?></td>
-            <td><?php echo $helper_type; ?></td>
-            <td width="20"><div class="btn dropme"></div></td>
-        </tr>
-        <tr id="htr<?php echo $id; ?>" class="htr hidden">
-            <td id="hform<?php echo $id; ?>" class="hform" colspan="4"></td>
-        </tr>
+        <option value="<?php echo $helper_id; ?>"><?php echo $helper_name; ?></option>
 <?php
     }
 }
 ?>
-    </table>
-
-    <div id="helper_form" class="hidden">
-        <textarea id="helper_content"></textarea>
-        <input type="button" class="button" onclick="editHelper()" value="Save changes" /> or <a href="javascript:;" onclick="jQuery('.htr').hide()">close</a>
+    </select>
+    <input type="button" class="button-primary" onclick="jQuery('#helperBox').jqmShow()" value="Add new helper" />
+    <div id="helperContent">
+        <textarea id="helper_code"></textarea><br />
+        <input type="button" class="button" onclick="editHelper()" value="Save changes" /> or
+        <a href="javascript:;" onclick="dropHelper()">drop helper</a>
     </div>
 </div>
-

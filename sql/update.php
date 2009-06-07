@@ -139,12 +139,12 @@ if ($installed < 162)
     pod_query("UPDATE @wp_pod_pages SET uri = TRIM(BOTH '/' FROM uri)");
 }
 
-if ($installed < 163)
+if ($installed < 164)
 {
-    // Add the new "pod" detail page
-    
+    pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN pick_orderby TEXT AFTER pick_filter");
+    pod_query("ALTER TABLE @wp_pod_fields CHANGE helper display_helper TEXT");
+    pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN input_helper TEXT AFTER display_helper");
 }
 
 // Save this version
 update_option('pods_version', $pods_latest);
-

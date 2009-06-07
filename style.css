@@ -79,29 +79,19 @@ h2.title {
 
 #column_name,
 #column_label,
-#column_comment,
-#column_helper,
 #column_type,
 #column_pickval,
 #column_sister_field_id,
+#column_pick_filter,
+#column_pick_orderby,
+#column_display_helper,
+#column_input_helper,
+#column_comment,
+#list_filters,
+#before_helpers,
+#after_helpers,
 #pod_label {
-    width: 125px;
-    border: 1px solid #E3E3E3;
-}
-
-#column_comment {
-    width: 255px;
-}
-
-.extras {
-    margin: 0;
-    cursor: pointer;
-    padding: 5px 20px;
-    background: url(images/menu-closed.png) 0 5px no-repeat;
-}
-
-.extras.open {
-    background: url(images/menu-open.png) 0 5px no-repeat;
+    width: 160px;
 }
 
 .tips {
@@ -111,7 +101,6 @@ h2.title {
 
 .area .button {
     border: 1px solid #E3E3E3;
-    margin-bottom: 5px;
 }
 
 .area textarea, .desc, .code {
@@ -120,49 +109,41 @@ h2.title {
     border: 1px solid #E3E3E3;
 }
 
-#podArea .tabs {
+#page_code,
+#helper_code,
+#template_code {
+    height: 300px;
+}
+
+#pod-area-left {
     float: left;
-    width: 200px;
+    width: 60%;
 }
 
-#podArea .edit-pane {
-    width: auto;
-    float: none;
-    padding: 0 0 0 10px;
-    margin-left: 200px;
-}
-
-#podArea .tab {
-    text-decoration: underline;
-    border-top: 1px solid #f9f9f9;
-    border-bottom: 1px solid #f9f9f9;
-    padding: 2px 8px;
-    cursor: pointer;
-}
-
-#podArea .tab.active {
-    background: #fff;
-    border-top: 1px solid #E3E3E3;
-    border-bottom: 1px solid #E3E3E3;
-    text-decoration: none;
+#pod-area-right {
+    float: left;
+    width: 38%;
+    padding-left: 10px;
+    border-left: 1px solid #e3e3e3;
 }
 
 #welcomeArea {
-    color: #fff;
-    background: #262e3b;
+    padding-top: 0;
 }
 
 #welcomeArea #logo {
     height: 60px;
-    background: url(images/header-logo.png) no-repeat;
+    color: white;
+    padding: 10px 0;
+    background: #262e3b url(images/header-logo.png) 10px no-repeat;
 }
 
 #welcomeArea #version {
-    padding: 40px 0 0 180px;
+    padding: 40px 0 0 190px;
 }
 
 #welcomeArea #overview {
-    padding: 20px 10px 0 10px;
+    padding: 10px 0 0 0;
 }
 
 #menu_uri,
@@ -179,20 +160,22 @@ h2.title {
     margin-top: 10px;
 }
 
-#browseTable {
-    margin: 10px 0;
+#filterForm {
+    text-align: right;
 }
 
-#browseTable th {
-    text-align: left;
+#browseTable {
+    margin: 10px 0;
 }
 
 #browseTable th a {
     text-decoration: none;
 }
 
-#browseTable th, td {
+#browseTable th,
+#browseTable td {
     padding: 2px 0;
+    text-align: left;
     border-bottom: 1px solid #E3E3E3;
 }
 
@@ -232,6 +215,15 @@ h3 {
     margin: 0 0 10px 0;
 }
 
+#podArea .area-select,
+#templateArea .area-select,
+#pageArea .area-select,
+#helperArea .area-select {
+    width: 280px;
+    font-size: 1.1em;
+    height: 26px;
+}
+
 .form {
     border: 1px solid #E3E3E3;
 }
@@ -262,9 +254,13 @@ h3 {
     width: 80%;
 }
 
-#columnBox .pick {
-    width: 120px;
-    height: 60px;
+#podArea #columnBox {
+    width: 100%;
+}
+
+#podArea #columnBox td,
+#podArea #podSettings td {
+    padding: 0 0 3px 0;
 }
 
 .red {

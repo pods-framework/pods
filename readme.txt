@@ -1,4 +1,4 @@
-=== Pods ===
+=== Pods CMS ===
 Contributors: logikal16, sc0ttkclark
 Donate link: http://pods.uproot.us
 Tags: cms, pods, cck, drupal, joomla, content types, pages, datatypes

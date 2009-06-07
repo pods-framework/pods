@@ -56,7 +56,7 @@ function saveForm() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/showform.php",
-        data: "datatype=<?php echo $datatype; ?>&save=1&public=1&columns="+columns+"&"+data.join("&"),
+        data: "datatype=<?php echo $datatype; ?>&save=1&columns="+columns+"&"+data.join("&"),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);

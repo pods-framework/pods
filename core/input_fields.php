@@ -1,6 +1,11 @@
 <?php
-$data = is_array($this->data[$name]) ? $this->data[$name] : stripslashes($this->data[$name]);
-$hidden = empty($attr['hidden']) ? '' : ' hidden';
+$name = $field['name'];
+$label = $field['label'];
+$comment = $field['comment'];
+$coltype = $field['coltype'];
+$input_helper = $field['input_helper'];
+$hidden = empty($field['hidden']) ? '' : ' hidden';
+$value = is_array($this->data[$name]) ? $this->data[$name] : stripslashes($this->data[$name]);
 ?>
     <div class="leftside<?php echo $hidden; ?>">
         <?php echo $label; ?>
@@ -15,62 +20,104 @@ if (!empty($comment))
     </div>
     <div class="rightside<?php echo $hidden; ?>">
 <?php
-// Boolean checkbox
-if ('bool' == $coltype)
+/*
+==================================================
+Generate the input helper
+==================================================
+*/
+if (!empty($input_helper))
 {
-    $data = empty($data) ? '' : ' checked';
+    eval("?>$input_helper");
+}
+
+/*
+==================================================
+Boolean checkbox
+==================================================
+*/
+elseif ('bool' == $coltype)
+{
+    $value = empty($value) ? '' : ' checked';
 ?>
-    <input type="checkbox" class="form bool <?php echo $name; ?>"<?php echo $data; ?> />
+    <input type="checkbox" class="form bool <?php echo $name; ?>"<?php echo $value; ?> />
 <?php
 }
+
+/*
+==================================================
+Date picker
+==================================================
+*/
 elseif ('date' == $coltype)
 {
-    $data = empty($data) ? date("Y-m-d H:i:s") : $data;
+    $value = empty($value) ? date("Y-m-d H:i:s") : $value;
 ?>
-    <input type="text" class="form date <?php echo $name; ?>" value="<?php echo $data; ?>" />
+    <input type="text" class="form date <?php echo $name; ?>" value="<?php echo $value; ?>" />
 <?php
 }
-// File upload box
+/*
+==================================================
+File upload
+==================================================
+*/
 elseif ('file' == $coltype)
 {
 ?>
-    <input type="text" class="form file <?php echo $name; ?>" value="<?php echo $data; ?>" />
+    <input type="text" class="form file <?php echo $name; ?>" value="<?php echo $value; ?>" />
     <a href="javascript:;" onclick="active_file = '<?php echo $name; ?>'; jQuery('#dialog').jqmShow()">select</a> after
     <a href="<?php echo get_bloginfo('url'); ?>/wp-admin/media-upload.php" target="_blank">uploading</a>
 <?php
 }
-// Standard text box
+/*
+==================================================
+Standard text box
+==================================================
+*/
 elseif ('num' == $coltype || 'txt' == $coltype || 'slug' == $coltype)
 {
 ?>
-    <input type="text" class="form <?php echo $coltype . ' ' . $name; ?>" value="<?php echo str_replace('"', '&quot;', $data); ?>" />
+    <input type="text" class="form <?php echo $coltype . ' ' . $name; ?>" value="<?php echo htmlspecialchars($value); ?>" />
 <?php
 }
-// Textarea box
+/*
+==================================================
+Textarea box
+==================================================
+*/
 elseif ('desc' == $coltype)
 {
 ?>
-    <textarea class="form desc <?php echo $name; ?>" id="desc-<?php echo $name; ?>"><?php echo $data; ?></textarea>
+    <textarea class="form desc <?php echo $name; ?>" id="desc-<?php echo $name; ?>"><?php echo $value; ?></textarea>
 <?php
 }
-// Textarea box (without WYSIWYG)
+/*
+==================================================
+Textarea box (no WYSIWYG)
+==================================================
+*/
 elseif ('code' == $coltype)
 {
 ?>
-    <textarea class="form code <?php echo $name; ?>" id="code-<?php echo $name; ?>"><?php echo $data; ?></textarea>
+    <textarea class="form code <?php echo $name; ?>" id="code-<?php echo $name; ?>"><?php echo $value; ?></textarea>
 <?php
 }
+
+/*
+==================================================
+PICK select box
+==================================================
+*/
 else
 {
-    // Multi-select list
-    if (1 == $attr['multiple'])
+    // Multi-select
+    if (1 == $field['multiple'])
     {
 ?>
     <div class="form pick <?php echo $name; ?>">
 <?php
-        if (!empty($data))
+        if (!empty($value))
         {
-            foreach ($data as $key => $val)
+            foreach ($value as $key => $val)
             {
                 $active = empty($val['active']) ? '' : ' active';
 ?>
@@ -82,16 +129,15 @@ else
     </div>
 <?php
     }
-    // Single-select list
     else
     {
 ?>
     <select class="form pick1 <?php echo $name; ?>">
         <option value="">-- Select one --</option>
 <?php
-        if (!empty($data))
+        if (!empty($value))
         {
-            foreach ($data as $key => $val)
+            foreach ($value as $key => $val)
             {
                 $selected = empty($val['active']) ? '' : ' selected';
 ?>

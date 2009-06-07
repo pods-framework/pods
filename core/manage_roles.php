@@ -73,7 +73,7 @@ if (isset($user_roles))
         if ('administrator' != $role)
         {
 ?>
-    <div style="float:left; width:32%; margin:0 5px 5px 0">
+    <div style="float:left; width:24%; margin:0 5px 5px 0">
         <h3><?php echo $role; ?></h3>
         <div class="form pick <?php echo $role; ?>">
 <?php

@@ -6,6 +6,8 @@ while ($row = mysql_fetch_assoc($result))
     $helpers[$row['id']] = $row;
     $helper_types[$row['helper_type']][] = $row['name'];
 }
+
+$codepress_path = get_option('siteurl') . '/wp-includes/js/codepress/';
 ?>
 
 <!--
@@ -42,11 +44,10 @@ jQuery(function() {
     jQuery(".navTab[rel="+thetab+"Area]").click();
 });
 
-function colorFade(area, id) {
-    var firstLetter = area.substr(0, 1);
-    var bgcolor = jQuery("#"+area+"Area #"+firstLetter+"row"+id).css("background-color");
-    jQuery("#"+area+"Area #"+firstLetter+"row"+id).css("background-color", "#88FFC0");
-    jQuery("#"+area+"Area #"+firstLetter+"row"+id).animate({backgroundColor:bgcolor}, 1000);
+function addPodHelper(div_id, select_id) {
+    var val = jQuery("#"+select_id).val();
+    var html = '<div class="helper" id="'+val+'">'+val+' (<a onclick="jQuery(this).parent().remove()">drop</a>)</div>';
+    jQuery("#"+div_id).append(html);
 }
 </script>
 
@@ -111,9 +112,9 @@ Begin welcome area
     </div>
     <div id="overview">
         <h3>This server is running...</h3>
-        &nbsp; &raquo; &nbsp; PHP <?php echo phpversion(); ?><br />
-        &nbsp; &raquo; &nbsp; <?php echo $_SERVER['SERVER_SOFTWARE']; ?><br />
-        &nbsp; &raquo; &nbsp; MySQL <?php echo mysql_result(pod_query("SELECT VERSION()"), 0); ?>
+        &nbsp; &#149; &nbsp; PHP <?php echo phpversion(); ?><br />
+        &nbsp; &#149; &nbsp; <?php echo $_SERVER['SERVER_SOFTWARE']; ?><br />
+        &nbsp; &#149; &nbsp; MySQL <?php echo mysql_result(pod_query("SELECT VERSION()"), 0); ?>
     </div>
     <div class="clear"><!--clear--></div>
 </div>

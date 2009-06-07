@@ -14,36 +14,47 @@ Begin pod area
 -->
 <script type="text/javascript">
 jQuery(function() {
-    jQuery("#podArea .tab").click(function() {
-        jQuery("#podArea .tab").removeClass("active");
-        datatype = jQuery(this).attr("class").split(" ")[1].substr(1);
-        jQuery(this).addClass("active");
-        jQuery("#podArea .idle").show();
-        loadPod();
+    jQuery(".select-pod").change(function() {
+        dt = jQuery(this).val();
+        dtname = jQuery(".select-pod > option:selected").html();
+        if ("" == dt) {
+            jQuery("#columnBox").hide();
+            jQuery("#podContent").hide();
+            jQuery("#podArea #column_list").html(jQuery(".pod-welcome").html());
+        }
+        else {
+            jQuery("#columnBox").show();
+            jQuery("#podContent").show();
+            resetForm();
+            loadPod();
+        }
     });
-
-    jQuery("#columnBox").jqm();
+    jQuery(".select-pod").change();
     jQuery("#podBox").jqm();
 });
 
 function resetForm() {
     jQuery("#column_name").val("");
-    jQuery("#column_name").attr("disabled", false);
+    jQuery("#column_name").attr("disabled", 0);
     jQuery("#column_label").val("");
+    jQuery("#column_comment").val("");
     jQuery("#column_type").val("");
-    jQuery("#column_type").attr("disabled", false);
+    jQuery("#column_type").attr("disabled", 0);
     jQuery("#column_pickval").val("");
-    jQuery("#column_required").attr("checked", 0);
-    jQuery("#column_required").attr("disabled", false);
-    jQuery("#column_unique").attr("checked", 0);
-    jQuery("#column_unique").attr("disabled", false);
-    jQuery("#column_multiple").attr("checked", 0);
-    jQuery("#column_multiple").attr("disabled", false);
-    jQuery("#column_sister_field_id").val("");
-    jQuery("#column_sister_field_id").hide();
     jQuery("#column_pick_filter").val("");
-    jQuery("#pick_filter_block").hide();
-    jQuery("#column_pickval").hide();
+    jQuery("#column_pick_orderby").val("");
+    jQuery("#column_display_helper").val("");
+    jQuery("#column_input_helper").val("");
+    jQuery("#column_required").attr("checked", 0);
+    jQuery("#column_required").attr("disabled", 0);
+    jQuery("#column_unique").attr("checked", 0);
+    jQuery("#column_unique").attr("disabled", 0);
+    jQuery("#column_multiple").attr("checked", 0);
+    jQuery("#column_multiple").attr("disabled", 0);
+    jQuery("#column_sister_field_id").val("");
+    jQuery(".coltype-pick").hide();
+    jQuery(".column-header").html("Add Column");
+    add_or_edit = "add";
 }
 
 function addOrEditColumn() {
@@ -56,18 +67,12 @@ function addOrEditColumn() {
 }
 
 function doDropdown(val) {
-    if ('pick' == val) {
-        jQuery("#column_pickval").show();
-        jQuery("#pick_filter_block").show();
+    if ("pick" == val) {
+        jQuery(".coltype-pick").show();
     }
     else {
-        jQuery("#column_pickval").val("");
-        jQuery("#column_pickval").hide();
-        jQuery("#column_pick_filter").val("");
-        jQuery("#pick_filter_block").hide();
+        jQuery(".coltype-pick").hide();
     }
-    jQuery("#column_sister_field_id").val("");
-    jQuery("#column_sister_field_id").hide();
 }
 
 function sisterFields(sister_field_id) {
@@ -75,7 +80,7 @@ function sisterFields(sister_field_id) {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/sister_fields.php",
-        data: "auth="+auth+"&datatype="+datatype+"&pickval="+pickval,
+        data: "auth="+auth+"&datatype="+dt+"&pickval="+pickval,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -101,20 +106,18 @@ function loadPod() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/load.php",
-        data: "auth="+auth+"&id="+datatype,
+        data: "auth="+auth+"&id="+dt,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
             }
             else {
-                var pod_type = eval("("+msg+")");
-                var name = (null == pod_type.name) ? "" : pod_type.name;
-                var label = (null == pod_type.label) ? "" : pod_type.label;
-                var is_toplevel = parseInt(pod_type.is_toplevel);
-                var list_filters = (null == pod_type.list_filters) ? "" : pod_type.list_filters;
-                var before_helpers = (null == pod_type.before_helpers) ? "" : pod_type.before_helpers;
-                var after_helpers = (null == pod_type.after_helpers) ? "" : pod_type.after_helpers;
-                jQuery("#pod_name").html(name);
+                var json = eval("("+msg+")");
+                var label = (null == json.label) ? "" : json.label;
+                var is_toplevel = parseInt(json.is_toplevel);
+                var list_filters = (null == json.list_filters) ? "" : json.list_filters;
+                var before_helpers = (null == json.before_helpers) ? "" : json.before_helpers;
+                var after_helpers = (null == json.after_helpers) ? "" : json.after_helpers;
                 jQuery("#pod_label").val(label);
                 jQuery("#is_toplevel").attr("checked", is_toplevel);
                 jQuery("#list_filters").val(list_filters);
@@ -123,7 +126,7 @@ function loadPod() {
 
                 // Build the column list
                 var html = "";
-                var fields = pod_type.fields;
+                var fields = json.fields;
                 for (var i = 0; i < fields.length; i++) {
                     var id = fields[i].id;
                     var name = fields[i].name;
@@ -202,18 +205,12 @@ function addPod() {
             }
             else {
                 var id = msg;
-                var html = '<div class="tab t'+id+'">'+name+'</div>';
-                jQuery("#podArea .tabs").append(html);
+                var html = '<option value="'+id+'">'+name+'</option>';
+                jQuery(".select-pod").append(html);
+                jQuery("#podBox #new_pod").val("");
+                jQuery(".select-pod > option[value="+id+"]").attr("selected", "selected");
+                jQuery(".select-pod").change();
                 jQuery("#podBox").jqmHide();
-                jQuery("#podArea .t"+id).click(function() {
-                    jQuery("#podArea .tab").removeClass("active");
-                    datatype = jQuery(this).attr("class").split(" ")[1].substr(1);
-                    jQuery(this).addClass("active");
-                    jQuery("#podArea .idle").show();
-                    jQuery("#podBox #new_pod").val("");
-                    loadPod();
-                });
-                jQuery("#podArea .t"+id).click();
             }
         }
     });
@@ -221,7 +218,7 @@ function addPod() {
 
 function editPod() {
     var label = jQuery("#pod_label").val();
-    var is_toplevel = (true == jQuery("#is_toplevel").is(":checked")) ? 1 : 0;
+    var is_toplevel = jQuery("#is_toplevel").is(":checked") ? 1 : 0;
     var list_filters = jQuery("#list_filters").val();
     var before_helpers = "";
     jQuery("#list_before_helpers .helper").each(function() {
@@ -236,7 +233,7 @@ function editPod() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "auth="+auth+"&datatype="+datatype+"&label="+label+"&is_toplevel="+is_toplevel+"&list_filters="+encodeURIComponent(list_filters)+"&before_helpers="+before_helpers+"&after_helpers="+after_helpers,
+        data: "auth="+auth+"&datatype="+dt+"&label="+label+"&is_toplevel="+is_toplevel+"&list_filters="+encodeURIComponent(list_filters)+"&before_helpers="+before_helpers+"&after_helpers="+after_helpers,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -250,20 +247,17 @@ function editPod() {
 
 function dropPod() {
     if (confirm("Do you really want to drop this pod and its contents?")) {
-        var dtname = jQuery("#pod_name").html();
         jQuery.ajax({
             type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
-            data: "auth="+auth+"&pod="+datatype+"&dtname="+dtname,
+            data: "auth="+auth+"&pod="+dt+"&dtname="+dtname,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);
                 }
                 else {
-                    jQuery("#pod_name").html("Choose a Pod");
-                    jQuery("#podArea #column_list").html('Need some help? Check out the <a href="http://codex.uproot.us" target="_blank">Codex</a> to get started.');
-                    jQuery("#podArea .t"+datatype).remove();
-                    jQuery("#podArea .idle").hide();
+                    jQuery(".select-pod > option[value="+dt+"]").remove();
+                    jQuery(".select-pod").change();
                 }
             }
         });
@@ -272,52 +266,53 @@ function dropPod() {
 
 function loadColumn(col) {
     resetForm();
+    column_id = col;
+    add_or_edit = "edit";
+    jQuery(".column-header").html("Edit Column");
 
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/load.php",
         data: "auth="+auth+"&col="+col,
         success: function(msg) {
-            var col_data = eval("("+msg+")");
-            var name = (null == col_data.name) ? "" : col_data.name;
-            var label = (null == col_data.label) ? "" : col_data.label;
-            var helper = (null == col_data.helper) ? "" : col_data.helper;
-            var comment = (null == col_data.comment) ? "" : col_data.comment;
-            var coltype = (null == col_data.coltype) ? "" : col_data.coltype;
-            var pickval = (null == col_data.pickval) ? "" : col_data.pickval;
-            var sister_field_id = (null == col_data.sister_field_id) ? "" : col_data.sister_field_id;
-            var pick_filter = (null == col_data.pick_filter) ? "" : col_data.pick_filter;
-            var required = parseInt(col_data.required);
-            var unique = parseInt(col_data.unique);
-            var multiple = parseInt(col_data.multiple);
+            var json = eval("("+msg+")");
+            var name = (null == json.name) ? "" : json.name;
+            var label = (null == json.label) ? "" : json.label;
+            var comment = (null == json.comment) ? "" : json.comment;
+            var coltype = (null == json.coltype) ? "" : json.coltype;
+            var pickval = (null == json.pickval) ? "" : json.pickval;
+            var sister_field_id = (null == json.sister_field_id) ? "" : json.sister_field_id;
+            var pick_filter = (null == json.pick_filter) ? "" : json.pick_filter;
+            var pick_orderby = (null == json.pick_orderby) ? "" : json.pick_orderby;
+            var display_helper = (null == json.display_helper) ? "" : json.display_helper;
+            var input_helper = (null == json.input_helper) ? "" : json.input_helper;
+            var required = parseInt(json.required);
+            var unique = parseInt(json.unique);
+            var multiple = parseInt(json.multiple);
             jQuery("#column_name").val(name);
             jQuery("#column_label").val(label);
-            jQuery("#column_helper").val(helper);
             jQuery("#column_comment").val(comment);
             jQuery("#column_type").val(coltype);
             jQuery("#column_pickval").val(pickval);
             jQuery("#column_pick_filter").val(pick_filter);
-            jQuery("#column_sister_field_id").hide();
-            jQuery("#pick_filter_block").hide();
+            jQuery("#column_pick_orderby").val(pick_orderby);
+            jQuery("#column_display_helper").val(display_helper);
+            jQuery("#column_input_helper").val(input_helper);
             jQuery("#column_required").attr("checked", required);
             jQuery("#column_unique").attr("checked", unique);
             jQuery("#column_multiple").attr("checked", multiple);
-            jQuery("#column_pickval").hide();
+
             if ("name" == name) {
-                jQuery("#column_name").attr("disabled", true);
-                jQuery("#column_type").attr("disabled", true);
-                jQuery("#column_required").attr("disabled", true);
+                jQuery("#column_name").attr("disabled", 1);
+                jQuery("#column_type").attr("disabled", 1);
+                jQuery("#column_required").attr("disabled", 1);
             }
             if ("pick" == coltype) {
-                jQuery("#column_pickval").show();
-                jQuery("#pick_filter_block").show();
+                jQuery(".coltype-pick").show();
             }
-            if ("0" != sister_field_id) {
+            if (0 != parseInt(sister_field_id)) {
                 sisterFields(sister_field_id);
             }
-            column_id = col;
-            add_or_edit = "edit";
-            jQuery("#columnBox").jqmShow();
         }
     });
 }
@@ -325,16 +320,18 @@ function loadColumn(col) {
 function addColumn() {
     var name = jQuery("#column_name").val();
     var label = jQuery("#column_label").val();
-    var helper = jQuery("#column_helper").val();
     var comment = jQuery("#column_comment").val();
-    var dtname = jQuery("#pod_name").html();
     var coltype = jQuery("#column_type").val();
     var pickval = jQuery("#column_pickval").val();
     var pick_filter = jQuery("#column_pick_filter").val();
+    var pick_orderby = jQuery("#column_pick_orderby").val();
     var sister_field_id = jQuery("#column_sister_field_id").val();
-    var required = (true == jQuery("#column_required").is(":checked")) ? 1 : 0;
-    var unique = (true == jQuery("#column_unique").is(":checked")) ? 1 : 0;
-    var multiple = (true == jQuery("#column_multiple").is(":checked")) ? 1 : 0;
+    var display_helper = jQuery("#column_display_helper").val();
+    var input_helper = jQuery("#column_input_helper").val();
+    var required = jQuery("#column_required").is(":checked") ? 1 : 0;
+    var unique = jQuery("#column_unique").is(":checked") ? 1 : 0;
+    var multiple = jQuery("#column_multiple").is(":checked") ? 1 : 0;
+
     if ("pick" == coltype && "" == pickval) {
         alert("Error: Invalid pick selection");
         return false;
@@ -342,13 +339,13 @@ function addColumn() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/add.php",
-        data: "auth="+auth+"&datatype="+datatype+"&dtname="+dtname+"&name="+name+"&label="+label+"&helper="+helper+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&sister_field_id="+sister_field_id+"&required="+required+"&unique="+unique+"&multiple="+multiple,
+        data: "auth="+auth+"&datatype="+dt+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&pick_orderby="+pick_orderby+"&sister_field_id="+sister_field_id+"&display_helper="+display_helper+"&input_helper="+input_helper+"&required="+required+"&unique="+unique+"&multiple="+multiple,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
             }
             else {
-                jQuery("#columnBox").jqmHide();
+                resetForm();
                 loadPod();
             }
         }
@@ -359,7 +356,7 @@ function moveColumn(col, dir) {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "auth="+auth+"&action=move&datatype="+datatype+"&col="+col+"&dir="+dir,
+        data: "auth="+auth+"&action=move&datatype="+dt+"&col="+col+"&dir="+dir,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -374,16 +371,18 @@ function moveColumn(col, dir) {
 function editColumn(col) {
     var name = jQuery("#column_name").val();
     var label = jQuery("#column_label").val();
-    var helper = jQuery("#column_helper").val();
     var comment = jQuery("#column_comment").val();
-    var dtname = jQuery(".tab.active").html();
     var coltype = jQuery("#column_type").val();
     var pickval = jQuery("#column_pickval").val();
     var pick_filter = jQuery("#column_pick_filter").val();
+    var pick_orderby = jQuery("#column_pick_orderby").val();
     var sister_field_id = jQuery("#column_sister_field_id").val();
-    var required = (true == jQuery("#column_required").is(":checked")) ? 1 : 0;
-    var unique = (true == jQuery("#column_unique").is(":checked")) ? 1 : 0;
-    var multiple = (true == jQuery("#column_multiple").is(":checked")) ? 1 : 0;
+    var display_helper = jQuery("#column_display_helper").val();
+    var input_helper = jQuery("#column_input_helper").val();
+    var required = jQuery("#column_required").is(":checked") ? 1 : 0;
+    var unique = jQuery("#column_unique").is(":checked") ? 1 : 0;
+    var multiple = jQuery("#column_multiple").is(":checked") ? 1 : 0;
+
     if ("pick" == coltype && "" == pickval) {
         alert("Error: Invalid pick selection");
         return false;
@@ -391,13 +390,14 @@ function editColumn(col) {
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "auth="+auth+"&action=edit&datatype="+datatype+"&dtname="+dtname+"&field_id="+col+"&name="+name+"&label="+label+"&helper="+helper+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&sister_field_id="+sister_field_id+"&required="+required+"&unique="+unique+"&multiple="+multiple,
+        data: "auth="+auth+"&action=edit&field_id="+col+"&datatype="+dt+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&pick_orderby="+pick_orderby+"&sister_field_id="+sister_field_id+"&display_helper="+display_helper+"&input_helper="+input_helper+"&required="+required+"&unique="+unique+"&multiple="+multiple,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
             }
             else {
-                jQuery("#columnBox").jqmHide();
+                alert("Success!");
+                resetForm();
                 loadPod();
             }
         }
@@ -406,7 +406,6 @@ function editColumn(col) {
 
 function dropColumn(col) {
     if (confirm("Do you really want to drop this column?")) {
-        var dtname = jQuery("#pod_name").html();
         jQuery.ajax({
             type: "post",
             url: "<?php echo $pods_url; ?>/ajax/drop.php",
@@ -417,6 +416,7 @@ function dropColumn(col) {
                 }
                 else {
                     jQuery(".col"+col).remove();
+                    resetForm();
                 }
             }
         });
@@ -435,140 +435,55 @@ Pod popups
     <p>Please use lowercase letters, dashes or underscores only.</p>
 </div>
 
-<div id="columnBox" class="jqmWindow">
-    <input type="hidden" id="add_or_edit" value="" />
-    <div class="leftside">Name</div>
-    <div class="rightside">
-        <input type="text" id="column_name" value="" />
-        <input type="button" class="button" onclick="addOrEditColumn()" value="Save column" />
-    </div>
-
-    <div class="leftside">Label</div>
-    <div class="rightside">
-        <input type="text" id="column_label" value="" />
-        <select id="column_helper">
-            <option value="">-- Helper --</option>
-<?php
-// Get all display helpers
-foreach ($helper_types['display'] as $key => $name)
-{
-?>
-            <option value="<?php echo $name; ?>"><?php echo $name; ?></option>
-<?php
-}
-?>
-        </select>
-    </div>
-
-    <div class="leftside">Column Type</div>
-    <div class="rightside">
-        <select id="column_type" onchange="doDropdown(this.value)">
-            <option value="date">date</option>
-            <option value="num">number</option>
-            <option value="bool">boolean (true, false)</option>
-            <option value="txt">text (title, caption, email, phone, url)</option>
-            <option value="desc">desc (summary, fulltext)</option>
-            <option value="code">code (no WYSIWYG editor)</option>
-            <option value="file">file (document, media)</option>
-            <option value="slug">slug (permalink)</option>
-            <option value="pick">pick</option>
-        </select>
-        <select id="column_pickval" class="hidden" onchange="sisterFields()">
-            <option value="" style="font-weight:bold; font-style:italic">-- Pods --</option>
-<?php
-// Get pods, including country and state
-$result = pod_query("SHOW TABLES LIKE '@wp_pod_tbl_%'");
-while ($row = mysql_fetch_array($result))
-{
-    $table_name = explode('tbl_', $row[0]);
-    $table_name = $table_name[1];
-?>
-            <option value="<?php echo $table_name; ?>"><?php echo $table_name; ?></option>
-<?php
-}
-?>
-            <option value="" style="font-weight:bold; font-style:italic">-- Category --</option>
-<?php
-// Category dropdown list
-$sql = "
-SELECT DISTINCT
-    t.term_id AS id, t.name
-FROM
-    @wp_term_taxonomy tx
-INNER JOIN
-    @wp_terms t ON t.term_id = tx.parent
-";
-$result = pod_query($sql);
-while ($row = mysql_fetch_assoc($result))
-{
-?>
-            <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
-<?php
-}
-?>
-            <option value="" style="font-weight:bold; font-style:italic">-- WordPress --</option>
-            <option value="wp_page">WP Page</option>
-            <option value="wp_post">WP Post</option>
-            <option value="wp_user">WP User</option>
-        </select>
-        <select id="column_sister_field_id" class="hidden"></select>
-    </div>
-
-    <div id="pick_filter_block">
-        <div class="leftside">Pick Filter</div>
-        <div class="rightside"><input type="text" id="column_pick_filter" value="" /></div>
-    </div>
-
-    <div class="leftside">&nbsp;</div>
-    <div class="rightside">
-        <input type="checkbox" id="column_required" /> required &nbsp;
-        <input type="checkbox" id="column_unique" /> unique &nbsp;
-        <input type="checkbox" id="column_multiple" /> multiple
-    </div>
-
-    <div class="leftside">Comment</div>
-    <div class="rightside"><input type="text" id="column_comment" value="" /></div>
-
-    <div class="clear"><!--clear--></div>
-</div>
-
 <!--
 ==================================================
 Pod HTML
 ==================================================
 -->
 <div id="podArea" class="area hidden">
-    <div class="tabs">
-        <input type="button" class="button-primary" onclick="jQuery('#podBox').jqmShow()" value="Add new pod" />
+    <select class="area-select select-pod">
+        <option value="">Choose a Pod</option>
 <?php
 if (isset($datatypes))
 {
     foreach ($datatypes as $key => $val)
     {
 ?>
-        <div class="tab t<?php echo $key; ?>"><?php echo $val; ?></div>
+        <option value="<?php echo $key; ?>"><?php echo $val; ?></option>
 <?php
     }
 }
 ?>
-    </div>
-    <div class="edit-pane">
-        <h2 class="title" id="pod_name">Choose a Pod</h2>
-        <p id="column_list">Need some help? Check out the <a href="http://codex.uproot.us" target="_blank">Codex</a> to get started.</p>
-        <div class="idle hidden">
-            <p>
-                <input type="button" class="button" onclick="add_or_edit='add'; resetForm(); jQuery('#columnBox').jqmShow()" value="Add a column" />
-                <input type="button" class="button" onclick="editPod()" value="Save changes" /> or
-                <a href="javascript:;" onclick="dropPod()">drop pod</a>
-            </p>
+    </select>
+    <input type="button" class="button-primary" onclick="jQuery('#podBox').jqmShow()" value="Add new pod" />
 
-            <p class="extras" onclick="jQuery('#pod_settings').toggle(); jQuery(this).toggleClass('open')">Pod Settings</p>
-            <div id="pod_settings" class="hidden">
-                <input type="text" id="pod_label" value="" />
-                <input type="checkbox" id="is_toplevel" /> Top-level menu? (if so, add a label)
-                <p>List Filters:<br /><input type="text" id="list_filters" /></p>
-                <p>
-                    Pre-save Helpers:<br />
+    <div class="pod-welcome hidden">
+        Need some help? Check out the <a href="http://codex.uproot.us" target="_blank">Codex</a> to get started.
+    </div>
+
+    <div id="pod-area-left">
+        <p id="column_list"></p>
+        <table id="podContent" style="width:100%" cellpadding="0" cellspacing="0">
+            <tr>
+                <td colspan="2">
+                    <h2 class="title" style="margin:10px 0">Pod Settings</h2>
+                </td>
+            </tr>
+            <tr>
+                <td>Top Level Menu?</td>
+                <td><input type="checkbox" id="is_toplevel" /></td>
+            </tr>
+            <tr>
+                <td>Menu Label</td>
+                <td><input type="text" id="pod_label" value="" /></td>
+            </tr>
+            <tr>
+                <td>List Filters</td>
+                <td><input type="text" id="list_filters" /></td>
+            </tr>
+            <tr>
+                <td>Pre-save Helpers</td>
+                <td>
                     <select id="before_helpers">
                         <option value="">-- Select --</option>
 <?php
@@ -585,9 +500,11 @@ if (isset($helper_types['before']))
                     </select>
                     <input type="button" class="button" value="Add" onclick="addPodHelper('list_before_helpers', 'before_helpers')" />
                     <div id="list_before_helpers"></div>
-                </p>
-                <p>
-                    Post-save Helpers:<br />
+                </td>
+            </tr>
+            <tr>
+                <td>Post-save Helpers</td>
+                <td>
                     <select id="after_helpers">
                         <option value="">-- Select --</option>
 <?php
@@ -604,10 +521,164 @@ if (isset($helper_types['after']))
                     </select>
                     <input type="button" class="button" value="Add" onclick="addPodHelper('list_after_helpers', 'after_helpers')" />
                     <div id="list_after_helpers"></div>
-                </p>
-            </div>
-        </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="button" class="button-primary" onclick="editPod()" value="Save settings" /> or
+                    <a href="javascript:;" onclick="dropPod()">drop pod</a>
+                </td>
+            </tr>
+        </table>
     </div>
-    <div class="clear"><!--clear--></div>
+
+    <div id="pod-area-right">
+        <table id="columnBox" cellpadding="0" cellspacing="0">
+            <tr>
+                <td colspan="2">
+                    <h2 class="title column-header" style="margin-bottom:10px">New Column</h2>
+                </td>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td><input type="text" id="column_name" value="" /></td>
+            </tr>
+            <tr>
+                <td>Label</td>
+                <td><input type="text" id="column_label" value="" /></td>
+            </tr>
+            <tr>
+                <td>Column Type</td>
+                <td>
+                    <select id="column_type" onchange="doDropdown(this.value)">
+                        <option value="date">date</option>
+                        <option value="num">number</option>
+                        <option value="bool">boolean (true, false)</option>
+                        <option value="txt">text (title, email, phone, url)</option>
+                        <option value="desc">desc (summary, body)</option>
+                        <option value="code">code (no WYSIWYG editor)</option>
+                        <option value="file">file (document, media)</option>
+                        <option value="slug">slug (permalink)</option>
+                        <option value="pick">pick</option>
+                    </select>
+                </td>
+            </tr>
+            <tr class="coltype-pick">
+                <td>Related to</td>
+                <td>
+                    <select id="column_pickval" onchange="sisterFields()">
+                        <option value="" style="font-weight:bold; font-style:italic">-- Pods --</option>
+<?php
+// Get pods, including country and state
+$result = pod_query("SHOW TABLES LIKE '@wp_pod_tbl_%'");
+while ($row = mysql_fetch_array($result))
+{
+    $table_name = explode('tbl_', $row[0]);
+    $table_name = $table_name[1];
+?>
+                        <option value="<?php echo $table_name; ?>"><?php echo $table_name; ?></option>
+<?php
+}
+?>
+                        <option value="" style="font-weight:bold; font-style:italic">-- Category --</option>
+<?php
+// Category dropdown list
+$sql = "
+SELECT DISTINCT
+    t.term_id AS id, t.name
+FROM
+    @wp_term_taxonomy tx
+INNER JOIN
+    @wp_terms t ON t.term_id = tx.parent
+";
+$result = pod_query($sql);
+while ($row = mysql_fetch_assoc($result))
+{
+?>
+                        <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
+<?php
+}
+?>
+                        <option value="" style="font-weight:bold; font-style:italic">-- WordPress --</option>
+                        <option value="wp_page">WP Page</option>
+                        <option value="wp_post">WP Post</option>
+                        <option value="wp_user">WP User</option>
+                    </select>
+                </td>
+            </tr>
+            <tr class="coltype-pick">
+                <td>Bi-directional?</td>
+                <td>
+                    <select id="column_sister_field_id"></select>
+                </td>
+            </tr>
+            <tr class="coltype-pick">
+                <td>PICK Filter</td>
+                <td>
+                    <input type="text" id="column_pick_filter" value="" />
+                </td>
+            </tr>
+            <tr class="coltype-pick">
+                <td>PICK Orderby</td>
+                <td>
+                    <input type="text" id="column_pick_orderby" value="" />
+                </td>
+            </tr>
+            <tr>
+                <td>Attributes</td>
+                <td>
+                    <input type="checkbox" id="column_required" /> required<br />
+                    <input type="checkbox" id="column_unique" /> unique<br />
+                    <input type="checkbox" id="column_multiple" /> multiple
+                </td>
+            </tr>
+            <tr>
+                <td>Display Helper</td>
+                <td>
+                    <select id="column_display_helper">
+                        <option value="">-- Select --</option>
+<?php
+// Get all display helpers
+foreach ($helper_types['display'] as $key => $name)
+{
+?>
+                        <option value="<?php echo $name; ?>"><?php echo $name; ?></option>
+<?php
+}
+?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Input Helper</td>
+                <td>
+                    <select id="column_input_helper">
+                        <option value="">-- Select --</option>
+<?php
+// Get all display helpers
+foreach ($helper_types['input'] as $key => $name)
+{
+?>
+                        <option value="<?php echo $name; ?>"><?php echo $name; ?></option>
+<?php
+}
+?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Comment</td>
+                <td>
+                    <input type="text" id="column_comment" value="" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="button" class="button-primary" onclick="addOrEditColumn()" value="Save column" />
+                    or <a href="javascript:;" onclick="resetForm()">cancel</a>
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>
 

@@ -80,4 +80,3 @@ function saveForm() {
 $this->showForm($this->get_pod_id(), $public_columns);
 ?>
 </div>
-

@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS
 Plugin URI: http://pods.uproot.us/
 Description: The WordPress CMS Plugin
-Version: 1.6.4
+Version: 1.6.5
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$pods_latest = 164;
+$pods_latest = 165;
 
 function pods_init()
 {
@@ -234,23 +234,18 @@ function kill_redirect()
 
 function podpage_exists()
 {
-    $uri = explode('?', $_SERVER['REQUEST_URI']);
-    $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri[0]);
-    $uri = empty($uri) ? '/' : $uri;
+    $home = str_replace('http://', '', get_bloginfo('url'));
+    $uri = explode('?', $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+    $uri = str_replace($home, '', $uri[0]);
+    $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri);
 
     if (false !== strpos($uri, 'wp-admin'))
     {
         return false;
     }
 
-    // Handle subdirectory installations
-    $baseuri = get_bloginfo('url');
-    $baseuri = substr($baseuri, strpos($baseuri, '//') + 2);
-    $baseuri = str_replace($_SERVER['HTTP_HOST'], '', $baseuri);
-    $baseuri = str_replace($baseuri, '', $uri);
-
     // See if the custom template exists
-    $result = pod_query("SELECT * FROM @wp_pod_pages WHERE uri IN('$uri', '$baseuri') LIMIT 1");
+    $result = pod_query("SELECT * FROM @wp_pod_pages WHERE uri = '$uri' LIMIT 1");
     if (1 > mysql_num_rows($result))
     {
         // Find any wildcards
@@ -260,7 +255,7 @@ function podpage_exists()
         FROM
             @wp_pod_pages
         WHERE
-            '$uri' LIKE REPLACE(uri, '*', '%') OR '$baseuri' LIKE REPLACE(uri, '*', '%')
+            '$uri' LIKE REPLACE(uri, '*', '%')
         ORDER BY
             uri DESC
         LIMIT

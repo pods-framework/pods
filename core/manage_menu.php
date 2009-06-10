@@ -98,7 +98,7 @@ function addMenu() {
             else {
                 var menu_id = msg;
                 var html = '<div class="menu-item" mid="'+menu_id+'"><div class="btn addnew"></div><div class="btn dropme"></div><span class="menu-title">'+menu_title+'</span></div>';
-                jQuery("div.menu-item[@mid='"+parent_menu_id+"']").append(html);
+                jQuery("div.menu-item[mid="+parent_menu_id+"]").append(html);
                 jQuery("#menuBox").jqmHide();
             }
         }
@@ -117,7 +117,7 @@ function editMenu() {
                 alert(msg);
             }
             else {
-                jQuery("div.menu-item[@mid='"+menu_id+"'] > span.menu-title").html(menu_title);
+                jQuery("div.menu-item[mid="+menu_id+"] > span.menu-title").html(menu_title);
                 jQuery("#menuBox").jqmHide();
             }
         }
@@ -135,7 +135,7 @@ function dropMenu() {
                     alert(msg);
                 }
                 else {
-                    jQuery("div.menu-item[@mid='"+menu_id+"']").remove();
+                    jQuery("div.menu-item[mid="+menu_id+"]").remove();
                 }
             }
         });

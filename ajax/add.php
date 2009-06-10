@@ -21,18 +21,19 @@ Add new datatype
 */
 if ('pod' == $type)
 {
-    if (!empty($name))
+    if (empty($name))
     {
-        $sql = "SELECT id FROM @wp_pod_types WHERE name = '$name' LIMIT 1";
-        pod_query($sql, 'Cannot get pod type', 'Pod by this name already exists');
-
-        $pod_id = pod_query("INSERT INTO @wp_pod_types (name) VALUES ('$name')", 'Cannot add new pod');
-        pod_query("CREATE TABLE `@wp_pod_tbl_$name` (id int unsigned auto_increment primary key, name varchar(128), body text)", 'Cannot add pod database table');
-        pod_query("INSERT INTO @wp_pod_fields (datatype, name, coltype, required, weight) VALUES ($pod_id, 'name', 'txt', 1, 0),($pod_id, 'body', 'desc', 0, 1)", 'Cannot add name and body columns');
-
-        die("$pod_id"); // return as string
+        die('Error: Enter a pod name');
     }
-    die('Error: Enter a pod name!');
+
+    $sql = "SELECT id FROM @wp_pod_types WHERE name = '$name' LIMIT 1";
+    pod_query($sql, 'Cannot get pod type', 'Pod by this name already exists');
+
+    $pod_id = pod_query("INSERT INTO @wp_pod_types (name) VALUES ('$name')", 'Cannot add new pod');
+    pod_query("CREATE TABLE `@wp_pod_tbl_$name` (id int unsigned auto_increment primary key, name varchar(128), body text)", 'Cannot add pod database table');
+    pod_query("INSERT INTO @wp_pod_fields (datatype, name, coltype, required, weight) VALUES ($pod_id, 'name', 'txt', 1, 0),($pod_id, 'body', 'desc', 0, 1)", 'Cannot add name and body columns');
+
+    die("$pod_id"); // return as string
 }
 
 /*
@@ -42,15 +43,16 @@ Add new template
 */
 elseif ('template' == $type)
 {
-    if (!empty($name))
+    if (empty($name))
     {
-        $sql = "SELECT id FROM @wp_pod_templates WHERE name = '$name' LIMIT 1";
-        pod_query($sql, 'Cannot get Templates', 'Template by this name already exists');
-        $template_id = pod_query("INSERT INTO @wp_pod_templates (name, code) VALUES ('$name', '$code')", 'Cannot add new template');
-
-        die("$template_id"); // return as string
+        die('Error: Enter a template name');
     }
-    die('Error: Enter a template name');
+
+    $sql = "SELECT id FROM @wp_pod_templates WHERE name = '$name' LIMIT 1";
+    pod_query($sql, 'Cannot get Templates', 'Template by this name already exists');
+    $template_id = pod_query("INSERT INTO @wp_pod_templates (name, code) VALUES ('$name', '$code')", 'Cannot add new template');
+
+    die("$template_id"); // return as string
 }
 
 /*
@@ -60,15 +62,16 @@ Add new page
 */
 elseif ('page' == $type)
 {
-    if (!empty($uri))
+    if (empty($uri))
     {
-        $sql = "SELECT id FROM @wp_pod_pages WHERE uri = '$uri' LIMIT 1";
-        pod_query($sql, 'Cannot get Pod Pages', 'Page by this URI already exists');
-        $page_id = pod_query("INSERT INTO @wp_pod_pages (uri, phpcode) VALUES ('$uri', '$phpcode')", 'Cannot add new page');
-
-        die("$page_id"); // return as string
+        die('Error: Enter a page URI');
     }
-    die('Error: Enter a page URI');
+
+    $sql = "SELECT id FROM @wp_pod_pages WHERE uri = '$uri' LIMIT 1";
+    pod_query($sql, 'Cannot get Pod Pages', 'Page by this URI already exists');
+    $page_id = pod_query("INSERT INTO @wp_pod_pages (uri, phpcode) VALUES ('$uri', '$phpcode')", 'Cannot add new page');
+
+    die("$page_id"); // return as string
 }
 
 /*
@@ -78,15 +81,16 @@ Add new helper
 */
 elseif ('helper' == $type)
 {
-    if (!empty($name))
+    if (empty($name))
     {
-        $sql = "SELECT id FROM @wp_pod_helpers WHERE name = '$name' LIMIT 1";
-        pod_query($sql, 'Cannot get helpers', 'helper by this name already exists');
-        $helper_id = pod_query("INSERT INTO @wp_pod_helpers (name, helper_type, phpcode) VALUES ('$name', '$helper_type', '$phpcode')", 'Cannot add new helper');
-
-        die("$helper_id"); // return as string
+        die('Error: Enter a helper name');
     }
-    die('Error: Enter a helper name');
+
+    $sql = "SELECT id FROM @wp_pod_helpers WHERE name = '$name' LIMIT 1";
+    pod_query($sql, 'Cannot get helpers', 'helper by this name already exists');
+    $helper_id = pod_query("INSERT INTO @wp_pod_helpers (name, helper_type, phpcode) VALUES ('$name', '$helper_type', '$phpcode')", 'Cannot add new helper');
+
+    die("$helper_id"); // return as string
 }
 
 /*
@@ -122,7 +126,11 @@ Add new column
 */
 else
 {
-    if (in_array($name, array('id', 'name', 'type', 'created', 'modified')))
+    if (empty($name))
+    {
+        die('Error: Enter a column name');
+    }
+    elseif (in_array($name, array('id', 'name', 'type', 'created', 'modified')))
     {
         die("Error: $name is a reserved name");
     }

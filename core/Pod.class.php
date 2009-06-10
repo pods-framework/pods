@@ -512,7 +512,7 @@ class Pod
             $where = "AND f.name IN ('" . implode("','", $where) . "')";
         }
 
-        $result = pod_query("SELECT * FROM @wp_pod_fields WHERE datatype = $datatype_id");
+        $result = pod_query("SELECT * FROM @wp_pod_fields WHERE datatype = $datatype_id ORDER BY weight ASC");
         while ($row = mysql_fetch_assoc($result))
         {
             $fields[$row['name']] = $row;
@@ -548,7 +548,7 @@ class Pod
             // Replace any field attributes with those ones through the public form
             if (is_array($attributes[$key]))
             {
-                $field = array_merge($field, $attributes);
+                $field = array_merge($field, $attributes[$key]);
             }
 
             if (empty($field['label']))

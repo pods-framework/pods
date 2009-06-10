@@ -6,8 +6,6 @@ while ($row = mysql_fetch_assoc($result))
     $helpers[$row['id']] = $row;
     $helper_types[$row['helper_type']][] = $row['name'];
 }
-
-$codepress_path = get_option('siteurl') . '/wp-includes/js/codepress/';
 ?>
 
 <!--

@@ -173,20 +173,11 @@ Begin popups
 
 <!--
 ==================================================
-Begin tabbed navigation
-==================================================
--->
-<div id="nav">
-    <div class="navTab active" rel="menuArea"><a href="javascript:;">Menu Editor</a></div>
-    <div class="clear"><!--clear--></div>
-</div>
-
-<!--
-==================================================
 Begin edit area
 ==================================================
 -->
 <div id="menuArea" class="area">
+    <h2 class="title" id="editTitle">Menu Editor</h2>
     <div class="tips">Define your site's menu structure, and display it using pods_navigation($uri, $max_depth)</div>
 <?php
 $last_depth = -1;

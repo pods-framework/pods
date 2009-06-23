@@ -78,11 +78,8 @@ elseif ('edit' == $action)
         die("Error: $name is not editable.");
     }
 
-    $result = pod_query("SELECT id FROM @wp_pod_fields WHERE datatype = $datatype AND id != $field_id AND name = '$name' LIMIT 1");
-    if (0 < mysql_num_rows($result))
-    {
-        die("Error: The $name column cannot be cloned.");
-    }
+    $sql = "SELECT id FROM @wp_pod_fields WHERE datatype = $datatype AND id != $field_id AND name = '$name' LIMIT 1";
+    pod_query($sql, 'Column already exists', "The $name column cannot be cloned.");
 
     $sql = "SELECT name, coltype FROM @wp_pod_fields WHERE id = $field_id LIMIT 1";
     $result = pod_query($sql) or die(mysql_error());
@@ -95,7 +92,7 @@ elseif ('edit' == $action)
 
         $dbtype = $dbtypes[$coltype];
         $pickval = ('pick' != $coltype || empty($pickval)) ? 'NULL' : "'$pickval'";
-        $sister_field_id = ('pick' != $coltype || empty($sister_field_id) || 'null' == $sister_field_id) ? 0 : "'$sister_field_id'";
+        $sister_field_id = intval($sister_field_id);
 
         if ($coltype != $old_coltype && 'pick' == $coltype)
         {
@@ -125,7 +122,7 @@ elseif ('edit' == $action)
             input_helper = '$input_helper',
             pick_filter = '$pick_filter',
             pick_orderby = '$pick_orderby',
-            sister_field_id = $sister_field_id,
+            sister_field_id = '$sister_field_id',
             required = '$required',
             `unique` = '$unique',
             `multiple` = '$multiple'

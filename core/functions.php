@@ -138,11 +138,14 @@ function pods_access($priv)
     }
 
     // Loop through the user's roles
-    foreach ($pods_roles as $role => $privs)
+    if (isset($pods_roles))
     {
-        if (false !== array_search($priv, $privs))
+        foreach ($pods_roles as $role => $privs)
         {
-            return true;
+            if (false !== array_search($priv, $privs))
+            {
+                return true;
+            }
         }
     }
     return false;

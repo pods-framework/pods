@@ -2,7 +2,7 @@
 $datatype = $this->datatype;
 $datatype_id = $this->datatype_id;
 ?>
-    <form method="get" class="filterbox filterbox_<?php echo $datatype; ?>" action="">
+    <form method="get" class="filterbox filterbox_<?php echo $datatype; ?>" action="<?php echo $action; ?>">
         <input type="hidden" name="type" value="<?php echo $datatype; ?>" />
 <?php
 if (empty($filters))

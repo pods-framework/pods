@@ -153,8 +153,8 @@ else
         $weight = intval($row['weight']) + 1;
     }
 
-    $sister_field_id = ('null' == $sister_field_id) ? 'NULL' : "$sister_field_id";
-    $field_id = pod_query("INSERT INTO @wp_pod_fields (datatype, name, label, display_helper, input_helper, coltype, pickval, pick_filter, pick_orderby, sister_field_id, required, `unique`, `multiple`, weight) VALUES ('$datatype', '$name', '$label', '$display_helper', '$input_helper', '$coltype', '$pickval', '$pick_filter', '$pick_orderby', $sister_field_id, '$required', '$unique', '$multiple', '$weight')", 'Cannot add new field');
+    $sister_field_id = intval($sister_field_id);
+    $field_id = pod_query("INSERT INTO @wp_pod_fields (datatype, name, label, comment, display_helper, input_helper, coltype, pickval, pick_filter, pick_orderby, sister_field_id, required, `unique`, `multiple`, weight) VALUES ('$datatype', '$name', '$label', '$comment', '$display_helper', '$input_helper', '$coltype', '$pickval', '$pick_filter', '$pick_orderby', '$sister_field_id', '$required', '$unique', '$multiple', '$weight')", 'Cannot add new field');
 
     if (empty($pickval))
     {

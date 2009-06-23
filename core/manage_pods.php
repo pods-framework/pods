@@ -313,6 +313,7 @@ function loadColumn(col) {
             if (0 != parseInt(sister_field_id)) {
                 sisterFields(sister_field_id);
             }
+            jQuery("#columnBox").animate({marginTop:"20px"},100).animate({marginTop:"0"},100).animate({marginTop:"20px"},100).animate({marginTop:"0"},100);
         }
     });
 }
@@ -639,11 +640,14 @@ while ($row = mysql_fetch_assoc($result))
                         <option value="">-- Select --</option>
 <?php
 // Get all display helpers
-foreach ($helper_types['display'] as $key => $name)
+if (isset($helper_types['display']))
 {
+    foreach ($helper_types['display'] as $key => $name)
+    {
 ?>
                         <option value="<?php echo $name; ?>"><?php echo $name; ?></option>
 <?php
+    }
 }
 ?>
                     </select>
@@ -656,11 +660,14 @@ foreach ($helper_types['display'] as $key => $name)
                         <option value="">-- Select --</option>
 <?php
 // Get all display helpers
-foreach ($helper_types['input'] as $key => $name)
+if (isset($helper_types['input']))
 {
+    foreach ($helper_types['input'] as $key => $name)
+    {
 ?>
                         <option value="<?php echo $name; ?>"><?php echo $name; ?></option>
 <?php
+    }
 }
 ?>
                     </select>

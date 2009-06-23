@@ -26,11 +26,26 @@ jQuery(function() {
         jQuery("."+active_file).val(file);
         jQuery("#dialog").jqmHide();
     });
+
+    elements = jQuery(".desc");
+    var config = {
+        iconsPath : "<?php echo $pods_url; ?>/images/nicEditorIcons.gif",
+        buttonList : ['bold','italic','underline','fontFormat','left','center','right','justify','ol','ul','indent','outdent','image','link','unlink','xhtml']
+    };
+
+    for (i = 0; i < elements.length; i++) {
+        new nicEditor(config).panelInstance(elements[i].id);
+    }
+
     jQuery("#module_form input.date").date_input();
     jQuery("#dialog").jqm();
 });
 
 function saveForm() {
+    for (i = 0; i < elements.length; i++) {
+        nicEditors.findEditor(elements[i].id).saveContent();
+    }
+
     var data = new Array();
     var columns = '<?php echo serialize($public_columns); ?>';
     var i = 0;

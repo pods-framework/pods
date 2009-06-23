@@ -20,7 +20,7 @@ class Pod
 
     function Pod($datatype = null, $id = null)
     {
-        $this->page = empty($_GET['pg']) ? 1 : $_GET['pg'];
+        $this->page = empty($_GET['pg']) ? 1 : intval($_GET['pg']);
 
         if (null != $datatype)
         {
@@ -238,7 +238,7 @@ class Pod
                 $where .= (empty($where) ? ' WHERE ' : ' AND ') . $pick_filter;
             }
 
-            $sql = "SELECT id, name FROM `@wp_pod_tbl_$table` $where ORDER BY $orderby";
+            $sql = "SELECT * FROM `@wp_pod_tbl_$table` $where ORDER BY $orderby";
         }
 
         $result = pod_query($sql);
@@ -568,8 +568,7 @@ class Pod
                 $table = $field['pickval'];
 
                 $result = pod_query("SELECT id FROM @wp_pod_fields WHERE datatype = $datatype_id AND name = '$key' LIMIT 1");
-                $row = mysql_fetch_assoc($result);
-                $field_id = $row['id'];
+                $field_id = mysql_result($result, 0);
 
                 $result = pod_query("SELECT tbl_row_id FROM @wp_pod_rel WHERE pod_id = $pod_id AND field_id = $field_id");
                 while ($row = mysql_fetch_assoc($result))
@@ -644,7 +643,7 @@ class Pod
     Display the list filters
     ==================================================
     */
-    function getFilters($filters = null, $label = 'Filter')
+    function getFilters($filters = null, $label = 'Filter', $action = '')
     {
         include realpath(dirname(__FILE__) . '/list_filters.php');
     }

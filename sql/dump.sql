@@ -57,7 +57,7 @@ DROP TABLE IF EXISTS wp_pod_templates;
 CREATE TABLE wp_pod_templates (
     id INT unsigned auto_increment primary key,
     name VARCHAR(32),
-    code TEXT
+    code LONGTEXT
 );
 
 DROP TABLE IF EXISTS wp_pod_pages;
@@ -65,7 +65,8 @@ CREATE TABLE wp_pod_pages (
     id INT unsigned auto_increment primary key,
     uri VARCHAR(128),
     title VARCHAR(128),
-    phpcode TEXT,
+    phpcode LONGTEXT,
+    precode LONGTEXT,
     page_template VARCHAR(128)
 );
 
@@ -74,7 +75,7 @@ CREATE TABLE wp_pod_helpers (
     id INT unsigned auto_increment primary key,
     name VARCHAR(32),
     helper_type VARCHAR(16) not null default 'display',
-    phpcode TEXT
+    phpcode LONGTEXT
 );
 
 DROP TABLE IF EXISTS wp_pod_menu;

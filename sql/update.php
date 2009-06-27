@@ -146,5 +146,10 @@ if ($installed < 164)
     pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN input_helper TEXT AFTER display_helper");
 }
 
+if ($installed < 167)
+{
+    pod_query("ALTER TABLE @wp_pod_pages ADD COLUMN precode LONGTEXT AFTER phpcode");
+}
+
 // Save this version
 update_option('pods_version', $pods_latest);

@@ -19,6 +19,7 @@ jQuery(function() {
         if ("" == page_id) {
             jQuery("#pageContent").hide();
             jQuery("#page_code").val("");
+            jQuery("#page_precode").val("");
         }
         else {
             jQuery("#pageContent").show();
@@ -42,8 +43,10 @@ function loadPage() {
                 var json = eval("("+msg+")");
                 var title = (null == json.title) ? "" : json.title;
                 var code = (null == json.phpcode) ? "" : json.phpcode;
+                var precode = (null == json.precode) ? "" : json.precode;
                 var template = (null == json.page_template) ? "" : json.page_template;
                 jQuery("#page_code").val(code);
+                jQuery("#page_precode").val(precode);
                 jQuery("#page_title").val(title);
                 jQuery("#page_template").val(template);
             }
@@ -76,12 +79,13 @@ function addPage() {
 
 function editPage() {
     var code = jQuery("#page_code").val();
+    var precode = jQuery("#page_precode").val();
     var title = jQuery("#page_title").val();
     var template = jQuery("#page_template").val();
     jQuery.ajax({
         type: "post",
         url: "<?php echo $pods_url; ?>/ajax/edit.php",
-        data: "auth="+auth+"&action=editpage&page_id="+page_id+"&page_title="+encodeURIComponent(title)+"&page_template="+encodeURIComponent(template)+"&phpcode="+encodeURIComponent(code),
+        data: "auth="+auth+"&action=editpage&page_id="+page_id+"&page_title="+encodeURIComponent(title)+"&page_template="+encodeURIComponent(template)+"&phpcode="+encodeURIComponent(code)+"&precode="+encodeURIComponent(precode),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -147,7 +151,10 @@ if (isset($pages))
     <input type="button" class="button-primary" onclick="jQuery('#pageBox').jqmShow()" value="Add new page" />
     <div id="pageContent">
         <textarea id="page_code"></textarea><br />
-        Page Title: <input id="page_title" type="text" />
+        Precode (optional):
+        <textarea id="page_precode"></textarea><br />
+        Page Title (optional):<br />
+        <input id="page_title" type="text" />
         <select id="page_template">
             <option value="">-- Page Template --</option>
 <?php

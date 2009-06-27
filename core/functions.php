@@ -248,3 +248,43 @@ function pods_navigation($uri = '/', $max_depth = 1)
     }
 }
 
+/*
+==================================================
+Shortcode support on WP Posts / Pages
+==================================================
+*/
+function pods_shortcode($tags)
+{
+    $pairs = array('name' => null, 'id' => null, 'slug' => null, 'order' => 'id DESC', 'limit' => 15, 'where' => null, 'col' => null, 'template' => null, 'helper' => null);
+    $tags = shortcode_atts($pairs, $tags);
+
+    if (empty($tags['name']))
+    {
+        return 'Error: Please provide a Pod name';
+    }
+    if (empty($tags['template']) && empty($tags['col']))
+    {
+        return 'Error: Please provide either a template or column name';
+    }
+
+    // "id" > "slug" if both exist
+    $id = empty($tags['slug']) ? null : $tags['slug'];
+    $id = empty($tags['id']) ? $id : $tags['id'];
+
+    $order = empty($tags['order']) ? 'id DESC' : $tags['order'];
+    $limit = empty($tags['limit']) ? 15 : $tags['limit'];
+    $where = empty($tags['where']) ? null : $tags['where'];
+
+    $Record = new Pod($tags['name'], $id);
+
+    if (empty($id))
+    {
+        $Record->findRecords($order, $limit, $where);
+    }
+    if (!empty($tags['col']) && !empty($id))
+    {
+        $val = $Record->print_field($tags['col']);
+        return empty($tags['helper']) ? $val : $Record->pod_helper($tags['helper'], $val);
+    }
+    return $Record->showTemplate($tags['template']);
+}

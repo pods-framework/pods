@@ -21,8 +21,8 @@ $dbtypes = array(
     'txt' => 'varchar(128)',
     'slug' => 'varchar(128)',
     'file' => 'varchar(128)',
-    'code' => 'mediumtext',
-    'desc' => 'mediumtext'
+    'code' => 'longtext',
+    'desc' => 'longtext'
 );
 
 /*
@@ -152,7 +152,7 @@ Edit a page
 */
 elseif ('editpage' == $action)
 {
-    pod_query("UPDATE @wp_pod_pages SET title = '$page_title', page_template = '$page_template', phpcode = '$phpcode' WHERE id = $page_id LIMIT 1");
+    pod_query("UPDATE @wp_pod_pages SET title = '$page_title', page_template = '$page_template', phpcode = '$phpcode', precode = '$precode' WHERE id = $page_id LIMIT 1");
 }
 
 /*

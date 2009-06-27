@@ -115,6 +115,10 @@ h2.title {
     height: 300px;
 }
 
+#page_precode {
+    height: 100px;
+}
+
 #pod-area-left {
     float: left;
     width: 60%;

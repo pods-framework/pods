@@ -507,12 +507,13 @@ class Pod
                 else
                 {
                     $where[] = $val;
+                    $attributes[$val] = array();
                 }
             }
-            $where = "AND f.name IN ('" . implode("','", $where) . "')";
+            $where = "AND name IN ('" . implode("','", $where) . "')";
         }
 
-        $result = pod_query("SELECT * FROM @wp_pod_fields WHERE datatype = $datatype_id ORDER BY weight ASC");
+        $result = pod_query("SELECT * FROM @wp_pod_fields WHERE datatype = $datatype_id $where ORDER BY weight ASC");
         while ($row = mysql_fetch_assoc($result))
         {
             $fields[$row['name']] = $row;
@@ -537,18 +538,15 @@ class Pod
 <?php
         foreach ($fields as $key => $field)
         {
+            // Replace field attributes with public form attributes
+            $field = array_merge($field, $attributes[$key]);
+
             // Replace the input helper name with the helper code
             $input_helper = $field['input_helper'];
             if (!empty($input_helper))
             {
                 $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name = '$input_helper' LIMIT 1");
                 $field['input_helper'] = mysql_result($result, 0);
-            }
-
-            // Replace any field attributes with those ones through the public form
-            if (is_array($attributes[$key]))
-            {
-                $field = array_merge($field, $attributes[$key]);
             }
 
             if (empty($field['label']))
@@ -675,22 +673,24 @@ class Pod
     */
     function showTemplate($tpl, $code = null)
     {
-        if (!empty($tpl))
-        {
-            if (empty($code))
-            {
-                // Backwards compatibility
-                if ('list' == $tpl || 'detail' == $tpl)
-                {
-                    $tpl = $this->datatype . "_$tpl";
-                }
+        ob_start();
 
-                $result = pod_query("SELECT code FROM @wp_pod_templates WHERE name = '$tpl' LIMIT 1");
-                $row = mysql_fetch_assoc($result);
-                $code = $row['code'];
+        if (empty($code))
+        {
+            // Backwards compatibility
+            if ('list' == $tpl || 'detail' == $tpl)
+            {
+                $tpl = $this->datatype . "_$tpl";
             }
 
-            // List templates don't use $this->id
+            $result = pod_query("SELECT code FROM @wp_pod_templates WHERE name = '$tpl' LIMIT 1");
+            $row = mysql_fetch_assoc($result);
+            $code = $row['code'];
+        }
+
+        if (!empty($code))
+        {
+            // Only detail templates need $this->id
             if (empty($this->id))
             {
                 while ($this->fetchRecord())
@@ -705,6 +705,7 @@ class Pod
                 eval("?>$out");
             }
         }
+        return ob_get_clean();
     }
 
     /*

@@ -2,8 +2,8 @@
 /*
 Plugin Name: Pods CMS
 Plugin URI: http://pods.uproot.us/
-Description: The WordPress CMS Plugin
-Version: 1.6.6
+Description: The WordPress CMS Framework
+Version: 1.6.7
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$pods_latest = 166;
+$pods_latest = 167;
 
 function pods_init()
 {
@@ -194,18 +194,12 @@ function get_content()
     {
         ob_start();
         eval("?>$phpcode");
-        $content = ob_get_clean();
-        remove_filter('the_content', 'st_add_widget');
-        remove_filter('the_content', 'prepend_attachment');
-        remove_filter('the_content', 'wpautop');
-        remove_filter('the_content', 'convert_chars');
-        remove_filter('the_content', 'wptexturize');
+        echo do_shortcode(ob_get_clean());
     }
     elseif (!empty($post))
     {
-        $content = $post->post_content;
+        echo apply_filters('the_content', $post->post_content);
     }
-    echo apply_filters('the_content', $content);
 }
 
 function pods_redirect()
@@ -291,11 +285,21 @@ add_action('wp_head', 'pods_meta', 0);
 // Hook for redirection
 add_action('template_redirect', 'pods_redirect');
 
+// Hook for shortcode
+add_shortcode('pods', 'pods_shortcode');
+
 // Filters for 404 handling
 if (false !== $podpage_exists)
 {
+    // Execute any precode
+    $precode = $podpage_exists['precode'];
+
+    if (!empty($precode))
+    {
+        eval("?>$precode");
+    }
+
     add_filter('redirect_canonical', 'kill_redirect');
     add_filter('wp_title', 'pods_title', 0, 3);
     add_filter('status_header', 'pods_404');
 }
-

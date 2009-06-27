@@ -165,8 +165,8 @@ else
             'txt' => 'varchar(128)',
             'slug' => 'varchar(128)',
             'file' => 'varchar(128)',
-            'code' => 'mediumtext',
-            'desc' => 'mediumtext'
+            'code' => 'longtext',
+            'desc' => 'longtext'
         );
         $dbtype = $dbtypes[$coltype];
         pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` ADD COLUMN `$name` $dbtype", 'Cannot create new column');

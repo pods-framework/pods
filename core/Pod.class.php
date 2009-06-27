@@ -539,7 +539,10 @@ class Pod
         foreach ($fields as $key => $field)
         {
             // Replace field attributes with public form attributes
-            $field = array_merge($field, $attributes[$key]);
+            if (is_array($attributes[$key]))
+            {
+                $field = array_merge($field, $attributes[$key]);
+            }
 
             // Replace the input helper name with the helper code
             $input_helper = $field['input_helper'];

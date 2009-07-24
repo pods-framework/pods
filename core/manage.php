@@ -105,7 +105,7 @@ Begin welcome area
 <div id="welcomeArea" class="area hidden">
     <div id="logo">
         <div id="version">
-            <?php echo implode('.', str_split($pods_latest)); ?>
+            <?php echo implode('.', str_split(PODS_VERSION)); ?>
         </div>
     </div>
     <div id="overview">

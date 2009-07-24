@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS
 Plugin URI: http://pods.uproot.us/
 Description: The CMS Framework for WordPress
-Version: 1.6.8
+Version: 1.6.9
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,8 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$pods_latest = 168;
-
+define('PODS_VERSION', 169);
 define('PODS_URL', WP_PLUGIN_URL . '/pods');
 define('PODS_DIR', WP_PLUGIN_DIR . '/pods');
 
@@ -33,7 +32,54 @@ require_once PODS_DIR . '/core/functions.php';
 require_once PODS_DIR . '/core/Pod.class.php';
 
 $pods_roles = unserialize(get_option('pods_roles'));
-$podpage_exists = podpage_exists();
+
+// Get the installed version
+if ($installed = (int) get_option('pods_version'))
+{
+    if ($installed < PODS_VERSION)
+    {
+        include(PODS_DIR . '/sql/update.php');
+    }
+}
+// Setup initial tables
+else
+{
+    $sql = file_get_contents(PODS_DIR . '/sql/dump.sql');
+    $sql = explode(";\n", str_replace('wp_', $table_prefix, $sql));
+    for ($i = 0, $z = count($sql) - 1; $i < $z; $i++)
+    {
+        pod_query($sql[$i], 'Cannot setup SQL tables');
+    }
+    delete_option('pods_version');
+    add_option('pods_version', PODS_VERSION);
+}
+
+// JSON support for < PHP 5.2
+if (!function_exists('json_encode'))
+{
+    include(PODS_DIR . '/ajax/JSON.php');
+
+    function json_encode($str)
+    {
+        $json = new Services_JSON();
+        return $json->encode($str);
+    }
+
+    function json_decode($str)
+    {
+        $json = new Services_JSON();
+        return $json->decode($str);
+    }
+}
+
+// Check for .htaccess
+if (!file_exists(ABSPATH . '.htaccess'))
+{
+    if (!copy(PODS_DIR . '/htaccess.txt', ABSPATH . '.htaccess'))
+    {
+        echo 'Please copy "htaccess.txt" to "' . ABSPATH . '.htaccess"';
+    }
+}
 
 function pods_menu()
 {
@@ -92,7 +138,7 @@ function pods_menu()
 
 function pods_options_page()
 {
-    global $pods_latest, $pods_roles, $table_prefix;
+    global $pods_roles, $table_prefix;
     include PODS_DIR . '/core/manage.php';
 }
 
@@ -114,9 +160,8 @@ function pods_menu_page()
 
 function pods_meta()
 {
-    global $pods_latest;
 ?>
-<meta name="CMS" content="Pods <?php echo implode('.', str_split($pods_latest)); ?>" />
+<meta name="CMS" content="Pods <?php echo implode('.', str_split(PODS_VERSION)); ?>" />
 <?php
 }
 
@@ -230,54 +275,6 @@ function podpage_exists()
     return false;
 }
 
-// JSON support for < PHP 5.2
-if (!function_exists('json_encode'))
-{
-    include(PODS_DIR . '/ajax/JSON.php');
-
-    function json_encode($str)
-    {
-        $json = new Services_JSON();
-        return $json->encode($str);
-    }
-
-    function json_decode($str)
-    {
-        $json = new Services_JSON();
-        return $json->decode($str);
-    }
-}
-
-// Get the installed version
-if ($installed = (int) get_option('pods_version'))
-{
-    if ($installed < $pods_latest)
-    {
-        include(PODS_DIR . '/sql/update.php');
-    }
-}
-// Setup initial tables
-else
-{
-    $sql = file_get_contents(PODS_DIR . '/sql/dump.sql');
-    $sql = explode(";\n", str_replace('wp_', $table_prefix, $sql));
-    for ($i = 0, $z = count($sql) - 1; $i < $z; $i++)
-    {
-        pod_query($sql[$i], 'Cannot setup SQL tables');
-    }
-    delete_option('pods_version');
-    add_option('pods_version', $pods_latest);
-}
-
-// Check for .htaccess
-if (!file_exists(ABSPATH . '.htaccess'))
-{
-    if (!copy(PODS_DIR . '/htaccess.txt', ABSPATH . '.htaccess'))
-    {
-        echo 'Please copy "htaccess.txt" to "' . ABSPATH . '.htaccess"';
-    }
-}
-
 // Hook for admin menu
 add_action('admin_menu', 'pods_menu', 9999);
 
@@ -289,6 +286,8 @@ add_action('template_redirect', 'pods_redirect');
 
 // Hook for shortcode
 add_shortcode('pods', 'pods_shortcode');
+
+$podpage_exists = podpage_exists();
 
 // Filters for 404 handling
 if (false !== $podpage_exists)

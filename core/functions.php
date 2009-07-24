@@ -9,6 +9,8 @@ $results_error      Triggered when results > 0
 $no_results_error   Triggered when results = 0
 ==================================================
 */
+session_start();
+
 function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_results_error = null)
 {
     global $table_prefix;
@@ -138,7 +140,7 @@ function pods_access($priv)
     }
 
     // Loop through the user's roles
-    if (isset($pods_roles))
+    if (is_array($pods_roles))
     {
         foreach ($pods_roles as $role => $privs)
         {
@@ -287,4 +289,39 @@ function pods_shortcode($tags)
         return empty($tags['helper']) ? $val : $Record->pod_helper($tags['helper'], $val);
     }
     return $Record->showTemplate($tags['template']);
+}
+
+/*
+==================================================
+Generate form key
+==================================================
+*/
+function pods_generate_key($datatype, $public_columns)
+{
+    $_SESSION['dt'] = $datatype;
+    $_SESSION['token'] = md5(mt_rand());
+
+    if (!empty($public_columns))
+    {
+        $_SESSION['columns'] = serialize($public_columns);
+    }
+    return $_SESSION['token'];
+}
+
+/*
+==================================================
+Validate form key
+==================================================
+*/
+function pods_validate_key($key, $datatype)
+{
+    if (!empty($key) && $key == $_SESSION['token'] && $datatype == $_SESSION['dt'])
+    {
+        $valid = true;
+    }
+    else
+    {
+        $valid = false;
+    }
+    return $valid;
 }

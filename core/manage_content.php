@@ -27,11 +27,11 @@ else
 Begin javascript code
 ==================================================
 -->
-<link rel="stylesheet" type="text/css" href="<?php echo $pods_url; ?>/style.css" />
-<script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqmodal.js"></script>
-<script type="text/javascript" src="<?php echo $pods_url; ?>/js/date_input.js"></script>
-<script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqFileTree.js"></script>
-<script type="text/javascript" src="<?php echo $pods_url; ?>/js/nicEdit.js"></script>
+<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css" />
+<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqmodal.js"></script>
+<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/date_input.js"></script>
+<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqFileTree.js"></script>
+<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/nicEdit.js"></script>
 <script type="text/javascript">
 var datatype;
 var active_file;
@@ -52,7 +52,7 @@ jQuery(function() {
     }
     jQuery(".filebox").fileTree({
         root: "<?php echo $upload_dir; ?>/",
-        script: "<?php echo $pods_url; ?>/ajax/filetree.php",
+        script: "<?php echo PODS_URL; ?>/ajax/filetree.php",
         multiFolder: false
     },
     function(file) {
@@ -74,7 +74,7 @@ function dropItem(pod_id) {
     if (confirm("Do you really want to drop this item?")) {
         jQuery.ajax({
             type: "post",
-            url: "<?php echo $pods_url; ?>/ajax/drop.php",
+            url: "<?php echo PODS_URL; ?>/ajax/drop.php",
             data: "auth="+auth+"&pod_id="+pod_id,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
@@ -118,8 +118,8 @@ function saveForm() {
 
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/showform.php",
-        data: "datatype="+datatype+"&save=1&"+data.join("&"),
+        url: "<?php echo PODS_URL; ?>/ajax/showform.php",
+        data: "datatype="+datatype+"&"+data.join("&"),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -140,7 +140,7 @@ function showform(dt, pod_id) {
     jQuery(".option").unbind("click");
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/showform.php",
+        url: "<?php echo PODS_URL; ?>/ajax/showform.php",
         data: "pod_id="+pod_id+"&datatype="+datatype,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -156,7 +156,7 @@ function showform(dt, pod_id) {
 
                 elements = jQuery(".desc");
                 var config = {
-                    iconsPath : "<?php echo $pods_url; ?>/images/nicEditorIcons.gif",
+                    iconsPath : "<?php echo PODS_URL; ?>/images/nicEditorIcons.gif",
                     buttonList : ['bold','italic','underline','fontFormat','left','center','right','justify','ol','ul','indent','outdent','image','link','unlink','xhtml']
                 };
 
@@ -325,7 +325,7 @@ Begin edit area
 ==================================================
 -->
 <div id="editArea" class="area hidden">
-    <div id="icon-plugins" class="icon32" style="margin:0; margin-right:6px"><br /></div>
+    <div id="icon-plugins" class="icon32" style="margin:0 6px 0 0"><br /></div>
     <h2 class="title" id="editTitle">Please select an item</h2>
     <div class="clear"><!--clear--></div>
 

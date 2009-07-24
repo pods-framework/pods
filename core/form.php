@@ -1,15 +1,14 @@
 <?php
 $datatype = $this->datatype;
-$pods_url = WP_PLUGIN_URL . '/pods';
 $upload_dir = wp_upload_dir();
 $upload_dir = str_replace(get_option('siteurl'), '', $upload_dir['baseurl']);
 ?>
-<link rel="stylesheet" type="text/css" href="<?php echo $pods_url; ?>/style.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css" />
 <script type="text/javascript" src="<?php echo get_option('siteurl'); ?>/wp-includes/js/jquery/jquery.js"></script>
-<script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqmodal.js"></script>
-<script type="text/javascript" src="<?php echo $pods_url; ?>/js/date_input.js"></script>
-<script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqFileTree.js"></script>
-<script type="text/javascript" src="<?php echo $pods_url; ?>/js/nicEdit.js"></script>
+<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqmodal.js"></script>
+<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/date_input.js"></script>
+<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqFileTree.js"></script>
+<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/nicEdit.js"></script>
 <script type="text/javascript">
 var active_file;
 
@@ -19,7 +18,7 @@ jQuery(function() {
     });
     jQuery(".filebox").fileTree({
         root: "<?php echo $upload_dir; ?>/",
-        script: "<?php echo $pods_url; ?>/ajax/filetree.php",
+        script: "<?php echo PODS_URL; ?>/ajax/filetree.php",
         multiFolder: false
     },
     function(file) {
@@ -29,7 +28,7 @@ jQuery(function() {
 
     elements = jQuery(".desc");
     var config = {
-        iconsPath : "<?php echo $pods_url; ?>/images/nicEditorIcons.gif",
+        iconsPath : "<?php echo PODS_URL; ?>/images/nicEditorIcons.gif",
         buttonList : ['bold','italic','underline','fontFormat','left','center','right','justify','ol','ul','indent','outdent','image','link','unlink','xhtml']
     };
 
@@ -47,7 +46,6 @@ function saveForm() {
     }
 
     var data = new Array();
-    var columns = '<?php echo serialize($public_columns); ?>';
     var i = 0;
     jQuery(".form").each(function() {
         var theval = "";
@@ -70,8 +68,8 @@ function saveForm() {
 
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/showform.php",
-        data: "datatype=<?php echo $datatype; ?>&save=1&columns="+columns+"&"+data.join("&"),
+        url: "<?php echo PODS_URL; ?>/ajax/showform.php",
+        data: "datatype=<?php echo $datatype; ?>&"+data.join("&"),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);

@@ -33,7 +33,7 @@ jQuery(function() {
 function loadPage() {
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/load.php",
+        url: "<?php echo PODS_URL; ?>/ajax/load.php",
         data: "auth="+auth+"&page_id="+page_id,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -58,7 +58,7 @@ function addPage() {
     var uri = jQuery("#new_page").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/add.php",
+        url: "<?php echo PODS_URL; ?>/ajax/add.php",
         data: "auth="+auth+"&type=page&uri="+uri,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -84,7 +84,7 @@ function editPage() {
     var template = jQuery("#page_template").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/edit.php",
+        url: "<?php echo PODS_URL; ?>/ajax/edit.php",
         data: "auth="+auth+"&action=editpage&page_id="+page_id+"&page_title="+encodeURIComponent(title)+"&page_template="+encodeURIComponent(template)+"&phpcode="+encodeURIComponent(code)+"&precode="+encodeURIComponent(precode),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -101,7 +101,7 @@ function dropPage() {
     if (confirm("Do you really want to drop this page?")) {
         jQuery.ajax({
             type: "post",
-            url: "<?php echo $pods_url; ?>/ajax/drop.php",
+            url: "<?php echo PODS_URL; ?>/ajax/drop.php",
             data: "auth="+auth+"&page="+page_id,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {

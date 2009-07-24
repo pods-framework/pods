@@ -3,12 +3,18 @@
 require_once(realpath(dirname(__FILE__) . '/../../../../wp-config.php'));
 require_once(realpath(dirname(__FILE__) . '/../core/Pod.class.php'));
 
-$save = (int) $_POST['save'];
 $pod_id = (int) $_POST['pod_id'];
 $datatype = $_POST['datatype'];
+$token = $_POST['token'];
 
-if ($save)
+// Save the form
+if (!empty($token))
 {
+    if (!pods_validate_key($token, $datatype))
+    {
+        die("Error: The form token has expired.");
+    }
+
     if ($datatype)
     {
         // Get array of datatypes
@@ -25,22 +31,28 @@ if ($save)
         $where = '';
         if (empty($pod_id))
         {
-            $public_columns = unserialize(stripslashes($_POST['columns']));
+            $public_columns = unserialize($_SESSION['columns']);
 
             if (!empty($public_columns))
             {
                 foreach ($public_columns as $key => $val)
                 {
-                    $where[] = is_array($public_columns[$key]) ? $key : $val;
+                    $column_key = is_array($public_columns[$key]) ? $key : $val;
+                    $active_columns[] = $column_key;
+                    $where[] = $column_key;
                 }
                 $where = "AND name IN ('" . implode("','", $where) . "')";
             }
         }
 
         // Get the datatype fields
-        $result = pod_query("SELECT * FROM @wp_pod_fields WHERE datatype = $datatype_id $where", 'Cannot get datatype fields');
+        $result = pod_query("SELECT * FROM @wp_pod_fields WHERE datatype = $datatype_id $where ORDER BY weight", 'Cannot get datatype fields');
         while ($row = mysql_fetch_assoc($result))
         {
+            if (empty($public_columns))
+            {
+                $active_columns[] = $row['name'];
+            }
             $fields[$row['name']] = $row;
         }
 
@@ -51,13 +63,13 @@ if ($save)
 
         /*
         ==================================================
-        Loop through $_POST, separating table data from PICK data
+        Loop through $active_columns, separating table data from PICK data
         ==================================================
         */
-        foreach ($_POST as $key => $val)
+        foreach ($active_columns as $key)
         {
             $type = $fields[$key]['coltype'];
-            $val = mysql_real_escape_string(stripslashes(trim($val)));
+            $val = mysql_real_escape_string(stripslashes(trim($_POST[$key])));
 
             // Verify required fields
             if (1 == $fields[$key]['required'])
@@ -83,8 +95,7 @@ if ($save)
                 if (!empty($pod_id))
                 {
                     $result = pod_query("SELECT tbl_row_id FROM @wp_pod WHERE id = $pod_id LIMIT 1");
-                    $tbl_row_id = mysql_result($result, 0);
-                    $exclude = "AND id != $tbl_row_id";
+                    $exclude = 'AND id != ' . mysql_result($result, 0);
                 }
                 $sql = "SELECT id FROM `@wp_pod_tbl_$datatype` WHERE `$key` = '$val' $exclude LIMIT 1";
                 pod_query($sql, 'Not a unique value', "The $key value needs to be unique.");
@@ -102,7 +113,7 @@ if ($save)
             {
                 $pick_columns[$key] = empty($val) ? array() : explode(',', $val);
             }
-            elseif (!in_array($key, array('datatype', 'pod_id', 'columns', 'public', 'save')))
+            else
             {
                 $table_columns[$key] = $val;
             }
@@ -231,4 +242,3 @@ else
     $obj = new Pod($datatype);
     echo $obj->showform($pod_id, $public_columns);
 }
-

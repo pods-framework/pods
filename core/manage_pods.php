@@ -79,7 +79,7 @@ function sisterFields(sister_field_id) {
     var pickval = jQuery("#column_pickval").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/sister_fields.php",
+        url: "<?php echo PODS_URL; ?>/ajax/sister_fields.php",
         data: "auth="+auth+"&datatype="+dt+"&pickval="+pickval,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -105,7 +105,7 @@ function sisterFields(sister_field_id) {
 function loadPod() {
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/load.php",
+        url: "<?php echo PODS_URL; ?>/ajax/load.php",
         data: "auth="+auth+"&id="+dt,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -197,7 +197,7 @@ function addPod() {
     var name = jQuery("#new_pod").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/add.php",
+        url: "<?php echo PODS_URL; ?>/ajax/add.php",
         data: "auth="+auth+"&type=pod&name="+name,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -232,7 +232,7 @@ function editPod() {
     });
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/edit.php",
+        url: "<?php echo PODS_URL; ?>/ajax/edit.php",
         data: "auth="+auth+"&datatype="+dt+"&label="+label+"&is_toplevel="+is_toplevel+"&list_filters="+encodeURIComponent(list_filters)+"&before_helpers="+before_helpers+"&after_helpers="+after_helpers,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -249,7 +249,7 @@ function dropPod() {
     if (confirm("Do you really want to drop this pod and its contents?")) {
         jQuery.ajax({
             type: "post",
-            url: "<?php echo $pods_url; ?>/ajax/drop.php",
+            url: "<?php echo PODS_URL; ?>/ajax/drop.php",
             data: "auth="+auth+"&pod="+dt+"&dtname="+dtname,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
@@ -272,7 +272,7 @@ function loadColumn(col) {
 
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/load.php",
+        url: "<?php echo PODS_URL; ?>/ajax/load.php",
         data: "auth="+auth+"&col="+col,
         success: function(msg) {
             var json = eval("("+msg+")");
@@ -339,7 +339,7 @@ function addColumn() {
     }
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/add.php",
+        url: "<?php echo PODS_URL; ?>/ajax/add.php",
         data: "auth="+auth+"&datatype="+dt+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&pick_orderby="+pick_orderby+"&sister_field_id="+sister_field_id+"&display_helper="+display_helper+"&input_helper="+input_helper+"&required="+required+"&unique="+unique+"&multiple="+multiple,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -356,7 +356,7 @@ function addColumn() {
 function moveColumn(col, dir) {
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/edit.php",
+        url: "<?php echo PODS_URL; ?>/ajax/edit.php",
         data: "auth="+auth+"&action=move&datatype="+dt+"&col="+col+"&dir="+dir,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -390,7 +390,7 @@ function editColumn(col) {
     }
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/edit.php",
+        url: "<?php echo PODS_URL; ?>/ajax/edit.php",
         data: "auth="+auth+"&action=edit&field_id="+col+"&datatype="+dt+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&pick_orderby="+pick_orderby+"&sister_field_id="+sister_field_id+"&display_helper="+display_helper+"&input_helper="+input_helper+"&required="+required+"&unique="+unique+"&multiple="+multiple,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -409,7 +409,7 @@ function dropColumn(col) {
     if (confirm("Do you really want to drop this column?")) {
         jQuery.ajax({
             type: "post",
-            url: "<?php echo $pods_url; ?>/ajax/drop.php",
+            url: "<?php echo PODS_URL; ?>/ajax/drop.php",
             data: "auth="+auth+"&col="+col+"&dtname="+dtname,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
@@ -442,21 +442,23 @@ Pod HTML
 ==================================================
 -->
 <div id="podArea" class="area hidden">
-    <select class="area-select select-pod">
-        <option value="">Choose a Pod</option>
+    <div>
+        <select class="area-select select-pod">
+            <option value="">Choose a Pod</option>
 <?php
 if (isset($datatypes))
 {
     foreach ($datatypes as $key => $val)
     {
 ?>
-        <option value="<?php echo $key; ?>"><?php echo $val; ?></option>
+            <option value="<?php echo $key; ?>"><?php echo $val; ?></option>
 <?php
     }
 }
 ?>
-    </select>
-    <input type="button" class="button-primary" onclick="jQuery('#podBox').jqmShow()" value="Add new pod" />
+        </select>
+        <input type="button" class="button-primary" onclick="jQuery('#podBox').jqmShow()" value="Add new pod" />
+    </div>
 
     <div class="pod-welcome hidden">
         Need some help? Check out the <a href="http://codex.uproot.us" target="_blank">Codex</a> to get started.

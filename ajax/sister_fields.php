@@ -17,14 +17,12 @@ if (!empty($pickval) && is_string($pickval))
     $result = pod_query("SELECT id FROM @wp_pod_types WHERE name = '$pickval' LIMIT 1");
     if (0 < mysql_num_rows($result))
     {
-        $row = mysql_fetch_assoc($result);
-        $sister_datatype = $row['id'];
+        $sister_datatype = mysql_result($result, 0);
 
         $result = pod_query("SELECT name FROM @wp_pod_types WHERE id = $datatype LIMIT 1");
         if (0 < mysql_num_rows($result))
         {
-            $row = mysql_fetch_assoc($result);
-            $datatype_name = $row['name'];
+            $datatype_name = mysql_result($result, 0);
 
             $result = pod_query("SELECT id, name FROM @wp_pod_fields WHERE datatype = $sister_datatype AND pickval = '$datatype_name'");
             if (0 < mysql_num_rows($result))

@@ -3,8 +3,8 @@
 Begin javascript code
 ==================================================
 -->
-<link rel="stylesheet" type="text/css" href="<?php echo $pods_url; ?>/style.css" />
-<script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqmodal.js"></script>
+<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css" />
+<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqmodal.js"></script>
 <script type="text/javascript" src="<?php echo WP_INC_URL; ?>/js/jquery/suggest.js"></script>
 <script type="text/javascript">
 var menu_id;
@@ -12,7 +12,7 @@ var add_or_edit;
 var auth = '<?php echo md5(AUTH_KEY); ?>';
 
 jQuery(function() {
-    jQuery("#menu_uri").suggest("<?php echo $pods_url; ?>/ajax/menu.php", {
+    jQuery("#menu_uri").suggest("<?php echo PODS_URL; ?>/ajax/menu.php", {
         delay : 400,
         minChars : 3,
         onSelect : function() {
@@ -64,7 +64,7 @@ function addOrEditMenu() {
 function loadMenu() {
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/load.php",
+        url: "<?php echo PODS_URL; ?>/ajax/load.php",
         data: "auth="+auth+"&action=menu&menu_id="+menu_id,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -89,7 +89,7 @@ function addMenu() {
     var menu_title = jQuery("#menu_title").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/add.php",
+        url: "<?php echo PODS_URL; ?>/ajax/add.php",
         data: "auth="+auth+"&type=menu&parent_menu_id="+parent_menu_id+"&menu_uri="+menu_uri+"&menu_title="+encodeURIComponent(menu_title),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -110,7 +110,7 @@ function editMenu() {
     var menu_title = jQuery("#menu_title").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/edit.php",
+        url: "<?php echo PODS_URL; ?>/ajax/edit.php",
         data: "auth="+auth+"&action=editmenu&menu_id="+menu_id+"&menu_uri="+menu_uri+"&menu_title="+encodeURIComponent(menu_title),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -128,7 +128,7 @@ function dropMenu() {
     if (confirm("Do you really want to drop this menu and all its children?")) {
         jQuery.ajax({
             type: "post",
-            url: "<?php echo $pods_url; ?>/ajax/drop.php",
+            url: "<?php echo PODS_URL; ?>/ajax/drop.php",
             data: "auth="+auth+"&menu_id="+menu_id,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {

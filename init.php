@@ -2,8 +2,8 @@
 /*
 Plugin Name: Pods CMS
 Plugin URI: http://pods.uproot.us/
-Description: The WordPress CMS Framework
-Version: 1.6.7
+Description: The CMS Framework for WordPress
+Version: 1.6.8
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,49 +23,17 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-$pods_latest = 167;
+$pods_latest = 168;
 
-function pods_init()
-{
-    global $table_prefix, $pods_latest;
-    $dir = WP_PLUGIN_DIR . '/pods/sql';
+define('PODS_URL', WP_PLUGIN_URL . '/pods');
+define('PODS_DIR', WP_PLUGIN_DIR . '/pods');
 
-    // Check for PHP 5.2+
-    if (!function_exists('json_encode'))
-    {
-        die('Please upgrade to PHP 5.2+ before installing Pods!');
-    }
+// Setup DB tables, get the gears turning
+require_once PODS_DIR . '/core/functions.php';
+require_once PODS_DIR . '/core/Pod.class.php';
 
-    // Get the installed version
-    if ($installed = (int) get_option('pods_version'))
-    {
-        if ($installed < $pods_latest)
-        {
-            include("$dir/update.php");
-        }
-    }
-    // Setup initial tables
-    else
-    {
-        $sql = file_get_contents("$dir/dump.sql");
-        $sql = explode(";\n", str_replace('wp_', $table_prefix, $sql));
-        for ($i = 0, $z = count($sql) - 1; $i < $z; $i++)
-        {
-            pod_query($sql[$i], 'Cannot setup SQL tables');
-        }
-        delete_option('pods_version');
-        add_option('pods_version', $pods_latest);
-    }
-
-    // Check for .htaccess
-    if (!file_exists(ABSPATH . '.htaccess'))
-    {
-        if (!copy(WP_PLUGIN_DIR . '/pods/htaccess.txt', ABSPATH . '.htaccess'))
-        {
-            echo 'Please copy "htaccess.txt" to "' . ABSPATH . '.htaccess"';
-        }
-    }
-}
+$pods_roles = unserialize(get_option('pods_roles'));
+$podpage_exists = podpage_exists();
 
 function pods_menu()
 {
@@ -124,28 +92,24 @@ function pods_menu()
 
 function pods_options_page()
 {
-    global $pods_url, $pods_latest, $pods_roles, $table_prefix;
-    include WP_PLUGIN_DIR . '/pods/core/manage.php';
+    global $pods_latest, $pods_roles, $table_prefix;
+    include PODS_DIR . '/core/manage.php';
 }
 
 function pods_content_page()
 {
-    global $pods_url;
-    include WP_PLUGIN_DIR . '/pods/core/manage_content.php';
+    include PODS_DIR . '/core/manage_content.php';
 }
 
 function pods_package_page()
 {
-    global $pods_url;
-    include WP_PLUGIN_DIR . '/pods/core/manage_packages.php';
+    include PODS_DIR . '/core/manage_packages.php';
 }
 
 function pods_menu_page()
 {
-    global $pods_url;
-
     define('WP_INC_URL', str_replace('wp-content', 'wp-includes', WP_CONTENT_URL));
-    include WP_PLUGIN_DIR . '/pods/core/manage_menu.php';
+    include PODS_DIR . '/core/manage_menu.php';
 }
 
 function pods_meta()
@@ -194,7 +158,7 @@ function get_content()
     {
         ob_start();
         eval("?>$phpcode");
-        echo do_shortcode(ob_get_clean());
+        echo ob_get_clean();
     }
     elseif (!empty($post))
     {
@@ -211,7 +175,7 @@ function pods_redirect()
         $phpcode = $row['phpcode'];
         $page_template = $row['page_template'];
 
-        include WP_PLUGIN_DIR . '/pods/core/router.php';
+        include PODS_DIR . '/core/router.php';
         die();
     }
 }
@@ -266,15 +230,53 @@ function podpage_exists()
     return false;
 }
 
-// Setup DB tables, get the gears turning
-require_once WP_PLUGIN_DIR . '/pods/core/functions.php';
-require_once WP_PLUGIN_DIR . '/pods/core/Pod.class.php';
+// JSON support for < PHP 5.2
+if (!function_exists('json_encode'))
+{
+    include(PODS_DIR . '/ajax/JSON.php');
 
-pods_init();
+    function json_encode($str)
+    {
+        $json = new Services_JSON();
+        return $json->encode($str);
+    }
 
-$pods_url = WP_PLUGIN_URL . '/pods';
-$pods_roles = unserialize(get_option('pods_roles'));
-$podpage_exists = podpage_exists();
+    function json_decode($str)
+    {
+        $json = new Services_JSON();
+        return $json->decode($str);
+    }
+}
+
+// Get the installed version
+if ($installed = (int) get_option('pods_version'))
+{
+    if ($installed < $pods_latest)
+    {
+        include(PODS_DIR . '/sql/update.php');
+    }
+}
+// Setup initial tables
+else
+{
+    $sql = file_get_contents(PODS_DIR . '/sql/dump.sql');
+    $sql = explode(";\n", str_replace('wp_', $table_prefix, $sql));
+    for ($i = 0, $z = count($sql) - 1; $i < $z; $i++)
+    {
+        pod_query($sql[$i], 'Cannot setup SQL tables');
+    }
+    delete_option('pods_version');
+    add_option('pods_version', $pods_latest);
+}
+
+// Check for .htaccess
+if (!file_exists(ABSPATH . '.htaccess'))
+{
+    if (!copy(PODS_DIR . '/htaccess.txt', ABSPATH . '.htaccess'))
+    {
+        echo 'Please copy "htaccess.txt" to "' . ABSPATH . '.htaccess"';
+    }
+}
 
 // Hook for admin menu
 add_action('admin_menu', 'pods_menu', 9999);

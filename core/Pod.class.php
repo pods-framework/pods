@@ -488,7 +488,7 @@ class Pod
     Display HTML for all datatype fields
     ==================================================
     */
-    function showform($pod_id = null, $public_columns = null)
+    function showform($pod_id = null, $public_columns = null, $label = 'Save changes')
     {
         $datatype = $this->datatype;
         $datatype_id = $this->datatype_id;
@@ -534,7 +534,8 @@ class Pod
         $result = pod_query($sql);
         $tbl_cols = mysql_fetch_assoc($result);
 ?>
-    <div><input type="hidden" class="form num pod_id" value="<?php echo $pod_id; ?>" /></div>
+    <input type="hidden" class="form num pod_id" value="<?php echo $pod_id; ?>" />
+    <input type="hidden" class="form txt token" value="<?php echo pods_generate_key($datatype, $public_columns); ?>" />
 <?php
         foreach ($fields as $key => $field)
         {
@@ -559,7 +560,7 @@ class Pod
 
             if (1 == $field['required'])
             {
-                $label .= ' <span class="red">*</span>';
+                $field['label'] .= ' <span class="red">*</span>';
             }
 
             if (!empty($field['pickval']))
@@ -625,7 +626,7 @@ class Pod
             $this->build_field_html($field);
         }
 ?>
-    <div><input type="button" class="button" value="Save changes" onclick="saveForm()" /></div>
+    <div><input type="button" class="button" value="<?php echo $label; ?>" onclick="saveForm()" /></div>
 <?php
     }
 
@@ -654,7 +655,7 @@ class Pod
     Build public input form
     ==================================================
     */
-    function publicForm($public_columns = null)
+    function publicForm($public_columns = null, $label = 'Save changes')
     {
         include realpath(dirname(__FILE__) . '/form.php');
     }

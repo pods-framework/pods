@@ -26,7 +26,7 @@ function editRoles() {
 
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/edit.php",
+        url: "<?php echo PODS_URL; ?>/ajax/edit.php",
         data: "action=editroles&auth="+auth+"&"+data.join("&"),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {

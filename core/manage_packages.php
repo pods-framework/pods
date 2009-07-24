@@ -3,7 +3,7 @@
 Begin javascript code
 ==================================================
 -->
-<link rel="stylesheet" type="text/css" href="<?php echo $pods_url; ?>/style.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css" />
 <script type="text/javascript">
 var auth = '<?php echo md5(AUTH_KEY); ?>';
 
@@ -38,7 +38,7 @@ function podsExport() {
 
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/import_export.php",
+        url: "<?php echo PODS_URL; ?>/ajax/import_export.php",
         data: "action=export&auth="+auth+"&"+data.join("&"),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -56,7 +56,7 @@ function podsImport(action) {
     var data = jQuery("#import_code").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo $pods_url; ?>/ajax/import_export.php",
+        url: "<?php echo PODS_URL; ?>/ajax/import_export.php",
         data: "action="+action+"&auth="+auth+"&data="+encodeURIComponent(data),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {

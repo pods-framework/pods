@@ -13,8 +13,8 @@ while ($row = mysql_fetch_assoc($result))
 Begin javascript code
 ==================================================
 -->
-<link rel="stylesheet" type="text/css" href="<?php echo $pods_url; ?>/style.css" />
-<script type="text/javascript" src="<?php echo $pods_url; ?>/js/jqmodal.js"></script>
+<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css" />
+<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqmodal.js"></script>
 <script type="text/javascript">
 var auth = '<?php echo md5(AUTH_KEY); ?>';
 var datatype;

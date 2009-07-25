@@ -2,8 +2,8 @@
 /*
 Plugin Name: Pods CMS
 Plugin URI: http://pods.uproot.us/
-Description: The CMS Framework for WordPress
-Version: 1.6.9
+Description: The CMS Framework for WordPress.
+Version: 1.7.0
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 169);
+define('PODS_VERSION', 170);
 define('PODS_URL', WP_PLUGIN_URL . '/pods');
 define('PODS_DIR', WP_PLUGIN_DIR . '/pods');
 
@@ -32,6 +32,25 @@ require_once PODS_DIR . '/core/functions.php';
 require_once PODS_DIR . '/core/Pod.class.php';
 
 $pods_roles = unserialize(get_option('pods_roles'));
+
+// TEMPORARY FIX: 1.6.8 and 1.6.9
+global $table_prefix;
+if (!empty($table_prefix))
+{
+    // Look for the un-prefixed table
+    $result = pod_query("SHOW TABLES LIKE 'pod_types'");
+    if (0 < mysql_num_rows($result))
+    {
+        // See if the user made it work anyways
+        $result = pod_query("SHOW TABLES LIKE '@wp_pod_types'");
+
+        // If not, trigger the (fixed) fresh install by deleting "pods_version"
+        if (1 > mysql_num_rows($result))
+        {
+            delete_option('pods_version');
+        }
+    }
+}
 
 // Get the installed version
 if ($installed = (int) get_option('pods_version'))
@@ -45,7 +64,7 @@ if ($installed = (int) get_option('pods_version'))
 else
 {
     $sql = file_get_contents(PODS_DIR . '/sql/dump.sql');
-    $sql = explode(";\n", str_replace('wp_', $table_prefix, $sql));
+    $sql = explode(";\n", str_replace('wp_', '@wp_', $sql));
     for ($i = 0, $z = count($sql) - 1; $i < $z; $i++)
     {
         pod_query($sql[$i], 'Cannot setup SQL tables');

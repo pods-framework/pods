@@ -2,9 +2,9 @@
 // Include the MySQL connection
 include(realpath('../../../wp-config.php'));
 
-if ($_POST['auth'] != md5(AUTH_KEY))
+if (!pods_access('manage_settings'))
 {
-    die('Error: Authentication failed');
+    die('Error: Access denied');
 }
 
 $result = pod_query("SHOW TABLES LIKE '@wp_pod%'");

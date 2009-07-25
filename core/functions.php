@@ -300,11 +300,7 @@ function pods_generate_key($datatype, $public_columns)
 {
     $_SESSION['dt'] = $datatype;
     $_SESSION['token'] = md5(mt_rand());
-
-    if (!empty($public_columns))
-    {
-        $_SESSION['columns'] = serialize($public_columns);
-    }
+    $_SESSION['columns'] = serialize($public_columns);
     return $_SESSION['token'];
 }
 

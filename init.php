@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS
 Plugin URI: http://pods.uproot.us/
 Description: The CMS Framework for WordPress.
-Version: 1.7.0
+Version: 1.7.1
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,13 +23,14 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 170);
+define('PODS_VERSION', 171);
 define('PODS_URL', WP_PLUGIN_URL . '/pods');
 define('PODS_DIR', WP_PLUGIN_DIR . '/pods');
 
 // Setup DB tables, get the gears turning
 require_once PODS_DIR . '/core/functions.php';
 require_once PODS_DIR . '/core/Pod.class.php';
+require_once PODS_DIR . '/core/PodAPI.class.php';
 
 $pods_roles = unserialize(get_option('pods_roles'));
 
@@ -240,7 +241,7 @@ function pods_redirect()
         $page_template = $row['page_template'];
 
         include PODS_DIR . '/core/router.php';
-        die();
+        exit;
     }
 }
 

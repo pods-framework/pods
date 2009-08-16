@@ -3,7 +3,7 @@
 ==================================================
 Pod.class.php
 
-http://codex.uproot.us/
+http://pods.uproot.us/codex/
 ==================================================
 */
 class Pod
@@ -102,7 +102,7 @@ class Pod
             $datatype = $this->rel_table;
             foreach ($data as $key => $val)
             {
-                $detail_url = get_bloginfo('url') . "/{$datatype}_detail/" . $val['id'];
+                $detail_url = get_bloginfo('url') . "/pods/$datatype/" . $val['id'];
                 $val = is_numeric($datatype) ? $val['name'] : '<a href="' . $detail_url . '">' . $val['name'] . '</a>';
                 $out .= "<span class='{$first}list list_$datatype'>$val</span>";
                 $first = '';
@@ -202,7 +202,7 @@ class Pod
             $where = (false !== $unique_vals) ? "AND id NOT IN ($unique_vals)" : '';
             if (!empty($pick_filter))
             {
-                $where .= (empty($where) ? ' WHERE ' : ' AND ') . $pick_filter;
+                $where .= " AND $pick_filter";
             }
 
             $sql = "SELECT ID as id, post_title AS name FROM @wp_posts WHERE post_type = 'page' $where ORDER BY $orderby";
@@ -213,7 +213,7 @@ class Pod
             $where = (false !== $unique_vals) ? "AND id NOT IN ($unique_vals)" : '';
             if (!empty($pick_filter))
             {
-                $where .= (empty($where) ? ' WHERE ' : ' AND ') . $pick_filter;
+                $where .= " AND $pick_filter";
             }
 
             $sql = "SELECT ID as id, post_title AS name FROM @wp_posts WHERE post_type = 'post' $where ORDER BY $orderby";

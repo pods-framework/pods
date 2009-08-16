@@ -7,7 +7,7 @@ foreach ($_GET as $key => $val)
     ${$key} = mysql_real_escape_string(stripslashes(trim($val)));
 }
 
-$result = mysql_query("SELECT id, uri, title from @wp_pod_pages WHERE uri LIKE '%$q%' ORDER BY uri ASC");
+$result = pod_query("SELECT id, uri, title from @wp_pod_pages WHERE uri LIKE '%$q%' ORDER BY uri ASC");
 if (0 < mysql_num_rows($result))
 {
     while ($row = mysql_fetch_assoc($result))
@@ -16,4 +16,3 @@ if (0 < mysql_num_rows($result))
     }
     echo implode("\n", $matches);
 }
-

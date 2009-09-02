@@ -4,15 +4,16 @@ require_once(realpath(dirname(__FILE__) . '/../../../../wp-config.php'));
 require_once(realpath(dirname(__FILE__) . '/../core/Pod.class.php'));
 
 $pod_id = (int) $_POST['pod_id'];
+$uri_hash = $_POST['uri_hash'];
 $datatype = $_POST['datatype'];
 $token = $_POST['token'];
 
 // Save the form
 if (!empty($token))
 {
-    if (!pods_validate_key($token, $datatype))
+    if (!pods_validate_key($token, $uri_hash, $datatype))
     {
-        die("Error: The form token has expired.");
+        die("Error: The form has expired.");
     }
 
     if ($datatype)
@@ -31,7 +32,7 @@ if (!empty($token))
         $where = '';
         if (empty($pod_id))
         {
-            $public_columns = unserialize($_SESSION['columns']);
+            $public_columns = unserialize($_SESSION[$uri_hash]['columns']);
 
             if (!empty($public_columns))
             {
@@ -105,8 +106,7 @@ if (!empty($token))
             if ('slug' == $type)
             {
                 $slug_val = empty($_POST[$key]) ? $_POST['name'] : $_POST[$key];
-                $slug_val = sanitize_title($slug_val);
-                $val = $slug_val;
+                $val = pods_unique_slug($slug_val, $key, $datatype, $datatype_id, $pod_id);
             }
 
             if ('pick' == $type)

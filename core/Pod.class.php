@@ -15,23 +15,24 @@ class Pod
     var $datatype_id;
     var $total_rows;
     var $rel_table;
+    var $rel_tbl_row_ids;
     var $rpp = 15;
     var $page;
 
     function Pod($datatype = null, $id = null)
     {
+        $this->id = pods_sanitize($id);
+        $this->datatype = pods_sanitize($datatype);
         $this->page = empty($_GET['pg']) ? 1 : intval($_GET['pg']);
 
-        if (null != $datatype)
+        if (null != $this->datatype)
         {
-            $this->datatype = trim($datatype);
-            $result = pod_query("SELECT id FROM @wp_pod_types WHERE name = '$datatype' LIMIT 1");
+            $result = pod_query("SELECT id FROM @wp_pod_types WHERE name = '$this->datatype' LIMIT 1");
             $this->datatype_id = mysql_result($result, 0);
 
-            if (null != $id)
+            if (null != $this->id)
             {
-                $this->id = $id;
-                return $this->getRecordById($id);
+                return $this->getRecordById($this->id);
             }
         }
     }
@@ -58,6 +59,8 @@ class Pod
     */
     function get_field($name, $orderby = null)
     {
+        $this->rel_table = $this->datatype_id;
+
         if (isset($this->data[$name]) && empty($orderby))
         {
             return $this->data[$name];
@@ -73,18 +76,56 @@ class Pod
         }
         else
         {
-            $datatype = $this->datatype;
-            $datatype_id = $this->datatype_id;
-
-            $result = pod_query("SELECT id, pickval FROM @wp_pod_fields WHERE datatype = $datatype_id AND name = '$name' LIMIT 1");
-            if (0 < mysql_num_rows($result))
+            // Dot-traversal
+            $tmp_results = $this->data[$name];
+            $this->rel_tbl_row_ids = $this->data['id'];
+            $traverse = (false !== strpos($name, '.')) ? explode('.', $name) : array($name);
+            foreach ($traverse as $key => $column_name)
             {
-                $row = mysql_fetch_assoc($result);
-                $this->rel_table = $row['pickval'];
-                $this->data[$name] = $this->rel_lookup($row['id'], $this->rel_table, $orderby);
-                return $this->data[$name];
+                $result = pod_query("SELECT id, pickval FROM @wp_pod_fields WHERE datatype = '$this->rel_table' AND name = '$column_name' AND coltype = 'pick' LIMIT 1");
+                if (0 < mysql_num_rows($result))
+                {
+                    $row = mysql_fetch_assoc($result);
+                    $tmp_results = $this->rel_lookup($row['id'], $row['pickval'], $orderby);
+
+                    if (false === $tmp_results)
+                    {
+                        return false;
+                    }
+
+                    // Get the next datatype id if not the last traversal item
+                    if ($key < count($traverse) - 1)
+                    {
+                        $result = pod_query("SELECT id FROM @wp_pod_types WHERE name = '" . $row['pickval'] . "' LIMIT 1");
+                        $this->rel_table = mysql_result($result, 0);
+                    }
+                }
+                else
+                {
+                    if ($key == count($traverse) - 1)
+                    {
+                        // If it's a single item, output the scalar value
+                        if (1 == count($tmp_results))
+                        {
+                            $results = $tmp_results[0][$column_name];
+                        }
+                        // Otherwise, output the values as an array
+                        else
+                        {
+                            $tmp_results = array();
+                            if (is_array($tmp_results))
+                            {
+                                foreach ($tmp_results as $key => $val)
+                                {
+                                    $results[] = $val[$column_name];
+                                }
+                            }
+                        }
+                        return $results;
+                    }
+                }
             }
-            return false;
+            return $tmp_results;
         }
     }
 
@@ -99,7 +140,7 @@ class Pod
         if (is_array($data))
         {
             $first = 'first ';
-            $datatype = $this->rel_table;
+            $datatype = $this->datatype;
             foreach ($data as $key => $val)
             {
                 $detail_url = get_bloginfo('url') . "/pods/$datatype/" . $val['id'];
@@ -124,7 +165,7 @@ class Pod
 
     /*
     ==================================================
-    Run a helper within a PodPage or WP template
+    Run a helper within a Pod Page or WP template
     ==================================================
     */
     function pod_helper($helper, $value = null, $name = null)
@@ -143,24 +184,94 @@ class Pod
 
     /*
     ==================================================
-    Get the post id
+    Get the pod id
     ==================================================
     */
-    function get_pod_id()
+    function get_pod_id($traverse = false)
     {
-        if (empty($this->data['pod_id']))
+        if ($traverse)
         {
-            $this->data['pod_id'] = 0;
-
-            $dt = $this->datatype_id;
-            $tbl_row_id = $this->print_field('id');
-            $result = pod_query("SELECT id FROM @wp_pod WHERE datatype = $dt AND tbl_row_id = '$tbl_row_id' LIMIT 1");
+            $result = pod_query("SELECT id FROM @wp_pod WHERE datatype = '$this->rel_table' AND tbl_row_id IN ($this->rel_tbl_row_ids)");
             if (0 < mysql_num_rows($result))
             {
-                $this->data['pod_id'] = mysql_result($result, 0);
+                while ($row = mysql_fetch_assoc($result))
+                {
+                    $pod_ids[] = $row['id'];
+                }
+                return implode(',', $pod_ids);
             }
+            return 0;
         }
-        return $this->data['pod_id'];
+        else
+        {
+            if (empty($this->data['pod_id']))
+            {
+                $this->data['pod_id'] = 0;
+                $tbl_row_id = $this->data['id'];
+                $result = pod_query("SELECT id FROM @wp_pod WHERE datatype = '$this->datatype_id' AND tbl_row_id = '$tbl_row_id' LIMIT 1");
+                if (0 < mysql_num_rows($result))
+                {
+                    $this->data['pod_id'] = mysql_result($result, 0);
+                }
+            }
+            return $this->data['pod_id'];
+        }
+    }
+
+    /*
+    ==================================================
+    Lookup values from a single relationship field
+    ==================================================
+    */
+    function rel_lookup($field_id, $table = null, $orderby = null)
+    {
+        $orderby = empty($orderby) ? '' : "ORDER BY $orderby";
+
+        $pod_ids = $this->get_pod_id(true);
+        $result = pod_query("SELECT tbl_row_id FROM @wp_pod_rel WHERE pod_id IN ($pod_ids) AND field_id = $field_id");
+
+        // Find all related IDs
+        if (0 < mysql_num_rows($result))
+        {
+            $term_ids = array();
+            while ($row = mysql_fetch_assoc($result))
+            {
+                $term_ids[] = $row['tbl_row_id'];
+            }
+            $this->rel_tbl_row_ids = $term_ids = implode(',', $term_ids);
+        }
+        else
+        {
+            return false;
+        }
+
+        // WP category
+        if (is_numeric($table))
+        {
+            $result = pod_query("SELECT term_id AS id, name FROM @wp_terms WHERE term_id IN ($term_ids) $orderby");
+        }
+        // WP page or post
+        elseif ('wp_page' == $table || 'wp_post' == $table)
+        {
+            $result = pod_query("SELECT ID as id, post_title AS name FROM @wp_posts WHERE ID IN ($term_ids) $orderby");
+        }
+        // WP user
+        elseif ('wp_user' == $table)
+        {
+            $result = pod_query("SELECT ID as id, display_name AS name FROM @wp_users WHERE ID IN ($term_ids) $orderby");
+        }
+        // Pod table
+        else
+        {
+            $result = pod_query("SELECT * FROM `@wp_pod_tbl_$table` WHERE id IN ($term_ids) $orderby");
+        }
+
+        // Put all related items into an array
+        while ($row = mysql_fetch_assoc($result))
+        {
+            $data[] = $row;
+        }
+        return $data;
     }
 
     /*
@@ -196,27 +307,17 @@ class Pod
                 tx.parent = $table AND tx.taxonomy = 'category' $where
             ";
         }
-        // WP page dropdown
-        elseif ('wp_page' == $table)
+        // WP page or post dropdown
+        elseif ('wp_page' == $table || 'wp_post' == $table)
         {
+            $post_type = substr($table, 3);
             $where = (false !== $unique_vals) ? "AND id NOT IN ($unique_vals)" : '';
             if (!empty($pick_filter))
             {
                 $where .= " AND $pick_filter";
             }
 
-            $sql = "SELECT ID as id, post_title AS name FROM @wp_posts WHERE post_type = 'page' $where ORDER BY $orderby";
-        }
-        // WP post dropdown
-        elseif ('wp_post' == $table)
-        {
-            $where = (false !== $unique_vals) ? "AND id NOT IN ($unique_vals)" : '';
-            if (!empty($pick_filter))
-            {
-                $where .= " AND $pick_filter";
-            }
-
-            $sql = "SELECT ID as id, post_title AS name FROM @wp_posts WHERE post_type = 'post' $where ORDER BY $orderby";
+            $sql = "SELECT ID as id, post_title AS name FROM @wp_posts WHERE post_type = '$post_type' $where ORDER BY $orderby";
         }
         // WP user dropdown
         elseif ('wp_user' == $table)
@@ -257,63 +358,6 @@ class Pod
         return $val;
     }
 
-    /*
-    ==================================================
-    Lookup values from a single relationship field
-    ==================================================
-    */
-    function rel_lookup($field_id, $table = null, $orderby = null)
-    {
-        $orderby = empty($orderby) ? '' : "ORDER BY $orderby";
-        $datatype_id = $this->datatype_id;
-        $pod_id = $this->get_pod_id();
-        $row_id = $this->data['id'];
-
-        $result = pod_query("SELECT tbl_row_id FROM @wp_pod_rel WHERE pod_id = $pod_id AND field_id = $field_id");
-
-        // Find all related IDs
-        if (0 < mysql_num_rows($result))
-        {
-            $term_ids = array();
-            while ($row = mysql_fetch_assoc($result))
-            {
-                $term_ids[] = $row['tbl_row_id'];
-            }
-            $term_ids = implode(', ', $term_ids);
-        }
-        else
-        {
-            return false;
-        }
-
-        // WP category
-        if (is_numeric($table))
-        {
-            $result = pod_query("SELECT term_id AS id, name FROM @wp_terms WHERE term_id IN ($term_ids) $orderby");
-        }
-        // WP page or post
-        elseif ('wp_page' == $table || 'wp_post' == $table)
-        {
-            $result = pod_query("SELECT ID as id, post_title AS name FROM @wp_posts WHERE ID IN ($term_ids) $orderby");
-        }
-        // WP user
-        elseif ('wp_user' == $table)
-        {
-            $result = pod_query("SELECT ID as id, display_name AS name FROM @wp_users WHERE ID IN ($term_ids) $orderby");
-        }
-        // Pod table
-        else
-        {
-            $result = pod_query("SELECT * FROM `@wp_pod_tbl_$table` WHERE id IN ($term_ids) $orderby");
-        }
-
-        // Put all related items into an array
-        while ($row = mysql_fetch_assoc($result))
-        {
-            $data[] = $row;
-        }
-        return $data;
-    }
     /*
     ==================================================
     Return a single record
@@ -402,6 +446,13 @@ class Pod
                 {
                     $where .= " AND `$field_name`.id = $val";
                 }
+            }
+
+            // Performance improvement - only use PICK columns mentioned in ($orderby, $where, $search)
+            $haystack = "$orderby $where $search";
+            if (false === strpos($haystack, $field_name . '.') && false === strpos($haystack, "`$field_name`."))
+            {
+                continue;
             }
 
             if (is_numeric($table))
@@ -519,23 +570,31 @@ class Pod
             $fields[$row['name']] = $row;
         }
 
-        $sql = "
-        SELECT
-            t.*
-        FROM
-            @wp_pod p
-        INNER JOIN
-            `@wp_pod_tbl_$datatype` t ON t.id = p.tbl_row_id
-        WHERE
-            p.id = $pod_id
-        LIMIT
-            1
-        ";
-        $result = pod_query($sql);
-        $tbl_cols = mysql_fetch_assoc($result);
+        if (!empty($pod_id))
+        {
+            $sql = "
+            SELECT
+                t.*
+            FROM
+                @wp_pod p
+            INNER JOIN
+                `@wp_pod_tbl_$datatype` t ON t.id = p.tbl_row_id
+            WHERE
+                p.id = $pod_id
+            LIMIT
+                1
+            ";
+            $result = pod_query($sql);
+            if (0 < mysql_num_rows($result))
+            {
+                $tbl_cols = mysql_fetch_assoc($result);
+            }
+        }
+        $uri_hash = md5($_SERVER['REQUEST_URI']);
 ?>
     <input type="hidden" class="form num pod_id" value="<?php echo $pod_id; ?>" />
-    <input type="hidden" class="form txt token" value="<?php echo pods_generate_key($datatype, $public_columns); ?>" />
+    <input type="hidden" class="form txt token" value="<?php echo pods_generate_key($datatype, $uri_hash, $public_columns); ?>" />
+    <input type="hidden" class="form txt uri_hash" value="<?php echo $uri_hash; ?>" />
 <?php
         foreach ($fields as $key => $field)
         {
@@ -619,7 +678,7 @@ class Pod
                 }
                 else
                 {
-                    $this->data[$key] = $tbl_cols[$key];
+                    $this->data[$key] = empty($tbl_cols[$key]) ? null : $tbl_cols[$key];
                 }
                 $this->get_field($key);
             }
@@ -738,7 +797,10 @@ class Pod
             {
                 $value = $this->pod_helper($helper, $this->get_field($name), $name);
             }
-            return $before . $value . $after;
+            if (null != $value && false !== $value)
+            {
+                return $before . $value . $after;
+            }
         }
     }
 }

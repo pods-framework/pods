@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS
 Plugin URI: http://pods.uproot.us/
 Description: The CMS Framework for WordPress.
-Version: 1.7.1
+Version: 1.7.2
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,16 +23,16 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 171);
+define('PODS_VERSION', 172);
 define('PODS_URL', WP_PLUGIN_URL . '/pods');
 define('PODS_DIR', WP_PLUGIN_DIR . '/pods');
+
+$pods_roles = unserialize(get_option('pods_roles'));
 
 // Setup DB tables, get the gears turning
 require_once PODS_DIR . '/core/functions.php';
 require_once PODS_DIR . '/core/Pod.class.php';
 require_once PODS_DIR . '/core/PodAPI.class.php';
-
-$pods_roles = unserialize(get_option('pods_roles'));
 
 // TEMPORARY FIX: 1.6.8 and 1.6.9
 global $table_prefix;
@@ -255,6 +255,11 @@ function kill_redirect()
     return false;
 }
 
+function pods_session()
+{
+    session_start();
+}
+
 function podpage_exists()
 {
     $home = explode('://', get_bloginfo('url'));
@@ -281,7 +286,7 @@ function podpage_exists()
         WHERE
             '$uri' LIKE REPLACE(uri, '*', '%')
         ORDER BY
-            uri DESC
+            LENGTH(uri) DESC, uri DESC
         LIMIT
             1
         ";
@@ -303,6 +308,9 @@ add_action('wp_head', 'pods_meta', 0);
 
 // Hook for redirection
 add_action('template_redirect', 'pods_redirect');
+
+// Hook for session handling
+add_action('init', 'pods_session');
 
 // Hook for shortcode
 add_shortcode('pods', 'pods_shortcode');

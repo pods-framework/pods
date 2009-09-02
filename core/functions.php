@@ -9,8 +9,6 @@ $results_error      Triggered when results > 0
 $no_results_error   Triggered when results = 0
 ==================================================
 */
-session_start();
-
 function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_results_error = null)
 {
     global $table_prefix;
@@ -104,7 +102,7 @@ function pods_sanitize($input)
 
     if (is_object($input))
     {
-        $input = get_object_vars($input);
+        $input = (array) $input;
         foreach ($input as $key => $val)
         {
             $output[$key] = pods_sanitize($val);
@@ -127,6 +125,50 @@ function pods_sanitize($input)
 
 /*
 ==================================================
+Build a unique slug
+==================================================
+*/
+function pods_unique_slug($value, $column_name, $datatype, $datatype_id, $pod_id = 0)
+{
+    $value = sanitize_title($value);
+    $sql = "
+    SELECT DISTINCT
+        t.`$column_name` AS slug
+    FROM
+        @wp_pod p
+    INNER JOIN
+        `@wp_pod_tbl_{$datatype}` t ON t.id = p.tbl_row_id
+    WHERE
+        p.datatype = '$datatype_id' AND p.id != '$pod_id'
+    ";
+    $result = pod_query($sql);
+    if (0 < mysql_num_rows($result))
+    {
+        $unique_num = 0;
+        $unique_found = false;
+        while ($row = mysql_fetch_assoc($result))
+        {
+            $taken_slugs[] = $row['slug'];
+        }
+        if (in_array($value, $taken_slugs))
+        {
+            while (!$unique_found)
+            {
+                $unique_num++;
+                $test_slug = $value . '-' . $unique_num;
+                if (!in_array($test_slug, $taken_slugs))
+                {
+                    $value = $test_slug;
+                    $unique_found = true;
+                }
+            }
+        }
+    }
+    return $value;
+}
+
+/*
+==================================================
 Access control
 ==================================================
 */
@@ -144,7 +186,7 @@ function pods_access($priv)
     {
         foreach ($pods_roles as $role => $privs)
         {
-            if (false !== array_search($priv, $privs))
+            if (in_array($role, $current_user->roles) && false !== array_search($priv, $privs))
             {
                 return true;
             }
@@ -296,12 +338,13 @@ function pods_shortcode($tags)
 Generate form key
 ==================================================
 */
-function pods_generate_key($datatype, $public_columns)
+function pods_generate_key($datatype, $uri_hash, $public_columns)
 {
-    $_SESSION['dt'] = $datatype;
-    $_SESSION['token'] = md5(mt_rand());
-    $_SESSION['columns'] = serialize($public_columns);
-    return $_SESSION['token'];
+    $token = md5(mt_rand());
+    $_SESSION[$uri_hash]['dt'] = $datatype;
+    $_SESSION[$uri_hash]['token'] = $token;
+    $_SESSION[$uri_hash]['columns'] = serialize($public_columns);
+    return $token;
 }
 
 /*
@@ -309,15 +352,16 @@ function pods_generate_key($datatype, $public_columns)
 Validate form key
 ==================================================
 */
-function pods_validate_key($key, $datatype)
+function pods_validate_key($key, $uri_hash, $datatype)
 {
-    if (!empty($key) && $key == $_SESSION['token'] && $datatype == $_SESSION['dt'])
+    if (!empty($_SESSION[$uri_hash]))
     {
-        $valid = true;
+        $session_dt = $_SESSION[$uri_hash]['dt'];
+        $session_token = $_SESSION[$uri_hash]['token'];
+        if (!empty($session_token) && $key == $session_token && $datatype == $session_dt)
+        {
+            return true;
+        }
     }
-    else
-    {
-        $valid = false;
-    }
-    return $valid;
+    return false;
 }

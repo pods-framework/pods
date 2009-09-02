@@ -50,6 +50,9 @@ class PodAPI
             $data = $this->csv_to_php($data);
         }
 
+        pod_query("SET NAMES utf8");
+        pod_query("SET CHARACTER SET utf8");
+
         // Get the id/name pairs of all associated pick tables
         foreach ($this->fields as $field_name => $field_data)
         {
@@ -140,9 +143,12 @@ class PodAPI
             $pod_id = pod_query("INSERT INTO @wp_pod (tbl_row_id, datatype, name, created, modified) VALUES ('$tbl_row_id', '{$this->dt}', '$pod_name', NOW(), NOW())");
 
             // Insert the relationship (rel) data
-            $pick_columns = implode(',', $pick_columns);
-            $pick_columns = str_replace('POD_ID', $pod_id, $pick_columns);
-            pod_query("INSERT INTO @wp_pod_rel (pod_id, field_id, tbl_row_id) VALUES $pick_columns");
+            if (!empty($pick_columns))
+            {
+                $pick_columns = implode(',', $pick_columns);
+                $pick_columns = str_replace('POD_ID', $pod_id, $pick_columns);
+                pod_query("INSERT INTO @wp_pod_rel (pod_id, field_id, tbl_row_id) VALUES $pick_columns");
+            }
         }
     }
 
@@ -273,6 +279,8 @@ class PodAPI
     {
         $delimiter = ",";
         $expr = "/$delimiter(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))/";
+        $data = str_replace("\r\n", "\n", $data);
+        $data = str_replace("\r", "\n", $data);
         $lines = explode("\n", $data);
         $field_names = explode($delimiter, array_shift($lines));
         foreach ($lines as $line)

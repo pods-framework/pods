@@ -38,7 +38,7 @@ function resetForm() {
     jQuery("#column_name").attr("disabled", 0);
     jQuery("#column_label").val("");
     jQuery("#column_comment").val("");
-    jQuery("#column_type").val("");
+    jQuery("#column_type").val("date");
     jQuery("#column_type").attr("disabled", 0);
     jQuery("#column_pickval").val("");
     jQuery("#column_pick_filter").val("");
@@ -559,8 +559,8 @@ if (isset($helper_types['after']))
                         <option value="bool">boolean (true, false)</option>
                         <option value="txt">text (title, email, phone, url)</option>
                         <option value="desc">desc (summary, body)</option>
-                        <option value="code">code (no WYSIWYG editor)</option>
-                        <option value="file">file (document, media)</option>
+                        <option value="code">code (no visual editor)</option>
+                        <option value="file">file (upload)</option>
                         <option value="slug">slug (permalink)</option>
                         <option value="pick">pick</option>
                     </select>

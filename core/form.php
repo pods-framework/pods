@@ -4,7 +4,6 @@ $upload_dir = wp_upload_dir();
 $upload_dir = str_replace(get_option('siteurl'), '', $upload_dir['baseurl']);
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css" />
-<script type="text/javascript" src="<?php echo get_option('siteurl'); ?>/wp-includes/js/jquery/jquery.js"></script>
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqmodal.js"></script>
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/date_input.js"></script>
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqFileTree.js"></script>

@@ -288,7 +288,7 @@ if (!empty($orderby))
     }
 }
 ?>
-    <table id="browseTable" style="width:100%" cellpadding="0" cellspacing="0">
+    <table id="browseTable" cellpadding="0" cellspacing="0">
         <tr>
             <th></th>
             <th><a href="?<?php echo $get_vals . '&orderby=' . $order['name']; ?>">Name</a></th>
@@ -340,4 +340,3 @@ if ('add' == $add_or_edit)
 ?>
     </div>
 </div>
-

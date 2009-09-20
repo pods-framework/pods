@@ -13,14 +13,15 @@ function editRoles() {
     var data = new Array();
 
     var i = 0;
-    jQuery("#roleArea .form").each(function() {
+    jQuery("#roleTable .all_roles").each(function() {
         var theval = "";
-        var classname = jQuery(this).attr("class").split(" ");
-        jQuery("." + classname[2] + " .active").each(function() {
-            theval += jQuery(this).attr("value") + ",";
+        var the_role = jQuery(this).html();
+        jQuery("#roleTable input."+the_role+":checked").each(function() {
+            var the_priv = jQuery(this).parent().parent().attr("id");
+            theval += the_priv + ",";
         });
         theval = theval.substr(0, theval.length - 1);
-        data[i] = classname[2] + "=" + encodeURIComponent(theval);
+        data[i] = the_role + "=" + encodeURIComponent(theval);
         i++;
     });
 
@@ -48,6 +49,9 @@ Role HTML
 -->
 <div id="roleArea" class="area hidden">
     <div class="tips">Use the Role Manager plugin to add new roles. Admins have total access.</div>
+    <table id="roleTable" cellpadding="0" cellspacing="0">
+        <tr>
+            <td><!--privilege--></td>
 <?php
 $all_privs = array(
     array('name' => 'manage_pods', 'label' => 'Manage Pods'),
@@ -73,31 +77,44 @@ if (isset($user_roles))
         if ('administrator' != $role)
         {
 ?>
-    <div style="float:left; width:24%; margin:0 5px 5px 0">
-        <h3><?php echo $role; ?></h3>
-        <div class="form pick <?php echo $role; ?>">
-<?php
-            foreach ($all_privs as $priv)
-            {
-                $active = '';
-                $pods_role = $pods_roles[$role];
-                if (isset($pods_role) && false !== array_search($priv['name'], $pods_role))
-                {
-                    $active = ' active';
-                }
-?>
-            <div class="option<?php echo $active; ?>" value="<?php echo $priv['name']; ?>"><?php echo $priv['label']; ?></div>
-<?php
-            }
-?>
-        </div>
-    </div>
+            <td class="all_roles"><?php echo $role; ?></td>
 <?php
         }
     }
 }
 ?>
-    <div class="clear"><!--clear--></div>
+        </tr>
+<?php
+foreach ($all_privs as $priv)
+{
+    $zebra = ('zebra' == $zebra) ? '' : 'zebra';
+?>
+        <tr id="<?php echo $priv['name']; ?>" class="<?php echo $zebra; ?>">
+            <td><?php echo $priv['name']; ?></td>
+<?php
+    if (isset($user_roles))
+    {
+        foreach ($user_roles as $role => $junk)
+        {
+            if ('administrator' != $role)
+            {
+                $checked = '';
+                $pods_role = $pods_roles[$role];
+                if (isset($pods_role) && false !== array_search($priv['name'], $pods_role))
+                {
+                    $checked = ' checked';
+                }
+?>
+            <td><input type="checkbox" class="<?php echo $role; ?>"<?php echo $checked; ?> /></td>
+<?php
+            }
+        }
+    }
+?>
+        </tr>
+<?php
+}
+?>
+    </table>
     <input type="button" class="button" onclick="editRoles()" value="Save roles" />
 </div>
-

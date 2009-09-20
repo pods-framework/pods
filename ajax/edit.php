@@ -209,7 +209,7 @@ else
     SET
         label = '$label',
         is_toplevel = '$is_toplevel',
-        list_filters = '$list_filters',
+        detail_page = '$detail_page',
         before_helpers = '$before_helpers',
         after_helpers = '$after_helpers'
     WHERE
@@ -219,4 +219,3 @@ else
     ";
     pod_query($sql, 'Cannot change Pod details');
 }
-

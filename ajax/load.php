@@ -100,4 +100,3 @@ elseif ($helper_id = (int) $_POST['helper_id'])
     $row = mysql_fetch_assoc($result);
     echo json_encode($row);
 }
-

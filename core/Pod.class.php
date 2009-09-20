@@ -9,6 +9,7 @@ http://pods.uproot.us/codex/
 class Pod
 {
     var $id;
+    var $sql;
     var $data;
     var $result;
     var $datatype;
@@ -16,6 +17,7 @@ class Pod
     var $total_rows;
     var $rel_table;
     var $rel_tbl_row_ids;
+    var $detail_page;
     var $rpp = 15;
     var $page;
 
@@ -27,8 +29,10 @@ class Pod
 
         if (null != $this->datatype)
         {
-            $result = pod_query("SELECT id FROM @wp_pod_types WHERE name = '$this->datatype' LIMIT 1");
-            $this->datatype_id = mysql_result($result, 0);
+            $result = pod_query("SELECT id, detail_page FROM @wp_pod_types WHERE name = '$this->datatype' LIMIT 1");
+            $row = mysql_fetch_assoc($result);
+            $this->datatype_id = $row['id'];
+            $this->detail_page = $row['detail_page'];
 
             if (null != $this->id)
             {
@@ -110,15 +114,11 @@ class Pod
                             $results = $tmp_results[0][$column_name];
                         }
                         // Otherwise, output the values as an array
-                        else
+                        elseif (is_array($tmp_results))
                         {
-                            $tmp_results = array();
-                            if (is_array($tmp_results))
+                            foreach ($tmp_results as $key => $val)
                             {
-                                foreach ($tmp_results as $key => $val)
-                                {
-                                    $results[] = $val[$column_name];
-                                }
+                                $results[] = $val[$column_name];
                             }
                         }
                         return $results;
@@ -127,30 +127,6 @@ class Pod
             }
             return $tmp_results;
         }
-    }
-
-    /*
-    ==================================================
-    Return the value of a single field (implode arrays)
-    ==================================================
-    */
-    function print_field($name)
-    {
-        $data = $this->get_field($name);
-        if (is_array($data))
-        {
-            $first = 'first ';
-            $datatype = $this->datatype;
-            foreach ($data as $key => $val)
-            {
-                $detail_url = get_bloginfo('url') . "/pods/$datatype/" . $val['id'];
-                $val = is_numeric($datatype) ? $val['name'] : '<a href="' . $detail_url . '">' . $val['name'] . '</a>';
-                $out .= "<span class='{$first}list list_$datatype'>$val</span>";
-                $first = '';
-            }
-            $data = $out;
-        }
-        return $data;
     }
 
     /*
@@ -513,6 +489,7 @@ class Pod
                 $limit
             ";
         }
+        $this->sql = $sql;
         $this->result = pod_query($sql);
         $this->total_rows = pod_query("SELECT FOUND_ROWS()");
     }
@@ -696,7 +673,10 @@ class Pod
     */
     function getPagination($label = 'Go to page:')
     {
-        include realpath(dirname(__FILE__) . '/pagination.php');
+        if ($this->rpp < $this->getTotalRows())
+        {
+            include realpath(dirname(__FILE__) . '/pagination.php');
+        }
     }
 
     /*
@@ -786,16 +766,16 @@ class Pod
         }
         if ('detail_url' == $name)
         {
-            return get_bloginfo('url') . '/pod/' . $this->datatype . '/' . $this->print_field('id');
+            return get_bloginfo('url') . '/' . preg_replace_callback("/({@(.*?)})/m", array($this, "magic_swap"), $this->detail_page);
         }
         else
         {
-            $value = $this->print_field($name);
+            $value = $this->get_field($name);
 
             // Use helper if necessary
             if (!empty($helper))
             {
-                $value = $this->pod_helper($helper, $this->get_field($name), $name);
+                $value = $this->pod_helper($helper, $value, $name);
             }
             if (null != $value && false !== $value)
             {

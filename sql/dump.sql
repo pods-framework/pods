@@ -17,6 +17,7 @@ CREATE TABLE wp_pod_types (
     name VARCHAR(32),
     label VARCHAR(32),
     is_toplevel BOOL default 0,
+    detail_page VARCHAR(128),
     list_filters TEXT,
     before_helpers TEXT,
     after_helpers TEXT

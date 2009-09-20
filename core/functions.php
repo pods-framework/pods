@@ -57,6 +57,7 @@ Return either a GET var or URI string segment
 */
 function pods_url_variable($key = 'last', $type = 'uri')
 {
+    $output = false;
     if ('uri' == strtolower($type))
     {
         $uri = explode('?', $_SERVER['REQUEST_URI']);
@@ -74,21 +75,22 @@ function pods_url_variable($key = 'last', $type = 'uri')
 
         if (is_numeric($key))
         {
-            if (0 > $key)
-            {
-                return $uri[count($uri)+$key];
-            }
-            else
-            {
-                return $uri[$key];
-            }
+            $output = (0 > $key) ? $uri[count($uri)+$key] : $uri[$key];
         }
     }
     elseif ('get' == strtolower($type))
     {
-        return $_GET[$key];
+        $output = $_GET[$key];
     }
-    return false;
+    elseif ('post' == strtolower($type))
+    {
+        $output = $_POST[$key];
+    }
+    elseif ('session' == strtolower($type))
+    {
+        $output = $_SESSION[$key];
+    }
+    return pods_sanitize($output);
 }
 
 /*
@@ -115,6 +117,10 @@ function pods_sanitize($input)
         {
             $output[$key] = pods_sanitize($val);
         }
+    }
+    elseif (empty($input))
+    {
+        $output = $input;
     }
     else
     {
@@ -327,7 +333,7 @@ function pods_shortcode($tags)
     }
     if (!empty($tags['col']) && !empty($id))
     {
-        $val = $Record->print_field($tags['col']);
+        $val = $Record->get_field($tags['col']);
         return empty($tags['helper']) ? $val : $Record->pod_helper($tags['helper'], $val);
     }
     return $Record->showTemplate($tags['template']);
@@ -364,4 +370,20 @@ function pods_validate_key($key, $uri_hash, $datatype)
         }
     }
     return false;
+}
+
+/*
+==================================================
+Translation support
+==================================================
+*/
+function pods_i18n($string)
+{
+    global $lang;
+
+    if (isset($lang[$string]))
+    {
+        $string = $lang[$string];
+    }
+    return $string;
 }

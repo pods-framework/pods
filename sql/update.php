@@ -151,5 +151,10 @@ if ($installed < 167)
     pod_query("ALTER TABLE @wp_pod_pages ADD COLUMN precode LONGTEXT AFTER phpcode");
 }
 
+if ($installed < 173)
+{
+    pod_query("ALTER TABLE @wp_pod_types ADD COLUMN detail_page VARCHAR(128) AFTER is_toplevel");
+}
+
 // Save this version
 update_option('pods_version', PODS_VERSION);

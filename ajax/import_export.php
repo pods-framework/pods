@@ -12,8 +12,6 @@ foreach ($_POST as $key => $val)
     ${$key} = $val;
 }
 
-session_start();
-
 /*
 ==================================================
 Package Manager: Export

@@ -115,12 +115,12 @@ function loadPod() {
                 var json = eval("("+msg+")");
                 var label = (null == json.label) ? "" : json.label;
                 var is_toplevel = parseInt(json.is_toplevel);
-                var list_filters = (null == json.list_filters) ? "" : json.list_filters;
+                var detail_page = (null == json.detail_page) ? "" : json.detail_page;
                 var before_helpers = (null == json.before_helpers) ? "" : json.before_helpers;
                 var after_helpers = (null == json.after_helpers) ? "" : json.after_helpers;
                 jQuery("#pod_label").val(label);
                 jQuery("#is_toplevel").attr("checked", is_toplevel);
-                jQuery("#list_filters").val(list_filters);
+                jQuery("#detail_page").val(detail_page);
                 jQuery("#list_before_helpers").html("");
                 jQuery("#list_after_helpers").html("");
 
@@ -219,7 +219,7 @@ function addPod() {
 function editPod() {
     var label = jQuery("#pod_label").val();
     var is_toplevel = jQuery("#is_toplevel").is(":checked") ? 1 : 0;
-    var list_filters = jQuery("#list_filters").val();
+    var detail_page = jQuery("#detail_page").val();
     var before_helpers = "";
     jQuery("#list_before_helpers .helper").each(function() {
         var new_helper = jQuery(this).attr("id");
@@ -233,7 +233,7 @@ function editPod() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo PODS_URL; ?>/ajax/edit.php",
-        data: "auth="+auth+"&datatype="+dt+"&label="+label+"&is_toplevel="+is_toplevel+"&list_filters="+encodeURIComponent(list_filters)+"&before_helpers="+before_helpers+"&after_helpers="+after_helpers,
+        data: "auth="+auth+"&datatype="+dt+"&label="+label+"&is_toplevel="+is_toplevel+"&detail_page="+detail_page+"&before_helpers="+before_helpers+"&after_helpers="+after_helpers,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -433,7 +433,7 @@ Pod popups
 <div id="podBox" class="jqmWindow">
     <input type="text" id="new_pod" />
     <input type="button" class="button" onclick="addPod()" value="Add Pod" />
-    <p>Please use lowercase letters, dashes or underscores only.</p>
+    <p>Please only use lowercase letters and underscores.</p>
 </div>
 
 <!--
@@ -481,8 +481,8 @@ if (isset($datatypes))
                 <td><input type="text" id="pod_label" value="" /></td>
             </tr>
             <tr>
-                <td>List Filters</td>
-                <td><input type="text" id="list_filters" /></td>
+                <td>Detail Page</td>
+                <td><input type="text" id="detail_page" /></td>
             </tr>
             <tr>
                 <td>Pre-save Helpers</td>
@@ -554,15 +554,15 @@ if (isset($helper_types['after']))
                 <td>Column Type</td>
                 <td>
                     <select id="column_type" onchange="doDropdown(this.value)">
-                        <option value="date">date</option>
-                        <option value="num">number</option>
-                        <option value="bool">boolean (true, false)</option>
-                        <option value="txt">text (title, email, phone, url)</option>
-                        <option value="desc">desc (summary, body)</option>
-                        <option value="code">code (no visual editor)</option>
-                        <option value="file">file (upload)</option>
-                        <option value="slug">slug (permalink)</option>
-                        <option value="pick">pick</option>
+                        <option value="date">Date</option>
+                        <option value="num">Number</option>
+                        <option value="bool">Boolean</option>
+                        <option value="txt">Single line Text</option>
+                        <option value="desc">Paragraph Text</option>
+                        <option value="code">Code</option>
+                        <option value="file">File Upload</option>
+                        <option value="slug">Permalink</option>
+                        <option value="pick">Relationship (pick)</option>
                     </select>
                 </td>
             </tr>
@@ -690,4 +690,3 @@ if (isset($helper_types['input']))
         </table>
     </div>
 </div>
-

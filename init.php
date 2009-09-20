@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS
 Plugin URI: http://pods.uproot.us/
 Description: The CMS Framework for WordPress.
-Version: 1.7.2
+Version: 1.7.3
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 172);
+define('PODS_VERSION', 173);
 define('PODS_URL', WP_PLUGIN_URL . '/pods');
 define('PODS_DIR', WP_PLUGIN_DIR . '/pods');
 
@@ -89,6 +89,15 @@ if (!function_exists('json_encode'))
     {
         $json = new Services_JSON();
         return $json->decode($str);
+    }
+}
+
+// Internationalization
+if ('' != WPLANG)
+{
+    if (file_exists(PODS_DIR . '/lang/' . WPLANG . '.php'))
+    {
+        include PODS_DIR . '/lang/' . WPLANG . '.php';
     }
 }
 
@@ -190,12 +199,16 @@ function pods_title($title, $sep, $seplocation)
     $title_i8n = __('Page not found');
     if (false !== strpos($title, $title_i8n))
     {
-        global $podpage_exists;
+        global $pods, $podpage_exists;
 
         $page_title = trim($podpage_exists['title']);
 
         if (0 < strlen($page_title))
         {
+            if (isset($pods))
+            {
+                $page_title = preg_replace_callback("/({@(.*?)})/m", array($pods, "magic_swap"), $page_title);
+            }
             $title = str_replace($title_i8n, $page_title, $title);
         }
         else
@@ -255,9 +268,10 @@ function kill_redirect()
     return false;
 }
 
-function pods_session()
+function pods_init()
 {
     session_start();
+    wp_enqueue_script('jquery');
 }
 
 function podpage_exists()
@@ -310,7 +324,7 @@ add_action('wp_head', 'pods_meta', 0);
 add_action('template_redirect', 'pods_redirect');
 
 // Hook for session handling
-add_action('init', 'pods_session');
+add_action('init', 'pods_init');
 
 // Hook for shortcode
 add_shortcode('pods', 'pods_shortcode');

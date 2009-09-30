@@ -87,7 +87,6 @@ h2.title {
 #column_display_helper,
 #column_input_helper,
 #column_comment,
-#list_filters,
 #detail_page,
 #before_helpers,
 #after_helpers,
@@ -161,7 +160,7 @@ h2.title {
     border: 1px solid #E3E3E3;
 }
 
-#module_form {
+.pod_form {
     margin-top: 10px;
 }
 

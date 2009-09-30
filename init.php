@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS
 Plugin URI: http://pods.uproot.us/
 Description: The CMS Framework for WordPress.
-Version: 1.7.3
+Version: 1.7.4
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 173);
+define('PODS_VERSION', 174);
 define('PODS_URL', WP_PLUGIN_URL . '/pods');
 define('PODS_DIR', WP_PLUGIN_DIR . '/pods');
 
@@ -33,25 +33,6 @@ $pods_roles = unserialize(get_option('pods_roles'));
 require_once PODS_DIR . '/core/functions.php';
 require_once PODS_DIR . '/core/Pod.class.php';
 require_once PODS_DIR . '/core/PodAPI.class.php';
-
-// TEMPORARY FIX: 1.6.8 and 1.6.9
-global $table_prefix;
-if (!empty($table_prefix))
-{
-    // Look for the un-prefixed table
-    $result = pod_query("SHOW TABLES LIKE 'pod_types'");
-    if (0 < mysql_num_rows($result))
-    {
-        // See if the user made it work anyways
-        $result = pod_query("SHOW TABLES LIKE '@wp_pod_types'");
-
-        // If not, trigger the (fixed) fresh install by deleting "pods_version"
-        if (1 > mysql_num_rows($result))
-        {
-            delete_option('pods_version');
-        }
-    }
-}
 
 // Get the installed version
 if ($installed = (int) get_option('pods_version'))
@@ -93,6 +74,7 @@ if (!function_exists('json_encode'))
 }
 
 // Internationalization
+/*
 if ('' != WPLANG)
 {
     if (file_exists(PODS_DIR . '/lang/' . WPLANG . '.php'))
@@ -100,6 +82,7 @@ if ('' != WPLANG)
         include PODS_DIR . '/lang/' . WPLANG . '.php';
     }
 }
+*/
 
 // Check for .htaccess
 if (!file_exists(ABSPATH . '.htaccess'))
@@ -270,7 +253,10 @@ function kill_redirect()
 
 function pods_init()
 {
-    session_start();
+    if ('' == session_id())
+    {
+        session_start();
+    }
     wp_enqueue_script('jquery');
 }
 

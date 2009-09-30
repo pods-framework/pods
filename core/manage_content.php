@@ -119,7 +119,7 @@ function saveForm() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo PODS_URL; ?>/ajax/showform.php",
-        data: "datatype="+datatype+"&"+data.join("&"),
+        data: data.join("&"),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -147,9 +147,9 @@ function showform(dt, pod_id) {
                 alert(msg);
             }
             else {
-                jQuery("#module_form").hide();
-                jQuery("#module_form").html(msg);
-                jQuery("#module_form").show();
+                jQuery(".pod_form").hide();
+                jQuery(".pod_form").html(msg);
+                jQuery(".pod_form").show();
                 jQuery(".option").click(function() {
                     jQuery(this).toggleClass("active");
                 });
@@ -329,7 +329,7 @@ Begin edit area
     <h2 class="title" id="editTitle">Please select an item</h2>
     <div class="clear"><!--clear--></div>
 
-    <div id="module_form">
+    <div class="pod_form">
 <?php
 if ('add' == $add_or_edit)
 {

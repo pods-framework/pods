@@ -344,12 +344,12 @@ function pods_shortcode($tags)
 Generate form key
 ==================================================
 */
-function pods_generate_key($datatype, $uri_hash, $public_columns)
+function pods_generate_key($datatype, $uri_hash, $public_columns, $form_count = 1)
 {
     $token = md5(mt_rand());
-    $_SESSION[$uri_hash]['dt'] = $datatype;
-    $_SESSION[$uri_hash]['token'] = $token;
-    $_SESSION[$uri_hash]['columns'] = serialize($public_columns);
+    $_SESSION[$uri_hash][$form_count]['dt'] = $datatype;
+    $_SESSION[$uri_hash][$form_count]['token'] = $token;
+    $_SESSION[$uri_hash][$form_count]['columns'] = serialize($public_columns);
     return $token;
 }
 
@@ -358,12 +358,12 @@ function pods_generate_key($datatype, $uri_hash, $public_columns)
 Validate form key
 ==================================================
 */
-function pods_validate_key($key, $uri_hash, $datatype)
+function pods_validate_key($key, $uri_hash, $datatype, $form_count = 1)
 {
     if (!empty($_SESSION[$uri_hash]))
     {
-        $session_dt = $_SESSION[$uri_hash]['dt'];
-        $session_token = $_SESSION[$uri_hash]['token'];
+        $session_dt = $_SESSION[$uri_hash][$form_count]['dt'];
+        $session_token = $_SESSION[$uri_hash][$form_count]['token'];
         if (!empty($session_token) && $key == $session_token && $datatype == $session_dt)
         {
             return true;

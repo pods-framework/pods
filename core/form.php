@@ -1,7 +1,13 @@
 <?php
+global $form_count;
+$form_count = empty($form_count) ? 1 : $form_count + 1;
+
 $datatype = $this->datatype;
 $upload_dir = wp_upload_dir();
 $upload_dir = str_replace(get_option('siteurl'), '', $upload_dir['baseurl']);
+
+if (1 == $form_count)
+{
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css" />
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqmodal.js"></script>
@@ -35,18 +41,18 @@ jQuery(function() {
         new nicEditor(config).panelInstance(elements[i].id);
     }
 
-    jQuery("#module_form input.date").date_input();
+    jQuery("#pod_form input.date").date_input();
     jQuery("#dialog").jqm();
 });
 
-function saveForm() {
+function saveForm(form_count) {
     for (i = 0; i < elements.length; i++) {
         nicEditors.findEditor(elements[i].id).saveContent();
     }
 
     var data = new Array();
     var i = 0;
-    jQuery(".form").each(function() {
+    jQuery(".form_" + form_count + " .form").each(function() {
         var theval = "";
         var classname = jQuery(this).attr("class").split(" ");
         if ("pick" == classname[1]) {
@@ -68,7 +74,7 @@ function saveForm() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo PODS_URL; ?>/ajax/showform.php",
-        data: "datatype=<?php echo $datatype; ?>&"+data.join("&"),
+        data: data.join("&"),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -87,8 +93,12 @@ function saveForm() {
     <div class="filebox"></div>
 </div>
 
-<div id="module_form" class="form_<?php echo $datatype; ?>">
 <?php
-$this->showForm($this->get_pod_id(), $public_columns);
+}
+?>
+
+<div class="pod_form form_<?php echo $datatype; ?> form_<?php echo $form_count; ?>">
+<?php
+$this->showForm($this->get_pod_id(), $public_columns, $label, $form_count);
 ?>
 </div>

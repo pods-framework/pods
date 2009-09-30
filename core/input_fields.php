@@ -152,4 +152,4 @@ else
 }
 ?>
     </div>
-    <div class="clear"<?php echo $hidden; ?>></div>
+    <div class="clear<?php echo $hidden; ?>"></div>

@@ -281,6 +281,8 @@ class Pod
                 @wp_terms t ON t.term_id = tx.term_id
             WHERE
                 tx.parent = $table AND tx.taxonomy = 'category' $where
+            ORDER BY
+                $orderby
             ";
         }
         // WP page or post dropdown
@@ -516,7 +518,7 @@ class Pod
     Display HTML for all datatype fields
     ==================================================
     */
-    function showform($pod_id = null, $public_columns = null, $label = 'Save changes')
+    function showform($pod_id = null, $public_columns = null, $label = 'Save changes', $form_count = 1)
     {
         $datatype = $this->datatype;
         $datatype_id = $this->datatype_id;
@@ -568,11 +570,7 @@ class Pod
             }
         }
         $uri_hash = md5($_SERVER['REQUEST_URI']);
-?>
-    <input type="hidden" class="form num pod_id" value="<?php echo $pod_id; ?>" />
-    <input type="hidden" class="form txt token" value="<?php echo pods_generate_key($datatype, $uri_hash, $public_columns); ?>" />
-    <input type="hidden" class="form txt uri_hash" value="<?php echo $uri_hash; ?>" />
-<?php
+
         foreach ($fields as $key => $field)
         {
             // Replace field attributes with public form attributes
@@ -661,8 +659,16 @@ class Pod
             }
             $this->build_field_html($field);
         }
+        $uri_hash = md5($_SERVER['REQUEST_URI']);
 ?>
-    <div><input type="button" class="button" value="<?php echo $label; ?>" onclick="saveForm()" /></div>
+    <div>
+    <input type="hidden" class="form num pod_id" value="<?php echo $pod_id; ?>" />
+    <input type="hidden" class="form txt datatype" value="<?php echo $datatype; ?>" />
+    <input type="hidden" class="form txt form_count" value="<?php echo $form_count; ?>" />
+    <input type="hidden" class="form txt token" value="<?php echo pods_generate_key($datatype, $uri_hash, $public_columns, $form_count); ?>" />
+    <input type="hidden" class="form txt uri_hash" value="<?php echo $uri_hash; ?>" />
+    <input type="button" class="button" value="<?php echo $label; ?>" onclick="saveForm(<?php echo $form_count; ?>)" />
+    </div>
 <?php
     }
 

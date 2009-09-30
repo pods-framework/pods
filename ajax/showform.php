@@ -3,6 +3,7 @@
 require_once(realpath(dirname(__FILE__) . '/../../../../wp-config.php'));
 require_once(realpath(dirname(__FILE__) . '/../core/Pod.class.php'));
 
+$form_count = (int) $_POST['form_count'];
 $pod_id = (int) $_POST['pod_id'];
 $uri_hash = $_POST['uri_hash'];
 $datatype = $_POST['datatype'];
@@ -11,7 +12,7 @@ $token = $_POST['token'];
 // Save the form
 if (!empty($token))
 {
-    if (!pods_validate_key($token, $uri_hash, $datatype))
+    if (!pods_validate_key($token, $uri_hash, $datatype, $form_count))
     {
         die("Error: The form has expired.");
     }
@@ -30,11 +31,11 @@ if (!empty($token))
 
         // Add data from a public form
         $where = '';
-        if (empty($pod_id))
+        if (false === empty($_SESSION[$uri_hash][$form_count]['columns']))
         {
-            $public_columns = unserialize($_SESSION[$uri_hash]['columns']);
+            $public_columns = unserialize($_SESSION[$uri_hash][$form_count]['columns']);
 
-            if (!empty($public_columns))
+            if (is_array($public_columns))
             {
                 foreach ($public_columns as $key => $val)
                 {

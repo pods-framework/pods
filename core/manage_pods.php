@@ -20,11 +20,13 @@ jQuery(function() {
         if ("" == dt) {
             jQuery("#columnBox").hide();
             jQuery("#podContent").hide();
-            jQuery("#podArea #column_list").html(jQuery(".pod-welcome").html());
+            jQuery("#podArea #column_list").html("");
+            jQuery("#podArea .stickynote").show();
         }
         else {
             jQuery("#columnBox").show();
             jQuery("#podContent").show();
+            jQuery("#podArea .stickynote").hide();
             resetForm();
             loadPod();
         }
@@ -460,13 +462,13 @@ if (isset($datatypes))
         <input type="button" class="button-primary" onclick="jQuery('#podBox').jqmShow()" value="Add new pod" />
     </div>
 
-    <div class="pod-welcome hidden">
-        Need some help? Check out the <a href="http://codex.uproot.us" target="_blank">Codex</a> to get started.
-    </div>
-
     <div id="pod-area-left">
-        <p id="column_list"></p>
         <table id="podContent" style="width:100%" cellpadding="0" cellspacing="0">
+            <tr>
+                <td colspan="2">
+                    <div id="column_list"></div>
+                </td>
+            </tr>
             <tr>
                 <td colspan="2">
                     <h2 class="title" style="margin:10px 0">Pod Settings</h2>
@@ -570,16 +572,14 @@ if (isset($helper_types['after']))
                 <td>Related to</td>
                 <td>
                     <select id="column_pickval" onchange="sisterFields()">
-                        <option value="" style="font-weight:bold; font-style:italic">-- Pods --</option>
+                        <option value="" style="font-weight:bold; font-style:italic">-- Pod --</option>
 <?php
-// Get pods, including country and state
-$result = pod_query("SHOW TABLES LIKE '@wp_pod_tbl_%'");
+// Get all pod names
+$result = pod_query("SELECT name FROM @wp_pod_types ORDER BY name");
 while ($row = mysql_fetch_array($result))
 {
-    $table_name = explode('tbl_', $row[0]);
-    $table_name = $table_name[1];
 ?>
-                        <option value="<?php echo $table_name; ?>"><?php echo $table_name; ?></option>
+                        <option value="<?php echo $table_name; ?>"><?php echo $row['name']; ?></option>
 <?php
 }
 ?>
@@ -688,5 +688,11 @@ if (isset($helper_types['input']))
                 </td>
             </tr>
         </table>
+    </div>
+    <div class="clear"></div>
+
+    <div class="stickynote">
+        <div><strong>A pod is a named grouping of input fields.</strong> This area will allow you to add new pods and edit existing ones.</div>
+        <div style="margin-top:10px">To get started, select an existing pod from the dropdown or click the blue button to add a new one.</div>
     </div>
 </div>

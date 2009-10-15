@@ -246,7 +246,6 @@ $Record->total_rows = pod_query("SELECT FOUND_ROWS()");
 ?>
     <div id="filterForm">
         <form method="get">
-            Narrow results:
 <?php
 if ('pods-browse' == $_GET['page'])
 {
@@ -268,7 +267,7 @@ if ('pods-browse' == $_GET['page'])
 ?>
             <input type="text" id="column_name" name="keywords" />
             <input type="hidden" name="page" value="<?php echo $_GET['page']; ?>" />
-            <input type="button" class="button" value="Go" onclick="this.form.submit()" />
+            <input type="button" class="button" value="Narrow results" onclick="this.form.submit()" />
         </form>
     </div>
     <div class="clear"><!--clear--></div>

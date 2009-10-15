@@ -17,11 +17,13 @@ jQuery(function() {
     jQuery(".select-page").change(function() {
         page_id = jQuery(this).val();
         if ("" == page_id) {
+            jQuery("#pageArea .stickynote").show();
             jQuery("#pageContent").hide();
             jQuery("#page_code").val("");
             jQuery("#page_precode").val("");
         }
         else {
+            jQuery("#pageArea .stickynote").hide();
             jQuery("#pageContent").show();
             loadPage();
         }
@@ -125,7 +127,7 @@ Page popups
 <div id="pageBox" class="jqmWindow">
     <input type="text" id="new_page" style="width:280px" />
     <input type="button" class="button" onclick="addPage()" value="Add Page" />
-    <div>Ex: <strong>events</strong> or <strong>events/latest/*</strong></div>
+    <div>Ex: <strong>events</strong> or <strong>events/*</strong></div>
 </div>
 
 <!--
@@ -169,5 +171,11 @@ foreach ($page_templates as $template => $file)
         </select><br />
         <input type="button" class="button" onclick="editPage()" value="Save changes" /> or
         <a href="javascript:;" onclick="dropPage()">drop page</a>
+    </div>
+
+    <div class="stickynote">
+        <div><strong>Pod Pages are similar to WordPress pages, but also support PHP and wildcard URLs.</strong></div>
+        <div style="margin-top:10px">To handle the URL of http://yoursite.com/history, you'd create a Pod Page named <strong>history</strong></div>
+        <div style="margin-top:10px">A single wildcard Pod Page can handle multiple URLs. For example, the Pod Page <strong>history/*</strong> will be used for any URL beginning with http://yoursite.com/history/</div>
     </div>
 </div>

@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS
 Plugin URI: http://pods.uproot.us/
 Description: The CMS Framework for WordPress.
-Version: 1.7.4
+Version: 1.7.5
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 174);
+define('PODS_VERSION', 175);
 define('PODS_URL', WP_PLUGIN_URL . '/pods');
 define('PODS_DIR', WP_PLUGIN_DIR . '/pods');
 
@@ -113,37 +113,50 @@ function pods_menu()
                 }
                 else
                 {
-                    add_object_page($label, $label, 0, "pods-browse-$name");
-                    add_submenu_page("pods-browse-$name", 'Edit', 'Edit', 0, "pods-browse-$name", 'pods_content_page');
-                    add_submenu_page("pods-browse-$name", 'Add New', 'Add New', 0, "pod-$name", 'pods_content_page');
+                    add_object_page($label, $label, 'read', "pods-browse-$name");
+                    add_submenu_page("pods-browse-$name", 'Edit', 'Edit', 'read', "pods-browse-$name", 'pods_content_page');
+                    add_submenu_page("pods-browse-$name", 'Add New', 'Add New', 'read', "pod-$name", 'pods_content_page');
                 }
             }
         }
     }
 
-    add_object_page('Pods', 'Pods', 0, 'pods');
-    add_submenu_page('pods', 'Setup', 'Setup', 0, 'pods', 'pods_options_page');
+    if (
+        pods_access('manage_pods') ||
+        pods_access('manage_templates') ||
+        pods_access('manage_pod_pages') ||
+        pods_access('manage_helpers') ||
+        pods_access('manage_roles') ||
+        pods_access('manage_settings') ||
+        pods_access('manage_content') ||
+        pods_access('manage_packages') ||
+        pods_access('manage_menu') ||
+        false === empty($submenu))
+    {
+        add_object_page('Pods', 'Pods', 'read', 'pods');
+        add_submenu_page('pods', 'Setup', 'Setup', 'read', 'pods', 'pods_options_page');
 
-    if (pods_access('manage_content'))
-    {
-        add_submenu_page('pods', 'Browse Content', 'Browse Content', 0, 'pods-browse', 'pods_content_page');
-    }
-    if (pods_access('manage_packages'))
-    {
-        add_submenu_page('pods', 'Package Manager', 'Package Manager', 0, 'pods-package', 'pods_package_page');
-    }
-    if (pods_access('manage_menu'))
-    {
-        add_submenu_page('pods', 'Menu Editor', 'Menu Editor', 0, 'pods-menu', 'pods_menu_page');
-    }
-
-    foreach ($submenu as $item)
-    {
-        $name = $item['name'];
-
-        if (pods_access("pod_$name"))
+        if (pods_access('manage_content'))
         {
-            add_submenu_page('pods', "Add $name", "Add $name", 0, "pod-$name", 'pods_content_page');
+            add_submenu_page('pods', 'Browse Content', 'Browse Content', 'read', 'pods-browse', 'pods_content_page');
+        }
+        if (pods_access('manage_packages'))
+        {
+            add_submenu_page('pods', 'Package Manager', 'Package Manager', 'read', 'pods-package', 'pods_package_page');
+        }
+        if (pods_access('manage_menu'))
+        {
+            add_submenu_page('pods', 'Menu Editor', 'Menu Editor', 'read', 'pods-menu', 'pods_menu_page');
+        }
+
+        foreach ($submenu as $item)
+        {
+            $name = $item['name'];
+
+            if (pods_access("pod_$name"))
+            {
+                add_submenu_page('pods', "Add $name", "Add $name", 'read', "pod-$name", 'pods_content_page');
+            }
         }
     }
 }
@@ -182,9 +195,9 @@ function pods_title($title, $sep, $seplocation)
     $title_i8n = __('Page not found');
     if (false !== strpos($title, $title_i8n))
     {
-        global $pods, $podpage_exists;
+        global $pods, $pod_page_exists;
 
-        $page_title = trim($podpage_exists['title']);
+        $page_title = trim($pod_page_exists['title']);
 
         if (0 < strlen($page_title))
         {
@@ -211,7 +224,7 @@ function pods_title($title, $sep, $seplocation)
     return $title;
 }
 
-function get_content()
+function pods_content()
 {
     global $phpcode, $post;
 
@@ -227,11 +240,20 @@ function get_content()
     }
 }
 
+// DEPRECATED
+if (!function_exists('get_content'))
+{
+    function get_content()
+    {
+        return pods_content();
+    }
+}
+
 function pods_redirect()
 {
-    global $phpcode, $podpage_exists;
+    global $phpcode, $pod_page_exists;
 
-    if ($row = $podpage_exists)
+    if ($row = $pod_page_exists)
     {
         $phpcode = $row['phpcode'];
         $page_template = $row['page_template'];
@@ -241,14 +263,27 @@ function pods_redirect()
     }
 }
 
-function pods_404()
+function pods_status_header()
 {
     return 'HTTP/1.1 200 OK';
 }
 
-function kill_redirect()
+function pods_silence_404()
+{
+    global $wp_query;
+    $wp_query->query_vars['error'] = '';
+    $wp_query->is_404 = false;
+}
+
+function pods_kill_redirect()
 {
     return false;
+}
+
+function pods_precode()
+{
+    global $precode;
+    eval("?>$precode");
 }
 
 function pods_init()
@@ -260,7 +295,7 @@ function pods_init()
     wp_enqueue_script('jquery');
 }
 
-function podpage_exists()
+function pod_page_exists()
 {
     $home = explode('://', get_bloginfo('url'));
     $uri = explode('?', $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
@@ -315,20 +350,21 @@ add_action('init', 'pods_init');
 // Hook for shortcode
 add_shortcode('pods', 'pods_shortcode');
 
-$podpage_exists = podpage_exists();
+$pod_page_exists = pod_page_exists();
 
 // Filters for 404 handling
-if (false !== $podpage_exists)
+if (false !== $pod_page_exists)
 {
     // Execute any precode
-    $precode = $podpage_exists['precode'];
+    $precode = $pod_page_exists['precode'];
 
     if (!empty($precode))
     {
-        eval("?>$precode");
+        add_action('plugins_loaded', 'pods_precode');
     }
 
-    add_filter('redirect_canonical', 'kill_redirect');
+    add_filter('redirect_canonical', 'pods_kill_redirect');
     add_filter('wp_title', 'pods_title', 0, 3);
-    add_filter('status_header', 'pods_404');
+    add_filter('status_header', 'pods_status_header');
+    add_action('wp', 'pods_silence_404');
 }

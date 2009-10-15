@@ -1,6 +1,6 @@
 <?php
 // Include the MySQL connection
-include(realpath('../../../wp-config.php'));
+include(realpath(dirname(__FILE__) . '/../../../wp-config.php'));
 
 if (!pods_access('manage_settings'))
 {

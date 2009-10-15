@@ -8,10 +8,12 @@ jQuery(function() {
     jQuery(".select-helper").change(function() {
         helper_id = jQuery(this).val();
         if ("" == helper_id) {
+            jQuery("#helperArea .stickynote").show();
             jQuery("#helperContent").hide();
             jQuery("#helper_code").val("");
         }
         else {
+            jQuery("#helperArea .stickynote").hide();
             jQuery("#helperContent").show();
             loadHelper();
         }
@@ -145,5 +147,12 @@ if (isset($helpers))
         <textarea id="helper_code"></textarea><br />
         <input type="button" class="button" onclick="editHelper()" value="Save changes" /> or
         <a href="javascript:;" onclick="dropHelper()">drop helper</a>
+    </div>
+
+    <div class="stickynote">
+        <div><strong>Display Helpers</strong> allow you to format a column's value before it gets displayed. They can be invoked within Pod Templates (using Magic Tags), within Pod Pages (using the pod_helper function), or at the column-level.</div>
+        <div style="margin-top:10px"><strong>Before Helpers</strong> run right before Pod data is saved to the database. They are invoked at the Pod-level.</div>
+        <div style="margin-top:10px"><strong>After Helpers</strong> run right after Pod data is successfully saved to the database. They are invoked at the Pod-level.</div>
+        <div style="margin-top:10px"><strong>Input Helpers</strong> allow you to override the appearance and functionality of an input form field. They are invoked at the column-level.</div>
     </div>
 </div>

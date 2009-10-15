@@ -159,6 +159,6 @@ while ($row = mysql_fetch_assoc($result))
     <h2 class="title">Import Package</h2>
     <p>Paste the package code into the form. You will be taken to a confirmation screen.</p>
     <p><textarea id="import_code" style="height:180px; border:2px dashed #e3e3e3"></textarea></p>
-    <input type="button" class="button-primary" onclick="podsImport(false)" value="Proceed to Import Confirmation" />
+    <input type="button" class="button-primary" onclick="podsImport(false)" value="Proceed to Confirmation" />
     <div id="import_finalize"></div>
 </div>

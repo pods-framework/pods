@@ -1,8 +1,7 @@
 /* Admin-facing */
 .area {
     margin: 0 15px 0 0;
-    border-top: 1px solid #E3E3E3;
-    padding: 10px 0;
+    padding: 0;
 }
 
 h2.title {
@@ -19,23 +18,22 @@ h2.title {
 }
 
 #nav {
-    margin-top: 10px;
+    margin: 15px 0;
+}
+
+.navTab {
+    float: left;
 }
 
 .navTab a {
-    float: left;
-    padding: 5px;
-    margin-right: 10px;
-    margin-bottom: -1px;
-    border-bottom: 1px solid #E3E3E3;
-    color: #464646;
+    padding: 4px 12px;
+    background: #fff url(images/white-grad.png);
+    text-decoration: none;
 }
 
 .navTab.active a {
     color: #fff;
-    background: #262e3b;
-    text-decoration: none;
-    border-bottom: 1px solid #262e3b;
+    background: #4f5c71;
 }
 
 .hidden {
@@ -77,6 +75,10 @@ h2.title {
     margin-right: 8px;
 }
 
+#column_list {
+    padding-top: 10px;
+}
+
 #column_name,
 #column_label,
 #column_type,
@@ -94,6 +96,48 @@ h2.title {
     width: 160px;
 }
 
+/* Help text */
+.stickynote {
+    width: 400px;
+    padding: 10px;
+    margin-top: 10px;
+    background: #fff359;
+    box-shadow: 5px 5px 5px #ccc;
+    -moz-box-shadow: 5px 5px 5px #ccc;
+    -webkit-box-shadow: 5px 5px 5px #ccc;
+}
+
+#welcomeArea .stickynote {
+    padding: 0;
+    width: 420px;
+    background: #fff;
+}
+
+#welcomeArea #logo {
+    color: #fff;
+    height: 70px;
+    background: #333c49 url(images/header-logo.png) 0 5px no-repeat;
+}
+
+#welcomeArea #version {
+    padding: 44px 0 0 178px;
+}
+
+#welcomeArea #info {
+    padding: 10px;
+}
+
+.stickynote ul {
+    margin-bottom: 10px;
+}
+
+.stickynote li {
+    padding: 0;
+    margin: 0 0 0 18px;
+    list-style: square;
+}
+
+/* Basic styling for input forms */
 .tips {
     font-style: italic;
     margin-bottom: 5px;
@@ -129,25 +173,6 @@ h2.title {
     width: 38%;
     padding-left: 10px;
     border-left: 1px solid #e3e3e3;
-}
-
-#welcomeArea {
-    padding-top: 0;
-}
-
-#welcomeArea #logo {
-    height: 60px;
-    color: white;
-    padding: 10px 0;
-    background: #262e3b url(images/header-logo.png) 10px no-repeat;
-}
-
-#welcomeArea #version {
-    padding: 40px 0 0 190px;
-}
-
-#welcomeArea #overview {
-    padding: 10px 0 0 0;
 }
 
 #menu_uri,
@@ -203,6 +228,14 @@ h2.title {
 
 .pod_search {
     width: 120px;
+}
+
+/* Form input fields */
+.form.txt,
+.form.file,
+.form.slug,
+.form.pick1 {
+    width: 200px;
 }
 
 /* NicEdit */
@@ -297,22 +330,6 @@ div#content p {
     white-space: nowrap;
     overflow: hidden;
     cursor: default;
-}
-
-span.list {
-
-}
-
-span.list:before {
-    content: ", ";
-}
-
-span.first:before {
-    content: "";
-}
-
-span.first {
-
 }
 
 .menu-item {

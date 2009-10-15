@@ -56,7 +56,7 @@ Role HTML
 $all_privs = array(
     array('name' => 'manage_pods', 'label' => 'Manage Pods'),
     array('name' => 'manage_templates', 'label' => 'Manage Templates'),
-    array('name' => 'manage_podpages', 'label' => 'Manage PodPages'),
+    array('name' => 'manage_pod_pages', 'label' => 'Manage Pod Pages'),
     array('name' => 'manage_helpers', 'label' => 'Manage Helpers'),
     array('name' => 'manage_roles', 'label' => 'Manage Roles'),
     array('name' => 'manage_settings', 'label' => 'Manage Settings'),

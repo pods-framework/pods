@@ -1,39 +1,4 @@
 <?php
-if ($installed < 143)
-{
-    $result = pod_query("SHOW COLUMNS FROM @wp_pod_types LIKE 'description'");
-    if (0 < mysql_num_rows($result))
-    {
-        pod_query("ALTER TABLE @wp_pod_types CHANGE description label VARCHAR(32)");
-    }
-    pod_query("ALTER TABLE @wp_pod_types ADD COLUMN is_toplevel BOOL default 0 AFTER label");
-}
-
-if ($installed < 145)
-{
-    pod_query("ALTER TABLE @wp_pod_pages ADD COLUMN title VARCHAR(128) AFTER uri");
-    $sql = "
-    CREATE TABLE @wp_pod_menu (
-        id INT unsigned auto_increment primary key,
-        uri VARCHAR(128),
-        title VARCHAR(128),
-        lft INT unsigned,
-        rgt INT unsigned,
-        weight TINYINT unsigned default 0)";
-    pod_query($sql);
-    pod_query("INSERT INTO @wp_pod_menu (uri, title, lft, rgt) VALUES ('/', 'Home', 1, 2)");
-}
-
-if ($installed < 148)
-{
-    add_option('pods_roles');
-}
-
-if ($installed < 149)
-{
-    pod_query("RENAME TABLE @wp_pod_widgets TO @wp_pod_helpers");
-}
-
 if ($installed < 150)
 {
     pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN `unique` BOOL default 0 AFTER required");
@@ -154,6 +119,23 @@ if ($installed < 167)
 if ($installed < 173)
 {
     pod_query("ALTER TABLE @wp_pod_types ADD COLUMN detail_page VARCHAR(128) AFTER is_toplevel");
+}
+
+if ($installed < 175)
+{
+    if (isset($pods_roles))
+    {
+        foreach ($pods_roles as $role => $privs)
+        {
+            if (in_array('manage_podpages', $privs))
+            {
+                $pods_roles[$role][] = 'manage_pod_pages';
+                unset($pods_roles[$role]['manage_podpages']);
+            }
+        }
+    }
+    delete_option('pods_roles');
+    add_option('pods_roles', serialize($pods_roles));
 }
 
 // Save this version

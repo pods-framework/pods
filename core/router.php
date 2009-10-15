@@ -10,11 +10,11 @@ sidebar     <?php get_sidebar(); ?>
 footer      <?php get_footer(); ?>
 ==================================================
 */
-$pods_theme_path = TEMPLATEPATH . '/pods.php';
+$pods_theme_path = STYLESHEETPATH . '/pods.php';
 
-if (!empty($page_template) && file_exists(TEMPLATEPATH . '/' . $page_template))
+if (!empty($page_template) && file_exists(STYLESHEETPATH . '/' . $page_template))
 {
-    include TEMPLATEPATH . '/' . $page_template;
+    include STYLESHEETPATH . '/' . $page_template;
 }
 elseif (file_exists($pods_theme_path))
 {
@@ -23,8 +23,7 @@ elseif (file_exists($pods_theme_path))
 else
 {
     get_header();
-    get_content();
+    pods_content();
     get_sidebar();
     get_footer();
 }
-

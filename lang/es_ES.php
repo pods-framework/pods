@@ -1,6 +1,32 @@
 ﻿<?php
-// Greek
-$lang['el'] = array(
-'english_string' => 'greek_string',
-'english_string2' => 'greek_string2'
+$pods_lang = array(
+"Add" => "Añadir",
+"Add new" => "Añadir nuevo",
+"Attributes" => "Atributos",
+"Browse" => "Explorar",
+"Browse Content" => "Explorar contenido",
+"Choose a" => "Escoger un",
+"Column Type" => "Tipo de columna",
+"Comment" => "Comentario",
+"drop page" => "eliminar página",
+"Edit" => "Editar",
+"Export Package" => "Exportar Paquete",
+"Go to page" => "Ir a página",
+"Import Package" => "Importar Paqueta",
+"Label" => "Etiqueta",
+"Menu Editor" => "Editor de menú",
+"Modified" => "Modificado",
+"Name" => "Nombre",
+"Narrow results" => "Refinar resultados",
+"Need some help?" => "¿Necesitas ayuda?",
+"optional" => "Opcional",
+"Package Manager" => "Gestor de paquetes",
+"Page Template" => "Plantilla de página",
+"Page Title" => "Título de la página",
+"Roles" => "Roles",
+"Save changes" => "Guardar cambios",
+"Settings" => "Preferencias",
+"Setup" => "Configuración",
+"Templates" => "Plantillas",
+"Welcome" => "Bienvenido"
 );

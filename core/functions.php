@@ -14,8 +14,8 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
     global $table_prefix;
 
     $sql = str_replace('@wp_', $table_prefix, $sql);
-
     $result = mysql_query($sql) or die("Error: $error; SQL: $sql; Response: " . mysql_error());
+
     if (0 < @mysql_num_rows($result))
     {
         if (!empty($results_error))
@@ -317,7 +317,7 @@ function pods_shortcode($tags)
         return 'Error: Please provide either a template or column name';
     }
 
-    // "id" > "slug" if both exist
+    // id > slug (if both exist)
     $id = empty($tags['slug']) ? null : $tags['slug'];
     $id = empty($tags['id']) ? $id : $tags['id'];
 
@@ -386,4 +386,16 @@ function pods_i18n($string)
         $string = $lang[$string];
     }
     return $string;
+}
+
+/*
+==================================================
+Is the current page a Pod Page?
+==================================================
+*/
+function is_pod_page()
+{
+    global $pod_page_exists;
+
+    return (false !== $pod_page_exists) ? true : false;
 }

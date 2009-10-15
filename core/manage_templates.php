@@ -17,10 +17,12 @@ jQuery(function() {
     jQuery(".select-template").change(function() {
         template_id = jQuery(this).val();
         if ("" == template_id) {
+            jQuery("#templateArea .stickynote").show();
             jQuery("#templateContent").hide();
             jQuery("#template_code").val("");
         }
         else {
+            jQuery("#templateArea .stickynote").hide();
             jQuery("#templateContent").show();
             loadTemplate();
         }
@@ -143,5 +145,10 @@ if (isset($templates))
         <textarea id="template_code"></textarea><br />
         <input type="button" class="button" onclick="editTemplate()" value="Save changes" /> or
         <a href="javascript:;" onclick="dropTemplate()">drop template</a>
+    </div>
+
+    <div class="stickynote">
+        <div><strong>Templates are re-usable chunks of display code.</strong> They are called from Pod Pages using showTemplate().</div>
+        <div style="margin-top:10px">Templates support all the usual code (HTML, Javascript, PHP), and you can pull column values from Pod items using <strong>Magic Tags</strong>: {@column_name}</div>
     </div>
 </div>

@@ -114,8 +114,7 @@ INSERT INTO wp_pod_types (name, label, list_filters) VALUES
 
 INSERT INTO wp_pod_pages (uri, phpcode) VALUES
 ('states', "<?php\n$Record = new Pod('state');\n$Record->findRecords('name ASC', 10);\necho $Record->getPagination();\necho $Record->showTemplate('state_list');\n?>"),
-('states/*', "<?php\n// Get the last URL variable\n$id = pods_url_variable('last');\n\n$Record = new Pod('state', $id);\necho $Record->showTemplate('state_detail');\n?>"),
-('pod/*', "<?php\n$id = pods_url_variable(-1);\n$type = pods_url_variable(-2);\n\n$Record = new Pod($type, $id);\necho $Record->showTemplate($type . '_detail');\n?>");
+('states/*', "<?php\n// Get the last URL variable\n$id = pods_url_variable('last');\n\n$Record = new Pod('state', $id);\necho $Record->showTemplate('state_detail');\n?>");
 
 INSERT INTO wp_pod_templates (name, code) VALUES
 ('state_list', '<p><a href="/states/{@abbrev}">{@name}</a></p>'),

@@ -579,7 +579,7 @@ $result = pod_query("SELECT name FROM @wp_pod_types ORDER BY name");
 while ($row = mysql_fetch_array($result))
 {
 ?>
-                        <option value="<?php echo $table_name; ?>"><?php echo $row['name']; ?></option>
+                        <option value="<?php echo $row['name']; ?>"><?php echo $row['name']; ?></option>
 <?php
 }
 ?>

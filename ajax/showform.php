@@ -60,6 +60,7 @@ if (!empty($token))
 
         $before = array();
         $after = array();
+        $file_columns = array();
         $pick_columns = array();
         $table_columns = array();
 
@@ -113,6 +114,10 @@ if (!empty($token))
             if ('pick' == $type)
             {
                 $pick_columns[$key] = empty($val) ? array() : explode(',', $val);
+            }
+            elseif ('file' == $type)
+            {
+                $file_columns[$key] = empty($val) ? array() : explode(',', $val);
             }
             else
             {
@@ -169,7 +174,28 @@ if (!empty($token))
 
         /*
         ==================================================
-        Save PICK relationship data
+        Save file relationships
+        ==================================================
+        */
+        foreach ($file_columns as $key => $attachment_ids)
+        {
+            // Get the field_id
+            $result = pod_query("SELECT id FROM @wp_pod_fields WHERE datatype = $datatype_id AND name = '$key' LIMIT 1");
+            $field_id = mysql_result($result, 0);
+
+            // Remove existing relationships
+            pod_query("DELETE FROM @wp_pod_rel WHERE pod_id = $pod_id AND field_id = $field_id");
+
+            // Add new relationships
+            foreach ($attachment_ids as $attachment_id)
+            {
+                pod_query("INSERT INTO @wp_pod_rel (pod_id, field_id, tbl_row_id) VALUES ($pod_id, $field_id, $attachment_id)");
+            }
+        }
+
+        /*
+        ==================================================
+        Save PICK relationships
         ==================================================
         */
         foreach ($pick_columns as $key => $rel_ids)

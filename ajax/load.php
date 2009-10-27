@@ -14,6 +14,7 @@ Get all pod columns
 */
 if ($id = (int) $_POST['id'])
 {
+    $fields = array();
     $result = pod_query("SELECT * FROM @wp_pod_types WHERE id = $id LIMIT 1");
     $module = mysql_fetch_assoc($result);
 

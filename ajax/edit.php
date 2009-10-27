@@ -20,58 +20,16 @@ $dbtypes = array(
     'num' => 'decimal(9,2)',
     'txt' => 'varchar(128)',
     'slug' => 'varchar(128)',
-    'file' => 'varchar(128)',
     'code' => 'longtext',
     'desc' => 'longtext'
 );
 
 /*
 ==================================================
-Change a column's weight
-==================================================
-*/
-if ('move' == $action)
-{
-    $result = pod_query("SELECT id FROM @wp_pod_fields WHERE datatype = $datatype ORDER BY weight");
-    while ($row = mysql_fetch_assoc($result))
-    {
-        $fields[] = $row['id'];
-    }
-
-    $col_position = array_search($col, $fields);
-
-    if ('down' == $dir)
-    {
-        $array_count = count($fields);
-        if ($col_position < ($array_count - 1))
-        {
-            $tmp = $fields[$col_position + 1];
-            $fields[$col_position + 1] = $col;
-            $fields[$col_position] = $tmp;
-        }
-    }
-    if ('up' == $dir)
-    {
-        if (0 < $col_position)
-        {
-            $tmp = $fields[$col_position - 1];
-            $fields[$col_position - 1] = $col;
-            $fields[$col_position] = $tmp;
-        }
-    }
-    foreach ($fields as $key => $val)
-    {
-        $weight = ($key * 1);
-        pod_query("UPDATE @wp_pod_fields SET weight = $weight WHERE id = $val LIMIT 1");
-    }
-}
-
-/*
-==================================================
 Edit a column
 ==================================================
 */
-elseif ('edit' == $action)
+if ('edit' == $action)
 {
     if ('id' == $name || 'type' == $name)
     {
@@ -79,7 +37,7 @@ elseif ('edit' == $action)
     }
 
     $sql = "SELECT id FROM @wp_pod_fields WHERE datatype = $datatype AND id != $field_id AND name = '$name' LIMIT 1";
-    pod_query($sql, 'Column already exists', "The $name column cannot be cloned.");
+    pod_query($sql, 'Column already exists', "The $name column already exists.");
 
     $sql = "SELECT name, coltype FROM @wp_pod_fields WHERE id = $field_id LIMIT 1";
     $result = pod_query($sql) or die(mysql_error());
@@ -92,21 +50,30 @@ elseif ('edit' == $action)
 
         $dbtype = $dbtypes[$coltype];
         $pickval = ('pick' != $coltype || empty($pickval)) ? 'NULL' : "'$pickval'";
-        $sister_field_id = intval($sister_field_id);
+        $sister_field_id = (int) $sister_field_id;
 
-        if ($coltype != $old_coltype && 'pick' == $coltype)
+        if ($coltype != $old_coltype)
         {
-            pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` DROP COLUMN `$old_name`");
-        }
-        elseif ($coltype != $old_coltype && 'pick' == $old_coltype)
-        {
-            pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` ADD COLUMN `$name` $dbtype", 'Cannot create column');
-            pod_query("UPDATE @wp_pod_fields SET sister_field_id = NULL WHERE sister_field_id = $field_id");
-            pod_query("DELETE FROM @wp_pod_rel WHERE field_id = $field_id");
-        }
-        elseif ('pick' != $coltype)
-        {
-            pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` CHANGE `$old_name` `$name` $dbtype");
+            if ('pick' == $coltype || 'file' == $coltype)
+            {
+                if ('pick' != $old_coltype && 'file' != $old_coltype)
+                {
+                    pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` DROP COLUMN `$old_name`");
+                }
+            }
+            else
+            {
+                if ('pick' == $old_coltype || 'file' == $old_coltype)
+                {
+                    pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` ADD COLUMN `$name` $dbtype", 'Cannot create column');
+                    pod_query("UPDATE @wp_pod_fields SET sister_field_id = NULL WHERE sister_field_id = $field_id");
+                    pod_query("DELETE FROM @wp_pod_rel WHERE field_id = $field_id");
+                }
+                else
+                {
+                    pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` CHANGE `$old_name` `$name` $dbtype");
+                }
+            }
         }
 
         $sql = "
@@ -217,5 +184,13 @@ else
     LIMIT
         1
     ";
-    pod_query($sql, 'Cannot change Pod details');
+    pod_query($sql, 'Cannot change Pod settings');
+
+    $weight = 0;
+    $order = (false !== strpos($order, ',')) ? explode(',', $order) : array($order);
+    foreach ($order as $key => $field_id)
+    {
+        pod_query("UPDATE @wp_pod_fields SET weight = '$weight' WHERE id = '$field_id' LIMIT 1", 'Cannot change column order');
+        $weight++;
+    }
 }

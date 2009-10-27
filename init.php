@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS
 Plugin URI: http://pods.uproot.us/
 Description: The CMS Framework for WordPress.
-Version: 1.7.5
+Version: 1.7.6
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,9 +23,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 175);
+define('PODS_VERSION', 176);
 define('PODS_URL', WP_PLUGIN_URL . '/pods');
 define('PODS_DIR', WP_PLUGIN_DIR . '/pods');
+define('WP_INC_URL', get_bloginfo('wpurl') . '/' . WPINC);
 
 $pods_roles = unserialize(get_option('pods_roles'));
 
@@ -133,6 +134,8 @@ function pods_menu()
         pods_access('manage_menu') ||
         false === empty($submenu))
     {
+        wp_enqueue_script('jquery-ui-core');
+        wp_enqueue_script('jquery-ui-sortable');
         add_object_page('Pods', 'Pods', 'read', 'pods');
         add_submenu_page('pods', 'Setup', 'Setup', 'read', 'pods', 'pods_options_page');
 
@@ -179,7 +182,6 @@ function pods_package_page()
 
 function pods_menu_page()
 {
-    define('WP_INC_URL', str_replace('wp-content', 'wp-includes', WP_CONTENT_URL));
     include PODS_DIR . '/core/manage_menu.php';
 }
 
@@ -192,33 +194,29 @@ function pods_meta()
 
 function pods_title($title, $sep, $seplocation)
 {
-    $title_i8n = __('Page not found');
-    if (false !== strpos($title, $title_i8n))
+    global $pods, $pod_page_exists;
+
+    $page_title = trim($pod_page_exists['title']);
+
+    if (0 < strlen($page_title))
     {
-        global $pods, $pod_page_exists;
-
-        $page_title = trim($pod_page_exists['title']);
-
-        if (0 < strlen($page_title))
+        if (isset($pods))
         {
-            if (isset($pods))
-            {
-                $page_title = preg_replace_callback("/({@(.*?)})/m", array($pods, "magic_swap"), $page_title);
-            }
-            $title = str_replace($title_i8n, $page_title, $title);
+            $page_title = preg_replace_callback("/({@(.*?)})/m", array($pods, "magic_swap"), $page_title);
         }
-        else
-        {
-            $uri = explode('?', $_SERVER['REQUEST_URI']);
-            $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri[0]);
-            $uri = preg_replace("@(-|_)@", " ", $uri);
-            $uri = explode('/', $uri);
+        $title = $page_title;
+    }
+    else
+    {
+        $uri = explode('?', $_SERVER['REQUEST_URI']);
+        $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri[0]);
+        $uri = preg_replace("@(-|_)@", " ", $uri);
+        $uri = explode('/', $uri);
 
-            $title = '';
-            foreach ($uri as $key => $page_title)
-            {
-                $title .= ('right' == $seplocation) ? ucwords($page_title) . " $sep " : " $sep " . ucwords($page_title);
-            }
+        $title = '';
+        foreach ($uri as $key => $page_title)
+        {
+            $title .= ('right' == $seplocation) ? ucwords($page_title) . " $sep " : " $sep " . ucwords($page_title);
         }
     }
     return $title;
@@ -226,17 +224,13 @@ function pods_title($title, $sep, $seplocation)
 
 function pods_content()
 {
-    global $phpcode, $post;
+    global $phpcode;
 
     if (!empty($phpcode))
     {
         ob_start();
         eval("?>$phpcode");
         echo ob_get_clean();
-    }
-    elseif (!empty($post))
-    {
-        echo apply_filters('the_content', $post->post_content);
     }
 }
 
@@ -257,7 +251,6 @@ function pods_redirect()
     {
         $phpcode = $row['phpcode'];
         $page_template = $row['page_template'];
-
         include PODS_DIR . '/core/router.php';
         exit;
     }
@@ -282,8 +275,25 @@ function pods_kill_redirect()
 
 function pods_precode()
 {
-    global $precode;
+    global $precode, $pods;
     eval("?>$precode");
+}
+
+function pods_delete_attachment($postid)
+{
+    // Get all file field_ids
+    $result = pod_query("SELECT id FROM @wp_pod_fields WHERE coltype = 'file'");
+    if (0 < mysql_num_rows($result))
+    {
+        while ($row = mysql_fetch_assoc($result))
+        {
+            $field_ids[] = $row['id'];
+        }
+        $field_ids = implode(',', $field_ids);
+
+        // Remove all references to the deleted attachment
+        pod_query("DELETE FROM @wp_pod_rel WHERE field_id IN ($field_ids) AND tbl_row_id = $postid");
+    }
 }
 
 function pods_init()
@@ -293,11 +303,12 @@ function pods_init()
         session_start();
     }
     wp_enqueue_script('jquery');
+    wp_enqueue_script('swfupload');
 }
 
 function pod_page_exists()
 {
-    $home = explode('://', get_bloginfo('url'));
+    $home = explode('://', get_bloginfo('wpurl'));
     $uri = explode('?', $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
     $uri = str_replace($home[1], '', $uri[0]);
     $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri);
@@ -349,6 +360,9 @@ add_action('init', 'pods_init');
 
 // Hook for shortcode
 add_shortcode('pods', 'pods_shortcode');
+
+// Remove pod references from deleted attachments
+add_action('delete_attachment', 'pods_delete_attachment');
 
 $pod_page_exists = pod_page_exists();
 

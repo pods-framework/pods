@@ -5,7 +5,7 @@
 2. Style it to suit your needs
 
 header      <?php get_header(); ?>
-content     <?php get_content(); ?>
+content     <?php pods_content(); ?>
 sidebar     <?php get_sidebar(); ?>
 footer      <?php get_footer(); ?>
 ==================================================

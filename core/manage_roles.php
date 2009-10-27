@@ -20,7 +20,7 @@ function editRoles() {
             var the_priv = jQuery(this).parent().parent().attr("id");
             theval += the_priv + ",";
         });
-        theval = theval.substr(0, theval.length - 1);
+        theval = theval.slice(0, -1);
         data[i] = the_role + "=" + encodeURIComponent(theval);
         i++;
     });

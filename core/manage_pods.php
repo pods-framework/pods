@@ -137,9 +137,8 @@ function loadPod() {
                     if ("" != pickval && null != pickval && "NULL" != pickval) {
                         coltype += " "+pickval;
                     }
-                    html += '<div class="col'+id+'">';
-                    html += '<div class="btn moveup"></div> ';
-                    html += '<div class="btn movedown"></div> ';
+                    html += '<li class="col'+id+'">';
+                    html += '<div class="btn dragme"></div> ';
                     html += '<div class="btn editme"></div> ';
 
                     // Mark required fields
@@ -150,20 +149,16 @@ function loadPod() {
                     if ("name" != name) {
                         html += '<div class="btn dropme"></div> ';
                     }
-                    html += name+" ("+coltype+")"+required+"</div>";
-                    jQuery("#podArea #column_list").html(html);
+                    html += name+" ("+coltype+")"+required+"</li>";
                 }
+                jQuery("#podArea #column_list").html('<ul class="sortable">'+html+'</ul>');
+                jQuery(".sortable").sortable("destroy");
+                jQuery(".sortable").sortable({axis: "y", handle: ".dragme"});
 
                 jQuery("#podArea #column_list .btn").click(function() {
                     var field_id = jQuery(this).parent().attr("class").substr(3);
                     var classname = jQuery(this).attr("class").substr(4);
-                    if ("moveup" == classname) {
-                        moveColumn(field_id, "up");
-                    }
-                    else if ("movedown" == classname) {
-                        moveColumn(field_id, "down");
-                    }
-                    else if ("dropme" == classname) {
+                    if ("dropme" == classname) {
                         dropColumn(field_id);
                     }
                     else if ("editme" == classname) {
@@ -232,10 +227,17 @@ function editPod() {
         var new_helper = jQuery(this).attr("id");
         after_helpers += ("" == after_helpers) ? new_helper : "," + new_helper;
     });
+
+    var order = "";
+    jQuery("ul.sortable li").each(function() {
+        order += jQuery(this).attr("class").substr(3) + ",";
+    });
+    order = order.slice(0, -1);
+
     jQuery.ajax({
         type: "post",
         url: "<?php echo PODS_URL; ?>/ajax/edit.php",
-        data: "auth="+auth+"&datatype="+dt+"&label="+label+"&is_toplevel="+is_toplevel+"&detail_page="+detail_page+"&before_helpers="+before_helpers+"&after_helpers="+after_helpers,
+        data: "auth="+auth+"&datatype="+dt+"&label="+label+"&is_toplevel="+is_toplevel+"&detail_page="+detail_page+"&before_helpers="+before_helpers+"&after_helpers="+after_helpers+"&order="+order,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);

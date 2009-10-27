@@ -1,18 +1,13 @@
 <?php
 global $form_count;
 $form_count = empty($form_count) ? 1 : $form_count + 1;
-
 $datatype = $this->datatype;
-$upload_dir = wp_upload_dir();
-$upload_dir = str_replace(get_option('siteurl'), '', $upload_dir['baseurl']);
 
 if (1 == $form_count)
 {
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css" />
-<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqmodal.js"></script>
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/date_input.js"></script>
-<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqFileTree.js"></script>
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/nicEdit.js"></script>
 <script type="text/javascript">
 var active_file;
@@ -21,14 +16,9 @@ jQuery(function() {
     jQuery(".option").click(function() {
         jQuery(this).toggleClass("active");
     });
-    jQuery(".filebox").fileTree({
-        root: "<?php echo $upload_dir; ?>/",
-        script: "<?php echo PODS_URL; ?>/ajax/filetree.php",
-        multiFolder: false
-    },
-    function(file) {
-        jQuery("."+active_file).val(file);
-        jQuery("#dialog").jqmHide();
+
+    jQuery(".file .btn.dropme").live("click", function() {
+        jQuery(this).parent().remove();
     });
 
     elements = jQuery(".desc");
@@ -42,7 +32,6 @@ jQuery(function() {
     }
 
     jQuery("#pod_form input.date").date_input();
-    jQuery("#dialog").jqm();
 });
 
 function saveForm(form_count) {
@@ -59,7 +48,13 @@ function saveForm(form_count) {
             jQuery("." + classname[2] + " .active").each(function() {
                 theval += jQuery(this).attr("value") + ",";
             });
-            theval = theval.substr(0, theval.length - 1);
+            theval = theval.slice(0, -1);
+        }
+        else if ("file" == classname[1]) {
+            jQuery("." + classname[2] + " > div.success").each(function() {
+                theval += jQuery(this).attr("id") + ",";
+            });
+            theval = theval.slice(0, -1);
         }
         else if ("bool" == classname[1]) {
             theval = (true == jQuery(this).is(":checked")) ? 1 : 0;
@@ -87,11 +82,6 @@ function saveForm(form_count) {
     return false;
 }
 </script>
-
-<div class="jqmWindow" id="dialog">
-    <h2 style="margin-top:0">Pick a File:</h2>
-    <div class="filebox"></div>
-</div>
 
 <?php
 }

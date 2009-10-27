@@ -15,7 +15,7 @@ DROP TABLE IF EXISTS wp_pod_types;
 CREATE TABLE wp_pod_types (
     id INT unsigned auto_increment primary key,
     name VARCHAR(32),
-    label VARCHAR(32),
+    label VARCHAR(128),
     is_toplevel BOOL default 0,
     detail_page VARCHAR(128),
     list_filters TEXT,
@@ -28,7 +28,7 @@ CREATE TABLE wp_pod_fields (
     id INT unsigned auto_increment primary key,
     datatype SMALLINT unsigned,
     name VARCHAR(32),
-    label VARCHAR(32),
+    label VARCHAR(128),
     comment VARCHAR(128),
     coltype VARCHAR(4),
     pickval VARCHAR(32),

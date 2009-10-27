@@ -1,7 +1,4 @@
 <?php
-$upload_dir = wp_upload_dir();
-$upload_dir = str_replace(get_option('siteurl'), '', $upload_dir['baseurl']);
-
 $result = pod_query("SELECT id, name FROM @wp_pod_types ORDER BY name ASC");
 while ($row = mysql_fetch_assoc($result))
 {
@@ -28,13 +25,10 @@ Begin javascript code
 ==================================================
 -->
 <link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css" />
-<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqmodal.js"></script>
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/date_input.js"></script>
-<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqFileTree.js"></script>
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/nicEdit.js"></script>
 <script type="text/javascript">
 var datatype;
-var active_file;
 var add_or_edit = '<?php echo $add_or_edit; ?>';
 var auth = '<?php echo md5(AUTH_KEY); ?>';
 
@@ -50,18 +44,12 @@ jQuery(function() {
         jQuery(".navTab").click();
         jQuery("#editTitle").html("Add new <?php echo $dtname; ?>");
     }
-    jQuery(".filebox").fileTree({
-        root: "<?php echo $upload_dir; ?>/",
-        script: "<?php echo PODS_URL; ?>/ajax/filetree.php",
-        multiFolder: false
-    },
-    function(file) {
-        jQuery("."+active_file).val(file);
-        jQuery("#dialog").jqmHide();
+
+    jQuery(".file .btn.dropme").live("click", function() {
+        jQuery(this).parent().remove();
     });
 
     jQuery("#browseTable tr:odd").addClass("zebra");
-    jQuery("#dialog").jqm();
 });
 
 function editItem(datatype, pod_id) {
@@ -104,7 +92,13 @@ function saveForm() {
             jQuery("." + classname[2] + " .active").each(function() {
                 theval += jQuery(this).attr("value") + ",";
             });
-            theval = theval.substr(0, theval.length - 1);
+            theval = theval.slice(0, -1);
+        }
+        else if ("file" == classname[1]) {
+            jQuery("." + classname[2] + " > div.success").each(function() {
+                theval += jQuery(this).attr("id") + ",";
+            });
+            theval = theval.slice(0, -1);
         }
         else if ("bool" == classname[1]) {
             theval = (true == jQuery(this).is(":checked")) ? 1 : 0;
@@ -169,11 +163,6 @@ function showform(dt, pod_id) {
     });
 }
 </script>
-
-<div class="jqmWindow" id="dialog">
-    <h2 style="margin-top:0">Pick a File:</h2>
-    <div class="filebox"></div>
-</div>
 
 <!--
 ==================================================

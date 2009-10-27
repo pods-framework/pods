@@ -138,5 +138,12 @@ if ($installed < 175)
     add_option('pods_roles', serialize($pods_roles));
 }
 
+if ($installed < 176)
+{
+    pod_query("ALTER TABLE @wp_pod_types CHANGE label label VARCHAR(128)");
+    pod_query("ALTER TABLE @wp_pod_fields CHANGE label label VARCHAR(128)");
+    pod_query("UPDATE @wp_pod_fields SET coltype = 'txt' WHERE coltype = 'file'");
+}
+
 // Save this version
 update_option('pods_version', PODS_VERSION);

@@ -150,13 +150,13 @@ else
     if (0 < mysql_num_rows($result))
     {
         $row = mysql_fetch_assoc($result);
-        $weight = intval($row['weight']) + 1;
+        $weight = (int) $row['weight'] + 1;
     }
 
-    $sister_field_id = intval($sister_field_id);
+    $sister_field_id = (int) $sister_field_id;
     $field_id = pod_query("INSERT INTO @wp_pod_fields (datatype, name, label, comment, display_helper, input_helper, coltype, pickval, pick_filter, pick_orderby, sister_field_id, required, `unique`, `multiple`, weight) VALUES ('$datatype', '$name', '$label', '$comment', '$display_helper', '$input_helper', '$coltype', '$pickval', '$pick_filter', '$pick_orderby', '$sister_field_id', '$required', '$unique', '$multiple', '$weight')", 'Cannot add new field');
 
-    if (empty($pickval))
+    if ('pick' != $coltype && 'file' != $coltype)
     {
         $dbtypes = array(
             'bool' => 'bool default 0',
@@ -164,7 +164,6 @@ else
             'num' => 'decimal(9,2)',
             'txt' => 'varchar(128)',
             'slug' => 'varchar(128)',
-            'file' => 'varchar(128)',
             'code' => 'longtext',
             'desc' => 'longtext'
         );
@@ -176,4 +175,3 @@ else
         pod_query("UPDATE @wp_pod_fields SET sister_field_id = '$field_id' WHERE id = $sister_field_id LIMIT 1", 'Cannot update sister field');
     }
 }
-

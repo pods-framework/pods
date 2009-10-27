@@ -48,12 +48,8 @@ h2.title {
     cursor: pointer;
 }
 
-.moveup {
-    background: url(images/arrow_top.gif) no-repeat;
-}
-
-.movedown {
-    background: url(images/arrow_down.gif) no-repeat;
+.dragme {
+    background: url(images/move.png) no-repeat;
 }
 
 .dropme {
@@ -68,7 +64,7 @@ h2.title {
     background: url(images/file.gif) no-repeat;
 }
 
-.moveup, .movedown, .editme, .dropme, .addnew {
+.dragme, .editme, .dropme, .addnew {
     float: left;
     width: 16px;
     height: 16px;
@@ -77,6 +73,10 @@ h2.title {
 
 #column_list {
     padding-top: 10px;
+}
+
+ul.sortable li {
+    margin-bottom: 2px;
 }
 
 #column_name,
@@ -94,6 +94,18 @@ h2.title {
 #after_helpers,
 #pod_label {
     width: 160px;
+}
+
+/* File progress bar */
+.pods-progress {
+    width: 200px;
+    border: 1px solid #e3e3e3;
+}
+
+.pods-bar {
+    width: 1%;
+    height: 12px;
+    background: #4f5c71;
 }
 
 /* Help text */
@@ -232,7 +244,6 @@ h2.title {
 
 /* Form input fields */
 .form.txt,
-.form.file,
 .form.slug,
 .form.pick1 {
     width: 200px;
@@ -267,6 +278,10 @@ h3 {
 
 .form {
     border: 1px solid #E3E3E3;
+}
+
+.form.file {
+    border: none;
 }
 
 .leftside {

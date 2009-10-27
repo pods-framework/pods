@@ -23,11 +23,7 @@ if ($field_id = (int) $_POST['col'])
     $row = mysql_fetch_assoc($result);
     $field_name = $row['name'];
 
-    if ('pick' != $row['coltype'])
-    {
-        pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` DROP COLUMN `$field_name`");
-    }
-    else
+    if ('pick' == $row['coltype'])
     {
         // Remove any orphans
         $result = pod_query("SELECT id FROM @wp_pod_fields WHERE sister_field_id = $field_id");
@@ -41,6 +37,14 @@ if ($field_id = (int) $_POST['col'])
             pod_query("DELETE FROM @wp_pod_rel WHERE field_id IN ($related_fields)");
             pod_query("UPDATE @wp_pod_fields SET sister_field_id = NULL WHERE sister_field_id IN ($related_fields)");
         }
+    }
+    elseif ('file' == $row['coltype'])
+    {
+        pod_query("DELETE FROM @wp_pod_rel WHERE field_id = $field_id");
+    }
+    else
+    {
+        pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` DROP COLUMN `$field_name`");
     }
 
     pod_query("DELETE FROM @wp_pod_fields WHERE id = $field_id LIMIT 1");

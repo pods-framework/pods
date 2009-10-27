@@ -7,7 +7,7 @@ $input_helper = $field['input_helper'];
 $hidden = empty($field['hidden']) ? '' : ' hidden';
 $value = is_array($this->data[$name]) ? $this->data[$name] : stripslashes($this->data[$name]);
 ?>
-    <div class="leftside<?php echo $name . $hidden; ?>">
+    <div class="leftside<?php echo "$name $hidden"; ?>">
         <?php echo $label; ?>
 <?php
 if (!empty($comment))
@@ -18,7 +18,7 @@ if (!empty($comment))
 }
 ?>
     </div>
-    <div class="rightside<?php echo $name . $hidden; ?>">
+    <div class="rightside<?php echo "$name $hidden"; ?>">
 <?php
 /*
 ==================================================

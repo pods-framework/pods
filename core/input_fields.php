@@ -113,7 +113,7 @@ jQuery(function() {
         upload_url: "<?php echo PODS_URL; ?>/ajax/misc.php",
         flash_url: "<?php echo WP_INC_URL; ?>/js/swfupload/swfupload.swf",
         file_types: "*.*",
-        file_size_limit: "10 MB",
+        file_size_limit: "20 MB",
         post_params: {"action": "wp_handle_upload"},
         file_dialog_complete_handler: function(num_files, num_queued_files, total_queued_files) {
             this.startUpload();
@@ -166,7 +166,7 @@ jQuery(function() {
         $filepath = $row['guid'];
         $filename = substr($filepath, strrpos($filepath, '/') + 1);
 ?>
-        <div id="<?php echo $row['ID']; ?>">
+        <div id="<?php echo $row['ID']; ?>" class="success">
             <div class="btn dropme"></div><?php echo $filename; ?>
         </div>
 <?php

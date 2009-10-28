@@ -125,6 +125,7 @@ class Pod
 
                         // Get datatype ID for non-WP PICK columns
                         if (
+                            false === empty($pickval) &&
                             false === is_numeric($pickval) &&
                             false === in_array($pickval, array('wp_post', 'wp_page', 'wp_user')))
                         {

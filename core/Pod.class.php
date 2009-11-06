@@ -825,7 +825,7 @@ class Pod
         }
         if ('detail_url' == $name)
         {
-            return get_bloginfo('wpurl') . '/' . preg_replace_callback("/({@(.*?)})/m", array($this, "magic_swap"), $this->detail_page);
+            return get_bloginfo('url') . '/' . preg_replace_callback("/({@(.*?)})/m", array($this, "magic_swap"), $this->detail_page);
         }
         else
         {

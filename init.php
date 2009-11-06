@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS
 Plugin URI: http://pods.uproot.us/
 Description: The CMS Framework for WordPress.
-Version: 1.7.6
+Version: 1.7.7
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 176);
+define('PODS_VERSION', 177);
 define('PODS_URL', WP_PLUGIN_URL . '/pods');
 define('PODS_DIR', WP_PLUGIN_DIR . '/pods');
 define('WP_INC_URL', get_bloginfo('wpurl') . '/' . WPINC);
@@ -48,7 +48,7 @@ else
 {
     $sql = file_get_contents(PODS_DIR . '/sql/dump.sql');
     $sql = explode(";\n", str_replace('wp_', '@wp_', $sql));
-    for ($i = 0, $z = count($sql) - 1; $i < $z; $i++)
+    for ($i = 0, $z = count($sql); $i < $z; $i++)
     {
         pod_query($sql[$i], 'Cannot setup SQL tables');
     }
@@ -308,7 +308,7 @@ function pods_init()
 
 function pod_page_exists()
 {
-    $home = explode('://', get_bloginfo('wpurl'));
+    $home = explode('://', get_bloginfo('url'));
     $uri = explode('?', $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
     $uri = str_replace($home[1], '', $uri[0]);
     $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri);
@@ -369,6 +369,9 @@ $pod_page_exists = pod_page_exists();
 // Filters for 404 handling
 if (false !== $pod_page_exists)
 {
+    // Precode storage variable
+    $pods = false;
+
     // Execute any precode
     $precode = $pod_page_exists['precode'];
 

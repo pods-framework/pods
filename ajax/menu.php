@@ -1,6 +1,6 @@
 <?php
 // Include the MySQL connection
-include(realpath('../../../../wp-config.php'));
+require_once(realpath('../../../../wp-config.php'));
 
 foreach ($_GET as $key => $val)
 {

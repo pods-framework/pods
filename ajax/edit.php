@@ -1,6 +1,6 @@
 <?php
 // Include the MySQL connection
-include(realpath('../../../../wp-config.php'));
+require_once(realpath('../../../../wp-config.php'));
 
 if ($_POST['auth'] != md5(AUTH_KEY))
 {
@@ -61,19 +61,20 @@ if ('edit' == $action)
                     pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` DROP COLUMN `$old_name`");
                 }
             }
+            elseif ('pick' == $old_coltype || 'file' == $old_coltype)
+            {
+                pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` ADD COLUMN `$name` $dbtype", 'Cannot create column');
+                pod_query("UPDATE @wp_pod_fields SET sister_field_id = NULL WHERE sister_field_id = $field_id");
+                pod_query("DELETE FROM @wp_pod_rel WHERE field_id = $field_id");
+            }
             else
             {
-                if ('pick' == $old_coltype || 'file' == $old_coltype)
-                {
-                    pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` ADD COLUMN `$name` $dbtype", 'Cannot create column');
-                    pod_query("UPDATE @wp_pod_fields SET sister_field_id = NULL WHERE sister_field_id = $field_id");
-                    pod_query("DELETE FROM @wp_pod_rel WHERE field_id = $field_id");
-                }
-                else
-                {
-                    pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` CHANGE `$old_name` `$name` $dbtype");
-                }
+                pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` CHANGE `$old_name` `$name` $dbtype");
             }
+        }
+        elseif ($name != $old_name && 'pick' != $coltype && 'file' != $coltype)
+        {
+            pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` CHANGE `$old_name` `$name` $dbtype");
         }
 
         $sql = "

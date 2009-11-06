@@ -119,7 +119,7 @@ jQuery(function() {
             this.startUpload();
         },
         file_queued_handler: function(file) {
-            jQuery(".<?php echo $name; ?>").append('<div id="' + file.id + '">' + file.name + '<div class="pods-progress"><div class="pods-bar"></div></div></div>');
+            jQuery(".rightside.<?php echo $name; ?>").append('<div id="' + file.id + '">' + file.name + '<div class="pods-progress"><div class="pods-bar"></div></div></div>');
         },
         upload_progress_handler: function(file, bytes_complete, bytes_total) {
             var percent = Math.ceil(100 * (bytes_complete / bytes_total));

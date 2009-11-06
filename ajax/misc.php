@@ -1,7 +1,7 @@
 <?php
 // Include the MySQL connection
-include(realpath('../../../../wp-config.php'));
-include(realpath('../../../../wp-admin/includes/admin.php'));
+require_once(realpath('../../../../wp-config.php'));
+require_once(realpath('../../../../wp-admin/includes/admin.php'));
 
 foreach ($_POST as $key => $val)
 {

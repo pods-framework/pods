@@ -6,6 +6,13 @@ while ($row = mysql_fetch_assoc($result))
     $helpers[$row['id']] = $row;
     $helper_types[$row['helper_type']][] = $row['name'];
 }
+
+// Get all datatypes
+$result = pod_query("SELECT id, name FROM @wp_pod_types ORDER BY name");
+while ($row = mysql_fetch_assoc($result))
+{
+    $datatypes[$row['id']] = $row['name'];
+}
 ?>
 
 <!--

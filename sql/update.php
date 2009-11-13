@@ -123,7 +123,7 @@ if ($installed < 173)
 
 if ($installed < 175)
 {
-    if (isset($pods_roles))
+    if (is_array($pods_roles))
     {
         foreach ($pods_roles as $role => $privs)
         {

@@ -1,12 +1,3 @@
-<?php
-// Get all datatypes
-$result = pod_query("SELECT id, name FROM @wp_pod_types ORDER BY name");
-while ($row = mysql_fetch_assoc($result))
-{
-    $datatypes[$row['id']] = $row['name'];
-}
-?>
-
 <!--
 ==================================================
 Begin pod area

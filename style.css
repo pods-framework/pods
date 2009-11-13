@@ -108,6 +108,17 @@ ul.sortable li {
     background: #4f5c71;
 }
 
+/* Browse existing files */
+.file_match {
+    cursor: pointer;
+    padding-left: 20px;
+    background: url(images/file.gif) no-repeat;
+}
+
+.file_match:hover {
+    text-decoration: underline;
+}
+
 /* Help text */
 .stickynote {
     width: 400px;
@@ -225,7 +236,8 @@ ul.sortable li {
 }
 
 .filebox {
-    height: 160px;
+    height: 240px;
+    margin: 10px 0 0 0;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -350,48 +362,6 @@ div#content p {
 .menu-item {
     margin-top: 5px;
     margin-left: 20px;
-}
-
-/* File Tree */
-UL.jqueryFileTree {
-    font-family: Verdana, sans-serif;
-    font-size: 11px;
-    line-height: 18px;
-    padding: 0px;
-    margin: 0px;
-}
-
-UL.jqueryFileTree LI {
-    list-style: none;
-    padding: 0px;
-    padding-left: 20px;
-    margin: 0px;
-    white-space: nowrap;
-}
-
-UL.jqueryFileTree A {
-    color: #333;
-    text-decoration: none;
-    display: block;
-    padding: 0px 2px;
-}
-
-UL.jqueryFileTree A:hover {
-    background: #BDF;
-}
-
-.jqueryFileTree li.directory {
-    background: url(images/folder.gif) left top no-repeat;
-}
-.jqueryFileTree li.expanded {
-    background: url(images/folder_open.gif) left top no-repeat;
-}
-.jqueryFileTree li.file {
-    background: url(images/file.gif) left top no-repeat;
-}
-
-.jqueryFileTree LI.wait {
-    background: url(images/ajax-loader.gif) left top no-repeat;
 }
 
 /* jqModal */

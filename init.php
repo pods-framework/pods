@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS
 Plugin URI: http://pods.uproot.us/
 Description: The CMS Framework for WordPress.
-Version: 1.7.7
+Version: 1.7.8
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 177);
+define('PODS_VERSION', 178);
 define('PODS_URL', WP_PLUGIN_URL . '/pods');
 define('PODS_DIR', WP_PLUGIN_DIR . '/pods');
 define('WP_INC_URL', get_bloginfo('wpurl') . '/' . WPINC);
@@ -73,17 +73,6 @@ if (!function_exists('json_encode'))
         return $json->decode($str);
     }
 }
-
-// Internationalization
-/*
-if ('' != WPLANG)
-{
-    if (file_exists(PODS_DIR . '/lang/' . WPLANG . '.php'))
-    {
-        include PODS_DIR . '/lang/' . WPLANG . '.php';
-    }
-}
-*/
 
 // Check for .htaccess
 if (!file_exists(ABSPATH . '.htaccess'))
@@ -200,7 +189,7 @@ function pods_title($title, $sep, $seplocation)
 
     if (0 < strlen($page_title))
     {
-        if (isset($pods))
+        if (is_object($pods))
         {
             $page_title = preg_replace_callback("/({@(.*?)})/m", array($pods, "magic_swap"), $page_title);
         }

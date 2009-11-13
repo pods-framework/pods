@@ -65,12 +65,15 @@ $all_privs = array(
     array('name' => 'manage_menu', 'label' => 'Manage Menu')
 );
 
-foreach ($datatypes as $id => $dtname)
+if (is_array($datatypes))
 {
-    $all_privs[] = array('name' => "pod_$dtname", 'label' => "Access: $dtname");
+    foreach ($datatypes as $id => $dtname)
+    {
+        $all_privs[] = array('name' => "pod_$dtname", 'label' => "Access: $dtname");
+    }
 }
 
-if (isset($user_roles))
+if (is_array($user_roles))
 {
     foreach ($user_roles as $role => $junk)
     {
@@ -92,7 +95,7 @@ foreach ($all_privs as $priv)
         <tr id="<?php echo $priv['name']; ?>" class="<?php echo $zebra; ?>">
             <td><?php echo $priv['name']; ?></td>
 <?php
-    if (isset($user_roles))
+    if (is_array($user_roles))
     {
         foreach ($user_roles as $role => $junk)
         {

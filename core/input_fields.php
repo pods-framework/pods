@@ -99,27 +99,30 @@ File upload
 */
 elseif ('file' == $coltype)
 {
+    require_once(realpath(ABSPATH . '/wp-admin/includes/template.php'));
 ?>
 <script type="text/javascript">
 jQuery(function() {
     swfu_<?php echo $name; ?> = new SWFUpload({
-        button_text: '<span class="button">Select Files</span>',
-        button_text_style: '.button { text-align: center; font-weight: bold; font-family:"Lucida Grande",Verdana,Arial,"Bitstream Vera Sans",sans-serif; }',
+        button_text: '<span class="button">Select + Upload</span>',
+        button_text_style: '.button { text-align:center; color:#464646; font-size:11px; font-family:"Lucida Grande",Verdana,Arial,"Bitstream Vera Sans",sans-serif; }',
         button_width: "132",
         button_height: "24",
-        button_text_top_padding: 2,
+        button_text_top_padding: 3,
         button_image_url: "<?php echo WP_INC_URL; ?>/images/upload.png",
         button_placeholder_id: "btn_<?php echo $name; ?>",
+        button_cursor: SWFUpload.CURSOR.HAND,
+        button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT,
         upload_url: "<?php echo PODS_URL; ?>/ajax/misc.php",
         flash_url: "<?php echo WP_INC_URL; ?>/js/swfupload/swfupload.swf",
         file_types: "*.*",
-        file_size_limit: "20 MB",
+        file_size_limit: "<?php echo wp_max_upload_size(); ?>",
         post_params: {"action": "wp_handle_upload"},
         file_dialog_complete_handler: function(num_files, num_queued_files, total_queued_files) {
             this.startUpload();
         },
         file_queued_handler: function(file) {
-            jQuery(".rightside.<?php echo $name; ?>").append('<div id="' + file.id + '">' + file.name + '<div class="pods-progress"><div class="pods-bar"></div></div></div>');
+            jQuery(".rightside.<?php echo $name; ?> .form").append('<div id="' + file.id + '">' + file.name + '<div class="pods-progress"><div class="pods-bar"></div></div></div>');
         },
         upload_progress_handler: function(file, bytes_complete, bytes_total) {
             var percent = Math.ceil(100 * (bytes_complete / bytes_total));
@@ -145,6 +148,7 @@ jQuery(function() {
 });
 </script>
     <input type="button" id="btn_<?php echo $name; ?>" value="swfupload not loaded" />
+    <input type="button" class="button" value="Browse Server" onclick="active_file = '<?php echo $name; ?>'; fileBrowser()" />
     <div class="form file <?php echo $name; ?>">
 <?php
     // Retrieve uploaded files

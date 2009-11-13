@@ -7,6 +7,7 @@ if (1 == $form_count)
 {
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css" />
+<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqmodal.js"></script>
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/date_input.js"></script>
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/nicEdit.js"></script>
 <script type="text/javascript">
@@ -21,6 +22,13 @@ jQuery(function() {
         jQuery(this).parent().remove();
     });
 
+    jQuery(".file_match").live("click", function() {
+        var file_id = jQuery(this).attr("rel");
+        var file_name = jQuery(this).html();
+        jQuery(".rightside." + active_file + " .form").append('<div id="' + file_id + '" class="success"><div class="btn dropme"></div>' + file_name + '</div>');
+        jQuery("#dialog").jqmHide();
+    });
+
     elements = jQuery(".desc");
     var config = {
         iconsPath : "<?php echo PODS_URL; ?>/images/nicEditorIcons.gif",
@@ -32,6 +40,7 @@ jQuery(function() {
     }
 
     jQuery("#pod_form input.date").date_input();
+    jQuery("#dialog").jqm();
 });
 
 function saveForm(form_count) {
@@ -81,7 +90,27 @@ function saveForm(form_count) {
     });
     return false;
 }
+
+function fileBrowser() {
+    jQuery("#dialog").jqmShow();
+    jQuery(".filebox").html("Loading...");
+    var search = jQuery("#file_search").val();
+    jQuery.ajax({
+        type: "post",
+        url: "<?php echo PODS_URL; ?>/ajax/filetree.php",
+        data: "search="+encodeURIComponent(search),
+        success: function(msg) {
+            jQuery(".filebox").html(msg);
+        }
+    });
+}
 </script>
+
+<div class="jqmWindow" id="dialog">
+    <input type="text" id="file_search" value="" />
+    <input type="button" class="button" value="Narrow results" onclick="fileBrowser()" />
+    <div class="filebox"></div>
+</div>
 
 <?php
 }

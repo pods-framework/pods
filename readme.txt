@@ -10,7 +10,6 @@ Pods is a full-featured yet lightweight CMS framework for WordPress.
 
 == Description ==
 
-Pods is a CMS framework for WordPress. It allows you to add and display your own content types. If you're looking for a clean, lightweight alternative to Drupal/CCK or Joomla, then look no further. Visit the [Pods homepage](http://pods.uproot.us) for more info.
+Pods is a CMS framework for WordPress. It allows you to add and display your own content types. If you're looking for a clean, lightweight alternative to Drupal/CCK or Joomla, then look no further. [Pods homepage](http://pods.uproot.us)
 
-**WARNING!**
-Pods is intended for developers with PHP and MySQL experience.
+**WARNING:** Pods is intended for developers with PHP + MySQL experience.

@@ -11,7 +11,6 @@ function resetDB() {
                 jQuery.ajax({
                     type: "post",
                     url: "<?php echo PODS_URL; ?>/uninstall.php",
-                    data: "auth="+auth,
                     success: function(msg) {
                         if ("Error" == msg.substr(0, 5)) {
                             alert(msg);

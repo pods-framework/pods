@@ -1,8 +1,8 @@
 <?php
 // Include the MySQL connection
-require_once(realpath('../../../../wp-config.php'));
+require_once(realpath('../../../../wp-load.php'));
 
-if ($_POST['auth'] != md5(AUTH_KEY))
+if (!pods_access('manage_packages'))
 {
     die('Error: Authentication failed');
 }

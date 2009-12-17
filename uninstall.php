@@ -1,6 +1,6 @@
 <?php
 // Include the MySQL connection
-require_once(realpath(dirname(__FILE__) . '/../../../wp-config.php'));
+require_once(realpath(dirname(__FILE__) . '/../../../wp-load.php'));
 require_once(realpath(dirname(__FILE__) . '/init.php'));
 
 if (!pods_access('manage_settings'))

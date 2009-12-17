@@ -9,7 +9,7 @@ CREATE TABLE wp_pod (
     created DATETIME,
     modified TIMESTAMP,
     INDEX datatype_idx (datatype)
-);
+) DEFAULT CHARSET utf8;
 
 DROP TABLE IF EXISTS wp_pod_types;
 CREATE TABLE wp_pod_types (
@@ -21,7 +21,7 @@ CREATE TABLE wp_pod_types (
     list_filters TEXT,
     before_helpers TEXT,
     after_helpers TEXT
-);
+) DEFAULT CHARSET utf8;
 
 DROP TABLE IF EXISTS wp_pod_fields;
 CREATE TABLE wp_pod_fields (
@@ -42,7 +42,7 @@ CREATE TABLE wp_pod_fields (
     `unique` TINYINT,
     `multiple` TINYINT,
     INDEX datatype_idx (datatype)
-);
+) DEFAULT CHARSET utf8;
 
 DROP TABLE IF EXISTS wp_pod_rel;
 CREATE TABLE wp_pod_rel (
@@ -52,14 +52,14 @@ CREATE TABLE wp_pod_rel (
     field_id INT unsigned,
     tbl_row_id INT unsigned,
     INDEX field_id_idx (field_id)
-);
+) DEFAULT CHARSET utf8;
 
 DROP TABLE IF EXISTS wp_pod_templates;
 CREATE TABLE wp_pod_templates (
     id INT unsigned auto_increment primary key,
     name VARCHAR(32),
     code LONGTEXT
-);
+) DEFAULT CHARSET utf8;
 
 DROP TABLE IF EXISTS wp_pod_pages;
 CREATE TABLE wp_pod_pages (
@@ -69,7 +69,7 @@ CREATE TABLE wp_pod_pages (
     phpcode LONGTEXT,
     precode LONGTEXT,
     page_template VARCHAR(128)
-);
+) DEFAULT CHARSET utf8;
 
 DROP TABLE IF EXISTS wp_pod_helpers;
 CREATE TABLE wp_pod_helpers (
@@ -77,7 +77,7 @@ CREATE TABLE wp_pod_helpers (
     name VARCHAR(32),
     helper_type VARCHAR(16) not null default 'display',
     phpcode LONGTEXT
-);
+) DEFAULT CHARSET utf8;
 
 DROP TABLE IF EXISTS wp_pod_menu;
 CREATE TABLE wp_pod_menu (
@@ -87,7 +87,7 @@ CREATE TABLE wp_pod_menu (
     lft INT unsigned,
     rgt INT unsigned,
     weight TINYINT unsigned default 0
-);
+) DEFAULT CHARSET utf8;
 
 /* Load some default pods */
 
@@ -96,14 +96,14 @@ CREATE TABLE wp_pod_tbl_country (
     id INT unsigned auto_increment primary key,
     name VARCHAR(64),
     abbrev CHAR(2)
-);
+) DEFAULT CHARSET utf8;
 
 DROP TABLE IF EXISTS wp_pod_tbl_state;
 CREATE TABLE wp_pod_tbl_state (
     id INT unsigned auto_increment primary key,
     name VARCHAR(64),
     abbrev CHAR(2)
-);
+) DEFAULT CHARSET utf8;
 
 INSERT INTO wp_pod_menu (uri, title, lft, rgt) VALUES
 ('/', 'Home', 1, 2);

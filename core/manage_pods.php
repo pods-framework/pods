@@ -72,8 +72,8 @@ function sisterFields(sister_field_id) {
     var pickval = jQuery("#column_pickval").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/sister_fields.php",
-        data: "auth="+auth+"&datatype="+dt+"&pickval="+pickval,
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=load_sister_fields&datatype="+dt+"&pickval="+pickval,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -98,8 +98,8 @@ function sisterFields(sister_field_id) {
 function loadPod() {
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/load.php",
-        data: "auth="+auth+"&id="+dt,
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=load_pod&id="+dt,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -185,8 +185,8 @@ function addPod() {
     var name = jQuery("#new_pod").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/add.php",
-        data: "auth="+auth+"&type=pod&name="+name,
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=save_pod&name="+name,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -227,8 +227,8 @@ function editPod() {
 
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/edit.php",
-        data: "auth="+auth+"&datatype="+dt+"&label="+label+"&is_toplevel="+is_toplevel+"&detail_page="+detail_page+"&before_helpers="+before_helpers+"&after_helpers="+after_helpers+"&order="+order,
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=save_pod&datatype="+dt+"&label="+label+"&is_toplevel="+is_toplevel+"&detail_page="+detail_page+"&before_helpers="+before_helpers+"&after_helpers="+after_helpers+"&order="+order,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -244,8 +244,8 @@ function dropPod() {
     if (confirm("Do you really want to drop this pod and its contents?")) {
         jQuery.ajax({
             type: "post",
-            url: "<?php echo PODS_URL; ?>/ajax/drop.php",
-            data: "auth="+auth+"&pod="+dt+"&dtname="+dtname,
+            url: "<?php echo PODS_URL; ?>/ajax/api.php",
+            data: "action=drop_pod&id="+dt+"&dtname="+dtname,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);
@@ -259,16 +259,16 @@ function dropPod() {
     }
 }
 
-function loadColumn(col) {
+function loadColumn(id) {
     resetForm();
-    column_id = col;
+    column_id = id;
     add_or_edit = "edit";
     jQuery(".column-header").html("Edit Column");
 
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/load.php",
-        data: "auth="+auth+"&col="+col,
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=load_column&id="+column_id,
         success: function(msg) {
             var json = eval("("+msg+")");
             var name = (null == json.name) ? "" : json.name;
@@ -334,8 +334,8 @@ function addColumn() {
     }
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/add.php",
-        data: "auth="+auth+"&datatype="+dt+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&pick_orderby="+pick_orderby+"&sister_field_id="+sister_field_id+"&display_helper="+display_helper+"&input_helper="+input_helper+"&required="+required+"&unique="+unique+"&multiple="+multiple,
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=save_column&datatype="+dt+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&pick_orderby="+pick_orderby+"&sister_field_id="+sister_field_id+"&display_helper="+display_helper+"&input_helper="+input_helper+"&required="+required+"&unique="+unique+"&multiple="+multiple,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -348,23 +348,7 @@ function addColumn() {
     });
 }
 
-function moveColumn(col, dir) {
-    jQuery.ajax({
-        type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/edit.php",
-        data: "auth="+auth+"&action=move&datatype="+dt+"&col="+col+"&dir="+dir,
-        success: function(msg) {
-            if ("Error" == msg.substr(0, 5)) {
-                alert(msg);
-            }
-            else {
-                loadPod();
-            }
-        }
-    });
-}
-
-function editColumn(col) {
+function editColumn(id) {
     var name = jQuery("#column_name").val();
     var label = jQuery("#column_label").val();
     var comment = jQuery("#column_comment").val();
@@ -385,8 +369,8 @@ function editColumn(col) {
     }
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/edit.php",
-        data: "auth="+auth+"&action=edit&field_id="+col+"&datatype="+dt+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&pick_orderby="+pick_orderby+"&sister_field_id="+sister_field_id+"&display_helper="+display_helper+"&input_helper="+input_helper+"&required="+required+"&unique="+unique+"&multiple="+multiple,
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=save_column&id="+id+"&datatype="+dt+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&pick_orderby="+pick_orderby+"&sister_field_id="+sister_field_id+"&display_helper="+display_helper+"&input_helper="+input_helper+"&required="+required+"&unique="+unique+"&multiple="+multiple,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -400,18 +384,18 @@ function editColumn(col) {
     });
 }
 
-function dropColumn(col) {
+function dropColumn(id) {
     if (confirm("Do you really want to drop this column?")) {
         jQuery.ajax({
             type: "post",
-            url: "<?php echo PODS_URL; ?>/ajax/drop.php",
-            data: "auth="+auth+"&col="+col+"&dtname="+dtname,
+            url: "<?php echo PODS_URL; ?>/ajax/api.php",
+            data: "action=drop_column&id="+id+"&dtname="+dtname,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);
                 }
                 else {
-                    jQuery(".col"+col).remove();
+                    jQuery(".col"+id).remove();
                     resetForm();
                 }
             }

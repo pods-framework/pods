@@ -1,4 +1,6 @@
 <?php
+global $coltype_exists;
+
 $name = $field['name'];
 $label = $field['label'];
 $comment = $field['comment'];
@@ -75,6 +77,12 @@ Textarea box
 */
 elseif ('desc' == $coltype)
 {
+    if (false === isset($coltype_counter[$coltype]))
+    {
+?>
+<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/nicEdit.js"></script>
+<?php
+    }
 ?>
     <textarea class="form desc <?php echo $name; ?>" id="desc-<?php echo $name; ?>"><?php echo $value; ?></textarea>
 <?php
@@ -88,7 +96,7 @@ Textarea box (no WYSIWYG)
 elseif ('code' == $coltype)
 {
 ?>
-    <textarea class="form code <?php echo $name; ?>" id="code-<?php echo $name; ?>"><?php echo $value; ?></textarea>
+    <textarea class="form code <?php echo $name; ?>" id="code-<?php echo $name; ?>"><?php echo htmlentities($value); ?></textarea>
 <?php
 }
 
@@ -100,6 +108,13 @@ File upload
 elseif ('file' == $coltype)
 {
     require_once(realpath(ABSPATH . '/wp-admin/includes/template.php'));
+
+    if (false === isset($coltype_exists[$coltype]))
+    {
+?>
+<script type="text/javascript" src="<?php echo WP_INC_URL . '/js/swfupload/swfupload.js'; ?>"></script>
+<?php
+    }
 ?>
 <script type="text/javascript">
 jQuery(function() {
@@ -228,6 +243,7 @@ else
 <?php
     }
 }
+$coltype_exists[$coltype] = true;
 ?>
     </div>
     <div class="clear<?php echo $hidden; ?>"></div>

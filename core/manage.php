@@ -20,10 +20,9 @@ while ($row = mysql_fetch_assoc($result))
 Begin javascript code
 ==================================================
 -->
-<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css?r=<?php echo rand(1000, 9999); ?>" />
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqmodal.js"></script>
 <script type="text/javascript">
-var auth = '<?php echo md5(AUTH_KEY); ?>';
 var datatype;
 var column_id;
 var add_or_edit;
@@ -56,17 +55,6 @@ function addPodHelper(div_id, select_id) {
         jQuery("#"+div_id).append(html);
     }
 }
-
-function changelog() {
-    jQuery.ajax({
-        type: "get",
-        url: "<?php echo PODS_URL; ?>/ajax/changelog.php",
-        data: "v=<?php echo PODS_VERSION; ?>&ref=<?php echo $_SERVER['HTTP_HOST']; ?>",
-        success: function(msg) {
-            jQuery("#changelog").html(msg);
-        }
-    });
-}
 </script>
 
 <!--
@@ -89,7 +77,7 @@ if (pods_access('manage_templates'))
     <div class="navTab" rel="templateArea"><a href="#template">Templates</a></div>
 <?php
 }
-if (pods_access('manage_podpages'))
+if (pods_access('manage_pod_pages'))
 {
 ?>
     <div class="navTab" rel="pageArea"><a href="#page">Pages</a></div>
@@ -134,10 +122,6 @@ Begin welcome area
                 <li><?php echo $_SERVER['SERVER_SOFTWARE']; ?></li>
                 <li>MySQL <?php echo mysql_result(pod_query("SELECT VERSION()"), 0); ?></li>
             </ul>
-            <h3>What's new in this version?</h3>
-            <div  id="changelog">
-                <input type="button" class="button" value="Get changelog" onclick="changelog()" />
-            </div>
         </div>
     </div>
 </div>
@@ -153,7 +137,7 @@ if (pods_access('manage_templates'))
 {
     include $pods_manage_dir . 'manage_templates.php';
 }
-if (pods_access('manage_podpages'))
+if (pods_access('manage_pod_pages'))
 {
     include $pods_manage_dir . 'manage_pages.php';
 }

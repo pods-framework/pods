@@ -11,10 +11,12 @@ $no_results_error   Triggered when results = 0
 */
 function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_results_error = null)
 {
-    global $table_prefix;
+    global $wpdb;
 
-    $sql = str_replace('@wp_', $table_prefix, $sql);
-    $result = mysql_query($sql) or die("Error: $error; SQL: $sql; Response: " . mysql_error());
+    $sql = str_replace('@wp_', $wpdb->prefix, $sql);
+    $sql = str_replace('__podsdb__', '@wp_', $sql);
+
+    $result = mysql_query($sql, $wpdb->dbh) or die("Error: $error; SQL: $sql; Response: " . mysql_error());
 
     if (0 < @mysql_num_rows($result))
     {
@@ -124,6 +126,9 @@ function pods_sanitize($input)
     }
     else
     {
+        // Rename @wp_ to prevent pod_query() from replacing it
+        $input = str_replace('@wp_', '__podsdb__', $input);
+
         $output = mysql_real_escape_string(trim($input));
     }
     return $output;

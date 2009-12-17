@@ -24,15 +24,13 @@ else
 Begin javascript code
 ==================================================
 -->
-<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css" />
-<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqmodal.js"></script>
+<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css?r=<?php echo rand(1000, 9999); ?>" />
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/date_input.js"></script>
-<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/nicEdit.js"></script>
+<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqmodal.js"></script>
 <script type="text/javascript">
 var datatype;
 var active_file;
 var add_or_edit = '<?php echo $add_or_edit; ?>';
-var auth = '<?php echo md5(AUTH_KEY); ?>';
 
 jQuery(function() {
     jQuery(".navTab").click(function() {
@@ -72,8 +70,8 @@ function dropItem(pod_id) {
     if (confirm("Do you really want to drop this item?")) {
         jQuery.ajax({
             type: "post",
-            url: "<?php echo PODS_URL; ?>/ajax/drop.php",
-            data: "auth="+auth+"&pod_id="+pod_id,
+            url: "<?php echo PODS_URL; ?>/ajax/api.php",
+            data: "action=drop_pod_item&pod_id="+pod_id,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);
@@ -122,8 +120,8 @@ function saveForm() {
 
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/showform.php",
-        data: data.join("&"),
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=save_pod_item&"+data.join("&"),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -144,8 +142,8 @@ function showform(dt, pod_id) {
     jQuery(".option").unbind("click");
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/showform.php",
-        data: "pod_id="+pod_id+"&datatype="+datatype,
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=load_pod_item&pod_id="+pod_id+"&datatype="+datatype,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -179,8 +177,8 @@ function fileBrowser() {
     var search = jQuery("#file_search").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/filetree.php",
-        data: "search="+encodeURIComponent(search),
+        url: "<?php echo PODS_URL; ?>/ajax/misc.php",
+        data: "action=browse_files&search="+encodeURIComponent(search),
         success: function(msg) {
             jQuery(".filebox").html(msg);
         }
@@ -343,7 +341,7 @@ Begin edit area
 ==================================================
 -->
 <div id="editArea" class="area hidden">
-    <div id="icon-plugins" class="icon32" style="margin:0 6px 0 0"><br /></div>
+    <div id="icon-plugins" class="icon32" style="margin:0 10px 0 0"><br /></div>
     <h2 class="title" id="editTitle">Please select an item</h2>
     <div class="clear"><!--clear--></div>
 

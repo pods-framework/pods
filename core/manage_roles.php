@@ -27,8 +27,8 @@ function editRoles() {
 
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/edit.php",
-        data: "action=editroles&auth="+auth+"&"+data.join("&"),
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=save_roles&"+data.join("&"),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -48,7 +48,6 @@ Role HTML
 ==================================================
 -->
 <div id="roleArea" class="area hidden">
-    <div class="tips">Use the Role Manager plugin to add new roles. Admins have total access.</div>
     <table id="roleTable" cellpadding="0" cellspacing="0">
         <tr>
             <td><!--privilege--></td>
@@ -90,7 +89,7 @@ if (is_array($user_roles))
 <?php
 foreach ($all_privs as $priv)
 {
-    $zebra = ('zebra' == $zebra) ? '' : 'zebra';
+    $zebra = empty($zebra) ? 'zebra' : '';
 ?>
         <tr id="<?php echo $priv['name']; ?>" class="<?php echo $zebra; ?>">
             <td><?php echo $priv['name']; ?></td>

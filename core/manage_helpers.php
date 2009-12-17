@@ -25,8 +25,8 @@ jQuery(function() {
 function loadHelper() {
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/load.php",
-        data: "auth="+auth+"&helper_id="+helper_id,
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=load_helper&id="+helper_id,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -46,8 +46,8 @@ function addHelper() {
     var helper_type = jQuery("#helper_type").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/add.php",
-        data: "auth="+auth+"&type=helper&name="+name+"&helper_type="+helper_type,
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=save_helper&name="+name+"&helper_type="+helper_type,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -69,8 +69,8 @@ function editHelper() {
     var code = jQuery("#helper_code").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/edit.php",
-        data: "auth="+auth+"&action=edithelper&helper_id="+helper_id+"&phpcode="+encodeURIComponent(code),
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=save_helper&id="+helper_id+"&phpcode="+encodeURIComponent(code),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -86,8 +86,8 @@ function dropHelper() {
     if (confirm("Do you really want to drop this helper?")) {
         jQuery.ajax({
             type: "post",
-            url: "<?php echo PODS_URL; ?>/ajax/drop.php",
-            data: "auth="+auth+"&helper="+helper_id,
+            url: "<?php echo PODS_URL; ?>/ajax/api.php",
+            data: "action=drop_helper&id="+helper_id,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);

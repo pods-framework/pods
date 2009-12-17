@@ -3,10 +3,8 @@
 Begin javascript code
 ==================================================
 -->
-<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css?r=<?php echo rand(1000, 9999); ?>" />
 <script type="text/javascript">
-var auth = '<?php echo md5(AUTH_KEY); ?>';
-
 jQuery(function() {
     jQuery(".navTab").click(function() {
         jQuery(".navTab").removeClass("active");
@@ -39,7 +37,7 @@ function podsExport() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo PODS_URL; ?>/ajax/import_export.php",
-        data: "action=export&auth="+auth+"&"+data.join("&"),
+        data: "action=export&"+data.join("&"),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -57,7 +55,7 @@ function podsImport(action) {
     jQuery.ajax({
         type: "post",
         url: "<?php echo PODS_URL; ?>/ajax/import_export.php",
-        data: "action="+action+"&auth="+auth+"&data="+encodeURIComponent(data),
+        data: "action="+action+"&data="+encodeURIComponent(data),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);

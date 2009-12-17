@@ -3,25 +3,13 @@
 Begin javascript code
 ==================================================
 -->
-<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css?r=<?php echo rand(1000, 9999); ?>" />
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqmodal.js"></script>
-<script type="text/javascript" src="<?php echo WP_INC_URL; ?>/js/jquery/suggest.js"></script>
 <script type="text/javascript">
 var menu_id;
 var add_or_edit;
-var auth = '<?php echo md5(AUTH_KEY); ?>';
 
 jQuery(function() {
-    jQuery("#menu_uri").suggest("<?php echo PODS_URL; ?>/ajax/menu.php", {
-        delay : 400,
-        minChars : 3,
-        onSelect : function() {
-            var val = this.value.split("||");
-            jQuery("#menu_id").val(val[1]);
-            jQuery("#menu_uri").val(val[0]);
-            jQuery("#menu_title").val(val[2]);
-        }
-    });
     jQuery(".btn").live("click", function() {
         menu_id = jQuery(this).parent("div").attr("mid");
         var classname = jQuery(this).attr("class").substr(4);
@@ -64,8 +52,8 @@ function addOrEditMenu() {
 function loadMenu() {
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/load.php",
-        data: "auth="+auth+"&action=menu&menu_id="+menu_id,
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=load_menu&id="+menu_id,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -89,8 +77,8 @@ function addMenu() {
     var menu_title = jQuery("#menu_title").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/add.php",
-        data: "auth="+auth+"&type=menu&parent_menu_id="+parent_menu_id+"&menu_uri="+menu_uri+"&menu_title="+encodeURIComponent(menu_title),
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=save_menu&parent_menu_id="+parent_menu_id+"&menu_uri="+menu_uri+"&menu_title="+encodeURIComponent(menu_title),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -110,8 +98,8 @@ function editMenu() {
     var menu_title = jQuery("#menu_title").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/edit.php",
-        data: "auth="+auth+"&action=editmenu&menu_id="+menu_id+"&menu_uri="+menu_uri+"&menu_title="+encodeURIComponent(menu_title),
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=save_menu&id="+menu_id+"&menu_uri="+menu_uri+"&menu_title="+encodeURIComponent(menu_title),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -128,8 +116,8 @@ function dropMenu() {
     if (confirm("Do you really want to drop this menu and all its children?")) {
         jQuery.ajax({
             type: "post",
-            url: "<?php echo PODS_URL; ?>/ajax/drop.php",
-            data: "auth="+auth+"&menu_id="+menu_id,
+            url: "<?php echo PODS_URL; ?>/ajax/api.php",
+            data: "action=drop_menu&id="+menu_id,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);

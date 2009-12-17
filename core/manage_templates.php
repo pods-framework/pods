@@ -34,8 +34,8 @@ jQuery(function() {
 function loadTemplate() {
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/load.php",
-        data: "auth="+auth+"&template_id="+template_id,
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=load_template&id="+template_id,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -53,8 +53,8 @@ function addTemplate() {
     var name = jQuery("#new_template").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/add.php",
-        data: "auth="+auth+"&type=template&name="+name,
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=save_template&name="+name,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -76,8 +76,8 @@ function editTemplate() {
     var code = jQuery("#template_code").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/edit.php",
-        data: "auth="+auth+"&action=edittemplate&template_id="+template_id+"&code="+encodeURIComponent(code),
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=save_template&id="+template_id+"&code="+encodeURIComponent(code),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -93,8 +93,8 @@ function dropTemplate() {
     if (confirm("Do you really want to drop this template?")) {
         jQuery.ajax({
             type: "post",
-            url: "<?php echo PODS_URL; ?>/ajax/drop.php",
-            data: "auth="+auth+"&template="+template_id,
+            url: "<?php echo PODS_URL; ?>/ajax/api.php",
+            data: "action=drop_template&id="+template_id,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);

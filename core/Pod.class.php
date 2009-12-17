@@ -19,6 +19,8 @@ class Pod
     var $rpp = 15;
     var $page;
 
+    var $helper_cache;
+
     function Pod($datatype = null, $id = null)
     {
         $this->id = pods_sanitize($id);
@@ -48,7 +50,6 @@ class Pod
     {
         if ($this->data = mysql_fetch_assoc($this->result))
         {
-            $this->data['type'] = $this->datatype;
             return $this->data;
         }
         return false;
@@ -231,7 +232,7 @@ class Pod
         {
             $result = pod_query("SELECT * FROM @wp_terms WHERE term_id IN ($tbl_row_ids) $orderby");
         }
-        // WP page or post
+        // WP page, post, or attachment
         elseif ('wp_page' == $table || 'wp_post' == $table || 'file' == $table)
         {
             $result = pod_query("SELECT * FROM @wp_posts WHERE ID IN ($tbl_row_ids) $orderby");
@@ -293,13 +294,26 @@ class Pod
     function pod_helper($helper, $value = null, $name = null)
     {
         $helper = mysql_real_escape_string(trim($helper));
-        $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name = '$helper' LIMIT 1");
-        if (0 < mysql_num_rows($result))
-        {
-            $phpcode = mysql_result($result, 0);
 
+        if (false === isset($this->helper_cache[$helper]))
+        {
+            $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name = '$helper' LIMIT 1");
+            if (0 < mysql_num_rows($result))
+            {
+                $this->helper_cache[$helper] = mysql_result($result, 0);
+            }
+            else
+            {
+                $this->helper_cache[$helper] = false;
+            }
+        }
+
+        $content = $this->helper_cache[$helper];
+
+        if (false !== $content)
+        {
             ob_start();
-            eval("?>$phpcode");
+            eval("?>$content");
             return ob_get_clean();
         }
     }
@@ -309,8 +323,13 @@ class Pod
     Get pod or category dropdown values
     ==================================================
     */
-    function get_dropdown_values($table = null, $field_name = null, $tbl_row_ids = null, $unique_vals = false, $pick_filter = null, $pick_orderby = null)
+    function get_dropdown_values($params)
     {
+        foreach ($params as $key => $val)
+        {
+            ${$key} = $val;
+        }
+
         $orderby = empty($pick_orderby) ? 'name ASC' : $pick_orderby;
 
         // Category dropdown
@@ -442,9 +461,11 @@ class Pod
         $limit = ($rows_per_page * ($page - 1)) . ', ' . $rows_per_page;
         $where = empty($where) ? '' : "AND $where";
         $this->rpp = $rows_per_page;
+        $join = '';
         $i = 0;
 
         // Handle search
+        $search = '';
         if (!empty($_GET['search']))
         {
             $val = mysql_real_escape_string(trim($_GET['search']));
@@ -696,7 +717,16 @@ class Pod
                         $unique_vals = implode(',', $unique_vals);
                     }
                 }
-                $this->data[$key] = $this->get_dropdown_values($table, null, $tbl_row_ids, $unique_vals, $field['pick_filter'], $field['pick_orderby']);
+
+                $params = array(
+                    'table' => $table,
+                    'field_name' => null,
+                    'tbl_row_ids' => $tbl_row_ids,
+                    'unique_vals' => $unique_vals,
+                    'pick_filter' => $field['pick_filter'],
+                    'pick_orderby' => $field['pick_orderby']
+                );
+                $this->data[$key] = $this->get_dropdown_values($params);
             }
             else
             {
@@ -779,12 +809,6 @@ class Pod
 
         if (empty($code))
         {
-            // TODO: remove backwards compatibility
-            if ('list' == $tpl || 'detail' == $tpl)
-            {
-                $tpl = $this->datatype . "_$tpl";
-            }
-
             $result = pod_query("SELECT code FROM @wp_pod_templates WHERE name = '$tpl' LIMIT 1");
             $row = mysql_fetch_assoc($result);
             $code = $row['code'];
@@ -821,9 +845,13 @@ class Pod
         $before = $after = '';
         if (false !== strpos($name, ','))
         {
-            list($name, $helper) = explode(',', $name);
+            list($name, $helper, $before, $after) = explode(',', $name);
         }
-        if ('detail_url' == $name)
+        if ('type' == $name)
+        {
+            return $this->datatype;
+        }
+        elseif ('detail_url' == $name)
         {
             return get_bloginfo('url') . '/' . preg_replace_callback("/({@(.*?)})/m", array($this, "magic_swap"), $this->detail_page);
         }

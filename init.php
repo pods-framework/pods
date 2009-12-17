@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS
 Plugin URI: http://pods.uproot.us/
 Description: The CMS Framework for WordPress.
-Version: 1.7.8
+Version: 1.7.9
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 178);
+define('PODS_VERSION', 179);
 define('PODS_URL', WP_PLUGIN_URL . '/pods');
 define('PODS_DIR', WP_PLUGIN_DIR . '/pods');
 define('WP_INC_URL', get_bloginfo('wpurl') . '/' . WPINC);
@@ -287,12 +287,11 @@ function pods_delete_attachment($postid)
 
 function pods_init()
 {
-    if ('' == session_id())
+    if (false === headers_sent())
     {
         session_start();
     }
     wp_enqueue_script('jquery');
-    wp_enqueue_script('swfupload');
 }
 
 function pod_page_exists()
@@ -335,23 +334,12 @@ function pod_page_exists()
     return false;
 }
 
-// Hook for admin menu
-add_action('admin_menu', 'pods_menu', 9999);
-
-// Hook for Pods branding
-add_action('wp_head', 'pods_meta', 0);
-
-// Hook for redirection
-add_action('template_redirect', 'pods_redirect');
-
-// Hook for session handling
 add_action('init', 'pods_init');
-
-// Hook for shortcode
-add_shortcode('pods', 'pods_shortcode');
-
-// Remove pod references from deleted attachments
+add_action('admin_menu', 'pods_menu', 9999);
+add_action('wp_head', 'pods_meta', 0);
+add_action('template_redirect', 'pods_redirect');
 add_action('delete_attachment', 'pods_delete_attachment');
+add_shortcode('pods', 'pods_shortcode');
 
 $pod_page_exists = pod_page_exists();
 

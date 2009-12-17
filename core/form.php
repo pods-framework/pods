@@ -6,10 +6,9 @@ $datatype = $this->datatype;
 if (1 == $form_count)
 {
 ?>
-<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css" />
-<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqmodal.js"></script>
+<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css?r=<?php echo rand(1000, 9999); ?>" />
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/date_input.js"></script>
-<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/nicEdit.js"></script>
+<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqmodal.js"></script>
 <script type="text/javascript">
 var active_file;
 
@@ -77,8 +76,8 @@ function saveForm(form_count) {
 
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/showform.php",
-        data: data.join("&"),
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=save_pod_item&"+data.join("&"),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -97,8 +96,8 @@ function fileBrowser() {
     var search = jQuery("#file_search").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/filetree.php",
-        data: "search="+encodeURIComponent(search),
+        url: "<?php echo PODS_URL; ?>/ajax/misc.php",
+        data: "action=browse_files&search="+encodeURIComponent(search),
         success: function(msg) {
             jQuery(".filebox").html(msg);
         }
@@ -117,7 +116,5 @@ function fileBrowser() {
 ?>
 
 <div class="pod_form form_<?php echo $datatype; ?> form_<?php echo $form_count; ?>">
-<?php
-$this->showForm($this->get_pod_id(), $public_columns, $label, $form_count);
-?>
+<?php $this->showForm($this->get_pod_id(), $public_columns, $label, $form_count); ?>
 </div>

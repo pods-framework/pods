@@ -35,8 +35,8 @@ jQuery(function() {
 function loadPage() {
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/load.php",
-        data: "auth="+auth+"&page_id="+page_id,
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=load_page&id="+page_id,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -60,8 +60,8 @@ function addPage() {
     var uri = jQuery("#new_page").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/add.php",
-        data: "auth="+auth+"&type=page&uri="+uri,
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=save_page&uri="+uri,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -86,8 +86,8 @@ function editPage() {
     var template = jQuery("#page_template").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/edit.php",
-        data: "auth="+auth+"&action=editpage&page_id="+page_id+"&page_title="+encodeURIComponent(title)+"&page_template="+encodeURIComponent(template)+"&phpcode="+encodeURIComponent(code)+"&precode="+encodeURIComponent(precode),
+        url: "<?php echo PODS_URL; ?>/ajax/api.php",
+        data: "action=save_page&id="+page_id+"&page_title="+encodeURIComponent(title)+"&page_template="+encodeURIComponent(template)+"&phpcode="+encodeURIComponent(code)+"&precode="+encodeURIComponent(precode),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -103,8 +103,8 @@ function dropPage() {
     if (confirm("Do you really want to drop this page?")) {
         jQuery.ajax({
             type: "post",
-            url: "<?php echo PODS_URL; ?>/ajax/drop.php",
-            data: "auth="+auth+"&page="+page_id,
+            url: "<?php echo PODS_URL; ?>/ajax/api.php",
+            data: "action=drop_page&id="+page_id,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);

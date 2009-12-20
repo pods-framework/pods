@@ -393,6 +393,7 @@ class Pod
             $sql = "SELECT * FROM `@wp_pod_tbl_$table` $where ORDER BY $orderby";
         }
 
+        $val = array();
         $result = pod_query($sql);
         while ($row = mysql_fetch_assoc($result))
         {

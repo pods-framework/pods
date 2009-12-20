@@ -456,7 +456,7 @@ class PodAPI
                 // Verify required fields
                 if (1 == $fields[$key]['required'])
                 {
-                    if (empty($val))
+                    if ('' == $val || null == $val)
                     {
                         die("Error: $label is empty.");
                     }

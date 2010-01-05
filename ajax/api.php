@@ -37,13 +37,13 @@ elseif ('save_helper' == $action && pods_access('manage_helpers'))
 {
     echo $api->save_helper($params);
 }
-elseif ('save_menu' == $action && pods_access('manage_menu'))
-{
-    echo $api->save_menu($params);
-}
 elseif ('save_roles' == $action && pods_access('manage_roles'))
 {
     echo $api->save_roles($params);
+}
+elseif ('save_menu_item' == $action && pods_access('manage_menu'))
+{
+    echo $api->save_menu_item($params);
 }
 elseif ('save_pod_item' == $action)
 {
@@ -75,9 +75,9 @@ elseif ('drop_helper' == $action && pods_access('manage_helpers'))
 {
     $api->drop_helper($params);
 }
-elseif ('drop_menu' == $action && pods_access('manage_menu'))
+elseif ('drop_menu_item' == $action && pods_access('manage_menu'))
 {
-    $api->drop_menu($params);
+    $api->drop_menu_item($params);
 }
 elseif ('drop_pod_item' == $action)
 {
@@ -114,9 +114,9 @@ elseif ('load_helper' == $action && pods_access('manage_helpers'))
     $out = $api->load_helper($params);
     echo json_encode($out);
 }
-elseif ('load_menu' == $action && pods_access('manage_menu'))
+elseif ('load_menu_item' == $action && pods_access('manage_menu'))
 {
-    $out = $api->load_menu($params);
+    $out = $api->load_menu_item($params);
     echo json_encode($out);
 }
 elseif ('load_pod_item' == $action)

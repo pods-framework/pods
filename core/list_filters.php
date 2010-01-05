@@ -22,8 +22,8 @@ if (!empty($filters))
         $row = mysql_fetch_assoc($result);
         if (!empty($row['pickval']))
         {
-            $rel_table = $row['pickval'];
-            $data = $this->get_dropdown_values($rel_table, $field_name);
+            $params = array('table' => $row['pickval'], 'field_name' => $field_name, 'unique_vals' => false);
+            $data = $this->get_dropdown_values($params);
 ?>
     <select name="<?php echo $field_name; ?>" class="filter <?php echo $field_name; ?>">
         <option value="">-- <?php echo ucwords(str_replace('_', ' ', $field_name)); ?> --</option>

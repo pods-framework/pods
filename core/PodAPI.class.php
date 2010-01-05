@@ -60,8 +60,8 @@ class PodAPI
             pod_query($sql, 'Duplicate pod name', 'Pod name already exists');
 
             $pod_id = pod_query("INSERT INTO @wp_pod_types (name) VALUES ('$name')", 'Cannot add new pod');
-            pod_query("CREATE TABLE `@wp_pod_tbl_$name` (id int unsigned auto_increment primary key, name varchar(128), body text)", 'Cannot add pod database table');
-            pod_query("INSERT INTO @wp_pod_fields (datatype, name, coltype, required, weight) VALUES ($pod_id, 'name', 'txt', 1, 0),($pod_id, 'body', 'desc', 0, 1)", 'Cannot add name and body columns');
+            pod_query("CREATE TABLE `@wp_pod_tbl_$name` (id int unsigned auto_increment primary key, name varchar(128), slug varchar(128)) DEFAULT CHARSET utf8", 'Cannot add pod database table');
+            pod_query("INSERT INTO @wp_pod_fields (datatype, name, label, comment, coltype, required, weight) VALUES ($pod_id, 'name', 'Name', '', 'txt', 1, 0),($pod_id, 'slug', 'Permalink', 'Leave blank to auto-generate', 'slug', 0, 1)");
             die("$pod_id"); // return as string
         }
         else
@@ -327,7 +327,7 @@ class PodAPI
     Add/edit a menu item
     ==================================================
     */
-    function save_menu($params)
+    function save_menu_item($params)
     {
         foreach ($params as $key => $val)
         {
@@ -376,9 +376,8 @@ class PodAPI
                 $roles[$key] = $tmp;
             }
         }
-        $roles = serialize($roles);
         delete_option('pods_roles');
-        add_option('pods_roles', $roles);
+        add_option('pods_roles', serialize($roles));
     }
 
     /*
@@ -718,7 +717,7 @@ class PodAPI
     Drop a menu item and its children
     ==================================================
     */
-    function drop_menu($params)
+    function drop_menu_item($params)
     {
         $id = $params['id'];
         $result = pod_query("SELECT lft, rgt, (rgt - lft + 1) AS width FROM @wp_pod_menu WHERE id = $id LIMIT 1");
@@ -850,7 +849,7 @@ class PodAPI
     Load a menu item
     ==================================================
     */
-    function load_menu($params)
+    function load_menu_item($params)
     {
         $params = (object) $params;
         $result = pod_query("SELECT uri, title FROM @wp_pod_menu WHERE id = $params->id LIMIT 1");

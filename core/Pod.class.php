@@ -625,6 +625,19 @@ class Pod
             $fields[$row['name']] = $row;
         }
 
+        // Re-order the fields if a public form
+        if (!empty($attributes))
+        {
+            $tmp = $fields;
+            $fields = array();
+            foreach ($attributes as $key => $val)
+            {
+                $fields[$key] = $tmp[$key];
+            }
+            unset($tmp);
+        }
+
+        // Edit an existing item
         if (!empty($pod_id))
         {
             $sql = "

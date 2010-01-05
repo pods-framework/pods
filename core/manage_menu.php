@@ -53,7 +53,7 @@ function loadMenu() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo PODS_URL; ?>/ajax/api.php",
-        data: "action=load_menu&id="+menu_id,
+        data: "action=load_menu_item&id="+menu_id,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -78,7 +78,7 @@ function addMenu() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo PODS_URL; ?>/ajax/api.php",
-        data: "action=save_menu&parent_menu_id="+parent_menu_id+"&menu_uri="+menu_uri+"&menu_title="+encodeURIComponent(menu_title),
+        data: "action=save_menu_item&parent_menu_id="+parent_menu_id+"&menu_uri="+menu_uri+"&menu_title="+encodeURIComponent(menu_title),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -99,7 +99,7 @@ function editMenu() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo PODS_URL; ?>/ajax/api.php",
-        data: "action=save_menu&id="+menu_id+"&menu_uri="+menu_uri+"&menu_title="+encodeURIComponent(menu_title),
+        data: "action=save_menu_item&id="+menu_id+"&menu_uri="+menu_uri+"&menu_title="+encodeURIComponent(menu_title),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -117,7 +117,7 @@ function dropMenu() {
         jQuery.ajax({
             type: "post",
             url: "<?php echo PODS_URL; ?>/ajax/api.php",
-            data: "action=drop_menu&id="+menu_id,
+            data: "action=drop_menu_item&id="+menu_id,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);

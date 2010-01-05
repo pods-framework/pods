@@ -138,12 +138,12 @@ ul.sortable li {
 
 #welcomeArea #logo {
     color: #fff;
-    height: 70px;
-    background: #333c49 url(images/header-logo.png) 0 5px no-repeat;
+    height: 64px;
+    background: #333c49 url(images/header-logo.png) 30px 10px no-repeat;
 }
 
 #welcomeArea #version {
-    padding: 44px 0 0 178px;
+    padding: 38px 0 0 180px;
 }
 
 #welcomeArea #info {

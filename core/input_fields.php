@@ -96,7 +96,7 @@ Textarea box (no WYSIWYG)
 elseif ('code' == $coltype)
 {
 ?>
-    <textarea class="form code <?php echo $name; ?>" id="code-<?php echo $name; ?>"><?php echo htmlentities($value); ?></textarea>
+    <textarea class="form code <?php echo $name; ?>" id="code-<?php echo $name; ?>"><?php echo htmlspecialchars($value); ?></textarea>
 <?php
 }
 

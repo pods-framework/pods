@@ -1,4 +1,13 @@
 <?php
+// Plugin hook
+do_action('pods_manage_content');
+
+if (false === apply_filters('pods_manage_content', true))
+{
+    return;
+}
+
+// Get all pod types
 $result = pod_query("SELECT id, name FROM @wp_pod_types ORDER BY name ASC");
 while ($row = mysql_fetch_assoc($result))
 {

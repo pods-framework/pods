@@ -90,8 +90,10 @@ ul.sortable li {
 #column_input_helper,
 #column_comment,
 #detail_page,
-#before_helpers,
-#after_helpers,
+#pre_save_helpers,
+#pre_drop_helpers,
+#post_save_helpers,
+#post_drop_helpers,
 #pod_label {
     width: 160px;
 }
@@ -124,7 +126,7 @@ ul.sortable li {
     width: 400px;
     padding: 10px;
     margin-top: 10px;
-    background: #fff359;
+    background: #fff;
     box-shadow: 5px 5px 5px #ccc;
     -moz-box-shadow: 5px 5px 5px #ccc;
     -webkit-box-shadow: 5px 5px 5px #ccc;

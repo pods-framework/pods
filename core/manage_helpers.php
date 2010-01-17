@@ -111,10 +111,12 @@ Helper popups
     <input type="text" id="new_helper" style="width:280px" />
     <input type="button" class="button" onclick="addHelper()" value="Add Helper" />
     <select id="helper_type">
-        <option value="display">Display (pre-output hook)</option>
+        <option value="display">Display (pre-output)</option>
         <option value="input">Input (alter input fields)</option>
-        <option value="before">Before (pre-save hook)</option>
-        <option value="after">After (post-save hook)</option>
+        <option value="pre_save">Pre-save</option>
+        <option value="pre_drop">Pre-drop</option>
+        <option value="post_save">Post-save</option>
+        <option value="post_drop">Post-drop</option>
     </select>
     <div>Ex: <strong>format_date</strong> or <strong>mp3_player</strong></div>
 </div>
@@ -151,8 +153,8 @@ if (isset($helpers))
 
     <div class="stickynote">
         <div><strong>Display Helpers</strong> allow you to format a column's value before it gets displayed. They can be invoked within Pod Templates (using Magic Tags), within Pod Pages (using the pod_helper function), or at the column-level.</div>
-        <div style="margin-top:10px"><strong>Before Helpers</strong> run right before Pod data is saved to the database. They are invoked at the Pod-level.</div>
-        <div style="margin-top:10px"><strong>After Helpers</strong> run right after Pod data is successfully saved to the database. They are invoked at the Pod-level.</div>
+        <div style="margin-top:10px"><strong>Pre-save Helpers</strong> run right before Pod data is saved to the database. They are invoked at the Pod-level.</div>
+        <div style="margin-top:10px"><strong>Post-save Helpers</strong> run right after Pod data is successfully saved to the database. They are invoked at the Pod-level.</div>
         <div style="margin-top:10px"><strong>Input Helpers</strong> allow you to override the appearance and functionality of an input form field. They are invoked at the column-level.</div>
     </div>
 </div>

@@ -127,29 +127,73 @@ Begin welcome area
 </div>
 
 <?php
+$hooks = apply_filters('pods_manage', false);
+
 $pods_manage_dir = WP_PLUGIN_DIR . '/pods/core/';
 
 if (pods_access('manage_pods'))
 {
-    include $pods_manage_dir . 'manage_pods.php';
+    if (empty($hooks['manage_pods']))
+    {
+        include $pods_manage_dir . 'manage_pods.php';
+    }
+    else
+    {
+        echo $hooks['manage_pods'];
+    }
 }
 if (pods_access('manage_templates'))
 {
-    include $pods_manage_dir . 'manage_templates.php';
+    if (empty($hooks['manage_template']))
+    {
+        include $pods_manage_dir . 'manage_templates.php';
+    }
+    else
+    {
+        echo $hooks['manage_templates'];
+    }
 }
 if (pods_access('manage_pod_pages'))
 {
-    include $pods_manage_dir . 'manage_pages.php';
+    if (empty($hooks['manage_pod_pages']))
+    {
+        include $pods_manage_dir . 'manage_pages.php';
+    }
+    else
+    {
+        echo $hooks['manage_pod_pages'];
+    }
 }
 if (pods_access('manage_helpers'))
 {
-    include $pods_manage_dir . 'manage_helpers.php';
+    if (empty($hooks['manage_helpers']))
+    {
+        include $pods_manage_dir . 'manage_helpers.php';
+    }
+    else
+    {
+        echo $hooks['manage_helpers'];
+    }
 }
 if (pods_access('manage_roles'))
 {
-    include $pods_manage_dir . 'manage_roles.php';
+    if (empty($hooks['manage_roles']))
+    {
+        include $pods_manage_dir . 'manage_roles.php';
+    }
+    else
+    {
+        echo $hooks['manage_roles'];
+    }
 }
 if (pods_access('manage_settings'))
 {
-    include $pods_manage_dir . 'manage_settings.php';
+    if (empty($hooks['manage_settings']))
+    {
+        include $pods_manage_dir . 'manage_settings.php';
+    }
+    else
+    {
+        echo $hooks['manage_settings'];
+    }
 }

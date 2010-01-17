@@ -8,9 +8,10 @@ $coltype = $field['coltype'];
 $input_helper = $field['input_helper'];
 $hidden = empty($field['hidden']) ? '' : ' hidden';
 $value = is_array($this->data[$name]) ? $this->data[$name] : stripslashes($this->data[$name]);
+$css_id = 'pods_form_' . $this->form_count . '_' . $name;
 ?>
     <div class="leftside <?php echo $name . $hidden; ?>">
-        <?php echo $label; ?>
+        <label for="<?php echo $css_id; ?>"><?php echo $label; ?></label>
 <?php
 if (!empty($comment))
 {
@@ -41,7 +42,7 @@ elseif ('bool' == $coltype)
 {
     $value = empty($value) ? '' : ' checked';
 ?>
-    <input type="checkbox" class="form bool <?php echo $name; ?>"<?php echo $value; ?> />
+    <input type="checkbox" class="form bool <?php echo $name; ?>" id="<?php echo $css_id; ?>"<?php echo $value; ?> />
 <?php
 }
 
@@ -54,7 +55,7 @@ elseif ('date' == $coltype)
 {
     $value = empty($value) ? date("Y-m-d H:i:s") : $value;
 ?>
-    <input type="text" class="form date <?php echo $name; ?>" value="<?php echo $value; ?>" />
+    <input type="text" class="form date <?php echo $name; ?>" id="<?php echo $css_id; ?>" value="<?php echo $value; ?>" />
 <?php
 }
 
@@ -66,7 +67,7 @@ Standard text box
 elseif ('num' == $coltype || 'txt' == $coltype || 'slug' == $coltype)
 {
 ?>
-    <input type="text" class="form <?php echo $coltype . ' ' . $name; ?>" value="<?php echo htmlspecialchars($value); ?>" />
+    <input type="text" class="form <?php echo $coltype . ' ' . $name; ?>" id="<?php echo $css_id; ?>" value="<?php echo htmlspecialchars($value); ?>" />
 <?php
 }
 
@@ -84,7 +85,7 @@ elseif ('desc' == $coltype)
 <?php
     }
 ?>
-    <textarea class="form desc <?php echo $name; ?>" id="desc-<?php echo $name; ?>"><?php echo $value; ?></textarea>
+    <textarea class="form desc <?php echo $name; ?>" id="<?php echo $css_id; ?>"><?php echo $value; ?></textarea>
 <?php
 }
 
@@ -96,7 +97,7 @@ Textarea box (no WYSIWYG)
 elseif ('code' == $coltype)
 {
 ?>
-    <textarea class="form code <?php echo $name; ?>" id="code-<?php echo $name; ?>"><?php echo htmlspecialchars($value); ?></textarea>
+    <textarea class="form code <?php echo $name; ?>" id="<?php echo $css_id; ?>"><?php echo htmlspecialchars($value); ?></textarea>
 <?php
 }
 
@@ -125,7 +126,7 @@ jQuery(function() {
         button_height: "24",
         button_text_top_padding: 3,
         button_image_url: "<?php echo WP_INC_URL; ?>/images/upload.png",
-        button_placeholder_id: "btn_<?php echo $name; ?>",
+        button_placeholder_id: "<?php echo $css_id; ?>",
         button_cursor: SWFUpload.CURSOR.HAND,
         button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT,
         upload_url: "<?php echo PODS_URL; ?>/ajax/misc.php",
@@ -162,7 +163,7 @@ jQuery(function() {
     });
 });
 </script>
-    <input type="button" id="btn_<?php echo $name; ?>" value="swfupload not loaded" />
+    <input type="button" id="<?php echo $css_id; ?>" value="swfupload not loaded" />
     <input type="button" class="button" value="Browse Server" onclick="active_file = '<?php echo $name; ?>'; fileBrowser()" />
     <div class="form file <?php echo $name; ?>">
 <?php
@@ -206,7 +207,7 @@ else
     if (1 == $field['multiple'])
     {
 ?>
-    <div class="form pick <?php echo $name; ?>">
+    <div class="form pick <?php echo $name; ?>" id="<?php echo $css_id; ?>">
 <?php
         if (!empty($value))
         {
@@ -225,7 +226,7 @@ else
     else
     {
 ?>
-    <select class="form pick1 <?php echo $name; ?>">
+    <select class="form pick1 <?php echo $name; ?>" id="<?php echo $css_id; ?>">
         <option value="">-- Select one --</option>
 <?php
         if (!empty($value))

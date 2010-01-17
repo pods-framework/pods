@@ -36,7 +36,7 @@ function podsExport() {
 
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/import_export.php",
+        url: "<?php echo PODS_URL; ?>/ajax/package.php",
         data: "action=export&"+data.join("&"),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -54,7 +54,7 @@ function podsImport(action) {
     var data = jQuery("#import_code").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/ajax/import_export.php",
+        url: "<?php echo PODS_URL; ?>/ajax/package.php",
         data: "action="+action+"&data="+encodeURIComponent(data),
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
@@ -92,7 +92,7 @@ Begin tabbed navigation
         <h3>Pods</h3>
         <div class="form pick pod" style="height:100px; margin-bottom:10px">
 <?php
-$result = pod_query("SELECT id, name FROM @wp_pod_types");
+$result = pod_query("SELECT id, name FROM @wp_pod_types ORDER BY name");
 while ($row = mysql_fetch_assoc($result))
 {
 ?>
@@ -107,7 +107,7 @@ while ($row = mysql_fetch_assoc($result))
         <h3>Templates</h3>
         <div class="form pick template" style="height:100px; margin-bottom:10px">
 <?php
-$result = pod_query("SELECT id, name FROM @wp_pod_templates");
+$result = pod_query("SELECT id, name FROM @wp_pod_templates ORDER BY name");
 while ($row = mysql_fetch_assoc($result))
 {
 ?>
@@ -122,7 +122,7 @@ while ($row = mysql_fetch_assoc($result))
         <h3>Pod Pages</h3>
         <div class="form pick podpage" style="height:100px; margin-bottom:10px">
 <?php
-$result = pod_query("SELECT id, uri FROM @wp_pod_pages");
+$result = pod_query("SELECT id, uri FROM @wp_pod_pages ORDER BY name");
 while ($row = mysql_fetch_assoc($result))
 {
 ?>
@@ -137,7 +137,7 @@ while ($row = mysql_fetch_assoc($result))
         <h3>Helpers</h3>
         <div class="form pick helper" style="height:100px">
 <?php
-$result = pod_query("SELECT id, name FROM @wp_pod_helpers");
+$result = pod_query("SELECT id, name FROM @wp_pod_helpers ORDER BY name");
 while ($row = mysql_fetch_assoc($result))
 {
 ?>

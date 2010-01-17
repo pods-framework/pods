@@ -45,22 +45,19 @@ class PodAPI
     */
     function save_pod($params)
     {
-        foreach ($params as $key => $val)
-        {
-            ${$key} = $val;
-        }
+        $params = (object) $params;
 
-        if (empty($datatype))
+        if (empty($params->datatype))
         {
-            if (empty($name))
+            if (empty($params->name))
             {
                 die('Error: Enter a pod name');
             }
-            $sql = "SELECT id FROM @wp_pod_types WHERE name = '$name' LIMIT 1";
+            $sql = "SELECT id FROM @wp_pod_types WHERE name = '$params->name' LIMIT 1";
             pod_query($sql, 'Duplicate pod name', 'Pod name already exists');
 
-            $pod_id = pod_query("INSERT INTO @wp_pod_types (name) VALUES ('$name')", 'Cannot add new pod');
-            pod_query("CREATE TABLE `@wp_pod_tbl_$name` (id int unsigned auto_increment primary key, name varchar(128), slug varchar(128)) DEFAULT CHARSET utf8", 'Cannot add pod database table');
+            $pod_id = pod_query("INSERT INTO @wp_pod_types (name) VALUES ('$params->name')", 'Cannot add new pod');
+            pod_query("CREATE TABLE `@wp_pod_tbl_$params->name` (id int unsigned auto_increment primary key, name varchar(128), slug varchar(128)) DEFAULT CHARSET utf8", 'Cannot add pod database table');
             pod_query("INSERT INTO @wp_pod_fields (datatype, name, label, comment, coltype, required, weight) VALUES ($pod_id, 'name', 'Name', '', 'txt', 1, 0),($pod_id, 'slug', 'Permalink', 'Leave blank to auto-generate', 'slug', 0, 1)");
             die("$pod_id"); // return as string
         }
@@ -70,20 +67,22 @@ class PodAPI
             UPDATE
                 @wp_pod_types
             SET
-                label = '$label',
-                is_toplevel = '$is_toplevel',
-                detail_page = '$detail_page',
-                before_helpers = '$before_helpers',
-                after_helpers = '$after_helpers'
+                label = '$params->label',
+                is_toplevel = '$params->is_toplevel',
+                detail_page = '$params->detail_page',
+                pre_save_helpers = '$params->pre_save_helpers',
+                pre_drop_helpers = '$params->pre_drop_helpers',
+                post_save_helpers = '$params->post_save_helpers',
+                post_drop_helpers = '$params->post_drop_helpers'
             WHERE
-                id = $datatype
+                id = $params->datatype
             LIMIT
                 1
             ";
             pod_query($sql, 'Cannot change Pod settings');
 
             $weight = 0;
-            $order = (false !== strpos($order, ',')) ? explode(',', $order) : array($order);
+            $order = (false !== strpos($params->order, ',')) ? explode(',', $params->order) : array($params->order);
             foreach ($order as $key => $field_id)
             {
                 pod_query("UPDATE @wp_pod_fields SET weight = '$weight' WHERE id = '$field_id' LIMIT 1", 'Cannot change column order');
@@ -238,27 +237,24 @@ class PodAPI
     */
     function save_template($params)
     {
-        foreach ($params as $key => $val)
-        {
-            ${$key} = $val;
-        }
+        $params = (object) $params;
 
-        if (empty($id))
+        if (empty($params->id))
         {
-            if (empty($name))
+            if (empty($params->name))
             {
                 die('Error: Enter a template name');
             }
 
-            $sql = "SELECT id FROM @wp_pod_templates WHERE name = '$name' LIMIT 1";
+            $sql = "SELECT id FROM @wp_pod_templates WHERE name = '$params->name' LIMIT 1";
             pod_query($sql, 'Cannot get Templates', 'Template by this name already exists');
-            $template_id = pod_query("INSERT INTO @wp_pod_templates (name, code) VALUES ('$name', '$code')", 'Cannot add new template');
+            $template_id = pod_query("INSERT INTO @wp_pod_templates (name, code) VALUES ('$params->name', '$params->code')", 'Cannot add new template');
 
             die("$template_id"); // return as string
         }
         else
         {
-            pod_query("UPDATE @wp_pod_templates SET code = '$code' WHERE id = $id LIMIT 1");
+            pod_query("UPDATE @wp_pod_templates SET code = '$params->code' WHERE id = $params->id LIMIT 1");
         }
     }
 
@@ -269,26 +265,23 @@ class PodAPI
     */
     function save_page($params)
     {
-        foreach ($params as $key => $val)
-        {
-            ${$key} = $val;
-        }
+        $params = (object) $params;
 
-        if (empty($id))
+        if (empty($params->id))
         {
-            if (empty($uri))
+            if (empty($params->uri))
             {
                 die('Error: Enter a page URI');
             }
 
-            $sql = "SELECT id FROM @wp_pod_pages WHERE uri = '$uri' LIMIT 1";
+            $sql = "SELECT id FROM @wp_pod_pages WHERE uri = '$params->uri' LIMIT 1";
             pod_query($sql, 'Cannot get Pod Pages', 'Page by this URI already exists');
-            $page_id = pod_query("INSERT INTO @wp_pod_pages (uri, phpcode) VALUES ('$uri', '$phpcode')", 'Cannot add new page');
+            $page_id = pod_query("INSERT INTO @wp_pod_pages (uri, phpcode) VALUES ('$params->uri', '$params->phpcode')", 'Cannot add new page');
             die("$page_id"); // return as string
         }
         else
         {
-            pod_query("UPDATE @wp_pod_pages SET title = '$page_title', page_template = '$page_template', phpcode = '$phpcode', precode = '$precode' WHERE id = $id LIMIT 1");
+            pod_query("UPDATE @wp_pod_pages SET title = '$params->page_title', page_template = '$params->page_template', phpcode = '$params->phpcode', precode = '$params->precode' WHERE id = $params->id LIMIT 1");
         }
     }
 
@@ -299,26 +292,23 @@ class PodAPI
     */
     function save_helper($params)
     {
-        foreach ($params as $key => $val)
-        {
-            ${$key} = $val;
-        }
+        $params = (object) $params;
 
-        if (empty($id))
+        if (empty($params->id))
         {
-            if (empty($name))
+            if (empty($params->name))
             {
                 die('Error: Enter a helper name');
             }
 
-            $sql = "SELECT id FROM @wp_pod_helpers WHERE name = '$name' LIMIT 1";
+            $sql = "SELECT id FROM @wp_pod_helpers WHERE name = '$params->name' LIMIT 1";
             pod_query($sql, 'Cannot get helpers', 'helper by this name already exists');
-            $helper_id = pod_query("INSERT INTO @wp_pod_helpers (name, helper_type, phpcode) VALUES ('$name', '$helper_type', '$phpcode')", 'Cannot add new helper');
+            $helper_id = pod_query("INSERT INTO @wp_pod_helpers (name, helper_type, phpcode) VALUES ('$params->name', '$params->helper_type', '$params->phpcode')", 'Cannot add new helper');
             die("$helper_id"); // return as string
         }
         else
         {
-            pod_query("UPDATE @wp_pod_helpers SET phpcode = '$phpcode' WHERE id = $id LIMIT 1");
+            pod_query("UPDATE @wp_pod_helpers SET phpcode = '$params->phpcode' WHERE id = $params->id LIMIT 1");
         }
     }
 
@@ -329,15 +319,12 @@ class PodAPI
     */
     function save_menu_item($params)
     {
-        foreach ($params as $key => $val)
-        {
-            ${$key} = $val;
-        }
+        $params = (object) $params;
 
-        if (empty($id))
+        if (empty($params->id))
         {
             // get the "rgt" value of the parent
-            $result = pod_query("SELECT rgt FROM @wp_pod_menu WHERE id = $parent_menu_id LIMIT 1");
+            $result = pod_query("SELECT rgt FROM @wp_pod_menu WHERE id = $params->parent_menu_id LIMIT 1");
             $row = mysql_fetch_assoc($result);
             $rgt = $row['rgt'];
 
@@ -350,13 +337,13 @@ class PodAPI
             // Add new item: "lft" = rgt, "rgt" = rgt + 1
             $lft = $rgt;
             $rgt = ($rgt + 1);
-            $menu_id = pod_query("INSERT INTO @wp_pod_menu (uri, title, lft, rgt) VALUES ('$menu_uri', '$menu_title', $lft, $rgt)");
+            $menu_id = pod_query("INSERT INTO @wp_pod_menu (uri, title, lft, rgt) VALUES ('$params->menu_uri', '$params->menu_title', $lft, $rgt)");
 
             die("$menu_id"); // return as string
         }
         else
         {
-            pod_query("UPDATE @wp_pod_menu SET uri = '$menu_uri', title = '$menu_title' WHERE id = $id LIMIT 1");
+            pod_query("UPDATE @wp_pod_menu SET uri = '$params->menu_uri', title = '$params->menu_title' WHERE id = $params->id LIMIT 1");
         }
     }
 
@@ -504,13 +491,16 @@ class PodAPI
             }
 
             // Get helper code
-            $result = pod_query("SELECT before_helpers, after_helpers FROM @wp_pod_types WHERE id = $datatype_id");
+            $result = pod_query("SELECT pre_save_helpers, post_save_helpers FROM @wp_pod_types WHERE id = $datatype_id");
             $row = mysql_fetch_assoc($result);
-            $before = str_replace(',', "','", $row['before_helpers']);
-            $after = str_replace(',', "','", $row['after_helpers']);
+            $pre_save_helpers = str_replace(',', "','", $row['pre_save_helpers']);
+            $post_save_helpers = str_replace(',', "','", $row['post_save_helpers']);
 
-            // Call any "before" helpers
-            $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name IN ('$before')");
+            // Plugin hook
+            do_action('pods_pre_save_pod_item');
+
+            // Call any "pre-save" helpers
+            $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name IN ('$pre_save_helpers')");
             while ($row = mysql_fetch_assoc($result))
             {
                 eval('?>' . $row['phpcode']);
@@ -609,8 +599,11 @@ class PodAPI
                 }
             }
 
-            // Call any "after" helpers
-            $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name IN ('$after')");
+            // Plugin hook
+            do_action('pods_post_save_pod_item');
+
+            // Call any "post-save" helpers
+            $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name IN ('$post_save_helpers')");
             while ($row = mysql_fetch_assoc($result))
             {
                 eval('?>' . $row['phpcode']);
@@ -739,7 +732,7 @@ class PodAPI
 
         $sql = "
         SELECT
-            p.tbl_row_id, t.name
+            p.tbl_row_id, t.id, t.name
         FROM
             @wp_pod p
         INNER JOIN
@@ -751,13 +744,40 @@ class PodAPI
         ";
         $result = pod_query($sql);
         $row = mysql_fetch_assoc($result);
+        $dt = $row['id'];
         $dtname = $row['name'];
         $tbl_row_id = $row['tbl_row_id'];
+
+        // Get helper code
+        $result = pod_query("SELECT pre_drop_helpers, post_drop_helpers FROM @wp_pod_types WHERE id = $dt");
+        $row = mysql_fetch_assoc($result);
+        $pre_drop_helpers = str_replace(',', "','", $row['pre_drop_helpers']);
+        $post_drop_helpers = str_replace(',', "','", $row['post_drop_helpers']);
+
+        // Plugin hook
+        do_action('pods_pre_drop_pod_item');
+
+        // Pre-drop helpers
+        $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name IN ('$pre_drop_helpers')");
+        while ($row = mysql_fetch_assoc($result))
+        {
+            eval('?>' . $row['phpcode']);
+        }
 
         pod_query("DELETE FROM `@wp_pod_tbl_$dtname` WHERE id = $tbl_row_id LIMIT 1");
         pod_query("UPDATE @wp_pod_rel SET sister_pod_id = NULL WHERE sister_pod_id = $pod_id");
         pod_query("DELETE FROM @wp_pod WHERE id = $pod_id LIMIT 1");
         pod_query("DELETE FROM @wp_pod_rel WHERE pod_id = $pod_id");
+
+        // Plugin hook
+        do_action('pods_post_drop_pod_item');
+
+        // Post-drop helpers
+        $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name IN ('$post_drop_helpers')");
+        while ($row = mysql_fetch_assoc($result))
+        {
+            eval('?>' . $row['phpcode']);
+        }
     }
 
     /*
@@ -791,8 +811,6 @@ class PodAPI
 
         // Combine the fields into the $module array
         $module['fields'] = $fields;
-
-        // Encode the array to JSON
         return $module;
     }
 
@@ -863,14 +881,9 @@ class PodAPI
     */
     function load_pod_item($params)
     {
-        foreach ($params as $key => $val)
-        {
-            ${$key} = $val;
-        }
-        $pod_id = (int) $pod_id;
-
-        $obj = new Pod($datatype);
-        return $obj->showform($pod_id, $public_columns);
+        $params = (object) $params;
+        $obj = new Pod($params->datatype);
+        return $obj->showform((int) $params->pod_id, $params->public_columns);
     }
 
     /*

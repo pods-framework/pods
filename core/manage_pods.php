@@ -109,13 +109,17 @@ function loadPod() {
                 var label = (null == json.label) ? "" : json.label;
                 var is_toplevel = parseInt(json.is_toplevel);
                 var detail_page = (null == json.detail_page) ? "" : json.detail_page;
-                var before_helpers = (null == json.before_helpers) ? "" : json.before_helpers;
-                var after_helpers = (null == json.after_helpers) ? "" : json.after_helpers;
+                var pre_save_helpers = (null == json.pre_save_helpers) ? "" : json.pre_save_helpers;
+                var pre_drop_helpers = (null == json.pre_drop_helpers) ? "" : json.pre_drop_helpers;
+                var post_save_helpers = (null == json.post_save_helpers) ? "" : json.post_save_helpers;
+                var post_drop_helpers = (null == json.post_drop_helpers) ? "" : json.post_drop_helpers;
                 jQuery("#pod_label").val(label);
                 jQuery("#is_toplevel").attr("checked", is_toplevel);
                 jQuery("#detail_page").val(detail_page);
-                jQuery("#list_before_helpers").html("");
-                jQuery("#list_after_helpers").html("");
+                jQuery("#list_pre_save_helpers").html("");
+                jQuery("#list_pre_drop_helpers").html("");
+                jQuery("#list_post_save_helpers").html("");
+                jQuery("#list_post_drop_helpers").html("");
 
                 // Build the column list
                 var html = "";
@@ -158,23 +162,43 @@ function loadPod() {
                 });
 
                 var html = "";
-                if ("" != before_helpers) {
-                    before_helpers = before_helpers.split(",");
-                    for (var i = 0; i < before_helpers.length; i++) {
-                        var val = before_helpers[i];
+                if ("" != pre_save_helpers) {
+                    pre_save_helpers = pre_save_helpers.split(",");
+                    for (var i = 0; i < pre_save_helpers.length; i++) {
+                        var val = pre_save_helpers[i];
                         html += '<div class="helper" id="'+val+'">'+val+' (<a onclick="jQuery(this).parent().remove()">drop</a>)</div>';
                     }
-                    jQuery("#list_before_helpers").html(html);
+                    jQuery("#list_pre_save_helpers").html(html);
                 }
 
                 var html = "";
-                if ("" != after_helpers) {
-                    after_helpers = after_helpers.split(",");
-                    for (var i = 0; i < after_helpers.length; i++) {
-                        var val = after_helpers[i];
+                if ("" != pre_drop_helpers) {
+                    pre_drop_helpers = pre_drop_helpers.split(",");
+                    for (var i = 0; i < pre_drop_helpers.length; i++) {
+                        var val = pre_drop_helpers[i];
                         html += '<div class="helper" id="'+val+'">'+val+' (<a onclick="jQuery(this).parent().remove()">drop</a>)</div>';
                     }
-                    jQuery("#list_after_helpers").html(html);
+                    jQuery("#list_pre_drop_helpers").html(html);
+                }
+
+                var html = "";
+                if ("" != post_save_helpers) {
+                    post_save_helpers = post_save_helpers.split(",");
+                    for (var i = 0; i < post_save_helpers.length; i++) {
+                        var val = post_save_helpers[i];
+                        html += '<div class="helper" id="'+val+'">'+val+' (<a onclick="jQuery(this).parent().remove()">drop</a>)</div>';
+                    }
+                    jQuery("#list_post_save_helpers").html(html);
+                }
+
+                var html = "";
+                if ("" != post_drop_helpers) {
+                    post_drop_helpers = post_drop_helpers.split(",");
+                    for (var i = 0; i < post_drop_helpers.length; i++) {
+                        var val = post_drop_helpers[i];
+                        html += '<div class="helper" id="'+val+'">'+val+' (<a onclick="jQuery(this).parent().remove()">drop</a>)</div>';
+                    }
+                    jQuery("#list_post_drop_helpers").html(html);
                 }
             }
         }
@@ -208,15 +232,25 @@ function editPod() {
     var label = jQuery("#pod_label").val();
     var is_toplevel = jQuery("#is_toplevel").is(":checked") ? 1 : 0;
     var detail_page = jQuery("#detail_page").val();
-    var before_helpers = "";
-    jQuery("#list_before_helpers .helper").each(function() {
+    var pre_save_helpers = "";
+    jQuery("#list_pre_save_helpers .helper").each(function() {
         var new_helper = jQuery(this).attr("id");
-        before_helpers += ("" == before_helpers) ? new_helper : "," + new_helper;
+        pre_save_helpers += ("" == pre_save_helpers) ? new_helper : "," + new_helper;
     });
-    var after_helpers = "";
-    jQuery("#list_after_helpers .helper").each(function() {
+    var pre_drop_helpers = "";
+    jQuery("#list_pre_drop_helpers .helper").each(function() {
         var new_helper = jQuery(this).attr("id");
-        after_helpers += ("" == after_helpers) ? new_helper : "," + new_helper;
+        pre_drop_helpers += ("" == pre_drop_helpers) ? new_helper : "," + new_helper;
+    });
+    var post_save_helpers = "";
+    jQuery("#list_post_save_helpers .helper").each(function() {
+        var new_helper = jQuery(this).attr("id");
+        post_save_helpers += ("" == post_save_helpers) ? new_helper : "," + new_helper;
+    });
+    var post_drop_helpers = "";
+    jQuery("#list_post_drop_helpers .helper").each(function() {
+        var new_helper = jQuery(this).attr("id");
+        post_drop_helpers += ("" == post_drop_helpers) ? new_helper : "," + new_helper;
     });
 
     var order = "";
@@ -228,7 +262,7 @@ function editPod() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo PODS_URL; ?>/ajax/api.php",
-        data: "action=save_pod&datatype="+dt+"&label="+label+"&is_toplevel="+is_toplevel+"&detail_page="+detail_page+"&before_helpers="+before_helpers+"&after_helpers="+after_helpers+"&order="+order,
+        data: "action=save_pod&datatype="+dt+"&label="+label+"&is_toplevel="+is_toplevel+"&detail_page="+detail_page+"&pre_save_helpers="+pre_save_helpers+"&pre_drop_helpers="+pre_drop_helpers+"&post_save_helpers="+post_save_helpers+"&post_drop_helpers="+post_drop_helpers+"&order="+order,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -466,12 +500,12 @@ if (isset($datatypes))
             <tr>
                 <td>Pre-save Helpers</td>
                 <td>
-                    <select id="before_helpers">
+                    <select id="pre_save_helpers">
                         <option value="">-- Select --</option>
 <?php
-if (isset($helper_types['before']))
+if (isset($helper_types['pre_save']))
 {
-    foreach ($helper_types['before'] as $key => $helper_name)
+    foreach ($helper_types['pre_save'] as $key => $helper_name)
     {
 ?>
                         <option value="<?php echo $helper_name; ?>"><?php echo $helper_name; ?></option>
@@ -480,19 +514,40 @@ if (isset($helper_types['before']))
 }
 ?>
                     </select>
-                    <input type="button" class="button" value="Add" onclick="addPodHelper('list_before_helpers', 'before_helpers')" />
-                    <div id="list_before_helpers"></div>
+                    <input type="button" class="button" value="Add" onclick="addPodHelper('list_pre_save_helpers', 'pre_save_helpers')" />
+                    <div id="list_pre_save_helpers"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>Pre-drop Helpers</td>
+                <td>
+                    <select id="pre_drop_helpers">
+                        <option value="">-- Select --</option>
+<?php
+if (isset($helper_types['pre_drop']))
+{
+    foreach ($helper_types['pre_drop'] as $key => $helper_name)
+    {
+?>
+                        <option value="<?php echo $helper_name; ?>"><?php echo $helper_name; ?></option>
+<?php
+    }
+}
+?>
+                    </select>
+                    <input type="button" class="button" value="Add" onclick="addPodHelper('list_pre_drop_helpers', 'pre_drop_helpers')" />
+                    <div id="list_pre_drop_helpers"></div>
                 </td>
             </tr>
             <tr>
                 <td>Post-save Helpers</td>
                 <td>
-                    <select id="after_helpers">
+                    <select id="post_save_helpers">
                         <option value="">-- Select --</option>
 <?php
-if (isset($helper_types['after']))
+if (isset($helper_types['post_save']))
 {
-    foreach ($helper_types['after'] as $key => $helper_name)
+    foreach ($helper_types['post_save'] as $key => $helper_name)
     {
 ?>
                         <option value="<?php echo $helper_name; ?>"><?php echo $helper_name; ?></option>
@@ -501,8 +556,29 @@ if (isset($helper_types['after']))
 }
 ?>
                     </select>
-                    <input type="button" class="button" value="Add" onclick="addPodHelper('list_after_helpers', 'after_helpers')" />
-                    <div id="list_after_helpers"></div>
+                    <input type="button" class="button" value="Add" onclick="addPodHelper('list_post_save_helpers', 'post_save_helpers')" />
+                    <div id="list_post_save_helpers"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>Post-drop Helpers</td>
+                <td>
+                    <select id="post_drop_helpers">
+                        <option value="">-- Select --</option>
+<?php
+if (isset($helper_types['post_drop']))
+{
+    foreach ($helper_types['post_drop'] as $key => $helper_name)
+    {
+?>
+                        <option value="<?php echo $helper_name; ?>"><?php echo $helper_name; ?></option>
+<?php
+    }
+}
+?>
+                    </select>
+                    <input type="button" class="button" value="Add" onclick="addPodHelper('list_post_drop_helpers', 'post_drop_helpers')" />
+                    <div id="list_post_drop_helpers"></div>
                 </td>
             </tr>
             <tr>

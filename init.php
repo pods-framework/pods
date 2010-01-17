@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS
 Plugin URI: http://pods.uproot.us/
 Description: The CMS Framework for WordPress.
-Version: 1.8.0
+Version: 1.8.1
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 180);
+define('PODS_VERSION', 181);
 define('PODS_URL', WP_PLUGIN_URL . '/pods');
 define('PODS_DIR', WP_PLUGIN_DIR . '/pods');
 define('WP_INC_URL', get_bloginfo('wpurl') . '/' . WPINC);
@@ -56,20 +56,20 @@ else
     add_option('pods_version', PODS_VERSION);
 }
 
-// JSON support for < PHP 5.2
+// JSON support
 if (!function_exists('json_encode'))
 {
-    include(PODS_DIR . '/ajax/JSON.php');
+    require_once(ABSPATH . '/wp-includes/js/tinymce/plugins/spellchecker/classes/utils/JSON.php');
 
     function json_encode($str)
     {
-        $json = new Services_JSON();
+        $json = new Moxiecode_JSON();
         return $json->encode($str);
     }
 
     function json_decode($str)
     {
-        $json = new Services_JSON();
+        $json = new Moxiecode_JSON();
         return $json->decode($str);
     }
 }
@@ -357,8 +357,11 @@ if (false !== $pod_page_exists)
         add_action('plugins_loaded', 'pods_precode');
     }
 
-    add_filter('redirect_canonical', 'pods_kill_redirect');
-    add_filter('wp_title', 'pods_title', 0, 3);
-    add_filter('status_header', 'pods_status_header');
-    add_action('wp', 'pods_silence_404');
+    if (404 != $pods)
+    {
+        add_filter('redirect_canonical', 'pods_kill_redirect');
+        add_filter('wp_title', 'pods_title', 0, 3);
+        add_filter('status_header', 'pods_status_header');
+        add_action('wp', 'pods_silence_404');
+    }
 }

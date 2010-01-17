@@ -16,6 +16,7 @@ class Pod
     var $datatype_id;
     var $total_rows;
     var $detail_page;
+    var $form_count = 0;
     var $rpp = 15;
     var $page;
 
@@ -594,10 +595,11 @@ class Pod
     Display HTML for all datatype fields
     ==================================================
     */
-    function showform($pod_id = null, $public_columns = null, $label = 'Save changes', $form_count = 1)
+    function showform($pod_id = null, $public_columns = null, $label = 'Save changes')
     {
         $datatype = $this->datatype;
         $datatype_id = $this->datatype_id;
+        $this->coltype_counter = array();
         $this->data['pod_id'] = $pod_id;
 
         $where = '';
@@ -761,10 +763,10 @@ class Pod
     <div>
     <input type="hidden" class="form num pod_id" value="<?php echo $pod_id; ?>" />
     <input type="hidden" class="form txt datatype" value="<?php echo $datatype; ?>" />
-    <input type="hidden" class="form txt form_count" value="<?php echo $form_count; ?>" />
-    <input type="hidden" class="form txt token" value="<?php echo pods_generate_key($datatype, $uri_hash, $public_columns, $form_count); ?>" />
+    <input type="hidden" class="form txt form_count" value="<?php echo $this->form_count; ?>" />
+    <input type="hidden" class="form txt token" value="<?php echo pods_generate_key($datatype, $uri_hash, $public_columns, $this->form_count); ?>" />
     <input type="hidden" class="form txt uri_hash" value="<?php echo $uri_hash; ?>" />
-    <input type="button" class="button" value="<?php echo $label; ?>" onclick="saveForm(<?php echo $form_count; ?>)" />
+    <input type="button" class="button" value="<?php echo $label; ?>" onclick="saveForm(<?php echo $this->form_count; ?>)" />
     </div>
 <?php
     }

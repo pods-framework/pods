@@ -145,5 +145,16 @@ if ($installed < 176)
     pod_query("UPDATE @wp_pod_fields SET coltype = 'txt' WHERE coltype = 'file'");
 }
 
+if ($installed < 181)
+{
+    pod_query("ALTER TABLE @wp_pod_rel ADD COLUMN weight SMALLINT unsigned AFTER tbl_row_id");
+    pod_query("ALTER TABLE @wp_pod_types CHANGE before_helpers pre_save_helpers TEXT");
+    pod_query("ALTER TABLE @wp_pod_types CHANGE after_helpers post_save_helpers TEXT");
+    pod_query("ALTER TABLE @wp_pod_types ADD COLUMN pre_drop_helpers TEXT AFTER pre_save_helpers");
+    pod_query("ALTER TABLE @wp_pod_types ADD COLUMN post_drop_helpers TEXT AFTER post_save_helpers");
+    pod_query("UPDATE @wp_pod_helpers SET helper_type = 'pre_save' WHERE helper_type = 'before'");
+    pod_query("UPDATE @wp_pod_helpers SET helper_type = 'post_save' WHERE helper_type = 'after'");
+}
+
 // Save this version
 update_option('pods_version', PODS_VERSION);

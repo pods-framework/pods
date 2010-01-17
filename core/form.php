@@ -1,9 +1,8 @@
 <?php
-global $form_count;
-$form_count = empty($form_count) ? 1 : $form_count + 1;
+$this->form_count++;
 $datatype = $this->datatype;
 
-if (1 == $form_count)
+if (1 == $this->form_count)
 {
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css?r=<?php echo rand(1000, 9999); ?>" />
@@ -38,7 +37,7 @@ jQuery(function() {
         new nicEditor(config).panelInstance(elements[i].id);
     }
 
-    jQuery("#pod_form input.date").date_input();
+    jQuery(".pod_form input.date").date_input();
     jQuery("#dialog").jqm();
 });
 
@@ -83,7 +82,7 @@ function saveForm(form_count) {
                 alert(msg);
             }
             else {
-                window.location = "";
+                window.location = "<?php echo $_SERVER['REQUEST_URI']; ?>";
             }
         }
     });
@@ -115,6 +114,6 @@ function fileBrowser() {
 }
 ?>
 
-<div class="pod_form form_<?php echo $datatype; ?> form_<?php echo $form_count; ?>">
-<?php $this->showForm($this->get_pod_id(), $public_columns, $label, $form_count); ?>
+<div class="pod_form form_<?php echo $datatype; ?> form_<?php echo $this->form_count; ?>">
+<?php $this->showForm($this->get_pod_id(), $public_columns, $label); ?>
 </div>

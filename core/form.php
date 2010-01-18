@@ -1,5 +1,7 @@
 <?php
-$this->form_count++;
+global $form_count;
+$form_count = empty($form_count) ? 1 : $form_count + 1;
+$this->form_count = $form_count;
 $datatype = $this->datatype;
 
 if (1 == $this->form_count)

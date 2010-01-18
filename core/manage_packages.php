@@ -122,7 +122,7 @@ while ($row = mysql_fetch_assoc($result))
         <h3>Pod Pages</h3>
         <div class="form pick podpage" style="height:100px; margin-bottom:10px">
 <?php
-$result = pod_query("SELECT id, uri FROM @wp_pod_pages ORDER BY name");
+$result = pod_query("SELECT id, uri FROM @wp_pod_pages ORDER BY uri");
 while ($row = mysql_fetch_assoc($result))
 {
 ?>

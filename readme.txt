@@ -23,7 +23,8 @@ Pod Pages are similar to WP Pages, but they include PHP and wildcard URL support
 Templates are used within Pod Pages, and are meant for separating presentation from logic as much as possible. Magic tags are used within templates to dynamically pull in a column's value: {@column_name}
 
 **It's all in the box.**
-* Package Manager - import + export pieces of your site
+
+* Package Manager - import & export pieces of your site
 * Menu Editor - organize your pages to generate sitemaps, navigation menus, and breadcrumbs
 * Roles - lightweight permissions system
 * API - access and modify the data programatically

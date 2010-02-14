@@ -212,7 +212,7 @@ function pods_access($priv)
 Build the navigation array
 ==================================================
 */
-function build_nav_array($uri = '/', $max_depth = 1)
+function build_nav_array($uri = '<root>', $max_depth = 1)
 {
     $having = (0 < $max_depth) ? "HAVING depth <= $max_depth" : '';
 
@@ -264,7 +264,7 @@ function build_nav_array($uri = '/', $max_depth = 1)
 Build the HTML navigation
 ==================================================
 */
-function pods_navigation($uri = '/', $max_depth = 1)
+function pods_navigation($uri = '<root>', $max_depth = 1)
 {
     $last_depth = -1;
 
@@ -272,7 +272,7 @@ function pods_navigation($uri = '/', $max_depth = 1)
     {
         foreach ($menu as $key => $val)
         {
-            $uri = $val['uri'];
+            $uri = get_bloginfo('url') . '/' . $val['uri'];
             $title = $val['title'];
             $depth = $val['depth'];
             $diff = ($depth - $last_depth);

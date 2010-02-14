@@ -164,18 +164,24 @@ Begin popups
 Begin edit area
 ==================================================
 -->
-<div id="menuArea" class="area">
-    <h2 class="title" id="editTitle">Menu Editor</h2>
-    <div class="tips">Define your site's menu structure, and display it using pods_navigation($uri, $max_depth)</div>
+<div class="wrap">
+    <div id="icon-edit" class="icon32"><br /></div>
+    <h2>Menu Editor</h2>
+    <table class="widefat">
+        <thead><tr><th></th></tr></thead>
+        <tfoot><tr><th></th></tr></tfoot>
+        <tbody>
+            <tr>
+                <td>
 <?php
 $last_depth = -1;
-if ($menu = build_nav_array('/', 0))
+if ($menu = build_nav_array('<root>', 0))
 {
     foreach ($menu as $key => $val)
     {
         $id = $val['id'];
         $uri = $val['uri'];
-        $title = $val['title'];
+        $title = htmlspecialchars($val['title']);
         $depth = $val['depth'];
         $diff = ($depth - $last_depth);
         $last_depth = $depth;
@@ -202,5 +208,8 @@ if ($menu = build_nav_array('/', 0))
     }
 }
 ?>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>
-

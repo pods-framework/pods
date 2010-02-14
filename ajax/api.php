@@ -41,6 +41,10 @@ elseif ('save_roles' == $action && pods_access('manage_roles'))
 {
     echo $api->save_roles($params);
 }
+elseif ('save_menu' == $action && pods_access('manage_menu'))
+{
+    echo $api->save_menu($params);
+}
 elseif ('save_menu_item' == $action && pods_access('manage_menu'))
 {
     echo $api->save_menu_item($params);

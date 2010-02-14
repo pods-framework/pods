@@ -232,6 +232,10 @@ ul.sortable li {
     border-bottom: 1px solid #E3E3E3;
 }
 
+#editTable .btn_save {
+    display: none;
+}
+
 .filebox {
     height: 240px;
     margin: 10px 0 0 0;

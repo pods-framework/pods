@@ -10,15 +10,18 @@ Pods is a full-featured yet lightweight CMS framework for WordPress.
 
 == Description ==
 
-**WordPress Evolved**
+**WordPress Evolved.**
+
 Pods is a CMS framework for WordPress.
 It's a plugin that sits on top of WordPress, allowing you to add and display your own content types. 
 
 **Relate content to other content.**
+
 When creating a new content type, you can add relationship, or PICK, columns. This column will build a dropdown containing items from the related table, allowing you to select one or more.
 In other words, you can relate an item from one pod to items in another pod, or even relate to WordPress items (users, pages, posts).
 
 **Show your new content with style.**
+
 Pod Pages are similar to WP Pages, but they include PHP and wildcard URL support. For example, the Pod Page events/* will handle all URLs beginning with "events/", unless a more specific Pod Page is found.
 Templates are used within Pod Pages, and are meant for separating presentation from logic as much as possible. Magic tags are used within templates to dynamically pull in a column's value: {@column_name}
 

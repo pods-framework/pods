@@ -8,6 +8,7 @@ CREATE TABLE wp_pod (
     name VARCHAR(128),
     created DATETIME,
     modified TIMESTAMP,
+    author_id INT unsigned,
     INDEX datatype_idx (datatype)
 ) DEFAULT CHARSET utf8;
 
@@ -101,7 +102,7 @@ CREATE TABLE wp_pod_tbl_state (
     abbrev CHAR(2)
 ) DEFAULT CHARSET utf8;
 
-INSERT INTO wp_pod_menu (uri, title, lft, rgt) VALUES ('/', 'Home', 1, 2);
+INSERT INTO wp_pod_menu (uri, title, lft, rgt) VALUES ('<root>', '<root>', 1, 2);
 
 INSERT INTO wp_pod_types (name, label) VALUES ('state','State');
 

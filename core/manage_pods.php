@@ -490,7 +490,7 @@ if (isset($datatypes))
                 <td><input type="checkbox" id="is_toplevel" /></td>
             </tr>
             <tr>
-                <td>Menu Label</td>
+                <td>Pod Label</td>
                 <td><input type="text" id="pod_label" value="" /></td>
             </tr>
             <tr>
@@ -636,26 +636,8 @@ while ($row = mysql_fetch_array($result))
 <?php
 }
 ?>
-                        <option value="" style="font-weight:bold; font-style:italic">-- Category --</option>
-<?php
-// Category dropdown list
-$sql = "
-SELECT DISTINCT
-    t.term_id AS id, t.name
-FROM
-    @wp_term_taxonomy tx
-INNER JOIN
-    @wp_terms t ON t.term_id = tx.parent
-";
-$result = pod_query($sql);
-while ($row = mysql_fetch_assoc($result))
-{
-?>
-                        <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
-<?php
-}
-?>
                         <option value="" style="font-weight:bold; font-style:italic">-- WordPress --</option>
+                        <option value="wp_taxonomy">WP Taxonomy</option>
                         <option value="wp_page">WP Page</option>
                         <option value="wp_post">WP Post</option>
                         <option value="wp_user">WP User</option>

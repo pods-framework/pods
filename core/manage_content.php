@@ -34,7 +34,6 @@ Begin javascript code
 ==================================================
 -->
 <link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css?r=<?php echo rand(1000, 9999); ?>" />
-<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/date_input.js"></script>
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqmodal.js"></script>
 <script type="text/javascript">
 var datatype;
@@ -42,16 +41,9 @@ var active_file;
 var add_or_edit = '<?php echo $add_or_edit; ?>';
 
 jQuery(function() {
-    jQuery(".navTab").click(function() {
-        jQuery(".navTab").removeClass("active");
-        jQuery(this).addClass("active");
-        var activeArea = jQuery(this).attr("rel");
-        jQuery(".area").hide();
-        jQuery("#"+activeArea).show();
-    });
     if ('add' == add_or_edit) {
-        jQuery(".navTab").click();
-        jQuery("#editTitle").html("Add new <?php echo $dtname; ?>");
+        jQuery(".area").hide();
+        jQuery("#editArea").show();
     }
 
     jQuery(".file .btn.dropme").live("click", function() {
@@ -65,13 +57,13 @@ jQuery(function() {
         jQuery("#dialog").jqmHide();
     });
 
-    jQuery("#browseTable tr:odd").addClass("zebra");
+    jQuery("#browseArea tr:even").addClass("alternate");
     jQuery("#dialog").jqm();
 });
 
 function editItem(datatype, pod_id) {
-    jQuery(".navTab").click();
-    jQuery("#editTitle").html("Edit "+datatype);
+    jQuery(".area").hide();
+    jQuery("#editArea").show();
     showform(datatype, pod_id);
 }
 
@@ -86,8 +78,8 @@ function dropItem(pod_id) {
                     alert(msg);
                 }
                 else {
-                    jQuery("#browseTable tr#row"+pod_id).css("background", "red");
-                    jQuery("#browseTable tr#row"+pod_id).fadeOut("slow");
+                    jQuery("#browseArea tr#row"+pod_id).css("background", "red");
+                    jQuery("#browseArea tr#row"+pod_id).fadeOut("slow");
                 }
             }
         });
@@ -144,9 +136,8 @@ function saveForm() {
 }
 
 function showform(dt, pod_id) {
-    if ("" == dt) {
-        return false;
-    }
+    jQuery(".pod_form").hide();
+
     datatype = dt;
     jQuery(".option").unbind("click");
     jQuery.ajax({
@@ -158,9 +149,8 @@ function showform(dt, pod_id) {
                 alert(msg);
             }
             else {
-                jQuery(".pod_form").hide();
                 jQuery(".pod_form").html(msg);
-                jQuery(".pod_form").show();
+                jQuery(".pod_form").slideToggle();
                 jQuery(".option").click(function() {
                     jQuery(this).toggleClass("active");
                 });
@@ -203,21 +193,9 @@ function fileBrowser() {
 
 <!--
 ==================================================
-Begin tabbed navigation
-==================================================
--->
-<div id="nav">
-    <div class="navTab active" rel="browseArea"><a href="javascript:;">Browse</a></div>
-    <div class="navTab" rel="editArea"><a href="javascript:;">Edit</a></div>
-    <div class="clear"><!--clear--></div>
-</div>
-
-<!--
-==================================================
 Begin browse area
 ==================================================
 -->
-<div id="browseArea" class="area">
 <?php
 $Record = new Pod();
 $Record->page = empty($_GET['pg']) ? 1 : $_GET['pg'];
@@ -228,12 +206,12 @@ $where[] = 1;
 
 if (!empty($dtname))
 {
-    $where[] = "t.name = '" . mysql_real_escape_string(trim($dtname)) . "'";
+    $where[] = "t.name = '" . pods_sanitize($dtname) . "'";
 }
 
 if (!empty($_GET['keywords']))
 {
-    $where[] = "p.name LIKE '%" . mysql_real_escape_string(trim($_GET['keywords'])) . "%'";
+    $where[] = "p.name LIKE '%" . pods_sanitize(pods_url_variable('keywords', 'get')) . "%'";
 }
 
 $orderby = 'modified desc';
@@ -245,7 +223,7 @@ foreach ($_GET as $key => $val)
     }
     else
     {
-        $orderby = $_GET[$key];
+        $orderby = pods_url_variable($key, 'get');
     }
 }
 
@@ -254,7 +232,7 @@ $where = implode(' AND ', $where);
 $sql = "
 SELECT
     SQL_CALC_FOUND_ROWS
-    p.id, p.name, p.datatype, t.name AS dtname, p.modified
+    p.id, p.name, p.datatype, t.name AS dtname, p.created, p.modified
 FROM
     @wp_pod p
 INNER JOIN
@@ -267,101 +245,108 @@ LIMIT
     $limit
 ";
 $result = pod_query($sql);
-
 $Record->total_rows = pod_query("SELECT FOUND_ROWS()");
 ?>
-    <div id="filterForm">
-        <form method="get">
-<?php
-if ('pods-browse' == $_GET['page'])
-{
-?>
-            <select class="pick_module" name="pod">
-                <option value="">-- All pods --</option>
+<div class="wrap">
+    <div id="icon-edit" class="icon32"><br /></div>
+    <h2>Browse Content</h2>
+
+    <div id="browseArea" class="area">
+        <div class="tablenav">
+            <form method="get">
+                <select class="pick_module" name="pod">
+                    <option value="">-- All Pods --</option>
 <?php
     foreach ($datatypes as $key => $name)
     {
         $selected = ($name == $dtname) ? ' selected' : '';
 ?>
-                <option value="<?php echo $name; ?>"<?php echo $selected; ?>><?php echo $name; ?></option>
+                    <option value="<?php echo $name; ?>"<?php echo $selected; ?>><?php echo $name; ?></option>
 <?php
     }
 ?>
-            </select>
-<?php
-}
-?>
-            <input type="text" id="column_name" name="keywords" />
-            <input type="hidden" name="page" value="<?php echo $_GET['page']; ?>" />
-            <input type="button" class="button" value="Narrow results" onclick="this.form.submit()" />
-        </form>
-    </div>
-    <div class="clear"><!--clear--></div>
-<?php
-/*
-==================================================
-Listing
-==================================================
-*/
-$get_vals = implode('&', $get_vals);
-$order = array('name' => 'name', 'dtname' => 'dtname', 'modified' => 'modified');
-if (!empty($orderby))
-{
-    if ('desc' != substr($orderby, -4))
-    {
-        $order[$orderby] = "$orderby+desc";
-    }
-}
-?>
-    <table id="browseTable" cellpadding="0" cellspacing="0">
-        <tr>
-            <th></th>
-            <th><a href="?<?php echo $get_vals . '&orderby=' . $order['name']; ?>">Name</a></th>
-            <th><a href="?<?php echo $get_vals . '&orderby=' . $order['dtname']; ?>">Pod</a></th>
-            <th><a href="?<?php echo $get_vals . '&orderby=' . $order['modified']; ?>">Modified</a></th>
-            <th></th>
-        </tr>
+                </select>
+                <input type="text" name="keywords" value="<?php echo pods_url_variable('keywords', 'get'); ?>" />
+                <input type="hidden" name="page" value="<?php echo pods_url_variable('page', 'get'); ?>" />
+                <input type="submit" class="button" value="Filter" />
+            </form>
+        </div>
+
+        <table class="widefat">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Pod</th>
+                    <th width="100">Date</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>Name</th>
+                    <th>Pod</th>
+                    <th>Date</th>
+                </tr>
+            </tfoot>
+            <tbody>
 <?php
 while ($row = mysql_fetch_assoc($result))
 {
+    $date_desc = ($row['created'] != $row['modified']) ? 'Updated' : 'Added';
 ?>
-        <tr id="row<?php echo $row['id']; ?>">
-            <td width="20">
-                <div class="btn editme" onclick="editItem('<?php echo $row['dtname']; ?>', <?php echo $row['id']; ?>)"></div>
-            </td>
-            <td><?php echo htmlspecialchars($row['name']); ?></td>
-            <td><?php echo $datatypes[$row['datatype']]; ?></td>
-            <td><?php echo date("m/d/Y g:i A", strtotime($row['modified'])); ?></td>
-            <td width="20"><div class="btn dropme" onclick="dropItem(<?php echo $row['id']; ?>)"></div></td>
-        </tr>
+                <tr id="row<?php echo $row['id']; ?>">
+                    <td>
+                        <a class="row-title" href="#" onclick="editItem('<?php echo $row['dtname']; ?>',<?php echo $row['id']; ?>)"><?php echo htmlspecialchars($row['name']); ?></a>
+                        <div class="row-actions">
+                            <span><a href="#" onclick="editItem('<?php echo $row['dtname']; ?>',<?php echo $row['id']; ?>)">Quick Edit</a></span> |
+                            <span><a href="javascript:;" onclick="dropItem(<?php echo $row['id']; ?>)">Delete</a></span>
+                        </div>
+                    </td>
+                    <td><?php echo $datatypes[$row['datatype']]; ?></td>
+                    <td><?php echo date("Y/m/d", strtotime($row['modified'])); ?><div><?php echo $date_desc; ?></div></td>
+                </tr>
 <?php
 }
 ?>
-    </table>
+            </tbody>
+        </table>
+        <div class="tablenav">
+            <div class="tablenav-pages">
+                <?php echo $Record->getPagination(); ?>
+            </div>
+        </div>
+    </div>
 
-    <?php echo $Record->getPagination(); ?>
-
-    <div class="clear"><!--clear--></div>
-</div>
-
-<!--
-==================================================
-Begin edit area
-==================================================
--->
-<div id="editArea" class="area hidden">
-    <div id="icon-plugins" class="icon32" style="margin:0 10px 0 0"><br /></div>
-    <h2 class="title" id="editTitle">Please select an item</h2>
-    <div class="clear"><!--clear--></div>
-
-    <div class="pod_form">
+    <!--
+    ==================================================
+    Begin edit area
+    ==================================================
+    -->
+    <div id="editArea" class="area hidden">
+        <div class="tablenav">
+            <input type="button" class="button" value="Back to List" onclick="jQuery('.area').hide(); jQuery('#browseArea').show()" />
+        </div>
+        <table id="editTable" class="widefat">
+            <thead><tr><th></th></tr></thead>
+            <tfoot><tr><th></th></tr></tfoot>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="pod_form">
 <?php
 if ('add' == $add_or_edit)
 {
 ?>
-        <script type="text/javascript">showform('<?php echo $dtname; ?>')</script>
+                            <script type="text/javascript">showform('<?php echo $dtname; ?>')</script>
 <?php
 }
 ?>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="tablenav">
+            <input type="button" onclick="saveForm(0)" value="Save changes" class="button" />
+        </div>
     </div>
 </div>

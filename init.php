@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS
 Plugin URI: http://pods.uproot.us/
 Description: The CMS Framework for WordPress.
-Version: 1.8.1
+Version: 1.8.2
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,7 +23,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 181);
+define('PODS_VERSION', 182);
+define('PODS_VERSION_FULL', substr(PODS_VERSION, 0, 1) . '.' . substr(PODS_VERSION, 1, 1) . '.' . substr(PODS_VERSION, 2, 1));
 define('PODS_URL', WP_PLUGIN_URL . '/pods');
 define('PODS_DIR', WP_PLUGIN_DIR . '/pods');
 define('WP_INC_URL', get_bloginfo('wpurl') . '/' . WPINC);
@@ -34,8 +35,9 @@ $pods_roles = unserialize(get_option('pods_roles'));
 require_once PODS_DIR . '/core/functions.php';
 require_once PODS_DIR . '/core/Pod.class.php';
 require_once PODS_DIR . '/core/PodAPI.class.php';
+//require_once PODS_DIR . '/core/PodCache.class.php';
 
-// Get the installed version
+// Upgrade if necessary
 if ($installed = (int) get_option('pods_version'))
 {
     if ($installed < PODS_VERSION)
@@ -144,10 +146,11 @@ function pods_menu()
         foreach ($submenu as $item)
         {
             $name = $item['name'];
+            $label = empty($item['label']) ? $name : $item['label'];
 
             if (pods_access("pod_$name"))
             {
-                add_submenu_page('pods', "Add $name", "Add $name", 'read', "pod-$name", 'pods_content_page');
+                add_submenu_page('pods', "Add $label", "Add $label", 'read', "pod-$name", 'pods_content_page');
             }
         }
     }
@@ -177,7 +180,7 @@ function pods_menu_page()
 function pods_meta()
 {
 ?>
-<meta name="CMS" content="Pods <?php echo implode('.', str_split(PODS_VERSION)); ?>" />
+<meta name="CMS" content="Pods <?php echo PODS_VERSION_FULL; ?>" />
 <?php
 }
 
@@ -191,7 +194,7 @@ function pods_title($title, $sep, $seplocation)
     {
         if (is_object($pods))
         {
-            $page_title = preg_replace_callback("/({@(.*?)})/m", array($pods, "magic_swap"), $page_title);
+            $page_title = preg_replace_callback("/({@(.*?)})/m", array($pods, "parse_magic_tags"), $page_title);
         }
         $title = $page_title;
     }
@@ -247,7 +250,7 @@ function pods_redirect()
 
 function pods_status_header()
 {
-    return 'HTTP/1.1 200 OK';
+    return $_SERVER['SERVER_PROTOCOL'] . ' 200 OK';
 }
 
 function pods_silence_404()

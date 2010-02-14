@@ -8,7 +8,7 @@ $coltype = $field['coltype'];
 $input_helper = $field['input_helper'];
 $hidden = empty($field['hidden']) ? '' : ' hidden';
 $value = is_array($this->data[$name]) ? $this->data[$name] : stripslashes($this->data[$name]);
-$css_id = 'pods_form_' . $this->form_count . '_' . $name;
+$css_id = 'pods_form' . $this->form_count . '_' . $name;
 ?>
     <div class="leftside <?php echo $name . $hidden; ?>">
         <label for="<?php echo $css_id; ?>"><?php echo $label; ?></label>
@@ -53,6 +53,12 @@ Date picker
 */
 elseif ('date' == $coltype)
 {
+    if (empty($coltype_exists[$coltype]))
+    {
+?>
+<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/date_input.js"></script>
+<?php
+    }
     $value = empty($value) ? date("Y-m-d H:i:s") : $value;
 ?>
     <input type="text" class="form date <?php echo $name; ?>" id="<?php echo $css_id; ?>" value="<?php echo $value; ?>" />
@@ -78,7 +84,7 @@ Textarea box
 */
 elseif ('desc' == $coltype)
 {
-    if (false === isset($coltype_counter[$coltype]))
+    if (empty($coltype_exists[$coltype]))
     {
 ?>
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/nicEdit.js"></script>
@@ -110,7 +116,7 @@ elseif ('file' == $coltype)
 {
     require_once(realpath(ABSPATH . '/wp-admin/includes/template.php'));
 
-    if (false === isset($coltype_exists[$coltype]))
+    if (empty($coltype_exists[$coltype]))
     {
 ?>
 <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/swfupload/swfupload.js'; ?>"></script>

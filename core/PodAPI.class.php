@@ -49,6 +49,7 @@ class PodAPI
 
         if (empty($params->datatype))
         {
+            $params->name = pods_clean_name($params->name);
             if (empty($params->name))
             {
                 die('Error: Enter a pod name');
@@ -314,6 +315,18 @@ class PodAPI
 
     /*
     ==================================================
+    Modify the entire menu structure (ordering, etc)
+    ==================================================
+    */
+    function save_menu($params)
+    {
+        $params = (object) $params;
+
+        
+    }
+
+    /*
+    ==================================================
     Add/edit a menu item
     ==================================================
     */
@@ -379,11 +392,6 @@ class PodAPI
             ${$key} = $val;
         }
 
-        if (!pods_validate_key($token, $uri_hash, $datatype, $form_count))
-        {
-            die("Error: The form has expired.");
-        }
-
         if ($datatype)
         {
             // Get array of datatypes
@@ -434,8 +442,8 @@ class PodAPI
             // Loop through $active_columns, separating table data from PICK/file data
             foreach ($active_columns as $key)
             {
+                $val = $$key;
                 $type = $fields[$key]['coltype'];
-                $val = mysql_real_escape_string(stripslashes(trim($_POST[$key])));
                 $label = $fields[$key]['label'];
                 $label = empty($label) ? $key : $label;
 
@@ -472,7 +480,7 @@ class PodAPI
                 // Verify slug columns
                 if ('slug' == $type)
                 {
-                    $slug_val = empty($_POST[$key]) ? $_POST['name'] : $_POST[$key];
+                    $slug_val = empty($$key) ? $name : $$key;
                     $val = pods_unique_slug($slug_val, $key, $datatype, $datatype_id, $pod_id);
                 }
 
@@ -527,8 +535,7 @@ class PodAPI
             $set_data = implode(',', $set_data);
 
             // Get the item name
-            $name = stripslashes($_POST['name']);
-            $name = mysql_real_escape_string(trim($name));
+            $name = mysql_real_escape_string(trim(stripslashes($name)));
 
             // Insert table row
             pod_query("UPDATE `@wp_pod_tbl_$datatype` SET $set_data WHERE id = $tbl_row_id LIMIT 1");
@@ -583,6 +590,7 @@ class PodAPI
                 pod_query("DELETE FROM @wp_pod_rel WHERE pod_id = $pod_id AND field_id = $field_id", 'Cannot drop relationships');
 
                 // Add rel values
+                $rel_weight = 0;
                 foreach ($rel_ids as $rel_id)
                 {
                     $sister_pod_id = 0;
@@ -592,11 +600,12 @@ class PodAPI
                         if (0 < mysql_num_rows($result))
                         {
                             $sister_pod_id = mysql_result($result, 0);
-                            pod_query("INSERT INTO @wp_pod_rel (pod_id, sister_pod_id, field_id, tbl_row_id) VALUES ($sister_pod_id, $pod_id, $sister_field_id, $tbl_row_id)", 'Cannot add sister relationships');
+                            pod_query("INSERT INTO @wp_pod_rel (pod_id, sister_pod_id, field_id, tbl_row_id, weight) VALUES ($sister_pod_id, $pod_id, $sister_field_id, $tbl_row_id, $rel_weight)", 'Cannot add sister relationships');
                         }
                     }
-                    pod_query("INSERT INTO @wp_pod_rel (pod_id, sister_pod_id, field_id, tbl_row_id) VALUES ($pod_id, $sister_pod_id, $field_id, $rel_id)", 'Cannot add relationships');
+                    pod_query("INSERT INTO @wp_pod_rel (pod_id, sister_pod_id, field_id, tbl_row_id, weight) VALUES ($pod_id, $sister_pod_id, $field_id, $rel_id, $rel_weight)", 'Cannot add relationships');
                 }
+                $rel_weight++;
             }
 
             // Plugin hook
@@ -618,22 +627,21 @@ class PodAPI
     */
     function drop_pod($params)
     {
-        $id = $params['id'];
-        $dtname = $params['dtname'];
+        $params = (object) $params;
 
         $fields = '0';
-        pod_query("DELETE FROM @wp_pod_types WHERE id = $id LIMIT 1");
-        $result = pod_query("SELECT id FROM @wp_pod_fields WHERE datatype = $id");
+        pod_query("DELETE FROM @wp_pod_types WHERE id = $params->id LIMIT 1");
+        $result = pod_query("SELECT id FROM @wp_pod_fields WHERE datatype = $params->id");
         while ($row = mysql_fetch_assoc($result))
         {
             $fields .= ',' . $row['id'];
         }
 
         pod_query("UPDATE @wp_pod_fields SET sister_field_id = NULL WHERE sister_field_id IN ($fields)");
-        pod_query("DELETE FROM @wp_pod_fields WHERE datatype = $id");
+        pod_query("DELETE FROM @wp_pod_fields WHERE datatype = $params->id");
         pod_query("DELETE FROM @wp_pod_rel WHERE field_id IN ($fields)");
-        pod_query("DELETE FROM @wp_pod WHERE datatype = $id");
-        pod_query("DROP TABLE `@wp_pod_tbl_$dtname`");
+        pod_query("DELETE FROM @wp_pod WHERE datatype = $params->id");
+        pod_query("DROP TABLE `@wp_pod_tbl_$params->dtname`");
     }
 
     /*
@@ -643,15 +651,14 @@ class PodAPI
     */
     function drop_column($params)
     {
-        $id = $params['id'];
-        $dtname = $params['dtname'];
-        $result = pod_query("SELECT name, coltype FROM @wp_pod_fields WHERE id = $id LIMIT 1");
+        $params = (object) $params;
+        $result = pod_query("SELECT name, coltype FROM @wp_pod_fields WHERE id = $params->id LIMIT 1");
         list($field_name, $coltype) = mysql_fetch_array($result);
 
         if ('pick' == $coltype)
         {
             // Remove any orphans
-            $result = pod_query("SELECT id FROM @wp_pod_fields WHERE sister_field_id = $id");
+            $result = pod_query("SELECT id FROM @wp_pod_fields WHERE sister_field_id = $params->id");
             if (0 < mysql_num_rows($result))
             {
                 while ($row = mysql_fetch_assoc($result))
@@ -663,13 +670,13 @@ class PodAPI
                 pod_query("UPDATE @wp_pod_fields SET sister_field_id = NULL WHERE sister_field_id IN ($related_fields)");
             }
         }
-        else
+        elseif ('file' != $coltype)
         {
-            pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` DROP COLUMN `$field_name`");
+            pod_query("ALTER TABLE `@wp_pod_tbl_$params->dtname` DROP COLUMN `$field_name`");
         }
 
-        pod_query("DELETE FROM @wp_pod_fields WHERE id = $id LIMIT 1");
-        pod_query("DELETE FROM @wp_pod_rel WHERE field_id = $id");
+        pod_query("DELETE FROM @wp_pod_fields WHERE id = $params->id LIMIT 1");
+        pod_query("DELETE FROM @wp_pod_rel WHERE field_id = $params->id");
     }
 
     /*
@@ -679,8 +686,8 @@ class PodAPI
     */
     function drop_template($params)
     {
-        $id = $params['id'];
-        pod_query("DELETE FROM @wp_pod_templates WHERE id = $id LIMIT 1");
+        $params = (object) $params;
+        pod_query("DELETE FROM @wp_pod_templates WHERE id = $params->id LIMIT 1");
     }
 
     /*
@@ -690,8 +697,8 @@ class PodAPI
     */
     function drop_page($params)
     {
-        $id = $params['id'];
-        pod_query("DELETE FROM @wp_pod_pages WHERE id = $id LIMIT 1");
+        $params = (object) $params;
+        pod_query("DELETE FROM @wp_pod_pages WHERE id = $params->id LIMIT 1");
     }
 
     /*
@@ -701,8 +708,8 @@ class PodAPI
     */
     function drop_helper($params)
     {
-        $id = $params['id'];
-        pod_query("DELETE FROM @wp_pod_helpers WHERE id = $id LIMIT 1");
+        $params = (object) $params;
+        pod_query("DELETE FROM @wp_pod_helpers WHERE id = $params->id LIMIT 1");
     }
 
     /*
@@ -712,8 +719,8 @@ class PodAPI
     */
     function drop_menu_item($params)
     {
-        $id = $params['id'];
-        $result = pod_query("SELECT lft, rgt, (rgt - lft + 1) AS width FROM @wp_pod_menu WHERE id = $id LIMIT 1");
+        $params = (object) $params;
+        $result = pod_query("SELECT lft, rgt, (rgt - lft + 1) AS width FROM @wp_pod_menu WHERE id = $params->id LIMIT 1");
         list($lft, $rgt, $width) = mysql_fetch_array($result);
 
         pod_query("DELETE from @wp_pod_menu WHERE lft BETWEEN $lft AND $rgt");
@@ -728,7 +735,7 @@ class PodAPI
     */
     function drop_pod_item($params)
     {
-        $pod_id = $params['pod_id'];
+        $params = (object) $params;
 
         $sql = "
         SELECT
@@ -738,7 +745,7 @@ class PodAPI
         INNER JOIN
             @wp_pod_types t ON t.id = p.datatype
         WHERE
-            p.id = $pod_id
+            p.id = $params->pod_id
         LIMIT
             1
         ";
@@ -765,9 +772,9 @@ class PodAPI
         }
 
         pod_query("DELETE FROM `@wp_pod_tbl_$dtname` WHERE id = $tbl_row_id LIMIT 1");
-        pod_query("UPDATE @wp_pod_rel SET sister_pod_id = NULL WHERE sister_pod_id = $pod_id");
-        pod_query("DELETE FROM @wp_pod WHERE id = $pod_id LIMIT 1");
-        pod_query("DELETE FROM @wp_pod_rel WHERE pod_id = $pod_id");
+        pod_query("UPDATE @wp_pod_rel SET sister_pod_id = NULL WHERE sister_pod_id = $params->pod_id");
+        pod_query("DELETE FROM @wp_pod WHERE id = $params->pod_id LIMIT 1");
+        pod_query("DELETE FROM @wp_pod_rel WHERE pod_id = $params->pod_id");
 
         // Plugin hook
         do_action('pods_post_drop_pod_item');
@@ -893,16 +900,16 @@ class PodAPI
     */
     function load_sister_fields($params)
     {
-        $pickval = $params['pickval'];
-        $datatype = $params['datatype'];
-        if (!empty($pickval) && is_string($pickval))
+        $params = (object) $params;
+
+        if (!empty($params->pickval) && is_string($params->pickval))
         {
-            $result = pod_query("SELECT id FROM @wp_pod_types WHERE name = '$pickval' LIMIT 1");
+            $result = pod_query("SELECT id FROM @wp_pod_types WHERE name = '$params->pickval' LIMIT 1");
             if (0 < mysql_num_rows($result))
             {
                 $sister_datatype = mysql_result($result, 0);
 
-                $result = pod_query("SELECT name FROM @wp_pod_types WHERE id = $datatype LIMIT 1");
+                $result = pod_query("SELECT name FROM @wp_pod_types WHERE id = $params->datatype LIMIT 1");
                 if (0 < mysql_num_rows($result))
                 {
                     $datatype_name = mysql_result($result, 0);
@@ -926,7 +933,7 @@ class PodAPI
     Import data
     ==================================================
     */
-    function import($data)
+    function import($data, $numeric_mode = false)
     {
         if ('csv' == $this->format)
         {
@@ -936,13 +943,24 @@ class PodAPI
         pod_query("SET NAMES utf8");
         pod_query("SET CHARACTER SET utf8");
 
-        // Get the id/name pairs of all associated pick tables
+        // Get the id/name pairs of all associated pick/file tables
+        $pick_values = $file_values = array();
         foreach ($this->fields as $field_name => $field_data)
         {
             $pickval = $field_data['pickval'];
-            if ('pick' == $field_data['coltype'])
+            if ('file' == $field_data['coltype'])
             {
-                if (is_numeric($pickval))
+                $res = pod_query("SELECT ID as id, guid as name FROM @wp_posts WHERE post_type = 'attachment' ORDER BY id");
+                while ($item = mysql_fetch_assoc($res))
+                {
+                    $file_url = str_replace(get_bloginfo('url'), '', $item['name']);
+                    $file_values[$field_name][$file_url] = $item['id'];
+                    $file_values[$field_name][$item['name']] = $item['id'];
+                }
+            }
+            elseif ('pick' == $field_data['coltype'])
+            {
+                if ('wp_taxonomy' == $pickval)
                 {
                     $res = pod_query("SELECT term_id AS id, name FROM @wp_terms ORDER BY id");
                     while ($item = mysql_fetch_assoc($res))
@@ -952,6 +970,7 @@ class PodAPI
                 }
                 elseif ('wp_page' == $pickval || 'wp_post' == $pickval)
                 {
+                    $pickval = str_replace('wp_', '', $pickval);
                     $res = pod_query("SELECT ID as id, post_title as name FROM @wp_posts WHERE post_type = '$pickval' ORDER BY id");
                     while ($item = mysql_fetch_assoc($res))
                     {
@@ -978,6 +997,7 @@ class PodAPI
         }
 
         // Loop through the array of items
+        $pod_ids = array();
         foreach ($data as $key => $data_row)
         {
             $set_data = array();
@@ -985,6 +1005,7 @@ class PodAPI
             $table_columns = array();
 
             // Loop through each field (use $this->fields so only valid columns get parsed)
+            $pod_ids = array();
             foreach ($this->fields as $field_name => $field_data)
             {
                 $field_id = $field_data['id'];
@@ -994,12 +1015,16 @@ class PodAPI
 
                 if (!empty($field_value))
                 {
-                    if ('pick' == $coltype)
+                    if ('pick' == $coltype || 'file' == $coltype)
                     {
                         $field_value = is_array($field_value) ? $field_value : array($field_value);
                         foreach ($field_value as $key => $pick_title)
                         {
-                            if (!empty($pick_values[$field_name][$pick_title]))
+                            if (is_int($pick_title) && false !== $numeric_mode)
+                            {
+                                $pick_columns[] = "('POD_ID', '$field_id', '$pick_title')";
+                            }
+                            elseif (!empty($pick_values[$field_name][$pick_title]))
                             {
                                 $tbl_row_id = $pick_values[$field_name][$pick_title];
                                 $pick_columns[] = "('POD_ID', '$field_id', '$tbl_row_id')";
@@ -1024,6 +1049,7 @@ class PodAPI
             // Add the new wp_pod item
             $pod_name = mysql_real_escape_string(trim($data_row['name']));
             $pod_id = pod_query("INSERT INTO @wp_pod (tbl_row_id, datatype, name, created, modified) VALUES ('$tbl_row_id', '{$this->dt}', '$pod_name', NOW(), NOW())");
+            $pod_ids[] = $pod_id;
 
             // Insert the relationship (rel) data
             if (!empty($pick_columns))
@@ -1033,6 +1059,7 @@ class PodAPI
                 pod_query("INSERT INTO @wp_pod_rel (pod_id, field_id, tbl_row_id) VALUES $pick_columns");
             }
         }
+        return $pod_ids;
     }
 
     /*
@@ -1046,7 +1073,7 @@ class PodAPI
         $fields = array();
         $pick_values = array();
 
-        // Find all pick fields
+        // Find all pick/file fields
         $result = pod_query("SELECT id, name, coltype, pickval FROM @wp_pod_fields WHERE datatype = {$this->dt} ORDER BY weight");
         while ($row = mysql_fetch_assoc($result))
         {
@@ -1055,10 +1082,18 @@ class PodAPI
             $coltype = $row['coltype'];
             $pickval = $row['pickval'];
 
-            // Store all pick values into an array
-            if ('pick' == $coltype)
+            // Store all pick/file values into an array
+            if ('file' == $coltype)
             {
-                if (is_numeric($pickval))
+                $res = pod_query("SELECT ID AS id, guid AS name FROM @wp_posts WHERE post_type = 'attachment' ORDER BY id");
+                while ($item = mysql_fetch_assoc($res))
+                {
+                    $pick_values[$field_name][$item['id']] = $item['name'];
+                }
+            }
+            elseif ('pick' == $coltype)
+            {
+                if ('wp_taxonomy' == $pickval)
                 {
                     $res = pod_query("SELECT term_id AS id, name FROM @wp_terms ORDER BY id");
                     while ($item = mysql_fetch_assoc($res))
@@ -1068,6 +1103,7 @@ class PodAPI
                 }
                 elseif ('wp_page' == $pickval || 'wp_post' == $pickval)
                 {
+                    $pickval = str_replace('wp_', '', $pickval);
                     $res = pod_query("SELECT ID as id, post_title as name FROM @wp_posts WHERE post_type = '$pickval' ORDER BY id");
                     while ($item = mysql_fetch_assoc($res))
                     {

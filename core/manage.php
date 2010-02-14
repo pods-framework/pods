@@ -113,7 +113,7 @@ Begin welcome area
 <div id="welcomeArea" class="area hidden">
     <div class="stickynote">
         <div id="logo">
-            <div id="version"><?php echo implode('.', str_split(PODS_VERSION)); ?></div>
+            <div id="version"><?php echo PODS_VERSION_FULL; ?></div>
         </div>
         <div id="info">
             <h3>Your server is running...</h3>

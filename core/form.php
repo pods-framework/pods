@@ -8,7 +8,6 @@ if (1 == $this->form_count)
 {
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css?r=<?php echo rand(1000, 9999); ?>" />
-<script type="text/javascript" src="<?php echo PODS_URL; ?>/js/date_input.js"></script>
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqmodal.js"></script>
 <script type="text/javascript">
 var active_file;

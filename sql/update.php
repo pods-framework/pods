@@ -156,5 +156,21 @@ if ($installed < 181)
     pod_query("UPDATE @wp_pod_helpers SET helper_type = 'post_save' WHERE helper_type = 'after'");
 }
 
+if ($installed < 182)
+{
+    pod_query("ALTER TABLE @wp_pod ADD COLUMN author_id INT unsigned AFTER modified");
+    pod_query("UPDATE @wp_pod_fields SET pickval = 'wp_taxonomy' WHERE pickval REGEXP '^[0-9]+$'");
+    pod_query("UPDATE @wp_pod_menu SET uri = '<root>' WHERE uri = '/' LIMIT 1");
+
+    // Remove beginning and trailing slashes
+    $result = pod_query("SELECT id, uri FROM @wp_pod_menu");
+    while ($row = mysql_fetch_assoc($result))
+    {
+        $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $row['uri']);
+        $uri = mysql_real_escape_string($uri);
+        pod_query("UPDATE @wp_pod_menu SET uri = '$uri' WHERE id = {$row['id']} LIMIT 1");
+    }
+}
+
 // Save this version
 update_option('pods_version', PODS_VERSION);

@@ -76,6 +76,10 @@ class Pod
             $this->data['modified'] = $row['modified'];
             return $this->data[$name];
         }
+        elseif ('detail_url' == $name)
+        {
+            return $this->parse_magic_tags(array('', '', 'detail_url'));
+        }
         else
         {
             // Dot-traversal
@@ -128,8 +132,7 @@ class Pod
                         // Get datatype ID for non-WP PICK columns
                         if (
                             false === empty($pickval) &&
-                            false === is_numeric($pickval) &&
-                            false === in_array($pickval, array('wp_post', 'wp_page', 'wp_user')))
+                            false === in_array($pickval, array('wp_taxonomy', 'wp_post', 'wp_page', 'wp_user')))
                         {
                             $result = pod_query("SELECT id FROM @wp_pod_types WHERE name = '$pickval' LIMIT 1");
                             $datatype_id = mysql_result($result, 0);
@@ -206,6 +209,8 @@ class Pod
             @wp_pod_rel r ON r.pod_id = p.id AND r.field_id = $field_id
         WHERE
             p.datatype = $datatype_id AND p.tbl_row_id IN ($tbl_row_ids)
+        ORDER BY
+            r.weight
         ";
         $result = pod_query($sql);
         if (0 < mysql_num_rows($result))
@@ -228,8 +233,8 @@ class Pod
     {
         $orderby = empty($orderby) ? '' : "ORDER BY $orderby";
 
-        // WP category
-        if (is_numeric($table))
+        // WP taxonomy item
+        if ('wp_taxonomy' == $table)
         {
             $result = pod_query("SELECT * FROM @wp_terms WHERE term_id IN ($tbl_row_ids) $orderby");
         }
@@ -333,8 +338,8 @@ class Pod
 
         $orderby = empty($pick_orderby) ? 'name ASC' : $pick_orderby;
 
-        // Category dropdown
-        if (is_numeric($table))
+        // WP taxonomy dropdown
+        if ('wp_taxonomy' == $table)
         {
             $where = (false !== $unique_vals) ? "AND id NOT IN ($unique_vals)" : '';
             if (!empty($pick_filter))
@@ -354,7 +359,7 @@ class Pod
             INNER JOIN
                 @wp_terms t ON t.term_id = tx.term_id
             WHERE
-                tx.parent = $table AND tx.taxonomy = 'category' $where
+                1 $where
             ORDER BY
                 $orderby
             ";
@@ -460,14 +465,21 @@ class Pod
         $page = $this->page;
         $datatype = $this->datatype;
         $datatype_id = $this->datatype_id;
-        $limit = ($rows_per_page * ($page - 1)) . ', ' . $rows_per_page;
+        $limit = $join = $search = '';
+        if (is_int($rows_per_page) && 0 < $rows_per_page)
+        {
+            $limit = 'LIMIT ' . ($rows_per_page * ($page - 1)) . ',' . $rows_per_page;
+        }
+        elseif (false !== strpos($rows_per_page, ','))
+        {
+            // Custom offset
+            $limit = 'LIMIT ' . $rows_per_page;
+        }
         $where = empty($where) ? '' : "AND $where";
         $this->rpp = $rows_per_page;
-        $join = '';
         $i = 0;
 
         // Handle search
-        $search = '';
         if (!empty($_GET['search']))
         {
             $val = mysql_real_escape_string(trim($_GET['search']));
@@ -493,7 +505,8 @@ class Pod
             if (!empty($_GET[$field_name]))
             {
                 $val = mysql_real_escape_string(trim($_GET[$field_name]));
-                if (is_numeric($table))
+
+                if ('wp_taxonomy' == $table)
                 {
                     $where .= " AND `$field_name`.term_id = $val";
                 }
@@ -510,7 +523,7 @@ class Pod
                 continue;
             }
 
-            if (is_numeric($table))
+            if ('wp_taxonomy' == $table)
             {
                 $join .= "
                 LEFT JOIN
@@ -564,8 +577,7 @@ class Pod
                 $where
             ORDER BY
                 $orderby
-            LIMIT
-                $limit
+            $limit
             ";
         }
         $this->sql = $sql;
@@ -665,7 +677,7 @@ class Pod
         foreach ($fields as $key => $field)
         {
             // Replace field attributes with public form attributes
-            if (is_array($attributes[$key]))
+            if (!empty($attributes) && is_array($attributes[$key]))
             {
                 $field = array_merge($field, $attributes[$key]);
             }
@@ -766,7 +778,7 @@ class Pod
     <input type="hidden" class="form txt form_count" value="<?php echo $this->form_count; ?>" />
     <input type="hidden" class="form txt token" value="<?php echo pods_generate_key($datatype, $uri_hash, $public_columns, $this->form_count); ?>" />
     <input type="hidden" class="form txt uri_hash" value="<?php echo $uri_hash; ?>" />
-    <input type="button" class="button" value="<?php echo $label; ?>" onclick="saveForm(<?php echo $this->form_count; ?>)" />
+    <input type="button" class="button btn_save" value="<?php echo $label; ?>" onclick="saveForm(<?php echo $this->form_count; ?>)" />
     </div>
 <?php
     }
@@ -837,13 +849,13 @@ class Pod
             {
                 while ($this->fetchRecord())
                 {
-                    $out = preg_replace_callback("/({@(.*?)})/m", array($this, "magic_swap"), $code);
+                    $out = preg_replace_callback("/({@(.*?)})/m", array($this, "parse_magic_tags"), $code);
                     eval("?>$out");
                 }
             }
             else
             {
-                $out = preg_replace_callback("/({@(.*?)})/m", array($this, "magic_swap"), $code);
+                $out = preg_replace_callback("/({@(.*?)})/m", array($this, "parse_magic_tags"), $code);
                 eval("?>$out");
             }
         }
@@ -855,7 +867,7 @@ class Pod
     Replace magic tags with their values
     ==================================================
     */
-    function magic_swap($in)
+    function parse_magic_tags($in)
     {
         $name = $in[2];
         $before = $after = '';
@@ -869,7 +881,7 @@ class Pod
         }
         elseif ('detail_url' == $name)
         {
-            return get_bloginfo('url') . '/' . preg_replace_callback("/({@(.*?)})/m", array($this, "magic_swap"), $this->detail_page);
+            return get_bloginfo('url') . '/' . preg_replace_callback("/({@(.*?)})/m", array($this, "parse_magic_tags"), $this->detail_page);
         }
         else
         {

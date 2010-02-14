@@ -13,6 +13,7 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
 {
     global $wpdb;
 
+    $sql = str_replace('{@wp_', '{__podsdb__', $sql);
     $sql = str_replace('@wp_', $wpdb->prefix, $sql);
     $sql = str_replace('__podsdb__', '@wp_', $sql);
 

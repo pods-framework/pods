@@ -121,13 +121,17 @@ elseif ('finalize' == $action)
             // Escape the values
             foreach ($val as $k => $v)
             {
-                $val[$k] = mysql_real_escape_string($v);
+                $val[$k] = pods_sanitize($v);
             }
 
             if (empty($pod_columns))
             {
                 $pod_columns = implode("`,`", array_keys($val));
             }
+            // Backward-compatibility (before/after helpers)
+            $pod_columns = str_replace('before_helpers', 'pre_save_helpers', $pod_columns);
+            $pod_columns = str_replace('after_helpers', 'post_save_helpers', $pod_columns);
+
             $values = implode("','", $val);
             $dt = pod_query("INSERT INTO @wp_pod_types (`$pod_columns`) VALUES ('$values')");
 
@@ -138,7 +142,7 @@ elseif ('finalize' == $action)
                 // Escape the values
                 foreach ($fieldval as $k => $v)
                 {
-                    $fieldval[$k] = mysql_real_escape_string($v);
+                    $fieldval[$k] = empty($v) ? 'null' : pods_sanitize($v);
                 }
 
                 // Store all table columns
@@ -155,6 +159,7 @@ elseif ('finalize' == $action)
                 $tupples[] = implode("','", $fieldval);
             }
             $tupples = implode("'),('", $tupples);
+            $tupples = str_replace("'null'", 'null', $tupples);
             pod_query("INSERT INTO @wp_pod_fields (`$field_columns`) VALUES ('$tupples')");
 
             // Create the actual table with any non-PICK columns
@@ -177,7 +182,7 @@ elseif ('finalize' == $action)
             // Escape the values
             foreach ($val as $k => $v)
             {
-                $val[$k] = mysql_real_escape_string($v);
+                $val[$k] = pods_sanitize($v);
             }
 
             if (empty($columns))
@@ -199,7 +204,7 @@ elseif ('finalize' == $action)
             // Escape the values
             foreach ($val as $k => $v)
             {
-                $val[$k] = mysql_real_escape_string($v);
+                $val[$k] = pods_sanitize($v);
             }
 
             if (empty($columns))
@@ -221,7 +226,13 @@ elseif ('finalize' == $action)
             // Escape the values
             foreach ($val as $k => $v)
             {
-                $val[$k] = mysql_real_escape_string($v);
+                // Backward-compatibility (before/after helpers)
+                if ('helper_type' == $k)
+                {
+                    $v = ('before' == $v) ? 'pre_save' : $v;
+                    $v = ('after' == $v) ? 'post_save' : $v;
+                }
+                $val[$k] = pods_sanitize($v);
             }
 
             if (empty($columns))

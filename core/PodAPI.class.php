@@ -45,7 +45,7 @@ class PodAPI
     */
     function save_pod($params)
     {
-        $params = (object) $params;
+        $params = (object) str_replace('@wp_','__podsdb__',$params);
 
         if (empty($params->datatype))
         {
@@ -99,10 +99,7 @@ class PodAPI
     */
     function save_column($params)
     {
-        foreach ($params as $key => $val)
-        {
-            ${$key} = $val;
-        }
+        $params = (object) str_replace('@wp_','__podsdb__',$params);
 
         $dbtypes = array(
             'bool' => 'bool default 0',
@@ -114,59 +111,59 @@ class PodAPI
             'desc' => 'longtext'
         );
 
-        if (empty($id))
+        if (empty($params->id))
         {
-            if (empty($name))
+            $params->name = pods_clean_name($params->name);
+            if (empty($params->name))
             {
                 die('Error: Enter a column name');
             }
-            elseif (in_array($name, array('id', 'name', 'type', 'created', 'modified')))
+            elseif (in_array($params->name, array('id', 'name', 'type', 'created', 'modified')))
             {
-                die("Error: $name is a reserved name");
+                die("Error: $params->name is a reserved name");
             }
-
-            $sql = "SELECT id FROM @wp_pod_fields WHERE datatype = $datatype AND name = '$name' LIMIT 1";
+            $sql = "SELECT id FROM @wp_pod_fields WHERE datatype = $params->datatype AND name = '$params->name' LIMIT 1";
             pod_query($sql, 'Cannot get fields', 'Column by this name already exists');
 
-            if ('slug' == $coltype)
+            if ('slug' == $params->coltype)
             {
-                $sql = "SELECT id FROM @wp_pod_fields WHERE datatype = $datatype AND coltype = 'slug' LIMIT 1";
+                $sql = "SELECT id FROM @wp_pod_fields WHERE datatype = $params->datatype AND coltype = 'slug' LIMIT 1";
                 pod_query($sql, 'Too many permalinks', 'This pod already has a permalink column');
             }
 
             // Sink the new column to the bottom of the list
             $weight = 0;
-            $result = pod_query("SELECT weight FROM @wp_pod_fields WHERE datatype = $datatype ORDER BY weight DESC LIMIT 1");
+            $result = pod_query("SELECT weight FROM @wp_pod_fields WHERE datatype = $params->datatype ORDER BY weight DESC LIMIT 1");
             if (0 < mysql_num_rows($result))
             {
                 $row = mysql_fetch_assoc($result);
                 $weight = (int) $row['weight'] + 1;
             }
 
-            $sister_field_id = (int) $sister_field_id;
-            $field_id = pod_query("INSERT INTO @wp_pod_fields (datatype, name, label, comment, display_helper, input_helper, coltype, pickval, pick_filter, pick_orderby, sister_field_id, required, `unique`, `multiple`, weight) VALUES ('$datatype', '$name', '$label', '$comment', '$display_helper', '$input_helper', '$coltype', '$pickval', '$pick_filter', '$pick_orderby', '$sister_field_id', '$required', '$unique', '$multiple', '$weight')", 'Cannot add new field');
+            $params->sister_field_id = (int) $params->sister_field_id;
+            $field_id = pod_query("INSERT INTO @wp_pod_fields (datatype, name, label, comment, display_helper, input_helper, coltype, pickval, pick_filter, pick_orderby, sister_field_id, required, `unique`, `multiple`, weight) VALUES ('$params->datatype', '$params->name', '$params->label', '$params->comment', '$params->display_helper', '$params->input_helper', '$params->coltype', '$params->pickval', '$params->pick_filter', '$params->pick_orderby', '$params->sister_field_id', '$params->required', '$params->unique', '$params->multiple', '$weight')", 'Cannot add new field');
 
-            if ('pick' != $coltype && 'file' != $coltype)
+            if ('pick' != $params->coltype && 'file' != $params->coltype)
             {
-                $dbtype = $dbtypes[$coltype];
-                pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` ADD COLUMN `$name` $dbtype", 'Cannot create new column');
+                $dbtype = $dbtypes[$params->coltype];
+                pod_query("ALTER TABLE `@wp_pod_tbl_$params->dtname` ADD COLUMN `$params->name` $dbtype", 'Cannot create new column');
             }
             else
             {
-                pod_query("UPDATE @wp_pod_fields SET sister_field_id = '$field_id' WHERE id = $sister_field_id LIMIT 1", 'Cannot update sister field');
+                pod_query("UPDATE @wp_pod_fields SET sister_field_id = '$field_id' WHERE id = $params->sister_field_id LIMIT 1", 'Cannot update sister field');
             }
         }
         else
         {
-            if ('id' == $name)
+            if ('id' == $params->name)
             {
-                die("Error: $name is not editable.");
+                die("Error: $params->name is not editable.");
             }
 
-            $sql = "SELECT id FROM @wp_pod_fields WHERE datatype = $datatype AND id != $id AND name = '$name' LIMIT 1";
-            pod_query($sql, 'Column already exists', "$name already exists.");
+            $sql = "SELECT id FROM @wp_pod_fields WHERE datatype = $params->datatype AND id != $params->id AND name = '$params->name' LIMIT 1";
+            pod_query($sql, 'Column already exists', "$params->name already exists.");
 
-            $sql = "SELECT name, coltype FROM @wp_pod_fields WHERE id = $id LIMIT 1";
+            $sql = "SELECT name, coltype FROM @wp_pod_fields WHERE id = $params->id LIMIT 1";
             $result = pod_query($sql);
 
             if (0 < mysql_num_rows($result))
@@ -175,54 +172,54 @@ class PodAPI
                 $old_coltype = $row['coltype'];
                 $old_name = $row['name'];
 
-                $dbtype = $dbtypes[$coltype];
-                $pickval = ('pick' != $coltype || empty($pickval)) ? 'NULL' : "'$pickval'";
-                $sister_field_id = (int) $sister_field_id;
+                $dbtype = $dbtypes[$params->coltype];
+                $pickval = ('pick' != $params->coltype || empty($params->pickval)) ? '' : "$params->pickval";
+                $params->sister_field_id = (int) $params->sister_field_id;
 
-                if ($coltype != $old_coltype)
+                if ($params->coltype != $old_coltype)
                 {
-                    if ('pick' == $coltype || 'file' == $coltype)
+                    if ('pick' == $params->coltype || 'file' == $params->coltype)
                     {
                         if ('pick' != $old_coltype && 'file' != $old_coltype)
                         {
-                            pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` DROP COLUMN `$old_name`");
+                            pod_query("ALTER TABLE `@wp_pod_tbl_$params->dtname` DROP COLUMN `$old_name`");
                         }
                     }
                     elseif ('pick' == $old_coltype || 'file' == $old_coltype)
                     {
-                        pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` ADD COLUMN `$name` $dbtype", 'Cannot create column');
-                        pod_query("UPDATE @wp_pod_fields SET sister_field_id = NULL WHERE sister_field_id = $id");
-                        pod_query("DELETE FROM @wp_pod_rel WHERE field_id = $id");
+                        pod_query("ALTER TABLE `@wp_pod_tbl_$params->dtname` ADD COLUMN `$params->name` $dbtype", 'Cannot create column');
+                        pod_query("UPDATE @wp_pod_fields SET sister_field_id = NULL WHERE sister_field_id = $params->id");
+                        pod_query("DELETE FROM @wp_pod_rel WHERE field_id = $params->id");
                     }
                     else
                     {
-                        pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` CHANGE `$old_name` `$name` $dbtype");
+                        pod_query("ALTER TABLE `@wp_pod_tbl_$params->dtname` CHANGE `$old_name` `$params->name` $dbtype");
                     }
                 }
-                elseif ($name != $old_name && 'pick' != $coltype && 'file' != $coltype)
+                elseif ($params->name != $old_name && 'pick' != $params->coltype && 'file' != $params->coltype)
                 {
-                    pod_query("ALTER TABLE `@wp_pod_tbl_$dtname` CHANGE `$old_name` `$name` $dbtype");
+                    pod_query("ALTER TABLE `@wp_pod_tbl_$params->dtname` CHANGE `$old_name` `$params->name` $dbtype");
                 }
 
                 $sql = "
                 UPDATE
                     @wp_pod_fields
                 SET
-                    name = '$name',
-                    label = '$label',
-                    comment = '$comment',
-                    coltype = '$coltype',
-                    pickval = $pickval,
-                    display_helper = '$display_helper',
-                    input_helper = '$input_helper',
-                    pick_filter = '$pick_filter',
-                    pick_orderby = '$pick_orderby',
-                    sister_field_id = '$sister_field_id',
-                    required = '$required',
-                    `unique` = '$unique',
-                    `multiple` = '$multiple'
+                    name = '$params->name',
+                    label = '$params->label',
+                    comment = '$params->comment',
+                    coltype = '$params->coltype',
+                    pickval = '$params->pickval',
+                    display_helper = '$params->display_helper',
+                    input_helper = '$params->input_helper',
+                    pick_filter = '$params->pick_filter',
+                    pick_orderby = '$params->pick_orderby',
+                    sister_field_id = '$params->sister_field_id',
+                    required = '$params->required',
+                    `unique` = '$params->unique',
+                    `multiple` = '$params->multiple'
                 WHERE
-                    id = $id
+                    id = $params->id
                 LIMIT
                     1
                 ";
@@ -238,7 +235,7 @@ class PodAPI
     */
     function save_template($params)
     {
-        $params = (object) $params;
+        $params = (object) str_replace('@wp_','__podsdb__',$params);
 
         if (empty($params->id))
         {
@@ -266,7 +263,7 @@ class PodAPI
     */
     function save_page($params)
     {
-        $params = (object) $params;
+        $params = (object) str_replace('@wp_','__podsdb__',$params);
 
         if (empty($params->id))
         {
@@ -293,7 +290,7 @@ class PodAPI
     */
     function save_helper($params)
     {
-        $params = (object) $params;
+        $params = (object) str_replace('@wp_','__podsdb__',$params);
 
         if (empty($params->id))
         {
@@ -322,7 +319,7 @@ class PodAPI
     {
         $params = (object) $params;
 
-        
+
     }
 
     /*
@@ -387,12 +384,9 @@ class PodAPI
     */
     function save_pod_item($params)
     {
-        foreach ($params as $key => $val)
-        {
-            ${$key} = $val;
-        }
+        $params = (object) str_replace('@wp_','__podsdb__',$params);
 
-        if ($datatype)
+        if ($params->datatype)
         {
             // Get array of datatypes
             $result = pod_query("SELECT id, name FROM @wp_pod_types");
@@ -402,13 +396,13 @@ class PodAPI
             }
 
             // Get the datatype ID
-            $datatype_id = $datatypes[$datatype];
+            $params->datatype_id = $datatypes[$params->datatype];
 
             // Add data from a public form
             $where = '';
-            if (false === empty($_SESSION[$uri_hash][$form_count]['columns']))
+            if (false === empty($params->columns))
             {
-                $public_columns = unserialize($_SESSION[$uri_hash][$form_count]['columns']);
+                $public_columns = $params->columns;
 
                 if (is_array($public_columns))
                 {
@@ -423,7 +417,7 @@ class PodAPI
             }
 
             // Get the datatype fields
-            $result = pod_query("SELECT * FROM @wp_pod_fields WHERE datatype = $datatype_id $where ORDER BY weight", 'Cannot get datatype fields');
+            $result = pod_query("SELECT * FROM @wp_pod_fields WHERE datatype = $params->datatype_id $where ORDER BY weight", 'Cannot get datatype fields');
             while ($row = mysql_fetch_assoc($result))
             {
                 if (empty($public_columns))
@@ -442,7 +436,7 @@ class PodAPI
             // Loop through $active_columns, separating table data from PICK/file data
             foreach ($active_columns as $key)
             {
-                $val = $$key;
+                $val = $params->$key;
                 $type = $fields[$key]['coltype'];
                 $label = $fields[$key]['label'];
                 $label = empty($label) ? $key : $label;
@@ -468,20 +462,20 @@ class PodAPI
                 if (1 == $fields[$key]['unique'] && 'pick' != $type)
                 {
                     $exclude = '';
-                    if (!empty($pod_id))
+                    if (!empty($params->pod_id))
                     {
-                        $result = pod_query("SELECT tbl_row_id FROM @wp_pod WHERE id = $pod_id LIMIT 1");
+                        $result = pod_query("SELECT tbl_row_id FROM @wp_pod WHERE id = $params->pod_id LIMIT 1");
                         $exclude = 'AND id != ' . mysql_result($result, 0);
                     }
-                    $sql = "SELECT id FROM `@wp_pod_tbl_$datatype` WHERE `$key` = '$val' $exclude LIMIT 1";
+                    $sql = "SELECT id FROM `@wp_pod_tbl_$params->datatype` WHERE `$key` = '$val' $exclude LIMIT 1";
                     pod_query($sql, 'Not unique', "$label needs to be unique.");
                 }
 
                 // Verify slug columns
                 if ('slug' == $type)
                 {
-                    $slug_val = empty($$key) ? $name : $$key;
-                    $val = pods_unique_slug($slug_val, $key, $datatype, $datatype_id, $pod_id);
+                    $slug_val = empty($params->$key) ? (isset($params->name)?$params->name:$params->pod_id) : $params->$key;
+                    $val = pods_unique_slug($slug_val, $key, $params->datatype, $params->datatype_id, $params->pod_id);
                 }
 
                 if ('pick' == $type)
@@ -499,7 +493,7 @@ class PodAPI
             }
 
             // Get helper code
-            $result = pod_query("SELECT pre_save_helpers, post_save_helpers FROM @wp_pod_types WHERE id = $datatype_id");
+            $result = pod_query("SELECT pre_save_helpers, post_save_helpers FROM @wp_pod_types WHERE id = $params->datatype_id");
             $row = mysql_fetch_assoc($result);
             $pre_save_helpers = str_replace(',', "','", $row['pre_save_helpers']);
             $post_save_helpers = str_replace(',', "','", $row['post_save_helpers']);
@@ -515,16 +509,16 @@ class PodAPI
             }
 
             // Make sure the pod_id exists
-            if (empty($pod_id))
+            if (empty($params->pod_id))
             {
-                $sql = "INSERT INTO @wp_pod (datatype, name, created, modified) VALUES ('$datatype_id', '$name', NOW(), NOW())";
-                $pod_id = pod_query($sql, 'Cannot add new content');
-                $tbl_row_id = pod_query("INSERT INTO `@wp_pod_tbl_$datatype` (name) VALUES (NULL)", 'Cannot add new table row');
+                $sql = "INSERT INTO @wp_pod (datatype, name, created, modified) VALUES ('$params->datatype_id', '$params->name', NOW(), NOW())";
+                $params->pod_id = pod_query($sql, 'Cannot add new content');
+                $params->tbl_row_id = pod_query("INSERT INTO `@wp_pod_tbl_$params->datatype` (name) VALUES (NULL)", 'Cannot add new table row');
             }
             else
             {
-                $result = pod_query("SELECT tbl_row_id FROM @wp_pod WHERE id = $pod_id LIMIT 1");
-                $tbl_row_id = mysql_result($result, 0);
+                $result = pod_query("SELECT tbl_row_id FROM @wp_pod WHERE id = $params->pod_id LIMIT 1");
+                $params->tbl_row_id = mysql_result($result, 0);
             }
 
             // Save table row data
@@ -535,28 +529,31 @@ class PodAPI
             $set_data = implode(',', $set_data);
 
             // Get the item name
-            $name = mysql_real_escape_string(trim(stripslashes($name)));
+            if(in_array('name',$table_columns))
+            {
+                $name = pods_sanitize(stripslashes($table_columns['name']));
+            }
 
             // Insert table row
-            pod_query("UPDATE `@wp_pod_tbl_$datatype` SET $set_data WHERE id = $tbl_row_id LIMIT 1");
+            pod_query("UPDATE `@wp_pod_tbl_$params->datatype` SET $set_data WHERE id = $params->tbl_row_id LIMIT 1");
 
             // Update wp_pod
-            pod_query("UPDATE @wp_pod SET tbl_row_id = $tbl_row_id, datatype = $datatype_id, name = '$name', modified = NOW() WHERE id = $pod_id LIMIT 1", 'Cannot modify datatype row');
+            pod_query("UPDATE @wp_pod SET tbl_row_id = $params->tbl_row_id, datatype = $params->datatype_id,".(in_array('name',$table_columns)?" name = '$name',":"")." modified = NOW() WHERE id = $params->pod_id LIMIT 1", 'Cannot modify datatype row');
 
             // Save file relationships
             foreach ($file_columns as $key => $attachment_ids)
             {
                 // Get the field_id
-                $result = pod_query("SELECT id FROM @wp_pod_fields WHERE datatype = $datatype_id AND name = '$key' LIMIT 1");
+                $result = pod_query("SELECT id FROM @wp_pod_fields WHERE datatype = $params->datatype_id AND name = '$key' LIMIT 1");
                 $field_id = mysql_result($result, 0);
 
                 // Remove existing relationships
-                pod_query("DELETE FROM @wp_pod_rel WHERE pod_id = $pod_id AND field_id = $field_id");
+                pod_query("DELETE FROM @wp_pod_rel WHERE pod_id = $params->pod_id AND field_id = $field_id");
 
                 // Add new relationships
                 foreach ($attachment_ids as $attachment_id)
                 {
-                    pod_query("INSERT INTO @wp_pod_rel (pod_id, field_id, tbl_row_id) VALUES ($pod_id, $field_id, $attachment_id)");
+                    pod_query("INSERT INTO @wp_pod_rel (pod_id, field_id, tbl_row_id) VALUES ($params->pod_id, $field_id, $attachment_id)");
                 }
             }
 
@@ -574,7 +571,7 @@ class PodAPI
                 if (!empty($sister_field_id))
                 {
                     // Get sister pod IDs (a sister pod's sister pod is the parent pod)
-                    $result = pod_query("SELECT pod_id FROM @wp_pod_rel WHERE sister_pod_id = $pod_id");
+                    $result = pod_query("SELECT pod_id FROM @wp_pod_rel WHERE sister_pod_id = $params->pod_id");
                     if (0 < mysql_num_rows($result))
                     {
                         while ($row = mysql_fetch_assoc($result))
@@ -584,10 +581,10 @@ class PodAPI
                         $sister_pod_ids = implode(',', $sister_pod_ids);
 
                         // Delete the sister pod relationship
-                        pod_query("DELETE FROM @wp_pod_rel WHERE pod_id IN ($sister_pod_ids) AND sister_pod_id = $pod_id AND field_id = $sister_field_id", 'Cannot drop sister relationships');
+                        pod_query("DELETE FROM @wp_pod_rel WHERE pod_id IN ($sister_pod_ids) AND sister_pod_id = $params->pod_id AND field_id = $sister_field_id", 'Cannot drop sister relationships');
                     }
                 }
-                pod_query("DELETE FROM @wp_pod_rel WHERE pod_id = $pod_id AND field_id = $field_id", 'Cannot drop relationships');
+                pod_query("DELETE FROM @wp_pod_rel WHERE pod_id = $params->pod_id AND field_id = $field_id", 'Cannot drop relationships');
 
                 // Add rel values
                 $rel_weight = 0;
@@ -600,10 +597,10 @@ class PodAPI
                         if (0 < mysql_num_rows($result))
                         {
                             $sister_pod_id = mysql_result($result, 0);
-                            pod_query("INSERT INTO @wp_pod_rel (pod_id, sister_pod_id, field_id, tbl_row_id, weight) VALUES ($sister_pod_id, $pod_id, $sister_field_id, $tbl_row_id, $rel_weight)", 'Cannot add sister relationships');
+                            pod_query("INSERT INTO @wp_pod_rel (pod_id, sister_pod_id, field_id, tbl_row_id, weight) VALUES ($sister_pod_id, $params->pod_id, $sister_field_id, $params->tbl_row_id, $rel_weight)", 'Cannot add sister relationships');
                         }
                     }
-                    pod_query("INSERT INTO @wp_pod_rel (pod_id, sister_pod_id, field_id, tbl_row_id, weight) VALUES ($pod_id, $sister_pod_id, $field_id, $rel_id, $rel_weight)", 'Cannot add relationships');
+                    pod_query("INSERT INTO @wp_pod_rel (pod_id, sister_pod_id, field_id, tbl_row_id, weight) VALUES ($params->pod_id, $sister_pod_id, $field_id, $rel_id, $rel_weight)", 'Cannot add relationships');
                 }
                 $rel_weight++;
             }
@@ -1013,7 +1010,7 @@ class PodAPI
                 $pickval = $field_data['pickval'];
                 $field_value = $data_row[$field_name];
 
-                if (!empty($field_value))
+                if ($this->is_val($field_value))
                 {
                     if ('pick' == $coltype || 'file' == $coltype)
                     {
@@ -1214,5 +1211,15 @@ class PodAPI
             $out[] = $tmp;
         }
         return $out;
+    }
+
+    /*
+    ==================================================
+    Does the field have a value? (incl. 0)
+    ==================================================
+    */
+    function is_val($val)
+    {
+        return (null != $val && false !== $val) ? true : false;
     }
 }

@@ -136,9 +136,8 @@ function saveForm() {
 }
 
 function showform(dt, pod_id) {
-    jQuery(".pod_form").hide();
-
     datatype = dt;
+    jQuery(".pods_form").hide();
     jQuery(".option").unbind("click");
     jQuery.ajax({
         type: "post",
@@ -149,8 +148,8 @@ function showform(dt, pod_id) {
                 alert(msg);
             }
             else {
-                jQuery(".pod_form").html(msg);
-                jQuery(".pod_form").slideToggle();
+                jQuery(".pods_form").html(msg);
+                jQuery(".pods_form").toggle();
                 jQuery(".option").click(function() {
                     jQuery(this).toggleClass("active");
                 });
@@ -164,7 +163,6 @@ function showform(dt, pod_id) {
                 for (i = 0; i < elements.length; i++) {
                     new nicEditor(config).panelInstance(elements[i].id);
                 }
-                jQuery("input.date").date_input();
             }
         }
     });
@@ -211,7 +209,7 @@ if (!empty($dtname))
 
 if (!empty($_GET['keywords']))
 {
-    $where[] = "p.name LIKE '%" . pods_sanitize(pods_url_variable('keywords', 'get')) . "%'";
+    $where[] = "p.name LIKE '%" . pods_url_variable('keywords', 'get') . "%'";
 }
 
 $orderby = 'modified desc';
@@ -331,7 +329,7 @@ while ($row = mysql_fetch_assoc($result))
             <tbody>
                 <tr>
                     <td>
-                        <div class="pod_form">
+                        <div class="pods_form">
 <?php
 if ('add' == $add_or_edit)
 {
@@ -346,7 +344,7 @@ if ('add' == $add_or_edit)
             </tbody>
         </table>
         <div class="tablenav">
-            <input type="button" onclick="saveForm(0)" value="Save changes" class="button" />
+            <input type="button" onclick="saveForm()" value="Save changes" class="button" />
         </div>
     </div>
 </div>

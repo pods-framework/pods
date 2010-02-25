@@ -51,6 +51,15 @@ elseif ('save_menu_item' == $action && pods_access('manage_menu'))
 }
 elseif ('save_pod_item' == $action)
 {
+    if (!pods_validate_key($params['token'], $params['uri_hash'], $params['datatype'], $params['form_count']))
+    {
+        die("Error: The form has expired.");
+    }
+    $params['columns'] = null;
+    if (false === empty($_SESSION[$params['uri_hash']][$params['form_count']]['columns']))
+    {
+        $params['columns'] = unserialize($_SESSION[$params['uri_hash']][$params['form_count']]['columns']);
+    }
     echo $api->save_pod_item($params);
 }
 

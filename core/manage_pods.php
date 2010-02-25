@@ -667,7 +667,7 @@ while ($row = mysql_fetch_array($result))
                 <td>
                     <input type="checkbox" id="column_required" /> required<br />
                     <input type="checkbox" id="column_unique" /> unique<br />
-                    <input type="checkbox" id="column_multiple" /> multiple
+                    <input type="checkbox" id="column_multiple" /> multi-select pick
                 </td>
             </tr>
             <tr>

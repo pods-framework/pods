@@ -116,7 +116,7 @@ Begin welcome area
             <div id="version"><?php echo PODS_VERSION_FULL; ?></div>
         </div>
         <div id="info">
-            <h3>Your server is running...</h3>
+            <h3>Server Software</h3>
             <ul>
                 <li>PHP <?php echo phpversion(); ?></li>
                 <li><?php echo $_SERVER['SERVER_SOFTWARE']; ?></li>

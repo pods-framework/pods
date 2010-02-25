@@ -13,9 +13,24 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
 {
     global $wpdb;
 
-    $sql = str_replace('{@wp_', '{__podsdb__', $sql);
+    $sql = str_replace('@wp_users', $wpdb->users, $sql);
     $sql = str_replace('@wp_', $wpdb->prefix, $sql);
     $sql = str_replace('__podsdb__', '@wp_', $sql);
+
+    // Returned cached resultset
+    if ('SELECT' == substr(trim($sql), 0, 6))
+    {
+        $pods_cache = PodCache::Instance();
+        if (isset($pods_cache->results[$sql]) && $pods_cache->cache_enabled)
+        {
+            $result = $pods_cache->results[$sql];
+            if (0 < mysql_num_rows($result))
+            {
+                mysql_data_seek($result, 0);
+            }
+            return $result;
+        }
+    }
 
     $result = mysql_query($sql, $wpdb->dbh) or die("Error: $error; SQL: $sql; Response: " . mysql_error());
 
@@ -26,17 +41,21 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
             die("Error: $results_error");
         }
     }
-    else
+    elseif (!empty($no_results_error))
     {
-        if (!empty($no_results_error))
-        {
-            die("Error: $no_results_error");
-        }
+        die("Error: $no_results_error");
     }
 
     if ('INSERT' == substr(trim($sql), 0, 6))
     {
         $result = mysql_insert_id();
+    }
+    elseif ('SELECT' == substr(trim($sql), 0, 6))
+    {
+        if ('SELECT FOUND_ROWS()' != $sql)
+        {
+            $pods_cache->results[$sql] = $result;
+        }
     }
     return $result;
 }
@@ -83,15 +102,15 @@ function pods_url_variable($key = 'last', $type = 'uri')
     }
     elseif ('get' == strtolower($type))
     {
-        $output = $_GET[$key];
+        $output = isset($_GET[$key]) ? $_GET[$key] : null;
     }
     elseif ('post' == strtolower($type))
     {
-        $output = $_POST[$key];
+        $output = isset($_POST[$key]) ? $_POST[$key] : null;
     }
     elseif ('session' == strtolower($type))
     {
-        $output = $_SESSION[$key];
+        $output = isset($_SESSION[$key]) ? $_SESSION[$key] : null;
     }
     return pods_sanitize($output);
 }
@@ -212,7 +231,7 @@ function pods_access($priv)
 Build the navigation array
 ==================================================
 */
-function build_nav_array($uri = '<root>', $max_depth = 1)
+function pods_nav_array($uri = '<root>', $max_depth = 1)
 {
     $having = (0 < $max_depth) ? "HAVING depth <= $max_depth" : '';
 
@@ -268,7 +287,7 @@ function pods_navigation($uri = '<root>', $max_depth = 1)
 {
     $last_depth = -1;
 
-    if ($menu = build_nav_array($uri, $max_depth))
+    if ($menu = pods_nav_array($uri, $max_depth))
     {
         foreach ($menu as $key => $val)
         {
@@ -404,4 +423,22 @@ function is_pod_page()
     global $pod_page_exists;
 
     return (false !== $pod_page_exists) ? true : false;
+}
+
+/*
+==================================================
+DEPRECATED
+==================================================
+*/
+if (!function_exists('get_content'))
+{
+    function get_content()
+    {
+        return pods_content();
+    }
+}
+
+function build_nav_array($uri = '<root>', $max_depth = 1)
+{
+    pods_nav_array($uri, $max_depth);
 }

@@ -8,7 +8,14 @@ $coltype = $field['coltype'];
 $input_helper = $field['input_helper'];
 $hidden = empty($field['hidden']) ? '' : ' hidden';
 $value = is_array($this->data[$name]) ? $this->data[$name] : stripslashes($this->data[$name]);
-$css_id = 'pods_form' . $this->form_count . '_' . $name;
+$css_id = 'pods_form' . $pods_cache->form_count . '_' . $name;
+
+// The first 3 CSS classes will be DEPRECATED in 2.0.0
+$css_classes = "form $coltype $name pods_field pods_field_$name pods_coltype_$coltype";
+if (1 > $field['multiple'])
+{
+    $css_classes = str_replace(' pick ', ' pick1 ', $css_classes);
+}
 ?>
     <div class="leftside <?php echo $name . $hidden; ?>">
         <label for="<?php echo $css_id; ?>"><?php echo $label; ?></label>
@@ -42,7 +49,7 @@ elseif ('bool' == $coltype)
 {
     $value = empty($value) ? '' : ' checked';
 ?>
-    <input type="checkbox" class="form bool <?php echo $name; ?>" id="<?php echo $css_id; ?>"<?php echo $value; ?> />
+    <input type="checkbox" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>"<?php echo $value; ?> />
 <?php
 }
 
@@ -57,11 +64,16 @@ elseif ('date' == $coltype)
     {
 ?>
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/date_input.js"></script>
+<script type="text/javascript">
+jQuery(function() {
+    jQuery(".pods_form input.date").date_input();
+});
+</script>
 <?php
     }
     $value = empty($value) ? date("Y-m-d H:i:s") : $value;
 ?>
-    <input type="text" class="form date <?php echo $name; ?>" id="<?php echo $css_id; ?>" value="<?php echo $value; ?>" />
+    <input type="text" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>" value="<?php echo $value; ?>" />
 <?php
 }
 
@@ -73,7 +85,7 @@ Standard text box
 elseif ('num' == $coltype || 'txt' == $coltype || 'slug' == $coltype)
 {
 ?>
-    <input type="text" class="form <?php echo $coltype . ' ' . $name; ?>" id="<?php echo $css_id; ?>" value="<?php echo htmlspecialchars($value); ?>" />
+    <input type="text" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>" value="<?php echo htmlspecialchars($value); ?>" />
 <?php
 }
 
@@ -91,7 +103,7 @@ elseif ('desc' == $coltype)
 <?php
     }
 ?>
-    <textarea class="form desc <?php echo $name; ?>" id="<?php echo $css_id; ?>"><?php echo $value; ?></textarea>
+    <textarea class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>"><?php echo $value; ?></textarea>
 <?php
 }
 
@@ -103,7 +115,7 @@ Textarea box (no WYSIWYG)
 elseif ('code' == $coltype)
 {
 ?>
-    <textarea class="form code <?php echo $name; ?>" id="<?php echo $css_id; ?>"><?php echo htmlspecialchars($value); ?></textarea>
+    <textarea class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>"><?php echo htmlspecialchars($value); ?></textarea>
 <?php
 }
 
@@ -171,7 +183,7 @@ jQuery(function() {
 </script>
     <input type="button" id="<?php echo $css_id; ?>" value="swfupload not loaded" />
     <input type="button" class="button" value="Browse Server" onclick="active_file = '<?php echo $name; ?>'; fileBrowser()" />
-    <div class="form file <?php echo $name; ?>">
+    <div class="<?php echo $css_classes; ?>">
 <?php
     // Retrieve uploaded files
     $field_id = $field['id'];
@@ -204,16 +216,13 @@ jQuery(function() {
 
 /*
 ==================================================
-PICK select box
+Multi-select PICK
 ==================================================
 */
-else
+elseif ('pick' == $coltype && 0 < $field['multiple'])
 {
-    // Multi-select
-    if (1 == $field['multiple'])
-    {
 ?>
-    <div class="form pick <?php echo $name; ?>" id="<?php echo $css_id; ?>">
+    <div class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>">
 <?php
         if (!empty($value))
         {
@@ -228,11 +237,16 @@ else
 ?>
     </div>
 <?php
-    }
-    else
-    {
+}
+/*
+==================================================
+Single-select PICK
+==================================================
+*/
+else
+{
 ?>
-    <select class="form pick1 <?php echo $name; ?>" id="<?php echo $css_id; ?>">
+    <select class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>">
         <option value="">-- Select one --</option>
 <?php
         if (!empty($value))
@@ -248,7 +262,6 @@ else
 ?>
     </select>
 <?php
-    }
 }
 $coltype_exists[$coltype] = true;
 ?>

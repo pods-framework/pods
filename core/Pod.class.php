@@ -16,11 +16,8 @@ class Pod
     var $datatype_id;
     var $total_rows;
     var $detail_page;
-    var $form_count = 0;
     var $rpp = 15;
     var $page;
-
-    var $helper_cache;
 
     function Pod($datatype = null, $id = null)
     {
@@ -28,7 +25,7 @@ class Pod
         $this->datatype = pods_sanitize($datatype);
         $this->page = empty($_GET['pg']) ? 1 : (int) $_GET['pg'];
 
-        if (null != $this->datatype)
+        if ($this->is_val($this->datatype))
         {
             $result = pod_query("SELECT id, detail_page FROM @wp_pod_types WHERE name = '$this->datatype' LIMIT 1");
             $row = mysql_fetch_assoc($result);
@@ -37,7 +34,9 @@ class Pod
 
             if (null != $this->id)
             {
-                return $this->getRecordById($this->id);
+                $this->getRecordById($this->id);
+                $this->id = $this->get_field('id');
+                return;
             }
         }
     }
@@ -299,22 +298,10 @@ class Pod
     */
     function pod_helper($helper, $value = null, $name = null)
     {
-        $helper = mysql_real_escape_string(trim($helper));
-
-        if (false === isset($this->helper_cache[$helper]))
-        {
-            $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name = '$helper' LIMIT 1");
-            if (0 < mysql_num_rows($result))
-            {
-                $this->helper_cache[$helper] = mysql_result($result, 0);
-            }
-            else
-            {
-                $this->helper_cache[$helper] = false;
-            }
-        }
-
-        $content = $this->helper_cache[$helper];
+        $helper = pods_sanitize($helper);
+        $pods_cache = PodCache::Instance();
+        $result = $pods_cache->get_helper($helper);
+        $content = $result['phpcode'];
 
         if (false !== $content)
         {
@@ -424,7 +411,7 @@ class Pod
     function getRecordById($id)
     {
         $datatype = $this->datatype;
-        if (!empty($datatype))
+        if ($this->is_val($datatype))
         {
             if (is_numeric($id))
             {
@@ -466,7 +453,9 @@ class Pod
         $datatype = $this->datatype;
         $datatype_id = $this->datatype_id;
         $limit = $join = $search = '';
-        if (is_int($rows_per_page) && 0 < $rows_per_page)
+
+        // ctype_digit expects a string, or it returns FALSE
+        if (ctype_digit("$rows_per_page") && 0 <= $rows_per_page)
         {
             $limit = 'LIMIT ' . ($rows_per_page * ($page - 1)) . ',' . $rows_per_page;
         }
@@ -504,15 +493,15 @@ class Pod
             // Handle any $_GET variables
             if (!empty($_GET[$field_name]))
             {
-                $val = mysql_real_escape_string(trim($_GET[$field_name]));
+                $val = (int) trim($_GET[$field_name]);
 
                 if ('wp_taxonomy' == $table)
                 {
-                    $where .= " AND `$field_name`.term_id = $val";
+                    $where .= " AND `$field_name`.term_id = '$val'";
                 }
                 else
                 {
-                    $where .= " AND `$field_name`.id = $val";
+                    $where .= " AND `$field_name`.id = '$val'";
                 }
             }
 
@@ -604,11 +593,27 @@ class Pod
 
     /*
     ==================================================
+    (Re)set the MySQL result pointer
+    ==================================================
+    */
+    function resetPointer($row_number = 0)
+    {
+        if (0 < mysql_num_rows($this->result))
+        {
+            return mysql_data_seek($this->result, $row_number);
+        }
+        return false;
+    }
+
+    /*
+    ==================================================
     Display HTML for all datatype fields
     ==================================================
     */
     function showform($pod_id = null, $public_columns = null, $label = 'Save changes')
     {
+        $pods_cache = PodCache::instance();
+
         $datatype = $this->datatype;
         $datatype_id = $this->datatype_id;
         $this->coltype_counter = array();
@@ -759,13 +764,13 @@ class Pod
             else
             {
                 // Set a default value if no value is entered
-                if (empty($this->data[$key]) && !empty($field['default']))
+                if (!$this->is_val($this->data[$key]) && $this->is_val($field['default']))
                 {
                     $this->data[$key] = $field['default'];
                 }
                 else
                 {
-                    $this->data[$key] = empty($tbl_cols[$key]) ? null : $tbl_cols[$key];
+                    $this->data[$key] = $this->is_val($tbl_cols[$key]) ? $tbl_cols[$key] : null;
                 }
             }
             $this->build_field_html($field);
@@ -775,12 +780,22 @@ class Pod
     <div>
     <input type="hidden" class="form num pod_id" value="<?php echo $pod_id; ?>" />
     <input type="hidden" class="form txt datatype" value="<?php echo $datatype; ?>" />
-    <input type="hidden" class="form txt form_count" value="<?php echo $this->form_count; ?>" />
-    <input type="hidden" class="form txt token" value="<?php echo pods_generate_key($datatype, $uri_hash, $public_columns, $this->form_count); ?>" />
+    <input type="hidden" class="form txt form_count" value="<?php echo $pods_cache->form_count; ?>" />
+    <input type="hidden" class="form txt token" value="<?php echo pods_generate_key($datatype, $uri_hash, $public_columns, $pods_cache->form_count); ?>" />
     <input type="hidden" class="form txt uri_hash" value="<?php echo $uri_hash; ?>" />
-    <input type="button" class="button btn_save" value="<?php echo $label; ?>" onclick="saveForm(<?php echo $this->form_count; ?>)" />
+    <input type="button" class="button btn_save" value="<?php echo $label; ?>" onclick="saveForm(<?php echo $pods_cache->form_count; ?>)" />
     </div>
 <?php
+    }
+
+    /*
+    ==================================================
+    Does the field have a value? (incl. 0)
+    ==================================================
+    */
+    function is_val($val)
+    {
+        return (null != $val && false !== $val) ? true : false;
     }
 
     /*
@@ -823,6 +838,7 @@ class Pod
     */
     function build_field_html($field)
     {
+        $pods_cache = PodCache::instance();
         include realpath(dirname(__FILE__) . '/input_fields.php');
     }
 

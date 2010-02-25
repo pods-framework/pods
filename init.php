@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS
 Plugin URI: http://pods.uproot.us/
 Description: The CMS Framework for WordPress.
-Version: 1.8.2
+Version: 1.8.3
 Author: Matt Gibbs
 Author URI: http://pods.uproot.us/
 
@@ -23,8 +23,8 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 182);
-define('PODS_VERSION_FULL', substr(PODS_VERSION, 0, 1) . '.' . substr(PODS_VERSION, 1, 1) . '.' . substr(PODS_VERSION, 2, 1));
+define('PODS_VERSION', 183);
+define('PODS_VERSION_FULL', implode('.', str_split(PODS_VERSION)));
 define('PODS_URL', WP_PLUGIN_URL . '/pods');
 define('PODS_DIR', WP_PLUGIN_DIR . '/pods');
 define('WP_INC_URL', get_bloginfo('wpurl') . '/' . WPINC);
@@ -35,7 +35,10 @@ $pods_roles = unserialize(get_option('pods_roles'));
 require_once PODS_DIR . '/core/functions.php';
 require_once PODS_DIR . '/core/Pod.class.php';
 require_once PODS_DIR . '/core/PodAPI.class.php';
-//require_once PODS_DIR . '/core/PodCache.class.php';
+require_once PODS_DIR . '/core/PodCache.class.php';
+
+// Cache container
+$pods_cache = PodCache::Instance();
 
 // Upgrade if necessary
 if ($installed = (int) get_option('pods_version'))
@@ -226,15 +229,6 @@ function pods_content()
     }
 }
 
-// DEPRECATED
-if (!function_exists('get_content'))
-{
-    function get_content()
-    {
-        return pods_content();
-    }
-}
-
 function pods_redirect()
 {
     global $phpcode, $pod_page_exists;
@@ -290,7 +284,7 @@ function pods_delete_attachment($postid)
 
 function pods_init()
 {
-    if (false === headers_sent())
+    if (false === headers_sent() && '' == session_id())
     {
         session_start();
     }

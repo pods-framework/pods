@@ -3,7 +3,7 @@ Contributors: logikal16, sc0ttkclark
 Donate link: http://pods.uproot.us
 Tags: pods, cms, table, database, relational database, custom, data, framework, drupal, cck, joomla
 Requires at least: 2.8
-Tested up to: 2.9.1
+Tested up to: 3.0
 Stable tag: trunk
 
 Pods is a full-featured yet lightweight CMS framework for WordPress.

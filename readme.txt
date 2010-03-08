@@ -1,6 +1,6 @@
 === Pods CMS ===
 Contributors: logikal16, sc0ttkclark
-Donate link: http://pods.uproot.us
+Donate link: http://podscms.org
 Tags: pods, cms, table, database, relational database, custom, data, framework, drupal, cck, joomla
 Requires at least: 2.8
 Tested up to: 3.0

@@ -99,12 +99,12 @@ DROP TABLE IF EXISTS wp_pod_tbl_state;
 CREATE TABLE wp_pod_tbl_state (
     id INT unsigned auto_increment primary key,
     name VARCHAR(64),
-    abbrev CHAR(2)
+    abbrev CHAR(64)
 ) DEFAULT CHARSET utf8;
 
 INSERT INTO wp_pod_menu (uri, title, lft, rgt) VALUES ('<root>', '<root>', 1, 2);
 
-INSERT INTO wp_pod_types (name, label) VALUES ('state','State');
+INSERT INTO wp_pod_types (name, label, detail_page) VALUES ('state','States','states/{@abbrev}');
 
 INSERT INTO wp_pod_pages (uri, phpcode) VALUES
 ('states', "<?php\n$Record = new Pod('state');\n$Record->findRecords('name ASC', 10);\necho $Record->getPagination();\necho $Record->showTemplate('state_list');\n?>"),

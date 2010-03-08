@@ -39,6 +39,8 @@ jQuery(function() {
 });
 
 function saveForm(form_count) {
+    jQuery(".btn_save").attr("disabled", "disabled");
+
     for (i = 0; i < elements.length; i++) {
         nicEditors.findEditor(elements[i].id).saveContent();
     }
@@ -81,6 +83,7 @@ function saveForm(form_count) {
             else {
                 window.location = "<?php echo $_SERVER['REQUEST_URI']; ?>";
             }
+            jQuery(".btn_save").attr("disabled", "");
         }
     });
     return false;

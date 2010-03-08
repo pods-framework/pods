@@ -3,7 +3,7 @@
 ==================================================
 PodCache.class.php
 
-http://pods.uproot.us/codex/
+http://podscms.org/codex/
 ==================================================
 */
 class PodCache

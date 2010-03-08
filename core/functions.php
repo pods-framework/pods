@@ -32,7 +32,7 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
         }
     }
 
-    $result = mysql_query($sql, $wpdb->dbh) or die("Error: $error; SQL: $sql; Response: " . mysql_error());
+    $result = mysql_query($sql, $wpdb->dbh) or die("Error: $error; SQL: $sql; Response: " . mysql_error($wpdb->dbh));
 
     if (0 < @mysql_num_rows($result))
     {
@@ -48,7 +48,7 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
 
     if ('INSERT' == substr(trim($sql), 0, 6))
     {
-        $result = mysql_insert_id();
+        $result = mysql_insert_id($wpdb->dbh);
     }
     elseif ('SELECT' == substr(trim($sql), 0, 6))
     {
@@ -440,5 +440,5 @@ if (!function_exists('get_content'))
 
 function build_nav_array($uri = '<root>', $max_depth = 1)
 {
-    pods_nav_array($uri, $max_depth);
+    return pods_nav_array($uri, $max_depth);
 }

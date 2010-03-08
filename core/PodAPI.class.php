@@ -3,7 +3,7 @@
 ==================================================
 PodAPI.class.php
 
-http://pods.uproot.us/codex/
+http://podscms.org/codex/
 ==================================================
 */
 class PodAPI
@@ -538,7 +538,8 @@ class PodAPI
             pod_query("UPDATE `@wp_pod_tbl_$params->datatype` SET $set_data WHERE id = $params->tbl_row_id LIMIT 1");
 
             // Update wp_pod
-            pod_query("UPDATE @wp_pod SET tbl_row_id = $params->tbl_row_id, datatype = $params->datatype_id,".(in_array('name',$table_columns)?" name = '$name',":"")." modified = NOW() WHERE id = $params->pod_id LIMIT 1", 'Cannot modify datatype row');
+            $update_name = isset($table_columns['name']) ? ", name='" . $table_columns['name'] . "'" : '';
+            pod_query("UPDATE @wp_pod SET tbl_row_id = $params->tbl_row_id, datatype = $params->datatype_id, modified = NOW() $update_name WHERE id = $params->pod_id LIMIT 1", 'Cannot modify datatype row');
 
             // Save file relationships
             foreach ($file_columns as $key => $attachment_ids)

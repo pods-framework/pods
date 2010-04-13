@@ -9,142 +9,88 @@ foreach ($_POST as $key => $val)
     $params[$key] = mysql_real_escape_string(stripslashes(trim($val)));
 }
 
+$methods = array(
+    'save_pod' => array('priv' => 'manage_pods'),
+    'save_column' => array('priv' => 'manage_pods'),
+    'save_template' => array('priv' => 'manage_templates'),
+    'save_page' => array('priv' => 'manage_pod_pages'),
+    'save_helper' => array('priv' => 'manage_helpers'),
+    'save_roles' => array('priv' => 'manage_roles'),
+    'save_menu_item' => array('priv' => 'manage_menu'),
+    'save_pod_item' => array('processor' => 'process_save_pod_item'),
+    'drop_pod' => array('priv' => 'manage_pods'),
+    'drop_column' => array('priv' => 'manage_pods'),
+    'drop_template' => array('priv' => 'manage_templates'),
+    'drop_page' => array('priv' => 'manage_pod_pages'),
+    'drop_helper' => array('priv' => 'manage_helpers'),
+    'drop_menu_item' => array('priv' => 'manage_menu'),
+    'load_pod' => array('priv' => 'manage_pods', 'format' => 'json'),
+    'load_column' => array('priv' => 'manage_pods', 'format' => 'json'),
+    'load_template' => array('priv' => 'manage_templates', 'format' => 'json'),
+    'load_page' => array('priv' => 'manage_pod_pages', 'format' => 'json'),
+    'load_helper' => array('priv' => 'manage_helpers', 'format' => 'json'),
+    'load_menu_item' => array('priv' => 'manage_menu', 'format' => 'json'),
+    'load_sister_fields' => array('format' => 'json'),
+    'load_pod_item' => array(),
+    'load_files' => array()
+);
+
 $api = new PodAPI();
 $action = $params['action'];
 
-/*
-==================================================
-Actions: Add / Edit
-==================================================
-*/
-if ('save_pod' == $action && pods_access('manage_pods'))
+if (isset($methods[$action]))
 {
-    echo $api->save_pod($params);
+    $priv = isset($methods[$action]['priv']) ? $methods[$action]['priv'] : null;
+    $format = isset($methods[$action]['format']) ? $methods[$action]['format'] : null;
+    $processor = isset($methods[$action]['processor']) ? $methods[$action]['processor'] : null;
+
+    // Check permissions
+    if (!empty($priv) && !pods_access($priv))
+    {
+        die('Error: Access denied');
+    }
+
+    // Call any processors
+    if (!empty($processor) && function_exists($processor))
+    {
+        $params = $processor($params, $api);
+    }
+
+    // Dynamically call the API method
+    $output = $api->$action($params);
+
+    // Output in PHP or JSON format
+    if ('json' == $format)
+    {
+        $output = json_encode($output);
+    }
+    echo $output;
 }
-elseif ('save_column' == $action && pods_access('manage_pods'))
-{
-    echo $api->save_column($params);
-}
-elseif ('save_template' == $action && pods_access('manage_templates'))
-{
-    echo $api->save_template($params);
-}
-elseif ('save_page' == $action && pods_access('manage_pod_pages'))
-{
-    echo $api->save_page($params);
-}
-elseif ('save_helper' == $action && pods_access('manage_helpers'))
-{
-    echo $api->save_helper($params);
-}
-elseif ('save_roles' == $action && pods_access('manage_roles'))
-{
-    echo $api->save_roles($params);
-}
-elseif ('save_menu' == $action && pods_access('manage_menu'))
-{
-    echo $api->save_menu($params);
-}
-elseif ('save_menu_item' == $action && pods_access('manage_menu'))
-{
-    echo $api->save_menu_item($params);
-}
-elseif ('save_pod_item' == $action)
+
+function process_save_pod_item($params, $api)
 {
     if (!pods_validate_key($params['token'], $params['uri_hash'], $params['datatype'], $params['form_count']))
     {
         die("Error: The form has expired.");
     }
-    $params['columns'] = null;
-    if (false === empty($_SESSION[$params['uri_hash']][$params['form_count']]['columns']))
+
+    if ($tmp = $_SESSION[$params['uri_hash']][$params['form_count']]['columns'])
     {
-        $params['columns'] = unserialize($_SESSION[$params['uri_hash']][$params['form_count']]['columns']);
+        foreach ($tmp as $key => $val)
+        {
+            $column_name = is_array($val) ? $key : $val;
+            $columns[$column_name] = $params[$column_name];
+        }
     }
-    echo $api->save_pod_item($params);
-}
-
-/*
-==================================================
-Actions: Drop
-==================================================
-*/
-elseif ('drop_pod' == $action && pods_access('manage_pods'))
-{
-    $api->drop_pod($params);
-}
-elseif ('drop_column' == $action && pods_access('manage_pods'))
-{
-    $api->drop_column($params);
-}
-elseif ('drop_template' == $action && pods_access('manage_templates'))
-{
-    $api->drop_template($params);
-}
-elseif ('drop_page' == $action && pods_access('manage_pod_pages'))
-{
-    $api->drop_page($params);
-}
-elseif ('drop_helper' == $action && pods_access('manage_helpers'))
-{
-    $api->drop_helper($params);
-}
-elseif ('drop_menu_item' == $action && pods_access('manage_menu'))
-{
-    $api->drop_menu_item($params);
-}
-elseif ('drop_pod_item' == $action)
-{
-    $api->drop_pod_item($params);
-}
-
-/*
-==================================================
-Actions: Load
-==================================================
-*/
-elseif ('load_pod' == $action && pods_access('manage_pods'))
-{
-    $out = $api->load_pod($params);
-    echo json_encode($out);
-}
-elseif ('load_column' == $action && pods_access('manage_pods'))
-{
-    $out = $api->load_column($params);
-    echo json_encode($out);
-}
-elseif ('load_template' == $action && pods_access('manage_templates'))
-{
-    $out = $api->load_template($params);
-    echo json_encode($out);
-}
-elseif ('load_page' == $action && pods_access('manage_pod_pages'))
-{
-    $out = $api->load_page($params);
-    echo json_encode($out);
-}
-elseif ('load_helper' == $action && pods_access('manage_helpers'))
-{
-    $out = $api->load_helper($params);
-    echo json_encode($out);
-}
-elseif ('load_menu_item' == $action && pods_access('manage_menu'))
-{
-    $out = $api->load_menu_item($params);
-    echo json_encode($out);
-}
-elseif ('load_pod_item' == $action)
-{
-    echo $api->load_pod_item($params);
-}
-elseif ('load_files' == $action)
-{
-    echo $api->load_files($params);
-}
-elseif ('load_sister_fields' == $action)
-{
-    echo $api->load_sister_fields($params);
-}
-else
-{
-    echo 'Error: Access denied';
+    else
+    {
+        $tmp = $api->load_pod(array('name' => $params['datatype']));
+        foreach ($tmp['fields'] as $key => $field_data)
+        {
+            $column_name = $field_data['name'];
+            $columns[$column_name] = $params[$column_name];
+        }
+    }
+    $params['columns'] = $columns;
+    return $params;
 }

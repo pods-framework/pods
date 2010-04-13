@@ -3,7 +3,7 @@
 Begin javascript code
 ==================================================
 -->
-<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css?r=<?php echo rand(1000, 9999); ?>" />
+<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css" />
 <script type="text/javascript">
 jQuery(function() {
     jQuery(".navTab").click(function() {
@@ -88,7 +88,7 @@ Begin tabbed navigation
     <h2 class="title">Export Package</h2>
     <p>Select which items to include in your new package.</p>
 
-    <div style="float:left; width:45%; margin-right:20px">
+    <div style="float:left; width:48%; margin-right:20px">
         <h3>Pods</h3>
         <div class="form pick pod" style="height:100px; margin-bottom:10px">
 <?php
@@ -103,7 +103,7 @@ while ($row = mysql_fetch_assoc($result))
         </div>
     </div>
 
-    <div style="float:left; width:45%; margin-right:20px">
+    <div style="float:left; width:48%">
         <h3>Templates</h3>
         <div class="form pick template" style="height:100px; margin-bottom:10px">
 <?php
@@ -118,7 +118,7 @@ while ($row = mysql_fetch_assoc($result))
         </div>
     </div>
 
-    <div style="float:left; width:45%; margin-right:20px">
+    <div style="float:left; width:48%; margin-right:20px">
         <h3>Pod Pages</h3>
         <div class="form pick podpage" style="height:100px; margin-bottom:10px">
 <?php
@@ -133,7 +133,7 @@ while ($row = mysql_fetch_assoc($result))
         </div>
     </div>
 
-    <div style="float:left; width:45%; margin-right:20px">
+    <div style="float:left; width:48%">
         <h3>Helpers</h3>
         <div class="form pick helper" style="height:100px">
 <?php

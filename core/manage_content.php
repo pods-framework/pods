@@ -249,7 +249,6 @@ $result = pod_query($sql);
 $Record->total_rows = pod_query("SELECT FOUND_ROWS()");
 ?>
 <div class="wrap">
-    <div id="icon-edit" class="icon32"><br /></div>
     <h2>Browse Content</h2>
 
     <div id="browseArea" class="area">
@@ -326,28 +325,15 @@ while ($row = mysql_fetch_assoc($result))
         <div class="tablenav">
             <input type="button" class="button" value="Back to List" onclick="jQuery('.area').hide(); jQuery('#browseArea').show()" />
         </div>
-        <table id="editTable" class="widefat">
-            <thead><tr><th></th></tr></thead>
-            <tfoot><tr><th></th></tr></tfoot>
-            <tbody>
-                <tr>
-                    <td>
-                        <div class="pods_form">
+        <div class="pods_form">
 <?php
 if ('add' == $add_or_edit)
 {
 ?>
-                            <script type="text/javascript">showform('<?php echo $dtname; ?>')</script>
+                <script type="text/javascript">showform('<?php echo $dtname; ?>')</script>
 <?php
 }
 ?>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="tablenav">
-            <input type="button" onclick="saveForm()" value="Save changes" class="button" />
         </div>
     </div>
 </div>

@@ -1,11 +1,11 @@
 <?php
-$pods_cache = PodCache::Instance();
-$pods_cache->form_count++;
+$cache = PodCache::instance();
+$cache->form_count++;
 
-if (1 == $pods_cache->form_count)
+if (1 == $cache->form_count)
 {
 ?>
-<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css?r=<?php echo rand(1000, 9999); ?>" />
+<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css" />
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqmodal.js"></script>
 <script type="text/javascript">
 var active_file;
@@ -114,6 +114,6 @@ function fileBrowser() {
 }
 ?>
 
-<div class="pods_form form_<?php echo $this->datatype; ?> form_<?php echo $pods_cache->form_count; ?>">
+<div class="pods_form form_<?php echo $this->datatype; ?> form_<?php echo $cache->form_count; ?>">
 <?php $this->showForm($this->get_pod_id(), $public_columns, $label); ?>
 </div>

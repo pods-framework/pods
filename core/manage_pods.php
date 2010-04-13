@@ -81,10 +81,10 @@ function sisterFields(sister_field_id) {
             else if ("" != msg) {
                 var html = '<option value="">-- Related to --</option>';
                 jQuery("#column_sister_field_id").html("");
-                var items = eval("("+msg+")");
-                for (var i = 0; i < items.length; i++) {
-                    var id = items[i].id;
-                    var name = items[i].name;
+                var json = eval('('+msg+')');
+                for (var i = 0; i < json.length; i++) {
+                    var id = json[i].id;
+                    var name = json[i].name;
                     html += '<option value="'+id+'">'+name+'</option>';
                 }
                 jQuery("#column_sister_field_id").html(html);
@@ -105,7 +105,7 @@ function loadPod() {
                 alert(msg);
             }
             else {
-                var json = eval("("+msg+")");
+                var json = eval('('+msg+')');
                 var label = (null == json.label) ? "" : json.label;
                 var is_toplevel = parseInt(json.is_toplevel);
                 var detail_page = (null == json.detail_page) ? "" : json.detail_page;
@@ -262,7 +262,7 @@ function editPod() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo PODS_URL; ?>/ajax/api.php",
-        data: "action=save_pod&datatype="+dt+"&label="+label+"&is_toplevel="+is_toplevel+"&detail_page="+detail_page+"&pre_save_helpers="+pre_save_helpers+"&pre_drop_helpers="+pre_drop_helpers+"&post_save_helpers="+post_save_helpers+"&post_drop_helpers="+post_drop_helpers+"&order="+order,
+        data: "action=save_pod&id="+dt+"&label="+label+"&is_toplevel="+is_toplevel+"&detail_page="+detail_page+"&pre_save_helpers="+pre_save_helpers+"&pre_drop_helpers="+pre_drop_helpers+"&post_save_helpers="+post_save_helpers+"&post_drop_helpers="+post_drop_helpers+"&order="+order,
         success: function(msg) {
             if ("Error" == msg.substr(0, 5)) {
                 alert(msg);
@@ -279,7 +279,7 @@ function dropPod() {
         jQuery.ajax({
             type: "post",
             url: "<?php echo PODS_URL; ?>/ajax/api.php",
-            data: "action=drop_pod&id="+dt+"&dtname="+dtname,
+            data: "action=drop_pod&id="+dt+"&name="+dtname,
             success: function(msg) {
                 if ("Error" == msg.substr(0, 5)) {
                     alert(msg);
@@ -304,7 +304,7 @@ function loadColumn(id) {
         url: "<?php echo PODS_URL; ?>/ajax/api.php",
         data: "action=load_column&id="+column_id,
         success: function(msg) {
-            var json = eval("("+msg+")");
+            var json = eval('('+msg+')');
             var name = (null == json.name) ? "" : json.name;
             var label = (null == json.label) ? "" : json.label;
             var comment = (null == json.comment) ? "" : json.comment;

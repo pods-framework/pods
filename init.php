@@ -3,11 +3,11 @@
 Plugin Name: Pods CMS
 Plugin URI: http://podscms.org/
 Description: The CMS Framework for WordPress.
-Version: 1.8.4
+Version: 1.8.5
 Author: Matt Gibbs
 Author URI: http://podscms.org/
 
-Copyright 2009  Matt Gibbs  (email : logikal16@gmail.com)
+Copyright 2010  Matt Gibbs  (email : logikal16@gmail.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 184);
+define('PODS_VERSION', 185);
 define('PODS_VERSION_FULL', implode('.', str_split(PODS_VERSION)));
 define('PODS_URL', WP_PLUGIN_URL . '/pods');
 define('PODS_DIR', WP_PLUGIN_DIR . '/pods');
@@ -38,7 +38,7 @@ require_once PODS_DIR . '/core/PodAPI.class.php';
 require_once PODS_DIR . '/core/PodCache.class.php';
 
 // Cache container
-$pods_cache = PodCache::Instance();
+$cache = PodCache::instance();
 
 // Upgrade if necessary
 if ($installed = (int) get_option('pods_version'))
@@ -91,7 +91,7 @@ if (!file_exists(ABSPATH . '.htaccess'))
 function pods_menu()
 {
     $submenu = array();
-    $result = pod_query("SELECT name, label, is_toplevel FROM @wp_pod_types ORDER BY name");
+    $result = pod_query("SELECT name, label, is_toplevel FROM @wp_pod_types ORDER BY label, name");
     if (0 < mysql_num_rows($result))
     {
         while ($row = mysql_fetch_array($result))
@@ -182,9 +182,12 @@ function pods_menu_page()
 
 function pods_meta()
 {
+    if (false !== apply_filters('pods_meta', false))
+    {
 ?>
 <meta name="CMS" content="Pods <?php echo PODS_VERSION_FULL; ?>" />
 <?php
+    }
 }
 
 function pods_title($title, $sep, $seplocation)
@@ -214,7 +217,7 @@ function pods_title($title, $sep, $seplocation)
             $title .= ('right' == $seplocation) ? ucwords($page_title) . " $sep " : " $sep " . ucwords($page_title);
         }
     }
-    return $title;
+    return apply_filters('pods_title', $title);
 }
 
 function pods_content()
@@ -225,7 +228,7 @@ function pods_content()
     {
         ob_start();
         eval("?>$phpcode");
-        echo ob_get_clean();
+        echo apply_filters('pods_content', ob_get_clean());
     }
 }
 
@@ -267,7 +270,6 @@ function pods_precode()
 
 function pods_delete_attachment($postid)
 {
-    // Get all file field_ids
     $result = pod_query("SELECT id FROM @wp_pod_fields WHERE coltype = 'file'");
     if (0 < mysql_num_rows($result))
     {

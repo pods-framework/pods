@@ -41,7 +41,7 @@ function loadTemplate() {
                 alert(msg);
             }
             else {
-                var json = eval("("+msg+")");
+                var json = eval('('+msg+')');
                 var code = (null == json.code) ? "" : json.code;
                 jQuery("#template_code").val(code);
             }

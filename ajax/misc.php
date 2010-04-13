@@ -8,11 +8,9 @@ foreach ($_POST as $key => $val)
     ${$key} = mysql_real_escape_string(stripslashes(trim($val)));
 }
 
-/*
-==================================================
-Load file list
-==================================================
-*/
+/**
+ * Load file list
+ */
 if ('browse_files' == $action)
 {
     $search = empty($search) ? '' : "AND guid LIKE '%$search%'";
@@ -47,11 +45,9 @@ if ('browse_files' == $action)
     }
 }
 
-/*
-==================================================
-Upload a new file
-==================================================
-*/
+/**
+ * Upload a new file
+ */
 elseif ('wp_handle_upload' == $action)
 {
     $attachment_id = media_handle_upload('Filedata', 0);

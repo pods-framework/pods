@@ -111,7 +111,7 @@ INSERT INTO wp_pod_pages (uri, phpcode) VALUES
 ('states/*', "<?php\n// Get the last URL variable\n$id = pods_url_variable('last');\n\n$Record = new Pod('state', $id);\necho $Record->showTemplate('state_detail');\n?>");
 
 INSERT INTO wp_pod_templates (name, code) VALUES
-('state_list', '<p><a href="/states/{@abbrev}">{@name}</a></p>'),
+('state_list', '<p><a href="{@detail_url}">{@name}</a></p>'),
 ('state_detail', '<h2>{@name}</h2>\n<div>Abbrev: {@abbrev}</div>');
 
 INSERT INTO wp_pod_helpers (name, helper_type, phpcode) VALUES

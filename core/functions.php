@@ -1,29 +1,28 @@
 <?php
-/*
-==================================================
-Standardize queries and error reporting
-
-$sql                SQL query
-$error              SQL failure message
-$results_error      Triggered when results > 0
-$no_results_error   Triggered when results = 0
-==================================================
-*/
+/**
+ * Standardize queries and error reporting
+ *
+ * @param string $query The SQL query
+ * @param string $error (optional) The failure message
+ * @param string $results_error (optional) Throw an error if a records are found
+ * @param string $no_results_error (optional) Throw an error if no records are found
+ * @since 1.2.0
+ */
 function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_results_error = null)
 {
     global $wpdb;
 
     $sql = str_replace('@wp_users', $wpdb->users, $sql);
     $sql = str_replace('@wp_', $wpdb->prefix, $sql);
-    $sql = str_replace('__podsdb__', '@wp_', $sql);
+    $sql = str_replace('{prefix}', '@wp_', $sql);
 
     // Returned cached resultset
     if ('SELECT' == substr(trim($sql), 0, 6))
     {
-        $pods_cache = PodCache::Instance();
-        if (isset($pods_cache->results[$sql]) && $pods_cache->cache_enabled)
+        $cache = PodCache::instance();
+        if ($cache->cache_enabled && isset($cache->results[$sql]))
         {
-            $result = $pods_cache->results[$sql];
+            $result = $cache->results[$sql];
             if (0 < mysql_num_rows($result))
             {
                 mysql_data_seek($result, 0);
@@ -54,29 +53,34 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
     {
         if ('SELECT FOUND_ROWS()' != $sql)
         {
-            $pods_cache->results[$sql] = $result;
+            $cache->results[$sql] = $result;
         }
     }
     return $result;
 }
 
-/*
-==================================================
-Return a lowercase alphanumeric name (with underscores)
-==================================================
-*/
+/**
+ * Return a lowercase alphanumeric name (with underscores)
+ *
+ * @param string $name Input string to clean
+ * @since 1.2.0
+ */
 function pods_clean_name($name)
 {
     $name = preg_replace("/([- ])/", "_", $name);
+    $name = preg_replace("/(_){2,}/", "_", $name);
     $name = preg_replace("/([^0-9a-z_])/", "", strtolower($name));
     return $name;
 }
 
-/*
-==================================================
-Return either a GET var or URI string segment
-==================================================
-*/
+/**
+ * Return a GET, POST, COOKIE, SESSION, or URI string segment
+ *
+ * @param mixed $key The variable name or URI segment position
+ * @param string $type (optional) "uri", "get", "post", "cookie", or "session"
+ * @return string The requested value, or null
+ * @since 1.6.2
+ */
 function pods_url_variable($key = 'last', $type = 'uri')
 {
     $output = false;
@@ -115,11 +119,12 @@ function pods_url_variable($key = 'last', $type = 'uri')
     return pods_sanitize($output);
 }
 
-/*
-==================================================
-Filter input. Escape output.
-==================================================
-*/
+/**
+ * Filter input. Escape output.
+ *
+ * @param mixed $input The string, array, or object to sanitize
+ * @since 1.2.0
+ */
 function pods_sanitize($input)
 {
     $output = array();
@@ -147,18 +152,24 @@ function pods_sanitize($input)
     else
     {
         // Rename @wp_ to prevent pod_query() from replacing it
-        $input = str_replace('@wp_', '__podsdb__', $input);
-
+        $input = str_replace('@wp_', '{prefix}', $input);
         $output = mysql_real_escape_string(trim($input));
     }
     return $output;
 }
 
-/*
-==================================================
-Build a unique slug
-==================================================
-*/
+/**
+ * Build a unique slug
+ *
+ * @todo Simplify this function - get rid of the pod_id crap
+ * @param string $value The slug value
+ * @param string $column_name The column name
+ * @param string $datatype The datatype name
+ * @param int $datatype_id The datatype ID
+ * @param int $pod_id The item's ID in the wp_pod table
+ * @return string The unique slug name
+ * @since 1.7.2
+ */
 function pods_unique_slug($value, $column_name, $datatype, $datatype_id, $pod_id = 0)
 {
     $value = sanitize_title($value);
@@ -198,14 +209,26 @@ function pods_unique_slug($value, $column_name, $datatype, $datatype_id, $pod_id
     return $value;
 }
 
-/*
-==================================================
-Access control
-==================================================
-*/
+/**
+ * See if the current user has a certain privilege
+ *
+ * @param string $priv The privilege name
+ * @return bool
+ * @since 1.2.0
+ */
 function pods_access($priv)
 {
     global $pods_roles, $current_user;
+
+    // Usage: add_filter('pods_access', array('manage_roles' => false));
+    if ($hook_privs = apply_filters('pods_access', false))
+    {
+        if (isset($hook_privs[$priv]))
+        {
+            // The string "false" should equal boolean false
+            return ('false' == $hooks[$priv]) ? false : (bool) $hooks[$priv];
+        }
+    }
 
     if (in_array('administrator', $current_user->roles))
     {
@@ -226,11 +249,119 @@ function pods_access($priv)
     return false;
 }
 
-/*
-==================================================
-Build the navigation array
-==================================================
-*/
+/**
+ * Shortcode support for WP Posts and Pages
+ *
+ * @param array $tags An associative array of shortcode properties
+ * @since 1.6.7
+ */
+function pods_shortcode($tags)
+{
+    $pairs = array('name' => null, 'id' => null, 'slug' => null, 'order' => 'id DESC', 'limit' => 15, 'where' => null, 'col' => null, 'template' => null, 'helper' => null);
+    $tags = shortcode_atts($pairs, $tags);
+
+    if (empty($tags['name']))
+    {
+        return 'Error: Please provide a Pod name';
+    }
+    if (empty($tags['template']) && empty($tags['col']))
+    {
+        return 'Error: Please provide either a template or column name';
+    }
+
+    // id > slug (if both exist)
+    $id = empty($tags['slug']) ? null : $tags['slug'];
+    $id = empty($tags['id']) ? $id : $tags['id'];
+
+    $order = empty($tags['order']) ? 'id DESC' : $tags['order'];
+    $limit = empty($tags['limit']) ? 15 : $tags['limit'];
+    $where = empty($tags['where']) ? null : $tags['where'];
+
+    $Record = new Pod($tags['name'], $id);
+
+    if (empty($id))
+    {
+        $Record->findRecords($order, $limit, $where);
+    }
+    if (!empty($tags['col']) && !empty($id))
+    {
+        $val = $Record->get_field($tags['col']);
+        return empty($tags['helper']) ? $val : $Record->pod_helper($tags['helper'], $val);
+    }
+    return $Record->showTemplate($tags['template']);
+}
+
+/**
+ * Generate form key - INTERNAL USE
+ *
+ * @since 1.2.0
+ */
+function pods_generate_key($datatype, $uri_hash, $public_columns, $form_count = 1)
+{
+    $token = md5(mt_rand());
+    $_SESSION[$uri_hash][$form_count]['dt'] = $datatype;
+    $_SESSION[$uri_hash][$form_count]['token'] = $token;
+    $_SESSION[$uri_hash][$form_count]['columns'] = $public_columns;
+    return $token;
+}
+
+/**
+ * Validate form key - INTERNAL USE
+ *
+ * @since 1.2.0
+ */
+function pods_validate_key($key, $uri_hash, $datatype, $form_count = 1)
+{
+    if (!empty($_SESSION[$uri_hash]))
+    {
+        $session_dt = $_SESSION[$uri_hash][$form_count]['dt'];
+        $session_token = $_SESSION[$uri_hash][$form_count]['token'];
+        if (!empty($session_token) && $key == $session_token && $datatype == $session_dt)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Translation support
+ *
+ * @param string $string The string to translate
+ * @return string The translated string, or the original string
+ * @since 1.7.0
+ */
+function pods_i18n($string)
+{
+    global $lang;
+
+    if (isset($lang[$string]))
+    {
+        $string = $lang[$string];
+    }
+    return $string;
+}
+
+/**
+ * Find out if the current page is a Pod Page
+ *
+ * @return bool
+ * @since 1.7.5
+ */
+function is_pod_page()
+{
+    global $pod_page_exists;
+
+    return (false !== $pod_page_exists) ? true : false;
+}
+
+/**
+ * Build the navigation array
+ *
+ * @param string $uri (optional) The base URL
+ * @param int $depth (optional) The maximum recursion depth
+ * @since 1.2.0
+ */
 function pods_nav_array($uri = '<root>', $max_depth = 1)
 {
     $having = (0 < $max_depth) ? "HAVING depth <= $max_depth" : '';
@@ -278,11 +409,13 @@ function pods_nav_array($uri = '<root>', $max_depth = 1)
     return false;
 }
 
-/*
-==================================================
-Build the HTML navigation
-==================================================
-*/
+/**
+ * Build the HTML navigation
+ *
+ * @param string $uri (optional) The base URL
+ * @param int $depth (optional) The maximum recursion depth
+ * @since 1.2.0
+ */
 function pods_navigation($uri = '<root>', $max_depth = 1)
 {
     $last_depth = -1;
@@ -323,113 +456,7 @@ function pods_navigation($uri = '<root>', $max_depth = 1)
     }
 }
 
-/*
-==================================================
-Shortcode support on WP Posts / Pages
-==================================================
-*/
-function pods_shortcode($tags)
-{
-    $pairs = array('name' => null, 'id' => null, 'slug' => null, 'order' => 'id DESC', 'limit' => 15, 'where' => null, 'col' => null, 'template' => null, 'helper' => null);
-    $tags = shortcode_atts($pairs, $tags);
-
-    if (empty($tags['name']))
-    {
-        return 'Error: Please provide a Pod name';
-    }
-    if (empty($tags['template']) && empty($tags['col']))
-    {
-        return 'Error: Please provide either a template or column name';
-    }
-
-    // id > slug (if both exist)
-    $id = empty($tags['slug']) ? null : $tags['slug'];
-    $id = empty($tags['id']) ? $id : $tags['id'];
-
-    $order = empty($tags['order']) ? 'id DESC' : $tags['order'];
-    $limit = empty($tags['limit']) ? 15 : $tags['limit'];
-    $where = empty($tags['where']) ? null : $tags['where'];
-
-    $Record = new Pod($tags['name'], $id);
-
-    if (empty($id))
-    {
-        $Record->findRecords($order, $limit, $where);
-    }
-    if (!empty($tags['col']) && !empty($id))
-    {
-        $val = $Record->get_field($tags['col']);
-        return empty($tags['helper']) ? $val : $Record->pod_helper($tags['helper'], $val);
-    }
-    return $Record->showTemplate($tags['template']);
-}
-
-/*
-==================================================
-Generate form key
-==================================================
-*/
-function pods_generate_key($datatype, $uri_hash, $public_columns, $form_count = 1)
-{
-    $token = md5(mt_rand());
-    $_SESSION[$uri_hash][$form_count]['dt'] = $datatype;
-    $_SESSION[$uri_hash][$form_count]['token'] = $token;
-    $_SESSION[$uri_hash][$form_count]['columns'] = serialize($public_columns);
-    return $token;
-}
-
-/*
-==================================================
-Validate form key
-==================================================
-*/
-function pods_validate_key($key, $uri_hash, $datatype, $form_count = 1)
-{
-    if (!empty($_SESSION[$uri_hash]))
-    {
-        $session_dt = $_SESSION[$uri_hash][$form_count]['dt'];
-        $session_token = $_SESSION[$uri_hash][$form_count]['token'];
-        if (!empty($session_token) && $key == $session_token && $datatype == $session_dt)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-/*
-==================================================
-Translation support
-==================================================
-*/
-function pods_i18n($string)
-{
-    global $lang;
-
-    if (isset($lang[$string]))
-    {
-        $string = $lang[$string];
-    }
-    return $string;
-}
-
-/*
-==================================================
-Is the current page a Pod Page?
-==================================================
-*/
-function is_pod_page()
-{
-    global $pod_page_exists;
-
-    return (false !== $pod_page_exists) ? true : false;
-}
-
-/*
-==================================================
-DEPRECATED
-==================================================
-*/
+// Deprecated
 if (!function_exists('get_content'))
 {
     function get_content()

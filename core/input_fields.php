@@ -8,7 +8,7 @@ $coltype = $field['coltype'];
 $input_helper = $field['input_helper'];
 $hidden = empty($field['hidden']) ? '' : ' hidden';
 $value = is_array($this->data[$name]) ? $this->data[$name] : stripslashes($this->data[$name]);
-$css_id = 'pods_form' . $pods_cache->form_count . '_' . $name;
+$css_id = 'pods_form' . $cache->form_count . '_' . $name;
 
 // The first 3 CSS classes will be DEPRECATED in 2.0.0
 $css_classes = "form $coltype $name pods_field pods_field_$name pods_coltype_$coltype";

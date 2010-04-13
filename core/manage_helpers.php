@@ -32,7 +32,7 @@ function loadHelper() {
                 alert(msg);
             }
             else {
-                var json = eval("("+msg+")");
+                var json = eval('('+msg+')');
                 var code = (null == json.phpcode) ? "" : json.phpcode;
                 var helper_type = (null == json.helper_type) ? "display" : json.helper_type;
                 jQuery("#helper_code").val(code);
@@ -138,7 +138,7 @@ if (isset($helpers))
         $helper_name = $helper['name'];
         $helper_type = $helper['helper_type'];
 ?>
-        <option value="<?php echo $helper_id; ?>"><?php echo $helper_name; ?></option>
+        <option value="<?php echo $helper_id; ?>"><?php echo $helper_name; ?> (<?php echo $helper_type; ?>)</option>
 <?php
     }
 }

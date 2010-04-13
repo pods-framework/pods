@@ -1,11 +1,4 @@
 <?php
-/*
-==================================================
-Pod.class.php
-
-http://podscms.org/codex/
-==================================================
-*/
 class Pod
 {
     var $id;
@@ -17,20 +10,32 @@ class Pod
     var $total_rows;
     var $detail_page;
     var $rpp = 15;
+    var $page_var = 'pg';
     var $page;
 
-    function Pod($datatype = null, $id = null)
+    /**
+     * Constructor - Pods CMS core
+     *
+     * @param string $datatype The pod name
+     * @param mixed $id (optional) The ID or slug, to load a single record
+     * @license http://www.gnu.org/licenses/gpl-2.0.html
+     * @since 1.0.0
+     */
+    function __construct($datatype = null, $id = null)
     {
         $this->id = pods_sanitize($id);
         $this->datatype = pods_sanitize($datatype);
-        $this->page = empty($_GET['pg']) ? 1 : (int) $_GET['pg'];
 
-        if ($this->is_val($this->datatype))
+        // Get the page variable
+        $this->page = pods_url_variable($this->page_var, 'get');
+        $this->page = empty($this->page) ? 1 : (int) $this->page;
+
+        if (!empty($this->datatype))
         {
             $result = pod_query("SELECT id, detail_page FROM @wp_pod_types WHERE name = '$this->datatype' LIMIT 1");
-            $row = mysql_fetch_assoc($result);
-            $this->datatype_id = $row['id'];
-            $this->detail_page = $row['detail_page'];
+            $row = mysql_fetch_object($result);
+            $this->datatype_id = $row->id;
+            $this->detail_page = $row->detail_page;
 
             if (null != $this->id)
             {
@@ -41,11 +46,11 @@ class Pod
         }
     }
 
-    /*
-    ==================================================
-    Output the SQL resultset
-    ==================================================
-    */
+    /**
+     * Fetch a row of results from the DB
+     *
+     * @since 1.2.0
+     */
     function fetchRecord()
     {
         if ($this->data = mysql_fetch_assoc($this->result))
@@ -55,11 +60,13 @@ class Pod
         return false;
     }
 
-    /*
-    ==================================================
-    Return the value of a single field (return arrays)
-    ==================================================
-    */
+    /**
+     * Return a field's value(s)
+     *
+     * @param string $name The field name
+     * @param string $orderby (optional) The orderby string, for PICK fields
+     * @since 1.2.0
+     */
     function get_field($name, $orderby = null)
     {
         if (isset($this->data[$name]))
@@ -130,8 +137,8 @@ class Pod
 
                         // Get datatype ID for non-WP PICK columns
                         if (
-                            false === empty($pickval) &&
-                            false === in_array($pickval, array('wp_taxonomy', 'wp_post', 'wp_page', 'wp_user')))
+                            !empty($pickval) &&
+                            !in_array($pickval, array('wp_taxonomy', 'wp_post', 'wp_page', 'wp_user')))
                         {
                             $result = pod_query("SELECT id FROM @wp_pod_types WHERE name = '$pickval' LIMIT 1");
                             $datatype_id = mysql_result($result, 0);
@@ -190,11 +197,14 @@ class Pod
         }
     }
 
-    /*
-    ==================================================
-    Find items related to a parent field
-    ==================================================
-    */
+    /**
+     * Find items related to a parent field
+     *
+     * @param int $field_id The field ID
+     * @param int $datatype_id The datatype ID
+     * @param mixed $tbl_row_ids A comma-separated string of row IDs
+     * @since 1.2.0
+     */
     function lookup_row_ids($field_id, $datatype_id, $tbl_row_ids)
     {
         $tbl_row_ids = empty($tbl_row_ids) ? 0 : $tbl_row_ids;
@@ -223,11 +233,15 @@ class Pod
         return false;
     }
 
-    /*
-    ==================================================
-    Lookup values from a single relationship field
-    ==================================================
-    */
+    /**
+     * Lookup values from a single relationship field
+     *
+     * @param mixed $tbl_row_ids A comma-separated string of row IDs
+     * @param string $table The database table alias
+     * @param string $orderby (optional) MySQL "ORDER BY" clause
+     * @return array $data Associative array of table column values
+     * @since 1.2.0
+     */
     function rel_lookup($tbl_row_ids, $table, $orderby = null)
     {
         $orderby = empty($orderby) ? '' : "ORDER BY $orderby";
@@ -261,11 +275,13 @@ class Pod
         return $data;
     }
 
-    /*
-    ==================================================
-    Get the pod id
-    ==================================================
-    */
+    /**
+     * Get the current item's pod ID from its datatype ID and tbl_row_id
+     *
+     * @todo pod_id should NEVER be needed by users - fix code so tbl_row_id is used instead
+     * @return int The ID from the wp_pod table
+     * @since 1.2.0
+     */
     function get_pod_id()
     {
         if (empty($this->data['pod_id']))
@@ -281,28 +297,31 @@ class Pod
         return $this->data['pod_id'];
     }
 
-    /*
-    ==================================================
-    Store user-generated data
-    ==================================================
-    */
+    /**
+     * Set a custom data value (no database changes)
+     *
+     * @param string $name The field name
+     * @param mixed $data The value to set
+     * @return mixed The value of $data
+     * @since 1.2.0
+     */
     function set_field($name, $data)
     {
         return $this->data[$name] = $data;
     }
 
-    /*
-    ==================================================
-    Run a helper within a Pod Page or WP template
-    ==================================================
-    */
+    /**
+     * Run a helper within a Pod Page or WP Template
+     *
+     * @param string $helper The helper name
+     * @return mixed Anything returned by the helper
+     * @since 1.2.0
+     */
     function pod_helper($helper, $value = null, $name = null)
     {
+        $api = new PodAPI();
         $helper = pods_sanitize($helper);
-        $pods_cache = PodCache::Instance();
-        $result = $pods_cache->get_helper($helper);
-        $content = $result['phpcode'];
-
+        $content = $api->load_helper(array('name' => $helper));
         if (false !== $content)
         {
             ob_start();
@@ -311,10 +330,8 @@ class Pod
         }
     }
 
-    /*
-    ==================================================
-    Get pod or category dropdown values
-    ==================================================
+    /**
+     * Get pod or category dropdown values
     */
     function get_dropdown_values($params)
     {
@@ -403,10 +420,8 @@ class Pod
         return $val;
     }
 
-    /*
-    ==================================================
-    Return a single record
-    ==================================================
+    /**
+     * Return a single record
     */
     function getRecordById($id)
     {
@@ -442,10 +457,8 @@ class Pod
         }
     }
 
-    /*
-    ==================================================
-    Search and filter records
-    ==================================================
+    /**
+     * Search and filter records
     */
     function findRecords($orderby = 'id DESC', $rows_per_page = 15, $where = null, $sql = null)
     {
@@ -471,7 +484,7 @@ class Pod
         // Handle search
         if (!empty($_GET['search']))
         {
-            $val = mysql_real_escape_string(trim($_GET['search']));
+            $val = pods_url_variable('search', 'get');
             $search = "AND (t.name LIKE '%$val%')";
         }
 
@@ -574,10 +587,8 @@ class Pod
         $this->total_rows = pod_query("SELECT FOUND_ROWS()");
     }
 
-    /*
-    ==================================================
-    Fetch the total row count
-    ==================================================
+    /**
+     * Fetch the total row count
     */
     function getTotalRows()
     {
@@ -591,10 +602,8 @@ class Pod
         return $this->total_rows;
     }
 
-    /*
-    ==================================================
-    (Re)set the MySQL result pointer
-    ==================================================
+    /**
+     * (Re)set the MySQL result pointer
     */
     function resetPointer($row_number = 0)
     {
@@ -605,14 +614,12 @@ class Pod
         return false;
     }
 
-    /*
-    ==================================================
-    Display HTML for all datatype fields
-    ==================================================
+    /**
+     * Display HTML for all datatype fields
     */
     function showform($pod_id = null, $public_columns = null, $label = 'Save changes')
     {
-        $pods_cache = PodCache::instance();
+        $cache = PodCache::instance();
 
         $datatype = $this->datatype;
         $datatype_id = $this->datatype_id;
@@ -780,28 +787,24 @@ class Pod
     <div>
     <input type="hidden" class="form num pod_id" value="<?php echo $pod_id; ?>" />
     <input type="hidden" class="form txt datatype" value="<?php echo $datatype; ?>" />
-    <input type="hidden" class="form txt form_count" value="<?php echo $pods_cache->form_count; ?>" />
-    <input type="hidden" class="form txt token" value="<?php echo pods_generate_key($datatype, $uri_hash, $public_columns, $pods_cache->form_count); ?>" />
+    <input type="hidden" class="form txt form_count" value="<?php echo $cache->form_count; ?>" />
+    <input type="hidden" class="form txt token" value="<?php echo pods_generate_key($datatype, $uri_hash, $public_columns, $cache->form_count); ?>" />
     <input type="hidden" class="form txt uri_hash" value="<?php echo $uri_hash; ?>" />
-    <input type="button" class="button btn_save" value="<?php echo $label; ?>" onclick="saveForm(<?php echo $pods_cache->form_count; ?>)" />
+    <input type="button" class="button btn_save" value="<?php echo $label; ?>" onclick="saveForm(<?php echo $cache->form_count; ?>)" />
     </div>
 <?php
     }
 
-    /*
-    ==================================================
-    Does the field have a value? (incl. 0)
-    ==================================================
+    /**
+     * Does the field have a value? (incl. 0)
     */
     function is_val($val)
     {
         return (null != $val && false !== $val) ? true : false;
     }
 
-    /*
-    ==================================================
-    Display the pagination controls
-    ==================================================
+    /**
+     * Display the pagination controls
     */
     function getPagination($label = 'Go to page:')
     {
@@ -811,42 +814,34 @@ class Pod
         }
     }
 
-    /*
-    ==================================================
-    Display the list filters
-    ==================================================
+    /**
+     * Display the list filters
     */
     function getFilters($filters = null, $label = 'Filter', $action = '')
     {
         include realpath(dirname(__FILE__) . '/list_filters.php');
     }
 
-    /*
-    ==================================================
-    Build public input form
-    ==================================================
+    /**
+     * Build public input form
     */
     function publicForm($public_columns = null, $label = 'Save changes')
     {
         include realpath(dirname(__FILE__) . '/form.php');
     }
 
-    /*
-    ==================================================
-    Build HTML for a single field
-    ==================================================
+    /**
+     * Build HTML for a single field
     */
-    function build_field_html($field)
+    private function build_field_html($field)
     {
-        $pods_cache = PodCache::instance();
+        $cache = PodCache::instance();
         include realpath(dirname(__FILE__) . '/input_fields.php');
     }
 
-    /*
-    ==================================================
-    Display the page template
-    ==================================================
-    */
+    /**
+     * Display the page template
+     */
     function showTemplate($tpl, $code = null)
     {
         ob_start();
@@ -865,25 +860,35 @@ class Pod
             {
                 while ($this->fetchRecord())
                 {
-                    $out = preg_replace_callback("/({@(.*?)})/m", array($this, "parse_magic_tags"), $code);
-                    eval("?>$out");
+                    echo $this->parse_template_string($code);
                 }
             }
             else
             {
-                $out = preg_replace_callback("/({@(.*?)})/m", array($this, "parse_magic_tags"), $code);
-                eval("?>$out");
+                echo $this->parse_template_string($code);
             }
         }
         return ob_get_clean();
     }
 
-    /*
-    ==================================================
-    Replace magic tags with their values
-    ==================================================
-    */
-    function parse_magic_tags($in)
+    /**
+     * Parse a template string
+     *
+     * @param string $in The template string to parse
+     * @since 1.8.5
+     */
+    function parse_template_string($in)
+    {
+        ob_start();
+        $out = preg_replace_callback("/({@(.*?)})/m", array($this, "parse_magic_tags"), $in);
+        eval("?>$out");
+        return ob_get_clean();
+    }
+
+    /**
+     * Replace magic tags with their values
+     */
+    private function parse_magic_tags($in)
     {
         $name = $in[2];
         $before = $after = '';
@@ -897,7 +902,7 @@ class Pod
         }
         elseif ('detail_url' == $name)
         {
-            return get_bloginfo('url') . '/' . preg_replace_callback("/({@(.*?)})/m", array($this, "parse_magic_tags"), $this->detail_page);
+            return get_bloginfo('url') . '/' . $this->parse_template_string($this->detail_page);
         }
         else
         {

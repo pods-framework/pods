@@ -3,7 +3,7 @@
 Begin javascript code
 ==================================================
 -->
-<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css?r=<?php echo rand(1000, 9999); ?>" />
+<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/style.css" />
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/js/jqmodal.js"></script>
 <script type="text/javascript">
 var menu_id;
@@ -59,9 +59,9 @@ function loadMenu() {
                 alert(msg);
             }
             else {
-                var menu_data = eval("("+msg+")");
-                var uri = (null == menu_data.uri) ? "" : menu_data.uri;
-                var title = (null == menu_data.title) ? "" : menu_data.title;
+                var json = jQuery.eval('('+msg+')');
+                var uri = (null == json.uri) ? "" : json.uri;
+                var title = (null == json.title) ? "" : json.title;
                 jQuery("#menu_id").val(menu_id);
                 jQuery("#menu_uri").val(uri);
                 jQuery("#menu_title").val(title);
@@ -165,14 +165,10 @@ Begin edit area
 ==================================================
 -->
 <div class="wrap">
-    <div id="icon-edit" class="icon32"><br /></div>
     <h2>Menu Editor</h2>
-    <table class="widefat">
-        <thead><tr><th></th></tr></thead>
-        <tfoot><tr><th></th></tr></tfoot>
-        <tbody>
-            <tr>
-                <td>
+    <div class="updated">
+        <p>This feature is being deprecated in favor of <strong>Appearance > Menus</strong> in WP 3.0.</p>
+    </div>
 <?php
 $last_depth = -1;
 if ($menu = build_nav_array('<root>', 0))
@@ -208,8 +204,4 @@ if ($menu = build_nav_array('<root>', 0))
     }
 }
 ?>
-                </td>
-            </tr>
-        </tbody>
-    </table>
 </div>

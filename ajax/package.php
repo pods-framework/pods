@@ -28,7 +28,7 @@ if ('export' == $action)
 
     $pod_ids = $pod;
     $template_ids = $template;
-    $podpage_ids = $podpage;
+    $pod_page_ids = $podpage;
     $helper_ids = $helper;
 
     // Get pods
@@ -65,9 +65,9 @@ if ('export' == $action)
     }
 
     // Get pod pages
-    if (!empty($podpage_ids))
+    if (!empty($pod_page_ids))
     {
-        $result = pod_query("SELECT * FROM @wp_pod_pages WHERE id IN ($podpage_ids)");
+        $result = pod_query("SELECT * FROM @wp_pod_pages WHERE id IN ($pod_page_ids)");
         while ($row = mysql_fetch_assoc($result))
         {
             unset($row['id']);
@@ -146,7 +146,7 @@ elseif ('finalize' == $action)
                 }
 
                 // Store all table columns
-                if ('pick' != $fieldval['coltype'])
+                if ('pick' != $fieldval['coltype'] && 'file' != $fieldval['coltype'])
                 {
                     $table_columns[$fieldval['name']] = $fieldval['coltype'];
                 }

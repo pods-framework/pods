@@ -1,6 +1,6 @@
 /* Admin-facing */
 .area {
-    margin: 0 15px 0 0;
+    margin: 0;
     padding: 0;
 }
 
@@ -230,10 +230,6 @@ ul.sortable li {
     padding: 2px 0;
     text-align: left;
     border-bottom: 1px solid #E3E3E3;
-}
-
-#editTable .btn_save {
-    display: none;
 }
 
 .filebox {

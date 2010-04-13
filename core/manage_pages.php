@@ -42,7 +42,7 @@ function loadPage() {
                 alert(msg);
             }
             else {
-                var json = eval("("+msg+")");
+                var json = eval('('+msg+')');
                 var title = (null == json.title) ? "" : json.title;
                 var code = (null == json.phpcode) ? "" : json.phpcode;
                 var precode = (null == json.precode) ? "" : json.precode;

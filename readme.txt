@@ -10,10 +10,8 @@ Pods is a full-featured yet lightweight CMS framework for WordPress.
 
 == Description ==
 
-**WordPress Evolved.**
-
 Pods is a CMS framework for WordPress.
-It's a plugin that sits on top of WordPress, allowing you to add and display your own content types. 
+It sits on top of WordPress, allowing you to add and display your own content types. 
 
 **Relate content to other content.**
 
@@ -31,3 +29,16 @@ Templates are used within Pod Pages, and are meant for separating presentation f
 * Menu Editor - organize your pages to generate sitemaps, navigation menus, and breadcrumbs
 * Roles - lightweight permissions system
 * API - access and modify the data programatically
+
+== Changelog ==
+
+= 1.8.6 - Apr 14, 2010 =
+* Bugfix: saving an error pick column throws an error
+
+= 1.8.5 - Apr 13, 2010 =
+* Changed: save_pod_item improvements, see http://bit.ly/d4EWDM
+* Changed: proper PHPdoc commenting
+* Bugfix: timezone issues
+* Added: ability to override pager var ($this->page_var)
+* Added: load_helper, load_pod, load_template, drop_helper, drop_pod, drop_template methods support the "name" field as well as the id
+* Added: load_page, drop_page methods support the "uri" field as well as the id

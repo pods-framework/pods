@@ -606,7 +606,7 @@ class PodAPI
                     $field_id = $columns[$rel_name]['id'];
 
                     // Convert values from a comma-separated string into an array
-                    $rel_values = explode(',', $rel_values);
+                    $rel_values = empty($rel_values) ? array() : explode(',', $rel_values);
 
                     // Remove existing relationships
                     pod_query("DELETE FROM @wp_pod_rel WHERE pod_id = $params->pod_id AND field_id = $field_id");

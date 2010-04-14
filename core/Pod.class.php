@@ -322,6 +322,7 @@ class Pod
         $api = new PodAPI();
         $helper = pods_sanitize($helper);
         $content = $api->load_helper(array('name' => $helper));
+        $content = $content['phpcode'];
         if (false !== $content)
         {
             ob_start();

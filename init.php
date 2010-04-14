@@ -182,7 +182,7 @@ function pods_menu_page()
 
 function pods_meta()
 {
-    if (false !== apply_filters('pods_meta', false))
+    if (false !== apply_filters('pods_meta', true))
     {
 ?>
 <meta name="CMS" content="Pods <?php echo PODS_VERSION_FULL; ?>" />

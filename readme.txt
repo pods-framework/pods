@@ -33,7 +33,7 @@ Templates are used within Pod Pages, and are meant for separating presentation f
 == Changelog ==
 
 = 1.8.6 - Apr 14, 2010 =
-* Bugfix: saving an error pick column throws an error
+* Bugfix: saving an empty pick column throws an error
 
 = 1.8.5 - Apr 13, 2010 =
 * Changed: save_pod_item improvements, see http://bit.ly/d4EWDM

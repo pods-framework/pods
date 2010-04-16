@@ -544,10 +544,16 @@ class PodAPI
             if (1 == $columns[$key]['unique'] && !in_array($type, array('pick', 'file')))
             {
                 $exclude = '';
-                if (!empty($params->tbl_row_id))
+                if (!empty($params->pod_id))
                 {
-                    $exclude = "AND id != $params->tbl_row_id";
+                    $result = pod_query("SELECT tbl_row_id FROM @wp_pod WHERE id = '$params->pod_id' AND datatype = '$datatype_id' LIMIT 1");
+                    if (0 < mysql_num_rows($result))
+                    {
+                        $exclude = 'AND id != ' . mysql_result($result, 0);
+                    }
                 }
+
+                // Trigger an error if not unique
                 $sql = "SELECT id FROM `@wp_pod_tbl_$params->datatype` WHERE `$key` = '$val' $exclude LIMIT 1";
                 pod_query($sql, 'Not unique', "$label needs to be unique.");
             }

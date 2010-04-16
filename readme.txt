@@ -32,6 +32,10 @@ Templates are used within Pod Pages, and are meant for separating presentation f
 
 == Changelog ==
 
+= 1.8.7 - Apr 16, 2010 =
+* Bugfix: error when editing a unique field
+* Bugfix: API handling for drop_pod_item
+
 = 1.8.6 - Apr 14, 2010 =
 * Bugfix: saving an empty pick column throws an error
 

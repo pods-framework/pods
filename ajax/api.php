@@ -24,6 +24,7 @@ $methods = array(
     'drop_page' => array('priv' => 'manage_pod_pages'),
     'drop_helper' => array('priv' => 'manage_helpers'),
     'drop_menu_item' => array('priv' => 'manage_menu'),
+    'drop_pod_item' => array('priv' => 'manage_content'),
     'load_pod' => array('priv' => 'manage_pods', 'format' => 'json'),
     'load_column' => array('priv' => 'manage_pods', 'format' => 'json'),
     'load_template' => array('priv' => 'manage_templates', 'format' => 'json'),

@@ -150,13 +150,13 @@ while ($row = mysql_fetch_assoc($result))
 
     <div class="clear"><!--clear--></div>
     <p><input type="button" class="button-primary" onclick="podsExport()" value="Export!" /></p>
-    <p><textarea id="export_code" style="height:180px; border:2px dashed #e3e3e3">The export code will appear here.</textarea></p>
+    <p><textarea id="export_code">The export code will appear here.</textarea></p>
 </div>
 
 <div id="importArea" class="area hidden">
     <h2 class="title">Import Package</h2>
     <p>Paste the package code into the form. You will be taken to a confirmation screen.</p>
-    <p><textarea id="import_code" style="height:180px; border:2px dashed #e3e3e3"></textarea></p>
+    <p><textarea id="import_code"></textarea></p>
     <input type="button" class="button-primary" onclick="podsImport(false)" value="Proceed to Confirmation" />
     <div id="import_finalize"></div>
 </div>

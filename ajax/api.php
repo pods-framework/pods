@@ -45,10 +45,16 @@ if (isset($methods[$action]))
     $format = isset($methods[$action]['format']) ? $methods[$action]['format'] : null;
     $processor = isset($methods[$action]['processor']) ? $methods[$action]['processor'] : null;
 
-    // Check permissions
-    if (!empty($priv) && !pods_access($priv))
+    // Check permissions (convert to array to support multiple)
+    if (!empty($priv))
     {
-        die('Error: Access denied');
+        foreach ((array) $priv as $priv_val)
+        {
+            if (!pods_access($priv_val))
+            {
+                die('Error: Access denied');
+            }
+        }
     }
 
     // Call any processors

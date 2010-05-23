@@ -834,7 +834,7 @@ class Pod
     /**
      * Build HTML for a single field
     */
-    private function build_field_html($field)
+    function build_field_html($field)
     {
         $cache = PodCache::instance();
         include realpath(dirname(__FILE__) . '/input_fields.php');
@@ -889,7 +889,7 @@ class Pod
     /**
      * Replace magic tags with their values
      */
-    private function parse_magic_tags($in)
+    function parse_magic_tags($in)
     {
         $name = $in[2];
         $before = $after = '';

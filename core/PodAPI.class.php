@@ -630,9 +630,9 @@ class PodAPI
                     // Pick relationships
                     elseif ('pick' == $rel_type)
                     {
-                        $pickval = $columns[$key]['pickval'];
+                        $pickval = $columns[$rel_name]['pickval'];
                         $sister_datatype_id = $datatypes[$pickval]['id'];
-                        $sister_field_id = $columns[$key]['sister_field_id'];
+                        $sister_field_id = $columns[$rel_name]['sister_field_id'];
                         $sister_field_id = empty($sister_field_id) ? 0 : $sister_field_id;
                         $sister_pod_ids = array();
 

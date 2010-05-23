@@ -598,7 +598,7 @@ if (isset($helper_types['post_drop']))
                 </td>
             </tr>
             <tr>
-                <td>Name</td>
+                <td>Machine Name</td>
                 <td><input type="text" id="column_name" value="" /></td>
             </tr>
             <tr>

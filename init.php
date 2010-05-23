@@ -3,11 +3,11 @@
 Plugin Name: Pods CMS
 Plugin URI: http://podscms.org/
 Description: The CMS Framework for WordPress.
-Version: 1.8.7
+Version: 1.8.8
 Author: Matt Gibbs
 Author URI: http://podscms.org/
 
-Copyright 2010  Matt Gibbs  (email : logikal16@gmail.com)
+Copyright 2010  Matt Gibbs  (email : contact@podscms.org)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 187);
+define('PODS_VERSION', 188);
 define('PODS_VERSION_FULL', implode('.', str_split(PODS_VERSION)));
 define('PODS_URL', WP_PLUGIN_URL . '/pods');
 define('PODS_DIR', WP_PLUGIN_DIR . '/pods');

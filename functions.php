@@ -62,13 +62,13 @@ function pods_sanitize($input) {
     }
     elseif (is_object($input)) {
         foreach ((array) $input as $key => $val) {
-            $output[$key] = $this->purify($val);
+            $output[$key] = pods_sanitize($val);
         }
         $output = (object) $output;
     }
     elseif (is_array($input)) {
         foreach ($input as $key => $val) {
-            $output[$key] = $this->purify($val);
+            $output[$key] = pods_sanitize($val);
         }
     }
     else {

@@ -789,7 +789,7 @@ class Pod
             list($name, $helper, $before, $after) = explode(',', $name);
             $name = trim($name);
             $helper = trim($helper);
-            $before = trim($after);
+            $before = trim($before);
             $after = trim($after);
         }
         if ('type' == $name) {

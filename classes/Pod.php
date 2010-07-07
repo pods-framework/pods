@@ -786,8 +786,11 @@ class Pod
         $name = $in[2];
         $before = $after = '';
         if (false !== strpos($name, ',')) {
-            $name = str_replace(' ', '', $name);
             list($name, $helper, $before, $after) = explode(',', $name);
+            $name = trim($name);
+            $helper = trim($helper);
+            $before = trim($after);
+            $after = trim($after);
         }
         if ('type' == $name) {
             return $this->datatype;

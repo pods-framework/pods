@@ -1,36 +1,42 @@
 === Pods CMS ===
 Contributors: logikal16, sc0ttkclark
 Donate link: http://podscms.org
-Tags: pods, cms, table, database, relational database, custom, data, framework, drupal, cck, joomla
+Tags: pods, cms, cck, custom post types, content types, relationships, database, framework, drupal
 Requires at least: 2.8
 Tested up to: 3.0
 Stable tag: trunk
 
-Pods is a full-featured yet lightweight CMS framework for WordPress.
+Pods is a CMS framework for managing your own content types.
 
 == Description ==
 
-Pods is a CMS framework for WordPress.
-It sits on top of WordPress, allowing you to add and display your own content types. 
+Pods is a CMS framework for managing your own content types.
 
-**Relate content to other content.**
+**Create your own content types.**
 
-When creating a new content type, you can add relationship, or PICK, columns. This column will build a dropdown containing items from the related table, allowing you to select one or more.
-In other words, you can relate an item from one pod to items in another pod, or even relate to WordPress items (users, pages, posts).
+A pod, or content type, is a named group of input fields. The Pods plugin lets you create your own content types. Instead of with custom post types, each content type gets its own table.
 
-**Show your new content with style.**
+Create a variety of different input fields, including text, paragraph text, date, number, file upload, and relationship (called "pick") fields. Pick fields are extremely useful if you want to create relationships among your data. One example is if you want to relate an "event" item with one or more "speaker" items.
 
-Pod Pages are similar to WP Pages, but they include PHP and wildcard URL support. For example, the Pod Page events/* will handle all URLs beginning with "events/", unless a more specific Pod Page is found.
-Templates are used within Pod Pages, and are meant for separating presentation from logic as much as possible. Magic tags are used within templates to dynamically pull in a column's value: {@column_name}
+**Easily display your content.**
 
-**It's all in the box.**
+There are several ways to get Pods data to show up throughout your site:
 
-* Package Manager - import & export pieces of your site
-* Menu Editor - organize your pages to generate sitemaps, navigation menus, and breadcrumbs
-* Roles - lightweight permissions system
-* API - access and modify the data programatically
+* Add Pod Pages from within the admin area. Pod Pages support PHP and Wildcard URLs. For example, the Pod Page "events/*" will be the default handler for all pages beginning with "events/". This allows you to have a single page to handle a myriad of different items.
+* Add PHP code directly into your WP template files, or wherever else PHP is supported.
+* Use shortcode to display lists of Pod items within WP Pages or Posts.
+* The Pods API allows you to retrieve raw data from the database.
+
+**Migrate!**
+
+Pods includes a Package Manager, which allows you to import/export your database structure. You can select which features you want to "package up" and export it for easy migration.
 
 == Changelog ==
+
+= 1.8.9 - July 7, 2010 =
+* Changed: Minor UI changes
+* Changed: author_id now getting stored
+* Bugfix: Add / Edit javascript fix
 
 = 1.8.8 - May 23, 2010 =
 * Bugfix: bi-directional relationships

@@ -1,71 +1,5 @@
 <?php
-if ($installed < 150)
-{
-    pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN `unique` BOOL default 0 AFTER required");
-    pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN `multiple` BOOL default 0 AFTER `unique`");
-    pod_query("ALTER TABLE @wp_pod_pages ADD COLUMN page_template VARCHAR(128) AFTER phpcode");
-    pod_query("ALTER TABLE @wp_pod_helpers ADD COLUMN helper_type VARCHAR(16) AFTER name");
-    pod_query("ALTER TABLE @wp_pod ADD COLUMN name VARCHAR(128) AFTER datatype");
-    pod_query("ALTER TABLE @wp_pod ADD COLUMN created VARCHAR(128) AFTER name");
-    pod_query("ALTER TABLE @wp_pod ADD COLUMN modified VARCHAR(128) AFTER created");
-    pod_query("ALTER TABLE @wp_pod CHANGE row_id tbl_row_id INT unsigned");
-    pod_query("ALTER TABLE @wp_pod_rel CHANGE term_id tbl_row_id INT unsigned");
-    pod_query("ALTER TABLE @wp_pod_rel CHANGE post_id pod_id INT unsigned");
-    pod_query("ALTER TABLE @wp_pod_rel CHANGE sister_post_id sister_pod_id INT unsigned");
-
-    // Make all pick columns "multiple" for consistency
-    pod_query("UPDATE @wp_pod_fields SET `multiple` = 1 WHERE coltype = 'pick'");
-
-    // Use "display" as the default helper type
-    pod_query("UPDATE @wp_pod_helpers SET helper_type = 'display'");
-
-    // Replace all post_ids with its associated pod_id
-    $sql = "
-    SELECT
-        p.id, p.post_id, r.post_title AS name, r.post_date AS created, r.post_modified AS modified
-    FROM
-        @wp_pod p
-    INNER JOIN
-        @wp_posts r ON r.ID = p.post_id
-    ";
-    $result = pod_query($sql);
-    while ($row = mysql_fetch_assoc($result))
-    {
-        foreach ($row as $key => $val)
-        {
-            ${$key} = mysql_real_escape_string(trim($val));
-        }
-        $posts_to_delete[] = $post_id;
-        $all_pod_ids[$post_id] = $id;
-        pod_query("UPDATE @wp_pod SET name = '$name', created = '$created', modified = '$modified' WHERE id = $id LIMIT 1");
-    }
-
-    // Replace post_id with pod_id
-    $result = pod_query("SELECT id, pod_id, sister_pod_id FROM @wp_pod_rel");
-    while ($row = mysql_fetch_assoc($result))
-    {
-        $id = $row['id'];
-        $new_pod_id = $all_pod_ids[$row['pod_id']];
-        $new_sister_pod_id = $all_pod_ids[$row['sister_pod_id']];
-        pod_query("UPDATE @wp_pod_rel SET pod_id = '$new_pod_id', sister_pod_id = '$new_sister_pod_id' WHERE id = '$id' LIMIT 1");
-    }
-
-    $posts_to_delete = implode(',', $posts_to_delete);
-
-    // Remove all traces from wp_posts
-    pod_query("ALTER TABLE @wp_pod DROP COLUMN post_id");
-    pod_query("DELETE FROM @wp_posts WHERE ID IN ($posts_to_delete)");
-}
-
-if ($installed < 151)
-{
-    pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN helper VARCHAR(32) AFTER label");
-    pod_query("ALTER TABLE @wp_pod_types ADD COLUMN before_helpers TEXT AFTER tpl_list");
-    pod_query("ALTER TABLE @wp_pod_types ADD COLUMN after_helpers TEXT AFTER before_helpers");
-}
-
-if ($installed < 160)
-{
+if ($installed < 160) {
     // Add the "templates" table
     $sql = "
     CREATE TABLE @wp_pod_templates (
@@ -81,11 +15,9 @@ if ($installed < 160)
 
     // Try to route old templates as best as possible
     $result = pod_query("SELECT name, tpl_detail, tpl_list FROM @wp_pod_types");
-    while ($row = mysql_fetch_assoc($result))
-    {
+    while ($row = mysql_fetch_assoc($result)) {
         // Create the new template, e.g. "dtname_list" or "dtname_detail"
-        foreach ($row as $key => $val)
-        {
+        foreach ($row as $key => $val) {
             ${$key} = mysql_real_escape_string($val);
         }
         pod_query("INSERT INTO @wp_pod_templates (name, code) VALUES ('{$name}_detail', '$tpl_detail'),('{$name}_list', '$tpl_list')");
@@ -98,37 +30,29 @@ if ($installed < 160)
     pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN pick_filter VARCHAR(128) AFTER pickval");
 }
 
-if ($installed < 162)
-{
+if ($installed < 162) {
     // Remove all beginning and ending slashes from Pod Pages
     pod_query("UPDATE @wp_pod_pages SET uri = TRIM(BOTH '/' FROM uri)");
 }
 
-if ($installed < 164)
-{
+if ($installed < 164) {
     pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN pick_orderby TEXT AFTER pick_filter");
     pod_query("ALTER TABLE @wp_pod_fields CHANGE helper display_helper TEXT");
     pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN input_helper TEXT AFTER display_helper");
 }
 
-if ($installed < 167)
-{
+if ($installed < 167) {
     pod_query("ALTER TABLE @wp_pod_pages ADD COLUMN precode LONGTEXT AFTER phpcode");
 }
 
-if ($installed < 173)
-{
+if ($installed < 173) {
     pod_query("ALTER TABLE @wp_pod_types ADD COLUMN detail_page VARCHAR(128) AFTER is_toplevel");
 }
 
-if ($installed < 175)
-{
-    if (is_array($pods_roles))
-    {
-        foreach ($pods_roles as $role => $privs)
-        {
-            if (in_array('manage_podpages', $privs))
-            {
+if ($installed < 175) {
+    if (is_array($pods_roles)) {
+        foreach ($pods_roles as $role => $privs) {
+            if (in_array('manage_podpages', $privs)) {
                 $pods_roles[$role][] = 'manage_pod_pages';
                 unset($pods_roles[$role]['manage_podpages']);
             }
@@ -138,15 +62,13 @@ if ($installed < 175)
     add_option('pods_roles', serialize($pods_roles));
 }
 
-if ($installed < 176)
-{
+if ($installed < 176) {
     pod_query("ALTER TABLE @wp_pod_types CHANGE label label VARCHAR(128)");
     pod_query("ALTER TABLE @wp_pod_fields CHANGE label label VARCHAR(128)");
     pod_query("UPDATE @wp_pod_fields SET coltype = 'txt' WHERE coltype = 'file'");
 }
 
-if ($installed < 181)
-{
+if ($installed < 181) {
     pod_query("ALTER TABLE @wp_pod_rel ADD COLUMN weight SMALLINT unsigned AFTER tbl_row_id");
     pod_query("ALTER TABLE @wp_pod_types CHANGE before_helpers pre_save_helpers TEXT");
     pod_query("ALTER TABLE @wp_pod_types CHANGE after_helpers post_save_helpers TEXT");
@@ -156,16 +78,14 @@ if ($installed < 181)
     pod_query("UPDATE @wp_pod_helpers SET helper_type = 'post_save' WHERE helper_type = 'after'");
 }
 
-if ($installed < 182)
-{
+if ($installed < 182) {
     pod_query("ALTER TABLE @wp_pod ADD COLUMN author_id INT unsigned AFTER modified");
     pod_query("UPDATE @wp_pod_fields SET pickval = 'wp_taxonomy' WHERE pickval REGEXP '^[0-9]+$'");
     pod_query("UPDATE @wp_pod_menu SET uri = '<root>' WHERE uri = '/' LIMIT 1");
 
     // Remove beginning and trailing slashes
     $result = pod_query("SELECT id, uri FROM @wp_pod_menu");
-    while ($row = mysql_fetch_assoc($result))
-    {
+    while ($row = mysql_fetch_assoc($result)) {
         $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $row['uri']);
         $uri = mysql_real_escape_string($uri);
         pod_query("UPDATE @wp_pod_menu SET uri = '$uri' WHERE id = {$row['id']} LIMIT 1");

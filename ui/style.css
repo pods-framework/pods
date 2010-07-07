@@ -1,0 +1,528 @@
+/* Admin-facing */
+.area {
+    margin: 0;
+    padding: 0;
+    display: none;
+}
+
+.area.active {
+    display: block;
+}
+
+h2.title {
+    color: #464646;
+    font-family: Georgia, "Times New Roman", "Bitstream Charter", Times, serif;
+    font-weight: normal;
+    font-style: italic;
+    font-size: 24px;
+    margin: 0;
+}
+
+#editTitle {
+    padding-top: 8px;
+}
+
+#nav, #subnav {
+    margin: 15px 0;
+    border-bottom: 1px solid #dfdfdf;
+    padding-left: 10px;
+}
+
+.navTab {
+    float: left;
+    line-height: 200%;
+}
+
+.navTab a {
+    display: block;
+    line-height: 26px;
+    padding: 1px 13px 0;
+    margin-bottom: -1px;
+    text-decoration: none;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+}
+
+.navTab.active a {
+    color: #333;
+    border: 1px solid #dfdfdf;
+    border-bottom: 1px solid #f9f9f9;
+    padding: 0 12px;
+}
+
+.hidden {
+    display: none;
+}
+
+.clear {
+    clear: both;
+}
+
+.btn {
+    cursor: pointer;
+}
+
+.dragme {
+    background: url(images/move.png) no-repeat;
+}
+
+.dropme {
+    background: url(images/action_delete.gif) no-repeat;
+}
+
+.editme {
+    background: url(images/reply.gif) no-repeat;
+}
+
+.addnew {
+    background: url(images/file.gif) no-repeat;
+}
+
+.dragme, .editme, .dropme, .addnew {
+    float: left;
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+}
+
+#column_list {
+    padding-top: 10px;
+}
+
+ul.sortable li {
+    margin-bottom: 2px;
+}
+
+#column_name,
+#column_label,
+#column_type,
+#column_pickval,
+#column_sister_field_id,
+#column_pick_filter,
+#column_pick_orderby,
+#column_display_helper,
+#column_input_helper,
+#column_comment,
+#detail_page,
+#pre_save_helpers,
+#pre_drop_helpers,
+#post_save_helpers,
+#post_drop_helpers,
+#pod_label {
+    width: 160px;
+}
+
+/* File progress bar */
+.pods-progress {
+    width: 200px;
+    border: 1px solid #e3e3e3;
+}
+
+.pods-bar {
+    width: 1%;
+    height: 12px;
+    background: #4f5c71;
+}
+
+/* Browse existing files */
+.file_match {
+    cursor: pointer;
+    padding-left: 20px;
+    background: url(images/file.gif) no-repeat;
+}
+
+.file_match:hover {
+    text-decoration: underline;
+}
+
+/* Help text */
+.stickynote {
+    width: 500px;
+    padding: 10px;
+    margin-top: 10px;
+    background: #fff;
+    box-shadow: 5px 5px 5px #ccc;
+    -moz-box-shadow: 5px 5px 5px #ccc;
+    -webkit-box-shadow: 5px 5px 5px #ccc;
+}
+
+#welcomeArea .stickynote {
+    padding: 0;
+    width: 420px;
+    background: #fff;
+}
+
+#welcomeArea #logo {
+    color: #fff;
+    height: 64px;
+    background: #333c49 url(images/header-logo.png) 30px 10px no-repeat;
+}
+
+#welcomeArea #version {
+    padding: 38px 0 0 180px;
+}
+
+#welcomeArea #info {
+    padding: 10px;
+}
+
+.stickynote li {
+    margin: 0 0 10px 15px;
+    list-style: square;
+}
+
+/* Basic styling for input forms */
+.tips {
+    font-style: italic;
+    margin-bottom: 5px;
+}
+
+.area .button {
+    border: 1px solid #E3E3E3;
+}
+
+.area textarea, .desc, .code {
+    width: 99%;
+    height: 200px;
+    border: 1px solid #E3E3E3;
+}
+
+#page_code,
+#helper_code,
+#template_code {
+    height: 300px;
+}
+
+#page_precode {
+    height: 100px;
+}
+
+#pod-area-left {
+    float: left;
+    width: 60%;
+}
+
+#pod-area-right {
+    float: left;
+    width: 38%;
+    padding-left: 10px;
+    border-left: 1px solid #e3e3e3;
+}
+
+#menu_uri,
+#menu_title,
+#page_title,
+#podBox #new_pod,
+#pageBox #new_page,
+#helperBox #new_helper {
+    width: 300px;
+    border: 1px solid #E3E3E3;
+}
+
+.pods_form {
+    margin-top: 10px;
+}
+
+#filterForm {
+    text-align: right;
+}
+
+#roleTable,
+#browseTable {
+    width: 100%;
+    margin: 10px 0;
+}
+
+#browseTable th a {
+    text-decoration: none;
+}
+
+#roleTable th,
+#roleTable td,
+#browseTable th,
+#browseTable td {
+    padding: 2px 0;
+    text-align: left;
+    border-bottom: 1px solid #E3E3E3;
+}
+
+.filebox {
+    height: 240px;
+    margin: 10px 0 0 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.zebra {
+    background: #fff;
+}
+
+.filter {
+    width: 180px;
+}
+
+.pod_search {
+    width: 120px;
+}
+
+/* Form input fields */
+.form.txt,
+.form.slug,
+.form.pick1 {
+    width: 200px;
+}
+
+/* NicEdit */
+.nicEdit-panel {
+    background: #F9F9F9;
+}
+
+.nicEdit-button {
+    background: #F9F9F9;
+}
+
+.nicEdit-main {
+    background: #fff;
+}
+
+/* Public-facing */
+h3 {
+    margin: 0 0 10px 0;
+}
+
+#podArea .area-select,
+#templateArea .area-select,
+#pageArea .area-select,
+#helperArea .area-select {
+    width: 280px;
+    font-size: 1.1em;
+    height: 26px;
+}
+
+.form {
+    border: 1px solid #E3E3E3;
+}
+
+.form.file {
+    border: none;
+}
+
+.leftside {
+    width: 30%;
+    float: left;
+    font-weight: bold;
+}
+
+.leftside .comment {
+    font-weight: normal;
+    font-size: 11px;
+    color: #999;
+}
+
+.rightside {
+    float: left;
+    margin: 0 0 5px 0;
+    width: 70%;
+}
+
+#menuBox .leftside {
+    width: 20%;
+}
+
+#menuBox .rightside {
+    width: 80%;
+}
+
+#podArea #columnBox {
+    width: 100%;
+}
+
+#podArea #columnBox td,
+#podArea #podSettings td {
+    padding: 0 0 3px 0;
+}
+
+.red {
+    color: red;
+    font-weight: bold;
+}
+
+div#content p {
+    padding: 5px 0;
+}
+
+.pick {
+    width: 100%;
+    height: 160px;
+    background: white;
+    border: 1px solid #E3E3E3;
+    overflow: auto;
+}
+
+.pick .active {
+    background: #FFD799;
+}
+
+.option {
+    padding-left: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    cursor: default;
+}
+
+.menu-item {
+    margin-top: 5px;
+    margin-left: 20px;
+}
+
+/* jqModal */
+.jqmWindow {
+    display: none;
+    position: fixed;
+    top: 25%;
+    left: 25%;
+    width: 400px;
+    background: #E4F2FD;
+    color: #333;
+    border: 1px solid #C6D9E9;
+    padding: 10px;
+}
+
+.jqmOverlay {
+    background: #fff;
+}
+
+* iframe.jqm {
+    top: 0;
+    left: 0;
+    z-index: -1;
+    position: absolute;
+    width: expression(this.parentNode.offsetWidth+'px');
+    height: expression(this.parentNode.offsetHeight+'px');
+}
+
+* html .jqmWindow {
+    position: absolute;
+    top: expression((document.documentElement.scrollTop || document.body.scrollTop) + Math.round(20 * (document.documentElement.offsetHeight || document.body.clientHeight) / 100) + 'px');
+}
+
+/* Date Input */
+.date_selector, .date_selector * {
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    text-decoration: none;
+}
+
+.date_selector {
+    padding: 5px;
+    margin: -1px 0 0 0;
+    background: #f2f2f2;
+    border: 1px solid #ccc;
+    position: absolute;
+    text-align: center;
+    z-index: 99999;
+    display: none;
+}
+
+.date_selector_ieframe {
+    position: absolute;
+    z-index: 9999;
+    display: none;
+}
+
+.date_selector .month_nav {
+    padding: 0;
+    margin: 0 0 5px 0;
+    display: block;
+}
+
+.date_selector .month_name {
+    display: block;
+    font-weight: bold;
+    line-height: 20px;
+    text-align: center;
+}
+
+.date_selector .date_hour, .date_selector .date_minute, .date_selector .date_second {
+    border: 1px solid #ccc;
+}
+
+.date_selector .month_nav a {
+    top: 5px;
+    width: 20px;
+    height: 20px;
+    display: block;
+    font-weight: bold;
+    position: absolute;
+    text-align: center;
+    line-height: 17px;
+    overflow: hidden;
+    font-size: 120%;
+    color: #003C78;
+}
+
+.date_selector .month_nav a:hover, .date_selector .month_nav a:focus {
+    color: #003C78;
+    background: none;
+    text-decoration: none;
+}
+
+.date_selector .prev {
+    left: 5px;
+}
+
+.date_selector .next {
+    right: 5px;
+}
+.date_selector table {
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+.date_selector th, .date_selector td {
+    padding: 0;
+    height: 2em;
+    width: 2.5em;
+    text-align: center;
+}
+
+.date_selector td {
+    line-height: 2em;
+    text-align: center;
+    white-space: nowrap;
+    border: 1px solid #ccc;
+    background: #fff;
+}
+
+.date_selector td.today {
+    background: #FFFED9;
+}
+
+.date_selector td.unselected_month {
+    color: #ccc;
+}
+
+.date_selector td a {
+    width: 100%;
+    height: 100%;
+    display: block;
+    color: #003C78;
+    line-height: 2em;
+    text-align: center;
+    text-decoration: none !important;
+}
+
+.date_selector td.today a {
+    background: #FFFEB3;
+}
+
+.date_selector td.selected a {
+    background: #D8DFE5;
+    font-weight: bold;
+}
+
+.date_selector td a:hover {
+    background: #003C78;
+    color: #fff;
+}

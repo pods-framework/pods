@@ -1,6 +1,6 @@
 <link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/ui/style.css" />
 <script type="text/javascript">
-var api_url = "<?php echo PODS_URL; ?>/ui/ajax/package.php";
+var api_url = "<?php echo PODS_URL; ?>/ui/ajax/api.php";
 
 jQuery(function() {
     jQuery(".option").click(function() {
@@ -26,7 +26,7 @@ function podsExport() {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=export&"+data.join("&"),
+        data: "action=export_package&"+data.join("&"),
         success: function(msg) {
             if (!is_error(msg)) {
                 jQuery("#export_code").html(msg);
@@ -36,12 +36,12 @@ function podsExport() {
 }
 
 function podsImport(action) {
-    var action = (false == action) ? 'import' : 'finalize';
-    var data = jQuery("#import_code").val();
+    var action = (false == action) ? 'validate_package' : 'import_package';
+    var data = ('validate_package' == action) ? '&data='+encodeURIComponent(jQuery("#import_code").val()) : '';
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action="+action+"&data="+encodeURIComponent(data),
+        data: "action="+action+data,
         success: function(msg) {
             if (!is_error(msg)) {
                 jQuery("#import_finalize").html(msg);
@@ -51,7 +51,7 @@ function podsImport(action) {
 }
 </script>
 
-<div class="wrap">
+<div class="wrap pods_admin">
     <h2>Package Manager</h2>
 
     <div id="nav">
@@ -60,7 +60,7 @@ function podsImport(action) {
         <div class="clear"><!--clear--></div>
     </div>
 
-    <div id="exportArea" class="area active">
+    <div id="exportArea" class="area active pods_form">
         <table style="width:100%">
             <tr>
                 <td>

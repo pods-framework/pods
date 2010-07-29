@@ -92,5 +92,19 @@ if ($installed < 182) {
     }
 }
 
+if ($installed < 190) {
+    pod_query("ALTER TABLE @wp_pod_templates CHANGE `name` `name` VARCHAR(255)");
+    pod_query("ALTER TABLE @wp_pod_helpers CHANGE `name` `name` VARCHAR(255)");
+    pod_query("ALTER TABLE @wp_pod_fields CHANGE `comment` `comment` VARCHAR(255)");
+
+    // Remove beginning and trailing slashes
+    $result = pod_query("SELECT id, uri FROM @wp_pod_pages");
+    while ($row = mysql_fetch_assoc($result)) {
+        $uri = trim($row['uri'],'/');
+        $uri = mysql_real_escape_string($uri);
+        pod_query("UPDATE @wp_pod_pages SET uri = '$uri' WHERE id = {$row['id']} LIMIT 1");
+    }
+}
+
 // Save this version
 update_option('pods_version', PODS_VERSION);

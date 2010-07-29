@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS
 Plugin URI: http://podscms.org/
 Description: Create custom content types in WordPress.
-Version: 1.8.9
+Version: 1.9.0
 Author: Matt Gibbs
 Author URI: http://podscms.org/about/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 189);
+define('PODS_VERSION', 190);
 define('PODS_VERSION_FULL', implode('.', str_split(PODS_VERSION)));
 define('PODS_URL', WP_PLUGIN_URL . '/pods');
 define('PODS_DIR', WP_PLUGIN_DIR . '/pods');
@@ -67,7 +67,7 @@ class PodInit
         global $pod_page_exists;
 
         add_action('init', array($this, 'init'));
-        add_action('admin_menu', array($this, 'admin_menu'));
+        add_action('admin_menu', array($this, 'admin_menu'), 99);
         add_action('wp_head', array($this, 'wp_head'));
         add_action('template_redirect', array($this, 'template_redirect'));
         add_action('delete_attachment', array($this, 'delete_attachment'));
@@ -79,6 +79,7 @@ class PodInit
             if (empty($pods) || 404 != $pods) {
                 add_filter('redirect_canonical', array($this, 'kill_redirect'));
                 add_filter('wp_title', array($this, 'wp_title'), 0, 3);
+                add_filter('body_class', array($this, 'body_class'), 0, 1);
                 add_filter('status_header', array($this, 'status_header'));
                 add_action('plugins_loaded', array($this, 'precode'));
                 add_action('wp', array($this, 'silence_404'));
@@ -112,7 +113,7 @@ class PodInit
 
         // Session start
         if (false === headers_sent() && '' == session_id()) {
-            session_start();
+            @session_start();
         }
 
         // Load necessary JS
@@ -143,25 +144,27 @@ class PodInit
                 }
             }
         }
-
-        wp_enqueue_script('jquery-ui-core');
-        wp_enqueue_script('jquery-ui-sortable');
-        add_object_page('Pods', 'Pods', 'read', 'pods');
-        add_submenu_page('pods', 'Setup', 'Setup', 'read', 'pods', array($this, 'pods_setup_page'));
-        if (pods_access('manage_content')) {
-            add_submenu_page('pods', 'Manage Content', 'Manage Content', 'read', 'pods-manage', array($this, 'pods_content_page'));
-        }
-        if (pods_access('manage_packages')) {
-            add_submenu_page('pods', 'Package Manager', 'Package Manager', 'read', 'pods-package', array($this, 'pods_package_page'));
-        }
-        if (pods_access('manage_menu')) {
-            add_submenu_page('pods', 'Menu Editor', 'Menu Editor', 'read', 'pods-menu', array($this, 'pods_menu_page'));
-        }
-        foreach ($submenu as $item) {
-            $name = $item['name'];
-            $label = trim($item['label']);
-            $label = ('' != $label) ? $label : $name;
-            add_submenu_page('pods', "Add $label", "Add $label", 'read', "pod-$name", array($this, 'pods_content_page'));
+        $priv_check = array('manage_pods','manage_templates','manage_pod_pages','manage_helpers','manage_roles','manage_settings','manage_content','manage_packages','manage_menu');
+        if (!empty($submenu) || pods_access($priv_check)) {
+            wp_enqueue_script('jquery-ui-core');
+            wp_enqueue_script('jquery-ui-sortable');
+            add_object_page('Pods', 'Pods', 'read', 'pods', null, PODS_URL.'/ui/images/icon16.png');
+            add_submenu_page('pods', 'Setup', 'Setup', 'read', 'pods', array($this, 'pods_setup_page'));
+            if (pods_access('manage_content')) {
+                add_submenu_page('pods', 'Manage Content', 'Manage Content', 'read', 'pods-manage', array($this, 'pods_content_page'));
+            }
+            if (pods_access('manage_packages')) {
+                add_submenu_page('pods', 'Package Manager', 'Package Manager', 'read', 'pods-package', array($this, 'pods_package_page'));
+            }
+            if (pods_access('manage_menu')) {
+                add_submenu_page('pods', 'Menu Editor', 'Menu Editor', 'read', 'pods-menu', array($this, 'pods_menu_page'));
+            }
+            foreach ($submenu as $item) {
+                $name = $item['name'];
+                $label = trim($item['label']);
+                $label = ('' != $label) ? $label : $name;
+                add_submenu_page('pods', "Add $label", "Add $label", 'read', "pod-$name", array($this, 'pods_content_page'));
+            }
         }
     }
 
@@ -184,7 +187,7 @@ class PodInit
             if (is_object($pods)) {
                 $page_title = preg_replace_callback("/({@(.*?)})/m", array($pods, "parse_magic_tags"), $page_title);
             }
-            $title = $page_title;
+            $title = ('right' == $seplocation) ? $page_title . " $sep " : " $sep " . $page_title;
         }
         else {
             $uri = explode('?', $_SERVER['REQUEST_URI']);
@@ -198,6 +201,18 @@ class PodInit
             }
         }
         return apply_filters('pods_title', $title);
+    }
+
+    function body_class($classes) {
+        global $pods;
+        $classes[] = 'pods';
+        $uri = explode('?',$_SERVER['REQUEST_URI']);
+        $uri = explode('#',$uri[0]);
+        $classes[] = 'pod-page-'.str_replace('--','-',str_replace('--','-',str_replace('_','-',str_replace('/','-',sanitize_title($uri[0])))));
+        if (is_object($pods)) {
+            $classes[] = 'pod-'.str_replace('--','-',str_replace('_','-',$pods->datatype));
+        }
+        return apply_filters('pods_body_class', $classes);
     }
 
     function status_header() {
@@ -273,5 +288,5 @@ class PodInit
     }
 }
 
-$cache = PodCache::instance();
-$init = new PodInit();
+$cache = PodCache::instance(); // @todo Rename to $pods_cache
+$pods_init = new PodInit();

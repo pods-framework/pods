@@ -106,7 +106,7 @@ function dropPage() {
 <!-- Page popups -->
 
 <div id="pageBox" class="jqmWindow">
-    <input type="text" id="new_page" style="width:280px" />
+    <input type="text" id="new_page" style="width:280px" maxlength="128" />
     <input type="button" class="button" onclick="addPage()" value="Add Page" />
     <div>Ex: <strong>events</strong> or <strong>events/*</strong></div>
 </div>
@@ -131,7 +131,7 @@ if (isset($pages)) {
     Precode (optional):
     <textarea id="page_precode"></textarea><br />
     Page Title (optional):<br />
-    <input id="page_title" type="text" />
+    <input id="page_title" type="text" maxlength="128" />
     <select id="page_template">
         <option value="">-- Page Template --</option>
 <?php

@@ -23,24 +23,24 @@ function resetDB() {
 <!-- Settings HTML -->
 
 <h3>Debug Information</h3>
-<ul>
-    <li>PHP <?php echo phpversion(); ?></li>
-    <li><?php echo $_SERVER['SERVER_SOFTWARE']; ?></li>
-    <li>MySQL <?php echo mysql_result(pod_query("SELECT VERSION()"), 0); ?></li>
-    <li><?php echo $_SERVER['HTTP_USER_AGENT']; ?></li>
-    <li>WordPress <?php global $wp_version; echo $wp_version; ?></li>
+<textarea>
+PHP <?php echo phpversion(); ?> 
+<?php echo $_SERVER['SERVER_SOFTWARE']; ?> 
+MySQL <?php echo mysql_result(pod_query("SELECT VERSION()"), 0); ?> 
+<?php echo $_SERVER['HTTP_USER_AGENT']; ?> 
+WordPress <?php global $wp_version; echo $wp_version; ?> 
+
+-- Active Plugins --
 <?php
 $all_plugins = get_plugins();
 foreach ($all_plugins as $plugin_file => $plugin_data) {
     if (is_plugin_active($plugin_file)) {
-?>
-    <li><?php echo $plugin_data['Name'] . ' ' . $plugin_data['Version']; ?></li>
-<?php
+        echo $plugin_data['Name'] . ' ' . $plugin_data['Version'] . " \n";
     }
 }
 ?>
-</ul>
+</textarea>
 
-<h3>Reset Pods</h3>
-<div class="tips">There is no undo. Please backup your database before proceeding!</div>
-<input type="button" class="button" onclick="resetDB()" value="Reset everything" />
+<h3 style="padding-top:15px">Reset Pods</h3>
+<div class="tips">Remove your content types and Pods data. There is no undo!</div>
+<input type="button" class="button" onclick="resetDB()" value="Big Shiny Reset Button" />

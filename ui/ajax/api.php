@@ -30,9 +30,12 @@ $methods = array(
     'load_page' => array('priv' => 'manage_pod_pages', 'format' => 'json'),
     'load_helper' => array('priv' => 'manage_helpers', 'format' => 'json'),
     'load_menu_item' => array('priv' => 'manage_menu', 'format' => 'json'),
-    'load_sister_fields' => array('format' => 'json'),
+    'load_sister_fields' => array('priv' => 'manage_pods', 'format' => 'json'),
     'load_pod_item' => array(),
-    'load_files' => array()
+    'load_files' => array(),
+    'export_package' => array('priv' => 'manage_packages', 'format' => 'json', 'safe' => true),
+    'import_package' => array('priv' => 'manage_packages'),
+    'validate_package' => array('priv' => 'manage_packages')
 );
 
 $api = new PodAPI();
@@ -42,6 +45,7 @@ if (isset($methods[$action])) {
     $priv = isset($methods[$action]['priv']) ? $methods[$action]['priv'] : null;
     $format = isset($methods[$action]['format']) ? $methods[$action]['format'] : null;
     $processor = isset($methods[$action]['processor']) ? $methods[$action]['processor'] : null;
+    $safe = isset($methods[$action]['safe']) ? $methods[$action]['safe'] : null;
 
     // Check permissions (convert to array to support multiple)
     if (!empty($priv)) {
@@ -57,6 +61,8 @@ if (isset($methods[$action])) {
         $params = $processor($params, $api);
     }
 
+    $params = apply_filters('pods_api_'.$action,$params);
+
     // Dynamically call the API method
     $output = $api->$action($params);
 
@@ -64,7 +70,15 @@ if (isset($methods[$action])) {
     if ('json' == $format) {
         $output = json_encode($output);
     }
-    echo $output;
+
+    // If output for on-page to go into a textarea
+    if (true === $safe) {
+        $output = htmlspecialchars($output);
+    }
+
+    if(!is_bool($output)) {
+        echo $output;
+    }
 }
 
 function process_save_pod_item($params, $api) {

@@ -5,10 +5,12 @@ $total_rows = $this->getTotalRows();
 $total_pages = ceil($total_rows / $rows_per_page);
 $type = $this->datatype;
 
-$request_uri = "?type=$type&";
+// Build the $_GET string
+$request_uri = explode('?', $_SERVER['REQUEST_URI']);
+$request_uri = $request_uri[0] . '?';
 foreach ($_GET as $key => $val) {
-    if ('pg' != $key && 'type' != $key && !empty($val)) {
-        $request_uri .= $key . '=' . urlencode($val) . '&';
+    if ('pg' != $key) {
+        $request_uri .= "$key=$val&";
     }
 }
 ?>

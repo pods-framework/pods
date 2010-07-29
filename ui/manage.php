@@ -23,6 +23,16 @@ var add_or_edit;
 var helper_id;
 var page_id;
 
+jQuery(function() {
+    jQuery(".navTab:first").click();
+
+    // Remember the tab selection
+    var thetab = window.location.href.split("#")[1];
+    if ("undefined" != typeof(thetab)) {
+        jQuery(".navTab[rel="+thetab+"Area]").click();
+    }
+});
+
 function addPodHelper(div_id, select_id) {
     var val = jQuery("#"+select_id).val();
     if ("" != val) {
@@ -32,19 +42,46 @@ function addPodHelper(div_id, select_id) {
 }
 </script>
 
-<div class="wrap">
+<div class="wrap pods_admin">
+    <div id="icon-edit-pages" class="icon32"><br /></div>
     <h2>Pods Setup</h2>
     <div id="nav">
-        <div class="navTab active" rel="podArea"><a href="#pod">Pods</a></div>
+<?php
+if (pods_access('manage_pods')) {
+?>
+        <div class="navTab" rel="podArea"><a href="#pod">Pods</a></div>
+<?php
+}
+if (pods_access('manage_templates')) {
+?>
         <div class="navTab" rel="templateArea"><a href="#template">Templates</a></div>
+<?php
+}
+if (pods_access('manage_pages')) {
+?>
         <div class="navTab" rel="pageArea"><a href="#page">Pages</a></div>
+<?php
+}
+if (pods_access('manage_helpers')) {
+?>
         <div class="navTab" rel="helperArea"><a href="#helper">Helpers</a></div>
+<?php
+}
+if (pods_access('manage_roles')) {
+?>
         <div class="navTab" rel="roleArea"><a href="#role">Roles</a></div>
+<?php
+}
+if (pods_access('manage_settings')) {
+?>
         <div class="navTab" rel="settingsArea"><a href="#settings">Settings</a></div>
+<?php
+}
+?>
         <div class="clear"><!--clear--></div>
     </div>
 
-    <div id="podArea" class="area active">
+    <div id="podArea" class="area">
 <?php
 if (pods_access('manage_pods')) {
     include(PODS_DIR . '/ui/manage_pods.php');

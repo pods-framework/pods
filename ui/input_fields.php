@@ -78,7 +78,7 @@ Standard text box
 */
 elseif ('num' == $coltype || 'txt' == $coltype || 'slug' == $coltype) {
 ?>
-    <input type="text" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>" value="<?php echo htmlspecialchars($value); ?>" />
+    <input type="text" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>" value="<?php echo htmlspecialchars($value); ?>" maxlength="<?php echo ($coltype=='num')?15:128; ?>" />
 <?php
 }
 
@@ -192,7 +192,7 @@ jQuery(function() {
         $filename = substr($filepath, strrpos($filepath, '/') + 1);
 ?>
         <div id="<?php echo $row['ID']; ?>" class="success">
-            <div class="btn dropme"></div><?php echo $filename; ?>
+            <div class="btn dropme"></div> <a href="<?php echo $row['guid']; ?>" target="_blank"><?php echo $filename; ?></a>
         </div>
 <?php
     }

@@ -11,12 +11,13 @@
 function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_results_error = null) {
     global $wpdb;
 
+    $sql = trim($sql);
     $sql = str_replace('@wp_users', $wpdb->users, $sql);
     $sql = str_replace('@wp_', $wpdb->prefix, $sql);
     $sql = str_replace('{prefix}', '@wp_', $sql);
 
     // Return cached resultset
-    if ('SELECT' == substr(trim($sql), 0, 6)) {
+    if ('SELECT' == substr($sql, 0, 6)) {
         $cache = PodCache::instance();
         if ($cache->cache_enabled && isset($cache->results[$sql])) {
             $result = $cache->results[$sql];
@@ -37,11 +38,11 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
         die("<e>$no_results_error");
     }
 
-    if ('INSERT' == substr(trim($sql), 0, 6)) {
+    if ('INSERT' == substr($sql, 0, 6)) {
         $result = mysql_insert_id($wpdb->dbh);
     }
-    elseif ('SELECT' == substr(trim($sql), 0, 6)) {
-        if ('SELECT FOUND ROWS()' != $sql) {
+    elseif ('SELECT' == substr($sql, 0, 6)) {
+        if ('SELECT FOUND_ROWS()' != $sql) {
             $cache->results[$sql] = $result;
         }
     }
@@ -205,10 +206,20 @@ function is_pod_page($uri = null) {
     return false;
 }
 
-function pod_page_exists() {
-    $home = explode('://', get_bloginfo('url'));
-    $uri = explode('?', $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
-    $uri = str_replace($home[1], '', $uri[0]);
+/**
+ * Check to see if Pod Page exists and return data
+ *
+ * $uri not required, if NULL then returns REQUEST_URI matching Pod Page
+ *
+ * @param string $uri The Pod Page URI to check if exists
+ * @return array
+ */
+function pod_page_exists($uri = null) {
+    if(null==$uri) {
+        $home = explode('://', get_bloginfo('url'));
+        $uri = explode('?', $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+        $uri = str_replace($home[1], '', $uri[0]);
+    }
     $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri);
     $uri = mysql_real_escape_string($uri);
 
@@ -233,31 +244,45 @@ function pod_page_exists() {
 /**
  * See if the current user has a certain privilege
  *
- * @param string $priv The privilege name
+ * @param mixed $priv The privilege name or names (array if multiple)
+ * @param string $method The access method ("AND", "OR")
  * @return bool
  * @since 1.2.0
  */
-function pods_access($priv) {
+function pods_access($privs, $method = 'OR') {
     global $pods_roles, $current_user;
-
-    // Usage: add_filter('pods_access', array('manage_roles' => false));
-    if ($hook_privs = apply_filters('pods_access', false)) {
-        if (isset($hook_privs[$priv])) {
-            // The string "false" equals boolean false
-            return ('false' == $hooks[$priv]) ? false : (bool) $hooks[$priv];
-        }
-    }
 
     if (in_array('administrator', $current_user->roles)) {
         return true;
     }
 
+    // Convert $privs to an array
+    $privs = (array) $privs;
+
+    // Store approved privs when using "AND"
+    $approved_privs = array();
+
     // Loop through the user's roles
     if (is_array($pods_roles)) {
-        foreach ($pods_roles as $role => $privs) {
-            if (in_array($role, $current_user->roles) && false !== array_search($priv, $privs)) {
-                return true;
+        foreach ($pods_roles as $role => $pods_privs) {
+            if (in_array($role, $current_user->roles)) {
+                foreach ($privs as $priv) {
+                    if (false !== array_search($priv, $pods_privs)) {
+                        if ('OR' == strtoupper($method)) {
+                            return true;
+                        }
+                        $approved_privs[$priv] = true;
+                    }
+                }
             }
+        }
+        if ('AND' == strtoupper($method)) {
+            foreach ($privs as $priv) {
+                if (isset($approved_privs[$priv])) {
+                    return false;
+                }
+            }
+            return true;
         }
     }
     return false;

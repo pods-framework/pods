@@ -218,13 +218,13 @@ function fileBrowser() {
 }
 </script>
 
-<div class="jqmWindow" id="dialog">
-    <input type="text" id="file_search" value="" />
-    <input type="button" class="button" value="Narrow results" onclick="fileBrowser()" />
-    <div class="filebox"></div>
-</div>
-
-<div class="wrap">
+<div class="wrap pods_admin">
+    <div class="jqmWindow" id="dialog">
+        <input type="text" id="file_search" value="" />
+        <input type="button" class="button" value="Narrow results" onclick="fileBrowser()" />
+        <div class="filebox"></div>
+    </div>
+    
     <h2>Manage Content</h2>
 
     <div id="nav">

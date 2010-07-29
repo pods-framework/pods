@@ -90,7 +90,7 @@ function dropHelper() {
 <!-- Helper popups -->
 
 <div id="helperBox" class="jqmWindow">
-    <input type="text" id="new_helper" style="width:280px" />
+    <input type="text" id="new_helper" style="width:280px" maxlength="255" />
     <input type="button" class="button" onclick="addHelper()" value="Add Helper" />
     <select id="helper_type">
         <option value="display">Display (pre-output)</option>

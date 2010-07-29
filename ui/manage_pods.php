@@ -414,7 +414,7 @@ function dropColumn(id) {
 <!-- Pod popups -->
 
 <div id="podBox" class="jqmWindow">
-    <input type="text" id="new_pod" />
+    <input type="text" id="new_pod" maxlength="32" />
     <input type="button" class="button" onclick="addPod()" value="Add Pod" />
     <p>Please only use lowercase letters and underscores.</p>
 </div>
@@ -455,11 +455,11 @@ if (isset($datatypes)) {
         </tr>
         <tr>
             <td>Pod Label</td>
-            <td><input type="text" id="pod_label" value="" /></td>
+            <td><input type="text" id="pod_label" value="" maxlength="128" /></td>
         </tr>
         <tr>
             <td>Detail Page</td>
-            <td><input type="text" id="detail_page" /></td>
+            <td><input type="text" id="detail_page" maxlength="128" /></td>
         </tr>
         <tr>
             <td>Pre-save Helpers</td>
@@ -555,11 +555,11 @@ if (isset($helper_types['post_drop'])) {
         </tr>
         <tr>
             <td>Machine Name</td>
-            <td><input type="text" id="column_name" value="" /></td>
+            <td><input type="text" id="column_name" value="" maxlength="32" /></td>
         </tr>
         <tr>
             <td>Label</td>
-            <td><input type="text" id="column_label" value="" /></td>
+            <td><input type="text" id="column_label" value="" maxlength="128" /></td>
         </tr>
         <tr>
             <td>Column Type</td>
@@ -664,7 +664,7 @@ if (isset($helper_types['input'])) {
         <tr>
             <td>Comment</td>
             <td>
-                <input type="text" id="column_comment" value="" />
+                <input type="text" id="column_comment" value="" maxlength="255" />
             </td>
         </tr>
         <tr>

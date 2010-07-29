@@ -96,7 +96,7 @@ function dropTemplate() {
 <!-- Template popups -->
 
 <div id="templateBox" class="jqmWindow">
-    <input type="text" id="new_template" style="width:280px" />
+    <input type="text" id="new_template" style="width:280px" maxlength="255" />
     <input type="button" class="button" onclick="addTemplate()" value="Add Template" />
     <div>Ex: <strong>event_list</strong> or <strong>gallery_photo_detail</strong></div>
 </div>

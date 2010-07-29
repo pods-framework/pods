@@ -52,7 +52,7 @@ function loadMenu() {
         data: "action=load_menu_item&id="+menu_id,
         success: function(msg) {
             if (!is_error(msg)) {
-                var json = jQuery.eval('('+msg+')');
+                var json = eval('('+msg+')');
                 var uri = (null == json.uri) ? "" : json.uri;
                 var title = (null == json.title) ? "" : json.title;
                 jQuery("#menu_id").val(menu_id);
@@ -115,7 +115,7 @@ function dropMenu() {
 }
 </script>
 
-<div class="wrap">
+<div class="wrap pods_admin">
     <h2>Menu Editor</h2>
     <div class="updated">
         <p>This feature has been deprecated. Please use <strong>Appearance > Menus</strong> in WordPress 3.0.</p>
@@ -149,29 +149,27 @@ if ($menu = build_nav_array('<root>', 0)) {
     }
 }
 ?>
-</div>
+    <!-- Begin popups -->
+    <div id="menuBox" class="jqmWindow">
+        <input type="hidden" id="add_or_edit" value="" />
 
-<!-- Begin popups -->
+        <div class="leftside">Link/URI</div>
+        <div class="rightside">
+            <input type="text" id="menu_uri" value="" />
+            <input type="hidden" id="menu_id" value="" />
+        </div>
 
-<div id="menuBox" class="jqmWindow">
-    <input type="hidden" id="add_or_edit" value="" />
+        <div class="leftside">Title</div>
+        <div class="rightside">
+            <input type="text" id="menu_title" value="" />
+        </div>
 
-    <div class="leftside">Link/URI</div>
-    <div class="rightside">
-        <input type="text" id="menu_uri" value="" />
-        <input type="hidden" id="menu_id" value="" />
+        <div align="center">
+            <input type="radio" id="menu_add" name="addedit" value="add" onclick="add_or_edit='add'"> Add child &nbsp; &nbsp;
+            <input type="radio" id="menu_edit" name="addedit" value="edit" onclick="add_or_edit='edit'"> Edit current &nbsp; &nbsp;
+            <input type="button" class="button" onclick="addOrEditMenu()" value="Save item" />
+        </div>
+
+        <div class="clear"><!--clear--></div>
     </div>
-
-    <div class="leftside">Title</div>
-    <div class="rightside">
-        <input type="text" id="menu_title" value="" />
-    </div>
-
-    <div align="center">
-        <input type="radio" id="menu_add" name="addedit" value="add" onclick="add_or_edit='add'"> Add child &nbsp; &nbsp;
-        <input type="radio" id="menu_edit" name="addedit" value="edit" onclick="add_or_edit='edit'"> Edit current &nbsp; &nbsp;
-        <input type="button" class="button" onclick="addOrEditMenu()" value="Save item" />
-    </div>
-
-    <div class="clear"><!--clear--></div>
 </div>

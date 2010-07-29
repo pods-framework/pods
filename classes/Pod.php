@@ -255,7 +255,7 @@ class Pod
     function get_pod_id() {
         if (empty($this->data['pod_id'])) {
             $this->data['pod_id'] = 0;
-            $tbl_row_id = $this->data['id'];
+            $tbl_row_id = (isset($this->data['id'])?$this->data['id']:0);
             $result = pod_query("SELECT id FROM @wp_pod WHERE datatype = '$this->datatype_id' AND tbl_row_id = '$tbl_row_id' LIMIT 1");
             if (0 < mysql_num_rows($result)) {
                 $this->data['pod_id'] = mysql_result($result, 0);

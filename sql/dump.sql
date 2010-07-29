@@ -38,7 +38,7 @@ CREATE TABLE `wp_pod_fields` (
     `datatype` SMALLINT(5) UNSIGNED NULL DEFAULT NULL,
     `name` VARCHAR(32) NULL DEFAULT NULL,
     `label` VARCHAR(128) NULL DEFAULT NULL,
-    `comment` VARCHAR(128) NULL DEFAULT NULL,
+    `comment` VARCHAR(255) NULL DEFAULT NULL,
     `coltype` VARCHAR(4) NULL DEFAULT NULL,
     `pickval` VARCHAR(32) NULL DEFAULT NULL,
     `sister_field_id` INT(10) UNSIGNED NULL DEFAULT NULL,
@@ -67,7 +67,7 @@ CREATE TABLE `wp_pod_rel` (
 
 CREATE TABLE `wp_pod_templates` (
     `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(32) NULL DEFAULT NULL,
+    `name` VARCHAR(255) NULL DEFAULT NULL,
     `code` LONGTEXT NULL,
     PRIMARY KEY (`id`)
 ) DEFAULT CHARSET utf8;
@@ -84,7 +84,7 @@ CREATE TABLE `wp_pod_pages` (
 
 CREATE TABLE `wp_pod_helpers` (
     `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(32) NULL DEFAULT NULL,
+    `name` VARCHAR(255) NULL DEFAULT NULL,
     `helper_type` VARCHAR(16) NOT NULL DEFAULT 'display',
     `phpcode` LONGTEXT NULL,
     PRIMARY KEY (`id`)

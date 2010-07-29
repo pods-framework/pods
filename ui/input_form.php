@@ -5,6 +5,7 @@ $form_count = $cache->form_count;
 
 if (1 == $form_count)
 {
+    do_action('pods_form_init');
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/ui/style.css" />
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/ui/js/jqmodal.js"></script>
@@ -102,16 +103,22 @@ function fileBrowser() {
 }
 </script>
 
-<div class="jqmWindow" id="dialog">
-    <input type="text" id="file_search" value="" />
-    <input type="button" class="button" value="Narrow results" onclick="fileBrowser()" />
-    <div class="filebox"></div>
-</div>
-
 <?php
 }
 ?>
 
 <div class="pods_form form_<?php echo $this->datatype; ?> form_<?php echo $form_count; ?>">
-<?php $this->showform($this->get_pod_id(), $public_columns, $label); ?>
+<?php
+if (1 == $form_count)
+{
+?>
+<div class="jqmWindow" id="dialog">
+    <input type="text" id="file_search" value="" />
+    <input type="button" class="button" value="Narrow results" onclick="fileBrowser()" />
+    <div class="filebox"></div>
+</div>
+<?php
+}
+$this->showform($this->get_pod_id(), $public_columns, $label);
+?>
 </div>

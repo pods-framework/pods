@@ -77,6 +77,10 @@
     clear: both;
 }
 
+.pods_form .clear {
+    height:15px;
+}
+
 .pods_admin .btn {
     cursor: pointer;
 }

@@ -461,6 +461,12 @@ class PodAPI
             }
         }
 
+        // Allow Helpers to know what's going on, are we adding or saving?
+        $is_new_item = false;
+        if (empty($params->pod_id)&&empty($params->tbl_row_id)) {
+            $is_new_item = true;
+        }
+
         // Get array of datatypes
         $datatypes = $this->get_table_data(array('array_key' => 'name', 'columns' => 'id, name'));
         $datatype_id = $datatypes[$params->datatype]['id'];
@@ -725,7 +731,7 @@ class PodAPI
         INNER JOIN @wp_pod ON @wp_pod.datatype = @wp_pod_fields.datatype
         WHERE @wp_pod_fields.datatype = $params->id";
 
-        pod_quer($sql);
+        pod_query($sql);
         pod_query("DELETE FROM @wp_pod_fields WHERE datatype = $params->id");
         pod_query("DROP TABLE `@wp_pod_tbl_$params->name`");
     }
@@ -1316,7 +1322,7 @@ class PodAPI
      */
     function validate_package($data = false) {
         $output = false;
-        if (isset($data['data'])) {
+        if (is_array($data)&&isset($data['data'])) {
             $data = $data['data'];
             $output = true;
         }

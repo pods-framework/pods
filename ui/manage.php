@@ -83,7 +83,7 @@ if (pods_access('manage_settings')) {
 
     <div id="podArea" class="area">
 <?php
-if (pods_access('manage_pods')) {
+if (pods_access('manage_pods') && apply_filters('pods_manage_pods',true)) {
     include(PODS_DIR . '/ui/manage_pods.php');
 }
 ?>
@@ -91,7 +91,7 @@ if (pods_access('manage_pods')) {
 
     <div id="templateArea" class="area">
 <?php
-if (pods_access('manage_templates')) {
+if (pods_access('manage_templates') && apply_filters('pods_manage_templates',true)) {
     include(PODS_DIR . '/ui/manage_templates.php');
 }
 ?>
@@ -99,7 +99,7 @@ if (pods_access('manage_templates')) {
 
     <div id="pageArea" class="area">
 <?php
-if (pods_access('manage_pod_pages')) {
+if (pods_access('manage_pod_pages') && apply_filters('pods_manage_pod_pages',true)) {
     include(PODS_DIR . '/ui/manage_pages.php');
 }
 ?>
@@ -107,7 +107,7 @@ if (pods_access('manage_pod_pages')) {
 
     <div id="helperArea" class="area">
 <?php
-if (pods_access('manage_helpers')) {
+if (pods_access('manage_helpers') && apply_filters('pods_manage_helpers',true)) {
     include(PODS_DIR . '/ui/manage_helpers.php');
 }
 ?>
@@ -115,7 +115,7 @@ if (pods_access('manage_helpers')) {
 
     <div id="roleArea" class="area">
 <?php
-if (pods_access('manage_roles')) {
+if (pods_access('manage_roles') && apply_filters('pods_manage_roles',true)) {
     include(PODS_DIR . '/ui/manage_roles.php');
 }
 ?>
@@ -123,7 +123,7 @@ if (pods_access('manage_roles')) {
 
     <div id="settingsArea" class="area">
 <?php
-if (pods_access('manage_settings')) {
+if (pods_access('manage_settings') && apply_filters('pods_manage_settings',true)) {
     include(PODS_DIR . '/ui/manage_settings.php');
 }
 ?>

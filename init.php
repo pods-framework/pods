@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS
 Plugin URI: http://podscms.org/
 Description: Create custom content types in WordPress.
-Version: 1.9.0
+Version: 1.9.1
 Author: Matt Gibbs
 Author URI: http://podscms.org/about/
 
@@ -23,11 +23,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 190);
+define('PODS_VERSION', 191);
 define('PODS_VERSION_FULL', implode('.', str_split(PODS_VERSION)));
-define('PODS_URL', WP_PLUGIN_URL . '/pods');
-define('PODS_DIR', WP_PLUGIN_DIR . '/pods');
-define('WP_INC_URL', get_bloginfo('wpurl') . '/' . WPINC);
+define('PODS_URL', rtrim(plugin_dir_url(__FILE__),'/')); // non-trailing slash being deprecated in 2.0
+define('PODS_DIR', rtrim(plugin_dir_path(__FILE__),'/')); // non-trailing slash being deprecated in 2.0
+define('WP_INC_URL', rtrim(includes_url(),'/')); // non-trailing slash being deprecated in 2.0
 
 $pods_roles = unserialize(get_option('pods_roles'));
 
@@ -181,9 +181,9 @@ class PodInit
     function wp_title($title, $sep, $seplocation) {
         global $pods, $pod_page_exists;
 
-        $page_title = trim($pod_page_exists['title']);
+        $page_title = $pod_page_exists['title'];
 
-        if (0 < strlen($page_title)) {
+        if (0 < strlen(trim($page_title))) {
             if (is_object($pods)) {
                 $page_title = preg_replace_callback("/({@(.*?)})/m", array($pods, "parse_magic_tags"), $page_title);
             }

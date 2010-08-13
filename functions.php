@@ -252,7 +252,7 @@ function pod_page_exists($uri = null) {
 function pods_access($privs, $method = 'OR') {
     global $pods_roles, $current_user;
 
-    if (in_array('administrator', $current_user->roles)) {
+    if (in_array('administrator', $current_user->roles) || (function_exists('is_super_admin') && is_super_admin())) {
         return true;
     }
 

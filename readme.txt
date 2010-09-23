@@ -12,14 +12,12 @@ Pods is a CMS framework for creating and managing your own content types.
 
 Pods is a CMS framework for creating and managing your own content types.
 
-**Create your own content types.**
-
+= Create your own content types =
 A pod, or content type, is a named group of input fields. The Pods plugin lets you create your own content types. Instead of with custom post types, each content type gets its own table.
 
 Create a variety of different input fields, including text, paragraph text, date, number, file upload, and relationship (called "pick") fields. Pick fields are extremely useful if you want to create relationships among your data. One example is if you want to relate an "event" item with one or more "speaker" items.
 
-**Easily display your content.**
-
+= Easily display your content =
 There are several ways to get Pods data to show up throughout your site:
 
 * Add Pod Pages from within the admin area. Pod Pages support PHP and Wildcard URLs. For example, the Pod Page "events/*" will be the default handler for all pages beginning with "events/". This allows you to have a single page to handle a myriad of different items.
@@ -27,16 +25,17 @@ There are several ways to get Pods data to show up throughout your site:
 * Use shortcode to display lists of Pod items within WP Pages or Posts.
 * The Pods API allows you to retrieve raw data from the database.
 
-**Migrate!**
-
+= Migrate! =
 Pods includes a Package Manager, which allows you to import/export your database structure. You can select which features you want to "package up" and export it for easy migration. Pods also includes an easy to use PHP API to manage all types of Pod-related data for complex operations.
 
+= Introduction to the Pods CMS Framework =
 [vimeo http://vimeo.com/15086927]
 
 == Changelog ==
 
 = 1.9.2 - September, 23, 2010 =
 This will be the last Feature release for Pods 1.9.x -- All future releases of 1.9.x will be strictly Bug Fix only until Pods 2.0
+
 * Added: Ability to use filters / actions to add new Column Types to Pods
 * Added: Filters - pods_admin_menu_name / pods_admin_menu_label / pods_admin_submenu_name / pods_admin_submenu_label / pods_rel_lookup / pods_get_dropdown_values / pods_findrecords_the_join / pods_findrecords_join / pods_showform_save_button_atts / pods_showform_save_button / pods_column_dbtypes / pods_column_types
 * Added: Actions - pods_pre_pod_helper / pods_pre_pod_helper_$helper / pods_post_pod_helper / pods_post_pod_helper_$helper / pods_pre_showtemplate / pods_pre_showtemplate_$tpl / pods_post_showtemplate / pods_post_showtemplate_$tpl / pods_pre_input_field / pods_pre_input_field_$name / pods_pre_input_field_type_$coltype / pods_input_field_type_$coltype / pods_post_input_field / pods_post_input_field_$name / pods_post_input_field_type_$coltype / pods_pre_form / pods_pre_form_{Pod::datatype} / pods_post_form / pods_post_form_{Pod::datatype}

@@ -33,7 +33,7 @@ Pods includes a Package Manager, which allows you to import/export your database
 
 == Changelog ==
 
-= 1.9.2 - September, 23, 2010 =
+= 1.9.2 - September 23, 2010 =
 This will be the last Feature release for Pods 1.9.x -- All future releases of 1.9.x will be strictly Bug Fix only until Pods 2.0
 
 * Added: Ability to use filters / actions to add new Column Types to Pods

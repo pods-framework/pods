@@ -2,7 +2,7 @@
 ob_start();
 require_once(realpath('../../../../../wp-load.php'));
 ob_end_clean();
-
+echo "<e>";
 // Sanitize input
 $params = array();
 foreach ($_POST as $key => $val) {
@@ -111,6 +111,7 @@ if (isset($methods[$action])) {
     $params = apply_filters('pods_api_'.$action,$params);
 
     // Dynamically call the API method
+    $params = (array) $params;
     $output = $api->$action($params);
 
     // Output in PHP or JSON format

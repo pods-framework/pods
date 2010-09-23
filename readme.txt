@@ -126,8 +126,9 @@ This will be the last Feature release for Pods 1.9.x -- All future releases of 1
 
 == Upgrade Notice ==
 
-= 1.9.2 - September, 23, 2010 =
+= 1.9.2 - September 23, 2010 =
 This will be the last Feature release for Pods 1.9.x -- All future releases of 1.9.x will be strictly Bug Fix only until Pods 2.0
+
 * Added: Ability to use filters / actions to add new Column Types to Pods
 * Added: Filters - pods_admin_menu_name / pods_admin_menu_label / pods_admin_submenu_name / pods_admin_submenu_label / pods_rel_lookup / pods_get_dropdown_values / pods_findrecords_the_join / pods_findrecords_join / pods_showform_save_button_atts / pods_showform_save_button / pods_column_dbtypes / pods_column_types
 * Added: Actions - pods_pre_pod_helper / pods_pre_pod_helper_$helper / pods_post_pod_helper / pods_post_pod_helper_$helper / pods_pre_showtemplate / pods_pre_showtemplate_$tpl / pods_post_showtemplate / pods_post_showtemplate_$tpl / pods_pre_input_field / pods_pre_input_field_$name / pods_pre_input_field_type_$coltype / pods_input_field_type_$coltype / pods_post_input_field / pods_post_input_field_$name / pods_post_input_field_type_$coltype / pods_pre_form / pods_pre_form_{Pod::datatype} / pods_post_form / pods_post_form_{Pod::datatype}

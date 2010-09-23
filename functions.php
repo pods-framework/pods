@@ -12,6 +12,7 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
     global $wpdb;
 
     $sql = trim($sql);
+    // Using @wp_users is deprecated! use $wpdb->users instead!
     $sql = str_replace('@wp_users', $wpdb->users, $sql);
     $sql = str_replace('@wp_', $wpdb->prefix, $sql);
     $sql = str_replace('{prefix}', '@wp_', $sql);
@@ -91,6 +92,7 @@ function pods_url_variable($key = 'last', $type = 'uri') {
     $type = strtolower($type);
     if ('uri' == $type) {
         $uri = explode('?', $_SERVER['REQUEST_URI']);
+        $uri = explode('#', $uri[0]);
         $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri[0]);
         $uri = explode('/', $uri);
 
@@ -215,7 +217,7 @@ function is_pod_page($uri = null) {
  * @return array
  */
 function pod_page_exists($uri = null) {
-    if(null==$uri) {
+    if (null==$uri) {
         $home = explode('://', get_bloginfo('url'));
         $uri = explode('?', $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
         $uri = str_replace($home[1], '', $uri[0]);
@@ -250,11 +252,14 @@ function pod_page_exists($uri = null) {
  * @since 1.2.0
  */
 function pods_access($privs, $method = 'OR') {
-    global $pods_roles, $current_user;
+    global $pods_roles;
 
-    if (in_array('administrator', $current_user->roles) || (function_exists('is_super_admin') && is_super_admin())) {
+    if (current_user_can('administrator') || current_user_can('pods_administrator') || (function_exists('is_super_admin') && is_super_admin())) {
         return true;
     }
+    
+    // Convert $method to uppercase
+    $method = strtoupper($method);
 
     // Convert $privs to an array
     $privs = (array) $privs;
@@ -265,10 +270,10 @@ function pods_access($privs, $method = 'OR') {
     // Loop through the user's roles
     if (is_array($pods_roles)) {
         foreach ($pods_roles as $role => $pods_privs) {
-            if (in_array($role, $current_user->roles)) {
+            if (current_user_can($role)) {
                 foreach ($privs as $priv) {
-                    if (false !== array_search($priv, $pods_privs)) {
-                        if ('OR' == strtoupper($method)) {
+                    if (false !== array_search($priv, $pods_privs) || current_user_can('pods_'.ltrim($priv,'pod_'))) {
+                        if ('OR' == $method) {
                             return true;
                         }
                         $approved_privs[$priv] = true;

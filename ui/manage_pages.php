@@ -136,8 +136,8 @@ if (isset($pages)) {
         <option value="">-- Page Template --</option>
 <?php
 $page_templates = get_page_templates();
-if(!in_array('page.php',$page_templates)&&(file_exists(TEMPLATEPATH .'/page.php')||file_exists(STYLESHEETPATH.'/page.php'))) {
-    $page_templates['page.php'] = 'Page (WP Default)';
+if (!in_array('page.php',$page_templates) && locate_template(array('page.php',false))) {
+    $page_templates['Page (WP Default)'] = 'page.php';
     ksort($page_templates);
 }
 foreach ($page_templates as $template => $file) {

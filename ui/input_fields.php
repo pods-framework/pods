@@ -15,6 +15,11 @@ $css_classes = "form $coltype $name pods_field pods_field_$name pods_coltype_$co
 if (1 > $field['multiple']) {
     $css_classes = str_replace(' pick ', ' pick1 ', $css_classes);
 }
+
+//pre-field hooks
+do_action('pods_pre_input_field', $field, $css_id, $css_classes, $value, &$this);
+do_action("pods_pre_input_field_$name", $field, $css_id, $css_classes, $value, &$this);
+do_action("pods_pre_input_field_type_$coltype", $field, $css_id, $css_classes, $value, &$this);
 ?>
     <div class="leftside <?php echo $name . $hidden; ?>">
         <label for="<?php echo $css_id; ?>"><?php echo $label; ?></label>
@@ -45,7 +50,7 @@ Boolean checkbox
 elseif ('bool' == $coltype) {
     $value = empty($value) ? '' : ' checked';
 ?>
-    <input type="checkbox" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>"<?php echo $value; ?> />
+    <input name="<?php echo $name; ?>" type="checkbox" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>"<?php echo $value; ?> />
 <?php
 }
 
@@ -67,7 +72,7 @@ jQuery(function() {
     }
     $value = empty($value) ? date("Y-m-d H:i:s") : $value;
 ?>
-    <input type="text" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>" value="<?php echo $value; ?>" />
+    <input name="<?php echo $name; ?>" type="text" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>" value="<?php echo $value; ?>" />
 <?php
 }
 
@@ -78,7 +83,7 @@ Standard text box
 */
 elseif ('num' == $coltype || 'txt' == $coltype || 'slug' == $coltype) {
 ?>
-    <input type="text" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>" value="<?php echo htmlspecialchars($value); ?>" maxlength="<?php echo ($coltype=='num')?15:128; ?>" />
+    <input name="<?php echo $name; ?>" type="text" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>" value="<?php echo htmlspecialchars($value); ?>" maxlength="<?php echo ($coltype=='num')?15:128; ?>" />
 <?php
 }
 
@@ -94,7 +99,7 @@ elseif ('desc' == $coltype) {
 <?php
     }
 ?>
-    <textarea class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>"><?php echo $value; ?></textarea>
+    <textarea name="<?php echo $name; ?>" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>"><?php echo $value; ?></textarea>
 <?php
 }
 
@@ -105,7 +110,7 @@ Textarea box (no WYSIWYG)
 */
 elseif ('code' == $coltype) {
 ?>
-    <textarea class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>"><?php echo htmlspecialchars($value); ?></textarea>
+    <textarea name="<?php echo $name; ?>" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>"><?php echo htmlspecialchars($value); ?></textarea>
 <?php
 }
 
@@ -122,6 +127,7 @@ elseif ('file' == $coltype) {
 <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/swfupload/swfupload.js'; ?>"></script>
 <?php
     }
+    $button_height = (function_exists('is_super_admin')?23:24);
 ?>
 <script type="text/javascript">
 jQuery(function() {
@@ -129,7 +135,7 @@ jQuery(function() {
         button_text: '<span class="button">Select + Upload</span>',
         button_text_style: '.button { text-align:center; color:#464646; font-size:11px; font-family:"Lucida Grande",Verdana,Arial,"Bitstream Vera Sans",sans-serif; }',
         button_width: "132",
-        button_height: "24",
+	button_height: "<?php echo $button_height; ?>",
         button_text_top_padding: 3,
         button_image_url: "<?php echo WP_INC_URL; ?>/images/upload.png",
         button_placeholder_id: "<?php echo $css_id; ?>",
@@ -227,9 +233,9 @@ elseif ('pick' == $coltype && 0 < $field['multiple']) {
 Single-select PICK
 ==================================================
 */
-else {
+elseif ('pick' == $coltype) {
 ?>
-    <select class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>">
+    <select name="<?php echo $name; ?>" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>">
         <option value="">-- Select one --</option>
 <?php
         if (!empty($value)) {
@@ -244,7 +250,13 @@ else {
     </select>
 <?php
 }
+do_action("pods_input_field_type_$coltype", $field, $css_id, $css_classes, $value, &$this);
 $coltype_exists[$coltype] = true;
 ?>
     </div>
     <div class="clear<?php echo $hidden; ?>"></div>
+<?php 
+//post-field hooks
+do_action('pods_post_input_field', $field, $css_id, $css_classes, &$this);
+do_action("pods_post_input_field_$name", $field, $css_id, $css_classes, &$this);
+do_action("pods_post_input_field_type_$coltype", $field, $css_id, $css_classes, $value, &$this);

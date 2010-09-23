@@ -565,15 +565,26 @@ if (isset($helper_types['post_drop'])) {
             <td>Column Type</td>
             <td>
                 <select id="column_type" onchange="doDropdown(this.value)">
-                    <option value="date">Date</option>
-                    <option value="num">Number</option>
-                    <option value="bool">Boolean</option>
-                    <option value="txt">Single line Text</option>
-                    <option value="desc">Paragraph Text</option>
-                    <option value="code">Code</option>
-                    <option value="file">File Upload</option>
-                    <option value="slug">Permalink</option>
-                    <option value="pick">Relationship (pick)</option>
+<?php
+$column_types = array(
+    'date' => 'Date',
+    'num' => 'Number',
+    'bool' => 'Boolean',
+    'txt' => 'Single line Text',
+    'desc' => 'Paragraph Text',
+    'code' => 'Code',
+    'file' => 'File Upload',
+    'slug' => 'Permalink',
+    'pick' => 'Relationship (pick)'
+);
+$column_types = apply_filters('pods_column_types', $column_types);
+foreach ($column_types as $type => $label)
+{
+?>
+                    <option value="<?php echo $type; ?>"><?php echo $label; ?></option>
+<?php
+}
+?>
                 </select>
             </td>
         </tr>

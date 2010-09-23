@@ -219,29 +219,39 @@ class Pod
      * @since 1.2.0
      */
     function rel_lookup($tbl_row_ids, $table, $orderby = null) {
+        global $wpdb;
         $orderby = empty($orderby) ? '' : "ORDER BY $orderby";
 
         // WP taxonomy item
         if ('wp_taxonomy' == $table) {
-            $result = pod_query("SELECT * FROM @wp_terms WHERE term_id IN ($tbl_row_ids) $orderby");
+            $result = pod_query("SELECT * FROM $wpdb->terms WHERE term_id IN ($tbl_row_ids) $orderby");
         }
         // WP page, post, or attachment
         elseif ('wp_page' == $table || 'wp_post' == $table || 'file' == $table) {
-            $result = pod_query("SELECT * FROM @wp_posts WHERE ID IN ($tbl_row_ids) $orderby");
+            $result = pod_query("SELECT * FROM $wpdb->posts WHERE ID IN ($tbl_row_ids) $orderby");
         }
         // WP user
         elseif ('wp_user' == $table) {
-            $result = pod_query("SELECT * FROM @wp_users WHERE ID IN ($tbl_row_ids) $orderby");
+            $result = pod_query("SELECT * FROM $wpdb->users WHERE ID IN ($tbl_row_ids) $orderby");
         }
         // Pod table
         else {
             $result = pod_query("SELECT * FROM `@wp_pod_tbl_$table` WHERE id IN ($tbl_row_ids) $orderby");
         }
 
+        //override with custom relational query
+        $result = apply_filters('pods_rel_lookup', $result, $tbl_row_ids, $table, $orderby, &$this);
+
         // Put all related items into an array
-        while ($row = mysql_fetch_assoc($result)) {
-            $data[] = $row;
+        if (!is_array($result)) {
+	    while ($row = mysql_fetch_assoc($result)) {
+                $data[] = $row;
+	    }
         }
+	else {
+	    $data = $result;
+	}
+
         return $data;
     }
 
@@ -288,17 +298,29 @@ class Pod
         $helper = pods_sanitize($helper);
         $content = $api->load_helper(array('name' => $helper));
         $content = $content['phpcode'];
+
+        ob_start();
+
+        //pre-helper hooks
+        do_action('pods_pre_pod_helper', $helper, $value, $name, &$this);
+        do_action("pods_pre_pod_helper_$helper", $helper, $value, $name, &$this);
+
         if (false !== $content) {
-            ob_start();
             eval("?>$content");
-            return ob_get_clean();
         }
+
+        //post-helper hooks
+        do_action('pods_post_pod_helper', $helper, $value, $name, &$this);
+        do_action("pods_post_pod_helper_$helper", $helper, $value, $name, &$this);
+
+        return ob_get_clean();
     }
 
     /**
      * Get pod or category dropdown values
      */
     function get_dropdown_values($params) {
+        global $wpdb;
         foreach ($params as $key => $val) {
             ${$key} = $val;
         }
@@ -319,9 +341,9 @@ class Pod
             SELECT
                 t.term_id AS id, t.name
             FROM
-                @wp_term_taxonomy tx
+                $wpdb->term_taxonomy tx
             INNER JOIN
-                @wp_terms t ON t.term_id = tx.term_id
+                $wpdb->terms t ON t.term_id = tx.term_id
             WHERE
                 1 $where
             ORDER BY
@@ -336,7 +358,7 @@ class Pod
                 $where .= " AND $pick_filter";
             }
 
-            $sql = "SELECT ID as id, post_title AS name FROM @wp_posts WHERE post_type = '$post_type' $where ORDER BY $orderby";
+            $sql = "SELECT ID as id, post_title AS name FROM $wpdb->posts WHERE post_type = '$post_type' $where ORDER BY $orderby";
         }
         // WP user dropdown
         elseif ('wp_user' == $table) {
@@ -345,7 +367,7 @@ class Pod
                 $where .= (empty($where) ? ' WHERE ' : ' AND ') . $pick_filter;
             }
 
-            $sql = "SELECT ID as id, display_name AS name FROM @wp_users $where ORDER BY $orderby";
+            $sql = "SELECT ID as id, display_name AS name FROM $wpdb->users $where ORDER BY $orderby";
         }
         // Pod table dropdown
         else {
@@ -356,6 +378,9 @@ class Pod
 
             $sql = "SELECT * FROM `@wp_pod_tbl_$table` $where ORDER BY $orderby";
         }
+
+        //override with custom dropdown values
+        $sql = apply_filters('pods_get_dropdown_values', $sql, $params, &$this);
 
         $val = array();
         $result = pod_query($sql);
@@ -409,11 +434,26 @@ class Pod
     /**
      * Search and filter records
      */
-    function findRecords($orderby = 'id DESC', $rows_per_page = 15, $where = null, $sql = null) {
+    function findRecords($orderby = 't.id DESC', $rows_per_page = 15, $where = null, $sql = null) {
+        global $wpdb;
+        $join = '';
+        $select = 't.*, p.id AS pod_id, p.created, p.modified';
+        if(is_array($orderby)) {
+            $defaults = array('select'=>$select,'where'=>$where,'join'=>$join,'orderby'=>'t.id DESC','limit'=>$rows_per_page,'page'=>$this->page,'search'=>$this->search,'sql'=>$sql);
+            $params = (object) array_merge($defaults,$orderby);
+            $select = $params->select;
+            $where = $params->where;
+            $join = $params->join;
+            $orderby = $params->orderby;
+            $rows_per_page = $params->limit;
+            $this->page = $params->page;
+            $this->search = $params->search;
+            $sql = $params->sql;
+        }
         $page = $this->page;
         $datatype = $this->datatype;
         $datatype_id = $this->datatype_id;
-        $limit = $join = $search = '';
+        $limit = $search = '';
 
         // ctype_digit expects a string, or it returns FALSE
         if (ctype_digit("$rows_per_page") && 0 <= $rows_per_page) {
@@ -427,7 +467,7 @@ class Pod
         $this->rpp = $rows_per_page;
         $i = 0;
 
-        if(false !== $this->search) {
+        if (false !== $this->search) {
             // Handle search
             if (!empty($_GET[$this->search_var])) {
                 $val = pods_url_variable($this->search_var, 'get');
@@ -449,7 +489,7 @@ class Pod
             $field_coltype = $row['coltype'];
             $table = $row['pickval'];
 
-            if(false !== $this->search) {
+            if (false !== $this->search) {
                 // Handle any $_GET variables
                 if (!empty($_GET[$field_name])) {
                     $val = (int) trim($_GET[$field_name]);
@@ -470,43 +510,47 @@ class Pod
             }
 
             if ('wp_taxonomy' == $table) {
-                $join .= "
+                $the_join = "
                 LEFT JOIN
                     @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id
                 LEFT JOIN
-                    @wp_terms `$field_name` ON `$field_name`.term_id = r$i.tbl_row_id
+                    $wpdb->terms `$field_name` ON `$field_name`.term_id = r$i.tbl_row_id
                 ";
             }
             elseif ('wp_page' == $table || 'wp_post' == $table || 'file' == $field_coltype) {
-                $join .= "
+                $the_join = "
                 LEFT JOIN
                     @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id
                 LEFT JOIN
-                    @wp_posts `$field_name` ON `$field_name`.ID = r$i.tbl_row_id
+                    $wpdb->posts `$field_name` ON `$field_name`.ID = r$i.tbl_row_id
                 ";
             }
             elseif ('wp_user' == $table) {
-                $join .= "
+                $the_join = "
                 LEFT JOIN
                     @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id
                 LEFT JOIN
-                    @wp_users `$field_name` ON `$field_name`.ID = r$i.tbl_row_id
+                    $wpdb->users `$field_name` ON `$field_name`.ID = r$i.tbl_row_id
                 ";
             }
             else {
-                $join .= "
+                $the_join = "
                 LEFT JOIN
                     @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id
                 LEFT JOIN
                     `@wp_pod_tbl_$table` `$field_name` ON `$field_name`.id = r$i.tbl_row_id
                 ";
             }
+            //override with custom joins
+            $join .= ' '.apply_filters('pods_findrecords_the_join', $the_join, $i, $row, $params, &$this).' ';
         }
+        //override with custom joins
+        $join = apply_filters('pods_findrecords_join', $join, $params, &$this);
 
         if (empty($sql)) {
             $sql = "
             SELECT
-                SQL_CALC_FOUND_ROWS DISTINCT t.*
+                SQL_CALC_FOUND_ROWS DISTINCT $select
             FROM
                 @wp_pod p
             $join
@@ -691,6 +735,19 @@ class Pod
             $this->build_field_html($field);
         }
         $uri_hash = md5($_SERVER['REQUEST_URI']);
+
+        $save_button_atts = array(
+        	'type' => 'button',
+        	'class' => 'button btn_save',
+        	'value' => $label,
+        	'onclick' => "saveForm($cache->form_count)"
+        );
+        $save_button_atts = apply_filters('pods_showform_save_button_atts', $save_button_atts, &$this);
+        $atts = '';
+        foreach ($save_button_atts as $att => $value) {
+        	$atts .= $att.'="'.$value.'" ';
+        }
+        $save_button = '<input '.$atts.'/>';
 ?>
     <div>
     <input type="hidden" class="form num pod_id" value="<?php echo $pod_id; ?>" />
@@ -698,7 +755,7 @@ class Pod
     <input type="hidden" class="form txt form_count" value="<?php echo $cache->form_count; ?>" />
     <input type="hidden" class="form txt token" value="<?php echo pods_generate_key($datatype, $uri_hash, $public_columns, $cache->form_count); ?>" />
     <input type="hidden" class="form txt uri_hash" value="<?php echo $uri_hash; ?>" />
-    <input type="button" class="button btn_save" value="<?php echo $label; ?>" onclick="saveForm(<?php echo $cache->form_count; ?>)" />
+	<?php echo apply_filters('pods_showform_save_button', $save_button, $save_button_atts, &$this); ?>
     </div>
 <?php
     }
@@ -746,6 +803,10 @@ class Pod
     function showTemplate($tpl, $code = null) {
         ob_start();
 
+        //pre-template hooks
+        do_action('pods_pre_showtemplate', $tpl, $code, &$this);
+        do_action("pods_pre_showtemplate_$tpl", $tpl, $code, &$this);
+
         if (empty($code)) {
             $result = pod_query("SELECT code FROM @wp_pod_templates WHERE name = '$tpl' LIMIT 1");
             $row = mysql_fetch_assoc($result);
@@ -763,6 +824,11 @@ class Pod
                 echo $this->parse_template_string($code);
             }
         }
+
+        //post-template hooks
+        do_action('pods_post_showtemplate', $tpl, $code, &$this);
+        do_action("pods_post_showtemplate_$tpl", $tpl, $code, &$this);
+
         return ob_get_clean();
     }
 

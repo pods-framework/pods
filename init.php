@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS
 Plugin URI: http://podscms.org/
 Description: Create custom content types in WordPress.
-Version: 1.9.1
+Version: 1.9.2
 Author: Matt Gibbs
 Author URI: http://podscms.org/about/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 191);
+define('PODS_VERSION', 192);
 define('PODS_VERSION_FULL', implode('.', str_split(PODS_VERSION)));
 define('PODS_URL', rtrim(plugin_dir_url(__FILE__),'/')); // non-trailing slash being deprecated in 2.0
 define('PODS_DIR', rtrim(plugin_dir_path(__FILE__),'/')); // non-trailing slash being deprecated in 2.0
@@ -130,9 +130,10 @@ class PodInit
         $submenu = array();
         $result = pod_query("SELECT name, label, is_toplevel FROM @wp_pod_types ORDER BY label, name");
         while ($row = mysql_fetch_array($result)) {
-            $name = $row['name'];
+            $name = apply_filters('pods_admin_menu_name', $row['name'], $row);
             $label = trim($row['label']);
             $label = ('' != $label) ? $label : $name;
+            $label = apply_filters('pods_admin_menu_label', $label, $row);
             if (pods_access("pod_$name")) {
                 if (1 == $row['is_toplevel']) {
                     add_object_page($label, $label, 'read', "pods-manage-$name");
@@ -149,7 +150,9 @@ class PodInit
             wp_enqueue_script('jquery-ui-core');
             wp_enqueue_script('jquery-ui-sortable');
             add_object_page('Pods', 'Pods', 'read', 'pods', null, PODS_URL.'/ui/images/icon16.png');
-            add_submenu_page('pods', 'Setup', 'Setup', 'read', 'pods', array($this, 'pods_setup_page'));
+            if (pods_access(array('manage_pods','manage_templates','manage_pod_pages','manage_helpers','manage_roles','manage_settings'))) {
+                add_submenu_page('pods', 'Setup', 'Setup', 'read', 'pods', array($this, 'pods_setup_page'));
+            }
             if (pods_access('manage_content')) {
                 add_submenu_page('pods', 'Manage Content', 'Manage Content', 'read', 'pods-manage', array($this, 'pods_content_page'));
             }
@@ -160,9 +163,10 @@ class PodInit
                 add_submenu_page('pods', 'Menu Editor', 'Menu Editor', 'read', 'pods-menu', array($this, 'pods_menu_page'));
             }
             foreach ($submenu as $item) {
-                $name = $item['name'];
+                $name = apply_filters('pods_admin_submenu_name', $item['name'], $item);
                 $label = trim($item['label']);
                 $label = ('' != $label) ? $label : $name;
+                $label = apply_filters('pods_admin_submenu_label', $label, $item);
                 add_submenu_page('pods', "Add $label", "Add $label", 'read', "pod-$name", array($this, 'pods_content_page'));
             }
         }
@@ -212,7 +216,7 @@ class PodInit
         if (is_object($pods)) {
             $classes[] = 'pod-'.str_replace('--','-',str_replace('_','-',$pods->datatype));
         }
-        return apply_filters('pods_body_class', $classes);
+        return apply_filters('pods_body_class', $classes, $uri);
     }
 
     function status_header() {
@@ -240,15 +244,15 @@ class PodInit
              */
             $phpcode = $row['phpcode'];
             $page_template = $row['page_template'];
-            $pods_theme_path = STYLESHEETPATH . '/pods.php';
 
-            if (!empty($page_template) && file_exists(STYLESHEETPATH . '/' . $page_template)) {
-                include STYLESHEETPATH . '/' . $page_template;
+            if (!empty($page_template) && '' != locate_template(array($page_template), true)) {
+                // found the template and included it, we're good to go!
             }
-            elseif (file_exists($pods_theme_path)) {
-                include $pods_theme_path;
+            elseif ('' != locate_template(array('pods.php'), true)) {
+                // found the template and included it, we're good to go!
             }
             else {
+                // templates not found in theme, default output
                 get_header();
                 pods_content();
                 get_sidebar();

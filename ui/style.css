@@ -278,7 +278,8 @@
     border-bottom: 1px solid #E3E3E3;
 }
 
-.pods_form .filebox {
+.pods_form #dialog .filebox,
+.pods_admin #dialog .filebox {
     height: 240px;
     margin: 10px 0 0 0;
     overflow-x: hidden;

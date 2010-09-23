@@ -17,10 +17,8 @@ if ($installed < 160) {
     $result = pod_query("SELECT name, tpl_detail, tpl_list FROM @wp_pod_types");
     while ($row = mysql_fetch_assoc($result)) {
         // Create the new template, e.g. "dtname_list" or "dtname_detail"
-        foreach ($row as $key => $val) {
-            ${$key} = mysql_real_escape_string($val);
-        }
-        pod_query("INSERT INTO @wp_pod_templates (name, code) VALUES ('{$name}_detail', '$tpl_detail'),('{$name}_list', '$tpl_list')");
+        $row = pods_sanitize($row);
+        pod_query("INSERT INTO @wp_pod_templates (name, code) VALUES ('{$row['name']}_detail', '{$row['tpl_detail']}'),('{$row['name']}_list', '{$row['tpl_list']}')");
     }
 
     // Drop the "tpl_detail" and "tpl_list" columns
@@ -65,7 +63,54 @@ if ($installed < 175) {
 if ($installed < 176) {
     pod_query("ALTER TABLE @wp_pod_types CHANGE label label VARCHAR(128)");
     pod_query("ALTER TABLE @wp_pod_fields CHANGE label label VARCHAR(128)");
-    pod_query("UPDATE @wp_pod_fields SET coltype = 'txt' WHERE coltype = 'file'");
+
+    $result = pod_query("SELECT f.id AS field_id, f.name AS field_name, f.datatype AS datatype_id, dt.name AS datatype FROM @wp_pod_fields AS f LEFT JOIN @wp_pod_types AS dt ON dt.id = f.datatype WHERE f.coltype='file'");
+    while ($row = mysql_fetch_assoc($result)) {
+        $items = pod_query("SELECT t.id AS tbl_row_id, t.{$row['field_name']} AS file, p.id AS pod_id FROM @wp_pod_tbl_{$row['datatype']} AS t LEFT JOIN @wp_pod AS p ON p.tbl_row_id = t.id AND p.datatype = {$row['datatype_id']} WHERE t.{$row['field_name']} != '' AND t.{$row['field_name']} IS NOT NULL");
+        $success = false;
+        $rels = array();
+        while ($item = mysql_fetch_assoc($items)) {
+            $filename = $item['file'];
+            if(strpos($filename,get_bloginfo('wpurl'))!==false&&strpos($filename,get_bloginfo('wpurl'))==0) {
+                $filename = ltrim($filename,get_bloginfo('wpurl'));
+            }
+            $upload_dir = wp_upload_dir();
+            if(strpos($filename,str_replace(get_bloginfo('wpurl'),'',$upload_dir['baseurl']))===false) {
+                $success = false;
+                break;
+            }
+            $file = str_replace('//','/',(ABSPATH.$filename));
+            $wp_filetype = wp_check_filetype(basename($file), null );
+            $attachment = array(
+                'post_mime_type' => $wp_filetype['type'],
+                'post_title' => preg_replace('/\.[^.]+$/', '', basename($file)),
+                'guid' => str_replace('//wp-content','/wp-content',get_bloginfo('wpurl').$filename),
+                'post_content' => '',
+                'post_status' => 'inherit'
+            );
+            $attach_id = wp_insert_attachment( $attachment, $file, 0 );
+            if($attach_id>0) {
+                require_once(ABSPATH . "wp-admin" . '/includes/image.php');
+                $attach_data = wp_generate_attachment_metadata( $attach_id, $file );
+                wp_update_attachment_metadata( $attach_id,  $attach_data );
+                $sizes = array('thumb','medium','large');
+                foreach($sizes as $size) {
+                    image_downsize( $attach_id, $size );
+                }
+                $rels[] = array('pod_id'=>$item['pod_id'],'tbl_row_id'=>$item['tbl_row_id'],'attach_id'=>$attach_id,'field_id'=>$row['field_id']);
+                $success = true;
+            }
+        }
+        if(false!==$success) {
+            foreach($rels as $rel) {
+                pod_query("INSERT INTO @wp_pod_rel (pod_id, field_id, tbl_row_id) VALUES({$rel['pod_id']}, {$rel['field_id']}, {$rel['attach_id']})");
+            }
+            pod_query("ALTER TABLE @wp_pod_tbl_{$row['datatype']} DROP COLUMN {$row['field_name']}");
+        }
+        else {
+            pod_query("UPDATE @wp_pod_fields SET coltype = 'txt' WHERE id = {$row['field_id']}");
+        }
+    }
 }
 
 if ($installed < 181) {
@@ -87,7 +132,7 @@ if ($installed < 182) {
     $result = pod_query("SELECT id, uri FROM @wp_pod_menu");
     while ($row = mysql_fetch_assoc($result)) {
         $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $row['uri']);
-        $uri = mysql_real_escape_string($uri);
+        $uri = pods_sanitize($uri);
         pod_query("UPDATE @wp_pod_menu SET uri = '$uri' WHERE id = {$row['id']} LIMIT 1");
     }
 }
@@ -101,7 +146,7 @@ if ($installed < 190) {
     $result = pod_query("SELECT id, uri FROM @wp_pod_pages");
     while ($row = mysql_fetch_assoc($result)) {
         $uri = trim($row['uri'],'/');
-        $uri = mysql_real_escape_string($uri);
+        $uri = pods_sanitize($uri);
         pod_query("UPDATE @wp_pod_pages SET uri = '$uri' WHERE id = {$row['id']} LIMIT 1");
     }
 }

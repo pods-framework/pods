@@ -485,6 +485,11 @@ class PodAPI
         // Find the active columns (loop through $params->columns to retain order)
         if (!empty($params->columns) && is_array($params->columns)) {
             foreach ($params->columns as $column_name => $column_val) {
+                // Support for Pre Key/Value Parameters in previous Pods versions
+                if (isset($params->name)) {
+                    $column_name = $column_val;
+                    $column_val = $params->$column_name;
+                }
                 if (isset($columns[$column_name])) {
                     $columns[$column_name]['value'] = $column_val;
                     $active_columns[] = $column_name;

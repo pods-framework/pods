@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS
 Plugin URI: http://podscms.org/
 Description: Create custom content types in WordPress.
-Version: 1.9.2.1
+Version: 1.9.2.2
 Author: Matt Gibbs
 Author URI: http://podscms.org/about/
 

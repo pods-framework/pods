@@ -486,7 +486,7 @@ class PodAPI
         if (!empty($params->columns) && is_array($params->columns)) {
             foreach ($params->columns as $column_name => $column_val) {
                 // Support for Pre Key/Value Parameters in previous Pods versions
-                if (isset($params->name)) {
+                if (isset($params->name)&&isset($params->$column_val)) {
                     $column_name = $column_val;
                     $column_val = $params->$column_name;
                 }

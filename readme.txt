@@ -33,6 +33,9 @@ Pods includes a Package Manager, which allows you to import/export your database
 
 == Changelog ==
 
+= 1.9.2.2 - September 23, 2010 =
+* Bugfix: Older method of array('datatype'=>'x','columns'=>array('name','other_col'),'name'=>$name,'other_col'=>$other_col) with save_pod_item now work when saving (to allow an easier upgrade path for those using already built code that utilize it)
+
 = 1.9.2.1 - September 23, 2010 =
 * Bugfix: Adding / Editing items weren't saving properly
 

@@ -1070,8 +1070,8 @@ class PodAPI
     function load_pod_item($params) {
         $params = (object) $params;
 
-        $params->tbl_row_id = (int) $params->tbl_row_id;
-        $params->pod_id = (int) $params->pod_id;
+        $params->tbl_row_id = (int) (isset($params->tbl_row_id)?$params->tbl_row_id:null);
+        $params->pod_id = (int) (isset($params->pod_id)?$params->pod_id:null);
         if (empty($params->tbl_row_id)) {
             $params->tbl_row_id = null;
             if (!empty($params->pod_id)) {
@@ -1626,6 +1626,7 @@ class PodAPI
         $data = str_replace("\r", "\n", $data);
         $lines = explode("\n", $data);
         $field_names = explode($delimiter, array_shift($lines));
+        $field_names = preg_replace("/^\"(.*)\"$/s", "$1", $field_names);
         foreach ($lines as $line) {
             // Skip the empty line
             if (empty($line)) continue;

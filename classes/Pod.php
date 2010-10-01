@@ -33,7 +33,7 @@ class Pod
 
         // Get the page variable
         $this->page = pods_url_variable($this->page_var, 'get');
-        $this->page = empty($this->page) ? 1 : (int) $this->page;
+        $this->page = empty($this->page) ? 1 : max((int)$this->page,1);
 
         if (!empty($this->datatype)) {
             $result = pod_query("SELECT id, detail_page FROM @wp_pod_types WHERE name = '$this->datatype' LIMIT 1");
@@ -453,101 +453,104 @@ class Pod
         $page = $this->page;
         $datatype = $this->datatype;
         $datatype_id = $this->datatype_id;
-        $limit = $search = '';
-
-        // ctype_digit expects a string, or it returns FALSE
-        if (ctype_digit("$rows_per_page") && 0 <= $rows_per_page) {
-            $limit = 'LIMIT ' . ($rows_per_page * ($page - 1)) . ',' . $rows_per_page;
-        }
-        elseif (false !== strpos($rows_per_page, ',')) {
-            // Custom offset
-            $limit = 'LIMIT ' . $rows_per_page;
-        }
-        $where = empty($where) ? '' : "AND $where";
         $this->rpp = $rows_per_page;
-        $i = 0;
 
-        if (false !== $this->search) {
-            // Handle search
-            if (!empty($_GET[$this->search_var])) {
-                $val = pods_url_variable($this->search_var, 'get');
-                $search = "AND (t.name LIKE '%$val%')";
+        if (empty($sql)) {
+            $limit = $search = '';
+
+            // ctype_digit expects a string, or it returns FALSE
+            if (ctype_digit("$rows_per_page") && 0 <= $rows_per_page) {
+                $limit = 'LIMIT ' . ($rows_per_page * ($page - 1)) . ',' . $rows_per_page;
             }
-        }
-
-        // Add "t." prefix to $orderby if needed
-        if (false !== strpos($orderby, ',') && false === strpos($orderby, '.')) {
-            $orderby = 't.' . $orderby;
-        }
-
-        // Get this pod's fields
-        $result = pod_query("SELECT id, name, coltype, pickval FROM @wp_pod_fields WHERE datatype = $datatype_id AND (coltype = 'file' OR coltype = 'pick') ORDER BY weight");
-        while ($row = mysql_fetch_assoc($result)) {
-            $i++;
-            $field_id = $row['id'];
-            $field_name = $row['name'];
-            $field_coltype = $row['coltype'];
-            $table = $row['pickval'];
+            elseif (false !== strpos($rows_per_page, ',')) {
+                // Custom offset
+                $limit = 'LIMIT ' . $rows_per_page;
+            }
+            $where = empty($where) ? '' : $where;
 
             if (false !== $this->search) {
-                // Handle any $_GET variables
-                if (!empty($_GET[$field_name])) {
-                    $val = (int) trim($_GET[$field_name]);
-
-                    if ('wp_taxonomy' == $table) {
-                        $where .= " AND `$field_name`.term_id = '$val'";
-                    }
-                    else {
-                        $where .= " AND `$field_name`.id = '$val'";
-                    }
+                // Handle search
+                if (!empty($_GET[$this->search_var])) {
+                    $val = pods_url_variable($this->search_var, 'get');
+                    $search = "AND (t.name LIKE '%$val%')";
                 }
             }
 
-            // Performance improvement - only use PICK columns mentioned in ($orderby, $where, $search)
-            $haystack = "$orderby $where $search";
-            if (false === strpos($haystack, $field_name . '.') && false === strpos($haystack, "`$field_name`.")) {
-                continue;
+            // Add "t." prefix to $orderby if needed
+            if (false !== strpos($orderby, ',') && false === strpos($orderby, '.')) {
+                $orderby = 't.' . $orderby;
             }
 
-            if ('wp_taxonomy' == $table) {
-                $the_join = "
-                LEFT JOIN
-                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id
-                LEFT JOIN
-                    $wpdb->terms `$field_name` ON `$field_name`.term_id = r$i.tbl_row_id
-                ";
-            }
-            elseif ('wp_page' == $table || 'wp_post' == $table || 'file' == $field_coltype) {
-                $the_join = "
-                LEFT JOIN
-                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id
-                LEFT JOIN
-                    $wpdb->posts `$field_name` ON `$field_name`.ID = r$i.tbl_row_id
-                ";
-            }
-            elseif ('wp_user' == $table) {
-                $the_join = "
-                LEFT JOIN
-                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id
-                LEFT JOIN
-                    $wpdb->users `$field_name` ON `$field_name`.ID = r$i.tbl_row_id
-                ";
-            }
-            else {
-                $the_join = "
-                LEFT JOIN
-                    @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id
-                LEFT JOIN
-                    `@wp_pod_tbl_$table` `$field_name` ON `$field_name`.id = r$i.tbl_row_id
-                ";
+            // Get this pod's fields
+            $result = pod_query("SELECT id, name, coltype, pickval FROM @wp_pod_fields WHERE datatype = $datatype_id AND (coltype = 'file' OR coltype = 'pick') ORDER BY weight");
+            $i = 0;
+            while ($row = mysql_fetch_assoc($result)) {
+                $i++;
+                $field_id = $row['id'];
+                $field_name = $row['name'];
+                $field_coltype = $row['coltype'];
+                $table = $row['pickval'];
+
+                if (false !== $this->search) {
+                    // Handle any $_GET variables
+                    if (!empty($_GET[$field_name])) {
+                        $val = (int) trim($_GET[$field_name]);
+
+                        if ('wp_taxonomy' == $table) {
+                            $where .= " AND `$field_name`.term_id = '$val'";
+                        }
+                        else {
+                            $where .= " AND `$field_name`.id = '$val'";
+                        }
+                    }
+                }
+
+                // Performance improvement - only use PICK columns mentioned in ($orderby, $where, $search)
+                $haystack = "$orderby $where $search";
+                if (false === strpos($haystack, $field_name . '.') && false === strpos($haystack, "`$field_name`.")) {
+                    continue;
+                }
+
+                if ('wp_taxonomy' == $table) {
+                    $the_join = "
+                    LEFT JOIN
+                        @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id
+                    LEFT JOIN
+                        $wpdb->terms `$field_name` ON `$field_name`.term_id = r$i.tbl_row_id
+                    ";
+                }
+                elseif ('wp_page' == $table || 'wp_post' == $table || 'file' == $field_coltype) {
+                    $the_join = "
+                    LEFT JOIN
+                        @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id
+                    LEFT JOIN
+                        $wpdb->posts `$field_name` ON `$field_name`.ID = r$i.tbl_row_id
+                    ";
+                }
+                elseif ('wp_user' == $table) {
+                    $the_join = "
+                    LEFT JOIN
+                        @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id
+                    LEFT JOIN
+                        $wpdb->users `$field_name` ON `$field_name`.ID = r$i.tbl_row_id
+                    ";
+                }
+                else {
+                    $the_join = "
+                    LEFT JOIN
+                        @wp_pod_rel r$i ON r$i.field_id = $field_id AND r$i.pod_id = p.id
+                    LEFT JOIN
+                        `@wp_pod_tbl_$table` `$field_name` ON `$field_name`.id = r$i.tbl_row_id
+                    ";
+                }
+                //override with custom joins
+                $join .= ' '.apply_filters('pods_findrecords_the_join', $the_join, $i, $row, $params, &$this).' ';
             }
             //override with custom joins
-            $join .= ' '.apply_filters('pods_findrecords_the_join', $the_join, $i, $row, $params, &$this).' ';
-        }
-        //override with custom joins
-        $join = apply_filters('pods_findrecords_join', $join, $params, &$this);
+            $join = apply_filters('pods_findrecords_join', $join, $params, &$this);
 
-        if (empty($sql)) {
+            $where = empty($where) ? '' : " AND ( $where )";
+
             $sql = "
             SELECT
                 SQL_CALC_FOUND_ROWS DISTINCT $select

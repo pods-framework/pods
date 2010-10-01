@@ -22,8 +22,8 @@ There are several ways to get Pods data to show up throughout your site:
 
 * Add Pod Pages from within the admin area. Pod Pages support PHP and Wildcard URLs. For example, the Pod Page "events/*" will be the default handler for all pages beginning with "events/". This allows you to have a single page to handle a myriad of different items.
 * Add PHP code directly into your WP template files, or wherever else PHP is supported.
-* Use shortcode to display lists of Pod items within WP Pages or Posts.
-* The Pods API allows you to retrieve raw data from the database.
+* Use shortcode to display lists of Pod items or details of a Pod item within WP Pages or Posts.
+* The Pods API allows you to retrieve raw data from and save data to the database.
 
 = Migrate! =
 Pods includes a Package Manager, which allows you to import/export your database structure. You can select which features you want to "package up" and export it for easy migration. Pods also includes an easy to use PHP API to manage all types of Pod-related data for complex operations.
@@ -32,6 +32,19 @@ Pods includes a Package Manager, which allows you to import/export your database
 [vimeo http://vimeo.com/15086927]
 
 == Changelog ==
+
+= 1.9.3 - October 1, 2010 =
+* Bugfix: PodAPI :: csv_to_php - Field Name not un-escaped like Field Values (quotes)
+* Bugfix: Pod :: findRecords - $limit / $where / etc should only run if $sql is empty
+* Bugfix: Pod :: findRecords - $where (if not empty) should be surrounded in parethesis
+* Bugfix: mysql_real_escape_string - Needs an identifier to avoid PHP warnings
+* Bugfix: $this->page should be no lower than 1
+* Bugfix: PodAPI::load_pod_item - Undefined Property fix
+* Bugfix: Manage Pods - JS Error with .length on null var
+* Bugfix: Manage Content - Browse / Edit tabs + Filtering fixes
+* Bugfix: Pod::publicForm - CSS .hidden not targeted in stylesheet
+* Bugfix: PodInit :: body_class - Pulling REQUEST_URI instead of Pod Page URI
+* Bugfix: PodInit :: init - htaccess check not necessary, not all users will use Pod Pages
 
 = 1.9.2.2 - September 23, 2010 =
 * Bugfix: Older method of array('datatype'=>'x','columns'=>array('name','other_col'),'name'=>$name,'other_col'=>$other_col) with save_pod_item now work when saving (to allow an easier upgrade path for those using already built code that utilize it)

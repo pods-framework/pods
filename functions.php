@@ -57,6 +57,7 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
  * @since 1.2.0
  */
 function pods_sanitize($input) {
+    global $wpdb;
     $output = array();
 
     if (empty($input)) {
@@ -74,7 +75,7 @@ function pods_sanitize($input) {
         }
     }
     else {
-        $output = mysql_real_escape_string($input);
+        $output = mysql_real_escape_string($input,$wpdb->dbh);
     }
     return $output;
 }
@@ -217,13 +218,14 @@ function is_pod_page($uri = null) {
  * @return array
  */
 function pod_page_exists($uri = null) {
+    global $wpdb;
     if (null==$uri) {
         $home = explode('://', get_bloginfo('url'));
         $uri = explode('?', $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
         $uri = str_replace($home[1], '', $uri[0]);
     }
     $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri);
-    $uri = mysql_real_escape_string($uri);
+    $uri = mysql_real_escape_string($uri,$wpdb->dbh);
 
     if (false !== strpos($uri, 'wp-admin')) {
         return false;

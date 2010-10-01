@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS
 Plugin URI: http://podscms.org/
 Description: Create custom content types in WordPress.
-Version: 1.9.2.2
+Version: 1.9.3
 Author: Matt Gibbs
 Author URI: http://podscms.org/about/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 192);
+define('PODS_VERSION', 193);
 define('PODS_VERSION_FULL', implode('.', str_split(PODS_VERSION)));
 define('PODS_URL', rtrim(plugin_dir_url(__FILE__),'/')); // non-trailing slash being deprecated in 2.0
 define('PODS_DIR', rtrim(plugin_dir_path(__FILE__),'/')); // non-trailing slash being deprecated in 2.0
@@ -102,13 +102,6 @@ class PodInit
             }
             delete_option('pods_version');
             add_option('pods_version', PODS_VERSION);
-        }
-
-        // Check for .htaccess
-        if (!file_exists(ABSPATH . '.htaccess')) {
-            if (!copy(PODS_DIR . '/htaccess.txt', ABSPATH . '.htaccess')) {
-                echo 'Please copy "htaccess.txt" to "' . ABSPATH . '.htaccess"';
-            }
         }
 
         // Session start
@@ -208,11 +201,11 @@ class PodInit
     }
 
     function body_class($classes) {
-        global $pods;
+        global $pods, $pod_page_exists;
         $classes[] = 'pods';
-        $uri = explode('?',$_SERVER['REQUEST_URI']);
+        $uri = explode('?',$pod_page_exists['uri']);
         $uri = explode('#',$uri[0]);
-        $classes[] = 'pod-page-'.str_replace('--','-',str_replace('--','-',str_replace('_','-',str_replace('/','-',sanitize_title($uri[0])))));
+        $classes[] = 'pod-page-'.str_replace('--','-',str_replace('--','-',str_replace('_','-',str_replace('/','-',sanitize_title(str_replace('*','_w_',$uri[0]))))));
         if (is_object($pods)) {
             $classes[] = 'pod-'.str_replace('--','-',str_replace('_','-',$pods->datatype));
         }

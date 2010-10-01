@@ -68,7 +68,8 @@
     padding: 0 12px;
 }
 
-.pods_admin .hidden {
+.pods_admin .hidden,
+.pods_form .hidden {
     display: none;
 }
 

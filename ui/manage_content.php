@@ -22,6 +22,9 @@ elseif ('pod-' == substr($wp_page, 0, 4)) {
     $add_or_edit = 'add';
     $dtname = substr($wp_page, 4);
 }
+if (isset($_GET['pod'])) {
+    $dtname = pods_url_variable('pod','get');
+}
 
 // Load the listing
 $Record = new Pod();
@@ -79,7 +82,8 @@ var active_file;
 var add_or_edit = "<?php echo $add_or_edit; ?>";
 
 jQuery(function() {
-    if ("add" == add_or_edit) {
+    active_tab = window.location.href.split("#")[1];
+    if ("add" == add_or_edit && ("undefined" == typeof active_tab || active_tab != "browse")) {
         jQuery(".navTab[rel=editArea]").click();
     }
 
@@ -100,9 +104,7 @@ jQuery(function() {
 
 function editItem(datatype, pod_id) {
     jQuery(".area").hide();
-    jQuery(".navTab").removeClass("active");
-    jQuery(".navTab[rel=editArea]").addClass("active");
-    jQuery("#editArea").show();
+    jQuery(".navTab[rel=editArea]").click();
     showform(datatype, pod_id);
 }
 
@@ -224,7 +226,7 @@ function fileBrowser() {
         <input type="button" class="button" value="Narrow results" onclick="fileBrowser()" />
         <div class="filebox"></div>
     </div>
-    
+
     <h2>Manage Content</h2>
 
     <div id="nav">
@@ -241,7 +243,7 @@ function fileBrowser() {
                     <option value="">-- All Pods --</option>
 <?php
     foreach ($datatypes as $key => $name) {
-        $selected = ($name == $dtname) ? ' selected' : '';
+        $selected = ($name == $dtname || $name == pods_url_variable('pod','get')) ? ' selected' : '';
 ?>
                     <option value="<?php echo $name; ?>"<?php echo $selected; ?>><?php echo $name; ?></option>
 <?php

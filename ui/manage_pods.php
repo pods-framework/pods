@@ -76,10 +76,12 @@ function sisterFields(sister_field_id) {
                 var html = '<option value="">-- Related to --</option>';
                 jQuery("#column_sister_field_id").html("");
                 var json = eval('('+msg+')');
-                for (var i = 0; i < json.length; i++) {
-                    var id = json[i].id;
-                    var name = json[i].name;
-                    html += '<option value="'+id+'">'+name+'</option>';
+                if(json != null) {
+                    for (var i = 0; i < json.length; i++) {
+                        var id = json[i].id;
+                        var name = json[i].name;
+                        html += '<option value="'+id+'">'+name+'</option>';
+                    }
                 }
                 jQuery("#column_sister_field_id").html(html);
                 jQuery("#column_sister_field_id option[value="+sister_field_id+"]").attr("selected", "selected");

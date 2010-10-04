@@ -436,18 +436,19 @@ class Pod
      */
     function findRecords($orderby = 't.id DESC', $rows_per_page = 15, $where = null, $sql = null) {
         global $wpdb;
-        $join = '';
+        $join = $groupby = '';
         $select = 't.*, p.id AS pod_id, p.created, p.modified';
         if(is_array($orderby)) {
-            $defaults = array('select'=>$select,'where'=>$where,'join'=>$join,'orderby'=>'t.id DESC','limit'=>$rows_per_page,'page'=>$this->page,'search'=>$this->search,'sql'=>$sql);
+            $defaults = array('select'=>$select,'join'=>$join,'search'=>$this->search,'where'=>$where,'groupby'=>$groupby,'orderby'=>'t.id DESC','limit'=>$rows_per_page,'page'=>$this->page,'sql'=>$sql);
             $params = (object) array_merge($defaults,$orderby);
             $select = $params->select;
-            $where = $params->where;
             $join = $params->join;
+            $this->search = $params->search;
+            $where = $params->where;
+            $groupby = $params->groupby;
             $orderby = $params->orderby;
             $rows_per_page = $params->limit;
             $this->page = $params->page;
-            $this->search = $params->search;
             $sql = $params->sql;
         }
         $page = $this->page;
@@ -466,7 +467,7 @@ class Pod
                 // Custom offset
                 $limit = 'LIMIT ' . $rows_per_page;
             }
-            $where = empty($where) ? '' : $where;
+            $where = empty($where) ? '' : " AND ( $where )";
 
             if (false !== $this->search) {
                 // Handle search
@@ -497,10 +498,10 @@ class Pod
                         $val = (int) trim($_GET[$field_name]);
 
                         if ('wp_taxonomy' == $table) {
-                            $where .= " AND `$field_name`.term_id = '$val'";
+                            $search .= " AND `$field_name`.term_id = '$val'";
                         }
                         else {
-                            $where .= " AND `$field_name`.id = '$val'";
+                            $search .= " AND `$field_name`.id = '$val'";
                         }
                     }
                 }
@@ -548,8 +549,6 @@ class Pod
             }
             //override with custom joins
             $join = apply_filters('pods_findrecords_join', $join, $params, &$this);
-
-            $where = empty($where) ? '' : " AND ( $where )";
 
             $sql = "
             SELECT

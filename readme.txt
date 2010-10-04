@@ -33,6 +33,10 @@ Pods includes a Package Manager, which allows you to import/export your database
 
 == Changelog ==
 
+= 1.9.3.1 - October 4, 2010 =
+* Bugfix / Added: Pod :: findRecords - Add param for groupby since where is now surrounded in ( ) - resolving the issue introduced in 1.9.3
+* Bugfix: Pod :: findRecords - Filtering should run through $search variable instead of $where
+
 = 1.9.3 - October 1, 2010 =
 * Bugfix: PodAPI :: csv_to_php - Field Name not un-escaped like Field Values (quotes)
 * Bugfix: Pod :: findRecords - $limit / $where / etc should only run if $sql is empty

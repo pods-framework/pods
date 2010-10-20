@@ -33,6 +33,12 @@ Pods includes a Package Manager, which allows you to import/export your database
 
 == Changelog ==
 
+= 1.9.4 - October 20, 2010 =
+* Bugfix: Pod Pages - Only match Pod Page URIs that match current depth (specifically when using wildcards)
+* Bugfix: $groupby referenced but not used - and $orderby should be allowed to be empty (gives error if it is)
+* Bugfix: Allow Pod Pages on domains other than contained in wpurl
+* Bugfix: Pod :: get_dropdown_values wp_taxonomy Filter Query fix
+
 = 1.9.3.1 - October 4, 2010 =
 * Bugfix / Added: Pod :: findRecords - Add param for groupby since where is now surrounded in ( ) - resolving the issue introduced in 1.9.3
 * Bugfix: Pod :: findRecords - Filtering should run through $search variable instead of $where

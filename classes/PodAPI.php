@@ -709,10 +709,10 @@ class PodAPI
         $params = (object) $params;
 
         $sql = "DELETE FROM p, r
-        USING @wp_pod_fields AS f
-        INNER JOIN @wp_pod_types AS t ON t.id = f.datatype
-        INNER JOIN @wp_pod_rel AS r ON r.field_id = f.id
-        INNER JOIN @wp_pod AS p ON p.datatype = t.id
+        USING @wp_pod_types AS t
+        LEFT JOIN @wp_pod AS p ON p.datatype = t.id
+        LEFT JOIN @wp_pod_fields AS f ON f.datatype = t.id
+        LEFT JOIN @wp_pod_rel AS r ON r.field_id = f.id
         WHERE t.name = '$params->name'";
 
         pod_query($sql);

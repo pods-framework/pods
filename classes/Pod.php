@@ -329,26 +329,12 @@ class Pod
 
         // WP taxonomy dropdown
         if ('wp_taxonomy' == $table) {
-            $where = (false !== $unique_vals) ? "AND id NOT IN ($unique_vals)" : '';
+            $where = (false !== $unique_vals) ? "WHERE id NOT IN ($unique_vals)" : '';
             if (!empty($pick_filter)) {
-                if (!empty($where)) {
-                    $where .= ' AND ';
-                }
-                $where .= $pick_filter;
+                $where .= (empty($where) ? ' WHERE ' : ' AND ') . $pick_filter;
             }
 
-            $sql = "
-            SELECT
-                t.term_id AS id, t.name
-            FROM
-                $wpdb->term_taxonomy tx
-            INNER JOIN
-                $wpdb->terms t ON t.term_id = tx.term_id
-            WHERE
-                1 $where
-            ORDER BY
-                $orderby
-            ";
+            $sql = "SELECT t.term_id AS id, t.name FROM $wpdb->term_taxonomy tx INNER JOIN $wpdb->terms t ON t.term_id = tx.term_id $where ORDER BY $orderby";
         }
         // WP page or post dropdown
         elseif ('wp_page' == $table || 'wp_post' == $table) {
@@ -437,6 +423,7 @@ class Pod
     function findRecords($orderby = 't.id DESC', $rows_per_page = 15, $where = null, $sql = null) {
         global $wpdb;
         $join = $groupby = '';
+        $params = null;
         $select = 't.*, p.id AS pod_id, p.created, p.modified';
         if(is_array($orderby)) {
             $defaults = array('select'=>$select,'join'=>$join,'search'=>$this->search,'where'=>$where,'groupby'=>$groupby,'orderby'=>'t.id DESC','limit'=>$rows_per_page,'page'=>$this->page,'sql'=>$sql);
@@ -478,7 +465,7 @@ class Pod
             }
 
             // Add "t." prefix to $orderby if needed
-            if (false !== strpos($orderby, ',') && false === strpos($orderby, '.')) {
+            if (false !== strpos($orderby, ',') && false === strpos($orderby, '.') && !empty($orderby)) {
                 $orderby = 't.' . $orderby;
             }
 
@@ -550,6 +537,9 @@ class Pod
             //override with custom joins
             $join = apply_filters('pods_findrecords_join', $join, $params, &$this);
 
+            $groupby = empty($groupby) ? '' : "GROUP BY $groupby";
+            $orderby = empty($orderby) ? '' : "ORDER BY $orderby";
+
             $sql = "
             SELECT
                 SQL_CALC_FOUND_ROWS DISTINCT $select
@@ -562,8 +552,8 @@ class Pod
                 p.datatype = $datatype_id
                 $search
                 $where
-            ORDER BY
-                $orderby
+            $groupby
+            $orderby
             $limit
             ";
         }

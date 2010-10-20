@@ -219,13 +219,18 @@ function is_pod_page($uri = null) {
  */
 function pod_page_exists($uri = null) {
     global $wpdb;
-    if (null==$uri) {
-        $home = explode('://', get_bloginfo('url'));
-        $uri = explode('?', $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
-        $uri = str_replace($home[1], '', $uri[0]);
+    if (null == $uri) {
+        $home = parse_url(get_bloginfo('url'));
+        $uri = explode('?', $_SERVER['REQUEST_URI']);
+        $uri = explode('#', $uri[0]);
+        $uri = $uri[0];
+        if($home['path']!='/') {
+            $uri = substr($uri, strlen($home['path']));
+        }
     }
-    $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri);
+    $uri = trim($uri,'/');
     $uri = mysql_real_escape_string($uri,$wpdb->dbh);
+    $uri_depth = count(explode('/',$uri))-1;
 
     if (false !== strpos($uri, 'wp-admin')) {
         return false;
@@ -235,12 +240,22 @@ function pod_page_exists($uri = null) {
     $result = pod_query("SELECT * FROM @wp_pod_pages WHERE uri = '$uri' LIMIT 1");
     if (1 > mysql_num_rows($result)) {
         // Find any wildcards
-        $sql = "SELECT * FROM @wp_pod_pages WHERE '$uri' LIKE REPLACE(uri, '*', '%') ORDER BY LENGTH(uri) DESC, uri DESC LIMIT 1";
+        $sql = "SELECT * FROM @wp_pod_pages
+                WHERE
+                    (LENGTH(uri)-LENGTH(REPLACE(uri,'/','')))=$uri_depth
+                    AND '$uri' LIKE REPLACE(uri, '*', '%')
+                ORDER BY LENGTH(uri) DESC, uri DESC
+                LIMIT 1";
         $result = pod_query($sql);
     }
 
     if (0 < mysql_num_rows($result)) {
-        return mysql_fetch_assoc($result);
+        $pod_page_data = mysql_fetch_assoc($result);
+        $validate_pod_page = explode('/',$pod_page_data['uri']);
+        $validate_uri = explode('/',$uri);
+        if (count($validate_pod_page)==count($validate_uri)) {
+            return $pod_page_data;
+        }
     }
     return false;
 }
@@ -259,7 +274,7 @@ function pods_access($privs, $method = 'OR') {
     if (current_user_can('administrator') || current_user_can('pods_administrator') || (function_exists('is_super_admin') && is_super_admin())) {
         return true;
     }
-    
+
     // Convert $method to uppercase
     $method = strtoupper($method);
 

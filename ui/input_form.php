@@ -80,7 +80,7 @@ function saveForm(form_count) {
         data: "action=save_pod_item&"+data.join("&"),
         success: function(msg) {
             if (!is_error(msg)) {
-                window.location = "<?php echo $_SERVER['REQUEST_URI']; ?>";
+                window.location = "<?php echo (!empty($thankyou_url)) ? $thankyou_url : $_SERVER['REQUEST_URI']; ?>";
             }
             jQuery(".btn_save").attr("disabled", "");
         }

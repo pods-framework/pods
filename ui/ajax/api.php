@@ -1,6 +1,6 @@
 <?php
 ob_start();
-require_once(realpath('../../../../../wp-load.php'));
+require_once(preg_replace("/wp-content.*/","wp-load.php",__FILE__));
 ob_end_clean();
 
 // Sanitize input
@@ -131,7 +131,7 @@ if (isset($methods[$action])) {
 
 function process_save_pod_item($params, $api) {
     if (!pods_validate_key($params->token, $params->uri_hash, $params->datatype, $params->form_count)) {
-        die("<e>The form has expired.");
+        die("<e>The form has expired. Please reload the page and ensure your session is still active.");
     }
 
     if ($tmp = $_SESSION[$params->uri_hash][$params->form_count]['columns']) {

@@ -1,16 +1,16 @@
-=== Pods CMS ===
-Contributors: logikal16, sc0ttkclark, jchristopher, clarinetlord
+=== Pods CMS Framework ===
+Contributors: logikal16, sc0ttkclark, jchristopher
 Donate link: http://podscms.org/
-Tags: pods, cms, cck, custom post types, content types, relationships, database, framework, drupal
+Tags: pods, cms, cck, custom post types, content types, relationships, database, framework, drupal, mysql, custom content, php
 Requires at least: 2.8
-Tested up to: 3.0.1
-Stable tag: trunk
+Tested up to: 3.1.1
+Stable tag: 1.9.4
 
 Pods is a CMS framework for creating and managing your own content types.
 
 == Description ==
 
-Pods is a CMS framework for creating and managing your own content types.
+Check out http://podscms.org/ for our User Guide and many other resources to help you develop with Pods.
 
 = Create your own content types =
 A pod, or content type, is a named group of input fields. The Pods plugin lets you create your own content types. Instead of with custom post types, each content type gets its own table.
@@ -25,13 +25,29 @@ There are several ways to get Pods data to show up throughout your site:
 * Use shortcode to display lists of Pod items or details of a Pod item within WP Pages or Posts.
 * The Pods API allows you to retrieve raw data from and save data to the database.
 
+= Customized Management Panels =
+Utilize the Pods UI plugin to build your own Custom Management panels for your Pods. Get it at: http://wordpress.org/extend/plugins/pods-ui/
+
 = Migrate! =
 Pods includes a Package Manager, which allows you to import/export your database structure. You can select which features you want to "package up" and export it for easy migration. Pods also includes an easy to use PHP API to manage all types of Pod-related data for complex operations.
 
 = Introduction to the Pods CMS Framework =
 [vimeo http://vimeo.com/15086927]
 
+= Stay tuned for Pods 2.0 =
+Pods 2.0 is around the corner, so keep up-to-date by following our @podscms twitter account or checking out our Pods Development blog at http://dev.podscms.org/
+
 == Changelog ==
+
+= 1.9.5 - April 6, 2011 =
+* Added: Multisite (3.0+) Network Activation support - Now when you click Network Activate, Pods will install itself correctly across all sites (and new sites as they are added)
+* Added: Third option "$thankyou_url" in publicForm($columns, $label, $thankyou_url) which changes what happens when a form is submitted
+* Added: Pod :: findRecords($params) - New groupby parameter accepted (GROUP BY added automatically if groupby isn't empty)
+* Added: Pod :: findRecords($params) - New 'total' variable (separate from getTotalRows(), call $record->total to get the number of results in _current_ query
+* Added: For sites that don't use Pod Pages, there is now a new check if defined('PODS_DISABLE_POD_PAGE_CHECK') to disable the Pod Page check on each page load
+* Improved: Drop / Reset Pod now does a little validations on ID / Name of Pod
+* Bugfix: File Uploads failed to save to the Pod item when themes / plugins output erroneous whitespace during their init
+* Bugfix: Various PHP warnings cleaned up (was showing when WP_DEBUG and other debugging is turned on)
 
 = 1.9.4 - October 20, 2010 =
 * Bugfix: Pod Pages - Only match Pod Page URIs that match current depth (specifically when using wildcards)

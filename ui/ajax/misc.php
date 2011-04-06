@@ -1,7 +1,8 @@
 <?php
-// Include the MySQL connection
-require_once(realpath('../../../../../wp-load.php'));
-require_once(realpath('../../../../../wp-admin/includes/admin.php'));
+ob_start();
+require_once(preg_replace("/wp-content.*/","wp-load.php",__FILE__));
+require_once(preg_replace("/wp-content.*/","/wp-admin/includes/admin.php",__FILE__));
+ob_end_clean();
 
 foreach ($_POST as $key => $val) {
     ${$key} = mysql_real_escape_string(stripslashes(trim($val)));

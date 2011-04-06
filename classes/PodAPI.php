@@ -707,6 +707,21 @@ class PodAPI
      */
     function reset_pod($params) {
         $params = (object) $params;
+        
+        $pod = $this->load_pod($params);
+        if (false === $pod)
+            return false;
+        
+        $params->id = $pod['id'];
+        $params->name = $pod['name'];
+        
+        $fields = array();
+        foreach ($pod['fields'] as $field) {
+            $fields[] = $field['id'];
+        }
+        $fields = implode(',',$fields);
+        if (!empty($fields))
+            pod_query("UPDATE @wp_pod_fields SET sister_field_id = NULL WHERE sister_field_id IN ($fields)");
 
         $sql = "DELETE FROM p, r
         USING @wp_pod_types AS t
@@ -738,15 +753,23 @@ class PodAPI
      */
     function drop_pod($params) {
         $params = (object) $params;
+        
+        $pod = $this->load_pod($params);
+        if (false === $pod)
+            return false;
+        
+        $params->id = $pod['id'];
+        $params->name = $pod['name'];
 
-        $fields = '0';
         pod_query("DELETE FROM @wp_pod_types WHERE id = $params->id LIMIT 1");
-        $result = pod_query("SELECT id FROM @wp_pod_fields WHERE datatype = $params->id");
-        while ($row = mysql_fetch_assoc($result)) {
-            $fields .= ',' . $row['id'];
-        }
 
-        pod_query("UPDATE @wp_pod_fields SET sister_field_id = NULL WHERE sister_field_id IN ($fields)");
+        $fields = array();
+        foreach ($pod['fields'] as $field) {
+            $fields[] = $field['id'];
+        }
+        $fields = implode(',',$fields);
+        if (!empty($fields))
+            pod_query("UPDATE @wp_pod_fields SET sister_field_id = NULL WHERE sister_field_id IN ($fields)");
 
         $sql = "DELETE FROM @wp_pod,@wp_pod_rel
         USING @wp_pod_fields

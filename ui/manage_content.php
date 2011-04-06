@@ -15,6 +15,7 @@ while ($row = mysql_fetch_assoc($result)) {
 // Figure out which tab to display
 $add_or_edit = 'edit';
 $wp_page = pods_url_variable('page', 'get');
+$dtname = '';
 if ('pods-manage-' == substr($wp_page, 0, 12)) {
     $dtname = substr($wp_page, 12);
 }

@@ -1,13 +1,13 @@
 <?php
 /*
-Plugin Name: Pods CMS
+Plugin Name: Pods CMS Framework
 Plugin URI: http://podscms.org/
 Description: Create custom content types in WordPress.
-Version: 1.9.4
-Author: Matt Gibbs
+Version: 1.9.5
+Author: The Pods CMS Team
 Author URI: http://podscms.org/about/
 
-Copyright 2010  Matt Gibbs  (email : contact@podscms.org)
+Copyright 2009-2011  The Pods CMS Team  (email : contact@podscms.org)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 194);
+define('PODS_VERSION', 195);
 define('PODS_VERSION_FULL', implode('.', str_split(PODS_VERSION)));
 define('PODS_URL', rtrim(plugin_dir_url(__FILE__),'/')); // non-trailing slash being deprecated in 2.0
 define('PODS_DIR', rtrim(plugin_dir_path(__FILE__),'/')); // non-trailing slash being deprecated in 2.0
@@ -64,7 +64,11 @@ function pods_content() {
 class PodInit
 {
     function __construct() {
-        global $pod_page_exists;
+        global $pod_page_exists, $pods;
+
+        // Activate and Install
+        register_activation_hook(__FILE__, array($this, 'activate'));
+        add_action('wpmu_new_blog', array(&$this, 'new_blog'), 10, 6);
 
         add_action('init', array($this, 'init'));
         add_action('admin_menu', array($this, 'admin_menu'), 99);
@@ -72,24 +76,47 @@ class PodInit
         add_action('template_redirect', array($this, 'template_redirect'));
         add_action('delete_attachment', array($this, 'delete_attachment'));
         add_shortcode('pods', 'pods_shortcode');
+        
+        if (!defined('PODS_DISABLE_POD_PAGE_CHECK')) {
+            $pod_page_exists = pod_page_exists();
 
-        $pod_page_exists = pod_page_exists();
-
-        if (false !== $pod_page_exists) {
-            if (empty($pods) || 404 != $pods) {
-                add_filter('redirect_canonical', array($this, 'kill_redirect'));
-                add_filter('wp_title', array($this, 'wp_title'), 0, 3);
-                add_filter('body_class', array($this, 'body_class'), 0, 1);
-                add_filter('status_header', array($this, 'status_header'));
-                add_action('plugins_loaded', array($this, 'precode'));
-                add_action('wp', array($this, 'silence_404'));
+            if (false !== $pod_page_exists) {
+                if (empty($pods) || 404 != $pods) {
+                    add_filter('redirect_canonical', array($this, 'kill_redirect'));
+                    add_filter('wp_title', array($this, 'wp_title'), 0, 3);
+                    add_filter('body_class', array($this, 'body_class'), 0, 1);
+                    add_filter('status_header', array($this, 'status_header'));
+                    add_action('plugins_loaded', array($this, 'precode'));
+                    add_action('wp', array($this, 'silence_404'));
+                }
             }
         }
     }
 
-    function init() {
+    function activate () {
+        global $wpdb;
+        if (function_exists('is_multisite') && is_multisite() && isset($_GET['networkwide']) && 1 == $_GET['networkwide']) {
+            $blogids = $wpdb->get_col($wpdb->prepare("SELECT blog_id FROM $wpdb->blogs"));
+            foreach ($blogids as $blogid)
+                $this->setup($blogid);
+        }
+        else
+            $this->setup();
+    }
+
+    function new_blog ($blogid, $user_id, $domain, $path, $site_id, $meta) {
+        if (function_exists('is_multisite') && is_multisite() && is_plugin_active_for_network('pods/init.php'))
+            $this->setup($blogid);
+    }
+
+    function setup ($blogid = null) {
+        global $wpdb;
+        if (null !== $blogid && $blogid != $wpdb->blogid) {
+            $old_blogid = $wpdb->blogid;
+            switch_to_blog($blogid);
+        }
         // Setup DB tables
-        if ($installed = (int) get_option('pods_version')) {
+        if ($installed = absint(get_option('pods_version'))) {
             if ($installed < PODS_VERSION) {
                 include(PODS_DIR . '/sql/update.php');
             }
@@ -103,11 +130,14 @@ class PodInit
             delete_option('pods_version');
             add_option('pods_version', PODS_VERSION);
         }
+        if (null !== $blogid && $blogid != $wpdb->blogid)
+            switch_to_blog($old_blogid);
+    }
 
+    function init() {
         // Session start
-        if (false === headers_sent() && '' == session_id()) {
+        if (false === headers_sent() && '' == session_id())
             @session_start();
-        }
 
         // Load necessary JS
         wp_enqueue_script('jquery');

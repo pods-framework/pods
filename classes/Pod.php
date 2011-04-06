@@ -107,6 +107,7 @@ class Pod
             // Loop through each traversal level
             foreach ($traverse as $key => $column_name) {
                 $last_loop = (1 < count($traverse) - $key) ? false : true;
+                $last_coltype = $last_pickval = '';
                 $column_exists = isset($all_fields[$datatype_id][$column_name]);
 
                 if ($column_exists) {
@@ -559,6 +560,7 @@ class Pod
         }
         $this->sql = $sql;
         $this->result = pod_query($sql);
+        $this->total = absint(@mysql_num_rows($this->result));
         $this->total_rows = pod_query("SELECT FOUND_ROWS()");
     }
 
@@ -778,7 +780,7 @@ class Pod
     /**
      * Build public input form
      */
-    function publicForm($public_columns = null, $label = 'Save changes') {
+    function publicForm($public_columns = null, $label = 'Save changes', $thankyou_url = null) {
         include PODS_DIR . '/ui/input_form.php';
     }
 

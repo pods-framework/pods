@@ -4,7 +4,7 @@ Donate link: http://podscms.org/
 Tags: pods, cms, cck, custom post types, content types, relationships, database, framework, drupal, mysql, custom content, php
 Requires at least: 2.8
 Tested up to: 3.1.1
-Stable tag: 1.9.5
+Stable tag: 1.9.5.1
 
 Pods is a CMS framework for creating and managing your own content types.
 
@@ -38,6 +38,9 @@ Pods includes a Package Manager, which allows you to import/export your database
 Pods 2.0 is around the corner, so keep up-to-date by following our @podscms twitter account or checking out our Pods Development blog at http://dev.podscms.org/
 
 == Changelog ==
+
+= 1.9.5.1 - April 7, 2011 =
+* Bugfix: Fixed dot-traversal in Pod :: get_field
 
 = 1.9.5 - April 7, 2011 =
 * Added: Multisite (3.0+) Network Activation support - Now when you click Network Activate, Pods will install itself correctly across all sites (and new sites as they are added)

@@ -104,10 +104,10 @@ class Pod
                 return false;
             }
 
+            $last_coltype = $last_pickval = '';
             // Loop through each traversal level
             foreach ($traverse as $key => $column_name) {
                 $last_loop = (1 < count($traverse) - $key) ? false : true;
-                $last_coltype = $last_pickval = '';
                 $column_exists = isset($all_fields[$datatype_id][$column_name]);
 
                 if ($column_exists) {

@@ -69,6 +69,8 @@ class PodInit
         // Activate and Install
         register_activation_hook(__FILE__, array($this, 'activate'));
         add_action('wpmu_new_blog', array(&$this, 'new_blog'), 10, 6);
+        if (absint(get_option('pods_version')) < PODS_VERSION)
+            $this->setup();
 
         add_action('init', array($this, 'init'));
         add_action('admin_menu', array($this, 'admin_menu'), 99);

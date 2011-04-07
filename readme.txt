@@ -4,7 +4,7 @@ Donate link: http://podscms.org/
 Tags: pods, cms, cck, custom post types, content types, relationships, database, framework, drupal, mysql, custom content, php
 Requires at least: 2.8
 Tested up to: 3.1.1
-Stable tag: 1.9.4
+Stable tag: 1.9.5
 
 Pods is a CMS framework for creating and managing your own content types.
 
@@ -39,11 +39,10 @@ Pods 2.0 is around the corner, so keep up-to-date by following our @podscms twit
 
 == Changelog ==
 
-= 1.9.5 - April 6, 2011 =
+= 1.9.5 - April 7, 2011 =
 * Added: Multisite (3.0+) Network Activation support - Now when you click Network Activate, Pods will install itself correctly across all sites (and new sites as they are added)
 * Added: Third option "$thankyou_url" in publicForm($columns, $label, $thankyou_url) which changes what happens when a form is submitted
-* Added: Pod :: findRecords($params) - New groupby parameter accepted (GROUP BY added automatically if groupby isn't empty)
-* Added: Pod :: findRecords($params) - New 'total' variable (separate from getTotalRows(), call $record->total to get the number of results in _current_ query
+* Added: Pod :: findRecords - New 'total' variable separate from getTotalRows(), call $record->total to get the number of results in _current_ query
 * Added: For sites that don't use Pod Pages, there is now a new check if defined('PODS_DISABLE_POD_PAGE_CHECK') to disable the Pod Page check on each page load
 * Improved: Drop / Reset Pod now does a little validations on ID / Name of Pod
 * Bugfix: File Uploads failed to save to the Pod item when themes / plugins output erroneous whitespace during their init
@@ -65,10 +64,10 @@ Pods 2.0 is around the corner, so keep up-to-date by following our @podscms twit
 * Bugfix: Pod :: findRecords - $where (if not empty) should be surrounded in parethesis
 * Bugfix: mysql_real_escape_string - Needs an identifier to avoid PHP warnings
 * Bugfix: $this->page should be no lower than 1
-* Bugfix: PodAPI::load_pod_item - Undefined Property fix
+* Bugfix: PodAPI :: load_pod_item - Undefined Property fix
 * Bugfix: Manage Pods - JS Error with .length on null var
 * Bugfix: Manage Content - Browse / Edit tabs + Filtering fixes
-* Bugfix: Pod::publicForm - CSS .hidden not targeted in stylesheet
+* Bugfix: Pod :: publicForm - CSS .hidden not targeted in stylesheet
 * Bugfix: PodInit :: body_class - Pulling REQUEST_URI instead of Pod Page URI
 * Bugfix: PodInit :: init - htaccess check not necessary, not all users will use Pod Pages
 
@@ -83,21 +82,21 @@ This will be the last Feature release for Pods 1.9.x -- All future releases of 1
 
 * Added: Ability to use filters / actions to add new Column Types to Pods
 * Added: Filters - pods_admin_menu_name / pods_admin_menu_label / pods_admin_submenu_name / pods_admin_submenu_label / pods_rel_lookup / pods_get_dropdown_values / pods_findrecords_the_join / pods_findrecords_join / pods_showform_save_button_atts / pods_showform_save_button / pods_column_dbtypes / pods_column_types
-* Added: Actions - pods_pre_pod_helper / pods_pre_pod_helper_$helper / pods_post_pod_helper / pods_post_pod_helper_$helper / pods_pre_showtemplate / pods_pre_showtemplate_$tpl / pods_post_showtemplate / pods_post_showtemplate_$tpl / pods_pre_input_field / pods_pre_input_field_$name / pods_pre_input_field_type_$coltype / pods_input_field_type_$coltype / pods_post_input_field / pods_post_input_field_$name / pods_post_input_field_type_$coltype / pods_pre_form / pods_pre_form_{Pod::datatype} / pods_post_form / pods_post_form_{Pod::datatype}
+* Added: Actions - pods_pre_pod_helper / pods_pre_pod_helper_$helper / pods_post_pod_helper / pods_post_pod_helper_$helper / pods_pre_showtemplate / pods_pre_showtemplate_$tpl / pods_post_showtemplate / pods_post_showtemplate_$tpl / pods_pre_input_field / pods_pre_input_field_$name / pods_pre_input_field_type_$coltype / pods_input_field_type_$coltype / pods_post_input_field / pods_post_input_field_$name / pods_post_input_field_type_$coltype / pods_pre_form / pods_pre_form_{Pod :: datatype} / pods_post_form / pods_post_form_{Pod :: datatype}
 * Added: Automatic File Column Upgrade during DB Update from Pods < 1.7.6
-* Added: Pod::findRecords($params) can now be used where $params is an key/value array containing 'select' (t.*, p.id AS pod_id, p.created, p.modified), 'where' (null), 'join' (empty), 'orderby' (t.id DESC), 'limit' (15), 'page' (Pod::page), 'search' (Pod::search), and 'sql' (null) for future proofing variable expansion
+* Added: Pod :: findRecords($params) can now be used where $params is an key/value array containing 'select' (t.*, p.id AS pod_id, p.created, p.modified), 'where' (null), 'join' (empty), 'orderby' (t.id DESC), 'limit' (15), 'page' (Pod :: page), 'search' (Pod :: search), and 'sql' (null) for future proofing variable expansion
 * Added: save_pod_item has a new var in $params to be used - bypass_helpers (default: true) which can be set to false to not run any pre/post save helpers
 * Improved: Parent / Child Theme integration uses core WP functions to lookup templates
 * Improved: pods_access now uses current_user_can for 'administrator' role check, converts $method to upper case, also looks for a capability of pods_administrator for full access
 * Improved: DB Update code revised
 * Improved: Using $wpdb->tablename format for WP Core table names in all code
-* Improved: PodAPI::import now checks if the $data is an array of items or if it's a single-item array
+* Improved: PodAPI :: import now checks if the $data is an array of items or if it's a single-item array
 * Improved: Input fields have name attribute * Added to them (except multi-select pick field which works off of a div and the file upload field)
 * Bugfix: File Upload field checks version of WP to get correct button height
-* Bugfix: PodAPI::import and pick values work correctly now
-* Bugfix: PodAPI::save_pod_item works with tbl_row_id parameter correctly now
-* Bugfix: PodAPI::reset_pod works correctly now
-* Bugfix: PodAPI::drop_pod_item works with tbl_row_id parameter correctly now
+* Bugfix: PodAPI :: import and pick values work correctly now
+* Bugfix: PodAPI :: save_pod_item works with tbl_row_id parameter correctly now
+* Bugfix: PodAPI :: reset_pod works correctly now
+* Bugfix: PodAPI :: drop_pod_item works with tbl_row_id parameter correctly now
 * Bugfix: pods_url_variable now removes the hash (#) part of the url - On a side note, avoid use of pods_url_variable(-1) and other negative numbers as it is not always the level you expect in wildcard Pod Pages
 * Bugfix: Revised AJAX-based drop_pod_item access check, you can now drop an item if a user has pod_$podname access but NOT manage_content access (previously denied)
 * Bugfix: Date Input offset uses this.input.position() instead of this.input.offset() now

@@ -57,7 +57,7 @@ if (pods_access('manage_templates')) {
         <div class="navTab" rel="templateArea"><a href="#template">Templates</a></div>
 <?php
 }
-if (pods_access('manage_pages')) {
+if (pods_access('manage_pod_pages')) {
 ?>
         <div class="navTab" rel="pageArea"><a href="#page">Pages</a></div>
 <?php

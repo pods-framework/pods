@@ -82,7 +82,7 @@ function saveForm(form_count) {
             if (!is_error(msg)) {
                 window.location = "<?php echo (!empty($thankyou_url)) ? $thankyou_url : $_SERVER['REQUEST_URI']; ?>";
             }
-            jQuery(".btn_save").attr("disabled", "");
+            jQuery(".btn_save").removeAttr("disabled");
         }
     });
     return false;

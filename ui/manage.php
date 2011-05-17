@@ -29,7 +29,7 @@ jQuery(function() {
     // Remember the tab selection
     var thetab = window.location.href.split("#")[1];
     if ("undefined" != typeof(thetab)) {
-        jQuery(".navTab[rel="+thetab+"Area]").click();
+        jQuery(".navTab[rel='"+thetab+"Area']").click();
     }
 });
 

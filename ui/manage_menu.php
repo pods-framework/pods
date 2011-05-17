@@ -13,11 +13,11 @@ jQuery(function() {
         if ("addnew" == classname) {
             resetForm();
             if ("1" == menu_id) {
-                jQuery("#menu_edit").attr("disabled", true);
+                jQuery("#menu_edit").attr("disabled", "disabled");
                 jQuery("#menuBox").jqmShow();
             }
             else {
-                jQuery("#menu_edit").attr("disabled", false);
+                jQuery("#menu_edit").removeAttr("disabled");
                 loadMenu();
             }
         }
@@ -33,7 +33,7 @@ function resetForm() {
     jQuery("#menu_id").val("");
     jQuery("#menu_uri").val("");
     jQuery("#menu_title").val("");
-    jQuery("#menu_add").attr("checked", true);
+    jQuery("#menu_add").attr("checked", "checked");
 }
 
 function addOrEditMenu() {
@@ -76,7 +76,7 @@ function addMenu() {
             if (!is_error(msg)) {
                 var menu_id = msg;
                 var html = '<div class="menu-item" mid="'+menu_id+'"><div class="btn addnew"></div><div class="btn dropme"></div><span class="menu-title">'+menu_title+'</span></div>';
-                jQuery("div.menu-item[mid="+parent_menu_id+"]").append(html);
+                jQuery("div.menu-item[mid='"+parent_menu_id+"']").append(html);
                 jQuery("#menuBox").jqmHide();
             }
         }
@@ -92,7 +92,7 @@ function editMenu() {
         data: "action=save_menu_item&id="+menu_id+"&menu_uri="+menu_uri+"&menu_title="+encodeURIComponent(menu_title),
         success: function(msg) {
             if (!is_error(msg)) {
-                jQuery("div.menu-item[mid="+menu_id+"] > span.menu-title").html(menu_title);
+                jQuery("div.menu-item[mid='"+menu_id+"'] > span.menu-title").html(menu_title);
                 jQuery("#menuBox").jqmHide();
             }
         }
@@ -107,7 +107,7 @@ function dropMenu() {
             data: "action=drop_menu_item&id="+menu_id,
             success: function(msg) {
                 if (!is_error(msg)) {
-                    jQuery("div.menu-item[mid="+menu_id+"]").remove();
+                    jQuery("div.menu-item[mid='"+menu_id+"']").remove();
                 }
             }
         });

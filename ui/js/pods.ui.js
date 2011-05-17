@@ -17,6 +17,6 @@ jQuery(function() {
 
     var active_tab = window.location.href.split("#")[1];
     if ("undefined" != typeof active_tab) {
-        jQuery(".navTab[rel=" + active_tab + "Area]").click();
+        jQuery(".navTab[rel='" + active_tab + "Area']").click();
     }    
 });

@@ -85,7 +85,7 @@ var add_or_edit = "<?php echo $add_or_edit; ?>";
 jQuery(function() {
     active_tab = window.location.href.split("#")[1];
     if ("add" == add_or_edit && ("undefined" == typeof active_tab || active_tab != "browse")) {
-        jQuery(".navTab[rel=editArea]").click();
+        jQuery(".navTab[rel='editArea']").click();
     }
 
     jQuery(".file .btn.dropme").live("click", function() {
@@ -105,7 +105,7 @@ jQuery(function() {
 
 function editItem(datatype, pod_id) {
     jQuery(".area").hide();
-    jQuery(".navTab[rel=editArea]").click();
+    jQuery(".navTab[rel='editArea']").click();
     showform(datatype, pod_id);
 }
 

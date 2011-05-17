@@ -25,22 +25,22 @@ jQuery(function() {
 
 function resetForm() {
     jQuery("#column_name").val("");
-    jQuery("#column_name").attr("disabled", 0);
+    jQuery("#column_name").removeAttr("disabled");
     jQuery("#column_label").val("");
     jQuery("#column_comment").val("");
     jQuery("#column_type").val("date");
-    jQuery("#column_type").attr("disabled", 0);
+    jQuery("#column_type").removeAttr("disabled");
     jQuery("#column_pickval").val("");
     jQuery("#column_pick_filter").val("");
     jQuery("#column_pick_orderby").val("");
     jQuery("#column_display_helper").val("");
     jQuery("#column_input_helper").val("");
-    jQuery("#column_required").attr("checked", 0);
-    jQuery("#column_required").attr("disabled", 0);
-    jQuery("#column_unique").attr("checked", 0);
-    jQuery("#column_unique").attr("disabled", 0);
-    jQuery("#column_multiple").attr("checked", 0);
-    jQuery("#column_multiple").attr("disabled", 0);
+    jQuery("#column_required").removeAttr("checked");
+    jQuery("#column_required").removeAttr("disabled");
+    jQuery("#column_unique").removeAttr("checked");
+    jQuery("#column_unique").removeAttr("disabled");
+    jQuery("#column_multiple").removeAttr("checked");
+    jQuery("#column_multiple").removeAttr("disabled");
     jQuery("#column_sister_field_id").val("");
     jQuery(".coltype-pick").hide();
     jQuery(".column-header").html("Add Column");
@@ -84,7 +84,7 @@ function sisterFields(sister_field_id) {
                     }
                 }
                 jQuery("#column_sister_field_id").html(html);
-                jQuery("#column_sister_field_id option[value="+sister_field_id+"]").attr("selected", "selected");
+                jQuery("#column_sister_field_id option[value='"+sister_field_id+"']").attr("selected", "selected");
                 jQuery("#column_sister_field_id").show();
             }
         }
@@ -107,7 +107,10 @@ function loadPod() {
                 var post_save_helpers = (null == json.post_save_helpers) ? "" : json.post_save_helpers;
                 var post_drop_helpers = (null == json.post_drop_helpers) ? "" : json.post_drop_helpers;
                 jQuery("#pod_label").val(label);
-                jQuery("#is_toplevel").attr("checked", is_toplevel);
+                if (is_toplevel)
+                    jQuery("#is_toplevel").attr("checked", "checked");
+                else
+                    jQuery("#is_toplevel").removeAttr("checked");
                 jQuery("#detail_page").val(detail_page);
                 jQuery("#list_pre_save_helpers").html("");
                 jQuery("#list_pre_drop_helpers").html("");
@@ -210,7 +213,7 @@ function addPod() {
                 var html = '<option value="'+id+'">'+name+'</option>';
                 jQuery(".select-pod").append(html);
                 jQuery("#podBox #new_pod").val("");
-                jQuery(".select-pod > option[value="+id+"]").attr("selected", "selected");
+                jQuery(".select-pod > option[value='"+id+"']").attr("selected", "selected");
                 jQuery(".select-pod").change();
                 jQuery("#podBox").jqmHide();
             }
@@ -269,7 +272,7 @@ function dropPod() {
             data: "action=drop_pod&id="+dt+"&name="+dtname,
             success: function(msg) {
                 if (!is_error(msg)) {
-                    jQuery(".select-pod > option[value="+dt+"]").remove();
+                    jQuery(".select-pod > option[value='"+dt+"']").remove();
                     jQuery(".select-pod").change();
                 }
             }
@@ -311,14 +314,23 @@ function loadColumn(id) {
             jQuery("#column_pick_orderby").val(pick_orderby);
             jQuery("#column_display_helper").val(display_helper);
             jQuery("#column_input_helper").val(input_helper);
-            jQuery("#column_required").attr("checked", required);
-            jQuery("#column_unique").attr("checked", unique);
-            jQuery("#column_multiple").attr("checked", multiple);
+            if (required)
+                jQuery("#column_required").attr("checked", "checked");
+            else
+                jQuery("#column_required").removeAttr("checked");
+            if (unique)
+                jQuery("#column_unique").attr("checked", "checked");
+            else
+                jQuery("#column_unique").removeAttr("checked");
+            if (multiple)
+                jQuery("#column_multiple").attr("checked", "checked");
+            else
+                jQuery("#column_multiple").removeAttr("checked");
 
             if ("name" == name) {
-                jQuery("#column_name").attr("disabled", 1);
-                jQuery("#column_type").attr("disabled", 1);
-                jQuery("#column_required").attr("disabled", 1);
+                jQuery("#column_name").attr("disabled", "disabled");
+                jQuery("#column_type").attr("disabled", "disabled");
+                jQuery("#column_required").attr("disabled", "disabled");
             }
             if ("pick" == coltype) {
                 jQuery(".coltype-pick").show();

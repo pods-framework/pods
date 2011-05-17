@@ -61,7 +61,7 @@ function addPage() {
                 var html = '<option value="'+id+'">'+uri+'</option>';
                 jQuery(".select-page").append(html);
                 jQuery("#pageBox #new_page").val("");
-                jQuery(".select-page > option[value="+id+"]").attr("selected", "selected");
+                jQuery(".select-page > option[value='"+id+"']").attr("selected", "selected");
                 jQuery(".select-page").change();
                 jQuery("#pageBox").jqmHide();
             }
@@ -94,7 +94,7 @@ function dropPage() {
             data: "action=drop_page&id="+page_id,
             success: function(msg) {
                 if (!is_error(msg)) {
-                    jQuery(".select-page > option[value="+page_id+"]").remove();
+                    jQuery(".select-page > option[value='"+page_id+"']").remove();
                     jQuery(".select-page").change();
                 }
             }

@@ -91,7 +91,7 @@ DateInput = (function($) { // Localise the $ function
                 return false;
             }));
 
-            $("td[date=" + this.getYMD(new Date()) + "]", this.tbody).addClass("today");
+            $("td[date='" + this.getYMD(new Date()) + "']", this.tbody).addClass("today");
         },
 
         stringToDate: function() {

@@ -48,7 +48,7 @@ function addHelper() {
                 var html = '<option value="'+id+'">'+name+'</option>';
                 jQuery(".select-helper").append(html);
                 jQuery("#helperBox #new_helper").val("");
-                jQuery(".select-helper > option[value="+id+"]").attr("selected", "selected");
+                jQuery(".select-helper > option[value='"+id+"']").attr("selected", "selected");
                 jQuery(".select-helper").change();
                 jQuery("#helperBox").jqmHide();
             }
@@ -78,7 +78,7 @@ function dropHelper() {
             data: "action=drop_helper&id="+helper_id,
             success: function(msg) {
                 if (!is_error(msg)) {
-                    jQuery(".select-helper > option[value="+helper_id+"]").remove();
+                    jQuery(".select-helper > option[value='"+helper_id+"']").remove();
                     jQuery(".select-helper").change();
                 }
             }

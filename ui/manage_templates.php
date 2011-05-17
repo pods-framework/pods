@@ -54,7 +54,7 @@ function addTemplate() {
                 var html = '<option value="'+id+'">'+name+'</option>';
                 jQuery(".select-template").append(html);
                 jQuery("#templateBox #new_template").val("");
-                jQuery(".select-template > option[value="+id+"]").attr("selected", "selected");
+                jQuery(".select-template > option[value='"+id+"']").attr("selected", "selected");
                 jQuery(".select-template").change();
                 jQuery("#templateBox").jqmHide();
             }
@@ -84,7 +84,7 @@ function dropTemplate() {
             data: "action=drop_template&id="+template_id,
             success: function(msg) {
                 if (!is_error(msg)) {
-                    jQuery(".select-template > option[value="+template_id+"]").remove();
+                    jQuery(".select-template > option[value='"+template_id+"']").remove();
                     jQuery(".select-template").change();
                 }
             }

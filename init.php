@@ -2,8 +2,8 @@
 /*
 Plugin Name: Pods CMS Framework
 Plugin URI: http://podscms.org/
-Description: Create custom content types in WordPress.
-Version: 1.9.5.1
+Description: Pods is a CMS framework for creating and managing your own content types.
+Version: 1.9.6
 Author: The Pods CMS Team
 Author URI: http://podscms.org/about/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', 195);
+define('PODS_VERSION', 196);
 define('PODS_VERSION_FULL', implode('.', str_split(PODS_VERSION)));
 define('PODS_URL', rtrim(plugin_dir_url(__FILE__),'/')); // non-trailing slash being deprecated in 2.0
 define('PODS_DIR', rtrim(plugin_dir_path(__FILE__),'/')); // non-trailing slash being deprecated in 2.0
@@ -144,6 +144,32 @@ class PodInit
         // Load necessary JS
         wp_enqueue_script('jquery');
         wp_enqueue_script('pods-ui', PODS_URL . '/ui/js/pods.ui.js');
+
+        $security_settings = array('pods_disable_file_browser' => 0,
+                                   'pods_files_require_login' => 0,
+                                   'pods_files_require_login_cap' => '',
+                                   'pods_disable_file_upload' => 0,
+                                   'pods_upload_require_login' => 0,
+                                   'pods_upload_require_login_cap' => '');
+        foreach ($security_settings as $security_setting => $setting) {
+            $setting = get_option($security_setting);
+            if (!empty($setting))
+                $security_settings[$security_setting] = $setting;
+        }
+        foreach ($security_settings as $security_setting => $setting) {
+            if (0 == $setting)
+                $setting = false;
+            elseif (1 == $setting)
+                $setting = true;
+            if (in_array($security_setting, array('pods_files_require_login', 'pods_upload_require_login'))) {
+                if (0 < strlen($security_settings[$security_setting.'_cap']))
+                    $setting = $security_settings[$security_setting.'_cap'];
+            }
+            elseif (in_array($security_setting, array('pods_files_require_login_cap', 'pods_upload_require_login_cap')))
+                continue;
+            if (!defined(strtoupper($security_setting)))
+                define(strtoupper($security_setting), $setting);
+        }
     }
 
     function precode() {

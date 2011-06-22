@@ -28,14 +28,16 @@ jQuery(function() {
         jQuery("#dialog").jqmHide();
     });
 
-    elements = jQuery(".desc");
-    var config = {
-        iconsPath : "<?php echo PODS_URL; ?>/ui/images/nicEditorIcons.gif",
-        buttonList : ['bold','italic','underline','fontFormat','left','center','right','justify','ol','ul','indent','outdent','image','link','unlink','xhtml']
-    };
+    if ('undefined' != typeof(nicPaneOptions)) {
+        elements = jQuery(".desc");
+        var config = {
+            iconsPath : "<?php echo PODS_URL; ?>/ui/images/nicEditorIcons.gif",
+            buttonList : ['bold','italic','underline','fontFormat','left','center','right','justify','ol','ul','indent','outdent','image','link','unlink','xhtml']
+        };
 
-    for (i = 0; i < elements.length; i++) {
-        new nicEditor(config).panelInstance(elements[i].id);
+        for (i = 0; i < elements.length; i++) {
+            new nicEditor(config).panelInstance(elements[i].id);
+        }
     }
     jQuery("#dialog").jqm();
 });
@@ -54,7 +56,7 @@ function saveForm(form_count) {
         var classname = jQuery(this).attr("class").split(" ");
         if ("pick" == classname[1]) {
             jQuery("." + classname[2] + " .active").each(function() {
-                theval += jQuery(this).attr("value") + ",";
+                theval += jQuery(this).data("value") + ",";
             });
             theval = theval.slice(0, -1);
         }

@@ -16,7 +16,7 @@ function podsExport() {
         var theval = "";
         var classname = jQuery(this).attr("class").split(" ");
         jQuery("." + classname[2] + " .active").each(function() {
-            theval += jQuery(this).attr("value") + ",";
+            theval += jQuery(this).data("value") + ",";
         });
         theval = theval.substr(0, theval.length - 1);
         data[i] = classname[2] + "=" + encodeURIComponent(theval);
@@ -70,7 +70,7 @@ function podsImport(action) {
 $result = pod_query("SELECT id, name FROM @wp_pod_types ORDER BY name");
 while ($row = mysql_fetch_assoc($result)) {
 ?>
-            <div class="option" value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></div>
+            <div class="option" data-value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></div>
 <?php
 }
 ?>
@@ -84,7 +84,7 @@ while ($row = mysql_fetch_assoc($result)) {
 $result = pod_query("SELECT id, name FROM @wp_pod_templates ORDER BY name");
 while ($row = mysql_fetch_assoc($result)) {
 ?>
-            <div class="option" value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></div>
+            <div class="option" data-value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></div>
 <?php
 }
 ?>
@@ -99,7 +99,7 @@ while ($row = mysql_fetch_assoc($result)) {
 $result = pod_query("SELECT id, uri FROM @wp_pod_pages ORDER BY uri");
 while ($row = mysql_fetch_assoc($result)) {
 ?>
-            <div class="option" value="<?php echo $row['id']; ?>"><?php echo $row['uri']; ?></div>
+            <div class="option" data-value="<?php echo $row['id']; ?>"><?php echo $row['uri']; ?></div>
 <?php
 }
 ?>
@@ -113,7 +113,7 @@ while ($row = mysql_fetch_assoc($result)) {
 $result = pod_query("SELECT id, name FROM @wp_pod_helpers ORDER BY name");
 while ($row = mysql_fetch_assoc($result)) {
 ?>
-            <div class="option" value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></div>
+            <div class="option" data-value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></div>
 <?php
 }
 ?>

@@ -462,12 +462,6 @@ class PodAPI
             }
         }
 
-        // Allow Helpers to know what's going on, are we adding or saving?
-        $is_new_item = false;
-        if (empty($params->pod_id)&&empty($params->tbl_row_id)) {
-            $is_new_item = true;
-        }
-
         // Allow Helpers to bypass subsequent helpers in recursive save_pod_item calls
         $bypass_helpers = false;
         if (isset($params->bypass_helpers) && false !== $params->bypass_helpers) {
@@ -504,15 +498,28 @@ class PodAPI
         $pre_save_helpers = str_replace(',', "','", $row['pre_save_helpers']);
         $post_save_helpers = str_replace(',', "','", $row['post_save_helpers']);
 
+        // Allow Helpers to know what's going on, are we adding or saving?
+        $is_new_item = false;
+        if (!empty($params->tbl_row_id)) {
+            $result = pod_query("SELECT p.id FROM @wp_pod p INNER JOIN @wp_pod_types t ON t.id = p.datatype WHERE p.tbl_row_id = $params->tbl_row_id AND t.name = '$params->datatype' LIMIT 1",'Pod item not found',null,'Pod item not found');
+            $params->pod_id = mysql_result($result, 0);
+        }
+        elseif (!empty($params->pod_id)) {
+            $result = pod_query("SELECT tbl_row_id FROM @wp_pod WHERE id = $params->pod_id LIMIT 1",'Item not found',null,'Item not found');
+            $params->tbl_row_id = mysql_result($result, 0);
+        }
+        else
+            $is_new_item = true;
+
         // Plugin hook
-        do_action('pods_pre_save_pod_item');
+        do_action('pods_pre_save_pod_item', $params, $columns);
 
         // Call any pre-save helpers (if not bypassed)
-        if(!$bypass_helpers) {
+        if(!$bypass_helpers && !empty($pre_save_helpers)) {
 	        $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name IN ('$pre_save_helpers')");
 	        while ($row = mysql_fetch_assoc($result)) {
 	            eval('?>' . $row['phpcode']);
-                }
+            }
         }
 
         // Loop through each active column, validating and preparing the table data
@@ -573,14 +580,6 @@ class PodAPI
             $sql = "INSERT INTO @wp_pod (datatype, name, created, modified, author_id) VALUES ('$datatype_id', '$params->name', '$current_time', '$current_time', '$user')";
             $params->pod_id = pod_query($sql, 'Cannot add new content');
             $params->tbl_row_id = pod_query("INSERT INTO `@wp_pod_tbl_$params->datatype` (name) VALUES (NULL)", 'Cannot add new table row');
-        }
-        elseif (!empty($params->tbl_row_id)) {
-            $result = pod_query("SELECT p.id FROM @wp_pod p INNER JOIN @wp_pod_types t ON t.id = p.datatype WHERE p.tbl_row_id = $params->tbl_row_id AND t.name = '$params->datatype' LIMIT 1",'Pod item not found',null,'Pod item not found');
-            $params->pod_id = mysql_result($result, 0);
-        }
-        elseif (!empty($params->pod_id)) {
-            $result = pod_query("SELECT tbl_row_id FROM @wp_pod WHERE id = $params->pod_id LIMIT 1",'Item not found',null,'Item not found');
-            $params->tbl_row_id = mysql_result($result, 0);
         }
 
         // Save the table row
@@ -657,10 +656,10 @@ class PodAPI
         }
 
         // Plugin hook
-        do_action('pods_post_save_pod_item');
+        do_action('pods_post_save_pod_item', $params, $columns);
 
         // Call any post-save helpers (if not bypassed)
-        if(!$bypass_helpers) {
+        if(!$bypass_helpers && !empty($post_save_helpers)) {
 	        $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name IN ('$post_save_helpers')");
 	        while ($row = mysql_fetch_assoc($result)) {
 	            eval('?>' . $row['phpcode']);

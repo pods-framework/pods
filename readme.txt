@@ -1,10 +1,10 @@
 === Pods CMS Framework ===
 Contributors: logikal16, sc0ttkclark, jchristopher
-Donate link: http://podscms.org/
+Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, custom post types, content types, relationships, database, framework, drupal, mysql, custom content, php
 Requires at least: 2.8
-Tested up to: 3.1.1
-Stable tag: 1.9.5.1
+Tested up to: 3.2
+Stable tag: 1.9.6
 
 Pods is a CMS framework for creating and managing your own content types.
 
@@ -13,9 +13,11 @@ Pods is a CMS framework for creating and managing your own content types.
 Check out http://podscms.org/ for our User Guide and many other resources to help you develop with Pods.
 
 = Create your own content types =
-A pod, or content type, is a named group of input fields. The Pods plugin lets you create your own content types. Instead of with custom post types, each content type gets its own table.
+A Pod is a content type which contains a user-defined set of fields. Each content type is stored in it's own table, where as WordPress Custom Post Types are normally all stored in one single table for them all.
 
-Create a variety of different input fields, including text, paragraph text, date, number, file upload, and relationship (called "pick") fields. Pick fields are extremely useful if you want to create relationships among your data. One example is if you want to relate an "event" item with one or more "speaker" items.
+Create a variety of different fields including: text, paragraph text, date, number, file upload, and relationship (called "pick") fields.
+
+Pick fields are useful if you want to create relationships between your content types. One example is if you want to relate an "event" with one or more "speaker".
 
 = Easily display your content =
 There are several ways to get Pods data to show up throughout your site:
@@ -26,10 +28,12 @@ There are several ways to get Pods data to show up throughout your site:
 * The Pods API allows you to retrieve raw data from and save data to the database.
 
 = Customized Management Panels =
-Utilize the Pods UI plugin to build your own Custom Management panels for your Pods. Get it at: http://wordpress.org/extend/plugins/pods-ui/
+Utilize the Pods UI plugin (included in the upcoming Pods 2.0) to build your own Custom Management panels for your Pods. Get it at: http://wordpress.org/extend/plugins/pods-ui/
 
 = Migrate! =
-Pods includes a Package Manager, which allows you to import/export your database structure. You can select which features you want to "package up" and export it for easy migration. Pods also includes an easy to use PHP API to manage all types of Pod-related data for complex operations.
+Pods includes a Package Manager, which allows you to import/export your database structure. You can select which features you want to "package up" and export it for easy migration.
+
+Pods also includes an easy to use PHP API to allow you to import and export your data via CSV, and other more complex operations.
 
 = Introduction to the Pods CMS Framework =
 [vimeo http://vimeo.com/15086927]
@@ -37,7 +41,33 @@ Pods includes a Package Manager, which allows you to import/export your database
 = Stay tuned for Pods 2.0 =
 Pods 2.0 is around the corner, so keep up-to-date by following our @podscms twitter account or checking out our Pods Development blog at http://dev.podscms.org/
 
+Features coming in Pods 2.0 include:
+
+* Completely revamped UI
+* Pods UI will become part of Pods core
+* Create and Manage Custom Post Types
+* Create and Manage Custom Taxonomy
+* Easy migration between Custom Post Types and Custom Content Types (Standalone Pods)
+* Many more field types and advanced options (less code for you to do!)
+* Many MySQL optimizations and performance tweaks
+* Full i18n support
+* and more features which can be found at: http://dev.podscms.org/pods-2-0/
+
 == Changelog ==
+
+= 1.9.6 - June 24, 2011 =
+* Full Details can be found at:
+* Security Update: New security settings section in the Pods >> Setup >> Settings tab to restrict access to the File Browser / Uploader used in publicForm, adjust the settings to fit your site if you experience any problems
+* Added: New TinyMCE API for use with the new TinyMCE package update at http://podscms.org/packages/tinymce-for-pods/
+* Added: New get_current_url() function to get current page URL
+* Bugfix: Fixed pod_page_exists() bug with $home path
+* Bugfix: Fixed publicForm bug with $css_id always using form_count 1 (now uses correct $form_count)
+* Bugfix: Fixed access to Pod Pages tab in Pods >> Setup menu (manage_pages >> manage_pod_pages)
+* Bugfix: Added $params and $columns to actions for pods_pre_save_pod_item and pods_post_save_pod_item in PodAPI :: save_pod_item
+* Bugfix: Moved $params->pod_id and $params->tbl_row_id setup to above pre_save_helpers run in PodAPI :: save_pod_item
+* Bugfix: tbl_row_id now sent in publicForm (not just pod_id)
+* Bugfix: Fixed WP 3.2 bugs regarding jQuery upgrade to 1.6.1
+* Bugfix: Fixed some PHP warnings dependant on error_reporting level and PHP version
 
 = 1.9.5.1 - April 7, 2011 =
 * Bugfix: Fixed dot-traversal in Pod :: get_field

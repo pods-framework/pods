@@ -1,7 +1,7 @@
 <!-- Begin settings area -->
 
 <script type="text/javascript">
-function resetDB() {
+function pods_resetDB() {
     if (confirm("This will completely remove Pods from the database. Are you sure?")) {
         if (confirm("Did you already make a database backup?")) {
             if (confirm("There's no undo. Is that your final answer?")) {
@@ -18,19 +18,67 @@ function resetDB() {
         }
     }
 }
+function pods_security_settings() {
+    var data = new Array();
+    var i = 0;
+    jQuery('#pods_security_settings .pods-security-setting').each(function() {
+        if ('checkbox' != jQuery(this).attr('type') || jQuery(this).is(':checked')) {
+            data[i] = jQuery(this).attr('id') + "=" + encodeURIComponent(jQuery(this).val());
+        }
+        i++;
+    });
+    jQuery.ajax({
+        type: "post",
+        url: "<?php echo PODS_URL; ?>/ui/ajax/api.php",
+        data: "action=security_settings&"+data.join("&"),
+        success: function(msg) {
+            window.location = "admin.php?page=pods&security_settings_updated=1#settings";
+        }
+    });
+}
 </script>
 
 <!-- Settings HTML -->
 
-<h3>Debug Information</h3>
-<textarea>
-PHP <?php echo phpversion(); ?> 
-<?php echo $_SERVER['SERVER_SOFTWARE']; ?> 
-MySQL <?php echo mysql_result(pod_query("SELECT VERSION()"), 0); ?> 
-<?php echo $_SERVER['HTTP_USER_AGENT']; ?> 
-WordPress <?php global $wp_version; echo $wp_version; ?> 
+<h3 style="padding-top:15px">Security Settings</h3>
+<?php
+if (isset($_GET['security_settings_updated']) && 1 == $_GET['security_settings_updated']) {
+?>
+        <div id="message" class="updated fade"><p>Security Settings Updated</p></div>
+<?php
+}
+?>
+<div class="tips">Restrict access to uploads and browsing existing uploads</div>
+<div id="pods_security_settings">
+    <p><label for="disable_file_browser"><input type="checkbox" name="disable_file_browser" id="disable_file_browser" class="pods-security-setting" value="1"<?php echo (defined('PODS_DISABLE_FILE_BROWSER') && false !== PODS_DISABLE_FILE_BROWSER) ? ' CHECKED' : ''; ?> /> Disable File Browser Completely</label></p>
+    <p><label for="files_require_login"><input type="checkbox" name="files_require_login" id="files_require_login" class="pods-security-setting" value="1"<?php echo (defined('PODS_FILES_REQUIRE_LOGIN') && is_bool(PODS_FILES_REQUIRE_LOGIN) && false !== PODS_FILES_REQUIRE_LOGIN) ? ' CHECKED' : ''; ?> /> Require user to be logged in to use File Browser</label></p>
+    <p><label for="files_require_login_cap"><input type="text" name="files_require_login_cap" id="files_require_login_cap" class="pods-security-setting" value="<?php echo (defined('PODS_FILES_REQUIRE_LOGIN') && !is_bool(PODS_FILES_REQUIRE_LOGIN) && 0 < strlen(PODS_FILES_REQUIRE_LOGIN)) ? PODS_FILES_REQUIRE_LOGIN : ''; ?>" /> Require role or capability to use File Browser</label></p>
+    <p><label for="disable_file_upload"><input type="checkbox" name="disable_file_upload" id="disable_file_upload" class="pods-security-setting" value="1"<?php echo (defined('PODS_DISABLE_FILE_UPLOAD') && false !== PODS_DISABLE_FILE_UPLOAD) ? ' CHECKED' : ''; ?> /> Disable File Uploader Completely</label></p>
+    <p><label for="upload_require_login"><input type="checkbox" name="upload_require_login" id="upload_require_login" class="pods-security-setting" value="1"<?php echo (defined('PODS_UPLOAD_REQUIRE_LOGIN') && is_bool(PODS_UPLOAD_REQUIRE_LOGIN) && false !== PODS_UPLOAD_REQUIRE_LOGIN) ? ' CHECKED' : ''; ?> /> Require user to be logged in to use File Uploader</label></p>
+    <p><label for="upload_require_login_cap"><input type="text" name="upload_require_login_cap" id="upload_require_login_cap" class="pods-security-setting" value="<?php echo (defined('PODS_UPLOAD_REQUIRE_LOGIN') && !is_bool(PODS_UPLOAD_REQUIRE_LOGIN) && 0 < strlen(PODS_UPLOAD_REQUIRE_LOGIN)) ? PODS_UPLOAD_REQUIRE_LOGIN : ''; ?>" /> Require role or capability to use File Uploader</label></p>
+    <input type="button" class="button" onclick="pods_security_settings()" value=" Save Security Settings " />
+</div>
 
--- Active Plugins --
+<hr />
+<h3 style="padding-top:15px">Reset Pods</h3>
+<div class="tips">Remove your content types and Pods data. There is no undo!</div>
+<input type="button" class="button" onclick="pods_resetDB()" value=" Big Shiny Reset Button " />
+
+<hr />
+<h3 style="padding-top:15px">Debug Information</h3>
+<textarea>
+WordPress <?php global $wp_version; echo $wp_version; ?>
+
+PHP Version: <?php echo phpversion(); ?>
+
+MySQL Version: <?php echo mysql_result(pod_query("SELECT VERSION()"), 0); ?>
+
+Server Software: <?php echo $_SERVER['SERVER_SOFTWARE']; ?>
+
+Your User Agent: <?php echo $_SERVER['HTTP_USER_AGENT']; ?>
+
+
+-- Currently Active Plugins --
 <?php
 $all_plugins = get_plugins();
 foreach ($all_plugins as $plugin_file => $plugin_data) {
@@ -40,7 +88,3 @@ foreach ($all_plugins as $plugin_file => $plugin_data) {
 }
 ?>
 </textarea>
-
-<h3 style="padding-top:15px">Reset Pods</h3>
-<div class="tips">Remove your content types and Pods data. There is no undo!</div>
-<input type="button" class="button" onclick="resetDB()" value="Big Shiny Reset Button" />

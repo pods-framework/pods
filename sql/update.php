@@ -151,5 +151,14 @@ if ($installed < 190) {
     }
 }
 
+if ($installed < 196) {
+    add_option('pods_disable_file_browser', 0);
+    add_option('pods_files_require_login', 0);
+    add_option('pods_files_require_login_cap', 'upload_files');
+    add_option('pods_disable_file_upload', 0);
+    add_option('pods_upload_require_login', 0);
+    add_option('pods_upload_require_login_cap', 'upload_files');
+}
+
 // Save this version
 update_option('pods_version', PODS_VERSION);

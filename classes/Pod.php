@@ -648,6 +648,8 @@ class Pod
         }
         $uri_hash = md5($_SERVER['REQUEST_URI']);
 
+        do_action('pods_showform_pre', $pod_id, $public_columns, $label, &$this);
+        
         foreach ($fields as $key => $field) {
             // Replace field attributes with public form attributes
             if (!empty($attributes) && is_array($attributes[$key])) {
@@ -745,6 +747,7 @@ class Pod
 ?>
     <div>
     <input type="hidden" class="form num pod_id" value="<?php echo $pod_id; ?>" />
+    <input type="hidden" class="form num tbl_row_id" value="<?php echo (!empty($tbl_cols) ? $tbl_cols['id'] : 0); ?>" />
     <input type="hidden" class="form txt datatype" value="<?php echo $datatype; ?>" />
     <input type="hidden" class="form txt form_count" value="<?php echo $cache->form_count; ?>" />
     <input type="hidden" class="form txt token" value="<?php echo pods_generate_key($datatype, $uri_hash, $public_columns, $cache->form_count); ?>" />
@@ -752,6 +755,7 @@ class Pod
 	<?php echo apply_filters('pods_showform_save_button', $save_button, $save_button_atts, &$this); ?>
     </div>
 <?php
+        do_action('pods_showform_post', $pod_id, $public_columns, $label, &$this);
     }
 
     /**
@@ -846,7 +850,7 @@ class Pod
         $name = $in[2];
         $before = $after = '';
         if (false !== strpos($name, ',')) {
-            list($name, $helper, $before, $after) = explode(',', $name);
+            @list($name, $helper, $before, $after) = explode(',', $name);
             $name = trim($name);
             $helper = trim($helper);
             $before = trim($before);

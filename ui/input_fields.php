@@ -1,4 +1,7 @@
 <?php
+$cache = PodCache::instance();
+$form_count = $cache->form_count;
+
 global $coltype_exists;
 
 $name = $field['name'];
@@ -8,7 +11,7 @@ $coltype = $field['coltype'];
 $input_helper = $field['input_helper'];
 $hidden = empty($field['hidden']) ? '' : ' hidden';
 $value = is_array($this->data[$name]) ? $this->data[$name] : stripslashes($this->data[$name]);
-$css_id = 'pods_form' . 1 . '_' . $name;
+$css_id = 'pods_form' . $form_count . '_' . $name;
 
 // The first 3 CSS classes will be DEPRECATED in 2.0.0
 $css_classes = "form $coltype $name pods_field pods_field_$name pods_coltype_$coltype";
@@ -60,7 +63,7 @@ Date picker
 ==================================================
 */
 elseif ('date' == $coltype) {
-    if (empty($coltype_exists[$coltype])) {
+    if (!isset($coltype_exists[$coltype]) || empty($coltype_exists[$coltype])) {
 ?>
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/ui/js/date_input.js"></script>
 <script type="text/javascript">
@@ -93,7 +96,7 @@ Textarea box
 ==================================================
 */
 elseif ('desc' == $coltype) {
-    if (empty($coltype_exists[$coltype])) {
+    if (!isset($coltype_exists[$coltype]) || empty($coltype_exists[$coltype])) {
 ?>
 <script type="text/javascript" src="<?php echo PODS_URL; ?>/ui/js/nicEdit.js"></script>
 <?php
@@ -122,7 +125,7 @@ File upload
 elseif ('file' == $coltype) {
     require_once(realpath(ABSPATH . '/wp-admin/includes/template.php'));
 
-    if (empty($coltype_exists[$coltype])) {
+    if (!isset($coltype_exists[$coltype]) || empty($coltype_exists[$coltype])) {
 ?>
 <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/swfupload/swfupload.js'; ?>"></script>
 <?php
@@ -145,7 +148,7 @@ jQuery(function() {
         flash_url: "<?php echo WP_INC_URL; ?>/js/swfupload/swfupload.swf",
         file_types: "*.*",
         file_size_limit: "<?php echo wp_max_upload_size(); ?>",
-        post_params: {"action": "wp_handle_upload"},
+        post_params: {"action": "wp_handle_upload", "auth_cookie": "<?php echo (is_ssl() ? $_COOKIE[SECURE_AUTH_COOKIE] : $_COOKIE[AUTH_COOKIE]); ?>", "logged_in_cookie": "<?php echo $_COOKIE[LOGGED_IN_COOKIE]; ?>"},
         file_dialog_complete_handler: function(num_files, num_queued_files, total_queued_files) {
             this.startUpload();
         },
@@ -220,7 +223,7 @@ elseif ('pick' == $coltype && 0 < $field['multiple']) {
             foreach ($value as $key => $val) {
                 $active = empty($val['active']) ? '' : ' active';
 ?>
-        <div class="option<?php echo $active; ?>" value="<?php echo $val['id']; ?>"><?php echo $val['name']; ?></div>
+        <div class="option<?php echo $active; ?>" data-value="<?php echo $val['id']; ?>"><?php echo $val['name']; ?></div>
 <?php
             }
         }

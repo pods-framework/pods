@@ -36,7 +36,8 @@ $methods = array(
     'load_files' => array(),
     'export_package' => array('priv' => 'manage_packages', 'format' => 'json', 'safe' => true),
     'import_package' => array('priv' => 'manage_packages'),
-    'validate_package' => array('priv' => 'manage_packages')
+    'validate_package' => array('priv' => 'manage_packages'),
+    'security_settings' => array('priv' => 'manage_settings')
 );
 
 $api = new PodAPI();
@@ -110,9 +111,30 @@ if (isset($methods[$action])) {
 
     $params = apply_filters('pods_api_'.$action,$params);
 
-    // Dynamically call the API method
-    $params = (array) $params;
-    $output = $api->$action($params);
+    if ('security_settings' == $action) {
+        delete_option('pods_disable_file_browser');
+        add_option('pods_disable_file_browser', (isset($params->disable_file_browser) ? $params->disable_file_browser : 0));
+
+        delete_option('pods_files_require_login');
+        add_option('pods_files_require_login', (isset($params->files_require_login) ? $params->files_require_login : 0));
+
+        delete_option('pods_files_require_login_cap');
+        add_option('pods_files_require_login_cap', (isset($params->files_require_login_cap) ? $params->files_require_login_cap : ''));
+
+        delete_option('pods_disable_file_upload');
+        add_option('pods_disable_file_upload', (isset($params->disable_file_upload) ? $params->disable_file_upload : 0));
+
+        delete_option('pods_upload_require_login');
+        add_option('pods_upload_require_login', (isset($params->upload_require_login) ? $params->upload_require_login : 0));
+
+        delete_option('pods_upload_require_login_cap');
+        add_option('pods_upload_require_login_cap', (isset($params->upload_require_login_cap) ? $params->upload_require_login_cap : ''));
+    }
+    else {
+        // Dynamically call the API method
+        $params = (array) $params;
+        $output = $api->$action($params);
+    }
 
     // Output in PHP or JSON format
     if ('json' == $format) {

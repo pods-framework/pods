@@ -210,6 +210,22 @@ function is_pod_page($uri = null) {
 }
 
 /**
+ * Get current URL of any page
+ *
+ * @return string
+ * @since 1.9.6
+ */
+if (!function_exists('get_current_url')) {
+    function get_current_url() {
+        $url = 'http';
+        if (isset($_SERVER['HTTPS']) && 'off' != $_SERVER['HTTPS'] && 0 != $_SERVER['HTTPS'])
+            $url = 'https';
+        $url .= '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        return apply_filters('get_current_url', $url);
+    }
+}
+
+/**
  * Check to see if Pod Page exists and return data
  *
  * $uri not required, if NULL then returns REQUEST_URI matching Pod Page
@@ -220,13 +236,12 @@ function is_pod_page($uri = null) {
 function pod_page_exists($uri = null) {
     global $wpdb;
     if (null == $uri) {
-        $home = parse_url(get_bloginfo('url'));
         $uri = explode('?', $_SERVER['REQUEST_URI']);
         $uri = explode('#', $uri[0]);
         $uri = $uri[0];
-        if($home['path']!='/') {
+        $home = @parse_url(get_bloginfo('url'));
+        if(!empty($home) && isset($home['path']) && '/' != $home['path'])
             $uri = substr($uri, strlen($home['path']));
-        }
     }
     $uri = trim($uri,'/');
     $uri = mysql_real_escape_string($uri,$wpdb->dbh);

@@ -29,14 +29,14 @@ jQuery(function() {
     });
 
     if ('undefined' != typeof(nicPaneOptions)) {
-        elements = jQuery(".desc");
+        var nicEditElements = jQuery(".form.desc");
         var config = {
             iconsPath : "<?php echo PODS_URL; ?>/ui/images/nicEditorIcons.gif",
             buttonList : ['bold','italic','underline','fontFormat','left','center','right','justify','ol','ul','indent','outdent','image','link','unlink','xhtml']
         };
 
         for (i = 0; i < elements.length; i++) {
-            new nicEditor(config).panelInstance(elements[i].id);
+            new nicEditor(config).panelInstance(nicEditElements[i].id);
         }
     }
     jQuery("#dialog").jqm();
@@ -45,8 +45,11 @@ jQuery(function() {
 function saveForm(form_count) {
     jQuery(".btn_save").attr("disabled", "disabled");
 
-    for (i = 0; i < elements.length; i++) {
-        nicEditors.findEditor(elements[i].id).saveContent();
+    if ('undefined' != typeof(nicPaneOptions)) {
+        var nicEditElements = jQuery(".form.desc");
+        for (i = 0; i < elements.length; i++) {
+            nicEditors.findEditor(nicEditElements[i].id).saveContent();
+        }
     }
 
     var data = new Array();

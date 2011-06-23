@@ -55,6 +55,10 @@ Features coming in Pods 2.0 include:
 
 == Changelog ==
 
+= 1.9.6.1 - June 25, 2011 =
+* Fix for nicEdit JS error during init that breaks forms
+* 1.9.6 Security Update information can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
+
 = 1.9.6 - June 24, 2011 =
 * Full Details can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 * Security Update: New security settings section in the Pods >> Setup >> Settings tab to restrict access to the File Browser / Uploader used in publicForm, adjust the settings to fit your site if you experience any problems

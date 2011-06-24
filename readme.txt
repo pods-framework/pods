@@ -69,6 +69,7 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 * Bugfix: Fixed Pod Page Precode $pods = 404; bug that wouldn't produce the default WordPress 404 error page
 * Bugfix: Fix for nicEdit JS error during init that breaks forms (when on a non top-level menu Pod AJAX-loaded form)
 * Bugfix: Fix for PICK error during save that errors out trying to save selections as 'undefined' (when on a non top-level menu Pod AJAX-loaded form)
+* 1.9.6 Security Update information can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 
 = 1.9.6.1 - June 23, 2011 =
 * Bugfix: Fix for nicEdit JS error during init that breaks forms

@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, custom post types, content types, relationships, database, framework, drupal, mysql, custom content, php
 Requires at least: 2.8
 Tested up to: 3.2
-Stable tag: 1.9.6.1
+Stable tag: 1.9.6.2
 
 Pods is a CMS framework for creating and managing your own content types.
 
@@ -53,13 +53,28 @@ Features coming in Pods 2.0 include:
 * Full i18n support
 * and more features which can be found at: http://dev.podscms.org/pods-2-0/
 
+== Installation ==
+
+1. Unpack the entire contents of this plugin zip file into your `wp-content/plugins/` folder locally
+1. Upload to your site
+1. Navigate to `wp-admin/plugins.php` on your site (your WP plugin page)
+1. Activate this plugin
+
+OR you can just install it with WordPress by going to Plugins >> Add New >> and type this plugin's name
+
 == Changelog ==
 
-= 1.9.6.1 - June 25, 2011 =
-* Fix for nicEdit JS error during init that breaks forms
+= 1.9.6.2 - June 23, 2011 =
+* Bugfix: TinyMCE API update from @azaozz with additional WP 3.2 support
+* Bugfix: Fixed Pod Page Precode $pods = 404; bug that wouldn't produce the default WordPress 404 error page
+* Bugfix: Fix for nicEdit JS error during init that breaks forms (when on a non top-level menu Pod AJAX-loaded form)
+* Bugfix: Fix for PICK error during save that errors out trying to save selections as 'undefined' (when on a non top-level menu Pod AJAX-loaded form)
+
+= 1.9.6.1 - June 23, 2011 =
+* Bugfix: Fix for nicEdit JS error during init that breaks forms
 * 1.9.6 Security Update information can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 
-= 1.9.6 - June 24, 2011 =
+= 1.9.6 - June 22, 2011 =
 * Full Details can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 * Security Update: New security settings section in the Pods >> Setup >> Settings tab to restrict access to the File Browser / Uploader used in publicForm, adjust the settings to fit your site if you experience any problems
 * Added: New TinyMCE API for use with the new TinyMCE package update at http://podscms.org/packages/tinymce-for-pods/

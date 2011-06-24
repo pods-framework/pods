@@ -128,8 +128,10 @@ function dropItem(pod_id) {
 function saveForm() {
     jQuery(".btn_save").attr("disabled", "disabled");
 
-    for (i = 0; i < elements.length; i++) {
-        nicEditors.findEditor(elements[i].id).saveContent();
+    if ('undefined' != typeof(nicPaneOptions)) {
+        for (i = 0; i < elements.length; i++) {
+            nicEditors.findEditor(elements[i].id).saveContent();
+        }
     }
 
     var data = new Array();
@@ -140,7 +142,7 @@ function saveForm() {
         var classname = jQuery(this).attr("class").split(" ");
         if ("pick" == classname[1]) {
             jQuery("." + classname[2] + " .active").each(function() {
-                theval += jQuery(this).attr("value") + ",";
+                theval += jQuery(this).data("value") + ",";
             });
             theval = theval.slice(0, -1);
         }
@@ -190,14 +192,16 @@ function showform(dt, pod_id) {
                     jQuery(this).toggleClass("active");
                 });
 
-                elements = jQuery(".desc");
-                var config = {
-                    iconsPath : "<?php echo PODS_URL; ?>/ui/images/nicEditorIcons.gif",
-                    buttonList : ['bold','italic','underline','fontFormat','left','center','right','justify','ol','ul','indent','outdent','image','link','unlink','xhtml']
-                };
+                if ('undefined' != typeof(nicPaneOptions)) {
+                    elements = jQuery(".form.desc");
+                    var config = {
+                        iconsPath : "<?php echo PODS_URL; ?>/ui/images/nicEditorIcons.gif",
+                        buttonList : ['bold','italic','underline','fontFormat','left','center','right','justify','ol','ul','indent','outdent','image','link','unlink','xhtml']
+                    };
 
-                for (i = 0; i < elements.length; i++) {
-                    new nicEditor(config).panelInstance(elements[i].id);
+                    for (i = 0; i < elements.length; i++) {
+                        new nicEditor(config).panelInstance(elements[i].id);
+                    }
                 }
             }
         }

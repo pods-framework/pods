@@ -34,11 +34,10 @@ class WP_Editor {
 		if ( !$set['wpautop'] )
 			$set['apply_source_formatting'] = true;
 
-		$this->settings[$editor_id] = $set;
-
 		$rows = (int) $set['textarea_rows'];
 		$can_richedit = user_can_richedit();
 		$id = $editor_id;
+		$default_editor = is_admin() ? wp_default_editor() : 'tinymce';
 		$toolbar = '';
 
 		if ( !current_user_can( 'upload_files' ) )
@@ -47,7 +46,7 @@ class WP_Editor {
 		$this->media_buttons = $media_buttons;
 		echo '<div id="wp-' . $id . '-wrap" class="wp-editor-wrap">';
 
-		if ( !is_admin() )
+		if ( !is_admin() && !empty($set['wp_buttons_css']) )
 			echo '<style type="text/css" scoped="scoped"> @import url("' . $set['wp_buttons_css'] . '"); ' . "</style>\n";
 
 		if ( $can_richedit || $media_buttons ) {
@@ -56,7 +55,7 @@ class WP_Editor {
 			if ( $can_richedit ) {
 				$html_class = $tmce_class = '';
 
-				if ( 'html' == wp_default_editor() ) {
+				if ( 'html' == $default_editor ) {
 					add_filter('the_editor_content', 'wp_htmledit_pre');
 					$html_class = 'active ';
 				} else {
@@ -66,7 +65,6 @@ class WP_Editor {
 
 				$toolbar .= '<a id="' . $id . '-html" class="' . $html_class . 'hide-if-no-js wp-switch-editor" onclick="wpEditor.s(this);return false;">' . __('HTML') . "</a>\n";
 				$toolbar .= '<a id="' . $id . '-tmce" class="' . $tmce_class . 'hide-if-no-js wp-switch-editor" onclick="wpEditor.s(this);return false;">' . __('Visual') . "</a>\n";
-
 			}
 
 			if ( $media_buttons ) {
@@ -95,6 +93,9 @@ class WP_Editor {
 			add_action( 'admin_print_footer_scripts', array(&$this, 'editor_js'), 50 );
 		else
 			add_action( 'wp_print_footer_scripts', array(&$this, 'editor_js') );
+
+		unset( $set['wp_buttons_css'], $set['editor_class'], $set['upload_link_title'], $set['media_buttons_context'], $set['textarea_rows'] );
+		$this->settings[$editor_id] = $set;
 	}
 
 	function loaded_test($r) {
@@ -102,7 +103,18 @@ class WP_Editor {
 		return $r;
 	}
 
+	function disable_fullscreen($init) {
+		$plugins = preg_split('/[ ,]+/', $init['plugins']);
+		$plugins = array_diff( $plugins, array('fullscreen', 'wpfullscreen') );
+		$init['plugins'] = implode($plugins, ',');
+
+		$init['theme_advanced_buttons1'] = str_replace( ',fullscreen', '', $init['theme_advanced_buttons1'] );
+
+		return $init;
+	}
+
 	function editor_js() {
+		global $wp_db_version;
 
 		$short_load = false;
 
@@ -117,8 +129,14 @@ class WP_Editor {
 			if ( !function_exists('wp_tiny_mce') )
 				include_once( ABSPATH . 'wp-admin/includes/post.php' );
 
+			if ( $wp_db_version > 18000 && !function_exists('submit_button') )
+				include_once( ABSPATH . 'wp-admin/includes/template.php' );
+
+			if ( !is_admin() ) {
+				add_filter( 'tiny_mce_before_init', array(&$this, 'disable_fullscreen') );
+			}
+
 			$set = $this->settings[$id];
-			unset( $set['wp_buttons_css'], $set['editor_class'], $set['upload_link_title'], $set['media_buttons_context'], $set['textarea_rows'] );
 
 			$set['elements'] = $id;
 			$set['mode'] = 'exact';
@@ -198,11 +216,12 @@ var wpEditor = {
 	},
 
 	qt_init : function(id, settings) {
-		var disabled, name = 'qt_'+id;
+		var disabled, name;
 
 		id = id || 'content';
 		settings = settings || {};
 		disabled = settings.disabled;
+		name = 'qt_'+id;
 
 		if ( typeof(QTags) != 'undefined' )
 			window[name] = new QTags(name, id, 'wp-'+id+'-editor-container', disabled);

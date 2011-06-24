@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS Framework
 Plugin URI: http://podscms.org/
 Description: Pods is a CMS framework for creating and managing your own content types.
-Version: 1.9.6.1
+Version: 1.9.6.2
 Author: The Pods CMS Team
 Author URI: http://podscms.org/about/
 
@@ -82,15 +82,13 @@ class PodInit
             $pod_page_exists = pod_page_exists();
 
             if (false !== $pod_page_exists) {
-                if (empty($pods) || 404 != $pods) {
-                    add_action('wp_head', array($this, 'wp_head'));
-                    add_filter('redirect_canonical', array($this, 'kill_redirect'));
-                    add_filter('wp_title', array($this, 'wp_title'), 0, 3);
-                    add_filter('body_class', array($this, 'body_class'), 0, 1);
-                    add_filter('status_header', array($this, 'status_header'));
-                    add_action('plugins_loaded', array($this, 'precode'));
-                    add_action('wp', array($this, 'silence_404'));
-                }
+                add_action('wp_head', array($this, 'wp_head'));
+                add_filter('redirect_canonical', array($this, 'kill_redirect'));
+                add_filter('wp_title', array($this, 'wp_title'), 0, 3);
+                add_filter('body_class', array($this, 'body_class'), 0, 1);
+                add_filter('status_header', array($this, 'status_header'));
+                add_action('plugins_loaded', array($this, 'precode'));
+                add_action('wp', array($this, 'silence_404'));
             }
         }
     }
@@ -175,6 +173,15 @@ class PodInit
     function precode() {
         global $pods, $pod_page_exists;
         eval('?>' . $pod_page_exists['precode']);
+        if (!is_object($pods) && 404 == $pods) {
+            remove_action('template_redirect', array($this, 'template_redirect'));
+            remove_action('wp_head', array($this, 'wp_head'));
+            remove_filter('redirect_canonical', array($this, 'kill_redirect'));
+            remove_filter('wp_title', array($this, 'wp_title'));
+            remove_filter('body_class', array($this, 'body_class'));
+            remove_filter('status_header', array($this, 'status_header'));
+            remove_action('wp', array($this, 'silence_404'));
+        }
     }
 
     function admin_menu() {

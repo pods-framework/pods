@@ -5,9 +5,7 @@ while ($row = mysql_fetch_assoc($result)) {
     $pages[$row['id']] = $row['uri'];
 }
 ?>
-
 <!-- Begin page area -->
-
 <script type="text/javascript">
 jQuery(function() {
     jQuery(".select-page").change(function() {

@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, custom post types, content types, relationships, database, framework, drupal, mysql, custom content, php
 Requires at least: 2.8
 Tested up to: 3.2
-Stable tag: 1.9.6.2
+Stable tag: 1.9.6.3
 
 Pods is a CMS framework for creating and managing your own content types.
 
@@ -63,6 +63,11 @@ Features coming in Pods 2.0 include:
 OR you can just install it with WordPress by going to Plugins >> Add New >> and type this plugin's name
 
 == Changelog ==
+
+= 1.9.6.3 - June 24, 2011 =
+* Bugfix: JS optimization and fixes for nicEdit (also now no longer outputting pods-ui.js on every page)
+* Bugfix: Non Top-level menu Pods now appearing in alphabetical order under Pods menu
+* 1.9.6 Security Update information can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 
 = 1.9.6.2 - June 23, 2011 =
 * Bugfix: TinyMCE API update from @azaozz with additional WP 3.2 support

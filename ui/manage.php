@@ -11,10 +11,11 @@ $result = pod_query("SELECT id, name FROM @wp_pod_types ORDER BY name");
 while ($row = mysql_fetch_assoc($result)) {
     $datatypes[$row['id']] = $row['name'];
 }
-?>
 
+if (!wp_script_is('pods-ui', 'queue') && !wp_script_is('pods-ui', 'to_do') && !wp_script_is('pods-ui', 'done'))
+    wp_print_scripts('pods-ui');
+?>
 <link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/ui/style.css" />
-<script type="text/javascript" src="<?php echo PODS_URL; ?>/ui/js/jqmodal.js"></script>
 <script type="text/javascript">
 var api_url = "<?php echo PODS_URL; ?>/ui/ajax/api.php";
 var datatype;

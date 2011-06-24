@@ -1,5 +1,4 @@
 <!-- Begin helper area -->
-
 <script type="text/javascript">
 jQuery(function() {
     jQuery(".select-helper").change(function() {

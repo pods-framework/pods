@@ -72,10 +72,11 @@ LIMIT
 ";
 $result = pod_query($sql);
 $Record->total_rows = pod_query("SELECT FOUND_ROWS()");
-?>
 
+if (!wp_script_is('pods-ui', 'queue') && !wp_script_is('pods-ui', 'to_do') && !wp_script_is('pods-ui', 'done'))
+    wp_print_scripts('pods-ui');
+?>
 <link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/ui/style.css" />
-<script type="text/javascript" src="<?php echo PODS_URL; ?>/ui/js/jqmodal.js"></script>
 <script type="text/javascript">
 var api_url = "<?php echo PODS_URL; ?>/ui/ajax/api.php";
 var datatype;
@@ -129,8 +130,9 @@ function saveForm() {
     jQuery(".btn_save").attr("disabled", "disabled");
 
     if ('undefined' != typeof(nicPaneOptions)) {
-        for (i = 0; i < elements.length; i++) {
-            nicEditors.findEditor(elements[i].id).saveContent();
+        var nicEditElements = jQuery(".form.desc");
+        for (i = 0; i < nicEditElements.length; i++) {
+            nicEditors.findEditor(nicEditElements[i].id).saveContent();
         }
     }
 
@@ -193,14 +195,14 @@ function showform(dt, pod_id) {
                 });
 
                 if ('undefined' != typeof(nicPaneOptions)) {
-                    elements = jQuery(".form.desc");
+                    var nicEditElements = jQuery(".form.desc");
                     var config = {
                         iconsPath : "<?php echo PODS_URL; ?>/ui/images/nicEditorIcons.gif",
                         buttonList : ['bold','italic','underline','fontFormat','left','center','right','justify','ol','ul','indent','outdent','image','link','unlink','xhtml']
                     };
 
-                    for (i = 0; i < elements.length; i++) {
-                        new nicEditor(config).panelInstance(elements[i].id);
+                    for (i = 0; i < nicEditElements.length; i++) {
+                        new nicEditor(config).panelInstance(nicEditElements[i].id);
                     }
                 }
             }

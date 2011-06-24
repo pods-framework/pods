@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS Framework
 Plugin URI: http://podscms.org/
 Description: Pods is a CMS framework for creating and managing your own content types.
-Version: 1.9.6.2
+Version: 1.9.6.3
 Author: The Pods CMS Team
 Author URI: http://podscms.org/about/
 
@@ -140,8 +140,8 @@ class PodInit
             @session_start();
 
         // Load necessary JS
-        wp_enqueue_script('jquery');
-        wp_enqueue_script('pods-ui', PODS_URL . '/ui/js/pods.ui.js');
+        wp_register_script('jqmodal', PODS_URL . '/ui/js/jqmodal.js', array('jquery'));
+        wp_register_script('pods-ui', PODS_URL . '/ui/js/pods.ui.js', array('jquery', 'jqmodal'));
 
         $security_settings = array('pods_disable_file_browser' => 0,
                                    'pods_files_require_login' => 0,
@@ -199,7 +199,7 @@ class PodInit
                     add_submenu_page("pods-manage-$name", 'Add New', 'Add New', 'read', "pod-$name", array($this, 'pods_content_page'));
                 }
                 else {
-                    $submenu[] = $row;
+                    $submenu[trim($row['label'].$row['name'])] = $row;
                 }
             }
         }
@@ -220,6 +220,7 @@ class PodInit
             if (pods_access('manage_menu')) {
                 add_submenu_page('pods', 'Menu Editor', 'Menu Editor', 'read', 'pods-menu', array($this, 'pods_menu_page'));
             }
+            ksort($submenu);
             foreach ($submenu as $item) {
                 $name = apply_filters('pods_admin_submenu_name', $item['name'], $item);
                 $label = trim($item['label']);

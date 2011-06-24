@@ -6,9 +6,10 @@ $form_count = $cache->form_count;
 if (1 == $form_count)
 {
     do_action('pods_form_init',&$this);
+    if (!wp_script_is('pods-ui', 'queue') && !wp_script_is('pods-ui', 'to_do') && !wp_script_is('pods-ui', 'done'))
+        wp_print_scripts('pods-ui');
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/ui/style.css" />
-<script type="text/javascript" src="<?php echo PODS_URL; ?>/ui/js/jqmodal.js"></script>
 <script type="text/javascript">
 var active_file;
 
@@ -35,7 +36,7 @@ jQuery(function() {
             buttonList : ['bold','italic','underline','fontFormat','left','center','right','justify','ol','ul','indent','outdent','image','link','unlink','xhtml']
         };
 
-        for (i = 0; i < elements.length; i++) {
+        for (i = 0; i < nicEditElements.length; i++) {
             new nicEditor(config).panelInstance(nicEditElements[i].id);
         }
     }
@@ -47,7 +48,7 @@ function saveForm(form_count) {
 
     if ('undefined' != typeof(nicPaneOptions)) {
         var nicEditElements = jQuery(".form.desc");
-        for (i = 0; i < elements.length; i++) {
+        for (i = 0; i < nicEditElements.length; i++) {
             nicEditors.findEditor(nicEditElements[i].id).saveContent();
         }
     }

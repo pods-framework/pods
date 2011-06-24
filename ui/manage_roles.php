@@ -3,9 +3,7 @@
 global $table_prefix, $pods_roles;
 $user_roles = get_option($table_prefix . 'user_roles');
 ?>
-
 <!-- Begin role area -->
-
 <script type="text/javascript">
 function editRoles() {
     var data = new Array();

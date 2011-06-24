@@ -5,9 +5,7 @@ while ($row = mysql_fetch_assoc($result)) {
     $templates[$row['id']] = $row['name'];
 }
 ?>
-
 <!-- Begin template area -->
-
 <script type="text/javascript">
 jQuery(function() {
     jQuery(".select-template").change(function() {

@@ -1,5 +1,4 @@
 <!-- Begin pod area -->
-
 <script type="text/javascript">
 jQuery(function() {
     jQuery(".select-pod").change(function() {

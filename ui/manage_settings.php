@@ -1,5 +1,4 @@
 <!-- Begin settings area -->
-
 <script type="text/javascript">
 function pods_resetDB() {
     if (confirm("This will completely remove Pods from the database. Are you sure?")) {

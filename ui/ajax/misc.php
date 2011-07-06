@@ -9,7 +9,7 @@ header('Content-Type: text/html; charset=' . get_bloginfo('charset'));
 foreach ($_POST as $key => $val) {
     ${$key} = mysql_real_escape_string(stripslashes(trim($val)));
 }
-if ('wp_handle_upload' == $action) {
+if ('wp_handle_upload' == $action || 'wp_handle_upload_advanced' == $action) {
     // Flash often fails to send cookies with the POST or upload, so we need to pass it in GET or POST instead
     if ( is_ssl() && empty($_COOKIE[SECURE_AUTH_COOKIE]) && !empty($_REQUEST['auth_cookie']) )
         $_COOKIE[SECURE_AUTH_COOKIE] = $_REQUEST['auth_cookie'];

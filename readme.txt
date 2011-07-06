@@ -64,8 +64,10 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 == Changelog ==
 
-= 1.9.7.1 - July 6, 2011 =
+= 1.9.7.2 - July 6, 2011 =
 * Bugfix: Fixed Uploader cookie-handling for advanced usage
+
+= 1.9.7.1 - July 6, 2011 =
 * Bugfix: Fix for relationships / file saving (error 500 fix)
 
 = 1.9.7 - July 5, 2011 =

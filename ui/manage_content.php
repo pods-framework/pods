@@ -172,7 +172,7 @@ function saveForm() {
             if (!is_error(msg)) {
                 window.location="<?php echo $_SERVER['REQUEST_URI']; ?>";
             }
-            jQuery(".btn_save").attr("disabled", "");
+            jQuery(".btn_save").removeAttr("disabled");
         }
     });
     return false;

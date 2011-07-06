@@ -86,7 +86,7 @@ Standard text box
 */
 elseif ('num' == $coltype || 'txt' == $coltype || 'slug' == $coltype) {
 ?>
-    <input name="<?php echo $name; ?>" type="text" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>" value="<?php echo htmlspecialchars($value); ?>" maxlength="<?php echo ($coltype=='num')?15:128; ?>" />
+    <input name="<?php echo $name; ?>" type="text" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>" value="<?php echo esc_attr($value); ?>" maxlength="<?php echo ($coltype=='num')?15:128; ?>" />
 <?php
 }
 
@@ -113,7 +113,7 @@ Textarea box (no WYSIWYG)
 */
 elseif ('code' == $coltype) {
 ?>
-    <textarea name="<?php echo $name; ?>" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>"><?php echo htmlspecialchars($value); ?></textarea>
+    <textarea name="<?php echo $name; ?>" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>"><?php echo esc_html($value); ?></textarea>
 <?php
 }
 
@@ -123,14 +123,28 @@ File upload
 ==================================================
 */
 elseif ('file' == $coltype) {
-    require_once(realpath(ABSPATH . '/wp-admin/includes/template.php'));
+    if (((defined('PODS_DISABLE_FILE_UPLOAD') && true === PODS_DISABLE_FILE_UPLOAD)
+                || (defined('PODS_UPLOAD_REQUIRE_LOGIN') && is_bool(PODS_UPLOAD_REQUIRE_LOGIN) && true === PODS_UPLOAD_REQUIRE_LOGIN && !is_user_logged_in())
+                || (defined('PODS_UPLOAD_REQUIRE_LOGIN') && !is_bool(PODS_UPLOAD_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_UPLOAD_REQUIRE_LOGIN))))
+            && ((defined('PODS_DISABLE_FILE_BROWSER') && true === PODS_DISABLE_FILE_BROWSER)
+                || (defined('PODS_FILES_REQUIRE_LOGIN') && is_bool(PODS_FILES_REQUIRE_LOGIN) && true === PODS_FILES_REQUIRE_LOGIN && !is_user_logged_in())
+                || (defined('PODS_FILES_REQUIRE_LOGIN') && !is_bool(PODS_FILES_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_FILES_REQUIRE_LOGIN))))) {
+?>
+            <p>You do not have access to upload / browse files. Contact your website admin to resolve.</p>
+<?php
+    }
+    else {
+        if (!(defined('PODS_DISABLE_FILE_UPLOAD') && true === PODS_DISABLE_FILE_UPLOAD)
+                && !(defined('PODS_UPLOAD_REQUIRE_LOGIN') && is_bool(PODS_UPLOAD_REQUIRE_LOGIN) && true === PODS_UPLOAD_REQUIRE_LOGIN && !is_user_logged_in())
+                && !(defined('PODS_UPLOAD_REQUIRE_LOGIN') && !is_bool(PODS_UPLOAD_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_UPLOAD_REQUIRE_LOGIN)))) {
+            require_once(realpath(ABSPATH . '/wp-admin/includes/template.php'));
 
-    if (!isset($coltype_exists[$coltype]) || empty($coltype_exists[$coltype])) {
+            if (!isset($coltype_exists[$coltype]) || empty($coltype_exists[$coltype])) {
 ?>
 <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/swfupload/swfupload.js'; ?>"></script>
 <?php
-    }
-    $button_height = (function_exists('is_super_admin')?23:24);
+            }
+            $button_height = (function_exists('is_super_admin') ? 23 : 24);
 ?>
 <script type="text/javascript">
 jQuery(function() {
@@ -138,7 +152,7 @@ jQuery(function() {
         button_text: '<span class="button">Select + Upload</span>',
         button_text_style: '.button { text-align:center; color:#464646; font-size:11px; font-family:"Lucida Grande",Verdana,Arial,"Bitstream Vera Sans",sans-serif; }',
         button_width: "132",
-	button_height: "<?php echo $button_height; ?>",
+        button_height: "<?php echo $button_height; ?>",
         button_text_top_padding: 3,
         button_image_url: "<?php echo WP_INC_URL; ?>/images/upload.png",
         button_placeholder_id: "<?php echo $css_id; ?>",
@@ -148,7 +162,7 @@ jQuery(function() {
         flash_url: "<?php echo WP_INC_URL; ?>/js/swfupload/swfupload.swf",
         file_types: "*.*",
         file_size_limit: "<?php echo wp_max_upload_size(); ?>",
-        post_params: {"action": "wp_handle_upload", "auth_cookie": "<?php echo (is_ssl() ? $_COOKIE[SECURE_AUTH_COOKIE] : $_COOKIE[AUTH_COOKIE]); ?>", "logged_in_cookie": "<?php echo $_COOKIE[LOGGED_IN_COOKIE]; ?>"},
+        post_params: {"action": "wp_handle_upload_advanced", "auth_cookie": "<?php echo (is_ssl() ? $_COOKIE[SECURE_AUTH_COOKIE] : $_COOKIE[AUTH_COOKIE]); ?>", "logged_in_cookie": "<?php echo $_COOKIE[LOGGED_IN_COOKIE]; ?>"},
         file_dialog_complete_handler: function(num_files, num_queued_files, total_queued_files) {
             this.startUpload();
         },
@@ -167,9 +181,10 @@ jQuery(function() {
                 jQuery("#"+file.id).append(server_data);
             }
             else {
-                jQuery("#"+file.id).prepend('<div class="btn dropme"></div>');
+                server_data = eval('('+server_data+')');
+                jQuery("#"+file.id).html('<div class="btn dropme"></div> <a href="' + server_data.guid + '" target="_blank">' + server_data.post_title + '</a>');
                 jQuery("#"+file.id).attr("class", "success");
-                jQuery("#"+file.id).attr("id", server_data);
+                jQuery("#"+file.id).attr("id", server_data.ID);
             }
         },
         upload_complete_handler: function(file) {
@@ -179,35 +194,45 @@ jQuery(function() {
 });
 </script>
     <input type="button" id="<?php echo $css_id; ?>" value="swfupload not loaded" />
-    <input type="button" class="button" value="Browse Server" onclick="active_file = '<?php echo $name; ?>'; fileBrowser()" />
+<?php
+        }
+        if (!(defined('PODS_DISABLE_FILE_BROWSER') && true === PODS_DISABLE_FILE_BROWSER)
+                && !(defined('PODS_FILES_REQUIRE_LOGIN') && is_bool(PODS_FILES_REQUIRE_LOGIN) && true === PODS_FILES_REQUIRE_LOGIN && !is_user_logged_in())
+                && !(defined('PODS_FILES_REQUIRE_LOGIN') && !is_bool(PODS_FILES_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_FILES_REQUIRE_LOGIN)))) {
+?>
+    <input type="button" class="button" value="Browse Server" onclick="active_file = '<?php echo $name; ?>'; fileBrowser();" />
+<?php
+        }
+?>
     <div class="<?php echo $css_classes; ?>">
 <?php
-    // Retrieve uploaded files
-    $field_id = $field['id'];
-    $pod_id = $this->get_pod_id();
-    $sql = "
-    SELECT
-        p.ID, p.guid
-    FROM
-        @wp_pod_rel r
-    INNER JOIN
-        @wp_posts p ON p.post_type = 'attachment' AND p.ID = r.tbl_row_id
-    WHERE
-        r.pod_id = '$pod_id' AND r.field_id = '$field_id'
-    ";
-    $result = pod_query($sql);
-    while ($row = mysql_fetch_assoc($result)) {
-        $filepath = $row['guid'];
-        $filename = substr($filepath, strrpos($filepath, '/') + 1);
+        // Retrieve uploaded files
+        $field_id = $field['id'];
+        $pod_id = $this->get_pod_id();
+        $sql = "
+        SELECT
+            p.ID, p.guid
+        FROM
+            @wp_pod_rel r
+        INNER JOIN
+            @wp_posts p ON p.post_type = 'attachment' AND p.ID = r.tbl_row_id
+        WHERE
+            r.pod_id = '$pod_id' AND r.field_id = '$field_id'
+        ";
+        $result = pod_query($sql);
+        while ($row = mysql_fetch_assoc($result)) {
+            $filepath = $row['guid'];
+            $filename = substr($filepath, strrpos($filepath, '/') + 1);
 ?>
         <div id="<?php echo $row['ID']; ?>" class="success">
             <div class="btn dropme"></div> <a href="<?php echo $row['guid']; ?>" target="_blank"><?php echo $filename; ?></a>
         </div>
 <?php
-    }
+        }
 ?>
     </div>
 <?php
+    }
 }
 
 /*
@@ -257,7 +282,7 @@ do_action("pods_input_field_type_$coltype", $field, $css_id, $css_classes, $valu
 $coltype_exists[$coltype] = true;
 ?>
     </div>
-    <div class="clear<?php echo $hidden; ?>"></div>
+    <div class="clear<?php echo $hidden; ?>" id="spacer_<?php echo $name; ?>"></div>
 <?php 
 //post-field hooks
 do_action('pods_post_input_field', $field, $css_id, $css_classes, &$this);

@@ -2,9 +2,9 @@
 Contributors: logikal16, sc0ttkclark, jchristopher
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, custom post types, content types, relationships, database, framework, drupal, mysql, custom content, php
-Requires at least: 2.8
+Requires at least: 3.1
 Tested up to: 3.2
-Stable tag: 1.9.6.3
+Stable tag: 1.9.7
 
 Pods is a CMS framework for creating and managing your own content types.
 
@@ -63,6 +63,20 @@ Features coming in Pods 2.0 include:
 OR you can just install it with WordPress by going to Plugins >> Add New >> and type this plugin's name
 
 == Changelog ==
+
+= 1.9.7 - July 5, 2011 =
+* Added: 'having' parameter to Pod :: findRecords
+* Added: #spacer_$name ID is now set on the spacer (div.pods_form div.clear) directly after a field) for clean UI when utilizing advanced CSS / jQuery usage; Also increased spacing by 5px
+* Improved: Increased integer limits on IDs throughout the database to allow for more (or just higher ID #'s)
+* Improved: File Uploader now links after upload, instead of only on loading a form with existing files (or after saving)
+* Bugfix: Now looking at 'groupby' parameter for any additional PICK fields to be JOINed
+* Bugfix: PodAPI :: fields now gets label in addition to name
+* Bugfix: Sometimes when a non integer is sent, SQL errors show up (but not a sanitization issue, it was a casting issue)
+* Bugfix: Using esc_html in place of htmlentities (out with the old, in with the standards, more in 2.0)
+* Bugfix: Now explicitly sending content encoding type (based on WP settings) in AJAX returns
+* Bugfix: TinyMCE API update from @azaozz with additional WP 3.2 support
+* Bugfix: File Upload field now checks if user has access to upload and/or browse before showing the UI for those (regardless, access when trying to actually use the UI before was still closed off)
+* Bugfix: Removed htaccess.txt which was no longer referenced or used
 
 = 1.9.6.3 - June 24, 2011 =
 * Bugfix: JS optimization and fixes for nicEdit (also now no longer outputting pods-ui.js on every page)

@@ -3,6 +3,8 @@ ob_start();
 require_once(preg_replace("/wp-content.*/","wp-load.php",__FILE__));
 ob_end_clean();
 
+header('Content-Type: text/html; charset=' . get_bloginfo('charset'));
+
 // Sanitize input
 $params = array();
 foreach ($_POST as $key => $val) {
@@ -143,7 +145,7 @@ if (isset($methods[$action])) {
 
     // If output for on-page to go into a textarea
     if (true === $safe) {
-        $output = htmlspecialchars($output);
+        $output = esc_html($output);
     }
 
     if (!is_bool($output)) {

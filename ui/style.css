@@ -79,14 +79,15 @@
 }
 
 .pods_form .clear {
-    height:15px;
+    height:20px;
 }
 
 .pods_admin .btn {
     cursor: pointer;
 }
 
-.pods_admin .dragme {
+.pods_admin .dragme,
+.pods_form .dragme {
     background: url(images/move.png) no-repeat;
 }
 
@@ -104,6 +105,7 @@
 }
 
 .pods_admin .dragme,
+.pods_form .dragme,
 .pods_admin .editme,
 .pods_admin .dropme,
 .pods_form .dropme,

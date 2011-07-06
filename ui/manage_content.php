@@ -285,7 +285,7 @@ while ($row = mysql_fetch_assoc($result)) {
 ?>
                 <tr id="row<?php echo $row['id']; ?>">
                     <td>
-                        <a class="row-title" href="#" onclick="editItem('<?php echo $row['dtname']; ?>',<?php echo $row['id']; ?>)"><?php echo htmlspecialchars($row['name']); ?></a>
+                        <a class="row-title" href="#" onclick="editItem('<?php echo $row['dtname']; ?>',<?php echo $row['id']; ?>)"><?php echo esc_html($row['name']); ?></a>
                         <div class="row-actions">
                             <span><a href="#" onclick="editItem('<?php echo $row['dtname']; ?>',<?php echo $row['id']; ?>)">Quick Edit</a></span> |
                             <span><a href="javascript:;" onclick="dropItem(<?php echo $row['id']; ?>)">Delete</a></span>

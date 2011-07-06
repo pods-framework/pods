@@ -93,7 +93,9 @@ function saveForm(form_count) {
     });
     return false;
 }
-
+<?php
+if (!(defined('PODS_DISABLE_FILE_BROWSER') && true === PODS_DISABLE_FILE_BROWSER) && !(defined('PODS_FILES_REQUIRE_LOGIN') && is_bool(PODS_FILES_REQUIRE_LOGIN) && true === PODS_FILES_REQUIRE_LOGIN && !is_user_logged_in()) && !(defined('PODS_FILES_REQUIRE_LOGIN') && !is_bool(PODS_FILES_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_FILES_REQUIRE_LOGIN)))) {
+?>
 function fileBrowser() {
     jQuery("#dialog").jqmShow();
     jQuery(".filebox").html("Loading...");
@@ -107,6 +109,9 @@ function fileBrowser() {
         }
     });
 }
+<?php
+}
+?>
 </script>
 
 <?php
@@ -119,8 +124,7 @@ do_action("pods_pre_form_$this->datatype",$form_count,&$this);
 
 <div class="pods_form form_<?php echo $this->datatype; ?> form_<?php echo $form_count; ?>">
 <?php
-if (1 == $form_count)
-{
+if (1 == $form_count && !(defined('PODS_DISABLE_FILE_BROWSER') && true === PODS_DISABLE_FILE_BROWSER) && !(defined('PODS_FILES_REQUIRE_LOGIN') && is_bool(PODS_FILES_REQUIRE_LOGIN) && true === PODS_FILES_REQUIRE_LOGIN && !is_user_logged_in()) && !(defined('PODS_FILES_REQUIRE_LOGIN') && !is_bool(PODS_FILES_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_FILES_REQUIRE_LOGIN)))) {
 ?>
 <div class="jqmWindow" id="dialog">
     <input type="text" id="file_search" value="" />

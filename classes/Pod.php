@@ -423,17 +423,18 @@ class Pod
      */
     function findRecords($orderby = 't.id DESC', $rows_per_page = 15, $where = null, $sql = null) {
         global $wpdb;
-        $join = $groupby = '';
+        $join = $groupby = $having = '';
         $params = null;
         $select = 't.*, p.id AS pod_id, p.created, p.modified';
         if(is_array($orderby)) {
-            $defaults = array('select'=>$select,'join'=>$join,'search'=>$this->search,'where'=>$where,'groupby'=>$groupby,'orderby'=>'t.id DESC','limit'=>$rows_per_page,'page'=>$this->page,'sql'=>$sql);
+            $defaults = array('select'=>$select,'join'=>$join,'search'=>$this->search,'where'=>$where,'groupby'=>$groupby,'having'=>$having,'orderby'=>'t.id DESC','limit'=>$rows_per_page,'page'=>$this->page,'sql'=>$sql);
             $params = (object) array_merge($defaults,$orderby);
             $select = $params->select;
             $join = $params->join;
             $this->search = $params->search;
             $where = $params->where;
             $groupby = $params->groupby;
+            $having = $params->having;
             $orderby = $params->orderby;
             $rows_per_page = $params->limit;
             $this->page = $params->page;
@@ -495,7 +496,7 @@ class Pod
                 }
 
                 // Performance improvement - only use PICK columns mentioned in ($orderby, $where, $search)
-                $haystack = "$orderby $where $search";
+                $haystack = "$orderby $where $search $groupby $having";
                 if (false === strpos($haystack, $field_name . '.') && false === strpos($haystack, "`$field_name`.")) {
                     continue;
                 }
@@ -539,6 +540,7 @@ class Pod
             $join = apply_filters('pods_findrecords_join', $join, $params, &$this);
 
             $groupby = empty($groupby) ? '' : "GROUP BY $groupby";
+            $having = empty($having) ? '' : "HAVING $having";
             $orderby = empty($orderby) ? '' : "ORDER BY $orderby";
 
             $sql = "
@@ -554,6 +556,7 @@ class Pod
                 $search
                 $where
             $groupby
+            $having
             $orderby
             $limit
             ";

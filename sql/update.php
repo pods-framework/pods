@@ -160,5 +160,16 @@ if ($installed < 196) {
     add_option('pods_upload_require_login_cap', 'upload_files');
 }
 
+if ($installed < 197) {
+    pod_query("ALTER TABLE `@wp_pod` CHANGE `id` `id` BIGINT(15) UNSIGNED NOT NULL AUTO_INCREMENT");
+    pod_query("ALTER TABLE `@wp_pod` CHANGE `tbl_row_id` `tbl_row_id` BIGINT(15) UNSIGNED NULL DEFAULT NULL");
+    pod_query("ALTER TABLE `@wp_pod` CHANGE `author_id` `author_id` BIGINT(15) UNSIGNED NULL DEFAULT NULL");
+    pod_query("ALTER TABLE `@wp_pod_rel` CHANGE `id` `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT");
+    pod_query("ALTER TABLE `@wp_pod_rel` CHANGE `pod_id` `pod_id` BIGINT(15) UNSIGNED NULL DEFAULT NULL");
+    pod_query("ALTER TABLE `@wp_pod_rel` CHANGE `sister_pod_id` `sister_pod_id` BIGINT(15) UNSIGNED NULL DEFAULT NULL");
+    pod_query("ALTER TABLE `@wp_pod_rel` CHANGE `tbl_row_id` `tbl_row_id` BIGINT(15) UNSIGNED NULL DEFAULT NULL");
+    pod_query("ALTER TABLE `@wp_pod_rel` CHANGE `weight` `weight` INT(10) UNSIGNED NULL DEFAULT '0'");
+}
+
 // Save this version
 update_option('pods_version', PODS_VERSION);

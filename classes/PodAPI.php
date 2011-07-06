@@ -23,7 +23,7 @@ class PodAPI
             $result = pod_query("SELECT id FROM @wp_pod_types WHERE name = '$dtname' LIMIT 1");
             if (0 < mysql_num_rows($result)) {
                 $this->dt = mysql_result($result, 0);
-                $result = pod_query("SELECT id, name, coltype, pickval FROM @wp_pod_fields WHERE datatype = {$this->dt} ORDER BY weight");
+                $result = pod_query("SELECT id, name, label, coltype, pickval FROM @wp_pod_fields WHERE datatype = {$this->dt} ORDER BY weight");
                 if (0 < mysql_num_rows($result)) {
                     while ($row = mysql_fetch_assoc($result)) {
                         $this->fields[$row['name']] = $row;
@@ -609,6 +609,9 @@ class PodAPI
                     if ('file' == $rel_type) {
                         $rel_weight = 0;
                         foreach ($rel_values as $related_id) {
+                            $related_id = absval($related_id);
+                            if (empty($related_id))
+                                continue;
                             pod_query("INSERT INTO @wp_pod_rel (pod_id, field_id, tbl_row_id, weight) VALUES ($params->pod_id, $field_id, $related_id, $rel_weight)");
                             $rel_weight++;
                         }
@@ -639,6 +642,9 @@ class PodAPI
                         // Add rel values
                         $rel_weight = 0;
                         foreach ($rel_values as $related_id) {
+                            $related_id = absval($related_id);
+                            if (empty($related_id))
+                                continue;
                             $sister_pod_id = 0;
                             if (!empty($sister_field_id) && !empty($sister_datatype_id)) {
                                 $result = pod_query("SELECT id FROM @wp_pod WHERE datatype = $sister_datatype_id AND tbl_row_id = $related_id LIMIT 1");
@@ -1379,7 +1385,7 @@ class PodAPI
             $output = true;
         }
         if (is_array($data)) {
-            $data = htmlspecialchars(json_encode($data));
+            $data = esc_html(json_encode($data));
         }
         $warnings = array();
 

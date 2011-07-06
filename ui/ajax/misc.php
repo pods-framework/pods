@@ -4,6 +4,8 @@ require_once(preg_replace("/wp-content.*/","wp-load.php",__FILE__));
 require_once(preg_replace("/wp-content.*/","/wp-admin/includes/admin.php",__FILE__));
 ob_end_clean();
 
+header('Content-Type: text/html; charset=' . get_bloginfo('charset'));
+
 foreach ($_POST as $key => $val) {
     ${$key} = mysql_real_escape_string(stripslashes(trim($val)));
 }
@@ -41,7 +43,7 @@ elseif (defined('PODS_UPLOAD_REQUIRE_LOGIN') && !is_bool(PODS_UPLOAD_REQUIRE_LOG
  * Load file list
  */
 if ('browse_files' == $action && false === $browse_disabled) {
-    $search = empty($search) ? '' : "AND guid LIKE '%$search%'";
+    $search = (0 < strlen($search)) ? "AND (post_title LIKE '%$search%' OR guid LIKE '%$search%')" : '';
 
     $sql = "
     SELECT
@@ -83,6 +85,24 @@ elseif ('wp_handle_upload' == $action && false === $upload_disabled) {
     }
     else
         echo $attachment_id;
+}
+
+/**
+ * Upload a new file (advanced - returns URL and ID)
+ */
+elseif ('wp_handle_upload_advanced' == $action && false === $upload_disabled) {
+    $attachment_id = media_handle_upload('Filedata', 0);
+    if (is_object($attachment_id)) {
+        $errors = array();
+        foreach ($attachment_id->errors['upload_error'] as $error_code => $error_message) {
+            $errors[] = $error_message;
+        }
+        echo 'Error: <div style="color:#FF0000">' . implode('</div><div>', $errors) . '</div>';
+    }
+    else {
+        $attachment = get_post($attachment_id, ARRAY_A);
+        echo json_encode($attachment);
+    }
 }
 else
     echo 'Error: <div style="color:#FF0000">Access denied. Contact your website admin to resolve.</div>';

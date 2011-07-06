@@ -609,7 +609,7 @@ class PodAPI
                     if ('file' == $rel_type) {
                         $rel_weight = 0;
                         foreach ($rel_values as $related_id) {
-                            $related_id = absval($related_id);
+                            $related_id = absint($related_id);
                             if (empty($related_id))
                                 continue;
                             pod_query("INSERT INTO @wp_pod_rel (pod_id, field_id, tbl_row_id, weight) VALUES ($params->pod_id, $field_id, $related_id, $rel_weight)");
@@ -642,7 +642,7 @@ class PodAPI
                         // Add rel values
                         $rel_weight = 0;
                         foreach ($rel_values as $related_id) {
-                            $related_id = absval($related_id);
+                            $related_id = absint($related_id);
                             if (empty($related_id))
                                 continue;
                             $sister_pod_id = 0;

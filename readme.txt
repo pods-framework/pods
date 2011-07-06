@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, custom post types, content types, relationships, database, framework, drupal, mysql, custom content, php
 Requires at least: 3.1
 Tested up to: 3.2
-Stable tag: 1.9.7
+Stable tag: 1.9.7.1
 
 Pods is a CMS framework for creating and managing your own content types.
 
@@ -63,6 +63,10 @@ Features coming in Pods 2.0 include:
 OR you can just install it with WordPress by going to Plugins >> Add New >> and type this plugin's name
 
 == Changelog ==
+
+= 1.9.7.1 - July 6, 2011 =
+* Bugfix: Fixed Uploader cookie-handling for advanced usage
+* Bugfix: Fix for relationships / file saving (error 500 fix)
 
 = 1.9.7 - July 5, 2011 =
 * Added: 'having' parameter to Pod :: findRecords

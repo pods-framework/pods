@@ -65,7 +65,7 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 == Changelog ==
 
 = 1.9.7.4 - July 14, 2011 =
-* Bugfix: esc_html replaced with esc_textarea for Package Export and <textarea> usages to prevent breaking html entities
+* Bugfix: esc_html replaced with esc_textarea for Package Export and textarea usages to prevent breaking html entities
 * Bugfix: Fixed errors when you enter a field that doesn't exist, for inclusion in a publicForm
 
 = 1.9.7.3 - July 6, 2011 =

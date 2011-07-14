@@ -145,7 +145,7 @@ if (isset($methods[$action])) {
 
     // If output for on-page to go into a textarea
     if (true === $safe) {
-        $output = esc_html($output);
+        $output = esc_textarea($output);
     }
 
     if (!is_bool($output)) {

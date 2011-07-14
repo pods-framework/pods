@@ -102,7 +102,7 @@ elseif ('desc' == $coltype) {
 <?php
     }
 ?>
-    <textarea name="<?php echo $name; ?>" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>"><?php echo $value; ?></textarea>
+    <textarea name="<?php echo $name; ?>" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>"><?php echo esc_textarea($value); ?></textarea>
 <?php
 }
 
@@ -113,7 +113,7 @@ Textarea box (no WYSIWYG)
 */
 elseif ('code' == $coltype) {
 ?>
-    <textarea name="<?php echo $name; ?>" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>"><?php echo esc_html($value); ?></textarea>
+    <textarea name="<?php echo $name; ?>" class="<?php echo $css_classes; ?>" id="<?php echo $css_id; ?>"><?php echo esc_textarea($value); ?></textarea>
 <?php
 }
 

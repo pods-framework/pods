@@ -1385,7 +1385,7 @@ class PodAPI
             $output = true;
         }
         if (is_array($data)) {
-            $data = esc_html(json_encode($data));
+            $data = esc_textarea(json_encode($data));
         }
         $warnings = array();
 

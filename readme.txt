@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, custom post types, content types, relationships, database, framework, drupal, mysql, custom content, php
 Requires at least: 3.1
 Tested up to: 3.2.1
-Stable tag: 1.9.7.4
+Stable tag: 1.9.8
 
 Pods is a CMS framework for creating and managing your own content types.
 

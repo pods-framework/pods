@@ -64,7 +64,7 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 == Changelog ==
 
-= 1.9.8 - July , 2011 =
+= 1.9.8 - July 24, 2011 =
 * Feature: New Option to override existing packages during package import
 * Feature: Pods and additional database calls are not initiated (but you can run the code as the files are included) when SHORTINIT is defined and set to true (also does not load much of WP itself)
 * Improved: Enhanced display / error information and implementation for package import

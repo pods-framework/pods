@@ -5,7 +5,7 @@ $form_count = $cache->form_count;
 
 if (1 == $form_count)
 {
-    do_action('pods_form_init',&$this);
+    do_action('pods_form_init',$this);
     if (!wp_script_is('pods-ui', 'queue') && !wp_script_is('pods-ui', 'to_do') && !wp_script_is('pods-ui', 'done'))
         wp_print_scripts('pods-ui');
 ?>
@@ -118,8 +118,8 @@ function fileBrowser() {
 }
 
 //pre-form hooks
-do_action('pods_pre_form',$form_count,&$this);
-do_action("pods_pre_form_$this->datatype",$form_count,&$this);
+do_action('pods_pre_form',$form_count,$this);
+do_action("pods_pre_form_$this->datatype",$form_count,$this);
 ?>
 
 <div class="pods_form form_<?php echo $this->datatype; ?> form_<?php echo $form_count; ?>">
@@ -138,5 +138,5 @@ $this->showform($this->get_pod_id(), $public_columns, $label);
 </div>
 <?php 
 //post-form hooks
-do_action('pods_post_form',$form_count,&$this);
-do_action("pods_post_form_$this->datatype",$form_count,&$this);
+do_action('pods_post_form',$form_count,$this);
+do_action("pods_post_form_$this->datatype",$form_count,$this);

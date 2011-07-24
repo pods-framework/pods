@@ -64,6 +64,15 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 == Changelog ==
 
+= 1.9.8 - July , 2011 =
+* Feature: New Option to override existing packages during package import
+* Feature: Pods and additional database calls are not initiated (but you can run the code as the files are included) when SHORTINIT is defined and set to true (also does not load much of WP itself)
+* Improved: Enhanced display / error information and implementation for package import
+* Bugfix: Fixed package export bug that generated an 'empty' package when you click 'Export' without anything selected
+* Bugfix: No longer calling $pods_roles immediately, only used when needed in the code
+* Bugfix: &$referenced the $pods_cache variable to $cache for backwards compatibility - use $pods_cache going forward
+* Bugfix: Fixed minor PHP warnings/notices that come up when WP_DEBUG is defined and set to true
+
 = 1.9.7.4 - July 14, 2011 =
 * Bugfix: esc_html replaced with esc_textarea for Package Export and textarea usages to prevent breaking html entities
 * Bugfix: Fixed errors when you enter a field that doesn't exist, for inclusion in a publicForm

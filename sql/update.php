@@ -48,6 +48,11 @@ if ($installed < 173) {
 }
 
 if ($installed < 175) {
+    if (empty($pods_roles) && !is_array($pods_roles)) {
+        $pods_roles = @unserialize(get_option('pods_roles'));
+        if (!is_array($pods_roles))
+            $pods_roles = array();
+    }
     if (is_array($pods_roles)) {
         foreach ($pods_roles as $role => $privs) {
             if (in_array('manage_podpages', $privs)) {

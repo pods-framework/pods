@@ -1,75 +1,17 @@
 <?php
-/*
-Plugin Name: Pods CMS Framework
-Plugin URI: http://podscms.org/
-Description: Pods is a CMS framework for creating and managing your own content types.
-Version: 1.9.7.4
-Author: The Pods CMS Team
-Author URI: http://podscms.org/about/
-
-Copyright 2009-2011  The Pods CMS Team  (email : contact@podscms.org)
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-define('PODS_VERSION', 197);
-define('PODS_VERSION_FULL', implode('.', str_split(PODS_VERSION)));
-define('PODS_URL', rtrim(plugin_dir_url(__FILE__),'/')); // non-trailing slash being deprecated in 2.0
-define('PODS_DIR', rtrim(plugin_dir_path(__FILE__),'/')); // non-trailing slash being deprecated in 2.0
-define('WP_INC_URL', rtrim(includes_url(),'/')); // non-trailing slash being deprecated in 2.0
-
-global $pods_roles;
-$pods_roles = unserialize(get_option('pods_roles'));
-
-require_once(PODS_DIR . '/functions.php');
-require_once(PODS_DIR . '/deprecated.php');
-require_once(PODS_DIR . '/classes/Pod.php');
-require_once(PODS_DIR . '/classes/PodAPI.php');
-require_once(PODS_DIR . '/classes/PodCache.php');
-require_once(PODS_DIR . '/classes/PodUI.php');
-
-// JSON support
-if (!function_exists('json_encode')) {
-    require_once(ABSPATH . '/wp-includes/js/tinymce/plugins/spellchecker/classes/utils/JSON.php');
-
-    function json_encode($str) {
-        $json = new Moxiecode_JSON();
-        return $json->encode($str);
-    }
-
-    function json_decode($str) {
-        $json = new Moxiecode_JSON();
-        return $json->decode($str);
-    }
-}
-
-function pods_content() {
-    global $pod_page_exists;
-
-    ob_start();
-    eval('?>' . $pod_page_exists['phpcode']);
-    echo apply_filters('pods_content', ob_get_clean());
-}
-
 class PodInit
 {
+    /**
+     * Constructor - Pods Initialization
+     *
+     * @license http://www.gnu.org/licenses/gpl-2.0.html
+     */
     function __construct() {
         global $pod_page_exists, $pods;
 
         // Activate and Install
         register_activation_hook(__FILE__, array($this, 'activate'));
-        add_action('wpmu_new_blog', array(&$this, 'new_blog'), 10, 6);
+        add_action('wpmu_new_blog', array($this, 'new_blog'), 10, 6);
         if (absint(get_option('pods_version')) < PODS_VERSION)
             $this->setup();
 
@@ -351,7 +293,3 @@ class PodInit
         include PODS_DIR . '/ui/manage_menu.php';
     }
 }
-
-global $cache, $pods_init;
-$cache = PodCache::instance(); // @todo Rename to $pods_cache
-$pods_init = new PodInit();

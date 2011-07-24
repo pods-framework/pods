@@ -39,6 +39,7 @@ $methods = array(
     'export_package' => array('priv' => 'manage_packages', 'format' => 'json', 'safe' => true),
     'import_package' => array('priv' => 'manage_packages'),
     'validate_package' => array('priv' => 'manage_packages'),
+    'replace_package' => array('priv' => 'manage_packages'),
     'security_settings' => array('priv' => 'manage_settings')
 );
 
@@ -49,7 +50,7 @@ $action = $params->action;
 if (isset($methods[$action])) {
     $priv = isset($methods[$action]['priv']) ? $methods[$action]['priv'] : null;
     $format = isset($methods[$action]['format']) ? $methods[$action]['format'] : null;
-    $processor = isset($methods[$action]['processor']) ? $methods[$action]['processor'] : null;
+    $processor = isset($methods[$action]['processor']) ? (string) $methods[$action]['processor'] : null;
     $safe = isset($methods[$action]['safe']) ? $methods[$action]['safe'] : null;
     $access_pod_specific = isset($methods[$action]['access_pod_specific']) ? $methods[$action]['access_pod_specific'] : null;
 
@@ -92,24 +93,21 @@ if (isset($methods[$action])) {
         $result = pod_query($sql);
         $row = mysql_fetch_assoc($result);
         $priv_val = 'pod_'.$row['datatype'];
-        if (!pods_access($priv_val) && !pods_access('manage_content')) {
+        if (!pods_access($priv_val) && !pods_access('manage_content'))
             die('<e>Access denied');
-        }
     }
 
     // Check permissions (convert to array to support multiple)
     if (!empty($priv)) {
         foreach ((array) $priv as $priv_val) {
-            if (!pods_access($priv_val)) {
+            if (!pods_access($priv_val))
                 die('<e>Access denied');
-            }
         }
     }
 
     // Call any processors
-    if (!empty($processor) && function_exists($processor)) {
+    if (null !== $processor && 0 < strlen($processor) && function_exists($processor))
         $params = $processor($params, $api);
-    }
 
     $params = apply_filters('pods_api_'.$action,$params);
 
@@ -139,24 +137,21 @@ if (isset($methods[$action])) {
     }
 
     // Output in PHP or JSON format
-    if ('json' == $format) {
+    if ('json' == $format && false !== $output)
         $output = json_encode($output);
-    }
 
     // If output for on-page to go into a textarea
-    if (true === $safe) {
+    if (true === $safe)
         $output = esc_textarea($output);
-    }
 
-    if (!is_bool($output)) {
+    if (!is_bool($output))
         echo $output;
-    }
 }
 
 function process_save_pod_item($params, $api) {
-    if (!pods_validate_key($params->token, $params->uri_hash, $params->datatype, $params->form_count)) {
+    $params = (object) $params;
+    if (!pods_validate_key($params->token, $params->uri_hash, $params->datatype, $params->form_count))
         die("<e>The form has expired. Please reload the page and ensure your session is still active.");
-    }
 
     if ($tmp = $_SESSION[$params->uri_hash][$params->form_count]['columns']) {
         foreach ($tmp as $key => $val) {
@@ -166,7 +161,7 @@ function process_save_pod_item($params, $api) {
     }
     else {
         $tmp = $api->load_pod(array('name' => $params->datatype));
-        foreach ($tmp['fields'] as $key => $field_data) {
+        foreach ($tmp['fields'] as $field_data) {
             $column_name = $field_data['name'];
             $columns[$column_name] = $params->$column_name;
         }

@@ -577,7 +577,12 @@ class PodAPI
                 get_currentuserinfo();
                 $user = $user_ID;
             }
-            $sql = "INSERT INTO @wp_pod (datatype, name, created, modified, author_id) VALUES ('$datatype_id', '$params->name', '$current_time', '$current_time', '$user')";
+            $name = $params->datatype;
+            if (isset($params->name))
+                $name = $params->name;
+            if (isset($params->columns) && is_array($params->columns) && isset($params->columns['name']))
+                $name = $params->columns['name'];
+            $sql = "INSERT INTO @wp_pod (datatype, name, created, modified, author_id) VALUES ('$datatype_id', '$name', '$current_time', '$current_time', '$user')";
             $params->pod_id = pod_query($sql, 'Cannot add new content');
             $params->tbl_row_id = pod_query("INSERT INTO `@wp_pod_tbl_$params->datatype` (name) VALUES (NULL)", 'Cannot add new table row');
         }
@@ -1218,7 +1223,21 @@ class PodAPI
             }
         }
 
+        if (1 == count($export))
+            return false;
+
         return $export;
+    }
+
+    /**
+     * Replace an existing package
+     *
+     *
+     * @param mixed $data (optional) An associative array containing a package, or the json encoded package
+     * @since 1.9.8
+     */
+    function replace_package($data = false) {
+        return $this->import_package($data, true);
     }
 
     /**
@@ -1226,9 +1245,10 @@ class PodAPI
      *
      *
      * @param mixed $data (optional) An associative array containing a package, or the json encoded package
+     * @param bool $replace (optional) Replace existing items when found
      * @since 1.9.0
      */
-    function import_package($data = false) {
+    function import_package($data = false, $replace = false) {
         $output = false;
         if (false===$data || isset($data['action'])) {
             $data = get_option('pods_package');
@@ -1250,33 +1270,36 @@ class PodAPI
             'code' => 'mediumtext',
             'desc' => 'mediumtext'
         );
-        $dbtypes = apply_filters('pods_column_dbtypes', $dbtypes, &$this);
+        $dbtypes = apply_filters('pods_column_dbtypes', $dbtypes, $this);
+        
+        $found = array();
 
         if (isset($data['pods'])) {
             $pod_columns = '';
-            foreach ($data['pods'] as $key => $val) {
+            foreach ($data['pods'] as $pod) {
+                $pod = pods_sanitize($pod);
                 $table_columns = array();
-                $pod_fields = $val['fields'];
-                unset($val['fields']);
+                $pod_fields = $pod['fields'];
+                unset($pod['fields']);
 
-                // Escape the values
-                foreach ($val as $k => $v) {
-                    $val[$k] = pods_sanitize($v);
+                if (false !== $replace) {
+                    $existing = $this->load_pod(array('name' => $pod['name']));
+                    if (is_array($existing))
+                        $this->drop_pod(array('id' => $existing['id']));
                 }
 
-                if (empty($pod_columns)) {
-                    $pod_columns = implode("`,`", array_keys($val));
-                }
+                if (empty($pod_columns))
+                    $pod_columns = implode("`,`", array_keys($pod));
                 // Backward-compatibility (before/after helpers)
                 $pod_columns = str_replace('before_helpers', 'pre_save_helpers', $pod_columns);
                 $pod_columns = str_replace('after_helpers', 'post_save_helpers', $pod_columns);
 
-                $values = implode("','", $val);
+                $values = implode("','", $pod);
                 $dt = pod_query("INSERT INTO @wp_pod_types (`$pod_columns`) VALUES ('$values')");
 
                 $tupples = array();
                 $field_columns = '';
-                foreach ($pod_fields as $key => $fieldval) {
+                foreach ($pod_fields as $fieldval) {
                     // Escape the values
                     foreach ($fieldval as $k => $v) {
                         $fieldval[$k] = empty($v) ? 'null' : pods_sanitize($v);
@@ -1303,72 +1326,98 @@ class PodAPI
                     $definitions[] = "`$colname` {$dbtypes[$coltype]}";
                 }
                 $definitions = implode(',', $definitions);
-                pod_query("CREATE TABLE @wp_pod_tbl_{$val['name']} ($definitions)");
+                pod_query("CREATE TABLE @wp_pod_tbl_{$pod['name']} ($definitions)");
+                if (!isset($found['pods']))
+                    $found['pods'] = array();
+                $found['pods'][] = esc_textarea($pod['name']);
             }
         }
 
         if (isset($data['templates'])) {
-            $columns = '';
-            $tupples = array();
-            foreach ($data['templates'] as $key => $val) {
-                // Escape the values
-                foreach ($val as $k => $v) {
-                    $val[$k] = pods_sanitize($v);
+            foreach ($data['templates'] as $template) {
+                $defaults = array('name' => '', 'code' => '');
+                $params = array_merge($defaults, $template);
+                $params = pods_sanitize($params);
+                if (false !== $replace) {
+                    $existing = $this->load_template(array('name' => $params['name']));
+                    if (is_array($existing))
+                        $params['id'] = $existing['id'];
                 }
-
-                if (empty($columns)) {
-                    $columns = implode("`,`", array_keys($val));
-                }
-                $tupples[] = implode("','", $val);
+                $this->save_template($params);
+                if (!isset($found['templates']))
+                    $found['templates'] = array();
+                $found['templates'][] = esc_textarea($params['name']);
             }
-            $tupples = implode("'),('", $tupples);
-            pod_query("INSERT INTO @wp_pod_templates (`$columns`) VALUES ('$tupples')");
         }
 
         if (isset($data['pod_pages'])) {
-            $columns = '';
-            $tupples = array();
-            foreach ($data['pod_pages'] as $key => $val) {
-                // Escape the values
-                foreach ($val as $k => $v) {
-                    $val[$k] = pods_sanitize($v);
+            foreach ($data['pod_pages'] as $pod_page) {
+                $defaults = array('uri' => '', 'title' => '', 'phpcode' => '', 'precode' => '', 'page_template' => '');
+                $params = array_merge($defaults, $pod_page);
+                $params = pods_sanitize($params);
+                if (false !== $replace) {
+                    $existing = $this->load_page(array('uri' => $params['uri']));
+                    if (is_array($existing))
+                        $params['id'] = $existing['id'];
                 }
-
-                if (empty($columns)) {
-                    $columns = implode("`,`", array_keys($val));
-                }
-                $tupples[] = implode("','", $val);
+                $this->save_page($params);
+                if (!isset($found['pod_pages']))
+                    $found['pod_pages'] = array();
+                $found['pod_pages'][] = esc_textarea($params['uri']);
             }
-            $tupples = implode("'),('", $tupples);
-            pod_query("INSERT INTO @wp_pod_pages (`$columns`) VALUES ('$tupples')");
         }
 
         if (isset($data['helpers'])) {
-            $columns = '';
-            $tupples = array();
-            foreach ($data['helpers'] as $key => $val) {
-                // Escape the values
-                foreach ($val as $k => $v) {
-                    // Backward-compatibility (before/after helpers)
-                    if ('helper_type' == $k) {
-                        $v = ('before' == $v) ? 'pre_save' : $v;
-                        $v = ('after' == $v) ? 'post_save' : $v;
-                    }
-                    $val[$k] = pods_sanitize($v);
+            foreach ($data['helpers'] as $helper) {
+                // backwards compatibility
+                if (isset($helper['helper_type'])) {
+                    if ('before' == $helper['helper_type'])
+                        $helper['helper_type'] = 'pre_save';
+                    if ('after' == $helper['helper_type'])
+                        $helper['helper_type'] = 'post_save';
                 }
-
-                if (empty($columns)) {
-                    $columns = implode("`,`", array_keys($val));
+                $defaults = array('name' => '', 'helper_type' => 'display', 'phpcode' => '');
+                $params = array_merge($defaults, $helper);
+                $params = pods_sanitize($params);
+                if (false !== $replace) {
+                    $existing = $this->load_helper(array('name' => $params['name']));
+                    if (is_array($existing))
+                        $params['id'] = $existing['id'];
                 }
-                $tupples[] = implode("','", $val);
+                $this->save_helper($params);
+                if (!isset($found['helpers']))
+                    $found['helpers'] = array();
+                $found['helpers'][] = esc_textarea($params['name']);
             }
-            $tupples = implode("'),('", $tupples);
-            pod_query("INSERT INTO @wp_pod_helpers (`$columns`) VALUES ('$tupples')");
         }
         if (true===$output) {
-            echo "<p><strong>Success!</strong></p>";
+            if (!empty($found)) {
+                echo '<br /><div id="message" class="updated fade">';
+                echo '<h3 style="margin-top:10px;">Package Imported:</h3>';
+                if (isset($found['pods'])) {
+                    echo '<h4>Pod(s)</h4>';
+                    echo '<ul class="pretty"><li>' . implode('</li><li>', $found['pods']) . '</li></ul>';
+                }
+                if (isset($found['templates'])) {
+                    echo '<h4>Template(s)</h4>';
+                    echo '<ul class="pretty"><li>' . implode('</li><li>', $found['templates']) . '</li></ul>';
+                }
+                if (isset($found['pod_pages'])) {
+                    echo '<h4>Pod Page(s)</h4>';
+                    echo '<ul class="pretty"><li>' . implode('</li><li>', $found['pod_pages']) . '</li></ul>';
+                }
+                if (isset($found['helpers'])) {
+                    echo '<h4>Helper(s)</h4>';
+                    echo '<ul class="pretty"><li>' . implode('</li><li>', $found['helpers']) . '</li></ul>';
+                }
+                echo '</div>';
+            }
+            else
+                echo '<e><br /><div id="message" class="error fade"><p>Error: Package not imported, try again.</p></div></e>';
         }
-        return true;
+        if (!empty($found))
+            return true;
+        return false;
     }
 
     /**
@@ -1387,6 +1436,7 @@ class PodAPI
         if (is_array($data)) {
             $data = esc_textarea(json_encode($data));
         }
+        $found = array();
         $warnings = array();
 
         update_option('pods_package', $data);
@@ -1395,54 +1445,129 @@ class PodAPI
 
         if (!is_array($data) || empty($data)) {
             $warnings[] = "This is not a valid package. Please try again.";
+            if (true===$output) {
+                echo '<e><br /><div id="message" class="error fade"><p>This is not a valid package. Please try again.</p></div></e>';
+                return false;
+            }
+            else
+                return $warnings;
         }
 
         if (isset($data['pods'])) {
-            foreach ($data['pods'] as $id => $val) {
-                $pod_name = $val['name'];
-                $result = pod_query("SELECT id FROM @wp_pod_types WHERE name = '$pod_name' LIMIT 1");
-                if (0 < mysql_num_rows($result)) {
-                    $warnings[] = "The pod <b>$pod_name</b> already exists!";
+            foreach ($data['pods'] as $pod) {
+                $pod = pods_sanitize($pod);
+                $existing = $this->load_pod(array('name' => $pod['name']));
+                if (is_array($existing)) {
+                    if (!isset($warnings['pods']))
+                        $warnings['pods'] = array();
+                    $warnings['pods'][] = esc_textarea($pod['name']);
                 }
+                if (!isset($found['pods']))
+                    $found['pods'] = array();
+                $found['pods'][] = esc_textarea($pod['name']);
+            }
+        }
+
+        if (isset($data['templates'])) {
+            foreach ($data['templates'] as $template) {
+                $template = pods_sanitize($template);
+                $existing = $this->load_template(array('name' => $template['name']));
+                if (is_array($existing)) {
+                    if (!isset($warnings['templates']))
+                        $warnings['templates'] = array();
+                    $warnings['templates'][] = esc_textarea($template['name']);
+                }
+                if (!isset($found['templates']))
+                    $found['templates'] = array();
+                $found['templates'][] = esc_textarea($template['name']);
             }
         }
 
         if (isset($data['pod_pages'])) {
-            foreach ($data['pod_pages'] as $id => $val) {
-                $uri = $val['uri'];
-                $result = pod_query("SELECT id FROM @wp_pod_pages WHERE uri = '$uri' LIMIT 1");
-                if (0 < mysql_num_rows($result)) {
-                    $warnings[] = "The pod page <b>$uri</b> already exists!";
+            foreach ($data['pod_pages'] as $pod_page) {
+                $pod_page = pods_sanitize($pod_page);
+                $existing = $this->load_page(array('uri' => $pod_page['uri']));
+                if (is_array($existing)) {
+                    if (!isset($warnings['pod_pages']))
+                        $warnings['pod_pages'] = array();
+                    $warnings['pod_pages'][] = esc_textarea($pod_page['uri']);
                 }
+                if (!isset($found['pod_pages']))
+                    $found['pod_pages'] = array();
+                $found['pod_pages'][] = esc_textarea($pod_page['uri']);
             }
         }
 
         if (isset($data['helpers'])) {
-            foreach ($data['helpers'] as $id => $val) {
-                $helper_name = $val['name'];
-                $result = pod_query("SELECT id FROM @wp_pod_helpers WHERE name = '$helper_name' LIMIT 1");
-                if (0 < mysql_num_rows($result)) {
-                    $warnings[] = "The helper <b>$helper_name</b> already exists!";
+            foreach ($data['helpers'] as $helper) {
+                $helper = pods_sanitize($helper);
+                $existing = $this->load_helper(array('name' => $helper['name']));
+                if (is_array($existing)) {
+                    if (!isset($warnings['helpers']))
+                        $warnings['helpers'] = array();
+                    $warnings['helpers'][] = esc_textarea($helper['name']);
                 }
+                if (!isset($found['helpers']))
+                    $found['helpers'] = array();
+                $found['helpers'][] = esc_textarea($helper['name']);
             }
         }
 
-        if (0 < count($warnings)) {
-            if (true===$output) {
-                echo '<p class="red">The import cannot continue because of the following warnings:</p>';
-                echo '<p>' . implode('</p><p>', $warnings) . '</p>';
+        if (true===$output) {
+            if (!empty($found)) {
+                echo '<hr />';
+                echo '<h3>Package Contents:</h3>';
+                if (isset($found['pods'])) {
+                    echo '<h4>Pod(s)</h4>';
+                    echo '<ul class="pretty"><li>' . implode('</li><li>', $found['pods']) . '</li></ul>';
+                }
+                if (isset($found['templates'])) {
+                    echo '<h4>Template(s)</h4>';
+                    echo '<ul class="pretty"><li>' . implode('</li><li>', $found['templates']) . '</li></ul>';
+                }
+                if (isset($found['pod_pages'])) {
+                    echo '<h4>Pod Page(s)</h4>';
+                    echo '<ul class="pretty"><li>' . implode('</li><li>', $found['pod_pages']) . '</li></ul>';
+                }
+                if (isset($found['helpers'])) {
+                    echo '<h4>Helper(s)</h4>';
+                    echo '<ul class="pretty"><li>' . implode('</li><li>', $found['helpers']) . '</li></ul>';
+                }
+            }
+            if (0 < count($warnings)) {
+                echo '<hr />';
+                echo '<h3 class="red">WARNING: There are portions of this package that already exist</h3>';
+                if (isset($warnings['pods'])) {
+                    echo '<h4>Pod(s)</h4>';
+                    echo '<ul class="pretty"><li>' . implode('</li><li>', $warnings['pods']) . '</li></ul>';
+                }
+                if (isset($warnings['templates'])) {
+                    echo '<h4>Template(s)</h4>';
+                    echo '<ul class="pretty"><li>' . implode('</li><li>', $warnings['templates']) . '</li></ul>';
+                }
+                if (isset($warnings['pod_pages'])) {
+                    echo '<h4>Pod Page(s)</h4>';
+                    echo '<ul class="pretty"><li>' . implode('</li><li>', $warnings['pod_pages']) . '</li></ul>';
+                }
+                if (isset($warnings['helpers'])) {
+                    echo '<h4>Helper(s)</h4>';
+                    echo '<ul class="pretty"><li>' . implode('</li><li>', $warnings['helpers']) . '</li></ul>';
+                }
+                echo '<p><input type="button" class="button-primary" style="background:#f39400;border-color:#d56500;" onclick="podsImport(\'replace_package\')" value=" Overwrite the existing package (Step 2 of 2) " />&nbsp;&nbsp;&nbsp;<input type="button" class="button-secondary" onclick="podsImportCancel()" value=" Cancel " /></p>';
                 return false;
             }
-            else {
-                return $warnings;
+            elseif (!empty($found)) {
+                echo '<p><input type="button" class="button-primary" onclick="podsImport(\'import_package\')" value=" Import Package (Step 2 of 2) " />&nbsp;&nbsp;&nbsp;<input type="button" class="button-secondary" onclick="podsImportCancel()" value=" Cancel " /></p>';
+                return false;
             }
+            echo '<e><br /><div id="message" class="error fade"><p>Error: This package is empty, there is nothing to import.</p></div></e>';
+            return false;
         }
-        else {
-            if (true===$output) {
-                echo '<p><input type="button" class="button" onclick="podsImport(true)" value="Looking good. Finalize!" />';
-            }
+        if (0 < count($warnings))
+            return $warnings;
+        elseif (!empty($found))
             return true;
-        }
+        return false;
     }
 
     /**

@@ -20,9 +20,9 @@ if (1 > $field['multiple']) {
 }
 
 //pre-field hooks
-do_action('pods_pre_input_field', $field, $css_id, $css_classes, $value, &$this);
-do_action("pods_pre_input_field_$name", $field, $css_id, $css_classes, $value, &$this);
-do_action("pods_pre_input_field_type_$coltype", $field, $css_id, $css_classes, $value, &$this);
+do_action('pods_pre_input_field', $field, $css_id, $css_classes, $value, $this);
+do_action("pods_pre_input_field_$name", $field, $css_id, $css_classes, $value, $this);
+do_action("pods_pre_input_field_type_$coltype", $field, $css_id, $css_classes, $value, $this);
 ?>
     <div class="leftside <?php echo $name . $hidden; ?>">
         <label for="<?php echo $css_id; ?>"><?php echo $label; ?></label>
@@ -278,13 +278,13 @@ elseif ('pick' == $coltype) {
     </select>
 <?php
 }
-do_action("pods_input_field_type_$coltype", $field, $css_id, $css_classes, $value, &$this);
+do_action("pods_input_field_type_$coltype", $field, $css_id, $css_classes, $value, $this);
 $coltype_exists[$coltype] = true;
 ?>
     </div>
     <div class="clear<?php echo $hidden; ?>" id="spacer_<?php echo $name; ?>"></div>
 <?php 
 //post-field hooks
-do_action('pods_post_input_field', $field, $css_id, $css_classes, &$this);
-do_action("pods_post_input_field_$name", $field, $css_id, $css_classes, &$this);
-do_action("pods_post_input_field_type_$coltype", $field, $css_id, $css_classes, $value, &$this);
+do_action('pods_post_input_field', $field, $css_id, $css_classes, $this);
+do_action("pods_post_input_field_$name", $field, $css_id, $css_classes, $this);
+do_action("pods_post_input_field_type_$coltype", $field, $css_id, $css_classes, $value, $this);

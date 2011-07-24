@@ -1,6 +1,11 @@
 <?php
 // Get all available WP roles
 global $table_prefix, $pods_roles;
+if (empty($pods_roles) && !is_array($pods_roles)) {
+    $pods_roles = @unserialize(get_option('pods_roles'));
+    if (!is_array($pods_roles))
+        $pods_roles = array();
+}
 $user_roles = get_option($table_prefix . 'user_roles');
 ?>
 <!-- Begin role area -->

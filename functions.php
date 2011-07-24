@@ -286,6 +286,12 @@ function pod_page_exists($uri = null) {
 function pods_access($privs, $method = 'OR') {
     global $pods_roles;
 
+    if (empty($pods_roles) && !is_array($pods_roles)) {
+        $pods_roles = @unserialize(get_option('pods_roles'));
+        if (!is_array($pods_roles))
+            $pods_roles = array();
+    }
+
     if (current_user_can('administrator') || current_user_can('pods_administrator') || (function_exists('is_super_admin') && is_super_admin())) {
         return true;
     }
@@ -405,4 +411,17 @@ function pods_validate_key($key, $uri_hash, $datatype, $form_count = 1) {
         }
     }
     return false;
+}
+
+/**
+ * Output Pod Page Content
+ */
+function pods_content() {
+    global $pod_page_exists;
+
+    if (false !== $pod_page_exists) {
+        ob_start();
+        eval('?>' . $pod_page_exists['phpcode']);
+        echo apply_filters('pods_content', ob_get_clean());
+    }
 }

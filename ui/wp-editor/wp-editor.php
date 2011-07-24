@@ -14,7 +14,7 @@ class WP_Editor {
 	var $media_buttons;
 
 	function __construct() {
-		add_filter( 'tiny_mce_before_init', array(&$this, 'loaded_test') );
+		add_filter( 'tiny_mce_before_init', array($this, 'loaded_test') );
 	}
 
 	function editor( $content, $editor_id, $settings = array(), $media_buttons = true ) {
@@ -89,9 +89,9 @@ class WP_Editor {
 		echo "\n</div>\n\n";
 
 		if ( is_admin() )
-			add_action( 'admin_print_footer_scripts', array(&$this, 'editor_js'), 50 );
+			add_action( 'admin_print_footer_scripts', array($this, 'editor_js'), 50 );
 		else
-			add_action( 'wp_print_footer_scripts', array(&$this, 'editor_js') );
+			add_action( 'wp_print_footer_scripts', array($this, 'editor_js') );
 
 		unset( $set['wp_buttons_css'], $set['editor_class'], $set['upload_link_title'], $set['media_buttons_context'], $set['textarea_rows'] );
 		$this->settings[$editor_id] = $set;
@@ -132,7 +132,7 @@ class WP_Editor {
 				include_once( ABSPATH . 'wp-admin/includes/template.php' );
 
 			if ( !is_admin() ) {
-				add_filter( 'tiny_mce_before_init', array(&$this, 'disable_fullscreen') );
+				add_filter( 'tiny_mce_before_init', array($this, 'disable_fullscreen') );
 				echo '<style type="text/css">.wp-dialog,.alternate{background-color:#F9F9F9;}</style>';
 			}
 

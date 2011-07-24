@@ -321,7 +321,7 @@
     background: #fff;
 }
 
-/* Public-facing */
+/* Admin-facing */
 .pods_admin h3 {
     margin: 0 0 10px 0;
 }
@@ -335,6 +335,7 @@
     height: 26px;
 }
 
+/* Public-facing */
 .pods_form .form {
     border: 1px solid #E3E3E3;
 }

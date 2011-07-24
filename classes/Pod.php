@@ -241,7 +241,7 @@ class Pod
         }
 
         //override with custom relational query
-        $result = apply_filters('pods_rel_lookup', $result, $tbl_row_ids, $table, $orderby, &$this);
+        $result = apply_filters('pods_rel_lookup', $result, $tbl_row_ids, $table, $orderby, $this);
 
         // Put all related items into an array
         if (!is_array($result)) {
@@ -303,16 +303,16 @@ class Pod
         ob_start();
 
         //pre-helper hooks
-        do_action('pods_pre_pod_helper', $helper, $value, $name, &$this);
-        do_action("pods_pre_pod_helper_$helper", $helper, $value, $name, &$this);
+        do_action('pods_pre_pod_helper', $helper, $value, $name, $this);
+        do_action("pods_pre_pod_helper_$helper", $helper, $value, $name, $this);
 
         if (false !== $content) {
             eval("?>$content");
         }
 
         //post-helper hooks
-        do_action('pods_post_pod_helper', $helper, $value, $name, &$this);
-        do_action("pods_post_pod_helper_$helper", $helper, $value, $name, &$this);
+        do_action('pods_post_pod_helper', $helper, $value, $name, $this);
+        do_action("pods_post_pod_helper_$helper", $helper, $value, $name, $this);
 
         return ob_get_clean();
     }
@@ -367,7 +367,7 @@ class Pod
         }
 
         //override with custom dropdown values
-        $sql = apply_filters('pods_get_dropdown_values', $sql, $params, &$this);
+        $sql = apply_filters('pods_get_dropdown_values', $sql, $params, $this);
 
         $val = array();
         $result = pod_query($sql);
@@ -441,6 +441,8 @@ class Pod
             $sql = $params->sql;
         }
         $page = $this->page;
+        if (-1 == $rows_per_page)
+            $page = 1;
         $datatype = $this->datatype;
         $datatype_id = $this->datatype_id;
         $this->rpp = $rows_per_page;
@@ -534,10 +536,10 @@ class Pod
                     ";
                 }
                 //override with custom joins
-                $join .= ' '.apply_filters('pods_findrecords_the_join', $the_join, $i, $row, $params, &$this).' ';
+                $join .= ' '.apply_filters('pods_findrecords_the_join', $the_join, $i, $row, $params, $this).' ';
             }
             //override with custom joins
-            $join = apply_filters('pods_findrecords_join', $join, $params, &$this);
+            $join = apply_filters('pods_findrecords_join', $join, $params, $this);
 
             $groupby = empty($groupby) ? '' : "GROUP BY $groupby";
             $having = empty($having) ? '' : "HAVING $having";
@@ -565,6 +567,11 @@ class Pod
         $this->result = pod_query($sql);
         $this->total = absint(@mysql_num_rows($this->result));
         $this->total_rows = pod_query("SELECT FOUND_ROWS()");
+        if (false === is_numeric($this->total_rows)) {
+            if ($row = mysql_fetch_array($this->total_rows)) {
+                $this->total_rows = $row[0];
+            }
+        }
     }
 
     /**
@@ -652,7 +659,7 @@ class Pod
         }
         $uri_hash = md5($_SERVER['REQUEST_URI']);
 
-        do_action('pods_showform_pre', $pod_id, $public_columns, $label, &$this);
+        do_action('pods_showform_pre', $pod_id, $public_columns, $label, $this);
         
         foreach ($fields as $key => $field) {
             // Replace field attributes with public form attributes
@@ -742,7 +749,7 @@ class Pod
         	'value' => $label,
         	'onclick' => "saveForm($cache->form_count)"
         );
-        $save_button_atts = apply_filters('pods_showform_save_button_atts', $save_button_atts, &$this);
+        $save_button_atts = apply_filters('pods_showform_save_button_atts', $save_button_atts, $this);
         $atts = '';
         foreach ($save_button_atts as $att => $value) {
         	$atts .= $att.'="'.$value.'" ';
@@ -756,10 +763,10 @@ class Pod
     <input type="hidden" class="form txt form_count" value="<?php echo $cache->form_count; ?>" />
     <input type="hidden" class="form txt token" value="<?php echo pods_generate_key($datatype, $uri_hash, $public_columns, $cache->form_count); ?>" />
     <input type="hidden" class="form txt uri_hash" value="<?php echo $uri_hash; ?>" />
-	<?php echo apply_filters('pods_showform_save_button', $save_button, $save_button_atts, &$this); ?>
+	<?php echo apply_filters('pods_showform_save_button', $save_button, $save_button_atts, $this); ?>
     </div>
 <?php
-        do_action('pods_showform_post', $pod_id, $public_columns, $label, &$this);
+        do_action('pods_showform_post', $pod_id, $public_columns, $label, $this);
     }
 
     /**
@@ -773,7 +780,7 @@ class Pod
      * Display the pagination controls
      */
     function getPagination($label = 'Go to page:') {
-        if ($this->rpp < $this->getTotalRows()) {
+        if ($this->rpp < $this->getTotalRows() && 0 < $this->rpp) {
             include PODS_DIR . '/ui/pagination.php';
         }
     }
@@ -806,8 +813,8 @@ class Pod
         ob_start();
 
         //pre-template hooks
-        do_action('pods_pre_showtemplate', $tpl, $code, &$this);
-        do_action("pods_pre_showtemplate_$tpl", $tpl, $code, &$this);
+        do_action('pods_pre_showtemplate', $tpl, $code, $this);
+        do_action("pods_pre_showtemplate_$tpl", $tpl, $code, $this);
 
         if (empty($code)) {
             $result = pod_query("SELECT code FROM @wp_pod_templates WHERE name = '$tpl' LIMIT 1");
@@ -828,8 +835,8 @@ class Pod
         }
 
         //post-template hooks
-        do_action('pods_post_showtemplate', $tpl, $code, &$this);
-        do_action("pods_post_showtemplate_$tpl", $tpl, $code, &$this);
+        do_action('pods_post_showtemplate', $tpl, $code, $this);
+        do_action("pods_post_showtemplate_$tpl", $tpl, $code, $this);
 
         return ob_get_clean();
     }

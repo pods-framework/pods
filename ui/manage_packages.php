@@ -32,7 +32,7 @@ function podsExport() {
         url: api_url,
         data: "action=export_package&"+data.join("&"),
         success: function(msg) {
-            if (!is_error(msg)) {
+            if (!is_error(msg) && 0 < msg.length) {
                 jQuery("#export_code").html(msg);
             }
         }
@@ -40,18 +40,23 @@ function podsExport() {
 }
 
 function podsImport(action) {
-    var action = (false == action) ? 'validate_package' : 'import_package';
+    if ('replace_package' == action && !confirm('Warning: Overwriting a package will remove all customizations previously made to it (if any). Overwriting a Pod will remove all items, be sure to backup your data before you continue if you wish to retain it.\n\nContinue overwriting this Package?'))
+        return false;
     var data = ('validate_package' == action) ? '&data='+encodeURIComponent(jQuery("#import_code").val()) : '';
     jQuery.ajax({
         type: "post",
         url: api_url,
         data: "action="+action+data,
         success: function(msg) {
-            if (!is_error(msg)) {
-                jQuery("#import_finalize").html(msg);
-            }
+            jQuery("#import_finalize").html(msg);
+            if ('validate_package' != action && !is_error(msg))
+                jQuery('#import_code').val('');
         }
     });
+}
+
+function podsImportCancel() {
+    jQuery('#import_finalize').html('');
 }
 </script>
 
@@ -126,14 +131,14 @@ while ($row = mysql_fetch_assoc($result)) {
             </tr>
         </table>
 
-        <p><input type="button" class="button-primary" onclick="podsExport()" value="Export!" /></p>
+        <p><input type="button" class="button-primary" onclick="podsExport()" value=" Export Package " /></p>
         <p><textarea id="export_code">The export code will appear here.</textarea></p>
     </div>
 
     <div id="importArea" class="area hidden">
-        <p>Paste the package code into the form. You will be taken to a confirmation screen.</p>
+        <p>Paste the package code into the form. The package will be verified and you will have a chance to confirm before the final import.</p>
         <p><textarea id="import_code"></textarea></p>
-        <input type="button" class="button-primary" onclick="podsImport(false)" value="Proceed to Confirmation" />
+        <input type="button" class="button-primary" onclick="podsImport('validate_package')" value=" Verify Package (Step 1 of 2) " />
         <div id="import_finalize"></div>
     </div>
 </div>

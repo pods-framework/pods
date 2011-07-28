@@ -6,7 +6,7 @@ Requires at least: 3.1
 Tested up to: 3.2.1
 Stable tag: 1.10
 
-Pods is a CMS framework for creating and managing your own content types.
+Pods is a CMS framework for creating, managing, and deploying customized content types.
 
 == Description ==
 

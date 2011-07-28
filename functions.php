@@ -17,6 +17,8 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
     $sql = str_replace('@wp_', $wpdb->prefix, $sql);
     $sql = str_replace('{prefix}', '@wp_', $sql);
 
+    $sql = apply_filters('pod_query', $sql, $error, $results_error, $no_results_error);
+
     // Return cached resultset
     if ('SELECT' == substr($sql, 0, 6)) {
         $cache = PodCache::instance();
@@ -25,6 +27,7 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
             if (0 < mysql_num_rows($result)) {
                 mysql_data_seek($result, 0);
             }
+            $result = apply_filters('pod_query_return', $result, $sql, $error, $results_error, $no_results_error);
             return $result;
         }
     }
@@ -47,6 +50,7 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
             $cache->results[$sql] = $result;
         }
     }
+    $result = apply_filters('pod_query_return', $result, $sql, $error, $results_error, $no_results_error);
     return $result;
 }
 
@@ -75,8 +79,9 @@ function pods_sanitize($input) {
         }
     }
     else {
-        $output = mysql_real_escape_string($input,$wpdb->dbh);
+        $output = mysql_real_escape_string($input, $wpdb->dbh);
     }
+    $output = apply_filters('pods_sanitize', $output, $input);
     return $output;
 }
 
@@ -117,6 +122,7 @@ function pods_url_variable($key = 'last', $type = 'uri') {
     elseif ('session' == $type) {
         $output = isset($_SESSION[$key]) ? $_SESSION[$key] : null;
     }
+    $output = apply_filters('pods_url_variable', $output, $key, $type);
     return pods_sanitize($output);
 }
 
@@ -130,6 +136,7 @@ function pods_create_slug($str) {
     $str = preg_replace("/([_ ])/", "-", trim($str));
     $str = preg_replace("/([^0-9a-z-.])/", "", strtolower($str));
     $str = preg_replace("/(-){2,}/", "-", $str);
+    $str = apply_filters('pods_create_slug', $str);
     return $str;
 }
 
@@ -143,6 +150,7 @@ function pods_clean_name($str) {
     $str = preg_replace("/([- ])/", "_", trim($str));
     $str = preg_replace("/([^0-9a-z_])/", "", strtolower($str));
     $str = preg_replace("/(_){2,}/", "_", $str);
+    $str = apply_filters('pods_clean_name', $str);
     return $str;
 }
 
@@ -188,6 +196,7 @@ function pods_unique_slug($value, $column_name, $datatype, $datatype_id, $pod_id
             }
         }
     }
+    $value = apply_filters('pods_unique_slug', $value, $column_name, $datatype, $datatype_id, $pod_id);
     return $value;
 }
 
@@ -292,15 +301,18 @@ function pods_access($privs, $method = 'OR') {
             $pods_roles = array();
     }
 
-    if (current_user_can('administrator') || current_user_can('pods_administrator') || (function_exists('is_super_admin') && is_super_admin())) {
-        return true;
-    }
+    // Convert $privs to an array
+    $privs = (array) $privs;
 
     // Convert $method to uppercase
     $method = strtoupper($method);
 
-    // Convert $privs to an array
-    $privs = (array) $privs;
+    $check = apply_filters('pods_access', null, $privs, $method, $pods_roles);
+    if (null !== $check && is_bool($check))
+        return $check;
+
+    if (current_user_can('administrator') || current_user_can('pods_administrator') || (function_exists('is_super_admin') && is_super_admin()))
+        return true;
 
     // Store approved privs when using "AND"
     $approved_privs = array();
@@ -311,9 +323,8 @@ function pods_access($privs, $method = 'OR') {
             if (current_user_can($role)) {
                 foreach ($privs as $priv) {
                     if (false !== array_search($priv, $pods_privs) || current_user_can('pods_'.ltrim($priv,'pod_'))) {
-                        if ('OR' == $method) {
+                        if ('OR' == $method)
                             return true;
-                        }
                         $approved_privs[$priv] = true;
                     }
                 }
@@ -321,9 +332,8 @@ function pods_access($privs, $method = 'OR') {
         }
         if ('AND' == strtoupper($method)) {
             foreach ($privs as $priv) {
-                if (isset($approved_privs[$priv])) {
+                if (isset($approved_privs[$priv]))
                     return false;
-                }
             }
             return true;
         }
@@ -338,8 +348,9 @@ function pods_access($privs, $method = 'OR') {
  * @since 1.6.7
  */
 function pods_shortcode($tags) {
-    $pairs = array('name' => null, 'id' => null, 'slug' => null, 'order' => 'id DESC', 'limit' => 15, 'where' => null, 'col' => null, 'template' => null, 'helper' => null);
+    $pairs = array('name' => null, 'id' => null, 'slug' => null, 'order' => 't.id DESC', 'limit' => 15, 'where' => null, 'col' => null, 'template' => null, 'helper' => null);
     $tags = shortcode_atts($pairs, $tags);
+    $tags = apply_filters('pods_shortcode', $tags);
 
     if (empty($tags['name'])) {
         return '<e>Please provide a Pod name';
@@ -359,29 +370,15 @@ function pods_shortcode($tags) {
     $Record = new Pod($tags['name'], $id);
 
     if (empty($id)) {
-        $Record->findRecords($order, $limit, $where);
+        $params = array('orderby' => $order, 'limit' => $limit, 'where' => $limit);
+        $params = apply_filters('pods_shortcode_findrecords_params', $params);
+        $Record->findRecords($params);
     }
     if (!empty($tags['col']) && !empty($id)) {
         $val = $Record->get_field($tags['col']);
         return empty($tags['helper']) ? $val : $Record->pod_helper($tags['helper'], $val);
     }
     return $Record->showTemplate($tags['template']);
-}
-
-/**
- * Translation support
- *
- * @param string $string The string to translate
- * @return string The translated string, or the original string
- * @since 1.7.0
- */
-function pods_i18n($string) {
-    global $lang;
-
-    if (isset($lang[$string])) {
-        $string = $lang[$string];
-    }
-    return $string;
 }
 
 /**
@@ -394,6 +391,7 @@ function pods_generate_key($datatype, $uri_hash, $public_columns, $form_count = 
     $_SESSION[$uri_hash][$form_count]['dt'] = $datatype;
     $_SESSION[$uri_hash][$form_count]['token'] = $token;
     $_SESSION[$uri_hash][$form_count]['columns'] = $public_columns;
+    $token = apply_filters('pods_generate_key', $token, $datatype, $uri_hash, $public_columns, $form_count);
     return $token;
 }
 
@@ -403,14 +401,13 @@ function pods_generate_key($datatype, $uri_hash, $public_columns, $form_count = 
  * @since 1.2.0
  */
 function pods_validate_key($key, $uri_hash, $datatype, $form_count = 1) {
-    if (!empty($_SESSION[$uri_hash])) {
+    if (!empty($_SESSION) && isset($_SESSION[$uri_hash]) && !empty($_SESSION[$uri_hash])) {
         $session_dt = $_SESSION[$uri_hash][$form_count]['dt'];
         $session_token = $_SESSION[$uri_hash][$form_count]['token'];
-        if (!empty($session_token) && $key == $session_token && $datatype == $session_dt) {
-            return true;
-        }
+        if (!empty($session_token) && $key == $session_token && $datatype == $session_dt)
+            return apply_filters('pods_validate_key', true, $key, $uri_hash, $datatype, $form_count);
     }
-    return false;
+    return apply_filters('pods_validate_key', false, $key, $uri_hash, $datatype, $form_count);
 }
 
 /**
@@ -424,4 +421,77 @@ function pods_content() {
         eval('?>' . $pod_page_exists['phpcode']);
         echo apply_filters('pods_content', ob_get_clean());
     }
+}
+
+/**
+ * Get a Point value from a Pods Version number
+ *
+ * @since 1.9.9
+ */
+function pods_version_to_point($version) {
+    $pods_point_tmp = $version;
+    if (strlen($pods_point_tmp) < 9) {
+        if (8 == strlen($pods_point_tmp))
+            $pods_point_tmp = '0' . $pods_point_tmp;
+        if (7 == strlen($pods_point_tmp))
+            $pods_point_tmp = '00' . $pods_point_tmp;
+        if (3 == strlen($version)) // older versions prior to 1.9.9
+            return implode('.', str_split($version));
+    }
+    $pods_point_tmp = str_split($pods_point_tmp, 3);
+    $pods_point = array();
+    foreach ($pods_point_tmp as $point) {
+        $pods_point[] = (int) $point;
+    }
+    $pods_point = implode('.', $pods_point);
+    return $pods_point;
+}
+
+/**
+ * Check if Pods is compatible with WP / PHP / MySQL or not
+ *
+ * @since 1.9.9
+ */
+function pods_compatible($wp = null, $php = null, $mysql = null) {
+    if (null === $wp)
+        $wp = get_bloginfo("version");
+    if (null === $php)
+        $php = phpversion();
+    if (null === $mysql)
+        $mysql = @mysql_result(pod_query("SELECT VERSION()"), 0);
+    $compatible = true;
+    if (!version_compare($wp, PODS_WP_VERSION_MINIMUM, '>=')) {
+        $compatible = false;
+        add_action('admin_notices', 'pods_version_notice_wp');
+        function pods_version_notice_wp () {
+?>
+    <div class="error fade">
+        <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of <strong>WordPress <?php echo PODS_WP_VERSION_MINIMUM; ?>+</strong> to function. You are currently running <strong>WordPress <?php echo get_bloginfo("version"); ?></strong> - Please upgrade your WordPress to continue.</p>
+    </div>
+<?php
+        }
+    }
+    if (!version_compare($php, PODS_PHP_VERSION_MINIMUM, '>=')) {
+        $compatible = false;
+        add_action('admin_notices', 'pods_version_notice_php');
+        function pods_version_notice_php () {
+?>
+    <div class="error fade">
+        <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of <strong>PHP <?php echo PODS_PHP_VERSION_MINIMUM; ?>+</strong> to function. You are currently running <strong>PHP <?php echo phpversion(); ?></strong> - Please upgrade (or have your Hosting Provider upgrade it for you) your PHP version to continue.</p>
+    </div>
+<?php
+        }
+    }
+    if (!@version_compare($mysql, PODS_MYSQL_VERSION_MINIMUM, '>=')) {
+        $compatible = false;
+        add_action('admin_notices', 'pods_version_notice_mysql');
+        function pods_version_notice_mysql () {
+?>
+    <div class="error fade">
+        <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of <strong>MySQL <?php echo PODS_MYSQL_VERSION_MINIMUM; ?>+</strong> to function. You are currently running <strong>MySQL <?php echo @mysql_result(pod_query("SELECT VERSION()"), 0); ?></strong> - Please upgrade (or have your Hosting Provider upgrade it for you) your MySQL version to continue.</p>
+    </div>
+<?php
+        }
+    }
+    return $compatible;
 }

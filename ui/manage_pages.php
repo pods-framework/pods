@@ -112,7 +112,7 @@ function dropPage() {
 <!-- Page HTML -->
 
 <select class="area-select select-page">
-    <option value="">Choose a Page</option>
+    <option value="">-- Choose a Page --</option>
 <?php
 if (isset($pages)) {
     foreach ($pages as $key => $val) {

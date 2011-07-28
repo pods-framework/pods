@@ -13,19 +13,38 @@ while ($row = mysql_fetch_assoc($result)) {
 }
 
 // Figure out which tab to display
-$add_or_edit = 'edit';
+$manage_action = 'manage';
 $wp_page = pods_url_variable('page', 'get');
-$dtname = '';
+$dtname = pods_url_variable('pod','get');
 if ('pods-manage-' == substr($wp_page, 0, 12)) {
+    $manage_action = 'top-level-manage';
     $dtname = substr($wp_page, 12);
+    if (isset($_GET['action']) && ('add' == $_GET['action'] || 'duplicate' == $_GET['action'])) {
+?>
+<script type="text/javascript">
+    document.location = "<?php echo pods_ui_var_update(array('page' => 'pods-add-' . $dtname, 'action' => $_GET['action'], 'id' => (('duplicate' == $_GET['action'] && isset($_GET['id'])) ? $_GET['id'] : ''))); ?>";
+</script>
+<?php
+        die();
+    }
+}
+elseif ('pods-add-' == substr($wp_page, 0, 9)) {
+    $manage_action = 'top-level-manage';
+    $dtname = substr($wp_page, 9);
+    $_GET['page'] = 'pods-manage-' . $dtname;
+    if (!isset($_GET['action']))
+        $_GET['action'] = 'add';
 }
 elseif ('pod-' == substr($wp_page, 0, 4)) {
-    $add_or_edit = 'add';
+    $manage_action = 'sub-manage';
     $dtname = substr($wp_page, 4);
+    if (!isset($_GET['action']))
+        $_GET['action'] = 'add';
 }
-if (isset($_GET['pod'])) {
-    $dtname = pods_url_variable('pod','get');
-}
+?>
+<div class="pods_manage_admin">
+<?php
+/* Using Pods UI now
 
 // Load the listing
 $Record = new Pod();
@@ -72,7 +91,6 @@ LIMIT
 ";
 $result = pod_query($sql);
 $Record->total_rows = pod_query("SELECT FOUND_ROWS()");
-
 if (!wp_script_is('pods-ui', 'queue') && !wp_script_is('pods-ui', 'to_do') && !wp_script_is('pods-ui', 'done'))
     wp_print_scripts('pods-ui');
 ?>
@@ -243,13 +261,30 @@ function fileBrowser() {
     </div>
 
     <div id="browseArea" class="area active">
-
-        <div class="tablenav">
+<?php
+*/
+if ('manage' == $manage_action && (!isset($_GET['action']) || 'manage' == $_GET['action'])) {
+?>
+        <style type="text/css">
+            .pods_manage_admin .pod-browser {
+                width: 100%;
+                margin: 20px 15px 20px 0;
+                padding: 10px;
+                background-color: #F7F7F7;
+                border: 1px solid #E7E7E7;
+                -webkit-border-radius: 3px;
+                -moz-border-radius: 3px;
+                border-radius: 3px;
+            }
+        </style>
+        <div class="pod-browser">
             <form method="get">
                 <select class="pick_module" name="pod">
-                    <option value="">-- All Pods --</option>
+                    <option value="">-- Select Pod --</option>
 <?php
     foreach ($datatypes as $key => $name) {
+        if (!pods_access('pod_' . $name))
+            continue;
         $selected = ($name == $dtname || $name == pods_url_variable('pod','get')) ? ' selected' : '';
 ?>
                     <option value="<?php echo $name; ?>"<?php echo $selected; ?>><?php echo $name; ?></option>
@@ -257,12 +292,23 @@ function fileBrowser() {
     }
 ?>
                 </select>
-                <input type="text" name="keywords" value="<?php echo pods_url_variable('keywords', 'get'); ?>" />
+                <!--<input type="text" name="keywords" value="<?php echo pods_url_variable('keywords', 'get'); ?>" />-->
                 <input type="hidden" name="page" value="<?php echo pods_url_variable('page', 'get'); ?>" />
-                <input type="submit" class="button" value="Filter" />
+                <input type="submit" class="button" value="  Browse Pod  " />
             </form>
         </div>
-
+<?php
+    if (0 < strlen($dtname))
+        pods_ui_manage('pod=' . $dtname . '&select=t.id,t.name,p.created,p.modified&sort=p.modified DESC');
+    else
+        echo "<p>Select a Pod from above to begin managing content.</p>";
+}
+elseif (pods_access('pod_' . $dtname))
+    pods_ui_manage('pod=' . $dtname . '&select=t.id,t.name,p.created,p.modified&sort=p.modified DESC');
+else
+    echo "<p>You do not have access to manage this Pod's content.</p>";
+/* Using Pods UI now
+?>
         <table class="widefat">
             <thead>
                 <tr>
@@ -321,4 +367,7 @@ else {
 ?>
         </div>
     </div>
+</div>
+<?php */
+?>
 </div>

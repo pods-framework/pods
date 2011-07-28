@@ -14,6 +14,11 @@ class PodInit
         add_action('wpmu_new_blog', array($this, 'new_blog'), 10, 6);
         if (absint(get_option('pods_version')) < PODS_VERSION)
             $this->setup();
+        elseif (absint(get_option('pods_version')) != PODS_VERSION) {
+            delete_option('pods_version');
+            add_option('pods_version', PODS_VERSION);
+        }
+
 
         add_action('init', array($this, 'init'));
         add_action('admin_menu', array($this, 'admin_menu'), 99);
@@ -79,7 +84,7 @@ class PodInit
 
     function init() {
         // Session start
-        if (false === headers_sent() && '' == session_id())
+        if (((defined('WP_DEBUG') && WP_DEBUG) || false === headers_sent()) && '' == session_id())
             @session_start();
 
         // Load necessary JS
@@ -135,18 +140,20 @@ class PodInit
             $label = trim($row['label']);
             $label = ('' != $label) ? $label : $name;
             $label = apply_filters('pods_admin_menu_label', $label, $row);
-            if (pods_access("pod_$name")) {
+            $row['name'] = $name;
+            $row['label'] = $label;
+            if (pods_access("pod_{$name}")) {
                 if (1 == $row['is_toplevel']) {
                     add_object_page($label, $label, 'read', "pods-manage-$name");
                     add_submenu_page("pods-manage-$name", 'Edit', 'Edit', 'read', "pods-manage-$name", array($this, 'pods_content_page'));
-                    add_submenu_page("pods-manage-$name", 'Add New', 'Add New', 'read', "pod-$name", array($this, 'pods_content_page'));
+                    add_submenu_page("pods-manage-$name", 'Add New', 'Add New', 'read', "pods-add-$name", array($this, 'pods_content_page'));
                 }
                 else {
                     $submenu[trim($row['label'].$row['name'])] = $row;
                 }
             }
         }
-        $priv_check = array('manage_pods','manage_templates','manage_pod_pages','manage_helpers','manage_roles','manage_settings','manage_content','manage_packages','manage_menu');
+        $priv_check = array('manage_pods','manage_templates','manage_pod_pages','manage_helpers','manage_roles','manage_settings','manage_content','manage_packages');
         if (!empty($submenu) || pods_access($priv_check)) {
             wp_enqueue_script('jquery-ui-core');
             wp_enqueue_script('jquery-ui-sortable');
@@ -154,14 +161,11 @@ class PodInit
             if (pods_access(array('manage_pods','manage_templates','manage_pod_pages','manage_helpers','manage_roles','manage_settings'))) {
                 add_submenu_page('pods', 'Setup', 'Setup', 'read', 'pods', array($this, 'pods_setup_page'));
             }
-            if (pods_access('manage_content')) {
-                add_submenu_page('pods', 'Manage Content', 'Manage Content', 'read', 'pods-manage', array($this, 'pods_content_page'));
-            }
             if (pods_access('manage_packages')) {
                 add_submenu_page('pods', 'Package Manager', 'Package Manager', 'read', 'pods-package', array($this, 'pods_package_page'));
             }
-            if (pods_access('manage_menu')) {
-                add_submenu_page('pods', 'Menu Editor', 'Menu Editor', 'read', 'pods-menu', array($this, 'pods_menu_page'));
+            if (pods_access('manage_content')) {
+                add_submenu_page('pods', 'Manage Content', 'Manage Content', 'read', 'pods-manage', array($this, 'pods_content_page'));
             }
             ksort($submenu);
             foreach ($submenu as $item) {
@@ -281,15 +285,11 @@ class PodInit
         include PODS_DIR . '/ui/manage.php';
     }
 
-    function pods_content_page() {
-        include PODS_DIR . '/ui/manage_content.php';
-    }
-
     function pods_package_page() {
         include PODS_DIR . '/ui/manage_packages.php';
     }
 
-    function pods_menu_page() {
-        include PODS_DIR . '/ui/manage_menu.php';
+    function pods_content_page() {
+        include PODS_DIR . '/ui/manage_content.php';
     }
 }

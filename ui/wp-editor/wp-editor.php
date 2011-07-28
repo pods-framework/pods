@@ -37,6 +37,7 @@ class WP_Editor {
 		$can_richedit = user_can_richedit();
 		$id = $editor_id;
 		$default_editor = is_admin() ? wp_default_editor() : 'tinymce';
+        $default_editor = 'tinymce'; // default editor not working yet in code, so it's turned off for now
 		$toolbar = '';
 
 		if ( !current_user_can( 'upload_files' ) )
@@ -53,7 +54,6 @@ class WP_Editor {
 
 			if ( $can_richedit ) {
 				$html_class = $tmce_class = '';
-
 				if ( 'html' == $default_editor ) {
 					add_filter('the_editor_content', 'wp_htmledit_pre');
 					$html_class = 'active ';
@@ -104,10 +104,12 @@ class WP_Editor {
 
 	function disable_fullscreen($init) {
 		$plugins = preg_split('/[ ,]+/', $init['plugins']);
-		$plugins = array_diff( $plugins, array('fullscreen', 'wpfullscreen') );
+		$plugins = array_diff( $plugins, array('wpfullscreen') );
+        $plugins[] = 'fullscreen';
+        $plugins = array_unique($plugins);
 		$init['plugins'] = implode($plugins, ',');
 
-		$init['theme_advanced_buttons1'] = str_replace( ',fullscreen', '', $init['theme_advanced_buttons1'] );
+		//$init['theme_advanced_buttons1'] = str_replace( ',fullscreen', '', $init['theme_advanced_buttons1'] );
 
 		return $init;
 	}
@@ -131,10 +133,8 @@ class WP_Editor {
 			if ( !function_exists('submit_button') )
 				include_once( ABSPATH . 'wp-admin/includes/template.php' );
 
-			if ( !is_admin() ) {
-				add_filter( 'tiny_mce_before_init', array($this, 'disable_fullscreen') );
-				echo '<style type="text/css">.wp-dialog,.alternate{background-color:#F9F9F9;}</style>';
-			}
+            add_filter( 'tiny_mce_before_init', array($this, 'disable_fullscreen') );
+            echo '<style type="text/css">.wp-dialog,.alternate{background-color:#F9F9F9;}</style>';
 
 			if ( function_exists('wp_tiny_mce_preload_dialogs') ) {
 				add_action( 'wp_footer', 'wp_tiny_mce_preload_dialogs', 30 );

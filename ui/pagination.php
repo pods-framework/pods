@@ -1,5 +1,5 @@
 <?php
-$page = $this->page;
+$page = (int) $this->page;
 $rows_per_page = $this->rpp;
 $total_rows = $this->getTotalRows();
 $total_pages = ceil($total_rows / $rows_per_page);
@@ -10,7 +10,7 @@ $request_uri = explode('?', $_SERVER['REQUEST_URI']);
 $request_uri = $request_uri[0] . '?';
 foreach ($_GET as $key => $val) {
     if ('pg' != $key) {
-        $request_uri .= "$key=$val&";
+        $request_uri .= esc_url($key) . '=' . esc_url($val) . '&amp;';
     }
 }
 ?>

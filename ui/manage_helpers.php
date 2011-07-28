@@ -44,12 +44,31 @@ function addHelper() {
         success: function(msg) {
             if (!is_error(msg)) {
                 var id = msg;
-                var html = '<option value="'+id+'">'+name+'</option>';
+                var html = '<option value="'+id+'">'+name+' ('+helper_type+')</option>';
                 jQuery(".select-helper").append(html);
                 jQuery("#helperBox #new_helper").val("");
                 jQuery(".select-helper > option[value='"+id+"']").attr("selected", "selected");
                 jQuery(".select-helper").change();
                 jQuery("#helperBox").jqmHide();
+<?php
+if (pods_access('manage_pods')) {
+?>
+                var helper_select_html = '<option value="'+id+'">'+name+'</option>';
+                if ('pre_save' == helper_type) {
+                    jQuery("#pre_save_helpers").append(helper_select_html);
+                }
+                else if ('pre_drop' == helper_type) {
+                    jQuery("#pre_drop_helpers").append(helper_select_html);
+                }
+                else if ('post_save' == helper_type) {
+                    jQuery("#post_save_helpers").append(helper_select_html);
+                }
+                else if ('post_drop' == helper_type) {
+                    jQuery("#post_drop_helpers").append(helper_select_html);
+                }
+<?php
+}
+?>
             }
         }
     });
@@ -79,6 +98,16 @@ function dropHelper() {
                 if (!is_error(msg)) {
                     jQuery(".select-helper > option[value='"+helper_id+"']").remove();
                     jQuery(".select-helper").change();
+<?php
+if (pods_access('manage_pods')) {
+?>
+                    jQuery("#pre_save_helpers option[value='"+helper_id+"']").remove();
+                    jQuery("#pre_drop_helpers option[value='"+helper_id+"']").remove();
+                    jQuery("#post_save_helpers option[value='"+helper_id+"']").remove();
+                    jQuery("#post_drop_helpers option[value='"+helper_id+"']").remove();
+<?php
+}
+?>
                 }
             }
         });
@@ -105,7 +134,7 @@ function dropHelper() {
 <!-- Helper HTML -->
 
 <select class="area-select select-helper">
-    <option value="">Choose a Helper</option>
+    <option value="">-- Choose a Helper --</option>
 <?php
 if (isset($helpers)) {
     foreach ($helpers as $key => $helper) {

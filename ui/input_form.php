@@ -73,6 +73,11 @@ function saveForm(form_count) {
         else if ("bool" == classname[1]) {
             theval = (true == jQuery(this).is(":checked")) ? 1 : 0;
         }
+        else if (typeof(tinyMCE) == 'object' && "desc_tinymce" == classname[1]) {
+            var ed = tinyMCE.get(jQuery(this).attr('id'));
+            jQuery(this).val(ed.getContent());
+            theval = jQuery(this).val();
+        }
         else {
             theval = jQuery(this).val();
         }
@@ -119,10 +124,10 @@ function fileBrowser() {
 
 //pre-form hooks
 do_action('pods_pre_form',$form_count,$this);
-do_action("pods_pre_form_$this->datatype",$form_count,$this);
+do_action("pods_pre_form_{$this->datatype}",$form_count,$this);
 ?>
 
-<div class="pods_form form_<?php echo $this->datatype; ?> form_<?php echo $form_count; ?>">
+<div class="pods_form form_<?php echo esc_attr($this->datatype); ?> form_<?php echo $form_count; ?>">
 <?php
 if (1 == $form_count && !(defined('PODS_DISABLE_FILE_BROWSER') && true === PODS_DISABLE_FILE_BROWSER) && !(defined('PODS_FILES_REQUIRE_LOGIN') && is_bool(PODS_FILES_REQUIRE_LOGIN) && true === PODS_FILES_REQUIRE_LOGIN && !is_user_logged_in()) && !(defined('PODS_FILES_REQUIRE_LOGIN') && !is_bool(PODS_FILES_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_FILES_REQUIRE_LOGIN)))) {
 ?>
@@ -139,4 +144,4 @@ $this->showform($this->get_pod_id(), $public_columns, $label);
 <?php 
 //post-form hooks
 do_action('pods_post_form',$form_count,$this);
-do_action("pods_post_form_$this->datatype",$form_count,$this);
+do_action("pods_post_form_{$this->datatype}",$form_count,$this);

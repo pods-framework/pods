@@ -3,7 +3,11 @@ ob_start();
 require_once(preg_replace("/wp-content.*/","wp-load.php",__FILE__));
 ob_end_clean();
 
-header('Content-Type: text/html; charset=' . get_bloginfo('charset'));
+if (false === headers_sent()) {
+    if ('' == session_id())
+        @session_start();
+    header('Content-Type: text/html; charset=' . get_bloginfo('charset'));
+}
 
 // Sanitize input
 $params = array();
@@ -20,6 +24,7 @@ $methods = array(
     'save_roles' => array('priv' => 'manage_roles'),
     'save_menu_item' => array('priv' => 'manage_menu'),
     'save_pod_item' => array('processor' => 'process_save_pod_item'),
+    'reorder_pod_item' => array('access_pod_specific' => true),
     'drop_pod' => array('priv' => 'manage_pods'),
     'drop_column' => array('priv' => 'manage_pods'),
     'drop_template' => array('priv' => 'manage_templates'),

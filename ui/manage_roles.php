@@ -54,8 +54,7 @@ $all_privs = array(
     array('name' => 'manage_roles', 'label' => 'Manage Roles'),
     array('name' => 'manage_settings', 'label' => 'Manage Settings'),
     array('name' => 'manage_content', 'label' => 'Manage All Content'),
-    array('name' => 'manage_packages', 'label' => 'Manage Packages'),
-    array('name' => 'manage_menu', 'label' => 'Manage Menu')
+    array('name' => 'manage_packages', 'label' => 'Manage Packages')
 );
 
 if (isset($datatypes) && is_array($datatypes)) {

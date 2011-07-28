@@ -6,10 +6,17 @@ ob_end_clean();
 
 header('Content-Type: text/html; charset=' . get_bloginfo('charset'));
 
+global $wpdb;
+
+// Sanitize input
+$params = array();
 foreach ($_POST as $key => $val) {
-    ${$key} = mysql_real_escape_string(stripslashes(trim($val)));
+    $params[$key] = mysql_real_escape_string(stripslashes(trim($val)));
 }
-if ('wp_handle_upload' == $action || 'wp_handle_upload_advanced' == $action) {
+
+$params = (object) $params;
+
+if ('wp_handle_upload' == $params->action || 'wp_handle_upload_advanced' == $params->action) {
     // Flash often fails to send cookies with the POST or upload, so we need to pass it in GET or POST instead
     if ( is_ssl() && empty($_COOKIE[SECURE_AUTH_COOKIE]) && !empty($_REQUEST['auth_cookie']) )
         $_COOKIE[SECURE_AUTH_COOKIE] = $_REQUEST['auth_cookie'];
@@ -42,22 +49,10 @@ elseif (defined('PODS_UPLOAD_REQUIRE_LOGIN') && !is_bool(PODS_UPLOAD_REQUIRE_LOG
 /**
  * Load file list
  */
-if ('browse_files' == $action && false === $browse_disabled) {
-    $search = (0 < strlen($search)) ? "AND (post_title LIKE '%$search%' OR guid LIKE '%$search%')" : '';
+if ('browse_files' == $params->action && false === $browse_disabled) {
+    $search = (0 < strlen($params->search)) ? "AND (post_title LIKE '%{$params->search}%' OR guid LIKE '%{$params->search}%')" : '';
 
-    $sql = "
-    SELECT
-        id, guid
-    FROM
-        @wp_posts
-    WHERE
-        post_type = 'attachment'
-        $search
-    ORDER BY
-        guid ASC
-    ";
-
-    $result = pod_query($sql);
+    $result = pod_query("SELECT id, guid FROM {$wpdb->posts} WHERE post_type = 'attachment' {$search} ORDER BY guid ASC");
 
     if (0 < mysql_num_rows($result)) {
         while ($row = mysql_fetch_assoc($result)) {
@@ -74,7 +69,7 @@ if ('browse_files' == $action && false === $browse_disabled) {
 /**
  * Upload a new file
  */
-elseif ('wp_handle_upload' == $action && false === $upload_disabled) {
+elseif ('wp_handle_upload' == $params->action && false === $upload_disabled) {
     $attachment_id = media_handle_upload('Filedata', 0);
     if (is_object($attachment_id)) {
         $errors = array();
@@ -90,7 +85,7 @@ elseif ('wp_handle_upload' == $action && false === $upload_disabled) {
 /**
  * Upload a new file (advanced - returns URL and ID)
  */
-elseif ('wp_handle_upload_advanced' == $action && false === $upload_disabled) {
+elseif ('wp_handle_upload_advanced' == $params->action && false === $upload_disabled) {
     $attachment_id = media_handle_upload('Filedata', 0);
     if (is_object($attachment_id)) {
         $errors = array();

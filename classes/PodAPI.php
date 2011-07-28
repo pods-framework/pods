@@ -16,22 +16,15 @@ class PodAPI
      * @since 1.7.1
      */
     function __construct($dtname = null, $format = 'php') {
-        $this->dtname = $dtname;
+        $this->dtname = pods_sanitize(trim($dtname));
         $this->format = $format;
 
-        if (!empty($dtname)) {
-            $result = pod_query("SELECT id FROM @wp_pod_types WHERE name = '$dtname' LIMIT 1");
-            if (0 < mysql_num_rows($result)) {
-                $this->dt = mysql_result($result, 0);
-                $result = pod_query("SELECT id, name, label, coltype, pickval FROM @wp_pod_fields WHERE datatype = {$this->dt} ORDER BY weight");
-                if (0 < mysql_num_rows($result)) {
-                    while ($row = mysql_fetch_assoc($result)) {
-                        $this->fields[$row['name']] = $row;
-                    }
-                    return true;
-                }
+        if (!empty($this->dtname)) {
+            $pod = $this->load_pod(array('name' => $this->dtname));
+            if (is_array($pod)) {
+                $this->dt = $pod['id'];
+                $this->fields = $pod['fields'];
             }
-            return false;
         }
     }
 
@@ -987,30 +980,21 @@ class PodAPI
      */
     function load_pod($params) {
         $params = (object) $params;
-        $where = empty($params->id) ? "name = '$params->name'" : "id = $params->id";
-        $result = pod_query("SELECT * FROM @wp_pod_types WHERE $where LIMIT 1");
-        $module = mysql_fetch_assoc($result);
+        if (!empty($params->id) || !empty($params->name)) {
+            $where = empty($params->id) ? "name = '$params->name'" : "id = $params->id";
+            $result = pod_query("SELECT * FROM @wp_pod_types WHERE $where LIMIT 1");
+            if (0 < mysql_num_rows($result)) {
+                $pod = mysql_fetch_assoc($result);
+                $pod['fields'] = array();
+                $result = pod_query("SELECT id, name, coltype, pickval, required, weight FROM @wp_pod_fields WHERE datatype = {$pod['id']} ORDER BY weight");
+                while ($row = mysql_fetch_assoc($result)) {
+                    $pod['fields'][$row['name']] = $row;
+                }
 
-        $sql = "
-            SELECT
-                id, name, coltype, pickval, required, weight
-            FROM
-                @wp_pod_fields
-            WHERE
-                datatype = {$module['id']}
-            ORDER BY
-                weight
-            ";
-
-        $fields = array();
-        $result = pod_query($sql);
-        while ($row = mysql_fetch_assoc($result)) {
-            $fields[] = $row;
+                return $pod;
+            }
         }
-
-        // Combine the fields into the $module array
-        $module['fields'] = $fields;
-        return $module;
+        return false;
     }
 
     /**
@@ -1453,6 +1437,49 @@ class PodAPI
                 return $warnings;
         }
 
+        if ((int) $data['meta']['version'] < 1000) { // old style
+            $pods_version_tmp = str_split($data['meta']['version']);
+            $pods_version_number = '';
+            for ($pods_x = 0; $pods_x < 3; $pods_x++) { // 3 points max - MAJOR.MINOR.PATCH
+                if (!isset($pods_version_tmp[$pods_x]) || strlen($pods_version_tmp[$pods_x]) < 1)
+                    $pods_version_tmp[$pods_x] = '000';
+                $pods_version_temp = str_split($pods_version_tmp[$pods_x]);
+                if (3 == count($pods_version_temp))
+                    $pods_version_number .= $pods_version_tmp[$pods_x];
+                elseif (2 == count($pods_version_temp))
+                    $pods_version_number .= '0' . $pods_version_tmp[$pods_x];
+                elseif (1 == count($pods_version_temp))
+                    $pods_version_number .= '00' . $pods_version_tmp[$pods_x];
+            }
+            $pods_version_number = (int) $pods_version_number;
+            $data['meta']['version'] = $pods_version_number;
+        }
+
+        if (isset($data['meta']['compatible_from']) && PODS_VERSION < (int) $data['meta']['compatible_from']) {
+            $version_diff = floor((int) $data['meta']['compatible_from'] / 1000) * 1000;
+            $version_diff -= floor(PODS_VERSION / 1000) * 1000;
+            if (1000 <= $version_diff)
+                $warnings['version'] = 'This package may only compatible with the newer <strong>Pods ' . pods_version_to_point($data['meta']['compatible_from']) . '+</strong>, but you are currently running the older <strong>Pods ' . PODS_VERSION_FULL . '</strong><br />Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods.';
+        }
+        elseif (isset($data['meta']['compatible_to']) && (int) $data['meta']['compatible_to'] < PODS_VERSION) {
+            $version_diff = floor(PODS_VERSION / 1000) * 1000;
+            $version_diff -= floor((int) $data['meta']['compatible_to'] / 1000) * 1000;
+            if (1000 <= $version_diff)
+                $warnings['version'] = 'This package may only compatible with the older <strong>Pods ' . pods_version_to_point($data['meta']['compatible_to']) . '</strong>, but you are currently running the newer <strong>Pods ' . PODS_VERSION_FULL . '</strong><br />Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods.';
+        }
+        elseif (PODS_VERSION < (int) $data['meta']['version'] && !isset($data['meta']['compatible_from']) && !isset($data['meta']['compatible_to'])) {
+            $version_diff = floor((int) $data['meta']['version'] / 1000) * 1000;
+            $version_diff -= floor(PODS_VERSION / 1000) * 1000;
+            if (1000 <= $version_diff)
+                $warnings['version'] = 'This package was built using the newer <strong>Pods ' . pods_version_to_point($data['meta']['version']) . '</strong>, but you are currently running the older <strong>Pods ' . PODS_VERSION_FULL . '</strong><br />Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods.';
+        }
+        elseif ((int) $data['meta']['version'] < PODS_VERSION && !isset($data['meta']['compatible_from']) && !isset($data['meta']['compatible_from'])) {
+            $version_diff = floor(PODS_VERSION / 1000) * 1000;
+            $version_diff -= floor((int) $data['meta']['version'] / 1000) * 1000;
+            if (1000 <= $version_diff)
+                $warnings['version'] = 'This package was built using the older <strong>Pods ' . pods_version_to_point($data['meta']['version']) . '</strong>, but you are currently running the newer <strong>Pods ' . PODS_VERSION_FULL . '</strong><br />Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods.';
+        }
+
         if (isset($data['pods'])) {
             foreach ($data['pods'] as $pod) {
                 $pod = pods_sanitize($pod);
@@ -1517,6 +1544,8 @@ class PodAPI
             if (!empty($found)) {
                 echo '<hr />';
                 echo '<h3>Package Contents:</h3>';
+                if (isset($warnings['version']))
+                    echo '<p><em><strong>NOTICE:</strong> ' . $warnings['version'] . '</em></p>';
                 if (isset($found['pods'])) {
                     echo '<h4>Pod(s)</h4>';
                     echo '<ul class="pretty"><li>' . implode('</li><li>', $found['pods']) . '</li></ul>';
@@ -1534,7 +1563,7 @@ class PodAPI
                     echo '<ul class="pretty"><li>' . implode('</li><li>', $found['helpers']) . '</li></ul>';
                 }
             }
-            if (0 < count($warnings)) {
+            if (0 < count($warnings) && (!isset($warnings['version']) || 1 < count($warnings))) {
                 echo '<hr />';
                 echo '<h3 class="red">WARNING: There are portions of this package that already exist</h3>';
                 if (isset($warnings['pods'])) {

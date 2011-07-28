@@ -102,7 +102,7 @@ function dropTemplate() {
 <!-- Template HTML -->
 
 <select class="area-select select-template">
-    <option value="">Choose a Template</option>
+    <option value="">-- Choose a Template --</option>
 <?php
 if (isset($templates)) {
     foreach ($templates as $key => $val) {

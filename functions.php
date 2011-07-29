@@ -463,8 +463,8 @@ function pods_version_to_point($version) {
     }
     $point_tmp = str_split($point_tmp, 3);
     $point = array();
-    foreach ($point_tmp as $point) {
-        $point[] = (int) $point;
+    foreach ($point_tmp as $the_point) {
+        $point[] = (int) $the_point;
     }
     $point = implode('.', $point);
     return $point;

@@ -16,7 +16,7 @@ foreach ($_POST as $key => $val) {
 }
 
 $methods = array(
-    'save_pod' => array('priv' => 'manage_pods'),
+    'save_pod' => array('priv' => 'manage_pods', 'format' => 'json'),
     'save_column' => array('priv' => 'manage_pods'),
     'save_template' => array('priv' => 'manage_templates'),
     'save_page' => array('priv' => 'manage_pod_pages'),

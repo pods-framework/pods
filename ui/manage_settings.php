@@ -73,7 +73,7 @@ if (isset($_GET['security_settings_updated']) && 1 == $_GET['security_settings_u
     <p><label for="disable_file_upload"><input type="checkbox" name="disable_file_upload" id="disable_file_upload" class="pods-security-setting" value="1"<?php echo (defined('PODS_DISABLE_FILE_UPLOAD') && false !== PODS_DISABLE_FILE_UPLOAD) ? ' CHECKED' : ''; ?> /> Disable File Uploader Completely</label></p>
     <p><label for="upload_require_login"><input type="checkbox" name="upload_require_login" id="upload_require_login" class="pods-security-setting" value="1"<?php echo (defined('PODS_UPLOAD_REQUIRE_LOGIN') && is_bool(PODS_UPLOAD_REQUIRE_LOGIN) && false !== PODS_UPLOAD_REQUIRE_LOGIN) ? ' CHECKED' : ''; ?> /> Require user to be logged in to use File Uploader</label></p>
     <p><label for="upload_require_login_cap"><input type="text" name="upload_require_login_cap" id="upload_require_login_cap" class="pods-security-setting" value="<?php echo (defined('PODS_UPLOAD_REQUIRE_LOGIN') && !is_bool(PODS_UPLOAD_REQUIRE_LOGIN) && 0 < strlen(PODS_UPLOAD_REQUIRE_LOGIN)) ? PODS_UPLOAD_REQUIRE_LOGIN : ''; ?>" /> Require role or capability to use File Uploader</label></p>
-    <input type="button" class="button" onclick="pods_security_settings()" value=" Save Security Settings " />
+    <input type="button" class="button-primary" onclick="pods_security_settings()" value=" Save Security Settings " />
 </div>
 
 <hr />

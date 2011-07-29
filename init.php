@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS Framework
 Plugin URI: http://podscms.org/
 Description: Pods is a CMS framework for creating, managing, and deploying customized content types.
-Version: 1.10
+Version: 1.10.1
 Author: The Pods CMS Team
 Author URI: http://podscms.org/about/
 
@@ -24,28 +24,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-define('PODS_VERSION_FULL', '1.10');
+define('PODS_VERSION_FULL', '1.10.1');
 define('PODS_WP_VERSION_MINIMUM', '3.1');
 define('PODS_PHP_VERSION_MINIMUM', '5.2.4');
 define('PODS_MYSQL_VERSION_MINIMUM', '5.0');
-
-// setup version as a full number for upgrade handling
-$pods_version_tmp = explode('.', PODS_VERSION_FULL);
-$pods_version_number = '';
-for ($pods_x = 0; $pods_x < 3; $pods_x++) { // 3 points max - MAJOR.MINOR.PATCH
-    if (!isset($pods_version_tmp[$pods_x]) || strlen($pods_version_tmp[$pods_x]) < 1)
-        $pods_version_tmp[$pods_x] = '000';
-    $pods_version_temp = str_split($pods_version_tmp[$pods_x]);
-    if (3 == count($pods_version_temp))
-        $pods_version_number .= $pods_version_tmp[$pods_x];
-    elseif (2 == count($pods_version_temp))
-        $pods_version_number .= '0' . $pods_version_tmp[$pods_x];
-    elseif (1 == count($pods_version_temp))
-        $pods_version_number .= '00' . $pods_version_tmp[$pods_x];
-}
-$pods_version_number = (int) $pods_version_number;
-define('PODS_VERSION', $pods_version_number);
-unset($pods_version_number, $pods_version_tmp, $pods_x); // cleanup
 
 define('PODS_URL', rtrim(plugin_dir_url(__FILE__), '/')); // non-trailing slash being deprecated in 2.0
 define('PODS_DIR', rtrim(plugin_dir_path(__FILE__), '/')); // non-trailing slash being deprecated in 2.0
@@ -53,11 +35,14 @@ define('WP_INC_URL', rtrim(includes_url(), '/')); // non-trailing slash being de
 
 require_once(PODS_DIR . '/functions.php');
 
-require_once(PODS_DIR . '/classes/PodCache.php');
+define('PODS_VERSION', pods_point_to_version(PODS_VERSION_FULL));
+
 require_once(PODS_DIR . '/classes/PodInit.php');
 
 require_once(PODS_DIR . '/classes/Pod.php');
 require_once(PODS_DIR . '/classes/PodAPI.php');
+
+require_once(PODS_DIR . '/classes/PodCache.php');
 
 require_once(PODS_DIR . '/pods-ui.php');
 

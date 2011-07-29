@@ -45,7 +45,8 @@ $methods = array(
     'import_package' => array('priv' => 'manage_packages'),
     'validate_package' => array('priv' => 'manage_packages'),
     'replace_package' => array('priv' => 'manage_packages'),
-    'security_settings' => array('priv' => 'manage_settings')
+    'security_settings' => array('priv' => 'manage_settings'),
+    'fix_wp_pod' => array('priv' => 'manage_settings')
 );
 
 $api = new PodAPI();

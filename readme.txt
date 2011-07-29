@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, pods ui, ui, content types, custom post types, relationships, database, framework, drupal, mysql, custom content, php
 Requires at least: 3.1
 Tested up to: 3.2.1
-Stable tag: 1.10
+Stable tag: 1.10.1
 
 Pods is a CMS framework for creating, managing, and deploying customized content types.
 
@@ -64,6 +64,19 @@ Features coming in Pods 2.0 include:
 OR you can just install it with WordPress by going to Plugins >> Add New >> and type this plugin's name
 
 == Changelog ==
+
+= 1.10.1 - July 28, 2011 =
+* Added: New wp_pod and wp_pod_tbl_* table fix tool under Pods >> Setup >> Settings tab to resync your wp_pod table (clear orphans in wp_pod, and sync from wp_pod_tbl_* to wp_pod what doesn't already exist) - Useful for those who imported directly to wp_pod_tbl_* but forgot to import into wp_pod
+* Added: Set Meta Tags in your Pod Page precode, just setup $pods on your Pod object, and assign $pods->meta as an array with 'description', 'keywords', or any other meta tags you want put on that page
+* Added: Set Title Tag via $pods->meta['title'] (see Meta Tags feature listed directly above) which overrides what you might have in your Pod Page Title field
+* Added: Set Body Classes via $pods->body_classes (as a string, like $pods->body_classes = 'one-class another-class')
+* Added: Dynamically set your Pod Page template via $pods->page_template to set the filename, compatible with parent / child themes (fallback on currently selected Pod Page template, pods.php or default output)
+* Improved: Added many new filters / actions to PodInit functions for advanced customization via other plugins
+* Improved: On duplicate, Pods UI will now show the 'Add Another' and 'Add another based on this item' links again (instead of only on first add but not after duplicating)
+* Improved: PodAPI :: save_pod now returns the $pod data (via PodAPI :: load_pod) if $params->return_pod is set to true
+* Bugfix: Pod :: getFilters now using the correct 'label' for the search button
+* Bugfix: On uninstall, now deleting options WHERE option_name LIKE 'pods_%'
+* Bugfix: Various minor bug fixes
 
 = 1.10 - July 28, 2011 =
 * Added: Full revamped UI for Content Management via Pods UI (you no longer need two separate plugins - Pods and Pods UI)

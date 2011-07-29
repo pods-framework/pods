@@ -66,10 +66,12 @@ class PodInit
         // Setup DB tables
         if ($installed = absint(get_option('pods_version'))) {
             if ($installed < PODS_VERSION) {
+                do_action('pods_update', PODS_VERSION, $installed, $blogid);
                 include(PODS_DIR . '/sql/update.php');
             }
         }
         else {
+            do_action('pods_install', PODS_VERSION, $installed, $blogid);
             $sql = file_get_contents(PODS_DIR . '/sql/dump.sql');
             $sql = explode(";\n", str_replace('wp_', '@wp_', $sql));
             for ($i = 0, $z = count($sql); $i < $z; $i++) {
@@ -162,7 +164,7 @@ class PodInit
                 add_submenu_page('pods', 'Setup', 'Setup', 'read', 'pods', array($this, 'pods_setup_page'));
             }
             if (pods_access('manage_packages')) {
-                add_submenu_page('pods', 'Package Manager', 'Package Manager', 'read', 'pods-package', array($this, 'pods_package_page'));
+                add_submenu_page('pods', 'Package Manager', 'Package Manager', 'read', 'pods-package', array($this, 'pods_packages_page'));
             }
             if (pods_access('manage_content')) {
                 add_submenu_page('pods', 'Manage Content', 'Manage Content', 'read', 'pods-manage', array($this, 'pods_content_page'));
@@ -179,9 +181,19 @@ class PodInit
     }
 
     function wp_head() {
+        global $pods;
 ?>
 <!-- Pods CMS <?php echo PODS_VERSION_FULL; ?> -->
 <?php
+        if ((!defined('PODS_DISABLE_META') || !PODS_DISABLE_META) && is_object($pods) && isset($pods->meta) && is_array($pods->meta)) {
+            foreach ($pods->meta as $name => $content) {
+                if ('title' == $name)
+                    continue;
+?>
+<meta name="<?php echo esc_attr($name); ?>" content="<?php echo esc_attr($content); ?>" />
+<?php
+            }
+        }
     }
 
     function kill_redirect() {
@@ -194,9 +206,8 @@ class PodInit
         $page_title = $pod_page_exists['title'];
 
         if (0 < strlen(trim($page_title))) {
-            if (is_object($pods)) {
+            if (is_object($pods))
                 $page_title = preg_replace_callback("/({@(.*?)})/m", array($pods, "parse_magic_tags"), $page_title);
-            }
             $title = ('right' == $seplocation) ? $page_title . " $sep " : " $sep " . $page_title;
         }
         else {
@@ -206,11 +217,13 @@ class PodInit
             $uri = explode('/', $uri);
 
             $title = '';
-            foreach ($uri as $key => $page_title) {
+            foreach ($uri as $page_title) {
                 $title .= ('right' == $seplocation) ? ucwords($page_title) . " $sep " : " $sep " . ucwords($page_title);
             }
         }
-        return apply_filters('pods_title', $title);
+        if ((!defined('PODS_DISABLE_META') || !PODS_DISABLE_META) && is_object($pods) && isset($pods->meta) && is_array($pods->meta) && isset($pods->meta['title']))
+            $title = $pods->meta['title'];
+        return apply_filters('pods_title', $title, $sep, $seplocation);
     }
 
     function body_class($classes) {
@@ -222,6 +235,8 @@ class PodInit
         if (is_object($pods)) {
             $classes[] = 'pod-'.str_replace('--','-',str_replace('_','-',$pods->datatype));
         }
+        if ((!defined('PODS_DISABLE_BODY_CLASSES') || !PODS_DISABLE_BODY_CLASSES) && is_object($pods) && isset($pods->body_classes))
+            $classes[] = $pods->body_classes;
         return apply_filters('pods_body_class', $classes, $uri);
     }
 
@@ -236,9 +251,9 @@ class PodInit
     }
 
     function template_redirect() {
-        global $pod_page_exists;
+        global $pods, $pod_page_exists;
 
-        if ($row = $pod_page_exists) {
+        if (false !== $pod_page_exists) {
             /*
              * Create pods.php in your theme directory, and
              * style it to suit your needs. Some helpful functions:
@@ -248,10 +263,12 @@ class PodInit
              * get_sidebar()
              * get_footer()
              */
-            $phpcode = $row['phpcode'];
-            $page_template = $row['page_template'];
+            $page_template = $pod_page_exists['page_template'];
 
-            if (!empty($page_template) && '' != locate_template(array($page_template), true)) {
+            if ((!defined('PODS_DISABLE_DYNAMIC_TEMPLATE') || !PODS_DISABLE_DYNAMIC_TEMPLATE) && is_object($pods) && isset($pods->page_template) && !empty($pods->page_template) && '' != locate_template(array($pods->page_template), true)) {
+                // found the template and included it, we're good to go!
+            }
+            elseif (!empty($page_template) && '' != locate_template(array($page_template), true)) {
                 // found the template and included it, we're good to go!
             }
             elseif ('' != locate_template(array('pods.php'), true)) {
@@ -268,7 +285,7 @@ class PodInit
         }
     }
 
-    function delete_attachment($postid) {
+    function delete_attachment($attachment_id) {
         $result = pod_query("SELECT id FROM @wp_pod_fields WHERE coltype = 'file'");
         if (0 < mysql_num_rows($result)) {
             while ($row = mysql_fetch_assoc($result)) {
@@ -277,19 +294,23 @@ class PodInit
             $field_ids = implode(',', $field_ids);
 
             // Remove all references to the deleted attachment
-            pod_query("DELETE FROM @wp_pod_rel WHERE field_id IN ($field_ids) AND tbl_row_id = $postid");
+            do_action('pods_delete_attachment', $attachment_id, $field_ids);
+            pod_query("DELETE FROM @wp_pod_rel WHERE field_id IN ({$field_ids}) AND tbl_row_id = {$attachment_id}");
         }
     }
 
     function pods_setup_page() {
-        include PODS_DIR . '/ui/manage.php';
+        if (null === apply_filters('pods_admin_setup', null))
+            include PODS_DIR . '/ui/manage.php';
     }
 
-    function pods_package_page() {
-        include PODS_DIR . '/ui/manage_packages.php';
+    function pods_packages_page() {
+        if (null === apply_filters('pods_admin_packages', null))
+            include PODS_DIR . '/ui/manage_packages.php';
     }
 
     function pods_content_page() {
-        include PODS_DIR . '/ui/manage_content.php';
+        if (null === apply_filters('pods_admin_content', null))
+            include PODS_DIR . '/ui/manage_content.php';
     }
 }

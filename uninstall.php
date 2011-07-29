@@ -15,4 +15,4 @@ if (0 < mysql_num_rows($result)) {
         pod_query("DROP TABLE {$row[0]}");
     }
 }
-pod_query("DELETE FROM @wp_options WHERE option_name IN ('pods_version', 'pods_roles')");
+pod_query("DELETE FROM @wp_options WHERE option_name LIKE 'pods_%'");

@@ -48,7 +48,7 @@ function pods_ui_manage ($obj)
     $unique_md5 = '_'.md5($unique_md5);
     $object->ui['unique_md5'] = (isset($object->ui['unique_md5'])?'_'.$object->ui['unique_md5']:$unique_md5);
     $object->ui['title'] = (isset($object->ui['title'])?$object->ui['title']:ucwords(str_replace('_',' ',$object->datatype)));
-    $object->ui['item'] = (isset($object->ui['item'])?$object->ui['item']:'Item');
+    $object->ui['item'] = (isset($object->ui['item'])?$object->ui['item']:ucwords(str_replace('_',' ',$object->datatype)));
     $object->ui['label'] = (isset($object->ui['label'])?$object->ui['label']:null);
     $object->ui['label_add'] = (isset($object->ui['label_add'])?$object->ui['label_add']:null);
     $object->ui['label_edit'] = (isset($object->ui['label_edit'])?$object->ui['label_edit']:null);
@@ -717,37 +717,6 @@ function pods_ui_manage ($obj)
 ?>
 </div>
 <?php
-    }
-}
-function pods_ui_manage_content ($filter=false)
-{
-    if(strpos(pods_ui_var('page'),'pods-manage-')!==false)
-    {
-        $datatype = pods_sanitize(str_replace('pods-manage-','',pods_ui_var('page')));
-        $result = pod_query("SELECT is_toplevel,label FROM @wp_pod_types WHERE name = '$datatype' LIMIT 1");
-        $row = mysql_fetch_assoc($result);
-        if(1==$row['is_toplevel'])
-        {
-            if($filter)
-            {
-                return false;
-            }
-            pods_ui_manage('pod='.$datatype.'&title='.$row['label'].'&item='.$row['label'].'&sort=p.modified DESC');
-        }
-    }
-    if(strpos(pods_ui_var('page'),'pod-')!==false)
-    {
-        $datatype = pods_sanitize(str_replace('pod-','',pods_ui_var('page')));
-        $result = pod_query("SELECT is_toplevel,label FROM @wp_pod_types WHERE name = '$datatype' LIMIT 1");
-        $row = mysql_fetch_assoc($result);
-        if(1==$row['is_toplevel'])
-        {
-            if($filter)
-            {
-                return false;
-            }
-            pods_ui_manage('pod='.$datatype.'&title='.$row['label'].'&item='.$row['label'].'&action=add&manage_content=1&sort=p.modified DESC');
-        }
     }
 }
 function pods_ui_table ($object,$rows=null)
@@ -1576,7 +1545,11 @@ function pods_ui_form ($object,$add=0,$duplicate=0)
     }
     elseif(isset($_GET['duplicated'.$object->ui['num']]))
     {
-        pods_ui_message($object->ui['item'].' duplicated successfully.'.$viewit);
+        $redirect_array = array('action'.$object->ui['num']=>'add','id'.$object->ui['num']=>'','updated'.$object->ui['num']=>'','duplicated'.$object->ui['num']=>'','added'.$object->ui['num']=>'');
+        $redirect_to = pods_ui_var_update($redirect_array,true);
+        $redirect_array = array('action'.$object->ui['num']=>'duplicate','id'.$object->ui['num']=>$object->id,'updated'.$object->ui['num']=>'','duplicated'.$object->ui['num']=>'','added'.$object->ui['num']=>'');
+        $redirect_to_duplicate = pods_ui_var_update($redirect_array,true);
+        pods_ui_message($object->ui['item'].' duplicated successfully. <a href="'.$redirect_to.'">Add another &raquo;</a>'.(!in_array('duplicate',$object->ui['disable_actions'])?'&nbsp;&nbsp;|&nbsp;&nbsp;<a href="'.$redirect_to_duplicate.'">Add another based on this one &raquo;</a>':'').$viewit);
     }
     elseif(isset($_GET['added'.$object->ui['num']]))
     {
@@ -1921,7 +1894,4 @@ function pods_ui_coltype ($column,$object,$t=false)
         return ($t?'':'p.').$column;
     }
 }
-
-//add_action('pods_manage_content','pods_ui_manage_content');
-//add_filter('pods_manage_content','pods_ui_manage_content');
 }

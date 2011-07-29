@@ -69,29 +69,31 @@ class PodAPI
             if (empty($params->name)) {
                 return $this->oh_snap('<e>Enter a pod name');
             }
-            $sql = "SELECT id FROM @wp_pod_types WHERE name = '$params->name' LIMIT 1";
+            $sql = "SELECT id FROM @wp_pod_types WHERE name = '{$params->name}' LIMIT 1";
             pod_query($sql, 'Duplicate pod name', 'Pod name already exists');
 
-            $pod_id = pod_query("INSERT INTO @wp_pod_types (name) VALUES ('$params->name')", 'Cannot add new pod');
-            pod_query("CREATE TABLE `@wp_pod_tbl_$params->name` (id int unsigned auto_increment primary key, name varchar(128), slug varchar(128)) DEFAULT CHARSET utf8", 'Cannot add pod database table');
-            pod_query("INSERT INTO @wp_pod_fields (datatype, name, label, comment, coltype, required, weight) VALUES ($pod_id, 'name', 'Name', '', 'txt', 1, 0),($pod_id, 'slug', 'Permalink', 'Leave blank to auto-generate', 'slug', 0, 1)");
-            return $pod_id; // return
+            $pod_id = pod_query("INSERT INTO @wp_pod_types (name) VALUES ('{$params->name}')", 'Cannot add new pod');
+            pod_query("CREATE TABLE `@wp_pod_tbl_{$params->name}` (id int unsigned auto_increment primary key, name varchar(128), slug varchar(128)) DEFAULT CHARSET utf8", 'Cannot add pod database table');
+            pod_query("INSERT INTO @wp_pod_fields (datatype, name, label, comment, coltype, required, weight) VALUES ({$pod_id}, 'name', 'Name', '', 'txt', 1, 0),({$pod_id}, 'slug', 'Permalink', 'Leave blank to auto-generate', 'slug', 0, 1)");
+            if (!isset($params->return_pod) || false === $params->return_pod)
+                return $pod_id;
         }
         // Edit existing pod
         else {
+            $pod_id = $params->id;
             $sql = "
             UPDATE
                 @wp_pod_types
             SET
-                label = '$params->label',
-                is_toplevel = '$params->is_toplevel',
-                detail_page = '$params->detail_page',
-                pre_save_helpers = '$params->pre_save_helpers',
-                pre_drop_helpers = '$params->pre_drop_helpers',
-                post_save_helpers = '$params->post_save_helpers',
-                post_drop_helpers = '$params->post_drop_helpers'
+                label = '{$params->label}',
+                is_toplevel = '{$params->is_toplevel}',
+                detail_page = '{$params->detail_page}',
+                pre_save_helpers = '{$params->pre_save_helpers}',
+                pre_drop_helpers = '{$params->pre_drop_helpers}',
+                post_save_helpers = '{$params->post_save_helpers}',
+                post_drop_helpers = '{$params->post_drop_helpers}'
             WHERE
-                id = $params->id
+                id = {$pod_id}
             LIMIT
                 1
             ";
@@ -99,11 +101,14 @@ class PodAPI
 
             $weight = 0;
             $order = (false !== strpos($params->order, ',')) ? explode(',', $params->order) : array($params->order);
-            foreach ($order as $key => $field_id) {
-                pod_query("UPDATE @wp_pod_fields SET weight = '$weight' WHERE id = '$field_id' LIMIT 1", 'Cannot change column order');
+            foreach ($order as $field_id) {
+                pod_query("UPDATE @wp_pod_fields SET weight = '{$weight}' WHERE id = '{$field_id}' LIMIT 1", 'Cannot change column order');
                 $weight++;
             }
+            if (!isset($params->return_pod) || false === $params->return_pod)
+                return $pod_id;
         }
+        return $this->load_pod(array('id' => $pod_id));
     }
 
     /**
@@ -1820,5 +1825,25 @@ class PodAPI
             $out[] = $tmp;
         }
         return $out;
+    }
+
+    /**
+     * Resync wp_pod and wp_pod_tbl_* tables
+     *
+     * wp_pod_tbl_* is assumed the primary source
+     * (if not found there, it'll get deleted from wp_pod)
+     *
+     * This might take a bit!
+     *
+     * @since 1.10.1
+     */
+    function fix_wp_pod() {
+        $result = pod_query("SELECT id, name FROM @wp_pod_types ORDER BY name");
+        while ($row = mysql_fetch_array($result)) {
+            $id = (int) $row['id'];
+            $name = pods_sanitize($row['name']);
+            pod_query("DELETE p FROM `@wp_pod` AS p LEFT JOIN `@wp_pod_tbl_{$name}` AS t ON t.id = p.tbl_row_id WHERE p.datatype = {$id} AND t.id IS NULL");
+            pod_query("INSERT INTO `@wp_pod` (tbl_row_id, name, datatype, created, modified, author_id) SELECT t.id AS tbl_row_id, t.name AS name, {$id} AS datatype, '" . current_time('mysql') . "' AS created, '" . current_time('mysql') . "' AS modified, 0 AS author_id FROM `@wp_pod_tbl_{$name}` AS t LEFT JOIN `@wp_pod` AS p ON p.datatype = {$id} AND p.tbl_row_id = t.id WHERE p.id IS NULL");
+        }
     }
 }

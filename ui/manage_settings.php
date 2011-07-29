@@ -17,6 +17,21 @@ function pods_resetDB() {
         }
     }
 }
+function pods_fixDB() {
+    if (confirm("This will completely resync your wp_pod and wp_pod_tbl_* data in the database. Are you sure?")) {
+        jQuery.ajax({
+            type: "post",
+            url: "<?php echo PODS_URL; ?>/ui/ajax/api.php",
+            data: "action=fix_wp_pod",
+            success: function(msg) {
+                if ("admin.php?page=pods&wp_pod_fixed=1#settings" == window.location)
+                    window.location = "";
+                else
+                    window.location = "admin.php?page=pods&wp_pod_fixed=1#settings";
+            }
+        });
+    }
+}
 function pods_security_settings() {
     var data = new Array();
     var i = 0;
@@ -31,7 +46,10 @@ function pods_security_settings() {
         url: "<?php echo PODS_URL; ?>/ui/ajax/api.php",
         data: "action=security_settings&"+data.join("&"),
         success: function(msg) {
-            window.location = "admin.php?page=pods&security_settings_updated=1#settings";
+            if ("admin.php?page=pods&security_settings_updated=1#settings" == window.location)
+                window.location = "";
+            else
+                window.location = "admin.php?page=pods&security_settings_updated=1#settings";
         }
     });
 }
@@ -39,7 +57,7 @@ function pods_security_settings() {
 
 <!-- Settings HTML -->
 
-<h3 style="padding-top:15px">Security Settings</h3>
+<h3 style="padding-top:15px" id="pods_security_settings">Security Settings</h3>
 <?php
 if (isset($_GET['security_settings_updated']) && 1 == $_GET['security_settings_updated']) {
 ?>
@@ -48,7 +66,7 @@ if (isset($_GET['security_settings_updated']) && 1 == $_GET['security_settings_u
 }
 ?>
 <div class="tips">Restrict access to uploads and browsing existing uploads</div>
-<div id="pods_security_settings">
+<div>
     <p><label for="disable_file_browser"><input type="checkbox" name="disable_file_browser" id="disable_file_browser" class="pods-security-setting" value="1"<?php echo (defined('PODS_DISABLE_FILE_BROWSER') && false !== PODS_DISABLE_FILE_BROWSER) ? ' CHECKED' : ''; ?> /> Disable File Browser Completely</label></p>
     <p><label for="files_require_login"><input type="checkbox" name="files_require_login" id="files_require_login" class="pods-security-setting" value="1"<?php echo (defined('PODS_FILES_REQUIRE_LOGIN') && is_bool(PODS_FILES_REQUIRE_LOGIN) && false !== PODS_FILES_REQUIRE_LOGIN) ? ' CHECKED' : ''; ?> /> Require user to be logged in to use File Browser</label></p>
     <p><label for="files_require_login_cap"><input type="text" name="files_require_login_cap" id="files_require_login_cap" class="pods-security-setting" value="<?php echo (defined('PODS_FILES_REQUIRE_LOGIN') && !is_bool(PODS_FILES_REQUIRE_LOGIN) && 0 < strlen(PODS_FILES_REQUIRE_LOGIN)) ? PODS_FILES_REQUIRE_LOGIN : ''; ?>" /> Require role or capability to use File Browser</label></p>
@@ -59,9 +77,21 @@ if (isset($_GET['security_settings_updated']) && 1 == $_GET['security_settings_u
 </div>
 
 <hr />
+<h3 style="padding-top:15px" id="pods_fix_wp_pod">Fix wp_pod table</h3>
+<?php
+if (isset($_GET['wp_pod_fixed']) && 1 == $_GET['wp_pod_fixed']) {
+?>
+        <div id="message" class="updated fade"><p>wp_pod / wp_pod_tbl_* Data Fixed</p></div>
+<?php
+}
+?>
+<div class="tips">Reset wp_pod_tbl_podname and wp_pod records to match if they've somehow gotten out of sync. There is no undo!</div>
+<input type="button" class="button-primary" style="background:#f39400;border-color:#d56500;" onclick="pods_fixDB()" value=" Fix wp_pod table " />
+
+<hr />
 <h3 style="padding-top:15px">Reset Pods</h3>
-<div class="tips">Remove your content types and Pods data. There is no undo!</div>
-<input type="button" class="button" onclick="pods_resetDB()" value=" Big Shiny Reset Button " />
+<div class="tips">Remove all settings and delete all Pod data. There is no undo!</div>
+<input type="button" class="button-primary" style="background:#f39400;border-color:#d56500;" onclick="pods_resetDB()" value=" Reset Pods " />
 
 <hr />
 <h3 style="padding-top:15px">Debug Information</h3>

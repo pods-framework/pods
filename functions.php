@@ -426,31 +426,54 @@ function pods_content() {
 /**
  * Get a Point value from a Pods Version number
  *
- * @since 1.9.9
+ * @since 1.10.1
+ */
+function pods_point_to_version($point) {
+    $version_tmp = explode('.', $point);
+    $version = '';
+    for ($x = 0; $x < 3; $x++) { // 3 points max - MAJOR.MINOR.PATCH
+        if (!isset($version_tmp[$x]) || strlen($version_tmp[$x]) < 1)
+            $version_tmp[$x] = '000';
+        $version_temp = str_split($version_tmp[$x]);
+        if (3 == count($version_temp))
+            $version .= $version_tmp[$x];
+        elseif (2 == count($version_temp))
+            $version .= '0' . $version_tmp[$x];
+        elseif (1 == count($version_temp))
+            $version .= '00' . $version_tmp[$x];
+    }
+    $version = (int) $version;
+    return $version;
+}
+
+/**
+ * Get a Point value from a Pods Version number
+ *
+ * @since 1.10
  */
 function pods_version_to_point($version) {
-    $pods_point_tmp = $version;
-    if (strlen($pods_point_tmp) < 9) {
-        if (8 == strlen($pods_point_tmp))
-            $pods_point_tmp = '0' . $pods_point_tmp;
-        if (7 == strlen($pods_point_tmp))
-            $pods_point_tmp = '00' . $pods_point_tmp;
+    $point_tmp = $version;
+    if (strlen($point_tmp) < 9) {
+        if (8 == strlen($point_tmp))
+            $point_tmp = '0' . $point_tmp;
+        if (7 == strlen($point_tmp))
+            $point_tmp = '00' . $point_tmp;
         if (3 == strlen($version)) // older versions prior to 1.9.9
             return implode('.', str_split($version));
     }
-    $pods_point_tmp = str_split($pods_point_tmp, 3);
-    $pods_point = array();
-    foreach ($pods_point_tmp as $point) {
-        $pods_point[] = (int) $point;
+    $point_tmp = str_split($point_tmp, 3);
+    $point = array();
+    foreach ($point_tmp as $point) {
+        $point[] = (int) $point;
     }
-    $pods_point = implode('.', $pods_point);
-    return $pods_point;
+    $point = implode('.', $point);
+    return $point;
 }
 
 /**
  * Check if Pods is compatible with WP / PHP / MySQL or not
  *
- * @since 1.9.9
+ * @since 1.10
  */
 function pods_compatible($wp = null, $php = null, $mysql = null) {
     if (null === $wp)

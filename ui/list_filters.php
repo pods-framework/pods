@@ -15,28 +15,48 @@ if (!empty($filters)) {
     $filters = explode(',', $filters);
     foreach ($filters as $key => $val) {
         $field_name = trim($val);
-        $result = pod_query("SELECT label, pickval FROM @wp_pod_fields WHERE datatype = $datatype_id AND name = '$field_name' LIMIT 1");
+        $result = pod_query("SELECT label, pickval, coltype FROM @wp_pod_fields WHERE datatype = $datatype_id AND name = '$field_name' LIMIT 1");
         $row = mysql_fetch_assoc($result);
-        if (!empty($row['pickval'])) {
-            $params = array('table' => $row['pickval'], 'field_name' => $field_name, 'unique_vals' => false);
-            $data = $this->get_dropdown_values($params);
-            $label = ucwords(str_replace('_', ' ', $field_name));
+        if ('pick' == $row['coltype'] && !empty($row['pickval'])) {
+            $pick_params = array('table' => $row['pickval'], 'field_name' => $field_name, 'unique_vals' => false);
+            $field_data = $this->get_dropdown_values($pick_params);
+            $field_label = ucwords(str_replace('_', ' ', $field_name));
             if (0 < strlen($row['label']))
-                $label = $row['label'];
+                $field_label = $row['label'];
 ?>
-    <select name="<?php echo esc_attr($field_name); ?>" class="filter <?php echo esc_attr($field_name); ?>">
-        <option value="">-- <?php echo esc_attr($label); ?> --</option>
+    <select name="<?php echo esc_attr($field_name); ?>" id="filter_<?php echo esc_attr($field_name); ?>" class="filter <?php echo esc_attr($field_name); ?>">
+        <option value="">-- <?php echo esc_attr($field_label); ?> --</option>
 <?php
-            foreach ($data as $key => $val) {
+            foreach ($field_data as $key => $val) {
                 $active = empty($val['active']) ? '' : ' selected';
 ?>
-        <option value="<?php echo esc_attr($val['id']); ?>"<?php echo $active; ?>><?php echo esc_attr($val['name']); ?></option>
+        <option value="<?php echo esc_attr($val['id']); ?>"<?php echo $active; ?>><?php echo esc_html($val['name']); ?></option>
 <?php
             }
 ?>
     </select>
 <?php
+        }/* findRecords doesn't handle non-pick fields yet
+        elseif ('bool' == $row['coltype']) {
+            $field_label = ucwords(str_replace('_', ' ', $field_name));
+            if (0 < strlen($row['label']))
+                $field_label = $row['label'];
+?>
+    <label for="filter_<?php echo esc_attr($field_name); ?>" class="filter <?php echo esc_attr($field_name); ?>">
+        <input type="checkbox" name="<?php echo esc_attr($field_name); ?>" id="filter_<?php echo esc_attr($field_name); ?>" value="1"<?php echo ((isset($_GET[$field_name]) && 1 == $_GET[$field_name]) ? ' CHEKED' : ''); ?>> <?php echo esc_html($field_label); ?>
+    </label>
+<?php
         }
+        elseif ('file' != $row['coltype']) {
+            $field_label = ucwords(str_replace('_', ' ', $field_name));
+            if (0 < strlen($row['label']))
+                $field_label = $row['label'];
+?>
+    <label for="filter_<?php echo esc_attr($field_name); ?>" class="filter <?php echo esc_attr($field_name); ?>">
+        <input type="text" name="<?php echo esc_attr($field_name); ?>" id="filter_<?php echo esc_attr($field_name); ?>" value="<?php echo esc_attr((isset($_GET[$field_name]) ? $_GET[$field_name] : '')); ?>"> <?php echo esc_html($field_label); ?>
+    </label>
+<?php
+        }*/
     }
 }
 // Display the search box and submit button

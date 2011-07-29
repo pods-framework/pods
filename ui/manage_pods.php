@@ -222,17 +222,18 @@ function addPod() {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=save_pod&name="+name,
+        data: "action=save_pod&name="+name+"&return_pod=1",
         success: function(msg) {
             if (!is_error(msg)) {
-                var id = msg;
-                var html = '<option value="'+id+'">'+name+'</option>';
+                var json = eval('('+msg+')');
+                var id = json.id;
+                var html = '<option value="'+json.id+'">'+json.name+'</option>';
                 jQuery(".select-pod").append(html);
+                jQuery(".select-pod > option[value='"+json.id+"']").attr("selected", "selected");
                 jQuery("#podBox #new_pod").val("");
-                jQuery(".select-pod > option[value='"+id+"']").attr("selected", "selected");
                 jQuery(".select-pod").change();
                 jQuery("#podBox").jqmHide();
-                var pod_selection_html = '<option value="'+id+'" class="pod-selection">'+name+'</option>';
+                var pod_selection_html = '<option value="'+json.name+'" class="pod-selection">'+json.name+'</option>';
                 jQuery("#column_pickval .pod-selection:last").after(pod_selection_html);
             }
         }
@@ -292,7 +293,7 @@ function dropPod() {
                 if (!is_error(msg)) {
                     jQuery(".select-pod > option[value='"+dt+"']").remove();
                     jQuery(".select-pod").change();
-                    jQuery("#column_pickval > option[value='"+dt+"']").remove();
+                    jQuery("#column_pickval > option[value='"+dtname+"']").remove();
                 }
             }
         });

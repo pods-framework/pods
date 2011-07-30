@@ -370,7 +370,7 @@ function pods_shortcode($tags) {
     $Record = new Pod($tags['name'], $id);
 
     if (empty($id)) {
-        $params = array('orderby' => $order, 'limit' => $limit, 'where' => $limit);
+        $params = array('orderby' => $order, 'limit' => $limit, 'where' => $where);
         $params = apply_filters('pods_shortcode_findrecords_params', $params);
         $Record->findRecords($params);
     }

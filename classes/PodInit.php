@@ -231,9 +231,9 @@ class PodInit
         $classes[] = 'pods';
         $uri = explode('?',$pod_page_exists['uri']);
         $uri = explode('#',$uri[0]);
-        $classes[] = 'pod-page-'.str_replace('--','-',str_replace('--','-',str_replace('_','-',str_replace('/','-',sanitize_title(str_replace('*','_w_',$uri[0]))))));
+        $classes[] = 'pod-page-'.trim(str_replace('--','-',str_replace('--','-',str_replace('_','-',sanitize_title(str_replace('/','-',str_replace('*','_w_',$uri[0])))))), '-');
         if (is_object($pods)) {
-            $classes[] = 'pod-'.str_replace('--','-',str_replace('_','-',$pods->datatype));
+            $classes[] = 'pod-'.trim(str_replace('--','-',str_replace('_','-',$pods->datatype)), '-');
         }
         if ((!defined('PODS_DISABLE_BODY_CLASSES') || !PODS_DISABLE_BODY_CLASSES) && is_object($pods) && isset($pods->body_classes))
             $classes[] = $pods->body_classes;

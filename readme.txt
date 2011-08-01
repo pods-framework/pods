@@ -65,6 +65,13 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 == Changelog ==
 
+= 1.10.4 - August 1, 2011 =
+* Bugfix: Pods UI was breaking 'view' links
+* Bugfix: Pods UI reordering fixed
+* Bugfix: Better errors for when a Pod doesn't exist to replace SQL errors
+* Reminder: 1.9.6 Security Update information can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
+* Reminder: Pods 2.0 and How You Can Help - http://dev.podscms.org/2011/06/16/pods-2-0-and-how-you-can-help/
+
 = 1.10.3 - July 30, 2011 =
 * Bugfix: Shortcode 'where' parameter fixed
 * Bugfix: Body Class for Pod Pages not replacing / with - correctly and leaving an extra - at the end with wildcards

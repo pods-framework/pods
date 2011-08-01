@@ -207,6 +207,9 @@ elseif ('file' == $coltype) {
                         server_data = server_data.substr(7);
                         jQuery("#"+file.id).append(server_data);
                     }
+                    else if ("<e>" == server_data.substr(0, 3)) {
+                        jQuery("#"+file.id).append(server_data);
+                    }
                     else {
                         server_data = eval('('+server_data+')');
                         jQuery("#"+file.id).html('<div class="btn dropme"></div> <a href="' + server_data.guid + '" target="_blank">' + server_data.post_title + '</a>');

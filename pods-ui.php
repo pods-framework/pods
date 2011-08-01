@@ -1123,7 +1123,7 @@ function pods_ui_reorder () {
         url: "<?php echo PODS_URL; ?>/ui/ajax/api.php",
         data: "action=reorder_pod_item&datatype=<?php echo $object->datatype; ?>&field=<?php echo $object->ui['reorder']; ?>&order="+order,
         success: function(msg) {
-            if ("Error" == msg.substr(0, 5)) {
+            if ("<e>" == msg.substr(0, 3)) {
                 alert(msg);
             }
             else {

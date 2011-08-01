@@ -696,10 +696,10 @@ class PodAPI
         $params = (object) $params;
 
         if (!is_array($params->order)) {
-            $params->order = explode(',',$params->order);
+            $params->order = explode(',', $params->order);
         }
         foreach ($params->order as $order => $id) {
-            pod_query("UPDATE @wp_pod_tbl_$params->datatype SET `$params->field`=$order WHERE id=$id");
+            pod_query("UPDATE @wp_pod_tbl_{$params->datatype} SET `{$params->field}`={$order} WHERE id={$id}");
         }
     }
 

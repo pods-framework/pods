@@ -28,24 +28,29 @@ class Pod
         global $wpdb;
 
         $this->wpdb = $wpdb;
-        $this->id = pods_sanitize($id);
-        $this->datatype = pods_sanitize($datatype);
+        $id = pods_sanitize($id);
+        $datatype = pods_sanitize($datatype);
 
         // Get the page variable
         $this->page = pods_url_variable($this->page_var, 'get');
-        $this->page = empty($this->page) ? 1 : max((int)$this->page,1);
+        $this->page = empty($this->page) ? 1 : max((int) $this->page, 1);
 
-        if (!empty($this->datatype)) {
-            $result = pod_query("SELECT id, detail_page FROM @wp_pod_types WHERE name = '$this->datatype' LIMIT 1");
-            $row = mysql_fetch_object($result);
-            $this->datatype_id = $row->id;
-            $this->detail_page = $row->detail_page;
+        if (!empty($datatype)) {
+            $result = pod_query("SELECT id, name, detail_page FROM @wp_pod_types WHERE name = '$datatype' LIMIT 1");
+            if (0 < mysql_num_rows($result)) {
+                $row = mysql_fetch_assoc($result);
+                $this->datatype = $row['name'];
+                $this->datatype_id = $row['id'];
+                $this->detail_page = $row['detail_page'];
 
-            if (null != $this->id) {
-                $this->getRecordById($this->id);
-                $this->id = $this->get_field('id');
-                return;
+                if (null != $id) {
+                    $this->getRecordById($id);
+                    if (!empty($this->data))
+                        $this->id = $this->get_field('id');
+                }
             }
+            else
+                echo "<e>Error: Pod does not exist</e>";
         }
     }
 
@@ -69,6 +74,10 @@ class Pod
      * @since 1.2.0
      */
     function get_field($name, $orderby = null) {
+        if (empty($this->data) && empty($this->datatype_id)) {
+            echo "<e>Error: Pod name invalid, no data available</e>";
+            return null;
+        }
         if (isset($this->data[$name])) {
             return $this->data[$name];
         }
@@ -264,6 +273,10 @@ class Pod
      * @since 1.2.0
      */
     function get_pod_id() {
+        if (empty($this->data) && empty($this->datatype_id)) {
+            echo "<e>Error: Pod name invalid, no data available</e>";
+            return null;
+        }
         if (empty($this->data['pod_id'])) {
             $this->data['pod_id'] = 0;
             $tbl_row_id = (isset($this->data['id'])?$this->data['id']:0);
@@ -391,6 +404,10 @@ class Pod
      * Return a single record
      */
     function getRecordById($id) {
+        if (empty($this->datatype_id)) {
+            echo "<e>Error: Pod name invalid</e>";
+            return null;
+        }
         $datatype = $this->datatype;
         if ($this->is_val($datatype)) {
             if (is_numeric($id)) {
@@ -421,6 +438,10 @@ class Pod
      * Search and filter records
      */
     function findRecords($orderby = 't.id DESC', $rows_per_page = 15, $where = null, $sql = null) {
+        if (empty($this->datatype_id)) {
+            echo "<e>Error: Pod name invalid</e>";
+            return null;
+        }
         global $wpdb;
         $join = $groupby = $having = '';
         $params = null;
@@ -601,6 +622,10 @@ class Pod
      * Display HTML for all datatype fields
      */
     function showform($pod_id = null, $public_columns = null, $label = 'Save changes') {
+        if (empty($this->datatype_id)) {
+            echo "<e>Error: Pod name invalid</e>";
+            return null;
+        }
         $cache = PodCache::instance();
 
         $datatype = $this->datatype;

@@ -755,7 +755,7 @@ function pods_ui_table ($object,$rows=null)
                 $rows[$i][$key] = $value;
             }
             $view_link[$i] = $object->get_field('detail_url');
-            if($view_link[$i]==get_bloginfo('wpurl').'/')
+            if($view_link[$i]==get_bloginfo('url').'/')
             {
                 $view_link[$i] = false;
             }
@@ -1535,7 +1535,7 @@ function pods_ui_form ($object,$add=0,$duplicate=0)
         return;
     }
     $viewit = '';
-    if($add==0&&$object->get_field('detail_url')!=get_bloginfo('wpurl').'/')
+    if($add==0&&$object->get_field('detail_url')!=get_bloginfo('url').'/')
     {
         $viewit = '&nbsp;&nbsp;|&nbsp;&nbsp;<a href="'.$object->get_field('detail_url').'">View '.$object->ui['item'].' &raquo;</a>';
     }

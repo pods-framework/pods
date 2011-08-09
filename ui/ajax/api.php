@@ -11,8 +11,8 @@ if (false === headers_sent()) {
 
 // Sanitize input
 $params = stripslashes_deep($_POST);
-foreach ($_POST as $key => $val) {
-    $params[$key] = esc_sql(trim($val));
+foreach ($params as $key => $val) {
+    $params[$key] = pods_sanitize(trim($val));
 }
 
 $methods = array(

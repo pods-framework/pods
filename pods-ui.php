@@ -1629,7 +1629,7 @@ function pods_ui_message ($msg,$error=false)
     <div id="message" class="<?php echo ($error?'error':'updated'); ?> fade"><p><?php echo $msg; ?></p></div>
 <?php
 }
-function pods_ui_var ($var,$method='get',$default=null)
+function pods_ui_var ($var,$method='get',$default=false)
 {
     if(is_array($var))
     {
@@ -1642,57 +1642,8 @@ function pods_ui_var ($var,$method='get',$default=null)
         }
         return false;
     }
-    $ret = false;
-    if(is_array($method))
-    {
-        if(isset($method[$var]))
-        {
-            $ret = $method[$var];
-        }
-    }
-    if($method=='get'&&isset($_GET[$var]))
-    {
-        $ret = $_GET[$var];
-        if(empty($ret))
-        {
-            $ret = false;
-        }
-    }
-    elseif($method=='post'&&isset($_POST[$var]))
-    {
-        $ret = $_POST[$var];
-        if(empty($ret))
-        {
-            $ret = false;
-        }
-    }
-    elseif($method=='session'&&isset($_SESSION[$var]))
-    {
-        $ret = $_SESSION[$var];
-        if(empty($ret))
-        {
-            $ret = false;
-        }
-    }
-    elseif($method=='user')
-    {
-        if(!is_user_logged_in())
-        {
-            return false;
-        }
-        global $user_ID;
-        get_currentuserinfo();
-        $ret = get_user_meta($user_ID,'pods_ui_'.$var,true);
-        if(!is_array($ret)&&strlen($ret)<1)
-        {
-            $ret = false;
-        }
-    }
-    if($ret===false&&$default!==null)
-    {
-        $ret = $default;
-    }
-    return pods_sanitize($ret);
+    $ret = pods_var($var, $method, $default);
+    return $ret;
 }
 function pods_ui_var_update ($arr=false,$url=false,$strict=true)
 {

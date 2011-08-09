@@ -61,12 +61,10 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
  * @since 1.2.0
  */
 function pods_sanitize($input) {
-    global $wpdb;
     $output = array();
 
-    if (empty($input)) {
+    if (empty($input))
         $output = $input;
-    }
     elseif (is_object($input)) {
         foreach ((array) $input as $key => $val) {
             $output[$key] = pods_sanitize($val);
@@ -78,9 +76,8 @@ function pods_sanitize($input) {
             $output[$key] = pods_sanitize($val);
         }
     }
-    else {
-        $output = mysql_real_escape_string($input, $wpdb->dbh);
-    }
+    else
+        $output = esc_sql($input);
     $output = apply_filters('pods_sanitize', $output, $input);
     return $output;
 }
@@ -89,41 +86,141 @@ function pods_sanitize($input) {
  * Return a GET, POST, COOKIE, SESSION, or URI string segment
  *
  * @param mixed $key The variable name or URI segment position
- * @param string $type (optional) "uri", "get", "post", "cookie", or "session"
+ * @param string $type (optional) "uri", "get", "post", "request", "server", "session", or "cookie"
  * @return string The requested value, or null
  * @since 1.6.2
  */
-function pods_url_variable($key = 'last', $type = 'uri') {
-    $output = null;
-    $type = strtolower($type);
-    if ('uri' == $type) {
-        $uri = explode('?', $_SERVER['REQUEST_URI']);
-        $uri = explode('#', $uri[0]);
-        $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri[0]);
-        $uri = explode('/', $uri);
+function pods_url_variable($key = 'last', $type = 'url') {
+    $output = apply_filters('pods_url_variable', pods_var($key, $type), $key, $type);
+    return $output;
+}
 
-        if ('first' == $key) {
+/**
+ * Return a variable (if exists)
+ *
+ * @param mixed $key The variable name or URI segment position
+ * @param string $type (optional) "url", "get", "post", "request", "server", "session", "cookie", "constant", or "user"
+ * @param mixed $default (optional) The default value to set if variable doesn't exist
+ * @param mixed $allowed (optional) The value(s) allowed
+ * @return mixed The variable (if exists), or default value
+ * @since 1.10.6
+ */
+function pods_var($key = 'last', $type = 'url', $default = null, $allowed = null) {
+    $output = $default;
+    $type = strtolower($type);
+    if (is_array($type))
+        $output = isset($type[$key]) ? $type[$key] : $output;
+    elseif (is_object($type))
+        $output = isset($type->$key) ? $type->$key : $output;
+    elseif (in_array($type, array('url', 'uri'))) {
+        $url = parse_url(get_current_url());
+        $uri = trim($url['path'], '/');
+        $uri = array_filter(explode('/', $uri));
+
+        if ('first' == $key)
             $key = 0;
-        }
-        elseif ('last' == $key) {
+        elseif ('last' == $key)
             $key = -1;
+
+        if (is_numeric($key))
+            $output = ($key < 0) ? $uri[count($uri) + $key] : $uri[$key];
+    }
+    elseif ('get' == $type && isset($_GET[$key]))
+        $output = stripslashes_deep($_GET[$key]);
+    elseif ('post' == $type && isset($_POST[$key]))
+        $output = stripslashes_deep($_POST[$key]);
+    elseif ('request' == $type && isset($_REQUEST[$key]))
+        $output = stripslashes_deep($_REQUEST[$key]);
+    elseif ('server' == $type && isset($_SERVER[$key]))
+        $output = stripslashes_deep($_SERVER[$key]);
+    elseif ('session' == $type && isset($_SESSION[$key]))
+        $output = $_SESSION[$key];
+    elseif ('cookie' == $type && isset($_COOKIE[$key]))
+        $output = stripslashes_deep($_COOKIE[$key]);
+    elseif ('constant' == $type && defined($key))
+        $output = constant($key);
+    elseif ('user' == $type && is_user_logged_in()) {
+        global $user_ID;
+        get_currentuserinfo();
+        $value = get_user_meta($user_ID, $key, true);
+        if (is_array($value) || 0 < strlen($value))
+            $output = $value;
+    }
+    if (null !== $allowed) {
+        if (is_array($allowed)) {
+            if (!in_array($output, $allowed))
+                $output = $default;
         }
+        elseif ($allowed !== $output)
+            $output = $default;
+    }
+    $output = apply_filters('pods_var', $output, $key, $type);
+    return pods_sanitize($output);
+}
+
+/**
+ * Set a variable
+ *
+ * @param mixed $value The value to be set
+ * @param mixed $key The variable name or URI segment position
+ * @param string $type (optional) "url", "get", "post", "request", "server", "session", "cookie", "constant", or "user"
+ * @return mixed $value (if set), $type (if $type is array or object), or $url (if $type is 'url')
+ * @since 1.10.6
+ */
+function pods_var_set($value, $key = 'last', $type = 'url') {
+    $type = strtolower($type);
+    $ret = false;
+    if (is_array($type)) {
+        $type[$key] = $value;
+        $ret = $type;
+    }
+    elseif (is_object($type)) {
+        $type->$key = $value;
+        $ret = $type;
+    }
+    elseif ('url' == $type) {
+        $url = parse_url(get_current_url());
+        $uri = trim($url['path'], '/');
+        $uri = array_filter(explode('/', $uri));
+
+        if ('first' == $key)
+            $key = 0;
+        elseif ('last' == $key)
+            $key = -1;
 
         if (is_numeric($key)) {
-            $output = (0 > $key) ? $uri[count($uri)+$key] : $uri[$key];
+            if ($key < 0)
+                $uri[count($uri) + $key] = $value;
+            else
+                $uri[$key] = $value;
         }
+        $url['path'] = '/' . implode('/', $uri) . '/';
+        $url['path'] = trim($url['path'], '/');
+        $ret = http_build_url($url);
     }
-    elseif ('get' == $type) {
-        $output = isset($_GET[$key]) ? $_GET[$key] : null;
+    elseif ('get' == $type)
+        $ret = $_GET[$key] = $value;
+    elseif ('post' == $type)
+        $ret = $_POST[$key] = $value;
+    elseif ('request' == $type)
+        $ret = $_REQUEST[$key] = $value;
+    elseif ('server' == $type)
+        $ret = $_SERVER[$key] = $value;
+    elseif ('session' == $type)
+        $ret = $_SESSION[$key] = $value;
+    elseif ('cookie' == $type)
+        $ret = $_COOKIE[$key] = $value;
+    elseif ('constant' == $type && !defined($key)) {
+        define($key, $value);
+        $ret = constant($key);
     }
-    elseif ('post' == $type) {
-        $output = isset($_POST[$key]) ? $_POST[$key] : null;
+    elseif ('user' == $type && is_user_logged_in()) {
+        global $user_ID;
+        get_currentuserinfo();
+        update_user_meta($user_ID, $key, $value);
+        $ret = $value;
     }
-    elseif ('session' == $type) {
-        $output = isset($_SESSION[$key]) ? $_SESSION[$key] : null;
-    }
-    $output = apply_filters('pods_url_variable', $output, $key, $type);
-    return pods_sanitize($output);
+    return apply_filters('pods_var_set', $ret, $value, $key, $type);
 }
 
 /**
@@ -211,7 +308,7 @@ function is_pod_page($uri = null) {
     global $pod_page_exists;
 
     if (false !== $pod_page_exists) {
-        if (null == $uri || $uri == $pod_page_exists['uri']) {
+        if (null === $uri || $uri == $pod_page_exists['uri']) {
             return true;
         }
     }
@@ -243,22 +340,19 @@ if (!function_exists('get_current_url')) {
  * @return array
  */
 function pod_page_exists($uri = null) {
-    global $wpdb;
-    if (null == $uri) {
-        $uri = explode('?', $_SERVER['REQUEST_URI']);
-        $uri = explode('#', $uri[0]);
-        $uri = $uri[0];
-        $home = @parse_url(get_bloginfo('url'));
+    if (null === $uri) {
+        $uri = parse_url(get_current_url());
+        $uri = $uri['path'];
+        $home = parse_url(get_bloginfo('url'));
         if(!empty($home) && isset($home['path']) && '/' != $home['path'])
             $uri = substr($uri, strlen($home['path']));
     }
     $uri = trim($uri,'/');
-    $uri = mysql_real_escape_string($uri,$wpdb->dbh);
-    $uri_depth = count(explode('/',$uri))-1;
+    $uri = esc_sql($uri);
+    $uri_depth = count(array_filter(explode('/',$uri)))-1;
 
-    if (false !== strpos($uri, 'wp-admin')) {
+    if (false !== strpos($uri, 'wp-admin') || false !== strpos($uri, 'wp-includes'))
         return false;
-    }
 
     // See if the custom template exists
     $result = pod_query("SELECT * FROM @wp_pod_pages WHERE uri = '$uri' LIMIT 1");

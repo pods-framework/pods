@@ -8,9 +8,9 @@ $type = $this->datatype;
 // Build the $_GET string
 $request_uri = explode('?', $_SERVER['REQUEST_URI']);
 $request_uri = $request_uri[0] . '?';
-$_GET = urlencode_deep($_GET);
-foreach ($_GET as $key => $val) {
-    if ('pg' != $key)
+$query = urlencode_deep(stripslashes_deep($_GET));
+foreach ($query as $key => $val) {
+    if ('pg' != $key && 'q' != $key)
         $request_uri .= urlencode($key) . '=' . $val . '&amp;';
 }
 ?>

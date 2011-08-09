@@ -22,7 +22,7 @@ if ('pods-manage-' == substr($wp_page, 0, 12)) {
     if (isset($_GET['action']) && ('add' == $_GET['action'] || 'duplicate' == $_GET['action'])) {
 ?>
 <script type="text/javascript">
-    document.location = "<?php echo pods_ui_var_update(array('page' => 'pods-add-' . $dtname, 'action' => $_GET['action'], 'id' => (('duplicate' == $_GET['action'] && isset($_GET['id'])) ? $_GET['id'] : ''))); ?>";
+    document.location = "<?php echo pods_ui_var_update(array('page' => 'pods-add-' . $dtname, 'action' => $_GET['action'], 'id' => (('duplicate' == $_GET['action'] && isset($_GET['id'])) ? absint($_GET['id']) : ''))); ?>";
 </script>
 <?php
         die();

@@ -10,9 +10,9 @@ if (false === headers_sent()) {
 }
 
 // Sanitize input
-$params = array();
+$params = stripslashes_deep($_POST);
 foreach ($_POST as $key => $val) {
-    $params[$key] = mysql_real_escape_string(stripslashes(trim($val)));
+    $params[$key] = esc_sql(trim($val));
 }
 
 $methods = array(

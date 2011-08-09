@@ -1695,7 +1695,7 @@ class PodAPI
                         }
                         $field_value = implode(',',$pick_value);
                     }
-                    $columns[$field_name] = mysql_real_escape_string(trim($field_value));
+                    $columns[$field_name] = esc_sql(trim($field_value));
                 }
             }
             if (!empty($columns)) {

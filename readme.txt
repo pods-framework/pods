@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, pods ui, ui, content types, custom post types, relationships, database, framework, drupal, mysql, custom content, php
 Requires at least: 3.1
 Tested up to: 3.2.1
-Stable tag: 1.10.5
+Stable tag: 1.10.6
 
 Pods is a CMS framework for creating, managing, and deploying customized content types.
 
@@ -64,6 +64,13 @@ Features coming in Pods 2.0 include:
 OR you can just install it with WordPress by going to Plugins >> Add New >> and type this plugin's name
 
 == Changelog ==
+
+= 1.10.6 - August 9, 2011 =
+* Added: pods_var function to replace pods_url_variable (better name, more functionality), now handles URL segments, $_GET, $_POST, $_SESSION, $_COOKIE, $_SERVER, CONSTANT, User meta, custom arrays, and custom objects - also added a $default option to set what it should default to if not found (default: null) - also added a $allowed option to set what values are allowed to be returned, if $output is not $allowed ($allowed is array and not in $allowed OR $allowed is not array and does not equal $allowed) then $default is returned
+* Added: pods_var_set function to set variables, operates similar to pods_var, has three variables ($value, $key, $type) and returns $value on success (if $type is an array or object it will return the updated $type, if $type is 'url' it will return the full updated $url)
+* Bugfix: Now using get_current_url() and parse_url to get path versus $_SERVER['REQUEST_URI']
+* Bugfix: Replaced mysql_real_escape_string usage with esc_sql
+* Bugfix: Fixed backslashes being automatically added and causing issues with additional urlencoding and esc_attr usage
 
 = 1.10.5 - August 9, 2011 =
 * Added: $pods->meta_extra now outputs after the meta tags when wp_head runs in case you want to output one-off meta tags for a specific page using pre-code without extra WP functions

@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, pods ui, ui, content types, custom post types, relationships, database, framework, drupal, mysql, custom content, php
 Requires at least: 3.1
 Tested up to: 3.2.1
-Stable tag: 1.10.4
+Stable tag: 1.10.5
 
 Pods is a CMS framework for creating, managing, and deploying customized content types.
 
@@ -64,6 +64,15 @@ Features coming in Pods 2.0 include:
 OR you can just install it with WordPress by going to Plugins >> Add New >> and type this plugin's name
 
 == Changelog ==
+
+= 1.10.5 - August 9, 2011 =
+* Added: $pods->meta_extra now outputs after the meta tags when wp_head runs in case you want to output one-off meta tags for a specific page using pre-code without extra WP functions
+* Bugfix: When adding a helper, it will now be added to the 'input helper' drop-down too
+* Bugfix: Pods non-top-level management has session filters turned off now by default
+* Bugfix: Taxonomy PICK unique values handler fixed to reference 't.term_id' instead of just 'id'
+* Bugfix: Pagination now using esc_url correctly, which wasn't being used right in 1.10.4
+* Reminder: 1.9.6 Security Update information can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
+* Reminder: Pods 2.0 and How You Can Help - http://dev.podscms.org/2011/06/16/pods-2-0-and-how-you-can-help/
 
 = 1.10.4 - August 1, 2011 =
 * Bugfix: Pods UI was breaking 'view' links

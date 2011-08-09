@@ -299,12 +299,12 @@ if ('manage' == $manage_action && (!isset($_GET['action']) || 'manage' == $_GET[
         </div>
 <?php
     if (0 < strlen($dtname))
-        pods_ui_manage('pod=' . $dtname . '&sort=p.modified DESC');
+        pods_ui_manage('pod=' . $dtname . '&sort=p.modified DESC&session_filters=false');
     else
         echo "<p>Select a Pod from above to begin managing content.</p>";
 }
 elseif (pods_access('pod_' . $dtname))
-    pods_ui_manage('pod=' . $dtname . '&sort=p.modified DESC');
+    pods_ui_manage('pod=' . $dtname . '&sort=p.modified DESC' . ('top-level-manage' != $manage_action ? '&session_filters=false' : ''));
 else
     echo "<p>You do not have access to manage this Pod's content.</p>";
 /* Using Pods UI now

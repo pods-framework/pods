@@ -66,6 +66,10 @@ if (pods_access('manage_pods')) {
                 else if ('post_drop' == helper_type) {
                     jQuery("#post_drop_helpers").append(helper_select_html);
                 }
+                else if ('input' == helper_type) {
+                    var helper_select_input_html = '<option value="'+name+'">'+name+'</option>';
+                    jQuery("#column_input_helper").append(helper_select_input_html);
+                }
 <?php
 }
 ?>

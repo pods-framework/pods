@@ -342,7 +342,7 @@ class Pod
 
         // WP taxonomy dropdown
         if ('wp_taxonomy' == $params->table) {
-            $where = (false !== $params->unique_vals) ? "WHERE id NOT IN ({$params->unique_vals})" : '';
+            $where = (false !== $params->unique_vals) ? "WHERE t.term_id NOT IN ({$params->unique_vals})" : '';
             if (!empty($params->pick_filter)) {
                 $where .= (empty($where) ? ' WHERE ' : ' AND ') . $params->pick_filter;
             }

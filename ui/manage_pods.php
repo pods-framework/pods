@@ -46,7 +46,7 @@ function resetForm() {
     jQuery("#column_pickval").val("");
     jQuery("#column_pick_filter").val("");
     jQuery("#column_pick_orderby").val("");
-    jQuery("#column_display_helper").val("");
+    //jQuery("#column_display_helper").val("");
     jQuery("#column_input_helper").val("");
     jQuery("#column_required").removeAttr("checked");
     jQuery("#column_required").removeAttr("disabled");
@@ -332,7 +332,7 @@ function loadColumn(id) {
             jQuery("#column_pickval").val(pickval);
             jQuery("#column_pick_filter").val(pick_filter);
             jQuery("#column_pick_orderby").val(pick_orderby);
-            jQuery("#column_display_helper").val(display_helper);
+            //jQuery("#column_display_helper").val(display_helper);
             jQuery("#column_input_helper").val(input_helper);
             if (required)
                 jQuery("#column_required").attr("checked", "checked");
@@ -372,7 +372,7 @@ function addColumn() {
     var pick_filter = jQuery("#column_pick_filter").val();
     var pick_orderby = jQuery("#column_pick_orderby").val();
     var sister_field_id = jQuery("#column_sister_field_id").val();
-    var display_helper = jQuery("#column_display_helper").val();
+    //var display_helper = jQuery("#column_display_helper").val();
     var input_helper = jQuery("#column_input_helper").val();
     var required = jQuery("#column_required").is(":checked") ? 1 : 0;
     var unique = jQuery("#column_unique").is(":checked") ? 1 : 0;
@@ -385,7 +385,7 @@ function addColumn() {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=save_column&datatype="+dt+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&pick_orderby="+pick_orderby+"&sister_field_id="+sister_field_id+"&display_helper="+display_helper+"&input_helper="+input_helper+"&required="+required+"&unique="+unique+"&multiple="+multiple,
+        data: "action=save_column&datatype="+dt+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&pick_orderby="+pick_orderby+"&sister_field_id="+sister_field_id+"&input_helper="+input_helper+"&required="+required+"&unique="+unique+"&multiple="+multiple,//&display_helper="+display_helper+"
         success: function(msg) {
             if (!is_error(msg)) {
                 resetForm();
@@ -404,7 +404,7 @@ function editColumn(id) {
     var pick_filter = jQuery("#column_pick_filter").val();
     var pick_orderby = jQuery("#column_pick_orderby").val();
     var sister_field_id = jQuery("#column_sister_field_id").val();
-    var display_helper = jQuery("#column_display_helper").val();
+    //var display_helper = jQuery("#column_display_helper").val();
     var input_helper = jQuery("#column_input_helper").val();
     var required = jQuery("#column_required").is(":checked") ? 1 : 0;
     var unique = jQuery("#column_unique").is(":checked") ? 1 : 0;
@@ -417,7 +417,7 @@ function editColumn(id) {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=save_column&id="+id+"&datatype="+dt+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&pick_orderby="+pick_orderby+"&sister_field_id="+sister_field_id+"&display_helper="+display_helper+"&input_helper="+input_helper+"&required="+required+"&unique="+unique+"&multiple="+multiple,
+        data: "action=save_column&id="+id+"&datatype="+dt+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&pick_orderby="+pick_orderby+"&sister_field_id="+sister_field_id+"&input_helper="+input_helper+"&required="+required+"&unique="+unique+"&multiple="+multiple,//&display_helper="+display_helper+"
         success: function(msg) {
             if (!is_error(msg)) {
                 alert("Success!");

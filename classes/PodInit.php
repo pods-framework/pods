@@ -193,6 +193,8 @@ class PodInit
 <meta name="<?php echo esc_attr($name); ?>" content="<?php echo esc_attr($content); ?>" />
 <?php
             }
+            if (isset($pods->meta_extra) && 0 < strlen($pods->meta_extra))
+                echo $pods->meta_extra;
         }
     }
 

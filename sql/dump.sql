@@ -9,13 +9,13 @@ DROP TABLE IF EXISTS wp_pod_helpers;
 CREATE TABLE `wp_pod` (
     `id` BIGINT(15) UNSIGNED NOT NULL AUTO_INCREMENT,
     `tbl_row_id` BIGINT(15) UNSIGNED NULL DEFAULT NULL,
-    `datatype` SMALLINT(5) UNSIGNED NULL DEFAULT NULL,
+    `datatype` INT(10) UNSIGNED NULL DEFAULT NULL,
     `name` VARCHAR(128) NULL DEFAULT NULL,
     `created` DATETIME NULL DEFAULT NULL,
     `modified` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `author_id` BIGINT(15) UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
-    INDEX `datatype_idx` (`datatype`)
+    INDEX `datatype_row_idx` (`datatype`, `tbl_row_id`)
 ) DEFAULT CHARSET utf8;
 
 CREATE TABLE `wp_pod_types` (
@@ -34,7 +34,7 @@ CREATE TABLE `wp_pod_types` (
 
 CREATE TABLE `wp_pod_fields` (
     `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `datatype` SMALLINT(5) UNSIGNED NULL DEFAULT NULL,
+    `datatype` INT(10) UNSIGNED NULL DEFAULT NULL,
     `name` VARCHAR(32) NULL DEFAULT NULL,
     `label` VARCHAR(128) NULL DEFAULT NULL,
     `comment` VARCHAR(255) NULL DEFAULT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE `wp_pod_rel` (
     `tbl_row_id` BIGINT(15) UNSIGNED NULL DEFAULT NULL,
     `weight` INT(10) UNSIGNED NULL DEFAULT '0',
     PRIMARY KEY (`id`),
-    INDEX `field_id_idx` (`field_id`)
+    INDEX `field_pod_idx` (`field_id`, `pod_id`)
 ) DEFAULT CHARSET utf8;
 
 CREATE TABLE `wp_pod_templates` (

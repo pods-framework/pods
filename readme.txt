@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, pods ui, ui, content types, custom post types, relationships, database, framework, drupal, mysql, custom content, php
 Requires at least: 3.1
 Tested up to: 3.2.1
-Stable tag: 1.10.7
+Stable tag: 1.11
 
 Pods is a CMS framework for creating, managing, and deploying customized content types.
 
@@ -64,6 +64,23 @@ Features coming in Pods 2.0 include:
 OR you can just install it with WordPress by going to Plugins >> Add New >> and type this plugin's name
 
 == Changelog ==
+
+= 1.11 - August 12, 2011 =
+* Improved: MySQL performance enhanced with a number of MySQL indexes and column type tweaks, your DB will be automatically upgraded for you
+* Added: PodInit :: setup now has filters / actions that run before / after install and updates
+* Added: PodInit :: setup now explicitly sets CHARSET / COLLATE options as defined in wp-config ($wpdb->charset / $wpdb->collate)
+* Added: PodInit :: precode now runs action 'pods_page_precode' after a Pod Page's precode is run (if any) and allows you to intercept the global $pods variable to force a Pod Page to stop running (issue a 404 by $pods = 404;) and other modifications to $pods global
+* Added: PodInit :: admin_menu now checks if PODS_DISABLE_ADMIN_MENU is defined and set to true, which will hide all of the Pods menus (except for top-level Pod menus)
+* Added: PodInit :: wp_head now checks if PODS_DISABLE_VERSION_OUTPUT is defined and set to true, which will hide the Pods version from Pod Pages
+* Added: Set Meta Property Tags in your Pod Page precode, just setup $pods on your Pod object, and assign $pods->meta_properties as an array with any other meta property tags you want put on that page (useful for quick and dynamic meta tags dependant on Pod information)
+* Bugfix: Pods UI bug with filters / searches not working fixed, added a $strict variable to pods_ui_var and pods_var for clearer values (strict mode returns default if value found is empty)
+* Bugfix: Fixed pods_var bug with strtolower PHP warning when managing content
+* Bugfix: PodAPI :: export_package now removes sister_field_id from field data being exported as it could cause issues with incorrect bi-directional mapping to fields on reimport (expect to rebuild bi-directional field relationships upon import of packages going forward)
+* Bugfix: PodAPI :: save_column now reserves the field names 't' and 'p' for internal use as aliases
+* Bugfix: Pod :: lookup_row_ids now forces (int) on values given, also allows $tbl_row_ids to be array instead of only just comma-separate string as before
+* Bugfix: Pod :: findRecords now looks in 'select' parameter to find fields that need to be included
+* Bugfix: Pod :: showform now forces (int) on explicitly values that hit the DB
+* Bugfix: Various PHP notice fixes and query updates to improve performance (to maximize performance on custom queries, update wp_pod queries to use datatype first then tbl_row_id if it's not already in WHERE statements, do same for wp_pod_rel on field_id and pod_id)
 
 = 1.10.7 - August 9, 2011 =
 * Bugfix: Fix for /ui/ajax/api.php which added extra slashes unnecessarily

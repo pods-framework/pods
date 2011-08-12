@@ -317,7 +317,8 @@ function pods_ui_manage ($obj)
             }
             else
             {
-                if($object->ui['session_filters']!==false)
+                $search = pods_ui_var('search'.$object->ui['num'],$oldget,false);
+                if(false!==$search && $object->ui['session_filters']!==false)
                 {
                     $search = pods_ui_var('search'.$object->ui['unique_md5'],'session');
                     if($search!==false)
@@ -1629,7 +1630,7 @@ function pods_ui_message ($msg,$error=false)
     <div id="message" class="<?php echo ($error?'error':'updated'); ?> fade"><p><?php echo $msg; ?></p></div>
 <?php
 }
-function pods_ui_var ($var,$method='get',$default=false)
+function pods_ui_var ($var,$method='get',$default=false,$strict=true)
 {
     if(is_array($var))
     {
@@ -1642,7 +1643,7 @@ function pods_ui_var ($var,$method='get',$default=false)
         }
         return false;
     }
-    $ret = pods_var($var, $method, $default);
+    $ret = pods_var($var, $method, $default, null, $strict);
     return $ret;
 }
 function pods_ui_var_update ($arr=false,$url=false,$strict=true)

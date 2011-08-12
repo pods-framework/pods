@@ -102,49 +102,52 @@ function pods_url_variable($key = 'last', $type = 'url') {
  * @param string $type (optional) "url", "get", "post", "request", "server", "session", "cookie", "constant", or "user"
  * @param mixed $default (optional) The default value to set if variable doesn't exist
  * @param mixed $allowed (optional) The value(s) allowed
+ * @param bool $strict (optional) Only allow values (must not be empty)
  * @return mixed The variable (if exists), or default value
  * @since 1.10.6
  */
-function pods_var($key = 'last', $type = 'url', $default = null, $allowed = null) {
+function pods_var($key = 'last', $type = 'url', $default = null, $allowed = null, $strict = false) {
     $output = $default;
-    $type = strtolower($type);
     if (is_array($type))
         $output = isset($type[$key]) ? $type[$key] : $output;
     elseif (is_object($type))
         $output = isset($type->$key) ? $type->$key : $output;
-    elseif (in_array($type, array('url', 'uri'))) {
-        $url = parse_url(get_current_url());
-        $uri = trim($url['path'], '/');
-        $uri = array_filter(explode('/', $uri));
+    else {
+        $type = strtolower((string) $type);
+        if (in_array($type, array('url', 'uri'))) {
+            $url = parse_url(get_current_url());
+            $uri = trim($url['path'], '/');
+            $uri = array_filter(explode('/', $uri));
 
-        if ('first' == $key)
-            $key = 0;
-        elseif ('last' == $key)
-            $key = -1;
+            if ('first' == $key)
+                $key = 0;
+            elseif ('last' == $key)
+                $key = -1;
 
-        if (is_numeric($key))
-            $output = ($key < 0) ? $uri[count($uri) + $key] : $uri[$key];
-    }
-    elseif ('get' == $type && isset($_GET[$key]))
-        $output = stripslashes_deep($_GET[$key]);
-    elseif ('post' == $type && isset($_POST[$key]))
-        $output = stripslashes_deep($_POST[$key]);
-    elseif ('request' == $type && isset($_REQUEST[$key]))
-        $output = stripslashes_deep($_REQUEST[$key]);
-    elseif ('server' == $type && isset($_SERVER[$key]))
-        $output = stripslashes_deep($_SERVER[$key]);
-    elseif ('session' == $type && isset($_SESSION[$key]))
-        $output = $_SESSION[$key];
-    elseif ('cookie' == $type && isset($_COOKIE[$key]))
-        $output = stripslashes_deep($_COOKIE[$key]);
-    elseif ('constant' == $type && defined($key))
-        $output = constant($key);
-    elseif ('user' == $type && is_user_logged_in()) {
-        global $user_ID;
-        get_currentuserinfo();
-        $value = get_user_meta($user_ID, $key, true);
-        if (is_array($value) || 0 < strlen($value))
-            $output = $value;
+            if (is_numeric($key))
+                $output = ($key < 0) ? $uri[count($uri) + $key] : $uri[$key];
+        }
+        elseif ('get' == $type && isset($_GET[$key]))
+            $output = stripslashes_deep($_GET[$key]);
+        elseif ('post' == $type && isset($_POST[$key]))
+            $output = stripslashes_deep($_POST[$key]);
+        elseif ('request' == $type && isset($_REQUEST[$key]))
+            $output = stripslashes_deep($_REQUEST[$key]);
+        elseif ('server' == $type && isset($_SERVER[$key]))
+            $output = stripslashes_deep($_SERVER[$key]);
+        elseif ('session' == $type && isset($_SESSION[$key]))
+            $output = $_SESSION[$key];
+        elseif ('cookie' == $type && isset($_COOKIE[$key]))
+            $output = stripslashes_deep($_COOKIE[$key]);
+        elseif ('constant' == $type && defined($key))
+            $output = constant($key);
+        elseif ('user' == $type && is_user_logged_in()) {
+            global $user_ID;
+            get_currentuserinfo();
+            $value = get_user_meta($user_ID, $key, true);
+            if (is_array($value) || 0 < strlen($value))
+                $output = $value;
+        }
     }
     if (null !== $allowed) {
         if (is_array($allowed)) {
@@ -154,6 +157,8 @@ function pods_var($key = 'last', $type = 'url', $default = null, $allowed = null
         elseif ($allowed !== $output)
             $output = $default;
     }
+    if (true === $strict && empty($output))
+        $output = $default;
     $output = apply_filters('pods_var', $output, $key, $type);
     return pods_sanitize($output);
 }

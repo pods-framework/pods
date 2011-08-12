@@ -67,18 +67,31 @@ class PodInit
         if ($installed = absint(get_option('pods_version'))) {
             if ($installed < PODS_VERSION) {
                 do_action('pods_update', PODS_VERSION, $installed, $blogid);
-                include(PODS_DIR . '/sql/update.php');
+                if (null === apply_filters('pods_update_run', null, PODS_VERSION, $installed, $blogid))
+                    include(PODS_DIR . '/sql/update.php');
+                do_action('pods_update_post', PODS_VERSION, $installed, $blogid);
             }
         }
         else {
             do_action('pods_install', PODS_VERSION, $installed, $blogid);
-            $sql = file_get_contents(PODS_DIR . '/sql/dump.sql');
-            $sql = explode(";\n", str_replace('wp_', '@wp_', $sql));
-            for ($i = 0, $z = count($sql); $i < $z; $i++) {
-                pod_query($sql[$i], 'Cannot setup SQL tables');
+            if (null === apply_filters('pods_install_run', null, PODS_VERSION, $installed, $blogid)) {
+                $sql = file_get_contents(PODS_DIR . '/sql/dump.sql');
+                $sql = apply_filters('pods_install_sql', $sql, PODS_VERSION, $installed, $blogid);
+                $charset_collate = 'DEFAULT CHARSET utf8';
+                if (!empty($wpdb->charset))
+                    $charset_collate = "DEFAULT CHARSET {$wpdb->charset}";
+                if (!empty($wpdb->collate))
+                    $charset_collate .= " COLLATE {$wpdb->collate}";
+                if ('DEFAULT CHARSET utf8' != $charset_collate)
+                    $sql = str_replace('DEFAULT CHARSET utf8', $charset_collate, $sql);
+                $sql = explode(";\n", str_replace('wp_', '@wp_', $sql));
+                for ($i = 0, $z = count($sql); $i < $z; $i++) {
+                    pod_query($sql[$i], 'Cannot setup SQL tables');
+                }
             }
             delete_option('pods_version');
             add_option('pods_version', PODS_VERSION);
+            do_action('pods_install_post', PODS_VERSION, $installed, $blogid);
         }
         if (null !== $blogid && $blogid != $wpdb->blogid)
             switch_to_blog($old_blogid);
@@ -123,6 +136,7 @@ class PodInit
     function precode() {
         global $pods, $pod_page_exists;
         eval('?>' . $pod_page_exists['precode']);
+        do_action('pods_page_precode', $pod_page_exists);
         if (!is_object($pods) && 404 == $pods) {
             remove_action('template_redirect', array($this, 'template_redirect'));
             remove_action('wp_head', array($this, 'wp_head'));
@@ -156,7 +170,7 @@ class PodInit
             }
         }
         $priv_check = array('manage_pods','manage_templates','manage_pod_pages','manage_helpers','manage_roles','manage_settings','manage_content','manage_packages');
-        if (!empty($submenu) || pods_access($priv_check)) {
+        if ((!defined('PODS_DISABLE_ADMIN_MENU') || !PODS_DISABLE_ADMIN_MENU) && (!empty($submenu) || pods_access($priv_check))) {
             wp_enqueue_script('jquery-ui-core');
             wp_enqueue_script('jquery-ui-sortable');
             add_object_page('Pods', 'Pods', 'read', 'pods', null, PODS_URL.'/ui/images/icon16.png');
@@ -182,16 +196,28 @@ class PodInit
 
     function wp_head() {
         global $pods;
+        do_action('pods_wp_head');
+        if (!defined('PODS_DISABLE_VERSION_OUTPUT') || !PODS_DISABLE_VERSION_OUTPUT) {
 ?>
 <!-- Pods CMS <?php echo PODS_VERSION_FULL; ?> -->
 <?php
-        if ((!defined('PODS_DISABLE_META') || !PODS_DISABLE_META) && is_object($pods) && isset($pods->meta) && is_array($pods->meta)) {
-            foreach ($pods->meta as $name => $content) {
-                if ('title' == $name)
-                    continue;
-?>
-<meta name="<?php echo esc_attr($name); ?>" content="<?php echo esc_attr($content); ?>" />
-<?php
+        }
+        if ((!defined('PODS_DISABLE_META') || !PODS_DISABLE_META) && is_object($pods)) {
+            if (isset($pods->meta) && is_array($pods->meta)) {
+                foreach ($pods->meta as $name => $content) {
+                    if ('title' == $name)
+                        continue;
+    ?>
+    <meta name="<?php echo esc_attr($name); ?>" content="<?php echo esc_attr($content); ?>" />
+    <?php
+                }
+            }
+            if (isset($pods->meta_properties) && is_array($pods->meta_properties)) {
+                foreach ($pods->meta_properties as $property => $content) {
+    ?>
+    <meta property="<?php echo esc_attr($property); ?>" content="<?php echo esc_attr($content); ?>" />
+    <?php
+                }
             }
             if (isset($pods->meta_extra) && 0 < strlen($pods->meta_extra))
                 echo $pods->meta_extra;

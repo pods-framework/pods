@@ -154,7 +154,7 @@ class PodAPI
             if (empty($params->name)) {
                 return $this->oh_snap('<e>Enter a column name');
             }
-            elseif (in_array($params->name, array('id', 'name', 'type', 'created', 'modified'))) {
+            elseif (in_array($params->name, array('id', 'name', 'type', 'created', 'modified', 'p', 't'))) {
                 return $this->oh_snap("<e>$params->name is a reserved name");
             }
             $sql = "SELECT id FROM @wp_pod_fields WHERE datatype = $params->datatype AND name = '$params->name' LIMIT 1";
@@ -1181,6 +1181,7 @@ class PodAPI
                 unset($row['id']);
                 $dt = $row['datatype'];
                 unset($row['datatype']);
+                unset($row['sister_field_id']); // impossible to reference this correctly until all pods / fields have been added
                 $export['pods'][$dt]['fields'][] = $row;
             }
         }

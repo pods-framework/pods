@@ -237,8 +237,8 @@ elseif ('file' == $coltype) {
     <div class="<?php echo esc_attr($css_classes); ?>">
 <?php
         // Retrieve uploaded files
-        $field_id = $field['id'];
-        $pod_id = $this->get_pod_id();
+        $field_id = (int) $field['id'];
+        $pod_id = (int) $this->get_pod_id();
         $sql = "
         SELECT
             p.ID, p.guid
@@ -247,7 +247,7 @@ elseif ('file' == $coltype) {
         INNER JOIN
             @wp_posts p ON p.post_type = 'attachment' AND p.ID = r.tbl_row_id
         WHERE
-            r.pod_id = '$pod_id' AND r.field_id = '$field_id'
+            r.field_id = {$field_id} AND r.pod_id = {$pod_id}
         ";
         $result = pod_query($sql);
         while ($row = mysql_fetch_assoc($result)) {

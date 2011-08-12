@@ -176,5 +176,19 @@ if ($installed < 197) {
     pod_query("ALTER TABLE `@wp_pod_rel` CHANGE `weight` `weight` INT(10) UNSIGNED NULL DEFAULT '0'");
 }
 
+if ($installed < pods_point_to_version('1.11')) {
+    pod_query("ALTER TABLE `@wp_pod` CHANGE `datatype` `datatype` INT(10) UNSIGNED NULL DEFAULT NULL");
+    pod_query("ALTER TABLE `@wp_pod` DROP INDEX `datatype_idx`");
+    pod_query("ALTER TABLE `@wp_pod` ADD INDEX `datatype_row_idx` (`datatype`, `tbl_row_id`)");
+    pod_query("ALTER TABLE `@wp_pod_rel` DROP INDEX `field_id_idx`");
+    pod_query("ALTER TABLE `@wp_pod_rel` ADD INDEX `field_pod_idx` (`field_id`, `pod_id`)");
+    pod_query("ALTER TABLE `@wp_pod_fields` CHANGE `datatype` `datatype` INT(10) UNSIGNED NULL DEFAULT NULL");
+    $result = pod_query("SELECT id, name FROM @wp_pod_types");
+    while ($row = mysql_fetch_assoc($result)) {
+        $pod = pods_sanitize($row['name']);
+        pod_query("ALTER TABLE `@wp_pod_tbl_{$pod}` CHANGE `id` `id` BIGINT(15) UNSIGNED NOT NULL AUTO_INCREMENT");
+    }
+}
+
 // Save this version
 update_option('pods_version', PODS_VERSION);

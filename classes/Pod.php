@@ -191,11 +191,23 @@ class Pod
      *
      * @param int $field_id The field ID
      * @param int $datatype_id The datatype ID
-     * @param mixed $tbl_row_ids A comma-separated string of row IDs
+     * @param mixed $tbl_row_ids A comma-separated string (or array) of row IDs
      * @since 1.2.0
      */
     function lookup_row_ids($field_id, $datatype_id, $tbl_row_ids) {
-        $tbl_row_ids = empty($tbl_row_ids) ? 0 : $tbl_row_ids;
+        if (empty($tbl_row_ids))
+            $tbl_row_ids = 0;
+        else {
+            if (!is_array($tbl_row_ids))
+                $tbl_row_ids = explode(',', $tbl_row_ids);
+            foreach ($tbl_row_ids as $key => $id) {
+                $tbl_row_ids[$key] = (int) $id;
+            }
+            $tbl_row_ids = implode(',', $tbl_row_ids);
+        }
+
+        $field_id = (int) $field_id;
+        $datatype_id = (int) $datatype_id;
 
         $sql = "
         SELECT
@@ -203,9 +215,9 @@ class Pod
         FROM
             @wp_pod p
         INNER JOIN
-            @wp_pod_rel r ON r.pod_id = p.id AND r.field_id = $field_id
+            @wp_pod_rel r ON r.field_id = {$field_id} AND r.pod_id = p.id
         WHERE
-            p.datatype = $datatype_id AND p.tbl_row_id IN ($tbl_row_ids)
+            p.datatype = {$datatype_id} AND p.tbl_row_id IN ($tbl_row_ids)
         ORDER BY
             r.weight
         ";
@@ -519,7 +531,7 @@ class Pod
                 }
 
                 // Performance improvement - only use PICK columns mentioned in ($orderby, $where, $search)
-                $haystack = "$orderby $where $search $groupby $having";
+                $haystack = "$select $orderby $where $search $groupby $having";
                 if (false === strpos($haystack, $field_name . '.') && false === strpos($haystack, "`$field_name`.")) {
                     continue;
                 }
@@ -629,9 +641,9 @@ class Pod
         $cache = PodCache::instance();
 
         $datatype = $this->datatype;
-        $datatype_id = $this->datatype_id;
+        $datatype_id = (int) $this->datatype_id;
         $this->coltype_counter = array();
-        $this->data['pod_id'] = $pod_id;
+        $this->data['pod_id'] = $pod_id = (int) $pod_id;
 
         $where = '';
         if (!empty($public_columns)) {
@@ -716,11 +728,11 @@ class Pod
                 $table = $field['pickval'];
 
                 $result = pod_query("SELECT id FROM @wp_pod_fields WHERE datatype = $datatype_id AND name = '$key' LIMIT 1");
-                $field_id = mysql_result($result, 0);
+                $field_id = (int) mysql_result($result, 0);
 
-                $result = pod_query("SELECT tbl_row_id FROM @wp_pod_rel WHERE pod_id = $pod_id AND field_id = $field_id");
+                $result = pod_query("SELECT tbl_row_id FROM @wp_pod_rel WHERE field_id = $field_id ANd pod_id = $pod_id");
                 while ($row = mysql_fetch_assoc($result)) {
-                    $tbl_row_ids[] = $row['tbl_row_id'];
+                    $tbl_row_ids[] = (int) $row['tbl_row_id'];
                 }
 
                 // Use default values for public forms
@@ -729,7 +741,7 @@ class Pod
                     if (!is_array($field['default'])) {
                         $tbl_row_ids = explode(',', $tbl_row_ids);
                         foreach ($tbl_row_ids as $row_key => $row_val) {
-                            $tbl_row_ids[$row_key] = trim($row_val);
+                            $tbl_row_ids[$row_key] = (int) trim($row_val);
                         }
                     }
                 }
@@ -737,12 +749,12 @@ class Pod
                 // If the PICK column is unique, get values already chosen
                 $unique_vals = false;
                 if (1 == $field['unique']) {
-                    $exclude = empty($pod_id) ? '' : "pod_id != $pod_id AND";
-                    $result = pod_query("SELECT tbl_row_id FROM @wp_pod_rel WHERE $exclude field_id = $field_id");
+                    $exclude = empty($pod_id) ? '' : "AND pod_id != $pod_id";
+                    $result = pod_query("SELECT tbl_row_id FROM @wp_pod_rel WHERE field_id = $field_id $exclude");
                     if (0 < mysql_num_rows($result)) {
                         $unique_vals = array();
                         while ($row = mysql_fetch_assoc($result)) {
-                            $unique_vals[] = $row['tbl_row_id'];
+                            $unique_vals[] = (int) $row['tbl_row_id'];
                         }
                         $unique_vals = implode(',', $unique_vals);
                     }

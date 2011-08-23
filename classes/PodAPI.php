@@ -786,7 +786,7 @@ class PodAPI
     }
 
     /**
-     * Add or edit a single pod item
+     * Reorder a Pod
      *
      * $params['datatype'] string The datatype name
      * $params['field'] string The column name of the field to reorder

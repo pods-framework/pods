@@ -741,7 +741,7 @@ class PodAPI
     }
 
     /**
-     * Add or edit a single pod item
+     * Duplicate a pod item
      *
      * $params['datatype'] string The datatype name
      * $params['tbl_row_id'] int The item's ID from the wp_pod_tbl_* table

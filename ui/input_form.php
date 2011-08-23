@@ -88,7 +88,7 @@ function saveForm(form_count) {
     jQuery.ajax({
         type: "post",
         url: "<?php echo PODS_URL; ?>/ui/ajax/api.php",
-        data: "action=save_pod_item&"+data.join("&"),
+        data: "action=save_pod_item&_wpnonce=<?php echo wp_create_nonce('pods-save_pod_item'); ?>&"+data.join("&"),
         success: function(msg) {
             if (!is_error(msg)) {
                 window.location = "<?php echo (!empty($thankyou_url)) ? $thankyou_url : $_SERVER['REQUEST_URI']; ?>";
@@ -108,7 +108,7 @@ function fileBrowser() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo PODS_URL; ?>/ui/ajax/misc.php",
-        data: "action=browse_files&search="+encodeURIComponent(search),
+        data: "action=browse_files&_wpnonce=<?php echo wp_create_nonce('pods-browse_files'); ?>&search="+encodeURIComponent(search),
         success: function(msg) {
             jQuery(".filebox").html(msg);
         }

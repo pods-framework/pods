@@ -1,5 +1,5 @@
 <?php
-if ($installed < 160) {
+if (version_compare($installed, '1.6', '<')) {
     // Add the "templates" table
     $sql = "
     CREATE TABLE @wp_pod_templates (
@@ -28,26 +28,26 @@ if ($installed < 160) {
     pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN pick_filter VARCHAR(128) AFTER pickval");
 }
 
-if ($installed < 162) {
+if (version_compare($installed, '1.6.2', '<')) {
     // Remove all beginning and ending slashes from Pod Pages
     pod_query("UPDATE @wp_pod_pages SET uri = TRIM(BOTH '/' FROM uri)");
 }
 
-if ($installed < 164) {
+if (version_compare($installed, '1.6.4', '<')) {
     pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN pick_orderby TEXT AFTER pick_filter");
     pod_query("ALTER TABLE @wp_pod_fields CHANGE helper display_helper TEXT");
     pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN input_helper TEXT AFTER display_helper");
 }
 
-if ($installed < 167) {
+if (version_compare($installed, '1.6.7', '<')) {
     pod_query("ALTER TABLE @wp_pod_pages ADD COLUMN precode LONGTEXT AFTER phpcode");
 }
 
-if ($installed < 173) {
+if (version_compare($installed, '1.7.3', '<')) {
     pod_query("ALTER TABLE @wp_pod_types ADD COLUMN detail_page VARCHAR(128) AFTER is_toplevel");
 }
 
-if ($installed < 175) {
+if (version_compare($installed, '1.7.5', '<')) {
     if (empty($pods_roles) && !is_array($pods_roles)) {
         $pods_roles = @unserialize(get_option('pods_roles'));
         if (!is_array($pods_roles))
@@ -65,7 +65,7 @@ if ($installed < 175) {
     add_option('pods_roles', serialize($pods_roles));
 }
 
-if ($installed < 176) {
+if (version_compare($installed, '1.7.6', '<')) {
     pod_query("ALTER TABLE @wp_pod_types CHANGE label label VARCHAR(128)");
     pod_query("ALTER TABLE @wp_pod_fields CHANGE label label VARCHAR(128)");
 
@@ -118,7 +118,7 @@ if ($installed < 176) {
     }
 }
 
-if ($installed < 181) {
+if (version_compare($installed, '1.8.1', '<')) {
     pod_query("ALTER TABLE @wp_pod_rel ADD COLUMN weight SMALLINT unsigned AFTER tbl_row_id");
     pod_query("ALTER TABLE @wp_pod_types CHANGE before_helpers pre_save_helpers TEXT");
     pod_query("ALTER TABLE @wp_pod_types CHANGE after_helpers post_save_helpers TEXT");
@@ -128,7 +128,7 @@ if ($installed < 181) {
     pod_query("UPDATE @wp_pod_helpers SET helper_type = 'post_save' WHERE helper_type = 'after'");
 }
 
-if ($installed < 182) {
+if (version_compare($installed, '1.8.2', '<')) {
     pod_query("ALTER TABLE @wp_pod ADD COLUMN author_id INT unsigned AFTER modified");
     pod_query("UPDATE @wp_pod_fields SET pickval = 'wp_taxonomy' WHERE pickval REGEXP '^[0-9]+$'");
     pod_query("UPDATE @wp_pod_menu SET uri = '<root>' WHERE uri = '/' LIMIT 1");
@@ -142,7 +142,7 @@ if ($installed < 182) {
     }
 }
 
-if ($installed < 190) {
+if (version_compare($installed, '1.9.0', '<')) {
     pod_query("ALTER TABLE @wp_pod_templates CHANGE `name` `name` VARCHAR(255)");
     pod_query("ALTER TABLE @wp_pod_helpers CHANGE `name` `name` VARCHAR(255)");
     pod_query("ALTER TABLE @wp_pod_fields CHANGE `comment` `comment` VARCHAR(255)");
@@ -156,7 +156,7 @@ if ($installed < 190) {
     }
 }
 
-if ($installed < 196) {
+if (version_compare($installed, '1.9.6', '<')) {
     add_option('pods_disable_file_browser', 0);
     add_option('pods_files_require_login', 0);
     add_option('pods_files_require_login_cap', 'upload_files');
@@ -165,7 +165,7 @@ if ($installed < 196) {
     add_option('pods_upload_require_login_cap', 'upload_files');
 }
 
-if ($installed < 197) {
+if (version_compare($installed, '1.9.7', '<')) {
     pod_query("ALTER TABLE `@wp_pod` CHANGE `id` `id` BIGINT(15) UNSIGNED NOT NULL AUTO_INCREMENT");
     pod_query("ALTER TABLE `@wp_pod` CHANGE `tbl_row_id` `tbl_row_id` BIGINT(15) UNSIGNED NULL DEFAULT NULL");
     pod_query("ALTER TABLE `@wp_pod` CHANGE `author_id` `author_id` BIGINT(15) UNSIGNED NULL DEFAULT NULL");
@@ -176,7 +176,7 @@ if ($installed < 197) {
     pod_query("ALTER TABLE `@wp_pod_rel` CHANGE `weight` `weight` INT(10) UNSIGNED NULL DEFAULT '0'");
 }
 
-if ($installed < pods_point_to_version('1.11')) {
+if (version_compare($installed, '1.11', '<')) {
     pod_query("ALTER TABLE `@wp_pod` CHANGE `datatype` `datatype` INT(10) UNSIGNED NULL DEFAULT NULL");
     pod_query("ALTER TABLE `@wp_pod` DROP INDEX `datatype_idx`");
     pod_query("ALTER TABLE `@wp_pod` ADD INDEX `datatype_row_idx` (`datatype`, `tbl_row_id`)");

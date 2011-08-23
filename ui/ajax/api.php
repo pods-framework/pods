@@ -22,7 +22,6 @@ $methods = array(
     'save_page' => array('priv' => 'manage_pod_pages'),
     'save_helper' => array('priv' => 'manage_helpers'),
     'save_roles' => array('priv' => 'manage_roles'),
-    'save_menu_item' => array('priv' => 'manage_menu'),
     'save_pod_item' => array('processor' => 'process_save_pod_item'),
     'reorder_pod_item' => array('access_pod_specific' => true),
     'drop_pod' => array('priv' => 'manage_pods'),
@@ -30,14 +29,12 @@ $methods = array(
     'drop_template' => array('priv' => 'manage_templates'),
     'drop_page' => array('priv' => 'manage_pod_pages'),
     'drop_helper' => array('priv' => 'manage_helpers'),
-    'drop_menu_item' => array('priv' => 'manage_menu'),
     'drop_pod_item' => array('access_pod_specific' => true),
     'load_pod' => array('priv' => 'manage_pods', 'format' => 'json'),
     'load_column' => array('priv' => 'manage_pods', 'format' => 'json'),
     'load_template' => array('priv' => 'manage_templates', 'format' => 'json'),
     'load_page' => array('priv' => 'manage_pod_pages', 'format' => 'json'),
     'load_helper' => array('priv' => 'manage_helpers', 'format' => 'json'),
-    'load_menu_item' => array('priv' => 'manage_menu', 'format' => 'json'),
     'load_sister_fields' => array('priv' => 'manage_pods', 'format' => 'json'),
     'load_pod_item' => array(),
     'load_files' => array(),
@@ -60,7 +57,14 @@ if (isset($methods[$action])) {
     $safe = isset($methods[$action]['safe']) ? $methods[$action]['safe'] : null;
     $access_pod_specific = isset($methods[$action]['access_pod_specific']) ? $methods[$action]['access_pod_specific'] : null;
 
-    if($access_pod_specific === true) {
+    if ('save_pod_item' == $action) {
+        if (isset($params->_wpnonce) && false === wp_verify_nonce($params->_wpnonce, 'pods-' . $action))
+            die('<e>Access denied');
+    }
+    elseif ((!isset($params->_wpnonce) || (false === wp_verify_nonce($params->_wpnonce, 'pods-' . $action) && false === wp_verify_nonce($params->_wpnonce, 'pods-multi'))))
+        die('<e>Access denied');
+
+    if ($access_pod_specific === true) {
         if (isset($params->datatype))
             $priv_val = 'pod_' . $params->datatype;
         else {
@@ -160,20 +164,28 @@ if (isset($methods[$action])) {
 
 function process_save_pod_item($params, $api) {
     $params = (object) $params;
-    if (!pods_validate_key($params->token, $params->uri_hash, $params->datatype, $params->form_count))
-        die("<e>The form has expired. Please reload the page and ensure your session is still active.");
 
-    if ($tmp = $_SESSION[$params->uri_hash][$params->form_count]['columns']) {
-        foreach ($tmp as $key => $val) {
-            $column_name = is_array($val) ? $key : $val;
-            $columns[$column_name] = $params->$column_name;
+    $columns = pods_validate_key($params->token, $params->datatype, $params->uri_hash, null, $params->form_count);
+    if (false === $columns)
+        die("<e>This form has expired. Please reload the page and ensure your session is still active.");
+
+    if (is_array($columns)) {
+        foreach ($columns as $key => $val) {
+            $column = is_array($val) ? $key : $val;
+            if (!isset($params->$column))
+                unset($columns[$column]);
+            else
+                $columns[$column] = $params->$column;
         }
     }
     else {
         $tmp = $api->load_pod(array('name' => $params->datatype));
+        $columns = array();
         foreach ($tmp['fields'] as $field_data) {
-            $column_name = $field_data['name'];
-            $columns[$column_name] = $params->$column_name;
+            $column = $field_data['name'];
+            if (!isset($params->$column))
+                continue;
+            $columns[$column] = $params->$column;
         }
     }
     $params->columns = $columns;

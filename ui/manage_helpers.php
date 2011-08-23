@@ -1,5 +1,7 @@
 <!-- Begin helper area -->
 <script type="text/javascript">
+var helper_id = '';
+var helper_name = '';
 jQuery(function() {
     jQuery(".select-helper").change(function() {
         helper_id = jQuery(this).val();
@@ -22,12 +24,14 @@ function loadHelper() {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=load_helper&id="+helper_id,
+        data: "action=load_helper&_wpnonce=<?php echo wp_create_nonce('pods-load_helper'); ?>&id="+helper_id,
         success: function(msg) {
             if (!is_error(msg)) {
                 var json = eval('('+msg+')');
                 var code = (null == json.phpcode) ? "" : json.phpcode;
                 var helper_type = (null == json.helper_type) ? "display" : json.helper_type;
+                helper_id = json.id;
+                helper_name = json.name;
                 jQuery("#helper_code").val(code);
             }
         }
@@ -40,7 +44,7 @@ function addHelper() {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=save_helper&name="+name+"&helper_type="+helper_type,
+        data: "action=save_helper&_wpnonce=<?php echo wp_create_nonce('pods-save_helper'); ?>&name="+name+"&helper_type="+helper_type,
         success: function(msg) {
             if (!is_error(msg)) {
                 var id = msg;
@@ -53,7 +57,7 @@ function addHelper() {
 <?php
 if (pods_access('manage_pods')) {
 ?>
-                var helper_select_html = '<option value="'+id+'">'+name+'</option>';
+                var helper_select_html = '<option value="'+name+'">'+name+'</option>';
                 if ('pre_save' == helper_type) {
                     jQuery("#pre_save_helpers").append(helper_select_html);
                 }
@@ -67,8 +71,7 @@ if (pods_access('manage_pods')) {
                     jQuery("#post_drop_helpers").append(helper_select_html);
                 }
                 else if ('input' == helper_type) {
-                    var helper_select_input_html = '<option value="'+name+'">'+name+'</option>';
-                    jQuery("#column_input_helper").append(helper_select_input_html);
+                    jQuery("#column_input_helper").append(helper_select_html);
                 }
 <?php
 }
@@ -83,7 +86,7 @@ function editHelper() {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=save_helper&id="+helper_id+"&phpcode="+encodeURIComponent(code),
+        data: "action=save_helper&_wpnonce=<?php echo wp_create_nonce('pods-save_helper'); ?>&id="+helper_id+"&phpcode="+encodeURIComponent(code),
         success: function(msg) {
             if (!is_error(msg)) {
                 alert("Success!");
@@ -97,7 +100,7 @@ function dropHelper() {
         jQuery.ajax({
             type: "post",
             url: api_url,
-            data: "action=drop_helper&id="+helper_id,
+            data: "action=drop_helper&_wpnonce=<?php echo wp_create_nonce('pods-drop_helper'); ?>&id="+helper_id,
             success: function(msg) {
                 if (!is_error(msg)) {
                     jQuery(".select-helper > option[value='"+helper_id+"']").remove();
@@ -105,10 +108,11 @@ function dropHelper() {
 <?php
 if (pods_access('manage_pods')) {
 ?>
-                    jQuery("#pre_save_helpers option[value='"+helper_id+"']").remove();
-                    jQuery("#pre_drop_helpers option[value='"+helper_id+"']").remove();
-                    jQuery("#post_save_helpers option[value='"+helper_id+"']").remove();
-                    jQuery("#post_drop_helpers option[value='"+helper_id+"']").remove();
+                    jQuery("div.helper#"+helper_name).remove();
+                    jQuery("#pre_save_helpers option[value='"+helper_name+"']").remove();
+                    jQuery("#pre_drop_helpers option[value='"+helper_name+"']").remove();
+                    jQuery("#post_save_helpers option[value='"+helper_name+"']").remove();
+                    jQuery("#post_drop_helpers option[value='"+helper_name+"']").remove();
 <?php
 }
 ?>

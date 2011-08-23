@@ -30,7 +30,7 @@ function loadPage() {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=load_page&id="+page_id,
+        data: "action=load_page&_wpnonce=<?php echo wp_create_nonce('pods-load_page'); ?>&id="+page_id,
         success: function(msg) {
             if (!is_error(msg)) {
                 var json = eval('('+msg+')');
@@ -52,7 +52,7 @@ function addPage() {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=save_page&uri="+uri,
+        data: "action=save_page&_wpnonce=<?php echo wp_create_nonce('pods-save_page'); ?>&uri="+uri,
         success: function(msg) {
             if (!is_error(msg)) {
                 var id = msg;
@@ -75,7 +75,7 @@ function editPage() {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=save_page&id="+page_id+"&page_title="+encodeURIComponent(title)+"&page_template="+encodeURIComponent(template)+"&phpcode="+encodeURIComponent(code)+"&precode="+encodeURIComponent(precode),
+        data: "action=save_page&_wpnonce=<?php echo wp_create_nonce('pods-save_page'); ?>&id="+page_id+"&page_title="+encodeURIComponent(title)+"&page_template="+encodeURIComponent(template)+"&phpcode="+encodeURIComponent(code)+"&precode="+encodeURIComponent(precode),
         success: function(msg) {
             if (!is_error(msg)) {
                 alert("Success!");
@@ -89,7 +89,7 @@ function dropPage() {
         jQuery.ajax({
             type: "post",
             url: api_url,
-            data: "action=drop_page&id="+page_id,
+            data: "action=drop_page&_wpnonce=<?php echo wp_create_nonce('pods-drop_page'); ?>&id="+page_id,
             success: function(msg) {
                 if (!is_error(msg)) {
                     jQuery(".select-page > option[value='"+page_id+"']").remove();
@@ -133,7 +133,7 @@ if (isset($pages)) {
     <select id="page_template">
         <option value="">-- Page Template --</option>
 <?php
-$page_templates = get_page_templates();
+$page_templates = apply_filters('pods_pod_page_templates', get_page_templates());
 if (!in_array('page.php',$page_templates) && locate_template(array('page.php',false))) {
     $page_templates['Page (WP Default)'] = 'page.php';
     ksort($page_templates);

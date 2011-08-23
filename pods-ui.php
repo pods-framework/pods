@@ -45,7 +45,7 @@ function pods_ui_manage ($obj)
     {
         $unique_md5 .= '_'.$object->ui['num'];
     }
-    $unique_md5 = '_'.md5($unique_md5);
+    $unique_md5 = '_'.wp_hash($unique_md5);
     $object->ui['unique_md5'] = (isset($object->ui['unique_md5'])?'_'.$object->ui['unique_md5']:$unique_md5);
     $object->ui['title'] = (isset($object->ui['title'])?$object->ui['title']:ucwords(str_replace('_',' ',$object->datatype)));
     $object->ui['item'] = (isset($object->ui['item'])?$object->ui['item']:ucwords(str_replace('_',' ',$object->datatype)));
@@ -1122,7 +1122,7 @@ function pods_ui_reorder () {
     jQuery.ajax({
         type: "post",
         url: "<?php echo PODS_URL; ?>/ui/ajax/api.php",
-        data: "action=reorder_pod_item&datatype=<?php echo $object->datatype; ?>&field=<?php echo $object->ui['reorder']; ?>&order="+order,
+        data: "action=reorder_pod_item&_wpnonce=<?php echo wp_create_nonce('pods-reorder_pod_item'); ?>&datatype=<?php echo $object->datatype; ?>&field=<?php echo $object->ui['reorder']; ?>&order="+order,
         success: function(msg) {
             if ("<e>" == msg.substr(0, 3)) {
                 alert(msg);

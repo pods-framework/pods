@@ -189,7 +189,7 @@ elseif ('file' == $coltype) {
                 flash_url: "<?php echo WP_INC_URL; ?>/js/swfupload/swfupload.swf",
                 file_types: "*.*",
                 file_size_limit: "<?php echo esc_attr(wp_max_upload_size()); ?>",
-                post_params: {"action": "wp_handle_upload_advanced", "auth_cookie": "<?php echo (is_ssl() ? esc_attr($_COOKIE[SECURE_AUTH_COOKIE]) : esc_attr($_COOKIE[AUTH_COOKIE])); ?>", "logged_in_cookie": "<?php echo esc_attr($_COOKIE[LOGGED_IN_COOKIE]); ?>"},
+                post_params: {"action": "wp_handle_upload_advanced", "_wpnonce": "<?php echo wp_create_nonce('pods-wp_handle_upload_advanced'); ?>", "auth_cookie": "<?php echo (is_ssl() ? esc_attr($_COOKIE[SECURE_AUTH_COOKIE]) : esc_attr($_COOKIE[AUTH_COOKIE])); ?>", "logged_in_cookie": "<?php echo esc_attr($_COOKIE[LOGGED_IN_COOKIE]); ?>"},
                 file_dialog_complete_handler: function(num_files, num_queued_files, total_queued_files) {
                     this.startUpload();
                 },

@@ -14,8 +14,8 @@ while ($row = mysql_fetch_assoc($result)) {
 
 // Figure out which tab to display
 $manage_action = 'manage';
-$wp_page = pods_url_variable('page', 'get');
-$dtname = pods_url_variable('pod','get');
+$wp_page = pods_var('page', 'get');
+$dtname = pods_var('pod','get');
 if ('pods-manage-' == substr($wp_page, 0, 12)) {
     $manage_action = 'top-level-manage';
     $dtname = substr($wp_page, 12);
@@ -59,7 +59,7 @@ if (!empty($dtname)) {
 }
 
 if (!empty($_GET['keywords'])) {
-    $where[] = "p.name LIKE '%" . pods_url_variable('keywords', 'get') . "%'";
+    $where[] = "p.name LIKE '%" . pods_var('keywords', 'get') . "%'";
 }
 
 $orderby = 'modified desc';
@@ -68,7 +68,7 @@ foreach ($_GET as $key => $val) {
         $get_vals[$key] = "$key=$val";
     }
     else {
-        $orderby = pods_url_variable($key, 'get');
+        $orderby = pods_var($key, 'get');
     }
 }
 
@@ -285,15 +285,15 @@ if ('manage' == $manage_action && (!isset($_GET['action']) || 'manage' == $_GET[
     foreach ($datatypes as $key => $name) {
         if (!pods_access('pod_' . $name))
             continue;
-        $selected = ($name == $dtname || $name == pods_url_variable('pod','get')) ? ' selected' : '';
+        $selected = ($name == $dtname || $name == pods_var('pod','get')) ? ' selected' : '';
 ?>
                     <option value="<?php echo $name; ?>"<?php echo $selected; ?>><?php echo $name; ?></option>
 <?php
     }
 ?>
                 </select>
-                <!--<input type="text" name="keywords" value="<?php echo pods_url_variable('keywords', 'get'); ?>" />-->
-                <input type="hidden" name="page" value="<?php echo pods_url_variable('page', 'get'); ?>" />
+                <!--<input type="text" name="keywords" value="<?php echo pods_var('keywords', 'get'); ?>" />-->
+                <input type="hidden" name="page" value="<?php echo pods_var('page', 'get'); ?>" />
                 <input type="submit" class="button" value="  Browse Pod  " />
             </form>
         </div>

@@ -5,7 +5,7 @@ require_once(preg_replace("/wp-content.*/","/wp-admin/includes/admin.php",__FILE
 require_once(realpath(dirname(__FILE__) . '/init.php'));
 ob_end_clean();
 
-if (!pods_access('manage_settings')) {
+if ((!isset($_POST['_wpnonce']) || !pods_access('manage_settings') || false === wp_verify_nonce($_POST['_wpnonce'], 'pods-uninstall')) && !defined('WP_UNINSTALL_PLUGIN')) {
     die('Error: Access denied');
 }
 

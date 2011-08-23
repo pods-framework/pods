@@ -29,7 +29,7 @@ function editRoles() {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=save_roles&"+data.join("&"),
+        data: "action=save_roles&_wpnonce=<?php echo wp_create_nonce('pods-save_roles'); ?>&"+data.join("&"),
         success: function(msg) {
             if (!is_error(msg)) {
                 alert("Success!");

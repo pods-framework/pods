@@ -67,13 +67,13 @@ function pods_sanitize($input) {
         $output = $input;
     elseif (is_object($input)) {
         foreach ((array) $input as $key => $val) {
-            $output[$key] = pods_sanitize($val);
+            $output[pods_sanitize($key)] = pods_sanitize($val);
         }
         $output = (object) $output;
     }
     elseif (is_array($input)) {
         foreach ($input as $key => $val) {
-            $output[$key] = pods_sanitize($val);
+            $output[pods_sanitize($key)] = pods_sanitize($val);
         }
     }
     else
@@ -447,8 +447,26 @@ function pods_access($privs, $method = 'OR') {
  * @since 1.6.7
  */
 function pods_shortcode($tags) {
-    $pairs = array('name' => null, 'id' => null, 'slug' => null, 'order' => 't.id DESC', 'limit' => 15, 'where' => null, 'col' => null, 'template' => null, 'helper' => null);
-    $tags = shortcode_atts($pairs, $tags);
+    $defaults = array('name' => null,
+                   'id' => null,
+                   'slug' => null,
+                   'select' => null,
+                   'order' => null,
+                   'orderby' => null,
+                   'limit' => null,
+                   'where' => null,
+                   'search' => true,
+                   'page' => null,
+                   'filters' => false,
+                   'filters_label' => null,
+                   'filters_location' => 'before',
+                   'pagination' => false,
+                   'pagination_label' => null,
+                   'pagination_location' => 'after',
+                   'col' => null,
+                   'template' => null,
+                   'helper' => null);
+    $tags = shortcode_atts($defaults, $tags);
     $tags = apply_filters('pods_shortcode', $tags);
 
     if (empty($tags['name'])) {
@@ -460,24 +478,46 @@ function pods_shortcode($tags) {
 
     // id > slug (if both exist)
     $id = empty($tags['slug']) ? null : $tags['slug'];
-    $id = empty($tags['id']) ? $id : $tags['id'];
+    $id = empty($tags['id']) ? $id : absint($tags['id']);
+    
+    $pod = new Pod($tags['name'], $id);
 
-    $order = empty($tags['order']) ? 'id DESC' : $tags['order'];
-    $limit = empty($tags['limit']) ? 15 : $tags['limit'];
-    $where = empty($tags['where']) ? null : $tags['where'];
-
-    $Record = new Pod($tags['name'], $id);
-
+    $found = 0;
     if (empty($id)) {
-        $params = array('orderby' => $order, 'limit' => $limit, 'where' => $where);
+        $params = array();
+        if (0 < strlen($tags['order']))
+            $params['orderby'] = $tags['order'];
+        if (0 < strlen($tags['orderby']))
+            $params['orderby'] = $tags['orderby'];
+        if (!empty($tags['limit']))
+            $params['limit'] = $tags['limit'];
+        if (0 < strlen($tags['where']))
+            $params['where'] = $tags['where'];
+        if (0 < strlen($tags['select']))
+            $params['select'] = $tags['select'];
+        if (empty($tags['search']))
+            $params['search'] = false;
+        if (0 < absint($tags['page']))
+            $params['page'] = absint($tags['page']);
         $params = apply_filters('pods_shortcode_findrecords_params', $params);
-        $Record->findRecords($params);
+        $pod->findRecords($params);
+        $found = $pod->getTotalRows();
     }
-    if (!empty($tags['col']) && !empty($id)) {
-        $val = $Record->get_field($tags['col']);
-        return empty($tags['helper']) ? $val : $Record->pod_helper($tags['helper'], $val);
+    elseif (!empty($tags['col'])) {
+        $val = $pod->get_field($tags['col']);
+        return empty($tags['helper']) ? $val : $pod->pod_helper($tags['helper'], $val);
     }
-    return $Record->showTemplate($tags['template']);
+    ob_start();
+    if (empty($id) && false !== $tags['filters'] && 'before' == $tags['filters_location'])
+        echo $pod->getFilters($tags['filters'], $tags['filters_label']);
+    if (empty($id) && 0 < $found && false !== $tags['pagination'] && 'before' == $tags['pagination_location'])
+        echo $pod->getPagination($tags['pagination_label']);
+    echo $pod->showTemplate($tags['template']);
+    if (empty($id) && 0 < $found && false !== $tags['pagination'] && 'after' == $tags['pagination_location'])
+        echo $pod->getPagination($tags['pagination_label']);
+    if (empty($id) && false !== $tags['filters'] && 'after' == $tags['filters_location'])
+        echo $pod->getFilters($tags['filters'], $tags['filters_label']);
+    return ob_get_clean();
 }
 
 /**
@@ -485,12 +525,10 @@ function pods_shortcode($tags) {
  *
  * @since 1.2.0
  */
-function pods_generate_key($datatype, $uri_hash, $public_columns, $form_count = 1) {
-    $token = md5(mt_rand());
-    $_SESSION[$uri_hash][$form_count]['dt'] = $datatype;
-    $_SESSION[$uri_hash][$form_count]['token'] = $token;
-    $_SESSION[$uri_hash][$form_count]['columns'] = $public_columns;
-    $token = apply_filters('pods_generate_key', $token, $datatype, $uri_hash, $public_columns, $form_count);
+function pods_generate_key($datatype, $uri_hash, $columns, $form_count = 1) {
+    $token = wp_create_nonce('pods-form-' . $datatype . '-' . (int) $form_count . '-' . $uri_hash . '-' . json_encode($columns));
+    $token = apply_filters('pods_generate_key', $token, $datatype, $uri_hash, $columns, (int) $form_count);
+    $_SESSION['pods_form_' . $token] = $columns;
     return $token;
 }
 
@@ -499,14 +537,13 @@ function pods_generate_key($datatype, $uri_hash, $public_columns, $form_count = 
  *
  * @since 1.2.0
  */
-function pods_validate_key($key, $uri_hash, $datatype, $form_count = 1) {
-    if (!empty($_SESSION) && isset($_SESSION[$uri_hash]) && !empty($_SESSION[$uri_hash])) {
-        $session_dt = $_SESSION[$uri_hash][$form_count]['dt'];
-        $session_token = $_SESSION[$uri_hash][$form_count]['token'];
-        if (!empty($session_token) && $key == $session_token && $datatype == $session_dt)
-            return apply_filters('pods_validate_key', true, $key, $uri_hash, $datatype, $form_count);
-    }
-    return apply_filters('pods_validate_key', false, $key, $uri_hash, $datatype, $form_count);
+function pods_validate_key($token, $datatype, $uri_hash, $columns = null, $form_count = 1) {
+    if (null === $columns && !empty($_SESSION) && isset($_SESSION['pods_form_' . $token]))
+        $columns = $_SESSION['pods_form_' . $token];
+    $success = false;
+    if (false !== wp_verify_nonce($token, 'pods-form-' . $datatype . '-' . (int) $form_count . '-' . $uri_hash . '-' . json_encode($columns)))
+        $success = $columns;
+    return apply_filters('pods_validate_key', $success, $token, $datatype, $uri_hash, $columns, (int) $form_count);
 }
 
 /**

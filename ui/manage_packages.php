@@ -30,7 +30,7 @@ function podsExport() {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=export_package&"+data.join("&"),
+        data: "action=export_package&_wpnonce=<?php echo wp_create_nonce('pods-export_package'); ?>&"+data.join("&"),
         success: function(msg) {
             if (!is_error(msg) && 0 < msg.length) {
                 jQuery("#export_code").html(msg);
@@ -46,7 +46,7 @@ function podsImport(action) {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action="+action+data,
+        data: "action="+action+"&_wpnonce=<?php echo wp_create_nonce('pods-multi'); ?>"+data,
         success: function(msg) {
             jQuery("#import_finalize").html(msg);
             if ('validate_package' != action && !is_error(msg))

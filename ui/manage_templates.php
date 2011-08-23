@@ -29,7 +29,7 @@ function loadTemplate() {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=load_template&id="+template_id,
+        data: "action=load_template&_wpnonce=<?php echo wp_create_nonce('pods-load_template'); ?>&id="+template_id,
         success: function(msg) {
             if (!is_error(msg)) {
                 var json = eval("("+msg+")");
@@ -45,7 +45,7 @@ function addTemplate() {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=save_template&name="+name,
+        data: "action=save_template&_wpnonce=<?php echo wp_create_nonce('pods-save_template'); ?>&name="+name,
         success: function(msg) {
             if (!is_error(msg)) {
                 var id = msg;
@@ -65,7 +65,7 @@ function editTemplate() {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=save_template&id="+template_id+"&code="+encodeURIComponent(code),
+        data: "action=save_template&_wpnonce=<?php echo wp_create_nonce('pods-save_template'); ?>&id="+template_id+"&code="+encodeURIComponent(code),
         success: function(msg) {
             if (!is_error(msg)) {
                 alert("Success!");
@@ -79,7 +79,7 @@ function dropTemplate() {
         jQuery.ajax({
             type: "post",
             url: api_url,
-            data: "action=drop_template&id="+template_id,
+            data: "action=drop_template&_wpnonce=<?php echo wp_create_nonce('pods-drop_template'); ?>&id="+template_id,
             success: function(msg) {
                 if (!is_error(msg)) {
                     jQuery(".select-template > option[value='"+template_id+"']").remove();

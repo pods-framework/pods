@@ -1,6 +1,7 @@
 <!-- Begin pod area -->
 <script type="text/javascript">
 jQuery(function() {
+    jQuery("#columnBox").hide();
     jQuery(".select-pod").change(function() {
         dt = jQuery(this).val();
         dtname = jQuery(".select-pod > option:selected").html();
@@ -11,10 +12,8 @@ jQuery(function() {
             jQuery("#podArea .stickynote").show();
         }
         else {
-            jQuery("#columnBox").show();
             jQuery("#podContent").show();
             jQuery("#podArea .stickynote").hide();
-            resetForm();
             loadPod();
         }
     });
@@ -36,7 +35,9 @@ function resetPodForm() {
     jQuery("#list_post_drop_helpers").html("");
 }
 
-function resetForm() {
+function resetForm(fade) {
+    if (false !== fade)
+        jQuery("#columnBox").hide();
     jQuery("#column_name").val("");
     jQuery("#column_name").removeAttr("disabled");
     jQuery("#column_label").val("");
@@ -54,10 +55,12 @@ function resetForm() {
     jQuery("#column_unique").removeAttr("disabled");
     jQuery("#column_multiple").removeAttr("checked");
     jQuery("#column_multiple").removeAttr("disabled");
-    jQuery("#column_sister_field_id").val("");
+    jQuery("#column_sister_field_id").html("");
     doDropdown('nopick');
     jQuery(".column-header").html("Add Column");
     add_or_edit = "add";
+    if (false !== fade)
+        jQuery("#columnBox").fadeIn('fast');
 }
 
 function addOrEditColumn() {
@@ -75,6 +78,7 @@ function doDropdown(val) {
         jQuery(".coltype-nopick").hide();
     }
     else {
+        jQuery(".coltype-pick-bi").hide();
         jQuery(".coltype-pick").hide();
         jQuery(".coltype-nopick").show();
     }
@@ -82,36 +86,43 @@ function doDropdown(val) {
 
 function sisterFields(sister_field_id) {
     var pickval = jQuery("#column_pickval").val();
+    jQuery(".coltype-pick-bi").hide();
+    jQuery("#column_sister_field_id").html('<option value="">-- Related to --</option>');
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=load_sister_fields&datatype="+dt+"&pickval="+pickval,
+        data: "action=load_sister_fields&_wpnonce=<?php echo wp_create_nonce('pods-load_sister_fields'); ?>&datatype="+dt+"&pickval="+pickval,
         success: function(msg) {
             if (!is_error(msg) && "" != msg) {
                 var html = '<option value="">-- Related to --</option>';
-                jQuery("#column_sister_field_id").html("");
                 var json = eval('('+msg+')');
+                var found = false;
                 if(json != null) {
                     for (var i = 0; i < json.length; i++) {
+                        found = true;
                         var id = json[i].id;
                         var name = json[i].name;
                         html += '<option value="'+id+'">'+name+'</option>';
                     }
                 }
                 jQuery("#column_sister_field_id").html(html);
-                jQuery("#column_sister_field_id option[value='"+sister_field_id+"']").attr("selected", "selected");
-                jQuery("#column_sister_field_id").show();
+                if (!found)
+                    return;
+                if (0 < sister_field_id)
+                    jQuery("#column_sister_field_id option[value='"+sister_field_id+"']").attr("selected", "selected");
+                jQuery(".coltype-pick-bi").show();
             }
         }
     });
 }
 
 function loadPod() {
+    resetForm();
     resetPodForm();
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=load_pod&id="+dt,
+        data: "action=load_pod&_wpnonce=<?php echo wp_create_nonce('pods-load_pod'); ?>&id="+dt,
         success: function(msg) {
             if (!is_error(msg)) {
                 var json = eval('('+msg+')');
@@ -178,7 +189,7 @@ function loadPod() {
                     pre_save_helpers = pre_save_helpers.split(",");
                     for (var i = 0; i < pre_save_helpers.length; i++) {
                         var val = pre_save_helpers[i];
-                        html += '<div class="helper" id="'+val+'">'+val+' (<a onclick="jQuery(this).parent().remove()">drop</a>)</div>';
+                        html += '<div class="helper" id="'+val+'">'+val+' (<a href="#" onclick="jQuery(this).parent().remove();return false;">drop</a>)</div>';
                     }
                     jQuery("#list_pre_save_helpers").html(html);
                 }
@@ -188,7 +199,7 @@ function loadPod() {
                     pre_drop_helpers = pre_drop_helpers.split(",");
                     for (var i in pre_drop_helpers) {
                         var val = pre_drop_helpers[i];
-                        html += '<div class="helper" id="'+val+'">'+val+' (<a onclick="jQuery(this).parent().remove()">drop</a>)</div>';
+                        html += '<div class="helper" id="'+val+'">'+val+' (<a href="#" onclick="jQuery(this).parent().remove();return false;">drop</a>)</div>';
                     }
                     jQuery("#list_pre_drop_helpers").html(html);
                 }
@@ -198,7 +209,7 @@ function loadPod() {
                     post_save_helpers = post_save_helpers.split(",");
                     for (var i in post_save_helpers) {
                         var val = post_save_helpers[i];
-                        html += '<div class="helper" id="'+val+'">'+val+' (<a onclick="jQuery(this).parent().remove()">drop</a>)</div>';
+                        html += '<div class="helper" id="'+val+'">'+val+' (<a href="#" onclick="jQuery(this).parent().remove();return false;">drop</a>)</div>';
                     }
                     jQuery("#list_post_save_helpers").html(html);
                 }
@@ -208,7 +219,7 @@ function loadPod() {
                     post_drop_helpers = post_drop_helpers.split(",");
                     for (var i in post_drop_helpers) {
                         var val = post_drop_helpers[i];
-                        html += '<div class="helper" id="'+val+'">'+val+' (<a onclick="jQuery(this).parent().remove()">drop</a>)</div>';
+                        html += '<div class="helper" id="'+val+'">'+val+' (<a href="#" onclick="jQuery(this).parent().remove();return false;">drop</a>)</div>';
                     }
                     jQuery("#list_post_drop_helpers").html(html);
                 }
@@ -222,7 +233,7 @@ function addPod() {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=save_pod&name="+name+"&return_pod=1",
+        data: "action=save_pod&_wpnonce=<?php echo wp_create_nonce('pods-save_pod'); ?>&name="+name+"&return_pod=1",
         success: function(msg) {
             if (!is_error(msg)) {
                 var json = eval('('+msg+')');
@@ -274,7 +285,7 @@ function editPod() {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=save_pod&id="+dt+"&label="+label+"&is_toplevel="+is_toplevel+"&detail_page="+detail_page+"&pre_save_helpers="+pre_save_helpers+"&pre_drop_helpers="+pre_drop_helpers+"&post_save_helpers="+post_save_helpers+"&post_drop_helpers="+post_drop_helpers+"&order="+order,
+        data: "action=save_pod&_wpnonce=<?php echo wp_create_nonce('pods-save_pod'); ?>&id="+dt+"&label="+label+"&is_toplevel="+is_toplevel+"&detail_page="+detail_page+"&pre_save_helpers="+pre_save_helpers+"&pre_drop_helpers="+pre_drop_helpers+"&post_save_helpers="+post_save_helpers+"&post_drop_helpers="+post_drop_helpers+"&order="+order,
         success: function(msg) {
             if (!is_error(msg)) {
                 alert("Success!");
@@ -288,7 +299,7 @@ function dropPod() {
         jQuery.ajax({
             type: "post",
             url: api_url,
-            data: "action=drop_pod&id="+dt+"&name="+dtname,
+            data: "action=drop_pod&_wpnonce=<?php echo wp_create_nonce('pods-drop_pod'); ?>&id="+dt+"&name="+dtname,
             success: function(msg) {
                 if (!is_error(msg)) {
                     jQuery(".select-pod > option[value='"+dt+"']").remove();
@@ -301,15 +312,15 @@ function dropPod() {
 }
 
 function loadColumn(id) {
-    resetForm();
+    jQuery("#columnBox").hide();
+    resetForm(false);
     column_id = id;
     add_or_edit = "edit";
     jQuery(".column-header").html("Edit Column");
-
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=load_column&id="+column_id,
+        data: "action=load_column&_wpnonce=<?php echo wp_create_nonce('pods-load_column'); ?>&id="+column_id,
         success: function(msg) {
             var json = eval('('+msg+')');
             var name = (null == json.name) ? "" : json.name;
@@ -352,13 +363,12 @@ function loadColumn(id) {
                 jQuery("#column_type").attr("disabled", "disabled");
                 jQuery("#column_required").attr("disabled", "disabled");
             }
-            if ("pick" == coltype) {
-                doDropdown(coltype);
-            }
-            if (0 != parseInt(sister_field_id)) {
+            var found = null;
+            if (0 != parseInt(sister_field_id))
                 sisterFields(sister_field_id);
-            }
-            jQuery("#columnBox").animate({marginTop:"20px"},100).animate({marginTop:"0"},100).animate({marginTop:"20px"},100).animate({marginTop:"0"},100);
+            if ("pick" == coltype)
+                doDropdown(coltype);
+            jQuery("#columnBox").fadeIn('fast');
         }
     });
 }
@@ -385,10 +395,9 @@ function addColumn() {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=save_column&datatype="+dt+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&pick_orderby="+pick_orderby+"&sister_field_id="+sister_field_id+"&input_helper="+input_helper+"&required="+required+"&unique="+unique+"&multiple="+multiple,//&display_helper="+display_helper+"
+        data: "action=save_column&_wpnonce=<?php echo wp_create_nonce('pods-save_column'); ?>&datatype="+dt+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&pick_orderby="+pick_orderby+"&sister_field_id="+sister_field_id+"&input_helper="+input_helper+"&required="+required+"&unique="+unique+"&multiple="+multiple,//&display_helper="+display_helper+"
         success: function(msg) {
             if (!is_error(msg)) {
-                resetForm();
                 loadPod();
             }
         }
@@ -417,11 +426,9 @@ function editColumn(id) {
     jQuery.ajax({
         type: "post",
         url: api_url,
-        data: "action=save_column&id="+id+"&datatype="+dt+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&pick_orderby="+pick_orderby+"&sister_field_id="+sister_field_id+"&input_helper="+input_helper+"&required="+required+"&unique="+unique+"&multiple="+multiple,//&display_helper="+display_helper+"
+        data: "action=save_column&_wpnonce=<?php echo wp_create_nonce('pods-save_column'); ?>&id="+id+"&datatype="+dt+"&dtname="+dtname+"&name="+name+"&label="+label+"&comment="+comment+"&coltype="+coltype+"&pickval="+pickval+"&pick_filter="+pick_filter+"&pick_orderby="+pick_orderby+"&sister_field_id="+sister_field_id+"&input_helper="+input_helper+"&required="+required+"&unique="+unique+"&multiple="+multiple,//&display_helper="+display_helper+"
         success: function(msg) {
             if (!is_error(msg)) {
-                alert("Success!");
-                resetForm();
                 loadPod();
             }
         }
@@ -433,7 +440,7 @@ function dropColumn(id) {
         jQuery.ajax({
             type: "post",
             url: api_url,
-            data: "action=drop_column&id="+id+"&dtname="+dtname,
+            data: "action=drop_column&_wpnonce=<?php echo wp_create_nonce('pods-drop_column'); ?>&id="+id+"&dtname="+dtname,
             success: function(msg) {
                 if (!is_error(msg)) {
                     jQuery(".col"+id).remove();
@@ -441,6 +448,18 @@ function dropColumn(id) {
                 }
             }
         });
+    }
+}
+
+function addPodHelper(div_id, select_id) {
+    var val = jQuery("#"+select_id).val();
+    if ("" != val) {
+        var valexists = jQuery("div.helper#"+val).html();
+        if (null == valexists) {
+            var html = '<div class="helper" id="'+val+'">'+val+' (<a href="#" onclick="jQuery(this).parent().remove();return false;">drop</a>)</div>';
+            jQuery("#"+div_id).append(html);
+            jQuery("#"+select_id).val('');
+        }
     }
 }
 </script>
@@ -644,7 +663,7 @@ while ($row = mysql_fetch_array($result)) {
                 </select>
             </td>
         </tr>
-        <tr class="coltype-pick">
+        <tr class="coltype-pick-bi">
             <td>Bi-directional?</td>
             <td>
                 <select id="column_sister_field_id"></select>

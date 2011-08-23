@@ -7,6 +7,7 @@ function pods_resetDB() {
                 jQuery.ajax({
                     type: "post",
                     url: "<?php echo PODS_URL; ?>/uninstall.php",
+                    data: "_wpnonce=<?php echo wp_create_nonce('pods-uninstall'); ?>",
                     success: function(msg) {
                         if (!is_error(msg)) {
                             window.location="";
@@ -22,7 +23,7 @@ function pods_fixDB() {
         jQuery.ajax({
             type: "post",
             url: "<?php echo PODS_URL; ?>/ui/ajax/api.php",
-            data: "action=fix_wp_pod",
+            data: "action=fix_wp_pod&_wpnonce=<?php echo wp_create_nonce('pods-fix_wp_pod'); ?>",
             success: function(msg) {
                 if ("admin.php?page=pods&wp_pod_fixed=1#settings" == window.location)
                     window.location = "";
@@ -44,7 +45,7 @@ function pods_security_settings() {
     jQuery.ajax({
         type: "post",
         url: "<?php echo PODS_URL; ?>/ui/ajax/api.php",
-        data: "action=security_settings&"+data.join("&"),
+        data: "action=security_settings&_wpnonce=<?php echo wp_create_nonce('pods-security_settings'); ?>&"+data.join("&"),
         success: function(msg) {
             if ("admin.php?page=pods&security_settings_updated=1#settings" == window.location)
                 window.location = "";

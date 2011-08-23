@@ -12,13 +12,16 @@ class PodInit
         // Activate and Install
         register_activation_hook(__FILE__, array($this, 'activate'));
         add_action('wpmu_new_blog', array($this, 'new_blog'), 10, 6);
-        if (absint(get_option('pods_version')) < PODS_VERSION)
+
+        $installed = get_option('pods_version');
+        if (0 < strlen($installed) && false === strpos($installed, '.'))
+            $installed = pods_version_to_point($installed);
+        if (version_compare($installed, PODS_VERSION, '<'))
             $this->setup();
-        elseif (absint(get_option('pods_version')) != PODS_VERSION) {
+        elseif (version_compare($installed, PODS_VERSION, '>')) {
             delete_option('pods_version');
             add_option('pods_version', PODS_VERSION);
         }
-
 
         add_action('init', array($this, 'init'));
         add_action('admin_menu', array($this, 'admin_menu'), 99);
@@ -64,17 +67,20 @@ class PodInit
             switch_to_blog($blogid);
         }
         // Setup DB tables
-        if ($installed = absint(get_option('pods_version'))) {
-            if ($installed < PODS_VERSION) {
+        $installed = get_option('pods_version');
+        if (0 < strlen($installed) && false === strpos($installed, '.'))
+            $installed = pods_version_to_point($installed);
+        if (0 < strlen($installed)) {
+            if (version_compare($installed, PODS_VERSION, '<')) {
                 do_action('pods_update', PODS_VERSION, $installed, $blogid);
-                if (null === apply_filters('pods_update_run', null, PODS_VERSION, $installed, $blogid))
+                if (null === apply_filters('pods_update_run', null, PODS_VERSION, $installed, $blogid) && !isset($_GET['pods_bypass_update']))
                     include(PODS_DIR . '/sql/update.php');
                 do_action('pods_update_post', PODS_VERSION, $installed, $blogid);
             }
         }
         else {
             do_action('pods_install', PODS_VERSION, $installed, $blogid);
-            if (null === apply_filters('pods_install_run', null, PODS_VERSION, $installed, $blogid)) {
+            if (null === apply_filters('pods_install_run', null, PODS_VERSION, $installed, $blogid) && !isset($_GET['pods_bypass_install'])) {
                 $sql = file_get_contents(PODS_DIR . '/sql/dump.sql');
                 $sql = apply_filters('pods_install_sql', $sql, PODS_VERSION, $installed, $blogid);
                 $charset_collate = 'DEFAULT CHARSET utf8';
@@ -199,7 +205,7 @@ class PodInit
         do_action('pods_wp_head');
         if (!defined('PODS_DISABLE_VERSION_OUTPUT') || !PODS_DISABLE_VERSION_OUTPUT) {
 ?>
-<!-- Pods CMS <?php echo PODS_VERSION_FULL; ?> -->
+<!-- Pods CMS <?php echo PODS_VERSION; ?> -->
 <?php
         }
         if ((!defined('PODS_DISABLE_META') || !PODS_DISABLE_META) && is_object($pods)) {

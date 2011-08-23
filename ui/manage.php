@@ -21,7 +21,6 @@ var api_url = "<?php echo PODS_URL; ?>/ui/ajax/api.php";
 var datatype;
 var column_id;
 var add_or_edit;
-var helper_id;
 var page_id;
 
 jQuery(function() {
@@ -33,14 +32,6 @@ jQuery(function() {
         jQuery(".navTab[rel='"+thetab+"Area']").click();
     }
 });
-
-function addPodHelper(div_id, select_id) {
-    var val = jQuery("#"+select_id).val();
-    if ("" != val) {
-        var html = '<div class="helper" id="'+val+'">'+val+' (<a onclick="jQuery(this).parent().remove()">drop</a>)</div>';
-        jQuery("#"+div_id).append(html);
-    }
-}
 </script>
 
 <div class="wrap pods_admin">

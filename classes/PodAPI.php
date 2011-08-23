@@ -744,6 +744,51 @@ class PodAPI
      * Add or edit a single pod item
      *
      * $params['datatype'] string The datatype name
+     * $params['tbl_row_id'] int The item's ID from the wp_pod_tbl_* table
+     *
+     * @param array $params An associative array of parameters
+     * @return int The table row ID
+     * @since 1.12
+     */
+    function duplicate_pod_item($params) {
+        $params = (object) $params;
+
+        $id = false;
+        $columns = $this->fields;
+        if (empty($columns) || $this->dtname != $params->datatype) {
+            $pod = $this->load_pod(array('name' => $params->datatype));
+            $columns = $pod['fields'];
+        }
+        $pod = new Pod($params->datatype, $params->tbl_row_id);
+        if (!empty($pod->data)) {
+            $params = array('datatype' => $params->datatype,
+                            'columns' => array());
+            foreach ($columns as $column) {
+                $value = null;
+                $field = $column;
+                if ('pick' == $column['coltype']) {
+                    $field = $column . '.id';
+                    if ('wp_taxonomy' == $column['pickval'])
+                        $field = $column . '.term_id';
+                }
+                if ('file' == $column['coltype'])
+                    $field = $column . '.ID';
+                $value = $pod->get_field($field);
+                if (is_array($value))
+                    $value = array_unique(array_filter(implode(',', $value)));
+                if (0 < strlen($value))
+                    $params['columns'][$column['name']] = $value;
+            }
+            $params = apply_filters('duplicate_pod_item', $params, $pod->datatype, $pod->get_field('id'));
+            $id = $this->save_pod_item($params);
+        }
+        return $id;
+    }
+
+    /**
+     * Add or edit a single pod item
+     *
+     * $params['datatype'] string The datatype name
      * $params['field'] string The column name of the field to reorder
      * $params['order'] array The key=>value array of items to reorder (key should be an integer)
      *

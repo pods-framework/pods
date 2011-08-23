@@ -72,7 +72,8 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 * Added: Lightweight Relationship (PICK) field support in Pod :: findRecords (2.0 full support in UI)
 * Added: Fully revamped JOINs based on field names when referenced in Pod :: findRecords $params (`select, where, groupby, having, orderby`)
 * Added: RegEx auto-sanitizing of field names when referenced in Pod :: findRecords $params (`select, where, groupby, having, orderby`)
-* Added: PodAPI :: duplicate_pod_item with $params as `'datatype' => 'podname', 'tbl_row_id' => $item_id_to_duplicate`
+* Added: PodAPI :: duplicate_pod_item with $params as `'datatype' => 'podname', 'tbl_row_id' => $item_id_to_duplicate` (returns new id)
+* Added: PodAPI :: export_pod_item with $params as `'datatype' => 'podname', 'tbl_row_id' => $item_id_to_export` (returns array of data - pick/file columns are arrays of their data)
 * Added: Option to use SQL_CALC_FOUND_ROWS or COUNT(*) for getting the total rows available (for use with pagination / Pod :: getTotalRows) setting 'calc_found_rows' or 'count_found_rows' to true in Pod :: findRecords $params (useful for complex queries on data)
 * Added: Option to disable pagination altogether (separate from setting page to 1, but also forces page to be 1) in findRecords $params `'pagination' => false`
 * Added: PODS_GLOBAL_POD_PAGINATION constant to globally disable pagination by setting the constant to false (can be renabled as needed in findRecords $params `'pagination' => true`)

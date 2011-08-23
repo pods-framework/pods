@@ -764,8 +764,7 @@ class PodAPI
             $params = array('datatype' => $params->datatype,
                             'columns' => array());
             foreach ($columns as $column) {
-                $value = null;
-                $field = $column;
+                $field = $column['name'];
                 if ('pick' == $column['coltype']) {
                     $field = $column . '.id';
                     if ('wp_taxonomy' == $column['pickval'])
@@ -783,6 +782,38 @@ class PodAPI
             $id = $this->save_pod_item($params);
         }
         return $id;
+    }
+
+    /**
+     * Export a pod item's data
+     *
+     * $params['datatype'] string The datatype name
+     * $params['tbl_row_id'] int The item's ID from the wp_pod_tbl_* table
+     *
+     * @param array $params An associative array of parameters
+     * @return int The table row ID
+     * @since 1.12
+     */
+    function export_pod_item($params) {
+        $params = (object) $params;
+
+        $data = false;
+        $columns = $this->fields;
+        if (empty($columns) || $this->dtname != $params->datatype) {
+            $pod = $this->load_pod(array('name' => $params->datatype));
+            $columns = $pod['fields'];
+        }
+        $pod = new Pod($params->datatype, $params->tbl_row_id);
+        if (!empty($pod->data)) {
+            $data = array();
+            foreach ($columns as $column) {
+                $value = $pod->get_field($column['name']);
+                if (0 < strlen($value))
+                    $data[$column['name']] = $value;
+            }
+            $data = apply_filters('export_pod_item', $data, $pod->datatype, $pod->get_field('id'));
+        }
+        return $data;
     }
 
     /**

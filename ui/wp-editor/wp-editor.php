@@ -5,7 +5,7 @@
 // Usage:
 // global $wp_editor;
 // $wp_editor->editor($content, $editor_id, $settings, $media_buttons);
-if ( !class_exists('WP_Editor') ) :
+if ( !class_exists('WP_Editor') && !function_exists('wp_editor') ) :
 class WP_Editor {
 
 	var $editor_ids = array();
@@ -15,6 +15,10 @@ class WP_Editor {
 
 	function __construct() {
 		add_filter( 'tiny_mce_before_init', array($this, 'loaded_test') );
+	}
+
+	function wp_default_editor() {
+		return wp_default_editor();
 	}
 
 	function editor( $content, $editor_id, $settings = array(), $media_buttons = true ) {

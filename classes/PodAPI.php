@@ -773,8 +773,6 @@ class PodAPI
                 if ('file' == $column['coltype'])
                     $field = $column . '.ID';
                 $value = $pod->get_field($field);
-                if (is_array($value))
-                    $value = array_unique(array_filter(implode(',', $value)));
                 if (0 < strlen($value))
                     $params['columns'][$column['name']] = $value;
             }

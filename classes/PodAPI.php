@@ -758,6 +758,11 @@ class PodAPI
         if (empty($columns) || $this->dtname != $params->datatype) {
             $pod = $this->load_pod(array('name' => $params->datatype));
             $columns = $pod['fields'];
+            if (null === $this->dtname) {
+                $this->dtname = $pod['name'];
+                $this->dt = $pod['id'];
+                $this->fields = $pod['fields'];
+            }
         }
         $pod = new Pod($params->datatype, $params->tbl_row_id);
         if (!empty($pod->data)) {
@@ -783,7 +788,7 @@ class PodAPI
     }
 
     /**
-     * Export a pod item's data
+     * Export a pod item
      *
      * $params['datatype'] string The datatype name
      * $params['tbl_row_id'] int The item's ID from the wp_pod_tbl_* table
@@ -800,6 +805,11 @@ class PodAPI
         if (empty($columns) || $this->dtname != $params->datatype) {
             $pod = $this->load_pod(array('name' => $params->datatype));
             $columns = $pod['fields'];
+            if (null === $this->dtname) {
+                $this->dtname = $pod['name'];
+                $this->dt = $pod['id'];
+                $this->fields = $pod['fields'];
+            }
         }
         $pod = new Pod($params->datatype, $params->tbl_row_id);
         if (!empty($pod->data)) {
@@ -841,7 +851,6 @@ class PodAPI
      * $params['id'] int The datatype ID
      * $params['name'] string The datatype name
      *
-     * @todo Only require the datatype ID or name (not both!)
      * @param array $params An associative array of parameters
      * @since 1.9.0
      */
@@ -887,7 +896,6 @@ class PodAPI
      * $params['id'] int The datatype ID
      * $params['name'] string The datatype name
      *
-     * @todo Only require the datatype ID or name (not both!)
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */

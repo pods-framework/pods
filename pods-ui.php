@@ -129,6 +129,11 @@ function pods_ui_manage ($obj)
     $object->ui['join'] = (isset($object->ui['join'])?$object->ui['join']:null);
     $object->ui['groupby'] = (isset($object->ui['groupby'])?$object->ui['groupby']:null);
     $object->ui['having'] = (isset($object->ui['having'])?$object->ui['having']:null);
+    $object->ui['search_mode'] = (isset($object->ui['search_mode'])?$object->ui['search_mode']:null);
+    $object->ui['traverse'] = (isset($object->ui['traverse'])?$object->ui['traverse']:null);
+    $object->ui['calc_found_rows'] = (isset($object->ui['calc_found_rows'])?$object->ui['calc_found_rows']:null);
+    $object->ui['count_found_rows'] = (isset($object->ui['count_found_rows'])?$object->ui['count_found_rows']:null);
+    $object->ui['rabit_hole'] = (isset($object->ui['rabit_hole'])?$object->ui['rabit_hole']:null);
     $object->ui['sql'] = (isset($object->ui['sql'])?$object->ui['sql']:null);
     $object->ui['reorder_sql'] = (isset($object->ui['reorder_sql'])?$object->ui['reorder_sql']:$object->ui['sql']);
     $object->ui['search'] = (isset($object->ui['search'])&&is_bool($object->ui['search'])&&$object->ui['search']===false?false:null);
@@ -460,6 +465,10 @@ function pods_ui_manage ($obj)
                 $params['join'] = $object->ui['join'];
                 $params['groupby'] = $object->ui['groupby'];
                 $params['having'] = $object->ui['having'];
+                $params['search_mode'] = $object->ui['search_mode'];
+                $params['traverse'] = $object->ui['traverse'];
+                $params['calc_found_rows'] = $object->ui['calc_found_rows'];
+                $params['count_found_rows'] = $object->ui['count_found_rows'];
                 $params['sql'] = $object->ui['reorder_sql'];
                 $object->findRecords($params);
             }
@@ -474,7 +483,13 @@ function pods_ui_manage ($obj)
                 $params['join'] = $object->ui['join'];
                 $params['groupby'] = $object->ui['groupby'];
                 $params['having'] = $object->ui['having'];
+                $params['search_mode'] = $object->ui['search_mode'];
+                $params['traverse'] = $object->ui['traverse'];
+                $params['calc_found_rows'] = $object->ui['calc_found_rows'];
+                $params['count_found_rows'] = $object->ui['count_found_rows'];
                 $params['sql'] = $object->ui['sql'];
+                if (!empty($object->ui['rabit_hole']))
+                    $object->rabit_hole = $object->ui['rabit_hole'];
                 $object->findRecords($params);
             }
             $_GET = array_merge($oldget,$_GET);

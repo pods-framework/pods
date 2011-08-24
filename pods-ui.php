@@ -459,17 +459,28 @@ function pods_ui_manage ($obj)
                 $params = array();
                 if (!empty($object->ui['select']))
                     $params['select'] = $object->ui['select'];
-                $params['orderby'] = $object->ui['reorder_sort'];
-                $params['limit'] = $object->ui['reorder_limit'];
-                $params['where'] = $object->ui['reorder_where'];
-                $params['join'] = $object->ui['join'];
-                $params['groupby'] = $object->ui['groupby'];
-                $params['having'] = $object->ui['having'];
-                $params['search_mode'] = $object->ui['search_mode'];
-                $params['traverse'] = $object->ui['traverse'];
-                $params['calc_found_rows'] = $object->ui['calc_found_rows'];
-                $params['count_found_rows'] = $object->ui['count_found_rows'];
-                $params['sql'] = $object->ui['reorder_sql'];
+                if (null !== $object->ui['reorder_sort'])
+                    $params['orderby'] = $object->ui['reorder_sort'];
+                if (null !== $object->ui['reorder_limit'])
+                    $params['limit'] = $object->ui['reorder_limit'];
+                if (null !== $object->ui['reorder_where'])
+                    $params['where'] = $object->ui['reorder_where'];
+                if (null !== $object->ui['join'])
+                    $params['join'] = $object->ui['join'];
+                if (null !== $object->ui['groupby'])
+                    $params['groupby'] = $object->ui['groupby'];
+                if (null !== $object->ui['having'])
+                    $params['having'] = $object->ui['having'];
+                if (null !== $object->ui['search_mode'])
+                    $params['search_mode'] = $object->ui['search_mode'];
+                if (null !== $object->ui['traverse'])
+                    $params['traverse'] = $object->ui['traverse'];
+                if (null !== $object->ui['calc_found_rows'])
+                    $params['calc_found_rows'] = $object->ui['calc_found_rows'];
+                if (null !== $object->ui['count_found_rows'])
+                    $params['count_found_rows'] = $object->ui['count_found_rows'];
+                if (null !== $object->ui['reorder_sql'])
+                    $params['sql'] = $object->ui['reorder_sql'];
                 $object->findRecords($params);
             }
             else
@@ -477,17 +488,28 @@ function pods_ui_manage ($obj)
                 $params = array();
                 if (!empty($object->ui['select']))
                     $params['select'] = $object->ui['select'];
-                $params['orderby'] = $object->ui['sort'];
-                $params['limit'] = $object->ui['limit'];
-                $params['where'] = $object->ui['where'];
-                $params['join'] = $object->ui['join'];
-                $params['groupby'] = $object->ui['groupby'];
-                $params['having'] = $object->ui['having'];
-                $params['search_mode'] = $object->ui['search_mode'];
-                $params['traverse'] = $object->ui['traverse'];
-                $params['calc_found_rows'] = $object->ui['calc_found_rows'];
-                $params['count_found_rows'] = $object->ui['count_found_rows'];
-                $params['sql'] = $object->ui['sql'];
+                if (null !== $object->ui['sort'])
+                    $params['orderby'] = $object->ui['sort'];
+                if (null !== $object->ui['limit'])
+                    $params['limit'] = $object->ui['limit'];
+                if (null !== $object->ui['where'])
+                    $params['where'] = $object->ui['where'];
+                if (null !== $object->ui['join'])
+                    $params['join'] = $object->ui['join'];
+                if (null !== $object->ui['groupby'])
+                    $params['groupby'] = $object->ui['groupby'];
+                if (null !== $object->ui['having'])
+                    $params['having'] = $object->ui['having'];
+                if (null !== $object->ui['search_mode'])
+                    $params['search_mode'] = $object->ui['search_mode'];
+                if (null !== $object->ui['traverse'])
+                    $params['traverse'] = $object->ui['traverse'];
+                if (null !== $object->ui['calc_found_rows'])
+                    $params['calc_found_rows'] = $object->ui['calc_found_rows'];
+                if (null !== $object->ui['count_found_rows'])
+                    $params['count_found_rows'] = $object->ui['count_found_rows'];
+                if (null !== $object->ui['sql'])
+                    $params['sql'] = $object->ui['sql'];
                 if (!empty($object->ui['rabit_hole']))
                     $object->rabit_hole = $object->ui['rabit_hole'];
                 $object->findRecords($params);

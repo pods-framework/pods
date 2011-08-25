@@ -31,7 +31,10 @@ function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_resul
             return $result;
         }
     }
-    $result = mysql_query($sql, $wpdb->dbh) or die("<e>$error; SQL: $sql; Response: " . mysql_error($wpdb->dbh));
+    if (false !== $error)
+        $result = mysql_query($sql, $wpdb->dbh) or die("<e>$error; SQL: $sql; Response: " . mysql_error($wpdb->dbh));
+    else
+        $result = @mysql_query($sql, $wpdb->dbh);
 
     if (0 < @mysql_num_rows($result)) {
         if (!empty($results_error)) {

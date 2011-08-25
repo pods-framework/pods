@@ -178,10 +178,10 @@ if (version_compare($installed, '1.9.7', '<')) {
 
 if (version_compare($installed, '1.11', '<')) {
     pod_query("ALTER TABLE `@wp_pod` CHANGE `datatype` `datatype` INT(10) UNSIGNED NULL DEFAULT NULL");
-    pod_query("ALTER TABLE `@wp_pod` DROP INDEX `datatype_idx`");
-    pod_query("ALTER TABLE `@wp_pod` ADD INDEX `datatype_row_idx` (`datatype`, `tbl_row_id`)");
-    pod_query("ALTER TABLE `@wp_pod_rel` DROP INDEX `field_id_idx`");
-    pod_query("ALTER TABLE `@wp_pod_rel` ADD INDEX `field_pod_idx` (`field_id`, `pod_id`)");
+    pod_query("ALTER TABLE `@wp_pod` DROP INDEX `datatype_idx`", false);
+    pod_query("ALTER TABLE `@wp_pod` ADD INDEX `datatype_row_idx` (`datatype`, `tbl_row_id`)", false);
+    pod_query("ALTER TABLE `@wp_pod_rel` DROP INDEX `field_id_idx`", false);
+    pod_query("ALTER TABLE `@wp_pod_rel` ADD INDEX `field_pod_idx` (`field_id`, `pod_id`)", false);
     pod_query("ALTER TABLE `@wp_pod_fields` CHANGE `datatype` `datatype` INT(10) UNSIGNED NULL DEFAULT NULL");
     $result = pod_query("SELECT id, name FROM @wp_pod_types");
     while ($row = mysql_fetch_assoc($result)) {

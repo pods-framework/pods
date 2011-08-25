@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS Framework
 Plugin URI: http://podscms.org/
 Description: Pods is a CMS framework for creating, managing, and deploying customized content types.
-Version: 1.12-beta-4
+Version: 1.12-beta-5
 Author: The Pods CMS Team
 Author URI: http://podscms.org/about/
 
@@ -24,10 +24,13 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-define('PODS_VERSION', '1.12-beta-4');
-define('PODS_WP_VERSION_MINIMUM', '3.1');
-define('PODS_PHP_VERSION_MINIMUM', '5.2.4');
-define('PODS_MYSQL_VERSION_MINIMUM', '5.0');
+define('PODS_VERSION', '1.12-beta-5');
+if (!defined('PODS_WP_VERSION_MINIMUM'))
+    define('PODS_WP_VERSION_MINIMUM', '3.1');
+if (!defined('PODS_PHP_VERSION_MINIMUM'))
+    define('PODS_PHP_VERSION_MINIMUM', '5.2.4');
+if (!defined('PODS_MYSQL_VERSION_MINIMUM'))
+    define('PODS_MYSQL_VERSION_MINIMUM', '5.0');
 
 define('PODS_URL', rtrim(plugin_dir_url(__FILE__), '/')); // non-trailing slash being deprecated in 2.0
 define('PODS_DIR', rtrim(plugin_dir_path(__FILE__), '/')); // non-trailing slash being deprecated in 2.0

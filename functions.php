@@ -101,7 +101,7 @@ function pods_url_variable($key = 'last', $type = 'url') {
 /**
  * Return a variable (if exists)
  *
- * @param mixed $key The variable name or URI segment position
+ * @param mixed $key The variable key or URI segment position
  * @param string $type (optional) "url", "get", "post", "request", "server", "session", "cookie", "constant", or "user"
  * @param mixed $default (optional) The default value to set if variable doesn't exist
  * @param mixed $allowed (optional) The value(s) allowed
@@ -109,7 +109,7 @@ function pods_url_variable($key = 'last', $type = 'url') {
  * @return mixed The variable (if exists), or default value
  * @since 1.10.6
  */
-function pods_var($key = 'last', $type = 'url', $default = null, $allowed = null, $strict = false) {
+function pods_var($key = 'last', $type = 'get', $default = null, $allowed = null, $strict = false) {
     $output = $default;
     if (is_array($type))
         $output = isset($type[$key]) ? $type[$key] : $output;
@@ -117,7 +117,9 @@ function pods_var($key = 'last', $type = 'url', $default = null, $allowed = null
         $output = isset($type->$key) ? $type->$key : $output;
     else {
         $type = strtolower((string) $type);
-        if (in_array($type, array('url', 'uri'))) {
+        if ('get' == $type && isset($_GET[$key]))
+            $output = stripslashes_deep($_GET[$key]);
+        elseif (in_array($type, array('url', 'uri'))) {
             $url = parse_url(get_current_url());
             $uri = trim($url['path'], '/');
             $uri = array_filter(explode('/', $uri));
@@ -130,8 +132,6 @@ function pods_var($key = 'last', $type = 'url', $default = null, $allowed = null
             if (is_numeric($key))
                 $output = ($key < 0) ? $uri[count($uri) + $key] : $uri[$key];
         }
-        elseif ('get' == $type && isset($_GET[$key]))
-            $output = stripslashes_deep($_GET[$key]);
         elseif ('post' == $type && isset($_POST[$key]))
             $output = stripslashes_deep($_POST[$key]);
         elseif ('request' == $type && isset($_REQUEST[$key]))

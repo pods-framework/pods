@@ -26,25 +26,30 @@ if (version_compare($installed, '1.6', '<')) {
 
     // Add the "pick_filter" column
     pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN pick_filter VARCHAR(128) AFTER pickval");
+    update_option('pods_version', '160');
 }
 
 if (version_compare($installed, '1.6.2', '<')) {
     // Remove all beginning and ending slashes from Pod Pages
     pod_query("UPDATE @wp_pod_pages SET uri = TRIM(BOTH '/' FROM uri)");
+    update_option('pods_version', '162');
 }
 
 if (version_compare($installed, '1.6.4', '<')) {
     pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN pick_orderby TEXT AFTER pick_filter");
     pod_query("ALTER TABLE @wp_pod_fields CHANGE helper display_helper TEXT");
     pod_query("ALTER TABLE @wp_pod_fields ADD COLUMN input_helper TEXT AFTER display_helper");
+    update_option('pods_version', '164');
 }
 
 if (version_compare($installed, '1.6.7', '<')) {
     pod_query("ALTER TABLE @wp_pod_pages ADD COLUMN precode LONGTEXT AFTER phpcode");
+    update_option('pods_version', '167');
 }
 
 if (version_compare($installed, '1.7.3', '<')) {
     pod_query("ALTER TABLE @wp_pod_types ADD COLUMN detail_page VARCHAR(128) AFTER is_toplevel");
+    update_option('pods_version', '173');
 }
 
 if (version_compare($installed, '1.7.5', '<')) {
@@ -63,6 +68,7 @@ if (version_compare($installed, '1.7.5', '<')) {
     }
     delete_option('pods_roles');
     add_option('pods_roles', serialize($pods_roles));
+    update_option('pods_version', '175');
 }
 
 if (version_compare($installed, '1.7.6', '<')) {
@@ -116,6 +122,7 @@ if (version_compare($installed, '1.7.6', '<')) {
             pod_query("UPDATE @wp_pod_fields SET coltype = 'txt' WHERE id = {$row['field_id']}");
         }
     }
+    update_option('pods_version', '176');
 }
 
 if (version_compare($installed, '1.8.1', '<')) {
@@ -126,6 +133,7 @@ if (version_compare($installed, '1.8.1', '<')) {
     pod_query("ALTER TABLE @wp_pod_types ADD COLUMN post_drop_helpers TEXT AFTER post_save_helpers");
     pod_query("UPDATE @wp_pod_helpers SET helper_type = 'pre_save' WHERE helper_type = 'before'");
     pod_query("UPDATE @wp_pod_helpers SET helper_type = 'post_save' WHERE helper_type = 'after'");
+    update_option('pods_version', '181');
 }
 
 if (version_compare($installed, '1.8.2', '<')) {
@@ -140,6 +148,7 @@ if (version_compare($installed, '1.8.2', '<')) {
         $uri = pods_sanitize($uri);
         pod_query("UPDATE @wp_pod_menu SET uri = '$uri' WHERE id = {$row['id']} LIMIT 1");
     }
+    update_option('pods_version', '182');
 }
 
 if (version_compare($installed, '1.9.0', '<')) {
@@ -154,6 +163,7 @@ if (version_compare($installed, '1.9.0', '<')) {
         $uri = pods_sanitize($uri);
         pod_query("UPDATE @wp_pod_pages SET uri = '$uri' WHERE id = {$row['id']} LIMIT 1");
     }
+    update_option('pods_version', '190');
 }
 
 if (version_compare($installed, '1.9.6', '<')) {
@@ -163,6 +173,7 @@ if (version_compare($installed, '1.9.6', '<')) {
     add_option('pods_disable_file_upload', 0);
     add_option('pods_upload_require_login', 0);
     add_option('pods_upload_require_login_cap', 'upload_files');
+    update_option('pods_version', '196');
 }
 
 if (version_compare($installed, '1.9.7', '<')) {
@@ -174,6 +185,7 @@ if (version_compare($installed, '1.9.7', '<')) {
     pod_query("ALTER TABLE `@wp_pod_rel` CHANGE `sister_pod_id` `sister_pod_id` BIGINT(15) UNSIGNED NULL DEFAULT NULL");
     pod_query("ALTER TABLE `@wp_pod_rel` CHANGE `tbl_row_id` `tbl_row_id` BIGINT(15) UNSIGNED NULL DEFAULT NULL");
     pod_query("ALTER TABLE `@wp_pod_rel` CHANGE `weight` `weight` INT(10) UNSIGNED NULL DEFAULT '0'");
+    update_option('pods_version', '197');
 }
 
 if (version_compare($installed, '1.11', '<')) {
@@ -188,6 +200,7 @@ if (version_compare($installed, '1.11', '<')) {
         $pod = pods_sanitize($row['name']);
         pod_query("ALTER TABLE `@wp_pod_tbl_{$pod}` CHANGE `id` `id` BIGINT(15) UNSIGNED NOT NULL AUTO_INCREMENT");
     }
+    update_option('pods_version', '001011000');
 }
 
 // Save this version

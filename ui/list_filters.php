@@ -29,8 +29,11 @@ if (!empty($filters)) {
 <?php
             foreach ($field_data as $key => $val) {
                 $active = empty($val['active']) ? '' : ' selected';
+                $value = $val['id'];
+                if ('text' == $this->search_mode)
+                    $value = $val['name'];
 ?>
-        <option value="<?php echo esc_attr($val['id']); ?>"<?php echo $active; ?>><?php echo esc_html($val['name']); ?></option>
+        <option value="<?php echo esc_attr($value); ?>"<?php echo $active; ?>><?php echo esc_html($val['name']); ?></option>
 <?php
             }
 ?>

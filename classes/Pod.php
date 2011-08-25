@@ -21,7 +21,7 @@ class Pod
     var $search = true;
     var $search_var = 'search';
     var $search_where = '';
-    var $search_mode = 'int'; // int | text
+    var $search_mode = 'int'; // int | text | text_like
 
     var $traverse = array();
     var $rabit_hole = array();
@@ -417,7 +417,7 @@ class Pod
                 $row['active'] = in_array($row['id'], $params->tbl_row_ids);
             }
             else {
-                if (isset($_GET[$params->field_name]) && $row['id'] == $_GET[$params->field_name]) {
+                if (isset($_GET[$params->field_name]) && (('int' == $this->search_mode && $row['id'] == $_GET[$params->field_name]) || ('text' == $this->search_mode && $row['name'] == $_GET[$params->field_name]))) {
                     $row['active'] = true;
                 }
                 else {
@@ -504,6 +504,11 @@ class Pod
                 $on = $this->rabit_hole[$pod][$field]['on'];
                 $search = "`{$field_joined}`.`{$on}` = {$val}";
                 if ('text' == $this->search_mode) {
+                    $val = pods_var($field_joined, 'get');
+                    $on = $this->rabit_hole[$pod][$field]['name'];
+                    $search = "`{$field_joined}`.`{$on}` = '{$val}'";
+                }
+                elseif ('text_like' == $this->search_mode) {
                     $val = pods_sanitize(like_escape($_GET[$field_joined]));
                     $on = $this->rabit_hole[$pod][$field]['name'];
                     $search = "`{$field_joined}`.`{$on}` LIKE '%{$val}%'";
@@ -727,12 +732,12 @@ class Pod
                 $found[$key] = $value;
             }
             if (!empty($this->traverse)) {
-                foreach ($this->traverse as $key => $traverse) {
+                foreach ((array) $this->traverse as $key => $traverse) {
                     $traverse = str_replace('`', '', $traverse);
                     $already_found = false;
                     foreach ($found as $traversal) {
                         $traversal = implode('.', $traversal);
-                        if ($traversal == $traversal) {
+                        if ($traversal == $traverse) {
                             $already_found = true;
                             break;
                         }

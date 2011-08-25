@@ -140,6 +140,7 @@ function pods_ui_manage ($obj)
     $object->ui['search_across'] = (isset($object->ui['search_across'])&&is_bool($object->ui['search_across'])&&$object->ui['search_across']===false?$object->ui['search']:null);
     $object->ui['search_across_picks'] = (isset($object->ui['search_across_picks'])&&is_bool($object->ui['search_across_picks'])&&$object->ui['search_across_picks']===false?true:false);
     $object->ui['filters'] = (isset($object->ui['filters'])&&!empty($object->ui['filters'])?pods_ui_strtoarray($object->ui['filters']):null);
+    $object->ui['hidden_filters'] = (isset($object->ui['hidden_filters'])&&!empty($object->ui['hidden_filters'])?pods_ui_strtoarray($object->ui['hidden_filters']):null);
     $object->ui['custom_filters'] = (isset($object->ui['custom_filters'])?$object->ui['custom_filters']:null);
     $object->ui['disable_actions'] = (isset($object->ui['disable_actions'])?pods_ui_strtoarray($object->ui['disable_actions']):array());
     if(in_array($object->ui['action'],$object->ui['disable_actions']))
@@ -149,6 +150,10 @@ function pods_ui_manage ($obj)
     $object->ui['hide_actions'] = (isset($object->ui['hide_actions'])?pods_ui_strtoarray($object->ui['hide_actions']):array());
     $object->ui['wpcss'] = (isset($object->ui['wpcss'])?true:null);
     $object->ui = apply_filters('pods_ui_options', $object->ui, $object);
+    if (null !== $object->ui['search_mode'])
+        $object->search_mode = $object->ui['search_mode'];
+    if (null !== $object->ui['rabit_hole'])
+        $object->rabit_hole = $object->ui['rabit_hole'];
     if($object->ui['wpcss']!==null)
     {
         wp_print_styles(array('global','wp-admin'));
@@ -482,6 +487,11 @@ function pods_ui_manage ($obj)
                 if (null !== $object->ui['reorder_sql'])
                     $params['sql'] = $object->ui['reorder_sql'];
                 $object->findRecords($params);
+                if (current_user_can('manage_options') && isset($_GET['debug']) && 1 == $_GET['debug']) {
+?>
+    <textarea cols="130" rows="30"><?php echo esc_html($object->sql); ?></textarea>
+<?php
+                }
             }
             else
             {
@@ -510,9 +520,12 @@ function pods_ui_manage ($obj)
                     $params['count_found_rows'] = $object->ui['count_found_rows'];
                 if (null !== $object->ui['sql'])
                     $params['sql'] = $object->ui['sql'];
-                if (!empty($object->ui['rabit_hole']))
-                    $object->rabit_hole = $object->ui['rabit_hole'];
                 $object->findRecords($params);
+                if (current_user_can('manage_options') && isset($_GET['debug']) && 1 == $_GET['debug']) {
+?>
+    <textarea cols="130" rows="30"><?php echo esc_html($object->sql); ?></textarea>
+<?php
+                }
             }
             $_GET = array_merge($oldget,$_GET);
             if(!empty($all_where))
@@ -547,6 +560,15 @@ function pods_ui_manage ($obj)
             {
                 $hidden_filters = array();
                 foreach ($object->ui['filters'] as $filter)
+                {
+                    $hidden_filters[$filter.$object->ui['num']] = '';
+                }
+                $hidden_fields = array_merge($hidden_filters,$hidden_fields);
+            }
+            if(is_array($object->ui['hidden_filters']))
+            {
+                $hidden_filters = array();
+                foreach ($object->ui['hidden_filters'] as $filter)
                 {
                     $hidden_filters[$filter.$object->ui['num']] = '';
                 }
@@ -615,9 +637,15 @@ function pods_ui_manage ($obj)
 <?php
                                     foreach ($data as $k => $v)
                                     {
-                                        $active = (false!==pods_ui_var($field_name.$object->ui['num'])&&$v['id']==pods_ui_var($field_name.$object->ui['num'])) ? ' selected' : '';
+                                        $active = '';
+                                        if (false!==pods_ui_var($field_name.$object->ui['num'])&&(('int' == $object->search_mode && $v['id'] == pods_ui_var($field_name.$object->ui['num'])) || ('text' == $object->search_mode && $v['name'] == pods_ui_var($field_name.$object->ui['num'])))) {
+                                            $active = ' selected';
+                                        }
+                                        $value = $v['id'];
+                                        if ('text' == $object->search_mode)
+                                            $value = $v['name'];
 ?>
-                <option value="<?php echo $v['id']; ?>"<?php echo $active; ?>><?php echo esc_html($v['name']); ?></option>
+                <option value="<?php echo esc_attr($value); ?>"<?php echo $active; ?>><?php echo esc_html($v['name']); ?></option>
 <?php
                                     }
 ?>
@@ -949,8 +977,35 @@ function pods_ui_table ($object,$rows=null)
             }
             $dir = (($object->ui['sortable']===null&&pods_ui_var('sort'.$object->ui['num'])==pods_ui_coltype($key,$object)&&pods_ui_var('sortdir'.$object->ui['num'])=='desc')?'asc':'desc');
             $sort = ($object->ui['sortable']===null?pods_ui_coltype($key,$object):null);
+            if ($object->ui['sortable']===null&&(!isset($column['sortable']) || false !== $column['sortable'])) {
+                if (pods_ui_var('sort'.$object->ui['num'])==pods_ui_coltype($key,$object))
+                    $class .= ' sorted';
+                else
+                    $class .= ' sortable';
+                if (pods_ui_var('sort'.$object->ui['num'])==pods_ui_coltype($key,$object)&&$dir=='asc')
+                    $class .= ' asc';
+                else
+                    $class .= ' ' . (('asc' == $dir) ? 'desc' : 'asc');
+            }
 ?>
-            <th scope="col"<?php echo $id; ?> class="manage-column<?php echo $class; ?>"><?php if($object->ui['sortable']===null&&$sort!==null){ ?><a href="<?php echo pods_ui_var_update(array('sort'.$object->ui['num']=>$sort,'sortdir'.$object->ui['num']=>$dir),false,false); ?>"><?php } echo $label; if($object->ui['sortable']===null){ ?></a><?php } ?></th>
+            <th scope="col"<?php echo $id; ?> class="manage-column<?php echo $class; ?>">
+<?php
+            if($object->ui['sortable']===null&&$sort!==null&&(!isset($column['sortable']) || false !== $column['sortable'])){
+?>
+                <a href="<?php echo pods_ui_var_update(array('sort'.$object->ui['num']=>$sort,'sortdir'.$object->ui['num']=>$dir,'reset_filters'.$object->ui['num']=>'','pg'.$object->ui['num']=>''),false,false); ?>">
+                    <span>
+<?php
+            }
+            echo $label;
+            if($object->ui['sortable']===null&&$sort!==null&&(!isset($column['sortable']) || false !== $column['sortable'])){
+?>
+                    </span>
+                    <span class="sorting-indicator"></span>
+                </a>
+<?php
+            }
+?>
+            </th>
 <?php
         }
 ?>
@@ -1834,12 +1889,15 @@ function pods_ui_fields ($datatype_id)
 }
 function pods_ui_coltype ($column,$object,$t=false)
 {
-    $column = explode('.',$column);
-    if(isset($column[1]))
+    $columns = explode('.',str_replace('`', '', $column));
+    if(!isset($columns[1]) || 't' == $columns[0])
     {
         $t = true;
+        if (isset($columns[1]))
+            $column = $columns[1];
     }
-    $column = $column[0];
+    else
+        $column = $columns[0];
     $fields = $object->ui['fields'];
     if($fields===false)
     {
@@ -1848,6 +1906,9 @@ function pods_ui_coltype ($column,$object,$t=false)
     if(empty($fields))
     {
         return ($t?'':'t.').$column;
+    }
+    elseif(1 < count($columns)) {
+        return implode('.', $columns);
     }
     elseif(isset($fields[$column]))
     {

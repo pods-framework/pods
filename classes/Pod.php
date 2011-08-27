@@ -437,7 +437,7 @@ class Pod
             if (!is_array($data))
                 $field = $data;
             if (isset($_GET[$field]))
-                $feed['traverse_' . $field] = array($field, 'id');
+                $feed['traverse_' . $field] = array($field);
         }
         return $feed;
     }

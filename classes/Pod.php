@@ -413,20 +413,33 @@ class Pod
         $val = array();
         $result = pod_query($sql);
         while ($row = mysql_fetch_assoc($result)) {
+            $row['active'] = false;
             if (!empty($params->tbl_row_ids)) {
                 $row['active'] = in_array($row['id'], $params->tbl_row_ids);
             }
-            else {
-                if (isset($_GET[$params->field_name]) && (('int' == $this->search_mode && $row['id'] == $_GET[$params->field_name]) || ('text' == $this->search_mode && $row['name'] == $_GET[$params->field_name]))) {
+            elseif (isset($_GET[$params->field_name])) {
+                if ('int' == $this->search_mode && $row['id'] == (int) $_GET[$params->field_name])
                     $row['active'] = true;
-                }
-                else {
-                    $row['active'] = false;
-                }
+                elseif ('text' == $this->search_mode && $row['name'] == $_GET[$params->field_name])
+                    $row['active'] = true;
             }
             $val[] = $row;
         }
         return $val;
+    }
+
+    /**
+     * Setup fields for rabit hole
+     */
+    function feed_rabit ($fields) {
+        $feed = array();
+        foreach ($fields as $field => $data) {
+            if (!is_array($data))
+                $field = $data;
+            if (isset($_GET[$field]))
+                $feed['traverse_' . $field] = array($field, 'id');
+        }
+        return $feed;
     }
 
     /**
@@ -481,7 +494,7 @@ class Pod
         unset($api);
 
         $joins = array();
-        if (!isset($fields[$depth]))
+        if (!isset($fields[$depth]) || empty($fields[$depth]))
             return $joins;
         $field = $fields[$depth];
         if (!isset($this->rabit_hole[$pod][$field]))
@@ -542,8 +555,12 @@ class Pod
     /**
      * Recursively join tables based on fields
      */
-    function rabit_hole ($pod, $fields) {
+    function rabit_hole ($pod, $fields = null) {
         $joins = array();
+        if (null === $fields) {
+            $api = new PodAPI($pod);
+            $fields = $this->feed_rabit($api->fields);
+        }
         foreach ((array) $fields as $field_group) {
             if (is_array($field_group))
                 $joins = array_merge($joins, $this->recurse_rabit_hole($pod, $field_group));
@@ -707,11 +724,14 @@ class Pod
             }
 
             // Add "`t`." prefix to $orderby if needed
-            if (false !== strpos($orderby, ',') && false === strpos($orderby, '.') && !empty($orderby)) {
-                $orderby = '`t`.' . $orderby;
+            if (!empty($orderby) && false === strpos($orderby, ',') && false === strpos($orderby, '(') && false === strpos($orderby, '.')) {
+                if (false !== strpos($orderby, ' ASC'))
+                    $orderby = '`t`.`' . str_replace(array('`', ' ASC'), '', $orderby) . '` ASC';
+                elseif (false !== strpos($orderby, ' ASC'))
+                    $orderby = '`t`.`' . str_replace(array('`', ' DESC'), '', $orderby) . '` DESC';
             }
 
-            $haystack = preg_replace('/\s/', ' ', "$select $where $groupby $having $orderby");
+            $haystack = str_replace(array('(', ')'), '', preg_replace('/\s/', ' ', "$select $where $groupby $having $orderby"));
 
             preg_match_all('/`?[\w]+`?(?:\\.`?[\w]+`?)+(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found, PREG_PATTERN_ORDER);
 
@@ -721,6 +741,8 @@ class Pod
                 $value = str_replace('`', '', $value);
                 $value = explode('.', $value);
                 $dot = array_pop($value);
+                if (in_array('/' . $found[$key] . '(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $find))
+                    continue;
                 $find[$key] = '/' . $found[$key] . '(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/';
                 if ('*' != $dot)
                     $dot = '`' . $dot . '`';
@@ -748,15 +770,19 @@ class Pod
             }
 
             $joins = array();
-            if (!empty($found)) {
+            if (!empty($find)) {
                 $select = preg_replace($find, $replace, $select);
                 $where = preg_replace($find, $replace, $where);
                 $groupby = preg_replace($find, $replace, $groupby);
                 $having = preg_replace($find, $replace, $having);
                 $orderby = preg_replace($find, $replace, $orderby);
 
-                $joins = $this->rabit_hole($this->datatype, $found);
+                if (!empty($found))
+                    $joins = $this->rabit_hole($this->datatype, $found);
+                elseif (false !== $this->search)
+                    $joins = $this->rabit_hole($this->datatype);
             }
+
             if (0 < strlen($join)) {
                 $joins[] = "
                     {$join}

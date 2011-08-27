@@ -177,8 +177,6 @@ class PodInit
         }
         $priv_check = array('manage_pods','manage_templates','manage_pod_pages','manage_helpers','manage_roles','manage_settings','manage_content','manage_packages');
         if ((!defined('PODS_DISABLE_ADMIN_MENU') || !PODS_DISABLE_ADMIN_MENU) && (!empty($submenu) || pods_access($priv_check))) {
-            wp_enqueue_script('jquery-ui-core');
-            wp_enqueue_script('jquery-ui-sortable');
             add_object_page('Pods', 'Pods', 'read', 'pods', null, PODS_URL.'/ui/images/icon16.png');
             if (pods_access(array('manage_pods','manage_templates','manage_pod_pages','manage_helpers','manage_roles','manage_settings'))) {
                 add_submenu_page('pods', 'Setup', 'Setup', 'read', 'pods', array($this, 'pods_setup_page'));
@@ -334,6 +332,10 @@ class PodInit
     }
 
     function pods_setup_page() {
+        if (!wp_script_is('jquery-ui-core', 'queue') && !wp_script_is('jquery-ui-core', 'to_do') && !wp_script_is('jquery-ui-core', 'done'))
+            wp_print_scripts('jquery-ui-core');
+        if (!wp_script_is('jquery-ui-sortable', 'queue') && !wp_script_is('jquery-ui-sortable', 'to_do') && !wp_script_is('jquery-ui-sortable', 'done'))
+            wp_print_scripts('jquery-ui-sortable');
         if (null === apply_filters('pods_admin_setup', null))
             include PODS_DIR . '/ui/manage.php';
     }
@@ -344,6 +346,10 @@ class PodInit
     }
 
     function pods_content_page() {
+        if (!wp_script_is('jquery-ui-core', 'queue') && !wp_script_is('jquery-ui-core', 'to_do') && !wp_script_is('jquery-ui-core', 'done'))
+            wp_print_scripts('jquery-ui-core');
+        if (!wp_script_is('jquery-ui-sortable', 'queue') && !wp_script_is('jquery-ui-sortable', 'to_do') && !wp_script_is('jquery-ui-sortable', 'done'))
+            wp_print_scripts('jquery-ui-sortable');
         if (null === apply_filters('pods_admin_content', null))
             include PODS_DIR . '/ui/manage_content.php';
     }

@@ -1100,7 +1100,7 @@ class PodAPI
             $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name IN ('$params->pre_drop_helpers')");
             while ($row = mysql_fetch_assoc($result)) {
                 if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
-	                eval('?>' . $row['phpcode']);
+                    eval('?>' . $row['phpcode']);
             }
         }
 
@@ -1113,11 +1113,11 @@ class PodAPI
         do_action('pods_post_drop_pod_item', $params);
 
         // Post-drop helpers
-        if (0 < strlen($params->pre_drop_helpers)) {
+        if (0 < strlen($params->post_drop_helpers)) {
             $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name IN ('$params->post_drop_helpers')");
             while ($row = mysql_fetch_assoc($result)) {
                 if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
-	                eval('?>' . $row['phpcode']);
+                    eval('?>' . $row['phpcode']);
             }
         }
     }

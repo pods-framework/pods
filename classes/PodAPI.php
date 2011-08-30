@@ -574,7 +574,8 @@ class PodAPI
         if(!$bypass_helpers && !empty($pre_save_helpers)) {
 	        $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name IN ('$pre_save_helpers')");
 	        while ($row = mysql_fetch_assoc($result)) {
-	            eval('?>' . $row['phpcode']);
+                if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
+	                eval('?>' . $row['phpcode']);
             }
         }
 
@@ -729,7 +730,8 @@ class PodAPI
         if(!$bypass_helpers && !empty($post_save_helpers)) {
 	        $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name IN ('$post_save_helpers')");
 	        while ($row = mysql_fetch_assoc($result)) {
-	            eval('?>' . $row['phpcode']);
+	            if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
+	                eval('?>' . $row['phpcode']);
 	        }
         }
 
@@ -1087,16 +1089,19 @@ class PodAPI
         // Get helper code
         $result = pod_query("SELECT pre_drop_helpers, post_drop_helpers FROM @wp_pod_types WHERE id = $params->datatype_id");
         $row = mysql_fetch_assoc($result);
-        $pre_drop_helpers = str_replace(',', "','", $row['pre_drop_helpers']);
-        $post_drop_helpers = str_replace(',', "','", $row['post_drop_helpers']);
+        $params->pre_drop_helpers = trim(str_replace(',', "','", $row['pre_drop_helpers']),', ');
+        $params->post_drop_helpers = trim(str_replace(',', "','", $row['post_drop_helpers']),', ');
 
         // Plugin hook
-        do_action('pods_pre_drop_pod_item');
+        do_action('pods_pre_drop_pod_item', $params);
 
         // Pre-drop helpers
-        $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name IN ('$pre_drop_helpers')");
-        while ($row = mysql_fetch_assoc($result)) {
-            eval('?>' . $row['phpcode']);
+        if (0 < strlen($params->pre_drop_helpers)) {
+            $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name IN ('$params->pre_drop_helpers')");
+            while ($row = mysql_fetch_assoc($result)) {
+                if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
+	                eval('?>' . $row['phpcode']);
+            }
         }
 
         pod_query("DELETE FROM `@wp_pod_tbl_$params->datatype` WHERE id = $params->tbl_row_id LIMIT 1");
@@ -1105,12 +1110,15 @@ class PodAPI
         pod_query("DELETE FROM @wp_pod_rel WHERE pod_id = $params->pod_id");
 
         // Plugin hook
-        do_action('pods_post_drop_pod_item');
+        do_action('pods_post_drop_pod_item', $params);
 
         // Post-drop helpers
-        $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name IN ('$post_drop_helpers')");
-        while ($row = mysql_fetch_assoc($result)) {
-            eval('?>' . $row['phpcode']);
+        if (0 < strlen($params->pre_drop_helpers)) {
+            $result = pod_query("SELECT phpcode FROM @wp_pod_helpers WHERE name IN ('$params->post_drop_helpers')");
+            while ($row = mysql_fetch_assoc($result)) {
+                if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
+	                eval('?>' . $row['phpcode']);
+            }
         }
     }
 

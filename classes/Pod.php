@@ -349,7 +349,10 @@ class Pod
         do_action("pods_pre_pod_helper_$helper", $helper, $value, $name, $this);
 
         if (false !== $content) {
-            eval("?>$content");
+            if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
+                eval("?>$content");
+            else
+                echo $content;
         }
 
         //post-helper hooks
@@ -1162,8 +1165,11 @@ class Pod
     function parse_template_string($in) {
         ob_start();
         $out = preg_replace_callback("/({@(.*?)})/m", array($this, "parse_magic_tags"), $in);
-        eval("?>$out");
-        return ob_get_clean();
+        if ((!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL))
+            eval("?>$out");
+        else
+            echo $out;
+        return apply_filters('pods_parse_template_string', ob_get_clean(), $in);
     }
 
     /**

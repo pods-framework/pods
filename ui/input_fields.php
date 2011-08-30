@@ -42,7 +42,10 @@ Generate the input helper
 ==================================================
 */
 if (!empty($input_helper)) {
-    eval("?>$input_helper");
+    if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
+        eval("?>$input_helper");
+    else
+        echo $input_helper;
 }
 
 /*

@@ -557,7 +557,10 @@ function pods_content() {
 
     if (false !== $pod_page_exists) {
         ob_start();
-        eval('?>' . $pod_page_exists['phpcode']);
+        if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
+            eval('?>' . $pod_page_exists['phpcode']);
+        else
+            echo $pod_page_exists['phpcode'];
         echo apply_filters('pods_content', ob_get_clean());
     }
 }

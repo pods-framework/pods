@@ -141,8 +141,9 @@ class PodInit
 
     function precode() {
         global $pods, $pod_page_exists;
-        eval('?>' . $pod_page_exists['precode']);
-        do_action('pods_page_precode', $pod_page_exists);
+        if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
+            eval('?>' . $pod_page_exists['precode']);
+        do_action('pods_page_precode', $pod_page_exists, $pods);
         if (!is_object($pods) && 404 == $pods) {
             remove_action('template_redirect', array($this, 'template_redirect'));
             remove_action('wp_head', array($this, 'wp_head'));

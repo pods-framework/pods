@@ -99,9 +99,18 @@ class Pod
             return $this->data[$name];
         }
         elseif ('created' == $name || 'modified' == $name) {
-            $pod_id = $this->get_pod_id();
-            $result = pod_query("SELECT created, modified FROM @wp_pod WHERE id = $pod_id LIMIT 1");
+            $pod_id = (int) $this->get_pod_id();
+            if (!empty($pod_id))
+                $result = pod_query("SELECT id, created, modified FROM @wp_pod WHERE id = {$pod_id} LIMIT 1");
+            else {
+                $tbl_row_id = (int) $this->get_field('id');
+                if (!empty($tbl_row_id))
+                    $result = pod_query("SELECT id, created, modified FROM @wp_pod WHERE tbl_row_id = {$tbl_row_id} LIMIT 1");
+                else
+                    return;
+            }
             $row = mysql_fetch_assoc($result);
+            $this->data['pod_id'] = $row['pod_id'];
             $this->data['created'] = $row['created'];
             $this->data['modified'] = $row['modified'];
             return $this->data[$name];
@@ -744,9 +753,9 @@ class Pod
                 $value = str_replace('`', '', $value);
                 $value = explode('.', $value);
                 $dot = array_pop($value);
-                if (in_array('/' . $found[$key] . '(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $find))
+                if (in_array('/\b' . $found[$key] . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $find))
                     continue;
-                $find[$key] = '/' . $found[$key] . '(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/';
+                $find[$key] = '/\b' . $found[$key] . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/';
                 if ('*' != $dot)
                     $dot = '`' . $dot . '`';
                 $replace[$key] = '`' . implode('_', $value) . '`.' . $dot;

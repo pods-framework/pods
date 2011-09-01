@@ -56,7 +56,6 @@ class PodAPI
      * $params['post_drop_helpers'] string Comma-separated list of helper names
      * $params['order'] string Comma-separated list of field IDs
      *
-     * @todo Ability to edit a single DB column (e.g. "detail_page")
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
@@ -75,6 +74,10 @@ class PodAPI
                                              'post_drop_helpers' => '',
                                              'order' => ''),
                                        (array) $params);
+        if (isset($params->action))
+            unset($params->action);
+        if (isset($params->_wpnonce))
+            unset($params->_wpnonce);
 
         // Add new pod
         if (empty($params->id)) {
@@ -85,7 +88,17 @@ class PodAPI
             $sql = "SELECT id FROM @wp_pod_types WHERE name = '{$params->name}' LIMIT 1";
             pod_query($sql, 'Duplicate pod name', 'Pod name already exists');
 
-            $pod_id = pod_query("INSERT INTO @wp_pod_types (name) VALUES ('{$params->name}')", 'Cannot add new pod');
+            $set = array();
+            $columns = array();
+            foreach ($params as $column => $value) {
+                if (in_array($column, array('id', 'order')))
+                    continue;
+                $columns[] = "`{$column}`";
+                $set[] = "'{$value}'";
+            }
+            $columns = implode(', ', $columns);
+            $set = implode("', '", $set);
+            $pod_id = pod_query("INSERT INTO @wp_pod_types ({$columns}) VALUES ('{$set}')", 'Cannot add new pod');
             pod_query("CREATE TABLE `@wp_pod_tbl_{$params->name}` (id int unsigned auto_increment primary key, name varchar(128), slug varchar(128)) DEFAULT CHARSET utf8", 'Cannot add pod database table');
             pod_query("INSERT INTO @wp_pod_fields (datatype, name, label, comment, coltype, required, weight) VALUES ({$pod_id}, 'name', 'Name', '', 'txt', 1, 0),({$pod_id}, 'slug', 'Permalink', 'Leave blank to auto-generate', 'slug', 0, 1)");
             if (!isset($params->return_pod) || false === $params->return_pod)
@@ -94,28 +107,31 @@ class PodAPI
         // Edit existing pod
         else {
             $pod_id = $params->id;
-            $sql = "
-            UPDATE
-                @wp_pod_types
-            SET
-                label = '{$params->label}',
-                is_toplevel = '{$params->is_toplevel}',
-                detail_page = '{$params->detail_page}',
-                pre_save_helpers = '{$params->pre_save_helpers}',
-                pre_drop_helpers = '{$params->pre_drop_helpers}',
-                post_save_helpers = '{$params->post_save_helpers}',
-                post_drop_helpers = '{$params->post_drop_helpers}'
-            WHERE
-                id = {$pod_id}
-            LIMIT
-                1
-            ";
-            pod_query($sql, 'Cannot change Pod settings');
+            $set = array();
+            foreach ($params as $column => $value) {
+                if (in_array($column, array('id', 'name', 'order')))
+                    continue;
+                $set[] = "`{$column}` = '{$value}'";
+            }
+            if (!empty($set)) {
+                $set = implode(', ', $set);
+                $sql = "
+                UPDATE
+                    `@wp_pod_types`
+                SET
+                    {$set}
+                WHERE
+                    `id` = {$pod_id}
+                LIMIT
+                    1
+                ";
+                pod_query($sql, 'Cannot change Pod settings');
+            }
 
             $weight = 0;
             $order = (false !== strpos($params->order, ',')) ? explode(',', $params->order) : array($params->order);
             foreach ($order as $field_id) {
-                pod_query("UPDATE @wp_pod_fields SET weight = '{$weight}' WHERE id = '{$field_id}' LIMIT 1", 'Cannot change column order');
+                pod_query("UPDATE `@wp_pod_fields` SET `weight` = '{$weight}' WHERE `id` = '{$field_id}' LIMIT 1", 'Cannot change column order');
                 $weight++;
             }
             if (!isset($params->return_pod) || false === $params->return_pod)
@@ -508,14 +524,27 @@ class PodAPI
     function save_pod_item($params) {
         $params = (object) str_replace('@wp_', '{prefix}', $params);
 
-        // support for multiple save_pod_item operations at the same time
+        // Support for multiple save_pod_item operations at the same time
         if (isset($params->data) && !empty($params->data) && is_array($params->data)) {
+            $ids = array();
+            $new_params = $params;
+            unset($new_params->data);
             foreach ($params->data as $columns){
-                $new_params = $params;
-                unset($new_params->data);
                 $new_params->columns = $columns;
-                $this->save_pod_item($new_params);
+                $ids[] = $this->save_pod_item($new_params);
             }
+            return $ids;
+        }
+
+        // Support for bulk edit
+        if (isset($params->tbl_row_id) && !empty($params->tbl_row_id) && is_array($params->tbl_row_id)) {
+            $ids = array();
+            $new_params = $params;
+            foreach ($params->tbl_row_id as $tbl_row_id){
+                $new_params->tbl_row_id = $tbl_row_id;
+                $ids[] = $this->save_pod_item($new_params);
+            }
+            return $ids;
         }
 
         // Allow Helpers to bypass subsequent helpers in recursive save_pod_item calls
@@ -784,7 +813,7 @@ class PodAPI
                     $params['columns'][$column['name']] = $value;
             }
             $params = apply_filters('duplicate_pod_item', $params, $pod->datatype, $pod->get_field('id'));
-            $id = $this->save_pod_item($params);
+            $id = $this->save_pod_item(pods_sanitize($params));
         }
         return $id;
     }
@@ -1012,24 +1041,6 @@ class PodAPI
     }
 
     /**
-     * Drop a menu item and all its children
-     *
-     * $params['id'] int The menu ID
-     *
-     * @param array $params An associative array of parameters
-     * @since 1.7.9
-     */
-    function drop_menu_item($params) {
-        $params = (object) $params;
-        $result = pod_query("SELECT lft, rgt, (rgt - lft + 1) AS width FROM @wp_pod_menu WHERE id = $params->id LIMIT 1");
-        list($lft, $rgt, $width) = mysql_fetch_array($result);
-
-        pod_query("DELETE from @wp_pod_menu WHERE lft BETWEEN $lft AND $rgt");
-        pod_query("UPDATE @wp_pod_menu SET rgt = rgt - $width WHERE rgt > $rgt");
-        pod_query("UPDATE @wp_pod_menu SET lft = lft - $width WHERE lft > $rgt");
-    }
-
-    /**
      * Drop a single pod item
      *
      * $params['pod_id'] int The item's ID from the wp_pod table
@@ -1044,6 +1055,14 @@ class PodAPI
         $params = (object) $params;
 
         if (isset($params->tbl_row_id)) {
+            if (!empty($params->tbl_row_id) && is_array($params->tbl_row_id)) {
+                $new_params = $params;
+                foreach ($params->tbl_row_id as $tbl_row_id) {
+                    $new_params->tbl_row_id = $tbl_row_id;
+                    $this->drop_pod_item($new_params);
+                }
+                return;
+            }
             if (isset($params->datatype_id)) {
                 $select_dt = "p.datatype = '$params->datatype_id'";
             }
@@ -1209,20 +1228,6 @@ class PodAPI
         $params = (object) $params;
         $where = empty($params->id) ? "name = '$params->name'" : "id = $params->id";
         $result = pod_query("SELECT * FROM @wp_pod_helpers WHERE $where LIMIT 1");
-        return mysql_fetch_assoc($result);
-    }
-
-    /**
-     * Load a single menu item
-     *
-     * $params['id'] int The menu ID
-     *
-     * @param array $params An associative array of parameters
-     * @since 1.7.9
-     */
-    function load_menu_item($params) {
-        $params = (object) $params;
-        $result = pod_query("SELECT * FROM @wp_pod_menu WHERE id = $params->id LIMIT 1");
         return mysql_fetch_assoc($result);
     }
 

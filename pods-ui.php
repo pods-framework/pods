@@ -784,6 +784,7 @@ function pods_ui_manage ($obj)
 </div>
 <?php
     }
+    return $object;
 }
 function pods_ui_table ($object,$rows=null)
 {

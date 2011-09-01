@@ -144,7 +144,7 @@ class PodInit
         if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
             eval('?>' . $pod_page_exists['precode']);
         do_action('pods_page_precode', $pod_page_exists, $pods);
-        if (!is_object($pods) && 404 == $pods) {
+        if (!is_object($pods) && (404 == $pods || is_wp_error($pods))) {
             remove_action('template_redirect', array($this, 'template_redirect'));
             remove_action('wp_head', array($this, 'wp_head'));
             remove_filter('redirect_canonical', array($this, 'kill_redirect'));
@@ -207,7 +207,7 @@ class PodInit
 <!-- Pods CMS <?php echo PODS_VERSION; ?> -->
 <?php
         }
-        if ((!defined('PODS_DISABLE_META') || !PODS_DISABLE_META) && is_object($pods)) {
+        if ((!defined('PODS_DISABLE_META') || !PODS_DISABLE_META) && is_object($pods) && !is_wp_error($pods)) {
             if (isset($pods->meta) && is_array($pods->meta)) {
                 foreach ($pods->meta as $name => $content) {
                     if ('title' == $name)
@@ -239,7 +239,7 @@ class PodInit
         $page_title = $pod_page_exists['title'];
 
         if (0 < strlen(trim($page_title))) {
-            if (is_object($pods))
+            if (is_object($pods) && !is_wp_error($pods))
                 $page_title = preg_replace_callback("/({@(.*?)})/m", array($pods, "parse_magic_tags"), $page_title);
             $title = ('right' == $seplocation) ? $page_title . " $sep " : " $sep " . $page_title;
         }
@@ -254,7 +254,7 @@ class PodInit
                 $title .= ('right' == $seplocation) ? ucwords($page_title) . " $sep " : " $sep " . ucwords($page_title);
             }
         }
-        if ((!defined('PODS_DISABLE_META') || !PODS_DISABLE_META) && is_object($pods) && isset($pods->meta) && is_array($pods->meta) && isset($pods->meta['title']))
+        if ((!defined('PODS_DISABLE_META') || !PODS_DISABLE_META) && is_object($pods) && !is_wp_error($pods) && isset($pods->meta) && is_array($pods->meta) && isset($pods->meta['title']))
             $title = $pods->meta['title'];
         return apply_filters('pods_title', $title, $sep, $seplocation);
     }
@@ -265,10 +265,10 @@ class PodInit
         $uri = explode('?',$pod_page_exists['uri']);
         $uri = explode('#',$uri[0]);
         $classes[] = 'pod-page-'.trim(str_replace('--','-',str_replace('--','-',str_replace('_','-',sanitize_title(str_replace('/','-',str_replace('*','_w_',$uri[0])))))), '-');
-        if (is_object($pods)) {
+        if (is_object($pods) && !is_wp_error($pods)) {
             $classes[] = 'pod-'.trim(str_replace('--','-',str_replace('_','-',$pods->datatype)), '-');
         }
-        if ((!defined('PODS_DISABLE_BODY_CLASSES') || !PODS_DISABLE_BODY_CLASSES) && is_object($pods) && isset($pods->body_classes))
+        if ((!defined('PODS_DISABLE_BODY_CLASSES') || !PODS_DISABLE_BODY_CLASSES) && is_object($pods) && !is_wp_error($pods) && isset($pods->body_classes))
             $classes[] = $pods->body_classes;
         return apply_filters('pods_body_class', $classes, $uri);
     }
@@ -298,7 +298,7 @@ class PodInit
              */
             $page_template = $pod_page_exists['page_template'];
 
-            if ((!defined('PODS_DISABLE_DYNAMIC_TEMPLATE') || !PODS_DISABLE_DYNAMIC_TEMPLATE) && is_object($pods) && isset($pods->page_template) && !empty($pods->page_template) && '' != locate_template(array($pods->page_template), true)) {
+            if ((!defined('PODS_DISABLE_DYNAMIC_TEMPLATE') || !PODS_DISABLE_DYNAMIC_TEMPLATE) && is_object($pods) && !is_wp_error($pods) && isset($pods->page_template) && !empty($pods->page_template) && '' != locate_template(array($pods->page_template), true)) {
                 // found the template and included it, we're good to go!
             }
             elseif (!empty($page_template) && '' != locate_template(array($page_template), true)) {

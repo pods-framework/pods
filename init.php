@@ -3,7 +3,7 @@
 Plugin Name: Pods CMS Framework
 Plugin URI: http://podscms.org/
 Description: Pods is a CMS framework for creating, managing, and deploying customized content types.
-Version: 1.12-rc-1
+Version: 2.0
 Author: The Pods CMS Team
 Author URI: http://podscms.org/about/
 

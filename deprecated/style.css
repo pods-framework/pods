@@ -1,0 +1,570 @@
+/* Admin-facing */
+.pods_admin .area {
+    margin: 0;
+    padding: 0;
+    display: none;
+}
+
+.pods_admin .area.active {
+    display: block;
+}
+
+.pods_admin ul.pretty,
+.pods_admin ul.pretty li {
+    list-style:disc;
+}
+
+.pods_admin ul.pretty {
+    margin:10px;
+}
+
+.pods_admin ul.pretty li {
+    margin:8px 0 0 15px;
+}
+
+.pods_admin #icon-edit-pages.icon32 {
+    background-position:0 0;
+    background-image:url(images/icon32.png);
+}
+.pods_admin h2.title {
+    color: #464646;
+    font-family: Georgia, "Times New Roman", "Bitstream Charter", Times, serif;
+    font-weight: normal;
+    font-style: italic;
+    font-size: 24px;
+    margin: 0;
+}
+
+.pods_admin #editTitle {
+    padding-top: 8px;
+}
+
+.pods_admin #nav,
+.pods_admin #subnav {
+    margin: 15px 0;
+    border-bottom: 1px solid #dfdfdf;
+    padding-left: 10px;
+}
+
+.pods_admin .navTab {
+    float: left;
+    line-height: 200%;
+}
+
+.pods_admin .navTab a {
+    display: block;
+    line-height: 26px;
+    padding: 1px 13px 0;
+    margin-bottom: -1px;
+    text-decoration: none;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+}
+
+.pods_admin .navTab.active a {
+    color: #333;
+    border: 1px solid #dfdfdf;
+    border-bottom: 1px solid #f9f9f9;
+    padding: 0 12px;
+}
+
+.pods_admin .hidden,
+.pods_form .hidden {
+    display: none;
+}
+
+.pods_admin .clear,
+.pods_form .clear {
+    clear: both;
+}
+
+.pods_form .clear {
+    height:15px;
+}
+
+.pods_admin .btn {
+    cursor: pointer;
+}
+
+.pods_admin .dragme {
+    background: url(images/move.png) no-repeat;
+}
+
+.pods_admin .dropme,
+.pods_form .dropme {
+    background: url(images/action_delete.gif) no-repeat;
+}
+
+.pods_admin .editme {
+    background: url(images/reply.gif) no-repeat;
+}
+
+.pods_admin .addnew {
+    background: url(images/file.gif) no-repeat;
+}
+
+.pods_admin .dragme,
+.pods_admin .editme,
+.pods_admin .dropme,
+.pods_form .dropme,
+.pods_admin .addnew {
+    float: left;
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+}
+
+.pods_admin #column_list {
+    padding-top: 10px;
+}
+
+.pods_admin ul.sortable li {
+    margin-bottom: 2px;
+}
+
+.pods_admin #column_name,
+.pods_admin #column_label,
+.pods_admin #column_type,
+.pods_admin #column_pickval,
+.pods_admin #column_sister_field_id,
+.pods_admin #column_pick_filter,
+.pods_admin #column_pick_orderby,
+.pods_admin #column_display_helper,
+.pods_admin #column_input_helper,
+.pods_admin #column_comment,
+.pods_admin #detail_page,
+.pods_admin #pre_save_helpers,
+.pods_admin #pre_drop_helpers,
+.pods_admin #post_save_helpers,
+.pods_admin #post_drop_helpers,
+.pods_admin #pod_label {
+    width: 160px;
+}
+
+/* File progress bar */
+.pods_form .pods-progress {
+    width: 200px;
+    border: 1px solid #e3e3e3;
+}
+
+.pods_form .pods-bar {
+    width: 1%;
+    height: 12px;
+    background: #4f5c71;
+}
+
+/* Browse existing files */
+.pods_form .file_match {
+    cursor: pointer;
+    padding-left: 20px;
+    background: url(images/file.gif) no-repeat;
+}
+
+.pods_form .file_match:hover {
+    text-decoration: underline;
+}
+
+/* Help text */
+.pods_admin .stickynote {
+    width: 500px;
+    padding: 10px;
+    margin-top: 10px;
+    background: #fff;
+    box-shadow: 5px 5px 5px #ccc;
+    -moz-box-shadow: 5px 5px 5px #ccc;
+    -webkit-box-shadow: 5px 5px 5px #ccc;
+}
+
+.pods_admin #welcomeArea .stickynote {
+    padding: 0;
+    width: 420px;
+    background: #fff;
+}
+
+.pods_admin #welcomeArea #logo {
+    color: #fff;
+    height: 64px;
+    background: #333c49 url(images/header-logo.png) 30px 10px no-repeat;
+}
+
+.pods_admin #welcomeArea #version {
+    padding: 38px 0 0 180px;
+}
+
+.pods_admin #welcomeArea #info {
+    padding: 10px;
+}
+
+.pods_admin .stickynote li {
+    margin: 0 0 10px 15px;
+    list-style: square;
+}
+
+/* Basic styling for input forms */
+.pods_admin .tips {
+    font-style: italic;
+    margin-bottom: 5px;
+}
+
+.pods_admin .area .button {
+    border: 1px solid #E3E3E3;
+}
+
+.pods_admin .area textarea,
+.pods_admin .desc,
+.pods_admin .code,
+.pods_form .desc,
+.pods_form .code {
+    width: 99%;
+    height: 200px;
+    border: 1px solid #E3E3E3;
+}
+
+.pods_admin #page_code,
+.pods_admin #helper_code,
+.pods_admin #template_code {
+    height: 300px;
+}
+
+.pods_admin #page_precode {
+    height: 100px;
+}
+
+.pods_admin #pod-area-left {
+    float: left;
+    width: 60%;
+}
+
+.pods_admin #pod-area-right {
+    float: left;
+    width: 38%;
+    padding-left: 10px;
+    border-left: 1px solid #e3e3e3;
+}
+
+.pods_admin #menu_uri,
+.pods_admin #menu_title,
+.pods_admin #page_title,
+.pods_admin #podBox #new_pod,
+.pods_admin #pageBox #new_page,
+.pods_admin #helperBox #new_helper {
+    width: 300px;
+    border: 1px solid #E3E3E3;
+}
+
+.pods_form {
+    margin-top: 10px;
+}
+
+.pods_admin #filterForm {
+    text-align: right;
+}
+
+.pods_admin #roleTable,
+.pods_admin #browseTable {
+    width: 100%;
+    margin: 10px 0;
+}
+
+.pods_admin #browseTable th a {
+    text-decoration: none;
+}
+
+.pods_admin #roleTable th,
+.pods_admin #roleTable td,
+.pods_admin #browseTable th,
+.pods_admin #browseTable td {
+    padding: 2px 0;
+    text-align: left;
+    border-bottom: 1px solid #E3E3E3;
+}
+
+.pods_form #dialog .filebox,
+.pods_admin #dialog .filebox {
+    height: 240px;
+    margin: 10px 0 0 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.pods_admin .zebra {
+    background: #fff;
+}
+
+.filterbox .filter {
+    width: 180px;
+}
+
+.filterbox .pod_search {
+    width: 120px;
+}
+
+/* Form input fields */
+.pods_form .form.txt,
+.pods_form .form.slug,
+.pods_form .form.pick1 {
+    width: 200px;
+}
+
+/* NicEdit */
+.pods_form .nicEdit-panel {
+    background: #F9F9F9;
+}
+
+.pods_form .nicEdit-button {
+    background: #F9F9F9;
+}
+
+.pods_form .nicEdit-main {
+    background: #fff;
+}
+
+/* Public-facing */
+.pods_admin h3 {
+    margin: 0 0 10px 0;
+}
+
+.pods_admin #podArea .area-select,
+.pods_admin #templateArea .area-select,
+.pods_admin #pageArea .area-select,
+.pods_admin #helperArea .area-select {
+    width: 280px;
+    font-size: 1.1em;
+    height: 26px;
+}
+
+.pods_form .form {
+    border: 1px solid #E3E3E3;
+}
+
+.pods_form .form.file {
+    border: none;
+}
+
+.pods_form .leftside {
+    width: 30%;
+    float: left;
+    font-weight: bold;
+}
+
+.pods_form .leftside .comment {
+    font-weight: normal;
+    font-size: 11px;
+    color: #999;
+}
+
+.pods_form .rightside {
+    float: left;
+    margin: 0 0 5px 0;
+    width: 70%;
+}
+
+.pods_admin #menuBox .leftside {
+    width: 20%;
+}
+
+.pods_admin #menuBox .rightside {
+    width: 80%;
+}
+
+.pods_admin #podArea #columnBox {
+    width: 100%;
+}
+
+.pods_admin #podArea #columnBox td,
+.pods_admin #podArea #podSettings td {
+    padding: 0 0 3px 0;
+}
+
+.pods_admin .red,
+.pods_form .red {
+    color: red;
+    font-weight: bold;
+}
+
+.pods_admin div#content p {
+    padding: 5px 0;
+}
+
+.pods_form .pick {
+    width: 100%;
+    height: 160px;
+    background: white;
+    border: 1px solid #E3E3E3;
+    overflow: auto;
+}
+
+.pods_form .pick .active {
+    background: #FFD799;
+}
+
+.pods_form .option {
+    padding-left: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    cursor: default;
+}
+
+.pods_admin .menu-item {
+    margin-top: 5px;
+    margin-left: 20px;
+}
+
+/* jqModal */
+.pods_admin .jqmWindow,
+.pods_form .jqmWindow {
+    display: none;
+    position: fixed;
+    top: 25%;
+    left: 25%;
+    width: 400px;
+    background: #E4F2FD;
+    color: #333;
+    border: 1px solid #C6D9E9;
+    padding: 10px;
+}
+
+.pods_admin .jqmOverlay,
+.pods_form .jqmOverlay {
+    background: #fff;
+}
+
+* iframe.jqm {
+    top: 0;
+    left: 0;
+    z-index: -1;
+    position: absolute;
+    width: expression(this.parentNode.offsetWidth+'px');
+    height: expression(this.parentNode.offsetHeight+'px');
+}
+
+* html .jqmWindow {
+    position: absolute;
+    top: expression((document.documentElement.scrollTop || document.body.scrollTop) + Math.round(20 * (document.documentElement.offsetHeight || document.body.clientHeight) / 100) + 'px');
+}
+
+/* Date Input */
+.pods_form .date_selector,
+.pods_form .date_selector * {
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    text-decoration: none;
+}
+
+.pods_form .date_selector {
+    padding: 5px;
+    margin: -1px 0 0 0;
+    background: #f2f2f2;
+    border: 1px solid #ccc;
+    position: absolute;
+    text-align: center;
+    z-index: 99999;
+    display: none;
+}
+
+.pods_form .date_selector_ieframe {
+    position: absolute;
+    z-index: 9999;
+    display: none;
+}
+
+.pods_form .date_selector .month_nav {
+    padding: 0;
+    margin: 0 0 5px 0;
+    display: block;
+}
+
+.pods_form .date_selector .month_name {
+    display: block;
+    font-weight: bold;
+    line-height: 20px;
+    text-align: center;
+}
+
+.pods_form .date_selector .date_hour,
+.pods_form .date_selector .date_minute,
+.pods_form .date_selector .date_second {
+    border: 1px solid #ccc;
+}
+
+.pods_form .date_selector .month_nav a {
+    top: 5px;
+    width: 20px;
+    height: 20px;
+    display: block;
+    font-weight: bold;
+    position: absolute;
+    text-align: center;
+    line-height: 17px;
+    overflow: hidden;
+    font-size: 120%;
+    color: #003C78;
+}
+
+.pods_form .date_selector .month_nav a:hover,
+.pods_form .date_selector .month_nav a:focus {
+    color: #003C78;
+    background: none;
+    text-decoration: none;
+}
+
+.pods_form .date_selector .prev {
+    left: 5px;
+}
+
+.pods_form .date_selector .next {
+    right: 5px;
+}
+.pods_form .date_selector table {
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+.pods_form .date_selector th,
+.pods_form .date_selector td {
+    padding: 0;
+    height: 2em;
+    width: 2.5em;
+    text-align: center;
+}
+
+.pods_form .date_selector td {
+    line-height: 2em;
+    text-align: center;
+    white-space: nowrap;
+    border: 1px solid #ccc;
+    background: #fff;
+}
+
+.pods_form .date_selector td.today {
+    background: #FFFED9;
+}
+
+.pods_form .date_selector td.unselected_month {
+    color: #ccc;
+}
+
+.pods_form .date_selector td a {
+    width: 100%;
+    height: 100%;
+    display: block;
+    color: #003C78;
+    line-height: 2em;
+    text-align: center;
+    text-decoration: none !important;
+}
+
+.pods_form .date_selector td.today a {
+    background: #FFFEB3;
+}
+
+.pods_form .date_selector td.selected a {
+    background: #D8DFE5;
+    font-weight: bold;
+}
+
+.pods_form .date_selector td a:hover {
+    background: #003C78;
+    color: #fff;
+}

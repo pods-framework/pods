@@ -2,233 +2,260 @@
 /**
  * Standardize queries and error reporting
  *
+ * @see PodsData::query
+ *
  * @param string $query The SQL query
  * @param string $error (optional) The failure message
  * @param string $results_error (optional) Throw an error if a records are found
  * @param string $no_results_error (optional) Throw an error if no records are found
- * @since 1.2.0
+ * @since 2.0.0
  */
-function pod_query($sql, $error = 'SQL failed', $results_error = null, $no_results_error = null) {
-    global $wpdb;
-
-    $sql = trim($sql);
-    // Using @wp_users is deprecated! use $wpdb->users instead!
-    $sql = str_replace('@wp_users', $wpdb->users, $sql);
-    $sql = str_replace('@wp_', $wpdb->prefix, $sql);
-    $sql = str_replace('{prefix}', '@wp_', $sql);
-
-    $sql = apply_filters('pod_query', $sql, $error, $results_error, $no_results_error);
-
-    // Return cached resultset
-    if ('SELECT' == substr($sql, 0, 6)) {
-        $cache = PodCache::instance();
-        if ($cache->cache_enabled && isset($cache->results[$sql])) {
-            $result = $cache->results[$sql];
-            if (0 < mysql_num_rows($result)) {
-                mysql_data_seek($result, 0);
-            }
-            $result = apply_filters('pod_query_return', $result, $sql, $error, $results_error, $no_results_error);
-            return $result;
-        }
-    }
-    if (false !== $error)
-        $result = mysql_query($sql, $wpdb->dbh) or die("<e>$error; SQL: $sql; Response: " . mysql_error($wpdb->dbh));
-    else
-        $result = @mysql_query($sql, $wpdb->dbh);
-
-    if (0 < @mysql_num_rows($result)) {
-        if (!empty($results_error)) {
-            die("<e>$results_error");
-        }
-    }
-    elseif (!empty($no_results_error)) {
-        die("<e>$no_results_error");
-    }
-
-    if ('INSERT' == substr($sql, 0, 6)) {
-        $result = mysql_insert_id($wpdb->dbh);
-    }
-    elseif ('SELECT' == substr($sql, 0, 6)) {
-        if ('SELECT FOUND_ROWS()' != $sql) {
-            $cache->results[$sql] = $result;
-        }
-    }
-    $result = apply_filters('pod_query_return', $result, $sql, $error, $results_error, $no_results_error);
-    return $result;
+function pods_query ($sql, $error = 'Database Error', $results_error = null, $no_results_error = null) {
+    $podsdata = pods_data();
+    return $podsdata->query($sql, $error, $results_error, $no_results_error);
 }
 
 /**
- * Filter input. Escape output.
+ * Standardize filters / actions
+ *
+ * @param string $scope Scope of the filter / action (ui for PodsUI, api for PodsAPI, etc..)
+ * @param string $name Name of filter / action to run
+ * @param mixed $args (optional) Arguments to send to filter / action
+ * @param object $obj (optional) Object to reference for filter / action
+ * @since 2.0.0
+ */
+function pods_do_hook ($scope, $name, $args = null, $obj = null) {
+    $args = apply_filters("pods_{$scope}_{$name}", $args, &$obj);
+    if (is_array($args) && isset($args[0]))
+        return $args[0];
+    return $args;
+}
+
+/**
+ * Error Handling which throws / displays errors
+ *
+ * @param string $error The error message to be thrown / displayed
+ * @param object / boolean $obj If object, if $obj->display_errors is set, and is set to true: display errors;
+ *                              If boolean, and is set to true: display errors
+ */
+function pods_error ($error, $obj = null) {
+    $display_errors = false;
+    if (is_object($obj) && isset($obj->display_errors) && true === $obj->display_errors)
+        $display_errors = true;
+    elseif (is_bool($obj) && true === $obj)
+        $display_errors = true;
+    // log error in WP
+    $log_error = new WP_Error('pods-error-'.md5($error),$error);
+    // throw error as Exception and return false if silent
+    if (false !== $display_errors) {
+        throw new Exception($error);
+        return false;
+    }
+    // die with error
+    die("<e>$error");
+}
+
+/**
+ * Marks a function as deprecated and informs when it has been used.
+ *
+ * There is a hook deprecated_function_run that will be called that can be used
+ * to get the backtrace up to what file and function called the deprecated
+ * function.
+ *
+ * The current behavior is to trigger a user error if WP_DEBUG is true.
+ *
+ * This function is to be used in every function that is deprecated.
+ *
+ * @uses do_action() Calls 'deprecated_function_run' and passes the function name, what to use instead,
+ *   and the version the function was deprecated in.
+ * @uses apply_filters() Calls 'deprecated_function_trigger_error' and expects boolean value of true to do
+ *   trigger or false to not trigger error.
+ *
+ * @param string $function The function that was called
+ * @param string $version The version of WordPress that deprecated the function
+ * @param string $replacement Optional. The function that should have been called
+ * @since 2.0.0
+ */
+function pods_deprecated($function, $version, $replacement = null) {
+
+	do_action('deprecated_function_run', $function, $replacement, $version);
+
+	// Allow plugin to filter the output error trigger
+	if (WP_DEBUG && apply_filters( 'deprecated_function_trigger_error', true)) {
+		if (!is_null($replacement))
+			trigger_error(sprintf(__('%1$s is <strong>deprecated</strong> since Pods version %2$s! Use %3$s instead.'), $function, $version, $replacement));
+		else
+			trigger_error(sprintf(__('%1$s is <strong>deprecated</strong> since Pods version %2$s with no alternative available.'), $function, $version));
+	}
+}
+
+/**
+ * Output content from Pod Page
+ *
+ * @param string $uri The Pod Page URI to output
+ */
+function pods_content ($uri = null, $output = true) {
+    global $pod_page_exists;
+    $phpcode = $pod_page_exists['phpcode'];
+
+    if (null != $uri) {
+        if (is_array($uri)) {
+            $pairs = array('uri' => null);
+            $tags = shortcode_atts($pairs, $uri);
+            $uri = null;
+            if(null != $tags['uri'])
+                $uri = $tags['uri'];
+        }
+        elseif (!is_string($uri))
+            $uri = null;
+        if (null != $uri) {
+            $pod_page = pod_page_exists($uri);
+            $phpcode = $pod_page['phpcode'];
+        }
+    }
+
+    ob_start();
+    eval('?>' . $phpcode);
+    $output = apply_filters('pods_content', ob_get_clean());
+    if (true === $output)
+        echo $output;
+    else
+        return $output;
+}
+
+/**
+ * Filter input and return sanitized output
  *
  * @param mixed $input The string, array, or object to sanitize
  * @since 1.2.0
  */
-function pods_sanitize($input) {
+function pods_sanitize ($input) {
+    global $wpdb;
     $output = array();
-
-    if (empty($input))
-        $output = $input;
-    elseif (is_object($input)) {
-        foreach ((array) $input as $key => $val) {
-            $output[pods_sanitize($key)] = pods_sanitize($val);
+    if (is_object($input)) {
+        $input = get_object_vars($input);
+        foreach ($input as $key => $val) {
+            $output[$key] = pods_sanitize($val);
         }
         $output = (object) $output;
     }
     elseif (is_array($input)) {
         foreach ($input as $key => $val) {
-            $output[pods_sanitize($key)] = pods_sanitize($val);
+            $output[$key] = pods_sanitize($val);
         }
     }
+    elseif (empty($input))
+        $output = $input;
     else
-        $output = esc_sql($input);
-    $output = apply_filters('pods_sanitize', $output, $input);
+        $output = $wpdb->_real_escape(trim($input));
     return $output;
 }
 
 /**
- * Return a GET, POST, COOKIE, SESSION, or URI string segment
+ * Filter input and return unsanitized output
  *
- * @param mixed $key The variable name or URI segment position
- * @param string $type (optional) "uri", "get", "post", "request", "server", "session", or "cookie"
- * @return string The requested value, or null
+ * @param mixed $input The string, array, or object to unsanitize
+ * @since 1.2.0
+ */
+function pods_unsanitize ($input) {
+    $output = array();
+    if (is_object($input)) {
+        $input = get_object_vars($input);
+        foreach ($input as $key => $val) {
+            $output[$key] = pods_unsanitize($val);
+        }
+        $output = (object) $output;
+    }
+    elseif (is_array($input)) {
+        foreach ($input as $key => $val) {
+            $output[$key] = pods_unsanitize($val);
+        }
+    }
+    elseif (empty($input))
+        $output = $input;
+    else
+        $output = stripslashes($input);
+    return $output;
+}
+
+/**
+ * Return a URI string segment, GET, POST, SESSION, COOKIE, or USER variable
+ *
+ * @param mixed $var The variable name or URI segment position
+ * @param string $method (optional) "uri", "get", "post", "session", "cookie", or "user"
+ * @param mixed $default (optional) The default value to return if not found
+ * @return mixed The requested value, or null
  * @since 1.6.2
  */
-function pods_url_variable($key = 'last', $type = 'url') {
-    $output = apply_filters('pods_url_variable', pods_var($key, $type), $key, $type);
-    return $output;
-}
-
-/**
- * Return a variable (if exists)
- *
- * @param mixed $key The variable key or URI segment position
- * @param string $type (optional) "url", "get", "post", "request", "server", "session", "cookie", "constant", or "user"
- * @param mixed $default (optional) The default value to set if variable doesn't exist
- * @param mixed $allowed (optional) The value(s) allowed
- * @param bool $strict (optional) Only allow values (must not be empty)
- * @return mixed The variable (if exists), or default value
- * @since 1.10.6
- */
-function pods_var($key = 'last', $type = 'get', $default = null, $allowed = null, $strict = false) {
-    $output = $default;
-    if (is_array($type))
-        $output = isset($type[$key]) ? $type[$key] : $output;
-    elseif (is_object($type))
-        $output = isset($type->$key) ? $type->$key : $output;
-    else {
-        $type = strtolower((string) $type);
-        if ('get' == $type && isset($_GET[$key]))
-            $output = stripslashes_deep($_GET[$key]);
-        elseif (in_array($type, array('url', 'uri'))) {
-            $url = parse_url(get_current_url());
-            $uri = trim($url['path'], '/');
-            $uri = array_filter(explode('/', $uri));
-
-            if ('first' == $key)
-                $key = 0;
-            elseif ('last' == $key)
-                $key = -1;
-
-            if (is_numeric($key))
-                $output = ($key < 0) ? $uri[count($uri) + $key] : $uri[$key];
+function pods_var ($var = 'last', $method = 'uri', $default = null) {
+    if (is_array($var)) {
+        foreach ($var as $key) {
+            if (false !== pods_ui_var($key, $method, $default))
+                return true;
         }
-        elseif ('post' == $type && isset($_POST[$key]))
-            $output = stripslashes_deep($_POST[$key]);
-        elseif ('request' == $type && isset($_REQUEST[$key]))
-            $output = stripslashes_deep($_REQUEST[$key]);
-        elseif ('server' == $type && isset($_SERVER[$key]))
-            $output = stripslashes_deep($_SERVER[$key]);
-        elseif ('session' == $type && isset($_SESSION[$key]))
-            $output = $_SESSION[$key];
-        elseif ('cookie' == $type && isset($_COOKIE[$key]))
-            $output = stripslashes_deep($_COOKIE[$key]);
-        elseif ('constant' == $type && defined($key))
-            $output = constant($key);
-        elseif ('user' == $type && is_user_logged_in()) {
-            global $user_ID;
-            get_currentuserinfo();
-            $value = get_user_meta($user_ID, $key, true);
-            if (is_array($value) || 0 < strlen($value))
-                $output = $value;
-        }
+        return false;
     }
-    if (null !== $allowed) {
-        if (is_array($allowed)) {
-            if (!in_array($output, $allowed))
-                $output = $default;
-        }
-        elseif ($allowed !== $output)
-            $output = $default;
-    }
-    if (true === $strict && empty($output))
-        $output = $default;
-    $output = apply_filters('pods_var', $output, $key, $type);
-    return pods_sanitize($output);
-}
-
-/**
- * Set a variable
- *
- * @param mixed $value The value to be set
- * @param mixed $key The variable name or URI segment position
- * @param string $type (optional) "url", "get", "post", "request", "server", "session", "cookie", "constant", or "user"
- * @return mixed $value (if set), $type (if $type is array or object), or $url (if $type is 'url')
- * @since 1.10.6
- */
-function pods_var_set($value, $key = 'last', $type = 'url') {
-    $type = strtolower($type);
+    
     $ret = false;
-    if (is_array($type)) {
-        $type[$key] = $value;
-        $ret = $type;
+    if (is_array($method)) {
+        if (isset($method[$var]))
+            $ret = $method[$var];
     }
-    elseif (is_object($type)) {
-        $type->$key = $value;
-        $ret = $type;
-    }
-    elseif ('url' == $type) {
-        $url = parse_url(get_current_url());
-        $uri = trim($url['path'], '/');
-        $uri = array_filter(explode('/', $uri));
+    else
+        $method = strtolower($method);
+    
+    if ('uri' == $method) {
+        $uri = explode('?', $_SERVER['REQUEST_URI']);
+        $uri = explode('#', $uri[0]);
+        $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri[0]);
+        $uri = explode('/', $uri);
 
-        if ('first' == $key)
-            $key = 0;
-        elseif ('last' == $key)
-            $key = -1;
-
-        if (is_numeric($key)) {
-            if ($key < 0)
-                $uri[count($uri) + $key] = $value;
-            else
-                $uri[$key] = $value;
-        }
-        $url['path'] = '/' . implode('/', $uri) . '/';
-        $url['path'] = trim($url['path'], '/');
-        $ret = http_build_url($url);
+        if ('first' == $var || 0 == $var)
+            $var = 0;
+        elseif ('last' == $var || -1 == $var)
+            $var = -1;
+        else
+            $var = intval($var);
+        
+        if ($var < 0)
+            $var = count($uri) + $var;
+        if (isset($uri[$var]))
+            $ret = $uri[$var];
     }
-    elseif ('get' == $type)
-        $ret = $_GET[$key] = $value;
-    elseif ('post' == $type)
-        $ret = $_POST[$key] = $value;
-    elseif ('request' == $type)
-        $ret = $_REQUEST[$key] = $value;
-    elseif ('server' == $type)
-        $ret = $_SERVER[$key] = $value;
-    elseif ('session' == $type)
-        $ret = $_SESSION[$key] = $value;
-    elseif ('cookie' == $type)
-        $ret = $_COOKIE[$key] = $value;
-    elseif ('constant' == $type && !defined($key)) {
-        define($key, $value);
-        $ret = constant($key);
+    elseif ('get' == $method && isset($_GET[$var])) {
+        $ret = $_GET[$var];
+        if (empty($ret))
+            $ret = false;
     }
-    elseif ('user' == $type && is_user_logged_in()) {
+    elseif ('post' == $method && isset($_POST[$var])) {
+        $ret = $_POST[$var];
+        if (empty($ret))
+            $ret = false;
+    }
+    elseif ('session' == $method && isset($_SESSION[$var])) {
+        $ret = $_SESSION[$var];
+        if (empty($ret))
+            $ret = false;
+    }
+    elseif ('cookie' == $method && isset($_COOKIE[$var])) {
+        $ret = $_COOKIE[$var];
+        if (empty($ret))
+            $ret = false;
+    }
+    elseif ('user' == $method) {
+        if (!is_user_logged_in())
+            return false;
         global $user_ID;
         get_currentuserinfo();
-        update_user_meta($user_ID, $key, $value);
-        $ret = $value;
+        $ret = get_user_meta($user_ID, $var, true);
+        if (!is_array($ret) && strlen($ret) < 1)
+            $ret = false;
     }
-    return apply_filters('pods_var_set', $ret, $value, $key, $type);
+    
+    if (false === $ret && null !== $default)
+        $ret = $default;
+    
+    return pods_sanitize($ret);
 }
 
 /**
@@ -237,11 +264,10 @@ function pods_var_set($value, $key = 'last', $type = 'url') {
  * @param string $str
  * @since 1.8.9
  */
-function pods_create_slug($str) {
+function pods_create_slug ($str) {
     $str = preg_replace("/([_ ])/", "-", trim($str));
     $str = preg_replace("/([^0-9a-z-.])/", "", strtolower($str));
     $str = preg_replace("/(-){2,}/", "-", $str);
-    $str = apply_filters('pods_create_slug', $str);
     return $str;
 }
 
@@ -251,11 +277,10 @@ function pods_create_slug($str) {
  * @param string $name Input string to clean
  * @since 1.2.0
  */
-function pods_clean_name($str) {
+function pods_clean_name ($str) {
     $str = preg_replace("/([- ])/", "_", trim($str));
     $str = preg_replace("/([^0-9a-z_])/", "", strtolower($str));
     $str = preg_replace("/(_){2,}/", "_", $str);
-    $str = apply_filters('pods_clean_name', $str);
     return $str;
 }
 
@@ -264,45 +289,73 @@ function pods_clean_name($str) {
  *
  * @todo Simplify this function - get rid of the pod_id crap
  * @param string $value The slug value
- * @param string $column_name The column name
- * @param string $datatype The datatype name
- * @param int $datatype_id The datatype ID
- * @param int $pod_id The item's ID in the wp_pod table
+ * @param string $column The column name
+ * @param string $pod The Pod name
+ * @param int $id The item's ID
  * @return string The unique slug name
  * @since 1.7.2
  */
-function pods_unique_slug($value, $column_name, $datatype, $datatype_id, $pod_id = 0) {
-    $value = sanitize_title($value);
+function pods_unique_slug ($value, $column, $pod, $id = 0) {
+    $value = sanitize_title($value, '', 'save');
+    $column = pods_sanitize($column);
+    $pod = pods_sanitize($pod);
+    $id = pods_absint($id);
     $sql = "
     SELECT DISTINCT
-        t.`$column_name` AS slug
+        `{$column}`
     FROM
-        @wp_pod p
-    INNER JOIN
-        `@wp_pod_tbl_{$datatype}` t ON t.id = p.tbl_row_id
+        `@wp_pod_tbl_{$pod}`
     WHERE
-        p.datatype = '$datatype_id' AND p.id != '$pod_id'
+        `id` != '{$id}' AND `{$column}` = '{$value}'
     ";
-    $result = pod_query($sql);
-    if (0 < mysql_num_rows($result)) {
-        $unique_num = 0;
-        $unique_found = false;
-        while ($row = mysql_fetch_assoc($result)) {
-            $taken_slugs[] = $row['slug'];
-        }
-        if (in_array($value, $taken_slugs)) {
-            while (!$unique_found) {
-                $unique_num++;
-                $test_slug = $value . '-' . $unique_num;
-                if (!in_array($test_slug, $taken_slugs)) {
-                    $value = $test_slug;
-                    $unique_found = true;
-                }
-            }
+    $taken = pods_query($sql);
+    if (!empty($taken)) {
+        $unique_num = 1;
+        while (0 < $unique_found) {
+            $unique_num++;
+            $slug = $value . '-' . $unique_num;
+            $sql = "
+            SELECT DISTINCT
+                `{$column}`
+            FROM
+                `@wp_pod_tbl_{$pod}`
+            WHERE
+                `id` != '{$id}' AND `{$column}` = '{$slug}'
+            LIMIT 1
+            ";
+            $taken = pods_query($sql);
+            if (empty($taken))
+                return $slug;
         }
     }
-    $value = apply_filters('pods_unique_slug', $value, $column_name, $datatype, $datatype_id, $pod_id);
     return $value;
+}
+
+/**
+ * Get the Absolute Integer of a value
+ *
+ * @param string $maybeint
+ * @return integer
+ * @since 2.0.0
+ */
+function pods_absint ($maybeint, $strict = true, $allow_negative = false) {
+    if (true === $strict && !is_numeric(trim($maybeint)))
+        return 0;
+    if (false !== $allow_negative)
+        return intval($maybeint);
+    return absint($maybeint);
+}
+
+/**
+ * Run a Pods Helper
+ *
+ * @param string $uri The Pod Page URI to check if currently on
+ * @return bool
+ * @since 1.7.5
+ */
+function pods_helper ($helper_name, $value = null, $name = null) {
+    $pod = new Pod();
+    return $pod->helper($helper_name, $value, $name);
 }
 
 /**
@@ -312,11 +365,10 @@ function pods_unique_slug($value, $column_name, $datatype, $datatype_id, $pod_id
  * @return bool
  * @since 1.7.5
  */
-function is_pod_page($uri = null) {
+function is_pod_page ($uri = null) {
     global $pod_page_exists;
-
     if (false !== $pod_page_exists) {
-        if (null === $uri || $uri == $pod_page_exists['uri']) {
+        if (null == $uri || $uri == $pod_page_exists['uri']) {
             return true;
         }
     }
@@ -324,19 +376,19 @@ function is_pod_page($uri = null) {
 }
 
 /**
- * Get current URL of any page
+ * Find out if the current page has a valid $pods
  *
- * @return string
- * @since 1.9.6
+ * @param object $object The Pod Object currently checking (optional)
+ * @return bool
+ * @since 2.0.0
  */
-if (!function_exists('get_current_url')) {
-    function get_current_url() {
-        $url = 'http';
-        if (isset($_SERVER['HTTPS']) && 'off' != $_SERVER['HTTPS'] && 0 != $_SERVER['HTTPS'])
-            $url = 'https';
-        $url .= '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-        return apply_filters('get_current_url', $url);
-    }
+function is_pod ($object = null) {
+    global $pods;
+    if (is_object($object) && isset($object->pod) && !empty($object->pod))
+        return true;
+    if (is_object($pods) && isset($pods->pod) && !empty($pods->pod))
+        return true;
+    return false;
 }
 
 /**
@@ -347,42 +399,30 @@ if (!function_exists('get_current_url')) {
  * @param string $uri The Pod Page URI to check if exists
  * @return array
  */
-function pod_page_exists($uri = null) {
-    if (null === $uri) {
-        $uri = parse_url(get_current_url());
-        $uri = $uri['path'];
-        $home = parse_url(get_bloginfo('url'));
-        if(!empty($home) && isset($home['path']) && '/' != $home['path'])
-            $uri = substr($uri, strlen($home['path']));
+function pod_page_exists ($uri = null) {
+    if (null==$uri) {
+        $uri = explode('?', $_SERVER['REQUEST_URI']);
+        $uri = explode('#', $uri[0]);
+        $uri = $uri[0];
+        $site_url = parse_url(get_bloginfo('url'));
+        if (isset($site_url['path']) && !empty($site_url['path']) && '/' != $site_url['path'])
+            $uri = str_replace($site_url['path'], '', $uri);
     }
-    $uri = trim($uri,'/');
-    $uri = esc_sql($uri);
-    $uri_depth = count(array_filter(explode('/',$uri)))-1;
+    $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri);
+    $uri = pods_sanitize($uri);
 
-    if (false !== strpos($uri, 'wp-admin') || false !== strpos($uri, 'wp-includes'))
+    if (false !== strpos($uri, 'wp-admin'))
         return false;
 
     // See if the custom template exists
-    $result = pod_query("SELECT * FROM @wp_pod_pages WHERE uri = '$uri' LIMIT 1");
-    if (1 > mysql_num_rows($result)) {
+    $result = pods_query("SELECT * FROM `@wp_pods_objects` WHERE `type` = 'page' AND `name` = '{$uri}' LIMIT 1");
+    if (empty($result)) {
         // Find any wildcards
-        $sql = "SELECT * FROM @wp_pod_pages
-                WHERE
-                    (LENGTH(uri)-LENGTH(REPLACE(uri,'/','')))=$uri_depth
-                    AND '$uri' LIKE REPLACE(uri, '*', '%')
-                ORDER BY LENGTH(uri) DESC, uri DESC
-                LIMIT 1";
-        $result = pod_query($sql);
+        $sql = "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'page' AND '{$uri}' LIKE REPLACE(`name`, '*', '%') ORDER BY LENGTH(`name`) DESC, `name` DESC LIMIT 1";
+        $result = pods_query($sql);
     }
-
-    if (0 < mysql_num_rows($result)) {
-        $pod_page_data = mysql_fetch_assoc($result);
-        $validate_pod_page = explode('/',$pod_page_data['uri']);
-        $validate_uri = explode('/',$uri);
-        if (count($validate_pod_page)==count($validate_uri)) {
-            return $pod_page_data;
-        }
-    }
+    if (!empty($result))
+        return get_object_vars($result[0]);
     return false;
 }
 
@@ -394,133 +434,101 @@ function pod_page_exists($uri = null) {
  * @return bool
  * @since 1.2.0
  */
-function pods_access($privs, $method = 'OR') {
-    global $pods_roles;
-
-    if (empty($pods_roles) && !is_array($pods_roles)) {
-        $pods_roles = @unserialize(get_option('pods_roles'));
-        if (!is_array($pods_roles))
-            $pods_roles = array();
-    }
-
-    // Convert $privs to an array
-    $privs = (array) $privs;
+function pods_access ($privs, $method = 'OR') {
+    if (!is_user_logged_in())
+        return false;
+    if (current_user_can('administrator') || current_user_can('pods_administrator') || (function_exists('is_super_admin') && is_super_admin()))
+        return true;
 
     // Convert $method to uppercase
     $method = strtoupper($method);
 
-    $check = apply_filters('pods_access', null, $privs, $method, $pods_roles);
-    if (null !== $check && is_bool($check))
-        return $check;
-
-    if (current_user_can('administrator') || current_user_can('pods_administrator') || (function_exists('is_super_admin') && is_super_admin()))
-        return true;
-
-    // Store approved privs when using "AND"
-    $approved_privs = array();
+    // Convert $privs to an array
+    $privs = (array) $privs;
 
     // Loop through the user's roles
-    if (is_array($pods_roles)) {
-        foreach ($pods_roles as $role => $pods_privs) {
-            if (current_user_can($role)) {
-                foreach ($privs as $priv) {
-                    if (false !== array_search($priv, $pods_privs) || current_user_can('pods_'.ltrim($priv,'pod_'))) {
-                        if ('OR' == $method)
-                            return true;
-                        $approved_privs[$priv] = true;
-                    }
-                }
+    if (!empty($privs)) {
+        foreach ($privs as $priv) {
+            if (current_user_can('pods_'.ltrim($priv,'pod_'))) {
+                if('OR' == $method)
+                    return true;
             }
-        }
-        if ('AND' == strtoupper($method)) {
-            foreach ($privs as $priv) {
-                if (isset($approved_privs[$priv]))
-                    return false;
-            }
-            return true;
+            elseif('AND' == $method)
+                return false;
         }
     }
+    if('AND' == $method)
+        return true;
     return false;
 }
 
 /**
- * Shortcode support for WP Posts and Pages
+ * Shortcode support for use anywhere that support WP Shortcodes
  *
  * @param array $tags An associative array of shortcode properties
  * @since 1.6.7
  */
-function pods_shortcode($tags) {
-    $defaults = array('name' => null,
-                   'id' => null,
-                   'slug' => null,
-                   'select' => null,
-                   'order' => null,
-                   'orderby' => null,
-                   'limit' => null,
-                   'where' => null,
-                   'search' => true,
-                   'page' => null,
-                   'filters' => false,
-                   'filters_label' => null,
-                   'filters_location' => 'before',
-                   'pagination' => false,
-                   'pagination_label' => null,
-                   'pagination_location' => 'after',
-                   'col' => null,
-                   'template' => null,
-                   'helper' => null);
-    $tags = shortcode_atts($defaults, $tags);
-    $tags = apply_filters('pods_shortcode', $tags);
+function pods_shortcode ($tags, $content = null) {
+    $pairs = array('name' => null, 'id' => null, 'slug' => null, 'col' => null, 'template' => null, 'helper' => null, 'limit' => 15, 'where' => null, 'orderby' => null, 'order' => null);
+    $tags = shortcode_atts($pairs, $tags);
 
-    if (empty($tags['name'])) {
-        return '<e>Please provide a Pod name';
+    if (strlen($tags['name']) < 1) {
+        return pods_content(null,false);
     }
-    if (empty($tags['template']) && empty($tags['col'])) {
+    if (strlen($tags['template']) < 1 && strlen($tags['col']) < 1) {
         return '<e>Please provide either a template or column name';
     }
 
-    // id > slug (if both exist)
-    $id = empty($tags['slug']) ? null : $tags['slug'];
-    $id = empty($tags['id']) ? $id : absint($tags['id']);
-    
-    $pod = new Pod($tags['name'], $id);
+    if (0 < strlen($tags['slug']) && strlen($tags['id']) < 1)
+        $tags['id'] = $tags['slug'];
 
-    $found = 0;
-    if (empty($id)) {
-        $params = array();
-        if (0 < strlen($tags['order']))
-            $params['orderby'] = $tags['order'];
-        if (0 < strlen($tags['orderby']))
-            $params['orderby'] = $tags['orderby'];
-        if (!empty($tags['limit']))
-            $params['limit'] = $tags['limit'];
-        if (0 < strlen($tags['where']))
-            $params['where'] = $tags['where'];
-        if (0 < strlen($tags['select']))
-            $params['select'] = $tags['select'];
-        if (empty($tags['search']))
-            $params['search'] = false;
-        if (0 < absint($tags['page']))
-            $params['page'] = absint($tags['page']);
-        $params = apply_filters('pods_shortcode_findrecords_params', $params);
-        $pod->findRecords($params);
-        $found = $pod->getTotalRows();
+    if (isset($tags['order']) && 0 < strlen($tags['order'])) {
+        $tags['orderby'] = $tags['order'];
+        unset($tags['order']);
     }
-    elseif (!empty($tags['col'])) {
-        $val = $pod->get_field($tags['col']);
-        return empty($tags['helper']) ? $val : $pod->pod_helper($tags['helper'], $val);
+
+    $shortcode = new Pod($tags['name'], $tags['id']);
+
+    if ($shortcode->get_field('id') < 1)
+        $shortcode->findRecords($tags);
+    if (!empty($tags['col'])) {
+        if (!empty($id)) {
+            if (0 < strlen($tags['helper']))
+                $val = $shortcode->pod_helper($tags['helper'], $shortcode->get_field($tags['col']));
+            else
+                $val = $shortcode->get_field($tags['col']);
+        }
+        else {
+            $val = "<ul>\n";
+            while ($shortcode->fetchRecord()) {
+                $val .= "\t<li>";
+                if (0 < strlen($tags['helper']))
+                    $val .= $shortcode->pod_helper($tags['helper'], $shortcode->get_field($tags['col']));
+                else
+                    $val .= $shortcode->get_field($tags['col']);
+                $val .= "</li>\n";
+            }
+            $val .= "</ul>\n";
+        }
+        return empty($tags['helper']) ? $val : $shortcode->pod_helper($tags['helper'], $val);
     }
-    ob_start();
-    if (empty($id) && false !== $tags['filters'] && 'before' == $tags['filters_location'])
-        echo $pod->getFilters($tags['filters'], $tags['filters_label']);
-    if (empty($id) && 0 < $found && false !== $tags['pagination'] && 'before' == $tags['pagination_location'])
-        echo $pod->getPagination($tags['pagination_label']);
-    echo $pod->showTemplate($tags['template']);
-    if (empty($id) && 0 < $found && false !== $tags['pagination'] && 'after' == $tags['pagination_location'])
-        echo $pod->getPagination($tags['pagination_label']);
-    if (empty($id) && false !== $tags['filters'] && 'after' == $tags['filters_location'])
-        echo $pod->getFilters($tags['filters'], $tags['filters_label']);
-    return ob_get_clean();
+    return $shortcode->showTemplate($tags['template'],$content);
+}
+
+/**
+ * Translation support
+ *
+ * @param string $string The string to translate
+ * @return string The translated string, or the original string
+ * @since 1.7.0
+ */
+function pods_i18n ($string) {
+    global $lang;
+
+    if (isset($lang[$string])) {
+        $string = $lang[$string];
+    }
+    return $string;
 }
 
 /**
@@ -528,10 +536,11 @@ function pods_shortcode($tags) {
  *
  * @since 1.2.0
  */
-function pods_generate_key($datatype, $uri_hash, $columns, $form_count = 1) {
-    $token = wp_create_nonce('pods-form-' . $datatype . '-' . (int) $form_count . '-' . $uri_hash . '-' . json_encode($columns));
-    $token = apply_filters('pods_generate_key', $token, $datatype, $uri_hash, $columns, (int) $form_count);
-    $_SESSION['pods_form_' . $token] = $columns;
+function pods_generate_key ($datatype, $uri_hash, $public_columns, $form_count = 1) {
+    $token = md5(mt_rand());
+    $_SESSION[$uri_hash][$form_count]['dt'] = $datatype;
+    $_SESSION[$uri_hash][$form_count]['token'] = $token;
+    $_SESSION[$uri_hash][$form_count]['columns'] = $public_columns;
     return $token;
 }
 
@@ -540,123 +549,113 @@ function pods_generate_key($datatype, $uri_hash, $columns, $form_count = 1) {
  *
  * @since 1.2.0
  */
-function pods_validate_key($token, $datatype, $uri_hash, $columns = null, $form_count = 1) {
-    if (null === $columns && !empty($_SESSION) && isset($_SESSION['pods_form_' . $token]))
-        $columns = $_SESSION['pods_form_' . $token];
-    $success = false;
-    if (false !== wp_verify_nonce($token, 'pods-form-' . $datatype . '-' . (int) $form_count . '-' . $uri_hash . '-' . json_encode($columns)))
-        $success = $columns;
-    return apply_filters('pods_validate_key', $success, $token, $datatype, $uri_hash, $columns, (int) $form_count);
-}
-
-/**
- * Output Pod Page Content
- */
-function pods_content() {
-    global $pod_page_exists;
-
-    if (false !== $pod_page_exists) {
-        ob_start();
-        if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
-            eval('?>' . $pod_page_exists['phpcode']);
-        else
-            echo $pod_page_exists['phpcode'];
-        echo apply_filters('pods_content', ob_get_clean());
-    }
-}
-
-/**
- * Get a Point value from a Pods Version number
- *
- * @since 1.10.1
- */
-function pods_point_to_version($point) {
-    $version_tmp = explode('.', $point);
-    $version = '';
-    for ($x = 0; $x < 3; $x++) { // 3 points max - MAJOR.MINOR.PATCH
-        if (!isset($version_tmp[$x]) || strlen($version_tmp[$x]) < 1)
-            $version_tmp[$x] = '000';
-        $version_temp = str_split($version_tmp[$x]);
-        if (3 == count($version_temp))
-            $version .= $version_tmp[$x];
-        elseif (2 == count($version_temp))
-            $version .= '0' . $version_tmp[$x];
-        elseif (1 == count($version_temp))
-            $version .= '00' . $version_tmp[$x];
-    }
-    $version = (int) $version;
-    return $version;
-}
-
-/**
- * Get a Point value from a Pods Version number
- *
- * @since 1.10
- */
-function pods_version_to_point($version) {
-    $point_tmp = $version;
-    if (strlen($point_tmp) < 9) {
-        if (8 == strlen($point_tmp))
-            $point_tmp = '0' . $point_tmp;
-        if (7 == strlen($point_tmp))
-            $point_tmp = '00' . $point_tmp;
-        if (3 == strlen($version)) // older versions prior to 1.9.9
-            return implode('.', str_split($version));
-    }
-    $point_tmp = str_split($point_tmp, 3);
-    $point = array();
-    foreach ($point_tmp as $the_point) {
-        $point[] = (int) $the_point;
-    }
-    $point = implode('.', $point);
-    return $point;
-}
-
-/**
- * Check if Pods is compatible with WP / PHP / MySQL or not
- *
- * @since 1.10
- */
-function pods_compatible($wp = null, $php = null, $mysql = null) {
-    if (null === $wp)
-        $wp = get_bloginfo("version");
-    if (null === $php)
-        $php = phpversion();
-    if (null === $mysql)
-        $mysql = @mysql_result(pod_query("SELECT VERSION()"), 0);
-    $compatible = true;
-    if (!version_compare($wp, PODS_WP_VERSION_MINIMUM, '>=')) {
-        $compatible = false;
-        add_action('admin_notices', 'pods_version_notice_wp');
-        function pods_version_notice_wp () {
-?>
-    <div class="error fade">
-        <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of <strong>WordPress <?php echo PODS_WP_VERSION_MINIMUM; ?>+</strong> to function. You are currently running <strong>WordPress <?php echo get_bloginfo("version"); ?></strong> - Please upgrade your WordPress to continue.</p>
-    </div>
-<?php
+function pods_validate_key ($key, $uri_hash, $datatype, $form_count = 1) {
+    if (!empty($_SESSION[$uri_hash])) {
+        $session_dt = $_SESSION[$uri_hash][$form_count]['dt'];
+        $session_token = $_SESSION[$uri_hash][$form_count]['token'];
+        if (!empty($session_token) && $key == $session_token && $datatype == $session_dt) {
+            return true;
         }
     }
-    if (!version_compare($php, PODS_PHP_VERSION_MINIMUM, '>=')) {
-        $compatible = false;
-        add_action('admin_notices', 'pods_version_notice_php');
-        function pods_version_notice_php () {
-?>
-    <div class="error fade">
-        <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of <strong>PHP <?php echo PODS_PHP_VERSION_MINIMUM; ?>+</strong> to function. You are currently running <strong>PHP <?php echo phpversion(); ?></strong> - Please upgrade (or have your Hosting Provider upgrade it for you) your PHP version to continue.</p>
-    </div>
-<?php
-        }
-    }
-    if (!@version_compare($mysql, PODS_MYSQL_VERSION_MINIMUM, '>=')) {
-        $compatible = false;
-        add_action('admin_notices', 'pods_version_notice_mysql');
-        function pods_version_notice_mysql () {
-?>
-    <div class="error fade">
-        <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of <strong>MySQL <?php echo PODS_MYSQL_VERSION_MINIMUM; ?>+</strong> to function. You are currently running <strong>MySQL <?php echo @mysql_result(pod_query("SELECT VERSION()"), 0); ?></strong> - Please upgrade (or have your Hosting Provider upgrade it for you) your MySQL version to continue.</p>
-    </div>
-<?php
-        }
-    }
-    return $compatible;
+    return false;
+}
+
+/**
+ * Include and Init the Pods class
+ *
+ * @since 2.0.0
+ */
+function pods_init () {
+    require_once(PODS_DIR . '/classes/PodsInit.php');
+    return new PodsInit();
+}
+
+/**
+ * Include and Init the Pods class
+ *
+ * @since 2.0.0
+ */
+function pods ($type = null, $id = null) {
+    require_once(PODS_DIR . '/classes/Pods.php');
+    return new Pods($type, $id);
+}
+
+/**
+ * Include and Init the PodsUI class
+ *
+ * @since 2.0.0
+ */
+function pods_ui ($obj = null) {
+    require_once(PODS_DIR . '/classes/PodsUI.php');
+    return new PodsUI($obj);
+}
+
+/**
+ * Include and Init the PodsAPI class
+ *
+ * @since 2.0.0
+ */
+function pods_api () {
+    require_once(PODS_DIR . '/classes/PodsAPI.php');
+    return new PodsAPI();
+}
+
+/**
+ * Include and Init the PodsData class
+ *
+ * @since 2.0.0
+ */
+function pods_data ($pod = null, $id = null) {
+    require_once(PODS_DIR . '/classes/PodsData.php');
+    return new PodsData($pod, $id);
+}
+
+/**
+ * Include and Init the PodsFormUI class
+ *
+ * @since 2.0.0
+ */
+function pods_form_ui () {
+    require_once(PODS_DIR . '/classes/PodsFormUI.php');
+    return new PodsFormUI();
+}
+
+/**
+ * Include and Init the PodsAdminUI class
+ *
+ * @since 2.0.0
+ */
+function pods_admin_ui () {
+    require_once(PODS_DIR . '/classes/PodsAdminUI.php');
+    return new PodsAdminUI();
+}
+
+/**
+ * Include and Init the PodsMigrate class
+ *
+ * @since 2.0.0
+ */
+function pods_migrate ($type = null, $delimiter = null, $data = null) {
+    require_once(PODS_DIR . '/classes/PodsMigrate.php');
+    return new PodsMigrate($type, $delimiter, $data);
+}
+
+/**
+ * Include and Init the PodsMigrateUI class
+ *
+ * @since 2.0.0
+ */
+function pods_migrate_ui () {
+    require_once(PODS_DIR . '/classes/PodsMigrateUI.php');
+    return new PodsMigrateUI();
+}
+
+/**
+ * Include and Init the PodsArray class
+ *
+ * @since 2.0.0
+ */
+function pods_array ($container) {
+    require_once(PODS_DIR . '/classes/PodsArray.php');
+    return new PodsArray(&$container);
 }

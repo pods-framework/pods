@@ -68,8 +68,7 @@
     padding: 0 12px;
 }
 
-.pods_admin .hidden,
-.pods_form .hidden {
+.pods_admin .hidden {
     display: none;
 }
 
@@ -79,15 +78,14 @@
 }
 
 .pods_form .clear {
-    height:20px;
+    height:15px;
 }
 
 .pods_admin .btn {
     cursor: pointer;
 }
 
-.pods_admin .dragme,
-.pods_form .dragme {
+.pods_admin .dragme {
     background: url(images/move.png) no-repeat;
 }
 
@@ -105,7 +103,6 @@
 }
 
 .pods_admin .dragme,
-.pods_form .dragme,
 .pods_admin .editme,
 .pods_admin .dropme,
 .pods_form .dropme,
@@ -321,7 +318,7 @@
     background: #fff;
 }
 
-/* Admin-facing */
+/* Public-facing */
 .pods_admin h3 {
     margin: 0 0 10px 0;
 }
@@ -335,7 +332,6 @@
     height: 26px;
 }
 
-/* Public-facing */
 .pods_form .form {
     border: 1px solid #E3E3E3;
 }

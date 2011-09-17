@@ -42,10 +42,41 @@ Generate the input helper
 ==================================================
 */
 if (!empty($input_helper)) {
-    if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
-        eval("?>$input_helper");
+    $function_or_file = $input_helper;
+    $check_function = $function_or_file;
+    if ((!defined('PODS_STRICT_MODE') || !PODS_STRICT_MODE) && (!defined('PODS_HELPER_FUNCTIONS') || !PODS_HELPER_FUNCTIONS))
+        $check_function = false;
+    $check_file = null;
+    if ((!defined('PODS_STRICT_MODE') || !PODS_STRICT_MODE) && (!defined('PODS_HELPER_FILES') || !PODS_HELPER_FILES))
+        $check_file = false;
+    if (false !== $check_function && false !== $check_file)
+        $function_or_file = pods_function_or_file($function_or_file, $check_function, 'helper', $check_file);
     else
-        echo $input_helper;
+        $function_or_file = false;
+
+    $content = false;
+    if (!$function_or_file) {
+        $api = new PodAPI();
+        $params = array('name' => $input_helper, 'type' => 'input');
+        if (!defined('PODS_STRICT_MODE') || !PODS_STRICT_MODE)
+            $params = pods_sanitize($params);
+        $content = $api->load_helper($params);
+        if (false !== $content && 0 < strlen(trim($content['phpcode'])))
+            $content = $content['phpcode'];
+        else
+            $content = false;
+    }
+
+    if (false === $content && false !== $function_or_file && isset($function_or_file['function']))
+        echo $function_or_file['function']($coltype, $field, $css_id, $css_classes, $value, $this);
+    elseif (false === $content && false !== $function_or_file && isset($function_or_file['file']))
+        locate_template($function_or_file['file'], true, true);
+    elseif (false !== $content) {
+        if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
+            eval("?>$content");
+        else
+            echo $content;
+    }
 }
 
 /*

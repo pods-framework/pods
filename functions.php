@@ -271,34 +271,67 @@ function pods_clean_name($str) {
  * @return string The unique slug name
  * @since 1.7.2
  */
-function pods_unique_slug($value, $column_name, $datatype, $datatype_id, $pod_id = 0) {
+function pods_unique_slug($value, $column_name, $datatype, $datatype_id = 0, $pod_id = 0) {
     $value = sanitize_title($value);
+    $slug = pods_sanitize($value);
+    $tbl_row_id = 0;
+    if (is_object($datatype)) {
+        if (isset($datatype->tbl_row_id))
+            $tbl_row_id = $datatype->tbl_row_id;
+        if (isset($datatype->pod_id))
+            $pod_id = $datatype->pod_id;
+        if (isset($datatype->datatype_id))
+            $datatype_id = $datatype->datatype_id;
+        if (isset($datatype->datatype))
+            $datatype = $datatype->datatype;
+        else
+            $datatype = '';
+    }
+    $datatype_id = absint($datatype_id);
+    $tbl_row_id = absint($tbl_row_id);
+    $pod_id = absint($pod_id);
     $sql = "
     SELECT DISTINCT
-        t.`$column_name` AS slug
+        t.`{$column_name}` AS slug
     FROM
-        @wp_pod p
-    INNER JOIN
-        `@wp_pod_tbl_{$datatype}` t ON t.id = p.tbl_row_id
+        `@wp_pod_tbl_{$datatype}` t
     WHERE
-        p.datatype = '$datatype_id' AND p.id != '$pod_id'
+        t.`{$column_name}` = '{$value}'
     ";
+    if (0 < $tbl_row_id) {
+        $sql = "
+        SELECT DISTINCT
+            t.`{$column_name}` AS slug
+        FROM
+            `@wp_pod_tbl_{$datatype}` t
+        WHERE
+            t.`{$column_name}` = '{$value}' AND t.id != {$tbl_row_id}
+        ";
+    }
+    elseif (0 < $pod_id) {
+        $sql = "
+        SELECT DISTINCT
+            t.`{$column_name}` AS slug
+        FROM
+            @wp_pod p
+        INNER JOIN
+            `@wp_pod_tbl_{$datatype}` t ON t.id = p.tbl_row_id
+        WHERE
+            t.`{$column_name}` = '{$slug}' AND p.datatype = {$datatype_id} AND p.id != {$pod_id}
+        ";
+    }
     $result = pod_query($sql);
     if (0 < mysql_num_rows($result)) {
         $unique_num = 0;
         $unique_found = false;
-        while ($row = mysql_fetch_assoc($result)) {
-            $taken_slugs[] = $row['slug'];
-        }
-        if (in_array($value, $taken_slugs)) {
-            while (!$unique_found) {
-                $unique_num++;
-                $test_slug = $value . '-' . $unique_num;
-                if (!in_array($test_slug, $taken_slugs)) {
-                    $value = $test_slug;
-                    $unique_found = true;
-                }
-            }
+        while (!$unique_found) {
+            $unique_num++;
+            $test_slug = pods_sanitize($value . '-' . $unique_num);
+            $result = pod_query(str_replace("t.`{$column_name}` = '{$slug}'", "t.`{$column_name}` = '{$test_slug}'", $sql));
+            if (0 < mysql_num_rows($result))
+                continue;
+            $value = $test_slug;
+            $unique_found = true;
         }
     }
     $value = apply_filters('pods_unique_slug', $value, $column_name, $datatype, $datatype_id, $pod_id);
@@ -555,14 +588,35 @@ function pods_validate_key($token, $datatype, $uri_hash, $columns = null, $form_
 function pods_content() {
     global $pod_page_exists;
 
+    do_action('pods_content_pre', $pod_page_exists);
+    $content = false;
     if (false !== $pod_page_exists) {
-        ob_start();
-        if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
-            eval('?>' . $pod_page_exists['phpcode']);
+        $function_or_file = str_replace('*', 'w', $pod_page_exists['uri']);
+        $check_function = false;
+        $check_file = null;
+        if ((!defined('PODS_STRICT_MODE') || !PODS_STRICT_MODE) && (!defined('PODS_PAGE_FILES') || !PODS_PAGE_FILES))
+            $check_file = false;
+        if (false !== $check_function && false !== $check_file)
+            $function_or_file = pods_function_or_file($function_or_file, $check_function, 'page', $check_file);
         else
-            echo $pod_page_exists['phpcode'];
-        echo apply_filters('pods_content', ob_get_clean());
+            $function_or_file = false;
+
+        if (!$function_or_file && 0 < strlen(trim($pod_page_exists['phpcode'])))
+            $content = $pod_page_exists['phpcode'];
+
+        ob_start();
+        if (false === $content && false !== $function_or_file && isset($function_or_file['file']))
+            locate_template($function_or_file['file'], true, true);
+        elseif (false !== $content) {
+            if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
+                eval("?>$content");
+            else
+                echo $content;
+        }
+        $content = ob_get_clean();
+        echo apply_filters('pods_content', $content);
     }
+    do_action('pods_content_post', $pod_page_exists, $content);
 }
 
 /**
@@ -659,4 +713,40 @@ function pods_compatible($wp = null, $php = null, $mysql = null) {
         }
     }
     return $compatible;
+}
+
+/**
+ * Check if a Function exists or File exists in Theme / Child Theme
+ *
+ * @since 1.12
+ */
+function pods_function_or_file ($function_or_file, $function_name = null, $file_dir = null, $file_name = null) {
+    $found = false;
+    $function_or_file = (string) $function_or_file;
+    if (false !== $function_name) {
+        if (null === $function_name)
+            $function_name = $function_or_file;
+        $function_name = str_replace(array('__', '__', '__'), '_', preg_replace('/[^a-z^A-Z^_][^a-z^A-Z^0-9^_]*/', '_', (string) $function_name));
+        if (function_exists('pods_custom_' . $function_name))
+            $found = array('function' => 'pods_custom_' . $function_name);
+        elseif (function_exists($function_name))
+            $found = array('function' => $function_name);
+    }
+    if (false !== $file_name && false === $found) {
+        if (null === $file_name)
+            $file_name = $function_or_file;
+        $file_name = str_replace(array('__', '__', '__'), '_', preg_replace('/[^a-z^A-Z^0-9^_]*/', '_', (string) $file_name)) . '.php';
+        $custom_location = apply_filters('pods_file_directory', null, $function_or_file, $function_name, $file_dir, $file_name);
+        if (defined('PODS_FILE_DIRECTORY') && false !== PODS_FILE_DIRECTORY)
+            $custom_location = PODS_FILE_DIRECTORY;
+        if (!empty($custom_location) && locate_template(trim($custom_location, '/') . '/' . (!empty($file_dir) ? $file_dir . '/' : '') . $file_name))
+            $found = array('file' => trim($custom_location, '/') . '/' . (!empty($file_dir) ? $file_dir . '/' : '') . $file_name);
+        elseif (locate_template('pods/' . (!empty($file_dir) ? $file_dir . '/' : '') . $file_name))
+            $found = array('file' => 'pods/' . (!empty($file_dir) ? $file_dir . '/' : '') . $file_name);
+        elseif (locate_template('pods-' . (!empty($file_dir) ? $file_dir . '-' : '') . $file_name))
+            $found = array('file' => 'pods-' . (!empty($file_dir) ? $file_dir . '-' : '') . $file_name);
+        elseif (locate_template('pods/' . (!empty($file_dir) ? $file_dir . '-' : '') . $file_name))
+            $found = array('file' => 'pods/' . (!empty($file_dir) ? $file_dir . '-' : '') . $file_name);
+    }
+    return apply_filters('pods_function_or_file', $found, $function_or_file, $function_name, $file_name);
 }

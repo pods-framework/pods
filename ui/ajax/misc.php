@@ -99,6 +99,7 @@ elseif ('wp_handle_upload_advanced' == $params->action && false === $upload_disa
     }
     else {
         $attachment = get_post($attachment_id, ARRAY_A);
+        $attachment['filename'] = basename($attachment['guid']);
         echo json_encode($attachment);
     }
 }

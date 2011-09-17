@@ -11,8 +11,10 @@ if (false === headers_sent()) {
 
 // Sanitize input
 $params = stripslashes_deep($_POST);
-foreach ($params as $key => $val) {
-    $params[$key] = pods_sanitize(trim($val));
+if (!defined('PODS_STRICT_MODE') || !PODS_STRICT_MODE) {
+    foreach ($params as $key => $val) {
+        $params[$key] = pods_sanitize(trim($val));
+    }
 }
 
 $methods = array(
@@ -77,7 +79,7 @@ if (isset($methods[$action])) {
                 }
                 $sql = "
                 SELECT
-                    p.id AS pod_id, p.tbl_row_id, t.id, t.name AS datatype
+                    p.id AS pod_id, p.tbl_row_id, t.id, t.name AS datatype, t.id AS datatype_id
                 FROM
                     @wp_pod p
                 INNER JOIN
@@ -92,7 +94,7 @@ if (isset($methods[$action])) {
             else {
                 $sql = "
                 SELECT
-                    p.id AS pod_id, p.tbl_row_id, t.id, t.name AS datatype
+                    p.id AS pod_id, p.tbl_row_id, t.id, t.name AS datatype, t.id AS datatype_id
                 FROM
                     @wp_pod p
                 INNER JOIN
@@ -106,6 +108,8 @@ if (isset($methods[$action])) {
             $result = pod_query($sql);
             $row = mysql_fetch_assoc($result);
             $priv_val = 'pod_' . $row['datatype'];
+            $params->datatype = $row['datatype'];
+            $params->datatype_id = $row['datatype_id'];
         }
         if (!pods_access($priv_val) && !pods_access('manage_content'))
             die('<e>Access denied');

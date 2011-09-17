@@ -6,6 +6,7 @@ class Pod
     var $raw_sql;
     var $data;
     var $row_number = -1;
+    var $zebra = false;
     var $result;
     var $datatype;
     var $datatype_id;
@@ -30,26 +31,32 @@ class Pod
      * Constructor - Pods CMS core
      *
      * @param string $datatype The pod name
-     * @param mixed $id (optional) The ID or slug, to load a single record
+     * @param mixed $id (optional) The ID or slug, to load a single record; Provide array of $params to run findRecords immediately
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 1.0.0
      */
     function __construct($datatype = null, $id = null) {
-        $id = pods_sanitize($id);
         $datatype = pods_sanitize($datatype);
 
-        // Get the page variable
-        $this->page = pods_var($this->page_var, 'get');
-        $this->page = empty($this->page) ? 1 : max((int) $this->page, 1);
-        if (defined('PODS_GLOBAL_POD_PAGINATION') && !PODS_GLOBAL_POD_PAGINATION) {
+        if (defined('PODS_STRICT_MODE') && PODS_STRICT_MODE) {
             $this->page = 1;
             $this->pagination = false;
-        }
-
-        if (defined('PODS_GLOBAL_POD_SEARCH') && !PODS_GLOBAL_POD_SEARCH)
             $this->search = false;
-        if (defined('PODS_GLOBAL_POD_SEARCH_MODE') && in_array(PODS_GLOBAL_POD_SEARCH_MODE, array('int', 'text')))
-            $this->search_mode = PODS_GLOBAL_POD_SEARCH_MODE;
+        }
+        else {
+            // Get the page variable
+            $this->page = pods_var($this->page_var, 'get');
+            $this->page = empty($this->page) ? 1 : max((int) $this->page, 1);
+            if (defined('PODS_GLOBAL_POD_PAGINATION') && !PODS_GLOBAL_POD_PAGINATION) {
+                $this->page = 1;
+                $this->pagination = false;
+            }
+
+            if (defined('PODS_GLOBAL_POD_SEARCH') && !PODS_GLOBAL_POD_SEARCH)
+                $this->search = false;
+            if (defined('PODS_GLOBAL_POD_SEARCH_MODE') && in_array(PODS_GLOBAL_POD_SEARCH_MODE, array('int', 'text', 'text_like')))
+                $this->search_mode = PODS_GLOBAL_POD_SEARCH_MODE;
+        }
 
         if (!empty($datatype)) {
             $result = pod_query("SELECT id, name, detail_page FROM @wp_pod_types WHERE name = '$datatype' LIMIT 1");
@@ -59,14 +66,18 @@ class Pod
                 $this->datatype_id = $row['id'];
                 $this->detail_page = $row['detail_page'];
 
-                if (null != $id) {
-                    $this->getRecordById($id);
-                    if (!empty($this->data))
-                        $this->id = $this->get_field('id');
+                if (null !== $id) {
+                    if (is_array($id) || is_object($id))
+                        $this->findRecords($id);
+                    else {
+                        $this->getRecordById($id);
+                        if (!empty($this->data))
+                            $this->id = $this->get_field('id');
+                    }
                 }
             }
             else
-                echo "<e>Error: Pod does not exist</e>";
+                echo "<e>Error: Pod '{$datatype}' does not exist</e>";
         }
     }
 
@@ -78,6 +89,10 @@ class Pod
     function fetchRecord() {
         if ($this->data = mysql_fetch_assoc($this->result)) {
             $this->row_number++;
+            if (true === $this->zebra)
+                $this->zebra = false;
+            else
+                $this->zebra = true;
             return $this->data;
         }
         return false;
@@ -339,26 +354,49 @@ class Pod
     }
 
     /**
-     * Run a helper within a Pod Page or WP Template
+     * Run a helper within a Pod Page or WP Template or Magic Tags
      *
      * @param string $helper The helper name
      * @return mixed Anything returned by the helper
      * @since 1.2.0
      */
     function pod_helper($helper, $value = null, $name = null) {
-        $api = new PodAPI();
-        $helper = pods_sanitize($helper);
-        $content = $api->load_helper(array('name' => $helper));
-        $content = $content['phpcode'];
-
         ob_start();
 
-        //pre-helper hooks
         do_action('pods_pre_pod_helper', $helper, $value, $name, $this);
-        do_action("pods_pre_pod_helper_$helper", $helper, $value, $name, $this);
+        do_action("pods_pre_pod_helper_{$helper}", $helper, $value, $name, $this);
 
-        if (false !== $content) {
-            if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
+        $function_or_file = $helper;
+        $check_function = $function_or_file;
+        if ((!defined('PODS_STRICT_MODE') || !PODS_STRICT_MODE) && (!defined('PODS_HELPER_FUNCTIONS') || !PODS_HELPER_FUNCTIONS))
+            $check_function = false;
+        $check_file = null;
+        if ((!defined('PODS_STRICT_MODE') || !PODS_STRICT_MODE) && (!defined('PODS_HELPER_FILES') || !PODS_HELPER_FILES))
+            $check_file = false;
+        if (false !== $check_function && false !== $check_file)
+            $function_or_file = pods_function_or_file($function_or_file, $check_function, 'helper', $check_file);
+        else
+            $function_or_file = false;
+
+        $content = false;
+        if (!$function_or_file) {
+            $api = new PodAPI();
+            $params = array('name' => $helper, 'type' => 'display');
+            if (!defined('PODS_STRICT_MODE') || !PODS_STRICT_MODE)
+                $params = pods_sanitize($params);
+            $content = $api->load_helper($params);
+            if (false !== $content && 0 < strlen(trim($content['phpcode'])))
+                $content = $content['phpcode'];
+            else
+                $content = false;
+        }
+
+        if (false === $content && false !== $function_or_file && isset($function_or_file['function']))
+            echo $function_or_file['function']($value, $name, $this);
+        elseif (false === $content && false !== $function_or_file && isset($function_or_file['file']))
+            locate_template($function_or_file['file'], true, true);
+        elseif (false !== $content) {
+            if ((!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL))
                 eval("?>$content");
             else
                 echo $content;
@@ -366,9 +404,9 @@ class Pod
 
         //post-helper hooks
         do_action('pods_post_pod_helper', $helper, $value, $name, $this);
-        do_action("pods_post_pod_helper_$helper", $helper, $value, $name, $this);
+        do_action("pods_post_pod_helper_{$helper}", $helper, $value, $name, $this);
 
-        return ob_get_clean();
+        return apply_filters('pods_helper', ob_get_clean(), $helper, $value, $this);
     }
 
     /**
@@ -616,6 +654,7 @@ class Pod
                 $this->sql = str_replace('@wp_', $wpdb->prefix, $sql);
                 $this->result = pod_query($sql);
                 $this->row_number = 0;
+                $this->zebra = false;
                 $this->total = $this->total_rows = 1;
             }
             else {
@@ -639,6 +678,7 @@ class Pod
                     $this->sql = str_replace('@wp_', $wpdb->prefix, $sql);
                     $this->result = pod_query($sql);
                     $this->row_number = 0;
+                    $this->zebra = false;
                     $this->total = $this->total_rows = 1;
                 }
             }
@@ -753,24 +793,35 @@ class Pod
                 $value = str_replace('`', '', $value);
                 $value = explode('.', $value);
                 $dot = array_pop($value);
-                if (in_array('/\b' . $found[$key] . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $find))
+                if (in_array('/\b' . trim($found[$key], '`') . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $find)) {
+                    unset($found[$key]);
                     continue;
-                $find[$key] = '/\b' . $found[$key] . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/';
+                }
+                $find[$key] = '/\b' . trim($found[$key], '`') . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/';
+                $esc_start = $esc_end = '`';
+                if (strlen(ltrim($found[$key], '`')) < strlen($found[$key]))
+                    $esc_start = '';
+                if (strlen(rtrim($found[$key], '`')) < strlen($found[$key]))
+                    $esc_end = '';
                 if ('*' != $dot)
-                    $dot = '`' . $dot . '`';
-                $replace[$key] = '`' . implode('_', $value) . '`.' . $dot;
+                    $dot = '`' . $dot . $esc_end;
+                $replace[$key] = $esc_start . implode('_', $value) . '`.' . $dot;
                 if (in_array($value[0], array('t', 'p'))) {
                     unset($found[$key]);
                     continue;
                 }
-                $found[$key] = $value;
+                unset($found[$key]);
+                if (!in_array($value, $found))
+                    $found[$key] = $value;
             }
+            
             if (!empty($this->traverse)) {
                 foreach ((array) $this->traverse as $key => $traverse) {
                     $traverse = str_replace('`', '', $traverse);
                     $already_found = false;
                     foreach ($found as $traversal) {
-                        $traversal = implode('.', $traversal);
+                        if (is_array($traversal))
+                            $traversal = implode('.', $traversal);
                         if ($traversal == $traverse) {
                             $already_found = true;
                             break;
@@ -844,6 +895,7 @@ class Pod
         $this->sql = str_replace('@wp_', $wpdb->prefix, $sql);
         $this->result = pod_query($sql);
         $this->row_number = -1;
+        $this->zebra = false;
         $this->total = absint(@mysql_num_rows($this->result));
         if (false !== $this->calc_found_rows) {
             $this->total_rows = pod_query("SELECT FOUND_ROWS()");
@@ -898,7 +950,14 @@ class Pod
      * Fetch the current row number
      */
     function getRowNumber() {
-        return $this->row_number;
+        return (int) $this->row_number;
+    }
+
+    /**
+     * Fetch the current row number
+     */
+    function getZebra() {
+        return (boolean) $this->zebra;
     }
 
     /**
@@ -908,6 +967,7 @@ class Pod
         $row_number = absint($row_number);
         if (0 < mysql_num_rows($this->result)) {
             $this->row_number = $row_number;
+            $this->zebra = false;
             return mysql_data_seek($this->result, $row_number);
         }
         return false;
@@ -921,12 +981,11 @@ class Pod
             echo "<e>Error: Pod name invalid</e>";
             return null;
         }
-	$pod_id = absint($pod_id);
+        $pod_id = absint($pod_id);
         $cache = PodCache::instance();
 
         $datatype = $this->datatype;
         $datatype_id = (int) $this->datatype_id;
-        $this->coltype_counter = array();
         $this->data['pod_id'] = $pod_id = (int) $pod_id;
 
         $where = '';
@@ -989,13 +1048,6 @@ class Pod
             // Replace field attributes with public form attributes
             if (!empty($attributes) && is_array($attributes[$key])) {
                 $field = array_merge($field, $attributes[$key]);
-            }
-
-            // Replace the input helper name with the helper code
-            $input_helper = $field['input_helper'];
-            if (!empty($input_helper)) {
-                $result = pod_query("SELECT `phpcode` FROM `@wp_pod_helpers` WHERE `name` = '$input_helper' LIMIT 1");
-                $field['input_helper'] = mysql_result($result, 0);
             }
 
             if (empty($field['label'])) {
@@ -1133,36 +1185,65 @@ class Pod
     /**
      * Display the page template
      */
-    function showTemplate($tpl, $code = null) {
+    function showTemplate($template, $code = null) {
         ob_start();
 
         //pre-template hooks
-        do_action('pods_pre_showtemplate', $tpl, $code, $this);
-        do_action("pods_pre_showtemplate_$tpl", $tpl, $code, $this);
+        do_action('pods_pre_showtemplate', $template, $code, $this);
+        do_action("pods_pre_showtemplate_$template", $template, $code, $this);
 
-        if (empty($code)) {
-            $result = pod_query("SELECT code FROM @wp_pod_templates WHERE name = '$tpl' LIMIT 1");
-            $row = mysql_fetch_assoc($result);
-            $code = $row['code'];
+        if (!empty($code))
+            $function_or_file = false;
+        else {
+            $function_or_file = $template;
+            $check_function = false;
+            $check_file = null;
+            if ((!defined('PODS_STRICT_MODE') || !PODS_STRICT_MODE) && (!defined('PODS_TEMPLATE_FILES') || !PODS_TEMPLATE_FILES))
+                $check_file = false;
+            if (false !== $check_function && false !== $check_file)
+                $function_or_file = pods_function_or_file($function_or_file, $check_function, 'template', $check_file);
+            else
+                $function_or_file = false;
+
+            if (!$function_or_file) {
+                $api = new PodAPI();
+                $params = array('name' => $template);
+                if (!defined('PODS_STRICT_MODE') || !PODS_STRICT_MODE)
+                    $params = pods_sanitize($params);
+                $code = $api->load_template($params);
+                if (false !== $code && 0 < strlen(trim($code['code'])))
+                    $code = $code['code'];
+                else
+                    $code = false;
+            }
         }
 
-        if (!empty($code)) {
+        if (empty($code) && false !== $function_or_file && isset($function_or_file['file'])) {
+            // Only detail templates need $this->id
+            if (empty($this->id)) {
+                while ($this->fetchRecord()) {
+                    locate_template($function_or_file['file'], true, true);
+                }
+            }
+            else
+                locate_template($function_or_file['file'], true, true);
+        }
+        elseif (!empty($code)) {
             // Only detail templates need $this->id
             if (empty($this->id)) {
                 while ($this->fetchRecord()) {
                     echo $this->parse_template_string($code);
                 }
             }
-            else {
+            else
                 echo $this->parse_template_string($code);
-            }
         }
 
         //post-template hooks
-        do_action('pods_post_showtemplate', $tpl, $code, $this);
-        do_action("pods_post_showtemplate_$tpl", $tpl, $code, $this);
+        do_action('pods_post_showtemplate', $template, $code, $this);
+        do_action("pods_post_showtemplate_$template", $template, $code, $this);
 
-        return ob_get_clean();
+        return apply_filters('pods_showtemplate', ob_get_clean(), $template, $code, $this);
     }
 
     /**
@@ -1173,12 +1254,13 @@ class Pod
      */
     function parse_template_string($in) {
         ob_start();
-        $out = preg_replace_callback("/({@(.*?)})/m", array($this, "parse_magic_tags"), $in);
         if ((!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL))
-            eval("?>$out");
+            eval("?>$in");
         else
-            echo $out;
-        return apply_filters('pods_parse_template_string', ob_get_clean(), $in);
+            echo $in;
+        $out = ob_get_clean();
+        $out = preg_replace_callback("/({@(.*?)})/m", array($this, "parse_magic_tags"), $out);
+        return apply_filters('pods_parse_template_string', $out, $in, $this);
     }
 
     /**
@@ -1194,22 +1276,23 @@ class Pod
             $before = trim($before);
             $after = trim($after);
         }
-        if ('type' == $name) {
-            return $this->datatype;
-        }
-        elseif ('detail_url' == $name) {
-            return get_bloginfo('url') . '/' . $this->parse_template_string($this->detail_page);
-        }
-        else {
+
+        if ('type' == $name)
+            $value = $this->datatype;
+        elseif ('detail_url' == $name)
+            $value = get_bloginfo('url') . '/' . $this->parse_template_string($this->detail_page);
+        else
             $value = $this->get_field($name);
 
-            // Use helper if necessary
-            if (!empty($helper)) {
-                $value = $this->pod_helper($helper, $value, $name);
-            }
-            if (null != $value && false !== $value) {
-                return $before . $value . $after;
-            }
-        }
+        // Use helper if necessary
+        if (!empty($helper))
+            $value = $this->pod_helper($helper, $value, $name);
+
+        // Clean out PHP in case it exists
+        $value = str_replace(array('<?php', '<?', '?>'), array('&lt;?php', '&lt;?', '?&gt;'), $value);
+
+        $value = apply_filters('pods_parse_magic_tags', $value, $name, $helper, $before, $after);
+        if (null != $value && false !== $value)
+            return $before . $value . $after;
     }
 }

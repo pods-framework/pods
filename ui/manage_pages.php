@@ -133,8 +133,8 @@ if (isset($pages)) {
     <select id="page_template">
         <option value="">-- Page Template --</option>
 <?php
-$page_templates = apply_filters('pods_pod_page_templates', get_page_templates());
-if (!in_array('page.php',$page_templates) && locate_template(array('page.php',false))) {
+$page_templates = apply_filters('pods_page_templates', get_page_templates());
+if (!in_array('page.php', $page_templates) && locate_template(array('page.php', false))) {
     $page_templates['Page (WP Default)'] = 'page.php';
     ksort($page_templates);
 }
@@ -151,6 +151,6 @@ foreach ($page_templates as $template => $file) {
 
 <div class="stickynote">
     <div><strong>Pod Pages are similar to WordPress pages, but also support PHP and wildcard URLs.</strong></div>
-    <div style="margin-top:10px">To handle the URL of http://yoursite.com/history, you'd create a Pod Page named <strong>history</strong></div>
-    <div style="margin-top:10px">A single wildcard Pod Page can handle multiple URLs. For example, the Pod Page <strong>history/*</strong> will be used for any URL beginning with http://yoursite.com/history/</div>
+    <div style="margin-top:10px">To handle the URL of http://yoursite.com/history/, you'd create a Pod Page named <strong>history</strong></div>
+    <div style="margin-top:10px">A single wildcard Pod Page can handle multiple URLs. For example, the Pod Page <strong>history/*</strong> will be used for any URL beginning with http://yoursite.com/history/ like http://yoursite.com/history/ancient-egypt/</div>
 </div>

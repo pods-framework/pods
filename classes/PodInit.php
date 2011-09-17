@@ -38,7 +38,7 @@ class PodInit
                 add_filter('wp_title', array($this, 'wp_title'), 0, 3);
                 add_filter('body_class', array($this, 'body_class'), 0, 1);
                 add_filter('status_header', array($this, 'status_header'));
-                add_action('plugins_loaded', array($this, 'precode'));
+                add_action('after_setup_theme', array($this, 'precode'));
                 add_action('wp', array($this, 'silence_404'));
             }
         }
@@ -141,8 +141,28 @@ class PodInit
 
     function precode() {
         global $pods, $pod_page_exists;
-        if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
-            eval('?>' . $pod_page_exists['precode']);
+
+        $function_or_file = str_replace('*', 'w', $pod_page_exists['uri']);
+        $check_function = false;
+        $check_file = 'precode-' . $function_or_file;
+        if ((!defined('PODS_STRICT_MODE') || !PODS_STRICT_MODE) && (!defined('PODS_PAGE_FILES') || !PODS_PAGE_FILES))
+            $check_file = false;
+        if (false !== $check_function && false !== $check_file)
+            $function_or_file = pods_function_or_file($function_or_file, $check_function, 'page', $check_file);
+        else
+            $function_or_file = false;
+
+        $content = false;
+        if (!$function_or_file && 0 < strlen(trim($pod_page_exists['precode'])))
+            $content = $pod_page_exists['precode'];
+
+        if (false === $content && false !== $function_or_file && isset($function_or_file['file']))
+            locate_template($function_or_file['file'], true, true);
+        elseif (false !== $content) {
+            if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
+                eval("?>$content");
+        }
+
         do_action('pods_page_precode', $pod_page_exists, $pods);
         if (!is_object($pods) && (404 == $pods || is_wp_error($pods))) {
             remove_action('template_redirect', array($this, 'template_redirect'));

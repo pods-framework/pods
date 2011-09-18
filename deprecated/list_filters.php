@@ -1,18 +1,13 @@
-<?php
-$pod = $this->pod;
-$pod_id = $this->pod_id;
-?>
-    <form method="get" class="filterbox filterbox_<?php echo $pod; ?>" action="<?php echo $action; ?>">
+    <form method="get" class="filterbox filterbox_<?php echo esc_attr($this->pod); ?>" action="<?php echo esc_attr($action); ?>">
 <?php
 if (!empty($filters)) {
     if (!is_array($filters))
         $filters = explode(',', $filters);
     foreach ($filters as $field_name) {
-        $field = $this->api->load_column(array('name' => $field_name));
+        $field = $this->api->load_column(array('name' => $field_name, 'pod' => $this->pod));
         if (empty($field))
             continue;
-        $field_name = $field['name'];
-        if (!empty($field['pick_object'])) {
+        if ('pick' == $field['type'] && !empty($field['pick_object'])) {
             $pick_object = $field['pick_object'];
             $pick_val = $field['pick_val'];
             if ('pod' == $pick_object) {
@@ -52,7 +47,7 @@ if (!empty($filters)) {
                     $pick_column_id = 'id';
                     break;
             }
-            $params = array(
+            $pick_params = array(
                 'selected_ids' => $selected_ids,
                 'table' => $pick_table,
                 'column' => $pick_column_id,
@@ -61,15 +56,21 @@ if (!empty($filters)) {
                 'orderby' => $field['options']['pick_orderby'],
                 'where' => $pick_where
             );
-            $data = $this->get_dropdown_values($params);
+            $field_data = $this->get_dropdown_values($pick_params);
+            $field_label = ucwords(str_replace('_', ' ', $field_name));
+            if (0 < strlen($row['label']))
+                $field_label = $row['label'];
 ?>
-    <select name="filter_<?php echo $field_name; ?>" class="filter <?php echo $field_name; ?>">
-        <option value="">-- <?php echo $field['label']; ?> --</option>
+    <select name="<?php echo esc_attr($field_name); ?>" id="filter_<?php echo esc_attr($field_name); ?>" class="filter <?php echo esc_attr($field_name); ?>">
+        <option value="">-- <?php echo esc_attr($field_label); ?> --</option>
 <?php
-            foreach ($data as $key => $val) {
+            foreach ($field_data as $val) {
                 $active = (empty($val['active'])) ? '' : ' selected';
+                $value = $val['id'];
+                if ('text' == $this->search_mode)
+                    $value = $val['name'];
 ?>
-        <option value="<?php echo $val['id']; ?>"<?php echo $active; ?>><?php echo $val['name']; ?></option>
+        <option value="<?php echo esc_attr($value); ?>"<?php echo $active; ?>><?php echo esc_html($val['name']); ?></option>
 <?php
             }
 ?>
@@ -79,18 +80,18 @@ if (!empty($filters)) {
     }
 }
 // Display the search box and submit button
-$search = empty($_GET[$this->search_var]) ? '' : $_GET[$this->search_var];
+$search = empty($_GET[$this->search_var]) ? '' : stripslashes($_GET[$this->search_var]);
 if (false !== $show_textbox) {
 ?>
-        <input type="text" class="pod_search" name="<?php echo $this->search_var; ?>" value="<?php echo $search; ?>" />
+        <input type="text" class="pod_search" name="<?php echo esc_attr($this->search_var); ?>" value="<?php echo esc_attr($search); ?>" />
 <?php
 }
 else {
 ?>
-        <input type="hidden" name="<?php echo $this->search_var; ?>" value="1" />
-        <input type="hidden" name="<?php echo $this->search_var; ?>_min" value="1" />
+        <input type="hidden" name="<?php echo esc_attr($this->search_var); ?>" value="1" />
+        <input type="hidden" name="<?php echo esc_attr($this->search_var); ?>_min" value="1" />
 <?php
 }
 ?>
-        <input type="submit" class="pod_submit" value="<?php echo $label; ?>" />
+        <input type="submit" class="pod_submit" value="<?php echo esc_attr($label); ?>" />
     </form>

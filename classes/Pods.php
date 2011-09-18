@@ -16,38 +16,62 @@ class Pods
     var $id;
     
     var $row_number = -1;
+    var $zebra = false;
     var $results = array();
     var $data;
     var $sql;
+    var $raw_sql;
+    var $calc_found_rows = true;
+    var $count_found_rows = false;
     var $total = 0;
     var $total_found = 0;
     
     var $rpp = 15;
     var $page_var = 'pg';
     var $page = 1;
+    var $pagination = true;
     var $search = true;
     var $search_var = 'search';
+    var $search_where = '';
+    var $search_mode = 'int'; // int | text | text_like
+
+    var $traverse = array();
+    var $rabit_hole = array();
 
     /**
      * Constructor - Pods CMS core
      *
      * @param string $pod The pod name
-     * @param mixed $id (optional) The ID or slug, to load a single record
+     * @param mixed $id (optional) The ID or slug, to load a single record; Provide array of $params to run 'find' immediately
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 1.0.0
      */
     function __construct ($pod = null, $id = null) {
         $this->api = pods_api();
         $this->api->display_errors = $this->display_errors;
-        $this->id = pods_sanitize($id);
-        $this->pod = $this->datatype = pods_sanitize($pod);
 
-        // Get the page variable
-        $this->page = pods_var($this->page_var, 'get');
-        $this->page = (empty($this->page) ? 1 : pods_absint($this->page));
+        if (defined('PODS_STRICT_MODE') && PODS_STRICT_MODE) {
+            $this->page = 1;
+            $this->pagination = false;
+            $this->search = false;
+        }
+        else {
+            // Get the page variable
+            $this->page = pods_var($this->page_var, 'get');
+            $this->page = (empty($this->page) ? 1 : max(pods_absint($this->page), 1));
+            if (defined('PODS_GLOBAL_POD_PAGINATION') && !PODS_GLOBAL_POD_PAGINATION) {
+                $this->page = 1;
+                $this->pagination = false;
+            }
 
-        if (!empty($this->pod)) {
-            $this->pod_data = $this->api->load_pod(array('name' => $this->pod));
+            if (defined('PODS_GLOBAL_POD_SEARCH') && !PODS_GLOBAL_POD_SEARCH)
+                $this->search = false;
+            if (defined('PODS_GLOBAL_POD_SEARCH_MODE') && in_array(PODS_GLOBAL_POD_SEARCH_MODE, array('int', 'text', 'text_like')))
+                $this->search_mode = PODS_GLOBAL_POD_SEARCH_MODE;
+        }
+
+        if (null !== $pod) {
+            $this->pod_data = $this->api->load_pod(array('name' => $pod));
             if(false === $this->pod_data)
                 return pods_error('Pod not found', &$this);
             $this->pod_id = $this->datatype_id = $pod['id'];
@@ -82,9 +106,14 @@ class Pods
                     break;
             }
 
-            if (null != $this->id) {
-                $this->fetch_item($this->id);
-                $this->id = $this->get_field($this->column_id);
+            if (null !== $id) {
+                if (is_array($id) || is_object($id))
+                    $this->find($id);
+                else {
+                    $this->fetch_item($id);
+                    if (!empty($this->data))
+                        $this->id = $this->field($this->column_id);
+                }
             }
         }
     }
@@ -108,25 +137,26 @@ class Pods
      * @since 2.0.0
      */
     function field ($params, $orderby = null) {
+        $value = null;
+	
         $default = array('name' => $params, 'orderby' => $orderby);
-        if (is_array($params)) {
+        if (is_array($params))
             $params = array_merge($default, $params);
-        }
         else
             $params = $default;
         $name = $params->name;
         $orderby = $params->orderby;
         
-        if (isset($this->data[$name]))
-            $value = $this->data[$name];
+        if (isset($this->data[$params->name]))
+            $value = $this->data[$params->name];
         elseif ('detail_url' == $name)
-            $value = $this->do_magic_tags('detail_url');
+            $value = $this->do_magic_tags($params->name);
         else {
             // Dot-traversal
             $last_loop = false;
             $ids = $this->data[$this->column_id];
 
-            $traverse = (false !== strpos($name, '.') ? explode('.', $name) : array($name));
+            $traverse = (false !== strpos($params->name, '.') ? explode('.', $params->name) : array($params->name));
             $traverse_fields = implode("','", $traverse);
             
             $all_fields = array();
@@ -147,7 +177,7 @@ class Pods
             else
                 $value = false;
             
-            if (!isset($value)) {
+            if (null === $value) {
                 // Loop through each traversal level
                 $total_traverse = count($traverse) - 1;
                 $last_type = $last_pick_object = $last_pick_val = '';
@@ -155,7 +185,7 @@ class Pods
                     $last_loop = false;
                     if ($total_traverse == $key)
                         $last_loop = true;
-                    $column_exists = isset($all_fields[$pod_id][$column_name]);
+                    $column_exists = (isset($all_fields[$pod_id]) && isset($all_fields[$pod_id][$column_name]));
 
                     if ($column_exists) {
                         $column = $all_fields[$pod_id][$column_name];
@@ -174,8 +204,7 @@ class Pods
                                 return false;
 
                             // Get Pod ID for Pod PICK columns
-                            if (!empty($pick_val))
-                            {
+                            if (!empty($pick_val) && !in_array($pickval, array('wp_taxonomy', 'wp_post', 'wp_page', 'wp_user'))) {
                                 $where = "`name` = '{$pick_val}'";
                                 if ('pod' != $pick_object)
                                     $where = "`object` = '{$pick_val}'";
@@ -220,6 +249,7 @@ class Pods
 
                         if (!empty($table))
                             $data = $this->lookup(array('ids' => $ids, 'table' => $table, 'orderby' => $orderby));
+                        $results = $value;
 
                         if (empty($data))
                             $results = false;
@@ -227,12 +257,16 @@ class Pods
                         elseif (false !== $column_exists && ('pick' == $type || 'file' == $type))
                             $results = $data;
                         // Return a single column value
-                        elseif (1 == count($data))
-                            $results = $data[0][$column_name];
+                        elseif (1 == count($data)) {
+			    $data = current($data);
+			    if (isset($data[$column_name]))
+                                $results = $data[$column_name];
+		        }
                         // Return an array of single column values
                         else {
                             foreach ($data as $k => $v) {
-                                $results[$k] = $v[$column_name];
+			        if (isset($v[$column_name]))
+                                    $results[$k] = $v[$column_name];
                             }
                         }
                         $value = $results;
@@ -265,18 +299,30 @@ class Pods
      * @since 2.0.0
      */
     function find ($params) {
-        $defaults = array('select' => 't.*',
-                            'join' => '',
-                            'where' => null,
-                            'orderby' => "t.`{$this->column_id}` DESC",
-                            'groupby' => '',
-                            'limit' => $this->rpp,
-                            'page' => $this->page,
-                            'search' => $this->search,
-                            'search_across' => true,
-                            'search_across_picks' => false,
-                            'sql' => null);
-        $params = (object) array_merge($defaults, $params);
+        global $wpdb;
+        $this->traverse = array();
+        $defaults = array(// query-related
+                          'select' => '`t`.*',
+                          'join' => '',
+                          'where' => null,
+                          'groupby' => '',
+                          'having' => '',
+                          'orderby' => "`t`.`{$this->column_id}` DESC",
+                          'limit' => $this->rpp,
+                          'sql' => null,
+			  
+			  // functionality-related
+                          'search' => $this->search,
+                          'search_across' => true,
+                          'search_across_picks' => false,
+                          'search_var' => $this->search_var,
+                          'search_mode' => $this->search_mode,
+                          'traverse' => $this->traverse,
+                          'page' => $this->page,
+                          'pagination' => $this->pagination,
+                          'calc_found_rows' => $this->calc_found_rows,
+                          'count_found_rows' => $this->count_found_rows);
+        $params = (object) array_merge($defaults, (array) $params);
         
         $pod = $this->pod;
         $pod_id = pods_absint($this->pod_id);

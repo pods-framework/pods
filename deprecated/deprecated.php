@@ -1,4 +1,19 @@
 <?php
+// JSON support
+if (!function_exists('json_encode')) {
+    require_once(ABSPATH . '/wp-includes/js/tinymce/plugins/spellchecker/classes/utils/JSON.php');
+
+    function json_encode($str) {
+        $json = new Moxiecode_JSON();
+        return $json->encode($str);
+    }
+
+    function json_decode($str) {
+        $json = new Moxiecode_JSON();
+        return $json->decode($str);
+    }
+}
+
 /**
  * Mapping function to new function name (following normalization of function names from pod_ to pods_)
  *
@@ -8,8 +23,51 @@
 function pod_query ($sql, $error = 'SQL failed', $results_error = null, $no_results_error = null) {
     pods_deprecated('pod_query', '2.0.0', 'pods_query');
     global $wpdb;
-    $result = pods_query($sql, $error, $results_error, $no_results_error);
-    return $wpdb->result;
+
+    $sql = trim($sql);
+    // Using @wp_users is deprecated! use $wpdb->users instead!
+    $sql = str_replace('@wp_users', $wpdb->users, $sql);
+    $sql = str_replace('@wp_', $wpdb->prefix, $sql);
+    $sql = str_replace('{prefix}', '@wp_', $sql);
+
+    $sql = apply_filters('pod_query', $sql, $error, $results_error, $no_results_error);
+
+    // Return cached resultset
+    if ('SELECT' == substr($sql, 0, 6)) {
+        $cache = PodCache::instance();
+        if ($cache->cache_enabled && isset($cache->results[$sql])) {
+            $result = $cache->results[$sql];
+            if (0 < mysql_num_rows($result)) {
+                mysql_data_seek($result, 0);
+            }
+            $result = apply_filters('pod_query_return', $result, $sql, $error, $results_error, $no_results_error);
+            return $result;
+        }
+    }
+    if (false !== $error)
+        $result = mysql_query($sql, $wpdb->dbh) or die("<e>$error; SQL: $sql; Response: " . mysql_error($wpdb->dbh));
+    else
+        $result = @mysql_query($sql, $wpdb->dbh);
+
+    if (0 < @mysql_num_rows($result)) {
+        if (!empty($results_error)) {
+            die("<e>$results_error");
+        }
+    }
+    elseif (!empty($no_results_error)) {
+        die("<e>$no_results_error");
+    }
+
+    if ('INSERT' == substr($sql, 0, 6)) {
+        $result = mysql_insert_id($wpdb->dbh);
+    }
+    elseif ('SELECT' == substr($sql, 0, 6)) {
+        if ('SELECT FOUND_ROWS()' != $sql) {
+            $cache->results[$sql] = $result;
+        }
+    }
+    $result = apply_filters('pod_query_return', $result, $sql, $error, $results_error, $no_results_error);
+    return $result;
 }
 
 /**
@@ -82,12 +140,12 @@ function pods_ui_access ($object, $access, $what) {
  * Return a GET, POST, COOKIE, SESSION, or URI string segment
  *
  * @param mixed $key The variable name or URI segment position
- * @param string $type (optional) "uri", "get", "post", "cookie", or "session"
+ * @param string $type (optional) "uri", "get", "post", "request", "server", "session", or "cookie"
  * @return string The requested value, or null
  * @since 1.6.2
  * @deprecated deprecated since version 2.0.0
  */
-function pods_url_variable ($key = 'last', $type = 'uri') {
-    pods_deprecated('pods_url_variable', '2.0.0', 'pods_deprecated');
-    return pods_var($key, $type);
+function pods_url_variable($key = 'last', $type = 'url') {
+    $output = apply_filters('pods_url_variable', pods_var($key, $type), $key, $type);
+    return $output;
 }

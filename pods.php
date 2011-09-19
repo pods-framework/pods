@@ -1,13 +1,13 @@
 <?php
 /*
-Plugin Name: Pods CMS Framework
-Plugin URI: http://podscms.org/
+Plugin Name: Pods Development Framework
+Plugin URI: http://podsframework.org/
 Description: Create / Manage / Develop / Extend content types: Posts, Pages, Custom Post Types, Categories, Tags, Custom Taxonomy, Comments, Users, Custom Content Types, and Custom Tables
 Version: 2.0.0 Alpha 1
-Author: The Pods CMS Team
-Author URI: http://podscms.org/about/
+Author: The Pods Framework Team
+Author URI: http://podsframework.org/about/
 
-Copyright 2009-2011  The Pods CMS Team  (email : contact@podscms.org)
+Copyright 2009-2011  The Pods Framework Team  (email : contact@podsframework.org)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

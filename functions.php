@@ -95,8 +95,8 @@ function pods_deprecated($function, $version, $replacement = null) {
  * @param string $uri The Pod Page URI to output
  */
 function pods_content ($uri = null, $output = true) {
-    global $pod_page_exists;
-    $phpcode = $pod_page_exists['phpcode'];
+    global $pods, $pod_page_exists;
+    $code = $pod_page_exists['code'];
 
     if (null != $uri) {
         if (is_array($uri)) {
@@ -110,17 +110,17 @@ function pods_content ($uri = null, $output = true) {
             $uri = null;
         if (null != $uri) {
             $pod_page = pod_page_exists($uri);
-            $phpcode = $pod_page['phpcode'];
+            $code = $pod_page['code'];
         }
     }
 
     ob_start();
-    eval('?>' . $phpcode);
-    $output = apply_filters('pods_content', ob_get_clean());
+    eval('?>' . $code);
+    $out = apply_filters('pods_content', ob_get_clean(), $output);
     if (true === $output)
-        echo $output;
+        echo $out;
     else
-        return $output;
+        return $out;
 }
 
 /**
@@ -337,6 +337,7 @@ function pods_clean_name ($str) {
     $str = preg_replace("/([- ])/", "_", trim($str));
     $str = preg_replace("/([^0-9a-z_])/", "", strtolower($str));
     $str = preg_replace("/(_){2,}/", "_", $str);
+    $str = trim($str, '_');
     $str = apply_filters('pods_clean_name', $str);
     return $str;
 }

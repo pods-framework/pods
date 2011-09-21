@@ -1,12 +1,14 @@
 <?php
 class PodsAPI
 {
-    var $display_errors = false;
-    var $pod;
-    var $pod_id;
-    var $pod_data;
-    var $fields;
-    var $format = 'php';
+    public $display_errors = false;
+
+    public $pod;
+    public $pod_id;
+    public $pod_data;
+    public $fields;
+    
+    public $format = 'php';
 
     /**
      * Store and retrieve data programatically
@@ -1471,7 +1473,7 @@ class PodsAPI
             if (empty($value) && isset($columns['name']['value']))
                 $value = $columns['name']['value'];
             if (!empty($value))
-                $value = pods_unique_slug($value, $column, $params->pod, $params->pod_id, $params->id);
+                $value = pods_unique_slug($value, $column, $params->pod, $params->pod_id, $params->id, $this);
         }
         // Verify required fields
         if (1 == $columns[$column]['required']) {

@@ -33,6 +33,7 @@ class Pods
     public $search_var = 'search';
     public $search_mode = 'int'; // int | text | text_like
     private $search_where = '';
+    private $search_prepare = array();
 
     public $traverse = array();
     public $rabit_hole = array();
@@ -144,12 +145,13 @@ class Pods
             $ids = $this->data[$this->column_id];
 
             $traverse = (false !== strpos($params->name, '.') ? explode('.', $params->name) : array($params->name));
-            $traverse_fields = implode("','", $traverse);
+            $traverse_fields = implode("', '", $traverse);
 
             $all_fields = array();
             if (!empty($traverse_fields)) {
                 // Get columns matching traversal names
-                $result = pods_query("SELECT * FROM `@wp_pods_fields` WHERE `name` IN ('$traverse_fields')", $this);
+                $sql = "SELECT * FROM `@wp_pods_fields` WHERE `name` IN ('$traverse_fields')";
+                $result = pods_query($sql, $this);
                 if (!empty($result)) {
                     foreach ($result as $row) {
                         if (!isset($all_fields[$row->pod]))
@@ -193,10 +195,12 @@ class Pods
 
                             // Get Pod ID for Pod PICK columns
                             if (!empty($pick_val) && !in_array($pick_val, array('wp_taxonomy', 'wp_post', 'wp_page', 'wp_user'))) {
-                                $where = "`name` = '{$pick_val}'";
+                                $where = 'name';
                                 if ('pod' != $pick_object)
-                                    $where = "`object` = '{$pick_val}'";
-                                $result = pods_query("SELECT `id` FROM `@wp_pods` WHERE `type` = '{$pick_object}' AND {$where} LIMIT 1", $this);
+                                    $where = 'object';
+                                $sql = "SELECT `id` FROM `@wp_pods` WHERE `type` = %s AND `{$where}` = %s LIMIT 1";
+                                $sql = array($sql, array($pick_object, $pick_val));
+                                $result = pods_query($sql, $this);
                                 if (!empty($result))
                                     $pod_id = $result[0]->id;
                             }
@@ -367,18 +371,19 @@ class Pods
             if (0 < strlen(pods_var($field_joined, 'get'))) {
                 $val = absint(pods_var($field_joined, 'get'));
                 $on = $this->rabit_hole[$pod][$field]['on'];
-                $search = "`{$field_joined}`.`{$on}` = {$val}";
+                $search = "`{$field_joined}`.`{$on}` = %d";
                 if ('text' == $this->search_mode) {
-                    $val = pods_var($field_joined, 'get');
+                    $val = pods_unsanitize(pods_var($field_joined, 'get'));
                     $on = $this->rabit_hole[$pod][$field]['name'];
-                    $search = "`{$field_joined}`.`{$on}` = '{$val}'";
+                    $search = "`{$field_joined}`.`{$on}` = %s";
                 }
                 elseif ('text_like' == $this->search_mode) {
-                    $val = pods_sanitize(like_escape($_GET[$field_joined]));
+                    $val = '%' . like_escape(pods_unsanitize(pods_var($field_joined, 'get'))) . '%';
                     $on = $this->rabit_hole[$pod][$field]['name'];
-                    $search = "`{$field_joined}`.`{$on}` LIKE '%{$val}%'";
+                    $search = "`{$field_joined}`.`{$on}` LIKE %s";
                 }
                 $this->search_where .= " AND {$search} ";
+                $this->search_prepare[] = $val;
             }
         }
         $p_alias = 'p';
@@ -448,7 +453,7 @@ class Pods
                           'limit' => $this->limit,
                           'sql' => null,
 
-              // functionality-related
+                          // functionality-related
                           'search' => $this->search,
                           'search_across' => true,
                           'search_across_picks' => false,
@@ -484,80 +489,103 @@ class Pods
         $sql = $params->sql;
         if (true === $this->count_found_rows && empty($sql))
             $this->calc_found_rows = $params->calc_found_rows = false;
+
+        $params->where = str_replace('%', '%%', $params->where);
+
         $this->limit = $params->limit = pods_absint($params->limit, false);
 
         $sql_builder = false;
+        $this->search_where = '';
         if (empty($sql)) {
             $sql_builder = true;
-            $this->search_where = '';
 
-            // ctype_digit expects a string, or it returns FALSE
-            if (0 < $params->limit) {
+            if (0 < $params->limit)
                 $params->limit = ($params->limit * ($this->page - 1)) . ',' . $params->limit;
-            }
-
-            $params->where = empty($params->where) ? array() : array("({$params->where})");
 
             if (false !== $this->search) {
-                // Handle search
-                $search = pods_sanitize(like_escape($_GET[$this->search_var]));
+                $this->search_where = array();
+
+                $search = '%' . like_escape($_GET[$this->search_var]) . '%';
                 if (0 < strlen($search)) {
                     $search_where = array();
                     if (false === $params->search_across)
-                        $search_where[] = "t.`{$this->column_index}` LIKE '%{$search}%'";
+                        $search_where[] = "`t`.`{$this->column_index}` LIKE %s";
                     else
-                        $search_where[] = "t.* LIKE '%{$search}%'";
+                        $search_where[] = "`t`.* LIKE %s";
+                    $this->search_prepare[] = $search;
                     foreach ((array) $this->fields as $column) {
                         if (false !== $params->search_across_picks) {
                             if('pod' == $column['pick_object']) {
                                 $name_field = $this->api->load_column(array('name' => 'name'));
                                 if (false !== $name_field)
-                                    $search_where[] = "`{$column['name']}`.`name` LIKE '%{$search}%'";
+                                    $search_where[] = "`{$column['name']}`.`name` LIKE %s";
                                 else
-                                    $search_where[] = "`{$column['name']}`.* LIKE '%{$search}%'";
+                                    $search_where[] = "`{$column['name']}`.* LIKE %s";
+                                $this->search_prepare[] = $search;
                             }
                             elseif('post_type' == $column['pick_object']) {
-                                $search_where[] = "`{$column['name']}`.`post_title` LIKE '%{$search}%'";
-                                $search_where[] = "`{$column['name']}`.`post_content` LIKE '%{$search}%'";
+                                $search_where[] = "`{$column['name']}`.`post_title` LIKE %s";
+                                $search_where[] = "`{$column['name']}`.`post_content` LIKE %s";
+                                $this->search_prepare[] = $search;
+                                $this->search_prepare[] = $search;
                             }
-                            elseif('taxonomy' == $column['pick_object'])
-                                $search_where[] = "`{$column['name']}`.`name` LIKE '%{$search}%'";
+                            elseif('taxonomy' == $column['pick_object']) {
+                                $search_where[] = "`{$column['name']}`.`name` LIKE %s";
+                                $this->search_prepare[] = $search;
+                            }
                             elseif('user' == $column['pick_object']) {
-                                $search_where[] = "`{$column['name']}`.`display_name` LIKE '%{$search}%'";
-                                $search_where[] = "`{$column['name']}`.`user_email` LIKE '%{$search}%'";
-                                $search_where[] = "`{$column['name']}`.`user_login` LIKE '%{$search}%'";
+                                $search_where[] = "`{$column['name']}`.`display_name` LIKE %s";
+                                $search_where[] = "`{$column['name']}`.`user_email` LIKE %s";
+                                $search_where[] = "`{$column['name']}`.`user_login` LIKE %s";
+                                $this->search_prepare[] = $search;
+                                $this->search_prepare[] = $search;
+                                $this->search_prepare[] = $search;
                             }
                             elseif('comment' == $column['pick_object']) {
-                                $search_where[] = "`{$column['name']}`.`comment_author` LIKE '%{$search}%'";
-                                $search_where[] = "`{$column['name']}`.`comment_content` LIKE '%{$search}%'";
+                                $search_where[] = "`{$column['name']}`.`comment_author` LIKE %s";
+                                $search_where[] = "`{$column['name']}`.`comment_content` LIKE %s";
+                                $this->search_prepare[] = $search;
+                                $this->search_prepare[] = $search;
                             }
-                            elseif('custom_table' == $column['pick_object'])
-                                $search_where[] = "`{$column['name']}`.`name` = LIKE '%{$search}%'";
+                            elseif('custom_table' == $column['pick_object']) {
+                                $search_where[] = "`{$column['name']}`.`name` = LIKE %s";
+                                $this->search_prepare[] = $search;
+                            }
                         }
                         if (isset($_GET['filter_'.$column['name']]) || isset($_GET[$column['name']])) {
                             if (isset($_GET['filter_'.$column['name']]))
-                                $id = pods_absint($_GET['filter_'.$column['name']]);
+                                $id = pods_absint(pods_var('filter_' . $column['name'], 'get'));
                             else
-                                $id = pods_absint($_GET[$column['name']]); // deprecated
+                                $id = pods_absint(pods_var($column['name'], 'get')); // deprecated
                             if (empty($id))
                                 continue;
-                            if('pod' == $column['pick_object'])
-                                $search_where[] = "`{$column['name']}`.`id` = {$id}";
-                            elseif('post_type' == $column['pick_object'] || 'user' == $column['pick_object'])
-                                $search_where[] = "`{$column['name']}`.`ID` = {$id}";
-                            elseif('taxonomy' == $column['pick_object'])
-                                $search_where[] = "`{$column['name']}`.`term_id` = {$id}";
-                            elseif('comment' == $column['pick_object'])
-                                $search_where[] = "`{$column['name']}`.`comment_ID` = {$id}";
-                            elseif('custom_table' == $column['pick_object'])
-                                $search_where[] = "`{$column['name']}`.`id` = {$id}";
+                            if('pod' == $column['pick_object']) {
+                                $search_where[] = "`{$column['name']}`.`id` = %d";
+                                $this->search_prepare[] = $id;
+                            }
+                            elseif('post_type' == $column['pick_object'] || 'user' == $column['pick_object']) {
+                                $search_where[] = "`{$column['name']}`.`ID` = %d";
+                                $this->search_prepare[] = $id;
+                            }
+                            elseif('taxonomy' == $column['pick_object']) {
+                                $search_where[] = "`{$column['name']}`.`term_id` = %d";
+                                $this->search_prepare[] = $id;
+                            }
+                            elseif('comment' == $column['pick_object']) {
+                                $search_where[] = "`{$column['name']}`.`comment_ID` = %d";
+                                $this->search_prepare[] = $id;
+                            }
+                            elseif('custom_table' == $column['pick_object']) {
+                                $search_where[] = "`{$column['name']}`.`id` = %d";
+                                $this->search_prepare[] = $id;
+                            }
                         }
                     }
                     $search_where = implode(' OR ', $search_where);
-                    $params->where[] = "({$search_where})";
+                    $this->search_where[] = "({$search_where})";
                 }
             }
-            $params->where = implode(' AND ', $params->where);
+            $this->search_where = implode(' AND ', $this->search_where);
 
             // Add "`t`." prefix to $orderby if needed
             if (!empty($params->orderby) && false === strpos($params->orderby, ',') && false === strpos($params->orderby, '(') && false === strpos($params->orderby, '.')) {
@@ -567,7 +595,7 @@ class Pods
                     $params->orderby = '`t`.`' . str_replace(array('`', ' DESC'), '', $params->orderby) . '` DESC';
             }
 
-            $haystack = str_replace(array('(', ')'), '', preg_replace('/\s/', ' ', "$params->select $params->where $params->groupby $params->having $params->orderby"));
+            $haystack = str_replace(array('(', ')'), ' ', preg_replace('/\s/', ' ', "{$params->select} {$this->search_where} {$params->where} {$params->groupby} {$params->having} {$params->orderby}"));
 
             preg_match_all('/`?[\w]+`?(?:\\.`?[\w]+`?)+(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found, PREG_PATTERN_ORDER);
 
@@ -619,6 +647,7 @@ class Pods
             $joins = array();
             if (!empty($find)) {
                 $params->select = preg_replace($find, $replace, $params->select);
+                $this->search_where = preg_replace($find, $replace, $this->search_where);
                 $params->where = preg_replace($find, $replace, $params->where);
                 $params->groupby = preg_replace($find, $replace, $params->groupby);
                 $params->having = preg_replace($find, $replace, $params->having);
@@ -627,14 +656,13 @@ class Pods
                 if (!empty($found))
                     $joins = $this->rabit_hole($this->datatype, $found);
                 elseif (false !== $this->search)
-                    $joins = $this->rabit_hole($this->datatype);
+                    $joins = $this->rabit_hole($this->pod);
             }
-
             if (0 < strlen($params->join)) {
                 $joins[] = "
             {$params->join}";
             }
-            $params->join = apply_filters('pods_find_join', implode('', $joins), $params, $this);
+            $params->join = apply_filters('pods_find_join', implode(' ', $joins), $params, $this);
 
             $params->table = false;
             switch ($this->pod_data['type']) {
@@ -643,23 +671,26 @@ class Pods
                     break;
                 case 'post_type':
                     $params->table = '@wp_posts';
-                    $params->where = "t.`post_type` = '{$this->pod_data['object']}'
+                    $params->where = "`t`.`post_type` = %s
         {$params->where}";
+                    $this->search_prepare[] = $this->pod_data['object'];
                     break;
                 case 'taxonomy':
                     $params->table = '@wp_terms';
-                    $params->join = "`@wp_term_taxonomy` AS tx ON tx.`term_id` = t.`term_id`
+                    $params->join = "`@wp_term_taxonomy` AS `tx` ON `tx`.`term_id` = `t`.`term_id`
         {$params->join}";
-                    $params->where = "t.`taxonomy` = '{$this->pod_data['object']}'
+                    $params->where = "`t`.`taxonomy` = %s
         {$params->where}";
+                    $this->search_prepare[] = $this->pod_data['object'];
                     break;
                 case 'user':
                     $params->table = '@wp_users';
                     break;
                 case 'comment':
                     $params->table = '@wp_comments';
-                    $params->where = "t.`comment_type` = '{$this->pod_data['object']}'
+                    $params->where = "`t`.`comment_type` = %s
         {$params->where}";
+                    $this->search_prepare[] = $this->pod_data['object'];
                     break;
                 case 'custom_table':
                     $params->table = "{$this->pod_data['object']}";
@@ -676,12 +707,12 @@ class Pods
             SELECT
                 {$calc_found_rows} DISTINCT {$params->select}
             FROM
-                {$params->table} AS t";
+                `{$params->table}` AS `t`";
             if (!empty($params->join)) {
                 $sql .= "
             {$params->join}";
             }
-        if (!empty($this->search_where) || !empty($params->where)) {
+            if (!empty($this->search_where) || !empty($params->where)) {
                 $sql .= "
             WHERE";
                 if (!empty($this->search_where)) {
@@ -712,6 +743,7 @@ class Pods
                 $sql .= "
             LIMIT {$params->limit}";
             }
+            $sql = array($sql, $this->search_prepare);
         }
 /*
         // Get this pod's fields
@@ -785,8 +817,11 @@ class Pods
         $this->zebra = false;
         $this->id = null;
         $this->total = $this->total_found = pods_absint(count($this->results));
-        if (false !== $this->calc_found_rows)
-            $this->total_found = pods_absint(pods_query("SELECT FOUND_ROWS()", $this));
+        if (false !== $this->calc_found_rows) {
+            $found_rows = pods_query("SELECT FOUND_ROWS() AS `found_rows`", $this);
+            $found_rows = $found_rows[0]->found_rows;
+            $this->total_found = pods_absint($found_rows);
+        }
         elseif (false !== $this->count_found_rows && false !== $sql_builder) {
             $sql = "
             SELECT
@@ -797,7 +832,7 @@ class Pods
                 $sql .= "
             {$params->join}";
             }
-        if (!empty($this->search_where) || !empty($params->where)) {
+            if (!empty($this->search_where) || !empty($params->where)) {
                 $sql .= "
             WHERE";
                 if (!empty($this->search_where)) {
@@ -820,6 +855,7 @@ class Pods
             HAVING
                 {$params->having}";
             }
+            $sql = array($sql, $this->search_prepare);
             $this->total_found = pods_absint(pods_query($sql, $this));
         }
     }
@@ -836,14 +872,21 @@ class Pods
 
             $id = pods_sanitize($id);
             $check = pods_absint($id);
-            if (0 < $check)
-                $result = pods_query("SELECT * FROM `@wp_pods_tbl_{$this->pod}` WHERE `{$this->column_id}` = {$check} LIMIT 1", $this);
+            if (0 < $check) {
+                $sql = "SELECT * FROM `@wp_pods_tbl_{$this->pod}` WHERE `{$this->column_id}` = %d LIMIT 1";
+                $sql = array($sql, array($check));
+                $result = pods_query($sql, $this);
+            }
             if (empty($check) || empty($result)) {
                 // Get the slug column
-                $slug_field = pods_query("SELECT `name` FROM `@wp_pods_fields` WHERE `pod_id` = {$this->pod_id} AND `type` = 'slug' LIMIT 1", $this);
+                $sql = "SELECT `name` FROM `@wp_pods_fields` WHERE `pod_id` = %d AND `type` = 'slug' LIMIT 1";
+                $sql = array($sql, array($this->pod_id));
+                $slug_field = pods_query($sql, $this);
                 if (!empty($slug_field)) {
                     $field_name = pods_sanitize($slug_field[0]->name);
-                    $result = pods_query("SELECT * FROM `@wp_pods_tbl_{$this->pod}` WHERE `{$field_name}` = '{$id}' LIMIT 1", $this);
+                    $sql = "SELECT * FROM `@wp_pods_tbl_{$this->pod}` WHERE `{$field_name}` = %s LIMIT 1";
+                    $sql = array($sql, array($id));
+                    $result = pods_query($sql, $this);
                 }
             }
 
@@ -969,16 +1012,15 @@ class Pods
             case '@wp_users':
                 $column = 'ID';
             case '@wp_terms':
-                $column = 't.`term_id`';
+                $column = '`t`.`term_id`';
             case '@wp_comments':
                 $column = 'comment_ID';
         }
         if (isset($params->column) && !empty($params->column))
             $column = pods_sanitize($params->column);
         if (false === strpos($column, '`') && false === strpos($column, '.'))
-            $select = "`{$column}`";
-
-        $select = '*';
+            $column = "`{$column}`";
+        
         if (isset($params->select))
             $select = $params->select;
         if (empty($select)) {
@@ -987,7 +1029,7 @@ class Pods
                 case '@wp_posts':
                     $select = 'post_title';
                 case '@wp_terms':
-                    $select = 't.`name`';
+                    $select = 't`.`name';
                 case '@wp_users':
                     $select = 'display_name';
                 case '@wp_comments':
@@ -1001,7 +1043,7 @@ class Pods
         if (isset($params->join) && !empty($params->join))
             $join = $params->join;
         if ('@wp_terms' == $table)
-            $join .= ' t INNER JOIN {@wp_term_taxonomy} tx ON tx.term_id = t.term_id';
+            $join .= ' `t` INNER JOIN `{@wp_term_taxonomy}` `tx` ON `tx`.`term_id` = `t`.`term_id`';
 
         $orderby = "{$column} ASC";
         if ('@wp_posts' == $table)
@@ -1098,11 +1140,13 @@ class Pods
         }
         $ids = implode(', ', $ids);
 
-        $result = pods_query("SELECT `related_item_id` FROM `@wp_pods_rel` WHERE `pod_id` = {$pod_id} AND `field_id` = {$field_id} AND `item_id` IN ({$ids}) ORDER BY `weight`", $this);
+        $sql = "SELECT `related_item_id` FROM `@wp_pods_rel` WHERE `pod_id` = %d AND `field_id` = %d AND `item_id` IN ({$ids}) ORDER BY `weight`";
+        $sql = array($sql, array($pod_id, $field_id));
+        $result = pods_query($sql, $this);
         if (!empty($result)) {
             $data = array();
             foreach ($result as $row) {
-                $data[] = $row->related_item_id;
+                $data[] = (int) $row->related_item_id;
             }
             return implode(',', $data);
         }
@@ -1372,8 +1416,6 @@ class Pods
             }
         }
 
-        $uri_hash = wp_hash($_SERVER['REQUEST_URI']);
-
         do_action('pods_showform_pre', $pod_id, $public_columns, $label, $this);
 
         foreach ($fields as $key => $field) {
@@ -1443,7 +1485,9 @@ class Pods
                         break;
                 }
 
-                $result = pods_query("SELECT `related_item_id` FROM `@wp_pods_rel` WHERE `item_id` = {$id} AND `field_id` = {$field['id']}", $this);
+                $sql = "SELECT `related_item_id` FROM `@wp_pods_rel` WHERE `item_id` = %d AND `field_id` = %d";
+                $sql = array($sql, array($id, $field['id']));
+                $result = pods_query($sql, $this);
                 foreach ($result as $row) {
                     $selected_ids[] = $row->related_item_id;
                 }
@@ -1463,12 +1507,16 @@ class Pods
                 // If the PICK column is unique, get values already chosen
                 $exclude = false;
                 if (1 == $field['unique']) {
-                    $unique_where = (empty($id)) ? '' : "`item_id` != {$id} AND";
-                    $result = pods_query("SELECT `related_item_id` FROM `@wp_pods_rel` WHERE {$unique_where} `field_id` = {$field['id']}", $this);
+                    $unique_where = (empty($id)) ? '' : " AND `item_id` != %d";
+                    $sql = "SELECT `related_item_id` FROM `@wp_pods_rel` WHERE `field_id` = %d {$unique_where}";
+                    $sql = array($sql, array($field['id']));
+                    if (!empty($id))
+                        $sql[1][] = $id;
+                    $result = pods_query($sql, $this);
                     if (!empty($result)) {
                         $exclude = array();
                         foreach ($result as $row) {
-                            $exclude[] = $row->related_item_id;
+                            $exclude[] = (int) $row->related_item_id;
                         }
                         $exclude = implode(',', $exclude);
                     }
@@ -1499,18 +1547,19 @@ class Pods
             }
             $this->build_field_html($field);
         }
+
         $uri_hash = wp_hash($_SERVER['REQUEST_URI']);
 
         $save_button_atts = array(
             'type' => 'button',
             'class' => 'button btn_save',
             'value' => $label,
-            'onclick' => "saveForm($pods_cache->form_count)"
+            'onclick' => "saveForm({$pods_cache->form_count})"
         );
         $save_button_atts = apply_filters('pods_showform_save_button_atts', $save_button_atts, $this);
         $atts = '';
         foreach ($save_button_atts as $att => $value) {
-            $atts .= $att.'="' . $value . '" ';
+            $atts .= ' ' . esc_attr($att) . '="' . esc_attr($value) . '"';
         }
         $save_button = '<input ' . $atts . '/>';
 ?>

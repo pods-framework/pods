@@ -145,26 +145,29 @@ class PodsInit
         }
     }
 
+    // Delete Attachments from relationships
+    // @to-do: remove select and run DELETE with the JOIN on field.type='file'
     function delete_attachment ($_ID) {
         $results = pods_query("SELECT `id` FROM `@wp_pods_fields` WHERE `type` = 'file'");
         if (!empty($results)) {
             $field_ids = array();
             foreach ($results as $row) {
-                $field_ids[] = $row->id;
+                $field_ids[] = (int) $row->id;
             }
             $field_ids = implode(',', $field_ids);
 
             if (!empty($field_ids)) {
                 // Remove all references to the deleted attachment
                 do_action('pods_delete_attachment', $_ID, $field_ids);
-                pods_query("DELETE FROM `@wp_pods_rel` WHERE `field_id` IN ({$field_ids}) AND `item_id` = {$_ID}");
-        }
+                $sql = "DELETE FROM `@wp_pods_rel` WHERE `field_id` IN ({$field_ids}) AND `item_id` = %d";
+                $sql = array($sql, array($_ID));
+                pods_query($sql);
+            }
         }
     }
 
 
     // Pod Page Code
-
     function precode () {
         global $pods, $pod_page_exists;
 

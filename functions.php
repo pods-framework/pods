@@ -56,6 +56,34 @@ function pods_error ($error, &$obj = null) {
 }
 
 /**
+ * Debug variable used in pods_debug to count the instances debug is used
+ */
+global $pods_debug;
+$pods_debug = 0;
+/**
+ * Debugging common issues using this function saves a few lines and is compatible with
+ *
+ * @param mixed $debug The error message to be thrown / displayed
+ * @param boolean $die If set to true, a die() will occur, if set to (int) 2 then a wp_die() will occur
+ */
+function pods_debug ($debug = '_null', $die = true) {
+    global $pods_debug;
+    $pods_debug++;
+    echo "<e>";
+    ob_start();
+    if ('_null' != $debug)
+        var_dump($debug);
+    else
+        var_dump('Pods Debug #' . $pods_debug);
+    $debug = ob_get_clean();
+    if (2 === $die)
+        wp_die($debug);
+    elseif (true === $die)
+        die(debug);
+    echo $debug;
+}
+
+/**
  * Marks a function as deprecated and informs when it has been used.
  *
  * There is a hook deprecated_function_run that will be called that can be used
@@ -318,9 +346,9 @@ function pods_clean_name ($str) {
  * @return string The unique slug name
  * @since 1.7.2
  */
-function pods_unique_slug ($value, $column_name, $pod, $pod_id = 0) {
+function pods_unique_slug ($value, $column_name, $pod, $pod_id = 0, &$obj = null) {
     $value = sanitize_title($value);
-    $slug = pods_sanitize($value);
+
     $id = 0;
     if (is_object($pod)) {
         if (isset($pod->id))
@@ -334,15 +362,17 @@ function pods_unique_slug ($value, $column_name, $pod, $pod_id = 0) {
     }
     $pod_id = absint($pod_id);
     $id = absint($id);
+
     $sql = "
     SELECT DISTINCT
         `t`.`{$column_name}` AS `slug`
     FROM
         `@wp_pods_tbl_{$pod}` `t`
     WHERE
-        `t`.`{$column_name}` = '" . pods_sanitize($value) . "'
+        `t`.`{$column_name}` = %s
     LIMIT 1
     ";
+    $sql = array($sql, array($value));
     if (0 < $id) {
         $sql = "
         SELECT DISTINCT
@@ -350,25 +380,28 @@ function pods_unique_slug ($value, $column_name, $pod, $pod_id = 0) {
         FROM
             `@wp_pods_tbl_{$pod}` `t`
         WHERE
-            `t`.`{$column_name}` = '" . pods_sanitize($value) . "' AND `t`.`id` != {$id}
+            `t`.`{$column_name}` = %s AND `t`.`id` != %d
         LIMIT 1
         ";
+        $sql = array($sql, array($value, $id));
     }
-    $result = pods_query($sql);
-    if (0 < mysql_num_rows($result)) {
+
+    $result = pods_query($sql, $obj);
+    if (0 < count($result)) {
         $unique_num = 0;
         $unique_found = false;
         while (!$unique_found) {
             $unique_num++;
             $test_slug = pods_sanitize($value . '-' . $unique_num);
-            $result = pods_query(str_replace("`t`.`{$column_name}` = '{$slug}'", "`t`.`{$column_name}` = '{$test_slug}'", $sql));
+            $sql[1][0] = $test_slug;
+            $result = pods_query($sql, $obj);
             if (0 < count($result))
                 continue;
             $value = $test_slug;
             $unique_found = true;
         }
     }
-    $value = apply_filters('pods_unique_slug', $value, $column_name, $pod, $pod_id);
+    $value = apply_filters('pods_unique_slug', $value, $column_name, $pod, $pod_id, $obj);
     return $value;
 }
 
@@ -465,17 +498,19 @@ function pod_page_exists ($uri = null) {
             $uri = substr($uri, strlen($home['path']));
     }
     $uri = trim($uri,'/');
-    $uri = esc_sql($uri);
-    $uri_depth = count(array_filter(explode('/',$uri)))-1;
+    $uri_depth = count(array_filter(explode('/', $uri))) - 1;
 
     if (false !== strpos($uri, 'wp-admin') || false !== strpos($uri, 'wp-includes'))
         return false;
 
     // See if the custom template exists
-    $result = pods_query("SELECT * FROM `@wp_pods_objects` WHERE `type` = 'page' AND `name` = '{$uri}' LIMIT 1");
+    $sql = "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'page' AND `name` = %s LIMIT 1";
+    $sql = array($sql, array($uri));
+    $result = pods_query($sql);
     if (empty($result)) {
         // Find any wildcards
-        $sql = "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'page' AND '{$uri}' LIKE REPLACE(`name`, '*', '%') AND (LENGTH(uri) - LENGTH(REPLACE(uri, '/', ''))) = {$uri_depth} ORDER BY LENGTH(`name`) DESC, `name` DESC LIMIT 1";
+        $sql = "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'page' AND %s LIKE REPLACE(`name`, '*', '%') AND (LENGTH(uri) - LENGTH(REPLACE(uri, '/', ''))) = %d ORDER BY LENGTH(`name`) DESC, `name` DESC LIMIT 1";
+        $sql = array($sql, array($uri, $uri_depth));
         $result = pods_query($sql);
     }
     if (!empty($result))
@@ -743,8 +778,10 @@ function pods_compatible ($wp = null, $php = null, $mysql = null) {
         $wp = get_bloginfo("version");
     if (null === $php)
         $php = phpversion();
-    if (null === $mysql)
-        $mysql = pods_query("SELECT VERSION()");
+    if (null === $mysql) {
+        $mysql = pods_query("SELECT VERSION() AS `mysql_version`");
+        $mysql = $mysql[0]->mysql_version;
+    }
     $compatible = true;
     if (!version_compare($wp, PODS_WP_VERSION_MINIMUM, '>=')) {
         $compatible = false;
@@ -772,9 +809,11 @@ function pods_compatible ($wp = null, $php = null, $mysql = null) {
         $compatible = false;
         add_action('admin_notices', 'pods_version_notice_mysql');
         function pods_version_notice_mysql () {
+            $mysql = pods_query("SELECT VERSION() AS `mysql_version`");
+            $mysql = $mysql[0]->mysql_version;
 ?>
     <div class="error fade">
-        <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of <strong>MySQL <?php echo PODS_MYSQL_VERSION_MINIMUM; ?>+</strong> to function. You are currently running <strong>MySQL <?php echo pods_query("SELECT VERSION()"); ?></strong> - Please upgrade (or have your Hosting Provider upgrade it for you) your MySQL version to continue.</p>
+        <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of <strong>MySQL <?php echo PODS_MYSQL_VERSION_MINIMUM; ?>+</strong> to function. You are currently running <strong>MySQL <?php echo $mysql; ?></strong> - Please upgrade (or have your Hosting Provider upgrade it for you) your MySQL version to continue.</p>
     </div>
 <?php
         }

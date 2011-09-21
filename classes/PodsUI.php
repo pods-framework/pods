@@ -1697,9 +1697,9 @@ class PodsUI
                 $this->row = $row;
             }
             ob_start();
-            $code = preg_replace_callback("/({@(.*?)})/m", array($this, "do_magic_tags"), $code);
-            echo eval("?>{$code}");
+            eval("?>{$code}");
             $code = ob_get_clean();
+            $code = preg_replace_callback("/({@(.*?)})/m", array($this, "do_magic_tags"), $code);
             if (false !== $row) {
                 $this->row = $this->temp_row;
                 unset($this->temp_row);

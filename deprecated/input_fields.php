@@ -1,5 +1,6 @@
 <?php
-global $pods_cache, coltype_exists;
+global $pods_cache, $coltype_exists, $pods_type_exists;
+$pods_type_exists &= $coltype_exists;
 $pods_cache = PodCache::instance();
 $form_count = $pods_cache->form_count;
 
@@ -91,7 +92,7 @@ Date picker
 ==================================================
 */
 elseif ('date' == $type) {
-    if (!isset($coltype_exists[$type]) || empty($coltype_exists[$type])) {
+    if (!isset($pods_type_exists[$type]) || empty($pods_type_exists[$type])) {
 ?>
     <script type="text/javascript" src="<?php echo PODS_URL; ?>/deprecated/js/date_input.js"></script>
     <script type="text/javascript">
@@ -131,7 +132,7 @@ elseif ('desc' == $type) {
         require_once(PODS_DIR . '/ui/wp-editor/wp-editor.php');
         require_once(ABSPATH . '/wp-admin/includes/template.php');
 
-        if (!isset($coltype_exists[$type]) || empty($coltype_exists[$type])) {
+        if (!isset($pods_type_exists[$type]) || empty($pods_type_exists[$type])) {
 ?>
     <style type="text/css" scoped="scoped">
         @import url("<?php echo PODS_URL; ?>/deprecated/wp-editor/editor-buttons.css");
@@ -150,7 +151,7 @@ elseif ('desc' == $type) {
         echo $wp_editor->editor($value, $css_id, array('editor_class' => $css_classes, 'media_buttons_context' => 'Upload/Insert ', 'textarea_rows' => 10), $media_bar);
     }
     else {
-        if (!isset($coltype_exists[$type]) || empty($coltype_exists[$type])) {
+        if (!isset($pods_type_exists[$type]) || empty($pods_type_exists[$type])) {
 ?>
     <script type="text/javascript" src="<?php echo PODS_URL; ?>/deprecated/js/nicEdit.js"></script>
 <?php
@@ -194,7 +195,7 @@ elseif ('file' == $type) {
                 && !(defined('PODS_UPLOAD_REQUIRE_LOGIN') && !is_bool(PODS_UPLOAD_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_UPLOAD_REQUIRE_LOGIN)))) {
             require_once(realpath(ABSPATH . '/wp-admin/includes/template.php'));
 
-            if (!isset($coltype_exists[$type]) || empty($coltype_exists[$type])) {
+            if (!isset($pods_type_exists[$type]) || empty($pods_type_exists[$type])) {
 ?>
     <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/swfupload/swfupload.js'; ?>"></script>
 <?php
@@ -265,18 +266,18 @@ elseif ('file' == $type) {
     <div class="<?php echo esc_attr($css_classes); ?>">
 <?php
         // Retrieve uploaded files
-        $field_id = (int) $field['id'];
         $sql = "
         SELECT
-            p.`ID`, p.`post_title`, p.`guid`
+            `p`.`ID`, `p`.`post_title`, `p`.`guid`
         FROM
-            `@wp_pod_rel` r
+            `@wp_pods_rel` `r`
         INNER JOIN
-            `@wp_posts` p ON p.`post_type` = 'attachment' AND p.`ID` = r.`related_item_id`
+            `@wp_posts` `p` ON `p`.`post_type` = 'attachment' AND `p`.`ID` = `r`.`related_item_id`
         WHERE
-            r.`item_id` = '$id' AND r.`field_id` = '$field_id'
+            `r`.`item_id` = %d AND `r`.`field_id` = %d
         ";
-        $result = pods_query($sql);
+        $sql = array($sql, array($id, $field['id']));
+        $result = pods_query($sql, $this);
         foreach ($result as $row) {
 ?>
         <div id="<?php echo esc_attr($row->ID); ?>" class="success">
@@ -334,7 +335,7 @@ elseif ('pick' == $type) {
 <?php
 }
 do_action("pods_input_field_type_{$type}", $field, $css_id, $css_classes, $value, $this);
-$coltype_exists[$type] = true;
+$pods_type_exists[$type] = true;
 ?>
     </div>
     <div class="clear<?php echo esc_attr($hidden); ?>" id="spacer_<?php echo esc_attr($name); ?>"></div>

@@ -12,6 +12,6 @@ if ((!isset($_POST['_wpnonce']) || !pods_access('manage_settings') || false === 
 global $wpdb;
 $result = $wpdb->get_col("SHOW TABLES LIKE '{$wpdb->prefix}pod%'");
 foreach ((array) $result as $table) {
-    pods_query("DROP TABLE `{$table}`");
+    pods_query("DROP TABLE `{$table}`", false);
 }
-pods_query("DELETE FROM `@wp_options` WHERE `option_name` LIKE 'pods_%'");
+pods_query("DELETE FROM `@wp_options` WHERE `option_name` LIKE 'pods_%'", false);

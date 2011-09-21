@@ -915,8 +915,10 @@ class PodsData
 
         if (is_array($sql)) {
             if (isset($sql[0]) && 1 < count($sql)) {
-                if (2 == count($sql))
-                    $params->sql = self::prepare($sql[0], $sql[1]);
+                if (2 == count($sql)) {
+                    if (!is_array($sql[1]) || !empty($sql[1]))
+                        $params->sql = self::prepare($sql[0], $sql[1]);
+                }
                 elseif (3 == count($sql))
                     $params->sql = self::prepare($sql[0], $sql[1], $sql[2]);
                 else

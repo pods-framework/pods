@@ -53,7 +53,7 @@ jQuery(function() {
 ?>
 });
 
-function saveForm(form_count) {
+function saveForm (form_count) {
     jQuery(".btn_save").attr("disabled", "disabled");
 
     if ('undefined' != typeof(nicPaneOptions)) {
@@ -111,7 +111,7 @@ function saveForm(form_count) {
 <?php
     if (!(defined('PODS_DISABLE_FILE_BROWSER') && true === PODS_DISABLE_FILE_BROWSER) && !(defined('PODS_FILES_REQUIRE_LOGIN') && is_bool(PODS_FILES_REQUIRE_LOGIN) && true === PODS_FILES_REQUIRE_LOGIN && !is_user_logged_in()) && !(defined('PODS_FILES_REQUIRE_LOGIN') && !is_bool(PODS_FILES_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_FILES_REQUIRE_LOGIN)))) {
 ?>
-function fileBrowser() {
+function fileBrowser () {
     jQuery("#dialog").jqmShow();
     jQuery(".filebox").html("Loading...");
     var search = jQuery("#file_search").val();

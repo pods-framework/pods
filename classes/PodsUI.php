@@ -715,7 +715,7 @@ class PodsUI
 
         $this->ui_page = array($this->action);
         if (isset($this->actions_custom[$this->action]) && function_exists("{$this->actions_custom[$this->action]}"))
-            $this->actions_custom[$this->action](&$this);
+            $this->actions_custom[$this->action]($this);
         elseif ('add' == $this->action && !in_array($this->action, $this->actions_disabled)) {
             $this->ui_page[] = 'form';
             if ('create' == $this->do && !in_array('save', $this->actions_disabled) && !in_array($this->do, $this->actions_disabled) && !empty($_POST)) {
@@ -788,7 +788,7 @@ class PodsUI
             $duplicate = false;
         $this->do_hook('edit', $duplicate);
         if (isset($this->actions_custom['edit']) && function_exists("{$this->actions_custom['edit']}"))
-            $this->actions_custom['edit']($duplicate, &$this);
+            $this->actions_custom['edit']($duplicate, $this);
 ?>
     <div class="wrap">
         <div id="icon-edit-pages" class="icon32"<?php if (false !== $this->icon) { ?> style="background-position:0 0;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
@@ -801,7 +801,7 @@ class PodsUI
     public function form ($create = false, $duplicate = false) {
         $this->do_hook('form');
         if (isset($this->actions_custom['form']) && function_exists("{$this->actions_custom['form']}"))
-            return $this->actions_custom['form'](&$this);
+            return $this->actions_custom['form']($this);
         $submit = $this->label['add'];
         $id = null;
         $vars = array('action' . $this->num => $this->action_after['add'], 'do' . $this->num => 'create', 'id' . $this->num => '');
@@ -825,7 +825,7 @@ class PodsUI
     public function view () {
         $this->do_hook('view');
         if (isset($this->actions_custom['view']) && function_exists("{$this->actions_custom['view']}"))
-            return $this->actions_custom['view'](&$this);
+            return $this->actions_custom['view']($this);
         if (empty($this->row))
             $this->get_row();
         if (empty($this->row))
@@ -837,7 +837,7 @@ class PodsUI
     public function save ($insert = false) {
         $this->do_hook('pre_save', $insert);
         if (isset($this->actions_custom['save']) && function_exists("{$this->actions_custom['save']}"))
-            return $this->actions_custom['save']($insert, &$this);
+            return $this->actions_custom['save']($insert, $this);
         global $wpdb;
         $action = 'saved';
         if (true === $insert)
@@ -893,7 +893,7 @@ class PodsUI
                     $value = $_POST[$field];
             }
             if (isset($attributes['custom_save']) && false !== $attributes['custom_save'] && function_exists("{$attributes['custom_save']}"))
-                $value = $attributes['custom_save']($value, $field, $attributes, &$this);
+                $value = $attributes['custom_save']($value, $field, $attributes, $this);
             $field_sql[] = "`$field`=$vartype";
             $values[] = $value;
             $data[$field] = $value;
@@ -922,7 +922,7 @@ class PodsUI
             $id = pods_absint($this->id);
         $this->do_hook('pre_delete', $id);
         if (isset($this->actions_custom['delete']) && function_exists("{$this->actions_custom['delete']}"))
-            return $this->actions_custom['delete']($id, &$this);
+            return $this->actions_custom['delete']($id, $this);
         if ($id < 1)
             return $this->error(__('<strong>Error:</strong> Invalid Configuration - Missing "id" definition.', 'pods'));
         if (false === $id)
@@ -939,7 +939,7 @@ class PodsUI
     public function get_field ($field) {
         // use PodsData to get field
         if (isset($this->actions_custom['get_field']) && function_exists("{$this->actions_custom['get_field']}"))
-            return $this->actions_custom['get_field']($field, &$this);
+            return $this->actions_custom['get_field']($field, $this);
         if (false !== $this->pod && is_object($this->pod))
             $value = $this->pod->get_field($field);
         else
@@ -958,7 +958,7 @@ class PodsUI
     public function manage ($reorder = false) {
         $this->do_hook('manage', $reorder);
         if (isset($this->actions_custom['manage']) && function_exists("{$this->actions_custom['manage']}"))
-            return $this->actions_custom['manage']($reorder, &$this);
+            return $this->actions_custom['manage']($reorder, $this);
         $this->screen_meta();
 ?>
 <div class="wrap">
@@ -987,7 +987,7 @@ class PodsUI
     </h2>
 <?php
         if (isset($this->actions_custom['header']) && function_exists("{$this->actions_custom['header']}"))
-            echo $this->actions_custom['header']($reorder, &$this);
+            echo $this->actions_custom['header']($reorder, $this);
         if (empty($this->data))
             $this->get_data();
         if (!in_array('export', $this->actions_disabled) && 'export' == $this->action)
@@ -1187,7 +1187,7 @@ class PodsUI
     public function table ($reorder = false) {
         $this->do_hook('table', $reorder);
         if (isset($this->actions_custom['table']) && function_exists("{$this->actions_custom['table']}"))
-            return $this->actions_custom['table']($reorder, &$this);
+            return $this->actions_custom['table']($reorder, $this);
         if (empty($this->data)) {
 ?>
         <p>No items found</p>
@@ -1300,7 +1300,7 @@ class PodsUI
                     if (false === $attributes['display'])
                         continue;
                     if (false !== $attributes['custom_display'] && function_exists("{$attributes['custom_display']}"))
-                        $row[$field] = $attributes['custom_display']($row[$field], $row, &$this);
+                        $row[$field] = $attributes['custom_display']($row[$field], $row, $this);
                     if (false !== $attributes['custom_relate']) {
                         global $wpdb;
                         $table = $attributes['custom_relate'];
@@ -1381,10 +1381,10 @@ class PodsUI
                     <div class="row-actions">
 <?php
                             if (isset($this->actions_custom['actions_start']) && function_exists("{$this->actions_custom['actions_start']}"))
-                                $this->actions_custom['actions_start']($row, &$this);
+                                $this->actions_custom['actions_start']($row, $this);
                             echo implode(' | ', $actions);
                             if (isset($this->actions_custom['actions_end']) && function_exists("{$this->actions_custom['actions_end']}"))
-                                $this->actions_custom['actions_end']($row, &$this);
+                                $this->actions_custom['actions_end']($row, $this);
 ?>
                     </div>
 <?php
@@ -1648,7 +1648,7 @@ class PodsUI
     public function pagination ($header = false) {
         $this->do_hook('pagination', $header);
         if (isset($this->actions_custom['pagination']) && function_exists("{$this->actions_custom['pagination']}"))
-            return $this->actions_custom['pagination']($header, &$this);
+            return $this->actions_custom['pagination']($header, $this);
         $total_pages = ceil($this->total / $this->limit);
         $request_uri = $this->var_update(array('pg' => ''), array('limit' . $this->num, 'orderby' . $this->num, 'orderby_dir' . $this->num, 'search' . $this->num));
 ?>
@@ -1675,7 +1675,7 @@ class PodsUI
     public function limit ($options = false) {
         $this->do_hook('limit', $options);
         if (isset($this->actions_custom['limit']) && function_exists("{$this->actions_custom['limit']}"))
-            return $this->actions_custom['limit']($options, &$this);
+            return $this->actions_custom['limit']($options, $this);
         if (false === $options || !is_array($options) || empty($options))
             $options = array(10, 25, 50, 100, 200);
         if (!in_array($this->limit, $options))
@@ -1720,7 +1720,7 @@ class PodsUI
         $value = $this->get_field($field_name);
         if (isset($tag[1]) && !empty($tag[1])) {
             $helper_name = $tag[1];
-            $value = $$helper_name($value, $field_name, $this->row, &$this);
+            $value = $$helper_name($value, $field_name, $this->row, $this);
         }
         $before = $after = '';
         if (isset($tag[2]) && !empty($tag[2]))
@@ -1861,6 +1861,6 @@ class PodsUI
         if (empty($args))
             return false;
         $name = array_shift($args);
-        return pods_do_hook("ui", $name, $args, &$this);
+        return pods_do_hook("ui", $name, $args, $this);
     }
 }

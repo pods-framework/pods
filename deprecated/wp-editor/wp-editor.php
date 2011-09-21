@@ -13,15 +13,15 @@ class WP_Editor {
 	var $editor_loaded;
 	var $media_buttons;
 
-	function __construct() {
+	function __construct () {
 		add_filter( 'tiny_mce_before_init', array($this, 'loaded_test') );
 	}
 
-	function wp_default_editor() {
+	function wp_default_editor () {
 		return wp_default_editor();
 	}
 
-	function editor( $content, $editor_id, $settings = array(), $media_buttons = true ) {
+	function editor ( $content, $editor_id, $settings = array(), $media_buttons = true ) {
 
 		$this->editor_ids[] = $editor_id;
 
@@ -101,12 +101,12 @@ class WP_Editor {
 		$this->settings[$editor_id] = $set;
 	}
 
-	function loaded_test($r) {
+	function loaded_test ($r) {
 		$this->editor_loaded = true;
 		return $r;
 	}
 
-	function disable_fullscreen($init) {
+	function disable_fullscreen ($init) {
 		$plugins = preg_split('/[ ,]+/', $init['plugins']);
 		$plugins = array_diff( $plugins, array('wpfullscreen') );
         $plugins[] = 'fullscreen';
@@ -118,7 +118,7 @@ class WP_Editor {
 		return $init;
 	}
 
-	function editor_js() {
+	function editor_js () {
 		global $wp_db_version;
 
 		$short_load = false;

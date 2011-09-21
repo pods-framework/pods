@@ -125,7 +125,7 @@ if (isset($methods[$action])) {
         echo $output;
 }
 
-function process_save_pod_item($params, $api) {
+function process_save_pod_item ($params, $api) {
     $params = (object) $params;
 
     $columns = pods_validate_key($params->token, $params->datatype, $params->uri_hash, null, $params->form_count);

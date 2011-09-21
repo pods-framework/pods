@@ -580,7 +580,7 @@ class PodsData
 
     function get_row ($id = false) {
         if (isset($this->actions_custom['row']) && function_exists("{$this->actions_custom['row']}"))
-            return $this->actions_custom['row']($id, &$this);
+            return $this->actions_custom['row']($id, $this);
         if (false !== $this->ui['pod'] && is_object($this->ui['pod'])) {
             if (false === $id) {
                 $this->ui['pod']->fetch();
@@ -616,7 +616,7 @@ class PodsData
 
     function get_data ($full = false) {
         if (isset($this->actions_custom['data']) && function_exists("{$this->actions_custom['data']}"))
-            return $this->actions_custom['data']($full, &$this);
+            return $this->actions_custom['data']($full, $this);
         if (false !== $this->ui['pod'] && is_object($this->ui['pod'])) {
             if (false !== $this->sort && (false === $this->reorder || 'reorder' != $this->action))
                 $sort = $this->sort . ' ' . $this->sort_dir;
@@ -907,13 +907,24 @@ class PodsData
             $error = 'Database Error';
         }
 
-        $params = array('sql' => $sql,
-                        'error' => $error,
-                        'results_error' => $results_error,
-                        'no_results_error' => $no_results_error,
-                        'display_errors' => $display_errors);
-        if (is_array($sql))
-            $params = array_merge($params, $sql);
+        $params = (object) array('sql' => $sql,
+                                 'error' => $error,
+                                 'results_error' => $results_error,
+                                 'no_results_error' => $no_results_error,
+                                 'display_errors' => $display_errors);
+
+        if (is_array($sql)) {
+            if (isset($sql[0]) && 1 < count($sql)) {
+                if (2 == count($sql))
+                    $params->sql = self::prepare($sql[0], $sql[1]);
+                elseif (3 == count($sql))
+                    $params->sql = self::prepare($sql[0], $sql[1], $sql[2]);
+                else
+                    $params->sql = self::prepare($sql[0], $sql[1], $sql[2], $sql[3]);
+            }
+            else
+                $params = array_merge($params, $sql);
+        }
 
         $params->sql = trim($params->sql);
         $params->sql = str_replace('@wp_users', $wpdb->users, $params->sql);
@@ -963,6 +974,6 @@ class PodsData
         if (empty($args))
             return false;
         $name = array_shift($args);
-        return pods_do_hook("data", $name, $args, &$this);
+        return pods_do_hook("data", $name, $args, $this);
     }
 }

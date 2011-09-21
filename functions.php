@@ -38,21 +38,21 @@ function pods_do_hook ($scope, $name, $args = null, $obj = null) {
  * @param object / boolean $obj If object, if $obj->display_errors is set, and is set to true: display errors;
  *                              If boolean, and is set to true: display errors
  */
-function pods_error ($error, $obj = null) {
+function pods_error ($error, &$obj = null) {
     $display_errors = false;
     if (is_object($obj) && isset($obj->display_errors) && true === $obj->display_errors)
         $display_errors = true;
     elseif (is_bool($obj) && true === $obj)
         $display_errors = true;
     // log error in WP
-    $log_error = new WP_Error('pods-error-'.md5($error),$error);
+    $log_error = new WP_Error('pods-error-' . md5($error), $error);
     // throw error as Exception and return false if silent
     if (false !== $display_errors) {
         throw new Exception($error);
         return false;
     }
     // die with error
-    die("<e>$error");
+    die("<e>$error</e>");
 }
 
 /**
@@ -76,51 +76,17 @@ function pods_error ($error, $obj = null) {
  * @param string $replacement Optional. The function that should have been called
  * @since 2.0.0
  */
-function pods_deprecated($function, $version, $replacement = null) {
+function pods_deprecated ($function, $version, $replacement = null) {
 
-	do_action('deprecated_function_run', $function, $replacement, $version);
+    do_action('deprecated_function_run', $function, $replacement, $version);
 
-	// Allow plugin to filter the output error trigger
-	if (WP_DEBUG && apply_filters( 'deprecated_function_trigger_error', true)) {
-		if (!is_null($replacement))
-			trigger_error(sprintf(__('%1$s is <strong>deprecated</strong> since Pods version %2$s! Use %3$s instead.'), $function, $version, $replacement));
-		else
-			trigger_error(sprintf(__('%1$s is <strong>deprecated</strong> since Pods version %2$s with no alternative available.'), $function, $version));
-	}
-}
-
-/**
- * Output content from Pod Page
- *
- * @param string $uri The Pod Page URI to output
- */
-function pods_content ($uri = null, $output = true) {
-    global $pods, $pod_page_exists;
-    $code = $pod_page_exists['code'];
-
-    if (null != $uri) {
-        if (is_array($uri)) {
-            $pairs = array('uri' => null);
-            $tags = shortcode_atts($pairs, $uri);
-            $uri = null;
-            if(null != $tags['uri'])
-                $uri = $tags['uri'];
-        }
-        elseif (!is_string($uri))
-            $uri = null;
-        if (null != $uri) {
-            $pod_page = pod_page_exists($uri);
-            $code = $pod_page['code'];
-        }
+    // Allow plugin to filter the output error trigger
+    if (WP_DEBUG && apply_filters( 'deprecated_function_trigger_error', true)) {
+        if (!is_null($replacement))
+            trigger_error(sprintf(__('%1$s is <strong>deprecated</strong> since Pods version %2$s! Use %3$s instead.'), $function, $version, $replacement));
+        else
+            trigger_error(sprintf(__('%1$s is <strong>deprecated</strong> since Pods version %2$s with no alternative available.'), $function, $version));
     }
-
-    ob_start();
-    eval('?>' . $code);
-    $out = apply_filters('pods_content', ob_get_clean(), $output);
-    if (true === $output)
-        echo $out;
-    else
-        return $out;
 }
 
 /**
@@ -345,64 +311,64 @@ function pods_clean_name ($str) {
 /**
  * Build a unique slug
  *
- * @todo Simplify this function - get rid of the pod_id crap
  * @param string $value The slug value
  * @param string $column_name The column name
- * @param string $datatype The datatype name
- * @param int $datatype_id The datatype ID
- * @param int $pod_id The item's ID in the wp_pod table
+ * @param string $pod The datatype name
+ * @param int $pod_id The datatype ID
  * @return string The unique slug name
  * @since 1.7.2
  */
-function pods_unique_slug($value, $column_name, $datatype, $datatype_id = 0) {
+function pods_unique_slug ($value, $column_name, $pod, $pod_id = 0) {
     $value = sanitize_title($value);
     $slug = pods_sanitize($value);
-    $tbl_row_id = 0;
-    if (is_object($datatype)) {
-        if (isset($datatype->tbl_row_id))
-            $tbl_row_id = $datatype->tbl_row_id;
-        if (isset($datatype->datatype_id))
-            $datatype_id = $datatype->datatype_id;
-        if (isset($datatype->datatype))
-            $datatype = $datatype->datatype;
+    $id = 0;
+    if (is_object($pod)) {
+        if (isset($pod->id))
+            $id = $pod->id;
+        if (isset($pod->pod_id))
+            $pod_id = $pod->pod_id;
+        if (isset($pod->datatype))
+            $pod = $pod->datatype;
         else
-            $datatype = '';
+            $pod = '';
     }
-    $datatype_id = absint($datatype_id);
-    $tbl_row_id = absint($tbl_row_id);
+    $pod_id = absint($pod_id);
+    $id = absint($id);
     $sql = "
     SELECT DISTINCT
         `t`.`{$column_name}` AS `slug`
     FROM
-        `@wp_pod_tbl_{$datatype}` `t`
+        `@wp_pods_tbl_{$pod}` `t`
     WHERE
-        `t`.`{$column_name}` = '{$value}'
+        `t`.`{$column_name}` = '" . pods_sanitize($value) . "'
+    LIMIT 1
     ";
-    if (0 < $tbl_row_id) {
+    if (0 < $id) {
         $sql = "
         SELECT DISTINCT
             `t`.`{$column_name}` AS `slug`
         FROM
-            `@wp_pod_tbl_{$datatype}` `t`
+            `@wp_pods_tbl_{$pod}` `t`
         WHERE
-            `t`.`{$column_name}` = '{$value}' AND `t`.`id` != {$tbl_row_id}
+            `t`.`{$column_name}` = '" . pods_sanitize($value) . "' AND `t`.`id` != {$id}
+        LIMIT 1
         ";
     }
-    $result = pod_query($sql);
+    $result = pods_query($sql);
     if (0 < mysql_num_rows($result)) {
         $unique_num = 0;
         $unique_found = false;
         while (!$unique_found) {
             $unique_num++;
             $test_slug = pods_sanitize($value . '-' . $unique_num);
-            $result = pod_query(str_replace("`t`.`{$column_name}` = '{$slug}'", "`t`.`{$column_name}` = '{$test_slug}'", $sql));
-            if (0 < mysql_num_rows($result))
+            $result = pods_query(str_replace("`t`.`{$column_name}` = '{$slug}'", "`t`.`{$column_name}` = '{$test_slug}'", $sql));
+            if (0 < count($result))
                 continue;
             $value = $test_slug;
             $unique_found = true;
         }
     }
-    $value = apply_filters('pods_unique_slug', $value, $column_name, $datatype, $datatype_id, $pod_id);
+    $value = apply_filters('pods_unique_slug', $value, $column_name, $pod, $pod_id);
     return $value;
 }
 
@@ -457,7 +423,7 @@ function is_pod_page ($uri = null) {
  * @since 1.9.6
  */
 if (!function_exists('get_current_url')) {
-    function get_current_url() {
+    function get_current_url () {
         $url = 'http';
         if (isset($_SERVER['HTTPS']) && 'off' != $_SERVER['HTTPS'] && 0 != $_SERVER['HTTPS'])
             $url = 'https';
@@ -616,7 +582,7 @@ function pods_shortcode ($tags, $content = null) {
     // id > slug (if both exist)
     $id = empty($tags['slug']) ? null : $tags['slug'];
     $id = empty($tags['id']) ? $id : absint($tags['id']);
-    
+
     $pod = new Pod($tags['name'], $id);
 
     $found = 0;
@@ -686,7 +652,7 @@ function pods_validate_key ($token, $datatype, $uri_hash, $columns = null, $form
 /**
  * Output Pod Page Content
  */
-function pods_content() {
+function pods_content () {
     global $pod_page_exists;
 
     do_action('pods_content_pre', $pod_page_exists);
@@ -725,7 +691,7 @@ function pods_content() {
  *
  * @since 1.10.1
  */
-function pods_point_to_version($point) {
+function pods_point_to_version ($point) {
     $version_tmp = explode('.', $point);
     $version = '';
     for ($x = 0; $x < 3; $x++) { // 3 points max - MAJOR.MINOR.PATCH
@@ -748,7 +714,7 @@ function pods_point_to_version($point) {
  *
  * @since 1.10
  */
-function pods_version_to_point($version) {
+function pods_version_to_point ($version) {
     $point_tmp = $version;
     if (strlen($point_tmp) < 9) {
         if (8 == strlen($point_tmp))
@@ -772,13 +738,13 @@ function pods_version_to_point($version) {
  *
  * @since 1.10
  */
-function pods_compatible($wp = null, $php = null, $mysql = null) {
+function pods_compatible ($wp = null, $php = null, $mysql = null) {
     if (null === $wp)
         $wp = get_bloginfo("version");
     if (null === $php)
         $php = phpversion();
     if (null === $mysql)
-        $mysql = @mysql_result(pod_query("SELECT VERSION()"), 0);
+        $mysql = pods_query("SELECT VERSION()");
     $compatible = true;
     if (!version_compare($wp, PODS_WP_VERSION_MINIMUM, '>=')) {
         $compatible = false;
@@ -808,7 +774,7 @@ function pods_compatible($wp = null, $php = null, $mysql = null) {
         function pods_version_notice_mysql () {
 ?>
     <div class="error fade">
-        <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of <strong>MySQL <?php echo PODS_MYSQL_VERSION_MINIMUM; ?>+</strong> to function. You are currently running <strong>MySQL <?php echo @mysql_result(pod_query("SELECT VERSION()"), 0); ?></strong> - Please upgrade (or have your Hosting Provider upgrade it for you) your MySQL version to continue.</p>
+        <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of <strong>MySQL <?php echo PODS_MYSQL_VERSION_MINIMUM; ?>+</strong> to function. You are currently running <strong>MySQL <?php echo pods_query("SELECT VERSION()"); ?></strong> - Please upgrade (or have your Hosting Provider upgrade it for you) your MySQL version to continue.</p>
     </div>
 <?php
         }

@@ -11,7 +11,7 @@ class PodCache
      *
      * @since 1.8.3
      */
-    public static function instance()
+    public static function instance ()
     {
         static $instance = null;
         if (null == $instance)

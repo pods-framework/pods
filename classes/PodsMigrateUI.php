@@ -7,13 +7,13 @@ class PodMigrateUI
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0.0
      */
-    function __construct() {
+    function __construct () {
 
     }
-    function wizard() {
+    function wizard () {
 
     }
-    function handler() {
+    function handler () {
         $migrate = pods_migrate_ui();
     }
 }

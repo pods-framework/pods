@@ -3,12 +3,12 @@
 if (!function_exists('json_encode')) {
     require_once(ABSPATH . '/wp-includes/js/tinymce/plugins/spellchecker/classes/utils/JSON.php');
 
-    function json_encode($str) {
+    function json_encode ($str) {
         $json = new Moxiecode_JSON();
         return $json->encode($str);
     }
 
-    function json_decode($str) {
+    function json_decode ($str) {
         $json = new Moxiecode_JSON();
         return $json->decode($str);
     }
@@ -145,7 +145,7 @@ function pods_ui_access ($object, $access, $what) {
  * @since 1.6.2
  * @deprecated deprecated since version 2.0.0
  */
-function pods_url_variable($key = 'last', $type = 'url') {
+function pods_url_variable ($key = 'last', $type = 'url') {
     $output = apply_filters('pods_url_variable', pods_var($key, $type), $key, $type);
     return $output;
 }

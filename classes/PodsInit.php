@@ -4,7 +4,7 @@ class PodsInit
 
     /**
      * Setup and Initiate Pods
-     * 
+     *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 1.8.9
      */
@@ -17,17 +17,17 @@ class PodsInit
     function activate () {
         global $wpdb;
         if (function_exists('is_multisite') && is_multisite() && isset($_GET['networkwide']) && 1 == $_GET['networkwide']) {
-            $blogids = $wpdb->get_col($wpdb->prepare("SELECT `blog_id` FROM {$wpdb->blogs}"));
-            foreach ($blogids as $blogid)
+            $_blog_ids = $wpdb->get_col($wpdb->prepare("SELECT `blog_id` FROM {$wpdb->blogs}"));
+            foreach ($_blog_ids as $_blog_id)
                 $this->setup($_blog_id);
         }
         else
             $this->setup();
     }
 
-    function new_blog ($blogid, $user_id, $domain, $path, $site_id, $meta) {
+    function new_blog ($_blog_id, $user_id, $domain, $path, $site_id, $meta) {
         if (function_exists('is_multisite') && is_multisite() && is_plugin_active_for_network('pods/init.php'))
-            $this->setup($blogid);
+            $this->setup($_blog_id);
     }
 
     function setup ($_blog_id = null) {
@@ -72,7 +72,7 @@ class PodsInit
             add_option('pods_version', PODS_VERSION);
             do_action('pods_install_post', PODS_VERSION, $pods_version, $_blog_id);
         }
-	
+
         // Restore DB table prefix (if switched)
         if (null !== $_blog_id)
             PodsData::restore_site();
@@ -80,7 +80,7 @@ class PodsInit
 
     function init () {
         global $pod_page_exists, $pods, $pods_admin;
-	
+
         // Session start
         if (((defined('WP_DEBUG') && WP_DEBUG) || false === headers_sent()) && '' == session_id())
             @session_start();
@@ -91,12 +91,12 @@ class PodsInit
         $pods_version = get_option('pods_version');
         if (empty($pods_version) || false === strpos($pods_version, '.') || version_compare($pods_version, PODS_VERSION, '<'))
             $this->setup();
-        
+
         $pods_admin = pods_admin_ui();
-        
+
         add_shortcode('pods', 'pods_shortcode');
         add_action('delete_attachment', array($this, 'delete_attachment'));
-        
+
         if (!defined('PODS_DISABLE_POD_PAGE_CHECK')) {
             $pod_page_exists = pod_page_exists();
 
@@ -104,7 +104,7 @@ class PodsInit
                 if (404 != $pods && (!is_object($pods) || !is_wp_error($pods))) {
                     add_action('template_redirect', array($this, 'template_redirect'));
                     add_filter('redirect_canonical', '__return_false');
-		    add_action('wp_head', array($this, 'wp_head'));
+            add_action('wp_head', array($this, 'wp_head'));
                     add_filter('wp_title', array($this, 'wp_title'), 0, 3);
                     add_filter('body_class', array($this, 'body_class'), 0, 1);
                     add_filter('status_header', array($this, 'status_header'));
@@ -146,7 +146,7 @@ class PodsInit
     }
 
     function delete_attachment ($_ID) {
-        $result = pods_query("SELECT `id` FROM `@wp_pods_fields` WHERE `type` = 'file'");
+        $results = pods_query("SELECT `id` FROM `@wp_pods_fields` WHERE `type` = 'file'");
         if (!empty($results)) {
             $field_ids = array();
             foreach ($results as $row) {
@@ -158,50 +158,39 @@ class PodsInit
                 // Remove all references to the deleted attachment
                 do_action('pods_delete_attachment', $_ID, $field_ids);
                 pods_query("DELETE FROM `@wp_pods_rel` WHERE `field_id` IN ({$field_ids}) AND `item_id` = {$_ID}");
-	    }
+        }
         }
     }
-    
-    
+
+
     // Pod Page Code
 
     function precode () {
         global $pods, $pod_page_exists;
 
-        $function_or_file = str_replace('*', 'w', $pod_page_exists['uri']);
-        $check_file = 'precode-' . $function_or_file;
-        if ((!defined('PODS_STRICT_MODE') || !PODS_STRICT_MODE) && (!defined('PODS_PAGE_FILES') || !PODS_PAGE_FILES))
-            $check_file = false;
-        if (false !== $check_function && false !== $check_file)
-            $function_or_file = pods_function_or_file($function_or_file, false, 'page', $check_file);
-        else
-            $function_or_file = false;
+        if (false !== $pod_page_exists) {
+            $content = false;
+            if (0 < strlen(trim($pod_page_exists['precode'])))
+                $content = $pod_page_exists['precode'];
 
-        $content = false;
-        if (!$function_or_file && 0 < strlen(trim($pod_page_exists['precode'])))
-            $content = $pod_page_exists['precode'];
-
-        if (false === $content && false !== $function_or_file && isset($function_or_file['file']))
-            locate_template($function_or_file['file'], true, true);
-        elseif (false !== $content) {
-            if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
+            if (false !== $content && !defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
                 eval("?>$content");
-        }
 
-        do_action('pods_page_precode', $pod_page_exists, $pods);
-        if (!is_object($pods) && (404 == $pods || is_wp_error($pods))) {
-            remove_action('template_redirect', array($this, 'template_redirect'));
-            remove_action('wp_head', array($this, 'wp_head'));
-            remove_filter('redirect_canonical', '__return_false');
-            remove_filter('wp_title', array($this, 'wp_title'));
-            remove_filter('body_class', array($this, 'body_class'));
-            remove_filter('status_header', array($this, 'status_header'));
-            remove_action('wp', array($this, 'silence_404'));
+            do_action('pods_page_precode', $pod_page_exists, $pods);
+            if (!is_object($pods) && (404 == $pods || is_wp_error($pods))) {
+                remove_action('template_redirect', array($this, 'template_redirect'));
+                remove_action('wp_head', array($this, 'wp_head'));
+                remove_filter('redirect_canonical', '__return_false');
+                remove_filter('wp_title', array($this, 'wp_title'));
+                remove_filter('body_class', array($this, 'body_class'));
+                remove_filter('status_header', array($this, 'status_header'));
+                remove_action('wp', array($this, 'silence_404'));
+            }
         }
     }
 
 
-    function wp_head() {
+    function wp_head () {
         global $pods;
         do_action('pods_wp_head');
         if (!defined('PODS_DISABLE_VERSION_OUTPUT') || !PODS_DISABLE_VERSION_OUTPUT) {
@@ -263,14 +252,14 @@ class PodsInit
         $uri = explode('?', $pod_page_exists['uri']);
         $uri = explode('#', $uri[0]);
         $class = str_replace(array('*', '/'), array('_w_', '-'), $uri[0]);
-	$class = sanitize_title($class);
-	$class = str_replace(array('_', '--', '--'), '-', $class);
-	$class = trim($class, '-');
-        $classes[] = 'pod-page-' . $class);
+        $class = sanitize_title($class);
+        $class = str_replace(array('_', '--', '--'), '-', $class);
+        $class = trim($class, '-');
+        $classes[] = 'pod-page-' . $class;
         if (is_object($pods) && !is_wp_error($pods)) {
-	    $class = sanitize_title($pods->pod);
-	    $class = str_replace(array('_', '--', '--'), '-', $class);
-	    $class = trim($class, '-');
+        $class = sanitize_title($pods->pod);
+        $class = str_replace(array('_', '--', '--'), '-', $class);
+        $class = trim($class, '-');
             $classes[] = 'pod-' . $class;
         }
         if ((!defined('PODS_DISABLE_BODY_CLASSES') || !PODS_DISABLE_BODY_CLASSES) && is_object($pods) && !is_wp_error($pods) && isset($pods->body_classes))

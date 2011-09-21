@@ -1,42 +1,41 @@
 <?php
 class Pods
 {
-    var $api;
-    var $display_errors = false;
-    
-    var $column_id = 'id';
-    var $column_index = 'name';
-    
-    var $pod_data;
-    var $pod;
-    var $pod_id;
-    var $fields;
-    var $detail_page;
-    
-    var $id;
-    
-    var $row_number = -1;
-    var $zebra = false;
-    var $results = array();
-    var $data;
-    var $sql;
-    var $raw_sql;
-    var $calc_found_rows = true;
-    var $count_found_rows = false;
-    var $total = 0;
-    var $total_found = 0;
-    
-    var $limit = 15;
-    var $page_var = 'pg';
-    var $page = 1;
-    var $pagination = true;
-    var $search = true;
-    var $search_var = 'search';
-    var $search_where = '';
-    var $search_mode = 'int'; // int | text | text_like
+    private $api;
+    public $display_errors = false;
 
-    var $traverse = array();
-    var $rabit_hole = array();
+    public $column_id = 'id';
+    public $column_index = 'name';
+
+    public $pod_data;
+    public $pod;
+    public $pod_id;
+    public $fields;
+    public $detail_page;
+
+    public $id;
+
+    public $results = array();
+    public $data;
+    public $sql;
+    public $calc_found_rows = true;
+    public $count_found_rows = false;
+    private $row_number = -1;
+    private $zebra = false;
+    private $total = 0;
+    private $total_found = 0;
+
+    public $limit = 15;
+    public $page_var = 'pg';
+    public $page = 1;
+    public $pagination = true;
+    public $search = true;
+    public $search_var = 'search';
+    public $search_mode = 'int'; // int | text | text_like
+    private $search_where = '';
+
+    public $traverse = array();
+    public $rabit_hole = array();
 
     /**
      * Constructor - Pods CMS core
@@ -46,9 +45,9 @@ class Pods
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 1.0.0
      */
-    function __construct ($pod = null, $id = null) {
+    public function __construct ($pod = null, $id = null) {
         $this->api = pods_api();
-        $this->api->display_errors = $this->display_errors;
+        $this->api->display_errors &= $this->display_errors;
 
         if (defined('PODS_STRICT_MODE') && PODS_STRICT_MODE) {
             $this->page = 1;
@@ -78,7 +77,7 @@ class Pods
             $this->pod = $this->datatype = $pod['name'];
             $this->fields = $pod['fields'];
             $this->detail_page = $pod['detail_page'];
-            
+
             switch ($pod['type']) {
                 case 'pod':
                     $this->column_id = 'id';
@@ -125,9 +124,9 @@ class Pods
      * @param string $orderby (optional) The orderby string, for PICK fields
      * @since 2.0.0
      */
-    function field ($params, $orderby = null) {
+    public function field ($params, $orderby = null) {
         $value = null;
-	
+
         $default = array('name' => $params, 'orderby' => $orderby);
         if (is_array($params))
             $params = array_merge($default, $params);
@@ -135,19 +134,18 @@ class Pods
             $params = $default;
         $name = $params->name;
         $orderby = $params->orderby;
-        
+
         if (isset($this->data[$params->name]))
             $value = $this->data[$params->name];
         elseif ('detail_url' == $name)
             $value = $this->do_magic_tags($params->name);
         else {
             // Dot-traversal
-            $last_loop = false;
             $ids = $this->data[$this->column_id];
 
             $traverse = (false !== strpos($params->name, '.') ? explode('.', $params->name) : array($params->name));
             $traverse_fields = implode("','", $traverse);
-            
+
             $all_fields = array();
             if (!empty($traverse_fields)) {
                 // Get columns matching traversal names
@@ -165,11 +163,12 @@ class Pods
             }
             else
                 $value = false;
-            
+
             if (null === $value) {
                 // Loop through each traversal level
                 $total_traverse = count($traverse) - 1;
                 $last_type = $last_pick_object = $last_pick_val = '';
+                $pod_id = $this->pod_id;
                 foreach ($traverse as $key => $column_name) {
                     $last_loop = false;
                     if ($total_traverse == $key)
@@ -193,7 +192,7 @@ class Pods
                                 return false;
 
                             // Get Pod ID for Pod PICK columns
-                            if (!empty($pick_val) && !in_array($pickval, array('wp_taxonomy', 'wp_post', 'wp_page', 'wp_user'))) {
+                            if (!empty($pick_val) && !in_array($pick_val, array('wp_taxonomy', 'wp_post', 'wp_page', 'wp_user'))) {
                                 $where = "`name` = '{$pick_val}'";
                                 if ('pod' != $pick_object)
                                     $where = "`object` = '{$pick_val}'";
@@ -247,14 +246,14 @@ class Pods
                             $results = $data;
                         // Return a single column value
                         elseif (1 == count($data)) {
-			    $data = current($data);
-			    if (isset($data[$column_name]))
+                $data = current($data);
+                if (isset($data[$column_name]))
                                 $results = $data[$column_name];
-		        }
+                }
                         // Return an array of single column values
                         else {
                             foreach ($data as $k => $v) {
-			        if (isset($v[$column_name]))
+                    if (isset($v[$column_name]))
                                     $results[$k] = $v[$column_name];
                             }
                         }
@@ -276,15 +275,15 @@ class Pods
      * @return mixed The value of $data
      * @since 1.2.0
      */
-    function set_field ($name, $data = null) {
+    public function set_field ($name, $data = null) {
         $this->data[$name] = $data;
         return $this->data[$name];
     }
-    
+
     /**
      * Setup fields for rabit hole
      */
-    function feed_rabit ($fields) {
+    private function feed_rabit ($fields) {
         $feed = array();
         foreach ($fields as $field => $data) {
             if (!is_array($data))
@@ -298,7 +297,7 @@ class Pods
     /**
      * Recursively join tables based on fields
      */
-    function recurse_rabit_hole ($pod, $fields, $joined = 't', $depth = 0) {
+    private function recurse_rabit_hole ($pod, $fields, $joined = 't', $depth = 0) {
         global $wpdb;
 
         if (!isset($this->rabit_hole[$pod]))
@@ -408,7 +407,7 @@ class Pods
     /**
      * Recursively join tables based on fields
      */
-    function rabit_hole ($pod, $fields = null) {
+    private function rabit_hole ($pod, $fields = null) {
         $joins = array();
         if (null === $fields) {
             $api = new PodAPI($pod);
@@ -429,11 +428,11 @@ class Pods
 
     /**
      * Search and filter records
-     * 
+     *
      * @param array $params An associative array of parameters
      * @since 2.0.0
      */
-    function find ($params, $limit = 15, $where = null, $sql = null) {
+    public function find ($params, $limit = 15, $where = null, $sql = null) {
         if (empty($this->pod) || empty($this->pod_id))
             return pods_error('Pod not found', $this);
 
@@ -448,8 +447,8 @@ class Pods
                           'orderby' => "`t`.`{$this->column_id}` DESC",
                           'limit' => $this->limit,
                           'sql' => null,
-			  
-			  // functionality-related
+
+              // functionality-related
                           'search' => $this->search,
                           'search_across' => true,
                           'search_across_picks' => false,
@@ -486,7 +485,7 @@ class Pods
         if (true === $this->count_found_rows && empty($sql))
             $this->calc_found_rows = $params->calc_found_rows = false;
         $this->limit = $params->limit = pods_absint($params->limit, false);
-        
+
         $sql_builder = false;
         if (empty($sql)) {
             $sql_builder = true;
@@ -599,7 +598,7 @@ class Pods
                 if (!in_array($value, $found))
                     $found[$key] = $value;
             }
-            
+
             if (!empty($this->traverse)) {
                 foreach ((array) $this->traverse as $key => $traverse) {
                     $traverse = str_replace('`', '', $traverse);
@@ -631,7 +630,7 @@ class Pods
                     $joins = $this->rabit_hole($this->datatype);
             }
 
-            if (0 < strlen($join)) {
+            if (0 < strlen($params->join)) {
                 $joins[] = "
             {$params->join}";
             }
@@ -645,14 +644,14 @@ class Pods
                 case 'post_type':
                     $params->table = '@wp_posts';
                     $params->where = "t.`post_type` = '{$this->pod_data['object']}'
-	    {$params->where}";
+        {$params->where}";
                     break;
                 case 'taxonomy':
                     $params->table = '@wp_terms';
                     $params->join = "`@wp_term_taxonomy` AS tx ON tx.`term_id` = t.`term_id`
-	    {$params->join}";
+        {$params->join}";
                     $params->where = "t.`taxonomy` = '{$this->pod_data['object']}'
-	    {$params->where}";
+        {$params->where}";
                     break;
                 case 'user':
                     $params->table = '@wp_users';
@@ -660,7 +659,7 @@ class Pods
                 case 'comment':
                     $params->table = '@wp_comments';
                     $params->where = "t.`comment_type` = '{$this->pod_data['object']}'
-	    {$params->where}";
+        {$params->where}";
                     break;
                 case 'custom_table':
                     $params->table = "{$this->pod_data['object']}";
@@ -682,7 +681,7 @@ class Pods
                 $sql .= "
             {$params->join}";
             }
-	    if (!empty($this->search_where) || (!empty($params->where)) {
+        if (!empty($this->search_where) || !empty($params->where)) {
                 $sql .= "
             WHERE";
                 if (!empty($this->search_where)) {
@@ -713,13 +712,14 @@ class Pods
                 $sql .= "
             LIMIT {$params->limit}";
             }
+        }
 /*
         // Get this pod's fields
         $i = 0;
         foreach ($this->fields as $column) {
             if (!in_array($column['type'], array('file', 'pick')))
                 continue;
-            
+
             $field_id = $column['id'];
             $field_name = $column['name'];
             $field_type = $column['type'];
@@ -728,16 +728,16 @@ class Pods
             $haystack = "$select $where $orderby";
             if (false === strpos($haystack, $field_name . '.') && false === strpos($haystack, "`{$field_name}`."))
                 continue;
-            
+
             $i++;
-            
+
             $pick_object = $column['pick_object'];
             $pick_val = $column['pick_val'];
             if ('file' == $field_type) {
                 $pick_object = 'post_type';
                 $pick_val = 'attachment';
             }
-            
+
             $pick_table = $pick_join = $pick_where = '';
             $pick_column_id = 'id';
             switch ($pick_object) {
@@ -778,7 +778,7 @@ class Pods
             $join .= " {$params->join} ";
         $join = apply_filters('pods_find_join', $join, $params, $this);
 */
-        
+
         $this->sql = apply_filters('pods_find', $sql, $params, $this);
         $this->results = pods_query($this->sql, $this);
         $this->row_number = -1;
@@ -797,7 +797,7 @@ class Pods
                 $sql .= "
             {$params->join}";
             }
-	    if (!empty($this->search_where) || (!empty($params->where)) {
+        if (!empty($this->search_where) || !empty($params->where)) {
                 $sql .= "
             WHERE";
                 if (!empty($this->search_where)) {
@@ -829,9 +829,9 @@ class Pods
      *
      * @since 2.0.0
      */
-    function fetch ($id = null) {
+    public function fetch ($id = null) {
         if (null !== $id) {
-            if (null === $this->pod || false === $this->pod)
+            if (null === $this->pod || null === $this->pod_id)
                 return pods_error('Pod is required');
 
             $id = pods_sanitize($id);
@@ -857,7 +857,7 @@ class Pods
                 $this->total = $this->total_rows = 1;
             }
             return $this->data;
-	}
+    }
         if (!isset($this->results[$this->row_number + 1]))
             return false;
         $this->row_number++;
@@ -871,10 +871,10 @@ class Pods
 
     /**
      * (Re)set the MySQL result pointer
-     * 
+     *
      * @since 2.0.0
      */
-    function reset ($row = 0) {
+    public function reset ($row = 0) {
         if (isset($this->results[$row]))
             $this->data = $this->results[$row];
         else
@@ -885,31 +885,31 @@ class Pods
 
     /**
      * Fetch the total row count returned
-     * 
+     *
      * @return int Number of rows returned by find()
      * @since 2.0.0
      */
-    function total () {
+    public function total () {
         return (int) $this->total;
     }
 
     /**
      * Fetch the total row count total
-     * 
+     *
      * @return int Number of rows found by find()
      * @since 2.0.0
      */
-    function total_found () {
+    public function total_found () {
         return (int) $this->total_found;
     }
 
     /**
      * Fetch the zebra switch
-     * 
+     *
      * @return bool Zebra state
      * @since 1.12
      */
-    function zebra () {
+    public function zebra () {
         return (boolean) $this->zebra;
     }
 
@@ -927,14 +927,14 @@ class Pods
      * $params['orderby'] (optional) MySQL "ORDER BY" clause
      * $params['where'] (optional) MySQL "WHERE" clause
      * $params['sql'] (optional) Custom MySQL SQL Query
-     * 
+     *
      * @param array $params An associative array of parameters
      * @return array $data Associative array of table column values
      * @since 2.0.0
      */
-    function lookup ($params) {
+    private function lookup ($params) {
         $params = (object) $params;
-        
+
         $ids = '';
         if (!empty($params->ids))
             $ids = $params->ids;
@@ -946,7 +946,7 @@ class Pods
             }
         }
         $ids = implode(', ', $ids);
-        
+
         $exclude = '';
         if (!empty($params->exclude))
             $exclude = $params->exclude;
@@ -958,7 +958,7 @@ class Pods
             }
         }
         $exclude = implode(', ', $exclude);
-        
+
         $table = '';
         if (isset($params->table) && !empty($params->table))
             $table = $params->table;
@@ -977,7 +977,7 @@ class Pods
             $column = pods_sanitize($params->column);
         if (false === strpos($column, '`') && false === strpos($column, '.'))
             $select = "`{$column}`";
-        
+
         $select = '*';
         if (isset($params->select))
             $select = $params->select;
@@ -996,7 +996,7 @@ class Pods
         }
         if (false === strpos($select, '`') && false === strpos($select, '.') && false === strpos($select, '*'))
             $select = "`{$select}`";
-        
+
         $join = '';
         if (isset($params->join) && !empty($params->join))
             $join = $params->join;
@@ -1024,14 +1024,14 @@ class Pods
             $where = " WHERE {$where} ";
         else
             $where = '';
-        
+
         $sql = "SELECT {$select} FROM `{$table}` {$join} {$where} {$orderby}";
         if (isset($params->sql) && !empty($params->sql))
             $sql = $params->sql;
         elseif (empty($table))
             return pods_error('Table or SQL param required', $this);
         $result = pods_query($sql, $this);
-        
+
         $data = array();
         // Put all related items into an array
         if (!empty($result)) {
@@ -1058,6 +1058,7 @@ class Pods
                             $data[$row->{$column}]['active'] = true;
                         elseif ('text' == $this->search_mode && isset($row->{$select}) && $row->{$select} == $_GET[$params->column_name])
                             $data[$row->{$column}]['active'] = true;
+                    }
                 }
             }
         }
@@ -1074,17 +1075,19 @@ class Pods
      * $params['field_id'] The field ID
      * $params['pod_id'] The Pod ID
      * $params['ids'] A comma-separated string or array of item IDs
-     * 
+     *
      * @param array $params An associative array of parameters
      * @since 1.2.0
      */
-    function lookup_row_ids ($params) {
+    private function lookup_row_ids ($params) {
         $params = (object) pods_sanitize($params);
-        
+
+        $field_id = pods_absint($params->field_id);
+
         $pod_id = $this->pod_id;
         if (isset($params->pod_id))
             $pod_id = pods_absint($params->pod_id);
-        
+
         $ids = 0;
         if (isset($params->ids))
             $ids = $params->ids;
@@ -1125,49 +1128,49 @@ class Pods
      * @return mixed Anything returned by the helper
      * @since 1.x
      */
-    function get_dropdown_values ($params) {
+    private function get_dropdown_values ($params) {
         $params = (object) $params;
-        
+
         $values = $this->lookup($params);
-        
+
         $values = apply_filters('pods_get_dropdown_values', $values, $params, $this);
         $values = apply_filters("pods_get_dropdown_values_{$this->pod}", $values, $params, $this);
-        
+
         return $values;
     }
 
     /**
      * Display the pagination controls
-     * 
+     *
      * @since 2.0.0
      */
-    function pagination ($params = null) {
+    public function pagination ($params = null) {
         $defaults = array('label' => 'Go to page:');
         if (!empty($params) && is_array($params))
             $params = array_merge($defaults, $params);
         else
             $params = $defaults;
         $params = (object) $params;
-        
+
         $output = '';
         if (0 < $this->rpp && $this->rpp < $this->total_found() && false !== $this->pagination) {
             ob_start();
             include PODS_DIR . '/ui/pagination.php';
             $output = ob_get_clean();
         }
-        
+
         $output = apply_filters('pods_pagination', $output, $params, $this);
         $output = apply_filters("pods_pagination_{$this->pod}", $output, $params, $this);
-        
+
         return $output;
     }
 
     /**
      * Display the list filters
-     * 
+     *
      * @since 2.0.0
      */
-    function filters ($params = null) {
+    public function filters ($params = null) {
         $defaults = array('filters' => null,
                             'label' => 'Filter',
                             'action' => '',
@@ -1177,20 +1180,20 @@ class Pods
         else
             $params = $defaults;
         $params = (object) $params;
-        
+
         ob_start();
         include PODS_DIR . '/ui/list_filters.php';
         $output = ob_get_clean();
-        
+
         $output = apply_filters('pods_filters', $output, $params, $this);
         $output = apply_filters("pods_filters_{$this->pod}", $output, $params, $this);
-        
+
         return $output;
     }
 
     /**
      * Run a helper within a Pod Page or WP Template
-     * 
+     *
      * $params['helper'] string Helper name
      * $params['value'] string Value to run Helper on
      * $params['name'] string Column name
@@ -1199,22 +1202,22 @@ class Pods
      * @return mixed Anything returned by the helper
      * @since 2.0.0
      */
-    function helper ($helper, $value = null, $name = null) {
+    public function helper ($helper, $value = null, $name = null) {
         $params = array('helper' => $helper,
                         'value' => $value,
                         'name' => $name);
-        if (is_array($helper_name))
-            $params = array_merge($params, $helper_name);
+        if (is_array($helper))
+            $params = array_merge($params, $helper);
         $params = (object) $params;
-        
+
         if (empty($params->helper))
             return pods_error('Helper name required', $this);
-        
+
         if (!isset($params->value))
             $params->value = null;
         if (!isset($params->name))
             $params->name = null;
-        
+
         ob_start();
 
         do_action('pods_pre_pod_helper', $params, $this);
@@ -1223,11 +1226,14 @@ class Pods
         $helper = $this->api->load_helper(array('name' => $params->helper));
         if (!empty($helper) && !empty($helper['code'])) {
             if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
-                echo eval("?>{$helper['code']}");
+                eval("?>{$helper['code']}");
             else
                 echo $helper['code'];
-       elseif (function_exists("{$helper_name}"))
-            echo $params->helper($params->value, $params->name, $params, $this);
+        }
+        elseif (function_exists("{$params->helper}")) {
+            $function_name = (string) $params->helper;
+            echo $function_name($params->value, $params->name, $params, $this);
+        }
 
         do_action('pods_post_pod_helper', $params, $this);
         do_action("pods_post_pod_helper_{$params->helper}", $params, $this);
@@ -1237,10 +1243,10 @@ class Pods
 
     /**
      * Display the page template
-     * 
+     *
      * @since 2.0.0
      */
-    function template ($template_name, $code = null) {
+    public function template ($template_name, $code = null) {
         ob_start();
 
         do_action('pods_pre_template', $template_name, $code, $this);
@@ -1251,12 +1257,12 @@ class Pods
             if (!empty($template) && !empty($template['code']))
                 $code = $template['code'];
             elseif (function_exists("{$template_name}"))
-                $code = $template_name(&$obj);
+                $code = $template_name($this);
         }
-        
+
         $code = apply_filters('pods_template', $code, $template_name, $this);
         $code = apply_filters("pods_template_{$template_name}", $code, $template_name, $this);
-        
+
         if (!empty($code)) {
             // Only detail templates need $this->id
             if (empty($this->id)) {
@@ -1280,15 +1286,15 @@ class Pods
      * @param string $code The template string to parse
      * @since 1.8.5
      */
-    function do_template ($code) {
+    public function do_template ($code) {
         ob_start();
         if ((!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL))
-            eval("?>$in");
+            eval("?>$code");
         else
-            echo $in;
+            echo $code;
         $out = ob_get_clean();
         $out = preg_replace_callback("/({@(.*?)})/m", array($this, "do_magic_tags"), $out);
-        return apply_filters('pods_do_template', $out, $in, $this);
+        return apply_filters('pods_do_template', $out, $code, $this);
     }
 
     /**
@@ -1296,7 +1302,7 @@ class Pods
      * @param string $tag The magic tag to evaluate
      * @since 1.x
      */
-    function do_magic_tags ($tag) {
+    private function do_magic_tags ($tag) {
         $tag = trim($tag, ' {@}');
         $tag = explode(',', $tag);
         if (empty($tag) || !isset($tag[0]) || 0 < strlen(trim($tag[0])))
@@ -1326,17 +1332,17 @@ class Pods
             return $before . $value . $after;
         return;
     }
-    
+
     //
     // DEPRECATED FUNCTIONS IN 2.0.0
     //
 
     /**
      * Display HTML for all datatype fields
-     * 
+     *
      * @deprecated deprecated since 2.0.0
      */
-    function showform ($id = null, $public_columns = null, $label = 'Save changes') {
+    public function showform ($id = null, $public_columns = null, $label = 'Save changes') {
         pods_deprecated('Pods::showform', '2.0.0');
         $pods_cache = PodCache::instance();
 
@@ -1356,7 +1362,7 @@ class Pods
         }
 
         $fields = $this->fields;
-        
+
         // Re-order the fields if a public form
         if (!empty($attributes)) {
             $fields = array();
@@ -1365,18 +1371,18 @@ class Pods
                     $fields[$key] = $this->fields[$key];
             }
         }
-        
+
         $uri_hash = wp_hash($_SERVER['REQUEST_URI']);
 
         do_action('pods_showform_pre', $pod_id, $public_columns, $label, $this);
-        
+
         foreach ($fields as $key => $field) {
             if (!is_array($field))
                 continue;
-            
+
             // Pass options so they can be manipulated via form
             $field = array_merge($field['options'], $field);
-            
+
             // Replace field attributes with public form attributes
             if (!empty($attributes) && is_array($attributes[$key]))
                 $field = array_merge($field, $attributes[$key]);
@@ -1470,7 +1476,7 @@ class Pods
 
                 if (!empty($field['options']['pick_filter']))
                     $pick_where .= ' AND ' . $field['options']['pick_filter'];
-                
+
                 $params = array(
                     'exclude' => $exclude,
                     'selected_ids' => $selected_ids,
@@ -1496,15 +1502,15 @@ class Pods
         $uri_hash = wp_hash($_SERVER['REQUEST_URI']);
 
         $save_button_atts = array(
-        	'type' => 'button',
-        	'class' => 'button btn_save',
-        	'value' => $label,
-        	'onclick' => "saveForm($pods_cache->form_count)"
+            'type' => 'button',
+            'class' => 'button btn_save',
+            'value' => $label,
+            'onclick' => "saveForm($pods_cache->form_count)"
         );
         $save_button_atts = apply_filters('pods_showform_save_button_atts', $save_button_atts, $this);
         $atts = '';
         foreach ($save_button_atts as $att => $value) {
-        	$atts .= $att.'="' . $value . '" ';
+            $atts .= $att.'="' . $value . '" ';
         }
         $save_button = '<input ' . $atts . '/>';
 ?>
@@ -1515,7 +1521,7 @@ class Pods
     <input type="hidden" class="form txt form_count" value="<?php echo $pods_cache->form_count; ?>" />
     <input type="hidden" class="form txt token" value="<?php echo pods_generate_key($pod, $uri_hash, $public_columns, $pods_cache->form_count); ?>" />
     <input type="hidden" class="form txt uri_hash" value="<?php echo $uri_hash; ?>" />
-	<?php echo apply_filters('pods_showform_save_button', $save_button, $save_button_atts, $this); ?>
+    <?php echo apply_filters('pods_showform_save_button', $save_button, $save_button_atts, $this); ?>
     </div>
 <?php
         do_action('pods_showform_post', $pod_id, $public_columns, $label, $this);
@@ -1523,20 +1529,20 @@ class Pods
 
     /**
      * Build public input form
-     * 
+     *
      * @deprecated deprecated since 2.0.0
      */
-    function publicForm ($public_columns = null, $label = 'Save Changes', $thankyou_url = null) {
+    public function publicForm ($public_columns = null, $label = 'Save Changes', $thankyou_url = null) {
         pods_deprecated('Pods::publicForm', '2.0.0', 'Pods::form');
         include PODS_DIR . '/ui/input_form.php';
     }
 
     /**
      * Build HTML for a single field
-     * 
+     *
      * @deprecated deprecated since 2.0.0
      */
-    function build_field_html ($field) {
+    public function build_field_html ($field) {
         pods_deprecated('Pods::build_field_html', '2.0.0');
         include PODS_DIR . '/ui/input_fields.php';
     }
@@ -1547,7 +1553,7 @@ class Pods
      * @since 1.2.0
      * @deprecated deprecated since 2.0.0
      */
-    function fetchRecord () {
+    public function fetchRecord () {
         pods_deprecated('Pods::fetchRecord', '2.0.0', 'Pods::fetch');
         return $this->fetch();
     }
@@ -1560,7 +1566,7 @@ class Pods
      * @since 1.2.0
      * @deprecated deprecated since version 2.0.0
      */
-    function get_field ($name, $orderby = null) {
+    public function get_field ($name, $orderby = null) {
         pods_deprecated('Pods::get_field', '2.0.0', 'Pods::field');
         return $this->field(array('name' => $name, 'orderby' => $orderby));
     }
@@ -1573,7 +1579,7 @@ class Pods
      * @since 1.2.0
      * @deprecated deprecated since version 2.0.0
      */
-    function get_pod_id () {
+    public function get_pod_id () {
         pods_deprecated('Pods::get_pod_id', '2.0.0');
         if (!empty($this->data))
             return $this->data[$this->column_id];
@@ -1582,11 +1588,11 @@ class Pods
 
     /**
      * Search and filter records
-     * 
+     *
      * @since 1.x
      * @deprecated deprecated since version 2.0.0
      */
-    function findRecords ($orderby = null, $rows_per_page = 15, $where = null, $sql = null) {
+    public function findRecords ($orderby = null, $rows_per_page = 15, $where = null, $sql = null) {
         pods_deprecated('Pods::findRecords', '2.0.0', 'Pods::find');
         if (null == $orderby)
             $orderby = "t.`{$this->column_id}` DESC";
@@ -1611,51 +1617,51 @@ class Pods
 
     /**
      * Return a single record
-     * 
+     *
      * @since 1.x
      * @deprecated deprecated since version 2.0.0
      */
-    function getRecordById ($id) {
+    public function getRecordById ($id) {
         pods_deprecated('Pods::getRecordById', '2.0.0', 'Pods::fetch_item');
         return $this->fetch_item($id);
     }
 
     /**
      * Fetch the total row count
-     * 
+     *
      * @deprecated deprecated since version 2.0.0
      */
-    function getTotalRows () {
+    public function getTotalRows () {
         pods_deprecated('Pods::getTotalRows', '2.0.0', 'Pods::total_found');
         return $this->total_found();
     }
 
     /**
      * (Re)set the MySQL result pointer
-     * 
+     *
      * @deprecated deprecated since version 2.0.0
      */
-    function resetPointer ($row_number = 0) {
+    public function resetPointer ($row_number = 0) {
         pods_deprecated('Pods::resetPointer', '2.0.0', 'Pods::reset');
         return $this->reset($row_number);
     }
 
     /**
      * Display the pagination controls
-     * 
+     *
      * @deprecated deprecated since 2.0.0
      */
-    function getPagination ($label = 'Go to page:') {
+    public function getPagination ($label = 'Go to page:') {
         pods_deprecated('Pods::getPagination', '2.0.0', 'Pods::pagination');
         echo $this->pagination(array('label' => $label));
     }
 
     /**
      * Display the list filters
-     * 
+     *
      * @deprecated deprecated since 2.0.0
      */
-    function getFilters ($filters = null, $label = 'Filter', $action = '') {
+    public function getFilters ($filters = null, $label = 'Filter', $action = '') {
         pods_deprecated('Pods::getFilters', '2.0.0', 'Pods::filters');
         $params = array('filters' => $filters,
                             'label' => $label,
@@ -1674,17 +1680,17 @@ class Pods
      * @since 1.2.0
      * @deprecated deprecated since version 2.0.0
      */
-    function pod_helper ($helper_name, $value = null, $name = null) {
+    public function pod_helper ($helper_name, $value = null, $name = null) {
         pods_deprecated('Pods::pod_helper', '2.0.0', 'Pods::helper');
         return $this->helper(array('helper' => $helper_name, 'value' => $value, 'name' => $name));
     }
 
     /**
      * Display the page template
-     * 
+     *
      * @deprecated deprecated since version 2.0.0
      */
-    function showTemplate ($template_name, $code = null) {
+    public function showTemplate ($template_name, $code = null) {
         pods_deprecated('Pods::showTemplate', '2.0.0', 'Pods::template');
         return $this->template($template_name, $code);
     }

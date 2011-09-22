@@ -18,7 +18,7 @@ class PodsAPI
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 1.7.1
      */
-    function __construct ($pod = null, $format = 'php') {
+    public function __construct ($pod = null, $format = 'php') {
         if (!empty($pod)) {
             $this->format = $format;
             $this->pod_data = $this->load_pod(array('name' => $pod));
@@ -27,9 +27,8 @@ class PodsAPI
                 $this->pod_id = $this->pod_data['id'];
                 $this->fields = $this->pod_data['fields'];
             }
-        else
+            else
                 return false;
-            return true;
         }
     }
 
@@ -45,9 +44,9 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    function save_pod ($params) {
+    public function save_pod ($params) {
         $pod = $this->load_pod($params);
-    $params = (object) pods_sanitize($params);
+        $params = (object) pods_sanitize($params);
         if (!empty($pod)) {
             $params->id = $pod['id'];
             $params->name = $pod['name'];
@@ -186,7 +185,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    function save_column ($params) {
+    public function save_column ($params) {
         $params = (object) $params;
 
         $params->pod_id = pods_absint($params->pod_id);
@@ -320,7 +319,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 2.0.0
      */
-    function save_object ($params) {
+    public function save_object ($params) {
         $params = (object) $params;
         if (!isset($params->name) || empty($params->name))
             return pods_error('Name must be given to save an Object', $this);
@@ -370,7 +369,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    function save_template ($params) {
+    public function save_template ($params) {
         $params = (object) $params;
         $params->type = 'template';
         return $this->save_object($params);
@@ -386,7 +385,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    function save_page ($params) {
+    public function save_page ($params) {
         $params = (object) $params;
         if (!isset($params->name)) {
             $params->name = $params->uri;
@@ -408,7 +407,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    function save_helper ($params) {
+    public function save_helper ($params) {
         $params = (object) $params;
         $params->type = 'helper';
         return $this->save_object($params);
@@ -420,7 +419,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    function save_roles ($params) {
+    public function save_roles ($params) {
     $params = pods_sanitize($params);
         $roles = array();
         foreach ($params as $key => $val) {
@@ -431,38 +430,6 @@ class PodsAPI
         }
         delete_option('pods_roles');
         add_option('pods_roles', serialize($roles));
-    }
-
-    /**
-     * Retrieve an associative array of table values
-     *
-     * $params['table'] string The table name (default: "types")
-     * $params['columns'] string Comma-separated string of columns (default: "*")
-     * $params['orderby'] string MySQL ORDER BY clause (default: "id ASC")
-     * $params['where'] string MySQL WHERE clause (default: 1)
-     * $params['array_key'] string The key column for the returned associative array (default: "id")
-     *
-     * @param array $params An associative array of parameters
-     * @return array The table data array
-     * @since 1.8.5
-     */
-    function get_table_data ($params) {
-        $params = is_array($params) ? $params : array();
-        $defaults = array(
-            'table' => 'types',
-            'columns' => '*',
-            'orderby' => '`id` ASC',
-            'where' => 1,
-            'array_key' => 'id');
-        $params = (object) array_merge($defaults, $params);
-        $result = pods_query("SELECT $params->columns FROM `@wp_pods_$params->table` WHERE $params->where ORDER BY $params->orderby", $this);
-        $data = array();
-        if (!empty($result)) {
-            foreach ($result as $row) {
-                $data[$row->{$params->array_key}] = get_object_vars($row);
-            }
-        }
-        return $data;
     }
 
     /**
@@ -479,7 +446,7 @@ class PodsAPI
      * @return int The item ID
      * @since 1.7.9
      */
-    function save_pod_item ($params) {
+    public function save_pod_item ($params) {
         $params = (object) str_replace('@wp_', '{prefix}', pods_sanitize($params));
 
     // deprecated in 2.0
@@ -622,8 +589,6 @@ class PodsAPI
         foreach ($columns_active as $column) {
             $value = $columns[$column]['value'];
             $type = $columns[$column]['type'];
-            $label = $columns[$column]['label'];
-            $label = empty($label) ? $column : $label;
 
             // Validate value
             $value = $this->handle_column_validation($value, $column, $columns, $params);
@@ -780,7 +745,7 @@ class PodsAPI
      * @return int The table row ID
      * @since 1.12
      */
-    function duplicate_pod_item ($params) {
+    public function duplicate_pod_item ($params) {
         $params = (object) pods_sanitize($params);
 
         $id = false;
@@ -827,7 +792,7 @@ class PodsAPI
      * @return int The table row ID
      * @since 1.12
      */
-    function export_pod_item ($params) {
+    public function export_pod_item ($params) {
         $params = (object) pods_sanitize($params);
 
         $data = false;
@@ -864,7 +829,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.9.0
      */
-    function reorder_pod_item ($params) {
+    public function reorder_pod_item ($params) {
         $params = (object) pods_sanitize($params);
 
     // deprecated in 2.0
@@ -889,7 +854,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.9.0
      */
-    function reset_pod ($params) {
+    public function reset_pod ($params) {
         $params = (object) pods_sanitize($params);
 
         $pod = $this->load_pod($params);
@@ -921,7 +886,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    function drop_pod ($params) {
+    public function drop_pod ($params) {
         $params = (object) pods_sanitize($params);
 
         $pod = $this->load_pod($params);
@@ -958,7 +923,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    function drop_column ($params) {
+    public function drop_column ($params) {
         $params = (object) pods_sanitize($params);
 
         if (!isset($params->pod))
@@ -1002,7 +967,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 2.0.0
      */
-    function drop_object ($params) {
+    public function drop_object ($params) {
         $params = (object) pods_sanitize($params);
         if (!isset($params->id) || empty($params->id)) {
             if (!isset($params->name) || empty($params->name))
@@ -1028,7 +993,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    function drop_template ($params) {
+    public function drop_template ($params) {
         $params = (object) $params;
         $params->type = 'template';
         return $this->drop_object($params);
@@ -1043,7 +1008,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    function drop_page ($params) {
+    public function drop_page ($params) {
         $params = (object) $params;
         if (!isset($params->name)) {
             $params->name = $params->uri;
@@ -1063,7 +1028,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    function drop_helper ($params) {
+    public function drop_helper ($params) {
         $params = (object) $params;
         $params->type = 'helper';
         return $this->drop_object($params);
@@ -1080,7 +1045,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    function drop_pod_item ($params) {
+    public function drop_pod_item ($params) {
         $params = (object) pods_sanitize($params);
 
         // deprecated in 2.0
@@ -1167,13 +1132,6 @@ class PodsAPI
         }
     }
 
-    function handle_options ($options, $pod) {
-        // setup default array
-        $default = array('is_toplevel' => 0, 'label' => '');
-        $options = array_merge($default, $options);
-        return apply_filters('pods_api_pod_options', $options, $pod);
-    }
-
     /**
      * Check if a Pod exists
      *
@@ -1183,7 +1141,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.12
      */
-    function pod_exists ($params) {
+    public function pod_exists ($params) {
         if (defined('PODS_STRICT_MODE') && PODS_STRICT_MODE)
             $params = pods_sanitize($params);
         $params = (object) $params;
@@ -1207,7 +1165,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    function load_pod ($params) {
+    public function load_pod ($params) {
         $params = (object) pods_sanitize($params);
         if ((!isset($params->id) || empty($params->id)) && (!isset($params->name) || empty($params->name)))
             return pods_error('Either Pod ID or Name are required', $this);
@@ -1240,7 +1198,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 2.0.0
      */
-    function load_pods ($params) {
+    public function load_pods ($params) {
         $params = (object) pods_sanitize($params);
         $where = $orderby = $limit = '';
         if (isset($params->type) && !empty($params->type)) {
@@ -1288,7 +1246,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    function load_column ($params) {
+    public function load_column ($params) {
         $params = (object) pods_sanitize($params);
         if (empty($params->id)) {
             if (empty($params->name))
@@ -1319,7 +1277,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 2.0.0
      */
-    function load_object ($params) {
+    public function load_object ($params) {
         $params = (object) pods_sanitize($params);
         if (!isset($params->id) || empty($params->id)) {
             if (!isset($params->name) || empty($params->name))
@@ -1345,7 +1303,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    function load_template ($params) {
+    public function load_template ($params) {
         $params = (object) $params;
         $params->type = 'template';
         return $this->load_object($params);
@@ -1360,7 +1318,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    function load_page ($params) {
+    public function load_page ($params) {
         $params = (object) $params;
         if (!isset($params->name) && isset($params->uri)) {
             $params->name = $params->uri;
@@ -1379,10 +1337,64 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    function load_helper ($params) {
+    public function load_helper ($params) {
         $params = (object) $params;
         $params->type = 'helper';
         return $this->load_object($params);
+    }
+
+    /**
+     * Load Component Information
+     *
+     * @since 2.0.0
+     */
+    public function load_components () {
+        $components_root = PODS_DIR . 'components';
+        $components_dir = @opendir($components_root);
+        $component_files = array();
+        if (false !== $components_dir) {
+            while (false !== ($file = readdir($components_dir))) {
+                if ('.' == substr($file, 0, 1))
+                    continue;
+                if (is_dir($components_dir . '/' . $file)) {
+                    $components_subdir = @opendir($components_root . $file);
+                    if ($components_subdir) {
+                        while (false !== ($subfile = readdir($components_subdir))) {
+                            if ('.' == substr($subfile, 0, 1))
+                                continue;
+                            if ('.php' == substr($subfile, -4))
+                                $component_files[] = $components_root . $file . '/' . $subfile;
+                        }
+                        closedir($components_subdir);
+                    }
+                }
+                elseif ('.php' == substr($file, -4))
+                    $component_files[] = $components_root . $file;
+            }
+            closedir($components_dir);
+        }
+        $component_files = $this->do_hook('load_components_files', $component_files, $components_root);
+
+        $default_headers = array('Name' => 'Component Name',
+                                 'ShortName' => 'Short Name',
+                                 'ComponentURI' => 'Component URI',
+                                 'Version' => 'Version',
+                                 'Description' => 'Description',
+                                 'Author' => 'Author',
+                                 'AuthorURI' => 'Author URI',
+                                 'HideMenu' => 'Hide from Menu');
+        $components = array();
+        foreach ($component_files as $component_file) {
+            if (!is_readable($component_file))
+                continue;
+            $component_data = get_file_data($component_file, $default_headers, 'pods_component');
+            if (empty($component_data['Name']))
+                continue;
+            if (empty($component_data['ShortName']))
+                $component_data['ShortName'] = $component_data['Name'];
+            $components[str_replace($components_root, '', $component_file)] = $component_data;
+        }
+        return $components;
     }
 
     /**
@@ -1394,7 +1406,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 2.0.0
      */
-    function load_pod_item ($params) {
+    public function load_pod_item ($params) {
         $params = (object) pods_sanitize($params);
 
         if (!isset($params->pod) || empty($params->pod))
@@ -1414,7 +1426,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.7.9
      */
-    function load_sister_fields ($params) {
+    public function load_sister_fields ($params) {
         $params = (object) pods_sanitize($params);
 
         $pod = $this->load_pod(array('name' => $params->pod));
@@ -1443,7 +1455,46 @@ class PodsAPI
         return false;
     }
 
-    function load_column_types () {
+    /**
+     * Retrieve an associative array of table values
+     *
+     * $params['table'] string The table name (default: "types")
+     * $params['columns'] string Comma-separated string of columns (default: "*")
+     * $params['orderby'] string MySQL ORDER BY clause (default: "id ASC")
+     * $params['where'] string MySQL WHERE clause (default: 1)
+     * $params['array_key'] string The key column for the returned associative array (default: "id")
+     *
+     * @param array $params An associative array of parameters
+     * @return array The table data array
+     * @since 1.8.5
+     */
+    public function get_table_data ($params) {
+        $params = is_array($params) ? $params : array();
+        $defaults = array('table' => 'types',
+                          'columns' => '*',
+                          'orderby' => '`id` ASC',
+                          'where' => 1,
+                          'array_key' => 'id');
+        $params = (object) array_merge($defaults, $params);
+        $result = pods_query("SELECT $params->columns FROM `@wp_pods_$params->table` WHERE $params->where ORDER BY $params->orderby", $this);
+        $data = array();
+        if (!empty($result)) {
+            foreach ($result as $row) {
+                $data[$row->{$params->array_key}] = get_object_vars($row);
+            }
+        }
+        return $data;
+    }
+
+    private function handle_options ($options, $pod) {
+        // setup default array
+        $default = array('is_toplevel' => 0,
+                         'label' => '');
+        $options = array_merge($default, $options);
+        return apply_filters('pods_api_pod_options', $options, $pod);
+    }
+
+    private function load_column_types () {
         $columns = array('bool' => 'BOOL DEFAULT 0',
                         'date' => "DATETIME NOT NULL default '0000-00-00 00:00:00'",
                         'num' => 'DECIMAL(12,2)',
@@ -1455,18 +1506,22 @@ class PodsAPI
         return $columns;
     }
 
-    function get_column_definition ($type, $options = null) {
+    private function get_column_definition ($type, $options = null) {
         $column_types = $this->load_column_types();
-        $definition = $columns[$type];
+        $definition = 'VARCHAR(255)';
+        if (isset($column_types[$type]))
+            $definition = $column_types[$type];
         if (!empty($options) && is_array($options)) {
-            // handle options and change definition where needed
+            // @to-do: handle options and change definition where needed
         }
         $definition = apply_filters('pods_column_definition', $definition, $column_types, $type, $options, $this);
         return $definition;
     }
 
-    function handle_column_validation ($value, $column, $columns, $params) {
+    private function handle_column_validation ($value, $column, $columns, $params) {
         $type = $columns[$column]['type'];
+        $label = $columns[$column]['label'];
+        $label = empty($label) ? $column : $label;
 
         // Verify slug columns
         if ('slug' == $type) {
@@ -1513,7 +1568,7 @@ class PodsAPI
      * @param array $params An associative array of parameters
      * @since 1.9.0
      */
-    function export_package ($params) {
+    public function export_package ($params) {
         $export = array(
             'meta' => array(
                 'version' => PODS_VERSION,
@@ -1564,7 +1619,7 @@ class PodsAPI
      * @param mixed $data (optional) An associative array containing a package, or the json encoded package
      * @since 1.9.8
      */
-    function replace_package ($data = false) {
+    public function replace_package ($data = false) {
         return $this->import_package($data, true);
     }
 
@@ -1576,7 +1631,7 @@ class PodsAPI
      * @param bool $replace (optional) Replace existing items when found
      * @since 1.9.0
      */
-    function import_package ($data = false, $replace = false) {
+    public function import_package ($data = false, $replace = false) {
         $output = false;
         if (false===$data || isset($data['action'])) {
             $data = get_option('pods_package');
@@ -1766,7 +1821,7 @@ class PodsAPI
      * @param mixed $data (optional) An associative array containing a package, or the json encoded package
      * @since 1.9.0
      */
-    function validate_package ($data = false, $output = false) {
+    public function validate_package ($data = false, $output = false) {
         if (is_array($data) && isset($data['data'])) {
             $data = $data['data'];
             $output = true;
@@ -1972,7 +2027,7 @@ class PodsAPI
      * @param bool $numeric_mode Use IDs instead of the name field when matching
      * @since 1.7.1
      */
-    function import ($data, $numeric_mode = false) {
+    public function import ($data, $numeric_mode = false) {
         global $wpdb;
         if ('csv' == $this->format) {
             $data = $this->csv_to_php($data);
@@ -2066,12 +2121,8 @@ class PodsAPI
      *
      * @since 1.7.1
      */
-    function export () {
-        global $wpdb;
+    public function export () {
         $data = array();
-        $fields = array();
-        $pick_values = array();
-
         $pod = pods($this->pod, array('limit' => -1,'search' => false,'pagination' => false));
         while($pod->fetch()) {
             $data[$pod->field('id')] = $this->export_pod_item($pod->field('id'));
@@ -2085,7 +2136,7 @@ class PodsAPI
      * @param string $data The CSV input
      * @since 1.7.1
      */
-    function csv_to_php ($data) {
+    public function csv_to_php ($data) {
         $delimiter = ",";
         $expr = "/{$delimiter}(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))/";
         $data = str_replace("\r\n", "\n", $data);
@@ -2107,5 +2158,13 @@ class PodsAPI
             $out[] = $row;
         }
         return $out;
+    }
+
+    private function do_hook () {
+        $args = func_get_args();
+        if (empty($args))
+            return false;
+        $name = array_shift($args);
+        return pods_do_hook("api", $name, $args, $this);
     }
 }

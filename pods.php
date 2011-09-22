@@ -35,10 +35,9 @@ define('PODS_DIR', plugin_dir_path(__FILE__));
 if (!defined('WP_INCLUDES_URL'))
     define('WP_INCLUDES_URL', includes_url());
 
-require_once(PODS_DIR . '/functions.php');
-require_once(PODS_DIR . '/pods-ui.php');
+require_once(PODS_DIR . 'functions.php');
 global $pods, $pods_init, $pods_admin, $pod_page_exists;
 if (false !== pods_compatible() && (!defined('SHORTINIT') || !SHORTINIT)) {
-    require_once(PODS_DIR . '/deprecated/deprecated.php');
+    require_once(PODS_DIR . 'deprecated/deprecated.php');
     $pods_init = pods_init();
 }

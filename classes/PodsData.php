@@ -4,7 +4,7 @@ class PodsData
     // base
     private $prefix = 'pods_';
     private $field_types = array();
-    public $display_errors = true;
+    public static $display_errors = true;
 
     // pods
     public $pod = null;
@@ -916,13 +916,14 @@ class PodsData
         if (is_array($sql)) {
             if (isset($sql[0]) && 1 < count($sql)) {
                 if (2 == count($sql)) {
-                    if (!is_array($sql[1]) || !empty($sql[1]))
-                        $params->sql = self::prepare($sql[0], $sql[1]);
+                    if (!is_array($sql[1]))
+                        $sql[1] = array($sql[1]);
+                    $params->sql = self::prepare($sql[0], $sql[1]);
                 }
                 elseif (3 == count($sql))
-                    $params->sql = self::prepare($sql[0], $sql[1], $sql[2]);
+                    $params->sql = self::prepare($sql[0], array($sql[1], $sql[2]));
                 else
-                    $params->sql = self::prepare($sql[0], $sql[1], $sql[2], $sql[3]);
+                    $params->sql = self::prepare($sql[0], array($sql[1], $sql[2], $sql[3]));
             }
             else
                 $params = array_merge($params, $sql);
@@ -935,7 +936,7 @@ class PodsData
 
         // Run Query
         $params->sql = self::do_hook('query', $params->sql, $params);
-        $result = $wpdb->query($sql);
+        $result = $wpdb->query($params->sql);
         $result = self::do_hook('query_result', $result, $params);
 
         if (false === $result && !empty($params->error) && !empty($wpdb->last_error))
@@ -971,11 +972,13 @@ class PodsData
         return restore_current_blog();
     }
 
-    private function do_hook () {
+    public function do_hook () {
         $args = func_get_args();
         if (empty($args))
             return false;
         $name = array_shift($args);
-        return pods_do_hook("data", $name, $args, $this);
+        if (isset($this))
+            return pods_do_hook("data", $name, $args, $this);
+        return pods_do_hook("data", $name, $args);
     }
 }

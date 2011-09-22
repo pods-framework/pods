@@ -47,14 +47,14 @@ class PodsInit
             if (version_compare($pods_version, PODS_VERSION, '<')) {
                 do_action('pods_update', PODS_VERSION, $pods_version, $_blog_id);
                 if (false !== apply_filters('pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id) && !isset($_GET['pods_bypass_update']))
-                    include(PODS_DIR . '/sql/update.php');
+                    include(PODS_DIR . 'sql/update.php');
                 do_action('pods_update_post', PODS_VERSION, $pods_version, $_blog_id);
             }
         }
         else {
             do_action('pods_install', PODS_VERSION, $pods_version, $_blog_id);
             if (false !== apply_filters('pods_install_run', null, PODS_VERSION, $pods_version, $_blog_id) && !isset($_GET['pods_bypass_install'])) {
-                $sql = file_get_contents(PODS_DIR . '/sql/dump.sql');
+                $sql = file_get_contents(PODS_DIR . 'sql/dump.sql');
                 $sql = apply_filters('pods_install_sql', $sql, PODS_VERSION, $pods_version, $_blog_id);
                 $charset_collate = 'DEFAULT CHARSET utf8';
                 if (!empty($wpdb->charset))

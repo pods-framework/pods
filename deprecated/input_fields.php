@@ -129,7 +129,7 @@ elseif ('desc' == $type) {
         $type = 'desc_tinymce';
         
         // New TinyMCE API by azaozz
-        require_once(PODS_DIR . '/ui/wp-editor/wp-editor.php');
+        require_once(PODS_DIR . 'ui/wp-editor/wp-editor.php');
         require_once(ABSPATH . '/wp-admin/includes/template.php');
 
         if (!isset($pods_type_exists[$type]) || empty($pods_type_exists[$type])) {

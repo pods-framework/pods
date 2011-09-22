@@ -23,6 +23,7 @@ function pods_query ($sql, $error = 'Database Error', $results_error = null, $no
  * @param mixed $args (optional) Arguments to send to filter / action
  * @param object $obj (optional) Object to reference for filter / action
  * @since 2.0.0
+ * @to-do Need to figure out how to handle $scope = 'pods' for the Pods class
  */
 function pods_do_hook ($scope, $name, $args = null, $obj = null) {
     $args = apply_filters("pods_{$scope}_{$name}", $args, &$obj);
@@ -47,7 +48,7 @@ function pods_error ($error, &$obj = null) {
     // log error in WP
     $log_error = new WP_Error('pods-error-' . md5($error), $error);
     // throw error as Exception and return false if silent
-    if (false !== $display_errors) {
+    if (false !== $display_errors && !empty($error)) {
         throw new Exception($error);
         return false;
     }
@@ -79,7 +80,7 @@ function pods_debug ($debug = '_null', $die = true) {
     if (2 === $die)
         wp_die($debug);
     elseif (true === $die)
-        die(debug);
+        die($debug);
     echo $debug;
 }
 
@@ -124,7 +125,6 @@ function pods_deprecated ($function, $version, $replacement = null) {
  * @since 1.2.0
  */
 function pods_sanitize ($input) {
-    global $wpdb;
     $output = array();
 
     if (empty($input))
@@ -509,7 +509,7 @@ function pod_page_exists ($uri = null) {
     $result = pods_query($sql);
     if (empty($result)) {
         // Find any wildcards
-        $sql = "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'page' AND %s LIKE REPLACE(`name`, '*', '%') AND (LENGTH(uri) - LENGTH(REPLACE(uri, '/', ''))) = %d ORDER BY LENGTH(`name`) DESC, `name` DESC LIMIT 1";
+        $sql = "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'page' AND %s LIKE REPLACE(`name`, '*', '%%') AND (LENGTH(`name`) - LENGTH(REPLACE(`name`, '/', ''))) = %d ORDER BY LENGTH(`name`) DESC, `name` DESC LIMIT 1";
         $sql = array($sql, array($uri, $uri_depth));
         $result = pods_query($sql);
     }
@@ -863,7 +863,7 @@ function pods_function_or_file ($function_or_file, $function_name = null, $file_
  * @since 2.0.0
  */
 function pods_init () {
-    require_once(PODS_DIR . '/classes/PodsInit.php');
+    require_once(PODS_DIR . 'classes/PodsInit.php');
     return new PodsInit();
 }
 
@@ -873,7 +873,7 @@ function pods_init () {
  * @since 2.0.0
  */
 function pods ($type = null, $id = null) {
-    require_once(PODS_DIR . '/classes/Pods.php');
+    require_once(PODS_DIR . 'classes/Pods.php');
     return new Pods($type, $id);
 }
 
@@ -883,7 +883,7 @@ function pods ($type = null, $id = null) {
  * @since 2.0.0
  */
 function pods_ui ($obj = null) {
-    require_once(PODS_DIR . '/classes/PodsUI.php');
+    require_once(PODS_DIR . 'classes/PodsUI.php');
     return new PodsUI($obj);
 }
 
@@ -893,7 +893,7 @@ function pods_ui ($obj = null) {
  * @since 2.0.0
  */
 function pods_api () {
-    require_once(PODS_DIR . '/classes/PodsAPI.php');
+    require_once(PODS_DIR . 'classes/PodsAPI.php');
     return new PodsAPI();
 }
 
@@ -903,7 +903,7 @@ function pods_api () {
  * @since 2.0.0
  */
 function pods_data ($pod = null, $id = null) {
-    require_once(PODS_DIR . '/classes/PodsData.php');
+    require_once(PODS_DIR . 'classes/PodsData.php');
     return new PodsData($pod, $id);
 }
 
@@ -913,7 +913,7 @@ function pods_data ($pod = null, $id = null) {
  * @since 2.0.0
  */
 function pods_form_ui () {
-    require_once(PODS_DIR . '/classes/PodsFormUI.php');
+    require_once(PODS_DIR . 'classes/PodsFormUI.php');
     return new PodsFormUI();
 }
 
@@ -923,7 +923,7 @@ function pods_form_ui () {
  * @since 2.0.0
  */
 function pods_admin_ui () {
-    require_once(PODS_DIR . '/classes/PodsAdminUI.php');
+    require_once(PODS_DIR . 'classes/PodsAdminUI.php');
     return new PodsAdminUI();
 }
 
@@ -933,7 +933,7 @@ function pods_admin_ui () {
  * @since 2.0.0
  */
 function pods_migrate ($type = null, $delimiter = null, $data = null) {
-    require_once(PODS_DIR . '/classes/PodsMigrate.php');
+    require_once(PODS_DIR . 'classes/PodsMigrate.php');
     return new PodsMigrate($type, $delimiter, $data);
 }
 
@@ -943,7 +943,7 @@ function pods_migrate ($type = null, $delimiter = null, $data = null) {
  * @since 2.0.0
  */
 function pods_migrate_ui () {
-    require_once(PODS_DIR . '/classes/PodsMigrateUI.php');
+    require_once(PODS_DIR . 'classes/PodsMigrateUI.php');
     return new PodsMigrateUI();
 }
 
@@ -953,6 +953,6 @@ function pods_migrate_ui () {
  * @since 2.0.0
  */
 function pods_array ($container) {
-    require_once(PODS_DIR . '/classes/PodsArray.php');
+    require_once(PODS_DIR . 'classes/PodsArray.php');
     return new PodsArray(&$container);
 }

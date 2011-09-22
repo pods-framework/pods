@@ -194,7 +194,10 @@ class Pods
                                 return false;
 
                             // Get Pod ID for Pod PICK columns
-                            if (!empty($pick_val) && !in_array($pick_val, array('wp_taxonomy', 'wp_post', 'wp_page', 'wp_user'))) {
+                            if (!empty($pick_val) && !in_array($pick_val, array('wp_taxonomy',
+                                                                                'wp_post',
+                                                                                'wp_page',
+                                                                                'wp_user'))) {
                                 $where = 'name';
                                 if ('pod' != $pick_object)
                                     $where = 'object';
@@ -1199,7 +1202,7 @@ class Pods
         $output = '';
         if (0 < $this->rpp && $this->rpp < $this->total_found() && false !== $this->pagination) {
             ob_start();
-            include PODS_DIR . '/ui/pagination.php';
+            include PODS_DIR . 'ui/pagination.php';
             $output = ob_get_clean();
         }
 
@@ -1226,7 +1229,7 @@ class Pods
         $params = (object) $params;
 
         ob_start();
-        include PODS_DIR . '/ui/list_filters.php';
+        include PODS_DIR . 'ui/list_filters.php';
         $output = ob_get_clean();
 
         $output = apply_filters('pods_filters', $output, $params, $this);
@@ -1583,7 +1586,7 @@ class Pods
      */
     public function publicForm ($public_columns = null, $label = 'Save Changes', $thankyou_url = null) {
         pods_deprecated('Pods::publicForm', '2.0.0', 'Pods::form');
-        include PODS_DIR . '/ui/input_form.php';
+        include PODS_DIR . 'ui/input_form.php';
     }
 
     /**
@@ -1593,7 +1596,7 @@ class Pods
      */
     public function build_field_html ($field) {
         pods_deprecated('Pods::build_field_html', '2.0.0');
-        include PODS_DIR . '/ui/input_fields.php';
+        include PODS_DIR . 'ui/input_fields.php';
     }
 
     /**
@@ -1742,5 +1745,13 @@ class Pods
     public function showTemplate ($template_name, $code = null) {
         pods_deprecated('Pods::showTemplate', '2.0.0', 'Pods::template');
         return $this->template($template_name, $code);
+    }
+
+    private function do_hook () {
+        $args = func_get_args();
+        if (empty($args))
+            return false;
+        $name = array_shift($args);
+        return pods_do_hook("pods", $name, $args, $this);
     }
 }

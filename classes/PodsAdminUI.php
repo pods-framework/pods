@@ -12,6 +12,7 @@ class PodsAdminUI
     public function __construct () {
         add_action('admin_menu', array($this, 'admin_menu'), 99);
         add_action('admin_init', array($this, 'admin_init'));
+        add_action('wp_ajax_pods_admin', array($this, 'admin_ajax'));
     }
 
     public function admin_init () {
@@ -23,7 +24,7 @@ class PodsAdminUI
         $submenu = array();
         $this->api = pods_api();
         $results = $this->api->load_pods(array('options' => array('disable_manage' => 0),
-                                               'orderby' => '`weight`,`name`'));
+                                               'orderby' => '`weight`, `name`'));
         $can_manage = pods_access('manage_content');
         if (false !== $results) {
             foreach ($results as $item) {
@@ -133,14 +134,163 @@ class PodsAdminUI
     }
 
     public function admin_components () {
-
+        $components = $this->api->load_components();
+        var_dump($components);
     }
 
     public function admin_components_handler () {
         $components = $this->api->load_components();
+        var_dump($components);
     }
 
     public function admin_help () {
 
+    }
+
+    public function admin_ajax () {
+        if (false === headers_sent()) {
+            if ('' == session_id())
+                @session_start();
+            header('Content-Type: text/html; charset=' . get_bloginfo('charset'));
+        }
+        
+        // Sanitize input
+        $params = stripslashes_deep((array) $_POST);
+        if (!defined('PODS_STRICT_MODE') || !PODS_STRICT_MODE) {
+            foreach ($params as $key => $val) {
+                $params[$key] = pods_sanitize(trim($val));
+            }
+        }
+        $params = (object) $params;
+        
+        $methods = array('save_pod' => array('priv' => 'manage_pods',
+                                             'format' => 'json'),
+                         'save_column' => array('priv' => 'manage_pods'),
+                         'save_template' => array('priv' => 'manage_templates'),
+                         'save_page' => array('priv' => 'manage_pod_pages'),
+                         'save_helper' => array('priv' => 'manage_helpers'),
+                         'save_roles' => array('priv' => 'manage_roles'),
+                         'save_pod_item' => array(),
+                         'reorder_pod_item' => array('access_pod_specific' => true),
+                         'drop_pod' => array('priv' => 'manage_pods'),
+                         'drop_column' => array('priv' => 'manage_pods'),
+                         'drop_template' => array('priv' => 'manage_templates'),
+                         'drop_page' => array('priv' => 'manage_pod_pages'),
+                         'drop_helper' => array('priv' => 'manage_helpers'),
+                         'drop_pod_item' => array('access_pod_specific' => true),
+                         'load_pod' => array('priv' => 'manage_pods',
+                                             'format' => 'json'),
+                         'load_column' => array('priv' => 'manage_pods',
+                                                'format' => 'json'),
+                         'load_template' => array('priv' => 'manage_templates',
+                                                  'format' => 'json'),
+                         'load_page' => array('priv' => 'manage_pod_pages',
+                                              'format' => 'json'),
+                         'load_helper' => array('priv' => 'manage_helpers',
+                                                'format' => 'json'),
+                         'load_sister_fields' => array('priv' => 'manage_pods',
+                                                       'format' => 'json'),
+                         'load_pod_item' => array('access_pod_specific' => true),
+                         'load_files' => array('priv' => 'upload_files'),
+                         'export_package' => array('priv' => 'manage_packages',
+                                                   'format' => 'json',
+                                                   'safe' => true),
+                         'import_package' => array('priv' => 'manage_packages'),
+                         'validate_package' => array('priv' => 'manage_packages'),
+                         'replace_package' => array('priv' => 'manage_packages'),
+                         'security_settings' => array('priv' => 'manage_settings'));
+
+        if (!isset($params->method) || !isset($methods[$params->method]))
+            pods_error('Invalid AJAX request', $this);
+
+        if (!isset($params->_wpnonce) || false === wp_verify_nonce($params->_wpnonce, 'pods-' . $params->method))
+            pods_error('Unauthorized request', $this);
+
+        $defaults = array('priv' => null,
+                          'format' => null,
+                          'safe' => null,
+                          'access_pod_specific' => null);
+        $method = (object) array_merge($defaults, (array) $methods[$params->method]);
+
+        if (true === $method->access_pod_specific) {
+            $priv_val = false;
+            if (isset($params->pod))
+                $priv_val = 'pod_' . $params->pod;
+            if (false === $priv_val || (!pods_access($priv_val) && !pods_access('manage_content')))
+                pods_error('Access denied', $this);
+        }
+
+        // Check permissions (convert to array to support multiple)
+        if (!empty($method->priv)) {
+            foreach ((array) $method->priv as $priv_val) {
+                if (!pods_access($priv_val))
+                    pods_error('Access denied', $this);
+            }
+        }
+
+        if ('save_pod_item' == $params->method) {
+            $columns = pods_validate_key($params->token, $params->datatype, $params->uri_hash, null, $params->form_count);
+            if (false === $columns)
+                pods_error('This form has expired. Please reload the page and ensure your session is still active.', $this);
+
+            if (is_array($columns)) {
+                foreach ($columns as $key => $val) {
+                    $column = is_array($val) ? $key : $val;
+                    if (!isset($params->$column))
+                        unset($columns[$column]);
+                    else
+                        $columns[$column] = $params->$column;
+                }
+            }
+            else {
+                $tmp = $this->api->load_pod(array('name' => $params->datatype));
+                $columns = array();
+                foreach ($tmp['fields'] as $field_data) {
+                    $column = $field_data['name'];
+                    if (!isset($params->$column))
+                        continue;
+                    $columns[$column] = $params->$column;
+                }
+            }
+            $params->columns = $columns;
+        }
+
+        $params = apply_filters('pods_api_' . $params->method, $params, $method);
+
+        if ('security_settings' == $params->method) {
+            delete_option('pods_disable_file_browser');
+            add_option('pods_disable_file_browser', (isset($params->disable_file_browser) ? $params->disable_file_browser : 0));
+
+            delete_option('pods_files_require_login');
+            add_option('pods_files_require_login', (isset($params->files_require_login) ? $params->files_require_login : 0));
+
+            delete_option('pods_files_require_login_cap');
+            add_option('pods_files_require_login_cap', (isset($params->files_require_login_cap) ? $params->files_require_login_cap : ''));
+
+            delete_option('pods_disable_file_upload');
+            add_option('pods_disable_file_upload', (isset($params->disable_file_upload) ? $params->disable_file_upload : 0));
+
+            delete_option('pods_upload_require_login');
+            add_option('pods_upload_require_login', (isset($params->upload_require_login) ? $params->upload_require_login : 0));
+
+            delete_option('pods_upload_require_login_cap');
+            add_option('pods_upload_require_login_cap', (isset($params->upload_require_login_cap) ? $params->upload_require_login_cap : ''));
+        }
+        else {
+            // Dynamically call the API method
+            $params = (array) $params;
+            $output = $this->api->{$params->method}($params);
+        }
+
+        // Output in PHP or JSON format
+        if ('json' == $method->format && false !== $output)
+            $output = json_encode($output);
+
+        // If output for on-page to go into a textarea
+        if (true === $method->safe)
+            $output = esc_textarea($output);
+
+        if (!is_bool($output))
+            echo $output;
     }
 }

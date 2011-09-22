@@ -11,7 +11,7 @@ if (null !== $group)
             <td class="label field-label">
                 <strong>
                     <?php if ('group' != $field['type']) { ?>
-                        <a class="row-label pods-edit-field-specifics" title="Edit Field" href="#edit-field">
+                        <a class="row-label pods-edit-field-specifics" title="Edit this field" href="#edit-field">
                             <?php 
                                 if(!empty($level)) {
                                     for ($level_count = 0; $level_count < intval($level); $level_count++) {
@@ -30,12 +30,12 @@ if (null !== $group)
                 <div class="row-actions">
                     <?php if ('group' != $field['type']) { ?>
                         <span class="edit">
-                            <a title="Edit Field" class="pods-edit-field-specifics" href="#edit-field">Edit</a>
+                            <a title="Edit this field" class="pods-edit-field-specifics" href="#edit-field">Edit</a>
                              | 
                         </span>
                     <?php } ?>
                     <span class="delete">
-                         <a class="submitdelete" title="Delete this Field" href="#delete-field">Delete</a>
+                         <a class="submitdelete" title="Delete this field" href="#delete-field">Delete</a>
                     </span>
                 </div> 
                 <?php if ('group' != $field['type']) { ?>
@@ -151,7 +151,7 @@ if (null !== $group)
             </td>
             <td class="machine-name field-machine-name">
                 <?php if ('group' != $field['type']) { ?>
-                    <a title="Edit Field" class="pods-edit-field-specifics" href="#edit-field"><?php echo esc_html($field['name']); ?></a>
+                    <a title="Edit this field" class="pods-edit-field-specifics" href="#edit-field"><?php echo esc_html($field['name']); ?></a>
                 <?php } ?>
             </td> 
             <td class="field-type field-field-type">

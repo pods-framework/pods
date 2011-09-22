@@ -3,6 +3,8 @@
 global $i;
 // name has been skipped for the time being
 
+//$pod = $this->api->load_pod('event');
+//$fields = $pod->fields;
 $fields = array(
                 array(
                     'label'     => 'Name',
@@ -141,19 +143,19 @@ $fields = array(
                         <thead> 
                             <tr> 
                                 <th scope="col" id="cb" class="manage-column field-cb check-column">
-                                    &nbsp;
+                                    <span>&nbsp;</span>
                                 </th>
                                 <th scope="col" id="label" class="manage-column field-label">
-                                        <span>Label</span>
+                                    <span>Label</span>
                                 </th>
                                 <th scope="col" id="machine-name" class="manage-column field-machine-name">
-                                        <span>Name</span>
+                                    <span>Name</span>
                                 </th>
                                 <th scope="col" id="field-type" class="manage-column field-field-type">
-                                        <span>Type</span>
+                                    <span>Type</span>
                                 </th>
                                 <th scope="col" id="comment" class="manage-column field-comment">
-                                        <span>Comment</span>
+                                    <span>Comment</span>
                                 </th>
                             </tr> 
                         </thead> 
@@ -161,19 +163,19 @@ $fields = array(
                         <tfoot> 
                             <tr> 
                                 <th scope="col" id="cb" class="manage-column field-cb check-column">
-                                    &nbsp;
+                                    <span>&nbsp;</span>
                                 </th>
                                 <th scope="col" id="label" class="manage-column field-label">
-                                        <span>Label</span>
+                                    <span>Label</span>
                                 </th>
                                 <th scope="col" id="machine-name" class="manage-column field-machine-name">
-                                        <span>Name</span>
+                                    <span>Name</span>
                                 </th>
                                 <th scope="col" id="field-type" class="manage-column field-field-type">
-                                        <span>Type</span>
+                                    <span>Type</span>
                                 </th>
                                 <th scope="col" id="comment" class="manage-column field-comment">
-                                        <span>Comment</span>
+                                    <span>Comment</span>
                                 </th>
                             </tr>
                         </tfoot> 
@@ -186,7 +188,7 @@ $fields = array(
                                         continue;
                                     $group = null;
                                     include PODS_DIR . 'ui/admin/setup_edit_pod_column.php';
-                                    $i++;
+                                    $i++;/*
                                     if('group' == $field['type']) {
                                         $children = $field['children'];
                                         $group = $field;
@@ -194,7 +196,7 @@ $fields = array(
                                             include PODS_DIR . 'ui/admin/setup_edit_pod_column.php';
                                             $i++;
                                         }
-                                    }
+                                    }*/
                                 }
                             ?>
 

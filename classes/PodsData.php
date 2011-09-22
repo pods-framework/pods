@@ -904,7 +904,8 @@ class PodsData
         }
         elseif (is_bool($error)) {
             $display_errors = $error;
-            $error = 'Database Error';
+            if (false !== $error)
+                $error = 'Database Error';
         }
 
         $params = (object) array('sql' => $sql,

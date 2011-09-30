@@ -11,23 +11,33 @@ class PodsAdminUI
      */
     public function __construct () {
         add_action('admin_menu', array($this, 'admin_menu'), 99);
-        add_action('admin_init', array($this, 'admin_init'));
+        add_action('admin_enqueue_scripts', array($this, 'admin_head'));
         add_action('wp_ajax_pods_admin', array($this, 'admin_ajax'));
     }
 
-    public function admin_init () {
-        wp_register_script('pods-floatmenu', PODS_URL . 'ui/js/floatmenu.js', array('jquery'), PODS_VERSION);
-        wp_register_style('pods-form', PODS_URL . 'ui/css/pods-form.css', array(), PODS_VERSION);
+    public function admin_head () {
+        $page = $_GET['page'];
+        if ('pods' == $page || (false !== strpos($page, 'pods-') && 0 === strpos($page, 'pods-'))) {
+            wp_enqueue_script('jquery');
+            wp_enqueue_script('jquery-ui-core');
+            wp_enqueue_script('jquery-ui-sortable');
+
+            wp_register_script('pods-floatmenu', PODS_URL . 'ui/js/floatmenu.js', array(), PODS_VERSION);
+            wp_enqueue_script('pods-floatmenu');
+            
+            wp_register_style('pods-form', PODS_URL . 'ui/css/pods-form.css', array(), PODS_VERSION);
+            wp_enqueue_style('pods-form');
+        }
     }
 
     public function admin_menu () {
         $submenu = array();
         $this->api = pods_api();
-        $results = $this->api->load_pods(array('options' => array('disable_manage' => 0),
+        $results = $this->api->load_pods(array(//'options' => array('disable_manage' => 0),
                                                'orderby' => '`weight`, `name`'));
         $can_manage = pods_access('manage_content');
         if (false !== $results) {
-            foreach ($results as $item) {
+            foreach ((array) $results as $item) {
                 if (!pods_access('pod_'.$item['name']) && !$can_manage)
                     continue;
                 $item['options']['label'] = (!empty($item['options']['label'])) ? $item['options']['label'] : ucwords(str_replace('_', ' ', $item['name']));
@@ -99,23 +109,19 @@ class PodsAdminUI
     }
 
     public function admin_content () {
-
+        $pod = str_replace('pods-manage-', '', $_GET['page']);
+        $ui = pods_ui(array('pod' => $pod));
     }
 
     public function admin_setup () {
-        if (!wp_script_is('jquery-ui-core', 'queue') && !wp_script_is('jquery-ui-core', 'to_do') && !wp_script_is('jquery-ui-core', 'done'))
-            wp_print_scripts('jquery-ui-core');
-        if (!wp_script_is('jquery-ui-sortable', 'queue') && !wp_script_is('jquery-ui-sortable', 'to_do') && !wp_script_is('jquery-ui-sortable', 'done'))
-            wp_print_scripts('jquery-ui-sortable');
-        if (!wp_script_is('pods-floatmenu', 'queue') && !wp_script_is('pods-floatmenu', 'to_do') && !wp_script_is('pods-floatmenu', 'done'))
-            wp_print_scripts('pods-floatmenu');
-        /*if (!wp_script_is('postbox', 'queue') && !wp_script_is('postbox', 'to_do') && !wp_script_is('postbox', 'done'))
-            wp_print_scripts('postbox');*/
-        if (!wp_style_is('pods-form', 'queue') && !wp_style_is('pods-form', 'to_do') && !wp_style_is('pods-form', 'done'))
-            wp_print_styles('pods-form');
-
-        // testing frontend
-        if (!isset($_GET['preview']) || 'edit' == $_GET['preview'])
+        if (!isset($_GET['preview'])) {
+            $ui = pods_ui(array('sql' => array('table' => 'wp_pods',
+                                               'select' => 'name, type'),
+                                'fields' => array('manage' => array('name',
+                                                                    'type'))));
+            $ui->go();
+        }
+        elseif ('edit' == $_GET['preview'])
             require_once PODS_DIR . 'ui/admin/setup.php';
         elseif ('edit-pod' == $_GET['preview'])
             require_once PODS_DIR . 'ui/admin/setup_edit_pod.php';

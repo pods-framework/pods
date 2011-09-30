@@ -42,7 +42,7 @@ if (!empty($filters)) {
                     $pick_column_id = 'comment_ID';
                     $pick_where = "t.`comment_type` = '{$pick_val}'";
                     break;
-                case 'custom_table':
+                case 'table':
                     $pick_table = "{$pick_val}";
                     $pick_column_id = 'id';
                     break;

@@ -12,6 +12,10 @@
  */
 function pods_query ($sql, $error = 'Database Error', $results_error = null, $no_results_error = null) {
     $podsdata = pods_data();
+    global $wpdb;
+    $sql = str_replace('@wp_users', $wpdb->users, $sql);
+    $sql = str_replace('@wp_', $wpdb->prefix, $sql);
+    $sql = str_replace('{prefix}', '@wp_', $sql);
     return $podsdata->query($sql, $error, $results_error, $no_results_error);
 }
 
@@ -70,13 +74,13 @@ $pods_debug = 0;
 function pods_debug ($debug = '_null', $die = true) {
     global $pods_debug;
     $pods_debug++;
-    echo "<e>";
+    echo "<e><pre>";
     ob_start();
-    if ('_null' != $debug)
+    if ('_null' !== $debug)
         var_dump($debug);
     else
         var_dump('Pods Debug #' . $pods_debug);
-    $debug = ob_get_clean();
+    $debug = ob_get_clean() . '</pre>';
     if (2 === $die)
         wp_die($debug);
     elseif (true === $die)

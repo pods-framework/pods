@@ -211,9 +211,9 @@ class PodsData
                 if (false !== $attributes['real_name'])
                     $fieldfield = $attributes['real_name'];
                 if (false !== $attributes['group_related'])
-                    $having[] = "$fieldfield LIKE '%" . $this->sanitize($this->search_query) . "%'";
+                    $having[] = "$fieldfield LIKE '%" . pods_sanitize($this->search_query) . "%'";
                 else
-                    $where[] = "$fieldfield LIKE '%" . $this->sanitize($this->search_query) . "%'";
+                    $where[] = "$fieldfield LIKE '%" . pods_sanitize($this->search_query) . "%'";
             }
             if (!empty($where)) {
                 $where = array('(' . implode(' OR ', $where) . ')');
@@ -257,9 +257,9 @@ class PodsData
             }
             elseif (0 < strlen($this->get_var('filter_' . $filter, false))) {
                 if (false !== $this->search_fields[$filter]['group_related'])
-                    $having[] = "$filterfield LIKE '%" . PodsUI::sanitize($this->get_var('filter_' . $filter, false)) . "%'";
+                    $having[] = "$filterfield LIKE '%" . pods_sanitize($this->get_var('filter_' . $filter, false)) . "%'";
                 else
-                    $where[] = "$filterfield LIKE '%" . PodsUI::sanitize($this->get_var('filter_' . $filter, false)) . "%'";
+                    $where[] = "$filterfield LIKE '%" . pods_sanitize($this->get_var('filter_' . $filter, false)) . "%'";
             }
         }
         if (null !== $params->sql)
@@ -306,7 +306,7 @@ class PodsData
                             continue;
                         if (is_array($field))
                             $field = $key;
-                        $where_sql[] = "`$field` LIKE '%" . $this->sanitize($this->search_query) . "%'";
+                        $where_sql[] = "`$field` LIKE '%" . pods_sanitize($this->search_query) . "%'";
                     }
                     if (!empty($where_sql))
                         $sql .= '(' . implode(' OR ', $where_sql) . ')';
@@ -330,7 +330,7 @@ class PodsData
                             $where_sql[] = "(`$filter` BETWEEN '$start' AND '$end')";
                     }
                     elseif (0 < strlen($this->get_var('filter_' . $filter, false)))
-                        $where_sql[] = "`$filter` LIKE '%" . $this->sanitize($this->get_var('filter_' . $filter, false)) . "%'";
+                        $where_sql[] = "`$filter` LIKE '%" . pods_sanitize($this->get_var('filter_' . $filter, false)) . "%'";
                 }
                 if (!empty($where_sql)) {
                     if (false === $whered)
@@ -393,9 +393,9 @@ class PodsData
                         if (false !== $attributes['real_name'])
                             $fieldfield = $attributes['real_name'];
                         if (false !== $attributes['group_related'])
-                            $having_sql[] = "$fieldfield LIKE '%" . $this->sanitize($this->search_query) . "%'";
+                            $having_sql[] = "$fieldfield LIKE '%" . pods_sanitize($this->search_query) . "%'";
                         else
-                            $where_sql[] = "$fieldfield LIKE '%" . $this->sanitize($this->search_query) . "%'";
+                            $where_sql[] = "$fieldfield LIKE '%" . pods_sanitize($this->search_query) . "%'";
                     }
                     if (!empty($where_sql)) {
                         $where_sql = array('(' . implode(' OR ', $where_sql) . ')');
@@ -439,9 +439,9 @@ class PodsData
                     }
                     elseif (0 < strlen($this->get_var('filter_' . $filter, false))) {
                         if (false !== $this->search_fields[$filter]['group_related'])
-                            $having_sql[] = "$filterfield LIKE '%" . PodsUI::sanitize($this->get_var('filter_' . $filter, false)) . "%'";
+                            $having_sql[] = "$filterfield LIKE '%" . pods_sanitize($this->get_var('filter_' . $filter, false)) . "%'";
                         else
-                            $where_sql[] = "$filterfield LIKE '%" . PodsUI::sanitize($this->get_var('filter_' . $filter, false)) . "%'";
+                            $where_sql[] = "$filterfield LIKE '%" . pods_sanitize($this->get_var('filter_' . $filter, false)) . "%'";
                     }
                 }
                 if (!empty($where_sql)) {
@@ -606,7 +606,7 @@ class PodsData
         if (false === $id)
             $id = $this->id;
         global $wpdb;
-        $sql = "SELECT * FROM `{$this->table}` WHERE `id` = " . $this->sanitize($id);
+        $sql = "SELECT * FROM `{$this->table}` WHERE `id` = " . pods_sanitize($id);
         $row = @current($wpdb->get_results($sql, array_A));
         $row = $this->do_hook('get_row', $row, $id);
         if (!empty($row))
@@ -648,7 +648,7 @@ class PodsData
                             continue;
                         if (is_array($field))
                             $field = $key;
-                        $where_sql[] = "`$field` LIKE '%" . $this->sanitize($this->search_query) . "%'";
+                        $where_sql[] = "`$field` LIKE '%" . pods_sanitize($this->search_query) . "%'";
                     }
                     if (!empty($where_sql))
                         $sql .= '(' . implode(' OR ', $where_sql) . ')';
@@ -672,7 +672,7 @@ class PodsData
                             $where_sql[] = "(`$filter` BETWEEN '$start' AND '$end')";
                     }
                     elseif (0 < strlen($this->get_var('filter_' . $filter, false)))
-                        $where_sql[] = "`$filter` LIKE '%" . $this->sanitize($this->get_var('filter_' . $filter, false)) . "%'";
+                        $where_sql[] = "`$filter` LIKE '%" . pods_sanitize($this->get_var('filter_' . $filter, false)) . "%'";
                 }
                 if (!empty($where_sql)) {
                     if (false === $whered)
@@ -735,9 +735,9 @@ class PodsData
                         if (false !== $attributes['real_name'])
                             $fieldfield = $attributes['real_name'];
                         if (false !== $attributes['group_related'])
-                            $having_sql[] = "$fieldfield LIKE '%" . $this->sanitize($this->search_query) . "%'";
+                            $having_sql[] = "$fieldfield LIKE '%" . pods_sanitize($this->search_query) . "%'";
                         else
-                            $where_sql[] = "$fieldfield LIKE '%" . $this->sanitize($this->search_query) . "%'";
+                            $where_sql[] = "$fieldfield LIKE '%" . pods_sanitize($this->search_query) . "%'";
                     }
                     if (!empty($where_sql)) {
                         $where_sql = array('(' . implode(' OR ', $where_sql) . ')');
@@ -781,9 +781,9 @@ class PodsData
                     }
                     elseif (0 < strlen($this->get_var('filter_' . $filter, false))) {
                         if (false !== $this->search_fields[$filter]['group_related'])
-                            $having_sql[] = "$filterfield LIKE '%" . PodsUI::sanitize($this->get_var('filter_' . $filter, false)) . "%'";
+                            $having_sql[] = "$filterfield LIKE '%" . pods_sanitize($this->get_var('filter_' . $filter, false)) . "%'";
                         else
-                            $where_sql[] = "$filterfield LIKE '%" . PodsUI::sanitize($this->get_var('filter_' . $filter, false)) . "%'";
+                            $where_sql[] = "$filterfield LIKE '%" . pods_sanitize($this->get_var('filter_' . $filter, false)) . "%'";
                     }
                 }
                 if (!empty($where_sql)) {
@@ -931,9 +931,6 @@ class PodsData
         }
 
         $params->sql = trim($params->sql);
-        $params->sql = str_replace('@wp_users', $wpdb->users, $params->sql);
-        $params->sql = str_replace('@wp_', $wpdb->prefix, $params->sql);
-        $params->sql = str_replace('{prefix}', '@wp_', $params->sql);
 
         // Run Query
         $params->sql = self::do_hook('query', $params->sql, $params);
@@ -958,19 +955,6 @@ class PodsData
         global $wpdb;
         list($sql, $data) = self::do_hook('prepare', array($sql, $data));
         return $wpdb->prepare($sql, $data);
-    }
-
-    public static function switch_site ($new_blog, $validate = true) {
-        $new_blog = self::do_hook('switch_site', $new_blog, $validate);
-        $new_blog = pods_absint($new_blog);
-        if (0 < $new_blog)
-            return switch_to_blog($new_blog, $validate);
-        return false;
-    }
-
-    public static function restore_site () {
-        self::do_hook('restore_site');
-        return restore_current_blog();
     }
 
     public function do_hook () {

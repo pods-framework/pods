@@ -1175,7 +1175,9 @@ class PodsAPI
             return pods_error('Pod not found', $this);
         $pod = get_object_vars($result[0]);
         if (!empty($pod['options']))
-            $pod['options'] = @json_decode($pod['options'],true);
+            $pod['options'] = @json_decode($pod['options'], true);
+        if (!is_array($pod['options']))
+            $pod['options'] = array();
         $pod['options'] = $this->handle_options($pod['options'], $pod);
         $pod['fields'] = array();
         $result = pods_query("SELECT * FROM `@wp_pods_fields` WHERE pod_id = {$pod['id']} ORDER BY weight");
@@ -1231,7 +1233,7 @@ class PodsAPI
             if (!empty($pod['options']))
                 $pod['options'] = @json_decode($pod['options'],true);
             $pod['options'] = $this->handle_options($pod['options'], $pod);
-            $the_pods = $pod;
+            $the_pods[] = $pod;
         }
         return $the_pods;
     }
@@ -1490,7 +1492,7 @@ class PodsAPI
         // setup default array
         $default = array('is_toplevel' => 0,
                          'label' => '');
-        $options = array_merge($default, $options);
+        $options = array_merge($default, (array) $options);
         return apply_filters('pods_api_pod_options', $options, $pod);
     }
 

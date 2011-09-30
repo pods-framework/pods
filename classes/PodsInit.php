@@ -35,7 +35,7 @@ class PodsInit
 
         // Switch DB table prefixes
         if (null !== $_blog_id && $_blog_id != $wpdb->blogid)
-            PodsData::switch_site($_blog_id);
+            switch_to_blog(pods_absint($_blog_id));
         else
             $_blog_id = null;
 
@@ -75,7 +75,7 @@ class PodsInit
 
         // Restore DB table prefix (if switched)
         if (null !== $_blog_id)
-            PodsData::restore_site();
+            restore_current_blog();
     }
 
     function init () {
@@ -293,10 +293,15 @@ class PodsInit
              * get_sidebar()
              * get_footer()
              */
+            $template = $pod_page_exists['page_template'];
+            $template = apply_filters('pods_page_template', $template, $pod_page_exists);
 
-            do_action('pods_page_start', $pod_page_exists);
-            $template = false;
-            if ((!defined('PODS_DISABLE_DYNAMIC_TEMPLATE') || !PODS_DISABLE_DYNAMIC_TEMPLATE) && is_object($pods) && !is_wp_error($pods) && isset($pods->page_template) && !empty($pods->page_template) && '' != locate_template(array($pods->page_template), true)) {
+            $render_function = apply_filters('pods_template_redirect', 'false', $template, $pod_page_exists);
+
+            do_action('pods_page', $template, $pod_page_exists);
+            if (is_callable($render_function))
+                call_user_func($render_function);
+            elseif ((!defined('PODS_DISABLE_DYNAMIC_TEMPLATE') || !PODS_DISABLE_DYNAMIC_TEMPLATE) && is_object($pods) && !is_wp_error($pods) && isset($pods->page_template) && !empty($pods->page_template) && '' != locate_template(array($pods->page_template), true)) {
                 $template = $pods->page_template;
                 // found the template and included it, we're good to go!
             }
@@ -304,12 +309,13 @@ class PodsInit
                 $template = $pod_page_exists['page_template'];
                 // found the template and included it, we're good to go!
             }
-            elseif ('' != locate_template(array('pods.php'), true)) {
+            elseif ('' != locate_template(apply_filters('pods_page_default_templates', array('pods.php')), true)) {
                 $template = 'pods.php';
                 // found the template and included it, we're good to go!
             }
             else {
                 // templates not found in theme, default output
+                do_action('pods_page_default', $template, $pod_page_exists);
                 get_header();
                 pods_content();
                 get_sidebar();

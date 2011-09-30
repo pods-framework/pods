@@ -21,7 +21,7 @@ $fields = array(
                 array(
                     'label'     => 'Category',
                     'name'      => 'category',
-                    'type'      => 'pick event_categories',
+                    'type'      => 'relationship to <strong>pod</strong> event_categories',
                     'comment'   => ''
                 ),
                 array(
@@ -59,14 +59,8 @@ $fields = array(
                 array(
                     'label'     => 'Flyer',
                     'name'      => 'flyer',
-                    'type'      => 'file',
+                    'type'      => 'file upload',
                     'comment'   => 'Must be PDF'
-                ),
-                array(
-                    'label'     => 'Location',
-                    'name'      => 'location',
-                    'type'      => 'paragraph',
-                    'comment'   => ''
                 ),
                 array(
                     'label'     => 'Contact Name',
@@ -152,7 +146,7 @@ $fields = array(
                                     <span>Name</span>
                                 </th>
                                 <th scope="col" id="field-type" class="manage-column field-field-type">
-                                    <span>Type</span>
+                                    <span>Field Type</span>
                                 </th>
                                 <th scope="col" id="comment" class="manage-column field-comment">
                                     <span>Comment</span>
@@ -187,13 +181,13 @@ $fields = array(
                                     if ('_pods_empty' == $field['name'])
                                         continue;
                                     $group = null;
-                                    include PODS_DIR . 'ui/admin/setup_edit_pod_column.php';
+                                    include PODS_DIR . 'ui/admin/setup_edit_pod_field.php';
                                     $i++;/*
                                     if('group' == $field['type']) {
                                         $children = $field['children'];
                                         $group = $field;
                                         foreach($children as $field) {
-                                            include PODS_DIR . 'ui/admin/setup_edit_pod_column.php';
+                                            include PODS_DIR . 'ui/admin/setup_edit_pod_field.php';
                                             $i++;
                                         }
                                     }*/
@@ -372,7 +366,7 @@ $field =  array('label'     => 'New Field',
                 'type'      => 'txt',
                 'comment'   => '');
 $group = null;
-include PODS_DIR . 'ui/admin/setup_edit_pod_column.php';
+include PODS_DIR . 'ui/admin/setup_edit_pod_field.php';
 $new_field_row = ob_get_clean();
 ?>
     var new_field_row = '<?php echo addslashes(str_replace(array("\n", "\r"), '', $new_field_row)); ?>';

@@ -100,7 +100,7 @@ class Pods
                     $this->column_id = 'comment_ID';
                     $this->column_name = 'comment_date';
                     break;
-                case 'custom_table':
+                case 'table':
                     $this->column_id = 'id';
                     $this->column_name = 'name';
                     break;
@@ -236,7 +236,7 @@ class Pods
                                 case 'comment':
                                     $table = '@wp_comments';
                                     break;
-                                case 'custom_table':
+                                case 'table':
                                     $table = "{$last_pick_val}";
                                     break;
                             }
@@ -550,7 +550,7 @@ class Pods
                                 $this->search_prepare[] = $search;
                                 $this->search_prepare[] = $search;
                             }
-                            elseif('custom_table' == $column['pick_object']) {
+                            elseif('table' == $column['pick_object']) {
                                 $search_where[] = "`{$column['name']}`.`name` = LIKE %s";
                                 $this->search_prepare[] = $search;
                             }
@@ -578,7 +578,7 @@ class Pods
                                 $search_where[] = "`{$column['name']}`.`comment_ID` = %d";
                                 $this->search_prepare[] = $id;
                             }
-                            elseif('custom_table' == $column['pick_object']) {
+                            elseif('table' == $column['pick_object']) {
                                 $search_where[] = "`{$column['name']}`.`id` = %d";
                                 $this->search_prepare[] = $id;
                             }
@@ -695,7 +695,7 @@ class Pods
         {$params->where}";
                     $this->search_prepare[] = $this->pod_data['object'];
                     break;
-                case 'custom_table':
+                case 'table':
                     $params->table = "{$this->pod_data['object']}";
                     break;
                 default:
@@ -800,7 +800,7 @@ class Pods
                     $pick_column_id = 'comment_ID';
                     $pick_where = " AND t.`comment_type` = '{$this->pod_data['object']}'";
                     break;
-                case 'custom_table':
+                case 'table':
                     $pick_table = "{$this->pod_data['object']}";
                     $pick_column_id = 'id';
                     break;
@@ -1482,7 +1482,7 @@ class Pods
                         $pick_column_id = 'comment_ID';
                         $pick_where = "t.`comment_type` = '{$pick_val}'";
                         break;
-                    case 'custom_table':
+                    case 'table':
                         $pick_table = "{$pick_val}";
                         $pick_column_id = 'id';
                         break;

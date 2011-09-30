@@ -2,7 +2,7 @@
 class PodsUI
 {
     // internal
-    private $pods_data = null;
+    private $pods_data = false;
     private $actions = array('manage',
                              'add',
                              'edit',
@@ -13,10 +13,10 @@ class PodsUI
                              'reorder',
                              'export');
     private $ui_page = array();
-    private $unique_identifier = null;
+    private $unique_identifier = false;
 
     // base
-    public $pod;
+    public $pod = false;
     public $id = 0;
     public $num = ''; // allows multiple co-existing PodsUI instances with separate functionality in URL
     static $excluded = array('do',
@@ -35,10 +35,10 @@ class PodsUI
                              'duplicate'); // used in var_update
 
     // ui
-    public $item; // to be set with localized string
-    public $items; // to be set with localized string
-    public $heading; // to be set with localized string array
-    public $label; // to be set with localized string array
+    public $item = false; // to be set with localized string
+    public $items = false; // to be set with localized string
+    public $heading = false; // to be set with localized string array
+    public $label = false; // to be set with localized string array
     public $icon = false;
     public $css = false; // set to a URL of stylesheet to include
     public $wpcss = false; // set to true to include WP Admin stylesheets
@@ -74,6 +74,7 @@ class PodsUI
     public $filters = array();
     public $search_across = true;
     public $search_across_picks = false;
+    public $default_none = false;
     public $where = array('manage' => null,
                           'edit' => null,
                           'duplicate' => null,
@@ -153,11 +154,12 @@ class PodsUI
             $options = $this->setup_deprecated($options);
         $options = $this->do_hook('pre_init', $options);
         $this->setup($options);
-        if ((!is_object($this->pod) || !isset($this->pod->pod)) && false === $this->table) {
+        if ((!is_object($this->pod) || !isset($this->pod->pod)) && false === $this->sql['table']) {
             echo $this->error(__('<strong>Error:</strong> Pods UI needs a Pods object or a Table definition to run from, see the User Guide for more information.', 'pods'));
             return false;
         }
         $this->pods_data = pods_data();
+        $this->go();
     }
 
     public function setup_deprecated ($deprecated_options) {
@@ -409,25 +411,27 @@ class PodsUI
     public function setup ($options) {
         $options = pods_array($options);
         $options->validate('num', '', 'absint');
-        $options->validate('id', $this->get_var('action' . $this->num, $this->id), 'absint');
+        if (empty($options->num))
+            $options->num = '';
+        $options->validate('id', $this->get_var('action' . $options->num, $this->id), 'absint');
 
-        $options->validate('action', $this->get_var('action' . $this->num, $this->action), 'in_array', array('save', 'create'));
-        $options->validate('do', $this->get_var('do' . $this->num, $this->action), 'in_array', $this->actions);
+        $options->validate('do', $this->get_var('do' . $options->num, $this->do), 'in_array', array('save', 'create'));
+        $options->validate('action', $this->get_var('action' . $options->num, $this->action), 'in_array', $this->actions);
 
         $options->validate('searchable', $this->searchable, 'boolean');
-        $options->validate('search', $this->get_var('search' . $this->num));
+        $options->validate('search', $this->get_var('search' . $options->num));
         $options->validate('search_across', $this->search_across, 'boolean');
         $options->validate('search_across_picks', $this->search_across_picks, 'boolean');
         $options->validate('filters', $this->filters, 'array');
         $options->validate('where', $this->where, 'array_merge');
 
         $options->validate('pagination', $this->pagination, 'boolean');
-        $options->validate('page', $this->get_var('pg' . $this->num, $this->page), 'absint');
-        $options->validate('limit', $this->get_var('limit' . $this->num, $this->limit), 'absint');
+        $options->validate('page', $this->get_var('pg' . $options->num, $this->page), 'absint');
+        $options->validate('limit', $this->get_var('limit' . $options->num, $this->limit), 'absint');
 
         $options->validate('sortable', $this->sortable, 'boolean');
-        $options->validate('orderby', $this->get_var('orderby' . $this->num, $this->orderby), 'absint');
-        $options->validate('orderby_dir', $this->get_var('orderby_dir' . $this->num, $this->orderby_dir), 'in_array', array('ASC', 'DESC'));
+        $options->validate('orderby', $this->get_var('orderby' . $options->num, $this->orderby), 'absint');
+        $options->validate('orderby_dir', $this->get_var('orderby_dir' . $options->num, $this->orderby_dir), 'in_array', array('ASC', 'DESC'));
 
         $options->validate('sql', $this->sql, 'array_merge');
 
@@ -473,16 +477,6 @@ class PodsUI
         $options->validate('css', $this->css);
         $options->validate('wpcss', $this->wpcss, 'boolean');
 
-        $unique_identifier = $this->get_var('page'); // wp-admin page
-        if (is_object($this->pod) && isset($this->pod->pod))
-            $unique_identifier = '_' . $this->pod->pod;
-        elseif (0 < strlen($this->table))
-            $unique_identifier = '_' . $this->table;
-        $unique_identifier .= '_' . $this->page;
-        if (0 < strlen($this->num))
-            $unique_identifier .= '_' . $this->num;
-        $this->unique_identifier = 'podsui_' . md5($unique_identifier);
-
         if (true === $options['wpcss']) {
             global $user_ID;
             get_currentuserinfo();
@@ -492,21 +486,41 @@ class PodsUI
             $this->wpcss = "colors-{$color}";
         }
 
+        $options = $options->dump();
         $options = $this->do_hook('setup_options', $options);
         if (false !== $options && !empty($options)) {
+                echo '<pre>';
             foreach ($options as $option => $value) {
-                if (isset($this->$option))
-                    $this->$option = $value;
+                if (isset($this->{$option}))
+                    $this->{$option} = $value;
             }
+                echo '</pre>';
         }
-        $this->fields = $this->setup_fields();
+
+        $unique_identifier = $this->get_var('page'); // wp-admin page
+        if (is_object($this->pod) && isset($this->pod->pod))
+            $unique_identifier = '_' . $this->pod->pod;
+        elseif (0 < strlen($this->sql['table']))
+            $unique_identifier = '_' . $this->sql['table'];
+        $unique_identifier .= '_' . $this->page;
+        if (0 < strlen($this->num))
+            $unique_identifier .= '_' . $this->num;
+        $this->unique_identifier = 'podsui_' . md5($unique_identifier);
+
+        $this->setup_fields();
+        
         return $options;
     }
 
     public function setup_fields ($fields = null, $which = 'fields') {
         $init = false;
         if (null === $fields) {
-            $fields = $this->fields[$which];
+            if (isset($this->fields[$which]))
+                $fields = (array) $this->fields[$which];
+            elseif (isset($this->fields['manage']))
+                $fields = (array) $this->fields['manage'];
+            else
+                $fields = array();
             if ('fields' == $which)
                 $init = true;
         }
@@ -635,7 +649,7 @@ class PodsUI
             if ('fields' != $which && !empty($this->fields))
                 $this->fields = $this->setup_fields($this->fields, 'fields');
             else
-                $this->fields = $fields;
+                $this->fields['manage'] = $fields;
             if (!in_array('add', $this->actions_disabled) || !in_array('edit', $this->actions_disabled) || !in_array('duplicate', $this->actions_disabled)) {
                 if ('form' != $which && !empty($this->fields['form']))
                     $this->fields['form'] = $this->setup_fields($this->fields['form'], 'form');
@@ -697,8 +711,8 @@ class PodsUI
 
     public function go () {
         $this->do_hook('go');
-        $_GET = $this->unsanitize($_GET); // fix wp sanitization
-        $_POST = $this->unsanitize($_POST); // fix wp sanitization
+        $_GET = pods_unsanitize($_GET); // fix wp sanitization
+        $_POST = pods_unsanitize($_POST); // fix wp sanitization
 
         if (false !== $this->css) {
 ?>
@@ -902,10 +916,10 @@ class PodsUI
         if (false === $insert && 0 < $this->id) {
             $this->insert_id = $this->id;
             $values[] = $this->id;
-            $check = $wpdb->query($wpdb->prepare("UPDATE $this->table SET $field_sql WHERE id=%d", $values));
+            $check = $wpdb->query($wpdb->prepare("UPDATE $this->sql['table'] SET $field_sql WHERE id=%d", $values));
         }
         else
-            $check = $wpdb->query($wpdb->prepare("INSERT INTO $this->table SET $field_sql", $values));
+            $check = $wpdb->query($wpdb->prepare("INSERT INTO $this->sql['table'] SET $field_sql", $values));
         if ($check) {
             if (0 == $this->insert_id)
                 $this->insert_id = $wpdb->insert_id;
@@ -937,12 +951,15 @@ class PodsUI
     }
 
     public function get_field ($field) {
+        $value = null;
+
         // use PodsData to get field
+
         if (isset($this->actions_custom['get_field']) && function_exists("{$this->actions_custom['get_field']}"))
             return $this->actions_custom['get_field']($field, $this);
         if (false !== $this->pod && is_object($this->pod))
-            $value = $this->pod->get_field($field);
-        else
+            $value = $this->pod->field($field);
+        elseif (isset($this->row[$field]))
             $value = $this->row[$field];
         return $this->do_hook('get_field', $value, $field);
     }
@@ -1105,23 +1122,24 @@ class PodsUI
     <br class="clear" />
 <?php
         }
+        if (!empty($this->data)) {
 ?>
     <div class="tablenav">
 <?php
-        if (!empty($this->data) && false !== $this->pagination) {
+            if (false !== $this->pagination) {
 ?>
         <div class="tablenav-pages<?php echo ($this->limit < $this->total || 1 < $this->page) ? '' : ' one-page'; ?>">
             <?php $this->pagination(1); ?>
         </div>
 <?php
-        }
-        if (true === $reorder && !in_array('reorder', $this->actions_disabled) && !in_array('delete', $this->actions_hidden)) {
+            }
+            if (true === $reorder && !in_array('reorder', $this->actions_disabled) && !in_array('delete', $this->actions_hidden)) {
 ?>
         <input type="button" value="<?php _e('Update Order', 'pods'); ?>" class="button" onclick="jQuery('form.admin_ui_reorder_form').submit();" />
         <input type="button" value="<?php _e('Cancel', 'pods'); ?>" class="button" onclick="document.location='<?php echo $this->var_update(array('action' . $this->num => 'manage')); ?>';" />
 <?php
-        }
-        elseif (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden)) {
+            }
+            elseif (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden)) {
 ?>
         <div class="alignleft actions">
             <select name="action">
@@ -1130,24 +1148,27 @@ class PodsUI
             </select> <input type="submit" id="doaction" class="button-secondary action" value="<?php _e('Apply', 'pods'); ?>">
         </div>
 <?php
-        }
-        elseif (!in_array('export', $this->actions_disabled) && !in_array('export', $this->actions_hidden)) {
+            }
+            elseif (!in_array('export', $this->actions_disabled) && !in_array('export', $this->actions_hidden)) {
 ?>
         <div class="alignleft actions">
             <strong><?php _e('Export', 'pods'); ?>:</strong>
 <?php
-            foreach ($this->export_formats as $format) {
+                foreach ($this->export_formats as $format) {
 ?>
             <input type="button" value=" <?php echo strtoupper($format); ?> " class="button" onclick="document.location='<?php echo $this->var_update(array('action' . $this->num => 'export', 'export_type' . $this->num => $format)); ?>';" />
 <?php
-            }
+                }
 ?>
         </div>
 <?php
-        }
+            }
 ?>
         <br class="clear" />
     </div>
+<?php
+        }
+?>
     <div class="clear"></div>
 <?php
         if (empty($this->data) && false !== $this->default_none && false === $this->search) {
@@ -1309,23 +1330,23 @@ class PodsUI
                         $what = array('name');
                         if (is_array($table)) {
                             if (isset($table['on']))
-                                $on = $this->sanitize($table['on']);
+                                $on = pods_sanitize($table['on']);
                             if (isset($table['is']) && isset($row[$table['is']]))
-                                $is = $this->sanitize($row[$table['is']]);
+                                $is = pods_sanitize($row[$table['is']]);
                             if (isset($table['what'])) {
                                 $what = array();
                                 if (is_array($table['what'])) {
                                     foreach ($table['what'] as $wha) {
-                                        $what[] = $this->sanitize($wha);
+                                        $what[] = pods_sanitize($wha);
                                     }
                                 }
                                 else
-                                    $what[] = $this->sanitize($table['what']);
+                                    $what[] = pods_sanitize($table['what']);
                             }
                             if (isset($table['table']))
                                 $table = $table['table'];
                         }
-                        $table = $this->sanitize($table);
+                        $table = pods_sanitize($table);
                         $wha = implode(',', $what);
                         $sql = "SELECT {$wha} FROM {$table} WHERE `{$on}`='{$is}'";
                         $value = @current($wpdb->get_results($sql, ARRAY_A));
@@ -1490,8 +1511,8 @@ class PodsUI
     }
 
     public function screen_meta () {
-        $screen_html = $help_html = array();
-        $screen_link = $help_link = null;
+        $screen_html = $help_html = '';
+        $screen_link = $help_link = '';
         if (!empty($this->screen_options) && !empty($this->help)) {
             foreach ($this->ui_page as $page) {
                 if (isset($this->screen_options[$page])) {

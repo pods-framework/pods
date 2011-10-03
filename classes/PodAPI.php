@@ -245,7 +245,7 @@ class PodAPI
                 pod_query("ALTER TABLE `@wp_pod_tbl_$params->dtname` ADD COLUMN `$params->name` $dbtype", 'Cannot create new column');
             }
             else {
-                pod_query("UPDATE @wp_pod_fields SET sister_field_id = '$field_id' WHERE id = $params->sister_field_id LIMIT 1", 'Cannot update sister field');
+                pod_query("UPDATE @wp_pod_fields SET sister_field_id = '{$field_id}' WHERE id = '{$params->sister_field_id}' LIMIT 1", 'Cannot update sister field');
             }
         }
         // Edit existing column
@@ -438,7 +438,7 @@ class PodAPI
         // Set defaults
         $params = (object) array_merge(array('id' => '',
                                              'name' => '',
-                                             'helper_type' => 'display',
+                                             //'helper_type' => 'display',
                                              'phpcode' => ''),
                                        (array) $params);
 
@@ -450,6 +450,8 @@ class PodAPI
             if (empty($params->name)) {
                 return $this->oh_snap('<e>Enter a helper name');
             }
+            if (!isset($params->helper_type) || empty($params->helper_type))
+                $params->helper_type = 'display';
 
             $sql = "SELECT id FROM @wp_pod_helpers WHERE name = '$params->name' LIMIT 1";
             pod_query($sql, 'Cannot get helpers', 'helper by this name already exists');
@@ -459,10 +461,10 @@ class PodAPI
         // Edit existing helper
         else {
             $maybename = '';
-            if (!empty($params->name))
+            if (isset($params->name) && !empty($params->name))
                 $maybename = "name = '$params->name',";
             $maybetype = '';
-            if (!empty($params->helper_type))
+            if (isset($params->helper_type) && !empty($params->helper_type))
                 $maybetype = "helper_type = '$params->helper_type',";
             pod_query("UPDATE @wp_pod_helpers SET {$maybename} {$maybetype} phpcode = '$params->phpcode' WHERE id = $params->id LIMIT 1");
         }
@@ -1220,7 +1222,7 @@ class PodAPI
         do_action('pods_pre_drop_pod_item', $params);
 
         // Pre-drop helpers
-        if (0 < strlen($params->pre_drop_helpers)) {
+        if (0 < count($params->pre_drop_helpers)) {
             foreach ($params->pre_drop_helpers as $helper) {
                 $function_or_file = $helper;
                 $check_function = $function_or_file;
@@ -1269,7 +1271,7 @@ class PodAPI
         do_action('pods_post_drop_pod_item', $params);
 
         // Post-drop helpers
-        if (0 < strlen($params->post_drop_helpers)) {
+        if (0 < count($params->post_drop_helpers)) {
             foreach ($params->post_drop_helpers as $helper) {
                 $function_or_file = $helper;
                 $check_function = $function_or_file;

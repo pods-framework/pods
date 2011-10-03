@@ -24,6 +24,7 @@ class PodInit
         }
 
         add_action('init', array($this, 'init'));
+        add_action('after_setup_theme', array($this, 'deprecated'));
         add_action('admin_menu', array($this, 'admin_menu'), 99);
         add_action('template_redirect', array($this, 'template_redirect'));
         add_action('delete_attachment', array($this, 'delete_attachment'));
@@ -82,6 +83,8 @@ class PodInit
             do_action('pods_install', PODS_VERSION, $installed, $blogid);
             if (null === apply_filters('pods_install_run', null, PODS_VERSION, $installed, $blogid) && !isset($_GET['pods_bypass_install'])) {
                 $sql = file_get_contents(PODS_DIR . '/sql/dump.sql');
+                $sql = str_replace("\r", "\n", $sql);
+                $sql = str_replace("\n\n", "\n", $sql);
                 $sql = apply_filters('pods_install_sql', $sql, PODS_VERSION, $installed, $blogid);
                 $charset_collate = 'DEFAULT CHARSET utf8';
                 if (!empty($wpdb->charset))
@@ -92,6 +95,9 @@ class PodInit
                     $sql = str_replace('DEFAULT CHARSET utf8', $charset_collate, $sql);
                 $sql = explode(";\n", str_replace('wp_', '@wp_', $sql));
                 for ($i = 0, $z = count($sql); $i < $z; $i++) {
+                    $sql[$i] = trim($sql[$i]);
+                    if (empty($sql[$i]))
+                        continue;
                     pod_query($sql[$i], 'Cannot setup SQL tables');
                 }
             }
@@ -316,24 +322,35 @@ class PodInit
              * get_sidebar()
              * get_footer()
              */
-            $page_template = $pod_page_exists['page_template'];
+            $template = $pod_page_exists['page_template'];
+            $template = apply_filters('pods_page_template', $template, $pod_page_exists);
 
-            if ((!defined('PODS_DISABLE_DYNAMIC_TEMPLATE') || !PODS_DISABLE_DYNAMIC_TEMPLATE) && is_object($pods) && !is_wp_error($pods) && isset($pods->page_template) && !empty($pods->page_template) && '' != locate_template(array($pods->page_template), true)) {
+            $render_function = apply_filters('pods_template_redirect', 'false', $template, $pod_page_exists);
+
+            do_action('pods_page', $template, $pod_page_exists);
+            if (is_callable($render_function))
+                call_user_func($render_function);
+            elseif ((!defined('PODS_DISABLE_DYNAMIC_TEMPLATE') || !PODS_DISABLE_DYNAMIC_TEMPLATE) && is_object($pods) && !is_wp_error($pods) && isset($pods->page_template) && !empty($pods->page_template) && '' != locate_template(array($pods->page_template), true)) {
+                $template = $pods->page_template;
                 // found the template and included it, we're good to go!
             }
-            elseif (!empty($page_template) && '' != locate_template(array($page_template), true)) {
+            elseif (!empty($pod_page_exists['page_template']) && '' != locate_template(array($pod_page_exists['page_template']), true)) {
+                $template = $pod_page_exists['page_template'];
                 // found the template and included it, we're good to go!
             }
-            elseif ('' != locate_template(array('pods.php'), true)) {
+            elseif ('' != locate_template(apply_filters('pods_page_default_templates', array('pods.php')), true)) {
+                $template = 'pods.php';
                 // found the template and included it, we're good to go!
             }
             else {
                 // templates not found in theme, default output
+                do_action('pods_page_default', $template, $pod_page_exists);
                 get_header();
                 pods_content();
                 get_sidebar();
                 get_footer();
             }
+            do_action('pods_page_end', $template, $pod_page_exists);
             exit;
         }
     }
@@ -373,5 +390,9 @@ class PodInit
             wp_print_scripts('jquery-ui-sortable');
         if (null === apply_filters('pods_admin_content', null))
             include PODS_DIR . '/ui/manage_content.php';
+    }
+
+    function deprecated() {
+        require_once(PODS_DIR . '/deprecated.php'); // DEPRECATED IN 2.0
     }
 }

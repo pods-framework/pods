@@ -65,52 +65,6 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 == Changelog ==
 
-= 1.12 - September 2011 =
-* Security Update: AJAX API calls all utilize _wpnonce hashes, update your customized publicForm / input helper code AJAX (api.php and misc.php expect `wp_create_nonce('pods-' . $action)` usage)
-* Added: Multi-level references in field names when referenced in Pod :: findRecords $params (`select, where, groupby, having, orderby`) - ex. `'where' => 'pick_field.another_pick_field.another_pick.field = "Example"'` (donation-funded by @chriscarvache)
-* Added: Multi-level references in search filters when referenced in Pod :: findRecords $params (`select, where, groupby, having, orderby`) or Pod :: traverse variable (when not mentioned in params but you want it filterable) (donation-funded by @chriscarvache)
-* Added: Lightweight Relationship (PICK) field support in Pod :: findRecords (2.0 full support in UI) (donation-funded by @chriscarvache)
-* Added: Fully revamped JOINs based on field names when referenced in Pod :: findRecords $params (`select, where, groupby, having, orderby`) (donation-funded by @chriscarvache)
-* Added: RegEx auto-sanitizing of field names when referenced in Pod :: findRecords $params (`select, where, groupby, having, orderby`) (donation-funded by @chriscarvache)
-* Added: PodAPI :: duplicate_pod_item with $params as `'datatype' => 'podname', 'tbl_row_id' => $item_id_to_duplicate` (returns new id) (donation-funded by @gr0b1)
-* Added: PodAPI :: export_pod_item with $params as `'datatype' => 'podname', 'tbl_row_id' => $item_id_to_export` (returns array of data - pick/file columns are arrays of their data) (donation-funded by @gr0b1)
-* Added: Option to use SQL_CALC_FOUND_ROWS or COUNT(*) for getting the total rows available (for use with pagination / Pod :: getTotalRows) setting 'calc_found_rows' or 'count_found_rows' to true in Pod :: findRecords $params (useful for complex queries on data)
-* Added: Option to disable pagination altogether (separate from setting page to 1, but also forces page to be 1) in findRecords $params `'pagination' => false`
-* Added: PODS_GLOBAL_POD_PAGINATION constant to globally disable pagination by setting the constant to false (can be renabled as needed in findRecords $params `'pagination' => true`)
-* Added: PODS_GLOBAL_POD_SEARCH constant to globally disable search by setting the constant to false (can be renabled as needed in findRecords $params `'search' => true`)
-* Added: PODS_GLOBAL_POD_SEARCH_MODE constant to globally set the search_mode to 'text', 'int', or 'text_like' (default 'int' which references field IDs) - can be overrided as needed in findRecords $params `'search_mode' => 'text'`)
-* Added: PODS_DISABLE_EVAL constant to globally disable PHP eval() on PHP-enabled areas of Pods (Templates, Helpers, Pod Pages)
-* Added: PODS_WP_VERSION_MINIMUM constant to disable WP minimum version requirement
-* Added: PODS_PHP_VERSION_MINIMUM constant to disable PHP minimum version requirement
-* Added: PODS_MYSQL_VERSION_MINIMUM constant to disable MySQL minimum version requirement
-* Added: Pod :: getRowNumber() to get current row number and Pod :: row_number variable to internally be used to keep track of which row_number you're on in findRecords loop (incremented in fetchRecord)
-* Added: Pod :: raw_sql contains SQL without @ table references replaced and Pod :: sql now should reflect the same query as hits the DB (@ table references replaced)
-* Added: PodAPI :: save_template / save_page / save_helper now allow 'name' / 'uri' to be renamed on save (only in API, not UI)
-* Added: PodAPI :: save_pod_item now accepts an array for $params->tbl_row_id which will let you save multiple items at a time using the rest of the $params
-* Added: PodAPI :: delete_pod_item now accepts an array for $params->tbl_row_id which will let you delete multiple items at a time
-* Added: Having trouble updating Pods but you know things should be OK (advanced users)? Try adding ?pods_bypass_update=1 to the page URL you're on to bypass the update
-* Added: Pagination / Filters to pods_shortcode (ex. `[pods name="mypod" limit="15" pagination="1" pagination_label="Go to page:" pagination_location="after" filters="status,category" filters_label="Filter:" filters_location="before"]`)
-* Added: pods_pod_page_templates filter to get $page_templates for use in Pod Page editor, which allows support for Pods built into iThemes Builder coming soon (to select layouts)
-* Added: When using pods_query and setting $error to false, will bypass die on MySQL error
-* Added: When using Pods UI as an admin (manage_options capability), add 'debug=1' to the URL to see the currently used SQL query for a manage screen
-* Added: pods_manage now returns $object
-* Added: Sort classes now used to show current sort direction
-* Changed: pods_generate_key / pods_validate_key revamped to work off of wpnonce, though $_SESSION is still used for holding the columns from that form usage
-* Changed: pods_sanitize now sanitizes keys (previously only values)
-* Changed: Now using wp_hash instead of md5 to get the hash of a value
-* Changed: PODS_VERSION_FULL removed and PODS_VERSION now set as real point version (ex. `1.12`), updated all checks for version to use PHP version_compare
-* Removed: $this->wpdb from Pod class (just a vestige of the past, now using global $wpdb)
-* Removed: PodAPI / UI References to old Pods Menu functionality
-* Fixed: jQuery Sortable include fix
-* Fixed: WP 3.3 (trunk) errors fixed in regards to new WP Editor API for TinyMCE (via @azzozz)
-* Fixed: Tightened up uninstall.php and when it can be run to avoid accidental uninstalls (Reminder: When you delete Pods within WP, you'll delete the files AND your data as we follow the WP Plugin data standard for uninstalling)
-* Fixed: Pods >> Setup UI updated with lots of fixes when editing Pods / Columns, and Helpers (no more refreshes needed where they may have been needed before)
-* Fixed: PodAPI setting of defaults for $params to avoid isset checks
-* Fixed: PodAPI :: save_column now sets pick-related extra data to empty if not a pick column
-* Fixed: Pod :: getRecordById() now gets all of the same data as findRecords pulls in (pod_id, created, modified)
-* Fixed: pods_url_variable references updated to pods_var
-* Fixed: SQL cleaned up (extra line breaks removed so it's not as ugly) and standardized to escape field names in SQL references
-
 = 1.11 - August 12, 2011 =
 * Improved: MySQL performance enhanced with a number of MySQL indexes and column type tweaks, your DB will be automatically upgraded for you
 * Added: PodInit :: setup now has filters / actions that run before / after install and updates

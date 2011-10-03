@@ -778,9 +778,9 @@ class Pod
             // Add "`t`." prefix to $orderby if needed
             if (!empty($orderby) && false === strpos($orderby, ',') && false === strpos($orderby, '(') && false === strpos($orderby, '.')) {
                 if (false !== strpos($orderby, ' ASC'))
-                    $orderby = '`t`.`' . str_replace(array('`', ' ASC'), '', $orderby) . '` ASC';
-                elseif (false !== strpos($orderby, ' ASC'))
-                    $orderby = '`t`.`' . str_replace(array('`', ' DESC'), '', $orderby) . '` DESC';
+                    $orderby = '`t`.`' . trim(str_replace(array('`', ' DESC'), '', $orderby)) . '` DESC';
+                else
+                    $orderby = '`t`.`' . trim(str_replace(array('`', ' DESC'), '', $orderby)) . '` DESC';
             }
 
             $haystack = str_replace(array('(', ')'), '', preg_replace('/\s/', ' ', "$select $where $groupby $having $orderby"));
@@ -852,6 +852,10 @@ class Pod
                 ";
             }
             $join = apply_filters('pods_findrecords_join', implode(' ', $joins), $params, $this);
+
+            $groupby = trim($groupby);
+            $orderby = trim($orderby);
+            $limit = trim($limit);
 
             $calc_found_rows = '';
             if (false !== $this->calc_found_rows)

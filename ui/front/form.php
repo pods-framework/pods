@@ -194,7 +194,6 @@
     // including the style inline because I'm not sure how you'll want to enqueue it
     // since it'll be used both here and on the site front end (maybe?)
     echo '<style type="text/css">';
-    include PODS_DIR . 'ui/css/pods-front.css';
     include PODS_DIR . 'ui/css/custom-theme/jquery-ui-1.8.16.custom.css';   // used for date picker
     include PODS_DIR . 'ui/css/custom-theme/jquery-ui-timepicker-addon.css';   // used for time picker
     echo '</style>';

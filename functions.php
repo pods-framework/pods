@@ -916,9 +916,9 @@ function pods_data ($pod = null, $id = null) {
  *
  * @since 2.0.0
  */
-function pods_form_ui () {
-    require_once(PODS_DIR . 'classes/PodsFormUI.php');
-    return new PodsFormUI();
+function pods_form () {
+    require_once(PODS_DIR . 'classes/PodsForm.php');
+    return new PodsForm();
 }
 
 /**
@@ -926,9 +926,9 @@ function pods_form_ui () {
  *
  * @since 2.0.0
  */
-function pods_admin_ui () {
-    require_once(PODS_DIR . 'classes/PodsAdminUI.php');
-    return new PodsAdminUI();
+function pods_admin () {
+    require_once(PODS_DIR . 'classes/PodsAdmin.php');
+    return new PodsAdmin();
 }
 
 /**
@@ -939,16 +939,6 @@ function pods_admin_ui () {
 function pods_migrate ($type = null, $delimiter = null, $data = null) {
     require_once(PODS_DIR . 'classes/PodsMigrate.php');
     return new PodsMigrate($type, $delimiter, $data);
-}
-
-/**
- * Include and Init the PodsMigrateUI class
- *
- * @since 2.0.0
- */
-function pods_migrate_ui () {
-    require_once(PODS_DIR . 'classes/PodsMigrateUI.php');
-    return new PodsMigrateUI();
 }
 
 /**

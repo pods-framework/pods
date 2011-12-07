@@ -1954,6 +1954,10 @@ function pods_ui_coltype ($column,$object,$t=false)
                 {
                     return ($t?'':$column.'.').'display_name';
                 }
+                elseif($fields[$column]['pickval']=='wp_taxonomy')
+                {
+                    return ($t?'':$column.'.').'name';
+                }
                 else
                 {
                     return ($t?'':$column.'.').($t?'post_title':'post_name');

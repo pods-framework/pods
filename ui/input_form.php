@@ -9,7 +9,7 @@ if (1 == $form_count)
     if (!wp_script_is('pods-ui', 'queue') && !wp_script_is('pods-ui', 'to_do') && !wp_script_is('pods-ui', 'done'))
         wp_print_scripts('pods-ui');
 ?>
-<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/ui/style.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo apply_filters('pods_form_stylesheet_url', PODS_URL.'/ui/style.css'); ?>" />
 <script type="text/javascript">
 var active_file;
 

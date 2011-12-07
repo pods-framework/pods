@@ -1582,19 +1582,27 @@ function pods_ui_verify_access  ($object,$access,$what)
                 $okay = false;
                 foreach($match as $the_field=>$the_match)
                 {
-                    if($object->get_field($the_field)==$the_match)
-                    {
-                        $okay = true;
+                    $value = $object->get_field($the_field);
+                    if (is_array($value)) {
+                        if (in_array($the_match, $value))
+                            $okay = true;
                     }
+                    elseif($value==$the_match)
+                        $okay = true;
                 }
                 if($okay===false)
                 {
                     return false;
                 }
             }
-            elseif($object->get_field($field)!=$match)
-            {
-                return false;
+            else {
+                $value = $object->get_field($field);
+                if (is_array($value)) {
+                    if (!in_array($match, $value))
+                        return false;
+                }
+                elseif($value!=$match)
+                    return false;
             }
         }
     }
@@ -1953,6 +1961,10 @@ function pods_ui_coltype ($column,$object,$t=false)
                 if($fields[$column]['pickval']=='wp_user')
                 {
                     return ($t?'':$column.'.').'display_name';
+                }
+                elseif($fields[$column]['pickval']=='wp_taxonomy')
+                {
+                    return ($t?'':$column.'.').'name';
                 }
                 else
                 {

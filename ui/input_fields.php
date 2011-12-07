@@ -132,12 +132,12 @@ Textarea box
 elseif ('desc' == $coltype) {
     if (is_admin()) {
         $coltype = 'desc_tinymce';
-        
+
         // New TinyMCE API by azaozz
         require_once(PODS_DIR . '/ui/wp-editor/wp-editor.php');
         require_once(ABSPATH . '/wp-admin/includes/template.php');
 
-        if (!isset($coltype_exists[$coltype]) || empty($coltype_exists[$coltype])) {
+        if (!function_exists('wp_editor') && (!isset($coltype_exists[$coltype]) || empty($coltype_exists[$coltype]))) {
 ?>
     <style type="text/css" scoped="scoped">
         @import url("<?php echo PODS_URL; ?>/ui/wp-editor/editor-buttons.css");
@@ -152,8 +152,13 @@ elseif ('desc' == $coltype) {
                 && !(defined('PODS_UPLOAD_REQUIRE_LOGIN') && !is_bool(PODS_UPLOAD_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_UPLOAD_REQUIRE_LOGIN)))) {
             $media_bar = true;
         }
-        global $wp_editor;
-        echo $wp_editor->editor($value, $css_id, array('editor_class' => $css_classes, 'media_buttons_context' => 'Upload/Insert ', 'textarea_rows' => 10), $media_bar);
+        if (function_exists('wp_editor')) {
+            wp_editor($value, $css_id, array('editor_class' => $css_classes, 'media_buttons' => $media_bar));
+        }
+        else {
+            global $wp_editor;
+            echo $wp_editor->editor($value, $css_id, array('editor_class' => $css_classes, 'media_buttons_context' => 'Upload/Insert ', 'textarea_rows' => 10), $media_bar);
+        }
     }
     else {
         if (!isset($coltype_exists[$coltype]) || empty($coltype_exists[$coltype])) {
@@ -347,7 +352,7 @@ $coltype_exists[$coltype] = true;
 ?>
     </div>
     <div class="clear<?php echo esc_attr($hidden); ?>" id="spacer_<?php echo esc_attr($name); ?>"></div>
-<?php 
+<?php
 //post-field hooks
 do_action('pods_post_input_field', $field, $css_id, $css_classes, $this);
 do_action("pods_post_input_field_$name", $field, $css_id, $css_classes, $this);

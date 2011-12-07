@@ -814,7 +814,7 @@ class Pod
                 if (!in_array($value, $found))
                     $found[$key] = $value;
             }
-            
+
             if (!empty($this->traverse)) {
                 foreach ((array) $this->traverse as $key => $traverse) {
                     $traverse = str_replace('`', '', $traverse);
@@ -1047,7 +1047,7 @@ class Pod
         $uri_hash = wp_hash($_SERVER['REQUEST_URI']);
 
         do_action('pods_showform_pre', $pod_id, $public_columns, $label, $this);
-        
+
         foreach ($fields as $key => $field) {
             // Replace field attributes with public form attributes
             if (!empty($attributes) && is_array($attributes[$key])) {
@@ -1272,7 +1272,7 @@ class Pod
      */
     function parse_magic_tags($in) {
         $name = $in[2];
-        $before = $after = '';
+        $before = $after = $helper = '';
         if (false !== strpos($name, ',')) {
             @list($name, $helper, $before, $after) = explode(',', $name);
             $name = trim($name);

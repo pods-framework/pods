@@ -327,7 +327,7 @@ function pods_ui_manage ($obj)
             }
             else
             {
-                $search = pods_ui_var('search'.$object->ui['num'],$oldget,false);
+                $search = stripslashes(pods_ui_var('search'.$object->ui['num'],$oldget,false));
                 if(false!==$search && $object->ui['session_filters']!==false)
                 {
                     $search = pods_ui_var('search'.$object->ui['unique_md5'],'session');
@@ -336,7 +336,7 @@ function pods_ui_manage ($obj)
                         $_GET['search'] = $search;
                     }
                 }
-                $search = pods_ui_var('search'.$object->ui['num'],$oldget);
+                $search = stripslashes(pods_ui_var('search'.$object->ui['num'],$oldget));
                 if($search!==false)
                 {
                     $_GET['search'] = $search;
@@ -677,7 +677,7 @@ function pods_ui_manage ($obj)
             if(false!==$object->ui['search'])
             {
 ?>
-            <input type="text" name="search<?php echo $object->ui['num']; ?>" id="page-search-input" value="<?php echo esc_attr(pods_ui_var('search'.$object->ui['num'])); ?>" />
+            <input type="text" name="search<?php echo $object->ui['num']; ?>" id="page-search-input" value="<?php echo esc_attr(stripslashes(pods_ui_var('search'.$object->ui['num']))); ?>" />
 <?php
             }
 ?>
@@ -1803,6 +1803,14 @@ function pods_ui_var_update ($arr=false,$url=false,$strict=true)
     {
         $query['pod'] = $get['pod'];
     }
+
+    // hack to fix Lotus theme hack...
+    // yeah that's a hack to fix someone else's hack
+    if(isset($query['post_type']))
+    {
+        unset($query['post_type']);
+    }
+    
     if(is_array($arr))
     {
         foreach($arr as $key=>$val)

@@ -1810,7 +1810,7 @@ function pods_ui_var_update ($arr=false,$url=false,$strict=true)
     {
         unset($query['post_type']);
     }
-    
+
     if(is_array($arr))
     {
         foreach($arr as $key=>$val)

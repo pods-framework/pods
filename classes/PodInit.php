@@ -29,7 +29,7 @@ class PodInit
         add_action('template_redirect', array($this, 'template_redirect'));
         add_action('delete_attachment', array($this, 'delete_attachment'));
         add_shortcode('pods', 'pods_shortcode');
-        
+
         if (!defined('PODS_DISABLE_POD_PAGE_CHECK')) {
             $pod_page_exists = pod_page_exists();
 
@@ -39,7 +39,10 @@ class PodInit
                 add_filter('wp_title', array($this, 'wp_title'), 0, 3);
                 add_filter('body_class', array($this, 'body_class'), 0, 1);
                 add_filter('status_header', array($this, 'status_header'));
-                add_action('after_setup_theme', array($this, 'precode'));
+                if (defined('PODS_PAGE_PRECODE_TIMING') && false !== PODS_PAGE_PRECODE_TIMING)
+                    add_action('after_setup_theme', array($this, 'precode'));
+                else
+                    add_action('plugins_loaded', array($this, 'precode'));
                 add_action('wp', array($this, 'silence_404'));
             }
         }
@@ -118,30 +121,31 @@ class PodInit
         wp_register_script('jqmodal', PODS_URL . '/ui/js/jqmodal.js', array('jquery'));
         wp_register_script('pods-ui', PODS_URL . '/ui/js/pods.ui.js', array('jquery', 'jqmodal'));
 
-        $security_settings = array('pods_disable_file_browser' => 0,
-                                   'pods_files_require_login' => 0,
-                                   'pods_files_require_login_cap' => '',
-                                   'pods_disable_file_upload' => 0,
-                                   'pods_upload_require_login' => 0,
-                                   'pods_upload_require_login_cap' => '');
-        foreach ($security_settings as $security_setting => $setting) {
-            $setting = get_option($security_setting);
+        $additional_settings = array('pods_disable_file_browser' => 0,
+                                     'pods_files_require_login' => 0,
+                                     'pods_files_require_login_cap' => '',
+                                     'pods_disable_file_upload' => 0,
+                                     'pods_upload_require_login' => 0,
+                                     'pods_upload_require_login_cap' => '',
+                                     'pods_page_precode_timing' => 0);
+        foreach ($additional_settings as $additional_setting => $setting) {
+            $setting = get_option($additional_setting);
             if (!empty($setting))
-                $security_settings[$security_setting] = $setting;
+                $additional_settings[$additional_setting] = $setting;
         }
-        foreach ($security_settings as $security_setting => $setting) {
+        foreach ($additional_settings as $additional_setting => $setting) {
             if (0 == $setting)
                 $setting = false;
             elseif (1 == $setting)
                 $setting = true;
-            if (in_array($security_setting, array('pods_files_require_login', 'pods_upload_require_login'))) {
-                if (0 < strlen($security_settings[$security_setting.'_cap']))
-                    $setting = $security_settings[$security_setting.'_cap'];
+            if (in_array($additional_setting, array('pods_files_require_login', 'pods_upload_require_login'))) {
+                if (0 < strlen($additional_settings[$additional_setting.'_cap']))
+                    $setting = $additional_settings[$additional_setting.'_cap'];
             }
-            elseif (in_array($security_setting, array('pods_files_require_login_cap', 'pods_upload_require_login_cap')))
+            elseif (in_array($additional_setting, array('pods_files_require_login_cap', 'pods_upload_require_login_cap')))
                 continue;
-            if (!defined(strtoupper($security_setting)))
-                define(strtoupper($security_setting), $setting);
+            if (!defined(strtoupper($additional_setting)))
+                define(strtoupper($additional_setting), $setting);
         }
     }
 

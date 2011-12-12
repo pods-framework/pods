@@ -3,14 +3,14 @@ Contributors: sc0ttkclark, logikal16, jchristopher
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, pods ui, ui, content types, custom post types, relationships, database, framework, drupal, mysql, custom content, php
 Requires at least: 3.1
-Tested up to: 3.2.1
-Stable tag: 1.11
+Tested up to: 3.3
+Stable tag: 1.12
 
 Pods is a CMS framework for creating, managing, and deploying customized content types.
 
 == Description ==
 
-Check out http://podscms.org/ for our User Guide and many other resources to help you develop with Pods.
+Check out http://podsframework.org/ for our User Guide and many other resources to help you develop with Pods.
 
 = Create your own content types =
 A Pod is a content type which contains a user-defined set of fields. Each content type is stored in it's own table, where as WordPress Custom Post Types are normally all stored in one single table for them all.
@@ -39,7 +39,7 @@ Pods also includes an easy to use PHP API to allow you to import and export your
 [vimeo http://vimeo.com/15086927]
 
 = Stay tuned for Pods 2.0 =
-Pods 2.0 is around the corner, so keep up-to-date by following our @podscms twitter account or checking out our Pods Development blog at http://dev.podscms.org/2011/06/16/pods-2-0-and-how-you-can-help/
+Pods 2.0 is around the corner, so keep up-to-date by following our @podsframework twitter account or checking out our Pods Development blog at http://dev.podscms.org/2011/06/16/pods-2-0-and-how-you-can-help/
 
 Features coming in Pods 2.0 include:
 
@@ -64,6 +64,62 @@ Features coming in Pods 2.0 include:
 OR you can just install it with WordPress by going to Plugins >> Add New >> and type this plugin's name
 
 == Changelog ==
+
+= 1.12 - December 12, 2011 =
+* Important: As with all upgrades, we take them seriously. If you experience any major issues when upgrading to this version from a previous version, immediately contact uhoh@podsframework.org and we'll help get your upgrade issue figured out (critical bugs only please)
+* Security Update: AJAX API calls all utilize _wpnonce hashes, update your customized publicForm / input helper code AJAX (api.php and misc.php expect `wp_create_nonce('pods-' . $action)` usage)
+* Added: Multi-level references in field names when referenced in Pod :: findRecords $params (`select, where, groupby, having, orderby`) - ex. `'where' =&gt; 'pick_field.another_pick_field.another_pick.field = "Example"'` **(donation-funded by @chriscarvache)**
+* Added: Multi-level references in search filters when referenced in Pod :: findRecords $params (`select, where, groupby, having, orderby`) or Pod :: traverse variable (when not mentioned in params but you want it filterable) **(donation-funded by @chriscarvache)**
+* Added: Lightweight Relationship (PICK) field support in Pod :: findRecords (2.0 full support in UI) **(donation-funded by @chriscarvache)**
+* Added: Fully revamped JOINs based on field names when referenced in Pod :: findRecords $params (`select, where, groupby, having, orderby`) **(donation-funded by @chriscarvache)**
+* Added: RegEx auto-sanitizing of field names when referenced in Pod :: findRecords $params (`select, where, groupby, having, orderby`) **(donation-funded by @chriscarvache)**
+* Added: PodAPI :: duplicate_pod_item with $params as `'datatype' =&gt; 'podname', 'tbl_row_id' =&gt; $item_id_to_duplicate` (returns new id) **(donation-funded by @gr0b1)**
+* Added: PodAPI :: export_pod_item with $params as `'datatype' =&gt; 'podname', 'tbl_row_id' =&gt; $item_id_to_export` (returns array of data - pick/file columns are arrays of their data) **(donation-funded by @gr0b1)**
+* Added: PODS_STRICT_MODE constant to enable many features at once which are common settings for advanced developers including - Pagination defaults to off; Search defaults to off; PodAPI $params are auto-sanitized (stripslashes_deep if you already sanitized or are dealing with sanitized values in your $params)
+* Added: Pod('pod_name', $params) ability to run findRecords straight away with one single line that also sets up the Pod object, $params must be an array
+* Added: Option to use SQL_CALC_FOUND_ROWS or COUNT(*) for getting the total rows available (for use with pagination / Pod :: getTotalRows) setting 'calc_found_rows' or 'count_found_rows' to true in Pod :: findRecords $params (useful for complex queries on data)
+* Added: Option to disable pagination altogether (separate from setting page to 1, but also forces page to be 1) in findRecords $params `'pagination' =&gt; false`
+* Added: PODS_GLOBAL_POD_PAGINATION constant to globally disable pagination by setting the constant to false (can be renabled as needed in findRecords $params `'pagination' =&gt; true`)
+* Added: PODS_GLOBAL_POD_SEARCH constant to globally disable search by setting the constant to false (can be renabled as needed in findRecords $params `'search' =&gt; true`)
+* Added: PODS_GLOBAL_POD_SEARCH_MODE constant to globally set the search_mode to 'text', 'int', or 'text_like' (default 'int' which references field IDs) - can be overrided as needed in findRecords $params `'search_mode' =&gt; 'text'`)
+* Added: PODS_DISABLE_EVAL constant to globally disable PHP eval() on PHP-enabled areas of Pods (Templates, Helpers, Pod Pages)
+* Added: PODS_WP_VERSION_MINIMUM constant to disable WP minimum version requirement
+* Added: PODS_PHP_VERSION_MINIMUM constant to disable PHP minimum version requirement
+* Added: PODS_MYSQL_VERSION_MINIMUM constant to disable MySQL minimum version requirement
+* Added: Pod :: getRowNumber() to get current row number and Pod :: row_number variable to internally be used to keep track of which row_number you're on in findRecords loop (incremented in fetchRecord)
+* Added: Pod :: raw_sql contains SQL without @ table references replaced and Pod :: sql now should reflect the same query as hits the DB (@ table references replaced)
+* Added: Pod :: getZebra() which uses a switch (Pod :: zebra) that goes from false to true during fetchRecord loops (initial value is false, first fetch switches it to true and reverses each additional fetch)
+* Added: PodAPI :: save_template / save_page / save_helper now allow 'name' / 'uri' to be renamed on save (only in API, not UI)
+* Added: PodAPI :: save_pod_item now accepts an array for $params-&gt;tbl_row_id which will let you save multiple items at a time using the rest of the $params
+* Added: PodAPI :: delete_pod_item now accepts an array for $params-&gt;tbl_row_id which will let you delete multiple items at a time
+* Added: Having trouble updating Pods but you know things should be OK (advanced users)? Try adding ?pods_bypass_update=1 to the page URL you're on to bypass the update
+* Added: Pagination / Filters to pods_shortcode (ex. `[pods name="mypod" limit="15" pagination="1" pagination_label="Go to page:" pagination_location="after" filters="status,category" filters_label="Filter:" filters_location="before"]`)
+* Added: pods_page_templates filter to get $page_templates for use in Pod Page editor, which allows support for Pods built into **iThemes Builder** coming soon (to select layouts)
+* Added: When using pods_query and setting $error to false, will bypass die on MySQL error
+* Added: When using Pods UI as an admin (manage_options capability), add 'debug=1' to the URL to see the currently used SQL query for a manage screen
+* Added: pods_manage now returns $object
+* Added: Sort classes now used to show current sort direction
+* Added: PodAPI :: load_column now accepts 'name' and 'datatype' (id) parameters for lookup instead of only just 'id' of field
+* Added: PodAPI :: load_helper now accepts 'type' parameter for lookup instead of only just 'id' and 'name' of helper
+* Added: New function 'pods_function_or_file' that checks if a function or file exists based on a number of locations, used for Helpers / Templates / Pod Pages, filter available called 'pods_function_or_file' if you want to customize further
+* Changed: Pod Page Precode now runs on 'after_setup_theme' action instead of 'plugins_loaded'
+* Changed: pods_generate_key / pods_validate_key revamped to work off of wpnonce, though $_SESSION is still used for holding the columns from that form usage
+* Changed: pods_sanitize now sanitizes keys (previously only values)
+* Changed: Now using wp_hash instead of md5 to get the hash of a value
+* Changed: PODS_VERSION_FULL removed and PODS_VERSION now set as real point version (ex. `1.12`), updated all checks for version to use PHP version_compare
+* Changed: input_helper in column options returns only value instead of the actual 'phpcode' now during publicForm, which then enables file-based / function-based checks during input_field.php loop
+* Changed: pods_unique_slug to work more efficiently
+* Removed: $this-&gt;wpdb from Pod class (just a vestige of the past, now using global $wpdb)
+* Removed: PodAPI / UI References to old Pods Menu functionality
+* Fixed: jQuery Sortable include fix
+* Fixed: WP 3.3 errors fixed in regards to new WP Editor API for TinyMCE (via @azzozz)
+* Fixed: Tightened up uninstall.php and when it can be run to avoid accidental uninstalls (Reminder: When you delete Pods (and other plugins) within WP, you'll delete the files AND your data as we follow the WP Plugin data standard for uninstalling)
+* Fixed: Pods &gt;&gt; Setup UI updated with lots of fixes when editing Pods / Columns, and Helpers (no more refreshes needed where they may have been needed before)
+* Fixed: PodAPI setting of defaults for $params to avoid isset checks
+* Fixed: PodAPI :: save_column now sets pick-related extra data to empty if not a pick column
+* Fixed: Pod :: getRecordById() now gets all of the same data as findRecords pulls in (pod_id, created, modified)
+* Fixed: pods_url_variable references updated to pods_var
+* Fixed: SQL cleaned up (extra line breaks removed so it's not as ugly) and standardized to escape field names in SQL references
 
 = 1.11 - August 12, 2011 =
 * Improved: MySQL performance enhanced with a number of MySQL indexes and column type tweaks, your DB will be automatically upgraded for you
@@ -217,7 +273,7 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 = 1.9.6 - June 22, 2011 =
 * Full Details can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 * Security Update: New security settings section in the Pods >> Setup >> Settings tab to restrict access to the File Browser / Uploader used in publicForm, adjust the settings to fit your site if you experience any problems
-* Added: New TinyMCE API for use with the new TinyMCE package update at http://podscms.org/packages/tinymce-for-pods/
+* Added: New TinyMCE API for use with the new TinyMCE package update at http://podsframework.org/packages/tinymce-for-pods/
 * Added: New get_current_url() function to get current page URL
 * Fixed: pod_page_exists() bug with $home path
 * Fixed: publicForm bug with $css_id always using form_count 1 (now uses correct $form_count)
@@ -273,7 +329,7 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 * Added: Ability to use filters / actions to add new Column Types to Pods
 * Added: Filters - pods_admin_menu_name / pods_admin_menu_label / pods_admin_submenu_name / pods_admin_submenu_label / pods_rel_lookup / pods_get_dropdown_values / pods_findrecords_the_join / pods_findrecords_join / pods_showform_save_button_atts / pods_showform_save_button / pods_column_dbtypes / pods_column_types
 * Added: Actions - pods_pre_pod_helper / pods_pre_pod_helper_$helper / pods_post_pod_helper / pods_post_pod_helper_$helper / pods_pre_showtemplate / pods_pre_showtemplate_$tpl / pods_post_showtemplate / pods_post_showtemplate_$tpl / pods_pre_input_field / pods_pre_input_field_$name / pods_pre_input_field_type_$coltype / pods_input_field_type_$coltype / pods_post_input_field / pods_post_input_field_$name / pods_post_input_field_type_$coltype / pods_pre_form / pods_pre_form_{Pod :: datatype} / pods_post_form / pods_post_form_{Pod :: datatype}
-* Added: Automatic File Column Upgrade during DB Update from Pods < 1.7.6
+* Added: Automatic File Column Upgrade during DB Update from Pods below version 1.7.6
 * Added: Pod :: findRecords($params) can now be used where $params is an key/value array containing 'select' (t.*, p.id AS pod_id, p.created, p.modified), 'where' (null), 'join' (empty), 'orderby' (t.id DESC), 'limit' (15), 'page' (Pod :: page), 'search' (Pod :: search), and 'sql' (null) for future proofing variable expansion
 * Added: save_pod_item has a new var in $params to be used - bypass_helpers (default: true) which can be set to false to not run any pre/post save helpers
 * Improved: Parent / Child Theme integration uses core WP functions to lookup templates

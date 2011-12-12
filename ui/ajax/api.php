@@ -45,6 +45,7 @@ $methods = array(
     'validate_package' => array('priv' => 'manage_packages'),
     'replace_package' => array('priv' => 'manage_packages'),
     'security_settings' => array('priv' => 'manage_settings'),
+    'pod_page_settings' => array('priv' => 'manage_settings'),
     'fix_wp_pod' => array('priv' => 'manage_settings')
 );
 
@@ -127,7 +128,8 @@ if (isset($methods[$action])) {
     if (null !== $processor && 0 < strlen($processor) && function_exists($processor))
         $params = $processor($params, $api);
 
-    $params = apply_filters('pods_api_'.$action,$params);
+    $params = apply_filters('pods_api_'.$action, $params);
+    $output = '';
 
     if ('security_settings' == $action) {
         delete_option('pods_disable_file_browser');
@@ -147,6 +149,10 @@ if (isset($methods[$action])) {
 
         delete_option('pods_upload_require_login_cap');
         add_option('pods_upload_require_login_cap', (isset($params->upload_require_login_cap) ? $params->upload_require_login_cap : ''));
+    }
+    elseif ('pod_page_settings' == $action) {
+        delete_option('pods_page_precode_timing');
+        add_option('pods_page_precode_timing', (isset($params->pods_page_precode_timing) ? (int) $params->pods_page_precode_timing : 0));
     }
     else {
         // Dynamically call the API method

@@ -330,7 +330,9 @@ class Pod
             echo "<e>Error: Pod name invalid, no data available</e>";
             return null;
         }
-        if (empty($this->data['pod_id']) && 0 < $this->data['id']) {
+        elseif (empty($this->data))
+            return 0;
+        elseif ((!isset($this->data['pod_id']) ||empty($this->data['pod_id'])) && isset($this->data['id']) && 0 < $this->data['id']) {
             $this->data['pod_id'] = 0;
             $tbl_row_id = (isset($this->data['id']) ? (int) $this->data['id'] : 0);
             $result = pod_query("SELECT `id` FROM `@wp_pod` WHERE `datatype` = '$this->datatype_id' AND `tbl_row_id` = '$tbl_row_id' LIMIT 1");
@@ -707,44 +709,47 @@ class Pod
         $params = null;
         $select = '`t`.*, `p`.`id` AS `pod_id`, `p`.`created`, `p`.`modified`';
         $this->traverse = array();
-        if(is_array($orderby)) {
-            $defaults = array('select' => $select,
-                              'join' => $join,
-                              'where' => $where,
-                              'groupby' => $groupby,
-                              'having' => $having,
-                              'orderby' => '`t`.`id` DESC',
-                              'limit' => $rows_per_page,
-                              'search' => $this->search,
-                              'search_var' => $this->search_var,
-                              'search_mode' => $this->search_mode,
-                              'traverse' => $this->traverse,
-                              'page' => $this->page,
-                              'pagination' => $this->pagination,
-                              'calc_found_rows' => $this->calc_found_rows,
-                              'count_found_rows' => $this->count_found_rows,
-                              'sql' => $sql);
+
+        $defaults = array('select' => $select,
+                          'join' => $join,
+                          'where' => $where,
+                          'groupby' => $groupby,
+                          'having' => $having,
+                          'orderby' => '`t`.`id` DESC',
+                          'limit' => $rows_per_page,
+                          'search' => $this->search,
+                          'search_var' => $this->search_var,
+                          'search_mode' => $this->search_mode,
+                          'traverse' => $this->traverse,
+                          'page' => $this->page,
+                          'pagination' => $this->pagination,
+                          'calc_found_rows' => $this->calc_found_rows,
+                          'count_found_rows' => $this->count_found_rows,
+                          'sql' => $sql);
+        $defaults = (array) apply_filters('pods_findrecords_defaults', $defaults, $orderby, $this);
+        $params = (object) $defaults;
+        if (is_array($orderby) && !empty($orderby))
             $params = (object) array_merge($defaults, $orderby);
-            if (0 < strlen($params->select))
-                $select = $params->select;
-            $join = $params->join;
-            $this->search = (boolean) $params->search;
-            $this->search_var = $params->search_var;
-            $this->search_mode = (in_array($params->search_mode, array('int', 'text')) ? $params->search_mode : 'int');
-            $this->traverse = (array) $params->traverse;
-            $where = $params->where;
-            $groupby = $params->groupby;
-            $having = $params->having;
-            $orderby = $params->orderby;
-            $rows_per_page = (int) $params->limit;
-            $this->page = (int) $params->page;
-            $this->pagination = (bool) $params->pagination;
-            $this->calc_found_rows = (boolean) $params->calc_found_rows;
-            $this->count_found_rows = (boolean) $params->count_found_rows;
-            $sql = $params->sql;
-            if (true === $this->count_found_rows && empty($sql))
-                $this->calc_found_rows = false;
-        }
+
+        if (0 < strlen($params->select))
+            $select = $params->select;
+        $join = $params->join;
+        $this->search = (boolean) $params->search;
+        $this->search_var = $params->search_var;
+        $this->search_mode = (in_array($params->search_mode, array('int', 'text')) ? $params->search_mode : 'int');
+        $this->traverse = (array) $params->traverse;
+        $where = $params->where;
+        $groupby = $params->groupby;
+        $having = $params->having;
+        $orderby = $params->orderby;
+        $rows_per_page = (int) $params->limit;
+        $this->page = (int) $params->page;
+        $this->pagination = (bool) $params->pagination;
+        $this->calc_found_rows = (boolean) $params->calc_found_rows;
+        $this->count_found_rows = (boolean) $params->count_found_rows;
+        $sql = $params->sql;
+        if (true === $this->count_found_rows && empty($sql))
+            $this->calc_found_rows = false;
         $page = (int) $this->page;
         if ($rows_per_page < 0 || false === $this->pagination)
             $page = $this->page = 1;

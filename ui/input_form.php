@@ -85,7 +85,8 @@ function saveForm(form_count) {
         }
         else if (typeof(tinyMCE) == 'object' && "desc_tinymce" == classname[1]) {
             var ed = tinyMCE.get(jQuery(this).attr('id'));
-            jQuery(this).val(ed.getContent());
+            if (typeof(ed) == 'object')
+                jQuery(this).val(ed.getContent());
             theval = jQuery(this).val();
         }
         else {
@@ -150,7 +151,7 @@ if (1 == $form_count && !(defined('PODS_DISABLE_FILE_BROWSER') && true === PODS_
 $this->showform($this->get_pod_id(), $public_columns, $label);
 ?>
 </div>
-<?php 
+<?php
 //post-form hooks
 do_action('pods_post_form',$form_count,$this);
 do_action("pods_post_form_{$this->datatype}",$form_count,$this);

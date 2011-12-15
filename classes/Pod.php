@@ -398,7 +398,7 @@ class Pod
         elseif (false === $content && false !== $function_or_file && isset($function_or_file['file']))
             locate_template($function_or_file['file'], true, true);
         elseif (false !== $content) {
-            if ((!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL))
+            if (!defined('PODS_DISABLE_EVAL') || !PODS_DISABLE_EVAL)
                 eval("?>$content");
             else
                 echo $content;
@@ -715,7 +715,7 @@ class Pod
                           'where' => $where,
                           'groupby' => $groupby,
                           'having' => $having,
-                          'orderby' => '`t`.`id` DESC',
+                          'orderby' => (is_array($orderby) ? '`t`.`id` DESC' : $orderby),
                           'limit' => $rows_per_page,
                           'search' => $this->search,
                           'search_var' => $this->search_var,
@@ -1263,7 +1263,7 @@ class Pod
      */
     function parse_template_string($in) {
         ob_start();
-        if ((!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL))
+        if (!defined('PODS_DISABLE_EVAL') || !PODS_DISABLE_EVAL)
             eval("?>$in");
         else
             echo $in;
@@ -1298,7 +1298,7 @@ class Pod
             $value = $this->pod_helper($helper, $value, $name);
 
         // Clean out PHP in case it exists
-        $value = str_replace(array('<?php', '<?', '?>'), array('&lt;?php', '&lt;?', '?&gt;'), $value);
+        $value = str_replace(array('<' . '?php', '<' . '?', '?' .'>'), array('&lt;?php', '&lt;?', '?&gt;'), $value);
 
         $value = apply_filters('pods_parse_magic_tags', $value, $name, $helper, $before, $after);
         if (null != $value && false !== $value)

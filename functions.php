@@ -515,7 +515,7 @@ function pods_shortcode($tags) {
     // id > slug (if both exist)
     $id = empty($tags['slug']) ? null : $tags['slug'];
     $id = empty($tags['id']) ? $id : absint($tags['id']);
-    
+
     $pod = new Pod($tags['name'], $id);
 
     $found = 0;

@@ -56,16 +56,3 @@ CREATE TABLE `wp_pods_rel` (
     INDEX `field_rel_item_idx` (`field_id`, `related_item_id`),
     INDEX `rel_field_item_idx` (`related_field_id`, `item_id`)
 ) DEFAULT CHARSET utf8;
-
-# example table for a pod
-/*
-CREATE TABLE `wp_pods_tbl_podnamehere` (
-    `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(255) NULL DEFAULT NULL,
-    `created` DATETIME NULL DEFAULT NULL,
-    `modified` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `author_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-    PRIMARY KEY (`id`),
-    INDEX `name_idx` (`name`)
-) DEFAULT CHARSET utf8;
-*/

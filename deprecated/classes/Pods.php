@@ -16,7 +16,7 @@ class Pods_Deprecated
         foreach ((array) $vars as $key => $val) {
             $this->{$key} = $val;
         }
-        
+
         // keeping references pointing back to the source
         $this->obj &= $obj;
     }
@@ -303,12 +303,12 @@ class Pods_Deprecated
                         'search_across' => true,
                         'search_across_picks' => false,
                         'sql' => $sql);
-        if (is_array($orderby)) {
-            $params = (object) array_merge($params, $orderby);
-            $this->obj->rpp = $params->limit;
-            $this->obj->page = $params->page;
-            $this->obj->search = $params->search;
-        }
+        if (is_array($orderby))
+            $params = array_merge($params, $orderby);
+        $params = (object) $params;
+        $this->obj->limit = $params->limit;
+        $this->obj->page = $params->page;
+        $this->obj->search = $params->search;
         return $this->obj->find($params);
     }
 

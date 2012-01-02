@@ -7,9 +7,15 @@ class PodsData
     public static $display_errors = true;
 
     // pods
+    public $table = null;
     public $pod = null;
     public $pod_data = null;
     public $id = 0;
+    public $field_id = 'id';
+    public $field_index = 'name';
+    public $fields = array();
+    public $aliases = array();
+    public $detail_page;
 
     // data
     public $row_number = -1;
@@ -17,6 +23,20 @@ class PodsData
     public $row;
     public $insert_id;
     public $total;
+    public $total_found;
+
+    // pagination
+    public $page_var = 'pg';
+    public $page = 1;
+    public $pagination = true;
+
+    // search
+    public $search = true;
+    public $search_var = 'search';
+    public $search_mode = 'int'; // int | text | text_like
+    public $search_query = '';
+    public $search_fields = array();
+    public $filters = array();
 
     /**
      * Data Abstraction Class for Pods
@@ -27,42 +47,69 @@ class PodsData
      * @since 2.0.0
      */
     public function __construct ($pod = null, $id = 0) {
-        if (0 < strlen($pod)) {
-            $pod_id = pods_absint($pod);
-            $where = $this->prepare('name = %s', $pod);
-            if (0 < $pod_id)
-                $where = $this->prepare('id = %d', $pod_id);
-            $pod_data = $this->select(array('table' => '@wp_pods',
-                                            'where' => $where,
-                                            'limit' => 1));
-            if (is_array($pod_data) && !empty($pod_data)) {
-                $this->pod_data = $pod_data[0];
-                $this->pod_data->options = @json_decode($this->pod_data->options, true);
-                if (empty($this->pod_data->options))
-                    $this->pod_data->options = array();
-                $field_data = $this->select(array('table' => '@wp_pods_fields',
-                                                  'where' => "pod_id = {$this->data->id}",
-                                                  'limit' => 1));
-                $fields = array();
-                if (is_array($field_data) && !empty($field_data)) {
-                    foreach ($field_data as $field) {
-                        $fields[$field->name] = $field;
-                        $fields[$field->name]->options = @json_decode($fields[$field->name]->options, true);
-                        if (empty($fields[$field->name]->options))
-                            $fields[$field->name]->options = array();
-                    }
-                }
-                $this->pod_data->fields = $fields;
-                $this->pod = $this->pod_data->name;
-                if ('pod' == $this->pod_data->type)
-                    $this->pod_data->table = 'tbl_' . $this->pod;
-                $id = pods_absint($id);
-                if (0 < $id)
-                    $this->id = $id;
+        $this->api = pods_api($pod);
+        $this->api->display_errors &= self::$display_errors;
+
+        if (null !== $pod) {
+            $this->pod_data = $this->api->load_pod(array('name' => $pod));
+            if (false === $this->pod_data)
+                return pods_error('Pod not found', $this);
+
+            $this->pod_data &= $this->api->pod_data;
+            $this->pod_id = $this->pod_data['id'];
+            $this->pod = $this->pod_data['name'];
+            $this->fields = $this->pod_data['fields'];
+            $this->detail_page = $this->pod_data['detail_page'];
+
+            switch ($this->pod_data['type']) {
+                case 'pod':
+                    $this->table = '@wp_' . self::prefix . 'tbl_' . $this->pod;
+                    $this->field_id = 'id';
+                    $this->field_name = 'name';
+                    break;
+                case 'post_type':
+                    $this->table = '@wp_posts';
+                    $this->field_id = 'ID';
+                    $this->field_name = 'post_title';
+                    break;
+                case 'taxonomy':
+                    $this->table = '@wp_taxonomy';
+                    $this->field_id = 'term_id';
+                    $this->field_name = 'name';
+                    break;
+                case 'user':
+                    $this->table = '@wp_users';
+                    $this->field_id = 'ID';
+                    $this->field_name = 'display_name';
+                    break;
+                case 'comment':
+                    $this->table = '@wp_comments';
+                    $this->field_id = 'comment_ID';
+                    $this->field_name = 'comment_date';
+                    break;
+                case 'table':
+                    $this->table = $this->pod;
+                    $this->field_id = 'id';
+                    $this->field_name = 'name';
+                    break;
+            }
+
+            if (null !== $id && !is_array($id) && !is_object($id)) {
+                $this->fetch($id);
+                if (!empty($this->row))
+                    $this->id = $this->field($this->field_id);
             }
         }
     }
 
+    /**
+     * Insert an item, eventually mapping to WPDB::insert
+     *
+     * @param string $table
+     * @param array $data
+     * @param array $format
+     * @since 2.0.0
+     */
     public function insert ($table, $data, $format = null) {
         global $wpdb;
         if (strlen($table) < 1 || empty($data) || !is_array($data))
@@ -79,9 +126,23 @@ class PodsData
             }
         }
         list($table, $data, $format) = $this->do_hook('insert', array($table, $data, $format));
-        return $wpdb->insert($table, $data, $format);
+        $result = $wpdb->insert($table, $data, $format);
+        $this->insert_id = $wpdb->insert_id;
+        if (false !== $result)
+            return $this->insert_id;
+        return false;
     }
 
+    /**
+     * Update an item, eventually mapping to WPDB::update
+     *
+     * @param string $table
+     * @param array $data
+     * @param array $where
+     * @param array $format
+     * @param array $where_format
+     * @since 2.0.0
+     */
     public function update ($table, $data, $where, $format = null, $where_format = null) {
         global $wpdb;
         if (strlen($table) < 1 || empty($data) || !is_array($data))
@@ -111,9 +172,20 @@ class PodsData
             }
         }
         list($table, $data, $where, $format, $where_format) = $this->do_hook('update', array($table, $data, $where, $format, $where_format));
-        return $wpdb->update($table, $data, $where, $format, $where_format);
+        $result = $wpdb->update($table, $data, $where, $format, $where_format);
+        if (false !== $result)
+            return true;
+        return false;
     }
 
+    /**
+     * Delete an item
+     *
+     * @param string $table
+     * @param array $where
+     * @param array $where_format
+     * @since 2.0.0
+     */
     public function delete ($table, $where, $where_format = null) {
         global $wpdb;
         if (strlen($table) < 1 || empty($where) || !is_array($where))
@@ -132,34 +204,56 @@ class PodsData
             $wheres[] = "`{$field}` = {$form}";
         }
         $sql = "DELETE FROM `$table` WHERE " . implode(' AND ', $wheres);
-        list($sql, $where) = $this->do_hook('insert', array($sql, array_values($where)), $table, $where, $where_format, $wheres);
+        list($sql, $where) = $this->do_hook('delete', array($sql, array_values($where)), $table, $where, $where_format, $wheres);
         return $this->query($this->prepare($sql, $where));
     }
 
+    /**
+     * Select items, eventually building dynamic query
+     *
+     * @param array $params
+     * @since 2.0.0
+     */
     public function select ($params) {
-        /*
-         * sql params:
-         *
-         * select
-         * table
-         * join
-         * where
-         * groupby
-         * having
-         * orderby
-         * limit
-         *
-         * build params:
-         *
-         * page
-         * search
-         * filters
-         * sort
-         *
-         * return:
-         *
-         * array of objects
-         */
+        global $wpdb;
+
+        // Build
+        $this->sql = $this->build($params);
+
+        // Get Data
+        $results = pods_query($this->sql, $this);
+        $results = $this->do_hook('select', $results);
+        $this->data = $results;
+        $this->row_number = -1;
+
+        // Fill in empty field data (if none provided)
+        if ((!isset($params->fields) || empty($params->fields)) && !empty($this->data)) {
+            $params->fields = array();
+            $data = (array) @current($this->data);
+            foreach ($data as $data_key => $data_value) {
+                $params->fields[$data_key] = array('label' => ucwords(str_replace('-', ' ', str_replace('_', ' ', $data_key))));
+            }
+        }
+        $this->fields = $params->fields;
+
+        // Set totals
+        $total = @current($wpdb->get_col("SELECT FOUND_ROWS()"));
+        $total = $this->do_hook('select_total', $total);
+        $this->total_found = 0;
+        if (is_numeric($total))
+            $this->total_found = $total;
+        $this->total = count((array) $this->data);
+
+        return $this->data;
+    }
+
+    /**
+     * Build/Rewrite dynamic SQL and handle search/filter/sort
+     *
+     * @param array $params
+     * @since 2.0.0
+     */
+    public function build (&$params) {
         $defaults = array('select' => '*',
                           'table' => null,
                           'join' => null,
@@ -168,370 +262,347 @@ class PodsData
                           'having' => null,
                           'orderby' => null,
                           'limit' => -1,
+
                           'identifier' => 'id',
                           'index' => 'name',
+
                           'page' => 1,
                           'search' => null,
-                          'filters' => null,
-                          'sort' => null,
-                          'fields' => null,
+                          'search_query' => null,
+                          'filters' => array(),
+
+                          'fields' => array(),
+
                           'sql' => null);
+
         $params = (object) array_merge($defaults, (array) $params);
+
+        // Validate
         $params->page = pods_absint($params->page);
         if (0 == $params->page)
             $params->page = 1;
-        $params->limit = pods_absint($params->limit);
+        $params->limit = (int) $params->limit;
         if (0 == $params->limit)
             $params->limit = -1;
-        if (empty($params->fields) || !is_array($params->fields) && isset($this->pod_data->fields) && !empty($this->pod_data->fields))
+        if ((empty($params->fields) || !is_array($params->fields)) && is_object($this->pod_data) && isset($this->pod_data->fields) && !empty($this->pod_data->fields))
             $params->fields = $this->pod_data->fields;
+        if (empty($params->table) && is_object($this->pod_data) && isset($this->pod_data->table) && !empty($this->pod_data->table))
+            $params->table = $this->pod_data->table;
+        $params->where = (array) $params->where;
+        if (empty($params->where))
+            $params->where = array();
+        $params->having = (array) $params->having;
+        if (empty($params->having))
+            $params->having = array();
 
-        $where = (array) $params->where;
-        if (empty($where))
-            $where = array();
-        $having = (array) $params->having;
-        if (empty($having))
-            $having = array();
-        if (false !== $this->search_query && 0 < strlen($this->search_query)) {
-            foreach ($params->fields as $key => $field) {
-                $attributes = $field;
-                if (!is_array($attributes))
-                    $attributes = array();
-                if (false === $attributes['search'])
-                    continue;
-                if (in_array($attributes['type'], array('date', 'time', 'datetime')))
-                    continue;
-                if (is_array($field))
-                    $field = $key;
-                if (!isset($this->filters[$field]))
-                    continue;
-                $fieldfield = '`' . $field . '`';
-                if (isset($selects[$field]))
-                    $fieldfield = '`' . $selects[$field] . '`';
-                if (false !== $attributes['real_name'])
-                    $fieldfield = $attributes['real_name'];
-                if (false !== $attributes['group_related'])
-                    $having[] = "$fieldfield LIKE '%" . pods_sanitize($this->search_query) . "%'";
-                else
-                    $where[] = "$fieldfield LIKE '%" . pods_sanitize($this->search_query) . "%'";
-            }
-            if (!empty($where)) {
-                $where = array('(' . implode(' OR ', $where) . ')');
-            }
-            if (!empty($having)) {
-                $having = array('(' . implode(' OR ', $having) . ')');
-            }
-        }
-        foreach ($this->filters as $filter) {
-            if (!isset($this->search_fields[$filter]))
-                continue;
-            $filterfield = '`' . $filter . '`';
-            if (isset($selects[$filter]))
-                $filterfield = '`' . $selects[$filter] . '`';
-            if (false !== $this->search_fields[$filter]['real_name'])
-                $filterfield = $this->search_fields[$filter]['real_name'];
-            if (in_array($this->search_fields[$filter]['type'], array('date', 'datetime'))) {
-                $start = date('Y-m-d') . ('datetime' == $this->search_fields[$filter]['type']) ? ' 00:00:00' : '';
-                $end = date('Y-m-d') . ('datetime' == $this->search_fields[$filter]['type']) ? ' 23:59:59' : '';
-                if (strlen($this->get_var('filter_' . $filter . '_start', false)) < 1 && strlen($this->get_var('filter_' . $filter . '_end', false)) < 1)
-                    continue;
-                if (0 < strlen($this->get_var('filter_' . $filter . '_start', false)))
-                    $start = date('Y-m-d', strtotime($this->get_var('filter_' . $filter . '_start', false))) . ('datetime' == $this->search_fields[$filter]['type']) ? ' 00:00:00' : '';
-                if (0 < strlen($this->get_var('filter_' . $filter . '_end', false)))
-                    $end = date('Y-m-d', strtotime($this->get_var('filter_' . $filter . '_end', false))) . ('datetime' == $this->search_fields[$filter]['type']) ? ' 23:59:59' : '';
-                if (false !== $this->search_fields[$filter]['date_ongoing']) {
-                    $date_ongoing = $this->search_fields[$filter]['date_ongoing'];
-                    if (isset($selects[$date_ongoing]))
-                        $date_ongoing = $selects[$date_ongoing];
-                    if (false !== $this->search_fields[$filter]['group_related'])
-                        $having[] = "(($filterfield <= '$start' OR ($filterfield >= '$start' AND $filterfield <= '$end')) AND ($date_ongoing >= '$start' OR ($date_ongoing >= '$start' AND $date_ongoing <= '$end')))";
-                    else
-                        $where[] = "(($filterfield <= '$start' OR ($filterfield >= '$start' AND $filterfield <= '$end')) AND ($date_ongoing >= '$start' OR ($date_ongoing >= '$start' AND $date_ongoing <= '$end')))";
-                }
-                else {
-                    if (false !== $this->search_fields[$filter]['group_related'])
-                        $having[] = "($filterfield BETWEEN '$start' AND '$end')";
-                    else
-                        $where[] = "($filterfield BETWEEN '$start' AND '$end')";
-                }
-            }
-            elseif (0 < strlen($this->get_var('filter_' . $filter, false))) {
-                if (false !== $this->search_fields[$filter]['group_related'])
-                    $having[] = "$filterfield LIKE '%" . pods_sanitize($this->get_var('filter_' . $filter, false)) . "%'";
-                else
-                    $where[] = "$filterfield LIKE '%" . pods_sanitize($this->get_var('filter_' . $filter, false)) . "%'";
-            }
-        }
-        if (null !== $params->sql)
-            $params->sql = $this->build($params);
-        else {
-
-        }
-    }
-
-    public function build ($params) {
-        $defaults = array('select' => '*',
-                          'join' => null,
-                          'where' => null,
-                          'groupby' => null,
-                          'having' => null,
-                          'orderby' => null,
-                          'limit' => -1,
-                          'page' => 1,
-                          'sql' => null);
-        $params = (object) array_merge($defaults, (array) $params);
-        $params->page = pods_absint($params->page);
-        if (0 == $params->page)
-            $params->page = 1;
-        $params->limit = pods_absint($params->limit);
-        if (0 == $params->limit)
-            $params->limit = -1;
-        if (empty($params->sql))
-            return false;
-
-        // build SQL based off of sql query
-        global $wpdb;
-        if (false === $this->sql) {
-            $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM $this->table";
-            if (false !== $this->search && !empty($this->search_fields)) {
-                $whered = false;
-                if (false !== $this->search_query && 0 < strlen($this->search_query)) {
-                    $sql .= " WHERE ";
-                    $whered = true;
-                    $where_sql = array();
-                    foreach ($this->search_fields as $key => $field) {
-                        if (false === $field['search'])
-                            continue;
-                        if (in_array($field['type'], array('date', 'time', 'datetime')))
-                            continue;
-                        if (is_array($field))
-                            $field = $key;
-                        $where_sql[] = "`$field` LIKE '%" . pods_sanitize($this->search_query) . "%'";
-                    }
-                    if (!empty($where_sql))
-                        $sql .= '(' . implode(' OR ', $where_sql) . ')';
-                }
-                $where_sql = array();
-                foreach ($this->filters as $filter) {
-                    if (!isset($this->search_fields[$filter]))
-                        continue;
-                    if (in_array($this->search_fields[$filter]['type'], array('date', 'datetime'))) {
-                        $start = date('Y-m-d') . ' 00:00:00';
-                        $end = date('Y-m-d') . ' 23:59:59';
-                        if (strlen($this->get_var('filter_' . $filter . '_start', false)) < 1 && strlen($this->get_var('filter_' . $filter . '_end', false)) < 1)
-                            continue;
-                        if (0 < strlen($this->get_var('filter_' . $filter . '_start', false)))
-                            $start = date('Y-m-d', strtotime($this->get_var('filter_' . $filter . '_start', false))) . ' 00:00:00';
-                        if (0 < strlen($this->get_var('filter_' . $filter . '_end', false)))
-                            $end = date('Y-m-d', strtotime($this->get_var('filter_' . $filter . '_end', false))) . ' 23:59:59';
-                        if (false !== $this->search_fields[$filter]['date_ongoing'])
-                            $where_sql[] = "((`$filter` <= '$start' OR `$filter` <= '$end') AND (`" . $this->search_fields[$filter]['date_ongoing'] . "` >= '$end' OR `" . $this->search_fields[$filter]['date_ongoing'] . "` >= '$start'))";
-                        else
-                            $where_sql[] = "(`$filter` BETWEEN '$start' AND '$end')";
-                    }
-                    elseif (0 < strlen($this->get_var('filter_' . $filter, false)))
-                        $where_sql[] = "`$filter` LIKE '%" . pods_sanitize($this->get_var('filter_' . $filter, false)) . "%'";
-                }
-                if (!empty($where_sql)) {
-                    if (false === $whered)
-                        $sql .= " WHERE ";
-                    else
-                        $sql .= " AND ";
-                    $sql .= implode(' AND ', $where_sql);
-                }
-            }
-            $sql .= ' ORDER BY ';
-            if (false !== $this->sort && (false === $this->reorder || 'reorder' != $this->action))
-                $sql .= $this->sort . ' ' . $this->sort_dir;
-            elseif (false !== $this->reorder && 'reorder' == $this->action)
-                $sql .= $this->reorder_sort . ' ' . $this->reorder_sort_dir;
+        // Get Aliases for future reference
+        $selectsfound = '';
+        if (!empty($params->select)) {
+            if (is_array($params->select))
+                $selectsfound = implode(', ', $params->select);
             else
-                $sql .= $this->identifier;
-            if (false !== $this->pagination) {
-                $start = ($this->page - 1) * $this->limit;
-                $end = ($this->page - 1) * $this->limit + $this->limit;
-                $sql .= " LIMIT $start, $end";
+                $selectsfound = $params->select;
+        }
+
+        // Pull Aliases from SQL query too
+        if (null !== $params->sql) {
+            $temp_sql = ' ' . trim(str_replace(array("\n", "\r"), ' ', $params->sql));
+            $temp_sql = preg_replace(array('/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i',
+                                      '/\sSELECT\s/i'),
+                                array(' SELECT ',
+                                      ' SELECT SQL_CALC_FOUND_ROWS '),
+                                $temp_sql);
+            preg_match('/\sSELECT SQL_CALC_FOUND_ROWS\s(.*)\sFROM/i', $temp_sql, $selectmatches);
+            if (isset($selectmatches[1]) && !empty($selectmatches[1]) && false !== stripos($selectmatches[1], ' AS '))
+                $selectsfound .= (!empty($selectsfound) ? ', ' : '') . $selectmatches[1];
+        }
+
+        // Build Alias list
+        $this->aliases = array();
+        if (!empty($selectsfound) && false !== stripos($selectsfound, ' AS ')) {
+            $theselects = array_filter(explode(', ', $selectsfound));
+            if (empty($theselects))
+                $theselects = array_filter(explode(',', $selectsfound));
+            foreach ($theselects as $selected) {
+                $selected = trim($selected);
+                if (strlen($selected) < 1)
+                    continue;
+                $selectfield = explode(' AS ', str_replace(' as ', ' AS ', $selected));
+                if (2 == count($selectfield)) {
+                    $field = trim(trim($selectfield[1]), '`');
+                    $real_field = trim(trim($selectfield[0]), '`');
+                    $this->aliases[$field] = $real_field;
+                }
             }
         }
-        else {
-            $sql = str_replace(array("\n", "\r"), ' ', ' ' . $this->sql);
-            $sql = str_ireplace(' SELECT ', ' SELECT SQL_CALC_FOUND_ROWS ', str_ireplace(' SELECT SQL_CALC_FOUND_ROWS ', ' SELECT ', $sql));
-            $wheresql = $havingsql = $ordersql = $limitsql = '';
-            $where_sql = $having_sql = array();
-            preg_match('/SELECT SQL_CALC_FOUND_ROWS (.*) FROM/i', $sql, $selectmatches);
-            $selects = array();
-            if (isset($selectmatches[1]) && !empty($selectmatches[1]) && false !== stripos($selectmatches[1], ' AS ')) {
-                $theselects = explode(', ', $selectmatches[1]);
-                if (empty($theselects))
-                    $theselects = explode(',', $selectmatches[1]);
-                foreach ($theselects as $selected) {
-                    $selectfield = explode(' AS ', $selected);
-                    if (2 == count($selectfield)) {
-                        $field = trim(trim($selectfield[1]), '`');
-                        $real_field = trim(trim($selectfield[0]), '`');
-                        $selects[$field] = $real_field;
-                    }
-                }
-            }
-            if (false !== $this->search && !empty($this->search_fields)) {
-                if (false !== $this->search_query && 0 < strlen($this->search_query)) {
-                    foreach ($this->search_fields as $key => $field) {
-                        $attributes = $field;
-                        if (!is_array($attributes))
-                            $attributes = array();
-                        if (false === $attributes['search'])
-                            continue;
-                        if (in_array($attributes['type'], array('date', 'time', 'datetime')))
-                            continue;
-                        if (is_array($field))
-                            $field = $key;
-                        if (!isset($this->filters[$field]))
-                            continue;
-                        $fieldfield = '`' . $field . '`';
-                        if (isset($selects[$field]))
-                            $fieldfield = '`' . $selects[$field] . '`';
-                        if (false !== $attributes['real_name'])
-                            $fieldfield = $attributes['real_name'];
-                        if (false !== $attributes['group_related'])
-                            $having_sql[] = "$fieldfield LIKE '%" . pods_sanitize($this->search_query) . "%'";
-                        else
-                            $where_sql[] = "$fieldfield LIKE '%" . pods_sanitize($this->search_query) . "%'";
-                    }
-                    if (!empty($where_sql)) {
-                        $where_sql = array('(' . implode(' OR ', $where_sql) . ')');
-                    }
-                    if (!empty($having_sql)) {
-                        $having_sql = array('(' . implode(' OR ', $having_sql) . ')');
-                    }
-                }
-                foreach ($this->filters as $filter) {
-                    if (!isset($this->search_fields[$filter]))
+
+        if (null !== $params->search && !empty($params->fields)) {
+            // Search
+            if (false !== $params->search_query && 0 < strlen($params->search_query)) {
+                $where = $having = array();
+                foreach ($params->fields as $key => $field) {
+                    $attributes = $field;
+                    if (!is_array($attributes))
+                        $attributes = array();
+                    if (false === $attributes['search'])
                         continue;
-                    $filterfield = '`' . $filter . '`';
-                    if (isset($selects[$filter]))
-                        $filterfield = '`' . $selects[$filter] . '`';
-                    if (false !== $this->search_fields[$filter]['real_name'])
-                        $filterfield = $this->search_fields[$filter]['real_name'];
-                    if (in_array($this->search_fields[$filter]['type'], array('date', 'datetime'))) {
-                        $start = date('Y-m-d') . ('datetime' == $this->search_fields[$filter]['type']) ? ' 00:00:00' : '';
-                        $end = date('Y-m-d') . ('datetime' == $this->search_fields[$filter]['type']) ? ' 23:59:59' : '';
-                        if (strlen($this->get_var('filter_' . $filter . '_start', false)) < 1 && strlen($this->get_var('filter_' . $filter . '_end', false)) < 1)
-                            continue;
-                        if (0 < strlen($this->get_var('filter_' . $filter . '_start', false)))
-                            $start = date('Y-m-d', strtotime($this->get_var('filter_' . $filter . '_start', false))) . ('datetime' == $this->search_fields[$filter]['type']) ? ' 00:00:00' : '';
-                        if (0 < strlen($this->get_var('filter_' . $filter . '_end', false)))
-                            $end = date('Y-m-d', strtotime($this->get_var('filter_' . $filter . '_end', false))) . ('datetime' == $this->search_fields[$filter]['type']) ? ' 23:59:59' : '';
-                        if (false !== $this->search_fields[$filter]['date_ongoing']) {
-                            $date_ongoing = $this->search_fields[$filter]['date_ongoing'];
-                            if (isset($selects[$date_ongoing]))
-                                $date_ongoing = $selects[$date_ongoing];
-                            if (false !== $this->search_fields[$filter]['group_related'])
-                                $having_sql[] = "(($filterfield <= '$start' OR ($filterfield >= '$start' AND $filterfield <= '$end')) AND ($date_ongoing >= '$start' OR ($date_ongoing >= '$start' AND $date_ongoing <= '$end')))";
-                            else
-                                $where_sql[] = "(($filterfield <= '$start' OR ($filterfield >= '$start' AND $filterfield <= '$end')) AND ($date_ongoing >= '$start' OR ($date_ongoing >= '$start' AND $date_ongoing <= '$end')))";
-                        }
-                        else {
-                            if (false !== $this->search_fields[$filter]['group_related'])
-                                $having_sql[] = "($filterfield BETWEEN '$start' AND '$end')";
-                            else
-                                $where_sql[] = "($filterfield BETWEEN '$start' AND '$end')";
-                        }
-                    }
-                    elseif (0 < strlen($this->get_var('filter_' . $filter, false))) {
-                        if (false !== $this->search_fields[$filter]['group_related'])
-                            $having_sql[] = "$filterfield LIKE '%" . pods_sanitize($this->get_var('filter_' . $filter, false)) . "%'";
+                    if (in_array($attributes['type'], array('date', 'time', 'datetime')))
+                        continue;
+                    if (is_array($field))
+                        $field = $key;
+                    if (isset($params->filters[$field]))
+                        continue;
+                    $fieldfield = '`' . $field . '`';
+                    if (isset($this->aliases[$field]))
+                        $fieldfield = '`' . $this->aliases[$field] . '`';
+                    if (false !== $attributes['real_name'])
+                        $fieldfield = $attributes['real_name'];
+                    if (false !== $attributes['group_related'])
+                        $having[] = "{$fieldfield} LIKE '%" . pods_sanitize($params->search_query) . "%'";
+                    else
+                        $where[] = "{$fieldfield} LIKE '%" . pods_sanitize($params->search_query) . "%'";
+                }
+                if (!empty($where))
+                    $params->where[] = '(' . implode(' OR ', $where) . ')';
+                if (!empty($having))
+                    $params->having[] = '(' . implode(' OR ', $having) . ')';
+            }
+
+            // Filter
+            foreach ($params->filters as $filter) {
+                $where = $having = array();
+                if (!isset($params->fields[$filter]))
+                    continue;
+                $filterfield = '`' . $filter . '`';
+                if (isset($this->aliases[$filter]))
+                    $filterfield = '`' . $this->aliases[$filter] . '`';
+                if (false !== $params->fields[$filter]['real_name'])
+                    $filterfield = $params->fields[$filter]['real_name'];
+                if (in_array($params->fields[$filter]['type'], array('date', 'datetime'))) {
+                    $start = date('Y-m-d') . ('datetime' == $params->fields[$filter]['type']) ? ' 00:00:00' : '';
+                    $end = date('Y-m-d') . ('datetime' == $params->fields[$filter]['type']) ? ' 23:59:59' : '';
+                    if (strlen(pods_var('filter_' . $filter . '_start', 'get', false)) < 1 && strlen(pods_var('filter_' . $filter . '_end', 'get', false)) < 1)
+                        continue;
+                    if (0 < strlen(pods_var('filter_' . $filter . '_start', 'get', false)))
+                        $start = date('Y-m-d', strtotime(pods_var('filter_' . $filter . '_start', 'get', false))) . ('datetime' == $params->fields[$filter]['type']) ? ' 00:00:00' : '';
+                    if (0 < strlen(pods_var('filter_' . $filter . '_end', 'get', false)))
+                        $end = date('Y-m-d', strtotime(pods_var('filter_' . $filter . '_end', 'get', false))) . ('datetime' == $params->fields[$filter]['type']) ? ' 23:59:59' : '';
+                    if (false !== $params->fields[$filter]['date_ongoing']) {
+                        $date_ongoing = '`' . $params->fields[$filter]['date_ongoing'] . '`';
+                        if (isset($this->aliases[$date_ongoing]))
+                            $date_ongoing = '`' . $this->aliases[$date_ongoing] . '`';
+                        if (false !== $params->fields[$filter]['group_related'])
+                            $having[] = "(({$filterfield} <= '$start' OR ({$filterfield} >= '$start' AND {$filterfield} <= '$end')) AND ({$date_ongoing} >= '$start' OR ({$date_ongoing} >= '$start' AND {$date_ongoing} <= '$end')))";
                         else
-                            $where_sql[] = "$filterfield LIKE '%" . pods_sanitize($this->get_var('filter_' . $filter, false)) . "%'";
+                            $where[] = "(({$filterfield} <= '$start' OR ({$filterfield} >= '$start' AND {$filterfield} <= '$end')) AND ({$date_ongoing} >= '$start' OR ({$date_ongoing} >= '$start' AND {$date_ongoing} <= '$end')))";
+                    }
+                    else {
+                        if (false !== $params->fields[$filter]['group_related'])
+                            $having[] = "({$filterfield} BETWEEN '$start' AND '$end')";
+                        else
+                            $where[] = "({$filterfield} BETWEEN '$start' AND '$end')";
                     }
                 }
-                if (!empty($where_sql)) {
-                    if (false === stripos($sql, ' WHERE '))
-                        $wheresql .= ' WHERE (' . implode(' AND ', $where_sql) . ')';
-                    elseif (empty($wheresql))
-                        $wheresql .= ' AND (' . implode(' AND ', $where_sql) . ')';
+                elseif (0 < strlen(pods_var('filter_' . $filter, 'get', false))) {
+                    if (false !== $params->fields[$filter]['group_related'])
+                        $having[] = "{$filterfield} LIKE '%" . pods_sanitize(pods_var('filter_' . $filter, 'get', false)) . "%'";
                     else
-                        $wheresql .= '(' . implode(' AND ', $where_sql) . ') AND ';
+                        $where[] = "{$filterfield} LIKE '%" . pods_sanitize(pods_var('filter_' . $filter, 'get', false)) . "%'";
                 }
-                if (!empty($having_sql)) {
-                    if (false === stripos($sql, ' HAVING '))
-                        $havingsql .= ' HAVING (' . implode(' AND ', $having_sql) . ')';
-                    elseif (empty($havingsql))
-                        $havingsql .= ' AND (' . implode(' AND ', $having_sql) . ')';
-                    else
-                        $havingsql .= '(' . implode(' AND ', $having_sql) . ') AND ';
-                }
+                if (!empty($where))
+                    $params->where[] = '(' . implode(' AND ', $where) . ')';
+                if (!empty($having))
+                    $params->having[] = '(' . implode(' AND ', $having) . ')';
             }
-            if (false !== $this->sort && (false === $this->reorder || 'reorder' != $this->action))
-                $ordersql = trim($this->sort . ' ' . $this->sort_dir);
-            elseif (false !== $this->reorder && 'reorder' == $this->action)
-                $ordersql = trim($this->reorder_sort . ' ' . $this->reorder_sort_dir);
-            elseif (false === stripos($sql, ' ORDER BY '))
-                $ordersql = trim($this->identifier);
-            if (!empty($ordersql)) {
-                if (false === stripos($sql, ' ORDER BY '))
-                    $ordersql = ' ORDER BY ' . $ordersql;
-                else
-                    $ordersql = $ordersql . ', ';
-            }
-            if (false !== $this->pagination && false === stripos($sql, ' LIMIT ')) {
-                $start = ($this->page - 1) * $this->limit;
-                $end = ($this->page - 1) * $this->limit + $this->limit;
-                $limitsql .= " LIMIT $start, $end";
-            }
-            $sql = str_replace(' WHERE ', ' WHERE %%WHERE%% ', $sql);
-            $sql = str_replace(' HAVING ', ' HAVING %%HAVING%% ', $sql);
-            $sql = str_replace(' ORDER BY ', ' ORDER BY %%ORDERBY%% ', $sql);
-            if (false === stripos($sql, '%%WHERE%%') && false === stripos($sql, ' WHERE ')) {
-                if (false !== stripos($sql, ' GROUP BY '))
-                    $sql = str_replace(' GROUP BY ', ' %%WHERE%% GROUP BY ', $sql);
+        }
+
+        // Build
+        if (null === $params->sql) {
+            $sql = "
+                SELECT SQL_CALC_FOUND_ROWS
+                " . (!empty($params->select) ? (is_array($params->select) ? implode(', ', $params->select) : $params->select) : '*') . "
+                FROM {$params->table}
+                " . (!empty($params->join) ? (is_array($params->join) ? implode("\n                ", $params->join) : $params->join) : '') . "
+                " . (!empty($params->where) ? 'WHERE ' . (is_array($params->where) ? implode(' AND ', $params->where) : $params->where) : '') . "
+                " . (!empty($params->groupby) ? 'GROUP BY ' . (is_array($params->groupby) ? implode(', ', $params->groupby) : $params->groupby) : '') . "
+                " . (!empty($params->having) ? 'HAVING ' . (is_array($params->having) ? implode(' AND ', $params->having) : $params->having) : '') . "
+                " . (!empty($params->orderby) ? 'ORDER BY ' . (is_array($params->orderby) ? implode(', ', $params->orderby) : $params->orderby) : '') . "
+                " . ((0 < $params->page && 0 < $params->limit) ? 'LIMIT ' . (($params->page - 1) * $params->limit) . ', ' . ((($params->page - 1) * $params->limit) + $params->limit) : '') . "
+            ";
+        }
+        // Rewrite
+        else {
+            $sql = ' ' . trim(str_replace(array("\n", "\r"), ' ', $this->sql));
+            $sql = preg_replace(array('/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i',
+                                      '/\sSELECT\s/i'),
+                                array(' SELECT ',
+                                      ' SELECT SQL_CALC_FOUND_ROWS '),
+                                $sql);
+
+            // Insert variables based on existing statements
+            if (false === stripos($sql, '%%SELECT%%'))
+                $sql = preg_replace('/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i', ' SELECT SQL_CALC_FOUND_ROWS %%SELECT%% ', $sql);
+            if (false === stripos($sql, '%%WHERE%%'))
+                $sql = preg_replace('/\sWHERE\s(?!.*\sWHERE\s)/gi', ' WHERE %%WHERE%% ', $sql);
+            if (false === stripos($sql, '%%GROUPBY%%'))
+                $sql = preg_replace('/\sGROUP BY\s(?!.*\sGROUP BY\s)/gi', ' GROUP BY %%GROUPBY%% ', $sql);
+            if (false === stripos($sql, '%%HAVING%%'))
+                $sql = preg_replace('/\sHAVING\s(?!.*\sHAVING\s)/gi', ' HAVING %%HAVING%% ', $sql);
+            if (false === stripos($sql, '%%ORDERBY%%'))
+                $sql = preg_replace('/\sORDER BY\s(?!.*\sORDER BY\s)/gi', ' ORDER BY %%ORDERBY%% ', $sql);
+
+            // Insert variables based on other existing statements
+            if (false === stripos($sql, '%%JOIN%%')) {
+                if (false !== stripos($sql, ' WHERE '))
+                    $sql = preg_replace('/\sWHERE\s(?!.*\sWHERE\s)/gi', ' %%JOIN%% WHERE ', $sql);
+                elseif (false !== stripos($sql, ' GROUP BY '))
+                    $sql = preg_replace('/\sGROUP BY\s(?!.*\sGROUP BY\s)/gi', ' %%WHERE%% GROUP BY ', $sql);
                 elseif (false !== stripos($sql, ' ORDER BY '))
-                    $sql = str_replace(' ORDER BY ', ' %%WHERE%% ORDER BY ', $sql);
-                elseif (false !== stripos($sql, ' LIMIT '))
-                    $sql = str_replace(' LIMIT ', ' %%WHERE%% LIMIT ', $sql);
+                    $sql = preg_replace('/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%WHERE%% ORDER BY ', $sql);
+                else
+                    $sql .= ' %%JOIN%% ';
+            }
+            if (false === stripos($sql, '%%WHERE%%')) {
+                if (false !== stripos($sql, ' GROUP BY '))
+                    $sql = preg_replace('/\sGROUP BY\s(?!.*\sGROUP BY\s)/gi', ' %%WHERE%% GROUP BY ', $sql);
+                elseif (false !== stripos($sql, ' ORDER BY '))
+                    $sql = preg_replace('/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%WHERE%% ORDER BY ', $sql);
                 else
                     $sql .= ' %%WHERE%% ';
             }
-            if (false === stripos($sql, '%%HAVING%%') && false === stripos($sql, ' HAVING ')) {
+            if (false === stripos($sql, '%%GROUPBY%%')) {
+                if (false !== stripos($sql, ' HAVING '))
+                    $sql = preg_replace('/\sHAVING\s(?!.*\sHAVING\s)/gi', ' %%GROUPBY%% HAVING ', $sql);
+                elseif (false !== stripos($sql, ' ORDER BY '))
+                    $sql = preg_replace('/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%GROUPBY%% ORDER BY ', $sql);
+                else
+                    $sql .= ' %%GROUPBY%% ';
+            }
+            if (false === stripos($sql, '%%HAVING%%')) {
                 if (false !== stripos($sql, ' ORDER BY '))
-                    $sql = str_replace(' ORDER BY ', ' %%HAVING%% ORDER BY ', $sql);
-                elseif (false !== stripos($sql, ' LIMIT '))
-                    $sql = str_replace(' LIMIT ', ' %%HAVING%% LIMIT ', $sql);
+                    $sql = preg_replace('/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%HAVING%% ORDER BY ', $sql);
                 else
                     $sql .= ' %%HAVING%% ';
             }
-            if (false === stripos($sql, '%%ORDERBY%%') && false === stripos($sql, ' ORDER BY ')) {
-                if (false !== stripos($sql, ' LIMIT '))
-                    $sql = str_replace(' LIMIT ', ' %%ORDERBY%% LIMIT ', $sql);
+            if (false === stripos($sql, '%%ORDERBY%%'))
+                $sql .= ' %%ORDERBY%% ';
+            if (false === stripos($sql, '%%LIMIT%%'))
+                $sql .= ' %%LIMIT%% ';
+
+            // Replace variables
+            if (0 < strlen($params->select)) {
+                if (false === stripos($sql, '%%SELECT%% FROM '))
+                    $sql = str_ireplace('%%SELECT%%', $params->select . ', ', $sql);
                 else
-                    $sql .= ' %%ORDERBY%% ';
+                    $sql = str_ireplace('%%SELECT%%', $params->select, $sql);
             }
-            if (false === stripos($sql, '%%LIMIT%%') && false === stripos($sql, ' LIMIT '))
-                $sql .= ' %%LIMIT%%';
-            $sql = str_replace('%%WHERE%%', $wheresql, $sql);
-            $sql = str_replace('%%HAVING%%', $havingsql, $sql);
-            $sql = str_replace('%%ORDERBY%%', $ordersql, $sql);
-            $sql = str_replace('%%LIMIT%%', $limitsql, $sql);
-            $sql = str_replace('``', '`', $sql);
-            $sql = str_replace('  ', ' ', $sql);
-            //echo "<textarea cols='130' rows='30'>$sql</textarea>";
-        }
-        $results = $wpdb->get_results($sql, array_A);
-        $results = $this->do_hook('get_data', $results);
-        $this->data = $results;
-        if (empty($this->fields) && !empty($this->data)) {
-            $data = current($this->data);
-            foreach ($data as $data_key => $data_value) {
-                $this->fields[$data_key] = array('label' => ucwords(str_replace('-', ' ', str_replace('_', ' ', $data_key))));
+            if (0 < strlen($params->join))
+                $sql = str_ireplace('%%JOIN%%', $params->join, $sql);
+            if (0 < strlen($params->where)) {
+                if (false !== stripos($sql, ' WHERE ')) {
+                    if (false !== stripos($sql, ' WHERE %%WHERE%% '))
+                        $sql = str_ireplace('%%WHERE%%', $params->where . ' AND ', $sql);
+                    else
+                        $sql = str_ireplace('%%WHERE%%', ' AND ' . $params->where, $sql);
+                }
+                else
+                    $sql = str_ireplace('%%WHERE%%', ' WHERE ' . $params->where, $sql);
             }
-            $this->export_fields = $this->fields;
+            if (0 < strlen($params->groupby)) {
+                if (false !== stripos($sql, ' GROUP BY ')) {
+                    if (false !== stripos($sql, ' GROUP BY %%GROUPBY%% '))
+                        $sql = str_ireplace('%%GROUPBY%%', $params->groupby . ', ', $sql);
+                    else
+                        $sql = str_ireplace('%%GROUPBY%%', ', ' . $params->groupby, $sql);
+                }
+                else
+                    $sql = str_ireplace('%%GROUPBY%%', ' GROUP BY ' . $params->groupby, $sql);
+            }
+            if (0 < strlen($params->having) && false !== stripos($sql, ' GROUP BY ')) {
+                if (false !== stripos($sql, ' HAVING ')) {
+                    if (false !== stripos($sql, ' HAVING %%HAVING%% '))
+                        $sql = str_ireplace('%%HAVING%%', $params->having . ' AND ', $sql);
+                    else
+                        $sql = str_ireplace('%%HAVING%%', ' AND ' . $params->having, $sql);
+                }
+                else
+                    $sql = str_ireplace('%%HAVING%%', ' HAVING ' . $params->having, $sql);
+            }
+            if (0 < strlen($params->orderby)) {
+                if (false !== stripos($sql, ' ORDER BY ')) {
+                    if (false !== stripos($sql, ' ORDER BY %%ORDERBY%% '))
+                        $sql = str_ireplace('%%ORDERBY%%', $params->having . ', ', $sql);
+                    else
+                        $sql = str_ireplace('%%ORDERBY%%', ', ' . $params->having, $sql);
+                }
+                else
+                    $sql = str_ireplace('%%ORDERBY%%', ' ORDER BY ' . $params->groupby, $sql);
+            }
+            if (0 < $params->page && 0 < $params->limit) {
+                $start = ($params->page - 1) * $params->limit;
+                $end = $start + $params->limit;
+                $sql .= 'LIMIT ' . (int) $start . ', ' . (int) $end;
+            }
+
+            // Clear any unused variables
+            $sql = str_ireplace(array('%%SELECT%%',
+                                      '%%JOIN%%',
+                                      '%%WHERE%%',
+                                      '%%GROUPBY%%',
+                                      '%%HAVING%%',
+                                      '%%ORDERBY%%',
+                                      '%%LIMIT%%'), '', $sql);
+            $sql = str_replace(array('``', '`'), array('  ', ' '), $sql);
         }
-        $total = @current($wpdb->get_col("SELECT FOUND_ROWS()"));
-        $total = $this->do_hook('get_data_total', $total);
-        if (is_numeric($total))
-            $this->total = $total;
-        return $results;
+
+        // Debug purposes
+        if (1 == pods_var('debug_sql', 'get', 0) && is_user_logged_in() && is_super_admin())
+            echo "<textarea cols='130' rows='30'>{$sql}</textarea>";
+
+        return $sql;
     }
 
+    /**
+     * Fetch the total row count returned
+     *
+     * @return int Number of rows returned by select()
+     * @since 2.0.0
+     */
+    public function total () {
+        return (int) $this->total;
+    }
+
+    /**
+     * Fetch the total row count total
+     *
+     * @return int Number of rows found by select()
+     * @since 2.0.0
+     */
+    public function total_found () {
+        return (int) $this->total_found;
+    }
+
+    /**
+     * Fetch the zebra switch
+     *
+     * @return bool Zebra state
+     * @since 1.12
+     */
+    public function zebra () {
+        $zebra = true;
+        if (0 < ($this->row_number % 2)) // Odd numbers
+            $zebra = false;
+        return $zebra;
+    }
+
+    /**
+     * Create a Table
+     *
+     * @param string $table
+     * @param string $fields
+     * @param boolean $if_not_exists
+     * @since 2.0.0
+     */
     public static function table_create ($table, $fields, $if_not_exists = false) {
         global $wpdb;
         $sql = "CREATE TABLE";
@@ -545,24 +616,52 @@ class PodsData
         return self::query($sql);
     }
 
+    /**
+     * Alter a Table
+     *
+     * @param string $table
+     * @param string $changes
+     * @since 2.0.0
+     */
     public static function table_alter ($table, $changes) {
         global $wpdb;
         $sql = "ALTER TABLE `{$wpdb->prefix}" . self::prefix . "{$table}` {$changes}";
         return self::query($sql);
     }
 
+    /**
+     * Truncate a Table
+     *
+     * @param string $table
+     * @since 2.0.0
+     */
     public static function table_truncate ($table) {
         global $wpdb;
         $sql = "TRUNCATE TABLE `{$wpdb->prefix}" . self::prefix . "{$table}`";
         return self::query($sql);
     }
 
+    /**
+     * Drop a Table
+     *
+     * @param string $table
+     * @since 2.0.0
+     */
     public static function table_drop ($table) {
         global $wpdb;
         $sql = "DROP TABLE `{$wpdb->prefix}" . self::prefix . "{$table}`";
         return self::query($sql);
     }
 
+    /**
+     * Reorder Items
+     *
+     * @param string $table
+     * @param string $weight_field
+     * @param string $id_field
+     * @param array $ids
+     * @since 2.0.0
+     */
     public function reorder ($table, $weight_field, $id_field, $ids) {
         $success = false;
         $ids = (array) $ids;
@@ -578,315 +677,16 @@ class PodsData
         return $success;
     }
 
-    function get_row ($id = false) {
-        if (isset($this->actions_custom['row']) && function_exists("{$this->actions_custom['row']}"))
-            return $this->actions_custom['row']($id, $this);
-        if (false !== $this->ui['pod'] && is_object($this->ui['pod'])) {
-            if (false === $id) {
-                $this->ui['pod']->fetch();
-                $row = $this->ui['pod']->data;
-                $row = $this->do_hook('get_row', $row, $id);
-                $this->row = $row;
-                return $row;
-            }
-            else {
-                foreach ($this->ui['pod']->result as $row) {
-                    if (!empty($row) && $id === $row[$this->identified]) {
-                        $row = $this->do_hook('get_row', $row, $id);
-                        $this->row = $row;
-                        return $row;
-                    }
-                }
-            }
-        }
-        if (false === $this->table && false === $this->sql)
-            return $this->error(__('<strong>Error:</strong> Invalid Configuration - Missing "table" definition.', 'pods'));
-        if (false === $this->id && false === $id)
-            return $this->error(__('<strong>Error:</strong> Invalid Configuration - Missing "id" definition.', 'pods'));
-        if (false === $id)
-            $id = $this->id;
-        global $wpdb;
-        $sql = "SELECT * FROM `{$this->table}` WHERE `id` = " . pods_sanitize($id);
-        $row = @current($wpdb->get_results($sql, array_A));
-        $row = $this->do_hook('get_row', $row, $id);
-        if (!empty($row))
-            $this->row = $row;
-        return $row;
-    }
-
-    function get_data ($full = false) {
-        if (isset($this->actions_custom['data']) && function_exists("{$this->actions_custom['data']}"))
-            return $this->actions_custom['data']($full, $this);
-        if (false !== $this->ui['pod'] && is_object($this->ui['pod'])) {
-            if (false !== $this->sort && (false === $this->reorder || 'reorder' != $this->action))
-                $sort = $this->sort . ' ' . $this->sort_dir;
-            elseif (false !== $this->reorder && 'reorder' == $this->action)
-                $sort = $this->reorder_sort . ' ' . $this->reorder_sort_dir;
-            $params = array('limit' => $this->limit, 'orderby' => $sort, 'search_var' => 'search_query' . $this->num, 'page_var' => 'pg' . $this->num);
-            if (false !== $full)
-                $params['limit'] = -1;
-            $this->ui['pod']->find($params);
-            $results = $this->ui['pod']->results;
-            $results = $this->do_hook('get_data', $results, $full);
-            return $results;
-        }
-        if (false === $this->table && false === $this->sql)
-            return $this->error(__('<strong>Error:</strong> Invalid Configuration - Missing "table" definition.', 'pods'));
-        global $wpdb;
-        if (false === $this->sql) {
-            $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM $this->table";
-            if (false !== $this->search && !empty($this->search_fields)) {
-                $whered = false;
-                if (false !== $this->search_query && 0 < strlen($this->search_query)) {
-                    $sql .= " WHERE ";
-                    $whered = true;
-                    $where_sql = array();
-                    foreach ($this->search_fields as $key => $field) {
-                        if (false === $field['search'])
-                            continue;
-                        if (in_array($field['type'], array('date', 'time', 'datetime')))
-                            continue;
-                        if (is_array($field))
-                            $field = $key;
-                        $where_sql[] = "`$field` LIKE '%" . pods_sanitize($this->search_query) . "%'";
-                    }
-                    if (!empty($where_sql))
-                        $sql .= '(' . implode(' OR ', $where_sql) . ')';
-                }
-                $where_sql = array();
-                foreach ($this->filters as $filter) {
-                    if (!isset($this->search_fields[$filter]))
-                        continue;
-                    if (in_array($this->search_fields[$filter]['type'], array('date', 'datetime'))) {
-                        $start = date('Y-m-d') . ' 00:00:00';
-                        $end = date('Y-m-d') . ' 23:59:59';
-                        if (strlen($this->get_var('filter_' . $filter . '_start', false)) < 1 && strlen($this->get_var('filter_' . $filter . '_end', false)) < 1)
-                            continue;
-                        if (0 < strlen($this->get_var('filter_' . $filter . '_start', false)))
-                            $start = date('Y-m-d', strtotime($this->get_var('filter_' . $filter . '_start', false))) . ' 00:00:00';
-                        if (0 < strlen($this->get_var('filter_' . $filter . '_end', false)))
-                            $end = date('Y-m-d', strtotime($this->get_var('filter_' . $filter . '_end', false))) . ' 23:59:59';
-                        if (false !== $this->search_fields[$filter]['date_ongoing'])
-                            $where_sql[] = "((`$filter` <= '$start' OR `$filter` <= '$end') AND (`" . $this->search_fields[$filter]['date_ongoing'] . "` >= '$end' OR `" . $this->search_fields[$filter]['date_ongoing'] . "` >= '$start'))";
-                        else
-                            $where_sql[] = "(`$filter` BETWEEN '$start' AND '$end')";
-                    }
-                    elseif (0 < strlen($this->get_var('filter_' . $filter, false)))
-                        $where_sql[] = "`$filter` LIKE '%" . pods_sanitize($this->get_var('filter_' . $filter, false)) . "%'";
-                }
-                if (!empty($where_sql)) {
-                    if (false === $whered)
-                        $sql .= " WHERE ";
-                    else
-                        $sql .= " AND ";
-                    $sql .= implode(' AND ', $where_sql);
-                }
-            }
-            $sql .= ' ORDER BY ';
-            if (false !== $this->sort && (false === $this->reorder || 'reorder' != $this->action))
-                $sql .= $this->sort . ' ' . $this->sort_dir;
-            elseif (false !== $this->reorder && 'reorder' == $this->action)
-                $sql .= $this->reorder_sort . ' ' . $this->reorder_sort_dir;
-            else
-                $sql .= $this->identifier;
-            if (false !== $this->pagination && !$full) {
-                $start = ($this->page - 1) * $this->limit;
-                $end = ($this->page - 1) * $this->limit + $this->limit;
-                $sql .= " LIMIT $start, $end";
-            }
-        }
-        else {
-            $sql = str_replace(array("\n", "\r"), ' ', ' ' . $this->sql);
-            $sql = str_ireplace(' SELECT ', ' SELECT SQL_CALC_FOUND_ROWS ', str_ireplace(' SELECT SQL_CALC_FOUND_ROWS ', ' SELECT ', $sql));
-            $wheresql = $havingsql = $ordersql = $limitsql = '';
-            $where_sql = $having_sql = array();
-            preg_match('/SELECT SQL_CALC_FOUND_ROWS (.*) FROM/i', $sql, $selectmatches);
-            $selects = array();
-            if (isset($selectmatches[1]) && !empty($selectmatches[1]) && false !== stripos($selectmatches[1], ' AS ')) {
-                $theselects = explode(', ', $selectmatches[1]);
-                if (empty($theselects))
-                    $theselects = explode(',', $selectmatches[1]);
-                foreach ($theselects as $selected) {
-                    $selectfield = explode(' AS ', $selected);
-                    if (2 == count($selectfield)) {
-                        $field = trim(trim($selectfield[1]), '`');
-                        $real_field = trim(trim($selectfield[0]), '`');
-                        $selects[$field] = $real_field;
-                    }
-                }
-            }
-            if (false !== $this->search && !empty($this->search_fields)) {
-                if (false !== $this->search_query && 0 < strlen($this->search_query)) {
-                    foreach ($this->search_fields as $key => $field) {
-                        $attributes = $field;
-                        if (!is_array($attributes))
-                            $attributes = array();
-                        if (false === $attributes['search'])
-                            continue;
-                        if (in_array($attributes['type'], array('date', 'time', 'datetime')))
-                            continue;
-                        if (is_array($field))
-                            $field = $key;
-                        if (!isset($this->filters[$field]))
-                            continue;
-                        $fieldfield = '`' . $field . '`';
-                        if (isset($selects[$field]))
-                            $fieldfield = '`' . $selects[$field] . '`';
-                        if (false !== $attributes['real_name'])
-                            $fieldfield = $attributes['real_name'];
-                        if (false !== $attributes['group_related'])
-                            $having_sql[] = "$fieldfield LIKE '%" . pods_sanitize($this->search_query) . "%'";
-                        else
-                            $where_sql[] = "$fieldfield LIKE '%" . pods_sanitize($this->search_query) . "%'";
-                    }
-                    if (!empty($where_sql)) {
-                        $where_sql = array('(' . implode(' OR ', $where_sql) . ')');
-                    }
-                    if (!empty($having_sql)) {
-                        $having_sql = array('(' . implode(' OR ', $having_sql) . ')');
-                    }
-                }
-                foreach ($this->filters as $filter) {
-                    if (!isset($this->search_fields[$filter]))
-                        continue;
-                    $filterfield = '`' . $filter . '`';
-                    if (isset($selects[$filter]))
-                        $filterfield = '`' . $selects[$filter] . '`';
-                    if (false !== $this->search_fields[$filter]['real_name'])
-                        $filterfield = $this->search_fields[$filter]['real_name'];
-                    if (in_array($this->search_fields[$filter]['type'], array('date', 'datetime'))) {
-                        $start = date('Y-m-d') . ('datetime' == $this->search_fields[$filter]['type']) ? ' 00:00:00' : '';
-                        $end = date('Y-m-d') . ('datetime' == $this->search_fields[$filter]['type']) ? ' 23:59:59' : '';
-                        if (strlen($this->get_var('filter_' . $filter . '_start', false)) < 1 && strlen($this->get_var('filter_' . $filter . '_end', false)) < 1)
-                            continue;
-                        if (0 < strlen($this->get_var('filter_' . $filter . '_start', false)))
-                            $start = date('Y-m-d', strtotime($this->get_var('filter_' . $filter . '_start', false))) . ('datetime' == $this->search_fields[$filter]['type']) ? ' 00:00:00' : '';
-                        if (0 < strlen($this->get_var('filter_' . $filter . '_end', false)))
-                            $end = date('Y-m-d', strtotime($this->get_var('filter_' . $filter . '_end', false))) . ('datetime' == $this->search_fields[$filter]['type']) ? ' 23:59:59' : '';
-                        if (false !== $this->search_fields[$filter]['date_ongoing']) {
-                            $date_ongoing = $this->search_fields[$filter]['date_ongoing'];
-                            if (isset($selects[$date_ongoing]))
-                                $date_ongoing = $selects[$date_ongoing];
-                            if (false !== $this->search_fields[$filter]['group_related'])
-                                $having_sql[] = "(($filterfield <= '$start' OR ($filterfield >= '$start' AND $filterfield <= '$end')) AND ($date_ongoing >= '$start' OR ($date_ongoing >= '$start' AND $date_ongoing <= '$end')))";
-                            else
-                                $where_sql[] = "(($filterfield <= '$start' OR ($filterfield >= '$start' AND $filterfield <= '$end')) AND ($date_ongoing >= '$start' OR ($date_ongoing >= '$start' AND $date_ongoing <= '$end')))";
-                        }
-                        else {
-                            if (false !== $this->search_fields[$filter]['group_related'])
-                                $having_sql[] = "($filterfield BETWEEN '$start' AND '$end')";
-                            else
-                                $where_sql[] = "($filterfield BETWEEN '$start' AND '$end')";
-                        }
-                    }
-                    elseif (0 < strlen($this->get_var('filter_' . $filter, false))) {
-                        if (false !== $this->search_fields[$filter]['group_related'])
-                            $having_sql[] = "$filterfield LIKE '%" . pods_sanitize($this->get_var('filter_' . $filter, false)) . "%'";
-                        else
-                            $where_sql[] = "$filterfield LIKE '%" . pods_sanitize($this->get_var('filter_' . $filter, false)) . "%'";
-                    }
-                }
-                if (!empty($where_sql)) {
-                    if (false === stripos($sql, ' WHERE '))
-                        $wheresql .= ' WHERE (' . implode(' AND ', $where_sql) . ')';
-                    elseif (empty($wheresql))
-                        $wheresql .= ' AND (' . implode(' AND ', $where_sql) . ')';
-                    else
-                        $wheresql .= '(' . implode(' AND ', $where_sql) . ') AND ';
-                }
-                if (!empty($having_sql)) {
-                    if (false === stripos($sql, ' HAVING '))
-                        $havingsql .= ' HAVING (' . implode(' AND ', $having_sql) . ')';
-                    elseif (empty($havingsql))
-                        $havingsql .= ' AND (' . implode(' AND ', $having_sql) . ')';
-                    else
-                        $havingsql .= '(' . implode(' AND ', $having_sql) . ') AND ';
-                }
-            }
-            if (false !== $this->sort && (false === $this->reorder || 'reorder' != $this->action))
-                $ordersql = trim($this->sort . ' ' . $this->sort_dir);
-            elseif (false !== $this->reorder && 'reorder' == $this->action)
-                $ordersql = trim($this->reorder_sort . ' ' . $this->reorder_sort_dir);
-            elseif (false === stripos($sql, ' ORDER BY '))
-                $ordersql = trim($this->identifier);
-            if (!empty($ordersql)) {
-                if (false === stripos($sql, ' ORDER BY '))
-                    $ordersql = ' ORDER BY ' . $ordersql;
-                else
-                    $ordersql = $ordersql . ', ';
-            }
-            if (false !== $this->pagination && !$full && false === stripos($sql, ' LIMIT ')) {
-                $start = ($this->page - 1) * $this->limit;
-                $end = ($this->page - 1) * $this->limit + $this->limit;
-                $limitsql .= " LIMIT $start, $end";
-            }
-            $sql = str_replace(' WHERE ', ' WHERE %%WHERE%% ', $sql);
-            $sql = str_replace(' HAVING ', ' HAVING %%HAVING%% ', $sql);
-            $sql = str_replace(' ORDER BY ', ' ORDER BY %%ORDERBY%% ', $sql);
-            if (false === stripos($sql, '%%WHERE%%') && false === stripos($sql, ' WHERE ')) {
-                if (false !== stripos($sql, ' GROUP BY '))
-                    $sql = str_replace(' GROUP BY ', ' %%WHERE%% GROUP BY ', $sql);
-                elseif (false !== stripos($sql, ' ORDER BY '))
-                    $sql = str_replace(' ORDER BY ', ' %%WHERE%% ORDER BY ', $sql);
-                elseif (false !== stripos($sql, ' LIMIT '))
-                    $sql = str_replace(' LIMIT ', ' %%WHERE%% LIMIT ', $sql);
-                else
-                    $sql .= ' %%WHERE%% ';
-            }
-            if (false === stripos($sql, '%%HAVING%%') && false === stripos($sql, ' HAVING ')) {
-                if (false !== stripos($sql, ' ORDER BY '))
-                    $sql = str_replace(' ORDER BY ', ' %%HAVING%% ORDER BY ', $sql);
-                elseif (false !== stripos($sql, ' LIMIT '))
-                    $sql = str_replace(' LIMIT ', ' %%HAVING%% LIMIT ', $sql);
-                else
-                    $sql .= ' %%HAVING%% ';
-            }
-            if (false === stripos($sql, '%%ORDERBY%%') && false === stripos($sql, ' ORDER BY ')) {
-                if (false !== stripos($sql, ' LIMIT '))
-                    $sql = str_replace(' LIMIT ', ' %%ORDERBY%% LIMIT ', $sql);
-                else
-                    $sql .= ' %%ORDERBY%% ';
-            }
-            if (false === stripos($sql, '%%LIMIT%%') && false === stripos($sql, ' LIMIT '))
-                $sql .= ' %%LIMIT%%';
-            $sql = str_replace('%%WHERE%%', $wheresql, $sql);
-            $sql = str_replace('%%HAVING%%', $havingsql, $sql);
-            $sql = str_replace('%%ORDERBY%%', $ordersql, $sql);
-            $sql = str_replace('%%LIMIT%%', $limitsql, $sql);
-            $sql = str_replace('``', '`', $sql);
-            $sql = str_replace('  ', ' ', $sql);
-            //echo "<textarea cols='130' rows='30'>$sql</textarea>";
-        }
-        $results = $wpdb->get_results($sql, array_A);
-        $results = $this->do_hook('get_data', $results, $full);
-        if ($full)
-            $this->full_data = $results;
+    public function fetch ($row = null) {
+        if (null === $row)
+            $this->row_number++;
         else
-            $this->data = $results;
-        if ($full) {
-            if (empty($this->fields) && !empty($this->full_data)) {
-                $data = current($this->full_data);
-                foreach ($data as $data_key => $data_value) {
-                    $this->fields[$data_key] = array('label' => ucwords(str_replace('-', ' ', str_replace('_', ' ', $data_key))));
-                }
-                $this->export_fields = $this->fields;
-            }
-            return;
-        }
-        else {
-            if (empty($this->fields) && !empty($this->data)) {
-                $data = current($this->data);
-                foreach ($data as $data_key => $data_value) {
-                    $this->fields[$data_key] = array('label' => ucwords(str_replace('-', ' ', str_replace('_', ' ', $data_key))));
-                }
-                $this->export_fields = $this->fields;
-            }
-        }
-        $total = @current($wpdb->get_col("SELECT FOUND_ROWS()"));
-        $total = $this->do_hook('get_data_total', $total, $full);
-        if (is_numeric($total))
-            $this->total = $total;
-        return $results;
+            $this->row_number = pods_absint($row);
+        if (isset($this->data[$this->row_number]))
+            $this->row = $this->data[$this->row_number];
+        else
+            $this->row = false;
+        return $this->row;
     }
 
     public static function query ($sql, $error = 'Database Error', $results_error = null, $no_results_error = null) {
@@ -951,13 +751,105 @@ class PodsData
         return $result;
     }
 
+    /**
+     * Gets all tables in the WP database, optionally exclude WP core
+     * tables, and/or Pods table by settings the parameters to false.
+     *
+     * @param boolean $wp_core
+     * @param boolean $pods_tables restrict Pods 2.x tables
+     */
+    public static function get_tables ($wp_core = true, $pods_tables = true) {
+        global $wpdb;
+
+        $core_wp_tables = array($wpdb->options,
+                                $wpdb->comments,
+                                $wpdb->commentmeta,
+                                $wpdb->posts,
+                                $wpdb->postmeta,
+                                $wpdb->users,
+                                $wpdb->usermeta,
+                                $wpdb->links,
+                                $wpdb->terms,
+                                $wpdb->term_taxonomy,
+                                $wpdb->term_relationships);
+
+        $showTables = mysql_list_tables(DB_NAME);
+
+        $finalTables = array();
+
+        while ($table = mysql_fetch_row($showTables)) {
+            if (!$pods_tables && 0 === (strpos($table[0], $wpdb->prefix . rtrim(self::prefix, '_')))) // don't include pods tables
+                continue;
+            elseif (!$wp_core && in_array($table[0], $core_wp_tables))
+                continue;
+            else
+                $finalTables[] = $table[0];
+        }
+
+        return $finalTables;
+    }
+
+    /**
+     * Gets column information from a table
+     *
+     * @param string $table
+     */
+    public static function get_table_columns ($table) {
+        $table_columns = self::query('SHOW COLUMNS FROM ' . $table);
+
+        $table_cols_and_types = array();
+
+        while ($table_col = mysql_fetch_assoc($table_columns)) {
+            // Get only the type, not the attributes
+            if (false === strpos($table_col['Type'], '('))
+                $modified_type = $table_col['Type'];
+            else
+                $modified_type = substr($table_col['Type'], 0, (strpos($table_col['Type'], '(')));
+
+            $table_cols_and_types[$table_col['Field']] = $modified_type;
+        }
+
+        return $table_cols_and_types;
+    }
+
+    /**
+     * Gets column data information from a table
+     *
+     * @param string $table
+     */
+    public static function get_column_data ($column_name, $table) {
+        $describe_data = mysql_query('DESCRIBE ' . $table);
+
+        $column_data = array();
+
+        while ($column_row = mysql_fetch_assoc($describe_data)) {
+            $column_data[] = $column_row;
+        }
+
+        foreach ($column_data as $single_column) {
+            if ($column_name == $single_column['Field'])
+                return $single_column;
+        }
+
+        return $column_data;
+    }
+
+    /**
+     * Prepare values for the DB
+     *
+     * @param string $sql
+     * @param array $data
+     */
     public static function prepare ($sql, $data) {
         global $wpdb;
         list($sql, $data) = self::do_hook('prepare', array($sql, $data));
         return $wpdb->prepare($sql, $data);
     }
 
-    public function do_hook () {
+    /**
+     * Hook handler for class
+     */
+    private function do_hook () {
         $args = func_get_args();
         if (empty($args))
             return false;

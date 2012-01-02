@@ -1,132 +1,186 @@
-/* ============================= */
-/* = GENERAL FORM FIELD STYLES = */
-/* ============================= */
-
-/* Required: form must have class of pods */
-
-form.pods div { overflow:hidden; zoom:1; }
-.pods-sort-handles { display:block; cursor:move; }
-
-form.pods tr.expanded { background:#f1f1f1; }
-form.pods tr.expanded td.field-machine-name,
-form.pods tr.expanded td.field-type,
-form.pods tr.expanded td.field-comment { display: none; }
-
-form.pods tr.expanded div.row-actions { visibility:hidden; }
-
-form.pods tr.expanded th.check-field img.pods-sort-handles { visibility: hidden; }
-
-form.pods tr.ui-sortable-helper {
-	background-color: #dddddd;
-	opacity: .5;
+.pods-field label {
+	cursor:pointer;
+	display:inline-block;
+	padding:0 0 4px 2px;
 }
 
-form.pods tr.disabled { color: #dfdfdf; }
-
-form.pods tr.disabled a,
-form.pods tr.disabled code {
-	color: #dfdfdf;
-	background: none;
+.pods-field input,.pods-field textarea {
+	display:block;
 }
 
-form.pods tr.ui-sortable-helper th,
-form.pods tr.ui-sortable-helper td { border: 0; }
+.pods-field textarea {
+	font-family:monospace;
+	height:100%;
+	resize:none;
+}
 
-form.pods tr.ui-sortable-helper td.field-machine-name,
-form.pods tr.ui-sortable-helper td.field-type,
-form.pods tr.ui-sortable-helper td.field-comment { display: none; }
+.pods-field p.pods-field-comment {
+	color:#aaa;
+	font-size:.9em;
+	font-style:italic;
+	margin:5px 0 0 2px !important;
+}
 
-form.pods tr.ui-sortable-helper td.field-label { width: 100%; }
+.pods-pick select {
+	display:block;
+	min-width:125px;
+}
 
-form.pods tr.ui-sortable-placeholder + tr th,
-form.pods tr.ui-sortable-placeholder + tr td { border-top: 1px solid #dfdfdf; }
+.pods-boolean {
+	position:relative;
+}
 
-/* Single line input */
-form.pods .pods-textfield { padding:5px 0; }
-form.pods .pods-textfield label { display:block; float:left; width:30%; }
-form.pods .pods-textfield input { display:block; float:right; width:65%; }
+.pods-boolean input {
+	display:block;
+	height:auto;
+	left:2px;
+	margin:1px 7px 0 0;
+	padding:0;
+	position:absolute;
+	top:10px;
+	width:auto;
+}
 
+.pods-boolean label {
+	margin-left:20px;
+	padding-top:1px;
+}
 
+.pods-file label {
+	padding-bottom:8px;
+}
 
-/* Select */
-form.pods .pods-select { padding:5px 0; }
-form.pods .pods-select label { display:block; float:left; width:30%; }
-form.pods .pods-select select { display:block; float:right; width:65%; }
+.pods-file input {
+	display:none;
+}
 
+ul.pods-files {
+	background:#fbfbfb;
+	border:1px solid #dfdfdf;
+	border-bottom:0;
+	border-radius:3px;
+	list-style:none;
+	margin:0;
+	padding:0;
+}
 
+ul.pods-files li {
+	background:#fff;
+	border-bottom:1px solid #dfdfdf;
+	margin:0;
+	position:relative;
+}
 
-/* Checkbox */
-form.pods .pods-checkbox { padding:5px 0; }
-form.pods .pods-checkbox input { display:block; float:left; margin-right:7px; }
-form.pods .pods-checkbox label { display:block; float:left; padding-top:1px; }
+ul.pods-files li span {
+	display:block;
+	float:left;
+}
 
+ul.pods-files li span.pods-file-reorder {
+	left:3px;
+	position:absolute;
+	top:15px;
+	width:30px;
+}
 
-/* Picks */
+ul.pods-files li span.pods-file-reorder img {
+	cursor:move;
+	display:block;
+}
 
-/* Pick - Checkbox */
-form.pods .pods-pick-alt p { font-weight:bold; margin-bottom:5px; }
-form.pods .pods-pick-alt .pods-pick-choices { max-height:100px; overflow:auto; margin-right:25px; }
+ul.pods-files li span.pods-file-thumb {
+	left:35px;
+	position:absolute;
+	top:2px;
+	width:45px;
+}
 
-.pods-group { overflow:hidden; zoom:1; }
+ul.pods-files li span.pods-file-thumb .pinkynail {
+	float:none;
+	margin:0;
+}
 
+ul.pods-files li span.pods-file-name {
+	padding:11px 35px 0 85px;
+}
 
+ul.pods-files li span.pods-file-remove {
+	position:absolute;
+	right:10px;
+	top:10px;
+	width:25px;
+}
 
-/* ==================== */
-/* = POD SETUP SCREEN = */
-/* ==================== */
+ul.pods-files li span.pods-file-remove img {
+	cursor:pointer;
+	display:block;
+}
 
-/* Advanced Settings */
-.pods-admin #poststuff { padding-top:10px; }
-.pods-admin #poststuff #pods-manage-settings { padding-top:10px; }
-.pods-admin #poststuff #pods-pod-advanced-settings .hndle { cursor:default; }
-.pods-admin #poststuff #pods-pod-advanced-settings .inside fieldset { padding-bottom:10px; }
-.pods-admin #poststuff #pods-pod-advanced-settings .inside legend { display:none; }
-.pods-admin #poststuff #pods-pod-advanced-settings .inside .pods-helper { width:25%; float:left; }
-.pods-admin #poststuff #pods-pod-advanced-settings .inside .pods-pick { padding-top:10px; }
-.pods-admin #poststuff #pods-pod-advanced-settings .inside .pods-pick p { margin-bottom:5px; }
+.pods-pick-values {
+	background:#fff;
+	border:1px solid #dfdfdf;
+	border-radius:3px;
+	min-width:125px;
+	overflow:auto;
+	padding:2px 0;
+}
 
-.pods-admin #poststuff #titlediv #titlewrap input { margin:0; }
+.pods-pick-values ul {
+	overflow:auto;
+}
 
-.pods-admin .pods-main-field-attributes { border:1px solid #dfdfdf; border-bottom:0; }
-.pods-admin .pods-manage-field .pods-field-detail { padding:10px; border-bottom:1px solid #dfdfdf; background:#fcfcfc; }
-.pods-admin .pods-manage-field .pods-field-detail:nth-child(odd) { background:#fff; }
-.pods-admin .pods-manage-field .pods-field-detail label { padding-top:4px; }
+.pods-pick-values li {
+	border-bottom:1px solid #f4f4f4;
+	line-height:1em;
+	margin:0;
+	padding:3px 6px 2px;
+}
 
-.pods-admin .pods-pick { }
-.pods-admin .pods-pick p.pods-pick-label { width:30%; float:left; padding-top:4px; }
-.pods-admin .pods-pick div.pods-pick-values { width:65%; float:right; padding-bottom:5px; }
-.pods-admin .pods-pick div.pods-pick-values .pods-checkbox { padding-bottom:0; }
-.pods-admin .pods-pick div.pods-pick-values input { position:relative; top:2px; }
-.pods-admin .pods-pick div.pods-pick-values label { padding-top:0; }
+.pods-pick-values li:nth-child(even) {
+	background:#fcfcfc;
+}
 
-.pods-admin .pods-advanced { clear:both; padding-top:10px; }
+.pods-pick-values label {
+	padding-bottom:3px;
+	padding-top:3px;
+}
 
-.pods-admin .pods-add-field { clear:both; padding:15px 0; }
+.pods-pick-values li:last-of-type {
+	border-bottom:0;
+}
 
-.pods-admin .pods-field-actions { clear:both; padding:15px 0; }
-.pods-admin .pods-advanced-toggle { width:40%; float:left; }
-.pods-admin .pods-save-field { width:40%; float:right; text-align:right; }
+.pods-pick-values li .pods-field {
+	padding:3px 0 2px;
+}
 
-.pods-admin .pods-location-condition-wrapper { overflow:hidden; zoom:1; padding:2px 0 5px; }
-.pods-admin .pods-location-condition-wrapper select { display:block; float:left; }
-.pods-admin .pods-location-condition-wrapper select.pods-location-condition { width:100px; margin-right:7px; }
-.pods-admin .pods-location-condition-wrapper select.pods-location-operator { width:55px; margin-right:7px; }
-.pods-admin .pods-location-condition-wrapper select.pods-location-limiter { width:65px; }
-.pods-admin .pods-location-condition-wrapper span.pods-location-condition-delete { display:block; float:right; overflow:hidden; text-indent:-9999px; width:16px; height:25px; cursor:pointer; background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAA3NCSVQICAjb4U/gAAAATlBMVEX///9/f39/f39/f39/f39/f39/f39/f39/f39/f39/f3/Dw8O4uLi1tbV/f3++vr6ysrK7u7uysrLd3d3a2tr////w8PDs7OzX19eZmZmiM/O2AAAAGnRSTlMAESIzRFVmd4iZqru7u7vMzN3d7u7//////5iXHkEAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAUdEVYdENyZWF0aW9uIFRpbWUAOC82LzExcXp9NQAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNXG14zYAAAB9SURBVBiVbY9bFoMgDAUJ4RGjohU1dv8brQGk/eh85c7JycOYf2Agoog9hymLSJ4jtDxKZaFicJKH1asJuYt9sLcg+cIIRVxv5RJJrorzUM4m4s8MVoFzFxvpDBOXll/sdYsBWnft39hjvRX8wCkxPfk2Fp1zaKG/Z0Ap1QfqJArAT0KCEwAAAABJRU5ErkJggg%3D%3D) 50% 50% no-repeat; }
+.pods-pick-values li .pods-boolean input {
+	top:5px;
+}
 
-p.pods-location-condition-add { clear:both; padding:5px 0 0; }
+.pods-pick-values li:hover {
+	background:#ffffd8;
+}
 
-.pods-admin .pods-child-hidden,
-.pods-admin .pod-slug-field { display:none; }
-.pods-admin h3 { cursor:auto; }
-.pods-admin h2 a.cancel { font-size:12px; }
+select.pods-pick-multi {
+	height:auto!important;
+}
 
-.pods-manage-field-wrapper,
-.pods-manage-field-wrapper .pods-advanced { display:none; }
+.pods-field,p.pods-add-file {
+	padding:10px 0;
+}
 
-/* Groups */
-.pods-admin tr.pods-group-fields td { padding:0; }
-.pods-admin tr.pods-group-fields td table { width:100%; }
+div.pods-textfield input,.pods-textarea textarea {
+	width:100%;
+}
 
-.pods-helpers { padding-bottom:15px; }
-.pods-dependent-on { padding-top:15px; }
+.pods-date input,.pods-number input {
+	min-width:125px;
+}
+
+.pods-date input.pods-date-field.hasDatepicker {
+	background:#fff url(../images/calendar16.png) no-repeat 5px 5px;
+	cursor:pointer;
+	padding-left:25px!important;
+	padding-top:6px!important;
+	width:150px;
+}

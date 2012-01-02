@@ -1,8 +1,6 @@
 <?php
-
     function pods_field( $params = array() )
     {
-
         $defaults = array(
                 'type' => 'text',
                 'name' => 'textfield',
@@ -10,28 +8,62 @@
                 'comment' => '',
                 'options' => array()
             );
-
         $params = array_merge( $defaults, $params );
-
         switch ($params['type']) {
             case 'text':
                 ?>
                     <div class="pods-field pods-textfield" id="field-pods-field-<?php echo $params['name']; ?>">
                         <label for="pods-field-<?php echo $params['name']; ?>"><?php echo $params['label']; ?></label>
-                        <input name="pods-field-<?php echo $params['name']; ?>" id="pods-field-<?php echo $params['name']; ?>" type="text" value="" />
+                        <?php if ( !empty( $params['options']['autocomplete'] ) && $params['options']['autocomplete'] == true ) : ?>
+                            <input name="pods-field-<?php echo $params['name']; ?>" id="pods-field-<?php echo $params['name']; ?>" class="pods-text-field" type="text" />
+                        <?php else : ?>
+                            <input name="pods-field-<?php echo $params['name']; ?>" id="pods-field-<?php echo $params['name']; ?>" class="pods-text-field" type="text" value="" />
+                        <?php endif; ?>
                         <?php if(!empty($params['comment'])) : ?>
                             <p class="pods-field-comment"><?php echo $params['comment']; ?></p>
                         <?php endif; ?>
                     </div>
+                    <?php if ( !empty( $params['options']['autocomplete'] ) ) : ?>
+                        <script>
+                            jQuery(function($) {
+                                var availableTags = [
+                                    "ActionScript",
+                                    "AppleScript",
+                                    "Asp",
+                                    "BASIC",
+                                    "C",
+                                    "C++",
+                                    "Clojure",
+                                    "COBOL",
+                                    "ColdFusion",
+                                    "Erlang",
+                                    "Fortran",
+                                    "Groovy",
+                                    "Haskell",
+                                    "Java",
+                                    "JavaScript",
+                                    "Lisp",
+                                    "Perl",
+                                    "PHP",
+                                    "Python",
+                                    "Ruby",
+                                    "Scala",
+                                    "Scheme"
+                                ];
+                                $( "#pods-field-<?php echo $params['name']; ?>" ).autocomplete({
+                                    source: availableTags
+                                });
+                            });
+                        </script>
+                    <?php endif; ?>
                     <!-- /.pods-textfield -->
                 <?php
                 break;
-
             case 'code':
                 ?>
                     <div class="pods-field pods-textarea" id="field-pods-field-<?php echo $params['name']; ?>">
                         <label for="pods-field-<?php echo $params['name']; ?>"><?php echo $params['label']; ?></label>
-                        <textarea name="pods-field-<?php echo $params['name']; ?>" id="pods-field-<?php echo $params['name']; ?>" rows="7" cols="70"></textarea>
+                        <textarea name="pods-field-<?php echo $params['name']; ?>" id="pods-field-<?php echo $params['name']; ?>" class="pods-code-field" rows="7" cols="70"></textarea>
                         <?php if(!empty($params['comment'])) : ?>
                             <p class="pods-field-comment"><?php echo $params['comment']; ?></p>
                         <?php endif; ?>
@@ -39,7 +71,9 @@
                     <!-- /.pods-textfield -->
                 <?php
                 break;
-
+            case 'html':
+                wp_editor("<strong>Yay, it's TinyMCE!</strong>", 'pods-field-'. $params['name']);
+                break;
             case 'date':
                 ?>
                     <div class="pods-field pods-textfield pods-date" id="field-pods-field-<?php echo $params['name']; ?>">
@@ -51,34 +85,115 @@
                     </div>
                     <!-- /.pods-textfield.pods-date -->
                     <script>
-                    jQuery(function() {
-                        <?php if( !empty( $params['options']['time'] ) ) : ?>
-                            jQuery( "input#pods-field-<?php echo $params['name']; ?>" ).datetimepicker();
-                        <?php else: ?>
-                            jQuery( "input#pods-field-<?php echo $params['name']; ?>" ).datepicker();
-                        <?php endif; ?>
-                    });
+                        jQuery(function() {
+                            <?php if( !empty( $params['options']['time'] ) ) : ?>
+                                jQuery( "input#pods-field-<?php echo $params['name']; ?>" ).datetimepicker();
+                            <?php else: ?>
+                                jQuery( "input#pods-field-<?php echo $params['name']; ?>" ).datepicker();
+                            <?php endif; ?>
+                        });
                     </script>
                 <?php
                 break;
-
             case 'number':
-                ?>
+                if ( !empty( $params['options']['slider'] ) && $params['options']['slider'] == true) : ?>
+                    <div class="pods-field pods-textfield pods-slider" id="field-pods-field-<?php echo $params['name']; ?>">
+                        <label for="pods-field-<?php echo $params['name']; ?>"><?php echo $params['label']; ?></label>
+                        <div id="pods-field-<?php echo $params['name']; ?>" class="pods-slider-field" /></div>
+                        <div id="pods-field-<?php echo $params['name']; ?>-amount-display"  class="pods-slider-field-display" /></div>
+                        <input name="pods-field-<?php echo $params['name']; ?>-amount-hidden" id="pods-field-<?php echo $params['name']; ?>-amount-hidden" type="hidden" value="" />
+                        <?php if(!empty($params['comment'])) : ?>
+                            <p class="pods-field-comment"><?php echo $params['comment']; ?></p>
+                        <?php endif; ?>
+                    </div>
+                    <script>
+                        jQuery(function($) {
+                            $( "#pods-field-<?php echo $params['name']; ?>" ).slider({
+                                <?php if ( !empty( $params['options']['range'] ) ) : ?>
+                                    range:<?php echo $params['options']['range']; ?>,
+                                <?php else: ?>
+                                    range: false,
+                                <?php endif; ?>
+
+                                <?php if ( !empty( $params['options']['value'] ) ) : ?>
+                                    value:<?php echo $params['options']['value']; ?>,
+                                <?php else: ?>
+                                    value: 0,
+                                <?php endif; ?>
+
+                                <?php if ( !empty( $params['options']['range'] ) ) : ?>
+                                    <?php if ( !empty( $params['options']['values'] ) ) : ?>
+                                        values: [<?php echo $params['options']['values']; ?>],
+                                    <?php else: ?>
+                                        values: [0,
+                                            <?php if ( !empty( $params['options']['maxnumber'] ) ) : ?>
+                                                <?php echo $params['options']['maxnumber']; ?>
+                                            <?php else: ?>
+                                                100
+                                            <?php endif; ?>
+                                        ],
+                                    <?php endif; ?>
+                                <?php endif; ?>
+
+                                <?php if ( !empty( $params['options']['orientation'] ) ): ?>
+                                    orientation : "<?php echo $params['options']['orientation']; ?>",
+                                <?php else : ?>
+                                    orientation : "horizontal",
+                                <?php endif; ?>
+
+                                <?php if ( !empty( $params['options']['minnumber'] ) ) : ?>
+                                    min:<?php echo $params['options']['minnumber']; ?>,
+                                <?php else: ?>
+                                    min: 0,
+                                <?php endif; ?>
+
+                                <?php if ( !empty( $params['options']['maxnumber'] ) ) : ?>
+                                    max:<?php echo $params['options']['maxnumber']; ?>,
+                                <?php else: ?>
+                                    max: 100,
+                                <?php endif; ?>
+
+                                <?php if ( !empty( $params['options']['step'] ) ) : ?>
+                                    step:<?php echo $params['options']['step']; ?>,
+                                <?php else: ?>
+                                    step: 1,
+                                <?php endif; ?>
+
+                                slide: function( event, ui ) {
+                                <?php if ( !empty( $params['options']['range'] ) ) : ?>
+                                    $( "#pods-field-<?php echo $params['name']; ?>-amount-hidden" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+                                    $( "#pods-field-<?php echo $params['name']; ?>-amount-display" ).html( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+                                <?php else : ?>
+                                    $( "#pods-field-<?php echo $params['name']; ?>-amount-hidden" ).val( ui.value );
+                                    $( "#pods-field-<?php echo $params['name']; ?>-amount-display" ).html( ui.value );
+                                <?php endif; ?>
+                                }
+                            });
+                            <?php if ( !empty( $params['options']['range'] ) ) : ?>
+                                $( "#pods-field-<?php echo $params['name']; ?>-amount-hidden" ).val( $( "#pods-field-<?php echo $params['name']; ?>" ).slider( "values", 0 ) + " - " + $( "#pods-field-<?php echo $params['name']; ?>" ).slider( "values", 1 ) );
+                                $( "#pods-field-<?php echo $params['name']; ?>-amount-display" ).html( $( "#pods-field-<?php echo $params['name']; ?>" ).slider( "values", 0 ) + " - " + $( "#pods-field-<?php echo $params['name']; ?>" ).slider( "values", 1 ) );
+                            <?php else : ?>
+                                $( "#pods-field-<?php echo $params['name']; ?>-amount-hidden" ).val( $( "#pods-field-<?php echo $params['name']; ?>" ).slider( "value" ) );
+                                $( "#pods-field-<?php echo $params['name']; ?>-amount-display" ).html( $( "#pods-field-<?php echo $params['name']; ?>" ).slider( "value" ) );
+                            <?php endif; ?>
+                        });
+                    </script>
+                    <!-- /.pods-slider -->
+                <?php else : ?>
                     <div class="pods-field pods-textfield pods-number" id="field-pods-field-<?php echo $params['name']; ?>">
                         <label for="pods-field-<?php echo $params['name']; ?>"><?php echo $params['label']; ?></label>
-                        <input name="pods-field-<?php echo $params['name']; ?>" id="pods-field-<?php echo $params['name']; ?>" type="text" value="" />
+                        <input name="pods-field-<?php echo $params['name']; ?>" id="pods-field-<?php echo $params['name']; ?>" class="pods-number-field" type="text" value="" />
                         <?php if(!empty($params['comment'])) : ?>
                             <p class="pods-field-comment"><?php echo $params['comment']; ?></p>
                         <?php endif; ?>
                     </div>
                     <!-- /.pods-number -->
-                <?php
+                <?php endif;
                 break;
-
             case 'boolean':
                 ?>
                     <div class="pods-field pods-boolean" id="field-pods-field-<?php echo $params['name']; ?>">
-                        <input name="pods-field-<?php echo $params['name']; ?>" id="pods-field-<?php echo $params['name']; ?>" type="checkbox" value="1" />
+                        <input name="pods-field-<?php echo $params['name']; ?>" id="pods-field-<?php echo $params['name']; ?>"  class="pods-boolean-field" type="checkbox" value="1" />
                         <label for="pods-field-<?php echo $params['name']; ?>"><?php echo $params['label']; ?></label>
                         <?php if(!empty($params['comment'])) : ?>
                             <p class="pods-field-comment"><?php echo $params['comment']; ?></p>
@@ -87,12 +202,10 @@
                     <!-- /.pods-boolean -->
                 <?php
                 break;
-
             case 'file':
                 ?>
                     <div class="pods-field pods-file" id="field-pods-field-<?php echo $params['name']; ?>">
                         <label for="pods-field-<?php echo $params['name']; ?>"><?php echo $params['label']; ?></label>
-
                         <ul class="pods-files">
                             <?php for ($i=0; $i < 3; $i++) : ?>
                                 <li class="media-item"> <!-- required for WP styles (.pinkynail) -->
@@ -118,7 +231,6 @@
                     <!-- /.pods-file -->
                 <?php
                 break;
-
             case 'pick':
                 ?>
                     <div class="pods-field pods-pick" id="field-pods-field-<?php echo $params['name']; ?>">
@@ -178,67 +290,37 @@
                     <!-- /.pods-pick -->
                 <?php
                 break;
-
             default:
                 # code...
                 break;
         }
-
         ?>
-
     <?php }
-
 ?>
-
-<?php
-    // including the style inline because I'm not sure how you'll want to enqueue it
-    // since it'll be used both here and on the site front end (maybe?)
-    echo '<style type="text/css">';
-    include PODS_DIR . 'ui/css/custom-theme/jquery-ui-1.8.16.custom.css';   // used for date picker
-    include PODS_DIR . 'ui/css/custom-theme/jquery-ui-timepicker-addon.css';   // used for time picker
-    echo '</style>';
-
-    // this is a build of jQuery UI that includes everything
-    // we need the date picker
-    // as with the CSS, this needs to be enqueued based on what ships with WP
-    echo '<script type="text/javascript">';
-    echo 'var PODS_URL = "';
-    echo PODS_URL;
-    echo '";';
-    include PODS_DIR . 'ui/js/jquery-ui-1.8.16.custom.min.js';
-    include PODS_DIR . 'ui/js/jquery-ui-timepicker-addon.js';
-    include PODS_DIR . 'ui/js/pods-file-attach.js';
-    echo '</script>';
-?>
-
 <div class="wrap">
-
     <div id="icon-edit" class="icon32 icon32-posts-post"><br /></div>
-    <h2>Edit</h2>
-
-    <form action="" method="post" id="pods-record">
-
+    <h2>Edit Event</h2>
+    <form action="" method="post" class="pods-manage pod-event">
         <div id="poststuff" class="metabox-holder has-right-sidebar"> <!-- class "has-right-sidebar" preps for a sidebar... always present? -->
             <div id="side-info-column" class="inner-sidebar">
                 <div id="side-sortables" class="meta-box-sortables ui-sortable">
-
                     <!-- BEGIN PUBLISH DIV -->
                     <div id="submitdiv" class="postbox">
                         <div class="handlediv" title="Click to toggle"><br /></div>
-                        <h3 class="hndle"><span>Publish</span></h3>
+                        <h3 class="hndle"><span>Manage</span></h3>
                         <div class="inside">
                             <div class="submitbox" id="submitpost">
-                                <div id="minor-publishing">
+                                <div id="minor-publishing"><!--
                                     <div id="minor-publishing-actions">
                                         <div id="save-action">
                                             <input type="submit" name="save" id="save-post" value="Save" class="button button-highlighted" />
                                         </div>
-                                        <!-- /#save-action -->
+                                        <!-- /#save-action --><!--
                                         <div id="preview-action">
                                             <a class="preview button" href="#" target="pods-preview" id="pod-preview">Preview</a>
                                             <input type="hidden" name="pods-preview" id="pods-preview" value="" />
                                         </div>
-                                        <!-- /#preview-action -->
+                                        <!-- /#preview-action --><!--
                                         <div class="clear"></div>
                                     </div>
                                     <!-- /#minor-publishing-actions -->
@@ -262,22 +344,14 @@
                         <!-- /.inside -->
                     </div>
                     <!-- /#submitdiv -->
-
                     <!-- END PUBLISH DIV -->
-
-
                     <!-- TODO: minor column fields -->
-
                 </div>
                 <!-- /#side-sortables -->
             </div>
             <!-- /#side-info-column -->
-
-
             <div id="post-body">
-
                 <div id="post-body-content">
-
                     <div id="titlediv">
                         <div id="titlewrap">
                             <label class="hide-if-no-js" style="" id="title-prompt-text" for="title">Name</label>
@@ -292,105 +366,88 @@
                         <!-- /.inside -->
                     </div>
                     <!-- /#titlediv -->
-
                     <div id="normal-sortables" class="meta-box-sortables ui-sortable">
-
                         <div id="pods-meta-box" class="postbox" style="">
                             <div class="handlediv" title="Click to toggle"><br /></div>
                             <h3 class="hndle"><span>Pod Name</span></h3>
                             <div class="inside">
-
                                 <?php
-
-                                    // dummy functions for the sake of being functions
-
                                     $args = array( 'type' => 'text', 'name' => 'singlelinetext1', 'label' => 'Single Line Text' );
                                     pods_field( $args );
-
                                     $args = array( 'type' => 'text', 'name' => 'singlelinetext2', 'label' => 'Single Line Text with Comment', 'comment' => 'Please fill out the field' );
                                     pods_field( $args );
-
                                     $args = array( 'type' => 'code', 'name' => 'code1', 'label' => 'Code' );
                                     pods_field( $args );
-
                                     $args = array( 'type' => 'code', 'name' => 'code2', 'label' => 'Code with Comment', 'comment' => 'Please fill out the field' );
                                     pods_field( $args );
-
-                                    $args = array( 'type' => 'code', 'name' => 'code3', 'label' => 'WYSIWYG', 'options' => array( 'wysiwyg' => true ) );
+                                    $args = array( 'type' => 'code', 'name' => 'code3', 'label' => 'WYSIWYG (cleditor)', 'options' => array( 'wysiwyg' => true ) );
                                     pods_field( $args );
-
+                                    $args = array( 'type' => 'html', 'name' => 'code4', 'label' => 'WYSIWYG (tinymce)', 'options' => array( 'wysiwyg' => true ) );
+                                    pods_field( $args );
                                     $args = array( 'type' => 'date', 'name' => 'date1', 'label' => 'Date' );
                                     pods_field( $args );
-
                                     $args = array( 'type' => 'date', 'name' => 'date2', 'label' => 'Date with Comment', 'comment' => 'Please fill out the field' );
                                     pods_field( $args );
-
                                     $args = array( 'type' => 'date', 'name' => 'date3', 'label' => 'Date with time', 'options' => array( 'time' => true ) );
                                     pods_field( $args );
-
                                     $args = array( 'type' => 'number', 'name' => 'number1', 'label' => 'Number' );
                                     pods_field( $args );
-
                                     $args = array( 'type' => 'number', 'name' => 'number2', 'label' => 'Number with Comment', 'comment' => 'Please fill out the field' );
+                                    pods_field( $args );
+
+                                    // slider default
+                                    $args = array( 'type' => 'number', 'name' => 'slider1', 'label' => 'Slider Default', 'options' => array('slider' => true), 'comment' => 'Demonstrates Default Slider Settings' );
+                                    pods_field( $args );
+
+                                    // slider configured
+                                    $args = array( 'type' => 'number', 'name' => 'slider2', 'label' => 'Slider Configured (stepped)', 'options' => array ('slider' => true, 'value' => 100, 'minnumber' => 0, 'maxnumber' => 500, 'step' => 50), 'comment' => 'Demonstrates Configured Values' );
                                     pods_field( $args );
 
                                     $args = array( 'type' => 'boolean', 'name' => 'boolean1', 'label' => 'Boolean' );
                                     pods_field( $args );
-
                                     $args = array( 'type' => 'boolean', 'name' => 'boolean2', 'label' => 'Boolean with Comment', 'comment' => 'Explain the Boolean' );
                                     pods_field( $args );
-
                                     $args = array( 'type' => 'file', 'name' => 'file1', 'label' => 'File Upload' );
                                     pods_field( $args );
-
                                     $args = array( 'type' => 'file', 'name' => 'file2', 'label' => 'File Upload with Comment', 'comment' => 'File upload details' );
                                     pods_field( $args );
-
                                     $args = array( 'type' => 'pick', 'name' => 'pick1', 'label' => 'Pick' );
                                     pods_field( $args );
-
                                     $args = array( 'type' => 'pick', 'name' => 'pick2', 'label' => 'Pick with Comment', 'comment' => 'Pick comment' );
                                     pods_field( $args );
-
                                     $args = array( 'type' => 'pick', 'name' => 'pick3', 'label' => 'Pick - Multi', 'options' => array( 'type' => 'multi' ) );
                                     pods_field( $args );
-
                                     $args = array( 'type' => 'pick', 'name' => 'pick4', 'label' => 'Pick - Checkboxes', 'options' => array( 'type' => 'checkbox' ) );
                                     pods_field( $args );
-
                                     $args = array( 'type' => 'pick', 'name' => 'pick5', 'label' => 'Pick - Radio', 'options' => array( 'type' => 'radio' ) );
                                     pods_field( $args );
 
-                                ?>
+                                    // WP Categories
+                                    $args = array( 'type' => 'text', 'name' => 'wpcategories', 'label' => 'Wordpress Auto Complete Categories', 'options' => array('autocomplete' => true, 'taxonomy' => 'category') );
+                                    pods_field( $args );
 
+                                    // WP Tags
+                                    $args = array( 'type' => 'text', 'name' => 'wptags', 'label' => 'Wordpress Auto Complete Tags', 'options' => array('autocomplete' => true, 'taxonomy' => 'tag') );
+                                    pods_field( $args );
+                                ?>
                             </div>
                             <!-- /.inside -->
                         </div>
                         <!-- /#pods-meta-box -->
-
                     </div>
                     <!-- /#normal-sortables -->
-
                     <div id="advanced-sortables" class="meta-box-sortables ui-sortable">
-
                     </div>
                     <!-- /#advanced-sortables -->
-
                 </div>
                 <!-- /#post-body-content -->
-
                 <br class="clear" />
-
             </div>
             <!-- /#post-body -->
-
             <br class="clear" />
-
         </div>
         <!-- /#poststuff -->
-
     </form>
     <!-- /#pods-record -->
-
 </div>
 <!-- /.wrap -->

@@ -116,10 +116,35 @@ function pods_deprecated ($function, $version, $replacement = null) {
     // Allow plugin to filter the output error trigger
     if (WP_DEBUG && apply_filters( 'deprecated_function_trigger_error', true)) {
         if (!is_null($replacement))
-            trigger_error(sprintf(__('%1$s is <strong>deprecated</strong> since Pods version %2$s! Use %3$s instead.'), $function, $version, $replacement));
+            trigger_error(sprintf(__('%1$s is <strong>deprecated</strong> since Pods version %2$s! Use %3$s instead.', 'pods'), $function, $version, $replacement));
         else
-            trigger_error(sprintf(__('%1$s is <strong>deprecated</strong> since Pods version %2$s with no alternative available.'), $function, $version));
+            trigger_error(sprintf(__('%1$s is <strong>deprecated</strong> since Pods version %2$s with no alternative available.', 'pods'), $function, $version));
     }
+}
+
+/**
+ * Inline help
+ *
+ * @param string $text Help text
+ * @since 2.0.0
+ */
+function pods_help ($text) {
+    if (!wp_script_is('pods-qtip', 'registered'))
+        wp_register_script('pods-qtip', PODS_URL . 'ui/js/jquery.qtip.min.js', array('jquery'), '2.0-2011-10-02');
+    if (!wp_script_is('pods-qtip', 'queue') && !wp_script_is('pods-qtip', 'to_do') && !wp_script_is('pods-qtip', 'done'))
+        wp_enqueue_script('pods-qtip');
+
+    if (!wp_style_is('pods-qtip', 'registered'))
+        wp_register_style('pods-qtip', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.0-2011-10-02');
+    if (!wp_style_is('pods-qtip', 'queue') && !wp_style_is('pods-qtip', 'to_do') && !wp_style_is('pods-qtip', 'done'))
+        wp_enqueue_style('pods-qtip');
+
+    if (!wp_script_is('pods-qtip-init', 'registered'))
+        wp_register_script('pods-qtip-init', PODS_URL . 'ui/js/qtip.js', array('jquery', 'pods-qtip'), PODS_VERSION);
+    if (!wp_script_is('pods-qtip-init', 'queue') && !wp_script_is('pods-qtip-init', 'to_do') && !wp_script_is('pods-qtip-init', 'done'))
+        wp_enqueue_script('pods-qtip-init');
+
+    echo '<img src="' . PODS_URL . 'ui/images/help.png" alt="' . esc_attr($text) . '" class="pods-icon pods-qtip" />';
 }
 
 /**
@@ -778,8 +803,9 @@ function pods_version_to_point ($version) {
  * @since 1.10
  */
 function pods_compatible ($wp = null, $php = null, $mysql = null) {
+    global $wp_version;
     if (null === $wp)
-        $wp = get_bloginfo("version");
+        $wp = $wp_version;
     if (null === $php)
         $php = phpversion();
     if (null === $mysql) {
@@ -918,7 +944,7 @@ function pods_data ($pod = null, $id = null) {
  */
 function pods_form () {
     require_once(PODS_DIR . 'classes/PodsForm.php');
-    return new PodsForm();
+    return PodsForm;
 }
 
 /**

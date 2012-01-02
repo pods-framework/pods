@@ -101,7 +101,7 @@ class PodsArray implements ArrayAccess {
             if ('object_merge' == $type && $value !== $default)
                 $value = (object) array_merge((array) $default, (array) $value);
         }
-        if ('integer' == $type || 'absint' == $type) {
+        if ('integer' == $type || 'int' == $type || 'absint' == $type) {
             if (!is_numeric(trim($value)))
                 $value = 0;
             else
@@ -109,8 +109,8 @@ class PodsArray implements ArrayAccess {
             if ('absint' == $type)
                 $value = abs($value);
         }
-        if ('boolean' == $type)
-            $value = (bool) $value;
+        if ('boolean' == $type || 'bool' == $type)
+            $value = (boolean) $value;
         if ('in_array' == $type && is_array($default)) {
             if (is_array($value)) {
                 foreach ($value as $k => $v) {

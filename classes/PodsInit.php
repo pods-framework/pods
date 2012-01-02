@@ -9,9 +9,290 @@ class PodsInit
      * @since 1.8.9
      */
     function __construct () {
-        global $pod_page_exists, $pods, $pods_admin;
-
         add_action('init', array($this, 'init'));
+        add_action('init', array($this, 'activate_install'), 9);
+        add_action('init', array($this, 'admin_init'));
+        add_action('init', array($this, 'setup_content_types'));
+        add_action('init', array($this, 'page_check'), 11);
+        add_action('init', array($this, 'jquery_ui'), 11);
+        add_action('delete_attachment', array($this, 'delete_attachment'));
+    }
+
+    function init () {
+        // Session start
+        if (((defined('WP_DEBUG') && WP_DEBUG) || false === headers_sent()) && '' == session_id())
+            @session_start();
+
+        load_plugin_textdomain('pods', false, basename(plugin_basename(__FILE__)) . '/languages/');
+
+        add_shortcode('pods', 'pods_shortcode');
+
+        $security_settings = array('pods_disable_file_browser' => 0,
+                                   'pods_files_require_login' => 0,
+                                   'pods_files_require_login_cap' => '',
+                                   'pods_disable_file_upload' => 0,
+                                   'pods_upload_require_login' => 0,
+                                   'pods_upload_require_login_cap' => '');
+        foreach ($security_settings as $security_setting => $setting) {
+            $setting = get_option($security_setting);
+            if (!empty($setting))
+                $security_settings[$security_setting] = $setting;
+        }
+        foreach ($security_settings as $security_setting => $setting) {
+            if (0 == $setting)
+                $setting = false;
+            elseif (1 == $setting)
+                $setting = true;
+            if (in_array($security_setting, array('pods_files_require_login', 'pods_upload_require_login'))) {
+                if (0 < strlen($security_settings[$security_setting . '_cap']))
+                    $setting = $security_settings[$security_setting . '_cap'];
+            }
+            elseif (in_array($security_setting, array('pods_files_require_login_cap', 'pods_upload_require_login_cap')))
+                continue;
+            if (!defined(strtoupper($security_setting)))
+                define(strtoupper($security_setting), $setting);
+        }
+    }
+
+    function admin_init () {
+        global $pods_admin;
+        $pods_admin = pods_admin();
+    }
+
+    function setup_content_types () {
+        $api = pods_api();
+
+        $taxonomies = (array) $api->load_pods(array('orderby' => '`weight`, `name`', 'type' => 'taxonomy'));
+        foreach ($taxonomies as $taxonomy) {
+            if (!empty($taxonomy['object']))
+                continue;
+
+            $taxonomy['options']['name'] = $taxonomy['object'];
+            $taxonomy = (array) $taxonomy['options'];
+            $taxonomy = array_filter($taxonomy);
+
+            // Post Types
+            $ct_post_types = array();
+            $post_types = get_post_types();
+            $ignore = array('attachment', 'revision', 'nav_menu_item');
+            foreach ($post_types as $post_type => $label) {
+                if (in_array($post_type, $ignore)) {
+                    unset($post_types[$post_type]);
+                    continue;
+                }
+                if (false !== (boolean) pods_var('ct_built_in_post_types_' . $post_type, $taxonomy, false))
+                    $ct_post_types[] = $post_type;
+            }
+            if (empty($ct_post_types))
+                $ct_post_types = null;
+
+            // Labels
+            $ct_label = esc_html(pods_var('ct_label', $taxonomy, pods_var('name', $taxonomy)));
+            $ct_singular_label = esc_html(pods_var('ct_singular_label', $taxonomy, pods_var('ct_label', $taxonomy, pods_var('name', $taxonomy))));
+            $ct_labels['name'] = $ct_label;
+            $ct_labels['singular_name'] = $ct_singular_label;
+            $ct_labels['search_items'] = pods_var('ct_search_items', $taxonomy, 'Search ' .$ct_label);
+            $ct_labels['popular_items'] = pods_var('ct_popular_items', $taxonomy, 'Popular ' .$ct_label);
+            $ct_labels['all_items'] = pods_var('ct_all_items', $taxonomy, 'All ' .$ct_label);
+            $ct_labels['parent_item'] = pods_var('ct_parent_item', $taxonomy, 'Parent ' .$ct_singular_label);
+            $ct_labels['parent_item_colon'] = pods_var('ct_parent_item_colon', $taxonomy, 'Parent ' .$ct_singular_label. ':');
+            $ct_labels['edit_item'] = pods_var('ct_edit_item', $taxonomy, 'Edit ' .$ct_singular_label);
+            $ct_labels['update_item'] = pods_var('ct_update_item', $taxonomy, 'Update ' .$ct_singular_label);
+            $ct_labels['add_new_item'] = pods_var('ct_add_new_item', $taxonomy, 'Add New ' .$ct_singular_label);
+            $ct_labels['new_item_name'] = pods_var('ct_new_item_name', $taxonomy, 'New ' .$ct_singular_label. ' Name');
+            $ct_labels['separate_items_with_commas'] = pods_var('ct_separate_items_with_commas', $taxonomy, 'Separate ' .$ct_label. ' with commas');
+            $ct_labels['add_or_remove_items'] = pods_var('ct_add_or_remove_items', $taxonomy, 'Add or remove ' .$ct_label);
+            $ct_labels['choose_from_most_used'] = pods_var('ct_choose_from_most_used', $taxonomy, 'Choose from the most used ' .$ct_label);
+            $ct_labels['menu_name'] = pods_var('ct_menu_name', $taxonomy, $ct_label);
+
+            // Rewrite
+            $ct_rewrite = pods_var('ct_rewrite', $taxonomy, true);
+            $ct_rewrite_array = array('slug' => pods_var('ct_custom_rewrite_slug', $taxonomy, pods_var('name', $taxonomy)),
+                                      'with_front' => (boolean) pods_var('ct_rewrite_with_front', $taxonomy, true),
+                                      'hierarchical' => pods_var('ct_rewrite_hierarchical', $taxonomy, pods_var('ct_hierarchical', $taxonomy, false)));
+            if (false !== $ct_rewrite)
+                $ct_rewrite = $ct_rewrite_array;
+
+            // Register Taxonomy
+            register_taxonomy(pods_var('name', $taxonomy),
+                              $ct_post_types,
+                              array('label' => $ct_label,
+                                    'labels' => $ct_labels,
+                                    'public' => (boolean) pods_var('ct_public', $taxonomy, true),
+                                    'show_in_nav_menus' => (boolean) pods_var('ct_show_in_nav_menus', $taxonomy, pods_var('ct_public', $taxonomy, true)),
+                                    'show_ui' => (boolean) pods_var('ct_show_ui', $taxonomy, pods_var('ct_public', $taxonomy, true)),
+                                    'show_tagcloud' => (boolean) pods_var('ct_show_tagcloud', $taxonomy, pods_var('ct_show_ui', $taxonomy, pods_var('ct_public', $taxonomy, true))),
+                                    'hierarchical' => (boolean) pods_var('ct_hierarchical', $taxonomy),
+                                    //'update_count_callback' => pods_var('update_count_callback', $taxonomy),
+                                    'query_var' => (false !== pods_var('ct_query_var', $taxonomy, true) ? pods_var('ct_query_var_string', $taxonomy, pods_var('name', $taxonomy)) : false),
+                                    'rewrite' => $ct_rewrite));
+            //'capabilities' => $ct_capabilities
+        }
+
+        $post_types = (array) $api->load_pods(array('orderby' => '`weight`, `name`', 'type' => 'post_type'));
+        foreach ($post_types as $post_type) {
+            if (!empty($post_type['object']))
+                continue;
+
+            $post_type['options']['name'] = $post_type['name'];
+            $post_type = (array) $post_type['options'];
+            $post_type = array_filter($post_type);
+
+            // Labels
+            $cpt_label = esc_html(pods_var('cpt_label', $post_type, ucwords(str_replace('_', ' ', pods_var('name', $post_type)))));
+            $cpt_singular = esc_html(pods_var('cpt_singular_label', $post_type, ucwords(str_replace('_', ' ', pods_var('cpt_label', $post_type, pods_var('name', $post_type))))));
+            $cpt_labels['name'] = $cpt_label;
+            $cpt_labels['singular_name'] = $cpt_singular;
+            $cpt_labels['menu_name'] = pods_var('cpt_menu_name', $post_type, $cpt_label);
+            $cpt_labels['add_new'] = pods_var('cpt_add_new', $post_type, 'Add ' .$cpt_singular);
+            $cpt_labels['add_new_item'] = pods_var('cpt_add_new_item', $post_type, 'Add New ' .$cpt_singular);
+            $cpt_labels['new_item'] = pods_var('cpt_new_item', $post_type, 'New ' .$cpt_singular);
+            $cpt_labels['edit'] = pods_var('cpt_edit', $post_type, 'Edit');
+            $cpt_labels['edit_item'] = pods_var('cpt_edit_item', $post_type, 'Edit ' .$cpt_singular);
+            $cpt_labels['view'] = pods_var('cpt_view', $post_type, 'View ' .$cpt_singular);
+            $cpt_labels['view_item'] = pods_var('cpt_view_item', $post_type, 'View ' .$cpt_singular);
+            $cpt_labels['all_items'] = pods_var('cpt_all_items', $post_type, 'All ' .$cpt_singular);
+            $cpt_labels['search_items'] = pods_var('cpt_search_items', $post_type, 'Search ' .$cpt_label);
+            $cpt_labels['not_found'] = pods_var('cpt_not_found', $post_type, 'No ' .$cpt_label. ' Found');
+            $cpt_labels['not_found_in_trash'] = pods_var('cpt_not_found_in_trash', $post_type, 'No ' .$cpt_label. ' Found in Trash');
+            $cpt_labels['parent'] = pods_var('cpt_parent', $post_type, 'Parent ' .$cpt_singular);
+            $cpt_labels['parent_item_colon'] = pods_var('cpt_parent_item_colon', $post_type, 'Parent ' . $cpt_singular . ':');
+
+            // Supported
+            $cpt_supported = array('title' => (boolean) pods_var('cpt_supports_title', $post_type, true),
+                                   'editor' => (boolean) pods_var('cpt_supports_editor', $post_type, true),
+                                   'author' => (boolean) pods_var('cpt_supports_author', $post_type, false),
+                                   'thumbnail' => (boolean) pods_var('cpt_supports_thumbnail', $post_type, false),
+                                   'excerpt' => (boolean) pods_var('cpt_supports_excerpt', $post_type, false),
+                                   'trackbacks' => (boolean) pods_var('cpt_supports_trackbacks', $post_type, false),
+                                   'custom-fields' => (boolean) pods_var('cpt_supports_custom_fields', $post_type, false),
+                                   'comments' => (boolean) pods_var('cpt_supports_comments', $post_type, false),
+                                   'revisions' => (boolean) pods_var('cpt_supports_revisions', $post_type, false),
+                                   'page-attributes' => (boolean) pods_var('cpt_supports_page_attributes', $post_type, false),
+                                   'post-formats' => (boolean) pods_var('cpt_supports_post_formats', $post_type, false));
+            $cpt_supports = array();
+            foreach ($cpt_supported as $cpt_support => $cpt_supported) {
+                if (false !== $cpt_supported)
+                    $cpt_supports[] = $cpt_support;
+            }
+
+            // Taxonomies
+            $cpt_taxonomies = array();
+            $taxonomies = get_taxonomies();
+            $ignore = array('nav_menu', 'link_category', 'post_format');
+            foreach ($taxonomies as $taxonomy => $label) {
+                if (in_array($taxonomy, $ignore)) {
+                    unset($taxonomies[$taxonomy]);
+                    continue;
+                }
+                if (false !== (boolean) pods_var('cpt_built_in_taxonomies_' . $taxonomy, $post_type, false))
+                    $cpt_taxonomies[] = $taxonomy;
+            }
+
+            // Rewrite
+            $cpt_rewrite = pods_var('cpt_rewrite', $post_type, true);
+            $cpt_rewrite_array = array('slug' => pods_var('cpt_custom_rewrite_slug', $post_type, pods_var('name', $post_type)),
+                                       'with_front' => (boolean) pods_var('cpt_rewrite_with_front', $post_type, true),
+                                       'feeds' => pods_var('cpt_rewrite_feeds', $post_type, pods_var('cpt_has_archive', $post_type, false)),
+                                       'pages' => (boolean) pods_var('cpt_rewrite_pages', $post_type, true));
+            if (false !== $cpt_rewrite)
+                $cpt_rewrite = $cpt_rewrite_array;
+
+            // Register Post Type
+            register_post_type(pods_var('name', $post_type),
+                               array('label' => $cpt_label,
+                                     'labels' => $cpt_labels,
+                                     'description' => esc_html(pods_var('cpt_description', $post_type)),
+                                     'public' => (boolean) pods_var('cpt_public', $post_type, false),
+                                     'publicly_queryable' => (boolean) pods_var('cpt_publicly_queryable', $post_type, (boolean) pods_var('cpt_public', $post_type, false)),
+                                     'exclude_from_search' => (boolean) pods_var('cpt_exclude_from_search', $post_type, (pods_var('cpt_public', $post_type, false) ? false : true)),
+                                     'show_ui' => (boolean) pods_var('cpt_show_ui', $post_type, (boolean) pods_var('cpt_public', $post_type, false)),
+                                     'show_in_menu' => (boolean) pods_var('cpt_show_in_menu', $post_type, true),
+                                     'show_in_admin_bar' => (boolean) pods_var('cpt_show_in_admin_bar', $post_type, (boolean) pods_var('cpt_show_in_menu', $post_type, true)),
+                                     'menu_position' => (int) pods_var('cpt_menu_position', $post_type, 20),
+                                     'menu_icon' => pods_var('cpt_menu_icon', $post_type),
+                                     'capability_type' => pods_var('cpt_capability_type', $post_type, 'post'),
+                                     //'capabilities' => $cpt_capabilities,
+                                     'map_meta_cap' => (boolean) pods_var('cpt_map_meta_cap', $post_type, false),
+                                     'hierarchical' => (boolean) pods_var('cpt_hierarchical', $post_type, false),
+                                     'supports' => $cpt_supports,
+                                     //'register_meta_box_cb' => array($this, 'manage_meta_box'),
+                                     'taxonomies' => $cpt_taxonomies,
+                                     //'permalink_epmask' => EP_PERMALINK,
+                                     'has_archive' => (boolean) pods_var('cpt_has_archive', $post_type, false),
+                                     'rewrite' => $cpt_rewrite,
+                                     'query_var' => (false !== pods_var('cpt_query_var', $post_type, true) ? pods_var('cpt_query_var_string', $post_type, pods_var('name', $post_type)) : false),
+                                     'can_export' => (boolean) pods_var('cpt_can_export', $post_type, true),
+                                     'show_in_nav_menus' => (boolean) pods_var('cpt_show_in_nav_menus', $post_type, (boolean) pods_var('cpt_public', $post_type, false))));
+        }
+    }
+
+    function page_check () {
+        global $pod_page_exists, $pods;
+
+        if (!defined('PODS_DISABLE_POD_PAGE_CHECK')) {
+            if (null === $pod_page_exists)
+                $pod_page_exists = pod_page_exists();
+
+            if (false !== $pod_page_exists) {
+                if (404 != $pods && (!is_object($pods) || !is_wp_error($pods))) {
+                    add_action('template_redirect', array($this, 'template_redirect'));
+                    add_filter('redirect_canonical', '__return_false');
+                    add_action('wp_head', array($this, 'wp_head'));
+                    add_filter('wp_title', array($this, 'wp_title'), 0, 3);
+                    add_filter('body_class', array($this, 'body_class'), 0, 1);
+                    add_filter('status_header', array($this, 'status_header'));
+                    add_action('after_setup_theme', array($this, 'precode'));
+                    add_action('wp', array($this, 'silence_404'));
+                }
+            }
+        }
+    }
+
+    function jquery_ui () {
+        global $wp_version;
+        if (version_compare($wp_version, '3.3', '<')) {
+            $jquery_ui = array('effects.blind' => array('effects-core'),
+                               'effects.bounce' => array('effects-core'),
+                               'effects.clip' => array('effects-core'),
+                               'effects.core' => array(),
+                               'effects.drop' => array('effects-core'),
+                               'effects.explode' => array('effects-core'),
+                               'effects.fade' => array('effects-core'),
+                               'effects.fold' => array('effects-core'),
+                               'effects.highlight' => array('effects-core'),
+                               'effects.pulsate' => array('effects-core'),
+                               'effects.scale' => array('effects-core'),
+                               'effects.shake' => array('effects-core'),
+                               'effects.slide' => array('effects-core'),
+                               'effects.transfer' => array('effects-core'),
+                               'ui.accordion' => array('jquery-ui-core',
+                                                       'jquery-ui-widget'),
+                               'ui.autocomplete' => array('jquery-ui-core',
+                                                          'jquery-ui-widget',
+                                                          'jquery-ui-position'),
+                               'ui.datepicker' => array('jquery-ui-core'),
+                               'ui.progressbar' => array('jquery-ui-core',
+                                                         'jquery-ui-widget'),
+                               'ui.slider' => array('jquery',
+                                                    'jquery-ui-core',
+                                                    'jquery-ui-widget',
+                                                    'jquery-ui-mouse'));
+            foreach ($jquery_ui as $script => $dependencies) {
+                $handle = 'jquery-' . str_replace('.', '-', $script);
+                if (!wp_script_is($handle, 'registered'))
+                    wp_register_script($handle, PODS_URL . 'ui/js/jquery-ui/jquery.' . $script . '.js', $dependencies, '1.8.12');
+            }
+        }
+    }
+
+    function activate_install () {
+        // Activate and Install (@to-do: don't install, display notice if not 'installed' with a link for user to run install)
+        register_activation_hook(__FILE__, array($this, 'activate'));
+        add_action('wpmu_new_blog', array($this, 'new_blog'), 10, 6);
+        $pods_version = get_option('pods_framework_version');
+        if (empty($pods_version) || false === strpos($pods_version, '.') || version_compare($pods_version, PODS_VERSION, '<'))
+            $this->setup();
     }
 
     function activate () {
@@ -40,7 +321,7 @@ class PodsInit
             $_blog_id = null;
 
         // Setup DB tables
-        $pods_version = get_option('pods_version');
+        $pods_version = get_option('pods_framework_version');
         if (0 < strlen($pods_version) && false === strpos($pods_version, '.'))
             $pods_version = pods_version_to_point($pods_version);
         if (0 < strlen($pods_version)) {
@@ -68,81 +349,14 @@ class PodsInit
                     pods_query($sql[$i], 'Cannot setup SQL tables');
                 }
             }
-            delete_option('pods_version');
-            add_option('pods_version', PODS_VERSION);
+            delete_option('pods_framework_version');
+            add_option('pods_framework_version', PODS_VERSION);
             do_action('pods_install_post', PODS_VERSION, $pods_version, $_blog_id);
         }
 
         // Restore DB table prefix (if switched)
         if (null !== $_blog_id)
             restore_current_blog();
-    }
-
-    function init () {
-        global $pod_page_exists, $pods, $pods_admin;
-
-        // Session start
-        if (((defined('WP_DEBUG') && WP_DEBUG) || false === headers_sent()) && '' == session_id())
-            @session_start();
-
-        // Activate and Install (@to-do: don't install, display notice if not 'installed' with a link for user to run install)
-        register_activation_hook(__FILE__, array($this, 'activate'));
-        add_action('wpmu_new_blog', array($this, 'new_blog'), 10, 6);
-        $pods_version = get_option('pods_version');
-        if (empty($pods_version) || false === strpos($pods_version, '.') || version_compare($pods_version, PODS_VERSION, '<'))
-            $this->setup();
-
-        $pods_admin = pods_admin_ui();
-
-        add_shortcode('pods', 'pods_shortcode');
-        add_action('delete_attachment', array($this, 'delete_attachment'));
-
-        if (!defined('PODS_DISABLE_POD_PAGE_CHECK')) {
-            $pod_page_exists = pod_page_exists();
-
-            if (false !== $pod_page_exists) {
-                if (404 != $pods && (!is_object($pods) || !is_wp_error($pods))) {
-                    add_action('template_redirect', array($this, 'template_redirect'));
-                    add_filter('redirect_canonical', '__return_false');
-            add_action('wp_head', array($this, 'wp_head'));
-                    add_filter('wp_title', array($this, 'wp_title'), 0, 3);
-                    add_filter('body_class', array($this, 'body_class'), 0, 1);
-                    add_filter('status_header', array($this, 'status_header'));
-                    add_action('after_setup_theme', array($this, 'precode'));
-                    add_action('wp', array($this, 'silence_404'));
-                }
-            }
-        }
-
-        // Load necessary JS
-        wp_register_script('jqmodal', PODS_URL . '/ui/js/jqmodal.js', array('jquery'));
-        wp_register_script('pods-ui', PODS_URL . '/ui/js/pods.ui.js', array('jquery', 'jqmodal'));
-
-        $security_settings = array('pods_disable_file_browser' => 0,
-                                   'pods_files_require_login' => 0,
-                                   'pods_files_require_login_cap' => '',
-                                   'pods_disable_file_upload' => 0,
-                                   'pods_upload_require_login' => 0,
-                                   'pods_upload_require_login_cap' => '');
-        foreach ($security_settings as $security_setting => $setting) {
-            $setting = get_option($security_setting);
-            if (!empty($setting))
-                $security_settings[$security_setting] = $setting;
-        }
-        foreach ($security_settings as $security_setting => $setting) {
-            if (0 == $setting)
-                $setting = false;
-            elseif (1 == $setting)
-                $setting = true;
-            if (in_array($security_setting, array('pods_files_require_login', 'pods_upload_require_login'))) {
-                if (0 < strlen($security_settings[$security_setting . '_cap']))
-                    $setting = $security_settings[$security_setting . '_cap'];
-            }
-            elseif (in_array($security_setting, array('pods_files_require_login_cap', 'pods_upload_require_login_cap')))
-                continue;
-            if (!defined(strtoupper($security_setting)))
-                define(strtoupper($security_setting), $setting);
-        }
     }
 
     // Delete Attachments from relationships

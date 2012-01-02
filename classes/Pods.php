@@ -3,7 +3,8 @@ class Pods
 {
     private $api;
     private $data;
-    private $ui;
+    private $results;
+    private $row;
     private $deprecated;
     public $display_errors = false;
 
@@ -15,7 +16,7 @@ class Pods
     public $pod_id;
     public $fields;
     public $detail_page;
-    
+
     public $id;
 
     public $limit = 15;
@@ -25,6 +26,8 @@ class Pods
     public $search = true;
     public $search_var = 'search';
     public $search_mode = 'int'; // int | text | text_like
+
+    public $ui;
 
     /**
      * Constructor - Pods CMS core
@@ -37,6 +40,9 @@ class Pods
     public function __construct ($pod = null, $id = null) {
         $this->api = pods_api();
         $this->api->display_errors &= $this->display_errors;
+
+        $this->data = pods_data($pod, $id);
+        PodsData::$display_errors &= $this->display_errors;
 
         if (defined('PODS_STRICT_MODE') && PODS_STRICT_MODE) {
             $this->page = 1;
@@ -58,56 +64,51 @@ class Pods
                 $this->search_mode = PODS_GLOBAL_POD_SEARCH_MODE;
         }
 
-        if (null !== $pod) {
-            $this->pod_data = $this->api->load_pod(array('name' => $pod));
-            if(false === $this->pod_data)
-                return pods_error('Pod not found', $this);
-            $this->pod_id = $this->datatype_id = $pod['id'];
-            $this->pod = $this->datatype = $pod['name'];
-            $this->fields = $pod['fields'];
-            $this->detail_page = $pod['detail_page'];
+        // Sync Settings
+        $this->data->page &= $this->page;
+        $this->data->pagination &= $this->pagination;
+        $this->data->search &= $this->search;
+        $this->data->search_mode &= $this->search_mode;
 
-            switch ($pod['type']) {
-                case 'pod':
-                    $this->field_id = 'id';
-                    $this->field_name = 'name';
-                    break;
-                case 'post_type':
-                    $this->table = '@wp_posts';
-                    $this->field_id = 'ID';
-                    $this->field_name = 'post_title';
-                    break;
-                case 'taxonomy':
-                    $this->table = '@wp_taxonomy';
-                    $this->field_id = 'term_id';
-                    $this->field_name = 'name';
-                    break;
-                case 'user':
-                    $this->table = '@wp_users';
-                    $this->field_id = 'ID';
-                    $this->field_name = 'display_name';
-                    break;
-                case 'comment':
-                    $this->table = '@wp_comments';
-                    $this->field_id = 'comment_ID';
-                    $this->field_name = 'comment_date';
-                    break;
-                case 'table':
-                    $this->field_id = 'id';
-                    $this->field_name = 'name';
-                    break;
-            }
+        if (is_array($id) || is_object($id))
+            $this->find($id);
 
-            if (null !== $id) {
-                if (is_array($id) || is_object($id))
-                    $this->find($id);
-                else {
-                    $this->fetch($id);
-                    if (!empty($this->data))
-                        $this->id = $this->field($this->field_id);
-                }
-            }
-        }
+        // Sync Pod Data
+        $this->pod_data &= $this->api->pod_data &= $this->data->pod_data;
+        $this->pod_id &= $this->datatype_id &= $this->api->pod_id &= $this->data->pod_id;
+        $this->pod &= $this->datatype &= $this->api->pod &= $this->data->pod;
+        $this->fields &= $this->api->fields &= $this->data->fields;
+        $this->detail_page &= $this->data->detail_page;
+        $this->id &= $this->data->id;
+
+        // Sync Table Data
+        $this->table &= $this->data->table;
+        $this->field_id &= $this->data->field_id;
+        $this->field_index &= $this->data->field_index;
+    }
+
+    /**
+     * Return data array from a find
+     *
+     * @since 2.0.0
+     */
+    public function data () {
+        $this->do_hook('data');
+        if (empty($this->results))
+            return false;
+        return (array) $this->results;
+    }
+
+    /**
+     * Return row array for an item
+     *
+     * @since 2.0.0
+     */
+    public function row () {
+        $this->do_hook('row');
+        if (empty($this->row))
+            return false;
+        return (array) $this->row;
     }
 
     /**
@@ -118,26 +119,99 @@ class Pods
      * @since 2.0.0
      */
     public function field ($params, $orderby = null) {
-        // PodsData
+        $defaults = array('name' => $params,
+                          'orderby' => $orderby);
+
+        if (is_array($params) || is_object($params))
+            $params = (object) array_merge($defaults, (array) $params);
+        else
+            $params = (object) $defaults;
+
+        if (is_array($params->name) || strlen($params->name) < 1)
+            return null;
+
+        if (false === $this->row()) {
+            if (false !== $this->data())
+                $this->fetch();
+            else
+                return null;
+        }
+
+        $value = null;
+        if (isset($this->fields[$params->name]) && isset($this->row[$params->name]))
+            $value = $this->row[$params->name];
+        else {
+            // do pick / file handling
+        }
+        $value = $this->do_hook('field', $value, $this->row, $params);
+        return $value;
     }
 
     /**
-     * Search and filter records
+     * Search and filter items
      *
      * @param array $params An associative array of parameters
      * @since 2.0.0
      */
-    public function find ($params, $limit = 15, $where = null, $sql = null) {
-        // PodsData
+    public function find ($params = null, $limit = 15, $where = null, $sql = null) {
+        $defaults = array('table' => $this->table,
+                          'select' => 't.*',
+                          'join' => null,
+                          'where' => $where,
+                          'groupby' => null,
+                          'having' => null,
+                          'orderby' => "t.`{$this->field_id}` DESC",
+                          'limit' => (int) $limit,
+                          'page' => (int) $this->page,
+                          'search' => (boolean) $this->search,
+                          'search_query' => pods_var($this->search_var, 'get', ''),
+                          'search_mode' => pods_var($this->search_var, 'get', ''),
+                          'search_across' => true,
+                          'search_across_picks' => false,
+                          'fields' => $this->fields,
+                          'sql' => $sql);
+
+        if (is_array($params))
+            $params = (object) array_merge($defaults, $params);
+        else
+            $params = (object) $defaults;
+
+        $this->limit = (int) $params->limit;
+        $this->page = (int) $params->page;
+        $this->search = (boolean) $params->search;
+
+        // also need to do better search/filtering using search_mode and auto join stuff for pick/file fields
+
+        $params = $this->do_hook('find', $params);
+
+        $this->data->select($params);
+        $this->results &= $this->data->data;
     }
 
     /**
-     * Fetch a row of results from the DB
+     * Fetch a row
      *
      * @since 2.0.0
      */
     public function fetch ($id = null) {
-        // PodsData
+        if (null !== $id) {
+            $id = pods_absint($id);
+            $params = array('table' => $this->table,
+                            'where' => "`{$this->field_id}` = {$id}",
+                            'orderby' => "`{$this->field_id}` DESC",
+                            'page' => 1,
+                            'limit' => 1,
+                            'search' => false);
+
+            $params = $this->do_hook('fetch', $params, $id);
+
+            $this->data->select($params);
+            $this->results &= $this->data->data;
+        }
+        else
+            $this->do_hook('fetch', null, $id);
+
+        $this->row &= $this->data->fetch();
     }
 
     /**
@@ -146,7 +220,10 @@ class Pods
      * @since 2.0.0
      */
     public function reset ($row = 0) {
-        // PodsData
+        $this->do_hook('reset');
+        $pods = pods_absint($row);
+        $this->row &= $this->data->fetch($row);
+        return $this->row;
     }
 
     /**
@@ -156,7 +233,9 @@ class Pods
      * @since 2.0.0
      */
     public function total () {
-        // PodsData
+        $this->do_hook('total');
+        $this->total &= $this->data->total();
+        return $this->total;
     }
 
     /**
@@ -166,7 +245,9 @@ class Pods
      * @since 2.0.0
      */
     public function total_found () {
-        // PodsData
+        $this->do_hook('total_found');
+        $this->total_found &= $this->data->total_found();
+        return $this->total_found;
     }
 
     /**
@@ -176,7 +257,56 @@ class Pods
      * @since 1.12
      */
     public function zebra () {
-        // PodsData
+        $this->do_hook('zebra');
+        return $this->data->zebra();
+    }
+
+    /**
+     * Save an item
+     *
+     * @since 2.0.0
+     */
+    public function save ($params = null) {
+        $params = (object) $this->do_hook('save', $params);
+        if (isset($params->bypass) && true === $params->bypass)
+            return;
+        return $this->api->save_pod_item($params);
+    }
+
+    /**
+     * Delete an item
+     *
+     * @since 2.0.0
+     */
+    public function delete ($params = null) {
+        $params = (object) $this->do_hook('delete', $params);
+        if (isset($params->bypass) && true === $params->bypass)
+            return;
+        return $this->api->drop_pod_item($params);
+    }
+
+    /**
+     * Duplicate an item
+     *
+     * @since 2.0.0
+     */
+    public function duplicate ($params = null) {
+        $params = (object) $this->do_hook('duplicate', $params);
+        if (isset($params->bypass) && true === $params->bypass)
+            return;
+        return $this->api->duplicate_pod_item($params);
+    }
+
+    /**
+     * Export an item's data
+     *
+     * @since 2.0.0
+     */
+    public function export ($params = null) {
+        $params = (object) $this->do_hook('export', $params);
+        if (isset($params->bypass) && true === $params->bypass)
+            return;
+        return $this->api->export_pod_item($params);
     }
 
     /**
@@ -185,7 +315,10 @@ class Pods
      * @since 2.0.0
      */
     public function pagination ($params = null) {
-        // PodsUI
+        $params = (object) $this->do_hook('pagination', $params);
+        if (isset($params->bypass) && true === $params->bypass)
+            return;
+        require_once PODS_DIR . 'ui/front/pagination.php';
     }
 
     /**
@@ -194,7 +327,10 @@ class Pods
      * @since 2.0.0
      */
     public function filters ($params = null) {
-        // PodsUI
+        $params = (object) $this->do_hook('filters', $params);
+        if (isset($params->bypass) && true === $params->bypass)
+            return;
+        require_once PODS_DIR . 'ui/front/pagination.php';
     }
 
     /**
@@ -207,8 +343,12 @@ class Pods
      * @param array $params An associative array of parameters
      * @return mixed Anything returned by the helper
      * @since 2.0.0
+     *
+     * @deprecated deprecated since 2.0.0
      */
     public function helper ($helper, $value = null, $name = null) {
+        pods_deprecated("Pods::helper", '2.0.0');
+
         $params = array('helper' => $helper,
                         'value' => $value,
                         'name' => $name);

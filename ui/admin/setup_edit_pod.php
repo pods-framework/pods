@@ -96,7 +96,7 @@ foreach ($_pods as $pod) {
 $post_types = get_post_types();
 $ignore = array('attachment', 'revision', 'nav_menu_item');
 foreach ($post_types as $post_type => $label) {
-    if (in_array($post_type, $ignore))
+    if (in_array($post_type, $ignore) || empty($post_type))
         continue;
     $post_type = get_post_type_object($post_type);
     $pick_object['Post Types']['post-type-' . $post_type->name] = $post_type->label;
@@ -105,7 +105,7 @@ foreach ($post_types as $post_type => $label) {
 $taxonomies = get_taxonomies();
 $ignore = array('nav_menu', 'link_category', 'post_format');
 foreach ($taxonomies as $taxonomy => $label) {
-    if (in_array($taxonomy, $ignore))
+    if (in_array($taxonomy, $ignore) || empty($taxonomy))
         continue;
     $taxonomy = get_taxonomy($taxonomy);
     $pick_object['Taxonomies']['taxonomy-' . $taxonomy->name] = $taxonomy->label;
@@ -454,7 +454,7 @@ if ('post_type' == pods_var('type', $pod)) {
                                                     <?php echo PodsForm::field('cpt_menu_icon', pods_var('cpt_menu_icon', $pod), 'text'); ?>
                                                 </div>
                                                 <div class="pods-field-option">
-                                                    <?php echo PodsForm::label('cpt_menu_string', __('Parent Page', 'pods'), __('A top level page like "tools.php" or "edit.php?post_type=page", for when you want to show a CPT under a different top-level menu apart from it\'s own')); ?>
+                                                    <?php echo PodsForm::label('cpt_menu_string', __('<strong>Label: </strong> Parent Page', 'pods'), __('A top level page like "tools.php" or "edit.php?post_type=page", for when you want to show a CPT under a different top-level menu apart from it\'s own')); ?>
                                                     <?php echo PodsForm::field('cpt_menu_string', pods_var('cpt_menu_string', $pod), 'text'); ?>
                                                 </div>
                                             </div>
@@ -476,11 +476,11 @@ if ('post_type' == pods_var('type', $pod)) {
                                             </div>
                                             <div class="pods-field-option-container pods-depends-on pods-depends-on-cpt-hierarchical">
                                                 <div class="pods-field-option">
-                                                    <?php echo PodsForm::label('cpt_parent_item_colon', __('Parent <span class="pods-slugged">Item</span>'), __('help', 'pods')); ?>
+                                                    <?php echo PodsForm::label('cpt_parent_item_colon', __('<strong>Label: </strong> Parent <span class="pods-slugged">Item</span>'), __('help', 'pods')); ?>
                                                     <?php echo PodsForm::field('cpt_parent_item_colon', pods_var('cpt_parent_item_colon', $pod), 'text'); ?>
                                                 </div>
                                                 <div class="pods-field-option">
-                                                    <?php echo PodsForm::label('cpt_parent', __('Parent', 'pods'), __('help', 'pods')); ?>
+                                                    <?php echo PodsForm::label('cpt_parent', __('<strong>Label: </strong> Parent', 'pods'), __('help', 'pods')); ?>
                                                     <?php echo PodsForm::field('cpt_parent', pods_var('cpt_parent', $pod), 'text'); ?>
                                                 </div>
                                             </div>
@@ -665,11 +665,11 @@ elseif ('taxonomy' == pods_var('type', $pod)) {
                                             </div>
                                             <div class="pods-field-option-container pods-depends-on pods-depends-on-ct-hierarchical">
                                                 <div class="pods-field-option">
-                                                    <?php echo PodsForm::label('ct_parent_item_colon', __('Parent <span class="pods-slugged">Item</span>'), __('help', 'pods')); ?>
+                                                    <?php echo PodsForm::label('ct_parent_item_colon', __('<strong>Label: </strong> Parent <span class="pods-slugged">Item</span>'), __('help', 'pods')); ?>
                                                     <?php echo PodsForm::field('ct_parent_item_colon', pods_var('ct_parent_item_colon', $pod), 'text'); ?>
                                                 </div>
                                                 <div class="pods-field-option">
-                                                    <?php echo PodsForm::label('ct_parent', __('Parent', 'pods'), __('help', 'pods')); ?>
+                                                    <?php echo PodsForm::label('ct_parent', __('<strong>Label: </strong> Parent', 'pods'), __('help', 'pods')); ?>
                                                     <?php echo PodsForm::field('ct_parent', pods_var('ct_parent', $pod), 'text'); ?>
                                                 </div>
                                             </div>

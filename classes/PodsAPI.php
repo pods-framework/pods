@@ -73,20 +73,23 @@ class PodsAPI
             $pod_params = array('name' => $params->create_name,
                                 'type' => $params->create_pod_type,
                                 'storage' => $params->create_storage,
-                                'options' => array());
+                                'options' => array('cpt_show_ui' => 1,
+                                                   'ct_show_ui' => 1,
+                                                   'cpt_public' => 1,
+                                                   'ct_public' => 1));
             if ('post_type' == $pod_params['type']) {
                 $pod_params['options']['cpt_label'] = (!empty($params->create_label_plural) ? $params->create_label_plural : ucwords(str_replace('_', ' ', $params->create_name)));
-                $pod_params['options']['cpt_singular_label'] = (!empty($params->create_label_plural) ? $params->create_label_singular : ucwords(str_replace('_', ' ', $params->create_name)));
+                $pod_params['options']['cpt_singular_label'] = (!empty($params->create_label_singular) ? $params->create_label_singular : ucwords(str_replace('_', ' ', $params->create_name)));
             }
             elseif ('taxonomy' == $pod_params['type']) {
                 $pod_params['storage'] = 'table';
                 $pod_params['options']['ct_label'] = (!empty($params->create_label_plural) ? $params->create_label_plural : ucwords(str_replace('_', ' ', $params->create_name)));
-                $pod_params['options']['ct_singular_label'] = (!empty($params->create_label_plural) ? $params->create_label_singular : ucwords(str_replace('_', ' ', $params->create_name)));
+                $pod_params['options']['ct_singular_label'] = (!empty($params->create_label_singular) ? $params->create_label_singular : ucwords(str_replace('_', ' ', $params->create_name)));
             }
             elseif ('pod' == $pod_params['type']) {
                 $pod_params['storage'] = 'table';
                 $pod_params['options']['label'] = (!empty($params->create_label_plural) ? $params->create_label_plural : ucwords(str_replace('_', ' ', $params->create_name)));
-                $pod_params['options']['singular_label'] = (!empty($params->create_label_plural) ? $params->create_label_singular : ucwords(str_replace('_', ' ', $params->create_name)));
+                $pod_params['options']['singular_label'] = (!empty($params->create_label_singular) ? $params->create_label_singular : ucwords(str_replace('_', ' ', $params->create_name)));
             }
         }
         elseif ('extend' == $params->create_extend) {
@@ -137,7 +140,7 @@ class PodsAPI
                 $params->name = $pod['name'];
             if ($old_name != $params->name && false !== $this->pod_exists(array('name' => $params->name)))
                 return pods_error('Pod ' . $params->name . ' already exists', $this);
-            elseif ($old_id != $params->id && $params->type == $pod['type'] && $params->object == $pod['object'])
+            elseif ($old_id != $params->id && $params->type == $pod['type'] && (!isset($params->object) || $params->object == $pod['object']))
                 return pods_error('Pod using ' . $params->object . ' already exists', $this);
         }
 
@@ -253,7 +256,7 @@ class PodsAPI
                     $definitions[] = "`{$row['name']}` " . $this->get_column_definition($row['type']);
             }
             if (!isset($columns['storage']) || 'table' == $columns['storage']) {
-                $result = pods_query("CREATE TABLE `@wp_pods_tbl_{$params->name}` ({$definitions}) DEFAULT CHARSET utf8", $this);
+                $result = pods_query("CREATE TABLE `@wp_pods_tbl_{$params->name}` (" . implode(', ', $definitions) . ") DEFAULT CHARSET utf8", $this);
                 if (empty($result))
                     return pods_error('Cannot add Database Table for new Pod');
             }

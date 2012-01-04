@@ -185,7 +185,7 @@ class PodsAPI
             $field_columns = array('pod_id' => $params->id,
                                    'name' => '',
                                    'label' => '',
-                                   'type' => 'txt',
+                                   'type' => 'text',
                                    'pick_object' => '',
                                    'pick_val' => '',
                                    'sister_field_id' => 0,
@@ -196,31 +196,29 @@ class PodsAPI
             if ('pod' == $params->type) {
                 $fields[] = array('name' => 'name',
                                   'label' => 'Name',
-                                  'type' => 'txt',
+                                  'type' => 'text',
                                   'weight' => $weight,
                                   'options' => array('required' => '1'));
                 $weight++;
                 $fields[] = array('name' => 'created',
                                   'label' => 'Date Created',
                                   'type' => 'date',
-                                  'weight' => $weight,
-                                  'options' => array('required' => '1'));
+                                  'weight' => $weight);
                 $weight++;
                 $fields[] = array('name' => 'modified',
                                   'label' => 'Date Modified',
                                   'type' => 'date',
-                                  'weight' => $weight,
-                                  'options' => array('required' => '1'));
+                                  'weight' => $weight);
                 $weight++;
-                $fields[] = array('name' => 'author_id',
+                $fields[] = array('name' => 'author',
                                   'label' => 'Author',
-                                  'type' => 'txt',
-                                  'weight' => $weight,
-                                  'options' => array('required' => '1'));
+                                  'type' => 'pick',
+                                  'pick_object' => 'wp_users',
+                                  'weight' => $weight);
                 $weight++;
-                $fields[] = array('name' => 'slug',
+                $fields[] = array('name' => 'permalink',
                                   'label' => 'Permalink',
-                                  'type' => 'slug',
+                                  'type' => 'permalink',
                                   'weight' => $weight,
                                   'options' => array('comment' => 'Leave blank to auto-generate from Name'));
                 $weight++;

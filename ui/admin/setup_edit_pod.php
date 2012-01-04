@@ -230,7 +230,7 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
                     <input type="button" class="edit-slug-button button" value="Edit" />
                 </span>
                 <span class="pods-slug-edit">
-                    <input type="text" size="25" maxlength="<?php echo $max_length_name; ?>" name="name" value="<?php echo esc_attr($pod['name']); ?>" />
+                    <?php echo PodsForm::field('name', pods_var('name', $pod), 'db', array('attributes' => array('maxlength' => $max_length_name, 'size' => 25), 'class' => 'pods-validate pods-validate-required')); ?>
                     <input type="button" class="save-button button" value="OK" /> <a class="cancel" href="#cancel-edit">Cancel</a>
                 </span>
             </span>
@@ -571,7 +571,7 @@ if ('post_type' == pods_var('type', $pod)) {
                                                 </p>
                                                 <div class="pods-field-option-group-values">
 <?php
-    foreach ($pick_object['Taxonomies'] as $taxonomy => $label) {
+    foreach ((array) $field_settings['pick_object']['Taxonomies'] as $taxonomy => $label) {
         $taxonomy = str_replace('taxonomy-', '', $taxonomy);
 ?>
                                                     <div class="pods-field-option-group-value">
@@ -701,7 +701,7 @@ elseif ('taxonomy' == pods_var('type', $pod)) {
                                                 </p>
                                                 <div class="pods-field-option-group-values">
 <?php
-    foreach ($pick_object['Post Types'] as $post_type => $label) {
+    foreach ((array) $field_settings['pick_object']['Post Types'] as $post_type => $label) {
         $post_type = str_replace('post-type-', '', $post_type);
 ?>
                                                     <div class="pods-field-option-group-value">

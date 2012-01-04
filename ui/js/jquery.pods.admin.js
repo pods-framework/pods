@@ -10,15 +10,18 @@
                 if (!$el.is(':visible'))
                     return;
 
-                var label = $el.parent().find('label').html().trim();
+                if (0 < $el.parent().find('label').length)
+                    var label = $el.parent().find('label').html().trim();
+                else
+                    var label = $el.prop('name').trim().replace('_', ' ');
                 if ($el.is('input[type=checkbox]') && !$el.is(':checked')) {
                     if (0 == $el.parent().find('.pods-validate-error-message').length)
-                        $el.parent().append('<div class="pods-validate-error-message">' + $el.parent().find('label').html().trim() + ' is required.</div>');
+                        $el.parent().append('<div class="pods-validate-error-message">' + label + ' is required.</div>');
                     $el.addClass('pods-validate-error');
                 }
                 else if ('' == $el.val() || 0 == $el.val()) {
                     if (0 == $el.parent().find('.pods-validate-error-message').length)
-                        $el.parent().append('<div class="pods-validate-error-message">' + $el.parent().find('label').html().trim() + ' is required.</div>');
+                        $el.parent().append('<div class="pods-validate-error-message">' + label + ' is required.</div>');
                     $el.addClass('pods-validate-error');
                 }
                 else {

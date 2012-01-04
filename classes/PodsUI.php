@@ -393,7 +393,7 @@ class PodsUI
             else {
                 global $pods_ui_custom_filters;
                 $pods_ui_custom_filters = $deprecated_options['custom_filters'];
-                add_filter('pods_ui_filters', function () { global $pods_ui_custom_filters; echo $pods_ui_custom_filters; });
+                add_filter('pods_ui_filters', array($this, 'deprecated_filters'));
             }
         }
 
@@ -406,6 +406,11 @@ class PodsUI
             $options['wpcss'] = $deprecated_options['wpcss'];
 
         return $options;
+    }
+
+    public function deprecated_filters () {
+        global $pods_ui_custom_filters;
+        echo $pods_ui_custom_filters;
     }
 
     public function setup ($options) {

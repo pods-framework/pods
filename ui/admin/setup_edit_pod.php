@@ -245,7 +245,7 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
                             <div class="submitbox" id="submitpost">
                                 <div id="major-publishing-actions">
                                     <div id="delete-action">
-                                        <a href="#delete-pod" class="submitdelete deletion">Delete Pod</a>
+                                        <a href="#delete-pod" class="submitdelete deletion pods-submittable" data-action="pods_admin" data-method="drop_pod" data-_wpnonce="<?php echo wp_create_nonce('pods-drop_pod'); ?>" data-name="<?php echo esc_attr(pods_var('name', $pod)); ?>">Delete Pod</a>
                                     </div>
                                     <div id="publishing-action">
                                         <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
@@ -871,6 +871,9 @@ foreach ($field_settings['pick_object'] as $object => $object_label) {
     var pods_pick_objects = {
         <?php echo implode(",\n        ", $pods_pick_objects); ?>
     };
+    function pods_admin_submittable_callback() {
+        document.location = '<?php echo $obj->var_update(array('action' . $obj->num => 'manage', 'id' . $obj->num => '')); ?>';
+    }
 jQuery(function($){
     $(document).PodsAdmin('validate');
     $(document).PodsAdmin('submit');

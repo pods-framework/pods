@@ -107,6 +107,50 @@
                 $submitbutton.parent().find('.waiting').fadeOut();
             });
 
+            // Handle submit via link and translate to AJAX
+            $('.pods-admin form a.pods-submittable').on('click', function (e) {
+                e.preventDefault();
+
+                var $el = $(this);
+
+                $el.off(e);
+
+                pods_ajaxurl = $el.data('ajaxurl');
+                if ('undefined' != typeof pods_ajaxurl)
+                    pods_ajaxurl = pods_ajaxurl.replace(/\?nojs\=1/, '?pods_ajax=1');
+                else if ('undefined' != typeof ajaxurl && ('undefined' == typeof pods_ajaxurl || '' == pods_ajaxurl || '?pods_ajax=1' == pods_ajaxurl || document.location.href == pods_ajaxurl || document.location.href.replace(/\?nojs\=1/, '?pods_ajax=1') == pods_ajaxurl))
+                    pods_ajaxurl = ajaxurl + '?pods_ajax=1';
+
+                var postdata = $el.data();
+
+                pods_ajaxurl = pods_ajaxurl + '&action=' + postdata.action;
+
+                $.ajax({
+                    type: 'POST',
+                    url: pods_ajaxurl,
+                    cache: false,
+                    data: postdata,
+                    success: function (d) {
+                        if (-1 == d.indexOf('<e>')) {
+                            alert('Success!');
+                            if ('undefined' != typeof pods_admin_submittable_callback)
+                                pods_admin_submittable_callback(d);
+                            else
+                                document.href = '';
+                        }
+                        else {
+                            alert('Error: ' + d.replace('<e>', '').replace('</e>', ''));
+                        }
+                    },
+                    error: function () {
+                        alert('Unable to process request, please try again.');
+                    },
+                    dataType: 'html'
+                });
+
+                $el.on(e);
+            });
+
             // Handle submit button and show waiting image
             $('.pods-admin form').on('click', 'input[type=submit], button[type=submit]', function (e) {
                 e.preventDefault();

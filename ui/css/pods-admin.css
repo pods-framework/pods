@@ -447,6 +447,7 @@ tbody.pods-manage-list div {
 tbody.pods-manage-list div.pods-manage-row-wrapper {
     max-width: 500px;
     display: none;
+    width:100%;
 }
 
 tbody.pods-manage-list tr.pods-manage-row-expanded {

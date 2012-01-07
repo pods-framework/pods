@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 /*
 Plugin Name: Pods Development Framework
 Plugin URI: http://podsframework.org/

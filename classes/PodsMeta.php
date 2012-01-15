@@ -26,13 +26,15 @@ if(!function_exists('PodMeta')) {
 			$page = end(explode('/',$uri['path']));
 			if('edit-tags.php' == $page) {
 				$this->taxonomy_meta_setup();
-			}
-			
-			add_action('add_meta_boxes', array($this,'add_meta_boxes'));
-      add_action('save_post',array($this,'save_post'));
-      //user fields
-      add_action('show_user_profile',array($this,'profile_fields'));
-      add_action('edit_user_profile',array($this,'profile_fields'));
+			} elseif('post.php' == $page OR 'edit-post.php' == $page) {		
+				add_action('add_meta_boxes', array($this,'add_meta_boxes'));
+	      add_action('save_post',array($this,'save_post'));
+	      //user fields
+	      add_action('show_user_profile',array($this,'profile_fields'));
+	      add_action('edit_user_profile',array($this,'profile_fields'));
+	    } elseif('profile.php' == $page OR 'users.php' == $page) { 
+	    	$this->user_setup(); 
+	    }
 		}
 
 		/**
@@ -109,15 +111,28 @@ if(!function_exists('PodMeta')) {
 	   	}
 	   	
 	   	function user_setup() {
-	   		
+				add_action( 'show_user_profile', array($this,'user_fields'));
+				add_action( 'edit_user_profile', array($this,'user_fields'));
+				add_action( 'personal_options_update', array($this,'user_save'));
+				add_action( 'edit_user_profile_update',  array($this,'user_save'));
 	   	}
 	   	
 	   	function user_fields() {
-	   	
+	   		?>
+	   		<table class="form-table">
+	   			<tbody>
+	   				<tr>
+	   					<th><label>Custom Field</label></th>
+	   					<td><input type="text" name="" value="testing..."</td>
+	   					<p class="description">This is a sample field for proof of concept</p>
+	   				</tr>
+	   			</tbody>
+	   		</table>
+	   		<?php
 	   	}
 	   	
 	   	function user_save() {
-	   		
+	   		//save the fields here
 	   	}
 	   	
 	   	function mb_callback($post,$args) {

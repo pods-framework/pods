@@ -271,10 +271,14 @@ class PodInit
         if (0 < strlen(trim($page_title))) {
             if (is_object($pods) && !is_wp_error($pods))
                 $page_title = preg_replace_callback("/({@(.*?)})/m", array($pods, "parse_magic_tags"), $page_title);
-            $title = ('right' == $seplocation) ? $page_title . " $sep " : " $sep " . $page_title;
+            $title = $page_title . " " . $sep . " ";
+            if ('right' == $seplocation)
+                $title = " " . $sep . " " . $page_title;
         }
         else {
-            $uri = explode('?', $_SERVER['REQUEST_URI']);
+            $home_path = parse_url(home_url());
+            $uri = preg_replace('|^' . preg_quote($home_path['path'], '|') . '|', '', $_SERVER['REQUEST_URI']);
+            $uri = explode('?', $uri);
             $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri[0]);
             $uri = preg_replace("@(-|_)@", " ", $uri);
             $uri = explode('/', $uri);

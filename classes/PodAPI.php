@@ -566,7 +566,7 @@ class PodAPI
 
         // Allow Helpers to bypass subsequent helpers in recursive save_pod_item calls
         $bypass_helpers = false;
-        if (isset($params->bypass_helpers) && false !== $params->bypass_helpers) {
+        if (isset($params->bypass_helpers) && true === (boolean) $params->bypass_helpers) {
         	$bypass_helpers = true;
         }
 
@@ -989,14 +989,14 @@ class PodAPI
         if (defined('PODS_STRICT_MODE') && PODS_STRICT_MODE)
             $params = pods_sanitize($params);
         $params = (object) $params;
-        
+
         $pod = $this->load_pod($params);
         if (false === $pod)
             return false;
-        
+
         $params->id = $pod['id'];
         $params->name = $pod['name'];
-        
+
         $fields = array();
         foreach ($pod['fields'] as $field) {
             $fields[] = $field['id'];
@@ -1036,11 +1036,11 @@ class PodAPI
         if (defined('PODS_STRICT_MODE') && PODS_STRICT_MODE)
             $params = pods_sanitize($params);
         $params = (object) $params;
-        
+
         $pod = $this->load_pod($params);
         if (false === $pod)
             return false;
-        
+
         $params->id = $pod['id'];
         $params->name = $pod['name'];
 
@@ -1649,7 +1649,7 @@ class PodAPI
             'desc' => 'mediumtext'
         );
         $dbtypes = apply_filters('pods_column_dbtypes', $dbtypes, $this);
-        
+
         $found = array();
 
         if (isset($data['pods'])) {

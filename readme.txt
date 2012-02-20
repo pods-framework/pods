@@ -3,8 +3,8 @@ Contributors: sc0ttkclark, logikal16, jchristopher
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, pods ui, ui, content types, custom post types, relationships, database, framework, drupal, mysql, custom content, php
 Requires at least: 3.1
-Tested up to: 3.3
-Stable tag: 1.12.2
+Tested up to: 3.3.1
+Stable tag: 1.12.3
 
 Pods is a CMS framework for creating, managing, and deploying customized content types.
 
@@ -65,11 +65,20 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 == Changelog ==
 
+= 1.12.3 - February 19, 2012 =
+* Added: Pods UI findRecords parameters array now goes through a new filter called "pods_ui_findrecords"
+* Fixed: Forcing boolean check if true in bypass_helpers in PodAPI
+* Fixed: Pod Page automatic title generation now removed WP home path (for WP sites in sub-directories); Props @chrisbliss18
+* Fixed: nicEdit JS "A.createRange()||document.createRange()" fix for JS errors on certain browsers / uses
+* Fixed: Pagination page_var usage (was forcing 'pg' var name no matter what), and fixed query array handling; Props to @thangaswamyarun for finding this one so we could fix it!
+* Fixed: Pods UI search settings set correctly now (had to flip a true/false check and not have search_across take the bool value of search)
+* Fixed: Pods UI filtering sets emptied values now, wasn't setting right if you had emptied a filter value when submitting (unselected drop-down)
+
 = 1.12.2 - December 14, 2011 =
-* Fixed WP 3.3 TinyMCE Editor bug with HTML tab (wouldn't save if HTML tab was active during initial form load) and other minor fixes
+* Fixed: WP 3.3 TinyMCE Editor bug with HTML tab (wouldn't save if HTML tab was active during initial form load) and other minor fixes
 
 = 1.12.1 - December 12, 2011 =
-* Fixed findRecords Order bug
+* Fixed: findRecords Order bug
 
 = 1.12 - December 12, 2011 =
 * Important: As with all upgrades, we take them seriously. If you experience any major issues when upgrading to this version from a previous version, immediately contact uhoh@podsframework.org and we'll help get your upgrade issue figured out (critical bugs only please)

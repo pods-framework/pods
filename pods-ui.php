@@ -137,8 +137,8 @@ function pods_ui_manage ($obj)
     $object->ui['sql'] = (isset($object->ui['sql'])?$object->ui['sql']:null);
     $object->ui['reorder_sql'] = (isset($object->ui['reorder_sql'])?$object->ui['reorder_sql']:$object->ui['sql']);
     $object->ui['search'] = (isset($object->ui['search'])&&is_bool($object->ui['search'])&&$object->ui['search']===false?false:null);
-    $object->ui['search_across'] = (isset($object->ui['search_across'])&&is_bool($object->ui['search_across'])&&$object->ui['search_across']===false?$object->ui['search']:null);
-    $object->ui['search_across_picks'] = (isset($object->ui['search_across_picks'])&&is_bool($object->ui['search_across_picks'])&&$object->ui['search_across_picks']===false?true:false);
+    $object->ui['search_across'] = (isset($object->ui['search_across'])&&is_bool($object->ui['search_across'])&&$object->ui['search_across']===false?false:null);
+    $object->ui['search_across_picks'] = (isset($object->ui['search_across_picks'])&&is_bool($object->ui['search_across_picks'])&&$object->ui['search_across_picks']!==false?true:false);
     $object->ui['filters'] = (isset($object->ui['filters'])&&!empty($object->ui['filters'])?pods_ui_strtoarray($object->ui['filters']):null);
     $object->ui['hidden_filters'] = (isset($object->ui['hidden_filters'])&&!empty($object->ui['hidden_filters'])?pods_ui_strtoarray($object->ui['hidden_filters']):null);
     $object->ui['custom_filters'] = (isset($object->ui['custom_filters'])?$object->ui['custom_filters']:null);
@@ -365,29 +365,29 @@ function pods_ui_manage ($obj)
             {
                 foreach($object->ui['filters'] as $filter)
                 {
-                    if($object->ui['session_filters']!==false)
-                    {
-                        $filter_value = pods_ui_var($filter.$object->ui['unique_md5'],'session');
-                        if(false!==$filter_value)
-                        {
-                            $_GET[$filter] = $filter_value;
-                        }
-                    }
-                    $filter_value = pods_ui_var($filter.$object->ui['num'],$oldget);
-                    if(false!==$filter_value)
-                    {
-                        $_GET[$filter] = $filter_value;
-                        if($object->ui['session_filters']!==false)
-                        {
-                            pods_ui_var_set($filter.$object->ui['unique_md5'],$filter_value,'session');
-                        }
-                    }
                     if(pods_ui_var('reset_filters'.$object->ui['num'],$oldget)!==false||pods_ui_var($filter)===false)
                     {
                         $_GET[$filter] = '';
                         $oldget[$filter] = '';
                         if($object->ui['session_filters']!==false)
                             pods_ui_var_set($filter.$object->ui['unique_md5'],'','session');
+                    }
+                    elseif(false!==$filter_value)
+                    {
+                        if($object->ui['session_filters']!==false)
+                        {
+                            $filter_value = pods_ui_var($filter.$object->ui['unique_md5'],'session');
+                            if(false!==$filter_value &&false===pods_ui_var($filter))
+                            {
+                                $_GET[$filter] = $filter_value;
+                            }
+                        }
+                        $filter_value = pods_ui_var($filter.$object->ui['num'],$oldget);
+                        $_GET[$filter] = $filter_value;
+                        if($object->ui['session_filters']!==false)
+                        {
+                            pods_ui_var_set($filter.$object->ui['unique_md5'],$filter_value,'session');
+                        }
                     }
                 }
             }
@@ -486,6 +486,7 @@ function pods_ui_manage ($obj)
                     $params['count_found_rows'] = $object->ui['count_found_rows'];
                 if (null !== $object->ui['reorder_sql'])
                     $params['sql'] = $object->ui['reorder_sql'];
+                $params = apply_filters('pods_ui_findrecords', $params, $object);
                 $object->findRecords($params);
                 if (current_user_can('manage_options') && isset($_GET['debug']) && 1 == $_GET['debug']) {
 ?>
@@ -520,6 +521,7 @@ function pods_ui_manage ($obj)
                     $params['count_found_rows'] = $object->ui['count_found_rows'];
                 if (null !== $object->ui['sql'])
                     $params['sql'] = $object->ui['sql'];
+                $params = apply_filters('pods_ui_findrecords', $params, $object);
                 $object->findRecords($params);
                 if (current_user_can('manage_options') && isset($_GET['debug']) && 1 == $_GET['debug']) {
 ?>

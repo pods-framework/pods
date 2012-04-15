@@ -87,6 +87,9 @@ class PodsAdmin {
 
                 wp_enqueue_script('pods-qtip-init');
 
+				wp_enqueue_script('jquery-chosen');
+				wp_enqueue_style('jquery-chosen');
+
                 wp_enqueue_script('jquery-pods-admin');
 
                 if (false !== strpos($page, 'pods-manage-') && 0 === strpos($page, 'pods-manage-')) {

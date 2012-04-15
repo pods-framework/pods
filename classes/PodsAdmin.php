@@ -57,6 +57,10 @@ class PodsAdmin {
         if (!wp_style_is('jquery-ui-timepicker', 'registered'))
             wp_register_style('jquery-ui-timepicker', PODS_URL . 'ui/css/jquery.ui.timepicker.css', array(), '0.9.7');
         wp_register_script('pods-file-attach', PODS_URL . 'ui/js/file-attach.js', array(), PODS_VERSION);
+		if (!wp_script_is('jquery-chosen', 'registered'))
+			wp_register_script('jquery-chosen', PODS_URL . 'ui/js/chosen.jquery.min.js', array(), '0.9.8');
+		if (!wp_style_is('jquery-chosen', 'registered'))
+			wp_register_style('jquery-chosen', PODS_URL . 'ui/css/chosen.css', array(), '0.9.8');
         if (isset($_GET['page'])) {
             $page = $_GET['page'];
             if ('pods' == $page || (false !== strpos($page, 'pods-') && 0 === strpos($page, 'pods-'))) {

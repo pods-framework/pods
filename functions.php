@@ -901,6 +901,9 @@ function pods_init () {
  * Include and Init the Pods class
  *
  * @since 2.0.0
+ *
+ * $pods = pods('bunny', array('orderby' => 't.name',
+ *                             'where' => 't.active=1', 'search' => false));
  */
 function pods ($type = null, $id = null) {
     require_once(PODS_DIR . 'classes/Pods.php');

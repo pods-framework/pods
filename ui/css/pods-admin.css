@@ -361,6 +361,7 @@ li.invisible {
 
 .pods-admin .pods-advanced {
     display: none;
+    width: 100%;
 }
 
 /*
@@ -447,6 +448,7 @@ tbody.pods-manage-list div {
 tbody.pods-manage-list div.pods-manage-row-wrapper {
     max-width: 500px;
     display: none;
+    width: 100%;
 }
 
 tbody.pods-manage-list tr.pods-manage-row-expanded {
@@ -518,6 +520,7 @@ tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-save {
  */
 .pods-dependent-on {
     display: none;
+    width: 100%;
 }
 
 /*

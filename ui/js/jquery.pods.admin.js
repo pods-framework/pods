@@ -85,7 +85,7 @@
                     cache: false,
                     data: postdata,
                     success: function (d) {
-                        if (-1 == d.indexOf('<e>')) {
+                        if (-1 == d.indexOf('<e>') && -1 != d) {
                             alert('Success!');
                             if ('undefined' != typeof pods_admin_submit_callback)
                                 pods_admin_submit_callback(d);
@@ -131,7 +131,7 @@
                     cache: false,
                     data: postdata,
                     success: function (d) {
-                        if (-1 == d.indexOf('<e>')) {
+                        if (-1 == d.indexOf('<e>') && -1 != d) {
                             alert('Success!');
                             if ('undefined' != typeof pods_admin_submittable_callback)
                                 pods_admin_submittable_callback(d);

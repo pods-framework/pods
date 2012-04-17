@@ -330,7 +330,7 @@ class Pods
         $params = (object) $this->do_hook('filters', $params);
         if (isset($params->bypass) && true === $params->bypass)
             return;
-        require_once PODS_DIR . 'ui/front/pagination.php';
+        require_once PODS_DIR . 'ui/front/filters.php';
     }
 
     /**

@@ -195,9 +195,9 @@ class PodsAdmin {
             if ('pods-components' == $page)
                 $this->admin_components_menu($parent);
         }
-        /*
+
         add_submenu_page('pods', 'x Import - Table', 'x Import - Table', 'manage_options', 'pods-import-table', array($this, 'pods_import_table'));
-        add_submenu_page('pods', 'x Import - Convert Fields', 'x Import - Convert Fields', 'manage_options', 'pods-import-convert-fields', array($this, 'pods_import_convert_fields'));
+        /*add_submenu_page('pods', 'x Import - Convert Fields', 'x Import - Convert Fields', 'manage_options', 'pods-import-convert-fields', array($this, 'pods_import_convert_fields'));
         add_submenu_page('pods', 'x Import - Created', 'x Import - Created', 'manage_options', 'pods-import-create-pod', array($this, 'pods_import_create_pod'));
 
         add_submenu_page('pods', 'x Media Upload - Test', 'x Media Upload - Test', 'manage_options', 'media-upload-test', array($this, 'media_upload_test'));*/
@@ -244,9 +244,10 @@ class PodsAdmin {
                       'orderby' => 'name',
                       //'reorder' => array('on' => 'weight'),
                       'fields' => array('manage' => array('name')),
-                      'actions_disabled' => array('delete', 'duplicate', 'view', 'export'),
+                      'actions_disabled' => array('duplicate', 'view', 'export'),
                       'actions_custom' => array('add' => array($this, 'admin_setup_add'),
-                                                'edit' => array($this, 'admin_setup_edit'))));
+                                                'edit' => array($this, 'admin_setup_edit'),
+                                                'delete' => array($this, 'admin_setup_delete'))));
     }
 
     public function admin_setup_add($obj) {
@@ -255,6 +256,11 @@ class PodsAdmin {
 
     public function admin_setup_edit($duplicate, $obj) {
         require_once PODS_DIR . 'ui/admin/setup_edit_pod.php';
+    }
+
+    public function admin_setup_delete($id, $obj) {
+        $this->api->drop_pod(array('id' => $id));
+        $obj->message('Pod deleted succesfully.');
     }
 
     public function admin_advanced() {

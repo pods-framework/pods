@@ -30,7 +30,7 @@
                     </div>
                     <div class="pods-field-option">
                         <?php echo PodsForm::label('create_name', __('Name', 'pods'), __('help', 'pods')); ?>
-                        <?php echo PodsForm::field('create_name', pods_var('create_name', 'post'), 'db', array('class' => 'pods-validate pods-validate-required')); ?>
+                        <?php echo PodsForm::field('create_name', pods_var('create_name', 'post'), 'text', array('class' => 'pods-validate pods-validate-required')); ?>
                     </div>
                     <p><a href="#pods-advanced" class="pods-advanced-toggle">Advanced</a></p>
                     <div class="pods-advanced">

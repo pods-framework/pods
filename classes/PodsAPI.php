@@ -238,7 +238,7 @@ class PodsAPI
                     if (!empty($row['options'])) {
                         if (is_array($row['options'])) {
                             $options = $row['options'];
-                            $exclude = array('id', 'name', 'type', 'object', 'storage', 'alias', 'weight', 'options', 'field_data');
+                            $exclude = array_keys($field_columns);
                             foreach ($exclude as $exclude_field) {
                                 if (isset($options[$exclude_field]))
                                     unset($options[$exclude_field]);
@@ -1749,13 +1749,12 @@ class PodsAPI
     }
 
     private function load_column_types () {
-        $columns = array('bool' => 'BOOL DEFAULT 0',
+        $columns = array('boolean' => 'BOOL DEFAULT 0',
                         'date' => "DATETIME NOT NULL default '0000-00-00 00:00:00'",
-                        'num' => 'DECIMAL(12,2)',
-                        'txt' => 'VARCHAR(255)',
-                        'slug' => 'VARCHAR(200)',
-                        'code' => 'LONGTEXT',
-                        'desc' => 'LONGTEXT');
+                        'number' => 'DECIMAL(12,2)',
+                        'text' => 'VARCHAR(255)',
+                        'permalink' => 'VARCHAR(200)',
+                        'paragraph' => 'LONGTEXT');
         $columns = apply_filters('pods_column_dbtypes', $columns, $this);
         return $columns;
     }

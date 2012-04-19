@@ -197,6 +197,7 @@ class PodsAdmin {
         }
 
         add_submenu_page('pods', 'x Import - Table', 'x Import - Table', 'manage_options', 'pods-import-table', array($this, 'pods_import_table'));
+		add_submenu_page('pods', 'x Form Test', 'x Form Test', 'manage_options', 'pods-form-test', array($this, 'pods_form_test'));
         /*add_submenu_page('pods', 'x Import - Convert Fields', 'x Import - Convert Fields', 'manage_options', 'pods-import-convert-fields', array($this, 'pods_import_convert_fields'));
         add_submenu_page('pods', 'x Import - Created', 'x Import - Created', 'manage_options', 'pods-import-create-pod', array($this, 'pods_import_create_pod'));
 
@@ -234,6 +235,10 @@ class PodsAdmin {
     public function pods_import_create_pod() {
         require_once PODS_DIR . 'ui/admin/pods_import_create_pod.php';
     }
+
+	public function pods_form_test() {
+		require_once PODS_DIR . 'ui/admin/pods_form_test.php';
+	}
 
     public function admin_setup() {
         pods_ui(array('sql' => array('table' => '@wp_pods',

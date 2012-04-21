@@ -46,7 +46,7 @@ class WPGitHubUpdater {
 
 		$defaults = array(
 			'slug' => plugin_basename(__FILE__),
-			'proper_folder_name' => plugin_basename(__FILE__),
+			'proper_folder_name' => dirname( plugin_basename(__FILE__) ),
 			'api_url' => 'https://api.github.com/repos/jkudish/WordPress-GitHub-Plugin-Updater',
 			'raw_url' => 'https://raw.github.com/jkudish/WordPress-GitHub-Plugin-Updater/master',
 			'github_url' => 'https://github.com/jkudish/WordPress-GitHub-Plugin-Updater',
@@ -264,7 +264,7 @@ class WPGitHubUpdater {
 		if ( 1 === $update ) {
 			$response = new stdClass;
 			$response->new_version = $this->config['new_version'];
-			$response->slug = $this->config['slug'];
+			$response->slug = $this->config['proper_folder_name'];
 			$response->url = $this->config['github_url'];
 			$response->package = $this->config['zip_url'];
 

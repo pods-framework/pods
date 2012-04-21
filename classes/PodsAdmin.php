@@ -309,6 +309,9 @@ class PodsAdmin {
     }
 
     public function admin_ajax() {
+    	ob_start(); 
+    	ini_set('display_errors', 1);
+    	error_reporting(E_ALL);
         if (false === headers_sent()) {
             if ('' == session_id())
                 @session_start();
@@ -468,7 +471,9 @@ class PodsAdmin {
 
         if (!is_bool($output))
             echo $output;
-
+		$debug = ob_get_contents();
+		echo $debug;echo 'test';
+		ob_end_clean();
         die(); // KBAI!
     }
 

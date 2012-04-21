@@ -981,3 +981,16 @@ function pods_array ($container) {
     require_once(PODS_DIR . 'classes/PodsArray.php');
     return new PodsArray(&$container);
 }
+
+/**
+ * Load a view
+ *
+ * @since 2.0.0
+ */
+function pods_view($view,  $data) {
+	if(!empty($data)) { extract($data); }
+	$view = PODS_DIR.'/views/'.trim($view,'/').'.php';
+	if(file_exists($view)) {
+		include_once($view);
+	}
+}

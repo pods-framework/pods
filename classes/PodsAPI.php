@@ -140,8 +140,12 @@ class PodsAPI
                 $params->name = $pod['name'];
             if ($old_name != $params->name && false !== $this->pod_exists(array('name' => $params->name)))
                 return pods_error('Pod ' . $params->name . ' already exists', $this);
-            elseif ($old_id != $params->id && $params->type == $pod['type'] && (!isset($params->object) || $params->object == $pod['object']))
-                return pods_error('Pod using ' . $params->object . ' already exists', $this);
+            elseif ($old_id != $params->id) {
+                if ($params->type == $pod['type'] && isset($params->object) && $params->object == $pod['object'])
+                    return pods_error('Pod using ' . $params->object . ' already exists', $this);
+                else
+                    return pods_error('Pod ' . $params->name . ' already exists', $this);
+            }
         }
 
         // Add new pod
@@ -152,7 +156,7 @@ class PodsAPI
 
             $check = pods_query("SELECT `id` FROM `@wp_pods` WHERE `name` = '{$params->name}' LIMIT 1", $this);
             if (!empty($check))
-                return pods_error('Duplicate Pod name', $this);
+                return pods_error('Pod ' . $params->name . ' already exists', $this);
 
             $columns = array('name' => $params->name, 'options' => '', 'type' => 'pod', 'storage' => 'table');
             if (isset($params->type) && 0 < strlen($params->type))
@@ -213,7 +217,7 @@ class PodsAPI
                 $fields[] = array('name' => 'author',
                                   'label' => 'Author',
                                   'type' => 'pick',
-                                  'pick_object' => 'wp_users',
+                                  'pick_object' => 'user',
                                   'weight' => $weight);
                 $weight++;
                 $fields[] = array('name' => 'permalink',
@@ -231,27 +235,25 @@ class PodsAPI
                 $row = array();
                 foreach ($field_columns as $column => $default) {
                     $row[$column] = $default;
-                    if (isset($field[$column]) && !empty($field[$column]))
-                        $row[$column] = array_merge_recursive( $row[$column], $field[$column] );
-                    if (!isset($row['options']) && !isset($field['options']))
-                        $row['options'] = $field;
-                    if (!empty($row['options'])) {
-                        if (is_array($row['options'])) {
-                            $options = $row['options'];
-                            $exclude = array_keys($field_columns);
-                            foreach ($exclude as $exclude_field) {
-                                if (isset($options[$exclude_field]))
-                                    unset($options[$exclude_field]);
-                            }
-                            $row['options'] = '';
-                            if (!empty($options))
-                                $row['options'] = pods_sanitize(str_replace('@wp_', '{prefix}', json_encode($options)));
+                    if (isset($field[$column]))
+                        $row[$column] = $field[$column];
+                }
+                if (!empty($row['options'])) {
+                    if (is_array($row['options'])) {
+                        $options = $row['options'];
+                        $exclude = array_keys($field_columns);
+                        foreach ($exclude as $exclude_field) {
+                            if (isset($options[$exclude_field]))
+                                unset($options[$exclude_field]);
                         }
+                        $row['options'] = '';
+                        if (!empty($options))
+                            $row['options'] = pods_sanitize(str_replace('@wp_', '{prefix}', json_encode($options)));
                     }
                 }
                 $rows[] = implode("','", $row);
                 if (!in_array($row['type'], array('pick', 'file')))
-                    $definitions[] = "`{$row['name']}` " . $this->get_column_definition($row['type']);
+                    $definitions[] = "`{$field['name']}` " . $this->get_column_definition($field['type']);
             }
             if (!isset($columns['storage']) || 'table' == $columns['storage']) {
                 $result = pods_query("CREATE TABLE `@wp_pods_tbl_{$params->name}` (" . implode(', ', $definitions) . ") DEFAULT CHARSET utf8", $this);

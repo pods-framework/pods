@@ -472,13 +472,13 @@ tbody.pods-manage-list tr.pods-manage-row th.pods-manage-sort img {
     margin-top: 1px;
 }
 
-tbody.pods-manage-list tr.pods-manage-row span.pods-manage-row-id {
+tbody.pods-manage-list tr.pods-manage-row td > span.pods-manage-row-more {
     display: none;
     margin-left: 5px;
     color: #999;
 }
 
-tbody.pods-manage-list tr.pods-manage-row:hover span.pods-manage-row-id {
+tbody.pods-manage-list tr.pods-manage-row td:hover > span.pods-manage-row-more {
     display: inline;
 }
 

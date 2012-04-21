@@ -86,11 +86,12 @@
                     data: postdata,
                     success: function (d) {
                         if (-1 == d.indexOf('<e>') && -1 != d) {
-                            alert('Success!');
                             if ('undefined' != typeof pods_admin_submit_callback)
                                 pods_admin_submit_callback(d);
-                            else
+                            else {
                                 document.href = '';
+                                alert('Success!');
+                            }
                         }
                         else {
                             alert('Error: ' + d.replace('<e>', '').replace('</e>', ''));
@@ -413,7 +414,9 @@
                             return false;
                         }
                     });
-                    $row.find('td.pods-manage-row-type').html(field_type + field_type_desc);
+                    $row.find('td.pods-manage-row-type').html(field_type
+                                                                  + field_type_desc
+                                                                  + ' <span class="pods-manage-row-more">[type: ' + $row_content.find('select#pods-form-ui-field-data-' + row_id + '-type').val() + ']</span>');
                 }
 
                 $row_content.slideUp('slow', function () {

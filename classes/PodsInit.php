@@ -322,9 +322,9 @@ class PodsInit
 
         // Setup DB tables
         $pods_version = get_option('pods_framework_version');
-        if (0 < strlen($pods_version) && false === strpos($pods_version, '.'))
-            $pods_version = pods_version_to_point($pods_version);
         if (0 < strlen($pods_version)) {
+            if (false === strpos($pods_version, '.'))
+                $pods_version = pods_version_to_point($pods_version);
             if (version_compare($pods_version, '1.15', '<')) {
                 do_action('pods_update', PODS_VERSION, $pods_version, $_blog_id);
                 if (false !== apply_filters('pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id) && !isset($_GET['pods_bypass_update']))
@@ -335,6 +335,8 @@ class PodsInit
                 do_action('pods_update', PODS_VERSION, $pods_version, $_blog_id);
                 if (false !== apply_filters('pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id) && !isset($_GET['pods_bypass_update']))
                     include(PODS_DIR . 'sql/update.php');
+                delete_option('pods_framework_version');
+                add_option('pods_framework_version', PODS_VERSION);
                 do_action('pods_update_post', PODS_VERSION, $pods_version, $_blog_id);
             }
         }

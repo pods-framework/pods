@@ -1169,7 +1169,7 @@ class PodsUI
             <input type="button" value="<?php _e('Cancel', 'pods'); ?>" class="button" onclick="document.location='<?php echo $this->var_update(array('action' . $this->num => 'manage')); ?>';" />
 <?php
             }
-            elseif (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden)) {
+            elseif (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
 ?>
             <div class="alignleft actions">
                 <select name="action">
@@ -1209,7 +1209,7 @@ class PodsUI
         else
             $this->table($reorder);
         if (!empty($this->data)) {
-            if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden)) {
+            if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
 ?>
         <div class="alignleft actions">
             <select name="action2">
@@ -1276,7 +1276,7 @@ class PodsUI
         <thead>
             <tr>
 <?php
-        if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden)) {
+        if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
 ?>
                 <th scope="col" id="cb" class="manage-column column-cb check-column"><input type="checkbox" /></th>
 <?php
@@ -1318,7 +1318,7 @@ class PodsUI
         <tfoot>
             <tr>
 <?php
-        if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden)) {
+        if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
 ?>
                 <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" /></th>
 <?php

@@ -45,8 +45,8 @@ require_once(PODS_DIR . 'updater.php');
 
 if ( is_admin() ) { // note the use of is_admin() to double check that this is happening in the admin
     $config = array(
-        'slug' => 'pods-2.0', // this is the slug of your plugin
-        'proper_folder_name' => 'pods-2.0', // this is the name of the folder your plugin lives in
+        'slug' => plugin_basename(__FILE__), // this is the slug of your plugin
+        'proper_folder_name' => dirname( plugin_basename(__FILE__) ), // this is the name of the folder your plugin lives in
         'api_url' => 'https://api.github.com/repos/pods-framework/pods', // the github API url of your github repo
         'raw_url' => 'https://raw.github.com/pods-framework/pods/2.0', // the github raw url of your github repo
         'github_url' => 'https://github.com/pods-framework/pods', // the github url of your github repo

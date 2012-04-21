@@ -52,8 +52,8 @@ class WPGitHubUpdater {
 			'github_url' => 'https://github.com/jkudish/WordPress-GitHub-Plugin-Updater',
 			'zip_url' => 'https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/zipball/master',
 			'sslverify' => true,
-    	'requires' => $wp_version,
-    	'tested' => $wp_version,
+            'requires' => $wp_version,
+            'tested' => $wp_version,
 		);
 
 		$this->config = wp_parse_args( $config, $defaults );
@@ -169,6 +169,7 @@ class WPGitHubUpdater {
 
 			$_version	= explode( '~', $__version['1'] );
 			$version	= $_version[0];
+
 
 			// refresh every 6 hours
 			set_site_transient( $this->config['slug'].'_new_version', $version, 60*60*6 );

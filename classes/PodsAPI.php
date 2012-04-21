@@ -1403,6 +1403,7 @@ class PodsAPI
      * $params['options'] array Pod Option(s) key=>value array to filter by
      * $params['orderby'] string ORDER BY clause of query
      * $params['limit'] string Number of Pods to return
+     * $params['where'] string WHERE clause of query
      *
      * @param array $params An associative array of parameters
      * @since 2.0.0
@@ -1422,6 +1423,11 @@ class PodsAPI
             }
             if (!empty($options))
                 $where .= ' (`options` LIKE "%' . implode('%" AND `options` LIKE "%', $options) . '%")';
+        }
+        if (isset($params->where) && 0 < strlen($params->where)) {
+            if (!empty($where))
+                $where .= ' AND ';
+            $where .= $params->where;
         }
         if (!empty($where))
             $where = " WHERE {$where} ";

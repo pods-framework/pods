@@ -1,9 +1,8 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 class PodsInit
 {
-		public $meta_instance;
+    public $meta;
+
     /**
      * Setup and Initiate Pods
      *
@@ -18,9 +17,9 @@ class PodsInit
         add_action('init', array($this, 'page_check'), 11);
 		//add_action('init', array($this, 'jquery_ui'), 11); // WP 3.1 + 3.2 support
         add_action('delete_attachment', array($this, 'delete_attachment'));
-        
+
         include_once(PODS_DIR.'/classes/PodsMeta.php');
-        $this->meta_instance = new PodMeta();
+        $this->meta = new PodMeta();
     }
 
     function init () {
@@ -66,8 +65,8 @@ class PodsInit
 
     function setup_content_types () {
 
-				$taxonomies = $this->meta_instance->taxonomies;
-        
+        $taxonomies = $this->meta->taxonomies;
+
         foreach ($taxonomies as $taxonomy) {
             if (empty($taxonomy['object']))
                 continue;
@@ -131,10 +130,11 @@ class PodsInit
                                     'query_var' => (false !== pods_var('ct_query_var', $taxonomy, true) ? pods_var('ct_query_var_string', $taxonomy, pods_var('name', $taxonomy)) : false),
                                     'rewrite' => $ct_rewrite));
             //'capabilities' => $ct_capabilities
-        
+
         }
 
-        $post_types = $this->meta_instance->post_types;
+        $post_types = $this->meta->post_types;
+
         foreach ($post_types as $post_type) {
             if (!empty($post_type['object']))
                 continue;
@@ -202,7 +202,7 @@ class PodsInit
                                        'pages' => (boolean) pods_var('cpt_rewrite_pages', $post_type, true));
             if (false !== $cpt_rewrite)
                 $cpt_rewrite = $cpt_rewrite_array;
-                
+
             // Register Post Type
             register_post_type(pods_var('name', $post_type),
                                array('label' => $cpt_label,

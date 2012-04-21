@@ -157,7 +157,14 @@ class PodsUI
             echo $this->error(__('<strong>Error:</strong> Pods UI needs a Pods object or a Table definition to run from, see the User Guide for more information.', 'pods'));
             return false;
         }
-        $this->pods_data = pods_data($this->pod->pod);
+        if (!is_object($this->pods_data)) {
+            if (is_object($this->pod) && is_object($this->pod->pod_data))
+                $this->pod_data =& $this->pod->pod_data;
+            elseif (is_object($this->pod))
+                $this->pods_data =& pods_data($this->pod->pod);
+            elseif (!is_object($this->pod))
+                $this->pods_data =& pods_data($this->pod);
+        }
         $this->go();
     }
 

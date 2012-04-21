@@ -1572,25 +1572,26 @@ class PodsAPI
                 if ('.' == substr($file, 0, 1))
                     continue;
                 if (is_dir($components_dir . '/' . $file)) {
-                    $components_subdir = @opendir($components_root . $file);
+                    $components_subdir = @opendir($components_root . '/' . $file);
                     if ($components_subdir) {
                         while (false !== ($subfile = readdir($components_subdir))) {
                             if ('.' == substr($subfile, 0, 1))
                                 continue;
                             if ('.php' == substr($subfile, -4))
-                                $component_files[] = $components_root . $file . '/' . $subfile;
+                                $component_files[] = $components_root . '/' . $file . '/' . $subfile;
                         }
                         closedir($components_subdir);
                     }
                 }
                 elseif ('.php' == substr($file, -4))
-                    $component_files[] = $components_root . $file;
+                    $component_files[] = $components_root . '/' . $file;
             }
             closedir($components_dir);
         }
         $component_files = $this->do_hook('load_components_files', $component_files, $components_root);
 
-        $default_headers = array('Name' => 'Component Name',
+        $default_headers = array('ID' => 'Component ID',
+                                 'Name' => 'Component Name',
                                  'ShortName' => 'Short Name',
                                  'ComponentURI' => 'Component URI',
                                  'Version' => 'Version',
@@ -1607,6 +1608,9 @@ class PodsAPI
                 continue;
             if (empty($component_data['ShortName']))
                 $component_data['ShortName'] = $component_data['Name'];
+            if (empty($component_data['ID'])) {
+                $component_data['ID'] = sanitize_title(str_replace(array($components_root, '.php'), '', $component_file));
+            }
             $components[str_replace($components_root, '', $component_file)] = $component_data;
         }
         return $components;

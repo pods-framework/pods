@@ -23,9 +23,10 @@ if ( !function_exists( 'PodMeta' ) ) {
         function __construct ()
         {
 
-            $api = pods_api();
-            $this->taxonomies = (array) $api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'taxonomy', 'where' => '!ISNULL(`object`)' ) );
-            $this->post_types = (array) $api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'post_type', 'where' => '!ISNULL(`object`)' ) );
+            $api =& pods_api();
+
+            $this->taxonomies = $api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'taxonomy', 'where' => 'ISEMPTY(`object`)' ) );
+            $this->post_types = $api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'post_type', 'where' => 'ISEMPTY(`object`)' ) );
 
             if (defined('PODS_DEVELOPER')) {
                 $uri = parse_url( $_SERVER[ 'REQUEST_URI' ] );
@@ -33,7 +34,7 @@ if ( !function_exists( 'PodMeta' ) ) {
                 if ( 'edit-tags.php' == $page ) {
                     $this->taxonomy_meta_setup();
                 }
-                elseif ( 'post.php' == $page || 'edit-post.php' == $page ) {
+                elseif ( 'post-new.php' == $page || 'post.php' == $page || 'edit-post.php' == $page ) {
                     add_action( 'add_meta_boxes', array( $this,
                                                        'add_meta_boxes' ) );
                     add_action( 'save_post', array( $this,
@@ -251,7 +252,7 @@ if ( !function_exists( 'PodMeta' ) ) {
             return $post_id;
         }
 
-        function show_input ( $field, $meta, $post )
+        function show_input ( $field, $meta, $post = null )
         {
             switch ( $field[ 'type' ] ) {
                 case 'text':

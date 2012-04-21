@@ -215,7 +215,7 @@ class PodsAdmin {
         foreach ($components as $component => $component_data) {
             if (!empty($component_data['HideMenu']))
                 continue;
-            add_submenu_page($parent, '- ' . strip_tags($component_data['ShortName']), strip_tags($component_data['Name']), 'read', 'pods-components&component=' . urlencode($component), array($this, 'admin_components_handler'));
+            add_submenu_page($parent, strip_tags($component_data['Name']), '- ' . strip_tags($component_data['ShortName']), 'read', 'pods-component-' . $component_data['ID'], array($this, 'admin_components_handler'));
         }
     }
 

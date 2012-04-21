@@ -2,6 +2,7 @@
 class PodsInit
 {
     public $meta;
+    public $version;
 
     /**
      * Setup and Initiate Pods
@@ -10,16 +11,20 @@ class PodsInit
      * @since 1.8.9
      */
     function __construct () {
-        add_action('init', array($this, 'init'));
-        add_action('init', array($this, 'activate_install'), 9);
-        add_action('init', array($this, 'admin_init'));
-        add_action('init', array($this, 'setup_content_types'));
-        add_action('init', array($this, 'page_check'), 11);
-		//add_action('init', array($this, 'jquery_ui'), 11); // WP 3.1 + 3.2 support
-        add_action('delete_attachment', array($this, 'delete_attachment'));
+        $this->version = get_option('pods_framework_version');
 
-        include_once(PODS_DIR.'/classes/PodsMeta.php');
-        $this->meta = new PodMeta();
+        add_action('init', array($this, 'activate_install'), 9);
+
+        if ( empty( $this->version ) ) {
+            add_action('init', array($this, 'init'));
+            add_action('init', array($this, 'admin_init'));
+            add_action('init', array($this, 'setup_content_types'));
+            add_action('init', array($this, 'page_check'), 11);
+            add_action('delete_attachment', array($this, 'delete_attachment'));
+
+            include_once(PODS_DIR.'/classes/PodsMeta.php');
+            $this->meta = new PodMeta();
+        }
     }
 
     function init () {
@@ -250,43 +255,6 @@ class PodsInit
                     add_action('after_setup_theme', array($this, 'precode'));
                     add_action('wp', array($this, 'silence_404'));
                 }
-            }
-        }
-    }
-
-    function jquery_ui () {
-        global $wp_version;
-        if (version_compare($wp_version, '3.3', '<')) {
-            $jquery_ui = array('effects.blind' => array('effects-core'),
-                               'effects.bounce' => array('effects-core'),
-                               'effects.clip' => array('effects-core'),
-                               'effects.core' => array(),
-                               'effects.drop' => array('effects-core'),
-                               'effects.explode' => array('effects-core'),
-                               'effects.fade' => array('effects-core'),
-                               'effects.fold' => array('effects-core'),
-                               'effects.highlight' => array('effects-core'),
-                               'effects.pulsate' => array('effects-core'),
-                               'effects.scale' => array('effects-core'),
-                               'effects.shake' => array('effects-core'),
-                               'effects.slide' => array('effects-core'),
-                               'effects.transfer' => array('effects-core'),
-                               'ui.accordion' => array('jquery-ui-core',
-                                                       'jquery-ui-widget'),
-                               'ui.autocomplete' => array('jquery-ui-core',
-                                                          'jquery-ui-widget',
-                                                          'jquery-ui-position'),
-                               'ui.datepicker' => array('jquery-ui-core'),
-                               'ui.progressbar' => array('jquery-ui-core',
-                                                         'jquery-ui-widget'),
-                               'ui.slider' => array('jquery',
-                                                    'jquery-ui-core',
-                                                    'jquery-ui-widget',
-                                                    'jquery-ui-mouse'));
-            foreach ($jquery_ui as $script => $dependencies) {
-                $handle = 'jquery-' . str_replace('.', '-', $script);
-                if (!wp_script_is($handle, 'registered'))
-                    wp_register_script($handle, PODS_URL . 'ui/js/jquery-ui/jquery.' . $script . '.js', $dependencies, '1.8.12');
             }
         }
     }

@@ -15,7 +15,7 @@ class PodsInit
 
         add_action('init', array($this, 'activate_install'), 9);
 
-        if ( empty( $this->version ) ) {
+        if ( !empty( $this->version ) ) {
             add_action('init', array($this, 'init'));
             add_action('init', array($this, 'admin_init'));
             add_action('init', array($this, 'setup_content_types'));

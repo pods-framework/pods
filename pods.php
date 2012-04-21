@@ -3,7 +3,7 @@
 Plugin Name: Pods Development Framework
 Plugin URI: http://podsframework.org/
 Description: Create / Manage / Develop / Extend content types: Posts, Pages, Custom Post Types, Categories, Tags, Custom Taxonomy, Comments, Users, Custom Content Types, and Custom Tables
-Version: 2.0.0 Alpha 6
+Version: 2.0.0 Alpha 7
 Author: The Pods Framework Team
 Author URI: http://podsframework.org/about/
 
@@ -23,7 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', '2.0.0-a-6');
+define('PODS_VERSION', '2.0.0-a-7');
 
 if (!defined('PODS_WP_VERSION_MINIMUM'))
     define('PODS_WP_VERSION_MINIMUM', '3.3');
@@ -45,8 +45,8 @@ require_once(PODS_DIR . 'updater.php');
 
 if ( is_admin() ) { // note the use of is_admin() to double check that this is happening in the admin
     $config = array(
-        'slug' => plugin_basename(__FILE__), // this is the slug of your plugin
-        'proper_folder_name' => plugin_basename(__FILE__), // this is the name of the folder your plugin lives in
+        'slug' => 'pods-2.0', // this is the slug of your plugin
+        'proper_folder_name' => 'pods-2.0', // this is the name of the folder your plugin lives in
         'api_url' => 'https://api.github.com/repos/pods-framework/pods', // the github API url of your github repo
         'raw_url' => 'https://raw.github.com/pods-framework/pods/2.0', // the github raw url of your github repo
         'github_url' => 'https://github.com/pods-framework/pods', // the github url of your github repo
@@ -54,6 +54,7 @@ if ( is_admin() ) { // note the use of is_admin() to double check that this is h
         'sslverify' => true, // whether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
         'requires' => '3.3', // which version of WordPress does your plugin require?
         'tested' => '3.4', // which version of WordPress is your plugin tested up to?
+        'version' => PODS_VERSION
     );
     new WPGitHubUpdater($config);
 }

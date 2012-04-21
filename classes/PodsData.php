@@ -47,23 +47,23 @@ class PodsData
      * @since 2.0.0
      */
     public function __construct ($pod = null, $id = 0) {
-        $this->api = pods_api($pod);
-        $this->api->display_errors &= self::$display_errors;
+        $this->api =& pods_api($pod);
+        $this->api->display_errors =& self::$display_errors;
 
         if (null !== $pod) {
-            $this->pod_data = $this->api->load_pod(array('name' => $pod));
+            $this->pod_data =& $this->api->pod_data;
             if (false === $this->pod_data)
                 return pods_error('Pod not found', $this);
 
-            $this->pod_data &= $this->api->pod_data;
             $this->pod_id = $this->pod_data['id'];
             $this->pod = $this->pod_data['name'];
             $this->fields = $this->pod_data['fields'];
-            $this->detail_page = $this->pod_data['detail_page'];
+            if ( isset( $this->pod_data[ 'detail_page' ] ) )
+                $this->detail_page = $this->pod_data['detail_page'];
 
             switch ($this->pod_data['type']) {
                 case 'pod':
-                    $this->table = '@wp_' . self::prefix . 'tbl_' . $this->pod;
+                    $this->table = '@wp_' . $this->prefix . 'tbl_' . $this->pod;
                     $this->field_id = 'id';
                     $this->field_name = 'name';
                     break;
@@ -608,7 +608,7 @@ class PodsData
         $sql = "CREATE TABLE";
         if (true === $if_not_exists)
             $sql .= " IF NOT EXISTS";
-        $sql .= " `{$wpdb->prefix}" . self::prefix . "{$table}` ({$fields})";
+        $sql .= " `{$wpdb->prefix}" . $this->prefix . "{$table}` ({$fields})";
         if (!empty($wpdb->charset))
             $sql .= " DEFAULT CHARACTER SET {$wpdb->charset}";
         if (!empty($wpdb->collate))
@@ -625,7 +625,7 @@ class PodsData
      */
     public static function table_alter ($table, $changes) {
         global $wpdb;
-        $sql = "ALTER TABLE `{$wpdb->prefix}" . self::prefix . "{$table}` {$changes}";
+        $sql = "ALTER TABLE `{$wpdb->prefix}" . $this->prefix . "{$table}` {$changes}";
         return self::query($sql);
     }
 
@@ -637,7 +637,7 @@ class PodsData
      */
     public static function table_truncate ($table) {
         global $wpdb;
-        $sql = "TRUNCATE TABLE `{$wpdb->prefix}" . self::prefix . "{$table}`";
+        $sql = "TRUNCATE TABLE `{$wpdb->prefix}" . $this->prefix . "{$table}`";
         return self::query($sql);
     }
 
@@ -649,7 +649,7 @@ class PodsData
      */
     public static function table_drop ($table) {
         global $wpdb;
-        $sql = "DROP TABLE `{$wpdb->prefix}" . self::prefix . "{$table}`";
+        $sql = "DROP TABLE `{$wpdb->prefix}" . $this->prefix . "{$table}`";
         return self::query($sql);
     }
 
@@ -778,7 +778,7 @@ class PodsData
         $finalTables = array();
 
         while ($table = mysql_fetch_row($showTables)) {
-            if (!$pods_tables && 0 === (strpos($table[0], $wpdb->prefix . rtrim(self::prefix, '_')))) // don't include pods tables
+            if (!$pods_tables && 0 === (strpos($table[0], $wpdb->prefix . rtrim($this->prefix, '_')))) // don't include pods tables
                 continue;
             elseif (!$wp_core && in_array($table[0], $core_wp_tables))
                 continue;

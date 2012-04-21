@@ -144,14 +144,23 @@ class WPGitHubUpdater {
 		if ( !isset( $version ) || !$version || '' == $version ) {
 
 			$raw_response = wp_remote_get(
-				trailingslashit($this->config['raw_url']).'README.md',
+				trailingslashit($this->config['raw_url']).'readme.txt',
 				array(
 					'sslverify' => $this->config['sslverify'],
 				)
 			);
 
-			if ( is_wp_error( $raw_response ) )
-				return false;
+			if ( is_wp_error( $raw_response ) ) {
+                $raw_response = wp_remote_get(
+                    trailingslashit($this->config['raw_url']).'README.md',
+                    array(
+                        'sslverify' => $this->config['sslverify'],
+                    )
+                );
+
+                if ( is_wp_error( $raw_response ) )
+                    return false;
+            }
 
 			$__version	= explode( '~Current Version:', $raw_response['body'] );
 

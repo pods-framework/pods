@@ -144,10 +144,9 @@ class PodsUI
         }
         if (!is_object($object) && isset($options['pod'])) {
             if (isset($options['id']))
-                $object = pods($options['pod'], $options['id']);
+                $this->pod =& pods($options['pod'], $options['id']);
             else
-                $object = pods($options['pod']);
-            $this->pod = &$object;
+                $this->pod =& pods($options['pod']);
             unset($options['pod']);
         }
         if (false !== $deprecated)
@@ -158,7 +157,7 @@ class PodsUI
             echo $this->error(__('<strong>Error:</strong> Pods UI needs a Pods object or a Table definition to run from, see the User Guide for more information.', 'pods'));
             return false;
         }
-        $this->pods_data = pods_data();
+        $this->pods_data = pods_data($this->pod->pod);
         $this->go();
     }
 
@@ -434,6 +433,11 @@ class PodsUI
         $options->validate('page', pods_var('pg' . $options->num, 'get', $this->page), 'absint');
         $options->validate('limit', pods_var('limit' . $options->num, 'get', $this->limit), 'int');
 
+        if ( isset( $this->pod ) && is_object( $this->pod ) ){
+            $this->sql = array('table' => $this->pod->table,
+                               'field_id' => $this->pod->field_id,
+                               'field_index' => $this->pod->field_index);
+        }
         $options->validate('sql', $this->sql, 'array_merge');
 
         $options->validate('sortable', $this->sortable, 'boolean');

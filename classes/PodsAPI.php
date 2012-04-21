@@ -19,7 +19,7 @@ class PodsAPI
      * @since 1.7.1
      */
     public function __construct ($pod = null, $format = 'php') {
-        if (null !== $pod && 0 < strlen($pod)) {
+        if (null !== $pod && 0 < strlen((string) $pod)) {
             $this->format = $format;
             $this->pod_data = $this->load_pod(array('name' => $pod));
             if (false !== $this->pod_data && is_array($this->pod_data)) {
@@ -232,7 +232,7 @@ class PodsAPI
                 foreach ($field_columns as $column => $default) {
                     $row[$column] = $default;
                     if (isset($field[$column]) && !empty($field[$column]))
-                        $row[$column] = $field[$column];
+                        $row[$column] = array_merge_recursive( $row[$column], $field[$column] );
                     if (!isset($row['options']) && !isset($field['options']))
                         $row['options'] = $field;
                     if (!empty($row['options'])) {

@@ -38,11 +38,11 @@ class Pods
      * @since 1.0.0
      */
     public function __construct ($pod = null, $id = null) {
-        $this->api = pods_api();
-        $this->api->display_errors &= $this->display_errors;
+        $this->api = pods_api($pod);
+        $this->api->display_errors =& $this->display_errors;
 
         $this->data = pods_data($pod, $id);
-        PodsData::$display_errors &= $this->display_errors;
+        PodsData::$display_errors =& $this->display_errors;
 
         if (defined('PODS_STRICT_MODE') && PODS_STRICT_MODE) {
             $this->page = 1;
@@ -65,26 +65,32 @@ class Pods
         }
 
         // Sync Settings
-        $this->data->page &= $this->page;
-        $this->data->pagination &= $this->pagination;
-        $this->data->search &= $this->search;
-        $this->data->search_mode &= $this->search_mode;
+        $this->data->page =& $this->page;
+        $this->data->pagination =& $this->pagination;
+        $this->data->search =& $this->search;
+        $this->data->search_mode =& $this->search_mode;
+
+        // Sync Pod Data
+        $this->api->pod_data =& $this->data->pod_data;
+        $this->pod_data =& $this->api->pod_data;
+        $this->api->pod_id =& $this->data->pod_id;
+        $this->datatype_id =& $this->api->pod_id;
+        $this->pod_id =& $this->datatype_id;
+        $this->api->pod =& $this->data->pod;
+        $this->datatype =& $this->api->pod;
+        $this->pod =& $this->datatype;
+        $this->api->fields =& $this->data->fields;
+        $this->fields =& $this->api->fields;
+        $this->detail_page =& $this->data->detail_page;
+        $this->id =& $this->data->id;
+
+        // Sync Table Data
+        $this->table =& $this->data->table;
+        $this->field_id =& $this->data->field_id;
+        $this->field_index =& $this->data->field_index;
 
         if (is_array($id) || is_object($id))
             $this->find($id);
-
-        // Sync Pod Data
-        $this->pod_data &= $this->api->pod_data &= $this->data->pod_data;
-        $this->pod_id &= $this->datatype_id &= $this->api->pod_id &= $this->data->pod_id;
-        $this->pod &= $this->datatype &= $this->api->pod &= $this->data->pod;
-        $this->fields &= $this->api->fields &= $this->data->fields;
-        $this->detail_page &= $this->data->detail_page;
-        $this->id &= $this->data->id;
-
-        // Sync Table Data
-        $this->table &= $this->data->table;
-        $this->field_id &= $this->data->field_id;
-        $this->field_index &= $this->data->field_index;
     }
 
     /**
@@ -185,7 +191,7 @@ class Pods
         $params = $this->do_hook('find', $params);
 
         $this->data->select($params);
-        $this->results &= $this->data->data;
+        $this->results =& $this->data->data;
     }
 
     /**
@@ -206,12 +212,12 @@ class Pods
             $params = $this->do_hook('fetch', $params, $id);
 
             $this->data->select($params);
-            $this->results &= $this->data->data;
+            $this->results =& $this->data->data;
         }
         else
             $this->do_hook('fetch', null, $id);
 
-        $this->row &= $this->data->fetch();
+        $this->row =& $this->data->fetch();
     }
 
     /**
@@ -222,7 +228,7 @@ class Pods
     public function reset ($row = 0) {
         $this->do_hook('reset');
         $pods = pods_absint($row);
-        $this->row &= $this->data->fetch($row);
+        $this->row =& $this->data->fetch($row);
         return $this->row;
     }
 
@@ -234,7 +240,7 @@ class Pods
      */
     public function total () {
         $this->do_hook('total');
-        $this->total &= $this->data->total();
+        $this->total =& $this->data->total();
         return $this->total;
     }
 
@@ -246,7 +252,7 @@ class Pods
      */
     public function total_found () {
         $this->do_hook('total_found');
-        $this->total_found &= $this->data->total_found();
+        $this->total_found =& $this->data->total_found();
         return $this->total_found;
     }
 

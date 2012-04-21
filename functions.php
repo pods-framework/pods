@@ -70,17 +70,19 @@ $pods_debug = 0;
  *
  * @param mixed $debug The error message to be thrown / displayed
  * @param boolean $die If set to true, a die() will occur, if set to (int) 2 then a wp_die() will occur
+ * @param boolean $identifier If set to true, an identifying # will be output
  */
-function pods_debug ($debug = '_null', $die = true) {
+function pods_debug ($debug = '_null', $die = true, $prefix = '_null') {
     global $pods_debug;
     $pods_debug++;
-    echo "<e><pre>";
     ob_start();
+    if ('_null' !== $prefix)
+        var_dump($prefix);
     if ('_null' !== $debug)
         var_dump($debug);
     else
         var_dump('Pods Debug #' . $pods_debug);
-    $debug = ob_get_clean() . '</pre>';
+    $debug = '<e><pre>' . ob_get_clean() . '</pre>';
     if (2 === $die)
         wp_die($debug);
     elseif (true === $die)
@@ -925,9 +927,9 @@ function pods_ui ($obj = null) {
  *
  * @since 2.0.0
  */
-function pods_api () {
+function pods_api ($pod = null, $format = 'php') {
     require_once(PODS_DIR . 'classes/PodsAPI.php');
-    return new PodsAPI();
+    return new PodsAPI($pod, $format);
 }
 
 /**

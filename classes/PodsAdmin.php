@@ -207,6 +207,7 @@ class PodsAdmin {
         if ( defined( 'PODS_DEVELOPER' ) ) {
             add_submenu_page('pods', 'x Import - Table', 'x Import - Table', 'manage_options', 'pods-import-table', array($this, 'pods_import_table'));
             add_submenu_page('pods', 'x Media Upload - Test', 'x Media Upload - Test', 'manage_options', 'media-upload-test', array($this, 'media_upload_test'));
+			add_submenu_page('pods', 'x Form Test', 'x Form Test', 'manage_options', 'pods-manage-form-test', array($this, 'admin_content_form'));
         }
     }
 

@@ -170,7 +170,7 @@ class PodsInit
                     continue;
                 if (false !== (boolean) pods_var('cpt_built_in_taxonomies_' . $taxonomy, $post_type, false)) {
                     $cpt_taxonomies[] = $taxonomy;
-                    if ( !in_array( pods_var('name', $post_type), $supported_post_types[ $taxonomy ] ) )
+                    if ( isset( $supported_post_types[ $taxonomy ] ) && !in_array( pods_var('name', $post_type), $supported_post_types[ $taxonomy ] ) )
                         $supported_post_types[ $taxonomy ][] = pods_var('name', $post_type);
                 }
             }
@@ -239,7 +239,7 @@ class PodsInit
                     continue;
                 if (false !== (boolean) pods_var('ct_built_in_post_types_' . $post_type, $taxonomy, false)) {
                     $ct_post_types[] = $post_type;
-                    if ( !in_array( pods_var('name', $taxonomy), $supported_taxonomies[ $post_type ] ) )
+                    if ( isset( $supported_taxonomies[ $post_type ] ) &&  !in_array( pods_var('name', $taxonomy), $supported_taxonomies[ $post_type ] ) )
                         $supported_taxonomies[ $post_type ][] = pods_var('name', $taxonomy);
                 }
             }

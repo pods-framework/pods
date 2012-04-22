@@ -1415,7 +1415,8 @@ class PodsAPI
      */
     public function load_pods ($params) {
         $params = (object) pods_sanitize($params);
-        $where = $orderby = $limit = '';
+        $orderby = $limit = '';
+        $where = array();
         if (isset($params->type) && !empty($params->type)) {
             if (!is_array($params->type))
                 $params->type = array($params->type);

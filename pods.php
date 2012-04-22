@@ -40,11 +40,11 @@ if (!defined('WP_INCLUDES_URL'))
 
 require_once(PODS_DIR . 'functions.php');
 
-// GitHub Plugin Updater
-// https://github.com/jkudish/WordPress-GitHub-Plugin-Updater
-require_once(PODS_DIR . 'updater.php');
-
 if ( is_admin() ) { // note the use of is_admin() to double check that this is happening in the admin
+    // GitHub Plugin Updater
+    // https://github.com/jkudish/WordPress-GitHub-Plugin-Updater
+    require_once(PODS_DIR . 'updater.php');
+
     $user = 'pods-framework';
     $repo = 'pods';
     $branch = '2.0';

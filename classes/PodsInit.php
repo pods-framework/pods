@@ -358,9 +358,9 @@ class PodsInit
                     $charset_collate .= " COLLATE {$wpdb->collate}";
                 if ('DEFAULT CHARSET utf8' != $charset_collate)
                     $sql = str_replace('DEFAULT CHARSET utf8', $charset_collate, $sql);
-                $sql = explode(";\n", str_replace('wp_', $wpdb->prefix, $sql));
+                $sql = explode(";\n", str_replace(array("\r", 'wp_'), array("\n", $wpdb->prefix), $sql));
                 for ($i = 0, $z = count($sql); $i < $z; $i++) {
-                    pods_query($sql[$i], 'Cannot setup SQL tables');
+                    pods_query( trim( $sql[$i] ), 'Cannot setup SQL tables');
                 }
             }
             delete_option('pods_framework_version');

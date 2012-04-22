@@ -1,5 +1,5 @@
 <?php
-class PodMeta {
+class PodsMeta {
 
     private $api;
 
@@ -33,7 +33,7 @@ class PodMeta {
                         $post_type_name = $post_type['object'];
                     add_action( 'add_meta_boxes_' . $post_type_name, array( $this, 'meta_post_add' ) );
                 }
-                add_action( 'save_post', array( $this, 'save_post' ) );
+                add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
             }
 
             if (!empty(self::$taxonomies)) {
@@ -42,18 +42,18 @@ class PodMeta {
                     $taxonomy_name = $taxonomy['name'];
                     if (!empty($taxonomy['object']))
                         $taxonomy_name = $taxonomy['object'];
-                    add_action( $taxonomy_name . '_edit_form_fields', array( $this, 'meta_taxonomy' ) );
-                    add_action( $taxonomy_name . '_add_form_fields', array( $this, 'meta_taxonomy' ) );
-                    add_action( 'edit_' . $taxonomy_name, array( $this, 'save_taxonomy' ) );
-                    add_action( 'create_' . $taxonomy_name, array( $this, 'save_taxonomy' ) );
+                    add_action( $taxonomy_name . '_edit_form_fields', array( $this, 'meta_taxonomy' ), 10, 2 );
+                    add_action( $taxonomy_name . '_add_form_fields', array( $this, 'meta_taxonomy' ), 10, 2 );
+                    add_action( 'edit_' . $taxonomy_name, array( $this, 'save_taxonomy' ), 10, 2 );
+                    add_action( 'create_' . $taxonomy_name, array( $this, 'save_taxonomy' ), 10, 2 );
                 }
             }
 
             if (!empty(self::$media)) {
                 // Handle Media Editor
-                add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ) );
-                add_filter( 'attachment_fields_to_save', array( $this, 'save_media' ) );
-                add_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ) );
+                add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
+                add_filter( 'attachment_fields_to_save', array( $this, 'save_media' ), 10, 2 );
+                add_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 );
             }
 
             if (!empty(self::$user)) {

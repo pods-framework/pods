@@ -68,6 +68,7 @@ class PodsData
                     $this->field_name = 'name';
                     break;
                 case 'post_type':
+                case 'media':
                     $this->table = '@wp_posts';
                     $this->field_id = 'ID';
                     $this->field_name = 'post_title';

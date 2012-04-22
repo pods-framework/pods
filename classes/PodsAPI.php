@@ -102,6 +102,8 @@ class PodsAPI
                 $pod_params['storage'] = 'table';
                 $pod_params['name'] = $pod_params['object'] = $params->extend_taxonomy;
             }
+            elseif ('user' == $pod_params['type'])
+                $pod_params['name'] = $params->extend_pod_type;
             else
                 $pod_params['name'] = $pod_params['object'] = $params->extend_pod_type;
         }

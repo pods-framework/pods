@@ -25,7 +25,7 @@ class PodsInit
             add_action('init', array($this, 'admin_init'));
 
             include_once(PODS_DIR.'/classes/PodsMeta.php');
-            $this->meta = new PodMeta();
+            $this->meta = new PodsMeta();
         }
     }
 
@@ -72,8 +72,8 @@ class PodsInit
 
     function setup_content_types () {
 
-        $post_types = $this->meta->post_types;
-        $taxonomies = $this->meta->taxonomies;
+        $post_types = PodsMeta::$post_types;
+        $taxonomies = PodsMeta::$taxonomies;
 
         $wp_post_types = $wp_taxonomies = array();
         $supported_post_types = $supported_taxonomies = array();

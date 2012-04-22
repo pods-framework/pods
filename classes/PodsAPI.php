@@ -1383,7 +1383,7 @@ class PodsAPI
             $pod['options'] = @json_decode($pod['options'], true);
         if (!is_array($pod['options']))
             $pod['options'] = array();
-        if (!isset($pod['options']['label']))
+        if (!isset($pod['options']['label']) || empty($pod['options']['label']))
             $pod['options']['label'] = ucwords(str_replace('_', ' ', $pod['name']));
         //$pod['options'] = $this->handle_options($pod['options'], $pod);
         $pod['fields'] = array();
@@ -1453,7 +1453,7 @@ class PodsAPI
             if (!empty($pod['options']))
                 $pod['options'] = @json_decode($pod['options'],true);
             $pod['options'] = $this->handle_options($pod['options'], $pod);
-            if (!isset($pod['options']['label']))
+            if (!isset($pod['options']['label']) || empty($pod['options']['label']))
                 $pod['options']['label'] = ucwords(str_replace('_', ' ', $pod['name']));
             $the_pods[$pod['name']] = $pod;
         }

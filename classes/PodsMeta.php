@@ -7,6 +7,8 @@ class PodMeta {
 
     public static $post_types;
 
+    public static $media;
+
     public static $user;
 
     public static $comment;
@@ -18,6 +20,7 @@ class PodMeta {
 
         self::$taxonomies = $this->api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'taxonomy' ) );
         self::$post_types = $this->api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'post_type' ) );
+        self::$media = $this->api->load_pods( array( ) );
         self::$user = $this->api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'user', 'object' => 'user' ) );
         self::$comment = $this->api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'comment', 'object' => 'comment' ) );
 
@@ -44,6 +47,13 @@ class PodMeta {
                     add_action( 'edit_' . $taxonomy_name, array( $this, 'save_taxonomy' ) );
                     add_action( 'create_' . $taxonomy_name, array( $this, 'save_taxonomy' ) );
                 }
+            }
+
+            if (!empty(self::$media)) {
+                // Handle Media Editor
+                add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ) );
+                add_filter( 'attachment_fields_to_save', array( $this, 'save_media' ) );
+                add_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ) );
             }
 
             if (!empty(self::$user)) {
@@ -98,6 +108,30 @@ class PodMeta {
         }
 
         return $post_id;
+    }
+
+    public function meta_media ( $form_fields, $post ) {
+        $pod = $this->api->load_pod( array( 'name' => 'media' ) );
+        foreach ( $pod['fields'] as $field ) {
+            $form_fields[ 'pods_meta_' . $field[ 'name' ] ] = array(
+                'label' => $field[ 'label' ],
+                'input' => 'html',
+                'html' => PodsForm::field('pods_meta_' . $field['name'], get_post_meta( $post->ID, $field['name'] ), $field['type']),
+                'helps' => $field['options']['description']
+            );
+        }
+        return $form_fields;
+    }
+    public function save_media ( $post, $attachment ) {
+        $post_id = $attachment;
+        if ( is_array( $post ) )
+            $post_id = $post['ID'];
+        $pod = $this->api->load_pod( array( 'name' => 'media' ) );
+        foreach ( $pod['fields'] as $field ) {
+            if (isset($_POST['pods_meta_' . $field['name']]))
+                update_post_meta( $post_id, $field['name'], $_POST['pods_meta_' . $field['name']]);
+        }
+        return $post;
     }
 
     public function meta_taxonomy ( $tag, $taxonomy ) {

@@ -1400,6 +1400,7 @@ class PodsAPI
      * Load Pods and filter by options
      *
      * $params['type'] string/array Pod Type(s) to filter by
+     * $params['object'] string/array Pod Object(s) to filter by
      * $params['options'] array Pod Option(s) key=>value array to filter by
      * $params['orderby'] string ORDER BY clause of query
      * $params['limit'] string Number of Pods to return
@@ -1414,7 +1415,12 @@ class PodsAPI
         if (isset($params->type) && !empty($params->type)) {
             if (!is_array($params->type))
                 $params->type = array($params->type);
-            $where .= " `type` IN ('" . implode("','", $params->type) . "') ";
+            $where[] = " `type` IN ('" . implode("','", $params->type) . "') ";
+        }
+        if (isset($params->object) && !empty($params->object)) {
+            if (!is_array($params->object))
+                $params->object = array($params->object);
+            $where[] = " `object` IN ('" . implode("','", $params->object) . "') ";
         }
         if (isset($params->options) && !empty($params->options) && is_array($params->options)) {
             $options = array();
@@ -1422,13 +1428,12 @@ class PodsAPI
                 $options[] = pods_sanitize(trim(json_encode(array($option => $value)), '{} []'));
             }
             if (!empty($options))
-                $where .= ' (`options` LIKE "%' . implode('%" AND `options` LIKE "%', $options) . '%")';
+                $where[] = ' (`options` LIKE "%' . implode('%" AND `options` LIKE "%', $options) . '%")';
         }
         if (isset($params->where) && 0 < strlen($params->where)) {
-            if (!empty($where))
-                $where .= ' AND ';
-            $where .= $params->where;
+            $where[] = $params->where;
         }
+        $where = implode( ' AND ', $where );
         if (!empty($where))
             $where = " WHERE {$where} ";
         if (isset($params->orderby) && !empty($params->orderby))
@@ -1446,7 +1451,7 @@ class PodsAPI
             if (!empty($pod['options']))
                 $pod['options'] = @json_decode($pod['options'],true);
             $pod['options'] = $this->handle_options($pod['options'], $pod);
-            $the_pods[] = $pod;
+            $the_pods[$pod['name']] = $pod;
         }
         return $the_pods;
     }

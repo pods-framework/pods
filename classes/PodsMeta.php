@@ -24,52 +24,50 @@ class PodsMeta {
         self::$user = $this->api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'user', 'object' => 'user' ) );
         self::$comment = $this->api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'comment', 'object' => 'comment' ) );
 
-        if (defined('PODS_DEVELOPER')) {
-            if (!empty(self::$post_types)) {
-                // Handle Post Type Editor
-                foreach ( self::$post_types as $post_type ) {
-                    $post_type_name = $post_type['name'];
-                    if (!empty($post_type['object']))
-                        $post_type_name = $post_type['object'];
-                    add_action( 'add_meta_boxes_' . $post_type_name, array( $this, 'meta_post_add' ) );
-                }
-                add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
+        if (!empty(self::$post_types)) {
+            // Handle Post Type Editor
+            foreach ( self::$post_types as $post_type ) {
+                $post_type_name = $post_type['name'];
+                if (!empty($post_type['object']))
+                    $post_type_name = $post_type['object'];
+                add_action( 'add_meta_boxes_' . $post_type_name, array( $this, 'meta_post_add' ) );
             }
+            add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
+        }
 
-            if (!empty(self::$taxonomies)) {
-                // Handle Taxonomy Editor
-                foreach ( self::$taxonomies as $taxonomy ) {
-                    $taxonomy_name = $taxonomy['name'];
-                    if (!empty($taxonomy['object']))
-                        $taxonomy_name = $taxonomy['object'];
-                    add_action( $taxonomy_name . '_edit_form_fields', array( $this, 'meta_taxonomy' ), 10, 2 );
-                    add_action( $taxonomy_name . '_add_form_fields', array( $this, 'meta_taxonomy' ), 10, 2 );
-                    add_action( 'edit_' . $taxonomy_name, array( $this, 'save_taxonomy' ), 10, 2 );
-                    add_action( 'create_' . $taxonomy_name, array( $this, 'save_taxonomy' ), 10, 2 );
-                }
+        if (!empty(self::$taxonomies)) {
+            // Handle Taxonomy Editor
+            foreach ( self::$taxonomies as $taxonomy ) {
+                $taxonomy_name = $taxonomy['name'];
+                if (!empty($taxonomy['object']))
+                    $taxonomy_name = $taxonomy['object'];
+                add_action( $taxonomy_name . '_edit_form_fields', array( $this, 'meta_taxonomy' ), 10, 2 );
+                add_action( $taxonomy_name . '_add_form_fields', array( $this, 'meta_taxonomy' ), 10, 2 );
+                add_action( 'edit_' . $taxonomy_name, array( $this, 'save_taxonomy' ), 10, 2 );
+                add_action( 'create_' . $taxonomy_name, array( $this, 'save_taxonomy' ), 10, 2 );
             }
+        }
 
-            if (!empty(self::$media)) {
-                // Handle Media Editor
-                add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
-                add_filter( 'attachment_fields_to_save', array( $this, 'save_media' ), 10, 2 );
-                add_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 );
-            }
+        if (!empty(self::$media)) {
+            // Handle Media Editor
+            add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
+            add_filter( 'attachment_fields_to_save', array( $this, 'save_media' ), 10, 2 );
+            add_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 );
+        }
 
-            if (!empty(self::$user)) {
-                // Handle User Editor
-                add_action( 'show_user_profile', array( $this, 'meta_user' ) );
-                add_action( 'edit_user_profile', array( $this, 'meta_user' ) );
-                add_action( 'personal_options_update', array( $this, 'save_user' ) );
-                add_action( 'edit_user_profile_update', array( $this, 'save_user' ) );
-            }
+        if (!empty(self::$user)) {
+            // Handle User Editor
+            add_action( 'show_user_profile', array( $this, 'meta_user' ) );
+            add_action( 'edit_user_profile', array( $this, 'meta_user' ) );
+            add_action( 'personal_options_update', array( $this, 'save_user' ) );
+            add_action( 'edit_user_profile_update', array( $this, 'save_user' ) );
+        }
 
-            if (!empty(self::$comment)) {
-                // Handle Comment Editor
-                add_action( 'add_meta_boxes_comment', array( $this, 'meta_comment' ) );
-                add_action( 'wp_insert_comment', array( $this, 'save_comment' ) );
-                add_action( 'edit_comment', array( $this, 'save_comment' ) );
-            }
+        if (!empty(self::$comment)) {
+            // Handle Comment Editor
+            add_action( 'add_meta_boxes_comment', array( $this, 'meta_comment' ) );
+            add_action( 'wp_insert_comment', array( $this, 'save_comment' ) );
+            add_action( 'edit_comment', array( $this, 'save_comment' ) );
         }
     }
 

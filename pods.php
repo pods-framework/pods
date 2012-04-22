@@ -32,6 +32,7 @@ if (!defined('PODS_PHP_VERSION_MINIMUM'))
 if (!defined('PODS_MYSQL_VERSION_MINIMUM'))
     define('PODS_MYSQL_VERSION_MINIMUM', '5.0');
 
+define('PODS_SLUG', plugin_basename(__FILE__));
 define('PODS_URL', plugin_dir_url(__FILE__));
 define('PODS_DIR', plugin_dir_path(__FILE__));
 if (!defined('WP_INCLUDES_URL'))
@@ -44,13 +45,16 @@ require_once(PODS_DIR . 'functions.php');
 require_once(PODS_DIR . 'updater.php');
 
 if ( is_admin() ) { // note the use of is_admin() to double check that this is happening in the admin
+    $user = 'pods-framework';
+    $repo = 'pods';
+    $branch = '2.0';
     $config = array(
-        'slug' => plugin_basename(__FILE__), // this is the slug of your plugin
-        'proper_folder_name' => dirname( plugin_basename(__FILE__) ), // this is the name of the folder your plugin lives in
-        'api_url' => 'https://api.github.com/repos/pods-framework/pods', // the github API url of your github repo
-        'raw_url' => 'https://raw.github.com/pods-framework/pods/2.0', // the github raw url of your github repo
-        'github_url' => 'https://github.com/pods-framework/pods', // the github url of your github repo
-        'zip_url' => 'https://github.com/pods-framework/pods/zipball/2.0', // the zip url of the github repo
+        'slug' => PODS_SLUG, // this is the slug of your plugin
+        'proper_folder_name' => dirname( PODS_SLUG ), // this is the name of the folder your plugin lives in
+        'api_url' => 'https://api.github.com/repos/' . $user . '/' . $repo, // the github API url of your github repo
+        'raw_url' => 'https://raw.github.com/' . $user . '/' . $repo . '/' . $branch, // the github raw url of your github repo
+        'github_url' => 'https://github.com/' . $user . '/' . $repo, // the github url of your github repo
+        'zip_url' => 'https://github.com/' . $user . '/' . $repo . '/zipball/' . $branch, // the zip url of the github repo
         'sslverify' => true, // whether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
         'requires' => '3.3', // which version of WordPress does your plugin require?
         'tested' => '3.4', // which version of WordPress is your plugin tested up to?

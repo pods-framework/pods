@@ -158,10 +158,11 @@ class PodMeta {
         add_meta_box( 'comment-pods-meta', $pod['options']['label'], array( $this, 'meta_comment' ), 'comment', 'normal', 'high' );
     }
     public function meta_comment ( $comment ) {
+        $pod = $this->api->load_pod( array( 'name' => 'comment' ) );
 ?>
+    <h3><?php echo $pod['options']['label']; ?></h3>
     <table class="form-table pods-metabox">
 <?php
-        $pod = $this->api->load_pod( array( 'name' => 'comment' ) );
         foreach ( $pod['fields'] as $field ) {
 ?>
     <tr class="form-field">

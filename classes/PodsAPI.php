@@ -1383,6 +1383,8 @@ class PodsAPI
             $pod['options'] = @json_decode($pod['options'], true);
         if (!is_array($pod['options']))
             $pod['options'] = array();
+        if (!isset($pod['options']['label']))
+            $pod['options']['label'] = ucwords(str_replace('_', ' ', $pod['name']));
         //$pod['options'] = $this->handle_options($pod['options'], $pod);
         $pod['fields'] = array();
         $result = pods_query("SELECT * FROM `@wp_pods_fields` WHERE pod_id = {$pod['id']} ORDER BY weight");
@@ -1451,6 +1453,8 @@ class PodsAPI
             if (!empty($pod['options']))
                 $pod['options'] = @json_decode($pod['options'],true);
             $pod['options'] = $this->handle_options($pod['options'], $pod);
+            if (!isset($pod['options']['label']))
+                $pod['options']['label'] = ucwords(str_replace('_', ' ', $pod['name']));
             $the_pods[$pod['name']] = $pod;
         }
         return $the_pods;

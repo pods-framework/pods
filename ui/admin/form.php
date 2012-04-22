@@ -384,9 +384,12 @@
 											Please fill out the field	
 										</p>
 									</div>
+									<div class="pods-field pods-textarea">
+										<?php echo PodsForm::label('code1', 'Code Field'); ?>
+										<?php echo PodsForm::field('code1', NULL, 'textarea', array('class' => 'pods-code-field', 'rows' => '7', 'cols' => '70')); ?>
+									</div>
 									<?php
-                                    $args = array( 'type' => 'code', 'name' => 'code1', 'label' => 'Code' );
-                                    pods_field( $args );
+
                                     $args = array( 'type' => 'code', 'name' => 'code2', 'label' => 'Code with Comment', 'comment' => 'Please fill out the field' );
                                     pods_field( $args );
                                     $args = array( 'type' => 'code', 'name' => 'code3', 'label' => 'WYSIWYG (cleditor)', 'options' => array( 'wysiwyg' => true ) );

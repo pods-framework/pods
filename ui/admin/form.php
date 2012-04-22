@@ -368,13 +368,28 @@
                             <div class="handlediv" title="Click to toggle"><br /></div>
                             <h3 class="hndle"><span>Pod Name</span></h3>
                             <div class="inside">
-                                <?php
-                                    $args = array( 'type' => 'text', 'name' => 'singlelinetext1', 'label' => 'Single Line Text' );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'text', 'name' => 'singlelinetext2', 'label' => 'Single Line Text with Comment', 'comment' => 'Please fill out the field' );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'code', 'name' => 'code1', 'label' => 'Code' );
-                                    pods_field( $args );
+									<div class="pods-field pods-textfield">
+										<?php
+										echo PodsForm::label('singlelinetext1', 'Single Line Text');
+										echo PodsForm::field('singlelinetext1', NULL, 'text', array('class' => 'pods-text-field'));
+										?>
+									</div>
+									
+									<div class="pods-field pods-textfield">
+										<?php
+										echo PodsForm::label('singlelinetext2', 'Single Line Text with Comment');
+										echo PodsForm::field('singlelinetext2', NULL, 'text', array('class' => 'pods-text-field'));
+										?>
+										<p class="pods-field-comment">
+											Please fill out the field	
+										</p>
+									</div>
+									<div class="pods-field pods-textarea">
+										<?php echo PodsForm::label('code1', 'Code Field'); ?>
+										<?php echo PodsForm::field('code1', NULL, 'textarea', array('class' => 'pods-code-field', 'rows' => '7', 'cols' => '70')); ?>
+									</div>
+									<?php
+
                                     $args = array( 'type' => 'code', 'name' => 'code2', 'label' => 'Code with Comment', 'comment' => 'Please fill out the field' );
                                     pods_field( $args );
                                     $args = array( 'type' => 'code', 'name' => 'code3', 'label' => 'WYSIWYG (cleditor)', 'options' => array( 'wysiwyg' => true ) );

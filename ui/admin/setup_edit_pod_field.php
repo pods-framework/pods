@@ -15,7 +15,7 @@ $field = array_merge($field_settings['field_defaults'], $field);
 <?php
 if ('__1' != pods_var('id', $field)) {
 ?>
-                <span class="pods-manage-row-id">
+                <span class="pods-manage-row-more">
                     [id: <?php echo esc_html(pods_var('id', $field)); ?>]
                 </span>
 <?php
@@ -47,7 +47,7 @@ if ('__1' != pods_var('id', $field)) {
                                     <div id="pods-basic-options-<?php echo $i; ?>" class="pods-tab pods-basic-options">
                                         <div class="pods-field-option">
                                             <?php echo PodsForm::label('field_data[' . $i . '][name]', __('Name', 'pods'), __('help', 'pods')); ?>
-                                            <?php echo PodsForm::field('field_data[' . $i . '][name]', pods_var('name', $field), 'text'); ?>
+                                            <?php echo PodsForm::field('field_data[' . $i . '][name]', pods_var('name', $field), 'db'); ?>
                                         </div>
                                         <div class="pods-field-option">
                                             <?php echo PodsForm::label('field_data[' . $i . '][label]', __('Label', 'pods'), __('help', 'pods')); ?>
@@ -390,7 +390,7 @@ if ('__1' != pods_var('id', $field)) {
                 <a title="Edit this field" class="pods-manage-row-edit row-name" href="#edit-field"><?php echo esc_html(pods_var('name', $field)); ?></a>
             </td>
             <td class="pods-manage-row-type">
-                <?php echo esc_html((isset($field_types[pods_var('type', $field)]) ? $field_types[pods_var('type', $field)] : 'Unknown')) . ' <span>(' . pods_var('type', $field) . ')</span>'; ?>
+                <?php echo esc_html((isset($field_types[pods_var('type', $field)]) ? $field_types[pods_var('type', $field)] : 'Unknown')) . ' <span class="pods-manage-row-more">[type: ' . pods_var('type', $field) . ']</span>'; ?>
 <?php
 if ('pick' == pods_var('type', $field) && '' != pods_var('pick_object', $field, '')) {
     $pick_object = null;

@@ -144,10 +144,9 @@ class PodsUI
         }
         if (!is_object($object) && isset($options['pod'])) {
             if (isset($options['id']))
-                $object = pods($options['pod'], $options['id']);
+                $this->pod =& pods($options['pod'], $options['id']);
             else
-                $object = pods($options['pod']);
-            $this->pod = &$object;
+                $this->pod =& pods($options['pod']);
             unset($options['pod']);
         }
         if (false !== $deprecated)
@@ -158,7 +157,14 @@ class PodsUI
             echo $this->error(__('<strong>Error:</strong> Pods UI needs a Pods object or a Table definition to run from, see the User Guide for more information.', 'pods'));
             return false;
         }
-        $this->pods_data = pods_data();
+        if (!is_object($this->pods_data)) {
+            if (is_object($this->pod) && is_object($this->pod->pod_data))
+                $this->pod_data =& $this->pod->pod_data;
+            elseif (is_object($this->pod))
+                $this->pods_data =& pods_data($this->pod->pod);
+            elseif (!is_object($this->pod))
+                $this->pods_data =& pods_data($this->pod);
+        }
         $this->go();
     }
 
@@ -434,6 +440,11 @@ class PodsUI
         $options->validate('page', pods_var('pg' . $options->num, 'get', $this->page), 'absint');
         $options->validate('limit', pods_var('limit' . $options->num, 'get', $this->limit), 'int');
 
+        if ( isset( $this->pod ) && is_object( $this->pod ) ){
+            $this->sql = array('table' => $this->pod->table,
+                               'field_id' => $this->pod->field_id,
+                               'field_index' => $this->pod->field_index);
+        }
         $options->validate('sql', $this->sql, 'array_merge');
 
         $options->validate('sortable', $this->sortable, 'boolean');
@@ -1165,7 +1176,7 @@ class PodsUI
             <input type="button" value="<?php _e('Cancel', 'pods'); ?>" class="button" onclick="document.location='<?php echo $this->var_update(array('action' . $this->num => 'manage')); ?>';" />
 <?php
             }
-            elseif (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden)) {
+            elseif (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
 ?>
             <div class="alignleft actions">
                 <select name="action">
@@ -1205,7 +1216,7 @@ class PodsUI
         else
             $this->table($reorder);
         if (!empty($this->data)) {
-            if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden)) {
+            if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
 ?>
         <div class="alignleft actions">
             <select name="action2">
@@ -1272,7 +1283,7 @@ class PodsUI
         <thead>
             <tr>
 <?php
-        if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden)) {
+        if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
 ?>
                 <th scope="col" id="cb" class="manage-column column-cb check-column"><input type="checkbox" /></th>
 <?php
@@ -1314,7 +1325,7 @@ class PodsUI
         <tfoot>
             <tr>
 <?php
-        if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden)) {
+        if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
 ?>
                 <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" /></th>
 <?php

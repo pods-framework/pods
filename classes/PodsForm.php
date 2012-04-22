@@ -83,6 +83,8 @@ class PodsForm {
         $attributes['data-name-clean'] = $name_more_clean;
         $attributes['id'] = 'pods-form-ui-' . $name_clean;
         $attributes['class'] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
+        if ( is_array( $value ) )
+            $value = current( $value );
         $attributes['value'] = $value;
         $attributes = self::merge_attributes($attributes, $options);
         if (isset($options['default']) && strlen($attributes['value']) < 1)
@@ -137,8 +139,10 @@ class PodsForm {
         $settings = null;
         if (isset($options['settings']))
             $settings = $options['settings'];
-        require_once PODS_DIR . "/ui/wp-editor/wp-editor.php";
+
         global $wp_editor;
+        if ( !class_exists('WP_Editor') && !function_exists('wp_editor') )
+            require_once PODS_DIR . "/ui/wp-editor/wp-editor.php";
         $wp_editor->editor($value, $attributes['id'], $settings);
     }
 
@@ -248,6 +252,18 @@ class PodsForm {
 ?>
     <input<?php self::attributes($attributes, $name, $type, $options); ?> />
 <?php
+    if (!wp_script_is('jquery', 'queue') && !wp_script_is('jquery', 'to_do') && !wp_script_is('jquery', 'done'))
+        wp_print_scripts('jquery');
+?>
+    <script>
+        jQuery(function($){
+            $('input#<?php echo $attributes['id']; ?>').change(function() {
+                var newval = $(this).val().toLowerCase().replace(/([- ])/g, '_').replace(/([^0-9a-z_])/g, '').replace(/(_){2,}/g, '_');
+                $(this).val(newval);
+            });
+        });
+    </script>
+<?php
     }
 
     /**
@@ -272,6 +288,18 @@ class PodsForm {
             $attributes['value'] = $options['default'];
 ?>
     <input<?php self::attributes($attributes, $name, $type, $options); ?> />
+<?php
+    if (!wp_script_is('jquery', 'queue') && !wp_script_is('jquery', 'to_do') && !wp_script_is('jquery', 'done'))
+        wp_print_scripts('jquery');
+?>
+    <script>
+        jQuery(function($){
+            $('input#<?php echo $attributes['id']; ?>').change(function() {
+                var newval = $(this).val().toLowerCase().replace(/([_ ])/g, '-').replace(/([^0-9a-z-])/g, '').replace(/(-){2,}/g, '-');
+                $(this).val(newval);
+            });
+        });
+    </script>
 <?php
     }
 

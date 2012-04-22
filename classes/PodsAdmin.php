@@ -131,7 +131,8 @@ class PodsAdmin {
         $results = $this->api->load_pods(array(//'options' => array('disable_manage' => 0),
             'orderby' => '`weight`, `name`', 'type' => 'pod'));
         $can_manage = pods_access('manage_content');
-        $results = false; // not yet!
+        if ( !defined( 'PODS_DEVELOPER' ) )
+            $results = false; // not yet!
         if (false !== $results) {
             foreach ((array) $results as $item) {
                 if (!pods_access('pod_' . $item['name']) && !$can_manage)
@@ -162,23 +163,30 @@ class PodsAdmin {
         $admin_menus = array('pods' => array('label' => 'Setup',
                                              'function' => array($this, 'admin_setup'),
                                              'access' => 'manage_pods'),
-                             /*'pods-advanced' => array('label' => 'Advanced',
-                                                      'function' => array($this, 'admin_advanced'),
-                                                      'access' => array('manage_templates',
-                                                                        'manage_pod_pages',
-                                                                        'manage_helpers',
-                                                                        'manage_roles')),
-                             'pods-settings' => array('label' => 'Settings',
-                                                      'function' => array($this, 'admin_settings'),
-                                                      'access' => 'manage_settings'),
-                             'pods-packages' => array('label' => 'Packages',
-                                                      'function' => array($this, 'admin_packages'),
-                                                      'access' => 'manage_packages'),
-                             'pods-components' => array('label' => 'Components',
-                                                        'function' => array($this, 'admin_components'),
-                                                        'access' => 'manage_components'),*/
                              'pods-help' => array('label' => 'Help',
                                                   'function' => array($this, 'admin_help')));
+        if ( defined( 'PODS_DEVELOPER' ) ) {
+            $admin_menus = array('pods' => array('label' => 'Setup',
+                                                 'function' => array($this, 'admin_setup'),
+                                                 'access' => 'manage_pods'),
+                                 'pods-advanced' => array('label' => 'Advanced',
+                                                          'function' => array($this, 'admin_advanced'),
+                                                          'access' => array('manage_templates',
+                                                                            'manage_pod_pages',
+                                                                            'manage_helpers',
+                                                                            'manage_roles')),
+                                 'pods-settings' => array('label' => 'Settings',
+                                                          'function' => array($this, 'admin_settings'),
+                                                          'access' => 'manage_settings'),
+                                 'pods-packages' => array('label' => 'Packages',
+                                                          'function' => array($this, 'admin_packages'),
+                                                          'access' => 'manage_packages'),
+                                 'pods-components' => array('label' => 'Components',
+                                                            'function' => array($this, 'admin_components'),
+                                                            'access' => 'manage_components'),
+                                 'pods-help' => array('label' => 'Help',
+                                                      'function' => array($this, 'admin_help')));
+        }
         $admin_menus = apply_filters('pods_admin_menu', $admin_menus);
 
         $parent = false;
@@ -196,12 +204,10 @@ class PodsAdmin {
                 $this->admin_components_menu($parent);
         }
 
-        add_submenu_page('pods', 'x Import - Table', 'x Import - Table', 'manage_options', 'pods-import-table', array($this, 'pods_import_table'));
-		add_submenu_page('pods', 'x Form Test', 'x Form Test', 'manage_options', 'pods-form-test', array($this, 'pods_form_test'));
-        /*add_submenu_page('pods', 'x Import - Convert Fields', 'x Import - Convert Fields', 'manage_options', 'pods-import-convert-fields', array($this, 'pods_import_convert_fields'));
-        add_submenu_page('pods', 'x Import - Created', 'x Import - Created', 'manage_options', 'pods-import-create-pod', array($this, 'pods_import_create_pod'));
-
-        add_submenu_page('pods', 'x Media Upload - Test', 'x Media Upload - Test', 'manage_options', 'media-upload-test', array($this, 'media_upload_test'));*/
+        if ( defined( 'PODS_DEVELOPER' ) ) {
+            add_submenu_page('pods', 'x Import - Table', 'x Import - Table', 'manage_options', 'pods-import-table', array($this, 'pods_import_table'));
+            add_submenu_page('pods', 'x Media Upload - Test', 'x Media Upload - Test', 'manage_options', 'media-upload-test', array($this, 'media_upload_test'));
+        }
     }
 
     private function admin_components_menu($parent = 'pods') {
@@ -209,14 +215,18 @@ class PodsAdmin {
         foreach ($components as $component => $component_data) {
             if (!empty($component_data['HideMenu']))
                 continue;
-            add_submenu_page($parent, '- ' . strip_tags($component_data['ShortName']), strip_tags($component_data['Name']), 'read', 'pods-components&component=' . urlencode($component), array($this, 'admin_components_handler'));
+            add_submenu_page($parent, strip_tags($component_data['Name']), '- ' . strip_tags($component_data['ShortName']), 'read', 'pods-component-' . $component_data['ID'], array($this, 'admin_components_handler'));
         }
     }
 
     public function admin_content() {
-        require_once PODS_DIR . 'ui/front/form.php';
-        //$pod = str_replace('pods-manage-', '', $_GET['page']);
-        //$ui = pods_ui(array('pod' => $pod));
+        $pod = str_replace('pods-manage-', '', $_GET['page']);
+        $ui = pods_ui(array('pod' => $pod,
+                            'actions_custom' => array('form' => array( $this, 'admin_content_form' ))));
+    }
+
+    public function admin_content_form() {
+        require_once PODS_DIR . 'ui/admin/form.php';
     }
 
     public function media_upload_test() {
@@ -248,7 +258,7 @@ class PodsAdmin {
                       'item' => 'Pod',
                       'orderby' => 'name',
                       //'reorder' => array('on' => 'weight'),
-                      'fields' => array('manage' => array('name')),
+                      'fields' => array('manage' => array('name', 'type')),
                       'actions_disabled' => array('duplicate', 'view', 'export'),
                       'actions_custom' => array('add' => array($this, 'admin_setup_add'),
                                                 'edit' => array($this, 'admin_setup_edit'),
@@ -303,9 +313,6 @@ class PodsAdmin {
     }
 
     public function admin_ajax() {
-    	ob_start(); 
-    	ini_set('display_errors', 1);
-    	error_reporting(E_ALL);
         if (false === headers_sent()) {
             if ('' == session_id())
                 @session_start();
@@ -465,9 +472,7 @@ class PodsAdmin {
 
         if (!is_bool($output))
             echo $output;
-		$debug = ob_get_contents();
-		echo $debug;echo 'test';
-		ob_end_clean();
+
         die(); // KBAI!
     }
 

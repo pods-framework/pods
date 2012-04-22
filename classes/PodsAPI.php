@@ -19,7 +19,7 @@ class PodsAPI
      * @since 1.7.1
      */
     public function __construct ($pod = null, $format = 'php') {
-        if (null !== $pod && 0 < strlen($pod)) {
+        if (null !== $pod && 0 < strlen((string) $pod)) {
             $this->format = $format;
             $this->pod_data = $this->load_pod(array('name' => $pod));
             if (false !== $this->pod_data && is_array($this->pod_data)) {
@@ -140,8 +140,12 @@ class PodsAPI
                 $params->name = $pod['name'];
             if ($old_name != $params->name && false !== $this->pod_exists(array('name' => $params->name)))
                 return pods_error('Pod ' . $params->name . ' already exists', $this);
-            elseif ($old_id != $params->id && $params->type == $pod['type'] && (!isset($params->object) || $params->object == $pod['object']))
-                return pods_error('Pod using ' . $params->object . ' already exists', $this);
+            elseif ($old_id != $params->id) {
+                if ($params->type == $pod['type'] && isset($params->object) && $params->object == $pod['object'])
+                    return pods_error('Pod using ' . $params->object . ' already exists', $this);
+                else
+                    return pods_error('Pod ' . $params->name . ' already exists', $this);
+            }
         }
 
         // Add new pod
@@ -152,7 +156,7 @@ class PodsAPI
 
             $check = pods_query("SELECT `id` FROM `@wp_pods` WHERE `name` = '{$params->name}' LIMIT 1", $this);
             if (!empty($check))
-                return pods_error('Duplicate Pod name', $this);
+                return pods_error('Pod ' . $params->name . ' already exists', $this);
 
             $columns = array('name' => $params->name, 'options' => '', 'type' => 'pod', 'storage' => 'table');
             if (isset($params->type) && 0 < strlen($params->type))
@@ -213,7 +217,7 @@ class PodsAPI
                 $fields[] = array('name' => 'author',
                                   'label' => 'Author',
                                   'type' => 'pick',
-                                  'pick_object' => 'wp_users',
+                                  'pick_object' => 'user',
                                   'weight' => $weight);
                 $weight++;
                 $fields[] = array('name' => 'permalink',
@@ -231,27 +235,25 @@ class PodsAPI
                 $row = array();
                 foreach ($field_columns as $column => $default) {
                     $row[$column] = $default;
-                    if (isset($field[$column]) && !empty($field[$column]))
+                    if (isset($field[$column]))
                         $row[$column] = $field[$column];
-                    if (!isset($row['options']) && !isset($field['options']))
-                        $row['options'] = $field;
-                    if (!empty($row['options'])) {
-                        if (is_array($row['options'])) {
-                            $options = $row['options'];
-                            $exclude = array_keys($field_columns);
-                            foreach ($exclude as $exclude_field) {
-                                if (isset($options[$exclude_field]))
-                                    unset($options[$exclude_field]);
-                            }
-                            $row['options'] = '';
-                            if (!empty($options))
-                                $row['options'] = pods_sanitize(str_replace('@wp_', '{prefix}', json_encode($options)));
+                }
+                if (!empty($row['options'])) {
+                    if (is_array($row['options'])) {
+                        $options = $row['options'];
+                        $exclude = array_keys($field_columns);
+                        foreach ($exclude as $exclude_field) {
+                            if (isset($options[$exclude_field]))
+                                unset($options[$exclude_field]);
                         }
+                        $row['options'] = '';
+                        if (!empty($options))
+                            $row['options'] = pods_sanitize(str_replace('@wp_', '{prefix}', json_encode($options)));
                     }
                 }
                 $rows[] = implode("','", $row);
                 if (!in_array($row['type'], array('pick', 'file')))
-                    $definitions[] = "`{$row['name']}` " . $this->get_column_definition($row['type']);
+                    $definitions[] = "`{$field['name']}` " . $this->get_column_definition($field['type']);
             }
             if (!isset($columns['storage']) || 'table' == $columns['storage']) {
                 $result = pods_query("CREATE TABLE `@wp_pods_tbl_{$params->name}` (" . implode(', ', $definitions) . ") DEFAULT CHARSET utf8", $this);
@@ -368,7 +370,7 @@ class PodsAPI
             }
         }
 
-        $params->name = trim(str_replace('-', '_', pods_clean_name(strtolower($params->name))), ' _');
+        $params->name = pods_clean_name($params->name);
         if (empty($params->name))
             return pods_error('Pod Column name is required', $this);
 
@@ -1381,6 +1383,8 @@ class PodsAPI
             $pod['options'] = @json_decode($pod['options'], true);
         if (!is_array($pod['options']))
             $pod['options'] = array();
+        if (!isset($pod['options']['label']) || empty($pod['options']['label']))
+            $pod['options']['label'] = ucwords(str_replace('_', ' ', $pod['name']));
         //$pod['options'] = $this->handle_options($pod['options'], $pod);
         $pod['fields'] = array();
         $result = pods_query("SELECT * FROM `@wp_pods_fields` WHERE pod_id = {$pod['id']} ORDER BY weight");
@@ -1398,20 +1402,28 @@ class PodsAPI
      * Load Pods and filter by options
      *
      * $params['type'] string/array Pod Type(s) to filter by
+     * $params['object'] string/array Pod Object(s) to filter by
      * $params['options'] array Pod Option(s) key=>value array to filter by
      * $params['orderby'] string ORDER BY clause of query
      * $params['limit'] string Number of Pods to return
+     * $params['where'] string WHERE clause of query
      *
      * @param array $params An associative array of parameters
      * @since 2.0.0
      */
     public function load_pods ($params) {
         $params = (object) pods_sanitize($params);
-        $where = $orderby = $limit = '';
+        $orderby = $limit = '';
+        $where = array();
         if (isset($params->type) && !empty($params->type)) {
             if (!is_array($params->type))
                 $params->type = array($params->type);
-            $where .= " `type` IN ('" . implode("','", $params->type) . "') ";
+            $where[] = " `type` IN ('" . implode("','", $params->type) . "') ";
+        }
+        if (isset($params->object) && !empty($params->object)) {
+            if (!is_array($params->object))
+                $params->object = array($params->object);
+            $where[] = " `object` IN ('" . implode("','", $params->object) . "') ";
         }
         if (isset($params->options) && !empty($params->options) && is_array($params->options)) {
             $options = array();
@@ -1419,8 +1431,12 @@ class PodsAPI
                 $options[] = pods_sanitize(trim(json_encode(array($option => $value)), '{} []'));
             }
             if (!empty($options))
-                $where .= ' (`options` LIKE "%' . implode('%" AND `options` LIKE "%', $options) . '%")';
+                $where[] = ' (`options` LIKE "%' . implode('%" AND `options` LIKE "%', $options) . '%")';
         }
+        if (isset($params->where) && 0 < strlen($params->where)) {
+            $where[] = $params->where;
+        }
+        $where = implode( ' AND ', $where );
         if (!empty($where))
             $where = " WHERE {$where} ";
         if (isset($params->orderby) && !empty($params->orderby))
@@ -1431,14 +1447,16 @@ class PodsAPI
         }
         $result = pods_query("SELECT * FROM `@wp_pods` {$where} {$orderby} {$limit}", $this);
         if (empty($result))
-            return false;
+            return array();
         $the_pods = array();
         foreach ($result as $row) {
             $pod = get_object_vars($row);
             if (!empty($pod['options']))
                 $pod['options'] = @json_decode($pod['options'],true);
             $pod['options'] = $this->handle_options($pod['options'], $pod);
-            $the_pods[] = $pod;
+            if (!isset($pod['options']['label']) || empty($pod['options']['label']))
+                $pod['options']['label'] = ucwords(str_replace('_', ' ', $pod['name']));
+            $the_pods[$pod['name']] = $pod;
         }
         return $the_pods;
     }
@@ -1564,25 +1582,26 @@ class PodsAPI
                 if ('.' == substr($file, 0, 1))
                     continue;
                 if (is_dir($components_dir . '/' . $file)) {
-                    $components_subdir = @opendir($components_root . $file);
+                    $components_subdir = @opendir($components_root . '/' . $file);
                     if ($components_subdir) {
                         while (false !== ($subfile = readdir($components_subdir))) {
                             if ('.' == substr($subfile, 0, 1))
                                 continue;
                             if ('.php' == substr($subfile, -4))
-                                $component_files[] = $components_root . $file . '/' . $subfile;
+                                $component_files[] = $components_root . '/' . $file . '/' . $subfile;
                         }
                         closedir($components_subdir);
                     }
                 }
                 elseif ('.php' == substr($file, -4))
-                    $component_files[] = $components_root . $file;
+                    $component_files[] = $components_root . '/' . $file;
             }
             closedir($components_dir);
         }
         $component_files = $this->do_hook('load_components_files', $component_files, $components_root);
 
-        $default_headers = array('Name' => 'Component Name',
+        $default_headers = array('ID' => 'Component ID',
+                                 'Name' => 'Component Name',
                                  'ShortName' => 'Short Name',
                                  'ComponentURI' => 'Component URI',
                                  'Version' => 'Version',
@@ -1599,6 +1618,9 @@ class PodsAPI
                 continue;
             if (empty($component_data['ShortName']))
                 $component_data['ShortName'] = $component_data['Name'];
+            if (empty($component_data['ID'])) {
+                $component_data['ID'] = sanitize_title(str_replace(array($components_root, '.php'), '', $component_file));
+            }
             $components[str_replace($components_root, '', $component_file)] = $component_data;
         }
         return $components;

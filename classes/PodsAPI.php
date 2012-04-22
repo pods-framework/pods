@@ -102,8 +102,6 @@ class PodsAPI
                 $pod_params['storage'] = 'table';
                 $pod_params['name'] = $pod_params['object'] = $params->extend_taxonomy;
             }
-            elseif ('user' == $pod_params['type'])
-                $pod_params['name'] = $params->extend_pod_type;
             else
                 $pod_params['name'] = $pod_params['object'] = $params->extend_pod_type;
         }
@@ -1449,7 +1447,7 @@ class PodsAPI
         }
         $result = pods_query("SELECT * FROM `@wp_pods` {$where} {$orderby} {$limit}", $this);
         if (empty($result))
-            return false;
+            return array();
         $the_pods = array();
         foreach ($result as $row) {
             $pod = get_object_vars($row);

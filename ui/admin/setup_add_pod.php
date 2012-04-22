@@ -59,7 +59,7 @@
                     <hr />
                     <div class="pods-field-option">
                         <?php echo PodsForm::label('extend_pod_type', __('Content Type', 'pods'), __('help', 'pods')); ?>
-                        <?php echo PodsForm::field('extend_pod_type', pods_var('extend_pod_type', 'post'), 'pick', array('data' => array('post_type' => 'Post Types (Posts, Pages, etc..)', 'taxonomy' => 'Taxonomies (Categories, Tags, etc..)', 'user' => 'Users', 'comment' => 'Comments'), 'class' => 'pods-dependent-toggle')); ?>
+                        <?php echo PodsForm::field('extend_pod_type', pods_var('extend_pod_type', 'post'), 'pick', array('data' => array('post_type' => 'Post Types (Posts, Pages, etc..)', 'taxonomy' => 'Taxonomies (Categories, Tags, etc..)', 'media' => 'Media', 'user' => 'Users', 'comment' => 'Comments'), 'class' => 'pods-dependent-toggle')); ?>
                     </div>
                     <div class="pods-field-option pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-post_type">
 <?php

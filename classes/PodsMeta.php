@@ -21,8 +21,8 @@ class PodsMeta {
         self::$taxonomies = $this->api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'taxonomy' ) );
         self::$post_types = $this->api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'post_type' ) );
         self::$media = $this->api->load_pods( array( ) );
-        self::$user = $this->api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'user', 'object' => 'user' ) );
-        self::$comment = $this->api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'comment', 'object' => 'comment' ) );
+        self::$user = $this->api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'user' ) );
+        self::$comment = $this->api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'comment' ) );
 
         if (!empty(self::$post_types)) {
             // Handle Post Type Editor
@@ -65,7 +65,7 @@ class PodsMeta {
 
         if (!empty(self::$comment)) {
             // Handle Comment Editor
-            add_action( 'add_meta_boxes_comment', array( $this, 'meta_comment' ) );
+            add_action( 'add_meta_boxes_comment', array( $this, 'meta_comment_add' ) );
             add_action( 'wp_insert_comment', array( $this, 'save_comment' ) );
             add_action( 'edit_comment', array( $this, 'save_comment' ) );
         }
@@ -93,10 +93,8 @@ class PodsMeta {
 <?php
     }
     public function save_post ( $post_id, $post ) {
-        global $wpdb;
-
         // @todo Figure out how to hook into autosave for saving meta
-        if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
+        if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || 'revision' == $post->post_type )
             return $post_id;
 
         $pod = $this->api->load_pod( array( 'name' => self::$post_types[$post->post_type]['name'] ) );
@@ -133,18 +131,37 @@ class PodsMeta {
     }
 
     public function meta_taxonomy ( $tag, $taxonomy ) {
-        $pod = $this->api->load_pod( array( 'name' => self::$taxonomies[$tag]['name'] ) );
+        $taxonomy_name = $taxonomy;
+        if ( !is_object( $tag ) )
+            $taxonomy_name = $tag;
+        $pod = $this->api->load_pod( array( 'name' => self::$taxonomies[$taxonomy_name]['name'] ) );
         foreach ( $pod['fields'] as $field ) {
+            if ( !is_object( $tag ) ) {
 ?>
     <div class="form-field">
-        <?php
+<?php
             echo PodsForm::label('pods_meta_' . $field['name'], $field['label']);
             echo PodsForm::field('pods_meta_' . $field['name'], '', $field['type']);
             if ( isset( $fields[ 'options' ][ 'description' ] ) )
                 echo wpautop( $field['options']['description'] );
-        ?>
+?>
     </div>
 <?php
+            }
+            else {
+?>
+    <tr class="form-field">
+        <th scope="row" valign="top"><?php echo PodsForm::label('pods_meta_' . $field['name'], $field['label']); ?></th>
+        <td>
+<?php
+                echo PodsForm::field('pods_meta_' . $field['name'], '', $field['type']);
+                if ( isset( $fields[ 'options' ][ 'description' ] ) )
+                    echo '<span class="description">' . $field['options']['description'] . '</span>';
+?>
+        </td>
+    </tr>
+<?php
+            }
         }
     }
     public function save_taxonomy ( $term_id, $term_taxonomy_id ) {
@@ -155,7 +172,9 @@ class PodsMeta {
         if ( is_object( $user_id ) )
             $user_id = $user_id->ID;
 
-        $pod = $this->api->load_pod( array( 'name' => 'user' ) );
+        $pod_name = current( self::$user );
+        $pod_name = $pod_name['name'];
+        $pod = $this->api->load_pod( array( 'name' => $pod_name ) );
 ?>
     <h3><?php echo $pod['options']['label']; ?></h3>
     <table class="form-table pods-meta">
@@ -178,28 +197,33 @@ class PodsMeta {
         if ( is_object( $user_id ) )
             $user_id = $user_id->ID;
 
-        $pod = $this->api->load_pod( array( 'name' => 'user' ) );
+        $pod_name = current( self::$user );
+        $pod_name = $pod_name['name'];
+        $pod = $this->api->load_pod( array( 'name' => $pod_name ) );
         foreach ( $pod['fields'] as $field ) {
             if (isset($_POST['pods_meta_' . $field['name']]))
                 update_user_meta( $user_id, $field['name'], $_POST['pods_meta_' . $field['name']]);
         }
     }
 
-    public function meta_comment_add ( $post ) {
-        $pod = $this->api->load_pod( array( 'name' => 'comment' ) );
+    public function meta_comment_add ( $comment ) {
+        $pod_name = current( self::$comment );
+        $pod_name = $pod_name['name'];
+        $pod = $this->api->load_pod( array( 'name' => $pod_name ) );
         add_meta_box( 'comment-pods-meta', $pod['options']['label'], array( $this, 'meta_comment' ), 'comment', 'normal', 'high' );
     }
     public function meta_comment ( $comment ) {
-        $pod = $this->api->load_pod( array( 'name' => 'comment' ) );
+        $pod_name = current( self::$comment );
+        $pod_name = $pod_name['name'];
+        $pod = $this->api->load_pod( array( 'name' => $pod_name ) );
 ?>
-    <h3><?php echo $pod['options']['label']; ?></h3>
     <table class="form-table pods-metabox">
 <?php
         foreach ( $pod['fields'] as $field ) {
 ?>
     <tr class="form-field">
         <th scope="row" valign="top"><?php echo PodsForm::label('pods_meta_' . $field['name'], $field['label']); ?></th>
-        <td><?php echo PodsForm::field('pods_meta_' . $field['name'], (is_object($comment) ? get_comment_meta($comment->ID, $field['name']) : '' ), $field['type']); ?></td>
+        <td><?php echo PodsForm::field('pods_meta_' . $field['name'], (is_object($comment) ? get_comment_meta($comment->comment_ID, $field['name']) : '' ), $field['type']); ?></td>
     </tr>
 <?php
         }
@@ -208,7 +232,9 @@ class PodsMeta {
 <?php
     }
     public function save_comment ( $comment_id ) {
-        $pod = $this->api->load_pod( array( 'name' => 'comment' ) );
+        $pod_name = current( self::$comment );
+        $pod_name = $pod_name['name'];
+        $pod = $this->api->load_pod( array( 'name' => $pod_name ) );
         foreach ( $pod['fields'] as $field ) {
             if (isset($_POST['pods_meta_' . $field['name']]))
                 update_comment_meta( $comment_id, $field['name'], $_POST['pods_meta_' . $field['name']]);

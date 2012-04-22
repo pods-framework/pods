@@ -370,7 +370,7 @@ class PodsAPI
             }
         }
 
-        $params->name = trim(str_replace('-', '_', pods_clean_name(strtolower($params->name))), ' _');
+        $params->name = pods_clean_name($params->name);
         if (empty($params->name))
             return pods_error('Pod Column name is required', $this);
 

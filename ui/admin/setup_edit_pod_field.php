@@ -47,7 +47,7 @@ if ('__1' != pods_var('id', $field)) {
                                     <div id="pods-basic-options-<?php echo $i; ?>" class="pods-tab pods-basic-options">
                                         <div class="pods-field-option">
                                             <?php echo PodsForm::label('field_data[' . $i . '][name]', __('Name', 'pods'), __('help', 'pods')); ?>
-                                            <?php echo PodsForm::field('field_data[' . $i . '][name]', pods_var('name', $field), 'text'); ?>
+                                            <?php echo PodsForm::field('field_data[' . $i . '][name]', pods_var('name', $field), 'db'); ?>
                                         </div>
                                         <div class="pods-field-option">
                                             <?php echo PodsForm::label('field_data[' . $i . '][label]', __('Label', 'pods'), __('help', 'pods')); ?>

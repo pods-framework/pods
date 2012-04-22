@@ -516,7 +516,8 @@
                     $row.css('backgroundColor', '#B80000');
                     $row.fadeOut('slow', function () {
                         $(this).remove();
-                        $tbody.find('tr.no-items').show();
+                        if (0 == $('tbody.pods-manage-list tr.pods-manage-row').length)
+                            $tbody.find('tr.no-items').show();
                     });
 
                     if ($.fn.sortable && $tbody.hasClass('pods-manage-sortable'))

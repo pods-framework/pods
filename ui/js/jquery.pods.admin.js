@@ -85,27 +85,33 @@
                     cache: false,
                     data: postdata,
                     success: function (d) {
+                        $submitbutton.css('cursor', 'pointer');
+                        $submitbutton.prop('disabled', false);
+                        $submitbutton.parent().find('.waiting').fadeOut();
                         if (-1 == d.indexOf('<e>') && -1 != d) {
                             if ('undefined' != typeof pods_admin_submit_callback)
                                 pods_admin_submit_callback(d);
-                            else {
-                                document.href = '';
-                                alert('Success!');
-                            }
+                            else if ( 'undefined' != typeof $submitbutton.data('location') )
+                                document.location.href = $submitbutton.data('location');
+                            else
+                                document.location.reload( true );
                         }
-                        else {
+                        else if ('undefined' != typeof pods_admin_submit_error_callback)
+                            pods_admin_submit_error_callback(d.replace('<e>', '').replace('</e>', ''));
+                        else if ( 'undefined' != typeof $submitbutton.data('error-location') )
+                            document.location.href = $submitbutton.data('error-location');
+                        else
                             alert('Error: ' + d.replace('<e>', '').replace('</e>', ''));
-                        }
                     },
                     error: function () {
+                        $submitbutton.css('cursor', 'pointer');
+                        $submitbutton.prop('disabled', false);
+                        $submitbutton.parent().find('.waiting').fadeOut();
                         alert('Unable to process request, please try again.');
                     },
                     dataType: 'html'
                 });
 
-                $submitbutton.css('cursor', 'pointer');
-                $submitbutton.prop('disabled', false);
-                $submitbutton.parent().find('.waiting').fadeOut();
             });
 
             // Handle submit via link and translate to AJAX
@@ -133,15 +139,19 @@
                     data: postdata,
                     success: function (d) {
                         if (-1 == d.indexOf('<e>') && -1 != d) {
-                            alert('Success!');
                             if ('undefined' != typeof pods_admin_submittable_callback)
                                 pods_admin_submittable_callback(d);
+                            else if ( 'undefined' != typeof $( this ).data('location') )
+                                document.location.href = $( this ).data('location');
                             else
-                                document.href = '';
+                                document.location.reload( true );
                         }
-                        else {
+                        else if ('undefined' != typeof pods_admin_submittable_error_callback)
+                            pods_admin_submittable_error_callback(d.replace('<e>', '').replace('</e>', ''));
+                        else if ( 'undefined' != typeof $( this ).data('error-location') )
+                            document.location.href = $( this ).data('error-location');
+                        else
                             alert('Error: ' + d.replace('<e>', '').replace('</e>', ''));
-                        }
                     },
                     error: function () {
                         alert('Unable to process request, please try again.');
@@ -513,7 +523,7 @@
                     var $row = $(this).closest('tr.pods-manage-row');
                     var $tbody = $(this).closest('tbody.pods-manage-list');
 
-                    $row.css('backgroundColor', '#B80000');
+                    $row.animate({backgroundColor:'#B80000'});
                     $row.fadeOut('slow', function () {
                         $(this).remove();
                         if (0 == $('tbody.pods-manage-list tr.pods-manage-row').length)

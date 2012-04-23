@@ -646,7 +646,7 @@
 									</div><!-- /#field-pods-field-pick5 -->
 
 									<!-- Pick - Radio -->
-									<div class="pods-field pods-pick">
+									<div class="pods-field pods-pick" id="field-pods-field-pick6">
 										<?php
 										echo PodsForm::label('pick6', 'Pick - Radio Buttons');
 										?>
@@ -664,7 +664,46 @@
 												<?php endforeach; ?>
 											</ul>
 										</div>
-									</div>
+									</div><!-- /#field-pods-field-pick6 -->
+
+									<!-- WP Auto Complete Categories -->
+									<div class="pods-field pods-textfield" id="field-pods-field-wpcategories">
+										<?php
+										echo PodsForm::label('wpcategories', 'WordPress Auto Complete Categories');
+										echo PodsForm::field('wpcategories', NULL, 'text');									
+										?>
+										<script>
+											jQuery(function($) {
+												var availableTags = [
+													"ActionScript",
+													"AppleScript",
+													"Asp",
+													"BASIC",
+													"C",
+													"C++",
+													"Clojure",
+													"COBOL",
+													"ColdFusion",
+													"Erlang",
+													"Fortran",
+													"Groovy",
+													"Haskell",
+													"Java",
+													"JavaScript",
+													"Lisp",
+													"Perl",
+													"PHP",
+													"Python",
+													"Ruby",
+													"Scala",
+													"Scheme"
+												];
+												$('#pods-form-ui-wpcategories').autocomplete({
+													source: availableTags
+												});
+											});
+										</script>
+									</div><!-- /#field-pods-field-wpcategories -->
 
 									<?php
 
@@ -676,14 +715,6 @@
 									// TODO: Make attributes pass multiple="true" to pick fields
                                     //$args = array( 'type' => 'pick', 'name' => 'pick3', 'label' => 'Pick - Multi', 'options' => array( 'type' => 'multi' ) );
                                     //pods_field( $args );
-
-                                    // WP Categories
-                                    $args = array( 'type' => 'text', 'name' => 'wpcategories', 'label' => 'Wordpress Auto Complete Categories', 'options' => array('autocomplete' => true, 'taxonomy' => 'category') );
-                                    pods_field( $args );
-
-                                    // WP Tags
-                                    $args = array( 'type' => 'text', 'name' => 'wptags', 'label' => 'Wordpress Auto Complete Tags', 'options' => array('autocomplete' => true, 'taxonomy' => 'tag') );
-                                    pods_field( $args );
                                 ?>
                             </div>
                             <!-- /.inside -->

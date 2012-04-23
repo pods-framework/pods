@@ -379,14 +379,21 @@
 										<?php
 										echo PodsForm::label('singlelinetext2', 'Single Line Text with Comment');
 										echo PodsForm::field('singlelinetext2', NULL, 'text', array('class' => 'pods-text-field'));
+										echo PodsForm::field_comment('Please fill out the field');
 										?>
-										<p class="pods-field-comment">
-											Please fill out the field	
-										</p>
 									</div>
 									<div class="pods-field pods-textarea">
-										<?php echo PodsForm::label('code1', 'Code Field'); ?>
-										<?php echo PodsForm::field('code1', NULL, 'textarea', array('class' => 'pods-code-field', 'rows' => '7', 'cols' => '70')); ?>
+										<?php
+										echo PodsForm::label('code1', 'Code Field');
+										echo PodsForm::field('code1', NULL, 'textarea', array('class' => 'pods-code-field', 'rows' => '7', 'cols' => '70'));
+										?>
+									</div>
+									<div class="pods-field pods-textarea">
+										<?php
+										echo PodsForm::label('code2', 'Code Field w/ Comment');
+										echo PodsForm::field('code2', NULL, 'textarea', array('class' => 'pods-code-field', 'rows' => '7', 'cols' => '70'));
+										echo PodsForm::field_comment('Enter some code');
+										?>
 									</div>
 									<?php
 

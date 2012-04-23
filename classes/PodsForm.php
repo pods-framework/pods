@@ -424,6 +424,17 @@ class PodsForm {
 <?php
     }
 
+	/**
+	 * Output a Field Comment Paragraph
+	 */
+	public static function field_comment($message) {
+?>
+		<p class="pods-field-comment">
+			<?php echo $message; ?>
+		</p>
+<?php
+	}
+
     /**
      * Output a field's attributes
      *

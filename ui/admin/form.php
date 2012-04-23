@@ -469,25 +469,101 @@
 										<div class="pods-slider-field" id="pods-field-slider1"></div>
 										<div id="pods-field-slider1-amount-display" class="pods-slider-field-display"></div>
 										<?php echo PodsForm::field('slider1', NULL, 'hidden'); ?>
+										<script>
+											jQuery(function($) {
+												$('#pods-field-slider1').slider({
+													range: false,
+													value: 0,
+													orientation: 'horizontal',
+													min: 0,
+													max: 100,
+													step: 1,
+													slide: function(evt, ui) {
+														$('#pods-form-ui-slider1').val( ui.value );
+														$('#pods-field-slider1-amount-display').html( ui.value );
+													}
+												});
+												$('#pods-form-ui-slider1').val( $('#pods-field-slider1').slider('value') );
+												$('#pods-field-slider1-amount-display').html( $('#pods-field-slider1').slider('value') );
+											});
+										</script>
 									</div>
 
+									<div class="pods-field pods-boolean">
+										<?php
+										echo PodsForm::label('boolean1', 'Boolean');
+										echo PodsForm::field('boolean1', NULL, 'boolean');
+										?>
+									</div>
+
+									<div class="pods-field pods-boolean">
+										<?php
+										echo PodsForm::label('boolean2', 'Boolean with Comment');
+										echo PodsForm::field('boolean2', NULL, 'boolean');
+										echo PodsForm::field_comment('Please check this field');
+										?>
+									</div>
+
+									<!-- File Upload Field -->
+									<div class="pods-field pods-file pods-file-context" id="field-pods-field-file1">
+										<?php echo PodsForm::label('file1', 'File Upload'); ?>
+										<ul class="pods-files">
+											<?php for($i=0; $i < 3; $i++): ?>
+												<li class="media-item">
+													<span class="pods-file-reorder"><img src="<?php echo PODS_URL . 'ui/images/handle.gif'; ?>" alt="drag to reorder" /></span>
+													<span class="pods-file-thumb">
+														<span>
+															<img class="pinkynail" src="<?php echo PODS_URL . 'ui/images/icon32.png'; ?>" alt="Thumbnail" />
+															<?php echo PodsForm::field('file1[files]', NULL, 'hidden'); ?>
+														</span>
+													</span>
+													<span class="pods-file-name">Sample Image</span>
+													<span class="pods-file-remove">
+														<img src="<?php echo PODS_URL . 'ui/images/del.png'; ?>" alt="" class="pods-icon-minus" />
+													</span>
+												</li>
+											<?php endfor; ?>
+										</ul>
+										<p class="pods-add-file">
+										    <a href="media-upload.php?type=image&amp;TB_iframe=1&amp;width=640&amp;height=1500" class="button">Add New</a>
+										</p>
+									</div>
+
+									<!-- File Upload Field w/ Comment -->
+									<div class="pods-field pods-file pods-file-context" id="field-pods-field-file2">
+										<?php echo PodsForm::label('file2', 'File Upload with Comment'); ?>
+										<ul class="pods-files">
+											<?php for($i=0; $i < 3; $i++): ?>
+												<li class="media-item">
+													<span class="pods-file-reorder"><img src="<?php echo PODS_URL . 'ui/images/handle.gif'; ?>" alt="drag to reorder" /></span>
+													<span class="pods-file-thumb">
+														<span>
+															<img class="pinkynail" src="<?php echo PODS_URL . 'ui/images/icon32.png'; ?>" alt="Thumbnail" />
+															<?php echo PodsForm::field('file2[files]', NULL, 'hidden'); ?>
+														</span>
+													</span>
+													<span class="pods-file-name">Sample Image</span>
+													<span class="pods-file-remove">
+														<img src="<?php echo PODS_URL . 'ui/images/del.png'; ?>" alt="" class="pods-icon-minus" />
+													</span>
+												</li>
+											<?php endfor; ?>
+										</ul>
+										<p class="pods-add-file">
+											<a href="media-upload.php?type=image&amp;TB_iframe=1&amp;width=640&amp;height=1500" class="button">Add New</a>
+										</p>
+										<?php echo PodsForm::field_comment('File Upload Details'); ?>
+									</div><!-- /#field-pods-field-file2 -->
+
 									<?php
-                                    // slider default
-                                    $args = array( 'type' => 'number', 'name' => 'slider1', 'label' => 'Slider Default', 'options' => array('slider' => true), 'comment' => 'Demonstrates Default Slider Settings' );
-                                    pods_field( $args );
 
+									// TODO: Add slider-configured field once we write a PodsForm::field_slider method
                                     // slider configured
-                                    $args = array( 'type' => 'number', 'name' => 'slider2', 'label' => 'Slider Configured (stepped)', 'options' => array ('slider' => true, 'value' => 100, 'minnumber' => 0, 'maxnumber' => 500, 'step' => 50), 'comment' => 'Demonstrates Configured Values' );
-                                    pods_field( $args );
+                                    //$args = array( 'type' => 'number', 'name' => 'slider2', 'label' => 'Slider Configured (stepped)', 'options' => array ('slider' => true, 'value' => 100, 'minnumber' => 0, 'maxnumber' => 500, 'step' => 50), 'comment' => 'Demonstrates Configured Values' );
+                                    //pods_field( $args );
 
-                                    $args = array( 'type' => 'boolean', 'name' => 'boolean1', 'label' => 'Boolean' );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'boolean', 'name' => 'boolean2', 'label' => 'Boolean with Comment', 'comment' => 'Explain the Boolean' );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'file', 'name' => 'file1', 'label' => 'File Upload' );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'file', 'name' => 'file2', 'label' => 'File Upload with Comment', 'comment' => 'File upload details' );
-                                    pods_field( $args );
+                                    //$args = array( 'type' => 'file', 'name' => 'file2', 'label' => 'File Upload with Comment', 'comment' => 'File upload details' );
+                                    //pods_field( $args );
                                     $args = array( 'type' => 'pick', 'name' => 'pick1', 'label' => 'Pick' );
                                     pods_field( $args );
                                     $args = array( 'type' => 'pick', 'name' => 'pick2', 'label' => 'Pick with Comment', 'comment' => 'Pick comment' );

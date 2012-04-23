@@ -137,13 +137,14 @@ class PodsMeta {
         if ( !is_object( $tag ) )
             $taxonomy_name = $tag;
         $pod = $this->api->load_pod( array( 'name' => self::$taxonomies[$taxonomy_name]['name'] ) );
+        $item = pods( $pod[ 'name' ], ( is_object( $tag ) ? $tag->term_id : null ) );
         foreach ( $pod['fields'] as $field ) {
             if ( !is_object( $tag ) ) {
 ?>
     <div class="form-field">
 <?php
             echo PodsForm::label('pods_meta_' . $field['name'], $field['label']);
-            echo PodsForm::field('pods_meta_' . $field['name'], '', $field['type']);
+            echo PodsForm::field('pods_meta_' . $field['name'], $item->field( $field[ 'name' ] ), $field['type']);
             if ( isset( $fields[ 'options' ][ 'description' ] ) )
                 echo wpautop( $field['options']['description'] );
 ?>
@@ -156,7 +157,7 @@ class PodsMeta {
         <th scope="row" valign="top"><?php echo PodsForm::label('pods_meta_' . $field['name'], $field['label']); ?></th>
         <td>
 <?php
-                echo PodsForm::field('pods_meta_' . $field['name'], '', $field['type']);
+                echo PodsForm::field('pods_meta_' . $field['name'], $item->field( $field[ 'name' ] ), $field['type']);
                 if ( isset( $fields[ 'options' ][ 'description' ] ) )
                     echo '<span class="description">' . $field['options']['description'] . '</span>';
 ?>

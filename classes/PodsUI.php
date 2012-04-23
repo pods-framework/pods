@@ -1357,7 +1357,7 @@ class PodsUI
 ?>
             <tr id="item-<?php echo $row[$this->sql['field_id']]; ?>" class="iedit">
 <?php
-                if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden)) {
+              if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
 ?>
                 <th scope="row" class="check-column"><input type="checkbox" name="post[]" value="<?php echo $row[$this->sql['field_id']]; ?>"></th>
 <?php

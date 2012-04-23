@@ -462,41 +462,259 @@
 										?>
 									</div>
 
+									<div class="pods-field pods-textfield pods-slider">
+										<?php
+										echo PodsForm::label('slider1', 'Slider Default');
+										?>
+										<div class="pods-slider-field" id="pods-field-slider1"></div>
+										<div id="pods-field-slider1-amount-display" class="pods-slider-field-display"></div>
+										<?php echo PodsForm::field('slider1', NULL, 'hidden'); ?>
+										<script>
+											jQuery(function($) {
+												$('#pods-field-slider1').slider({
+													range: false,
+													value: 0,
+													orientation: 'horizontal',
+													min: 0,
+													max: 100,
+													step: 1,
+													slide: function(evt, ui) {
+														$('#pods-form-ui-slider1').val( ui.value );
+														$('#pods-field-slider1-amount-display').html( ui.value );
+													}
+												});
+												$('#pods-form-ui-slider1').val( $('#pods-field-slider1').slider('value') );
+												$('#pods-field-slider1-amount-display').html( $('#pods-field-slider1').slider('value') );
+											});
+										</script>
+									</div>
+
+									<div class="pods-field pods-boolean">
+										<?php
+										echo PodsForm::label('boolean1', 'Boolean');
+										echo PodsForm::field('boolean1', NULL, 'boolean');
+										?>
+									</div>
+
+									<div class="pods-field pods-boolean">
+										<?php
+										echo PodsForm::label('boolean2', 'Boolean with Comment');
+										echo PodsForm::field('boolean2', NULL, 'boolean');
+										echo PodsForm::field_comment('Please check this field');
+										?>
+									</div>
+
+									<!-- File Upload Field -->
+									<div class="pods-field pods-file pods-file-context" id="field-pods-field-file1">
+										<?php echo PodsForm::label('file1', 'File Upload'); ?>
+										<ul class="pods-files">
+											<?php for($i=0; $i < 3; $i++): ?>
+												<li class="media-item">
+													<span class="pods-file-reorder"><img src="<?php echo PODS_URL . 'ui/images/handle.gif'; ?>" alt="drag to reorder" /></span>
+													<span class="pods-file-thumb">
+														<span>
+															<img class="pinkynail" src="<?php echo PODS_URL . 'ui/images/icon32.png'; ?>" alt="Thumbnail" />
+															<?php echo PodsForm::field('file1[files]', NULL, 'hidden'); ?>
+														</span>
+													</span>
+													<span class="pods-file-name">Sample Image</span>
+													<span class="pods-file-remove">
+														<img src="<?php echo PODS_URL . 'ui/images/del.png'; ?>" alt="" class="pods-icon-minus" />
+													</span>
+												</li>
+											<?php endfor; ?>
+										</ul>
+										<p class="pods-add-file">
+										    <a href="media-upload.php?type=image&amp;TB_iframe=1&amp;width=640&amp;height=1500" class="button">Add New</a>
+										</p>
+									</div>
+
+									<!-- File Upload Field w/ Comment -->
+									<div class="pods-field pods-file pods-file-context" id="field-pods-field-file2">
+										<?php echo PodsForm::label('file2', 'File Upload with Comment'); ?>
+										<ul class="pods-files">
+											<?php for($i=0; $i < 3; $i++): ?>
+												<li class="media-item">
+													<span class="pods-file-reorder"><img src="<?php echo PODS_URL . 'ui/images/handle.gif'; ?>" alt="drag to reorder" /></span>
+													<span class="pods-file-thumb">
+														<span>
+															<img class="pinkynail" src="<?php echo PODS_URL . 'ui/images/icon32.png'; ?>" alt="Thumbnail" />
+															<?php echo PodsForm::field('file2[files]', NULL, 'hidden'); ?>
+														</span>
+													</span>
+													<span class="pods-file-name">Sample Image</span>
+													<span class="pods-file-remove">
+														<img src="<?php echo PODS_URL . 'ui/images/del.png'; ?>" alt="" class="pods-icon-minus" />
+													</span>
+												</li>
+											<?php endfor; ?>
+										</ul>
+										<p class="pods-add-file">
+											<a href="media-upload.php?type=image&amp;TB_iframe=1&amp;width=640&amp;height=1500" class="button">Add New</a>
+										</p>
+										<?php echo PodsForm::field_comment('File Upload Details'); ?>
+									</div><!-- /#field-pods-field-file2 -->
+
+									<!-- Pods Pick Field -->
+									<div class="pods-field pods-pick" id="field-pods-field-pick1">
+										<?php
+										echo PodsForm::label('pick1', 'Pick');
+										echo PodsForm::field('pick1', NULL, 'pick', array(
+											'data' => array(
+												'' => '-- Select One --',
+												'option_1' => 'Choice 1',
+												'option_2' => 'Choice 2',
+												'option_3' => 'Choice 3'
+											)
+										));
+										?>
+									</div><!-- /.pods-field.pods-pick -->
+
+									<div class="pods-field pods-pick" id="field-pods-field-pick2">
+										<?php
+										echo PodsForm::label('pick2', 'Pick with Comment');
+										echo PodsForm::field('pick2', NULL, 'pick', array(
+											'data' => array(
+												'' => '-- Select One --',
+												'option_1' => 'Choice 1',
+												'option_2' => 'Choice 2',
+												'option_3' => 'Choice 3'
+											)
+										));
+										echo PodsForm::field_comment('Please select one');
+										?>
+									</div><!-- /.pods-field.pods-pick -->
+
+									<?php // FIXME: Figure out why 'multiple' doesn't get through the attributes merge ?>
+									<div class="pods-field pods-pick" id="field-pods-field-pick3">
+										<?php
+										echo PodsForm::label('pick3', 'Pick Multiple');
+										echo PodsForm::field('pick3', NULL, 'pick', array(
+											'data' => array(
+												'option_1' => 'Choice 1',
+												'option_2' => 'Choice 2',
+												'option_3' => 'Choice 3',
+												'option_4' => 'Choice 4',
+												'option_5' => 'Choice 5'
+											),
+											'multiple' => true
+										));
+										?>
+									</div><!-- /.pods-field.pods-pick -->
+
+									<div class="pods-field pods-pick" id="field-pods-field-pick4">
+										<?php
+										echo PodsForm::label('pick4', 'Pick - Checkboxes');
+										$pick_opts = array(
+											'option_1' => 'Choice 1',
+											'option_2' => 'Choice 2',
+											'option_3' => 'Choice 3'
+										);
+										$i = 0;
+										?>
+										<div class="pods-pick-values pods-pick-checkbox">
+											<ul>
+												<?php foreach ($pick_opts as $opt => $label): ?>
+													<?php $i++; ?>
+													<li>
+														<div class="pods-field pods-boolean">
+															<?php
+															echo PodsForm::field('pick4-'.$i, $opt, 'pick_checkbox');
+															echo PodsForm::label('pick4-'.$i, $label);
+															?>
+														</div>
+													</li>
+												<?php endforeach; ?>
+											</ul>
+										</div>
+									</div><!-- /.pods-field.pods-pick -->
+
+									<div class="pods-field pods-pick" id="field-pods-field-pick5">
+										<?php 
+										echo PodsForm::label('pick5', 'Pick - jQuery Chosen Autocomplete');
+										echo PodsForm::field('pick5', NULL, 'pick', array(
+											'class' => 'chosen',
+											'data' => array(
+												'option_1' => 'Choice 1',
+												'option_2' => 'Choice 2',
+												'option_3' => 'Choice 3',
+												'option_4' => 'Choice 4',
+												'option_5' => 'Choice 5'
+											)
+										));
+										?>
+									</div><!-- /#field-pods-field-pick5 -->
+
+									<!-- Pick - Radio -->
+									<div class="pods-field pods-pick" id="field-pods-field-pick6">
+										<?php
+										echo PodsForm::label('pick6', 'Pick - Radio Buttons');
+										?>
+										<div class="pods-pick-values pods-pick-radio">
+											<ul>
+												<?php $i = 0; ?>
+												<?php foreach ($pick_opts as $opt => $label): ?>
+													<?php $i++; ?>
+													<li>
+														<div class="pods-field pods-boolean" id="field-pods-field-pick6-<?php echo $i; ?>">
+															<input type="radio" name="pods-field-pick6" id="pods-field-pick6-<?php echo $i; ?>" value="<?php echo $opt; ?>" />
+															<?php echo PodsForm::label('pick6-'.$i, $label); ?>
+														</div>
+													</li>
+												<?php endforeach; ?>
+											</ul>
+										</div>
+									</div><!-- /#field-pods-field-pick6 -->
+
+									<!-- WP Auto Complete Categories -->
+									<div class="pods-field pods-textfield" id="field-pods-field-wpcategories">
+										<?php
+										echo PodsForm::label('wpcategories', 'WordPress Auto Complete Categories');
+										echo PodsForm::field('wpcategories', NULL, 'text');									
+										?>
+										<script>
+											jQuery(function($) {
+												var availableTags = [
+													"ActionScript",
+													"AppleScript",
+													"Asp",
+													"BASIC",
+													"C",
+													"C++",
+													"Clojure",
+													"COBOL",
+													"ColdFusion",
+													"Erlang",
+													"Fortran",
+													"Groovy",
+													"Haskell",
+													"Java",
+													"JavaScript",
+													"Lisp",
+													"Perl",
+													"PHP",
+													"Python",
+													"Ruby",
+													"Scala",
+													"Scheme"
+												];
+												$('#pods-form-ui-wpcategories').autocomplete({
+													source: availableTags
+												});
+											});
+										</script>
+									</div><!-- /#field-pods-field-wpcategories -->
+
 									<?php
-                                    // slider default
-                                    $args = array( 'type' => 'number', 'name' => 'slider1', 'label' => 'Slider Default', 'options' => array('slider' => true), 'comment' => 'Demonstrates Default Slider Settings' );
-                                    pods_field( $args );
 
+									// TODO: Add slider-configured field once we write a PodsForm::field_slider method
                                     // slider configured
-                                    $args = array( 'type' => 'number', 'name' => 'slider2', 'label' => 'Slider Configured (stepped)', 'options' => array ('slider' => true, 'value' => 100, 'minnumber' => 0, 'maxnumber' => 500, 'step' => 50), 'comment' => 'Demonstrates Configured Values' );
-                                    pods_field( $args );
+                                    //$args = array( 'type' => 'number', 'name' => 'slider2', 'label' => 'Slider Configured (stepped)', 'options' => array ('slider' => true, 'value' => 100, 'minnumber' => 0, 'maxnumber' => 500, 'step' => 50), 'comment' => 'Demonstrates Configured Values' );
+                                    //pods_field( $args );
 
-                                    $args = array( 'type' => 'boolean', 'name' => 'boolean1', 'label' => 'Boolean' );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'boolean', 'name' => 'boolean2', 'label' => 'Boolean with Comment', 'comment' => 'Explain the Boolean' );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'file', 'name' => 'file1', 'label' => 'File Upload' );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'file', 'name' => 'file2', 'label' => 'File Upload with Comment', 'comment' => 'File upload details' );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'pick', 'name' => 'pick1', 'label' => 'Pick' );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'pick', 'name' => 'pick2', 'label' => 'Pick with Comment', 'comment' => 'Pick comment' );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'pick', 'name' => 'pick3', 'label' => 'Pick - Multi', 'options' => array( 'type' => 'multi' ) );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'pick', 'name' => 'pick4', 'label' => 'Pick - Checkboxes', 'options' => array( 'type' => 'checkbox' ) );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'pick', 'name' => 'pick5', 'label' => 'Pick - Radio', 'options' => array( 'type' => 'radio' ) );
-                                    pods_field( $args );
-
-                                    // WP Categories
-                                    $args = array( 'type' => 'text', 'name' => 'wpcategories', 'label' => 'Wordpress Auto Complete Categories', 'options' => array('autocomplete' => true, 'taxonomy' => 'category') );
-                                    pods_field( $args );
-
-                                    // WP Tags
-                                    $args = array( 'type' => 'text', 'name' => 'wptags', 'label' => 'Wordpress Auto Complete Tags', 'options' => array('autocomplete' => true, 'taxonomy' => 'tag') );
-                                    pods_field( $args );
+									// TODO: Make attributes pass multiple="true" to pick fields
+                                    //$args = array( 'type' => 'pick', 'name' => 'pick3', 'label' => 'Pick - Multi', 'options' => array( 'type' => 'multi' ) );
+                                    //pods_field( $args );
                                 ?>
                             </div>
                             <!-- /.inside -->

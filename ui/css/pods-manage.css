@@ -80,8 +80,8 @@ form.pods-manage ul.pods-files li {
 }
 
 form.pods-manage ul.pods-files li span {
-	display:block;
-	float:left;
+	display:inline-block;
+	float:none;
 }
 
 form.pods-manage ul.pods-files li span.pods-file-reorder {

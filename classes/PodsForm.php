@@ -425,6 +425,26 @@ class PodsForm {
     }
 
 	/**
+	 * Output a hidden field
+	 */
+	protected function field_hidden($name, $value = null, $options = null) {
+		$name_clean = self::clean($name);
+		$name_more_clean = self::clean($name, true);
+		$type = 'hidden';
+		$attributes = array();
+		$attributes['type'] = $type;
+		$attributes['name'] = $name;
+		$attributes['data-name-clean'] = $name_more_clean;
+		$attributes['id'] = 'pods-form-ui-' . $name_clean;
+		$attributes['class'] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
+		$attributes['value'] = $value;
+		$attributes = self::merge_attributes($attributes, $options);
+?>
+	<input<?php self::attributes($attributes, $name, $type, $options); ?> />
+<?php
+	}
+
+	/**
 	 * Output a Field Comment Paragraph
 	 */
 	public static function field_comment($message) {

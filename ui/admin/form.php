@@ -527,7 +527,7 @@
 											<?php endfor; ?>
 										</ul>
 										<p class="pods-add-file">
-										    <a href="media-upload.php?type=image&amp;TB_iframe=1&amp;width=640&amp;height=1500" class="button">Add New</a>
+											<a href="media-upload.php?type=image&amp;TB_iframe=1&amp;width=640&amp;height=1500" class="button">Add New</a>
 										</p>
 									</li>
 

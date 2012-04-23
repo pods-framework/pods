@@ -629,6 +629,22 @@
 										</div>
 									</div><!-- /.pods-field.pods-pick -->
 
+									<div class="pods-field pods-pick" id="field-pods-field-pick5">
+										<?php 
+										echo PodsForm::label('pick5', 'Pick - jQuery Chosen Autocomplete');
+										echo PodsForm::field('pick5', NULL, 'pick', array(
+											'class' => 'chosen',
+											'data' => array(
+												'option_1' => 'Choice 1',
+												'option_2' => 'Choice 2',
+												'option_3' => 'Choice 3',
+												'option_4' => 'Choice 4',
+												'option_5' => 'Choice 5'
+											)
+										));
+										?>
+									</div><!-- /#field-pods-field-pick5 -->
+
 									<?php
 
 									// TODO: Add slider-configured field once we write a PodsForm::field_slider method

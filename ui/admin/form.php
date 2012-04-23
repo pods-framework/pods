@@ -462,6 +462,15 @@
 										?>
 									</div>
 
+									<div class="pods-field pods-textfield pods-slider">
+										<?php
+										echo PodsForm::label('slider1', 'Slider Default');
+										?>
+										<div class="pods-slider-field" id="pods-field-slider1"></div>
+										<div id="pods-field-slider1-amount-display" class="pods-slider-field-display"></div>
+										<?php echo PodsForm::field('slider1', NULL, 'hidden'); ?>
+									</div>
+
 									<?php
                                     // slider default
                                     $args = array( 'type' => 'number', 'name' => 'slider1', 'label' => 'Slider Default', 'options' => array('slider' => true), 'comment' => 'Demonstrates Default Slider Settings' );

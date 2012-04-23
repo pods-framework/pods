@@ -556,7 +556,7 @@
 									</div><!-- /#field-pods-field-file2 -->
 
 									<!-- Pods Pick Field -->
-									<div class="pods-field pods-pick">
+									<div class="pods-field pods-pick" id="field-pods-field-pick1">
 										<?php
 										echo PodsForm::label('pick1', 'Pick');
 										echo PodsForm::field('pick1', NULL, 'pick', array(
@@ -570,7 +570,7 @@
 										?>
 									</div><!-- /.pods-field.pods-pick -->
 
-									<div class="pods-field pods-pick">
+									<div class="pods-field pods-pick" id="field-pods-field-pick2">
 										<?php
 										echo PodsForm::label('pick2', 'Pick with Comment');
 										echo PodsForm::field('pick2', NULL, 'pick', array(
@@ -585,6 +585,50 @@
 										?>
 									</div><!-- /.pods-field.pods-pick -->
 
+									<?php // FIXME: Figure out why 'multiple' doesn't get through the attributes merge ?>
+									<div class="pods-field pods-pick" id="field-pods-field-pick3">
+										<?php
+										echo PodsForm::label('pick3', 'Pick Multiple');
+										echo PodsForm::field('pick3', NULL, 'pick', array(
+											'data' => array(
+												'option_1' => 'Choice 1',
+												'option_2' => 'Choice 2',
+												'option_3' => 'Choice 3',
+												'option_4' => 'Choice 4',
+												'option_5' => 'Choice 5'
+											),
+											'multiple' => true
+										));
+										?>
+									</div><!-- /.pods-field.pods-pick -->
+
+									<div class="pods-field pods-pick" id="field-pods-field-pick4">
+										<?php
+										echo PodsForm::label('pick4', 'Pick - Checkboxes');
+										$pick_opts = array(
+											'option_1' => 'Choice 1',
+											'option_2' => 'Choice 2',
+											'option_3' => 'Choice 3'
+										);
+										$i = 0;
+										?>
+										<div class="pods-pick-values pods-pick-checkbox">
+											<ul>
+												<?php foreach ($pick_opts as $opt => $label): ?>
+													<?php $i++; ?>
+													<li>
+														<div class="pods-field pods-boolean">
+															<?php
+															echo PodsForm::field('pick4-'.$i, $opt, 'pick_checkbox');
+															echo PodsForm::label('pick4-'.$i, $label);
+															?>
+														</div>
+													</li>
+												<?php endforeach; ?>
+											</ul>
+										</div>
+									</div><!-- /.pods-field.pods-pick -->
+
 									<?php
 
 									// TODO: Add slider-configured field once we write a PodsForm::field_slider method
@@ -593,8 +637,6 @@
                                     //pods_field( $args );
 
                                     $args = array( 'type' => 'pick', 'name' => 'pick3', 'label' => 'Pick - Multi', 'options' => array( 'type' => 'multi' ) );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'pick', 'name' => 'pick4', 'label' => 'Pick - Checkboxes', 'options' => array( 'type' => 'checkbox' ) );
                                     pods_field( $args );
                                     $args = array( 'type' => 'pick', 'name' => 'pick5', 'label' => 'Pick - Radio', 'options' => array( 'type' => 'radio' ) );
                                     pods_field( $args );

@@ -645,6 +645,27 @@
 										?>
 									</div><!-- /#field-pods-field-pick5 -->
 
+									<!-- Pick - Radio -->
+									<div class="pods-field pods-pick">
+										<?php
+										echo PodsForm::label('pick6', 'Pick - Radio Buttons');
+										?>
+										<div class="pods-pick-values pods-pick-radio">
+											<ul>
+												<?php $i = 0; ?>
+												<?php foreach ($pick_opts as $opt => $label): ?>
+													<?php $i++; ?>
+													<li>
+														<div class="pods-field pods-boolean" id="field-pods-field-pick6-<?php echo $i; ?>">
+															<input type="radio" name="pods-field-pick6" id="pods-field-pick6-<?php echo $i; ?>" value="<?php echo $opt; ?>" />
+															<?php echo PodsForm::label('pick6-'.$i, $label); ?>
+														</div>
+													</li>
+												<?php endforeach; ?>
+											</ul>
+										</div>
+									</div>
+
 									<?php
 
 									// TODO: Add slider-configured field once we write a PodsForm::field_slider method
@@ -652,10 +673,9 @@
                                     //$args = array( 'type' => 'number', 'name' => 'slider2', 'label' => 'Slider Configured (stepped)', 'options' => array ('slider' => true, 'value' => 100, 'minnumber' => 0, 'maxnumber' => 500, 'step' => 50), 'comment' => 'Demonstrates Configured Values' );
                                     //pods_field( $args );
 
-                                    $args = array( 'type' => 'pick', 'name' => 'pick3', 'label' => 'Pick - Multi', 'options' => array( 'type' => 'multi' ) );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'pick', 'name' => 'pick5', 'label' => 'Pick - Radio', 'options' => array( 'type' => 'radio' ) );
-                                    pods_field( $args );
+									// TODO: Make attributes pass multiple="true" to pick fields
+                                    //$args = array( 'type' => 'pick', 'name' => 'pick3', 'label' => 'Pick - Multi', 'options' => array( 'type' => 'multi' ) );
+                                    //pods_field( $args );
 
                                     // WP Categories
                                     $args = array( 'type' => 'text', 'name' => 'wpcategories', 'label' => 'Wordpress Auto Complete Categories', 'options' => array('autocomplete' => true, 'taxonomy' => 'category') );

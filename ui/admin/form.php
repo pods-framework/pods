@@ -555,6 +555,36 @@
 										<?php echo PodsForm::field_comment('File Upload Details'); ?>
 									</div><!-- /#field-pods-field-file2 -->
 
+									<!-- Pods Pick Field -->
+									<div class="pods-field pods-pick">
+										<?php
+										echo PodsForm::label('pick1', 'Pick');
+										echo PodsForm::field('pick1', NULL, 'pick', array(
+											'data' => array(
+												'' => '-- Select One --',
+												'option_1' => 'Choice 1',
+												'option_2' => 'Choice 2',
+												'option_3' => 'Choice 3'
+											)
+										));
+										?>
+									</div><!-- /.pods-field.pods-pick -->
+
+									<div class="pods-field pods-pick">
+										<?php
+										echo PodsForm::label('pick2', 'Pick with Comment');
+										echo PodsForm::field('pick2', NULL, 'pick', array(
+											'data' => array(
+												'' => '-- Select One --',
+												'option_1' => 'Choice 1',
+												'option_2' => 'Choice 2',
+												'option_3' => 'Choice 3'
+											)
+										));
+										echo PodsForm::field_comment('Please select one');
+										?>
+									</div><!-- /.pods-field.pods-pick -->
+
 									<?php
 
 									// TODO: Add slider-configured field once we write a PodsForm::field_slider method
@@ -562,12 +592,6 @@
                                     //$args = array( 'type' => 'number', 'name' => 'slider2', 'label' => 'Slider Configured (stepped)', 'options' => array ('slider' => true, 'value' => 100, 'minnumber' => 0, 'maxnumber' => 500, 'step' => 50), 'comment' => 'Demonstrates Configured Values' );
                                     //pods_field( $args );
 
-                                    //$args = array( 'type' => 'file', 'name' => 'file2', 'label' => 'File Upload with Comment', 'comment' => 'File upload details' );
-                                    //pods_field( $args );
-                                    $args = array( 'type' => 'pick', 'name' => 'pick1', 'label' => 'Pick' );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'pick', 'name' => 'pick2', 'label' => 'Pick with Comment', 'comment' => 'Pick comment' );
-                                    pods_field( $args );
                                     $args = array( 'type' => 'pick', 'name' => 'pick3', 'label' => 'Pick - Multi', 'options' => array( 'type' => 'multi' ) );
                                     pods_field( $args );
                                     $args = array( 'type' => 'pick', 'name' => 'pick4', 'label' => 'Pick - Checkboxes', 'options' => array( 'type' => 'checkbox' ) );

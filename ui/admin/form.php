@@ -379,34 +379,90 @@
 										<?php
 										echo PodsForm::label('singlelinetext2', 'Single Line Text with Comment');
 										echo PodsForm::field('singlelinetext2', NULL, 'text', array('class' => 'pods-text-field'));
+										echo PodsForm::field_comment('Please fill out the field');
 										?>
-										<p class="pods-field-comment">
-											Please fill out the field	
-										</p>
 									</div>
 									<div class="pods-field pods-textarea">
-										<?php echo PodsForm::label('code1', 'Code Field'); ?>
-										<?php echo PodsForm::field('code1', NULL, 'textarea', array('class' => 'pods-code-field', 'rows' => '7', 'cols' => '70')); ?>
+										<?php
+										echo PodsForm::label('code1', 'Code Field');
+										echo PodsForm::field('code1', NULL, 'textarea', array('class' => 'pods-code-field', 'rows' => '7', 'cols' => '70'));
+										?>
 									</div>
+									<div class="pods-field pods-textarea">
+										<?php
+										echo PodsForm::label('code2', 'Code Field w/ Comment');
+										echo PodsForm::field('code2', NULL, 'textarea', array('class' => 'pods-code-field', 'rows' => '7', 'cols' => '70'));
+										echo PodsForm::field_comment('Enter some code');
+										?>
+									</div>
+									<div class="pods-field pods-textarea">
+										<?php
+										echo PodsForm::label('code3', 'WYSIWYG (cleditor)');
+										echo PodsForm::field('code3', NULL, 'textarea', array('class' => 'pods-code-field', 'rows' => '7', 'cols' => '70'));
+										?> 
+									</div>
+
+									<div class="pods-field pods-textarea">
+										<?php
+										echo PodsForm::label('code4', 'WYSIWYG (tinymce)');
+										//echo PodsForm::field('code4', "Yay! It's TinyMCE!", 'tinymce', array('class' => 'pods-code-field'));
+										wp_editor("<strong>Yay, it's TinyMCE!</strong>", 'pods-field-code4');
+										?>
+									</div>
+
+									<div class="pods-field pods-textfield pods-date">
+										<?php
+										echo PodsForm::label('date1', 'Date');
+										echo PodsForm::field('date1', NULL, 'text', array('class' => 'pods-date-field'));
+										?>
+										<script>
+										jQuery(function() {
+											jQuery('#pods-form-ui-date1').datepicker();
+										});
+										</script>
+									</div>
+
+									<div class="pods-field pods-textfield pods-date">
+										<?php
+										echo PodsForm::label('date2', 'Date with Comment');
+										echo PodsForm::field('date2', NULL, 'text', array('class' => 'pods-date-field'));
+										echo PodsForm::field_comment('Please select a date');
+										?>
+										<script>
+										jQuery(function() {
+											jQuery('#pods-form-ui-date2').datepicker();
+										});
+										</script>
+									</div>
+
+									<div class="pods-field pods-textfield pods-date">
+										<?php
+										echo PodsForm::label('date3', 'Date with Time');
+										echo PodsForm::field('date3', NULL, 'text', array('class' => 'pods-date-field'));
+										?>
+										<script>
+										jQuery(function() {
+											jQuery('#pods-form-ui-date3').datetimepicker();
+										});
+										</script>
+									</div>
+
+									<div class="pods-field pods-textfield">
+										<?php
+										echo PodsForm::label('number1', 'Number Field');
+										echo PodsForm::field('number1', NULL, 'number');
+										?>
+									</div>
+
+									<div class="pods-field pods-textfield">
+										<?php
+										echo PodsForm::label('number2', 'Number with Comment');
+										echo PodsForm::field('number2', NULL, 'number', array('decimals' => 1));
+										echo PodsForm::field_comment('Please fill out the field');
+										?>
+									</div>
+
 									<?php
-
-                                    $args = array( 'type' => 'code', 'name' => 'code2', 'label' => 'Code with Comment', 'comment' => 'Please fill out the field' );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'code', 'name' => 'code3', 'label' => 'WYSIWYG (cleditor)', 'options' => array( 'wysiwyg' => true ) );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'html', 'name' => 'code4', 'label' => 'WYSIWYG (tinymce)', 'options' => array( 'wysiwyg' => true ) );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'date', 'name' => 'date1', 'label' => 'Date' );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'date', 'name' => 'date2', 'label' => 'Date with Comment', 'comment' => 'Please fill out the field' );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'date', 'name' => 'date3', 'label' => 'Date with time', 'options' => array( 'time' => true ) );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'number', 'name' => 'number1', 'label' => 'Number' );
-                                    pods_field( $args );
-                                    $args = array( 'type' => 'number', 'name' => 'number2', 'label' => 'Number with Comment', 'comment' => 'Please fill out the field' );
-                                    pods_field( $args );
-
                                     // slider default
                                     $args = array( 'type' => 'number', 'name' => 'slider1', 'label' => 'Slider Default', 'options' => array('slider' => true), 'comment' => 'Demonstrates Default Slider Settings' );
                                     pods_field( $args );

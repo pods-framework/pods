@@ -1,3 +1,3 @@
 jQuery(document).ready(function() {
-   jQuery('#pods-field-code3').cleditor(); 
+   jQuery('#pods-form-ui-code3').cleditor(); 
 });

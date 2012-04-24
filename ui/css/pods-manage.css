@@ -4,6 +4,10 @@ ol.form-fields {
 	margin: 0;
 }
 
+.chzn-container {
+	display: block;
+}
+
 ul.ui-sortable li {
     cursor: move;
 }

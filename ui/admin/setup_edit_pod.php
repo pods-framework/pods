@@ -198,7 +198,6 @@ foreach ($pod['options'] as $_option => $_value) {
     $pod[$_option] = $_value;
 }
 
-$fields = (array) $pod['fields'];
 foreach ( $pod['fields'] as $_field => $_data) {
     $_data['options'] = (array) $_data['options'];
     foreach ($_data['options'] as $_option => $_value) {
@@ -208,7 +207,7 @@ foreach ( $pod['fields'] as $_field => $_data) {
 
 $field_defaults = apply_filters('pods_field_defaults', apply_filters('pods_field_defaults_' . $pod['name'], $field_defaults, $pod));
 $field_settings = apply_filters('pods_field_settings', apply_filters('pods_field_settings_' . $pod['name'], $field_settings, $pod));
-$fields = apply_filters('pods_fields_edit', apply_filters('pods_fields_edit_' . $pod['name'], $fields, $pod));
+$pod['fields'] = apply_filters('pods_fields_edit', apply_filters('pods_fields_edit_' . $pod['name'], $pod['fields'], $pod));
 
 global $wpdb;
 $max_length_name = 64;
@@ -306,13 +305,9 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
                         <tbody class="pods-manage-list">
                             <?php
                                 $i = 1;
-                                foreach ($fields as $field) {
+                                foreach ($pod['fields'] as $field) {
                                     if ('_pods_empty' == $field['name'])
                                         continue;
-                                    foreach ($field['options'] as $option => $option_value) {
-                                        $field[$option] = $option_value;
-                                    }
-                                    unset($field['options']);
                                     include PODS_DIR . 'ui/admin/setup_edit_pod_field.php';
                                     $i++;
                                 }

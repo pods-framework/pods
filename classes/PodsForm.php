@@ -6,7 +6,7 @@ class PodsForm {
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0.0
      */
-    private function __construct () {
+    public function __construct () {
         add_filter( 'pods_form_ui_label_text', 'wp_kses_post', 10, 1 );
 
         return false;

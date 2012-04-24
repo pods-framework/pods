@@ -43,8 +43,8 @@ class PodsMeta {
                     $taxonomy_name = $taxonomy['object'];
                 add_action( $taxonomy_name . '_edit_form_fields', array( $this, 'meta_taxonomy' ), 10, 2 );
                 add_action( $taxonomy_name . '_add_form_fields', array( $this, 'meta_taxonomy' ), 10, 2 );
-                add_action( 'edit_' . $taxonomy_name, array( $this, 'save_taxonomy' ), 10, 2 );
-                add_action( 'create_' . $taxonomy_name, array( $this, 'save_taxonomy' ), 10, 2 );
+                add_action( 'edit_term', array( $this, 'save_taxonomy' ), 10, 3 );
+                add_action( 'create_term', array( $this, 'save_taxonomy' ), 10, 3 );
             }
         }
 
@@ -167,7 +167,12 @@ class PodsMeta {
             }
         }
     }
-    public function save_taxonomy ( $term_id, $term_taxonomy_id ) {
+    public function save_taxonomy ( $term_id, $term_taxonomy_id, $taxonomy ) {
+        if ( !isset( self::$taxonomies[ $taxonomy ][ 'name' ] ) )
+            return false;
+
+        $pod = $this->api->load_pod( array( 'name' => self::$taxonomies[ $taxonomy ]['name'] ) );
+        $item = pods( $pod[ 'name' ], $term_id );
         // @todo Save values to PodsAPI
     }
 

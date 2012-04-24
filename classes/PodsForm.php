@@ -7,6 +7,8 @@ class PodsForm {
      * @since 2.0.0
      */
     private function __construct () {
+        add_filter( 'pods_form_ui_label_text', 'wp_kses_post', 10, 1 );
+
         return false;
     }
 
@@ -30,7 +32,7 @@ class PodsForm {
 ?>
     <label<?php self::attributes($attributes, $name, 'label'); ?>>
         <?php
-            echo wp_kses_post($label);
+            echo $label;
             if (0 < strlen($help) && 'help' != $help)
                 pods_help($help);
         ?>

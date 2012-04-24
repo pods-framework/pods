@@ -447,12 +447,21 @@ class PodsForm {
 	/**
 	 * Output a Field Comment Paragraph
 	 */
-	public static function field_comment($message) {
+	public static function comment($message) {
+		$message = apply_filters('pods_form_ui_comment_text', $message);
+
+		ob_start();
+
+		$attributes = array();
+		$attributes['class'] = 'pods-field-comment';
 ?>
-		<p class="pods-field-comment">
-			<?php echo $message; ?>
+		<p<?php self::attributes($attributes); ?>>
+			<?php echo wp_kses_post($message); ?>
 		</p>
 <?php
+		$output = ob_get_clean();
+
+		return apply_filters('pods_form_ui_comment', $output, $message);
 	}
 
     /**
@@ -491,7 +500,7 @@ class PodsForm {
         return $attributes;
     }
 
-    /**
+    /*
      * Clean a value for use in class / id
      *
      * @since 2.0.0

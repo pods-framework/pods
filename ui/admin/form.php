@@ -599,7 +599,9 @@
 												'option_4' => 'Choice 4',
 												'option_5' => 'Choice 5'
 											),
-											'multiple' => true
+											'attributes' => array(
+												'multiple' => true
+											)
 										));
 										?>
 									</li><!-- /.pods-field.pods-pick -->

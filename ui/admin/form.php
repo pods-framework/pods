@@ -381,7 +381,7 @@
 										<?php
 										echo PodsForm::label('singlelinetext2', 'Single Line Text with Comment');
 										echo PodsForm::field('singlelinetext2', NULL, 'text', array('class' => 'pods-text-field'));
-										echo PodsForm::field_comment('Please fill out the field');
+										echo PodsForm::comment('Please fill out the field');
 										?>
 									</li>
 									<li class="pods-field pods-textarea">
@@ -394,7 +394,7 @@
 										<?php
 										echo PodsForm::label('code2', 'Code Field w/ Comment');
 										echo PodsForm::field('code2', NULL, 'textarea', array('class' => 'pods-code-field', 'rows' => '7', 'cols' => '70'));
-										echo PodsForm::field_comment('Enter some code');
+										echo PodsForm::comment('Enter some code');
 										?>
 									</li>
 									<li class="pods-field pods-textarea">
@@ -428,7 +428,7 @@
 										<?php
 										echo PodsForm::label('date2', 'Date with Comment');
 										echo PodsForm::field('date2', NULL, 'text', array('class' => 'pods-date-field'));
-										echo PodsForm::field_comment('Please select a date');
+										echo PodsForm::comment('Please select a date');
 										?>
 										<script>
 										jQuery(function() {
@@ -460,7 +460,7 @@
 										<?php
 										echo PodsForm::label('number2', 'Number with Comment');
 										echo PodsForm::field('number2', NULL, 'number', array('decimals' => 1));
-										echo PodsForm::field_comment('Please fill out the field');
+										echo PodsForm::comment('Please fill out the field');
 										?>
 									</li>
 
@@ -502,7 +502,7 @@
 										<?php
 										echo PodsForm::label('boolean2', 'Boolean with Comment');
 										echo PodsForm::field('boolean2', NULL, 'boolean');
-										echo PodsForm::field_comment('Please check this field');
+										echo PodsForm::comment('Please check this field');
 										?>
 									</li>
 
@@ -554,7 +554,7 @@
 										<p class="pods-add-file">
 											<a href="media-upload.php?type=image&amp;TB_iframe=1&amp;width=640&amp;height=1500" class="button">Add New</a>
 										</p>
-										<?php echo PodsForm::field_comment('File Upload Details'); ?>
+										<?php echo PodsForm::comment('File Upload Details'); ?>
 									</li><!-- /#field-pods-field-file2 -->
 
 									<!-- Pods Pick Field -->
@@ -583,7 +583,7 @@
 												'option_3' => 'Choice 3'
 											)
 										));
-										echo PodsForm::field_comment('Please select one');
+										echo PodsForm::comment('Please select one');
 										?>
 									</li><!-- /.pods-field.pods-pick -->
 

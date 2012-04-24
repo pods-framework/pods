@@ -1,3 +1,9 @@
+ol.form-fields {
+	list-style: none;
+	padding-left: 0;
+	margin: 0;
+}
+
 ul.ui-sortable li {
     cursor: move;
 }
@@ -14,6 +20,7 @@ form.pods-manage .pods-field label {
 
 form.pods-manage .pods-field input,.pods-field textarea {
 	display:block;
+	width: 100%;
 }
 
 form.pods-manage .pods-field textarea {
@@ -178,20 +185,20 @@ form.pods-manage .pods-field,p.pods-add-file {
 	padding:10px 0;
 }
 
-form.pods-manage div.pods-textfield input,.pods-textarea textarea {
+form.pods-manage .pods-textfield input,.pods-textarea textarea {
 	width:100%;
 }
 
-form.pods-manage div.pods-textfield input, form.pods-manage div.pods-textarea textarea {
+form.pods-manage .pods-textfield input, form.pods-manage .pods-textarea textarea {
     padding: 5px 7px;
     color: #808080;
 }
 
-form.pods-manage div.pods-textarea textarea {
+form.pods-manage .pods-textarea textarea {
     resize:vertical;
 }
 
-form.pods-manage div.pods-textfield input:focus, form.pods-manage div.pods-textarea textarea:focus {
+form.pods-manage .pods-textfield input:focus, form.pods-manage .pods-textarea textarea:focus {
     border-color: #a0a0a0;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     color: #000;

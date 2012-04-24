@@ -312,6 +312,7 @@
                                         <div id="save-action">
                                             <input type="submit" name="save" id="save-post" value="Save" class="button button-highlighted" />
                                         </div>
+										-->
                                         <!-- /#save-action --><!--
                                         <div id="preview-action">
                                             <a class="preview button" href="#" target="pods-preview" id="pod-preview">Preview</a>
@@ -368,49 +369,50 @@
                             <div class="handlediv" title="Click to toggle"><br /></div>
                             <h3 class="hndle"><span>Pod Name</span></h3>
                             <div class="inside">
-									<div class="pods-field pods-textfield">
+								<ol class="form-fields">
+									<li class="pods-field pods-textfield">
 										<?php
 										echo PodsForm::label('singlelinetext1', 'Single Line Text');
 										echo PodsForm::field('singlelinetext1', NULL, 'text', array('class' => 'pods-text-field'));
 										?>
-									</div>
+									</li>
 									
-									<div class="pods-field pods-textfield">
+									<li class="pods-field pods-textfield">
 										<?php
 										echo PodsForm::label('singlelinetext2', 'Single Line Text with Comment');
 										echo PodsForm::field('singlelinetext2', NULL, 'text', array('class' => 'pods-text-field'));
 										echo PodsForm::field_comment('Please fill out the field');
 										?>
-									</div>
-									<div class="pods-field pods-textarea">
+									</li>
+									<li class="pods-field pods-textarea">
 										<?php
 										echo PodsForm::label('code1', 'Code Field');
 										echo PodsForm::field('code1', NULL, 'textarea', array('class' => 'pods-code-field', 'rows' => '7', 'cols' => '70'));
 										?>
-									</div>
-									<div class="pods-field pods-textarea">
+									</li>
+									<li class="pods-field pods-textarea">
 										<?php
 										echo PodsForm::label('code2', 'Code Field w/ Comment');
 										echo PodsForm::field('code2', NULL, 'textarea', array('class' => 'pods-code-field', 'rows' => '7', 'cols' => '70'));
 										echo PodsForm::field_comment('Enter some code');
 										?>
-									</div>
-									<div class="pods-field pods-textarea">
+									</li>
+									<li class="pods-field pods-textarea">
 										<?php
 										echo PodsForm::label('code3', 'WYSIWYG (cleditor)');
 										echo PodsForm::field('code3', NULL, 'textarea', array('class' => 'pods-code-field', 'rows' => '7', 'cols' => '70'));
 										?> 
-									</div>
+									</li>
 
-									<div class="pods-field pods-textarea">
+									<li class="pods-field pods-textarea">
 										<?php
 										echo PodsForm::label('code4', 'WYSIWYG (tinymce)');
 										//echo PodsForm::field('code4', "Yay! It's TinyMCE!", 'tinymce', array('class' => 'pods-code-field'));
 										wp_editor("<strong>Yay, it's TinyMCE!</strong>", 'pods-field-code4');
 										?>
-									</div>
+									</li>
 
-									<div class="pods-field pods-textfield pods-date">
+									<li class="pods-field pods-textfield pods-date">
 										<?php
 										echo PodsForm::label('date1', 'Date');
 										echo PodsForm::field('date1', NULL, 'text', array('class' => 'pods-date-field'));
@@ -420,9 +422,9 @@
 											jQuery('#pods-form-ui-date1').datepicker();
 										});
 										</script>
-									</div>
+									</li>
 
-									<div class="pods-field pods-textfield pods-date">
+									<li class="pods-field pods-textfield pods-date">
 										<?php
 										echo PodsForm::label('date2', 'Date with Comment');
 										echo PodsForm::field('date2', NULL, 'text', array('class' => 'pods-date-field'));
@@ -433,9 +435,9 @@
 											jQuery('#pods-form-ui-date2').datepicker();
 										});
 										</script>
-									</div>
+									</li>
 
-									<div class="pods-field pods-textfield pods-date">
+									<li class="pods-field pods-textfield pods-date">
 										<?php
 										echo PodsForm::label('date3', 'Date with Time');
 										echo PodsForm::field('date3', NULL, 'text', array('class' => 'pods-date-field'));
@@ -445,24 +447,24 @@
 											jQuery('#pods-form-ui-date3').datetimepicker();
 										});
 										</script>
-									</div>
+									</li>
 
-									<div class="pods-field pods-textfield">
+									<li class="pods-field pods-textfield">
 										<?php
 										echo PodsForm::label('number1', 'Number Field');
 										echo PodsForm::field('number1', NULL, 'number');
 										?>
-									</div>
+									</li>
 
-									<div class="pods-field pods-textfield">
+									<li class="pods-field pods-textfield">
 										<?php
 										echo PodsForm::label('number2', 'Number with Comment');
 										echo PodsForm::field('number2', NULL, 'number', array('decimals' => 1));
 										echo PodsForm::field_comment('Please fill out the field');
 										?>
-									</div>
+									</li>
 
-									<div class="pods-field pods-textfield pods-slider">
+									<li class="pods-field pods-textfield pods-slider">
 										<?php
 										echo PodsForm::label('slider1', 'Slider Default');
 										?>
@@ -487,25 +489,25 @@
 												$('#pods-field-slider1-amount-display').html( $('#pods-field-slider1').slider('value') );
 											});
 										</script>
-									</div>
+									</li>
 
-									<div class="pods-field pods-boolean">
+									<li class="pods-field pods-boolean">
 										<?php
 										echo PodsForm::label('boolean1', 'Boolean');
 										echo PodsForm::field('boolean1', NULL, 'boolean');
 										?>
-									</div>
+									</li>
 
-									<div class="pods-field pods-boolean">
+									<li class="pods-field pods-boolean">
 										<?php
 										echo PodsForm::label('boolean2', 'Boolean with Comment');
 										echo PodsForm::field('boolean2', NULL, 'boolean');
 										echo PodsForm::field_comment('Please check this field');
 										?>
-									</div>
+									</li>
 
 									<!-- File Upload Field -->
-									<div class="pods-field pods-file pods-file-context" id="field-pods-field-file1">
+									<li class="pods-field pods-file pods-file-context" id="field-pods-field-file1">
 										<?php echo PodsForm::label('file1', 'File Upload'); ?>
 										<ul class="pods-files">
 											<?php for($i=0; $i < 3; $i++): ?>
@@ -525,12 +527,12 @@
 											<?php endfor; ?>
 										</ul>
 										<p class="pods-add-file">
-										    <a href="media-upload.php?type=image&amp;TB_iframe=1&amp;width=640&amp;height=1500" class="button">Add New</a>
+											<a href="media-upload.php?type=image&amp;TB_iframe=1&amp;width=640&amp;height=1500" class="button">Add New</a>
 										</p>
-									</div>
+									</li>
 
 									<!-- File Upload Field w/ Comment -->
-									<div class="pods-field pods-file pods-file-context" id="field-pods-field-file2">
+									<li class="pods-field pods-file pods-file-context" id="field-pods-field-file2">
 										<?php echo PodsForm::label('file2', 'File Upload with Comment'); ?>
 										<ul class="pods-files">
 											<?php for($i=0; $i < 3; $i++): ?>
@@ -553,10 +555,10 @@
 											<a href="media-upload.php?type=image&amp;TB_iframe=1&amp;width=640&amp;height=1500" class="button">Add New</a>
 										</p>
 										<?php echo PodsForm::field_comment('File Upload Details'); ?>
-									</div><!-- /#field-pods-field-file2 -->
+									</li><!-- /#field-pods-field-file2 -->
 
 									<!-- Pods Pick Field -->
-									<div class="pods-field pods-pick" id="field-pods-field-pick1">
+									<li class="pods-field pods-pick" id="field-pods-field-pick1">
 										<?php
 										echo PodsForm::label('pick1', 'Pick');
 										echo PodsForm::field('pick1', NULL, 'pick', array(
@@ -568,9 +570,9 @@
 											)
 										));
 										?>
-									</div><!-- /.pods-field.pods-pick -->
+									</li><!-- /.pods-field.pods-pick -->
 
-									<div class="pods-field pods-pick" id="field-pods-field-pick2">
+									<li class="pods-field pods-pick" id="field-pods-field-pick2">
 										<?php
 										echo PodsForm::label('pick2', 'Pick with Comment');
 										echo PodsForm::field('pick2', NULL, 'pick', array(
@@ -583,10 +585,10 @@
 										));
 										echo PodsForm::field_comment('Please select one');
 										?>
-									</div><!-- /.pods-field.pods-pick -->
+									</li><!-- /.pods-field.pods-pick -->
 
 									<?php // FIXME: Figure out why 'multiple' doesn't get through the attributes merge ?>
-									<div class="pods-field pods-pick" id="field-pods-field-pick3">
+									<li class="pods-field pods-pick" id="field-pods-field-pick3">
 										<?php
 										echo PodsForm::label('pick3', 'Pick Multiple');
 										echo PodsForm::field('pick3', NULL, 'pick', array(
@@ -600,9 +602,9 @@
 											'multiple' => true
 										));
 										?>
-									</div><!-- /.pods-field.pods-pick -->
+									</li><!-- /.pods-field.pods-pick -->
 
-									<div class="pods-field pods-pick" id="field-pods-field-pick4">
+									<li class="pods-field pods-pick" id="field-pods-field-pick4">
 										<?php
 										echo PodsForm::label('pick4', 'Pick - Checkboxes');
 										$pick_opts = array(
@@ -627,9 +629,9 @@
 												<?php endforeach; ?>
 											</ul>
 										</div>
-									</div><!-- /.pods-field.pods-pick -->
+									</li><!-- /.pods-field.pods-pick -->
 
-									<div class="pods-field pods-pick" id="field-pods-field-pick5">
+									<li class="pods-field pods-pick" id="field-pods-field-pick5">
 										<?php 
 										echo PodsForm::label('pick5', 'Pick - jQuery Chosen Autocomplete');
 										echo PodsForm::field('pick5', NULL, 'pick', array(
@@ -643,10 +645,10 @@
 											)
 										));
 										?>
-									</div><!-- /#field-pods-field-pick5 -->
+									</li><!-- /#field-pods-field-pick5 -->
 
 									<!-- Pick - Radio -->
-									<div class="pods-field pods-pick" id="field-pods-field-pick6">
+									<li class="pods-field pods-pick" id="field-pods-field-pick6">
 										<?php
 										echo PodsForm::label('pick6', 'Pick - Radio Buttons');
 										?>
@@ -664,10 +666,10 @@
 												<?php endforeach; ?>
 											</ul>
 										</div>
-									</div><!-- /#field-pods-field-pick6 -->
+									</li><!-- /#field-pods-field-pick6 -->
 
 									<!-- WP Auto Complete Categories -->
-									<div class="pods-field pods-textfield" id="field-pods-field-wpcategories">
+									<li class="pods-field pods-textfield" id="field-pods-field-wpcategories">
 										<?php
 										echo PodsForm::label('wpcategories', 'WordPress Auto Complete Categories');
 										echo PodsForm::field('wpcategories', NULL, 'text');									
@@ -703,7 +705,7 @@
 												});
 											});
 										</script>
-									</div><!-- /#field-pods-field-wpcategories -->
+									</li><!-- /#field-pods-field-wpcategories -->
 
 									<?php
 
@@ -715,7 +717,8 @@
 									// TODO: Make attributes pass multiple="true" to pick fields
                                     //$args = array( 'type' => 'pick', 'name' => 'pick3', 'label' => 'Pick - Multi', 'options' => array( 'type' => 'multi' ) );
                                     //pods_field( $args );
-                                ?>
+									?>
+								</ol>
                             </div>
                             <!-- /.inside -->
                         </div>

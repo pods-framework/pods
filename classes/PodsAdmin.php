@@ -57,6 +57,10 @@ class PodsAdmin {
         if (!wp_style_is('jquery-ui-timepicker', 'registered'))
             wp_register_style('jquery-ui-timepicker', PODS_URL . 'ui/css/jquery.ui.timepicker.css', array(), '0.9.7');
         wp_register_script('pods-file-attach', PODS_URL . 'ui/js/file-attach.js', array(), PODS_VERSION);
+		if (!wp_script_is('jquery-chosen', 'registered'))
+			wp_register_script('jquery-chosen', PODS_URL . 'ui/js/chosen.jquery.min.js', array('jquery'), '0.9.8');
+		if (!wp_style_is('jquery-chosen', 'registered'))
+			wp_register_style('jquery-chosen', PODS_URL . 'ui/css/chosen.css', array(), '0.9.8');
         if (isset($_GET['page'])) {
             $page = $_GET['page'];
             if ('pods' == $page || (false !== strpos($page, 'pods-') && 0 === strpos($page, 'pods-'))) {
@@ -82,6 +86,9 @@ class PodsAdmin {
                 wp_enqueue_style('pods-qtip');
 
                 wp_enqueue_script('pods-qtip-init');
+
+				wp_enqueue_script('jquery-chosen');
+				wp_enqueue_style('jquery-chosen');
 
                 wp_enqueue_script('jquery-pods-admin');
 
@@ -207,6 +214,7 @@ class PodsAdmin {
         if ( defined( 'PODS_DEVELOPER' ) ) {
             add_submenu_page('pods', 'x Import - Table', 'x Import - Table', 'manage_options', 'pods-import-table', array($this, 'pods_import_table'));
             add_submenu_page('pods', 'x Media Upload - Test', 'x Media Upload - Test', 'manage_options', 'media-upload-test', array($this, 'media_upload_test'));
+			add_submenu_page('pods', 'x Form Test', 'x Form Test', 'manage_options', 'pods-manage-form-test', array($this, 'admin_content_form'));
         }
     }
 
@@ -245,6 +253,10 @@ class PodsAdmin {
     public function pods_import_create_pod() {
         require_once PODS_DIR . 'ui/admin/pods_import_create_pod.php';
     }
+
+	public function pods_form_test() {
+		require_once PODS_DIR . 'ui/admin/pods_form_test.php';
+	}
 
     public function admin_setup() {
         pods_ui(array('sql' => array('table' => '@wp_pods',

@@ -424,6 +424,46 @@ class PodsForm {
 <?php
     }
 
+	/**
+	 * Output a hidden field
+	 */
+	protected function field_hidden($name, $value = null, $options = null) {
+		$name_clean = self::clean($name);
+		$name_more_clean = self::clean($name, true);
+		$type = 'hidden';
+		$attributes = array();
+		$attributes['type'] = $type;
+		$attributes['name'] = $name;
+		$attributes['data-name-clean'] = $name_more_clean;
+		$attributes['id'] = 'pods-form-ui-' . $name_clean;
+		$attributes['class'] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
+		$attributes['value'] = $value;
+		$attributes = self::merge_attributes($attributes, $options);
+?>
+	<input<?php self::attributes($attributes, $name, $type, $options); ?> />
+<?php
+	}
+
+	/**
+	 * Output a Field Comment Paragraph
+	 */
+	public static function comment($message) {
+		$message = apply_filters('pods_form_ui_comment_text', $message);
+
+		ob_start();
+
+		$attributes = array();
+		$attributes['class'] = 'pods-field-comment';
+?>
+		<p<?php self::attributes($attributes); ?>>
+			<?php echo wp_kses_post($message); ?>
+		</p>
+<?php
+		$output = ob_get_clean();
+
+		return apply_filters('pods_form_ui_comment', $output, $message);
+	}
+
     /**
      * Output a field's attributes
      *
@@ -460,7 +500,7 @@ class PodsForm {
         return $attributes;
     }
 
-    /**
+    /*
      * Clean a value for use in class / id
      *
      * @since 2.0.0

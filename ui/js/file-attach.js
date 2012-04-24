@@ -85,7 +85,7 @@ function pods_thickbox_handler(){
 
 
 function pods_add_file(pods_media_id,pods_media_name,pods_media_thumb){
-    pods_file_list = jQuery('div.pods-file-context ul');
+    pods_file_list = jQuery('.pods-file-context ul');
     pods_file_field_name = pods_file_list.parent().attr('id').replace('field-pods-field-','');
 
     pods_file_markup = '<li class="media-item">';

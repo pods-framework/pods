@@ -5,29 +5,34 @@
 // Usage:
 // global $wp_editor;
 // $wp_editor->editor($content, $editor_id, $settings, $media_buttons);
-if ( !class_exists('WP_Editor') && !function_exists('wp_editor') ) :
-class WP_Editor {
+if ( !class_exists('WP_Pre_33_Editor') ) :
+class WP_Pre_33_Editor {
 
 	var $editor_ids = array();
 	var $settings = array();
 	var $editor_loaded;
 	var $media_buttons;
 
-	function __construct () {
+	function __construct() {
 		add_filter( 'tiny_mce_before_init', array($this, 'loaded_test') );
 	}
 
-	function wp_default_editor () {
+	function wp_default_editor() {
 		return wp_default_editor();
 	}
 
-	function editor ( $content, $editor_id, $settings = array(), $media_buttons = true ) {
+	function editor( $content, $editor_id, $settings = array(), $media_buttons = true ) {
+        if (function_exists('wp_editor')) {
+            $settings['media_buttons'] = $media_buttons;
+            wp_editor($content, $editor_id, $settings);
+            return;
+        }
 
 		$this->editor_ids[] = $editor_id;
 
 		$set = wp_parse_args( $settings,  array(
 			'wpautop' => true, // use wpautop?
-			'wp_buttons_css' => PODS_URL . '/ui/wp-editor/editor-buttons.css', // styles for both visual and HTML editors buttons
+			'wp_buttons_css' => PODS_URL . '/deprecated/wp-editor/editor-buttons.css', // styles for both visual and HTML editors buttons
 			'editor_class' => 'wp-editor-area',
 			'upload_link_title' => 'Upload and insert images or other media',
 			'media_buttons_context' => '',
@@ -101,12 +106,12 @@ class WP_Editor {
 		$this->settings[$editor_id] = $set;
 	}
 
-	function loaded_test ($r) {
+	function loaded_test($r) {
 		$this->editor_loaded = true;
 		return $r;
 	}
 
-	function disable_fullscreen ($init) {
+	function disable_fullscreen($init) {
 		$plugins = preg_split('/[ ,]+/', $init['plugins']);
 		$plugins = array_diff( $plugins, array('wpfullscreen') );
         $plugins[] = 'fullscreen';
@@ -118,7 +123,7 @@ class WP_Editor {
 		return $init;
 	}
 
-	function editor_js () {
+	function editor_js() {
 		global $wp_db_version;
 
 		$short_load = false;
@@ -276,5 +281,5 @@ var wpEditor={wpautop:{<?php echo $id.':';echo $this->settings[$id]['wpautop'] ?
 	}
 }
 global $wp_editor;
-$wp_editor = new WP_Editor;
+$wp_editor = new WP_Pre_33_Editor;
 endif; // WP_Editor

@@ -137,15 +137,29 @@ class PodsForm {
         $attributes = self::merge_attributes($attributes, $options);
         if (isset($options['default']) && strlen($value) < 1)
             $value = $options['default'];
+
         $value = apply_filters('pods_form_ui_field_' . $type . '_value', $value, $name, $attributes, $options);
         $settings = null;
         if (isset($options['settings']))
             $settings = $options['settings'];
 
-        global $wp_editor;
-        if ( !class_exists('WP_Editor') && !function_exists('wp_editor') )
-            require_once PODS_DIR . "/ui/wp-editor/wp-editor.php";
-        $wp_editor->editor($value, $attributes['id'], $settings);
+        $media_bar = false;
+        if (!(defined('PODS_DISABLE_FILE_UPLOAD') && true === PODS_DISABLE_FILE_UPLOAD)
+                && !(defined('PODS_UPLOAD_REQUIRE_LOGIN') && is_bool(PODS_UPLOAD_REQUIRE_LOGIN) && true === PODS_UPLOAD_REQUIRE_LOGIN && !is_user_logged_in())
+                && !(defined('PODS_UPLOAD_REQUIRE_LOGIN') && !is_bool(PODS_UPLOAD_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_UPLOAD_REQUIRE_LOGIN)))) {
+            $media_bar = true;
+        }
+
+        if (function_exists('wp_editor')) {
+            if (!isset($settings['media_button']))
+                $settings['media_button'] = $media_bar;
+            wp_editor($value, $attributes['id'], $settings);
+        }
+        else {
+            global $wp_editor;
+            require_once PODS_DIR . "/deprecated/wp-editor/wp-editor.php";
+            echo $wp_editor->editor($value, $attributes['id'], $settings, $media_bar);
+        }
     }
 
     /**

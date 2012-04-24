@@ -66,7 +66,6 @@ if ( is_admin() ) { // note the use of is_admin() to double check that this is h
 global $pods, $pods_init, $pods_admin, $pod_page_exists;
 if (false !== pods_compatible() && (!defined('SHORTINIT') || !SHORTINIT)) {
     require_once(PODS_DIR . 'deprecated/deprecated.php');
-    require_once(PODS_DIR . 'classes/PodsForm.php');
 
     $pods_init = pods_init();
 }

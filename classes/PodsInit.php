@@ -24,8 +24,8 @@ class PodsInit
 
             add_action('init', array($this, 'admin_init'));
 
-            include_once(PODS_DIR.'/classes/PodsMeta.php');
-            $this->meta = new PodsMeta();
+            // Init Pods Meta
+            $this->meta = pods_meta();
         }
     }
 

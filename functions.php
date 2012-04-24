@@ -950,7 +950,17 @@ function pods_data ($pod = null, $id = null) {
  */
 function pods_form () {
     require_once(PODS_DIR . 'classes/PodsForm.php');
-    return PodsForm;
+    return new PodsForm();
+}
+
+/**
+ * Include and Init the PodsFormUI class
+ *
+ * @since 2.0.0
+ */
+function pods_meta () {
+    require_once(PODS_DIR . 'classes/PodsMeta.php');
+    return new PodsMeta();
 }
 
 /**

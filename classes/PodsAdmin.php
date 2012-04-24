@@ -122,15 +122,15 @@ class PodsAdmin {
                 else
                     wp_enqueue_style('pods-admin');
                 if ('pods-advanced' == $page) {
-                    wp_register_style('pods-parts', PODS_URL . 'ui/css/pods-parts.css', array(), '1.0');
-                    wp_enqueue_style('pods-parts');
+                    wp_register_style('pods-advanced', PODS_URL . 'ui/css/pods-advanced.css', array(), '1.0');
+                    wp_enqueue_style('pods-advanced');
 
                     wp_enqueue_script('jquery-ui-effects-core', PODS_URL . 'ui/js/jquery-ui/jquery.effects.core.js', array('jquery'), '1.8.8');
                     wp_enqueue_script('jquery-ui-effects-fade', PODS_URL . 'ui/js/jquery-ui/jquery.effects.fade.js', array('jquery'), '1.8.8');
                     wp_enqueue_script('jquery-ui-dialog');
 
-                    wp_register_script('parts', PODS_URL . 'ui/js/parts.js', array(), PODS_VERSION);
-                    wp_enqueue_script('parts');
+                    wp_register_script('pods-advanced', PODS_URL . 'ui/js/advanced.js', array(), PODS_VERSION);
+                    wp_enqueue_script('pods-advanced');
                 }
             }
         }
@@ -179,6 +179,10 @@ class PodsAdmin {
             $admin_menus = array('pods' => array('label' => 'Setup',
                                                  'function' => array($this, 'admin_setup'),
                                                  'access' => 'manage_pods'),
+                                 'pods-ui' => array('label' => 'Admin UI',
+                                                    'function' => array($this, 'admin_ui'),
+                                                    'access' => array('admin_setup',
+                                                                      'admin_ui')),
                                  'pods-advanced' => array('label' => 'Advanced',
                                                           'function' => array($this, 'admin_advanced'),
                                                           'access' => array('manage_templates',
@@ -277,11 +281,11 @@ class PodsAdmin {
     }
 
     public function admin_setup_add($obj) {
-        require_once PODS_DIR . 'ui/admin/setup_add_pod.php';
+        require_once PODS_DIR . 'ui/admin/setup_add.php';
     }
 
     public function admin_setup_edit($duplicate, $obj) {
-        require_once PODS_DIR . 'ui/admin/setup_edit_pod.php';
+        require_once PODS_DIR . 'ui/admin/setup_edit.php';
     }
 
     public function admin_setup_delete($id, $obj) {
@@ -289,8 +293,35 @@ class PodsAdmin {
         $obj->message('Pod deleted succesfully.');
     }
 
+    public function admin_ui() {
+        pods_ui(array('sql' => array('table' => '@wp_pods_objects',
+                                     'select' => 'name'),
+                      'icon' => PODS_URL .'ui/images/icon32.png',
+                      'items' => 'Admin UI',
+                      'item' => 'Admin UI',
+                      'orderby' => 'name',
+                      'fields' => array('manage' => array('name')),
+                      'actions_disabled' => array('duplicate', 'view', 'export'),
+                      'actions_custom' => array('add' => array($this, 'admin_ui_add'),
+                                                'edit' => array($this, 'admin_ui_edit'),
+                                                'delete' => array($this, 'admin_ui_delete'))));
+    }
+
+    public function admin_ui_add($obj) {
+        require_once PODS_DIR . 'ui/admin/ui_add.php';
+    }
+
+    public function admin_ui_edit($duplicate, $obj) {
+        require_once PODS_DIR . 'ui/admin/ui_edit.php';
+    }
+
+    public function admin_ui_delete($id, $obj) {
+        $this->api->drop_ui(array('id' => $id));
+        $obj->message('Admin UI deleted succesfully.');
+    }
+
     public function admin_advanced() {
-        require_once PODS_DIR . 'ui/admin/setup_edit_part.php';
+        require_once PODS_DIR . 'ui/admin/advanced.php';
     }
 
     public function admin_settings() {

@@ -376,7 +376,7 @@
 										echo PodsForm::field('singlelinetext1', NULL, 'text', array('class' => 'pods-text-field'));
 										?>
 									</li>
-									
+
 									<li class="pods-field pods-textfield">
 										<?php
 										echo PodsForm::label('singlelinetext2', 'Single Line Text with Comment');
@@ -401,7 +401,7 @@
 										<?php
 										echo PodsForm::label('code3', 'WYSIWYG (cleditor)');
 										echo PodsForm::field('code3', NULL, 'textarea', array('class' => 'pods-code-field', 'rows' => '7', 'cols' => '70'));
-										?> 
+										?>
 									</li>
 
 									<li class="pods-field pods-textarea">
@@ -634,7 +634,7 @@
 									</li><!-- /.pods-field.pods-pick -->
 
 									<li class="pods-field pods-pick" id="field-pods-field-pick5">
-										<?php 
+										<?php
 										echo PodsForm::label('pick5', 'Pick - jQuery Chosen Autocomplete');
 										echo PodsForm::field('pick5', NULL, 'pick', array(
 											'class' => 'chosen',
@@ -661,7 +661,7 @@
 													<?php $i++; ?>
 													<li>
 														<div class="pods-field pods-boolean" id="field-pods-field-pick6-<?php echo $i; ?>">
-															<input type="radio" name="pods-field-pick6" id="pods-field-pick6-<?php echo $i; ?>" value="<?php echo $opt; ?>" />
+															<input type="radio" name="pods-field-pick6" id="pods-form-ui-pick6-<?php echo $i; ?>" value="<?php echo $opt; ?>" />
 															<?php echo PodsForm::label('pick6-'.$i, $label); ?>
 														</div>
 													</li>
@@ -674,7 +674,7 @@
 									<li class="pods-field pods-textfield" id="field-pods-field-wpcategories">
 										<?php
 										echo PodsForm::label('wpcategories', 'WordPress Auto Complete Categories');
-										echo PodsForm::field('wpcategories', NULL, 'text');									
+										echo PodsForm::field('wpcategories', NULL, 'text');
 										?>
 										<script>
 											jQuery(function($) {

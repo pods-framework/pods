@@ -96,9 +96,9 @@ class PodsData
             }
 
             if (null !== $id && !is_array($id) && !is_object($id)) {
+                $id = (int) $id;
                 $this->fetch($id);
-                if (!empty($this->row))
-                    $this->id = $this->field($this->field_id);
+                $this->id = $id;
             }
         }
     }
@@ -609,7 +609,7 @@ class PodsData
         $sql = "CREATE TABLE";
         if (true === $if_not_exists)
             $sql .= " IF NOT EXISTS";
-        $sql .= " `{$wpdb->prefix}" . $this->prefix . "{$table}` ({$fields})";
+        $sql .= " `{$wpdb->prefix}" . self::$prefix . "{$table}` ({$fields})";
         if (!empty($wpdb->charset))
             $sql .= " DEFAULT CHARACTER SET {$wpdb->charset}";
         if (!empty($wpdb->collate))
@@ -626,7 +626,7 @@ class PodsData
      */
     public static function table_alter ($table, $changes) {
         global $wpdb;
-        $sql = "ALTER TABLE `{$wpdb->prefix}" . $this->prefix . "{$table}` {$changes}";
+        $sql = "ALTER TABLE `{$wpdb->prefix}" . self::$prefix . "{$table}` {$changes}";
         return self::query($sql);
     }
 
@@ -638,7 +638,7 @@ class PodsData
      */
     public static function table_truncate ($table) {
         global $wpdb;
-        $sql = "TRUNCATE TABLE `{$wpdb->prefix}" . $this->prefix . "{$table}`";
+        $sql = "TRUNCATE TABLE `{$wpdb->prefix}" . self::$prefix . "{$table}`";
         return self::query($sql);
     }
 
@@ -650,7 +650,7 @@ class PodsData
      */
     public static function table_drop ($table) {
         global $wpdb;
-        $sql = "DROP TABLE `{$wpdb->prefix}" . $this->prefix . "{$table}`";
+        $sql = "DROP TABLE `{$wpdb->prefix}" . self::$prefix . "{$table}`";
         return self::query($sql);
     }
 
@@ -779,7 +779,7 @@ class PodsData
         $finalTables = array();
 
         while ($table = mysql_fetch_row($showTables)) {
-            if (!$pods_tables && 0 === (strpos($table[0], $wpdb->prefix . rtrim($this->prefix, '_')))) // don't include pods tables
+            if (!$pods_tables && 0 === (strpos($table[0], $wpdb->prefix . rtrim(self::$prefix, '_')))) // don't include pods tables
                 continue;
             elseif (!$wp_core && in_array($table[0], $core_wp_tables))
                 continue;

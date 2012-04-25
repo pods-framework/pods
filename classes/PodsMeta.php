@@ -170,9 +170,14 @@ class PodsMeta {
         if ( !isset( self::$taxonomies[ $taxonomy ][ 'name' ] ) )
             return false;
 
-        $pod = $this->api->load_pod( array( 'name' => self::$taxonomies[ $taxonomy ]['name'] ) );
+        $pod = $this->api->load_pod( array( 'name' => self::$taxonomies[ $taxonomy ][ 'name' ] ) );
         $item = pods( $pod[ 'name' ], $term_id );
-        // @todo Save values to PodsAPI
+        $data = array();
+        foreach ( $pod[ 'fields' ] as $field ) {
+            if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
+                $data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
+        }
+        $item->save( $data );
     }
 
     public function meta_user ( $user_id ) {

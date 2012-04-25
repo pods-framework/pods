@@ -648,7 +648,7 @@ class PodsAPI
     public function save_pod_item ($params) {
         $params = (object) str_replace('@wp_', '{prefix}', pods_sanitize($params));
 
-    // deprecated in 2.0
+        // deprecated in 2.0
         if (isset($params->datatype)) {
             $params->pod = $params->datatype;
             if (isset($params->pod_id)) {

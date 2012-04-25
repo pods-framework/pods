@@ -268,14 +268,36 @@ class Pods
     }
 
     /**
+     * Add an item
+     *
+     * @since 2.0.0
+     */
+    public function add ($data = null, $value = null, $id = null) {
+        if (null !== $value)
+            $data = array( $data => $value );
+        if (null === $id)
+            $id = $this->id;
+        $data = (array) $this->do_hook('add', $data, $id);
+        if (empty($data))
+            return;
+        $params = array( 'pod' => $this->pod, 'id' => $id, 'columns' => array( $data ) );
+        return $this->api->save_pod_item($params);
+    }
+
+    /**
      * Save an item
      *
      * @since 2.0.0
      */
-    public function save ($params = null) {
-        $params = (object) $this->do_hook('save', $params);
-        if (isset($params->bypass) && true === $params->bypass)
+    public function save ($data = null, $value = null, $id = null) {
+        if (null !== $value)
+            $data = array( $data => $value );
+        if (null === $id)
+            $id = $this->id;
+        $data = (array) $this->do_hook('save', $data, $id);
+        if (empty($data))
             return;
+        $params = array( 'pod' => $this->pod, 'id' => $id, 'columns' => array( $data ) );
         return $this->api->save_pod_item($params);
     }
 
@@ -284,10 +306,13 @@ class Pods
      *
      * @since 2.0.0
      */
-    public function delete ($params = null) {
-        $params = (object) $this->do_hook('delete', $params);
-        if (isset($params->bypass) && true === $params->bypass)
+    public function delete ($id = null) {
+        if (null === $id)
+            $id = $this->id;
+        $id = (int) $this->do_hook('delete', $id);
+        if (empty($id))
             return;
+        $params = array( 'pod' => $this->pod, 'id' => $id );
         return $this->api->drop_pod_item($params);
     }
 
@@ -296,10 +321,13 @@ class Pods
      *
      * @since 2.0.0
      */
-    public function duplicate ($params = null) {
-        $params = (object) $this->do_hook('duplicate', $params);
-        if (isset($params->bypass) && true === $params->bypass)
+    public function duplicate ($id = null) {
+        if (null === $id)
+            $id = $this->id;
+        $id = (int) $this->do_hook('duplicate', $id);
+        if (empty($id))
             return;
+        $params = array( 'pod' => $this->pod, 'id' => $id );
         return $this->api->duplicate_pod_item($params);
     }
 
@@ -308,10 +336,13 @@ class Pods
      *
      * @since 2.0.0
      */
-    public function export ($params = null) {
-        $params = (object) $this->do_hook('export', $params);
-        if (isset($params->bypass) && true === $params->bypass)
+    public function export ($columns = null, $id = null) {
+        if (null === $id)
+            $id = $this->id;
+        $columns = (array) $this->do_hook('export', $columns, $id);
+        if (empty($id))
             return;
+        $params = array( 'pod' => $this->pod, 'id' => $id, 'columns' => $columns );
         return $this->api->export_pod_item($params);
     }
 

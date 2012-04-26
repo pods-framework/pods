@@ -11,7 +11,7 @@ class PodMigrate
 
     /**
      * Migrate Data to and from Pods
-     * 
+     *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0.0
      */
@@ -35,7 +35,7 @@ class PodMigrate
         if (!empty($delimiter))
             $this->delimiter = $delimiter;
         if (method_exists($this,"parse_{$this->type}"))
-            $this->parse_{$this->type}();
+            call_user_func( array( $this, 'parse_' . $this->type ) );
         return $this->import_pod_items();
     }
     function import_pod ($data = null) {
@@ -92,7 +92,7 @@ class PodMigrate
         if (!empty($type) && in_array($type, $this->types))
             $this->type = $type;
         if (method_exists($this,"parse_{$this->type}"))
-            return $this->parse_{$this->type}();
+            call_user_func( array( $this, 'parse_' . $this->type ) );
         return $this->data;
     }
     function parse_json ($data = null) {
@@ -281,7 +281,7 @@ class PodMigrate
         if (!empty($delimiter))
             $this->delimiter = $delimiter;
         if (method_exists($this,"build_{$this->type}"))
-            $this->build_{$this->type}();
+            call_user_func( array( $this, 'build_' . $this->type ) );
         return $this->export_pod_items();
     }
     function export_pod_items ($data = null) {
@@ -294,7 +294,7 @@ class PodMigrate
         if (!empty($type) && in_array($type, $this->types))
             $this->type = $type;
         if (method_exists($this,"build_{$this->type}"))
-            $this->build_{$this->type}();
+            call_user_func( array( $this, 'build_' . $this->type ) );
         return $this->data;
     }
     function build_json ($data = null) {
@@ -365,6 +365,7 @@ class PodMigrate
                 'build' => time()
             )
         );
+        $api = pods_api();
         if (isset($this->data['pods']) || !empty($this->data['pods'])) {
             $this->data['pods'] = explode(',', $this->data['pods']);
             $data['pods'] = array();
@@ -431,7 +432,7 @@ class PodMigrate
     //// run import
     pods_import_it($import);
     */
-    function heres_the_beef () {
+    function heres_the_beef ($import, $output = true) {
         global $wpdb;
         $api = pods_api();
         for ($i = 0; $i < 40000; $i++) {

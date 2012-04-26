@@ -292,6 +292,10 @@ if ('__1' != pods_var('id', $field)) {
                                                 <?php echo PodsForm::field('field_data[' . $i . '][pick_limit]', pods_var('pick_limit', $field), 'number'); ?>
                                             </div>
                                             <div class="pods-field-option">
+                                                <?php echo PodsForm::label( 'field_data[' . $i . '][pick_display]', __( 'Display Field in Form', 'pods' ), __( 'help', 'pods' ) ); ?>
+                                                <?php echo PodsForm::field( 'field_data[' . $i . '][pick_display]', pods_var( 'pick_display', $field ), 'text' ); ?>
+                                            </div>
+                                            <div class="pods-field-option">
                                                 <?php echo PodsForm::label('field_data[' . $i . '][pick_filter]', __('Filter Items by', 'pods'), __('help', 'pods')); ?>
                                                 <?php echo PodsForm::field('field_data[' . $i . '][pick_filter]', pods_var('pick_filter', $field), 'text'); ?>
                                             </div>

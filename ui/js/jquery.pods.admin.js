@@ -351,10 +351,13 @@
                 var $row_label = $row.find('td.pods-manage-row-label');
                 var $row_content = $row_label.find('div.pods-manage-row-wrapper');
 
+                if ('undefined' == typeof orig_fields[$row.data( 'id' )])
+                    orig_fields[$row.data('id')] = {};
+
                 // Row active, hide it
                 if ($row_content.is(':visible')) {
                     $row_content.find('input, select').each(function () {
-                        $(this).val(orig_fields[$(this).prop('name')]);
+                        $(this).val(orig_fields[$row.data( 'id' )][$(this).prop('name')]);
                     });
 
                     $row_content.slideUp('slow', function () {
@@ -365,7 +368,7 @@
                 // Row inactive, show it
                 else {
                     $row_content.find('input, select').each(function () {
-                        orig_fields[$(this).prop('name')] = $(this).val();
+                        orig_fields[$row.data( 'id' )][$(this).prop('name')] = $(this).val();
                     });
 
                     $row.toggleClass('pods-manage-row-expanded');
@@ -442,27 +445,7 @@
 
             // Handle 'Cancel' action
             $('tbody.pods-manage-list').on('click', '.pods-manage-row-actions a.pods-manage-row-cancel', function (e) {
-                $(this).css('cursor', 'default');
-                $(this).prop('disabled', true);
-
-                var $row = $(this).closest('tr.pods-manage-row');
-                var $row_label = $row.find('td.pods-manage-row-label');
-                var $row_content = $row_label.find('div.pods-manage-row-wrapper');
-
-                $row_content.slideUp('slow', function () {
-                    $row.toggleClass('pods-manage-row-expanded');
-                    $row_label.prop('colspan', '1');
-
-                    var orig_counter = 0;
-                    $row_content.find('input,select').each(function () {
-                        $(this).val(orig_fields[orig_counter]);
-                        orig_counter++;
-                    });
-                 });
-
-                $(this).css('cursor', 'pointer');
-                $(this).prop('disabled', false);
-
+                $(this).closest('tr.pods-manage-row').find('a.pods-manage-row-edit').click();
                 e.preventDefault();
             });
         },

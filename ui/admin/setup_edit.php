@@ -836,7 +836,7 @@ $field =  array('id' => '__1',
                 'name' => 'new__1',
                 'label' => 'New Field __1',
                 'type' => 'text');
-include PODS_DIR . 'ui/admin/setup_edit_pod_field.php';
+include PODS_DIR . 'ui/admin/setup_edit_field.php';
 $new_field_row = ob_get_clean();
 
 $pods_field_types = array();

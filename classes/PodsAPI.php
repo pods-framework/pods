@@ -255,7 +255,7 @@ class PodsAPI
                 if (!in_array($row['type'], array('pick', 'file')))
                     $definitions[] = "`{$field['name']}` " . $this->get_column_definition($field['type']);
             }
-            if (!isset($columns['storage']) || 'table' == $columns['storage']) {
+            if ('table' == $columns['storage']) {
                 $result = pods_query("CREATE TABLE `@wp_pods_tbl_{$params->name}` (" . implode(', ', $definitions) . ") DEFAULT CHARSET utf8", $this);
                 if (empty($result))
                     return pods_error('Cannot add Database Table for new Pod');
@@ -315,7 +315,7 @@ class PodsAPI
             $set[] = "`options` = '{$params->options}'";
             $set = implode(', ', $set);
             pods_query("UPDATE `@wp_pods` SET {$set} WHERE `id` = {$params->id}", $this);
-            if (null !== $old_name && $old_name != $params->name) {
+            if ( 'table' == $pod[ 'storage' ] && null !== $old_name && $old_name != $params->name) {
                 pods_query("ALTER TABLE `@wp_pods_tbl_{$old_name}` RENAME `@wp_pods_tbl_{$params->name}`", $this);
             }
         }
@@ -369,6 +369,8 @@ class PodsAPI
                 $params->pod = $pod['name'];
             }
         }
+        if (!isset($pod))
+            $pod = $this->load_pod( array( 'id' => $params->pod_id ) );
 
         $params->name = pods_clean_name($params->name);
         if (empty($params->name))
@@ -385,6 +387,8 @@ class PodsAPI
                           'weight' => 0,
                           'options' => array());
         $params = (object) array_merge($defaults, (array) $params);
+
+        $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
 
         // Add new column
         if (!isset($params->id) || empty($params->id)) {
@@ -435,7 +439,7 @@ class PodsAPI
             if (empty($field_id))
                 return pods_error("Cannot add new field {$params->name}", $this);
 
-            if (!in_array($params->type, array('pick','file'))) {
+            if ( 'table' == $pod[ 'storage' ] && !in_array($params->type, $tableless_field_types)) {
                 $dbtype = $this->get_column_definition($params->type);
                 pods_query("ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN `{$params->name}` {$dbtype}", 'Cannot create new column');
             }
@@ -470,14 +474,15 @@ class PodsAPI
             $params->sister_field_id = pods_absint($params->sister_field_id);
             $params->weight = pods_absint($params->weight);
 
-            if ($params->type != $old_type) {
-                if ('pick' == $params->type || 'file' == $params->type) {
-                    if ('pick' != $old_type && 'file' != $old_type) {
+            if ( $params->type != $old_type) {
+                if ( in_array( $params->type, $tableless_field_types ) ) {
+                    if ( 'table' == $pod[ 'storage' ] && !in_array( $old_type, $tableless_field_types ) ) {
                         pods_query("ALTER TABLE `@wp_pods_tbl_$params->pod` DROP COLUMN `$old_name`");
                     }
                 }
-                elseif ('pick' == $old_type || 'file' == $old_type) {
-                    pods_query("ALTER TABLE `@wp_pods_tbl_$params->pod` ADD COLUMN `$params->name` $dbtype", 'Cannot create column');
+                elseif ( in_array( $old_type, $tableless_field_types ) ) {
+                    if ( 'table' == $pod[ 'storage' ] )
+                        pods_query("ALTER TABLE `@wp_pods_tbl_$params->pod` ADD COLUMN `$params->name` $dbtype", 'Cannot create column');
                     pods_query("UPDATE @wp_pods_fields SET sister_field_id = NULL WHERE sister_field_id = $params->id");
                     pods_query("DELETE FROM @wp_pods_rel WHERE field_id = $params->id");
                 }
@@ -485,7 +490,7 @@ class PodsAPI
                     pods_query("ALTER TABLE `@wp_pods_tbl_$params->pod` CHANGE `$old_name` `$params->name` $dbtype");
                 }
             }
-            elseif ($params->name != $old_name && 'pick' != $params->type && 'file' != $params->type) {
+            elseif ( 'table' == $pod[ 'storage' ] && $params->name != $old_name && !in_array( $params->type, $tableless_field_types ) ) {
                 pods_query("ALTER TABLE `@wp_pods_tbl_$params->pod` CHANGE `$old_name` `$params->name` $dbtype");
             }
             if (!isset($params->options) || empty($params->options)) {

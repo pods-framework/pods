@@ -52,14 +52,14 @@ function pods_thickbox_handler(){
         // need to handle the click event
         jQuery('#TB_iframeContent').contents().find('td.savesend input.pods-add-button').unbind('click').click(function(e){
             pods_media_parent = jQuery(this).parent().parent().parent();
-            jQuery(this).after('<span class="pods-attached">Added!</span>');
+            jQuery(this).after(' <span class="pods-attached">Added! Choose another or close this box.</span>');
             pods_media_id = pods_media_parent.find('td.imgedit-response').attr('id').replace('imgedit-response-','');
             pods_media_name = pods_media_parent.parent().prev().find('span.title').text();
             pods_media_thumb = pods_media_parent.parent().parent().find('img.pinkynail').attr('src');
             // add the file on the edit screen
             pods_add_file(pods_media_id,pods_media_name,pods_media_thumb);
             // get rid of the message
-            pods_media_parent.find('span.pods-attached').delay(500).fadeOut('fast');
+            pods_media_parent.find('span.pods-attached').delay(3000).fadeOut('fast');
             return false;
         });
         // now we can handle the button
@@ -92,7 +92,7 @@ function pods_add_file(pods_media_id,pods_media_name,pods_media_thumb){
     pods_file_markup += '<span class="pods-file-reorder"><img src="'+PODS_URL+'ui/images/handle.gif" alt="Drag to reorder" /></span>';
     pods_file_markup += '<span class="pods-file-thumb"><span>';
     pods_file_markup += '<img class="pinkynail" src="'+pods_media_thumb+'" alt="Thumbnail" />';
-    pods_file_markup += '<input name="pods-field-'+pods_file_field_name+'[files]" type="hidden" value="" />';
+    pods_file_markup += '<input name="pods-field-'+pods_file_field_name+'[]" type="hidden" value="' + pods_media_id + '" />';
     pods_file_markup += '</span></span>';
     pods_file_markup += '<span class="pods-file-name">'+pods_media_name+'</span>';
     pods_file_markup += '<span class="pods-file-remove"><img class="pods-icon-minus" src="'+PODS_URL+'ui/images/del.png" alt="Remove" /></span>';

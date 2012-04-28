@@ -400,15 +400,15 @@
                                 <li class="pods-field pods-textarea">
                                     <?php
                                     echo PodsForm::label('code3', 'WYSIWYG (cleditor)');
-                                    echo PodsForm::field('code3', NULL, 'textarea', array('class' => 'pods-code-field', 'attributes' => array('rows' => '7', 'cols' => '70', 'data-width' => '100%')));
+                                    echo PodsForm::field('code3', NULL, 'textarea', array('attributes' => array('rows' => '7', 'cols' => '70', 'data-width' => '100%')));
                                     ?>
                                 </li>
 
                                 <li class="pods-field pods-textarea">
                                     <?php
                                     echo PodsForm::label('code4', 'WYSIWYG (tinymce)');
-                                    //echo PodsForm::field('code4', "Yay! It's TinyMCE!", 'tinymce', array('class' => 'pods-code-field'));
-                                    wp_editor("<strong>Yay, it's TinyMCE!</strong>", 'pods-field-code4');
+                                    echo PodsForm::field('code4', "Yay! It's TinyMCE!", 'tinymce');
+                                    //wp_editor("<strong>Yay, it's TinyMCE!</strong>", 'pods-field-code4');
                                     ?>
                                 </li>
 
@@ -516,10 +516,10 @@
                                                 <span class="pods-file-thumb">
                                                     <span>
                                                         <img class="pinkynail" src="<?php echo PODS_URL . 'ui/images/icon32.png'; ?>" alt="Thumbnail" />
-                                                        <?php echo PodsForm::field('file1[files]', NULL, 'hidden'); ?>
+                                                        <?php echo PodsForm::field('file1[]', $i + 1, 'hidden'); ?>
                                                     </span>
                                                 </span>
-                                                <span class="pods-file-name">Sample Image</span>
+                                                <span class="pods-file-name">Sample Image <?php echo $i + 1; ?></span>
                                                 <span class="pods-file-remove">
                                                     <img src="<?php echo PODS_URL . 'ui/images/del.png'; ?>" alt="" class="pods-icon-minus" />
                                                 </span>
@@ -534,6 +534,7 @@
                                 <!-- File Upload Field w/ Comment -->
                                 <li class="pods-field pods-file pods-file-context" id="field-pods-field-file2">
                                     <?php echo PodsForm::label('file2', 'File Upload with Comment'); ?>
+                                    <?php echo PodsForm::comment( 'File Upload Details' ); ?>
                                     <ul class="pods-files">
                                         <?php for($i=0; $i < 3; $i++): ?>
                                             <li class="media-item">
@@ -541,10 +542,10 @@
                                                 <span class="pods-file-thumb">
                                                     <span>
                                                         <img class="pinkynail" src="<?php echo PODS_URL . 'ui/images/icon32.png'; ?>" alt="Thumbnail" />
-                                                        <?php echo PodsForm::field('file2[files]', NULL, 'hidden'); ?>
+                                                        <?php echo PodsForm::field('file2[]', $i + 1, 'hidden'); ?>
                                                     </span>
                                                 </span>
-                                                <span class="pods-file-name">Sample Image</span>
+                                                <span class="pods-file-name">Sample Image <?php echo $i + 1; ?></span>
                                                 <span class="pods-file-remove">
                                                     <img src="<?php echo PODS_URL . 'ui/images/del.png'; ?>" alt="" class="pods-icon-minus" />
                                                 </span>
@@ -554,7 +555,6 @@
                                     <p class="pods-add-file">
                                         <a href="media-upload.php?type=image&amp;TB_iframe=1&amp;width=640&amp;height=1500" class="button">Add New</a>
                                     </p>
-                                    <?php echo PodsForm::comment('File Upload Details'); ?>
                                 </li><!-- /#field-pods-field-file2 -->
 
                                 <!-- Pods Pick Field -->

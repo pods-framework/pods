@@ -66,6 +66,8 @@ class PodsMeta {
 
         if (!empty(self::$comment)) {
             // Handle Comment Editor
+            add_action( 'comment_form_logged_in_after', array( $this, 'meta_comment_new_logged_in' ), 10, 2 );
+            add_filter( 'comment_form_default_fields', array( $this, 'meta_comment_new' ) );
             add_action( 'add_meta_boxes_comment', array( $this, 'meta_comment_add' ) );
             add_action( 'wp_insert_comment', array( $this, 'save_comment' ) );
             add_action( 'edit_comment', array( $this, 'save_comment' ) );
@@ -218,11 +220,57 @@ class PodsMeta {
         }
     }
 
-    public function meta_comment_add ( $comment ) {
+    public function meta_comment_new_logged_in ( $commenter, $user_identity ) {
         $pod_name = current( self::$comment );
         $pod_name = $pod_name['name'];
         $pod = $this->api->load_pod( array( 'name' => $pod_name ) );
-        add_meta_box( 'comment-pods-meta', $pod['options']['label'], array( $this, 'meta_comment' ), 'comment', 'normal', 'high' );
+        foreach ( $pod['fields'] as $field ) {
+?>
+            <p class="comment-form-author comment-form-pods-meta-<?php echo $field['name']; ?>">
+<?php
+            echo PodsForm::label('pods_meta_' . $field['name'], $field['label']);
+            echo PodsForm::field('pods_meta_' . $field['name'], '', $field['type']);
+?>
+            </p>
+<?php
+        }
+    }
+    public function meta_comment_new ( $form_fields ) {
+        $pod_name = current( self::$comment );
+        $pod_name = $pod_name['name'];
+        $pod = $this->api->load_pod( array( 'name' => $pod_name ) );
+        foreach ( $pod['fields'] as $field ) {
+            ob_start();
+?>
+            <p class="comment-form-author comment-form-pods-meta-<?php echo $field['name']; ?>">
+<?php
+            echo PodsForm::label('pods_meta_' . $field['name'], $field['label']);
+            echo PodsForm::field('pods_meta_' . $field['name'], '', $field['type']);
+?>
+            </p>
+<?php
+            $form_fields[ 'pods_meta_' . $field[ 'name' ] ] = ob_get_clean();
+        }
+        return $form_fields;
+    }
+    public function meta_comment_add ( $comment ) {
+        $pod_name = current( self::$comment );
+        $pod_name = $pod_name[ 'name' ];
+        $pod = $this->api->load_pod( array( 'name' => $pod_name ) );
+?>
+    <table class="form-table pods-metabox">
+<?php
+        foreach ( $pod[ 'fields' ] as $field ) {
+?>
+            <tr class="form-field">
+                <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ] ); ?></th>
+                <td><?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], ( is_object( $comment ) ? get_comment_meta( $comment->comment_ID, $field[ 'name' ] ) : '' ), $field[ 'type' ] ); ?></td>
+            </tr>
+<?php
+        }
+?>
+    </table>
+<?php
     }
     public function meta_comment ( $comment ) {
         $pod_name = current( self::$comment );

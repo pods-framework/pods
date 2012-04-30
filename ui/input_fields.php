@@ -290,6 +290,11 @@ elseif ('file' == $coltype) {
                     file_div.attr('id', response.ID);
                 }
             });
+
+            plup_<?php echo esc_attr($name); ?>.bind('UploadComplete', function(up, files) {
+                var start_button = jQuery('#plupload-container-<?php echo esc_attr($css_id); ?> .start');
+                start_button.remove();
+            });
             
             plup_<?php echo esc_attr($name); ?>.init();
 

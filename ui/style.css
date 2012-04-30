@@ -212,6 +212,14 @@
     border: 1px solid #E3E3E3;
 }
 
+.plupload-container .button {
+    margin-bottom: 10px;
+}
+
+.plupload-container .start {
+    margin-top: 10px;
+}
+
 .pods_admin .area textarea,
 .pods_admin .desc,
 .pods_admin .code,

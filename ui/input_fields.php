@@ -237,6 +237,7 @@ elseif ('file' == $coltype) {
                     "logged_in_cookie": "<?php echo esc_attr($_COOKIE[LOGGED_IN_COOKIE]); ?>"
                 }
             });
+            plup_<?php echo esc_attr($name); ?>.init();
 
             // Plupload Init Event Handler
             plup_<?php echo esc_attr($name); ?>.bind('Init', function(up, params) {
@@ -249,22 +250,8 @@ elseif ('file' == $coltype) {
                     jQuery(".rightside.<?php echo esc_attr($name); ?> .form").append('<div id="' + file.id + '">' + file.name + '<div class="pods-progress"><div class="pods-bar"></div></div></div>');
                 });
                 
-                var start_button = jQuery('#plupload-container-<?php echo esc_attr($css_id); ?> .start');
-                if (!start_button.size()) {
-                    start_button = jQuery('<input />', {
-                        'type': 'button',
-                        'class': 'start button',
-                        'value': 'Start Upload',
-                        'css': {
-                            'cursor': 'pointer'
-                        },
-                        'click': function(evt) {
-                            plup_<?php echo esc_attr($name); ?>.start();
-                            return false;
-                        }
-                    });
-                    start_button.appendTo('#plupload-container-<?php echo esc_attr($css_id); ?>');
-                }
+                up.refresh();
+                up.start();
             });
 
             // Plupload UploadProgress Event Handler
@@ -291,12 +278,7 @@ elseif ('file' == $coltype) {
                 }
             });
 
-            plup_<?php echo esc_attr($name); ?>.bind('UploadComplete', function(up, files) {
-                var start_button = jQuery('#plupload-container-<?php echo esc_attr($css_id); ?> .start');
-                start_button.remove();
-            });
             
-            plup_<?php echo esc_attr($name); ?>.init();
 
         });
     </script>

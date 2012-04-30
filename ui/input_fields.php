@@ -207,19 +207,22 @@ elseif ('file' == $coltype) {
 
             if (!isset($coltype_exists[$coltype]) || empty($coltype_exists[$coltype])) {
 ?>
-    <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/swfupload/swfupload.js'; ?>"></script>
-    <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.js'; ?>"></script>
-    <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.html4.js'; ?>"></script>
-    <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.html5.js'; ?>"></script>
-    <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.flash.js'; ?>"></script>
-    <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.silverlight.js'; ?>"></script>
+    <?php global $wp_version; if (version_compare($wp_version, '3.3', '>=')) { ?>
+        <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.js'; ?>"></script>
+        <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.html4.js'; ?>"></script>
+        <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.html5.js'; ?>"></script>
+        <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.flash.js'; ?>"></script>
+        <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.silverlight.js'; ?>"></script>
+    <?php } else { ?>
+        <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/swfupload/swfupload.js'; ?>"></script>
+    <?php } ?>
 <?php
             }
             $button_height = (function_exists('is_super_admin') ? 23 : 24);
 ?>
     <script type="text/javascript">
         jQuery(function() {
-    <?php global $wp_version; if (version_compare($wp_version, '3.3', '>=')) { ?>
+    <?php if (version_compare($wp_version, '3.3', '>=')) { ?>
             plup_<?php echo esc_attr($name); ?> = new plupload.Uploader({
                 runtimes: 'html5,flash,silverlight,html4',
                 browse_button: '<?php echo esc_attr($css_id); ?>',

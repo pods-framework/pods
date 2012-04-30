@@ -218,6 +218,7 @@ elseif ('file' == $coltype) {
             $button_height = (function_exists('is_super_admin') ? 23 : 24);
 ?>
     <script type="text/javascript">
+    <?php global $wp_version; if (version_compare($wp_version, '3.3', '>=')) { ?>
         jQuery(function() {
             plup_<?php echo esc_attr($name); ?> = new plupload.Uploader({
                 runtimes: 'html5,flash,silverlight,html4',
@@ -278,9 +279,8 @@ elseif ('file' == $coltype) {
                 }
             });
 
-            
+        <?php } else { ?>
 
-            /* SWFUpload Setup (soon to be deprecated)
             swfu_<?php echo esc_attr($name); ?> = new SWFUpload({
                 button_text: '<span class="button">Select + Upload</span>',
                 button_text_style: '.button { text-align:center; color:#464646; font-size:11px; font-family:"Lucida Grande",Verdana,Arial,"Bitstream Vera Sans",sans-serif; }',
@@ -327,7 +327,7 @@ elseif ('file' == $coltype) {
                     this.startUpload();
                 }
             });
-            */
+        <?php } ?>
         });
     </script>
     <div class="plupload-container" id="plupload-container-<?php echo esc_attr($css_id); ?>">

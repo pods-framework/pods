@@ -998,9 +998,12 @@ function pods_array (&$container) {
  *
  * @since 2.0.0
  */
-function pods_view ($view, $data = null, $expires = 0, $cache_mode = 'cache') {
+function pods_view ($view, $data = null, $expires = 0, $cache_mode = 'cache', $return = false) {
     require_once( PODS_DIR . 'classes/PodsView.php' );
-    return PodsView::view( $view, $data, $expires, $cache_mode );
+    $view = PodsView::view( $view, $data, $expires, $cache_mode );
+    if ( $return )
+        return $view;
+    echo $view;
 }
 
 /**

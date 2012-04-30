@@ -116,6 +116,10 @@
     margin-right: 8px;
 }
 
+.pods_admin .dropme, .pods_form .dropme {
+    cursor: pointer;
+}
+
 .pods_admin #column_list {
     padding-top: 10px;
 }

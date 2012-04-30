@@ -218,8 +218,8 @@ elseif ('file' == $coltype) {
             $button_height = (function_exists('is_super_admin') ? 23 : 24);
 ?>
     <script type="text/javascript">
-    <?php global $wp_version; if (version_compare($wp_version, '3.3', '>=')) { ?>
         jQuery(function() {
+    <?php global $wp_version; if (version_compare($wp_version, '3.3', '>=')) { ?>
             plup_<?php echo esc_attr($name); ?> = new plupload.Uploader({
                 runtimes: 'html5,flash,silverlight,html4',
                 browse_button: '<?php echo esc_attr($css_id); ?>',

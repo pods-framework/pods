@@ -7,9 +7,10 @@ class PodsForm {
      * @since 2.0.0
      */
     public function __construct () {
-        add_filter( 'pods_form_ui_label_text', 'wp_kses_post', 10, 1 );
-
-        return false;
+        add_filter( 'pods_form_ui_label_text', 'wp_kses_post', 9, 1 );
+        add_filter( 'pods_form_ui_label_help', 'wp_kses_post', 9, 1 );
+        add_filter( 'pods_form_ui_comment_text', 'wp_kses_post', 9, 1 );
+        add_filter( 'pods_form_ui_comment_text', 'the_content', 9, 1 );
     }
 
     /**
@@ -17,30 +18,54 @@ class PodsForm {
      *
      * @since 2.0.0
      */
-    public static function label ($name, $label, $help = '') {
-        $name_clean = self::clean($name);
-        $name_more_clean = self::clean($name, true);
+    public static function label ( $name, $label, $help = '', $options = null ) {
+        $name_clean = self::clean( $name );
+        $name_more_clean = self::clean( $name, true );
 
-        $label = apply_filters('pods_form_ui_label_text', $label, $name, $help);
-        $help = apply_filters('pods_form_ui_label_help', $help, $name, $label);
+        $label = apply_filters( 'pods_form_ui_label_text', $label, $name, $help, $options );
+        $help = apply_filters( 'pods_form_ui_label_help', $help, $name, $label, $options );
 
         ob_start();
 
+        $type = 'label';
         $attributes = array();
-        $attributes['class'] = 'pods-form-ui-label-' . $name_more_clean;
-        $attributes['for'] = 'pods-form-ui-' . $name_clean;
-?>
-    <label<?php self::attributes($attributes, $name, 'label'); ?>>
-        <?php
-            echo $label;
-            if (0 < strlen($help) && 'help' != $help)
-                pods_help($help);
-        ?>
-    </label>
-<?php
+        $attributes[ 'class' ] = 'pods-form-ui-' . $type . ' pods-form-ui-' . $type . '-' . $name_more_clean;
+        $attributes[ 'for' ] = 'pods-form-ui-' . $name_clean;
+        $attributes = self::merge_attributes( $attributes, $name, $type, $options, false );
+
+        pods_view( PODS_DIR . 'ui/fields/_label.php', compact( $name, $label, $help, $attributes, $options ) );
+
         $output = ob_get_clean();
 
-        return apply_filters('pods_form_ui_label', $output, $name, $label, $help);
+        return apply_filters( 'pods_form_ui_' . $type, $output, $name, $label, $help, $attributes, $options );
+    }
+
+    /**
+     * Output a Field Comment Paragraph
+     */
+    public static function comment ( $name, $message = null, $options = null ) {
+        $options = (array) $options;
+        $name_more_clean = self::clean( $name, true );
+
+        if ( isset( $options[ 'description' ] ) && !empty( $options[ 'description' ] ) )
+            $message = $options[ 'description' ];
+        elseif ( empty( $message ) )
+            return;
+
+        $message = apply_filters( 'pods_form_ui_comment_text', $message, $name, $options );
+
+        ob_start();
+
+        $type = 'comment';
+        $attributes = array();
+        $attributes[ 'class' ] = 'pods-form-ui-' . $type . ' pods-form-ui-' . $type . '-' . $name_more_clean;
+        $attributes = self::merge_attributes( $attributes, $name, $type, $options, false );
+
+        pods_view( PODS_DIR . 'ui/fields/_comment.php', compact( $name, $attributes, $options ) );
+
+        $output = ob_get_clean();
+
+        return apply_filters( 'pods_form_ui_' . $type, $output, $name, $message, $attributes, $options );
     }
 
     /**
@@ -48,25 +73,20 @@ class PodsForm {
      *
      * @since 2.0.0
      */
-    public static function field ($name, $value, $type = 'text', $options = null) {
+    public static function field ($name, $value, $type = 'text', $options = null, $pod = null, $id = null) {
         $options = (array) $options;
 
         ob_start();
 
-        if (method_exists(get_called_class(), "field_{$type}")) {
-            $field = "field_{$type}";
-            call_user_func(array(get_called_class(), $field), $name, $value, $options);
-        }
-        elseif (method_exists(__CLASS__, "field_{$type}")) {
-            $field = "field_{$type}";
-            call_user_func(array(__CLASS__, $field), $name, $value, $options);
+        if ( class_exists( "PodsField_{$type}" ) && method_exists( "PodsField_{$type}", 'input' ) ) {
+            call_user_func( array( "PodsField_{$type}", 'input' ), $name, $value, $options, $pod, $id );
         }
         else
-            do_action('pods_form_ui_field_' . $type, $name, $value, $options);
+            do_action('pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id);
 
         $output = ob_get_clean();
 
-        return apply_filters('pods_form_ui_field', $output, $name, $value, $type, $options);
+        return apply_filters('pods_form_ui_field_' . $type, $output, $name, $value, $options, $pod, $id);
     }
 
     /**
@@ -76,19 +96,13 @@ class PodsForm {
      */
     protected function field_text ($name, $value = null, $options = null) {
         $options = (array) $options;
-        $name_clean = self::clean($name);
-        $name_more_clean = self::clean($name, true);
         $type = 'text';
         $attributes = array();
         $attributes['type'] = 'text';
-        $attributes['name'] = $name;
-        $attributes['data-name-clean'] = $name_more_clean;
-        $attributes['id'] = 'pods-form-ui-' . $name_clean;
-        $attributes['class'] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
         if ( is_array( $value ) )
             $value = current( $value );
         $attributes['value'] = $value;
-        $attributes = self::merge_attributes($attributes, $options);
+        $attributes = self::merge_attributes($attributes, $name, $type, $options);
         if (isset($options['default']) && strlen($attributes['value']) < 1)
             $attributes['value'] = $options['default'];
 ?>
@@ -103,15 +117,9 @@ class PodsForm {
      */
     protected function field_textarea ($name, $value = null, $options = null) {
         $options = (array) $options;
-        $name_clean = self::clean($name);
-        $name_more_clean = self::clean($name, true);
         $type = 'textarea';
         $attributes = array();
-        $attributes['name'] = $name;
-        $attributes['data-name-clean'] = $name_more_clean;
-        $attributes['id'] = 'pods-form-ui-' . $name_clean;
-        $attributes['class'] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
-        $attributes = self::merge_attributes($attributes, $options);
+        $attributes = self::merge_attributes($attributes, $name, $type, $options);
         if (isset($options['default']) && strlen($value) < 1)
             $value = $options['default'];
         $value = apply_filters('pods_form_ui_field_' . $type . '_value', $value, $name, $attributes, $options);
@@ -127,14 +135,10 @@ class PodsForm {
      */
     protected function field_tinymce ($name, $value = null, $options = null) {
         $options = (array) $options;
-        $name_clean = self::clean($name);
-        $name_more_clean = self::clean($name, true);
         $type = 'tinymce';
         $attributes = array();
         $attributes['name'] = $name;
-        $attributes['data-name-clean'] = $name_more_clean;
-        $attributes['id'] = 'pods-form-ui-' . $name_clean;
-        $attributes = self::merge_attributes($attributes, $options);
+        $attributes = self::merge_attributes($attributes, $name, $type, $options);
         if (isset($options['default']) && strlen($value) < 1)
             $value = $options['default'];
 
@@ -169,20 +173,14 @@ class PodsForm {
      */
     protected function field_number ($name, $value = null, $options = null) {
         $options = (array) $options;
-        $name_clean = self::clean($name);
-        $name_more_clean = self::clean($name, true);
         $type = 'number';
         $decimals = 0;
         $decimal_point = '.';
         $thousands_sep = '';
         $attributes = array();
         $attributes['type'] = 'text';
-        $attributes['name'] = $name;
-        $attributes['data-name-clean'] = $name_more_clean;
-        $attributes['id'] = 'pods-form-ui-' . $name_clean;
-        $attributes['class'] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
         $attributes['value'] = $value;
-        $attributes = self::merge_attributes($attributes, $options);
+        $attributes = self::merge_attributes($attributes, $name, $type, $options);
         if (isset($options['default']) && strlen($attributes['value']) < 1)
             $attributes['value'] = $options['default'];
         if (isset($options['decimals']))
@@ -224,17 +222,11 @@ class PodsForm {
      */
     protected function field_password ($name, $value = null, $options = null) {
         $options = (array) $options;
-        $name_clean = self::clean($name);
-        $name_more_clean = self::clean($name, true);
         $type = 'password';
         $attributes = array();
         $attributes['type'] = 'password';
-        $attributes['name'] = $name;
-        $attributes['data-name-clean'] = $name_more_clean;
-        $attributes['id'] = 'pods-form-ui-' . $name_clean;
-        $attributes['class'] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
         $attributes['value'] = $value;
-        $attributes = self::merge_attributes($attributes, $options);
+        $attributes = self::merge_attributes($attributes, $name, $type, $options);
         if (isset($options['default']) && strlen($attributes['value']) < 1)
             $attributes['value'] = $options['default'];
         $attributes['value'] = apply_filters('pods_form_ui_field_' . $type . '_value', $attributes['value'], $name, $attributes, $options);
@@ -252,17 +244,11 @@ class PodsForm {
      */
     protected function field_db ($name, $value = null, $options = null) {
         $options = (array) $options;
-        $name_clean = self::clean($name);
-        $name_more_clean = self::clean($name, true);
         $type = 'slug';
         $attributes = array();
         $attributes['type'] = 'text';
-        $attributes['name'] = $name;
-        $attributes['data-name-clean'] = $name_more_clean;
-        $attributes['id'] = 'pods-form-ui-' . $name_clean;
-        $attributes['class'] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
         $attributes['value'] = self::clean($value, false, true);
-        $attributes = self::merge_attributes($attributes, $options);
+        $attributes = self::merge_attributes($attributes, $name, $type, $options);
         if (isset($options['default']) && strlen($attributes['value']) < 1)
             $attributes['value'] = $options['default'];
 ?>
@@ -289,17 +275,11 @@ class PodsForm {
      */
     protected function field_slug ($name, $value = null, $options = null) {
         $options = (array) $options;
-        $name_clean = self::clean($name);
-        $name_more_clean = self::clean($name, true);
         $type = 'slug';
         $attributes = array();
         $attributes['type'] = 'text';
-        $attributes['name'] = $name;
-        $attributes['data-name-clean'] = $name_more_clean;
-        $attributes['id'] = 'pods-form-ui-' . $name_clean;
-        $attributes['class'] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
         $attributes['value'] = $value;
-        $attributes = self::merge_attributes($attributes, $options);
+        $attributes = self::merge_attributes($attributes, $name, $type, $options);
         if (isset($options['default']) && strlen($attributes['value']) < 1)
             $attributes['value'] = $options['default'];
 ?>
@@ -320,48 +300,15 @@ class PodsForm {
     }
 
     /**
-     * Output field type 'boolean'
-     *
-     * @since 2.0.0
-     */
-    protected function field_boolean ($name, $value = null, $options = null) {
-        $options = (array) $options;
-        $name_clean = self::clean($name);
-        $name_more_clean = self::clean($name, true);
-        $type = 'boolean';
-        $attributes = array();
-        $attributes['type'] = 'checkbox';
-        $attributes['name'] = $name;
-        $attributes['data-name-clean'] = $name_more_clean;
-        $attributes['id'] = 'pods-form-ui-' . $name_clean;
-        $attributes['class'] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
-        $attributes['value'] = 1;
-        $attributes['checked'] = (1 == $value || true === $value) ? 'CHECKED' : null;
-        $attributes = self::merge_attributes($attributes, $options);
-        if (isset($options['default']) && strlen($attributes['value']) < 1)
-            $attributes['value'] = $options['default'];
-        $attributes['value'] = apply_filters('pods_form_ui_field_' . $type . '_value', $attributes['value'], $name, $attributes, $options);
-?>
-    <input<?php self::attributes($attributes, $name, $type, $options); ?> />
-<?php
-    }
-
-    /**
      * Output field type 'pick'
      *
      * @since 2.0.0
      */
     protected function field_pick ($name, $value = null, $options = null) {
         $options = (array) $options;
-        $name_clean = self::clean($name);
-        $name_more_clean = self::clean($name, true);
         $type = 'pick';
         $attributes = array();
-        $attributes['name'] = $name;
-        $attributes['data-name-clean'] = $name_more_clean;
-        $attributes['id'] = 'pods-form-ui-' . $name_clean;
-        $attributes['class'] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
-        $attributes = self::merge_attributes($attributes, $options);
+        $attributes = self::merge_attributes($attributes, $name, $type, $options);
         if (isset($options['default']) && strlen($value) < 1)
             $value = $options['default'];
         $value = apply_filters('pods_form_ui_field_' . $type . '_value', $value, $name, $attributes, $options);
@@ -419,17 +366,12 @@ class PodsForm {
      * @since 2.0.0
      */
     protected function field_pick_checkbox ($name, $value = null, $options = null) {
-        $name_clean = self::clean($name);
-        $name_more_clean = self::clean($name, true);
+        $options = (array) $options;
         $type = 'pick_checkbox';
         $attributes = array();
         $attributes['type'] = 'checkbox';
-        $attributes['name'] = $name;
-        $attributes['data-name-clean'] = $name_more_clean;
-        $attributes['id'] = 'pods-form-ui-' . $name_clean;
-        $attributes['class'] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
         $attributes['value'] = $value;
-        $attributes = self::merge_attributes($attributes, $options);
+        $attributes = self::merge_attributes($attributes, $name, $type, $options);
         if (isset($options['default']) && strlen($attributes['value']) < 1)
             $attributes['value'] = $options['default'];
         if (isset($options['data']))
@@ -444,40 +386,14 @@ class PodsForm {
 	 * Output a hidden field
 	 */
 	protected function field_hidden($name, $value = null, $options = null) {
-		$name_clean = self::clean($name);
-		$name_more_clean = self::clean($name, true);
 		$type = 'hidden';
 		$attributes = array();
 		$attributes['type'] = $type;
-		$attributes['name'] = $name;
-		$attributes['data-name-clean'] = $name_more_clean;
-		$attributes['id'] = 'pods-form-ui-' . $name_clean;
-		$attributes['class'] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
 		$attributes['value'] = $value;
-		$attributes = self::merge_attributes($attributes, $options);
+		$attributes = self::merge_attributes($attributes, $name, $type, $options);
 ?>
 	<input<?php self::attributes($attributes, $name, $type, $options); ?> />
 <?php
-	}
-
-	/**
-	 * Output a Field Comment Paragraph
-	 */
-	public static function comment($message) {
-		$message = apply_filters('pods_form_ui_comment_text', $message);
-
-		ob_start();
-
-		$attributes = array();
-		$attributes['class'] = 'pods-field-comment';
-?>
-		<p<?php self::attributes($attributes); ?>>
-			<?php echo wp_kses_post($message); ?>
-		</p>
-<?php
-		$output = ob_get_clean();
-
-		return apply_filters('pods_form_ui_comment', $output, $message);
 	}
 
     /**
@@ -499,8 +415,18 @@ class PodsForm {
      *
      * @since 2.0.0
      */
-    protected function merge_attributes ($attributes, $options) {
+    protected function merge_attributes ($attributes, $name = null, $type = null, $options = null ) {
         $options = (array) $options;
+        if ( !in_array( $type, array( 'label', 'comment' ) ) ) {
+            $name_clean = self::clean( $name );
+            $name_more_clean = self::clean( $name, true );
+            $_attributes = array();
+            $_attributes[ 'name' ] = $name;
+            $_attributes[ 'data-name-clean' ] = $name_more_clean;
+            $_attributes[ 'id' ] = 'pods-form-ui-' . $name_clean;
+            $_attributes[ 'class' ] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
+            $attributes = array_merge( $_attributes, (array) $attributes );
+        }
         if (isset($options['attributes']) && is_array($options['attributes']) && !empty($options['attributes'])) {
             $attributes = array_merge($attributes, $options['attributes']);
         }
@@ -513,6 +439,7 @@ class PodsForm {
             else
                 $attributes['class'] = $options['class'];
         }
+        $attributes = (array) apply_filters( 'pods_form_ui_field_' . $type . '_merge_attributes', $attributes, $name, $options );
         return $attributes;
     }
 

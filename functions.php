@@ -988,9 +988,9 @@ function pods_migrate ($type = null, $delimiter = null, $data = null) {
  *
  * @since 2.0.0
  */
-function pods_array ($container) {
+function pods_array (&$container) {
     require_once(PODS_DIR . 'classes/PodsArray.php');
-    return new PodsArray(&$container);
+    return new PodsArray($container);
 }
 
 /**
@@ -998,10 +998,37 @@ function pods_array ($container) {
  *
  * @since 2.0.0
  */
-function pods_view($view,  $data) {
-	if(!empty($data)) { extract($data); }
-	$view = PODS_DIR.'/views/'.trim($view,'/').'.php';
-	if(file_exists($view)) {
-		include_once($view);
-	}
+function pods_view ($view, $data = null, $expires = 0, $cache_mode = 'cache') {
+    require_once( PODS_DIR . 'classes/PodsView.php' );
+    return PodsView::view( $view, $data, $expires, $cache_mode );
+}
+
+/**
+ * Set a cached value
+ *
+ * @since 2.0.0
+ */
+function pods_cache_set ( $key, $value, $expires = 0, $cache_mode = 'cache' ) {
+    require_once( PODS_DIR . 'classes/PodsView.php' );
+    return PodsView::set( $key, $value, $expires, $cache_mode );
+}
+
+/**
+ * Set a cached value
+ *
+ * @since 2.0.0
+ */
+function pods_cache_get ( $key, $cache_mode = 'cache' ) {
+    require_once( PODS_DIR . 'classes/PodsView.php' );
+    return PodsView::get( $key, $cache_mode );
+}
+
+/**
+ * Clear a cached value
+ *
+ * @since 2.0.0
+ */
+function pods_cache_clear ( $key, $cache_mode = 'cache' ) {
+    require_once( PODS_DIR . 'classes/PodsView.php' );
+    return PodsView::clear( $key, $cache_mode );
 }

@@ -220,12 +220,12 @@ elseif ('file' == $coltype) {
     <script type="text/javascript">
         jQuery(function() {
             plup_<?php echo esc_attr($name); ?> = new plupload.Uploader({
-                runtimes: 'flash,html4,html5,silverlight',
+                runtimes: 'html5,flash,silverlight,html4',
                 browse_button: '<?php echo esc_attr($css_id); ?>',
                 container: 'plupload-container-<?php echo esc_attr($css_id); ?>',
-                file_data_name: 'async-upload',
+                file_data_name: 'Filedata',
                 max_file_size: '<?php echo wp_max_upload_size(); ?>b',
-                url: '<?php echo admin_url('async-upload.php'); ?>',
+                url: '<?php echo PODS_URL; ?>/ui/ajax/misc.php',
                 flash_swf_url: '<?php echo includes_url('js/plupload/plupload.flash.swf'); ?>',
                 silverlight_xap_url: '<?php echo includes_url('js/plupload/plupload.silverlight.xap'); ?>',
                 multipart: true,
@@ -237,6 +237,63 @@ elseif ('file' == $coltype) {
                     "logged_in_cookie": "<?php echo esc_attr($_COOKIE[LOGGED_IN_COOKIE]); ?>"
                 }
             });
+
+            // Plupload Init Event Handler
+            plup_<?php echo esc_attr($name); ?>.bind('Init', function(up, params) {
+
+            });
+            
+            // Plupload FilesAdded Event Handler
+            plup_<?php echo esc_attr($name); ?>.bind('FilesAdded', function(up, files) {
+                jQuery.each(files, function(index, file) {
+                    jQuery(".rightside.<?php echo esc_attr($name); ?> .form").append('<div id="' + file.id + '">' + file.name + '<div class="pods-progress"><div class="pods-bar"></div></div></div>');
+                });
+                
+                var start_button = jQuery('#plupload-container-<?php echo esc_attr($css_id); ?> .start');
+                if (!start_button.size()) {
+                    start_button = jQuery('<input />', {
+                        'type': 'button',
+                        'class': 'start button',
+                        'value': 'Start Upload',
+                        'css': {
+                            'cursor': 'pointer'
+                        },
+                        'click': function(evt) {
+                            plup_<?php echo esc_attr($name); ?>.start();
+                            return false;
+                        }
+                    });
+                    start_button.appendTo('#plupload-container-<?php echo esc_attr($css_id); ?>');
+                }
+            });
+
+            // Plupload UploadProgress Event Handler
+            plup_<?php echo esc_attr($name); ?>.bind('UploadProgress', function(up, file) {
+                jQuery('#' + file.id + ' .pods-bar').css('width', file.percent + '%');
+            });
+            
+            // Plupload FileUploaded Event Handler
+            plup_<?php echo esc_attr($name); ?>.bind('FileUploaded', function(up, file, resp) {
+                var file_div = jQuery('#' + file.id);
+                file_div.find('.pods-progress').remove();
+
+                if ("Error" == resp.response.substr(0, 5)) {
+                    var response = resp.response.substr(7);
+                    file_div.append(response);
+                } else if ("<e>" == resp.response.substr(0, 3)) {
+                    var response = resp.response;
+                    file_div.append(resp.response);
+                } else {
+                    var response = jQuery.parseJSON(resp.response);
+                    file_div.html('<div class="btn dropme"></div><a href="' + response.guid + '" target="_blank">' + response.post_title + '</a>');
+                    file_div.attr('class', 'success');
+                    file_div.attr('id', response.ID);
+                }
+            });
+            
+            plup_<?php echo esc_attr($name); ?>.init();
+
+            /* SWFUpload Setup (soon to be deprecated)
             swfu_<?php echo esc_attr($name); ?> = new SWFUpload({
                 button_text: '<span class="button">Select + Upload</span>',
                 button_text_style: '.button { text-align:center; color:#464646; font-size:11px; font-family:"Lucida Grande",Verdana,Arial,"Bitstream Vera Sans",sans-serif; }',
@@ -283,10 +340,11 @@ elseif ('file' == $coltype) {
                     this.startUpload();
                 }
             });
+            */
         });
     </script>
     <div class="plupload-container" id="plupload-container-<?php echo esc_attr($css_id); ?>">
-        <input type="button" id="<?php echo esc_attr($css_id); ?>" value="swfupload not loaded" />
+        <input type="button" class="button" id="<?php echo esc_attr($css_id); ?>" value="Browse + Upload" style="cursor: pointer" />
 <?php
         }
         if (!(defined('PODS_DISABLE_FILE_BROWSER') && true === PODS_DISABLE_FILE_BROWSER)

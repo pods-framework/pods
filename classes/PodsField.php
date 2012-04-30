@@ -27,13 +27,15 @@ class PodsField {
     }
 
     /**
-     * Add options and set defaults to
+     * Add options and set defaults for field type, shows in admin area
      *
-     * @param array $options
+     * @return array $options
      *
      * @since 2.0.0
      */
-    public function options ( $options ) {
+    public function options () {
+        $options = array();
+        
         return $options;
     }
 

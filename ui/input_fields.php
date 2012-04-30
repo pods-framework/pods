@@ -280,6 +280,54 @@ elseif ('file' == $coltype) {
 
             
 
+            /* SWFUpload Setup (soon to be deprecated)
+            swfu_<?php echo esc_attr($name); ?> = new SWFUpload({
+                button_text: '<span class="button">Select + Upload</span>',
+                button_text_style: '.button { text-align:center; color:#464646; font-size:11px; font-family:"Lucida Grande",Verdana,Arial,"Bitstream Vera Sans",sans-serif; }',
+                button_width: "132",
+                button_height: "<?php echo $button_height; ?>",
+                button_text_top_padding: 3,
+                button_image_url: "<?php echo WP_INC_URL; ?>/images/upload.png",
+                button_placeholder_id: "<?php echo esc_attr($css_id); ?>",
+                button_cursor: SWFUpload.CURSOR.HAND,
+                button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT,
+                upload_url: "<?php echo PODS_URL; ?>/ui/ajax/misc.php",
+                flash_url: "<?php echo WP_INC_URL; ?>/js/swfupload/swfupload.swf",
+                file_types: "*.*",
+                file_size_limit: "<?php echo esc_attr(wp_max_upload_size()); ?>",
+                post_params: {"action": "wp_handle_upload_advanced", "_wpnonce": "<?php echo wp_create_nonce('pods-wp_handle_upload_advanced'); ?>", "auth_cookie": "<?php echo (is_ssl() ? esc_attr($_COOKIE[SECURE_AUTH_COOKIE]) : esc_attr($_COOKIE[AUTH_COOKIE])); ?>", "logged_in_cookie": "<?php echo esc_attr($_COOKIE[LOGGED_IN_COOKIE]); ?>"},
+                file_dialog_complete_handler: function(num_files, num_queued_files, total_queued_files) {
+                    this.startUpload();
+                },
+                file_queued_handler: function(file) {
+                    jQuery(".rightside.<?php echo esc_attr($name); ?> .form").append('<div id="' + file.id + '">' + file.name + '<div class="pods-progress"><div class="pods-bar"></div></div></div>');
+                },
+                upload_progress_handler: function(file, bytes_complete, bytes_total) {
+                    var percent = Math.ceil(100 * (bytes_complete / bytes_total));
+                    jQuery("#"+file.id+" .pods-bar").css("width", percent + "%");
+                },
+                upload_success_handler: function(file, server_data, response) {
+                    jQuery("#"+file.id+" .pods-progress").remove();
+
+                    if ("Error" == server_data.substr(0, 5)) {
+                        server_data = server_data.substr(7);
+                        jQuery("#"+file.id).append(server_data);
+                    }
+                    else if ("<e>" == server_data.substr(0, 3)) {
+                        jQuery("#"+file.id).append(server_data);
+                    }
+                    else {
+                        server_data = eval('('+server_data+')');
+                        jQuery("#"+file.id).html('<div class="btn dropme"></div> <a href="' + server_data.guid + '" target="_blank">' + server_data.post_title + '</a>');
+                        jQuery("#"+file.id).attr("class", "success");
+                        jQuery("#"+file.id).attr("id", server_data.ID);
+                    }
+                },
+                upload_complete_handler: function(file) {
+                    this.startUpload();
+                }
+            });
+            */
         });
     </script>
     <div class="plupload-container" id="plupload-container-<?php echo esc_attr($css_id); ?>">

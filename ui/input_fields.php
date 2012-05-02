@@ -222,7 +222,7 @@ elseif ('file' == $coltype) {
 ?>
     <script type="text/javascript">
         jQuery(function() {
-    <?php if (version_compare($wp_version, '3.3', '>=')) { ?>
+    <?php global $wp_version; if (version_compare($wp_version, '3.3', '>=')) { ?>
             plup_<?php echo esc_attr($name); ?> = new plupload.Uploader({
                 runtimes: 'html5,flash,silverlight,html4',
                 browse_button: '<?php echo esc_attr($css_id); ?>',

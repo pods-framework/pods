@@ -116,6 +116,10 @@
     margin-right: 8px;
 }
 
+.pods_admin .dropme, .pods_form .dropme {
+    cursor: pointer;
+}
+
 .pods_admin #column_list {
     padding-top: 10px;
 }
@@ -210,6 +214,14 @@
 
 .pods_admin .area .button {
     border: 1px solid #E3E3E3;
+}
+
+.plupload-container .button {
+    margin-bottom: 10px;
+}
+
+.plupload-container .start {
+    margin-top: 10px;
 }
 
 .pods_admin .area textarea,

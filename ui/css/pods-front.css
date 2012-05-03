@@ -1,3 +1,13 @@
+form.pods-manage ol {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+form.pods-manage .inside {
+    padding: 20px;
+}
+
 .pods-field label {
 	cursor:pointer;
 	display:block;
@@ -43,7 +53,6 @@
 
 .pods-boolean label {
 	margin-left:20px;
-	padding-top:1px;
 }
 
 .pods-file label {

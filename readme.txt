@@ -66,9 +66,14 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 == Changelog ==
 
 = 1.14 - May 5, 2012 =
-* Important Change: For installations using WordPress 3.3+, we have switched the default uploader to Plupload from SWFUpload due to incompatibilities introduced in WP 3.3.2 that effect all plugins and themes using the styled button. Be sure to update your file upload helpers using our examples at http://podscms.org/packages/file-uploader-input-helpers/
+* Important Change / Addition: For installations using WordPress 3.3+, we have switched the default uploader to Plupload from SWFUpload due to incompatibilities introduced in WP 3.3.2 that effect all plugins and themes using the styled button. Be sure to update your file upload helpers using our examples at http://podscms.org/packages/file-uploader-input-helpers/
+* Added: edit_where_any option in Pods UI now lets you set (true/false) whether for edit_where to be an ANY or ALL match (default false = ALL)
 * Fixed: Date Input field was throwing a JS error if you used YYYY-mm-dd format without the time included
-* 
+* Fixed: parse_url fixes for when path isn't set (localhost or custom ports usually causes this)
+* Fixed: When there was extra output above or below JSON strings like errors from other plugins, whitespace, or anything else - we now explicitly match the JSON {...} string before using it in JS to avoid confusing errors for the user
+* Fixed: .pods_form style tweaks to help cover themes which display the form incorrectly
+* Fixed: Forcing (int) on getRecordById when is_numeric( $id )
+* Fixed: Resolved incompatibility issues with certain MySQL configurations which were throwing errors when saving a Pod
 
 = 1.12.4 - April 5, 2012 =
 * Added: 'offset' parameter to Pod::findRecords, allows you to offset what results to start with, which is added to the offset calculated based on current page number and limit

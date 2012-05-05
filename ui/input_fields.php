@@ -207,15 +207,102 @@ elseif ('file' == $coltype) {
 
             if (!isset($coltype_exists[$coltype]) || empty($coltype_exists[$coltype])) {
 ?>
-    <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/swfupload/swfupload.js'; ?>"></script>
+    <?php global $wp_version; if (version_compare($wp_version, '3.3', '>=')) { ?>
+        <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.js'; ?>"></script>
+        <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.html4.js'; ?>"></script>
+        <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.html5.js'; ?>"></script>
+        <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.flash.js'; ?>"></script>
+        <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.silverlight.js'; ?>"></script>
+    <?php } else { ?>
+        <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/swfupload/swfupload.js'; ?>"></script>
+    <?php } ?>
 <?php
             }
             $button_height = (function_exists('is_super_admin') ? 23 : 24);
 ?>
     <script type="text/javascript">
         jQuery(function() {
+    <?php global $wp_version; if (version_compare($wp_version, '3.3', '>=')) { ?>
+            plup_<?php echo esc_attr($name); ?> = new plupload.Uploader({
+                runtimes: 'html5,flash,silverlight,html4',
+                browse_button: '<?php echo esc_attr($css_id); ?>',
+                container: 'plupload-container-<?php echo esc_attr($css_id); ?>',
+                file_data_name: 'Filedata',
+                max_file_size: '<?php echo wp_max_upload_size(); ?>b',
+                url: '<?php echo PODS_URL; ?>/ui/ajax/misc.php',
+                flash_swf_url: '<?php echo includes_url('js/plupload/plupload.flash.swf'); ?>',
+                silverlight_xap_url: '<?php echo includes_url('js/plupload/plupload.silverlight.xap'); ?>',
+                multipart: true,
+                urlstresm_upload: true,
+                multipart_params: {
+                    "_wpnonce": "<?php echo wp_create_nonce('pods-wp_handle_upload_advanced'); ?>",
+                    "action": "wp_handle_upload_advanced",
+                    "auth_cookie": "<?php echo (is_ssl() ? esc_attr($_COOKIE[SECURE_AUTH_COOKIE]) : esc_attr($_COOKIE[AUTH_COOKIE])); ?>",
+                    "logged_in_cookie": "<?php echo esc_attr($_COOKIE[LOGGED_IN_COOKIE]); ?>"
+                }
+            });
+            plup_<?php echo esc_attr($name); ?>.init();
+
+            // Plupload Init Event Handler
+            plup_<?php echo esc_attr($name); ?>.bind('Init', function(up, params) {
+
+            });
+            
+            // Plupload FilesAdded Event Handler
+            plup_<?php echo esc_attr($name); ?>.bind('FilesAdded', function(up, files) {
+				// Hide any existing files (for use in single/limited field configuration)
+				// jQuery('.pods_field_<?php echo $name; ?> .success').hide();
+				
+                jQuery.each(files, function(index, file) {
+                    jQuery(".rightside.<?php echo esc_attr($name); ?> .form").append('<div id="' + file.id + '">' + file.name + '<div class="pods-progress"><div class="pods-bar"></div></div></div>');
+                });
+                
+                up.refresh();
+                up.start();
+            });
+
+            // Plupload UploadProgress Event Handler
+            plup_<?php echo esc_attr($name); ?>.bind('UploadProgress', function(up, file) {
+                jQuery('#' + file.id + ' .pods-bar').css('width', file.percent + '%');
+            });
+            
+            // Plupload FileUploaded Event Handler
+			<?php $queue_limit = 1; ?>
+            plup_<?php echo esc_attr($name); ?>.bind('FileUploaded', function(up, file, resp) {
+                var file_div = jQuery('#' + file.id);
+				var queue_limit = <?php echo $queue_limit; ?>;
+                file_div.find('.pods-progress').remove();
+
+                if ("Error" == resp.response.substr(0, 5)) {
+                    var response = resp.response.substr(7);
+                    file_div.append(response);
+                } else if ("<e>" == resp.response.substr(0, 3)) {
+                    var response = resp.response;
+                    file_div.append(resp.response);
+                } else {
+                    var response = jQuery.parseJSON(resp.response.match( /\{(.*)\}/gi));
+                    file_div.html('<div class="btn dropme"></div><a href="' + response.guid + '" target="_blank">' + response.post_title + '</a>');
+                    file_div.attr('class', 'success');
+                    file_div.attr('id', response.ID);
+                }
+
+				/**
+ 				 * Field limit
+				jQuery.fn.reverse = [].reverse;
+				var files = jQuery('.pods_field_<?php echo $name; ?> .success'), file_count = files.size();
+				files.reverse().each(function(idx, elem) {
+					if (idx + 1 > queue_limit) {
+						jQuery(elem).remove();
+					}
+				});
+				*/
+
+            });
+
+        <?php } else { ?>
+
             swfu_<?php echo esc_attr($name); ?> = new SWFUpload({
-                button_text: '<span class="button">Select + Upload</span>',
+                button_text: '<span class="button">Browse + Upload</span>',
                 button_text_style: '.button { text-align:center; color:#464646; font-size:11px; font-family:"Lucida Grande",Verdana,Arial,"Bitstream Vera Sans",sans-serif; }',
                 button_width: "132",
                 button_height: "<?php echo $button_height; ?>",
@@ -260,20 +347,22 @@ elseif ('file' == $coltype) {
                     this.startUpload();
                 }
             });
+        <?php } ?>
         });
     </script>
-    <input type="button" id="<?php echo esc_attr($css_id); ?>" value="swfupload not loaded" />
+    <div class="plupload-container" id="plupload-container-<?php echo esc_attr($css_id); ?>">
+        <input type="button" class="button" id="<?php echo esc_attr($css_id); ?>" value="Browse + Upload" style="cursor: pointer" />
 <?php
         }
         if (!(defined('PODS_DISABLE_FILE_BROWSER') && true === PODS_DISABLE_FILE_BROWSER)
                 && !(defined('PODS_FILES_REQUIRE_LOGIN') && is_bool(PODS_FILES_REQUIRE_LOGIN) && true === PODS_FILES_REQUIRE_LOGIN && !is_user_logged_in())
                 && !(defined('PODS_FILES_REQUIRE_LOGIN') && !is_bool(PODS_FILES_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_FILES_REQUIRE_LOGIN)))) {
 ?>
-    <input type="button" class="button" value="Browse Server" onclick="active_file = '<?php echo esc_attr($name); ?>'; fileBrowser();" />
+        <input type="button" class="button" value="Browse Server" onclick="active_file = '<?php echo esc_attr($name); ?>'; fileBrowser();" />
 <?php
         }
 ?>
-    <div class="<?php echo esc_attr($css_classes); ?>">
+        <div class="<?php echo esc_attr($css_classes); ?>">
 <?php
         // Retrieve uploaded files
         $field_id = (int) $field['id'];
@@ -299,6 +388,7 @@ elseif ('file' == $coltype) {
 <?php
         }
 ?>
+        </div>
     </div>
 <?php
     }

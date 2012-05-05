@@ -3,7 +3,7 @@ Contributors: sc0ttkclark, logikal16, jchristopher
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, pods ui, ui, content types, custom post types, relationships, database, framework, drupal, mysql, custom content, php
 Requires at least: 3.1
-Tested up to: 3.3.1
+Tested up to: 3.3.2
 Stable tag: 1.14
 
 Pods is a CMS framework for creating, managing, and deploying customized content types.
@@ -39,26 +39,29 @@ Pods also includes an easy to use PHP API to allow you to import and export your
 [vimeo http://vimeo.com/15086927]
 
 = Stay tuned for Pods 2.0 =
-Pods 2.0 is around the corner, so keep up-to-date by following our @podsframework twitter account or checking out our Pods Development blog at http://dev.podscms.org/2011/06/16/pods-2-0-and-how-you-can-help/
+Pods 2.0 is around the corner, so keep up-to-date by following us on Twitter @podsframework or checking out our Pods Development blog at http://dev.podscms.org/
 
 Features coming in Pods 2.0 include:
 
 * Completely revamped UI
 * Pods UI refactoring / revamp
-* Create and Manage Custom Post Types
-* Create and Manage Custom Taxonomy
-* Easy migration between Custom Post Types and Custom Content Types (Standalone Pods)
+* Create and Extend Post Types (post, page, and custom post types)
+* Create and Extend Taxonomies (category, tag, and custom taxonomies)
+* Extend Users, Comments, and Media (add new fields to the front / admin forms!)
+* Meta storage integration for Post Types, Users, Comments, and Media
+* WP core integration with standard theming functions you already use
 * Many more field types and advanced options (less code for you to do!)
 * Many MySQL optimizations and performance tweaks
 * Full i18n support
-* and more features which can be found at: http://dev.podscms.org/pods-2-0/
-* Pods 2.0 and How You Can Help: http://dev.podscms.org/2011/06/16/pods-2-0-and-how-you-can-help/
+* Gravity Forms integration for mapping form submissions to a Pod
+* New Templating / Caching / Transients feature for independent partial page caching
+* and more features which can be found at: http://dev.podscms.org/
 
 == Installation ==
 
 1. Unpack the entire contents of this plugin zip file into your `wp-content/plugins/` folder locally
 1. Upload to your site
-1. Navigate to `wp-admin/plugins.php` on your site (your WP plugin page)
+1. Navigate to `wp-admin/plugins.php` on your site (your WP Admin plugin page)
 1. Activate this plugin
 
 OR you can just install it with WordPress by going to Plugins >> Add New >> and type this plugin's name

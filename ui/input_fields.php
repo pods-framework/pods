@@ -247,16 +247,16 @@ elseif ('file' == $coltype) {
             plup_<?php echo esc_attr($name); ?>.bind('Init', function(up, params) {
 
             });
-            
+
             // Plupload FilesAdded Event Handler
             plup_<?php echo esc_attr($name); ?>.bind('FilesAdded', function(up, files) {
-				// Hide any existing files (for use in single/limited field configuration)
-				// jQuery('.pods_field_<?php echo $name; ?> .success').hide();
-				
+                // Hide any existing files (for use in single/limited field configuration)
+                // jQuery('.pods_field_<?php echo $name; ?> .success').hide();
+
                 jQuery.each(files, function(index, file) {
                     jQuery(".rightside.<?php echo esc_attr($name); ?> .form").append('<div id="' + file.id + '">' + file.name + '<div class="pods-progress"><div class="pods-bar"></div></div></div>');
                 });
-                
+
                 up.refresh();
                 up.start();
             });
@@ -265,12 +265,12 @@ elseif ('file' == $coltype) {
             plup_<?php echo esc_attr($name); ?>.bind('UploadProgress', function(up, file) {
                 jQuery('#' + file.id + ' .pods-bar').css('width', file.percent + '%');
             });
-            
+
             // Plupload FileUploaded Event Handler
-			<?php $queue_limit = 1; ?>
+            <?php $queue_limit = 1; ?>
             plup_<?php echo esc_attr($name); ?>.bind('FileUploaded', function(up, file, resp) {
                 var file_div = jQuery('#' + file.id);
-				var queue_limit = <?php echo $queue_limit; ?>;
+                var queue_limit = <?php echo $queue_limit; ?>;
                 file_div.find('.pods-progress').remove();
 
                 if ("Error" == resp.response.substr(0, 5)) {
@@ -280,22 +280,22 @@ elseif ('file' == $coltype) {
                     var response = resp.response;
                     file_div.append(resp.response);
                 } else {
-                    var response = jQuery.parseJSON(resp.response.match( /\{(.*)\}/gi));
+                    var response = eval( '(' +resp.response.match( /\{(.*)\}/gi ) + ')' );
                     file_div.html('<div class="btn dropme"></div><a href="' + response.guid + '" target="_blank">' + response.post_title + '</a>');
                     file_div.attr('class', 'success');
                     file_div.attr('id', response.ID);
                 }
 
-				/**
- 				 * Field limit
-				jQuery.fn.reverse = [].reverse;
-				var files = jQuery('.pods_field_<?php echo $name; ?> .success'), file_count = files.size();
-				files.reverse().each(function(idx, elem) {
-					if (idx + 1 > queue_limit) {
-						jQuery(elem).remove();
-					}
-				});
-				*/
+                /**
+                 * Field limit
+                jQuery.fn.reverse = [].reverse;
+                var files = jQuery('.pods_field_<?php echo $name; ?> .success'), file_count = files.size();
+                files.reverse().each(function(idx, elem) {
+                    if (idx + 1 > queue_limit) {
+                        jQuery(elem).remove();
+                    }
+                });
+                */
 
             });
 

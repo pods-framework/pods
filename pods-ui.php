@@ -1,6 +1,6 @@
 <?php
 // Brought in pre-2.0, this is revamped / refactored in 2.0 so this is really just a temporary file
-if (function_exists('pods_ui_manage')) {
+if (function_exists('pods_ui_manage')) :
     add_action('admin_notices', 'pods_ui_notice');
     function pods_ui_notice () {
 ?>
@@ -9,8 +9,7 @@ if (function_exists('pods_ui_manage')) {
     </div>
 <?php
     }
-}
-else {
+else :
 function pods_ui_manage ($obj)
 {
     if(!is_array($obj)&&!is_object($obj)&&0<strlen($obj))
@@ -122,6 +121,7 @@ function pods_ui_manage ($obj)
     }
     $object->ui['where'] = (isset($object->ui['where'])?$object->ui['where']:'');
     $object->ui['edit_where'] = (isset($object->ui['edit_where'])?$object->ui['edit_where']:null);
+    $object->ui['edit_where_any'] = (isset($object->ui['edit_where_any'])?(bool) $object->ui['edit_where_any']:false);
     $object->ui['duplicate_where'] = (isset($object->ui['duplicate_where'])?$object->ui['duplicate_where']:$object->ui['edit_where']);
     $object->ui['delete_where'] = (isset($object->ui['delete_where'])?$object->ui['delete_where']:$object->ui['edit_where']);
     $object->ui['reorder_where'] = (isset($object->ui['reorder_where'])?$object->ui['reorder_where']:$object->ui['where']);
@@ -227,7 +227,7 @@ function pods_ui_manage ($obj)
         $edit = new Pod($object->datatype, pods_ui_var('id'.$object->ui['num']));
         if($edit->data!==false)
         {
-            $check = pods_ui_verify_access($edit,$access,'edit');
+            $check = pods_ui_verify_access($edit,$access,'edit',$object->ui['edit_where_any']);
             if($check===false)
             {
 ?>
@@ -742,8 +742,13 @@ function pods_ui_manage ($obj)
         <div class="alignleft actions">
 <?php
                 if(!in_array('add',$object->ui['disable_actions'])) {
+                    $label = 'Add New '.$object->ui['item'];
+                    if($object->ui['label_add']!==null)
+                    {
+                        $label = $object->ui['label_add'];
+                    }
 ?>
-            <input type="button" value="Add New <?php echo $object->ui['item']; ?>" class="button" onclick="document.location='<?php echo pods_ui_var_update(array('action'.$object->ui['num']=>'add')); ?>'" />
+            <input type="button" value="<?php echo $label; ?>" class="button" onclick="document.location='<?php echo pods_ui_var_update(array('action'.$object->ui['num']=>'add')); ?>'" />
 <?php
                 }
                 if($object->ui['reorder']!==null&&!in_array('reorder',$object->ui['disable_actions'])) {
@@ -861,7 +866,7 @@ function pods_ui_table ($object,$rows=null)
                     $view_link[$i] = $check;
                 }
             }
-            $check = pods_ui_verify_access($object,$object->ui['edit_where'],'edit');
+            $check = pods_ui_verify_access($object,$object->ui['edit_where'],'edit',$object->ui['edit_where_any']);
             if($check===false)
             {
                 $edit_link[$i] = false;
@@ -1573,7 +1578,7 @@ function pods_ui_pagination ($object)
 <?php
     }
 }
-function pods_ui_verify_access  ($object,$access,$what)
+function pods_ui_verify_access  ($object,$access,$what,$any=false)
 {
     if(is_array($access))
     {
@@ -1592,16 +1597,26 @@ function pods_ui_verify_access  ($object,$access,$what)
                     elseif($value==$the_match)
                         $okay = true;
                 }
-                if($okay===false)
-                {
-                    return false;
+                if(true===$any) {
+                    if(false !== $okay)
+                        return true;
                 }
+                elseif(false===$okay)
+                    return false;
             }
             else {
                 $value = $object->get_field($field);
                 if (is_array($value)) {
-                    if (!in_array($match, $value))
+                    if(true===$any) {
+                        if(in_array($match, $value))
+                            return true;
+                    }
+                    elseif(!in_array($match, $value))
                         return false;
+                }
+                if(true===$any) {
+                    if($value==$match)
+                        return true;
                 }
                 elseif($value!=$match)
                     return false;
@@ -1617,6 +1632,7 @@ function pods_ui_form ($object,$add=0,$duplicate=0)
         echo '<strong>Error:</strong> Pods UI needs an object to run from, see the User Guide for more information.';
         return false;
     }
+    $any = false;
     if($duplicate==1&&$object->id>0)
     {
         $add = 0;
@@ -1636,6 +1652,7 @@ function pods_ui_form ($object,$add=0,$duplicate=0)
     {
         $fields = $object->ui['edit_fields'];
         $access = $object->ui['edit_where'];
+        $any = $object->ui['edit_where_any'];
         $what = 'Edit ';
         if($object->ui['label_edit']!==null)
         {
@@ -1665,7 +1682,7 @@ function pods_ui_form ($object,$add=0,$duplicate=0)
 ?>
 <h2><?php echo $what.$object->ui['item']; ?> <small>(<a href="<?php echo pods_ui_var_update(($object->ui['manage_content']!==null?array('page'=>'pods-manage-'.$object->datatype):array('action'.$object->ui['num']=>'manage'))); ?>">&laquo; Back to Manage</a>)</small></h2>
 <?php
-    $check = pods_ui_verify_access($object,$access,strtolower($what));
+    $check = pods_ui_verify_access($object,$access,strtolower($what),$any);
     if($check===false)
     {
         pods_ui_message('<strong>Error:</strong> You do not have the permissions required to '.strtolower($what).' this '.$object->ui['item'].'.',2);
@@ -2000,4 +2017,4 @@ function pods_ui_coltype ($column,$object,$t=false)
         return ($t?'':'p.').$column;
     }
 }
-}
+endif;

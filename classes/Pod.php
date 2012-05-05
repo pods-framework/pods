@@ -307,13 +307,15 @@ class Pod
 
         // Put all related items into an array
         if (!is_array($result)) {
-	    while ($row = mysql_fetch_assoc($result)) {
+            while ($row = mysql_fetch_assoc($result)) {
                 $data[] = $row;
-	    }
+            }
         }
-	else {
-	    $data = $result;
-	}
+        else
+            $data = $result;
+
+        //override with custom data
+        $data = apply_filters('pods_rel_lookup_data', $data, $tbl_row_ids, $table, $orderby, $this);
 
         return $data;
     }
@@ -640,6 +642,7 @@ class Pod
         if ($this->is_val($datatype)) {
             $this->result = null;
             if (is_numeric($id)) {
+                $id = (int) $id;
                 $sql = "
                 SELECT
                     DISTINCT `t`.*, `p`.`id` AS `pod_id`, `p`.`created`, `p`.`modified`
@@ -717,11 +720,13 @@ class Pod
                           'having' => $having,
                           'orderby' => (is_array($orderby) ? '`t`.`id` DESC' : $orderby),
                           'limit' => $rows_per_page,
+                          'offset' => null,
                           'search' => $this->search,
                           'search_var' => $this->search_var,
                           'search_mode' => $this->search_mode,
                           'traverse' => $this->traverse,
                           'page' => $this->page,
+                          'page_var' => null,
                           'pagination' => $this->pagination,
                           'calc_found_rows' => $this->calc_found_rows,
                           'count_found_rows' => $this->count_found_rows,
@@ -744,6 +749,10 @@ class Pod
         $orderby = $params->orderby;
         $rows_per_page = (int) $params->limit;
         $this->page = (int) $params->page;
+        if (null !== $params->page_var)
+            $this->page_var = (int) $params->page_var;
+        if ($this->page < 1 || null !== $params->page_var)
+            $this->page = max(pods_var($this->page_var, 'get'), 1);
         $this->pagination = (bool) $params->pagination;
         $this->calc_found_rows = (boolean) $params->calc_found_rows;
         $this->count_found_rows = (boolean) $params->count_found_rows;
@@ -756,6 +765,9 @@ class Pod
         $datatype = $this->datatype;
         $datatype_id = (int) $this->datatype_id;
         $this->rpp = (int) $rows_per_page;
+        $this->offset = ($this->rpp * ($page - 1));
+        if (null !== $params->offset)
+            $this->offset += (int) $params->offset;
 
         $sql_builder = false;
         if (empty($sql)) {
@@ -764,7 +776,7 @@ class Pod
 
             // ctype_digit expects a string, or it returns FALSE
             if (ctype_digit("$rows_per_page") && 0 <= $rows_per_page) {
-                $limit = ($rows_per_page * ($page - 1)) . ',' . $rows_per_page;
+                $limit = $this->offset . ',' . $rows_per_page;
             }
             elseif (false !== strpos($rows_per_page, ',')) {
                 // Custom offset
@@ -788,7 +800,9 @@ class Pod
                     $orderby = '`t`.`' . trim(str_replace(array('`', ' DESC'), '', $orderby)) . '` DESC';
             }
 
-            $haystack = str_replace(array('(', ')'), '', preg_replace('/\s/', ' ', "$select $where $groupby $having $orderby"));
+            $haystack = preg_replace('/\s/', ' ', "$select $where $groupby $having $orderby");
+            $haystack = preg_replace('/\w\(/', ' ', $haystack);
+            $haystack = str_replace(array('(', ')', '  '), ' ', $haystack);
 
             preg_match_all('/`?[\w]+`?(?:\\.`?[\w]+`?)+(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found, PREG_PATTERN_ORDER);
 

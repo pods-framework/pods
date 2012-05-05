@@ -68,13 +68,13 @@ class PodAPI
         $params = (object) array_merge(array('id' => '',
                                              'name' => '',
                                              'label' => '',
-                                             'is_toplevel' => '',
+                                             'is_toplevel' => 0,
                                              'detail_page' => '',
                                              'pre_save_helpers' => '',
                                              'pre_drop_helpers' => '',
                                              'post_save_helpers' => '',
                                              'post_drop_helpers' => '',
-                                             'order' => ''),
+                                             'order' => 0),
                                        (array) $params);
         if (isset($params->action))
             unset($params->action);

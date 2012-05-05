@@ -97,7 +97,13 @@ DateInput = (function($) { // Localise the $ function
         stringToDate: function() {
             var input = this.input.val();
             matches = input.match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/);
-            var currentDate = new Date(matches[1], matches[2] - 1, matches[3], matches[4], matches[5], matches[6]);
+            if ( null != matches ) {
+                var currentDate = new Date( matches[1], matches[2] - 1, matches[3], matches[4], matches[5], matches[6] );
+            }
+            else {
+                matches = input.match( /^(\d{4})-(\d{2})-(\d{2})$/ );
+                var currentDate = new Date( matches[1], matches[2] - 1, matches[3], 0, 0, 0 );
+            }
             this.selectMonth(currentDate);
         },
 
@@ -122,10 +128,16 @@ DateInput = (function($) { // Localise the $ function
         },
 
         showTime: function() {
-            var val = this.input.val().split(" ")[1].split(":");
-            var active_hour = val[0].toString();
-            var active_minute = val[1].toString();
-            var active_second = val[2].toString();
+            var val = this.input.val().split( " " );
+            var active_hour = 0;
+            var active_minute = 0;
+            var active_second = 0;
+            if ( 'undefined' != typeof val[1] ) {
+                var val = val[1].split( ":" );
+                var active_hour = val[0].toString();
+                var active_minute = val[1].toString();
+                var active_second = val[2].toString();
+            }
 
             var output = "<select class='date_hour'>";
             for (var i = 0; i < 24; i++) {

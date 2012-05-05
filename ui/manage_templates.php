@@ -32,7 +32,7 @@ function loadTemplate() {
         data: "action=load_template&_wpnonce=<?php echo wp_create_nonce('pods-load_template'); ?>&id="+template_id,
         success: function(msg) {
             if (!is_error(msg)) {
-                var json = eval("("+msg+")");
+                var json = eval("("+msg.match( /\{(.*)\}/gi )+")");
                 var code = (null == json.code) ? "" : json.code;
                 jQuery("#template_code").val(code);
             }

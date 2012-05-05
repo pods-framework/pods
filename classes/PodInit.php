@@ -277,6 +277,8 @@ class PodInit
         }
         else {
             $home_path = parse_url(home_url());
+            if ( !isset( $home_path[ 'path' ] ) )
+                $home_path[ 'path' ] = '/';
             $uri = preg_replace('|^' . preg_quote($home_path['path'], '|') . '|', '', $_SERVER['REQUEST_URI']);
             $uri = explode('?', $uri);
             $uri = preg_replace("@^([/]?)(.*?)([/]?)$@", "$2", $uri[0]);

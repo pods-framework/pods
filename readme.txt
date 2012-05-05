@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, pods ui, ui, content types, custom post types, relationships, database, framework, drupal, mysql, custom content, php
 Requires at least: 3.1
 Tested up to: 3.3.1
-Stable tag: 1.12.3
+Stable tag: 1.14
 
 Pods is a CMS framework for creating, managing, and deploying customized content types.
 
@@ -64,6 +64,21 @@ Features coming in Pods 2.0 include:
 OR you can just install it with WordPress by going to Plugins >> Add New >> and type this plugin's name
 
 == Changelog ==
+
+= 1.14 - May 5, 2012 =
+* Important Change: For installations using WordPress 3.3+, we have switched the default uploader to Plupload from SWFUpload due to incompatibilities introduced in WP 3.3.2 that effect all plugins and themes using the styled button. Be sure to update your file upload helpers using our examples at http://podscms.org/packages/file-uploader-input-helpers/
+* Fixed: Date Input field was throwing a JS error if you used YYYY-mm-dd format without the time included
+* 
+
+= 1.12.4 - April 5, 2012 =
+* Added: 'offset' parameter to Pod::findRecords, allows you to offset what results to start with, which is added to the offset calculated based on current page number and limit
+* Added: 'page_var' parameter to Pod::findRecords, allows you to set a custom page_var (default is 'pg'), setting it will reset the current page number, set during Pod::construct()
+* Added: New 'pods_rel_lookup_data' filter to filter the data array itself (not just the MySQL resource given in 'pods_rel_lookup' filter above), great for customizing drop-downs for PICK fields
+* Fixed: 'page' parameter in Pod::findRecords wasn't being validated as a number greater than 0, now forces a minimum of 1; Anything less will also reset the current page number, set during Pod::construct()
+* Fixed: Pods UI 'label_add' wasn't being used on button at top of manage table list
+* Fixed: Pagination bug with custom page_var set in Pod object, would add the custom page_var to the URL over and over
+* Fixed: Upgrade script updated to include all upgrades prior to 1.6, which had been left out in a previous release
+* Fixed: More strict matching in Pod::findRecords for field names, instead of just removing '(' and ')', it now removes 'function_name(' first, so that fields with the same name as function names won't be pulled
 
 = 1.12.3 - February 19, 2012 =
 * Added: Pods UI findRecords parameters array now goes through a new filter called "pods_ui_findrecords"

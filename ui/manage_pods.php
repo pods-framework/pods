@@ -95,7 +95,7 @@ function sisterFields(sister_field_id) {
         success: function(msg) {
             if (!is_error(msg) && "" != msg) {
                 var html = '<option value="">-- Related to --</option>';
-                var json = eval('('+msg+')');
+                var json = eval('('+msg.match( /\{(.*)\}/gi )+')');
                 var found = false;
                 if(json != null) {
                     for (var i = 0; i < json.length; i++) {
@@ -125,7 +125,7 @@ function loadPod() {
         data: "action=load_pod&_wpnonce=<?php echo wp_create_nonce('pods-load_pod'); ?>&id="+dt,
         success: function(msg) {
             if (!is_error(msg)) {
-                var json = eval('('+msg+')');
+                var json = eval('('+msg.match( /\{(.*)\}/gi )+')');
                 var label = (null == json.label) ? "" : json.label;
                 var is_toplevel = parseInt(json.is_toplevel);
                 var detail_page = (null == json.detail_page) ? "" : json.detail_page;
@@ -236,7 +236,7 @@ function addPod() {
         data: "action=save_pod&_wpnonce=<?php echo wp_create_nonce('pods-save_pod'); ?>&name="+name+"&return_pod=1",
         success: function(msg) {
             if (!is_error(msg)) {
-                var json = eval('('+msg+')');
+                var json = eval('('+msg.match( /\{(.*)\}/gi )+')');
                 var id = json.id;
                 var html = '<option value="'+json.id+'">'+json.name+'</option>';
                 jQuery(".select-pod").append(html);
@@ -322,7 +322,7 @@ function loadColumn(id) {
         url: api_url,
         data: "action=load_column&_wpnonce=<?php echo wp_create_nonce('pods-load_column'); ?>&id="+column_id,
         success: function(msg) {
-            var json = eval('('+msg+')');
+            var json = eval('('+msg.match( /\{(.*)\}/gi )+')');
             var name = (null == json.name) ? "" : json.name;
             var label = (null == json.label) ? "" : json.label;
             var comment = (null == json.comment) ? "" : json.comment;

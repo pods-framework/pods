@@ -33,7 +33,7 @@ function loadPage() {
         data: "action=load_page&_wpnonce=<?php echo wp_create_nonce('pods-load_page'); ?>&id="+page_id,
         success: function(msg) {
             if (!is_error(msg)) {
-                var json = eval('('+msg+')');
+                var json = eval('('+msg.match( /\{(.*)\}/gi )+')');
                 var title = (null == json.title) ? "" : json.title;
                 var code = (null == json.phpcode) ? "" : json.phpcode;
                 var precode = (null == json.precode) ? "" : json.precode;

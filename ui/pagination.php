@@ -10,7 +10,7 @@ $request_uri = explode('?', $_SERVER['REQUEST_URI']);
 $request_uri = $request_uri[0] . '?';
 $query = urlencode_deep(stripslashes_deep($_GET));
 foreach ($query as $key => $val) {
-    if ('pg' != $key && 'q' != $key) {
+    if ($this->page_var != $key && 'q' != $key) {
         if (is_array($val)) {
             foreach ($val as $v) {
                 $request_uri .= urlencode($key) . '[]=' . $v . '&amp;';

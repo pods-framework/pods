@@ -27,7 +27,7 @@ function loadHelper() {
         data: "action=load_helper&_wpnonce=<?php echo wp_create_nonce('pods-load_helper'); ?>&id="+helper_id,
         success: function(msg) {
             if (!is_error(msg)) {
-                var json = eval('('+msg+')');
+                var json = eval('('+msg.match( /\{(.*)\}/gi )+')');
                 var code = (null == json.phpcode) ? "" : json.phpcode;
                 var helper_type = (null == json.helper_type) ? "display" : json.helper_type;
                 helper_id = json.id;

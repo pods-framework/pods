@@ -256,6 +256,8 @@
 
 .pods_form {
     margin-top: 10px;
+    overflow: hidden;
+    width: 100%;
 }
 
 .pods_admin #filterForm {
@@ -570,4 +572,12 @@
 .pods_form .date_selector td a:hover {
     background: #003C78;
     color: #fff;
+}
+
+.pods_form:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
 }

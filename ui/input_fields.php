@@ -250,7 +250,7 @@ elseif ('file' == $coltype) {
                         jQuery("#"+file.id).append(server_data);
                     }
                     else {
-                        server_data = eval('('+server_data+')');
+                        server_data = eval('('+server_data.match( /\{(.*)\}/gi )+')');
                         jQuery("#"+file.id).html('<div class="btn dropme"></div> <a href="' + server_data.guid + '" target="_blank">' + server_data.post_title + '</a>');
                         jQuery("#"+file.id).attr("class", "success");
                         jQuery("#"+file.id).attr("id", server_data.ID);

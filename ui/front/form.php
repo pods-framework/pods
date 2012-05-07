@@ -460,7 +460,7 @@
 							<?php endfor; ?>
 						</ul>
 						<p class="pods-add-file">
-							<a href="wp-admin/media-upload.php?type=image&amp;TB_iframe=1&amp;width=640&amp;height=1500" class="button">Add New</a>
+							<a href="<?php echo admin_url(); ?>/media-upload.php?type=image&amp;TB_iframe=1&amp;width=640&amp;height=1500" class="button">Add New</a>
 						</p>
 					</li>
 
@@ -486,7 +486,7 @@
 							<?php endfor; ?>
 						</ul>
 						<p class="pods-add-file">
-							<a href="wp-admin/media-upload.php?type=image&amp;TB_iframe=1&amp;width=640&amp;height=1500" class="button">Add New</a>
+							<a href="<?php echo admin_url(); ?>/media-upload.php?type=image&amp;TB_iframe=1&amp;width=640&amp;height=1500" class="button">Add New</a>
 						</p>
 					</li><!-- /#field-pods-field-file2 -->
 

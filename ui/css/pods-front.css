@@ -125,6 +125,11 @@ ul.pods-files li span.pods-file-remove img {
 	display:block;
 }
 
+.pods-pick-checkbox ul, .pods-pick-radio ul {
+	padding-left: 0;
+	margin-left: 0;
+}
+
 .pods-pick-values {
 	background:#fff;
 	border:1px solid #dfdfdf;

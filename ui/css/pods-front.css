@@ -82,11 +82,11 @@ ul.pods-files li {
 	border-bottom:1px solid #dfdfdf;
 	margin:0;
 	position:relative;
+	padding-bottom: 3px;
 }
 
 ul.pods-files li span {
-	display:block;
-	float:left;
+	display:inline-block;
 }
 
 ul.pods-files li span.pods-file-reorder {

@@ -82,7 +82,7 @@ ul.pods-files li {
 	border-bottom:1px solid #dfdfdf;
 	margin:0;
 	position:relative;
-	padding-bottom: 3px;
+	padding-bottom: 10px;
 }
 
 ul.pods-files li span {
@@ -111,6 +111,8 @@ ul.pods-files li span.pods-file-thumb {
 ul.pods-files li span.pods-file-thumb .pinkynail {
 	float:none;
 	margin:0;
+	max-width: 40px;
+	max-height: 40px;
 }
 
 ul.pods-files li span.pods-file-name {

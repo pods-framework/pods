@@ -52,7 +52,7 @@ form.pods-manage .inside {
 	display:block;
 	height:auto;
 	left:2px;
-	margin:1px 7px 0 0;
+	margin:5px 7px 0 0;
 	padding:0;
 	position:absolute;
 	top:10px;
@@ -177,7 +177,7 @@ ul.pods-files li span.pods-file-remove img {
 }
 
 .pods-pick-values li .pods-boolean input {
-	top:5px;
+	top:0;
 }
 
 .pods-pick-values li:hover {

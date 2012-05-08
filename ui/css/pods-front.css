@@ -2,6 +2,10 @@
 	font-size: 14px !important;
 }
 
+.ui-slider-handle {
+	z-index: 0 !important;
+}
+
 a.button {
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;

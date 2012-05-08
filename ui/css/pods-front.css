@@ -16,6 +16,16 @@ a.button {
 	color: #464646;
 }
 
+a.button:hover {
+	text-decoration: none;
+	color: black;
+	border-color: #666;
+}
+
+a.button:active {
+	background: #eee url(../../../../../wp-admin/images/white-grad-active.png) repeat-x scroll left top;
+}
+
 h3.hndle {
 	margin-left: 23px;
 }

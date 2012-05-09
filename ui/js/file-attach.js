@@ -78,10 +78,10 @@ function pods_thickbox_handler(){
     }
     if(jQuery('#TB_iframeContent').contents().length==0&&pods_file_info.hijacked){
         // the thickbox was closed
-		pods_file_list = jQuery('.pods-file-context.current ul')
+        pods_file_list = jQuery('.pods-file-context.current ul')
         clearInterval(pods_file_thickbox);
         pods_file_info.hijacked = false;
-		pods_file_list.parent().removeClass('current');
+        pods_file_list.parent().removeClass('current');
     }
 }
 
@@ -111,6 +111,8 @@ function pods_init_file_sortability() {
             containment: 'parent'
         });
 }
-jQuery(document).ready(function(){
+jQuery(document).ready(function($){
     pods_init_file_sortability();
 });
+
+// vim : set expandtab ts=4 sw=4 :

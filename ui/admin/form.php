@@ -557,6 +557,111 @@
                                     </p>
                                 </li><!-- /#field-pods-field-file2 -->
 
+                                <!-- Plupload Queue Field -->
+                                <li class="pods-field pods-file pods-plupload-context" id="field-pods-field-file3">
+                                    <?php echo PodsForm::label('file3', 'Plupload Queue'); ?>
+                                    <ul class="pods-files">
+                                        <?php for ($i=0; $i < 3; $i++): ?>
+                                            <li>
+                                                <span class="pods-file-reorder"><img src="<?php echo PODS_URL . 'ui/images/handle.gif'; ?>" alt="drag to reorder" /></span>
+                                                <span class="pods-file-thumb">
+                                                    <span>
+                                                        <img class="pinkynail" src="<?php echo PODS_URL . 'ui/images/icon32.png'; ?>" alt="Thumbnail" />
+                                                        <?php echo PodsForm::field('file3[]', $i + 1, 'hidden'); ?>
+                                                    </span>
+                                                </span>
+                                                <span class="pods-file-name">Sample Image <?php echo $i + 1; ?></span>
+                                                <span class="pods-file-remove">
+                                                    <img src="<?php echo PODS_URL . 'ui/images/del.png'; ?>" alt="remove" class="pods-icon-minus" />
+                                                </span>
+                                            </li>
+                                        <?php endfor; ?>
+                                    </ul>
+                                    <p>
+                                        <a href="" class="plupload-add button" id="file3-browse">Add New</a>
+                                    </p>
+                                    <p class="plupload-queue">
+                                        <div class="plupload-progress" id="abc123">
+                                            <span class="file-name">test.png</span>
+                                            <span class="progress-bar" style="width: 75%;">
+                                                75%
+                                            </span>
+                                        </div>
+                                    </p>
+                                    <?php
+                                    $plupload_init = array(
+                                        'runtimes'            => 'html5,silverlight,flash,html4',
+                                        'browse_button'       => 'file3-browse',
+                                        'url'                 => admin_url('admin-ajax.php'),
+                                        'file_data_name'      => 'async-upload',
+                                        'multiple_queues'     => false,
+                                        'max_file_size'       => wp_max_upload_size().'b',
+                                        'url'                 => admin_url('admin-ajax.php'),
+                                        'flash_swf_url'       => includes_url('js/plupload/plupload.flash.swf'),
+                                        'silverlight_xap_url' => includes_url('js/plupload/plupload.silverlight.xap'),
+                                        'filters'             => array(array('title' => __('Allowed Files', 'pods'), 'extensions' => '*')),
+                                        'multipart'           => true,
+                                        'urlstream_upload'    => true,
+                                        'multipart_params'    => array(
+                                          '_ajax_nonce' => wp_create_nonce('photo-upload'),
+                                          'action'      => 'media_upload_test',
+                                        ),
+                                    );
+                                    $plupload_init = apply_filters('plupload_init', $plupload_init);
+                                    ?>
+                                    <script type="text/javascript">
+                                        jQuery(document).ready(function($) {
+                                            if (!window.pluploaders) {
+                                                window.pluploaders = [];
+                                            }
+                                            var uploader = new plupload.Uploader(<?php echo json_encode($plupload_init); ?>);
+
+                                            uploader.bind('Init', function(up) {
+                                                console.log('Uploader initialized with runtime: ' + up.runtime);
+                                            });
+
+                                            uploader.init();
+
+                                            uploader.bind('FilesAdded', function(up, files) {
+                                                var queue = jQuery('#field-pods-field-file3 .plupload-queue');
+
+                                                jQuery.each(files, function(idx, file) {
+                                                    var prog_container = jQuery('<div/>', {
+                                                            'class': 'plupload-progress',
+                                                            'id': file.id
+                                                        }),
+                                                        prog_name = jQuery('<span/>', {
+                                                            'class': 'file-name',
+                                                            text: file.name
+                                                        }),
+                                                        prog_bar = jQuery('<span/>', {
+                                                            'class': 'progress-bar',
+                                                            css: {
+                                                                width: '0'
+                                                            }
+                                                        });
+                                                    prog_container.append(prog_name).append(prog_bar).appendTo(queue);
+                                                });
+                                                //uploader.start();
+                                            });
+
+                                            uploader.bind('UploadProgress', function(up, file) {
+                                                var prog_bar = jQuery('#' + file.id).find('.progress-bar');
+                                                prog_bar.css('width', file.percent + '%');
+                                            });
+
+                                            uploader.bind('FileUploaded', function(up, file, resp) {
+                                                jQuery('#' + file.id).remove();
+                                                console.log(resp);
+                                            });
+
+                                            // Add this uploader to a global 
+                                            // array so we can mess with it.
+                                            window.pluploaders.push(uploader);
+                                        });
+                                    </script>
+                                </li>
+
                                 <!-- Pods Pick Field -->
                                 <li class="pods-field pods-pick" id="field-pods-field-pick1">
                                     <?php
@@ -740,3 +845,4 @@
     <!-- /#poststuff -->
 </form>
 <!-- /#pods-record -->
+<!-- vim: set expandtab sw=4 ts=4 : -->

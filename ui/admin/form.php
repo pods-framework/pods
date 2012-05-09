@@ -604,7 +604,9 @@
                                         'urlstream_upload'    => true,
                                         'multipart_params'    => array(
                                           '_ajax_nonce' => wp_create_nonce('photo-upload'),
-                                          'action'      => 'media_upload_test',
+                                          'action'      => 'pods_front',
+                                          'method'      => 'upload_file',
+                                          'pods_ajax'   => '1',
                                         ),
                                     );
                                     $plupload_init = apply_filters('plupload_init', $plupload_init);
@@ -642,7 +644,7 @@
                                                         });
                                                     prog_container.append(prog_name).append(prog_bar).appendTo(queue);
                                                 });
-                                                //uploader.start();
+                                                uploader.start();
                                             });
 
                                             uploader.bind('UploadProgress', function(up, file) {

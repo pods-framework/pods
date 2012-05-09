@@ -653,6 +653,11 @@
 					//$args = array( 'type' => 'pick', 'name' => 'pick3', 'label' => 'Pick - Multi', 'options' => array( 'type' => 'multi' ) );
 					//pods_field( $args );
 					?>
+
+					<li>
+						<a href="#" class="button-primary">Save</a>
+						<a href="#" class="delete">Delete This Item</a>
+					</li>
 		</ol>
 	</div>
 	<!-- /.inside -->

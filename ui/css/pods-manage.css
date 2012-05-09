@@ -16,6 +16,10 @@ ul.ui-sortable li:hover {
     background: #ffffd8;
 }
 
+.ui-slider-handle {
+	z-index: 0 !important;
+}
+
 form.pods-manage .pods-field label {
     cursor: pointer;
     display: inline-block;

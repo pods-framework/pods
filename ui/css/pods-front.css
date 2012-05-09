@@ -30,6 +30,40 @@ a.button:active {
 	background: #eee url(../../../../../wp-admin/images/white-grad-active.png) repeat-x scroll left top;
 }
 
+.button-primary {
+	-webkit-border-radius: 11px;
+	-moz-border-radius: 11px;
+	-o-border-radius: 11px;
+	border-radius: 11px;
+	-webkit-box-sizing: content-box;
+	box-sizing: content-box;
+	white-space: nowrap;
+	line-height: 15px;
+	padding: 3px 8px;
+	border: 1px solid #298CBA;
+	background: #21759B url(../../../../../wp-admin/images/button-grad.png) repeat-x scroll left top;
+	font-size: 12px;
+	font-weight: bold;
+	color: #fff;
+}
+
+.button-primary:hover {
+	text-decoration: none;
+	border-color: #13455B;
+	color: #EAF2FA;
+}
+
+.button-primary:active {
+	border-color: #298CBA;
+	text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
+	background: #21759B url(../../../../../wp-admin/images/button-grad-active.png) repeat-x scroll left top;
+	text-decoration: none;
+}
+
+a.delete {
+	color: #bf1300;
+}
+
 h3.hndle {
 	margin-left: 23px;
 }

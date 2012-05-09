@@ -62,6 +62,7 @@ a.button:active {
 
 a.delete {
 	color: #bf1300;
+	font-size: 12px;
 }
 
 h3.hndle {

@@ -581,12 +581,6 @@
                                         <a href="" class="plupload-add button" id="file3-browse">Add New</a>
                                     </p>
                                     <p class="plupload-queue">
-                                        <div class="plupload-progress" id="abc123">
-                                            <span class="file-name">test.png</span>
-                                            <span class="progress-bar" style="width: 75%;">
-                                                75%
-                                            </span>
-                                        </div>
                                     </p>
                                     <?php
                                     $plupload_init = array(
@@ -618,10 +612,7 @@
                                             }
                                             var uploader = new plupload.Uploader(<?php echo json_encode($plupload_init); ?>);
 
-                                            uploader.bind('Init', function(up) {
-                                                console.log('Uploader initialized with runtime: ' + up.runtime);
-                                            });
-
+                                            // Initialize uploader BEFORE binding event handlers, otherwise auto-upload doesn't work.
                                             uploader.init();
 
                                             uploader.bind('FilesAdded', function(up, files) {
@@ -653,6 +644,8 @@
                                             });
 
                                             uploader.bind('FileUploaded', function(up, file, resp) {
+                                                var sort_array = jQuery('#field-pods-field-file3 .ui-sortable');
+                                                sort_array.append('<li><span class="pods-file-reorder"><img src="' + PODS_URL + 'ui/images/handle.gif" alt="reorder"/></span><span class="pods-file-thumb"></span><span class="pods-file-name">' + file.name + '</span><span class="pods-file-remove"><img src="' + PODS_URL + 'ui/images/del.png"/></span>');
                                                 jQuery('#' + file.id).remove();
                                                 console.log(resp);
                                             });

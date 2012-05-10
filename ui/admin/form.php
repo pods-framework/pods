@@ -657,6 +657,59 @@
                                     </script>
                                 </li>
 
+                                <!-- Inline plupload input -->
+                                <li class="pods-field pods-file pods-plupload-context" id="field-pods-field-file4">
+                                    <?php echo PodsForm::label("file4", "Plupload Single"); ?>
+                                    <br/>
+                                    <a class="button plupload-add" href="" id="file4-browse">Select + Upload</a>
+                                    <a class="button" href="" id="file4-browse-server">Browse Server</a>
+                                    
+                                    <?php
+                                    $plupload_init = array(
+                                        'runtimes'            => 'html5,silverlight,flash,html4',
+                                        'browse_button'       => 'file4-browse',
+                                        'url'                 => admin_url('admin-ajax.php'),
+                                        'file_data_name'      => 'async-upload',
+                                        'multiple_queues'     => false,
+                                        'max_file_size'       => wp_max_upload_size().'b',
+                                        'url'                 => admin_url('admin-ajax.php'),
+                                        'flash_swf_url'       => includes_url('js/plupload/plupload.flash.swf'),
+                                        'silverlight_xap_url' => includes_url('js/plupload/plupload.silverlight.xap'),
+                                        'filters'             => array(array('title' => __('Allowed Files', 'pods'), 'extensions' => '*')),
+                                        'multipart'           => true,
+                                        'urlstream_upload'    => true,
+                                        'multipart_params'    => array(
+                                          '_ajax_nonce' => wp_create_nonce('photo-upload'),
+                                          'action'      => 'pods_front',
+                                          'method'      => 'upload_file',
+                                          'pods_ajax'   => '1',
+                                        ),
+                                    );
+                                    $plupload_init = apply_filters('plupload_init', $plupload_init);
+                                    ?>
+                                    <script type="text/javascript">
+                                        jQuery(document).ready(function($) {
+                                            if (!window.pluploaders) {
+                                                window.pluploaders = [];
+                                            }
+                                            var uploader = new plupload.Uploader(<?php echo json_encode($plupload_init); ?>);
+                                            uploader.init();
+
+                                            uploader.bind('FilesAdded', function(up, files) {
+                                                
+                                            });
+
+                                            uploader.bind('UploadProgress', function(up, file) {
+
+                                            });
+
+                                            uploader.bind('FileUploaded', function(up, file, resp) {
+
+                                            });
+                                        });
+                                    </script>
+                                </li>
+
                                 <!-- Pods Pick Field -->
                                 <li class="pods-field pods-pick" id="field-pods-field-pick1">
                                     <?php

@@ -663,6 +663,18 @@
                                     <br/>
                                     <a class="button plupload-add" href="" id="file4-browse">Select + Upload</a>
                                     <a class="button" href="" id="file4-browse-server">Browse Server</a>
+                                    <ul class="pods-inline-files">
+                                        <li>
+                                            <span class="remove"><img src="<?php echo PODS_URL . 'ui/images/del.png'; ?>" /></span>
+                                            <span class="file-name">test.png</span>
+                                        </li>
+                                        <li>
+                                            <div class="plupload-progress">
+                                                <span class="file-name">test.png</span>
+                                                <span class="progress-bar" style="width: 50%"></span>
+                                            </div>
+                                        </li>
+                                    </ul>
                                     
                                     <?php
                                     $plupload_init = array(
@@ -696,11 +708,33 @@
                                             uploader.init();
 
                                             uploader.bind('FilesAdded', function(up, files) {
+                                                var queue = jQuery('#field-pods-field-file4 .pods-inline-files');
+
+                                                jQuery.each(files, function(idx, file) {
+                                                    var list_item = jQuery('<li/>'),
+                                                        prog_wrap = jQuery('<div/>', {
+                                                            'class': 'plupload-progress',
+                                                            'id': file.id
+                                                        }),
+                                                        prog_name = jQuery('<span/>', {
+                                                            'class': 'file-name',
+                                                            text: file.name
+                                                        }),
+                                                        prog_bar = jQuery('<span/>', {
+                                                            'class': 'progress-bar',
+                                                            css: {
+                                                                width: '0%'
+                                                            }
+                                                        });
+                                                    prog_wrap.append(prog_name).append(prog_bar).appendTo(list_item);
+                                                    list_item.appendTo(queue);
+                                                });
                                                 
+                                                // up.start() // auto-upload on FilesAdded
                                             });
 
                                             uploader.bind('UploadProgress', function(up, file) {
-
+                                                var upbar = jQuery('#' + file.id);
                                             });
 
                                             uploader.bind('FileUploaded', function(up, file, resp) {

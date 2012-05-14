@@ -145,16 +145,20 @@ form.pods-manage ul.pods-files li span.pods-file-remove img {
 	width: 250px;
 }
 
-.plupload-queue .plupload-progress {
+.plupload-progress {
 	position: relative;
 }
 
-.plupload-queue .plupload-progress .progress-bar {
+.plupload-progress .progress-bar {
 	position: absolute;
 	height: 14px;
 	width: 0%;
 	background: #4d4d4d;
 	margin-left: 10px;
+}
+
+.pods-inline-files .plupload-progress {
+	width: 150px;
 }
 
 form.pods-manage .pods-pick-values {

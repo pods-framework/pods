@@ -157,6 +157,10 @@ form.pods-manage ul.pods-files li span.pods-file-remove img {
 	margin-left: 10px;
 }
 
+.plupload-progress .file-name {
+	vertical-align: top;
+}
+
 .pods-inline-files .plupload-progress {
 	width: 150px;
 }

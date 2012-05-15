@@ -741,9 +741,15 @@
 
                                             uploader.bind('FileUploaded', function(up, file, resp) {
                                                 var upbar = jQuery('#' + file.id),
-                                                    prog  = upbar.find('.progress-bar');
+                                                    prog  = upbar.find('.progress-bar')
+                                                    input = jQuery('<input/>', {
+                                                        'type': 'hidden',
+                                                        name: 'file4',
+                                                        value: resp.response
+                                                    });
                                                 prog.remove();
                                                 upbar.prepend('<span class="remove"><img src="' + PODS_URL +  'ui/images/del.png" alt="remove" /></span>');
+                                                upbar.append(input);
                                             });
 
                                             window.pluploaders.push(uploader);

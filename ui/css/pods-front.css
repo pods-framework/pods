@@ -1,3 +1,84 @@
+#ui-datepicker-div {
+	font-size: 14px !important;
+}
+
+.ui-slider-handle {
+	z-index: 0 !important;
+}
+
+a.button {
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	-o-border-radius: 10px;
+	border-radius: 10px;
+	white-space: nowrap;
+	line-height: 15px;
+	padding: 3px 10px;
+	background: #f2f2f2 url(../../../../../wp-admin/images/white-grad.png) repeat-x scroll left top;
+	border: 1px solid #bbb;
+	font-size: 12px;
+	color: #464646;
+}
+
+a.button:hover {
+	text-decoration: none;
+	color: black;
+	border-color: #666;
+}
+
+a.button:active {
+	background: #eee url(../../../../../wp-admin/images/white-grad-active.png) repeat-x scroll left top;
+}
+
+.button-primary {
+	-webkit-border-radius: 11px;
+	-moz-border-radius: 11px;
+	-o-border-radius: 11px;
+	border-radius: 11px;
+	-webkit-box-sizing: content-box;
+	box-sizing: content-box;
+	white-space: nowrap;
+	line-height: 15px;
+	padding: 3px 8px;
+	border: 1px solid #298CBA;
+	background: #21759B url(../../../../../wp-admin/images/button-grad.png) repeat-x scroll left top;
+	font-size: 12px;
+	font-weight: bold;
+	color: #fff;
+}
+
+.button-primary:hover {
+	text-decoration: none;
+	border-color: #13455B;
+	color: #EAF2FA;
+}
+
+.button-primary:active {
+	border-color: #298CBA;
+	text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
+	background: #21759B url(../../../../../wp-admin/images/button-grad-active.png) repeat-x scroll left top;
+	text-decoration: none;
+}
+
+a.delete {
+	color: #bf1300;
+	font-size: 12px;
+}
+
+h3.hndle {
+	margin-left: 23px;
+}
+
+form.pods-manage ol {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+form.pods-manage .inside {
+    padding: 20px;
+}
+
 .pods-field label {
 	cursor:pointer;
 	display:block;
@@ -34,7 +115,7 @@
 	display:block;
 	height:auto;
 	left:2px;
-	margin:1px 7px 0 0;
+	margin:7px 7px 0 0;
 	padding:0;
 	position:absolute;
 	top:10px;
@@ -43,7 +124,6 @@
 
 .pods-boolean label {
 	margin-left:20px;
-	padding-top:1px;
 }
 
 .pods-file label {
@@ -69,11 +149,11 @@ ul.pods-files li {
 	border-bottom:1px solid #dfdfdf;
 	margin:0;
 	position:relative;
+	padding-bottom: 10px;
 }
 
 ul.pods-files li span {
-	display:block;
-	float:left;
+	display:inline-block;
 }
 
 ul.pods-files li span.pods-file-reorder {
@@ -98,10 +178,12 @@ ul.pods-files li span.pods-file-thumb {
 ul.pods-files li span.pods-file-thumb .pinkynail {
 	float:none;
 	margin:0;
+	max-width: 40px;
+	max-height: 40px;
 }
 
 ul.pods-files li span.pods-file-name {
-	padding:11px 35px 0 85px;
+	padding:5px 35px 0 85px;
 }
 
 ul.pods-files li span.pods-file-remove {
@@ -114,6 +196,11 @@ ul.pods-files li span.pods-file-remove {
 ul.pods-files li span.pods-file-remove img {
 	cursor:pointer;
 	display:block;
+}
+
+.pods-pick-checkbox ul, .pods-pick-radio ul {
+	padding-left: 0;
+	margin-left: 0;
 }
 
 .pods-pick-values {
@@ -142,7 +229,6 @@ ul.pods-files li span.pods-file-remove img {
 
 .pods-pick-values label {
 	padding-bottom:3px;
-	padding-top:3px;
 }
 
 .pods-pick-values li:last-of-type {
@@ -154,7 +240,7 @@ ul.pods-files li span.pods-file-remove img {
 }
 
 .pods-pick-values li .pods-boolean input {
-	top:5px;
+	top:0;
 }
 
 .pods-pick-values li:hover {

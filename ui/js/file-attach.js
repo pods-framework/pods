@@ -18,7 +18,7 @@ jQuery('p.pods-add-file a').live('click',function(event){
 
     // track which file column we're dealing with here
     jQuery('div.pods-file-context').removeClass('pods-file-context');
-    jQuery(this).parent().parent().addClass('pods-file-context');
+    jQuery(this).parent().parent().addClass('pods-file-context').addClass('current');
 
     var pods_href = jQuery(this).attr('href'), pods_width = jQuery(window).width(), pods_H = jQuery(window).height(), pods_W = ( 720 < pods_width ) ? 720 : pods_width;
 
@@ -78,14 +78,16 @@ function pods_thickbox_handler(){
     }
     if(jQuery('#TB_iframeContent').contents().length==0&&pods_file_info.hijacked){
         // the thickbox was closed
+        pods_file_list = jQuery('.pods-file-context.current ul')
         clearInterval(pods_file_thickbox);
         pods_file_info.hijacked = false;
+        pods_file_list.parent().removeClass('current');
     }
 }
 
 
 function pods_add_file(pods_media_id,pods_media_name,pods_media_thumb){
-    pods_file_list = jQuery('.pods-file-context ul');
+    pods_file_list = jQuery('.pods-file-context.current ul');
     pods_file_field_name = pods_file_list.parent().attr('id').replace('field-pods-field-','');
 
     pods_file_markup = '<li class="media-item">';
@@ -109,6 +111,8 @@ function pods_init_file_sortability() {
             containment: 'parent'
         });
 }
-jQuery(document).ready(function(){
+jQuery(document).ready(function($){
     pods_init_file_sortability();
 });
+
+// vim : set expandtab ts=4 sw=4 :

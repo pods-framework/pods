@@ -117,6 +117,14 @@ class PodsAdmin {
                     // File Upload
                     wp_enqueue_script('thickbox');
                     wp_enqueue_style('thickbox');
+
+					// Plupload scripts 
+					wp_enqueue_script('plupload');
+					wp_enqueue_script('plupload-html5');
+					wp_enqueue_script('plupload-flash');
+					wp_enqueue_script('plupload-silverlight');
+					wp_enqueue_script('plupload-html4');
+
                     wp_enqueue_script('pods-file-attach');
                 }
                 else

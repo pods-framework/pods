@@ -730,16 +730,23 @@
                                                     list_item.appendTo(queue);
                                                 });
                                                 
-                                                // up.start() // auto-upload on FilesAdded
+                                                up.start() // auto-upload on FilesAdded
                                             });
 
                                             uploader.bind('UploadProgress', function(up, file) {
-                                                var upbar = jQuery('#' + file.id);
+                                                var upbar = jQuery('#' + file.id),
+                                                    prog  = upbar.find('.progress-bar');
+                                                prog.css('width', file.percent + '%');
                                             });
 
                                             uploader.bind('FileUploaded', function(up, file, resp) {
-
+                                                var upbar = jQuery('#' + file.id),
+                                                    prog  = upbar.find('.progress-bar');
+                                                prog.remove();
+                                                upbar.prepend('<span class="remove"><img src="' + PODS_URL +  'ui/images/del.png" alt="remove" /></span>');
                                             });
+
+                                            window.pluploaders.push(uploader);
                                         });
                                     </script>
                                 </li>

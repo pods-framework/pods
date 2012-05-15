@@ -165,6 +165,18 @@ form.pods-manage ul.pods-files li span.pods-file-remove img {
 	width: 150px;
 }
 
+.pods-inline-files li {
+	margin-top: 10px;
+}
+
+.pods-inline-files li .file-name {
+	vertical-align: top !important;
+}
+
+.pods-inline-files li .remove {
+	cursor: pointer;
+}
+
 form.pods-manage .pods-pick-values {
     background: #fff;
     border: 1px solid #dfdfdf;

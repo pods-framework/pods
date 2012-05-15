@@ -664,16 +664,6 @@
                                     <a class="button plupload-add" href="" id="file4-browse">Select + Upload</a>
                                     <a class="button" href="" id="file4-browse-server">Browse Server</a>
                                     <ul class="pods-inline-files">
-                                        <li>
-                                            <span class="remove"><img src="<?php echo PODS_URL . 'ui/images/del.png'; ?>" /></span>
-                                            <span class="file-name">test.png</span>
-                                        </li>
-                                        <li>
-                                            <div class="plupload-progress">
-                                                <span class="file-name">test.png</span>
-                                                <span class="progress-bar" style="width: 50%"></span>
-                                            </div>
-                                        </li>
                                     </ul>
                                     
                                     <?php
@@ -750,6 +740,10 @@
                                                 prog.remove();
                                                 upbar.prepend('<span class="remove"><img src="' + PODS_URL +  'ui/images/del.png" alt="remove" /></span>');
                                                 upbar.append(input);
+                                            });
+
+                                            jQuery('span.remove').live('click', function(evt) {
+                                                jQuery(this).closest('li').remove();
                                             });
 
                                             window.pluploaders.push(uploader);

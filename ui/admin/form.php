@@ -698,7 +698,12 @@
                                             uploader.init();
 
                                             uploader.bind('FilesAdded', function(up, files) {
-                                                var queue = jQuery('#field-pods-field-file4 .pods-inline-files');
+                                                var queue = jQuery('#field-pods-field-file4 .pods-inline-files'),
+                                                    items = queue.find('li'),
+                                                    itemCount = items.size(),
+                                                    fileCount = files.length,
+                                                    maxFiles  = 2;
+
 
                                                 jQuery.each(files, function(idx, file) {
                                                     var list_item = jQuery('<li/>'),
@@ -719,6 +724,19 @@
                                                     prog_wrap.append(prog_name).append(prog_bar).appendTo(list_item);
                                                     list_item.appendTo(queue);
                                                 });
+
+                                                // Remove files beyond limit
+                                                if (itemCount + fileCount > maxFiles) {
+                                                    $.fn.reverse = [].reverse;
+                                                    var reversed = queue.find('li').reverse();
+
+                                                    reversed.each(function(idx, elem) {
+                                                        if (idx + 1 > maxFiles) {
+                                                            jQuery(elem).remove();
+                                                            console.log('removing ' + elem);
+                                                        }
+                                                    })
+                                                }
                                                 
                                                 up.start() // auto-upload on FilesAdded
                                             });

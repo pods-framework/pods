@@ -586,11 +586,10 @@
                                     $plupload_init = array(
                                         'runtimes'            => 'html5,silverlight,flash,html4',
                                         'browse_button'       => 'file3-browse',
-                                        'url'                 => admin_url('admin-ajax.php'),
-                                        'file_data_name'      => 'async-upload',
+                                        'url'                 => PODS_URL . 'ui/admin/misc.php',
+                                        'file_data_name'      => 'Filedata',
                                         'multiple_queues'     => false,
                                         'max_file_size'       => wp_max_upload_size().'b',
-                                        'url'                 => admin_url('admin-ajax.php'),
                                         'flash_swf_url'       => includes_url('js/plupload/plupload.flash.swf'),
                                         'silverlight_xap_url' => includes_url('js/plupload/plupload.silverlight.xap'),
                                         'filters'             => array(array('title' => __('Allowed Files', 'pods'), 'extensions' => '*')),
@@ -598,7 +597,7 @@
                                         'urlstream_upload'    => true,
                                         'multipart_params'    => array(
                                           '_ajax_nonce' => wp_create_nonce('photo-upload'),
-                                          'action'      => 'pods_front',
+                                          'action'      => 'wp_handle_upload_advanced',
                                           'method'      => 'upload_file',
                                           'pods_ajax'   => '1',
                                         ),
@@ -616,7 +615,9 @@
                                             uploader.init();
 
                                             uploader.bind('FilesAdded', function(up, files) {
-                                                var queue = jQuery('#field-pods-field-file3 .plupload-queue');
+                                                var list = jQuery('#field-pods-field-file3 ul.ui-sortable'),
+                                                    queue = jQuery('#field-pods-field-file3 .plupload-queue'),
+                                                    maxFiles = 5;
 
                                                 jQuery.each(files, function(idx, file) {
                                                     var prog_container = jQuery('<div/>', {
@@ -635,6 +636,7 @@
                                                         });
                                                     prog_container.append(prog_name).append(prog_bar).appendTo(queue);
                                                 });
+
                                                 uploader.start();
                                             });
 
@@ -644,10 +646,35 @@
                                             });
 
                                             uploader.bind('FileUploaded', function(up, file, resp) {
-                                                var sort_array = jQuery('#field-pods-field-file3 .ui-sortable');
-                                                sort_array.append('<li><span class="pods-file-reorder"><img src="' + PODS_URL + 'ui/images/handle.gif" alt="reorder"/></span><span class="pods-file-thumb"></span><span class="pods-file-name">' + file.name + '</span><span class="pods-file-remove"><img src="' + PODS_URL + 'ui/images/del.png"/></span>');
+                                                var response = resp.response;
+
+                                                if (response.substr(0, 5) == "Error") {
+                                                    var div = response.substr(7);
+                                                    alert(jQuery(div).text());
+                                                } else if (response.substr(0, 3) == "<e>") {
+                                                    var r = response.substr(4);
+                                                    alert(r);
+                                                } else {
+                                                    $.fn.reverse = [].reverse;
+                                                    var json = jQuery.parseJSON(response),
+                                                        sort_array = jQuery('#field-pods-field-file3 .ui-sortable'),
+                                                        maxFiles = 5;
+                                                    
+                                                    sort_array.append('<li><span class="pods-file-reorder"><img src="' + PODS_URL + 'ui/images/handle.gif" alt="reorder"/></span><span class="pods-file-thumb"><span><img class="pinkynail" src="' + json.guid + '" /></span><input type="hidden" name="file3[]" value="' + json.ID + '" /></span><span class="pods-file-name">' + file.name + '</span><span class="pods-file-remove"><img src="' + PODS_URL + 'ui/images/del.png"/></span>');
+
+                                                    var items = sort_array.find('li'), itemCount = items.size();
+                                                    
+                                                    if (itemCount > maxFiles) {
+                                                        var reversed = items.reverse();
+
+                                                        reversed.each(function(idx, elem) {
+                                                            if (idx + 1 > maxFiles) {
+                                                                jQuery(elem).remove();
+                                                            }
+                                                        });
+                                                    }
+                                                }
                                                 jQuery('#' + file.id).remove();
-                                                console.log(resp);
                                             });
 
                                             // Add this uploader to a global 
@@ -670,11 +697,10 @@
                                     $plupload_init = array(
                                         'runtimes'            => 'html5,silverlight,flash,html4',
                                         'browse_button'       => 'file4-browse',
-                                        'url'                 => admin_url('admin-ajax.php'),
-                                        'file_data_name'      => 'async-upload',
+                                        'url'                 => PODS_URL . 'ui/admin/misc.php',
+                                        'file_data_name'      => 'Filedata',
                                         'multiple_queues'     => false,
                                         'max_file_size'       => wp_max_upload_size().'b',
-                                        'url'                 => admin_url('admin-ajax.php'),
                                         'flash_swf_url'       => includes_url('js/plupload/plupload.flash.swf'),
                                         'silverlight_xap_url' => includes_url('js/plupload/plupload.silverlight.xap'),
                                         'filters'             => array(array('title' => __('Allowed Files', 'pods'), 'extensions' => '*')),
@@ -682,7 +708,7 @@
                                         'urlstream_upload'    => true,
                                         'multipart_params'    => array(
                                           '_ajax_nonce' => wp_create_nonce('photo-upload'),
-                                          'action'      => 'pods_front',
+                                          'action'      => 'wp_handle_upload_advanced',
                                           'method'      => 'upload_file',
                                           'pods_ajax'   => '1',
                                         ),
@@ -749,15 +775,28 @@
 
                                             uploader.bind('FileUploaded', function(up, file, resp) {
                                                 var upbar = jQuery('#' + file.id),
-                                                    prog  = upbar.find('.progress-bar')
-                                                    input = jQuery('<input/>', {
+                                                    prog  = upbar.find('.progress-bar'),
+                                                    response = resp.response;
+
+                                                if (response.substr(0, 5) == "Error") {
+                                                    var div = response.substr(7);
+                                                    alert(jQuery(div).text());
+                                                    upbar.remove();
+                                                } else if (response.substr(0, 3) == "<e>") {
+                                                    var r = response.substr(4);
+                                                    alert(r);
+                                                    upbar.remove();
+                                                } else {
+                                                    var json = jQuery.parseJSON(response);
+                                                    var input = jQuery('<input/>', {
                                                         'type': 'hidden',
-                                                        name: 'file4',
-                                                        value: resp.response
+                                                        name: 'file4[]',
+                                                        value: json.ID
                                                     });
-                                                prog.remove();
-                                                upbar.prepend('<span class="remove"><img src="' + PODS_URL +  'ui/images/del.png" alt="remove" /></span>');
-                                                upbar.append(input);
+                                                    prog.remove();
+                                                    upbar.prepend('<span class="remove"><img src="' + PODS_URL +  'ui/images/del.png" alt="remove" /></span>');
+                                                    upbar.append(input);
+                                                }
                                             });
 
                                             jQuery('span.remove').live('click', function(evt) {

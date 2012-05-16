@@ -644,10 +644,18 @@
                                             });
 
                                             uploader.bind('FileUploaded', function(up, file, resp) {
-                                                var sort_array = jQuery('#field-pods-field-file3 .ui-sortable');
-                                                sort_array.append('<li><span class="pods-file-reorder"><img src="' + PODS_URL + 'ui/images/handle.gif" alt="reorder"/></span><span class="pods-file-thumb"></span><span class="pods-file-name">' + file.name + '</span><span class="pods-file-remove"><img src="' + PODS_URL + 'ui/images/del.png"/></span>');
-                                                jQuery('#' + file.id).remove();
-                                                console.log(resp);
+                                                var response = resp.response;
+
+                                                if (response.substr(0, 5) == "Error") {
+                                                    alert(jQuery(response).find('div').text());
+                                                } else if (response.substr(0, 3) == "<e>") {
+                                                    
+                                                } else {
+                                                    var sort_array = jQuery('#field-pods-field-file3 .ui-sortable');
+                                                    sort_array.append('<li><span class="pods-file-reorder"><img src="' + PODS_URL + 'ui/images/handle.gif" alt="reorder"/></span><span class="pods-file-thumb"></span><span class="pods-file-name">' + file.name + '</span><span class="pods-file-remove"><img src="' + PODS_URL + 'ui/images/del.png"/></span>');
+                                                    jQuery('#' + file.id).remove();
+                                                    console.log(resp);
+                                                }
                                             });
 
                                             // Add this uploader to a global 

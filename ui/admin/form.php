@@ -597,7 +597,7 @@
                                         'urlstream_upload'    => true,
                                         'multipart_params'    => array(
                                           '_ajax_nonce' => wp_create_nonce('photo-upload'),
-                                          'action'      => 'pods_front',
+                                          'action'      => 'wp_handle_upload_advanced',
                                           'method'      => 'upload_file',
                                           'pods_ajax'   => '1',
                                         ),
@@ -646,15 +646,19 @@
                                                 var response = resp.response;
 
                                                 if (response.substr(0, 5) == "Error") {
-                                                    alert(jQuery(response).find('div').text());
+                                                    var div = response.substr(7);
+                                                    alert(jQuery(div).text());
+                                                    jQuery('#' + file.id).remove();
+
                                                 } else if (response.substr(0, 3) == "<e>") {
                                                     
                                                 } else {
+                                                    var json = jQuery.parseJSON(response);
                                                     var sort_array = jQuery('#field-pods-field-file3 .ui-sortable');
-                                                    sort_array.append('<li><span class="pods-file-reorder"><img src="' + PODS_URL + 'ui/images/handle.gif" alt="reorder"/></span><span class="pods-file-thumb"></span><span class="pods-file-name">' + file.name + '</span><span class="pods-file-remove"><img src="' + PODS_URL + 'ui/images/del.png"/></span>');
+                                                    sort_array.append('<li><span class="pods-file-reorder"><img src="' + PODS_URL + 'ui/images/handle.gif" alt="reorder"/></span><span class="pods-file-thumb"><span><img class="pinkynail" src="' + json.guid + '" /></span><input type="hidden" name="file3[]" value="' + json.ID + '" /></span><span class="pods-file-name">' + file.name + '</span><span class="pods-file-remove"><img src="' + PODS_URL + 'ui/images/del.png"/></span>');
                                                     jQuery('#' + file.id).remove();
-                                                    console.log(resp);
                                                 }
+                                                console.log(resp);
                                             });
 
                                             // Add this uploader to a global 
@@ -688,7 +692,7 @@
                                         'urlstream_upload'    => true,
                                         'multipart_params'    => array(
                                           '_ajax_nonce' => wp_create_nonce('photo-upload'),
-                                          'action'      => 'pods_front',
+                                          'action'      => 'wp_handle_upload_advanced',
                                           'method'      => 'upload_file',
                                           'pods_ajax'   => '1',
                                         ),

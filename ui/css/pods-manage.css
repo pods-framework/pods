@@ -123,6 +123,8 @@ form.pods-manage ul.pods-files li span.pods-file-thumb {
 form.pods-manage ul.pods-files li span.pods-file-thumb .pinkynail {
     float: none;
     margin: 0;
+	max-width: 40px !important;
+	max-height: 40px !important;
 }
 
 form.pods-manage ul.pods-files li span.pods-file-name {

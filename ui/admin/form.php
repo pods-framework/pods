@@ -615,7 +615,9 @@
                                             uploader.init();
 
                                             uploader.bind('FilesAdded', function(up, files) {
-                                                var queue = jQuery('#field-pods-field-file3 .plupload-queue');
+                                                var list = jQuery('#field-pods-field-file3 ul.ui-sortable'),
+                                                    queue = jQuery('#field-pods-field-file3 .plupload-queue'),
+                                                    maxFiles = 5;
 
                                                 jQuery.each(files, function(idx, file) {
                                                     var prog_container = jQuery('<div/>', {
@@ -634,6 +636,7 @@
                                                         });
                                                     prog_container.append(prog_name).append(prog_bar).appendTo(queue);
                                                 });
+
                                                 uploader.start();
                                             });
 
@@ -652,12 +655,26 @@
                                                     var r = response.substr(4);
                                                     alert(r);
                                                 } else {
-                                                    var json = jQuery.parseJSON(response);
-                                                    var sort_array = jQuery('#field-pods-field-file3 .ui-sortable');
+                                                    $.fn.reverse = [].reverse;
+                                                    var json = jQuery.parseJSON(response),
+                                                        sort_array = jQuery('#field-pods-field-file3 .ui-sortable'),
+                                                        maxFiles = 5;
+                                                    
                                                     sort_array.append('<li><span class="pods-file-reorder"><img src="' + PODS_URL + 'ui/images/handle.gif" alt="reorder"/></span><span class="pods-file-thumb"><span><img class="pinkynail" src="' + json.guid + '" /></span><input type="hidden" name="file3[]" value="' + json.ID + '" /></span><span class="pods-file-name">' + file.name + '</span><span class="pods-file-remove"><img src="' + PODS_URL + 'ui/images/del.png"/></span>');
+
+                                                    var items = sort_array.find('li'), itemCount = items.size();
+                                                    
+                                                    if (itemCount > maxFiles) {
+                                                        var reversed = items.reverse();
+
+                                                        reversed.each(function(idx, elem) {
+                                                            if (idx + 1 > maxFiles) {
+                                                                jQuery(elem).remove();
+                                                            }
+                                                        });
+                                                    }
                                                 }
                                                 jQuery('#' + file.id).remove();
-                                                console.log(resp);
                                             });
 
                                             // Add this uploader to a global 

@@ -5,6 +5,8 @@ Tags: pods, cms, cck, pods ui, ui, content types, custom post types, relationshi
 Requires at least: 3.1
 Tested up to: 3.3.2
 Stable tag: 1.14
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Pods is a CMS framework for creating, managing, and deploying customized content types.
 
@@ -68,7 +70,7 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 == Changelog ==
 
-= 1.14 - May 5, 2012 =
+= 1.14 - May 21, 2012 =
 * Important Change / Addition: For installations using WordPress 3.3+, we have switched the default uploader to Plupload from SWFUpload due to incompatibilities introduced in WP 3.3.2 that effect all plugins and themes using the styled button. Be sure to update your file upload helpers using our examples at http://podscms.org/packages/file-uploader-input-helpers/
 * Added: edit_where_any option in Pods UI now lets you set (true/false) whether for edit_where to be an ANY or ALL match (default false = ALL)
 * Fixed: Date Input field was throwing a JS error if you used YYYY-mm-dd format without the time included

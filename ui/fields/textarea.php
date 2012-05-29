@@ -1,8 +1,1 @@
-<?php
-/**
- * Created by JetBrains PhpStorm.
- * User: sclark
- * Date: 4/29/12
- * Time: 11:12 AM
- * To change this template use File | Settings | File Templates.
- */
+<textarea<?php self::attributes( $attributes, $name, $type, $options ); ?>><?php echo esc_html( $value ); ?></textarea>

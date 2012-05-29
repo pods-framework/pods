@@ -85,19 +85,6 @@ class PodsField_Text extends PodsField {
     }
 
     /**
-     * Change the value before it's sent to be displayed or saved
-     *
-     * @param mixed $value
-     * @param array $options
-     *
-     * @since 2.0.0
-     */
-    public function value ( &$value, $options ) {
-        // Only allow 0 / 1
-        $value = ( 1 == (int) $value ? 1 : 0 );
-    }
-
-    /**
      * Customize output of the form field
      *
      * @param string $name
@@ -111,45 +98,15 @@ class PodsField_Text extends PodsField {
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
         $attributes = array();
-        $attributes[ 'value' ] = 1;
-        $attributes[ 'checked' ] = ( 1 == $value || true === $value ) ? 'CHECKED' : null;
+        $attributes[ 'type' ] = 'text';
+        if ( is_array( $value ) )
+            $value = current( $value );
+        $attributes[ 'value' ] = $value;
         $attributes = self::merge_attributes( $attributes, $name, self::$type, $options );
         if ( isset( $options[ 'default' ] ) && strlen( $attributes[ 'value' ] ) < 1 )
             $attributes[ 'value' ] = $options[ 'default' ];
         $attributes[ 'value' ] = apply_filters( 'pods_form_ui_field_' . self::$type . '_value', $attributes[ 'value' ], $name, $attributes, $options );
 
-        pods_view( PODS_DIR . 'ui/fields/checkbox.php', compact( $attributes, $name, $value, self::$type, $options, $pod, $id ) );
-    }
-
-    /**
-     * Change the way the value of the field is displayed, optionally called with Pods::get
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param string $pod
-     * @param int $id
-     *
-     * @since 2.0.0
-     */
-    public function display ( $value, $name, $options, $fields, $pod, $id ) {
-        $yesno = array(
-            1 => __( 'Yes', 'pods' ),
-            0 => __( 'No', 'pods' )
-        );
-
-        // Handle options
-        if ( isset( $field[ 'options' ][ 'boolean_yes_label' ] ) && 0 < strlen( $field[ 'options' ][ 'boolean_yes_label' ] ) )
-            $yesno[ 1 ] = $field[ 'options' ][ 'boolean_yes_label' ];
-        if ( isset( $field[ 'options' ][ 'boolean_no_label' ] ) && 0 < strlen( $field[ 'options' ][ 'boolean_no_label' ] ) )
-            $yesno[ 0 ] = $field[ 'options' ][ 'boolean_no_label' ];
-
-        // Deprecated handling for 1.x
-        if ( parent::$deprecated ) {
-            return $value;
-        }
-
-        return $yesno[ $value ];
+        pods_view( PODS_DIR . 'ui/fields/text.php', compact( $attributes, $name, $value, self::$type, $options, $pod, $id ) );
     }
 }

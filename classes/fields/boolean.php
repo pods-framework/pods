@@ -75,6 +75,7 @@ class PodsField_Boolean extends PodsField {
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
         $attributes = array();
+        $attributes[ 'type' ] = 'checkbox';
         $attributes[ 'value' ] = 1;
         $attributes[ 'checked' ] = ( 1 == $value || true === $value ) ? 'CHECKED' : null;
         $attributes = self::merge_attributes( $attributes, $name, self::$type, $options );
@@ -82,6 +83,7 @@ class PodsField_Boolean extends PodsField {
             $attributes[ 'value' ] = $options[ 'default' ];
         $attributes[ 'value' ] = apply_filters( 'pods_form_ui_field_' . self::$type . '_value', $attributes[ 'value' ], $name, $attributes, $options );
 
+        if ( $options[''] )
         pods_view( PODS_DIR . 'ui/fields/checkbox.php', compact( $attributes, $name, $value, self::$type, $options, $pod, $id ) );
     }
 

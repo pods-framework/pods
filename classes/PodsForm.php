@@ -76,38 +76,21 @@ class PodsForm {
     public static function field ($name, $value, $type = 'text', $options = null, $pod = null, $id = null) {
         $options = (array) $options;
 
+        if ( class_exists( "PodsField_{$type}" ) && method_exists( "PodsField_{$type}", 'options' ) ) {
+            $defaults = call_user_func( array( "PodsField_{$type}", 'options' ), $name, $value, $options, $pod, $id );
+            $options = self::options( $options, $defaults );
+        }
+
         ob_start();
 
-        if ( class_exists( "PodsField_{$type}" ) && method_exists( "PodsField_{$type}", 'input' ) ) {
+        if ( class_exists( "PodsField_{$type}" ) && method_exists( "PodsField_{$type}", 'input' ) )
             call_user_func( array( "PodsField_{$type}", 'input' ), $name, $value, $options, $pod, $id );
-        }
         else
             do_action('pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id);
 
         $output = ob_get_clean();
 
         return apply_filters('pods_form_ui_field_' . $type, $output, $name, $value, $options, $pod, $id);
-    }
-
-    /**
-     * Output field type 'text'
-     *
-     * @since 2.0.0
-     */
-    protected function field_text ($name, $value = null, $options = null) {
-        $options = (array) $options;
-        $type = 'text';
-        $attributes = array();
-        $attributes['type'] = 'text';
-        if ( is_array( $value ) )
-            $value = current( $value );
-        $attributes['value'] = $value;
-        $attributes = self::merge_attributes($attributes, $name, $type, $options);
-        if (isset($options['default']) && strlen($attributes['value']) < 1)
-            $attributes['value'] = $options['default'];
-?>
-    <input<?php self::attributes($attributes, $name, $type, $options); ?> />
-<?php
     }
 
     /**
@@ -441,6 +424,19 @@ class PodsForm {
         }
         $attributes = (array) apply_filters( 'pods_form_ui_field_' . $type . '_merge_attributes', $attributes, $name, $options );
         return $attributes;
+    }
+
+    public static function options ( $options, $defaults ) {
+        $options = (array) $options;
+        $defaults = (array) $defaults;
+        foreach ( $defaults as $option => $settings ) {
+            $default = $settings;
+            if ( is_array( $settings ) && isset( $settings[ 'default' ] ) )
+                $default = $settings[ 'default' ];
+            if ( !isset( $options[ $option ] ) )
+                $options[ $option ] = $default;
+        }
+        return $options;
     }
 
     /*

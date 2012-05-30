@@ -1,4 +1,4 @@
-<label<?php self::attributes( $attributes, $name, 'label' ); ?>>
+<label<?php PodsForm::attributes( $attributes, $name, 'label' ); ?>>
     <?php
     echo $label;
     if ( 0 < strlen( $help ) && 'help' != $help )

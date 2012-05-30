@@ -54,12 +54,12 @@ class PodsForm {
      * Output a Field Comment Paragraph
      */
     public static function comment ( $name, $message = null, $options = null ) {
+        $name_more_clean = self::clean( $name, true );
+
         if ( null === $options && !empty( self::$options ) )
             $options = self::$options;
         else
             $options = self::options( null, $options );
-
-        $name_more_clean = self::clean( $name, true );
 
         if ( isset( $options[ 'description' ] ) && !empty( $options[ 'description' ] ) )
             $message = $options[ 'description' ];
@@ -90,6 +90,10 @@ class PodsForm {
     public static function field ($name, $value, $type = 'text', $options = null, $pod = null, $id = null) {
         $options = self::options( $type, $options );
 
+        if ( isset( $options[ 'default' ] ) && null === $value )
+            $value = $options[ 'default' ];
+        $value = apply_filters( 'pods_form_ui_field_' . $type . '_value', $value, $name, $options, $pod, $id );
+
         ob_start();
 
         if ( is_object( self::$field ) && class_exists( self::$field ) && method_exists( self::$field, 'input' ) )
@@ -103,24 +107,6 @@ class PodsForm {
     }
 
     /**
-     * Output field type 'textarea'
-     *
-     * @since 2.0.0
-     */
-    protected function field_textarea ($name, $value = null, $options = null) {
-        $options = (array) $options;
-        $type = 'textarea';
-        $attributes = array();
-        $attributes = self::merge_attributes($attributes, $name, $type, $options);
-        if (isset($options['default']) && strlen($value) < 1)
-            $value = $options['default'];
-        $value = apply_filters('pods_form_ui_field_' . $type . '_value', $value, $name, $attributes, $options);
-?>
-    <textarea<?php self::attributes($attributes, $name, $type, $options); ?>><?php echo esc_html($value); ?></textarea>
-<?php
-    }
-
-    /**
      * Output field type 'tinymce'
      *
      * @since 2.0.0
@@ -131,10 +117,6 @@ class PodsForm {
         $attributes = array();
         $attributes['name'] = $name;
         $attributes = self::merge_attributes($attributes, $name, $type, $options);
-        if (isset($options['default']) && strlen($value) < 1)
-            $value = $options['default'];
-
-        $value = apply_filters('pods_form_ui_field_' . $type . '_value', $value, $name, $attributes, $options);
         $settings = null;
         if (isset($options['settings']))
             $settings = $options['settings'];
@@ -173,8 +155,6 @@ class PodsForm {
         $attributes['type'] = 'text';
         $attributes['value'] = $value;
         $attributes = self::merge_attributes($attributes, $name, $type, $options);
-        if (isset($options['default']) && strlen($attributes['value']) < 1)
-            $attributes['value'] = $options['default'];
         if (isset($options['decimals']))
             $decimals = (int) $options['decimals'];
         if (isset($options['decimal_point']))
@@ -184,7 +164,6 @@ class PodsForm {
         if (isset($options['thousands_sep']))
             $thousands_sep = $options['thousands_sep'];
         $attributes['value'] = number_format((float) $attributes['value'], $decimals, $decimal_point, $thousands_sep);
-        $attributes['value'] = apply_filters('pods_form_ui_field_' . $type . '_value', $attributes['value'], $name, $attributes, $options);
 ?>
     <input<?php self::attributes($attributes, $name, $type, $options); ?> />
 <?php
@@ -219,9 +198,6 @@ class PodsForm {
         $attributes['type'] = 'password';
         $attributes['value'] = $value;
         $attributes = self::merge_attributes($attributes, $name, $type, $options);
-        if (isset($options['default']) && strlen($attributes['value']) < 1)
-            $attributes['value'] = $options['default'];
-        $attributes['value'] = apply_filters('pods_form_ui_field_' . $type . '_value', $attributes['value'], $name, $attributes, $options);
 ?>
     <input<?php self::attributes($attributes, $name, $type, $options); ?> />
 <?php
@@ -241,8 +217,6 @@ class PodsForm {
         $attributes['type'] = 'text';
         $attributes['value'] = self::clean($value, false, true);
         $attributes = self::merge_attributes($attributes, $name, $type, $options);
-        if (isset($options['default']) && strlen($attributes['value']) < 1)
-            $attributes['value'] = $options['default'];
 ?>
     <input<?php self::attributes($attributes, $name, $type, $options); ?> />
 <?php
@@ -272,8 +246,6 @@ class PodsForm {
         $attributes['type'] = 'text';
         $attributes['value'] = $value;
         $attributes = self::merge_attributes($attributes, $name, $type, $options);
-        if (isset($options['default']) && strlen($attributes['value']) < 1)
-            $attributes['value'] = $options['default'];
 ?>
     <input<?php self::attributes($attributes, $name, $type, $options); ?> />
 <?php
@@ -301,9 +273,6 @@ class PodsForm {
         $type = 'pick';
         $attributes = array();
         $attributes = self::merge_attributes($attributes, $name, $type, $options);
-        if (isset($options['default']) && strlen($value) < 1)
-            $value = $options['default'];
-        $value = apply_filters('pods_form_ui_field_' . $type . '_value', $value, $name, $attributes, $options);
         if (!isset($options['data']) || empty($options['data']))
             $options['data'] = array();
         elseif (!is_array($options['data']))
@@ -364,11 +333,8 @@ class PodsForm {
         $attributes['type'] = 'checkbox';
         $attributes['value'] = $value;
         $attributes = self::merge_attributes($attributes, $name, $type, $options);
-        if (isset($options['default']) && strlen($attributes['value']) < 1)
-            $attributes['value'] = $options['default'];
         if (isset($options['data']))
             $attributes['data'] = $options['data'];
-        $attributes['value'] = apply_filters('pods_form_ui_field_' . $type . '_value', $attributes['value'], $name, $attributes, $options);
 ?>
     <input<?php self::attributes($attributes, $name, $type, $options); ?> />
 <?php
@@ -446,7 +412,7 @@ class PodsForm {
 
         $core_defaults = array(
             'description' => '',
-            'default' => '',
+            'default' => null,
             'attributes' => array(),
             'class' => ''
         );

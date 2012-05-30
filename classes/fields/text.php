@@ -28,6 +28,7 @@ class PodsField_Text extends PodsField {
     public function options () {
         $options = array(
             'text_format_type' => array(
+                'label' => 'Format Type',
                 'default' => 'plain',
                 'type' => 'pick',
                 'values' => array(
@@ -39,6 +40,7 @@ class PodsField_Text extends PodsField {
             ),
 
             'text_format_website' => array(
+                'label' => 'Format',
                 'default' => 'normal',
                 'type' => 'pick',
                 'values' => array(
@@ -51,6 +53,7 @@ class PodsField_Text extends PodsField {
                 )
             ),
             'text_format_phone' => array(
+                'label' => 'Format',
                 'default' => '999-999-9999 x999',
                 'type' => 'pick',
                 'values' => array(
@@ -67,14 +70,22 @@ class PodsField_Text extends PodsField {
                 )
             ),
             'text_enable_phone_extension' => array(
+                'label' => 'Enable Phone Extension?',
                 'default' => 1,
                 'type' => 'boolean'
             ),
             'text_allow_html' => array(
+                'label' => 'Allow HTML?',
+                'default' => 1,
+                'type' => 'boolean'
+            ),
+            'text_allow_shortcode' => array(
+                'label' => 'Allow Shortcodes?',
                 'default' => 1,
                 'type' => 'boolean'
             ),
             'text_allowed_html_tags' => array(
+                'label' => 'Allowed HTML Tags',
                 'default' => 'strong em a ul ol li b i',
                 'type' => 'text'
             ),

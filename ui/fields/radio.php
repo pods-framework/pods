@@ -5,7 +5,7 @@
         $attributes[ 'type' ] = 'radio';
         $attributes[ 'checked' ] = ( $val == $value ) ? 'CHECKED' : null;
         $attributes[ 'value' ] = $val;
-        $attributes = self::merge_attributes( $attributes, $name, self::$type, $options );
+        $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$type, $options );
         if ( 1 < count( $options[ 'data' ] ) )
             $attributes[ 'id' ] .= $counter;
 ?>

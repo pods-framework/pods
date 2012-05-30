@@ -7,7 +7,7 @@
         $attributes[ 'value' ] = $val;
         if ( 1 < count( $options[ 'data' ] ) && false === strpos( '[]', $name ) )
             $name .= '[]';
-        $attributes = self::merge_attributes( $attributes, $name, self::$type, $options );
+        $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$type, $options );
         if ( 1 < count( $options[ 'data' ] ) )
             $attributes[ 'id' ] .= $counter;
 ?>

@@ -28,20 +28,23 @@ class PodsField_Boolean extends PodsField {
     public function options () {
         $options = array(
             'boolean_format_type' => array(
+                'label' => 'Format Type',
                 'default' => 'checkbox',
                 'type' => 'pick',
                 'values' => array(
-                    'checkbox' => 'Checkbox',
-                    'radio' => 'Radio Buttons',
-                    'dropdown' => 'Drop Down'
+                    'checkbox' => __( 'Checkbox', 'pods' ),
+                    'radio' => __( 'Radio Buttons', 'pods' ),
+                    'dropdown' => __( 'Drop Down', 'pods' )
                 )
             ),
             'boolean_yes_label' => array(
-                'default' => 'Yes',
+                'label' => 'Yes Label',
+                'default' => __( 'Yes', 'pods' ),
                 'type' => 'text'
             ),
             'boolean_no_label' => array(
-                'default' => 'No',
+                'label' => 'No Label',
+                'default' => __( 'No', 'pods' ),
                 'type' => 'text'
             )
         );
@@ -74,17 +77,27 @@ class PodsField_Boolean extends PodsField {
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
-        $attributes = array();
-        $attributes[ 'type' ] = 'checkbox';
-        $attributes[ 'value' ] = 1;
-        $attributes[ 'checked' ] = ( 1 == $value || true === $value ) ? 'CHECKED' : null;
-        $attributes = self::merge_attributes( $attributes, $name, self::$type, $options );
-        if ( isset( $options[ 'default' ] ) && strlen( $attributes[ 'value' ] ) < 1 )
-            $attributes[ 'value' ] = $options[ 'default' ];
-        $attributes[ 'value' ] = apply_filters( 'pods_form_ui_field_' . self::$type . '_value', $attributes[ 'value' ], $name, $attributes, $options );
 
-        if ( $options[''] )
-        pods_view( PODS_DIR . 'ui/fields/checkbox.php', compact( $attributes, $name, $value, self::$type, $options, $pod, $id ) );
+        $field_type = 'checkbox';
+
+        if ( 'checkbox' != $options[ 'boolean_format_type' ] ) {
+            $options[ 'data' ] = array(
+                1 => $options[ 'boolean_yes_label' ],
+                0 => $options[ 'boolean_no_label' ]
+            );
+
+            if ( 'radio' == $options[ 'boolean_format_type' ] )
+                $field_type = 'radio';
+            elseif ( 'dropdown' == $options[ 'boolean_format_type' ] )
+                $field_type = 'select';
+        }
+        else {
+            $options[ 'data' ] = array(
+                1 => $options[ 'boolean_yes_label' ]
+            );
+        }
+
+        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( $name, $value, self::$type, $options, $pod, $id ) );
     }
 
     /**
@@ -101,20 +114,13 @@ class PodsField_Boolean extends PodsField {
      */
     public function display ( $value, $name, $options, $fields, $pod, $id ) {
         $yesno = array(
-            1 => __( 'Yes', 'pods' ),
-            0 => __( 'No', 'pods' )
+            1 => $options[ 'boolean_yes_label' ],
+            0 => $options[ 'boolean_no_label' ]
         );
 
-        // Handle options
-        if ( isset( $field[ 'options' ][ 'boolean_yes_label' ] ) && 0 < strlen( $field[ 'options' ][ 'boolean_yes_label' ] ) )
-            $yesno[ 1 ] = $field[ 'options' ][ 'boolean_yes_label' ];
-        if ( isset( $field[ 'options' ][ 'boolean_no_label' ] ) && 0 < strlen( $field[ 'options' ][ 'boolean_no_label' ] ) )
-            $yesno[ 0 ] = $field[ 'options' ][ 'boolean_no_label' ];
-
         // Deprecated handling for 1.x
-        if ( parent::$deprecated ) {
+        if ( parent::$deprecated )
             return $value;
-        }
 
         return $yesno[ $value ];
     }

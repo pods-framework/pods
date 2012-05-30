@@ -1,6 +1,7 @@
 <?php
 class PodsForm {
 
+    static $field = null;
     static $type = null;
     static $options = array();
 
@@ -87,15 +88,12 @@ class PodsForm {
      * @since 2.0.0
      */
     public static function field ($name, $value, $type = 'text', $options = null, $pod = null, $id = null) {
-        if ( self::$type == $type && null === $options && !empty( self::$options ) )
-            $options = self::$options;
-        else
-            $options = self::options( $type, $options );
+        $options = self::options( $type, $options );
 
         ob_start();
 
-        if ( class_exists( "PodsField_{$type}" ) && method_exists( "PodsField_{$type}", 'input' ) )
-            call_user_func( array( "PodsField_{$type}", 'input' ), $name, $value, $options, $pod, $id );
+        if ( is_object( self::$field ) && class_exists( self::$field ) && method_exists( self::$field, 'input' ) )
+            call_user_func( array( self::$field, 'input' ), $name, $value, $options, $pod, $id );
         else
             do_action('pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id);
 
@@ -453,8 +451,16 @@ class PodsForm {
             'class' => ''
         );
 
-        if ( class_exists( "PodsField_{$type}" ) && method_exists( "PodsField_{$type}", 'options' ) )
-            $defaults = (array) call_user_func( array( "PodsField_{$type}", 'options' ) );
+        if ( $type != self::$type ) {
+            $class = "PodsField_{$type}";
+            if ( class_exists( $class ) )
+                self::$field = new $class();
+            else
+                self::$field = null;
+        }
+
+        if ( is_object( self::$field ) && method_exists( self::$field, 'options' ) )
+            $defaults = (array) call_user_func( array( self::$field, 'options' ) );
 
         $defaults = array_merge_recursive( $core_defaults, $defaults );
 

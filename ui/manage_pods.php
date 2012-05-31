@@ -95,7 +95,7 @@ function sisterFields(sister_field_id) {
         success: function(msg) {
             if (!is_error(msg) && "" != msg) {
                 var html = '<option value="">-- Related to --</option>';
-                var json = eval('('+msg.match( /\{(.*)\}/gi )+')');
+                var json = eval('('+msg.match( /\[{(.*)\}]/gi )+')');
                 var found = false;
                 if(json != null) {
                     for (var i = 0; i < json.length; i++) {
@@ -364,10 +364,11 @@ function loadColumn(id) {
                 jQuery("#column_required").attr("disabled", "disabled");
             }
             var found = null;
-            if (0 != parseInt(sister_field_id))
-                sisterFields(sister_field_id);
-            if ("pick" == coltype)
+            if ("pick" == coltype) {
                 doDropdown(coltype);
+                sister_field_id = parseInt( sister_field_id );
+                sisterFields( sister_field_id );
+            }
             jQuery("#columnBox").fadeIn('fast');
         }
     });

@@ -283,7 +283,7 @@ elseif ('file' == $coltype) {
                     var response = eval( '(' +resp.response.match( /\{(.*)\}/gi ) + ')' );
                     file_div.html('<div class="btn dropme"></div><a href="' + response.guid + '" target="_blank">' + response.post_title + '</a>');
                     file_div.attr('class', 'success');
-                    file_div.attr('id', response.ID);
+                    file_div.data('post-id', response.ID);
                 }
 
                 /**
@@ -340,7 +340,7 @@ elseif ('file' == $coltype) {
                         server_data = eval('('+server_data.match( /\{(.*)\}/gi )+')');
                         jQuery("#"+file.id).html('<div class="btn dropme"></div> <a href="' + server_data.guid + '" target="_blank">' + server_data.post_title + '</a>');
                         jQuery("#"+file.id).attr("class", "success");
-                        jQuery("#"+file.id).attr("id", server_data.ID);
+                        jQuery("#"+file.id).data("post-id", server_data.ID);
                     }
                 },
                 upload_complete_handler: function(file) {
@@ -366,26 +366,21 @@ elseif ('file' == $coltype) {
 <?php
         // Retrieve uploaded files
         $field_id = (int) $field['id'];
-        $pod_id = (int) $this->get_pod_id();
-        $sql = "
-        SELECT
-            p.ID, p.guid
-        FROM
-            @wp_pod_rel r
-        INNER JOIN
-            @wp_posts p ON p.post_type = 'attachment' AND p.ID = r.tbl_row_id
-        WHERE
-            r.field_id = {$field_id} AND r.pod_id = {$pod_id}
-        ";
-        $result = pod_query($sql);
-        while ($row = mysql_fetch_assoc($result)) {
-            $filepath = $row['guid'];
-            $filename = substr($filepath, strrpos($filepath, '/') + 1);
+        $files = $this->get_field( $field[ 'name' ] );
+        if ( !empty( $files ) && isset( $files[ 'ID' ] ) )
+            $files = array( $files );
+
+        if ( !empty( $files ) ) {
+            foreach ( $files as $file ) {
+                $filepath = $file[ 'guid' ];
+                $filename = substr($filepath, strrpos($filepath, '/') + 1);
 ?>
-        <div id="<?php echo esc_attr($row['ID']); ?>" class="success">
-            <div class="btn dropme"></div> <a href="<?php echo esc_attr($row['guid']); ?>" target="_blank"><?php echo esc_html($filename); ?></a>
-        </div>
+            <div data-post-id="<?php echo (int) $file[ 'ID' ]; ?>" class="success">
+                <div class="btn dropme"></div>
+                <a href="<?php echo esc_attr( $file[ 'guid' ] ); ?>" target="_blank"><?php echo esc_html( $filename ); ?></a>
+            </div>
 <?php
+            }
         }
 ?>
         </div>

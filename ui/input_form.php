@@ -75,9 +75,12 @@ function saveForm(form_count) {
             theval = theval.slice(0, -1);
         }
         else if ("file" == classname[1]) {
-            jQuery("." + classname[2] + " > div.success").each(function() {
-                theval += jQuery(this).attr("id") + ",";
-            });
+            jQuery( "." + classname[2] + " > div.success" ).each( function () {
+                if ( 0 < parseInt( jQuery( this ).attr( 'id' ) ) )
+                    theval += jQuery( this ).attr( 'id' ) + ",";
+                else if ( 0 < parseInt( jQuery( this ).data( 'post-id' ) ) )
+                    theval += jQuery( this ).data( 'post-id' ) + ",";
+            } );
             theval = theval.slice(0, -1);
         }
         else if ("bool" == classname[1]) {

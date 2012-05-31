@@ -39,6 +39,7 @@ class PodsAdmin {
     }
 
     public function admin_head() {
+		require_once PODS_DIR . 'ui/admin/media_button.php';
         wp_register_style('pods-admin', PODS_URL . 'ui/css/pods-admin.css', array(), PODS_VERSION);
         if (!wp_style_is('jquery-ui', 'registered'))
             wp_register_style('jquery-ui', PODS_URL . 'ui/css/smoothness/jquery-ui-1.8.16.custom.css', array(), '1.8.16');

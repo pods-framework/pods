@@ -9,9 +9,8 @@ div.section {
 	padding: 15px 15px 0 15px;
 }
 </style>
-<script type="text/javascript">
 
-</script>
+
 <div id="pods_shortcode_form" style="display: none;">
 	<div class="wrap">
 		<div>
@@ -47,6 +46,7 @@ div.section {
 				<div class="section">
 					<label for="pod_sort_direction">Direction</label>
 					<select id="pod_sort_direction" name="pod_sort_direction">
+						<option value=""></option>
 						<option value="ASC">
 							Ascending
 						</option>
@@ -79,7 +79,7 @@ div.section {
 					</select>
 				</div>
 				<div class="section">
-					<a class="button" href="#">Insert</a>
+					<a class="button" id="pods_insert_shortcode" href="#">Insert</a>
 				</div>
 			</form>
 		</div>

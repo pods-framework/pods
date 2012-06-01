@@ -17,6 +17,24 @@ add_filter('media_buttons_context', 'pods_media_button');
  * Display the shortcode form
  */
 function add_pods_mce_popup() {
+	?>
+	<script type="text/javascript">
+	jQuery(function($) {
+		$('#pods_insert_shortcode').click(function(evt) {
+			var form = $('#pods_shortcode_form'),
+				pod_select = $('#pod_select').val(),
+				slug = $('#pod_slug').val(),
+				orderby = $('#pod_orderby').val(),
+				sort_direction = $('#pod_sort_direction').val(),
+				template = $('#pod_template').val(),
+				limit = $('#pod_limit').val(),
+				column = $('#pod_column').val(),
+				helper = $('#pod_helper').val();
+				
+		});
+	});
+	</script>
+	<?php
 	require_once PODS_DIR . 'ui/admin/pods_shortcode_form.php';
 }
 add_action('admin_footer', 'add_pods_mce_popup');

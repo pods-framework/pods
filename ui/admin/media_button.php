@@ -29,7 +29,31 @@ function add_pods_mce_popup() {
 				template = $('#pod_template').val(),
 				limit = $('#pod_limit').val(),
 				column = $('#pod_column').val(),
-				helper = $('#pod_helper').val();
+				helper = $('#pod_helper').val(),
+				shortcode = '[pods ';
+
+			shortcode += 'name="' + pod_select + '" ';
+			if (slug.length)
+				shortcode += 'slug="' + slug + '" ';
+			if (orderby.length) {
+				if (sort_direction.length) {
+					shortcode += 'orderby="' + orderby + ' ' + sort_direction + '" ';
+				} else {
+					shortcode += 'orderby="' + orderby + ' ASC" ';
+				}
+			}
+			if (template.length)
+				shortcode += 'template="' + template + '" ';
+			if (limit.length)
+				shortcode += 'limit="' + limit + '" ';
+			if (column.length)
+				shortcode += 'col="' + column + '" ';
+			if (helper.length)
+				shortcode += 'helper="' + helper + '" ';
+
+			shortcode += ']';
+
+			window.send_to_editor(shortcode);
 				
 		});
 	});

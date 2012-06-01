@@ -57,11 +57,18 @@ div.section {
 				</div>
 				<div class="section">
 					<?php
-					//TODO: Load all templates
+					$templates = $api->load_templates(array(
+						'orderby' => 'name ASC',
+					));
 					?>
 					<label for="pod_template">Template</label>
 					<select id="pod_template" name="pod_template">
-						
+						<option value=""></option>
+						<?php foreach ($templates as $tmpl => $data){ ?>
+							<option value="<?php echo $tmpl; ?>">
+								<?php echo $tmpl; ?>
+							</option>
+						<?php } ?>
 					</select>
 				</div>
 				<div class="section">
@@ -73,9 +80,19 @@ div.section {
 					<input type="text" id="pod_column" name="pod_column" />
 				</div>
 				<div class="section">
+					<?php
+					$helpers = $api->load_helpers(array(
+						"orderby" => "name ASC",
+					));
+					?>
 				    <label for="pod_helper">Helper</label>
 					<select id="pod_helper" name="pod_helper">
-					
+						<option value=""></option>
+						<?php foreach ($helpers as $helper => $data) { ?>
+							<option value="<?php echo $helper; ?>">
+								<?php echo $helper; ?>
+							</option>
+						<?php } ?>
 					</select>
 				</div>
 				<div class="section">

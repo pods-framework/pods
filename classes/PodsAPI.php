@@ -1532,6 +1532,8 @@ class PodsAPI
      * $params['orderby'] string ORDER BY clause of query
      * $params['limit'] string Number of objects to return
      * $params['where'] string WHERE clause of query
+     *
+     * @param array $params An associative array of parameters
      */
     public function load_objects ($params) {
         $params = (object) pods_sanitize($params);
@@ -1579,6 +1581,22 @@ class PodsAPI
     }
 
     /**
+     * Load Multiple Pod Templates
+     *
+     * $params['where'] string The WHERE clause of query
+     * $params['options'] array Pod Option(s) key=>value array to filter by
+     * $params['orderby'] string ORDER BY clause of query
+     * $params['limit'] string Number of templates to return
+     *
+     * @param array $params An associative array of parameters
+     */
+    public function load_templates ($params) {
+        $params = (object) $params;
+        $params->type = 'template';
+        return $this->load_objects($params);
+    }
+
+    /**
      * Load a Pod Template
      *
      * $params['id'] int The template ID
@@ -1613,6 +1631,22 @@ class PodsAPI
     }
 
     /**
+     * Load Multiple Pod Pages
+     *
+     * $params['where'] string The WHERE clause of query
+     * $params['options'] array Pod Option(s) key=>value array to filter by
+     * $params['orderby'] string ORDER BY clause of query
+     * $params['limit'] string Number of pages to return
+     *
+     * @param array $params An associative array of parameters
+     */
+    public function load_pages ($params) {
+        $params = (object) $params;
+        $params->type = 'page';
+        return $this->load_objects($params);
+    }
+
+    /**
      * Load a Pod Helper
      *
      * $params['id'] int The helper ID
@@ -1625,6 +1659,22 @@ class PodsAPI
         $params = (object) $params;
         $params->type = 'helper';
         return $this->load_object($params);
+    }
+
+    /**
+     * Load Multiple Pod Helpers
+     *
+     * $params['where'] string The WHERE clause of query
+     * $params['options'] array Pod Option(s) key=>value array to filter by
+     * $params['orderby'] string ORDER BY clause of query
+     * $params['limit'] string Number of pages to return
+     *
+     * @param array $params An associative array of parameters
+     */
+    public function load_helpers ($params) {
+        $params = (object) $params;
+        $params->type = 'helper';
+        return $this->load_objects($params);
     }
 
     /**

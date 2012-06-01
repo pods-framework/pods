@@ -31,7 +31,7 @@ class PodsField_Boolean extends PodsField {
                 'label' => 'Format Type',
                 'default' => 'checkbox',
                 'type' => 'pick',
-                'values' => array(
+                'data' => array(
                     'checkbox' => __( 'Checkbox', 'pods' ),
                     'radio' => __( 'Radio Buttons', 'pods' ),
                     'dropdown' => __( 'Drop Down', 'pods' )

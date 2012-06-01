@@ -1,6 +1,6 @@
 <?php
     $attributes = array();
-    $attributes[ 'type' ] = 'text';
+    $attributes[ 'type' ] = 'tel';
     $attributes[ 'value' ] = $value;
     $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$type, $options );
 ?>

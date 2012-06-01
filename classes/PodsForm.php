@@ -113,31 +113,6 @@ class PodsForm {
      */
     protected function field_tinymce ($name, $value = null, $options = null) {
         $options = (array) $options;
-        $type = 'tinymce';
-        $attributes = array();
-        $attributes['name'] = $name;
-        $attributes = self::merge_attributes($attributes, $name, $type, $options);
-        $settings = null;
-        if (isset($options['settings']))
-            $settings = $options['settings'];
-
-        $media_bar = false;
-        if (!(defined('PODS_DISABLE_FILE_UPLOAD') && true === PODS_DISABLE_FILE_UPLOAD)
-                && !(defined('PODS_UPLOAD_REQUIRE_LOGIN') && is_bool(PODS_UPLOAD_REQUIRE_LOGIN) && true === PODS_UPLOAD_REQUIRE_LOGIN && !is_user_logged_in())
-                && !(defined('PODS_UPLOAD_REQUIRE_LOGIN') && !is_bool(PODS_UPLOAD_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_UPLOAD_REQUIRE_LOGIN)))) {
-            $media_bar = true;
-        }
-
-        if (function_exists('wp_editor')) {
-            if (!isset($settings['media_button']))
-                $settings['media_button'] = $media_bar;
-            wp_editor($value, $attributes['id'], $settings);
-        }
-        else {
-            global $wp_editor;
-            require_once PODS_DIR . "/deprecated/wp-editor/wp-editor.php";
-            echo $wp_editor->editor($value, $attributes['id'], $settings, $media_bar);
-        }
     }
 
     /**

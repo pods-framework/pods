@@ -64,9 +64,7 @@ class PodsField_Text extends PodsField {
                         '999.999.9999 x999' => '123.456.7890 x123'
                     ),
                     'International' => array(
-                        '+9 999-999-9999 x999' => '+1 123-456-7890 x123',
-                        '+9 (999) 999-9999 x999' => '+1 (123) 456-7890 x123',
-                        '+9 999.999.9999 x999' => '+1 123.456.7890 x123'
+                        'international' => 'Any (no validation available)'
                     )
                 )
             ),
@@ -120,15 +118,112 @@ class PodsField_Text extends PodsField {
     public function value ( &$value, $options ) {
         $options = (array) $options;
 
-        if ( 1 == $options[ 'text_allow_html' ] ) {
-            if ( 0 < strlen( $options[ 'text_allowed_html_tags' ] ) )
-                $value = strip_tags( $value, $options[ 'text_allowed_html_tags' ] );
-        }
-        else
-            $value = strip_tags( $value );
+        if ( 'plain' == $options[ 'text_format_type' ] ) {
+            if ( 1 == $options[ 'text_allow_html' ] ) {
+                if ( 0 < strlen( $options[ 'text_allowed_html_tags' ] ) )
+                    $value = strip_tags( $value, $options[ 'text_allowed_html_tags' ] );
+            }
+            else
+                $value = strip_tags( $value );
 
-        if ( 1 != $options[ 'text_allow_shortcode' ] )
-            $value = strip_shortcodes( $value );
+            if ( 1 != $options[ 'text_allow_shortcode' ] )
+                $value = strip_shortcodes( $value );
+        }
+        elseif ( 'website' == $options[ 'text_format_type' ] && 0 < strlen( $options[ 'text_format_website' ] ) ) {
+            if ( false === strpos( $value, '://' ) )
+                $value = 'http://' . $value;
+            $url = @parse_url( $value );
+            if ( empty( $url ) || count( $url ) < 2 )
+                $value = '';
+            else {
+                $defaults = array(
+                    'scheme' => 'http',
+                    'host' => '',
+                    'path' => '/',
+                    'query' => '',
+                    'fragment' => ''
+                );
+                $url = array_merge( $defaults, $url );
+                if ( 'normal' == $options[ 'text_format_website' ] ) {
+                    $value = http_build_url( $url );
+                }
+                elseif ( 'no-www' == $options[ 'text_format_website' ] ) {
+                    if ( 0 === strpos( $url[ 'host' ], 'www.' ) )
+                        $url[ 'host' ] = substr( $url[ 'host' ], 4 );
+                    $value = http_build_url( $url );
+                }
+                elseif ( 'force-www' == $options[ 'text_format_website' ] ) {
+                    if ( false !== strpos( $url[ 'host' ], '.' ) && false === strpos( $url[ 'host' ], '.', 1 ) )
+                        $url[ 'host' ] = 'www.' . $url[ 'host' ];
+                    $value = http_build_url( $url );
+                }
+                elseif ( 'no-http' == $options[ 'text_format_website' ] ) {
+                    $value = http_build_url( $url );
+                    $value = str_replace( $url[ 'scheme' ] . '://', '', $value );
+                }
+                elseif ( 'no-http-no-www' == $options[ 'text_format_website' ] ) {
+                    if ( 0 === strpos( $url[ 'host' ], 'www.' ) )
+                        $url[ 'host' ] = substr( $url[ 'host' ], 4 );
+                    $value = http_build_url( $url );
+                    $value = str_replace( $url[ 'scheme' ] . '://', '', $value );
+                }
+                elseif ( 'no-http-force-www' == $options[ 'text_format_website' ] ) {
+                    if ( false !== strpos( $url[ 'host' ], '.' ) && false === strpos( $url[ 'host' ], '.', 1 ) )
+                        $url[ 'host' ] = 'www.' . $url[ 'host' ];
+                    $value = http_build_url( $url );
+                    $value = str_replace( $url[ 'scheme' ] . '://', '', $value );
+                }
+            }
+        }
+        elseif ( 'phone' == $options[ 'text_format_type' ] && 0 < strlen( $options[ 'text_format_phone' ] ) ) {
+            if ( 'international' == $options[ 'text_format_phone' ] ) {
+                // no validation/changes
+            }
+            else {
+                // Clean input
+                $number = preg_replace( '/([^0-9ext])/g', ' ', $value );
+                $number = str_replace(
+                    array( '-', '.', 'ext', 'x', 't', 'e', '(', ')' ),
+                    array( '', '', '|', '|', '', '', '', '', ),
+                    $number
+                );
+
+                // Get extension
+                $extension = explode( '|', $number );
+                if ( 1 < count( $extension ) ) {
+                    $number = preg_replace( '/([^0-9])/g', ' ', $extension[ 0 ] );
+                    $extension = preg_replace( '/([^0-9])/g', ' ', $extension[ 1 ] );
+                }
+                else
+                    $extension = '';
+
+                // Build number array
+                $numbers = str_split( $number, 3 );
+                if ( isset( $numbers[ 3 ] ) ) {
+                    $numbers[ 2 ] .= $numbers[ 3 ];
+                    $numbers = array( $numbers[ 0 ], $numbers[ 1 ], $numbers[ 2 ] );
+                }
+                elseif ( isset( $numbers[ 1 ] ) )
+                    $numbers = array( $numbers[ 0 ], $numbers[ 1 ] );
+
+                // Format number
+                elseif ( '(999) 999-9999 x999' == $options[ 'text_format_phone' ] ) {
+                    if ( 2 == count( $numbers ) )
+                        $value = implode( '-', $numbers );
+                    else
+                        $value = '(' . $numbers[ 0 ] . ') ' . $numbers[ 1 ] . '-' . $numbers[ 2 ];
+                }
+                elseif ( '999.999.9999 x999' == $options[ 'text_format_phone' ] )
+                    $value = implode( '.', $numbers );
+                else //if ( '999-999-9999 x999' == $options[ 'text_format_phone' ] )
+                    $value = implode( '-', $numbers );
+
+                // Add extension
+                if ( 1 == $options[ 'text_enable_phone_extension' ] && false !== $extension )
+                    $value .= ' x' . $extension;
+            }
+
+        }
     }
 
     /**
@@ -188,16 +283,24 @@ class PodsField_Text extends PodsField {
         $regex = false;
 
         if ( 'email' == $options[ 'text_format_type' ] ) {
-            $regex = '(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"'
+            $regex = '/(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"'
                 . '(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@'
                 . '(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}'
-                . '(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])';
+                . '(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/g'; // @todo test regex
         }
         elseif ( 'website' == $options[ 'text_format_type' ] && 0 < strlen( $options[ 'text_format_website' ] ) ) {
+            /*
+                    'normal' => 'http://example.com/',
+                    'no-www' => 'http://example.com/ (remove www)',
+                    'force-www' => 'http://www.example.com/ (force www if no sub-domain provided)',
+                    'no-http' => 'example.com',
+                    'no-http-no-www' => 'example.com (force removal of www)',
+                    'no-http-force-www' => 'www.example.com (force www if no sub-domain provided)'
+             */
             $regex = false; // @todo build regex
         }
         elseif ( 'phone' == $options[ 'text_format_type' ] && 0 < strlen( $options[ 'text_format_phone' ] ) ) {
-            $regex = false; // @todo build regex
+            $regex = '/[0-9 \.\-\(\)ext]/g'; // @todo test regex
         }
 
         return $regex;

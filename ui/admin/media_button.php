@@ -30,6 +30,7 @@ function add_pods_mce_popup() {
 				limit = $('#pod_limit').val(),
 				column = $('#pod_column').val(),
 				helper = $('#pod_helper').val(),
+				where = $('#pod_where').val(),
 				shortcode = '[pods ';
 
 			shortcode += 'name="' + pod_select + '" ';
@@ -50,6 +51,8 @@ function add_pods_mce_popup() {
 				shortcode += 'col="' + column + '" ';
 			if (helper.length)
 				shortcode += 'helper="' + helper + '" ';
+			if (where.length)
+				shortcode += 'where="' + where + '" ';
 
 			shortcode += ']';
 

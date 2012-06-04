@@ -44,15 +44,15 @@ function add_pods_mce_popup() {
 					shortcode += 'orderby="' + orderby + ' ASC" ';
 				}
 			}
-			if (template.length)
+			if (template && template.length)
 				shortcode += 'template="' + template + '" ';
-			if (limit.length)
+			if (limit && limit.length)
 				shortcode += 'limit="' + limit + '" ';
-			if (column.length)
+			if (column && column.length)
 				shortcode += 'col="' + column + '" ';
-			if (helper.length)
+			if (helper && helper.length)
 				shortcode += 'helper="' + helper + '" ';
-			if (where.length)
+			if (where && where.length)
 				shortcode += 'where="' + where + '" ';
 
 			shortcode += ']';

@@ -100,7 +100,7 @@ jQuery(function($) {
 					$template_count = count($templates);
 					?>
 					<label for="pod_template">Template</label>
-					<?php if ($template_count) { ?>
+					<?php if ($template_count > 0) { ?>
 						<select id="pod_template" name="pod_template">
 							<option value=""></option>
 							<?php foreach ($templates as $tmpl => $data){ ?>
@@ -156,7 +156,7 @@ jQuery(function($) {
 					$helper_count = count($helpers);
 					?>
 				    <label for="pod_helper">Helper</label>
-					<?php if ($helper_count) { ?>
+					<?php if ($helper_count > 0) { ?>
 						<select id="pod_helper" name="pod_helper">
 							<option value=""></option>
 							<?php foreach ($helpers as $helper => $data) { ?>

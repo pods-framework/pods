@@ -93,8 +93,36 @@ jQuery(function($) {
 					</select>
 				</div>
 				<div class="section hide">
-					<label for="pod_slug">Slug</label>
+					<?php
+					$templates = $api->load_templates(array(
+						'orderby' => 'name ASC',
+					));
+					$template_count = count($templates);
+					?>
+					<label for="pod_template">Template</label>
+					<?php if ($template_count) { ?>
+						<select id="pod_template" name="pod_template">
+							<option value=""></option>
+							<?php foreach ($templates as $tmpl => $data){ ?>
+								<option value="<?php echo $tmpl; ?>">
+									<?php echo $tmpl; ?>
+								</option>
+							<?php } ?>
+						</select>
+					<?php } else { ?>
+						<strong class="red">None Found</strong>
+					<?php } ?>
+					<script type="text/javascript">
+					window.pods_template_count = <?php echo $template_count; ?>;
+					</script>
+				</div>
+				<div class="section hide">
+					<label for="pod_slug">ID or Slug</label>
 					<input type="text" id="pod_slug" name="pod_slug" />
+				</div>
+				<div class="section hide">
+					<label for="pod_limit">Limit</label>
+					<input type="text" id="pod_limit" name="pod_limit" />
 				</div>
 				<div class="section hide">
 					<label for="pod_orderby">Order By</label>
@@ -113,26 +141,6 @@ jQuery(function($) {
 					</select>
 				</div>
 				<div class="section hide">
-					<?php
-					$templates = $api->load_templates(array(
-						'orderby' => 'name ASC',
-					));
-					?>
-					<label for="pod_template">Template</label>
-					<select id="pod_template" name="pod_template">
-						<option value=""></option>
-						<?php foreach ($templates as $tmpl => $data){ ?>
-							<option value="<?php echo $tmpl; ?>">
-								<?php echo $tmpl; ?>
-							</option>
-						<?php } ?>
-					</select>
-				</div>
-				<div class="section hide">
-					<label for="pod_limit">Limit</label>
-					<input type="text" id="pod_limit" name="pod_limit" />
-				</div>
-				<div class="section hide">
 					<label for="pod_column">Column</label>
 					<input type="text" id="pod_column" name="pod_column" />
 				</div>
@@ -145,16 +153,19 @@ jQuery(function($) {
 					$helpers = $api->load_helpers(array(
 						"orderby" => "name ASC",
 					));
+					$helper_count = count($helpers);
 					?>
 				    <label for="pod_helper">Helper</label>
-					<select id="pod_helper" name="pod_helper">
-						<option value=""></option>
-						<?php foreach ($helpers as $helper => $data) { ?>
-							<option value="<?php echo $helper; ?>">
-								<?php echo $helper; ?>
-							</option>
-						<?php } ?>
-					</select>
+					<?php if ($helper_count) { ?>
+						<select id="pod_helper" name="pod_helper">
+							<option value=""></option>
+							<?php foreach ($helpers as $helper => $data) { ?>
+								<option value="<?php echo $helper; ?>">
+									<?php echo $helper; ?>
+								</option>
+							<?php } ?>
+						</select>
+					<?php } ?>
 				</div>
 				<div class="section hide" style="text-align: right;">
 					<a class="button-primary" id="pods_insert_shortcode" href="#">Insert</a>

@@ -22,6 +22,7 @@ function add_pods_mce_popup() {
 	jQuery(function($) {
 		$('#pods_insert_shortcode').click(function(evt) {
 			var form = $('#pods_shortcode_form'),
+				use_case = $('#use-case-selector').val(),
 				pod_select = $('#pod_select').val(),
 				slug = $('#pod_slug').val(),
 				orderby = $('#pod_orderby').val(),
@@ -55,6 +56,11 @@ function add_pods_mce_popup() {
 				shortcode += 'where="' + where + '" ';
 
 			shortcode += ']';
+
+			if ((use_case == 'single' && window.pods_template_count == 0) || (use_case == 'list' && window.pods_template_count == 0)) {
+				alert("No templates found!");
+				return false;
+			}
 
 			window.send_to_editor(shortcode);
 				

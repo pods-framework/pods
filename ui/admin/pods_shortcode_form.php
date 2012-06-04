@@ -5,31 +5,46 @@ h3.popup-header {
 	font-size: 1.8em;
 }
 
-div.section {
+div.section, div.select, div.header {
 	padding: 15px 15px 0 15px;
 }
 
 div.section.hide {
 	display: none;
 }
+
+.section label {
+	display: inline-block;
+	width: 120px;
+	font-weight: bold;
+}
 </style>
 
 <script type="text/javascript">
 jQuery(function($) {
-	var $useCaseSelector = $('#use-case-selector');
+	var $useCaseSelector = $('#use-case-selector'),
+		$form = $('#pods_shortcode_form');
 
 	$useCaseSelector.change(function(evt) {
 		var val = $(this).val();
 
+		$('.section').addClass('hide');
+
 		switch (val) {
 			case 'single':
-
+				$('#pod_select, #pod_slug, #pod_template, #pod_helper, #pods_insert_shortcode').each(function() {
+					$(this).closest('.section').removeClass('hide');
+				})
 				break;
 			case 'list':
-
+				$('#pod_select, #pod_orderby, #pod_sort_direction, #pod_limit, #pod_template, #pod_helper, #pods_insert_shortcode').each(function() {
+					$(this).closest('.section').removeClass('hide');
+				})
 				break;
 			case 'column':
-
+				$('#pod_select, #pod_slug, #pod_helper, #pod_column, #pods_insert_shortcode').each(function() {
+					$(this).closest('.section').removeClass('hide');
+				})
 				break;
 		}
 	});
@@ -40,7 +55,7 @@ jQuery(function($) {
 <div id="pods_shortcode_form" style="display: none;">
 	<div class="wrap">
 		<div>
-			<div class="section">
+			<div class="header">
 				<h3 class="popup-header">Add a Pod</h3>
 			</div>
 			
@@ -48,6 +63,7 @@ jQuery(function($) {
 				<div class="select">
 					<label for="use-case-selector">What would you like to do?</label>
 					<select id="use-case-selector">
+						<option value="">---</option>
 						<option value="single">Display a single Pod item</option>
 						<option value="list">List multiple Pod items</option>
 						<option value="column">Display a column from a single Pod item</option>

@@ -110,7 +110,7 @@ jQuery(function($) {
 							<?php } ?>
 						</select>
 					<?php } else { ?>
-						<strong class="red">None Found</strong>
+						<strong class="red" id="pod_template">None Found</strong>
 					<?php } ?>
 					<script type="text/javascript">
 					window.pods_template_count = <?php echo $template_count; ?>;

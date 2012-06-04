@@ -86,15 +86,20 @@ jQuery(function($) {
                     $all_pods = $api->load_pods(array(
                         'orderby' => 'name ASC',
                     ));
+                    $pod_count = count($all_pods);
                     ?>
                     <label for="pod_select">Choose a Pod</label>
-                    <select id="pod_select" name="pod_select">
-                        <?php foreach($all_pods as $pod => $data) { ?>
-                            <option value="<?php echo $pod; ?>">
-                                <?php echo $pod; ?>
-                            </option>
-                        <?php } ?>
-                    </select>
+                    <?php if ($pod_count > 0) { ?>
+                        <select id="pod_select" name="pod_select">
+                            <?php foreach($all_pods as $pod => $data) { ?>
+                                <option value="<?php echo $pod; ?>">
+                                    <?php echo $pod; ?>
+                                </option>
+                            <?php } ?>
+                        </select>
+                    <?php } else { ?>
+                        <strong class="red" id="pod_select">None Found</strong>
+                    <?php } ?>
                 </div>
                 <div class="section hide">
                     <?php

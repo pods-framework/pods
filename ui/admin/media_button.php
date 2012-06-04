@@ -38,6 +38,9 @@ function add_pods_mce_popup() {
             var errors = [];
             switch (use_case) {
                 case 'single':
+                    if (!pod_select || !pod_select.length) {
+                        errors.push("Pod");
+                    }
                     if (!slug || !slug.length) {
                         errors.push("Slug or ID");
                     }
@@ -46,11 +49,17 @@ function add_pods_mce_popup() {
                     }
                     break;
                 case 'list':
+                    if (!pod_select || !pod_select.length) {
+                        errors.push("Pod");
+                    }
                     if (!template || !template.length) {
                         errors.push("Template");
                     }
                     break;
                 case 'column':
+                    if (!pod_select || !pod_select.length) {
+                        errors.push("Pod");
+                    }
                     if (!slug || !slug.length) {
                         errors.push("ID or Slug");
                     }

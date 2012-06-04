@@ -5,6 +5,7 @@ h3.popup-header {
 	font-size: 1.8em;
 	background: url(<?php echo PODS_URL; ?>/ui/images/icon32.png) top left no-repeat;
 	padding: 8px 0 5px 36px;
+	margin-top: 0;
 }
 
 div.section, div.select, div.header {
@@ -19,6 +20,10 @@ div.section.hide {
 	display: inline-block;
 	width: 120px;
 	font-weight: bold;
+}
+
+a#pods_insert_shortcode {
+	color: white !important;
 }
 </style>
 
@@ -151,8 +156,8 @@ jQuery(function($) {
 						<?php } ?>
 					</select>
 				</div>
-				<div class="section hide">
-					<a class="button" id="pods_insert_shortcode" href="#">Insert</a>
+				<div class="section hide" style="text-align: right;">
+					<a class="button-primary" id="pods_insert_shortcode" href="#">Insert</a>
 				</div>
 			</form>
 		</div>

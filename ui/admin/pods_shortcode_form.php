@@ -8,7 +8,33 @@ h3.popup-header {
 div.section {
 	padding: 15px 15px 0 15px;
 }
+
+div.section.hide {
+	display: none;
+}
 </style>
+
+<script type="text/javascript">
+jQuery(function($) {
+	var $useCaseSelector = $('#use-case-selector');
+
+	$useCaseSelector.change(function(evt) {
+		var val = $(this).val();
+
+		switch (val) {
+			case 'single':
+
+				break;
+			case 'list':
+
+				break;
+			case 'column':
+
+				break;
+		}
+	});
+});
+</script>
 
 
 <div id="pods_shortcode_form" style="display: none;">
@@ -19,7 +45,15 @@ div.section {
 			</div>
 			
 			<form id="pods_shortcode_form">
-				<div class="section">
+				<div class="select">
+					<label for="use-case-selector">What would you like to do?</label>
+					<select id="use-case-selector">
+						<option value="single">Display a single Pod item</option>
+						<option value="list">List multiple Pod items</option>
+						<option value="column">Display a column from a single Pod item</option>
+					</select>
+				</div>
+				<div class="section hide">
 					<?php
 					$api = new PodsAPI();
 					$all_pods = $api->load_pods(array(
@@ -35,15 +69,15 @@ div.section {
 						<?php } ?>
 					</select>
 				</div>
-				<div class="section">
+				<div class="section hide">
 					<label for="pod_slug">Slug</label>
 					<input type="text" id="pod_slug" name="pod_slug" />
 				</div>
-				<div class="section">
+				<div class="section hide">
 					<label for="pod_orderby">Order By</label>
 					<input type="text" id="pod_orderby" name="pod_orderby" />
 				</div>
-				<div class="section">
+				<div class="section hide">
 					<label for="pod_sort_direction">Direction</label>
 					<select id="pod_sort_direction" name="pod_sort_direction">
 						<option value=""></option>
@@ -55,7 +89,7 @@ div.section {
 						</option>
 					</select>
 				</div>
-				<div class="section">
+				<div class="section hide">
 					<?php
 					$templates = $api->load_templates(array(
 						'orderby' => 'name ASC',
@@ -71,15 +105,15 @@ div.section {
 						<?php } ?>
 					</select>
 				</div>
-				<div class="section">
+				<div class="section hide">
 					<label for="pod_limit">Limit</label>
 					<input type="text" id="pod_limit" name="pod_limit" />
 				</div>
-				<div class="section">
+				<div class="section hide">
 					<label for="pod_column">Column</label>
 					<input type="text" id="pod_column" name="pod_column" />
 				</div>
-				<div class="section">
+				<div class="section hide">
 					<?php
 					$helpers = $api->load_helpers(array(
 						"orderby" => "name ASC",
@@ -95,7 +129,7 @@ div.section {
 						<?php } ?>
 					</select>
 				</div>
-				<div class="section">
+				<div class="section hide">
 					<a class="button" id="pods_insert_shortcode" href="#">Insert</a>
 				</div>
 			</form>

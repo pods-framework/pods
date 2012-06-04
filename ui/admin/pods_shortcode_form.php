@@ -3,6 +3,8 @@ h3.popup-header {
 	font-family: Georgia, "Times New Roman", Times, serif;
 	color: #5a5a5a;
 	font-size: 1.8em;
+	background: url(<?php echo PODS_URL; ?>/ui/images/icon32.png) top left no-repeat;
+	padding: 8px 0 5px 36px;
 }
 
 div.section, div.select, div.header {
@@ -37,7 +39,7 @@ jQuery(function($) {
 				})
 				break;
 			case 'list':
-				$('#pod_select, #pod_orderby, #pod_sort_direction, #pod_limit, #pod_template, #pod_helper, #pods_insert_shortcode').each(function() {
+				$('#pod_select, #pod_orderby, #pod_sort_direction, #pod_limit, #pod_template, #pod_helper, #pod_where, #pods_insert_shortcode').each(function() {
 					$(this).closest('.section').removeClass('hide');
 				})
 				break;
@@ -56,7 +58,7 @@ jQuery(function($) {
 	<div class="wrap">
 		<div>
 			<div class="header">
-				<h3 class="popup-header">Add a Pod</h3>
+				<h3 class="popup-header">Pods &raquo; Embed</h3>
 			</div>
 			
 			<form id="pods_shortcode_form">
@@ -128,6 +130,10 @@ jQuery(function($) {
 				<div class="section hide">
 					<label for="pod_column">Column</label>
 					<input type="text" id="pod_column" name="pod_column" />
+				</div>
+				<div class="section hide">
+				    <label for="pod_where">Filter</label>
+				    <input type="text" name="pod_where" id="pod_where" />
 				</div>
 				<div class="section hide">
 					<?php

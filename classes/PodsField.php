@@ -79,6 +79,21 @@ class PodsField {
     }
 
     /**
+     * Build regex necessary for JS validation
+     *
+     * @param string $name
+     * @param string $value
+     * @param array $options
+     * @param string $pod
+     * @param int $id
+     *
+     * @since 2.0.0
+     */
+    public function regex ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+        return false;
+    }
+
+    /**
      * Validate a value before it's saved
      *
      * @param string $value

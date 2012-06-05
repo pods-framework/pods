@@ -28,75 +28,84 @@ class PodsField_Text extends PodsField {
     public function options () {
         $options = array(
             'text_format_type' => array(
-                'label' => 'Format Type',
+                'label' => __( 'Format Type', 'pods' ),
                 'default' => 'plain',
                 'type' => 'pick',
                 'data' => array(
-                    'plain' => 'Plain Text',
-                    'email' => 'E-mail Address (example@mail.com)',
-                    'website' => 'Website (http://www.example.com/)',
-                    'phone' => 'Phone Number'
+                    'plain' => __( 'Plain Text', 'pods' ),
+                    'email' => array(
+                        'label' => __( 'E-mail Address (example@mail.com)', 'pods' ),
+                        'regex' =>
+                            '/(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"'
+                            . '(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b'
+                            . '\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9]'
+                            . '(?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}'
+                            . '(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08'
+                            . '\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/g' // @todo test regex
+                    ),
+                    'website' => __( 'Website (http://www.example.com/)', 'pods' ),
+                    'phone' => __( 'Phone Number', 'pods' )
                 )
             ),
             'text_format_website' => array(
-                'label' => 'Format',
+                'label' => __( 'Format', 'pods' ),
                 'depends-on' => array( 'text_format_type' => 'website' ),
                 'default' => 'normal',
                 'type' => 'pick',
                 'data' => array(
-                    'normal' => 'http://example.com/',
-                    'no-www' => 'http://example.com/ (remove www)',
-                    'force-www' => 'http://www.example.com/ (force www if no sub-domain provided)',
-                    'no-http' => 'example.com',
-                    'no-http-no-www' => 'example.com (force removal of www)',
-                    'no-http-force-www' => 'www.example.com (force www if no sub-domain provided)'
+                    'normal' => __( 'http://example.com/', 'pods' ),
+                    'no-www' => __( 'http://example.com/ (remove www)', 'pods' ),
+                    'force-www' => __( 'http://www.example.com/ (force www if no sub-domain provided)', 'pods' ),
+                    'no-http' => __( 'example.com', 'pods' ),
+                    'no-http-no-www' => __( 'example.com (force removal of www)', 'pods' ),
+                    'no-http-force-www' => __( 'www.example.com (force www if no sub-domain provided)', 'pods' )
                 )
             ),
             'text_format_phone' => array(
-                'label' => 'Format',
+                'label' => __( 'Format', 'pods' ),
                 'depends-on' => array( 'text_format_type' => 'phone' ),
                 'default' => '999-999-9999 x999',
                 'type' => 'pick',
                 'data' => array(
-                    'US' => array(
-                        '999-999-9999 x999' => '123-456-7890 x123',
-                        '(999) 999-9999 x999' => '(123) 456-7890 x123',
-                        '999.999.9999 x999' => '123.456.7890 x123'
+                    __( 'US', 'pods' ) => array(
+                        '999-999-9999 x999' => __( '123-456-7890 x123', 'pods' ),
+                        '(999) 999-9999 x999' => __( '(123) 456-7890 x123', 'pods' ),
+                        '999.999.9999 x999' => __( '123.456.7890 x123', 'pods' )
                     ),
-                    'International' => array(
-                        'international' => 'Any (no validation available)'
+                    __( 'International', 'pods' ) => array(
+                        'international' => __( 'Any (no validation available)', 'pods' )
                     )
                 )
             ),
             'phone_options' => array(
-                'label' => 'Phone Options',
+                'label' => __( 'Phone Options', 'pods' ),
                 'depends-on' => array( 'text_format_type' => 'phone' ),
                 'group' => array(
                     'text_enable_phone_extension' => array(
-                        'label' => 'Enable Phone Extension?',
+                        'label' => __( 'Enable Phone Extension?', 'pods' ),
                         'default' => 1,
                         'type' => 'boolean'
                     )
                 )
             ),
             'output_options' => array(
-                'label' => 'Output Options',
+                'label' => __( 'Output Options', 'pods' ),
                 'depends-on' => array( 'text_format_type' => 'plain' ),
                 'group' => array(
                     'text_allow_shortcode' => array(
-                        'label' => 'Allow Shortcodes?',
+                        'label' => __( 'Allow Shortcodes?', 'pods' ),
                         'default' => 1,
                         'type' => 'boolean'
                     ),
                     'text_allow_html' => array(
-                        'label' => 'Allow HTML?',
+                        'label' => __( 'Allow HTML?', 'pods' ),
                         'default' => 1,
                         'type' => 'boolean'
                     )
                 )
             ),
             'text_allowed_html_tags' => array(
-                'label' => 'Allowed HTML Tags',
+                'label' => __( 'Allowed HTML Tags', 'pods' ),
                 'depends-on' => array( 'text_allow_html' => 1 ),
                 'default' => 'strong em a ul ol li b i',
                 'type' => 'text'
@@ -154,6 +163,35 @@ class PodsField_Text extends PodsField {
     }
 
     /**
+     * Validate a value before it's saved
+     *
+     * @param string $value
+     * @param string $name
+     * @param array $options
+     * @param array $data
+     * @param object $api
+     * @param string $pod
+     * @param int $id
+     *
+     * @since 2.0.0
+     */
+    public function validate ( &$value, $name, $options ) {
+        $errors = array();
+
+        // @todo if this field is required or if it's not empty, format it and check if it's valid
+        $check = $value; // $check will be passed by reference, but we want $value to stay the same
+        $this->pre_save( $check, $name, $options );
+        if ( 1 == $options[ 'required' ] && 0 < strlen( $value ) && strlen( $check ) < 1 ) {
+            $errors[] = __( 'This field is required.', 'pods' );
+
+            // @todo Ask for a specific format
+        }
+
+        if ( empty( $errors ) )
+            return true;
+    }
+
+    /**
      * Change the value or perform actions after validation but before saving to the DB
      *
      * @param string $value
@@ -175,6 +213,10 @@ class PodsField_Text extends PodsField {
 
             if ( 1 != $options[ 'text_allow_shortcode' ] )
                 $value = strip_shortcodes( $value );
+        }
+        elseif ( 'email' == $options[ 'text_format_type' ] ) {
+            if ( !is_email( $value ) )
+                $value = '';
         }
         elseif ( 'website' == $options[ 'text_format_type' ] && 0 < strlen( $options[ 'text_format_website' ] ) ) {
             if ( false === strpos( $value, '://' ) )
@@ -283,13 +325,7 @@ class PodsField_Text extends PodsField {
     public function regex ( $options ) {
         $regex = false;
 
-        if ( 'email' == $options[ 'text_format_type' ] ) {
-            $regex = '/(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"'
-                . '(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@'
-                . '(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}'
-                . '(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/g'; // @todo test regex
-        }
-        elseif ( 'website' == $options[ 'text_format_type' ] && 0 < strlen( $options[ 'text_format_website' ] ) ) {
+        if ( 'website' == $options[ 'text_format_type' ] && 0 < strlen( $options[ 'text_format_website' ] ) ) {
             /*
                     'normal' => 'http://example.com/',
                     'no-www' => 'http://example.com/ (remove www)',

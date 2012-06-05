@@ -24,8 +24,8 @@
 ?>
 <input<?php PodsForm::attributes( $attributes, $name, $type, $options ); ?> />
 <?php
-if ( !wp_script_is( 'jquery', 'queue' ) && !wp_script_is( 'jquery', 'to_do' ) && !wp_script_is( 'jquery', 'done' ) )
-    wp_print_scripts( 'jquery' );
+    if ( !wp_script_is( 'jquery', 'queue' ) && !wp_script_is( 'jquery', 'to_do' ) && !wp_script_is( 'jquery', 'done' ) )
+        wp_print_scripts( 'jquery' );
 ?>
 <script>
     jQuery( function ( $ ) {

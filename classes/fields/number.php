@@ -37,8 +37,8 @@ class PodsField_Number extends PodsField {
                 'default' => 'plain',
                 'type' => 'pick',
                 'data' => array(
-                    'plain' => 'Plain Number',
-                    'currency' => 'Currency'
+                    'plain' => __( 'Plain Number', 'pods' ),
+                    'currency' => __( 'Currency', 'pods' )
                 )
             ),
             'number_format_currency_sign' => array(
@@ -184,7 +184,7 @@ class PodsField_Number extends PodsField {
             $dot = ',';
         }
 
-        return '[^0-9' . implode( '\\', array_filter( array( $dot, $thousands ) ) ) . ']';
+        return '[0-9' . implode( '\\', array_filter( array( $dot, $thousands ) ) ) . ']+';
     }
 
     /**

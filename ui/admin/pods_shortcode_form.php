@@ -34,7 +34,12 @@ strong.red {
 <script type="text/javascript">
 jQuery(function($) {
     var $useCaseSelector = $('#use-case-selector'),
-        $form = $('#pods_shortcode_form');
+        $form = $('#pods_shortcode_form'),
+        $podSelector = $('#pod_select'),
+		ajaxurl = "<?php echo admin_url('admin-ajax.php?pods_ajax=1&action=pods_admin'); ?>",
+		nonce = "<?php echo wp_create_nonce('pods_ajax'); ?>";
+	console.log(ajaxurl);
+	console.log(nonce);
 
     $useCaseSelector.change(function(evt) {
         var val = $(this).val();
@@ -58,6 +63,10 @@ jQuery(function($) {
                 })
                 break;
         }
+    });
+
+    $podSelector.change(function() {
+        
     });
 });
 </script>

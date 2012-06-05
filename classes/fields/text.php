@@ -336,6 +336,7 @@ class PodsField_Text extends PodsField {
      * @since 2.0.0
      */
     public function ui ( &$value, $name, $options, $fields, &$pod, $id ) {
-        $value = make_clickable( $value );
+        if ( 'website' == $options[ 'text_format_type' ] && 0 < strlen( $options[ 'text_format_website' ] ) )
+            $value = make_clickable( $value );
     }
 }

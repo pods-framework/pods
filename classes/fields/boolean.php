@@ -28,7 +28,7 @@ class PodsField_Boolean extends PodsField {
     public function options () {
         $options = array(
             'boolean_format_type' => array(
-                'label' => 'Format Type',
+                'label' => __( 'Format Type', 'pods' ),
                 'default' => 'checkbox',
                 'type' => 'pick',
                 'data' => array(
@@ -38,12 +38,12 @@ class PodsField_Boolean extends PodsField {
                 )
             ),
             'boolean_yes_label' => array(
-                'label' => 'Yes Label',
+                'label' => __( 'Yes Label', 'pods' ),
                 'default' => __( 'Yes', 'pods' ),
                 'type' => 'text'
             ),
             'boolean_no_label' => array(
-                'label' => 'No Label',
+                'label' => __( 'No Label', 'pods' ),
                 'default' => __( 'No', 'pods' ),
                 'type' => 'text'
             )
@@ -63,17 +63,15 @@ class PodsField_Boolean extends PodsField {
      *
      * @since 2.0.0
      */
-    public function display ( $value, $name, $options, $fields, $pod, $id ) {
+    public function display ( &$value, $name, $options, $fields, $pod, $id ) {
         $yesno = array(
             1 => $options[ 'boolean_yes_label' ],
             0 => $options[ 'boolean_no_label' ]
         );
 
         // Deprecated handling for 1.x
-        if ( parent::$deprecated )
-            return $value;
-
-        return $yesno[ $value ];
+        if ( !parent::$deprecated )
+            $value = $yesno[ $value ];
     }
 
     /**

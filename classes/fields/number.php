@@ -33,41 +33,45 @@ class PodsField_Number extends PodsField {
     public function options () {
         $options = array(
             'number_format_type' => array(
+                'label' => __( 'Format Type', 'pods' ),
                 'default' => 'plain',
                 'type' => 'pick',
-                'values' => array(
+                'data' => array(
                     'plain' => 'Plain Number',
                     'currency' => 'Currency'
                 )
             ),
-            'depends-1' => array(
-                'on' => array( 'number_format_type' => 'currency' ),
-                'fields' => array(
-                    'number_format_currency_sign' => array(
-                        'default' => 'usd',
-                        'type' => 'pick',
-                        'values' => apply_filters( 'pods_form_ui_field_number_currency_options', array(
+            'number_format_currency_sign' => array(
+                'label' => __( 'Currency Sign', 'pods' ),
+                'depends-on' => array( 'number_format_type' => 'currency' ),
+                'default' => 'usd',
+                'type' => 'pick',
+                'data' =>
+                    apply_filters( 'pods_form_ui_field_number_currency_options',
+                        array(
                             'usd' => '$ (USD)',
                             'cad' => '$ (CAD)'
-                        ) )
-                    ),
-                    'number_format_currency_placement' => array(
-                        'default' => 'before',
-                        'type' => 'pick',
-                        'values' => array(
-                            'before' => 'Before ($100)',
-                            'after' => 'After (100$)',
-                            'none' => 'None (100)',
-                            'beforeaftercode' => 'Before with Currency Code after ($100 USD)'
                         )
                     )
+            ),
+            'number_format_currency_placement' => array(
+                'label' => __( 'Currency Placement', 'pods' ),
+                'depends-on' => array( 'number_format_type' => 'currency' ),
+                'default' => 'before',
+                'type' => 'pick',
+                'data' => array(
+                    'before' => __( 'Before ($100)', 'pods' ),
+                    'after' => __( 'After (100$)', 'pods' ),
+                    'none' => __( 'None (100)', 'pods' ),
+                    'beforeaftercode' => __( 'Before with Currency Code after ($100 USD)', 'pods' )
                 )
             ),
             'number_format' => array(
+                'label' => __( 'Format', 'pods' ),
                 'default' => 'i18n',
                 'type' => 'pick',
-                'values' => array(
-                    'i18n' => 'Localized Default',
+                'data' => array(
+                    'i18n' => __( 'Localized Default', 'pods' ),
                     '9,999.99' => '1,234.00',
                     '9999.99' => '1234.00',
                     '9.999,99' => '1.234,00',
@@ -75,6 +79,7 @@ class PodsField_Number extends PodsField {
                 )
             ),
             'number_decimals' => array(
+                'label' => __( 'Decimals', 'pods' ),
                 'default' => 0,
                 'type' => 'number'
             ),

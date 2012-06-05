@@ -34,7 +34,43 @@ class PodsField {
      * @since 2.0.0
      */
     public function options () {
-        $options = array();
+        $options = array( /*
+            'option_name' => array(
+                'label' => 'Option Label',
+                'depends-on' => array( 'another_option' => 'specific-value' ),
+                'default' => 'default-value',
+                'type' => 'field_type',
+                'data' => array(
+                    'value1' => 'Label 1',
+
+                    // Group your options together
+                    'Option Group' => array(
+                        'gvalue1' => 'Option Label 1',
+                        'gvalue2' => 'Option Label 2'
+                    ),
+
+                    // below is only if the option_name above is the "{$fieldtype}_format_type"
+                    'value2' => array(
+                        'label' => 'Label 2',
+                        'regex' => '[a-zA-Z]' // Uses JS regex validation for the value saved if this option selected
+                    )
+                ),
+
+                // below is only for a boolean group
+                'group' => array(
+                    'option_boolean1' => array(
+                        'label' => 'Option boolean 1?',
+                        'default' => 1,
+                        'type' => 'boolean'
+                    ),
+                    'option_boolean2' => array(
+                        'label' => 'Option boolean 2?',
+                        'default' => 0,
+                        'type' => 'boolean'
+                    )
+                )
+            ) */
+        );
 
         return $options;
     }
@@ -51,7 +87,7 @@ class PodsField {
      *
      * @since 2.0.0
      */
-    public function display ( &$value, $name, $options, $fields, $pod, $id ) {
+    public function display ( &$value, $name, $options, $fields, &$pod, $id ) {
 
     }
 
@@ -66,7 +102,7 @@ class PodsField {
      *
      * @since 2.0.0
      */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+    public function input ( $name, $value = null, $options = null, &$pod = null, $id = null ) {
         $options = (array) $options;
         $attributes = array();
         $attributes[ 'value' ] = $value;
@@ -89,7 +125,7 @@ class PodsField {
      *
      * @since 2.0.0
      */
-    public function regex ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+    public function regex ( $name, $value = null, $options = null, &$pod = null, $id = null ) {
         return false;
     }
 
@@ -106,7 +142,7 @@ class PodsField {
      *
      * @since 2.0.0
      */
-    public function validate ( &$value, $name, $options, $data, &$api, $pod, $id = false ) {
+    public function validate ( &$value, $name, $options, $data, &$api, &$pod, $id = false ) {
         return true;
     }
 
@@ -123,7 +159,7 @@ class PodsField {
      *
      * @since 2.0.0
      */
-    public function pre_save ( &$value, $name, $options, $data, &$api, $pod, $id = false ) {
+    public function pre_save ( &$value, $name, $options, $data, &$api, &$pod, $id = false ) {
 
     }
 
@@ -168,6 +204,22 @@ class PodsField {
      * @since 2.0.0
      */
     public function post_delete ( $pod, $id, &$api ) {
+
+    }
+
+    /**
+     * Customize the Pods UI manage table column output
+     *
+     * @param mixed $value
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param string $pod
+     * @param int $id
+     *
+     * @since 2.0.0
+     */
+    public function ui ( &$value, $name, $options, $fields, &$pod, $id ) {
 
     }
 }

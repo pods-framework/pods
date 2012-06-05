@@ -43,8 +43,14 @@ class PodsField_Text extends PodsField {
                             . '(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08'
                             . '\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/g' // @todo test regex
                     ),
-                    'website' => __( 'Website (http://www.example.com/)', 'pods' ),
-                    'phone' => __( 'Phone Number', 'pods' )
+                    'website' => array(
+                        'label' => __( 'Website (http://www.example.com/)', 'pods' )
+                        //'regex' => false // @todo test regex
+                    ),
+                    'phone' => array(
+                        'label' => __( 'Phone Number', 'pods' ),
+                        'regex' => '/[0-9 \.\-\(\)ext]/g' // @todo test regex
+                    )
                 )
             ),
             'text_format_website' => array(
@@ -128,7 +134,7 @@ class PodsField_Text extends PodsField {
      *
      * @since 2.0.0
      */
-    public function display ( &$value, $name, $options, $fields, $pod, $id ) {
+    public function display ( &$value, $name, $options, $fields, &$pod, $id ) {
         if ( 1 == $options[ 'text_allow_shortcode' ] )
             $value = do_shortcode( $value );
     }
@@ -144,7 +150,7 @@ class PodsField_Text extends PodsField {
      *
      * @since 2.0.0
      */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+    public function input ( $name, $value = null, $options = null, &$pod = null, $id = null ) {
         $options = (array) $options;
 
         $field_type = 'text';
@@ -178,13 +184,15 @@ class PodsField_Text extends PodsField {
     public function validate ( &$value, $name, $options ) {
         $errors = array();
 
-        // @todo if this field is required or if it's not empty, format it and check if it's valid
         $check = $value; // $check will be passed by reference, but we want $value to stay the same
         $this->pre_save( $check, $name, $options );
-        if ( 1 == $options[ 'required' ] && 0 < strlen( $value ) && strlen( $check ) < 1 ) {
-            $errors[] = __( 'This field is required.', 'pods' );
-
-            // @todo Ask for a specific format
+        if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
+            if ( 1 == $options[ 'required' ] )
+                $errors[] = __( 'This field is required.', 'pods' );
+            else {
+                // @todo Ask for a specific format in error message
+                $errors[] = __( 'Invalid value provided for this field.', 'pods' );
+            }
         }
 
         if ( empty( $errors ) )
@@ -316,30 +324,18 @@ class PodsField_Text extends PodsField {
     }
 
     /**
-     * Make regex from options
+     * Customize the Pods UI manage table column output
      *
+     * @param mixed $value
+     * @param string $name
      * @param array $options
+     * @param array $fields
+     * @param string $pod
+     * @param int $id
      *
      * @since 2.0.0
      */
-    public function regex ( $options ) {
-        $regex = false;
-
-        if ( 'website' == $options[ 'text_format_type' ] && 0 < strlen( $options[ 'text_format_website' ] ) ) {
-            /*
-                    'normal' => 'http://example.com/',
-                    'no-www' => 'http://example.com/ (remove www)',
-                    'force-www' => 'http://www.example.com/ (force www if no sub-domain provided)',
-                    'no-http' => 'example.com',
-                    'no-http-no-www' => 'example.com (force removal of www)',
-                    'no-http-force-www' => 'www.example.com (force www if no sub-domain provided)'
-             */
-            $regex = false; // @todo build regex
-        }
-        elseif ( 'phone' == $options[ 'text_format_type' ] && 0 < strlen( $options[ 'text_format_phone' ] ) ) {
-            $regex = '/[0-9 \.\-\(\)ext]/g'; // @todo test regex
-        }
-
-        return $regex;
+    public function ui ( &$value, $name, $options, $fields, &$pod, $id ) {
+        $value = make_clickable( $value );
     }
 }

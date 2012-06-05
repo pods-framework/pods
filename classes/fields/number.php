@@ -90,26 +90,6 @@ class PodsField_Number extends PodsField {
     }
 
     /**
-     * Change the value or perform actions after validation but before saving to the DB
-     *
-     * @param string $value
-     * @param string $name
-     * @param array $options
-     * @param array $data
-     * @param object $api
-     * @param string $pod
-     * @param int $id
-     *
-     * @since 2.0.0
-     */
-    public function pre_save ( &$value, $name, $options, $data, &$api, &$pod, $id = false ) {
-        $decimals = 0;
-        if ( 0 < (int) $options[ 'number_decimals' ] )
-            $decimals = (int) $options[ 'number_decimals' ];
-        $value = number_format( (float) $value, $decimals, '.', '' );
-    }
-
-    /**
      * Change the way the value of the field is displayed with Pods::get
      *
      * @param mixed $value
@@ -203,7 +183,7 @@ class PodsField_Number extends PodsField {
             $thousands = '.';
             $dot = ',';
         }
-        
+
         return '[^0-9' . implode( '\\', array_filter( array( $dot, $thousands ) ) ) . ']';
     }
 
@@ -221,6 +201,9 @@ class PodsField_Number extends PodsField {
      * @since 2.0.0
      */
     public function pre_save ( &$value, $name, $options, $data, &$api, &$pod, $id = false ) {
-
+        $decimals = 0;
+        if ( 0 < (int) $options[ 'number_decimals' ] )
+            $decimals = (int) $options[ 'number_decimals' ];
+        $value = number_format( (float) $value, $decimals, '.', '' );
     }
 }

@@ -87,7 +87,7 @@ class PodsField {
      *
      * @since 2.0.0
      */
-    public function display ( &$value, $name, $options, $fields, &$pod, $id ) {
+    public function display ( &$value, $name, $options, $fields, $pod, $id ) {
 
     }
 
@@ -102,7 +102,7 @@ class PodsField {
      *
      * @since 2.0.0
      */
-    public function input ( $name, $value = null, $options = null, &$pod = null, $id = null ) {
+    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
         $attributes = array();
         $attributes[ 'value' ] = $value;
@@ -111,7 +111,7 @@ class PodsField {
             $attributes[ 'value' ] = $options[ 'default' ];
         $attributes[ 'value' ] = apply_filters( 'pods_form_ui_field_' . self::$type . '_value', $attributes[ 'value' ], $name, $attributes, $options );
 
-        return pods_view( PODS_DIR . 'ui/fields/text.php', compact( $attributes, $name, $value, self::$type, $options, $pod, $id ) );
+        return pods_view( PODS_DIR . 'ui/fields/text.php', compact( $attributes, $name, $value, $options, $pod, $id ) );
     }
 
     /**
@@ -219,7 +219,7 @@ class PodsField {
      *
      * @since 2.0.0
      */
-    public function ui ( &$value, $name, $options, $fields, &$pod, $id ) {
+    public function ui ( $value, $name, $options, $fields, &$pod, $id ) {
 
     }
 }

@@ -10,6 +10,14 @@ class PodsField_Text extends PodsField {
     protected static $type = 'text';
 
     /**
+     * Field Type Label
+     *
+     * @var string
+     * @since 2.0.0
+     */
+    protected static $label = 'Text';
+
+    /**
      * Do things like register/enqueue scripts and stylesheets
      *
      * @since 2.0.0
@@ -162,7 +170,7 @@ class PodsField_Text extends PodsField {
         elseif ( 'phone' == $options[ 'text_format_type' ] )
             $field_type = 'phone';
 
-        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( $name, $value, self::$type, $options, $pod, $id ) );
+        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( $name, $value, $options, $pod, $id ) );
     }
 
     /**

@@ -9,6 +9,20 @@ class PodsField_Number extends PodsField {
      */
     protected static $type = 'number';
 
+    /**
+     * Field Type Label
+     *
+     * @var string
+     * @since 2.0.0
+     */
+    protected static $label = 'Number';
+
+    /**
+     * Currency Formats
+     *
+     * @var array
+     * @since 2.0.0
+     */
     protected static $currencies = array(
         'usd' => '$',
         'cad' => '$'
@@ -105,7 +119,9 @@ class PodsField_Number extends PodsField {
         $thousands = ',';
         $dot = '.';
         if ( '9999.99' == $options[ 'number_format' ] )
-            $thousands = '';
+                {
+                    $thousands = '';
+                }
         elseif ( '9999,99' == $options[ 'number_format' ] ) {
             $thousands = '';
             $dot = ',';
@@ -116,30 +132,39 @@ class PodsField_Number extends PodsField {
         }
 
         if ( 'i18n' == $options[ 'number_format' ] )
-            $value = number_format_i18n( $value, (int) $options[ 'number_decimals' ] );
-        else
+                {
+                    $value = number_format_i18n( $value, (int) $options[ 'number_decimals' ] );
+                }
+        else {
             $value = number_format( $value, (int) $options[ 'number_decimals' ], $dot, $thousands );
+        }
 
         if ( isset( $options[ 'number_format_type' ] ) && 'currency' == $options[ 'number_format_type' ] ) {
             $currency = 'usd';
             if ( isset( $options[ 'number_format_currency_sign' ] ) && isset( self::$currencies[ $options[ 'number_format_currency_sign' ] ] ) )
-                $currency = $options[ 'number_format_currency_sign' ];
+                    {
+                        $currency = $options[ 'number_format_currency_sign' ];
+                    }
 
             $currency_sign = self::$currencies[ $currency ];
 
             $placement = 'before';
             if ( isset( $options[ 'number_format_currency_placement' ] ) )
-                $placement = $options[ 'number_format_currency_placement' ];
+                    {
+                        $placement = $options[ 'number_format_currency_placement' ];
+                    }
 
             if ( 'before' == $placement )
-                $value = $currency_sign . $value;
-            elseif ( 'after' == $placement )
+                    {
+                        $value = $currency_sign . $value;
+                    }
+            elseif ( 'after' == $placement ) {
                 $value .= $currency_sign;
-            elseif ( 'beforeaftercode' == $placement )
+            }
+            elseif ( 'beforeaftercode' == $placement ) {
                 $value = $currency_sign . $value . ' ' . strtoupper( $currency );
+            }
         }
-
-        return $value;
     }
 
     /**
@@ -156,7 +181,7 @@ class PodsField_Number extends PodsField {
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
 
-        pods_view( PODS_DIR . 'ui/fields/number.php', compact( $name, $value, self::$type, $options, $pod, $id ) );
+        pods_view( PODS_DIR . 'ui/fields/number.php', compact( $name, $value, $options, $pod, $id ) );
     }
 
     /**
@@ -174,7 +199,9 @@ class PodsField_Number extends PodsField {
         $thousands = ',';
         $dot = '.';
         if ( '9999.99' == $options[ 'number_format' ] )
-            $thousands = '';
+                {
+                    $thousands = '';
+                }
         elseif ( '9999,99' == $options[ 'number_format' ] ) {
             $thousands = '';
             $dot = ',';
@@ -203,7 +230,9 @@ class PodsField_Number extends PodsField {
     public function pre_save ( &$value, $name, $options, $data, &$api, &$pod, $id = false ) {
         $decimals = 0;
         if ( 0 < (int) $options[ 'number_decimals' ] )
-            $decimals = (int) $options[ 'number_decimals' ];
+                {
+                    $decimals = (int) $options[ 'number_decimals' ];
+                }
         $value = number_format( (float) $value, $decimals, '.', '' );
     }
 }

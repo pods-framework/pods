@@ -96,7 +96,9 @@ class PodsForm {
 
         ob_start();
 
-        if ( is_object( self::$field ) && class_exists( self::$field ) && method_exists( self::$field, 'input' ) )
+        if ( method_exists( self, 'field_' . $type ) )
+            call_user_func( array( self, 'field_' . $type ), $name, $value, $options );
+        elseif ( is_object( self::$field ) && class_exists( self::$field ) && method_exists( self::$field, 'input' ) )
             call_user_func( array( self::$field, 'input' ), $name, $value, $options, $pod, $id );
         else
             do_action('pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id);
@@ -116,66 +118,14 @@ class PodsForm {
     }
 
     /**
-     * Output field type 'number'
-     *
-     * @since 2.0.0
-     */
-    protected function field_number ($name, $value = null, $options = null) {
-        $options = (array) $options;
-        $type = 'number';
-        $decimals = 0;
-        $decimal_point = '.';
-        $thousands_sep = '';
-        $attributes = array();
-        $attributes['type'] = 'text';
-        $attributes['value'] = $value;
-        $attributes = self::merge_attributes($attributes, $name, $type, $options);
-        if (isset($options['decimals']))
-            $decimals = (int) $options['decimals'];
-        if (isset($options['decimal_point']))
-            $decimal_point = $options['decimal_point'];
-        if ($decimals < 1)
-            $decimal_point = '';
-        if (isset($options['thousands_sep']))
-            $thousands_sep = $options['thousands_sep'];
-        $attributes['value'] = number_format((float) $attributes['value'], $decimals, $decimal_point, $thousands_sep);
-?>
-    <input<?php self::attributes($attributes, $name, $type, $options); ?> />
-<?php
-    if (!wp_script_is('jquery', 'queue') && !wp_script_is('jquery', 'to_do') && !wp_script_is('jquery', 'done'))
-        wp_print_scripts('jquery');
-?>
-    <script>
-        jQuery(function($){
-            $('input#<?php echo $attributes['id']; ?>').keyup(function() {
-                if (!/^[0-9<?php echo implode('\\', array_filter(array($decimal_point, $thousands_sep))); ?>]$/.test($(this).val())) {
-                    var newval = $(this).val().replace(/[^0-9<?php echo implode('\\', array_filter(array($decimal_point, $thousands_sep))); ?>]/g, '');
-                    $(this).val(newval);
-                }
-            });
-            $('input#<?php echo $attributes['id']; ?>').blur(function() {
-                $(this).keyup();
-            });
-        });
-    </script>
-<?php
-    }
-
-    /**
      * Output field type 'password'
      *
      * @since 2.0.0
      */
-    protected function field_password ($name, $value = null, $options = null) {
+    protected function field_password ($name, $value = null, $options = null ) {
         $options = (array) $options;
-        $type = 'password';
-        $attributes = array();
-        $attributes['type'] = 'password';
-        $attributes['value'] = $value;
-        $attributes = self::merge_attributes($attributes, $name, $type, $options);
-?>
-    <input<?php self::attributes($attributes, $name, $type, $options); ?> />
-<?php
+
+        pods_view( PODS_DIR . 'ui/fields/_password.php', compact( $name, $value, $options ) );
     }
 
     /**
@@ -187,55 +137,8 @@ class PodsForm {
      */
     protected function field_db ($name, $value = null, $options = null) {
         $options = (array) $options;
-        $type = 'slug';
-        $attributes = array();
-        $attributes['type'] = 'text';
-        $attributes['value'] = self::clean($value, false, true);
-        $attributes = self::merge_attributes($attributes, $name, $type, $options);
-?>
-    <input<?php self::attributes($attributes, $name, $type, $options); ?> />
-<?php
-    if (!wp_script_is('jquery', 'queue') && !wp_script_is('jquery', 'to_do') && !wp_script_is('jquery', 'done'))
-        wp_print_scripts('jquery');
-?>
-    <script>
-        jQuery(function($){
-            $('input#<?php echo $attributes['id']; ?>').change(function() {
-                var newval = $(this).val().toLowerCase().replace(/([- ])/g, '_').replace(/([^0-9a-z_])/g, '').replace(/(_){2,}/g, '_');
-                $(this).val(newval);
-            });
-        });
-    </script>
-<?php
-    }
 
-    /**
-     * Output field type 'slug'
-     *
-     * @since 2.0.0
-     */
-    protected function field_slug ($name, $value = null, $options = null) {
-        $options = (array) $options;
-        $type = 'slug';
-        $attributes = array();
-        $attributes['type'] = 'text';
-        $attributes['value'] = $value;
-        $attributes = self::merge_attributes($attributes, $name, $type, $options);
-?>
-    <input<?php self::attributes($attributes, $name, $type, $options); ?> />
-<?php
-    if (!wp_script_is('jquery', 'queue') && !wp_script_is('jquery', 'to_do') && !wp_script_is('jquery', 'done'))
-        wp_print_scripts('jquery');
-?>
-    <script>
-        jQuery(function($){
-            $('input#<?php echo $attributes['id']; ?>').change(function() {
-                var newval = $(this).val().toLowerCase().replace(/([_ ])/g, '-').replace(/([^0-9a-z-])/g, '').replace(/(-){2,}/g, '-');
-                $(this).val(newval);
-            });
-        });
-    </script>
-<?php
+        pods_view( PODS_DIR . 'ui/fields/_db.php', compact( $name, $value, $options ) );
     }
 
     /**

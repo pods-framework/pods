@@ -10,6 +10,14 @@ class PodsField_Boolean extends PodsField {
     protected static $type = 'boolean';
 
     /**
+     * Field Type Label
+     *
+     * @var string
+     * @since 2.0.0
+     */
+    protected static $label = 'Yes / No';
+
+    /**
      * Do things like register/enqueue scripts and stylesheets
      *
      * @since 2.0.0
@@ -107,7 +115,7 @@ class PodsField_Boolean extends PodsField {
             );
         }
 
-        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( $name, $value, self::$type, $options, $pod, $id ) );
+        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( $name, $value, $options, $pod, $id ) );
     }
 
     /**

@@ -11,7 +11,7 @@
         if ( 1 < count( $options[ 'data' ] ) )
             $attributes[ 'id' ] .= $counter;
 ?>
-<input<?php PodsForm::attributes( $attributes, $name, $type, $options ); ?> />
+<input<?php PodsForm::attributes( $attributes, $name, PodsForm::$type, $options ); ?> />
 <?php
         if ( 0 < strlen( $label ) ) {
             $help = '';

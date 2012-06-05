@@ -40,14 +40,18 @@ class PodsField {
     }
 
     /**
-     * Change the value before it's sent to be displayed or saved
+     * Change the way the value of the field is displayed with Pods::get
      *
      * @param mixed $value
+     * @param string $name
      * @param array $options
+     * @param array $fields
+     * @param string $pod
+     * @param int $id
      *
      * @since 2.0.0
      */
-    public function value ( &$value, $options ) {
+    public function display ( &$value, $name, $options, $fields, $pod, $id ) {
 
     }
 
@@ -75,23 +79,24 @@ class PodsField {
     }
 
     /**
-     * Change the way the value of the field is displayed, optionally called with Pods::get
+     * Validate a value before it's saved
      *
-     * @param mixed $value
+     * @param string $value
      * @param string $name
      * @param array $options
-     * @param array $fields
+     * @param array $data
+     * @param object $api
      * @param string $pod
      * @param int $id
      *
      * @since 2.0.0
      */
-    public function display ( &$value, $name, $options, $fields, $pod, $id ) {
-
+    public function validate ( &$value, $name, $options, $data, &$api, $pod, $id = false ) {
+        return true;
     }
 
     /**
-     * Change the value or perform actions before saving to the DB
+     * Change the value or perform actions after validation but before saving to the DB
      *
      * @param string $value
      * @param string $name

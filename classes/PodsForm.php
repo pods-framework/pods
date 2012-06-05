@@ -389,7 +389,9 @@ class PodsForm {
             'description' => '',
             'default' => null,
             'attributes' => array(),
-            'class' => ''
+            'class' => '',
+            'max_length' => null,
+            'size' => 'medium'
         );
 
         if ( $type != self::$type ) {
@@ -400,8 +402,15 @@ class PodsForm {
                 self::$field = null;
         }
 
-        if ( is_object( self::$field ) && method_exists( self::$field, 'options' ) )
+        if ( is_object( self::$field ) && method_exists( self::$field, 'options' ) ) {
             $defaults = (array) call_user_func( array( self::$field, 'options' ) );
+
+            // Map generic options to type-specific
+            if ( 0 < strlen( $options[ 'format_type' ] ) && isset( $defaults[ self::$type . '_format_type' ] ) ) {
+                $options[ self::$type . '_format_type' ] = $options[ 'format_type' ];
+                unset( $options[ 'format_type' ] );
+            }
+        }
 
         $defaults = array_merge_recursive( $core_defaults, $defaults );
 

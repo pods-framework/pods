@@ -52,16 +52,28 @@ class PodsField_Boolean extends PodsField {
     }
 
     /**
-     * Change the value before it's sent to be displayed or saved
+     * Change the way the value of the field is displayed with Pods::get
      *
      * @param mixed $value
+     * @param string $name
      * @param array $options
+     * @param array $fields
+     * @param string $pod
+     * @param int $id
      *
      * @since 2.0.0
      */
-    public function value ( &$value, $options ) {
-        // Only allow 0 / 1
-        $value = ( 1 == (int) $value ? 1 : 0 );
+    public function display ( $value, $name, $options, $fields, $pod, $id ) {
+        $yesno = array(
+            1 => $options[ 'boolean_yes_label' ],
+            0 => $options[ 'boolean_no_label' ]
+        );
+
+        // Deprecated handling for 1.x
+        if ( parent::$deprecated )
+            return $value;
+
+        return $yesno[ $value ];
     }
 
     /**
@@ -101,27 +113,14 @@ class PodsField_Boolean extends PodsField {
     }
 
     /**
-     * Change the way the value of the field is displayed, optionally called with Pods::get
+     * Change the value or perform actions after validation but before saving to the DB
      *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param string $pod
-     * @param int $id
+     * @param string $value
      *
      * @since 2.0.0
      */
-    public function display ( $value, $name, $options, $fields, $pod, $id ) {
-        $yesno = array(
-            1 => $options[ 'boolean_yes_label' ],
-            0 => $options[ 'boolean_no_label' ]
-        );
-
-        // Deprecated handling for 1.x
-        if ( parent::$deprecated )
-            return $value;
-
-        return $yesno[ $value ];
+    public function pre_save ( &$value ) {
+        // Only allow 0 / 1
+        $value = ( 1 == (int) $value ? 1 : 0 );
     }
 }

@@ -108,14 +108,61 @@ class PodsField_Text extends PodsField {
     }
 
     /**
-     * Change the value before it's sent to be displayed or saved
+     * Change the way the value of the field is displayed with Pods::get
      *
      * @param mixed $value
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param string $pod
+     * @param int $id
+     *
+     * @since 2.0.0
+     */
+    public function display ( &$value, $name, $options, $fields, $pod, $id ) {
+        if ( 1 == $options[ 'text_allow_shortcode' ] )
+            $value = do_shortcode( $value );
+    }
+
+    /**
+     * Customize output of the form field
+     *
+     * @param string $name
+     * @param string $value
+     * @param array $options
+     * @param string $pod
+     * @param int $id
+     *
+     * @since 2.0.0
+     */
+    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+        $options = (array) $options;
+
+        $field_type = 'text';
+
+        if ( 'email' == $options[ 'text_format_type' ] )
+            $field_type = 'email';
+        elseif ( 'website' == $options[ 'text_format_type' ] )
+            $field_type = 'url';
+        elseif ( 'phone' == $options[ 'text_format_type' ] )
+            $field_type = 'phone';
+
+        if ( !isset( $options[ 'regex_validation' ] ) || empty( $options[ 'regex_validation' ] ) )
+            $options[ 'regex_validation' ] = $this->regex( $options );
+
+        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( $name, $value, self::$type, $options, $pod, $id ) );
+    }
+
+    /**
+     * Change the value or perform actions after validation but before saving to the DB
+     *
+     * @param string $value
+     * @param string $name
      * @param array $options
      *
      * @since 2.0.0
      */
-    public function value ( &$value, $options ) {
+    public function pre_save ( &$value, $name, $options ) {
         $options = (array) $options;
 
         if ( 'plain' == $options[ 'text_format_type' ] ) {
@@ -224,52 +271,6 @@ class PodsField_Text extends PodsField {
             }
 
         }
-    }
-
-    /**
-     * Customize output of the form field
-     *
-     * @param string $name
-     * @param string $value
-     * @param array $options
-     * @param string $pod
-     * @param int $id
-     *
-     * @since 2.0.0
-     */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
-        $options = (array) $options;
-
-        $field_type = 'text';
-
-        if ( 'email' == $options[ 'text_format_type' ] )
-            $field_type = 'email';
-        elseif ( 'website' == $options[ 'text_format_type' ] )
-            $field_type = 'url';
-        elseif ( 'phone' == $options[ 'text_format_type' ] )
-            $field_type = 'phone';
-
-        if ( !isset( $options[ 'regex_validation' ] ) || empty( $options[ 'regex_validation' ] ) )
-            $options[ 'regex_validation' ] = $this->regex( $options );
-
-        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( $name, $value, self::$type, $options, $pod, $id ) );
-    }
-
-    /**
-     * Change the way the value of the field is displayed, optionally called with Pods::get
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param string $pod
-     * @param int $id
-     *
-     * @since 2.0.0
-     */
-    public function display ( &$value, $name, $options, $fields, $pod, $id ) {
-        if ( 1 == $options[ 'text_allow_shortcode' ] )
-            $value = do_shortcode( $value );
     }
 
     /**

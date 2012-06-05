@@ -162,9 +162,6 @@ class PodsField_Text extends PodsField {
         elseif ( 'phone' == $options[ 'text_format_type' ] )
             $field_type = 'phone';
 
-        if ( !isset( $options[ 'regex_validation' ] ) || empty( $options[ 'regex_validation' ] ) )
-            $options[ 'regex_validation' ] = $this->regex( $options );
-
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( $name, $value, self::$type, $options, $pod, $id ) );
     }
 

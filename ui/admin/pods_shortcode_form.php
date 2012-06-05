@@ -94,6 +94,8 @@ jQuery(function($) {
 			});
 		});
 	});
+
+	$('#pod_select').trigger('change');
 });
 </script>
 

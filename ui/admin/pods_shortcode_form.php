@@ -36,8 +36,8 @@ jQuery(function($) {
     var $useCaseSelector = $('#use-case-selector'),
         $form = $('#pods_shortcode_form'),
         $podSelector = $('#pod_select'),
-		ajaxurl = "<?php echo admin_url('admin-ajax.php?pods_ajax=1&action=pods_admin'); ?>",
-		nonce = "<?php echo wp_create_nonce('pods_ajax'); ?>";
+		ajaxurl = "<?php echo admin_url('admin-ajax.php?pods_ajax=1'); ?>",
+		nonce = "<?php echo wp_create_nonce('pods-load_pod'); ?>";
 	console.log(ajaxurl);
 	console.log(nonce);
 
@@ -65,9 +65,35 @@ jQuery(function($) {
         }
     });
 
-    $podSelector.change(function() {
-        
-    });
+	$('#pod_select').change(function() {
+		var pod = $(this).val();
+		var jax = $.ajax(ajaxurl, {
+			type: 'POST',
+			dataType: 'json',
+			data: {
+				action: 'pods_admin',
+				method: 'load_pod',
+				name: pod,
+				_wpnonce: nonce
+			}
+		});
+		jax.success(function(json) {
+			console.log(json.fields);
+			var $orderby = $('#pod_orderby'),
+				$column  = $('#pod_column');
+
+			$orderby.find('option').remove();
+			$orderby.append('<option value=""></option>');
+
+			$column.find('option').remove();
+			$column.append('<option value=""></option>');
+
+			$.each(json.fields, function(key, val) {
+				$orderby.append('<option value="' + val.name + '">' + val.label + '</option>');
+				$column.append('<option value="' + val.name + '">' + val.label + '</option>');
+			});
+		});
+	});
 });
 </script>
 
@@ -144,7 +170,8 @@ jQuery(function($) {
                 </div>
                 <div class="section hide">
                     <label for="pod_orderby">Order By</label>
-                    <input type="text" id="pod_orderby" name="pod_orderby" />
+					<select name="pod_orderby" id="pod_orderby">
+					</select>
                 </div>
                 <div class="section hide">
                     <label for="pod_sort_direction">Direction</label>
@@ -160,7 +187,8 @@ jQuery(function($) {
                 </div>
                 <div class="section hide">
                     <label for="pod_column">Column</label>
-                    <input type="text" id="pod_column" name="pod_column" />
+					<select id="pod_column" name="pod_column">
+					</select>
                 </div>
                 <div class="section hide">
                     <label for="pod_where">Filter</label>

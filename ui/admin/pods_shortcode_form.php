@@ -38,8 +38,6 @@ jQuery(function($) {
         $podSelector = $('#pod_select'),
 		ajaxurl = "<?php echo admin_url('admin-ajax.php?pods_ajax=1'); ?>",
 		nonce = "<?php echo wp_create_nonce('pods-load_pod'); ?>";
-	console.log(ajaxurl);
-	console.log(nonce);
 
     $useCaseSelector.change(function(evt) {
         var val = $(this).val();
@@ -78,7 +76,6 @@ jQuery(function($) {
 			}
 		});
 		jax.success(function(json) {
-			console.log(json.fields);
 			var $orderby = $('#pod_orderby'),
 				$column  = $('#pod_column');
 

@@ -42,11 +42,12 @@ class PodsField_Paragraph extends PodsField {
                 'data' => array(
                     'plain' => __( 'Plain Text Area', 'pods' ),
                     __( 'WYSIWYG', 'pods' ) =>
-                        apply_filters( 'pods_form_ui_field_paragraph_wysiwyg_options',
-                                       array(
-                                           'tinymce' => __( 'TinyMCE (WP Default)', 'pods' ),
-                                           'cleditor' => __( 'CLEditor', 'pods' )
-                                       )
+                        apply_filters(
+                            'pods_form_ui_field_paragraph_wysiwyg_options',
+                            array(
+                                'tinymce' => __( 'TinyMCE (WP Default)', 'pods' ),
+                                'cleditor' => __( 'CLEditor', 'pods' )
+                            )
                         )
                 )
             ),
@@ -124,11 +125,16 @@ class PodsField_Paragraph extends PodsField {
         $options = (array) $options;
 
         $field_type = 'textarea';
-
         if ( 'tinymce' == $options[ 'paragraph_format_type' ] )
             $field_type = 'tinymce';
         elseif ( 'cleditor' == $options[ 'paragraph_format_type' ] )
             $field_type = 'cleditor';
+        else {
+            // Support custom WYSIWYG integration
+            do_action( 'pods_form_ui_field_paragraph_wysiwyg_' . $options[ 'paragraph_format_type' ], $name, $value, $options, $pod, $id );
+            do_action( 'pods_form_ui_field_paragraph_wysiwyg', $options[ 'paragraph_format_type' ], $name, $value, $options, $pod, $id );
+            return;
+        }
 
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( $name, $value, $options, $pod, $id ) );
     }

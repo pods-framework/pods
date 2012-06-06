@@ -91,36 +91,6 @@ if ('__1' != pods_var('id', $field)) {
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="pods-additional-field-options-<?php echo $i; ?>" class="pods-tab pods-additional-field-options">
-                                        <div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-paragraph">
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('field_data[' . $i . '][paragraph_editor]', __('Text Editor', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('field_data[' . $i . '][paragraph_editor]', pods_var('paragraph_editor', $field), 'pick', array('data' => pods_var('paragraph_editor', $field_settings))); ?>
-                                            </div>
-                                            <div class="pods-field-option-group">
-                                                <p class="pods-field-option-group-label">
-                                                    <?php _e('Output Options'); ?>
-                                                </p>
-                                                <div class="pods-field-option-group-values">
-                                                    <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field('field_data[' . $i . '][paragraph_allow_html]', pods_var('paragraph_allow_html', $field), 'boolean', array('class' => 'pods-dependent-toggle')); ?>
-                                                        <?php echo PodsForm::label('field_data[' . $i . '][paragraph_allow_html]', __('Allow HTML?', 'pods'), __('help', 'pods')); ?>
-                                                    </div>
-                                                    <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field('field_data[' . $i . '][paragraph_allow_markdown]', pods_var('paragraph_allow_markdown', $field), 'boolean'); ?>
-                                                        <?php echo PodsForm::label('field_data[' . $i . '][paragraph_allow_markdown]', __('Allow Markdown Syntax?', 'pods'), __('help', 'pods')); ?>
-                                                    </div>
-                                                    <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field('field_data[' . $i . '][paragraph_allow_shortcode]', pods_var('paragraph_allow_shortcode', $field), 'boolean'); ?>
-                                                        <?php echo PodsForm::label('field_data[' . $i . '][paragraph_allow_shortcode]', __('Allow Shortcodes?', 'pods'), __('help', 'pods')); ?>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="pods-field-option pods-depends-on pods-depends-on-field-data-paragraph-allow-html">
-                                                <?php echo PodsForm::label('field_data[' . $i . '][paragraph_allowed_html_tags]', __('Allowed HTML Tags', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('field_data[' . $i . '][paragraph_allowed_html_tags]', pods_var('paragraph_allowed_html_tags', $field), 'text'); ?>
-                                            </div>
-                                        </div>
 
                                         <div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-file">
                                             <div class="pods-field-option">

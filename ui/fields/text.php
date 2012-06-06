@@ -6,4 +6,4 @@
 ?>
 <input<?php PodsForm::attributes( $attributes, $name, PodsForm::$type, $options ); ?> />
 <?php
-    PodsForm::regex( $options );
+    PodsForm::regex( PodsForm::$type, $options );

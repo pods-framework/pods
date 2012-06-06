@@ -1,8 +1,18 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: sclark
- * Date: 4/29/12
- * Time: 10:56 AM
- * To change this template use File | Settings | File Templates.
- */
+    $type = 'textarea';
+    $attributes = array();
+    $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$type, $options );
+?>
+<textarea<?php PodsForm::attributes( $attributes, $name, PodsForm::$type, $options ); ?>><?php echo esc_html( $value ); ?></textarea>
+<script>
+    jQuery( function( $ ) {
+        var $textarea = $( 'textarea#<?php echo $attributes[ 'id' ]; ?>' );
+        if ( $textarea.data( 'width' ) ) {
+            $textarea.cleditor( {
+                width : $textarea.data( 'width' )
+            } );
+        }
+        else
+            $textarea.cleditor();
+    } );
+</script>

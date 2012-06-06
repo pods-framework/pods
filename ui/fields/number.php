@@ -2,7 +2,7 @@
     $attributes = array();
     $attributes[ 'type' ] = 'text';
     $attributes[ 'value' ] = $value;
-    $attributes = PodsForm::merge_attributes( $attributes, $name, $type, $options );
+    $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$type, $options );
 
     $thousands = ',';
     $dot = '.';
@@ -22,11 +22,7 @@
     else
         $attributes[ 'value' ] = number_format( (float) $attributes[ 'value' ], $options[ 'number_decimals' ], $dot, $thousands );
 ?>
-<input<?php PodsForm::attributes( $attributes, $name, $type, $options ); ?> />
-<?php
-    if ( !wp_script_is( 'jquery', 'queue' ) && !wp_script_is( 'jquery', 'to_do' ) && !wp_script_is( 'jquery', 'done' ) )
-        wp_print_scripts( 'jquery' );
-?>
+<input<?php PodsForm::attributes( $attributes, $name, PodsForm::$type, $options ); ?> />
 <script>
     jQuery( function ( $ ) {
         $( 'input#<?php echo $attributes[ 'id' ]; ?>' ).keyup( function () {

@@ -58,7 +58,8 @@ class PodsField_Text extends PodsField {
                     'phone' => array(
                         'label' => __( 'Phone Number', 'pods' ),
                         'regex' => '/[^0-9 \.\-\(\)ext]/g' // @todo test regex
-                    )
+                    ),
+                    'password' => __( 'Password', 'pods' )
                 )
             ),
             'text_format_website' => array(
@@ -169,6 +170,10 @@ class PodsField_Text extends PodsField {
             $field_type = 'url';
         elseif ( 'phone' == $options[ 'text_format_type' ] )
             $field_type = 'phone';
+        elseif ( 'password' == $options[ 'text_format_type' ] )
+            $field_type = 'password';
+        elseif ( 'color' == $options[ 'text_format_type' ] )
+            $field_type = 'color';
 
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( $name, $value, $options, $pod, $id ) );
     }

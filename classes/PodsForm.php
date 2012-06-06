@@ -96,8 +96,8 @@ class PodsForm {
 
         ob_start();
 
-        if ( method_exists( self, 'field_' . $type ) )
-            call_user_func( array( self, 'field_' . $type ), $name, $value, $options );
+        if ( method_exists( get_class(), 'field_' . $type ) )
+            call_user_func( array( get_class(), 'field_' . $type ), $name, $value, $options );
         elseif ( is_object( self::$field ) && class_exists( self::$field ) && method_exists( self::$field, 'input' ) )
             call_user_func( array( self::$field, 'input' ), $name, $value, $options, $pod, $id );
         else
@@ -106,26 +106,6 @@ class PodsForm {
         $output = ob_get_clean();
 
         return apply_filters('pods_form_ui_field_' . $type, $output, $name, $value, $options, $pod, $id);
-    }
-
-    /**
-     * Output field type 'tinymce'
-     *
-     * @since 2.0.0
-     */
-    protected function field_tinymce ($name, $value = null, $options = null) {
-        $options = (array) $options;
-    }
-
-    /**
-     * Output field type 'password'
-     *
-     * @since 2.0.0
-     */
-    protected function field_password ($name, $value = null, $options = null ) {
-        $options = (array) $options;
-
-        pods_view( PODS_DIR . 'ui/fields/_password.php', compact( $name, $value, $options ) );
     }
 
     /**
@@ -141,95 +121,13 @@ class PodsForm {
         pods_view( PODS_DIR . 'ui/fields/_db.php', compact( $name, $value, $options ) );
     }
 
-    /**
-     * Output field type 'pick'
-     *
-     * @since 2.0.0
-     */
-    protected function field_pick ($name, $value = null, $options = null) {
-        $options = (array) $options;
-        $type = 'pick';
-        $attributes = array();
-        $attributes = self::merge_attributes($attributes, $name, $type, $options);
-        if (!isset($options['data']) || empty($options['data']))
-            $options['data'] = array();
-        elseif (!is_array($options['data']))
-            $options['data'] = implode(',', $options['data']);
-?>
-    <select<?php self::attributes($attributes, $name, $type, $options); ?>>
-<?php
-        foreach( $options['data'] as $option_value => $option_label ) {
-            if (is_array($option_label)) {
-?>
-        <optgroup label="<?php echo esc_attr($option_value); ?>">
-<?php
-                foreach ($option_label as $sub_option_value => $sub_option_label) {
-                    $sub_option_label = (string) $sub_option_label;
-                    if (is_array($sub_option_label)) {
-?>
-            <option<?php self::attributes($sub_option_label, $name, $type . '_option', $options); ?>><?php echo esc_html($sub_option_label); ?></option>
-<?php
-                    }
-                    else {
-?>
-            <option value="<?php echo esc_attr($sub_option_value); ?>"<?php echo ($value === $sub_option_value ? ' SELECTED' : ''); ?>><?php echo esc_html($sub_option_label); ?></option>
-<?php
-                    }
-                }
-?>
-        </optgroup>
-<?php
-            }
-            else {
-                $option_label = (string) $option_label;
-                if (is_array($option_value)) {
-?>
-        <option<?php self::attributes($option_value, $name, $type . '_option', $options); ?>><?php echo esc_html($option_label); ?></option>
-<?php
-                }
-                else {
-?>
-        <option value="<?php echo esc_attr($option_value); ?>"<?php echo ($value === $option_value ? ' SELECTED' : ''); ?>><?php echo esc_html($option_label); ?></option>
-<?php
-                }
-            }
-        }
-?>
-    </select>
-<?php
-    }
-
-    /**
-     * Output field type 'pick_checkbox'
-     *
-     * @since 2.0.0
-     */
-    protected function field_pick_checkbox ($name, $value = null, $options = null) {
-        $options = (array) $options;
-        $type = 'pick_checkbox';
-        $attributes = array();
-        $attributes['type'] = 'checkbox';
-        $attributes['value'] = $value;
-        $attributes = self::merge_attributes($attributes, $name, $type, $options);
-        if (isset($options['data']))
-            $attributes['data'] = $options['data'];
-?>
-    <input<?php self::attributes($attributes, $name, $type, $options); ?> />
-<?php
-    }
-
 	/**
 	 * Output a hidden field
 	 */
 	protected function field_hidden($name, $value = null, $options = null) {
-		$type = 'hidden';
-		$attributes = array();
-		$attributes['type'] = $type;
-		$attributes['value'] = $value;
-		$attributes = self::merge_attributes($attributes, $name, $type, $options);
-?>
-	<input<?php self::attributes($attributes, $name, $type, $options); ?> />
-<?php
+        $options = (array) $options;
+
+        pods_view( PODS_DIR . 'ui/fields/_hidden.php', compact( $name, $value, $options ) );
 	}
 
     /**

@@ -27,22 +27,6 @@ class PodsField_Slug extends PodsField {
     }
 
     /**
-     * Change the way the value of the field is displayed with Pods::get
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param string $pod
-     * @param int $id
-     *
-     * @since 2.0.0
-     */
-    public function display ( &$value, $name, $options, $fields, &$pod, $id ) {
-
-    }
-
-    /**
      * Customize output of the form field
      *
      * @param string $name
@@ -60,21 +44,6 @@ class PodsField_Slug extends PodsField {
     }
 
     /**
-     * Build regex necessary for JS validation
-     *
-     * @param string $name
-     * @param string $value
-     * @param array $options
-     * @param string $pod
-     * @param int $id
-     *
-     * @since 2.0.0
-     */
-    public function regex ( $name, $value = null, $options = null, &$pod = null, $id = null ) {
-
-    }
-
-    /**
      * Change the value or perform actions after validation but before saving to the DB
      *
      * @param string $value
@@ -88,6 +57,6 @@ class PodsField_Slug extends PodsField {
      * @since 2.0.0
      */
     public function pre_save ( &$value, $name, $options, $data, &$api, &$pod, $id = false ) {
-
+        $value = pods_unique_slug( $value, $name, $pod );
     }
 }

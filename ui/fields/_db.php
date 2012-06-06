@@ -4,11 +4,7 @@
     $attributes[ 'value' ] = PodsForm::clean( $value, false, true );
     $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$type, $options );
 ?>
-<input<?php PodsForm::attributes( $attributes, $name, $type, $options ); ?> />
-<?php
-    if ( !wp_script_is( 'jquery', 'queue' ) && !wp_script_is( 'jquery', 'to_do' ) && !wp_script_is( 'jquery', 'done' ) )
-        wp_print_scripts( 'jquery' );
-?>
+<input<?php PodsForm::attributes( $attributes, $name, PodsForm::$type, $options ); ?> />
 <script>
     jQuery( function ( $ ) {
         $( 'input#<?php echo $attributes[ 'id' ]; ?>' ).change( function () {

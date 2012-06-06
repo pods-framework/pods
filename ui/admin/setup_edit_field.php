@@ -91,6 +91,188 @@ if ('__1' != pods_var('id', $field)) {
                                             </div>
                                         </div>
                                     </div>
+                                    <div id="pods-additional-field-options-<?php echo $i; ?>" class="pods-tab pods-additional-field-options">
+                                        <div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-date">
+                                            <div class="pods-field-option">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][date_format_type]', __('Format Type', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][date_format_type]', pods_var('date_format_type', $field), 'pick', array('data' => pods_var('date_format_type', $field_settings), 'class' => 'pods-dependent-toggle')); ?>
+                                            </div>
+                                            <div class="pods-field-option pods-depends-on pods-depends-on-field-data-date-format-type pods-depends-on-field-data-date-format-type-date pods-depends-on-field-data-date-format-type-datetime">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][date_format_date]', __('Date Format', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][date_format_date]', pods_var('date_format', $field), 'pick', array('data' => pods_var('date_format', $field_settings))); ?>
+                                            </div>
+                                            <div class="pods-field-option pods-depends-on pods-depends-on-field-data-date-format-type pods-depends-on-field-data-date-format-type-datetime pods-depends-on-field-data-date-format-type-time">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][date_time_type]', __('Time Format Type', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][date_time_type]', pods_var('date_time_type', $field), 'pick', array('data' => pods_var('date_time_type', $field_settings), 'class' => 'pods-dependent-toggle')); ?>
+                                            </div>
+                                            <div class="pods-field-option pods-depends-on pods-depends-on-field-data-date-format-type pods-depends-on-field-data-date-format-type-datetime pods-depends-on-field-data-date-format-type-time pods-depends-on-field-data-date-time-type pods-depends-on-field-data-date-time-type-12">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][date_format_time]', __('Time Format', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][date_format_time]', pods_var('date_time_format', $field), 'pick', array('data' => pods_var('date_time_format', $field_settings))); ?>
+                                            </div>
+                                        </div>
+
+                                        <div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-text">
+                                            <div class="pods-field-option">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][text_format_type]', __('Format Type', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][text_format_type]', pods_var('text_format_type', $field), 'pick', array('data' => pods_var('text_format_type', $field_settings), 'class' => 'pods-dependent-toggle')); ?>
+                                            </div>
+                                            <div class="pods-field-option pods-depends-on pods-depends-on-field-data-text-format-type pods-depends-on-field-data-text-format-type-website">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][text_format_website]', __('Format', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][text_format_website]', pods_var('text_format_website', $field), 'pick', array('data' => pods_var('text_format_website', $field_settings))); ?>
+                                            </div>
+                                            <div class="pods-field-option-container pods-depends-on pods-depends-on-field-data-text-format-type pods-depends-on-field-data-text-format-type-phone">
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label('field_data[' . $i . '][text_format_phone]', __('Format', 'pods'), __('help', 'pods')); ?>
+                                                    <?php echo PodsForm::field('field_data[' . $i . '][text_format_phone]', pods_var('text_format_phone', $field), 'pick', array('data' => pods_var('text_format_phone', $field_settings))); ?>
+                                                </div>
+                                                <div class="pods-field-option-group">
+                                                    <p class="pods-field-option-group-label">
+                                                        <?php _e('Phone Options'); ?>
+                                                    </p>
+                                                    <div class="pods-field-option-group-values">
+                                                        <div class="pods-field-option-group-value">
+                                                            <?php echo PodsForm::field('field_data[' . $i . '][text_enable_phone_extension]', pods_var('text_enable_phone_extension', $field), 'boolean'); ?>
+                                                            <?php echo PodsForm::label('field_data[' . $i . '][text_enable_phone_extension]', __('Enable Phone Extension?', 'pods'), __('help', 'pods')); ?>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="pods-field-option-group">
+                                                <p class="pods-field-option-group-label">
+                                                    <?php _e('Output Options'); ?>
+                                                </p>
+                                                <div class="pods-field-option-group-values">
+                                                    <div class="pods-field-option-group-value">
+                                                        <?php echo PodsForm::field('field_data[' . $i . '][text_allow_html]', pods_var('text_allow_html', $field), 'boolean', array('class' => 'pods-dependent-toggle')); ?>
+                                                        <?php echo PodsForm::label('field_data[' . $i . '][text_allow_html]', __('Allow HTML?', 'pods'), __('help', 'pods')); ?>
+                                                    </div>
+                                                    <div class="pods-field-option-group-value">
+                                                        <?php echo PodsForm::field('field_data[' . $i . '][text_allow_shortcode]', pods_var('text_allow_shortcode', $field), 'boolean'); ?>
+                                                        <?php echo PodsForm::label('field_data[' . $i . '][text_allow_shortcode]', __('Allow Shortcodes?', 'pods'), __('help', 'pods')); ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="pods-field-option pods-depends-on pods-depends-on-field-data-text-allow-html">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][text_allowed_html_tags]', __('Allowed HTML Tags', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][text_allowed_html_tags]', pods_var('text_allowed_html_tags', $field), 'text'); ?>
+                                            </div>
+                                            <div class="pods-field-option">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][text_max_length]', __('Max Length', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][text_max_length]', pods_var('text_max_length', $field), 'number'); ?>
+                                            </div>
+                                            <div class="pods-field-option">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][text_size]', __('Field Size', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][text_size]', pods_var('text_size', $field), 'pick', array('data' => pods_var('text_size', $field_settings))); ?>
+                                            </div>
+                                        </div>
+
+                                        <div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-paragraph">
+                                            <div class="pods-field-option">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][paragraph_editor]', __('Text Editor', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][paragraph_editor]', pods_var('paragraph_editor', $field), 'pick', array('data' => pods_var('paragraph_editor', $field_settings))); ?>
+                                            </div>
+                                            <div class="pods-field-option-group">
+                                                <p class="pods-field-option-group-label">
+                                                    <?php _e('Output Options'); ?>
+                                                </p>
+                                                <div class="pods-field-option-group-values">
+                                                    <div class="pods-field-option-group-value">
+                                                        <?php echo PodsForm::field('field_data[' . $i . '][paragraph_allow_html]', pods_var('paragraph_allow_html', $field), 'boolean', array('class' => 'pods-dependent-toggle')); ?>
+                                                        <?php echo PodsForm::label('field_data[' . $i . '][paragraph_allow_html]', __('Allow HTML?', 'pods'), __('help', 'pods')); ?>
+                                                    </div>
+                                                    <div class="pods-field-option-group-value">
+                                                        <?php echo PodsForm::field('field_data[' . $i . '][paragraph_allow_markdown]', pods_var('paragraph_allow_markdown', $field), 'boolean'); ?>
+                                                        <?php echo PodsForm::label('field_data[' . $i . '][paragraph_allow_markdown]', __('Allow Markdown Syntax?', 'pods'), __('help', 'pods')); ?>
+                                                    </div>
+                                                    <div class="pods-field-option-group-value">
+                                                        <?php echo PodsForm::field('field_data[' . $i . '][paragraph_allow_shortcode]', pods_var('paragraph_allow_shortcode', $field), 'boolean'); ?>
+                                                        <?php echo PodsForm::label('field_data[' . $i . '][paragraph_allow_shortcode]', __('Allow Shortcodes?', 'pods'), __('help', 'pods')); ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="pods-field-option pods-depends-on pods-depends-on-field-data-paragraph-allow-html">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][paragraph_allowed_html_tags]', __('Allowed HTML Tags', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][paragraph_allowed_html_tags]', pods_var('paragraph_allowed_html_tags', $field), 'text'); ?>
+                                            </div>
+                                        </div>
+
+                                        <div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-number">
+                                            <div class="pods-field-option">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][number_format_type]', __('Format Type', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][number_format_type]', pods_var('number_format_type', $field), 'pick', array('data' => pods_var('number_format_type', $field_settings), 'class' => 'pods-dependent-toggle')); ?>
+                                            </div>
+                                            <div class="pods-field-option-container pods-depends-on pods-depends-on-field-data-number-format-type pods-depends-on-field-data-number-format-type-currency">
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label('field_data[' . $i . '][number_format_currency_sign]', __('Currency Sign', 'pods'), __('help', 'pods')); ?>
+                                                    <?php echo PodsForm::field('field_data[' . $i . '][number_format_currency_sign]', pods_var('number_format_currency_sign', $field), 'pick', array('data' => pods_var('number_format_currency_sign', $field_settings))); ?>
+                                                </div>
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label('field_data[' . $i . '][number_format_currency_placement]', __('Currency Placement', 'pods'), __('help', 'pods')); ?>
+                                                    <?php echo PodsForm::field('field_data[' . $i . '][number_format_currency_placement]', pods_var('number_format_currency_placement', $field), 'pick', array('data' => pods_var('number_format_currency_placement', $field_settings))); ?>
+                                                </div>
+                                            </div>
+                                            <div class="pods-field-option">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][number_format]', __('Format', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][number_format]', pods_var('number_format', $field), 'pick', array('data' => pods_var('number_format', $field_settings))); ?>
+                                            </div>
+                                            <div class="pods-field-option">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][number_decimals]', __('Decimals', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][number_decimals]', pods_var('number_decimals', $field), 'number'); ?>
+                                            </div>
+                                            <div class="pods-field-option">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][number_max_length]', __('Max Length', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][number_max_length]', pods_var('number_max_length', $field), 'number'); ?>
+                                            </div>
+                                            <div class="pods-field-option">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][number_size]', __('Field Size', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][number_size]', pods_var('number_size', $field), 'pick', array('data' => pods_var('number_size', $field_settings))); ?>
+                                            </div>
+                                        </div>
+
+                                        <div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-file">
+                                            <div class="pods-field-option">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][file_type]', __('File Type', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][file_type]', pods_var('file_type', $field), 'pick', array('data' => pods_var('file_type', $field_settings), 'class' => 'pods-dependent-toggle')); ?>
+                                            </div>
+                                            <div class="pods-field-option">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][file_uploader]', __('File Uploader', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][file_uploader]', pods_var('file_uploader', $field), 'pick', array('data' => pods_var('file_uploader', $field_settings))); ?>
+                                            </div>
+                                            <div class="pods-field-option pods-depends-on pods-depends-on-field-data-file-type pods-depends-on-field-data-file-type-multi-limited">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][file_limit]', __('File Limit', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][file_limit]', pods_var('file_limit', $field), 'number'); ?>
+                                            </div>
+                                            <div class="pods-field-option">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][file_restrict_filesize]', __('Restrict File Size (MB)', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][file_restrict_filesize]', pods_var('file_restrict_filesize', $field), 'number'); ?>
+                                            </div>
+                                            <div class="pods-field-option">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][file_restrict_filetypes]', __('Restrict Filetypes', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][file_restrict_filetypes]', pods_var('file_restrict_filetypes', $field), 'text'); ?>
+                                            </div>
+                                        </div>
+
+                                        <div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-boolean">
+                                            <div class="pods-field-option">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][boolean_format_type]', __('Format Type', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][boolean_format_type]', pods_var('boolean_format_type', $field), 'pick', array('data' => pods_var('boolean_format_type', $field_settings))); ?>
+                                            </div>
+                                            <div class="pods-field-option">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][boolean_yes_label]', __('Yes Label', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][boolean_yes_label]', pods_var('boolean_yes_label', $field), 'text'); ?>
+                                            </div>
+                                            <div class="pods-field-option">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][boolean_no_label]', __('No Label', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][boolean_no_label]', pods_var('boolean_no_label', $field), 'text'); ?>
+                                            </div>
+                                        </div>
+
+                                        <div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-permalink">
+                                            <div class="pods-field-option">
+                                                <?php echo PodsForm::label('field_data[' . $i . '][permalink_behavior]', __('Behavior', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][permalink_behavior]', pods_var('permalink_behavior', $field), 'pick', array('data' => pods_var('permalink_behavior', $field_settings))); ?>
+                                            </div>
+                                        </div>
 
                                         <div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-pick">
                                             <div class="pods-field-option">

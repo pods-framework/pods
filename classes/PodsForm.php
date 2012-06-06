@@ -2,8 +2,12 @@
 class PodsForm {
 
     static $field = null;
+
     static $type = null;
+
     static $options = array();
+
+    static $options_build = true;
 
     /**
      * Generate UI for a Form and it's Fields
@@ -24,6 +28,14 @@ class PodsForm {
      * @since 2.0.0
      */
     public static function label ( $name, $label, $help = '', $options = null ) {
+        if ( is_array( $label ) ) {
+            $options = $label;
+            $label = $options[ 'label' ];
+            if ( empty( $label ) )
+                $label = ucwords( str_replace( '_', ' ', $name ) );
+            $help = $options[ 'help' ];
+        }
+
         $name_clean = self::clean( $name );
         $name_more_clean = self::clean( $name, true );
 
@@ -87,7 +99,7 @@ class PodsForm {
      *
      * @since 2.0.0
      */
-    public static function field ($name, $value, $type = 'text', $options = null, $pod = null, $id = null) {
+    public static function field ( $name, $value, $type = 'text', $options = null, $pod = null, $id = null ) {
         $options = self::options( $type, $options );
 
         if ( isset( $options[ 'default' ] ) && null === $value )
@@ -101,11 +113,11 @@ class PodsForm {
         elseif ( is_object( self::$field ) && class_exists( self::$field ) && method_exists( self::$field, 'input' ) )
             call_user_func( array( self::$field, 'input' ), $name, $value, $options, $pod, $id );
         else
-            do_action('pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id);
+            do_action( 'pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id );
 
         $output = ob_get_clean();
 
-        return apply_filters('pods_form_ui_field_' . $type, $output, $name, $value, $options, $pod, $id);
+        return apply_filters( 'pods_form_ui_field_' . $type, $output, $name, $value, $options, $pod, $id );
     }
 
     /**
@@ -115,20 +127,37 @@ class PodsForm {
      *
      * @since 2.0.0
      */
-    protected function field_db ($name, $value = null, $options = null) {
+    protected function field_db ( $name, $value = null, $options = null ) {
         $options = (array) $options;
 
         pods_view( PODS_DIR . 'ui/fields/_db.php', compact( $name, $value, $options ) );
     }
 
-	/**
-	 * Output a hidden field
-	 */
-	protected function field_hidden($name, $value = null, $options = null) {
+    /**
+     * Output a hidden field
+     */
+    protected function field_hidden ( $name, $value = null, $options = null ) {
         $options = (array) $options;
 
         pods_view( PODS_DIR . 'ui/fields/_hidden.php', compact( $name, $value, $options ) );
-	}
+    }
+
+    public static function row ( $name, $value, $type = 'text', $options = null, $pod = null, $id = null ) {
+        // turn build options on
+        self::$options_build = true;
+
+        // build options
+        $options = self::options( $type, $options );
+
+        // don't rebuild during our row processes
+        self::$options_build = false;
+
+        // build row
+        pods_view( PODS_DIR . 'ui/fields/_row.php', compact( $name, $value, $type, $options, $pod, $id ) );
+
+        // Back to normal
+        self::$options_build = true;
+    }
 
     /**
      * Output a field's attributes
@@ -184,15 +213,26 @@ class PodsForm {
      */
     public static function options ( $type, $options ) {
         $options = (array) $options;
-        $defaults = array();
+
+        if ( !self::$options_build ) {
+            self::$type = $type;
+            self::$options = $options;
+
+            return $options;
+        }
 
         $core_defaults = array(
+            'label' => '',
             'description' => '',
+            'help' => '',
             'default' => null,
             'attributes' => array(),
             'class' => '',
             'max_length' => null,
-            'size' => 'medium'
+            'size' => 'medium',
+
+            // internal
+            'grouped' => 0
         );
 
         if ( $type != self::$type ) {
@@ -203,15 +243,9 @@ class PodsForm {
                 self::$field = null;
         }
 
-        if ( is_object( self::$field ) && method_exists( self::$field, 'options' ) ) {
+        $defaults = array();
+        if ( is_object( self::$field ) && method_exists( self::$field, 'options' ) )
             $defaults = (array) call_user_func( array( self::$field, 'options' ) );
-
-            // Map generic options to type-specific
-            if ( 0 < strlen( $options[ 'format_type' ] ) && isset( $defaults[ self::$type . '_format_type' ] ) ) {
-                $options[ self::$type . '_format_type' ] = $options[ 'format_type' ];
-                unset( $options[ 'format_type' ] );
-            }
-        }
 
         $defaults = array_merge_recursive( $core_defaults, $defaults );
 

@@ -1,5 +1,5 @@
 <?php
-    if ( isset( $options[ 'grouped' ] ) && 1 == $options[ 'grouped' ] ) {
+    if ( 1 == $options[ 'grouped' ] ) {
 ?>
 <div class="pods-pick-values pods-pick-radio">
     <ul>
@@ -16,7 +16,7 @@
         if ( 1 < count( $options[ 'data' ] ) )
             $attributes[ 'id' ] .= $counter;
 
-        if ( isset( $options[ 'grouped' ] ) && 1 == $options[ 'grouped' ] ) {
+        if ( 1 == $options[ 'grouped' ] ) {
 ?>
         <li>
 <?php
@@ -27,16 +27,16 @@
 <?php
         if ( 0 < strlen( $label ) ) {
             $help = '';
-            if ( isset( $options[ 'help' ] ) && 0 < strlen( $options[ 'help' ] ) )
+            if ( 0 == $options[ 'grouped' ] && isset( $options[ 'help' ] ) && 0 < strlen( $options[ 'help' ] ) )
                 $help = $options[ 'help' ];
 
-            parent::label( $attributes[ 'id' ], $label, $help );
+            PodsForm::label( $attributes[ 'id' ], $label, $help );
         }
 ?>
             </div>
 <?php
 
-        if ( isset( $options[ 'grouped' ] ) && 1 == $options[ 'grouped' ] ) {
+        if ( 1 == $options[ 'grouped' ] ) {
 ?>
         </li>
 <?php
@@ -45,7 +45,7 @@
         $counter++;
     }
 
-    if ( isset( $options[ 'grouped' ] ) &&  1 == $options[ 'grouped' ] ) {
+    if ( 1 == $options[ 'grouped' ] ) {
 ?>
     </ul>
 </div>

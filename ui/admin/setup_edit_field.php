@@ -92,29 +92,6 @@ if ('__1' != pods_var('id', $field)) {
                                         </div>
                                     </div>
 
-                                        <div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-file">
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('field_data[' . $i . '][file_type]', __('File Type', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('field_data[' . $i . '][file_type]', pods_var('file_type', $field), 'pick', array('data' => pods_var('file_type', $field_settings), 'class' => 'pods-dependent-toggle')); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('field_data[' . $i . '][file_uploader]', __('File Uploader', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('field_data[' . $i . '][file_uploader]', pods_var('file_uploader', $field), 'pick', array('data' => pods_var('file_uploader', $field_settings))); ?>
-                                            </div>
-                                            <div class="pods-field-option pods-depends-on pods-depends-on-field-data-file-type pods-depends-on-field-data-file-type-multi-limited">
-                                                <?php echo PodsForm::label('field_data[' . $i . '][file_limit]', __('File Limit', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('field_data[' . $i . '][file_limit]', pods_var('file_limit', $field), 'number'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('field_data[' . $i . '][file_restrict_filesize]', __('Restrict File Size (MB)', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('field_data[' . $i . '][file_restrict_filesize]', pods_var('file_restrict_filesize', $field), 'number'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('field_data[' . $i . '][file_restrict_filetypes]', __('Restrict Filetypes', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('field_data[' . $i . '][file_restrict_filetypes]', pods_var('file_restrict_filetypes', $field), 'text'); ?>
-                                            </div>
-                                        </div>
-
                                         <div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-pick">
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('field_data[' . $i . '][pick_type]', __('Selection Type', 'pods'), __('help', 'pods')); ?>

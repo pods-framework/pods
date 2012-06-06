@@ -36,58 +36,42 @@ class PodsField_File extends PodsField {
     public function options () {
         $options = array(
             'file_format_type' => array(
-                'label' => __( 'Format Type', 'pods' ),
-                'default' => 'date',
-                'type' => 'pick',
+                'label' => __( 'File Type', 'pods' ),
+                'default' => 'single',
                 'data' => array(
-                    'date' => __( 'Date', 'pods' ),
-                    'datetime' => __( 'Date + Time', 'pods' ),
-                    'time' => __( 'Time', 'pods' )
+                    'single' => __( 'Single File Upload', 'pods' ),
+                    'multi-limited' => __( 'Multiple File Upload (limited uploads)', 'pods' ),
+                    'multi-unlimited' => __( 'Multiple File Upload (no limit)', 'pods' )
                 )
             ),
-            'file_format' => array(
-                'label' => __( 'Format Type', 'pods' ),
-                'depends-on' => array( 'file_format_type' => array( 'date', 'datetime' ) ),
-                'default' => 'mdy',
-                'type' => 'pick',
-                'data' => array(
-                    'mdy' => 'mm/dd/yyyy',
-                    'dmy' => 'dd/mm/yyyy',
-                    'dmy_dash' => 'dd-mm-yyyy',
-                    'dmy_dot' => 'dd.mm.yyyy',
-                    'ymd_slash' => 'yyyy/mm/dd',
-                    'ymd_dash' => 'yyyy-mm-dd',
-                    'ymd_dot' => 'yyyy.mm.dd'
-                )
+            'file_uploader' => array(
+                'label' => __( 'File Uploader', 'pods' ),
+                'default' => 'plupload',
+                'data' =>
+                    apply_filters(
+                        'pods_form_ui_field_file_uploader_options',
+                        array(
+                            'plupload' => __( 'Plupload', 'pods' ),
+                            'attachment' => __( 'Attachments (WP Media Library)', 'pods' )
+                        )
+                    )
             ),
-            'file_time_type' => array(
-                'label' => __( 'Format Type', 'pods' ),
-                'depends-on' => array( 'file_format_type' => array( 'datetime', 'time' ) ),
-                'default' => '12',
-                'type' => 'pick',
-                'data' => array(
-                    '12' => __( '12 hour', 'pods' ),
-                    '24' => __( '24 hour', 'pods' )
-                )
+            'file_limit' => array(
+                'label' => __( 'File Limit', 'pods' ),
+                'depends-on' => array( 'file_format_type' => 'multi-limited' ),
+                'default' => 5,
+                'type' => 'number'
             ),
-            'file_time_format' => array(
-                'label' => __( 'Format Type', 'pods' ),
-                'depends-on' => array(
-                    'file_format_type' => array( 'datetime', 'time' ),
-                    'file_time_type' => '12',
-                ),
-                'default' => 'h_mma',
-                'type' => 'pick',
-                'data' => array(
-                    'h_mm_A' => '1:25 PM',
-                    'hh_mm_A' => '01:25 PM',
-                    'h_mma' => '1:25pm',
-                    'hh_mma' => '01:25pm',
-                    'h_mm' => '1:25',
-                    'hh_mm' => '01:25'
-                )
+            'file_restrict_filesize' => array(
+                'label' => __( 'Restrict File Size', 'pods' ),
+                'default' => '10MB',
+                'type' => 'text'
             ),
-            'size' => 'medium'
+            'file_restrict_extensions' => array(
+                'label' => __( 'Restrict File Extensions', 'pods' ),
+                'default' => '',
+                'type' => 'text'
+            )
         );
         return $options;
     }
@@ -105,9 +89,7 @@ class PodsField_File extends PodsField {
      * @since 2.0.0
      */
     public function display ( &$value, $name, $options, $fields, &$pod, $id ) {
-        $format = $this->format( $options );
-        $date = DateTime::createFromFormat( 'Y-m-d H:i:s', $value );
-        $value = $date->format( $format );
+
     }
 
     /**
@@ -124,25 +106,49 @@ class PodsField_File extends PodsField {
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
 
-        // Format Value
-        $this->display( $value, $name, $options, null, $pod, $id );
+        if ( ( ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD )
+               || ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && true === PODS_UPLOAD_REQUIRE_LOGIN && !is_user_logged_in() )
+               || ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && !is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && ( !is_user_logged_in() || !current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) ) )
+             && ( ( defined( 'PODS_DISABLE_FILE_BROWSER' ) && true === PODS_DISABLE_FILE_BROWSER )
+                  || ( defined( 'PODS_FILES_REQUIRE_LOGIN' ) && is_bool( PODS_FILES_REQUIRE_LOGIN ) && true === PODS_FILES_REQUIRE_LOGIN && !is_user_logged_in() )
+                  || ( defined( 'PODS_FILES_REQUIRE_LOGIN' ) && !is_bool( PODS_FILES_REQUIRE_LOGIN ) && ( !is_user_logged_in() || !current_user_can( PODS_FILES_REQUIRE_LOGIN ) ) ) )
+        ) {
+?>
+    <p>You do not have access to upload / browse files. Contact your website admin to resolve.</p>
+<?php
+            return;
+        }
 
-        pods_view( PODS_DIR . 'ui/fields/date.php', compact( $name, $value, $options, $pod, $id ) );
+        if ( 'plupload' == $options[ 'file_format_type' ] )
+            $field_type = 'plupload';
+        elseif ( 'attachment' == $options[ 'file_format_type' ] )
+            $field_type = 'attachment';
+        else {
+            // Support custom File Uploader integration
+            do_action( 'pods_form_ui_field_file_uploader_' . $options[ 'file_format_type' ], $name, $value, $options, $pod, $id );
+            do_action( 'pods_form_ui_field_file_uploader', $options[ 'file_format_type' ], $name, $value, $options, $pod, $id );
+            return;
+        }
+
+        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( $name, $value, $options, $pod, $id ) );
     }
 
     /**
-     * Build regex necessary for JS validation
+     * Validate a value before it's saved
      *
-     * @param string $name
      * @param string $value
+     * @param string $name
      * @param array $options
+     * @param array $data
+     * @param object $api
      * @param string $pod
      * @param int $id
      *
      * @since 2.0.0
      */
-    public function regex ( $name, $value = null, $options = null, &$pod = null, $id = null ) {
-
+    public function validate ( &$value, $name, $options, $data, &$api, &$pod, $id = false ) {
+        // check file size
+        // check file extensions
     }
 
     /**
@@ -159,55 +165,23 @@ class PodsField_File extends PodsField {
      * @since 2.0.0
      */
     public function pre_save ( &$value, $name, $options, $data, &$api, &$pod, $id = false ) {
-        $format = $this->format( $options );
-        $date = DateTime::createFromFormat( $format, $value );
-        $value = $date->format( 'Y-m-d H:i:s' );
+
     }
 
     /**
-     * Build date/time format string based on options
+     * Customize the Pods UI manage table column output
      *
-     * @param $options
+     * @param mixed $value
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param string $pod
+     * @param int $id
      *
-     * @return string
      * @since 2.0.0
      */
-    private function format ( $options ) {
-        $date_format = array(
-            'mdy' => 'm/d/Y',
-            'dmy' => 'd/m/Y',
-            'dmy_dash' => 'd-m-Y',
-            'dmy_dot' => 'd.m.Y',
-            'ymd_slash' => 'Y/m/d',
-            'ymd_dash' => 'Y-m-d',
-            'ymd_dot' => 'Y.m.d'
-        );
-        $time_format = array(
-            'h_mm_A' => 'g:i A',
-            'hh_mm_A' => 'h:i A',
-            'h_mma' => 'g:ia',
-            'hh_mma' => 'h:ia',
-            'h_mm' => 'g:i',
-            'hh_mm' => 'h:i'
-        );
-
-        $format = 'Y-m-d H:i:s';
-        if ( 'date' == $options[ 'file_format_type' ] )
-            $format = $date_format[ $options[ 'file_format' ] ];
-        elseif ( 'datetime' == $options[ 'file_format_type' ] ) {
-            $format = $date_format[ $options[ 'file_format' ] ] . ' ';
-            if ( 12 == $options[ 'file_time_type' ] )
-                $format .= $time_format[ $options[ 'file_time_format' ] ];
-            else
-                $format .= 'H:i';
-        }
-        elseif ( 'time' == $options[ 'file_format_type' ] ) {
-            if ( 12 == $options[ 'file_time_type' ] )
-                $format = $time_format[ $options[ 'file_time_format' ] ];
-            else
-                $format = 'H:i';
-        }
-
-        return $format;
+    public function ui ( $value, $name, $options, $fields, &$pod, $id ) {
+        // link to file in new target
+        // show thumbnail
     }
 }

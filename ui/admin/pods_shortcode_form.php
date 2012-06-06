@@ -34,7 +34,7 @@ strong.red {
 <script type="text/javascript">
 jQuery(function($) {
     var $useCaseSelector = $('#use-case-selector'),
-        $form = $('#pods_shortcode_form'),
+        $form = $('#pods_shortcode_form_element'),
         $podSelector = $('#pod_select'),
 		ajaxurl = "<?php echo admin_url('admin-ajax.php?pods_ajax=1'); ?>",
 		nonce = "<?php echo wp_create_nonce('pods-load_pod'); ?>";
@@ -104,7 +104,7 @@ jQuery(function($) {
                 <h3 class="popup-header">Pods &raquo; Embed</h3>
             </div>
             
-            <form id="pods_shortcode_form">
+            <form id="pods_shortcode_form_element">
                 <div class="select">
                     <label for="use-case-selector">What would you like to do?</label>
                     <select id="use-case-selector">

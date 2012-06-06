@@ -7,7 +7,7 @@
  * Add a button to the media buttons context
  */
 function pods_media_button($context) {
-    $button = '<a href="#TB_inline?inlineId=pods_shortcode_form&width=640&height=480" class="thickbox" id="add_pod"><img src="' . PODS_URL . 'ui/images/icon16.png" alt="Add Pod" /></a>';
+    $button = '<a href="#TB_inline?inlineId=pods_shortcode_form&width=640" class="thickbox" id="add_pod_button"><img src="' . PODS_URL . 'ui/images/icon16.png" alt="Add Pod" /></a>';
     $context .= $button;
     return $context;
 }
@@ -21,7 +21,7 @@ function add_pods_mce_popup() {
     <script type="text/javascript">
     jQuery(function($) {
         $('#pods_insert_shortcode').click(function(evt) {
-            var form = $('#pods_shortcode_form'),
+            var form = $('#pods_shortcode_form_element'),
                 use_case = $('#use-case-selector').val(),
                 pod_select = $('#pod_select').val(),
                 slug = $('#pod_slug').val(),

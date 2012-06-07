@@ -180,9 +180,11 @@
 
             if (0 !== $sluggable.length) {
                 // Hold onto slug in-case changes cancelled
-                var last_slug = $sluggable.find('.pods-slug-edit input[type=text]').val();
-                $('.pods-slugged-lower').html(last_slug.toLowerCase());
-                $('.pods-slugged').html(last_slug.charAt(0).toUpperCase() + last_slug.slice(1));
+                if ( $sluggable.find( '.pods-slug-edit input[type=text]' )[ 0 ] ) {
+                    var last_slug = $sluggable.find('.pods-slug-edit input[type=text]').val();
+                    $('.pods-slugged-lower').html(last_slug.toLowerCase());
+                    $('.pods-slugged').html(last_slug.charAt(0).toUpperCase() + last_slug.slice(1));
+                }
 
                 // Handle click to edit
                 $sluggable.on('click', '.pods-slug em, .pods-slug input[type=button]', function () {

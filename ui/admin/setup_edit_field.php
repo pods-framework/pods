@@ -95,24 +95,26 @@ if ('__1' != pods_var('id', $field)) {
                                     <div id="pods-additional-field-options-<?php echo $i; ?>" class="pods-tab pods-additional-field-options">
 
                                         <?php
-                                            foreach ( $field_settings[ 'field_types' ] as $field_type ) {
+                                            foreach ( $field_settings[ 'field_types' ] as $field_type => $field_label ) {
                                                 $depends_on = false;
                                         ?>
-                                            <div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-date">
+                                            <div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-<?php echo PodsForm::clean( $field_type, true ); ?>">
                                                 <?php
                                                     $field_options = PodsForm::options_setup( $field_type );
 
                                                     foreach ( $field_options as $field_name => $field_option ) {
-                                                        $depends = PodsForm::dependencies( $field_type[ 'depends-on' ], 'field-data-' );
+                                                        $depends = PodsForm::dependencies( $field_option[ 'depends-on' ], 'field-data-' );
                                                         if ( $depends_on != $depends ) {
                                                             if ( false !== $depends_on ) {
                                                 ?>
                                                     </div>
                                                 <?php
                                                             }
+                                                            if ( !empty( $depends ) ) {
                                                 ?>
                                                     <div class="pods-field-option-container <?php echo $depends; ?>">
                                                 <?php
+                                                            }
                                                         }
 
                                                         if ( !is_array( $field_option[ 'group' ] ) ) {
@@ -147,12 +149,16 @@ if ('__1' != pods_var('id', $field)) {
                                                     </div>
                                                 <?php
                                                         }
-
                                                         $depends_on = $depends;
+                                                    }
+                                                    if ( !empty( $depends_on ) ) {
+                                                ?>
+                                                    </div>
+                                                <?php
+                                                    }
                                                 ?>
                                             </div>
                                         <?php
-                                                }
                                             }/*
                                         ?>
 

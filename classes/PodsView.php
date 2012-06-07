@@ -14,7 +14,7 @@ class PodsView {
 
         $cache_key = sanitize_title( str_replace( PODS_DIR . 'ui/', 'pods-ui-', $view ) );
 
-        if ( 0 !== strpos( $view, PODS_DIR . 'ui/' ) ) {
+        if ( false === strpos( $view, PODS_DIR . 'ui/' ) ) {
 
             $output = self::get( $cache_key );
             if ( null !== $output ) {
@@ -124,7 +124,7 @@ class PodsView {
 
         if ( empty( $_view ) )
             return false;
-        elseif ( 0 !== strpos( $_view, PODS_DIR . 'ui/' ) ) {
+        elseif ( false === strpos( $_view, PODS_DIR . 'ui/' ) ) {
             $_view = trim( $_view, '/' );
 
             if ( empty( $_view ) )
@@ -135,8 +135,8 @@ class PodsView {
             elseif ( file_exists( TEMPLATEPATH . '/' . $_view ) )
                 $located = TEMPLATEPATH . '/' . $_view;
         }
-        elseif ( file_exists( PODS_DIR . 'ui/' . $_view ) )
-            $located = PODS_DIR . 'ui/' . $_view;
+        elseif ( file_exists( $_view ) )
+            $located = $_view;
         else
             $located = apply_filters( 'pods_view_locate_template', $located, $_view );
 

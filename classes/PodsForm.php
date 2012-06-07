@@ -55,7 +55,7 @@ class PodsForm {
         $attributes[ 'for' ] = 'pods-form-ui-' . $name_clean;
         $attributes = self::merge_attributes( $attributes, $name, $type, $options, false );
 
-        pods_view( PODS_DIR . 'ui/fields/_label.php', compact( $name, $label, $help, $attributes, $options ) );
+        pods_view( PODS_DIR . 'ui/fields/_label.php', compact( array_keys( get_defined_vars() ) ) );
 
         $output = ob_get_clean();
 
@@ -87,7 +87,7 @@ class PodsForm {
         $attributes[ 'class' ] = 'pods-form-ui-' . $type . ' pods-form-ui-' . $type . '-' . $name_more_clean;
         $attributes = self::merge_attributes( $attributes, $name, $type, $options, false );
 
-        pods_view( PODS_DIR . 'ui/fields/_comment.php', compact( $name, $attributes, $options ) );
+        pods_view( PODS_DIR . 'ui/fields/_comment.php', compact( array_keys( get_defined_vars() ) ) );
 
         $output = ob_get_clean();
 
@@ -130,7 +130,7 @@ class PodsForm {
     protected function field_db ( $name, $value = null, $options = null ) {
         $options = (array) $options;
 
-        pods_view( PODS_DIR . 'ui/fields/_db.php', compact( $name, $value, $options ) );
+        pods_view( PODS_DIR . 'ui/fields/_db.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
@@ -139,7 +139,7 @@ class PodsForm {
     protected function field_hidden ( $name, $value = null, $options = null ) {
         $options = (array) $options;
 
-        pods_view( PODS_DIR . 'ui/fields/_hidden.php', compact( $name, $value, $options ) );
+        pods_view( PODS_DIR . 'ui/fields/_hidden.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     public static function row ( $name, $value, $type = 'text', $options = null, $pod = null, $id = null ) {
@@ -153,7 +153,7 @@ class PodsForm {
         self::$options_build = false;
 
         // build row
-        pods_view( PODS_DIR . 'ui/fields/_row.php', compact( $name, $value, $type, $options, $pod, $id ) );
+        pods_view( PODS_DIR . 'ui/fields/_row.php', compact( array_keys( get_defined_vars() ) ) );
 
         // Back to normal
         self::$options_build = true;
@@ -178,7 +178,7 @@ class PodsForm {
      *
      * @since 2.0.0
      */
-    protected function merge_attributes ( $attributes, $name = null, $type = null, $options = null ) {
+    public static function merge_attributes ( $attributes, $name = null, $type = null, $options = null ) {
         $options = (array) $options;
         if ( !in_array( $type, array( 'label', 'comment' ) ) ) {
             $name_clean = self::clean( $name );
@@ -201,6 +201,8 @@ class PodsForm {
                 $attributes[ 'class' ] = $attributes[ 'class' ] . ' ' . $options[ 'class' ];
             else
                 $attributes[ 'class' ] = $options[ 'class' ];
+
+            $attributes[ 'class' ] = trim( $attributes[ 'class' ] );
         }
         $attributes = (array) apply_filters( 'pods_form_ui_field_' . $type . '_merge_attributes', $attributes, $name, $options );
         return $attributes;
@@ -223,6 +225,19 @@ class PodsForm {
 
         $defaults = self::options_setup( self::$field );
 
+        $core_defaults = array(
+            'label' => '',
+            'description' => '',
+            'help' => '',
+            'default' => null,
+            'attributes' => array(),
+            'class' => '',
+            'max_length' => null,
+            'size' => 'medium'
+        );
+
+        $defaults = array_merge_recursive( $core_defaults, $defaults );
+
         foreach ( $defaults as $option => $settings ) {
             $default = $settings;
             if ( is_array( $settings ) && isset( $settings[ 'default' ] ) )
@@ -243,6 +258,8 @@ class PodsForm {
      * @since 2.0.0
      */
     public static function options_setup ( $type ) {
+        include_once PODS_DIR . 'classes/PodsField.php';
+
         $core_defaults = array(
             'label' => '',
             'description' => '',
@@ -250,29 +267,60 @@ class PodsForm {
             'default' => null,
             'attributes' => array(),
             'class' => '',
-            'max_length' => null,
-            'size' => 'medium',
-
-            // internal
+            'type' => 'text',
             'group' => 0,
+            'grouped' => 0,
             'depends-on' => array()
         );
 
         if ( null === $type )
             return $core_defaults;
         elseif ( !is_object( $type ) ) {
+            $file = PODS_DIR . 'classes/fields/' . basename( $type ) . '.php';
+            $type = ucwords( $type );
             $type = "PodsField_{$type}";
-            if ( !class_exists( $type ) || !method_exists( $type, 'options' ) )
-                return $core_defaults;
+            if ( !class_exists( $type ) ) {
+                if ( file_exists( $file ) ) {
+                    include_once $file;
+
+                    if ( !class_exists( $type ) )
+                        return $core_defaults;
+                }
+                else
+                    return $core_defaults;
+            }
         }
-        elseif ( !method_exists( $type, 'options' ) )
+
+        if ( !method_exists( $type, 'options' ) )
             return $core_defaults;
 
-        $defaults = array_merge_recursive( $core_defaults, (array) call_user_func( array( $type, 'options' ) ) );
+        $options = (array) call_user_func( array( $type, 'options' ) );
 
-        return $defaults;
+        foreach ( $options as $option => &$defaults ) {
+            if ( !is_array( $defaults ) )
+                $defaults = array( 'default' => $defaults );
+
+            if ( isset( $defaults[ 'group' ] ) && is_array( $defaults[ 'group' ] ) )
+                foreach ( $defaults[ 'group' ] as &$group_option ) {
+                    $group_option = array_merge_recursive( $core_defaults, $group_option );
+                }
+
+            $defaults = array_merge_recursive( $core_defaults, $defaults );
+        }
+
+        return $options;
     }
 
+    /**
+     * Setup dependency classes
+     *
+     * @param array $depends_on
+     * @param string $prefix
+     *
+     * @return string
+     * @static
+     * @since 2.0.0
+     */
     public static function dependencies ( $depends_on, $prefix = '' ) {
         $depends_on = (array) $depends_on;
 
@@ -280,14 +328,16 @@ class PodsForm {
 
         if ( !empty( $depends_on ) )
             $classes[] = 'pods-depends-on';
+        else
+            return;
 
         foreach ( $depends_on as $depends => $on ) {
-            $classes[] = 'pods-depends-on-' . $prefix . $depends;
+            $classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true );
 
             $on = (array) $on;
 
             foreach ( $on as $o ) {
-                $classes[] = 'pods-depends-on-' . $prefix . $depends . '-' . $o;
+                $classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true ) . '-' . self::clean( $o, true );
             }
         }
 

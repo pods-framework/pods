@@ -1,6 +1,7 @@
 <style type="text/css">
 h3.popup-header {
-    font-family: Georgia, "Times New Roman", Times, serif;
+    font-family: "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",sans-serif;
+	font-weight: normal;
     color: #5a5a5a;
     font-size: 1.8em;
     background: url(<?php echo PODS_URL; ?>/ui/images/icon32.png) top left no-repeat;
@@ -36,7 +37,7 @@ jQuery(function($) {
     var $useCaseSelector = $('#use-case-selector'),
         $form = $('#pods_shortcode_form_element'),
         $podSelector = $('#pod_select'),
-		ajaxurl = "<?php echo admin_url('admin-ajax.php?pods_ajax=1'); ?>",
+		pods_ajaxurl = "<?php echo admin_url('admin-ajax.php?pods_ajax=1'); ?>",
 		nonce = "<?php echo wp_create_nonce('pods-load_pod'); ?>";
 
     $useCaseSelector.change(function(evt) {
@@ -65,7 +66,7 @@ jQuery(function($) {
 
 	$('#pod_select').change(function() {
 		var pod = $(this).val();
-		var jax = $.ajax(ajaxurl, {
+		var jax = $.ajax(pods_ajaxurl, {
 			type: 'POST',
 			dataType: 'json',
 			data: {

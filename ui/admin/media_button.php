@@ -15,7 +15,8 @@ function pods_media_button($context) {
     return $context;
 }
 
-add_filter('media_buttons_context', 'pods_media_button');
+if (defined('PODS_DEVELOPER'))
+	add_filter('media_buttons_context', 'pods_media_button');
 
 /**
  * Display the shortcode form
@@ -116,7 +117,10 @@ function add_pods_mce_popup() {
     <?php
     require_once PODS_DIR . 'ui/admin/pods_shortcode_form.php';
 }
-if (in_array($current_page, array('post.php', 'page.php', 'page-new.php', 'post-new.php')))
-	add_action('admin_footer', 'add_pods_mce_popup');
+
+if (defined('PODS_DEVELOPER')) {
+	if (in_array($current_page, array('post.php', 'page.php', 'page-new.php', 'post-new.php')))
+		add_action('admin_footer', 'add_pods_mce_popup');
+}
 
 ?>

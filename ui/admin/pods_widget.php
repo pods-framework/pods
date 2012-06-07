@@ -3,10 +3,11 @@
  * Pods Widget Form and Implementation
  */
 
-add_action('widgets_init', 'pods_register_widgets');
+if (defined('PODS_DEVELOPER'))
+	add_action('widgets_init', 'pods_register_widget');
 
-if (!function_exists('pods_register_widgets')) {
-function pods_register_widgets() {
+if (!function_exists('pods_register_widget')) {
+function pods_register_widget() {
 	register_widget('Pods_Custom_Widget');
 }
 }
@@ -47,6 +48,7 @@ class Pods_Custom_Widget extends WP_Widget {
 	public function form($instance) {
 		$widget = true;
 		require_once(PODS_DIR . 'ui/admin/pods_shortcode_form.php');
+		echo "Hello";
 	}
 }
 }

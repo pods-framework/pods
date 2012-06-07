@@ -24,10 +24,12 @@ class PodsInit
 
             add_action('init', array($this, 'admin_init'));
 
-            require_once PODS_DIR . 'classes/widgets/PodsSingleWidget.php';
-            require_once PODS_DIR . 'classes/widgets/PodsListWidget.php';
-            require_once PODS_DIR . 'classes/widgets/PodsColumnWidget.php';
-            add_action('widgets_init', array($this, 'register_widgets'));
+            if (defined('PODS_DEVELOPER')) {
+                require_once PODS_DIR . 'classes/widgets/PodsSingleWidget.php';
+                require_once PODS_DIR . 'classes/widgets/PodsListWidget.php';
+                require_once PODS_DIR . 'classes/widgets/PodsColumnWidget.php';
+                add_action('widgets_init', array($this, 'register_widgets'));
+            }
 
             // Init Pods Meta
             $this->meta = pods_meta();

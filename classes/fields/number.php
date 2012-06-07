@@ -180,7 +180,7 @@ class PodsField_Number extends PodsField {
         if ( 'range' == $options[ 'number_format_type' ] )
             $field_type = 'range';
 
-        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( $name, $value, $options, $pod, $id ) );
+        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**

@@ -29,6 +29,10 @@
 <script>
     jQuery( function () {
         <?php
+            $args = array(
+                'timeFormat' => $time_format[ $options[ 'date_time_format' ] ],
+                'dateFormat' => $date_format[ $options[ 'date_format' ] ]
+            );
             if ( 'datetime' == $type ) {
                 $method = 'datetimepicker';
                 $args = array(

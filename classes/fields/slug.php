@@ -40,7 +40,7 @@ class PodsField_Slug extends PodsField {
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
 
-        pods_view( PODS_DIR . 'ui/fields/slug.php', compact( $name, $value, $options, $pod, $id ) );
+        pods_view( PODS_DIR . 'ui/fields/slug.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**

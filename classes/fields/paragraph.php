@@ -136,7 +136,7 @@ class PodsField_Paragraph extends PodsField {
             return;
         }
 
-        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( $name, $value, $options, $pod, $id ) );
+        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**

@@ -35,19 +35,20 @@ class PodsForm {
                 $label = ucwords( str_replace( '_', ' ', $name ) );
             $help = $options[ 'help' ];
         }
-
-        $name_clean = self::clean( $name );
-        $name_more_clean = self::clean( $name, true );
-
-        if ( null === $options && !empty( self::$options ) )
+        elseif ( null === $options && !empty( self::$options ) )
             $options = self::$options;
         else
             $options = self::options( null, $options );
+
+        var_dump($options);
 
         $label = apply_filters( 'pods_form_ui_label_text', $label, $name, $help, $options );
         $help = apply_filters( 'pods_form_ui_label_help', $help, $name, $label, $options );
 
         ob_start();
+
+        $name_clean = self::clean( $name );
+        $name_more_clean = self::clean( $name, true );
 
         $type = 'label';
         $attributes = array();
@@ -110,8 +111,8 @@ class PodsForm {
 
         if ( method_exists( get_class(), 'field_' . $type ) )
             call_user_func( array( get_class(), 'field_' . $type ), $name, $value, $options );
-        elseif ( is_object( self::$field ) && class_exists( self::$field ) && method_exists( self::$field, 'input' ) )
-            call_user_func( array( self::$field, 'input' ), $name, $value, $options, $pod, $id );
+        elseif ( is_object( self::$field ) && method_exists( self::$field, 'input' ) )
+            self::$field->input( $name, $value, $options, $pod, $id );
         else
             do_action( 'pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id );
 
@@ -236,7 +237,7 @@ class PodsForm {
             'size' => 'medium'
         );
 
-        $defaults = array_merge_recursive( $core_defaults, $defaults );
+        $defaults = array_merge( $core_defaults, $defaults );
 
         foreach ( $defaults as $option => $settings ) {
             $default = $settings;
@@ -285,11 +286,17 @@ class PodsForm {
 
                     if ( !class_exists( $type ) )
                         return $core_defaults;
+                    else
+                        self::$field = new $type();
                 }
                 else
                     return $core_defaults;
             }
+            else
+                self::$field = new $type();
         }
+        else
+            self::$field = $type;
 
         if ( !method_exists( $type, 'options' ) )
             return $core_defaults;
@@ -302,10 +309,10 @@ class PodsForm {
 
             if ( isset( $defaults[ 'group' ] ) && is_array( $defaults[ 'group' ] ) )
                 foreach ( $defaults[ 'group' ] as &$group_option ) {
-                    $group_option = array_merge_recursive( $core_defaults, $group_option );
+                    $group_option = array_merge( $core_defaults, $group_option );
                 }
 
-            $defaults = array_merge_recursive( $core_defaults, $defaults );
+            $defaults = array_merge( $core_defaults, $defaults );
         }
 
         return $options;
@@ -344,6 +351,10 @@ class PodsForm {
         $classes = implode( ' ', $classes );
 
         return $classes;
+    }
+
+    public static function regex ( $type, $options ) {
+        // build and output regex based on options
     }
 
     /*

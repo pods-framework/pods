@@ -175,7 +175,7 @@ class PodsField_Text extends PodsField {
         elseif ( 'color' == $options[ 'text_format_type' ] )
             $field_type = 'color';
 
-        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( $name, $value, $options, $pod, $id ) );
+        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**

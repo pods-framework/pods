@@ -106,8 +106,16 @@ class PodsField_Date extends PodsField {
      */
     public function display ( &$value, $name, $options, $fields, &$pod, $id ) {
         $format = $this->format( $options );
-        $date = DateTime::createFromFormat( 'Y-m-d H:i:s', $value );
-        $value = $date->format( $format );
+
+        if ( !empty( $value ) ) {
+            $date = DateTime::createFromFormat( 'Y-m-d H:i:s', (string) $value );
+            if ( false !== $date )
+                $value = $date->format( $format );
+            else
+                $value = date_i18n( $format );
+        }
+        else
+            $value = date_i18n( $format );
     }
 
     /**
@@ -127,7 +135,7 @@ class PodsField_Date extends PodsField {
         // Format Value
         $this->display( $value, $name, $options, null, $pod, $id );
 
-        pods_view( PODS_DIR . 'ui/fields/date.php', compact( $name, $value, $options, $pod, $id ) );
+        pods_view( PODS_DIR . 'ui/fields/date.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
@@ -159,9 +167,17 @@ class PodsField_Date extends PodsField {
      * @since 2.0.0
      */
     public function pre_save ( &$value, $name, $options, $data, &$api, &$pod, $id = false ) {
-        $format = $this->format( $options );
-        $date = DateTime::createFromFormat( $format, $value );
-        $value = $date->format( 'Y-m-d H:i:s' );
+
+        if ( !empty( $value ) ) {
+            $format = $this->format( $options );
+            $date = DateTime::createFromFormat( $format, (string) $value );
+            if ( false !== $date )
+                $value = $date->format( 'Y-m-d H:i:s' );
+            else
+                $value = date_i18n( 'Y-m-d H:i:s' );
+        }
+        else
+            $value = date_i18n( 'Y-m-d H:i:s' );
     }
 
     /**

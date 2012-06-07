@@ -1,13 +1,13 @@
 <?php
-class PodsListWidget extends WP_Widget {
+class PodsWidgetList extends WP_Widget {
     /**
      * Register the widget
      */
-    public function PodsListWidget() {
+    public function PodsWidgetList() {
         $this->WP_Widget(
-            'pods_list_widget',
+            'pods_widget_list',
             'Pods List',
-            array('classname' => 'pods_list_widget', 'description' => 'Display multiple Pod items'),
+            array('classname' => 'pods_widget_list', 'description' => 'Display multiple Pod items'),
             array('width' => 200)
         );
     }

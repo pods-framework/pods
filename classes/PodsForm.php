@@ -221,33 +221,7 @@ class PodsForm {
             return $options;
         }
 
-        $core_defaults = array(
-            'label' => '',
-            'description' => '',
-            'help' => '',
-            'default' => null,
-            'attributes' => array(),
-            'class' => '',
-            'max_length' => null,
-            'size' => 'medium',
-
-            // internal
-            'grouped' => 0
-        );
-
-        if ( $type != self::$type ) {
-            $class = "PodsField_{$type}";
-            if ( class_exists( $class ) )
-                self::$field = new $class();
-            else
-                self::$field = null;
-        }
-
-        $defaults = array();
-        if ( is_object( self::$field ) && method_exists( self::$field, 'options' ) )
-            $defaults = (array) call_user_func( array( self::$field, 'options' ) );
-
-        $defaults = array_merge_recursive( $core_defaults, $defaults );
+        $defaults = self::options_setup( self::$field );
 
         foreach ( $defaults as $option => $settings ) {
             $default = $settings;
@@ -261,6 +235,65 @@ class PodsForm {
         self::$options = $options;
 
         return self::$options;
+    }
+
+    /*
+     * Get options for a field and setup defaults
+     *
+     * @since 2.0.0
+     */
+    public static function options_setup ( $type ) {
+        $core_defaults = array(
+            'label' => '',
+            'description' => '',
+            'help' => '',
+            'default' => null,
+            'attributes' => array(),
+            'class' => '',
+            'max_length' => null,
+            'size' => 'medium',
+
+            // internal
+            'group' => 0,
+            'depends-on' => array()
+        );
+
+        if ( null === $type )
+            return $core_defaults;
+        elseif ( !is_object( $type ) ) {
+            $type = "PodsField_{$type}";
+            if ( !class_exists( $type ) || !method_exists( $type, 'options' ) )
+                return $core_defaults;
+        }
+        elseif ( !method_exists( $type, 'options' ) )
+            return $core_defaults;
+
+        $defaults = array_merge_recursive( $core_defaults, (array) call_user_func( array( $type, 'options' ) ) );
+
+        return $defaults;
+    }
+
+    public static function dependencies ( $depends_on, $prefix = '' ) {
+        $depends_on = (array) $depends_on;
+
+        $classes = array();
+
+        if ( !empty( $depends_on ) )
+            $classes[] = 'pods-depends-on';
+
+        foreach ( $depends_on as $depends => $on ) {
+            $classes[] = 'pods-depends-on-' . $prefix . $depends;
+
+            $on = (array) $on;
+
+            foreach ( $on as $o ) {
+                $classes[] = 'pods-depends-on-' . $prefix . $depends . '-' . $o;
+            }
+        }
+
+        $classes = implode( ' ', $classes );
+
+        return $classes;
     }
 
     /*

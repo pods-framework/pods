@@ -100,6 +100,8 @@ class PodsMeta {
         if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || 'revision' == $post->post_type )
             return $post_id;
 
+        if (!isset(self::$post_types[$post->post_type]))
+            return;
         $pod = $this->api->load_pod( array( 'name' => self::$post_types[$post->post_type]['name'] ) );
         foreach ( $pod['fields'] as $field ) {
             if (isset($_POST['pods_meta_' . $field['name']]))

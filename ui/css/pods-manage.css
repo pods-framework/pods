@@ -16,6 +16,10 @@ ul.ui-sortable li:hover {
     background: #ffffd8;
 }
 
+.ui-slider-handle {
+	z-index: 0 !important;
+}
+
 form.pods-manage .pods-field label {
     cursor: pointer;
     display: inline-block;
@@ -119,6 +123,8 @@ form.pods-manage ul.pods-files li span.pods-file-thumb {
 form.pods-manage ul.pods-files li span.pods-file-thumb .pinkynail {
     float: none;
     margin: 0;
+	max-width: 40px !important;
+	max-height: 40px !important;
 }
 
 form.pods-manage ul.pods-files li span.pods-file-name {
@@ -135,6 +141,42 @@ form.pods-manage ul.pods-files li span.pods-file-remove {
 form.pods-manage ul.pods-files li span.pods-file-remove img {
     cursor: pointer;
     display: block;
+}
+
+.plupload-queue {
+	width: 250px;
+}
+
+.plupload-progress {
+	position: relative;
+}
+
+.plupload-progress .progress-bar {
+	position: absolute;
+	height: 14px;
+	width: 0%;
+	background: #4d4d4d;
+	margin-left: 10px;
+}
+
+.plupload-progress .file-name {
+	vertical-align: top;
+}
+
+.pods-inline-files .plupload-progress {
+	width: 150px;
+}
+
+.pods-inline-files li {
+	margin-top: 10px;
+}
+
+.pods-inline-files li .file-name {
+	vertical-align: top !important;
+}
+
+.pods-inline-files li .remove {
+	cursor: pointer;
 }
 
 form.pods-manage .pods-pick-values {
@@ -234,3 +276,4 @@ form.pods-manage .pods-slider-field {
 form.pods-manage .pods-slider-field-display {
     padding: 10px 0;
 }
+

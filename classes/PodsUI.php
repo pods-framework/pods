@@ -1279,7 +1279,7 @@ class PodsUI
         if (false === $table_fields || empty($table_fields))
             return $this->error(__('<strong>Error:</strong> Invalid Configuration - Missing "fields" definition.', 'pods'));
 ?>
-    <table class="widefat page fixed admin_ui_table" cellspacing="0"<?php echo (1 == $reorder && $this->reorder) ? ' id="admin_ui_reorder"' : ''; ?>>
+    <table class="widefat page fixed wp-list-table" cellspacing="0"<?php echo (1 == $reorder && $this->reorder) ? ' id="admin_ui_reorder"' : ''; ?>>
         <thead>
             <tr>
 <?php

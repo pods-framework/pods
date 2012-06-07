@@ -24,8 +24,8 @@ class PodsInit
 
             add_action('init', array($this, 'admin_init'));
 
-			require_once PODS_DIR . 'classes/PodsWidget.php';
-			add_action('widgets_init', array($this, 'register_widget'));
+            require_once PODS_DIR . 'classes/widgets/PodsWidget.php';
+            add_action('widgets_init', array($this, 'register_widgets'));
 
             // Init Pods Meta
             $this->meta = pods_meta();
@@ -558,7 +558,14 @@ class PodsInit
         }
     }
 
-	function register_widget() {
-		register_widget('PodsWidget');
-	}
+    function register_widgets() {
+        $widgets = array(
+            'PodsSingleWidget', 
+            'PodsListWidget',
+            'PodsColumnWidget',
+        );
+        foreach ($widgets as $widget) {
+            register_widget($widget);
+        }
+    }
 }

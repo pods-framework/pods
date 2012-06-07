@@ -34,7 +34,6 @@ class PodsWidget extends WP_Widget {
 	public function form($instance) {
 		$widget = true;
 		require_once(PODS_DIR . 'ui/admin/pods_shortcode_form.php');
-		echo "Hello";
 	}
 }
 ?>

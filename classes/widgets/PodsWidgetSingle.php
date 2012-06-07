@@ -1,13 +1,13 @@
 <?php
-class PodsSingleWidget extends WP_Widget {
+class PodsWidgetSingle extends WP_Widget {
     /**
      * Register the widget
      */
-    public function PodsSingleWidget() {
+    public function PodsWidgetSingle() {
         $this->WP_Widget(
-            'pods_single_widget',
+            'pods_widget_single',
             'Pods Single Item',
-            array('classname' => 'pods_single_widget', 'description' => 'Display a Single Pod Item'),
+            array('classname' => 'pods_widget_single', 'description' => 'Display a Single Pod Item'),
             array('width' => 200)
         );
     }

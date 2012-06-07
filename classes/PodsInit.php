@@ -24,6 +24,9 @@ class PodsInit
 
             add_action('init', array($this, 'admin_init'));
 
+			require_once PODS_DIR . 'classes/PodsWidget.php';
+			add_action('widgets_init', array($this, 'register_widget'));
+
             // Init Pods Meta
             $this->meta = pods_meta();
         }
@@ -37,6 +40,7 @@ class PodsInit
         load_plugin_textdomain('pods', false, basename(plugin_basename(__FILE__)) . '/languages/');
 
         add_shortcode('pods', 'pods_shortcode');
+
 
         $security_settings = array('pods_disable_file_browser' => 0,
                                    'pods_files_require_login' => 0,
@@ -553,4 +557,8 @@ class PodsInit
             exit;
         }
     }
+
+	function register_widget() {
+		register_widget('PodsWidget');
+	}
 }

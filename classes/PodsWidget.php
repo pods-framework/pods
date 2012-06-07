@@ -1,28 +1,14 @@
 <?php
-/**
- * Pods Widget Form and Implementation
- */
-
-if (defined('PODS_DEVELOPER'))
-	add_action('widgets_init', 'pods_register_widget');
-
-if (!function_exists('pods_register_widget')) {
-function pods_register_widget() {
-	register_widget('Pods_Custom_Widget');
-}
-}
-
-if (!class_exists('Pods_Custom_Widget')) {
-class Pods_Custom_Widget extends WP_Widget {
+class PodsWidget extends WP_Widget {
 
 	/**
 	 * Register Pods Widget
 	 */
-	public function Pods_Custom_Widget() {
+	public function PodsWidget() {
 		$this->WP_Widget(
-			'pods_custom_widget',
+			'pods_widget',
 			'Custom Pod',
-			array('classname' => 'pods_custom_widget', 'description' => 'Pods Custom Widget'),
+			array('classname' => 'pods_widget', 'description' => 'Pods Custom Widget'),
 			array('width' => 200, 'height' => 400)
 		);
 	}
@@ -51,6 +37,4 @@ class Pods_Custom_Widget extends WP_Widget {
 		echo "Hello";
 	}
 }
-}
-
 ?>

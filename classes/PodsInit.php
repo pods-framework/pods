@@ -25,9 +25,9 @@ class PodsInit
             add_action('init', array($this, 'admin_init'));
 
             if (defined('PODS_DEVELOPER')) {
-                require_once PODS_DIR . 'classes/widgets/PodsSingleWidget.php';
-                require_once PODS_DIR . 'classes/widgets/PodsListWidget.php';
-                require_once PODS_DIR . 'classes/widgets/PodsColumnWidget.php';
+                require_once PODS_DIR . 'classes/widgets/PodsWidgetSingle.php';
+                require_once PODS_DIR . 'classes/widgets/PodsWidgetList.php';
+                require_once PODS_DIR . 'classes/widgets/PodsWidgetColumn.php';
                 add_action('widgets_init', array($this, 'register_widgets'));
             }
 
@@ -564,9 +564,9 @@ class PodsInit
 
     function register_widgets() {
         $widgets = array(
-            'PodsSingleWidget', 
-            'PodsListWidget',
-            'PodsColumnWidget',
+            'PodsWidgetSingle', 
+            'PodsWidgetList',
+            'PodsWidgetColumn',
         );
         foreach ($widgets as $widget) {
             register_widget($widget);

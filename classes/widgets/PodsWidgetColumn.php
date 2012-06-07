@@ -1,13 +1,13 @@
 <?php
-class PodsColumnWidget extends WP_Widget {
+class PodsWidgetColumn extends WP_Widget {
     /**
      * Register the widget
      */
-    public function PodsColumnWidget() {
+    public function PodsWidgetColumn() {
         $this->WP_Widget(
-            'pods_column_widget',
+            'pods__widget_column',
             'Pods Column Value',
-            array('classname' => 'pods_column_widget', 'description' => "Display a single Pod item's column value"),
+            array('classname' => 'pods_widget_column', 'description' => "Display a single Pod item's column value"),
             array('width' => 200)
         );
     }

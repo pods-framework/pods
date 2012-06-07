@@ -24,6 +24,13 @@ class PodsInit
 
             add_action('init', array($this, 'admin_init'));
 
+            if (defined('PODS_DEVELOPER')) {
+                require_once PODS_DIR . 'classes/widgets/PodsWidgetSingle.php';
+                require_once PODS_DIR . 'classes/widgets/PodsWidgetList.php';
+                require_once PODS_DIR . 'classes/widgets/PodsWidgetColumn.php';
+                add_action('widgets_init', array($this, 'register_widgets'));
+            }
+
             // Init Pods Meta
             $this->meta = pods_meta();
         }
@@ -37,6 +44,7 @@ class PodsInit
         load_plugin_textdomain('pods', false, basename(plugin_basename(__FILE__)) . '/languages/');
 
         add_shortcode('pods', 'pods_shortcode');
+
 
         $security_settings = array('pods_disable_file_browser' => 0,
                                    'pods_files_require_login' => 0,
@@ -551,6 +559,17 @@ class PodsInit
             }
             do_action('pods_page_end', $template, $pod_page_exists);
             exit;
+        }
+    }
+
+    function register_widgets() {
+        $widgets = array(
+            'PodsWidgetSingle', 
+            'PodsWidgetList',
+            'PodsWidgetColumn',
+        );
+        foreach ($widgets as $widget) {
+            register_widget($widget);
         }
     }
 }

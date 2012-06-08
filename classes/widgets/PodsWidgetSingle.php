@@ -44,7 +44,7 @@ class PodsWidgetSingle extends WP_Widget {
         $template = esc_attr($instance['template']);
         $slug     = esc_attr($instance['slug']);
         $helper   = esc_attr($instance['helper']);
-        require PODS_DIR . 'ui/admin/widgets/pods_single_widget_form.php'; 
+        require PODS_DIR . 'ui/admin/widgets/pods_widget_single_form.php'; 
     }
 }
 

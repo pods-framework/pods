@@ -259,8 +259,6 @@ class PodsForm {
      * @since 2.0.0
      */
     public static function options_setup ( $type ) {
-        include_once PODS_DIR . 'classes/PodsField.php';
-
         $core_defaults = array(
             'label' => '',
             'description' => '',
@@ -276,27 +274,10 @@ class PodsForm {
 
         if ( null === $type )
             return $core_defaults;
-        elseif ( !is_object( $type ) ) {
-            $file = PODS_DIR . 'classes/fields/' . basename( $type ) . '.php';
-            $type = ucwords( $type );
-            $type = "PodsField_{$type}";
-            if ( !class_exists( $type ) ) {
-                if ( file_exists( $file ) ) {
-                    include_once $file;
-
-                    if ( !class_exists( $type ) )
-                        return $core_defaults;
-                    else
-                        self::$field = new $type();
-                }
-                else
-                    return $core_defaults;
-            }
-            else
-                self::$field = new $type();
-        }
-        else
+        elseif ( is_object( $type ) )
             self::$field = $type;
+        else
+            self::$field = self::field_loader( $type );
 
         if ( !method_exists( $type, 'options' ) )
             return $core_defaults;
@@ -363,7 +344,7 @@ class PodsForm {
      * @since 2.0.0
      */
     public static function clean ( $input, $noarray = false, $db_field = false ) {
-        $input = str_replace( array( '--1', '__1' ), '00000', $input );
+        $input = str_replace( array( '--1', '__1' ), '00000', (string) $input );
         if ( false !== $noarray )
             $input = preg_replace( '/\[\d*\]/', '-', $input );
         $output = str_replace( array( '[', ']' ), '-', strtolower( $input ) );
@@ -373,5 +354,38 @@ class PodsForm {
         if ( false !== $db_field )
             $output = str_replace( '-', '_', $output );
         return $output;
+    }
+
+    /**
+     * Autoload a Field Type's class
+     *
+     * @param string $field_type Field Type indentifier
+     *
+     * @return string
+     * @access public
+     * @static
+     * @since 2.0.0
+     */
+    public static function field_loader ( $field_type ) {
+        include_once PODS_DIR . 'classes/PodsField.php';
+
+        $field_type = self::clean( $field_type, true, true );
+
+        $class = ucfirst( $field_type );
+        $class = "PodsField_{$class}";
+
+        if ( !class_exists( $class ) ) {
+            $file = str_replace( '../', '', apply_filters( 'pods_form_field_include', PODS_DIR . 'classes/fields/' . basename( $field_type ) . '.php', $field_type ) );
+
+            if ( 0 === strpos( $file, ABSPATH ) && file_exists( $file ) )
+                include_once $file;
+        }
+
+        if ( class_exists( $class ) )
+            $class = new $class();
+        else
+            $class = self::field_loader( 'text' ); // load basic text field
+
+        return $class;
     }
 }

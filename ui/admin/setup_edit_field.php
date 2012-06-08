@@ -103,6 +103,8 @@ if ('__1' != pods_var('id', $field)) {
                                                     $field_options = PodsForm::options_setup( $field_type );
 
                                                     foreach ( $field_options as $field_name => $field_option ) {
+                                                        $field_option = (array) $field_option;
+
                                                         $depends = PodsForm::dependencies( $field_option[ 'depends-on' ], 'field-data-' );
                                                         if ( $depends_on != $depends ) {
                                                             if ( false !== $depends_on ) {
@@ -134,6 +136,8 @@ if ('__1' != pods_var('id', $field)) {
                                                         <div class="pods-field-option-group-values">
                                                             <?php
                                                                 foreach ( $field_option[ 'group' ] as $field_group_name => $field_group_option ) {
+                                                                    $field_group_option = (array) $field_group_option;
+
                                                                     if ( 'boolean' != $field_group_option[ 'type' ] )
                                                                         continue;
 

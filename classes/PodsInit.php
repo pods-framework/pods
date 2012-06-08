@@ -28,6 +28,7 @@ class PodsInit
                 require_once PODS_DIR . 'classes/widgets/PodsWidgetSingle.php';
                 require_once PODS_DIR . 'classes/widgets/PodsWidgetList.php';
                 require_once PODS_DIR . 'classes/widgets/PodsWidgetColumn.php';
+                require_once PODS_DIR . 'classes/widgets/PodsWidgetForm.php';
                 add_action('widgets_init', array($this, 'register_widgets'));
             }
 
@@ -567,6 +568,7 @@ class PodsInit
             'PodsWidgetSingle', 
             'PodsWidgetList',
             'PodsWidgetColumn',
+            'PodsWidgetForm',
         );
         foreach ($widgets as $widget) {
             register_widget($widget);

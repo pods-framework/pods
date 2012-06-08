@@ -79,7 +79,7 @@ class PodsWidgetList extends WP_Widget {
         $direction = $instance['direction'];
         $where     = $instance['where'];
         $helper    = $instance['helper'];
-        require_once PODS_DIR . 'ui/admin/widgets/pods_widget_list_form.php'; 
+        require PODS_DIR . 'ui/admin/widgets/pods_widget_list_form.php'; 
     }
 }
 

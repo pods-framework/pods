@@ -17,6 +17,7 @@ class PodsWidgetColumn extends WP_Widget {
      */
     public function widget($args, $instance) {
         extract($args);
+        require_once PODS_DIR . 'ui/front/widgets/pods_widget_output.php';
     }
 
     /**

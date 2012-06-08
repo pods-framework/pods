@@ -17,6 +17,28 @@ class PodsWidgetSingle extends WP_Widget {
      */
     public function widget($args, $instance) {
         extract($args);
+
+        // Get widget field values
+        $title    = apply_filters('widget_title', $instance['title']);
+        $pod_type = $instance['pod_type'];
+        $template = $instance['template'];
+        $slug     = $instance['slug'];
+        $helper   = $instance['helper'];
+
+        if (!empty($pod_type) && !empty($template) && !empty($slug)) {
+            $shortcode = '[pods ';
+            $shortcode .= "name=\"{$pod_type}\" ";
+            $shortcode .= "template=\"{$template}\" ";
+            $shortcode .= "slug=\"{$slug}\" ";
+
+            if (!empty($helper))
+                $shortcode .= "helper=\"{$helper}\" ";
+
+            $shortcode .= "]";
+            
+            require PODS_DIR . 'ui/front/widgets/pods_widget_output.php';
+        }
+
     }
 
     /**

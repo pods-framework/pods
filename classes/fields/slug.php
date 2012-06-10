@@ -7,7 +7,7 @@ class PodsField_Slug extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    protected static $type = 'slug';
+    public static $type = 'slug';
 
     /**
      * Field Type Label
@@ -15,7 +15,7 @@ class PodsField_Slug extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    protected static $label = 'Permalink (url-friendly)';
+    public static $label = 'Permalink (url-friendly)';
 
     /**
      * Do things like register/enqueue scripts and stylesheets

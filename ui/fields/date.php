@@ -5,7 +5,7 @@
         $type = $options[ 'date_format_type' ];
     $attributes[ 'type' ] = $type;
     $attributes[ 'value' ] = $value;
-    $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$type, $options );
+    $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
 
     $date_format = array(
         'mdy' => 'mm/dd/yy',
@@ -25,7 +25,7 @@
         'hh_mm' => 'hh:mm'
     );
 ?>
-<input<?php PodsForm::attributes( $attributes, $name, PodsForm::$type, $options ); ?> />
+<input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
 <script>
     jQuery( function () {
         <?php
@@ -53,7 +53,7 @@
                 );
             }
 
-            $args = apply_filters( 'pods_form_ui_field_date_args', $args, $type, $options, $attributes, $name, PodsForm::$type );
+            $args = apply_filters( 'pods_form_ui_field_date_args', $args, $type, $options, $attributes, $name, PodsForm::$field_type );
         ?>
         jQuery( 'input#<?php echo $attributes[ 'id' ]; ?>' ).<?php echo $method; ?>( {
             <?php

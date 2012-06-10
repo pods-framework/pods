@@ -7,7 +7,7 @@ class PodsField_Pick extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    protected static $type = 'pick';
+    public static $type = 'pick';
 
     /**
      * Field Type Label
@@ -15,7 +15,7 @@ class PodsField_Pick extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    protected static $label = 'Relationship';
+    public static $label = 'Relationship';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
@@ -35,42 +35,92 @@ class PodsField_Pick extends PodsField {
      */
     public function options () {
         $options = array(
-            'file_format_type' => array(
-                'label' => __( 'File Type', 'pods' ),
+            'pick_format_type' => array(
+                'label' => __( 'Selection Type', 'pods' ),
+                'help' => __( 'help', 'pods' ),
                 'default' => 'single',
+                'type' => 'pick',
                 'data' => array(
-                    'single' => __( 'Single File Upload', 'pods' ),
-                    'multi-limited' => __( 'Multiple File Upload (limited uploads)', 'pods' ),
-                    'multi-unlimited' => __( 'Multiple File Upload (no limit)', 'pods' )
+                    'single' => __( 'Single Select', 'pods' ),
+                    'multi' => __( 'Multiple Select', 'pods' )
                 )
             ),
-            'file_uploader' => array(
-                'label' => __( 'File Uploader', 'pods' ),
-                'default' => 'plupload',
+            'pick_format_single' => array(
+                'label' => __( 'Format', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'depends-on' => array( 'pick_format_type' => 'single' ),
+                'default' => 'dropdown',
+                'type' => 'pick',
                 'data' =>
-                    apply_filters(
-                        'pods_form_ui_field_file_uploader_options',
-                        array(
-                            'plupload' => __( 'Plupload', 'pods' ),
-                            'attachment' => __( 'Attachments (WP Media Library)', 'pods' )
-                        )
+                apply_filters(
+                    'pods_form_ui_field_pick_format_single_options',
+                    array(
+                        'dropdown' => __( 'Drop Down', 'pods' ),
+                        'radio' => __( 'Radio Buttons', 'pods' ),
+                        'autocomplete' => __( 'Autocomplete', 'pods' )
                     )
+                )
             ),
-            'file_limit' => array(
-                'label' => __( 'File Limit', 'pods' ),
-                'depends-on' => array( 'file_format_type' => 'multi-limited' ),
-                'default' => 5,
+            'pick_format_multi' => array(
+                'label' => __( 'Format', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'depends-on' => array( 'pick_format_type' => 'multi' ),
+                'default' => 'checkbox',
+                'type' => 'pick',
+                'data' =>
+                apply_filters(
+                    'pods_form_ui_field_pick_format_multi_options',
+                    array(
+                        'checkbox' => __( 'Checkboxes', 'pods' ),
+                        'multiselect' => __( 'Multi Select', 'pods' ),
+                        'autocomplete' => __( 'Autocomplete', 'pods' )
+                    )
+                )
+            ),
+            'pick_limit' => array(
+                'label' => __( 'Selection Limit', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'depends-on' => array( 'pick_format_type' => 'multi' ),
+                'default' => 0,
                 'type' => 'number'
             ),
-            'file_restrict_filesize' => array(
-                'label' => __( 'Restrict File Size', 'pods' ),
-                'default' => '10MB',
+            'pick_display' => array(
+                'label' => __( 'Display Field in Selection List', 'pods' ),
+                'help' => __( 'You can use {@magic_tags} to reference field names on the related object.', 'pods' ),
+                'excludes-on' => array( 'pick_object' => 'custom-simple' ),
+                'default' => '{@name}',
                 'type' => 'text'
             ),
-            'file_restrict_extensions' => array(
-                'label' => __( 'Restrict File Extensions', 'pods' ),
+            'pick_where' => array(
+                'label' => __( '', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'excludes-on' => array( 'pick_object' => 'custom-simple' ),
                 'default' => '',
                 'type' => 'text'
+            ),
+            'pick_orderby' => array(
+                'label' => __( '', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'excludes-on' => array( 'pick_object' => 'custom-simple' ),
+                'default' => '',
+                'type' => 'text'
+            ),
+            'pick_groupby' => array(
+                'label' => __( '', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'excludes-on' => array( 'pick_object' => 'custom-simple' ),
+                'default' => '',
+                'type' => 'text'
+            ),
+            'pick_size' => array(
+                'label' => __( 'Field Size', 'pods' ),
+                'default' => 'medium',
+                'type' => 'pick',
+                'data' => array(
+                    'small' => __( 'Small', 'pods' ),
+                    'medium' => __( 'Medium', 'pods' ),
+                    'large' => __( 'Large', 'pods' )
+                )
             )
         );
         return $options;
@@ -106,28 +156,35 @@ class PodsField_Pick extends PodsField {
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
 
-        if ( ( ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD )
-               || ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && true === PODS_UPLOAD_REQUIRE_LOGIN && !is_user_logged_in() )
-               || ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && !is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && ( !is_user_logged_in() || !current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) ) )
-             && ( ( defined( 'PODS_DISABLE_FILE_BROWSER' ) && true === PODS_DISABLE_FILE_BROWSER )
-                  || ( defined( 'PODS_FILES_REQUIRE_LOGIN' ) && is_bool( PODS_FILES_REQUIRE_LOGIN ) && true === PODS_FILES_REQUIRE_LOGIN && !is_user_logged_in() )
-                  || ( defined( 'PODS_FILES_REQUIRE_LOGIN' ) && !is_bool( PODS_FILES_REQUIRE_LOGIN ) && ( !is_user_logged_in() || !current_user_can( PODS_FILES_REQUIRE_LOGIN ) ) ) )
-        ) {
-?>
-    <p>You do not have access to upload / browse files. Contact your website admin to resolve.</p>
-<?php
-            return;
-        }
+        $options[ 'grouped' ] = 1;
 
-        if ( 'plupload' == $options[ 'file_format_type' ] )
-            $field_type = 'plupload';
-        elseif ( 'attachment' == $options[ 'file_format_type' ] )
-            $field_type = 'attachment';
-        else {
-            // Support custom File Uploader integration
-            do_action( 'pods_form_ui_field_file_uploader_' . $options[ 'file_format_type' ], $name, $value, $options, $pod, $id );
-            do_action( 'pods_form_ui_field_file_uploader', $options[ 'file_format_type' ], $name, $value, $options, $pod, $id );
-            return;
+        if ( 'single' == $options[ 'pick_format_type' ] ) {
+            if ( 'dropdown' == $options[ 'pick_format_single' ] )
+                $field_type = 'select';
+            elseif ( 'radio' == $options[ 'pick_format_single' ] )
+                $field_type = 'radio';
+            elseif ( 'autocomplete' == $options[ 'pick_format_single' ] )
+                $field_type = 'chosen';
+            else {
+                // Support custom integration
+                do_action( 'pods_form_ui_field_pick_input_' . $options[ 'pick_format_type' ], $name, $value, $options, $pod, $id );
+                do_action( 'pods_form_ui_field_pick_input', $options[ 'pick_format_type' ], $name, $value, $options, $pod, $id );
+                return;
+            }
+        }
+        elseif ( 'multi' == $options[ 'pick_format_type' ] ) {
+            if ( 'checkboxes' == $options[ 'pick_format_single' ] )
+                $field_type = 'checkbox';
+            elseif ( 'multiselect' == $options[ 'pick_format_single' ] )
+                $field_type = 'select';
+            elseif ( 'autocomplete' == $options[ 'pick_format_single' ] )
+                $field_type = 'chosen';
+            else {
+                // Support custom integration
+                do_action( 'pods_form_ui_field_pick_input_' . $options[ 'pick_format_type' ], $name, $value, $options, $pod, $id );
+                do_action( 'pods_form_ui_field_pick_input', $options[ 'pick_format_type' ], $name, $value, $options, $pod, $id );
+                return;
+            }
         }
 
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );

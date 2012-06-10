@@ -7,7 +7,7 @@ class PodsField_Text extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    protected static $type = 'text';
+    public static $type = 'text';
 
     /**
      * Field Type Label
@@ -15,7 +15,7 @@ class PodsField_Text extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    protected static $label = 'Text';
+    public static $label = 'Text';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
@@ -125,8 +125,21 @@ class PodsField_Text extends PodsField {
                 'default' => 'strong em a ul ol li b i',
                 'type' => 'text'
             ),
-            'max_length' => 255,
-            'size' => 'medium',
+            'text_max_length' => array(
+                'label' => __( 'Maximum Length', 'pods' ),
+                'default' => 255,
+                'type' => 'number'
+            ),
+            'text_size' => array(
+                'label' => __( 'Field Size', 'pods' ),
+                'default' => 'medium',
+                'type' => 'pick',
+                'data' => array(
+                    'small' => __( 'Small', 'pods' ),
+                    'medium' => __( 'Medium', 'pods' ),
+                    'large' => __( 'Large', 'pods' )
+                )
+            )
         );
         return $options;
     }

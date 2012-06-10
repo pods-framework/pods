@@ -15,7 +15,15 @@ class PodsField {
      * @var string
      * @since 2.0.0
      */
-    protected static $type = 'text';
+    public static $type = 'text';
+
+    /**
+     * Field Type Label
+     *
+     * @var string
+     * @since 2.0.0
+     */
+    public static $label = 'Text';
 
     /**
      * Do things like register/enqueue scripts and stylesheets

@@ -277,7 +277,7 @@
         },
         dependency : function () {
             // Hide all dependents
-            $('.pods-dependency .pods-depends-on').hide();
+            $( '.pods-dependency .pods-depends-on' ).hide();
 
             // Handle dependent toggle
             $(document).on('change', '.pods-dependency .pods-dependent-toggle', function (e) {
@@ -317,19 +317,19 @@
 
                     if ( $el.parent().is( ':visible' ) ) {
                         if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) )
-                            $el.slideDown().removeClass( 'pods-dependent-visible' );
+                            $el.slideUp().removeClass( 'pods-dependent-visible' );
                         else if ( $el.is( exclude_specific ) )
-                            $el.slideDown().removeClass( 'pods-dependent-visible' );
+                            $el.slideUp().removeClass( 'pods-dependent-visible' );
                         else
-                            $el.slideUp().addClass( 'pods-dependent-visible' );
+                            $el.slideDown().addClass( 'pods-dependent-visible' );
                     }
                     else {
                         if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) )
-                            $el.show().removeClass( 'pods-dependent-visible' );
+                            $el.hide().removeClass( 'pods-dependent-visible' );
                         else if ( $el.is( exclude_specific ) )
-                            $el.show().removeClass( 'pods-dependent-visible' );
+                            $el.hide().removeClass( 'pods-dependent-visible' );
                         else
-                            $el.hide().addClass( 'pods-dependent-visible' );
+                            $el.show().addClass( 'pods-dependent-visible' );
                     }
                 } );
             });

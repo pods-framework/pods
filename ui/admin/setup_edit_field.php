@@ -40,7 +40,7 @@ if ('__1' != pods_var('id', $field)) {
                             <div class="pods-tabbed">
                                 <ul class="pods-tabs">
                                     <li class="pods-tab"><a href="#pods-basic-options-<?php echo $i; ?>" class="selected"><?php _e('Basic', 'pods'); ?></a></li>
-                                    <li class="pods-tab pods-excludes-on-field-data-type pods-excludes-on-field-data-type-slug"><a href="#pods-additional-field-options-<?php echo $i; ?>"><?php _e('Additional Field Options', 'pods'); ?></a></li>
+                                    <li class="pods-tab pods-excludes-on pods-excludes-on-field-data-type pods-excludes-on-field-data-type-slug"><a href="#pods-additional-field-options-<?php echo $i; ?>"><?php _e('Additional Field Options', 'pods'); ?></a></li>
                                     <li class="pods-tab"><a href="#pods-advanced-options-<?php echo $i; ?>"><?php _e('Advanced', 'pods'); ?></a></li>
                                 </ul>
                                 <div class="pods-tab-group">
@@ -105,7 +105,7 @@ if ('__1' != pods_var('id', $field)) {
                                                     foreach ( $field_options as $field_name => $field_option ) {
                                                         $field_option = (array) $field_option;
 
-                                                        $depends = PodsForm::dependencies( $field_option[ 'depends-on' ], 'field-data-' );
+                                                        $depends = PodsForm::dependencies( $field_option, 'field-data-' );
                                                         if ( $depends_on != $depends ) {
                                                             if ( false !== $depends_on ) {
                                                 ?>
@@ -141,7 +141,7 @@ if ('__1' != pods_var('id', $field)) {
                                                                     if ( 'boolean' != $field_group_option[ 'type' ] )
                                                                         continue;
 
-                                                                    $depends_option = PodsForm::dependencies( $field_group_option[ 'depends-on' ], 'field-data-' );
+                                                                    $depends_option = PodsForm::dependencies( $field_group_option, 'field-data-' );
                                                             ?>
                                                                 <div class="pods-field-option-group-value <?php echo $depends_option; ?>">
                                                                     <?php echo PodsForm::row( 'field_data[' . $i . '][' . $field_group_name . ']', pods_var( $field_group_name, $field, $field_group_option[ 'default' ] ), $field_group_option[ 'type' ], $field_group_option ); ?>

@@ -7,7 +7,7 @@ class PodsField_Boolean extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    protected static $type = 'boolean';
+    public static $type = 'boolean';
 
     /**
      * Field Type Label
@@ -15,7 +15,7 @@ class PodsField_Boolean extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    protected static $label = 'Yes / No';
+    public static $label = 'Yes / No';
 
     /**
      * Do things like register/enqueue scripts and stylesheets

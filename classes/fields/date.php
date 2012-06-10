@@ -7,7 +7,7 @@ class PodsField_Date extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    protected static $type = 'date';
+    public static $type = 'date';
 
     /**
      * Field Type Label
@@ -15,7 +15,7 @@ class PodsField_Date extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    protected static $label = 'Date / Time';
+    public static $label = 'Date / Time';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
@@ -87,7 +87,16 @@ class PodsField_Date extends PodsField {
                     'hh_mm' => '01:25'
                 )
             ),
-            'size' => 'medium'
+            'date_size' => array(
+                'label' => __( 'Field Size', 'pods' ),
+                'default' => 'medium',
+                'type' => 'pick',
+                'data' => array(
+                    'small' => __( 'Small', 'pods' ),
+                    'medium' => __( 'Medium', 'pods' ),
+                    'large' => __( 'Large', 'pods' )
+                )
+            )
         );
         return $options;
     }

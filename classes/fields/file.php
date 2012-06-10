@@ -7,7 +7,7 @@ class PodsField_File extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    protected static $type = 'file';
+    public static $type = 'file';
 
     /**
      * Field Type Label
@@ -15,7 +15,7 @@ class PodsField_File extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    protected static $label = 'File Upload';
+    public static $label = 'File Upload';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
@@ -38,6 +38,7 @@ class PodsField_File extends PodsField {
             'file_format_type' => array(
                 'label' => __( 'File Type', 'pods' ),
                 'default' => 'single',
+                'type' => 'pick',
                 'data' => array(
                     'single' => __( 'Single File Upload', 'pods' ),
                     'multi-limited' => __( 'Multiple File Upload (limited uploads)', 'pods' ),
@@ -47,6 +48,7 @@ class PodsField_File extends PodsField {
             'file_uploader' => array(
                 'label' => __( 'File Uploader', 'pods' ),
                 'default' => 'plupload',
+                'type' => 'pick',
                 'data' =>
                     apply_filters(
                         'pods_form_ui_field_file_uploader_options',
@@ -67,10 +69,37 @@ class PodsField_File extends PodsField {
                 'default' => '10MB',
                 'type' => 'text'
             ),
-            'file_restrict_extensions' => array(
-                'label' => __( 'Restrict File Extensions', 'pods' ),
+            'file_type' => array(
+                'label' => __( 'Restrict File Types', 'pods' ),
+                'default' => 'images',
+                'type' => 'pick',
+                'data' => apply_filters(
+                    'pods_form_ui_field_file_type_options',
+                    array(
+                        'images' => __( 'Images (jpg, png, gif)', 'pods' ),
+                        'video' => __( 'Video (mpg, mov, flv, mp4)', 'pods' ),
+                        'other' => __( 'Other (customize allowed extensions)', 'pods' )
+                    )
+                )
+            ),
+            'file_allowed_extensions' => array(
+                'label' => __( 'Allowed File Extensions', 'pods' ),
+                'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov)', 'pods' ),
+                'depends-on' => array( 'file_type' => 'other' ),
                 'default' => '',
                 'type' => 'text'
+            ),
+            'file_image_size' => array(
+                'label' => __( 'Image Sizes', 'pods' ),
+                'default' => 'images',
+                'type' => 'pick',
+                'options' => array(
+                    // @todo multiple select checkbox
+                ),
+                'data' => apply_filters(
+                    'pods_form_ui_field_file_image_size_options',
+                    get_intermediate_image_sizes()
+                )
             )
         );
         return $options;

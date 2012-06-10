@@ -7,7 +7,7 @@ class PodsField_Number extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    protected static $type = 'number';
+    public static $type = 'number';
 
     /**
      * Field Type Label
@@ -15,7 +15,7 @@ class PodsField_Number extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    protected static $label = 'Number';
+    public static $label = 'Number';
 
     /**
      * Currency Formats
@@ -23,7 +23,7 @@ class PodsField_Number extends PodsField {
      * @var array
      * @since 2.0.0
      */
-    protected static $currencies = array(
+    public static $currencies = array(
         'usd' => '$',
         'cad' => '$'
     );
@@ -80,13 +80,13 @@ class PodsField_Number extends PodsField {
                     'none' => __( 'None (100)', 'pods' ),
                     'beforeaftercode' => __( 'Before with Currency Code after ($100 USD)', 'pods' )
                 )
-            ),
+            ),/*
             'number_range' => array(
                 'label' => __( 'Number Range', 'pods' ),
                 'depends-on' => array( 'number_format_type' => 'range' ),
                 'default' => '0,100',
                 'type' => 'range'
-            ),
+            ),*/
             'number_format' => array(
                 'label' => __( 'Format', 'pods' ),
                 'default' => 'i18n',
@@ -104,8 +104,21 @@ class PodsField_Number extends PodsField {
                 'default' => 0,
                 'type' => 'number'
             ),
-            'max_length' => 255,
-            'size' => 'medium'
+            'number_max_length' => array(
+                'label' => __( 'Maximum Length', 'pods' ),
+                'default' => 255,
+                'type' => 'number'
+            ),
+            'number_size' => array(
+                'label' => __( 'Field Size', 'pods' ),
+                'default' => 'medium',
+                'type' => 'pick',
+                'data' => array(
+                    'small' => __( 'Small', 'pods' ),
+                    'medium' => __( 'Medium', 'pods' ),
+                    'large' => __( 'Large', 'pods' )
+                )
+            )
         );
         return $options;
     }

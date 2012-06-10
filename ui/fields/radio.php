@@ -12,7 +12,7 @@
         $attributes[ 'type' ] = 'radio';
         $attributes[ 'checked' ] = ( $val == $value ) ? 'CHECKED' : null;
         $attributes[ 'value' ] = $val;
-        $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$type, $options );
+        $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
         if ( 1 < count( $options[ 'data' ] ) )
             $attributes[ 'id' ] .= $counter;
 
@@ -23,7 +23,7 @@
         }
 ?>
             <div class="pods-field pods-boolean">
-                <input<?php PodsForm::attributes( $attributes, $name, PodsForm::$type, $options ); ?> />
+                <input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
 <?php
         if ( 0 < strlen( $label ) ) {
             $help = '';

@@ -54,20 +54,20 @@ class PodsField_Number extends PodsField {
                     'plain' => __( 'Plain Number', 'pods' ),
                     'currency' => __( 'Currency', 'pods' )
                     //'range' => __( 'Range', 'pods' )
-                )
+                ),
+                'dependency' => true
             ),
             'number_format_currency_sign' => array(
                 'label' => __( 'Currency Sign', 'pods' ),
                 'depends-on' => array( 'number_format_type' => 'currency' ),
                 'default' => 'usd',
                 'type' => 'pick',
-                'data' =>
-                    apply_filters( 'pods_form_ui_field_number_currency_options',
-                        array(
-                            'usd' => '$ (USD)',
-                            'cad' => '$ (CAD)'
-                        )
+                'data' => apply_filters( 'pods_form_ui_field_number_currency_options',
+                    array(
+                        'usd' => '$ (USD)',
+                        'cad' => '$ (CAD)'
                     )
+                )
             ),
             'number_format_currency_placement' => array(
                 'label' => __( 'Currency Placement', 'pods' ),

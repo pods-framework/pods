@@ -49,7 +49,8 @@ class PodsField_Paragraph extends PodsField {
                                 'cleditor' => __( 'CLEditor', 'pods' )
                             )
                         )
-                )
+                ),
+                'dependency' => true
             ),
             'output_options' => array(
                 'label' => __( 'Output Options', 'pods' ),
@@ -58,12 +59,14 @@ class PodsField_Paragraph extends PodsField {
                     'paragraph_allow_shortcode' => array(
                         'label' => __( 'Allow Shortcodes?', 'pods' ),
                         'default' => 1,
-                        'type' => 'boolean'
+                        'type' => 'boolean',
+                        'dependency' => true
                     ),
                     'paragraph_allow_html' => array(
                         'label' => __( 'Allow HTML?', 'pods' ),
                         'default' => 1,
-                        'type' => 'boolean'
+                        'type' => 'boolean',
+                        'dependency' => true
                     )
                 )
             ),

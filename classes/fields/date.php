@@ -43,10 +43,11 @@ class PodsField_Date extends PodsField {
                     'date' => __( 'Date', 'pods' ),
                     'datetime' => __( 'Date + Time', 'pods' ),
                     'time' => __( 'Time', 'pods' )
-                )
+                ),
+                'dependency' => true
             ),
             'date_format' => array(
-                'label' => __( 'Format Type', 'pods' ),
+                'label' => __( 'Date Format', 'pods' ),
                 'depends-on' => array( 'date_format_type' => array( 'date', 'datetime' ) ),
                 'default' => 'mdy',
                 'type' => 'pick',
@@ -61,20 +62,21 @@ class PodsField_Date extends PodsField {
                 )
             ),
             'date_time_type' => array(
-                'label' => __( 'Format Type', 'pods' ),
+                'label' => __( 'Time Format Type', 'pods' ),
                 'depends-on' => array( 'date_format_type' => array( 'datetime', 'time' ) ),
                 'default' => '12',
                 'type' => 'pick',
                 'data' => array(
                     '12' => __( '12 hour', 'pods' ),
                     '24' => __( '24 hour', 'pods' )
-                )
+                ),
+                'dependency' => true
             ),
             'date_time_format' => array(
-                'label' => __( 'Format Type', 'pods' ),
-                'depends-on' => array(
-                    'date_format_type' => array( 'datetime', 'time' ),
-                    'date_time_type' => '12',
+                'label' => __( 'Time Format', 'pods' ),
+                'excludes-on' => array(
+                    'date_format_type' => 'date',
+                    'date_time_type' => '24',
                 ),
                 'default' => 'h_mma',
                 'type' => 'pick',

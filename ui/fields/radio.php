@@ -8,6 +8,13 @@
 
     $counter = 1;
     foreach ( $options[ 'data' ] as $val => $label ) {
+        if ( is_array( $label ) ) {
+            if ( isset( $label[ 'label' ] ) )
+                $label = $label[ 'label' ];
+            else
+                $label = $val;
+        }
+
         $attributes = array();
         $attributes[ 'type' ] = 'radio';
         $attributes[ 'checked' ] = ( $val == $value ) ? 'CHECKED' : null;

@@ -43,7 +43,8 @@ class PodsField_Boolean extends PodsField {
                     'checkbox' => __( 'Checkbox', 'pods' ),
                     'radio' => __( 'Radio Buttons', 'pods' ),
                     'dropdown' => __( 'Drop Down', 'pods' )
-                )
+                ),
+                'dependency' => true
             ),
             'boolean_yes_label' => array(
                 'label' => __( 'Yes Label', 'pods' ),

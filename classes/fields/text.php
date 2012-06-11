@@ -60,7 +60,8 @@ class PodsField_Text extends PodsField {
                         'regex' => '/[^0-9 \.\-\(\)ext]/g' // @todo test regex
                     ),
                     'password' => __( 'Password', 'pods' )
-                )
+                ),
+                'dependency' => true
             ),
             'text_format_website' => array(
                 'label' => __( 'Format', 'pods' ),
@@ -83,9 +84,9 @@ class PodsField_Text extends PodsField {
                 'type' => 'pick',
                 'data' => array(
                     __( 'US', 'pods' ) => array(
-                        '999-999-9999 x999' => __( '123-456-7890 x123', 'pods' ),
-                        '(999) 999-9999 x999' => __( '(123) 456-7890 x123', 'pods' ),
-                        '999.999.9999 x999' => __( '123.456.7890 x123', 'pods' )
+                        '999-999-9999 x999' => '123-456-7890 x123',
+                        '(999) 999-9999 x999' => '(123) 456-7890 x123',
+                        '999.999.9999 x999' => '123.456.7890 x123'
                     ),
                     __( 'International', 'pods' ) => array(
                         'international' => __( 'Any (no validation available)', 'pods' )
@@ -110,12 +111,14 @@ class PodsField_Text extends PodsField {
                     'text_allow_shortcode' => array(
                         'label' => __( 'Allow Shortcodes?', 'pods' ),
                         'default' => 1,
-                        'type' => 'boolean'
+                        'type' => 'boolean',
+                        'dependency' => true
                     ),
                     'text_allow_html' => array(
                         'label' => __( 'Allow HTML?', 'pods' ),
                         'default' => 1,
-                        'type' => 'boolean'
+                        'type' => 'boolean',
+                        'dependency' => true
                     )
                 )
             ),

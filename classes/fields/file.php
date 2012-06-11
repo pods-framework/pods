@@ -43,20 +43,21 @@ class PodsField_File extends PodsField {
                     'single' => __( 'Single File Upload', 'pods' ),
                     'multi-limited' => __( 'Multiple File Upload (limited uploads)', 'pods' ),
                     'multi-unlimited' => __( 'Multiple File Upload (no limit)', 'pods' )
-                )
+                ),
+                'dependency' => true
             ),
             'file_uploader' => array(
                 'label' => __( 'File Uploader', 'pods' ),
                 'default' => 'plupload',
                 'type' => 'pick',
-                'data' =>
-                    apply_filters(
-                        'pods_form_ui_field_file_uploader_options',
-                        array(
-                            'plupload' => __( 'Plupload', 'pods' ),
-                            'attachment' => __( 'Attachments (WP Media Library)', 'pods' )
-                        )
+                'data' => apply_filters(
+                    'pods_form_ui_field_file_uploader_options',
+                    array(
+                        'plupload' => __( 'Plupload', 'pods' ),
+                        'attachment' => __( 'Attachments (WP Media Library)', 'pods' )
                     )
+                ),
+                'dependency' => true
             ),
             'file_limit' => array(
                 'label' => __( 'File Limit', 'pods' ),
@@ -80,7 +81,8 @@ class PodsField_File extends PodsField {
                         'video' => __( 'Video (mpg, mov, flv, mp4)', 'pods' ),
                         'other' => __( 'Other (customize allowed extensions)', 'pods' )
                     )
-                )
+                ),
+                'dependency' => true
             ),
             'file_allowed_extensions' => array(
                 'label' => __( 'Allowed File Extensions', 'pods' ),
@@ -91,6 +93,7 @@ class PodsField_File extends PodsField {
             ),
             'file_image_size' => array(
                 'label' => __( 'Image Sizes', 'pods' ),
+                'depends-on' => array( 'file_type' => 'images' ),
                 'default' => 'images',
                 'type' => 'pick',
                 'options' => array(

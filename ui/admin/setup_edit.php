@@ -75,24 +75,6 @@ $field_settings = array('field_types' => $field_types,
                         'field_defaults' => $field_defaults,
                         'pick_object' => $pick_object,
                         'sister_field_id' => array('' => '-- Select --'),
-                        'file_type' => array('single' => 'Single File Upload',
-                                             'multi-limited' => 'Multiple File Upload (limited uploads)',
-                                             'multi-unlimited' => 'Multiple File Upload (no limit)'),
-                        'file_uploader' => array('plupload' => 'Plupload (WP Default)',
-                                                 'swfupload' => 'SWFUpload',
-                                                 'basic' => 'HTML Upload (basic)'),
-                        'pick_type' => array('single' => 'Single Select',
-                                             'multi-limited' => 'Multi Select (limited selections)',
-                                             'multi-unlimited' => 'Multi Select (no limit)'),
-                        'pick_format_single' => array('dropdown' => 'Drop Down',
-                                                      'radio' => 'Radio Buttons',
-                                                      'autocomplete' => 'Autocomplete'),
-                        'pick_format_multi' => array('checkbox' => 'Checkboxes',
-                                                     'multiselect' => 'Multi Select',
-                                                     'autocomplete' => 'Autocomplete'),
-                        'pick_size' => array('small' => 'Small',
-                                             'medium' => 'Medium',
-                                             'large' => 'Large'),
                         'input_helper' => array('' => '-- Select --'));
 
 $pod = $this->api->load_pod((isset($obj->row['name']) ? $obj->row['name'] : false));
@@ -207,6 +189,16 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
                         </tfoot>
                         <tbody class="pods-manage-list">
                             <?php
+                                // Empty Row for Flexible functionality
+                                $i = '--1';
+                                $field = array(
+                                    'id' => '__1',
+                                    'name' => 'new__1',
+                                    'label' => 'New Field __1',
+                                    'type' => 'text'
+                                );
+                                include PODS_DIR . 'ui/admin/setup_edit_field.php';
+
                                 $i = 1;
                                 foreach ($pod['fields'] as $field) {
                                     if ('_pods_empty' == $field['name'])
@@ -732,15 +724,6 @@ if ('pod' == pods_var('type', $pod)) {
 </div>
 <script type="text/javascript">
 <?php
-ob_start();
-$i = '--1';
-$field =  array('id' => '__1',
-                'name' => 'new__1',
-                'label' => 'New Field __1',
-                'type' => 'text');
-include PODS_DIR . 'ui/admin/setup_edit_field.php';
-$new_field_row = ob_get_clean();
-
 $pods_field_types = array();
 foreach ($field_settings['field_types'] as $field_type => $field_label) {
     $pods_field_types[] = "'" . esc_js($field_type) . "' : '" . esc_js($field_label) . "'";
@@ -762,25 +745,25 @@ foreach ($field_settings['pick_object'] as $object => $object_label) {
         $pods_pick_objects[] = "'" . esc_js($object) . "' : '" . esc_js($object_label) . "'";
 }
 ?>
-    var pods_flexible_row = '<?php echo str_replace('</script>', '<\' + \'/script>', addslashes(trim(str_replace(array("\n", "\r", '        ', '    ', '  ', '  '), ' ', $new_field_row)))); ?>';
     var pods_field_types = {
-        <?php echo implode(",\n        ", $pods_field_types); ?>
+        <?php echo implode( ",\n        ", $pods_field_types ); ?>
     };
     var pods_pick_objects = {
-        <?php echo implode(",\n        ", $pods_pick_objects); ?>
+        <?php echo implode( ",\n        ", $pods_pick_objects ); ?>
     };
-    function pods_admin_submittable_callback() {
-        document.location = '<?php echo $obj->var_update(array('action' . $obj->num => 'manage', 'id' . $obj->num => '')); ?>';
+    function pods_admin_submittable_callback () {
+        document.location = '<?php echo $obj->var_update( array( 'action' . $obj->num => 'manage', 'id' . $obj->num => '' ) ); ?>';
     }
-jQuery(function($){
-    $(document).PodsAdmin('validate');
-    $(document).PodsAdmin('submit');
-    $(document).PodsAdmin('sluggable');
-    $(document).PodsAdmin('sortable');
-    $(document).PodsAdmin('collapsible');
-    $(document).PodsAdmin('toggled');
-    $(document).PodsAdmin('tabbed');
-    $(document).PodsAdmin('dependency');
-    $(document).PodsAdmin('flexible', ('undefined' != typeof pods_flexible_row ? pods_flexible_row : null));
-});
+
+    jQuery( function ( $ ) {
+        $( document ).PodsAdmin( 'validate' );
+        $( document ).PodsAdmin( 'submit' );
+        $( document ).PodsAdmin( 'sluggable' );
+        $( document ).PodsAdmin( 'sortable' );
+        $( document ).PodsAdmin( 'collapsible' );
+        $( document ).PodsAdmin( 'toggled' );
+        $( document ).PodsAdmin( 'tabbed' );
+        $( document ).PodsAdmin( 'dependency' );
+        $( document ).PodsAdmin( 'flexible', $( 'tbody.pods-manage-list tr.flexible-row' ) );
+    } );
 </script>

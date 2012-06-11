@@ -43,7 +43,8 @@ class PodsField_Pick extends PodsField {
                 'data' => array(
                     'single' => __( 'Single Select', 'pods' ),
                     'multi' => __( 'Multiple Select', 'pods' )
-                )
+                ),
+                'dependency' => true
             ),
             'pick_format_single' => array(
                 'label' => __( 'Format', 'pods' ),
@@ -51,15 +52,15 @@ class PodsField_Pick extends PodsField {
                 'depends-on' => array( 'pick_format_type' => 'single' ),
                 'default' => 'dropdown',
                 'type' => 'pick',
-                'data' =>
-                apply_filters(
+                'data' => apply_filters(
                     'pods_form_ui_field_pick_format_single_options',
                     array(
                         'dropdown' => __( 'Drop Down', 'pods' ),
                         'radio' => __( 'Radio Buttons', 'pods' ),
                         'autocomplete' => __( 'Autocomplete', 'pods' )
                     )
-                )
+                ),
+                'dependency' => true
             ),
             'pick_format_multi' => array(
                 'label' => __( 'Format', 'pods' ),
@@ -67,15 +68,15 @@ class PodsField_Pick extends PodsField {
                 'depends-on' => array( 'pick_format_type' => 'multi' ),
                 'default' => 'checkbox',
                 'type' => 'pick',
-                'data' =>
-                apply_filters(
+                'data' => apply_filters(
                     'pods_form_ui_field_pick_format_multi_options',
                     array(
                         'checkbox' => __( 'Checkboxes', 'pods' ),
                         'multiselect' => __( 'Multi Select', 'pods' ),
                         'autocomplete' => __( 'Autocomplete', 'pods' )
                     )
-                )
+                ),
+                'dependency' => true
             ),
             'pick_limit' => array(
                 'label' => __( 'Selection Limit', 'pods' ),

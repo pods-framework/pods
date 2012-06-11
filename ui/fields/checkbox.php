@@ -8,12 +8,21 @@
 
     $counter = 1;
     foreach ( $options[ 'data' ] as $val => $label ) {
+        if ( is_array( $label ) ) {
+            if ( isset( $label[ 'label' ] ) )
+                $label = $label[ 'label' ];
+            else
+                $label = $val;
+        }
+
         $attributes = array();
         $attributes[ 'type' ] = 'checkbox';
         $attributes[ 'checked' ] = ( $val == $value ) ? 'CHECKED' : null;
         $attributes[ 'value' ] = $val;
+
         if ( 1 < count( $options[ 'data' ] ) && false === strpos( '[]', $name ) )
             $name .= '[]';
+
         $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
         if ( 1 < count( $options[ 'data' ] ) )
             $attributes[ 'id' ] .= $counter;

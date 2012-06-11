@@ -170,6 +170,10 @@ class PodsForm {
             $_attributes[ 'data-name-clean' ] = $name_more_clean;
             $_attributes[ 'id' ] = 'pods-form-ui-' . $name_clean;
             $_attributes[ 'class' ] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
+
+            if ( isset( $options[ 'dependency' ] ) && false !== $options[ 'dependency' ] )
+                $_attributes[ 'class' ] .= ' pods-dependent-toggle';
+
             $attributes = array_merge( $_attributes, (array) $attributes );
         }
         if ( isset( $options[ 'attributes' ] ) && is_array( $options[ 'attributes' ] ) && !empty( $options[ 'attributes' ] ) ) {
@@ -239,6 +243,7 @@ class PodsForm {
             'type' => 'text',
             'group' => 0,
             'grouped' => 0,
+            'dependency' => false,
             'depends-on' => array(),
             'excludes-on' => array()
         );

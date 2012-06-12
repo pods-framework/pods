@@ -253,7 +253,7 @@ class PodsAdmin {
 				'parent' => 'new-content',
 				'title' => $pod['name'],
 				'id' => 'new-pod-' . $pod['name'],
-				'href' => '#'
+				'href' => admin_url('admin.php?page=pods-manage-'.$pod['name'].'&action=add'),
 			));
 		}
 

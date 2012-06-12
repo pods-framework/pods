@@ -104,12 +104,12 @@ if ('__1' != pods_var('id', $field)) {
 
                                                     $depends = PodsForm::dependencies( $field_option, 'field-data-' );
 
-                                                    if ( false !== $depends_on && $depends_on != $depends ) {
+                                                    if ( ( !empty( $depends_on ) || !empty( $depends ) ) && $depends_on != $depends ) {
+                                                        if ( !empty( $depends_on ) ) {
                                             ?>
                                                 </div>
                                             <?php
-                                                    }
-                                                    if ( $depends_on != $depends ) {
+                                                        }
                                                         if ( !empty( $depends ) ) {
                                             ?>
                                                 <div class="pods-field-option-container <?php echo $depends; ?>">

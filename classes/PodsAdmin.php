@@ -24,6 +24,7 @@ class PodsAdmin {
             add_action('wp_ajax_pods_admin', array($this, 'admin_ajax'));
             add_action('wp_ajax_nopriv_pods_admin', array($this, 'admin_ajax'));
         }
+		add_action('wp_before_admin_bar_render', array($this, 'admin_bar_links'));
     }
 
     public function admin_init() {
@@ -233,6 +234,31 @@ class PodsAdmin {
 			add_submenu_page('pods', 'x Form Test', 'x Form Test', 'manage_options', 'pods-manage-form-test', array($this, 'admin_content_form'));
         }
     }
+
+	public function admin_bar_links() {
+		global $wp_admin_bar;
+		$api = new PodsAPI();
+		$all_pods = $api->load_pods(array('orderby' => 'name ASC'));
+		$non_cpt_pods = array();
+
+		// Round up all the non-CPT pod types
+		foreach ($all_pods as $pod) {
+			if ($pod['type'] == "pod")
+				$non_cpt_pods[] = $pod;
+		}
+
+		// Add New item links for all non-CPT pods
+		foreach ($non_cpt_pods as $pod) {
+			$wp_admin_bar->add_menu(array(
+				'parent' => 'new-content',
+				'title' => $pod['name'],
+				'id' => 'new-pod-' . $pod['name'],
+				'href' => '#'
+			));
+		}
+
+
+	}	
 
     private function admin_components_menu($parent = 'pods') {
         $components = $this->api->load_components();

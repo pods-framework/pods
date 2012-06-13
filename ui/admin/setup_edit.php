@@ -10,6 +10,92 @@ $field_types = array('date' => 'Date / Time',
                      'slug' => 'Permalink (url-friendly)',
                      'pick' => 'Relationship');
 
+$advanced_fields = array(
+    __( 'Visual', 'pods' ) => array(
+        'css_class_name' => array(
+            'label' => __( 'CSS Class Name', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'default' => ''
+        ),
+        'input_helper' => array(
+            'label' => __( 'Input Helper', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'default' => '',
+            'data' => pods_var( 'input_helper', $field_settings )
+        )
+    ),
+    __( 'Values', 'pods' ) => array(
+        'default_value' => array(
+            'label' => __( 'Default Value', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'default' => ''
+        ),
+        'default_value_parameter' => array(
+            'label' => __( 'Set Default Value via Parameter', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'default' => ''
+        )
+    ),
+    __( 'Visibility', 'pods' ) => array(
+        'restrict_access' => array(
+            'label' => __( 'Restrict Access', 'pods' ),
+            'group' => array(
+                'admin_only' => array(
+                    'label' => __( 'Show to Admins Only?', 'pods' ),
+                    'default' => 0,
+                    'type' => 'boolean',
+                    'dependency' => true
+                ),
+                'restrict_capability' => array(
+                    'label' => __( 'Restrict access by Capability?', 'pods' ),
+                    'default' => 0,
+                    'type' => 'boolean',
+                    'dependency' => true
+                )
+            )
+        ),
+        'capability_allowed' => array(
+            'label' => __( 'Capability Allowed', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'default' => '',
+            'depends-on' => array( 'restrict_capability' => true )
+        )
+    ),
+    __( 'Validation', 'pods' ) => array(
+        'regex_validation' => array(
+            'label' => __( 'RegEx Validation', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'default' => ''
+        ),
+        'message_regex' => array(
+            'label' => __( 'Message if field does not pass RegEx', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'default' => ''
+        ),
+        'message_required' => array(
+            'label' => __( 'Message if field is blank', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'default' => '',
+            'depends-on' => array( 'required' => true )
+        ),
+        'message_unique' => array(
+            'label' => __( 'Message if field is not unique', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'default' => '',
+            'depends-on' => array( 'unique' => true )
+        )
+    )
+);
+
 $field_defaults = array('name' => 'new_field',
                         'label' => 'New Field',
                         'description' => '',
@@ -73,6 +159,7 @@ foreach ($taxonomies as $taxonomy => $label) {
 
 $field_settings = array('field_types' => $field_types,
                         'field_defaults' => $field_defaults,
+                        'advanced_fields' => $advanced_fields,
                         'pick_object' => $pick_object,
                         'sister_field_id' => array('' => '-- Select --'),
                         'input_helper' => array('' => '-- Select --'));
@@ -121,30 +208,36 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
         </h2>
         <div id="poststuff" class="has-right-sidebar meta-box-sortables">
             <img src="<?php echo PODS_URL; ?>/ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
-            <div id="side-info-field" class="inner-sidebar pods_floatmenu">
-                <div id="side-sortables">
-                    <div id="submitdiv" class="postbox pods-no-toggle">
-                        <h3><span>Manage <small>(<a href="<?php echo $obj->var_update(array('action' . $obj->num => 'manage', 'id' . $obj->num => '')); ?>">&laquo; <?php _e('Back to Manage'); ?></a>)</small></span></h3>
-                        <div class="inside">
-                            <div class="submitbox" id="submitpost">
-                                <div id="major-publishing-actions">
-                                    <div id="delete-action">
-                                        <a href="#delete-pod" class="submitdelete deletion pods-submittable" data-action="pods_admin" data-method="drop_pod" data-_wpnonce="<?php echo wp_create_nonce('pods-drop_pod'); ?>" data-name="<?php echo esc_attr(pods_var('name', $pod)); ?>">Delete Pod</a>
+            <!-- /inner-sidebar -->
+            <div id="post-body" class="meta-box-holder columns-2">
+                <div id="postbox-container-1" class="postbox-container">
+                    <div id="side-info-field" class="inner-sidebar pods_floatmenu">
+                        <div id="side-sortables">
+                            <div id="submitdiv" class="postbox pods-no-toggle">
+                                <h3><span>Manage <small>(<a href="<?php echo $obj->var_update( array(
+                                                                                                   'action' . $obj->num => 'manage',
+                                                                                                   'id' . $obj->num => ''
+                                                                                               ) ); ?>">&laquo; <?php _e( 'Back to Manage' ); ?></a>)
+                                </small></span></h3>
+                                <div class="inside">
+                                    <div class="submitbox" id="submitpost">
+                                        <div id="major-publishing-actions">
+                                            <div id="delete-action">
+                                                <a href="#delete-pod" class="submitdelete deletion pods-submittable" data-action="pods_admin" data-method="drop_pod" data-_wpnonce="<?php echo wp_create_nonce( 'pods-drop_pod' ); ?>" data-name="<?php echo esc_attr( pods_var( 'name', $pod ) ); ?>">Delete Pod</a>
+                                            </div>
+                                            <div id="publishing-action">
+                                                <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
+                                                <button class="button-primary" type="submit">Save Pod</button>
+                                            </div>
+                                            <div class="clear"></div>
+                                        </div>
                                     </div>
-                                    <div id="publishing-action">
-                                        <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
-                                        <button class="button-primary" type="submit">Save Pod</button>
-                                    </div>
-                                    <div class="clear"></div>
                                 </div>
                             </div>
+                            <!-- /#submitdiv -->
                         </div>
                     </div>
-                    <!-- /#submitdiv -->
                 </div>
-            </div>
-            <!-- /inner-sidebar -->
-            <div id="post-body">
                 <div id="post-body-content">
                     <h2>Manage Fields</h2>
                     <!-- pods table -->

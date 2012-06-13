@@ -232,7 +232,7 @@ class PodsForm {
      *
      * @since 2.0.0
      */
-    public static function options_setup ( $type, $options = null ) {
+    public static function options_setup ( $type ) {
         $core_defaults = array(
             'label' => '',
             'description' => '',
@@ -253,11 +253,36 @@ class PodsForm {
         else
             self::field_loader( $type );
 
-
         if ( !method_exists( self::$field, 'options' ) )
             return $core_defaults;
 
         $options = (array) self::$field->options();
+
+        return self::option_setup( $options, $core_defaults );
+    }
+
+    /*
+     * Get options for a field and setup defaults
+     *
+     * @since 2.0.0
+     */
+    public static function option_setup ( $options = null, $core_defaults = null ) {
+        if ( null === $core_defaults ) {
+            $core_defaults = array(
+                'label' => '',
+                'description' => '',
+                'help' => '',
+                'default' => null,
+                'attributes' => array(),
+                'class' => '',
+                'type' => 'text',
+                'group' => 0,
+                'grouped' => 0,
+                'dependency' => false,
+                'depends-on' => array(),
+                'excludes-on' => array()
+            );
+        }
 
         foreach ( $options as $option => &$defaults ) {
             if ( !is_array( $defaults ) )
@@ -301,10 +326,12 @@ class PodsForm {
             foreach ( $depends_on as $depends => $on ) {
                 $classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true );
 
-                $on = (array) $on;
+                if ( !is_bool( $on ) ) {
+                    $on = (array) $on;
 
-                foreach ( $on as $o ) {
-                    $classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true ) . '-' . self::clean( $o, true );
+                    foreach ( $on as $o ) {
+                        $classes[] = 'pods-depends-on-' . $prefix . self::clean( $depends, true ) . '-' . self::clean( $o, true );
+                    }
                 }
             }
         }

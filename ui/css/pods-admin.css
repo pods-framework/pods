@@ -314,6 +314,10 @@ li.invisible {
 	z-index: -1;
 }
 
+.pods-admin .pods_floatmenu {
+    width: 200px;
+}
+
 .pods-admin .pods-icon {
     display: inline-block;
     padding: 1px 0 0 5px;

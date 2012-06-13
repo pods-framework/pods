@@ -58,7 +58,7 @@ class PodsField_Paragraph extends PodsField {
                 'group' => array(
                     'paragraph_allow_shortcode' => array(
                         'label' => __( 'Allow Shortcodes?', 'pods' ),
-                        'default' => 1,
+                        'default' => 0,
                         'type' => 'boolean',
                         'dependency' => true
                     ),
@@ -72,7 +72,7 @@ class PodsField_Paragraph extends PodsField {
             ),
             'paragraph_allowed_html_tags' => array(
                 'label' => __( 'Allowed HTML Tags', 'pods' ),
-                'depends-on' => array( 'paragraph_allow_html' => 1 ),
+                'depends-on' => array( 'paragraph_allow_html' => true ),
                 'default' => 'strong em a ul ol li b i',
                 'type' => 'text'
             ),

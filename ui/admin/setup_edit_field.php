@@ -79,12 +79,10 @@ if ('__1' != pods_var('id', $field)) {
                                         </p>
                                         <div class="pods-field-option-group-values">
                                             <div class="pods-field-option-group-value">
-                                                <?php echo PodsForm::field('field_data[' . $i . '][required]', pods_var('required', $field), 'boolean', array('class' => 'pods-dependent-toggle')); ?>
-                                                <?php echo PodsForm::label('field_data[' . $i . '][required]', __('Required', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][required]', pods_var('required', $field), 'boolean', array('class' => 'pods-dependent-toggle', 'boolean_yes_label' => __( 'Required', 'pods' ), 'help' => __( 'help', 'pods' ) ) ); ?>
                                             </div>
                                             <div class="pods-field-option-group-value pods-excludes-on pods-excludes-on-field-data-type pods-excludes-on-field-data-type-slug pods-excludes-on-field-data-type-pick pods-excludes-on-field-data-type-file pods-excludes-on-field-data-type-boolean">
-                                                <?php echo PodsForm::field('field_data[' . $i . '][unique]', pods_var('unique', $field), 'boolean', array('class' => 'pods-dependent-toggle')); ?>
-                                                <?php echo PodsForm::label('field_data[' . $i . '][unique]', __('Unique', 'pods'), __('help', 'pods')); ?>
+                                                <?php echo PodsForm::field('field_data[' . $i . '][unique]', pods_var('unique', $field), 'boolean', array('class' => 'pods-dependent-toggle', 'boolean_yes_label' => __( 'Unique', 'pods' ), 'help' => __( 'help', 'pods' ) ) ); ?>
                                             </div>
                                         </div>
                                     </div>
@@ -139,7 +137,7 @@ if ('__1' != pods_var('id', $field)) {
                                                                     if ( 'boolean' != $field_group_option[ 'type' ] )
                                                                         continue;
 
-                                                                    $field_group_option[ 'grouped' ] = 1;
+                                                                    $field_group_option[ 'boolean_yes_label' ] = $field_group_option[ 'label' ];
 
                                                                     $depends_option = PodsForm::dependencies( $field_group_option, 'field-data-' );
                                                             ?>
@@ -196,12 +194,10 @@ if ('__1' != pods_var('id', $field)) {
                                             </p>
                                             <div class="pods-field-option-group-values">
                                                 <div class="pods-field-option-group-value">
-                                                    <?php echo PodsForm::field('field_data[' . $i . '][admin_only]', pods_var('admin_only', $field), 'boolean'); ?>
-                                                    <?php echo PodsForm::label('field_data[' . $i . '][admin_only]', __('Show to Admins Only?', 'pods'), __('help', 'pods')); ?>
+                                                    <?php echo PodsForm::field('field_data[' . $i . '][admin_only]', pods_var('admin_only', $field), 'boolean', array('class' => 'pods-dependent-toggle', 'boolean_yes_label' => __( 'Show to Admins Only?', 'pods' ), 'help' => __( 'help', 'pods' ) ) ); ?>
                                                 </div>
                                                 <div class="pods-field-option-group-value">
-                                                    <?php echo PodsForm::field('field_data[' . $i . '][restrict_capability]', pods_var('restrict_capability', $field), 'boolean', array('class' => 'pods-dependent-toggle')); ?>
-                                                    <?php echo PodsForm::label('field_data[' . $i . '][restrict_capability]', __('Restrict access by Capability?', 'pods'), __('help', 'pods')); ?>
+                                                    <?php echo PodsForm::field('field_data[' . $i . '][restrict_capability]', pods_var('restrict_capability', $field), 'boolean', array('class' => 'pods-dependent-toggle', 'boolean_yes_label' => __( 'Restrict access by Capability?', 'pods' ), 'help' => __( 'help', 'pods' ) ) ); ?>
                                                 </div>
                                             </div>
                                         </div>

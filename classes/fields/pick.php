@@ -165,24 +165,24 @@ class PodsField_Pick extends PodsField {
             elseif ( 'radio' == $options[ 'pick_format_single' ] )
                 $field_type = 'radio';
             elseif ( 'autocomplete' == $options[ 'pick_format_single' ] )
-                $field_type = 'chosen';
+                $field_type = 'select2';
             else {
                 // Support custom integration
-                do_action( 'pods_form_ui_field_pick_input_' . $options[ 'pick_format_type' ], $name, $value, $options, $pod, $id );
+                do_action( 'pods_form_ui_field_pick_input_' . $options[ 'pick_format_type' ] . '_' . $options[ 'pick_format_single' ], $name, $value, $options, $pod, $id );
                 do_action( 'pods_form_ui_field_pick_input', $options[ 'pick_format_type' ], $name, $value, $options, $pod, $id );
                 return;
             }
         }
         elseif ( 'multi' == $options[ 'pick_format_type' ] ) {
-            if ( 'checkboxes' == $options[ 'pick_format_single' ] )
+            if ( 'checkbox' == $options[ 'pick_format_multi' ] )
                 $field_type = 'checkbox';
-            elseif ( 'multiselect' == $options[ 'pick_format_single' ] )
+            elseif ( 'multiselect' == $options[ 'pick_format_multi' ] )
                 $field_type = 'select';
-            elseif ( 'autocomplete' == $options[ 'pick_format_single' ] )
-                $field_type = 'chosen';
+            elseif ( 'autocomplete' == $options[ 'pick_format_multi' ] )
+                $field_type = 'select2';
             else {
                 // Support custom integration
-                do_action( 'pods_form_ui_field_pick_input_' . $options[ 'pick_format_type' ], $name, $value, $options, $pod, $id );
+                do_action( 'pods_form_ui_field_pick_input_' . $options[ 'pick_format_type' ] . '_' . $options[ 'pick_format_multi' ], $name, $value, $options, $pod, $id );
                 do_action( 'pods_form_ui_field_pick_input', $options[ 'pick_format_type' ], $name, $value, $options, $pod, $id );
                 return;
             }

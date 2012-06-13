@@ -45,7 +45,7 @@ class PodsForm {
         $type = 'label';
         $attributes = array();
         $attributes[ 'class' ] = 'pods-form-ui-' . $type . ' pods-form-ui-' . $type . '-' . $name_more_clean;
-        $attributes[ 'for' ] = 'pods-form-ui-' . $name_clean;
+        $attributes[ 'for' ] = ( false === strpos( $name_clean, 'pods-form-ui-' ) ? 'pods-form-ui-' : '' ) . $name_clean;
         $attributes = self::merge_attributes( $attributes, $name, $type, $options, false );
 
         pods_view( PODS_DIR . 'ui/fields/_label.php', compact( array_keys( get_defined_vars() ) ) );

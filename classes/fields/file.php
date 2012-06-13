@@ -92,13 +92,13 @@ class PodsField_File extends PodsField {
                 'type' => 'text'
             ),
             'file_image_size' => array(
-                'label' => __( 'Image Sizes', 'pods' ),
+                'label' => __( 'Excluded Image Sizes', 'pods' ),
+                'description' => __( 'Image sizes not to generate when processing the image', 'pods' ),
                 'depends-on' => array( 'file_type' => 'images' ),
                 'default' => 'images',
                 'type' => 'pick',
-                'options' => array(
-                    // @todo multiple select checkbox
-                ),
+                'pick_format_type' => 'multi',
+                'pick_format_multi' => 'checkbox',
                 'data' => apply_filters(
                     'pods_form_ui_field_file_image_size_options',
                     get_intermediate_image_sizes()

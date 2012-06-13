@@ -20,7 +20,7 @@
         $attributes[ 'checked' ] = ( $val == $value ) ? 'CHECKED' : null;
         $attributes[ 'value' ] = $val;
 
-        if ( 1 < count( $options[ 'data' ] ) && false === strpos( '[]', $name ) )
+        if ( 1 < count( $options[ 'data' ] ) && false === strpos( $name, '[]' ) )
             $name .= '[]';
 
         $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
@@ -41,7 +41,7 @@
             if ( 0 == $options[ 'grouped' ] && isset( $options[ 'help' ] ) && 0 < strlen( $options[ 'help' ] ) )
                 $help = $options[ 'help' ];
 
-            PodsForm::label( $attributes[ 'id' ], $label, $help );
+            echo PodsForm::label( $attributes[ 'id' ], $label, $help );
         }
 ?>
             </div>

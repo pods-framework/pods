@@ -30,6 +30,9 @@ class PodsInit
                 require_once PODS_DIR . 'classes/widgets/PodsWidgetColumn.php';
                 require_once PODS_DIR . 'classes/widgets/PodsWidgetForm.php';
                 add_action('widgets_init', array($this, 'register_widgets'));
+
+				// Show admin bar links
+				add_action('wp_before_admin_bar_render', array($this, 'admin_bar_links'));
             }
 
             // Init Pods Meta
@@ -574,4 +577,40 @@ class PodsInit
             register_widget($widget);
         }
     }
+
+	public function admin_bar_links() {
+		global $wp_admin_bar;
+		$api = new PodsAPI();
+		$all_pods = $api->load_pods(array('orderby' => 'name ASC'));
+		$non_cpt_pods = array();
+
+		// Round up all the non-CPT pod types
+		foreach ($all_pods as $pod) {
+			if ($pod['type'] == "pod")
+				$non_cpt_pods[] = $pod;
+		}
+
+		// Add New item links for all non-CPT pods
+		foreach ($non_cpt_pods as $pod) {
+			$label = isset($pod['options']['label']) ? $pod['options']['label'] : $pod['name'];
+			$wp_admin_bar->add_menu(array(
+				'parent' => 'new-content',
+				'title' => $label,
+				'id' => 'new-pod-' . $pod['name'],
+				'href' => admin_url('admin.php?page=pods-manage-'.$pod['name'].'&action=add')
+			));
+		}
+
+		// Add edit link if we're on a pods page
+		/*
+		if (is_object($pods) && !is_wp_error($pods)) {
+			$wp_admin_bar->add_menu(array(
+				'title' => 'Edit Pod Item',
+				'id' => 'edit-pod',
+				'href' => '#'
+			));
+		}
+		 */
+
+	}	
 }

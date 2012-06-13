@@ -249,11 +249,12 @@ class PodsAdmin {
 
 		// Add New item links for all non-CPT pods
 		foreach ($non_cpt_pods as $pod) {
+			$label = isset($pod['options']['label']) ? $pod['options']['label'] : $pod['name'];
 			$wp_admin_bar->add_menu(array(
 				'parent' => 'new-content',
-				'title' => $pod['name'],
+				'title' => $label,
 				'id' => 'new-pod-' . $pod['name'],
-				'href' => admin_url('admin.php?page=pods-manage-'.$pod['name'].'&action=add'),
+				'href' => admin_url('admin.php?page=pods-manage-'.$pod['name'].'&action=add')
 			));
 		}
 

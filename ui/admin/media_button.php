@@ -15,8 +15,7 @@ function pods_media_button($context) {
     return $context;
 }
 
-if (defined('PODS_DEVELOPER'))
-	add_filter('media_buttons_context', 'pods_media_button');
+add_filter('media_buttons_context', 'pods_media_button');
 
 /**
  * Display the shortcode form
@@ -110,7 +109,7 @@ function add_pods_mce_popup() {
             }
 
             window.send_to_editor(shortcode);
-                
+
         });
     });
     </script>

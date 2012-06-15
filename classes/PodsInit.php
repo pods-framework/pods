@@ -24,16 +24,14 @@ class PodsInit
 
             add_action('init', array($this, 'admin_init'));
 
-            if (defined('PODS_DEVELOPER')) {
-                require_once PODS_DIR . 'classes/widgets/PodsWidgetSingle.php';
-                require_once PODS_DIR . 'classes/widgets/PodsWidgetList.php';
-                require_once PODS_DIR . 'classes/widgets/PodsWidgetColumn.php';
-                require_once PODS_DIR . 'classes/widgets/PodsWidgetForm.php';
-                add_action('widgets_init', array($this, 'register_widgets'));
+            require_once PODS_DIR . 'classes/widgets/PodsWidgetSingle.php';
+            require_once PODS_DIR . 'classes/widgets/PodsWidgetList.php';
+            require_once PODS_DIR . 'classes/widgets/PodsWidgetColumn.php';
+            require_once PODS_DIR . 'classes/widgets/PodsWidgetForm.php';
+            add_action('widgets_init', array($this, 'register_widgets'));
 
-				// Show admin bar links
-				add_action('wp_before_admin_bar_render', array($this, 'admin_bar_links'));
-            }
+            // Show admin bar links
+            add_action('wp_before_admin_bar_render', array($this, 'admin_bar_links'));
 
             // Init Pods Meta
             $this->meta = pods_meta();
@@ -568,7 +566,7 @@ class PodsInit
 
     function register_widgets() {
         $widgets = array(
-            'PodsWidgetSingle', 
+            'PodsWidgetSingle',
             'PodsWidgetList',
             'PodsWidgetColumn',
             'PodsWidgetForm',
@@ -611,5 +609,5 @@ class PodsInit
 			));
 		}
 
-	}	
+	}
 }

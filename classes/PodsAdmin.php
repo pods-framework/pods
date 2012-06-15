@@ -234,6 +234,7 @@ class PodsAdmin {
         }
     }
 
+
     private function admin_components_menu($parent = 'pods') {
         $components = $this->api->load_components();
         foreach ($components as $component => $component_data) {

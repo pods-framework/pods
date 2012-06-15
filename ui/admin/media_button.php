@@ -27,7 +27,7 @@ function add_pods_mce_popup() {
     jQuery(function($) {
         $('#pods_insert_shortcode').click(function(evt) {
             var form = $('#pods_shortcode_form_element'),
-                use_case = $('#use-case-selector').val(),
+                use_case = $('#pods-use-case-selector').val(),
                 pod_select = $('#pod_select').val(),
                 slug = $('#pod_slug').val(),
                 orderby = $('#pod_orderby').val(),

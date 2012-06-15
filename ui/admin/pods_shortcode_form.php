@@ -9,15 +9,15 @@ h3.popup-header {
     margin-top: 0;
 }
 
-div.section, div.select, div.header {
+div.pods-section, div.pods-select, div.pods-header {
     padding: 15px 15px 0 15px;
 }
 
-div.section.hide {
+div.pods-section.hide {
     display: none;
 }
 
-.section label {
+.pods-section label {
     display: inline-block;
     width: 120px;
     font-weight: bold;
@@ -34,7 +34,7 @@ strong.red {
 
 <script type="text/javascript">
 jQuery(function($) {
-    var $useCaseSelector = $('#use-case-selector'),
+    var $useCaseSelector = $('#pods-use-case-selector'),
         $form = $('#pods_shortcode_form_element'),
         $podSelector = $('#pod_select'),
 		pods_ajaxurl = "<?php echo admin_url('admin-ajax.php?pods_ajax=1'); ?>",
@@ -48,17 +48,17 @@ jQuery(function($) {
         switch (val) {
             case 'single':
                 $('#pod_select, #pod_slug, #pod_template, #pod_helper, #pods_insert_shortcode').each(function() {
-                    $(this).closest('.section').removeClass('hide');
+                    $(this).closest('.pods-section').removeClass('hide');
                 })
                 break;
             case 'list':
                 $('#pod_select, #pod_orderby, #pod_sort_direction, #pod_limit, #pod_template, #pod_helper, #pod_where, #pods_insert_shortcode').each(function() {
-                    $(this).closest('.section').removeClass('hide');
+                    $(this).closest('.pods-section').removeClass('hide');
                 })
                 break;
             case 'column':
                 $('#pod_select, #pod_slug, #pod_helper, #pod_column, #pods_insert_shortcode').each(function() {
-                    $(this).closest('.section').removeClass('hide');
+                    $(this).closest('.pods-section').removeClass('hide');
                 })
                 break;
         }
@@ -101,21 +101,21 @@ jQuery(function($) {
 <div id="pods_shortcode_form" style="display: none;">
     <div class="wrap">
         <div>
-            <div class="header">
+            <div class="pods-header">
                 <h3 class="popup-header">Pods &raquo; Embed</h3>
             </div>
             
             <form id="pods_shortcode_form_element">
-                <div class="select">
-                    <label for="use-case-selector">What would you like to do?</label>
-                    <select id="use-case-selector">
+                <div class="pods-select">
+                    <label for="pods-use-case-selector">What would you like to do?</label>
+                    <select id="pods-use-case-selector">
                         <option value="">---</option>
                         <option value="single">Display a single Pod item</option>
                         <option value="list">List multiple Pod items</option>
                         <option value="column">Display a column from a single Pod item</option>
                     </select>
                 </div>
-                <div class="section hide">
+                <div class="pods-section hide">
                     <?php
                     $api = new PodsAPI();
                     $all_pods = $api->load_pods(array(
@@ -136,7 +136,7 @@ jQuery(function($) {
                         <strong class="red" id="pod_select">None Found</strong>
                     <?php } ?>
                 </div>
-                <div class="section hide">
+                <div class="pods-section hide">
                     <?php
                     $templates = $api->load_templates(array(
                         'orderby' => 'name ASC',
@@ -160,20 +160,20 @@ jQuery(function($) {
                     window.pods_template_count = <?php echo $template_count; ?>;
                     </script>
                 </div>
-                <div class="section hide">
+                <div class="pods-section hide">
                     <label for="pod_slug">ID or Slug</label>
                     <input type="text" id="pod_slug" name="pod_slug" />
                 </div>
-                <div class="section hide">
+                <div class="pods-section hide">
                     <label for="pod_limit">Limit</label>
                     <input type="text" id="pod_limit" name="pod_limit" />
                 </div>
-                <div class="section hide">
+                <div class="pods-section hide">
                     <label for="pod_orderby">Order By</label>
 					<select name="pod_orderby" id="pod_orderby">
 					</select>
                 </div>
-                <div class="section hide">
+                <div class="pods-section hide">
                     <label for="pod_sort_direction">Direction</label>
                     <select id="pod_sort_direction" name="pod_sort_direction">
                         <option value=""></option>
@@ -185,16 +185,16 @@ jQuery(function($) {
                         </option>
                     </select>
                 </div>
-                <div class="section hide">
+                <div class="pods-section hide">
                     <label for="pod_column">Column</label>
 					<select id="pod_column" name="pod_column">
 					</select>
                 </div>
-                <div class="section hide">
+                <div class="pods-section hide">
                     <label for="pod_where">Filter</label>
                     <input type="text" name="pod_where" id="pod_where" />
                 </div>
-                <div class="section hide">
+                <div class="pods-section hide">
                     <?php
                     $helpers = $api->load_helpers(array(
                         "orderby" => "name ASC",
@@ -213,7 +213,7 @@ jQuery(function($) {
                         </select>
                     <?php } ?>
                 </div>
-                <div class="section hide" style="text-align: right;">
+                <div class="pods-section hide" style="text-align: right;">
                     <a class="button-primary" id="pods_insert_shortcode" href="#">Insert</a>
                 </div>
             </form>

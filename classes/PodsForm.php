@@ -409,23 +409,25 @@ class PodsForm {
 
         $field_type = self::clean( $field_type, true, true );
 
-        $class = ucfirst( $field_type );
-        $class = "PodsField_{$class}";
+        $class_name = ucfirst( $field_type );
+        $class_name = "PodsField_{$class_name}";
 
-        if ( !class_exists( $class ) ) {
+        if ( !class_exists( $class_name ) ) {
             $file = str_replace( '../', '', apply_filters( 'pods_form_field_include', PODS_DIR . 'classes/fields/' . basename( $field_type ) . '.php', $field_type ) );
 
             if ( 0 === strpos( $file, ABSPATH ) && file_exists( $file ) )
                 include_once $file;
         }
 
-        if ( class_exists( $class ) )
-            $class = new $class();
-        else
+        if ( class_exists( $class_name ) )
+            $class = new $class_name();
+        else {
             $class = self::field_loader( 'text' ); // load basic text field
+            $class_name = 'PodsField_Text';
+        }
 
-        self::$field = $class;
-        self::$field_type = $class::$type;
+        self::$field =& $class;
+        self::$field_type = $class_name::$type;
 
         return $class;
     }

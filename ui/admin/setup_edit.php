@@ -23,7 +23,7 @@ $advanced_fields = array(
             'help' => __( 'help', 'pods' ),
             'type' => 'text',
             'default' => '',
-            'data' => pods_var( 'input_helper', $field_settings )
+            'data' => array( '' => '-- Select --' )
         )
     ),
     __( 'Values', 'pods' ) => array(

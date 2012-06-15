@@ -303,7 +303,7 @@ class PodsInit
     }
 
     function activate_install () {
-        // Activate and Install (@to-do: don't install, display notice if not 'installed' with a link for user to run install)
+        // Activate and Install (@todo: don't install, display notice if not 'installed' with a link for user to run install)
         register_activation_hook(__FILE__, array($this, 'activate'));
         add_action('wpmu_new_blog', array($this, 'new_blog'), 10, 6);
         $pods_version = get_option('pods_framework_version');
@@ -384,7 +384,7 @@ class PodsInit
     }
 
     // Delete Attachments from relationships
-    // @to-do: remove select and run DELETE with the JOIN on field.type='file'
+    // @todo: remove select and run DELETE with the JOIN on field.type='file'
     function delete_attachment ($_ID) {
         $results = pods_query("SELECT `id` FROM `@wp_pods_fields` WHERE `type` = 'file'");
         if (!empty($results)) {
@@ -577,7 +577,7 @@ class PodsInit
     }
 
 	public function admin_bar_links() {
-		global $wp_admin_bar;
+		global $wp_admin_bar, $pods;
 		$api = new PodsAPI();
 		$all_pods = $api->load_pods(array('orderby' => 'name ASC'));
 		$non_cpt_pods = array();

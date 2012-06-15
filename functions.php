@@ -29,7 +29,7 @@ function pods_query ( $sql, $error = 'Database Error', $results_error = null, $n
  * @param object $obj (optional) Object to reference for filter / action
  *
  * @since 2.0.0
- * @to-do Need to figure out how to handle $scope = 'pods' for the Pods class
+ * @todo Need to figure out how to handle $scope = 'pods' for the Pods class
  */
 function pods_do_hook ( $scope, $name, $args = null, $obj = null ) {
     $args = apply_filters( "pods_{$scope}_{$name}", $args, &$obj );

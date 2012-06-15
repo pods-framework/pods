@@ -801,7 +801,7 @@ class PodsAPI
 
             // Prepare all table (non-relational) data
             if (!in_array($type, array('pick', 'file')))
-                $table_data[] = "`$column` = '$value'";
+                $table_data[] = "`{$column}` = '{$value}'";
             // Store relational column data to be looped through later
             else {
                 $rel_columns[$type][$column] = $value;
@@ -809,23 +809,22 @@ class PodsAPI
             }
         }
 
-        // @to-do: Use REPLACE INTO instead and set defaults on created / modified / author
-        // (if not submitted) but check if the fields exist on Pod first
-        if (false !== $is_new_item) {
-            $current_time = current_time('mysql');
+        // @todo: Use REPLACE INTO instead and set defaults on created / modified / author (and check if they exist)
+        if ( false !== $is_new_item ) {
+            $current_time = current_time( 'mysql' );
             $author = 0;
-            if (is_user_logged_in()) {
+            if ( is_user_logged_in() ) {
                 global $user_ID;
                 get_currentuserinfo();
-                $author = pods_absint($user_ID);
+                $author = pods_absint( $user_ID );
             }
-            $params->id = pods_query("INSERT INTO `@wp_pods_tbl_{$params->pod}` (`created`, `modified`, `author`) VALUES ('{$current_time}', '{$current_time}', {$author})", 'Cannot add new table row');
+            $params->id = pods_query( "INSERT INTO `@wp_pods_tbl_{$params->pod}` (`created`, `modified`, `author`) VALUES ('{$current_time}', '{$current_time}', {$author})", 'Cannot add new table row' );
         }
 
         // Save the table row
         if (!empty($table_data)) {
             $table_data = implode(', ', $table_data);
-            pods_query("UPDATE `@wp_pods_tbl_{$params->pod}` SET {$table_data} WHERE `id` = {$params->id} LIMIT 1");
+            pods_query( "UPDATE `@wp_pods_tbl_{$params->pod}` SET {$table_data} WHERE `id` = {$params->id} LIMIT 1" );
         }
 
         // Save relational column data
@@ -1896,7 +1895,7 @@ class PodsAPI
         if (isset($column_types[$type]))
             $definition = $column_types[$type];
         if (!empty($options) && is_array($options)) {
-            // @to-do: handle options and change definition where needed
+            // @todo: handle options and change definition where needed
         }
         $definition = apply_filters('pods_column_definition', $definition, $column_types, $type, $options, $this);
         return $definition;
@@ -1937,6 +1936,9 @@ class PodsAPI
                 // handle rel check
             }
         }
+
+        // @todo Run field validation
+
         $value = apply_filters('pods_column_validation', $value, $column, $columns, $this);
         return $value;
     }

@@ -235,31 +235,6 @@ class PodsAdmin {
         }
     }
 
-	public function admin_bar_links() {
-		global $wp_admin_bar;
-		$api = new PodsAPI();
-		$all_pods = $api->load_pods(array('orderby' => 'name ASC'));
-		$non_cpt_pods = array();
-
-		// Round up all the non-CPT pod types
-		foreach ($all_pods as $pod) {
-			if ($pod['type'] == "pod")
-				$non_cpt_pods[] = $pod;
-		}
-
-		// Add New item links for all non-CPT pods
-		foreach ($non_cpt_pods as $pod) {
-			$label = isset($pod['options']['label']) ? $pod['options']['label'] : $pod['name'];
-			$wp_admin_bar->add_menu(array(
-				'parent' => 'new-content',
-				'title' => $label,
-				'id' => 'new-pod-' . $pod['name'],
-				'href' => admin_url('admin.php?page=pods-manage-'.$pod['name'].'&action=add')
-			));
-		}
-
-
-	}	
 
     private function admin_components_menu($parent = 'pods') {
         $components = $this->api->load_components();

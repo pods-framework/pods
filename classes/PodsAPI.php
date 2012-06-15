@@ -2544,6 +2544,17 @@ class PodsAPI
         return $out;
     }
 
+	/**
+	 * Return an array of dummy data for select2 autocomplete input
+	 */
+	public function select2_ajax() {
+		return array(
+			'option_1' => 'Option 1',
+			'option_2' => 'Option 2',
+			'option_3' => 'Option 3',
+			'option_4' => 'Option 4',
+		);
+	}
     private function do_hook () {
         $args = func_get_args();
         if (empty($args))

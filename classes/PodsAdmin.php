@@ -65,6 +65,10 @@ class PodsAdmin {
 			wp_register_script('jquery-chosen', PODS_URL . 'ui/js/chosen.jquery.min.js', array('jquery'), '0.9.8');
 		if (!wp_style_is('jquery-chosen', 'registered'))
 			wp_register_style('jquery-chosen', PODS_URL . 'ui/css/chosen.css', array(), '0.9.8');
+		if (!wp_style_is('jquery-select2', 'registered'))
+			wp_register_style('jquery-select2', PODS_URL . 'ui/css/select2.css', array(), '2.1');
+		if (!wp_script_is('jquery-select2', 'registered'))
+			wp_register_script('jquery-select2', PODS_URL . 'ui/js/select2.min.js', array('jquery'), '2.1');
         if (isset($_GET['page'])) {
             $page = $_GET['page'];
             if ('pods' == $page || (false !== strpos($page, 'pods-') && 0 === strpos($page, 'pods-'))) {
@@ -118,6 +122,10 @@ class PodsAdmin {
                     // File Upload
                     wp_enqueue_script('thickbox');
                     wp_enqueue_style('thickbox');
+
+					// Select2
+					wp_enqueue_script('jquery-select2');
+					wp_enqueue_style('jquery-select2');
 
 					// Plupload scripts 
 					wp_enqueue_script('plupload');
@@ -272,7 +280,7 @@ class PodsAdmin {
     }
 
 	public function pods_form_test() {
-		require_once PODS_DIR . 'ui/admin/pods_form_test.php';
+		require_once PODS_DIR . 'ui/admin/form.php';
 	}
 
     public function admin_setup() {
@@ -419,7 +427,8 @@ class PodsAdmin {
                          'import_package' => array('priv' => 'manage_packages'),
                          'validate_package' => array('priv' => 'manage_packages'),
                          'replace_package' => array('priv' => 'manage_packages'),
-                         'security_settings' => array('priv' => 'manage_settings'));
+						 'security_settings' => array('priv' => 'manage_settings'),
+					 	 'select2_ajax' => array('priv' => 'manage_pods', 'format' => 'json'));
 
         $methods = apply_filters('pods_admin_ajax_methods', $methods, $this);
 

@@ -960,6 +960,8 @@
                                     </script>
                                 </li><!-- /#field-pods-field-wpcategories -->
 
+                                <!-- Pick: select2 -->
+
                                 <?php
 
                                 // TODO: Add slider-configured field once we write a PodsForm::field_slider method

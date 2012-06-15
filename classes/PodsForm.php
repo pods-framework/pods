@@ -120,7 +120,13 @@ class PodsForm {
     protected function field_db ( $name, $value = null, $options = null ) {
         $options = self::options( null, $options );
 
+        ob_start();
+
         pods_view( PODS_DIR . 'ui/fields/_db.php', compact( array_keys( get_defined_vars() ) ) );
+
+        $output = ob_get_clean();
+
+        return apply_filters( 'pods_form_ui_field_db', $output, $name, $value, $options );
     }
 
     /**
@@ -130,6 +136,12 @@ class PodsForm {
         $options = self::options( null, $options );
 
         pods_view( PODS_DIR . 'ui/fields/_hidden.php', compact( array_keys( get_defined_vars() ) ) );
+
+        ob_start();
+
+        $output = ob_get_clean();
+
+        return apply_filters( 'pods_form_ui_field_hidden', $output, $name, $value, $options );
     }
 
     /**
@@ -138,7 +150,13 @@ class PodsForm {
     public static function row ( $name, $value, $type = 'text', $options = null, $pod = null, $id = null ) {
         $options = self::options( null, $options );
 
+        ob_start();
+
         pods_view( PODS_DIR . 'ui/fields/_row.php', compact( array_keys( get_defined_vars() ) ) );
+
+        $output = ob_get_clean();
+
+        return apply_filters( 'pods_form_ui_field_row', $output, $name, $value, $options, $pod, $id );
     }
 
     /**

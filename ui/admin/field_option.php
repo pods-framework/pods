@@ -4,7 +4,7 @@
     foreach ( $field_options as $field_name => $field_option ) {
         $field_option = (array) $field_option;
 
-        $depends = PodsForm::dependencies( $field_option, 'field-data-' );
+        $depends = PodsForm::dependencies( $field_option, ( !isset( $advanced_options ) ? 'field-data-' : '' ) );
 
         if ( ( !empty( $depends_on ) || !empty( $depends ) ) && $depends_on != $depends ) {
             if ( !empty( $depends_on ) ) {
@@ -20,9 +20,13 @@
         }
 
         if ( !is_array( $field_option[ 'group' ] ) ) {
+            $row_name = $field_name;
+
+            if ( !isset( $advanced_options ) )
+                $row_name = 'field_data[' . $i . '][' . $field_name . ']';
 ?>
         <div class="pods-field-option">
-            <?php echo PodsForm::row( 'field_data[' . $i . '][' . $field_name . ']', pods_var( $field_name, $field, $field_option[ 'default' ] ), $field_option[ 'type' ], $field_option ); ?>
+            <?php echo PodsForm::row( $row_name, pods_var( $field_name, $field, $field_option[ 'default' ] ), $field_option[ 'type' ], $field_option ); ?>
         </div>
 <?php
         }
@@ -43,10 +47,15 @@
 
                         $field_group_option[ 'boolean_yes_label' ] = $field_group_option[ 'label' ];
 
-                        $depends_option = PodsForm::dependencies( $field_group_option, 'field-data-' );
+                        $depends_option = PodsForm::dependencies( $field_group_option, ( !isset( $advanced_options ) ? 'field-data-' : '' ) );
+
+                        $row_name = $field_group_name;
+
+                        if ( !isset( $advanced_options ) )
+                            $row_name = 'field_data[' . $i . '][' . $field_group_name . ']';
                 ?>
                     <div class="pods-field-option-group-value <?php echo $depends_option; ?>">
-                        <?php echo PodsForm::field( 'field_data[' . $i . '][' . $field_group_name . ']', pods_var( $field_group_name, $field, $field_group_option[ 'default' ] ), $field_group_option[ 'type' ], $field_group_option ); ?>
+                        <?php echo PodsForm::field( $row_name, pods_var( $field_group_name, $field, $field_group_option[ 'default' ] ), $field_group_option[ 'type' ], $field_group_option ); ?>
                     </div>
                 <?php
                     }

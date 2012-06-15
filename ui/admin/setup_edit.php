@@ -550,6 +550,7 @@ if ('post_type' == pods_var('type', $pod)) {
                 'boolean_yes_label' => ''
             )
         ),
+        // @todo Finish converting hardcoded fields into field array format (see how simple/powerful it is?)
         'ct_labels' => array(),
         'ct_options' => array(),
         'pod_labels' => array(),

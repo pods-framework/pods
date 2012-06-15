@@ -24,7 +24,6 @@ class PodsAdmin {
             add_action('wp_ajax_pods_admin', array($this, 'admin_ajax'));
             add_action('wp_ajax_nopriv_pods_admin', array($this, 'admin_ajax'));
         }
-		add_action('wp_before_admin_bar_render', array($this, 'admin_bar_links'));
     }
 
     public function admin_init() {

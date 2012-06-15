@@ -180,9 +180,11 @@
 
             if (0 !== $sluggable.length) {
                 // Hold onto slug in-case changes cancelled
-                var last_slug = $sluggable.find('.pods-slug-edit input[type=text]').val();
-                $('.pods-slugged-lower').html(last_slug.toLowerCase());
-                $('.pods-slugged').html(last_slug.charAt(0).toUpperCase() + last_slug.slice(1));
+                if ( $sluggable.find( '.pods-slug-edit input[type=text]' )[ 0 ] ) {
+                    var last_slug = $sluggable.find('.pods-slug-edit input[type=text]').val();
+                    $('.pods-slugged-lower').html(last_slug.toLowerCase());
+                    $('.pods-slugged').html(last_slug.charAt(0).toUpperCase() + last_slug.slice(1));
+                }
 
                 // Handle click to edit
                 $sluggable.on('click', '.pods-slug em, .pods-slug input[type=button]', function () {
@@ -275,7 +277,7 @@
         },
         dependency : function () {
             // Hide all dependents
-            $('.pods-dependency .pods-depends-on').hide();
+            $( '.pods-dependency .pods-depends-on' ).hide();
 
             // Handle dependent toggle
             $(document).on('change', '.pods-dependency .pods-dependent-toggle', function (e) {
@@ -283,29 +285,89 @@
                 var $current = $el.closest('.pods-dependency');
                 var $field = $el;
 
-                var dependent_flag = '.pods-depends-on-' + $el.data('name-clean');
+                var dependent_flag = '.pods-depends-on-' + $el.data( 'name-clean' );
                 var dependent_specific = dependent_flag + '-' + $el.val();
 
-                $current.find(dependent_flag).each(function () {
-                    var $el = $(this);
+                $current.find( dependent_flag ).each( function () {
+                    var $el = $( this );
 
-                    if ($el.parent().is(':visible')) {
-                        if ($field.is('input[type=checkbox]') && $field.is(':checked'))
-                            $el.slideDown().addClass('pods-dependent-visible');
-                        else if ($el.is(dependent_specific))
-                            $el.slideDown().addClass('pods-dependent-visible');
+                    if ( $el.parent().is( ':visible' ) ) {
+                        if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) ) {
+                            $el.slideDown().addClass( 'pods-dependent-visible' );
+                            $el.find( '.pods-dependency .pods-depends-on' ).hide();
+                            $el.find( '.pods-dependency .pods-excludes-on' ).hide();
+                            $el.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
+                                $( this ).trigger( 'change' );
+                            } );
+                        }
+                        else if ( $el.is( dependent_specific ) ) {
+                            $el.slideDown().addClass( 'pods-dependent-visible' );
+                            $el.find( '.pods-dependency .pods-depends-on' ).hide();
+                            $el.find( '.pods-dependency .pods-excludes-on' ).hide();
+                            $el.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
+                                $( this ).trigger( 'change' );
+                            } );
+                        }
                         else
-                            $el.slideUp().removeClass('pods-dependent-visible');
+                            $el.slideUp().removeClass( 'pods-dependent-visible' );
                     }
                     else {
-                        if ($field.is('input[type=checkbox]') && $field.is(':checked'))
-                            $el.show().addClass('pods-dependent-visible');
-                        else if ($el.is(dependent_specific))
-                            $el.show().addClass('pods-dependent-visible');
+                        if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) ) {
+                            $el.show().addClass( 'pods-dependent-visible' );
+                            $el.find( '.pods-dependency .pods-depends-on' ).hide();
+                            $el.find( '.pods-dependency .pods-excludes-on' ).hide();
+                            $el.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
+                                $( this ).trigger( 'change' );
+                            } );
+                        }
+                        else if ( $el.is( dependent_specific ) ) {
+                            $el.show().addClass( 'pods-dependent-visible' );
+                            $el.find( '.pods-dependency .pods-depends-on' ).hide();
+                            $el.find( '.pods-dependency .pods-excludes-on' ).hide();
+                            $el.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
+                                $( this ).trigger( 'change' );
+                            } );
+                        }
                         else
-                            $el.hide().removeClass('pods-dependent-visible');
+                            $el.hide().removeClass( 'pods-dependent-visible' );
                     }
-                });
+                } );
+
+                var exclude_flag = '.pods-excludes-on-' + $el.data( 'name-clean' );
+                var exclude_specific = exclude_flag + '-' + $el.val();
+
+                $current.find( exclude_flag ).each( function () {
+                    var $el = $( this );
+
+                    if ( $el.parent().is( ':visible' ) ) {
+                        if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) )
+                            $el.slideUp().removeClass( 'pods-dependent-visible' );
+                        else if ( $el.is( exclude_specific ) )
+                            $el.slideUp().removeClass( 'pods-dependent-visible' );
+                        else {
+                            $el.slideDown().addClass( 'pods-dependent-visible' );
+                            $el.find( '.pods-dependency .pods-depends-on' ).hide();
+                            $el.find( '.pods-dependency .pods-excludes-on' ).hide();
+                            $el.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
+                                $( this ).trigger( 'change' );
+                            } );
+                        }
+                    }
+                    else {
+                        if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) )
+                            $el.hide().removeClass( 'pods-dependent-visible' );
+                        else if ( $el.is( exclude_specific ) )
+                            $el.hide().removeClass( 'pods-dependent-visible' );
+                        else {
+                            $el.show().addClass( 'pods-dependent-visible' );
+                            $el.find( '.pods-dependency .pods-depends-on' ).hide();
+                            $el.find( '.pods-dependency .pods-excludes-on' ).hide();
+                            $el.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
+                                $( this ).trigger( 'change' );
+                            } );
+                        }
+                    }
+                } );
             });
 
             $('.pods-dependency .pods-dependent-toggle').each(function () {
@@ -457,6 +519,9 @@
         },
         flexible : function (row) {
             var new_row = row;
+            if ( new_row[ 0 ] )
+                new_row = new_row.html();
+
             var row_counter = $('tr.pods-manage-row').length;
 
             // Handle 'Add' action
@@ -466,15 +531,18 @@
                     $(this).prop('disabled', true);
 
                     row_counter++;
+
                     var add_row = new_row.replace(/\_\_1/gi, row_counter).replace(/\-\-1/gi, row_counter);
                     var $tbody = $(this).parent().parent().find('tbody.pods-manage-list');
 
-                    $tbody.append(add_row);
-                    $tbody.find('tr.no-items').hide();
+                    $tbody.find( 'tr.no-items' ).hide();
+                    $tbody.append('<tr id="row-' + row_counter + '" class="pods-manage-row pods-field-' + row_counter + '" valign="top">' + add_row + '</tr>');
 
                     $new_row = $tbody.find('tr#row-' + row_counter);
 
-                    $new_row.find('.pods-dependency .pods-depends-on').hide();
+                    $new_row.data( 'row', row_counter );
+                    $new_row.find( '.pods-dependency .pods-depends-on' ).hide();
+                    $new_row.find( '.pods-dependency .pods-excludes-on' ).hide();
                     $new_row.find('.pods-dependency .pods-dependent-toggle').each(function () {
                         $(this).trigger('change');
                     });
@@ -515,6 +583,8 @@
 
                     if ($.fn.sortable && $tbody.hasClass('pods-manage-sortable'))
                         $(this).closest('tbody.pods-manage-list').sortable('refresh');
+
+                    //row_counter--;
                 }
 
                 $(this).css('cursor', 'pointer');

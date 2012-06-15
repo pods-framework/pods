@@ -314,6 +314,10 @@ li.invisible {
 	z-index: -1;
 }
 
+.pods-admin .pods_floatmenu {
+    width: 200px;
+}
+
 .pods-admin .pods-icon {
     display: inline-block;
     padding: 1px 0 0 5px;
@@ -519,9 +523,9 @@ tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-save {
 /*
  * Pods Dependency
  */
-.pods-dependent-on {
+.pods-depends-on,
+.pods-excludes-on {
     display: none;
-    width: 100%;
 }
 
 /*
@@ -611,5 +615,12 @@ tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-save {
 }
 
 .pods-sluggable .pods-slug-edit {
+    display: none;
+}
+
+/*
+* Pods Flexible
+*/
+tbody.pods-manage-list tr.flexible-row {
     display: none;
 }

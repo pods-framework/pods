@@ -3,11 +3,11 @@
 Plugin Name: Pods Development Framework
 Plugin URI: http://podsframework.org/
 Description: Create / Manage / Develop / Extend content types: Posts, Pages, Custom Post Types, Categories, Tags, Custom Taxonomy, Comments, Users, Custom Content Types, and Custom Tables
-Version: 2.0.0 Alpha 11
+Version: 2.0.0 Alpha 14
 Author: The Pods Framework Team
 Author URI: http://podsframework.org/about/
 
-Copyright 2009-2011  The Pods Framework Team  (email : contact@podsframework.org)
+Copyright 2009-2012  The Pods Framework Team  (email : contact@podsframework.org)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,27 +23,27 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-define('PODS_VERSION', '2.0.0-a-11');
+define( 'PODS_VERSION', '2.0.0-a-14' );
 
-if (!defined('PODS_WP_VERSION_MINIMUM'))
-    define('PODS_WP_VERSION_MINIMUM', '3.3');
-if (!defined('PODS_PHP_VERSION_MINIMUM'))
-    define('PODS_PHP_VERSION_MINIMUM', '5.2.4');
-if (!defined('PODS_MYSQL_VERSION_MINIMUM'))
-    define('PODS_MYSQL_VERSION_MINIMUM', '5.0');
+if ( !defined( 'PODS_WP_VERSION_MINIMUM' ) )
+    define( 'PODS_WP_VERSION_MINIMUM', '3.4' );
+if ( !defined( 'PODS_PHP_VERSION_MINIMUM' ) )
+    define( 'PODS_PHP_VERSION_MINIMUM', '5.2.4' );
+if ( !defined( 'PODS_MYSQL_VERSION_MINIMUM' ) )
+    define( 'PODS_MYSQL_VERSION_MINIMUM', '5.0' );
 
-define('PODS_SLUG', plugin_basename(__FILE__));
-define('PODS_URL', plugin_dir_url(__FILE__));
-define('PODS_DIR', plugin_dir_path(__FILE__));
-if (!defined('WP_INCLUDES_URL'))
-    define('WP_INCLUDES_URL', includes_url());
+define( 'PODS_SLUG', plugin_basename( __FILE__ ) );
+define( 'PODS_URL', plugin_dir_url( __FILE__ ) );
+define( 'PODS_DIR', plugin_dir_path( __FILE__ ) );
+if ( !defined( 'WP_INCLUDES_URL' ) )
+    define( 'WP_INCLUDES_URL', includes_url() );
 
-require_once(PODS_DIR . 'functions.php');
+require_once( PODS_DIR . 'functions.php' );
 
 if ( is_admin() ) { // note the use of is_admin() to double check that this is happening in the admin
     // GitHub Plugin Updater
     // https://github.com/jkudish/WordPress-GitHub-Plugin-Updater
-    require_once(PODS_DIR . 'updater.php');
+    require_once( PODS_DIR . 'updater.php' );
 
     $user = 'pods-framework';
     $repo = 'pods';
@@ -56,16 +56,16 @@ if ( is_admin() ) { // note the use of is_admin() to double check that this is h
         'github_url' => 'https://github.com/' . $user . '/' . $repo, // the github url of your github repo
         'zip_url' => 'https://github.com/' . $user . '/' . $repo . '/zipball/' . $branch, // the zip url of the github repo
         'sslverify' => true, // whether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
-        'requires' => '3.3', // which version of WordPress does your plugin require?
+        'requires' => '3.4', // which version of WordPress does your plugin require?
         'tested' => '3.4', // which version of WordPress is your plugin tested up to?
         'version' => PODS_VERSION
     );
-    new WPGitHubUpdater($config);
+    new WPGitHubUpdater( $config );
 }
 
 global $pods, $pods_init, $pods_admin, $pod_page_exists;
-if (false !== pods_compatible() && (!defined('SHORTINIT') || !SHORTINIT)) {
-    require_once(PODS_DIR . 'deprecated/deprecated.php');
+if ( false !== pods_compatible() && ( !defined( 'SHORTINIT' ) || !SHORTINIT ) ) {
+    require_once( PODS_DIR . 'deprecated/deprecated.php' );
 
     $pods_init = pods_init();
 }

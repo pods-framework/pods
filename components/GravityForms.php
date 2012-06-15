@@ -3,6 +3,7 @@
  * Component Name: Gravity Forms
  *
  * Integration with Gravity Forms, mapping data from GF to Pods
+ *
  * @package pods
  * @subpackage gravityforms
  */
@@ -227,7 +228,7 @@ class Pods_GravityForms {
         if ( null !== $keep_files )
             self::$keep_files = (bool) $keep_files;
 
-        add_action( 'gform_post_submission' . ( empty( $form_id ) ? '' : '_' . (int) $form_id ), array( $this, 'delete_entry' ), 20, 1 );
+        add_action( 'gform_post_submission' . ( empty( $form_id ) ? '' : '_' . (int) $form_id ), array( get_class(), 'delete_entry' ), 20, 1 );
     }
 
     /**
@@ -297,7 +298,7 @@ class Pods_GravityForms {
 
         if ( null !== $length ) {
             self::$paypal_switch_length = max( 1, (int) $length );
-            add_filter('gform_paypal_query_' . $form_id, array( $this, 'paypal_switch_length' ), 10, 1 );
+            add_filter('gform_paypal_query_' . $form_id, array( get_class(), 'paypal_switch_length' ), 10, 1 );
         }
 
         if ( null !== $type ) {
@@ -305,7 +306,7 @@ class Pods_GravityForms {
             if ( !in_array( self::$paypal_switch_type, array( 'D', 'W', 'M', 'Y' ) ) ) {
                 self::$paypal_switch_type = 'M';
             }
-            add_filter( 'gform_paypal_query_' . $form_id, array( $this, 'paypal_switch_type' ), 10, 1 );
+            add_filter( 'gform_paypal_query_' . $form_id, array( get_class(), 'paypal_switch_type' ), 10, 1 );
         }
     }
 
@@ -338,7 +339,7 @@ class Pods_GravityForms {
      * @static
      */
     public static function auto_login () {
-        add_action( 'gform_user_registered', array( $this, 'user_auto_login' ), 10, 4 );
+        add_action( 'gform_user_registered', array( get_class(), 'user_auto_login' ), 10, 4 );
     }
 
     /**
@@ -375,7 +376,7 @@ class Pods_GravityForms {
             'params' => $params
         );
 
-        add_filter( 'gform_pre_render', array( $this, 'add_dynamic_select' ), 10, 1 );
+        add_filter( 'gform_pre_render', array( get_class(), 'add_dynamic_select' ), 10, 1 );
     }
 
     /**

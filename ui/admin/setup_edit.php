@@ -7,8 +7,94 @@ $field_types = array('date' => 'Date / Time',
                      'text' => 'Text',
                      'paragraph' => 'Paragraph Text',
                      'file' => 'File Upload',
-                     'permalink' => 'Permalink (url-friendly)',
+                     'slug' => 'Permalink (url-friendly)',
                      'pick' => 'Relationship');
+
+$advanced_fields = array(
+    __( 'Visual', 'pods' ) => array(
+        'css_class_name' => array(
+            'label' => __( 'CSS Class Name', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'default' => ''
+        ),
+        'input_helper' => array(
+            'label' => __( 'Input Helper', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'default' => '',
+            'data' => pods_var( 'input_helper', $field_settings )
+        )
+    ),
+    __( 'Values', 'pods' ) => array(
+        'default_value' => array(
+            'label' => __( 'Default Value', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'default' => ''
+        ),
+        'default_value_parameter' => array(
+            'label' => __( 'Set Default Value via Parameter', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'default' => ''
+        )
+    ),
+    __( 'Visibility', 'pods' ) => array(
+        'restrict_access' => array(
+            'label' => __( 'Restrict Access', 'pods' ),
+            'group' => array(
+                'admin_only' => array(
+                    'label' => __( 'Show to Admins Only?', 'pods' ),
+                    'default' => 0,
+                    'type' => 'boolean',
+                    'dependency' => true
+                ),
+                'restrict_capability' => array(
+                    'label' => __( 'Restrict access by Capability?', 'pods' ),
+                    'default' => 0,
+                    'type' => 'boolean',
+                    'dependency' => true
+                )
+            )
+        ),
+        'capability_allowed' => array(
+            'label' => __( 'Capability Allowed', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'default' => '',
+            'depends-on' => array( 'restrict_capability' => true )
+        )
+    ),
+    __( 'Validation', 'pods' ) => array(
+        'regex_validation' => array(
+            'label' => __( 'RegEx Validation', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'default' => ''
+        ),
+        'message_regex' => array(
+            'label' => __( 'Message if field does not pass RegEx', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'default' => ''
+        ),
+        'message_required' => array(
+            'label' => __( 'Message if field is blank', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'default' => '',
+            'depends-on' => array( 'required' => true )
+        ),
+        'message_unique' => array(
+            'label' => __( 'Message if field is not unique', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'default' => '',
+            'depends-on' => array( 'unique' => true )
+        )
+    )
+);
 
 $field_defaults = array('name' => 'new_field',
                         'label' => 'New Field',
@@ -18,47 +104,6 @@ $field_defaults = array('name' => 'new_field',
                         'sister_field_id' => '',
                         'required' => 0,
                         'unique' => 0,
-                        'date_format_type' => 'datetime',
-                        'date_format_date' => 'mdy',
-                        'date_format_time' => 'h_mma',
-                        'date_format_type' => '12',
-                        'text_format_type' => 'plain',
-                        'text_format_website' => 'normal',
-                        'text_format_phone' => '999-999-9999 x999',
-                        'text_enable_phone_extension' => 0,
-                        'text_max_length' => 255,
-                        'text_size' => 'medium',
-                        'text_allow_html' => 1,
-                        'text_allowed_html_tags' => 'strong em a ul ol li b i',
-                        'paragraph_editor' => 'tinymce',
-                        'paragraph_allow_html' => 1,
-                        'paragraph_allow_markdown' => 0,
-                        'paragraph_allowed_html_tags' => 'strong em a ul ol li b i',
-                        'number_format_type' => 'plain',
-                        'number_format_currency_sign' => 'usd',
-                        'number_format_currency_placement' => 'before',
-                        'number_format' => '9,999.99',
-                        'number_decimals' => 0,
-                        'number_max_length' => 255,
-                        'number_size' => 'medium',
-                        'file_type' => 'single',
-                        'file_uploader' => 'plupload',
-                        'file_limit' => 5,
-                        'file_restrict_filesize' => '10MB',
-                        'file_restrict_filetypes' => '',
-                        'boolean_format_type' => 'checkbox',
-                        'boolean_yes_label' => 'Yes',
-                        'boolean_no_label' => 'No',
-                        'permalink_behavior' => '',
-                        'pick_type' => 'single',
-                        'pick_format_single' => 'dropdown',
-                        'pick_format_multi' => 'checkbox',
-                        'pick_limit' => 5,
-                        'pick_display' => '',
-                        'pick_filter' => '',
-                        'pick_orderby' => '',
-                        'pick_groupby' => '',
-                        'pick_size' => 'medium',
                         'css_class_name' => '',
                         'input_helper' => '',
                         'default_value' => '',
@@ -114,83 +159,9 @@ foreach ($taxonomies as $taxonomy => $label) {
 
 $field_settings = array('field_types' => $field_types,
                         'field_defaults' => $field_defaults,
+                        'advanced_fields' => $advanced_fields,
                         'pick_object' => $pick_object,
                         'sister_field_id' => array('' => '-- Select --'),
-                        'date_format_type' => array('date' => 'Date',
-                                                    'datetime' => 'Date + Time',
-                                                    'time' => 'Time'),
-                        'date_format' => array('mdy' => 'mm/dd/yyyy',
-                                               'dmy' => 'dd/mm/yyyy',
-                                               'dmy_dash' => 'dd-mm-yyyy',
-                                               'dmy_dot' => 'dd.mm.yyyy',
-                                               'ymd_slash' => 'yyyy/mm/dd',
-                                               'ymd_dash' => 'yyyy-mm-dd',
-                                               'ymd_dot' => 'yyyy.mm.dd'),
-                        'date_time_format' => array('h_mma' => '1:25 PM',
-                                                    'hh_mma' => '01:25 PM',
-                                                    'h_mm' => '1:25',
-                                                    'hh_mm' => '01:25'),
-                        'date_time_type' => array('12' => '12 hour',
-                                                    '24' => '24 hour'),
-                        'text_format_type' => array('plain' => 'Plain Text',
-                                                    'email' => 'E-mail Address (example@mail.com)',
-                                                    'website' => 'Website (http://www.example.com/)',
-                                                    'phone' => 'Phone Number'),
-                        'text_format_website' => array('normal' => 'http://example.com/',
-                                                            'no-www' => 'http://example.com/ (remove www)',
-                                                            'force-www' => 'http://www.example.com/ (force www if no sub-domain provided)',
-                                                            'no-http' => 'example.com',
-                                                            'no-http-no-www' => 'example.com (force removal of www)',
-                                                            'no-http-force-www' => 'www.example.com (force www if no sub-domain provided)'),
-                        'text_format_phone' => array('US' => array('999-999-9999 x999' => '123-456-7890 x123',
-                                                                        '(999) 999-9999 x999' => '(123) 456-7890 x123',
-                                                                        '999.999.9999 x999' => '123.456.7890 x123'),
-                                                          'International' => array('+9 999-999-9999 x999' => '+1 123-456-7890 x123',
-                                                                                   '+9 (999) 999-9999 x999' => '+1 (123) 456-7890 x123',
-                                                                                   '+9 999.999.9999 x999' => '+1 123.456.7890 x123')),
-                        'text_size' => array('small' => 'Small',
-                                             'medium' => 'Medium',
-                                             'large' => 'Large'),
-                        'paragraph_editor' => array('plain' => 'Plain Text Area',
-                                                    'WYSIWYG' => array('tinymce' => 'TinyMCE (WP Default)',
-                                                                       'cleditor' => 'CLEditor')),
-                        'number_format_type' => array('plain' => 'Plain Number',
-                                                      'currency' => 'Currency'),
-                        'number_format_currency_sign' => array('usd' => '$ (USD)',
-                                                               'cad' => '$ (CAD)'),
-                        'number_format_currency_placement' => array('before' => 'Before ($100)',
-                                                                    'after' => 'After (100$)',
-                                                                    'none' => 'None (100)',
-                                                                    'beforeaftercode' => 'Before with Currency Code after ($100 USD)'),
-                        'number_format' => array('9,999.99' => '1,234.00',
-                                                 '9999.99' => '1234.00',
-                                                 '9.999,99' => '1.234,00',
-                                                 '9999,99' => '1234,00'),
-                        'number_size' => array('small' => 'Small',
-                                               'medium' => 'Medium',
-                                               'large' => 'Large'),
-                        'file_type' => array('single' => 'Single File Upload',
-                                             'multi-limited' => 'Multiple File Upload (limited uploads)',
-                                             'multi-unlimited' => 'Multiple File Upload (no limit)'),
-                        'file_uploader' => array('plupload' => 'Plupload (WP Default)',
-                                                 'swfupload' => 'SWFUpload',
-                                                 'basic' => 'HTML Upload (basic)'),
-                        'boolean_format_type' => array('checkbox' => 'Checkbox',
-                                                       'radio' => 'Radio Buttons',
-                                                       'dropdown' => 'Drop Down'),
-                        'permalink_behavior' => array('' => '-- Select --'),
-                        'pick_type' => array('single' => 'Single Select',
-                                             'multi-limited' => 'Multi Select (limited selections)',
-                                             'multi-unlimited' => 'Multi Select (no limit)'),
-                        'pick_format_single' => array('dropdown' => 'Drop Down',
-                                                      'radio' => 'Radio Buttons',
-                                                      'autocomplete' => 'Autocomplete'),
-                        'pick_format_multi' => array('checkbox' => 'Checkboxes',
-                                                     'multiselect' => 'Multi Select',
-                                                     'autocomplete' => 'Autocomplete'),
-                        'pick_size' => array('small' => 'Small',
-                                             'medium' => 'Medium',
-                                             'large' => 'Large'),
                         'input_helper' => array('' => '-- Select --'));
 
 $pod = $this->api->load_pod((isset($obj->row['name']) ? $obj->row['name'] : false));
@@ -235,32 +206,10 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
                 </span>
             </span>
         </h2>
-        <div id="poststuff" class="has-right-sidebar meta-box-sortables">
+        <div id="poststuff">
             <img src="<?php echo PODS_URL; ?>/ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
-            <div id="side-info-field" class="inner-sidebar pods_floatmenu">
-                <div id="side-sortables">
-                    <div id="submitdiv" class="postbox pods-no-toggle">
-                        <h3><span>Manage <small>(<a href="<?php echo $obj->var_update(array('action' . $obj->num => 'manage', 'id' . $obj->num => '')); ?>">&laquo; <?php _e('Back to Manage'); ?></a>)</small></span></h3>
-                        <div class="inside">
-                            <div class="submitbox" id="submitpost">
-                                <div id="major-publishing-actions">
-                                    <div id="delete-action">
-                                        <a href="#delete-pod" class="submitdelete deletion pods-submittable" data-action="pods_admin" data-method="drop_pod" data-_wpnonce="<?php echo wp_create_nonce('pods-drop_pod'); ?>" data-name="<?php echo esc_attr(pods_var('name', $pod)); ?>">Delete Pod</a>
-                                    </div>
-                                    <div id="publishing-action">
-                                        <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
-                                        <button class="button-primary" type="submit">Save Pod</button>
-                                    </div>
-                                    <div class="clear"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /#submitdiv -->
-                </div>
-            </div>
             <!-- /inner-sidebar -->
-            <div id="post-body">
+            <div id="post-body" class="meta-box-holder columns-2">
                 <div id="post-body-content">
                     <h2>Manage Fields</h2>
                     <!-- pods table -->
@@ -305,6 +254,16 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
                         </tfoot>
                         <tbody class="pods-manage-list">
                             <?php
+                                // Empty Row for Flexible functionality
+                                $i = '--1';
+                                $field = array(
+                                    'id' => '__1',
+                                    'name' => 'new__1',
+                                    'label' => 'New Field __1',
+                                    'type' => 'text'
+                                );
+                                include PODS_DIR . 'ui/admin/setup_edit_field.php';
+
                                 $i = 1;
                                 foreach ($pod['fields'] as $field) {
                                     if ('_pods_empty' == $field['name'])
@@ -346,169 +305,279 @@ elseif ('taxonomy' == pods_var('type', $pod)) {
 }
 elseif ('pod' == pods_var('type', $pod)) {
 ?>
-                                        <li class="pods-tab"><a href="#pods-advanced-labels">Labels</a></li>
+                                        <li class="pods-tab"><a href="#pods-advanced-labels">Pod Labels</a></li>
 <?php
 }
 ?>
-                                        <li class="pods-tab"><a href="#pods-advanced-options">Options</a></li>
+                                        <li class="pods-tab"><a href="#pods-advanced-options">Pod Options</a></li>
                                     </ul>
 
                                     <div class="pods-tab-group">
 <?php
 if ('post_type' == pods_var('type', $pod)) {
+	$advanced_options = array(
+	    'cpt_labels' => array(
+	        'cpt_label' => array(
+	            'label' => __( 'Label', 'pods' ),
+	            'help' => __( 'help', 'pods' ),
+	            'type' => 'text',
+	            'default' => ucwords( str_replace( '_', ' ', pods_var( 'name', $pod ) ) )
+	        ),
+	        'cpt_singular_label' => array(
+	            'label' => __( 'Singular Label', 'pods' ),
+	            'help' => __( 'help', 'pods' ),
+	            'type' => 'text',
+	            'default' => pods_var( 'cpt_label', $pod, ucwords( str_replace( '_', ' ', pods_var( 'name', $pod ) ) ) )
+	        ),
+	        'cpt_add_new' => array(
+	            'label' => __( 'Add New', 'pods' ),
+	            'help' => __( 'help', 'pods' ),
+	            'type' => 'text',
+	            'default' => ''
+	        ),
+	        'cpt_add_new_item' => array(
+	            'label' => __( 'Add New <span class="pods-slugged">Item</span>', 'pods' ),
+	            'help' => __( 'help', 'pods' ),
+	            'type' => 'text',
+	            'default' => ''
+	        ),
+	        'cpt_new_item' => array(
+	            'label' => __( 'New <span class="pods-slugged">Item</span>', 'pods' ),
+	            'help' => __( 'help', 'pods' ),
+	            'type' => 'text',
+	            'default' => ''
+	        ),
+	        'cpt_edit' => array(
+	            'label' => __( 'Edit', 'pods' ),
+	            'help' => __( 'help', 'pods' ),
+	            'type' => 'text',
+	            'default' => ''
+	        ),
+	        'cpt_edit_item' => array(
+	            'label' => __( 'Edit <span class="pods-slugged">Item</span>', 'pods' ),
+	            'help' => __( 'help', 'pods' ),
+	            'type' => 'text',
+	            'default' => ''
+	        ),
+	        'cpt_view' => array(
+	            'label' => __( 'View', 'pods' ),
+	            'help' => __( 'help', 'pods' ),
+	            'type' => 'text',
+	            'default' => ''
+	        ),
+	        'cpt_view_item' => array(
+	            'label' => __( 'View <span class="pods-slugged">Item</span>', 'pods' ),
+	            'help' => __( 'help', 'pods' ),
+	            'type' => 'text',
+	            'default' => ''
+	        ),
+	        'cpt_all_items' => array(
+	            'label' => __( 'All <span class="pods-slugged">Items</span>', 'pods' ),
+	            'help' => __( 'help', 'pods' ),
+	            'type' => 'text',
+	            'default' => ''
+	        ),
+	        'cpt_search_items' => array(
+	            'label' => __( 'Search <span class="pods-slugged">Items</span>', 'pods' ),
+	            'help' => __( 'help', 'pods' ),
+	            'type' => 'text',
+	            'default' => ''
+	        ),
+	        'cpt_not_found' => array(
+	            'label' => __( 'Not Found', 'pods' ),
+	            'help' => __( 'help', 'pods' ),
+	            'type' => 'text',
+	            'default' => ''
+	        ),
+	        'cpt_not_found_in_trash' => array(
+	            'label' => __( 'Not Found in Trash', 'pods' ),
+	            'help' => __( 'help', 'pods' ),
+	            'type' => 'text',
+	            'default' => ''
+	        )
+	    ),
+        'cpt_options' => array(
+            'cpt_description' => array(
+                'label' => __( 'Post Type Description', 'pods' ),
+                'help' => __( 'A short descriptive summary of what the post type is.', 'pods' ),
+                'type' => 'text',
+                'default' => ''
+            ),
+            'cpt_public' => array(
+                'label' => __( 'Public', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'boolean',
+                'default' => true,
+                'boolean_yes_label' => ''
+            ),
+            'cpt_publicly_queryable' => array(
+                'label' => __( 'Publicly Queryable', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'boolean',
+                'default' => pods_var( 'cpt_public', $pod, true ),
+                'boolean_yes_label' => ''
+            ),
+            'cpt_exclude_from_search' => array(
+                'label' => __( 'Exclude from Search', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'boolean',
+                'default' => !pods_var( 'cpt_public', $pod, true ),
+                'boolean_yes_label' => ''
+            ),
+            'cpt_show_ui' => array(
+                'label' => __( 'Show UI', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'boolean',
+                'default' => pods_var( 'cpt_public', $pod, true ),
+                'boolean_yes_label' => ''
+            ),
+            'cpt_show_in_menu' => array(
+                'label' => __( 'Show in Menu', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'boolean',
+                'default' => pods_var( 'cpt_public', $pod, true ),
+                'dependency' => true,
+                'boolean_yes_label' => ''
+            ),
+            'cpt_menu_name' => array(
+                'label' => __( 'Menu Name', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => '',
+                'depends-on' => array( 'cpt_show_in_menu' => true )
+            ),
+            'cpt_menu_position' => array(
+                'label' => __( 'Menu Position', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'number',
+                'default' => '',
+                'depends-on' => array( 'cpt_show_in_menu' => true )
+            ),
+            'cpt_menu_icon' => array(
+                'label' => __( 'Menu Icon URL', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => '',
+                'depends-on' => array( 'cpt_show_in_menu' => true )
+            ),
+            'cpt_menu_string' => array(
+                'label' => __( '<strong>Label: </strong> Parent Page', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => '',
+                'depends-on' => array( 'cpt_show_in_menu' => true )
+            ),
+            'cpt_show_in_nav_menus' => array(
+                'label' => __( 'Show in Navigation Menu', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'boolean',
+                'default' => true,
+                'boolean_yes_label' => ''
+            ),
+            'cpt_capability_type' => array(
+                'label' => __( 'Capability Type', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'boolean',
+                'default' => true,
+                'boolean_yes_label' => ''
+            ),
+            'cpt_has_archive' => array(
+                'label' => __( 'Has Archive', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'boolean',
+                'default' => false,
+                'boolean_yes_label' => ''
+            ),
+            'cpt_hierarchical' => array(
+                'label' => __( 'Hierarchical', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'boolean',
+                'default' => false,
+                'dependency' => true,
+                'boolean_yes_label' => ''
+            ),
+            'cpt_parent_item_colon' => array(
+                'label' => __( '<strong>Label: </strong> Parent <span class="pods-slugged">Item</span>', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => '',
+                'depends-on' => array( 'cpt_hierarchical' => true )
+            ),
+            'cpt_parent' => array(
+                'label' => __( '<strong>Label: </strong> Parent', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => '',
+                'depends-on' => array( 'cpt_hierarchical' => true )
+            ),
+            'cpt_rewrite' => array(
+                'label' => __( 'Rewrite', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'boolean',
+                'default' => true,
+                'dependency' => true,
+                'boolean_yes_label' => ''
+            ),
+            'cpt_rewrite_custom_slug' => array(
+                'label' => __( 'Custom Rewrite Slug', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => '',
+                'depends-on' => array( 'cpt_rewrite' => true )
+            ),
+            'cpt_rewrite_with_front' => array(
+                'label' => __( 'Rewrite with Front', 'pods' ),
+                'help' => __( 'Allows permalinks to be prepended with front base (example: if your permalink structure is /blog/, then your links will be: Checked->/news/, Unchecked->/blog/news/)', 'pods' ),
+                'type' => 'boolean',
+                'default' => true,
+                'depends-on' => array( 'cpt_rewrite' => true ),
+                'boolean_yes_label' => ''
+            ),
+            'cpt_rewrite_feeds' => array(
+                'label' => __( 'Rewrite Feeds', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'boolean',
+                'default' => false,
+                'depends-on' => array( 'cpt_rewrite' => true ),
+                'boolean_yes_label' => ''
+            ),
+            'cpt_rewrite_pages' => array(
+                'label' => __( 'Rewrite Pages', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'boolean',
+                'default' => true,
+                'depends-on' => array( 'cpt_rewrite' => true ),
+                'boolean_yes_label' => ''
+            )
+        ),
+        'ct_labels' => array(),
+        'ct_options' => array(),
+        'pod_labels' => array(),
+        'pod_options' => array()
+	);
 ?>
                                         <div id="pods-advanced-post-type-labels" class="pods-tab">
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_label', __('Label', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_label', pods_var('cpt_label', $pod, ucwords(str_replace('_', ' ', pods_var('name', $pod)))), 'text'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_singular_label', __('Singular Label', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_singular_label', pods_var('cpt_singular_label', $pod, pods_var('cpt_label', $pod, ucwords(str_replace('_', ' ', pods_var('name', $pod))))), 'text'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_add_new', __('Add New', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_add_new', pods_var('cpt_add_new', $pod), 'text'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_add_new_item', __('Add New <span class="pods-slugged">Item</span>'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_add_new_item', pods_var('cpt_add_new_item', $pod), 'text'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_new_item', __('New <span class="pods-slugged">Item</span>'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_new_item', pods_var('cpt_new_item', $pod), 'text'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_edit', __('Edit', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_edit', pods_var('cpt_edit', $pod), 'text'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_edit_item', __('Edit <span class="pods-slugged">Item</span>'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_edit_item', pods_var('cpt_edit_item', $pod), 'text'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_view', __('View', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_view', pods_var('cpt_view', $pod), 'text'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_view_item', __('View <span class="pods-slugged">Item</span>'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_view_item', pods_var('cpt_view_item', $pod), 'text'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_all_items', __('All <span class="pods-slugged">Items</span>'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_all_items', pods_var('cpt_all_items', $pod), 'text'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_search_items', __('Search <span class="pods-slugged">Items</span>'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_search_items', pods_var('cpt_search_items', $pod), 'text'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_not_found', __('Not Found', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_not_found', pods_var('cpt_not_found', $pod), 'text'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_not_found_in_trash', __('Not Found in Trash', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_not_found_in_trash', pods_var('cpt_not_found_in_trash', $pod), 'text'); ?>
-                                            </div>
+                                            <?php
+                                                $fields = $advanced_options[ 'cpt_labels' ];
+                                                $field_options = PodsForm::option_setup( $fields );
+
+                                                include PODS_DIR . 'ui/admin/field_option.php';
+                                            ?>
                                         </div>
                                         <div id="pods-advanced-post-type-options" class="pods-tab">
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_description', __('Post Type Description', 'pods'), __('A short descriptive summary of what the post type is.')); ?>
-                                                <?php echo PodsForm::field('cpt_description', pods_var('cpt_description', $pod), 'text'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_public', __('Public', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_public', pods_var('cpt_public', $pod, false), 'boolean'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_publicly_queryable', __('Publicly Queryable', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_publicly_queryable', pods_var('cpt_publicly_queryable', $pod, pods_var('cpt_public', $pod, false)), 'boolean'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_exclude_from_search', __('Exclude from Search', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_exclude_from_search', pods_var('cpt_exclude_from_search', $pod, (false === pods_var('cpt_public', $pod, false) ? true : false)), 'boolean'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_show_ui', __('Show UI', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_show_ui', pods_var('cpt_show_ui', $pod, pods_var('cpt_public', $pod, false)), 'boolean'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_show_in_menu', __('Show in Menu', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_show_in_menu', pods_var('cpt_show_in_menu', $pod), 'boolean', array('class' => 'pods-dependent-toggle')); ?>
-                                            </div>
-                                            <div class="pods-field-option-container pods-depends-on pods-depends-on-cpt-show-in-menu">
-                                                <div class="pods-field-option">
-                                                    <?php echo PodsForm::label('cpt_menu_name', __('Menu Name', 'pods'), __('help', 'pods')); ?>
-                                                    <?php echo PodsForm::field('cpt_menu_name', pods_var('cpt_menu_name', $pod), 'text'); ?>
-                                                </div>
-                                                <div class="pods-field-option">
-                                                    <?php echo PodsForm::label('cpt_menu_position', __('Menu Position', 'pods'), __('<ul><li>5 - below Posts</li><li>10 - below Media</li><li>15 - below Links</li><li>20 - below Pages</li><li>25 - below comments</li><li>60 - below first separator</li><li>65 - below Plugins</li><li>70 - below Users</li><li>75 - below Tools</li><li>80 - below Settings</li><li>100 - below second separator</li></ul>')); ?>
-                                                    <?php echo PodsForm::field('cpt_menu_position', pods_var('cpt_menu_position', $pod, 20), 'number'); ?>
-                                                </div>
-                                                <div class="pods-field-option">
-                                                    <?php echo PodsForm::label('cpt_menu_icon', __('Menu Icon URL', 'pods'), __('help', 'pods')); ?>
-                                                    <?php echo PodsForm::field('cpt_menu_icon', pods_var('cpt_menu_icon', $pod), 'text'); ?>
-                                                </div>
-                                                <div class="pods-field-option">
-                                                    <?php echo PodsForm::label('cpt_menu_string', __('<strong>Label: </strong> Parent Page', 'pods'), __('A top level page like "tools.php" or "edit.php?post_type=page", for when you want to show a CPT under a different top-level menu apart from it\'s own')); ?>
-                                                    <?php echo PodsForm::field('cpt_menu_string', pods_var('cpt_menu_string', $pod), 'text'); ?>
-                                                </div>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_show_in_nav_menus', __('Show in Navigation Menus', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_show_in_nav_menus', pods_var('cpt_show_in_nav_menus', $pod), 'boolean', array('class' => 'pods-dependent-toggle')); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_has_archive', __('Has Archive', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_has_archive', pods_var('cpt_has_archive', $pod, false), 'boolean'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_capability_type', __('Capability Type', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_capability_type', pods_var('cpt_capability_type', $pod), 'text'); ?>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_hierarchical', __('Hierarchical', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_hierarchical', pods_var('cpt_hierarchical', $pod, false), 'boolean', array('class' => 'pods-dependent-toggle')); ?>
-                                            </div>
-                                            <div class="pods-field-option-container pods-depends-on pods-depends-on-cpt-hierarchical">
-                                                <div class="pods-field-option">
-                                                    <?php echo PodsForm::label('cpt_parent_item_colon', __('<strong>Label: </strong> Parent <span class="pods-slugged">Item</span>'), __('help', 'pods')); ?>
-                                                    <?php echo PodsForm::field('cpt_parent_item_colon', pods_var('cpt_parent_item_colon', $pod), 'text'); ?>
-                                                </div>
-                                                <div class="pods-field-option">
-                                                    <?php echo PodsForm::label('cpt_parent', __('<strong>Label: </strong> Parent', 'pods'), __('help', 'pods')); ?>
-                                                    <?php echo PodsForm::field('cpt_parent', pods_var('cpt_parent', $pod), 'text'); ?>
-                                                </div>
-                                            </div>
-                                            <div class="pods-field-option">
-                                                <?php echo PodsForm::label('cpt_rewrite', __('Rewrite', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_rewrite', pods_var('cpt_rewrite', $pod, true), 'boolean', array('class' => 'pods-dependent-toggle')); ?>
-                                            </div>
-                                            <div class="pods-field-option-container pods-depends-on pods-depends-on-cpt-rewrite">
-                                                <div class="pods-field-option">
-                                                    <?php echo PodsForm::label('cpt_rewrite_custom_slug', __('Custom Rewrite Slug', 'pods'), __('help', 'pods')); ?>
-                                                    <?php echo PodsForm::field('cpt_rewrite_custom_slug', pods_var('cpt_rewrite_custom_slug', $pod), 'text'); ?>
-                                                </div>
-                                                <div class="pods-field-option">
-                                                    <?php echo PodsForm::label('cpt_rewrite_with_front', __('Allow Front Prepend', 'pods'), __('Allows permalinks to be prepended with front base (example: if your permalink structure is /blog/, then your links will be: Checked->/news/, Unchecked->/blog/news/)')); ?>
-                                                    <?php echo PodsForm::field('cpt_rewrite_with_front', pods_var('cpt_rewrite_with_front', $pod, true), 'boolean'); ?>
-                                                </div>
-                                                <div class="pods-field-option">
-                                                    <?php echo PodsForm::label('cpt_rewrite_feeds', __('Feeds', 'pods'), __('help', 'pods')); ?>
-                                                    <?php echo PodsForm::field('cpt_rewrite_feeds', pods_var('cpt_rewrite_feeds', $pod, pods_var('cpt_has_archive', $pod, false)), 'boolean'); ?>
-                                                </div>
-                                                <div class="pods-field-option">
-                                                    <?php echo PodsForm::label('cpt_rewrite_pages', __('Pages', 'pods'), __('help', 'pods')); ?>
-                                                    <?php echo PodsForm::field('cpt_rewrite_pages', pods_var('cpt_rewrite_pages', $pod, true), 'boolean'); ?>
-                                                </div>
-                                            </div>
+                                            <?php
+                                                $fields = $advanced_options[ 'cpt_options' ];
+                                                $field_options = PodsForm::option_setup( $fields );
+
+                                                include PODS_DIR . 'ui/admin/field_option.php';
+                                            ?>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('cpt_query_var', __('Query Var', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_query_var', pods_var('cpt_query_var', $pod, true), 'boolean'); ?>
+                                                <?php echo PodsForm::field('cpt_query_var', pods_var('cpt_query_var', $pod, true), 'boolean', array( 'boolean_yes_label' => '' ) ); ?>
                                             </div>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('cpt_can_export', __('Exportable', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('cpt_can_export', pods_var('cpt_can_export', $pod, true), 'boolean'); ?>
+                                                <?php echo PodsForm::field('cpt_can_export', pods_var('cpt_can_export', $pod, true), 'boolean', array( 'boolean_yes_label' => '' ) ); ?>
                                             </div>
                                             <div class="pods-field-option-group">
                                                 <p class="pods-field-option-group-label">
@@ -516,48 +585,37 @@ if ('post_type' == pods_var('type', $pod)) {
                                                 </p>
                                                 <div class="pods-field-option-group-values">
                                                     <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field('cpt_supports_title', pods_var('cpt_supports_title', $pod, true), 'boolean'); ?>
-                                                        <?php echo PodsForm::label('cpt_supports_title', __('Title', 'pods'), __('help', 'pods')); ?>
+                                                        <?php echo PodsForm::field('cpt_supports_title', pods_var('cpt_supports_title', $pod, true), 'boolean', array( 'boolean_yes_label' => __( 'Title', 'pods' ) ) ); ?>
                                                     </div>
                                                     <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field('cpt_supports_editor', pods_var('cpt_supports_editor', $pod, true), 'boolean'); ?>
-                                                        <?php echo PodsForm::label('cpt_supports_editor', __('Editor', 'pods'), __('help', 'pods')); ?>
+                                                        <?php echo PodsForm::field( 'cpt_supports_editor', pods_var( 'cpt_supports_editor', $pod, true ), 'boolean', array( 'boolean_yes_label' => __( 'Editor', 'pods' ) ) ); ?>
                                                     </div>
                                                     <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field('cpt_supports_author', pods_var('cpt_supports_author', $pod, false), 'boolean'); ?>
-                                                        <?php echo PodsForm::label('cpt_supports_author', __('Author', 'pods'), __('help', 'pods')); ?>
+                                                        <?php echo PodsForm::field( 'cpt_supports_author', pods_var( 'cpt_supports_author', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Author', 'pods' ) ) ); ?>
                                                     </div>
                                                     <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field('cpt_supports_thumbnail', pods_var('cpt_supports_thumbnail', $pod, false), 'boolean'); ?>
-                                                        <?php echo PodsForm::label('cpt_supports_thumbnail', __('Featured Image', 'pods'), __('help', 'pods')); ?>
+                                                        <?php echo PodsForm::field( 'cpt_supports_thumbnail', pods_var( 'cpt_supports_thumbnail', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Featured Image', 'pods' ) ) ); ?>
                                                     </div>
                                                     <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field('cpt_supports_excerpt', pods_var('cpt_supports_excerpt', $pod, false), 'boolean'); ?>
-                                                        <?php echo PodsForm::label('cpt_supports_excerpt', __('Excerpt', 'pods'), __('help', 'pods')); ?>
+                                                        <?php echo PodsForm::field( 'cpt_supports_excerpt', pods_var( 'cpt_supports_excerpt', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Excerpt', 'pods' ) ) ); ?>
                                                     </div>
                                                     <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field('cpt_supports_trackbacks', pods_var('cpt_supports_trackbacks', $pod, false), 'boolean'); ?>
-                                                        <?php echo PodsForm::label('cpt_supports_trackbacks', __('Trackbacks', 'pods'), __('help', 'pods')); ?>
+                                                        <?php echo PodsForm::field( 'cpt_supports_trackbacks', pods_var( 'cpt_supports_trackbacks', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Trackbacks', 'pods' ) ) ); ?>
                                                     </div>
                                                     <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field('cpt_supports_custom_fields', pods_var('cpt_supports_custom_fields', $pod, false), 'boolean'); ?>
-                                                        <?php echo PodsForm::label('cpt_supports_custom_fields', __('Custom Fields', 'pods'), __('help', 'pods')); ?>
+                                                        <?php echo PodsForm::field( 'cpt_supports_custom_fields', pods_var( 'cpt_supports_custom_fields', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Custom Fields', 'pods' ) ) ); ?>
                                                     </div>
                                                     <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field('cpt_supports_comments', pods_var('cpt_supports_comments', $pod, false), 'boolean'); ?>
-                                                        <?php echo PodsForm::label('cpt_supports_comments', __('Comments', 'pods'), __('help', 'pods')); ?>
+                                                        <?php echo PodsForm::field( 'cpt_supports_comments', pods_var( 'cpt_supports_comments', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Comments', 'pods' ) ) ); ?>
                                                     </div>
                                                     <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field('cpt_supports_revisions', pods_var('cpt_supports_revisions', $pod, false), 'boolean'); ?>
-                                                        <?php echo PodsForm::label('cpt_supports_revisions', __('Revisions', 'pods'), __('help', 'pods')); ?>
+                                                        <?php echo PodsForm::field( 'cpt_supports_revisions', pods_var( 'cpt_supports_revisions', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Revisions', 'pods' ) ) ); ?>
                                                     </div>
                                                     <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field('cpt_supports_page_attributes', pods_var('cpt_supports_page_attributes', $pod, false), 'boolean'); ?>
-                                                        <?php echo PodsForm::label('cpt_supports_page_attributes', __('Page Attributes', 'pods'), __('help', 'pods')); ?>
+                                                        <?php echo PodsForm::field( 'cpt_supports_page_attributes', pods_var( 'cpt_supports_page_attributes', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Page Attributes', 'pods' ) ) ); ?>
                                                     </div>
                                                     <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field('cpt_supports_post_formats', pods_var('cpt_supports_post_formats', $pod, false), 'boolean'); ?>
-                                                        <?php echo PodsForm::label('cpt_supports_post_formats', __('Post Formats', 'pods'), __('help', 'pods')); ?>
+                                                        <?php echo PodsForm::field( 'cpt_supports_post_formats', pods_var( 'cpt_supports_post_formats', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Post Formats', 'pods' ) ) ); ?>
                                                     </div>
                                                 </div>
                                             </div>
@@ -571,8 +629,7 @@ if ('post_type' == pods_var('type', $pod)) {
         $taxonomy = str_replace('taxonomy-', '', $taxonomy);
 ?>
                                                     <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field('cpt_built_in_taxonomies_' . $taxonomy, pods_var('cpt_built_in_taxonomies_' . $taxonomy, $pod, false), 'boolean'); ?>
-                                                        <?php echo PodsForm::label('cpt_built_in_taxonomies_' . $taxonomy, $label); ?>
+                                                        <?php echo PodsForm::field( 'cpt_built_in_taxonomies_' . $taxonomy, pods_var( 'cpt_built_in_taxonomies_' . $taxonomy, $pod, false ), 'boolean', array( 'boolean_yes_label' => $label ) ); ?>
                                                     </div>
 <?php
     }
@@ -637,11 +694,11 @@ elseif ('taxonomy' == pods_var('type', $pod)) {
                                         <div id="pods-advanced-taxonomy-options" class="pods-tab">
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('ct_public', __('Public', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('ct_public', pods_var('ct_public', $pod, true), 'boolean'); ?>
+                                                <?php echo PodsForm::field('ct_public', pods_var('ct_public', $pod, true), 'boolean', array( 'boolean_yes_label' => '' ) ); ?>
                                             </div>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('ct_show_ui', __('Show UI', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('ct_show_ui', pods_var('ct_show_ui', $pod, pods_var('ct_public', $pod, true)), 'boolean', array('class' => 'pods-dependent-toggle')); ?>
+                                                <?php echo PodsForm::field('ct_show_ui', pods_var('ct_show_ui', $pod, pods_var('ct_public', $pod, true)), 'boolean', array('dependency' => true)); ?>
                                             </div>
                                             <div class="pods-field-option pods-depends-on pods-depends-on-ct-show-ui">
                                                 <?php echo PodsForm::label('ct_menu_name', __('Menu Name', 'pods'), __('help', 'pods')); ?>
@@ -649,15 +706,15 @@ elseif ('taxonomy' == pods_var('type', $pod)) {
                                             </div>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('ct_show_in_nav_menus', __('Show in Nav Menus', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('ct_show_in_nav_menus', pods_var('ct_show_in_nav_menus', $pod, pods_var('ct_public', $pod, true)), 'boolean'); ?>
+                                                <?php echo PodsForm::field('ct_show_in_nav_menus', pods_var('ct_show_in_nav_menus', $pod, pods_var('ct_public', $pod, true)), 'boolean', array( 'boolean_yes_label' => '' ) ); ?>
                                             </div>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('ct_show_tagcloud', __('Allow in Tagcloud Widget', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('ct_show_tagcloud', pods_var('ct_show_tagcloud', $pod, pods_var('ct_show_ui', $pod, pods_var('ct_public', $pod, true))), 'boolean'); ?>
+                                                <?php echo PodsForm::field('ct_show_tagcloud', pods_var('ct_show_tagcloud', $pod, pods_var('ct_show_ui', $pod, pods_var('ct_public', $pod, true))), 'boolean', array( 'boolean_yes_label' => '' ) ); ?>
                                             </div>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('ct_hierarchical', __('Hierarchical', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('ct_hierarchical', pods_var('ct_hierarchical', $pod, false), 'boolean', array('class' => 'pods-dependent-toggle')); ?>
+                                                <?php echo PodsForm::field('ct_hierarchical', pods_var('ct_hierarchical', $pod, false), 'boolean', array('dependency' => true)); ?>
                                             </div>
                                             <div class="pods-field-option-container pods-depends-on pods-depends-on-ct-hierarchical">
                                                 <div class="pods-field-option">
@@ -671,7 +728,7 @@ elseif ('taxonomy' == pods_var('type', $pod)) {
                                             </div>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('ct_rewrite', __('Rewrite', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('ct_rewrite', pods_var('ct_rewrite', $pod, true), 'boolean', array('class' => 'pods-dependent-toggle')); ?>
+                                                <?php echo PodsForm::field('ct_rewrite', pods_var('ct_rewrite', $pod, true), 'boolean', array('dependency' => true)); ?>
                                             </div>
                                             <div class="pods-field-option-container pods-depends-on pods-depends-on-ct-rewrite">
                                                 <div class="pods-field-option">
@@ -680,16 +737,16 @@ elseif ('taxonomy' == pods_var('type', $pod)) {
                                                 </div>
                                                 <div class="pods-field-option">
                                                     <?php echo PodsForm::label('ct_rewrite_with_front', __('Allow Front Prepend', 'pods'), __('Allows permalinks to be prepended with front base (example: if your permalink structure is /blog/, then your links will be: Checked->/news/, Unchecked->/blog/news/)')); ?>
-                                                    <?php echo PodsForm::field('ct_rewrite_with_front', pods_var('ct_rewrite_with_front', $pod, true), 'boolean'); ?>
+                                                    <?php echo PodsForm::field('ct_rewrite_with_front', pods_var('ct_rewrite_with_front', $pod, true), 'boolean', array( 'boolean_yes_label' => '' ) ); ?>
                                                 </div>
                                                 <div class="pods-field-option">
                                                     <?php echo PodsForm::label('ct_rewrite_hierarchical', __('Hierarchical Permalinks', 'pods'), __('help', 'pods')); ?>
-                                                    <?php echo PodsForm::field('ct_rewrite_hierarchical', pods_var('ct_rewrite_hierarchical', $pod, true), 'boolean'); ?>
+                                                    <?php echo PodsForm::field('ct_rewrite_hierarchical', pods_var('ct_rewrite_hierarchical', $pod, true), 'boolean', array( 'boolean_yes_label' => '' ) ); ?>
                                                 </div>
                                             </div>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('ct_query_var', __('Query Var', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('ct_query_var', pods_var('ct_query_var', $pod), 'boolean'); ?>
+                                                <?php echo PodsForm::field('ct_query_var', pods_var('ct_query_var', $pod), 'boolean', array( 'boolean_yes_label' => '' ) ); ?>
                                             </div>
                                             <div class="pods-field-option-group">
                                                 <p class="pods-field-option-group-label">
@@ -701,8 +758,7 @@ elseif ('taxonomy' == pods_var('type', $pod)) {
         $post_type = str_replace('post-type-', '', $post_type);
 ?>
                                                     <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field('ct_built_in_post_types_' . $post_type, pods_var('ct_built_in_post_types_' . $post_type, $pod, false), 'boolean'); ?>
-                                                        <?php echo PodsForm::label('ct_built_in_post_types_' . $post_type, $label); ?>
+                                                        <?php echo PodsForm::field( 'ct_built_in_post_types_' . $post_type, pods_var( 'ct_built_in_post_types_' . $post_type, $pod, false ), 'boolean', array( 'boolean_yes_label' => $label ) ); ?>
                                                     </div>
 <?php
     }
@@ -781,7 +837,7 @@ if ('pod' == pods_var('type', $pod)) {
 ?>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('show_in_menu', __('Show in Menu', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('show_in_menu', pods_var('show_in_menu', $pod), 'boolean', array('class' => 'pods-dependent-toggle')); ?>
+                                                <?php echo PodsForm::field('show_in_menu', pods_var('show_in_menu', $pod), 'boolean', array('dependency' => true)); ?>
                                             </div>
                                             <div class="pods-field-option-container pods-depends-on pods-depends-on-show-in-menu">
                                                 <div class="pods-field-option">
@@ -822,6 +878,34 @@ if ('pod' == pods_var('type', $pod)) {
                     <!-- /pods-pod-advanced-settings -->
                 </div>
                 <!-- /#post-body-content -->
+
+                <div id="postbox-container-1" class="postbox-container pods_floatmenu">
+                    <div id="side-info-field" class="inner-sidebar">
+                        <div id="side-sortables">
+                            <div id="submitdiv" class="postbox pods-no-toggle">
+                                <h3><span>Manage <small>(<a href="<?php echo $obj->var_update( array( 'action' . $obj->num => 'manage', 'id' . $obj->num => '' ) ); ?>">&laquo; <?php _e( 'Back to Manage' ); ?></a>)
+                                </small></span></h3>
+                                <div class="inside">
+                                    <div class="submitbox" id="submitpost">
+                                        <div id="major-publishing-actions">
+                                            <div id="delete-action">
+                                                <a href="#delete-pod" class="submitdelete deletion pods-submittable" data-action="pods_admin" data-method="drop_pod" data-_wpnonce="<?php echo wp_create_nonce( 'pods-drop_pod' ); ?>" data-name="<?php echo esc_attr( pods_var( 'name', $pod ) ); ?>">
+                                                    Delete Pod
+                                                </a>
+                                            </div>
+                                            <div id="publishing-action">
+                                                <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
+                                                <button class="button-primary" type="submit">Save Pod</button>
+                                            </div>
+                                            <div class="clear"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /#submitdiv -->
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- /#post-body -->
         </div>
@@ -830,15 +914,6 @@ if ('pod' == pods_var('type', $pod)) {
 </div>
 <script type="text/javascript">
 <?php
-ob_start();
-$i = '--1';
-$field =  array('id' => '__1',
-                'name' => 'new__1',
-                'label' => 'New Field __1',
-                'type' => 'text');
-include PODS_DIR . 'ui/admin/setup_edit_field.php';
-$new_field_row = ob_get_clean();
-
 $pods_field_types = array();
 foreach ($field_settings['field_types'] as $field_type => $field_label) {
     $pods_field_types[] = "'" . esc_js($field_type) . "' : '" . esc_js($field_label) . "'";
@@ -860,25 +935,25 @@ foreach ($field_settings['pick_object'] as $object => $object_label) {
         $pods_pick_objects[] = "'" . esc_js($object) . "' : '" . esc_js($object_label) . "'";
 }
 ?>
-    var pods_flexible_row = '<?php echo str_replace('</script>', '<\' + \'/script>', addslashes(trim(str_replace(array("\n", "\r", '        ', '    ', '  ', '  '), ' ', $new_field_row)))); ?>';
     var pods_field_types = {
-        <?php echo implode(",\n        ", $pods_field_types); ?>
+        <?php echo implode( ",\n        ", $pods_field_types ); ?>
     };
     var pods_pick_objects = {
-        <?php echo implode(",\n        ", $pods_pick_objects); ?>
+        <?php echo implode( ",\n        ", $pods_pick_objects ); ?>
     };
-    function pods_admin_submittable_callback() {
-        document.location = '<?php echo $obj->var_update(array('action' . $obj->num => 'manage', 'id' . $obj->num => '')); ?>';
+    function pods_admin_submittable_callback () {
+        document.location = '<?php echo $obj->var_update( array( 'action' . $obj->num => 'manage', 'id' . $obj->num => '' ) ); ?>';
     }
-jQuery(function($){
-    $(document).PodsAdmin('validate');
-    $(document).PodsAdmin('submit');
-    $(document).PodsAdmin('sluggable');
-    $(document).PodsAdmin('sortable');
-    $(document).PodsAdmin('collapsible');
-    $(document).PodsAdmin('toggled');
-    $(document).PodsAdmin('tabbed');
-    $(document).PodsAdmin('dependency');
-    $(document).PodsAdmin('flexible', ('undefined' != typeof pods_flexible_row ? pods_flexible_row : null));
-});
+
+    jQuery( function ( $ ) {
+        $( document ).PodsAdmin( 'validate' );
+        $( document ).PodsAdmin( 'submit' );
+        $( document ).PodsAdmin( 'sluggable' );
+        $( document ).PodsAdmin( 'sortable' );
+        $( document ).PodsAdmin( 'collapsible' );
+        $( document ).PodsAdmin( 'toggled' );
+        $( document ).PodsAdmin( 'tabbed' );
+        $( document ).PodsAdmin( 'dependency' );
+        $( document ).PodsAdmin( 'flexible', $( 'tbody.pods-manage-list tr.flexible-row' ) );
+    } );
 </script>

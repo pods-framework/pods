@@ -961,6 +961,41 @@
                                 </li><!-- /#field-pods-field-wpcategories -->
 
                                 <!-- Pick: select2 -->
+                                <li class="pods-field pods-pick" id="field-pods-field-pick7">
+                                    <?php
+                                    echo PodsForm::label('pick7', 'Pick - Select2');
+                                    ?>
+                                    <input type="hidden" name="pick7" id="pods-form-ui-pick7" data-name-clean="pick7" class="pods-form-ui-field-type-hidden pods-form-ui-field-name-pick7" />
+                                </li>
+                                <script type="text/javascript">
+                                    jQuery(function($) {
+                                        var nonce = "<?php echo wp_create_nonce('pods-admin_ajax'); ?>";
+                                        var pods_ajaxurl = "<?php echo admin_url('admin-ajax.php?pods_ajax=1'); ?>";
+                                        console.log(nonce);
+                                        console.log(pods_ajaxurl);
+
+                                        $('#pods-form-ui-pick7').select2({
+                                            placeholder: 'Search for something...',
+                                            minimumInputLength: 1,
+                                            ajax: {
+                                                url: pods_ajaxurl,
+                                                type: 'POST',
+                                                dataType: 'json',
+                                                data: function(term, page) {
+                                                    return {
+                                                        action: 'pods_admin',
+                                                        method: 'select2_ajax',
+                                                        query: term,
+                                                        _wpnonce: nonce
+                                                    };
+                                                },
+                                                results: function(data, page) {
+                                                    return data;
+                                                }
+                                            }
+                                        });
+                                    });
+                                </script>
 
                                 <?php
 

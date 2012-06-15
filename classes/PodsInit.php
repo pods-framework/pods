@@ -601,8 +601,8 @@ class PodsInit
 			));
 		}
 
-		// Add edit link if we're on a pods page
-		/*
+		// Add edit link if we're on a pods page (this requires testing)
+		// @todo Fill in correct href and test this once PodsAPI is capable of adding new pod items to the database
 		if (is_object($pods) && !is_wp_error($pods)) {
 			$wp_admin_bar->add_menu(array(
 				'title' => 'Edit Pod Item',
@@ -610,7 +610,6 @@ class PodsInit
 				'href' => '#'
 			));
 		}
-		 */
 
 	}	
 }

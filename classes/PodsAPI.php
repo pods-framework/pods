@@ -1896,7 +1896,9 @@ class PodsAPI
 
             $field_types = apply_filters( 'pods_field_types', $field_types, $this );
 
-            foreach ( $field_types as &$field_type => &$options ) {
+            foreach ( $field_types as $field_type => $options ) {
+                unset( $field_types[ $field_type ] );
+
                 $field_type = $options;
 
                 $options = array(
@@ -1907,10 +1909,13 @@ class PodsAPI
 
                 PodsForm::field_loader( $options );
 
-                $options[ 'type' ] = $field_type = PodsForm::$loaded[ $options ]::$type;
-                $options[ 'label' ] = PodsForm::$loaded[ $options ]::$label;
+                $class_vars = get_class_vars( PodsForm::$loaded[ $options ] ); // PHP 5.2.x workaround
+                $options[ 'type' ] = $field_type = $class_vars[ 'type' ];
+                $options[ 'label' ] = $class_vars[ 'label' ];
                 $options[ 'schema' ] = PodsForm::$loaded[ $options ]->schema();
                 $options[ 'options' ] = PodsForm::options_setup( $options[ 'type' ] );
+
+                $field_types[ $field_type ] = $options;
             }
 
             wp_cache_set( 'pods_field_types', json_encode( $field_types ), 'pods' );

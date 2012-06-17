@@ -46,7 +46,7 @@
                     field_data: {}
                 };
                 var valid_form = true;
-                $(this).find('input, select, textarea').each(function () {
+                $(this).find('.pods-submittable-fields' ).find('input, select, textarea').each(function () {
                     var $el = $(this);
                     var val = $el.val();
                     if ('' != $el.prop('name')) {
@@ -536,7 +536,7 @@
                     var $tbody = $(this).parent().parent().find('tbody.pods-manage-list');
 
                     $tbody.find( 'tr.no-items' ).hide();
-                    $tbody.append('<tr id="row-' + row_counter + '" class="pods-manage-row pods-field-' + row_counter + '" valign="top">' + add_row + '</tr>');
+                    $tbody.append('<tr id="row-' + row_counter + '" class="pods-manage-row pods-field-' + row_counter + ' pods-submittable-fields" valign="top">' + add_row + '</tr>');
 
                     $new_row = $tbody.find('tr#row-' + row_counter);
 

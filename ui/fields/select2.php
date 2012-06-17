@@ -9,6 +9,10 @@ $attributes = PodsForm::merge_attributes($attributes, $name, PodsForm::$field_ty
 
 <script type="text/javascript">
 jQuery(function($) {
+    if (typeof pods_ajaxurl === "undefined") {
+        var pods_ajaxurl = "<?php echo admin_url('admin-ajax.php?pods_ajax=1'); ?>";
+    }
+    var pods_nonce = "<?php echo wp_create_nonce('pods-admin_ajax'); ?>";
     $('#<?php echo $attributes['id']; ?>').select2({
         placeholder: 'Start Typing...',
         minimumInputLength: 1,
@@ -18,7 +22,7 @@ jQuery(function($) {
             dataType: 'json',
             data: function(term, page) {
                 return {
-                    _wpnonce: nonce,
+                    _wpnonce: pods_nonce,
                     action: 'pods_admin',
                     method: 'select2_ajax',
                     query: term

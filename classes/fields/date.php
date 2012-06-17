@@ -104,6 +104,20 @@ class PodsField_Date extends PodsField {
     }
 
     /**
+     * Define the current field's schema for DB table storage
+     *
+     * @param array $options
+     *
+     * @return array
+     * @since 2.0.0
+     */
+    public function schema ( $options = null ) {
+        $schema = 'DATETIME NOT NULL default "0000-00-00 00:00:00"';
+
+        return $schema;
+    }
+
+    /**
      * Change the way the value of the field is displayed with Pods::get
      *
      * @param mixed $value

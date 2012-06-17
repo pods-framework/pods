@@ -222,7 +222,7 @@ class PodsAPI
                 $weight++;
                 $fields[] = array('name' => 'permalink',
                                   'label' => 'Permalink',
-                                  'type' => 'permalink',
+                                  'type' => 'slug',
                                   'weight' => $weight,
                                   'options' => array('comment' => 'Leave blank to auto-generate from Name'));
                 $weight++;
@@ -1839,25 +1839,25 @@ class PodsAPI
     public static function detect_pod_field_from_sql_data_type($sql_column) {
         $sql_column = strtolower($sql_column);
 
-        $column_to_field_map = array('tinyint'    => 'num',
-                                     'smallint'   => 'num',
-                                     'mediumint'  => 'num',
-                                     'int'        => 'num',
-                                     'bigint'     => 'num',
-                                     'float'      => 'num',
-                                     'double'     => 'num',
-                                     'decimal'    => 'num',
+        $column_to_field_map = array('tinyint'    => 'number',
+                                     'smallint'   => 'number',
+                                     'mediumint'  => 'number',
+                                     'int'        => 'number',
+                                     'bigint'     => 'number',
+                                     'float'      => 'number',
+                                     'double'     => 'number',
+                                     'decimal'    => 'number',
                                      'date'       => 'date',
                                      'datetime'   => 'date',
                                      'timestamp'  => 'date',
                                      'time'       => 'date',
                                      'year'       => 'date',
-                                     'varchar'    => 'txt',
-                                     'text'       => 'desc',
-                                     'mediumtext' => 'desc',
-                                     'longtext'   => 'desc');
+                                     'varchar'    => 'text',
+                                     'text'       => 'paragraph',
+                                     'mediumtext' => 'paragraph',
+                                     'longtext'   => 'paragraph');
 
-        return (array_key_exists($sql_column, $column_to_field_map)) ? $column_to_field_map[$sql_column] : 'desc';
+        return (array_key_exists($sql_column, $column_to_field_map)) ? $column_to_field_map[$sql_column] : 'paragraph';
     }
 
     /**
@@ -1875,30 +1875,56 @@ class PodsAPI
     }
 
     public function get_pods_column_types() {
-        return $this->load_column_types();
+        return $this->load_field_types();
     }
 
-    private function load_column_types () {
-        $columns = array('boolean' => 'BOOL DEFAULT 0',
-                        'date' => "DATETIME NOT NULL default '0000-00-00 00:00:00'",
-                        'number' => 'DECIMAL(12,2)',
-                        'text' => 'VARCHAR(255)',
-                        'permalink' => 'VARCHAR(200)',
-                        'paragraph' => 'LONGTEXT');
-        $columns = apply_filters('pods_column_dbtypes', $columns, $this);
-        return $columns;
+    private function load_field_types () {
+        // use caching, or build out info and cache
+        $field_types = wp_cache_get( 'pods_field_types', 'pods' );
+
+        if ( false === $field_types ) {
+            $field_types = array(
+                'boolean',
+                'date',
+                'file',
+                'number',
+                'paragraph',
+                'pick',
+                'slug',
+                'text'
+            );
+
+            $field_types = apply_filters( 'pods_field_types', $field_types, $this );
+
+            foreach ( $field_types as &$field_type => &$options ) {
+                $field_type = $options;
+
+                $options = array(
+                    'type' => $field_type,
+                    'label' => ucwords( str_replace( '_', ' ', $field_type ) ),
+                    'schema' => 'VARCHAR(255)'
+                );
+
+                PodsForm::field_loader( $options );
+
+                $options[ 'type' ] = $field_type = PodsForm::$loaded[ $options ]::$type;
+                $options[ 'label' ] = PodsForm::$loaded[ $options ]::$label;
+                $options[ 'schema' ] = PodsForm::$loaded[ $options ]->schema();
+                $options[ 'options' ] = PodsForm::options_setup( $options[ 'type' ] );
+            }
+
+            wp_cache_set( 'pods_field_types', json_encode( $field_types ), 'pods' );
+        }
+        else
+            $field_types = json_decode( $field_types, true );
+
+        return $field_types;
     }
 
     private function get_column_definition ($type, $options = null) {
-        $column_types = $this->load_column_types();
-        $definition = 'VARCHAR(255)';
-        if (isset($column_types[$type]))
-            $definition = $column_types[$type];
-        if (!empty($options) && is_array($options)) {
-            // @todo: handle options and change definition where needed
-        }
-        $definition = apply_filters('pods_column_definition', $definition, $column_types, $type, $options, $this);
-        return $definition;
+        $definition = PodsForm::field_method( $type, 'schema', $options );
+
+        return apply_filters('pods_column_definition', $definition, $type, $options, $this);
     }
 
     private function handle_column_validation ($value, $column, $columns, $params) {
@@ -2033,17 +2059,6 @@ class PodsAPI
             return false;
         }
 
-        $dbtypes = array(
-            'bool' => 'bool default 0',
-            'date' => 'datetime',
-            'num' => 'decimal(9,2)',
-            'txt' => 'varchar(128)',
-            'slug' => 'varchar(128)',
-            'code' => 'mediumtext',
-            'desc' => 'mediumtext'
-        );
-        $dbtypes = apply_filters('pods_column_dbtypes', $dbtypes, $this);
-
         $found = array();
 
         if (isset($data['pods'])) {
@@ -2098,7 +2113,7 @@ class PodsAPI
                 // Create the actual table with any non-PICK columns
                 $definitions = array("id INT unsigned auto_increment primary key");
                 foreach ($table_columns as $colname => $coltype) {
-                    $definitions[] = "`$colname` {$dbtypes[$coltype]}";
+                    $definitions[] = "`$colname` " . $this->get_column_definition( $coltype );
                 }
                 $definitions = implode(',', $definitions);
                 pods_query("CREATE TABLE @wp_pod_tbl_{$pod['name']} ($definitions)");

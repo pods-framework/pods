@@ -5,6 +5,8 @@ class PodsForm {
 
     static $field_type = null;
 
+    static $loaded = array();
+
     /**
      * Generate UI for a Form and it's Fields
      *
@@ -94,14 +96,15 @@ class PodsForm {
 
         if ( isset( $options[ 'default' ] ) && null === $value )
             $value = $options[ 'default' ];
+
         $value = apply_filters( 'pods_form_ui_field_' . $type . '_value', $value, $name, $options, $pod, $id );
 
         ob_start();
 
         if ( method_exists( get_class(), 'field_' . $type ) )
-            call_user_func( array( get_class(), 'field_' . $type ), $name, $value, $options );
-        elseif ( is_object( self::$field ) && method_exists( self::$field, 'input' ) )
-            self::$field->input( $name, $value, $options, $pod, $id );
+            echo call_user_func( array( get_class(), 'field_' . $type ), $name, $value, $options );
+        elseif ( is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'input' ) )
+            self::$loaded[ $type ]->input( $name, $value, $options, $pod, $id );
         else
             do_action( 'pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id );
 
@@ -118,8 +121,6 @@ class PodsForm {
      * @since 2.0.0
      */
     protected function field_db ( $name, $value = null, $options = null ) {
-        $options = self::options( null, $options );
-
         ob_start();
 
         pods_view( PODS_DIR . 'ui/fields/_db.php', compact( array_keys( get_defined_vars() ) ) );
@@ -133,11 +134,9 @@ class PodsForm {
      * Output a hidden field
      */
     protected function field_hidden ( $name, $value = null, $options = null ) {
-        $options = self::options( null, $options );
+        ob_start();
 
         pods_view( PODS_DIR . 'ui/fields/_hidden.php', compact( array_keys( get_defined_vars() ) ) );
-
-        ob_start();
 
         $output = ob_get_clean();
 
@@ -271,10 +270,10 @@ class PodsForm {
         else
             self::field_loader( $type );
 
-        if ( !method_exists( self::$field, 'options' ) )
+        if ( !method_exists( self::$loaded[ $type ], 'options' ) )
             return $core_defaults;
 
-        $options = (array) self::$field->options();
+        $options = (array) self::$loaded[ $type ]->options();
 
         return self::option_setup( $options, $core_defaults );
     }
@@ -405,6 +404,9 @@ class PodsForm {
      * @since 2.0.0
      */
     public static function field_loader ( $field_type ) {
+        if ( isset( self::$loaded[ $field_type ] ) )
+            return self::$loaded[ $field_type ];
+
         include_once PODS_DIR . 'classes/PodsField.php';
 
         $field_type = self::clean( $field_type, true, true );
@@ -422,13 +424,35 @@ class PodsForm {
         if ( class_exists( $class_name ) )
             $class = new $class_name();
         else {
-            $class = self::field_loader( 'text' ); // load basic text field
-            $class_name = 'PodsField_Text';
+            $class = new PodsField();
+            $class_name = 'PodsField';
         }
 
-        self::$field =& $class;
-        self::$field_type = $class_name::$type;
+        $class_vars = get_class_vars( $class_name ); // PHP 5.2.x workaround
+        self::$field_type = $class_vars[ 'type' ];
+        self::$loaded[ $field_type ] =& $class;
 
-        return $class;
+        return self::$loaded[ $field_type ];
+    }
+
+    /**
+     * Run a method from a Field Type's class
+     *
+     * @param string $field_type Field Type indentifier
+     * @param string $method Method name
+     * @param array $options Field Options
+     *
+     * @return mixed
+     * @access public
+     * @static
+     * @since 2.0.0
+     */
+    public static function field_method ( $field_type, $method, $options = null ) {
+        $class = field_loader( $field_type );
+
+        if ( method_exists( $class, $method ) )
+            return $class->$method( $options );
+        else
+            return;
     }
 }

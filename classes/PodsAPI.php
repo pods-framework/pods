@@ -513,8 +513,7 @@ class PodsAPI
         }
 
         wp_cache_delete( 'pods', 'pods' );
-        wp_cache_delete( 'pod_' . $params->pod, 'pods' );
-        wp_cache_delete( 'pod_' . $params->pod . '_' . $params->name, 'pods' );
+        wp_cache_delete( $params->pod, 'pods_pods' );
 
         return $params->id;
     }
@@ -583,8 +582,8 @@ class PodsAPI
             $params->id = $object_id;
         }
 
-        wp_cache_delete( 'object_' . $params->type, 'pods' );
-        wp_cache_delete( 'object_' . $params->type . '_' . $params->name, 'pods' );
+        wp_cache_delete( $params->type, 'pods_objects' );
+        wp_cache_delete( $params->name, 'pods_object_' . $params->type );
     }
 
     /**
@@ -779,8 +778,6 @@ class PodsAPI
         $active_columns =& $fields_active; // @deprecated 2.0.0
 
         $pre_save_helpers = $post_save_helpers = array();
-        $pre_create_helpers = $post_create_helpers = array();
-        $pre_edit_helpers = $post_edit_helpers = array();
 
         if ( false === $bypass_helpers ) {
             // Plugin hook
@@ -800,8 +797,6 @@ class PodsAPI
                 if ( !empty( $this->pod_data[ 'options' ] ) && is_array( $this->pod_data[ 'options' ] ) ) {
                     $helpers = array( 'pre_save_helpers', 'post_save_helpers' );
                     foreach ( $helpers as $helper ) {
-                        ${$helper} = array();
-
                         if ( isset( $this->pod_data[ 'options' ][ $helper ] ) && !empty( $this->pod_data[ 'options' ][ $helper ] ) )
                             ${$helper} = explode( ',', $this->pod_data[ 'options' ][ $helper ] );
                     }
@@ -956,7 +951,7 @@ class PodsAPI
             }
         }
 
-        wp_cache_delete( $params->pod . '_' . $params->id, 'pods_items' );
+        wp_cache_delete( $params->id, 'pods_items_' . $params->pod );
 
         // Success! Return the id
         return $params->id;
@@ -1105,6 +1100,14 @@ class PodsAPI
             pods_query("TRUNCATE `@wp_pods_tbl_{$params->name}`");
         }
         pods_query("DELETE FROM `@wp_pods_rel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}");
+
+        // Hack for WP caching since there's no function (as of WP 3.4)
+        // @todo Get group deleting functionality into WP core
+        global $wp_object_cache;
+        if ( isset( $wp_object_cache[ 'pods_items_' . $pod[ 'name' ] ] ) )
+            unset( $wp_object_cache[ 'pods_items_' . $pod[ 'name' ] ] );
+
+        return true;
     }
 
     /**
@@ -1140,6 +1143,16 @@ class PodsAPI
         pods_query("DELETE FROM `@wp_pods_rel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}");
         pods_query("DELETE FROM `@wp_pods_fields` WHERE `pod_id` = {$params->id}");
         pods_query("DELETE FROM `@wp_pods` WHERE `id` = {$params->id} LIMIT 1");
+
+        wp_cache_delete( $pod[ 'name' ], $pod, 'pods_pods' );
+
+        // Hack for WP caching since there's no function (as of WP 3.4)
+        // @todo Get group deleting functionality into WP core
+        global $wp_object_cache;
+        if ( isset( $wp_object_cache[ 'pods_items_' . $pod[ 'name' ] ] ) )
+            unset( $wp_object_cache[ 'pods_items_' . $pod[ 'name' ] ] );
+
+        return true;
     }
 
     /**
@@ -1185,6 +1198,15 @@ class PodsAPI
         pods_query("DELETE FROM `@wp_pods_rel` WHERE (`pod_id` = {$params->pod_id} AND `field_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_field_id` = {$params->id})");
         pods_query("DELETE FROM `@wp_pods_fields` WHERE `id` = {$params->id} LIMIT 1");
         pods_query("UPDATE `@wp_pods_fields` SET `sister_field_id` = NULL WHERE `sister_field_id` = {$params->id}");
+
+        wp_cache_delete( 'pods', 'pods' );
+        wp_cache_delete( $params->pod, 'pods_pods' );
+
+        // Hack for WP caching since there's no function (as of WP 3.4)
+        // @todo Get group deleting functionality into WP core
+        global $wp_object_cache;
+        if ( isset( $wp_object_cache[ 'pods_items_' . $pod[ 'name' ] ] ) )
+            unset( $wp_object_cache[ 'pods_items_' . $pod[ 'name' ] ] );
     }
 
     /**
@@ -1208,7 +1230,8 @@ class PodsAPI
         if (empty($result))
             return pods_error(ucwords($params->type).' Object not deleted', $this);
 
-        wp_cache_delete( 'object_' . $params->type . '_' . $params->name, 'pods' );
+        wp_cache_delete( $params->type, 'pods_objects' );
+        wp_cache_delete( $params->name, 'pods_object_' . $params->type );
 
         return true;
     }
@@ -1331,8 +1354,6 @@ class PodsAPI
                 if ( !empty( $pod[ 'options' ] ) && is_array( $pod[ 'options' ] ) ) {
                     $helpers = array( 'pre_delete_helpers', 'post_delete_helpers' );
                     foreach ( $helpers as $helper ) {
-                        ${$helper} = array();
-
                         if ( isset( $pod[ 'options' ][ $helper ] ) && !empty( $pod[ 'options' ][ $helper ] ) )
                             ${$helper} = explode( ',', $pod[ 'options' ][ $helper ] );
                     }
@@ -1369,6 +1390,10 @@ class PodsAPI
                 }
             }
         }
+
+        wp_cache_delete( $params->id, 'pods_items_' . $params->pod );
+
+        return true;
     }
 
     /**
@@ -1408,7 +1433,7 @@ class PodsAPI
             return pods_error('Either Pod ID or Name are required', $this);
 
         if ( isset( $params->name ) ) {
-            $pod = wp_cache_get( 'pod_' . $params->name, 'pods' );
+            $pod = wp_cache_get( $params->name, 'pods_pods' );
             if ( false !== $pod )
                 return $pod;
         }
@@ -1425,24 +1450,30 @@ class PodsAPI
         }
 
         $pod = get_object_vars($result[0]);
+
         if (!empty($pod['options']))
             $pod['options'] = @json_decode($pod['options'], true);
+
         if (!is_array($pod['options']))
             $pod['options'] = array();
+
         if (!isset($pod['options']['label']) || empty($pod['options']['label']))
             $pod['options']['label'] = ucwords(str_replace('_', ' ', $pod['name']));
-        //$pod['options'] = $this->handle_options($pod['options'], $pod);
+
         $pod['fields'] = array();
+
         $result = pods_query("SELECT * FROM `@wp_pods_fields` WHERE pod_id = {$pod['id']} ORDER BY weight");
+
         if (!empty($result)) {
             foreach ($result as $row) {
                 $pod['fields'][$row->name] = get_object_vars($row);
+
                 if (!empty($pod['fields'][$row->name]['options']))
                     $pod['fields'][$row->name]['options'] = (array) @json_decode($pod['fields'][$row->name]['options'], true);
             }
         }
 
-        wp_cache_set( 'pod_' . $pod[ 'name' ], $pod, 'pods' );
+        wp_cache_set( $pod[ 'name' ], $pod, 'pods_pods' );
 
         return $pod;
     }
@@ -1495,6 +1526,13 @@ class PodsAPI
             $limit = " LIMIT {$params->limit} ";
         }
 
+        if ( empty( $where ) && empty( $limit ) && empty ( $orderby ) ) {
+            $the_pods = wp_cache_get( 'pods', 'pods' );
+
+            if ( false !== $the_pods )
+                return $the_pods;
+        }
+
         $result = pods_query("SELECT id FROM `@wp_pods` {$where} {$orderby} {$limit}", $this);
 
         if (empty($result))
@@ -1507,6 +1545,9 @@ class PodsAPI
 
             $the_pods[$pod['name']] = $pod;
         }
+
+        if ( empty( $where ) && empty( $limit ) && empty ( $orderby ) )
+            wp_cache_set( 'pods', $the_pods, 'pods' );
 
         return $the_pods;
     }
@@ -1563,10 +1604,25 @@ class PodsAPI
             $where = 'id = ' . pods_absint($params->id);
         if (!isset($params->type) || empty($params->type))
             return pods_error('Type must be given to load an Object', $this);
+
+        if ( isset( $params->name ) ) {
+            $object = wp_cache_get( $params->name, 'pods_object_' . $params->type );
+
+            if ( false !== $object )
+                return $object;
+        }
+
         $result = pods_query("SELECT * FROM `@wp_pods_objects` WHERE $where `type` = '{$params->type}' LIMIT 1", $this);
         if (empty($result))
             return pods_error(ucwords($params->type).' Object not found', $this);
-        return get_object_vars($result[0]);
+
+        $object = get_object_vars( $result[ 0 ] );
+        if ( !empty( $object[ 'options' ] ) )
+            $object[ 'options' ] = (array) @json_decode( $object[ 'options' ], true );
+
+        wp_cache_set( $object[ 'name' ], $object, 'pods_object_' . $params->type );
+
+        return $object;
     }
 
     /**
@@ -1609,6 +1665,14 @@ class PodsAPI
             $params->limit = pods_absint($params->limit);
             $limit = " LIMIT {$params->limit} ";
         }
+
+        if ( empty( $where ) && empty( $orderby ) && empty( $limit ) ) {
+            $the_objects = wp_cache_get( $params->type, 'pods_objects' );
+
+            if ( false !== $the_objects )
+                return $the_objects;
+        }
+
         $query = "SELECT * FROM `@wp_pods_objects` {$where} {$orderby} {$limit}";
         $result = pods_query($query, $this);
         if (empty($result))
@@ -1617,11 +1681,16 @@ class PodsAPI
 
         foreach ($result as $row) {
             $obj = get_object_vars($row);
+
             if (!empty($obj['options']))
                 $obj['options'] = @json_decode($obj['options'], true);
-            $obj['options'] = $this->handle_options($obj['options'], $obj);
+
             $the_objects[$obj['name']] = $obj;
         }
+
+        if ( empty( $where ) && empty( $orderby ) && empty( $limit ) )
+            wp_cache_set( $params->type, $the_objects, 'pods_objects' );
+
         return $the_objects;
     }
 
@@ -1726,6 +1795,8 @@ class PodsAPI
      * Load Component Information
      *
      * @since 2.0.0
+     *
+     * @todo Update with latest component code from RD2
      */
     public function load_components () {
         $components_root = PODS_DIR . 'components';
@@ -1797,7 +1868,14 @@ class PodsAPI
         if (!isset($params->id) || empty($params->id))
             return pods_error('Item ID required', $this);
 
-        return new Pod($params->datatype, $params->id);
+        $pod = wp_cache_get( $params->id, 'pods_items_' . $params->pod );
+
+        if ( false !== $pod )
+            return $pod;
+
+        $pod = new Pod($params->pod, $params->id);
+
+        return $pod;
     }
 
     /**
@@ -1807,14 +1885,20 @@ class PodsAPI
      * $params['related_pod'] string The related Pod name
      *
      * @param array $params An associative array of parameters
+     * @param array $pod Array of Pod data to use (to avoid lookup)
      * @since 1.7.9
+     *
+     * @todo Implement with load_pod / fields and use AJAX for new admin
      */
-    public function load_sister_fields ($params) {
+    public function load_sister_fields ($params, $pod = null) {
         $params = (object) pods_sanitize($params);
 
-        $pod = $this->load_pod(array('name' => $params->pod));
-        if (false === $pod)
-            return pods_error('Pod not found', $this);
+        if ( empty( $pod ) ) {
+            $pod = $this->load_pod(array('name' => $params->pod));
+
+            if (false === $pod)
+                return pods_error('Pod not found', $this);
+        }
 
         $params->pod_id = $pod['id'];
         $params->pod = $pod['name'];
@@ -1867,14 +1951,6 @@ class PodsAPI
             }
         }
         return $data;
-    }
-
-    private function handle_options ($options, $pod) {
-        // setup default array
-        $default = array('is_toplevel' => 0,
-                         'label' => '');
-        $options = array_merge($default, (array) $options);
-        return apply_filters('pods_api_pod_options', $options, $pod);
     }
 
     /**
@@ -1945,6 +2021,8 @@ class PodsAPI
                 $options[ 'options' ] = PodsForm::options_setup( $options[ 'type' ] );
 
                 $field_types[ $field_type ] = $options;
+
+                wp_cache_set( $field_type, $options, 'pods_field_types' );
             }
 
             wp_cache_set( 'field_types', $field_types, 'pods' );
@@ -1994,6 +2072,8 @@ class PodsAPI
                 // handle rel check
             }
         }
+
+
 
         // @todo Run field validation
 

@@ -535,26 +535,28 @@ class Pods
      *
      * @since 2.0.0
      */
-    public function __call ($name, $args) {
+    public function __call ( $name, $args ) {
         $name = (string) $name;
-        if (!isset($this->deprecated)) {
-            require_once(PODS_DIR . 'deprecated/classes/Pods.php');
-            $this->deprecated = new Pods_Deprecated($this);
-            if (method_exists($this->deprecated, $name)) {
-                $arg_count = count($args);
-                if (0 == $arg_count)
-                    $this->deprecated->{$name}();
-                elseif (1 == $arg_count)
-                    $this->deprecated->{$name}($args[0]);
-                elseif (2 == $arg_count)
-                    $this->deprecated->{$name}($args[0], $args[1]);
-                elseif (3 == $arg_count)
-                    $this->deprecated->{$name}($args[0], $args[1], $args[2]);
-                else
-                    $this->deprecated->{$name}($args[0], $args[1], $args[2], $args[3]);
-            }
-            else
-                pods_deprecated("Pods::{$name}", '2.0.0');
+
+        if ( !isset( $this->deprecated ) ) {
+            require_once( PODS_DIR . 'deprecated/classes/Pods.php' );
+            $this->deprecated = new Pods_Deprecated( $this );
         }
+
+        if ( method_exists( $this->deprecated, $name ) ) {
+            $arg_count = count( $args );
+            if ( 0 == $arg_count )
+                $this->deprecated->{$name}();
+            elseif ( 1 == $arg_count )
+                $this->deprecated->{$name}( $args[ 0 ] );
+            elseif ( 2 == $arg_count )
+                $this->deprecated->{$name}( $args[ 0 ], $args[ 1 ] );
+            elseif ( 3 == $arg_count )
+                $this->deprecated->{$name}( $args[ 0 ], $args[ 1 ], $args[ 2 ] );
+            else
+                $this->deprecated->{$name}( $args[ 0 ], $args[ 1 ], $args[ 2 ], $args[ 3 ] );
+        }
+        else
+            pods_deprecated( "Pods::{$name}", '2.0.0' );
     }
 }

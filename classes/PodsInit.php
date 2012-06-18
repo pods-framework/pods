@@ -22,8 +22,10 @@ class PodsInit
             add_action('init', array($this, 'page_check'), 11);
             add_action('delete_attachment', array($this, 'delete_attachment'));
 
-            add_action('init', array($this, 'admin_init'));
+            if ( is_admin() )
+                add_action('init', array($this, 'admin_init'));
 
+            // Widgets
             require_once PODS_DIR . 'classes/widgets/PodsWidgetSingle.php';
             require_once PODS_DIR . 'classes/widgets/PodsWidgetList.php';
             require_once PODS_DIR . 'classes/widgets/PodsWidgetColumn.php';

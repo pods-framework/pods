@@ -153,12 +153,12 @@ class PodsAPI {
             if ( isset( $params->name ) && 0 < strlen( $params->name ) )
                 $old_name = $pod[ 'name' ];
             else
-                $params->name = $pod[ 'name' ];
+                $params->name = $old_name = $pod[ 'name' ];
             if ( $old_name != $params->name && false !== $this->pod_exists( array( 'name' => $params->name ) ) )
-                return pods_error( 'Pod ' . $params->name . ' already exists', $this );
+                return pods_error( 'Pod ' . $params->name . ' already exists, you cannot rename ' . $old_name . ' to that', $this );
             elseif ( $old_id != $params->id ) {
                 if ( $params->type == $pod[ 'type' ] && isset( $params->object ) && $params->object == $pod[ 'object' ] )
-                    return pods_error( 'Pod using ' . $params->object . ' already exists', $this );
+                    return pods_error( 'Pod using ' . $params->object . ' already exists, you can not reuse an object across multiple pods', $this );
                 else
                     return pods_error( 'Pod ' . $params->name . ' already exists', $this );
             }
@@ -172,7 +172,7 @@ class PodsAPI {
 
             $check = pods_query( "SELECT `id` FROM `@wp_pods` WHERE `name` = '{$params->name}' LIMIT 1", $this );
             if ( !empty( $check ) )
-                return pods_error( 'Pod ' . $params->name . ' already exists', $this );
+                return pods_error( 'Pod ' . $params->name . ' already exists, you can not add one using the same name', $this );
 
             $fields = array( 'name' => $params->name, 'options' => '', 'type' => 'pod', 'storage' => 'table' );
             if ( isset( $params->type ) && 0 < strlen( $params->type ) )

@@ -582,7 +582,7 @@ function pods_access ( $privs, $method = 'OR' ) {
     global $pods_roles;
 
     if ( empty( $pods_roles ) && !is_array( $pods_roles ) ) {
-        $pods_roles = @unserialize( get_option( 'pods_roles' ) );
+        $pods_roles = get_option( 'pods_roles' );
         if ( !is_array( $pods_roles ) )
             $pods_roles = array();
     }

@@ -448,7 +448,7 @@ class PodsForm {
      * @since 2.0.0
      */
     public static function field_method ( $field_type, $method, $options = null ) {
-        $class = field_loader( $field_type );
+        $class = self::field_loader( $field_type );
 
         if ( method_exists( $class, $method ) )
             return $class->$method( $options );

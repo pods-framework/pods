@@ -326,13 +326,12 @@ class PodsAdmin {
         pods_ui( array(
                      'sql' => array(
                          'table' => '@wp_pods',
-                         'select' => 'name, type, "0" AS field_count'
+                         'select' => 'name, type'
                      ),
                      'icon' => PODS_URL . 'ui/images/icon32.png',
                      'items' => 'Pods',
                      'item' => 'Pod',
                      'orderby' => 'name',
-                     //'reorder' => array('on' => 'weight'),
                      'fields' => array( 'manage' => array( 'name', 'type' ) ),
                      'actions_disabled' => array( 'duplicate', 'view', 'export' ),
                      'actions_custom' => array(

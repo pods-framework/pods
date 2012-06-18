@@ -1,30 +1,48 @@
 <?php
-class Pods
-{
+class Pods {
+
     private $api;
+
     private $data;
+
     private $results;
+
     private $row;
+
     private $deprecated;
+
     public $display_errors = false;
 
     public $table;
+
     public $field_id = 'id';
+
     public $field_index = 'name';
+
     public $pod_data;
+
     public $pod;
+
     public $pod_id;
+
     public $fields;
+
     public $detail_page;
 
     public $id;
 
     public $limit = 15;
+
     public $page_var = 'pg';
+
     public $page = 1;
+
     public $pagination = true;
+
     public $search = true;
+
     public $search_var = 'search';
+
     public $search_mode = 'int'; // int | text | text_like
 
     public $ui;
@@ -34,33 +52,39 @@ class Pods
      *
      * @param string $pod The pod name
      * @param mixed $id (optional) The ID or slug, to load a single record; Provide array of $params to run 'find' immediately
+     *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 1.0.0
      */
-    public function __construct ($pod = null, $id = null) {
-        $this->api = pods_api($pod);
+    public function __construct ( $pod = null, $id = null ) {
+        $this->api = pods_api( $pod );
         $this->api->display_errors =& $this->display_errors;
 
-        $this->data = pods_data($pod, $id);
+        $this->data = pods_data( $pod, $id );
         PodsData::$display_errors =& $this->display_errors;
 
-        if (defined('PODS_STRICT_MODE') && PODS_STRICT_MODE) {
+        if ( defined( 'PODS_STRICT_MODE' ) && PODS_STRICT_MODE ) {
             $this->page = 1;
             $this->pagination = false;
             $this->search = false;
         }
         else {
             // Get the page variable
-            $this->page = pods_var($this->page_var, 'get');
-            $this->page = (empty($this->page) ? 1 : max(pods_absint($this->page), 1));
-            if (defined('PODS_GLOBAL_POD_PAGINATION') && !PODS_GLOBAL_POD_PAGINATION) {
+            $this->page = pods_var( $this->page_var, 'get' );
+            $this->page = ( empty( $this->page ) ? 1 : max( pods_absint( $this->page ), 1 ) );
+            if ( defined( 'PODS_GLOBAL_POD_PAGINATION' ) && !PODS_GLOBAL_POD_PAGINATION ) {
                 $this->page = 1;
                 $this->pagination = false;
             }
 
-            if (defined('PODS_GLOBAL_POD_SEARCH') && !PODS_GLOBAL_POD_SEARCH)
+            if ( defined( 'PODS_GLOBAL_POD_SEARCH' ) && !PODS_GLOBAL_POD_SEARCH )
                 $this->search = false;
-            if (defined('PODS_GLOBAL_POD_SEARCH_MODE') && in_array(PODS_GLOBAL_POD_SEARCH_MODE, array('int', 'text', 'text_like')))
+            if ( defined( 'PODS_GLOBAL_POD_SEARCH_MODE' ) && in_array( PODS_GLOBAL_POD_SEARCH_MODE, array(
+                'int',
+                'text',
+                'text_like'
+            ) )
+            )
                 $this->search_mode = PODS_GLOBAL_POD_SEARCH_MODE;
         }
 
@@ -89,8 +113,8 @@ class Pods
         $this->field_id =& $this->data->field_id;
         $this->field_index =& $this->data->field_index;
 
-        if (is_array($id) || is_object($id))
-            $this->find($id);
+        if ( is_array( $id ) || is_object( $id ) )
+            $this->find( $id );
     }
 
     /**
@@ -99,8 +123,8 @@ class Pods
      * @since 2.0.0
      */
     public function data () {
-        $this->do_hook('data');
-        if (empty($this->results))
+        $this->do_hook( 'data' );
+        if ( empty( $this->results ) )
             return false;
         return (array) $this->results;
     }
@@ -111,8 +135,8 @@ class Pods
      * @since 2.0.0
      */
     public function row () {
-        $this->do_hook('row');
-        if (empty($this->row))
+        $this->do_hook( 'row' );
+        if ( empty( $this->row ) )
             return false;
         return (array) $this->row;
     }
@@ -122,34 +146,37 @@ class Pods
      *
      * @param array $params An associative array of parameters (OR the Field name)
      * @param string $orderby (optional) The orderby string, for PICK fields
+     *
      * @since 2.0.0
      */
-    public function field ($params, $orderby = null) {
-        $defaults = array('name' => $params,
-                          'orderby' => $orderby);
+    public function field ( $params, $orderby = null ) {
+        $defaults = array(
+            'name' => $params,
+            'orderby' => $orderby
+        );
 
-        if (is_array($params) || is_object($params))
-            $params = (object) array_merge($defaults, (array) $params);
+        if ( is_array( $params ) || is_object( $params ) )
+            $params = (object) array_merge( $defaults, (array) $params );
         else
             $params = (object) $defaults;
 
-        if (is_array($params->name) || strlen($params->name) < 1)
+        if ( is_array( $params->name ) || strlen( $params->name ) < 1 )
             return null;
 
-        if (false === $this->row()) {
-            if (false !== $this->data())
+        if ( false === $this->row() ) {
+            if ( false !== $this->data() )
                 $this->fetch();
             else
                 return null;
         }
 
         $value = null;
-        if (isset($this->fields[$params->name]) && isset($this->row[$params->name]))
-            $value = $this->row[$params->name];
+        if ( isset( $this->fields[ $params->name ] ) && isset( $this->row[ $params->name ] ) )
+            $value = $this->row[ $params->name ];
         else {
             // do pick / file handling
         }
-        $value = $this->do_hook('field', $value, $this->row, $params);
+        $value = $this->do_hook( 'field', $value, $this->row, $params );
         return $value;
     }
 
@@ -157,28 +184,31 @@ class Pods
      * Search and filter items
      *
      * @param array $params An associative array of parameters
+     *
      * @since 2.0.0
      */
-    public function find ($params = null, $limit = 15, $where = null, $sql = null) {
-        $defaults = array('table' => $this->table,
-                          'select' => 't.*',
-                          'join' => null,
-                          'where' => $where,
-                          'groupby' => null,
-                          'having' => null,
-                          'orderby' => "t.`{$this->field_id}` DESC",
-                          'limit' => (int) $limit,
-                          'page' => (int) $this->page,
-                          'search' => (boolean) $this->search,
-                          'search_query' => pods_var($this->search_var, 'get', ''),
-                          'search_mode' => pods_var($this->search_var, 'get', ''),
-                          'search_across' => true,
-                          'search_across_picks' => false,
-                          'fields' => $this->fields,
-                          'sql' => $sql);
+    public function find ( $params = null, $limit = 15, $where = null, $sql = null ) {
+        $defaults = array(
+            'table' => $this->table,
+            'select' => 't.*',
+            'join' => null,
+            'where' => $where,
+            'groupby' => null,
+            'having' => null,
+            'orderby' => "t.`{$this->field_id}` DESC",
+            'limit' => (int) $limit,
+            'page' => (int) $this->page,
+            'search' => (boolean) $this->search,
+            'search_query' => pods_var( $this->search_var, 'get', '' ),
+            'search_mode' => pods_var( $this->search_var, 'get', '' ),
+            'search_across' => true,
+            'search_across_picks' => false,
+            'fields' => $this->fields,
+            'sql' => $sql
+        );
 
-        if (is_array($params))
-            $params = (object) array_merge($defaults, $params);
+        if ( is_array( $params ) )
+            $params = (object) array_merge( $defaults, $params );
         else
             $params = (object) $defaults;
 
@@ -188,9 +218,9 @@ class Pods
 
         // also need to do better search/filtering using search_mode and auto join stuff for pick/file fields
 
-        $params = $this->do_hook('find', $params);
+        $params = $this->do_hook( 'find', $params );
 
-        $this->data->select($params);
+        $this->data->select( $params );
         $this->results =& $this->data->data;
     }
 
@@ -199,23 +229,25 @@ class Pods
      *
      * @since 2.0.0
      */
-    public function fetch ($id = null) {
-        if (null !== $id) {
-            $id = pods_absint($id);
-            $params = array('table' => $this->table,
-                            'where' => "`{$this->field_id}` = {$id}",
-                            'orderby' => "`{$this->field_id}` DESC",
-                            'page' => 1,
-                            'limit' => 1,
-                            'search' => false);
+    public function fetch ( $id = null ) {
+        if ( null !== $id ) {
+            $id = pods_absint( $id );
+            $params = array(
+                'table' => $this->table,
+                'where' => "`{$this->field_id}` = {$id}",
+                'orderby' => "`{$this->field_id}` DESC",
+                'page' => 1,
+                'limit' => 1,
+                'search' => false
+            );
 
-            $params = $this->do_hook('fetch', $params, $id);
+            $params = $this->do_hook( 'fetch', $params, $id );
 
-            $this->data->select($params);
+            $this->data->select( $params );
             $this->results =& $this->data->data;
         }
         else
-            $this->do_hook('fetch', null, $id);
+            $this->do_hook( 'fetch', null, $id );
 
         $this->row =& $this->data->fetch();
     }
@@ -225,10 +257,10 @@ class Pods
      *
      * @since 2.0.0
      */
-    public function reset ($row = 0) {
-        $this->do_hook('reset');
-        $pods = pods_absint($row);
-        $this->row =& $this->data->fetch($row);
+    public function reset ( $row = 0 ) {
+        $this->do_hook( 'reset' );
+        $pods = pods_absint( $row );
+        $this->row =& $this->data->fetch( $row );
         return $this->row;
     }
 
@@ -239,7 +271,7 @@ class Pods
      * @since 2.0.0
      */
     public function total () {
-        $this->do_hook('total');
+        $this->do_hook( 'total' );
         $this->total =& $this->data->total();
         return $this->total;
     }
@@ -251,7 +283,7 @@ class Pods
      * @since 2.0.0
      */
     public function total_found () {
-        $this->do_hook('total_found');
+        $this->do_hook( 'total_found' );
         $this->total_found =& $this->data->total_found();
         return $this->total_found;
     }
@@ -263,7 +295,7 @@ class Pods
      * @since 1.12
      */
     public function zebra () {
-        $this->do_hook('zebra');
+        $this->do_hook( 'zebra' );
         return $this->data->zebra();
     }
 
@@ -272,16 +304,16 @@ class Pods
      *
      * @since 2.0.0
      */
-    public function add ($data = null, $value = null, $id = null) {
-        if (null !== $value)
+    public function add ( $data = null, $value = null, $id = null ) {
+        if ( null !== $value )
             $data = array( $data => $value );
-        if (null === $id)
+        if ( null === $id )
             $id = $this->id;
-        $data = (array) $this->do_hook('add', $data, $id);
-        if (empty($data))
+        $data = (array) $this->do_hook( 'add', $data, $id );
+        if ( empty( $data ) )
             return;
         $params = array( 'pod' => $this->pod, 'id' => $id, 'columns' => array( $data ) );
-        return $this->api->save_pod_item($params);
+        return $this->api->save_pod_item( $params );
     }
 
     /**
@@ -289,16 +321,16 @@ class Pods
      *
      * @since 2.0.0
      */
-    public function save ($data = null, $value = null, $id = null) {
-        if (null !== $value)
+    public function save ( $data = null, $value = null, $id = null ) {
+        if ( null !== $value )
             $data = array( $data => $value );
-        if (null === $id)
+        if ( null === $id )
             $id = $this->id;
-        $data = (array) $this->do_hook('save', $data, $id);
-        if (empty($data))
+        $data = (array) $this->do_hook( 'save', $data, $id );
+        if ( empty( $data ) )
             return;
         $params = array( 'pod' => $this->pod, 'id' => $id, 'columns' => array( $data ) );
-        return $this->api->save_pod_item($params);
+        return $this->api->save_pod_item( $params );
     }
 
     /**
@@ -306,14 +338,14 @@ class Pods
      *
      * @since 2.0.0
      */
-    public function delete ($id = null) {
-        if (null === $id)
+    public function delete ( $id = null ) {
+        if ( null === $id )
             $id = $this->id;
-        $id = (int) $this->do_hook('delete', $id);
-        if (empty($id))
+        $id = (int) $this->do_hook( 'delete', $id );
+        if ( empty( $id ) )
             return;
         $params = array( 'pod' => $this->pod, 'id' => $id );
-        return $this->api->drop_pod_item($params);
+        return $this->api->drop_pod_item( $params );
     }
 
     /**
@@ -321,14 +353,14 @@ class Pods
      *
      * @since 2.0.0
      */
-    public function duplicate ($id = null) {
-        if (null === $id)
+    public function duplicate ( $id = null ) {
+        if ( null === $id )
             $id = $this->id;
-        $id = (int) $this->do_hook('duplicate', $id);
-        if (empty($id))
+        $id = (int) $this->do_hook( 'duplicate', $id );
+        if ( empty( $id ) )
             return;
         $params = array( 'pod' => $this->pod, 'id' => $id );
-        return $this->api->duplicate_pod_item($params);
+        return $this->api->duplicate_pod_item( $params );
     }
 
     /**
@@ -336,14 +368,14 @@ class Pods
      *
      * @since 2.0.0
      */
-    public function export ($columns = null, $id = null) {
-        if (null === $id)
+    public function export ( $columns = null, $id = null ) {
+        if ( null === $id )
             $id = $this->id;
-        $columns = (array) $this->do_hook('export', $columns, $id);
-        if (empty($id))
+        $columns = (array) $this->do_hook( 'export', $columns, $id );
+        if ( empty( $id ) )
             return;
         $params = array( 'pod' => $this->pod, 'id' => $id, 'columns' => $columns );
-        return $this->api->export_pod_item($params);
+        return $this->api->export_pod_item( $params );
     }
 
     /**
@@ -351,9 +383,9 @@ class Pods
      *
      * @since 2.0.0
      */
-    public function pagination ($params = null) {
-        $params = (object) $this->do_hook('pagination', $params);
-        if (isset($params->bypass) && true === $params->bypass)
+    public function pagination ( $params = null ) {
+        $params = (object) $this->do_hook( 'pagination', $params );
+        if ( isset( $params->bypass ) && true === $params->bypass )
             return;
         require_once PODS_DIR . 'ui/front/pagination.php';
     }
@@ -363,9 +395,9 @@ class Pods
      *
      * @since 2.0.0
      */
-    public function filters ($params = null) {
-        $params = (object) $this->do_hook('filters', $params);
-        if (isset($params->bypass) && true === $params->bypass)
+    public function filters ( $params = null ) {
+        $params = (object) $this->do_hook( 'filters', $params );
+        if ( isset( $params->bypass ) && true === $params->bypass )
             return;
         require_once PODS_DIR . 'ui/front/filters.php';
     }
@@ -378,50 +410,53 @@ class Pods
      * $params['name'] string Field name
      *
      * @param array $params An associative array of parameters
+     *
      * @return mixed Anything returned by the helper
      * @since 2.0.0
      *
      * @deprecated deprecated since 2.0.0
      */
-    public function helper ($helper, $value = null, $name = null) {
-        pods_deprecated("Pods::helper", '2.0.0');
+    public function helper ( $helper, $value = null, $name = null ) {
+        pods_deprecated( "Pods::helper", '2.0.0' );
 
-        $params = array('helper' => $helper,
-                        'value' => $value,
-                        'name' => $name);
-        if (is_array($helper))
-            $params = array_merge($params, $helper);
+        $params = array(
+            'helper' => $helper,
+            'value' => $value,
+            'name' => $name
+        );
+        if ( is_array( $helper ) )
+            $params = array_merge( $params, $helper );
         $params = (object) $params;
 
-        if (empty($params->helper))
-            return pods_error('Helper name required', $this);
+        if ( empty( $params->helper ) )
+            return pods_error( 'Helper name required', $this );
 
-        if (!isset($params->value))
+        if ( !isset( $params->value ) )
             $params->value = null;
-        if (!isset($params->name))
+        if ( !isset( $params->name ) )
             $params->name = null;
 
         ob_start();
 
-        $this->do_hook('pre_pod_helper', $params);
-        $this->do_hook("pre_pod_helper_{$params->helper}", $params);
+        $this->do_hook( 'pre_pod_helper', $params );
+        $this->do_hook( "pre_pod_helper_{$params->helper}", $params );
 
-        $helper = $this->api->load_helper(array('name' => $params->helper));
-        if (!empty($helper) && !empty($helper['code'])) {
-            if (!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
-                eval("?>{$helper['code']}");
+        $helper = $this->api->load_helper( array( 'name' => $params->helper ) );
+        if ( !empty( $helper ) && !empty( $helper[ 'code' ] ) ) {
+            if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL )
+                eval( "?>{$helper['code']}" );
             else
-                echo $helper['code'];
+                echo $helper[ 'code' ];
         }
-        elseif (function_exists("{$params->helper}")) {
+        elseif ( function_exists( "{$params->helper}" ) ) {
             $function_name = (string) $params->helper;
-            echo $function_name($params->value, $params->name, $params, $this);
+            echo $function_name( $params->value, $params->name, $params, $this );
         }
 
-        $this->do_hook('post_pod_helper', $params);
-        $this->do_hook("post_pod_helper_{$params->helper}", $params);
+        $this->do_hook( 'post_pod_helper', $params );
+        $this->do_hook( "post_pod_helper_{$params->helper}", $params );
 
-        return $this->do_hook('helper', ob_get_clean(), $params);
+        return $this->do_hook( 'helper', ob_get_clean(), $params );
     }
 
     /**
@@ -429,36 +464,36 @@ class Pods
      *
      * @since 2.0.0
      */
-    public function template ($template, $code = null) {
+    public function template ( $template, $code = null ) {
         ob_start();
 
-        $this->do_hook('pre_template', $template, $code);
-        $this->do_hook("pre_template_{$template}", $template, $code);
+        $this->do_hook( 'pre_template', $template, $code );
+        $this->do_hook( "pre_template_{$template}", $template, $code );
 
-        if (empty($code)) {
-            $template = $this->api->load_template(array('name' => $template));
-            if (!empty($template) && !empty($template['code']))
-                $code = $template['code'];
-            elseif (function_exists("{$template}"))
-                $code = $template($this);
+        if ( empty( $code ) ) {
+            $template = $this->api->load_template( array( 'name' => $template ) );
+            if ( !empty( $template ) && !empty( $template[ 'code' ] ) )
+                $code = $template[ 'code' ];
+            elseif ( function_exists( "{$template}" ) )
+                $code = $template( $this );
         }
 
-        $code = $this->do_hook('template', $code, $template);
-        $code = $this->do_hook("template_{$template}", $code, $template);
+        $code = $this->do_hook( 'template', $code, $template );
+        $code = $this->do_hook( "template_{$template}", $code, $template );
 
-        if (!empty($code)) {
+        if ( !empty( $code ) ) {
             // Only detail templates need $this->id
-            if (empty($this->id)) {
+            if ( empty( $this->id ) ) {
                 while ($this->fetch()) {
-                    echo $this->do_template($code);
+                    echo $this->do_template( $code );
                 }
             }
             else
-                echo $this->do_template($code);
+                echo $this->do_template( $code );
         }
 
-        $this->do_hook('post_template', $template, $code);
-        $this->do_hook("post_template_{$template}", $template, $code);
+        $this->do_hook( 'post_template', $template, $code );
+        $this->do_hook( "post_template_{$template}", $template, $code );
 
         return ob_get_clean();
     }
@@ -467,51 +502,54 @@ class Pods
      * Parse a template string
      *
      * @param string $code The template string to parse
+     *
      * @since 1.8.5
      */
-    public function do_template ($code) {
+    public function do_template ( $code ) {
         ob_start();
-        if ((!defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL))
-            eval("?>$code");
+        if ( ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) )
+            eval( "?>$code" );
         else
             echo $code;
         $out = ob_get_clean();
-        $out = preg_replace_callback("/({@(.*?)})/m", array($this, "do_magic_tags"), $out);
-        return $this->do_hook('do_template', $out, $code);
+        $out = preg_replace_callback( "/({@(.*?)})/m", array( $this, "do_magic_tags" ), $out );
+        return $this->do_hook( 'do_template', $out, $code );
     }
 
     /**
      * Replace magic tags with their values
+     *
      * @param string $tag The magic tag to evaluate
+     *
      * @since 1.x
      */
-    private function do_magic_tags ($tag) {
-        $tag = trim($tag, ' {@}');
-        $tag = explode(',', $tag);
-        if (empty($tag) || !isset($tag[0]) || 0 < strlen(trim($tag[0])))
+    private function do_magic_tags ( $tag ) {
+        $tag = trim( $tag, ' {@}' );
+        $tag = explode( ',', $tag );
+        if ( empty( $tag ) || !isset( $tag[ 0 ] ) || 0 < strlen( trim( $tag[ 0 ] ) ) )
             return;
-        foreach ($tag as $k => $v) {
-            $tag[$k] = trim($v);
+        foreach ( $tag as $k => $v ) {
+            $tag[ $k ] = trim( $v );
         }
-        $field_name = $tag[0];
-        if ('detail_url' == $field_name)
-            $value = get_bloginfo('url') . '/' . $this->do_template($this->detail_page);
-        elseif ('type' == $field_name)
+        $field_name = $tag[ 0 ];
+        if ( 'detail_url' == $field_name )
+            $value = get_bloginfo( 'url' ) . '/' . $this->do_template( $this->detail_page );
+        elseif ( 'type' == $field_name )
             $value = $this->pod;
         else
-            $value = $this->field($field_name);
+            $value = $this->field( $field_name );
         $helper_name = $before = $after = '';
-        if (isset($tag[1]) && !empty($tag[1])) {
-            $helper_name = $tag[1];
-            $value = $this->helper($helper_name, $value, $field_name);
+        if ( isset( $tag[ 1 ] ) && !empty( $tag[ 1 ] ) ) {
+            $helper_name = $tag[ 1 ];
+            $value = $this->helper( $helper_name, $value, $field_name );
         }
-        if (isset($tag[2]) && !empty($tag[2]))
-            $before = $tag[2];
-        if (isset($tag[3]) && !empty($tag[3]))
-            $after = $tag[3];
+        if ( isset( $tag[ 2 ] ) && !empty( $tag[ 2 ] ) )
+            $before = $tag[ 2 ];
+        if ( isset( $tag[ 3 ] ) && !empty( $tag[ 3 ] ) )
+            $after = $tag[ 3 ];
 
-        $value = $this->do_hook('do_magic_tags', $value, $field_name, $helper_name, $before, $after);
-        if (null !== $value && false !== $value)
+        $value = $this->do_hook( 'do_magic_tags', $value, $field_name, $helper_name, $before, $after );
+        if ( null !== $value && false !== $value )
             return $before . $value . $after;
         return;
 
@@ -524,10 +562,10 @@ class Pods
      */
     private function do_hook () {
         $args = func_get_args();
-        if (empty($args))
+        if ( empty( $args ) )
             return false;
-        $name = array_shift($args);
-        return pods_do_hook('pods', $name, $args, $this);
+        $name = array_shift( $args );
+        return pods_do_hook( 'pods', $name, $args, $this );
     }
 
     /**
@@ -535,26 +573,28 @@ class Pods
      *
      * @since 2.0.0
      */
-    public function __call ($name, $args) {
+    public function __call ( $name, $args ) {
         $name = (string) $name;
-        if (!isset($this->deprecated)) {
-            require_once(PODS_DIR . 'deprecated/classes/Pods.php');
-            $this->deprecated = new Pods_Deprecated($this);
-            if (method_exists($this->deprecated, $name)) {
-                $arg_count = count($args);
-                if (0 == $arg_count)
-                    $this->deprecated->{$name}();
-                elseif (1 == $arg_count)
-                    $this->deprecated->{$name}($args[0]);
-                elseif (2 == $arg_count)
-                    $this->deprecated->{$name}($args[0], $args[1]);
-                elseif (3 == $arg_count)
-                    $this->deprecated->{$name}($args[0], $args[1], $args[2]);
-                else
-                    $this->deprecated->{$name}($args[0], $args[1], $args[2], $args[3]);
-            }
-            else
-                pods_deprecated("Pods::{$name}", '2.0.0');
+
+        if ( !isset( $this->deprecated ) ) {
+            require_once( PODS_DIR . 'deprecated/classes/Pods.php' );
+            $this->deprecated = new Pods_Deprecated( $this );
         }
+
+        if ( method_exists( $this->deprecated, $name ) ) {
+            $arg_count = count( $args );
+            if ( 0 == $arg_count )
+                $this->deprecated->{$name}();
+            elseif ( 1 == $arg_count )
+                $this->deprecated->{$name}( $args[ 0 ] );
+            elseif ( 2 == $arg_count )
+                $this->deprecated->{$name}( $args[ 0 ], $args[ 1 ] );
+            elseif ( 3 == $arg_count )
+                $this->deprecated->{$name}( $args[ 0 ], $args[ 1 ], $args[ 2 ] );
+            else
+                $this->deprecated->{$name}( $args[ 0 ], $args[ 1 ], $args[ 2 ], $args[ 3 ] );
+        }
+        else
+            pods_deprecated( "Pods::{$name}", '2.0.0' );
     }
 }

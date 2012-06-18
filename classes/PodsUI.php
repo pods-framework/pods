@@ -1175,7 +1175,7 @@ class PodsUI
             <input type="button" value="<?php _e('Update Order', 'pods'); ?>" class="button" onclick="jQuery('form.admin_ui_reorder_form').submit();" />
             <input type="button" value="<?php _e('Cancel', 'pods'); ?>" class="button" onclick="document.location='<?php echo $this->var_update(array('action' . $this->num => 'manage')); ?>';" />
 <?php
-            }
+            }/*
             elseif (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
 ?>
             <div class="alignleft actions">
@@ -1185,7 +1185,7 @@ class PodsUI
                 </select> <input type="submit" id="doaction" class="button-secondary action" value="<?php _e('Apply', 'pods'); ?>">
             </div>
 <?php
-            }
+            }*/
             elseif (!in_array('export', $this->actions_disabled) && !in_array('export', $this->actions_hidden)) {
 ?>
             <div class="alignleft actions">
@@ -1216,7 +1216,7 @@ class PodsUI
         else
             $this->table($reorder);
         if (!empty($this->data)) {
-            if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
+            /*if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
 ?>
         <div class="alignleft actions">
             <select name="action2">
@@ -1225,7 +1225,7 @@ class PodsUI
             </select> <input type="submit" id="doaction2" class="button-secondary action" value="<?php _e('Apply', 'pods'); ?>">
         </div>
 <?php
-            }
+            }*/
             if (false !== $this->pagination) {
 ?>
         <div class="tablenav">
@@ -1283,11 +1283,11 @@ class PodsUI
         <thead>
             <tr>
 <?php
-        if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
+        /*if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
 ?>
                 <th scope="col" id="cb" class="manage-column column-cb check-column"><input type="checkbox" /></th>
 <?php
-        }
+        }*/
         $name_field = false;
         $fields = array();
         if (!empty($table_fields)) {
@@ -1325,11 +1325,11 @@ class PodsUI
         <tfoot>
             <tr>
 <?php
-        if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
+        /*if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
 ?>
                 <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" /></th>
 <?php
-        }
+        }*/
         if (!empty($fields)) {
             foreach ($fields as $field => $attributes) {
                 $dir = 'ASC';
@@ -1357,11 +1357,11 @@ class PodsUI
 ?>
             <tr id="item-<?php echo $row[$this->sql['field_id']]; ?>" class="iedit">
 <?php
-              if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
+                /*if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
 ?>
                 <th scope="row" class="check-column"><input type="checkbox" name="post[]" value="<?php echo $row[$this->sql['field_id']]; ?>"></th>
 <?php
-                }
+                }*/
                 foreach ($fields as $field => $attributes) {
                     if (false === $attributes['display'])
                         continue;

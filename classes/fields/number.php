@@ -124,6 +124,20 @@ class PodsField_Number extends PodsField {
     }
 
     /**
+     * Define the current field's schema for DB table storage
+     *
+     * @param array $options
+     *
+     * @return array
+     * @since 2.0.0
+     */
+    public function schema ( $options = null ) {
+        $schema = 'DECIMAL(12,2)';
+
+        return $schema;
+    }
+
+    /**
      * Change the way the value of the field is displayed with Pods::get
      *
      * @param mixed $value

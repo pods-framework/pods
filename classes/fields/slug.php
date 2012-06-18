@@ -27,6 +27,20 @@ class PodsField_Slug extends PodsField {
     }
 
     /**
+     * Define the current field's schema for DB table storage
+     *
+     * @param array $options
+     *
+     * @return array
+     * @since 2.0.0
+     */
+    public function schema ( $options = null ) {
+        $schema = 'VARCHAR(200)';
+
+        return $schema;
+    }
+
+    /**
      * Customize output of the form field
      *
      * @param string $name

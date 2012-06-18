@@ -1,7 +1,11 @@
 <?php
 $field = array_merge($field_settings['field_defaults'], $field);
+
+// fix 2.0 alpha bug
+if ( 'permalink' == $field[ 'type' ] )
+    $field[ 'type' ] = 'slug';
 ?>
-        <tr id="row-<?php echo $i; ?>" class="pods-manage-row pods-field-<?php echo esc_attr(pods_var('name', $field)) . ( '--1' === $i ? ' flexible-row' : '' ); ?>" valign="top" data-row="<?php echo $i; ?>">
+        <tr id="row-<?php echo $i; ?>" class="pods-manage-row pods-field-<?php echo esc_attr(pods_var('name', $field)) . ( '--1' === $i ? ' flexible-row' : ' pods-submittable-fields' ); ?>" valign="top" data-row="<?php echo $i; ?>">
             <th scope="row" class="check-field pods-manage-sort">
                 <img src="<?php echo PODS_URL; ?>/ui/images/handle.gif" alt="<?php esc_attr_e( 'Move', 'pods' ); ?>" />
             </th>

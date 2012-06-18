@@ -960,6 +960,12 @@
                                     </script>
                                 </li><!-- /#field-pods-field-wpcategories -->
 
+                                <!-- Pick Field: Select2 -->
+                                <li>
+                                    <?php echo PodsForm::label('pick7', 'Autocomplete: Select2'); ?>
+                                    <?php echo PodsForm::field('pick7', null, 'pick', array('pick_format_type' => 'single', 'pick_format_single' => 'autocomplete')); ?>
+                                </li>
+
                                 <?php
 
                                 // TODO: Add slider-configured field once we write a PodsForm::field_slider method

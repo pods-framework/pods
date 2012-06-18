@@ -1438,7 +1438,7 @@ class PodsAPI
                 return $pod;
         }
 
-        $where = ( isset( $params->id ) ? "`name` = '{$params->name}'" : "`id` = " . pods_absint( $params->id ) );
+        $where = ( isset( $params->name ) ? "`name` = '{$params->name}'" : "`id` = " . pods_absint( $params->id ) );
         if (isset($params->type) && !empty($params->type) && isset($params->object) && !empty($params->object))
             $where .= " OR (`type` = '{$params->type}' AND `object` = '{$params->object}')";
         $result = pods_query("SELECT * FROM `@wp_pods` WHERE {$where} LIMIT 1", $this);
@@ -1451,11 +1451,19 @@ class PodsAPI
 
         $pod = get_object_vars($result[0]);
 
+        // @todo update with a method to put all options in
+        $defaults = array(
+            'is_toplevel' => 1,
+            'label' => ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) )
+        );
+
         if (!empty($pod['options']))
             $pod['options'] = @json_decode($pod['options'], true);
 
         if (!is_array($pod['options']))
             $pod['options'] = array();
+
+        $pod[ 'options' ] = array_merge( $defaults, $pod[ 'options' ] );
 
         if (!isset($pod['options']['label']) || empty($pod['options']['label']))
             $pod['options']['label'] = ucwords(str_replace('_', ' ', $pod['name']));

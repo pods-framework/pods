@@ -14,8 +14,20 @@ jQuery(function($) {
         var pods_ajaxurl = "<?php echo admin_url('admin-ajax.php?pods_ajax=1'); ?>";
     }
     var pods_nonce = "<?php echo wp_create_nonce('pods-select2_ajax'); ?>";
+
+    function podsFormatResult(item) {
+        return item.title;
+    }
+
+    function podsFormatSelection(item) {
+        return item.title;
+    }
+
     $('#<?php echo $attributes['id']; ?>').select2({
-        placeholder: 'Start Typing...',
+        placeholder: {
+            title: 'Start Typing...',
+            id: ''
+        },
         minimumInputLength: 1,
         ajax: {
             url: pods_ajaxurl,
@@ -28,8 +40,13 @@ jQuery(function($) {
                     method: 'select2_ajax',
                     query: term
                 };
+            },
+            results: function(data, page) {
+                return data;
             }
-        }
+        },
+        formatResult: podsFormatResult,
+        formatSelection: podsFormatSelection
     });
 });
 </script>

@@ -2549,10 +2549,20 @@ class PodsAPI
 	 */
 	public function select2_ajax() {
 		return array(
-			'option_1' => 'Option 1',
-			'option_2' => 'Option 2',
-			'option_3' => 'Option 3',
-			'option_4' => 'Option 4',
+			'results' => array(
+				array(
+					'id' => 1,
+					'title' => 'Option 1',
+				),
+				array(
+					'id' => 2,
+					'title' => 'Option 2',
+				),
+				array(
+					'id' => 3,
+					'title' => 'Option 3',
+				)
+			),
 		);
 	}
     private function do_hook () {

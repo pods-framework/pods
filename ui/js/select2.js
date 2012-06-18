@@ -236,6 +236,7 @@
                 }
                 handler = transport.call(null, {
                     url: options.url,
+                    type: options.type,
                     dataType: options.dataType,
                     data: data,
                     success: function (data) {

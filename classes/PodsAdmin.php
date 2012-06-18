@@ -68,7 +68,7 @@ class PodsAdmin {
 		if (!wp_style_is('jquery-select2', 'registered'))
 			wp_register_style('jquery-select2', PODS_URL . 'ui/css/select2.css', array(), '2.1');
 		if (!wp_script_is('jquery-select2', 'registered'))
-			wp_register_script('jquery-select2', PODS_URL . 'ui/js/select2.min.js', array('jquery'), '2.1');
+			wp_register_script('jquery-select2', PODS_URL . 'ui/js/select2.js', array('jquery'), '2.1');
         if (isset($_GET['page'])) {
             $page = $_GET['page'];
             if ('pods' == $page || (false !== strpos($page, 'pods-') && 0 === strpos($page, 'pods-'))) {

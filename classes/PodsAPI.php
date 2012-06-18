@@ -2812,27 +2812,27 @@ class PodsAPI {
         return pods_do_hook( "api", $name, $args, $this );
     }
 
-	/**
-	 * Return an array of dummy data for select2 autocomplete input
-	 */
-	public function select2_ajax() {
-		return array(
-			'results' => array(
-				array(
-					'id' => 1,
-					'title' => 'Option 1',
-				),
-				array(
-					'id' => 2,
-					'title' => 'Option 2',
-				),
-				array(
-					'id' => 3,
-					'title' => 'Option 3',
-				)
-			),
-		);
-	}
+    /**
+     * Return an array of dummy data for select2 autocomplete input
+     */
+    public function select2_ajax() {
+        return array(
+            'results' => array(
+                array(
+                    'id' => 1,
+                    'title' => 'Option 1',
+                ),
+                array(
+                    'id' => 2,
+                    'title' => 'Option 2',
+                ),
+                array(
+                    'id' => 3,
+                    'title' => 'Option 3',
+                )
+            ),
+        );
+    }
 
     /**
      * Handle methods that have been deprecated

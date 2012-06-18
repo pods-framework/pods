@@ -73,10 +73,10 @@ class PodsAdmin {
             wp_register_script( 'jquery-chosen', PODS_URL . 'ui/js/chosen.jquery.min.js', array( 'jquery' ), '0.9.8' );
         if ( !wp_style_is( 'jquery-chosen', 'registered' ) )
             wp_register_style( 'jquery-chosen', PODS_URL . 'ui/css/chosen.css', array(), '0.9.8' );
-		if (!wp_style_is('jquery-select2', 'registered'))
-			wp_register_style('jquery-select2', PODS_URL . 'ui/css/select2.css', array(), '2.1');
-		if (!wp_script_is('jquery-select2', 'registered'))
-			wp_register_script('jquery-select2', PODS_URL . 'ui/js/select2.js', array('jquery'), '2.1');
+        if (!wp_style_is('jquery-select2', 'registered'))
+            wp_register_style('jquery-select2', PODS_URL . 'ui/css/select2.css', array(), '2.1');
+        if (!wp_script_is('jquery-select2', 'registered'))
+            wp_register_script('jquery-select2', PODS_URL . 'ui/js/select2.js', array('jquery'), '2.1');
         if ( isset( $_GET[ 'page' ] ) ) {
             $page = $_GET[ 'page' ];
             if ( 'pods' == $page || ( false !== strpos( $page, 'pods-' ) && 0 === strpos( $page, 'pods-' ) ) ) {
@@ -138,9 +138,9 @@ class PodsAdmin {
                     wp_enqueue_script( 'plupload-silverlight' );
                     wp_enqueue_script( 'plupload-html4' );
 
-					// Select2
-					wp_enqueue_script('jquery-select2');
-					wp_enqueue_style('jquery-select2');
+                    // Select2
+                    wp_enqueue_script('jquery-select2');
+                    wp_enqueue_style('jquery-select2');
 
                     wp_enqueue_script( 'pods-file-attach' );
                 }
@@ -326,9 +326,9 @@ class PodsAdmin {
         require_once PODS_DIR . 'ui/admin/_import_create_pod.php';
     }*/
 
-	public function pods_form_test() {
-		require_once PODS_DIR . 'ui/admin/form.php';
-	}
+    public function pods_form_test() {
+        require_once PODS_DIR . 'ui/admin/form.php';
+    }
 
     public function admin_setup () {
         pods_ui( array(
@@ -501,8 +501,8 @@ class PodsAdmin {
             'import_package' => array( 'priv' => 'manage_packages' ),
             'validate_package' => array( 'priv' => 'manage_packages' ),
             'replace_package' => array( 'priv' => 'manage_packages' ),
-			'security_settings' => array( 'priv' => 'manage_settings' ),
-			'select2_ajax' => array('priv' => 'manage_pds', 'format' => 'json'),
+            'security_settings' => array( 'priv' => 'manage_settings' ),
+            'select2_ajax' => array('priv' => 'manage_pds', 'format' => 'json'),
         );
 
         $methods = apply_filters( 'pods_admin_ajax_methods', $methods, $this );

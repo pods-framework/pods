@@ -29,7 +29,7 @@ function pods_query ( $sql, $error = 'Database Error', $results_error = null, $n
  * @param object $obj (optional) Object to reference for filter / action
  *
  * @since 2.0.0
- * @to-do Need to figure out how to handle $scope = 'pods' for the Pods class
+ * @todo Need to figure out how to handle $scope = 'pods' for the Pods class
  */
 function pods_do_hook ( $scope, $name, $args = null, $obj = null ) {
     $args = apply_filters( "pods_{$scope}_{$name}", $args, &$obj );
@@ -582,7 +582,7 @@ function pods_access ( $privs, $method = 'OR' ) {
     global $pods_roles;
 
     if ( empty( $pods_roles ) && !is_array( $pods_roles ) ) {
-        $pods_roles = @unserialize( get_option( 'pods_roles' ) );
+        $pods_roles = get_option( 'pods_roles' );
         if ( !is_array( $pods_roles ) )
             $pods_roles = array();
     }

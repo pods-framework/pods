@@ -84,6 +84,20 @@ class PodsField {
     }
 
     /**
+     * Define the current field's schema for DB table storage
+     *
+     * @param array $options
+     *
+     * @return array
+     * @since 2.0.0
+     */
+    public function schema ( $options = null ) {
+        $schema = 'VARCHAR(255)';
+
+        return $schema;
+    }
+
+    /**
      * Change the way the value of the field is displayed with Pods::get
      *
      * @param mixed $value
@@ -110,16 +124,10 @@ class PodsField {
      *
      * @since 2.0.0
      */
-    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+    public function input ( $name, $value = null, $options = null, &$pod = null, $id = null ) {
         $options = (array) $options;
-        $attributes = array();
-        $attributes[ 'value' ] = $value;
-        $attributes = self::merge_attributes( $attributes, $name, self::$type, $options );
-        if ( isset( $options[ 'default' ] ) && strlen( $attributes[ 'value' ] ) < 1 )
-            $attributes[ 'value' ] = $options[ 'default' ];
-        $attributes[ 'value' ] = apply_filters( 'pods_form_ui_field_' . self::$type . '_value', $attributes[ 'value' ], $name, $attributes, $options );
 
-        return pods_view( PODS_DIR . 'ui/fields/text.php', compact( $attributes, $name, $value, $options, $pod, $id ) );
+        pods_view( PODS_DIR . 'ui/fields/text.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
@@ -227,7 +235,7 @@ class PodsField {
      *
      * @since 2.0.0
      */
-    public function ui ( $value, $name, $options, $fields, &$pod, $id ) {
+    public function ui ( &$value, $name, $options, $fields, &$pod, $id ) {
 
     }
 }

@@ -22,18 +22,18 @@ class PodsInit
             add_action('init', array($this, 'page_check'), 11);
             add_action('delete_attachment', array($this, 'delete_attachment'));
 
-            add_action('init', array($this, 'admin_init'));
+            if ( is_admin() )
+                add_action('init', array($this, 'admin_init'));
 
-            if (defined('PODS_DEVELOPER')) {
-                require_once PODS_DIR . 'classes/widgets/PodsWidgetSingle.php';
-                require_once PODS_DIR . 'classes/widgets/PodsWidgetList.php';
-                require_once PODS_DIR . 'classes/widgets/PodsWidgetColumn.php';
-                require_once PODS_DIR . 'classes/widgets/PodsWidgetForm.php';
-                add_action('widgets_init', array($this, 'register_widgets'));
+            // Widgets
+            require_once PODS_DIR . 'classes/widgets/PodsWidgetSingle.php';
+            require_once PODS_DIR . 'classes/widgets/PodsWidgetList.php';
+            require_once PODS_DIR . 'classes/widgets/PodsWidgetColumn.php';
+            require_once PODS_DIR . 'classes/widgets/PodsWidgetForm.php';
+            add_action('widgets_init', array($this, 'register_widgets'));
 
-				// Show admin bar links
-				add_action('wp_before_admin_bar_render', array($this, 'admin_bar_links'));
-            }
+            // Show admin bar links
+            add_action('wp_before_admin_bar_render', array($this, 'admin_bar_links'));
 
             // Init Pods Meta
             $this->meta = pods_meta();
@@ -305,7 +305,7 @@ class PodsInit
     }
 
     function activate_install () {
-        // Activate and Install (@to-do: don't install, display notice if not 'installed' with a link for user to run install)
+        // Activate and Install (@todo: don't install, display notice if not 'installed' with a link for user to run install)
         register_activation_hook(__FILE__, array($this, 'activate'));
         add_action('wpmu_new_blog', array($this, 'new_blog'), 10, 6);
         $pods_version = get_option('pods_framework_version');
@@ -386,7 +386,7 @@ class PodsInit
     }
 
     // Delete Attachments from relationships
-    // @to-do: remove select and run DELETE with the JOIN on field.type='file'
+    // @todo: remove select and run DELETE with the JOIN on field.type='file'
     function delete_attachment ($_ID) {
         $results = pods_query("SELECT `id` FROM `@wp_pods_fields` WHERE `type` = 'file'");
         if (!empty($results)) {
@@ -568,7 +568,7 @@ class PodsInit
 
     function register_widgets() {
         $widgets = array(
-            'PodsWidgetSingle', 
+            'PodsWidgetSingle',
             'PodsWidgetList',
             'PodsWidgetColumn',
             'PodsWidgetForm',
@@ -579,7 +579,7 @@ class PodsInit
     }
 
 	public function admin_bar_links() {
-		global $wp_admin_bar;
+		global $wp_admin_bar, $pods;
 		$api = new PodsAPI();
 		$all_pods = $api->load_pods(array('orderby' => 'name ASC'));
 		$non_cpt_pods = array();
@@ -611,5 +611,5 @@ class PodsInit
 			));
 		}
 
-	}	
+	}
 }

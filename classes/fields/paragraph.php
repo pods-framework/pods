@@ -106,6 +106,20 @@ class PodsField_Paragraph extends PodsField {
     }
 
     /**
+     * Define the current field's schema for DB table storage
+     *
+     * @param array $options
+     *
+     * @return array
+     * @since 2.0.0
+     */
+    public function schema ( $options ) {
+        $schem = 'LONGTEXT';
+
+        return $schema;
+    }
+
+    /**
      * Change the way the value of the field is displayed with Pods::get
      *
      * @param mixed $value

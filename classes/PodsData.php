@@ -2,8 +2,8 @@
 class PodsData
 {
     // base
-    private $prefix = 'pods_';
-    private $field_types = array();
+    static protected $prefix = 'pods_';
+    static protected $field_types = array();
     public static $display_errors = true;
 
     // pods
@@ -63,7 +63,7 @@ class PodsData
 
             switch ($this->pod_data['type']) {
                 case 'pod':
-                    $this->table = '@wp_' . $this->prefix . 'tbl_' . $this->pod;
+                    $this->table = '@wp_' . self::$prefix . 'tbl_' . $this->pod;
                     $this->field_id = 'id';
                     $this->field_name = 'name';
                     break;
@@ -118,8 +118,8 @@ class PodsData
         if (empty($format)) {
             $format = array();
             foreach ($data as $field) {
-                if (isset($this->field_types[$field]))
-                    $format[] = $this->field_types[$field];
+                if (isset(self::$field_types[$field]))
+                    $format[] = self::$field_types[$field];
                 elseif (isset($wpdb->field_types[$field]))
                     $format[] = $wpdb->field_types[$field];
                 else
@@ -151,8 +151,8 @@ class PodsData
         if (empty($format)) {
             $format = array();
             foreach ($data as $field) {
-                if (isset($this->field_types[$field]))
-                    $form = $this->field_types[$field];
+                if (isset(self::$field_types[$field]))
+                    $form = self::$field_types[$field];
                 elseif (isset($wpdb->field_types[$field]))
                     $form = $wpdb->field_types[$field];
                 else
@@ -163,8 +163,8 @@ class PodsData
         if (empty($where_format)) {
             $where_format = array();
             foreach ((array) array_keys($where) as $field) {
-                if (isset($this->field_types[$field]))
-                    $form = $this->field_types[$field];
+                if (isset(self::$field_types[$field]))
+                    $form = self::$field_types[$field];
                 elseif (isset($wpdb->field_types[$field]))
                     $form = $wpdb->field_types[$field];
                 else
@@ -196,8 +196,8 @@ class PodsData
         foreach ((array) array_keys($where) as $field) {
             if (!empty($where_format))
                 $form = ($form = array_shift($where_formats)) ? $form : $where_format[0];
-            elseif (isset($this->field_types[$field]))
-                $form = $this->field_types[$field];
+            elseif (isset(self::$field_types[$field]))
+                $form = self::$field_types[$field];
             elseif (isset($wpdb->field_types[$field]))
                 $form = $wpdb->field_types[$field];
             else

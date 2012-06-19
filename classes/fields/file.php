@@ -40,9 +40,8 @@ class PodsField_File extends PodsField {
                 'default' => 'single',
                 'type' => 'pick',
                 'data' => array(
-                    'single' => __( 'Single File Upload', 'pods' ),
-                    'multi-limited' => __( 'Multiple File Upload (limited uploads)', 'pods' ),
-                    'multi-unlimited' => __( 'Multiple File Upload (no limit)', 'pods' )
+                    'single' => __( 'Single Select', 'pods' ),
+                    'multi' => __( 'Multiple Select', 'pods' )
                 ),
                 'dependency' => true
             ),
@@ -61,7 +60,7 @@ class PodsField_File extends PodsField {
             ),
             'file_limit' => array(
                 'label' => __( 'File Limit', 'pods' ),
-                'depends-on' => array( 'file_format_type' => 'multi-limited' ),
+                'depends-on' => array( 'file_format_type' => 'multi' ),
                 'default' => 5,
                 'type' => 'number'
             ),
@@ -106,6 +105,20 @@ class PodsField_File extends PodsField {
             )
         );
         return $options;
+    }
+
+    /**
+     * Define the current field's schema for DB table storage
+     *
+     * @param array $options
+     *
+     * @return array
+     * @since 2.0.0
+     */
+    public function schema ( $options = null ) {
+        $schema = false;
+
+        return $schema;
     }
 
     /**

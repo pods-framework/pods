@@ -1219,7 +1219,7 @@ class PodsAPI {
         pods_query( "DELETE FROM `@wp_pods_fields` WHERE `pod_id` = {$params->id}" );
         pods_query( "DELETE FROM `@wp_pods` WHERE `id` = {$params->id} LIMIT 1" );
 
-        wp_cache_delete( $pod[ 'name' ], $pod, 'pods_pods' );
+        wp_cache_delete( $pod[ 'name' ], 'pods_pods' );
 
         wp_cache_flush(); // only way to reliably clear out cached data across an entire group
 

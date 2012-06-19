@@ -128,7 +128,6 @@ if ('multiple' === $options['file_format_type']):
 <?php else: ?>
     <?php $file_limit = 1; ?>
     <a class="button plupload-add" id="<?php echo $css_id; ?>-browse" href="">Select + Upload</a>
-    <a class="button" href="" id="<?php echo $css_id; ?>-browse-server">Browse Server</a>
     <ul class="pods-inline-files" id="<?php echo $css_id; ?>-inline-files">
     </ul>
 

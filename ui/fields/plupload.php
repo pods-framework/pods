@@ -1,4 +1,8 @@
 <?php
+	$attributes = array();
+	$attributes['value'] = $value;
+    $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+	$css_id = $attributes['id'];
     $file_limit = 1;
 
     if ( !wp_script_is( 'plupload-all', 'queue' ) && !wp_script_is( 'plupload-all', 'to_do' ) && !wp_script_is( 'plupload-all', 'done' ) )
@@ -30,7 +34,7 @@ $plupload_init = array(
     'multipart' => true,
     'urlstream_upload' => true,
     'multipart_params' => array(
-        '_wpnonce' => wp_create_nonce('upload_file'),
+        '_wpnonce' => wp_create_nonce('pods-wp_handle_upload_advanced'),
         'action' => 'wp_handle_upload_advanced',
         'method' => 'upload_file',
         'pods_ajax' => 1,
@@ -76,14 +80,15 @@ $plupload_init = apply_filters('plupload_init', $plupload_init);
 
         // Plupload UploadProgress Event Handler
         pods_uploader.bind( 'UploadProgress', function ( up, file ) {
-            jQuery( '#' + file.id + ' .pods-bar' ).css( 'width', file.percent + '%' );
+			var prog_bar = $('#' + file.id).find('.progress-bar');
+			prog_bar.css('width', file.percent + '%');
         } );
 
         // Plupload FileUploaded Event Handler
         pods_uploader.bind( 'FileUploaded', function ( up, file, resp ) {
             var file_div = jQuery( '#' + file.id );
             var file_limit = <?php echo $file_limit; ?>;
-            file_div.find( '.pods-progress' ).remove();
+            file_div.find( '.progress-bar' ).remove();
 
             if ( "Error" == resp.response.substr( 0, 5 ) ) {
                 var response = resp.response.substr( 7 );
@@ -94,18 +99,26 @@ $plupload_init = apply_filters('plupload_init', $plupload_init);
                 file_div.append( resp.response );
             }
             else {
-                var response = eval( '(' + resp.response.match( /\{(.*)\}/gi ) + ')' );
-                file_div.html( '<div class="btn dropme"></div><a href="' + response.guid + '" target="_blank">' + response.post_title + '</a>' );
-                file_div.attr( 'class', 'success' );
-                file_div.data( 'post-id', response.ID );
-            }
+				$.fn.reverse = [].reverse;
+				var json = eval( '(' + resp.response.match( /\{(.*)\}/gi ) + ')' ),
+					response = json,
+					sort_array = $('#<?php echo esc_js( $css_id ); ?>-files'),
+					maxFiles = <?php echo esc_js( $file_limit ); ?>;
 
-            jQuery.fn.reverse = [].reverse;
-            var files = jQuery( '.pods_field_<?php echo $name; ?> .success' ), file_count = files.size();
-            files.reverse().each( function ( idx, elem ) {
-                if ( idx + 1 > file_limit )
-                    jQuery( elem ).remove();
-            } );
+				sort_array.append('<li><span class="pods-file-reorder"><img src="' + PODS_URL + 'ui/images/handle.gif" alt="reorder"/></span><span class="pods-file-thumb"><span><img class="pinkynail" src="' + json.guid + '" /></span><input type="hidden" name="file3[]" value="' + json.ID + '" /></span><span class="pods-file-name">' + file.name + '</span><span class="pods-file-remove"><img src="' + PODS_URL + 'ui/images/del.png"/></span>');
+
+				var items = sort_array.find('li'), itemCount = items.size();
+				
+				if (itemCount > maxFiles) {
+					var reversed = items.reverse();
+
+					reversed.each(function(idx, elem) {
+						if (idx + 1 > maxFiles) {
+							jQuery(elem).remove();
+						}
+					});
+				}
+            }
         } );
     } );
 </script>

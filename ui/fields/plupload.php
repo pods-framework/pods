@@ -4,41 +4,70 @@
     if ( !wp_script_is( 'plupload-all', 'queue' ) && !wp_script_is( 'plupload-all', 'to_do' ) && !wp_script_is( 'plupload-all', 'done' ) )
         wp_print_scripts( 'plupload-all' );
 ?>
+<ul class="pods-files" id="<?php echo $css_id; ?>-files">
+    <?php foreach($value as $val): ?>
+        <li>
+            <?php print_r($val); ?>
+        </li>
+    <?php endforeach; ?>
+</ul>
+<p>
+    <a href="" class="plupload-add button" id="<?php echo $css_id; ?>-browse">Add New</a>
+</p>
+<p class="plupload-queue" id="<?php echo $css_id; ?>-queue">
+</p>
+<?php
+$plupload_init = array(
+    'runtimes' => 'html5,silverlight,flash,html4',
+    'browse_button' => $css_id . '-browse',
+    'url' => PODS_URL . 'ui/admin/misc.php',
+    'file_data_name' => 'Filedata',
+    'multiple_queues' => false,
+    'max_file_size' => wp_max_upload_size().'b',
+    'flash_swf_url' => includes_url('js/plupload/plupload.flash.swf'),
+    'silverlight_xap_url' => includes_url('js/plupload/plupload.silverlight.xap'),
+    'filters' => array(array('title' => __('Allowed Files', 'pods'), 'extensions' => '*')),
+    'multipart' => true,
+    'urlstream_upload' => true,
+    'multipart_params' => array(
+        '_wpnonce' => wp_create_nonce('photo-upload'),
+        'action' => 'wp_handle_upload_advanced',
+        'method' => 'upload_file',
+        'pods_ajax' => 1,
+    ),
+);
+$plupload_init = apply_filters('plupload_init', $plupload_init);
+?>
 <script>
-    jQuery( function () {
-        plup_<?php echo esc_js( $name ); ?> = new plupload.Uploader( {
-            runtimes: 'html5,flash,silverlight,html4',
-            browse_button: '<?php echo esc_js( $css_id ); ?>-browse',
-            container: 'plupload-container-<?php echo esc_js( $css_id ); ?>',
-            file_data_name: 'Filedata',
-            max_file_size: '<?php echo wp_max_upload_size(); ?>b',
-            url: '<?php echo PODS_URL; ?>/ui/ajax/misc.php',
-            flash_swf_url: '<?php echo includes_url( 'js/plupload/plupload.flash.swf' ); ?>',
-            silverlight_xap_url: '<?php echo includes_url( 'js/plupload/plupload.silverlight.xap' ); ?>',
-            multipart: true,
-            urlstresm_upload: true,
-            multipart_params: {
-                "_wpnonce": "<?php echo wp_create_nonce( 'pods-wp_handle_upload_advanced' ); ?>",
-                "action": "wp_handle_upload_advanced",
-                "auth_cookie": "<?php echo ( is_ssl() ? esc_js( $_COOKIE[ SECURE_AUTH_COOKIE ] ) : esc_js( $_COOKIE[ AUTH_COOKIE ] ) ); ?>",
-                "logged_in_cookie": "<?php echo esc_js( $_COOKIE[ LOGGED_IN_COOKIE ] ); ?>"
-            }
-        } );
+    jQuery( function ($) {
+        var pods_uploader = new plupload.Uploader(<?php echo json_encode($plupload_init); ?>);
 
-        // Plupload Init Event Handler
-        plup_<?php echo esc_js( $name ); ?>.bind( 'Init', function ( up, params ) {
-
-        } );
-
-        plup_<?php echo esc_js( $name ); ?>.init();
+        pods_uploader.init();
 
         // Plupload FilesAdded Event Handler
-        plup_<?php echo esc_js( $name ); ?>.bind( 'FilesAdded', function ( up, files ) {
+        pods_uploader.bind( 'FilesAdded', function ( up, files ) {
             // Hide any existing files (for use in single/limited field configuration)
             // jQuery('.pods_field_<?php echo $name; ?> .success').hide();
+            var list = $('#<?php echo esc_js( $css_id ); ?>-files'),
+                queue = $('#<?php echo esc_js( $css_id ); ?>-queue'),
+                maxFiles = <?php echo esc_js( $file_limit ); ?>;
 
             jQuery.each( files, function ( index, file ) {
-                jQuery( ".rightside.<?php echo esc_js( $name ); ?> .form" ).append( '<div id="' + file.id + '">' + file.name + '<div class="pods-progress"><div class="pods-bar"></div></div></div>' );
+                var prog_container = $('<div/>', {
+                        'class': 'plupload-progress',
+                        'id': file.id
+                    }),
+                    prog_name = $('<span/>', {
+                        'class': 'file-name',
+                        text: file.name
+                    }),
+                    prog_bar = $('<span/>', {
+                        'class': 'progress-bar',
+                        css: {
+                            width: '0'
+                        }
+                    });
+                prog_container.append(prog_name).append(prog_bar).appendTo(queue);
             } );
 
             up.refresh();
@@ -46,12 +75,12 @@
         } );
 
         // Plupload UploadProgress Event Handler
-        plup_<?php echo esc_js( $name ); ?>.bind( 'UploadProgress', function ( up, file ) {
+        pods_uploader.bind( 'UploadProgress', function ( up, file ) {
             jQuery( '#' + file.id + ' .pods-bar' ).css( 'width', file.percent + '%' );
         } );
 
         // Plupload FileUploaded Event Handler
-        plup_<?php echo esc_js( $name ); ?>.bind( 'FileUploaded', function ( up, file, resp ) {
+        pods_uploader.bind( 'FileUploaded', function ( up, file, resp ) {
             var file_div = jQuery( '#' + file.id );
             var file_limit = <?php echo $file_limit; ?>;
             file_div.find( '.pods-progress' ).remove();

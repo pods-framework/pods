@@ -684,6 +684,18 @@
                                     </script>
                                 </li>
 
+                                <li class="pods-field pods-file pods-plupload-context" id="field-pods-field-file9">
+                                    <?php echo PodsForm::label('file9', 'File via Form API'); ?>
+                                    <?php 
+                                    echo PodsForm::field('file9', null, 'file', array(
+                                        'file_format_type' => 'multiple',
+                                        'file_uploader' => 'plupload',
+                                        'file_limit' => 2,
+                                        'file_type' => 'images'
+                                    ));
+                                    ?>
+                                </li>
+
                                 <!-- Inline plupload input -->
                                 <li class="pods-field pods-file pods-plupload-context" id="field-pods-field-file4">
                                     <?php echo PodsForm::label("file4", "Plupload Single"); ?>

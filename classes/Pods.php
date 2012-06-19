@@ -345,7 +345,7 @@ class Pods {
         if ( empty( $id ) )
             return;
         $params = array( 'pod' => $this->pod, 'id' => $id );
-        return $this->api->drop_pod_item( $params );
+        return $this->api->delete_pod_item( $params );
     }
 
     /**

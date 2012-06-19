@@ -1145,6 +1145,8 @@ class PodsAPI {
         foreach ( $params->order as $order => $id ) {
             pods_query( "UPDATE `@wp_pods_tbl_{$params->pod}` SET `{$params->field}` = " . pods_absint( $order ) . " WHERE `id` = " . pods_absint( $id ) . " LIMIT 1" );
         }
+
+        return true;
     }
 
     /**
@@ -1273,6 +1275,8 @@ class PodsAPI {
 
         wp_cache_delete( 'pods', 'pods' );
         wp_cache_delete( $params->pod, 'pods_pods' );
+
+        return true;
     }
 
     /**

@@ -19,7 +19,7 @@ class PodsAPI_Deprecated {
         }
 
         // keeping references pointing back to the source
-        $this->obj &= $obj;
+        $this->obj =& $obj;
     }
 
     /**

@@ -70,7 +70,7 @@ class Pods_GravityForms {
      */
     public static function validation_error ( &$validation = null ) {
         if ( !empty( $validation ) ) {
-            self::$validation &= $validation;
+            self::$validation =& $validation;
         }
         if ( true !== self::$validation[ 'is_valid' ] ) {
             return self::$validation;
@@ -96,7 +96,7 @@ class Pods_GravityForms {
      */
     public static function redirect ( $url, &$validation = null, $queryString = null ) {
         if ( !empty( $validation ) ) {
-            self::$validation &= $validation;
+            self::$validation =& $validation;
         }
         self::$validation[ 'confirmation' ][ 'type' ] = 'redirect';
         self::$validation[ 'confirmation' ][ 'url' ] = $url;
@@ -115,7 +115,7 @@ class Pods_GravityForms {
      */
     public static function message ( $msg, &$validation = null ) {
         if ( !empty( $validation ) ) {
-            self::$validation &= $validation;
+            self::$validation =& $validation;
         }
         self::$validation[ 'confirmation' ][ 'type' ] = 'message';
         self::$validation[ 'confirmation' ][ 'message' ] = $msg;
@@ -131,7 +131,7 @@ class Pods_GravityForms {
      */
     public static function error ( $msg, &$validation = null ) {
         if ( !empty( $validation ) ) {
-            self::$validation &= $validation;
+            self::$validation =& $validation;
         }
         self::$validation[ 'is_valid' ] = false;
         self::$validation[ 'msg' ] = $msg;
@@ -147,7 +147,7 @@ class Pods_GravityForms {
      */
     public static function setup_entry ( $validation = null ) {
         if ( !empty( $validation ) ) {
-            self::$validation &= $validation;
+            self::$validation =& $validation;
         }
         if ( !is_array( self::$validation ) ) {
             return false;

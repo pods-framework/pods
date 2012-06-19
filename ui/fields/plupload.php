@@ -49,6 +49,7 @@ if ('multiple' === $options['file_format_type']):
             <span class="pods-file-remove">
                 <img src="<?php echo PODS_URL . 'ui/images/del.png'; ?>" alt="remove" class="pods-icon-minus" />
             </span>
+            <input type="hidden" name="<?php echo $field_name; ?>[]" value="<?php echo $val['ID']; ?>" />
         </li>
     <?php endforeach; ?>
 </ul>
@@ -87,7 +88,7 @@ if ('multiple' === $options['file_format_type']):
                         css: {
                             width: '0'
                         }
-                    })
+                    });
                 prog_container.append(prog_name).append(prog_bar).appendTo(queue);
             } );
 
@@ -122,7 +123,7 @@ if ('multiple' === $options['file_format_type']):
                     sort_array = $('#<?php echo esc_js( $css_id ); ?>-files'),
                     maxFiles = <?php echo esc_js( $file_limit ); ?>;
 
-                sort_array.append('<li><span class="pods-file-reorder"><img src="' + PODS_URL + 'ui/images/handle.gif" alt="reorder"/></span><span class="pods-file-thumb"><span><img class="pinkynail" src="' + json.guid + '" /></span><input type="hidden" name="file3[]" value="' + json.ID + '" /></span><span class="pods-file-name">' + file.name + '</span><span class="pods-file-remove"><img src="' + PODS_URL + 'ui/images/del.png"/></span>');
+                sort_array.append('<li><span class="pods-file-reorder"><img src="' + PODS_URL + 'ui/images/handle.gif" alt="reorder"/></span><span class="pods-file-thumb"><span><img class="pinkynail" src="' + json.guid + '" /></span><input type="hidden" name="file3[]" value="' + json.ID + '" /></span><span class="pods-file-name">' + file.name + '</span><span class="pods-file-remove"><img src="' + PODS_URL + 'ui/images/del.png"/></span><input type="hidden" name="<?php echo $field_name; ?>[]" value="' + json.ID + '" />');
 
                 var items = sort_array.find('li'), itemCount = items.size();
                 

@@ -3,6 +3,7 @@
     $attributes['value'] = $value;
     $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
     $css_id = $attributes['id'];
+    $field_name = $attributes['name'];
     $file_limit = isset($options['file_limit']) ? $options['file_limit'] : 1000;
     $plupload_init = array(
         'runtimes' => 'html5,silverlight,flash,html4',
@@ -33,8 +34,21 @@ if ('multiple' === $options['file_format_type']):
 ?>
 <ul class="pods-files" id="<?php echo $css_id; ?>-files">
     <?php foreach($value as $val): ?>
+        <?php
+        $filepath = $file[ 'guid' ];
+        $filename = substr($filepath, strrpos($filepath, '/') + 1); 
+        ?>
         <li>
-            <?php print_r($val); ?>
+            <span class="pods-file-reorder"><img src="<?php echo PODS_URL . 'ui/images/handle.gif'; ?>" alt="drag to reorder" /></span>
+            <span class="pods-file-thumb">
+                <span>
+                    <img class="pinkynail" src="<?php echo $val['guid']; ?>" alt="thumbnail" />
+                </span>
+            </span>
+            <span class="pods-file-name"><?php echo $filename; ?></span>
+            <span class="pods-file-remove">
+                <img src="<?php echo PODS_URL . 'ui/images/del.png'; ?>" alt="remove" class="pods-icon-minus" />
+            </span>
         </li>
     <?php endforeach; ?>
 </ul>
@@ -73,7 +87,7 @@ if ('multiple' === $options['file_format_type']):
                         css: {
                             width: '0'
                         }
-                    });
+                    })
                 prog_container.append(prog_name).append(prog_bar).appendTo(queue);
             } );
 

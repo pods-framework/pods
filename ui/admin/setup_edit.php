@@ -702,7 +702,7 @@ elseif ('taxonomy' == pods_var('type', $pod)) {
                                             </div>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('ct_show_ui', __('Show UI', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('ct_show_ui', pods_var('ct_show_ui', $pod, pods_var('ct_public', $pod, true)), 'boolean', array('dependency' => true)); ?>
+                                                <?php echo PodsForm::field( 'ct_show_ui', pods_var( 'ct_show_ui', $pod, pods_var( 'ct_public', $pod, true ) ), 'boolean', array( 'boolean_yes_label' => '', 'dependency' => true ) ); ?>
                                             </div>
                                             <div class="pods-field-option pods-depends-on pods-depends-on-ct-show-ui">
                                                 <?php echo PodsForm::label('ct_menu_name', __('Menu Name', 'pods'), __('help', 'pods')); ?>
@@ -718,7 +718,7 @@ elseif ('taxonomy' == pods_var('type', $pod)) {
                                             </div>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('ct_hierarchical', __('Hierarchical', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('ct_hierarchical', pods_var('ct_hierarchical', $pod, false), 'boolean', array('dependency' => true)); ?>
+                                                <?php echo PodsForm::field( 'ct_hierarchical', pods_var( 'ct_hierarchical', $pod, false ), 'boolean', array( 'dependency' => true, 'boolean_yes_label' => '' ) ); ?>
                                             </div>
                                             <div class="pods-field-option-container pods-depends-on pods-depends-on-ct-hierarchical">
                                                 <div class="pods-field-option">
@@ -732,7 +732,7 @@ elseif ('taxonomy' == pods_var('type', $pod)) {
                                             </div>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('ct_rewrite', __('Rewrite', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('ct_rewrite', pods_var('ct_rewrite', $pod, true), 'boolean', array('dependency' => true)); ?>
+                                                <?php echo PodsForm::field('ct_rewrite', pods_var('ct_rewrite', $pod, true), 'boolean', array('dependency' => true, 'boolean_yes_label' => '')); ?>
                                             </div>
                                             <div class="pods-field-option-container pods-depends-on pods-depends-on-ct-rewrite">
                                                 <div class="pods-field-option">
@@ -841,7 +841,7 @@ if ('pod' == pods_var('type', $pod)) {
 ?>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('show_in_menu', __('Show in Menu', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('show_in_menu', pods_var('show_in_menu', $pod), 'boolean', array('dependency' => true)); ?>
+                                                <?php echo PodsForm::field('show_in_menu', pods_var('show_in_menu', $pod), 'boolean', array('dependency' => true, 'boolean_yes_label' => '')); ?>
                                             </div>
                                             <div class="pods-field-option-container pods-depends-on pods-depends-on-show-in-menu">
                                                 <div class="pods-field-option">

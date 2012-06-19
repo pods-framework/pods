@@ -1511,7 +1511,7 @@ class PodsAPI {
                 return $pod;
         }
 
-        $where = ( isset( $params->name ) ? "`name` = '{$params->name}'" : "`id` = " . pods_absint( $params->id ) );
+        $where = ( isset( $params->id ) ? "`id` = " . pods_absint( $params->id ) : "`name` = '{$params->name}'" );
         if ( isset( $params->type ) && !empty( $params->type ) && isset( $params->object ) && !empty( $params->object ) )
             $where .= " OR (`type` = '{$params->type}' AND `object` = '{$params->object}')";
         $result = pods_query( "SELECT * FROM `@wp_pods` WHERE {$where} LIMIT 1", $this );

@@ -194,20 +194,21 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
             <input type="hidden" name="method" value="save_pod" />
             <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('pods-save_pod'); ?>" />
             <input type="hidden" name="id" value="<?php echo (int) $pod['id']; ?>" />
+
+            <h2>
+                Edit Pod:
+                <span class="pods-sluggable">
+                    <span class="pods-slug">
+                        <em><?php echo esc_html($pod['name']); ?></em>
+                        <input type="button" class="edit-slug-button button" value="Edit" />
+                    </span>
+                    <span class="pods-slug-edit">
+                        <?php echo PodsForm::field('name', pods_var('name', $pod), 'db', array('attributes' => array('maxlength' => $max_length_name, 'size' => 25), 'class' => 'pods-validate pods-validate-required')); ?>
+                        <input type="button" class="save-button button" value="OK" /> <a class="cancel" href="#cancel-edit">Cancel</a>
+                    </span>
+                </span>
+            </h2>
         </div>
-        <h2>
-            Edit Pod:
-            <span class="pods-sluggable">
-                <span class="pods-slug">
-                    <em><?php echo esc_html($pod['name']); ?></em>
-                    <input type="button" class="edit-slug-button button" value="Edit" />
-                </span>
-                <span class="pods-slug-edit">
-                    <?php echo PodsForm::field('name', pods_var('name', $pod), 'db', array('attributes' => array('maxlength' => $max_length_name, 'size' => 25), 'class' => 'pods-validate pods-validate-required')); ?>
-                    <input type="button" class="save-button button" value="OK" /> <a class="cancel" href="#cancel-edit">Cancel</a>
-                </span>
-            </span>
-        </h2>
         <div id="poststuff">
             <img src="<?php echo PODS_URL; ?>/ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
             <!-- /inner-sidebar -->

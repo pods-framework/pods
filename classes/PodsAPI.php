@@ -272,10 +272,10 @@ class PodsAPI {
             $definitions = array( "`id` BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY" );
             foreach ( $fields as $field ) {
                 $row = array();
-                foreach ( $field_columns as $field => $default ) {
-                    $row[ $field ] = $default;
-                    if ( isset( $field[ $field ] ) )
-                        $row[ $field ] = $field[ $field ];
+                foreach ( $field_columns as $field_name => $default ) {
+                    $row[ $field_name ] = $default;
+                    if ( isset( $field[ $field_name ] ) )
+                        $row[ $field_name ] = $field[ $field_name ];
                 }
                 if ( !empty( $row[ 'options' ] ) ) {
                     if ( is_array( $row[ 'options' ] ) ) {

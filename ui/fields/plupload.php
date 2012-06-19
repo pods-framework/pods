@@ -8,7 +8,7 @@
     jQuery( function () {
         plup_<?php echo esc_js( $name ); ?> = new plupload.Uploader( {
             runtimes: 'html5,flash,silverlight,html4',
-            browse_button: '<?php echo esc_js( $css_id ); ?>',
+            browse_button: '<?php echo esc_js( $css_id ); ?>-browse',
             container: 'plupload-container-<?php echo esc_js( $css_id ); ?>',
             file_data_name: 'Filedata',
             max_file_size: '<?php echo wp_max_upload_size(); ?>b',

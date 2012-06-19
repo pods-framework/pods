@@ -359,7 +359,7 @@ class PodsAdmin {
     }
 
     public function admin_setup_delete ( $id, $obj ) {
-        $this->api->drop_pod( array( 'id' => $id ) );
+        $this->api->delete_pod( array( 'id' => $id ) );
         $obj->message( 'Pod deleted successfully.' );
     }
 
@@ -454,43 +454,25 @@ class PodsAdmin {
         $methods = array(
             'add_pod' => array( 'priv' => 'manage_pods' ),
             'save_pod' => array( 'priv' => 'manage_pods' ),
-            'save_column' => array( 'priv' => 'manage_pods' ),
+            'save_field' => array( 'priv' => 'manage_pods' ),
             'save_template' => array( 'priv' => 'manage_templates' ),
             'save_page' => array( 'priv' => 'manage_pod_pages' ),
             'save_helper' => array( 'priv' => 'manage_helpers' ),
             'save_roles' => array( 'priv' => 'manage_roles' ),
             'save_pod_item' => array(),
             'reorder_pod_item' => array( 'access_pod_specific' => true ),
-            'drop_pod' => array( 'priv' => 'manage_pods' ),
-            'drop_column' => array( 'priv' => 'manage_pods' ),
-            'drop_template' => array( 'priv' => 'manage_templates' ),
-            'drop_page' => array( 'priv' => 'manage_pod_pages' ),
-            'drop_helper' => array( 'priv' => 'manage_helpers' ),
-            'drop_pod_item' => array( 'access_pod_specific' => true ),
-            'load_pod' => array(
-                'priv' => 'manage_pods',
-                'format' => 'json'
-            ),
-            'load_column' => array(
-                'priv' => 'manage_pods',
-                'format' => 'json'
-            ),
-            'load_template' => array(
-                'priv' => 'manage_templates',
-                'format' => 'json'
-            ),
-            'load_page' => array(
-                'priv' => 'manage_pod_pages',
-                'format' => 'json'
-            ),
-            'load_helper' => array(
-                'priv' => 'manage_helpers',
-                'format' => 'json'
-            ),
-            'load_sister_fields' => array(
-                'priv' => 'manage_pods',
-                'format' => 'json'
-            ),
+            'delete_pod' => array( 'priv' => 'manage_pods' ),
+            'delete_field' => array( 'priv' => 'manage_pods' ),
+            'delete_template' => array( 'priv' => 'manage_templates' ),
+            'delete_page' => array( 'priv' => 'manage_pod_pages' ),
+            'delete_helper' => array( 'priv' => 'manage_helpers' ),
+            'delete_pod_item' => array( 'access_pod_specific' => true ),
+            'load_pod' => array( 'priv' => 'manage_pods', 'format' => 'json' ),
+            'load_field' => array( 'priv' => 'manage_pods', 'format' => 'json' ),
+            'load_template' => array( 'priv' => 'manage_templates', 'format' => 'json' ),
+            'load_page' => array( 'priv' => 'manage_pod_pages', 'format' => 'json' ),
+            'load_helper' => array( 'priv' => 'manage_helpers', 'format' => 'json' ),
+            'load_sister_fields' => array( 'priv' => 'manage_pods', 'format' => 'json' ),
             'load_pod_item' => array( 'access_pod_specific' => true ),
             'load_files' => array( 'priv' => 'upload_files' ),
             'export_package' => array(

@@ -1,6 +1,6 @@
 <?php
 global $pods_cache, $coltype_exists, $pods_type_exists;
-$pods_type_exists &= $coltype_exists;
+$pods_type_exists =& $coltype_exists;
 $pods_cache = PodCache::instance();
 $form_count = $pods_cache->form_count;
 
@@ -127,7 +127,7 @@ Textarea box
 elseif ('desc' == $type) {
     if (is_admin()) {
         $type = 'desc_tinymce';
-        
+
         // New TinyMCE API by azaozz
         require_once(PODS_DIR . 'ui/wp-editor/wp-editor.php');
         require_once(ABSPATH . '/wp-admin/includes/template.php');
@@ -339,7 +339,7 @@ $pods_type_exists[$type] = true;
 ?>
     </div>
     <div class="clear<?php echo esc_attr($hidden); ?>" id="spacer_<?php echo esc_attr($name); ?>"></div>
-<?php 
+<?php
 //post-field hooks
 do_action('pods_post_input_field', $field, $css_id, $css_classes, $this);
 do_action("pods_post_input_field_{$name}", $field, $css_id, $css_classes, $this);

@@ -5,7 +5,7 @@ Tags: pods, cms, cck, pods ui, ui, content types, custom post types, relationshi
 Requires at least: 3.4
 Tested up to: 3.4
 Stable tag: 1.14.2
-~Current Version:2.0.0-a-18~
+~Current Version:2.0.0-a-20~
 
 Pods is a development framework for creating, managing, and deploying customized content types.
 

@@ -179,7 +179,7 @@
             var $sluggable = $('.pods-sluggable');
 
             if (0 !== $sluggable.length) {
-                // Hold onto slug in-case changes cancelled
+                // Hold onto slug in-case change is cancelled
                 if ( $sluggable.find( '.pods-slug-edit input[type=text]' )[ 0 ] ) {
                     var last_slug = $sluggable.find('.pods-slug-edit input[type=text]').val();
                     $('.pods-slugged-lower').html(last_slug.toLowerCase());

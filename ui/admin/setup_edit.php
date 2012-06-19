@@ -194,20 +194,21 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
             <input type="hidden" name="method" value="save_pod" />
             <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('pods-save_pod'); ?>" />
             <input type="hidden" name="id" value="<?php echo (int) $pod['id']; ?>" />
+
+            <h2>
+                Edit Pod:
+                <span class="pods-sluggable">
+                    <span class="pods-slug">
+                        <em><?php echo esc_html($pod['name']); ?></em>
+                        <input type="button" class="edit-slug-button button" value="Edit" />
+                    </span>
+                    <span class="pods-slug-edit">
+                        <?php echo PodsForm::field('name', pods_var('name', $pod), 'db', array('attributes' => array('maxlength' => $max_length_name, 'size' => 25), 'class' => 'pods-validate pods-validate-required')); ?>
+                        <input type="button" class="save-button button" value="OK" /> <a class="cancel" href="#cancel-edit">Cancel</a>
+                    </span>
+                </span>
+            </h2>
         </div>
-        <h2>
-            Edit Pod:
-            <span class="pods-sluggable">
-                <span class="pods-slug">
-                    <em><?php echo esc_html($pod['name']); ?></em>
-                    <input type="button" class="edit-slug-button button" value="Edit" />
-                </span>
-                <span class="pods-slug-edit">
-                    <?php echo PodsForm::field('name', pods_var('name', $pod), 'db', array('attributes' => array('maxlength' => $max_length_name, 'size' => 25), 'class' => 'pods-validate pods-validate-required')); ?>
-                    <input type="button" class="save-button button" value="OK" /> <a class="cancel" href="#cancel-edit">Cancel</a>
-                </span>
-            </span>
-        </h2>
         <div id="poststuff">
             <img src="<?php echo PODS_URL; ?>/ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
             <!-- /inner-sidebar -->
@@ -283,7 +284,7 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
                     <p class="pods-manage-row-add">
                         <a href="#add-field" class="button-primary"><?php _e('Add Field'); ?></a>
                     </p>
-                    <div id="pods-advanced" class="pods-toggled postbox closed">
+                    <div id="pods-advanced" class="pods-toggled postbox closed pods-submittable-fields">
                         <div class="handlediv" title="Click to toggle">
                             <br />
                         </div>
@@ -701,7 +702,7 @@ elseif ('taxonomy' == pods_var('type', $pod)) {
                                             </div>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('ct_show_ui', __('Show UI', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('ct_show_ui', pods_var('ct_show_ui', $pod, pods_var('ct_public', $pod, true)), 'boolean', array('dependency' => true)); ?>
+                                                <?php echo PodsForm::field( 'ct_show_ui', pods_var( 'ct_show_ui', $pod, pods_var( 'ct_public', $pod, true ) ), 'boolean', array( 'boolean_yes_label' => '', 'dependency' => true ) ); ?>
                                             </div>
                                             <div class="pods-field-option pods-depends-on pods-depends-on-ct-show-ui">
                                                 <?php echo PodsForm::label('ct_menu_name', __('Menu Name', 'pods'), __('help', 'pods')); ?>
@@ -717,7 +718,7 @@ elseif ('taxonomy' == pods_var('type', $pod)) {
                                             </div>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('ct_hierarchical', __('Hierarchical', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('ct_hierarchical', pods_var('ct_hierarchical', $pod, false), 'boolean', array('dependency' => true)); ?>
+                                                <?php echo PodsForm::field( 'ct_hierarchical', pods_var( 'ct_hierarchical', $pod, false ), 'boolean', array( 'dependency' => true, 'boolean_yes_label' => '' ) ); ?>
                                             </div>
                                             <div class="pods-field-option-container pods-depends-on pods-depends-on-ct-hierarchical">
                                                 <div class="pods-field-option">
@@ -731,7 +732,7 @@ elseif ('taxonomy' == pods_var('type', $pod)) {
                                             </div>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('ct_rewrite', __('Rewrite', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('ct_rewrite', pods_var('ct_rewrite', $pod, true), 'boolean', array('dependency' => true)); ?>
+                                                <?php echo PodsForm::field('ct_rewrite', pods_var('ct_rewrite', $pod, true), 'boolean', array('dependency' => true, 'boolean_yes_label' => '')); ?>
                                             </div>
                                             <div class="pods-field-option-container pods-depends-on pods-depends-on-ct-rewrite">
                                                 <div class="pods-field-option">
@@ -840,7 +841,7 @@ if ('pod' == pods_var('type', $pod)) {
 ?>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('show_in_menu', __('Show in Menu', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('show_in_menu', pods_var('show_in_menu', $pod), 'boolean', array('dependency' => true)); ?>
+                                                <?php echo PodsForm::field('show_in_menu', pods_var('show_in_menu', $pod), 'boolean', array('dependency' => true, 'boolean_yes_label' => '')); ?>
                                             </div>
                                             <div class="pods-field-option-container pods-depends-on pods-depends-on-show-in-menu">
                                                 <div class="pods-field-option">

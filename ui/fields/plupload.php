@@ -144,6 +144,19 @@ if ('multiple' === $options['file_format_type']):
     <?php $file_limit = 1; ?>
     <a class="button plupload-add" id="<?php echo $css_id; ?>-browse" href="">Select + Upload</a>
     <ul class="pods-inline-files" id="<?php echo $css_id; ?>-inline-files">
+        <?php foreach($value as $val): ?>
+            <?php
+            $filepath = $file[ 'guid' ];
+            $filename = substr($filepath, strrpos($filepath, '/') + 1); 
+            ?>
+            <li>
+                <div class="plupload-progress">
+                    <span class="remove"><img src="<?php echo PODS_URL . 'ui/images/del.png'; ?>" alt="remove" /></span>
+                    <span class="file-name"><?php echo $filename; ?></span>
+                    <input type="hidden" name="<?php echo $field_name; ?>[]" value="<?php echo $val['ID']; ?>" />
+                </div>
+            </li>
+        <?php endforeach; ?>
     </ul>
 
     <script type="text/javascript">

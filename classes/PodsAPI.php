@@ -1213,10 +1213,18 @@ class PodsAPI {
         if ( !empty( $field_ids ) )
             pods_query( "UPDATE `@wp_pods_fields` SET `sister_field_id` = NULL WHERE `sister_field_id` IN (" . implode( ',', $field_ids ) . ")" );
 
-        if ( 'pod' == $pod[ 'type' ] ) {
-            pods_query( "DROP TABLE `@wp_pods_tbl_{$params->name}`" );
+        if ( 'pod' == $pod[ 'type' ] || 'table' == $pod[ 'storage' ] ) {
+            try {
+                pods_query( "DROP TABLE `@wp_pods_tbl_{$params->name}`", false );
+            } catch ( Exception $e ) {
+                // Allow pod to be deleted if the table doesn't exist
+                if ( false === strpos( $e->getMessage(), 'Unknown table' ) )
+                    die( $e->getMessage() );
+            }
+
             pods_query( "UPDATE `@wp_pods_fields` SET `pick_val` = '' WHERE `pick_object` = 'pod' AND `pick_val` = '{$params->name}'" );
         }
+
         pods_query( "DELETE FROM `@wp_pods_rel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}" );
         pods_query( "DELETE FROM `@wp_pods_fields` WHERE `pod_id` = {$params->id}" );
         pods_query( "DELETE FROM `@wp_pods` WHERE `id` = {$params->id} LIMIT 1" );

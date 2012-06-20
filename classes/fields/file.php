@@ -242,6 +242,7 @@ class PodsField_File extends PodsField {
      * @since 2.0.0
      */
     public function markup ( $attributes, $limit = 1, $id = null, $icon = null, $name = null ) {
+        ob_start();
 ?>
     <li class="pods-file">
         <input type="hidden" class="pods-file-id" name="<?php echo $attributes[ 'name' ]; ?>[]" value="<?php echo ( empty( $id ) ? '{{id}}' : $id ); ?>" />
@@ -261,5 +262,6 @@ class PodsField_File extends PodsField {
         </ul>
     </li>
 <?php
+        return ob_get_clean();
     }
 }

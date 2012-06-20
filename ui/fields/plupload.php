@@ -59,7 +59,7 @@
                     <ul class="pods-files">
                         <?php
                             foreach ( $value as $val ) {
-                                $field_file->markup( $attributes, $val[ 'ID' ], $val[ 'guid' ], $val[ 'post_title' ] );
+                                echo $field_file->markup( $attributes, $val[ 'ID' ], $val[ 'guid' ], $val[ 'post_title' ] );
                             }
                         ?>
                     </ul>

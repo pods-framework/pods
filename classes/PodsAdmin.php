@@ -624,9 +624,6 @@ class PodsAdmin {
         if ( !isset( $params->method ) || !in_array( $params->method, $methods ) || !isset( $params->id ) || empty( $params->id ) )
             pods_error( 'Invalid AJAX request', $this );
 
-        if ( !method_exists( $this->api, $params->method ) )
-            pods_error( 'API method does not exist', $this );
-
         // Flash often fails to send cookies with the POST or upload, so we need to pass it in GET or POST instead
         if ( is_ssl() && empty( $_COOKIE[ SECURE_AUTH_COOKIE ] ) && !empty( $_REQUEST[ 'auth_cookie' ] ) )
             $_COOKIE[ SECURE_AUTH_COOKIE ] = $_REQUEST[ 'auth_cookie' ];

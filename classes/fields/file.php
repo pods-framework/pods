@@ -229,4 +229,37 @@ class PodsField_File extends PodsField {
         // link to file in new target
         // show thumbnail
     }
+
+    /**
+     * Handle file row output for uploaders
+     *
+     * @param array $attributes
+     * @param int $limit
+     * @param int $id
+     * @param string $icon
+     * @param string $name
+     *
+     * @since 2.0.0
+     */
+    public function markup ( $attributes, $limit = 1, $id = null, $icon = null, $name = null ) {
+?>
+    <li class="pods-file">
+        <input type="hidden" class="pods-file-id" name="<?php echo $attributes[ 'name' ]; ?>[]" value="<?php echo ( empty( $id ) ? '{{id}}' : $id ); ?>" />
+
+        <ul class="pods-file-meta media-item">
+            <?php if ( 1 < $limit ) { ?>
+                <li class="pods-file-col pods-file-handle">Handle</li>
+            <?php } ?>
+
+            <li class="pods-file-col pods-file-icon">
+                <img class="pinkynail" src="<?php echo ( empty( $icon ) ? '{{icon}}' : $icon ); ?>" alt="Icon" />
+            </li>
+
+            <li class="pods-file-col pods-file-name"><?php echo ( empty( $name ) ? '{{name}}' : $name ); ?></li>
+
+            <li class="pods-file-col pods-file-delete">Delete</li>
+        </ul>
+    </li>
+<?php
+    }
 }

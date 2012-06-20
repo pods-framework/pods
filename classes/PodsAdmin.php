@@ -24,12 +24,15 @@ class PodsAdmin {
         if ( is_admin() ) {
             add_action( 'wp_ajax_pods_admin', array( $this, 'admin_ajax' ) );
             add_action( 'wp_ajax_nopriv_pods_admin', array( $this, 'admin_ajax' ) );
+
+            add_action( 'wp_ajax_pods_upload', array( $this, 'admin_ajax_upload' ) );
+            add_action( 'wp_ajax_nopriv_pods_upload', array( $this, 'admin_ajax_upload' ) );
         }
     }
 
     public function admin_init () {
         // Fix for plugins that *don't do it right* so we don't cause issues for users
-        if ( defined( 'DOING_AJAX' ) && !empty( $_POST ) && ( 'pods_admin' == pods_var( 'action', 'get' ) || 'pods_admin' == pods_var( 'action', 'post' ) ) ) {
+        if ( defined( 'DOING_AJAX' ) && !empty( $_POST ) && ( in_array( pods_var( 'action', 'get' ), array( 'pods_admin', 'pods_upload' ) ) || in_array( pods_var( 'action', 'post' ), array( 'pods_admin', 'pods_upload' ) ) ) ) {
             foreach ( $_POST as $key => $value ) {
                 if ( 'action' == $key )
                     continue;
@@ -187,7 +190,7 @@ class PodsAdmin {
                     ) );
                 }
                 else
-                    $submenu[ ] = $item;
+                    $submenu[] = $item;
             }
             if ( !empty( $submenu ) ) {
                 $parent = false;
@@ -589,6 +592,94 @@ class PodsAdmin {
 
         if ( !is_bool( $output ) )
             echo $output;
+
+        die(); // KBAI!
+    }
+
+    public function admin_ajax_upload () {
+        if ( false === headers_sent() ) {
+            if ( '' == session_id() )
+                @session_start();
+
+            header( 'Content-Type: text/html; charset=' . get_bloginfo( 'charset' ) );
+        }
+
+        // Sanitize input
+        $params = stripslashes_deep( (array) $_POST );
+        foreach ( $params as $key => $value ) {
+            if ( 'action' == $key )
+                continue;
+            unset( $params[ $key ] );
+            $params[ str_replace( '_podsfix_', '', $key ) ] = $value;
+        }
+        if ( !defined( 'PODS_STRICT_MODE' ) || !PODS_STRICT_MODE )
+            $params = pods_sanitize( $params );
+
+        $params = (object) $params;
+
+        $methods = array(
+            'upload',
+        );
+
+        if ( !isset( $params->method ) || !in_array( $params->method, $methods ) || !isset( $params->id ) || empty( $params->id ) )
+            pods_error( 'Invalid AJAX request', $this );
+
+        if ( !method_exists( $this->api, $params->method ) )
+            pods_error( 'API method does not exist', $this );
+
+        // Flash often fails to send cookies with the POST or upload, so we need to pass it in GET or POST instead
+        if ( is_ssl() && empty( $_COOKIE[ SECURE_AUTH_COOKIE ] ) && !empty( $_REQUEST[ 'auth_cookie' ] ) )
+            $_COOKIE[ SECURE_AUTH_COOKIE ] = $_REQUEST[ 'auth_cookie' ];
+        elseif ( empty( $_COOKIE[ AUTH_COOKIE ] ) && !empty( $_REQUEST[ 'auth_cookie' ] ) )
+            $_COOKIE[ AUTH_COOKIE ] = $_REQUEST[ 'auth_cookie' ];
+        if ( empty( $_COOKIE[ LOGGED_IN_COOKIE ] ) && !empty( $_REQUEST[ 'logged_in_cookie' ] ) )
+            $_COOKIE[ LOGGED_IN_COOKIE ] = $_REQUEST[ 'logged_in_cookie' ];
+        global $current_user;
+        unset( $current_user );
+
+        /**
+         * Access Checking
+         */
+        $upload_disabled = false;
+        if ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD )
+            $upload_disabled = true;
+        elseif ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && true === PODS_UPLOAD_REQUIRE_LOGIN && !is_user_logged_in() )
+            $upload_disabled = true;
+        elseif ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && !is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && ( !is_user_logged_in() || !current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) )
+            $upload_disabled = true;
+
+        if ( false === $upload_disabled || !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, 'pods-' . $params->method . '-' . $params->id ) )
+            pods_error( 'Unauthorized request', $this );
+
+        $method = $params->method;
+
+        // Cleaning up $params
+        unset( $params->action );
+        unset( $params->method );
+        unset( $params->_wpnonce );
+
+        /**
+         * Upload a new file (advanced - returns URL and ID)
+         */
+        if ( 'upload' == $params->action && false === $upload_disabled ) {
+            $attachment_id = media_handle_upload( 'Filedata', 0 );
+            if ( is_object( $attachment_id ) ) {
+                $errors = array();
+
+                foreach ( $attachment_id->errors[ 'upload_error' ] as $error_code => $error_message ) {
+                    $errors[] = '[' . $error_code . '] ' . $error_message;
+                }
+
+                echo 'Error: <div style="color:#FF0000">' . implode( '</div><div>', $errors ) . '</div>';
+            }
+            else {
+                $attachment = get_post( $attachment_id, ARRAY_A );
+                $attachment[ 'filename' ] = basename( $attachment[ 'guid' ] );
+                $attachment[ 'thumbnail' ] = wp_get_attachment_image( $attachment[ 'id' ], 'thumbnail', true );
+
+                echo json_encode( $attachment );
+            }
+        }
 
         die(); // KBAI!
     }

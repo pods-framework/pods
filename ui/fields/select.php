@@ -9,12 +9,8 @@
 <select<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?>>
     <?php
         foreach ( $options[ 'data' ] as $option_value => $option_label ) {
-            if ( is_array( $option_label ) ) {
-                if ( isset( $option_label[ 'label' ] ) )
-                    $option_label = $option_label[ 'label' ];
-                else
-                    $option_label = $option_value;
-            }
+            if ( is_array( $option_label ) && isset( $option_label[ 'label' ] ) )
+                $option_label = $option_label[ 'label' ];
 
             if ( is_array( $option_label ) ) {
     ?>

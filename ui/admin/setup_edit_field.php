@@ -69,8 +69,8 @@ if ('__1' != pods_var('id', $field)) {
                                             <?php echo PodsForm::field('field_data[' . $i . '][pick_object]', pods_var('pick_object', $field), 'pick', array('data' => pods_var('pick_object', $field_settings), 'class' => 'pods-dependent-toggle')); ?>
                                         </div>
                                         <div class="pods-field-option pods-depends-on pods-depends-on-field-data-pick-object pods-depends-on-field-data-pick-object-custom-simple">
-                                            <?php echo PodsForm::label('field_data[' . $i . '][pick_custom]', __('Custom Defined Options', 'pods'), __('One option per line, use value|Label for separate values and labels')); ?>
-                                            <?php echo PodsForm::field('field_data[' . $i . '][pick_custom]', pods_var('pick_custom', $field), 'textarea'); ?>
+                                            <?php echo PodsForm::label('field_data[' . $i . '][pick_custom]', __('Custom Defined Options', 'pods'), __('One option per line, use <em>value|Label</em> for separate values and labels')); ?>
+                                            <?php echo PodsForm::field('field_data[' . $i . '][pick_custom]', pods_var('pick_custom', $field), 'paragraph'); ?>
                                         </div>
                                         <div class="pods-field-option pods-depends-on pods-depends-on-field-data-pick-object pods-depends-on-field-data-pick-object-pod-event">
                                             <?php echo PodsForm::label('field_data[' . $i . '][sister_field_id]', __('Bi-Directional Related', 'pods'), __('help', 'pods')); ?>

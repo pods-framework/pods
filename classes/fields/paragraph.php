@@ -37,7 +37,7 @@ class PodsField_Paragraph extends PodsField {
         $options = array(
             'paragraph_format_type' => array(
                 'label' => __( 'Format Type', 'pods' ),
-                'default' => 'textarea',
+                'default' => 'plain',
                 'type' => 'pick',
                 'data' => array(
                     'plain' => __( 'Plain Text Area', 'pods' ),
@@ -114,7 +114,7 @@ class PodsField_Paragraph extends PodsField {
      * @since 2.0.0
      */
     public function schema ( $options ) {
-        $schem = 'LONGTEXT';
+        $schema = 'LONGTEXT';
 
         return $schema;
     }
@@ -153,9 +153,11 @@ class PodsField_Paragraph extends PodsField {
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
+        var_dump( $options);
 
-        $field_type = 'textarea';
-        if ( 'tinymce' == $options[ 'paragraph_format_type' ] )
+        if ( 'plain' == $options[ 'paragraph_format_type' ] )
+            $field_type = 'textarea';
+        elseif ( 'tinymce' == $options[ 'paragraph_format_type' ] )
             $field_type = 'tinymce';
         elseif ( 'cleditor' == $options[ 'paragraph_format_type' ] )
             $field_type = 'cleditor';

@@ -153,7 +153,6 @@ class PodsField_Paragraph extends PodsField {
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
-        var_dump( $options);
 
         if ( 'plain' == $options[ 'paragraph_format_type' ] )
             $field_type = 'textarea';

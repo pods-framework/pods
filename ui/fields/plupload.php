@@ -72,6 +72,9 @@
         </tbody>
     </table>
 
+    <script type="text/x-handlebars" id="<?php echo $css_id; ?>-js-row">
+        <?php echo $field_file->markup( $attributes ); ?>
+    </script>
     <script>
         jQuery( function ( $ ) {
             var pods_uploader = new plupload.Uploader(<?php echo json_encode( $plupload_init ); ?>),
@@ -134,8 +137,16 @@
                     $.fn.reverse = [].reverse;
 
                     var json = eval( '(' + response.match( /\{(.*)\}/gi ) + ')' );
+                    var binding = {
+                        id: json.ID,
+                        icon: json.thumbnail,
+                        name: json.filename
+                    };
+                    var tmpl = Handlebars.compile($('<?php echo esc_js( $css_id ); ?>-js-row').html());
+                    var html = tmpl(binding);
+                    console.log(html);
 
-                    list.append( '<?php echo $js_row; ?>' );
+                    list.append( html );
 
                     var items = list.find( 'li' ),
                         itemCount = items.size();

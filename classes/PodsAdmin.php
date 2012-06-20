@@ -658,7 +658,7 @@ class PodsAdmin {
         /**
          * Upload a new file (advanced - returns URL and ID)
          */
-        if ( 'upload' == $params->action && false === $upload_disabled ) {
+        if ( 'upload' == $method ) {
             $attachment_id = media_handle_upload( 'Filedata', 0 );
             if ( is_object( $attachment_id ) ) {
                 $errors = array();

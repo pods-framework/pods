@@ -49,17 +49,28 @@
         $field_file->markup( $attributes )
     );
 ?>
-    <ul class="pods-files" id="<?php echo $css_id; ?>-files">
-        <?php
-            foreach ( $value as $val ) {
-                $field_file->markup( $attributes, $val[ 'ID' ], $val[ 'guid' ], $val[ 'post_title' ] );
-            }
-        ?>
-    </ul>
+    <table class="form-table pods-metabox">
+        <tbody>
+            <tr class="form-field">
+                <th scope="row" valign="top">
+                    <label class="pods-form-ui-label-pods-meta-files">Files</label>
+                </th>
+                <td>
+                    <ul class="pods-files">
+                        <?php
+                            foreach ( $value as $val ) {
+                                $field_file->markup( $attributes, $val[ 'ID' ], $val[ 'guid' ], $val[ 'post_title' ] );
+                            }
+                        ?>
+                    </ul>
 
-    <p><a href="" class="plupload-add button" id="<?php echo $css_id; ?>-browse">Add New</a></p>
+                    <a class="button pods-file-add plupload-add" id="<?php echo $css_id; ?>-browse" href="">Add File</a>
 
-    <p class="plupload-queue" id="<?php echo $css_id; ?>-queue"></p>
+                    <p class="plupload-queue" id="<?php echo $css_id; ?>-queue"></p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
     <script>
         jQuery( function ( $ ) {

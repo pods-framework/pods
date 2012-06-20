@@ -645,7 +645,7 @@ class PodsAdmin {
         elseif ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && !is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && ( !is_user_logged_in() || !current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) )
             $upload_disabled = true;
 
-        if ( false === $upload_disabled || !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, 'pods-' . $params->method . '-' . $params->id ) )
+        if ( true === $upload_disabled || !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, 'pods-' . $params->method . '-' . $params->id ) )
             pods_error( 'Unauthorized request', $this );
 
         $method = $params->method;
@@ -658,7 +658,7 @@ class PodsAdmin {
         /**
          * Upload a new file (advanced - returns URL and ID)
          */
-        if ( 'upload' == $params->action && false === $upload_disabled ) {
+        if ( 'upload' == $method && false === $upload_disabled ) {
             $attachment_id = media_handle_upload( 'Filedata', 0 );
             if ( is_object( $attachment_id ) ) {
                 $errors = array();

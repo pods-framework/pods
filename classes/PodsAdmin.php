@@ -475,11 +475,7 @@ class PodsAdmin {
             'load_sister_fields' => array( 'priv' => 'manage_pods', 'format' => 'json' ),
             'load_pod_item' => array( 'access_pod_specific' => true ),
             'load_files' => array( 'priv' => 'upload_files' ),
-            'export_package' => array(
-                'priv' => 'manage_packages',
-                'format' => 'json',
-                'safe' => true
-            ),
+            'export_package' => array( 'priv' => 'manage_packages', 'format' => 'json', 'safe' => true ),
             'import_package' => array( 'priv' => 'manage_packages' ),
             'validate_package' => array( 'priv' => 'manage_packages' ),
             'replace_package' => array( 'priv' => 'manage_packages' ),

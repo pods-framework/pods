@@ -25,6 +25,7 @@ function pods_attachments ( src, limit ) {
         var tmpl = Handlebars.compile( source );
 
         pods_file_context.append( tmpl( binding ) );
+        pods_file_context.find( 'li#pods-file-' + wp_media_id ).slideDown( 'fast' );
 
         if ( 1 < limit ) {
             jQuery( this ).after( ' <span class="pods-attached">Added! Choose another or <a href="#">close this box</a>.</span>' );

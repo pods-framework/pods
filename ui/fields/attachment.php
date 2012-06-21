@@ -25,14 +25,12 @@
         <tbody>
             <tr class="form-field">
                 <td>
-                    <ul class="pods-files">
-                        <?php
+                    <ul class="pods-files"><?php // no extra space in ul or CSS:empty won't work
                             foreach ( $value as $val ) {
                                 $thumb = wp_get_attachment_image_src( $val[ 'id' ], 'thumbnail', true );
                                 echo $field_file->markup( $attributes, $file_limit, $options[ 'file_edit_title' ], $val[ 'ID' ], $thumb[ 0 ], basename( $val[ 'guid' ] ) );
                             }
-                        ?>
-                    </ul>
+                        ?></ul>
 
                     <a class="button pods-file-add" href="media-upload.php?TB_iframe=1&amp;width=640&amp;height=1500">Add File</a>
                 </td>

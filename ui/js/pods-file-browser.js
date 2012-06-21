@@ -2,7 +2,7 @@ var pods_file_context_ = false; // tracks whether or not we've got a thickbox di
 var pods_file_thickbox_modder; // stores our interval for making necessary changes to thickbox content
 
 // handle our thickbox mods
-function modify_thickbox ( src, limit ) {
+function pods_attachments ( src, limit ) {
     var pods_thickbox = jQuery( '#TB_iframeContent' ).contents();
 
     pods_thickbox.find( 'td.savesend input' ).unbind( 'click' ).click( function ( e ) {
@@ -25,6 +25,7 @@ function modify_thickbox ( src, limit ) {
         var tmpl = Handlebars.compile( source );
 
         pods_file_context.append( tmpl( binding ) );
+        pods_file_context.find( 'li#pods-file-' + wp_media_id ).slideDown( 'fast' );
 
         if ( 1 < limit ) {
             jQuery( this ).after( ' <span class="pods-attached">Added! Choose another or <a href="#">close this box</a>.</span>' );

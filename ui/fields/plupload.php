@@ -44,14 +44,12 @@
         <tbody>
             <tr class="form-field">
                 <td>
-                    <ul class="pods-files">
-                        <?php
+                    <ul class="pods-files"><?php // no extra space in ul or CSS:empty won't work
                             foreach ( $value as $val ) {
                                 $thumb = wp_get_attachment_image_src( $val[ 'id' ], 'thumbnail', true );
-                                echo $field_file->markup( $attributes, $file_limit, $val[ 'ID' ], $thumb[ 0 ], basename( $val[ 'guid' ] ) );
+                                echo $field_file->markup( $attributes, $file_limit, $options[ 'file_edit_title' ], $val[ 'ID' ], $thumb[ 0 ], basename( $val[ 'guid' ] ) );
                             }
-                        ?>
-                    </ul>
+                        ?></ul>
 
                     <a class="button pods-file-add plupload-add" id="<?php echo $css_id; ?>-upload" href="">Add File</a>
 
@@ -65,7 +63,7 @@
     </table>
 
     <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
-        <?php echo $field_file->markup( $attributes, $file_limit ); ?>
+        <?php echo $field_file->markup( $attributes, $file_limit, $options[ 'file_edit_title' ] ); ?>
     </script>
 
     <script type="text/x-handlebars" id="<?php echo $css_id; ?>-progress-template">
@@ -158,7 +156,7 @@
                     var binding = {
                         id : json.ID,
                         icon : json.thumbnail,
-                        name : json.filename
+                        name : json.post_title
                     };
 
                     var tmpl = Handlebars.compile( $( 'script#<?php echo esc_js( $css_id ); ?>-handlebars' ).html() );
@@ -166,6 +164,7 @@
                     var html = tmpl( binding );
 
                     list.prepend( html );
+                    list.find( 'li.pods-file:first' ).slideDown( 'fast' );
 
                     var items = list.find( 'li.pods-file' ),
                         itemCount = items.size();

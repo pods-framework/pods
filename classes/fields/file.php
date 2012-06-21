@@ -58,6 +58,11 @@ class PodsField_File extends PodsField {
                 ),
                 'dependency' => true
             ),
+            'file_edit_title' => array(
+                'label' => __( 'Editable Title', 'pods' ),
+                'default' => 1,
+                'type' => 'boolean'
+            ),
             'file_limit' => array(
                 'label' => __( 'File Limit', 'pods' ),
                 'depends-on' => array( 'file_format_type' => 'multi' ),
@@ -241,11 +246,20 @@ class PodsField_File extends PodsField {
      *
      * @since 2.0.0
      */
-    public function markup ( $attributes, $limit = 1, $id = null, $icon = null, $name = null ) {
+    public function markup ( $attributes, $limit = 1, $editable = true, $id = null, $icon = null, $name = null ) {
         ob_start();
+
+        if ( empty ($id ) )
+            $id = '{{id}}';
+
+        if ( empty ( $icon ) )
+            $icon = '{{icon}}';
+
+        if ( empty ( $name ) )
+            $name = '{{name}}';
 ?>
     <li class="pods-file hidden" id="pods-file-{{id}}">
-        <input type="hidden" class="pods-file-id" name="<?php echo $attributes[ 'name' ]; ?>[]" value="<?php echo ( empty( $id ) ? '{{id}}' : $id ); ?>" />
+        <input type="hidden" class="pods-file-id" name="<?php echo $attributes[ 'name' ]; ?>[{{id}}][id]" value="<?php echo $id; ?>" />
 
         <ul class="pods-file-meta media-item">
             <?php if ( 1 < $limit ) { ?>
@@ -253,10 +267,17 @@ class PodsField_File extends PodsField {
             <?php } ?>
 
             <li class="pods-file-col pods-file-icon">
-                <img class="pinkynail" src="<?php echo ( empty( $icon ) ? '{{icon}}' : $icon ); ?>" alt="Icon" />
+                <img class="pinkynail" src="<?php echo $icon; ?>" alt="Icon" />
             </li>
 
-            <li class="pods-file-col pods-file-name"><?php echo ( empty( $name ) ? '{{name}}' : $name ); ?></li>
+            <li class="pods-file-col pods-file-name">
+                <?php
+                    if ( $editable )
+                        echo PodsForm::field( $attributes[ 'name' ] . '[' . $id . '][id]', $name, 'text' );
+                    else
+                        echo ( empty( $name ) ? '{{name}}' : $name );
+                ?>
+            </li>
 
             <li class="pods-file-col pods-file-delete">Delete</li>
         </ul>

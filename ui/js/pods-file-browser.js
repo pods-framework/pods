@@ -2,7 +2,7 @@ var pods_file_context_ = false; // tracks whether or not we've got a thickbox di
 var pods_file_thickbox_modder; // stores our interval for making necessary changes to thickbox content
 
 // handle our thickbox mods
-function modify_thickbox ( src, limit ) {
+function pods_attachments ( src, limit ) {
     var pods_thickbox = jQuery( '#TB_iframeContent' ).contents();
 
     pods_thickbox.find( 'td.savesend input' ).unbind( 'click' ).click( function ( e ) {

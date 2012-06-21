@@ -83,7 +83,7 @@
                 pods_file_context = trigger.parent().find( 'ul.pods-files' );
                 pods_file_thickbox_modder = setInterval( function () {
                     if ( pods_file_context )
-                        modify_thickbox( '<?php echo esc_js( $css_id ); ?>', <?php echo $file_limit; ?> );
+                        pods_attachments( '<?php echo esc_js( $css_id ); ?>', <?php echo $file_limit; ?> );
                 }, 500 );
 
                 tb_show( 'Attach a file', e.target.href, false );

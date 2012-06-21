@@ -168,7 +168,6 @@
                     $.fn.reverse = [].reverse;
                     if ( 0 < maxFiles || itemCount > maxFiles ) {
                         var reversed = items;
-                        console.log( reversed );
 
                         reversed.each( function ( idx, elem ) {
                             if ( idx + 1 > maxFiles ) {

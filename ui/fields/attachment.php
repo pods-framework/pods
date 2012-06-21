@@ -29,7 +29,7 @@
                         <?php
                             foreach ( $value as $val ) {
                                 $thumb = wp_get_attachment_image_src( $val[ 'id' ], 'thumbnail', true );
-                                echo $field_file->markup( $attributes, $file_limit, $val[ 'ID' ], $thumb[ 0 ], basename( $val[ 'guid' ] ) );
+                                echo $field_file->markup( $attributes, $file_limit, $options[ 'file_edit_title' ], $val[ 'ID' ], $thumb[ 0 ], basename( $val[ 'guid' ] ) );
                             }
                         ?>
                     </ul>
@@ -41,7 +41,7 @@
     </table>
 
     <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
-        <?php echo $field_file->markup( $attributes, $file_limit ); ?>
+        <?php echo $field_file->markup( $attributes, $file_limit, $options[ 'file_edit_title' ] ); ?>
     </script>
 
     <script type="text/javascript">

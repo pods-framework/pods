@@ -277,3 +277,21 @@ form.pods-manage .pods-slider-field-display {
     padding: 10px 0;
 }
 
+/**
+ * Plupload queue
+ */
+
+table.plupload-queue tr.hide {
+    display: none;
+}
+
+table.plupload-queue td.progress {
+    width: 175px;
+}
+
+table.plupload-queue td.progress .progress-bar {
+    width: 0%;
+    height: 14px;
+    background: black;
+}
+

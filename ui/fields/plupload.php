@@ -52,7 +52,7 @@
         $field_file->markup( $attributes )
     );
 ?>
-    <table class="form-table pods-metabox">
+    <table class="form-table pods-metabox" id="<?php echo $css_id; ?>">
         <tbody>
             <tr class="form-field">
                 <th scope="row" valign="top">
@@ -62,7 +62,7 @@
                     <ul class="pods-files" id="<?php echo $css_id; ?>-pods-files">
                         <?php
                             foreach ( $value as $val ) {
-                                echo $field_file->markup( $attributes, $val[ 'ID' ], $val[ 'guid' ], $val[ 'post_title' ] );
+                                echo $field_file->markup( $attributes, $file_limit, $val[ 'ID' ], wp_get_attachment_image( $val[ 'id' ], 'thumbnail', true ), basename( $val[ 'guid' ] ) );
                             }
                         ?>
                     </ul>
@@ -80,7 +80,7 @@
     </script>
     <script>
         jQuery( function ( $ ) {
-            var pods_uploader = new plupload.Uploader(<?php echo json_encode( $plupload_init ); ?>),
+            var pods_uploader = new plupload.Uploader( <?php echo json_encode( $plupload_init ); ?> ),
                 list = $( '#<?php echo esc_js( $css_id ); ?>-files' ),
                 queue = $( '#<?php echo esc_js( $css_id ); ?>-queue' ),
                 maxFiles = <?php echo esc_js( $file_limit ); ?>;
@@ -91,7 +91,7 @@
             pods_uploader.bind( 'FilesAdded', function ( up, files ) {
                 // Hide any existing files (for use in single/limited field configuration)
                 if ( 1 == maxFiles )
-                    jQuery( '.pods_field_<?php echo $name; ?> .success' ).hide();
+                    jQuery( '<?php echo $css_id; ?> li.pods-file' ).hide();
 
                 jQuery.each( files, function ( index, file ) {
                     var prog_container = $( '<div/>', {
@@ -117,7 +117,7 @@
 
             // Plupload UploadProgress Event Handler
             pods_uploader.bind( 'UploadProgress', function ( up, file ) {
-                var prog_bar = $( '#' + file.id ).find( '.progress-bar' );
+                var prog_bar = $( '#<?php echo esc_js( $css_id ); ?>-pods-files #' + file.id ).find( '.progress-bar' );
                 prog_bar.css( 'width', file.percent + '%' );
             } );
 
@@ -137,23 +137,24 @@
                 else {
                     file_div.remove();
 
-                    $.fn.reverse = [].reverse;
+                    var json = eval( '(' + response.match( /\{(.*)\}/gi ) + ')' ),
 
-                    var json = eval( '(' + response.match( /\{(.*)\}/gi ) + ')' );
                     var binding = {
-                        id: json.ID,
-                        icon: json.guid,
-                        name: json.filename
+                        id : json.ID,
+                        icon : json.thumbnail,
+                        name : json.filename
                     };
-                    var tmpl = Handlebars.compile($('#<?php echo esc_js( $css_id ); ?>-js-row').html());
-                    var html = tmpl(binding);
-                    var list = $('#<?php echo esc_js( $css_id ); ?>-pods-files');
+
+                    var tmpl = Handlebars.compile( $( '#<?php echo esc_js( $css_id ); ?>-js-row' ).html() );
+
+                    var html = tmpl( binding );
 
                     list.prepend( html );
 
-                    var items = list.find( 'ul.pods-file-meta' ),
+                    var items = list.find( '#<?php echo esc_js( $css_id ); ?>-pods-files li.pods-file' ),
                         itemCount = items.size();
 
+                    $.fn.reverse = [].reverse;
                     if ( 0 < maxFiles || itemCount > maxFiles ) {
                         var reversed = items.reverse();
 

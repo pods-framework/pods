@@ -14,7 +14,7 @@
     $css_id = $attributes[ 'id' ];
 
     $file_limit = 1;
-    if ( isset( $options[ 'file_limit' ] ) && 'multi' == $options[ 'file_format_type' ] )
+    if ( isset( $options[ 'file_limit' ] ) && 'multiple' == $options[ 'file_format_type' ] )
         $file_limit = (int) $options[ 'file_limit' ];
 
     $plupload_init = array(
@@ -162,12 +162,12 @@
 
                     list.prepend( html );
 
-                    var items = list.find( '#<?php echo esc_js( $css_id ); ?> ul.pods-files li.pods-file' ),
+                    var items = list.find( 'li.pods-file' ),
                         itemCount = items.size();
 
                     $.fn.reverse = [].reverse;
                     if ( 0 < maxFiles || itemCount > maxFiles ) {
-                        var reversed = items.reverse();
+                        var reversed = items;
 
                         reversed.each( function ( idx, elem ) {
                             if ( idx + 1 > maxFiles ) {

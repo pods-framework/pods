@@ -153,7 +153,7 @@
                     var binding = {
                         id : json.ID,
                         icon : json.thumbnail,
-                        name : json.filename
+                        name : json.post_title
                     };
 
                     var tmpl = Handlebars.compile( $( 'script#<?php echo esc_js( $css_id ); ?>-handlebars' ).html() );

@@ -60,7 +60,7 @@ class PodsField_File extends PodsField {
             ),
             'file_edit_title' => array(
                 'label' => __( 'Editable Title', 'pods' ),
-                'default' => true,
+                'default' => 1,
                 'type' => 'boolean'
             ),
             'file_limit' => array(

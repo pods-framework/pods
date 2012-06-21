@@ -35,7 +35,7 @@ class PodsWidgetSingle extends WP_Widget {
                 $shortcode .= "helper=\"{$helper}\" ";
 
             $shortcode .= "]";
-            
+
             require PODS_DIR . 'ui/front/widgets/pods_widget_output.php';
         }
 
@@ -66,9 +66,6 @@ class PodsWidgetSingle extends WP_Widget {
         $template = esc_attr($instance['template']);
         $slug     = esc_attr($instance['slug']);
         $helper   = esc_attr($instance['helper']);
-        require PODS_DIR . 'ui/admin/widgets/pods_widget_single_form.php'; 
+        require PODS_DIR . 'ui/admin/widgets/single.php';
     }
 }
-
-// vim: set ts=4 sw=4 expandtab :
-?>

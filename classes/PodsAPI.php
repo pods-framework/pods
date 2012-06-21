@@ -1566,6 +1566,8 @@ class PodsAPI {
             }
         }
 
+        $pod[ 'fields' ] = PodsForm::option_setup( $pod[ 'fields' ] );
+
         wp_cache_set( $pod[ 'name' ], $pod, 'pods_pods' );
 
         return $pod;
@@ -1628,7 +1630,6 @@ class PodsAPI {
         }
 
         $result = pods_query( "SELECT id FROM `@wp_pods` {$where} {$orderby} {$limit}", $this );
-
         if ( empty( $result ) )
             return array();
 

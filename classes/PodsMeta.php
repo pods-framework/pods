@@ -86,8 +86,8 @@ class PodsMeta {
         foreach ( $pod['fields'] as $field ) {
 ?>
     <tr class="form-field">
-        <th scope="row" valign="top"><?php echo PodsForm::label('pods_meta_' . $field['name'], $field['label']); ?></th>
-        <td><?php echo PodsForm::field('pods_meta_' . $field['name'], (is_object($post) ? get_post_meta($post->ID, $field['name']) : '' ), $field['type']); ?></td>
+        <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
+        <td><?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], ( is_object( $post ) ? get_post_meta( $post->ID, $field[ 'name' ] ) : '' ), $field[ 'type' ], $field[ 'options' ] ); ?></td>
     </tr>
 <?php
         }
@@ -117,7 +117,7 @@ class PodsMeta {
             $form_fields[ 'pods_meta_' . $field[ 'name' ] ] = array(
                 'label' => $field[ 'label' ],
                 'input' => 'html',
-                'html' => PodsForm::field('pods_meta_' . $field['name'], get_post_meta( $post->ID, $field['name'] ), $field['type']),
+                'html' => PodsForm::field('pods_meta_' . $field['name'], get_post_meta( $post->ID, $field['name'] ), $field['type'], $field[ 'options' ]),
                 'helps' => $field['options']['description']
             );
         }
@@ -146,8 +146,8 @@ class PodsMeta {
 ?>
     <div class="form-field">
 <?php
-            echo PodsForm::label('pods_meta_' . $field['name'], $field['label']);
-            echo PodsForm::field('pods_meta_' . $field['name'], '', $field['type']);
+            echo PodsForm::label('pods_meta_' . $field['name'], $field['label'], $field[ 'help' ]);
+            echo PodsForm::field('pods_meta_' . $field['name'], '', $field['type'], $field[ 'options' ]);
             if ( isset( $fields[ 'options' ][ 'description' ] ) )
                 echo wpautop( $field['options']['description'] );
 ?>
@@ -157,10 +157,10 @@ class PodsMeta {
             else {
 ?>
     <tr class="form-field">
-        <th scope="row" valign="top"><?php echo PodsForm::label('pods_meta_' . $field['name'], $field['label']); ?></th>
+        <th scope="row" valign="top"><?php echo PodsForm::label('pods_meta_' . $field['name'], $field['label'], $field[ 'help' ]); ?></th>
         <td>
 <?php
-                echo PodsForm::field('pods_meta_' . $field['name'], '', $field['type']);
+                echo PodsForm::field('pods_meta_' . $field['name'], '', $field['type'], $field[ 'options' ]);
                 if ( isset( $fields[ 'options' ][ 'description' ] ) )
                     echo '<span class="description">' . $field['options']['description'] . '</span>';
 ?>
@@ -199,8 +199,8 @@ class PodsMeta {
         foreach ( $pod['fields'] as $field ) {
 ?>
             <tr class="form-field">
-                <th scope="row" valign="top"><?php echo PodsForm::label('pods_meta_' . $field['name'], $field['label']); ?></th>
-                <td><?php echo PodsForm::field('pods_meta_' . $field['name'], get_user_meta( $user_id, $field['name'] ), $field['type']); ?></td>
+                <th scope="row" valign="top"><?php echo PodsForm::label('pods_meta_' . $field['name'], $field['label'], $field[ 'help' ]); ?></th>
+                <td><?php echo PodsForm::field('pods_meta_' . $field['name'], get_user_meta( $user_id, $field['name'] ), $field['type'], $field[ 'options' ]); ?></td>
             </tr>
 <?php
         }
@@ -230,8 +230,8 @@ class PodsMeta {
 ?>
             <p class="comment-form-author comment-form-pods-meta-<?php echo $field['name']; ?>">
 <?php
-            echo PodsForm::label('pods_meta_' . $field['name'], $field['label']);
-            echo PodsForm::field('pods_meta_' . $field['name'], '', $field['type']);
+            echo PodsForm::label('pods_meta_' . $field['name'], $field['label'], $field[ 'help' ]);
+            echo PodsForm::field('pods_meta_' . $field['name'], '', $field['type'], $field[ 'options' ]);
 ?>
             </p>
 <?php
@@ -246,8 +246,8 @@ class PodsMeta {
 ?>
             <p class="comment-form-author comment-form-pods-meta-<?php echo $field['name']; ?>">
 <?php
-            echo PodsForm::label('pods_meta_' . $field['name'], $field['label']);
-            echo PodsForm::field('pods_meta_' . $field['name'], '', $field['type']);
+            echo PodsForm::label('pods_meta_' . $field['name'], $field['label'], $field[ 'help' ]);
+            echo PodsForm::field('pods_meta_' . $field['name'], '', $field['type'], $field[ 'options' ]);
 ?>
             </p>
 <?php
@@ -265,8 +265,8 @@ class PodsMeta {
         foreach ( $pod[ 'fields' ] as $field ) {
 ?>
             <tr class="form-field">
-                <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ] ); ?></th>
-                <td><?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], ( is_object( $comment ) ? get_comment_meta( $comment->comment_ID, $field[ 'name' ] ) : '' ), $field[ 'type' ] ); ?></td>
+                <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
+                <td><?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], ( is_object( $comment ) ? get_comment_meta( $comment->comment_ID, $field[ 'name' ] ) : '' ), $field[ 'type' ], $field[ 'options' ] ); ?></td>
             </tr>
 <?php
         }
@@ -284,8 +284,8 @@ class PodsMeta {
         foreach ( $pod['fields'] as $field ) {
 ?>
     <tr class="form-field">
-        <th scope="row" valign="top"><?php echo PodsForm::label('pods_meta_' . $field['name'], $field['label']); ?></th>
-        <td><?php echo PodsForm::field('pods_meta_' . $field['name'], (is_object($comment) ? get_comment_meta($comment->comment_ID, $field['name']) : '' ), $field['type']); ?></td>
+        <th scope="row" valign="top"><?php echo PodsForm::label('pods_meta_' . $field['name'], $field['label'], $field[ 'help' ]); ?></th>
+        <td><?php echo PodsForm::field('pods_meta_' . $field['name'], (is_object($comment) ? get_comment_meta($comment->comment_ID, $field['name']) : '' ), $field['type'], $field[ 'options' ]); ?></td>
     </tr>
 <?php
         }

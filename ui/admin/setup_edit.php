@@ -480,9 +480,21 @@ if ('post_type' == pods_var('type', $pod)) {
             'cpt_capability_type' => array(
                 'label' => __( 'Capability Type', 'pods' ),
                 'help' => __( 'help', 'pods' ),
-                'type' => 'boolean',
-                'default' => true,
-                'boolean_yes_label' => ''
+                'type' => 'pick',
+                'default' => 'post',
+                'data' => array(
+                    'post' => __( 'Post', 'pods' ),
+                    'page' => __( 'Page', 'pods' ),
+                    'custom' => __( 'Custom', 'pods' )
+                ),
+                'dependency' => true
+            ),
+            'cpt_capability_type_custom' => array(
+                'label' => __( 'Custom Capability Type', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => pods_var( 'name', $pod ),
+                'depends-on' => array( 'cpt_capability_type' => 'custom' )
             ),
             'cpt_has_archive' => array(
                 'label' => __( 'Has Archive', 'pods' ),

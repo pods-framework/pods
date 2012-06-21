@@ -16,6 +16,9 @@ class PodsInit
         add_action('init', array($this, 'activate_install'), 9);
 
         if ( !empty( $this->version ) ) {
+            // Init Pods Form
+            pods_form();
+
             add_action('init', array($this, 'init'));
 
             add_action('init', array($this, 'setup_content_types'));
@@ -49,12 +52,11 @@ class PodsInit
 
         add_shortcode('pods', 'pods_shortcode');
 
-
         $security_settings = array('pods_disable_file_browser' => 0,
-                                   'pods_files_require_login' => 0,
+                                   'pods_files_require_login' => 1,
                                    'pods_files_require_login_cap' => '',
                                    'pods_disable_file_upload' => 0,
-                                   'pods_upload_require_login' => 0,
+                                   'pods_upload_require_login' => 1,
                                    'pods_upload_require_login_cap' => '');
         foreach ($security_settings as $security_setting => $setting) {
             $setting = get_option($security_setting);
@@ -145,6 +147,10 @@ class PodsInit
             if (false !== $cpt_rewrite)
                 $cpt_rewrite = $cpt_rewrite_array;
 
+            $capability_type = pods_var( 'cpt_capability_type', $post_type, 'post' );
+            if ( 'custom' == $capability_type )
+                $capability_type = pods_var( 'cpt_capability_type_custom', $post_type, 'post' );
+
             // Register Post Type
             $wp_post_types[ pods_var('name', $post_type) ] = array(
                 'label' => $cpt_label,
@@ -158,7 +164,7 @@ class PodsInit
                 'show_in_admin_bar' => (boolean) pods_var('cpt_show_in_admin_bar', $post_type, (boolean) pods_var('cpt_show_in_menu', $post_type, true)),
                 'menu_position' => (int) pods_var('cpt_menu_position', $post_type, 20),
                 'menu_icon' => pods_var('cpt_menu_icon', $post_type),
-                'capability_type' => pods_var('cpt_capability_type', $post_type, 'post'),
+                'capability_type' => $capability_type,
                 //'capabilities' => $cpt_capabilities,
                 'map_meta_cap' => (boolean) pods_var('cpt_map_meta_cap', $post_type, true),
                 'hierarchical' => (boolean) pods_var('cpt_hierarchical', $post_type, false),

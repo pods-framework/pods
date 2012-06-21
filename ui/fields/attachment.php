@@ -15,7 +15,9 @@
 
     $css_id = $attributes[ 'id' ];
 
-    $file_limit = ( isset( $options[ 'file_limit' ] ) ? (int) $options[ 'file_limit' ] : 1 );
+    $file_limit = 1;
+    if ( isset( $options[ 'file_limit' ] ) && 'multi' == $options[ 'file_format_type' ] )
+        $file_limit = (int) $options[ 'file_limit' ];
 
     $value = (array) $value;
 ?>
@@ -39,5 +41,5 @@
     </table>
 
     <script type="text/x-handlebars" id="<?php echo $css_id; ?>-js-row">
-        <?php echo $field_file->markup( $attributes ); ?>
+        <?php echo $field_file->markup( $attributes, $file_limit ); ?>
     </script>

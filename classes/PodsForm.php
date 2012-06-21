@@ -17,7 +17,6 @@ class PodsForm {
         add_filter( 'pods_form_ui_label_text', 'wp_kses_post', 9, 1 );
         add_filter( 'pods_form_ui_label_help', 'wp_kses_post', 9, 1 );
         add_filter( 'pods_form_ui_comment_text', 'wp_kses_post', 9, 1 );
-        add_filter( 'pods_form_ui_comment_text', 'the_content', 9, 1 );
     }
 
     /**
@@ -70,7 +69,7 @@ class PodsForm {
         elseif ( empty( $message ) )
             return;
 
-        $message = apply_filters( 'pods_form_ui_comment_text', $message, $name, $options );
+        $message = apply_filters( 'the_content', apply_filters( 'pods_form_ui_comment_text', $message, $name, $options ) );
 
         ob_start();
 

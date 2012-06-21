@@ -64,9 +64,6 @@ class PodsWidgetColumn extends WP_Widget {
         $slug     = $instance['slug'];
         $column   = $instance['column'];
         $helper   = $instance['helper'];
-        require PODS_DIR . 'ui/admin/widgets/pods_widget_column_form.php'; 
+        require PODS_DIR . 'ui/admin/widgets/column.php';
     }
 }
-
-// vim: set ts=4 sw=4 expandtab :
-?>

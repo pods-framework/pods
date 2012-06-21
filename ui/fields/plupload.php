@@ -13,7 +13,9 @@
 
     $css_id = $attributes[ 'id' ];
 
-    $file_limit = ( isset( $options[ 'file_limit' ] ) ? (int) $options[ 'file_limit' ] : 1 );
+    $file_limit = 1;
+    if ( isset( $options[ 'file_limit' ] ) && 'multi' == $options[ 'file_format_type' ] )
+        $file_limit = (int) $options[ 'file_limit' ];
 
     $plupload_init = array(
         'runtimes' => 'html5,silverlight,flash,html4',
@@ -60,8 +62,9 @@
     </table>
 
     <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
-        <?php echo $field_file->markup( $attributes ); ?>
+        <?php echo $field_file->markup( $attributes, $file_limit ); ?>
     </script>
+
     <script>
         jQuery( function ( $ ) {
             var pods_uploader = new plupload.Uploader( <?php echo json_encode( $plupload_init ); ?> ),

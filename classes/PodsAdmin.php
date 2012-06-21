@@ -15,9 +15,6 @@ class PodsAdmin {
         $this->api = pods_api();
         $this->data = pods_data();
 
-        // Init Pods Form
-        pods_form();
-
         add_action( 'admin_enqueue_scripts', array( $this, 'admin_head' ) );
         add_action( 'admin_menu', array( $this, 'admin_menu' ), 99 );
         add_action( 'admin_init', array( $this, 'admin_init' ), 9 );

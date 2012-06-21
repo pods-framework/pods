@@ -114,7 +114,7 @@ function add_pods_mce_popup() {
     });
     </script>
     <?php
-    require_once PODS_DIR . 'ui/admin/pods_shortcode_form.php';
+    require_once PODS_DIR . 'ui/admin/shortcode_form.php';
 }
 
 if (defined('PODS_DEVELOPER')) {

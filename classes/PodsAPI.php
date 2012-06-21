@@ -733,11 +733,10 @@ class PodsAPI {
     /**
      * Add or edit a single pod item
      *
-     * $params['pod'] string The Pod name
-     * $params['pod_id'] string The Pod name
-     * $params['columns'] array (optional) Associative array of column names + values
-     * $params['data'] array (optional) Associative array of a set of associative arrays of column names + values (for bulk operations)
-     * $params['id'] int The item's ID from the wp_pod_tbl_* table (or alternatively use the pod_id parameter instead)
+     * $params['pod'] string The Pod name (pod or pod_id is required)
+     * $params['pod_id'] string The Pod ID (pod or pod_id is required)
+     * $params['id'] int The item ID
+     * $params['data'] array (optional) Associative array of column names + values
      * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers
      *
      * @param array $params An associative array of parameters
@@ -758,6 +757,11 @@ class PodsAPI {
                 pods_deprecated( '$params->id instead of $params->pod_id', '2.0.0' );
                 $params->id = $params->pod_id;
                 unset( $params->pod_id );
+            }
+
+            if ( isset( $params->data ) && !empty( $params->data ) && is_array( $params->data ) ) {
+                pods_deprecated( 'PodsAPI::save_pod_items', '2.0.0' );
+                return $this->save_pod_items( $params, $params->data );
             }
         }
 
@@ -786,18 +790,6 @@ class PodsAPI {
             $params->id = pods_absint( $params->id );
         else
             $params->id = 0;
-
-        // support for multiple save_pod_item operations at the same time
-        if ( isset( $params->data ) && !empty( $params->data ) && is_array( $params->data ) ) {
-            $ids = array();
-            $new_params = $params;
-            unset( $new_params->data );
-            foreach ( $params->data as $fields ) {
-                $new_params->data = $fields;
-                $ids[] = $this->save_pod_item( $new_params );
-            }
-            return $ids;
-        }
 
         // Support for bulk edit
         if ( isset( $params->id ) && !empty( $params->id ) && is_array( $params->id ) ) {
@@ -1030,6 +1022,33 @@ class PodsAPI {
     }
 
     /**
+     * Add or edit a single pod item
+     *
+     * $params['pod'] string The Pod name (pod or pod_id is required)
+     * $params['pod_id'] string The Pod ID (pod or pod_id is required)
+     * $params['id'] int The item ID
+     * $params['data'] array (optional) Associative array of column names + values
+     * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers
+     *
+     * @param array $params An associative array of parameters
+     *
+     * @return int The item ID
+     * @since 1.7.9
+     */
+    public function save_pod_items ( $params, $data ) {
+        $params = (object) $params;
+
+        $ids = array();
+
+        foreach ( $data as $fields ) {
+            $params->data = $fields;
+            $ids[] = $this->save_pod_item( $params );
+        }
+
+        return $ids;
+    }
+
+    /**
      * Duplicate a pod item
      *
      * $params['pod'] string The Pod name
@@ -1059,7 +1078,7 @@ class PodsAPI {
         if ( !empty( $data ) ) {
             $params = array(
                 'pod' => $params->pod,
-                'columns' => array()
+                'data' => array()
             );
             foreach ( $fields as $field ) {
                 $field = $field[ 'name' ];
@@ -1072,7 +1091,7 @@ class PodsAPI {
                     $field = $field . '.ID';
                 $value = $pod->field( $field );
                 if ( 0 < strlen( $value ) )
-                    $params[ 'columns' ][ $field[ 'name' ] ] = $value;
+                    $params[ 'data' ][ $field[ 'name' ] ] = $value;
             }
             $params = apply_filters( 'duplicate_pod_item', $params, $pod->pod, $pod->field( 'id' ) );
             $id = $this->save_pod_item( $params );
@@ -2746,7 +2765,7 @@ class PodsAPI {
             if ( !empty( $fields ) ) {
                 $params = array(
                     'pod' => $this->pod,
-                    'columns' => $fields
+                    'data' => $fields
                 );
                 $ids[] = $this->save_pod_item( $params );
             }

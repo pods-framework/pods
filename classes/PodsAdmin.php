@@ -554,7 +554,7 @@ class PodsAdmin {
                     $columns[ $column ] = $params->$column;
                 }
             }
-            $params->columns = $columns;
+            $params->data = $columns;
         }
 
         $params = apply_filters( 'pods_api_' . $method->name, $params, $method );

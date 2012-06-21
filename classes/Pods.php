@@ -312,7 +312,7 @@ class Pods {
         $data = (array) $this->do_hook( 'add', $data, $id );
         if ( empty( $data ) )
             return;
-        $params = array( 'pod' => $this->pod, 'id' => $id, 'columns' => array( $data ) );
+        $params = array( 'pod' => $this->pod, 'id' => $id, 'data' => array( $data ) );
         return $this->api->save_pod_item( $params );
     }
 
@@ -329,7 +329,7 @@ class Pods {
         $data = (array) $this->do_hook( 'save', $data, $id );
         if ( empty( $data ) )
             return;
-        $params = array( 'pod' => $this->pod, 'id' => $id, 'columns' => array( $data ) );
+        $params = array( 'pod' => $this->pod, 'id' => $id, 'data' => array( $data ) );
         return $this->api->save_pod_item( $params );
     }
 

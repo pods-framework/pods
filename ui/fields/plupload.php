@@ -149,9 +149,9 @@
                     var html = tmpl(binding);
                     var list = $('#<?php echo esc_js( $css_id ); ?>-pods-files');
 
-                    list.append( html );
+                    list.prepend( html );
 
-                    var items = list.find( 'li' ),
+                    var items = list.find( 'ul.pods-file-meta' ),
                         itemCount = items.size();
 
                     if ( 0 < maxFiles || itemCount > maxFiles ) {

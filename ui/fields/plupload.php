@@ -33,6 +33,9 @@
     if ( !wp_script_is( 'plupload-all', 'queue' ) && !wp_script_is( 'plupload-all', 'to_do' ) && !wp_script_is( 'plupload-all', 'done' ) )
         wp_print_scripts( 'plupload-all' );
 
+    if ( !wp_script_is('handlebars', 'queue') && !wp_script_is('handlebars', 'to_do') && !wp_script_is('handlebars', 'done') )
+        wp_print_scripts('handlebars');
+
     $js_row = str_replace(
         array(
             "'",
@@ -56,7 +59,7 @@
                     <label class="pods-form-ui-label-pods-meta-files">Files</label>
                 </th>
                 <td>
-                    <ul class="pods-files">
+                    <ul class="pods-files" id="<?php echo $css_id; ?>-pods-files">
                         <?php
                             foreach ( $value as $val ) {
                                 echo $field_file->markup( $attributes, $val[ 'ID' ], $val[ 'guid' ], $val[ 'post_title' ] );
@@ -72,6 +75,9 @@
         </tbody>
     </table>
 
+    <script type="text/x-handlebars" id="<?php echo $css_id; ?>-js-row">
+        <?php echo $field_file->markup( $attributes ); ?>
+    </script>
     <script>
         jQuery( function ( $ ) {
             var pods_uploader = new plupload.Uploader(<?php echo json_encode( $plupload_init ); ?>),
@@ -134,10 +140,18 @@
                     $.fn.reverse = [].reverse;
 
                     var json = eval( '(' + response.match( /\{(.*)\}/gi ) + ')' );
+                    var binding = {
+                        id: json.ID,
+                        icon: json.guid,
+                        name: json.filename
+                    };
+                    var tmpl = Handlebars.compile($('#<?php echo esc_js( $css_id ); ?>-js-row').html());
+                    var html = tmpl(binding);
+                    var list = $('#<?php echo esc_js( $css_id ); ?>-pods-files');
 
-                    list.append( '<?php echo $js_row; ?>' );
+                    list.prepend( html );
 
-                    var items = list.find( 'li' ),
+                    var items = list.find( 'ul.pods-file-meta' ),
                         itemCount = items.size();
 
                     if ( 0 < maxFiles || itemCount > maxFiles ) {

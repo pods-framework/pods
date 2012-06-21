@@ -65,6 +65,10 @@
         <?php echo $field_file->markup( $attributes, $file_limit ); ?>
     </script>
 
+    <script type="text/x-handlebars" id="<?php echo $css_id; ?>-progress-template">
+
+    </script>
+
     <script>
         jQuery( function ( $ ) {
             // init sortable

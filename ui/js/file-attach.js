@@ -59,6 +59,7 @@ function pods_thickbox_handler(){
             // add the file on the edit screen
             pods_add_file(pods_media_id,pods_media_name,pods_media_thumb);
             // get rid of the message
+            jQuery( this ).after( ' <span class="pods-attached">Added! Choose another or close this box.</span>' );
             pods_media_parent.find('span.pods-attached').delay(3000).fadeOut('fast');
             return false;
         });

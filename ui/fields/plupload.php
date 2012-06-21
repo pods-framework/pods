@@ -17,7 +17,7 @@
 
     $plupload_init = array(
         'runtimes' => 'html5,silverlight,flash,html4',
-        'browse_button' => $css_id . '-browse',
+        'browse_button' => $css_id . '-upload',
         'url' => admin_url( 'admin-ajax.php', 'relative' ) . '?pods_ajax=1',
         'file_data_name' => 'Filedata',
         'multiple_queues' => false,
@@ -41,34 +41,32 @@
     <table class="form-table pods-metabox" id="<?php echo $css_id; ?>">
         <tbody>
             <tr class="form-field">
-                <th scope="row" valign="top">
-                    <label class="pods-form-ui-label-pods-meta-files">Files</label>
-                </th>
                 <td>
-                    <ul class="pods-files" id="<?php echo $css_id; ?>-pods-files">
+                    <ul class="pods-files">
                         <?php
                             foreach ( $value as $val ) {
-                                echo $field_file->markup( $attributes, $file_limit, $val[ 'ID' ], wp_get_attachment_image( $val[ 'id' ], 'thumbnail', true ), basename( $val[ 'guid' ] ) );
+                                $thumb = wp_get_attachment_image_src( $val[ 'id' ], 'thumbnail', true );
+                                echo $field_file->markup( $attributes, $file_limit, $val[ 'ID' ], $thumb[ 0 ], basename( $val[ 'guid' ] ) );
                             }
                         ?>
                     </ul>
 
-                    <a class="button pods-file-add plupload-add" id="<?php echo $css_id; ?>-browse" href="">Add File</a>
+                    <a class="button pods-file-add plupload-add" id="<?php echo $css_id; ?>-upload" href="">Add File</a>
 
-                    <p class="plupload-queue" id="<?php echo $css_id; ?>-queue"></p>
+                    <p class="plupload-queue"></p>
                 </td>
             </tr>
         </tbody>
     </table>
 
-    <script type="text/x-handlebars" id="<?php echo $css_id; ?>-js-row">
+    <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
         <?php echo $field_file->markup( $attributes ); ?>
     </script>
     <script>
         jQuery( function ( $ ) {
             var pods_uploader = new plupload.Uploader( <?php echo json_encode( $plupload_init ); ?> ),
-                list = $( '#<?php echo esc_js( $css_id ); ?>-files' ),
-                queue = $( '#<?php echo esc_js( $css_id ); ?>-queue' ),
+                list = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files' ),
+                queue = $( '#<?php echo esc_js( $css_id ); ?> p.plupload-queue' ),
                 maxFiles = <?php echo esc_js( $file_limit ); ?>;
 
             pods_uploader.init();
@@ -77,7 +75,7 @@
             pods_uploader.bind( 'FilesAdded', function ( up, files ) {
                 // Hide any existing files (for use in single/limited field configuration)
                 if ( 1 == maxFiles )
-                    jQuery( '#<?php echo $css_id; ?> li.pods-file' ).hide();
+                    jQuery( '#<?php echo $css_id; ?> ul.pods-files li.pods-file' ).hide();
 
                 jQuery.each( files, function ( index, file ) {
                     var prog_container = $( '<div/>', {
@@ -103,7 +101,7 @@
 
             // Plupload UploadProgress Event Handler
             pods_uploader.bind( 'UploadProgress', function ( up, file ) {
-                var prog_bar = $( '#<?php echo esc_js( $css_id ); ?>-pods-files #' + file.id ).find( '.progress-bar' );
+                var prog_bar = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files #' + file.id ).find( '.progress-bar' );
                 prog_bar.css( 'width', file.percent + '%' );
             } );
 
@@ -131,13 +129,13 @@
                         name : json.filename
                     };
 
-                    var tmpl = Handlebars.compile( $( '#<?php echo esc_js( $css_id ); ?>-js-row' ).html() );
+                    var tmpl = Handlebars.compile( $( 'script#<?php echo esc_js( $css_id ); ?>-handlebars' ).html() );
 
                     var html = tmpl( binding );
 
                     list.prepend( html );
 
-                    var items = list.find( '#<?php echo esc_js( $css_id ); ?>-pods-files li.pods-file' ),
+                    var items = list.find( '#<?php echo esc_js( $css_id ); ?> ul.pods-files li.pods-file' ),
                         itemCount = items.size();
 
                     $.fn.reverse = [].reverse;

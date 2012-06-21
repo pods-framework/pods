@@ -22,17 +22,16 @@
     <table class="form-table pods-metabox" id="<?php echo $css_id; ?>">
         <tbody>
             <tr class="form-field">
-                <th scope="row" valign="top">
-                    <label class="pods-form-ui-label-pods-meta-files">Files</label>
-                </th>
                 <td>
                     <ul class="pods-files">
                         <?php
                             foreach ( $value as $val ) {
-                                echo $field_file->markup( $attributes, $file_limit, $val[ 'ID' ], wp_get_attachment_image( $val[ 'id' ], 'thumbnail', true ), basename( $val[ 'guid' ] ) );
+                                $thumb = wp_get_attachment_image_src( $val[ 'id' ], 'thumbnail', true );
+                                echo $field_file->markup( $attributes, $file_limit, $val[ 'ID' ], $thumb[ 0 ], basename( $val[ 'guid' ] ) );
                             }
                         ?>
                     </ul>
+
                     <a class="button pods-file-add" href="media-upload.php?TB_iframe=1&amp;width=640&amp;height=1500">Add File</a>
                 </td>
             </tr>

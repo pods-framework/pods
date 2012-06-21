@@ -39,7 +39,7 @@ jQuery(document).ready(function($){
 
         pods_file_context = trigger.prev();
         pods_file_thickbox_modder = setInterval(function(){
-            if(pods_file_context) modify_thickbox();
+            if(pods_file_context) modify_thickbox( $( this ).data( 'source' ) );
         },500);
 
         tb_show('Attach a file', e.target.href, false);
@@ -47,11 +47,12 @@ jQuery(document).ready(function($){
     });
 
     // handle our thickbox mods
-    function modify_thickbox(){
+    function modify_thickbox( src ){
 
         var pods_thickbox = $('#TB_iframeContent').contents();
 
         pods_thickbox.find('td.savesend input').unbind('click').click(function(e){
+            console.log('test');
             // grab our meta as per the Media library
             var wp_media_meta       = $(this).parent().parent().parent();
             var wp_media_title      = wp_media_meta.find('tr.post_title td.field input').val();
@@ -60,7 +61,8 @@ jQuery(document).ready(function($){
             var wp_media_thumb      = wp_media_meta.parent().find('img.thumbnail').attr('src');
 
             // use the data we found to form a new Pods file entry and append it to the DOM
-            var source   = jQuery('#pods-file-template').html();
+            var source   = jQuery( '#' + src ).html();
+            console.log( source );
             var template = Handlebars.compile(source);
             pods_file_context.append(template({id:wp_media_id,name:wp_media_title,icon:wp_media_thumb}));
 

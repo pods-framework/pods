@@ -34,12 +34,18 @@
                         ?>
                     </ul>
 
-                    <a class="button pods-file-add" href="media-upload.php?TB_iframe=1&amp;width=640&amp;height=1500">Add File</a>
+                    <a class="button pods-file-add" href="media-upload.php?TB_iframe=1&amp;width=640&amp;height=1500" data-source="<?php echo $css_id; ?>-handlebars">Add File</a>
                 </td>
             </tr>
         </tbody>
     </table>
 
-    <script type="text/x-handlebars" id="<?php echo $css_id; ?>-js-row">
+    <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
         <?php echo $field_file->markup( $attributes, $file_limit ); ?>
     </script>
+
+        <script type="text/javascript">
+            jQuery( function () {
+
+            } );
+        </script>

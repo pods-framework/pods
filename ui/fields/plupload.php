@@ -67,6 +67,30 @@
 
     <script>
         jQuery( function ( $ ) {
+            // init sortable
+            $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files' ).sortable( {
+                containment : 'parent',
+                axis: 'y',
+                scrollSensitivity : 40,
+                tolerance : 'pointer',
+                opacity : 0.6
+            } )
+
+            // hook delete links
+            $( '#<?php echo esc_js( $css_id ); ?>' ).on( 'click', 'li.pods-file-delete', function () {
+                var podsfile = $( this ).parent().parent();
+                podsfile.slideUp( function () {
+
+                    // check to see if this was the only entry
+                    if ( podsfile.parent().children().length == 1 ) { // 1 because we haven't removed our target yet
+                        podsfile.parent().hide();
+                    }
+
+                    // remove the entry
+                    podsfile.remove();
+                } );
+            } );
+
             var pods_uploader = new plupload.Uploader( <?php echo json_encode( $plupload_init ); ?> ),
                 list = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files' ),
                 queue = $( '#<?php echo esc_js( $css_id ); ?> p.plupload-queue' ),

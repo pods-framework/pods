@@ -14,7 +14,7 @@
     $css_id = $attributes[ 'id' ];
 
     $file_limit = 1;
-    if ( isset( $options[ 'file_limit' ] ) && 'multi' == $options[ 'file_format_type' ] )
+    if ( isset( $options[ 'file_limit' ] ) && 'multiple' == $options[ 'file_format_type' ] )
         $file_limit = (int) $options[ 'file_limit' ];
 
     $plupload_init = array(

@@ -118,6 +118,8 @@ class PodsAdmin {
 
                     wp_enqueue_style( 'pods-cleditor' );
 
+                    wp_enqueue_script( 'jquery-effects-core' );
+                    wp_enqueue_script( 'jquery-effects-slide' );
                     wp_enqueue_script( 'jquery-ui-slider' );
                     wp_enqueue_script( 'jquery-ui-button' );
                     wp_enqueue_script( 'jquery-ui-autocomplete' );

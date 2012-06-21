@@ -55,7 +55,10 @@
 
                     <a class="button pods-file-add plupload-add" id="<?php echo $css_id; ?>-upload" href="">Add File</a>
 
-                    <p class="plupload-queue"></p>
+                    <table class="plupload-queue">
+                        <tbody>
+                        </tbody>
+                    </table>
                 </td>
             </tr>
         </tbody>
@@ -66,7 +69,12 @@
     </script>
 
     <script type="text/x-handlebars" id="<?php echo $css_id; ?>-progress-template">
-
+        <tr class="hide" id="{{id}}">
+            <td>{{filename}}</td>
+            <td class="progress" width="175">
+                <div class="progress-bar">&nbsp;</div>
+            </td>
+        </tr>
     </script>
 
     <script>
@@ -97,7 +105,7 @@
 
             var pods_uploader = new plupload.Uploader( <?php echo json_encode( $plupload_init ); ?> ),
                 list = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files' ),
-                queue = $( '#<?php echo esc_js( $css_id ); ?> p.plupload-queue' ),
+                queue = $( '#<?php echo esc_js( $css_id ); ?> table.plupload-queue' ),
                 maxFiles = <?php echo esc_js( $file_limit ); ?>;
 
             pods_uploader.init();
@@ -109,21 +117,12 @@
                     jQuery( '#<?php echo $css_id; ?> ul.pods-files li.pods-file' ).hide();
 
                 jQuery.each( files, function ( index, file ) {
-                    var prog_container = $( '<div/>', {
-                            'class' : 'plupload-progress',
-                            'id' : file.id
-                        } ),
-                        prog_name = $( '<span/>', {
-                            'class' : 'file-name',
-                            text : file.name
-                        } ),
-                        prog_bar = $( '<span/>', {
-                            'class' : 'progress-bar',
-                            css : {
-                                width : '0'
-                            }
-                        } );
-                    prog_container.append( prog_name ).append( prog_bar ).appendTo( queue );
+                    var binding = { id: file.id, filename: file.name },
+                        tmpl = Handlebars.compile( $('#<?php echo esc_js( $css_id ); ?>-progress-template').html() ),
+                        html = tmpl( binding );
+                    queue.append( html );
+                    //$('#' + file.id).show('slide', {direction: 'up'}, 1000);
+                    $('#' + file.id).fadeIn(800);
                 } );
 
                 up.refresh();
@@ -132,7 +131,7 @@
 
             // Plupload UploadProgress Event Handler
             pods_uploader.bind( 'UploadProgress', function ( up, file ) {
-                var prog_bar = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files #' + file.id ).find( '.progress-bar' );
+                var prog_bar = $( '#' + file.id ).find( '.progress-bar' );
                 prog_bar.css( 'width', file.percent + '%' );
             } );
 
@@ -150,8 +149,10 @@
                     file_div.append( response );
                 }
                 else {
-                    file_div.remove();
 
+                    file_div.fadeOut(800, function() {
+                        $(this).remove();
+                    });
                     var json = eval( '(' + response.match( /\{(.*)\}/gi ) + ')' );
 
                     var binding = {

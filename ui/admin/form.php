@@ -506,187 +506,9 @@
                                     ?>
                                 </li>
 
-                                <!-- File Upload Field -->
-                                <li class="pods-field pods-file pods-file-context" id="field-pods-field-file1">
-                                    <?php echo PodsForm::label('file1', 'File Upload'); ?>
-                                    <ul class="pods-files">
-                                        <?php for($i=0; $i < 3; $i++): ?>
-                                            <li class="media-item">
-                                                <span class="pods-file-reorder"><img src="<?php echo PODS_URL . 'ui/images/handle.gif'; ?>" alt="drag to reorder" /></span>
-                                                <span class="pods-file-thumb">
-                                                    <span>
-                                                        <img class="pinkynail" src="<?php echo PODS_URL . 'ui/images/icon32.png'; ?>" alt="Thumbnail" />
-                                                        <?php echo PodsForm::field('file1[]', $i + 1, 'hidden'); ?>
-                                                    </span>
-                                                </span>
-                                                <span class="pods-file-name">Sample Image <?php echo $i + 1; ?></span>
-                                                <span class="pods-file-remove">
-                                                    <img src="<?php echo PODS_URL . 'ui/images/del.png'; ?>" alt="" class="pods-icon-minus" />
-                                                </span>
-                                            </li>
-                                        <?php endfor; ?>
-                                    </ul>
-                                    <p class="pods-add-file">
-                                        <a href="media-upload.php?type=image&amp;TB_iframe=1&amp;width=640&amp;height=1500" class="button">Add New</a>
-                                    </p>
-                                </li>
-
-                                <!-- File Upload Field w/ Comment -->
-                                <li class="pods-field pods-file pods-file-context" id="field-pods-field-file2">
-                                    <?php echo PodsForm::label('file2', 'File Upload with Comment'); ?>
-                                    <?php echo PodsForm::comment( 'File Upload Details' ); ?>
-                                    <ul class="pods-files">
-                                        <?php for($i=0; $i < 3; $i++): ?>
-                                            <li class="media-item">
-                                                <span class="pods-file-reorder"><img src="<?php echo PODS_URL . 'ui/images/handle.gif'; ?>" alt="drag to reorder" /></span>
-                                                <span class="pods-file-thumb">
-                                                    <span>
-                                                        <img class="pinkynail" src="<?php echo PODS_URL . 'ui/images/icon32.png'; ?>" alt="Thumbnail" />
-                                                        <?php echo PodsForm::field('file2[]', $i + 1, 'hidden'); ?>
-                                                    </span>
-                                                </span>
-                                                <span class="pods-file-name">Sample Image <?php echo $i + 1; ?></span>
-                                                <span class="pods-file-remove">
-                                                    <img src="<?php echo PODS_URL . 'ui/images/del.png'; ?>" alt="" class="pods-icon-minus" />
-                                                </span>
-                                            </li>
-                                        <?php endfor; ?>
-                                    </ul>
-                                    <p class="pods-add-file">
-                                        <a href="media-upload.php?type=image&amp;TB_iframe=1&amp;width=640&amp;height=1500" class="button">Add New</a>
-                                    </p>
-                                </li><!-- /#field-pods-field-file2 -->
-
-                                <!-- Plupload Queue Field -->
-                                <li class="pods-field pods-file pods-plupload-context" id="field-pods-field-file3">
-                                    <?php echo PodsForm::label('file3', 'Plupload Queue'); ?>
-                                    <ul class="pods-files">
-                                        <?php for ($i=0; $i < 3; $i++): ?>
-                                            <li>
-                                                <span class="pods-file-reorder"><img src="<?php echo PODS_URL . 'ui/images/handle.gif'; ?>" alt="drag to reorder" /></span>
-                                                <span class="pods-file-thumb">
-                                                    <span>
-                                                        <img class="pinkynail" src="<?php echo PODS_URL . 'ui/images/icon32.png'; ?>" alt="Thumbnail" />
-                                                        <?php echo PodsForm::field('file3[]', $i + 1, 'hidden'); ?>
-                                                    </span>
-                                                </span>
-                                                <span class="pods-file-name">Sample Image <?php echo $i + 1; ?></span>
-                                                <span class="pods-file-remove">
-                                                    <img src="<?php echo PODS_URL . 'ui/images/del.png'; ?>" alt="remove" class="pods-icon-minus" />
-                                                </span>
-                                            </li>
-                                        <?php endfor; ?>
-                                    </ul>
-                                    <p>
-                                        <a href="" class="plupload-add button" id="file3-browse">Add New</a>
-                                    </p>
-                                    <p class="plupload-queue">
-                                    </p>
-                                    <?php
-                                    $plupload_init = array(
-                                        'runtimes'            => 'html5,silverlight,flash,html4',
-                                        'browse_button'       => 'file3-browse',
-                                        'url'                 => PODS_URL . 'ui/admin/misc.php',
-                                        'file_data_name'      => 'Filedata',
-                                        'multiple_queues'     => false,
-                                        'max_file_size'       => wp_max_upload_size().'b',
-                                        'flash_swf_url'       => includes_url('js/plupload/plupload.flash.swf'),
-                                        'silverlight_xap_url' => includes_url('js/plupload/plupload.silverlight.xap'),
-                                        'filters'             => array(array('title' => __('Allowed Files', 'pods'), 'extensions' => '*')),
-                                        'multipart'           => true,
-                                        'urlstream_upload'    => true,
-                                        'multipart_params'    => array(
-                                          '_ajax_nonce' => wp_create_nonce('photo-upload'),
-                                          'action'      => 'wp_handle_upload_advanced',
-                                          'method'      => 'upload_file',
-                                          'pods_ajax'   => '1',
-                                        ),
-                                    );
-                                    $plupload_init = apply_filters('plupload_init', $plupload_init);
-                                    ?>
-                                    <script type="text/javascript">
-                                        jQuery(document).ready(function($) {
-                                            if (!window.pluploaders) {
-                                                window.pluploaders = [];
-                                            }
-                                            var uploader = new plupload.Uploader(<?php echo json_encode($plupload_init); ?>);
-
-                                            // Initialize uploader BEFORE binding event handlers, otherwise auto-upload doesn't work.
-                                            uploader.init();
-
-                                            uploader.bind('FilesAdded', function(up, files) {
-                                                var list = jQuery('#field-pods-field-file3 ul.ui-sortable'),
-                                                    queue = jQuery('#field-pods-field-file3 .plupload-queue'),
-                                                    maxFiles = 5;
-
-                                                jQuery.each(files, function(idx, file) {
-                                                    var prog_container = jQuery('<div/>', {
-                                                            'class': 'plupload-progress',
-                                                            'id': file.id
-                                                        }),
-                                                        prog_name = jQuery('<span/>', {
-                                                            'class': 'file-name',
-                                                            text: file.name
-                                                        }),
-                                                        prog_bar = jQuery('<span/>', {
-                                                            'class': 'progress-bar',
-                                                            css: {
-                                                                width: '0'
-                                                            }
-                                                        });
-                                                    prog_container.append(prog_name).append(prog_bar).appendTo(queue);
-                                                });
-
-                                                uploader.start();
-                                            });
-
-                                            uploader.bind('UploadProgress', function(up, file) {
-                                                var prog_bar = jQuery('#' + file.id).find('.progress-bar');
-                                                prog_bar.css('width', file.percent + '%');
-                                            });
-
-                                            uploader.bind('FileUploaded', function(up, file, resp) {
-                                                var response = resp.response;
-
-                                                if (response.substr(0, 5) == "Error") {
-                                                    var div = response.substr(7);
-                                                    alert(jQuery(div).text());
-                                                } else if (response.substr(0, 3) == "<e>") {
-                                                    var r = response.substr(4);
-                                                    alert(r);
-                                                } else {
-                                                    $.fn.reverse = [].reverse;
-                                                    var json = jQuery.parseJSON(response),
-                                                        sort_array = jQuery('#field-pods-field-file3 .ui-sortable'),
-                                                        maxFiles = 5;
-                                                    
-                                                    sort_array.append('<li><span class="pods-file-reorder"><img src="' + PODS_URL + 'ui/images/handle.gif" alt="reorder"/></span><span class="pods-file-thumb"><span><img class="pinkynail" src="' + json.guid + '" /></span><input type="hidden" name="file3[]" value="' + json.ID + '" /></span><span class="pods-file-name">' + file.name + '</span><span class="pods-file-remove"><img src="' + PODS_URL + 'ui/images/del.png"/></span>');
-
-                                                    var items = sort_array.find('li'), itemCount = items.size();
-                                                    
-                                                    if (itemCount > maxFiles) {
-                                                        var reversed = items.reverse();
-
-                                                        reversed.each(function(idx, elem) {
-                                                            if (idx + 1 > maxFiles) {
-                                                                jQuery(elem).remove();
-                                                            }
-                                                        });
-                                                    }
-                                                }
-                                                jQuery('#' + file.id).remove();
-                                            });
-
-                                            // Add this uploader to a global 
-                                            // array so we can mess with it.
-                                            window.pluploaders.push(uploader);
-                                        });
-                                    </script>
-                                </li>
-
                                 <li class="pods-field pods-file pods-plupload-context" id="field-pods-field-file9">
                                     <?php echo PodsForm::label('file9', 'File via Form API'); ?>
-                                    <?php 
+                                    <?php
                                     echo PodsForm::field('file9', null, 'file', array(
                                         'file_format_type' => 'multiple',
                                         'file_uploader' => 'plupload',
@@ -695,7 +517,7 @@
                                     ));
                                     ?>
                                 </li>
-                                
+
                                 <li class="pods-field pods-file pods-plupload-context" id="field-pods-field-file10">
                                     <?php echo PodsForm::label('file10', 'Single File via Form API'); ?>
                                     <br/>
@@ -709,128 +531,29 @@
                                     ?>
                                 </li>
 
-                                <!-- Inline plupload input -->
-                                <li class="pods-field pods-file pods-plupload-context" id="field-pods-field-file4">
-                                    <?php echo PodsForm::label("file4", "Plupload Single"); ?>
-                                    <br/>
-                                    <a class="button plupload-add" href="" id="file4-browse">Select + Upload</a>
-                                    <a class="button" href="" id="file4-browse-server">Browse Server</a>
-                                    <ul class="pods-inline-files">
-                                    </ul>
-                                    
+                                <li class="pods-field pods-file pods-plupload-context" id="field-pods-field-file9">
+                                    <?php echo PodsForm::label( 'file11', 'Attachment via Form API' ); ?>
                                     <?php
-                                    $plupload_init = array(
-                                        'runtimes'            => 'html5,silverlight,flash,html4',
-                                        'browse_button'       => 'file4-browse',
-                                        'url'                 => PODS_URL . 'ui/admin/misc.php',
-                                        'file_data_name'      => 'Filedata',
-                                        'multiple_queues'     => false,
-                                        'max_file_size'       => wp_max_upload_size().'b',
-                                        'flash_swf_url'       => includes_url('js/plupload/plupload.flash.swf'),
-                                        'silverlight_xap_url' => includes_url('js/plupload/plupload.silverlight.xap'),
-                                        'filters'             => array(array('title' => __('Allowed Files', 'pods'), 'extensions' => '*')),
-                                        'multipart'           => true,
-                                        'urlstream_upload'    => true,
-                                        'multipart_params'    => array(
-                                          '_ajax_nonce' => wp_create_nonce('photo-upload'),
-                                          'action'      => 'wp_handle_upload_advanced',
-                                          'method'      => 'upload_file',
-                                          'pods_ajax'   => '1',
-                                        ),
-                                    );
-                                    $plupload_init = apply_filters('plupload_init', $plupload_init);
+                                    echo PodsForm::field( 'file11', null, 'file', array(
+                                        'file_format_type' => 'multiple',
+                                        'file_uploader' => 'attachment',
+                                        'file_limit' => 2,
+                                        'file_type' => 'images'
+                                    ) );
                                     ?>
-                                    <script type="text/javascript">
-                                        jQuery(document).ready(function($) {
-                                            if (!window.pluploaders) {
-                                                window.pluploaders = [];
-                                            }
-                                            var uploader = new plupload.Uploader(<?php echo json_encode($plupload_init); ?>);
-                                            uploader.init();
+                                </li>
 
-                                            uploader.bind('FilesAdded', function(up, files) {
-                                                var queue = jQuery('#field-pods-field-file4 .pods-inline-files'),
-                                                    items = queue.find('li'),
-                                                    itemCount = items.size(),
-                                                    fileCount = files.length,
-                                                    maxFiles  = 2;
-
-
-                                                jQuery.each(files, function(idx, file) {
-                                                    var list_item = jQuery('<li/>'),
-                                                        prog_wrap = jQuery('<div/>', {
-                                                            'class': 'plupload-progress',
-                                                            'id': file.id
-                                                        }),
-                                                        prog_name = jQuery('<span/>', {
-                                                            'class': 'file-name',
-                                                            text: file.name
-                                                        }),
-                                                        prog_bar = jQuery('<span/>', {
-                                                            'class': 'progress-bar',
-                                                            css: {
-                                                                width: '0%'
-                                                            }
-                                                        });
-                                                    prog_wrap.append(prog_name).append(prog_bar).appendTo(list_item);
-                                                    list_item.appendTo(queue);
-                                                });
-
-                                                // Remove files beyond limit
-                                                if (itemCount + fileCount > maxFiles) {
-                                                    $.fn.reverse = [].reverse;
-                                                    var reversed = queue.find('li').reverse();
-
-                                                    reversed.each(function(idx, elem) {
-                                                        if (idx + 1 > maxFiles) {
-                                                            jQuery(elem).remove();
-                                                            console.log('removing ' + elem);
-                                                        }
-                                                    })
-                                                }
-                                                
-                                                up.start() // auto-upload on FilesAdded
-                                            });
-
-                                            uploader.bind('UploadProgress', function(up, file) {
-                                                var upbar = jQuery('#' + file.id),
-                                                    prog  = upbar.find('.progress-bar');
-                                                prog.css('width', file.percent + '%');
-                                            });
-
-                                            uploader.bind('FileUploaded', function(up, file, resp) {
-                                                var upbar = jQuery('#' + file.id),
-                                                    prog  = upbar.find('.progress-bar'),
-                                                    response = resp.response;
-
-                                                if (response.substr(0, 5) == "Error") {
-                                                    var div = response.substr(7);
-                                                    alert(jQuery(div).text());
-                                                    upbar.remove();
-                                                } else if (response.substr(0, 3) == "<e>") {
-                                                    var r = response.substr(4);
-                                                    alert(r);
-                                                    upbar.remove();
-                                                } else {
-                                                    var json = jQuery.parseJSON(response);
-                                                    var input = jQuery('<input/>', {
-                                                        'type': 'hidden',
-                                                        name: 'file4[]',
-                                                        value: json.ID
-                                                    });
-                                                    prog.remove();
-                                                    upbar.prepend('<span class="remove"><img src="' + PODS_URL +  'ui/images/del.png" alt="remove" /></span>');
-                                                    upbar.append(input);
-                                                }
-                                            });
-
-                                            jQuery('span.remove').live('click', function(evt) {
-                                                jQuery(this).closest('li').remove();
-                                            });
-
-                                            window.pluploaders.push(uploader);
-                                        });
-                                    </script>
+                                <li class="pods-field pods-file pods-plupload-context" id="field-pods-field-file10">
+                                    <?php echo PodsForm::label( 'file12', 'Single Attachment via Form API' ); ?>
+                                    <br />
+                                    <?php
+                                    echo PodsForm::field( 'file12', null, 'file', array(
+                                        'file_format_type' => 'single',
+                                        'file_uploader' => 'attachment',
+                                        'file_limit' => 1,
+                                        'file_type' => 'images'
+                                    ) );
+                                    ?>
                                 </li>
 
                                 <!-- Pods Pick Field -->

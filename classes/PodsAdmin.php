@@ -675,7 +675,8 @@ class PodsAdmin {
             else {
                 $attachment = get_post( $attachment_id, ARRAY_A );
                 $attachment[ 'filename' ] = basename( $attachment[ 'guid' ] );
-                $attachment[ 'thumbnail' ] = wp_get_attachment_image( $attachment[ 'id' ], 'thumbnail', true );
+                $thumb = wp_get_attachment_image_src( $attachment[ 'ID' ], 'thumbnail', true );
+                $attachment[ 'thumbnail' ] = $thumb[ 0 ];
 
                 echo json_encode( $attachment );
             }

@@ -1,36 +1,44 @@
 <?php
-wp_enqueue_script( 'jquery-ui-core' );
-wp_enqueue_script( 'thickbox' );
-wp_enqueue_script( 'handlebars', PODS_URL . 'ui/js/handlebars-1.0.0.beta.6.js' );
-wp_enqueue_script( 'pods-file-browser', PODS_URL . 'ui/js/pods-file-browser.js' );
+    wp_enqueue_script( 'jquery-ui-core' );
+    wp_enqueue_script( 'thickbox' );
+    wp_enqueue_script( 'handlebars', PODS_URL . 'ui/js/handlebars-1.0.0.beta.6.js' );
+    wp_enqueue_script( 'pods-file-browser', PODS_URL . 'ui/js/pods-file-browser.js' );
 
-wp_enqueue_style( 'thickbox' );
-wp_enqueue_style( 'pods-file-browser', PODS_URL . 'ui/css/pods-file-browser.css' );
+    wp_enqueue_style( 'thickbox' );
+    wp_enqueue_style( 'pods-file-browser', PODS_URL . 'ui/css/pods-file-browser.css' );
 
-$attributes = array();
-$attributes[ 'value' ] = $value;
-$attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
-$css_id = $attributes[ 'id' ];
-$existing_files = array();
+    $field_file = PodsForm::field_loader( 'file' );
+
+    $attributes = array();
+    $attributes[ 'value' ] = $value;
+    $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+
+    $css_id = $attributes[ 'id' ];
+
+    $file_limit = ( isset( $options[ 'file_limit' ] ) ? (int) $options[ 'file_limit' ] : 1 );
+
+    $value = (array) $value;
 ?>
-    <table class="form-table pods-metabox">
+    <table class="form-table pods-metabox" id="<?php echo $css_id; ?>">
         <tbody>
             <tr class="form-field">
                 <th scope="row" valign="top">
                     <label class="pods-form-ui-label-pods-meta-files">Files</label>
                 </th>
                 <td>
-                    <ul class="pods-files"><?php
-                        if( is_array( $existing_files ) && !empty( $existing_files ) )
-                        {
-                            foreach( $existing_files as $existing_file )
-                            {
-                                pfb_file_entry_markup( $existing_file['id'], $existing_file['icon'], $existing_file['name'] );
+                    <ul class="pods-files">
+                        <?php
+                            foreach ( $value as $val ) {
+                                echo $field_file->markup( $attributes, $file_limit, $val[ 'ID' ], wp_get_attachment_image( $val[ 'id' ], 'thumbnail', true ), basename( $val[ 'guid' ] ) );
                             }
-                        }
-                    ?></ul>
+                        ?>
+                    </ul>
                     <a class="button pods-file-add" href="media-upload.php?TB_iframe=1&amp;width=640&amp;height=1500">Add File</a>
                 </td>
             </tr>
         </tbody>
     </table>
+
+    <script type="text/x-handlebars" id="<?php echo $css_id; ?>-js-row">
+        <?php echo $field_file->markup( $attributes ); ?>
+    </script>

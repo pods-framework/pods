@@ -1,4 +1,10 @@
 <?php
+    wp_enqueue_script( 'jquery-ui-core' );
+    wp_enqueue_script( 'plupload-all' );
+    wp_enqueue_script( 'handlebars', PODS_URL . 'ui/js/handlebars-1.0.0.beta.6.js' );
+
+    wp_enqueue_style( 'pods-file-browser', PODS_URL . 'ui/css/pods-file-browser.css' );
+
     $field_file = PodsForm::field_loader( 'file' );
 
     $attributes = array();
@@ -30,27 +36,7 @@
     );
     $plupload_init = apply_filters( 'plupload_init', $plupload_init );
 
-    if ( !wp_script_is( 'plupload-all', 'queue' ) && !wp_script_is( 'plupload-all', 'to_do' ) && !wp_script_is( 'plupload-all', 'done' ) )
-        wp_print_scripts( 'plupload-all' );
-
-    if ( !wp_script_is('handlebars', 'queue') && !wp_script_is('handlebars', 'to_do') && !wp_script_is('handlebars', 'done') )
-        wp_print_scripts('handlebars');
-
-    $js_row = str_replace(
-        array(
-            "'",
-            '{{id}}',
-            '{{icon}}',
-            '{{name}}'
-        ),
-        array(
-            "\\'",
-            "' + json.ID + '",
-            "' + json.thumbnail + '",
-            "' + json.filename + '"
-        ),
-        $field_file->markup( $attributes )
-    );
+    $value = (array) $value;
 ?>
     <table class="form-table pods-metabox" id="<?php echo $css_id; ?>">
         <tbody>
@@ -91,7 +77,7 @@
             pods_uploader.bind( 'FilesAdded', function ( up, files ) {
                 // Hide any existing files (for use in single/limited field configuration)
                 if ( 1 == maxFiles )
-                    jQuery( '<?php echo $css_id; ?> li.pods-file' ).hide();
+                    jQuery( '#<?php echo $css_id; ?> li.pods-file' ).hide();
 
                 jQuery.each( files, function ( index, file ) {
                     var prog_container = $( '<div/>', {
@@ -137,7 +123,7 @@
                 else {
                     file_div.remove();
 
-                    var json = eval( '(' + response.match( /\{(.*)\}/gi ) + ')' ),
+                    var json = eval( '(' + response.match( /\{(.*)\}/gi ) + ')' );
 
                     var binding = {
                         id : json.ID,

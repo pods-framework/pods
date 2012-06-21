@@ -162,12 +162,13 @@
 
                     list.prepend( html );
 
-                    var items = list.find( '#<?php echo esc_js( $css_id ); ?> ul.pods-files li.pods-file' ),
+                    var items = list.find( 'li.pods-file' ),
                         itemCount = items.size();
 
                     $.fn.reverse = [].reverse;
                     if ( 0 < maxFiles || itemCount > maxFiles ) {
-                        var reversed = items.reverse();
+                        var reversed = items;
+                        console.log( reversed );
 
                         reversed.each( function ( idx, elem ) {
                             if ( idx + 1 > maxFiles ) {

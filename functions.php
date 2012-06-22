@@ -634,6 +634,7 @@ function pods_access ( $privs, $method = 'OR' ) {
  * Shortcode support for use anywhere that support WP Shortcodes
  *
  * @param array $tags An associative array of shortcode properties
+ * @param string $content A string that represents a template override
  *
  * @since 1.6.7
  */
@@ -661,6 +662,9 @@ function pods_shortcode ( $tags, $content = null ) {
     );
     $tags = shortcode_atts( $defaults, $tags );
     $tags = apply_filters( 'pods_shortcode', $tags );
+
+    if ( empty( $content ) )
+        $content = null;
 
     if ( empty( $tags[ 'name' ] ) ) {
         return '<e>Please provide a Pod name';
@@ -705,7 +709,7 @@ function pods_shortcode ( $tags, $content = null ) {
         echo $pod->getFilters( $tags[ 'filters' ], $tags[ 'filters_label' ] );
     if ( empty( $id ) && 0 < $found && false !== $tags[ 'pagination' ] && 'before' == $tags[ 'pagination_location' ] )
         echo $pod->getPagination( $tags[ 'pagination_label' ] );
-    echo $pod->showTemplate( $tags[ 'template' ] );
+    echo $pod->showTemplate( $tags[ 'template' ], $content );
     if ( empty( $id ) && 0 < $found && false !== $tags[ 'pagination' ] && 'after' == $tags[ 'pagination_location' ] )
         echo $pod->getPagination( $tags[ 'pagination_label' ] );
     if ( empty( $id ) && false !== $tags[ 'filters' ] && 'after' == $tags[ 'filters_location' ] )

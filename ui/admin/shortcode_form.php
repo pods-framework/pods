@@ -47,12 +47,12 @@
 
             switch ( val ) {
                 case 'single':
-                    $( '#pod_select, #pod_slug, #pod_template, #pod_helper, #pods_insert_shortcode' ).each( function () {
+                    $( '#pod_select, #pod_slug, #pod_template, #pod_template_custom, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
                 case 'list':
-                    $( '#pod_select, #pod_orderby, #pod_sort_direction, #pod_limit, #pod_template, #pod_helper, #pod_where, #pods_insert_shortcode' ).each( function () {
+                    $( '#pod_select, #pod_limit, #pod_orderby, #pod_direction, #pod_where, #pod_template, #pod_template_custom, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
@@ -159,6 +159,10 @@
                     </select>
                 </div>
                 <div class="pods-section hide">
+                    <label for="pod_template_custom"> Custom Template </label>
+                    <textarea name="pod_template_custom" id="pod_template_custom" cols="10" rows="10" class="widefat"></textarea>
+                </div>
+                <div class="pods-section hide">
                     <label for="pod_slug">ID or Slug</label> <input type="text" id="pod_slug" name="pod_slug" />
                 </div>
                 <div class="pods-section hide">
@@ -183,6 +187,9 @@
                 </div>
                 <div class="pods-section hide">
                     <label for="pod_column">Column</label> <select id="pod_column" name="pod_column"> </select>
+                </div>
+                <div class="pods-section hide">
+                    <label for="pod_columns">Columns (comma-separated)</label> <input type="text" id="pod_column" name="pod_column" />
                 </div>
                 <div class="pods-section hide">
                     <?php

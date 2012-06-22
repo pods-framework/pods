@@ -13,4 +13,7 @@
     if ( isset( $options[ 'settings' ] ) )
         $settings = array_merge( $settings, $options[ 'settings' ] );
 
+    $attributes = array();
+    $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+
     wp_editor( $value, $attributes[ 'id' ], $settings );

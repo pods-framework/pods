@@ -10,7 +10,7 @@
 $current_page = basename( $_SERVER[ 'PHP_SELF' ] );
 
 function pods_media_button ( $context ) {
-    $button = '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox" id="add_pod_button"><img src="' . PODS_URL . 'ui/images/icon16.png" alt="Add Pod" /></a>';
+    $button = '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox" id="add_pod_button" title="Embed Pods"><img src="' . PODS_URL . 'ui/images/icon16.png" alt="Embed Pods" /></a>';
     $context .= $button;
     return $context;
 }

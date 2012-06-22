@@ -1,36 +1,37 @@
 <?php
 class PodsWidgetColumn extends WP_Widget {
+
     /**
      * Register the widget
      */
-    public function PodsWidgetColumn() {
+    public function PodsWidgetColumn () {
         $this->WP_Widget(
             'pods__widget_column',
             'Pods Column Value',
-            array('classname' => 'pods_widget_column', 'description' => "Display a single Pod item's column value"),
-            array('width' => 200)
+            array( 'classname' => 'pods_widget_column', 'description' => "Display a single Pod item's column value" ),
+            array( 'width' => 200 )
         );
     }
 
     /**
      * Output of widget
      */
-    public function widget($args, $instance) {
-        extract($args);
+    public function widget ( $args, $instance ) {
+        extract( $args );
 
-        $title    = apply_filters('widget_title', $instance['title']);
-        $pod_type = $instance['pod_type'];
-        $slug     = $instance['slug'];
-        $column   = $instance['column'];
-        $helper   = $instance['helper'];
+        $title = apply_filters( 'widget_title', $instance[ 'title' ] );
+        $pod_type = pods_var( 'pod_type', $instance, '' );
+        $slug = pods_var( 'slug', $instance, '' );
+        $column = pods_var( 'column', $instance, '' );
+        $helper = pods_var( 'helper', $instance, '' );
 
-        if (!empty($pod_type) && !empty($slug) && !empty($column)) {
+        if ( !empty( $pod_type ) && !empty( $slug ) && !empty( $column ) ) {
             $shortcode = '[pods ';
             $shortcode .= "name=\"{$pod_type}\" ";
             $shortcode .= "slug=\"{$slug}\" ";
             $shortcode .= "column=\"{$column}\" ";
 
-            if (!empty($helper))
+            if ( !empty( $helper ) )
                 $shortcode .= "helper=\"{$helper}\" ";
 
             $shortcode .= ']';
@@ -42,15 +43,16 @@ class PodsWidgetColumn extends WP_Widget {
 
     /**
      * Updates the new instance of widget arguments
+     *
      * @returns array $instance Updated instance
      */
-    public function update($new_instance, $old_instance) {
+    public function update ( $new_instance, $old_instance ) {
         $instance = $old_instance;
-        $instance['title']    = $new_instance['title'];
-        $instance['pod_type'] = $new_instance['pod_type'];
-        $instance['slug']     = $new_instance['slug'];
-        $instance['column']   = $new_instance['column'];
-        $instance['helper']   = $new_instance['helper'];
+        $instance[ 'title' ] = pods_var( 'title', $new_instance, '' );
+        $instance[ 'pod_type' ] = pods_var( 'pod_type', $new_instance, '' );
+        $instance[ 'slug' ] = pods_var( 'slug', $new_instance, '' );
+        $instance[ 'column' ] = pods_var( 'column', $new_instance, '' );
+        $instance[ 'helper' ] = pods_var( 'helper', $new_instance, '' );
 
         return $instance;
     }
@@ -58,12 +60,12 @@ class PodsWidgetColumn extends WP_Widget {
     /**
      * Widget Form
      */
-    public function form($instance) {
-        $title    = $instance['title'];
-        $pod_type = $instance['pod_type'];
-        $slug     = $instance['slug'];
-        $column   = $instance['column'];
-        $helper   = $instance['helper'];
+    public function form ( $instance ) {
+        $title = pods_var( 'title', $instance, '' );
+        $pod_type = pods_var( 'pod_type', $instance, '' );
+        $slug = pods_var( 'slug', $instance, '' );
+        $column = pods_var( 'column', $instance, '' );
+        $helper = pods_var( 'helper', $instance, '' );
         require PODS_DIR . 'ui/admin/widgets/column.php';
     }
 }

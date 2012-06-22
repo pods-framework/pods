@@ -4,7 +4,7 @@
         padding-left: 0;
         margin-left: 0;
     }
-    
+
     ol.pods_column_widget_form label {
         display: block;
     }
@@ -57,9 +57,9 @@
         <label for="<?php echo $this->get_field_id('helper'); ?>">
             Helper
         </label>
-        
+
         <select name="<?php echo $this->get_field_name('helper'); ?>" id="<?php echo $this->get_field_id('helper'); ?>">
-            <option value=""></option>
+            <option value="">- Helper -</option>
             <?php foreach ($all_helpers as $hlp): ?>
                 <?php $selected = ($hlp['name'] == $helper) ? 'selected' : ''; ?>
                 <option value="<?php echo $hlp['name']; ?>" <?php echo $selected; ?>>

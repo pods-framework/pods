@@ -172,8 +172,8 @@
                     <label for="pod_orderby">Order By</label> <select name="pod_orderby" id="pod_orderby"> </select>
                 </div>
                 <div class="pods-section hide">
-                    <label for="pod_sort_direction">Order Direction</label>
-                    <select id="pod_sort_direction" name="pod_sort_direction">
+                    <label for="pod_direction">Order Direction</label>
+                    <select id="pod_direction" name="pod_direction">
                         <option value="ASC">
                             Ascending
                         </option>
@@ -189,7 +189,7 @@
                     <label for="pod_column">Column</label> <select id="pod_column" name="pod_column"> </select>
                 </div>
                 <div class="pods-section hide">
-                    <label for="pod_columns">Columns (comma-separated)</label> <input type="text" id="pod_column" name="pod_column" />
+                    <label for="pod_columns">Columns (comma-separated)</label> <input type="text" id="pod_columns" name="pod_columns" />
                 </div>
                 <div class="pods-section hide">
                     <?php

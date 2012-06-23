@@ -84,10 +84,18 @@ class PodsMeta {
 <?php
         $pod = $this->api->load_pod( array( 'name' => self::$post_types[$post->post_type]['name'] ) );
         foreach ( $pod['fields'] as $field ) {
+            $value = '';
+
+            if ( is_object( $post ) ) {
+                if ( in_array( $field[ 'type' ], array( 'pick', 'file' ) ) )
+                    $value = get_post_meta( $post->ID, $field[ 'name' ] );
+                else
+                    $value = get_post_meta( $post->ID, $field[ 'name' ], true );
+            }
 ?>
     <tr class="form-field">
         <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
-        <td><?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], ( is_object( $post ) ? get_post_meta( $post->ID, $field[ 'name' ] ) : '' ), $field[ 'type' ], $field[ 'options' ] ); ?></td>
+        <td><?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] ); ?></td>
     </tr>
 <?php
         }
@@ -114,10 +122,15 @@ class PodsMeta {
     public function meta_media ( $form_fields, $post ) {
         $pod = $this->api->load_pod( array( 'name' => 'media' ) );
         foreach ( $pod['fields'] as $field ) {
+            if ( in_array( $field[ 'type' ], array( 'pick', 'file' ) ) )
+                $value = get_post_meta( $post->ID, $field[ 'name' ] );
+            else
+                $value = get_post_meta( $post->ID, $field[ 'name' ], true );
+
             $form_fields[ 'pods_meta_' . $field[ 'name' ] ] = array(
                 'label' => $field[ 'label' ],
                 'input' => 'html',
-                'html' => PodsForm::field('pods_meta_' . $field['name'], get_post_meta( $post->ID, $field['name'] ), $field['type'], $field[ 'options' ]),
+                'html' => PodsForm::field('pods_meta_' . $field['name'], $value, $field['type'], $field[ 'options' ]),
                 'helps' => $field['options']['description']
             );
         }

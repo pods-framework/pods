@@ -656,6 +656,7 @@ function pods_shortcode ( $tags, $content = null ) {
         'pagination' => false,
         'pagination_label' => null,
         'pagination_location' => 'after',
+        'field' => null,
         'col' => null,
         'template' => null,
         'helper' => null
@@ -672,10 +673,18 @@ function pods_shortcode ( $tags, $content = null ) {
     if ( empty( $tags[ 'template' ] ) && empty( $tags[ 'col' ] ) ) {
         return '<e>Please provide either a template or column name';
     }
+    if ( !empty( $tags[ 'col' ] ) ) {
+        $tags[ 'field' ] = $tags[ 'col' ];
+        unset( $tags[ 'col' ] );
+    }
 
     // id > slug (if both exist)
     $id = empty( $tags[ 'slug' ] ) ? null : $tags[ 'slug' ];
-    $id = empty( $tags[ 'id' ] ) ? $id : absint( $tags[ 'id' ] );
+    if ( !empty ( $tags[ 'id' ] ) ) {
+        $id = $tags[ 'id' ];
+        if ( is_numeric( $id ) )
+            $id = absint( $id );
+    }
 
     $pod = new Pod( $tags[ 'name' ], $id );
 
@@ -700,8 +709,8 @@ function pods_shortcode ( $tags, $content = null ) {
         $pod->findRecords( $params );
         $found = $pod->getTotalRows();
     }
-    elseif ( !empty( $tags[ 'col' ] ) ) {
-        $val = $pod->get_field( $tags[ 'col' ] );
+    elseif ( !empty( $tags[ 'field' ] ) ) {
+        $val = $pod->get_field( $tags[ 'field' ] );
         return empty( $tags[ 'helper' ] ) ? $val : $pod->pod_helper( $tags[ 'helper' ], $val );
     }
     ob_start();

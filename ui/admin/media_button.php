@@ -40,7 +40,7 @@ function add_pods_mce_popup () {
                     columns = $( '#pod_columns' ).val(),
                     helper = $( '#pod_helper' ).val(),
                     where = $( '#pod_where' ).val(),
-                    shortcode = '[pods ';
+                    shortcode = '[pods';
 
                 // Validate the form
                 var errors = [];
@@ -84,32 +84,34 @@ function add_pods_mce_popup () {
                     return false;
                 }
 
-                shortcode += 'name="' + pod_select + '" ';
+                shortcode += ' name="' + pod_select + '"';
                 if ( slug && slug.length )
                     shortcode += 'slug="' + slug + '" ';
                 if ( orderby && orderby.length ) {
                     if ( direction.length ) {
-                        shortcode += 'orderby="' + orderby + ' ' + direction + '" ';
+                        shortcode += ' orderby="' + orderby + ' ' + direction + '"';
                     }
                     else {
-                        shortcode += 'orderby="' + orderby + ' ASC" ';
+                        shortcode += ' orderby="' + orderby + ' ASC"';
                     }
                 }
                 if ( template && template.length )
-                    shortcode += 'template="' + template + '" ';
+                    shortcode += ' template="' + template + '"';
                 if ( limit && limit.length )
-                    shortcode += 'limit="' + limit + '" ';
+                    shortcode += ' limit="' + limit + '"';
                 if ( column && column.length )
-                    shortcode += 'col="' + column + '" ';
+                    shortcode += ' field="' + column + '"';
                 if ( helper && helper.length )
-                    shortcode += 'helper="' + helper + '" ';
+                    shortcode += ' helper="' + helper + '"';
                 if ( where && where.length )
-                    shortcode += 'where="' + where + '" ';
+                    shortcode += ' where="' + where + '"';
 
                 shortcode += ']';
 
-                if ( template_custom && template_custom.length )
-                    shortcode += template_custom + '[/pods]';
+                if ( template_custom && template_custom.length ) {
+                    console.log( template_custom );
+                    shortcode += '<br />' + template_custom.replace( /\n/g, '<br />' ) + '<br />[/pods]';
+                }
 
                 if ( (use_case == 'single' && window.pods_template_count == 0) || (use_case == 'list' && window.pods_template_count == 0) ) {
                     alert( "No templates found!" );

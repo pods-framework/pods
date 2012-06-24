@@ -94,11 +94,13 @@ foreach ($taxonomies as $taxonomy => $label) {
                             <?php echo PodsForm::label('extend_taxonomy', __('Taxonomy', 'pods'), __('help', 'pods')); ?>
                             <?php echo PodsForm::field('extend_taxonomy', pods_var('extend_taxonomy', 'post'), 'pick', array('data' => $taxonomies)); ?>
                         </div>
-                        <p><a href="#pods-advanced" class="pods-advanced-toggle">Advanced</a></p>
-                        <div class="pods-advanced">
-                            <div class="pods-field-option pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-post_type pods-depends-on-extend-pod-type-user pods-depends-on-extend-pod-type-comment">
-                                <?php echo PodsForm::label('extend_storage', __('Storage Type', 'pods'), __('Table based storage will operate in a way where each field in your content type becomes a field in a table, where as Meta based relies upon WordPress\' meta storage table for all field data.')); ?>
-                                <?php echo PodsForm::field('extend_storage', pods_var('extend_storage', 'post'), 'pick', array('data' => array('meta' => 'Meta Based (WP Default)', 'table' => 'Table Based'))); ?>
+                        <div class="pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-post_type pods-depends-on-extend-pod-type-user pods-depends-on-extend-pod-type-comment">
+                            <p><a href="#pods-advanced" class="pods-advanced-toggle">Advanced</a></p>
+                            <div class="pods-advanced">
+                                <div class="pods-field-option">
+                                    <?php echo PodsForm::label('extend_storage', __('Storage Type', 'pods'), __('Table based storage will operate in a way where each field in your content type becomes a field in a table, where as Meta based relies upon WordPress\' meta storage table for all field data.')); ?>
+                                    <?php echo PodsForm::field('extend_storage', pods_var('extend_storage', 'post'), 'pick', array('data' => array('meta' => 'Meta Based (WP Default)', 'table' => 'Table Based'))); ?>
+                                </div>
                             </div>
                         </div>
                         <p class="submit">

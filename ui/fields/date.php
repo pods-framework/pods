@@ -1,4 +1,9 @@
 <?php
+    wp_enqueue_script('jquery-ui-datepicker');
+    wp_enqueue_script('jquery-ui-timepicker');
+    wp_enqueue_style('jquery-ui');
+    wp_enqueue_style('jquery-ui-timepicker');
+
     $attributes = array();
     $type = 'date';
     if ( isset( $options[ 'date_format_type' ] ) )

@@ -59,7 +59,7 @@
             <?php
                 foreach ( $args as $arg => $val ) {
             ?>
-                <?php echo $arg; ?>: '<?php echo esc_js( $val ); ?>';
+                <?php echo $arg; ?>: '<?php echo esc_js( $val ); ?>',
             <?php
                 }
             ?>

@@ -578,8 +578,8 @@ class PodsAPI {
             pods_query( "UPDATE `@wp_pods_fields` SET `name` = '{$params->name}', `label` = '{$params->label}', `type` = '{$params->type}', `pick_object` = '{$params->pick_object}', `pick_val` = '{$params->pick_val}', `sister_field_id` = {$params->sister_field_id}, `weight` = {$params->weight}, `options` = '{$params->options}' WHERE `id` = {$params->id} LIMIT 1", 'Cannot edit column' );
         }
 
-        wp_cache_delete( 'pods', 'pods' );
-        wp_cache_delete( $params->pod, 'pods_pods' );
+        delete_transient( 'pods' );
+        delete_transient( 'pods_pod_' . $params->pod );
 
         return $params->id;
     }
@@ -649,8 +649,8 @@ class PodsAPI {
             $params->id = $object_id;
         }
 
-        wp_cache_delete( $params->type, 'pods_objects' );
-        wp_cache_delete( $params->name, 'pods_object_' . $params->type );
+        delete_transient( 'pods_object_' . $params->type );
+        delete_transient( 'pods_object_' . $params->type . '_' . $params->name );
     }
 
     /**
@@ -1248,7 +1248,7 @@ class PodsAPI {
         pods_query( "DELETE FROM `@wp_pods_fields` WHERE `pod_id` = {$params->id}" );
         pods_query( "DELETE FROM `@wp_pods` WHERE `id` = {$params->id} LIMIT 1" );
 
-        wp_cache_delete( $pod[ 'name' ], 'pods_pods' );
+        delete_transient( 'pods_pod_' . $pod[ 'name' ] );
 
         wp_cache_flush(); // only way to reliably clear out cached data across an entire group
 
@@ -1300,8 +1300,8 @@ class PodsAPI {
         pods_query( "DELETE FROM `@wp_pods_fields` WHERE `id` = {$params->id} LIMIT 1" );
         pods_query( "UPDATE `@wp_pods_fields` SET `sister_field_id` = NULL WHERE `sister_field_id` = {$params->id}" );
 
-        wp_cache_delete( 'pods', 'pods' );
-        wp_cache_delete( $params->pod, 'pods_pods' );
+        delete_transient( 'pods' );
+        delete_transient( 'pods_pod_' . $params->pod );
 
         return true;
     }
@@ -1328,8 +1328,8 @@ class PodsAPI {
         if ( empty( $result ) )
             return pods_error( ucwords( $params->type ) . ' Object not deleted', $this );
 
-        wp_cache_delete( $params->type, 'pods_objects' );
-        wp_cache_delete( $params->name, 'pods_object_' . $params->type );
+        delete_transient( 'pods_object_' . $params->type );
+        delete_transient( 'pods_object_' . $params->type . '_' . $params->name );
 
         return true;
     }
@@ -1537,7 +1537,7 @@ class PodsAPI {
             return pods_error( 'Either Pod ID or Name are required', $this );
 
         if ( isset( $params->name ) ) {
-            $pod = wp_cache_get( $params->name, 'pods_pods' );
+            $pod = get_transient( 'pods_pod_' . $params->name );
             if ( false !== $pod )
                 return $pod;
         }
@@ -1587,7 +1587,7 @@ class PodsAPI {
 
         $pod[ 'fields' ] = PodsForm::option_setup( $pod[ 'fields' ] );
 
-        wp_cache_set( $pod[ 'name' ], $pod, 'pods_pods' );
+        set_transient( 'pods_pod_' . $pod[ 'name' ], $pod );
 
         return $pod;
     }
@@ -1610,23 +1610,31 @@ class PodsAPI {
         $params = (object) pods_sanitize( $params );
         $orderby = $limit = '';
         $where = array();
+        $cache_key = '';
         if ( isset( $params->type ) && !empty( $params->type ) ) {
             if ( !is_array( $params->type ) )
-                $params->type = array( $params->type );
+                $params->type = array( trim( $params->type ) );
             $where[] = " `type` IN ('" . implode( "','", $params->type ) . "') ";
+            if ( 1 == count( $params->type ) )
+                $cache_key .= '_type_' . trim( implode( '', $params->type ) );
         }
         if ( isset( $params->object ) && !empty( $params->object ) ) {
             if ( !is_array( $params->object ) )
                 $params->object = array( $params->object );
             $where[] = " `object` IN ('" . implode( "','", $params->object ) . "') ";
+            if ( 1 == count( $params->object ) )
+                $cache_key .= '_object_' . trim( implode( '', $params->object ) );
         }
+
         if ( isset( $params->options ) && !empty( $params->options ) && is_array( $params->options ) ) {
             $options = array();
             foreach ( $params->options as $option => $value ) {
                 $options[] = pods_sanitize( trim( json_encode( array( $option => $value ) ), '{} []' ) );
             }
-            if ( !empty( $options ) )
+            if ( !empty( $options ) ) {
                 $where[] = ' (`options` LIKE "%' . implode( '%" AND `options` LIKE "%', $options ) . '%")';
+                $cache_key = '';
+            }
         }
         if ( isset( $params->where ) && 0 < strlen( $params->where ) ) {
             $where[] = $params->where;
@@ -1641,27 +1649,32 @@ class PodsAPI {
             $limit = " LIMIT {$params->limit} ";
         }
 
-        if ( empty( $where ) && empty( $limit ) && empty ( $orderby ) ) {
-            $the_pods = wp_cache_get( 'pods', 'pods' );
+        if ( empty( $cache_key ) )
+            $cache_key = 'pods';
+        else
+            $cache_key = 'pods_get' . $cache_key;
+
+        if ( ( 'pods' != $cache_key || empty( $where ) ) && empty( $limit ) && ( empty ( $orderby ) || 'ORDER BY `weight`, `name`' == trim( $orderby ) ) ) {
+            $the_pods = get_transient( $cache_key );
 
             if ( false !== $the_pods )
                 return $the_pods;
         }
 
-        $result = pods_query( "SELECT id FROM `@wp_pods` {$where} {$orderby} {$limit}", $this );
-        if ( empty( $result ) )
-            return array();
-
         $the_pods = array();
 
-        foreach ( $result as $row ) {
-            $pod = $this->load_pod( array( 'id' => $row->id ) );
+        $query = "SELECT `id`, `name` FROM `@wp_pods` {$where} {$orderby} {$limit}";
+        $result = pods_query( $query, $this );
+        if ( !empty( $result ) ) {
+            foreach ( $result as $row ) {
+                $pod = $this->load_pod( array( 'id' => $row->id, 'name' => $row->name ) );
 
-            $the_pods[ $pod[ 'name' ] ] = $pod;
+                $the_pods[ $pod[ 'name' ] ] = $pod;
+            }
         }
 
-        if ( empty( $where ) && empty( $limit ) && empty ( $orderby ) )
-            wp_cache_set( 'pods', $the_pods, 'pods' );
+        if ( ( 'pods' != $cache_key || empty( $where ) ) && empty( $limit ) && ( empty ( $orderby ) || 'ORDER BY `weight`, `name`' == trim( $orderby ) ) )
+            set_transient( $cache_key, $the_pods );
 
         return $the_pods;
     }
@@ -1722,7 +1735,7 @@ class PodsAPI {
             return pods_error( 'Type must be given to load an Object', $this );
 
         if ( isset( $params->name ) ) {
-            $object = wp_cache_get( $params->name, 'pods_object_' . $params->type );
+            $object = get_transient( 'pods_object_' . $params->type . '_' . $params->name );
 
             if ( false !== $object )
                 return $object;
@@ -1736,7 +1749,7 @@ class PodsAPI {
         if ( !empty( $object[ 'options' ] ) )
             $object[ 'options' ] = (array) @json_decode( $object[ 'options' ], true );
 
-        wp_cache_set( $object[ 'name' ], $object, 'pods_object_' . $params->type );
+        set_transient( 'pods_object_' . $params->type . '_' . $object[ 'name' ], $object );
 
         return $object;
     }
@@ -1783,7 +1796,7 @@ class PodsAPI {
         }
 
         if ( empty( $where ) && empty( $orderby ) && empty( $limit ) ) {
-            $the_objects = wp_cache_get( $params->type, 'pods_objects' );
+            $the_objects = get_transient( 'pods_object_' . $params->type );
 
             if ( false !== $the_objects )
                 return $the_objects;
@@ -1805,7 +1818,7 @@ class PodsAPI {
         }
 
         if ( empty( $where ) && empty( $orderby ) && empty( $limit ) )
-            wp_cache_set( $params->type, $the_objects, 'pods_objects' );
+            set_transient( 'pods_object_' . $params->type, $the_objects );
 
         return $the_objects;
     }
@@ -2129,7 +2142,7 @@ class PodsAPI {
 
         $types = apply_filters( 'pods_field_types', $types, $this );
 
-        $field_types = wp_cache_get( 'field_types', 'pods' );
+        $field_types = get_transient( 'pods_field_types' );
 
         if ( false === $field_types || count( $types ) != count( $field_types ) ) {
             $field_types = $types;
@@ -2155,10 +2168,10 @@ class PodsAPI {
 
                 $field_types[ $field_type ] = $options;
 
-                wp_cache_set( $field_type, $options, 'pods_field_types' );
+                set_transient( 'pods_field_types_' . $field_type, $options );
             }
 
-            wp_cache_set( 'field_types', $field_types, 'pods' );
+            set_transient( 'pods_field_types', $field_types );
         }
 
         return $field_types;

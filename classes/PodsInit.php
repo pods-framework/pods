@@ -587,7 +587,7 @@ class PodsInit
 	public function admin_bar_links() {
 		global $wp_admin_bar, $pods;
 		$api = new PodsAPI();
-		$all_pods = $api->load_pods(array('orderby' => 'name ASC'));
+		$all_pods = $api->load_pods(array('orderby' => '`weight`, `name`'));
 		$non_cpt_pods = array();
 
 		// Round up all the non-CPT pod types

@@ -2857,7 +2857,7 @@ class PodsAPI {
             delete_transient( 'pods_pod_' . $pod[ 'name' ] );
 
             if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) )
-                delete_transient( 'pods_cpt_ct' );
+                delete_transient( 'pods_wp_cpt_ct' );
         }
 
         $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods_get_%'" );

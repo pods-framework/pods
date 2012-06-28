@@ -360,7 +360,7 @@ class PodsAPI {
             }
         }
 
-        cache_flush_pods( $pod );
+        $this->cache_flush_pods( $pod );
 
         return $params->id;
     }
@@ -587,7 +587,7 @@ class PodsAPI {
         }
 
         if ( !$save_pod )
-            cache_flush_pods( $pod );
+            $this->cache_flush_pods( $pod );
 
         return $params->id;
     }
@@ -1256,7 +1256,7 @@ class PodsAPI {
         pods_query( "DELETE FROM `@wp_pods_fields` WHERE `pod_id` = {$params->id}" );
         pods_query( "DELETE FROM `@wp_pods` WHERE `id` = {$params->id} LIMIT 1" );
 
-        cache_flush_pods( $pod );
+        $this->cache_flush_pods( $pod );
 
         return true;
     }
@@ -1313,7 +1313,7 @@ class PodsAPI {
         pods_query( "UPDATE `@wp_pods_fields` SET `sister_field_id` = NULL WHERE `sister_field_id` = {$params->id}" );
 
         if ( !$save_pod )
-            cache_flush_pods( $pod );
+            $this->cache_flush_pods( $pod );
 
         return true;
     }

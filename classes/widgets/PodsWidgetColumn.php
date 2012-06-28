@@ -6,7 +6,7 @@ class PodsWidgetColumn extends WP_Widget {
      */
     public function PodsWidgetColumn () {
         $this->WP_Widget(
-            'pods__widget_column',
+            'pods_widget_column',
             'Pods Column Value',
             array( 'classname' => 'pods_widget_column', 'description' => "Display a single Pod item's column value" ),
             array( 'width' => 200 )

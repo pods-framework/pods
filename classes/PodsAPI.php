@@ -332,7 +332,7 @@ class PodsAPI {
                 foreach ( $params->field_data as $field_data ) {
                     if ( !is_array( $field_data ) )
                         continue;
-                    $field_data[ 'pod_id' ] = $params->id;
+                    $field_data[ 'pod' ] = $pod;
                     $field_data[ 'weight' ] = $weight;
                     $field_id = $this->save_field( $field_data );
                     if ( 0 < $field_id )
@@ -345,11 +345,10 @@ class PodsAPI {
                 foreach ( $pod[ 'fields' ] as $field ) {
                     if ( !isset( $saved[ $field[ 'id' ] ] ) ) {
                         $this->delete_field( array(
-                                                 'id' => (int) $field[ 'id' ],
-                                                 'name' => (int) $field[ 'name' ],
-                                                 'pod_id' => $params->id,
-                                                 'pod' => $params->name
-                                             ) );
+                            'id' => (int) $field[ 'id' ],
+                            'name' => (int) $field[ 'name' ],
+                            'pod' => $pod
+                        ) );
                     }
                 }
             }
@@ -360,6 +359,9 @@ class PodsAPI {
                 pods_query( "ALTER TABLE `@wp_pods_tbl_{$old_name}` RENAME `@wp_pods_tbl_{$params->name}`", $this );
             }
         }
+
+        cache_flush_pods( $pod );
+
         return $params->id;
     }
 
@@ -389,9 +391,15 @@ class PodsAPI {
             $params->pod_id = pods_absint( $params->pod_id );
         }
         $pod = null;
+        $save_pod = false;
         if ( !isset( $params->pod_id ) || empty( $params->pod_id ) ) {
             if ( isset( $params->pod ) ) {
-                $pod = $this->load_pod( array( 'name' => $params->name ) );
+                $pod = $params->pod;
+                if ( !is_array( $pod ) )
+                    $pod = $this->load_pod( array( 'name' => $pod ) );
+                else
+                    $save_pod = true;
+
                 if ( empty( $pod ) )
                     return pods_error( 'Pod ID or name is required', $this );
                 else {
@@ -578,8 +586,8 @@ class PodsAPI {
             pods_query( "UPDATE `@wp_pods_fields` SET `name` = '{$params->name}', `label` = '{$params->label}', `type` = '{$params->type}', `pick_object` = '{$params->pick_object}', `pick_val` = '{$params->pick_val}', `sister_field_id` = {$params->sister_field_id}, `weight` = {$params->weight}, `options` = '{$params->options}' WHERE `id` = {$params->id} LIMIT 1", 'Cannot edit column' );
         }
 
-        delete_transient( 'pods' );
-        delete_transient( 'pods_pod_' . $params->pod );
+        if ( !$save_pod )
+            cache_flush_pods( $pod );
 
         return $params->id;
     }
@@ -1248,9 +1256,7 @@ class PodsAPI {
         pods_query( "DELETE FROM `@wp_pods_fields` WHERE `pod_id` = {$params->id}" );
         pods_query( "DELETE FROM `@wp_pods` WHERE `id` = {$params->id} LIMIT 1" );
 
-        delete_transient( 'pods_pod_' . $pod[ 'name' ] );
-
-        wp_cache_flush(); // only way to reliably clear out cached data across an entire group
+        cache_flush_pods( $pod );
 
         return true;
     }
@@ -1274,8 +1280,14 @@ class PodsAPI {
             $params->pod = '';
         if ( !isset( $params->pod_id ) )
             $params->pod_id = 0;
-        $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id ) );
-        if ( false === $pod )
+
+        $pod = $params->pod;
+        if ( !is_array( $pod ) )
+            $pod = $this->load_pod( array( 'name' => $pod, 'id' => $params->pod_id ) );
+        else
+            $save_pod = true;
+
+        if ( empty( $pod ) )
             return pods_error( 'Pod not found', $this );
 
         $params->pod_id = $pod[ 'id' ];
@@ -1300,8 +1312,8 @@ class PodsAPI {
         pods_query( "DELETE FROM `@wp_pods_fields` WHERE `id` = {$params->id} LIMIT 1" );
         pods_query( "UPDATE `@wp_pods_fields` SET `sister_field_id` = NULL WHERE `sister_field_id` = {$params->id}" );
 
-        delete_transient( 'pods' );
-        delete_transient( 'pods_pod_' . $params->pod );
+        if ( !$save_pod )
+            cache_flush_pods( $pod );
 
         return true;
     }
@@ -2829,6 +2841,28 @@ class PodsAPI {
             $out[] = $row;
         }
         return $out;
+    }
+
+    /**
+     * Clear Pod-related cache
+     *
+     * @param array $pod
+     */
+    public function cache_flush_pods ( $pod = null ) {
+        global $wpdb;
+
+        delete_transient( 'pods_pods' );
+
+        if ( null !== $pod && is_array( $pod ) ) {
+            delete_transient( 'pods_pod_' . $pod[ 'name' ] );
+
+            if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) )
+                delete_transient( 'pods_cpt_ct' );
+        }
+
+        $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods_get_%'" );
+
+        wp_cache_flush();
     }
 
     /**

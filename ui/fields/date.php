@@ -1,4 +1,9 @@
 <?php
+    wp_enqueue_script('jquery-ui-datepicker');
+    wp_enqueue_script('jquery-ui-timepicker');
+    wp_enqueue_style('jquery-ui');
+    wp_enqueue_style('jquery-ui-timepicker');
+
     $attributes = array();
     $type = 'date';
     if ( isset( $options[ 'date_format_type' ] ) )
@@ -55,14 +60,7 @@
 
             $args = apply_filters( 'pods_form_ui_field_date_args', $args, $type, $options, $attributes, $name, PodsForm::$field_type );
         ?>
-        jQuery( 'input#<?php echo $attributes[ 'id' ]; ?>' ).<?php echo $method; ?>( {
-            <?php
-                foreach ( $args as $arg => $val ) {
-            ?>
-                <?php echo $arg; ?>: '<?php echo esc_js( $val ); ?>';
-            <?php
-                }
-            ?>
-        } );
+        var args = <?php echo json_encode($args); ?>;
+        jQuery( 'input#<?php echo $attributes[ 'id' ]; ?>' ).<?php echo $method; ?>( args );
     } );
 </script>

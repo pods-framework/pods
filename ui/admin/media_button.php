@@ -119,6 +119,7 @@ function add_pods_mce_popup () {
                 }
 
                 window.send_to_editor( shortcode );
+				evt.preventDefault();
 
             } );
         } );

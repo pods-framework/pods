@@ -43,7 +43,7 @@
         $useCaseSelector.change( function ( evt ) {
             var val = $( this ).val();
 
-            $( '.section' ).addClass( 'hide' );
+            $( '.pods-section' ).addClass( 'hide' );
 
             switch ( val ) {
                 case 'single':

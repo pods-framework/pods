@@ -181,6 +181,26 @@ class Pods {
     }
 
     /**
+     * Return the item ID
+     *
+     * @return int
+     * @since 2.0.0
+     */
+    public function id () {
+        return $this->field( $this->field_id );
+    }
+
+    /**
+     * Return the item name
+     *
+     * @return string
+     * @since 2.0.0
+     */
+    public function index () {
+        return $this->field( $this->field_index );
+    }
+
+    /**
      * Search and filter items
      *
      * @param array $params An associative array of parameters
@@ -553,6 +573,39 @@ class Pods {
             return $before . $value . $after;
         return;
 
+    }
+
+    /**
+     * Build form for handling add / edit
+     *
+     * @param array $params
+     * @param string $label
+     * @param string $thank_you
+     *
+     * @since 2.0.0
+     */
+    public function form ( $params, $label = null, $thank_you = null ) {
+        $defaults = array(
+            'fields' => $params,
+            'label' => $label,
+            'thank_you' => $thank_you
+        );
+
+        if ( isset( $params[ 'fields' ] ) )
+            $params = array_merge( $defaults, $params );
+
+        $pod =& $this;
+        $fields = $params[ 'fields' ];
+        $label = $params[ 'label' ];
+        $thank_you = $params[ 'thank_you' ];
+
+        ob_start();
+
+        pods_view( PODS_DIR . 'ui/front/form.php', compact( array_keys( get_defined_vars() ) ) );
+
+        $output = ob_get_clean();
+
+        return apply_filters( 'pods_form', $output, $fields, $label, $thank_you, $this, $this->id() );
     }
 
     /**

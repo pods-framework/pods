@@ -32,8 +32,8 @@ function pods_query ( $sql, $error = 'Database Error', $results_error = null, $n
  * @since 2.0.0
  * @todo Need to figure out how to handle $scope = 'pods' for the Pods class
  */
-function pods_do_hook ( $scope, $name, $args = null, $obj = null ) {
-    $args = apply_filters( "pods_{$scope}_{$name}", $args, &$obj );
+function pods_do_hook ( $scope, $name, $args = null, &$obj = null ) {
+    $args = apply_filters( "pods_{$scope}_{$name}", $args, $obj );
     if ( is_array( $args ) && isset( $args[ 0 ] ) )
         return $args[ 0 ];
     return $args;
@@ -348,6 +348,40 @@ function pods_var_set ( $value, $key = 'last', $type = 'url' ) {
         $ret = $value;
     }
     return apply_filters( 'pods_var_set', $ret, $value, $key, $type );
+}
+
+/**
+ * @param bool $array
+ * @param bool $allowed
+ * @param bool $url
+ *
+ * @return mixed
+ */
+function pods_var_update ( $array = false, $allowed = false, $url = false ) {
+    if ( false === $allowed )
+        $allowed = array();
+    if ( !isset( $_GET ) )
+        $get = array();
+    else
+        $get = $_GET;
+    if ( is_array( $array ) ) {
+        foreach ( self::$excluded as $exclusion ) {
+            if ( !isset( $array[ $exclusion ] ) && !in_array( $exclusion, $allowed ) )
+                unset( $get[ $exclusion ] );
+            if ( !isset( $array[ $exclusion . $this->num ] ) && !in_array( $exclusion . $this->num, $allowed ) )
+                unset( $get[ $exclusion . $this->num ] );
+        }
+        foreach ( $array as $key => $val ) {
+            if ( 0 < strlen( $val ) )
+                $get[ $key ] = $val;
+            else
+                unset( $get[ $key ] );
+        }
+    }
+    if ( false === $url )
+        $url = $_SERVER[ 'REQUEST_URI' ];
+    $url = current( explode( '#', current( explode( '?', $url ) ) ) );
+    return $url . '?' . http_build_query( $get );
 }
 
 /**

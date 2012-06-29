@@ -15,7 +15,7 @@ class PodsField_File extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    public static $label = 'File Upload';
+    public static $label = 'File / Image / Video';
 
     /**
      * Do things like register/enqueue scripts and stylesheets

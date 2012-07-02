@@ -371,8 +371,8 @@ function pods_var_update ( $array = null, $allowed = null, $excluded = null, $ur
         foreach ( $excluded as $exclusion ) {
             if ( !isset( $array[ $exclusion ] ) && !in_array( $exclusion, $allowed ) )
                 unset( $get[ $exclusion ] );
-            if ( !isset( $array[ $exclusion . $this->num ] ) && !in_array( $exclusion . $this->num, $allowed ) )
-                unset( $get[ $exclusion . $this->num ] );
+            if ( !isset( $array[ $exclusion ] ) && !in_array( $exclusion, $allowed ) )
+                unset( $get[ $exclusion ] );
         }
         foreach ( $array as $key => $val ) {
             if ( 0 < strlen( $val ) )

@@ -24,7 +24,10 @@ class PodsAdmin {
 
             add_action( 'wp_ajax_pods_upload', array( $this, 'admin_ajax_upload' ) );
             add_action( 'wp_ajax_nopriv_pods_upload', array( $this, 'admin_ajax_upload' ) );
+
+            add_filter( 'media_buttons_context', array( $this, 'media_button' ) );
         }
+
     }
 
     public function admin_init () {
@@ -40,45 +43,14 @@ class PodsAdmin {
     }
 
     public function admin_head () {
-        require_once PODS_DIR . 'ui/admin/media_button.php';
         wp_register_style( 'pods-admin', PODS_URL . 'ui/css/pods-admin.css', array(), PODS_VERSION );
-        if ( !wp_style_is( 'jquery-ui', 'registered' ) )
-            wp_register_style( 'jquery-ui', PODS_URL . 'ui/css/smoothness/jquery-ui-1.8.16.custom.css', array(), '1.8.16' );
+
         wp_register_script( 'pods-floatmenu', PODS_URL . 'ui/js/floatmenu.js', array(), PODS_VERSION );
-        wp_register_script( 'pods-cleditor-min', PODS_URL . 'ui/js/jquery.cleditor.min.js', array(), PODS_VERSION );
-        wp_register_style( 'pods-cleditor', PODS_URL . 'ui/css/jquery.cleditor.css', array(), PODS_VERSION );
+
         wp_register_script( 'pods-admin-importer', PODS_URL . 'ui/js/admin-importer.js', array(), PODS_VERSION );
-        if ( !wp_script_is( 'pods-qtip', 'registered' ) )
-            wp_register_script( 'pods-qtip', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.0-2011-10-02' );
-        if ( !wp_style_is( 'pods-qtip', 'registered' ) )
-            wp_register_style( 'pods-qtip', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.0-2011-10-02' );
-        if ( !wp_script_is( 'pods-qtip-init', 'registered' ) )
-            wp_register_script( 'pods-qtip-init', PODS_URL . 'ui/js/qtip.js', array(
-                'jquery',
-                'pods-qtip'
-            ), PODS_VERSION );
-        wp_register_script( 'jquery-pods-admin', PODS_URL . 'ui/js/jquery.pods.admin.js', array( 'jquery' ), PODS_VERSION );
+
         wp_register_style( 'pods-manage', PODS_URL . 'ui/css/pods-manage.css', array(), PODS_VERSION );
-        wp_register_script( 'pods-forms', PODS_URL . 'ui/js/forms.js', array(), PODS_VERSION );
-        if ( !wp_script_is( 'jquery-ui-timepicker', 'registered' ) )
-            wp_register_script( 'jquery-ui-timepicker', PODS_URL . 'ui/js/jquery.ui.timepicker.min.js', array(
-                'jquery-ui-core',
-                'jquery-ui-datepicker',
-                'jquery-ui-slider'
-            ), '0.9.7' );
-        if ( !wp_style_is( 'jquery-ui-timepicker', 'registered' ) )
-            wp_register_style( 'jquery-ui-timepicker', PODS_URL . 'ui/css/jquery.ui.timepicker.css', array(), '0.9.7' );
-        wp_register_script( 'pods-file-attach', PODS_URL . 'ui/js/file-attach.js', array(), PODS_VERSION );
-        if ( !wp_script_is( 'jquery-chosen', 'registered' ) )
-            wp_register_script( 'jquery-chosen', PODS_URL . 'ui/js/chosen.jquery.min.js', array( 'jquery' ), '0.9.8' );
-        if ( !wp_style_is( 'jquery-chosen', 'registered' ) )
-            wp_register_style( 'jquery-chosen', PODS_URL . 'ui/css/chosen.css', array(), '0.9.8' );
-        if (!wp_style_is('jquery-select2', 'registered'))
-            wp_register_style('jquery-select2', PODS_URL . 'ui/css/select2.css', array(), '2.1');
-        if (!wp_script_is('jquery-select2', 'registered'))
-            wp_register_script('jquery-select2', PODS_URL . 'ui/js/select2.js', array('jquery'), '2.1');
-        if (!wp_script_is('handlebars', 'registered'))
-            wp_register_script('handlebars', PODS_URL . 'ui/js/handlebars-1.0.0.beta.6.js', array(), '1.0.0.beta.6');
+
         if ( isset( $_GET[ 'page' ] ) ) {
             $page = $_GET[ 'page' ];
             if ( 'pods' == $page || ( false !== strpos( $page, 'pods-' ) && 0 === strpos( $page, 'pods-' ) ) ) {
@@ -95,20 +67,11 @@ class PodsAdmin {
 
                 wp_enqueue_script( 'pods-floatmenu' );
 
-                if ( false !== strpos( $page, 'pods-import-' ) ) {
-                    wp_enqueue_script( 'pods-admin-importer' );
-                    wp_enqueue_script( 'jquery-ui-effects-fade', PODS_URL . 'ui/js/jquery-ui/jquery.effects.fade.js', array( 'jquery' ), '1.8.8' );
-                }
-
-                wp_enqueue_script( 'pods-qtip' );
                 wp_enqueue_style( 'pods-qtip' );
-
+                wp_enqueue_script( 'pods-qtip' );
                 wp_enqueue_script( 'pods-qtip-init' );
 
-                wp_enqueue_script( 'jquery-chosen' );
-                wp_enqueue_style( 'jquery-chosen' );
-
-                wp_enqueue_script( 'jquery-pods-admin' );
+                wp_enqueue_script( 'pods' );
 
                 if ( false !== strpos( $page, 'pods-manage-' ) && 0 === strpos( $page, 'pods-manage-' ) ) {
                     wp_enqueue_style( 'pods-manage' );
@@ -304,14 +267,26 @@ class PodsAdmin {
 
     public function admin_content () {
         $pod = str_replace( 'pods-manage-', '', $_GET[ 'page' ] );
-        $ui = pods_ui( array(
-                           'pod' => $pod,
-                           'actions_custom' => array( 'form' => array( $this, 'admin_content_form' ) )
-                       ) );
+        pods_ui( array(
+            'pod' => $pod,
+            'actions_custom' => array( 'form' => array( $this, 'admin_content_form' ) )
+        ) );
     }
 
     public function admin_content_form () {
-        require_once PODS_DIR . 'ui/admin/form.php';
+        pods_view( 'ui/admin/form.php' );
+    }
+
+    public function media_button ( $context ) {
+        add_action( 'admin_footer', array( $this, 'mce_popup' ) );
+
+        $button = '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox" id="add_pod_button" title="Embed Pods"><img src="' . PODS_URL . 'ui/images/icon16.png" alt="Embed Pods" /></a>';
+        $context .= $button;
+        return $context;
+    }
+
+    public function mce_popup () {
+        pods_view( 'ui/admin/shortcode.php' );
     }
 
     public function media_upload_test () {
@@ -337,22 +312,22 @@ class PodsAdmin {
 
     public function admin_setup () {
         pods_ui( array(
-                     'sql' => array(
-                         'table' => '@wp_pods',
-                         'select' => 'name, type'
-                     ),
-                     'icon' => PODS_URL . 'ui/images/icon32.png',
-                     'items' => 'Pods',
-                     'item' => 'Pod',
-                     'orderby' => 'name',
-                     'fields' => array( 'manage' => array( 'name', 'type' ) ),
-                     'actions_disabled' => array( 'duplicate', 'view', 'export' ),
-                     'actions_custom' => array(
-                         'add' => array( $this, 'admin_setup_add' ),
-                         'edit' => array( $this, 'admin_setup_edit' ),
-                         'delete' => array( $this, 'admin_setup_delete' )
-                     )
-                 ) );
+            'sql' => array(
+                'table' => '@wp_pods',
+                'select' => 'name, type'
+            ),
+            'icon' => PODS_URL . 'ui/images/icon32.png',
+            'items' => 'Pods',
+            'item' => 'Pod',
+            'orderby' => 'name',
+            'fields' => array( 'manage' => array( 'name', 'type' ) ),
+            'actions_disabled' => array( 'duplicate', 'view', 'export' ),
+            'actions_custom' => array(
+                'add' => array( $this, 'admin_setup_add' ),
+                'edit' => array( $this, 'admin_setup_edit' ),
+                'delete' => array( $this, 'admin_setup_delete' )
+            )
+        ) );
     }
 
     public function admin_setup_add ( $obj ) {

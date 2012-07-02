@@ -1,7 +1,8 @@
 (function ($) {
+    var changed = false;
     var methods = {
         validate : function () {
-            var $form = $('.pods-admin form');
+            var $form = $('form.pods-submittable');
             $form.on('change keyup', 'input.pods-validate.pods-validate-required, select.pods-validate.pods-validate-required, textarea.pods-validate.pods-validate-required', function () {
                 var $el = $(this);
 
@@ -34,21 +35,29 @@
             var $submitbutton;
 
             // Handle submit of form and translate to AJAX
-            $('.pods-admin form').on('submit', function (e) {
+            $('form.pods-submittable').on('submit', function (e) {
+                var $submittable = $( this );
+
+                changed = false;
+
                 e.preventDefault();
 
-                pods_ajaxurl = $('.pods-admin form').attr('action');
+                pods_ajaxurl = $submittable.attr('action');
                 pods_ajaxurl = pods_ajaxurl.replace(/\?nojs\=1/, '?pods_ajax=1');
+
                 if ('undefined' != typeof ajaxurl && ('' == pods_ajaxurl || '?pods_ajax=1' == pods_ajaxurl || document.location.href == pods_ajaxurl || document.location.href.replace(/\?nojs\=1/, '?pods_ajax=1') == pods_ajaxurl))
                     pods_ajaxurl = ajaxurl + '?pods_ajax=1';
 
                 postdata = {
                     field_data: {}
                 };
+
                 var valid_form = true;
-                $(this).find('.pods-submittable-fields' ).find('input, select, textarea').each(function () {
+
+                $submittable.find('.pods-submittable-fields' ).find('input, select, textarea').each(function () {
                     var $el = $(this);
                     var val = $el.val();
+
                     if ('' != $el.prop('name')) {
                         if ($el.is('input[type=checkbox]') && 1 == val && !$el.is(':checked'))
                             val = 0;
@@ -70,12 +79,8 @@
                         postdata[$el.prop('name')] = val;
                     }
                 });
-                if (false === valid_form) {
-                    $submitbutton.css('cursor', 'pointer');
-                    $submitbutton.prop('disabled', false);
-                    $submitbutton.parent().find('.waiting').fadeOut();
+                if (false === valid_form)
                     return false;
-                }
 
                 pods_ajaxurl = pods_ajaxurl + '&action=' + postdata.action;
 
@@ -85,9 +90,6 @@
                     cache: false,
                     data: postdata,
                     success: function (d) {
-                        $submitbutton.css('cursor', 'pointer');
-                        $submitbutton.prop('disabled', false);
-                        $submitbutton.parent().find('.waiting').fadeOut();
                         if (-1 == d.indexOf('<e>') && -1 != d) {
                             if ('undefined' != typeof pods_admin_submit_callback)
                                 pods_admin_submit_callback(d);
@@ -115,7 +117,9 @@
             });
 
             // Handle submit via link and translate to AJAX
-            $('.pods-admin form a.pods-submittable').on('click', function (e) {
+            $('form.pods-submittable a.pods-submit').on('click', function (e) {
+                changed = false;
+
                 e.preventDefault();
 
                 var $el = $(this);
@@ -139,15 +143,15 @@
                     data: postdata,
                     success: function (d) {
                         if (-1 == d.indexOf('<e>') && -1 != d) {
-                            if ('undefined' != typeof pods_admin_submittable_callback)
-                                pods_admin_submittable_callback(d);
+                            if ('undefined' != typeof pods_admin_submit_callback)
+                                pods_admin_submit_callback(d);
                             else if ( 'undefined' != typeof $( this ).data('location') )
                                 document.location.href = $( this ).data('location');
                             else
                                 document.location.reload( true );
                         }
-                        else if ('undefined' != typeof pods_admin_submittable_error_callback)
-                            pods_admin_submittable_error_callback(d.replace('<e>', '').replace('</e>', ''));
+                        else if ('undefined' != typeof pods_admin_submit_error_callback)
+                            pods_admin_submit_error_callback(d.replace('<e>', '').replace('</e>', ''));
                         else if ( 'undefined' != typeof $( this ).data('error-location') )
                             document.location.href = $( this ).data('error-location');
                         else
@@ -163,7 +167,9 @@
             });
 
             // Handle submit button and show waiting image
-            $('.pods-admin form').on('click', 'input[type=submit], button[type=submit]', function (e) {
+            $('form.pods-submittable').on('click', 'input[type=submit], button[type=submit]', function (e) {
+                changed = false;
+
                 e.preventDefault();
 
                 $submitbutton = $(this);
@@ -171,7 +177,7 @@
                 $submitbutton.prop('disabled', true);
                 $submitbutton.parent().find('.waiting').fadeIn();
 
-                $('.pods-admin form').trigger('submit');
+                $('form.pods-submittable').trigger('submit');
             });
         },
         sluggable : function () {
@@ -592,10 +598,20 @@
 
                 e.preventDefault();
             });
+        },
+        confirm : function () {
+            $( 'form.pods-submittable .pods-submittable-fields' ).on( 'change', 'input:not(:button,:submit),textarea,select', function () {
+                changed = true;
+
+                window.onbeforeunload = function () {
+                    if ( changed )
+                        return 'Navigating away from this page will discard any changes you have made. Are you sure you want to leave?';
+                }
+            } );
         }
     };
 
-    $.fn.PodsAdmin = function (method) {
+    $.fn.Pods = function (method) {
         if (methods[method]) {
             return methods[ method ].apply(this, Array.prototype.slice.call(arguments, 1));
         }
@@ -606,7 +622,7 @@
         }
         */
         else {
-            $.error('Method ' + method + ' does not exist on jQuery.PodsAdmin');
+            $.error('Method ' + method + ' does not exist on jQuery.Pods');
         }
     };
 })(jQuery);

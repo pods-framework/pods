@@ -646,18 +646,18 @@ class PodsInit
 		// Add New item links for all non-CPT pods
 		foreach ($non_cpt_pods as $pod) {
 			$label = isset($pod['options']['label']) ? $pod['options']['label'] : $pod['name'];
-			$wp_admin_bar->add_menu(array(
+			$wp_admin_bar->add_node(array(
+                'id' => 'new-pod-' . $pod[ 'name' ],
+                'title' => $label,
 				'parent' => 'new-content',
-				'title' => $label,
-				'id' => 'new-pod-' . $pod['name'],
-				'href' => admin_url('admin.php?page=pods-manage-'.$pod['name'].'&action=add')
+                'href' => admin_url( 'admin.php?page=pods-manage-' . $pod[ 'name' ] . '&action=add' )
 			));
 		}
 
 		// Add edit link if we're on a pods page (this requires testing)
 		// @todo Fill in correct href and test this once PodsAPI is capable of adding new pod items to the database
 		if (is_object($pods) && !is_wp_error($pods) && isset($pods->id)) {
-			$wp_admin_bar->add_menu(array(
+			$wp_admin_bar->add_node(array(
 				'title' => 'Edit Pod Item',
 				'id' => 'edit-pod',
 				'href' => '#'

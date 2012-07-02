@@ -853,15 +853,15 @@ class PodsAPI {
 
         if ( false === $bypass_helpers ) {
             // Plugin hook
-            do_action( 'pods_pre_save_pod_item', $params, $fields, $this );
-            do_action( "pods_pre_save_pod_item_{$params->pod}", $params, $this );
+            $this->do_hook( 'pre_save_pod_item', $params, $fields );
+            $this->do_hook( "pre_save_pod_item_{$params->pod}", $params );
             if ( false !== $is_new_item ) {
-                do_action( 'pods_pre_create_pod_item', $params, $this );
-                do_action( "pods_pre_create_pod_item_{$params->pod}", $params, $this );
+                $this->do_hook( 'pre_create_pod_item', $params );
+                $this->do_hook( "pre_create_pod_item_{$params->pod}", $params );
             }
             else {
-                do_action( 'pods_pre_edit_pod_item', $params, $this );
-                do_action( "pods_pre_edit_pod_item_{$params->pod}", $params, $this );
+                $this->do_hook( 'pre_edit_pod_item', $params );
+                $this->do_hook( "pre_edit_pod_item_{$params->pod}", $params );
             }
 
             // Call any pre-save helpers (if not bypassed)
@@ -998,15 +998,15 @@ class PodsAPI {
 
         if ( false === $bypass_helpers ) {
             // Plugin hook
-            do_action( 'pods_post_save_pod_item', $params, $fields, $this );
-            do_action( "pods_post_save_pod_item_{$params->pod}", $params, $fields, $this );
+            $this->do_hook( 'post_save_pod_item', $params, $fields );
+            $this->do_hook( "post_save_pod_item_{$params->pod}", $params, $fields );
             if ( false !== $is_new_item ) {
-                do_action( 'pods_post_create_pod_item', $params, $fields, $this );
-                do_action( "pods_post_create_pod_item_{$params->pod}", $params, $fields, $this );
+                $this->do_hook( 'post_create_pod_item', $params, $fields );
+                $this->do_hook( "post_create_pod_item_{$params->pod}", $params, $fields );
             }
             else {
-                do_action( 'pods_post_edit_pod_item', $params, $fields, $this );
-                do_action( "pods_post_edit_pod_item_{$params->pod}", $params, $fields, $this );
+                $this->do_hook( 'post_edit_pod_item', $params, $fields );
+                $this->do_hook( "post_edit_pod_item_{$params->pod}", $params, $fields );
             }
 
             // Call any post-save helpers (if not bypassed)
@@ -1101,7 +1101,7 @@ class PodsAPI {
                 if ( 0 < strlen( $value ) )
                     $params[ 'data' ][ $field[ 'name' ] ] = $value;
             }
-            $params = apply_filters( 'duplicate_pod_item', $params, $pod->pod, $pod->field( 'id' ) );
+            $params = $this->do_hook( 'duplicate_pod_item', $params, $pod->pod, $pod->field( 'id' ) );
             $id = $this->save_pod_item( $params );
         }
         return $id;
@@ -1138,11 +1138,9 @@ class PodsAPI {
         if ( !empty( $data ) ) {
             $data = array();
             foreach ( $fields as $field ) {
-                $value = $pod->field( $field[ 'name' ] );
-                if ( 0 < strlen( $value ) )
-                    $data[ $field[ 'name' ] ] = $value;
+                $data[ $field[ 'name' ] ] = $pod->field( $field[ 'name' ] );
             }
-            $data = apply_filters( 'export_pod_item', $data, $pod->pod, $pod->field( 'id' ) );
+            $data = $this->do_hook( 'export_pod_item', $data, $pod->pod, $pod->field( 'id' ) );
         }
         return $data;
     }
@@ -1461,8 +1459,8 @@ class PodsAPI {
 
         if ( false === $bypass_helpers ) {
             // Plugin hook
-            do_action( 'pods_pre_delete_pod_item', $params, $this );
-            do_action( "pods_pre_delete_pod_item_{$params->pod}", $params, $this );
+            $this->do_hook( 'pre_delete_pod_item', $params );
+            $this->do_hook( "pre_delete_pod_item_{$params->pod}", $params );
 
             // Call any pre-save helpers (if not bypassed)
             if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) {
@@ -1491,8 +1489,8 @@ class PodsAPI {
 
         if ( false === $bypass_helpers ) {
             // Plugin hook
-            do_action( 'pods_post_delete_pod_item', $params, $this );
-            do_action( "pods_post_delete_pod_item_{$params->pod}", $params, $this );
+            $this->do_hook( 'post_delete_pod_item', $params );
+            $this->do_hook( "post_delete_pod_item_{$params->pod}", $params );
 
             // Call any post-save helpers (if not bypassed)
             if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) {
@@ -2153,7 +2151,7 @@ class PodsAPI {
             'text'
         );
 
-        $types = apply_filters( 'pods_field_types', $types, $this );
+        $types = $this->do_hook( 'field_types', $types );
 
         $field_types = get_transient( 'pods_field_types' );
 
@@ -2193,7 +2191,7 @@ class PodsAPI {
     private function get_field_definition ( $type, $options = null ) {
         $definition = PodsForm::field_method( $type, 'schema', $options );
 
-        return apply_filters( 'pods_field_definition', $definition, $type, $options, $this );
+        return $this->do_hook( 'field_definition', $definition, $type, $options );
     }
 
     private function handle_field_validation ( $value, $field, $fields, $params ) {
@@ -2234,7 +2232,7 @@ class PodsAPI {
 
         // @todo Run field validation
 
-        $value = apply_filters( 'pods_field_validation', $value, $field, $fields, $this );
+        $value = $this->do_hook( 'field_validation', $value, $field, $fields );
         return $value;
     }
 

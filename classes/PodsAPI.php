@@ -1112,6 +1112,7 @@ class PodsAPI {
      *
      * $params['pod'] string The Pod name
      * $params['id'] int The item's ID from the wp_pods_tbl_* table
+     * $params['fields'] array The fields to export
      *
      * @param array $params An associative array of parameters
      *
@@ -2863,6 +2864,76 @@ class PodsAPI {
         $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods_get_%'" );
 
         wp_cache_flush();
+    }
+
+    /**
+     * @param object $obj Pod object
+     * @param array $fields Fields being submitted in form ( key => settings )
+     * @param string $thank_you URL to send to upon success
+     *
+     * @return mixed
+     */
+    public function process_form ( $obj = null, $fields = null, $thank_you = null ) {
+        $this->display_errors = false;
+
+        $nonce = $pod = $id = $uri = $form = null;
+
+        if ( isset( $_POST[ '_pods_nonce' ] ) )
+            $nonce = $_POST[ '_pods_nonce' ];
+
+        if ( is_object( $obj ) ) {
+            $pod = $obj->pod;
+            $id = $obj->id();
+        }
+        else {
+            if ( isset( $_POST[ '_pods_pod' ] ) )
+                $pod = $_POST[ '_pods_pod' ];
+
+            if ( isset( $_POST[ '_pods_id' ] ) )
+                $id = $_POST[ '_pods_id' ];
+        }
+
+        if ( isset( $_POST[ '_pods_uri' ] ) )
+            $uri = $_POST[ '_pods_uri' ];
+
+        if ( !empty( $fields ) ) {
+            $fields = array_keys( $fields );
+            $form = implode( ',', $fields );
+        }
+        elseif ( isset( $_POST[ '_pods_form' ] ) ) {
+            $form = $_POST[ '_pods_form' ];
+            $fields = explode( ',', $form );
+        }
+
+        if ( empty( $nonce) || empty( $pod ) || empty( $uri ) || empty( $fields ) )
+            return pods_error( __( 'Invalid submission', 'pods' ), $this );
+
+        $action = 'pods_form_' . $pod . '_' . session_id() . '_' . $id . '_' . $uri . '_' . wp_hash( $form );
+
+        if ( wp_verify_nonce( $nonce, $action ) )
+            return pods_error( __( 'Access denied, please refresh and try again.', 'pods' ), $this );
+
+        $data = array();
+
+        foreach ( $fields as $field ) {
+            $data[ $field ] = '';
+
+            if ( isset( $_POST[ $field ] ) )
+                $data[ $field ] = $_POST[ $field ];
+        }
+
+        $params = array(
+            'pod' => $pod,
+            'id' => $id,
+            'data' => $data
+        );
+
+        $id = $this->save_pod_item( $params );
+
+        if ( 0 < $id && !empty( $thank_you ) )
+            echo '<script type="text/javascript">document.location = "' . esc_url( $thank_you ) . '";</script>';
+
+        return $id;
     }
 
     /**

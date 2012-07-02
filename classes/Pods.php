@@ -388,13 +388,13 @@ class Pods {
      *
      * @since 2.0.0
      */
-    public function export ( $columns = null, $id = null ) {
+    public function export ( $fields = null, $id = null ) {
         if ( null === $id )
             $id = $this->id;
-        $columns = (array) $this->do_hook( 'export', $columns, $id );
+        $fields = (array) $this->do_hook( 'export', $fields, $id );
         if ( empty( $id ) )
             return;
-        $params = array( 'pod' => $this->pod, 'id' => $id, 'columns' => $columns );
+        $params = array( 'pod' => $this->pod, 'id' => $id, 'fields' => $fields );
         return $this->api->export_pod_item( $params );
     }
 
@@ -404,10 +404,42 @@ class Pods {
      * @since 2.0.0
      */
     public function pagination ( $params = null ) {
-        $params = (object) $this->do_hook( 'pagination', $params );
-        if ( isset( $params->bypass ) && true === $params->bypass )
-            return;
-        require_once PODS_DIR . 'ui/front/pagination.php';
+        $defaults = array(
+            'type' => 'simple',
+            'label' => __( 'Go to page:', 'pods' ),
+            'next_label' => __( '&lt; Previous', 'pods' ),
+            'prev_label' => __( 'Next &gt;', 'pods' ),
+            'first_label' => __( '&laquo; First', 'pods' ),
+            'last_label' => __( 'Last &raquo;', 'pods' ),
+            'limit' => (int) $this->limit,
+            'page' => max( 1, (int) $this->page ),
+            'total_found' => $this->total_found()
+        );
+
+        if ( empty( $params ) )
+            $params = array();
+        elseif ( !is_array( $params ) )
+            $params = array( 'label' => $params );
+
+        $params = (object) array_merge( $defaults, $params );
+
+        $params->total_pages = ceil( $params->total_found / $params->limit );
+
+        if ( $params->limit < 1 || $params->total_found < 1 || 1 == $params->total_pages )
+            return $this->do_hook( 'pagination', '', $params );
+
+        $pagination = 'extended';
+
+        if ( 'basic' == $params->type )
+            $pagination = 'basic';
+
+        ob_start();
+
+        pods_view( PODS_DIR . 'ui/front/pagination/' . $pagination . '.php', compact( array_keys( get_defined_vars() ) ) );
+
+        $output = ob_get_clean();
+
+        return $this->do_hook( 'pagination', $output, $params );
     }
 
     /**
@@ -416,10 +448,15 @@ class Pods {
      * @since 2.0.0
      */
     public function filters ( $params = null ) {
-        $params = (object) $this->do_hook( 'filters', $params );
-        if ( isset( $params->bypass ) && true === $params->bypass )
-            return;
-        require_once PODS_DIR . 'ui/front/filters.php';
+        // handle $params deprecated
+
+        ob_start();
+
+        pods_view( PODS_DIR . 'ui/front/filters.php', compact( array_keys( get_defined_vars() ) ) );
+
+        $output = ob_get_clean();
+
+        return $this->do_hook( 'filters', $output, $params );
     }
 
     /**
@@ -605,7 +642,7 @@ class Pods {
 
         $output = ob_get_clean();
 
-        return apply_filters( 'pods_form', $output, $fields, $label, $thank_you, $this, $this->id() );
+        return $this->do_hook( 'form', $output, $fields, $label, $thank_you, $this, $this->id() );
     }
 
     /**

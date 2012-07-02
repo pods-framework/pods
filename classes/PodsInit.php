@@ -78,6 +78,7 @@ class PodsInit
                 define(strtoupper($security_setting), $setting);
         }
 
+        $this->register_assets();
     }
 
     function register_assets () {

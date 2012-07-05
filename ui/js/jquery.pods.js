@@ -118,13 +118,9 @@
 
             // Handle submit via link and translate to AJAX
             $('form.pods-submittable a.pods-submit').on('click', function (e) {
-                changed = false;
-
                 e.preventDefault();
 
                 var $el = $(this);
-
-                $el.off(e);
 
                 pods_ajaxurl = $el.data('ajaxurl');
                 if ('undefined' != typeof pods_ajaxurl)
@@ -133,6 +129,11 @@
                     pods_ajaxurl = ajaxurl + '?pods_ajax=1';
 
                 var postdata = $el.data();
+
+                if ( 'undefined' != typeof $el.data( 'confirm' ) && !confirm( $el.data( 'confirm' ) ) )
+                    return false;
+
+                changed = false;
 
                 pods_ajaxurl = pods_ajaxurl + '&action=' + postdata.action;
 
@@ -145,15 +146,15 @@
                         if (-1 == d.indexOf('<e>') && -1 != d) {
                             if ('undefined' != typeof pods_admin_submit_callback)
                                 pods_admin_submit_callback(d);
-                            else if ( 'undefined' != typeof $( this ).data('location') )
-                                document.location.href = $( this ).data('location');
+                            else if ( 'undefined' != typeof $el.data('location') )
+                                document.location.href = $el.data('location');
                             else
                                 document.location.reload( true );
                         }
                         else if ('undefined' != typeof pods_admin_submit_error_callback)
                             pods_admin_submit_error_callback(d.replace('<e>', '').replace('</e>', ''));
-                        else if ( 'undefined' != typeof $( this ).data('error-location') )
-                            document.location.href = $( this ).data('error-location');
+                        else if ( 'undefined' != typeof $el.data('error-location') )
+                            document.location.href = $el.data('error-location');
                         else
                             alert('Error: ' + d.replace('<e>', '').replace('</e>', ''));
                     },
@@ -162,8 +163,6 @@
                     },
                     dataType: 'html'
                 });
-
-                $el.on(e);
             });
 
             // Handle submit button and show waiting image
@@ -600,6 +599,14 @@
             });
         },
         confirm : function () {
+            $( 'a.pods-confirm' ).on( 'click', function ( e ) {
+                var $el = $( this );
+
+                if ( 'undefined' != typeof $el.data( 'confirm' ) && !confirm( $el.data( 'confirm' ) ) )
+                    return false;
+            } );
+        },
+        exit_confirm : function () {
             $( 'form.pods-submittable .pods-submittable-fields' ).on( 'change', 'input:not(:button,:submit),textarea,select', function () {
                 changed = true;
 

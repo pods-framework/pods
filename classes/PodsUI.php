@@ -97,6 +97,7 @@ class PodsUI
                         'field_index' => 'name',
                         'select' => null,
                         'sql' => null);
+    public $data = false;
 
     // actions
     public $action = 'manage';
@@ -153,7 +154,7 @@ class PodsUI
             $options = $this->setup_deprecated($options);
         $options = $this->do_hook('pre_init', $options);
         $this->setup($options);
-        if ((!is_object($this->pod) || 'Pods' != get_class($this->pod)) && false === $this->sql['table']) {
+        if ((!is_object($this->pod) || 'Pods' != get_class($this->pod)) && false === $this->sql['table'] && false === $this->data ) {
             echo $this->error(__('<strong>Error:</strong> Pods UI needs a Pods object or a Table definition to run from, see the User Guide for more information.', 'pods'));
             return false;
         }

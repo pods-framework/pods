@@ -351,25 +351,28 @@ function pods_var_set ( $value, $key = 'last', $type = 'url' ) {
 }
 
 /**
- * @param bool $array
- * @param bool $allowed
- * @param bool $url
+ * @param array $array
+ * @param array $allowed
+ * @param array $excluded
+ * @param string $url
  *
  * @return mixed
  */
-function pods_var_update ( $array = false, $allowed = false, $url = false ) {
-    if ( false === $allowed )
+function pods_var_update ( $array = null, $allowed = null, $excluded = null, $url = null ) {
+    if ( empty( $allowed ) )
         $allowed = array();
+    if ( empty( $excluded ) )
+        $excluded = array();
     if ( !isset( $_GET ) )
         $get = array();
     else
         $get = $_GET;
     if ( is_array( $array ) ) {
-        foreach ( self::$excluded as $exclusion ) {
+        foreach ( $excluded as $exclusion ) {
             if ( !isset( $array[ $exclusion ] ) && !in_array( $exclusion, $allowed ) )
                 unset( $get[ $exclusion ] );
-            if ( !isset( $array[ $exclusion . $this->num ] ) && !in_array( $exclusion . $this->num, $allowed ) )
-                unset( $get[ $exclusion . $this->num ] );
+            if ( !isset( $array[ $exclusion ] ) && !in_array( $exclusion, $allowed ) )
+                unset( $get[ $exclusion ] );
         }
         foreach ( $array as $key => $val ) {
             if ( 0 < strlen( $val ) )
@@ -378,7 +381,7 @@ function pods_var_update ( $array = false, $allowed = false, $url = false ) {
                 unset( $get[ $key ] );
         }
     }
-    if ( false === $url )
+    if ( empty( $url ) )
         $url = $_SERVER[ 'REQUEST_URI' ];
     $url = current( explode( '#', current( explode( '?', $url ) ) ) );
     return $url . '?' . http_build_query( $get );
@@ -877,58 +880,56 @@ function pods_version_to_point ( $version ) {
  * @since 1.10
  */
 function pods_compatible ( $wp = null, $php = null, $mysql = null ) {
-    global $wp_version;
+    global $wp_version, $wpdb;
     if ( null === $wp )
         $wp = $wp_version;
     if ( null === $php )
         $php = phpversion();
-    if ( null === $mysql ) {
-        $mysql = pods_query( "SELECT VERSION() AS `mysql_version`" );
-        $mysql = $mysql[ 0 ]->mysql_version;
-    }
+    if ( null === $mysql )
+        $mysql = $wpdb->db_version();
     $compatible = true;
     if ( !version_compare( $wp, PODS_WP_VERSION_MINIMUM, '>=' ) ) {
         $compatible = false;
         add_action( 'admin_notices', 'pods_version_notice_wp' );
         function pods_version_notice_wp () {
-            ?>
-        <div class="error fade">
-            <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of
-                <strong>WordPress <?php echo PODS_WP_VERSION_MINIMUM; ?>+</strong> to function. You are currently running
-                <strong>WordPress <?php echo get_bloginfo( "version" ); ?></strong> - Please upgrade your WordPress to continue.
-            </p>
-        </div>
-        <?php
+?>
+    <div class="error fade">
+        <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of
+            <strong>WordPress <?php echo PODS_WP_VERSION_MINIMUM; ?>+</strong> to function. You are currently running
+            <strong>WordPress <?php echo get_bloginfo( "version" ); ?></strong> - Please upgrade your WordPress to continue.
+        </p>
+    </div>
+<?php
         }
     }
     if ( !version_compare( $php, PODS_PHP_VERSION_MINIMUM, '>=' ) ) {
         $compatible = false;
         add_action( 'admin_notices', 'pods_version_notice_php' );
         function pods_version_notice_php () {
-            ?>
-        <div class="error fade">
-            <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of
-                <strong>PHP <?php echo PODS_PHP_VERSION_MINIMUM; ?>+</strong> to function. You are currently running
-                <strong>PHP <?php echo phpversion(); ?></strong> - Please upgrade (or have your Hosting Provider upgrade it for you) your PHP version to continue.
-            </p>
-        </div>
-        <?php
+?>
+    <div class="error fade">
+        <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of
+            <strong>PHP <?php echo PODS_PHP_VERSION_MINIMUM; ?>+</strong> to function. You are currently running
+            <strong>PHP <?php echo phpversion(); ?></strong> - Please upgrade (or have your Hosting Provider upgrade it for you) your PHP version to continue.
+        </p>
+    </div>
+<?php
         }
     }
     if ( !@version_compare( $mysql, PODS_MYSQL_VERSION_MINIMUM, '>=' ) ) {
         $compatible = false;
         add_action( 'admin_notices', 'pods_version_notice_mysql' );
         function pods_version_notice_mysql () {
-            $mysql = pods_query( "SELECT VERSION() AS `mysql_version`" );
-            $mysql = $mysql[ 0 ]->mysql_version;
-            ?>
-        <div class="error fade">
-            <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of
-                <strong>MySQL <?php echo PODS_MYSQL_VERSION_MINIMUM; ?>+</strong> to function. You are currently running
-                <strong>MySQL <?php echo $mysql; ?></strong> - Please upgrade (or have your Hosting Provider upgrade it for you) your MySQL version to continue.
-            </p>
-        </div>
-        <?php
+            global $wpdb;
+            $mysql = $wpdb->db_version();
+?>
+    <div class="error fade">
+        <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of
+            <strong>MySQL <?php echo PODS_MYSQL_VERSION_MINIMUM; ?>+</strong> to function. You are currently running
+            <strong>MySQL <?php echo $mysql; ?></strong> - Please upgrade (or have your Hosting Provider upgrade it for you) your MySQL version to continue.
+        </p>
+    </div>
+<?php
         }
     }
     return $compatible;

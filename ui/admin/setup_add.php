@@ -3,12 +3,15 @@
         var PODS_URL = '<?php echo PODS_URL; ?>';
     </script>
     <div id="icon-pods" class="icon32"><br /></div>
-    <form action="" method="post">
+
+    <form action="" method="post" class="pods-submittable">
         <div class="pods-submittable-fields">
             <input type="hidden" name="action" value="pods_admin" />
             <input type="hidden" name="method" value="add_pod" />
             <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('pods-add_pod'); ?>" />
+
             <h2 class="italicized"><?php _e('Add New Pod'); ?></h2>
+
             <div id="poststuff" class="pods-wizard">
                 <img src="<?php echo PODS_URL; ?>/ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
                 <p>Pods are content types that you can customize and define fields for based on your needs. You can choose to create a Custom Post Type, Custom Taxonomy, or a Custom Pod which operate completely seperate from normal WordPress Objects. You can also extend existing content types like WP Objects such as Post Types, Taxonomies, Users, or Comments</p>
@@ -116,14 +119,16 @@ foreach ($taxonomies as $taxonomy => $label) {
     </form>
 </div>
 <script type="text/javascript">
-jQuery(function($){
-    $(document).PodsAdmin('validate');
-    $(document).PodsAdmin('submit');
-    $(document).PodsAdmin('wizard');
-    $(document).PodsAdmin('dependency');
-    $(document).PodsAdmin('advanced');
-});
-pods_admin_submit_callback = function (id) {
-    document.location = 'admin.php?page=pods&action=edit&id=' + id;
-}
+    jQuery( function ( $ ) {
+        $( document ).Pods( 'validate' );
+        $( document ).Pods( 'submit' );
+        $( document ).Pods( 'wizard' );
+        $( document ).Pods( 'dependency' );
+        $( document ).Pods( 'advanced' );
+        $( document ).Pods( 'confirm' );
+    } );
+
+    pods_admin_submit_callback = function ( id ) {
+        document.location = 'admin.php?page=pods&action=edit&id=' + id;
+    }
 </script>

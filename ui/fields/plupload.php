@@ -1,5 +1,6 @@
 <?php
     wp_enqueue_script( 'jquery-ui-core' );
+    wp_enqueue_script( 'jquery-ui-sortable' );
     wp_enqueue_script( 'plupload-all' );
     wp_enqueue_script( 'handlebars', PODS_URL . 'ui/js/handlebars-1.0.0.beta.6.js' );
 

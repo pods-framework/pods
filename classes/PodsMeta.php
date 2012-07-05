@@ -79,6 +79,7 @@ class PodsMeta {
         add_meta_box( $post->post_type . '-pods-meta', $post_type->labels->name, array( $this, 'meta_post' ), $post->post_type, 'normal', 'high' );
     }
     public function meta_post ( $post ) {
+		wp_enqueue_style('pods-form', PODS_URL . 'ui/css/pods-form.css');
 ?>
     <table class="form-table pods-metabox">
 <?php
@@ -120,6 +121,7 @@ class PodsMeta {
     }
 
     public function meta_media ( $form_fields, $post ) {
+		wp_enqueue_style('pods-form', PODS_URL . 'ui/css/pods-form.css');
         $pod = $this->api->load_pod( array( 'name' => 'media' ) );
         foreach ( $pod['fields'] as $field ) {
             if ( in_array( $field[ 'type' ], array( 'pick', 'file' ) ) )
@@ -150,6 +152,7 @@ class PodsMeta {
 
     public function meta_taxonomy ( $tag, $taxonomy = null ) {
 
+		wp_enqueue_style('pods-form', PODS_URL . 'ui/css/pods-form.css');
         $taxonomy_name = $taxonomy;
         if ( !is_object( $tag ) )
             $taxonomy_name = $tag;
@@ -198,6 +201,7 @@ class PodsMeta {
     }
 
     public function meta_user ( $user_id ) {
+		wp_enqueue_style('pods-form', PODS_URL . 'ui/css/pods-form.css');
         if ( is_object( $user_id ) )
             $user_id = $user_id->ID;
 
@@ -236,6 +240,7 @@ class PodsMeta {
     }
 
     public function meta_comment_new_logged_in ( $commenter, $user_identity ) {
+		wp_enqueue_style('pods-form', PODS_URL . 'ui/css/pods-form.css');
         $pod_name = current( self::$comment );
         $pod_name = $pod_name['name'];
         $pod = $this->api->load_pod( array( 'name' => $pod_name ) );
@@ -251,6 +256,7 @@ class PodsMeta {
         }
     }
     public function meta_comment_new ( $form_fields ) {
+		wp_enqueue_style('pods-form', PODS_URL . 'ui/css/pods-form.css');
         $pod_name = current( self::$comment );
         $pod_name = $pod_name['name'];
         $pod = $this->api->load_pod( array( 'name' => $pod_name ) );
@@ -269,6 +275,7 @@ class PodsMeta {
         return $form_fields;
     }
     public function meta_comment_add ( $comment ) {
+		wp_enqueue_style('pods-form', PODS_URL . 'ui/css/pods-form.css');
         $pod_name = current( self::$comment );
         $pod_name = $pod_name[ 'name' ];
         $pod = $this->api->load_pod( array( 'name' => $pod_name ) );
@@ -288,6 +295,7 @@ class PodsMeta {
 <?php
     }
     public function meta_comment ( $comment ) {
+		wp_enqueue_style('pods-form', PODS_URL . 'ui/css/pods-form.css');
         $pod_name = current( self::$comment );
         $pod_name = $pod_name['name'];
         $pod = $this->api->load_pod( array( 'name' => $pod_name ) );

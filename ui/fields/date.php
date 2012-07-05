@@ -61,6 +61,31 @@
             $args = apply_filters( 'pods_form_ui_field_date_args', $args, $type, $options, $attributes, $name, PodsForm::$field_type );
         ?>
         var args = <?php echo json_encode($args); ?>;
-        jQuery( 'input#<?php echo $attributes[ 'id' ]; ?>' ).<?php echo $method; ?>( args );
+
+		// Test whether or not the browser supports date inputs
+		var supportDateField = function() {
+			var input = jQuery('<input/>', {
+				'type': 'date',
+				css: {
+					position: 'absolute',
+					display: 'none'
+				}
+			});
+
+			jQuery('body').append(input);
+			
+			var bool = input.attr('type') !== 'text';
+
+			if (bool) {
+				var smile = ":)";
+				input.val(smile);
+
+				return (input.val() != smile);
+			}
+		}
+
+		if (!supportDateField()) {
+			jQuery( 'input#<?php echo $attributes[ 'id' ]; ?>' ).<?php echo $method; ?>( args );
+		}
     } );
 </script>

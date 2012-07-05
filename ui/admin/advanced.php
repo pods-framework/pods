@@ -1,5 +1,7 @@
 <div class="wrap pods-admin">
-    <div id="icon-themes" class="icon32"></div><h2>Edit Pods Parts</h2>
+    <div id="icon-themes" class="icon32"></div>
+    <h2>Pods Advanced</h2>
+
     <form action="" method="post" class="pods pods-parts">
 		<div id="poststuff" class="has-right-sidebar meta-box-sortables">
 			<h4>Currently Editing: <span id="pods-currently-editing"><!-- This will be replaced via AJAX --></span></h4>

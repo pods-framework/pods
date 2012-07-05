@@ -906,7 +906,7 @@ if ('pod' == pods_var('type', $pod)) {
                                     <div class="submitbox" id="submitpost">
                                         <div id="major-publishing-actions">
                                             <div id="delete-action">
-                                                <a href="<?php echo pods_var_update( array( 'action' . $obj->num => 'delete' ) ); ?>" class="submitdelete deletion pods-confirm" data-confirm="<?php _e( 'Are you sure you want to delete this Pod? All fields and data will be removed.', 'pods' ); ?>">
+                                                <a href="#delete-pod" class="submitdelete deletion pods-submit" data-action="pods_admin" data-method="drop_pod" data-_wpnonce="<?php echo wp_create_nonce( 'pods-drop_pod' ); ?>" data-name="<?php echo esc_attr( pods_var( 'name', $pod ) ); ?>">
                                                     Delete Pod
                                                 </a>
                                             </div>

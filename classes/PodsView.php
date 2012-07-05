@@ -12,9 +12,9 @@ class PodsView {
         if ( !in_array( $cache_mode, self::$cache_modes ) )
             $cache_mode = 'cache';
 
-        $cache_key = sanitize_title( str_replace( PODS_DIR . 'ui/', 'pods-ui-', $view ) );
+        $cache_key = sanitize_title( str_replace( array( PODS_DIR . 'ui/', ABSPATH ), array( 'pods-ui-', 'pods-ui-' ), $view ) );
 
-        if ( false === strpos( $view, PODS_DIR . 'ui/' ) ) {
+        if ( false === strpos( $view, PODS_DIR . 'ui/' ) || false === strpos( $view, ABSPATH ) ) {
 
             $output = self::get( $cache_key );
             if ( null !== $output ) {
@@ -124,7 +124,7 @@ class PodsView {
 
         if ( empty( $_view ) )
             return false;
-        elseif ( false === strpos( $_view, PODS_DIR . 'ui/' ) ) {
+        elseif ( false === strpos( $_view, PODS_DIR . 'ui/' ) || false === strpos( $_view, ABSPATH ) ) {
             $_view = trim( $_view, '/' );
 
             if ( empty( $_view ) )

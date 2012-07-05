@@ -11,32 +11,26 @@ class PodsInit
      * @since 1.8.9
      */
     function __construct () {
-        $this->version = get_option('pods_framework_version');
+        $this->version = get_option( 'pods_framework_version' );
 
-        add_action('init', array($this, 'activate_install'), 9);
+        add_action( 'init', array( $this, 'activate_install' ), 9 );
 
         if ( !empty( $this->version ) ) {
             // Init Pods Form
             pods_form();
 
-            add_action('init', array($this, 'init'));
+            add_action( 'init', array( $this, 'init' ), 11 );
 
-            add_action('init', array($this, 'setup_content_types'));
-            add_action('init', array($this, 'page_check'), 11);
-            add_action('delete_attachment', array($this, 'delete_attachment'));
+            add_action( 'init', array( $this, 'setup_content_types' ), 11 );
+            add_action( 'delete_attachment', array( $this, 'delete_attachment' ) );
 
             if ( is_admin() )
-                add_action('init', array($this, 'admin_init'));
-
-            // Widgets
-            require_once PODS_DIR . 'classes/widgets/PodsWidgetSingle.php';
-            require_once PODS_DIR . 'classes/widgets/PodsWidgetList.php';
-            require_once PODS_DIR . 'classes/widgets/PodsWidgetColumn.php';
-            require_once PODS_DIR . 'classes/widgets/PodsWidgetForm.php';
-            add_action('widgets_init', array($this, 'register_widgets'));
+                add_action( 'init', array( $this, 'admin_init' ), 12 );
+            else
+                add_action( 'init', array( $this, 'page_check' ), 12 );
 
             // Show admin bar links
-            add_action('wp_before_admin_bar_render', array($this, 'admin_bar_links'));
+            add_action( 'wp_before_admin_bar_render', array( $this, 'admin_bar_links' ) );
 
             // Init Pods Meta
             $this->meta = pods_meta();
@@ -79,16 +73,19 @@ class PodsInit
         }
 
         $this->register_assets();
+
+        add_action( 'widgets_init', array( $this, 'register_widgets' ) );
     }
 
     function register_assets () {
         if ( !wp_style_is( 'jquery-ui', 'registered' ) )
             wp_register_style( 'jquery-ui', PODS_URL . 'ui/css/smoothness/jquery-ui-1.8.16.custom.css', array(), '1.8.16' );
 
+        wp_register_style( 'pods', PODS_URL . 'ui/css/pods-form.css', array(), PODS_VERSION );
         wp_register_script( 'pods', PODS_URL . 'ui/js/jquery.pods.js', array( 'jquery' ), PODS_VERSION );
 
-        wp_register_style( 'pods-qtip', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.0-2011-10-02' );
-        wp_register_script( 'pods-qtip', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.0-2011-10-02' );
+        wp_register_style( 'pods-qtip', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.0-2012-07-03' );
+        wp_register_script( 'pods-qtip', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.0-2012-07-03' );
         wp_register_script( 'pods-qtip-init', PODS_URL . 'ui/js/qtip.js', array( 'jquery', 'pods-qtip' ), PODS_VERSION );
 
         wp_register_style( 'pods-cleditor', PODS_URL . 'ui/css/jquery.cleditor.css', array(), '1.3.0' );
@@ -620,15 +617,18 @@ class PodsInit
         }
     }
 
-    function register_widgets() {
+    function register_widgets () {
         $widgets = array(
             'PodsWidgetSingle',
             'PodsWidgetList',
             'PodsWidgetColumn',
             'PodsWidgetForm',
         );
-        foreach ($widgets as $widget) {
-            register_widget($widget);
+
+        foreach ( $widgets as $widget ) {
+            require_once PODS_DIR . 'classes/widgets/' . basename( $widget ) . '.php';
+
+            register_widget( $widget );
         }
     }
 

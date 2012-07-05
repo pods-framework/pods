@@ -46,6 +46,16 @@ class Pods_GravityForms {
     static $dynamic_select;
 
     /**
+     * Setup filters and actions
+     */
+    public function __construct () {
+        // Handle custom success/error message
+        add_filter( 'gform_validation_message', array( 'Pods_GravityForms', 'validation_message' ) );
+
+
+    }
+
+    /**
      * Intercept validation message and return custom error/message
      * @static
      * @param $message
@@ -670,6 +680,3 @@ class Pods_GravityForms {
         return false;
     }
 }
-
-// Handle custom success/error message
-add_filter( 'gform_validation_message', array( 'Pods_GravityForms', 'validation_message' ) );

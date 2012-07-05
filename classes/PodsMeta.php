@@ -32,6 +32,7 @@ class PodsMeta {
                     $post_type_name = $post_type['object'];
                 add_action( 'add_meta_boxes_' . $post_type_name, array( $this, 'meta_post_add' ) );
             }
+
             add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
         }
 
@@ -44,9 +45,10 @@ class PodsMeta {
 
                 add_action( $taxonomy_name . '_edit_form_fields', array( $this, 'meta_taxonomy' ), 10, 2 );
                 add_action( $taxonomy_name . '_add_form_fields', array( $this, 'meta_taxonomy' ), 10, 1 );
-                add_action( 'edit_term', array( $this, 'save_taxonomy' ), 10, 3 );
-                add_action( 'create_term', array( $this, 'save_taxonomy' ), 10, 3 );
             }
+
+            add_action( 'edit_term', array( $this, 'save_taxonomy' ), 10, 3 );
+            add_action( 'create_term', array( $this, 'save_taxonomy' ), 10, 3 );
         }
 
         if (!empty(self::$media)) {

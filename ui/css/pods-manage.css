@@ -295,3 +295,7 @@ table.plupload-queue td.progress .progress-bar {
     background: black;
 }
 
+tr.form-field .pods-boolean input {
+	width: 20%;
+}
+

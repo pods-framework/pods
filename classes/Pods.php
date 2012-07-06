@@ -242,6 +242,8 @@ class Pods {
 
         $this->data->select( $params );
         $this->results =& $this->data->data;
+
+        return $this;
     }
 
     /**

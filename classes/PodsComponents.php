@@ -263,4 +263,8 @@ class PodsComponents {
     public function components () {
         return $this->components;
     }
+
+    public function admin () {
+
+    }
 }

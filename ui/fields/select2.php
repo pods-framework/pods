@@ -9,44 +9,47 @@
 <input<?php PodsForm::attributes($attributes, $name, PodsForm::$field_type, $options); ?> />
 
 <script type="text/javascript">
-    jQuery(function($) {
-        if (typeof pods_ajaxurl === "undefined") {
-            var pods_ajaxurl = "<?php echo admin_url('admin-ajax.php?pods_ajax=1'); ?>";
+    jQuery( function ( $ ) {
+        if ( typeof pods_ajaxurl === "undefined" ) {
+            var pods_ajaxurl = "<?php echo admin_url( 'admin-ajax.php?pods_ajax=1' ); ?>";
         }
-        var pods_nonce = "<?php echo wp_create_nonce('pods-select2_ajax'); ?>";
 
-        function podsFormatResult(item) {
+        if ( typeof pods_select2_nonce === "undefined" ) {
+            var pods_select2_nonce = "<?php echo wp_create_nonce( 'pods-select2_ajax' ); ?>";
+        }
+
+        function <?php echo $attributes[ 'id' ]; ?>_podsFormatResult ( item ) {
             return item.title;
         }
 
-        function podsFormatSelection(item) {
+        function <?php echo $attributes[ 'id' ]; ?>_podsFormatSelection ( item ) {
             return item.title;
         }
 
-        $('#<?php echo $attributes['id']; ?>').select2({
-            placeholder: {
-                title: 'Start Typing...',
-                id: ''
+        $( '#<?php echo $attributes[ 'id' ]; ?>' ).select2( {
+            placeholder : {
+                title : 'Start Typing...',
+                id : ''
             },
-            minimumInputLength: 1,
-            ajax: {
-                url: pods_ajaxurl,
-                type: 'POST',
-                dataType: 'json',
-                data: function(term, page) {
+            minimumInputLength : 1,
+            ajax : {
+                url : pods_ajaxurl,
+                type : 'POST',
+                dataType : 'json',
+                data : function ( term, page ) {
                     return {
-                        _wpnonce: pods_nonce,
-                        action: 'pods_admin',
-                        method: 'select2_ajax',
-                        query: term
+                        _wpnonce : pods_select2_nonce,
+                        action : 'pods_admin',
+                        method : 'select2_ajax',
+                        query : term
                     };
                 },
-                results: function(data, page) {
+                results : function ( data, page ) {
                     return data;
                 }
             },
-            formatResult: podsFormatResult,
-            formatSelection: podsFormatSelection
-        });
-    });
+            formatResult : <?php echo $attributes[ 'id' ]; ?>_podsFormatResult,
+            formatSelection : <?php echo $attributes[ 'id' ]; ?>_podsFormatSelection
+        } );
+    } );
 </script>

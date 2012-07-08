@@ -1935,6 +1935,20 @@ class PodsAPI {
     }
 
     /**
+     * Load Component Information
+     *
+     * @since 2.0.0
+     */
+    public function load_components () {
+        global $pods_components;
+
+        if ( !is_object( $pods_components ) )
+            return array();
+
+        return $pods_components->components();
+    }
+
+    /**
      * Load the pod item object
      *
      * $params['pod'] string The datatype name

@@ -388,12 +388,15 @@ class PodsAdmin {
 
     public function admin_components () {
         $components = $this->api->load_components();
-        var_dump( $components );
+        pods_debug( $components, false );
     }
 
     public function admin_components_handler () {
-        $components = $this->api->load_components();
-        var_dump( $components );
+        global $pods_components;
+
+        $component = str_replace( 'pods-component-', '', $_GET[ 'page' ] );
+
+        $pods_components->admin( $component );
     }
 
     public function admin_help () {

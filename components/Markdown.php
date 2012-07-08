@@ -2,11 +2,33 @@
 /**
  * Name: Markdown Syntax
  *
- * Integration with Markdown (http://michelf.com/projects/php-markdown/)
+ * Description: Integration with Markdown (http://michelf.com/projects/php-markdown/)
+ *
+ * Version: 1.0
  *
  * @package pods
  * @subpackage markdown
  */
+
+function pods_markdown_add_option ( $options, $type ) {
+    $options[ 'output_options' ][ 'group' ][ $type . '_allow_markdown' ] = array(
+        'label' => __( 'Allow Markdown Syntax?', 'pods' ),
+        'default' => 0,
+        'type' => 'boolean'
+    );
+
+    return $options;
+}
+add_filter( 'pods_field_paragraph_options', 'pods_markdown_add_option', 10, 2 );
+
+function pods_markdown_output ( $value, $options, $type ) {
+    if ( 1 == $options[ $type . '_allow_markdown' ] )
+        $value = Markdown( $value );
+
+    return $value;
+}
+add_filter( 'pods_field_paragraph_output', 'pods_markdown_output' );
+
 if ( !function_exists( 'Markdown' ) ) :
 #
 # Markdown  -  A text-to-HTML conversion tool for web writers

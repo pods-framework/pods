@@ -93,15 +93,6 @@ class PodsField_Paragraph extends PodsField {
             )
         );
 
-        // Markdown integration
-        if ( function_exists( 'Markdown' ) ) {
-            $options[ 'output_options' ][ 'paragraph_allow_markdown' ] = array(
-                'label' => __( 'Allow Markdown Syntax?', 'pods' ),
-                'default' => 0,
-                'type' => 'boolean'
-            );
-        }
-
         return $options;
     }
 
@@ -132,10 +123,6 @@ class PodsField_Paragraph extends PodsField {
      * @since 2.0.0
      */
     public function display ( &$value, $name, $options, $fields, &$pod, $id ) {
-        // Markdown integration
-        if ( function_exists( 'Markdown' ) && 1 == $options[ 'paragraph_allow_markdown' ] )
-            $value = Markdown( $value );
-
         if ( 1 == $options[ 'paragraph_allow_shortcode' ] )
             $value = do_shortcode( $value );
     }

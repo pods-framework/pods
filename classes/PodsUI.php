@@ -714,6 +714,7 @@ class PodsUI
                 $this->fields = $this->setup_fields($this->fields, 'fields');
             else
                 $this->fields['manage'] = $fields;
+
             if (!in_array('add', $this->actions_disabled) || !in_array('edit', $this->actions_disabled) || !in_array('duplicate', $this->actions_disabled)) {
                 if ('form' != $which && !empty($this->fields['form']))
                     $this->fields['form'] = $this->setup_fields($this->fields['form'], 'form');
@@ -738,18 +739,23 @@ class PodsUI
                         $this->fields['duplicate'] = $fields;
                 }
             }
+
             if (false !== $this->searchable) {
                 if ('search' != $which && !empty($this->fields['search']))
                     $this->fields['search'] = $this->setup_fields($this->fields['search'], 'search');
                 else
                     $this->fields['search'] = $fields;
             }
+            else
+                $this->fields[ 'search' ] = false;
+
             if (!in_array('export', $this->actions_disabled)) {
                 if ('export' != $which && !empty($this->fields['export']))
                     $this->fields['export'] = $this->setup_fields($this->fields['export'], 'export');
                 else
                     $this->fields['export'] = $fields;
             }
+
             if (!in_array('reorder', $this->actions_disabled) && false !== $this->reorder['on']) {
                 if ('reorder' != $which && !empty($this->fields['reorder']))
                     $this->fields['reorder'] = $this->setup_fields($this->fields['reorder'], 'reorder');
@@ -1092,10 +1098,13 @@ class PodsUI
 <?php
         if (isset($this->actions_custom['header']) && is_callable($this->actions_custom['header']))
             return call_user_func($this->actions_custom['header'], $reorder, $this);
+
         if (empty($this->data))
             $this->get_data();
+
         if (!in_array('export', $this->actions_disabled) && 'export' == $this->action)
             $this->export();
+
         if ((!empty($this->data) || false !== $this->search) && false !== $this->searchable) {
 ?>
         <p class="search-box" align="right">
@@ -1185,7 +1194,7 @@ class PodsUI
             <input type="text" name="search<?php echo $this->num; ?>" id="page-search-input" value="<?php echo $this->search; ?>" />
             <input type="submit" value="<?php esc_attr_e('Search', 'pods'); echo ' ' . esc_attr($this->items); ?>" class="button" />
 <?php
-            if (false !== $this->search) {
+            if ( 0 < strlen( $this->search ) ) {
                 $clear_filters = array();
                 foreach ($this->filters as $filter) {
                     $clear_filters['filter_' . $filter . '_start'] = '';
@@ -1205,9 +1214,9 @@ class PodsUI
         else {
 ?>
         <br class="clear" />
-        <br class="clear" />
 <?php
         }
+
         if (!empty($this->data) && ( false !== $this->pagination || ( true === $reorder && !in_array( 'reorder', $this->actions_disabled ) && !in_array( 'delete', $this->actions_hidden ) && false !== $this->reorder[ 'on' ] ) ) || ( !in_array( 'export', $this->actions_disabled ) && !in_array( 'export', $this->actions_hidden ) ) ) {
 ?>
         <div class="tablenav">
@@ -1252,6 +1261,11 @@ class PodsUI
 ?>
             <br class="clear" />
         </div>
+<?php
+        }
+        else {
+?>
+        <br class="clear" />
 <?php
         }
 ?>
@@ -1346,9 +1360,9 @@ class PodsUI
                 if (false === $name_field)
                     $id = 'title';
                 else
-                    $id = 'author';
+                    $id = '';
                 if ('other' == $attributes['type'])
-                    $id = 'author';
+                    $id = '';
                 if (in_array($attributes['type'], array('date', 'datetime', 'time')))
                     $id = 'date';
                 if (false === $name_field && 'title' == $id)
@@ -1363,6 +1377,10 @@ class PodsUI
                         $current_sort = 'asc';
                     }
                 }
+
+                if ( !empty( $id ) )
+                    $id = ' id="' . $id . '"';
+
                 if ( $fields[ $field ][ 'sortable' ] ) {
 ?>
                 <th scope="col" id="<?php echo $id; ?>" class="manage-column column-<?php echo $id; ?> sortable <?php echo $current_sort; ?>"><a href="<?php echo pods_var_update(array('orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir), array('limit' . $this->num, 'search' . $this->num), $this->exclusion()); ?>"><span><?php echo $attributes['label']; ?></span><span class="sorting-indicator"></span></a></th>
@@ -1370,7 +1388,7 @@ class PodsUI
                 }
                 else {
 ?>
-                <th scope="col" id="<?php echo $id; ?>" class="manage-column column-<?php echo $id; ?>"><?php echo $attributes['label']; ?></th>
+                <th scope="col"<?php echo $id; ?> class="manage-column column-<?php echo $id; ?>"><?php echo $attributes['label']; ?></th>
 <?php
                 }
             }
@@ -1378,39 +1396,45 @@ class PodsUI
 ?>
             </tr>
         </thead>
+<?php
+        if ( 6 < $this->total_found ) {
+?>
         <tfoot>
             <tr>
 <?php
-        /*if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
+            /*if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
 ?>
-                <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" /></th>
+                    <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" /></th>
 <?php
-        }*/
-        if (!empty($fields)) {
-            foreach ($fields as $field => $attributes) {
-                $dir = 'ASC';
-                if ($field == $this->orderby) {
-                    $current_sort = 'desc';
-                    if ('ASC' == $this->orderby_dir) {
-                        $dir = 'DESC';
-                        $current_sort = 'asc';
+            }*/
+            if (!empty($fields)) {
+                foreach ($fields as $field => $attributes) {
+                    $dir = 'ASC';
+                    if ($field == $this->orderby) {
+                        $current_sort = 'desc';
+                        if ('ASC' == $this->orderby_dir) {
+                            $dir = 'DESC';
+                            $current_sort = 'asc';
+                        }
                     }
-                }
-                if ( $fields[ $field ][ 'sortable' ] ) {
+                    if ( $fields[ $field ][ 'sortable' ] ) {
 ?>
                 <th scope="col" class="manage-column column-<?php echo $id; ?> sortable <?php echo $current_sort; ?>"><a href="<?php echo pods_var_update(array('orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir), array('limit' . $this->num, 'search' . $this->num), $this->exclusion()); ?>"><span><?php echo $attributes['label']; ?></span><span class="sorting-indicator"></span></a></th>
 <?php
-                }
-                else {
+                    }
+                    else {
 ?>
                 <th scope="col" class="manage-column column-<?php echo $id; ?>"><?php echo $attributes['label']; ?></th>
 <?php
+                    }
                 }
             }
-        }
 ?>
             </tr>
         </tfoot>
+<?php
+        }
+?>
         <tbody id="the-list"<?php echo (true === $reorder && !in_array('reorder', $this->actions_disabled) && false !== $this->reorder['on']) ? ' class="reorderable"' : ''; ?>>
 <?php
         if (!empty($this->data)) {
@@ -1598,7 +1622,7 @@ class PodsUI
                             }
                         }
 ?>
-                <td class="author column-author"><?php echo implode(', ', $field_data); ?></td>
+                <td class="author"><?php echo implode(', ', $field_data); ?></td>
 <?php
                     }
                     elseif ('bool' == $attributes['type']) {
@@ -1618,7 +1642,7 @@ class PodsUI
                     }
                     else {
 ?>
-                <td class="author column-author"><?php echo $row[$field]; ?></td>
+                <td class="author"><?php echo $row[$field]; ?></td>
 <?php
                     }
                 }

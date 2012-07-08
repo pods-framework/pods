@@ -181,6 +181,11 @@ class PodsAdmin {
                 'function' => array( $this, 'admin_setup' ),
                 'access' => 'manage_pods'
             ),
+            'pods-components' => array(
+                'label' => 'Components',
+                'function' => array( $this, 'admin_components' ),
+                'access' => 'manage_components'
+            ),
             'pods-help' => array(
                 'label' => 'Help',
                 'function' => array( $this, 'admin_help' )
@@ -335,22 +340,24 @@ class PodsAdmin {
 
     public function admin_ui () {
         pods_ui( array(
-                     'sql' => array(
-                         'table' => '@wp_pods_objects',
-                         'select' => 'name'
-                     ),
-                     'icon' => PODS_URL . 'ui/images/icon32.png',
-                     'items' => 'Admin UI',
-                     'item' => 'Admin UI',
-                     'orderby' => 'name',
-                     'fields' => array( 'manage' => array( 'name' ) ),
-                     'actions_disabled' => array( 'duplicate', 'view', 'export' ),
-                     'actions_custom' => array(
-                         'add' => array( $this, 'admin_ui_add' ),
-                         'edit' => array( $this, 'admin_ui_edit' ),
-                         'delete' => array( $this, 'admin_ui_delete' )
-                     )
-                 ) );
+            'sql' => array(
+                'table' => '@wp_pods_objects',
+                'select' => 'name'
+            ),
+            'icon' => PODS_URL . 'ui/images/icon32.png',
+            'items' => 'Admin UI',
+            'item' => 'Admin UI',
+            'orderby' => 'name',
+            'fields' => array( 'manage' => array( 'name' ) ),
+            'actions_disabled' => array( 'duplicate', 'view', 'export' ),
+            'actions_custom' => array(
+                'add' => array( $this, 'admin_ui_add' ),
+                'edit' => array( $this, 'admin_ui_edit' ),
+               'delete' => array( $this, 'admin_ui_delete' )
+            ),
+            'search' => false,
+            'searchable' => false
+        ) );
     }
 
     /*public function admin_ui_add($obj) {
@@ -395,6 +402,7 @@ class PodsAdmin {
             $component_data = array(
                 'id' => $component_data[ 'ID' ],
                 'name' => $component_data[ 'Name' ],
+                'description' => make_clickable( $component_data[ 'Description' ] ),
                 'version' => $component_data[ 'Version' ],
                 'author' => $component_data[ 'Author' ],
                 'toggle' => ( 0 != $pods_components->settings[ 'components' ][ $component_data[ 'ID' ] ] ? 1 : 0 )
@@ -403,10 +411,12 @@ class PodsAdmin {
 
         pods_ui( array(
             'data' => $components,
+            'total' => count( $components ),
+            'total_found' => count( $components ),
             'icon' => PODS_URL . 'ui/images/icon32.png',
             'items' => 'Components',
             'item' => 'Component',
-            'fields' => array( 'manage' => array( 'name', 'version', 'author' ) ),
+            'fields' => array( 'manage' => array( 'name', 'description' ) ), //, 'version', 'author' ) ),
             'actions_disabled' => array( 'duplicate', 'view', 'export', 'add', 'edit', 'delete' ),
             'actions_custom' => array(
                 'toggle' => array( 'callback' => array( $this, 'admin_components_toggle' ) )
@@ -434,9 +444,9 @@ class PodsAdmin {
         $toggle = $pods_components->toggle( $component );
 
         if ( $toggle )
-            $ui->message( __( 'Component enabled', 'pods' ) );
+            $ui->message( $pods_components->components[ $component ][ 'Name' ] . ' ' . __( 'Component enabled', 'pods' ) );
         else
-            $ui->message( __( 'Component disabled', 'pods' ) );
+            $ui->message( $pods_components->components[ $component ][ 'Name' ] . ' ' . __( 'Component disabled', 'pods' ) );
 
         $components = $pods_components->components;
 
@@ -444,6 +454,7 @@ class PodsAdmin {
             $component_data = array(
                 'id' => $component_data[ 'ID' ],
                 'name' => $component_data[ 'Name' ],
+                'description' => make_clickable( $component_data[ 'Description' ] ),
                 'version' => $component_data[ 'Version' ],
                 'author' => $component_data[ 'Author' ],
                 'toggle' => ( 0 != $pods_components->settings[ 'components' ][ $component_data[ 'ID' ] ] ? 1 : 0 )

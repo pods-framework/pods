@@ -2,7 +2,9 @@
 /**
  * Name: Gravity Forms
  *
- * Integration with Gravity Forms, mapping data from GF to Pods
+ * Description: Integration with Gravity Forms to map submissions to Pods (http://www.gravityforms.com/)
+ *
+ * Version: 1.0
  *
  * @package pods
  * @subpackage gravityforms

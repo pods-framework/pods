@@ -144,7 +144,7 @@ class PodsComponents {
      */
     public function load () {
         foreach ( (array) $this->settings[ 'components' ] as $component => $options ) {
-            if ( ( !isset( $this->components[ $component ] ) || 'yes' == $this->components[ $component ][ 'Autoload' ] ) && 0 == $options )
+            if ( !isset( $this->components[ $component ] ) && 0 == $options )
                 continue;
             elseif ( isset( $this->components[ $component ] ) && file_exists( $this->components_dir . $component ) ) {
                 $component_data = $this->components[ $component ];
@@ -211,7 +211,6 @@ class PodsComponents {
                 'Description' => 'Description',
                 'Version' => 'Version',
                 'Class' => 'Class',
-                'Autoload' => 'Autoload',
                 'Hide' => 'Hide'
             );
 
@@ -229,6 +228,8 @@ class PodsComponents {
                 if ( empty( $component_data[ 'MenuName' ] ) )
                     $component_data[ 'MenuName' ] = $component_data[ 'Name' ];
 
+                if ( empty( $component_data[ 'Class' ] ) )
+                    $component_data[ 'Class' ] = 'Pods_' . basename( $component_file, '.php' );
 
                 if ( empty( $component_data[ 'ID' ] ) )
                     $component_data[ 'ID' ] = sanitize_title( $component_data[ 'Name' ] );

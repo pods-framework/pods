@@ -387,8 +387,35 @@ class PodsAdmin {
     }
 
     public function admin_components () {
-        $components = $this->api->load_components();
-        pods_debug( $components, false );
+        global $pods_components;
+
+        $components = $pods_components->components;
+
+        foreach ( $components as $component => &$component_data ) {
+            $component_data = array(
+                'id' => $component_data[ 'ID' ],
+                'name' => $component_data[ 'Name' ],
+                'version' => $component_data[ 'Version' ],
+                'author' => $component_data[ 'Author' ],
+                'toggle' => ( 0 != $pods_components->settings[ 'components' ][ $component_data[ 'ID' ] ] ? 1 : 0 )
+            );
+        }
+
+        pods_ui( array(
+            'data' => $components,
+            'icon' => PODS_URL . 'ui/images/icon32.png',
+            'items' => 'Components',
+            'item' => 'Component',
+            'fields' => array( 'manage' => array( 'name', 'version', 'author' ) ),
+            'actions_disabled' => array( 'duplicate', 'view', 'export', 'add', 'edit', 'delete' ),
+            'actions_custom' => array(
+                'toggle' => array( 'callback' => array( $this, 'admin_components_toggle' ) )
+            ),
+            'search' => false,
+            'searchable' => false,
+            'sortable' => false,
+            'pagination' => false
+        ) );
     }
 
     public function admin_components_handler () {
@@ -397,6 +424,35 @@ class PodsAdmin {
         $component = str_replace( 'pods-component-', '', $_GET[ 'page' ] );
 
         $pods_components->admin( $component );
+    }
+
+    public function admin_components_toggle ( PodsUI $ui ) {
+        global $pods_components;
+
+        $component = $_GET[ 'id' ];
+
+        $toggle = $pods_components->toggle( $component );
+
+        if ( $toggle )
+            $ui->message( __( 'Component enabled', 'pods' ) );
+        else
+            $ui->message( __( 'Component disabled', 'pods' ) );
+
+        $components = $pods_components->components;
+
+        foreach ( $components as $component => &$component_data ) {
+            $component_data = array(
+                'id' => $component_data[ 'ID' ],
+                'name' => $component_data[ 'Name' ],
+                'version' => $component_data[ 'Version' ],
+                'author' => $component_data[ 'Author' ],
+                'toggle' => ( 0 != $pods_components->settings[ 'components' ][ $component_data[ 'ID' ] ] ? 1 : 0 )
+            );
+        }
+
+        $ui->data = $components;
+
+        $ui->manage();
     }
 
     public function admin_help () {

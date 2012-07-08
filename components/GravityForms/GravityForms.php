@@ -7,7 +7,7 @@
  * @package pods
  * @subpackage gravityforms
  */
-class Pods_GravityForms {
+class Pods_GravityForms extends PodsComponent {
 
     /**
      * Gravity Forms Validation array, containing message/error and thank you handling (message/redirect/page)
@@ -51,8 +51,6 @@ class Pods_GravityForms {
     public function __construct () {
         // Handle custom success/error message
         add_filter( 'gform_validation_message', array( 'Pods_GravityForms', 'validation_message' ) );
-
-
     }
 
     /**

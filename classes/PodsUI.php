@@ -98,6 +98,7 @@ class PodsUI
                         'select' => null,
                         'sql' => null);
     public $data = false;
+    public $row = array();
 
     // actions
     public $action = 'manage';
@@ -169,248 +170,258 @@ class PodsUI
         $this->go();
     }
 
-    public function setup_deprecated ($deprecated_options) {
+    public function setup_deprecated ( $deprecated_options ) {
         $options = array();
-        if (isset($deprecated_options['id']))
-            $options['id'] = $deprecated_options['id'];
-        if (isset($deprecated_options['action']))
-            $options['action'] = $deprecated_options['action'];
-        if (isset($deprecated_options['num']))
-            $options['num'] = $deprecated_options['num'];
+        if ( isset( $deprecated_options[ 'id' ] ) )
+            $options[ 'id' ] = $deprecated_options[ 'id' ];
+        if ( isset( $deprecated_options[ 'action' ] ) )
+            $options[ 'action' ] = $deprecated_options[ 'action' ];
+        if ( isset( $deprecated_options[ 'num' ] ) )
+            $options[ 'num' ] = $deprecated_options[ 'num' ];
 
-        if (isset($deprecated_options['title']))
-            $options['items'] = $deprecated_options['title'];
-        if (isset($deprecated_options['item']))
-            $options['item'] = $deprecated_options['item'];
+        if ( isset( $deprecated_options[ 'title' ] ) )
+            $options[ 'items' ] = $deprecated_options[ 'title' ];
+        if ( isset( $deprecated_options[ 'item' ] ) )
+            $options[ 'item' ] = $deprecated_options[ 'item' ];
 
-        if (isset($deprecated_options['label']))
-            $options['label'] = array('add' => $deprecated_options['label'],
-                                      'edit' => $deprecated_options['label'],
-                                      'duplicate' => $deprecated_options['label']);
-        if (isset($deprecated_options['label_add'])) {
-            if (isset($options['label']))
-                $options['label']['add'] = $deprecated_options['label_add'];
+        if ( isset( $deprecated_options[ 'label' ] ) )
+            $options[ 'label' ] = array(
+                'add' => $deprecated_options[ 'label' ],
+                'edit' => $deprecated_options[ 'label' ],
+                'duplicate' => $deprecated_options[ 'label' ]
+            );
+        if ( isset( $deprecated_options[ 'label_add' ] ) ) {
+            if ( isset( $options[ 'label' ] ) )
+                $options[ 'label' ][ 'add' ] = $deprecated_options[ 'label_add' ];
             else
-                $options['label'] = array('add' => $deprecated_options['label_add']);
+                $options[ 'label' ] = array( 'add' => $deprecated_options[ 'label_add' ] );
         }
-        if (isset($deprecated_options['label_edit'])) {
-            if (isset($options['label']))
-                $options['label']['edit'] = $deprecated_options['label_edit'];
+        if ( isset( $deprecated_options[ 'label_edit' ] ) ) {
+            if ( isset( $options[ 'label' ] ) )
+                $options[ 'label' ][ 'edit' ] = $deprecated_options[ 'label_edit' ];
             else
-                $options['label'] = array('edit' => $deprecated_options['label_edit']);
+                $options[ 'label' ] = array( 'edit' => $deprecated_options[ 'label_edit' ] );
         }
-        if (isset($deprecated_options['label_duplicate'])) {
-            if (isset($options['label']))
-                $options['label']['duplicate'] = $deprecated_options['label_duplicate'];
+        if ( isset( $deprecated_options[ 'label_duplicate' ] ) ) {
+            if ( isset( $options[ 'label' ] ) )
+                $options[ 'label' ][ 'duplicate' ] = $deprecated_options[ 'label_duplicate' ];
             else
-                $options['label'] = array('duplicate' => $deprecated_options['label_duplicate']);
+                $options[ 'label' ] = array( 'duplicate' => $deprecated_options[ 'label_duplicate' ] );
         }
 
-        if (isset($deprecated_options['icon']))
-            $options['icon'] = $deprecated_options['icon'];
+        if ( isset( $deprecated_options[ 'icon' ] ) )
+            $options[ 'icon' ] = $deprecated_options[ 'icon' ];
 
-        if (isset($deprecated_options['columns']))
-            $options['fields'] = array('manage' => $deprecated_options['columns']);
-        if (isset($deprecated_options['reorder_columns'])) {
-            if (isset($options['fields']))
-                $options['fields']['reorder'] = $deprecated_options['reorder_columns'];
+        if ( isset( $deprecated_options[ 'columns' ] ) )
+            $options[ 'fields' ] = array( 'manage' => $deprecated_options[ 'columns' ] );
+        if ( isset( $deprecated_options[ 'reorder_columns' ] ) ) {
+            if ( isset( $options[ 'fields' ] ) )
+                $options[ 'fields' ][ 'reorder' ] = $deprecated_options[ 'reorder_columns' ];
             else
-                $options['fields'] = array('reorder' => $deprecated_options['reorder_columns']);
+                $options[ 'fields' ] = array( 'reorder' => $deprecated_options[ 'reorder_columns' ] );
         }
-        if (isset($deprecated_options['add_fields'])) {
-            if (isset($options['fields'])) {
-                if (!isset($options['fields']['add']))
-                    $options['fields']['add'] = $deprecated_options['add_fields'];
-                if (!isset($options['fields']['edit']))
-                    $options['fields']['edit'] = $deprecated_options['add_fields'];
-                if (!isset($options['fields']['duplicate']))
-                    $options['fields']['duplicate'] = $deprecated_options['add_fields'];
+        if ( isset( $deprecated_options[ 'add_fields' ] ) ) {
+            if ( isset( $options[ 'fields' ] ) ) {
+                if ( !isset( $options[ 'fields' ][ 'add' ] ) )
+                    $options[ 'fields' ][ 'add' ] = $deprecated_options[ 'add_fields' ];
+                if ( !isset( $options[ 'fields' ][ 'edit' ] ) )
+                    $options[ 'fields' ][ 'edit' ] = $deprecated_options[ 'add_fields' ];
+                if ( !isset( $options[ 'fields' ][ 'duplicate' ] ) )
+                    $options[ 'fields' ][ 'duplicate' ] = $deprecated_options[ 'add_fields' ];
             }
             else
-                $options['fields'] = array('add' => $deprecated_options['add_fields'],
-                                           'edit' => $deprecated_options['add_fields'],
-                                           'duplicate' => $deprecated_options['add_fields']);
+                $options[ 'fields' ] = array(
+                    'add' => $deprecated_options[ 'add_fields' ],
+                    'edit' => $deprecated_options[ 'add_fields' ],
+                    'duplicate' => $deprecated_options[ 'add_fields' ]
+                );
         }
-        if (isset($deprecated_options['edit_fields'])) {
-            if (isset($options['fields'])) {
-                if (!isset($options['fields']['add']))
-                    $options['fields']['add'] = $deprecated_options['edit_fields'];
-                if (!isset($options['fields']['edit']))
-                    $options['fields']['edit'] = $deprecated_options['edit_fields'];
-                if (!isset($options['fields']['duplicate']))
-                    $options['fields']['duplicate'] = $deprecated_options['edit_fields'];
+        if ( isset( $deprecated_options[ 'edit_fields' ] ) ) {
+            if ( isset( $options[ 'fields' ] ) ) {
+                if ( !isset( $options[ 'fields' ][ 'add' ] ) )
+                    $options[ 'fields' ][ 'add' ] = $deprecated_options[ 'edit_fields' ];
+                if ( !isset( $options[ 'fields' ][ 'edit' ] ) )
+                    $options[ 'fields' ][ 'edit' ] = $deprecated_options[ 'edit_fields' ];
+                if ( !isset( $options[ 'fields' ][ 'duplicate' ] ) )
+                    $options[ 'fields' ][ 'duplicate' ] = $deprecated_options[ 'edit_fields' ];
             }
             else
-                $options['fields'] = array('add' => $deprecated_options['edit_fields'],
-                                           'edit' => $deprecated_options['edit_fields'],
-                                           'duplicate' => $deprecated_options['edit_fields']);
+                $options[ 'fields' ] = array(
+                    'add' => $deprecated_options[ 'edit_fields' ],
+                    'edit' => $deprecated_options[ 'edit_fields' ],
+                    'duplicate' => $deprecated_options[ 'edit_fields' ]
+                );
         }
-        if (isset($deprecated_options['duplicate_fields'])) {
-            if (isset($options['fields']))
-                $options['fields']['duplicate'] = $deprecated_options['duplicate_fields'];
+        if ( isset( $deprecated_options[ 'duplicate_fields' ] ) ) {
+            if ( isset( $options[ 'fields' ] ) )
+                $options[ 'fields' ][ 'duplicate' ] = $deprecated_options[ 'duplicate_fields' ];
             else
-                $options['fields'] = array('duplicate' => $deprecated_options['duplicate_fields']);
+                $options[ 'fields' ] = array( 'duplicate' => $deprecated_options[ 'duplicate_fields' ] );
         }
 
-        if (isset($deprecated_options['session_filters']) && false === $deprecated_options['session_filters'])
-            $options['session'] = false;
-        if (isset($deprecated_options['user_per_page'])) {
-            if (isset($options['user']) && !empty($options['user']))
-                $options['user'] = array('orderby');
+        if ( isset( $deprecated_options[ 'session_filters' ] ) && false === $deprecated_options[ 'session_filters' ] )
+            $options[ 'session' ] = false;
+        if ( isset( $deprecated_options[ 'user_per_page' ] ) ) {
+            if ( isset( $options[ 'user' ] ) && !empty( $options[ 'user' ] ) )
+                $options[ 'user' ] = array( 'orderby' );
             else
-                $options['user'] = false;
+                $options[ 'user' ] = false;
         }
-        if (isset($deprecated_options['user_sort'])) {
-            if (isset($options['user']) && !empty($options['user']))
-                $options['user'] = array('show_per_page');
+        if ( isset( $deprecated_options[ 'user_sort' ] ) ) {
+            if ( isset( $options[ 'user' ] ) && !empty( $options[ 'user' ] ) )
+                $options[ 'user' ] = array( 'show_per_page' );
             else
-                $options['user'] = false;
-        }
-
-        if (isset($deprecated_options['custom_list'])) {
-            if (isset($options['actions_custom']))
-                $options['actions_custom']['manage'] = $deprecated_options['custom_list'];
-            else
-                $options['actions_custom'] = array('manage' => $deprecated_options['custom_list']);
-        }
-        if (isset($deprecated_options['custom_reorder'])) {
-            if (isset($options['actions_custom']))
-                $options['actions_custom']['reorder'] = $deprecated_options['custom_reorder'];
-            else
-                $options['actions_custom'] = array('reorder' => $deprecated_options['custom_reorder']);
-        }
-        if (isset($deprecated_options['custom_add'])) {
-            if (isset($options['actions_custom']))
-                $options['actions_custom']['add'] = $deprecated_options['custom_add'];
-            else
-                $options['actions_custom'] = array('add' => $deprecated_options['custom_add']);
-        }
-        if (isset($deprecated_options['custom_edit'])) {
-            if (isset($options['actions_custom']))
-                $options['actions_custom']['edit'] = $deprecated_options['custom_edit'];
-            else
-                $options['actions_custom'] = array('edit' => $deprecated_options['custom_edit']);
-        }
-        if (isset($deprecated_options['custom_duplicate'])) {
-            if (isset($options['actions_custom']))
-                $options['actions_custom']['duplicate'] = $deprecated_options['custom_duplicate'];
-            else
-                $options['actions_custom'] = array('duplicate' => $deprecated_options['custom_duplicate']);
-        }
-        if (isset($deprecated_options['custom_delete'])) {
-            if (isset($options['actions_custom']))
-                $options['actions_custom']['delete'] = $deprecated_options['custom_delete'];
-            else
-                $options['actions_custom'] = array('delete' => $deprecated_options['custom_delete']);
-        }
-        if (isset($deprecated_options['custom_save'])) {
-            if (isset($options['actions_custom']))
-                $options['actions_custom']['save'] = $deprecated_options['custom_save'];
-            else
-                $options['actions_custom'] = array('save' => $deprecated_options['custom_save']);
+                $options[ 'user' ] = false;
         }
 
-        if (isset($deprecated_options['custom_actions']))
-            $options['actions_custom'] = $deprecated_options['custom_actions'];
-        if (isset($deprecated_options['action_after_save']))
-            $options['action_after'] = array('add' => $deprecated_options['action_after_save'],
-                                             'edit' => $deprecated_options['action_after_save'],
-                                             'duplicate' => $deprecated_options['action_after_save']);
-        if (isset($deprecated_options['edit_link'])) {
-            if (isset($options['action_links']))
-                $options['action_links']['edit'] = $deprecated_options['edit_link'];
+        if ( isset( $deprecated_options[ 'custom_list' ] ) ) {
+            if ( isset( $options[ 'actions_custom' ] ) )
+                $options[ 'actions_custom' ][ 'manage' ] = $deprecated_options[ 'custom_list' ];
             else
-                $options['action_links'] = array('edit' => $deprecated_options['edit_link']);
+                $options[ 'actions_custom' ] = array( 'manage' => $deprecated_options[ 'custom_list' ] );
         }
-        if (isset($deprecated_options['view_link'])) {
-            if (isset($options['action_links']))
-                $options['action_links']['view'] = $deprecated_options['view_link'];
+        if ( isset( $deprecated_options[ 'custom_reorder' ] ) ) {
+            if ( isset( $options[ 'actions_custom' ] ) )
+                $options[ 'actions_custom' ][ 'reorder' ] = $deprecated_options[ 'custom_reorder' ];
             else
-                $options['action_links'] = array('view' => $deprecated_options['view_link']);
+                $options[ 'actions_custom' ] = array( 'reorder' => $deprecated_options[ 'custom_reorder' ] );
         }
-        if (isset($deprecated_options['duplicate_link'])) {
-            if (isset($options['action_links']))
-                $options['action_links']['duplicate'] = $deprecated_options['duplicate_link'];
+        if ( isset( $deprecated_options[ 'custom_add' ] ) ) {
+            if ( isset( $options[ 'actions_custom' ] ) )
+                $options[ 'actions_custom' ][ 'add' ] = $deprecated_options[ 'custom_add' ];
             else
-                $options['action_links'] = array('duplicate' => $deprecated_options['duplicate_link']);
+                $options[ 'actions_custom' ] = array( 'add' => $deprecated_options[ 'custom_add' ] );
         }
-
-        if (isset($deprecated_options['reorder']))
-            $options['reorder'] = array('on' => $deprecated_options['reorder'],
-                                        'orderby' => $deprecated_options['reorder']);
-        if (isset($deprecated_options['reorder_sort']) && isset($options['reorder']))
-            $options['reorder']['orderby'] = $deprecated_options['reorder_sort'];
-        if (isset($deprecated_options['reorder_limit']) && isset($options['reorder']))
-            $options['reorder']['limit'] = $deprecated_options['reorder_limit'];
-        if (isset($deprecated_options['reorder_sql']) && isset($options['reorder']))
-            $options['reorder']['sql'] = $deprecated_options['reorder_sql'];
-
-        if (isset($deprecated_options['sort']))
-            $options['orderby'] = $deprecated_options['sort'];
-        if (isset($deprecated_options['sortable']))
-            $options['sortable'] = $deprecated_options['sortable'];
-        if (isset($deprecated_options['limit']))
-            $options['limit'] = $deprecated_options['limit'];
-
-        if (isset($deprecated_options['where'])) {
-            if (isset($options['where']))
-                $options['where']['manage'] = $deprecated_options['where'];
+        if ( isset( $deprecated_options[ 'custom_edit' ] ) ) {
+            if ( isset( $options[ 'actions_custom' ] ) )
+                $options[ 'actions_custom' ][ 'edit' ] = $deprecated_options[ 'custom_edit' ];
             else
-                $options['where'] = array('manage' => $deprecated_options['where']);
+                $options[ 'actions_custom' ] = array( 'edit' => $deprecated_options[ 'custom_edit' ] );
         }
-        if (isset($deprecated_options['edit_where'])) {
-            if (isset($options['where']))
-                $options['where']['edit'] = $deprecated_options['edit_where'];
+        if ( isset( $deprecated_options[ 'custom_duplicate' ] ) ) {
+            if ( isset( $options[ 'actions_custom' ] ) )
+                $options[ 'actions_custom' ][ 'duplicate' ] = $deprecated_options[ 'custom_duplicate' ];
             else
-                $options['where'] = array('edit' => $deprecated_options['edit_where']);
+                $options[ 'actions_custom' ] = array( 'duplicate' => $deprecated_options[ 'custom_duplicate' ] );
         }
-        if (isset($deprecated_options['duplicate_where'])) {
-            if (isset($options['where']))
-                $options['where']['duplicate'] = $deprecated_options['duplicate_where'];
+        if ( isset( $deprecated_options[ 'custom_delete' ] ) ) {
+            if ( isset( $options[ 'actions_custom' ] ) )
+                $options[ 'actions_custom' ][ 'delete' ] = $deprecated_options[ 'custom_delete' ];
             else
-                $options['where'] = array('duplicate' => $deprecated_options['duplicate_where']);
+                $options[ 'actions_custom' ] = array( 'delete' => $deprecated_options[ 'custom_delete' ] );
         }
-        if (isset($deprecated_options['delete_where'])) {
-            if (isset($options['where']))
-                $options['where']['delete'] = $deprecated_options['delete_where'];
+        if ( isset( $deprecated_options[ 'custom_save' ] ) ) {
+            if ( isset( $options[ 'actions_custom' ] ) )
+                $options[ 'actions_custom' ][ 'save' ] = $deprecated_options[ 'custom_save' ];
             else
-                $options['where'] = array('delete' => $deprecated_options['delete_where']);
-        }
-        if (isset($deprecated_options['reorder_where'])) {
-            if (isset($options['where']))
-                $options['where']['reorder'] = $deprecated_options['reorder_where'];
-            else
-                $options['where'] = array('reorder' => $deprecated_options['reorder_where']);
+                $options[ 'actions_custom' ] = array( 'save' => $deprecated_options[ 'custom_save' ] );
         }
 
-        if (isset($deprecated_options['sql']))
-            $options['sql'] = array('sql' => $deprecated_options['sql']);
+        if ( isset( $deprecated_options[ 'custom_actions' ] ) )
+            $options[ 'actions_custom' ] = $deprecated_options[ 'custom_actions' ];
+        if ( isset( $deprecated_options[ 'action_after_save' ] ) )
+            $options[ 'action_after' ] = array(
+                'add' => $deprecated_options[ 'action_after_save' ],
+                'edit' => $deprecated_options[ 'action_after_save' ],
+                'duplicate' => $deprecated_options[ 'action_after_save' ]
+            );
+        if ( isset( $deprecated_options[ 'edit_link' ] ) ) {
+            if ( isset( $options[ 'action_links' ] ) )
+                $options[ 'action_links' ][ 'edit' ] = $deprecated_options[ 'edit_link' ];
+            else
+                $options[ 'action_links' ] = array( 'edit' => $deprecated_options[ 'edit_link' ] );
+        }
+        if ( isset( $deprecated_options[ 'view_link' ] ) ) {
+            if ( isset( $options[ 'action_links' ] ) )
+                $options[ 'action_links' ][ 'view' ] = $deprecated_options[ 'view_link' ];
+            else
+                $options[ 'action_links' ] = array( 'view' => $deprecated_options[ 'view_link' ] );
+        }
+        if ( isset( $deprecated_options[ 'duplicate_link' ] ) ) {
+            if ( isset( $options[ 'action_links' ] ) )
+                $options[ 'action_links' ][ 'duplicate' ] = $deprecated_options[ 'duplicate_link' ];
+            else
+                $options[ 'action_links' ] = array( 'duplicate' => $deprecated_options[ 'duplicate_link' ] );
+        }
 
-        if (isset($deprecated_options['search']))
-            $options['searchable'] = $deprecated_options['search'];
-        if (isset($deprecated_options['search_across']))
-            $options['search_across'] = $deprecated_options['search_across'];
-        if (isset($deprecated_options['search_across_picks']))
-            $options['search_across_picks'] = $deprecated_options['search_across_picks'];
-        if (isset($deprecated_options['filters']))
-            $options['filters'] = $deprecated_options['filters'];
-        if (isset($deprecated_options['custom_filters'])) {
-            if (is_callable($deprecated_options['custom_filters']))
-                add_filter('pods_ui_filters', $deprecated_options['custom_filters']);
+        if ( isset( $deprecated_options[ 'reorder' ] ) )
+            $options[ 'reorder' ] = array(
+                'on' => $deprecated_options[ 'reorder' ],
+                'orderby' => $deprecated_options[ 'reorder' ]
+            );
+        if ( isset( $deprecated_options[ 'reorder_sort' ] ) && isset( $options[ 'reorder' ] ) )
+            $options[ 'reorder' ][ 'orderby' ] = $deprecated_options[ 'reorder_sort' ];
+        if ( isset( $deprecated_options[ 'reorder_limit' ] ) && isset( $options[ 'reorder' ] ) )
+            $options[ 'reorder' ][ 'limit' ] = $deprecated_options[ 'reorder_limit' ];
+        if ( isset( $deprecated_options[ 'reorder_sql' ] ) && isset( $options[ 'reorder' ] ) )
+            $options[ 'reorder' ][ 'sql' ] = $deprecated_options[ 'reorder_sql' ];
+
+        if ( isset( $deprecated_options[ 'sort' ] ) )
+            $options[ 'orderby' ] = $deprecated_options[ 'sort' ];
+        if ( isset( $deprecated_options[ 'sortable' ] ) )
+            $options[ 'sortable' ] = $deprecated_options[ 'sortable' ];
+        if ( isset( $deprecated_options[ 'limit' ] ) )
+            $options[ 'limit' ] = $deprecated_options[ 'limit' ];
+
+        if ( isset( $deprecated_options[ 'where' ] ) ) {
+            if ( isset( $options[ 'where' ] ) )
+                $options[ 'where' ][ 'manage' ] = $deprecated_options[ 'where' ];
+            else
+                $options[ 'where' ] = array( 'manage' => $deprecated_options[ 'where' ] );
+        }
+        if ( isset( $deprecated_options[ 'edit_where' ] ) ) {
+            if ( isset( $options[ 'where' ] ) )
+                $options[ 'where' ][ 'edit' ] = $deprecated_options[ 'edit_where' ];
+            else
+                $options[ 'where' ] = array( 'edit' => $deprecated_options[ 'edit_where' ] );
+        }
+        if ( isset( $deprecated_options[ 'duplicate_where' ] ) ) {
+            if ( isset( $options[ 'where' ] ) )
+                $options[ 'where' ][ 'duplicate' ] = $deprecated_options[ 'duplicate_where' ];
+            else
+                $options[ 'where' ] = array( 'duplicate' => $deprecated_options[ 'duplicate_where' ] );
+        }
+        if ( isset( $deprecated_options[ 'delete_where' ] ) ) {
+            if ( isset( $options[ 'where' ] ) )
+                $options[ 'where' ][ 'delete' ] = $deprecated_options[ 'delete_where' ];
+            else
+                $options[ 'where' ] = array( 'delete' => $deprecated_options[ 'delete_where' ] );
+        }
+        if ( isset( $deprecated_options[ 'reorder_where' ] ) ) {
+            if ( isset( $options[ 'where' ] ) )
+                $options[ 'where' ][ 'reorder' ] = $deprecated_options[ 'reorder_where' ];
+            else
+                $options[ 'where' ] = array( 'reorder' => $deprecated_options[ 'reorder_where' ] );
+        }
+
+        if ( isset( $deprecated_options[ 'sql' ] ) )
+            $options[ 'sql' ] = array( 'sql' => $deprecated_options[ 'sql' ] );
+
+        if ( isset( $deprecated_options[ 'search' ] ) )
+            $options[ 'searchable' ] = $deprecated_options[ 'search' ];
+        if ( isset( $deprecated_options[ 'search_across' ] ) )
+            $options[ 'search_across' ] = $deprecated_options[ 'search_across' ];
+        if ( isset( $deprecated_options[ 'search_across_picks' ] ) )
+            $options[ 'search_across_picks' ] = $deprecated_options[ 'search_across_picks' ];
+        if ( isset( $deprecated_options[ 'filters' ] ) )
+            $options[ 'filters' ] = $deprecated_options[ 'filters' ];
+        if ( isset( $deprecated_options[ 'custom_filters' ] ) ) {
+            if ( is_callable( $deprecated_options[ 'custom_filters' ] ) )
+                add_filter( 'pods_ui_filters', $deprecated_options[ 'custom_filters' ] );
             else {
                 global $pods_ui_custom_filters;
-                $pods_ui_custom_filters = $deprecated_options['custom_filters'];
-                add_filter('pods_ui_filters', array($this, 'deprecated_filters'));
+                $pods_ui_custom_filters = $deprecated_options[ 'custom_filters' ];
+                add_filter( 'pods_ui_filters', array( $this, 'deprecated_filters' ) );
             }
         }
 
-        if (isset($deprecated_options['disable_actions']))
-            $options['actions_disabled'] = $deprecated_options['disable_actions'];
-        if (isset($deprecated_options['hide_actions']))
-            $options['actions_hidden'] = $deprecated_options['hide_actions'];
+        if ( isset( $deprecated_options[ 'disable_actions' ] ) )
+            $options[ 'actions_disabled' ] = $deprecated_options[ 'disable_actions' ];
+        if ( isset( $deprecated_options[ 'hide_actions' ] ) )
+            $options[ 'actions_hidden' ] = $deprecated_options[ 'hide_actions' ];
 
-        if (isset($deprecated_options['wpcss']))
-            $options['wpcss'] = $deprecated_options['wpcss'];
+        if ( isset( $deprecated_options[ 'wpcss' ] ) )
+            $options[ 'wpcss' ] = $deprecated_options[ 'wpcss' ];
 
         return $options;
     }
@@ -420,108 +431,141 @@ class PodsUI
         echo $pods_ui_custom_filters;
     }
 
-    public function setup ($options) {
-        $options = pods_array($options);
-        $options->validate('num', '', 'absint');
-        if (empty($options->num))
+    public function setup ( $options ) {
+        $options = pods_array( $options );
+
+        $options->validate( 'num', '', 'absint' );
+
+        if ( empty( $options->num ) )
             $options->num = '';
-            $options->validate('id', pods_var('id' . $options->num, 'get', $this->id), 'absint');
 
-        $options->validate('do', pods_var('do' . $options->num, 'get', $this->do), 'in_array', array('save', 'create'));
-        $options->validate('action', pods_var('action' . $options->num, 'get', $this->action), 'in_array', $this->actions);
+        $options->validate( 'id', pods_var( 'id' . $options->num, 'get', $this->id ), 'absint' );
 
-        $options->validate('searchable', $this->searchable, 'boolean');
-        $options->validate('search', pods_var('search' . $options->num, 'get'));
-        $options->validate('search_across', $this->search_across, 'boolean');
-        $options->validate('search_across_picks', $this->search_across_picks, 'boolean');
-        $options->validate('filters', $this->filters, 'array');
-        $options->validate('where', $this->where, 'array_merge');
+        $options->validate( 'do', pods_var( 'do' . $options->num, 'get', $this->do ), 'in_array', array(
+            'save',
+            'create'
+        ) );
 
-        $options->validate('pagination', $this->pagination, 'boolean');
-        $options->validate('page', pods_var('pg' . $options->num, 'get', $this->page), 'absint');
-        $options->validate('limit', pods_var('limit' . $options->num, 'get', $this->limit), 'int');
+        $options->validate( 'action', pods_var( 'action' . $options->num, 'get', $this->action ), 'in_array', $this->actions );
 
-        if ( isset( $this->pod ) && is_object( $this->pod ) ){
-            $this->sql = array('table' => $this->pod->table,
-                               'field_id' => $this->pod->field_id,
-                               'field_index' => $this->pod->field_index);
+        $options->validate( 'searchable', $this->searchable, 'boolean' );
+        $options->validate( 'search', pods_var( 'search' . $options->num, 'get' ) );
+        $options->validate( 'search_across', $this->search_across, 'boolean' );
+        $options->validate( 'search_across_picks', $this->search_across_picks, 'boolean' );
+        $options->validate( 'filters', $this->filters, 'array' );
+        $options->validate( 'where', $this->where, 'array_merge' );
+
+        $options->validate( 'pagination', $this->pagination, 'boolean' );
+        $options->validate( 'page', pods_var( 'pg' . $options->num, 'get', $this->page ), 'absint' );
+        $options->validate( 'limit', pods_var( 'limit' . $options->num, 'get', $this->limit ), 'int' );
+
+        if ( isset( $this->pod ) && is_object( $this->pod ) ) {
+            $this->sql = array(
+                'table' => $this->pod->table,
+                'field_id' => $this->pod->field_id,
+                'field_index' => $this->pod->field_index
+            );
         }
-        $options->validate('sql', $this->sql, 'array_merge');
+        $options->validate( 'sql', $this->sql, 'array_merge' );
 
-        $options->validate('sortable', $this->sortable, 'boolean');
-        $options->validate('orderby', pods_var('orderby' . $options->num, 'get', $this->orderby));
-        $options->validate('orderby', $this->sql['field_index']); // fix in case of no value
-        $options->validate('orderby_dir', pods_var('orderby_dir' . $options->num, 'get', $this->orderby_dir), 'in_array', array('ASC', 'DESC'));
+        $options->validate( 'sortable', $this->sortable, 'boolean' );
+        $options->validate( 'orderby', pods_var( 'orderby' . $options->num, 'get', $this->orderby ) );
+        $options->validate( 'orderby', $this->sql[ 'field_index' ] ); // fix in case of no value
 
-        $options->validate('item', __('Item', 'pods'));
-        $options->validate('items', __('Items', 'pods'));
-        $options->validate('heading', array('manage' => __('Manage', 'pods'),
-                                            'add' => __('Add New', 'pods'),
-                                            'edit' => __('Edit', 'pods'),
-                                            'duplicate' => __('Duplicate', 'pods'),
-                                            'view' => __('View', 'pods'),
-                                            'reorder' => __('Reorder', 'pods')), 'array_merge');
-        $options->validate('label', array('add' => __('Add New', 'pods') . " {$this->item}",
-                                          'edit' => __('Edit', 'pods') . " {$this->item}",
-                                          'duplicate' => __('Duplicate', 'pods') . " {$this->item}",
-                                          'delete' => __('Delete this', 'pods') . " {$this->item}",
-                                          'view' => __('View', 'pods') . " {$this->item}",
-                                          'reorder' => __('Reorder', 'pods') . " {$this->items}"), 'array_merge');
+        $options->validate( 'orderby_dir', pods_var( 'orderby_dir' . $options->num, 'get', $this->orderby_dir ), 'in_array', array(
+            'ASC',
+            'DESC'
+        ) );
 
-        $options->validate('fields', array('manage' => array('name' => __('Name', 'pods'),
-                                                             'created' => __('Date Created', 'pods'),
-                                                             'modified' => __('Last Modified', 'pods'))), 'array');
+        $options->validate( 'item', __( 'Item', 'pods' ) );
+        $options->validate( 'items', __( 'Items', 'pods' ) );
 
-        $options->validate('export', $this->export, 'array_merge');
-        $options->validate('reorder', $this->reorder, 'array_merge');
-        $options->validate('screen_options', $this->screen_options, 'array_merge');
+        $options->validate( 'heading', array(
+            'manage' => __( 'Manage', 'pods' ),
+            'add' => __( 'Add New', 'pods' ),
+            'edit' => __( 'Edit', 'pods' ),
+            'duplicate' => __( 'Duplicate', 'pods' ),
+            'view' => __( 'View', 'pods' ),
+            'reorder' => __( 'Reorder', 'pods' )
+        ), 'array_merge' );
 
-        $options->validate('session', $this->session, 'in_array', array('search',
-                                                                        'filters',
-                                                                        'show_per_page',
-                                                                        'orderby'));
-        $options->validate('user', $this->user, 'in_array', array('search',
-                                                                  'filters',
-                                                                  'show_per_page',
-                                                                  'orderby'));
+        $options->validate( 'label', array(
+            'add' => __( 'Add New', 'pods' ) . " {$this->item}",
+            'edit' => __( 'Edit', 'pods' ) . " {$this->item}",
+            'duplicate' => __( 'Duplicate', 'pods' ) . " {$this->item}",
+            'delete' => __( 'Delete this', 'pods' ) . " {$this->item}",
+            'view' => __( 'View', 'pods' ) . " {$this->item}",
+            'reorder' => __( 'Reorder', 'pods' ) . " {$this->items}"
+        ), 'array_merge' );
 
-        $options->validate('action_after', $this->action_after, 'array_merge');
-        $options->validate('action_links', $this->action_links, 'array_merge');
-        $options->validate('actions_disabled', $this->actions_disabled, 'array');
-        $options->validate('actions_hidden', $this->actions_hidden, 'array_merge');
-        $options->validate('actions_custom', $this->actions_custom, 'array_merge');
+        $options->validate( 'fields', array(
+            'manage' => array(
+                'name' => __( 'Name', 'pods' ),
+                'created' => __( 'Date Created', 'pods' ),
+                'modified' => __( 'Last Modified', 'pods' )
+            )
+        ), 'array' );
 
-        $options->validate('icon', $this->icon);
-        $options->validate('css', $this->css);
-        $options->validate('wpcss', $this->wpcss, 'boolean');
+        $options->validate( 'export', $this->export, 'array_merge' );
+        $options->validate( 'reorder', $this->reorder, 'array_merge' );
+        $options->validate( 'screen_options', $this->screen_options, 'array_merge' );
 
-        if (true === $options['wpcss']) {
+        $options->validate( 'session', $this->session, 'in_array', array(
+            'search',
+            'filters',
+            'show_per_page',
+            'orderby'
+        ) );
+        $options->validate( 'user', $this->user, 'in_array', array(
+            'search',
+            'filters',
+            'show_per_page',
+            'orderby'
+        ) );
+
+        $options->validate( 'action_after', $this->action_after, 'array_merge' );
+        $options->validate( 'action_links', $this->action_links, 'array_merge' );
+        $options->validate( 'actions_disabled', $this->actions_disabled, 'array' );
+        $options->validate( 'actions_hidden', $this->actions_hidden, 'array_merge' );
+        $options->validate( 'actions_custom', $this->actions_custom, 'array_merge' );
+
+        $options->validate( 'icon', $this->icon );
+        $options->validate( 'css', $this->css );
+        $options->validate( 'wpcss', $this->wpcss, 'boolean' );
+
+        if ( true === $options[ 'wpcss' ] ) {
             global $user_ID;
             get_currentuserinfo();
-            $color = get_user_meta($user_ID, 'admin_color', true);
-            if (strlen($color) < 1)
+
+            $color = get_user_meta( $user_ID, 'admin_color', true );
+            if ( strlen( $color ) < 1 )
                 $color = 'fresh';
+
             $this->wpcss = "colors-{$color}";
         }
 
         $options = $options->dump();
-        $options = $this->do_hook('setup_options', $options);
-        if (false !== $options && !empty($options)) {
-            foreach ($options as $option => $value) {
-                if (isset($this->{$option}))
+
+        $options = $this->do_hook( 'setup_options', $options );
+
+        if ( false !== $options && !empty( $options ) ) {
+            foreach ( $options as $option => $value ) {
+                if ( isset( $this->{$option} ) )
                     $this->{$option} = $value;
             }
         }
 
-        $unique_identifier = pods_var('page', 'get'); // wp-admin page
-        if (is_object($this->pod) && isset($this->pod->pod))
+        $unique_identifier = pods_var( 'page', 'get' ); // wp-admin page
+        if ( is_object( $this->pod ) && isset( $this->pod->pod ) )
             $unique_identifier = '_' . $this->pod->pod;
-        elseif (0 < strlen($this->sql['table']))
-            $unique_identifier = '_' . $this->sql['table'];
+        elseif ( 0 < strlen( $this->sql[ 'table' ] ) )
+            $unique_identifier = '_' . $this->sql[ 'table' ];
+
         $unique_identifier .= '_' . $this->page;
-        if (0 < strlen($this->num))
+        if ( 0 < strlen( $this->num ) )
             $unique_identifier .= '_' . $this->num;
-        $this->unique_identifier = 'pods_ui_' . md5($unique_identifier);
+
+        $this->unique_identifier = 'pods_ui_' . md5( $unique_identifier );
 
         $this->setup_fields();
 
@@ -725,6 +769,8 @@ class PodsUI
 
     public function error ($msg) {
         $this->message($msg, true);
+
+        return false;
     }
 
     public function go () {
@@ -785,8 +831,10 @@ class PodsUI
         }
         elseif ('view' == $this->action && !in_array($this->action, $this->actions_disabled))
             $this->view();
-        elseif (isset($this->actions_custom[$this->action]) && is_callable($this->actions_custom[$this->action]))
+        elseif (isset($this->actions_custom[$this->action]) && is_callable( $this->actions_custom[ $this->action ] ) )
             return call_user_func($this->actions_custom[$this->action], $this);
+        elseif ( isset( $this->actions_custom[ $this->action ] ) && ( is_array( $this->actions_custom[ $this->action ] ) && isset( $this->actions_custom[ $this->action ][ 'callback' ] ) && is_callable( $this->actions_custom[ $this->action ][ 'callback' ] ) ) )
+            return call_user_func( $this->actions_custom[ $this->action ][ 'callback' ], $this );
         elseif (!in_array('manage', $this->actions_disabled))
             $this->manage();
         // handle session / user persistent settings for show_per_page, orderby, search, and filters
@@ -845,7 +893,7 @@ class PodsUI
             if (empty($this->row))
                 $this->get_row();
             if (empty($this->row))
-                return $this->error(__("<strong>Error:</strong> {$this->item} not found.", 'pods'));
+                return $this->error( sprintf( __( '<strong>Error:</strong> %s not found.', 'pods' ), $this->item ) );
             $submit = $this->label['edit'];
             $id = $this->row[$this->sql['field_id']];
             $vars = array('action' . $this->num => $this->action_after['edit'], 'do' . $this->num => 'save', 'id' . $this->num => $id);
@@ -865,7 +913,7 @@ class PodsUI
         if (empty($this->row))
             $this->get_row();
         if (empty($this->row))
-            return $this->error(__("<strong>Error:</strong> {$this->item} not found.", 'pods'));
+            return $this->error( sprintf( __( '<strong>Error:</strong> %s not found.', 'pods' ), $this->item ) );
         $id = $this->row[$this->sql['field_id']];
         // HOOK INTO FORM CLASS HERE FOR VIEW
     }
@@ -1160,7 +1208,7 @@ class PodsUI
         <br class="clear" />
 <?php
         }
-        if (!empty($this->data)) {
+        if (!empty($this->data) && ( false !== $this->pagination || ( true === $reorder && !in_array( 'reorder', $this->actions_disabled ) && !in_array( 'delete', $this->actions_hidden ) && false !== $this->reorder[ 'on' ] ) ) || ( !in_array( 'export', $this->actions_disabled ) && !in_array( 'export', $this->actions_hidden ) ) ) {
 ?>
         <div class="tablenav">
 <?php
@@ -1315,9 +1363,16 @@ class PodsUI
                         $current_sort = 'asc';
                     }
                 }
+                if ( $fields[ $field ][ 'sortable' ] ) {
 ?>
                 <th scope="col" id="<?php echo $id; ?>" class="manage-column column-<?php echo $id; ?> sortable <?php echo $current_sort; ?>"><a href="<?php echo pods_var_update(array('orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir), array('limit' . $this->num, 'search' . $this->num), $this->exclusion()); ?>"><span><?php echo $attributes['label']; ?></span><span class="sorting-indicator"></span></a></th>
 <?php
+                }
+                else {
+?>
+                <th scope="col" id="<?php echo $id; ?>" class="manage-column column-<?php echo $id; ?>"><?php echo $attributes['label']; ?></th>
+<?php
+                }
             }
         }
 ?>
@@ -1341,9 +1396,16 @@ class PodsUI
                         $current_sort = 'asc';
                     }
                 }
+                if ( $fields[ $field ][ 'sortable' ] ) {
 ?>
                 <th scope="col" class="manage-column column-<?php echo $id; ?> sortable <?php echo $current_sort; ?>"><a href="<?php echo pods_var_update(array('orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir), array('limit' . $this->num, 'search' . $this->num), $this->exclusion()); ?>"><span><?php echo $attributes['label']; ?></span><span class="sorting-indicator"></span></a></th>
 <?php
+                }
+                else {
+?>
+                <th scope="col" class="manage-column column-<?php echo $id; ?>"><?php echo $attributes['label']; ?></th>
+<?php
+                }
             }
         }
 ?>
@@ -1355,8 +1417,17 @@ class PodsUI
             foreach ($this->data as $row) {
                 if (is_object($row))
                     $row = get_object_vars($row);
+
+                $toggle_class = '';
+
+                if ( is_array( $this->actions_custom ) && isset( $this->actions_custom[ 'toggle' ] ) ) {
+                    $toggle_class = ' pods-toggled-on';
+
+                    if ( !isset( $row[ 'toggle' ] ) || empty( $row[ 'toggle' ] ) )
+                        $toggle_class = ' pods-toggled-off';
+                }
 ?>
-            <tr id="item-<?php echo $row[$this->sql['field_id']]; ?>" class="iedit">
+            <tr id="item-<?php echo $row[$this->sql['field_id']]; ?>" class="iedit<?php echo $toggle_class; ?>">
 <?php
                 /*if (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
 ?>
@@ -1424,39 +1495,66 @@ class PodsUI
                 <td class="post-title page-title column-title<?php echo (1 == $reorder && $this->reorder) ? ' dragme' : ''; ?>"><strong><?php echo $row[$field]; ?></strong>
 <?php
                         }
+
                         if (true !== $reorder || in_array('reorder', $this->actions_disabled) || false === $this->reorder['on']) {
+                            $toggle = false;
                             $actions = array();
+
                             if (!in_array('view', $this->actions_disabled))
                                 $actions['view'] = '<span class="view"><a href="' . pods_var_update(array('action' . $this->num => 'view', 'id' . $this->num => $row[$this->sql['field_id']]), null, $this->exclusion()) . '" title="' . __('View this item', 'pods') . '">' . __('View', 'pods') . '</a></span>';
+
                             if (!in_array('edit', $this->actions_disabled))
                                 $actions['edit'] = '<span class="edit"><a href="' . pods_var_update(array('action' . $this->num => 'edit', 'id' . $this->num => $row[$this->sql['field_id']]), null, $this->exclusion()) . '" title="' . __('Edit this item', 'pods') . '">' . __('Edit', 'pods') . '</a></span>';
+
                             if (!in_array('duplicate', $this->actions_disabled))
                                 $actions['duplicate'] = '<span class="edit"><a href="' . pods_var_update(array('action' . $this->num => 'duplicate', 'id' . $this->num => $row[$this->sql['field_id']]), null, $this->exclusion()) . '" title="' . __('Duplicate this item', 'pods') . '">' . __('Duplicate', 'pods') . '</a></span>';
+
                             if (!in_array('delete', $this->actions_disabled))
                                 $actions['delete'] = '<span class="delete"><a href="' . pods_var_update(array('action' . $this->num => 'delete', 'id' . $this->num => $row[$this->sql['field_id']]), null, $this->exclusion()) . '" title="' . __('Delete this item', 'pods') . '" class="submitdelete" onclick="if(confirm(\'' . esc_js( sprintf( __('You are about to delete this item \'%s\'\n \'Cancel\' to stop, \'OK\' to delete.', 'pods'), htmlentities( $row[ $field ], ENT_COMPAT, get_bloginfo( 'charset' ) ))) . '\')){return true;}return false;">' . __('Delete', 'pods') . '</a></span>';
-                            if (is_array($this->actions_custom)) {
-                                foreach ($this->actions_custom as $custom_action => $custom_data) {
-                                    if (is_array($custom_data) && isset($custom_data['link'])) {
-                                        if (!in_array($custom_action, array('add', 'view', 'edit', 'duplicate', 'delete', 'save', 'export', 'reorder'))) {
-                                            if (!isset($custom_data['label']))
-                                                $custom_data['label'] = ucwords(str_replace('_', ' ', $custom_action));
-                                            $actions[$custom_action] = '<span class="edit"><a href="' . $this->do_template($custom_data['link'], $row) . '" title="' . esc_attr($custom_data['label']) . ' this item">' . $custom_data['label'] . '</a></span>';
+
+                            if ( is_array( $this->actions_custom ) ) {
+                                foreach ( $this->actions_custom as $custom_action => $custom_data ) {
+                                    if ( is_array( $custom_data ) && ( isset( $custom_data[ 'link' ] ) || isset( $custom_data[ 'callback' ] ) ) ) {
+                                        if ( !in_array( $custom_action, array( 'add', 'view', 'edit', 'duplicate', 'delete', 'save', 'export', 'reorder' ) ) ) {
+                                            if ( 'toggle' == $custom_action ) {
+                                                $toggle = true;
+                                                $toggle_labels = array(
+                                                    __( 'Enable', 'pods' ),
+                                                    __( 'Disable', 'pods' )
+                                                );
+
+                                                $custom_data[ 'label' ] = ( $row[ 'toggle' ] ? $toggle_labels[ 1 ] : $toggle_labels[ 0 ] );
+                                            }
+
+                                            if ( !isset( $custom_data[ 'label' ] ) )
+                                                $custom_data[ 'label' ] = ucwords( str_replace( '_', ' ', $custom_action ) );
+
+                                            if ( !isset( $custom_data[ 'link' ] ) )
+                                                $custom_data[ 'link' ] = pods_var_update( array( 'action' => $custom_action, 'id' => $row[ $this->sql[ 'field_id' ] ] ) );
+
+                                            $actions[ $custom_action ] = '<span class="edit"><a href="' . $this->do_template( $custom_data[ 'link' ], $row ) . '" title="' . esc_attr( $custom_data[ 'label' ] ) . ' this item">' . $custom_data[ 'label' ] . '</a></span>';
                                         }
                                     }
                                 }
                             }
+
                             $actions = $this->do_hook('row_actions', $actions);
+
+                            if ( !empty( $actions ) ) {
 ?>
-                    <div class="row-actions">
+                    <div class="row-actions<?php echo ( $toggle ? ' row-actions-toggle' : '' ); ?>">
 <?php
-                            if (isset($this->actions_custom['actions_start']) && is_callable($this->actions_custom['actions_start']))
-                                call_user_func($this->actions_custom['actions_start'], $row, $actions, $this);
-                            echo implode(' | ', $actions);
-                            if (isset($this->actions_custom['actions_end']) && is_callable($this->actions_custom['actions_end']))
-                                call_user_func($this->actions_custom['actions_end'], $row, $actions, $this);
+                                if (isset($this->actions_custom['actions_start']) && is_callable($this->actions_custom['actions_start']))
+                                    call_user_func($this->actions_custom['actions_start'], $row, $actions, $this);
+
+                                echo implode(' | ', $actions);
+
+                                if (isset($this->actions_custom['actions_end']) && is_callable($this->actions_custom['actions_end']))
+                                    call_user_func($this->actions_custom['actions_end'], $row, $actions, $this);
 ?>
                     </div>
 <?php
+                            }
                         }
                         else {
 ?>
@@ -1773,16 +1871,13 @@ class PodsUI
     }
 
     public function do_template ($code, $row = false) {
-        if (false !== $this->ui['pod'] && is_object($this->ui['pod']))
+        if (isset( $this->ui[ 'pod' ] ) && false !== $this->ui['pod'] && is_object($this->ui['pod']))
             return $this->ui['pod']->do_magic_tags($code);
         else {
             if (false !== $row) {
                 $this->temp_row = $this->row;
                 $this->row = $row;
             }
-            ob_start();
-            eval("?>{$code}");
-            $code = ob_get_clean();
             $code = preg_replace_callback("/({@(.*?)})/m", array($this, "do_magic_tags"), $code);
             if (false !== $row) {
                 $this->row = $this->temp_row;

@@ -1,4 +1,234 @@
 <?php
+class PodsComponents {
+
+    /**
+     * Root of Components directory
+     *
+     * @var string
+     *
+     * @private
+     * @since 2.0.0
+     */
+    private $components_dir = null;
+
+    /**
+     * Available components
+     *
+     * @var string
+     *
+     * @private
+     * @since 2.0.0
+     */
+    public $components = array();
+
+    /**
+     * Components settings
+     *
+     * @var string
+     *
+     * @private
+     * @since 2.0.0
+     */
+    public $settings = array();
+
+    /**
+     * Setup actions and get options
+     *
+     * @since 2.0.0
+     */
+    public function __construct () {
+        $this->components_dir = apply_filters( 'pods_components_dir', PODS_DIR . 'components/' );
+
+        $settings = get_option( 'pods_component_settings', '' );
+
+        if ( !empty( $settings ) )
+            $this->settings = (array) json_decode( $settings, true );
+
+        if ( !isset( $this->settings[ 'components' ] ) )
+            $this->settings[ 'components' ] = array();
+
+        // Get components
+        add_action( 'after_setup_theme', array( $this, 'get_components' ), 11 );
+
+        // Load in components
+        add_action( 'after_setup_theme', array( $this, 'load' ), 12 );
+    }
+
+    /**
+     * Add menu item
+     *
+     * @since 2.0.0
+     */
+    public function menu ( $parent ) {
+        foreach ( $this->components as $component => $component_data ) {
+            if ( !empty( $component_data[ 'Hide' ] ) )
+                continue;
+
+            if ( !isset( $component_data[ 'object' ] ) || !method_exists( $component_data[ 'object' ], 'admin' ) )
+                continue;
+
+            add_submenu_page(
+                $parent,
+                strip_tags( $component_data[ 'Name' ] ),
+                '- ' . strip_tags( $component_data[ 'MenuName' ] ),
+                'read',
+                'pods-component-' . $component_data[ 'ID' ],
+                array( $this, 'admin_handler' )
+            );
+        }
+    }
+
+    /**
+     * Load activated components and init component
+     *
+     * @since 2.0.0
+     */
+    public function load () {
+        foreach ( (array) $this->settings[ 'components' ] as $component => $options ) {
+            if ( !isset( $this->components[ $component ] ) || 0 == $options )
+                continue;
+
+            $component_data = $this->components[ $component ];
+
+            if ( !file_exists( $component_data[ 'File' ] ) )
+                continue;
+
+            include_once $component_data[ 'File' ];
+
+            if ( !empty( $component_data[ 'Class' ] ) && class_exists( $component_data[ 'Class' ] ) && !isset( $this->components[ $component ][ 'object' ] ) ) {
+                $this->components[ $component ][ 'object' ] = new $component_data[ 'Class' ];
+
+                if ( method_exists( $this->components[ $component ][ 'object' ], 'options' ) ) {
+                    $this->components[ $component ][ 'options' ] = $this->components[ $component ][ 'object' ]->options();
+
+                    $this->options( $component, $this->components[ $component ][ 'options' ] );
+                }
+
+                if ( method_exists( $this->components[ $component ][ 'object' ], 'handler' ) )
+                    $this->components[ $component ][ 'object' ]->handler( $this->settings[ 'components' ][ $component ] );
+            }
+        }
+    }
+
+    /**
+     * Get list of components available
+     *
+     * @since 2.0.0
+     */
+    public function get_components () {
+        $components = get_transient( 'pods_components' );
+
+        if ( !is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET[ 'page' ] ) && 'pods-components' == $_GET[ 'page' ] && isset( $_GET[ 'reload_components' ] ) ) ) {
+            $component_dir = @opendir( rtrim( $this->components_dir, '/' ) );
+            $component_files = array();
+
+            if ( false !== $component_dir ) {
+                while ( false !== ( $file = readdir( $component_dir ) ) ) {
+                    if ( '.' == substr( $file, 0, 1 ) )
+                        continue;
+                    elseif ( is_dir( $this->components_dir . $file ) ) {
+                        $component_subdir = @opendir( $this->components_dir . $file );
+
+                        if ( $component_subdir ) {
+                            while ( false !== ( $subfile = readdir( $component_subdir ) ) ) {
+                                if ( '.' == substr( $subfile, 0, 1 ) )
+                                    continue;
+                                elseif ( '.php' == substr( $subfile, -4 ) )
+                                    $component_files[] = $this->components_dir . $file . '/' . $subfile;
+                            }
+
+                            closedir( $component_subdir );
+                        }
+                    }
+                    elseif ( '.php' == substr( $file, -4 ) )
+                        $component_files[] = $this->components_dir . $file;
+                }
+
+                closedir( $component_dir );
+            }
+
+            $default_headers = array(
+                'ID' => 'ID',
+                'Name' => 'Name',
+                'MenuName' => 'Menu Name',
+                'Description' => 'Description',
+                'Version' => 'Version',
+                'Author' => 'Author',
+                'Class' => 'Class',
+                'Hide' => 'Hide'
+            );
+
+            $components = array();
+
+            foreach ( $component_files as $component_file ) {
+                if ( !is_readable( $component_file ) )
+                    continue;
+
+                $component_data = get_file_data( $component_file, $default_headers, 'pods_component' );
+
+                if ( empty( $component_data[ 'Name' ] ) || 'yes' == $component_data[ 'Hide' ] )
+                    continue;
+
+                if ( empty( $component_data[ 'MenuName' ] ) )
+                    $component_data[ 'MenuName' ] = $component_data[ 'Name' ];
+
+                if ( empty( $component_data[ 'Class' ] ) )
+                    $component_data[ 'Class' ] = 'Pods_' . basename( $component_file, '.php' );
+
+                if ( empty( $component_data[ 'ID' ] ) )
+                    $component_data[ 'ID' ] = sanitize_title( $component_data[ 'Name' ] );
+
+                $component_data[ 'File' ] = $component_file;
+
+                $components[ $component_data[ 'ID' ] ] = $component_data;
+            }
+
+            ksort( $components );
+
+            set_transient( 'pods_components', $components );
+        }
+
+        $this->components = $components;
+
+        return $this->components;
+    }
+
+    public function options ( $component, $options ) {
+        if ( !isset( $this->settings[ 'components' ][ $component ] ) || !is_array( $this->settings[ 'components' ][ $component ] ) )
+            $this->settings[ 'components' ][ $component ] = array();
+
+        foreach ( $options as $option => $data ) {
+            if ( !isset( $this->settings[ 'components' ][ $component ][ $option ] ) && isset( $data[ 'default' ] ) )
+                $this->settings[ 'components' ][ $component ][ $option ] = $data[ 'default' ];
+        }
+    }
+
+    public function admin_handler () {
+        $component = str_replace( 'pods-component-', '', $_GET[ 'page' ] );
+
+        if ( isset( $this->components[ $component ] ) && isset( $this->components[ $component ][ 'object' ] ) && method_exists( $this->components[ $component ][ 'object' ], 'admin' ) )
+            $this->components[ $component ][ 'object' ]->admin( $this->settings[ 'components' ][ $component ] );
+    }
+
+    public function toggle ( $component ) {
+        $toggle = false;
+
+        if ( isset( $this->components[ $component ] ) ) {
+            if ( !isset( $this->settings[ 'components' ][ $component ] ) || 0 == $this->settings[ 'components' ][ $component ] ) {
+                $this->settings[ 'components' ][ $component ] = array();
+                $toggle = true;
+            }
+            else
+                $this->settings[ 'components' ][ $component ] = 0;
+        }
+
+        $settings = json_encode( $this->settings );
+        update_option( 'pods_component_settings', $settings );
+
+        return $toggle;
+    }
+}
+
 class PodsComponent {
 
     /**
@@ -58,213 +288,26 @@ class PodsComponent {
 
         return $options;
     }
-}
-
-
-class PodsComponents {
 
     /**
-     * Root of Components directory
+     * Handler to run code based on $options
      *
-     * @var string
-     *
-     * @private
-     * @since 2.0.0
-     */
-    private $components_dir = null;
-
-    /**
-     * Available components
-     *
-     * @var string
-     *
-     * @private
-     * @since 2.0.0
-     */
-    private $components = array();
-
-    /**
-     * Components settings
-     *
-     * @var string
-     *
-     * @private
-     * @since 2.0.0
-     */
-    private $settings = array( 'components' => array() );
-
-    /**
-     * Setup actions and get options
+     * @param $options
      *
      * @since 2.0.0
      */
-    public function __construct ( $admins = null ) {
-        $this->components_dir = apply_filters( 'pods_components_dir', PODS_DIR . 'components/' );
-
-        $settings = get_option( 'pods_component_settings', '' );
-
-        if ( !empty( $settings ) )
-            $this->settings = (array) json_decode( $settings, true );
-
-        if ( !isset( $this->settings[ 'components' ] ) )
-            $this->settings[ 'components' ] = array();
-
-        // Get components
-        add_action( 'after_setup_theme', array( $this, 'get_components' ), 11 );
-
-        // Load in components
-        add_action( 'after_setup_theme', array( $this, 'load' ), 12 );
+    public function handler ( $options ) {
+        // run code based on $options set
     }
 
     /**
-     * Add menu item
+     * Build admin area
+     *
+     * @param $options
      *
      * @since 2.0.0
+    public function admin ( $options ) {
+        // run code based on $options set
+    }
      */
-    public function menu ( $parent ) {
-        foreach ( $this->components as $component => $component_data ) {
-            if ( !empty( $component_data[ 'Hide' ] ) )
-                continue;
-
-            add_submenu_page(
-                $parent,
-                strip_tags( $component_data[ 'Name' ] ),
-                '- ' . strip_tags( $component_data[ 'MenuName' ] ),
-                'read',
-                'pods-component-' . $component_data[ 'ID' ],
-                array( $this, 'admin_components_handler' )
-            );
-        }
-    }
-
-    /**
-     * Load activated components and init component
-     *
-     * @since 2.0.0
-     */
-    public function load () {
-        foreach ( (array) $this->settings[ 'components' ] as $component => $options ) {
-            if ( !isset( $this->components[ $component ] ) && 0 == $options )
-                continue;
-            elseif ( isset( $this->components[ $component ] ) && file_exists( $this->components_dir . $component ) ) {
-                $component_data = $this->components[ $component ];
-
-                include_once $this->components_dir . $component;
-
-                if ( !empty( $component_data[ 'Class' ] ) && class_exists( $component_data[ 'Class' ] ) && !isset( $this->components[ $component ][ 'object' ] ) ) {
-                    $this->components[ $component ][ 'object' ] = new $component_data[ 'Class' ];
-
-                    if ( method_exists( $this->components[ $component ][ 'object' ], 'options' ) ) {
-                        $this->components[ $component ][ 'options' ] = $this->components[ $component ][ 'object' ]->options();
-
-                        self::options( $component, $this->components[ $component ][ 'options' ] );
-                    }
-
-                    if ( method_exists( $this->components[ $component ][ 'object' ], 'handler' ) )
-                        $this->components[ $component ][ 'object' ]->handler( $this->settings[ 'components' ][ $component ] );
-                }
-            }
-        }
-    }
-
-    /**
-     * Get list of components available
-     *
-     * @since 2.0.0
-     */
-    public function get_components () {
-        $components = get_transient( 'pods_components' );
-
-        if ( !is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET[ 'page' ] ) && 'pods-components' == $_GET[ 'page' ] && isset( $_GET[ 'reload_components' ] ) ) ) {
-            $component_dir = @opendir( rtrim( $this->components_dir, '/' ) );
-            $component_files = array();
-
-            if ( false !== $component_dir ) {
-                while ( false !== ( $file = readdir( $component_dir ) ) ) {
-                    if ( '.' == substr( $file, 0, 1 ) )
-                        continue;
-                    elseif ( is_dir( $this->components_dir . $file ) ) {
-                        $component_subdir = @opendir( $this->components_dir . $file );
-
-                        if ( $component_subdir ) {
-                            while ( false !== ( $subfile = readdir( $component_subdir ) ) ) {
-                                if ( '.' == substr( $subfile, 0, 1 ) )
-                                    continue;
-                                elseif ( '.php' == substr( $subfile, -4 ) )
-                                    $component_files[] = $this->components_dir . $file . '/' . $subfile;
-                            }
-
-                            closedir( $component_subdir );
-                        }
-                    }
-                    elseif ( '.php' == substr( $file, -4 ) )
-                        $component_files[] = $this->components_dir . $file;
-                }
-
-                closedir( $component_dir );
-            }
-
-            $default_headers = array(
-                'ID' => 'ID',
-                'Name' => 'Name',
-                'MenuName' => 'Menu Name',
-                'Description' => 'Description',
-                'Version' => 'Version',
-                'Class' => 'Class',
-                'Hide' => 'Hide'
-            );
-
-            $components = array();
-
-            foreach ( $component_files as $component_file ) {
-                if ( !is_readable( $component_file ) )
-                    continue;
-
-                $component_data = get_file_data( $component_file, $default_headers, 'pods_component' );
-
-                if ( empty( $component_data[ 'Name' ] ) || 'yes' == $component_data[ 'Hide' ] )
-                    continue;
-
-                if ( empty( $component_data[ 'MenuName' ] ) )
-                    $component_data[ 'MenuName' ] = $component_data[ 'Name' ];
-
-                if ( empty( $component_data[ 'Class' ] ) )
-                    $component_data[ 'Class' ] = 'Pods_' . basename( $component_file, '.php' );
-
-                if ( empty( $component_data[ 'ID' ] ) )
-                    $component_data[ 'ID' ] = sanitize_title( $component_data[ 'Name' ] );
-
-                $component_data[ 'File' ] = $component_file;
-
-                $components[ $component_data[ 'ID' ] ] = $component_data;
-            }
-
-            ksort( $components );
-
-            set_transient( 'pods_components', $components );
-        }
-
-        $this->components = $components;
-
-        return $this->components;
-    }
-
-    public function options ( $component, $options ) {
-
-        if ( !isset( $this->settings[ 'components' ][ $component ] ) || !is_array( $this->settings[ 'components' ][ $component ] ) )
-            $this->settings[ 'components' ][ $component ] = array();
-
-        foreach ( $options as $option => $data ) {
-            if ( !isset( $this->settings[ 'components' ][ $component ][ $option ] ) && isset( $data[ 'default' ] ) )
-                $this->settings[ 'components' ][ $component ][ $option ] = $data[ 'default' ];
-        }
-    }
-
-    public function components () {
-        return $this->components;
-    }
-
-    public function admin () {
-
-    }
 }

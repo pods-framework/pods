@@ -1087,7 +1087,7 @@ function pods_migrate ( $type = null, $delimiter = null, $data = null ) {
  *
  * @since 2.0.0
  */
-function pods_array ( &$container ) {
+function pods_array ( $container ) {
     require_once( PODS_DIR . 'classes/PodsArray.php' );
     return new PodsArray( $container );
 }

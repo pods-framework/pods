@@ -619,9 +619,16 @@ tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-save {
 }
 
 /*
-* Pods Flexible
-*/
+ * Pods Flexible
+ */
 tbody.pods-manage-list tr.flexible-row {
     display: none;
 }
 
+/*
+ * Pods UI
+ */
+div.row-actions.row-actions-toggle {
+    display: block;
+    visibility: visible;
+}

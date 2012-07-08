@@ -1,5 +1,6 @@
 <?php
 class PodsArray implements ArrayAccess {
+
     private $__container = array();
 
     /**
@@ -7,11 +8,12 @@ class PodsArray implements ArrayAccess {
      * add additional functionality. Additional functionality includes validation and setting default data.
      *
      * @param mixed $container Object (or existing Array)
+     *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0.0
      */
-    public function __construct ($container) {
-        if (is_array($container) || is_object($container))
+    public function __construct ( $container ) {
+        if ( is_array( $container ) || is_object( $container ) )
             $this->__container = &$container;
     }
 
@@ -20,28 +22,31 @@ class PodsArray implements ArrayAccess {
      *
      * @param mixed $offset Used to set index of Array or Variable name on Object
      * @param mixed $value Value to be set
+     *
      * @since 2.0.0
      */
-    public function offsetSet ($offset, $value) {
-        if (is_array($this->__container))
-            $this->__container[$offset] = $value;
+    public function offsetSet ( $offset, $value ) {
+        if ( is_array( $this->__container ) )
+            $this->__container[ $offset ] = $value;
         else
             $this->__container->$offset = $value;
+        return $value;
     }
 
     /**
      * Get value from array usage $object['offset'];
      *
      * @param mixed $offset Used to get value of Array or Variable on Object
+     *
      * @since 2.0.0
      */
-    public function offsetGet ($offset) {
-        if (is_array($this->__container)) {
-            if (isset($this->__container[$offset]))
-                return $this->__container[$offset];
+    public function offsetGet ( $offset ) {
+        if ( is_array( $this->__container ) ) {
+            if ( isset( $this->__container[ $offset ] ) )
+                return $this->__container[ $offset ];
             return null;
         }
-        if (isset($this->__container->$offset))
+        if ( isset( $this->__container->$offset ) )
             return $this->__container->$offset;
         return null;
     }
@@ -50,25 +55,27 @@ class PodsArray implements ArrayAccess {
      * Get value from array usage $object['offset'];
      *
      * @param mixed $offset Used to get value of Array or Variable on Object
+     *
      * @since 2.0.0
      */
-    public function offsetExists ($offset) {
-        if (is_array($this->__container))
-            return isset($this->__container[$offset]);
-        return isset($this->__container->$offset);
+    public function offsetExists ( $offset ) {
+        if ( is_array( $this->__container ) )
+            return isset( $this->__container[ $offset ] );
+        return isset( $this->__container->$offset );
     }
 
     /**
      * Get value from array usage $object['offset'];
      *
      * @param mixed $offset Used to unset index of Array or Variable on Object
+     *
      * @since 2.0.0
      */
-    public function offsetUnset ($offset) {
-        if (is_array($this->__container))
-            unset($this->__container[$offset]);
+    public function offsetUnset ( $offset ) {
+        if ( is_array( $this->__container ) )
+            unset( $this->__container[ $offset ] );
         else
-            unset($this->__container->$offset);
+            unset( $this->__container->$offset );
     }
 
     /**
@@ -78,50 +85,58 @@ class PodsArray implements ArrayAccess {
      * @param mixed $default Used to set default value if it doesn't exist
      * @param string $type Used to force a specific type of variable (allowed: array, object, integer, absint, boolean)
      * @param mixed $extra Used in advanced types of variables
+     *
      * @since 2.0.0
      */
-    public function validate ($offset, $default = null, $type = null, $extra = null) {
-        if (!$this->offsetExists($offset))
-            $this->offsetSet($offset, $default);
-        $value = $this->offsetGet($offset);
-        if (empty($value) && null !== $default)
+    public function validate ( $offset, $default = null, $type = null, $extra = null ) {
+        if ( !$this->offsetExists( $offset ) )
+            $this->offsetSet( $offset, $default );
+
+        $value = $this->offsetGet( $offset );
+
+        if ( empty( $value ) && null !== $default && false !== $value )
             $value = $default;
-        if ('array' == $type || 'array_merge' == $type) {
-            if (!is_array($value))
-                $value = explode(',', $value);
-            if ('array_merge' == $type && $value !== $default)
-                $value = array_merge($default, $value);
+        if ( 'array' == $type || 'array_merge' == $type ) {
+            if ( !is_array( $value ) )
+                $value = explode( ',', $value );
+
+            if ( 'array_merge' == $type && $value !== $default )
+                $value = array_merge( $default, $value );
         }
-        if ('object' == $type || 'object_merge' == $type) {
-            if (!is_object($value)) {
-                if (!is_array($value))
-                    $value = explode(',', $value);
+        elseif ( 'object' == $type || 'object_merge' == $type ) {
+            if ( !is_object( $value ) ) {
+                if ( !is_array( $value ) )
+                    $value = explode( ',', $value );
                 $value = (object) $value;
             }
-            if ('object_merge' == $type && $value !== $default)
-                $value = (object) array_merge((array) $default, (array) $value);
+
+            if ( 'object_merge' == $type && $value !== $default )
+                $value = (object) array_merge( (array) $default, (array) $value );
         }
-        if ('integer' == $type || 'int' == $type || 'absint' == $type) {
-            if (!is_numeric(trim($value)))
+        elseif ( 'integer' == $type || 'int' == $type || 'absint' == $type ) {
+            if ( !is_numeric( trim( $value ) ) )
                 $value = 0;
             else
-                $value = intval($value);
-            if ('absint' == $type)
-                $value = abs($value);
+                $value = intval( $value );
+
+            if ( 'absint' == $type )
+                $value = abs( $value );
         }
-        if ('boolean' == $type || 'bool' == $type)
+        elseif ( 'boolean' == $type || 'bool' == $type )
             $value = (boolean) $value;
-        if ('in_array' == $type && is_array($default)) {
-            if (is_array($value)) {
-                foreach ($value as $k => $v) {
-                    if (!in_array($v, $extra))
-                        unset($value[$k]);
+        elseif ( 'in_array' == $type && is_array( $default ) ) {
+            if ( is_array( $value ) ) {
+                foreach ( $value as $k => $v ) {
+                    if ( !in_array( $v, $extra ) )
+                        unset( $value[ $k ] );
                 }
             }
-            elseif (!in_array($value, $extra))
+            elseif ( !in_array( $value, $extra ) )
                 $value = $default;
         }
-        $this->offsetSet($offset, $value);
+
+        $this->offsetSet( $offset, $value );
+
         return $value;
     }
 
@@ -130,9 +145,9 @@ class PodsArray implements ArrayAccess {
      * @since 2.0.0
      */
     public function dump () {
-        if (is_array($this->__container))
+        if ( is_array( $this->__container ) )
             return $this->__container;
-        return get_object_vars($this->__container);
+        return get_object_vars( $this->__container );
     }
 
     /**
@@ -140,8 +155,8 @@ class PodsArray implements ArrayAccess {
      *
      * @since 2.0.0
      */
-    public function __set ($offset, $value) {
-        return $this->offsetSet($offset, $value);
+    public function __set ( $offset, $value ) {
+        return $this->offsetSet( $offset, $value );
     }
 
     /**
@@ -149,8 +164,8 @@ class PodsArray implements ArrayAccess {
      *
      * @since 2.0.0
      */
-    public function __get ($offset) {
-        return $this->offsetGet($offset);
+    public function __get ( $offset ) {
+        return $this->offsetGet( $offset );
     }
 
     /**
@@ -158,8 +173,8 @@ class PodsArray implements ArrayAccess {
      *
      * @since 2.0.0
      */
-    public function __isset ($offset) {
-        return $this->offsetExists($offset);
+    public function __isset ( $offset ) {
+        return $this->offsetExists( $offset );
     }
 
     /**
@@ -167,7 +182,7 @@ class PodsArray implements ArrayAccess {
      *
      * @since 2.0.0
      */
-    public function __unset ($offset) {
-        $this->offsetUnset($offset);
+    public function __unset ( $offset ) {
+        $this->offsetUnset( $offset );
     }
 }

@@ -1,6 +1,63 @@
 <?php
 class PodsComponent {
-    // methods to hook into go here, just like PodsField and field type classes work
+
+    /**
+     * Do things like register/enqueue scripts and stylesheets
+     *
+     * @since 2.0.0
+     */
+    public function __construct () {
+
+    }
+
+    /**
+     * Add options and set defaults for field type, shows in admin area
+     *
+     * @return array $options
+     *
+     * @since 2.0.0
+     */
+    public function options () {
+        $options = array( /*
+            'option_name' => array(
+                'label' => 'Option Label',
+                'depends-on' => array( 'another_option' => 'specific-value' ),
+                'default' => 'default-value',
+                'type' => 'field_type',
+                'data' => array(
+                    'value1' => 'Label 1',
+
+                    // Group your options together
+                    'Option Group' => array(
+                        'gvalue1' => 'Option Label 1',
+                        'gvalue2' => 'Option Label 2'
+                    ),
+
+                    // below is only if the option_name above is the "{$fieldtype}_format_type"
+                    'value2' => array(
+                        'label' => 'Label 2',
+                        'regex' => '[a-zA-Z]' // Uses JS regex validation for the value saved if this option selected
+                    )
+                ),
+
+                // below is only for a boolean group
+                'group' => array(
+                    'option_boolean1' => array(
+                        'label' => 'Option boolean 1?',
+                        'default' => 1,
+                        'type' => 'boolean'
+                    ),
+                    'option_boolean2' => array(
+                        'label' => 'Option boolean 2?',
+                        'default' => 0,
+                        'type' => 'boolean'
+                    )
+                )
+            ) */
+        );
+
+        return $options;
+    }
 }
 
 
@@ -11,10 +68,10 @@ class PodsComponents {
      *
      * @var string
      *
-     * @static
-     * @since 0.1
+     * @private
+     * @since 2.0
      */
-    static $components_root = null;
+    private $components_dir = null;
 
     /**
      * Available components
@@ -22,7 +79,7 @@ class PodsComponents {
      * @var string
      *
      * @static
-     * @since 0.1
+     * @since 2.0
      */
     static $components = array();
 
@@ -32,31 +89,31 @@ class PodsComponents {
      * @var string
      *
      * @static
-     * @since 0.1
+     * @since 2.0
      */
     static $settings = array( 'components' => array() );
 
     /**
      * Setup actions and get options
      *
-     * @since 0.1
+     * @since 2.0
      */
     public function __construct ( $admins = null ) {
-        self::$components_root = dirname( __FILE__ ) . '/';
+        self::$components_dir = apply_filters( 'pods_components_dir', PODS_DIR . 'components/' );
 
         $settings = get_option( 'pods_component_settings', '' );
 
-        if ( 5 < strlen( $settings ) )
+        if ( !empty( $settings ) )
             self::$settings = (array) json_decode( $settings, true );
 
         if ( !isset( self::$settings[ 'components' ] ) )
             self::$settings[ 'components' ] = array();
 
         // Get components
-        add_action( 'init', array( $this, 'get_components' ), 11 );
+        add_action( 'after_setup_theme', array( $this, 'get_components' ), 11 );
 
         // Load in components
-        add_action( 'init', array( $this, 'load' ), 12 );
+        add_action( 'after_setup_theme', array( $this, 'load' ), 12 );
 
         if ( is_admin() ) {
             // Add menu
@@ -67,7 +124,7 @@ class PodsComponents {
     /**
      * Add menu item
      *
-     * @since 0.1
+     * @since 2.0
      */
     public function menu () {
         // @todo add menu items (if any)
@@ -76,16 +133,16 @@ class PodsComponents {
     /**
      * Load activated components and init component
      *
-     * @since 0.1
+     * @since 2.0
      */
     public function load () {
         foreach ( (array) self::$settings[ 'components' ] as $component => $options ) {
             if ( ( !isset( self::$components[ $component ] ) || 'yes' == self::$components[ $component ][ 'Autoload' ] ) && 0 == $options )
                 continue;
-            elseif ( isset( self::$components[ $component ] ) && file_exists( self::$components_root . $component ) ) {
+            elseif ( isset( self::$components[ $component ] ) && file_exists( self::$components_dir . $component ) ) {
                 $component_data = self::$components[ $component ];
 
-                include_once self::$components_root . $component;
+                include_once self::$components_dir . $component;
 
                 if ( !empty( $component_data[ 'Class' ] ) && class_exists( $component_data[ 'Class' ] ) && !isset( self::$components[ $component ][ 'object' ] ) ) {
                     self::$components[ $component ][ 'object' ] = new $component_data[ 'Class' ];
@@ -106,37 +163,37 @@ class PodsComponents {
     /**
      * Get list of components available
      *
-     * @since 0.1
+     * @since 2.0
      */
     public function get_components () {
         $components = get_transient( 'pods_components' );
 
-        if ( 5 < strlen( $components ) && ( !isset( $_GET[ 'page' ] ) || 'rd2-framework' != $_GET[ 'page' ] || !isset( $_GET[ 'reload_components' ] ) ) )
+        if ( 5 < strlen( $components ) && ( !isset( $_GET[ 'page' ] ) || 'pods-components' != $_GET[ 'page' ] || !isset( $_GET[ 'reload_components' ] ) ) )
             $components = json_decode( $components, true );
         else {
-            $component_dir = @opendir( rtrim( self::$components_root, '/' ) );
+            $component_dir = @opendir( rtrim( self::$components_dir, '/' ) );
             $component_files = array();
 
             if ( false !== $component_dir ) {
                 while (false !== ( $file = readdir( $component_dir ) )) {
-                    if ( '.' == substr( $file, 0, 1 ) || false !== strpos( $file, '_rd2.php' ) )
+                    if ( '.' == substr( $file, 0, 1 ) )
                         continue;
                     elseif ( is_dir( $component_dir . $file ) ) {
-                        $component_subdir = @opendir( self::$components_root . $file );
+                        $component_subdir = @opendir( self::$components_dir . $file );
 
                         if ( $component_subdir ) {
                             while (false !== ( $subfile = readdir( $component_subdir ) )) {
                                 if ( '.' == substr( $subfile, 0, 1 ) )
                                     continue;
                                 elseif ( '.php' == substr( $subfile, -4 ) )
-                                    $component_files[ ] = self::$components_root . $file . '/' . $subfile;
+                                    $component_files[] = self::$components_dir . $file . '/' . $subfile;
                             }
 
                             closedir( $component_subdir );
                         }
                     }
                     elseif ( '.php' == substr( $file, -4 ) )
-                        $component_files[ ] = self::$components_root . $file;
+                        $component_files[] = self::$components_dir . $file;
                 }
 
                 closedir( $component_dir );
@@ -145,6 +202,7 @@ class PodsComponents {
             $default_headers = array(
                 'ID' => 'ID',
                 'Name' => 'Name',
+                'MenuName' => 'Menu Name',
                 'Description' => 'Description',
                 'Version' => 'Version',
                 'Class' => 'Class',
@@ -161,16 +219,15 @@ class PodsComponents {
 
                 if ( empty( $component_data[ 'Name' ] ) || 'yes' == $component_data[ 'Hide' ] )
                     continue;
+                if ( empty( $component_data[ 'MenuName' ] ) )
+                    $component_data[ 'MenuName' ] = $component_data[ 'Name' ];
                 elseif ( empty( $component_data[ 'ID' ] ) ) {
-                    $find = array(
-                        self::$components_root,
-                        '.php'
-                    );
+                    $find = array( self::$components_dir, '.php' );
 
                     $component_data[ 'ID' ] = sanitize_title( str_replace( $find, '', $component_file ) );
                 }
 
-                $components[ str_replace( self::$components_root, '', $component_file ) ] = $component_data;
+                $components[ str_replace( self::$components_dir, '', $component_file ) ] = $component_data;
             }
 
             set_transient( 'pods_components', json_encode( $components ), ( 60 * 60 * 24 * 1 ) ); // seconds * minutes * hours * days
@@ -184,6 +241,7 @@ class PodsComponents {
     }
 
     public function options ( $component, $options ) {
+
         if ( !isset( self::$settings[ 'components' ][ $component ] ) || !is_array( self::$settings[ 'components' ][ $component ] ) )
             self::$settings[ 'components' ][ $component ] = array();
 
@@ -191,5 +249,9 @@ class PodsComponents {
             if ( !isset( self::$settings[ 'components' ][ $component ][ $option ] ) && isset( $data[ 'default' ] ) )
                 self::$settings[ 'components' ][ $component ][ $option ] = $data[ 'default' ];
         }
+    }
+
+    public function components () {
+        return self::$components;
     }
 }

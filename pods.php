@@ -63,15 +63,17 @@ if ( is_admin() ) { // note the use of is_admin() to double check that this is h
         'zip_url' => 'https://github.com/' . $user . '/' . $repo . '/zipball/' . $branch, // the zip url of the github repo
         'sslverify' => true, // whether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
         'requires' => '3.4', // which version of WordPress does your plugin require?
-        'tested' => '3.4', // which version of WordPress is your plugin tested up to?
+        'tested' => '3.4.1', // which version of WordPress is your plugin tested up to?
         'version' => PODS_VERSION
     );
     new WPGitHubUpdater( $config );
 }
 
-global $pods, $pods_init, $pods_admin, $pod_page_exists;
+global $pods, $pods_init, $pods_components, $pods_admin, $pod_page_exists;
 if ( false !== pods_compatible() && ( !defined( 'SHORTINIT' ) || !SHORTINIT ) ) {
-    require_once( PODS_DIR . 'deprecated/deprecated.php' );
+    if ( !defined( 'PODS_DEPRECATED' ) || PODS_DEPRECATED )
+        require_once( PODS_DIR . 'deprecated/deprecated.php' );
 
     $pods_init = pods_init();
+    $pods_components = pods_components();
 }

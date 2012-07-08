@@ -1,6 +1,6 @@
 <?php
 /**
- * Component Name: Gravity Forms
+ * Name: Gravity Forms
  *
  * Integration with Gravity Forms, mapping data from GF to Pods
  *

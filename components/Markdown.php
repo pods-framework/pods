@@ -1,6 +1,6 @@
 <?php
 /**
- * Component Name: Markdown Syntax
+ * Name: Markdown Syntax
  *
  * Integration with Markdown (http://michelf.com/projects/php-markdown/)
  *

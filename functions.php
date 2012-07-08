@@ -990,6 +990,16 @@ function pods_init () {
 }
 
 /**
+ * Include and Init the Pods Components class
+ *
+ * @since 2.0.0
+ */
+function pods_components () {
+    require_once( PODS_DIR . 'classes/PodsComponents.php' );
+    return new PodsComponents();
+}
+
+/**
  * Include and Init the Pods class
  *
  * @since 2.0.0

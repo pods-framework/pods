@@ -130,6 +130,8 @@ class PodsAdmin {
     }
 
     public function admin_menu () {
+        global $pods_components;
+
         $submenu = array();
         $results = $this->api->load_pods( array( //'options' => array('disable_manage' => 0),
             'orderby' => '`weight`, `name`', 'type' => 'pod'
@@ -240,7 +242,7 @@ class PodsAdmin {
             }
             add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'read', $page, $menu_item[ 'function' ] );
             if ( 'pods-components' == $page )
-                $this->admin_components_menu( $parent );
+                $pods_components->menu( $parent );
         }
 
         if ( defined( 'PODS_DEVELOPER' ) ) {
@@ -249,18 +251,6 @@ class PodsAdmin {
             add_submenu_page( 'pods', 'x Form Sandbox', 'x Form Sandbox', 'manage_options', 'pods-manage-form-test', array(
                 $this,
                 'admin_content_form'
-            ) );
-        }
-    }
-
-    private function admin_components_menu ( $parent = 'pods' ) {
-        $components = $this->api->load_components();
-        foreach ( $components as $component => $component_data ) {
-            if ( !empty( $component_data[ 'HideMenu' ] ) )
-                continue;
-            add_submenu_page( $parent, strip_tags( $component_data[ 'Name' ] ), '- ' . strip_tags( $component_data[ 'ShortName' ] ), 'read', 'pods-component-' . $component_data[ 'ID' ], array(
-                $this,
-                'admin_components_handler'
             ) );
         }
     }

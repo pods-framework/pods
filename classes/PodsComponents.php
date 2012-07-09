@@ -231,6 +231,7 @@ class PodsComponents {
         }
 
         $settings = json_encode( $this->settings );
+
         update_option( 'pods_component_settings', $settings );
 
         return $toggle;

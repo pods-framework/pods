@@ -65,17 +65,31 @@ class Pods_GravityForms extends PodsComponent {
      * @since 2.0.0
      */
     public function admin ( $options ) {
-        $pods_forms = get_option( 'pods_gravity_forms' );
+        $pods_forms = (array) get_option( 'pods_gravity_forms', array() );
 
-        $gravity_forms = RGFormsModel::get_forms( null, 'title' );
+        $pods_forms = array( array(
+            'id' => 'book',
+            'form' => 1,
+            'fields' => array(
+                1 => 'foreword',
+                2 => 'author'
+            )
+        ) );
 
-        pods_debug( $gravity_forms, false );
+        pods_debug( $pods_forms, false );
 
         foreach( $pods_forms as &$form ) {
-            if ( !isset( $gravity_forms[ $form[ 'form' ] ] ) )
-                $gravity_forms[ $form[ 'form' ] ] = '<em>N/A</em>';
+            $gf = RGFormsModel::get_form( $form[ 'form' ] );
+            if ( empty( $gf ) || !isset( $gf->title ) )
+                $gf_title = '<em>N/A</em>';
+            else
+                $gf_title = $gf->title;
 
-            $form[ 'form' ] = $gravity_forms[ $form[ 'form' ] ] . ' (' . $form[ 'form' ] . ')';
+            $form[ 'form' ] = '<a href="/wp-admin/admin.php?page=gf_edit_forms&id=' . $form[ 'form' ] . '">' . $gf_title . '</a> (Form ID: ' . $form[ 'form' ] . ')';
+
+            $pod = pods_api()->load_pod( array( 'name' => $form[ 'id' ] ) );
+
+            $form[ 'name' ] = $pod[ 'name' ];
         }
 
         $ui = array(
@@ -97,9 +111,6 @@ class Pods_GravityForms extends PodsComponent {
             'sortable' => false,
             'pagination' => false
         );
-
-        if ( count( $roles ) < 2 )
-            $ui[ 'actions_custom' ][ ] = 'delete';
 
         pods_ui( $ui );
     }

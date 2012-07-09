@@ -88,6 +88,13 @@ class PodsComponents {
             if ( !isset( $this->components[ $component ] ) || 0 == $options )
                 continue;
 
+            if ( !empty( $this->components[ $component ][ 'PluginDependency' ] ) ) {
+                $dependency = explode( '|', $this->components[ $component ][ 'PluginDependency' ] );
+
+                if ( !is_plugin_active( $dependency[ 1 ] ) )
+                    continue;
+            }
+
             $component_data = $this->components[ $component ];
 
             if ( !file_exists( $component_data[ 'File' ] ) )

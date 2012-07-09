@@ -2,7 +2,7 @@
 /**
  * Name: Roles and Capabilities
  *
- * Description: Create and Manage WordPress User Roles and Capabilities; Uses Members plugin filters for additional plugin integrations
+ * Description: Create and Manage WordPress User Roles and Capabilities; Uses the 'Members' plugin filters for additional plugin integrations
  *
  * Version: 1.0
  *
@@ -152,6 +152,10 @@ class Pods_Roles extends PodsComponent {
 
         $default_role = get_option( 'default_role' );
 
+        if ( $id == $default_role ) {
+            return $ui->error( sprintf( __( 'You cannot remove the <strong>%s</strong> role, you must set a new default role for the site first.', 'pods' ), $ui->data[ $id ][ 'name' ] ) );
+        }
+
         $wp_user_search = new WP_User_Search( '', '', $id );
 
         $users = $wp_user_search->get_results();
@@ -193,6 +197,6 @@ class Pods_Roles extends PodsComponent {
         $ui->total = count( $roles );
         $ui->total_found = count( $roles );
 
-        $ui->message( $name . ' ' . __( 'Role removed from site', 'pods' ) );
+        $ui->message( '<strong>' . $name . '</strong> ' . __( 'role removed from site.', 'pods' ) );
     }
 }

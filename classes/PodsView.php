@@ -14,9 +14,9 @@ class PodsView {
 
         $cache_key = sanitize_title( str_replace( array( PODS_DIR . 'ui/', ABSPATH ), array( 'pods-ui-', 'pods-ui-' ), $view ) );
 
-        if ( false === strpos( $view, PODS_DIR . 'ui/' ) || false === strpos( $view, ABSPATH ) ) {
-
+        if ( false === strpos( $view, PODS_DIR . 'ui/' ) && false === strpos( $view, PODS_DIR . 'components/' ) && false === strpos( $view, ABSPATH ) ) {
             $output = self::get( $cache_key );
+
             if ( null !== $output ) {
                 if ( 0 < $expires )
                     return $output;
@@ -26,6 +26,7 @@ class PodsView {
         }
 
         $output = self::get_template_part( $view, $data );
+
         if ( false === $output )
             return false;
 
@@ -42,9 +43,10 @@ class PodsView {
             $cache_mode = 'cache';
 
         $value = null;
+
         if ( 'transient' == $cache_mode )
             $value = get_transient( 'pods_view_' . $key );
-        if ( 'site-transient' == $cache_mode )
+        elseif ( 'site-transient' == $cache_mode )
             $value = get_site_transient( 'pods_view_' . $key );
         elseif ( 'cache' == $cache_mode )
             $value = wp_cache_get( $key, 'pods_view' );
@@ -79,6 +81,7 @@ class PodsView {
             if ( true === $key ) {
                 global $wpdb;
                 $wpdb->query("DELETE FROM `{$wpdb->options}` WHERE option_name LIKE '_transient_pods_view_%'");
+                wp_cache_flush();
             }
             else
                 delete_transient( 'pods_view_' . $key );
@@ -87,13 +90,14 @@ class PodsView {
             if ( true === $key ) {
                 global $wpdb;
                 $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE option_name LIKE '_site_transient_pods_view_%'" );
+                wp_cache_flush();
             }
             else
                 delete_site_transient( 'pods_view_' . $key );
         }
         elseif ( 'cache' == $cache_mode ) {
             if ( true === $key )
-                wp_cache_flush( 'pods_view' );
+                wp_cache_flush();
             else
                 wp_cache_delete( $key, 'pods_view' );
         }
@@ -124,8 +128,8 @@ class PodsView {
 
         if ( empty( $_view ) )
             return false;
-        elseif ( false === strpos( $_view, PODS_DIR . 'ui/' ) || false === strpos( $_view, ABSPATH ) ) {
-            $_view = trim( $_view, '/' );
+        elseif ( false === strpos( $_view, PODS_DIR . 'ui/' ) && false === strpos( $_view, PODS_DIR . 'components/' ) && false === strpos( $_view, ABSPATH ) ) {
+            $_view = rtrim( $_view, '/' );
 
             if ( empty( $_view ) )
                 return false;

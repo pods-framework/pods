@@ -67,9 +67,15 @@ class Pods_GravityForms extends PodsComponent {
     public function admin ( $options ) {
         $pods_forms = (array) get_option( 'pods_gravity_forms', array() );
 
+        $id = 0;
+        $row = array();
+
+        if ( isset( $_GET[ 'id' ] ) )
+            $id = (int) $_GET[ 'id' ];
+
         $pods_forms = array( array(
-            'id' => 'book',
-            'form' => 1,
+            'id' => 1,
+            'pod' => 'book',
             'fields' => array(
                 1 => 'foreword',
                 2 => 'author'
@@ -79,17 +85,20 @@ class Pods_GravityForms extends PodsComponent {
         pods_debug( $pods_forms, false );
 
         foreach( $pods_forms as &$form ) {
-            $gf = RGFormsModel::get_form( $form[ 'form' ] );
+            $gf = RGFormsModel::get_form( $form[ 'id' ] );
             if ( empty( $gf ) || !isset( $gf->title ) )
                 $gf_title = '<em>N/A</em>';
             else
                 $gf_title = $gf->title;
 
-            $form[ 'form' ] = '<a href="/wp-admin/admin.php?page=gf_edit_forms&id=' . $form[ 'form' ] . '">' . $gf_title . '</a> (Form ID: ' . $form[ 'form' ] . ')';
+            $form[ 'form' ] = '<a href="/wp-admin/admin.php?page=gf_edit_forms&id=' . $form[ 'id' ] . '">' . $gf_title . '</a> (Form ID: ' . $form[ 'id' ] . ')';
 
-            $pod = pods_api()->load_pod( array( 'name' => $form[ 'id' ] ) );
+            $pod = pods_api()->load_pod( array( 'name' => $form[ 'pod' ] ) );
 
             $form[ 'name' ] = $pod[ 'name' ];
+
+            if ( 0 < $id && $id == $form[ 'id' ] )
+                $row = $form;
         }
 
         $ui = array(
@@ -112,20 +121,98 @@ class Pods_GravityForms extends PodsComponent {
             'pagination' => false
         );
 
+        if ( 0 < $id )
+            $ui[ 'row' ] = $row;
+
         pods_ui( $ui );
     }
 
-    function admin_add () {
-        // name and label
+    function admin_add ( $ui ) {
+        $gravity_forms = RGFormsModel::get_forms( null, 'title' );
+
+        $forms = array();
+
+        foreach ( $gravity_forms as $form ) {
+            $forms[ $form->id ] = $form->title . ' (Form ID: ' . $form->id . ')';
+        }
+
+        $_pods = pods_api()->load_pods( array() );
+
+        $types = array(
+            'pod' => 'Pods',
+            'post_type' => 'Post Types',
+            'taxonomy' => 'Taxonomies',
+            'user' => 'Users',
+            'comment' => 'Comments'
+        );
+
+        $pods = array(
+            'Pods' => array(),
+            'Post Types' => array(),
+            'Taxonomies' => array(),
+            'Users' => array(),
+            'Comments' => array()
+        );
+
+        foreach ( $_pods as $pod ) {
+            $pods[ $types[ $pod[ 'type' ] ] ][ $pod[ 'id' ] ] = $pod[ 'name' ];
+        }
+
+        foreach ( $pods as $k => $v ) {
+            if ( empty( $v ) )
+                unset( $pods[ $k ] );
+        }
+
+        echo pods_view( dirname( __FILE__ ) . '/ui/add.php', get_defined_vars() );
     }
 
-    function admin_edit () {
+    function admin_edit ( $dup, $ui ) {
+        $id = $_GET[ 'id' ];
+
+        $pods_forms = (array) get_option( 'pods_gravity_forms', array() );
+
+        $pods_forms = array(
+            array(
+                'id' => 'book',
+                'form' => 1,
+                'fields' => array(
+                    1 => 'foreword',
+                    2 => 'author'
+                )
+            )
+        );
+
+        pods_debug( $pods_forms, false );
+
+        $gravity_form = RGFormsModel::get_form( $id );
+
+        pods_debug( $gravity_form, false );
+
+        echo pods_view( dirname( __FILE__ ) . '/ui/edit.php', get_defined_vars() );
+
         // @todo edit role name/label
 
         // capabilities form (check existing, add new)
     }
 
     function admin_delete ( $id, &$ui ) {
+        $id = $_GET[ 'id' ];
+
+        $pods_forms = (array) get_option( 'pods_gravity_forms', array() );
+
+        $pods_forms = array(
+            array(
+                'id' => 'book',
+                'form' => 1,
+                'fields' => array(
+                    1 => 'foreword',
+                    2 => 'author'
+                )
+            )
+        );
+
+        pods_debug( $pods_forms, false );
+
         global $wp_roles;
 
         $id = $_GET[ 'id' ];

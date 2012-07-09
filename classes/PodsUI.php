@@ -861,7 +861,7 @@ class PodsUI
     public function add () {
         $this->do_hook('add');
         if (isset($this->actions_custom['add']) && is_callable($this->actions_custom['add']))
-            return call_user_func($this->actions_custom['add'], $this);
+            return call_user_func_array($this->actions_custom['add'], array( &$this ) );
 ?>
     <div class="wrap">
         <div id="icon-edit-pages" class="icon32"<?php if (false !== $this->icon) { ?> style="background-position:0 0;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
@@ -878,7 +878,7 @@ class PodsUI
             $this->get_row();
         $this->do_hook('edit', $duplicate);
         if (isset($this->actions_custom['edit']) && is_callable($this->actions_custom['edit']))
-            return call_user_func($this->actions_custom['edit'], $duplicate, $this);
+            return call_user_func_array($this->actions_custom['edit'], array( $duplicate, &$this ) );
 ?>
     <div class="wrap">
         <div id="icon-edit-pages" class="icon32"<?php if (false !== $this->icon) { ?> style="background-position:0 0;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>

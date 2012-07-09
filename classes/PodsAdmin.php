@@ -246,7 +246,7 @@ class PodsAdmin {
                 add_menu_page( 'Pods Admin', 'Pods Admin', 'manage_options', $parent, null, PODS_URL . '/ui/images/icon16.png' );
             }
             add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'manage_options', $page, $menu_item[ 'function' ] );
-            if ( 'pods-components' == $page )
+            if ( 'pods-components' == $page && defined( 'PODS_DEVELOPER' ) )
                 $pods_components->menu( $parent );
         }
 

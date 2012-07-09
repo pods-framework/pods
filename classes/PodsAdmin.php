@@ -243,9 +243,9 @@ class PodsAdmin {
                 $menu_item[ 'label' ] = $page;
             if ( false === $parent ) {
                 $parent = $page;
-                add_menu_page( 'Pods Admin', 'Pods Admin', 'read', $parent, null, PODS_URL . '/ui/images/icon16.png' );
+                add_menu_page( 'Pods Admin', 'Pods Admin', 'manage_options', $parent, null, PODS_URL . '/ui/images/icon16.png' );
             }
-            add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'read', $page, $menu_item[ 'function' ] );
+            add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'manage_options', $page, $menu_item[ 'function' ] );
             if ( 'pods-components' == $page )
                 $pods_components->menu( $parent );
         }
@@ -405,8 +405,11 @@ class PodsAdmin {
                 'description' => make_clickable( $component_data[ 'Description' ] ),
                 'version' => $component_data[ 'Version' ],
                 'author' => $component_data[ 'Author' ],
-                'toggle' => ( 0 != $pods_components->settings[ 'components' ][ $component_data[ 'ID' ] ] ? 1 : 0 )
+                'toggle' => 0
             );
+
+            if ( isset( $pods_components->settings[ 'components' ][ $component_data[ 'id' ] ] ) && 0 != $pods_components->settings[ 'components' ][ $component_data[ 'id' ] ] )
+                $component_data[ 'toggle' ] = 1;
         }
 
         pods_ui( array(

@@ -1014,7 +1014,7 @@ class PodsUI
             $id = pods_absint($this->id);
         $this->do_hook('pre_delete', $id);
         if (isset($this->actions_custom['delete']) && is_callable($this->actions_custom['delete']))
-            return call_user_func($this->actions_custom['delete'], $id, $this);
+            return call_user_func_array($this->actions_custom['delete'], array( $id, &$this ) );
         if ($id < 1)
             return $this->error(__('<strong>Error:</strong> Invalid Configuration - Missing "id" definition.', 'pods'));
         if (false === $id)

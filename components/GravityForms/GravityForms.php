@@ -6,6 +6,8 @@
  *
  * Version: 1.0
  *
+ * Plugin Dependency: Gravity Forms|gravityforms/gravityforms.php|http://www.gravityforms.com/
+ *
  * @package pods
  * @subpackage gravityforms
  */
@@ -53,6 +55,118 @@ class Pods_GravityForms extends PodsComponent {
     public function __construct () {
         // Handle custom success/error message
         add_filter( 'gform_validation_message', array( 'Pods_GravityForms', 'validation_message' ) );
+    }
+
+    /**
+     * Build admin area
+     *
+     * @param $options
+     *
+     * @since 2.0.0
+     */
+    public function admin ( $options ) {
+        $pods_forms = get_option( 'pods_gravity_forms' );
+
+        $gravity_forms = RGFormsModel::get_forms( null, 'title' );
+
+        pods_debug( $gravity_forms, false );
+
+        foreach( $pods_forms as &$form ) {
+            if ( !isset( $gravity_forms[ $form[ 'form' ] ] ) )
+                $gravity_forms[ $form[ 'form' ] ] = '<em>N/A</em>';
+
+            $form[ 'form' ] = $gravity_forms[ $form[ 'form' ] ] . ' (' . $form[ 'form' ] . ')';
+        }
+
+        $ui = array(
+            'data' => $pods_forms,
+            'total' => count( $pods_forms ),
+            'total_found' => count( $pods_forms ),
+            'icon' => PODS_URL . 'ui/images/icon32.png',
+            'items' => 'Gravity Forms Mapping',
+            'item' => 'Gravity Form Mapping',
+            'fields' => array( 'manage' => array( 'name', 'form' ) ),
+            'actions_disabled' => array( 'duplicate', 'view', 'export' ),
+            'actions_custom' => array(
+                'add' => array( $this, 'admin_add' ),
+                'edit' => array( $this, 'admin_edit' ),
+                'delete' => array( $this, 'admin_delete' )
+            ),
+            'search' => false,
+            'searchable' => false,
+            'sortable' => false,
+            'pagination' => false
+        );
+
+        if ( count( $roles ) < 2 )
+            $ui[ 'actions_custom' ][ ] = 'delete';
+
+        pods_ui( $ui );
+    }
+
+    function admin_add () {
+        // name and label
+    }
+
+    function admin_edit () {
+        // @todo edit role name/label
+
+        // capabilities form (check existing, add new)
+    }
+
+    function admin_delete ( $id, &$ui ) {
+        global $wp_roles;
+
+        $id = $_GET[ 'id' ];
+
+        $default_role = get_option( 'default_role' );
+
+        if ( $id == $default_role ) {
+            return $ui->error( sprintf( __( 'You cannot remove the <strong>%s</strong> role, you must set a new default role for the site first.', 'pods' ), $ui->data[ $id ][ 'name' ] ) );
+        }
+
+        $wp_user_search = new WP_User_Search( '', '', $id );
+
+        $users = $wp_user_search->get_results();
+
+        if ( !empty( $users ) && is_array( $users ) ) {
+            foreach ( $users as $user ) {
+                $user_object = new WP_User( $user );
+
+                if ( $user_object->has_cap( $id ) ) {
+                    $user_object->remove_role( $id );
+                    $user_object->set_role( $default_role );
+                }
+            }
+        }
+
+        remove_role( $id );
+
+        $roles = array();
+
+        foreach ( $wp_roles->role_objects as $key => $role ) {
+            $roles[ $key ] = array(
+                'id' => $key,
+                'name' => ucwords( str_replace( '_', ' ', $key ) ),
+                'capabilities' => count( (array) $role->capabilities )
+            );
+        }
+
+        foreach ( $wp_roles->role_names as $role => $name ) {
+            $roles[ $role ][ 'users' ] = 0;
+            $roles[ $role ][ 'name' ] = $name;
+
+            if ( $default_role == $role )
+                $roles[ $role ][ 'name' ] .= ' (site default)';
+        }
+
+        $name = $ui->data[ $id ][ 'name' ];
+
+        $ui->data = $roles;
+        $ui->total = count( $roles );
+        $ui->total_found = count( $roles );
+
+        $ui->message( '<strong>' . $name . '</strong> ' . __( 'role removed from site.', 'pods' ) );
     }
 
     /**

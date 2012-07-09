@@ -155,7 +155,8 @@ class PodsComponents {
                 'Version' => 'Version',
                 'Author' => 'Author',
                 'Class' => 'Class',
-                'Hide' => 'Hide'
+                'Hide' => 'Hide',
+                'PluginDependency' => 'Plugin Dependency'
             );
 
             $components = array();

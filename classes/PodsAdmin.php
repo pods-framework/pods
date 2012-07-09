@@ -444,6 +444,21 @@ class PodsAdmin {
 
         $component = $_GET[ 'id' ];
 
+        if ( !empty( $pods_components->components[ $component ][ 'PluginDependency' ] ) ) {
+            $dependency = explode( '|', $pods_components->components[ $component ][ 'PluginDependency' ] );
+
+            if ( !is_plugin_active( $dependency[ 1 ] ) ) {
+                $website = 'http://wordpress.org/extend/plugins/' . dirname( $dependency[ 1 ] ) . '/';
+
+                if ( isset( $dependency[ 2 ] ) )
+                    $website = $dependency[ 2 ];
+
+                $message = sprintf( __( 'This component requires that you have the <strong>%s</strong> plugin installed and activated. You can find it at %s', 'pods' ), $dependency[ 0 ], '<a href="' . $website . '" target="_blank">' . $website . '</a>' );
+
+                return $ui->error( $message );
+            }
+        }
+
         $toggle = $pods_components->toggle( $component );
 
         if ( $toggle )

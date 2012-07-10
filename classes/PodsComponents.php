@@ -52,6 +52,12 @@ class PodsComponents {
 
         // Load in components
         add_action( 'after_setup_theme', array( $this, 'load' ), 12 );
+
+        // AJAX handling
+        if ( is_admin() ) {
+            add_action( 'wp_ajax_pods_admin_components', array( $this, 'admin_ajax' ) );
+            add_action( 'wp_ajax_nopriv_pods_admin_components', array( $this, 'admin_ajax' ) );
+        }
     }
 
     /**
@@ -235,6 +241,58 @@ class PodsComponents {
         update_option( 'pods_component_settings', $settings );
 
         return $toggle;
+    }
+
+    public function admin_ajax () {
+        if ( false === headers_sent() ) {
+            if ( '' == session_id() )
+                @session_start();
+
+            header( 'Content-Type: text/html; charset=' . get_bloginfo( 'charset' ) );
+        }
+
+        // Sanitize input
+        $params = stripslashes_deep( (array) $_POST );
+        foreach ( $params as $key => $value ) {
+            if ( 'action' == $key )
+                continue;
+            unset( $params[ $key ] );
+            $params[ str_replace( '_podsfix_', '', $key ) ] = $value;
+        }
+        if ( !defined( 'PODS_STRICT_MODE' ) || !PODS_STRICT_MODE )
+            $params = pods_sanitize( $params );
+
+        $params = (object) $params;
+
+        $component = $params->component;
+        $method = $params->method;
+
+        if ( !isset( $component ) || !isset( $this->components[ $component ] ) || !isset( $this->settings[ 'components' ][ $component ] ) )
+            pods_error( 'Invalid AJAX request', $this );
+
+        if ( !isset( $this->components[ $component ][ 'object' ] ) || !method_exists( $this->components[ $component ][ 'object' ], 'ajax_' . $method ) )
+            pods_error( 'API method does not exist', $this );
+
+        if ( !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, 'pods-component-' . $component . '-' . $method ) )
+            pods_error( 'Unauthorized request', $this );
+
+        // Cleaning up $params
+        unset( $params->action );
+        unset( $params->component );
+        unset( $params->method );
+        unset( $params->_wpnonce );
+
+        $params = (object) apply_filters( 'pods_component_ajax_' . $component . '_' . $method, $params, $component, $method );
+
+        $method = 'ajax_' . $method;
+
+        // Dynamically call the component method
+        $output = call_user_func( array( $this->components[ $params->component ][ 'object' ], $method ), $params );
+
+        if ( !is_bool( $output ) )
+            echo $output;
+
+        die(); // KBAI!
     }
 }
 

@@ -32,7 +32,7 @@ class PodsAdmin {
 
     public function admin_init () {
         // Fix for plugins that *don't do it right* so we don't cause issues for users
-        if ( defined( 'DOING_AJAX' ) && !empty( $_POST ) && ( in_array( pods_var( 'action', 'get' ), array( 'pods_admin', 'pods_upload' ) ) || in_array( pods_var( 'action', 'post' ), array( 'pods_admin', 'pods_upload' ) ) ) ) {
+        if ( defined( 'DOING_AJAX' ) && !empty( $_POST ) && ( in_array( pods_var( 'action', 'get' ), array( 'pods_admin', 'pods_upload', 'pods_admin_components' ) ) || in_array( pods_var( 'action', 'post' ), array( 'pods_admin', 'pods_upload', 'pods_admin_components' ) ) ) ) {
             foreach ( $_POST as $key => $value ) {
                 if ( 'action' == $key )
                     continue;
@@ -249,15 +249,6 @@ class PodsAdmin {
             if ( 'pods-components' == $page && defined( 'PODS_DEVELOPER' ) )
                 $pods_components->menu( $parent );
         }
-
-        if ( defined( 'PODS_DEVELOPER' ) ) {
-            /*add_submenu_page('pods', 'x Import - Table', 'x Import - Table', 'manage_options', 'pods-import-table', array($this, 'pods_import_table'));
-            add_submenu_page('pods', 'x Media Upload - Test', 'x Media Upload - Test', 'manage_options', 'media-upload-test', array($this, 'media_upload_test'));*/
-            add_submenu_page( 'pods', 'x Form Sandbox', 'x Form Sandbox', 'manage_options', 'pods-manage-form-test', array(
-                $this,
-                'admin_content_form'
-            ) );
-        }
     }
 
     public function admin_content () {
@@ -266,10 +257,6 @@ class PodsAdmin {
             'pod' => $pod,
             'actions_custom' => array( 'form' => array( $this, 'admin_content_form' ) )
         ) );
-    }
-
-    public function admin_content_form () {
-        pods_view( 'ui/admin/form.php' );
     }
 
     public function media_button ( $context ) {
@@ -282,27 +269,6 @@ class PodsAdmin {
 
     public function mce_popup () {
         pods_view( 'ui/admin/shortcode.php' );
-    }
-
-    public function media_upload_test () {
-        wp_enqueue_script( 'plupload-all' );
-        require_once PODS_DIR . 'ui/admin/media_upload_test.php';
-    }
-
-    /*public function pods_import_table() {
-        require_once PODS_DIR . 'ui/admin/_import_table.php';
-    }
-
-    public function pods_import_convert_fields() {
-        require_once PODS_DIR . 'ui/admin/_import_convert_fields.php';
-    }
-
-    public function pods_import_create_pod() {
-        require_once PODS_DIR . 'ui/admin/_import_create_pod.php';
-    }*/
-
-    public function pods_form_test() {
-        require_once PODS_DIR . 'ui/admin/form.php';
     }
 
     public function admin_setup () {
@@ -337,41 +303,6 @@ class PodsAdmin {
         $this->api->delete_pod( array( 'id' => $id ) );
         $obj->message( 'Pod deleted successfully.' );
     }
-
-    public function admin_ui () {
-        pods_ui( array(
-            'sql' => array(
-                'table' => '@wp_pods_objects',
-                'select' => 'name'
-            ),
-            'icon' => PODS_URL . 'ui/images/icon32.png',
-            'items' => 'Admin UI',
-            'item' => 'Admin UI',
-            'orderby' => 'name',
-            'fields' => array( 'manage' => array( 'name' ) ),
-            'actions_disabled' => array( 'duplicate', 'view', 'export' ),
-            'actions_custom' => array(
-                'add' => array( $this, 'admin_ui_add' ),
-                'edit' => array( $this, 'admin_ui_edit' ),
-               'delete' => array( $this, 'admin_ui_delete' )
-            ),
-            'search' => false,
-            'searchable' => false
-        ) );
-    }
-
-    /*public function admin_ui_add($obj) {
-        require_once PODS_DIR . 'ui/admin/ui_add.php';
-    }
-
-    public function admin_ui_edit($duplicate, $obj) {
-        require_once PODS_DIR . 'ui/admin/ui_edit.php';
-    }
-
-    public function admin_ui_delete($id, $obj) {
-        $this->api->drop_ui(array('id' => $id));
-        $obj->message('Admin UI deleted successfully.');
-    }*/
 
     public function admin_advanced () {
         require_once PODS_DIR . 'ui/admin/advanced.php';

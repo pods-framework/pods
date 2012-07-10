@@ -2,6 +2,8 @@
 /**
  * Name: Roles and Capabilities
  *
+ * Menu Name: Roles &amp; Capabilities
+ *
  * Description: Create and Manage WordPress User Roles and Capabilities; Uses the 'Members' plugin filters for additional plugin integrations
  *
  * Version: 1.0

@@ -73,14 +73,16 @@ class Pods_GravityForms extends PodsComponent {
         if ( isset( $_GET[ 'id' ] ) )
             $id = (int) $_GET[ 'id' ];
 
-        $pods_forms = array( array(
-            'id' => 1,
-            'pod' => 'book',
-            'fields' => array(
-                1 => 'foreword',
-                2 => 'author'
+        $pods_forms = array(
+            1 => array(
+                'id' => 1,
+                'pod' => 'book',
+                'fields' => array(
+                    1 => 'foreword',
+                    2 => 'author'
+                )
             )
-        ) );
+        );
 
         pods_debug( $pods_forms, false );
 
@@ -128,30 +130,38 @@ class Pods_GravityForms extends PodsComponent {
     }
 
     function admin_add ( $ui ) {
+        $pods_forms = (array) get_option( 'pods_gravity_forms', array() );
+
         $gravity_forms = RGFormsModel::get_forms( null, 'title' );
 
         $forms = array();
 
         foreach ( $gravity_forms as $form ) {
+            if ( isset( $pods_forms[ $form->id ] ) )
+                continue;
+
             $forms[ $form->id ] = $form->title . ' (Form ID: ' . $form->id . ')';
         }
+
+        if ( empty( $forms ) )
+            $forms = __( 'No Gravity Forms available to map', 'pods' );
 
         $_pods = pods_api()->load_pods( array() );
 
         $types = array(
             'pod' => 'Pods',
-            'post_type' => 'Post Types',
-            'taxonomy' => 'Taxonomies',
-            'user' => 'Users',
-            'comment' => 'Comments'
+            'post_type' => __( 'Post Types', 'pods' ),
+            'taxonomy' => __( 'Taxonomies', 'pods' ),
+            'user' => __( 'Users', 'pods' ),
+            'comment' => __( 'Comments', 'pods' )
         );
 
         $pods = array(
             'Pods' => array(),
-            'Post Types' => array(),
-            'Taxonomies' => array(),
-            'Users' => array(),
-            'Comments' => array()
+            __( 'Post Types', 'pods' ) => array(),
+            __( 'Taxonomies', 'pods' ) => array(),
+            __( 'Users', 'pods' ) => array(),
+            __( 'Comments', 'pods' ) => array()
         );
 
         foreach ( $_pods as $pod ) {
@@ -171,28 +181,11 @@ class Pods_GravityForms extends PodsComponent {
 
         $pods_forms = (array) get_option( 'pods_gravity_forms', array() );
 
-        $pods_forms = array(
-            array(
-                'id' => 'book',
-                'form' => 1,
-                'fields' => array(
-                    1 => 'foreword',
-                    2 => 'author'
-                )
-            )
-        );
-
-        pods_debug( $pods_forms, false );
-
         $gravity_form = RGFormsModel::get_form( $id );
 
         pods_debug( $gravity_form, false );
 
         echo pods_view( dirname( __FILE__ ) . '/ui/edit.php', get_defined_vars() );
-
-        // @todo edit role name/label
-
-        // capabilities form (check existing, add new)
     }
 
     function admin_delete ( $id, &$ui ) {
@@ -200,71 +193,69 @@ class Pods_GravityForms extends PodsComponent {
 
         $pods_forms = (array) get_option( 'pods_gravity_forms', array() );
 
-        $pods_forms = array(
-            array(
-                'id' => 'book',
-                'form' => 1,
-                'fields' => array(
-                    1 => 'foreword',
-                    2 => 'author'
-                )
-            )
+        if ( !isset( $pods_forms[ $id ] ) )
+            return $ui->error( __( 'Error: Form mapping not found.', 'pods' ) );
+
+        $gravity_form = RGFormsModel::get_form( $id );
+
+        $name = $pods_forms[ $id ][ 'pod' ];
+
+        if ( !empty( $gravity_form->title ) )
+            $name = $gravity_form->title;
+
+        unset( $pods_forms[ $id ] );
+
+        $ui->data = $pods_forms;
+        $ui->total = count( $pods_forms );
+        $ui->total_found = count( $pods_forms );
+
+        $ui->message( '<strong>' . $name . '</strong> ' . __( 'mapping removed from site.', 'pods' ) );
+    }
+
+    function ajax_add ( $params ) {
+        if ( !isset( $params->form ) || empty( $params->form ) || !isset( $params->pod ) || empty( $params->pod ) )
+            pods_error( __( 'Error: You must select both a Gravity Form and a Pod to map to.', 'pods' ) );
+
+        $params->form = (int) $params->form;
+
+        $pods_forms = (array) get_option( 'pods_gravity_forms', array() );
+
+        if ( isset( $pods_forms[ $params->form ] ) )
+            pods_error( __( 'Error: Form mapping for this Form already exists. Only one is currently allowed.', 'pods' ) );
+
+        $pods_forms[ $params->form ] = array(
+            'id' => $params->form,
+            'pod' => $params->pod,
+            'fields' => array()
         );
 
-        pods_debug( $pods_forms, false );
+        update_option( 'pods_gravity_forms', $pods_forms );
 
-        global $wp_roles;
+        return $params->form;
+    }
 
-        $id = $_GET[ 'id' ];
+    function ajax_edit ( $params ) {
+        if ( !isset( $params->form ) || empty( $params->form ) || !isset( $params->pod ) || empty( $params->pod ) )
+            pods_error( __( 'Error: You must select both a Gravity Form and a Pod to map to.', 'pods' ) );
 
-        $default_role = get_option( 'default_role' );
+        $params->form = (int) $params->form;
 
-        if ( $id == $default_role ) {
-            return $ui->error( sprintf( __( 'You cannot remove the <strong>%s</strong> role, you must set a new default role for the site first.', 'pods' ), $ui->data[ $id ][ 'name' ] ) );
-        }
+        $pods_forms = (array) get_option( 'pods_gravity_forms', array() );
 
-        $wp_user_search = new WP_User_Search( '', '', $id );
+        if ( !isset( $pods_forms[ $params->form ] ) )
+            pods_error( __( 'Error: Form mapping not found.', 'pods' ) );
 
-        $users = $wp_user_search->get_results();
+        $fields = array();
 
-        if ( !empty( $users ) && is_array( $users ) ) {
-            foreach ( $users as $user ) {
-                $user_object = new WP_User( $user );
+        $pods_forms[ $params->form ] = array(
+            'id' => $params->form,
+            'pod' => $params->pod,
+            'fields' => $fields
+        );
 
-                if ( $user_object->has_cap( $id ) ) {
-                    $user_object->remove_role( $id );
-                    $user_object->set_role( $default_role );
-                }
-            }
-        }
+        update_option( 'pods_gravity_forms', $pods_forms );
 
-        remove_role( $id );
-
-        $roles = array();
-
-        foreach ( $wp_roles->role_objects as $key => $role ) {
-            $roles[ $key ] = array(
-                'id' => $key,
-                'name' => ucwords( str_replace( '_', ' ', $key ) ),
-                'capabilities' => count( (array) $role->capabilities )
-            );
-        }
-
-        foreach ( $wp_roles->role_names as $role => $name ) {
-            $roles[ $role ][ 'users' ] = 0;
-            $roles[ $role ][ 'name' ] = $name;
-
-            if ( $default_role == $role )
-                $roles[ $role ][ 'name' ] .= ' (site default)';
-        }
-
-        $name = $ui->data[ $id ][ 'name' ];
-
-        $ui->data = $roles;
-        $ui->total = count( $roles );
-        $ui->total_found = count( $roles );
-
-        $ui->message( '<strong>' . $name . '</strong> ' . __( 'role removed from site.', 'pods' ) );
+        return $params->form;
     }
 
     /**

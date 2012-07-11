@@ -639,8 +639,6 @@ class PodsAPI {
 
             if ( empty( $result ) )
                 return pods_error( ucwords( $params->type ) . ' Object not saved', $this );
-
-            return $params->id;
         }
         else {
             $sql = "SELECT id FROM `@wp_pods_objects` WHERE `name` = '{$params->name}' LIMIT 1";
@@ -659,6 +657,8 @@ class PodsAPI {
 
         delete_transient( 'pods_object_' . $params->type );
         delete_transient( 'pods_object_' . $params->type . '_' . $params->name );
+
+        return $params->id;
     }
 
     /**

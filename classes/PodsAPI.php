@@ -659,6 +659,8 @@ class PodsAPI {
 
         delete_transient( 'pods_object_' . $params->type );
         delete_transient( 'pods_object_' . $params->type . '_' . $params->name );
+
+		return $params->id;
     }
 
     /**

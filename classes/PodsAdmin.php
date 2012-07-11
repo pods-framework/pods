@@ -268,7 +268,7 @@ class PodsAdmin {
     }
 
     public function mce_popup () {
-        pods_view( 'ui/admin/shortcode.php' );
+        echo pods_view( 'ui/admin/shortcode.php' );
     }
 
     public function admin_setup () {

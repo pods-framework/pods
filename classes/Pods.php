@@ -124,8 +124,10 @@ class Pods {
      */
     public function data () {
         $this->do_hook( 'data' );
+
         if ( empty( $this->results ) )
             return false;
+
         return (array) $this->results;
     }
 
@@ -136,8 +138,10 @@ class Pods {
      */
     public function row () {
         $this->do_hook( 'row' );
+
         if ( empty( $this->row ) )
             return false;
+
         return (array) $this->row;
     }
 
@@ -271,7 +275,9 @@ class Pods {
         else
             $this->do_hook( 'fetch', null, $id );
 
-        $this->row =& $this->data->fetch();
+        $this->row =& $this->data->fetch( $id );
+
+        return $this->row;
     }
 
     /**
@@ -281,7 +287,7 @@ class Pods {
      */
     public function reset ( $row = 0 ) {
         $this->do_hook( 'reset' );
-        $pods = pods_absint( $row );
+        $row = pods_absint( $row );
         $this->row =& $this->data->fetch( $row );
         return $this->row;
     }

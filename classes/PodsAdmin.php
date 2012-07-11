@@ -260,6 +260,11 @@ class PodsAdmin {
     }
 
     public function media_button ( $context ) {
+		$current_page = basename( $_SERVER['PHP_SELF'] );
+
+		if ( $current_page == 'index.php' ) 
+			return $context;
+
         add_action( 'admin_footer', array( $this, 'mce_popup' ) );
 
         $button = '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox" id="add_pod_button" title="Embed Pods"><img src="' . PODS_URL . 'ui/images/icon16.png" alt="Embed Pods" /></a>';

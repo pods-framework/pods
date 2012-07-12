@@ -14,9 +14,7 @@ function translate_field_type($name) {
 	return $answer;
 }
 
-if (version_compare($pods_version, '2.0.0', '<')) {
-    // handle primary changes (don't process larger tables automatically)
-
+function migrate_pods() {
 	// Grab old pods and fields, and create new ones via the API
 	$pods_api = new PodsAPI;
 	$pod_types = pods_query("SELECT * FROM `@wp_pod_types`");
@@ -40,7 +38,10 @@ if (version_compare($pods_version, '2.0.0', '<')) {
 
 			$fields[] = $field_params;
 		}
-
-		
 	}
+}
+
+if (version_compare($pods_version, '2.0.0', '<')) {
+    // handle primary changes (don't process larger tables automatically)
+	migrate_pods();
 }

@@ -1752,7 +1752,7 @@ class PodsAPI {
                 return $object;
         }
 
-        $result = pods_query( "SELECT * FROM `@wp_pods_objects` WHERE $where `type` = '{$params->type}' LIMIT 1", $this );
+        $result = pods_query( "SELECT * FROM `@wp_pods_objects` WHERE $where AND `type` = '{$params->type}' LIMIT 1", $this );
         if ( empty( $result ) )
             return pods_error( ucwords( $params->type ) . ' Object not found', $this );
 

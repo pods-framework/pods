@@ -9,7 +9,7 @@ Author URI: http://podscms.org/
 */
 
 function pods_ui_demo_validate_plugin () {
-    if (!function_exists('pod_query') || !function_exists('pods_ui_manage')) {
+    if (!function_exists('pods')) {
         add_thickbox();
         add_action('admin_notices', 'pods_ui_demo_validate_plugin_notice');
         return false;
@@ -18,7 +18,7 @@ function pods_ui_demo_validate_plugin () {
 }
 function pods_ui_demo_validate_plugin_notice () {
     $this_plugin = 'Pods UI Demo';
-    if (!function_exists('pod_query') || !function_exists('pods_ui_manage')) {
+    if (!function_exists('pods')) {
         $plugin_name = 'Pods CMS Framework';
         $plugin_slug = 'pods';
 ?>
@@ -32,10 +32,10 @@ function pods_ui_demo_validate_plugin_notice () {
 function pods_ui_demo_menu () {
     if (false === pods_ui_demo_validate_plugin())
         return;
-    
+
     // Remember, this part (admin menu functions) isn't actually Pods UI, this is WordPress core!
     // See http://codex.wordpress.org/Adding_Administration_Menus for more information about Adding Administration Menus like below
-    
+
     $icon = ''; // you can use a custom icon! see below
     // $icon = WP_PLUGIN_URL.'/your-plugin-folder/icon.png';
 
@@ -125,7 +125,7 @@ function pods_ui_demo_init () {
     if (empty($installed)) {
         if (false === pods_ui_demo_validate_plugin())
             return false;
-        
+
         // Activate the Pods UI Demo package, this is an export of the Pods,
         // and whatever else you may need for the plugin. Not every plugin
         // needs this, you can remove this function.

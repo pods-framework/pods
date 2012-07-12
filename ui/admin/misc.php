@@ -55,13 +55,13 @@ elseif (defined('PODS_UPLOAD_REQUIRE_LOGIN') && !is_bool(PODS_UPLOAD_REQUIRE_LOG
 if ('browse_files' == $params->action && false === $browse_disabled) {
     $search = (0 < strlen($params->search)) ? "AND (post_title LIKE '%{$params->search}%' OR guid LIKE '%{$params->search}%')" : '';
 
-    $result = pod_query("SELECT id, guid FROM {$wpdb->posts} WHERE post_type = 'attachment' {$search} ORDER BY guid ASC");
+    $result = pods_query("SELECT id, guid FROM {$wpdb->posts} WHERE post_type = 'attachment' {$search} ORDER BY guid ASC");
 
-    if (0 < mysql_num_rows($result)) {
-        while ($row = mysql_fetch_assoc($result)) {
-            $guid = substr($row['guid'], strrpos($row['guid'], '/') + 1);
+    if (0 < count($result)) {
+        foreach( $result as $row ) {
+            $guid = substr($row->guid, strrpos($row->guid, '/') + 1);
     ?>
-        <div class="file_match" rel="<?php echo $row['id']; ?>"><?php echo $guid; ?></div>
+        <div class="file_match" rel="<?php echo $row->id; ?>"><?php echo $guid; ?></div>
     <?php
         }
     }

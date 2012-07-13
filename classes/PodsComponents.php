@@ -37,6 +37,8 @@ class PodsComponents {
      * @since 2.0.0
      */
     public function __construct () {
+        require_once ABSPATH . '/wp-admin/includes/plugin.php';
+
         $this->components_dir = apply_filters( 'pods_components_dir', PODS_DIR . 'components/' );
 
         $settings = get_option( 'pods_component_settings', '' );

@@ -37,8 +37,13 @@ function migrate_pods() {
 			}
 
 			$fields[] = $field_params;
+			// @todo Finish this function
 		}
 	}
+}
+
+function migrate_templates() {
+
 }
 
 if (version_compare($pods_version, '2.0.0', '<')) {

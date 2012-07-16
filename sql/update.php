@@ -45,6 +45,14 @@ function migrate_pods() {
 			'type' => 'pod',
 			'storage' => 'table',
 			'fields' => $fields,
+			'options' => array(
+				'pre_save_helpers' => $pod_type->pre_save_helpers,
+				'post_save_helpers' => $pod_type->post_save_helpers,
+				'pre_delete_helpers' => $pod_type->pre_drop_helpers,
+				'post_delete_helpers' => $pod_type->post_drop_helpers,
+				'show_in_menu' => $pod_type->is_toplevel,
+				'detail_url' => $pod_type->detail_page,
+			),
 		);
 		$pod_id = $api->save_pod($pod_params);
 	}
@@ -102,5 +110,8 @@ function migrate_pages() {
 
 if (version_compare($pods_version, '2.0.0', '<')) {
     // handle primary changes (don't process larger tables automatically)
+	$pages = migrate_pages();
+	$helpers = migrate_helpers();
+	$templates = migrate_templates();
 	migrate_pods();
 }

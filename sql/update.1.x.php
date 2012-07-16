@@ -196,8 +196,8 @@ if (version_compare($pods_version, '1.11', '<')) {
     pods_query("ALTER TABLE `@wp_pod_rel` ADD INDEX `field_pod_idx` (`field_id`, `pod_id`)", false);
     pods_query("ALTER TABLE `@wp_pod_fields` CHANGE `datatype` `datatype` INT(10) UNSIGNED NULL DEFAULT NULL");
     $result = pods_query("SELECT id, name FROM @wp_pod_types");
-    while ($row = mysql_fetch_assoc($result)) {
-        $pod = pods_sanitize($row['name']);
+    foreach ( $result as $row ) {
+        $pod = pods_sanitize($row->name);
         pods_query("ALTER TABLE `@wp_pod_tbl_{$pod}` CHANGE `id` `id` BIGINT(15) UNSIGNED NOT NULL AUTO_INCREMENT");
     }
     update_option('pods_version', '001011000');

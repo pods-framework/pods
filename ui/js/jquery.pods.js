@@ -242,8 +242,8 @@
                 var $tabbed = $(this).closest('.pods-tabbed');
                 var tab_hash = this.hash;
 
-                $tabbed.find('.pods-tab-group .pods-tab').not(tab_hash).slideUp(400, function () {
-                    $tabbed.find('.pods-tab-group .pods-tab').filter(tab_hash).slideDown();
+                $tabbed.find('.pods-tab-group .pods-tab').not(tab_hash).slideUp('fast', function () {
+                    $tabbed.find('.pods-tab-group .pods-tab').filter(tab_hash).slideDown('fast');
                 });
                 $tabbed.find('.pods-tabs .pods-tab a').removeClass('selected');
                 $(this).addClass('selected');
@@ -257,26 +257,88 @@
             $('.pods-tabbed').find('.pods-tab-group .pods-tab:first').show();
         },
         wizard : function () {
-            $('.pods-wizard .pods-wizard-step').on('click', 'a.button-primary, a.button-secondary', function (e) {
-                $(this).css('cursor', 'default');
-                $(this).prop('disabled', true);
-
-                var $wizard = $(this).closest('.pods-wizard');
-
-                var wizard_hash = this.hash;
-                if (null === wizard_hash || '' == wizard_hash)
-                    return true;
-
-                $wizard.find('.pods-wizard-step').not(wizard_hash).slideUp(400, function () {
-                    $wizard.find('.pods-wizard-step').filter(wizard_hash).slideDown();
-                    $wizard.find('input.pods-wizard-current-step').val(wizard_hash.replace(/\#pods\-wizard\-/gi, ''));
-                });
-
-                $(this).css('cursor', 'pointer');
-                $(this).prop('disabled', false);
-
-                e.preventDefault();
-            });
+        	var methods = {
+        		setFinished: function() {
+        			$('#pods-wizard-next').text('Finished');
+        		},
+        		setProgress: function() {
+        			$('#pods-wizard-next').text('Next Step');
+        		},
+		   	    stepForward: function() {
+		   	    	// Step toolbar menu state forwards
+		   	    	$('li.pods-wizard-menu-current')
+		   	    		.removeClass('pods-wizard-menu-current')
+		   	        	.addClass('pods-wizard-menu-complete')
+		   	        	.next('li')
+		   	        	.addClass('pods-wizard-menu-current');
+		   	        // Show start over button
+		   	        $('#pods-wizard-start').show();
+		   	        // Check if last step
+		   	        if($('.pods-wizard-panel:visible').next('.pods-wizard-panel').length) {
+		   	        // Show next panel
+			   	        $('.pods-wizard-panel:visible')
+			   	        	.hide()
+			   	        	.next()
+			   	        	.show();
+		   	        }
+		   	        else {
+		   	        	methods.setFinished();
+		   	        }
+		   	    },
+		   	    startOver: function() {
+		   	    	// Revert to first current menu item
+		   	    	$('#pods-wizard-heading ul li')
+		   	    		.removeClass()
+		   	    		.first()
+		   	    		.addClass('pods-wizard-menu-current');
+		   	    	// Revert to first panel
+		   	    	$('.pods-wizard-panel')
+		   	    		.hide()
+		   	    		.first()
+		   	    		.show();
+		   	    	// Hide start over button
+		   	    	$('.pods-wizard-option-selected').removeClass();
+		   	    	$('#pods-wizard-start').hide();
+		   	    	$('.stuffbox').hide();
+		   	    	$('#pods-wizard-choices').fadeIn('fast');
+		   	    }
+        	}
+        	// Next button event binding
+			$('#pods-wizard-next').on('click', function(e) {
+		    	e.preventDefault();
+		    	methods.stepForward();
+		    });
+		    // Start over button event binding
+		    $('#pods-wizard-start')
+		    	.hide()
+		    	.on('click', function(e) {
+		    		e.preventDefault();
+		    		methods.startOver();
+		    	});
+		    // Upgrade choice button event binding
+		    $('.pods-choice-button').on('click', function(e) {
+		    	e.preventDefault();
+		    	var target = $(this).attr('href');
+		    	$('#pods-wizard-choices').slideUp('fast');
+		    	$(target).slideDown('fast');
+		    });
+		    // Create/extend option event binding
+		    $('.pods-wizard-option a').on('click', function(e) {
+		    	e.preventDefault();
+		    	$('.stuffbox').hide();
+		    	var target = $(this).attr('href');
+		    	$(target).show();
+		    	$('a.pods-wizard-option-active').removeClass();
+		    	$(this).addClass('pods-wizard-option-active');
+		    });
+		    // Advanced anchor event binding
+		    $('.pods-advanced-toggle').on('click', function() {
+		    	var target = $(this).attr('href'),
+		    		target = target.replace('#', '.');
+		    	$(this).parent('p').slideUp('fast');
+		    	$(target).slideDown('fast');
+		    });
+		    // Initial step panel setup
             $('.pods-wizard .pods-wizard-step').hide();
             $('.pods-wizard .pods-wizard-step:first').show();
         },

@@ -20,25 +20,33 @@ function migrate_pods() {
 	$pod_types = pods_query("SELECT * FROM `@wp_pod_types`");
 
 	foreach ($pod_types as $pod_type) {
-		$field_rows = pods_query("SELECT * FROM `@wp_pod_fields` WHERE `datatype` = {$pod_type['id']}");
+		$field_rows = pods_query("SELECT * FROM `@wp_pod_fields` WHERE `datatype` = {$pod_type->id}");
 		$fields = array();
 
 		foreach ($field_rows as $row) {
 			$field_params = array(
-				'name' => $row['name'],
-				'label' => $row['label'],
-				'type' => translate_field_type($row['coltype']),
-				'weight' => $row['weight'],
-				'required' => $row['required'],
+				'name' => $row->name,
+				'label' => $row->label,
+				'type' => translate_field_type($row->coltype),
+				'weight' => $row->weight,
+				'required' => $row->required,
 			);
 
-			if ($row['coltype'] == 'pick') {
-				$field_params['pick_val'] = $row['pickval'];
+			if ($row->coltype == 'pick') {
+				$field_params['pick_val'] = $row->pickval;
+				$field_params['sister_field_id'] = $row->sister_field_id
 			}
 
 			$fields[] = $field_params;
-			// @todo Finish this function
 		}
+
+		$pod_params = array(
+			'name' => $pod_type->name,
+			'type' => 'pod',
+			'storage' => 'table',
+			'fields' => $fields,
+		);
+		$pod_id = $api->save_pod($pod_params);
 	}
 }
 

@@ -18,6 +18,7 @@ function migrate_pods() {
 	// Grab old pods and fields, and create new ones via the API
 	$api = new PodsAPI;
 	$pod_types = pods_query("SELECT * FROM `@wp_pod_types`");
+	$pod_ids = array();
 
 	foreach ($pod_types as $pod_type) {
 		$field_rows = pods_query("SELECT * FROM `@wp_pod_fields` WHERE `datatype` = {$pod_type->id}");
@@ -57,7 +58,9 @@ function migrate_pods() {
 			),
 		);
 		$pod_id = $api->save_pod($pod_params);
+		$pod_ids[] = $pod_id;
 	}
+	return $pod_ids;
 }
 
 function migrate_templates() {

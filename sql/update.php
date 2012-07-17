@@ -9,14 +9,14 @@ function translate_field_type($name) {
 			$answer = "paragraph";
 			break;
 		default:
-			$answer = $name
+			$answer = $name;
 	}
 	return $answer;
 }
 
 function migrate_pods() {
 	// Grab old pods and fields, and create new ones via the API
-	$pods_api = new PodsAPI;
+	$api = new PodsAPI;
 	$pod_types = pods_query("SELECT * FROM `@wp_pod_types`");
 
 	foreach ($pod_types as $pod_type) {
@@ -34,7 +34,7 @@ function migrate_pods() {
 
 			if ($row->coltype == 'pick') {
 				$field_params['pick_val'] = $row->pickval;
-				$field_params['sister_field_id'] = $row->sister_field_id
+				$field_params['sister_field_id'] = $row->sister_field_id;
 			}
 
 			$fields[] = $field_params;
@@ -68,8 +68,8 @@ function migrate_templates() {
 
 	foreach ($templates as $tpl) {
 		$params = array(
-			'name' => $tpl['name'],
-			'code' => $tpl['code'],
+			'name' => $tpl->name,
+			'code' => $tpl->code,
 		);
 
 		$results[] = $api->save_template($params);
@@ -85,9 +85,9 @@ function migrate_helpers() {
 
 	foreach ($helpers as $hlpr) {
 		$params = array(
-			'name' => $hlpr['name'],
-			'helper_type' => $hlpr['helper_type'],
-			'phpcode' => $hlpr['phpcode'],
+			'name' => $hlpr->name,
+			'helper_type' => $hlpr->helper_type,
+			'phpcode' => $hlpr->phpcode,
 		);
 
 		$results[] = $api->save_helper($params);
@@ -110,8 +110,8 @@ function migrate_pages() {
 
 if (version_compare($pods_version, '2.0.0', '<')) {
     // handle primary changes (don't process larger tables automatically)
-	$pages = migrate_pages();
-	$helpers = migrate_helpers();
-	$templates = migrate_templates();
-	migrate_pods();
+	// $pages = migrate_pages();
+	// $helpers = migrate_helpers();
+	// $templates = migrate_templates();
+	// migrate_pods();
 }

@@ -32,7 +32,7 @@
                             }
                         ?></ul>
 
-                    <a class="button pods-file-add" href="media-upload.php?TB_iframe=1&amp;width=640&amp;height=1500">Add File</a>
+					<a class="button pods-file-add" href="media-upload.php?TB_iframe=1&amp;width=640&amp;height=1500"><?php _e('Add File', 'pods'); ?></a>
                 </td>
             </tr>
         </tbody>

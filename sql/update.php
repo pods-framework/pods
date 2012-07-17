@@ -29,7 +29,9 @@ function migrate_pods() {
 				'label' => $row->label,
 				'type' => translate_field_type($row->coltype),
 				'weight' => $row->weight,
-				'required' => $row->required,
+				'options' => array(
+					'required' => $row->required,
+				),
 			);
 
 			if ($row->coltype == 'pick') {

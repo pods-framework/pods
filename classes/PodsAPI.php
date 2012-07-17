@@ -156,12 +156,12 @@ class PodsAPI {
             else
                 $params->name = $old_name = $pod[ 'name' ];
             if ( $old_name != $params->name && false !== $this->pod_exists( array( 'name' => $params->name ) ) )
-				return pods_error(sprintf(__("Pod %s already exists, you cannot rename %s to that", 'pods'), $params->name, $old_name), $this);
+                return pods_error(sprintf(__("Pod %s already exists, you cannot rename %s to that", 'pods'), $params->name, $old_name), $this);
             elseif ( $old_id != $params->id ) {
                 if ( $params->type == $pod[ 'type' ] && isset( $params->object ) && $params->object == $pod[ 'object' ] )
-					return pods_error(sprintf(__("Pod using %s already exists, you can not reuse an object across multiple pods", 'pods'), $params->object), $this);
+                    return pods_error(sprintf(__("Pod using %s already exists, you can not reuse an object across multiple pods", 'pods'), $params->object), $this);
                 else
-					return pods_error(sprintf(__("Pod %s already exists", 'pods'), $params->name), $this);
+                    return pods_error(sprintf(__("Pod %s already exists", 'pods'), $params->name), $this);
             }
         }
 
@@ -169,7 +169,7 @@ class PodsAPI {
         if ( empty( $params->id ) ) {
             $params->name = pods_clean_name( $params->name );
             if ( strlen( $params->name ) < 1 )
-				return pods_error( __('Pod name cannot be empty', 'pods'), $this );
+                return pods_error( __('Pod name cannot be empty', 'pods'), $this );
 
             $check = pods_query( "SELECT `id` FROM `@wp_pods` WHERE `name` = '{$params->name}' LIMIT 1", $this );
             if ( !empty( $check ) )
@@ -211,7 +211,7 @@ class PodsAPI {
                 $params->options = pods_sanitize( str_replace( '@wp_', '{prefix}', json_encode( $params->options ) ) );
             $params->id = pods_query( "INSERT INTO `@wp_pods` (`" . implode( '`,`', array_keys( $pod ) ) . "`) VALUES ('" . implode( "','", $pod ) . "')", $this );
             if ( false === $params->id )
-				return pods_error( __('Cannot add entry for new Pod', 'pods'), $this );
+                return pods_error( __('Cannot add entry for new Pod', 'pods'), $this );
 
             $field_columns = array(
                 'pod_id' => $params->id,
@@ -297,18 +297,18 @@ class PodsAPI {
             if ( 'table' == $pod[ 'storage' ] ) {
                 $result = pods_query( "CREATE TABLE `@wp_pods_tbl_{$params->name}` (" . implode( ', ', $definitions ) . ") DEFAULT CHARSET utf8", $this );
                 if ( empty( $result ) )
-					return pods_error( __('Cannot add Database Table for new Pod', 'pods'), $this );
+                    return pods_error( __('Cannot add Database Table for new Pod', 'pods'), $this );
             }
             if ( !empty( $rows ) ) {
                 $result = pods_query( "INSERT INTO `@wp_pods_fields` (`" . implode( '`,`', array_keys( $field_columns ) ) . "`) VALUES ('" . implode( "'),('", $rows ) . "')", $this );
                 if ( empty( $result ) )
-					return pods_error( __('Cannot add fields for new Pod', 'pods'), $this );
+                    return pods_error( __('Cannot add fields for new Pod', 'pods'), $this );
             }
         }
         // Edit existing pod
         else {
             if ( empty( $pod ) )
-				return pods_error( __('Pod not found', 'pods') );
+                return pods_error( __('Pod not found', 'pods') );
             $set = array();
             if ( !isset( $params->options ) || empty( $params->options ) ) {
                 $options = get_object_vars( $params );
@@ -338,7 +338,7 @@ class PodsAPI {
                     if ( 0 < $field_id )
                         $saved[ $field_id ] = true;
                     else {
-						return pods_error( __('Cannot edit field', 'pods'), $this );
+                        return pods_error( __('Cannot edit field', 'pods'), $this );
                     }
                     $weight++;
                 }
@@ -401,19 +401,19 @@ class PodsAPI {
                     $save_pod = true;
 
                 if ( empty( $pod ) )
-					return pods_error( __('Pod ID or name is required', 'pods'), $this );
+                    return pods_error( __('Pod ID or name is required', 'pods'), $this );
                 else {
                     $params->pod_id = $pod[ 'id' ];
                     $params->pod = $pod[ 'name' ];
                 }
             }
             else
-				return pods_error( __('Pod ID or name is required', 'pods'), $this );
+                return pods_error( __('Pod ID or name is required', 'pods'), $this );
         }
         elseif ( !isset( $params->pod ) ) {
             $pod = $this->load_pod( array( 'id' => $params->pod_id ) );
             if ( empty( $pod ) )
-				return pods_error( __('Pod not found', 'pods'), $this );
+                return pods_error( __('Pod not found', 'pods'), $this );
             else {
                 $params->pod_id = $pod[ 'id' ];
                 $params->pod = $pod[ 'name' ];
@@ -424,7 +424,7 @@ class PodsAPI {
 
         $params->name = pods_clean_name( $params->name );
         if ( empty( $params->name ) )
-			return pods_error( __('Pod Column name is required', 'pods'), $this );
+            return pods_error( __('Pod Column name is required', 'pods'), $this );
 
         $defaults = array(
             'id' => 0,
@@ -445,20 +445,20 @@ class PodsAPI {
         // Add new column
         if ( !isset( $params->id ) || empty( $params->id ) ) {
             if ( in_array( $params->name, array( 'p' ) ) ) // there are more, let's add them as we find them
-				return pods_error( sprintf(__("%s is reserved for internal WordPress usage, please try a different name", 'pods'), $params->name), $this );
+                return pods_error( sprintf(__("%s is reserved for internal WordPress usage, please try a different name", 'pods'), $params->name), $this );
             if ( in_array( $params->name, array( 'id', 'created', 'modified', 'author' ) ) )
-				return pods_error( sprintf(__("%s is reserved for internal WordPress usage, please try a different name", 'pods'), $params->name), $this );
+                return pods_error( sprintf(__("%s is reserved for internal WordPress usage, please try a different name", 'pods'), $params->name), $this );
 
             $sql = "SELECT `id` FROM `@wp_pods_fields` WHERE `pod_id` = {$params->pod_id} AND `name` = '{$params->name}' LIMIT 1";
             $result = pods_query( $sql, $this );
             if ( !empty( $result ) )
-				return pods_error( sprintf(__("Pod Column %s already exists", 'pods'), $params->name), $this );
+                return pods_error( sprintf(__("Pod Column %s already exists", 'pods'), $params->name), $this );
 
             if ( 'slug' == $params->type ) {
                 $sql = "SELECT `id` FROM `@wp_pods_fields` WHERE `pod_id` = {$params->pod_id} AND `type` = 'slug' LIMIT 1";
                 $result = pods_query( $sql, $this );
                 if ( !empty( $result ) )
-					return pods_error( __('This pod already has a permalink column', 'pods'), $this );
+                    return pods_error( __('This pod already has a permalink column', 'pods'), $this );
             }
 
             // Sink the new column to the bottom of the list
@@ -501,7 +501,7 @@ class PodsAPI {
 
             $field_id = pods_query( "INSERT INTO `@wp_pods_fields` (`pod_id`, `name`, `label`, `type`, `pick_object`, `pick_val`, `sister_field_id`, `weight`, `options`) VALUES ('{$params->pod_id}', '{$params->name}', '{$params->label}', '{$params->type}', '{$params->pick_object}', '{$params->pick_val}', {$params->sister_field_id}, {$params->weight}, '{$params->options}')", __('Cannot add new field', 'pods') );
             if ( empty( $field_id ) )
-				return pods_error( sprintf(__("Cannot add new field %s", 'pods'), $params->name), $this );
+                return pods_error( sprintf(__("Cannot add new field %s", 'pods'), $params->name), $this );
 
             if ( 'table' == $pod[ 'storage' ] && !in_array( $params->type, $tableless_field_types ) ) {
                 $dbtype = $this->get_field_definition( $params->type );
@@ -517,18 +517,18 @@ class PodsAPI {
         else {
             $params->id = pods_absint( $params->id );
             if ( 'id' == $params->name ) {
-				return pods_error( sprintf(__("%s is not editable", 'pods'), $params->name), $this );
+                return pods_error( sprintf(__("%s is not editable", 'pods'), $params->name), $this );
             }
 
             $sql = "SELECT `id` FROM `@wp_pods_fields` WHERE `pod_id` = {$params->pod_id} AND `id` != {$params->id} AND name = '{$params->name}' LIMIT 1";
             $check = pods_query( $sql, $this );
             if ( !empty( $check ) )
-				return pods_error( sprintf(__("Column %s already exists", 'pods'), $params->name), $this );
+                return pods_error( sprintf(__("Column %s already exists", 'pods'), $params->name), $this );
 
             $sql = "SELECT * FROM `@wp_pods_fields` WHERE `id` = {$params->id} LIMIT 1";
             $result = pods_query( $sql, $this );
             if ( empty( $result ) )
-				return pods_error( sprintf(__("Column %s not found, cannot edit", 'pods'), $params->name), $this );
+                return pods_error( sprintf(__("Column %s not found, cannot edit", 'pods'), $params->name), $this );
 
             $old_type = $result[ 0 ]->type;
             $old_name = $result[ 0 ]->name;
@@ -608,10 +608,10 @@ class PodsAPI {
         $params = (object) $params;
 
         if ( !isset( $params->name ) || empty( $params->name ) )
-			return pods_error( __('Name must be given to save an Object', 'pods'), $this );
+            return pods_error( __('Name must be given to save an Object', 'pods'), $this );
 
         if ( !isset( $params->type ) || empty( $params->type ) )
-			return pods_error( __('Type must be given to save an Object', 'pods'), $this );
+            return pods_error( __('Type must be given to save an Object', 'pods'), $this );
 
         if ( !isset( $params->options ) || empty( $params->options ) ) {
             $options = get_object_vars( $params );
@@ -826,7 +826,7 @@ class PodsAPI {
         if ( empty( $this->pod_data ) || ( $this->pod != $params->pod && $this->pod_id != $params->pod_id ) )
             $this->pod_data = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod ) );
         if ( false === $this->pod_data )
-			return pods_error( __('Pod not found', 'pods'), $this );
+            return pods_error( __('Pod not found', 'pods'), $this );
         $this->pod = $params->pod = $this->pod_data[ 'name' ];
         $this->pod_id = $params->pod_id = $this->pod_data[ 'id' ];
         $this->fields = $this->pod_data[ 'fields' ];
@@ -875,7 +875,7 @@ class PodsAPI {
                 }
 
                 if ( !empty( $pre_save_helpers ) ) {
-					pods_deprecated( sprintf(__('Pre-save helpers are deprecated, use the action pods_pre_save_pod_item_%s instead', 'pods'), $params->pod), '2.0.0' );
+                    pods_deprecated( sprintf(__('Pre-save helpers are deprecated, use the action pods_pre_save_pod_item_%s instead', 'pods'), $params->pod), '2.0.0' );
 
                     foreach ( $pre_save_helpers as $helper ) {
                         $helper = $this->load_helper( array( 'name' => $helper ) );
@@ -1012,7 +1012,7 @@ class PodsAPI {
             // Call any post-save helpers (if not bypassed)
             if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) {
                 if ( !empty( $post_save_helpers ) ) {
-					pods_deprecated( sprintf(__('Post-save helpers are deprecated, use the action pods_post_save_pod_item_%s instead', 'pods'), $params->pod), '2.0.0' );
+                    pods_deprecated( sprintf(__('Post-save helpers are deprecated, use the action pods_post_save_pod_item_%s instead', 'pods'), $params->pod), '2.0.0' );
 
                     foreach ( $post_save_helpers as $helper ) {
                         $helper = $this->load_helper( array( 'name' => $helper ) );
@@ -1161,7 +1161,7 @@ class PodsAPI {
 
         // @deprecated 2.0.0
         if ( isset( $params->datatype ) ) {
-			pods_deprecated( __('$params->pod instead of $params->datatype', 'pods'), '2.0.0');
+            pods_deprecated( __('$params->pod instead of $params->datatype', 'pods'), '2.0.0');
             $params->pod = $params->datatype;
             unset( $params->datatype );
         }
@@ -1332,12 +1332,12 @@ class PodsAPI {
         $object = $this->load_object( $params );
 
         if ( empty( $object ) )
-			return pods_error( sprintf(__("%s Object not found", 'pods'), ucwords($params->type)), $this );
+            return pods_error( sprintf(__("%s Object not found", 'pods'), ucwords($params->type)), $this );
 
         $result = pods_query( 'DELETE FROM `@wp_pods_objects` WHERE `id` = ' . (int) $object[ 'id' ] . " LIMIT 1", $this );
 
         if ( empty( $result ) )
-			return pods_error( sprintf(__("%s Object not deleted", 'pods'), ucwords($params->type)), $this );
+            return pods_error( sprintf(__("%s Object not deleted", 'pods'), ucwords($params->type)), $this );
 
         delete_transient( 'pods_object_' . $params->type );
         delete_transient( 'pods_object_' . $params->type . '_' . $params->name );
@@ -1416,22 +1416,22 @@ class PodsAPI {
         // @deprecated 2.0.0
         if ( isset( $params->datatype_id ) || isset( $params->datatype ) ) {
             if ( isset( $params->tbl_row_id ) ) {
-				pods_deprecated( __('$params->id instead of $params->tbl_row_id', 'pods'), '2.0.0');
+                pods_deprecated( __('$params->id instead of $params->tbl_row_id', 'pods'), '2.0.0');
                 $params->id = $params->tbl_row_id;
                 unset( $params->tbl_row_id );
             }
             if ( isset( $params->pod_id ) ) {
-				pods_deprecated( __('$params->id instead of $params->pod_id', 'pods'), '2.0.0');
+                pods_deprecated( __('$params->id instead of $params->pod_id', 'pods'), '2.0.0');
                 $params->id = $params->pod_id;
                 unset( $params->pod_id );
             }
             if ( isset( $params->dataype_id ) ) {
-				pods_deprecated( __('$params->pod_id instead of $params->datatype_id', 'pods'), '2.0.0');
+                pods_deprecated( __('$params->pod_id instead of $params->datatype_id', 'pods'), '2.0.0');
                 $params->pod_id = $params->dataype_id;
                 unset( $params->dataype_id );
             }
             if ( isset( $params->datatype ) ) {
-				pods_deprecated( __('$params->pod instead of $params->datatype', 'pods'), '2.0.0');
+                pods_deprecated( __('$params->pod instead of $params->datatype', 'pods'), '2.0.0');
                 $params->pod = $params->datatype;
                 unset( $params->datatype );
             }
@@ -1754,7 +1754,7 @@ class PodsAPI {
 
         $result = pods_query( "SELECT * FROM `@wp_pods_objects` WHERE $where AND `type` = '{$params->type}' LIMIT 1", $this );
         if ( empty( $result ) )
-			return pods_error( sprintf(__("%s Object not found", 'pods'), ucwords($params->type)), $this );
+            return pods_error( sprintf(__("%s Object not found", 'pods'), ucwords($params->type)), $this );
 
         $object = get_object_vars( $result[ 0 ] );
         if ( !empty( $object[ 'options' ] ) )
@@ -2158,7 +2158,7 @@ class PodsAPI {
                 // Trigger an error if not unique
                 $check = pods_query( "SELECT `id` FROM `@wp_pods_tbl_{$params->pod}` WHERE `{$field}` = '{$value}' {$exclude} LIMIT 1", $this );
                 if ( !empty( $check ) )
-					return pods_error( sprintf(__("%s needs to be unique", 'pods'), $label), $this );
+                    return pods_error( sprintf(__("%s needs to be unique", 'pods'), $label), $this );
             }
             else {
                 // handle rel check
@@ -2479,7 +2479,7 @@ class PodsAPI {
                 $pods_version = explode( '.', PODS_VERSION );
                 $pods_version = $pods_version[ 0 ] . '.' . $pods_version[ 1 ];
                 if ( version_compare( $pods_version, $compatible_from, '<' ) )
-					$warnings[ 'version' ] = sprintf(__('This package may only be compatible with the newer <strong>Pods %s</strong>, but you are currently running the older <strong>Pods %s</strong><br/>Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods.', 'pods'), $data['meta']['compatible_from'], PODS_VERSION);
+                    $warnings[ 'version' ] = sprintf(__('This package may only be compatible with the newer <strong>Pods %s</strong>, but you are currently running the older <strong>Pods %s</strong><br/>Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods.', 'pods'), $data['meta']['compatible_from'], PODS_VERSION);
             }
         }
         if ( isset( $data[ 'meta' ][ 'compatible_to' ] ) ) {
@@ -2492,7 +2492,7 @@ class PodsAPI {
                 $pods_version = explode( '.', PODS_VERSION );
                 $pods_version = $pods_version[ 0 ] . '.' . $pods_version[ 1 ];
                 if ( version_compare( $compatible_to, $pods_version, '<' ) )
-					$warnings[ 'version' ] = sprintf(__('This package may only be compatible with the older <strong>Pods %s</strong>, but you are currently running the newer <strong>Pods %s</strong><br />Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods', 'pods'), $data[ 'meta' ][ 'compatible_to' ], PODS_VERSION);
+                    $warnings[ 'version' ] = sprintf(__('This package may only be compatible with the older <strong>Pods %s</strong>, but you are currently running the newer <strong>Pods %s</strong><br />Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods', 'pods'), $data[ 'meta' ][ 'compatible_to' ], PODS_VERSION);
             }
         }
         if ( !isset( $data[ 'meta' ][ 'compatible_from' ] ) && !isset( $data[ 'meta' ][ 'compatible_to' ] ) ) {
@@ -2502,7 +2502,7 @@ class PodsAPI {
                 $pods_version = explode( '.', PODS_VERSION );
                 $pods_version = $pods_version[ 0 ] . '.' . $pods_version[ 1 ];
                 if ( version_compare( $pods_version, $compatible_from, '<' ) )
-					$warnings[ 'version' ] = sprintf(__('This package was built using the newer <strong>Pods %s</strong>, but you are currently running the older <strong>Pods</strong><br />Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods.', 'pods'), $data[ 'meta' ][ 'version' ], PODS_VERSION);
+                    $warnings[ 'version' ] = sprintf(__('This package was built using the newer <strong>Pods %s</strong>, but you are currently running the older <strong>Pods</strong><br />Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods.', 'pods'), $data[ 'meta' ][ 'version' ], PODS_VERSION);
             }
             elseif ( version_compare( $data[ 'meta' ][ 'version' ], PODS_VERSION, '<' ) ) {
                 $compatible_to = explode( '.', $data[ 'meta' ][ 'version' ] );
@@ -2510,7 +2510,7 @@ class PodsAPI {
                 $pods_version = explode( '.', PODS_VERSION );
                 $pods_version = $pods_version[ 0 ] . '.' . $pods_version[ 1 ];
                 if ( version_compare( $compatible_to, $pods_version, '<' ) )
-					$warnings[ 'version' ] = sprintf(__('This package was built using the older <strong>Pods %s</strong>, but you are currently running the newer <strong>Pods %s</strong><br/>Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods.', 'pods'), $data['meta']['version'], PODS_VERSION);
+                    $warnings[ 'version' ] = sprintf(__('This package was built using the older <strong>Pods %s</strong>, but you are currently running the newer <strong>Pods %s</strong><br/>Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods.', 'pods'), $data['meta']['version'], PODS_VERSION);
             }
         }
 

@@ -14,19 +14,19 @@
 
             <div id="poststuff" class="pods-wizard">
                 <img src="<?php echo PODS_URL; ?>/ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
-				<p><?php _e('Pods are content types that you can customize and define fields for based on your needs. You can choose to create a Custom Post Type, Custom Taxonomy, or a Custom Pod which operate completely seperate from normal WordPress Objects. You can also extend existing content types like WP Objects such as Post Types, Taxonomies, Users, or Comments', 'pods'); ?></p>
+                <p><?php _e('Pods are content types that you can customize and define fields for based on your needs. You can choose to create a Custom Post Type, Custom Taxonomy, or a Custom Pod which operate completely seperate from normal WordPress Objects. You can also extend existing content types like WP Objects such as Post Types, Taxonomies, Users, or Comments', 'pods'); ?></p>
                 <hr />
                 <div class="pods-manage-field pods-dependency">
                     <input type="hidden" name="create_extend" value="" class="pods-wizard-current-step" />
                     <div class="pods-wizard-step" id="pods-wizard-choose">
                         <p class="submit">
-							<a class="button-primary" href="#pods-wizard-create" title="Create a New Content Type"><?php _e( 'Create a New Content Type', 'pods' ); ?></a>
+                            <a class="button-primary" href="#pods-wizard-create" title="Create a New Content Type"><?php _e( 'Create a New Content Type', 'pods' ); ?></a>
                             &nbsp;&nbsp;&nbsp;
-							<a class="button-secondary" href="#pods-wizard-extend" title="Extend an Existing Content Type"><?php _e( 'Extend an Existing Content Type', 'pods' ); ?></a>
+                            <a class="button-secondary" href="#pods-wizard-extend" title="Extend an Existing Content Type"><?php _e( 'Extend an Existing Content Type', 'pods' ); ?></a>
                         </p>
                     </div>
                     <div class="pods-wizard-step" id="pods-wizard-create">
-						<h2><?php _e( 'Creating a New Content Type', 'pods' ); ?></h2>
+                        <h2><?php _e( 'Creating a New Content Type', 'pods' ); ?></h2>
                         <hr />
                         <div class="pods-field-option">
                             <?php echo PodsForm::label('create_pod_type', __('Content Type', 'pods'), __('help', 'pods')); ?>
@@ -36,7 +36,7 @@
                             <?php echo PodsForm::label('create_name', __('Name', 'pods'), __('help', 'pods')); ?>
                             <?php echo PodsForm::field('create_name', pods_var('create_name', 'post'), 'text', array('class' => 'pods-validate pods-validate-required')); ?>
                         </div>
-						<p><a href="#pods-advanced" class="pods-advanced-toggle"><?php _e('Advanced', 'pods'); ?></a></p>
+                        <p><a href="#pods-advanced" class="pods-advanced-toggle"><?php _e('Advanced', 'pods'); ?></a></p>
                         <div class="pods-advanced">
                             <div class="pods-field-option">
                                 <?php echo PodsForm::label('create_label_plural', __('Plural Label', 'pods'), __('help', 'pods')); ?>
@@ -55,11 +55,11 @@
                             <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
                             <button type="submit" class="button-primary"><?php _e('Continue'); ?></button>
                             &nbsp;&nbsp;&nbsp;
-							<a class="button-secondary" href="#pods-wizard-choose" title="Go Back"><?php _e('Go Back', 'pods'); ?></a>
+                            <a class="button-secondary" href="#pods-wizard-choose" title="Go Back"><?php _e('Go Back', 'pods'); ?></a>
                         </p>
                     </div>
                     <div class="pods-wizard-step" id="pods-wizard-extend">
-						<h2><?php _e('Extend an Existing Content Type', 'pods'); ?></h2>
+                        <h2><?php _e('Extend an Existing Content Type', 'pods'); ?></h2>
                         <hr />
                         <div class="pods-field-option">
                             <?php echo PodsForm::label('extend_pod_type', __('Content Type', 'pods'), __('help', 'pods')); ?>
@@ -110,7 +110,7 @@ foreach ($taxonomies as $taxonomy => $label) {
                             <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
                             <button type="submit" class="button-primary"><?php _e('Continue'); ?></button>
                             &nbsp;&nbsp;&nbsp;
-							<a class="button-secondary" href="#pods-wizard-choose" title="Go Back"><?php _e('Go Back', 'pods'); ?></a>
+                            <a class="button-secondary" href="#pods-wizard-choose" title="Go Back"><?php _e('Go Back', 'pods'); ?></a>
                         </p>
                     </div>
                 </div>

@@ -208,17 +208,17 @@
     <div class="wrap">
         <div>
             <div class="pods-header">
-                <h3 class="popup-header">Pods &raquo; Embed</h3>
+				<h3 class="popup-header"><?php _e('Pods &raquo; Embed', 'pods'); ?></h3>
             </div>
 
             <form id="pods_shortcode_form_element">
                 <div class="pods-select">
-                    <label for="pods-use-case-selector">What would you like to do?</label>
+					<label for="pods-use-case-selector"><?php _e('What would you like to do?', 'pods'); ?></label>
                     <select id="pods-use-case-selector">
                         <option value="">---</option>
-                        <option value="single">Display a single Pod item</option>
-                        <option value="list">List multiple Pod items</option>
-                        <option value="column">Display a column from a single Pod item</option>
+						<option value="single"><?php _e('Display a single Pod item', 'pods'); ?></option>
+						<option value="list"><?php _e('List multiple Pod items', 'pods'); ?></option>
+						<option value="column"><?php _e('Display a column from a single Pod item', 'pods'); ?></option>
                     </select>
                 </div>
                 <div class="pods-section hide">
@@ -239,7 +239,7 @@
                             <?php } ?>
                         </select>
                     <?php } else { ?>
-                        <strong class="red" id="pod_select">None Found</strong>
+						<strong class="red" id="pod_select"><?php _e('None Found', 'pods'); ?></strong>
                     <?php } ?>
                 </div>
                 <div class="pods-section hide">
@@ -260,37 +260,37 @@
                     </select>
                 </div>
                 <div class="pods-section hide">
-                    <label for="pod_template_custom"> Custom Template </label>
+					<label for="pod_template_custom"> <?php _e('Custom Template', 'pods'); ?> </label>
                     <textarea name="pod_template_custom" id="pod_template_custom" cols="10" rows="10" class="widefat"></textarea>
                 </div>
                 <div class="pods-section hide">
-                    <label for="pod_slug">ID or Slug</label> <input type="text" id="pod_slug" name="pod_slug" />
+					<label for="pod_slug"><?php _e('ID or Slug', 'pods'); ?></label> <input type="text" id="pod_slug" name="pod_slug" />
                 </div>
                 <div class="pods-section hide">
-                    <label for="pod_limit">Limit</label> <input type="text" id="pod_limit" name="pod_limit" />
+					<label for="pod_limit"><?php _e('Limit', 'pods'); ?></label> <input type="text" id="pod_limit" name="pod_limit" />
                 </div>
                 <div class="pods-section hide">
-                    <label for="pod_orderby">Order By</label> <select name="pod_orderby" id="pod_orderby"> </select>
+					<label for="pod_orderby"><?php _e('Order By', 'pods'); ?></label> <select name="pod_orderby" id="pod_orderby"> </select>
                 </div>
                 <div class="pods-section hide">
-                    <label for="pod_direction">Order Direction</label>
+					<label for="pod_direction"><?php _e('Order Direction', 'pods'); ?></label>
                     <select id="pod_direction" name="pod_direction">
                         <option value="ASC">
-                            Ascending
+							<?php _e('Ascending', 'pods'); ?>
                         </option>
                         <option value="DESC">
-                            Descending
+							<?php _e('Descending', 'pods'); ?>
                         </option>
                     </select>
                 </div>
                 <div class="pods-section hide">
-                    <label for="pod_where">Where</label> <input type="text" name="pod_where" id="pod_where" />
+					<label for="pod_where"><?php _e('Where', 'pods'); ?></label> <input type="text" name="pod_where" id="pod_where" />
                 </div>
                 <div class="pods-section hide">
-                    <label for="pod_column">Column</label> <select id="pod_column" name="pod_column"> </select>
+					<label for="pod_column"><?php _e('Column', 'pods'); ?></label> <select id="pod_column" name="pod_column"> </select>
                 </div>
                 <div class="pods-section hide">
-                    <label for="pod_columns">Columns (comma-separated)</label> <input type="text" id="pod_columns" name="pod_columns" />
+					<label for="pod_columns"><?php _e('Columns (comma-separated)', 'pods'); ?></label> <input type="text" id="pod_columns" name="pod_columns" />
                 </div>
                 <div class="pods-section hide">
                     <?php
@@ -299,9 +299,9 @@
                         ) );
                         $helper_count = count( $helpers );
                     ?>
-                    <label for="pod_helper">Helper</label>
+					<label for="pod_helper"><?php _e('Helper', 'pods'); ?></label>
                     <select id="pod_helper" name="pod_helper">
-                        <option value="">- Helper -</option>
+						<option value="">- <?php _e('Helper', 'pods'); ?> -</option>
                         <?php foreach ( $helpers as $helper => $data ) { ?>
                             <option value="<?php echo $helper; ?>">
                                 <?php echo $helper; ?>
@@ -310,7 +310,7 @@
                     </select>
                 </div>
                 <div class="pods-section hide" style="text-align: right;">
-                    <a class="button-primary" id="pods_insert_shortcode" href="#">Insert</a>
+					<a class="button-primary" id="pods_insert_shortcode" href="#"><?php _e('Insert', 'pods'); ?></a>
                 </div>
             </form>
         </div>

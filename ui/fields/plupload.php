@@ -52,7 +52,7 @@
                             }
                         ?></ul>
 
-						<a class="button pods-file-add plupload-add" id="<?php echo $css_id; ?>-upload" href=""><?php _e('Add File', 'pods'); ?></a>
+                        <a class="button pods-file-add plupload-add" id="<?php echo $css_id; ?>-upload" href=""><?php _e('Add File', 'pods'); ?></a>
 
                     <table class="plupload-queue">
                         <tbody>

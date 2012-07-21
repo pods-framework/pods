@@ -1099,7 +1099,7 @@ class PodsUI
         if (isset($this->actions_custom['header']) && is_callable($this->actions_custom['header']))
             return call_user_func($this->actions_custom['header'], $reorder, $this);
 
-        if (empty($this->data))
+        if ( false === $this->data )
             $this->get_data();
 
         if (!in_array('export', $this->actions_disabled) && 'export' == $this->action)
@@ -1312,7 +1312,7 @@ class PodsUI
             return call_user_func($this->actions_custom['table'], $reorder, $this);
         if (empty($this->data)) {
 ?>
-        <p>No items found</p>
+        <p><?php echo sprintf( __( 'No %s found', 'pods' ), $this->items ); ?></p>
 <?php
             return false;
         }

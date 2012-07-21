@@ -262,7 +262,7 @@ class PodsAdmin {
     public function media_button ( $context ) {
 		$current_page = basename( $_SERVER['PHP_SELF'] );
 
-		if ( $current_page == 'index.php' ) 
+		if ( $current_page == 'index.php' )
 			return $context;
 
         add_action( 'admin_footer', array( $this, 'mce_popup' ) );
@@ -277,22 +277,30 @@ class PodsAdmin {
     }
 
     public function admin_setup () {
+        $pods = pods_api()->load_pods();
+
         pods_ui( array(
+            'data' => $pods,
+            'total' => count( $pods ),
+            'total_found' => count( $pods ),
             'sql' => array(
-                'table' => '@wp_pods',
-                'select' => 'name, type'
+                'field_id' => 'ID',
+                'field_index' => 'post_title'
             ),
             'icon' => PODS_URL . 'ui/images/icon32.png',
             'items' => 'Pods',
             'item' => 'Pod',
-            'orderby' => 'name',
-            'fields' => array( 'manage' => array( 'name', 'type' ) ),
+            'fields' => array( 'manage' => array( 'post_title' => 'Label', 'post_name' => 'Name', 'type' => 'Type' ) ),
             'actions_disabled' => array( 'duplicate', 'view', 'export' ),
             'actions_custom' => array(
                 'add' => array( $this, 'admin_setup_add' ),
                 'edit' => array( $this, 'admin_setup_edit' ),
                 'delete' => array( $this, 'admin_setup_delete' )
-            )
+            ),
+            'search' => false,
+            'searchable' => false,
+            'sortable' => false,
+            'pagination' => false
         ) );
     }
 

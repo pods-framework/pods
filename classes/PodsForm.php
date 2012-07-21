@@ -282,7 +282,7 @@ class PodsForm {
      *
      * @since 2.0.0
      */
-    public static function option_setup ( $options = null, $core_defaults = null ) {
+    public static function option_setup ( $options = null, $core_defaults = null, $single = false ) {
         if ( null === $core_defaults ) {
             $core_defaults = array(
                 'label' => '',
@@ -300,6 +300,9 @@ class PodsForm {
             );
         }
 
+        if ( $single )
+            $options = array( $options );
+
         foreach ( $options as $option => &$defaults ) {
             if ( !is_array( $defaults ) )
                 $defaults = array( 'default' => $defaults );
@@ -311,6 +314,9 @@ class PodsForm {
 
             $defaults = array_merge( $core_defaults, $defaults );
         }
+
+        if ( $single )
+            $options = $options[ 0 ];
 
         return $options;
     }

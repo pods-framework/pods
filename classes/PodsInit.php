@@ -112,7 +112,7 @@ class PodsInit
             'capability_type' => 'pods_pod',
             'has_archive' => false,
             'hierarchical' => false,
-            'supports' => array( 'title', 'author' )
+            'supports' => array( 'title', 'content', 'author' )
         );
         register_post_type( '_pods_pod', $args );
 
@@ -122,7 +122,7 @@ class PodsInit
             'rewrite' => false,
             'capability_type' => 'pods_pod',
             'has_archive' => false,
-            'hierarchical' => false,
+            'hierarchical' => true,
             'supports' => array( 'title', 'content', 'author' )
         );
         register_post_type( '_pods_field', $args );
@@ -131,34 +131,34 @@ class PodsInit
             'public' => false,
             'query_var' => false,
             'rewrite' => false,
-            'capability_type' => 'pods_template',
+            'capability_type' => 'pods_object_template',
             'has_archive' => false,
             'hierarchical' => false,
             'supports' => array( 'title', 'content', 'author' )
         );
-        register_post_type( '_pods_template', $args );
+        register_post_type( '_pods_object_template', $args );
 
         $args = array(
             'public' => false,
             'query_var' => false,
             'rewrite' => false,
-            'capability_type' => 'pods_page',
+            'capability_type' => 'pods_object_page',
             'has_archive' => false,
             'hierarchical' => false,
             'supports' => array( 'title', 'content', 'author' )
         );
-        register_post_type( '_pods_page', $args );
+        register_post_type( '_pods_object_page', $args );
 
         $args = array(
             'public' => false,
             'query_var' => false,
             'rewrite' => false,
-            'capability_type' => 'pods_helper',
+            'capability_type' => 'pods_object_helper',
             'has_archive' => false,
             'hierarchical' => false,
             'supports' => array( 'title', 'content', 'author' )
         );
-        register_post_type( '_pods_helper', $args );
+        register_post_type( '_pods_object_helper', $args );
     }
 
     function admin_init () {

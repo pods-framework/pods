@@ -1453,22 +1453,17 @@ class PodsAPI {
         $params = (object) pods_sanitize( $params );
 
         $pod = $this->load_pod( $params );
+
         if ( false === $pod )
             return pods_error( __( 'Pod not found', 'pods' ), $this );
 
         $params->id = $pod[ 'id' ];
         $params->name = $pod[ 'name' ];
 
-        $field_ids = array();
-        foreach ( $pod[ 'fields' ] as $field ) {
-            $field_ids[] = $field[ 'id' ];
-        }
-        if ( !empty( $field_ids ) )
-            pods_query( "UPDATE `@wp_pods_fields` SET `sister_field_id` = NULL WHERE `sister_field_id` IN (" . implode( ',', $field_ids ) . ")" );
-
         if ( 'storage' == $pod[ 'type' ] ) {
             pods_query( "TRUNCATE `@wp_pods_tbl_{$params->name}`" );
         }
+
         pods_query( "DELETE FROM `@wp_pods_rel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}" );
 
         wp_cache_flush(); // only way to reliably clear out cached data across an entire group
@@ -1815,12 +1810,22 @@ class PodsAPI {
      */
     public function pod_exists ( $params ) {
         $params = (object) pods_sanitize( $params );
+
         if ( !empty( $params->id ) || !empty( $params->name ) ) {
-            $where = empty( $params->id ) ? "name = '{$params->name}'" : "id = {$params->id}";
-            $result = pods_query( "SELECT id FROM @wp_pods WHERE {$where} LIMIT 1" );
-            if ( !empty( $result ) )
+            if ( !isset( $params->name ) )
+                $pod = get_post( $dummy = (int) $params->id );
+            else {
+                $pod = get_posts( array(
+                    'name' => $params->name,
+                    'post_type' => '_pods_pod',
+                    'posts_per_page' => 1
+                ) );
+            }
+
+            if ( !empty( $pod ) )
                 return true;
         }
+
         return false;
     }
 
@@ -2063,6 +2068,39 @@ class PodsAPI {
     }
 
     /**
+     * Check if a Pod's field exists
+     *
+     * $params['pod_id'] int The Pod ID
+     * $params['id'] int The field ID
+     * $params['name'] string The field name
+     *
+     * @param array $params An associative array of parameters
+     *
+     * @since 1.12
+     */
+    public function field_exists ( $params ) {
+        $params = (object) pods_sanitize( $params );
+
+        if ( ( !empty( $params->id ) || !empty( $params->name ) ) && isset( $params->pod_id ) && !empty( $params->pod_id ) ) {
+            if ( !isset( $params->name ) )
+                $field = get_post( $dummy = (int) $params->id );
+            else {
+                $field = get_posts( array(
+                    'name' => $params->name,
+                    'post_type' => '_pods_field',
+                    'posts_per_page' => 1,
+                    'post_parent' => $params->pod_id
+                ) );
+            }
+
+            if ( !empty( $field ) )
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Load a field
      *
      * $params['pod_id'] int The Pod ID
@@ -2086,7 +2124,7 @@ class PodsAPI {
 
             $field = get_posts( array(
                 'name' => $params->name,
-                'post_type' => '_pods_pod',
+                'post_type' => '_pods_field',
                 'posts_per_page' => 1,
                 'post_parent' => $params->pod_id
             ) );

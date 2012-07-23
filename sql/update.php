@@ -227,7 +227,7 @@ if (version_compare($pods_version, '2.0.0', '<')) {
 		$pod_ids = migrate_pods();
 	}
 
-} elseif (version_compare($pods_version, '2.0.1', '<')) {
+} elseif (version_compare($pods_version, '2.0.0', '>') && pods_alpha_table_exists("@wp_pods")) {
 
 	if ( $_GET[ 'pods_upgrade_test' ] == 1 ) {
 		$pages = pods_alpha_migrate_pages();

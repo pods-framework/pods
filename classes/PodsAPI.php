@@ -307,25 +307,15 @@ class PodsAPI {
                 'label' => ( !empty( $params->create_label_plural ) ? $params->create_label_plural : ucwords( str_replace( '_', ' ', $params->create_name ) ) ),
                 'type' => $params->create_pod_type,
                 'storage' => 'table',
-                'options' => array()
+                'options' => array(
+                    'label_singular' => ( !empty( $params->create_label_singular ) ? $params->create_label_singular : ucwords( str_replace( '_', ' ', $params->create_name ) ) ),
+                    'public' => 1,
+                    'show_ui' => 1
+                )
             );
 
-            if ( 'post_type' == $pod_params[ 'type' ] ) {
+            if ( 'post_type' == $pod_params[ 'type' ] )
                 $pod_params[ 'storage' ] = $params->create_storage;
-                $pod_params[ 'options' ][ 'cpt_singular_label' ] = ( !empty( $params->create_label_singular ) ? $params->create_label_singular : ucwords( str_replace( '_', ' ', $params->create_name ) ) );
-                $pod_params[ 'options' ][ 'cpt_public' ] = 1;
-                $pod_params[ 'options' ][ 'cpt_show_ui' ] = 1;
-            }
-            elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
-                $pod_params[ 'options' ][ 'ct_singular_label' ] = ( !empty( $params->create_label_singular ) ? $params->create_label_singular : ucwords( str_replace( '_', ' ', $params->create_name ) ) );
-                $pod_params[ 'options' ][ 'ct_public' ] = 1;
-                $pod_params[ 'options' ][ 'ct_show_ui' ] = 1;
-            }
-            elseif ( 'pod' == $pod_params[ 'type' ] ) {
-                $pod_params[ 'options' ][ 'singular_label' ] = ( !empty( $params->create_label_singular ) ? $params->create_label_singular : ucwords( str_replace( '_', ' ', $params->create_name ) ) );
-                $pod_params[ 'options' ][ 'public' ] = 1;
-                $pod_params[ 'options' ][ 'show_ui' ] = 1;
-            }
         }
         elseif ( 'extend' == $params->create_extend ) {
             $pod_params = array(
@@ -1476,7 +1466,7 @@ class PodsAPI {
         if ( !empty( $field_ids ) )
             pods_query( "UPDATE `@wp_pods_fields` SET `sister_field_id` = NULL WHERE `sister_field_id` IN (" . implode( ',', $field_ids ) . ")" );
 
-        if ( 'pod' == $pod[ 'type' ] ) {
+        if ( 'storage' == $pod[ 'type' ] ) {
             pods_query( "TRUNCATE `@wp_pods_tbl_{$params->name}`" );
         }
         pods_query( "DELETE FROM `@wp_pods_rel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}" );
@@ -1520,7 +1510,7 @@ class PodsAPI {
             $this->delete_field( $field, false );
         }
 
-        if ( 'pod' == $pod[ 'type' ] || 'table' == $pod[ 'storage' ] ) {
+        if ( 'table' == $pod[ 'storage' ] ) {
             try {
                 pods_query( "DROP TABLE `@wp_pods_tbl_{$params->name}`", false );
             } catch ( Exception $e ) {
@@ -1786,7 +1776,7 @@ class PodsAPI {
             }
         }
 
-        if ( 'pod' == $pod[ 'type' ] )
+        if ( 'storage' == $pod[ 'type' ] )
             pods_query( "DELETE FROM `@wp_pods_tbl_{$params->datatype}` WHERE `id` = {$params->id} LIMIT 1" );
 
         pods_query( "DELETE FROM `@wp_pods_rel` WHERE (`pod_id` = {$params->pod_id} AND `item_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_item_id` = {$params->id})" );

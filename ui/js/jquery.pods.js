@@ -102,8 +102,13 @@
                             pods_admin_submit_error_callback(d.replace('<e>', '').replace('</e>', ''));
                         else if ( 'undefined' != typeof $submitbutton.data('error-location') )
                             document.location.href = $submitbutton.data('error-location');
-                        else
+                        else {
                             alert('Error: ' + d.replace('<e>', '').replace('</e>', ''));
+
+                            $submitbutton.css( 'cursor', 'pointer' );
+                            $submitbutton.prop( 'disabled', false );
+                            $submitbutton.parent().find( '.waiting' ).fadeOut();
+                        }
                     },
                     error: function () {
                         $submitbutton.css('cursor', 'pointer');
@@ -155,8 +160,9 @@
                             pods_admin_submit_error_callback(d.replace('<e>', '').replace('</e>', ''));
                         else if ( 'undefined' != typeof $el.data('error-location') )
                             document.location.href = $el.data('error-location');
-                        else
-                            alert('Error: ' + d.replace('<e>', '').replace('</e>', ''));
+                        else {
+                            alert( 'Error: ' + d.replace( '<e>', '' ).replace( '</e>', '' ) );
+                        }
                     },
                     error: function () {
                         alert('Unable to process request, please try again.');

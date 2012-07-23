@@ -1043,6 +1043,9 @@ class PodsUI
     }
 
     public function get_data () {
+        if ( !empty( $this->data ) )
+            return $this->data;
+
         $this->pods_data->select(array('table' => $this->sql['table'],
                                        'page' => (int) $this->page,
                                        'limit' => (int) $this->limit,
@@ -1056,6 +1059,9 @@ class PodsUI
     }
 
     public function get_row () {
+        if ( !empty( $this->data ) && count( $this->data ) == $this->total_found && isset( $this->data[ $this->id ] ) )
+            return $this->data[ $this->id ];
+
         $this->pods_data->select(array('table' => $this->sql['table'],
                                        'where' => '`' . $this->sql['field_id'] . '` = ' . (int) $this->id,
                                        'orderby' => '`' . $this->orderby . '` ' .$this->orderby_dir,

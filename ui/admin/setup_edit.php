@@ -124,19 +124,10 @@ $pick_object = array('' => '-- Select --',
                      'Other WP Objects' => array('user' => 'Users',
                                                  'comment' => 'Comments'));
 
-$_pods = (array) $this->data->select(array('table' => '@wp_pods',
-                                           'where' => '`type` = "pod"',
-                                           'orderby' => '`name`',
-                                           'limit' => -1,
-                                           'search' => false,
-                                           'pagination' => false));
+$_pods = pods_api()->load_pods();
+
 foreach ($_pods as $pod) {
-    if (!empty($pod->options))
-        $pod->options = (object) json_decode($pod->options);
-    $label = $pod->name;
-    if ('' != pods_var('label', $pod->options, ''))
-        $label = pods_var('label', $pod->options, '');
-    $pick_object['Pods']['pod-' . $pod->name] = $label;
+    $pick_object['Pods'][ 'pod-' . $pod[ 'name' ] ] = $pod[ 'label' ] . ' (' . $pod[ 'name' ] . ')';
 }
 
 $post_types = get_post_types();
@@ -164,8 +155,8 @@ $field_settings = array('field_types' => $field_types,
                         'sister_field_id' => array('' => '-- Select --'),
                         'input_helper' => array('' => '-- Select --'));
 
-$pod = $this->api->load_pod((isset($obj->row['name']) ? $obj->row['name'] : false));
-$pod['options'] = (array) $pod['options'];
+$pod = $_pods[ $obj->id ];
+
 foreach ($pod['options'] as $_option => $_value) {
     $pod[$_option] = $_value;
 }
@@ -330,13 +321,15 @@ if ('post_type' == pods_var('type', $pod)) {
 	            'label' => __( 'Label', 'pods' ),
 	            'help' => __( 'help', 'pods' ),
 	            'type' => 'text',
-	            'default' => ucwords( str_replace( '_', ' ', pods_var( 'name', $pod ) ) )
+	            'default' => pods_var( 'label', $pod, ucwords( str_replace( '_', ' ', pods_var( 'name', $pod ) ) ) ),
+	            'value' => pods_var( 'label', $pod, ucwords( str_replace( '_', ' ', pods_var( 'name', $pod ) ) ) )
 	        ),
 	        'cpt_singular_label' => array(
 	            'label' => __( 'Singular Label', 'pods' ),
 	            'help' => __( 'help', 'pods' ),
 	            'type' => 'text',
-	            'default' => pods_var( 'cpt_label', $pod, ucwords( str_replace( '_', ' ', pods_var( 'name', $pod ) ) ) )
+	            'default' => pods_var( 'label', $pod, ucwords( str_replace( '_', ' ', pods_var( 'name', $pod ) ) ) ),
+	            'value' => pods_var( 'label', $pod, ucwords( str_replace( '_', ' ', pods_var( 'name', $pod ) ) ) )
 	        ),
 	        'cpt_add_new' => array(
 	            'label' => __( 'Add New', 'pods' ),
@@ -410,7 +403,8 @@ if ('post_type' == pods_var('type', $pod)) {
                 'label' => __( 'Post Type Description', 'pods' ),
                 'help' => __( 'A short descriptive summary of what the post type is.', 'pods' ),
                 'type' => 'text',
-                'default' => ''
+                'default' => pods_var( 'description', $pod, '' ),
+                'value' => pods_var( 'description', $pod, '' )
             ),
             'cpt_public' => array(
                 'label' => __( 'Public', 'pods' ),
@@ -666,7 +660,7 @@ elseif ('taxonomy' == pods_var('type', $pod)) {
                                         <div id="pods-advanced-taxonomy-labels" class="pods-tab">
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('ct_label', __('Label', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('ct_label', pods_var('ct_label', $pod, ucwords(str_replace('_', ' ', pods_var('name', $pod)))), 'text'); ?>
+                                                <?php echo PodsForm::field('ct_label', pods_var('label', $pod, ucwords(str_replace('_', ' ', pods_var('name', $pod)))), 'text'); ?>
                                             </div>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('ct_singular_label', __('Singular Label', 'pods'), __('help', 'pods')); ?>

@@ -53,9 +53,17 @@
 
                         if ( !isset( $advanced_options ) )
                             $row_name = 'field_data[' . $i . '][' . $field_group_name . ']';
+
+                        $value = $field_group_option[ 'default' ];
+
+                        if ( isset( $field_group_option[ 'value' ] ) && 0 < strlen( $field_group_option[ 'value' ] ) )
+                            $value = $field_group_option[ 'value' ];
+
+                        $value = pods_var( $field_group_name, $field, $value );
+
                 ?>
                     <div class="pods-field-option-group-value <?php echo $depends_option; ?>">
-                        <?php echo PodsForm::field( $row_name, pods_var( $field_group_name, $field, $field_group_option[ 'default' ] ), $field_group_option[ 'type' ], $field_group_option ); ?>
+                        <?php echo PodsForm::field( $row_name, $value, $field_group_option[ 'type' ], $field_group_option ); ?>
                     </div>
                 <?php
                     }

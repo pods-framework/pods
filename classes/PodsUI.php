@@ -1437,8 +1437,8 @@ class PodsUI
 ?>
         <tbody id="the-list"<?php echo (true === $reorder && !in_array('reorder', $this->actions_disabled) && false !== $this->reorder['on']) ? ' class="reorderable"' : ''; ?>>
 <?php
-        if (!empty($this->data)) {
-            foreach ($this->data as $row) {
+        if (!empty($this->data) && is_array( $this->data ) ) {
+            foreach ( $this->data as $row ) {
                 if (is_object($row))
                     $row = get_object_vars($row);
 
@@ -1461,6 +1461,7 @@ class PodsUI
                 foreach ($fields as $field => $attributes) {
                     if (false === $attributes['display'])
                         continue;
+
                     if (!isset($row[$field]))
                         $row[$field] = null;
                     if (false !== $attributes['custom_display'] && is_callable($attributes['custom_display']))

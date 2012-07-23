@@ -283,14 +283,10 @@ class PodsAdmin {
             'data' => $pods,
             'total' => count( $pods ),
             'total_found' => count( $pods ),
-            'sql' => array(
-                'field_id' => 'ID',
-                'field_index' => 'post_title'
-            ),
             'icon' => PODS_URL . 'ui/images/icon32.png',
             'items' => 'Pods',
             'item' => 'Pod',
-            'fields' => array( 'manage' => array( 'post_title' => 'Label', 'post_name' => 'Name', 'type' => 'Type' ) ),
+            'fields' => array( 'manage' => array( 'label', 'name', 'type', 'storage' ) ),
             'actions_disabled' => array( 'duplicate', 'view', 'export' ),
             'actions_custom' => array(
                 'add' => array( $this, 'admin_setup_add' ),
@@ -313,8 +309,16 @@ class PodsAdmin {
     }
 
     public function admin_setup_delete ( $id, $obj ) {
+        $pod = $this->api->load_pod ( array( 'id' => $id ) );
+
+        if ( empty( $pod ) )
+            return $obj->error( __( 'Pod not found.', 'pods' ) );
+
         $this->api->delete_pod( array( 'id' => $id ) );
-        $obj->message( 'Pod deleted successfully.' );
+
+        unset( $obj->data[ $pod[ 'name' ] ] );
+
+        $obj->message( __( 'Pod deleted successfully.', 'pods' ) );
     }
 
     public function admin_advanced () {

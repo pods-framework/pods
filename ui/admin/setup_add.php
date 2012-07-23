@@ -122,10 +122,33 @@ foreach ($taxonomies as $taxonomy => $label) {
     jQuery( function ( $ ) {
         $( document ).Pods( 'validate' );
         $( document ).Pods( 'submit' );
-        $( document ).Pods( 'wizard' );
+        //$( document ).Pods( 'wizard' );
         $( document ).Pods( 'dependency' );
         $( document ).Pods( 'advanced' );
         $( document ).Pods( 'confirm' );
+
+        $( '.pods-wizard .pods-wizard-step' ).on( 'click', 'a.button-primary, a.button-secondary', function ( e ) {
+            $( this ).css( 'cursor', 'default' );
+            $( this ).prop( 'disabled', true );
+
+            var $wizard = $( this ).closest( '.pods-wizard' );
+
+            var wizard_hash = this.hash;
+            if ( null === wizard_hash || '' == wizard_hash )
+                return true;
+
+            $wizard.find( '.pods-wizard-step' ).not( wizard_hash ).slideUp( 400, function () {
+                $wizard.find( '.pods-wizard-step' ).filter( wizard_hash ).slideDown();
+                $wizard.find( 'input.pods-wizard-current-step' ).val( wizard_hash.replace( /\#pods\-wizard\-/gi, '' ) );
+            } );
+
+            $( this ).css( 'cursor', 'pointer' );
+            $( this ).prop( 'disabled', false );
+
+            e.preventDefault();
+        } );
+        $( '.pods-wizard .pods-wizard-step' ).hide();
+        $( '.pods-wizard .pods-wizard-step:first' ).show();
     } );
 
     pods_admin_submit_callback = function ( id ) {

@@ -64,7 +64,7 @@ class PodsAPI {
     }
 
     /**
-     * Save a post meta
+     * Save a post's meta
      *
      * @param $id array Post ID
      * @param $post_meta array All meta to be saved (set value to null to delete)
@@ -298,26 +298,25 @@ class PodsAPI {
                 return pods_error( 'Please enter a Name for this Pod', $this );
 
             $pod_params = array(
-                'post_name' => $params->create_name,
-                'post_title' => ( !empty( $params->create_label_plural ) ? $params->create_label_plural : ucwords( str_replace( '_', ' ', $params->create_name ) ) ),
-                'options' => array(
-                    'type' => $params->create_pod_type,
-                    'storage' => 'table',
-                )
+                'name' => $params->create_name,
+                'label' => ( !empty( $params->create_label_plural ) ? $params->create_label_plural : ucwords( str_replace( '_', ' ', $params->create_name ) ) ),
+                'type' => $params->create_pod_type,
+                'storage' => 'table',
+                'options' => array()
             );
 
-            if ( 'post_type' == $pod_params[ 'options' ][ 'type' ] ) {
+            if ( 'post_type' == $pod_params[ 'type' ] ) {
                 $pod_params[ 'storage' ] = $params->create_storage;
                 $pod_params[ 'options' ][ 'cpt_singular_label' ] = ( !empty( $params->create_label_singular ) ? $params->create_label_singular : ucwords( str_replace( '_', ' ', $params->create_name ) ) );
                 $pod_params[ 'options' ][ 'cpt_public' ] = 1;
                 $pod_params[ 'options' ][ 'cpt_show_ui' ] = 1;
             }
-            elseif ( 'taxonomy' == $pod_params[ 'options' ][ 'type' ] ) {
+            elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
                 $pod_params[ 'options' ][ 'ct_singular_label' ] = ( !empty( $params->create_label_singular ) ? $params->create_label_singular : ucwords( str_replace( '_', ' ', $params->create_name ) ) );
                 $pod_params[ 'options' ][ 'ct_public' ] = 1;
                 $pod_params[ 'options' ][ 'ct_show_ui' ] = 1;
             }
-            elseif ( 'pod' == $pod_params[ 'options' ][ 'type' ] ) {
+            elseif ( 'pod' == $pod_params[ 'type' ] ) {
                 $pod_params[ 'options' ][ 'singular_label' ] = ( !empty( $params->create_label_singular ) ? $params->create_label_singular : ucwords( str_replace( '_', ' ', $params->create_name ) ) );
                 $pod_params[ 'options' ][ 'public' ] = 1;
                 $pod_params[ 'options' ][ 'show_ui' ] = 1;
@@ -325,24 +324,23 @@ class PodsAPI {
         }
         elseif ( 'extend' == $params->create_extend ) {
             $pod_params = array(
-                'options' => array(
-                    'storage' => 'table',
-                )
+                'storage' => 'table',
+                'options' => array()
             );
 
             if ( 'post_type' == $pod_params[ 'type' ] ) {
                 $pod_params[ 'storage' ] = $params->extend_storage;
-                $pod_params[ 'post_name' ] = $params->extend_post_type;
+                $pod_params[ 'name' ] = $params->extend_post_type;
             }
             elseif ( 'taxonomy' == $pod_params[ 'type' ] )
-                $pod_params[ 'post_name' ] = $params->extend_taxonomy;
+                $pod_params[ 'name' ] = $params->extend_taxonomy;
             else {
                 $pod_params[ 'storage' ] = $params->extend_storage;
-                $pod_params[ 'post_name' ] = $params->extend_pod_type;
+                $pod_params[ 'name' ] = $params->extend_pod_type;
             }
 
-            $pod_params[ 'post_title' ] = ucwords( str_replace( '_', ' ', $pod_params[ 'post_name' ] ) );
-            $pod_params[ 'options' ][ 'object' ] = $pod_params[ 'options' ][ 'type' ] = $pod_params[ 'post_name' ];
+            $pod_params[ 'label' ] = ucwords( str_replace( '_', ' ', $pod_params[ 'name' ] ) );
+            $pod_params[ 'options' ][ 'object' ] = $pod_params[ 'type' ] = $pod_params[ 'name' ];
         }
 
         if ( !empty( $pod_params ) )
@@ -394,7 +392,7 @@ class PodsAPI {
                 return pods_error( sprintf( __( 'Pod %s already exists, you cannot rename %s to that', 'pods' ), $params->name, $old_name ), $this );
 
             if ( $old_id != $params->id ) {
-                if ( $params->type == $pod[ 'options' ][ 'type' ] && isset( $params->object ) && $params->object == $pod[ 'options' ][ 'object' ] )
+                if ( $params->type == $pod[ 'type' ] && isset( $params->object ) && $params->object == $pod[ 'options' ][ 'object' ] )
                     return pods_error( sprintf( __( 'Pod using %s already exists, you can not reuse an object across multiple pods', 'pods' ), $params->object ), $this );
                 else
                     return pods_error( sprintf( __( 'Pod %s already exists', 'pods' ), $params->name ), $this );
@@ -405,10 +403,9 @@ class PodsAPI {
                 'name' => $params->name,
                 'label' => $params->name,
                 'description' => '',
-                'options' => array(
-                    'type' => 'pod',
-                    'storage' => 'table'
-                ),
+                'type' => 'pod',
+                'storage' => 'table',
+                'options' => array(),
                 'fields' => array()
             );
         }
@@ -421,6 +418,8 @@ class PodsAPI {
             'name',
             'label',
             'description',
+            'type',
+            'storage',
             'options',
             'fields'
         );
@@ -1431,21 +1430,31 @@ class PodsAPI {
      * @since 1.7.9
      */
     public function delete_pod ( $params ) {
+        global $wpdb;
+
         $params = (object) pods_sanitize( $params );
 
         $pod = $this->load_pod( $params );
+
         if ( false === $pod )
             return pods_error( __( 'Pod not found', 'pods' ), $this );
 
-        $params->id = $pod[ 'id' ];
+        $params->id = (int) $pod[ 'id' ];
         $params->name = $pod[ 'name' ];
 
-        $field_ids = array();
+        $success = wp_delete_post( $params->id );
+
+        if ( !$success )
+            return pods_error( __( 'Pod unable to be deleted', 'pods' ), $this );
+
         foreach ( $pod[ 'fields' ] as $field ) {
-            $field_ids[] = $field[ 'id' ];
+            $wpdb->query( $wpdb->prepare( "DELETE pm FROM {$wpdb->postmeta} AS pm
+            LEFT JOIN {$wpdb->posts} AS p
+                ON p.post_type = '_pods_field' AND p.ID = pm.post_id
+            WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_field_id' AND pm.meta_value = %d", $field[ 'id' ] ) );
+
+            wp_delete_post( $field[ 'id' ] );
         }
-        if ( !empty( $field_ids ) )
-            pods_query( "UPDATE `@wp_pods_fields` SET `sister_field_id` = NULL WHERE `sister_field_id` IN (" . implode( ',', $field_ids ) . ")" );
 
         if ( 'pod' == $pod[ 'type' ] || 'table' == $pod[ 'storage' ] ) {
             try {
@@ -1456,12 +1465,17 @@ class PodsAPI {
                     die( $e->getMessage() );
             }
 
-            pods_query( "UPDATE `@wp_pods_fields` SET `pick_val` = '' WHERE `pick_object` = 'pod' AND `pick_val` = '{$params->name}'" );
+            $wpdb->query( "DELETE pm FROM {$wpdb->postmeta} AS pm
+                LEFT JOIN {$wpdb->posts} AS p
+                    ON p.post_type = '_pods_field' AND p.ID = pm.post_id
+                LEFT JOIN {$wpdb->postmeta} AS pm2
+                    ON pm2.meta_key = 'pick_object' AND pm2.meta_value = 'pod' AND pm2.post_id = pm.post_id
+                WHERE
+                    p.ID IS NOT NULL AND pm2.ID IS NOT NULL
+                    AND pm.meta_key = 'pick_val' AND pm.meta_value = '{$params->name}'" );
         }
 
         pods_query( "DELETE FROM `@wp_pods_rel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}" );
-        pods_query( "DELETE FROM `@wp_pods_fields` WHERE `pod_id` = {$params->id}" );
-        pods_query( "DELETE FROM `@wp_pods` WHERE `id` = {$params->id} LIMIT 1" );
 
         $this->cache_flush_pods( $pod );
 
@@ -1773,24 +1787,31 @@ class PodsAPI {
                     return $pod;
             }
 
-            $pod = get_posts( array(
-                'name' => $params->name,
-                'post_type' => '_pods_pod',
-                'posts_per_page' => 1
-            ) );
+            if ( !isset( $params->name ) )
+                $pod = get_post( $dummy = (int) $params->id );
+            else {
+                $pod = get_posts( array(
+                    'name' => $params->name,
+                    'post_type' => '_pods_pod',
+                    'posts_per_page' => 1
+                ) );
+            }
 
-            if ( empty( $pod) ) {
+            if ( empty( $pod ) ) {
                 if ( $strict )
                     return pods_error( __( 'Pod not found', 'pods' ), $this );
 
                 return false;
             }
 
-            $_pod = get_object_vars( $pod[ 0 ] );
+            if ( is_array( $pod ) )
+                $pod = $pod[ 0 ];
+
+            $_pod = get_object_vars( $pod );
         }
 
         $pod = array(
-            'id' => $_pod[ 'id' ],
+            'id' => $_pod[ 'ID' ],
             'name' => $_pod[ 'post_name' ],
             'label' => $_pod[ 'post_title' ],
             'description' => $_pod[ 'post_content' ]
@@ -1816,7 +1837,6 @@ class PodsAPI {
         $pod[ 'fields' ] = array();
 
         $fields = get_posts( array(
-            'name' => $params->name,
             'post_type' => '_pods_pod',
             'posts_per_page' => 1,
             'post_parent' => $pod[ 'id' ],
@@ -2116,7 +2136,7 @@ class PodsAPI {
 
                 sort( $value );
 
-                $meta_query[ ] = array(
+                $meta_query[] = array(
                     'key' => $option,
                     'value' => pods_sanitize( $value ),
                     'compare' => 'IN'

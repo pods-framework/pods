@@ -502,7 +502,7 @@ class PodsAPI {
 
             foreach ( $pod[ 'fields' ] as $field ) {
                 if ( !in_array( $field[ 'type' ], array( 'pick', 'file' ) ) )
-                    $definitions[ ] = "`{$field['name']}` " . $this->get_field_definition( $field[ 'type' ] );
+                    $definitions[] = "`{$field['name']}` " . $this->get_field_definition( $field[ 'type' ] );
             }
 
             $result = pods_query( "CREATE TABLE `@wp_pods_tbl_{$params->name}` (" . implode( ', ', $definitions ) . ") DEFAULT CHARSET utf8", $this );
@@ -549,6 +549,7 @@ class PodsAPI {
                     ) );
                 }
             }
+        }
 
         $this->cache_flush_pods( $pod );
 

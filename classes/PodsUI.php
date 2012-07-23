@@ -1153,7 +1153,7 @@ class PodsUI
 ?>
             <label for="admin_ui_filter_<?php echo $filter; ?>"><?php echo $this->fields['search'][$filter]['filter_label']; ?>:</label>
             <select name="filter_<?php echo $filter; ?><?php echo (false !== $this->fields['search'][$filter]['related_multiple'] ? '[]' : ''); ?>" id="admin_ui_filter_<?php echo $filter; ?>"<?php echo (false !== $this->fields['search'][$filter]['related_multiple'] ? ' size="10" style="height:auto;" MULTIPLE' : ''); ?>>
-                <option value="">-- Show All --</option>
+                <option value="">-- <?php _e('Show All', 'pods'); ?> --</option>
 <?php
                         foreach ($related as $option) {
 ?>
@@ -1169,7 +1169,7 @@ class PodsUI
 ?>
             <label for="admin_ui_filter_<?php echo $filter; ?>"><?php echo $this->fields['search'][$filter]['filter_label']; ?>:</label>
             <select name="filter_<?php echo $filter; ?><?php echo (false !== $this->fields['search'][$filter]['related_multiple'] ? '[]' : ''); ?>" id="admin_ui_filter_<?php echo $filter; ?>"<?php echo (false !== $this->fields['search'][$filter]['related_multiple'] ? ' size="10" style="height:auto;" MULTIPLE' : ''); ?>>
-                <option value="">-- Show All --</option>
+                <option value="">-- <?php _e('Show All', 'pods'); ?> --</option>
 <?php
                         foreach ($related as $option_id => $option)
                         {
@@ -1273,7 +1273,7 @@ class PodsUI
 <?php
         if (empty($this->data) && false !== $this->default_none && false === $this->search) {
 ?>
-        <p>Please use the search filter(s) above to display data<?php if ($this->export){ ?>, or click on an Export to download a full copy of the data<?php } ?>.</p>
+        <p><?php _e('Please use the search filter(s) above to display data', 'pods'); ?><?php if ($this->export){ ?>, <?php _e('or click on an Export to download a full copy of the data', 'pods'); ?><?php } ?>.</p>
 <?php
         }
         else
@@ -1735,7 +1735,7 @@ class PodsUI
                 }
                 if (!empty($fields) || true === $this->pagination) {
 ?>
-            <h5>Show on screen</h5>
+        <h5><?php _e('Show on screen', 'pods'); ?></h5>
 <?php
                     if (!empty($fields)) {
 ?>
@@ -1752,7 +1752,7 @@ class PodsUI
 ?>
                 <br class="clear">
             </div>
-            <h5>Show on screen</h5>
+            <h5><?php _e('Show on screen', 'pods'); ?></h5>
 <?php
                     }
 ?>
@@ -1855,7 +1855,7 @@ class PodsUI
     <span class="paging-input"><input class="current-page" title="<?php _e('Current page', 'pods'); ?>" type="text" name="pg<?php echo $this->num; ?>" value="<?php echo $this->page; ?>" size="<?php echo strlen($total_pages); ?>"> <?php _e('of', 'pods'); ?> <span class="total-pages"><?php echo $total_pages; ?></span></span>
     <script>
 
-		jQuery(document).ready(function($) {
+        jQuery(document).ready(function($) {
             var pageInput = $('input.current-page');
             var currentPage = pageInput.val();
             pageInput.closest('form').submit( function(e){

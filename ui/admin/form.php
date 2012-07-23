@@ -304,7 +304,7 @@
                 <!-- BEGIN PUBLISH DIV -->
                 <div id="submitdiv" class="postbox">
                     <div class="handlediv" title="Click to toggle"><br /></div>
-                    <h3 class="hndle"><span>Manage</span></h3>
+                    <h3 class="hndle"><span><?php _e( 'Manage', 'pods' ); ?></span></h3>
                     <div class="inside">
                         <div class="submitbox" id="submitpost">
                             <div id="minor-publishing"><!--
@@ -324,7 +324,7 @@
                                 <!-- /#minor-publishing-actions -->
                                 <div id="major-publishing-actions">
                                     <div id="delete-action">
-                                        <a class="submitdelete deletion" href="#">Move to Trash</a>
+                                        <a class="submitdelete deletion" href="#"><?php _e( 'Move to Trash', 'pods' ); ?></a>
                                     </div>
                                     <!-- /#delete-action -->
                                     <div id="publishing-action">
@@ -352,7 +352,7 @@
             <div id="post-body-content">
                 <div id="titlediv">
                     <div id="titlewrap">
-                        <label class="hide-if-no-js" style="" id="title-prompt-text" for="title">Name</label>
+                        <label class="hide-if-no-js" style="" id="title-prompt-text" for="title"><?php _e( 'Name', 'pods' ); ?></label>
                         <input type="text" name="pods_entry_title" size="30" tabindex="1" value="" id="title" autocomplete="off" />
                     </div>
                     <!-- /#titlewrap -->
@@ -372,41 +372,41 @@
                             <ol class="form-fields">
                                 <li class="pods-field pods-textfield">
                                     <?php
-                                    echo PodsForm::label('singlelinetext1', 'Single Line Text');
+                                    echo PodsForm::label('singlelinetext1', __( 'Single Line Text', 'pods' ));
                                     echo PodsForm::field('singlelinetext1', NULL, 'text', array('class' => 'pods-text-field'));
                                     ?>
                                 </li>
 
                                 <li class="pods-field pods-textfield">
                                     <?php
-                                    echo PodsForm::label('singlelinetext2', 'Single Line Text with Comment');
+                                    echo PodsForm::label('singlelinetext2', __( 'Single Line Text with Comment', 'pods' ));
                                     echo PodsForm::field('singlelinetext2', NULL, 'text', array('class' => 'pods-text-field'));
                                     echo PodsForm::comment('Please fill out the field');
                                     ?>
                                 </li>
                                 <li class="pods-field pods-textarea">
                                     <?php
-                                    echo PodsForm::label('code1', 'Code Field');
+                                    echo PodsForm::label('code1', __( 'Code Field', 'pods' ));
                                     echo PodsForm::field('code1', NULL, 'textarea', array('class' => 'pods-code-field', 'attributes' => array('rows' => '7', 'cols' => '70')));
                                     ?>
                                 </li>
                                 <li class="pods-field pods-textarea">
                                     <?php
-                                    echo PodsForm::label('code2', 'Code Field w/ Comment');
+                                    echo PodsForm::label('code2', __( 'Code Field w/ Comment', 'pods' ));
                                     echo PodsForm::field('code2', NULL, 'textarea', array('class' => 'pods-code-field', 'attributes' => array('rows' => '7', 'cols' => '70')));
                                     echo PodsForm::comment('Enter some code');
                                     ?>
                                 </li>
                                 <li class="pods-field pods-textarea">
                                     <?php
-                                    echo PodsForm::label('code3', 'WYSIWYG (cleditor)');
+                                    echo PodsForm::label('code3', __( 'WYSIWYG (cleditor)', 'pods' ));
                                     echo PodsForm::field('code3', NULL, 'textarea', array('attributes' => array('rows' => '7', 'cols' => '70', 'data-width' => '100%')));
                                     ?>
                                 </li>
 
                                 <li class="pods-field pods-textarea">
                                     <?php
-                                    echo PodsForm::label('code4', 'WYSIWYG (tinymce)');
+                                    echo PodsForm::label('code4', __( 'WYSIWYG (tinymce)', 'pods' ));
                                     echo PodsForm::field('code4', "Yay! It's TinyMCE!", 'tinymce');
                                     //wp_editor("<strong>Yay, it's TinyMCE!</strong>", 'pods-field-code4');
                                     ?>
@@ -414,7 +414,7 @@
 
                                 <li class="pods-field pods-textfield pods-date">
                                     <?php
-                                    echo PodsForm::label('date1', 'Date');
+                                    echo PodsForm::label('date1', __( 'Date', 'pods' ));
                                     echo PodsForm::field('date1', NULL, 'text', array('class' => 'pods-date-field'));
                                     ?>
                                     <script>
@@ -426,7 +426,7 @@
 
                                 <li class="pods-field pods-textfield pods-date">
                                     <?php
-                                    echo PodsForm::label('date2', 'Date with Comment');
+                                    echo PodsForm::label('date2', __( 'Date with Comment', 'pods' ));
                                     echo PodsForm::field('date2', NULL, 'text', array('class' => 'pods-date-field'));
                                     echo PodsForm::comment('Please select a date');
                                     ?>
@@ -439,7 +439,7 @@
 
                                 <li class="pods-field pods-textfield pods-date">
                                     <?php
-                                    echo PodsForm::label('date3', 'Date with Time');
+                                    echo PodsForm::label('date3', __( 'Date with Time', 'pods' ));
                                     echo PodsForm::field('date3', NULL, 'text', array('class' => 'pods-date-field'));
                                     ?>
                                     <script>
@@ -451,14 +451,14 @@
 
                                 <li class="pods-field pods-textfield">
                                     <?php
-                                    echo PodsForm::label('number1', 'Number Field');
+                                    echo PodsForm::label('number1', __( 'Number Field', 'pods' ));
                                     echo PodsForm::field('number1', NULL, 'number');
                                     ?>
                                 </li>
 
                                 <li class="pods-field pods-textfield">
                                     <?php
-                                    echo PodsForm::label('number2', 'Number with Comment');
+                                    echo PodsForm::label('number2', __( 'Number with Comment', 'pods' ));
                                     echo PodsForm::field('number2', NULL, 'number', array('decimals' => 1));
                                     echo PodsForm::comment('Please fill out the field');
                                     ?>
@@ -466,7 +466,7 @@
 
                                 <li class="pods-field pods-textfield pods-slider">
                                     <?php
-                                    echo PodsForm::label('slider1', 'Slider Default');
+                                    echo PodsForm::label('slider1', __( 'Slider Default', 'pods' ));
                                     ?>
                                     <div class="pods-slider-field" id="pods-field-slider1"></div>
                                     <div id="pods-field-slider1-amount-display" class="pods-slider-field-display"></div>
@@ -493,21 +493,21 @@
 
                                 <li class="pods-field pods-boolean">
                                     <?php
-                                    echo PodsForm::label('boolean1', 'Boolean');
+                                    echo PodsForm::label('boolean1', __( 'Boolean', 'pods' ));
                                     echo PodsForm::field('boolean1', NULL, 'boolean');
                                     ?>
                                 </li>
 
                                 <li class="pods-field pods-boolean">
                                     <?php
-                                    echo PodsForm::label('boolean2', 'Boolean with Comment');
+                                    echo PodsForm::label('boolean2', __('Boolean with Comment', 'pods' ));
                                     echo PodsForm::field('boolean2', NULL, 'boolean');
                                     echo PodsForm::comment('Please check this field');
                                     ?>
                                 </li>
 
                                 <li class="pods-field pods-file pods-plupload-context" id="field-pods-field-file9">
-                                    <?php echo PodsForm::label('file9', 'File via Form API'); ?>
+                                    <?php echo PodsForm::label('file9', __( 'File via Form API', 'pods' )); ?>
                                     <?php
                                     echo PodsForm::field('file9', null, 'file', array(
                                         'file_format_type' => 'multiple',
@@ -519,7 +519,7 @@
                                 </li>
 
                                 <li class="pods-field pods-file pods-plupload-context" id="field-pods-field-file10">
-                                    <?php echo PodsForm::label('file10', 'Single File via Form API'); ?>
+                                    <?php echo PodsForm::label('file10', __( 'Single File via Form API', 'pods' )); ?>
                                     <br/>
                                     <?php
                                     echo PodsForm::field('file10', null, 'file', array(
@@ -532,7 +532,7 @@
                                 </li>
 
                                 <li class="pods-field pods-file pods-plupload-context" id="field-pods-field-file9">
-                                    <?php echo PodsForm::label( 'file11', 'Attachment via Form API' ); ?>
+                                    <?php echo PodsForm::label( 'file11', __( 'Attachment via Form API', 'pods' )); ?>
                                     <?php
                                     echo PodsForm::field( 'file11', null, 'file', array(
                                         'file_format_type' => 'multiple',
@@ -544,7 +544,7 @@
                                 </li>
 
                                 <li class="pods-field pods-file pods-plupload-context" id="field-pods-field-file10">
-                                    <?php echo PodsForm::label( 'file12', 'Single Attachment via Form API' ); ?>
+                                    <?php echo PodsForm::label( 'file12', __( 'Single Attachment via Form API', 'pods' )); ?>
                                     <br />
                                     <?php
                                     echo PodsForm::field( 'file12', null, 'file', array(
@@ -559,7 +559,7 @@
                                 <!-- Pods Pick Field -->
                                 <li class="pods-field pods-pick" id="field-pods-field-pick1">
                                     <?php
-                                    echo PodsForm::label('pick1', 'Pick');
+                                    echo PodsForm::label('pick1', __( 'Pick', 'pods' ));
                                     echo PodsForm::field('pick1', NULL, 'pick', array(
                                         'data' => array(
                                             '' => '-- Select One --',
@@ -573,7 +573,7 @@
 
                                 <li class="pods-field pods-pick" id="field-pods-field-pick2">
                                     <?php
-                                    echo PodsForm::label('pick2', 'Pick with Comment');
+                                    echo PodsForm::label('pick2', __( 'Pick with Comment', 'pods' ));
                                     echo PodsForm::field('pick2', NULL, 'pick', array(
                                         'data' => array(
                                             '' => '-- Select One --',
@@ -589,7 +589,7 @@
                                 <?php // FIXME: Figure out why 'multiple' doesn't get through the attributes merge ?>
                                 <li class="pods-field pods-pick" id="field-pods-field-pick3">
                                     <?php
-                                    echo PodsForm::label('pick3', 'Pick Multiple');
+                                    echo PodsForm::label('pick3', __( 'Pick Multiple', 'pods' ));
                                     echo PodsForm::field('pick3', NULL, 'pick', array(
                                         'data' => array(
                                             'option_1' => 'Choice 1',
@@ -607,7 +607,7 @@
 
                                 <li class="pods-field pods-pick" id="field-pods-field-pick4">
                                     <?php
-                                    echo PodsForm::label('pick4', 'Pick - Checkboxes');
+                                    echo PodsForm::label('pick4', __( 'Pick - Checkboxes', 'pods' ));
                                     $pick_opts = array(
                                         'option_1' => 'Choice 1',
                                         'option_2' => 'Choice 2',
@@ -634,7 +634,7 @@
 
                                 <li class="pods-field pods-pick" id="field-pods-field-pick5">
                                     <?php
-                                    echo PodsForm::label('pick5', 'Pick - jQuery Chosen Autocomplete');
+                                    echo PodsForm::label('pick5', __( 'Pick - jQuery Chosen Autocomplete', 'pick' ));
                                     echo PodsForm::field('pick5', NULL, 'pick', array(
                                         'class' => 'chosen',
                                         'data' => array(
@@ -651,7 +651,7 @@
                                 <!-- Pick - Radio -->
                                 <li class="pods-field pods-pick" id="field-pods-field-pick6">
                                     <?php
-                                    echo PodsForm::label('pick6', 'Pick - Radio Buttons');
+                                    echo PodsForm::label('pick6', __( 'Pick - Radio Buttons', 'pods' ));
                                     ?>
                                     <div class="pods-pick-values pods-pick-radio">
                                         <ul>
@@ -672,7 +672,7 @@
                                 <!-- WP Auto Complete Categories -->
                                 <li class="pods-field pods-textfield" id="field-pods-field-wpcategories">
                                     <?php
-                                    echo PodsForm::label('wpcategories', 'WordPress Auto Complete Categories');
+                                    echo PodsForm::label('wpcategories', __( 'WordPress Auto Complete Categories', 'pods' ));
                                     echo PodsForm::field('wpcategories', NULL, 'text');
                                     ?>
                                     <script>
@@ -710,7 +710,7 @@
 
                                 <!-- Pick Field: Select2 -->
                                 <li>
-                                    <?php echo PodsForm::label('pick7', 'Autocomplete: Select2'); ?>
+                                    <?php echo PodsForm::label('pick7', __( 'Autocomplete: Select2', 'pods' )); ?>
                                     <?php echo PodsForm::field('pick7', null, 'pick', array('pick_format_type' => 'single', 'pick_format_single' => 'autocomplete')); ?>
                                 </li>
 

@@ -14,7 +14,7 @@ function translate_field_type($name) {
     return $answer;
 }
 
-function migrate_pods() {
+function pods_migrate_pods() {
     // Grab old pods and fields, and create new ones via the API
     $api = new PodsAPI;
     $pod_types = pods_query("SELECT * FROM `@wp_pod_types`");
@@ -63,7 +63,7 @@ function migrate_pods() {
     return $pod_ids;
 }
 
-function migrate_templates() {
+function pods_migrate_templates() {
     $api = new PodsAPI;
     $templates = pods_query("SELECT * FROM `@wp_pod_templates`");
     $results = array();
@@ -83,7 +83,7 @@ function migrate_templates() {
     return $results;
 }
 
-function migrate_helpers() {
+function pods_migrate_helpers() {
     $api = new PodsAPI;
     $results = array();
     $helpers = pods_query("SELECT * FROM `@wp_pod_helpers`");
@@ -101,7 +101,7 @@ function migrate_helpers() {
     return $results;
 }
 
-function migrate_pages() {
+function pods_migrate_pages() {
     $api = new PodsAPI;
     $results = array();
     $pages = pods_query("SELECT * FROM `@wp_pod_pages`");
@@ -113,10 +113,118 @@ function migrate_pages() {
     return $results;
 }
 
+function pods_alpha_table_exists($tbl) {
+	try {
+		$tbl = mysql_real_escape_string($tbl);
+		$rows = pods_query("SELECT * FROM `{$tbl}` LIMIT 1");
+	} catch (Exception $e) {
+		$rows = false;
+	}
+
+	return $rows;
+}
+
+function pods_alpha_migrate_pods() {
+	$api = new PodsAPI;
+	$old_pods = pods_query( "SELECT * FROM `@wp_pods`" );
+	$pod_ids = array();
+
+	foreach ($old_pods as $pod) {
+		$pod_opts = json_decode( $pod->options );
+		$field_rows = pods_query( "SELECT * FROM `@wp_pods_fields` where `pod_id` = {$pod->id}" );
+		$fields = array();
+
+		foreach ($field_rows as $row) {
+			$field_opts = json_decode( $row->options );
+			$field_params = array(
+				'name' => $row->name,
+				'label' => $row->label,
+				'type' => $row->type,
+				'pick_object' => $row->pick_object,
+				'pick_val' => $row->pick_val,
+				'sister_field_id' => $row->sister_field_id,
+				'weight' => $row->weight,
+				'options' => $field_opts,
+			);
+
+			$fields[] = $field_params;
+		}
+
+		$pod_params = array(
+			'name' => $pod->name,
+			'type' => $pod->type,
+			'storage' => $pod->storage,
+			'fields' => $fields,
+			'options' => $pod_opts,
+		);
+
+		$pod_id = $api->save_pod($pod_params);
+		$pod_ids[] = $pod_id;
+	}
+	return $pod_ids;
+}
+
+function pods_alpha_migrate_helpers() {
+	$api = new PodsAPI;
+	$helper_rows = pods_query( "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'helper'" );
+	$helper_ids = array();
+
+	foreach ( $helper_rows as $row ) {
+		$opts = json_decode( $row->options );
+		$helper_params = array(
+			'name' => $row->name,
+			'helper_type' => $opts[ 'helper_type' ],
+			'phpcode' => $opts[ 'phpcode' ],
+		);
+
+		$helper_ids[] = $api->save_helper( $helper_params );
+	}
+	return $helper_ids;
+}
+
+function pods_alpha_migrate_pages() {
+	$api = new PodsAPI;
+	$page_rows = pods_query( "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'page'" );
+	$page_ids = array();
+
+	foreach ( $page_rows as $row ) {
+		$opts = json_decode( $row->options );
+		$page_params = array(
+			'uri' => $row->name,
+			'phpcode' => $opts[ 'phpcode' ],
+		);
+
+		$page_ids[] = $api->save_page( $page_params );
+	}
+	return $page_ids;
+}
+
+function pods_alpha_migrate_templates() {
+	$api = new PodsAPI;
+	$tpl_rows = pods_query( "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'template'" );
+	$tpl_ids = array();
+
+	foreach ( $tpl_rows as $row ) {
+		$opts = json_decode( $row->options );
+		$tpl_params = array(
+			'name' => $row->name,
+			'code' => $opts[ 'code' ],
+		);
+
+		$tpl_ids[] = $api->save_template( $tpl_params );
+	}
+	return $tpl_ids;
+}
+
 if (version_compare($pods_version, '2.0.0', '<')) {
     // handle primary changes (don't process larger tables automatically)
     // $pages = migrate_pages();
     // $helpers = migrate_helpers();
     // $templates = migrate_templates();
     // migrate_pods();
+} elseif (version_compare($pods_version, '2.0.1', '<')) {
+	$pages = pods_alpha_migrate_pages();
+	$helpers = pods_alpha_migrate_helpers();
+	$templates = pods_alpha_migrate_templates();
+	$pod_ids = pods_alpha_migrate_pods();
 }

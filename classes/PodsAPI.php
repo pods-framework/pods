@@ -82,6 +82,13 @@ class PodsAPI {
         }
 
         foreach ( $post_meta as $meta_key => $meta_value ) {
+            if ( $strict ) {
+                if ( !is_array( $meta_value ) && strlen( $meta_value ) < 1 )
+                    $meta_value = null;
+                elseif ( is_array( $meta_value ) && empty( $meta_value ) )
+                    $meta_value = null;
+            }
+
             if ( null === $meta_value ) {
                 $old_meta_value = '';
 
@@ -419,7 +426,7 @@ class PodsAPI {
             'object',
             'alias',
             'options',
-            'fields'
+            'fields' => array( 'field_data' )
         );
 
         foreach ( $exclude as $k => $exclude_field ) {
@@ -593,11 +600,10 @@ class PodsAPI {
     public function save_field ( $params ) {
         global $wpdb;
 
-        $params = (object) $params;
+        $params = (object) pods_sanitize( $params );
 
-        if ( isset( $params->pod_id ) ) {
+        if ( isset( $params->pod_id ) )
             $params->pod_id = pods_absint( $params->pod_id );
-        }
 
         $pod = null;
         $save_pod = false;
@@ -639,6 +645,7 @@ class PodsAPI {
         }
 
         $params->name = pods_clean_name( $params->name );
+
         if ( empty( $params->name ) )
             return pods_error( 'Pod field name is required', $this );
 
@@ -646,23 +653,27 @@ class PodsAPI {
 
         $old_id = $old_name = $old_type = null;
 
-        if ( !empty( $pod ) ) {
+        if ( !empty( $field ) ) {
             if ( isset( $params->id ) && 0 < $params->id )
                 $old_id = $params->id;
 
-            $params->id = $pod[ 'id' ];
+            $params->id = $field[ 'id' ];
 
-            $old_name = $pod[ 'name' ];
-            $old_type = $pod[ 'type' ];
+            $old_name = $field[ 'name' ];
+            $old_type = $field[ 'type' ];
 
             if ( !isset( $params->name ) && empty( $params->name ) )
-                $params->name = $pod[ 'name' ];
+                $params->name = $field[ 'name' ];
 
             if ( $old_name != $params->name && false !== $this->field_exists( $params ) )
                 return pods_error( sprintf( __( 'Field %s already exists, you cannot rename %s to that', 'pods' ), $params->name, $old_name ), $this );
 
-            if ( $old_id != $params->id )
+            if ( $old_id != $params->id ) {
+                echo '<e>';
+                pods_debug( $field, false );
+                pods_debug( $params );
                 return pods_error( sprintf( __( 'Field %s already exists', 'pods' ), $params->name ), $this );
+            }
         }
         else {
             $field = array(
@@ -732,9 +743,6 @@ class PodsAPI {
             if ( in_array( $params->name, array( 'id', 'created', 'modified', 'author' ) ) )
                 return pods_error( "$params->name is reserved for internal Pods usage, please try a different name", $this );
 
-            if ( !empty( $field ) )
-                return pods_error( sprintf( __( "Pod field %s already exists", 'pods' ), $params->name ), $this );
-
             if ( 'slug' == $field[ 'type' ] ) {
                 $slug_field = get_posts( array(
                     'post_type' => '_pods_field',
@@ -798,37 +806,36 @@ class PodsAPI {
         if ( false === $params->id )
             return pods_error( __( 'Cannot save Field', 'pods' ), $this );
 
-        if ( 'table' == $pod[ 'storage' ] ) {
-            if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
-                $definition = "`{$params->name}` " . $this->get_field_definition( $field[ 'type' ] );
+        $definition = false;
 
+        if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
+            $definition = "`{$params->name}` " . $this->get_field_definition( $field[ 'type' ] );
+
+        if ( 'table' == $pod[ 'storage' ] ) {
             if ( !empty( $old_id ) ) {
                 if ( $field[ 'type' ] != $old_type ) {
-                    if ( in_array( $field[ 'type' ], $tableless_field_types ) ) {
-                        if ( 'table' == $pod[ 'storage' ] && !in_array( $old_type, $tableless_field_types ) ) {
-                            pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` DROP COLUMN `{$old_name}`" );
-                        }
-                    }
-                    elseif ( in_array( $old_type, $tableless_field_types ) ) {
-                        if ( 'table' == $pod[ 'storage' ] )
-                            pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
-
-                        $wpdb->query( $wpdb->prepare( "DELETE pm FROM {$wpdb->postmeta} AS pm
-                            LEFT JOIN {$wpdb->posts} AS p
-                                ON p.post_type = '_pods_field' AND p.ID = pm.post_id
-                            WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_field_id' AND pm.meta_value = %d", $params->id ) );
-
-                        pods_query( "DELETE FROM @wp_pods_rel WHERE `field_id` = {$params->id}" );
-                    }
-                    else
+                    if ( in_array( $field[ 'type' ], $tableless_field_types ) && !in_array( $old_type, $tableless_field_types ) )
+                        pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` DROP COLUMN `{$old_name}`" );
+                    elseif ( in_array( $old_type, $tableless_field_types ) )
+                        pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+                    elseif ( false !== $definition )
                         pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` CHANGE `{$old_name}` {$definition}" );
                 }
             }
-            else
+            elseif ( false !== $definition )
                 pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
         }
         elseif ( 0 < $field[ 'sister_field_id' ] )
             update_post_meta( $field[ 'sister_field_id' ], 'sister_field_id', $params->id );
+
+        if ( $field[ 'type' ] != $old_type && in_array( $old_type, $tableless_field_types ) ) {
+            $wpdb->query( $wpdb->prepare( "DELETE pm FROM {$wpdb->postmeta} AS pm
+                LEFT JOIN {$wpdb->posts} AS p
+                    ON p.post_type = '_pods_field' AND p.ID = pm.post_id
+                WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_field_id' AND pm.meta_value = %d", $params->id ) );
+
+            pods_query( "DELETE FROM @wp_pods_rel WHERE `field_id` = {$params->id}" );
+        }
 
         if ( !$save_pod )
             $this->cache_flush_pods( $pod );

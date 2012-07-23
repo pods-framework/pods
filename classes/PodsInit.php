@@ -114,7 +114,7 @@ class PodsInit
             'hierarchical' => false,
             'supports' => array( 'title', 'content', 'author' )
         );
-        register_post_type( '_pods_pod', $args );
+        register_post_type( '_pods_pod', apply_filters( 'pods_internal_register_post_type_pod', $args ) );
 
         $args = array(
             'public' => false,
@@ -125,7 +125,7 @@ class PodsInit
             'hierarchical' => true,
             'supports' => array( 'title', 'content', 'author' )
         );
-        register_post_type( '_pods_field', $args );
+        register_post_type( '_pods_field', apply_filters( 'pods_internal_register_post_type_field', $args ) );
 
         $args = array(
             'public' => false,
@@ -136,7 +136,7 @@ class PodsInit
             'hierarchical' => false,
             'supports' => array( 'title', 'content', 'author' )
         );
-        register_post_type( '_pods_object_template', $args );
+        register_post_type( '_pods_object_template', apply_filters( 'pods_internal_register_post_type_object_template', $args ) );
 
         $args = array(
             'public' => false,
@@ -147,7 +147,7 @@ class PodsInit
             'hierarchical' => false,
             'supports' => array( 'title', 'content', 'author' )
         );
-        register_post_type( '_pods_object_page', $args );
+        register_post_type( '_pods_object_page', apply_filters( 'pods_internal_register_post_type_object_page', $args ) );
 
         $args = array(
             'public' => false,
@@ -158,7 +158,7 @@ class PodsInit
             'hierarchical' => false,
             'supports' => array( 'title', 'content', 'author' )
         );
-        register_post_type( '_pods_object_helper', $args );
+        register_post_type( '_pods_object_helper', apply_filters( 'pods_internal_register_post_type_object_helper', $args ) );
     }
 
     function admin_init () {

@@ -583,9 +583,11 @@ function pod_page_exists ( $uri = null ) {
         $uri = parse_url( get_current_url() );
         $uri = $uri[ 'path' ];
         $home = parse_url( get_bloginfo( 'url' ) );
+
         if ( !empty( $home ) && isset( $home[ 'path' ] ) && '/' != $home[ 'path' ] )
             $uri = substr( $uri, strlen( $home[ 'path' ] ) );
     }
+
     $uri = trim( $uri, '/' );
     $uri_depth = count( array_filter( explode( '/', $uri ) ) ) - 1;
 
@@ -593,17 +595,34 @@ function pod_page_exists ( $uri = null ) {
         return false;
 
     // See if the custom template exists
-    $sql = "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'page' AND `name` = %s LIMIT 1";
+    $sql = "SELECT * FROM `@wp_posts` WHERE `post_type` = '_pods_object_page' AND `post_title` = %s LIMIT 1";
     $sql = array( $sql, array( $uri ) );
+
     $result = pods_query( $sql );
+
     if ( empty( $result ) ) {
         // Find any wildcards
-        $sql = "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'page' AND %s LIKE REPLACE(`name`, '*', '%%') AND (LENGTH(`name`) - LENGTH(REPLACE(`name`, '/', ''))) = %d ORDER BY LENGTH(`name`) DESC, `name` DESC LIMIT 1";
+        $sql = "SELECT * FROM `@wp_posts` WHERE `post_type` = '_pods_object_page' AND %s LIKE REPLACE(`post_title`, '*', '%%') AND (LENGTH(`post_title`) - LENGTH(REPLACE(`post_title`, '/', ''))) = %d ORDER BY LENGTH(`post_title`) DESC, `post_title` DESC LIMIT 1";
         $sql = array( $sql, array( $uri, $uri_depth ) );
+        
         $result = pods_query( $sql );
     }
-    if ( !empty( $result ) )
-        return get_object_vars( $result[ 0 ] );
+
+    if ( !empty( $result ) ) {
+        $_object = get_object_vars( $result[ 0 ] );
+
+        $object = array(
+            'ID' => $_object[ 'ID' ],
+            'uri' => $_object[ 'post_title' ],
+            'phpcode' => $_object[ 'post_content' ],
+            'precode' => get_post_meta( $_object[ 'ID' ], 'precode', true ),
+            'page_template' => get_post_meta( $_object[ 'ID' ], 'page_template', true ),
+            'title' => get_post_meta( $_object[ 'ID' ], 'page_title', true )
+        );
+
+        return $object;
+    }
+
     return false;
 }
 

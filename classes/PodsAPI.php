@@ -367,11 +367,10 @@ class PodsAPI {
      * @param array $params An associative array of parameters
      *
      * @since 1.7.9
-     *
-     * @todo Save new fields with save_field, delete with delete_field (it updates cache etc)
-     *
      */
     public function save_pod ( $params ) {
+        $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
+
         $pod = $this->load_pod( $params, false );
 
         $params = (object) pods_sanitize( $params );
@@ -520,14 +519,14 @@ class PodsAPI {
         $params->id = $this->save_post( $post_data, $pod[ 'options' ], true );
 
         if ( false === $params->id )
-            return pods_error( 'Cannot save Pod', $this );
+            return pods_error( __( 'Cannot save Pod', 'pods' ), $this );
 
         // Setup / update tables
         if ( 'table' == $pod[ 'storage' ] && null !== $old_storage && $old_storage != $pod[ 'storage' ] ) {
             $definitions = array( "`id` BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY" );
 
             foreach ( $pod[ 'fields' ] as $field ) {
-                if ( !in_array( $field[ 'type' ], array( 'pick', 'file' ) ) )
+                if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
                     $definitions[] = "`{$field['name']}` " . $this->get_field_definition( $field[ 'type' ] );
             }
 
@@ -602,25 +601,21 @@ class PodsAPI {
      * @since 1.7.9
      */
     public function save_field ( $params ) {
-        $field_columns = array(
-            'name' => '',
-            'label' => '',
-            'pod' => $params->id,
-            'weight' => 0,
-            'type' => 'text',
-            'options' => array()
-        );
+        global $wpdb;
 
         $params = (object) $params;
 
         if ( isset( $params->pod_id ) ) {
             $params->pod_id = pods_absint( $params->pod_id );
         }
+
         $pod = null;
         $save_pod = false;
+
         if ( !isset( $params->pod_id ) || empty( $params->pod_id ) ) {
             if ( isset( $params->pod ) ) {
                 $pod = $params->pod;
+
                 if ( !is_array( $pod ) )
                     $pod = $this->load_pod( array( 'name' => $pod ) );
                 else
@@ -638,6 +633,7 @@ class PodsAPI {
         }
         elseif ( !isset( $params->pod ) ) {
             $pod = $this->load_pod( array( 'id' => $params->pod_id ) );
+
             if ( empty( $pod ) )
                 return pods_error( __('Pod not found', 'pods'), $this );
             else {
@@ -645,180 +641,204 @@ class PodsAPI {
                 $params->pod = $pod[ 'name' ];
             }
         }
-        if ( !isset( $pod ) )
-            $pod = $this->load_pod( array( 'id' => $params->pod_id ) );
+        else {
+            $pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod ) );
+
+            if ( empty( $pod ) )
+                return pods_error( __( 'Pod not found', 'pods' ), $this );
+        }
 
         $params->name = pods_clean_name( $params->name );
         if ( empty( $params->name ) )
             return pods_error( 'Pod field name is required', $this );
 
-        $defaults = array(
-            'id' => 0,
-            'pod_id' => 0,
-            'name' => '',
-            'label' => '',
-            'type' => '',
-            'pick_object' => '',
-            'pick_val' => '',
-            'sister_field_id' => '',
-            'weight' => 0,
-            'options' => array()
-        );
-        $params = (object) array_merge( $defaults, (array) $params );
+        $field = $this->load_field( array( 'name' => $params->name, 'pod' => $params->pod, 'pod_id' => $params->pod_id ) );
+
+        $old_id = $old_name = $old_type = null;
+
+        if ( !empty( $pod ) ) {
+            if ( isset( $params->id ) && 0 < $params->id )
+                $old_id = $params->id;
+
+            $params->id = $pod[ 'id' ];
+
+            $old_name = $pod[ 'name' ];
+            $old_type = $pod[ 'type' ];
+
+            if ( !isset( $params->name ) && empty( $params->name ) )
+                $params->name = $pod[ 'name' ];
+
+            if ( $old_name != $params->name && false !== $this->field_exists( $params ) )
+                return pods_error( sprintf( __( 'Field %s already exists, you cannot rename %s to that', 'pods' ), $params->name, $old_name ), $this );
+
+            if ( $old_id != $params->id )
+                return pods_error( sprintf( __( 'Field %s already exists', 'pods' ), $params->name ), $this );
+        }
+        else {
+            $field = array(
+                'id' => 0,
+                'pod_id' => $params->pod_id,
+                'name' => $params->name,
+                'label' => $params->name,
+                'description' => '',
+                'type' => 'text',
+                'pick_object' => '',
+                'pick_val' => '',
+                'sister_field_id' => '',
+                'weight' => null,
+                'options' => array()
+            );
+        }
 
         $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
 
+        // Setup options
+        $options = get_object_vars( $params );
+
+        $exclude = array(
+            'id',
+            'pod_id',
+            'pod',
+            'name',
+            'label',
+            'description',
+            'type',
+            'pick_object',
+            'pick_val',
+            'sister_field_id',
+            'weight',
+            'options'
+        );
+
+        foreach ( $exclude as $k => $exclude_field ) {
+            $aliases = array( $exclude_field );
+
+            if ( is_array( $exclude_field ) ) {
+                $aliases = array_merge( array( $k ), $exclude_field );
+                $exclude_field = $k;
+            }
+
+            foreach ( $aliases as $alias ) {
+                if ( isset( $options[ $alias ] ) ) {
+                    $field[ $exclude_field ] = $options[ $alias ];
+
+                    unset( $options[ $alias ] );
+                }
+            }
+        }
+
+        $field[ 'options' ][ 'type' ] = $field[ 'type' ];
+
+        if ( !in_array( $field[ 'type' ], $tableless_field_types ) ) {
+            $field[ 'options' ][ 'pick_object' ] = $field[ 'pick_object' ];
+            $field[ 'options' ][ 'pick_val' ] = $field[ 'pick_val' ];
+            $field[ 'options' ][ 'sister_field_id' ] = $field[ 'sister_field_id' ];
+        }
+
+        $field[ 'options' ] = array_merge( $field[ 'options' ], $options );
+
         // Add new field
-        if ( !isset( $params->id ) || empty( $params->id ) ) {
-            if ( in_array( $params->name, array( 'id', 'created', 'modified', 'author' ) ) ) // 'created', 'modified', 'author'
+        if ( !isset( $params->id ) || empty( $params->id ) || empty( $field ) ) {
+            if ( in_array( $params->name, array( 'id', 'created', 'modified', 'author' ) ) )
                 return pods_error( "$params->name is reserved for internal Pods usage, please try a different name", $this );
 
-            $sql = "SELECT `id` FROM `@wp_pods_fields` WHERE `pod_id` = {$params->pod_id} AND `name` = '{$params->name}' LIMIT 1";
-            $result = pods_query( $sql, $this );
-            if ( !empty( $result ) )
+            if ( !empty( $field ) )
                 return pods_error( sprintf( __( "Pod field %s already exists", 'pods' ), $params->name ), $this );
 
-            if ( 'slug' == $params->type ) {
-            	// @todo use WP_Query and menu_order
-                $sql = "SELECT `id` FROM `@wp_pods_fields` WHERE `pod_id` = {$params->pod_id} AND `type` = 'slug' LIMIT 1";
-                $result = pods_query( $sql, $this );
-                if ( !empty( $result ) )
+            if ( 'slug' == $field[ 'type' ] ) {
+                $slug_field = get_posts( array(
+                    'post_type' => '_pods_field',
+                    'orderby' => 'menu_order',
+                    'order' => 'ASC',
+                    'posts_per_page' => 1,
+                    'post_parent' => $field[ 'pod_id' ],
+                    'meta_query' => array(
+                        array(
+                            'key' => 'type',
+                            'value' => 'slug'
+                        )
+                    )
+                ) );
+
+                if ( !empty( $slug_field ) )
                     return pods_error( __( 'This pod already has a permalink field', 'pods' ), $this );
             }
 
             // Sink the new field to the bottom of the list
-            if ( !isset( $params->weight ) ) {
-            	// @todo use WP_Query and menu_order
-                $params->weight = 0;
-                $result = pods_query( "SELECT `weight` FROM `@wp_pods_fields` WHERE `pod_id` = {$params->pod_id} ORDER BY `weight` DESC LIMIT 1", $this );
-                if ( !empty( $result ) )
-                    $params->weight = pods_absint( $result[ 0 ]->weight ) + 1;
+            if ( null === $field[ 'weight' ] ) {
+                $field[ 'weight' ] = 0;
+
+                $bottom_most_field = get_posts( array(
+                    'post_type' => '_pods_field',
+                    'orderby' => 'menu_order',
+                    'order' => 'DESC',
+                    'posts_per_page' => 1,
+                    'post_parent' => $field[ 'pod_id' ]
+                 ) );
+
+                if ( !empty( $bottom_most_field ) )
+                    $field[ 'weight' ] = pods_absint( $bottom_most_field[ 0 ]->menu_order ) + 1;
             }
 
-            $params->sister_field_id = pods_absint( $params->sister_field_id );
-            $params->weight = pods_absint( $params->weight );
+            $field[ 'weight' ] = pods_absint( $field[ 'weight' ] );
 
-            if ( !isset( $params->options ) || empty( $params->options ) ) {
-                $options = get_object_vars( $params );
-                $exclude = array(
-                    'id',
-                    'pod_id',
-                    'pod',
-                    'name',
-                    'label',
-                    'type',
-                    'pick_object',
-                    'pick_val',
-                    'sister_field_id',
-                    'weight',
-                    'options'
-                );
-                foreach ( $exclude as $exclude_field ) {
-                    if ( isset( $options[ $exclude_field ] ) )
-                        unset( $options[ $exclude_field ] );
-                }
-                $params->options = '';
-                if ( !empty( $options ) )
-                    $params->options = $options;
-            }
-            if ( !empty( $params->options ) ) {
-                $params->options = pods_sanitize( str_replace( '@wp_', '{prefix}', json_encode( $params->options ) ) );
-            }
-
-            // @todo Use wp_insert_post and set post_parent to current pod ID
-            $field_id = pods_query( "INSERT INTO `@wp_pods_fields` (`pod_id`, `name`, `label`, `type`, `pick_object`, `pick_val`, `sister_field_id`, `weight`, `options`) VALUES ('{$params->pod_id}', '{$params->name}', '{$params->label}', '{$params->type}', '{$params->pick_object}', '{$params->pick_val}', {$params->sister_field_id}, {$params->weight}, '{$params->options}')", 'Cannot add new field' );
-            if ( empty( $field_id ) )
-                return pods_error( sprintf(__("Cannot add new field %s", 'pods'), $params->name), $this );
-
-            if ( 'table' == $pod[ 'storage' ] && !in_array( $params->type, $tableless_field_types ) ) {
-                $dbtype = $this->get_field_definition( $params->type );
-                pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN `{$params->name}` {$dbtype}", 'Cannot create new field' );
-            }
-            elseif ( 0 < $params->sister_field_id ) {
-            	// Use update_post_meta on the sister field to set it's sister to current field
-                pods_query( "UPDATE `@wp_pods_fields` SET `sister_field_id` = '{$field_id}' WHERE `id` = {$params->sister_field_id} LIMIT 1", 'Cannot update sister field' );
-            }
-
-            $params->id = $field_id;
+            $post_data = array(
+                'post_name' => $field[ 'name' ],
+                'post_title' => $field[ 'label' ],
+                'post_content' => $field[ 'description' ],
+                'post_type' => '_pods_field',
+                'post_parent' => $field[ 'pod_id' ],
+                'post_status' => 'publish'
+            );
         }
-        // Edit existing field
         else {
-            $params->id = pods_absint( $params->id );
-            if ( 'id' == $params->name ) {
-                return pods_error( sprintf(__("%s is not editable", 'pods'), $params->name), $this );
-            }
+            if ( 'id' == $params->name )
+                return pods_error( sprintf( __( "%s is not editable", 'pods' ), $params->name ), $this );
 
-        	// @todo use WP_Query
-            $sql = "SELECT `id` FROM `@wp_pods_fields` WHERE `pod_id` = {$params->pod_id} AND `id` != {$params->id} AND name = '{$params->name}' LIMIT 1";
-            $check = pods_query( $sql, $this );
-            if ( !empty( $check ) )
-				return pods_error( sprintf( __( 'Field %s already exists', 'pods' ), $params->name ), $this );
-
-        	// @todo use WP_Query
-            $sql = "SELECT * FROM `@wp_pods_fields` WHERE `id` = {$params->id} LIMIT 1";
-            $result = pods_query( $sql, $this );
-            if ( empty( $result ) )
-				return pods_error( sprintf( __( 'Field %s not found, cannot edit', 'pods' ), $params->name ), $this );
-
-            $old_type = $result[ 0 ]->type;
-            $old_name = $result[ 0 ]->name;
-
-            $dbtype = $this->get_field_definition( $params->type );
-            $params->pick_val = ( 'pick' != $params->type || empty( $params->pick_val ) ) ? '' : "$params->pick_val";
-            $params->sister_field_id = pods_absint( $params->sister_field_id );
-            $params->weight = pods_absint( $params->weight );
-
-            if ( $params->type != $old_type ) {
-                if ( in_array( $params->type, $tableless_field_types ) ) {
-                    if ( 'table' == $pod[ 'storage' ] && !in_array( $old_type, $tableless_field_types ) ) {
-                        pods_query( "ALTER TABLE `@wp_pods_tbl_$params->pod` DROP COLUMN `$old_name`" );
-                    }
-                }
-                elseif ( in_array( $old_type, $tableless_field_types ) ) {
-                    if ( 'table' == $pod[ 'storage' ] )
-                        pods_query( "ALTER TABLE `@wp_pods_tbl_$params->pod` ADD COLUMN `$params->name` $dbtype", 'Cannot create field' );
-
-                	// Use update_post_meta on the sister field to set it's sister to current field
-                    pods_query( "UPDATE @wp_pods_fields SET sister_field_id = NULL WHERE sister_field_id = $params->id" );
-                    pods_query( "DELETE FROM @wp_pods_rel WHERE field_id = $params->id" );
-                }
-                else {
-                    pods_query( "ALTER TABLE `@wp_pods_tbl_$params->pod` CHANGE `$old_name` `$params->name` $dbtype" );
-                }
-            }
-            elseif ( 'table' == $pod[ 'storage' ] && $params->name != $old_name && !in_array( $params->type, $tableless_field_types ) ) {
-                pods_query( "ALTER TABLE `@wp_pods_tbl_$params->pod` CHANGE `$old_name` `$params->name` $dbtype" );
-            }
-            if ( !isset( $params->options ) || empty( $params->options ) ) {
-                $options = get_object_vars( $params );
-                $exclude = array(
-                    'id',
-                    'pod_id',
-                    'pod',
-                    'name',
-                    'label',
-                    'type',
-                    'pick_object',
-                    'pick_val',
-                    'sister_field_id',
-                    'weight',
-                    'options'
-                );
-                foreach ( $exclude as $exclude_field ) {
-                    if ( isset( $options[ $exclude_field ] ) )
-                        unset( $options[ $exclude_field ] );
-                }
-                $params->options = '';
-                if ( !empty( $options ) )
-                    $params->options = $options;
-            }
-            if ( !empty( $params->options ) ) {
-                $params->options = pods_sanitize( str_replace( '@wp_', '{prefix}', json_encode( $params->options ) ) );
-            }
-            pods_query( "UPDATE `@wp_pods_fields` SET `name` = '{$params->name}', `label` = '{$params->label}', `type` = '{$params->type}', `pick_object` = '{$params->pick_object}', `pick_val` = '{$params->pick_val}', `sister_field_id` = {$params->sister_field_id}, `weight` = {$params->weight}, `options` = '{$params->options}' WHERE `id` = {$params->id} LIMIT 1", 'Cannot edit field' );
+            $post_data = array(
+                'ID' => $field[ 'id' ],
+                'post_name' => $field[ 'name' ],
+                'post_title' => $field[ 'label' ],
+                'post_content' => $field[ 'description' ]
+            );
         }
 
-        // @todo Maybe save fields at the same time, run add/edit before to setup?
+        $params->id = $this->save_post( $post_data, $field[ 'options' ], true );
+
+        if ( false === $params->id )
+            return pods_error( __( 'Cannot save Field', 'pods' ), $this );
+
+        if ( 'table' == $pod[ 'storage' ] ) {
+            if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
+                $definition = "`{$params->name}` " . $this->get_field_definition( $field[ 'type' ] );
+
+            if ( !empty( $old_id ) ) {
+                if ( $field[ 'type' ] != $old_type ) {
+                    if ( in_array( $field[ 'type' ], $tableless_field_types ) ) {
+                        if ( 'table' == $pod[ 'storage' ] && !in_array( $old_type, $tableless_field_types ) ) {
+                            pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` DROP COLUMN `{$old_name}`" );
+                        }
+                    }
+                    elseif ( in_array( $old_type, $tableless_field_types ) ) {
+                        if ( 'table' == $pod[ 'storage' ] )
+                            pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+
+                        $wpdb->query( $wpdb->prepare( "DELETE pm FROM {$wpdb->postmeta} AS pm
+                            LEFT JOIN {$wpdb->posts} AS p
+                                ON p.post_type = '_pods_field' AND p.ID = pm.post_id
+                            WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_field_id' AND pm.meta_value = %d", $params->id ) );
+
+                        pods_query( "DELETE FROM @wp_pods_rel WHERE `field_id` = {$params->id}" );
+                    }
+                    else
+                        pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` CHANGE `{$old_name}` {$definition}" );
+                }
+            }
+            else
+                pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+        }
+        elseif ( 0 < $field[ 'sister_field_id' ] )
+            update_post_meta( $field[ 'sister_field_id' ], 'sister_field_id', $params->id );
 
         if ( !$save_pod )
             $this->cache_flush_pods( $pod );
@@ -839,7 +859,7 @@ class PodsAPI {
      * @since 2.0.0
      */
     public function save_object ( $params ) {
-        $params = (object) $params;
+        $params = (object) pods_sanitize( $params );
 
         if ( !isset( $params->name ) || empty( $params->name ) )
             return pods_error( __('Name must be given to save an Object', 'pods'), $this );
@@ -847,47 +867,65 @@ class PodsAPI {
         if ( !isset( $params->type ) || empty( $params->type ) )
             return pods_error( __('Type must be given to save an Object', 'pods'), $this );
 
-        if ( !isset( $params->options ) || empty( $params->options ) ) {
-            $options = get_object_vars( $params );
-            $exclude = array( 'id', 'name', 'type', 'options' );
+        $object = array(
+            'name' => $params->name,
+            'type' => $params->type,
+            'code' => '',
+            'options' => array()
+        );
 
-            foreach ( $exclude as $exclude_field ) {
-                if ( isset( $options[ $exclude_field ] ) )
-                    unset( $options[ $exclude_field ] );
+        // Setup options
+        $options = get_object_vars( $params );
+
+        $exclude = array(
+            'id',
+            'name',
+            'type',
+            'code',
+            'options'
+        );
+
+        foreach ( $exclude as $k => $exclude_field ) {
+            $aliases = array( $exclude_field );
+
+            if ( is_array( $exclude_field ) ) {
+                $aliases = array_merge( array( $k ), $exclude_field );
+                $exclude_field = $k;
             }
-            $params->options = '';
 
-            if ( !empty( $options ) )
-                $params->options = $options;
+            foreach ( $aliases as $alias ) {
+                if ( isset( $options[ $alias ] ) ) {
+                    $pod[ $exclude_field ] = $options[ $alias ];
+
+                    unset( $options[ $alias ] );
+                }
+            }
         }
 
-        if ( !empty( $params->options ) )
-            $params->options = str_replace( '@wp_', '{prefix}', json_encode( $params->options ) );
+        $object[ 'options' ][ 'type' ] = $object[ 'type' ];
+        $object[ 'options' ][ 'code' ] = $object[ 'code' ];
 
-        $params = pods_sanitize( $params );
+        $object[ 'options' ] = array_merge( $object[ 'options' ], $options );
 
         if ( isset( $params->id ) && !empty( $params->id ) ) {
-            $params->id = pods_absint( $params->id );
-
-            $result = pods_query( "UPDATE `@wp_pods_objects` SET `name` = '{$params->name}', `type` = '{$params->type}', `options` = '{$params->options}' WHERE `id` = " . pods_absint( $params->id ) );
-
-            if ( empty( $result ) )
-                return pods_error( ucwords( $params->type ) . ' Object not saved', $this );
+            $post_data = array(
+                'post_name' => $object[ 'name' ],
+                'post_title' => $object[ 'name' ],
+                'post_content' => $object[ 'code' ],
+                'post_type' => '_pods_object_' . $object[ 'type' ],
+                'post_status' => 'publish'
+            );
         }
         else {
-            $sql = "SELECT id FROM `@wp_pods_objects` WHERE `name` = '{$params->name}' LIMIT 1";
-            $check = pods_query( $sql, $this );
-
-            if ( !empty( $check ) )
-                return pods_error( ucwords( $params->type ) . " Object {$params->name} already exists", $this );
-
-            $object_id = pods_query( "INSERT INTO `@wp_pods_objects` (`name`, `type`, `options`) VALUES ('{$params->name}', '{$params->type}', '{$params->options}')" );
-
-            if ( empty( $object_id ) )
-                return pods_error( ucwords( $params->type ) . ' Object not saved', $this );
-
-            $params->id = $object_id;
+            $post_data = array(
+                'ID' => $object[ 'id' ],
+                'post_name' => $object[ 'name' ],
+                'post_title' => $object[ 'name' ],
+                'post_content' => $object[ 'code' ]
+            );
         }
+
+        $params->id = $this->save_post( $post_data, $object[ 'options' ], true );
 
         delete_transient( 'pods_object_' . $params->type );
         delete_transient( 'pods_object_' . $params->type . '_' . $params->name );
@@ -988,6 +1026,8 @@ class PodsAPI {
      */
     public function save_pod_item ( $params ) {
         $params = (object) str_replace( '@wp_', '{prefix}', pods_sanitize( $params ) );
+
+        $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
 
         // @deprecated 2.0.0
         if ( isset( $params->datatype ) ) {
@@ -1133,7 +1173,7 @@ class PodsAPI {
                 return false;
 
             // Prepare all table (non-relational) data
-            if ( !in_array( $type, array( 'pick', 'file' ) ) )
+            if ( !in_array( $type, $tableless_field_types ) )
                 $table_data[] = "`{$field}` = '{$value}'";
             // Store relational field data to be looped through later
             else {
@@ -1475,12 +1515,9 @@ class PodsAPI {
             return pods_error( __( 'Pod unable to be deleted', 'pods' ), $this );
 
         foreach ( $pod[ 'fields' ] as $field ) {
-            $wpdb->query( $wpdb->prepare( "DELETE pm FROM {$wpdb->postmeta} AS pm
-            LEFT JOIN {$wpdb->posts} AS p
-                ON p.post_type = '_pods_field' AND p.ID = pm.post_id
-            WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_field_id' AND pm.meta_value = %d", $field[ 'id' ] ) );
+            $field[ 'pod' ] = $pod;
 
-            wp_delete_post( $field[ 'id' ] );
+            $this->delete_field( $field, false );
         }
 
         if ( 'pod' == $pod[ 'type' ] || 'table' == $pod[ 'storage' ] ) {
@@ -1518,18 +1555,25 @@ class PodsAPI {
      * $params['pod_id'] string The Pod name
      *
      * @param array $params An associative array of parameters
+     * @param boolean $table_operation Whether or not to handle table operations
      *
      * @since 1.7.9
      */
-    public function delete_field ( $params ) {
+    public function delete_field ( $params, $table_operation = true ) {
+        global $wpdb;
+
+        $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
+
         $params = (object) pods_sanitize( $params );
 
         if ( !isset( $params->pod ) )
             $params->pod = '';
+
         if ( !isset( $params->pod_id ) )
             $params->pod_id = 0;
 
         $pod = $params->pod;
+
         if ( !is_array( $pod ) )
             $pod = $this->load_pod( array( 'name' => $pod, 'id' => $params->pod_id ) );
         else
@@ -1543,22 +1587,33 @@ class PodsAPI {
 
         if ( !isset( $params->name ) )
             $params->name = '';
+
         if ( !isset( $params->id ) )
             $params->id = 0;
+
         $field = $this->load_field( array( 'name' => $params->name, 'id' => $params->id ) );
+
         if ( false === $field )
 			return pods_error( __( 'Field not found', 'pods' ), $this );
 
         $params->id = $field[ 'id' ];
         $params->name = $field[ 'name' ];
 
-        if ( 'pod' == $pod[ 'type' ] && !in_array( $field[ 'type' ], array( 'file', 'pick' ) ) ) {
+        if ( $table_operation && 'table' == $pod[ 'storage' ] && !in_array( $field[ 'type' ], $tableless_field_types ) )
             pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` DROP COLUMN `{$params->name}`" );
-        }
 
-        pods_query( "DELETE FROM `@wp_pods_rel` WHERE (`pod_id` = {$params->pod_id} AND `field_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_field_id` = {$params->id})" );
-        pods_query( "DELETE FROM `@wp_pods_fields` WHERE `id` = {$params->id} LIMIT 1" );
-        pods_query( "UPDATE `@wp_pods_fields` SET `sister_field_id` = NULL WHERE `sister_field_id` = {$params->id}" );
+        $success = wp_delete_post( $params->id );
+
+        if ( !$success )
+            return pods_error( __( 'Field unable to be deleted', 'pods' ), $this );
+
+        $wpdb->query( $wpdb->prepare( "DELETE pm FROM {$wpdb->postmeta} AS pm
+            LEFT JOIN {$wpdb->posts} AS p
+                ON p.post_type = '_pods_field' AND p.ID = pm.post_id
+            WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_field_id' AND pm.meta_value = %d", $params->id ) );
+
+        if ( $table_operation )
+            pods_query( "DELETE FROM `@wp_pods_rel` WHERE (`pod_id` = {$params->pod_id} AND `field_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_field_id` = {$params->id})" );
 
         if ( !$save_pod )
             $this->cache_flush_pods( $pod );
@@ -1583,10 +1638,10 @@ class PodsAPI {
         if ( empty( $object ) )
             return pods_error( sprintf(__("%s Object not found", 'pods'), ucwords($params->type)), $this );
 
-        $result = pods_query( 'DELETE FROM `@wp_pods_objects` WHERE `id` = ' . (int) $object[ 'id' ] . " LIMIT 1", $this );
+        $success = wp_delete_post( $params->id );
 
-        if ( empty( $result ) )
-            return pods_error( sprintf(__("%s Object not deleted", 'pods'), ucwords($params->type)), $this );
+        if ( !$success )
+            return pods_error( sprintf( __( "%s Object not deleted", 'pods' ), ucwords( $params->type ) ), $this );
 
         delete_transient( 'pods_object_' . $params->type );
         delete_transient( 'pods_object_' . $params->type . '_' . $params->name );
@@ -2541,6 +2596,8 @@ class PodsAPI {
     }
 
     private function handle_field_validation ( $value, $field, $fields, $params ) {
+        $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
+
         $type = $fields[ $field ][ 'type' ];
         $label = $fields[ $field ][ 'label' ];
         $label = empty( $label ) ? $field : $label;
@@ -2561,7 +2618,7 @@ class PodsAPI {
         }
         // Verify unique fields
         if ( 1 == $fields[ $field ][ 'unique' ] ) {
-            if ( !in_array( $type, array( 'pick', 'file' ) ) ) {
+            if ( !in_array( $type, $tableless_field_types ) ) {
                 $exclude = '';
                 if ( !empty( $params->id ) )
                     $exclude = "AND `id` != {$params->id}";

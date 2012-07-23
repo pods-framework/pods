@@ -1,5 +1,5 @@
 <?php
-global $i;
+global $pods_i;
 
 $field_types = array('date' => 'Date / Time',
                      'number' => 'Number',
@@ -255,7 +255,7 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
                         <tbody class="pods-manage-list">
                             <?php
                                 // Empty Row for Flexible functionality
-                                $i = '--1';
+                                $pods_i = '--1';
                                 $field = array(
                                     'id' => '__1',
                                     'name' => 'new__1',
@@ -264,15 +264,15 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
                                 );
                                 include PODS_DIR . 'ui/admin/setup_edit_field.php';
 
-                                $i = 1;
+                                $pods_i = 1;
                                 foreach ($pod['fields'] as $field) {
                                     if ('_pods_empty' == $field['name'])
                                         continue;
                                     include PODS_DIR . 'ui/admin/setup_edit_field.php';
-                                    $i++;
+                                    $pods_i++;
                                 }
                             ?>
-                            <tr class="no-items<?php echo (1 < $i ? ' hidden' : ''); ?>">
+                            <tr class="no-items<?php echo (1 < $pods_i ? ' hidden' : ''); ?>">
                                 <td class="colspanchange" colspan="4">No fields have been added yet</td>
                             </tr>
                         </tbody>

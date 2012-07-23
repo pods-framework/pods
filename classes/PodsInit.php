@@ -74,6 +74,8 @@ class PodsInit
 
         $this->register_assets();
 
+        $this->register_pods();
+
         add_action( 'widgets_init', array( $this, 'register_widgets' ) );
     }
 
@@ -100,6 +102,63 @@ class PodsInit
         wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2.js', array( 'jquery' ), '2.1' );
 
         wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars-1.0.0.beta.6.js', array(), '1.0.0.beta.6' );
+    }
+
+    function register_pods () {
+        $args = array(
+            'public' => false,
+            'query_var' => false,
+            'rewrite' => false,
+            'capability_type' => 'pods_pod',
+            'has_archive' => false,
+            'hierarchical' => false,
+            'supports' => array( 'title', 'author' )
+        );
+        register_post_type( '_pods_pod', $args );
+
+        $args = array(
+            'public' => false,
+            'query_var' => false,
+            'rewrite' => false,
+            'capability_type' => 'pods_pod',
+            'has_archive' => false,
+            'hierarchical' => false,
+            'supports' => array( 'title', 'content', 'author' )
+        );
+        register_post_type( '_pods_field', $args );
+
+        $args = array(
+            'public' => false,
+            'query_var' => false,
+            'rewrite' => false,
+            'capability_type' => 'pods_template',
+            'has_archive' => false,
+            'hierarchical' => false,
+            'supports' => array( 'title', 'content', 'author' )
+        );
+        register_post_type( '_pods_template', $args );
+
+        $args = array(
+            'public' => false,
+            'query_var' => false,
+            'rewrite' => false,
+            'capability_type' => 'pods_page',
+            'has_archive' => false,
+            'hierarchical' => false,
+            'supports' => array( 'title', 'content', 'author' )
+        );
+        register_post_type( '_pods_page', $args );
+
+        $args = array(
+            'public' => false,
+            'query_var' => false,
+            'rewrite' => false,
+            'capability_type' => 'pods_helper',
+            'has_archive' => false,
+            'hierarchical' => false,
+            'supports' => array( 'title', 'content', 'author' )
+        );
+        register_post_type( '_pods_helper', $args );
     }
 
     function admin_init () {

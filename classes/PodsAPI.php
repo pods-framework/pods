@@ -50,7 +50,7 @@ class PodsAPI {
         if ( !is_array( $post_meta ) )
             $post_meta = array();
 
-        if ( !isset( $post_data[ 'ID' ] ) )
+        if ( !isset( $post_data[ 'ID' ] ) || empty( $post_data[ 'ID' ] ) )
             $post_data[ 'ID' ] = wp_insert_post( $post_data, true );
         else
             wp_update_post( $post_data );
@@ -549,15 +549,17 @@ class PodsAPI {
                 if ( !is_array( $field ) )
                     continue;
 
+                $field_name = $field[ 'name' ];
+
                 $field[ 'pod' ] = $pod;
                 $field[ 'weight' ] = $weight;
 
                 $field = $this->save_field( $field );
 
-                if ( !empty( $field ) && 0 < $field[ 'id' ] )
-                    $saved[ $field[ 'id' ] ] = true;
+                if ( !empty( $field ) && 0 < $field )
+                    $saved[ $field ] = true;
                 else
-                    return pods_error( sprintf( __( 'Cannot save %s field', 'pods' ), $field[ 'name' ] ), $this );
+                    return pods_error( sprintf( __( 'Cannot save the %s field', 'pods' ), $field_name ), $this );
 
                 $weight++;
             }
@@ -669,9 +671,6 @@ class PodsAPI {
                 return pods_error( sprintf( __( 'Field %s already exists, you cannot rename %s to that', 'pods' ), $params->name, $old_name ), $this );
 
             if ( $old_id != $params->id ) {
-                echo '<e>';
-                pods_debug( $field, false );
-                pods_debug( $params );
                 return pods_error( sprintf( __( 'Field %s already exists', 'pods' ), $params->name ), $this );
             }
         }
@@ -1861,10 +1860,8 @@ class PodsAPI {
             $_pod = get_object_vars( $params );
         }
         else {
-            if ( ( !isset( $params->id ) || empty( $params->id ) ) && ( !isset( $params->name ) || empty( $params->name ) ) ) {
-                pods_debug( $params );
+            if ( ( !isset( $params->id ) || empty( $params->id ) ) && ( !isset( $params->name ) || empty( $params->name ) ) )
                 return pods_error( 'Either Pod ID or Name are required', $this );
-            }
 
             if ( isset( $params->name ) ) {
                 $pod = get_transient( 'pods_pod_' . $params->name );
@@ -1934,18 +1931,21 @@ class PodsAPI {
         $pod[ 'fields' ] = array();
 
         $fields = get_posts( array(
-            'post_type' => '_pods_pod',
-            'posts_per_page' => 1,
+            'post_type' => '_pods_field',
+            'posts_per_page' => -1,
+            'nopaging' => true,
             'post_parent' => $pod[ 'id' ],
             'orderby' => 'menu_order',
             'order' => 'ASC'
         ) );
 
-        if ( !empty( $pod[ 'fields' ] ) ) {
+        if ( !empty( $fields ) ) {
             foreach ( $fields as $field ) {
                 $field = $this->load_field( $field );
 
-                $pod[ 'fields' ][ $field[ 'post_name' ] ] = $field;
+                $field = PodsForm::option_setup( $field, null, true );
+
+                $pod[ 'fields' ][ $field[ 'name' ] ] = $field;
             }
         }
 
@@ -2171,7 +2171,7 @@ class PodsAPI {
 
         unset( $field[ 'options' ][ 'type' ] );
 
-        $field = PodsForm::option_setup( $field, null, true );
+        //$field = PodsForm::option_setup( $field, null, true );
 
         return $field;
     }
@@ -3288,7 +3288,7 @@ class PodsAPI {
     public function cache_flush_pods ( $pod = null ) {
         global $wpdb;
 
-        delete_transient( 'pods_pods' );
+        delete_transient( 'pods' );
 
         if ( null !== $pod && is_array( $pod ) ) {
             delete_transient( 'pods_pod_' . $pod[ 'name' ] );

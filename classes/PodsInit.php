@@ -486,7 +486,9 @@ class PodsInit
                 }
             }
             delete_option('pods_framework_version');
+
             add_option('pods_framework_version', PODS_VERSION);
+
             do_action('pods_install_post', PODS_VERSION, $pods_version, $_blog_id);
         }
 
@@ -496,24 +498,17 @@ class PodsInit
     }
 
     // Delete Attachments from relationships
-    // @todo: remove select and run DELETE with the JOIN on field.type='file'
-    function delete_attachment ($_ID) {
-        $results = pods_query("SELECT `id` FROM `@wp_pods_fields` WHERE `type` = 'file'");
-        if (!empty($results)) {
-            $field_ids = array();
-            foreach ($results as $row) {
-                $field_ids[] = (int) $row->id;
-            }
-            $field_ids = implode(',', $field_ids);
+    function delete_attachment ( $_ID ) {
+        global $wpdb;
 
-            if (!empty($field_ids)) {
-                // Remove all references to the deleted attachment
-                do_action('pods_delete_attachment', $_ID, $field_ids);
-                $sql = "DELETE FROM `@wp_pods_rel` WHERE `field_id` IN ({$field_ids}) AND `item_id` = %d";
-                $sql = array($sql, array($_ID));
-                pods_query($sql);
-            }
-        }
+        do_action( 'pods_delete_attachment', $_ID );
+
+        pods_query( "DELETE rel FROM `@wp_pods_rel` AS rel
+            LEFT JOIN {$wpdb->posts} AS p
+                ON p.`post_type` = '_pods_field' AND ( p.ID = rel.`field_id` OR p.ID = rel.`related_field_id` )
+            LEFT JOIN {$wpdb->postmeta} AS pm
+                ON pm.`post_id` = p.`ID` AND pm.`meta_key` = 'type' AND pm.`meta_value` = 'file'
+            WHERE p.`ID` IS NOT NULL AND pm.`meta_id` IS NOT NULL AND rel.`item_id` = " . (int) $_ID );
     }
 
 
@@ -530,6 +525,7 @@ class PodsInit
                 eval("?>$content");
 
             do_action('pods_page_precode', $pod_page_exists, $pods);
+
             if (!is_object($pods) && (404 == $pods || is_wp_error($pods))) {
                 remove_action('template_redirect', array($this, 'template_redirect'));
                 remove_action('wp_head', array($this, 'wp_head'));

@@ -400,6 +400,8 @@ class PodsInit
                 $pod_page_exists = pod_page_exists();
 
             if (false !== $pod_page_exists) {
+                $pods = apply_filters( 'pods_global', $pods, $pod_page_exists );
+
                 if (404 != $pods && (!is_object($pods) || !is_wp_error($pods))) {
                     add_action('template_redirect', array($this, 'template_redirect'));
                     add_filter('redirect_canonical', '__return_false');
@@ -521,8 +523,10 @@ class PodsInit
             if (0 < strlen(trim($pod_page_exists['precode'])))
                 $content = $pod_page_exists['precode'];
 
-            if (false !== $content && !defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
+            if (false !== $content && !defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL) {
+                pods_deprecated( 'Use WP Page Templates or hook into the pods_page_precode action instead of using Pod Page Precode', '2.1.0' );
                 eval("?>$content");
+            }
 
             do_action('pods_page_precode', $pod_page_exists, $pods);
 

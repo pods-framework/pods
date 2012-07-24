@@ -116,6 +116,8 @@ function pods_debug ( $debug = '_null', $die = true, $prefix = '_null' ) {
  * @since 2.0.0
  */
 function pods_deprecated ( $function, $version, $replacement = null ) {
+    if ( !version_compare( $version, PODS_VERSION, '<=' ) )
+        return;
 
     do_action( 'deprecated_function_run', $function, $replacement, $version );
 
@@ -815,34 +817,30 @@ function pods_validate_key ( $token, $datatype, $uri_hash, $columns = null, $for
 function pods_content () {
     global $pod_page_exists;
 
-    do_action( 'pods_content_pre', $pod_page_exists );
     $content = false;
-    if ( false !== $pod_page_exists ) {
-        $function_or_file = str_replace( '*', 'w', $pod_page_exists[ 'uri' ] );
-        $check_function = false;
-        $check_file = null;
-        if ( ( !defined( 'PODS_STRICT_MODE' ) || !PODS_STRICT_MODE ) && ( !defined( 'PODS_PAGE_FILES' ) || !PODS_PAGE_FILES ) )
-            $check_file = false;
-        if ( false !== $check_function && false !== $check_file )
-            $function_or_file = pods_function_or_file( $function_or_file, $check_function, 'page', $check_file );
-        else
-            $function_or_file = false;
 
-        if ( !$function_or_file && 0 < strlen( trim( $pod_page_exists[ 'phpcode' ] ) ) )
+    do_action( 'pods_content_pre', $pod_page_exists );
+
+    if ( false !== $pod_page_exists ) {
+        if ( 0 < strlen( trim( $pod_page_exists[ 'phpcode' ] ) ) )
             $content = $pod_page_exists[ 'phpcode' ];
 
         ob_start();
-        if ( false === $content && false !== $function_or_file && isset( $function_or_file[ 'file' ] ) )
-            locate_template( $function_or_file[ 'file' ], true, true );
-        elseif ( false !== $content ) {
-            if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL )
+
+        if ( false !== $content ) {
+            if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) {
+                pods_deprecated( 'Use WP Page Templates or hook into the pods_content filter instead of using Pod Page PHP code', '2.1.0' );
                 eval( "?>$content" );
+            }
             else
                 echo $content;
         }
+
         $content = ob_get_clean();
+
         echo apply_filters( 'pods_content', $content );
     }
+
     do_action( 'pods_content_post', $pod_page_exists, $content );
 }
 

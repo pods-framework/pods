@@ -4,7 +4,7 @@
         padding-left: 0;
         margin-left: 0;
     }
-    
+
     ol.pods_form_widget_form label {
         display: block;
     }
@@ -12,13 +12,13 @@
 
 <ol class="pods_form_widget_form">
     <li>
-    <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title', 'pods')</label>
+    <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title', 'pods'); ?></label>
         <input class="widefat" type="text" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" value="<?php echo $title; ?>">
     </li>
     <li>
         <?php
-        $api = new PodsAPI();
-        $all_pods = $api->load_pods(array());
+        $api = pods_api();
+        $all_pods = $api->load_pods();
         ?>
         <label for="<?php echo $this->get_field_id('pod_type'); ?>"><?php _e('Pod Type', 'pods'); ?></label>
         <?php if (0 < count($all_pods)): ?>

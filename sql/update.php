@@ -16,7 +16,7 @@ function translate_field_type($name) {
 
 function migrate_pods() {
     // Grab old pods and fields, and create new ones via the API
-    $api = new PodsAPI;
+    $api = pods_api();
     $pod_types = pods_query("SELECT * FROM `@wp_pod_types`");
     $pod_ids = array();
 
@@ -64,7 +64,7 @@ function migrate_pods() {
 }
 
 function migrate_templates() {
-    $api = new PodsAPI;
+    $api = pods_api();
     $templates = pods_query("SELECT * FROM `@wp_pod_templates`");
     $results = array();
 
@@ -84,7 +84,7 @@ function migrate_templates() {
 }
 
 function migrate_helpers() {
-    $api = new PodsAPI;
+    $api = pods_api();
     $results = array();
     $helpers = pods_query("SELECT * FROM `@wp_pod_helpers`");
 
@@ -102,7 +102,7 @@ function migrate_helpers() {
 }
 
 function migrate_pages() {
-    $api = new PodsAPI;
+    $api = pods_api();
     $results = array();
     $pages = pods_query("SELECT * FROM `@wp_pod_pages`");
 

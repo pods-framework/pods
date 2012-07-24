@@ -134,7 +134,7 @@ class PodsAdmin {
 
         $submenu = array();
         $results = $this->api->load_pods( array( //'options' => array('disable_manage' => 0),
-            'orderby' => '`weight`, `name`', 'type' => 'pod'
+            'type' => 'pod'
         ) );
         $can_manage = pods_access( 'manage_content' );
         if ( !defined( 'PODS_DEVELOPER' ) )

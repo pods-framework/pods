@@ -19,7 +19,7 @@ $tableColumns = PodsData::get_table_columns($selectedTable);
         <div class="wrap pods-admin">
             <h2>Convert Table Fields</h2>
             <hr />
-            <div id="pods-part-left"> 
+            <div id="pods-part-left">
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sit amet pellentesque tortor. Vivamus non sem sit amet metus dapibus hendrerit ac at lectus. Nunc libero neque, varius vitae luctus ac, semper molestie massa. In hendrerit, odio in lacinia bibendum, purus dolor condimentum dui, ac imperdiet quam ipsum non felis. Phasellus ornare sem ut mi varius vulputate. Aenean tempus sollicitudin felis. Aliquam sed dui ipsum, ut mattis turpis.
                     Quisque tempus pretium rutrum. Aliquam vestibulum sem in nunc scelerisque feugiat. Donec vel nulla sit amet felis bibendum commodo. Suspendisse non leo erat, sit amet lacinia nunc. Sed risus erat, malesuada non faucibus vitae, tempor et est. Etiam malesuada sodales elementum. Integer dolor dui, congue quis iaculis sodales, posuere vitae nulla.</p>
 
@@ -48,7 +48,7 @@ $tableColumns = PodsData::get_table_columns($selectedTable);
                                                          <?php echo $colType; ?>
                                                     </td>
                                                     <td width="80">
-<?php 
+<?php
 
 $columnData = PodsData::get_column_data($colName, $selectedTable);
 
@@ -67,10 +67,10 @@ EOI;
                                                     </td>
 
                                                     <td> <img src="<?php echo PODS_URL; ?>/ui/images/arrow-right.png" width="12" height="12" style="vertical-align:middle;" /> <input type="text" name="pod_cols[<?php echo $colName; ?>]" value="<?php echo $colName; ?>" /> </td>
-    <?php $podsApi = new PodsAPI(); ?>
+    <?php $api = pods_api(); ?>
                                                     <td>
                                                         <select name="pod_col_types[<?php echo $colName; ?>]">
-                                                    <?php foreach ($podsApi->get_pods_field_types() as $fieldName => $fieldLabel): ?>
+                                                    <?php foreach ($api->get_pods_field_types() as $fieldName => $fieldLabel): ?>
                                                                 <?php $selected = (PodsApi::detect_pod_field_from_sql_data_type($colType) == $fieldName) ? 'selected' : ''; ?>
                                                                 <option value="<?php echo $fieldName; ?>" <?php echo $selected; ?>><?php echo $fieldLabel; ?></option>
                                                             <?php endforeach; ?>
@@ -97,15 +97,15 @@ EOI;
                         <div class="inside pods-form" style="display: block; ">
                             <ul>
                                 <li>
-                                    <label class="pod-detail">Pod is a Top level menu item?</label> 
+                                    <label class="pod-detail">Pod is a Top level menu item?</label>
                                     <input type="checkbox" class="new-pod-data" name="new_pod_data[top_level_menu]" />
                                 </li>
                                 <li>
-                                    <label class="pod-detail">Pod Name</label> 
+                                    <label class="pod-detail">Pod Name</label>
                                     <input type="text" class="new-pod-data" name="new_pod_data[pod_name]" /><?php pods_help('Lowercase letters and underscores only.'); ?>
                                 </li>
                                 <li>
-                                    <label class="pod-detail">Pod Label</label> 
+                                    <label class="pod-detail">Pod Label</label>
                                     <input type="text" class="new-pod-data" name="new_pod_data[pod_label]" />
                                 </li>
                             </ul>

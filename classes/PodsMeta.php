@@ -17,11 +17,11 @@ class PodsMeta {
 
         $this->api =& pods_api();
 
-        self::$taxonomies = $this->api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'taxonomy' ) );
-        self::$post_types = $this->api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'post_type' ) );
-        self::$media = $this->api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'media' ) );
-        self::$user = $this->api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'user' ) );
-        self::$comment = $this->api->load_pods( array( 'orderby' => '`weight`, `name`', 'type' => 'comment' ) );
+        self::$taxonomies = $this->api->load_pods( array( 'type' => 'taxonomy' ) );
+        self::$post_types = $this->api->load_pods( array( 'type' => 'post_type' ) );
+        self::$media = $this->api->load_pods( array( 'type' => 'media' ) );
+        self::$user = $this->api->load_pods( array( 'type' => 'user' ) );
+        self::$comment = $this->api->load_pods( array( 'type' => 'comment' ) );
 
         if ( !empty( self::$post_types ) ) {
             // Handle Post Type Editor

@@ -33,7 +33,7 @@ class PodsInit
             add_action( 'wp_before_admin_bar_render', array( $this, 'admin_bar_links' ) );
 
             // Init Pods Meta
-            $this->meta = pods_meta();
+            $this->meta = pods_meta()->init();
         }
     }
 

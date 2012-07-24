@@ -71,15 +71,18 @@ class PodsView {
             wp_cache_set( $key, $value, 'pods_view', $expires );
 
         do_action( 'pods_view_set_' . $cache_mode, $key, $value, $expires );
+
+        return $value;
     }
 
     public static function clear ( $key, $cache_mode = null ) {
+        global $wpdb;
+
         if ( !in_array( $cache_mode, self::$cache_modes ) )
             $cache_mode = 'cache';
 
         if ( 'transient' == $cache_mode ) {
             if ( true === $key ) {
-                global $wpdb;
                 $wpdb->query("DELETE FROM `{$wpdb->options}` WHERE option_name LIKE '_transient_pods_view_%'");
                 wp_cache_flush();
             }
@@ -88,7 +91,6 @@ class PodsView {
         }
         elseif ( 'site-transient' == $cache_mode ) {
             if ( true === $key ) {
-                global $wpdb;
                 $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE option_name LIKE '_site_transient_pods_view_%'" );
                 wp_cache_flush();
             }
@@ -103,6 +105,8 @@ class PodsView {
         }
 
         do_action( 'pods_view_clear_' . $cache_mode, $key );
+
+        return true;
     }
 
     private static function get_template_part ( $_view, $_data = null ) {

@@ -3,22 +3,25 @@ class PodsMeta {
 
     private $api;
 
-    public static $taxonomies;
+    public static $post_types = array();
 
-    public static $post_types;
+    public static $taxonomies = array();
 
-    public static $media;
+    public static $media = array();
 
-    public static $user;
+    public static $user = array();
 
-    public static $comment;
+    public static $comment = array();
+
+    public static $groups = array();
 
     function __construct () {
-
         $this->api =& pods_api();
+    }
 
-        self::$taxonomies = $this->api->load_pods( array( 'type' => 'taxonomy' ) );
+    public function init () {
         self::$post_types = $this->api->load_pods( array( 'type' => 'post_type' ) );
+        self::$taxonomies = $this->api->load_pods( array( 'type' => 'taxonomy' ) );
         self::$media = $this->api->load_pods( array( 'type' => 'media' ) );
         self::$user = $this->api->load_pods( array( 'type' => 'user' ) );
         self::$comment = $this->api->load_pods( array( 'type' => 'comment' ) );
@@ -75,29 +78,130 @@ class PodsMeta {
             add_action( 'wp_insert_comment', array( $this, 'save_comment' ) );
             add_action( 'edit_comment', array( $this, 'save_comment' ) );
         }
+
+        do_action( 'pods_meta_init' );
+    }
+
+    public function group_add ( $pod, $label, $fields, $context = 'normal', $priority = 'default' ) {
+        $defaults = array(
+            'name' => '',
+            'object' => 'post',
+            'type' => 'post_type'
+        );
+
+        $pod = array_merge( $defaults, (array) $pod );
+
+        if ( empty( $pod[ 'name' ] ) )
+            $pod[ 'name' ] = $pod[ 'object' ];
+
+        if ( empty( $pod[ 'object' ] ) )
+            return pods_error( __( 'Object required to add a Pods meta group', 'pods' ) );
+
+        $object_name = $pod[ 'object' ];
+
+        if ( 'pod' == $pod[ 'type' ] )
+            $object_name = $pod[ 'name' ];
+
+        if ( !isset( self::$groups[ $pod[ 'type' ] ] ) )
+            self::$groups[ $pod[ 'type' ] ] = array();
+
+        if ( !isset( self::$groups[ $pod[ 'type' ] ][ $object_name ] ) )
+            self::$groups[ $pod[ 'type' ] ][ $object_name ] = array();
+
+        $group = array(
+            'pod' => $pod,
+            'label' => $label,
+            'fields' => $fields,
+            'context' => $context,
+            'priority' => $priority
+        );
+
+        // Filter group data, pass vars separately for reference down the line (in case array changed by other filter)
+        $group = apply_filters( 'pods_meta_group_add_' . $pod[ 'type' ] . '_' . $object_name, $group, $pod, $label, $fields );
+        $group = apply_filters( 'pods_meta_group_add_' . $pod[ 'type' ], $group, $pod, $label, $fields );
+        $group = apply_filters( 'pods_meta_group_add', $group, $pod, $label, $fields );
+
+        self::$groups[ $object_name ][] = $group;
+    }
+
+    public function groups_get ( $type, $name ) {
+        $fields = array();
+
+        $object = self::$post_types;
+
+        if ( 'taxonomy' == $type )
+            $object = self::$taxonomies;
+        elseif ( 'media' == $type )
+            $object = self::$media;
+        elseif ( 'user' == $type )
+            $object = self::$user;
+        elseif ( 'comment' == $type )
+            $object = self::$comment;
+        elseif ( 'pod' == $type ) {
+            $object = $this->api->load_pod( array( 'name' => $name ) );
+
+            $fields = $object[ 'fields' ];
+        }
+
+        if ( 'pod' != $type && isset( $object[ $name ] ) )
+            $fields = $object[ $name ][ 'fields' ];
+
+        $groups = array(
+            array(
+                'pod' => array(
+                    'name' => 'post',
+                    'object' => 'post',
+                    'type' => 'post_type'
+                ),
+                'label' => __( 'More Fields', 'pods' ),
+                'fields' => $fields,
+                'context' => 'normal',
+                'priority' => 'default'
+            )
+        );
+
+        if ( isset( self::$groups[ $type ] ) && isset( self::$groups[ $type ][ $name ] ) )
+            $groups = self::$groups[ $type ][ $name ];
+
+        return $groups;
     }
 
     public function meta_post_add ( $post ) {
-        $post_type = get_post_type_object( $post->post_type );
+        $groups = $this->groups_get( 'post_type', $post->post_type );
 
-        add_meta_box( $post->post_type . '-pods-meta', $post_type->labels->name, array( $this, 'meta_post' ), $post->post_type, 'normal', 'high' );
+        foreach ( $groups as $k => $group ) {
+            if ( empty( $group[ 'label' ] ) )
+                $group[ 'label' ] = get_post_type_object( $post->post_type )->labels->label;
+
+            add_meta_box(
+                $post->post_type . '-pods-meta-' . sanitize_title( $group[ 'label' ] ),
+                $group[ 'label' ],
+                array( $this, 'meta_post' ),
+                $post->post_type,
+                $group[ 'context' ],
+                $group[ 'priority' ],
+                array( 'group' => $group )
+            );
+        }
     }
 
-    public function meta_post ( $post ) {
+    public function meta_post ( $post, $metabox ) {
         wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
 ?>
     <table class="form-table pods-metabox">
         <?php
-            $pod = $this->api->load_pod( array( 'name' => self::$post_types[ $post->post_type ][ 'name' ] ) );
-            foreach ( $pod[ 'fields' ] as $field ) {
+            $id = null;
+
+            if ( is_object( $post ) )
+                $id = $post->ID;
+
+            $pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ], $id );
+
+            foreach ( $metabox[ 'args' ][ 'group' ][ 'fields' ] as $field ) {
                 $value = '';
 
-                if ( is_object( $post ) ) {
-                    if ( in_array( $field[ 'type' ], array( 'pick', 'file' ) ) )
-                        $value = get_post_meta( $post->ID, $field[ 'name' ] );
-                    else
-                        $value = get_post_meta( $post->ID, $field[ 'name' ], true );
-                }
+                if ( !empty( $pod ) )
+                    $value = $pod->field( $field[ 'name' ] );
         ?>
             <tr class="form-field">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
@@ -115,53 +219,97 @@ class PodsMeta {
         if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || 'revision' == $post->post_type )
             return $post_id;
 
-        if ( !isset( self::$post_types[ $post->post_type ] ) )
-            return;
+        $groups = $this->groups_get( 'post_type', $post->post_type );
 
-        $pod = $this->api->load_pod( array( 'name' => self::$post_types[ $post->post_type ][ 'name' ] ) );
+        if ( empty( $groups ) )
+            return $post_id;
 
-        foreach ( $pod[ 'fields' ] as $field ) {
-            if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
-                update_post_meta( $post_id, $field[ 'name' ], $_POST[ 'pods_meta_' . $field[ 'name' ] ] );
+        $data = array();
+
+        $id = $post_id;
+        $pod = false;
+
+        foreach ( $groups as $group ) {
+            if ( empty( $pod ) )
+                $pod = pods( $group[ 'pod' ], $id );
+
+            foreach ( $group[ 'fields' ] as $field ) {
+                if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
+                    $data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
+            }
         }
+
+        if ( !empty( $pod ) )
+            $pod->save( $data );
 
         return $post_id;
     }
 
     public function meta_media ( $form_fields, $post ) {
+        $groups = $this->groups_get( 'media', 'media' );
+
+        if ( empty( $groups ) )
+            return $form_fields;
+
         wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
 
-        $pod = $this->api->load_pod( array( 'name' => 'media' ) );
+        $id = null;
 
-        foreach ( $pod[ 'fields' ] as $field ) {
-            if ( in_array( $field[ 'type' ], array( 'pick', 'file' ) ) )
-                $value = get_post_meta( $post->ID, $field[ 'name' ] );
-            else
-                $value = get_post_meta( $post->ID, $field[ 'name' ], true );
+        if ( is_object( $post ) )
+            $id = $post->ID;
 
-            $form_fields[ 'pods_meta_' . $field[ 'name' ] ] = array(
-                'label' => $field[ 'label' ],
-                'input' => 'html',
-                'html' => PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] ),
-                'helps' => $field[ 'options' ][ 'description' ]
-            );
+        $pod = false;
+
+        foreach ( $groups as $group ) {
+            if ( empty( $pod ) )
+                $pod = pods( $group[ 'pod' ], $id );
+
+            foreach ( $group[ 'fields' ] as $field ) {
+                $value = '';
+
+                if ( !empty( $pod ) )
+                    $value = $pod->field( $field[ 'name' ] );
+
+                $form_fields[ 'pods_meta_' . $field[ 'name' ] ] = array(
+                    'label' => $field[ 'label' ],
+                    'input' => 'html',
+                    'html' => PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] ),
+                    'helps' => $field[ 'options' ][ 'description' ]
+                );
+            }
         }
 
         return $form_fields;
     }
 
     public function save_media ( $post, $attachment ) {
+        $groups = $this->groups_get( 'media', 'media' );
+
+        if ( empty( $groups ) )
+            return $post;
+
         $post_id = $attachment;
 
         if ( is_array( $post ) )
             $post_id = $post[ 'ID' ];
 
-        $pod = $this->api->load_pod( array( 'name' => 'media' ) );
+        $data = array();
 
-        foreach ( $pod[ 'fields' ] as $field ) {
-            if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
-                update_post_meta( $post_id, $field[ 'name' ], $_POST[ 'pods_meta_' . $field[ 'name' ] ] );
+        $id = $post_id;
+        $pod = false;
+
+        foreach ( $groups as $group ) {
+            if ( empty( $pod ) )
+                $pod = pods( $group[ 'pod' ], $id );
+
+            foreach ( $group[ 'fields' ] as $field ) {
+                if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
+                    $data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
+            }
         }
+
+        if ( !empty( $pod ) )
+            $pod->save( $data );
 
         return $post;
     }
@@ -174,29 +322,41 @@ class PodsMeta {
         if ( !is_object( $tag ) )
             $taxonomy_name = $tag;
 
-        $pod = $this->api->load_pod( array( 'name' => self::$taxonomies[ $taxonomy_name ][ 'name' ] ) );
+        $groups = $this->groups_get( 'taxonomy', $taxonomy );
 
-        foreach ( $pod[ 'fields' ] as $field ) {
-            if ( !is_object( $tag ) ) {
+        $id = null;
+        $pod = false;
+
+        foreach ( $groups as $group ) {
+            if ( empty( $pod ) )
+                $pod = pods( $group[ 'pod' ], $id );
+
+            foreach ( $group[ 'fields' ] as $field ) {
+                $value = '';
+
+                if ( !empty( $pod ) )
+                    $value = $pod->field( $field[ 'name' ] );
+
+                if ( !is_object( $tag ) ) {
 ?>
     <div class="form-field">
         <?php
-            echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] );
-            echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], '', $field[ 'type' ], $field[ 'options' ] );
+                    echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] );
+                    echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] );
 
-            if ( isset( $fields[ 'options' ][ 'description' ] ) )
-                echo wpautop( $field[ 'options' ][ 'description' ] );
+                    if ( isset( $fields[ 'options' ][ 'description' ] ) )
+                        echo wpautop( $field[ 'options' ][ 'description' ] );
         ?>
     </div>
     <?php
-            }
-            else {
+                }
+                else {
     ?>
         <tr class="form-field">
             <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
             <td>
                 <?php
-                    echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], '', $field[ 'type' ], $field[ 'options' ] );
+                    echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] );
 
                     if ( isset( $fields[ 'options' ][ 'description' ] ) )
                         echo '<span class="description">' . $field[ 'options' ][ 'description' ] . '</span>';
@@ -204,25 +364,34 @@ class PodsMeta {
             </td>
         </tr>
     <?php
+                }
             }
         }
     }
 
     public function save_taxonomy ( $term_id, $term_taxonomy_id, $taxonomy ) {
-        if ( !isset( self::$taxonomies[ $taxonomy ][ 'name' ] ) )
-            return false;
+        $groups = $this->groups_get( 'taxonomy', $taxonomy );
 
-        $pod = $this->api->load_pod( array( 'name' => self::$taxonomies[ $taxonomy ][ 'name' ] ) );
+        if ( empty( $groups ) )
+            return;
 
-        $item = pods( $pod[ 'name' ], $term_id );
         $data = array();
 
-        foreach ( $pod[ 'fields' ] as $field ) {
-            if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
-                $data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
+        $id = $term_id;
+        $pod = false;
+
+        foreach ( $groups as $group ) {
+            if ( empty( $pod ) )
+                $pod = pods( $group[ 'pod' ], $id );
+
+            foreach ( $group[ 'fields' ] as $field ) {
+                if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
+                    $data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
+            }
         }
 
-        $item->save( $data );
+        if ( !empty( $pod ) )
+            $pod->save( $data );
     }
 
     public function meta_user ( $user_id ) {
@@ -231,21 +400,32 @@ class PodsMeta {
         if ( is_object( $user_id ) )
             $user_id = $user_id->ID;
 
-        $pod_name = current( self::$user );
-        $pod_name = $pod_name[ 'name' ];
+        $groups = $this->groups_get( 'user', 'user' );
 
-        $pod = $this->api->load_pod( array( 'name' => $pod_name ) );
+        if ( is_object( $user_id ) )
+            $user_id = $user_id->ID;
+
+        $id = $user_id;
+        $pod = false;
+
+        foreach ( $groups as $group ) {
+            if ( empty( $pod ) )
+                $pod = pods( $group[ 'pod' ], $id );
 ?>
-    <h3><?php echo $pod[ 'options' ][ 'label' ]; ?></h3>
+    <h3><?php echo $group[ 'label' ]; ?></h3>
 
     <table class="form-table pods-meta">
         <tbody>
             <?php
-                foreach ( $pod[ 'fields' ] as $field ) {
+                foreach ( $group[ 'fields' ] as $field ) {
+                    $value = '';
+
+                    if ( !empty( $pod ) )
+                        $value = $pod->field( $field[ 'name' ] );
             ?>
                 <tr class="form-field">
                     <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
-                    <td><?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], get_user_meta( $user_id, $field[ 'name' ] ), $field[ 'type' ], $field[ 'options' ] ); ?></td>
+                    <td><?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] ); ?></td>
                 </tr>
             <?php
                 }
@@ -253,60 +433,95 @@ class PodsMeta {
         </tbody>
     </table>
 <?php
+        }
     }
 
     public function save_user ( $user_id ) {
+        $groups = $this->groups_get( 'user', 'user' );
+
+        if ( empty( $groups ) )
+            return;
+
         if ( is_object( $user_id ) )
             $user_id = $user_id->ID;
 
-        $pod_name = current( self::$user );
-        $pod_name = $pod_name[ 'name' ];
+        $data = array();
 
-        $pod = $this->api->load_pod( array( 'name' => $pod_name ) );
+        $id = $user_id;
+        $pod = false;
 
-        foreach ( $pod[ 'fields' ] as $field ) {
-            if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
-                update_user_meta( $user_id, $field[ 'name' ], $_POST[ 'pods_meta_' . $field[ 'name' ] ] );
+        foreach ( $groups as $group ) {
+            if ( empty( $pod ) )
+                $pod = pods( $group[ 'pod' ], $id );
+
+            foreach ( $group[ 'fields' ] as $field ) {
+                if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
+                    $data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
+            }
         }
+
+        if ( !empty( $pod ) )
+            $pod->save( $data );
     }
 
     public function meta_comment_new_logged_in ( $commenter, $user_identity ) {
         wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
 
-        $pod_name = current( self::$comment );
-        $pod_name = $pod_name[ 'name' ];
+        $groups = $this->groups_get( 'comment', 'comment' );
 
-        $pod = $this->api->load_pod( array( 'name' => $pod_name ) );
-        foreach ( $pod[ 'fields' ] as $field ) {
+        $id = null;
+        $pod = false;
+
+        foreach ( $groups as $group ) {
+            if ( empty( $pod ) )
+                $pod = pods( $group[ 'pod' ], $id );
+
+            foreach ( $group[ 'fields' ] as $field ) {
+                $value = '';
+
+                if ( !empty( $pod ) )
+                    $value = $pod->field( $field[ 'name' ] );
 ?>
     <p class="comment-form-author comment-form-pods-meta-<?php echo $field[ 'name' ]; ?>">
         <?php
-            echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] );
-            echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], '', $field[ 'type' ], $field[ 'options' ] );
+                echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] );
+                echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] );
         ?>
     </p>
 <?php
+            }
         }
     }
 
     public function meta_comment_new ( $form_fields ) {
         wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
 
-        $pod_name = current( self::$comment );
-        $pod_name = $pod_name[ 'name' ];
+        $groups = $this->groups_get( 'comment', 'comment' );
 
-        $pod = $this->api->load_pod( array( 'name' => $pod_name ) );
-        foreach ( $pod[ 'fields' ] as $field ) {
-            ob_start();
+        $id = null;
+        $pod = false;
+
+        foreach ( $groups as $group ) {
+            if ( empty( $pod ) )
+                $pod = pods( $group[ 'pod' ], $id );
+
+            foreach ( $group[ 'fields' ] as $field ) {
+                $value = '';
+
+                if ( !empty( $pod ) )
+                    $value = $pod->field( $field[ 'name' ] );
+
+                ob_start();
 ?>
     <p class="comment-form-author comment-form-pods-meta-<?php echo $field[ 'name' ]; ?>">
         <?php
-            echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] );
-            echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], '', $field[ 'type' ], $field[ 'options' ] );
+                echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] );
+                echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] );
         ?>
     </p>
 <?php
-            $form_fields[ 'pods_meta_' . $field[ 'name' ] ] = ob_get_clean();
+                $form_fields[ 'pods_meta_' . $field[ 'name' ] ] = ob_get_clean();
+            }
         }
         return $form_fields;
     }
@@ -314,58 +529,93 @@ class PodsMeta {
     public function meta_comment_add ( $comment ) {
         wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
 
-        $pod_name = current( self::$comment );
-        $pod_name = $pod_name[ 'name' ];
+        $groups = $this->groups_get( 'comment', 'comment' );
 
-        $pod = $this->api->load_pod( array( 'name' => $pod_name ) );
-?>
-    <table class="form-table pods-metabox">
-        <?php
-        foreach ( $pod[ 'fields' ] as $field ) {
-            ?>
-            <tr class="form-field">
-                <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
-                <td><?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], ( is_object( $comment ) ? get_comment_meta( $comment->comment_ID, $field[ 'name' ] ) : '' ), $field[ 'type' ], $field[ 'options' ] ); ?></td>
-            </tr>
-            <?php
-        }
-        ?>
-    </table>
-    <?php
-    }
+        $id = null;
 
-    public function meta_comment ( $comment ) {
-        wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
+        if ( is_object( $comment ) )
+            $id = $comment->comment_ID;
 
-        $pod_name = current( self::$comment );
-        $pod_name = $pod_name[ 'name' ];
+        $pod = false;
 
-        $pod = $this->api->load_pod( array( 'name' => $pod_name ) );
+        foreach ( $groups as $group ) {
+            if ( empty( $pod ) )
+                $pod = pods( $group[ 'pod' ], $id );
 ?>
     <table class="form-table pods-metabox">
         <?php
             foreach ( $pod[ 'fields' ] as $field ) {
+                $value = '';
+
+                if ( !empty( $pod ) )
+                    $value = $pod->field( $field[ 'name' ] );
         ?>
             <tr class="form-field">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
-                <td><?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], ( is_object( $comment ) ? get_comment_meta( $comment->comment_ID, $field[ 'name' ] ) : '' ), $field[ 'type' ], $field[ 'options' ] ); ?></td>
+                <td><?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] ); ?></td>
             </tr>
         <?php
             }
         ?>
     </table>
 <?php
+        }
+    }
+
+    public function meta_comment ( $comment ) {
+        wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
+
+        $groups = $this->groups_get( 'comment', 'comment' );
+
+        $id = null;
+
+        if ( is_object( $comment ) )
+            $id = $comment->comment_ID;
+
+        $pod = false;
+
+        foreach ( $groups as $group ) {
+            if ( empty( $pod ) )
+                $pod = pods( $group[ 'pod' ], $id );
+?>
+    <table class="form-table pods-metabox">
+        <?php
+                foreach ( $group[ 'fields' ] as $field ) {
+        ?>
+            <tr class="form-field">
+                <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
+                <td><?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], ( is_object( $comment ) ? get_comment_meta( $comment->comment_ID, $field[ 'name' ] ) : '' ), $field[ 'type' ], $field[ 'options' ] ); ?></td>
+            </tr>
+        <?php
+                }
+        ?>
+    </table>
+<?php
+        }
     }
 
     public function save_comment ( $comment_id ) {
-        $pod_name = current( self::$comment );
-        $pod_name = $pod_name[ 'name' ];
+        $groups = $this->groups_get( 'comment', 'comment' );
 
-        $pod = $this->api->load_pod( array( 'name' => $pod_name ) );
+        if ( empty( $groups ) )
+            return;
 
-        foreach ( $pod[ 'fields' ] as $field ) {
-            if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
-                update_comment_meta( $comment_id, $field[ 'name' ], $_POST[ 'pods_meta_' . $field[ 'name' ] ] );
+        $data = array();
+
+        $id = $comment_id;
+        $pod = false;
+
+        foreach ( $groups as $group ) {
+            if ( empty( $pod ) )
+                $pod = pods( $group[ 'pod' ], $id );
+
+            foreach ( $group[ 'fields' ] as $field ) {
+                if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
+                    $data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
+            }
         }
+
+        if ( !empty( $pod ) )
+            $pod->save( $data );
     }
 }

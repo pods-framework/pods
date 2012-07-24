@@ -1122,16 +1122,16 @@ class PodsAPI {
         $pre_save_helpers = $post_save_helpers = array();
 
         if ( false === $bypass_helpers ) {
-            // Plugin hook
-            $this->do_hook( 'pre_save_pod_item', $params, $fields );
-            $this->do_hook( "pre_save_pod_item_{$params->pod}", $params );
+            // Plugin hooks
+            $this->do_hook( 'pre_save_pod_item', $params, $fields, $is_new_item );
+            $this->do_hook( "pre_save_pod_item_{$params->pod}", $params, $fields, $is_new_item );
             if ( false !== $is_new_item ) {
                 $this->do_hook( 'pre_create_pod_item', $params );
                 $this->do_hook( "pre_create_pod_item_{$params->pod}", $params );
             }
             else {
-                $this->do_hook( 'pre_edit_pod_item', $params );
-                $this->do_hook( "pre_edit_pod_item_{$params->pod}", $params );
+                $this->do_hook( 'pre_edit_pod_item', $params, $fields );
+                $this->do_hook( "pre_edit_pod_item_{$params->pod}", $params, $fields );
             }
 
             // Call any pre-save helpers (if not bypassed)
@@ -1169,8 +1169,9 @@ class PodsAPI {
                 return false;
 
             // Prepare all table (non-relational) data
-            if ( !in_array( $type, $tableless_field_types ) )
+            if ( !in_array( $type, $tableless_field_types ) ) {
                 $table_data[] = "`{$field}` = '{$value}'";
+            }
             // Store relational field data to be looped through later
             else {
                 $rel_fields[ $type ][ $field ] = $value;

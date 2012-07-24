@@ -106,6 +106,8 @@ class PodsInit
 
     function register_pods () {
         $args = array(
+            'label' => 'Pods',
+            'labels' => array( 'singular_name' => 'Pod' ),
             'public' => false,
             'query_var' => false,
             'rewrite' => false,
@@ -117,6 +119,8 @@ class PodsInit
         register_post_type( '_pods_pod', apply_filters( 'pods_internal_register_post_type_pod', $args ) );
 
         $args = array(
+            'label' => 'Pod Fields',
+            'labels' => array( 'singular_name' => 'Pod Field' ),
             'public' => false,
             'query_var' => false,
             'rewrite' => false,
@@ -128,6 +132,8 @@ class PodsInit
         register_post_type( '_pods_field', apply_filters( 'pods_internal_register_post_type_field', $args ) );
 
         $args = array(
+            'label' => 'Pod Templates',
+            'labels' => array( 'singular_name' => 'Pod Template' ),
             'public' => false,
             'query_var' => false,
             'rewrite' => false,
@@ -139,6 +145,8 @@ class PodsInit
         register_post_type( '_pods_object_template', apply_filters( 'pods_internal_register_post_type_object_template', $args ) );
 
         $args = array(
+            'label' => 'Pod Pages',
+            'labels' => array( 'singular_name' => 'Pod Page' ),
             'public' => false,
             'query_var' => false,
             'rewrite' => false,
@@ -150,6 +158,8 @@ class PodsInit
         register_post_type( '_pods_object_page', apply_filters( 'pods_internal_register_post_type_object_page', $args ) );
 
         $args = array(
+            'label' => 'Pod Helpers',
+            'labels' => array( 'singular_name' => 'Pod Helper' ),
             'public' => false,
             'query_var' => false,
             'rewrite' => false,

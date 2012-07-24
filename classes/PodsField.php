@@ -26,6 +26,14 @@ class PodsField {
     public static $label = 'Text';
 
     /**
+     * Field Type Preparation
+     *
+     * @var string
+     * @since 2.0.0
+     */
+    public static $prepare = '%s';
+
+    /**
      * Do things like register/enqueue scripts and stylesheets
      *
      * @since 2.0.0
@@ -95,6 +103,20 @@ class PodsField {
         $schema = 'VARCHAR(255)';
 
         return $schema;
+    }
+
+    /**
+     * Define the current field's preparation for sprintf
+     *
+     * @param array $options
+     *
+     * @return array
+     * @since 2.0.0
+     */
+    public function prepare ( $options = null ) {
+        $format = self::$prepare;
+
+        return $format;
     }
 
     /**

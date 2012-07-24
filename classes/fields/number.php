@@ -18,6 +18,14 @@ class PodsField_Number extends PodsField {
     public static $label = 'Number';
 
     /**
+     * Field Type Preparation
+     *
+     * @var string
+     * @since 2.0.0
+     */
+    public static $prepare = '%d';
+
+    /**
      * Currency Formats
      *
      * @var array
@@ -135,6 +143,23 @@ class PodsField_Number extends PodsField {
         $schema = 'DECIMAL(12,2)';
 
         return $schema;
+    }
+
+    /**
+     * Define the current field's preparation for sprintf
+     *
+     * @param array $options
+     *
+     * @return array
+     * @since 2.0.0
+     */
+    public function prepare ( $options = null ) {
+        $format = self::$prepare;
+
+        if ( 0 < (int) $options[ 'number_decimals' ] )
+            $format = '%01.' . (int) $options[ 'number_decimals' ] . 'f';
+
+        return $format;
     }
 
     /**

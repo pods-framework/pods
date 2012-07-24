@@ -266,6 +266,208 @@ class PodsAPI {
         return $term_ID;
     }
 
+    public function object_fields ( $object = 'post_type' ) {
+        $fields = array();
+
+        if ( 'post_type' == $object ) {
+            $post_stati = get_post_stati();
+
+            $fields = array(
+                'post_title' => array(
+                    'name' => 'post_title',
+                    'label' => 'Title',
+                    'type' => 'text',
+                    'alias' => array( 'title', 'name' )
+                ),
+                'post_name' => array(
+                    'name' => 'post_name',
+                    'label' => 'Permalink',
+                    'type' => 'slug',
+                    'alias' => array( 'slug', 'permalink' )
+                ),
+                'post_content' => array(
+                    'name' => 'post_content',
+                    'label' => 'Content',
+                    'type' => 'paragraph',
+                    'alias' => 'content'
+                ),
+                'post_excerpt' => array(
+                    'name' => 'post_excerpt',
+                    'label' => 'Excerpt',
+                    'type' => 'paragraph',
+                    'alias' => 'excerpt'
+                ),
+                'post_status' => array(
+                    'name' => 'post_status',
+                    'label' => 'Status',
+                    'type' => 'pick',
+                    'alias' => 'status',
+                    'data' => $post_stati
+                ),
+                'post_author' => array(
+                    'name' => 'post_author',
+                    'label' => 'Author',
+                    'type' => 'pick',
+                    'alias' => 'author',
+                    'data' => array()
+                ),
+                'post_date' => array(
+                    'name' => 'post_date',
+                    'label' => 'Publish Date',
+                    'type' => 'date',
+                    'alias' => array( 'created', 'date' ),
+                    'options' => array(
+                        'date_format_type' => 'datetime'
+                    )
+                ),
+                'post_parent' => array(
+                    'name' => 'post_parent',
+                    'label' => 'Parent',
+                    'type' => 'pick',
+                    'alias' => 'parent',
+                    'data' => array()
+                )
+            );
+        }
+        elseif ( 'user' == $object ) {
+            $fields = array(
+                'user_login' => array(
+                    'name' => 'user_login',
+                    'label' => 'Title',
+                    'type' => 'text',
+                    'alias' => 'login',
+                    'options' => array(
+                        'required' => 1,
+                        'unique' => 1
+                    )
+                ),
+                'user_nicename' => array(
+                    'name' => 'user_nicename',
+                    'label' => 'Permalink',
+                    'type' => 'slug',
+                    'alias' => array( 'nicename', 'slug', 'permalink' )
+                ),
+                'display_name' => array(
+                    'name' => 'display_name',
+                    'label' => 'Display Name',
+                    'type' => 'text',
+                    'alias' => array( 'title', 'name' )
+                ),
+                'user_pass' => array(
+                    'name' => 'user_pass',
+                    'label' => 'Password',
+                    'type' => 'text',
+                    'alias' => array( 'password', 'pass' ),
+                    'options' => array(
+                        'required' => 1,
+                        'text_format_type' => 'password'
+                    )
+                ),
+                'user_email' => array(
+                    'name' => 'user_email',
+                    'label' => 'E-mail',
+                    'type' => 'text',
+                    'alias' => 'email',
+                    'options' => array(
+                        'required' => 1,
+                        'unique' => 1,
+                        'text_format_type' => 'email'
+                    )
+                ),
+                'user_url' => array(
+                    'name' => 'user_url',
+                    'label' => 'URL',
+                    'type' => 'text',
+                    'alias' => array( 'url', 'website' ),
+                    'options' => array(
+                        'required' => 1,
+                        'unique' => 1,
+                        'text_format_type' => 'website',
+                        'text_format_website' => 'normal'
+                    )
+                ),
+                'user_registered' => array(
+                    'name' => 'user_registered',
+                    'label' => 'Registration Date',
+                    'type' => 'date',
+                    'alias' => array( 'created', 'date', 'registered' ),
+                    'options' => array(
+                        'date_format_type' => 'datetime'
+                    )
+                )
+            );
+        }
+        elseif ( 'comment' == $object ) {
+            $fields = array(
+                'comment_content' => array(
+                    'name' => 'comment_content',
+                    'label' => 'Content',
+                    'type' => 'paragraph',
+                    'alias' => 'content'
+                ),
+                'comment_approved' => array(
+                    'name' => 'comment_approved',
+                    'label' => 'Approved',
+                    'type' => 'number',
+                    'alias' => 'approved'
+                ),
+                'comment_post_ID' => array(
+                    'name' => 'comment_post_ID',
+                    'label' => 'Post',
+                    'type' => 'pick',
+                    'alias' => array( 'post', 'post_id' ),
+                    'data' => array()
+                ),
+                'user_id' => array(
+                    'name' => 'user_id',
+                    'label' => 'Author',
+                    'type' => 'pick',
+                    'alias' => 'author',
+                    'data' => array()
+                ),
+                'comment_date' => array(
+                    'name' => 'comment_date',
+                    'label' => 'Date',
+                    'type' => 'date',
+                    'alias' => array( 'created', 'date' ),
+                    'options' => array(
+                        'date_format_type' => 'datetime'
+                    )
+                )
+            );
+        }
+        elseif ( 'taxonomy' == $object ) {
+            $fields = array(
+                'name' => array(
+                    'name' => 'name',
+                    'label' => 'Title',
+                    'type' => 'text',
+                    'alias' => 'title'
+                ),
+                'slug' => array(
+                    'name' => 'slug',
+                    'label' => 'Permalink',
+                    'type' => 'slug',
+                    'alias' => 'permalink'
+                ),
+                'description' => array(
+                    'name' => 'description',
+                    'label' => 'Description',
+                    'type' => 'paragraph',
+                    'alias' => 'content'
+                ),
+                'taxonomy' => array(
+                    'name' => 'taxonomy',
+                    'label' => 'Taxonomy',
+                    'type' => 'pick',
+                    'data' => array()
+                )
+            );
+        }
+
+        return $fields;
+    }
+
     /**
      * Add a Pod via the Wizard
      *
@@ -737,12 +939,27 @@ class PodsAPI {
 
         $field[ 'options' ] = array_merge( $field[ 'options' ], $options );
 
+        $object_fields = $this->object_fields( $pod[ 'object' ] );
+
         // Add new field
         if ( !isset( $params->id ) || empty( $params->id ) || empty( $field ) ) {
-            if ( in_array( $params->name, array( 'id', 'created', 'modified', 'author' ) ) )
-                return pods_error( "$params->name is reserved for internal Pods usage, please try a different name", $this );
+            if ( in_array( $params->name, array( 'id', 'ID', 'created', 'modified', 'author' ) ) )
+                return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $params->name ), $this );
+
+            foreach ( $object_fields as $object_field => $object_field_opt ) {
+                $aliases = array();
+
+                if ( isset( $object_field_opt[ 'alias' ] ) )
+                    $aliases = (array) $object_field_opt[ 'alias' ];
+
+                if ( $object_field == $params->name || in_array( $params->name, $aliases ) )
+                    return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $params->name ), $this );
+            }
 
             if ( 'slug' == $field[ 'type' ] ) {
+                if ( in_array( $pod[ 'object' ], array( 'post_type', 'taxonomy', 'user' ) ) )
+                    return pods_error( __( 'This pod already has an internal WordPress permalink field', 'pods' ), $this );
+
                 $slug_field = get_posts( array(
                     'post_type' => '_pods_field',
                     'orderby' => 'menu_order',
@@ -789,8 +1006,31 @@ class PodsAPI {
             );
         }
         else {
-            if ( 'id' == $params->name )
-                return pods_error( sprintf( __( "%s is not editable", 'pods' ), $params->name ), $this );
+            if ( in_array( $params->name, array( 'id', 'ID' ) ) )
+                return pods_error( sprintf( __( '%s is not editable', 'pods' ), $params->name ), $this );
+
+            foreach ( $object_fields as $object_field => $object_field_opt ) {
+                $aliases = array();
+
+                if ( isset( $object_field_opt[ 'alias' ] ) )
+                    $aliases = (array) $object_field_opt[ 'alias' ];
+
+                if ( $object_field == $params->name || in_array( $params->name, $aliases ) )
+                    return pods_error( sprintf( __( '%s is not editable', 'pods' ), $params->name ), $this );
+            }
+
+            if ( in_array( $field[ 'name' ], array( 'id', 'ID', 'created', 'modified', 'author' ) ) )
+                return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field[ 'name' ] ), $this );
+
+            foreach ( $object_fields as $object_field => $object_field_opt ) {
+                $aliases = array();
+
+                if ( isset( $object_field_opt[ 'alias' ] ) )
+                    $aliases = (array) $object_field_opt[ 'alias' ];
+
+                if ( $object_field == $field[ 'name' ] || in_array( $field[ 'name' ], $aliases ) )
+                    return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $field[ 'name' ] ), $this );
+            }
 
             $post_data = array(
                 'ID' => $field[ 'id' ],
@@ -1094,14 +1334,20 @@ class PodsAPI {
 
         // Get array of Pods
         if ( empty( $this->pod_data ) || ( $this->pod != $params->pod && $this->pod_id != $params->pod_id ) )
-            $this->pod_data = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod ) );
-        if ( false === $this->pod_data )
+            $pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod ) );
+        else
+            $pod = $this->pod_data;
+
+        if ( false === $pod )
             return pods_error( __('Pod not found', 'pods'), $this );
-        $this->pod = $params->pod = $this->pod_data[ 'name' ];
-        $this->pod_id = $params->pod_id = $this->pod_data[ 'id' ];
-        $this->fields = $this->pod_data[ 'fields' ];
+
+        $this->pod = $params->pod = $pod[ 'name' ];
+        $this->pod_id = $params->pod_id = $pod[ 'id' ];
+        $this->fields = $pod[ 'fields' ];
 
         $fields =& $this->fields; // easy to use variable for helpers
+
+        // add core wp object fields to $fields
 
         $fields_active = array();
 
@@ -1125,6 +1371,7 @@ class PodsAPI {
             // Plugin hooks
             $this->do_hook( 'pre_save_pod_item', $params, $fields, $is_new_item );
             $this->do_hook( "pre_save_pod_item_{$params->pod}", $params, $fields, $is_new_item );
+
             if ( false !== $is_new_item ) {
                 $this->do_hook( 'pre_create_pod_item', $params );
                 $this->do_hook( "pre_create_pod_item_{$params->pod}", $params );
@@ -1136,11 +1383,12 @@ class PodsAPI {
 
             // Call any pre-save helpers (if not bypassed)
             if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) {
-                if ( !empty( $this->pod_data[ 'options' ] ) && is_array( $this->pod_data[ 'options' ] ) ) {
+                if ( !empty( $pod[ 'options' ] ) && is_array( $pod[ 'options' ] ) ) {
                     $helpers = array( 'pre_save_helpers', 'post_save_helpers' );
+
                     foreach ( $helpers as $helper ) {
-                        if ( isset( $this->pod_data[ 'options' ][ $helper ] ) && !empty( $this->pod_data[ 'options' ][ $helper ] ) )
-                            ${$helper} = explode( ',', $this->pod_data[ 'options' ][ $helper ] );
+                        if ( isset( $pod[ 'options' ][ $helper ] ) && !empty( $pod[ 'options' ][ $helper ] ) )
+                            ${$helper} = explode( ',', $pod[ 'options' ][ $helper ] );
                     }
                 }
 
@@ -1149,6 +1397,7 @@ class PodsAPI {
 
                     foreach ( $pre_save_helpers as $helper ) {
                         $helper = $this->load_helper( array( 'name' => $helper ) );
+
                         if ( false !== $helper )
                             echo eval( '?>' . $helper[ 'code' ] );
                     }
@@ -1157,6 +1406,8 @@ class PodsAPI {
         }
 
         $table_data = $rel_fields = $rel_field_ids = array();
+
+        $field_data = array();
 
         // Loop through each active field, validating and preparing the table data
         foreach ( $fields_active as $field ) {
@@ -1170,7 +1421,8 @@ class PodsAPI {
 
             // Prepare all table (non-relational) data
             if ( !in_array( $type, $tableless_field_types ) ) {
-                $table_data[] = "`{$field}` = '{$value}'";
+                $table_data[] = "`{$field}` = " . PodsForm::prepare( $type, $fields[ $field ] );
+                $field_data[] = $value;
             }
             // Store relational field data to be looped through later
             else {

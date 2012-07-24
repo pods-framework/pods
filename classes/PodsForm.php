@@ -376,11 +376,45 @@ class PodsForm {
         return $classes;
     }
 
+    /**
+     * Setup regex for JS / PHP
+     *
+     * @static
+     *
+     * @param $type
+     * @param $options
+     *
+     * @return mixed|void
+     * @since 2.0.0
+     */
     public static function regex ( $type, $options ) {
-        // build and output regex based on options
+        self::field_loader( $type );
+
+        $regex = apply_filters( 'pods_field_' . $type . '_regex', (array) self::$loaded[ $type ]->regex( $options ), $options, $type );
+
+        return $regex;
     }
 
-    /*
+    /**
+     * Setup value preparation for sprintf
+     *
+     * @static
+     *
+     * @param $type
+     * @param $options
+     *
+     * @return mixed|void
+     * @since 2.0.0
+     */
+    public static function prepare ( $type, $options ) {
+        self::field_loader( $type );
+
+        $prepare = apply_filters( 'pods_field_' . $type . '_prepare', (array) self::$loaded[ $type ]->prepare( $options ), $options, $type );
+
+        return $prepare;
+    }
+
+    /**
      * Clean a value for use in class / id
      *
      * @since 2.0.0

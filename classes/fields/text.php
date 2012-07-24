@@ -18,6 +18,14 @@ class PodsField_Text extends PodsField {
     public static $label = 'Text';
 
     /**
+     * Field Type Preparation
+     *
+     * @var string
+     * @since 2.0.0
+     */
+    public static $prepare = '%s';
+
+    /**
      * Do things like register/enqueue scripts and stylesheets
      *
      * @since 2.0.0

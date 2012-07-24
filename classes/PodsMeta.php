@@ -122,6 +122,50 @@ class PodsMeta {
         $group = apply_filters( 'pods_meta_group_add', $group, $pod, $label, $fields );
 
         self::$groups[ $object_name ][] = $group;
+
+        // Hook it up!
+        if ( 'post' == $pod[ 'type' ] ) {
+            if ( !has_action( 'add_meta_boxes_' . $pod[ 'object' ], array( $this, 'meta_post_add' ) ) )
+                add_action( 'add_meta_boxes_' . $pod[ 'object' ], array( $this, 'meta_post_add' ) );
+
+            if ( !has_action( 'save_post', array( $this, 'save_post' ), 10, 2 ) )
+                add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
+        }
+        elseif ( 'taxonomy' == $pod[ 'type' ] ) {
+            if ( !has_action( $pod[ 'object' ] . '_edit_form_fields', array( $this, 'meta_taxonomy' ), 10, 2 ) ) {
+                add_action( $pod[ 'object' ] . '_edit_form_fields', array( $this, 'meta_taxonomy' ), 10, 2 );
+                add_action( $pod[ 'object' ] . '_add_form_fields', array( $this, 'meta_taxonomy' ), 10, 1 );
+            }
+
+            if ( !has_action( 'edit_term', array( $this, 'save_taxonomy' ), 10, 3 ) ) {
+                add_action( 'edit_term', array( $this, 'save_taxonomy' ), 10, 3 );
+                add_action( 'create_term', array( $this, 'save_taxonomy' ), 10, 3 );
+            }
+        }
+        elseif( 'media' == $pod[ 'type' ] ) {
+            if ( !has_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 ) ) {
+                add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
+                add_filter( 'attachment_fields_to_save', array( $this, 'save_media' ), 10, 2 );
+                add_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 );
+            }
+        }
+        elseif ( 'user' == $pod[ 'type' ] ) {
+            if ( !has_action( 'show_user_profile', array( $this, 'meta_user' ) ) ) {
+                add_action( 'show_user_profile', array( $this, 'meta_user' ) );
+                add_action( 'edit_user_profile', array( $this, 'meta_user' ) );
+                add_action( 'personal_options_update', array( $this, 'save_user' ) );
+                add_action( 'edit_user_profile_update', array( $this, 'save_user' ) );
+            }
+        }
+        elseif ( 'comment' == $pod[ 'type' ] ) {
+            if ( !has_action( 'comment_form_logged_in_after', array( $this, 'meta_comment_new_logged_in' ), 10, 2 ) ) {
+                add_action( 'comment_form_logged_in_after', array( $this, 'meta_comment_new_logged_in' ), 10, 2 );
+                add_filter( 'comment_form_default_fields', array( $this, 'meta_comment_new' ) );
+                add_action( 'add_meta_boxes_comment', array( $this, 'meta_comment_add' ) );
+                add_action( 'wp_insert_comment', array( $this, 'save_comment' ) );
+                add_action( 'edit_comment', array( $this, 'save_comment' ) );
+            }
+        }
     }
 
     public function groups_get ( $type, $name ) {

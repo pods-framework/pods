@@ -207,11 +207,11 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
             <!-- /inner-sidebar -->
             <div id="post-body" class="meta-box-holder columns-2">
                 <div id="post-body-content">
-                    <h2>Manage Fields</h2>
-
-                    <p class="pods-manage-row-add">
+                    <p class="pods-manage-row-add pods-float-right">
                         <a href="#add-field" class="button-primary"><?php _e( 'Add Field' ); ?></a>
                     </p>
+
+                    <h2>Manage Fields</h2>
 
                     <!-- pods table -->
                     <table class="widefat fixed pages" cellspacing="0">

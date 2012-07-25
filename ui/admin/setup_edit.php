@@ -410,14 +410,14 @@ $advanced_options = array(
             'boolean_yes_label' => ''
         ),
         'show_ui' => array(
-            'label' => __( 'Show UI', 'pods' ),
+            'label' => __( 'Show Admin UI', 'pods' ),
             'help' => __( 'help', 'pods' ),
             'type' => 'boolean',
             'default' => pods_var( 'public', $pod, true ),
             'boolean_yes_label' => ''
         ),
         'show_in_menu' => array(
-            'label' => __( 'Show in Menu', 'pods' ),
+            'label' => __( 'Show Admin Menu in Dashboard', 'pods' ),
             'help' => __( 'help', 'pods' ),
             'type' => 'boolean',
             'default' => pods_var( 'public', $pod, true ),
@@ -453,7 +453,14 @@ $advanced_options = array(
             'depends-on' => array( 'show_in_menu' => true )
         ),
         'show_in_nav_menus' => array(
-            'label' => __( 'Show in Navigation Menu', 'pods' ),
+            'label' => __( 'Show in Navigation Menus', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'boolean',
+            'default' => true,
+            'boolean_yes_label' => ''
+        ),
+        'show_in_admin_bar' => array(
+            'label' => __( 'Show in Admin Bar "New" Menu', 'pods' ),
             'help' => __( 'help', 'pods' ),
             'type' => 'boolean',
             'default' => true,

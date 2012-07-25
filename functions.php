@@ -1179,3 +1179,22 @@ function pods_cache_clear ( $key, $cache_mode = 'cache' ) {
 function pods_group_add ( $pod, $label, $fields ) {
     pods_meta()->group_add( $pod, $label, $fields );
 }
+
+/**
+ * Check if a plugin is active on non-admin pages (is_plugin_active() only available in admin)
+ *
+ * @param $plugin
+ *
+ * @return bool
+ */
+function pods_is_plugin_active ( $plugin ) {
+    if ( function_exists( 'is_plugin_active' ) )
+        return is_plugin_active( $plugin );
+
+    $active_plugins = (array) get_option( 'active_plugins', array() );
+
+    if ( in_array( $plugin, $active_plugins ) )
+        return true;
+
+    return false;
+}

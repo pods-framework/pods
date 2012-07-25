@@ -407,7 +407,7 @@ class PodsAdmin {
         if ( !empty( $pods_components->components[ $component ][ 'PluginDependency' ] ) ) {
             $dependency = explode( '|', $pods_components->components[ $component ][ 'PluginDependency' ] );
 
-            if ( !is_plugin_active( $dependency[ 1 ] ) ) {
+            if ( !pods_is_plugin_active( $dependency[ 1 ] ) ) {
                 $website = 'http://wordpress.org/extend/plugins/' . dirname( $dependency[ 1 ] ) . '/';
 
                 if ( isset( $dependency[ 2 ] ) )

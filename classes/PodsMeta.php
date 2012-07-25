@@ -114,7 +114,7 @@ class PodsMeta {
         $_fields = array();
 
         if ( !is_array( $fields ) )
-            $fields = implode( ',', $fields );
+            $fields = explode( ',', $fields );
 
         foreach ( $fields as $k => $field ) {
             if ( !is_array( $field ) ) {

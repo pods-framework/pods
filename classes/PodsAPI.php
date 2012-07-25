@@ -3545,7 +3545,7 @@ class PodsAPI {
                 delete_transient( 'pods_wp_cpt_ct' );
         }
 
-        $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods_get_%'" );
+        $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods_%'" );
 
         wp_cache_flush();
     }

@@ -291,6 +291,9 @@ class PodsAdmin {
     public function admin_setup () {
         $pods = pods_api()->load_pods();
 
+        if ( empty( $pods ) && !isset( $_GET[ 'action' ] ) )
+            $_GET[ 'action' ] = 'add';
+
         pods_ui( array(
             'data' => $pods,
             'total' => count( $pods ),

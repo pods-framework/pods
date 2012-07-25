@@ -133,24 +133,32 @@ class PodsAdmin {
         global $pods_components;
 
         $submenu = array();
+
         $results = $this->api->load_pods( array( //'options' => array('disable_manage' => 0),
             'type' => 'pod'
         ) );
+
         $can_manage = pods_access( 'manage_content' );
-        if ( !defined( 'PODS_DEVELOPER' ) )
+
+        if ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER )
             $results = false; // not yet!
+
         if ( false !== $results ) {
             foreach ( (array) $results as $item ) {
                 if ( !pods_access( 'pod_' . $item[ 'name' ] ) && !$can_manage )
                     continue;
+
                 $item[ 'options' ][ 'label' ] = ( !empty( $item[ 'options' ][ 'label' ] ) ) ? $item[ 'options' ][ 'label' ] : ucwords( str_replace( '_', ' ', $item[ 'name' ] ) );
                 $item[ 'options' ][ 'label' ] = apply_filters( 'pods_admin_menu_label', $item[ 'options' ][ 'label' ], $item );
+
                 if ( 1 == $item[ 'options' ][ 'is_toplevel' ] ) {
                     add_object_page( $item[ 'options' ][ 'label' ], $item[ 'options' ][ 'label' ], 'read', "pods-manage-{$item['name']}" );
+
                     add_submenu_page( "pods-manage-{$item['name']}", 'Edit', 'Edit', 'read', "pods-manage-{$item['name']}", array(
                         $this,
                         'admin_content'
                     ) );
+
                     add_submenu_page( "pods-manage-{$item['name']}", 'Add New', 'Add New', 'read', "pods-add-new-{$item['name']}", array(
                         $this,
                         'admin_content'
@@ -161,12 +169,16 @@ class PodsAdmin {
             }
             if ( !empty( $submenu ) ) {
                 $parent = false;
+
                 foreach ( $submenu as $item ) {
                     $page = "pods-manage-{$item['name']}";
+
                     if ( false === $parent ) {
                         $parent = $page;
+
                         add_object_page( 'Pods', 'Pods', 'read', $parent, null, PODS_URL . '/ui/images/icon16.png' );
                     }
+
                     add_submenu_page( $parent, "Manage {$item['options']['label']}", "Manage {$item['options']['label']}", 'read', $page, array(
                         $this,
                         'admin_content'

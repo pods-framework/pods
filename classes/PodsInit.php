@@ -428,10 +428,14 @@ class PodsInit {
             $ct_post_types = $options[ 'ct_post_types' ];
             $options = $options[ 'options' ];
 
+            $options = apply_filters( 'pods_register_taxonomy_' . $taxonomy, $options );
+
             register_taxonomy( $taxonomy, $ct_post_types, $options );
         }
 
         foreach ( $wp_cpt_ct[ 'post_types' ] as $post_type => $options ) {
+            $options = apply_filters( 'pods_register_post_type_' . $post_type, $options );
+
             register_post_type( $post_type, $options );
         }
     }

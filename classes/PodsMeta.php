@@ -113,6 +113,9 @@ class PodsMeta {
 
         $_fields = array();
 
+        if ( !is_array( $fields ) )
+            $fields = implode( ',', $fields );
+
         foreach ( $fields as $k => $field ) {
             if ( !is_array( $field ) ) {
                 if ( is_numeric( $k ) )

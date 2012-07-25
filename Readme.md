@@ -37,29 +37,3 @@ Pods also includes an easy to use PHP API to allow you to import and export your
 ## Introduction to the Pods CMS Framework
 
 <http://vimeo.com/15086927>
-
-## Installation
-
-1. Unpack the entire contents of this plugin zip file into your `wp-content/plugins/` folder locally
-2. Upload to your site
-3. Navigate to `wp-admin/plugins.php` on your site (your WP plugin page)
-4. Activate this plugin
-
-OR you can just install it with WordPress by going to Plugins >> Add New >> and type this plugin's name
-
-## Details
-
-**Contributors:** sc0ttkclark, logikal16, jchristopher
-
-**Donate link:** http://podsfoundation.org/donate/
-
-**Tags:** pods, cms, cck, pods ui, ui, content types, custom post types, relationships, database, framework, drupal, mysql, custom content, php
-
-**Requires at least:** 3.4
-
-**Tested up to:** 3.4
-
-**Stable tag:** 1.14.2
-
-***Current Version:2.0.0-a-31***
-

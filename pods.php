@@ -29,7 +29,7 @@ if ( defined( 'PODS_VERSION' ) ) {
     return;
 }
 
-define( 'PODS_VERSION', '2.0.0-a-30' );
+define( 'PODS_VERSION', '2.0.0-a-31' );
 
 if ( !defined( 'PODS_WP_VERSION_MINIMUM' ) )
     define( 'PODS_WP_VERSION_MINIMUM', '3.4' );

@@ -3,7 +3,7 @@
 Plugin Name: Pods Framework
 Plugin URI: http://podsframework.org/
 Description: Create / Manage / Develop / Extend content types: Posts, Pages, Media, Custom Post Types, Categories, Tags, Custom Taxonomy, Comments, Users, Custom Content Types, and Custom Tables
-Version: 2.0.0 Alpha 30
+Version: 2.0.0 Alpha 31
 Author: The Pods Framework Team
 Author URI: http://podsframework.org/about/
 

@@ -61,5 +61,5 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 **Stable tag:** 1.14.2
 
-***Current Version:2.0.0-a-30***
+***Current Version:2.0.0-a-31***
 

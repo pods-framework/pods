@@ -111,8 +111,29 @@ class PodsMeta {
         if ( !isset( self::$groups[ $pod[ 'type' ] ][ $object_name ] ) )
             self::$groups[ $pod[ 'type' ] ][ $object_name ] = array();
 
+        $_fields = array();
+
+        foreach ( $fields as $k => $field ) {
+            if ( !is_array( $field ) ) {
+                if ( is_numeric( $k ) )
+                    $k = $field;
+
+                if ( isset( $pod[ 'fields' ] ) && isset( $pod[ 'fields' ][ $k ] ) )
+                    $field = $pod[ 'fields' ][ $k ];
+                else {
+                    $field = array(
+                        'name' => $k,
+                        'label' => $field,
+                        'type' => 'text'
+                    );
+                }
+            }
+
+            $_fields[ $k ] = $field;
+        }
+
         // Setup field options
-        $fields = PodsForm::option_setup( $fields );
+        $fields = PodsForm::option_setup( $_fields );
 
         $group = array(
             'pod' => $pod,

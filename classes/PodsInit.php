@@ -765,9 +765,11 @@ class PodsInit {
         $widgets = array(
             'PodsWidgetSingle',
             'PodsWidgetList',
-            'PodsWidgetColumn',
-            'PodsWidgetForm',
+            'PodsWidgetColumn'
         );
+
+        if ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER )
+            $widgets[] = 'PodsWidgetForm';
 
         foreach ( $widgets as $widget ) {
             require_once PODS_DIR . 'classes/widgets/' . basename( $widget ) . '.php';

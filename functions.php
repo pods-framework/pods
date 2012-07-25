@@ -720,6 +720,7 @@ function pods_shortcode ( $tags, $content = null ) {
         'template' => null,
         'helper' => null
     );
+    
     $tags = shortcode_atts( $defaults, $tags );
     $tags = apply_filters( 'pods_shortcode', $tags );
 
@@ -729,9 +730,11 @@ function pods_shortcode ( $tags, $content = null ) {
     if ( empty( $tags[ 'name' ] ) ) {
         return '<e>Please provide a Pod name';
     }
+
     if ( empty( $tags[ 'template' ] ) && empty( $tags[ 'col' ] ) ) {
         return '<e>Please provide either a template or column name';
     }
+
     if ( !empty( $tags[ 'col' ] ) ) {
         $tags[ 'field' ] = $tags[ 'col' ];
         unset( $tags[ 'col' ] );
@@ -739,49 +742,69 @@ function pods_shortcode ( $tags, $content = null ) {
 
     // id > slug (if both exist)
     $id = empty( $tags[ 'slug' ] ) ? null : $tags[ 'slug' ];
+
     if ( !empty ( $tags[ 'id' ] ) ) {
         $id = $tags[ 'id' ];
+
         if ( is_numeric( $id ) )
             $id = absint( $id );
     }
 
-    $pod = new Pod( $tags[ 'name' ], $id );
+    $pod = pods( $tags[ 'name' ], $id );
 
     $found = 0;
     if ( empty( $id ) ) {
         $params = array();
+
         if ( 0 < strlen( $tags[ 'order' ] ) )
             $params[ 'orderby' ] = $tags[ 'order' ];
+
         if ( 0 < strlen( $tags[ 'orderby' ] ) )
             $params[ 'orderby' ] = $tags[ 'orderby' ];
+
         if ( !empty( $tags[ 'limit' ] ) )
             $params[ 'limit' ] = $tags[ 'limit' ];
+
         if ( 0 < strlen( $tags[ 'where' ] ) )
             $params[ 'where' ] = $tags[ 'where' ];
+
         if ( 0 < strlen( $tags[ 'select' ] ) )
             $params[ 'select' ] = $tags[ 'select' ];
+
         if ( empty( $tags[ 'search' ] ) )
             $params[ 'search' ] = false;
+
         if ( 0 < absint( $tags[ 'page' ] ) )
             $params[ 'page' ] = absint( $tags[ 'page' ] );
+
         $params = apply_filters( 'pods_shortcode_findrecords_params', $params );
-        $pod->findRecords( $params );
-        $found = $pod->getTotalRows();
+
+        $pod->find( $params );
+
+        $found = $pod->total();
     }
     elseif ( !empty( $tags[ 'field' ] ) ) {
-        $val = $pod->get_field( $tags[ 'field' ] );
-        return empty( $tags[ 'helper' ] ) ? $val : $pod->pod_helper( $tags[ 'helper' ], $val );
+        $val = $pod->field( $tags[ 'field' ] );
+
+        return empty( $tags[ 'helper' ] ) ? $val : $pod->helper( $tags[ 'helper' ], $val );
     }
+
     ob_start();
+
     if ( empty( $id ) && false !== $tags[ 'filters' ] && 'before' == $tags[ 'filters_location' ] )
-        echo $pod->getFilters( $tags[ 'filters' ], $tags[ 'filters_label' ] );
+        echo $pod->filters( $tags[ 'filters' ], $tags[ 'filters_label' ] );
+
     if ( empty( $id ) && 0 < $found && false !== $tags[ 'pagination' ] && 'before' == $tags[ 'pagination_location' ] )
-        echo $pod->getPagination( $tags[ 'pagination_label' ] );
-    echo $pod->showTemplate( $tags[ 'template' ], $content );
+        echo $pod->pagination( $tags[ 'pagination_label' ] );
+
+    echo $pod->template( $tags[ 'template' ], $content );
+
     if ( empty( $id ) && 0 < $found && false !== $tags[ 'pagination' ] && 'after' == $tags[ 'pagination_location' ] )
-        echo $pod->getPagination( $tags[ 'pagination_label' ] );
+        echo $pod->pagination( $tags[ 'pagination_label' ] );
+
     if ( empty( $id ) && false !== $tags[ 'filters' ] && 'after' == $tags[ 'filters_location' ] )
-        echo $pod->getFilters( $tags[ 'filters' ], $tags[ 'filters_label' ] );
+        echo $pod->filters( $tags[ 'filters' ], $tags[ 'filters_label' ] );
+
     return ob_get_clean();
 }
 

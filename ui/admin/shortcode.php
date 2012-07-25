@@ -10,8 +10,8 @@
                 template = $( '#pod_template' ).val(),
                 template_custom = $( '#pod_template_custom' ).val(),
                 limit = $( '#pod_limit' ).val(),
-                column = $( '#pod_column' ).val(),
-                columns = $( '#pod_columns' ).val(),
+                field = $( '#pod_field' ).val(),
+                fields = $( '#pod_fields' ).val(),
                 helper = $( '#pod_helper' ).val(),
                 where = $( '#pod_where' ).val(),
                 shortcode = '[pods';
@@ -38,15 +38,15 @@
                         errors.push( "Template" );
                     }
                     break;
-                case 'column':
+                case 'field':
                     if ( !pod_select || !pod_select.length ) {
                         errors.push( "Pod" );
                     }
                     if ( !slug || !slug.length ) {
                         errors.push( "ID or Slug" );
                     }
-                    if ( !column || !column.length ) {
-                        errors.push( "Column" );
+                    if ( !field || !field.length ) {
+                        errors.push( "Field" );
                     }
                     break;
             }
@@ -73,8 +73,8 @@
                 shortcode += ' template="' + template + '"';
             if ( limit && limit.length )
                 shortcode += ' limit="' + limit + '"';
-            if ( column && column.length )
-                shortcode += ' field="' + column + '"';
+            if ( field && field.length )
+                shortcode += ' field="' + field + '"';
             if ( helper && helper.length )
                 shortcode += ' helper="' + helper + '"';
             if ( where && where.length )
@@ -157,13 +157,13 @@
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
-                case 'column':
-                    $( '#pod_select, #pod_slug, #pod_helper, #pod_column, #pods_insert_shortcode' ).each( function () {
+                case 'field':
+                    $( '#pod_select, #pod_slug, #pod_helper, #pod_field, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
                 case 'form':
-                    $( '#pod_select, #pod_slug, #pod_columns, #pods_insert_shortcode' ).each( function () {
+                    $( '#pod_select, #pod_slug, #pod_fields, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
@@ -184,17 +184,17 @@
             } );
             jax.success( function ( json ) {
                 var $orderby = $( '#pod_orderby' ),
-                    $column = $( '#pod_column' );
+                    $field = $( '#pod_field' );
 
                 $orderby.find( 'option' ).remove();
                 $orderby.append( '<option value=""></option>' );
 
-                $column.find( 'option' ).remove();
-                $column.append( '<option value=""></option>' );
+                $field.find( 'option' ).remove();
+                $field.append( '<option value=""></option>' );
 
                 $.each( json.fields, function ( key, val ) {
                     $orderby.append( '<option value="' + val.name + '">' + val.label + '</option>' );
-                    $column.append( '<option value="' + val.name + '">' + val.label + '</option>' );
+                    $field.append( '<option value="' + val.name + '">' + val.label + '</option>' );
                 } );
             } );
         } );
@@ -218,7 +218,7 @@
                         <option value="">---</option>
                         <option value="single"><?php _e('Display a single Pod item', 'pods'); ?></option>
                         <option value="list"><?php _e('List multiple Pod items', 'pods'); ?></option>
-                        <option value="column"><?php _e('Display a column from a single Pod item', 'pods'); ?></option>
+                        <option value="field"><?php _e('Display a field from a single Pod item', 'pods'); ?></option>
                     </select>
                 </div>
                 <div class="pods-section hide">
@@ -285,10 +285,10 @@
                     <label for="pod_where"><?php _e('Where', 'pods'); ?></label> <input type="text" name="pod_where" id="pod_where" />
                 </div>
                 <div class="pods-section hide">
-                    <label for="pod_column"><?php _e('Column', 'pods'); ?></label> <select id="pod_column" name="pod_column"> </select>
+                    <label for="pod_field"><?php _e('Field', 'pods'); ?></label> <select id="pod_field" name="pod_field"> </select>
                 </div>
                 <div class="pods-section hide">
-                    <label for="pod_columns"><?php _e('Columns (comma-separated)', 'pods'); ?></label> <input type="text" id="pod_columns" name="pod_columns" />
+                    <label for="pod_fields"><?php _e('Fields (comma-separated)', 'pods'); ?></label> <input type="text" id="pod_fields" name="pod_fields" />
                 </div>
                 <div class="pods-section hide">
                     <?php

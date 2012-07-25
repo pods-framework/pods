@@ -60,7 +60,10 @@ function pods_migrate_pods() {
 		);
 		$pod_id = $api->save_pod($pod_params);
 		$pod_ids[] = $pod_id;
+		pods_query("DROP TABLE `@wp_pod_tbl_{$pod_type->name}`");
 	}
+	pods_query("DROP TABLE `@wp_pod_types`");
+	pods_query("DROP TABLE `@wp_pod_rel`");
 	return $pod_ids;
 }
 
@@ -81,6 +84,7 @@ function pods_migrate_templates() {
 		$results[] = $api->save_template($params);
 	}
 
+	pods_query("DROP TABLE `@wp_pod_templates`");
 	return $results;
 }
 
@@ -99,6 +103,7 @@ function pods_migrate_helpers() {
 		$results[] = $api->save_helper($params);
 	}
 
+	pods_query("DROP TABLE `@wp_pod_helpers`");
 	return $results;
 }
 
@@ -111,6 +116,7 @@ function pods_migrate_pages() {
 		$results[] = $api->save_page($page);
 	}
 
+	pods_query("DROP TABLE `@wp_pod_pages`");
 	return $results;
 }
 
@@ -127,16 +133,18 @@ function pods_alpha_table_exists($tbl) {
 
 function pods_alpha_migrate_pods() {
 	$api = new PodsAPI;
+	$api->display_errors = true;
 	$old_pods = pods_query( "SELECT * FROM `@wp_pods`" );
 	$pod_ids = array();
 
 	foreach ($old_pods as $pod) {
-		$pod_opts = json_decode( $pod->options );
+		$api->cache_flush_pods(array('name' => $pod->name));
+		$pod_opts = json_decode( $pod->options, true );
 		$field_rows = pods_query( "SELECT * FROM `@wp_pods_fields` where `pod_id` = {$pod->id}" );
 		$fields = array();
 
 		foreach ($field_rows as $row) {
-			$field_opts = json_decode( $row->options );
+			$field_opts = json_decode( $row->options, true );
 			$field_params = array(
 				'name' => $row->name,
 				'label' => $row->label,
@@ -159,7 +167,20 @@ function pods_alpha_migrate_pods() {
 			'options' => $pod_opts,
 		);
 
+		if ($pod->storage == 'table') {
+			try{
+				pods_query("RENAME TABLE `@wp_pods_tbl_{$pod->name}` TO `@wp_pods_tb_{$pod->name}`");
+				$renamed = true;
+			} catch (Exception $e) {
+				$renamed = false;
+			}
+		}
 		$pod_id = $api->save_pod($pod_params);
+
+		if ($pod->storage == 'table' && $renamed) {
+			pods_query("DROP TABLE `@wp_pods_tbl_{$pod->name}`");
+			pods_query("RENAME TABLE `@wp_pods_tb_{$pod->name}` TO `@wp_pods_tbl_{$pod->name}`");
+		}
 		$pod_ids[] = $pod_id;
 	}
 	return $pod_ids;
@@ -174,8 +195,8 @@ function pods_alpha_migrate_helpers() {
 		$opts = json_decode( $row->options );
 		$helper_params = array(
 			'name' => $row->name,
-			'helper_type' => $opts[ 'helper_type' ],
-			'phpcode' => $opts[ 'phpcode' ],
+			'helper_type' => $opts->helper_type,
+			'phpcode' => $opts->phpcode,
 		);
 
 		$helper_ids[] = $api->save_helper( $helper_params );
@@ -192,7 +213,7 @@ function pods_alpha_migrate_pages() {
 		$opts = json_decode( $row->options );
 		$page_params = array(
 			'uri' => $row->name,
-			'phpcode' => $opts[ 'phpcode' ],
+			'phpcode' => $opts->phpcode,
 		);
 
 		$page_ids[] = $api->save_page( $page_params );
@@ -209,12 +230,24 @@ function pods_alpha_migrate_templates() {
 		$opts = json_decode( $row->options );
 		$tpl_params = array(
 			'name' => $row->name,
-			'code' => $opts[ 'code' ],
+			'code' => $opts->code,
 		);
 
 		$tpl_ids[] = $api->save_template( $tpl_params );
 	}
 	return $tpl_ids;
+}
+
+function pods_alpha_drop_tables() {
+	$tables = array(
+		'wp_pods',
+		'wp_pods_fields',
+		'wp_pods_objects',
+	);
+
+	foreach ($tables as $table) {
+		pods_query("DROP TABLE {$table}");
+	}
 }
 
 if (version_compare($pods_version, '2.0.0', '<')) {
@@ -234,6 +267,7 @@ if (version_compare($pods_version, '2.0.0', '<')) {
 		$helpers = pods_alpha_migrate_helpers();
 		$templates = pods_alpha_migrate_templates();
 		$pod_ids = pods_alpha_migrate_pods();
+		pods_alpha_drop_tables();
 	}
 
 }

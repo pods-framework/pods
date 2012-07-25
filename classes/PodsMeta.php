@@ -89,7 +89,10 @@ class PodsMeta {
             'type' => 'post_type'
         );
 
-        $pod = array_merge( $defaults, (array) $pod );
+        if ( !is_array( $pod ) )
+            $pod = pods_api()->load_pod( array( 'name' => $pod ) );
+        else
+            $pod = array_merge( $defaults, $pod );
 
         if ( empty( $pod[ 'name' ] ) )
             $pod[ 'name' ] = $pod[ 'object' ];

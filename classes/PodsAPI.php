@@ -655,6 +655,8 @@ class PodsAPI {
 
         $pod[ 'options' ] = array_merge( $pod[ 'options' ], $options );
 
+        $field_table_operation = true;
+
         // Add new pod
         if ( empty( $params->id ) || empty( $pod ) ) {
             $params->name = pods_clean_name( $params->name );
@@ -705,6 +707,8 @@ class PodsAPI {
                     'description' => 'Leave blank to auto-generate from Name'
                 );
             }
+
+            $field_table_operation = false;
         }
         else {
             $post_data = array(
@@ -720,8 +724,10 @@ class PodsAPI {
         if ( false === $params->id )
             return pods_error( __( 'Cannot save Pod', 'pods' ), $this );
 
+        $pod[ 'id' ] = $params->id;
+
         // Setup / update tables
-        if ( 'table' == $pod[ 'storage' ] && null !== $old_storage && $old_storage != $pod[ 'storage' ] ) {
+        if ( 'table' == $pod[ 'storage' ] && $old_storage != $pod[ 'storage' ] ) {
             $definitions = array( "`id` BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY" );
 
             foreach ( $pod[ 'fields' ] as $field ) {
@@ -735,7 +741,7 @@ class PodsAPI {
                 return pods_error( __( 'Cannot add Database Table for Pod', 'pods' ), $this );
 
         }
-        elseif ( 'table' == $pod[ 'storage' ] && 'table' == $old_storage && null !== $old_name && $old_name != $params->name ) {
+        elseif ( 'table' == $pod[ 'storage' ] && $pod[ 'storage' ] == $old_storage && null !== $old_name && $old_name != $params->name ) {
             $result = pods_query( "ALTER TABLE `@wp_pods_tbl_{$old_name}` RENAME `@wp_pods_tbl_{$params->name}`", $this );
 
             if ( empty( $result ) )
@@ -756,7 +762,7 @@ class PodsAPI {
                 $field[ 'pod' ] = $pod;
                 $field[ 'weight' ] = $weight;
 
-                $field = $this->save_field( $field );
+                $field = $this->save_field( $field, $field_table_operation );
 
                 if ( !empty( $field ) && 0 < $field )
                     $saved[ $field ] = true;
@@ -772,7 +778,7 @@ class PodsAPI {
                         'id' => (int) $field[ 'id' ],
                         'name' => $field[ 'name' ],
                         'pod' => $pod
-                    ) );
+                    ), $field_table_operation );
                 }
             }
         }
@@ -798,10 +804,11 @@ class PodsAPI {
      * $params['options'] array The field options
      *
      * @param array $params An associative array of parameters
+     * @param boolean $table_operation Whether or not to handle table operations
      *
      * @since 1.7.9
      */
-    public function save_field ( $params ) {
+    public function save_field ( $params, $table_operation = true ) {
         global $wpdb;
 
         $params = (object) pods_sanitize( $params );
@@ -812,33 +819,23 @@ class PodsAPI {
         $pod = null;
         $save_pod = false;
 
-        if ( !isset( $params->pod_id ) || empty( $params->pod_id ) ) {
-            if ( isset( $params->pod ) ) {
-                $pod = $params->pod;
+        if ( ( !isset( $params->pod ) || empty( $params->pod ) ) && ( !isset( $params->pod_id ) || empty( $params->pod_id ) ) )
+            return pods_error( __( 'Pod ID or name is required', 'pods' ), $this );
 
-                if ( !is_array( $pod ) )
-                    $pod = $this->load_pod( array( 'name' => $pod ) );
-                else
-                    $save_pod = true;
+        if ( isset( $params->pod ) && is_array( $params->pod ) ) {
+            $pod = $params->pod;
 
-                if ( empty( $pod ) )
-                    return pods_error( __('Pod ID or name is required', 'pods'), $this );
-            }
-            else
-                return pods_error( __('Pod ID or name is required', 'pods'), $this );
+            $save_pod = true;
         }
-        elseif ( !isset( $params->pod ) ) {
+        elseif ( !isset( $params->pod_id ) || empty( $params->pod_id ) )
+            $pod = $this->load_pod( array( 'name' => $params->pod ) );
+        elseif ( !isset( $params->pod ) )
             $pod = $this->load_pod( array( 'id' => $params->pod_id ) );
-
-            if ( empty( $pod ) )
-                return pods_error( __('Pod not found', 'pods'), $this );
-        }
-        else {
+        else
             $pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod ) );
 
-            if ( empty( $pod ) )
-                return pods_error( __( 'Pod not found', 'pods' ), $this );
-        }
+        if ( empty( $pod ) )
+            return pods_error( __( 'Pod not found', 'pods' ), $this );
 
         $params->pod_id = $pod[ 'id' ];
         $params->pod = $pod[ 'name' ];
@@ -938,7 +935,10 @@ class PodsAPI {
 
         // Add new field
         if ( !isset( $params->id ) || empty( $params->id ) || empty( $field ) ) {
-            if ( in_array( $params->name, array( 'id', 'ID', 'created', 'modified', 'author' ) ) )
+            if ( $table_operation && in_array( $params->name, array( 'created', 'modified', 'author' ) ) )
+                return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $params->name ), $this );
+
+            if ( in_array( $params->name, array( 'id', 'ID' ) ) )
                 return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $params->name ), $this );
 
             foreach ( $object_fields as $object_field => $object_field_opt ) {
@@ -1045,7 +1045,7 @@ class PodsAPI {
         if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
             $definition = "`{$params->name}` " . $this->get_field_definition( $field[ 'type' ] );
 
-        if ( 'table' == $pod[ 'storage' ] ) {
+        if ( $table_operation && 'table' == $pod[ 'storage' ] ) {
             if ( !empty( $old_id ) ) {
                 if ( $field[ 'type' ] != $old_type ) {
                     if ( in_array( $field[ 'type' ], $tableless_field_types ) && !in_array( $old_type, $tableless_field_types ) )
@@ -1765,7 +1765,7 @@ class PodsAPI {
             } catch ( Exception $e ) {
                 // Allow pod to be deleted if the table doesn't exist
                 if ( false === strpos( $e->getMessage(), 'Unknown table' ) )
-                    die( $e->getMessage() );
+                    return pods_error( $e->getMessage(), $this );
             }
 
             $wpdb->query( "DELETE pm FROM {$wpdb->postmeta} AS pm

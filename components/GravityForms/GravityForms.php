@@ -146,7 +146,7 @@ class Pods_GravityForms extends PodsComponent {
         if ( empty( $forms ) )
             $forms = __( 'No Gravity Forms available to map', 'pods' );
 
-        $_pods = pods_api()->load_pods( array() );
+        $_pods = pods_api()->load_pods();
 
         $types = array(
             'pod' => 'Pods',

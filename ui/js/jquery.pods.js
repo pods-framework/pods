@@ -102,8 +102,13 @@
                             pods_admin_submit_error_callback(d.replace('<e>', '').replace('</e>', ''));
                         else if ( 'undefined' != typeof $submitbutton.data('error-location') )
                             document.location.href = $submitbutton.data('error-location');
-                        else
+                        else {
                             alert('Error: ' + d.replace('<e>', '').replace('</e>', ''));
+
+                            $submitbutton.css( 'cursor', 'pointer' );
+                            $submitbutton.prop( 'disabled', false );
+                            $submitbutton.parent().find( '.waiting' ).fadeOut();
+                        }
                     },
                     error: function () {
                         $submitbutton.css('cursor', 'pointer');
@@ -155,8 +160,9 @@
                             pods_admin_submit_error_callback(d.replace('<e>', '').replace('</e>', ''));
                         else if ( 'undefined' != typeof $el.data('error-location') )
                             document.location.href = $el.data('error-location');
-                        else
-                            alert('Error: ' + d.replace('<e>', '').replace('</e>', ''));
+                        else {
+                            alert( 'Error: ' + d.replace( '<e>', '' ).replace( '</e>', '' ) );
+                        }
                     },
                     error: function () {
                         alert('Unable to process request, please try again.');
@@ -347,9 +353,9 @@
             $( '.pods-dependency .pods-depends-on' ).hide();
 
             // Handle dependent toggle
-            $(document).on('change', '.pods-dependency .pods-dependent-toggle', function (e) {
-                var $el = $(this);
-                var $current = $el.closest('.pods-dependency');
+            $( document ).on( 'change', '.pods-dependency .pods-dependent-toggle', function ( e ) {
+                var $el = $( this );
+                var $current = $el.closest( '.pods-dependency' );
                 var $field = $el;
 
                 var dependent_flag = '.pods-depends-on-' + $el.data( 'name-clean' );
@@ -435,10 +441,109 @@
                         }
                     }
                 } );
+            } );
+
+            $( '.pods-dependency .pods-dependent-toggle' ).each( function () {
+                $( this ).change();
+            } );
+        },
+        dependency_tabs : function () {
+            // Hide all dependents
+            $( '.pods-dependency-tabs .pods-depends-on' ).hide();
+
+            // Handle dependent toggle
+            $(document).on('click', '.pods-dependency-tabs .pods-dependent-tab', function (e) {
+                var $el = $(this);
+                var $current = $el.closest('.pods-dependency-tabs');
+                var $field = $el;
+
+                var dependent_flag = '.pods-depends-on-' + $el.data( 'name-clean' );
+                var dependent_specific = dependent_flag + '-' + $el.val();
+
+                $current.find( dependent_flag ).each( function () {
+                    var $s_el = $( this );
+
+                    if ( $s_el.parent().is( ':visible' ) ) {
+                        if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) ) {
+                            $s_el.slideDown().addClass( 'pods-dependent-visible' );
+                            $s_el.find( '.pods-dependency-tabs .pods-depends-on' ).hide();
+                            $s_el.find( '.pods-dependency-tabs .pods-excludes-on' ).hide();
+                            $s_el.find( '.pods-dependency-tabs .pods-dependent-tab.pods-dependent-tab-active' ).each( function () {
+                                $( this ).trigger( 'click' );
+                            } );
+                        }
+                        else if ( $s_el.is( dependent_specific ) ) {
+                            $s_el.slideDown().addClass( 'pods-dependent-visible' );
+                            $s_el.find( '.pods-dependency-tabs .pods-depends-on' ).hide();
+                            $s_el.find( '.pods-dependency-tabs .pods-excludes-on' ).hide();
+                            $s_el.find( '.pods-dependency-tabs .pods-dependent-tab.pods-dependent-tab-active' ).each( function () {
+                                $( this ).trigger( 'click' );
+                            } );
+                        }
+                        else
+                            $s_el.slideUp().removeClass( 'pods-dependent-visible' );
+                    }
+                    else {
+                        if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) ) {
+                            $s_el.show().addClass( 'pods-dependent-visible' );
+                            $s_el.find( '.pods-dependency-tabs .pods-depends-on' ).hide();
+                            $s_el.find( '.pods-dependency-tabs .pods-excludes-on' ).hide();
+                            $s_el.find( '.pods-dependency-tabs .pods-dependent-tab.pods-dependent-tab-active' ).each( function () {
+                                $( this ).trigger( 'click' );
+                            } );
+                        }
+                        else if ( $s_el.is( dependent_specific ) ) {
+                            $s_el.show().addClass( 'pods-dependent-visible' );
+                            $s_el.find( '.pods-dependency-tabs .pods-depends-on' ).hide();
+                            $s_el.find( '.pods-dependency-tabs .pods-excludes-on' ).hide();
+                            $s_el.find( '.pods-dependency-tabs .pods-dependent-tab.pods-dependent-tab-active' ).each( function () {
+                                $( this ).trigger( 'click' );
+                            } );
+                        }
+                        else
+                            $s_el.hide().removeClass( 'pods-dependent-visible' );
+                    }
+                } );
+
+                var exclude_flag = '.pods-excludes-on-' + $el.data( 'name-clean' );
+                var exclude_specific = exclude_flag + '-' + $el.val();
+
+                $current.find( exclude_flag ).each( function () {
+                    var $s_el = $( this );
+
+                    if ( $s_el.parent().is( ':visible' ) ) {
+                        if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) )
+                            $s_el.slideUp().removeClass( 'pods-dependent-visible' );
+                        else if ( $s_el.is( exclude_specific ) )
+                            $s_el.slideUp().removeClass( 'pods-dependent-visible' );
+                        else {
+                            $s_el.slideDown().addClass( 'pods-dependent-visible' );
+                            $s_el.find( '.pods-dependency-tabs .pods-depends-on' ).hide();
+                            $s_el.find( '.pods-dependency-tabs .pods-excludes-on' ).hide();
+                            $s_el.find( '.pods-dependency-tabs .pods-dependent-tab.pods-dependent-tab-active' ).each( function () {
+                                $( this ).trigger( 'click' );
+                            } );
+                        }
+                    }
+                    else {
+                        if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) )
+                            $s_el.hide().removeClass( 'pods-dependent-visible' );
+                        else if ( $s_el.is( exclude_specific ) )
+                            $s_el.hide().removeClass( 'pods-dependent-visible' );
+                        else {
+                            $s_el.show().addClass( 'pods-dependent-visible' );
+                            $s_el.find( '.pods-dependency-tabs .pods-depends-on' ).hide();
+                            $s_el.find( '.pods-dependency-tabs .pods-excludes-on' ).hide();
+                            $s_el.find( '.pods-dependency-tabs .pods-dependent-tab.pods-dependent-tab-active' ).each( function () {
+                                $( this ).trigger( 'click' );
+                            } );
+                        }
+                    }
+                } );
             });
 
-            $('.pods-dependency .pods-dependent-toggle').each(function () {
-                $(this).change();
+            $('.pods-dependency-tabs .pods-dependent-tab.pods-dependent-tab-active').each(function () {
+                $(this).click();
             });
         },
         sortable : function () {

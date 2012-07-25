@@ -33,7 +33,7 @@ class PodsInit
             add_action( 'wp_before_admin_bar_render', array( $this, 'admin_bar_links' ) );
 
             // Init Pods Meta
-            $this->meta = pods_meta();
+            $this->meta = pods_meta()->init();
         }
     }
 
@@ -106,17 +106,8 @@ class PodsInit
 
     function register_pods () {
         $args = array(
-            'public' => false,
-            'query_var' => false,
-            'rewrite' => false,
-            'capability_type' => 'pods_pod',
-            'has_archive' => false,
-            'hierarchical' => false,
-            'supports' => array( 'title', 'author' )
-        );
-        register_post_type( '_pods_pod', $args );
-
-        $args = array(
+            'label' => 'Pods',
+            'labels' => array( 'singular_name' => 'Pod' ),
             'public' => false,
             'query_var' => false,
             'rewrite' => false,
@@ -125,40 +116,59 @@ class PodsInit
             'hierarchical' => false,
             'supports' => array( 'title', 'content', 'author' )
         );
-        register_post_type( '_pods_field', $args );
+        register_post_type( '_pods_pod', apply_filters( 'pods_internal_register_post_type_pod', $args ) );
 
         $args = array(
+            'label' => 'Pod Fields',
+            'labels' => array( 'singular_name' => 'Pod Field' ),
             'public' => false,
             'query_var' => false,
             'rewrite' => false,
-            'capability_type' => 'pods_template',
+            'capability_type' => 'pods_pod',
+            'has_archive' => false,
+            'hierarchical' => true,
+            'supports' => array( 'title', 'content', 'author' )
+        );
+        register_post_type( '_pods_field', apply_filters( 'pods_internal_register_post_type_field', $args ) );
+
+        $args = array(
+            'label' => 'Pod Templates',
+            'labels' => array( 'singular_name' => 'Pod Template' ),
+            'public' => false,
+            'query_var' => false,
+            'rewrite' => false,
+            'capability_type' => 'pods_object_template',
             'has_archive' => false,
             'hierarchical' => false,
             'supports' => array( 'title', 'content', 'author' )
         );
-        register_post_type( '_pods_template', $args );
+        register_post_type( '_pods_object_template', apply_filters( 'pods_internal_register_post_type_object_template', $args ) );
 
         $args = array(
+            'label' => 'Pod Pages',
+            'labels' => array( 'singular_name' => 'Pod Page' ),
             'public' => false,
             'query_var' => false,
             'rewrite' => false,
-            'capability_type' => 'pods_page',
+            'capability_type' => 'pods_object_page',
             'has_archive' => false,
             'hierarchical' => false,
             'supports' => array( 'title', 'content', 'author' )
         );
-        register_post_type( '_pods_page', $args );
+        register_post_type( '_pods_object_page', apply_filters( 'pods_internal_register_post_type_object_page', $args ) );
 
         $args = array(
+            'label' => 'Pod Helpers',
+            'labels' => array( 'singular_name' => 'Pod Helper' ),
             'public' => false,
             'query_var' => false,
             'rewrite' => false,
-            'capability_type' => 'pods_helper',
+            'capability_type' => 'pods_object_helper',
             'has_archive' => false,
             'hierarchical' => false,
             'supports' => array( 'title', 'content', 'author' )
         );
-        register_post_type( '_pods_helper', $args );
+        register_post_type( '_pods_object_helper', apply_filters( 'pods_internal_register_post_type_object_helper', $args ) );
     }
 
     function admin_init () {
@@ -400,6 +410,8 @@ class PodsInit
                 $pod_page_exists = pod_page_exists();
 
             if (false !== $pod_page_exists) {
+                $pods = apply_filters( 'pods_global', $pods, $pod_page_exists );
+
                 if (404 != $pods && (!is_object($pods) || !is_wp_error($pods))) {
                     add_action('template_redirect', array($this, 'template_redirect'));
                     add_filter('redirect_canonical', '__return_false');
@@ -486,7 +498,9 @@ class PodsInit
                 }
             }
             delete_option('pods_framework_version');
+
             add_option('pods_framework_version', PODS_VERSION);
+
             do_action('pods_install_post', PODS_VERSION, $pods_version, $_blog_id);
         }
 
@@ -496,24 +510,17 @@ class PodsInit
     }
 
     // Delete Attachments from relationships
-    // @todo: remove select and run DELETE with the JOIN on field.type='file'
-    function delete_attachment ($_ID) {
-        $results = pods_query("SELECT `id` FROM `@wp_pods_fields` WHERE `type` = 'file'");
-        if (!empty($results)) {
-            $field_ids = array();
-            foreach ($results as $row) {
-                $field_ids[] = (int) $row->id;
-            }
-            $field_ids = implode(',', $field_ids);
+    function delete_attachment ( $_ID ) {
+        global $wpdb;
 
-            if (!empty($field_ids)) {
-                // Remove all references to the deleted attachment
-                do_action('pods_delete_attachment', $_ID, $field_ids);
-                $sql = "DELETE FROM `@wp_pods_rel` WHERE `field_id` IN ({$field_ids}) AND `item_id` = %d";
-                $sql = array($sql, array($_ID));
-                pods_query($sql);
-            }
-        }
+        do_action( 'pods_delete_attachment', $_ID );
+
+        pods_query( "DELETE rel FROM `@wp_pods_rel` AS rel
+            LEFT JOIN {$wpdb->posts} AS p
+                ON p.`post_type` = '_pods_field' AND ( p.ID = rel.`field_id` OR p.ID = rel.`related_field_id` )
+            LEFT JOIN {$wpdb->postmeta} AS pm
+                ON pm.`post_id` = p.`ID` AND pm.`meta_key` = 'type' AND pm.`meta_value` = 'file'
+            WHERE p.`ID` IS NOT NULL AND pm.`meta_id` IS NOT NULL AND rel.`item_id` = " . (int) $_ID );
     }
 
 
@@ -526,10 +533,13 @@ class PodsInit
             if (0 < strlen(trim($pod_page_exists['precode'])))
                 $content = $pod_page_exists['precode'];
 
-            if (false !== $content && !defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL)
+            if (false !== $content && !defined('PODS_DISABLE_EVAL') || PODS_DISABLE_EVAL) {
+                pods_deprecated( 'Use WP Page Templates or hook into the pods_page_precode action instead of using Pod Page Precode', '2.1.0' );
                 eval("?>$content");
+            }
 
             do_action('pods_page_precode', $pod_page_exists, $pods);
+
             if (!is_object($pods) && (404 == $pods || is_wp_error($pods))) {
                 remove_action('template_redirect', array($this, 'template_redirect'));
                 remove_action('wp_head', array($this, 'wp_head'));
@@ -693,8 +703,8 @@ class PodsInit
 
 	public function admin_bar_links() {
 		global $wp_admin_bar, $pods;
-		$api = new PodsAPI();
-		$all_pods = $api->load_pods(array('orderby' => '`weight`, `name`'));
+		$api = pods_api();
+		$all_pods = $api->load_pods();
 		$non_cpt_pods = array();
 
 		// Round up all the non-CPT pod types

@@ -223,10 +223,8 @@
                 </div>
                 <div class="pods-section hide">
                     <?php
-                        $api = new PodsAPI();
-                        $all_pods = $api->load_pods( array(
-                            'orderby' => 'name ASC',
-                        ) );
+                        $api = pods_api();
+                        $all_pods = $api->load_pods();
                         $pod_count = count( $all_pods );
                     ?>
                     <label for="pod_select">Choose a Pod</label>

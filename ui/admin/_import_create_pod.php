@@ -6,7 +6,7 @@ if (empty($_POST['pod_cols']) || !wp_verify_nonce($_POST['pods-import-create-pod
 
 if (false) {
     // Create the pod first
-    $podsApi = new PodsAPI();
+    $api = pods_api();
 
     // New pod data from $_POST
     $newPodData = array_map('trim', $_POST['new_pod_data']);
@@ -15,7 +15,7 @@ if (false) {
                           'name' => strtolower($newPodData['pod_name']));
 
     // Save the pod
-    $newlyAddedPod = $podsApi->save_pod($podArguments);
+    $newlyAddedPod = $api->save_pod($podArguments);
 
     if (!is_numeric($newlyAddedPod)) {
         // Throw fatal error, pod couldn't be created
@@ -33,7 +33,7 @@ if (false) {
                                'name'   => $newField,
                                'type'   => $podColTypes[$oldCol]);
 
-        $podsApi->save_column($podColumnArgs);
+        $api->save_column($podColumnArgs);
     }
 
     // Copy all data from old table, to new pod.
@@ -43,7 +43,7 @@ if (false) {
     foreach ($PodsData->select(array('from' => $_GET['table'])) as $dataRow) {
         // Save each one as a new pod item
         // Will need to use map here as well
-        //$PodsApi->save_pod_item();
+        //$api->save_pod_item();
     }
 }
 

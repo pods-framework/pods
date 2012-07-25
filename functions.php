@@ -116,6 +116,8 @@ function pods_debug ( $debug = '_null', $die = true, $prefix = '_null' ) {
  * @since 2.0.0
  */
 function pods_deprecated ( $function, $version, $replacement = null ) {
+    if ( !version_compare( $version, PODS_VERSION, '<=' ) )
+        return;
 
     do_action( 'deprecated_function_run', $function, $replacement, $version );
 
@@ -583,9 +585,11 @@ function pod_page_exists ( $uri = null ) {
         $uri = parse_url( get_current_url() );
         $uri = $uri[ 'path' ];
         $home = parse_url( get_bloginfo( 'url' ) );
+
         if ( !empty( $home ) && isset( $home[ 'path' ] ) && '/' != $home[ 'path' ] )
             $uri = substr( $uri, strlen( $home[ 'path' ] ) );
     }
+
     $uri = trim( $uri, '/' );
     $uri_depth = count( array_filter( explode( '/', $uri ) ) ) - 1;
 
@@ -593,17 +597,34 @@ function pod_page_exists ( $uri = null ) {
         return false;
 
     // See if the custom template exists
-    $sql = "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'page' AND `name` = %s LIMIT 1";
+    $sql = "SELECT * FROM `@wp_posts` WHERE `post_type` = '_pods_object_page' AND `post_title` = %s LIMIT 1";
     $sql = array( $sql, array( $uri ) );
+
     $result = pods_query( $sql );
+
     if ( empty( $result ) ) {
         // Find any wildcards
-        $sql = "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'page' AND %s LIKE REPLACE(`name`, '*', '%%') AND (LENGTH(`name`) - LENGTH(REPLACE(`name`, '/', ''))) = %d ORDER BY LENGTH(`name`) DESC, `name` DESC LIMIT 1";
+        $sql = "SELECT * FROM `@wp_posts` WHERE `post_type` = '_pods_object_page' AND %s LIKE REPLACE(`post_title`, '*', '%%') AND (LENGTH(`post_title`) - LENGTH(REPLACE(`post_title`, '/', ''))) = %d ORDER BY LENGTH(`post_title`) DESC, `post_title` DESC LIMIT 1";
         $sql = array( $sql, array( $uri, $uri_depth ) );
+
         $result = pods_query( $sql );
     }
-    if ( !empty( $result ) )
-        return get_object_vars( $result[ 0 ] );
+
+    if ( !empty( $result ) ) {
+        $_object = get_object_vars( $result[ 0 ] );
+
+        $object = array(
+            'ID' => $_object[ 'ID' ],
+            'uri' => $_object[ 'post_title' ],
+            'phpcode' => $_object[ 'post_content' ],
+            'precode' => get_post_meta( $_object[ 'ID' ], 'precode', true ),
+            'page_template' => get_post_meta( $_object[ 'ID' ], 'page_template', true ),
+            'title' => get_post_meta( $_object[ 'ID' ], 'page_title', true )
+        );
+
+        return $object;
+    }
+
     return false;
 }
 
@@ -796,34 +817,30 @@ function pods_validate_key ( $token, $datatype, $uri_hash, $columns = null, $for
 function pods_content () {
     global $pod_page_exists;
 
-    do_action( 'pods_content_pre', $pod_page_exists );
     $content = false;
-    if ( false !== $pod_page_exists ) {
-        $function_or_file = str_replace( '*', 'w', $pod_page_exists[ 'uri' ] );
-        $check_function = false;
-        $check_file = null;
-        if ( ( !defined( 'PODS_STRICT_MODE' ) || !PODS_STRICT_MODE ) && ( !defined( 'PODS_PAGE_FILES' ) || !PODS_PAGE_FILES ) )
-            $check_file = false;
-        if ( false !== $check_function && false !== $check_file )
-            $function_or_file = pods_function_or_file( $function_or_file, $check_function, 'page', $check_file );
-        else
-            $function_or_file = false;
 
-        if ( !$function_or_file && 0 < strlen( trim( $pod_page_exists[ 'phpcode' ] ) ) )
+    do_action( 'pods_content_pre', $pod_page_exists );
+
+    if ( false !== $pod_page_exists ) {
+        if ( 0 < strlen( trim( $pod_page_exists[ 'phpcode' ] ) ) )
             $content = $pod_page_exists[ 'phpcode' ];
 
         ob_start();
-        if ( false === $content && false !== $function_or_file && isset( $function_or_file[ 'file' ] ) )
-            locate_template( $function_or_file[ 'file' ], true, true );
-        elseif ( false !== $content ) {
-            if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL )
+
+        if ( false !== $content ) {
+            if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) {
+                pods_deprecated( 'Use WP Page Templates or hook into the pods_content filter instead of using Pod Page PHP code', '2.1.0' );
                 eval( "?>$content" );
+            }
             else
                 echo $content;
         }
+
         $content = ob_get_clean();
+
         echo apply_filters( 'pods_content', $content );
     }
+
     do_action( 'pods_content_post', $pod_page_exists, $content );
 }
 
@@ -986,6 +1003,7 @@ function pods_function_or_file ( $function_or_file, $function_name = null, $file
  */
 function pods_init () {
     require_once( PODS_DIR . 'classes/PodsInit.php' );
+
     return new PodsInit();
 }
 
@@ -996,6 +1014,7 @@ function pods_init () {
  */
 function pods_components () {
     require_once( PODS_DIR . 'classes/PodsComponents.php' );
+
     return new PodsComponents();
 }
 
@@ -1009,6 +1028,7 @@ function pods_components () {
  */
 function pods ( $type = null, $id = null ) {
     require_once( PODS_DIR . 'classes/Pods.php' );
+
     return new Pods( $type, $id );
 }
 
@@ -1019,6 +1039,7 @@ function pods ( $type = null, $id = null ) {
  */
 function pods_ui ( $obj = null ) {
     require_once( PODS_DIR . 'classes/PodsUI.php' );
+
     return new PodsUI( $obj );
 }
 
@@ -1029,6 +1050,7 @@ function pods_ui ( $obj = null ) {
  */
 function pods_api ( $pod = null, $format = 'php' ) {
     require_once( PODS_DIR . 'classes/PodsAPI.php' );
+
     return new PodsAPI( $pod, $format );
 }
 
@@ -1039,6 +1061,7 @@ function pods_api ( $pod = null, $format = 'php' ) {
  */
 function pods_data ( $pod = null, $id = null ) {
     require_once( PODS_DIR . 'classes/PodsData.php' );
+
     return new PodsData( $pod, $id );
 }
 
@@ -1049,6 +1072,7 @@ function pods_data ( $pod = null, $id = null ) {
  */
 function pods_form () {
     require_once( PODS_DIR . 'classes/PodsForm.php' );
+
     return new PodsForm();
 }
 
@@ -1059,6 +1083,7 @@ function pods_form () {
  */
 function pods_meta () {
     require_once( PODS_DIR . 'classes/PodsMeta.php' );
+
     return new PodsMeta();
 }
 
@@ -1069,6 +1094,7 @@ function pods_meta () {
  */
 function pods_admin () {
     require_once( PODS_DIR . 'classes/PodsAdmin.php' );
+
     return new PodsAdmin();
 }
 
@@ -1079,6 +1105,7 @@ function pods_admin () {
  */
 function pods_migrate ( $type = null, $delimiter = null, $data = null ) {
     require_once( PODS_DIR . 'classes/PodsMigrate.php' );
+
     return new PodsMigrate( $type, $delimiter, $data );
 }
 
@@ -1089,6 +1116,7 @@ function pods_migrate ( $type = null, $delimiter = null, $data = null ) {
  */
 function pods_array ( $container ) {
     require_once( PODS_DIR . 'classes/PodsArray.php' );
+
     return new PodsArray( $container );
 }
 
@@ -1099,9 +1127,12 @@ function pods_array ( $container ) {
  */
 function pods_view ( $view, $data = null, $expires = 0, $cache_mode = 'cache', $return = false ) {
     require_once( PODS_DIR . 'classes/PodsView.php' );
+
     $view = PodsView::view( $view, $data, $expires, $cache_mode );
+
     if ( $return )
         return $view;
+
     echo $view;
 }
 
@@ -1112,6 +1143,7 @@ function pods_view ( $view, $data = null, $expires = 0, $cache_mode = 'cache', $
  */
 function pods_cache_set ( $key, $value, $expires = 0, $cache_mode = 'cache' ) {
     require_once( PODS_DIR . 'classes/PodsView.php' );
+
     return PodsView::set( $key, $value, $expires, $cache_mode );
 }
 
@@ -1122,6 +1154,7 @@ function pods_cache_set ( $key, $value, $expires = 0, $cache_mode = 'cache' ) {
  */
 function pods_cache_get ( $key, $cache_mode = 'cache' ) {
     require_once( PODS_DIR . 'classes/PodsView.php' );
+
     return PodsView::get( $key, $cache_mode );
 }
 
@@ -1132,5 +1165,17 @@ function pods_cache_get ( $key, $cache_mode = 'cache' ) {
  */
 function pods_cache_clear ( $key, $cache_mode = 'cache' ) {
     require_once( PODS_DIR . 'classes/PodsView.php' );
+
     return PodsView::clear( $key, $cache_mode );
+}
+
+/**
+ * Add a meta group of fields to add/edit forms
+ *
+ * @param $pod
+ * @param $label
+ * @param $fields
+ */
+function pods_group_add ( $pod, $label, $fields ) {
+    pods_meta()->group_add( $pod, $label, $fields );
 }

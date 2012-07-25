@@ -750,7 +750,7 @@ class PodsAPI {
 
         $saved = array();
 
-        if ( !empty( $pod[ 'fields' ] ) ) {
+        if ( isset( $params->fields ) || isset( $params->field_data ) ) {
             $weight = 0;
 
             foreach ( $pod[ 'fields' ] as $field ) {
@@ -997,7 +997,8 @@ class PodsAPI {
                 'post_content' => $field[ 'description' ],
                 'post_type' => '_pods_field',
                 'post_parent' => $field[ 'pod_id' ],
-                'post_status' => 'publish'
+                'post_status' => 'publish',
+                'menu_order' => $field[ 'weight' ]
             );
         }
         else {
@@ -1033,6 +1034,12 @@ class PodsAPI {
                 'post_title' => $field[ 'label' ],
                 'post_content' => $field[ 'description' ]
             );
+
+            if ( null !== $field[ 'weight' ] ) {
+                $field[ 'weight' ] = pods_absint( $field[ 'weight' ] );
+
+                $post_data[ 'menu_order' ] = $field[ 'weight' ];
+            }
         }
 
         $params->id = $this->save_post( $post_data, $field[ 'options' ], true );

@@ -532,7 +532,7 @@ class PodsAdmin {
         }
 
         if ( 'save_pod_item' == $method->name ) {
-            $columns = pods_validate_key( $params->token, $params->datatype, $params->uri_hash, null, $params->form_count );
+            $columns = pods_validate_key( $params->token, $params->pod, $params->uri_hash, null, $params->form_count );
             if ( false === $columns )
                 pods_error( 'This form has expired. Please reload the page and ensure your session is still active.', $this );
 
@@ -546,7 +546,7 @@ class PodsAdmin {
                 }
             }
             else {
-                $tmp = $this->api->load_pod( array( 'name' => $params->datatype ) );
+                $tmp = $this->api->load_pod( array( 'name' => $params->pod ) );
                 $columns = array();
                 foreach ( $tmp[ 'fields' ] as $field_data ) {
                     $column = $field_data[ 'name' ];

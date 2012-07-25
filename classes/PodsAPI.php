@@ -823,10 +823,6 @@ class PodsAPI {
 
                 if ( empty( $pod ) )
                     return pods_error( __('Pod ID or name is required', 'pods'), $this );
-                else {
-                    $params->pod_id = $pod[ 'id' ];
-                    $params->pod = $pod[ 'name' ];
-                }
             }
             else
                 return pods_error( __('Pod ID or name is required', 'pods'), $this );
@@ -836,10 +832,6 @@ class PodsAPI {
 
             if ( empty( $pod ) )
                 return pods_error( __('Pod not found', 'pods'), $this );
-            else {
-                $params->pod_id = $pod[ 'id' ];
-                $params->pod = $pod[ 'name' ];
-            }
         }
         else {
             $pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod ) );
@@ -847,6 +839,9 @@ class PodsAPI {
             if ( empty( $pod ) )
                 return pods_error( __( 'Pod not found', 'pods' ), $this );
         }
+
+        $params->pod_id = $pod[ 'id' ];
+        $params->pod = $pod[ 'name' ];
 
         $params->name = pods_clean_name( $params->name );
 

@@ -108,6 +108,9 @@ class PodsMeta {
         if ( !isset( self::$groups[ $pod[ 'type' ] ][ $object_name ] ) )
             self::$groups[ $pod[ 'type' ] ][ $object_name ] = array();
 
+        // Setup field options
+        $fields = PodsForm::option_setup( $fields );
+
         $group = array(
             'pod' => $pod,
             'label' => $label,
@@ -186,7 +189,7 @@ class PodsMeta {
         if ( 'pod' != $type && isset( $object[ $name ] ) )
             $fields = $object[ $name ][ 'fields' ];
         else {
-            $pod = $this->api->load_pod( array( 'name' => $name ) );
+            $pod = $this->api->load_pod( array( 'name' => $name ), false );
 
             if ( !empty( $pod ) )
                 $fields = $pod[ 'fields' ];
@@ -268,8 +271,20 @@ class PodsMeta {
     }
 
     public function save_post ( $post_id, $post ) {
+        $blacklisted_types = array(
+            'revision',
+            'auto-draft',
+            '_pods_pod',
+            '_pods_field',
+            '_pods_object_template',
+            '_pods_object_page',
+            '_pods_object_helper'
+        );
+
+        $blacklisted_types = apply_filters( 'pods_meta_save_post_blacklist', $blacklisted_types, $post_id, $post );
+
         // @todo Figure out how to hook into autosave for saving meta
-        if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || 'revision' == $post->post_type || 'auto-draft' == $post->post_type )
+        if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || in_array( $post->post_type, $blacklisted_types ) )
             return $post_id;
 
         $groups = $this->groups_get( 'post_type', $post->post_type );

@@ -720,7 +720,7 @@ function pods_shortcode ( $tags, $content = null ) {
         'template' => null,
         'helper' => null
     );
-    
+
     $tags = shortcode_atts( $defaults, $tags );
     $tags = apply_filters( 'pods_shortcode', $tags );
 
@@ -731,13 +731,13 @@ function pods_shortcode ( $tags, $content = null ) {
         return '<e>Please provide a Pod name';
     }
 
-    if ( empty( $tags[ 'template' ] ) && empty( $tags[ 'col' ] ) ) {
-        return '<e>Please provide either a template or column name';
-    }
-
     if ( !empty( $tags[ 'col' ] ) ) {
         $tags[ 'field' ] = $tags[ 'col' ];
         unset( $tags[ 'col' ] );
+    }
+
+    if ( empty( $tags[ 'template' ] ) && empty( $tags[ 'field' ] ) ) {
+        return '<e>Please provide either a template or field name';
     }
 
     // id > slug (if both exist)
@@ -753,6 +753,7 @@ function pods_shortcode ( $tags, $content = null ) {
     $pod = pods( $tags[ 'name' ], $id );
 
     $found = 0;
+
     if ( empty( $id ) ) {
         $params = array();
 

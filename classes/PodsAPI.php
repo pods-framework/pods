@@ -725,6 +725,7 @@ class PodsAPI {
         // Add new pod
         if ( empty( $params->id ) || empty( $pod ) ) {
             $params->name = pods_clean_name( $params->name );
+
             if ( strlen( $params->name ) < 1 )
                 return pods_error( __('Pod name cannot be empty', 'pods'), $this );
 
@@ -736,7 +737,7 @@ class PodsAPI {
                 'post_status' => 'publish'
             );
 
-            if ( 'pod' == $params->type && ( !is_array( $pod[ 'fields' ] ) || empty( $pod[ 'fields' ] ) ) ) {
+            if ( 'pod' == $pod[ 'type' ] && ( !is_array( $pod[ 'fields' ] ) || empty( $pod[ 'fields' ] ) ) ) {
                 $pod[ 'fields' ] = array();
 
                 $pod[ 'fields' ][] = array(

@@ -612,6 +612,21 @@ class PodsAPI {
             $pod_params[ 'object' ] = $pod_params[ 'name' ];
         }
 
+        if ( empty( $pod_params[ 'object' ] ) ) {
+            if ( 'post_type' == $pod_params[ 'type' ] ) {
+                $check = get_post_type_object( $pod_params[ 'name' ] );
+
+                if ( !empty( $check ) )
+                    return pods_error( sprintf( __( 'Post Type %s already exists, try extending it instead', 'pods' ), $pod_params[ 'name' ] ), $this );
+            }
+            elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
+                $check = get_taxonomy( $pod_params[ 'name' ] );
+
+                if ( !empty( $check ) )
+                    return pods_error( sprintf( __( 'Taxonomy %s already exists, try extending it instead', 'pods' ), $pod_params[ 'name' ] ), $this );
+            }
+        }
+
         if ( !empty( $pod_params ) )
             return $this->save_pod( $pod_params );
 
@@ -726,6 +741,24 @@ class PodsAPI {
 
         $pod[ 'options' ] = array_merge( $pod[ 'options' ], $options );
 
+        $params->id = $pod[ 'id' ];
+        $params->name = $pod[ 'name' ];
+
+        if ( null !== $old_name && $old_name != $params->name && empty( $pod[ 'object' ] ) ) {
+            if ( 'post_type' == $pod[ 'type' ] ) {
+                $check = get_post_type_object( $params->name );
+
+                if ( !empty( $check ) )
+                    return pods_error( sprintf( __( 'Post Type %s already exists, you cannot rename %s to that', 'pods' ), $params->name, $old_name ), $this );
+            }
+            elseif ( 'taxonomy' == $pod[ 'type' ] ) {
+                $check = get_taxonomy( $params->name );
+
+                if ( !empty( $check ) )
+                    return pods_error( sprintf( __( 'Taxonomy %s already exists, you cannot rename %s to that', 'pods' ), $params->name, $old_name ), $this );
+            }
+        }
+
         $field_table_operation = true;
 
         // Add new pod
@@ -818,6 +851,21 @@ class PodsAPI {
 
             if ( empty( $result ) )
                 return pods_error( __( 'Cannot update Database Table for Pod', 'pods' ), $this );
+        }
+
+        global $wpdb;
+
+        if ( 'post_type' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) && null !== $old_name && $old_name != $params->name ) {
+            pods_query( "UPDATE `{$wpdb->posts}` SET `post_type` = %s WHERE `post_type` = %s", array(
+                $params->name,
+                $old_name
+            ) );
+        }
+        elseif ( 'taxonomy' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) && null !== $old_name && $old_name != $params->name ) {
+            pods_query( "UPDATE `{$wpdb->term_taxonomy}` SET `taxonomy` = %s WHERE `taxonomy` = %s", array(
+                $params->name,
+                $old_name
+            ) );
         }
 
         $saved = array();
@@ -1003,7 +1051,7 @@ class PodsAPI {
 
         $field[ 'options' ] = array_merge( $field[ 'options' ], $options );
 
-        $object_fields = $this->get_wp_object_fields( $pod[ 'object' ] );
+        $object_fields = $this->get_wp_object_fields( $pod[ 'type' ] );
 
         // Add new field
         if ( !isset( $params->id ) || empty( $params->id ) || empty( $field ) ) {
@@ -1019,7 +1067,7 @@ class PodsAPI {
             }
 
             if ( 'slug' == $field[ 'type' ] ) {
-                if ( in_array( $pod[ 'object' ], array( 'post_type', 'taxonomy', 'user' ) ) )
+                if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy', 'user' ) ) )
                     return pods_error( __( 'This pod already has an internal WordPress permalink field', 'pods' ), $this );
 
                 $slug_field = get_posts( array(
@@ -1416,7 +1464,7 @@ class PodsAPI {
 
         $fields = $pod[ 'fields' ];
 
-        $object_fields = $this->get_wp_object_fields( $pod[ 'object' ] );
+        $object_fields = $this->get_wp_object_fields( $pod[ 'type' ] );
 
         $fields_active = array();
 
@@ -1551,8 +1599,14 @@ class PodsAPI {
                 $term = $object_fields[ 'name' ][ 'value' ];
                 $term_data = array();
 
-                if ( empty( $params->id ) || !empty( $term_data ) )
-                    $params->id = $this->save_term( $params->id, $term, $pod[ 'object' ], $term_data );
+                if ( empty( $params->id ) || !empty( $term_data ) ) {
+                    $taxonomy = $pod[ 'name' ];
+
+                    if ( !empty( $pod[ 'object' ] ) )
+                        $taxonomy = $pod[ 'object' ];
+
+                    $params->id = $this->save_term( $params->id, $term, $taxonomy, $term_data );
+                }
             }
 
             if ( 'table' == $pod[ 'storage' ] ) {
@@ -2252,8 +2306,14 @@ class PodsAPI {
         if ( 'table' == $pod[ 'storage' ] )
             pods_query( "DELETE FROM `@wp_pods_tbl_{$params->datatype}` WHERE `id` = {$params->id} LIMIT 1" );
 
-        if ( 'taxonomy' == $pod[ 'type' ] )
-            wp_delete_term( $params->id, $pod[ 'object' ] );
+        if ( 'taxonomy' == $pod[ 'type' ] ) {
+            $taxonomy = $pod[ 'name' ];
+
+            if ( !empty( $pod[ 'object' ] ) )
+                $taxonomy = $pod[ 'object' ];
+
+            wp_delete_term( $params->id, $taxonomy );
+        }
         elseif ( !in_array( $pod[ 'type' ], array( 'pod', 'table', '', 'taxonomy' ) ) )
             $this->delete_wp_object( $pod[ 'type' ], $params->id );
 

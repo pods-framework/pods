@@ -50,6 +50,29 @@ class PodsAPI {
     }
 
     /**
+     * Delete a WP object
+     *
+     * @param string $object_type Object type: post|user|comment
+     * @param int $id Object ID
+     * @param bool $force_delete Force deletion instead of trashing (post types only)
+     */
+    public function delete_wp_object ( $object_type, $id, $force_delete = true ) {
+        if ( in_array( $object_type, array( 'post_type', 'media' ) ) )
+            $object_type = 'post';
+
+        if ( empty( $id ) )
+            return false;
+
+        if ( in_array( $object_type, array( 'post' ) ) )
+            return wp_delete_post( $id, $force_delete );
+
+        if ( function_exists( 'wp_delete_' . $object_type ) )
+            return call_user_func( 'wp_delete_' . $object_type, $id );
+
+        return false;
+    }
+
+    /**
      * Save a post and it's meta
      *
      * @param array $post_data All post data to be saved (using wp_insert_post / wp_update_post)
@@ -2194,8 +2217,13 @@ class PodsAPI {
             }
         }
 
-        if ( 'storage' == $pod[ 'type' ] )
+        if ( 'table' == $pod[ 'storage' ] )
             pods_query( "DELETE FROM `@wp_pods_tbl_{$params->datatype}` WHERE `id` = {$params->id} LIMIT 1" );
+
+        if ( !in_array( $pod[ 'type' ], array( 'pod', 'table', '', 'taxonomy' ) ) )
+            $this->delete_wp_object( $pod[ 'type' ], $params->id );
+        elseif ( 'taxonomy' == $pod[ 'type' ] )
+            wp_delete_term( $params->id, $pod[ 'object' ] );
 
         pods_query( "DELETE FROM `@wp_pods_rel` WHERE (`pod_id` = {$params->pod_id} AND `item_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_item_id` = {$params->id})" );
 

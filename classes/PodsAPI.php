@@ -527,7 +527,7 @@ class PodsAPI {
 
         $fields = PodsForm::option_setup( $fields );
 
-        update_transient( 'pods_api_object_fields_' . $object, $fields );
+        set_transient( 'pods_api_object_fields_' . $object, $fields );
 
         return $fields;
     }

@@ -1563,8 +1563,8 @@ class PodsAPI {
                 }
 
                 if ( !empty( $table_fields ) ) {
-                    $table_fields = implode( ',', $table_fields );
-                    $table_formats = implode( ',', $table_formats );
+                    $table_fields = implode( ', ', $table_fields );
+                    $table_formats = implode( ', ', $table_formats );
 
                     $sql = $wpdb->prepare( "REPLACE INTO `@wp_pods_tbl_{$params->pod}` ({$table_fields}) VALUES ({$table_formats})", $table_values );
 

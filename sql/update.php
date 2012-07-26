@@ -226,7 +226,7 @@ function pods_2_alpha_migrate_pods () {
                 'pick_val' => $row->pick_val,
                 'sister_field_id' => $row->sister_field_id,
                 'weight' => $row->weight,
-                'options' => $field_opts,
+                'options' => $field_opts
             );
 
             $fields[] = $field_params;
@@ -237,7 +237,7 @@ function pods_2_alpha_migrate_pods () {
             'type' => $pod->type,
             'storage' => $pod->storage,
             'fields' => $fields,
-            'options' => $pod_opts,
+            'options' => $pod_opts
         );
 
         $renamed = false;
@@ -293,7 +293,7 @@ function pods_2_alpha_migrate_helpers () {
 function pods_2_alpha_migrate_pages () {
     $api = pods_api();
 
-    $page_rows = pods_query( "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'page'". false );
+    $page_rows = pods_query( "SELECT * FROM `@wp_pods_objects` WHERE `type` = 'page'", false );
 
     $page_ids = array();
 

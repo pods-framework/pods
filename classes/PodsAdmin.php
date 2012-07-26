@@ -530,6 +530,8 @@ class PodsAdmin {
         unset( $params->method );
         unset( $params->_wpnonce );
 
+        $params->_ajax = true;
+
         if ( true === $method->access_pod_specific ) {
             $priv_val = false;
             if ( isset( $params->pod ) )

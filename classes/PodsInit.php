@@ -195,6 +195,10 @@ class PodsInit {
         $post_types = PodsMeta::$post_types;
         $taxonomies = PodsMeta::$taxonomies;
 
+        $existing_post_types = get_post_types();
+        $existing_taxonomies = get_taxonomies();
+
+
         $wp_cpt_ct = get_transient( 'pods_wp_cpt_ct' );
 
         if ( false === $wp_cpt_ct ) {
@@ -207,7 +211,11 @@ class PodsInit {
             $supported_post_types = $supported_taxonomies = array();
 
             foreach ( $post_types as $post_type ) {
-                if ( !empty( $post_type[ 'object' ] ) )
+                // Post Type exists already
+                if ( empty( $post_type[ 'object' ] ) && isset( $existing_post_types[ $post_type[ 'name' ] ] ) )
+                    continue;
+
+                if ( !empty( $post_type[ 'object' ] ) && isset( $existing_post_types[ $post_type[ 'object' ] ] ) )
                     continue;
 
                 $post_type[ 'options' ][ 'name' ] = $post_type[ 'name' ];
@@ -323,7 +331,11 @@ class PodsInit {
             }
 
             foreach ( $taxonomies as $taxonomy ) {
-                if ( !empty( $taxonomy[ 'object' ] ) )
+                // Taxonomy exists already
+                if ( empty( $taxonomy[ 'object' ] ) && isset( $existing_taxonomies[ $taxonomy[ 'name' ] ] ) )
+                    continue;
+
+                if ( !empty( $taxonomy[ 'object' ] ) && isset( $existing_taxonomies[ $taxonomy[ 'object' ] ] ) )
                     continue;
 
                 $taxonomy[ 'options' ][ 'name' ] = $taxonomy[ 'name' ];

@@ -580,6 +580,7 @@ class PodsAPI {
                 'label' => ( !empty( $params->create_label_plural ) ? $params->create_label_plural : ucwords( str_replace( '_', ' ', $params->create_name ) ) ),
                 'type' => $params->create_pod_type,
                 'storage' => 'table',
+                'object' => '',
                 'options' => array(
                     'label_singular' => ( !empty( $params->create_label_singular ) ? $params->create_label_singular : ucwords( str_replace( '_', ' ', $params->create_name ) ) ),
                     'public' => 1,

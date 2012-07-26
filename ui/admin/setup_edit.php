@@ -208,7 +208,7 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
             <div id="post-body" class="meta-box-holder columns-2">
                 <div id="post-body-content">
                     <p class="pods-manage-row-add pods-float-right">
-                        <a href="#add-field" class="button-primary"><?php _e( 'Add Field' ); ?></a>
+                        <a href="#add-field" class="button-primary"><?php _e( 'Add Field', 'pods' ); ?></a>
                     </p>
 
                     <h2>Manage Fields</h2>
@@ -221,13 +221,13 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
                                     <span>&nbsp;</span>
                                 </th>
                                 <th scope="col" id="label" class="manage-column field-label">
-                                    <span>Label<?php pods_help(__("<h6>Label</h6>The label is the descriptive name to identify the Pod field.")); ?></span>
+                                    <span>Label<?php pods_help(__("<h6>Label</h6>The label is the descriptive name to identify the Pod field.", 'pods')); ?></span>
                                 </th>
                                 <th scope="col" id="machine-name" class="manage-column field-machine-name">
-                                    <span>Name<?php pods_help(__("<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically.")); ?></span>
+                                    <span>Name<?php pods_help(__("<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically.", 'pods')); ?></span>
                                 </th>
                                 <th scope="col" id="field-type" class="manage-column field-field-type">
-                                    <span>Field Type<?php pods_help(__("<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc.")); ?></span>
+                                    <span>Field Type<?php pods_help(__("<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc.", 'pods')); ?></span>
                                 </th><!--
                                 <th scope="col" id="comment" class="manage-column field-comment">
                                     <span>Comment</span>
@@ -236,17 +236,17 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
                         </thead>
                         <tfoot>
                             <tr>
-                                <th scope="col" id="cb" class="manage-column field-cb check-column">
+                                <th scope="col" class="manage-column field-cb check-column">
                                     <span>&nbsp;</span>
                                 </th>
-                                <th scope="col" id="label" class="manage-column field-label">
-                                    <span>Label<?php pods_help(__("<h6>Label</h6>The label is the descriptive name to identify the Pod field.")); ?></span>
+                                <th scope="col" class="manage-column field-label">
+                                    <span>Label<?php pods_help(__("<h6>Label</h6>The label is the descriptive name to identify the Pod field.", 'pods')); ?></span>
                                 </th>
-                                <th scope="col" id="machine-name" class="manage-column field-machine-name">
-                                    <span>Name<?php pods_help(__("<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically.")); ?></span>
+                                <th scope="col" class="manage-column field-machine-name">
+                                    <span>Name<?php pods_help(__("<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically.", 'pods')); ?></span>
                                 </th>
-                                <th scope="col" id="field-type" class="manage-column field-field-type">
-                                    <span>Field Type<?php pods_help(__("<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc.")); ?></span>
+                                <th scope="col" class="manage-column field-field-type">
+                                    <span>Field Type<?php pods_help(__("<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc.", 'pods')); ?></span>
                                 </th><!--
                                 <th scope="col" id="comment" class="manage-column field-comment">
                                     <span>Comment</span>
@@ -280,7 +280,7 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
                     </table>
                     <!-- /pods table -->
                     <p class="pods-manage-row-add">
-                        <a href="#add-field" class="button-primary"><?php _e('Add Field'); ?></a>
+                        <a href="#add-field" class="button-primary"><?php _e('Add Field', 'pods'); ?></a>
                     </p>
                     <div id="pods-advanced" class="pods-toggled postbox closed pods-submittable-fields">
                         <div class="handlediv" title="Click to toggle">
@@ -322,11 +322,11 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
                                             <?php echo PodsForm::field( 'label_add_new', pods_var( 'label_add_new', $pod ), 'text' ); ?>
                                         </div>
                                         <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_add_new_item', __( 'Add New <span class="pods-slugged">Item</span>' ), __( 'help', 'pods' ) ); ?>
+                                            <?php echo PodsForm::label( 'label_add_new_item', __( 'Add New <span class="pods-slugged">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
                                             <?php echo PodsForm::field( 'label_add_new_item', pods_var( 'label_add_new_item', $pod ), 'text' ); ?>
                                         </div>
                                         <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_new_item', __( 'New <span class="pods-slugged">Item</span>' ), __( 'help', 'pods' ) ); ?>
+                                            <?php echo PodsForm::label( 'label_new_item', __( 'New <span class="pods-slugged">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
                                             <?php echo PodsForm::field( 'label_new_item', pods_var( 'label_new_item', $pod ), 'text' ); ?>
                                         </div>
                                         <div class="pods-field-option">
@@ -334,11 +334,11 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
                                             <?php echo PodsForm::field( 'label_edit', pods_var( 'label_edit', $pod ), 'text' ); ?>
                                         </div>
                                         <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_edit_item', __( 'Edit <span class="pods-slugged">Item</span>' ), __( 'help', 'pods' ) ); ?>
+                                            <?php echo PodsForm::label( 'label_edit_item', __( 'Edit <span class="pods-slugged">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
                                             <?php echo PodsForm::field( 'label_edit_item', pods_var( 'label_edit_item', $pod ), 'text' ); ?>
                                         </div>
                                         <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_update_item', __( 'Update <span class="pods-slugged">Item</span>' ), __( 'help', 'pods' ) ); ?>
+                                            <?php echo PodsForm::label( 'label_update_item', __( 'Update <span class="pods-slugged">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
                                             <?php echo PodsForm::field( 'label_update_item', pods_var( 'label_update_item', $pod ), 'text' ); ?>
                                         </div>
                                         <div class="pods-field-option">

@@ -266,6 +266,13 @@ class PodsAPI {
         return $term_ID;
     }
 
+    /**
+     * Get a list of core WP object fields for a specific object
+     *
+     * @param string $object
+     *
+     * @return array
+     */
     public function object_fields ( $object = 'post_type' ) {
         $fields = array();
 
@@ -528,6 +535,7 @@ class PodsAPI {
         }
         elseif ( 'extend' == $params->create_extend ) {
             $pod_params = array(
+                'type' => $params->extend_pod_type,
                 'storage' => 'table',
                 'options' => array()
             );
@@ -544,7 +552,7 @@ class PodsAPI {
             }
 
             $pod_params[ 'label' ] = ucwords( str_replace( '_', ' ', $pod_params[ 'name' ] ) );
-            $pod_params[ 'object' ] = $pod_params[ 'type' ] = $pod_params[ 'name' ];
+            $pod_params[ 'object' ] = $pod_params[ 'name' ];
         }
 
         if ( !empty( $pod_params ) )

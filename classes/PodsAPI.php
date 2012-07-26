@@ -140,7 +140,7 @@ class PodsAPI {
         if ( $strict ) {
             foreach ( $meta as $meta_key => $meta_value ) {
                 if ( !isset( $post_meta[ $meta_key ] ) )
-                    delete_post_meta( $id, $meta_key, $post_meta[ $meta_key ] );
+                    delete_post_meta( $id, $meta_key, $meta_value );
             }
         }
 
@@ -680,6 +680,12 @@ class PodsAPI {
             );
         }
 
+        // Blank out fields and options for AJAX calls (everything should be sent to it for a full overwrite)
+        if ( defined( 'DOING_AJAX' ) ) {
+            $pod[ 'fields' ] = array();
+            $pod[ 'options' ] = array();
+        }
+
         // Setup options
         $options = get_object_vars( $params );
 
@@ -816,7 +822,7 @@ class PodsAPI {
 
         $saved = array();
 
-        if ( isset( $params->fields ) || isset( $params->field_data ) || isset( $params->_ajax ) ) {
+        if ( isset( $params->fields ) || isset( $params->field_data ) ) {
             $weight = 0;
 
             foreach ( $pod[ 'fields' ] as $field ) {

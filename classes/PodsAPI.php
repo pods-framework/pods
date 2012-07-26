@@ -1320,6 +1320,8 @@ class PodsAPI {
      * @since 1.7.9
      */
     public function save_pod_item ( $params ) {
+        global $wpdb;
+
         $params = (object) str_replace( '@wp_', '{prefix}', pods_sanitize( $params ) );
 
         $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
@@ -1487,7 +1489,7 @@ class PodsAPI {
             }
         }
 
-        $table_fields = $table_values = $rel_fields = $rel_field_ids = array();
+        $table_fields = $table_formats = $table_values = $rel_fields = $rel_field_ids = array();
 
         $object_type = $pod[ 'type' ];
 
@@ -1526,7 +1528,8 @@ class PodsAPI {
                 // Prepare all table (non-relational) data
                 if ( !in_array( $type, $tableless_field_types ) ) {
                     $table_fields[] = "`{$field}`";
-                    $table_values[] = PodsForm::prepare( $type, $fields[ $field ] );
+                    $table_formats[] = PodsForm::prepare( $type, $fields[ $field ] );
+                    $table_values[] = $value;
 
                     $object_meta[ $field ] = $value;
                 }
@@ -1554,15 +1557,18 @@ class PodsAPI {
 
             if ( 'table' == $pod[ 'storage' ] ) {
                 if ( !empty( $params->id ) ) {
-                    $table_fields = array_unshift( $table_fields, array( '`id`' ) );
-                    $table_values = array_unshift( $table_values, array( (int) $params->id ) );
+                    $table_fields = array_unshift( $table_fields, '`id`' );
+                    $table_formats = array_unshift( $table_formats, '%d' );
+                    $table_values = array_unshift( $table_values, $params->id );
                 }
 
                 if ( !empty( $table_fields ) ) {
                     $table_fields = implode( ',', $table_fields );
-                    $table_values = implode( ',', $table_values );
+                    $table_formats = implode( ',', $table_formats );
 
-                    $params->id = pods_query( "REPLACE INTO `@wp_pods_tbl_{$params->pod}` ({$table_fields}) VALUES ({$table_values})", 'Cannot add/save table row' );
+                    $sql = $wpdb->prepare( "REPLACE INTO `@wp_pods_tbl_{$params->pod}` ({$table_fields}) VALUES ({$table_formats})", $table_values );
+
+                    $params->id = pods_query( $sql, 'Cannot add/save table row' );
                 }
             }
         }
@@ -3081,7 +3087,7 @@ class PodsAPI {
         }
 
         // Verify required fields
-        if ( 1 == $fields[ $field ][ 'required' ] ) {
+        if ( 1 == pods_var( 'required', $fields[ $field ][ 'options' ], 0 ) ) {
             if ( '' == $value || null == $value )
                 return pods_error( "{$label} is empty", $this );
             elseif ( 'num' == $type && !is_numeric( $value ) )
@@ -3089,7 +3095,7 @@ class PodsAPI {
         }
 
         // Verify unique fields
-        if ( 1 == $fields[ $field ][ 'unique' ] ) {
+        if ( 1 == pods_var( 'unique', $fields[ $field ][ 'options' ], 0 ) ) {
             if ( !in_array( $type, $tableless_field_types ) ) {
                 $exclude = '';
                 if ( !empty( $params->id ) )

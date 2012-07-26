@@ -331,7 +331,7 @@ class PodsAdmin {
 
         $this->api->delete_pod( array( 'id' => $id ) );
 
-        unset( $obj->data[ $pod[ 'name' ] ] );
+        unset( $obj->data[ $pod[ 'id' ] ] );
 
         $obj->message( __( 'Pod deleted successfully.', 'pods' ) );
     }

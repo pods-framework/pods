@@ -569,34 +569,33 @@ class PodsAPI {
         if ( empty( $params->create_extend ) || !in_array( $params->create_extend, array( 'create', 'extend' ) ) )
             return pods_error( __( 'Please choose whether to Create or Extend a Content Type', $this ) );
 
-        $pod_params = array();
+        $pod_params = array(
+            'name' => '',
+            'label' => '',
+            'type' => '',
+            'storage' => 'table',
+            'object' => '',
+            'options' => array()
+        );
 
         if ( 'create' == $params->create_extend ) {
             if ( empty( $params->create_name ) )
                 return pods_error( 'Please enter a Name for this Pod', $this );
 
-            $pod_params = array(
-                'name' => $params->create_name,
-                'label' => ( !empty( $params->create_label_plural ) ? $params->create_label_plural : ucwords( str_replace( '_', ' ', $params->create_name ) ) ),
-                'type' => $params->create_pod_type,
-                'storage' => 'table',
-                'object' => '',
-                'options' => array(
-                    'label_singular' => ( !empty( $params->create_label_singular ) ? $params->create_label_singular : ucwords( str_replace( '_', ' ', $params->create_name ) ) ),
-                    'public' => 1,
-                    'show_ui' => 1
-                )
+            $pod_params[ 'name' ] = $params->create_name;
+            $pod_params[ 'label' ] = ( !empty( $params->create_label_plural ) ? $params->create_label_plural : ucwords( str_replace( '_', ' ', $params->create_name ) ) );
+            $pod_params[ 'type' ] = $params->create_pod_type;
+            $pod_params[ 'options' ] = array(
+                'label_singular' => ( !empty( $params->create_label_singular ) ? $params->create_label_singular : ucwords( str_replace( '_', ' ', $params->create_name ) ) ),
+                'public' => 1,
+                'show_ui' => 1
             );
 
             if ( 'post_type' == $pod_params[ 'type' ] )
                 $pod_params[ 'storage' ] = $params->create_storage;
         }
         elseif ( 'extend' == $params->create_extend ) {
-            $pod_params = array(
-                'type' => $params->extend_pod_type,
-                'storage' => 'table',
-                'options' => array()
-            );
+            $pod_params[ 'type' ] = $params->extend_pod_type;
 
             if ( 'post_type' == $pod_params[ 'type' ] ) {
                 $pod_params[ 'storage' ] = $params->extend_storage;

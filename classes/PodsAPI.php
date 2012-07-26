@@ -683,6 +683,7 @@ class PodsAPI {
         }
         else {
             $pod = array(
+                'id' => 0,
                 'name' => $params->name,
                 'label' => $params->name,
                 'description' => '',

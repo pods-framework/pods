@@ -409,7 +409,7 @@ class PodsForm {
     public static function prepare ( $type, $options ) {
         self::field_loader( $type );
 
-        $prepare = apply_filters( 'pods_field_' . $type . '_prepare', (array) self::$loaded[ $type ]->prepare( $options ), $options, $type );
+        $prepare = apply_filters( 'pods_field_' . $type . '_prepare', self::$loaded[ $type ]->prepare( $options ), $options, $type );
 
         return $prepare;
     }

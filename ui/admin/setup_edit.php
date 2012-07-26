@@ -1,14 +1,16 @@
 <?php
 global $pods_i;
 
-$field_types = array('date' => 'Date / Time',
-                     'number' => 'Number',
-                     'boolean' => 'Yes / No',
-                     'text' => 'Text',
-                     'paragraph' => 'Paragraph Text',
-                     'file' => 'File Upload',
-                     'slug' => 'Permalink (url-friendly)',
-                     'pick' => 'Relationship');
+$field_types = array(
+    'date' => 'Date / Time',
+    'number' => 'Number',
+    'boolean' => 'Yes / No',
+    'text' => 'Text',
+    'paragraph' => 'Paragraph Text',
+    'file' => 'File Upload',
+    'slug' => 'Permalink (url-friendly)',
+    'pick' => 'Relationship'
+);
 
 $advanced_fields = array(
     __( 'Visual', 'pods' ) => array(
@@ -96,66 +98,78 @@ $advanced_fields = array(
     )
 );
 
-$field_defaults = array('name' => 'new_field',
-                        'label' => 'New Field',
-                        'description' => '',
-                        'type' => 'text',
-                        'pick_object' => '',
-                        'sister_field_id' => '',
-                        'required' => 0,
-                        'unique' => 0,
-                        'css_class_name' => '',
-                        'input_helper' => '',
-                        'default_value' => '',
-                        'default_value_parameter' => '',
-                        'admin_only' => 0,
-                        'restrict_capability' => 0,
-                        'capability_allowed' => '',
-                        'regex_validation' => '',
-                        'message_regex' => '',
-                        'message_required' => '',
-                        'message_unique' => '');
+$field_defaults = array(
+    'name' => 'new_field',
+    'label' => 'New Field',
+    'description' => '',
+    'type' => 'text',
+    'pick_object' => '',
+    'sister_field_id' => '',
+    'required' => 0,
+    'unique' => 0,
+    'css_class_name' => '',
+    'input_helper' => '',
+    'default_value' => '',
+    'default_value_parameter' => '',
+    'admin_only' => 0,
+    'restrict_capability' => 0,
+    'capability_allowed' => '',
+    'regex_validation' => '',
+    'message_regex' => '',
+    'message_required' => '',
+    'message_unique' => ''
+);
 
-$pick_object = array('' => '-- Select --',
-                     'Custom' => array('custom-simple' => 'Simple (custom defined list)'),
-                     'Pods' => array(),
-                     'Post Types' => array(),
-                     'Taxonomies' => array(),
-                     'Other WP Objects' => array('user' => 'Users',
-                                                 'comment' => 'Comments'));
+$pick_object = array(
+    '' => '-- Select --',
+    'Custom' => array( 'custom-simple' => 'Simple (custom defined list)' ),
+    'Pods' => array(),
+    'Post Types' => array(),
+    'Taxonomies' => array(),
+    'Other WP Objects' => array(
+        'user' => 'Users',
+        'comment' => 'Comments'
+    )
+);
 
 $_pods = pods_api()->load_pods();
 
-foreach ($_pods as $pod) {
-    $pick_object['Pods'][ 'pod-' . $pod[ 'name' ] ] = $pod[ 'label' ] . ' (' . $pod[ 'name' ] . ')';
+foreach ( $_pods as $pod ) {
+    $pick_object[ 'Pods' ][ 'pod-' . $pod[ 'name' ] ] = $pod[ 'label' ] . ' (' . $pod[ 'name' ] . ')';
 }
 
 $post_types = get_post_types();
-$ignore = array('attachment', 'revision', 'nav_menu_item');
-foreach ($post_types as $post_type => $label) {
+$ignore = array( 'attachment', 'revision', 'nav_menu_item' );
+foreach ( $post_types as $post_type => $label ) {
     if ( in_array( $post_type, $ignore ) || empty( $post_type ) || 0 === strpos( $post_type, '_pods_' ) ) {
         unset( $post_types[ $post_type ] );
+        
         continue;
     }
-    $post_type = get_post_type_object($post_type);
-    $pick_object['Post Types']['post-type-' . $post_type->name] = $post_type->label;
+
+    $post_type = get_post_type_object( $post_type );
+    $pick_object[ 'Post Types' ][ 'post-type-' . $post_type->name ] = $post_type->label;
 }
 
 $taxonomies = get_taxonomies();
-$ignore = array('nav_menu', 'link_category', 'post_format');
-foreach ($taxonomies as $taxonomy => $label) {
-    if (in_array($taxonomy, $ignore) || empty($taxonomy))
+$ignore = array( 'nav_menu', 'link_category', 'post_format' );
+
+foreach ( $taxonomies as $taxonomy => $label ) {
+    if ( in_array( $taxonomy, $ignore ) || empty( $taxonomy ) )
         continue;
-    $taxonomy = get_taxonomy($taxonomy);
-    $pick_object['Taxonomies']['taxonomy-' . $taxonomy->name] = $taxonomy->label;
+
+    $taxonomy = get_taxonomy( $taxonomy );
+    $pick_object[ 'Taxonomies' ][ 'taxonomy-' . $taxonomy->name ] = $taxonomy->label;
 }
 
-$field_settings = array('field_types' => $field_types,
-                        'field_defaults' => $field_defaults,
-                        'advanced_fields' => $advanced_fields,
-                        'pick_object' => $pick_object,
-                        'sister_field_id' => array('' => '-- Select --'),
-                        'input_helper' => array('' => '-- Select --'));
+$field_settings = array(
+    'field_types' => $field_types,
+    'field_defaults' => $field_defaults,
+    'advanced_fields' => $advanced_fields,
+    'pick_object' => $pick_object,
+    'sister_field_id' => array( '' => '-- Select --' ),
+    'input_helper' => array( '' => '-- Select --' )
+);
 
 $pod = $_pods[ $obj->id ];
 
@@ -165,20 +179,21 @@ foreach ( $pod[ 'options' ] as $_option => $_value ) {
 
 foreach ( $pod[ 'fields' ] as $_field => $_data ) {
     $_data[ 'options' ] = (array) $_data[ 'options' ];
+
     foreach ( $_data[ 'options' ] as $_option => $_value ) {
         $pod[ 'fields' ][ $_field ][ $_option ] = $_value;
     }
 }
 
-$field_defaults = apply_filters('pods_field_defaults', apply_filters('pods_field_defaults_' . $pod['name'], $field_defaults, $pod));
-$field_settings = apply_filters('pods_field_settings', apply_filters('pods_field_settings_' . $pod['name'], $field_settings, $pod));
+$field_defaults = apply_filters( 'pods_field_defaults', apply_filters( 'pods_field_defaults_' . $pod[ 'name' ], $field_defaults, $pod ) );
+$field_settings = apply_filters( 'pods_field_settings', apply_filters( 'pods_field_settings_' . $pod[ 'name' ], $field_settings, $pod ) );
 
 $pod[ 'fields' ] = apply_filters( 'pods_fields_edit', apply_filters( 'pods_fields_edit_' . $pod[ 'name' ], $pod[ 'fields' ], $pod ) );
 
 global $wpdb;
 $max_length_name = 64;
 $max_length_name -= 10; // Allow for WP Multisite or prefix changes in the future
-$max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
+$max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
 ?>
 <div class="wrap pods-admin">
     <div id="icon-pods" class="icon32"><br /></div>

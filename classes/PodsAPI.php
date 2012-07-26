@@ -1557,9 +1557,9 @@ class PodsAPI {
 
             if ( 'table' == $pod[ 'storage' ] ) {
                 if ( !empty( $params->id ) ) {
-                    $table_fields = array_unshift( $table_fields, '`id`' );
-                    $table_formats = array_unshift( $table_formats, '%d' );
-                    $table_values = array_unshift( $table_values, $params->id );
+                    array_unshift( $table_fields, '`id`' );
+                    array_unshift( $table_formats, '%d' );
+                    array_unshift( $table_values, $params->id );
                 }
 
                 if ( !empty( $table_fields ) ) {

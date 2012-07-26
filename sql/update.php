@@ -114,6 +114,24 @@ function pods_2_migrate_pods () {
     return $pod_ids;
 }
 
+function pods_2_migrate_roles() {
+	global $wpdb;
+	$roles = get_option( "{$wpdb->prefix}user_roles" );
+	$new_roles = array();
+
+	foreach ( $roles as $role => $data ) {
+		$caps = $data[ 'capabilities' ];
+		$new_caps = array()
+
+		foreach ($caps as $key => $val) {
+			
+		}
+
+		$new_roles[ $role ] = array( 'name' => $data[ 'name' ], 'capabilities' => $new_caps );
+	}
+
+}
+
 function pods_2_migrate_templates () {
     $api = pods_api();
 

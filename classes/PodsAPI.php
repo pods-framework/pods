@@ -290,6 +290,11 @@ class PodsAPI {
      * @return array
      */
     public function get_wp_object_fields ( $object = 'post_type' ) {
+        $fields = get_transient( 'pods_api_object_fields_' . $object );
+
+        if ( false !== $fields )
+            return apply_filters( 'pods_api_get_wp_object_fields', $fields, $object );
+
         $fields = array();
 
         if ( 'post_type' == $object ) {
@@ -496,6 +501,10 @@ class PodsAPI {
             else
                 $object_field_opt[ 'alias' ] = (array) $object_field_opt[ 'alias' ];
         }
+
+        $fields = PodsForm::option_setup( $fields );
+
+        update_transient( 'pods_api_object_fields_' . $object, $fields );
 
         return $fields;
     }
@@ -1383,6 +1392,7 @@ class PodsAPI {
         if ( !empty( $params->data ) && is_array( $params->data ) ) {
             foreach ( $params->data as $field => $value ) {
                 if ( isset( $object_fields[ $field ] ) ) {
+                    $fields[ $field ] =& $object_fields[ $field ];
                     $fields[ $field ][ 'value' ] = $value;
                     $fields_active[] = $field;
                 }
@@ -1393,6 +1403,7 @@ class PodsAPI {
                 else {
                     foreach ( $object_fields as $object_field => $object_field_opt ) {
                         if ( in_array( $field, $object_field_opt[ 'alias' ] ) ) {
+                            $fields[ $object_field ] =& $object_fields[ $object_field ];
                             $fields[ $object_field ][ 'value' ] = $value;
                             $fields_active[] = $object_field;
                         }
@@ -1504,7 +1515,7 @@ class PodsAPI {
             if ( !in_array( $pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) )
                 $params->id = $this->save_wp_object( $object_type, $object_data );
             elseif ( 'taxonomy' == $pod[ 'type' ] ) {
-                $term = '';
+                $term = $object_fields[ 'name' ][ 'value' ];
                 $term_data = array();
 
                 if ( empty( $params->id ) || !empty( $term_data ) )

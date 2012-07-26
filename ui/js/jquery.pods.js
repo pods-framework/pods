@@ -690,11 +690,17 @@
             });
         },
         flexible : function (row) {
-            var new_row = row;
-            if ( new_row[ 0 ] )
+            var new_row = row,
+                row_counter = 0;
+
+            if ( new_row[ 0 ] ) {
                 new_row = new_row.html();
 
-            var row_counter = $('tr.pods-manage-row').length;
+                // Don't count flexible row
+                row_counter = -1;
+            }
+
+            row_counter += $( 'tr.pods-manage-row' ).length;
 
             // Handle 'Add' action
             if ('undefined' != typeof new_row && null !== new_row) {

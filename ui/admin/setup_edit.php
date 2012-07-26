@@ -257,19 +257,21 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
                             <?php
                                 // Empty Row for Flexible functionality
                                 $pods_i = '--1';
+
                                 $field = array(
                                     'id' => '__1',
                                     'name' => 'new__1',
                                     'label' => 'New Field __1',
                                     'type' => 'text'
                                 );
+
                                 include PODS_DIR . 'ui/admin/setup_edit_field.php';
 
                                 $pods_i = 1;
-                                foreach ( $pod['fields'] as $field ) {
-                                    if ('_pods_empty' == $field['name'])
-                                        continue;
+
+                                foreach ( $pod[ 'fields' ] as $field ) {
                                     include PODS_DIR . 'ui/admin/setup_edit_field.php';
+
                                     $pods_i++;
                                 }
                             ?>

@@ -2155,16 +2155,19 @@ class PodsAPI {
                 $params->id = $params->tbl_row_id;
                 unset( $params->tbl_row_id );
             }
+
             if ( isset( $params->pod_id ) ) {
                 pods_deprecated( __('$params->id instead of $params->pod_id', 'pods'), '2.0.0');
                 $params->id = $params->pod_id;
                 unset( $params->pod_id );
             }
+
             if ( isset( $params->dataype_id ) ) {
                 pods_deprecated( __('$params->pod_id instead of $params->datatype_id', 'pods'), '2.0.0');
                 $params->pod_id = $params->dataype_id;
                 unset( $params->dataype_id );
             }
+
             if ( isset( $params->datatype ) ) {
                 pods_deprecated( __('$params->pod instead of $params->datatype', 'pods'), '2.0.0');
                 $params->pod = $params->datatype;
@@ -2176,9 +2179,12 @@ class PodsAPI {
 
         if ( !isset( $params->pod ) )
             $params->pod = '';
+
         if ( !isset( $params->pod_id ) )
             $params->pod_id = 0;
+
         $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id ) );
+
         if ( false === $pod )
             return pods_error( __( 'Pod not found', 'pods' ), $this );
 
@@ -2187,6 +2193,7 @@ class PodsAPI {
 
         // Allow Helpers to bypass subsequent helpers in recursive delete_pod_item calls
         $bypass_helpers = false;
+
         if ( isset( $params->bypass_helpers ) && false !== $params->bypass_helpers )
             $bypass_helpers = true;
 
@@ -2194,13 +2201,14 @@ class PodsAPI {
 
         if ( false === $bypass_helpers ) {
             // Plugin hook
-            $this->do_hook( 'pre_delete_pod_item', $params );
-            $this->do_hook( "pre_delete_pod_item_{$params->pod}", $params );
+            $this->do_hook( 'pre_delete_pod_item', $params, $pod );
+            $this->do_hook( "pre_delete_pod_item_{$params->pod}", $params, $pod );
 
             // Call any pre-save helpers (if not bypassed)
             if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) {
                 if ( !empty( $pod[ 'options' ] ) && is_array( $pod[ 'options' ] ) ) {
                     $helpers = array( 'pre_delete_helpers', 'post_delete_helpers' );
+
                     foreach ( $helpers as $helper ) {
                         if ( isset( $pod[ 'options' ][ $helper ] ) && !empty( $pod[ 'options' ][ $helper ] ) )
                             ${$helper} = explode( ',', $pod[ 'options' ][ $helper ] );
@@ -2208,8 +2216,11 @@ class PodsAPI {
                 }
 
                 if ( !empty( $pre_delete_helpers ) ) {
+                    pods_deprecated( sprintf( __( 'Pre-delete helpers are deprecated, use the action pods_pre_delete_pod_item_%s instead', 'pods' ), $params->pod ), '2.0.0' );
+
                     foreach ( $pre_delete_helpers as $helper ) {
                         $helper = $this->load_helper( array( 'name' => $helper ) );
+
                         if ( false !== $helper )
                             echo eval( '?>' . $helper[ 'code' ] );
                     }
@@ -2220,23 +2231,26 @@ class PodsAPI {
         if ( 'table' == $pod[ 'storage' ] )
             pods_query( "DELETE FROM `@wp_pods_tbl_{$params->datatype}` WHERE `id` = {$params->id} LIMIT 1" );
 
-        if ( !in_array( $pod[ 'type' ], array( 'pod', 'table', '', 'taxonomy' ) ) )
-            $this->delete_wp_object( $pod[ 'type' ], $params->id );
-        elseif ( 'taxonomy' == $pod[ 'type' ] )
+        if ( 'taxonomy' == $pod[ 'type' ] )
             wp_delete_term( $params->id, $pod[ 'object' ] );
+        elseif ( !in_array( $pod[ 'type' ], array( 'pod', 'table', '', 'taxonomy' ) ) )
+            $this->delete_wp_object( $pod[ 'type' ], $params->id );
 
         pods_query( "DELETE FROM `@wp_pods_rel` WHERE (`pod_id` = {$params->pod_id} AND `item_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_item_id` = {$params->id})" );
 
         if ( false === $bypass_helpers ) {
             // Plugin hook
-            $this->do_hook( 'post_delete_pod_item', $params );
-            $this->do_hook( "post_delete_pod_item_{$params->pod}", $params );
+            $this->do_hook( 'post_delete_pod_item', $params, $pod );
+            $this->do_hook( "post_delete_pod_item_{$params->pod}", $params, $pod );
 
             // Call any post-save helpers (if not bypassed)
             if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) {
                 if ( !empty( $post_delete_helpers ) ) {
+                    pods_deprecated( sprintf( __( 'Post-delete helpers are deprecated, use the action pods_post_delete_pod_item_%s instead', 'pods' ), $params->pod ), '2.0.0' );
+
                     foreach ( $post_delete_helpers as $helper ) {
                         $helper = $this->load_helper( array( 'name' => $helper ) );
+
                         if ( false !== $helper )
                             echo eval( '?>' . $helper[ 'code' ] );
                     }

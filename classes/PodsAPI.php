@@ -2377,7 +2377,7 @@ class PodsAPI {
         $params = (object) pods_sanitize( $params );
 
         if ( isset( $params->post_title ) )
-            $_field = get_object_vars( $params );
+            $_field = $params;
         elseif ( isset( $params->id ) && !empty( $params->id ) )
             $_field = get_post( $dumb = (int) $params->id );
         else {
@@ -2398,8 +2398,10 @@ class PodsAPI {
                 return false;
             }
 
-            $_field = get_object_vars( $field[ 0 ] );
+            $_field = $field[ 0 ];
         }
+
+        $_field = get_object_vars( $_field );
 
         $defaults = array(
             'type' => 'text'

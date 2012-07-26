@@ -1756,18 +1756,20 @@ class PodsAPI {
     }
 
     /**
-     * Add or edit a single pod item
+     * Add multiple pod items
      *
      * $params['pod'] string The Pod name (pod or pod_id is required)
      * $params['pod_id'] string The Pod ID (pod or pod_id is required)
-     * $params['id'] int The item ID
-     * $params['data'] array (optional) Associative array of field names + values
      * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers
      *
-     * @param array $params An associative array of parameters
+     * $data['id'] int The item ID (optional)
+     * $data['data'] array An associative array of field names + values
+     *
+     * @param array $params An associative array of parameters, data excluded
+     * @param array $data An associative array of pod ids and field names + values (arrays of field data)
      *
      * @return int The item ID
-     * @since 1.7.9
+     * @since 2.0.0
      */
     public function save_pod_items ( $params, $data ) {
         $params = (object) $params;
@@ -1776,6 +1778,12 @@ class PodsAPI {
 
         foreach ( $data as $fields ) {
             $params->data = $fields;
+
+            if ( isset( $fields[ 'id' ] ) && isset( $fields[ 'data' ] ) ) {
+                $params->id = $fields[ 'id' ];
+                $params->data = $fields[ 'data' ];
+            }
+
             $ids[] = $this->save_pod_item( $params );
         }
 

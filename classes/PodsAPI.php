@@ -2035,14 +2035,14 @@ class PodsAPI {
                     return pods_error( $e->getMessage(), $this );
             }
 
-            $wpdb->query( "DELETE pm FROM {$wpdb->postmeta} AS pm
-                LEFT JOIN {$wpdb->posts} AS p
-                    ON p.post_type = '_pods_field' AND p.ID = pm.post_id
-                LEFT JOIN {$wpdb->postmeta} AS pm2
-                    ON pm2.meta_key = 'pick_object' AND pm2.meta_value = 'pod' AND pm2.post_id = pm.post_id
+            $wpdb->query( "DELETE `pm` FROM `{$wpdb->postmeta}` AS `pm`
+                LEFT JOIN `{$wpdb->posts}` AS `p`
+                    ON `p`.`post_type` = '_pods_field' AND `p`.`ID` = `pm`.`post_id`
+                LEFT JOIN `{$wpdb->postmeta}` AS `pm2`
+                    ON `pm2`.`meta_key` = 'pick_object' AND `pm2`.`meta_value` = 'pod' AND `pm2`.`post_id` = `pm`.`post_id`
                 WHERE
-                    p.ID IS NOT NULL AND pm2.ID IS NOT NULL
-                    AND pm.meta_key = 'pick_val' AND pm.meta_value = '{$params->name}'" );
+                    `p`.`ID` IS NOT NULL AND `pm2`.`meta_id` IS NOT NULL
+                    AND `pm`.`meta_key` = 'pick_val' AND `pm`.`meta_value` = '{$params->name}'" );
         }
 
         pods_query( "DELETE FROM `@wp_pods_rel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}" );

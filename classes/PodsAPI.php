@@ -822,7 +822,7 @@ class PodsAPI {
 
         $saved = array();
 
-        if ( isset( $params->fields ) || isset( $params->field_data ) ) {
+        if ( isset( $params->fields ) || isset( $params->field_data ) || defined( 'DOING_AJAX' ) ) {
             $weight = 0;
 
             foreach ( $pod[ 'fields' ] as $field ) {

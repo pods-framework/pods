@@ -118,37 +118,47 @@ function pods_2_migrate_pods () {
 function pods_2_migrate_roles() {
     global $wpdb;
     $wp_roles = get_option( "{$wpdb->prefix}user_roles" );
-    $old_roles = unserialize( get_option( "pods_roles" ) );
-    $new_roles = array();
 
-    foreach ( $old_roles as $role => $data ) {
-        if ($role == '_wpnonce')
-            continue;
+    $old_roles = (array) @unserialize( get_option( 'pods_roles' ) );
 
-        $caps = $wp_roles[ $role ][ 'capabilities' ];
+    if ( !empty( $old_roles ) ) {
+        foreach ( $old_roles as $role => $data ) {
+            if ($role == '_wpnonce')
+                continue;
 
-        foreach ( $data as $cap ) {
-            if ( preg_match( '/^manage_/', $cap  ) ) {
-                $key = str_replace( 'manage_', 'pods_', $cap );
-                $caps[ $key ] = 1;
-            } elseif ( preg_match( '/^pod_/', $cap ) ) {
-                $keys = array(
-                    str_replace( 'pod_', 'pods_new_', $cap ),
-                    str_replace( 'pod_', 'pods_edit_', $cap ),
-                    str_replace( 'pod_', 'pods_delete_', $cap ),
-                );
+            $caps = $wp_roles[ $role ][ 'capabilities' ];
 
-                foreach ( $keys as $key ) {
-                    $caps[ $key ] = 1;
+            foreach ( $data as $cap ) {
+                if ( 0 === strpos( 'manage_', $cap ) ) {
+                    if ( in_array( $cap, array( 'manage_roles', 'manage_content' ) ) )
+                        continue;
+
+                    $cap = str_replace( 'manage_', 'pods_', $cap, 1 );
+                    $cap = str_replace( 'pod_pages', 'pages', $cap, 1 );
+
+                    $caps[ $cap ] = true;
+                }
+                elseif ( 0 === strpos( 'pod_', $cap ) ) {
+                    $keys = array(
+                        str_replace( 'pod_', 'pods_new_', $cap, 1 ),
+                        str_replace( 'pod_', 'pods_edit_', $cap, 1 ),
+                        str_replace( 'pod_', 'pods_delete_', $cap, 1 ),
+                    );
+
+                    foreach ( $keys as $key ) {
+                        $caps[ $key ] = true;
+                    }
                 }
             }
-        }
 
-        $wp_roles[ $role ][ 'capabilities' ] = $caps;
+            $wp_roles[ $role ][ 'capabilities' ] = $caps;
+        }
     }
-    
+
     update_option( "{$wpdb->prefix}user_roles", $wp_roles );
-    delete_option( "pods_roles" );
+
+    delete_option( 'pods_roles' );
+
     return $wp_roles;
 }
 

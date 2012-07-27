@@ -222,38 +222,38 @@ class PodsInit {
                 $post_type = array_merge( $post_type, (array) $post_type[ 'options' ] );
 
                 // Labels
-                $cpt_label = esc_html( pods_var( 'cpt_label', $post_type, ucwords( str_replace( '_', ' ', pods_var( 'name', $post_type ) ) ), null, true ) );
-                $cpt_singular = esc_html( pods_var( 'cpt_singular_label', $post_type, ucwords( str_replace( '_', ' ', pods_var( 'cpt_label', $post_type, pods_var( 'name', $post_type ), null, true ) ) ), null, true ) );
+                $cpt_label = esc_html( pods_var( 'label', $post_type, ucwords( str_replace( '_', ' ', pods_var( 'name', $post_type ) ) ), null, true ) );
+                $cpt_singular = esc_html( pods_var( 'singular_label', $post_type, ucwords( str_replace( '_', ' ', pods_var( 'label', $post_type, pods_var( 'name', $post_type ), null, true ) ) ), null, true ) );
                 $cpt_labels[ 'name' ] = $cpt_label;
                 $cpt_labels[ 'singular_name' ] = $cpt_singular;
-                $cpt_labels[ 'menu_name' ] = pods_var( 'cpt_menu_name', $post_type, $cpt_label, null, true );
-                $cpt_labels[ 'add_new' ] = pods_var( 'cpt_add_new', $post_type, 'Add ' . $cpt_singular, null, true );
-                $cpt_labels[ 'add_new_item' ] = pods_var( 'cpt_add_new_item', $post_type, 'Add New ' . $cpt_singular, null, true );
-                $cpt_labels[ 'new_item' ] = pods_var( 'cpt_new_item', $post_type, 'New ' . $cpt_singular, null, true );
-                $cpt_labels[ 'edit' ] = pods_var( 'cpt_edit', $post_type, 'Edit', null, true );
-                $cpt_labels[ 'edit_item' ] = pods_var( 'cpt_edit_item', $post_type, 'Edit ' . $cpt_singular, null, true );
-                $cpt_labels[ 'view' ] = pods_var( 'cpt_view', $post_type, 'View ' . $cpt_singular, null, true );
-                $cpt_labels[ 'view_item' ] = pods_var( 'cpt_view_item', $post_type, 'View ' . $cpt_singular, null, true );
-                $cpt_labels[ 'all_items' ] = pods_var( 'cpt_all_items', $post_type, 'All ' . $cpt_singular, null, true );
-                $cpt_labels[ 'search_items' ] = pods_var( 'cpt_search_items', $post_type, 'Search ' . $cpt_label, null, true );
-                $cpt_labels[ 'not_found' ] = pods_var( 'cpt_not_found', $post_type, 'No ' . $cpt_label . ' Found', null, true );
-                $cpt_labels[ 'not_found_in_trash' ] = pods_var( 'cpt_not_found_in_trash', $post_type, 'No ' . $cpt_label . ' Found in Trash', null, true );
-                $cpt_labels[ 'parent' ] = pods_var( 'cpt_parent', $post_type, 'Parent ' . $cpt_singular, null, true );
-                $cpt_labels[ 'parent_item_colon' ] = pods_var( 'cpt_parent_item_colon', $post_type, 'Parent ' . $cpt_singular . ':', null, true );
+                $cpt_labels[ 'menu_name' ] = pods_var( 'menu_name', $post_type, $cpt_label, null, true );
+                $cpt_labels[ 'add_new' ] = pods_var( 'add_new', $post_type, 'Add ' . $cpt_singular, null, true );
+                $cpt_labels[ 'add_new_item' ] = pods_var( 'add_new_item', $post_type, 'Add New ' . $cpt_singular, null, true );
+                $cpt_labels[ 'new_item' ] = pods_var( 'new_item', $post_type, 'New ' . $cpt_singular, null, true );
+                $cpt_labels[ 'edit' ] = pods_var( 'edit', $post_type, 'Edit', null, true );
+                $cpt_labels[ 'edit_item' ] = pods_var( 'edit_item', $post_type, 'Edit ' . $cpt_singular, null, true );
+                $cpt_labels[ 'view' ] = pods_var( 'view', $post_type, 'View ' . $cpt_singular, null, true );
+                $cpt_labels[ 'view_item' ] = pods_var( 'view_item', $post_type, 'View ' . $cpt_singular, null, true );
+                $cpt_labels[ 'all_items' ] = pods_var( 'all_items', $post_type, 'All ' . $cpt_singular, null, true );
+                $cpt_labels[ 'search_items' ] = pods_var( 'search_items', $post_type, 'Search ' . $cpt_label, null, true );
+                $cpt_labels[ 'not_found' ] = pods_var( 'not_found', $post_type, 'No ' . $cpt_label . ' Found', null, true );
+                $cpt_labels[ 'not_found_in_trash' ] = pods_var( 'not_found_in_trash', $post_type, 'No ' . $cpt_label . ' Found in Trash', null, true );
+                $cpt_labels[ 'parent' ] = pods_var( 'parent', $post_type, 'Parent ' . $cpt_singular, null, true );
+                $cpt_labels[ 'parent_item_colon' ] = pods_var( 'parent_item_colon', $post_type, 'Parent ' . $cpt_singular . ':', null, true );
 
                 // Supported
                 $cpt_supported = array(
-                    'title' => (boolean) pods_var( 'cpt_supports_title', $post_type, true ),
-                    'editor' => (boolean) pods_var( 'cpt_supports_editor', $post_type, true ),
-                    'author' => (boolean) pods_var( 'cpt_supports_author', $post_type, false ),
-                    'thumbnail' => (boolean) pods_var( 'cpt_supports_thumbnail', $post_type, false ),
-                    'excerpt' => (boolean) pods_var( 'cpt_supports_excerpt', $post_type, false ),
-                    'trackbacks' => (boolean) pods_var( 'cpt_supports_trackbacks', $post_type, false ),
-                    'custom-fields' => (boolean) pods_var( 'cpt_supports_custom_fields', $post_type, false ),
-                    'comments' => (boolean) pods_var( 'cpt_supports_comments', $post_type, false ),
-                    'revisions' => (boolean) pods_var( 'cpt_supports_revisions', $post_type, false ),
-                    'page-attributes' => (boolean) pods_var( 'cpt_supports_page_attributes', $post_type, false ),
-                    'post-formats' => (boolean) pods_var( 'cpt_supports_post_formats', $post_type, false )
+                    'title' => (boolean) pods_var( 'supports_title', $post_type, true ),
+                    'editor' => (boolean) pods_var( 'supports_editor', $post_type, true ),
+                    'author' => (boolean) pods_var( 'supports_author', $post_type, false ),
+                    'thumbnail' => (boolean) pods_var( 'supports_thumbnail', $post_type, false ),
+                    'excerpt' => (boolean) pods_var( 'supports_excerpt', $post_type, false ),
+                    'trackbacks' => (boolean) pods_var( 'supports_trackbacks', $post_type, false ),
+                    'custom-fields' => (boolean) pods_var( 'supports_custom_fields', $post_type, false ),
+                    'comments' => (boolean) pods_var( 'supports_comments', $post_type, false ),
+                    'revisions' => (boolean) pods_var( 'supports_revisions', $post_type, false ),
+                    'page-attributes' => (boolean) pods_var( 'supports_page_attributes', $post_type, false ),
+                    'post-formats' => (boolean) pods_var( 'supports_post_formats', $post_type, false )
                 );
                 $cpt_supports = array();
 
@@ -263,47 +263,47 @@ class PodsInit {
                 }
 
                 // Rewrite
-                $cpt_rewrite = pods_var( 'cpt_rewrite', $post_type, true );
+                $cpt_rewrite = pods_var( 'rewrite', $post_type, true );
                 $cpt_rewrite_array = array(
-                    'slug' => pods_var( 'cpt_custom_rewrite_slug', $post_type, pods_var( 'name', $post_type ) ),
-                    'with_front' => (boolean) pods_var( 'cpt_rewrite_with_front', $post_type, true ),
-                    'feeds' => pods_var( 'cpt_rewrite_feeds', $post_type, pods_var( 'cpt_has_archive', $post_type, false ) ),
-                    'pages' => (boolean) pods_var( 'cpt_rewrite_pages', $post_type, true )
+                    'slug' => pods_var( 'custom_rewrite_slug', $post_type, pods_var( 'name', $post_type ) ),
+                    'with_front' => (boolean) pods_var( 'rewrite_with_front', $post_type, true ),
+                    'feeds' => pods_var( 'rewrite_feeds', $post_type, pods_var( 'has_archive', $post_type, false ) ),
+                    'pages' => (boolean) pods_var( 'rewrite_pages', $post_type, true )
                 );
 
                 if ( false !== $cpt_rewrite )
                     $cpt_rewrite = $cpt_rewrite_array;
 
-                $capability_type = pods_var( 'cpt_capability_type', $post_type, 'post' );
+                $capability_type = pods_var( 'capability_type', $post_type, 'post' );
 
                 if ( 'custom' == $capability_type )
-                    $capability_type = pods_var( 'cpt_capability_type_custom', $post_type, 'post' );
+                    $capability_type = pods_var( 'capability_type_custom', $post_type, 'post' );
 
                 // Register Post Type
                 $wp_post_types[ pods_var( 'name', $post_type ) ] = array(
                     'label' => $cpt_label,
                     'labels' => $cpt_labels,
-                    'description' => esc_html( pods_var( 'cpt_description', $post_type ) ),
-                    'public' => (boolean) pods_var( 'cpt_public', $post_type, false ),
-                    'publicly_queryable' => (boolean) pods_var( 'cpt_publicly_queryable', $post_type, (boolean) pods_var( 'cpt_public', $post_type, false ) ),
-                    'exclude_from_search' => (boolean) pods_var( 'cpt_exclude_from_search', $post_type, ( pods_var( 'cpt_public', $post_type, false ) ? false : true ) ),
-                    'show_ui' => (boolean) pods_var( 'cpt_show_ui', $post_type, (boolean) pods_var( 'cpt_public', $post_type, false ) ),
-                    'show_in_menu' => (boolean) pods_var( 'cpt_show_in_menu', $post_type, true ),
-                    'show_in_admin_bar' => (boolean) pods_var( 'cpt_show_in_admin_bar', $post_type, (boolean) pods_var( 'cpt_show_in_menu', $post_type, true ) ),
-                    'menu_position' => (int) pods_var( 'cpt_menu_position', $post_type, 20, null, true ),
-                    'menu_icon' => pods_var( 'cpt_menu_icon', $post_type, null, null, true ),
+                    'description' => esc_html( pods_var( 'description', $post_type ) ),
+                    'public' => (boolean) pods_var( 'public', $post_type, false ),
+                    'publicly_queryable' => (boolean) pods_var( 'publicly_queryable', $post_type, (boolean) pods_var( 'public', $post_type, false ) ),
+                    'exclude_from_search' => (boolean) pods_var( 'exclude_from_search', $post_type, ( pods_var( 'public', $post_type, false ) ? false : true ) ),
+                    'show_ui' => (boolean) pods_var( 'show_ui', $post_type, (boolean) pods_var( 'public', $post_type, false ) ),
+                    'show_in_menu' => (boolean) pods_var( 'show_in_menu', $post_type, true ),
+                    'show_in_admin_bar' => (boolean) pods_var( 'show_in_admin_bar', $post_type, (boolean) pods_var( 'show_in_menu', $post_type, true ) ),
+                    'menu_position' => (int) pods_var( 'menu_position', $post_type, 20, null, true ),
+                    'menu_icon' => pods_var( 'menu_icon', $post_type, null, null, true ),
                     'capability_type' => $capability_type,
                     //'capabilities' => $cpt_capabilities,
-                    'map_meta_cap' => (boolean) pods_var( 'cpt_map_meta_cap', $post_type, true ),
-                    'hierarchical' => (boolean) pods_var( 'cpt_hierarchical', $post_type, false ),
+                    'map_meta_cap' => (boolean) pods_var( 'map_meta_cap', $post_type, true ),
+                    'hierarchical' => (boolean) pods_var( 'hierarchical', $post_type, false ),
                     'supports' => $cpt_supports,
                     //'register_meta_box_cb' => array($this, 'manage_meta_box'),
                     //'permalink_epmask' => EP_PERMALINK,
-                    'has_archive' => (boolean) pods_var( 'cpt_has_archive', $post_type, false ),
+                    'has_archive' => (boolean) pods_var( 'has_archive', $post_type, false ),
                     'rewrite' => $cpt_rewrite,
-                    'query_var' => ( false !== pods_var( 'cpt_query_var', $post_type, true ) ? pods_var( 'cpt_query_var_string', $post_type, pods_var( 'name', $post_type ) ) : false ),
-                    'can_export' => (boolean) pods_var( 'cpt_can_export', $post_type, true ),
-                    'show_in_nav_menus' => (boolean) pods_var( 'cpt_show_in_nav_menus', $post_type, (boolean) pods_var( 'cpt_public', $post_type, false ) )
+                    'query_var' => ( false !== pods_var( 'query_var', $post_type, true ) ? pods_var( 'query_var_string', $post_type, pods_var( 'name', $post_type ) ) : false ),
+                    'can_export' => (boolean) pods_var( 'can_export', $post_type, true ),
+                    'show_in_nav_menus' => (boolean) pods_var( 'show_in_nav_menus', $post_type, (boolean) pods_var( 'public', $post_type, false ) )
                 );
 
                 // Taxonomies
@@ -316,7 +316,7 @@ class PodsInit {
                     if ( in_array( $taxonomy, $ignore ) )
                         continue;
 
-                    if ( false !== (boolean) pods_var( 'cpt_built_in_taxonomies_' . $taxonomy, $post_type, false ) ) {
+                    if ( false !== (boolean) pods_var( 'built_in_taxonomies_' . $taxonomy, $post_type, false ) ) {
                         $cpt_taxonomies[] = $taxonomy;
 
                         if ( isset( $supported_post_types[ $taxonomy ] ) && !in_array( pods_var( 'name', $post_type ), $supported_post_types[ $taxonomy ] ) )
@@ -342,30 +342,30 @@ class PodsInit {
                 $taxonomy = array_merge( $taxonomy, (array) $taxonomy[ 'options' ] );
 
                 // Labels
-                $ct_label = esc_html( pods_var( 'ct_label', $taxonomy, pods_var( 'name', $taxonomy ), null, true ) );
-                $ct_singular_label = esc_html( pods_var( 'ct_singular_label', $taxonomy, pods_var( 'ct_label', $taxonomy, pods_var( 'name', $taxonomy ), null, true ), null, true ) );
+                $ct_label = esc_html( pods_var( 'label', $taxonomy, pods_var( 'name', $taxonomy ), null, true ) );
+                $ct_singular_label = esc_html( pods_var( 'singular_label', $taxonomy, pods_var( 'label', $taxonomy, pods_var( 'name', $taxonomy ), null, true ), null, true ) );
                 $ct_labels[ 'name' ] = $ct_label;
                 $ct_labels[ 'singular_name' ] = $ct_singular_label;
-                $ct_labels[ 'search_items' ] = pods_var( 'ct_search_items', $taxonomy, 'Search ' . $ct_label, null, true );
-                $ct_labels[ 'popular_items' ] = pods_var( 'ct_popular_items', $taxonomy, 'Popular ' . $ct_label, null, true );
-                $ct_labels[ 'all_items' ] = pods_var( 'ct_all_items', $taxonomy, 'All ' . $ct_label, null, true );
-                $ct_labels[ 'parent_item' ] = pods_var( 'ct_parent_item', $taxonomy, 'Parent ' . $ct_singular_label, null, true );
-                $ct_labels[ 'parent_item_colon' ] = pods_var( 'ct_parent_item_colon', $taxonomy, 'Parent ' . $ct_singular_label . ':', null, true );
-                $ct_labels[ 'edit_item' ] = pods_var( 'ct_edit_item', $taxonomy, 'Edit ' . $ct_singular_label, null, true );
-                $ct_labels[ 'update_item' ] = pods_var( 'ct_update_item', $taxonomy, 'Update ' . $ct_singular_label, null, true );
-                $ct_labels[ 'add_new_item' ] = pods_var( 'ct_add_new_item', $taxonomy, 'Add New ' . $ct_singular_label, null, true );
-                $ct_labels[ 'new_item_name' ] = pods_var( 'ct_new_item_name', $taxonomy, 'New ' . $ct_singular_label . ' Name', null, true );
-                $ct_labels[ 'separate_items_with_commas' ] = pods_var( 'ct_separate_items_with_commas', $taxonomy, 'Separate ' . $ct_label . ' with commas', null, true );
-                $ct_labels[ 'add_or_remove_items' ] = pods_var( 'ct_add_or_remove_items', $taxonomy, 'Add or remove ' . $ct_label, null, true );
-                $ct_labels[ 'choose_from_most_used' ] = pods_var( 'ct_choose_from_most_used', $taxonomy, 'Choose from the most used ' . $ct_label, null, true );
-                $ct_labels[ 'menu_name' ] = pods_var( 'ct_menu_name', $taxonomy, $ct_label, null, true );
+                $ct_labels[ 'search_items' ] = pods_var( 'search_items', $taxonomy, 'Search ' . $ct_label, null, true );
+                $ct_labels[ 'popular_items' ] = pods_var( 'popular_items', $taxonomy, 'Popular ' . $ct_label, null, true );
+                $ct_labels[ 'all_items' ] = pods_var( 'all_items', $taxonomy, 'All ' . $ct_label, null, true );
+                $ct_labels[ 'parent_item' ] = pods_var( 'parent_item', $taxonomy, 'Parent ' . $ct_singular_label, null, true );
+                $ct_labels[ 'parent_item_colon' ] = pods_var( 'parent_item_colon', $taxonomy, 'Parent ' . $ct_singular_label . ':', null, true );
+                $ct_labels[ 'edit_item' ] = pods_var( 'edit_item', $taxonomy, 'Edit ' . $ct_singular_label, null, true );
+                $ct_labels[ 'update_item' ] = pods_var( 'update_item', $taxonomy, 'Update ' . $ct_singular_label, null, true );
+                $ct_labels[ 'add_new_item' ] = pods_var( 'add_new_item', $taxonomy, 'Add New ' . $ct_singular_label, null, true );
+                $ct_labels[ 'new_item_name' ] = pods_var( 'new_item_name', $taxonomy, 'New ' . $ct_singular_label . ' Name', null, true );
+                $ct_labels[ 'separate_items_with_commas' ] = pods_var( 'separate_items_with_commas', $taxonomy, 'Separate ' . $ct_label . ' with commas', null, true );
+                $ct_labels[ 'add_or_remove_items' ] = pods_var( 'add_or_remove_items', $taxonomy, 'Add or remove ' . $ct_label, null, true );
+                $ct_labels[ 'choose_from_most_used' ] = pods_var( 'choose_from_most_used', $taxonomy, 'Choose from the most used ' . $ct_label, null, true );
+                $ct_labels[ 'menu_name' ] = pods_var( 'menu_name', $taxonomy, $ct_label, null, true );
 
                 // Rewrite
-                $ct_rewrite = pods_var( 'ct_rewrite', $taxonomy, true );
+                $ct_rewrite = pods_var( 'rewrite', $taxonomy, true );
                 $ct_rewrite_array = array(
-                    'slug' => pods_var( 'ct_custom_rewrite_slug', $taxonomy, pods_var( 'name', $taxonomy ) ),
-                    'with_front' => (boolean) pods_var( 'ct_rewrite_with_front', $taxonomy, true ),
-                    'hierarchical' => pods_var( 'ct_rewrite_hierarchical', $taxonomy, pods_var( 'ct_hierarchical', $taxonomy, false ) )
+                    'slug' => pods_var( 'custom_rewrite_slug', $taxonomy, pods_var( 'name', $taxonomy ) ),
+                    'with_front' => (boolean) pods_var( 'rewrite_with_front', $taxonomy, true ),
+                    'hierarchical' => pods_var( 'rewrite_hierarchical', $taxonomy, pods_var( 'hierarchical', $taxonomy, false ) )
                 );
 
                 if ( false !== $ct_rewrite )
@@ -375,13 +375,13 @@ class PodsInit {
                 $wp_taxonomies[ pods_var( 'name', $taxonomy ) ] = array(
                     'label' => $ct_label,
                     'labels' => $ct_labels,
-                    'public' => (boolean) pods_var( 'ct_public', $taxonomy, true ),
-                    'show_in_nav_menus' => (boolean) pods_var( 'ct_show_in_nav_menus', $taxonomy, pods_var( 'ct_public', $taxonomy, true ) ),
-                    'show_ui' => (boolean) pods_var( 'ct_show_ui', $taxonomy, pods_var( 'ct_public', $taxonomy, true ) ),
-                    'show_tagcloud' => (boolean) pods_var( 'ct_show_tagcloud', $taxonomy, pods_var( 'ct_show_ui', $taxonomy, pods_var( 'ct_public', $taxonomy, true ) ) ),
-                    'hierarchical' => (boolean) pods_var( 'ct_hierarchical', $taxonomy ),
+                    'public' => (boolean) pods_var( 'public', $taxonomy, true ),
+                    'show_in_nav_menus' => (boolean) pods_var( 'show_in_nav_menus', $taxonomy, pods_var( 'public', $taxonomy, true ) ),
+                    'show_ui' => (boolean) pods_var( 'show_ui', $taxonomy, pods_var( 'public', $taxonomy, true ) ),
+                    'show_tagcloud' => (boolean) pods_var( 'show_tagcloud', $taxonomy, pods_var( 'show_ui', $taxonomy, pods_var( 'public', $taxonomy, true ) ) ),
+                    'hierarchical' => (boolean) pods_var( 'hierarchical', $taxonomy ),
                     //'update_count_callback' => pods_var('update_count_callback', $taxonomy),
-                    'query_var' => ( false !== pods_var( 'ct_query_var', $taxonomy, true ) ? pods_var( 'ct_query_var_string', $taxonomy, pods_var( 'name', $taxonomy ) ) : false ),
+                    'query_var' => ( false !== pods_var( 'query_var', $taxonomy, true ) ? pods_var( 'query_var_string', $taxonomy, pods_var( 'name', $taxonomy ) ) : false ),
                     'rewrite' => $ct_rewrite
                 );
 
@@ -395,7 +395,7 @@ class PodsInit {
                     if ( in_array( $post_type, $ignore ) )
                         continue;
 
-                    if ( false !== (boolean) pods_var( 'ct_built_in_post_types_' . $post_type, $taxonomy, false ) ) {
+                    if ( false !== (boolean) pods_var( 'built_in_post_types_' . $post_type, $taxonomy, false ) ) {
                         $ct_post_types[] = $post_type;
 
                         if ( isset( $supported_taxonomies[ $post_type ] ) && !in_array( pods_var( 'name', $taxonomy ), $supported_taxonomies[ $post_type ] ) )
@@ -421,7 +421,7 @@ class PodsInit {
                     $ct_post_types = $supported_post_types[ $taxonomy ];
 
                 $wp_cpt_ct[ 'taxonomies' ][ $taxonomy ] = array(
-                    'ct_post_types' => $ct_post_types,
+                    'post_types' => $ct_post_types,
                     'options' => $options
                 );
             }
@@ -437,7 +437,7 @@ class PodsInit {
         }
 
         foreach ( $wp_cpt_ct[ 'taxonomies' ] as $taxonomy => $options ) {
-            $ct_post_types = $options[ 'ct_post_types' ];
+            $ct_post_types = $options[ 'post_types' ];
             $options = $options[ 'options' ];
 
             $options = apply_filters( 'pods_register_taxonomy_' . $taxonomy, $options );

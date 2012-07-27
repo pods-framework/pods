@@ -14,9 +14,7 @@ class PodsForm {
      * @since 2.0.0
      */
     public function __construct () {
-        add_filter( 'pods_form_ui_label_text', 'wp_kses_post', 9, 1 );
-        add_filter( 'pods_form_ui_label_help', 'wp_kses_post', 9, 1 );
-        add_filter( 'pods_form_ui_comment_text', 'wp_kses_post', 9, 1 );
+
     }
 
     /**
@@ -28,8 +26,10 @@ class PodsForm {
         if ( is_array( $label ) ) {
             $options = $label;
             $label = $options[ 'label' ];
+
             if ( empty( $label ) )
                 $label = ucwords( str_replace( '_', ' ', $name ) );
+
             $help = $options[ 'help' ];
         }
         else

@@ -310,14 +310,19 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
                             <div class="pods-manage-field pods-dependency">
                                 <div class="pods-tabbed">
                                     <ul class="pods-tabs">
-                                        <li class="pods-tab"><a href="#pods-advanced-labels">Labels</a></li>
                                         <?php
-                                            if ( 'post_type' == pods_var( 'type', $pod ) ) {
+                                            if ( strlen( pods_var( 'object', $pod ) ) < 1 ) {
+                                        ?>
+                                            <li class="pods-tab"><a href="#pods-advanced-labels">Labels</a></li>
+                                        <?php
+                                            }
+
+                                            if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) ) < 1 ) {
                                         ?>
                                             <li class="pods-tab"><a href="#pods-advanced-post-type-options">Post Type Options</a></li>
                                         <?php
                                             }
-                                            elseif ( 'taxonomy' == pods_var( 'type', $pod ) ) {
+                                            elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) ) < 1 ) {
                                         ?>
                                             <li class="pods-tab"><a href="#pods-advanced-taxonomy-options">Taxonomy Options</a></li>
                                         <?php
@@ -327,76 +332,82 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
                                     </ul>
 
                                     <div class="pods-tab-group">
-                                    <div id="pods-advanced-labels" class="pods-tab">
-                                        <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_label', __( 'Label', 'pods' ), __( 'help', 'pods' ) ); ?>
-                                            <?php echo PodsForm::field( 'label_label', pods_var( 'label', $pod ), 'text' ); ?>
-                                        </div>
-                                        <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_singular', __( 'Singular Label', 'pods' ), __( 'help', 'pods' ) ); ?>
-                                            <?php echo PodsForm::field( 'label_singular', pods_var( 'label_singular', $pod, pods_var( 'label', $pod, ucwords( str_replace( '_', ' ', pods_var( 'name', $pod ) ) ) ) ), 'text' ); ?>
-                                        </div>
-                                        <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_add_new', __( 'Add New', 'pods' ), __( 'help', 'pods' ) ); ?>
-                                            <?php echo PodsForm::field( 'label_add_new', pods_var( 'label_add_new', $pod ), 'text' ); ?>
-                                        </div>
-                                        <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_add_new_item', __( 'Add New <span class="pods-slugged">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
-                                            <?php echo PodsForm::field( 'label_add_new_item', pods_var( 'label_add_new_item', $pod ), 'text' ); ?>
-                                        </div>
-                                        <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_new_item', __( 'New <span class="pods-slugged">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
-                                            <?php echo PodsForm::field( 'label_new_item', pods_var( 'label_new_item', $pod ), 'text' ); ?>
-                                        </div>
-                                        <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_edit', __( 'Edit', 'pods' ), __( 'help', 'pods' ) ); ?>
-                                            <?php echo PodsForm::field( 'label_edit', pods_var( 'label_edit', $pod ), 'text' ); ?>
-                                        </div>
-                                        <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_edit_item', __( 'Edit <span class="pods-slugged">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
-                                            <?php echo PodsForm::field( 'label_edit_item', pods_var( 'label_edit_item', $pod ), 'text' ); ?>
-                                        </div>
-                                        <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_update_item', __( 'Update <span class="pods-slugged">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
-                                            <?php echo PodsForm::field( 'label_update_item', pods_var( 'label_update_item', $pod ), 'text' ); ?>
-                                        </div>
-                                        <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_view', __( 'View', 'pods' ), __( 'help', 'pods' ) ); ?>
-                                            <?php echo PodsForm::field( 'label_view', pods_var( 'label_view', $pod ), 'text' ); ?>
-                                        </div>
-                                        <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_view_item', __( 'View <span class="pods-slugged">Item</span>' ), __( 'help', 'pods' ) ); ?>
-                                            <?php echo PodsForm::field( 'label_view_item', pods_var( 'label_view_item', $pod ), 'text' ); ?>
-                                        </div>
-                                        <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_all_items', __( 'All <span class="pods-slugged">Items</span>' ), __( 'help', 'pods' ) ); ?>
-                                            <?php echo PodsForm::field( 'label_all_items', pods_var( 'label_all_items', $pod ), 'text' ); ?>
-                                        </div>
-                                        <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_search_items', __( 'Search <span class="pods-slugged">Items</span>' ), __( 'help', 'pods' ) ); ?>
-                                            <?php echo PodsForm::field( 'label_search_items', pods_var( 'label_search_items', $pod ), 'text' ); ?>
-                                        </div>
-                                        <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_not_found', __( 'Not Found', 'pods' ), __( 'help', 'pods' ) ); ?>
-                                            <?php echo PodsForm::field( 'label_not_found', pods_var( 'label_not_found', $pod ), 'text' ); ?>
-                                        </div>
-                                        <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_popular_items', __( 'Popular <span class="pods-slugged">Items</span>' ), __( 'help', 'pods' ) ); ?>
-                                            <?php echo PodsForm::field( 'label_popular_items', pods_var( 'label_popular_items', $pod ), 'text' ); ?>
-                                        </div>
-                                        <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_separate_items_with_commas', __( 'Separate <span class="pods-slugged-lower">items</span> with commas' ), __( 'help', 'pods' ) ); ?>
-                                            <?php echo PodsForm::field( 'label_separate_items_with_commas', pods_var( 'label_separate_items_with_commas', $pod ), 'text' ); ?>
-                                        </div>
-                                        <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_add_or_remove_items', __( 'Add or remove <span class="pods-slugged-lower">items</span>' ), __( 'help', 'pods' ) ); ?>
-                                            <?php echo PodsForm::field( 'label_add_or_remove_items', pods_var( 'label_add_or_remove_items', $pod ), 'text' ); ?>
-                                        </div>
-                                        <div class="pods-field-option">
-                                            <?php echo PodsForm::label( 'label_choose_from_the_most_used', __( 'Choose from the most used', 'pods' ), __( 'help', 'pods' ) ); ?>
-                                            <?php echo PodsForm::field( 'label_choose_from_the_most_used', pods_var( 'label_choose_from_the_most_used', $pod ), 'text' ); ?>
-                                        </div>
-                                    </div>
+                                        <?php
+                                            if ( strlen( pods_var( 'object', $pod ) ) < 1 ) {
+                                        ?>
+                                            <div id="pods-advanced-labels" class="pods-tab">
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label( 'label', __( 'Label', 'pods' ), __( 'help', 'pods' ) ); ?>
+                                                    <?php echo PodsForm::field( 'label', pods_var( 'label', $pod ), 'text' ); ?>
+                                                </div>
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label( 'label_singular', __( 'Singular Label', 'pods' ), __( 'help', 'pods' ) ); ?>
+                                                    <?php echo PodsForm::field( 'label_singular', pods_var( 'label_singular', $pod, pods_var( 'label', $pod, ucwords( str_replace( '_', ' ', pods_var( 'name', $pod ) ) ) ) ), 'text' ); ?>
+                                                </div>
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label( 'label_add_new', __( 'Add New', 'pods' ), __( 'help', 'pods' ) ); ?>
+                                                    <?php echo PodsForm::field( 'label_add_new', pods_var( 'label_add_new', $pod ), 'text' ); ?>
+                                                </div>
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label( 'label_add_new_item', __( 'Add New <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
+                                                    <?php echo PodsForm::field( 'label_add_new_item', pods_var( 'label_add_new_item', $pod ), 'text' ); ?>
+                                                </div>
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label( 'label_new_item', __( 'New <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
+                                                    <?php echo PodsForm::field( 'label_new_item', pods_var( 'label_new_item', $pod ), 'text' ); ?>
+                                                </div>
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label( 'label_edit', __( 'Edit', 'pods' ), __( 'help', 'pods' ) ); ?>
+                                                    <?php echo PodsForm::field( 'label_edit', pods_var( 'label_edit', $pod ), 'text' ); ?>
+                                                </div>
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label( 'label_edit_item', __( 'Edit <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
+                                                    <?php echo PodsForm::field( 'label_edit_item', pods_var( 'label_edit_item', $pod ), 'text' ); ?>
+                                                </div>
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label( 'label_update_item', __( 'Update <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ), __( 'help', 'pods' ) ); ?>
+                                                    <?php echo PodsForm::field( 'label_update_item', pods_var( 'label_update_item', $pod ), 'text' ); ?>
+                                                </div>
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label( 'label_view', __( 'View', 'pods' ), __( 'help', 'pods' ) ); ?>
+                                                    <?php echo PodsForm::field( 'label_view', pods_var( 'label_view', $pod ), 'text' ); ?>
+                                                </div>
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label( 'label_view_item', __( 'View <span class="pods-slugged" data-sluggable="label_singular">Item</span>' ), __( 'help', 'pods' ) ); ?>
+                                                    <?php echo PodsForm::field( 'label_view_item', pods_var( 'label_view_item', $pod ), 'text' ); ?>
+                                                </div>
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label( 'label_all_items', __( 'All <span class="pods-slugged" data-sluggable="label">Items</span>' ), __( 'help', 'pods' ) ); ?>
+                                                    <?php echo PodsForm::field( 'label_all_items', pods_var( 'label_all_items', $pod ), 'text' ); ?>
+                                                </div>
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label( 'label_search_items', __( 'Search <span class="pods-slugged" data-sluggable="label">Items</span>' ), __( 'help', 'pods' ) ); ?>
+                                                    <?php echo PodsForm::field( 'label_search_items', pods_var( 'label_search_items', $pod ), 'text' ); ?>
+                                                </div>
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label( 'label_not_found', __( 'Not Found', 'pods' ), __( 'help', 'pods' ) ); ?>
+                                                    <?php echo PodsForm::field( 'label_not_found', pods_var( 'label_not_found', $pod ), 'text' ); ?>
+                                                </div>
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label( 'label_popular_items', __( 'Popular <span class="pods-slugged" data-sluggable="label">Items</span>' ), __( 'help', 'pods' ) ); ?>
+                                                    <?php echo PodsForm::field( 'label_popular_items', pods_var( 'label_popular_items', $pod ), 'text' ); ?>
+                                                </div>
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label( 'label_separate_items_with_commas', __( 'Separate <span class="pods-slugged-lower" data-sluggable="label">items</span> with commas' ), __( 'help', 'pods' ) ); ?>
+                                                    <?php echo PodsForm::field( 'label_separate_items_with_commas', pods_var( 'label_separate_items_with_commas', $pod ), 'text' ); ?>
+                                                </div>
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label( 'label_add_or_remove_items', __( 'Add or remove <span class="pods-slugged-lower" data-sluggable="label">items</span>' ), __( 'help', 'pods' ) ); ?>
+                                                    <?php echo PodsForm::field( 'label_add_or_remove_items', pods_var( 'label_add_or_remove_items', $pod ), 'text' ); ?>
+                                                </div>
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label( 'label_choose_from_the_most_used', __( 'Choose from the most used', 'pods' ), __( 'help', 'pods' ) ); ?>
+                                                    <?php echo PodsForm::field( 'label_choose_from_the_most_used', pods_var( 'label_choose_from_the_most_used', $pod ), 'text' ); ?>
+                                                </div>
+                                            </div>
+                                        <?php
+                                            }
+                                        ?>
 <?php
 $advanced_options = array(
     'cpt_options' => array(
@@ -520,7 +531,7 @@ $advanced_options = array(
             'boolean_yes_label' => ''
         ),
         'label_parent_item_colon' => array(
-            'label' => __( '<strong>Label: </strong> Parent <span class="pods-slugged">Item</span>', 'pods' ),
+            'label' => __( '<strong>Label: </strong> Parent <span class="pods-slugged" data-sluggable="label_singular">Item</span>', 'pods' ),
             'help' => __( 'help', 'pods' ),
             'type' => 'text',
             'default' => '',
@@ -592,7 +603,7 @@ $advanced_options = array(
     'pod_options' => array()
 );
 
-if ('post_type' == pods_var('type', $pod)) {
+if ('post_type' == pods_var('type', $pod) && strlen( pods_var( 'object', $pod ) ) < 1 ) {
 ?>
                                         <div id="pods-advanced-post-type-options" class="pods-tab">
                                             <?php
@@ -661,7 +672,7 @@ if ('post_type' == pods_var('type', $pod)) {
                                         </div>
 <?php
 }
-elseif ('taxonomy' == pods_var('type', $pod)) {
+elseif ('taxonomy' == pods_var('type', $pod) && strlen( pods_var( 'object', $pod ) ) < 1) {
 ?>
                                         <div id="pods-advanced-taxonomy-options" class="pods-tab">
                                             <div class="pods-field-option">
@@ -690,7 +701,7 @@ elseif ('taxonomy' == pods_var('type', $pod)) {
                                             </div>
                                             <div class="pods-field-option-container pods-depends-on pods-depends-on-ct-hierarchical">
                                                 <div class="pods-field-option">
-                                                    <?php echo PodsForm::label('label_parent_item_colon', __('<strong>Label: </strong> Parent <span class="pods-slugged">Item</span>'), __('help', 'pods')); ?>
+                                                    <?php echo PodsForm::label('label_parent_item_colon', __('<strong>Label: </strong> Parent <span class="pods-slugged" data-sluggable="label_singular">Item</span>'), __('help', 'pods')); ?>
                                                     <?php echo PodsForm::field('label_parent_item_colon', pods_var('label_parent_item_colon', $pod), 'text'); ?>
                                                 </div>
                                                 <div class="pods-field-option">
@@ -726,8 +737,8 @@ elseif ('taxonomy' == pods_var('type', $pod)) {
                                                 </p>
                                                 <div class="pods-field-option-group-values">
 <?php
-    foreach ((array) $field_settings['pick_object']['Post Types'] as $post_type => $label) {
-        $post_type = str_replace('post-type-', '', $post_type);
+    foreach ( (array) $field_settings[ 'pick_object' ][ 'Post Types' ] as $post_type => $label ) {
+        $post_type = str_replace( 'post-type-', '', $post_type );
 ?>
                                                     <div class="pods-field-option-group-value">
                                                         <?php echo PodsForm::field( 'built_in_post_types_' . $post_type, pods_var( 'built_in_post_types_' . $post_type, $pod, false ), 'boolean', array( 'boolean_yes_label' => $label ) ); ?>

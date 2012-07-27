@@ -187,14 +187,15 @@
         },
         sluggable : function () {
             // Setup selector
-            var $sluggable = $('.pods-sluggable');
+            var $sluggable = $('.pods-sluggable' ),
+                last_slug = null;
 
             if (0 !== $sluggable.length) {
                 // Hold onto slug in-case change is cancelled
                 if ( $sluggable.find( '.pods-slug-edit input[type=text]' )[ 0 ] ) {
-                    var last_slug = $sluggable.find('.pods-slug-edit input[type=text]').val();
-                    $('.pods-slugged-lower').html(last_slug.toLowerCase());
-                    $('.pods-slugged').html(last_slug.charAt(0).toUpperCase() + last_slug.slice(1));
+                    last_slug = $sluggable.find('.pods-slug-edit input[type=text]').val();
+                    $('.pods-slugged-lower:not(.pods-slugged[data-sluggable])').html(last_slug.toLowerCase());
+                    $('.pods-slugged:not(.pods-slugged[data-sluggable])').html(last_slug.charAt(0).toUpperCase() + last_slug.slice(1));
                 }
 
                 // Handle click to edit
@@ -216,8 +217,8 @@
 
                     last_slug = $(this).parent().find('input[type=text]').val();
                     $(this).closest('.pods-sluggable').find('.pods-slug em').html(last_slug);
-                    $('.pods-slugged-lower').html(last_slug.toLowerCase());
-                    $('.pods-slugged').html(last_slug.charAt(0).toUpperCase() + last_slug.slice(1));
+                    $('.pods-slugged-lower:not(.pods-slugged[data-sluggable])').html(last_slug.toLowerCase());
+                    $(".pods-slugged:not(.pods-slugged[data-sluggable])").html(last_slug.charAt(0).toUpperCase() + last_slug.slice(1));
                     $(this).closest('.pods-sluggable').find('.pods-slug, .pods-slug-edit').toggle();
 
                     $(this).css('cursor', 'pointer');
@@ -238,6 +239,39 @@
                     e.preventDefault();
                 });
                 $sluggable.find('.pods-slug-edit').hide();
+            }
+
+            var sluggables = [];
+
+            $( '.pods-slugged[data-sluggable]' ).each( function () {
+                if ( -1 == sluggables.indexOf( $( this ).data( 'sluggable' ) ) )
+                    sluggables.push( $( this ).data( 'sluggable' ) );
+            } );
+
+            for ( var i in sluggables ) {
+                var sluggable = sluggables[ i ];
+
+                $slug = $( 'input[name="' + sluggable + '"]' );
+
+                var slug = $( '.pods-sluggable .pods-slug-edit input[type=text]' ).val();
+
+                if ( $slug[ 0 ] && 0 < $slug.val().length )
+                    slug = $slug.val();
+
+                $( '.pods-slugged-lower[data-sluggable="' + sluggable + '"]' ).html( slug.toLowerCase() );
+                $( '.pods-slugged[data-sluggable="' + sluggable + '"]' ).html( slug.charAt( 0 ).toUpperCase() + slug.slice( 1 ) );
+
+                if ( $slug[ 0 ] ) {
+                    $slug.on( 'change', function () {
+                        var slug = $( '.pods-sluggable .pods-slug-edit input[type=text]' ).val();
+
+                        if ( 0 < $( this ).val().length )
+                            slug = $( this ).val();
+
+                        $( '.pods-slugged-lower[data-sluggable="' + $( this ).prop( 'name' ) + '"]' ).html( slug.toLowerCase() );
+                        $( '.pods-slugged[data-sluggable="' + $( this ).prop( 'name' ) + '"]' ).html( slug.charAt( 0 ).toUpperCase() + slug.slice( 1 ) );
+                    } );
+                }
             }
         },
         tabbed : function () {

@@ -656,7 +656,7 @@ class PodsAPI {
 
         $old_id = $old_name = $old_storage = null;
 
-        $old_fields = array();
+        $old_fields = $old_options = array();
 
         if ( !empty( $pod ) ) {
             if ( isset( $params->id ) && 0 < $params->id )
@@ -667,6 +667,7 @@ class PodsAPI {
             $old_name = $pod[ 'name' ];
             $old_storage = $pod[ 'storage' ];
             $old_fields = $pod[ 'fields' ];
+            $old_options = $pod[ 'options' ];
 
             if ( !isset( $params->name ) && empty( $params->name ) )
                 $params->name = $pod[ 'name' ];

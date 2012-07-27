@@ -66,7 +66,7 @@ if ('__1' != pods_var('id', $field)) {
                                     <div class="pods-field-option-container pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-pick">
                                         <div class="pods-field-option">
                                             <?php echo PodsForm::label('field_data[' . $pods_i . '][pick_object]', __('Related To', 'pods'), __('help', 'pods')); ?>
-                                            <?php echo PodsForm::field('field_data[' . $pods_i . '][pick_object]', pods_var('pick_object', $field), 'pick', array('data' => pods_var('pick_object', $field_settings), 'class' => 'pods-dependent-toggle')); ?>
+                                            <?php echo PodsForm::field('field_data[' . $pods_i . '][pick_object]', pods_var('pick_object', $field) . '-' . pods_var( 'pick_val', $field ), 'pick', array('data' => pods_var('pick_object', $field_settings), 'class' => 'pods-dependent-toggle')); ?>
                                         </div>
                                         <div class="pods-field-option pods-depends-on pods-depends-on-field-data-pick-object pods-depends-on-field-data-pick-object-custom-simple">
                                             <?php echo PodsForm::label('field_data[' . $pods_i . '][pick_custom]', __('Custom Defined Options', 'pods'), __('One option per line, use <em>value|Label</em> for separate values and labels')); ?>

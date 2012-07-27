@@ -1045,7 +1045,25 @@ class PodsAPI {
 
         $field[ 'options' ][ 'type' ] = $field[ 'type' ];
 
-        if ( !in_array( $field[ 'type' ], $tableless_field_types ) ) {
+        if ( in_array( $field[ 'type' ], $tableless_field_types ) ) {
+            // Clean up special drop-down in field editor and save out pick_val
+            if ( defined( 'DOING_AJAX' ) ) {
+                $field[ 'pick_val' ] = '';
+
+                if ( 0 === strpos( 'pod-', $field[ 'pick_object' ] ) )
+                    $field[ 'pick_val' ] = str_replace( 'pod-', '', $field[ 'pick_object' ], 1 );
+                elseif ( 0 === strpos( 'post-types-', $field[ 'pick_object' ] ) )
+                    $field[ 'pick_val' ] = str_replace( 'post-types-', '', $field[ 'pick_object' ], 1 );
+                elseif ( 0 === strpos( 'taxonomies-', $field[ 'pick_object' ] ) )
+                    $field[ 'pick_val' ] = str_replace( 'post-types-', '', $field[ 'pick_object' ], 1 );
+
+                if ( !empty( $field[ 'pick_val' ] ) ) {
+                    $length = strpos( $field[ 'pick_val' ], $field[ 'pick_object' ] ) - 1;
+
+                    $field[ 'pick_object' ] = substr( $field[ 'pick_object' ], 0, $length );
+                }
+            }
+
             $field[ 'options' ][ 'pick_object' ] = $field[ 'pick_object' ];
             $field[ 'options' ][ 'pick_val' ] = $field[ 'pick_val' ];
             $field[ 'options' ][ 'sister_field_id' ] = $field[ 'sister_field_id' ];

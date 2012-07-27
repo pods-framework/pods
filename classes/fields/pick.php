@@ -173,16 +173,16 @@ class PodsField_Pick extends PodsField {
 
         $options[ 'grouped' ] = 1;
 
-        if ( 'custom-simple' == pods_var( 'pick_object', $options ) && pods_var( 'pick_custom', $options ) ) {
-            $custom = pods_var( 'pick_custom', $options );
+        $custom = pods_var( 'pick_custom', $options, false );
 
+        if ( 'custom-simple' == pods_var( 'pick_object', $options ) && !empty( $custom ) ) {
             if ( !is_array( $custom ) )
                 $custom = explode( "\n", $custom );
 
             $options[ 'data' ] = array();
 
             foreach ( $custom as $value ) {
-                $label = expode( '|', $value );
+                $label = explode( '|', $value );
 
                 if ( empty( $label ) )
                     continue;

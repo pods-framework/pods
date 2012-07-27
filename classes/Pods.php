@@ -175,12 +175,15 @@ class Pods {
         }
 
         $value = null;
+
         if ( isset( $this->fields[ $params->name ] ) && isset( $this->row[ $params->name ] ) )
             $value = $this->row[ $params->name ];
         else {
             // do pick / file handling
         }
+        
         $value = $this->do_hook( 'field', $value, $this->row, $params );
+
         return $value;
     }
 

@@ -96,6 +96,8 @@ class PodsMeta {
 
         if ( empty( $pod[ 'name' ] ) )
             $pod[ 'name' ] = $pod[ 'object' ];
+        elseif ( empty( $pod[ 'object' ] ) )
+            $pod[ 'object' ] = $pod[ 'name' ];
 
         if ( empty( $pod[ 'object' ] ) )
             return pods_error( __( 'Object required to add a Pods meta group', 'pods' ) );
@@ -151,7 +153,7 @@ class PodsMeta {
         $group = apply_filters( 'pods_meta_group_add_' . $pod[ 'type' ], $group, $pod, $label, $fields );
         $group = apply_filters( 'pods_meta_group_add', $group, $pod, $label, $fields );
 
-        self::$groups[ $object_name ][] = $group;
+        self::$groups[ $pod[ 'type' ] ][ $object_name ][] = $group;
 
         // Hook it up!
         if ( 'post' == $pod[ 'type' ] ) {
@@ -199,6 +201,8 @@ class PodsMeta {
     }
 
     public function groups_get ( $type, $name ) {
+        do_action( 'pods_meta_groups', $type, $name );
+
         $pod = array();
         $fields = array();
 
@@ -232,6 +236,8 @@ class PodsMeta {
 
         if ( empty( $pod[ 'name' ] ) )
             $pod[ 'name' ] = $pod[ 'object' ];
+        elseif ( empty( $pod[ 'object' ] ) )
+            $pod[ 'object' ] = $pod[ 'name' ];
 
         $groups = array(
             array(

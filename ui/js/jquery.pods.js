@@ -112,6 +112,7 @@
                                     document.location.href = $submitbutton.data( 'error-location' );
                                 else {
                                     alert( 'Error: ' + d.replace( '<e>', '' ).replace( '</e>', '' ) );
+                                    console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
 
                                     $submitbutton.css( 'cursor', 'pointer' );
                                     $submitbutton.prop( 'disabled', false );
@@ -172,6 +173,7 @@
                                     document.location.href = $el.data( 'error-location' );
                                 else {
                                     alert( 'Error: ' + d.replace( '<e>', '' ).replace( '</e>', '' ) );
+                                    console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
                                 }
                             },
                             error : function () {

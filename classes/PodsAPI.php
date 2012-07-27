@@ -1055,15 +1055,15 @@ class PodsAPI {
                 $field[ 'pick_val' ] = '';
 
                 if ( 0 === strpos( 'pod-', $field[ 'pick_object' ] ) ) {
-                    $field[ 'pick_val' ] = str_replace( 'pod-', '', $field[ 'pick_object' ], 1 );
+                    $field[ 'pick_val' ] = pods_str_replace( 'pod-', '', $field[ 'pick_object' ], 1 );
                     $field[ 'pick_object' ] = 'pod';
                 }
                 elseif ( 0 === strpos( 'post-types-', $field[ 'pick_object' ] ) ) {
-                    $field[ 'pick_val' ] = str_replace( 'post-types-', '', $field[ 'pick_object' ], 1 );
+                    $field[ 'pick_val' ] = pods_str_replace( 'post-types-', '', $field[ 'pick_object' ], 1 );
                     $field[ 'pick_object' ] = 'post_type';
                 }
                 elseif ( 0 === strpos( 'taxonomies-', $field[ 'pick_object' ] ) ) {
-                    $field[ 'pick_val' ] = str_replace( 'taxonomies-', '', $field[ 'pick_object' ], 1 );
+                    $field[ 'pick_val' ] = pods_str_replace( 'taxonomies-', '', $field[ 'pick_object' ], 1 );
                     $field[ 'pick_object' ] = 'taxonomy';
                 }
             }

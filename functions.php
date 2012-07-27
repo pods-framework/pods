@@ -516,6 +516,28 @@ function pods_absint ( $maybeint, $strict = true, $allow_negative = false ) {
 }
 
 /**
+ * Functions like str_replace except it will restrict $occurrences
+ *
+ * @param mixed $find
+ * @param mixed $replace
+ * @param string $string
+ * @param int $occurrences
+ *
+ * @return mixed
+ */
+function pods_str_replace( $find, $replace, $string, $occurrences = -1 ) {
+    if ( is_array( $find ) ) {
+        foreach ( $find as &$f ) {
+            $f = '/' . preg_quote( $f, '/' ) . '/';
+        }
+    }
+    else
+        $find = '/' . preg_quote( $find, '/' ) . '/';
+
+    return preg_replace( $find, $replace, $string, $occurrences );
+}
+
+/**
  * Run a Pods Helper
  *
  * @param string $uri The Pod Page URI to check if currently on
@@ -668,10 +690,10 @@ function pods_access ( $privs, $method = 'OR' ) {
     // Loop through the user's roles
     foreach ( $privs as $priv ) {
         if ( 0 === strpos( $priv, 'pod_' ) )
-            $priv = str_replace( 'pod_', 'pods_edit_', $priv, 1 );
+            $priv = pods_str_replace( 'pod_', 'pods_edit_', $priv, 1 );
 
         if ( 0 === strpos( $priv, 'manage_' ) )
-            $priv = str_replace( 'manage_', 'pods_', $priv, 1 );
+            $priv = pods_str_replace( 'manage_', 'pods_', $priv, 1 );
 
         if ( current_user_can( $priv ) ) {
             if ( 'OR' == $method )
@@ -683,10 +705,10 @@ function pods_access ( $privs, $method = 'OR' ) {
     if ( 'AND' == strtoupper( $method ) ) {
         foreach ( $privs as $priv ) {
             if ( 0 === strpos( $priv, 'pod_' ) )
-                $priv = str_replace( 'pod_', 'pods_edit_', $priv, 1 );
+                $priv = pods_str_replace( 'pod_', 'pods_edit_', $priv, 1 );
 
             if ( 0 === strpos( $priv, 'manage_' ) )
-                $priv = str_replace( 'manage_', 'pods_', $priv, 1 );
+                $priv = pods_str_replace( 'manage_', 'pods_', $priv, 1 );
 
             if ( isset( $approved_privs[ $priv ] ) )
                 return false;

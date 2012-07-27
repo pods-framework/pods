@@ -477,7 +477,8 @@ class PodsInit {
     }
 
     function activate_install () {
-        // Activate and Install (@todo: don't install, display notice if not 'installed' with a link for user to run install)
+        // Activate and Install
+        // @todo: VIP constant check, display notice with a link for user to run install instead of auto install
         register_activation_hook( __FILE__, array( $this, 'activate' ) );
 
         add_action( 'wpmu_new_blog', array( $this, 'new_blog' ), 10, 6 );

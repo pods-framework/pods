@@ -659,7 +659,7 @@ if ('post_type' == pods_var('type', $pod) && strlen( pods_var( 'object', $pod ) 
                                                 <div class="pods-field-option-group-values">
 <?php
     foreach ((array) $field_settings['pick_object']['Taxonomies'] as $taxonomy => $label) {
-        $taxonomy = str_replace('taxonomy-', '', $taxonomy);
+        $taxonomy = pods_str_replace('taxonomy-', '', $taxonomy, 1);
 ?>
                                                     <div class="pods-field-option-group-value">
                                                         <?php echo PodsForm::field( 'built_in_taxonomies_' . $taxonomy, pods_var( 'built_in_taxonomies_' . $taxonomy, $pod, false ), 'boolean', array( 'boolean_yes_label' => $label ) ); ?>
@@ -738,7 +738,7 @@ elseif ('taxonomy' == pods_var('type', $pod) && strlen( pods_var( 'object', $pod
                                                 <div class="pods-field-option-group-values">
 <?php
     foreach ( (array) $field_settings[ 'pick_object' ][ 'Post Types' ] as $post_type => $label ) {
-        $post_type = str_replace( 'post-type-', '', $post_type );
+        $post_type = pods_str_replace( 'post-type-', '', $post_type, 1 );
 ?>
                                                     <div class="pods-field-option-group-value">
                                                         <?php echo PodsForm::field( 'built_in_post_types_' . $post_type, pods_var( 'built_in_post_types_' . $post_type, $pod, false ), 'boolean', array( 'boolean_yes_label' => $label ) ); ?>

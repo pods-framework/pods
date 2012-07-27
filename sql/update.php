@@ -130,7 +130,6 @@ function pods_2_migrate_roles() {
 		foreach ( $data as $cap ) {
 			if ( preg_match( '/^manage_/', $cap  ) ) {
 				$key = str_replace( 'manage_', 'pods_', $cap );
-				var_dump($key);
 				$caps[ $key ] = 1;
 			} elseif ( preg_match( '/^pod_/', $cap ) ) {
 				$keys = array(
@@ -138,7 +137,6 @@ function pods_2_migrate_roles() {
 					str_replace( 'pod_', 'pods_edit_', $cap ),
 					str_replace( 'pod_', 'pods_delete_', $cap ),
 				);
-				print_r($keys);
 
 				foreach ( $keys as $key ) {
 					$caps[ $key ] = 1;

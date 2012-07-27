@@ -173,6 +173,31 @@ class PodsField_Pick extends PodsField {
 
         $options[ 'grouped' ] = 1;
 
+        if ( 'custom-simple' == pods_var( 'pick_object', $options ) && pods_var( 'pick_custom', $options ) ) {
+            $custom = pods_var( 'pick_custom', $options );
+
+            if ( !is_array( $custom ) )
+                $custom = explode( "\n", $custom );
+
+            $options[ 'data' ] = array();
+
+            foreach ( $custom as $value ) {
+                $label = expode( '|', $value );
+
+                if ( empty( $label ) )
+                    continue;
+
+                if ( 1 == count( $label ) )
+                    $label = $value;
+                else {
+                    $label = $label[ 1 ];
+                    $value = $label[ 0 ];
+                }
+
+                $options[ 'data' ][ $value ] = $label;
+            }
+        }
+
         if ( 'single' == $options[ 'pick_format_type' ] ) {
             if ( 'dropdown' == $options[ 'pick_format_single' ] )
                 $field_type = 'select';

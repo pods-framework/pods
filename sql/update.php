@@ -27,6 +27,7 @@ if ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER && isset( $_GET[ 'pods_upgrad
         $helpers = pods_2_migrate_helpers();
         $templates = pods_2_migrate_templates();
         $pod_ids = pods_2_migrate_pods();
+		$roles = pods_2_migrate_roles();
     }
 }
 
@@ -116,20 +117,40 @@ function pods_2_migrate_pods () {
 
 function pods_2_migrate_roles() {
 	global $wpdb;
-	$roles = get_option( "{$wpdb->prefix}user_roles" );
+	$wp_roles = get_option( "{$wpdb->prefix}user_roles" );
+	$old_roles = unserialize( get_option( "pods_roles" ) );
 	$new_roles = array();
 
-	foreach ( $roles as $role => $data ) {
-		$caps = $data[ 'capabilities' ];
-		$new_caps = array()
+	foreach ( $old_roles as $role => $data ) {
+		if ($role == '_wpnonce')
+			continue;
 
-		foreach ($caps as $key => $val) {
-			
+		$caps = $wp_roles[ $role ][ 'capabilities' ];
+
+		foreach ( $data as $cap ) {
+			if ( preg_match( '/^manage_/', $cap  ) ) {
+				$key = str_replace( 'manage_', 'pods_', $cap );
+				var_dump($key);
+				$caps[ $key ] = 1;
+			} elseif ( preg_match( '/^pod_/', $cap ) ) {
+				$keys = array(
+					str_replace( 'pod_', 'pods_new_', $cap ),
+					str_replace( 'pod_', 'pods_edit_', $cap ),
+					str_replace( 'pod_', 'pods_delete_', $cap ),
+				);
+				print_r($keys);
+
+				foreach ( $keys as $key ) {
+					$caps[ $key ] = 1;
+				}
+			}
 		}
 
-		$new_roles[ $role ] = array( 'name' => $data[ 'name' ], 'capabilities' => $new_caps );
+		$wp_roles[ $role ][ 'capabilities' ] = $caps;
 	}
-
+	
+	update_option( "{$wpdb->prefix}_user_roles", $wp_roles );
+	return $wp_roles;
 }
 
 function pods_2_migrate_templates () {

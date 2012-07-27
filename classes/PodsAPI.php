@@ -2424,10 +2424,8 @@ class PodsAPI {
             $_pod = get_object_vars( $params );
         }
         else {
-            if ( ( !isset( $params->id ) || empty( $params->id ) ) && ( !isset( $params->name ) || empty( $params->name ) ) ) {
-                pods_debug( $params );
+            if ( ( !isset( $params->id ) || empty( $params->id ) ) && ( !isset( $params->name ) || empty( $params->name ) ) )
                 return pods_error( 'Either Pod ID or Name are required', $this );
-            }
 
             if ( isset( $params->name ) ) {
                 $pod = get_transient( 'pods_pod_' . $params->name );

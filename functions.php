@@ -646,21 +646,13 @@ function pod_page_exists ( $uri = null ) {
  * @since 1.2.0
  */
 function pods_access ( $privs, $method = 'OR' ) {
-    global $pods_roles;
-
-    if ( empty( $pods_roles ) && !is_array( $pods_roles ) ) {
-        $pods_roles = get_option( 'pods_roles' );
-        if ( !is_array( $pods_roles ) )
-            $pods_roles = array();
-    }
-
     // Convert $privs to an array
     $privs = (array) $privs;
 
     // Convert $method to uppercase
     $method = strtoupper( $method );
 
-    $check = apply_filters( 'pods_access', null, $privs, $method, $pods_roles );
+    $check = apply_filters( 'pods_access', null, $privs, $method );
     if ( null !== $check && is_bool( $check ) )
         return $check;
 
@@ -674,26 +666,35 @@ function pods_access ( $privs, $method = 'OR' ) {
     $approved_privs = array();
 
     // Loop through the user's roles
-    if ( is_array( $pods_roles ) ) {
-        foreach ( $pods_roles as $role => $pods_privs ) {
-            if ( current_user_can( $role ) ) {
-                foreach ( $privs as $priv ) {
-                    if ( false !== array_search( $priv, $pods_privs ) || current_user_can( 'pods_' . ltrim( $priv, 'pod_' ) ) ) {
-                        if ( 'OR' == $method )
-                            return true;
-                        $approved_privs[ $priv ] = true;
-                    }
-                }
-            }
-        }
-        if ( 'AND' == strtoupper( $method ) ) {
-            foreach ( $privs as $priv ) {
-                if ( isset( $approved_privs[ $priv ] ) )
-                    return false;
-            }
-            return true;
+    foreach ( $privs as $priv ) {
+        if ( 0 === strpos( $priv, 'pod_' ) )
+            $priv = str_replace( 'pod_', 'pods_edit_', $priv, 1 );
+
+        if ( 0 === strpos( $priv, 'manage_' ) )
+            $priv = str_replace( 'manage_', 'pods_', $priv, 1 );
+
+        if ( current_user_can( $priv ) ) {
+            if ( 'OR' == $method )
+                return true;
+
+            $approved_privs[ $priv ] = true;
         }
     }
+    if ( 'AND' == strtoupper( $method ) ) {
+        foreach ( $privs as $priv ) {
+            if ( 0 === strpos( $priv, 'pod_' ) )
+                $priv = str_replace( 'pod_', 'pods_edit_', $priv, 1 );
+
+            if ( 0 === strpos( $priv, 'manage_' ) )
+                $priv = str_replace( 'manage_', 'pods_', $priv, 1 );
+
+            if ( isset( $approved_privs[ $priv ] ) )
+                return false;
+        }
+
+        return true;
+    }
+
     return false;
 }
 

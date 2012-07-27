@@ -147,7 +147,8 @@ function pods_2_migrate_roles() {
 		$wp_roles[ $role ][ 'capabilities' ] = $caps;
 	}
 	
-	update_option( "{$wpdb->prefix}_user_roles", $wp_roles );
+	update_option( "{$wpdb->prefix}user_roles", $wp_roles );
+	delete_option( "pods_roles" );
 	return $wp_roles;
 }
 

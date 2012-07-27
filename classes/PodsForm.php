@@ -69,7 +69,7 @@ class PodsForm {
         elseif ( empty( $message ) )
             return;
 
-        $message = apply_filters( 'the_content', apply_filters( 'pods_form_ui_comment_text', $message, $name, $options ) );
+        $message = apply_filters( 'pods_form_ui_comment_text', $message, $name, $options );
 
         ob_start();
 

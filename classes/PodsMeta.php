@@ -288,7 +288,10 @@ class PodsMeta {
         ?>
             <tr class="form-field">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
-                <td><?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] ); ?></td>
+                <td>
+                    <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] ); ?>
+                    <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field[ 'options' ] ); ?>
+                </td>
             </tr>
         <?php
             }
@@ -368,7 +371,8 @@ class PodsMeta {
                 $form_fields[ 'pods_meta_' . $field[ 'name' ] ] = array(
                     'label' => $field[ 'label' ],
                     'input' => 'html',
-                    'html' => PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] ),
+                    'html' =>  PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] )
+                               . PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field[ 'options' ] ),
                     'helps' => $field[ 'options' ][ 'description' ]
                 );
             }
@@ -438,6 +442,7 @@ class PodsMeta {
         <?php
                     echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] );
                     echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] );
+                    echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field[ 'options' ] );
 
                     if ( isset( $fields[ 'options' ][ 'description' ] ) )
                         echo wpautop( $field[ 'options' ][ 'description' ] );
@@ -452,6 +457,7 @@ class PodsMeta {
             <td>
                 <?php
                     echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] );
+                    echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field[ 'options' ] );
 
                     if ( isset( $fields[ 'options' ][ 'description' ] ) )
                         echo '<span class="description">' . $field[ 'options' ][ 'description' ] . '</span>';
@@ -520,7 +526,10 @@ class PodsMeta {
             ?>
                 <tr class="form-field">
                     <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
-                    <td><?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] ); ?></td>
+                    <td>
+                        <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] ); ?>
+                        <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field[ 'options' ] ); ?>
+                    </td>
                 </tr>
             <?php
                 }
@@ -581,6 +590,7 @@ class PodsMeta {
         <?php
                 echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] );
                 echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] );
+                echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field[ 'options' ] );
         ?>
     </p>
 <?php
@@ -612,6 +622,7 @@ class PodsMeta {
         <?php
                 echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] );
                 echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] );
+                echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field[ 'options' ] );
         ?>
     </p>
 <?php
@@ -647,7 +658,10 @@ class PodsMeta {
         ?>
             <tr class="form-field">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
-                <td><?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] ); ?></td>
+                <td>
+                    <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field[ 'options' ] ); ?>
+                    <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field[ 'options' ] ); ?>
+                </td>
             </tr>
         <?php
             }
@@ -679,7 +693,10 @@ class PodsMeta {
         ?>
             <tr class="form-field">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
-                <td><?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], ( is_object( $comment ) ? get_comment_meta( $comment->comment_ID, $field[ 'name' ] ) : '' ), $field[ 'type' ], $field[ 'options' ] ); ?></td>
+                <td>
+                    <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], ( is_object( $comment ) ? get_comment_meta( $comment->comment_ID, $field[ 'name' ] ) : '' ), $field[ 'type' ], $field[ 'options' ] ); ?>
+                    <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field[ 'options' ] ); ?>
+                </td>
             </tr>
         <?php
                 }

@@ -181,20 +181,20 @@ class PodsField_Pick extends PodsField {
 
             $options[ 'data' ] = array();
 
-            foreach ( $custom as $value ) {
-                $label = explode( '|', $value );
+            foreach ( $custom as $custom_value ) {
+                $custom_label = explode( '|', $custom_value );
 
-                if ( empty( $label ) )
+                if ( empty( $custom_label ) )
                     continue;
 
-                if ( 1 == count( $label ) )
-                    $label = $value;
+                if ( 1 == count( $custom_label ) )
+                    $custom_label = $custom_value;
                 else {
-                    $label = $label[ 1 ];
-                    $value = $label[ 0 ];
+                    $custom_label = $custom_label[ 1 ];
+                    $custom_value = $custom_label[ 0 ];
                 }
 
-                $options[ 'data' ][ $value ] = $label;
+                $options[ 'data' ][ $custom_value ] = $custom_label;
             }
         }
 

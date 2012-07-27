@@ -301,6 +301,14 @@ class PodsMeta {
     }
 
     public function save_post ( $post_id, $post ) {
+        $recursion_fix = false;
+
+        if ( has_action( 'save_post', array( $this, 'save_post' ), 10, 2 ) ) {
+            remove_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
+
+            $recursion_fix = true;
+        }
+
         $blacklisted_types = array(
             'revision',
             'auto-draft',
@@ -339,6 +347,9 @@ class PodsMeta {
 
         if ( !empty( $pod ) )
             $pod->save( $data );
+
+        if ( $recursion_fix )
+            add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
 
         return $post_id;
     }

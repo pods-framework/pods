@@ -98,11 +98,11 @@ class Pods {
         $this->api->pod_data =& $this->data->pod_data;
         $this->pod_data =& $this->api->pod_data;
         $this->api->pod_id =& $this->data->pod_id;
-        $this->datatype_id =& $this->api->pod_id;
-        $this->pod_id =& $this->datatype_id;
+        $this->pod_id =& $this->api->pod_id;
+        $this->datatype_id =& $this->pod_id;
         $this->api->pod =& $this->data->pod;
-        $this->datatype =& $this->api->pod;
-        $this->pod =& $this->datatype;
+        $this->pod =& $this->api->pod;
+        $this->datatype =& $this->pod;
         $this->api->fields =& $this->data->fields;
         $this->fields =& $this->api->fields;
         $this->detail_page =& $this->data->detail_page;
@@ -332,15 +332,17 @@ class Pods {
      *
      * @since 2.0.0
      */
-    public function add ( $data = null, $value = null, $id = null ) {
+    public function add ( $data = null, $value = null ) {
         if ( null !== $value )
             $data = array( $data => $value );
-        if ( null === $id )
-            $id = $this->id;
-        $data = (array) $this->do_hook( 'add', $data, $id );
+
+        $data = (array) $this->do_hook( 'add', $data );
+
         if ( empty( $data ) )
             return;
-        $params = array( 'pod' => $this->pod, 'id' => $id, 'data' => array( $data ) );
+
+        $params = array( 'pod' => $this->pod, 'data' => $data );
+
         return $this->api->save_pod_item( $params );
     }
 
@@ -352,12 +354,17 @@ class Pods {
     public function save ( $data = null, $value = null, $id = null ) {
         if ( null !== $value )
             $data = array( $data => $value );
+
         if ( null === $id )
             $id = $this->id;
+
         $data = (array) $this->do_hook( 'save', $data, $id );
+
         if ( empty( $data ) )
-            return;
-        $params = array( 'pod' => $this->pod, 'id' => $id, 'data' => array( $data ) );
+            return false;
+
+        $params = array( 'pod' => $this->pod, 'id' => $id, 'data' => $data );
+
         return $this->api->save_pod_item( $params );
     }
 
@@ -369,10 +376,14 @@ class Pods {
     public function delete ( $id = null ) {
         if ( null === $id )
             $id = $this->id;
+
         $id = (int) $this->do_hook( 'delete', $id );
+
         if ( empty( $id ) )
             return;
+
         $params = array( 'pod' => $this->pod, 'id' => $id );
+
         return $this->api->delete_pod_item( $params );
     }
 
@@ -384,10 +395,14 @@ class Pods {
     public function duplicate ( $id = null ) {
         if ( null === $id )
             $id = $this->id;
+
         $id = (int) $this->do_hook( 'duplicate', $id );
+
         if ( empty( $id ) )
             return;
+
         $params = array( 'pod' => $this->pod, 'id' => $id );
+
         return $this->api->duplicate_pod_item( $params );
     }
 
@@ -399,10 +414,14 @@ class Pods {
     public function export ( $fields = null, $id = null ) {
         if ( null === $id )
             $id = $this->id;
+
         $fields = (array) $this->do_hook( 'export', $fields, $id );
+
         if ( empty( $id ) )
             return;
+
         $params = array( 'pod' => $this->pod, 'id' => $id, 'fields' => $fields );
+
         return $this->api->export_pod_item( $params );
     }
 

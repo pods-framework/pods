@@ -3,6 +3,8 @@ class PodsAPI {
 
     public $display_errors = false;
 
+    public $pod_data;
+
     public $pod;
 
     public $pod_id;
@@ -25,8 +27,10 @@ class PodsAPI {
             $pod = $this->load_pod( array( 'name' => $pod ) );
 
             if ( !empty( $pod ) ) {
+                $this->pod_data = $pod;
                 $this->pod = $pod[ 'name' ];
                 $this->pod_id = $pod[ 'id' ];
+                $this->fields = $pod[ 'fields' ];
             }
         }
     }
@@ -1050,17 +1054,17 @@ class PodsAPI {
             if ( defined( 'DOING_AJAX' ) ) {
                 $field[ 'pick_val' ] = '';
 
-                if ( 0 === strpos( 'pod-', $field[ 'pick_object' ] ) )
+                if ( 0 === strpos( 'pod-', $field[ 'pick_object' ] ) ) {
                     $field[ 'pick_val' ] = str_replace( 'pod-', '', $field[ 'pick_object' ], 1 );
-                elseif ( 0 === strpos( 'post-types-', $field[ 'pick_object' ] ) )
+                    $field[ 'pick_object' ] = 'pod';
+                }
+                elseif ( 0 === strpos( 'post-types-', $field[ 'pick_object' ] ) ) {
                     $field[ 'pick_val' ] = str_replace( 'post-types-', '', $field[ 'pick_object' ], 1 );
-                elseif ( 0 === strpos( 'taxonomies-', $field[ 'pick_object' ] ) )
-                    $field[ 'pick_val' ] = str_replace( 'post-types-', '', $field[ 'pick_object' ], 1 );
-
-                if ( !empty( $field[ 'pick_val' ] ) ) {
-                    $length = strpos( $field[ 'pick_val' ], $field[ 'pick_object' ] ) - 1;
-
-                    $field[ 'pick_object' ] = substr( $field[ 'pick_object' ], 0, $length );
+                    $field[ 'pick_object' ] = 'post_type';
+                }
+                elseif ( 0 === strpos( 'taxonomies-', $field[ 'pick_object' ] ) ) {
+                    $field[ 'pick_val' ] = str_replace( 'taxonomies-', '', $field[ 'pick_object' ], 1 );
+                    $field[ 'pick_object' ] = 'taxonomy';
                 }
             }
 
@@ -1693,8 +1697,8 @@ class PodsAPI {
                     }
                     // Pick relationships
                     elseif ( 'pick' == $type ) {
-                        $pick_object = $fields[ $field ][ 'pick_object' ]; // pod, post_type, taxonomy, etc..
-                        $pick_val = $fields[ $field ][ 'pick_val' ]; // pod name, post type name, taxonomy name, etc..
+                        $pick_object = pods_var( 'pick_object', $fields[ $field ], '' ); // pod, post_type, taxonomy, etc..
+                        $pick_val = pods_var( 'pick_val', $fields[ $field ], '' ); // pod name, post type name, taxonomy name, etc..
 
                         $related_pod_id = $related_field_id = 0;
 
@@ -1777,7 +1781,7 @@ class PodsAPI {
                                 ) );
                             }
 
-                            pods_query( "INSERT INTO `@wp_pods_rel` (`pod_id`, `field_id`, `item_id`, `related_pod_id`, `related_field_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d)", array(
+                            pods_query( "INSERT INTO `@wp_pods_rel` (`pod_id`, `field_id`, `item_id`, `related_pod_id`, `related_field_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d, %d, %d)", array(
                                 $params->pod_id,
                                 $field_id,
                                 $params->id,
@@ -2420,8 +2424,10 @@ class PodsAPI {
             $_pod = get_object_vars( $params );
         }
         else {
-            if ( ( !isset( $params->id ) || empty( $params->id ) ) && ( !isset( $params->name ) || empty( $params->name ) ) )
+            if ( ( !isset( $params->id ) || empty( $params->id ) ) && ( !isset( $params->name ) || empty( $params->name ) ) ) {
+                pods_debug( $params );
                 return pods_error( 'Either Pod ID or Name are required', $this );
+            }
 
             if ( isset( $params->name ) ) {
                 $pod = get_transient( 'pods_pod_' . $params->name );

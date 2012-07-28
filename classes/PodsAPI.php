@@ -344,26 +344,26 @@ class PodsAPI {
                     'name' => 'post_content',
                     'label' => 'Content',
                     'type' => 'paragraph',
-                    'alias' => 'content'
+                    'alias' => array( 'content' )
                 ),
                 'post_excerpt' => array(
                     'name' => 'post_excerpt',
                     'label' => 'Excerpt',
                     'type' => 'paragraph',
-                    'alias' => 'excerpt'
+                    'alias' => array( 'excerpt' )
                 ),
                 'post_status' => array(
                     'name' => 'post_status',
                     'label' => 'Status',
                     'type' => 'pick',
-                    'alias' => 'status',
+                    'alias' => array( 'status' ),
                     'data' => $post_stati
                 ),
                 'post_author' => array(
                     'name' => 'post_author',
                     'label' => 'Author',
                     'type' => 'pick',
-                    'alias' => 'author',
+                    'alias' => array( 'author' ),
                     'data' => array()
                 ),
                 'post_date' => array(
@@ -379,7 +379,7 @@ class PodsAPI {
                     'name' => 'post_parent',
                     'label' => 'Parent',
                     'type' => 'pick',
-                    'alias' => 'parent',
+                    'alias' => array( 'parent' ),
                     'data' => array()
                 )
             );
@@ -390,7 +390,7 @@ class PodsAPI {
                     'name' => 'user_login',
                     'label' => 'Title',
                     'type' => 'text',
-                    'alias' => 'login',
+                    'alias' => array( 'login' ),
                     'options' => array(
                         'required' => 1,
                         'unique' => 1
@@ -422,7 +422,7 @@ class PodsAPI {
                     'name' => 'user_email',
                     'label' => 'E-mail',
                     'type' => 'text',
-                    'alias' => 'email',
+                    'alias' => array( 'email' ),
                     'options' => array(
                         'required' => 1,
                         'unique' => 1,
@@ -458,13 +458,13 @@ class PodsAPI {
                     'name' => 'comment_content',
                     'label' => 'Content',
                     'type' => 'paragraph',
-                    'alias' => 'content'
+                    'alias' => array( 'content' )
                 ),
                 'comment_approved' => array(
                     'name' => 'comment_approved',
                     'label' => 'Approved',
                     'type' => 'number',
-                    'alias' => 'approved'
+                    'alias' => array( 'approved' )
                 ),
                 'comment_post_ID' => array(
                     'name' => 'comment_post_ID',
@@ -477,7 +477,7 @@ class PodsAPI {
                     'name' => 'user_id',
                     'label' => 'Author',
                     'type' => 'pick',
-                    'alias' => 'author',
+                    'alias' => array( 'author' ),
                     'data' => array()
                 ),
                 'comment_date' => array(
@@ -497,19 +497,19 @@ class PodsAPI {
                     'name' => 'name',
                     'label' => 'Title',
                     'type' => 'text',
-                    'alias' => 'title'
+                    'alias' => array( 'title' )
                 ),
                 'slug' => array(
                     'name' => 'slug',
                     'label' => 'Permalink',
                     'type' => 'slug',
-                    'alias' => 'permalink'
+                    'alias' => array( 'permalink' )
                 ),
                 'description' => array(
                     'name' => 'description',
                     'label' => 'Description',
                     'type' => 'paragraph',
-                    'alias' => 'content'
+                    'alias' => array( 'content' )
                 ),
                 'taxonomy' => array(
                     'name' => 'taxonomy',

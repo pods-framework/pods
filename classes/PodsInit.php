@@ -227,7 +227,7 @@ class PodsInit {
 
                 // Labels
                 $cpt_label = esc_html( pods_var( 'label', $post_type, ucwords( str_replace( '_', ' ', pods_var( 'name', $post_type ) ) ), null, true ) );
-                $cpt_singular = esc_html( pods_var( 'singular_label', $post_type, ucwords( str_replace( '_', ' ', pods_var( 'label', $post_type, pods_var( 'name', $post_type ), null, true ) ) ), null, true ) );
+                $cpt_singular = esc_html( pods_var( 'label_singular', $post_type, ucwords( str_replace( '_', ' ', pods_var( 'label', $post_type, pods_var( 'name', $post_type ), null, true ) ) ), null, true ) );
                 $cpt_labels[ 'name' ] = $cpt_label;
                 $cpt_labels[ 'singular_name' ] = $cpt_singular;
                 $cpt_labels[ 'menu_name' ] = pods_var( 'menu_name', $post_type, $cpt_label, null, true );
@@ -347,18 +347,18 @@ class PodsInit {
 
                 // Labels
                 $ct_label = esc_html( pods_var( 'label', $taxonomy, pods_var( 'name', $taxonomy ), null, true ) );
-                $ct_singular_label = esc_html( pods_var( 'singular_label', $taxonomy, pods_var( 'label', $taxonomy, pods_var( 'name', $taxonomy ), null, true ), null, true ) );
+                $ct_singular = esc_html( pods_var( 'label_singular', $taxonomy, pods_var( 'label', $taxonomy, pods_var( 'name', $taxonomy ), null, true ), null, true ) );
                 $ct_labels[ 'name' ] = $ct_label;
-                $ct_labels[ 'singular_name' ] = $ct_singular_label;
+                $ct_labels[ 'singular_name' ] = $ct_singular;
                 $ct_labels[ 'search_items' ] = pods_var( 'search_items', $taxonomy, 'Search ' . $ct_label, null, true );
                 $ct_labels[ 'popular_items' ] = pods_var( 'popular_items', $taxonomy, 'Popular ' . $ct_label, null, true );
                 $ct_labels[ 'all_items' ] = pods_var( 'all_items', $taxonomy, 'All ' . $ct_label, null, true );
-                $ct_labels[ 'parent_item' ] = pods_var( 'parent_item', $taxonomy, 'Parent ' . $ct_singular_label, null, true );
-                $ct_labels[ 'parent_item_colon' ] = pods_var( 'parent_item_colon', $taxonomy, 'Parent ' . $ct_singular_label . ':', null, true );
-                $ct_labels[ 'edit_item' ] = pods_var( 'edit_item', $taxonomy, 'Edit ' . $ct_singular_label, null, true );
-                $ct_labels[ 'update_item' ] = pods_var( 'update_item', $taxonomy, 'Update ' . $ct_singular_label, null, true );
-                $ct_labels[ 'add_new_item' ] = pods_var( 'add_new_item', $taxonomy, 'Add New ' . $ct_singular_label, null, true );
-                $ct_labels[ 'new_item_name' ] = pods_var( 'new_item_name', $taxonomy, 'New ' . $ct_singular_label . ' Name', null, true );
+                $ct_labels[ 'parent_item' ] = pods_var( 'parent_item', $taxonomy, 'Parent ' . $ct_singular, null, true );
+                $ct_labels[ 'parent_item_colon' ] = pods_var( 'parent_item_colon', $taxonomy, 'Parent ' . $ct_singular . ':', null, true );
+                $ct_labels[ 'edit_item' ] = pods_var( 'edit_item', $taxonomy, 'Edit ' . $ct_singular, null, true );
+                $ct_labels[ 'update_item' ] = pods_var( 'update_item', $taxonomy, 'Update ' . $ct_singular, null, true );
+                $ct_labels[ 'add_new_item' ] = pods_var( 'add_new_item', $taxonomy, 'Add New ' . $ct_singular, null, true );
+                $ct_labels[ 'new_item_name' ] = pods_var( 'new_item_name', $taxonomy, 'New ' . $ct_singular . ' Name', null, true );
                 $ct_labels[ 'separate_items_with_commas' ] = pods_var( 'separate_items_with_commas', $taxonomy, 'Separate ' . $ct_label . ' with commas', null, true );
                 $ct_labels[ 'add_or_remove_items' ] = pods_var( 'add_or_remove_items', $taxonomy, 'Add or remove ' . $ct_label, null, true );
                 $ct_labels[ 'choose_from_most_used' ] = pods_var( 'choose_from_most_used', $taxonomy, 'Choose from the most used ' . $ct_label, null, true );

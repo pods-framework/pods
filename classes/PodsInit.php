@@ -407,7 +407,7 @@ class PodsInit {
                     }
                 }
 
-                if ( isset( $supported_post_types[ $post_type ] ) )
+                if ( isset( $supported_post_types[ pods_var( 'name', $taxonomy ) ] ) )
                     $supported_post_types[ pods_var( 'name', $taxonomy ) ] = array_merge( $supported_post_types[ pods_var( 'name', $taxonomy ) ], $ct_post_types );
                 else
                     $supported_post_types[ pods_var( 'name', $taxonomy ) ] = $ct_post_types;

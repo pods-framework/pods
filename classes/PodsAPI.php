@@ -2736,7 +2736,11 @@ class PodsAPI {
             'name' => $_field[ 'post_name' ],
             'label' => $_field[ 'post_title' ],
             'description' => $_field[ 'post_content' ],
-            'weight' => $_field[ 'menu_order' ]
+            'weight' => $_field[ 'menu_order' ],
+            'pod_id' => $_field[ 'post_parent' ],
+            'pick_object' => '',
+            'pick_val' => '',
+            'sister_field_id' => '',
         );
 
         $field[ 'options' ] = get_post_meta( $field[ 'id' ] );
@@ -2752,7 +2756,23 @@ class PodsAPI {
 
         unset( $field[ 'options' ][ 'type' ] );
 
-        //$field = PodsForm::fields_setup( $field, null, true );
+        if ( isset( $field[ 'options' ][ 'pick_object' ] ) ) {
+            $field[ 'pick_object' ] = $field[ 'options' ][ 'pick_object' ];
+
+            unset( $field[ 'options' ][ 'pick_object' ] );
+        }
+
+        if ( isset( $field[ 'options' ][ 'pick_val' ] ) ) {
+            $field[ 'pick_val' ] = $field[ 'options' ][ 'pick_val' ];
+
+            unset( $field[ 'options' ][ 'pick_val' ] );
+        }
+
+        if ( isset( $field[ 'options' ][ 'sister_field_id' ] ) ) {
+            $field[ 'sister_field_id' ] = $field[ 'options' ][ 'sister_field_id' ];
+
+            unset( $field[ 'options' ][ 'sister_field_id' ] );
+        }
 
         return $field;
     }

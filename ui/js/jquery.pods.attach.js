@@ -1,110 +1,68 @@
-var pods_file_attach_info = {
-    asset : null,
-    hijacked : false,
-    context : null
-};
+var pods_file_context = false; // tracks whether or not we've got a thickbox displayed in our context
+var pods_file_thickbox_modder; // stores our interval for making necessary changes to thickbox content
 
-// delete
-jQuery( 'span.pods-file-remove img' ).live( 'click', function () {
-    var pods_file_attach = jQuery( this ).parent().parent();
-    pods_file_attach.height( pods_file_attach.height() ).css( 'minHeight', '0' ).slideUp( function () {
-        pods_file_attach.remove();
-    } );
-    return false;
-} );
+// handle our thickbox mods
+function pods_attachments ( src, limit ) {
+    var pods_thickbox = jQuery( '#TB_iframeContent' ).contents();
 
-// add
-jQuery( 'p.pods-add-file a' ).live( 'click', function ( event ) {
+    pods_thickbox.find( 'td.savesend input' ).unbind( 'click' ).click( function ( e ) {
+        // grab our meta as per the Media library
+        var wp_media_meta = jQuery( this ).parent().parent().parent();
+        var wp_media_title = wp_media_meta.find( 'tr.post_title td.field input' ).val();
+        var wp_media_caption = wp_media_meta.find( 'tr.post_excerpt td.field input' ).val();
+        var wp_media_id = wp_media_meta.find( 'td.imgedit-response' ).attr( 'id' ).replace( 'imgedit-response-', '' );
+        var wp_media_thumb = wp_media_meta.parent().find( 'img.thumbnail' ).attr( 'src' );
 
-    // track which file column we're dealing with here
-    jQuery( 'div.pods-file-context' ).removeClass( 'pods-file-context' );
-    jQuery( this ).parent().parent().addClass( 'pods-file-context' ).addClass( 'current' );
+        // use the data we found to form a new Pods file entry and append it to the DOM
+        var source = jQuery( '#' + src + '-handlebars' ).html();
 
-    var pods_file_attach_href = jQuery( this ).attr( 'href' ), pods_file_attach_width = jQuery( window ).width(), pods_file_attach_H = jQuery( window ).height(), pods_file_attach_W = ( 720 < pods_file_attach_width ) ? 720 : pods_file_attach_width;
+        var binding = {
+            id : wp_media_id,
+            name : wp_media_title,
+            icon : wp_media_thumb
+        };
 
-    if ( !pods_file_attach_href ) return;
+        var tmpl = Handlebars.compile( source );
 
-    pods_file_attach_href = pods_file_attach_href.replace( /&width=[0-9]+/g, '' );
-    pods_file_attach_href = pods_file_attach_href.replace( /&height=[0-9]+/g, '' );
+        pods_file_context.append( tmpl( binding ) );
+        pods_file_context.find( 'li#pods-file-' + wp_media_id ).slideDown( 'fast' );
 
-    jQuery( this ).attr( 'href', pods_file_attach_href + '&width=' + ( pods_file_attach_W - 80 ) + '&height=' + ( pods_file_attach_H - 85 ) );
+        if ( 1 < limit ) {
+            jQuery( this ).after( ' <span class="pods-attached">Added! Choose another or <a href="#">close this box</a>.</span>' );
+            jQuery( this ).parent().find( 'span.pods-attached a' ).on( 'click', function ( e ) {
+                parent.eval( 'tb_remove()' );
 
-    pods_file_attach_info.hijacked = true;
-    pods_file_attach_thickbox = setInterval( pods_file_attach_thickbox_handler, 500 );
-
-    tb_show( 'Add a file', event.target.href, false );
-
-    return false;
-} );
-
-function pods_file_attach_thickbox_handler () {
-    if ( pods_file_attach_info.hijacked ) {
-        // need to add our own Attach (single) button
-        if ( jQuery( '#TB_iframeContent' ).contents().find( 'td.savesend' ).length ) {
-            jQuery( '#TB_iframeContent' ).contents().find( 'td.savesend' ).each( function () {
-                if ( jQuery( this ).find( 'input.pods-add-button' ).length == 0 ) {
-                    jQuery( this ).find( 'input' ).hide();
-                    jQuery( this ).prepend( '<input type="submit" name="pods_file_attach_add_trigger" class="pods-add-button button" value="Add" />' );
-                }
+                e.preventDefault();
             } );
+            jQuery( this ).parent().find( 'span.pods-attached' ).delay( 6000 ).fadeOut( 'fast' );
         }
-        // need to handle the click event
-        jQuery( '#TB_iframeContent' ).contents().find( 'td.savesend input.pods-add-button' ).unbind( 'click' ).click( function ( e ) {
-            pods_file_attach_media_parent = jQuery( this ).parent().parent().parent();
-            jQuery( this ).after( ' <span class="pods-attached">Added! Choose another or close this box.</span>' );
-            pods_file_attach_media_id = pods_file_attach_media_parent.find( 'td.imgedit-response' ).attr( 'id' ).replace( 'imgedit-response-', '' );
-            pods_file_attach_media_name = pods_file_attach_media_parent.parent().prev().find( 'span.title' ).text();
-            pods_file_attach_media_thumb = pods_file_attach_media_parent.parent().parent().find( 'img.pinkynail' ).attr( 'src' );
-            // add the file on the edit screen
-            pods_file_attach_add_file( pods_file_attach_media_id, pods_file_attach_media_name, pods_file_attach_media_thumb );
-            // get rid of the message
-            jQuery( this ).after( ' <span class="pods-attached">Added! Choose another or close this box.</span>' );
-            pods_file_attach_media_parent.find( 'span.pods-attached' ).delay( 3000 ).fadeOut( 'fast' );
-            return false;
-        } );
-        // now we can handle the button
-        if ( jQuery( '#TB_iframeContent' ).contents().find( '.media-item .savesend input[type=submit], #insertonlybutton' ).length ) {
-            jQuery( '#TB_iframeContent' ).contents().find( '.media-item .savesend input[type=submit], #insertonlybutton' ).val( 'Add' );
+        else {
+            parent.eval( 'tb_remove()' );
         }
-        if ( jQuery( '#TB_iframeContent' ).contents().find( '#tab-type_url' ).length ) {
-            jQuery( '#TB_iframeContent' ).contents().find( '#tab-type_url' ).hide();
-        }
-        if ( jQuery( '#TB_iframeContent' ).contents().find( 'tr.post_title' ).length ) {
-            // we need to ALWAYS get the fullsize since we're retrieving the guid
-            // if the user inserts an image somewhere else and chooses another size, everything breaks
-            jQuery( '#TB_iframeContent' ).contents().find( 'tr.image-size input[value="full"]' ).prop( 'checked', true );
-            jQuery( '#TB_iframeContent' ).contents().find( 'tr.post_title,tr.image_alt,tr.post_excerpt,tr.image-size,tr.post_content,tr.url,tr.align,tr.submit>td>a.del-link' ).hide();
-        }
-    }
-    if ( jQuery( '#TB_iframeContent' ).contents().length == 0 && pods_file_attach_info.hijacked ) {
-        // the thickbox was closed
-        pods_file_attach_list = jQuery( '.pods-file-context.current ul' )
-        clearInterval( pods_file_attach_thickbox );
-        pods_file_attach_info.hijacked = false;
-        pods_file_attach_list.parent().removeClass( 'current' );
-    }
-}
 
-function pods_file_attach_add_file ( pods_file_attach_media_id, pods_file_attach_media_name, pods_file_attach_media_thumb ) {
-    var pods_file_attach_list = jQuery( '.pods-file-context.current ul' );
-    var pods_file_attach_field_name = pods_file_attach_list.parent().attr( 'id' ).replace( 'field-pods-field-', '' );
-
-    var pods_file_attach_markup = '<li class="media-item">';
-    pods_file_attach_markup += '<span class="pods-file-reorder"><img src="' + pods_file_attach_URL + 'ui/images/handle.gif" alt="Drag to reorder" /></span>';
-    pods_file_attach_markup += '<span class="pods-file-thumb"><span>';
-    pods_file_attach_markup += '<img class="pinkynail" src="' + pods_file_attach_media_thumb + '" alt="Thumbnail" />';
-    pods_file_attach_markup += '<input name="pods-field-' + pods_file_attach_field_name + '[]" type="hidden" value="' + pods_file_attach_media_id + '" />';
-    pods_file_attach_markup += '</span></span>';
-    pods_file_attach_markup += '<span class="pods-file-name">' + pods_file_attach_media_name + '</span>';
-    pods_file_attach_markup += '<span class="pods-file-remove"><img class="pods-icon-minus" src="' + pods_file_attach_URL + 'ui/images/del.png" alt="Remove" /></span>';
-    pods_file_attach_markup += '</li>';
-
-    // append it
-    pods_file_attach_list.append( pods_file_attach_markup );
-}
-
-jQuery( function ( $ ) {
-    jQuery( '.pods-files' ).sortable( {
-        containment : 'parent'
+        e.preventDefault();
     } );
-} );
+
+    // update button
+    if ( pods_thickbox.find( '.media-item .savesend input[type=submit], #insertonlybutton' ).length ) {
+        pods_thickbox.find( '.media-item .savesend input[type=submit], #insertonlybutton' ).val( 'Select' );
+    }
+
+    // hide the URL tab
+    if ( pods_thickbox.find( '#tab-type_url' ).length ) {
+        pods_thickbox.find( '#tab-type_url' ).hide();
+    }
+
+    // we need to ALWAYS get the fullsize since we're retrieving the guid
+    // if the user inserts an image somewhere else and chooses another size, everything breaks, so we'll force it
+    if ( pods_thickbox.find( 'tr.post_title' ).length ) {
+        pods_thickbox.find( 'tr.image-size input[value="full"]' ).prop( 'checked', true );
+        pods_thickbox.find( 'tr.image-size,tr.post_content,tr.url,tr.align,tr.submit>td>a.del-link' ).hide();
+    }
+
+    // was the thickbox closed?
+    if ( pods_thickbox.length == 0 && pods_file_context ) {
+        clearInterval( pods_file_thickbox_modder );
+        pods_file_context = false;
+    }
+}

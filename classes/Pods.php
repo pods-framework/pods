@@ -51,7 +51,7 @@ class Pods {
      * Constructor - Pods CMS core
      *
      * @param string $pod The pod name
-     * @param mixed $id (optional) The ID or slug, to load a single record; Provide array of $params to run 'find' immediately
+     * @param mixed $id (optional) The ID or slug, to load a single record; Provide array of $params to run 'find'
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 1.0.0
@@ -63,7 +63,8 @@ class Pods {
         $this->data = pods_data( $pod, $id );
         PodsData::$display_errors =& $this->display_errors;
 
-        if ( defined( 'PODS_STRICT_MODE' ) && PODS_STRICT_MODE ) {
+        // Set up page variable
+        if ( !defined( 'PODS_STRICT_MODE' ) || PODS_STRICT_MODE ) {
             $this->page = 1;
             $this->pagination = false;
             $this->search = false;
@@ -72,21 +73,31 @@ class Pods {
             // Get the page variable
             $this->page = pods_var( $this->page_var, 'get' );
             $this->page = ( empty( $this->page ) ? 1 : max( pods_absint( $this->page ), 1 ) );
-            if ( defined( 'PODS_GLOBAL_POD_PAGINATION' ) && !PODS_GLOBAL_POD_PAGINATION ) {
+        }
+
+        // Set default pagination handling to on/off
+        if ( defined( 'PODS_GLOBAL_POD_PAGINATION' ) ) {
+            if ( !PODS_GLOBAL_POD_PAGINATION ) {
                 $this->page = 1;
                 $this->pagination = false;
             }
-
-            if ( defined( 'PODS_GLOBAL_POD_SEARCH' ) && !PODS_GLOBAL_POD_SEARCH )
-                $this->search = false;
-            if ( defined( 'PODS_GLOBAL_POD_SEARCH_MODE' ) && in_array( PODS_GLOBAL_POD_SEARCH_MODE, array(
-                'int',
-                'text',
-                'text_like'
-            ) )
-            )
-                $this->search_mode = PODS_GLOBAL_POD_SEARCH_MODE;
+            else
+                $this->pagination = true;
         }
+
+        // Set default search to on/off
+        if ( defined( 'PODS_GLOBAL_POD_SEARCH' ) ) {
+            if ( PODS_GLOBAL_POD_SEARCH )
+                $this->search = true;
+            else
+                $this->search = false;
+        }
+
+        // Set default search mode
+        $allowed_search_modes = array( 'int', 'text', 'text_like' );
+
+        if ( defined( 'PODS_GLOBAL_POD_SEARCH_MODE' ) && in_array( PODS_GLOBAL_POD_SEARCH_MODE, $allowed_search_modes ) )
+            $this->search_mode = PODS_GLOBAL_POD_SEARCH_MODE;
 
         // Sync Settings
         $this->data->page =& $this->page;

@@ -51,9 +51,8 @@
                 if ( 'undefined' != typeof ajaxurl && ('' == pods_ajaxurl || '?pods_ajax=1' == pods_ajaxurl || document.location.href == pods_ajaxurl || document.location.href.replace( /\?nojs\=1/, '?pods_ajax=1' ) == pods_ajaxurl) )
                     pods_ajaxurl = ajaxurl + '?pods_ajax=1';
 
-                postdata = {
-                    field_data : {}
-                };
+                postdata = {};
+                field_data = {};
 
                 var valid_form = true;
 
@@ -83,7 +82,27 @@
                             $el.removeClass( 'pods-validate-error' );
                         }
 
-                        postdata[$el.prop( 'name' )] = val;
+                        field_name = $el.prop( 'name' );
+
+                        if ( 0 == field_name.indexOf( 'field_data' ) ) {
+                            var field_array = field_name.match( /\[(\w*)\]/gi ),
+                                field_id = 0;
+
+                            for ( var i in field_array ) {
+                                the_field = field_array[ i ].replace( '[', '' ).replace( ']', '' );
+
+                                if ( 0 == i ) {
+                                    field_id = the_field;
+
+                                    if ( 'undefined' == typeof field_data[ field_id ] )
+                                        field_data[ field_id ] = {};
+                                }
+                                else
+                                    field_data[ field_id ][ the_field ] = val;
+                            }
+                        }
+                        else
+                            postdata[ field_name ] = val;
                     }
                 } );
 
@@ -92,42 +111,46 @@
 
                 pods_ajaxurl = pods_ajaxurl + '&action=' + postdata.action;
 
+                // $_POST doesn't like a LOT of items
+                if ( {} != field_data )
+                    postdata[ 'field_data' ] = $.toJSON( field_data );
+
                 $.ajax( {
-                            type : 'POST',
-                            url : pods_ajaxurl,
-                            cache : false,
-                            data : postdata,
-                            success : function ( d ) {
-                                if ( -1 == d.indexOf( '<e>' ) && -1 != d ) {
-                                    if ( 'undefined' != typeof pods_admin_submit_callback )
-                                        pods_admin_submit_callback( d );
-                                    else if ( 'undefined' != typeof $submitbutton.data( 'location' ) )
-                                        document.location.href = $submitbutton.data( 'location' );
-                                    else
-                                        document.location.reload( true );
-                                }
-                                else if ( 'undefined' != typeof pods_admin_submit_error_callback )
-                                    pods_admin_submit_error_callback( d.replace( '<e>', '' ).replace( '</e>', '' ) );
-                                else if ( 'undefined' != typeof $submitbutton.data( 'error-location' ) )
-                                    document.location.href = $submitbutton.data( 'error-location' );
-                                else {
-                                    alert( 'Error: ' + d.replace( '<e>', '' ).replace( '</e>', '' ) );
-                                    console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
+                    type : 'POST',
+                    url : pods_ajaxurl,
+                    cache : false,
+                    data : postdata,
+                    success : function ( d ) {
+                        if ( -1 == d.indexOf( '<e>' ) && -1 != d ) {
+                            if ( 'undefined' != typeof pods_admin_submit_callback )
+                                pods_admin_submit_callback( d );
+                            else if ( 'undefined' != typeof $submitbutton.data( 'location' ) )
+                                document.location.href = $submitbutton.data( 'location' );
+                            else
+                                document.location.reload( true );
+                        }
+                        else if ( 'undefined' != typeof pods_admin_submit_error_callback )
+                            pods_admin_submit_error_callback( d.replace( '<e>', '' ).replace( '</e>', '' ) );
+                        else if ( 'undefined' != typeof $submitbutton.data( 'error-location' ) )
+                            document.location.href = $submitbutton.data( 'error-location' );
+                        else {
+                            alert( 'Error: ' + d.replace( '<e>', '' ).replace( '</e>', '' ) );
+                            console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
 
-                                    $submitbutton.css( 'cursor', 'pointer' );
-                                    $submitbutton.prop( 'disabled', false );
-                                    $submitbutton.parent().find( '.waiting' ).fadeOut();
-                                }
-                            },
-                            error : function () {
-                                $submitbutton.css( 'cursor', 'pointer' );
-                                $submitbutton.prop( 'disabled', false );
-                                $submitbutton.parent().find( '.waiting' ).fadeOut();
+                            $submitbutton.css( 'cursor', 'pointer' );
+                            $submitbutton.prop( 'disabled', false );
+                            $submitbutton.parent().find( '.waiting' ).fadeOut();
+                        }
+                    },
+                    error : function () {
+                        $submitbutton.css( 'cursor', 'pointer' );
+                        $submitbutton.prop( 'disabled', false );
+                        $submitbutton.parent().find( '.waiting' ).fadeOut();
 
-                                alert( 'Unable to process request, please try again.' );
-                            },
-                            dataType : 'html'
-                        } );
+                        alert( 'Unable to process request, please try again.' );
+                    },
+                    dataType : 'html'
+                } );
 
             } );
 
@@ -154,33 +177,33 @@
                 pods_ajaxurl = pods_ajaxurl + '&action=' + postdata.action;
 
                 $.ajax( {
-                            type : 'POST',
-                            url : pods_ajaxurl,
-                            cache : false,
-                            data : postdata,
-                            success : function ( d ) {
-                                if ( -1 == d.indexOf( '<e>' ) && -1 != d ) {
-                                    if ( 'undefined' != typeof pods_admin_submit_callback )
-                                        pods_admin_submit_callback( d );
-                                    else if ( 'undefined' != typeof $el.data( 'location' ) )
-                                        document.location.href = $el.data( 'location' );
-                                    else
-                                        document.location.reload( true );
-                                }
-                                else if ( 'undefined' != typeof pods_admin_submit_error_callback )
-                                    pods_admin_submit_error_callback( d.replace( '<e>', '' ).replace( '</e>', '' ) );
-                                else if ( 'undefined' != typeof $el.data( 'error-location' ) )
-                                    document.location.href = $el.data( 'error-location' );
-                                else {
-                                    alert( 'Error: ' + d.replace( '<e>', '' ).replace( '</e>', '' ) );
-                                    console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
-                                }
-                            },
-                            error : function () {
-                                alert( 'Unable to process request, please try again.' );
-                            },
-                            dataType : 'html'
-                        } );
+                    type : 'POST',
+                    url : pods_ajaxurl,
+                    cache : false,
+                    data : postdata,
+                    success : function ( d ) {
+                        if ( -1 == d.indexOf( '<e>' ) && -1 != d ) {
+                            if ( 'undefined' != typeof pods_admin_submit_callback )
+                                pods_admin_submit_callback( d );
+                            else if ( 'undefined' != typeof $el.data( 'location' ) )
+                                document.location.href = $el.data( 'location' );
+                            else
+                                document.location.reload( true );
+                        }
+                        else if ( 'undefined' != typeof pods_admin_submit_error_callback )
+                            pods_admin_submit_error_callback( d.replace( '<e>', '' ).replace( '</e>', '' ) );
+                        else if ( 'undefined' != typeof $el.data( 'error-location' ) )
+                            document.location.href = $el.data( 'error-location' );
+                        else {
+                            alert( 'Error: ' + d.replace( '<e>', '' ).replace( '</e>', '' ) );
+                            console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
+                        }
+                    },
+                    error : function () {
+                        alert( 'Unable to process request, please try again.' );
+                    },
+                    dataType : 'html'
+                } );
             } );
 
             // Handle submit button and show waiting image
@@ -896,3 +919,29 @@
         }
     };
 })( jQuery );
+
+jQuery( function ( $ ) {
+    $( '.pods-qtip' ).qtip( {
+        content : {
+            attr : 'alt'
+        },
+        style : {
+            classes : 'ui-tooltip-light ui-tooltip-shadow ui-tooltip-rounded'
+        },
+        show : {
+            effect : function ( offset ) {
+                $( this ).fadeIn( 'fast' );
+            }
+        },
+        hide : {
+            fixed : true,
+            delay : 300
+        },
+        position : {
+            my : 'bottom left',
+            adjust : {
+                y : -14
+            }
+        }
+    } );
+} );

@@ -88,34 +88,38 @@ class PodsInit {
 
     function register_assets () {
         if ( !wp_style_is( 'jquery-ui', 'registered' ) )
-            wp_register_style( 'jquery-ui', PODS_URL . 'ui/css/smoothness/jquery-ui-1.8.16.custom.css', array(), '1.8.16' );
+            wp_register_style( 'jquery-ui', PODS_URL . 'ui/css/smoothness/jquery-ui.custom.css', array(), '1.8.16' );
 
-        wp_register_style( 'pods', PODS_URL . 'ui/css/pods-form.css', array(), PODS_VERSION );
-        wp_register_script( 'pods', PODS_URL . 'ui/js/jquery.pods.js', array( 'jquery' ), PODS_VERSION );
+        wp_register_script( 'pods-json', PODS_URL . 'ui/js/jquery.json.js', array( 'jquery' ), '2.3' );
 
         wp_register_style( 'pods-qtip', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.0-2012-07-03' );
         wp_register_script( 'pods-qtip', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.0-2012-07-03' );
-        wp_register_script( 'pods-qtip-init', PODS_URL . 'ui/js/qtip.js', array(
+
+        wp_register_style( 'pods', PODS_URL . 'ui/css/pods-form.css', array(), PODS_VERSION );
+        wp_register_script( 'pods', PODS_URL . 'ui/js/jquery.pods.js', array(
             'jquery',
+            'pods-json',
             'pods-qtip'
         ), PODS_VERSION );
 
         wp_register_style( 'pods-cleditor', PODS_URL . 'ui/css/jquery.cleditor.css', array(), '1.3.0' );
-        wp_register_script( 'pods-cleditor-min', PODS_URL . 'ui/js/jquery.cleditor.min.js', array(), '1.3.0' );
+        wp_register_script( 'pods-cleditor-min', PODS_URL . 'ui/js/jquery.cleditor.min.js', array( 'jquery' ), '1.3.0' );
 
         wp_register_style( 'pods-timepicker', PODS_URL . 'ui/css/jquery.ui.timepicker.css', array(), '0.9.7' );
         wp_register_script( 'pods-timepicker', PODS_URL . 'ui/js/jquery.ui.timepicker.min.js', array(
+            'jquery',
             'jquery-ui-core',
             'jquery-ui-datepicker',
             'jquery-ui-slider'
         ), '0.9.7' );
 
-        wp_register_script( 'pods-file-attach', PODS_URL . 'ui/js/file-attach.js', array(), PODS_VERSION );
+        wp_register_style( 'pods-attach', PODS_URL . 'ui/js/jquery.pods.attach.css', array(), PODS_VERSION );
+        wp_register_script( 'pods-attach', PODS_URL . 'ui/js/jquery.pods.attach.js', array(), PODS_VERSION );
 
         wp_register_style( 'pods-select2', PODS_URL . 'ui/css/select2.css', array(), '2.1' );
         wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2.js', array( 'jquery' ), '2.1' );
 
-        wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars-1.0.0.beta.6.js', array(), '1.0.0.beta.6' );
+        wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars.js', array(), '1.0.0.beta.6' );
     }
 
     function register_pods () {

@@ -36,7 +36,9 @@ class PodsAdmin {
             foreach ( $_POST as $key => $value ) {
                 if ( 'action' == $key )
                     continue;
+
                 unset( $_POST[ $key ] );
+
                 $_POST[ '_podsfix_' . $key ] = $value;
             }
         }
@@ -109,8 +111,6 @@ class PodsAdmin {
                     // Select2
                     wp_enqueue_script('jquery-select2');
                     wp_enqueue_style('jquery-select2');
-
-                    wp_enqueue_script( 'pods-file-attach' );
                 }
                 else
                     wp_enqueue_style( 'pods-admin' );
@@ -464,9 +464,12 @@ class PodsAdmin {
         foreach ( $params as $key => $value ) {
             if ( 'action' == $key )
                 continue;
+
             unset( $params[ $key ] );
+
             $params[ str_replace( '_podsfix_', '', $key ) ] = $value;
         }
+
         if ( !defined( 'PODS_STRICT_MODE' ) || !PODS_STRICT_MODE )
             $params = pods_sanitize( $params );
 
@@ -548,12 +551,14 @@ class PodsAdmin {
 
         if ( 'save_pod_item' == $method->name ) {
             $columns = pods_validate_key( $params->token, $params->pod, $params->uri_hash, null, $params->form_count );
+
             if ( false === $columns )
                 pods_error( 'This form has expired. Please reload the page and ensure your session is still active.', $this );
 
             if ( is_array( $columns ) ) {
                 foreach ( $columns as $key => $val ) {
                     $column = is_array( $val ) ? $key : $val;
+
                     if ( !isset( $params->$column ) )
                         unset( $columns[ $column ] );
                     else
@@ -563,14 +568,27 @@ class PodsAdmin {
             else {
                 $tmp = $this->api->load_pod( array( 'name' => $params->pod ) );
                 $columns = array();
+
                 foreach ( $tmp[ 'fields' ] as $field_data ) {
                     $column = $field_data[ 'name' ];
+
                     if ( !isset( $params->$column ) )
                         continue;
+
                     $columns[ $column ] = $params->$column;
                 }
             }
+
             $params->data = $columns;
+        }
+
+        if ( 'save_pod' == $method->name ) {
+            if ( isset( $params->field_data ) && !is_array( $params->field_data ) ) {
+                $params->field_data = stripslashes( $params->field_data );
+                $params->field_data = (array) @json_decode( $params->field_data, true );
+            }
+
+            pods_debug( $params->field_data );
         }
 
         $params = apply_filters( 'pods_api_' . $method->name, $params, $method );

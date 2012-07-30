@@ -1,10 +1,11 @@
 <?php
+    wp_enqueue_script( 'pods-handlebars' );
     wp_enqueue_script( 'jquery-ui-core' );
     wp_enqueue_script( 'jquery-ui-sortable' );
     wp_enqueue_script( 'plupload-all' );
-    wp_enqueue_script( 'handlebars', PODS_URL . 'ui/js/handlebars-1.0.0.beta.6.js' );
+    wp_enqueue_script( 'pods-attach' );
 
-    wp_enqueue_style( 'pods-file-browser', PODS_URL . 'ui/css/pods-file-browser.css' );
+    wp_enqueue_style( 'pods-attach' );
 
     $field_file = PodsForm::field_loader( 'file' );
 

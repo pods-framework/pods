@@ -587,8 +587,6 @@ class PodsAdmin {
                 $params->field_data = stripslashes( $params->field_data );
                 $params->field_data = (array) @json_decode( $params->field_data, true );
             }
-
-            pods_debug( $params->field_data );
         }
 
         $params = apply_filters( 'pods_api_' . $method->name, $params, $method );

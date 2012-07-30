@@ -324,12 +324,30 @@
                 $( this ).css( 'cursor', 'default' );
                 $( this ).prop( 'disabled', true );
 
+                var tab_class = '.pods-tabbed';
+
+                if ( 'undefined' != typeof $( this ).data( 'tabbed' ) )
+                    tab_class = $( this ).data( 'tabbed' );
+
                 var $tabbed = $( this ).closest( '.pods-tabbed' );
                 var tab_hash = this.hash;
 
-                $tabbed.find( '.pods-tab-group .pods-tab' ).not( tab_hash ).slideUp( 'fast', function () {
-                    $tabbed.find( '.pods-tab-group .pods-tab' ).filter( tab_hash ).slideDown( 'fast' );
-                } );
+                if ( 'undefined' != typeof $( this ).data( 'tabs' ) ) {
+                    $tabbed.find( '.pods-tabs .pods-tab a' ).each( function () {
+                        var tabs = $( this ).data( 'tabs' ),
+                            this_tab_hash = this.hash;
+
+                        if ( tab_hash != this_tab_hash )
+                            $tabbed.find( tabs ).hide();
+                        else
+                            $tabbed.find( tabs ).show();
+                    } );
+                }
+                else {
+                    $tabbed.find( '.pods-tab-group .pods-tab' ).not( tab_hash ).slideUp( 'fast', function () {
+                        $tabbed.find( '.pods-tab-group .pods-tab' ).filter( tab_hash ).slideDown( 'fast' );
+                    } );
+                }
 
                 $tabbed.find( '.pods-tabs .pods-tab a' ).removeClass( 'selected' );
 

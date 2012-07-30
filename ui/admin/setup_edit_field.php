@@ -115,7 +115,7 @@ if ('__1' != pods_var('id', $field)) {
                                     ?>
                                         <h4><?php echo $group; ?></h4>
                                     <?php
-                                            $field_options = PodsForm::option_setup( $fields );
+                                            $field_options = PodsForm::fields_setup( $fields );
 
                                             include PODS_DIR . 'ui/admin/field_option.php';
                                         }

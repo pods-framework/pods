@@ -529,7 +529,7 @@ class PodsAPI {
                 $object_field_opt[ 'alias' ] = (array) $object_field_opt[ 'alias' ];
         }
 
-        $fields = PodsForm::option_setup( $fields );
+        $fields = PodsForm::fields_setup( $fields );
 
         set_transient( 'pods_api_object_fields_' . $object, $fields );
 
@@ -2507,7 +2507,7 @@ class PodsAPI {
             foreach ( $fields as $field ) {
                 $field = $this->load_field( $field );
 
-                $field = PodsForm::option_setup( $field, null, true );
+                $field = PodsForm::fields_setup( $field, null, true );
 
                 $pod[ 'fields' ][ $field[ 'name' ] ] = $field;
             }
@@ -2737,7 +2737,7 @@ class PodsAPI {
 
         unset( $field[ 'options' ][ 'type' ] );
 
-        //$field = PodsForm::option_setup( $field, null, true );
+        //$field = PodsForm::fields_setup( $field, null, true );
 
         return $field;
     }

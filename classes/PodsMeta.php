@@ -138,7 +138,7 @@ class PodsMeta {
         }
 
         // Setup field options
-        $fields = PodsForm::option_setup( $_fields );
+        $fields = PodsForm::fields_setup( $_fields );
 
         $group = array(
             'pod' => $pod,

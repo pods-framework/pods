@@ -608,7 +608,7 @@ if ('post_type' == pods_var('type', $pod) && strlen( pods_var( 'object', $pod ) 
                                         <div id="pods-advanced-post-type-options" class="pods-tab">
                                             <?php
                                                 $fields = $advanced_options[ 'cpt_options' ];
-                                                $field_options = PodsForm::option_setup( $fields );
+                                                $field_options = PodsForm::fields_setup( $fields );
 
                                                 include PODS_DIR . 'ui/admin/field_option.php';
                                             ?>

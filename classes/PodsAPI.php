@@ -2675,6 +2675,7 @@ class PodsAPI {
      * Load a field
      *
      * $params['pod_id'] int The Pod ID
+     * $params['pod'] int The Pod name
      * $params['id'] int The field ID
      * $params['name'] string The field name
      *
@@ -2690,7 +2691,21 @@ class PodsAPI {
         elseif ( isset( $params->id ) && !empty( $params->id ) )
             $_field = get_post( $dumb = (int) $params->id );
         else {
-            if ( ( !isset( $params->name ) || empty( $params->name ) ) && ( !isset( $params->pod_id ) || empty( $params->pod_id ) ) )
+            if ( !isset( $params->pod ) )
+                $params->pod = '';
+
+            if ( !isset( $params->pod_id ) )
+                $params->pod_id = 0;
+
+            $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id ) );
+
+            if ( false === $pod )
+                return pods_error( __( 'Pod not found', 'pods' ), $this );
+
+            $params->pod_id = $pod[ 'id' ];
+            $params->pod = $pod[ 'name' ];
+
+            if ( empty( $params->name ) && empty( $params->pod ) && empty( $params->pod_id ) )
                 return pods_error( __( 'Either Field Name or Field ID / Pod ID are required', 'pods' ), $this );
 
             $field = get_posts( array(

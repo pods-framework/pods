@@ -326,10 +326,10 @@
 
                 var tab_class = '.pods-tabbed';
 
-                if ( 'undefined' != typeof $( this ).data( 'tabbed' ) )
-                    tab_class = $( this ).data( 'tabbed' );
+                if ( 'undefined' != typeof $( this ).closest( '.pods-tabs' ).data( 'tabbed' ) )
+                    tab_class = $( this ).closest( '.pods-tabs' ).data( 'tabbed' );
 
-                var $tabbed = $( this ).closest( '.pods-tabbed' );
+                var $tabbed = $( this ).closest( tab_class );
                 var tab_hash = this.hash;
 
                 if ( 'undefined' != typeof $( this ).data( 'tabs' ) ) {

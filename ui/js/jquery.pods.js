@@ -332,8 +332,8 @@
                 var $tabbed = $( this ).closest( tab_class );
                 var tab_hash = this.hash;
 
-                if ( 'undefined' != typeof $( this ).data( 'tabs' ) ) {
-                    $tabbed.find( '.pods-tabs .pods-tab a' ).each( function () {
+                if ( $tabbed.find( '.pods-tabs .pods-tab a[data-tabs]' )[ 0 ] ) {
+                    $tabbed.find( '.pods-tabs .pods-tab a[data-tabs]' ).each( function () {
                         var tabs = $( this ).data( 'tabs' ),
                             this_tab_hash = this.hash;
 

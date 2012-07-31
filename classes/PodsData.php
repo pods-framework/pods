@@ -302,7 +302,7 @@ class PodsData {
                 $this->fields[ $data_key ] = array( 'label' => ucwords( str_replace( '-', ' ', str_replace( '_', ' ', $data_key ) ) ) );
             }
 
-            $this->fields = PodsForm::field_setup( $this->fields );
+            $this->fields = PodsForm::fields_setup( $this->fields );
         }
 
         // Set totals

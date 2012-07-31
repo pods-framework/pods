@@ -127,6 +127,7 @@ ul.pods-files li span.pods-file-remove img {
 
 .pods-pick-values ul {
 	overflow:auto;
+    margin: 0;
 }
 
 .pods-pick-values li {

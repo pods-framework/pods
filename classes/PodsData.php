@@ -47,6 +47,8 @@ class PodsData
      * @since 2.0.0
      */
     public function __construct ($pod = null, $id = 0) {
+        global $wpdb;
+
         $this->api =& pods_api($pod);
         $this->api->display_errors =& self::$display_errors;
 
@@ -63,28 +65,28 @@ class PodsData
 
             switch ($this->pod_data['type']) {
                 case 'pod':
-                    $this->table = '@wp_' . self::$prefix . 'tbl_' . $this->pod;
+                    $this->table = $wpdb->prefix . self::$prefix . 'tbl_' . $this->pod;
                     $this->field_id = 'id';
                     $this->field_name = 'name';
                     break;
                 case 'post_type':
                 case 'media':
-                    $this->table = '@wp_posts';
+                    $this->table = $wpdb->posts;
                     $this->field_id = 'ID';
                     $this->field_name = 'post_title';
                     break;
                 case 'taxonomy':
-                    $this->table = '@wp_taxonomy';
+                    $this->table = $wpdb->taxonomy;
                     $this->field_id = 'term_id';
                     $this->field_name = 'name';
                     break;
                 case 'user':
-                    $this->table = '@wp_users';
+                    $this->table = $wpdb->users;
                     $this->field_id = 'ID';
                     $this->field_name = 'display_name';
                     break;
                 case 'comment':
-                    $this->table = '@wp_comments';
+                    $this->table = $wpdb->comments;
                     $this->field_id = 'comment_ID';
                     $this->field_name = 'comment_date';
                     break;

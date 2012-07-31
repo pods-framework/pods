@@ -13,12 +13,6 @@ class Pods {
 
     public $display_errors = false;
 
-    public $table;
-
-    public $field_id = 'id';
-
-    public $field_index = 'name';
-
     public $pod_data;
 
     public $pod;
@@ -119,11 +113,6 @@ class Pods {
         $this->detail_page =& $this->data->detail_page;
         $this->id =& $this->data->id;
 
-        // Sync Table Data
-        $this->table =& $this->data->table;
-        $this->field_id =& $this->data->field_id;
-        $this->field_index =& $this->data->field_index;
-
         if ( is_array( $id ) || is_object( $id ) )
             $this->find( $id );
     }
@@ -187,11 +176,22 @@ class Pods {
 
         $value = null;
 
-        if ( isset( $this->fields[ $params->name ] ) && isset( $this->row[ $params->name ] ) )
-            $value = $this->row[ $params->name ];
-        else {
+        if ( in_array( $this->fields[ $params->name ][ 'type' ], array( 'pick', 'file' ) ) ) {
             // do pick / file handling
         }
+        elseif ( 'meta' == $this->pod_data[ 'storage' ] || !isset( $this->row[ $params->name ] ) ) {
+            if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
+                $value = get_post_meta( $this->id, $params->name );
+            }
+            elseif ( 'user' == $this->pod_data[ 'type' ] ) {
+                $value = get_user_meta( $this->id, $params->name );
+            }
+            elseif ( 'comment' == $this->pod_data[ 'type' ] ) {
+                $value = get_comment_meta( $this->id, $params->name );
+            }
+        }
+        elseif ( isset( $this->fields[ $params->name ] ) && isset( $this->row[ $params->name ] ) )
+            $value = $this->row[ $params->name ];
 
         $value = $this->do_hook( 'field', $value, $this->row, $params );
 
@@ -205,7 +205,7 @@ class Pods {
      * @since 2.0.0
      */
     public function id () {
-        return $this->field( $this->field_id );
+        return $this->field( $this->data->field_id );
     }
 
     /**
@@ -215,7 +215,7 @@ class Pods {
      * @since 2.0.0
      */
     public function index () {
-        return $this->field( $this->field_index );
+        return $this->field( $this->data->field_index );
     }
 
     /**
@@ -227,7 +227,7 @@ class Pods {
      */
     public function find ( $params = null, $limit = 15, $where = null, $sql = null ) {
         $defaults = array(
-            'table' => $this->table,
+            'table' => $this->data->table,
             'select' => 't.*',
             'join' => null,
             'where' => $where,
@@ -273,7 +273,7 @@ class Pods {
         if ( null !== $id ) {
             $id = pods_absint( $id );
             $params = array(
-                'table' => $this->table,
+                'table' => $this->data->table,
                 'where' => "`{$this->field_id}` = {$id}",
                 'orderby' => "`{$this->field_id}` DESC",
                 'page' => 1,

@@ -42,7 +42,7 @@ class Pods {
     public $ui;
 
     /**
-     * Constructor - Pods CMS core
+     * Constructor - Pods Framework core
      *
      * @param string $pod The pod name
      * @param mixed $id (optional) The ID or slug, to load a single record; Provide array of $params to run 'find'
@@ -176,7 +176,10 @@ class Pods {
 
         $value = null;
 
-        if ( in_array( $this->fields[ $params->name ][ 'type' ], array( 'pick', 'file' ) ) ) {
+        if ( 'detail_url' == $params->name ) {
+            return $this->parse_magic_tags( array( '', '', 'detail_url' ) );
+        }
+        elseif ( in_array( $this->fields[ $params->name ][ 'type' ], array( 'pick', 'file' ) ) ) {
             // do pick / file handling
         }
         elseif ( 'meta' == $this->pod_data[ 'storage' ] || !isset( $this->row[ $params->name ] ) ) {
@@ -272,6 +275,7 @@ class Pods {
     public function fetch ( $id = null ) {
         if ( null !== $id ) {
             $id = pods_absint( $id );
+
             $params = array(
                 'table' => $this->data->table,
                 'where' => "`{$this->field_id}` = {$id}",
@@ -301,8 +305,11 @@ class Pods {
      */
     public function reset ( $row = 0 ) {
         $this->do_hook( 'reset' );
+
         $row = pods_absint( $row );
+
         $this->row =& $this->data->fetch( $row );
+
         return $this->row;
     }
 
@@ -314,7 +321,9 @@ class Pods {
      */
     public function total () {
         $this->do_hook( 'total' );
+
         $this->total =& $this->data->total();
+
         return $this->total;
     }
 
@@ -326,7 +335,9 @@ class Pods {
      */
     public function total_found () {
         $this->do_hook( 'total_found' );
+
         $this->total_found =& $this->data->total_found();
+
         return $this->total_found;
     }
 
@@ -338,6 +349,7 @@ class Pods {
      */
     public function zebra () {
         $this->do_hook( 'zebra' );
+
         return $this->data->zebra();
     }
 
@@ -522,8 +534,10 @@ class Pods {
             'value' => $value,
             'name' => $name
         );
+
         if ( is_array( $helper ) )
             $params = array_merge( $params, $helper );
+
         $params = (object) $params;
 
         if ( empty( $params->helper ) )
@@ -531,6 +545,7 @@ class Pods {
 
         if ( !isset( $params->value ) )
             $params->value = null;
+
         if ( !isset( $params->name ) )
             $params->name = null;
 
@@ -548,6 +563,7 @@ class Pods {
         }
         elseif ( function_exists( "{$params->helper}" ) ) {
             $function_name = (string) $params->helper;
+
             echo $function_name( $params->value, $params->name, $params, $this );
         }
 
@@ -570,6 +586,7 @@ class Pods {
 
         if ( empty( $code ) ) {
             $template = $this->api->load_template( array( 'name' => $template ) );
+
             if ( !empty( $template ) && !empty( $template[ 'code' ] ) )
                 $code = $template[ 'code' ];
             elseif ( function_exists( "{$template}" ) )
@@ -605,12 +622,15 @@ class Pods {
      */
     public function do_template ( $code ) {
         ob_start();
+
         if ( ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) )
             eval( "?>$code" );
         else
             echo $code;
+
         $out = ob_get_clean();
         $out = preg_replace_callback( "/({@(.*?)})/m", array( $this, "do_magic_tags" ), $out );
+
         return $this->do_hook( 'do_template', $out, $code );
     }
 
@@ -624,31 +644,41 @@ class Pods {
     private function do_magic_tags ( $tag ) {
         $tag = trim( $tag, ' {@}' );
         $tag = explode( ',', $tag );
+
         if ( empty( $tag ) || !isset( $tag[ 0 ] ) || 0 < strlen( trim( $tag[ 0 ] ) ) )
             return;
+
         foreach ( $tag as $k => $v ) {
             $tag[ $k ] = trim( $v );
         }
+
         $field_name = $tag[ 0 ];
+
         if ( 'detail_url' == $field_name )
             $value = get_bloginfo( 'url' ) . '/' . $this->do_template( $this->detail_page );
         elseif ( 'type' == $field_name )
             $value = $this->pod;
         else
             $value = $this->field( $field_name );
+
         $helper_name = $before = $after = '';
+
         if ( isset( $tag[ 1 ] ) && !empty( $tag[ 1 ] ) ) {
             $helper_name = $tag[ 1 ];
             $value = $this->helper( $helper_name, $value, $field_name );
         }
+
         if ( isset( $tag[ 2 ] ) && !empty( $tag[ 2 ] ) )
             $before = $tag[ 2 ];
+
         if ( isset( $tag[ 3 ] ) && !empty( $tag[ 3 ] ) )
             $after = $tag[ 3 ];
 
         $value = $this->do_hook( 'do_magic_tags', $value, $field_name, $helper_name, $before, $after );
+
         if ( null !== $value && false !== $value )
             return $before . $value . $after;
+
         return;
 
     }

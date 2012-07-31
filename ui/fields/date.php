@@ -6,10 +6,13 @@
 
     $attributes = array();
     $type = 'date';
+
     if ( isset( $options[ 'date_format_type' ] ) )
         $type = $options[ 'date_format_type' ];
+
     $attributes[ 'type' ] = $type;
     $attributes[ 'value' ] = $value;
+
     $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
 
     $date_format = array(
@@ -62,30 +65,30 @@
         ?>
         var args = <?php echo json_encode($args); ?>;
 
-		// Test whether or not the browser supports date inputs
-		var supportDateField = function() {
-			var input = jQuery('<input/>', {
-				'type': 'date',
-				css: {
-					position: 'absolute',
-					display: 'none'
-				}
-			});
+        // Test whether or not the browser supports date inputs
+        var supportDateField = function () {
+            var input = jQuery( '<input/>', {
+                'type' : 'date',
+                css : {
+                    position : 'absolute',
+                    display : 'none'
+                }
+            } );
 
-			jQuery('body').append(input);
-			
-			var bool = input.attr('type') !== 'text';
+            jQuery( 'body' ).append( input );
 
-			if (bool) {
-				var smile = ":)";
-				input.val(smile);
+            var bool = input.attr( 'type' ) !== 'text';
 
-				return (input.val() != smile);
-			}
-		}
+            if ( bool ) {
+                var smile = ":)";
+                input.val( smile );
 
-		if (!supportDateField()) {
-			jQuery( 'input#<?php echo $attributes[ 'id' ]; ?>' ).<?php echo $method; ?>( args );
-		}
+                return (input.val() != smile);
+            }
+        }
+
+        if ( !supportDateField() ) {
+            jQuery( 'input#<?php echo $attributes[ 'id' ]; ?>' ).<?php echo $method; ?>( args );
+        }
     } );
 </script>

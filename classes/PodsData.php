@@ -84,8 +84,8 @@ class PodsData {
             $this->pod = $this->pod_data[ 'name' ];
             $this->fields = $this->pod_data[ 'fields' ];
 
-            if ( isset( $this->pod_data[ 'detail_page' ] ) )
-                $this->detail_page = $this->pod_data[ 'detail_page' ];
+            if ( isset( $this->pod_data[ 'options' ][ 'detail_page' ] ) )
+                $this->detail_page = $this->pod_data[ 'options' ][ 'detail_page' ];
 
             switch ( $this->pod_data[ 'type' ] ) {
                 case 'pod':

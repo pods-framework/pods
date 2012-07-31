@@ -150,20 +150,31 @@ class Pods {
      * Return a field's value(s)
      *
      * @param array $params An associative array of parameters (OR the Field name)
-     * @param string $orderby (optional) The orderby string, for PICK fields
+     * @param boolean $single (optional) For tableless fields, to return an array or the first
      *
      * @since 2.0.0
      */
-    public function field ( $params, $orderby = null ) {
+    public function field ( $params, $single = false ) {
         $defaults = array(
             'name' => $params,
-            'orderby' => $orderby
+            'orderby' => null,
+            'single' => $single
         );
 
         if ( is_array( $params ) || is_object( $params ) )
             $params = (object) array_merge( $defaults, (array) $params );
         else
             $params = (object) $defaults;
+
+        // Support old $orderby variable
+        if ( !is_bool( $params->single ) && empty( $params->orderby ) ) {
+            pods_deprecated( 'Pods::field', '2.0.0', 'Use $params[ \'orderby\' ] instead' );
+
+            $params->orderby = $params->single;
+            $params->single = false;
+        }
+
+        $params->single = (boolean) $params->single;
 
         if ( is_array( $params->name ) || strlen( $params->name ) < 1 )
             return null;
@@ -181,25 +192,161 @@ class Pods {
 
         if ( 'detail_url' == $params->name )
             $value = get_bloginfo( 'url' ) . '/' . $this->do_template( $this->detail_page );
-        elseif ( isset( $this->fields[ $params->name ] ) && isset( $this->row[ $params->name ] ) )
+        elseif ( isset( $this->fields[ $params->name ] ) && isset( $this->row[ $params->name ] ) ) {
             $value = $this->row[ $params->name ];
-        elseif ( isset( $this->fields[ $params->name ] ) && in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
-            // do tableless handling
 
-            if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
-                $value = get_post_meta( $this->id, $params->name );
-            elseif ( 'user' == $this->pod_data[ 'type' ] )
-                $value = get_user_meta( $this->id, $params->name );
-            elseif ( 'comment' == $this->pod_data[ 'type' ] )
-                $value = get_comment_meta( $this->id, $params->name );
+            if ( in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
+                if ( 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] ) {
+                    if ( empty( $value ) )
+                        return array();
+                    else
+                        $value = @json_decode( $value, true );
+                }
+            }
         }
-        elseif ( 'meta' == $this->pod_data[ 'storage' ] || !isset( $this->fields[ $params->name ] ) || !isset( $this->row[ $params->name ] ) ) {
-            if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
-                $value = get_post_meta( $this->id, $params->name, true );
-            elseif ( 'user' == $this->pod_data[ 'type' ] )
-                $value = get_user_meta( $this->id, $params->name, true );
-            elseif ( 'comment' == $this->pod_data[ 'type' ] )
-                $value = get_comment_meta( $this->id, $params->name, true );
+        else {
+            $traverse = array( $params->name );
+
+            if ( false !== strpos( $params->name, '.' ) ) {
+                $traverse = explode( '.', $params->name );
+
+                $params->name = $traverse[ 0 ];
+            }
+
+            if ( isset( $this->fields[ $params->name ] ) && isset( $this->fields[ $params->name ][ 'type' ] ) ) {
+                $v = $this->do_hook( 'field_' . $this->fields[ $params->name ][ 'type' ], null, $this->fields[ $params->name ], $this->row, $params, $traverse );
+
+                if ( null !== $v )
+                    return $v;
+            }
+
+            $simple = false;
+
+            if ( isset( $this->fields[ $params->name ] ) ) {
+                if ( 'meta' == $this->pod_data[ 'storage' ] ) {
+                    if ( !in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) )
+                        $simple = true;
+
+                    $params->single = true;
+                }
+
+                if ( in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
+                    if ( 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] )
+                        $simple = true;
+                }
+            }
+
+            if ( !isset( $this->fields[ $params->name ] ) || !in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) || $simple ) {
+                if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
+                    $value = get_post_meta( $this->id, $params->name, $params->single );
+                elseif ( 'user' == $this->pod_data[ 'type' ] )
+                    $value = get_user_meta( $this->id, $params->name, $params->single );
+                elseif ( 'comment' == $this->pod_data[ 'type' ] )
+                    $value = get_comment_meta( $this->id, $params->name, $params->single );
+            }
+            else {
+                // Not ready yet
+                return $value;
+
+                // Dot-traversal
+                $pod = $this->pod;
+                $tbl_row_ids = $this->id();
+                $all_fields = array();
+
+                $lookup = $traverse;
+
+                if ( !empty( $lookup ) )
+                    unset( $lookup[ 0 ] );
+
+                // Get fields matching traversal names
+                $fields = $this->api->load_fields( array(
+                    'name' => $lookup,
+                    'type' => $tableless_field_types
+                ) );
+
+                if ( !empty( $fields ) ) {
+                    foreach ( $fields as $row ) {
+                        $field = $this->api->load_field( array(
+                            'pod_id' => $row->post_parent,
+                            'id' => $row->ID,
+                            'name' => $row->post_name
+                        ) );
+
+                        if ( !empty( $field ) )
+                            $all_fields[ $field[ 'pod' ] ][ $field[ 'name' ] ] = $field;
+                    }
+                }
+
+                $last_type = $last_object = $last_pick_val = '';
+
+                // Loop through each traversal level
+                foreach ( $traverse as $key => $field ) {
+                    $last_loop = false;
+
+                    if ( ( $key + 1 ) < count( $traverse ) )
+                        $last_loop = true;
+
+                    $field_exists = isset( $all_fields[ $pod ][ $field ] );
+
+                    // Tableless handler
+                    if ( $field_exists ) {
+                        $field_id = $all_fields[ $pod ][ $field ][ 'id' ];
+                        $type = $all_fields[ $pod ][ $field ][ 'type' ];
+                        $pick_object = $all_fields[ $pod ][ $field ][ 'pick_object' ];
+                        $pick_val = $all_fields[ $pod ][ $field ][ 'pick_val' ];
+
+                        $last_type = $type;
+                        $last_object = $pick_object;
+                        $last_pick_val = $pick_val;
+
+                        // Get IDs of
+                        $tbl_row_ids = $this->lookup_row_ids( $field_id, $pod, $tbl_row_ids );
+
+                        // No items found
+                        if ( empty( $tbl_row_ids ) )
+                            return $tbl_row_ids;
+
+                        // Get $pod if related to a Pod
+                        if ( !empty( $pick_object) && 'pod' == $pick_object && !empty( $pick_val ) )
+                            $pod = $pick_val;
+                    }
+                    // Assume last iteration
+                    else {
+                        // Invalid field
+                        if ( 0 == $key )
+                            return false;
+
+                        $last_loop = true;
+                    }
+
+                    if ( $last_loop ) {
+                        $table = ( 'file' == $last_type ) ? 'file' : $last_pick_val;
+
+                        if ( !empty( $table ) ) {
+                            $data = $this->rel_lookup( $tbl_row_ids, $table, $orderby );
+                        }
+
+                        if ( empty( $data ) ) {
+                            $results = false;
+                        }
+                        // Return entire array
+                        elseif ( false !== $field_exists && ( 'pick' == $type || 'file' == $type ) ) {
+                            $results = $data;
+                        }
+                        // Return a single column value
+                        elseif ( 1 == count( $data ) ) {
+                            $results = $data[ 0 ][ $field ];
+                        }
+                        // Return an array of single column values
+                        else {
+                            foreach ( $data as $key => $val ) {
+                                $results[ ] = $val[ $field ];
+                            }
+                        }
+                        return $results;
+                    }
+                }
+            }
         }
 
         $value = $this->do_hook( 'field', $value, $this->row, $params );

@@ -119,6 +119,9 @@ class PodsField_Boolean extends PodsField {
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
 
+        if ( is_array( $value ) )
+            $value = !empty( $value );
+
         $field_type = 'checkbox';
 
         if ( 'checkbox' != $options[ 'boolean_format_type' ] ) {

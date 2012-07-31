@@ -142,10 +142,11 @@ class PodsField_Date extends PodsField {
 
         if ( !empty( $value ) ) {
             $date = DateTime::createFromFormat( 'Y-m-d H:i:s', (string) $value );
+
             if ( false !== $date )
                 $value = $date->format( $format );
             else
-                $value = date_i18n( $format );
+                $value = date_i18n( $format, strtotime( (string) $value ) );
         }
         else
             $value = date_i18n( $format );
@@ -200,14 +201,15 @@ class PodsField_Date extends PodsField {
      * @since 2.0.0
      */
     public function pre_save ( &$value, $name, $options, $data, &$api, &$pod, $id = false ) {
-
         if ( !empty( $value ) ) {
             $format = $this->format( $options );
+
             $date = DateTime::createFromFormat( $format, (string) $value );
+
             if ( false !== $date )
                 $value = $date->format( 'Y-m-d H:i:s' );
             else
-                $value = date_i18n( 'Y-m-d H:i:s' );
+                $value = date_i18n( 'Y-m-d H:i:s', strtotime( (string) $value ) );
         }
         else
             $value = date_i18n( 'Y-m-d H:i:s' );
@@ -231,6 +233,7 @@ class PodsField_Date extends PodsField {
             'ymd_dash' => 'Y-m-d',
             'ymd_dot' => 'Y.m.d'
         );
+
         $time_format = array(
             'h_mm_A' => 'g:i A',
             'hh_mm_A' => 'h:i A',
@@ -241,10 +244,12 @@ class PodsField_Date extends PodsField {
         );
 
         $format = 'Y-m-d H:i:s';
+
         if ( 'date' == $options[ 'date_format_type' ] )
             $format = $date_format[ $options[ 'date_format' ] ];
         elseif ( 'datetime' == $options[ 'date_format_type' ] ) {
             $format = $date_format[ $options[ 'date_format' ] ] . ' ';
+
             if ( 12 == $options[ 'date_time_type' ] )
                 $format .= $time_format[ $options[ 'date_time_format' ] ];
             else

@@ -227,6 +227,9 @@ class PodsField_Number extends PodsField {
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
 
+        if ( is_array( $value ) )
+            $value = implode( '', $value );
+
         $field_type = 'number';
 
         if ( 'range' == $options[ 'number_format_type' ] )

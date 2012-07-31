@@ -149,6 +149,9 @@ class PodsField_Paragraph extends PodsField {
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
 
+        if ( is_array( $value ) )
+            $value = implode( "\n", $value );
+
         if ( 'plain' == $options[ 'paragraph_format_type' ] )
             $field_type = 'textarea';
         elseif ( 'tinymce' == $options[ 'paragraph_format_type' ] )

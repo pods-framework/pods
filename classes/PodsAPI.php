@@ -2675,7 +2675,7 @@ class PodsAPI {
      * Load a field
      *
      * $params['pod_id'] int The Pod ID
-     * $params['pod'] int The Pod name
+     * $params['pod'] string The Pod name
      * $params['id'] int The field ID
      * $params['name'] string The field name
      *
@@ -2775,6 +2775,105 @@ class PodsAPI {
         }
 
         return $field;
+    }
+
+    /**
+     * Load fields by name or by Pod
+     *
+     * $params['pod_id'] int The Pod ID
+     * $params['pod'] string The Pod name
+     * $params['id'] array The field IDs
+     * $params['name'] array The field names
+     * $params['type'] array The field types
+     *
+     * @param array $params An associative array of parameters
+     *
+     * @since 1.7.9
+     */
+    public function load_fields ( $params, $strict = false ) {
+        $params = (object) pods_sanitize( $params );
+
+        if ( !isset( $params->pod ) )
+            $params->pod = '';
+
+        if ( !isset( $params->pod_id ) )
+            $params->pod_id = 0;
+
+        if ( !isset( $params->name ) )
+            $params->name = array();
+        else
+            $params->name = (array) $params->name;
+
+        if ( !isset( $params->id ) )
+            $params->id = array();
+        else {
+            $params->id = (array) $params->id;
+
+            foreach ( $params->id as &$id ) {
+                $id = pods_absint( $id );
+            }
+        }
+
+        if ( !isset( $params->type ) )
+            $params->type = array();
+        else
+            $params->type = (array) $params->type;
+
+        if ( !empty( $params->pod ) || !empty( $params->pod_id ) ) {
+            $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id ) );
+
+            if ( false === $pod )
+                return pods_error( __( 'Pod not found', 'pods' ), $this );
+
+            $fields = array();
+
+            foreach ( $pod[ 'fields' ] as $field ) {
+                if ( empty( $params->name ) && empty( $params->id ) && empty( $params->type ) )
+                    $fields[ $field[ 'id' ] ] = $field;
+
+                if ( in_array( $fields[ 'name' ], $params->name ) || in_array( $fields[ 'id' ], $params->id ) || in_array( $fields[ 'type' ], $params->type ) )
+                    $fields[ $field[ 'id' ] ] = $field;
+            }
+        }
+        else {
+            if ( empty( $params->name ) && empty( $params->id ) && empty( $params->type ) )
+                return pods_error( __( 'Either Field Name / Field ID / Field Type, or Pod Name / Pod ID are required', 'pods' ), $this );
+
+            $lookup = array();
+
+            if ( !empty( $params->name ) ) {
+                $fields = implode( "', '", $params->name );
+
+                $lookup = "`post_name` IN ('{$fields}')";
+            }
+
+            if ( !empty( $params->id ) ) {
+                $fields = implode( ", ", $params->id );
+
+                $lookup = "`ID` IN ({$fields})";
+            }
+
+            $lookup = implode( ' AND ', $lookup );
+
+            $result = pods_query( "SELECT `ID`, `post_name, `post_parent` FROM `@wp_posts` WHERE `post_type` = %s AND ( {$lookup} )" );
+
+            $fields = array();
+
+            if ( !empty( $result ) ) {
+                foreach ( $result as $field ) {
+                    $field = $this->load_field( array(
+                        'id' => $field->ID,
+                        'name' => $field->post_name,
+                        'pod_id' => $field->post_parent
+                    ) );
+
+                    if ( empty( $params->type ) || in_array( $fields[ 'type' ], $params->type ) )
+                        $fields[ $field[ 'id' ] ] = $field;
+                }
+            }
+        }
+
+        return $fields;
     }
 
     /**

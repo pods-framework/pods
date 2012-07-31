@@ -112,6 +112,7 @@ class Pods {
         $this->fields =& $this->api->fields;
         $this->detail_page =& $this->data->detail_page;
         $this->id =& $this->data->id;
+        $this->results =& $this->data->data;
 
         if ( is_array( $id ) || is_object( $id ) )
             $this->find( $id );
@@ -176,25 +177,30 @@ class Pods {
 
         $value = null;
 
-        if ( 'detail_url' == $params->name ) {
-            return $this->parse_magic_tags( array( '', '', 'detail_url' ) );
-        }
-        elseif ( in_array( $this->fields[ $params->name ][ 'type' ], array( 'pick', 'file' ) ) ) {
-            // do pick / file handling
-        }
-        elseif ( 'meta' == $this->pod_data[ 'storage' ] || !isset( $this->row[ $params->name ] ) ) {
-            if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
-                $value = get_post_meta( $this->id, $params->name );
-            }
-            elseif ( 'user' == $this->pod_data[ 'type' ] ) {
-                $value = get_user_meta( $this->id, $params->name );
-            }
-            elseif ( 'comment' == $this->pod_data[ 'type' ] ) {
-                $value = get_comment_meta( $this->id, $params->name );
-            }
-        }
+        $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
+
+        if ( 'detail_url' == $params->name )
+            $value = get_bloginfo( 'url' ) . '/' . $this->do_template( $this->detail_page );
         elseif ( isset( $this->fields[ $params->name ] ) && isset( $this->row[ $params->name ] ) )
             $value = $this->row[ $params->name ];
+        elseif ( isset( $this->fields[ $params->name ] ) && in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
+            // do tableless handling
+
+            if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
+                $value = get_post_meta( $this->id, $params->name );
+            elseif ( 'user' == $this->pod_data[ 'type' ] )
+                $value = get_user_meta( $this->id, $params->name );
+            elseif ( 'comment' == $this->pod_data[ 'type' ] )
+                $value = get_comment_meta( $this->id, $params->name );
+        }
+        elseif ( 'meta' == $this->pod_data[ 'storage' ] || !isset( $this->fields[ $params->name ] ) || !isset( $this->row[ $params->name ] ) ) {
+            if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
+                $value = get_post_meta( $this->id, $params->name, true );
+            elseif ( 'user' == $this->pod_data[ 'type' ] )
+                $value = get_user_meta( $this->id, $params->name, true );
+            elseif ( 'comment' == $this->pod_data[ 'type' ] )
+                $value = get_comment_meta( $this->id, $params->name, true );
+        }
 
         $value = $this->do_hook( 'field', $value, $this->row, $params );
 
@@ -262,7 +268,6 @@ class Pods {
         $params = $this->do_hook( 'find', $params );
 
         $this->data->select( $params );
-        $this->results =& $this->data->data;
 
         return $this;
     }
@@ -273,25 +278,7 @@ class Pods {
      * @since 2.0.0
      */
     public function fetch ( $id = null ) {
-        if ( null !== $id ) {
-            $id = pods_absint( $id );
-
-            $params = array(
-                'table' => $this->data->table,
-                'where' => "`{$this->field_id}` = {$id}",
-                'orderby' => "`{$this->field_id}` DESC",
-                'page' => 1,
-                'limit' => 1,
-                'search' => false
-            );
-
-            $params = $this->do_hook( 'fetch', $params, $id );
-
-            $this->data->select( $params );
-            $this->results =& $this->data->data;
-        }
-        else
-            $this->do_hook( 'fetch', null, $id );
+        $this->do_hook( 'fetch', $id );
 
         $this->row =& $this->data->fetch( $id );
 
@@ -654,9 +641,7 @@ class Pods {
 
         $field_name = $tag[ 0 ];
 
-        if ( 'detail_url' == $field_name )
-            $value = get_bloginfo( 'url' ) . '/' . $this->do_template( $this->detail_page );
-        elseif ( 'type' == $field_name )
+        if ( 'type' == $field_name )
             $value = $this->pod;
         else
             $value = $this->field( $field_name );
@@ -723,9 +708,12 @@ class Pods {
      */
     private function do_hook () {
         $args = func_get_args();
+
         if ( empty( $args ) )
             return false;
+
         $name = array_shift( $args );
+
         return pods_do_hook( 'pods', $name, $args, $this );
     }
 

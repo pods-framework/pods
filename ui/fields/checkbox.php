@@ -16,8 +16,14 @@
         }
 
         $attributes = array();
+
         $attributes[ 'type' ] = 'checkbox';
-        $attributes[ 'checked' ] = ( $val == $value ) ? 'CHECKED' : null;
+
+        $attributes[ 'checked' ] = null;
+
+        if ( $val == $value || ( is_array( $value ) && in_array( $val, $value ) ) )
+            $attributes[ 'checked' ] = 'CHECKED';
+
         $attributes[ 'value' ] = $val;
 
         if ( 1 < count( $options[ 'data' ] ) && false === strpos( $name, '[]' ) )

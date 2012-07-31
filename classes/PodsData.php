@@ -1,41 +1,62 @@
 <?php
-class PodsData
-{
+class PodsData {
+
     // base
     static protected $prefix = 'pods_';
+
     static protected $field_types = array();
+
     public static $display_errors = true;
 
     // pods
     public $table = null;
+
     public $pod = null;
+
     public $pod_data = null;
+
     public $id = 0;
+
     public $field_id = 'id';
+
     public $field_index = 'name';
+
     public $fields = array();
+
     public $aliases = array();
+
     public $detail_page;
 
     // data
     public $row_number = -1;
+
     public $data;
+
     public $row;
+
     public $insert_id;
+
     public $total;
+
     public $total_found;
 
     // pagination
     public $page_var = 'pg';
+
     public $page = 1;
+
     public $pagination = true;
 
     // search
     public $search = true;
+
     public $search_var = 'search';
+
     public $search_mode = 'int'; // int | text | text_like
     public $search_query = '';
+
     public $search_fields = array();
+
     public $filters = array();
 
     /**
@@ -43,27 +64,30 @@ class PodsData
      *
      * @param string $pod Pod name
      * @param integer $id Pod Item ID
+     *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0.0
      */
-    public function __construct ($pod = null, $id = 0) {
+    public function __construct ( $pod = null, $id = 0 ) {
         global $wpdb;
 
-        $this->api =& pods_api($pod);
+        $this->api =& pods_api( $pod );
         $this->api->display_errors =& self::$display_errors;
 
-        if (null !== $pod) {
+        if ( null !== $pod ) {
             $this->pod_data =& $this->api->pod_data;
-            if (false === $this->pod_data)
-                return pods_error('Pod not found', $this);
 
-            $this->pod_id = $this->pod_data['id'];
-            $this->pod = $this->pod_data['name'];
-            $this->fields = $this->pod_data['fields'];
+            if ( false === $this->pod_data )
+                return pods_error( 'Pod not found', $this );
+
+            $this->pod_id = $this->pod_data[ 'id' ];
+            $this->pod = $this->pod_data[ 'name' ];
+            $this->fields = $this->pod_data[ 'fields' ];
+
             if ( isset( $this->pod_data[ 'detail_page' ] ) )
-                $this->detail_page = $this->pod_data['detail_page'];
+                $this->detail_page = $this->pod_data[ 'detail_page' ];
 
-            switch ($this->pod_data['type']) {
+            switch ( $this->pod_data[ 'type' ] ) {
                 case 'pod':
                     $this->table = $wpdb->prefix . self::$prefix . 'tbl_' . $this->pod;
                     $this->field_id = 'id';
@@ -97,10 +121,10 @@ class PodsData
                     break;
             }
 
-            if (null !== $id && !is_array($id) && !is_object($id)) {
-                $id = (int) $id;
-                $this->fetch($id);
-                $this->id = $id;
+            if ( null !== $id && !is_array( $id ) && !is_object( $id ) ) {
+                $this->id = pods_absint( $id );
+
+                $this->fetch( $this->id );
             }
         }
     }
@@ -111,28 +135,36 @@ class PodsData
      * @param string $table
      * @param array $data
      * @param array $format
+     *
      * @since 2.0.0
      */
-    public function insert ($table, $data, $format = null) {
+    public function insert ( $table, $data, $format = null ) {
         global $wpdb;
-        if (strlen($table) < 1 || empty($data) || !is_array($data))
+
+        if ( strlen( $table ) < 1 || empty( $data ) || !is_array( $data ) )
             return false;
-        if (empty($format)) {
+
+        if ( empty( $format ) ) {
             $format = array();
-            foreach ($data as $field) {
-                if (isset(self::$field_types[$field]))
-                    $format[] = self::$field_types[$field];
-                elseif (isset($wpdb->field_types[$field]))
-                    $format[] = $wpdb->field_types[$field];
+
+            foreach ( $data as $field ) {
+                if ( isset( self::$field_types[ $field ] ) )
+                    $format[] = self::$field_types[ $field ];
+                elseif ( isset( $wpdb->field_types[ $field ] ) )
+                    $format[] = $wpdb->field_types[ $field ];
                 else
                     break;
             }
         }
-        list($table, $data, $format) = $this->do_hook('insert', array($table, $data, $format));
-        $result = $wpdb->insert($table, $data, $format);
+
+        list( $table, $data, $format ) = $this->do_hook( 'insert', array( $table, $data, $format ) );
+
+        $result = $wpdb->insert( $table, $data, $format );
         $this->insert_id = $wpdb->insert_id;
-        if (false !== $result)
+
+        if ( false !== $result )
             return $this->insert_id;
+
         return false;
     }
 
@@ -144,40 +176,58 @@ class PodsData
      * @param array $where
      * @param array $format
      * @param array $where_format
+     *
      * @since 2.0.0
      */
-    public function update ($table, $data, $where, $format = null, $where_format = null) {
+    public function update ( $table, $data, $where, $format = null, $where_format = null ) {
         global $wpdb;
-        if (strlen($table) < 1 || empty($data) || !is_array($data))
+
+        if ( strlen( $table ) < 1 || empty( $data ) || !is_array( $data ) )
             return false;
-        if (empty($format)) {
+
+        if ( empty( $format ) ) {
             $format = array();
-            foreach ($data as $field) {
-                if (isset(self::$field_types[$field]))
-                    $form = self::$field_types[$field];
-                elseif (isset($wpdb->field_types[$field]))
-                    $form = $wpdb->field_types[$field];
+
+            foreach ( $data as $field ) {
+                if ( isset( self::$field_types[ $field ] ) )
+                    $form = self::$field_types[ $field ];
+                elseif ( isset( $wpdb->field_types[ $field ] ) )
+                    $form = $wpdb->field_types[ $field ];
                 else
                     $form = '%s';
+
                 $format[] = $form;
             }
         }
-        if (empty($where_format)) {
+
+        if ( empty( $where_format ) ) {
             $where_format = array();
-            foreach ((array) array_keys($where) as $field) {
-                if (isset(self::$field_types[$field]))
-                    $form = self::$field_types[$field];
-                elseif (isset($wpdb->field_types[$field]))
-                    $form = $wpdb->field_types[$field];
+
+            foreach ( (array) array_keys( $where ) as $field ) {
+                if ( isset( self::$field_types[ $field ] ) )
+                    $form = self::$field_types[ $field ];
+                elseif ( isset( $wpdb->field_types[ $field ] ) )
+                    $form = $wpdb->field_types[ $field ];
                 else
                     $form = '%s';
+
                 $where_format[] = $form;
             }
         }
-        list($table, $data, $where, $format, $where_format) = $this->do_hook('update', array($table, $data, $where, $format, $where_format));
-        $result = $wpdb->update($table, $data, $where, $format, $where_format);
-        if (false !== $result)
+
+        list( $table, $data, $where, $format, $where_format ) = $this->do_hook( 'update', array(
+            $table,
+            $data,
+            $where,
+            $format,
+            $where_format
+        ) );
+
+        $result = $wpdb->update( $table, $data, $where, $format, $where_format );
+
+        if ( false !== $result )
             return true;
+
         return false;
     }
 
@@ -187,65 +237,84 @@ class PodsData
      * @param string $table
      * @param array $where
      * @param array $where_format
+     *
      * @since 2.0.0
      */
-    public function delete ($table, $where, $where_format = null) {
+    public function delete ( $table, $where, $where_format = null ) {
         global $wpdb;
-        if (strlen($table) < 1 || empty($where) || !is_array($where))
+
+        if ( strlen( $table ) < 1 || empty( $where ) || !is_array( $where ) )
             return false;
+
         $wheres = array();
         $where_formats = $where_format = (array) $where_format;
-        foreach ((array) array_keys($where) as $field) {
-            if (!empty($where_format))
-                $form = ($form = array_shift($where_formats)) ? $form : $where_format[0];
-            elseif (isset(self::$field_types[$field]))
-                $form = self::$field_types[$field];
-            elseif (isset($wpdb->field_types[$field]))
-                $form = $wpdb->field_types[$field];
+
+        foreach ( (array) array_keys( $where ) as $field ) {
+            if ( !empty( $where_format ) )
+                $form = ( $form = array_shift( $where_formats ) ) ? $form : $where_format[ 0 ];
+            elseif ( isset( self::$field_types[ $field ] ) )
+                $form = self::$field_types[ $field ];
+            elseif ( isset( $wpdb->field_types[ $field ] ) )
+                $form = $wpdb->field_types[ $field ];
             else
                 $form = '%s';
+
             $wheres[] = "`{$field}` = {$form}";
         }
-        $sql = "DELETE FROM `$table` WHERE " . implode(' AND ', $wheres);
-        list($sql, $where) = $this->do_hook('delete', array($sql, array_values($where)), $table, $where, $where_format, $wheres);
-        return $this->query($this->prepare($sql, $where));
+
+        $sql = "DELETE FROM `$table` WHERE " . implode( ' AND ', $wheres );
+
+        list( $sql, $where ) = $this->do_hook( 'delete', array(
+            $sql,
+            array_values( $where )
+        ), $table, $where, $where_format, $wheres );
+
+        return $this->query( $this->prepare( $sql, $where ) );
     }
 
     /**
      * Select items, eventually building dynamic query
      *
      * @param array $params
+     *
      * @since 2.0.0
      */
-    public function select ($params) {
+    public function select ( $params ) {
         global $wpdb;
 
         // Build
-        $this->sql = $this->build($params);
+        $this->sql = $this->build( $params );
 
         // Get Data
-        $results = pods_query($this->sql, $this);
-        $results = $this->do_hook('select', $results);
+        $results = pods_query( $this->sql, $this );
+        $results = $this->do_hook( 'select', $results );
+
         $this->data = $results;
+
         $this->row_number = -1;
 
         // Fill in empty field data (if none provided)
-        if ((!isset($params->fields) || empty($params->fields)) && !empty($this->data)) {
-            $params->fields = array();
-            $data = (array) @current($this->data);
-            foreach ($data as $data_key => $data_value) {
-                $params->fields[$data_key] = array('label' => ucwords(str_replace('-', ' ', str_replace('_', ' ', $data_key))));
+        if ( ( !isset( $this->fields ) || empty( $this->fields ) ) && !empty( $this->data ) ) {
+            $this->fields = array();
+            $data = (array) @current( $this->data );
+
+            foreach ( $data as $data_key => $data_value ) {
+                $this->fields[ $data_key ] = array( 'label' => ucwords( str_replace( '-', ' ', str_replace( '_', ' ', $data_key ) ) ) );
             }
+
+            $this->fields = PodsForm::field_setup( $this->fields );
         }
-        $this->fields = $params->fields;
 
         // Set totals
-        $total = @current($wpdb->get_col("SELECT FOUND_ROWS()"));
-        $total = $this->do_hook('select_total', $total);
+        $total = @current( $wpdb->get_col( "SELECT FOUND_ROWS()" ) );
+        $total = $this->do_hook( 'select_total', $total );
+
         $this->total_found = 0;
-        if (is_numeric($total))
+
+        if ( is_numeric( $total ) )
             $this->total_found = $total;
-        $this->total = count((array) $this->data);
+
+        $this->total = count( (array) $this->data );
 
         return $this->data;
     }
@@ -256,46 +325,57 @@ class PodsData
      * @param array $params
      * @since 2.0.0
      */
-    public function build (&$params) {
-        $defaults = array('select' => '*',
-                          'table' => null,
-                          'join' => null,
-                          'where' => null,
-                          'groupby' => null,
-                          'having' => null,
-                          'orderby' => null,
-                          'limit' => -1,
+    public function build ( &$params ) {
+        $defaults = array(
+            'select' => '*',
+            'table' => null,
+            'join' => null,
+            'where' => null,
+            'groupby' => null,
+            'having' => null,
+            'orderby' => null,
+            'limit' => -1,
 
-                          'identifier' => 'id',
-                          'index' => 'name',
+            'identifier' => 'id',
+            'index' => 'name',
 
-                          'page' => 1,
-                          'search' => null,
-                          'search_query' => null,
-                          'filters' => array(),
+            'page' => 1,
+            'search' => null,
+            'search_query' => null,
+            'filters' => array(),
 
-                          'fields' => array(),
+            'fields' => array(),
 
-                          'sql' => null);
+            'sql' => null
+        );
 
-        $params = (object) array_merge($defaults, (array) $params);
+        $params = (object) array_merge( $defaults, (array) $params );
 
         // Validate
-        $params->page = pods_absint($params->page);
-        if (0 == $params->page)
+        $params->page = pods_absint( $params->page );
+
+        if ( 0 == $params->page )
             $params->page = 1;
+
         $params->limit = (int) $params->limit;
-        if (0 == $params->limit)
+
+        if ( 0 == $params->limit )
             $params->limit = -1;
-        if ((empty($params->fields) || !is_array($params->fields)) && is_object($this->pod_data) && isset($this->pod_data->fields) && !empty($this->pod_data->fields))
-            $params->fields = $this->pod_data->fields;
-        if (empty($params->table) && is_object($this->pod_data) && isset($this->pod_data->table) && !empty($this->pod_data->table))
-            $params->table = $this->pod_data->table;
+
+        if ( ( empty( $params->fields ) || !is_array( $params->fields ) ) && is_object( $this->pod_data ) && isset( $this->fields ) && !empty( $this->fields ) )
+            $params->fields = $this->fields;
+
+        if ( empty( $params->table ) && is_object( $this->pod_data ) && isset( $this->table ) && !empty( $this->table ) )
+            $params->table = $this->table;
+
         $params->where = (array) $params->where;
-        if (empty($params->where))
+
+        if ( empty( $params->where ) )
             $params->where = array();
+
         $params->having = (array) $params->having;
-        if (empty($params->having))
+
+        if ( empty( $params->having ) )
             $params->having = array();
 
         // Get Aliases for future reference
@@ -665,30 +745,72 @@ class PodsData
      * @param array $ids
      * @since 2.0.0
      */
-    public function reorder ($table, $weight_field, $id_field, $ids) {
+    public function reorder ( $table, $weight_field, $id_field, $ids ) {
         $success = false;
         $ids = (array) $ids;
-        list($table, $weight_field, $id_field, $ids) = $this->do_hook('reorder', array($table, $weight_field, $id_field, $ids));
-        if (!empty($ids)) {
+
+        list( $table, $weight_field, $id_field, $ids ) = $this->do_hook( 'reorder', array(
+            $table,
+            $weight_field,
+            $id_field,
+            $ids
+        ) );
+
+        if ( !empty( $ids ) ) {
             $success = true;
-            foreach ($ids as $weight => $id) {
-                $updated = $this->update($table, array($weight_field => $weight), array($id_field => $id), array('%d'), array('%d'));
-                if (false === $updated)
+
+            foreach ( $ids as $weight => $id ) {
+                $updated = $this->update( $table, array( $weight_field => $weight ), array( $id_field => $id ), array( '%d' ), array( '%d' ) );
+
+                if ( false === $updated )
                     $success = false;
             }
         }
+
         return $success;
     }
 
-    public function fetch ($row = null) {
-        if (null === $row)
+    public function fetch ( $row = null ) {
+        if ( null === $row ) {
             $this->row_number++;
-        else
-            $this->row_number = pods_absint($row);
-        if (isset($this->data[$this->row_number]))
-            $this->row = $this->data[$this->row_number];
-        else
+
             $this->row = false;
+
+            if ( isset( $this->data[ $this->row_number ] ) )
+                $this->row = get_object_vars( $this->data[ $this->row_number ] );
+        }
+        else {
+            $this->row_number = pods_absint( $row );
+
+            $row = false;
+
+            if ( !empty($this->pod ) )
+                $row = wp_cache_get( $this->row_number, 'pods_items_' . $this->pod );
+
+            if ( false !== $row && is_array( $row ) )
+                $this->row = $row;
+            else {
+                $params = array(
+                    'table' => $this->table,
+                    'where' => "`{$this->field_id}` = {$this->row_number}",
+                    'orderby' => "`{$this->field_id}` DESC",
+                    'page' => 1,
+                    'limit' => 1,
+                    'search' => false
+                );
+
+                $this->row = $this->select( $params );
+
+                if ( empty( $this->row ) )
+                    $this->row = false;
+                else
+                    $this->row = get_object_vars( (object) @current( (array) $this->row ) );
+
+                if ( !empty( $this->pod ) )
+                    wp_cache_set( $this->row_number, $this->row, 'pods_items_' . $this->pod );
+            }
+        }
+
         return $this->row;
     }
 
@@ -699,14 +821,16 @@ class PodsData
             self::$display_errors = true;
 
         $display_errors = self::$display_errors;
+
         if (is_object($error)) {
-            if (isset($error->display_errors) && false === $error->display_errors) {
+            if (isset($error->display_errors) && false === $error->display_errors)
                 $display_errors = false;
-            }
+
             $error = 'Database Error';
         }
         elseif (is_bool($error)) {
             $display_errors = $error;
+
             if (false !== $error)
                 $error = 'Database Error';
         }
@@ -717,11 +841,13 @@ class PodsData
                                  'no_results_error' => $no_results_error,
                                  'display_errors' => $display_errors);
 
+        // Handle Preparations of Values (sprintf format)
         if (is_array($sql)) {
             if (isset($sql[0]) && 1 < count($sql)) {
                 if (2 == count($sql)) {
                     if (!is_array($sql[1]))
                         $sql[1] = array($sql[1]);
+
                     $params->sql = self::prepare($sql[0], $sql[1]);
                 }
                 elseif (3 == count($sql))
@@ -737,20 +863,25 @@ class PodsData
 
         // Run Query
         $params->sql = self::do_hook('query', $params->sql, $params);
-        $result = $wpdb->query($params->sql);
+
+        $result = $wpdb->query( $params->sql );
+
         $result = self::do_hook('query_result', $result, $params);
 
         if (false === $result && !empty($params->error) && !empty($wpdb->last_error))
             return pods_error("{$params->error}; SQL: {$params->sql}; Response: {$wpdb->last_error}", $params->display_errors);
+
         if ('INSERT' == substr($params->sql, 0, 6))
             $result = $wpdb->insert_id;
         elseif ('SELECT' == substr($params->sql, 0, 6)) {
             $result = (array) $wpdb->last_result;
+
             if (!empty($result) && !empty($params->results_error))
-                return pods_error("{$params->results_error}", $params->display_errors);
+                return pods_error( $params->results_error, $params->display_errors);
             elseif (empty($result) && !empty($params->no_results_error))
-                return pods_error("{$params->no_results_error}", $params->display_errors);
+                return pods_error( $params->no_results_error , $params->display_errors);
         }
+
         return $result;
     }
 

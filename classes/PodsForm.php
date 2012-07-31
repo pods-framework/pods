@@ -218,6 +218,14 @@ class PodsForm {
     public static function options ( $type, $options ) {
         $options = (array) $options;
 
+        if ( isset( $options[ 'options' ] ) ) {
+            $options_temp = $options[ 'options' ];
+
+            unset( $options[ 'options' ] );
+
+            $options = array_merge( $options_temp, $options );
+        }
+
         $defaults = self::options_setup( $type, $options );
 
         $core_defaults = array(

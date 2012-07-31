@@ -29,7 +29,7 @@
                             foreach ( $fields as $field ) {
                         ?>
                             <li class="pods-field <?php echo 'pods-form-ui-row-type-' . $type . ' pods-form-ui-row-name-' . Podsform::clean( $name, true ); ?>">
-                                <?php PodsForm::row( 'pods_field_' . $field[ 'name' ], $pod->field( $field[ 'name' ] ), $field[ 'type' ], $field[ 'options' ], $pod, $pod->id() ); ?>
+                                <?php PodsForm::row( 'pods_field_' . $field[ 'name' ], $pod->field( $field[ 'name' ] ), $field[ 'type' ], $field, $pod, $pod->id() ); ?>
                             </li>
                         <?php
                             }

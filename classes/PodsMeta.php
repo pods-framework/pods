@@ -342,6 +342,9 @@ class PodsMeta {
         $pod = false;
 
         foreach ( $groups as $group ) {
+            if ( empty( $group[ 'fields' ] ) )
+                continue;
+
             if ( empty( $pod ) )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 

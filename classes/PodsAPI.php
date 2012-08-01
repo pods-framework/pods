@@ -893,7 +893,6 @@ class PodsAPI {
                         $results = pods_query($query);
                         
                         if ( 0 < count( $results ) ) {
-                            pods_debug( (int) $val );
                             $post_type_id = $results[0]->ID;
                             delete_post_meta($post_type_id, "built_in_taxonomies_{$tax_name}");
                             add_post_meta($post_type_id, "built_in_taxonomies_{$tax_name}", (int) $val);
@@ -919,7 +918,6 @@ class PodsAPI {
                         $results = pods_query($query);
                         
                         if ( 0 < count( $results ) ) {
-                            pods_debug( $results );
                             $tax_id = $results[0]->ID;
                             delete_post_meta($tax_id, "built_in_post_types_{$post_type_name}");
                             add_post_meta($tax_id, "built_in_post_types_{$post_type_name}", (int) $val);

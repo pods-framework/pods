@@ -910,7 +910,7 @@ class PodsAPI {
                         $search_val = 1 ^ $val;
                         $query = "SELECT p.ID FROM {$wpdb->posts} AS p
                                     LEFT JOIN {$wpdb->postmeta} AS pm ON pm.post_id = p.ID AND pm.meta_key = 'built_in_post_types_{$post_type_name}'
-                                    LEFT JOIN {$wpdb->postmeta} AS pm2 ON pm2.post_id = p.ID AND pm2.meta_key = 'type' AND pm2.meta_value = 'post_type'
+                                    LEFT JOIN {$wpdb->postmeta} AS pm2 ON pm2.post_id = p.ID AND pm2.meta_key = 'type' AND pm2.meta_value = 'taxonomy'
                                     LEFT JOIN {$wpdb->postmeta} AS pm3 ON pm3.post_id = p.ID AND pm3.meta_key = 'object' AND pm3.meta_value = ''
                                     WHERE p.post_type = '_pods_pod' AND p.post_name = '{$tax_name}'
                                         AND pm2.meta_id IS NOT NULL

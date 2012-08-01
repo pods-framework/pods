@@ -142,14 +142,12 @@ class PodsAdmin {
             'type' => 'pod'
         ) );
 
-        $can_manage = pods_access( 'manage_content' );
-
         if ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER )
             $results = false; // not yet!
 
         if ( false !== $results ) {
             foreach ( (array) $results as $item ) {
-                if ( !current_user_can( 'pods_new_' . $item[ 'name' ] ) && !current_user_can( 'pods_edit_' . $item[ 'name' ] ) && !current_user_can( 'pods_delete_' . $item[ 'name' ] ) )
+                if ( !is_super_admin() && !current_user_can( 'pods_new_' . $item[ 'name' ] ) && !current_user_can( 'pods_edit_' . $item[ 'name' ] ) && !current_user_can( 'pods_delete_' . $item[ 'name' ] ) )
                     continue;
 
                 $item[ 'options' ][ 'label' ] = ( !empty( $item[ 'options' ][ 'label' ] ) ) ? $item[ 'options' ][ 'label' ] : ucwords( str_replace( '_', ' ', $item[ 'name' ] ) );
@@ -158,17 +156,17 @@ class PodsAdmin {
                 if ( 1 == $item[ 'options' ][ 'is_toplevel' ] ) {
                     add_object_page( $item[ 'options' ][ 'label' ], $item[ 'options' ][ 'label' ], 'read', "pods-manage-{$item['name']}" );
 
-                    if ( current_user_can( 'pods_edit_' . $item[ 'name' ] ) || current_user_can( 'pods_delete_' . $item[ 'name' ] ) ) {
+                    if ( is_super_admin() || current_user_can( 'pods_edit_' . $item[ 'name' ] ) || current_user_can( 'pods_delete_' . $item[ 'name' ] ) ) {
                         add_submenu_page( "pods-manage-{$item['name']}", 'Edit', 'Edit', 'read', "pods-manage-{$item['name']}", array(
                             $this,
                             'admin_content'
                         ) );
                     }
 
-                    if ( current_user_can( 'pods_add_' . $item[ 'name' ] ) ) {
+                    if ( is_super_admin() || current_user_can( 'pods_add_' . $item[ 'name' ] ) ) {
                         $page = "pods-add-new-{$item['name']}";
 
-                        if ( !current_user_can( 'pods_edit_' . $item[ 'name' ] ) && !current_user_can( 'pods_delete_' . $item[ 'name' ] ) )
+                        if ( !is_super_admin() && !current_user_can( 'pods_edit_' . $item[ 'name' ] ) && !current_user_can( 'pods_delete_' . $item[ 'name' ] ) )
                             $page = "pods-manage-{$item['name']}";
 
                         add_submenu_page( "pods-manage-{$item['name']}", 'Add New', 'Add New', 'read', $page, array(
@@ -263,7 +261,7 @@ class PodsAdmin {
         $parent = false;
 
         foreach ( $admin_menus as $page => $menu_item ) {
-            if ( isset( $menu_item[ 'access' ] ) ) {
+            if ( !is_super_admin() && isset( $menu_item[ 'access' ] ) ) {
                 $access = (array) $menu_item[ 'access' ];
 
                 $ok = false;
@@ -286,10 +284,10 @@ class PodsAdmin {
             if ( false === $parent ) {
                 $parent = $page;
 
-                add_menu_page( 'Pods Admin', 'Pods Admin', 'manage_options', $parent, null, PODS_URL . '/ui/images/icon16.png' );
+                add_menu_page( 'Pods Admin', 'Pods Admin', 'read', $parent, null, PODS_URL . '/ui/images/icon16.png' );
             }
 
-            add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'manage_options', $page, $menu_item[ 'function' ] );
+            add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'read', $page, $menu_item[ 'function' ] );
 
             if ( 'pods-components' == $page && defined( 'PODS_DEVELOPER' ) )
                 $pods_components->menu( $parent );

@@ -869,6 +869,10 @@ class PodsAPI {
             ) );
         }
 
+		if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) ) {
+			//pods_debug($pod);
+		}
+
         $saved = array();
 
         if ( isset( $params->fields ) || isset( $params->field_data ) || defined( 'DOING_AJAX' ) ) {

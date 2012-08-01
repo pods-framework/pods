@@ -80,6 +80,8 @@ class PodsMeta {
         }
 
         do_action( 'pods_meta_init' );
+
+        return $this;
     }
 
     public function group_add ( $pod, $label, $fields, $context = 'normal', $priority = 'default' ) {

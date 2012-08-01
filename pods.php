@@ -82,11 +82,10 @@ if ( is_admin() ) { // note the use of is_admin() to double check that this is h
     new WPGitHubUpdater( $config );
 }
 
-global $pods, $pods_init, $pods_components, $pods_admin, $pod_page_exists;
+global $pods, $pods_init, $pod_page_exists;
 if ( false !== pods_compatible() && ( !defined( 'SHORTINIT' ) || !SHORTINIT ) ) {
     if ( !defined( 'PODS_DEPRECATED' ) || PODS_DEPRECATED )
         require_once( PODS_DIR . 'deprecated/deprecated.php' );
 
     $pods_init = pods_init();
-    $pods_components = pods_components();
 }

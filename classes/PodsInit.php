@@ -3,7 +3,11 @@ class PodsInit {
 
     static $no_conflict = array();
 
+    static $components;
+
     static $meta;
+
+    static $admin;
 
     public $version;
 
@@ -21,6 +25,8 @@ class PodsInit {
         if ( !empty( $this->version ) ) {
             // Init Pods Form
             pods_form();
+
+            self::$components = pods_components();
 
             add_action( 'init', array( $this, 'init' ), 11 );
 
@@ -196,9 +202,7 @@ class PodsInit {
     }
 
     function admin_init () {
-        global $pods_admin;
-
-        $pods_admin = pods_admin();
+        self::$admin = pods_admin();
     }
 
     function setup_content_types () {

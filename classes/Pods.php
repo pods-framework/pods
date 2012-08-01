@@ -439,7 +439,7 @@ class Pods {
     public function fetch ( $id = null ) {
         $this->do_hook( 'fetch', $id );
 
-        $this->row =& $this->data->fetch( $id );
+        $this->data->fetch( $id );
 
         return $this->row;
     }
@@ -449,12 +449,10 @@ class Pods {
      *
      * @since 2.0.0
      */
-    public function reset ( $row = 0 ) {
-        $this->do_hook( 'reset' );
+    public function reset ( $row = null ) {
+        $this->do_hook( 'reset', $row );
 
-        $row = pods_absint( $row );
-
-        $this->row =& $this->data->fetch( $row );
+        $this->data->reset( $row );
 
         return $this->row;
     }

@@ -858,6 +858,20 @@ class PodsData {
         return $this->row;
     }
 
+    public function reset ( $row = null ) {
+        $row = pods_absint( $row );
+
+        if ( empty( $row ) )
+            $this->row_number = 0;
+
+        $this->row = false;
+
+        if ( isset( $this->data[ $this->row_number ] ) )
+            $this->row = get_object_vars( $this->data[ $this->row_number ] );
+
+        return $this->row;
+    }
+
     public static function query ($sql, $error = 'Database Error', $results_error = null, $no_results_error = null) {
         global $wpdb;
 

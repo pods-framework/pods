@@ -8,7 +8,7 @@
 
     $counter = 1;
     $primary_name = $name;
-    $primary_id = $attributes[ 'id' ];
+    $primary_id = 'pods-form-ui-' . PodsForm::clean( $name );
 
     foreach ( $options[ 'data' ] as $val => $label ) {
         if ( is_array( $label ) ) {

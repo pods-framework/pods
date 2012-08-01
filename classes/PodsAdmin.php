@@ -222,10 +222,6 @@ class PodsAdmin {
                     'function' => array( $this, 'admin_setup' ),
                     'access' => 'pods'
                 ),
-                /*'pods-ui' => array('label' => 'Admin UI',
-'function' => array($this, 'admin_ui'),
-'access' => array('admin_setup',
-                'admin_ui')),*/
                 'pods-advanced' => array(
                     'label' => 'Advanced',
                     'function' => array( $this, 'admin_advanced' ),
@@ -241,7 +237,7 @@ class PodsAdmin {
                     'access' => 'pods_settings'
                 ),
                 'pods-packages' => array(
-                    'label' => 'Packages',
+                    'label' => 'Import / Export',
                     'function' => array( $this, 'admin_packages' ),
                     'access' => 'pods_packages'
                 ),

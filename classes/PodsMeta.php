@@ -258,7 +258,10 @@ class PodsMeta {
     public function meta_post_add ( $post ) {
         $groups = $this->groups_get( 'post_type', $post->post_type );
 
-        foreach ( $groups as $k => $group ) {
+        foreach ( $groups as $group ) {
+            if ( empty( $group[ 'fields' ] ) )
+                continue;
+
             if ( empty( $group[ 'label' ] ) )
                 $group[ 'label' ] = get_post_type_object( $post->post_type )->labels->label;
 
@@ -307,14 +310,6 @@ class PodsMeta {
     }
 
     public function save_post ( $post_id, $post ) {
-        $recursion_fix = false;
-
-        if ( has_action( 'save_post', array( $this, 'save_post' ), 10, 2 ) ) {
-            remove_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
-
-            $recursion_fix = true;
-        }
-
         $blacklisted_types = array(
             'revision',
             'auto-draft',
@@ -330,6 +325,14 @@ class PodsMeta {
         // @todo Figure out how to hook into autosave for saving meta
         if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || in_array( $post->post_type, $blacklisted_types ) )
             return $post_id;
+
+        $recursion_fix = false;
+
+        if ( has_action( 'save_post', array( $this, 'save_post' ), 10, 2 ) ) {
+            remove_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
+
+            $recursion_fix = true;
+        }
 
         $groups = $this->groups_get( 'post_type', $post->post_type );
 
@@ -379,6 +382,9 @@ class PodsMeta {
         $pod = false;
 
         foreach ( $groups as $group ) {
+            if ( empty( $group[ 'fields' ] ) )
+                continue;
+
             if ( empty( $pod ) )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 
@@ -418,6 +424,9 @@ class PodsMeta {
         $pod = false;
 
         foreach ( $groups as $group ) {
+            if ( empty( $group[ 'fields' ] ) )
+                continue;
+
             if ( empty( $pod ) )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 
@@ -447,6 +456,9 @@ class PodsMeta {
         $pod = false;
 
         foreach ( $groups as $group ) {
+            if ( empty( $group[ 'fields' ] ) )
+                continue;
+
             if ( empty( $pod ) )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 
@@ -502,6 +514,9 @@ class PodsMeta {
         $pod = false;
 
         foreach ( $groups as $group ) {
+            if ( empty( $group[ 'fields' ] ) )
+                continue;
+
             if ( empty( $pod ) )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 
@@ -530,6 +545,9 @@ class PodsMeta {
         $pod = false;
 
         foreach ( $groups as $group ) {
+            if ( empty( $group[ 'fields' ] ) )
+                continue;
+
             if ( empty( $pod ) )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 ?>
@@ -575,6 +593,9 @@ class PodsMeta {
         $pod = false;
 
         foreach ( $groups as $group ) {
+            if ( empty( $group[ 'fields' ] ) )
+                continue;
+
             if ( empty( $pod ) )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 
@@ -597,6 +618,9 @@ class PodsMeta {
         $pod = false;
 
         foreach ( $groups as $group ) {
+            if ( empty( $group[ 'fields' ] ) )
+                continue;
+
             if ( empty( $pod ) )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 
@@ -627,6 +651,9 @@ class PodsMeta {
         $pod = false;
 
         foreach ( $groups as $group ) {
+            if ( empty( $group[ 'fields' ] ) )
+                continue;
+
             if ( empty( $pod ) )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 
@@ -665,12 +692,15 @@ class PodsMeta {
         $pod = false;
 
         foreach ( $groups as $group ) {
+            if ( empty( $group[ 'fields' ] ) )
+                continue;
+
             if ( empty( $pod ) )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 ?>
     <table class="form-table pods-metabox">
         <?php
-            foreach ( $pod[ 'fields' ] as $field ) {
+            foreach ( $group[ 'fields' ] as $field ) {
                 $value = '';
 
                 if ( !empty( $pod ) )
@@ -704,6 +734,9 @@ class PodsMeta {
         $pod = false;
 
         foreach ( $groups as $group ) {
+            if ( empty( $group[ 'fields' ] ) )
+                continue;
+
             if ( empty( $pod ) )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 ?>
@@ -738,6 +771,9 @@ class PodsMeta {
         $pod = false;
 
         foreach ( $groups as $group ) {
+            if ( empty( $group[ 'fields' ] ) )
+                continue;
+
             if ( empty( $pod ) )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 

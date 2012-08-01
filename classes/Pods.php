@@ -389,7 +389,7 @@ class Pods {
             'where' => $where,
             'groupby' => null,
             'having' => null,
-            'orderby' => "t.`{$this->field_id}` DESC",
+            'orderby' => "`t`.`{$this->data->field_id}` DESC",
             'limit' => (int) $limit,
             'page' => (int) $this->page,
             'search' => (boolean) $this->search,

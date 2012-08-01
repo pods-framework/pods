@@ -46,34 +46,33 @@
             'dateFormat' => $date_format[ $options[ 'date_format' ] ]
         );
         $format = $date_format[ $options[ 'date_format' ] ] . ' ' . $time_format[ $options[ 'date_time_format' ] ];
+        $html5_format = 'Y-m-d\TH:i:s';
     }
     elseif ( 'date' == $type ) {
         $method = 'datepicker';
         $args = array(
             'dateFormat' => $date_format[ $options[ 'date_format' ] ]
         );
-        $format = $date_format[ $options[ 'date_format' ] ] . ' H:i:s';
-        $value = $value . ' ' . date_i18n( 'H:i:s' );
+        $format = $date_format[ $options[ 'date_format' ] ];
+        $html5_format = 'Y-m-d';
     }
     elseif ( 'time' == $type ) {
         $method = 'timepicker';
         $args = array(
             'timeFormat' => $time_format[ $options[ 'date_time_format' ] ]
         );
-        $format = 'Y-m-d ' . $time_format[ $options[ 'date_time_format' ] ];
-        $value = date_i18n( 'Y-m-d' ) . ' ' . $value;
+        $format = $time_format[ $options[ 'date_time_format' ] ];
+        $html5_format = 'H:i:s';
     }
-
-    $format = $date_format[ $options[ 'date_format' ] ] . ' ' . $time_format[ $options[ 'date_time_format' ] ];
 
     $date = DateTime::createFromFormat( $format, (string) $value );
 
     if ( false !== $date )
-        $value = $date->format( 'Y-m-d\TH:i:s' );
+        $value = $date->format( $html5_format );
     elseif ( !empty( $value ) )
-        $value = date_i18n( 'Y-m-d\TH:i:s', strtotime( (string) $value ) );
+        $value = date_i18n( $html5_format, strtotime( (string) $value ) );
     else
-        $value = date_i18n( 'Y-m-d\TH:i:s' );
+        $value = date_i18n( $html5_format );
 
     $args = apply_filters( 'pods_form_ui_field_date_args', $args, $type, $options, $attributes, $name, PodsForm::$field_type );
 

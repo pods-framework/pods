@@ -84,6 +84,8 @@ class PodsAPI {
      * @param bool $strict Whether to delete previously saved meta not in $post_meta
      */
     public function save_post( $post_data, $post_meta = null, $strict = false ) {
+        pods_no_conflict_on( 'post' );
+
         if ( !is_array( $post_data ) || empty( $post_data ) )
             return pods_error( __( 'Post data is required but is either invalid or empty', 'pods' ), $this );
 
@@ -95,10 +97,15 @@ class PodsAPI {
         else
             wp_update_post( $post_data );
 
-        if ( is_wp_error( $post_data[ 'ID' ] ) )
+        if ( is_wp_error( $post_data[ 'ID' ] ) ) {
+            pods_no_conflict_off( 'post' );
+
             return pods_error( $post_data[ 'ID' ]->get_error_message(), $this );
+        }
 
         $this->save_post_meta( $post_data[ 'ID' ], $post_meta, $strict );
+
+        pods_no_conflict_off( 'post' );
 
         return $post_data[ 'ID' ];
     }
@@ -111,6 +118,8 @@ class PodsAPI {
      * @param bool $strict Whether to delete previously saved meta not in $post_meta
      */
     public function save_post_meta ( $id, $post_meta = null, $strict = false ) {
+        pods_no_conflict_on( 'post' );
+
         if ( !is_array( $post_meta ) )
             $post_meta = array();
 
@@ -147,6 +156,7 @@ class PodsAPI {
                     delete_post_meta( $id, $meta_key, $meta_value );
             }
         }
+        pods_no_conflict_off( 'post' );
 
         return $id;
     }
@@ -162,6 +172,8 @@ class PodsAPI {
         if ( !is_array( $user_data ) || empty( $user_data ) )
             return pods_error( __( 'User data is required but is either invalid or empty', 'pods' ), $this );
 
+        pods_no_conflict_on( 'user' );
+
         if ( !is_array( $user_meta ) )
             $user_meta = array();
 
@@ -170,10 +182,15 @@ class PodsAPI {
         else
             wp_update_user( $user_data );
 
-        if ( is_wp_error( $user_data[ 'ID' ] ) )
+        if ( is_wp_error( $user_data[ 'ID' ] ) ) {
+            pods_no_conflict_off( 'user' );
+
             return pods_error( $user_data[ 'ID' ]->get_error_message(), $this );
+        }
 
         $this->save_user_meta( $user_data[ 'ID' ], $user_meta, $strict );
+
+        pods_no_conflict_off( 'user' );
 
         return $user_data[ 'ID' ];
     }
@@ -186,6 +203,8 @@ class PodsAPI {
      * @param bool $strict Whether to delete previously saved meta not in $user_meta
      */
     public function save_user_meta ( $id, $user_meta = null, $strict = false ) {
+        pods_no_conflict_on( 'user' );
+
         if ( !is_array( $user_meta ) )
             $user_meta = array();
 
@@ -211,6 +230,8 @@ class PodsAPI {
             }
         }
 
+        pods_no_conflict_off( 'user' );
+
         return $id;
     }
 
@@ -225,6 +246,8 @@ class PodsAPI {
         if ( !is_array( $comment_data ) || empty( $comment_data ) )
             return pods_error( __( 'Comment data is required but is either invalid or empty', 'pods' ), $this );
 
+        pods_no_conflict_on( 'comment' );
+
         if ( !is_array( $comment_meta ) )
             $comment_meta = array();
 
@@ -233,10 +256,15 @@ class PodsAPI {
         else
             wp_update_comment( $comment_data );
 
-        if ( is_wp_error( $comment_data[ 'comment_ID' ] ) )
+        if ( is_wp_error( $comment_data[ 'comment_ID' ] ) ) {
+            pods_no_conflict_off( 'comment' );
+
             return pods_error( $comment_data[ 'comment_ID' ]->get_error_message(), $this );
+        }
 
         $this->save_comment_meta( $comment_data[ 'comment_ID' ], $comment_meta, $strict );
+
+        pods_no_conflict_off( 'comment' );
 
         return $comment_data[ 'comment_ID' ];
     }
@@ -249,6 +277,8 @@ class PodsAPI {
      * @param bool $strict Whether to delete previously saved meta not in $comment_meta
      */
     public function save_comment_meta ( $id, $comment_meta = null, $strict = false ) {
+        pods_no_conflict_on( 'comment' );
+
         if ( !is_array( $comment_meta ) )
             $comment_meta = array();
 
@@ -274,6 +304,8 @@ class PodsAPI {
             }
         }
 
+        pods_no_conflict_off( 'comment' );
+
         return $id;
     }
 
@@ -286,6 +318,8 @@ class PodsAPI {
      * @param array $term_data All term data to be saved (using wp_insert_term / wp_update_term)
      */
     public function save_term ( $term_ID, $term, $taxonomy, $term_data ) {
+        pods_no_conflict_on( 'taxonomy' );
+
         if( !is_array( $term_data ) )
             $term_data = array();
 
@@ -295,16 +329,24 @@ class PodsAPI {
             if ( 0 < strlen( $term ) )
                 $term_data[ 'term' ] = $term;
 
-            if ( empty( $term_data ) )
+            if ( empty( $term_data ) ) {
+                pods_no_conflict_off( 'taxonomy' );
+
                 return pods_error( __( 'Taxonomy term data is required but is either invalid or empty', 'pods' ), $this );
+            }
 
             wp_update_term( $term_ID, $taxonomy, $term_data );
         }
 
-        if ( is_wp_error( $term_ID ) )
+        if ( is_wp_error( $term_ID ) ) {
+            pods_no_conflict_off( 'taxonomy' );
+
             return pods_error( $term_ID->get_error_message(), $this );
+        }
         elseif ( is_array( $term_ID ) )
             $term_ID = $term_ID[ 'term_id' ];
+
+        pods_no_conflict_off( 'taxonomy' );
 
         return $term_ID;
     }

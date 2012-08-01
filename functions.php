@@ -1276,10 +1276,10 @@ function pods_is_plugin_active ( $plugin ) {
  */
 function pods_no_conflict_on ( $object_type = 'post' ) {
     if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
-        return;
+        return true;
 
     if ( !is_object( PodsInit::$meta ) )
-        return;
+        return false;
 
     $no_conflict = array();
 
@@ -1287,7 +1287,10 @@ function pods_no_conflict_on ( $object_type = 'post' ) {
     // Actions = Usually insert/update/save/delete object functions
     if ( 'post' == $object_type ) {
         $no_conflict[ 'filter' ] = array(
-
+            array( 'get_post_metadata', array( PodsInit::$meta, 'get_post_meta' ), 10, 4 ),
+            array( 'add_post_metadata', array( PodsInit::$meta, 'add_post_meta' ), 10, 5 ),
+            array( 'update_post_metadata', array( PodsInit::$meta, 'update_post_meta' ), 10, 5 ),
+            array( 'delete_post_metadata', array( PodsInit::$meta, 'delete_post_meta' ), 10, 5 )
         );
 
         $no_conflict[ 'action' ] = array(
@@ -1315,7 +1318,10 @@ function pods_no_conflict_on ( $object_type = 'post' ) {
     }
     elseif ( 'user' == $object_type ) {
         $no_conflict[ 'filter' ] = array(
-
+            array( 'get_user_metadata', array( PodsInit::$meta, 'get_user_meta' ), 10, 4 ),
+            array( 'add_user_metadata', array( PodsInit::$meta, 'add_user_meta' ), 10, 5 ),
+            array( 'update_user_metadata', array( PodsInit::$meta, 'update_user_meta' ), 10, 5 ),
+            array( 'delete_user_metadata', array( PodsInit::$meta, 'delete_user_meta' ), 10, 5 )
         );
 
         $no_conflict[ 'action' ] = array(
@@ -1325,7 +1331,10 @@ function pods_no_conflict_on ( $object_type = 'post' ) {
     }
     elseif ( 'comment' == $object_type ) {
         $no_conflict[ 'filter' ] = array(
-
+            array( 'get_comment_metadata', array( PodsInit::$meta, 'get_comment_meta' ), 10, 4 ),
+            array( 'add_comment_metadata', array( PodsInit::$meta, 'add_comment_meta' ), 10, 5 ),
+            array( 'update_comment_metadata', array( PodsInit::$meta, 'update_comment_meta' ), 10, 5 ),
+            array( 'delete_comment_metadata', array( PodsInit::$meta, 'delete_comment_meta' ), 10, 5 )
         );
 
         $no_conflict[ 'action' ] = array(
@@ -1334,14 +1343,25 @@ function pods_no_conflict_on ( $object_type = 'post' ) {
         );
     }
 
+    $conflicted = false;
+
     foreach ( $no_conflict as $action_filter => $conflicts ) {
         foreach ( $conflicts as $args ) {
-            if ( call_user_func_array( 'has_' . $action_filter, $args ) )
+            if ( call_user_func_array( 'has_' . $action_filter, $args ) ) {
                 call_user_func_array( 'remove_' . $action_filter, $args );
+
+                $conflicted = true;
+            }
         }
     }
 
-    PodsInit::$no_conflict[ $object_type ] = $no_conflict;
+    if ( $conflicted ) {
+        PodsInit::$no_conflict[ $object_type ] = $no_conflict;
+
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -1351,17 +1371,30 @@ function pods_no_conflict_on ( $object_type = 'post' ) {
  */
 function pods_no_conflict_off ( $object_type = 'post' ) {
     if ( empty( PodsInit::$no_conflict ) || !isset( PodsInit::$no_conflict[ $object_type ] ) || empty( PodsInit::$no_conflict[ $object_type ] ) )
-        return;
+        return false;
 
     if ( !is_object( PodsInit::$meta ) )
-        return;
+        return false;
 
     $no_conflict = PodsInit::$no_conflict[ $object_type ];
 
+    $conflicted = false;
+
     foreach ( $no_conflict as $action_filter => $conflicts ) {
         foreach ( $conflicts as $args ) {
-            if ( !call_user_func_array( 'has_' . $action_filter, $args ) )
+            if ( !call_user_func_array( 'has_' . $action_filter, $args ) ) {
                 call_user_func_array( 'add_' . $action_filter, $args );
+
+                $conflicted = true;
+            }
         }
     }
+
+    if ( $conflicted ) {
+        unset( PodsInit::$no_conflict[ $object_type ] );
+
+        return true;
+    }
+
+    return false;
 }

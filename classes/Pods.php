@@ -526,7 +526,7 @@ class Pods {
             $data = array( $data => $value );
 
         if ( null === $id )
-            $id = $this->id;
+            $id = $this->id();
 
         $data = (array) $this->do_hook( 'save', $data, $id );
 
@@ -545,7 +545,7 @@ class Pods {
      */
     public function delete ( $id = null ) {
         if ( null === $id )
-            $id = $this->id;
+            $id = $this->id();
 
         $id = (int) $this->do_hook( 'delete', $id );
 
@@ -564,7 +564,7 @@ class Pods {
      */
     public function duplicate ( $id = null ) {
         if ( null === $id )
-            $id = $this->id;
+            $id = $this->id();
 
         $id = (int) $this->do_hook( 'duplicate', $id );
 
@@ -583,7 +583,7 @@ class Pods {
      */
     public function export ( $fields = null, $id = null ) {
         if ( null === $id )
-            $id = $this->id;
+            $id = $this->id();
 
         $fields = (array) $this->do_hook( 'export', $fields, $id );
 

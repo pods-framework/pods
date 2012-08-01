@@ -1281,6 +1281,8 @@ function pods_no_conflict_on ( $object_type = 'post' ) {
 
     $no_conflict = array();
 
+    // Filters = Usually get/update/delete meta functions
+    // Actions = Usually insert/update/save/delete object functions
     if ( 'post' == $object_type ) {
         $no_conflict[ 'filter' ] = array(
 
@@ -1300,13 +1302,23 @@ function pods_no_conflict_on ( $object_type = 'post' ) {
             array( 'create_term', array( PodsInit::$meta, 'save_taxonomy' ), 10, 3 )
         );
     }
+    elseif ( 'media' == $object_type ) {
+        $no_conflict[ 'filter' ] = array(
+            array( 'wp_update_attachment_metadata', array( PodsInit::$meta, 'save_media' ), 10, 2 )
+        );
+
+        $no_conflict[ 'action' ] = array(
+
+        );
+    }
     elseif ( 'user' == $object_type ) {
         $no_conflict[ 'filter' ] = array(
 
         );
 
         $no_conflict[ 'action' ] = array(
-
+            array( 'personal_options_update', array( PodsInit::$meta, 'save_user' ) ),
+            array( 'edit_user_profile_update', array( PodsInit::$meta, 'save_user' ) )
         );
     }
     elseif ( 'comment' == $object_type ) {
@@ -1315,7 +1327,8 @@ function pods_no_conflict_on ( $object_type = 'post' ) {
         );
 
         $no_conflict[ 'action' ] = array(
-
+            array( 'wp_insert_comment', array( PodsInit::$meta, 'save_comment' ) ),
+            array( 'edit_comment', array( PodsInit::$meta, 'save_comment' ) )
         );
     }
 

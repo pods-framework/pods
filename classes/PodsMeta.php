@@ -326,13 +326,7 @@ class PodsMeta {
         if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || in_array( $post->post_type, $blacklisted_types ) )
             return $post_id;
 
-        $recursion_fix = false;
-
-        if ( has_action( 'save_post', array( $this, 'save_post' ), 10, 2 ) ) {
-            remove_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
-
-            $recursion_fix = true;
-        }
+        pods_no_conflict_on( 'post' );
 
         $groups = $this->groups_get( 'post_type', $post->post_type );
 
@@ -360,8 +354,7 @@ class PodsMeta {
         if ( !empty( $pod ) )
             $pod->save( $data );
 
-        if ( $recursion_fix )
-            add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
+        pods_no_conflict_off( 'post' );
 
         return $post_id;
     }

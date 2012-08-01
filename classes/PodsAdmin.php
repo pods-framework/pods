@@ -134,8 +134,6 @@ class PodsAdmin {
     }
 
     public function admin_menu () {
-        global $pods_components;
-
         $submenu = array();
 
         $results = $this->api->load_pods( array( //'options' => array('disable_manage' => 0),
@@ -286,7 +284,7 @@ class PodsAdmin {
             add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'read', $page, $menu_item[ 'function' ] );
 
             if ( 'pods-components' == $page && defined( 'PODS_DEVELOPER' ) )
-                $pods_components->menu( $parent );
+                PodsInit::$components->menu( $parent );
         }
     }
 
@@ -402,9 +400,7 @@ class PodsAdmin {
     }
 
     public function admin_components () {
-        global $pods_components;
-
-        $components = $pods_components->components;
+        $components = PodsInit::$components->components;
 
         foreach ( $components as $component => &$component_data ) {
             $component_data = array(
@@ -416,7 +412,7 @@ class PodsAdmin {
                 'toggle' => 0
             );
 
-            if ( isset( $pods_components->settings[ 'components' ][ $component_data[ 'id' ] ] ) && 0 != $pods_components->settings[ 'components' ][ $component_data[ 'id' ] ] )
+            if ( isset( PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] ) && 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] )
                 $component_data[ 'toggle' ] = 1;
         }
 
@@ -440,20 +436,16 @@ class PodsAdmin {
     }
 
     public function admin_components_handler () {
-        global $pods_components;
-
         $component = str_replace( 'pods-component-', '', $_GET[ 'page' ] );
 
-        $pods_components->admin( $component );
+        PodsInit::$components->admin( $component );
     }
 
     public function admin_components_toggle ( PodsUI $ui ) {
-        global $pods_components;
-
         $component = $_GET[ 'id' ];
 
-        if ( !empty( $pods_components->components[ $component ][ 'PluginDependency' ] ) ) {
-            $dependency = explode( '|', $pods_components->components[ $component ][ 'PluginDependency' ] );
+        if ( !empty( PodsInit::$components->components[ $component ][ 'PluginDependency' ] ) ) {
+            $dependency = explode( '|', PodsInit::$components->components[ $component ][ 'PluginDependency' ] );
 
             if ( !pods_is_plugin_active( $dependency[ 1 ] ) ) {
                 $website = 'http://wordpress.org/extend/plugins/' . dirname( $dependency[ 1 ] ) . '/';
@@ -467,14 +459,14 @@ class PodsAdmin {
             }
         }
 
-        $toggle = $pods_components->toggle( $component );
+        $toggle = PodsInit::$components->toggle( $component );
 
         if ( $toggle )
-            $ui->message( $pods_components->components[ $component ][ 'Name' ] . ' ' . __( 'Component enabled', 'pods' ) );
+            $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component enabled', 'pods' ) );
         else
-            $ui->message( $pods_components->components[ $component ][ 'Name' ] . ' ' . __( 'Component disabled', 'pods' ) );
+            $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component disabled', 'pods' ) );
 
-        $components = $pods_components->components;
+        $components = PodsInit::$components->components;
 
         foreach ( $components as $component => &$component_data ) {
             $component_data = array(
@@ -483,7 +475,7 @@ class PodsAdmin {
                 'description' => make_clickable( $component_data[ 'Description' ] ),
                 'version' => $component_data[ 'Version' ],
                 'author' => $component_data[ 'Author' ],
-                'toggle' => ( 0 != $pods_components->settings[ 'components' ][ $component_data[ 'ID' ] ] ? 1 : 0 )
+                'toggle' => ( 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] ? 1 : 0 )
             );
         }
 

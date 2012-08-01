@@ -27,9 +27,10 @@
         $attributes[ 'value' ] = $val;
 
         if ( 1 < count( $options[ 'data' ] ) && false === strpos( $name, '[]' ) )
-            $name .= '[]';
+            $name .= '[' . ( $counter - 1 ) . ']';
 
         $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+
         if ( 1 < count( $options[ 'data' ] ) )
             $attributes[ 'id' ] .= $counter;
 

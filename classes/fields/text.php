@@ -176,28 +176,30 @@ class PodsField_Text extends PodsField {
      * @param string $name
      * @param array $options
      * @param array $fields
-     * @param string $pod
+     * @param array $pod
      * @param int $id
      *
      * @since 2.0.0
      */
-    public function display ( &$value, $name, $options, $fields, &$pod, $id ) {
+    public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         if ( 1 == $options[ 'text_allow_shortcode' ] )
             $value = do_shortcode( $value );
+
+        return $value;
     }
 
     /**
      * Customize output of the form field
      *
      * @param string $name
-     * @param string $value
+     * @param mixed $value
      * @param array $options
-     * @param string $pod
+     * @param array $pod
      * @param int $id
      *
      * @since 2.0.0
      */
-    public function input ( $name, $value = null, $options = null, &$pod = null, $id = null ) {
+    public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
 
         if ( is_array( $value ) )
@@ -220,46 +222,70 @@ class PodsField_Text extends PodsField {
     }
 
     /**
-     * Validate a value before it's saved
+     * Build regex necessary for JS validation
      *
-     * @param string $value
+     * @param mixed $value
      * @param string $name
      * @param array $options
-     * @param array $data
-     * @param object $api
      * @param string $pod
      * @param int $id
      *
      * @since 2.0.0
      */
-    public function validate ( &$value, $name, $options ) {
+    public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+        return false;
+    }
+
+    /**
+     * Validate a value before it's saved
+     *
+     * @param mixed $value
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param int $id
+     *
+     * @since 2.0.0
+     */
+    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         $errors = array();
 
-        $check = $value; // $check will be passed by reference, but we want $value to stay the same
-        $this->pre_save( $check, $name, $options );
-        if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
-            if ( 1 == $options[ 'required' ] )
-                $errors[] = __( 'This field is required.', 'pods' );
-            else {
-                // @todo Ask for a specific format in error message
-                $errors[] = __( 'Invalid value provided for this field.', 'pods' );
+        $check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
+
+        if ( is_array( $check ) )
+            $errors = $check;
+        else {
+            if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
+                if ( 1 == $options[ 'required' ] )
+                    $errors[] = __( 'This field is required.', 'pods' );
+                else {
+                    // @todo Ask for a specific format in error message
+                    $errors[] = __( 'Invalid value provided for this field.', 'pods' );
+                }
             }
         }
 
-        if ( empty( $errors ) )
-            return true;
+        if ( !empty( $errors ) )
+            return $errors;
+
+        return true;
     }
 
     /**
      * Change the value or perform actions after validation but before saving to the DB
      *
-     * @param string $value
+     * @param mixed $value
+     * @param int $id
      * @param string $name
      * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param object $params
      *
      * @since 2.0.0
      */
-    public function pre_save ( &$value, $name, $options ) {
+    public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $options = (array) $options;
 
         if ( 'plain' == $options[ 'text_format_type' ] ) {
@@ -280,7 +306,9 @@ class PodsField_Text extends PodsField {
         elseif ( 'website' == $options[ 'text_format_type' ] && 0 < strlen( $options[ 'text_format_website' ] ) ) {
             if ( false === strpos( $value, '://' ) )
                 $value = 'http://' . $value;
+
             $url = @parse_url( $value );
+
             if ( empty( $url ) || count( $url ) < 2 )
                 $value = '';
             else {
@@ -291,18 +319,21 @@ class PodsField_Text extends PodsField {
                     'query' => '',
                     'fragment' => ''
                 );
+
                 $url = array_merge( $defaults, $url );
-                if ( 'normal' == $options[ 'text_format_website' ] ) {
+
+                if ( 'normal' == $options[ 'text_format_website' ] )
                     $value = http_build_url( $url );
-                }
                 elseif ( 'no-www' == $options[ 'text_format_website' ] ) {
                     if ( 0 === strpos( $url[ 'host' ], 'www.' ) )
                         $url[ 'host' ] = substr( $url[ 'host' ], 4 );
+
                     $value = http_build_url( $url );
                 }
                 elseif ( 'force-www' == $options[ 'text_format_website' ] ) {
                     if ( false !== strpos( $url[ 'host' ], '.' ) && false === strpos( $url[ 'host' ], '.', 1 ) )
                         $url[ 'host' ] = 'www.' . $url[ 'host' ];
+
                     $value = http_build_url( $url );
                 }
                 elseif ( 'no-http' == $options[ 'text_format_website' ] ) {
@@ -312,12 +343,14 @@ class PodsField_Text extends PodsField {
                 elseif ( 'no-http-no-www' == $options[ 'text_format_website' ] ) {
                     if ( 0 === strpos( $url[ 'host' ], 'www.' ) )
                         $url[ 'host' ] = substr( $url[ 'host' ], 4 );
+
                     $value = http_build_url( $url );
                     $value = str_replace( $url[ 'scheme' ] . '://', '', $value );
                 }
                 elseif ( 'no-http-force-www' == $options[ 'text_format_website' ] ) {
                     if ( false !== strpos( $url[ 'host' ], '.' ) && false === strpos( $url[ 'host' ], '.', 1 ) )
                         $url[ 'host' ] = 'www.' . $url[ 'host' ];
+
                     $value = http_build_url( $url );
                     $value = str_replace( $url[ 'scheme' ] . '://', '', $value );
                 }
@@ -330,6 +363,7 @@ class PodsField_Text extends PodsField {
             else {
                 // Clean input
                 $number = preg_replace( '/([^0-9ext])/g', ' ', $value );
+
                 $number = str_replace(
                     array( '-', '.', 'ext', 'x', 't', 'e', '(', ')' ),
                     array( '', '', '|', '|', '', '', '', '', ),
@@ -347,6 +381,7 @@ class PodsField_Text extends PodsField {
 
                 // Build number array
                 $numbers = str_split( $number, 3 );
+
                 if ( isset( $numbers[ 3 ] ) ) {
                     $numbers[ 2 ] .= $numbers[ 3 ];
                     $numbers = array( $numbers[ 0 ], $numbers[ 1 ], $numbers[ 2 ] );
@@ -355,7 +390,7 @@ class PodsField_Text extends PodsField {
                     $numbers = array( $numbers[ 0 ], $numbers[ 1 ] );
 
                 // Format number
-                elseif ( '(999) 999-9999 x999' == $options[ 'text_format_phone' ] ) {
+                if ( '(999) 999-9999 x999' == $options[ 'text_format_phone' ] ) {
                     if ( 2 == count( $numbers ) )
                         $value = implode( '-', $numbers );
                     else
@@ -370,23 +405,69 @@ class PodsField_Text extends PodsField {
                 if ( 1 == $options[ 'text_enable_phone_extension' ] && false !== $extension )
                     $value .= ' x' . $extension;
             }
-
         }
+
+        return $value;
+    }
+
+    /**
+     * Perform actions after saving to the DB
+     *
+     * @param mixed $value
+     * @param int $id
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param object $params
+     *
+     * @since 2.0.0
+     */
+    public function post_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
+    }
+
+    /**
+     * Perform actions before deleting from the DB
+     *
+     * @param string $name
+     * @param string $pod
+     * @param int $id
+     * @param object $api
+     *
+     * @since 2.0.0
+     */
+    public function pre_delete ( $id = null, $name = null, $options = null, $pod = null ) {
+
+    }
+
+    /**
+     * Perform actions after deleting from the DB
+     *
+     * @param int $id
+     * @param string $name
+     * @param array $options
+     * @param array $pod
+     *
+     * @since 2.0.0
+     */
+    public function post_delete ( $id = null, $name = null, $options = null, $pod = null ) {
+
     }
 
     /**
      * Customize the Pods UI manage table column output
      *
+     * @param int $id
      * @param mixed $value
      * @param string $name
      * @param array $options
      * @param array $fields
-     * @param string $pod
-     * @param int $id
+     * @param array $pod
      *
      * @since 2.0.0
      */
-    public function ui ( &$value, $name, $options, $fields, &$pod, $id ) {
+    public function ui ( $id, &$value, $name = null, $options = null, $fields = null, $pod = null ) {
         if ( 'website' == $options[ 'text_format_type' ] && 0 < strlen( $options[ 'text_format_website' ] ) )
             $value = make_clickable( $value );
     }

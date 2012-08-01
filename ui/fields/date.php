@@ -1,20 +1,4 @@
 <?php
-    wp_enqueue_script('jquery-ui-datepicker');
-    wp_enqueue_script('jquery-ui-timepicker');
-    wp_enqueue_style('jquery-ui');
-    wp_enqueue_style('jquery-ui-timepicker');
-
-    $attributes = array();
-    $type = 'date';
-
-    if ( isset( $options[ 'date_format_type' ] ) )
-        $type = $options[ 'date_format_type' ];
-
-    $attributes[ 'type' ] = $type;
-    $attributes[ 'value' ] = $value;
-
-    $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
-
     $date_format = array(
         'mdy' => 'mm/dd/yy',
         'dmy' => 'dd/mm/yy',
@@ -32,63 +16,109 @@
         'h_mm' => 'h:mm',
         'hh_mm' => 'hh:mm'
     );
+
+    wp_enqueue_script('jquery-ui-datepicker');
+    wp_enqueue_script('jquery-ui-timepicker');
+    wp_enqueue_style('jquery-ui');
+    wp_enqueue_style('jquery-ui-timepicker');
+
+    $attributes = array();
+
+    $type = 'date';
+
+    if ( isset( $options[ 'date_format_type' ] ) )
+        $type = $options[ 'date_format_type' ];
+
+    $attributes[ 'type' ] = $type;
+
+    $args = array(
+        'timeFormat' => $time_format[ $options[ 'date_time_format' ] ],
+        'dateFormat' => $date_format[ $options[ 'date_format' ] ]
+    );
+
+    $format = PodsForm::field_method( 'date', 'format', $options );
+
+    if ( 'datetime' == $type ) {
+        $method = 'datetimepicker';
+        $args = array(
+            'timeFormat' => $time_format[ $options[ 'date_time_format' ] ],
+            'dateFormat' => $date_format[ $options[ 'date_format' ] ]
+        );
+        $html5_format = 'Y-m-d\TH:i:s';
+    }
+    elseif ( 'date' == $type ) {
+        $method = 'datepicker';
+        $args = array(
+            'dateFormat' => $date_format[ $options[ 'date_format' ] ]
+        );
+        $html5_format = 'Y-m-d';
+    }
+    elseif ( 'time' == $type ) {
+        $method = 'timepicker';
+        $args = array(
+            'timeFormat' => $time_format[ $options[ 'date_time_format' ] ]
+        );
+        $html5_format = '\TH:i:s';
+    }
+
+    $date = DateTime::createFromFormat( $format, (string) $value );
+    $date_default = DateTime::createFromFormat( 'Y-m-d H:i:s', (string) $value );
+
+    if ( false !== $date ) {
+        $formatted_date = $date->format( $format );
+        $value = $date->format( $html5_format );
+    }
+    elseif ( false !== $date_default ) {
+        $formatted_date = $date_default->format( $format );
+        $value = $date_default->format( $html5_format );
+    }
+    elseif ( !empty( $value ) ) {
+        $formatted_date = date_i18n( $format, strtotime( (string) $value ) );
+        $value = date_i18n( $html5_format, strtotime( (string) $value ) );
+    }
+    else {
+        $formatted_date = date_i18n( $format );
+        $value = date_i18n( $html5_format );
+    }
+
+    $args = apply_filters( 'pods_form_ui_field_date_args', $args, $type, $options, $attributes, $name, PodsForm::$field_type );
+
+    $attributes[ 'value' ] = $value;
+
+    $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
 ?>
 <input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
 <script>
     jQuery( function () {
-        <?php
-            $args = array(
-                'timeFormat' => $time_format[ $options[ 'date_time_format' ] ],
-                'dateFormat' => $date_format[ $options[ 'date_format' ] ]
-            );
-            if ( 'datetime' == $type ) {
-                $method = 'datetimepicker';
-                $args = array(
-                    'timeFormat' => $time_format[ $options[ 'date_time_format' ] ],
-                    'dateFormat' => $date_format[ $options[ 'date_format' ] ]
-                );
-            }
-            elseif ( 'date' == $type ) {
-                $method = 'datepicker';
-                $args = array(
-                    'dateFormat' => $date_format[ $options[ 'date_format' ] ]
-                );
-            }
-            elseif ( 'time' == $type ) {
-                $method = 'timepicker';
-                $args = array(
-                    'timeFormat' => $time_format[ $options[ 'date_time_format' ] ]
-                );
-            }
+        var <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_args = <?php echo json_encode($args); ?>;
 
-            $args = apply_filters( 'pods_form_ui_field_date_args', $args, $type, $options, $attributes, $name, PodsForm::$field_type );
-        ?>
-        var args = <?php echo json_encode($args); ?>;
-
+        if ( 'undefined' == typeof pods_test_date_field_<?php echo $type; ?> ) {
         // Test whether or not the browser supports date inputs
-        var supportDateField = function () {
-            var input = jQuery( '<input/>', {
-                'type' : 'date',
-                css : {
-                    position : 'absolute',
-                    display : 'none'
+            function pods_test_date_field_<?php echo $type; ?> () {
+                var input = jQuery( '<input/>', {
+                    'type' : '<?php echo $type; ?>',
+                    css : {
+                        position : 'absolute',
+                        display : 'none'
+                    }
+                } );
+
+                jQuery( 'body' ).append( input );
+
+                var bool = input.prop( 'type' ) !== 'text';
+
+                if ( bool ) {
+                    var smile = ":)";
+                    input.val( smile );
+
+                    return (input.val() != smile);
                 }
-            } );
-
-            jQuery( 'body' ).append( input );
-
-            var bool = input.attr( 'type' ) !== 'text';
-
-            if ( bool ) {
-                var smile = ":)";
-                input.val( smile );
-
-                return (input.val() != smile);
             }
         }
 
-        if ( !supportDateField() ) {
-            jQuery( 'input#<?php echo $attributes[ 'id' ]; ?>' ).<?php echo $method; ?>( args );
+        if ( !pods_test_date_field_<?php echo $type; ?>() ) {
+            jQuery( 'input#<?php echo $attributes[ 'id' ]; ?>' ).val( '<?php echo $formatted_date; ?>' );
+            jQuery( 'input#<?php echo $attributes[ 'id' ]; ?>' ).<?php echo $method; ?>( <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_args );
         }
     } );
 </script>

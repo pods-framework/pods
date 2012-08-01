@@ -132,33 +132,38 @@ class PodsField_Date extends PodsField {
      * @param string $name
      * @param array $options
      * @param array $fields
-     * @param string $pod
+     * @param array $pod
      * @param int $id
      *
      * @since 2.0.0
      */
-    public function display ( &$value, $name, $options, $fields, &$pod, $id ) {
+    public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $format = $this->format( $options );
 
         if ( !empty( $value ) ) {
             $date = DateTime::createFromFormat( 'Y-m-d H:i:s', (string) $value );
+            $date_local = DateTime::createFromFormat( $format, (string) $value );
 
             if ( false !== $date )
                 $value = $date->format( $format );
+            elseif ( false !== $date_local )
+                $value = $date_local->format( $format );
             else
                 $value = date_i18n( $format, strtotime( (string) $value ) );
         }
         else
             $value = date_i18n( $format );
+
+        return $value;
     }
 
     /**
      * Customize output of the form field
      *
      * @param string $name
-     * @param string $value
+     * @param mixed $value
      * @param array $options
-     * @param string $pod
+     * @param array $pod
      * @param int $id
      *
      * @since 2.0.0
@@ -167,7 +172,7 @@ class PodsField_Date extends PodsField {
         $options = (array) $options;
 
         // Format Value
-        $this->display( $value, $name, $options, null, $pod, $id );
+        $value = $this->display( $value, $name, $options, null, $pod, $id );
 
         pods_view( PODS_DIR . 'ui/fields/date.php', compact( array_keys( get_defined_vars() ) ) );
     }
@@ -175,32 +180,48 @@ class PodsField_Date extends PodsField {
     /**
      * Build regex necessary for JS validation
      *
+     * @param mixed $value
      * @param string $name
-     * @param string $value
      * @param array $options
      * @param string $pod
      * @param int $id
      *
      * @since 2.0.0
      */
-    public function regex ( $name, $value = null, $options = null, &$pod = null, $id = null ) {
+    public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+        return false;
+    }
 
+    /**
+     * Validate a value before it's saved
+     *
+     * @param mixed $value
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param int $id
+     *
+     * @since 2.0.0
+     */
+    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+        return true;
     }
 
     /**
      * Change the value or perform actions after validation but before saving to the DB
      *
-     * @param string $value
+     * @param mixed $value
+     * @param int $id
      * @param string $name
      * @param array $options
-     * @param array $data
-     * @param object $api
-     * @param string $pod
-     * @param int $id
+     * @param array $fields
+     * @param array $pod
+     * @param object $params
      *
      * @since 2.0.0
      */
-    public function pre_save ( &$value, $name, $options, $data, &$api, &$pod, $id = false ) {
+    public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         if ( !empty( $value ) ) {
             $format = $this->format( $options );
 
@@ -213,6 +234,69 @@ class PodsField_Date extends PodsField {
         }
         else
             $value = date_i18n( 'Y-m-d H:i:s' );
+
+        return $value;
+    }
+
+    /**
+     * Perform actions after saving to the DB
+     *
+     * @param mixed $value
+     * @param int $id
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param object $params
+     *
+     * @since 2.0.0
+     */
+    public function post_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
+    }
+
+    /**
+     * Perform actions before deleting from the DB
+     *
+     * @param string $name
+     * @param string $pod
+     * @param int $id
+     * @param object $api
+     *
+     * @since 2.0.0
+     */
+    public function pre_delete ( $id = null, $name = null, $options = null, $pod = null ) {
+
+    }
+
+    /**
+     * Perform actions after deleting from the DB
+     *
+     * @param int $id
+     * @param string $name
+     * @param array $options
+     * @param array $pod
+     *
+     * @since 2.0.0
+     */
+    public function post_delete ( $id = null, $name = null, $options = null, $pod = null ) {
+
+    }
+
+    /**
+     * Customize the Pods UI manage table column output
+     *
+     * @param int $id
+     * @param mixed $value
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     *
+     * @since 2.0.0
+     */
+    public function ui ( $id, &$value, $name = null, $options = null, $fields = null, $pod = null ) {
+
     }
 
     /**
@@ -223,7 +307,7 @@ class PodsField_Date extends PodsField {
      * @return string
      * @since 2.0.0
      */
-    private function format ( $options ) {
+    public function format ( $options ) {
         $date_format = array(
             'mdy' => 'm/d/Y',
             'dmy' => 'd/m/Y',

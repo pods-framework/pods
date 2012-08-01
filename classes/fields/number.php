@@ -169,12 +169,12 @@ class PodsField_Number extends PodsField {
      * @param string $name
      * @param array $options
      * @param array $fields
-     * @param string $pod
+     * @param array $pod
      * @param int $id
      *
      * @since 2.0.0
      */
-    public function display ( &$value, $name, $options, $fields, &$pod, $id ) {
+    public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $thousands = ',';
         $dot = '.';
         if ( '9999.99' == $options[ 'number_format' ] )
@@ -211,15 +211,17 @@ class PodsField_Number extends PodsField {
             elseif ( 'beforeaftercode' == $placement )
                 $value = $currency_sign . $value . ' ' . strtoupper( $currency );
         }
+
+        return $value;
     }
 
     /**
      * Customize output of the form field
      *
      * @param string $name
-     * @param string $value
+     * @param mixed $value
      * @param array $options
-     * @param string $pod
+     * @param array $pod
      * @param int $id
      *
      * @since 2.0.0
@@ -241,15 +243,15 @@ class PodsField_Number extends PodsField {
     /**
      * Build regex necessary for JS validation
      *
+     * @param mixed $value
      * @param string $name
-     * @param string $value
      * @param array $options
      * @param string $pod
      * @param int $id
      *
      * @since 2.0.0
      */
-    public function regex ( $name, $value = null, $options = null, &$pod = null, $id = null ) {
+    public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $thousands = ',';
         $dot = '.';
         if ( '9999.99' == $options[ 'number_format' ] )
@@ -267,23 +269,108 @@ class PodsField_Number extends PodsField {
     }
 
     /**
-     * Change the value or perform actions after validation but before saving to the DB
+     * Validate a value before it's saved
      *
-     * @param string $value
+     * @param mixed $value
      * @param string $name
      * @param array $options
-     * @param array $data
-     * @param object $api
-     * @param string $pod
+     * @param array $fields
+     * @param array $pod
      * @param int $id
      *
      * @since 2.0.0
      */
-    public function pre_save ( &$value, $name, $options, $data, &$api, &$pod, $id = false ) {
+    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+        $label = pods_var( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
+
+        if ( !is_numeric( $value ) )
+            return pods_error( sprintf( __( '%s is not numeric', 'pods' ), $label, $this ) );
+
+        return true;
+    }
+
+    /**
+     * Change the value or perform actions after validation but before saving to the DB
+     *
+     * @param mixed $value
+     * @param int $id
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param object $params
+     *
+     * @since 2.0.0
+     */
+    public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $decimals = 0;
+
         if ( 0 < (int) $options[ 'number_decimals' ] )
             $decimals = (int) $options[ 'number_decimals' ];
 
         $value = number_format( (float) $value, $decimals, '.', '' );
+
+        return $value;
+    }
+
+    /**
+     * Perform actions after saving to the DB
+     *
+     * @param mixed $value
+     * @param int $id
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param object $params
+     *
+     * @since 2.0.0
+     */
+    public function post_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
+    }
+
+    /**
+     * Perform actions before deleting from the DB
+     *
+     * @param string $name
+     * @param string $pod
+     * @param int $id
+     * @param object $api
+     *
+     * @since 2.0.0
+     */
+    public function pre_delete ( $id = null, $name = null, $options = null, $pod = null ) {
+
+    }
+
+    /**
+     * Perform actions after deleting from the DB
+     *
+     * @param int $id
+     * @param string $name
+     * @param array $options
+     * @param array $pod
+     *
+     * @since 2.0.0
+     */
+    public function post_delete ( $id = null, $name = null, $options = null, $pod = null ) {
+
+    }
+
+    /**
+     * Customize the Pods UI manage table column output
+     *
+     * @param int $id
+     * @param mixed $value
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     *
+     * @since 2.0.0
+     */
+    public function ui ( $id, &$value, $name = null, $options = null, $fields = null, $pod = null ) {
+
     }
 }

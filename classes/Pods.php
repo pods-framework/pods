@@ -349,6 +349,17 @@ class Pods {
             }
         }
 
+        if ( isset( $this->fields[ $params->name ] ) ) {
+            $value = PodsForm::display(
+                $this->fields[ $params->name ][ 'type' ],
+                $value,
+                $params->name,
+                array_merge( $this->fields[ $params->name ][ 'options' ], $this->fields[ $params->name ] ),
+                $this->pod_data,
+                $this->id()
+            );
+        }
+
         $value = $this->do_hook( 'field', $value, $this->row, $params );
 
         return $value;

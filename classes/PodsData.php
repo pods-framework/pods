@@ -1025,15 +1025,18 @@ class PodsData {
     }
 
     /**
-     * Hook handler for class
+     * Handle filters / actions for the class
+     *
+     * @since 2.0.0
      */
     private function do_hook () {
         $args = func_get_args();
-        if (empty($args))
+
+        if ( empty( $args ) )
             return false;
-        $name = array_shift($args);
-        if (isset($this))
-            return pods_do_hook("data", $name, $args, $this);
-        return pods_do_hook("data", $name, $args);
+
+        $name = array_shift( $args );
+
+        return pods_do_hook( 'data', $name, $args, $this );
     }
 }

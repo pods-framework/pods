@@ -142,9 +142,12 @@ class PodsField_Date extends PodsField {
 
         if ( !empty( $value ) ) {
             $date = DateTime::createFromFormat( 'Y-m-d H:i:s', (string) $value );
+            $date_local = DateTime::createFromFormat( $format, (string) $value );
 
             if ( false !== $date )
                 $value = $date->format( $format );
+            elseif ( false !== $date_local )
+                $value = $date_local->format( $format );
             else
                 $value = date_i18n( $format, strtotime( (string) $value ) );
         }
@@ -169,7 +172,7 @@ class PodsField_Date extends PodsField {
         $options = (array) $options;
 
         // Format Value
-        $this->display( $value, $name, $options, null, $pod, $id );
+        $value = $this->display( $value, $name, $options, null, $pod, $id );
 
         pods_view( PODS_DIR . 'ui/fields/date.php', compact( array_keys( get_defined_vars() ) ) );
     }
@@ -304,7 +307,7 @@ class PodsField_Date extends PodsField {
      * @return string
      * @since 2.0.0
      */
-    private function format ( $options ) {
+    public function format ( $options ) {
         $date_format = array(
             'mdy' => 'm/d/Y',
             'dmy' => 'd/m/Y',

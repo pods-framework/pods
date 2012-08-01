@@ -23,6 +23,7 @@
     wp_enqueue_style('jquery-ui-timepicker');
 
     $attributes = array();
+
     $type = 'date';
 
     if ( isset( $options[ 'date_format_type' ] ) )
@@ -30,14 +31,12 @@
 
     $attributes[ 'type' ] = $type;
 
-    $formatted_date = $value;
-
     $args = array(
         'timeFormat' => $time_format[ $options[ 'date_time_format' ] ],
         'dateFormat' => $date_format[ $options[ 'date_format' ] ]
     );
 
-    $format = 'Y-m-d H:i:s';
+    $format = PodsForm::field_method( 'date', 'format', $options );
 
     if ( 'datetime' == $type ) {
         $method = 'datetimepicker';
@@ -45,7 +44,6 @@
             'timeFormat' => $time_format[ $options[ 'date_time_format' ] ],
             'dateFormat' => $date_format[ $options[ 'date_format' ] ]
         );
-        $format = $date_format[ $options[ 'date_format' ] ] . ' ' . $time_format[ $options[ 'date_time_format' ] ];
         $html5_format = 'Y-m-d\TH:i:s';
     }
     elseif ( 'date' == $type ) {
@@ -53,7 +51,6 @@
         $args = array(
             'dateFormat' => $date_format[ $options[ 'date_format' ] ]
         );
-        $format = $date_format[ $options[ 'date_format' ] ];
         $html5_format = 'Y-m-d';
     }
     elseif ( 'time' == $type ) {
@@ -61,18 +58,28 @@
         $args = array(
             'timeFormat' => $time_format[ $options[ 'date_time_format' ] ]
         );
-        $format = $time_format[ $options[ 'date_time_format' ] ];
-        $html5_format = 'H:i:s';
+        $html5_format = '\TH:i:s';
     }
 
     $date = DateTime::createFromFormat( $format, (string) $value );
+    $date_default = DateTime::createFromFormat( 'Y-m-d H:i:s', (string) $value );
 
-    if ( false !== $date )
+    if ( false !== $date ) {
+        $formatted_date = $date->format( $format );
         $value = $date->format( $html5_format );
-    elseif ( !empty( $value ) )
+    }
+    elseif ( false !== $date_default ) {
+        $formatted_date = $date_default->format( $format );
+        $value = $date_default->format( $html5_format );
+    }
+    elseif ( !empty( $value ) ) {
+        $formatted_date = date_i18n( $format, strtotime( (string) $value ) );
         $value = date_i18n( $html5_format, strtotime( (string) $value ) );
-    else
+    }
+    else {
+        $formatted_date = date_i18n( $format );
         $value = date_i18n( $html5_format );
+    }
 
     $args = apply_filters( 'pods_form_ui_field_date_args', $args, $type, $options, $attributes, $name, PodsForm::$field_type );
 
@@ -83,7 +90,7 @@
 <input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
 <script>
     jQuery( function () {
-        var args = <?php echo json_encode($args); ?>;
+        var <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_args = <?php echo json_encode($args); ?>;
 
         if ( 'undefined' == typeof pods_test_date_field_<?php echo $type; ?> ) {
         // Test whether or not the browser supports date inputs
@@ -111,7 +118,7 @@
 
         if ( !pods_test_date_field_<?php echo $type; ?>() ) {
             jQuery( 'input#<?php echo $attributes[ 'id' ]; ?>' ).val( '<?php echo $formatted_date; ?>' );
-            jQuery( 'input#<?php echo $attributes[ 'id' ]; ?>' ).<?php echo $method; ?>( args );
+            jQuery( 'input#<?php echo $attributes[ 'id' ]; ?>' ).<?php echo $method; ?>( <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_args );
         }
     } );
 </script>

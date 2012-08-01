@@ -875,7 +875,28 @@ class PodsAPI {
         }
 
 		if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) ) {
-			//pods_debug($pod);
+			if ( 'taxonomy' == $pod[ 'type' ] ) {
+				foreach ( $pod[ 'options' ] as $key => $val ) {
+					if ( 0 === strpos( $key, 'built_in_post', 0 ) ) {
+						preg_match( '/_([^_]+)$/', $key, $key_matches );
+						$post_type_name = $key_matches[1];
+						$tax_name = $pod[ 'name' ];
+						$query = "SELECT p.ID FROM {$wpdb->posts} AS p
+									LEFT JOIN {$wpdb->postmeta} AS pm ON pm.post_id = p.ID AND pm.meta_key = 'built_in_taxonomies_{$tax_name}'
+									LEFT JOIN {$wpdb->postmeta} AS pm2 ON pm2.post_id = p.ID AND pm2.meta_key = 'type' AND pm2.meta_value = 'post_type'
+									LEFT JOIN {$wpdb->postmeta} AS pm3 ON pm3.post_id = p.ID AND pm3.meta_key = 'object' AND pm3.meta_value = ''
+									WHERE p.post_type = '_pods_pod' AND p.post_name = '{$post_type_name}'
+										AND pm2.meta_id IS NOT NULL AND pm3.meta_id IS NOT NULL
+										AND (pm.meta_id IS NULL OR pm.meta_value = 0)";
+						$results = pods_query($query);
+						
+						if ( 0 < count( $results ) )
+							pods_debug( $results );
+					}
+				}
+			}
+			elseif ( 'post_type' == $pod[ 'type' ] ) {
+			}
 		}
 
         $saved = array();

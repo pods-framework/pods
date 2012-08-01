@@ -1266,3 +1266,29 @@ function pods_is_plugin_active ( $plugin ) {
 
     return false;
 }
+
+/**
+ * Turn off conflicting / recursing actions for an object type that Pods hooks into
+ *
+ * @param string $object_type
+ */
+function pods_no_conflict_on ( $object_type = 'post' ) {
+    if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
+        return;
+
+    $no_conflict = array();
+
+    PodsInit::$no_conflict[ $object_type ] = $no_conflict;
+}
+
+/**
+ * Turn on actions after running code during pods_conflict
+ *
+ * @param string $object_type
+ */
+function pods_no_conflict_off ( $object_type = 'post' ) {
+    if ( empty( PodsInit::$no_conflict ) || !isset( PodsInit::$no_conflict[ $object_type ] ) || empty( PodsInit::$no_conflict[ $object_type ] ) )
+        return;
+
+    $no_conflict = PodsInit::$no_conflict[ $object_type ];
+}

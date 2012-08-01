@@ -112,6 +112,7 @@ class Pods {
         $this->fields =& $this->api->fields;
         $this->detail_page =& $this->data->detail_page;
         $this->id =& $this->data->id;
+        $this->row =& $this->data->row;
         $this->results =& $this->data->data;
 
         if ( is_array( $id ) || is_object( $id ) )

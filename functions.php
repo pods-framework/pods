@@ -523,8 +523,10 @@ function pods_unique_slug ( $value, $column_name, $pod, $pod_id = 0, &$obj = nul
 function pods_absint ( $maybeint, $strict = true, $allow_negative = false ) {
     if ( true === $strict && !is_numeric( trim( $maybeint ) ) )
         return 0;
+
     if ( false !== $allow_negative )
         return intval( $maybeint );
+
     return absint( $maybeint );
 }
 

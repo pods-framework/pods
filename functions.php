@@ -1268,7 +1268,7 @@ function pods_is_plugin_active ( $plugin ) {
 }
 
 /**
- * Turn off conflicting / recursing actions for an object type that Pods hooks into
+ * Turn off conflicting / recursive actions for an object type that Pods hooks into
  *
  * @param string $object_type
  */
@@ -1276,7 +1276,54 @@ function pods_no_conflict_on ( $object_type = 'post' ) {
     if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
         return;
 
+    if ( !is_object( PodsInit::$meta ) )
+        return;
+
     $no_conflict = array();
+
+    if ( 'post' == $object_type ) {
+        $no_conflict[ 'filter' ] = array(
+
+        );
+
+        $no_conflict[ 'action' ] = array(
+            array( 'save_post', array( PodsInit::$meta, 'save_post' ), 10, 2 )
+        );
+    }
+    elseif ( 'taxonomy' == $object_type ) {
+        $no_conflict[ 'filter' ] = array(
+
+        );
+
+        $no_conflict[ 'action' ] = array(
+            array( 'edit_term', array( PodsInit::$meta, 'save_taxonomy' ), 10, 3 ),
+            array( 'create_term', array( PodsInit::$meta, 'save_taxonomy' ), 10, 3 )
+        );
+    }
+    elseif ( 'user' == $object_type ) {
+        $no_conflict[ 'filter' ] = array(
+
+        );
+
+        $no_conflict[ 'action' ] = array(
+
+        );
+    }
+    elseif ( 'comment' == $object_type ) {
+        $no_conflict[ 'filter' ] = array(
+
+        );
+
+        $no_conflict[ 'action' ] = array(
+
+        );
+    }
+
+    foreach ( $no_conflict as $action_filter => $conflicts ) {
+        foreach ( $conflicts as $args ) {
+            call_user_func_array( 'remove_' . $action_filter, $args );
+        }
+    }
 
     PodsInit::$no_conflict[ $object_type ] = $no_conflict;
 }
@@ -1290,5 +1337,15 @@ function pods_no_conflict_off ( $object_type = 'post' ) {
     if ( empty( PodsInit::$no_conflict ) || !isset( PodsInit::$no_conflict[ $object_type ] ) || empty( PodsInit::$no_conflict[ $object_type ] ) )
         return;
 
+    if ( !is_object( PodsInit::$meta ) )
+        return;
+
     $no_conflict = PodsInit::$no_conflict[ $object_type ];
+
+    foreach ( $no_conflict as $action_filter => $conflicts ) {
+        foreach ( $conflicts as $args ) {
+            if ( call_user_func_array( 'has_' . $action_filter, $args ) )
+                call_user_func_array( 'add_' . $action_filter, $args );
+        }
+    }
 }

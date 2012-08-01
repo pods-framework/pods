@@ -882,9 +882,9 @@ class PodsAPI {
             foreach ( $pod[ 'options' ] as $key => $val ) {
                 if ( false === strpos( $key, 'built_in_' ) )
                     continue;
-                elseif ( false === strpos( $key, 'built_in_post_types_' ) )
+                elseif ( false !== strpos( $key, 'built_in_post_types_' ) )
                     $built_in_type = 'post_type';
-                elseif ( false === strpos( $key, 'built_in_taxonomies_' ) )
+                elseif ( false !== strpos( $key, 'built_in_taxonomies_' ) )
                     $built_in_type = 'taxonomy';
                 else
                     continue;
@@ -913,7 +913,7 @@ class PodsAPI {
                 $lookup_built_in = 'post_type';
             }
 
-            if ( !empty( $lookup_option ) && !empty( $lookup_built_in ) && isset( $built_in[ $lookup_built_in ] ) && !empty( $built_in[ $lookup_built_in ] ) ) {
+            if ( !empty( $lookup_option ) && !empty( $lookup_built_in ) && isset( $built_in[ $lookup_built_in ] ) ) {
                 foreach ( $built_in[ $lookup_built_in ] as $built_in_object => $val ) {
                     $search_val = 1 ^ $val;
 

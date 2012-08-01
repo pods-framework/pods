@@ -3,7 +3,7 @@ class PodsInit {
 
     static $no_conflict = array();
 
-    public $meta;
+    static $meta;
 
     public $version;
 
@@ -36,7 +36,7 @@ class PodsInit {
             add_action( 'wp_before_admin_bar_render', array( $this, 'admin_bar_links' ) );
 
             // Init Pods Meta
-            $this->meta = pods_meta()->init();
+            self::$meta = pods_meta()->init();
         }
     }
 

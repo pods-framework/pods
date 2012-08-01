@@ -897,7 +897,7 @@ class PodsAPI {
 
                 $built_in_object = str_replace( array( 'built_in_post_types_', 'built_in_taxonomies_' ), '', $key );
 
-                $built_in[ $built_in_type ][ $built_in_object ] = max( pods_absint( $val ), 1 );
+                $built_in[ $built_in_type ][ $built_in_object ] = (int) $val;
             }
 
             $lookup_option = $lookup_built_in = false;

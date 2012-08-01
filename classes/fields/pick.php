@@ -148,12 +148,12 @@ class PodsField_Pick extends PodsField {
      * @param string $name
      * @param array $options
      * @param array $fields
-     * @param string $pod
+     * @param array $pod
      * @param int $id
      *
      * @since 2.0.0
      */
-    public function display ( &$value, $name, $options, $fields, &$pod, $id ) {
+    public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
 
     }
 
@@ -161,9 +161,9 @@ class PodsField_Pick extends PodsField {
      * Customize output of the form field
      *
      * @param string $name
-     * @param string $value
+     * @param mixed $value
      * @param array $options
-     * @param string $pod
+     * @param array $pod
      * @param int $id
      *
      * @since 2.0.0
@@ -244,14 +244,14 @@ class PodsField_Pick extends PodsField {
             $data->field_name = $field_name;
 
             $results = $data->select( array(
-                'select' => "`{$data->field_id}`, `{$data->field_name}`",
-                'table' => $data->table,
-                'identifier' => $data->field_id,
-                'index' => $data->field_name,
-                'where' => pods_var( 'pick_where', $options, null, null, true ),
-                'orderby' => pods_var( 'pick_where', $options, null, null, true ),
-                'groupby' => pods_var( 'pick_groupby', $options, null, null, true )
-            ) );
+                                          'select' => "`{$data->field_id}`, `{$data->field_name}`",
+                                          'table' => $data->table,
+                                          'identifier' => $data->field_id,
+                                          'index' => $data->field_name,
+                                          'where' => pods_var( 'pick_where', $options, null, null, true ),
+                                          'orderby' => pods_var( 'pick_where', $options, null, null, true ),
+                                          'groupby' => pods_var( 'pick_groupby', $options, null, null, true )
+                                      ) );
 
             foreach ( $results as $result ) {
                 $options[ 'data' ][ $result->{$field_id} ] = $result->{$field_name};
@@ -291,54 +291,111 @@ class PodsField_Pick extends PodsField {
     }
 
     /**
-     * Validate a value before it's saved
+     * Build regex necessary for JS validation
      *
-     * @param string $value
+     * @param mixed $value
      * @param string $name
      * @param array $options
-     * @param array $data
-     * @param object $api
      * @param string $pod
      * @param int $id
      *
      * @since 2.0.0
      */
-    public function validate ( &$value, $name, $options, $data, &$api, &$pod, $id = false ) {
-        // check file size
-        // check file extensions
+    public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+        return false;
+    }
+
+    /**
+     * Validate a value before it's saved
+     *
+     * @param mixed $value
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param int $id
+     *
+     * @since 2.0.0
+     */
+    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null ) {
+        return true;
     }
 
     /**
      * Change the value or perform actions after validation but before saving to the DB
      *
-     * @param string $value
+     * @param mixed $value
+     * @param int $id
      * @param string $name
      * @param array $options
-     * @param array $data
-     * @param object $api
-     * @param string $pod
-     * @param int $id
+     * @param array $fields
+     * @param array $pod
+     * @param object $params
      *
      * @since 2.0.0
      */
-    public function pre_save ( &$value, $name, $options, $data, &$api, &$pod, $id = false ) {
+    public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+        return $value;
+    }
+
+    /**
+     * Perform actions after saving to the DB
+     *
+     * @param mixed $value
+     * @param int $id
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param object $params
+     *
+     * @since 2.0.0
+     */
+    public function post_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+
+    }
+
+    /**
+     * Perform actions before deleting from the DB
+     *
+     * @param string $name
+     * @param string $pod
+     * @param int $id
+     * @param object $api
+     *
+     * @since 2.0.0
+     */
+    public function pre_delete ( $id = null, $name = null, $options = null, $pod = null ) {
+
+    }
+
+    /**
+     * Perform actions after deleting from the DB
+     *
+     * @param int $id
+     * @param string $name
+     * @param array $options
+     * @param array $pod
+     *
+     * @since 2.0.0
+     */
+    public function post_delete ( $id = null, $name = null, $options = null, $pod = null ) {
 
     }
 
     /**
      * Customize the Pods UI manage table column output
      *
+     * @param int $id
      * @param mixed $value
      * @param string $name
      * @param array $options
      * @param array $fields
-     * @param string $pod
-     * @param int $id
+     * @param array $pod
      *
      * @since 2.0.0
      */
-    public function ui ( $value, $name, $options, $fields, &$pod, $id ) {
-        // link to file in new target
-        // show thumbnail
+    public function ui ( $id, &$value, $name = null, $options = null, $fields = null, $pod = null ) {
+
     }
 }

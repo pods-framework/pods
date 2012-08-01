@@ -1577,22 +1577,25 @@ class PodsAPI {
 
         // Loop through each active field, validating and preparing the table data
         foreach ( $fields_active as $field ) {
-            if ( isset( $object_fields[ $field ] ) ) {
-                $value = $object_fields[ $field ][ 'value' ];
-                $type = $object_fields[ $field ][ 'type' ];
-            }
-            else {
-                $value = $fields[ $field ][ 'value' ];
-                $type = $fields[ $field ][ 'type' ];
-            }
+            if ( isset( $object_fields[ $field ] ) )
+                $options = $object_fields[ $field ];
+            elseif ( isset( $fields[ $field ] ) )
+                $options = $fields[ $field ];
+            else
+                continue;
+
+            $value = $options[ 'value' ];
+            $type = $options[ 'type' ];
 
             // Validate value
-            $value = $this->handle_field_validation( $value, $field, $fields, $params );
+            $value = $this->handle_field_validation( $value, $field, $object_fields, $fields, $pod, $params );
 
             if ( false === $value )
                 return false;
 
-            $fields[ $field ][ 'value' ] = $value;
+            $value = PodsForm::pre_save( $options[ 'type' ], $value, $field, $options );
+
+            $options[ 'value' ] = $value;
 
             if ( isset( $object_fields[ $field ] ) )
                 $object_data[ $field ] = $value;
@@ -1600,7 +1603,7 @@ class PodsAPI {
                 // Prepare all table (non-relational) data
                 if ( !in_array( $type, $tableless_field_types ) ) {
                     $table_fields[] = "`{$field}`";
-                    $table_formats[] = PodsForm::prepare( $type, $fields[ $field ] );
+                    $table_formats[] = PodsForm::prepare( $type, $options );
                     $table_values[] = $value;
 
                     $object_meta[ $field ] = $value;
@@ -1608,7 +1611,7 @@ class PodsAPI {
                 // Store relational field data to be looped through later
                 else {
                     $rel_fields[ $type ][ $field ] = $value;
-                    $rel_field_ids[] = $fields[ $field ][ 'id' ];
+                    $rel_field_ids[] = $options[ 'id' ];
                 }
             }
         }
@@ -3296,51 +3299,48 @@ class PodsAPI {
         return $this->do_hook( 'field_definition', $definition, $type, $options );
     }
 
-    private function handle_field_validation ( $value, $field, $fields, $params ) {
+    private function handle_field_validation ( $value, $field, $object_fields, $fields, $pod, $params ) {
         $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
 
-        $type = $fields[ $field ][ 'type' ];
-        $label = $fields[ $field ][ 'label' ];
+        $fields = array_merge( $fields, $object_fields );
+
+        $options = $fields[ $field ];
+
+        $type = $options[ 'type' ];
+        $label = $options[ 'label' ];
         $label = empty( $label ) ? $field : $label;
 
-        // Verify slug fields
-        if ( 'slug' == $type ) {
-            if ( empty( $value ) && isset( $fields[ 'name' ][ 'value' ] ) )
-                $value = $fields[ 'name' ][ 'value' ];
-
-            if ( !empty( $value ) )
-                $value = pods_unique_slug( $value, $field, $params->pod, $params->pod_id, $params->id, $this );
-        }
-
         // Verify required fields
-        if ( 1 == pods_var( 'required', $fields[ $field ][ 'options' ], 0 ) ) {
-            if ( '' == $value || null == $value )
+        if ( 1 == pods_var( 'required', $options[ 'options' ], 0 ) ) {
+            if ( '' == $value || null === $value )
                 return pods_error( "{$label} is empty", $this );
-            elseif ( 'num' == $type && !is_numeric( $value ) )
-                return pods_error( "{$label} is not numeric", $this );
         }
 
         // Verify unique fields
-        if ( 1 == pods_var( 'unique', $fields[ $field ][ 'options' ], 0 ) ) {
+        if ( 1 == pods_var( 'unique', $options[ 'options' ], 0 ) ) {
             if ( !in_array( $type, $tableless_field_types ) ) {
                 $exclude = '';
+
                 if ( !empty( $params->id ) )
                     $exclude = "AND `id` != {$params->id}";
 
                 // Trigger an error if not unique
-                $check = pods_query( "SELECT `id` FROM `@wp_pods_tbl_{$params->pod}` WHERE `{$field}` = '{$value}' {$exclude} LIMIT 1", $this );
+                if ( 'table' == $pod[ 'storage' ] )
+                    $check = pods_query( "SELECT `id` FROM `@wp_pods_tbl_{$params->pod}` WHERE `{$field}` = '{$value}' {$exclude} LIMIT 1", $this );
+                else
+                    $check = false;
 
                 if ( !empty( $check ) )
                     return pods_error( sprintf(__("%s needs to be unique", 'pods'), $label), $this );
             }
             else {
-                // handle rel check
+                // handle tableless check
             }
         }
 
-        // @todo Run field validation
+        $value = PodsForm::field_method( $options[ 'type' ], 'validate', $value, $field, $options, $fields, $pod, $params->id );
 
-        $value = $this->do_hook( 'field_validation', $value, $field, $fields );
+        $value = $this->do_hook( 'field_validation', $value, $field, $object_fields, $fields, $pod, $params );
 
         return $value;
     }

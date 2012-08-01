@@ -154,7 +154,7 @@ class PodsField_Pick extends PodsField {
      * @since 2.0.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
+        return $value;
     }
 
     /**

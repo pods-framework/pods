@@ -70,7 +70,7 @@ function pods_error ( $error, &$obj = null ) {
 
     if ( is_array( $error ) )
         $error = __( 'The following issues occured:', 'pods' ) . "\n<ul><li>" . implode( "</li>\n<li>", $error ) . "</li></ul>";
-    
+
     // log error in WP
     $log_error = new WP_Error( 'pods-error-' . md5( $error ), $error );
 

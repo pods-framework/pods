@@ -1087,7 +1087,7 @@ class PodsAPI {
 
             foreach ( $object_fields as $object_field => $object_field_opt ) {
                 if ( $object_field == $params->name || in_array( $params->name, $object_field_opt[ 'alias' ] ) )
-                    return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name', 'pods' ), $params->name ), $this );
+                    return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name. Also consider what WordPress and Pods provide you built-in.', 'pods' ), $params->name ), $this );
             }
 
             if ( 'slug' == $field[ 'type' ] ) {

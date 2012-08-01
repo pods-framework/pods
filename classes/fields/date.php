@@ -150,6 +150,8 @@ class PodsField_Date extends PodsField {
         }
         else
             $value = date_i18n( $format );
+
+        return $value;
     }
 
     /**

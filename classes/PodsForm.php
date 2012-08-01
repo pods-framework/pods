@@ -439,6 +439,27 @@ class PodsForm {
     }
 
     /**
+     * Change the way the value of the field is displayed with Pods::get
+     *
+     * @param mixed $value
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param int $id
+     *
+     * @since 2.0.0
+     */
+    public static function display ( $type, $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+        self::field_loader( $type );
+
+        if ( method_exists( self::$loaded[ $type ], 'display' ) )
+            $value = self::$loaded[ $type ]->display( $value, $name, $options, $pod, $id );
+
+        return $value;
+    }
+
+    /**
      * Setup regex for JS / PHP
      *
      * @static

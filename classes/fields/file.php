@@ -34,6 +34,14 @@ class PodsField_File extends PodsField {
      * @since 2.0.0
      */
     public function options () {
+        $sizes = get_intermediate_image_sizes();
+
+        $image_sizes = array();
+
+        foreach ( $sizes as $size ) {
+            $image_sizes[ $size ] = ucwords( str_replace( '-', ' ', $size ) );
+        }
+
         $options = array(
             'file_format_type' => array(
                 'label' => __( 'File Type', 'pods' ),
@@ -105,7 +113,7 @@ class PodsField_File extends PodsField {
                 'pick_format_multi' => 'checkbox',
                 'data' => apply_filters(
                     'pods_form_ui_field_file_image_size_options',
-                    get_intermediate_image_sizes()
+                    $image_sizes
                 )
             )
         );
@@ -139,7 +147,7 @@ class PodsField_File extends PodsField {
      * @since 2.0.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-
+        return $value;
     }
 
     /**

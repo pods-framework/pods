@@ -184,6 +184,8 @@ class PodsField_Text extends PodsField {
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         if ( 1 == $options[ 'text_allow_shortcode' ] )
             $value = do_shortcode( $value );
+
+        return $value;
     }
 
     /**

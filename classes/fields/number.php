@@ -211,6 +211,8 @@ class PodsField_Number extends PodsField {
             elseif ( 'beforeaftercode' == $placement )
                 $value = $currency_sign . $value . ' ' . strtoupper( $currency );
         }
+
+        return $value;
     }
 
     /**

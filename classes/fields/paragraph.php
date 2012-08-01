@@ -133,6 +133,8 @@ class PodsField_Paragraph extends PodsField {
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         if ( 1 == $options[ 'paragraph_allow_shortcode' ] )
             $value = do_shortcode( $value );
+
+        return $value;
     }
 
     /**

@@ -915,7 +915,10 @@ class PodsAPI {
 
             if ( !empty( $lookup_option ) && !empty( $lookup_built_in ) && isset( $built_in[ $lookup_built_in ] ) ) {
                 foreach ( $built_in[ $lookup_built_in ] as $built_in_object => $val ) {
-                    $search_val = 1 ^ $val;
+                    $search_val = 1;
+
+                    if ( 1 == $val )
+                        $search_val = 0;
 
                     $query = "SELECT p.ID FROM {$wpdb->posts} AS p
                                 LEFT JOIN {$wpdb->postmeta} AS pm ON pm.post_id = p.ID AND pm.meta_key = '{$lookup_option}'

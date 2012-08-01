@@ -105,13 +105,17 @@ class PodsInit {
         wp_register_style( 'pods-cleditor', PODS_URL . 'ui/css/jquery.cleditor.css', array(), '1.3.0' );
         wp_register_script( 'pods-cleditor-min', PODS_URL . 'ui/js/jquery.cleditor.min.js', array( 'jquery' ), '1.3.0' );
 
-        wp_register_style( 'pods-timepicker', PODS_URL . 'ui/css/jquery.ui.timepicker.css', array(), '0.9.7' );
-        wp_register_script( 'pods-timepicker', PODS_URL . 'ui/js/jquery.ui.timepicker.min.js', array(
-            'jquery',
-            'jquery-ui-core',
-            'jquery-ui-datepicker',
-            'jquery-ui-slider'
-        ), '0.9.7' );
+        if ( !wp_style_is( 'jquery-ui-timepicker', 'registered' ) )
+            wp_register_style( 'jquery-ui-timepicker', PODS_URL . 'ui/css/jquery.ui.timepicker.css', array(), '1.0.1' );
+
+        if ( !wp_script_is( 'jquery-ui-timepicker', 'registered' ) ) {
+            wp_register_script( 'jquery-ui-timepicker', PODS_URL . 'ui/js/jquery.ui.timepicker.min.js', array(
+                'jquery',
+                'jquery-ui-core',
+                'jquery-ui-datepicker',
+                'jquery-ui-slider'
+            ), '1.0.1' );
+        }
 
         wp_register_style( 'pods-attach', PODS_URL . 'ui/js/jquery.pods.attach.css', array(), PODS_VERSION );
         wp_register_script( 'pods-attach', PODS_URL . 'ui/js/jquery.pods.attach.js', array(), PODS_VERSION );

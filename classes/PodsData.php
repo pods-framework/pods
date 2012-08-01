@@ -107,8 +107,8 @@ class PodsData {
                     $object = $this->pod_data[ 'object' ];
 
                 $this->where = array(
-                    'post_status' => '`post_status` = "publish"',
-                    'post_type' => '`post_type` = "' . $object . '"'
+                    'post_status' => '`t`.`post_status` = "publish"',
+                    'post_type' => '`t`.`post_type` = "' . $object . '"'
                 );
             }
             if ( 'taxonomy' == $this->pod_data[ 'type' ] ) {

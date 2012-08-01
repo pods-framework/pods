@@ -874,54 +874,53 @@ class PodsAPI {
             ) );
         }
 
-        if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) ) {
-            if ( 'taxonomy' == $pod[ 'type' ] ) {
-                foreach ( $pod[ 'options' ] as $key => $val ) {
-                    if ( 0 === strpos( $key, 'built_in_post', 0 ) ) {
-                        // KLUDGE: ugly regex munge. fix if able.
-                        preg_match( '/built_in_post_types_(.+)$/', $key, $key_matches );
-                        $post_type_name = $key_matches[1];
-                        $tax_name = $pod[ 'name' ];
-                        $search_val = 1 ^ $val;
-                        $query = "SELECT p.ID FROM {$wpdb->posts} AS p
-                                    LEFT JOIN {$wpdb->postmeta} AS pm ON pm.post_id = p.ID AND pm.meta_key = 'built_in_taxonomies_{$tax_name}'
-                                    LEFT JOIN {$wpdb->postmeta} AS pm2 ON pm2.post_id = p.ID AND pm2.meta_key = 'type' AND pm2.meta_value = 'post_type'
-                                    LEFT JOIN {$wpdb->postmeta} AS pm3 ON pm3.post_id = p.ID AND pm3.meta_key = 'object' AND pm3.meta_value = ''
-                                    WHERE p.post_type = '_pods_pod' AND p.post_name = '{$post_type_name}'
-                                        AND pm2.meta_id IS NOT NULL
-                                        AND (pm.meta_id IS NULL OR pm.meta_value = {$search_val})";
-                        $results = pods_query($query);
-                        
-                        if ( 0 < count( $results ) ) {
-                            $post_type_id = $results[ 0 ]->ID;
-                            delete_post_meta( $post_type_id, "built_in_taxonomies_{$tax_name}" );
-                            add_post_meta( $post_type_id, "built_in_taxonomies_{$tax_name}", (int) $val );
-                        }
+        // Check post type's taxonomy box and vice versa
+        if ( 'taxonomy' == $pod[ 'type' ] ) {
+            foreach ( $pod[ 'options' ] as $key => $val ) {
+                if ( 0 === strpos( $key, 'built_in_post', 0 ) ) {
+                    // KLUDGE: ugly regex munge. fix if able.
+                    preg_match( '/built_in_post_types_(.+)$/', $key, $key_matches );
+                    $post_type_name = $key_matches[1];
+                    $tax_name = $pod[ 'name' ];
+                    $search_val = 1 ^ $val;
+                    $query = "SELECT p.ID FROM {$wpdb->posts} AS p
+                                LEFT JOIN {$wpdb->postmeta} AS pm ON pm.post_id = p.ID AND pm.meta_key = 'built_in_taxonomies_{$tax_name}'
+                                LEFT JOIN {$wpdb->postmeta} AS pm2 ON pm2.post_id = p.ID AND pm2.meta_key = 'type' AND pm2.meta_value = 'post_type'
+                                LEFT JOIN {$wpdb->postmeta} AS pm3 ON pm3.post_id = p.ID AND pm3.meta_key = 'object' AND pm3.meta_value = ''
+                                WHERE p.post_type = '_pods_pod' AND p.post_name = '{$post_type_name}'
+                                    AND pm2.meta_id IS NOT NULL
+                                    AND (pm.meta_id IS NULL OR pm.meta_value = {$search_val})";
+                    $results = pods_query($query);
+                    
+                    if ( 0 < count( $results ) ) {
+                        $post_type_id = $results[ 0 ]->ID;
+                        delete_post_meta( $post_type_id, "built_in_taxonomies_{$tax_name}" );
+                        add_post_meta( $post_type_id, "built_in_taxonomies_{$tax_name}", (int) $val );
                     }
                 }
             }
-            elseif ( 'post_type' == $pod[ 'type' ] ) {
-                foreach ( $pod[ 'options' ] as $key => $val ) {
-                    if ( 0 === strpos( $key, 'built_in_taxonomies', 0 ) ) {
-                        // KLUDGE: same thing
-                        preg_match( '/built_in_taxonomies_(.+)$/', $key, $key_matches );
-                        $tax_name = $key_matches[1];
-                        $post_type_name = $pod[ 'name' ];
-                        $search_val = 1 ^ $val;
-                        $query = "SELECT p.ID FROM {$wpdb->posts} AS p
-                                    LEFT JOIN {$wpdb->postmeta} AS pm ON pm.post_id = p.ID AND pm.meta_key = 'built_in_post_types_{$post_type_name}'
-                                    LEFT JOIN {$wpdb->postmeta} AS pm2 ON pm2.post_id = p.ID AND pm2.meta_key = 'type' AND pm2.meta_value = 'taxonomy'
-                                    LEFT JOIN {$wpdb->postmeta} AS pm3 ON pm3.post_id = p.ID AND pm3.meta_key = 'object' AND pm3.meta_value = ''
-                                    WHERE p.post_type = '_pods_pod' AND p.post_name = '{$tax_name}'
-                                        AND pm2.meta_id IS NOT NULL
-                                        AND (pm.meta_id IS NULL OR pm.meta_value = {$search_val})";
-                        $results = pods_query($query);
-                        
-                        if ( 0 < count( $results ) ) {
-                            $tax_id = $results[ 0 ]->ID;
-                            delete_post_meta( $tax_id, "built_in_post_types_{$post_type_name}" );
-                            add_post_meta( $tax_id, "built_in_post_types_{$post_type_name}", (int) $val );
-                        }
+        }
+        elseif ( 'post_type' == $pod[ 'type' ] ) {
+            foreach ( $pod[ 'options' ] as $key => $val ) {
+                if ( 0 === strpos( $key, 'built_in_taxonomies', 0 ) ) {
+                    // KLUDGE: same thing
+                    preg_match( '/built_in_taxonomies_(.+)$/', $key, $key_matches );
+                    $tax_name = $key_matches[1];
+                    $post_type_name = $pod[ 'name' ];
+                    $search_val = 1 ^ $val;
+                    $query = "SELECT p.ID FROM {$wpdb->posts} AS p
+                                LEFT JOIN {$wpdb->postmeta} AS pm ON pm.post_id = p.ID AND pm.meta_key = 'built_in_post_types_{$post_type_name}'
+                                LEFT JOIN {$wpdb->postmeta} AS pm2 ON pm2.post_id = p.ID AND pm2.meta_key = 'type' AND pm2.meta_value = 'taxonomy'
+                                LEFT JOIN {$wpdb->postmeta} AS pm3 ON pm3.post_id = p.ID AND pm3.meta_key = 'object' AND pm3.meta_value = ''
+                                WHERE p.post_type = '_pods_pod' AND p.post_name = '{$tax_name}'
+                                    AND pm2.meta_id IS NOT NULL
+                                    AND (pm.meta_id IS NULL OR pm.meta_value = {$search_val})";
+                    $results = pods_query($query);
+                    
+                    if ( 0 < count( $results ) ) {
+                        $tax_id = $results[ 0 ]->ID;
+                        delete_post_meta( $tax_id, "built_in_post_types_{$post_type_name}" );
+                        add_post_meta( $tax_id, "built_in_post_types_{$post_type_name}", (int) $val );
                     }
                 }
             }

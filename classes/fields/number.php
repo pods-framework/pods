@@ -278,7 +278,7 @@ class PodsField_Number extends PodsField {
      *
      * @since 2.0.0
      */
-    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null ) {
+    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         $label = pods_var( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
 
         if ( !is_numeric( $value ) )
@@ -302,6 +302,7 @@ class PodsField_Number extends PodsField {
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $decimals = 0;
+
         if ( 0 < (int) $options[ 'number_decimals' ] )
             $decimals = (int) $options[ 'number_decimals' ];
 

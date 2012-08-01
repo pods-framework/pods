@@ -246,24 +246,26 @@ class PodsField_Text extends PodsField {
      *
      * @since 2.0.0
      */
-    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null ) {
+    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         $errors = array();
 
-        $check = $value; // $check will be passed by reference, but we want $value to stay the same
+        $check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
-        $this->pre_save( $check, $name, $options );
-
-        if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
-            if ( 1 == $options[ 'required' ] )
-                $errors[ ] = __( 'This field is required.', 'pods' );
-            else {
-                // @todo Ask for a specific format in error message
-                $errors[ ] = __( 'Invalid value provided for this field.', 'pods' );
+        if ( is_array( $check ) )
+            $errors = $check;
+        else {
+            if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
+                if ( 1 == $options[ 'required' ] )
+                    $errors[] = __( 'This field is required.', 'pods' );
+                else {
+                    // @todo Ask for a specific format in error message
+                    $errors[] = __( 'Invalid value provided for this field.', 'pods' );
+                }
             }
         }
 
         if ( !empty( $errors ) )
-            return false;
+            return $errors;
 
         return true;
     }

@@ -210,7 +210,7 @@ class PodsField_File extends PodsField {
      *
      * @since 2.0.0
      */
-    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null ) {
+    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         // check file size
         // check file extensions
         return true;

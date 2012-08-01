@@ -1588,12 +1588,15 @@ class PodsAPI {
             $type = $options[ 'type' ];
 
             // Validate value
-            $value = $this->handle_field_validation( $value, $field, $object_fields, $fields, $pod, $params );
+            $validate = $this->handle_field_validation( $value, $field, $object_fields, $fields, $pod, $params );
 
-            if ( false === $value )
-                return false;
+            if ( false === $validate )
+                $validate = sprintf( __( 'There was an issue validating the field %s', 'pods' ), $options[ 'label' ] );
 
-            $value = PodsForm::pre_save( $options[ 'type' ], $value, $field, $options );
+            if ( !is_bool( $validate) && !empty( $validate ) )
+                return pods_error( $validate, $this );
+
+            $value = PodsForm::pre_save( $options[ 'type' ], $value, $params->id, $field, array_merge( pods_var( 'options', $options, array() ), $options ), array_merge( $fields, $object_fields ), $pod, $params );
 
             $options[ 'value' ] = $value;
 
@@ -2510,7 +2513,7 @@ class PodsAPI {
             foreach ( $fields as $field ) {
                 $field = $this->load_field( $field );
 
-                $field = PodsForm::fields_setup( $field, null, true );
+                $field = PodsForm::field_setup( $field, null, $field[ 'type' ] );
 
                 $pod[ 'fields' ][ $field[ 'name' ] ] = $field;
             }
@@ -3299,7 +3302,7 @@ class PodsAPI {
         return $this->do_hook( 'field_definition', $definition, $type, $options );
     }
 
-    private function handle_field_validation ( $value, $field, $object_fields, $fields, $pod, $params ) {
+    private function handle_field_validation ( &$value, $field, $object_fields, $fields, $pod, $params ) {
         $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
 
         $fields = array_merge( $fields, $object_fields );
@@ -3338,11 +3341,11 @@ class PodsAPI {
             }
         }
 
-        $value = PodsForm::field_method( $options[ 'type' ], 'validate', $value, $field, $options, $fields, $pod, $params->id );
+        $validate = PodsForm::validate( $options[ 'type' ], $value, $field, array_merge( pods_var( 'options', $options, array() ), $options ), $fields, $pod, $params->id );
 
-        $value = $this->do_hook( 'field_validation', $value, $field, $object_fields, $fields, $pod, $params );
+        $validate = $this->do_hook( 'field_validation', $validate, $value, $field, $object_fields, $fields, $pod, $params );
 
-        return $value;
+        return $validate;
     }
 
     /**

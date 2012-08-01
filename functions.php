@@ -62,17 +62,24 @@ function pods_do_hook ( $scope, $name, $args = null, &$obj = null ) {
  */
 function pods_error ( $error, &$obj = null ) {
     $display_errors = false;
+
     if ( is_object( $obj ) && isset( $obj->display_errors ) && true === $obj->display_errors )
         $display_errors = true;
     elseif ( is_bool( $obj ) && true === $obj )
         $display_errors = true;
+
+    if ( is_array( $error ) )
+        $error = __( 'The following issues occured:', 'pods' ) . "\n<ul><li>" . implode( "</li>\n<li>", $error ) . "</li></ul>";
+    
     // log error in WP
     $log_error = new WP_Error( 'pods-error-' . md5( $error ), $error );
+
     // throw error as Exception and return false if silent
     if ( false !== $display_errors && !empty( $error ) ) {
         throw new Exception( $error );
         return false;
     }
+
     // die with error
     die( "<e>$error</e>" );
 }

@@ -195,7 +195,7 @@ class PodsField_Paragraph extends PodsField {
      *
      * @since 2.0.0
      */
-    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null ) {
+    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         return true;
     }
 

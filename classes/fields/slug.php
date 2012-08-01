@@ -111,7 +111,7 @@ class PodsField_Slug extends PodsField {
      *
      * @since 2.0.0
      */
-    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null ) {
+    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         if ( empty( $value ) && isset( $fields[ $pod[ 'index' ] ][ 'value' ] ) )
             $value = $fields[ $pod[ 'index' ] ][ 'value' ];
 

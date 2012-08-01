@@ -293,7 +293,7 @@ class PodsForm {
      * @since 2.0.0
      */
     public static function fields_setup ( $fields = null, $core_defaults = null, $single = false ) {
-        if ( null === $core_defaults ) {
+        if ( empty( $core_defaults ) ) {
             $core_defaults = array(
                 'name' => '',
                 'label' => '',
@@ -315,22 +315,72 @@ class PodsForm {
         if ( $single )
             $fields = array( $fields );
 
-        foreach ( $fields as $option => &$defaults ) {
-            if ( !is_array( $defaults ) )
-                $defaults = array( 'default' => $defaults );
-
-            if ( isset( $defaults[ 'group' ] ) && is_array( $defaults[ 'group' ] ) )
-                foreach ( $defaults[ 'group' ] as &$group_option ) {
-                    $group_option = array_merge( $core_defaults, $group_option );
-                }
-
-            $defaults = array_merge( $core_defaults, $defaults );
+        foreach ( $fields as &$field ) {
+            $field = self::field_setup( $field, $core_defaults, pods_var( 'type', $field, 'text' ) );
         }
 
         if ( $single )
             $fields = $fields[ 0 ];
 
         return $fields;
+    }
+
+    /*
+     * Get options for a field and setup defaults
+     *
+     * @since 2.0.0
+     */
+    public static function field_setup ( $field = null, $core_defaults = null, $type = null ) {
+        $options = array();
+
+        if ( empty( $core_defaults ) ) {
+            $core_defaults = array(
+                'name' => '',
+                'label' => '',
+                'description' => '',
+                'help' => '',
+                'default' => null,
+                'attributes' => array(),
+                'class' => '',
+                'type' => 'text',
+                'group' => 0,
+                'grouped' => 0,
+                'dependency' => false,
+                'depends-on' => array(),
+                'excludes-on' => array(),
+                'options' => array()
+            );
+
+            if ( null !== $type ) {
+                self::field_loader( $type );
+
+                if ( method_exists( self::$loaded[ $type ], 'options' ) )
+                    $options = apply_filters( 'pods_field_' . $type . '_options', (array) self::$loaded[ $type ]->options(), $type );
+            }
+        }
+
+        if ( !is_array( $field ) )
+            $field = array( 'default' => $field );
+
+        if ( isset( $field[ 'group' ] ) && is_array( $field[ 'group' ] ) ) {
+            foreach ( $field[ 'group' ] as &$group_option ) {
+                $group_option = array_merge( $core_defaults, $group_option );
+            }
+        }
+
+        $field = array_merge( $core_defaults, $field );
+
+        foreach ( $options as $option => $settings ) {
+            $v = null;
+
+            if ( isset( $settings[ 'default' ] ) )
+                $v = $settings[ 'default' ];
+
+            if ( !isset( $field[ 'options' ][ $option ] ) )
+                $field[ 'options' ][ $option ] = $v;
+        }
+
+        return $field;
     }
 
     /**
@@ -451,15 +501,15 @@ class PodsForm {
      *
      * @since 2.0.0
      */
-    public static function validate ( $type, &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null ) {
+    public static function validate ( $type, &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         self::field_loader( $type );
 
         $validate = true;
 
         if ( method_exists( self::$loaded[ $type ], 'validate' ) )
-            $validate = self::$loaded[ $type ]->validate( $value, $name, $options, $fields, $pod, $id );
+            $validate = self::$loaded[ $type ]->validate( $value, $name, $options, $fields, $pod, $id, $params );
 
-        $validate = apply_filters( 'pods_field_' . $type . '_validate', $validate, $value, $name, $options, $fields, $pod, $id, $type );
+        $validate = apply_filters( 'pods_field_' . $type . '_validate', $validate, $value, $name, $options, $fields, $pod, $id, $type, $params );
 
         return $validate;
     }
@@ -483,7 +533,7 @@ class PodsForm {
         self::field_loader( $type );
 
         if ( method_exists( self::$loaded[ $type ], 'pre_save' ) )
-            self::$loaded[ $type ]->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
+            $value = self::$loaded[ $type ]->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
         return $value;
     }

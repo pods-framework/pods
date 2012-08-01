@@ -113,7 +113,7 @@ class PodsData {
             }
             if ( 'taxonomy' == $this->pod_data[ 'type' ] ) {
                 $this->table = $wpdb->terms;
-                $this->join = "`{$wpdb->taxonomy}` AS `tx` ON `tx`.`term_id` = `t`.`term_id`";
+                $this->join = "LEFT JOIN `{$wpdb->taxonomy}` AS `tx` ON `tx`.`term_id` = `t`.`term_id`";
                 $this->field_id = 'term_id';
                 $this->field_name = 'name';
 

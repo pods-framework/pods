@@ -323,35 +323,35 @@ class PodsField_Text extends PodsField {
                 $url = array_merge( $defaults, $url );
 
                 if ( 'normal' == $options[ 'text_format_website' ] )
-                    $value = http_build_url( $url );
+                    $value = $this->build_url( $url );
                 elseif ( 'no-www' == $options[ 'text_format_website' ] ) {
                     if ( 0 === strpos( $url[ 'host' ], 'www.' ) )
                         $url[ 'host' ] = substr( $url[ 'host' ], 4 );
 
-                    $value = http_build_url( $url );
+                    $value = $this->build_url( $url );
                 }
                 elseif ( 'force-www' == $options[ 'text_format_website' ] ) {
                     if ( false !== strpos( $url[ 'host' ], '.' ) && false === strpos( $url[ 'host' ], '.', 1 ) )
                         $url[ 'host' ] = 'www.' . $url[ 'host' ];
 
-                    $value = http_build_url( $url );
+                    $value = $this->build_url( $url );
                 }
                 elseif ( 'no-http' == $options[ 'text_format_website' ] ) {
-                    $value = http_build_url( $url );
+                    $value = $this->build_url( $url );
                     $value = str_replace( $url[ 'scheme' ] . '://', '', $value );
                 }
                 elseif ( 'no-http-no-www' == $options[ 'text_format_website' ] ) {
                     if ( 0 === strpos( $url[ 'host' ], 'www.' ) )
                         $url[ 'host' ] = substr( $url[ 'host' ], 4 );
 
-                    $value = http_build_url( $url );
+                    $value = $this->build_url( $url );
                     $value = str_replace( $url[ 'scheme' ] . '://', '', $value );
                 }
                 elseif ( 'no-http-force-www' == $options[ 'text_format_website' ] ) {
                     if ( false !== strpos( $url[ 'host' ], '.' ) && false === strpos( $url[ 'host' ], '.', 1 ) )
                         $url[ 'host' ] = 'www.' . $url[ 'host' ];
 
-                    $value = http_build_url( $url );
+                    $value = $this->build_url( $url );
                     $value = str_replace( $url[ 'scheme' ] . '://', '', $value );
                 }
             }
@@ -470,5 +470,30 @@ class PodsField_Text extends PodsField {
     public function ui ( $id, &$value, $name = null, $options = null, $fields = null, $pod = null ) {
         if ( 'website' == $options[ 'text_format_type' ] && 0 < strlen( $options[ 'text_format_website' ] ) )
             $value = make_clickable( $value );
+    }
+
+    public function build_url ( $url ) {
+        if ( function_exists( 'http_build_url' ) )
+            return http_build_url( $url );
+
+        $defaults = array(
+            'scheme' => 'http',
+            'host' => '',
+            'path' => '/',
+            'query' => '',
+            'fragment' => ''
+        );
+
+        $url = array_merge( $defaults, (array) $url );
+
+        $new_url = $url[ 'scheme' ] . '://' . $url[ 'host' ] . '/' . ltrim( $url[ 'path' ], '/' );
+
+        if ( !empty( $url[ 'query' ] ) )
+            $new_url .= '?' . ltrim( $url[ 'query' ], '?' );
+
+        if ( !empty( $url[ 'fragment' ] ) )
+            $new_url .= '#' . ltrim( $url[ 'fragment' ], '#' );
+
+        return $new_url;
     }
 }

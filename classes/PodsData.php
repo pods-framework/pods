@@ -21,6 +21,10 @@ class PodsData {
 
     public $field_index = 'name';
 
+    public $join = '';
+
+    public $where = array();
+
     public $fields = array();
 
     public $aliases = array();
@@ -87,38 +91,69 @@ class PodsData {
             if ( isset( $this->pod_data[ 'options' ][ 'detail_page' ] ) )
                 $this->detail_page = $this->pod_data[ 'options' ][ 'detail_page' ];
 
-            switch ( $this->pod_data[ 'type' ] ) {
-                case 'pod':
-                    $this->table = $wpdb->prefix . self::$prefix . 'tbl_' . $this->pod;
-                    $this->field_id = 'id';
-                    $this->field_name = 'name';
-                    break;
-                case 'post_type':
-                case 'media':
-                    $this->table = $wpdb->posts;
-                    $this->field_id = 'ID';
-                    $this->field_name = 'post_title';
-                    break;
-                case 'taxonomy':
-                    $this->table = $wpdb->taxonomy;
-                    $this->field_id = 'term_id';
-                    $this->field_name = 'name';
-                    break;
-                case 'user':
-                    $this->table = $wpdb->users;
-                    $this->field_id = 'ID';
-                    $this->field_name = 'display_name';
-                    break;
-                case 'comment':
-                    $this->table = $wpdb->comments;
-                    $this->field_id = 'comment_ID';
-                    $this->field_name = 'comment_date';
-                    break;
-                case 'table':
-                    $this->table = $this->pod;
-                    $this->field_id = 'id';
-                    $this->field_name = 'name';
-                    break;
+            if ( 'pod' == $this->pod_data[ 'type' ] ) {
+                $this->table = $wpdb->prefix . self::$prefix . 'tbl_' . $this->pod;
+                $this->field_id = 'id';
+                $this->field_name = 'name';
+            }
+            elseif ( 'post_type' == $this->pod_data[ 'type' ] || 'media' == $this->pod_data[ 'type' ] ) {
+                $this->table = $wpdb->posts;
+                $this->field_id = 'ID';
+                $this->field_name = 'post_title';
+
+                $object = $this->pod;
+
+                if ( !empty( $this->pod_data[ 'object' ] ) )
+                    $object = $this->pod_data[ 'object' ];
+
+                $this->where = array(
+                    'post_status' => '`post_status` = "publish"',
+                    'post_type' => '`post_type` = "' . $object . '"'
+                );
+            }
+            if ( 'taxonomy' == $this->pod_data[ 'type' ] ) {
+                $this->table = $wpdb->terms;
+                $this->join = "`{$wpdb->taxonomy}` AS `tx` ON `tx`.`term_id` = `t`.`term_id`";
+                $this->field_id = 'term_id';
+                $this->field_name = 'name';
+
+                $object = $this->pod;
+
+                if ( !empty( $this->pod_data[ 'object' ] ) )
+                    $object = $this->pod_data[ 'object' ];
+
+                $this->where = array(
+                    'tx.taxonomy' => '`tx`.`taxonomy` = "' . $object . '"'
+                );
+            }
+            elseif ( 'user' == $this->pod_data[ 'type' ] ) {
+                $this->table = $wpdb->users;
+                $this->field_id = 'ID';
+                $this->field_name = 'display_name';
+
+                $this->where = array(
+                    'user_status' => '`t`.`user_status` = 0'
+                );
+            }
+            elseif ( 'comment' == $this->pod_data[ 'type' ] ) {
+                $this->table = $wpdb->comments;
+                $this->field_id = 'comment_ID';
+                $this->field_name = 'comment_date';
+
+                $object = 'comment';
+
+                if ( !empty( $this->pod_data[ 'object' ] ) )
+                    $object = $this->pod_data[ 'object' ];
+
+                $this->where = array(
+                    'comment_approved' => '`t`.`comment_approved` = 1',
+                    'comment_type' => '`t`.`comment_type` = "' . $object . '"'
+                );
+            }
+            elseif ( 'table' == $this->pod_data[ 'type' ] ) {
+                $this->table = $this->pod;
+                $this->field_id = 'id';
+                $this->field_name = 'name';
             }
 
             if ( null !== $id && !is_array( $id ) && !is_object( $id ) ) {
@@ -368,7 +403,14 @@ class PodsData {
         if ( empty( $params->table ) && is_object( $this->pod_data ) && isset( $this->table ) && !empty( $this->table ) )
             $params->table = $this->table;
 
+        if ( !empty( $params->join ) )
+            $params->join = array_merge( (array) $this->join, (array) $params->join );
+        else
+            $params->join = $this->join;
+
         $params->where = (array) $params->where;
+
+        $params->where = array_merge( $params->where, $this->where );
 
         if ( empty( $params->where ) )
             $params->where = array();
@@ -780,19 +822,21 @@ class PodsData {
                 $this->row = get_object_vars( $this->data[ $this->row_number ] );
         }
         else {
-            $this->row_number = pods_absint( $row );
+            $this->row_number = -1;
+
+            $id = pods_absint( $row );
 
             $row = false;
 
             if ( !empty($this->pod ) )
-                $row = wp_cache_get( $this->row_number, 'pods_items_' . $this->pod );
+                $row = wp_cache_get( $id, 'pods_items_' . $this->pod );
 
             if ( false !== $row && is_array( $row ) )
                 $this->row = $row;
             else {
                 $params = array(
                     'table' => $this->table,
-                    'where' => "`{$this->field_id}` = {$this->row_number}",
+                    'where' => "`{$this->field_id}` = {$id}",
                     'orderby' => "`{$this->field_id}` DESC",
                     'page' => 1,
                     'limit' => 1,
@@ -807,7 +851,7 @@ class PodsData {
                     $this->row = get_object_vars( (object) @current( (array) $this->row ) );
 
                 if ( !empty( $this->pod ) )
-                    wp_cache_set( $this->row_number, $this->row, 'pods_items_' . $this->pod );
+                    wp_cache_set( $id, $this->row, 'pods_items_' . $this->pod );
             }
         }
 

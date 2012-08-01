@@ -8,6 +8,8 @@
 
     $counter = 1;
     $primary_name = $name;
+    $primary_id = $attributes[ 'id' ];
+
     foreach ( $options[ 'data' ] as $val => $label ) {
         if ( is_array( $label ) ) {
             if ( isset( $label[ 'label' ] ) )
@@ -33,7 +35,7 @@
         $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
 
         if ( 1 < count( $options[ 'data' ] ) )
-            $attributes[ 'id' ] .= $counter;
+            $attributes[ 'id' ] = $primary_id . $counter;
 
         if ( 1 == $options[ 'grouped' ] ) {
 ?>

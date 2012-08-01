@@ -69,7 +69,7 @@ class PodsForm {
         elseif ( empty( $message ) )
             return;
 
-        $message = apply_filters( 'the_content', apply_filters( 'pods_form_ui_comment_text', $message, $name, $options ) );
+        $message = apply_filters( 'pods_form_ui_comment_text', $message, $name, $options );
 
         ob_start();
 
@@ -218,6 +218,14 @@ class PodsForm {
     public static function options ( $type, $options ) {
         $options = (array) $options;
 
+        if ( isset( $options[ 'options' ] ) ) {
+            $options_temp = $options[ 'options' ];
+
+            unset( $options[ 'options' ] );
+
+            $options = array_merge( $options_temp, $options );
+        }
+
         $defaults = self::options_setup( $type, $options );
 
         $core_defaults = array(
@@ -244,12 +252,13 @@ class PodsForm {
     }
 
     /*
-     * Get options for a field and setup defaults
+     * Get options for a field type and setup defaults
      *
      * @since 2.0.0
      */
     public static function options_setup ( $type ) {
         $core_defaults = array(
+            'name' => '',
             'label' => '',
             'description' => '',
             'help' => '',
@@ -261,7 +270,8 @@ class PodsForm {
             'grouped' => 0,
             'dependency' => false,
             'depends-on' => array(),
-            'excludes-on' => array()
+            'excludes-on' => array(),
+            'options' => array()
         );
 
         if ( null === $type )
@@ -274,7 +284,7 @@ class PodsForm {
 
         $options = apply_filters( 'pods_field_' . $type . '_options', (array) self::$loaded[ $type ]->options(), $type );
 
-        return self::option_setup( $options, $core_defaults );
+        return self::fields_setup( $options, $core_defaults );
     }
 
     /*
@@ -282,9 +292,10 @@ class PodsForm {
      *
      * @since 2.0.0
      */
-    public static function option_setup ( $options = null, $core_defaults = null, $single = false ) {
+    public static function fields_setup ( $fields = null, $core_defaults = null, $single = false ) {
         if ( null === $core_defaults ) {
             $core_defaults = array(
+                'name' => '',
                 'label' => '',
                 'description' => '',
                 'help' => '',
@@ -296,14 +307,15 @@ class PodsForm {
                 'grouped' => 0,
                 'dependency' => false,
                 'depends-on' => array(),
-                'excludes-on' => array()
+                'excludes-on' => array(),
+                'options' => array()
             );
         }
 
         if ( $single )
-            $options = array( $options );
+            $fields = array( $fields );
 
-        foreach ( $options as $option => &$defaults ) {
+        foreach ( $fields as $option => &$defaults ) {
             if ( !is_array( $defaults ) )
                 $defaults = array( 'default' => $defaults );
 
@@ -316,9 +328,9 @@ class PodsForm {
         }
 
         if ( $single )
-            $options = $options[ 0 ];
+            $fields = $fields[ 0 ];
 
-        return $options;
+        return $fields;
     }
 
     /**

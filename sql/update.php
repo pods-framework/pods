@@ -133,16 +133,16 @@ function pods_2_migrate_roles() {
                     if ( in_array( $cap, array( 'manage_roles', 'manage_content' ) ) )
                         continue;
 
-                    $cap = str_replace( 'manage_', 'pods_', $cap, 1 );
-                    $cap = str_replace( 'pod_pages', 'pages', $cap, 1 );
+                    $cap = pods_str_replace( 'manage_', 'pods_', $cap, 1 );
+                    $cap = pods_str_replace( 'pod_pages', 'pages', $cap, 1 );
 
                     $caps[ $cap ] = true;
                 }
                 elseif ( 0 === strpos( 'pod_', $cap ) ) {
                     $keys = array(
-                        str_replace( 'pod_', 'pods_new_', $cap, 1 ),
-                        str_replace( 'pod_', 'pods_edit_', $cap, 1 ),
-                        str_replace( 'pod_', 'pods_delete_', $cap, 1 ),
+                        pods_str_replace( 'pod_', 'pods_new_', $cap, 1 ),
+                        pods_str_replace( 'pod_', 'pods_edit_', $cap, 1 ),
+                        pods_str_replace( 'pod_', 'pods_delete_', $cap, 1 ),
                     );
 
                     foreach ( $keys as $key ) {

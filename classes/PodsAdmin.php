@@ -16,8 +16,11 @@ class PodsAdmin {
         $this->data = pods_data();
 
         add_action( 'admin_enqueue_scripts', array( $this, 'admin_head' ) );
-        add_action( 'admin_menu', array( $this, 'admin_menu' ), 99 );
+
         add_action( 'admin_init', array( $this, 'admin_init' ), 9 );
+
+        add_action( 'admin_menu', array( $this, 'admin_menu' ), 99 );
+
         if ( is_admin() ) {
             add_action( 'wp_ajax_pods_admin', array( $this, 'admin_ajax' ) );
             add_action( 'wp_ajax_nopriv_pods_admin', array( $this, 'admin_ajax' ) );
@@ -28,6 +31,7 @@ class PodsAdmin {
             add_filter( 'media_buttons_context', array( $this, 'media_button' ) );
         }
 
+        add_filter( 'members_get_capabilities', array( $this, 'admin_capabilities' ) );
     }
 
     public function admin_init () {
@@ -36,7 +40,9 @@ class PodsAdmin {
             foreach ( $_POST as $key => $value ) {
                 if ( 'action' == $key )
                     continue;
+
                 unset( $_POST[ $key ] );
+
                 $_POST[ '_podsfix_' . $key ] = $value;
             }
         }
@@ -109,8 +115,6 @@ class PodsAdmin {
                     // Select2
                     wp_enqueue_script('jquery-select2');
                     wp_enqueue_style('jquery-select2');
-
-                    wp_enqueue_script( 'pods-file-attach' );
                 }
                 else
                     wp_enqueue_style( 'pods-admin' );
@@ -138,14 +142,12 @@ class PodsAdmin {
             'type' => 'pod'
         ) );
 
-        $can_manage = pods_access( 'manage_content' );
-
         if ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER )
             $results = false; // not yet!
 
         if ( false !== $results ) {
             foreach ( (array) $results as $item ) {
-                if ( !pods_access( 'pod_' . $item[ 'name' ] ) && !$can_manage )
+                if ( !is_super_admin() && !current_user_can( 'pods_new_' . $item[ 'name' ] ) && !current_user_can( 'pods_edit_' . $item[ 'name' ] ) && !current_user_can( 'pods_delete_' . $item[ 'name' ] ) )
                     continue;
 
                 $item[ 'options' ][ 'label' ] = ( !empty( $item[ 'options' ][ 'label' ] ) ) ? $item[ 'options' ][ 'label' ] : ucwords( str_replace( '_', ' ', $item[ 'name' ] ) );
@@ -154,18 +156,27 @@ class PodsAdmin {
                 if ( 1 == $item[ 'options' ][ 'is_toplevel' ] ) {
                     add_object_page( $item[ 'options' ][ 'label' ], $item[ 'options' ][ 'label' ], 'read', "pods-manage-{$item['name']}" );
 
-                    add_submenu_page( "pods-manage-{$item['name']}", 'Edit', 'Edit', 'read', "pods-manage-{$item['name']}", array(
-                        $this,
-                        'admin_content'
-                    ) );
+                    if ( is_super_admin() || current_user_can( 'pods_edit_' . $item[ 'name' ] ) || current_user_can( 'pods_delete_' . $item[ 'name' ] ) ) {
+                        add_submenu_page( "pods-manage-{$item['name']}", 'Edit', 'Edit', 'read', "pods-manage-{$item['name']}", array(
+                            $this,
+                            'admin_content'
+                        ) );
+                    }
 
-                    add_submenu_page( "pods-manage-{$item['name']}", 'Add New', 'Add New', 'read', "pods-add-new-{$item['name']}", array(
-                        $this,
-                        'admin_content'
-                    ) );
+                    if ( is_super_admin() || current_user_can( 'pods_add_' . $item[ 'name' ] ) ) {
+                        $page = "pods-add-new-{$item['name']}";
+
+                        if ( !is_super_admin() && !current_user_can( 'pods_edit_' . $item[ 'name' ] ) && !current_user_can( 'pods_delete_' . $item[ 'name' ] ) )
+                            $page = "pods-manage-{$item['name']}";
+
+                        add_submenu_page( "pods-manage-{$item['name']}", 'Add New', 'Add New', 'read', $page, array(
+                            $this,
+                            'admin_content'
+                        ) );
+                    }
                 }
-                else
-                    $submenu[] = $item;
+                elseif ( !current_user_can( 'pods_edit_' . $item[ 'name' ] ) && !current_user_can( 'pods_delete_' . $item[ 'name' ] ) )
+                    $submenu[ ] = $item;
             }
             if ( !empty( $submenu ) ) {
                 $parent = false;
@@ -191,53 +202,49 @@ class PodsAdmin {
             'pods' => array(
                 'label' => 'Setup',
                 'function' => array( $this, 'admin_setup' ),
-                'access' => 'manage_pods'
+                'access' => 'pods'
             ),
             'pods-components' => array(
                 'label' => 'Components',
                 'function' => array( $this, 'admin_components' ),
-                'access' => 'manage_components'
+                'access' => 'pods_components'
             ),
             'pods-help' => array(
                 'label' => 'Help',
                 'function' => array( $this, 'admin_help' )
             )
         );
+
         if ( defined( 'PODS_DEVELOPER' ) ) {
             $admin_menus = array(
                 'pods' => array(
                     'label' => 'Setup',
                     'function' => array( $this, 'admin_setup' ),
-                    'access' => 'manage_pods'
+                    'access' => 'pods'
                 ),
-                /*'pods-ui' => array('label' => 'Admin UI',
-'function' => array($this, 'admin_ui'),
-'access' => array('admin_setup',
-                'admin_ui')),*/
                 'pods-advanced' => array(
                     'label' => 'Advanced',
                     'function' => array( $this, 'admin_advanced' ),
                     'access' => array(
-                        'manage_templates',
-                        'manage_pod_pages',
-                        'manage_helpers',
-                        'manage_roles'
+                        'pods_templates',
+                        'pods_pod_pages',
+                        'pods_helpers'
                     )
                 ),
                 'pods-settings' => array(
                     'label' => 'Settings',
                     'function' => array( $this, 'admin_settings' ),
-                    'access' => 'manage_settings'
+                    'access' => 'pods_settings'
                 ),
                 'pods-packages' => array(
-                    'label' => 'Packages',
+                    'label' => 'Import / Export',
                     'function' => array( $this, 'admin_packages' ),
-                    'access' => 'manage_packages'
+                    'access' => 'pods_packages'
                 ),
                 'pods-components' => array(
                     'label' => 'Components',
                     'function' => array( $this, 'admin_components' ),
-                    'access' => 'manage_components'
+                    'access' => 'pods_components'
                 ),
                 'pods-help' => array(
                     'label' => 'Help',
@@ -248,16 +255,36 @@ class PodsAdmin {
         $admin_menus = apply_filters( 'pods_admin_menu', $admin_menus );
 
         $parent = false;
+
         foreach ( $admin_menus as $page => $menu_item ) {
-            if ( isset( $menu_item[ 'access' ] ) && !pods_access( $menu_item[ 'access' ] ) )
-                continue;
+            if ( !is_super_admin() && isset( $menu_item[ 'access' ] ) ) {
+                $access = (array) $menu_item[ 'access' ];
+
+                $ok = false;
+
+                foreach ( $access as $cap ) {
+                    if ( current_user_can( $cap ) ) {
+                        $ok = true;
+
+                        break;
+                    }
+                }
+
+                if ( !$ok )
+                    continue;
+            }
+
             if ( !isset( $menu_item[ 'label' ] ) )
                 $menu_item[ 'label' ] = $page;
+
             if ( false === $parent ) {
                 $parent = $page;
-                add_menu_page( 'Pods Admin', 'Pods Admin', 'manage_options', $parent, null, PODS_URL . '/ui/images/icon16.png' );
+
+                add_menu_page( 'Pods Admin', 'Pods Admin', 'read', $parent, null, PODS_URL . '/ui/images/icon16.png' );
             }
-            add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'manage_options', $page, $menu_item[ 'function' ] );
+
+            add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'read', $page, $menu_item[ 'function' ] );
+
             if ( 'pods-components' == $page && defined( 'PODS_DEVELOPER' ) )
                 $pods_components->menu( $parent );
         }
@@ -265,9 +292,27 @@ class PodsAdmin {
 
     public function admin_content () {
         $pod = str_replace( 'pods-manage-', '', $_GET[ 'page' ] );
+
+        $actions_disabled = array();
+
+        if ( !current_user_can( 'pods_add_' . $pod ) )
+            $actions_disabled[] = 'add';
+
+        if ( !current_user_can( 'pods_edit_' . $pod ) )
+            $actions_disabled[] = 'edit';
+
+        if ( !current_user_can( 'pods_delete_' . $pod ) )
+            $actions_disabled[] = 'delete';
+
+        if ( in_array( 'edit', $actions_disabled ) && in_array( 'delete', $actions_disabled ) )
+            $_GET[ 'action' ] = 'add';
+
         pods_ui( array(
             'pod' => $pod,
-            'actions_custom' => array( 'form' => array( $this, 'admin_content_form' ) )
+            'actions_custom' => array(
+                'form' => array( $this, 'admin_content_form' )
+            ),
+            'actoins_disabled' => $actions_disabled
         ) );
     }
 
@@ -451,6 +496,27 @@ class PodsAdmin {
         require_once PODS_DIR . 'ui/admin/help.php';
     }
 
+    public function admin_capabilities ( $capabilities ) {
+        $pods = pods_api()->load_pods();
+
+        $capabilities[] = 'pods';
+        $capabilities[] = 'pods_templates';
+        $capabilities[] = 'pods_pages';
+        $capabilities[] = 'pods_helpers';
+        $capabilities[] = 'pods_settings';
+        $capabilities[] = 'pods_packages';
+        $capabilities[] = 'pods_components';
+
+        foreach ( $pods as $pod ) {
+            if ( !in_array( $pod[ 'type' ], array( 'pod', 'table' ) ) )
+                continue;
+
+            $capabilities[] = 'pods_add_' . $pod[ 'name' ];
+            $capabilities[] = 'pods_edit_' . $pod[ 'name' ];
+            $capabilities[] = 'pods_delete_' . $pod[ 'name' ];
+        }
+    }
+
     public function admin_ajax () {
         if ( false === headers_sent() ) {
             if ( '' == session_id() )
@@ -464,9 +530,12 @@ class PodsAdmin {
         foreach ( $params as $key => $value ) {
             if ( 'action' == $key )
                 continue;
+
             unset( $params[ $key ] );
+
             $params[ str_replace( '_podsfix_', '', $key ) ] = $value;
         }
+
         if ( !defined( 'PODS_STRICT_MODE' ) || !PODS_STRICT_MODE )
             $params = pods_sanitize( $params );
 
@@ -548,12 +617,14 @@ class PodsAdmin {
 
         if ( 'save_pod_item' == $method->name ) {
             $columns = pods_validate_key( $params->token, $params->pod, $params->uri_hash, null, $params->form_count );
+
             if ( false === $columns )
                 pods_error( 'This form has expired. Please reload the page and ensure your session is still active.', $this );
 
             if ( is_array( $columns ) ) {
                 foreach ( $columns as $key => $val ) {
                     $column = is_array( $val ) ? $key : $val;
+
                     if ( !isset( $params->$column ) )
                         unset( $columns[ $column ] );
                     else
@@ -563,14 +634,25 @@ class PodsAdmin {
             else {
                 $tmp = $this->api->load_pod( array( 'name' => $params->pod ) );
                 $columns = array();
+
                 foreach ( $tmp[ 'fields' ] as $field_data ) {
                     $column = $field_data[ 'name' ];
+
                     if ( !isset( $params->$column ) )
                         continue;
+
                     $columns[ $column ] = $params->$column;
                 }
             }
+
             $params->data = $columns;
+        }
+
+        if ( 'save_pod' == $method->name ) {
+            if ( isset( $params->field_data ) && !is_array( $params->field_data ) ) {
+                $params->field_data = stripslashes( $params->field_data );
+                $params->field_data = (array) @json_decode( $params->field_data, true );
+            }
         }
 
         $params = apply_filters( 'pods_api_' . $method->name, $params, $method );

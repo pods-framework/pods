@@ -18,6 +18,14 @@ function pods_query ( $sql, $error = 'Database Error', $results_error = null, $n
     $sql = str_replace( '@wp_users', $wpdb->users, $sql );
     $sql = str_replace( '@wp_', $wpdb->prefix, $sql );
     $sql = str_replace( '{prefix}', '@wp_', $sql );
+
+    if ( is_array( $error ) ) {
+        if ( !is_array( $sql ) )
+            $sql = array( $sql, $error );
+
+        $error = 'Database Error';
+    }
+
     return $podsdata->query( $sql, $error, $results_error, $no_results_error );
 }
 
@@ -33,9 +41,15 @@ function pods_query ( $sql, $error = 'Database Error', $results_error = null, $n
  * @todo Need to figure out how to handle $scope = 'pods' for the Pods class
  */
 function pods_do_hook ( $scope, $name, $args = null, &$obj = null ) {
-    $args = apply_filters( "pods_{$scope}_{$name}", $args, $obj );
-    if ( is_array( $args ) && isset( $args[ 0 ] ) )
-        return $args[ 0 ];
+    // Add filter name
+    array_unshift( $args, "pods_{$scope}_{$name}" );
+
+    // Add object
+    $args[] = $obj;
+
+    // Run apply_filters and give it all the arguments
+    $args = call_user_func_array( 'apply_filters', $args );
+
     return $args;
 }
 
@@ -508,6 +522,28 @@ function pods_absint ( $maybeint, $strict = true, $allow_negative = false ) {
 }
 
 /**
+ * Functions like str_replace except it will restrict $occurrences
+ *
+ * @param mixed $find
+ * @param mixed $replace
+ * @param string $string
+ * @param int $occurrences
+ *
+ * @return mixed
+ */
+function pods_str_replace( $find, $replace, $string, $occurrences = -1 ) {
+    if ( is_array( $find ) ) {
+        foreach ( $find as &$f ) {
+            $f = '/' . preg_quote( $f, '/' ) . '/';
+        }
+    }
+    else
+        $find = '/' . preg_quote( $find, '/' ) . '/';
+
+    return preg_replace( $find, $replace, $string, $occurrences );
+}
+
+/**
  * Run a Pods Helper
  *
  * @param string $uri The Pod Page URI to check if currently on
@@ -638,21 +674,13 @@ function pod_page_exists ( $uri = null ) {
  * @since 1.2.0
  */
 function pods_access ( $privs, $method = 'OR' ) {
-    global $pods_roles;
-
-    if ( empty( $pods_roles ) && !is_array( $pods_roles ) ) {
-        $pods_roles = get_option( 'pods_roles' );
-        if ( !is_array( $pods_roles ) )
-            $pods_roles = array();
-    }
-
     // Convert $privs to an array
     $privs = (array) $privs;
 
     // Convert $method to uppercase
     $method = strtoupper( $method );
 
-    $check = apply_filters( 'pods_access', null, $privs, $method, $pods_roles );
+    $check = apply_filters( 'pods_access', null, $privs, $method );
     if ( null !== $check && is_bool( $check ) )
         return $check;
 
@@ -666,26 +694,35 @@ function pods_access ( $privs, $method = 'OR' ) {
     $approved_privs = array();
 
     // Loop through the user's roles
-    if ( is_array( $pods_roles ) ) {
-        foreach ( $pods_roles as $role => $pods_privs ) {
-            if ( current_user_can( $role ) ) {
-                foreach ( $privs as $priv ) {
-                    if ( false !== array_search( $priv, $pods_privs ) || current_user_can( 'pods_' . ltrim( $priv, 'pod_' ) ) ) {
-                        if ( 'OR' == $method )
-                            return true;
-                        $approved_privs[ $priv ] = true;
-                    }
-                }
-            }
-        }
-        if ( 'AND' == strtoupper( $method ) ) {
-            foreach ( $privs as $priv ) {
-                if ( isset( $approved_privs[ $priv ] ) )
-                    return false;
-            }
-            return true;
+    foreach ( $privs as $priv ) {
+        if ( 0 === strpos( $priv, 'pod_' ) )
+            $priv = pods_str_replace( 'pod_', 'pods_edit_', $priv, 1 );
+
+        if ( 0 === strpos( $priv, 'manage_' ) )
+            $priv = pods_str_replace( 'manage_', 'pods_', $priv, 1 );
+
+        if ( current_user_can( $priv ) ) {
+            if ( 'OR' == $method )
+                return true;
+
+            $approved_privs[ $priv ] = true;
         }
     }
+    if ( 'AND' == strtoupper( $method ) ) {
+        foreach ( $privs as $priv ) {
+            if ( 0 === strpos( $priv, 'pod_' ) )
+                $priv = pods_str_replace( 'pod_', 'pods_edit_', $priv, 1 );
+
+            if ( 0 === strpos( $priv, 'manage_' ) )
+                $priv = pods_str_replace( 'manage_', 'pods_', $priv, 1 );
+
+            if ( isset( $approved_privs[ $priv ] ) )
+                return false;
+        }
+
+        return true;
+    }
+
     return false;
 }
 

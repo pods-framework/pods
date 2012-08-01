@@ -156,7 +156,7 @@ class PodsField_Number extends PodsField {
     public function prepare ( $options = null ) {
         $format = self::$prepare;
 
-        if ( 0 < (int) $options[ 'number_decimals' ] )
+        if ( 0 < (int) pods_var( 'number_decimals', $options, 0 ) )
             $format = '%01.' . (int) $options[ 'number_decimals' ] . 'f';
 
         return $format;
@@ -226,6 +226,9 @@ class PodsField_Number extends PodsField {
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
+
+        if ( is_array( $value ) )
+            $value = implode( '', $value );
 
         $field_type = 'number';
 

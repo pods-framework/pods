@@ -169,9 +169,94 @@ class PodsField_Pick extends PodsField {
      * @since 2.0.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+        global $wpdb;
+
         $options = (array) $options;
 
         $options[ 'grouped' ] = 1;
+
+        $custom = pods_var( 'pick_custom', $options, false );
+
+        if ( 'custom-simple' == pods_var( 'pick_object', $options ) && !empty( $custom ) ) {
+            if ( !is_array( $custom ) )
+                $custom = explode( "\n", $custom );
+
+            $options[ 'data' ] = array();
+
+            foreach ( $custom as $custom_value ) {
+                $custom_label = explode( '|', $custom_value );
+
+                if ( empty( $custom_label ) )
+                    continue;
+
+                if ( 1 == count( $custom_label ) )
+                    $custom_label = $custom_value;
+                else {
+                    $custom_label = $custom_label[ 1 ];
+                    $custom_value = $custom_label[ 0 ];
+                }
+
+                $options[ 'data' ][ $custom_value ] = $custom_label;
+            }
+        }
+        elseif ( '' != pods_var( 'pick_object', $options, '' ) && array() == pods_var( 'data', $options, array() ) ) {
+            $options[ 'data' ] = array( '' => __( '-- Select One --', 'pods' ) );
+
+            $table = $field_id = $field_name = false;
+
+            switch ( pods_var( 'pick_object', $options ) ) {
+                case 'pod':
+                    $table = $wpdb->prefix . 'pods_tbl_' . pods_var( 'pick_val', $options );
+                    $field_id = 'id';
+                    $field_name = 'name';
+                    break;
+                case 'post_type':
+                case 'media':
+                    $table = $wpdb->posts;
+                    $field_id = 'ID';
+                    $field_name = 'post_title';
+                    break;
+                case 'taxonomy':
+                    $table = $wpdb->taxonomy;
+                    $field_id = 'term_id';
+                    $field_name = 'name';
+                    break;
+                case 'user':
+                    $table = $wpdb->users;
+                    $field_id = 'ID';
+                    $field_name = 'display_name';
+                    break;
+                case 'comment':
+                    $table = $wpdb->comments;
+                    $field_id = 'comment_ID';
+                    $field_name = 'comment_date';
+                    break;
+                case 'table':
+                    $table = pods_var( 'pick_val', $options );
+                    $field_id = 'id';
+                    $field_name = 'name';
+                    break;
+            }
+
+            $data = pods_data();
+            $data->table = $table;
+            $data->field_id = $field_id;
+            $data->field_name = $field_name;
+
+            $results = $data->select( array(
+                'select' => "`{$data->field_id}`, `{$data->field_name}`",
+                'table' => $data->table,
+                'identifier' => $data->field_id,
+                'index' => $data->field_name,
+                'where' => pods_var( 'pick_where', $options, null, null, true ),
+                'orderby' => pods_var( 'pick_where', $options, null, null, true ),
+                'groupby' => pods_var( 'pick_groupby', $options, null, null, true )
+            ) );
+
+            foreach ( $results as $result ) {
+                $options[ 'data' ][ $result->{$field_id} ] = $result->{$field_name};
+            }
+        }
 
         if ( 'single' == $options[ 'pick_format_type' ] ) {
             if ( 'dropdown' == $options[ 'pick_format_single' ] )

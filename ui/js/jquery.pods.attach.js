@@ -1,4 +1,4 @@
-var pods_file_context_ = false; // tracks whether or not we've got a thickbox displayed in our context
+var pods_file_context = false; // tracks whether or not we've got a thickbox displayed in our context
 var pods_file_thickbox_modder; // stores our interval for making necessary changes to thickbox content
 
 // handle our thickbox mods

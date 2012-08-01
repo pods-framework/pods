@@ -1,6 +1,8 @@
 <?php
 class PodsInit {
 
+    static $no_conflict = array();
+
     public $meta;
 
     public $version;

@@ -904,11 +904,11 @@ class PodsAPI {
 
             $lookup_name = $pod[ 'name' ];
 
-            if ( 'post_type' == $pod[ 'type' ] && isset( $built_in[ $pod[ 'type' ] ] ) ) {
+            if ( 'post_type' == $pod[ 'type' ] && isset( $built_in[ 'taxonomy' ] ) ) {
                 $lookup_option = 'built_in_post_types_' . $lookup_name;
                 $lookup_built_in = 'taxonomy';
             }
-            elseif ( 'taxonomy' == $pod[ 'type' ] && isset( $built_in[ $pod[ 'type' ] ] ) ) {
+            elseif ( 'taxonomy' == $pod[ 'type' ] && isset( $built_in[ 'post_type' ] ) ) {
                 $lookup_option = 'built_in_taxonomies_' . $lookup_name;
                 $lookup_built_in = 'post_type';
             }

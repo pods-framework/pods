@@ -187,6 +187,13 @@ class Pods {
                 return null;
         }
 
+        if ( $this->data->field_id == $params->name ) {
+            if ( isset( $this->row[ $params->name ] ) )
+                return $this->row[ $params->name ];
+            else
+                return 0;
+        }
+
         $value = null;
 
         $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );

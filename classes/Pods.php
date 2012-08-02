@@ -200,10 +200,10 @@ class Pods {
 
         if ( 'detail_url' == $params->name )
             $value = get_bloginfo( 'url' ) . '/' . $this->do_template( $this->detail_page );
-        elseif ( isset( $this->fields[ $params->name ] ) && isset( $this->row[ $params->name ] ) ) {
+        elseif ( isset( $this->row[ $params->name ] ) ) {
             $value = $this->row[ $params->name ];
 
-            if ( in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
+            if ( isset( $this->fields[ $params->name ] ) && in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
                 if ( 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] ) {
                     if ( empty( $value ) )
                         return array();

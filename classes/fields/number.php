@@ -177,6 +177,7 @@ class PodsField_Number extends PodsField {
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $thousands = ',';
         $dot = '.';
+
         if ( '9999.99' == $options[ 'number_format' ] )
             $thousands = '';
         elseif ( '9999,99' == $options[ 'number_format' ] ) {
@@ -195,12 +196,14 @@ class PodsField_Number extends PodsField {
 
         if ( isset( $options[ 'number_format_type' ] ) && 'currency' == $options[ 'number_format_type' ] ) {
             $currency = 'usd';
+
             if ( isset( $options[ 'number_format_currency_sign' ] ) && isset( self::$currencies[ $options[ 'number_format_currency_sign' ] ] ) )
                 $currency = $options[ 'number_format_currency_sign' ];
 
             $currency_sign = self::$currencies[ $currency ];
 
             $placement = 'before';
+
             if ( isset( $options[ 'number_format_currency_placement' ] ) )
                 $placement = $options[ 'number_format_currency_placement' ];
 

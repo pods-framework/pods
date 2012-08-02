@@ -1275,6 +1275,9 @@ function pods_is_plugin_active ( $plugin ) {
  * @param string $object_type
  */
 function pods_no_conflict_on ( $object_type = 'post' ) {
+    if ( 'post_type' == $object_type )
+        $object_type = 'post';
+
     if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
         return true;
 
@@ -1370,6 +1373,9 @@ function pods_no_conflict_on ( $object_type = 'post' ) {
  * @param string $object_type
  */
 function pods_no_conflict_off ( $object_type = 'post' ) {
+    if ( 'post_type' == $object_type )
+        $object_type = 'post';
+
     if ( empty( PodsInit::$no_conflict ) || !isset( PodsInit::$no_conflict[ $object_type ] ) || empty( PodsInit::$no_conflict[ $object_type ] ) )
         return false;
 

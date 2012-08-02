@@ -983,6 +983,9 @@ class PodsMeta {
         if ( 'post_type' == $meta_type )
             $meta_type = 'post';
 
+        if ( empty( $meta_key ) )
+            return $_null;
+
         $object = $this->get_object( $object_type, $object_id );
 
         $field = $meta_key;

@@ -25,6 +25,8 @@ class PodsData {
 
     public $where = array();
 
+    public $orderby = '';
+
     public $fields = array();
 
     public $aliases = array();
@@ -95,6 +97,8 @@ class PodsData {
                 $this->table = $wpdb->prefix . self::$prefix . 'tbl_' . $this->pod;
                 $this->field_id = 'id';
                 $this->field_name = 'name';
+
+                $this->orderby = '`t`.`name`, `t`.`id` DESC';
             }
             elseif ( 'post_type' == $this->pod_data[ 'type' ] || 'media' == $this->pod_data[ 'type' ] ) {
                 $this->table = $wpdb->posts;
@@ -110,6 +114,8 @@ class PodsData {
                     'post_status' => '`t`.`post_status` = "publish"',
                     'post_type' => '`t`.`post_type` = "' . $object . '"'
                 );
+
+                $this->orderby = '`t`.`menu_order`, `t`.`post_title`, `t`.`post_date` DESC';
             }
             if ( 'taxonomy' == $this->pod_data[ 'type' ] ) {
                 $this->table = $wpdb->terms;
@@ -125,6 +131,8 @@ class PodsData {
                 $this->where = array(
                     'tx.taxonomy' => '`tx`.`taxonomy` = "' . $object . '"'
                 );
+
+                $this->orderby = '`t`.`name`';
             }
             elseif ( 'user' == $this->pod_data[ 'type' ] ) {
                 $this->table = $wpdb->users;
@@ -134,6 +142,8 @@ class PodsData {
                 $this->where = array(
                     'user_status' => '`t`.`user_status` = 0'
                 );
+
+                $this->orderby = '`t`.`display_name`, `t`.`ID` DESC';
             }
             elseif ( 'comment' == $this->pod_data[ 'type' ] ) {
                 $this->table = $wpdb->comments;
@@ -149,11 +159,15 @@ class PodsData {
                     'comment_approved' => '`t`.`comment_approved` = 1',
                     'comment_type' => '`t`.`comment_type` = "' . $object . '"'
                 );
+
+                $this->orderby = '`t`.`comment_date` DESC, `t`.`comment_ID` DESC';
             }
             elseif ( 'table' == $this->pod_data[ 'type' ] ) {
                 $this->table = $this->pod;
                 $this->field_id = 'id';
                 $this->field_name = 'name';
+
+                $this->orderby = '`t`.`name`, `t`.`id` DESC';
             }
 
             if ( null !== $id && !is_array( $id ) && !is_object( $id ) ) {
@@ -419,6 +433,9 @@ class PodsData {
 
         if ( empty( $params->having ) )
             $params->having = array();
+
+        if ( empty( $params->orderby ) && !empty( $this->orderby ) )
+            $params->orderby = $this->orderby;
 
         // Get Aliases for future reference
         $selectsfound = '';

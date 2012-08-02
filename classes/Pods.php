@@ -407,12 +407,12 @@ class Pods {
     public function find ( $params = null, $limit = 15, $where = null, $sql = null ) {
         $defaults = array(
             'table' => $this->data->table,
-            'select' => 't.*',
+            'select' => '`t`.*',
             'join' => null,
             'where' => $where,
             'groupby' => null,
             'having' => null,
-            'orderby' => "`t`.`{$this->data->field_id}` DESC",
+            'orderby' => null,
             'limit' => (int) $limit,
             'page' => (int) $this->page,
             'search' => (boolean) $this->search,
@@ -432,8 +432,6 @@ class Pods {
         $this->limit = (int) $params->limit;
         $this->page = (int) $params->page;
         $this->search = (boolean) $params->search;
-
-        // also need to do better search/filtering using search_mode and auto join stuff for pick/file fields
 
         $params = $this->do_hook( 'find', $params );
 

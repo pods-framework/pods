@@ -190,9 +190,9 @@ class PodsField_Number extends PodsField {
         }
 
         if ( 'i18n' == $options[ 'number_format' ] )
-            $value = number_format_i18n( $value, (int) $options[ 'number_decimals' ] );
+            $value = number_format_i18n( (float) $value, (int) $options[ 'number_decimals' ] );
         else
-            $value = number_format( $value, (int) $options[ 'number_decimals' ], $dot, $thousands );
+            $value = number_format( (float) $value, (int) $options[ 'number_decimals' ], $dot, $thousands );
 
         if ( isset( $options[ 'number_format_type' ] ) && 'currency' == $options[ 'number_format_type' ] ) {
             $currency = 'usd';

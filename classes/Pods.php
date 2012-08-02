@@ -241,11 +241,11 @@ class Pods {
                 pods_no_conflict_on( $this->pod_data[ 'type' ] );
 
                 if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
-                    $value = get_post_meta( $this->id, $params->name, $params->single );
+                    $value = get_post_meta( $this->id(), $params->name, $params->single );
                 elseif ( 'user' == $this->pod_data[ 'type' ] )
-                    $value = get_user_meta( $this->id, $params->name, $params->single );
+                    $value = get_user_meta( $this->id(), $params->name, $params->single );
                 elseif ( 'comment' == $this->pod_data[ 'type' ] )
-                    $value = get_comment_meta( $this->id, $params->name, $params->single );
+                    $value = get_comment_meta( $this->id(), $params->name, $params->single );
 
                 pods_no_conflict_off( $this->pod_data[ 'type' ] );
             }

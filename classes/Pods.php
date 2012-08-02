@@ -435,6 +435,14 @@ class Pods {
 
         $params = $this->do_hook( 'find', $params );
 
+        // Add "`t`." prefix to $orderby if needed
+        if ( !empty( $params->orderby ) && false === strpos( $params->orderby, ',' ) && false === strpos( $params->orderby, '(' ) && false === strpos( $params->orderby, '.' ) ) {
+            if ( false !== strpos( $params->orderby, ' ASC' ) )
+                $params->orderby = '`t`.`' . trim( str_replace( array( '`', ' ASC' ), '', $params->orderby ) ) . '` ASC';
+            else
+                $params->orderby = '`t`.`' . trim( str_replace( array( '`', ' DESC' ), '', $params->orderby ) ) . '` DESC';
+        }
+
         $this->data->select( $params );
 
         return $this;

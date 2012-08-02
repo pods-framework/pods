@@ -97,6 +97,11 @@ class PodsField_Date extends PodsField {
                     'hh_mm' => '01:25'
                 )
             ),
+            'date_html5' => array(
+                'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean'
+            ),
             'date_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',

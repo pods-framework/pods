@@ -417,12 +417,13 @@ function pods_var_update ( $array = null, $allowed = null, $excluded = null, $ur
  *
  * @since 1.8.9
  */
-function pods_create_slug ( $str ) {
-    $str = preg_replace( "/([_ ])/", "-", trim( $str ) );
-    $str = preg_replace( "/([^0-9a-z-.])/", "", strtolower( $str ) );
+function pods_create_slug ( $orig ) {
+    $str = preg_replace( "/([_ ])/", "-", trim( $orig ) );
+    $str = preg_replace( "/([^0-9a-z-])/", "", strtolower( $str ) );
     $str = preg_replace( "/(-){2,}/", "-", $str );
     $str = trim( $str, '-' );
-    $str = apply_filters( 'pods_create_slug', $str );
+    $str = apply_filters( 'pods_create_slug', $str, $orig );
+
     return $str;
 }
 
@@ -433,12 +434,13 @@ function pods_create_slug ( $str ) {
  *
  * @since 1.2.0
  */
-function pods_clean_name ( $str ) {
-    $str = preg_replace( "/([- ])/", "_", trim( $str ) );
+function pods_clean_name ( $orig ) {
+    $str = preg_replace( "/([- ])/", "_", trim( $orig ) );
     $str = preg_replace( "/([^0-9a-z_])/", "", strtolower( $str ) );
     $str = preg_replace( "/(_){2,}/", "_", $str );
     $str = trim( $str, '_' );
-    $str = apply_filters( 'pods_clean_name', $str );
+    $str = apply_filters( 'pods_clean_name', $str, $orig );
+
     return $str;
 }
 
@@ -453,63 +455,52 @@ function pods_clean_name ( $str ) {
  * @return string The unique slug name
  * @since 1.7.2
  */
-function pods_unique_slug ( $value, $column_name, $pod, $pod_id = 0, &$obj = null ) {
-    $value = pods_create_slug( $value );
+function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, &$obj = null ) {
+    $slug = pods_create_slug( $slug );
 
     $id = 0;
+
     if ( is_object( $pod ) ) {
         if ( isset( $pod->id ) )
             $id = $pod->id;
+
         if ( isset( $pod->pod_id ) )
             $pod_id = $pod->pod_id;
+
         if ( isset( $pod->datatype ) )
             $pod = $pod->datatype;
         else
             $pod = '';
     }
+
     $pod_id = absint( $pod_id );
     $id = absint( $id );
 
-    $sql = "
-    SELECT DISTINCT
-        `t`.`{$column_name}` AS `slug`
-    FROM
-        `@wp_pods_tbl_{$pod}` `t`
-    WHERE
-        `t`.`{$column_name}` = %s
-    LIMIT 1
-    ";
-    $sql = array( $sql, array( $value ) );
-    if ( 0 < $id ) {
-        $sql = "
-        SELECT DISTINCT
-            `t`.`{$column_name}` AS `slug`
-        FROM
-            `@wp_pods_tbl_{$pod}` `t`
-        WHERE
-            `t`.`{$column_name}` = %s AND `t`.`id` != %d
+    $check_sql = "
+        SELECT DISTINCT `t`.`{$column_name}` AS `slug`
+        FROM `@wp_pods_tbl_{$pod}` AS `t`
+        WHERE `t`.`{$column_name}` = %s AND `t`.`id` != %d
         LIMIT 1
-        ";
-        $sql = array( $sql, array( $value, $id ) );
+    ";
+
+    $slug_check = pods_query( array( $check_sql, $slug, $id ), $obj );
+
+    if ( $slug_check || apply_filters( 'pods_unique_slug_is_bad_flat_slug', false, $slug, $id, $column_name, $pod, $pod_id, $obj ) ) {
+        $suffix = 2;
+
+        do {
+            $alt_slug = substr( $slug, 0, 200 - ( strlen( $suffix ) + 1 ) ) . "-{$suffix}";
+            $slug_check = pods_query( array( $check_sql, $alt_slug, $id ), $obj );
+            $suffix++;
+        }
+        while ( $slug_check );
+
+        $slug = $alt_slug;
     }
 
-    $result = pods_query( $sql, $obj );
-    if ( 0 < count( $result ) ) {
-        $unique_num = 0;
-        $unique_found = false;
-        while (!$unique_found) {
-            $unique_num++;
-            $test_slug = pods_sanitize( $value . '-' . $unique_num );
-            $sql[ 1 ][ 0 ] = $test_slug;
-            $result = pods_query( $sql, $obj );
-            if ( 0 < count( $result ) )
-                continue;
-            $value = $test_slug;
-            $unique_found = true;
-        }
-    }
-    $value = apply_filters( 'pods_unique_slug', $value, $column_name, $pod, $pod_id, $obj );
-    return $value;
+    $slug = apply_filters( 'pods_unique_slug', $slug, $id, $column_name, $pod, $pod_id, $obj );
+
+    return $slug;
 }
 
 /**

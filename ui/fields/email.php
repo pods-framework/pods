@@ -1,6 +1,12 @@
 <?php
     $attributes = array();
-    $attributes[ 'type' ] = 'email';
+
+    $type = 'text';
+
+    if ( 1 == $options[ 'text_html5' ] )
+        $type = 'email';
+
+    $attributes[ 'type' ] = $type;
     $attributes[ 'value' ] = $value;
     $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
 ?>

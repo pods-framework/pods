@@ -24,10 +24,14 @@
 
     $attributes = array();
 
-    $type = 'date';
+    $type = 'text';
 
-    if ( isset( $options[ 'date_format_type' ] ) )
-        $type = $options[ 'date_format_type' ];
+    if ( 1 == $options[ 'date_html5' ] ) {
+        $type = 'date';
+
+        if ( isset( $options[ 'date_format_type' ] ) )
+            $type = $options[ 'date_format_type' ];
+    }
 
     $attributes[ 'type' ] = $type;
 

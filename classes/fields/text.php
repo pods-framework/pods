@@ -141,6 +141,11 @@ class PodsField_Text extends PodsField {
                 'default' => 255,
                 'type' => 'number'
             ),
+            'text_html5' => array(
+                'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean'
+            ),
             'text_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',

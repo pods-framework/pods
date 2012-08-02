@@ -26,12 +26,10 @@
 
     $type = 'text';
 
-    if ( 1 == $options[ 'date_html5' ] ) {
-        $type = 'date';
+    $date_type = pods_var( 'date_format_type', $options, 'date' );
 
-        if ( isset( $options[ 'date_format_type' ] ) )
-            $type = $options[ 'date_format_type' ];
-    }
+    if ( 1 == $options[ 'date_html5' ] )
+        $type = $date_type;
 
     $attributes[ 'type' ] = $type;
 
@@ -42,7 +40,7 @@
 
     $format = PodsForm::field_method( 'date', 'format', $options );
 
-    if ( 'datetime' == $type ) {
+    if ( 'datetime' == $date_type ) {
         $method = 'datetimepicker';
 
         $args = array(
@@ -55,7 +53,7 @@
 
         $html5_format = 'Y-m-d\TH:i:s';
     }
-    elseif ( 'date' == $type ) {
+    elseif ( 'date' == $date_type ) {
         $method = 'datepicker';
 
         $args = array(
@@ -64,7 +62,7 @@
 
         $html5_format = 'Y-m-d';
     }
-    elseif ( 'time' == $type ) {
+    elseif ( 'time' == $date_type ) {
         $method = 'timepicker';
 
         $args = array(

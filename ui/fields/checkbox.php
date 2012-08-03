@@ -34,6 +34,9 @@
 
         $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
 
+        if ( strlen( $label ) < 1 )
+            $attributes[ 'class' ] .= ' pods-form-ui-no-label';
+
         if ( 1 < count( $options[ 'data' ] ) )
             $attributes[ 'id' ] = $primary_id . $counter;
 

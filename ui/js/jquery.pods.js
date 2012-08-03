@@ -371,6 +371,12 @@
                     $( '#pods-wizard-next' ).text( 'Next Step' );
                 },
                 stepForward : function () {
+                    // Show action bar for second panel if hidden
+                    $( 'div.pods-wizard-hide-first' )
+                        .removeClass( 'pods-wizard-hide-first' )
+                        // Remember that first panel should hide action bar
+                        .data( 'hide', 1 );
+                    
                     // Step toolbar menu state forwards
                     $( 'li.pods-wizard-menu-current' )
                         .removeClass( 'pods-wizard-menu-current' )
@@ -382,9 +388,9 @@
                     $( '#pods-wizard-start' ).show();
 
                     // Check if last step
-                    if ( $( '.pods-wizard-panel:visible' ).next( '.pods-wizard-panel' ).length ) {
+                    if ( $( 'div.pods-wizard-panel:visible' ).next( 'div.pods-wizard-panel' ).length ) {
                         // Show next panel
-                        $( '.pods-wizard-panel:visible' )
+                        $( 'div.pods-wizard-panel:visible' )
                             .hide()
                             .next()
                             .show();
@@ -394,6 +400,14 @@
                     }
                 },
                 startOver : function () {
+                    // Reset next button text
+                    methods.setProgress();
+
+                    // If first panel and action bar is supposed to be hidden, hide it.
+                    var $box = $( '#pods-wizard-box' );
+                    if ( $box.data( 'hide' ) )
+                        $box.addClass( 'pods-wizard-hide-first' );
+
                     // Revert to first current menu item
                     $( '#pods-wizard-heading ul li' )
                         .removeClass()
@@ -401,7 +415,7 @@
                         .addClass( 'pods-wizard-menu-current' );
 
                     // Revert to first panel
-                    $( '.pods-wizard-panel' )
+                    $( 'div.pods-wizard-panel' )
                         .hide()
                         .first()
                         .show();
@@ -409,13 +423,15 @@
                     // Hide start over button
                     $( '.pods-wizard-option-selected' ).removeClass();
                     $( '#pods-wizard-start' ).hide();
-                    $( '.stuffbox' ).hide();
+                    $( 'div.stuffbox' ).hide();
                     $( '#pods-wizard-choices' ).fadeIn( 'fast' );
                 }
             }
+
             // Next button event binding
             $( '#pods-wizard-next' ).on( 'click', function ( e ) {
                 e.preventDefault();
+
                 methods.stepForward();
             } );
 
@@ -430,6 +446,7 @@
             // Upgrade choice button event binding
             $( '.pods-choice-button' ).on( 'click', function ( e ) {
                 e.preventDefault();
+
                 var target = $( this ).attr( 'href' );
                 $( '#pods-wizard-choices' ).slideUp( 'fast' );
                 $( target ).slideDown( 'fast' );
@@ -438,11 +455,11 @@
             // Create/extend option event binding
             $( '.pods-wizard-option a' ).on( 'click', function ( e ) {
                 e.preventDefault();
+
                 $( '.stuffbox' ).hide();
                 var target = $( this ).attr( 'href' );
                 $( target ).show();
-                $( 'a.pods-wizard-option-active' ).removeClass();
-                $( this ).addClass( 'pods-wizard-option-active' );
+                methods.stepForward();
             } );
 
             // Advanced anchor event binding

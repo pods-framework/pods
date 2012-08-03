@@ -198,7 +198,7 @@
     </div>
 </div>
 <script>
-    $( document ).ready( function () {
+    jQuery( function ( $ ) {
         $( '#pods-wizard-box' ).Pods( 'wizard' );
     } );
 </script>

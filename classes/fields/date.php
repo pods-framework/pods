@@ -99,7 +99,7 @@ class PodsField_Date extends PodsField {
             ),
             'date_html5' => array(
                 'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
-                'default' => 0,
+                'default' => apply_filters( 'pods_form_ui_field_html5', 0, 'date' ),
                 'type' => 'boolean'
             ),
             'date_size' => array(

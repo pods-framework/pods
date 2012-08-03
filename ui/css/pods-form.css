@@ -159,7 +159,8 @@ ul.pods-files li span.pods-file-remove img {
 	top:5px;
 }
 
-.pods-pick-values li:hover {
+.pods-field.pods-boolean:hover,
+.pods-pick-values.pods-pick-radio li:hover {
 	background:#ffffd8;
 }
 
@@ -171,7 +172,8 @@ select.pods-pick-multi {
 	padding:10px 0;
 }
 
-div.pods-textfield input,.pods-textarea textarea {
+div.pods-textfield input,
+.pods-textarea textarea {
 	width:100%;
 }
 

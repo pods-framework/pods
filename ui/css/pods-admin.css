@@ -638,6 +638,10 @@ tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-save {
     margin: 0;
 }
 
+.pods-manage-field .pods-field.pods-boolean:hover {
+    background: #ffffd8;
+}
+
 .pods-manage-field input.pods-form-ui-no-label {
     position: relative;
 }

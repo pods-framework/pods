@@ -361,6 +361,8 @@ class Pods {
             }
         }
 
+        $this->row[ $params->name ] = $value;
+
         if ( isset( $this->fields[ $params->name ] ) ) {
             $value = PodsForm::display(
                 $this->fields[ $params->name ][ 'type' ],

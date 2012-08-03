@@ -319,87 +319,87 @@ elseif ('pod' == pods_var('type', $pod)) {
                                     <div class="pods-tab-group">
 <?php
 if ('post_type' == pods_var('type', $pod)) {
-	$advanced_options = array(
-	    'cpt_labels' => array(
-	        'cpt_label' => array(
-	            'label' => __( 'Label', 'pods' ),
-	            'help' => __( 'help', 'pods' ),
-	            'type' => 'text',
-	            'default' => ucwords( str_replace( '_', ' ', pods_var( 'name', $pod ) ) )
-	        ),
-	        'cpt_singular_label' => array(
-	            'label' => __( 'Singular Label', 'pods' ),
-	            'help' => __( 'help', 'pods' ),
-	            'type' => 'text',
-	            'default' => pods_var( 'cpt_label', $pod, ucwords( str_replace( '_', ' ', pods_var( 'name', $pod ) ) ) )
-	        ),
-	        'cpt_add_new' => array(
-	            'label' => __( 'Add New', 'pods' ),
-	            'help' => __( 'help', 'pods' ),
-	            'type' => 'text',
-	            'default' => ''
-	        ),
-	        'cpt_add_new_item' => array(
-	            'label' => __( 'Add New <span class="pods-slugged">Item</span>', 'pods' ),
-	            'help' => __( 'help', 'pods' ),
-	            'type' => 'text',
-	            'default' => ''
-	        ),
-	        'cpt_new_item' => array(
-	            'label' => __( 'New <span class="pods-slugged">Item</span>', 'pods' ),
-	            'help' => __( 'help', 'pods' ),
-	            'type' => 'text',
-	            'default' => ''
-	        ),
-	        'cpt_edit' => array(
-	            'label' => __( 'Edit', 'pods' ),
-	            'help' => __( 'help', 'pods' ),
-	            'type' => 'text',
-	            'default' => ''
-	        ),
-	        'cpt_edit_item' => array(
-	            'label' => __( 'Edit <span class="pods-slugged">Item</span>', 'pods' ),
-	            'help' => __( 'help', 'pods' ),
-	            'type' => 'text',
-	            'default' => ''
-	        ),
-	        'cpt_view' => array(
-	            'label' => __( 'View', 'pods' ),
-	            'help' => __( 'help', 'pods' ),
-	            'type' => 'text',
-	            'default' => ''
-	        ),
-	        'cpt_view_item' => array(
-	            'label' => __( 'View <span class="pods-slugged">Item</span>', 'pods' ),
-	            'help' => __( 'help', 'pods' ),
-	            'type' => 'text',
-	            'default' => ''
-	        ),
-	        'cpt_all_items' => array(
-	            'label' => __( 'All <span class="pods-slugged">Items</span>', 'pods' ),
-	            'help' => __( 'help', 'pods' ),
-	            'type' => 'text',
-	            'default' => ''
-	        ),
-	        'cpt_search_items' => array(
-	            'label' => __( 'Search <span class="pods-slugged">Items</span>', 'pods' ),
-	            'help' => __( 'help', 'pods' ),
-	            'type' => 'text',
-	            'default' => ''
-	        ),
-	        'cpt_not_found' => array(
-	            'label' => __( 'Not Found', 'pods' ),
-	            'help' => __( 'help', 'pods' ),
-	            'type' => 'text',
-	            'default' => ''
-	        ),
-	        'cpt_not_found_in_trash' => array(
-	            'label' => __( 'Not Found in Trash', 'pods' ),
-	            'help' => __( 'help', 'pods' ),
-	            'type' => 'text',
-	            'default' => ''
-	        )
-	    ),
+    $advanced_options = array(
+        'cpt_labels' => array(
+            'cpt_label' => array(
+                'label' => __( 'Label', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => ucwords( str_replace( '_', ' ', pods_var( 'name', $pod ) ) )
+            ),
+            'cpt_singular_label' => array(
+                'label' => __( 'Singular Label', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => pods_var( 'cpt_label', $pod, ucwords( str_replace( '_', ' ', pods_var( 'name', $pod ) ) ) )
+            ),
+            'cpt_add_new' => array(
+                'label' => __( 'Add New', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => ''
+            ),
+            'cpt_add_new_item' => array(
+                'label' => __( 'Add New <span class="pods-slugged">Item</span>', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => ''
+            ),
+            'cpt_new_item' => array(
+                'label' => __( 'New <span class="pods-slugged">Item</span>', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => ''
+            ),
+            'cpt_edit' => array(
+                'label' => __( 'Edit', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => ''
+            ),
+            'cpt_edit_item' => array(
+                'label' => __( 'Edit <span class="pods-slugged">Item</span>', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => ''
+            ),
+            'cpt_view' => array(
+                'label' => __( 'View', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => ''
+            ),
+            'cpt_view_item' => array(
+                'label' => __( 'View <span class="pods-slugged">Item</span>', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => ''
+            ),
+            'cpt_all_items' => array(
+                'label' => __( 'All <span class="pods-slugged">Items</span>', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => ''
+            ),
+            'cpt_search_items' => array(
+                'label' => __( 'Search <span class="pods-slugged">Items</span>', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => ''
+            ),
+            'cpt_not_found' => array(
+                'label' => __( 'Not Found', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => ''
+            ),
+            'cpt_not_found_in_trash' => array(
+                'label' => __( 'Not Found in Trash', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'text',
+                'default' => ''
+            )
+        ),
         'cpt_options' => array(
             'cpt_description' => array(
                 'label' => __( 'Post Type Description', 'pods' ),
@@ -571,7 +571,7 @@ if ('post_type' == pods_var('type', $pod)) {
         'ct_options' => array(),
         'pod_labels' => array(),
         'pod_options' => array()
-	);
+    );
 ?>
                                         <div id="pods-advanced-post-type-labels" class="pods-tab">
                                             <?php

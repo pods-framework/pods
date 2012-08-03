@@ -244,6 +244,14 @@ class PodsAdmin {
                     'function' => array( $this, 'admin_components' ),
                     'access' => 'pods_components'
                 ),
+                'pods-wizard' => array(
+                    'label' => 'Preview: Wizard',
+                    'function' => array( $this, 'admin_temp_wizard' )
+                ),
+                'pods-upgrade' => array(
+                    'label' => 'Preview: Upgrade',
+                    'function' => array( $this, 'admin_temp_upgrade' )
+                ),
                 'pods-help' => array(
                     'label' => 'Help',
                     'function' => array( $this, 'admin_help' )
@@ -315,10 +323,10 @@ class PodsAdmin {
     }
 
     public function media_button ( $context ) {
-		$current_page = basename( $_SERVER['PHP_SELF'] );
+        $current_page = basename( $_SERVER['PHP_SELF'] );
 
-		if ( $current_page == 'index.php' )
-			return $context;
+        if ( $current_page == 'index.php' )
+            return $context;
 
         add_action( 'admin_footer', array( $this, 'mce_popup' ) );
 

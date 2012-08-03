@@ -195,7 +195,7 @@ $max_length_name = 64;
 $max_length_name -= 10; // Allow for WP Multisite or prefix changes in the future
 $max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
 ?>
-<div class="wrap pods-admin">
+<div class="wrap pods-admin" xmlns="http://www.w3.org/1999/html">
     <div id="icon-pods" class="icon32"><br /></div>
     <form action="" method="post" class="pods-submittable">
         <div class="pods-submittable-fields">
@@ -616,57 +616,77 @@ if ('post_type' == pods_var('type', $pod) && strlen( pods_var( 'object', $pod ) 
                                                 <p class="pods-field-option-group-label">
                                                     <?php _e('Supports'); ?>
                                                 </p>
-                                                <div class="pods-field-option-group-values">
-                                                    <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field('supports_title', pods_var('supports_title', $pod, true), 'boolean', array( 'boolean_yes_label' => __( 'Title', 'pods' ) ) ); ?>
-                                                    </div>
-                                                    <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field( 'supports_editor', pods_var( 'supports_editor', $pod, true ), 'boolean', array( 'boolean_yes_label' => __( 'Editor', 'pods' ) ) ); ?>
-                                                    </div>
-                                                    <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field( 'supports_author', pods_var( 'supports_author', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Author', 'pods' ) ) ); ?>
-                                                    </div>
-                                                    <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field( 'supports_thumbnail', pods_var( 'supports_thumbnail', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Featured Image', 'pods' ) ) ); ?>
-                                                    </div>
-                                                    <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field( 'supports_excerpt', pods_var( 'supports_excerpt', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Excerpt', 'pods' ) ) ); ?>
-                                                    </div>
-                                                    <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field( 'supports_trackbacks', pods_var( 'supports_trackbacks', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Trackbacks', 'pods' ) ) ); ?>
-                                                    </div>
-                                                    <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field( 'supports_custom_fields', pods_var( 'supports_custom_fields', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Custom Fields', 'pods' ) ) ); ?>
-                                                    </div>
-                                                    <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field( 'supports_comments', pods_var( 'supports_comments', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Comments', 'pods' ) ) ); ?>
-                                                    </div>
-                                                    <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field( 'supports_revisions', pods_var( 'supports_revisions', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Revisions', 'pods' ) ) ); ?>
-                                                    </div>
-                                                    <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field( 'supports_page_attributes', pods_var( 'supports_page_attributes', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Page Attributes', 'pods' ) ) ); ?>
-                                                    </div>
-                                                    <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field( 'supports_post_formats', pods_var( 'supports_post_formats', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Post Formats', 'pods' ) ) ); ?>
-                                                    </div>
+
+                                                <div class="pods-pick-values pods-pick-checkbox">
+                                                    <ul>
+                                                        <li>
+                                                                <?php echo PodsForm::field( 'supports_title', pods_var( 'supports_title', $pod, true ), 'boolean', array( 'boolean_yes_label' => __( 'Title', 'pods' ) ) ); ?>
+                                                        </li>
+                                                        <li>
+                                                                <?php echo PodsForm::field( 'supports_editor', pods_var( 'supports_editor', $pod, true ), 'boolean', array( 'boolean_yes_label' => __( 'Editor', 'pods' ) ) ); ?>
+                                                        </li>
+                                                        <li>
+                                                                <?php echo PodsForm::field( 'supports_author', pods_var( 'supports_author', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Author', 'pods' ) ) ); ?>
+                                                        </li>
+                                                        <li>
+                                                                <?php echo PodsForm::field( 'supports_thumbnail', pods_var( 'supports_thumbnail', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Featured Image', 'pods' ) ) ); ?>
+                                                        </li>
+                                                        <li>
+                                                                <?php echo PodsForm::field( 'supports_excerpt', pods_var( 'supports_excerpt', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Excerpt', 'pods' ) ) ); ?>
+                                                        </li>
+                                                        <li>
+                                                            <div class="pods-field pods-boolean">
+                                                                <?php echo PodsForm::field( 'supports_trackbacks', pods_var( 'supports_trackbacks', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Trackbacks', 'pods' ) ) ); ?>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="pods-field pods-boolean">
+                                                                <?php echo PodsForm::field( 'supports_custom_fields', pods_var( 'supports_custom_fields', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Custom Fields', 'pods' ) ) ); ?>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="pods-field pods-boolean">
+                                                                <?php echo PodsForm::field( 'supports_comments', pods_var( 'supports_comments', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Comments', 'pods' ) ) ); ?>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="pods-field pods-boolean">
+                                                                <?php echo PodsForm::field( 'supports_revisions', pods_var( 'supports_revisions', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Revisions', 'pods' ) ) ); ?>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="pods-field pods-boolean">
+                                                                <?php echo PodsForm::field( 'supports_page_attributes', pods_var( 'supports_page_attributes', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Page Attributes', 'pods' ) ) ); ?>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="pods-field pods-boolean">
+                                                                <?php echo PodsForm::field( 'supports_post_formats', pods_var( 'supports_post_formats', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Post Formats', 'pods' ) ) ); ?>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
                                                 </div>
                                             </div>
                                             <div class="pods-field-option-group">
                                                 <p class="pods-field-option-group-label">
                                                     <?php _e('Built-in Taxonomies'); ?>
                                                 </p>
-                                                <div class="pods-field-option-group-values">
-<?php
-    foreach ((array) $field_settings['pick_object']['Taxonomies'] as $taxonomy => $label) {
-        $taxonomy = pods_str_replace('taxonomy-', '', $taxonomy, 1);
-?>
-                                                    <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field( 'built_in_taxonomies_' . $taxonomy, pods_var( 'built_in_taxonomies_' . $taxonomy, $pod, false ), 'boolean', array( 'boolean_yes_label' => $label ) ); ?>
-                                                    </div>
-<?php
-    }
-?>
+
+                                                <div class="pods-pick-values pods-pick-checkbox">
+                                                    <ul>
+                                                        <?php
+                                                            foreach ( (array) $field_settings[ 'pick_object' ][ 'Taxonomies' ] as $taxonomy => $label ) {
+                                                                $taxonomy = pods_str_replace( 'taxonomy-', '', $taxonomy, 1 );
+                                                        ?>
+                                                            <li>
+                                                                <div class="pods-field pods-boolean">
+                                                                    <?php echo PodsForm::field( 'built_in_taxonomies_' . $taxonomy, pods_var( 'built_in_taxonomies_' . $taxonomy, $pod, false ), 'boolean', array( 'boolean_yes_label' => $label ) ); ?>
+                                                                </div>
+                                                            </li>
+                                                        <?php
+                                                            }
+                                                        ?>
+                                                    </ul>
                                                 </div>
                                             </div>
                                         </div>
@@ -731,21 +751,26 @@ elseif ('taxonomy' == pods_var('type', $pod) && strlen( pods_var( 'object', $pod
                                                 <?php echo PodsForm::label('query_var', __('Query Var', 'pods'), __('help', 'pods')); ?>
                                                 <?php echo PodsForm::field('query_var', pods_var('query_var', $pod), 'boolean', array( 'boolean_yes_label' => '' ) ); ?>
                                             </div>
-                                            <div class="pods-field-option-group">
+                                            <div class="pods-field-option">
                                                 <p class="pods-field-option-group-label">
                                                     <?php _e('Associated Post Types'); ?>
                                                 </p>
-                                                <div class="pods-field-option-group-values">
-<?php
-    foreach ( (array) $field_settings[ 'pick_object' ][ 'Post Types' ] as $post_type => $label ) {
-        $post_type = pods_str_replace( 'post-type-', '', $post_type, 1 );
-?>
-                                                    <div class="pods-field-option-group-value">
-                                                        <?php echo PodsForm::field( 'built_in_post_types_' . $post_type, pods_var( 'built_in_post_types_' . $post_type, $pod, false ), 'boolean', array( 'boolean_yes_label' => $label ) ); ?>
-                                                    </div>
-<?php
-    }
-?>
+
+                                                <div class="pods-pick-values pods-pick-checkbox">
+                                                    <ul>
+                                                        <?php
+                                                            foreach ( (array) $field_settings[ 'pick_object' ][ 'Post Types' ] as $post_type => $label ) {
+                                                                $post_type = pods_str_replace( 'post-type-', '', $post_type, 1 );
+                                                        ?>
+                                                            <li>
+                                                                <div class="pods-field pods-boolean">
+                                                                    <?php echo PodsForm::field( 'built_in_post_types_' . $post_type, pods_var( 'built_in_post_types_' . $post_type, $pod, false ), 'boolean', array( 'boolean_yes_label' => $label ) ); ?>
+                                                                </div>
+                                                            </li>
+                                                        <?php
+                                                            }
+                                                        ?>
+                                                    </ul>
                                                 </div>
                                             </div>
                                         </div>

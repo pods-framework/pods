@@ -81,13 +81,16 @@ if ('__1' != pods_var('id', $field)) {
                                         <p class="pods-field-option-group-label">
                                             <?php _e('Options', 'pods'); ?>
                                         </p>
-                                        <div class="pods-field-option-group-values">
-                                            <div class="pods-field-option-group-value">
-                                                <?php echo PodsForm::field('field_data[' . $pods_i . '][required]', pods_var('required', $field), 'boolean', array('class' => 'pods-dependent-toggle', 'boolean_yes_label' => __( 'Required', 'pods' ), 'help' => __( 'help', 'pods' ) ) ); ?>
-                                            </div>
-                                            <div class="pods-field-option-group-value pods-excludes-on pods-excludes-on-field-data-type pods-excludes-on-field-data-type-slug pods-excludes-on-field-data-type-pick pods-excludes-on-field-data-type-file pods-excludes-on-field-data-type-boolean">
-                                                <?php echo PodsForm::field('field_data[' . $pods_i . '][unique]', pods_var('unique', $field), 'boolean', array('class' => 'pods-dependent-toggle', 'boolean_yes_label' => __( 'Unique', 'pods' ), 'help' => __( 'help', 'pods' ) ) ); ?>
-                                            </div>
+
+                                        <div class="pods-pick-values pods-pick-checkbox">
+                                            <ul>
+                                                <li>
+                                                    <?php echo PodsForm::field('field_data[' . $pods_i . '][required]', pods_var('required', $field), 'boolean', array('class' => 'pods-dependent-toggle', 'boolean_yes_label' => __( 'Required', 'pods' ), 'help' => __( 'help', 'pods' ) ) ); ?>
+                                                </li>
+                                                <li>
+                                                    <?php echo PodsForm::field('field_data[' . $pods_i . '][unique]', pods_var('unique', $field), 'boolean', array('class' => 'pods-dependent-toggle', 'boolean_yes_label' => __( 'Unique', 'pods' ), 'help' => __( 'help', 'pods' ) ) ); ?>
+                                                </li>
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>

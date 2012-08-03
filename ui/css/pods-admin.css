@@ -557,6 +557,11 @@ tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-save {
     padding: 10px;
 }
 
+.pods-manage-field .pods-pick-values li,
+.pods-manage-field .pods-field {
+    position: relative;
+}
+
 .pods-manage-field .pods-field-option:nth-child(odd),
 .pods-manage-field .pods-field-option-group:nth-child(odd) {
     background: #fff;
@@ -570,19 +575,29 @@ tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-save {
     max-width: 150px;
 }
 
-.pods-manage-field .pods-field-option input,
-.pods-manage-field .pods-field-option select,
-.pods-manage-field .pods-field-option textarea,
-.pods-manage-field .pods-field-option-group-values {
-    display: block;
-    float: left;
-    margin-left: 22px;
+.pods-manage-field .pods-field.pods-boolean label,
+.pods-manage-field .pods-field-option .pods-pick-values label {
+    padding-top: 0;
+    float: none;
+    width: auto;
+    max-width: 100%;
+}
+
+.pods-manage-field .pods-field-option .pods-pick-values .pods-field.pods-boolean {
+    float: none;
+    margin-left: 0;
+    width: auto;
+    max-width: 100%;
 }
 
 .pods-manage-field .pods-field-option input[type="text"],
 .pods-manage-field .pods-field-option select,
 .pods-manage-field .pods-field-option textarea,
-.pods-manage-field .pods-field-option-group-values {
+.pods-manage-field .pods-field-option .pods-field.pods-boolean,
+.pods-manage-field .pods-pick-values {
+    display: block;
+    float: left;
+    margin-left: 22px;
     width: 65%;
     max-width: 300px;
 }
@@ -590,18 +605,37 @@ tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-save {
 .pods-manage-field .pods-field-option-group p.pods-field-option-group-label {
     margin-top: 0;
 }
-.pods-manage-field .pods-field-option-group div.pods-field-option-group-values label {
-    padding-top: 0;
+
+.pods-manage-field .pods-field.pods-boolean {
+    margin: 5px 0;
 }
 
-.pods-manage-field .pods-field-option-group input.pods-form-ui-field-boolean {
+.pods-manage-field .pods-field.pods-boolean label,
+.pods-manage-field .pods-pick-values label {
+    padding-top: 0;
+    display: block;
+    margin-left: 20px;
+}
+
+.pods-manage-field input[type="checkbox"],
+.pods-manage-field input[type="radio"] {
+    position: absolute;
+    left: 2px;
+    margin: 1px 7px 0 0;
+    display: inline;
+    float: none;
     margin-right: 2px;
+    margin-left: 0;
     vertical-align: middle;
 }
 
-.pods-manage-field .pods-field-option-group div.pods-field-option-group-values input {
-    position: relative;
-    top: -1px;
+.pods-manage-field .pods-pick-values ul {
+    overflow: auto;
+    margin: 5px 0;
+}
+
+.pods-manage-field .pods-pick-values ul .pods-field.pods-boolean {
+    margin: 0;
 }
 
 /*

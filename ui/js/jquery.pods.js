@@ -376,7 +376,7 @@
                         .removeClass( 'pods-wizard-hide-first' )
                         // Remember that first panel should hide action bar
                         .data( 'hide', 1 );
-                    
+
                     // Step toolbar menu state forwards
                     $( 'li.pods-wizard-menu-current' )
                         .removeClass( 'pods-wizard-menu-current' )

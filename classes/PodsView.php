@@ -1,6 +1,6 @@
 <?php
 class PodsView {
-    protected static $cache_modes = array( 'transient', 'site-transient', 'cache' );
+    static $cache_modes = array( 'transient', 'site-transient', 'cache' );
 
     private function __construct () {
     }
@@ -15,13 +15,13 @@ class PodsView {
         $cache_key = sanitize_title( pods_str_replace( array( PODS_DIR . 'ui/', ABSPATH ), array( 'pods-ui-', 'pods-ui-' ), $view, 1 ) );
 
         if ( false === strpos( $view, PODS_DIR . 'ui/' ) && false === strpos( $view, PODS_DIR . 'components/' ) && false === strpos( $view, ABSPATH ) ) {
-            $output = self::get( $cache_key );
+            $output = self::get( $cache_key, $cache_mode );
 
-            if ( null !== $output ) {
+            if ( false !== $output && null !== $output ) {
                 if ( 0 < $expires )
                     return $output;
                 else
-                    self::clear( $cache_key );
+                    self::clear( $cache_key, $cache_mode );
             }
         }
 
@@ -31,7 +31,7 @@ class PodsView {
             return false;
 
         if ( 0 < $expires )
-            self::set( $cache_key, $output );
+            self::set( $cache_key, $output, $cache_mode );
 
         $output = apply_filters( 'pods_view', $output, $view, $data, $expires, $cache_mode );
 

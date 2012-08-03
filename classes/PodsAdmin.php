@@ -507,6 +507,8 @@ class PodsAdmin {
             $capabilities[] = 'pods_edit_' . $pod[ 'name' ];
             $capabilities[] = 'pods_delete_' . $pod[ 'name' ];
         }
+
+        return $capabilities;
     }
 
     public function admin_ajax () {

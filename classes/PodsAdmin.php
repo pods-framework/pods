@@ -492,6 +492,14 @@ class PodsAdmin {
         $ui->manage();
     }
 
+    public function admin_temp_wizard () {
+        require_once PODS_DIR . 'ui/admin/wizard.php';
+    }
+
+    public function admin_temp_upgrade () {
+        require_once PODS_DIR . 'ui/admin/upgrade.php';
+    }
+
     public function admin_help () {
         require_once PODS_DIR . 'ui/admin/help.php';
     }

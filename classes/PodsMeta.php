@@ -34,7 +34,7 @@ class PodsMeta {
                 if ( !empty( $post_type[ 'object' ] ) )
                     $post_type_name = $post_type[ 'object' ];
 
-                add_action( 'add_meta_boxes_' . $post_type_name, array( $this, 'meta_post_add' ) );
+                add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
             }
 
             add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
@@ -186,8 +186,8 @@ class PodsMeta {
 
         // Hook it up!
         if ( 'post' == $pod[ 'type' ] ) {
-            if ( !has_action( 'add_meta_boxes_' . $pod[ 'object' ], array( $this, 'meta_post_add' ) ) )
-                add_action( 'add_meta_boxes_' . $pod[ 'object' ], array( $this, 'meta_post_add' ) );
+            if ( !has_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) ) )
+                add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
 
             if ( !has_action( 'save_post', array( $this, 'save_post' ), 10, 2 ) )
                 add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
@@ -284,21 +284,24 @@ class PodsMeta {
         return $groups;
     }
 
-    public function meta_post_add ( $post ) {
-        $groups = $this->groups_get( 'post_type', $post->post_type );
+    public function meta_post_add ( $post_type, $post = null ) {
+        if ( is_object( $post ) )
+            $post_type = $post->post_type;
+
+        $groups = $this->groups_get( 'post_type', $post_type );
 
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
             if ( empty( $group[ 'label' ] ) )
-                $group[ 'label' ] = get_post_type_object( $post->post_type )->labels->label;
+                $group[ 'label' ] = get_post_type_object( $post_type )->labels->label;
 
             add_meta_box(
-                $post->post_type . '-pods-meta-' . sanitize_title( $group[ 'label' ] ),
+                $post_type . '-pods-meta-' . sanitize_title( $group[ 'label' ] ),
                 $group[ 'label' ],
                 array( $this, 'meta_post' ),
-                $post->post_type,
+                $post_type,
                 $group[ 'context' ],
                 $group[ 'priority' ],
                 array( 'group' => $group )

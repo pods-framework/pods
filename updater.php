@@ -289,7 +289,7 @@ class WPGitHubUpdater {
 	public function get_plugin_info( $false, $action, $response ) {
 
 		// Check if this call API is for the right plugin
-		if ( $response->slug != $this->config['slug'] )
+		if ( !is_object( $response ) || !isset( $response->slug ) || $response->slug != $this->config['slug'] )
 			return false;
 
         $response->slug = $this->config['slug'];

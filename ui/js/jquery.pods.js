@@ -462,14 +462,6 @@
                 methods.stepForward();
             } );
 
-            // Advanced anchor event binding
-            $( '.pods-advanced-toggle' ).on( 'click', function () {
-                var target = $( this ).attr( 'href' ),
-                    target = target.replace( '#', '.' );
-                $( this ).parent( 'p' ).slideUp( 'fast' );
-                $( target ).slideDown( 'fast' );
-            } );
-
             // Initial step panel setup
             $( '.pods-wizard .pods-wizard-step' ).hide();
             $( '.pods-wizard .pods-wizard-step:first' ).show();
@@ -702,10 +694,14 @@
             $( document ).on( 'click', '.pods-advanced-toggle', function ( e ) {
                 $advanced = $( this ).closest( 'div' ).find( '.pods-advanced' );
 
-                if ( $advanced.is( ':visible' ) )
+                if ( $advanced.is( ':visible' ) ) {
+                    $( this ).text( $( this ).text().replace( '-', '+' ) );
                     $advanced.slideUp();
-                else
+                }
+                else {
+                    $( this ).text( $( this ).text().replace( '+', '-' ) );
                     $advanced.slideDown();
+                }
 
                 e.preventDefault();
             } );

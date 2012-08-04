@@ -132,9 +132,8 @@ class PodsAdmin {
                     wp_register_script( 'pods-advanced', PODS_URL . 'ui/js/advanced.js', array(), PODS_VERSION );
                     wp_enqueue_script( 'pods-advanced' );
                 }
-                elseif ( 'pods-wizard' == $page || 'pods-upgrade' == $page ) {
+                elseif ( 'pods-wizard' == $page || 'pods-upgrade' == $page || ( 'pods' == $page && 'add' == pods_var( 'action', 'get', 'manage' ) ) )
                     wp_enqueue_style( 'pods-wizard' );
-                }
             }
         }
     }

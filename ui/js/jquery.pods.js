@@ -461,7 +461,7 @@
             $( '.pods-wizard-option a' ).on( 'click', function ( e ) {
                 e.preventDefault();
 
-                $( '.stuffbox' ).hide();
+                $( '.pods-wizard-option-content' ).hide();
                 var target = $( this ).attr( 'href' );
                 $( target ).show();
                 methods.stepForward();

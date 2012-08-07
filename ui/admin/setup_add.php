@@ -51,7 +51,7 @@
                         </div>
                     </div>
                     <div id="pods-wizard-panel-2" class="pods-wizard-panel">
-                        <div id="pods-wizard-create">
+                        <div class="pods-wizard-option-content" id="pods-wizard-create">
                             <div class="pods-wizard-content">
                                 <p><?php _e( 'Creating a new Content Type allows you to control exactly what that content type does, acts like, the field it has, and the way you manage it.', 'pods' ); ?></p>
                             </div>
@@ -111,7 +111,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="pods-wizard-extend">
+                        <div class="pods-wizard-option-content" id="pods-wizard-extend">
                             <div class="pods-wizard-content">
                                 <p><?php _e( 'Extending an existing Content Type allows you to add fields to it and take advantage of the Pods architecture for management and optionally for theming.', 'pods' ); ?></p>
                             </div>

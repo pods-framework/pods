@@ -176,8 +176,10 @@
   text-decoration: underline;
   padding-left: 15px;
 }
-#pods-wizard-box #pods-wizard-main .stuffbox {
+#pods-wizard-box #pods-wizard-main .pods-wizard-option-content {
   display: none;
+}
+#pods-wizard-box #pods-wizard-main .stuffbox {
   margin: 15px 15px 0px 15px;
 }
 #pods-wizard-box #pods-wizard-main .stuffbox h3 {

@@ -135,6 +135,7 @@
                                     <?php
                                         $post_types = get_post_types();
                                         $ignore = array( 'attachment', 'revision', 'nav_menu_item' );
+
                                         foreach ( $post_types as $post_type => $label ) {
                                             if ( in_array( $post_type, $ignore ) || empty( $post_type ) || 0 === strpos( $post_type, '_pods_' ) ) {
                                                 unset( $post_types[ $post_type ] );
@@ -153,6 +154,7 @@
                                     <?php
                                         $taxonomies = get_taxonomies();
                                         $ignore = array( 'nav_menu', 'link_category', 'post_format' );
+
                                         foreach ( $taxonomies as $taxonomy => $label ) {
                                             if ( in_array( $taxonomy, $ignore ) ) {
                                                 unset( $taxonomies[ $taxonomy ] );
@@ -194,7 +196,7 @@
                     <div id="pods-wizard-actions">
                         <div id="pods-wizard-toolbar">
                             <a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a>
-                            <a href="#next" id="pods-wizard-next" class="button button-primary"><?php _e( 'Next Step', 'pods' ); ?></a>
+                            <a href="#next" id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>"><?php _e( 'Next Step', 'pods' ); ?></a>
                         </div>
                         <div id="pods-wizard-finished">
 

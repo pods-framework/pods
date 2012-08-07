@@ -365,10 +365,10 @@
         wizard : function () {
             var methods = {
                 setFinished : function () {
-                    $( '#pods-wizard-next' ).text( 'Finished' );
+                    $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data('finished' ) );
                 },
                 setProgress : function () {
-                    $( '#pods-wizard-next' ).text( 'Next Step' );
+                    $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'next ' ) );
                 },
                 stepForward : function () {
                     // Show action bar for second panel if hidden
@@ -394,6 +394,9 @@
                             .hide()
                             .next()
                             .show();
+                    }
+                    else if ( $( '#pods-wizard-box' ).closest( 'form' )[ 0 ] ) {
+                        $( '#pods-wizard-box' ).closest( 'form' ).submit();
                     }
                     else {
                         methods.setFinished();

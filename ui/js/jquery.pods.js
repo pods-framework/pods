@@ -428,7 +428,7 @@
                     // Hide start over button
                     $( '.pods-wizard-option-selected' ).removeClass();
                     $( '#pods-wizard-start' ).hide();
-                    $( 'div.stuffbox' ).hide();
+                    $( 'div.pods-wizard-option-content' ).hide();
                     $( '#pods-wizard-choices' ).fadeIn( 'fast' );
                 }
             }

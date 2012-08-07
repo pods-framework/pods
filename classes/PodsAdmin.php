@@ -249,10 +249,6 @@ class PodsAdmin {
                     'function' => array( $this, 'admin_components' ),
                     'access' => 'pods_components'
                 ),
-                'pods-wizard' => array(
-                    'label' => 'Preview: Wizard',
-                    'function' => array( $this, 'admin_temp_wizard' )
-                ),
                 'pods-upgrade' => array(
                     'label' => 'Preview: Upgrade',
                     'function' => array( $this, 'admin_temp_upgrade' )
@@ -495,10 +491,6 @@ class PodsAdmin {
         $ui->data = $components;
 
         $ui->manage();
-    }
-
-    public function admin_temp_wizard () {
-        require_once PODS_DIR . 'ui/admin/wizard.php';
     }
 
     public function admin_temp_upgrade () {

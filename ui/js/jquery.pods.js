@@ -396,6 +396,8 @@
                             .show();
                     }
                     else if ( $( '#pods-wizard-box' ).closest( 'form' )[ 0 ] ) {
+                        $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'processing' ) );
+                        $( '#pods-wizard-next' ).attr( 'disabled', true );
                         $( '#pods-wizard-box' ).closest( 'form' ).submit();
                     }
                     else {

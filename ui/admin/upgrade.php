@@ -51,7 +51,7 @@
                 <div class="pods-wizard-content">
                     <p><?php _e( '', 'pods' ); ?></p>
                 </div>
-                <table cellpadding="0" cellspacing="0" width="780">
+                <table cellpadding="0" cellspacing="0">
                     <col style="width: 70px">
                     <col style="width: 110px">
                     <col style="width: 580px">

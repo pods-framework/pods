@@ -19,8 +19,12 @@
                     'method' : $( '#pods-wizard-box' ).data( 'method' ),
                     '_wpnonce' : $( '#pods-wizard-box' ).data( '_wpnonce' ),
                     'step' : 'prepare',
-                    'type' : $row.data( 'upgrade' )
+                    'type' : $row.data( 'upgrade' ),
+                    'pod' : ''
                 };
+
+                if ( 'undefined' != typeof $row.data( 'pod' ) )
+                    postdata[ 'pod' ] = $row.data( 'pod' );
 
                 $.ajax( {
                     type : 'POST',
@@ -31,6 +35,11 @@
                         if ( -1 == d.indexOf( '<e>' ) && -1 != d ) {
                             $row.find( 'td.pods-wizard-count' ).text( d );
                             $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-complete' );
+
+                            if ( 'undefined' == typeof $row.data( 'pod' ) )
+                                $( '#pods-wizard-panel-3 table tbody tr[data-upgrade="' + $row.data( 'upgrade' ) + '"] td.pods-wizard-count' ).text( d );
+                            else
+                                $( '#pods-wizard-panel-3 table tbody tr[data-pod="' + $row.data( 'pod' ) + '"] td.pods-wizard-count' ).text( d );
 
                             // Run next
                             return methods[ 'prepare' ]();
@@ -74,8 +83,12 @@
                     'method' : $( '#pods-wizard-box' ).data( 'method' ),
                     '_wpnonce' : $( '#pods-wizard-box' ).data( '_wpnonce' ),
                     'step' : 'migrate',
-                    'type' : $row.data( 'upgrade' )
+                    'type' : $row.data( 'upgrade' ),
+                    'pod' : ''
                 };
+
+                if ( 'undefined' != typeof $row.data( 'pod' ) )
+                    postdata[ 'pod' ] = $row.data( 'pod' );
 
                 $.ajax( {
                     type : 'POST',
@@ -84,11 +97,10 @@
                     data : postdata,
                     success : function ( d ) {
                         if ( -1 == d.indexOf( '<e>' ) && -1 != d ) {
-                            $row.find( 'td.pods-wizard-count' ).text( d );
                             $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-complete' );
 
                             // Run next
-                            return methods[ 'prepare' ]();
+                            return methods[ 'migrate' ]();
                         }
                         else {
                             $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-error' );
@@ -96,7 +108,7 @@
                             console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
 
                             // Run next
-                            return methods[ 'prepare' ]();
+                            return methods[ 'migrate' ]();
                         }
                     },
                     error : function () {
@@ -107,7 +119,7 @@
                 } );
             }
             else {
-                jQuery( '#pods-wizard-next' ).show();
+                jQuery( '#pods-wizard-next' ).click();
             }
         }
     };

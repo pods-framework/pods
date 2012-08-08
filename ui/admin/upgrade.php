@@ -244,11 +244,11 @@
         </div>
         <div id="pods-wizard-actions">
             <div id="pods-wizard-toolbar">
-                <a href="#start" id="pods-wizard-start" class="button button-secondary">Start Over</a>
-                <a href="#next" id="pods-wizard-next" class="button button-primary">Next Step</a>
+                <a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a>
+                <a href="#next" id="pods-wizard-next" class="button button-primary"><?php _e( 'Next Step', 'pods' ); ?></a>
             </div>
             <div id="pods-wizard-finished">
-                MIGRATION COMPLETE
+                <?php _e( 'MIGRATION COMPLETE', 'pods' ); ?>
             </div>
         </div>
     </div>
@@ -256,16 +256,16 @@
 
 <script>
     var pods_admin_wizard_callback = function ( step ) {
+        jQuery( '#pods-wizard-start, #pods-wizard-next' ).hide();
+
         console.log( step );
 
         if ( step == 2 ) {
-            jQuery( '#pods-wizard-start' ).hide().prop( 'disabled', true );
             jQuery( '#pods-wizard-box' ).PodsUpgrade( 'prepare' );
 
             return false;
         }
-        else if ( step == 2 ) {
-            jQuery( '#pods-wizard-start' ).hide().prop( 'disabled', true );
+        else if ( step == 3 ) {
             jQuery( '#pods-wizard-box' ).PodsUpgrade( 'migrate' );
         }
     }

@@ -51,12 +51,17 @@
                     dataType : 'html'
                 } );
             }
+            else {
+                jQuery( '#pods-wizard-next' ).show();
+            }
         },
         migrate : function () {
             var pods_ajaxurl = $( '#pods-wizard-box' ).data( 'url' );
-            pods_ajaxurl = pods_ajaxurl.replace( /\?nojs\=1/, '?pods_ajax=1' );
 
-            if ( 'undefined' != typeof ajaxurl && ('' == pods_ajaxurl || '?pods_ajax=1' == pods_ajaxurl || document.location.href == pods_ajaxurl || document.location.href.replace( /\?nojs\=1/, '?pods_ajax=1' ) == pods_ajaxurl) )
+            if ( 'undefined' != typeof pods_ajaxurl )
+                pods_ajaxurl = pods_ajaxurl.replace( /\?nojs\=1/, '?pods_ajax=1' );
+
+            if ( 'undefined' != typeof ajaxurl && ('undefined' == typeof pods_ajaxurl || '' == pods_ajaxurl || '?pods_ajax=1' == pods_ajaxurl || document.location.href == pods_ajaxurl || document.location.href.replace( /\?nojs\=1/, '?pods_ajax=1' ) == pods_ajaxurl) )
                 pods_ajaxurl = ajaxurl + '?pods_ajax=1';
 
             if ( $( '#pods-wizard-panel-3 table tbody tr.pods-wizard-table-pending' )[ 0 ] ) {
@@ -100,6 +105,9 @@
                     },
                     dataType : 'html'
                 } );
+            }
+            else {
+                jQuery( '#pods-wizard-next' ).show();
             }
         }
     };

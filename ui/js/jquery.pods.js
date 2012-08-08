@@ -384,6 +384,12 @@
                         .next( 'li' )
                         .addClass( 'pods-wizard-menu-current' );
 
+                    // Get current step #
+                    var step = false;
+
+                    if ( $( 'li.pods-wizard-menu-current[data-step]' )[ 0 ] )
+                        step = $( 'li.pods-wizard-menu-current' ).data( 'step' );
+
                     // Show start over button
                     $( '#pods-wizard-start' ).show();
 
@@ -395,7 +401,17 @@
                             .next()
                             .show();
                     }
-                    else if ( $( '#pods-wizard-box' ).closest( 'form' )[ 0 ] ) {
+
+                    // Allow for override
+                    var check = true;
+
+                    if ( 'undefined' != typeof pods_admin_wizard_callback )
+                        check = pods_admin_wizard_callback( step );
+
+                    if ( false === check )
+                        return check;
+
+                    if ( $( '#pods-wizard-box' ).closest( 'form' )[ 0 ] ) {
                         $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'processing' ) );
                         $( '#pods-wizard-next' ).attr( 'disabled', true );
                         $( '#pods-wizard-box' ).closest( 'form' ).submit();
@@ -428,7 +444,7 @@
                     // Hide start over button
                     $( '.pods-wizard-option-selected' ).removeClass();
                     $( '#pods-wizard-start' ).hide();
-                    $( 'div.pods-wizard-option-content' ).hide();
+                    $( 'div.pods-wizard-option-cont' ).hide();
                     $( '#pods-wizard-choices' ).fadeIn( 'fast' );
                 }
             }

@@ -15,10 +15,10 @@
             <div id="pods-wizard-box" class="pods-wizard-steps-2 pods-wizard-hide-first">
                 <div id="pods-wizard-heading">
                     <ul>
-                        <li class="pods-wizard-menu-current">
+                        <li class="pods-wizard-menu-current" data-step="1">
                             <i></i><span>1</span> <?php _e( 'Create or Extend', 'pods' ); ?><em></em>
                         </li>
-                        <li>
+                        <li data-step="2">
                             <i></i><span>2</span> <?php _e( 'Configure', 'pods' ); ?><em></em>
                         </li>
                     </ul>
@@ -213,6 +213,10 @@
     </form>
 </div>
 <script type="text/javascript">
+    var pods_admin_submit_callback = function ( id ) {
+        document.location = 'admin.php?page=pods&action=edit&id=' + id;
+    }
+
     jQuery( function ( $ ) {
         $( document ).Pods( 'validate' );
         $( document ).Pods( 'submit' );
@@ -221,8 +225,4 @@
         $( document ).Pods( 'advanced' );
         $( document ).Pods( 'confirm' );
     } );
-
-    pods_admin_submit_callback = function ( id ) {
-        document.location = 'admin.php?page=pods&action=edit&id=' + id;
-    }
 </script>

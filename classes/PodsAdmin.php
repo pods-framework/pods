@@ -59,14 +59,16 @@ class PodsAdmin {
 
         wp_register_style( 'pods-wizard', PODS_URL . 'ui/css/pods-wizard.css', array(), PODS_VERSION );
 
+        wp_register_script( 'pods-upgrade', PODS_URL . 'ui/js/jquery.pods.upgrade.js', array(), PODS_VERSION );
+
         if ( isset( $_GET[ 'page' ] ) ) {
             $page = $_GET[ 'page' ];
             if ( 'pods' == $page || ( false !== strpos( $page, 'pods-' ) && 0 === strpos( $page, 'pods-' ) ) ) {
-                ?>
-            <script type="text/javascript">
-                var PODS_URL = "<?php echo PODS_URL; ?>";
-            </script>
-            <?php
+?>
+    <script type="text/javascript">
+        var PODS_URL = "<?php echo PODS_URL; ?>";
+    </script>
+<?php
                 wp_enqueue_script( 'jquery' );
                 wp_enqueue_script( 'jquery-ui-core' );
                 wp_enqueue_script( 'jquery-ui-sortable' );
@@ -132,8 +134,12 @@ class PodsAdmin {
                     wp_register_script( 'pods-advanced', PODS_URL . 'ui/js/advanced.js', array(), PODS_VERSION );
                     wp_enqueue_script( 'pods-advanced' );
                 }
-                elseif ( 'pods-wizard' == $page || 'pods-upgrade' == $page || ( 'pods' == $page && 'add' == pods_var( 'action', 'get', 'manage' ) ) )
+                elseif ( 'pods-wizard' == $page || 'pods-upgrade' == $page || ( 'pods' == $page && 'add' == pods_var( 'action', 'get', 'manage' ) ) ) {
                     wp_enqueue_style( 'pods-wizard' );
+
+                    if ( 'pods-upgrade' == $page )
+                        wp_enqueue_script( 'pods-upgrade' );
+                }
             }
         }
     }
@@ -578,15 +584,13 @@ class PodsAdmin {
             'replace_package' => array( 'priv' => 'manage_packages' ),
             'security_settings' => array( 'priv' => 'manage_settings' ),
             'select2_ajax' => array('priv' => 'manage_pds', 'format' => 'json'),
+            'upgrade' => array( 'priv' => 'manage_pods' )
         );
 
         $methods = apply_filters( 'pods_admin_ajax_methods', $methods, $this );
 
         if ( !isset( $params->method ) || !isset( $methods[ $params->method ] ) )
             pods_error( 'Invalid AJAX request', $this );
-
-        if ( !method_exists( $this->api, $params->method ) )
-            pods_error( 'API method does not exist', $this );
 
         if ( !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, 'pods-' . $params->method ) )
             pods_error( 'Unauthorized request', $this );
@@ -654,8 +658,7 @@ class PodsAdmin {
 
             $params->data = $columns;
         }
-
-        if ( 'save_pod' == $method->name ) {
+        elseif ( 'save_pod' == $method->name ) {
             if ( isset( $params->field_data ) && !is_array( $params->field_data ) ) {
                 $params->field_data = stripslashes( $params->field_data );
                 $params->field_data = (array) @json_decode( $params->field_data, true );
@@ -664,7 +667,11 @@ class PodsAdmin {
 
         $params = apply_filters( 'pods_api_' . $method->name, $params, $method );
 
-        if ( 'security_settings' == $method->name ) {
+        if ( 'upgrade' == $method->name ) {
+            // hook into upgrade script
+            $output = '1';
+        }
+        elseif ( 'security_settings' == $method->name ) {
             delete_option( 'pods_disable_file_browser' );
             add_option( 'pods_disable_file_browser', ( isset( $params->disable_file_browser ) ? $params->disable_file_browser : 1 ) );
 
@@ -684,6 +691,9 @@ class PodsAdmin {
             add_option( 'pods_upload_require_login_cap', ( isset( $params->upload_require_login_cap ) ? $params->upload_require_login_cap : 'upload_files' ) );
         }
         else {
+            if ( !method_exists( $this->api, $params->method ) )
+                pods_error( 'API method does not exist', $this );
+
             // Dynamically call the API method
             $params = (array) $params;
             $output = $this->api->{$method->name}( $params );

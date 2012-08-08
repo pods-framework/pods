@@ -9,12 +9,12 @@
 
     <h2 class="italicized"><?php _e( 'Upgrade Pods', 'pods' ); ?></h2>
 
-    <div id="pods-wizard-box" class="pods-wizard-steps-3">
+    <div id="pods-wizard-box" class="pods-wizard-steps-3" data-action="pods_admin" data-method="upgrade" data-_wpnonce="<?php echo wp_create_nonce( 'pods-upgrade' ); ?>">
         <div id="pods-wizard-heading">
             <ul>
-                <li class="pods-wizard-menu-current"><i></i><span>1</span> <?php _e( 'Getting Started', 'pods' ); ?><em></em></li>
-                <li><i></i><span>2</span> <?php _e( 'Prepare', 'pods' ); ?><em></em></li>
-                <li><i></i><span>3</span> <?php _e( 'Migrate', 'pods' ); ?></li>
+                <li class="pods-wizard-menu-current" data-step="1"><i></i><span>1</span> <?php _e( 'Getting Started', 'pods' ); ?><em></em></li>
+                <li data-step="2"><i></i><span>2</span> <?php _e( 'Prepare', 'pods' ); ?><em></em></li>
+                <li data-step="3"><i></i><span>3</span> <?php _e( 'Migrate', 'pods' ); ?></li>
             </ul>
         </div>
         <div id="pods-wizard-main">
@@ -74,7 +74,7 @@
                                 <span class="pods-wizard-info"></span>
                             </td>
                         </tr>
-                        <tr class="pods-wizard-table-active" data-upgrade="fields">
+                        <tr class="pods-wizard-table-pending" data-upgrade="fields">
                             <td class="pods-wizard-right pods-wizard-status">
                                 <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
@@ -129,16 +129,11 @@
                         ?>
                             <tr class="pods-wizard-table-pending" data-upgrade="pod" data-pod="<?php echo $pod->name; ?>">
                                 <td class="pods-wizard-right pods-wizard-status">
-                                    <img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." />
+                                    <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
                                 </td>
                                 <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                                 <td class="pods-wizard-name">
-                                    <?php
-                                        echo __( 'Content', 'pods' ) . ': ' . $pod->name;
-
-                                        if ( 0 < strlen( $pod->label ) )
-                                            echo '<br /><em>' . $pod->label . '</em>';
-                                    ?>
+                                    <?php echo __( 'Content', 'pods' ) . ': ' . $pod->name; ?>
                                     <span class="pods-wizard-info"></span>
                                 </td>
                             </tr>
@@ -155,43 +150,92 @@
                 <div class="pods-wizard-content">
                     <p><?php _e( '', 'pods' ); ?></p>
                 </div>
-                <table cellpadding="0" cellspacing="0" width="100%">
+                <table cellpadding="0" cellspacing="0">
                     <col style="width: 70px">
                     <col style="width: 110px">
                     <col style="width: 580px">
                     <thead>
                         <tr>
-                            <th colspan="3">Your Content</th>
+                            <th colspan="3"><?php _e( 'Your Content', 'pods' ); ?></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr class="pods-wizard-table-complete">
-                            <td class="pods-wizard-right"><i></i></td>
-                            <td class="pods-wizard-right">4</td>
-                            <td class="pods-wizard-name">Pods</td>
-                            <td class="pods-wizard-info"></td>
-                        </tr>
-                        <tr class="pods-wizard-table-warning">
-                            <td class="pods-wizard-right"><i></i></td>
-                            <td class="pods-wizard-right">158</td>
-                            <td class="pods-wizard-name">Content: Author</td>
-                            <td class="pods-wizard-info">
-                                Birthday field has been manually changed in the database,
-                                you will need to manually modify it again after migration.
+                    <tbody><!-- complete|pending|active <i></i> -->
+                        <tr class="pods-wizard-table-pending" data-upgrade="pods">
+                            <td class="pods-wizard-right pods-wizard-status">
+                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                            </td>
+                            <td class="pods-wizard-right pods-wizard-count"><?php echo count( $pods ); ?></td>
+                            <td class="pods-wizard-name">
+                                <?php _e( 'Pods', 'pods' ); ?>
+                                <span class="pods-wizard-info"></span>
                             </td>
                         </tr>
-                        <tr class="pods-wizard-table-error">
-                            <td class="pods-wizard-right"><i></i></td>
-                            <td class="pods-wizard-right">0</td>
-                            <td class="pods-wizard-name">Content: Bunny</td>
-                            <td class="pods-wizard-info">Table not found</td>
+                        <tr class="pods-wizard-table-pending" data-upgrade="fields">
+                            <td class="pods-wizard-right pods-wizard-status">
+                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                            </td>
+                            <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
+                            <td class="pods-wizard-name">
+                                <?php _e( 'Fields', 'pods' ); ?>
+                                <span class="pods-wizard-info"></span>
+                            </td>
                         </tr>
-                        <tr class="pods-wizard-table-complete">
-                            <td class="pods-wizard-right"><i></i></td>
-                            <td class="pods-wizard-right">552</td>
-                            <td class="pods-wizard-name"><?php _e( '', 'pods' ); ?></td>
-                            <td class="pods-wizard-info"></td>
+                        <tr class="pods-wizard-table-pending" data-upgrade="relationships">
+                            <td class="pods-wizard-right pods-wizard-status">
+                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                            </td>
+                            <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
+                            <td class="pods-wizard-name">
+                                <?php _e( 'Relationships', 'pods' ); ?>
+                                <span class="pods-wizard-info"></span>
+                            </td>
                         </tr>
+                        <tr class="pods-wizard-table-pending" data-upgrade="templates">
+                            <td class="pods-wizard-right pods-wizard-status">
+                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                            </td>
+                            <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
+                            <td class="pods-wizard-name">
+                                <?php _e( 'Templates', 'pods' ); ?>
+                                <span class="pods-wizard-info"></span>
+                            </td>
+                        </tr>
+                        <tr class="pods-wizard-table-pending" data-upgrade="pages">
+                            <td class="pods-wizard-right pods-wizard-status">
+                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                            </td>
+                            <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
+                            <td class="pods-wizard-name">
+                                <?php _e( 'Pod Pages', 'pods' ); ?>
+                                <span class="pods-wizard-info"></span>
+                            </td>
+                        </tr>
+                        <tr class="pods-wizard-table-pending" data-upgrade="helpers">
+                            <td class="pods-wizard-right pods-wizard-status">
+                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                            </td>
+                            <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
+                            <td class="pods-wizard-name">
+                                <?php _e( 'Helpers', 'pods' ); ?>
+                                <span class="pods-wizard-info"></span>
+                            </td>
+                        </tr>
+                        <?php
+                            foreach ( $pods as $pod ) {
+                        ?>
+                            <tr class="pods-wizard-table-pending" data-upgrade="pod" data-pod="<?php echo $pod->name; ?>">
+                                <td class="pods-wizard-right pods-wizard-status">
+                                    <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                                </td>
+                                <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
+                                <td class="pods-wizard-name">
+                                    <?php echo __( 'Content', 'pods' ) . ': ' . $pod->name; ?>
+                                    <span class="pods-wizard-info"></span>
+                                </td>
+                            </tr>
+                        <?php
+                            }
+                        ?>
                     </tbody>
                 </table>
             </div>
@@ -211,6 +255,21 @@
 </div>
 
 <script>
+    var pods_admin_wizard_callback = function ( step ) {
+        console.log( step );
+
+        if ( step == 2 ) {
+            jQuery( '#pods-wizard-start' ).hide().prop( 'disabled', true );
+            jQuery( '#pods-wizard-box' ).PodsUpgrade( 'prepare' );
+
+            return false;
+        }
+        else if ( step == 2 ) {
+            jQuery( '#pods-wizard-start' ).hide().prop( 'disabled', true );
+            jQuery( '#pods-wizard-box' ).PodsUpgrade( 'migrate' );
+        }
+    }
+
     jQuery( function ( $ ) {
         $( '#pods-wizard-box' ).Pods( 'wizard' );
     } );

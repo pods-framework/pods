@@ -247,8 +247,18 @@ class Pods {
             if ( !isset( $this->fields[ $params->name ] ) || !in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) || $simple ) {
                 pods_no_conflict_on( $this->pod_data[ 'type' ] );
 
-                if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
-                    $value = get_post_meta( $this->id(), $params->name, $params->single );
+                if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
+                    $id = $this->id();
+
+                    if ( function_exists( 'icl_get_languages' ) ) {
+                        $master_post_id = (int) get_post_meta( $id, '_icl_lang_duplicate_of', true );
+
+                        if ( 0 < $master_post_id )
+                            $id = $master_post_id;
+                    }
+
+                    $value = get_post_meta( $id, $params->name, $params->single );
+                }
                 elseif ( 'user' == $this->pod_data[ 'type' ] )
                     $value = get_user_meta( $this->id(), $params->name, $params->single );
                 elseif ( 'comment' == $this->pod_data[ 'type' ] )

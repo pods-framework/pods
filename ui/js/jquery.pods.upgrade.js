@@ -82,7 +82,7 @@
                     'action' : $( '#pods-wizard-box' ).data( 'action' ),
                     'method' : $( '#pods-wizard-box' ).data( 'method' ),
                     '_wpnonce' : $( '#pods-wizard-box' ).data( '_wpnonce' ),
-                    'step' : 'migrate',
+                    'step' : 'migratexx',
                     'type' : $row.data( 'upgrade' ),
                     'pod' : ''
                 };

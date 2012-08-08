@@ -9,7 +9,7 @@ class PodsInit {
 
     static $admin;
 
-    public $version;
+    static $version;
 
     /**
      * Setup and Initiate Pods
@@ -18,11 +18,11 @@ class PodsInit {
      * @since 1.8.9
      */
     function __construct () {
-        $this->version = get_option( 'pods_framework_version' );
+        self::$version = get_option( 'pods_framework_version' );
 
         add_action( 'init', array( $this, 'activate_install' ), 9 );
 
-        if ( !empty( $this->version ) ) {
+        if ( !empty( self::$version ) ) {
             // Init Pods Form
             pods_form();
 
@@ -497,7 +497,7 @@ class PodsInit {
 
         add_action( 'wpmu_new_blog', array( $this, 'new_blog' ), 10, 6 );
 
-        $pods_version = $this->version;
+        $pods_version = self::$version;
 
         if ( empty( $pods_version ) || false === strpos( $pods_version, '.' ) || version_compare( $pods_version, PODS_VERSION, '<' ) )
             $this->setup();
@@ -531,7 +531,7 @@ class PodsInit {
             $_blog_id = null;
 
         // Setup DB tables
-        $pods_version = $this->version;
+        $pods_version = self::$version;
 
         if ( 0 < strlen( $pods_version ) ) {
             if ( false === strpos( $pods_version, '.' ) )

@@ -957,6 +957,37 @@ class PodsData {
 
             if ( false !== $row && is_array( $row ) )
                 $this->row = $row;
+            elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
+                $this->row = get_post( $id, ARRAY_A );
+
+                if ( empty( $this->row ) )
+                    $this->row = false;
+            }
+            elseif ( 'taxonomy' == $this->pod_data[ 'type' ] ) {
+                $taxonomy = $this->pod_data[ 'object' ];
+
+                if ( empty( $taxonomy ) )
+                    $taxonomy = $this->pod_data[ 'name' ];
+
+                $this->row = get_term( $id, $taxonomy, ARRAY_A );
+
+                if ( empty( $this->row ) )
+                    $this->row = false;
+            }
+            elseif ( 'user' == $this->pod_data[ 'type' ] ) {
+                $this->row = get_userdata( $id );
+
+                if ( empty( $this->row ) )
+                    $this->row = false;
+                else
+                    $this->row = get_object_vars( $this->row );
+            }
+            elseif ( 'comment' == $this->pod_data[ 'type' ] ) {
+                $this->row = get_comment( $id, ARRAY_A );
+
+                if ( empty( $this->row ) )
+                    $this->row = false;
+            }
             else {
                 $params = array(
                     'table' => $this->table,
@@ -973,10 +1004,10 @@ class PodsData {
                     $this->row = false;
                 else
                     $this->row = get_object_vars( (object) @current( (array) $this->row ) );
-
-                if ( !empty( $this->pod ) )
-                    wp_cache_set( $id, $this->row, 'pods_items_' . $this->pod );
             }
+
+            if ( !empty( $this->pod ) )
+                wp_cache_set( $id, $this->row, 'pods_items_' . $this->pod );
         }
 
         return $this->row;

@@ -96,7 +96,7 @@ $pods_debug = 0;
  * @param boolean $die If set to true, a die() will occur, if set to (int) 2 then a wp_die() will occur
  * @param boolean $identifier If set to true, an identifying # will be output
  */
-function pods_debug ( $debug = '_null', $die = true, $prefix = '_null' ) {
+function pods_debug ( $debug = '_null', $die = false, $prefix = '_null' ) {
     global $pods_debug;
     $pods_debug++;
     ob_start();

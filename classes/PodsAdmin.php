@@ -668,8 +668,11 @@ class PodsAdmin {
         $params = apply_filters( 'pods_api_' . $method->name, $params, $method );
 
         if ( 'upgrade' == $method->name ) {
-            // hook into upgrade script
-            $output = '1';
+            require_once( PODS_DIR . 'sql/PodsUpgrade.php' );
+
+            $upgrade = new PodsUpgrade_2_0();
+
+            $output = (string) $upgrade->ajax( $params );
         }
         elseif ( 'security_settings' == $method->name ) {
             delete_option( 'pods_disable_file_browser' );

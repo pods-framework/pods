@@ -16,10 +16,14 @@
                 <div id="pods-wizard-heading">
                     <ul>
                         <li class="pods-wizard-menu-current" data-step="1">
-                            <i></i><span>1</span> <?php _e( 'Create or Extend', 'pods' ); ?><em></em>
+                            <i></i>
+                            <span>1</span> <?php _e( 'Create or Extend', 'pods' ); ?>
+                            <em></em>
                         </li>
                         <li data-step="2">
-                            <i></i><span>2</span> <?php _e( 'Configure', 'pods' ); ?><em></em>
+                            <i></i>
+                            <span>2</span> <?php _e( 'Configure', 'pods' ); ?>
+                            <em></em>
                         </li>
                     </ul>
                 </div>

@@ -45,7 +45,7 @@
                             return methods[ 'prepare' ]();
                         }
                         else {
-                            $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-error' );
+                            $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-warning' );
                             $row.find( 'td span.pods-wizard-info' ).html( d.replace( '<e>', '' ).replace( '</e>', '' ) );
                             console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
 
@@ -54,7 +54,7 @@
                         }
                     },
                     error : function () {
-                        $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-error pods-wizard-table-failure' );
+                        $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-error' );
                         $row.find( 'td span.pods-wizard-info' ).text( 'Unable to process request, please try again.' );
                     },
                     dataType : 'html'
@@ -103,7 +103,7 @@
                             return methods[ 'migrate' ]();
                         }
                         else {
-                            $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-error' );
+                            $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-warning' );
                             $row.find( 'td span.pods-wizard-info' ).html( d.replace( '<e>', '' ).replace( '</e>', '' ) );
                             console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
 
@@ -112,7 +112,7 @@
                         }
                     },
                     error : function () {
-                        $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-error pods-wizard-table-failure' );
+                        $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-error' );
                         $row.find( 'td span.pods-wizard-info' ).text( 'Unable to process request, please try again.' );
                     },
                     dataType : 'html'

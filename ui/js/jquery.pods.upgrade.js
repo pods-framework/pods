@@ -82,7 +82,7 @@
                     'action' : $( '#pods-wizard-box' ).data( 'action' ),
                     'method' : $( '#pods-wizard-box' ).data( 'method' ),
                     '_wpnonce' : $( '#pods-wizard-box' ).data( '_wpnonce' ),
-                    'step' : 'migratexx',
+                    'step' : 'migrate',
                     'type' : $row.data( 'upgrade' ),
                     'pod' : ''
                 };
@@ -101,6 +101,11 @@
 
                             // Run next
                             return methods[ 'migrate' ]();
+                        }
+                        else if ( -1 == d.indexOf( 'Database Error;' ) ) {
+                            $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-error' );
+                            $row.find( 'td span.pods-wizard-info' ).html( d.replace( '<e>', '' ).replace( '</e>', '' ) );
+                            console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
                         }
                         else {
                             $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-warning' );

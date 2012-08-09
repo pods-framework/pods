@@ -231,6 +231,12 @@ class PodsUpgrade_2_0 {
             $weight = 4;
 
             foreach ( $field_rows as $row ) {
+                if ( 'name' == $row->name )
+                    continue;
+
+                if ( in_array( $row->name, array( 'created', 'modified', 'author' ) ) )
+                    $row->name .= '2';
+
                 $field_type = $row->coltype;
 
                 if ( 'txt' == $field_type )
@@ -243,8 +249,8 @@ class PodsUpgrade_2_0 {
                     $field_type = 'number';
 
                 $field_params = array(
-                    'name' => $row->name,
-                    'label' => $row->label,
+                    'name' => trim( $row->name ),
+                    'label' => trim( $row->label ),
                     'type' => $field_type,
                     'weight' => $weight,
                     'options' => array(
@@ -306,6 +312,10 @@ class PodsUpgrade_2_0 {
 
         $this->update_progress( __FUNCTION__, true );
 
+        return '1';
+    }
+
+    function migrate_fields () {
         return '1';
     }
 
@@ -502,11 +512,27 @@ class PodsUpgrade_2_0 {
         if ( true === $this->check_progress( __FUNCTION__, $pod ) )
             return '1';
 
+        $pod_data = pods_api()->load_pod( array( 'name' => $pod ) );
+
+        if ( empty( $pod_data ) )
+            return pods_error( __( 'Pod not found, items cannot be migrated', 'pods' ) );
+
+        $columns = array();
+
+        foreach ( $pod_data[ 'fields' ] as $field ) {
+            if ( !in_array( $field[ 'name' ], array( 'created', 'modified', 'author' ) ) && !in_array( $field[ 'type' ], array( 'file', 'pick' ) ) )
+                $columns[] = pods_sanitize( $field[ 'name' ] );
+        }
+
+        $select = '`t`.`id`, `t`.`' . implode( '`, `t`.`', $columns ) . '`';
+        $columns = '`id`, `' . implode( '`, `', $columns ) . '`';
+
         // Copy content from the old table into the new
         $sql = "
-            SELECT *
-            INTO `@wp_pods_tbl_{$pod}`
-            FROM `@wp_pod_tbl_{$pod}`
+            REPLACE INTO `@wp_pods_tbl_{$pod}`
+                ( {$columns} )
+                ( SELECT {$select}
+                  FROM `@wp_pod_tbl_{$pod}` AS `t` )
         ";
 
         pods_query( $sql );
@@ -518,6 +544,17 @@ class PodsUpgrade_2_0 {
             LEFT JOIN `@wp_pod` AS `p` ON `p`.`datatype` = `x`.`id` AND `p`.`tbl_row_id` = `t`.`id`
             SET `t`.`created` = `p`.`created`, `t`.`modified` = `p`.`modified`
             WHERE `x`.`id` IS NOT NULL AND `p`.`id` IS NOT NULL
+        ";
+
+        pods_query( $sql );
+
+        // Copy name data from the old index table into the new individual table (if name empty in indiv table)
+        $sql = "
+            UPDATE `@wp_pods_tbl_{$pod}` AS `t`
+            LEFT JOIN `@wp_pod_types` AS `x` ON `x`.`name` = '{$pod}'
+            LEFT JOIN `@wp_pod` AS `p` ON `p`.`datatype` = `x`.`id` AND `p`.`tbl_row_id` = `t`.`id`
+            SET `t`.`name` = `p`.`name`
+            WHERE ( `t`.`name` IS NULL OR `t`.`name` = '' ) AND `x`.`id` IS NOT NULL AND `p`.`id` IS NOT NULL
         ";
 
         pods_query( $sql );

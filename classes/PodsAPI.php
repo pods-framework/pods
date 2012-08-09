@@ -789,6 +789,9 @@ class PodsAPI {
 
         $pod[ 'options' ] = array_merge( $pod[ 'options' ], $options );
 
+        if ( strlen( $pod[ 'label' ] ) < 1 )
+            $pod[ 'label' ] = $pod[ 'name' ];
+
         $params->id = $pod[ 'id' ];
         $params->name = $pod[ 'name' ];
 
@@ -868,7 +871,8 @@ class PodsAPI {
                 'ID' => $pod[ 'id' ],
                 'post_name' => $pod[ 'name' ],
                 'post_title' => $pod[ 'label' ],
-                'post_content' => $pod[ 'description' ]
+                'post_content' => $pod[ 'description' ],
+                'post_status' => 'publish'
             );
         }
 
@@ -1148,12 +1152,15 @@ class PodsAPI {
 
             foreach ( $aliases as $alias ) {
                 if ( isset( $options[ $alias ] ) ) {
-                    $field[ $exclude_field ] = $options[ $alias ];
+                    $field[ $exclude_field ] = trim( $options[ $alias ] );
 
                     unset( $options[ $alias ] );
                 }
             }
         }
+
+        if ( strlen( $field[ 'label' ] ) < 1 )
+            $field[ 'label' ] = $field[ 'name' ];
 
         $field[ 'options' ][ 'type' ] = $field[ 'type' ];
 
@@ -2578,9 +2585,12 @@ class PodsAPI {
             'description' => $_pod[ 'post_content' ]
         );
 
+        if ( strlen( $pod[ 'label' ] ) < 1 )
+            $pod[ 'label' ] = $pod[ 'name' ];
+
         // @todo update with a method to put all options in
         $defaults = array(
-            'is_toplevel' => 1,
+            'show_in_menu' => 1,
             'type' => 'post_type',
             'storage' => 'meta',
             'object' => '',

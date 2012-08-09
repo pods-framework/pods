@@ -147,7 +147,7 @@ class PodsAdmin {
     public function admin_menu () {
         $submenu = array();
 
-        $results = $this->api->load_pods( array( //'options' => array('disable_manage' => 0),
+        $results = $this->api->load_pods( array(
             'type' => 'pod'
         ) );
 
@@ -162,7 +162,7 @@ class PodsAdmin {
                 $item[ 'options' ][ 'label' ] = ( !empty( $item[ 'options' ][ 'label' ] ) ) ? $item[ 'options' ][ 'label' ] : ucwords( str_replace( '_', ' ', $item[ 'name' ] ) );
                 $item[ 'options' ][ 'label' ] = apply_filters( 'pods_admin_menu_label', $item[ 'options' ][ 'label' ], $item );
 
-                if ( 1 == $item[ 'options' ][ 'is_toplevel' ] ) {
+                if ( 1 == $item[ 'options' ][ 'show_in_menu' ] ) {
                     add_object_page( $item[ 'options' ][ 'label' ], $item[ 'options' ][ 'label' ], 'read', "pods-manage-{$item['name']}" );
 
                     if ( is_super_admin() || current_user_can( 'pods_edit_' . $item[ 'name' ] ) || current_user_can( 'pods_delete_' . $item[ 'name' ] ) ) {

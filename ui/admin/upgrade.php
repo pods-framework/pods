@@ -41,18 +41,18 @@
                 <p><em><?php _e( '', 'pods' ); ?></em></p>
                 <div id="pods-wizard-options">
                     <div class="pods-wizard-option">
-                        <a href="#">
+                        <a href="http://vaultpress.com/podsframework/" target="_blank">
                             <img src="<?php echo PODS_URL; ?>/ui/images/logo_vaultpress.png" alt="Vaultpress" />
                             <p><?php _e( '1 free month', 'pods' ); ?></p>
-                            <p><?php _e( 'Coupon Code', 'pods' ); ?>: <strong>ABC123</strong></p>
+                            <p><strong><?php _e ( 'Click to sign up', 'pods' ); ?></strong></p>
                         </a>
                         <p><em><?php _e( 'A service that provides realtime continuous backups, restores, and security scanning.', 'pods' ); ?></em></p>
                     </div>
                     <div class="pods-wizard-option">
-                        <a href="#">
+                        <a href="http://ithemes.com/member/go.php?r=31250&i=l44" target="_blank">
                             <img src="<?php echo PODS_URL; ?>/ui/images/logo_backupbuddy.png" alt="Backup Buddy" />
                             <p><?php _e( 'Receive 25% off', 'pods' ); ?></p>
-                            <p><?php _e( 'Coupon Code', 'pods' ); ?>: <strong>ABC123</strong></p>
+                            <p><?php _e( 'Coupon Code', 'pods' ); ?>: <strong>PODS25</strong></p>
                         </a>
                         <p><em><?php _e( 'The all-in-one WordPress backup plugin to easily backup, restore, and migrate to any number of local or external locations.', 'pods' ); ?></em></p>
                     </div>
@@ -63,7 +63,7 @@
             <!-- Prepare Panel -->
             <div id="pods-wizard-panel-2" class="pods-wizard-panel">
                 <div class="pods-wizard-content">
-                    <p><?php _e( '', 'pods' ); ?></p>
+                    <p><?php _e( 'We will prepare all of your Pods, Settings, and Content for migration. If any issues are found they will be displayed below for your review. Be sure to backup your database before continuing onto the next step for Migration.', 'pods' ); ?></p>
                 </div>
                 <table cellpadding="0" cellspacing="0">
                     <col style="width: 70px">
@@ -71,7 +71,7 @@
                     <col style="width: 580px">
                     <thead>
                         <tr>
-                            <th colspan="3"><?php _e( 'Your Content', 'pods' ); ?></th>
+                            <th colspan="3"><?php _e( 'Preparing Your Content for Migration', 'pods' ); ?>..</th>
                         </tr>
                     </thead>
                     <tbody><!-- complete|pending|active <i></i> -->
@@ -173,7 +173,7 @@
             <!-- Migrate Panel -->
             <div id="pods-wizard-panel-3" class="pods-wizard-panel">
                 <div class="pods-wizard-content">
-                    <p><?php _e( '', 'pods' ); ?></p>
+                    <p><?php _e( 'During this process your Pods, Settings, and Content will be migrated into the optimized Pods 2.0 architecture. We will not delete any of your old data, the tables will remain until you choose to clean them up after a successful upgrade.', 'pods' ); ?></p>
                 </div>
                 <table cellpadding="0" cellspacing="0">
                     <col style="width: 70px">
@@ -181,7 +181,7 @@
                     <col style="width: 580px">
                     <thead>
                         <tr>
-                            <th colspan="3"><?php _e( 'Your Content', 'pods' ); ?></th>
+                            <th colspan="3"><?php _e( 'Migrating Your Content', 'pods' ); ?>..</th>
                         </tr>
                     </thead>
                     <tbody><!-- complete|pending|active <i></i> -->

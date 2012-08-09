@@ -534,6 +534,8 @@ class PodsUpgrade_2_0 {
             if ( false !== strpos( $table, "{$wpdb->prefix}pods" ) )
                 pods_query( "TRUNCATE `{$table}`", false );
         }
+
+        delete_option( 'pods_upgrade_2_0_progress' );
     }
 
     function cleanup () {
@@ -546,8 +548,10 @@ class PodsUpgrade_2_0 {
 
         delete_option( 'pods_roles' );
         delete_option( 'pods_version' );
+        delete_option( 'pods_upgrade_2_0_progress' );
 
-        /* other options maybe not in 2.0
+        /*
+         * other options maybe not in 2.0
         delete_option( 'pods_disable_file_browser' );
         delete_option( 'pods_files_require_login' );
         delete_option( 'pods_files_require_login_cap' );
@@ -562,7 +566,7 @@ class PodsUpgrade_2_0 {
         $method = str_replace( 'migrate_', '', $method );
 
         if ( null !== $x )
-            $this->progress[ $method ][ $x ] = $v;
+            $this->progress[ $method ][ $x ] = (boolean) $v;
         else
             $this->progress[ $method ] = $v;
 

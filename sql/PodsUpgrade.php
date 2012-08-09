@@ -11,13 +11,17 @@ class PodsUpgrade_2_0 {
     public $tables = array();
 
     function __construct () {
+        $this->get_tables();
+    }
+
+    function get_tables () {
         global $wpdb;
 
         $tables = $wpdb->get_results( "SHOW TABLES LIKE '{$wpdb->prefix}pod%'", ARRAY_N );
 
         if ( !empty( $tables ) ) {
             foreach ( $tables as $table ) {
-                $this->tables[] = $table[ 0 ];
+                $this->tables[ ] = $table[ 0 ];
             }
         }
     }
@@ -146,11 +150,10 @@ class PodsUpgrade_2_0 {
         if ( !isset( $params->pod ) )
             return pods_error( __( 'Invalid Pod.', 'pods' ) );
 
-        $pod = pods_clean_name( $params->pod );
+        $pod = pods_sanitize( pods_clean_name( $params->pod ) );
 
         if ( !in_array( "{$wpdb->prefix}pod_tbl_{$pod}", $this->tables ) )
             return pods_error( __( 'Table not found, it cannot be migrated', 'pods' ) );
-
 
         $count = @count( (array) pods_query( "SELECT * FROM `@wp_pod_tbl_{$pod}`", false ) );
 
@@ -158,7 +161,6 @@ class PodsUpgrade_2_0 {
     }
 
     function migrate_pods () {
-        // Grab old pods and fields, and create new ones via the API
         $api = pods_api();
 
         $pod_types = pods_query( "SELECT * FROM `@wp_pod_types`", false );
@@ -169,9 +171,40 @@ class PodsUpgrade_2_0 {
             return $pod_ids;
 
         foreach ( $pod_types as $pod_type ) {
-            $field_rows = pods_query( "SELECT * FROM `@wp_pod_fields` WHERE `datatype` = {$pod_type->id}" );
+            $field_rows = pods_query( "SELECT * FROM `@wp_pod_fields` WHERE `datatype` = {$pod_type->id} ORDER BY `weight`, `name`" );
 
-            $fields = array();
+            $fields = array(
+                array(
+                    'name' => 'name',
+                    'label' => 'Name',
+                    'type' => 'text',
+                    'weight' => 0,
+                    'options' => array(
+                        'required' => '1'
+                    )
+                ),
+                array(
+                    'name' => 'created',
+                    'label' => 'Date Created',
+                    'type' => 'date',
+                    'weight' => 1
+                ),
+                array(
+                    'name' => 'modified',
+                    'label' => 'Date Modified',
+                    'type' => 'date',
+                    'weight' => 2
+                ),
+                array(
+                    'name' => 'author',
+                    'label' => 'Author',
+                    'type' => 'pick',
+                    'pick_object' => 'user',
+                    'weight' => 3
+                )
+            );
+
+            $weight = 4;
 
             foreach ( $field_rows as $row ) {
                 $field_type = $row->coltype;
@@ -189,22 +222,45 @@ class PodsUpgrade_2_0 {
                     'name' => $row->name,
                     'label' => $row->label,
                     'type' => $field_type,
-                    'weight' => $row->weight,
+                    'weight' => $weight,
                     'options' => array(
                         'required' => $row->required,
-                    ),
+                        'unique' => $row->unique,
+                        'input_helper' => $row->input_helper
+                    )
                 );
 
-                if ( $row->coltype == 'pick' ) {
+                if ( 'pick' == $field_type ) {
                     $field_params[ 'pick_val' ] = $row->pickval;
                     $field_params[ 'sister_field_id' ] = $row->sister_field_id;
+                    $field_params[ 'pick_filter' ] = $row->pick_filter;
+                    $field_params[ 'pick_orderby' ] = $row->pick_orderby;
+                    $field_params[ 'pick_display' ] = '{@name}';
+                    $field_params[ 'pick_size' ] = 'medium';
+
+                    if ( 1 == $row->multiple ) {
+                        $field_params[ 'pick_format_type' ] = 'multi';
+                        $field_params[ 'pick_format_multi' ] = 'checkbox';
+                        $field_params[ 'pick_limit' ] = 0;
+                    }
+                    else {
+                        $field_params[ 'pick_format_type' ] = 'single';
+                        $field_params[ 'pick_format_single' ] = 'dropdown';
+                    }
+                }
+                elseif ( 'number' == $field_type ) {
+                    $field_params[ 'number_format_type' ] = 'plain';
+                    $field_params[ 'number_decimals' ] = 2;
                 }
 
                 $fields[] = $field_params;
+
+                $weight++;
             }
 
             $pod_params = array(
                 'name' => $pod_type->name,
+                'label' => $pod_type->label,
                 'type' => 'pod',
                 'storage' => 'table',
                 'fields' => $fields,
@@ -220,22 +276,49 @@ class PodsUpgrade_2_0 {
 
             $pod_id = $api->save_pod( $pod_params );
             $pod_ids[] = $pod_id;
-
-            //pods_query( "DROP TABLE `@wp_pod_tbl_{$pod_type->name}`" );
         }
 
-        //pods_query( "DROP TABLE `@wp_pod_types`", false );
-        //pods_query( "DROP TABLE `@wp_pod_rel`", false );
+        $this->get_tables();
 
-        return $pod_ids;
+        return '1';
     }
 
     function migrate_relationships () {
-        //
+        // go through each relationship row
+        // convert pod_id to real table id of item
+            // lookup pod_id in wp_pod as id field, get tbl_row_id
+        // get real pod_id (Pod ID) of the item being related from
+            // get datatype field that matches id = pod_id
+        // get real relate_pod_id (Pod ID) of the item being related to (if pod)
+            // you can get this by looking at what object the field is related to
+            // or if a sister_pod_id is given, look up that in wp_pod
+        // copy tbl_row_id to related_item_id
+        // copy weight
+
+        // OLD TABLE:
+        /*
+            `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `pod_id` BIGINT(15) UNSIGNED NULL DEFAULT NULL,
+            `sister_pod_id` BIGINT(15) UNSIGNED NULL DEFAULT NULL,
+            `field_id` INT(10) UNSIGNED NULL DEFAULT NULL,
+            `tbl_row_id` BIGINT(15) UNSIGNED NULL DEFAULT NULL,
+            `weight` INT(10) UNSIGNED NULL DEFAULT '0'
+        */
+        // NEW TABLE:
+        /*
+            `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `pod_id` INT(10) UNSIGNED NULL DEFAULT NULL,
+            `field_id` INT(10) UNSIGNED NULL DEFAULT NULL,
+            `item_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+            `related_pod_id` INT(10) UNSIGNED NULL DEFAULT NULL,
+            `related_field_id` INT(10) UNSIGNED NULL DEFAULT NULL,
+            `related_item_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+            `weight` SMALLINT(5) UNSIGNED NULL DEFAULT '0'
+        */
     }
 
     function migrate_settings () {
-        $this->migrate_roles();
+        return $this->migrate_roles();
     }
 
     function migrate_roles () {
@@ -281,9 +364,7 @@ class PodsUpgrade_2_0 {
 
         update_option( "{$wpdb->prefix}user_roles", $wp_roles );
 
-        //delete_option( 'pods_roles' );
-
-        return $wp_roles;
+        return '1';
     }
 
     function migrate_templates () {
@@ -305,9 +386,7 @@ class PodsUpgrade_2_0 {
             $results[] = $api->save_template( $params );
         }
 
-        //pods_query( "DROP TABLE `@wp_pod_templates`", false );
-
-        return $results;
+        return '1';
     }
 
     function migrate_pages () {
@@ -321,12 +400,10 @@ class PodsUpgrade_2_0 {
             return $results;
 
         foreach ( $pages as $page ) {
-            $results[ ] = $api->save_page( $page );
+            $results[] = $api->save_page( $page );
         }
 
-        //pods_query( "DROP TABLE `@wp_pod_pages`", false );
-
-        return $results;
+        return '1';
     }
 
     function migrate_helpers () {
@@ -349,9 +426,7 @@ class PodsUpgrade_2_0 {
             $results[] = $api->save_helper( $params );
         }
 
-        //pods_query( "DROP TABLE `@wp_pod_helpers`", false );
-
-        return $results;
+        return '1';
     }
 
     function migrate_pod ( $params ) {
@@ -360,6 +435,71 @@ class PodsUpgrade_2_0 {
         if ( !isset( $params->pod ) )
             return pods_error( __( 'Invalid Pod.', 'pods' ) );
 
-        $pod = pods_clean_name( $params->pod );
+        $pod = pods_sanitize( pods_clean_name( $params->pod ) );
+
+        if ( !in_array( "{$wpdb->prefix}pod_tbl_{$pod}", $this->tables ) )
+            return pods_error( __( 'Table not found, items cannot be migrated', 'pods' ) );
+
+        if ( !in_array( "{$wpdb->prefix}pods_tbl_{$pod}", $this->tables ) )
+            return pods_error( __( 'New table not found, items cannot be migrated', 'pods' ) );
+
+        if ( !in_array( "{$wpdb->prefix}pod_types", $this->tables ) )
+            return pods_error( __( 'Pod Types table not found, items cannot be migrated', 'pods' ) );
+
+        if ( !in_array( "{$wpdb->prefix}pod", $this->tables ) )
+            return pods_error( __( 'Pod table not found, items cannot be migrated', 'pods' ) );
+
+        // Copy content from the old table into the new
+        $sql = "
+            SELECT *
+            INTO `@wp_pods_tbl_{$pod}`
+            FROM `@wp_pod_tbl_{$pod}`
+        ";
+
+        pods_query( $sql );
+
+        // Copy index data from the old index table into the new individual table
+        $sql = "
+            UPDATE `@wp_pods_tbl_{$pod}` AS `t`
+            LEFT JOIN `@wp_pod_types` AS `x` ON `x`.`name` = '{$pod}'
+            LEFT JOIN `@wp_pod` AS `p` ON `p`.`datatype` = `x`.`id` AND `p`.`tbl_row_id` = `t`.`id`
+            SET `t`.`created` = `p`.`created`, `t`.`modified` = `p`.`modified`
+            WHERE `x`.`id` IS NOT NULL AND `p`.`id` IS NOT NULL
+        ";
+
+        pods_query( $sql );
+
+        return '1';
+    }
+
+    function restart () {
+        global $wpdb;
+
+        foreach ( $this->table as $table ) {
+            if ( false !== strpos( $table, "{$wpdb->prefix}pods" ) )
+                pods_query( "TRUNCATE `{$table}`", false );
+        }
+    }
+
+    function cleanup () {
+        global $wpdb;
+
+        foreach ( $this->table as $table ) {
+            if ( false !== strpos( $table, "{$wpdb->prefix}pod_" ) || "{$wpdb->prefix}pod" == $table )
+                pods_query( "DROP TABLE `{$table}`", false );
+        }
+
+        delete_option( 'pods_roles' );
+        delete_option( 'pods_version' );
+
+        /* other options maybe not in 2.0
+        delete_option( 'pods_disable_file_browser' );
+        delete_option( 'pods_files_require_login' );
+        delete_option( 'pods_files_require_login_cap' );
+        delete_option( 'pods_disable_file_upload' );
+        delete_option( 'pods_upload_require_login' );
+        delete_option( 'pods_upload_require_login_cap' );
+        delete_option( 'pods_page_precode_timing' );
+        */
     }
 }

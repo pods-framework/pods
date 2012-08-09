@@ -124,28 +124,28 @@
                         if ( -1 == d.indexOf( '<e>' ) && -1 != d ) {
                             if ( 'undefined' != typeof pods_admin_submit_callback )
                                 pods_admin_submit_callback( d );
-                            else if ( 'undefined' != typeof $submitbutton.data( 'location' ) )
-                                document.location.href = $submitbutton.data( 'location' );
+                            else if ( 'undefined' != typeof $submittable.data( 'location' ) )
+                                document.location.href = $submittable.data( 'location' );
                             else
                                 document.location.reload( true );
                         }
                         else if ( 'undefined' != typeof pods_admin_submit_error_callback )
                             pods_admin_submit_error_callback( d.replace( '<e>', '' ).replace( '</e>', '' ) );
-                        else if ( 'undefined' != typeof $submitbutton.data( 'error-location' ) )
-                            document.location.href = $submitbutton.data( 'error-location' );
+                        else if ( 'undefined' != typeof $submittable.data( 'error-location' ) )
+                            document.location.href = $submittable.data( 'error-location' );
                         else {
                             alert( 'Error: ' + d.replace( '<e>', '' ).replace( '</e>', '' ) );
                             console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
 
-                            $submitbutton.css( 'cursor', 'pointer' );
-                            $submitbutton.prop( 'disabled', false );
-                            $submitbutton.parent().find( '.waiting' ).fadeOut();
+                            $submittable.css( 'cursor', 'pointer' );
+                            $submittable.prop( 'disabled', false );
+                            $submittable.parent().find( '.waiting' ).fadeOut();
                         }
                     },
                     error : function () {
-                        $submitbutton.css( 'cursor', 'pointer' );
-                        $submitbutton.prop( 'disabled', false );
-                        $submitbutton.parent().find( '.waiting' ).fadeOut();
+                        $submittable.css( 'cursor', 'pointer' );
+                        $submittable.prop( 'disabled', false );
+                        $submittable.parent().find( '.waiting' ).fadeOut();
 
                         alert( 'Unable to process request, please try again.' );
                     },
@@ -393,6 +393,9 @@
                     // Show start over button
                     $( '#pods-wizard-start' ).show();
 
+                    // Allow for override
+                    var check = true;
+
                     // Check if last step
                     if ( $( 'div.pods-wizard-panel:visible' ).next( 'div.pods-wizard-panel' ).length ) {
                         // Show next panel
@@ -400,23 +403,27 @@
                             .hide()
                             .next()
                             .show();
+
+                        // Allow for override
+                        if ( 'undefined' != typeof pods_admin_wizard_callback )
+                            check = pods_admin_wizard_callback( step );
+
+                        if ( false === check )
+                            return check;
                     }
-
-                    // Allow for override
-                    var check = true;
-
-                    if ( 'undefined' != typeof pods_admin_wizard_callback )
-                        check = pods_admin_wizard_callback( step );
-
-                    if ( false === check )
-                        return check;
-
-                    if ( $( '#pods-wizard-box' ).closest( 'form' )[ 0 ] ) {
+                    else if ( $( '#pods-wizard-box' ).closest( 'form' )[ 0 ] ) {
                         $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'processing' ) );
                         $( '#pods-wizard-next' ).attr( 'disabled', true );
                         $( '#pods-wizard-box' ).closest( 'form' ).submit();
                     }
                     else {
+                        // Allow for override
+                        if ( 'undefined' != typeof pods_admin_wizard_callback )
+                            check = pods_admin_wizard_callback( step );
+
+                        if ( false === check )
+                            return check;
+
                         methods.setFinished();
                     }
                 },

@@ -12,6 +12,8 @@
 
             <h2 class="italicized"><?php _e('Add New Pod', 'pods'); ?></h2>
 
+            <img src="<?php echo PODS_URL; ?>/ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+
             <div id="pods-wizard-box" class="pods-wizard-steps-2 pods-wizard-hide-first">
                 <div id="pods-wizard-heading">
                     <ul>
@@ -30,7 +32,6 @@
                 <div id="pods-wizard-main">
                     <div id="pods-wizard-panel-1" class="pods-wizard-panel">
                         <div class="pods-wizard-content">
-                            <img src="<?php echo PODS_URL; ?>/ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
                             <p><?php _e( 'Pods are content types that you can customize and define fields for based on your needs. You can choose to create a Custom Post Type, Custom Taxonomy, or a Custom Pod which operate completely seperate from normal WordPress Objects. You can also extend existing content types like WP Objects such as Post Types, Taxonomies, Users, or Comments', 'pods' ); ?></p>
                         </div>
                         <div id="pods-wizard-options">

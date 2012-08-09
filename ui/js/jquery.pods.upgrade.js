@@ -61,7 +61,7 @@
                 } );
             }
             else {
-                jQuery( '#pods-wizard-next' ).show();
+                $( '#pods-wizard-next' ).show();
             }
         },
         migrate : function () {
@@ -119,7 +119,11 @@
                 } );
             }
             else {
-                jQuery( '#pods-wizard-next' ).click();
+                $( '#pods-wizard-next' ).click().text( 'Start using Pods 2.0' ).addClass( 'finished' );
+                $( '#pods-wizard-next' ).off( 'click' );
+                $( '#pods-wizard-next' ).prop( 'href', 'admin.php?page=pods' );
+                $( '#pods-wizard-next' ).show();
+                $( '#pods-wizard-finished' ).show();
             }
         }
     };

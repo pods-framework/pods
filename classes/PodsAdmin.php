@@ -694,12 +694,13 @@ class PodsAdmin {
             add_option( 'pods_upload_require_login_cap', ( isset( $params->upload_require_login_cap ) ? $params->upload_require_login_cap : 'upload_files' ) );
         }
         else {
-            if ( !method_exists( $this->api, $params->method ) )
+            if ( !method_exists( $this->api, $method->name ) )
                 pods_error( 'API method does not exist', $this );
 
             // Dynamically call the API method
             $params = (array) $params;
-            $output = $this->api->{$method->name}( $params );
+
+            $output = call_user_func( array( $this->api, $method->name ), $params );
         }
 
         // Output in PHP or JSON format

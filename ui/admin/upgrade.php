@@ -9,6 +9,8 @@
 
     <h2 class="italicized"><?php _e( 'Upgrade Pods', 'pods' ); ?></h2>
 
+    <img src="<?php echo PODS_URL; ?>/ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+
     <div id="pods-wizard-box" class="pods-wizard-steps-3" data-action="pods_admin" data-method="upgrade" data-_wpnonce="<?php echo wp_create_nonce( 'pods-upgrade' ); ?>">
         <div id="pods-wizard-heading">
             <ul>
@@ -277,10 +279,10 @@
         <div id="pods-wizard-actions">
             <div id="pods-wizard-toolbar">
                 <a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a>
-                <a href="#next" id="pods-wizard-next" class="button button-primary"><?php _e( 'Next Step', 'pods' ); ?></a>
+                <a href="#next" id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Start using Pods', 'pods' ); ?>"><?php _e( 'Next Step', 'pods' ); ?></a>
             </div>
             <div id="pods-wizard-finished">
-                <?php _e( 'MIGRATION COMPLETE', 'pods' ); ?>
+                <?php _e( 'Migration Complete!', 'pods' ); ?>
             </div>
         </div>
     </div>

@@ -200,7 +200,7 @@ class PodsUpgrade_2_0 {
                     $field_params[ 'sister_field_id' ] = $row->sister_field_id;
                 }
 
-                $fields[ ] = $field_params;
+                $fields[] = $field_params;
             }
 
             $pod_params = array(
@@ -219,9 +219,42 @@ class PodsUpgrade_2_0 {
             );
 
             $pod_id = $api->save_pod( $pod_params );
-            $pod_ids[ ] = $pod_id;
+            $pod_ids[] = $pod_id;
 
             pods_query( "DROP TABLE `@wp_pod_tbl_{$pod_type->name}`" );
+        }
+
+        function prepare_fields () {
+            global $wpdb;
+
+            if ( !in_array( "{$wpdb->prefix}pod_fields", $this->tables ) )
+                return pods_error( __( 'Table not found, it cannot be migrated', 'pods' ) );
+
+            $count = @count( (array) pods_query( "SELECT * FROM `@wp_pod_fields`", false ) );
+
+            return $count;
+        }
+
+        function prepare_relationships () {
+            global $wpdb;
+
+            if ( !in_array( "{$wpdb->prefix}pod_fields", $this->tables ) )
+                return pods_error( __( 'Table not found, it cannot be migrated', 'pods' ) );
+
+            $count = @count( (array) pods_query( "SELECT * FROM `@wp_pod_rel`", false ) );
+
+            return $count;
+        }
+
+        function prepare_index () {
+            global $wpdb;
+
+            if ( !in_array( "{$wpdb->prefix}pod", $this->tables ) )
+                return pods_error( __( 'Table not found, it cannot be migrated', 'pods' ) );
+
+            $count = @count( (array) pods_query( "SELECT * FROM `@wp_pod`", false ) );
+
+            return $count;
         }
 
         pods_query( "DROP TABLE `@wp_pod_types`", false );
@@ -294,7 +327,7 @@ class PodsUpgrade_2_0 {
                 'code' => $tpl->code,
             );
 
-            $results[ ] = $api->save_template( $params );
+            $results[] = $api->save_template( $params );
         }
 
         pods_query( "DROP TABLE `@wp_pod_templates`", false );
@@ -319,7 +352,7 @@ class PodsUpgrade_2_0 {
                 'phpcode' => $hlpr->phpcode,
             );
 
-            $results[ ] = $api->save_helper( $params );
+            $results[] = $api->save_helper( $params );
         }
 
         pods_query( "DROP TABLE `@wp_pod_helpers`", false );
@@ -338,7 +371,7 @@ class PodsUpgrade_2_0 {
             return $results;
 
         foreach ( $pages as $page ) {
-            $results[ ] = $api->save_page( $page );
+            $results[] = $api->save_page( $page );
         }
 
         pods_query( "DROP TABLE `@wp_pod_pages`", false );

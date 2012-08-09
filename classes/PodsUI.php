@@ -54,6 +54,7 @@ class PodsUI
     public $searchable = true;
     public $sortable = true;
     public $pagination = true;
+    public $pagination_total = true;
     public $export = array('on' => false,
                            'formats' => array('csv' => ',',
                                               'tsv' => "\t",
@@ -1223,11 +1224,11 @@ class PodsUI
 <?php
         }
 
-        if (!empty($this->data) && ( false !== $this->pagination || ( true === $reorder && !in_array( 'reorder', $this->actions_disabled ) && !in_array( 'delete', $this->actions_hidden ) && false !== $this->reorder[ 'on' ] ) ) || ( !in_array( 'export', $this->actions_disabled ) && !in_array( 'export', $this->actions_hidden ) ) ) {
+        if (!empty($this->data) && ( false !== $this->pagination_total || false !== $this->pagination || ( true === $reorder && !in_array( 'reorder', $this->actions_disabled ) && !in_array( 'delete', $this->actions_hidden ) && false !== $this->reorder[ 'on' ] ) ) || ( !in_array( 'export', $this->actions_disabled ) && !in_array( 'export', $this->actions_hidden ) ) ) {
 ?>
         <div class="tablenav">
 <?php
-            if (false !== $this->pagination) {
+            if ( false !== $this->pagination_total || false !== $this->pagination ) {
 ?>
             <div class="tablenav-pages<?php echo ($this->limit < $this->total_found || 1 < $this->page) ? '' : ' one-page'; ?>">
                 <?php $this->pagination(1); ?>
@@ -1295,7 +1296,7 @@ class PodsUI
         </div>
 <?php
             }*/
-            if (false !== $this->pagination) {
+            if ( false !== $this->pagination_total || false !== $this->pagination ) {
 ?>
         <div class="tablenav">
             <div class="tablenav-pages<?php echo ($this->limit < $this->total_found || 1 < $this->page) ? '' : ' one-page'; ?>">
@@ -1849,15 +1850,20 @@ class PodsUI
             return call_user_func($this->actions_custom['pagination'], $header, $this);
         $total_pages = ceil($this->total_found / $this->limit);
         $request_uri = pods_var_update(array('pg' . $this->num => ''), array('limit' . $this->num, 'orderby' . $this->num, 'orderby_dir' . $this->num, 'search' . $this->num), $this->exclusion());
+
+        if ( false !== $this->pagination_total ) {
 ?>
     <span class="displaying-num"><?php echo $this->total_found; ?> item<?php echo (1 == $this->total_found) ? '' : 's'; ?></span>
 <?php
-        if (1 < $total_pages) {
+        }
+
+        if ( false !== $this->pagination ) {
+            if (1 < $total_pages) {
 ?>
     <a class="first-page<?php echo (1 < $this->page) ? '' : ' disabled'; ?>" title="<?php _e('Go to the first page', 'pods'); ?>" href="<?php echo $request_uri; ?>">&laquo;</a>
     <a class="prev-page<?php echo (1 < $this->page) ? '' : ' disabled'; ?>" title="<?php _e('Go to the previous page', 'pods'); ?>" href="<?php echo $request_uri; ?>&pg<?php echo $this->num; ?>=<?php echo max($this->page - 1, 1); ?>">&lsaquo;</a>
 <?php
-            if (true == $header) {
+                if (true == $header) {
 ?>
     <span class="paging-input"><input class="current-page" title="<?php _e('Current page', 'pods'); ?>" type="text" name="pg<?php echo $this->num; ?>" value="<?php echo $this->page; ?>" size="<?php echo strlen($total_pages); ?>"> <?php _e('of', 'pods'); ?> <span class="total-pages"><?php echo $total_pages; ?></span></span>
     <script>
@@ -1872,16 +1878,17 @@ class PodsUI
         });
     </script>
 <?php
-            }
-            else {
+                }
+                else {
 ?>
     <span class="paging-input"><?php echo $this->page; ?> <?php _e('of', 'pods'); ?> <span class="total-pages"><?php echo $total_pages; ?></span></span>
 <?php
-            }
+                }
 ?>
     <a class="next-page<?php echo ($this->page < $total_pages) ? '' : ' disabled'; ?>" title="<?php _e('Go to the next page', 'pods'); ?>" href="<?php echo $request_uri; ?>&pg<?php echo $this->num; ?>=<?php echo min($this->page + 1, $total_pages); ?>">&rsaquo;</a>
     <a class="last-page<?php echo ($this->page < $total_pages) ? '' : ' disabled'; ?>" title="<?php _e('Go to the last page', 'pods'); ?>'" href="<?php echo $request_uri; ?>&pg<?php echo $this->num; ?>=<?php echo $total_pages; ?>">&raquo;</a>
 <?php
+            }
         }
     }
 

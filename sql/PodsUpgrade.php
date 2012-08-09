@@ -41,7 +41,7 @@ class PodsUpgrade_2_0 {
             }
         }
 
-        $progress = (array) get_option( 'pods_upgrade_2_0_progress', array() );
+        $progress = (array) get_option( 'pods_framework_upgrade_2_0', array() );
 
         if ( !empty( $progress ) )
             $this->progress = array_merge( $this->progress, $progress );
@@ -535,7 +535,7 @@ class PodsUpgrade_2_0 {
                 pods_query( "TRUNCATE `{$table}`", false );
         }
 
-        delete_option( 'pods_upgrade_2_0_progress' );
+        delete_option( 'pods_framework_upgrade_2_0' );
     }
 
     function cleanup () {
@@ -548,7 +548,7 @@ class PodsUpgrade_2_0 {
 
         delete_option( 'pods_roles' );
         delete_option( 'pods_version' );
-        delete_option( 'pods_upgrade_2_0_progress' );
+        delete_option( 'pods_framework_upgrade_2_0' );
 
         /*
          * other options maybe not in 2.0
@@ -570,7 +570,7 @@ class PodsUpgrade_2_0 {
         else
             $this->progress[ $method ] = $v;
 
-        update_option( 'pods_upgrade_2_0_progress', $this->progress );
+        update_option( 'pods_framework_upgrade_2_0', $this->progress );
     }
 
     function check_progress ( $method, $x = null ) {

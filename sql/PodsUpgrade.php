@@ -221,46 +221,21 @@ class PodsUpgrade_2_0 {
             $pod_id = $api->save_pod( $pod_params );
             $pod_ids[] = $pod_id;
 
-            pods_query( "DROP TABLE `@wp_pod_tbl_{$pod_type->name}`" );
+            //pods_query( "DROP TABLE `@wp_pod_tbl_{$pod_type->name}`" );
         }
 
-        function prepare_fields () {
-            global $wpdb;
-
-            if ( !in_array( "{$wpdb->prefix}pod_fields", $this->tables ) )
-                return pods_error( __( 'Table not found, it cannot be migrated', 'pods' ) );
-
-            $count = @count( (array) pods_query( "SELECT * FROM `@wp_pod_fields`", false ) );
-
-            return $count;
-        }
-
-        function prepare_relationships () {
-            global $wpdb;
-
-            if ( !in_array( "{$wpdb->prefix}pod_fields", $this->tables ) )
-                return pods_error( __( 'Table not found, it cannot be migrated', 'pods' ) );
-
-            $count = @count( (array) pods_query( "SELECT * FROM `@wp_pod_rel`", false ) );
-
-            return $count;
-        }
-
-        function prepare_index () {
-            global $wpdb;
-
-            if ( !in_array( "{$wpdb->prefix}pod", $this->tables ) )
-                return pods_error( __( 'Table not found, it cannot be migrated', 'pods' ) );
-
-            $count = @count( (array) pods_query( "SELECT * FROM `@wp_pod`", false ) );
-
-            return $count;
-        }
-
-        pods_query( "DROP TABLE `@wp_pod_types`", false );
-        pods_query( "DROP TABLE `@wp_pod_rel`", false );
+        //pods_query( "DROP TABLE `@wp_pod_types`", false );
+        //pods_query( "DROP TABLE `@wp_pod_rel`", false );
 
         return $pod_ids;
+    }
+
+    function migrate_relationships () {
+        //
+    }
+
+    function migrate_settings () {
+        $this->migrate_roles();
     }
 
     function migrate_roles () {
@@ -306,7 +281,7 @@ class PodsUpgrade_2_0 {
 
         update_option( "{$wpdb->prefix}user_roles", $wp_roles );
 
-        delete_option( 'pods_roles' );
+        //delete_option( 'pods_roles' );
 
         return $wp_roles;
     }
@@ -321,41 +296,16 @@ class PodsUpgrade_2_0 {
         if ( empty( $templates ) )
             return $results;
 
-        foreach ( $templates as $tpl ) {
+        foreach ( $templates as $template ) {
             $params = array(
-                'name' => $tpl->name,
-                'code' => $tpl->code,
+                'name' => $template->name,
+                'code' => $template->code,
             );
 
             $results[] = $api->save_template( $params );
         }
 
-        pods_query( "DROP TABLE `@wp_pod_templates`", false );
-
-        return $results;
-    }
-
-    function migrate_helpers () {
-        $api = pods_api();
-
-        $helpers = pods_query( "SELECT * FROM `@wp_pod_helpers`", false );
-
-        $results = array();
-
-        if ( empty( $helpers ) )
-            return $results;
-
-        foreach ( $helpers as $hlpr ) {
-            $params = array(
-                'name' => $hlpr->name,
-                'helper_type' => $hlpr->helper_type,
-                'phpcode' => $hlpr->phpcode,
-            );
-
-            $results[] = $api->save_helper( $params );
-        }
-
-        pods_query( "DROP TABLE `@wp_pod_helpers`", false );
+        //pods_query( "DROP TABLE `@wp_pod_templates`", false );
 
         return $results;
     }
@@ -371,11 +321,45 @@ class PodsUpgrade_2_0 {
             return $results;
 
         foreach ( $pages as $page ) {
-            $results[] = $api->save_page( $page );
+            $results[ ] = $api->save_page( $page );
         }
 
-        pods_query( "DROP TABLE `@wp_pod_pages`", false );
+        //pods_query( "DROP TABLE `@wp_pod_pages`", false );
 
         return $results;
+    }
+
+    function migrate_helpers () {
+        $api = pods_api();
+
+        $helpers = pods_query( "SELECT * FROM `@wp_pod_helpers`", false );
+
+        $results = array();
+
+        if ( empty( $helpers ) )
+            return $results;
+
+        foreach ( $helpers as $helper ) {
+            $params = array(
+                'name' => $helper->name,
+                'helper_type' => $helper->helper_type,
+                'phpcode' => $helper->phpcode,
+            );
+
+            $results[] = $api->save_helper( $params );
+        }
+
+        //pods_query( "DROP TABLE `@wp_pod_helpers`", false );
+
+        return $results;
+    }
+
+    function migrate_pod ( $params ) {
+        global $wpdb;
+
+        if ( !isset( $params->pod ) )
+            return pods_error( __( 'Invalid Pod.', 'pods' ) );
+
+        $pod = pods_clean_name( $params->pod );
     }
 }

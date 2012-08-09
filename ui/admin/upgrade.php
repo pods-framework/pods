@@ -194,16 +194,6 @@
                                 <span class="pods-wizard-info"></span>
                             </td>
                         </tr>
-                        <tr class="pods-wizard-table-pending" data-upgrade="fields">
-                            <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
-                            </td>
-                            <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
-                            <td class="pods-wizard-name">
-                                <?php _e( 'Fields', 'pods' ); ?>
-                                <span class="pods-wizard-info"></span>
-                            </td>
-                        </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="relationships">
                             <td class="pods-wizard-right pods-wizard-status">
                                 <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
@@ -214,13 +204,13 @@
                                 <span class="pods-wizard-info"></span>
                             </td>
                         </tr>
-                        <tr class="pods-wizard-table-pending" data-upgrade="index">
+                        <tr class="pods-wizard-table-pending" data-upgrade="settings">
                             <td class="pods-wizard-right pods-wizard-status">
                                 <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
-                                <?php _e( 'Item Indexes', 'pods' ); ?>
+                                <?php _e( 'Settings', 'pods' ); ?>
                                 <span class="pods-wizard-info"></span>
                             </td>
                         </tr>

@@ -77,12 +77,13 @@
                     <tbody><!-- complete|pending|active <i></i> -->
                         <?php
                             $pods = $wpdb->get_results( "SELECT `name`, `label` FROM `{$wpdb->prefix}pod_types` ORDER BY `name`" );
+                            $count = count( $pods );
                         ?>
-                        <tr class="pods-wizard-table-complete" data-upgrade="pods">
+                        <tr class="pods-wizard-table-<?php echo ( 0 < $count ? 'complete' : 'pending' ); ?>" data-upgrade="pods">
                             <td class="pods-wizard-right pods-wizard-status">
                                 <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
-                            <td class="pods-wizard-right pods-wizard-count"><?php echo count( $pods ); ?></td>
+                            <td class="pods-wizard-right pods-wizard-count"><?php echo ( 0 < $count ? $count : '&mdash;' ); ?></td>
                             <td class="pods-wizard-name">
                                 <?php _e( 'Pods', 'pods' ); ?>
                                 <span class="pods-wizard-info"></span>
@@ -188,7 +189,7 @@
                             <td class="pods-wizard-right pods-wizard-status">
                                 <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
-                            <td class="pods-wizard-right pods-wizard-count"><?php echo count( $pods ); ?></td>
+                            <td class="pods-wizard-right pods-wizard-count"><?php echo ( 0 < $count ? $count : '&mdash;' ); ?></td>
                             <td class="pods-wizard-name">
                                 <?php _e( 'Pods', 'pods' ); ?>
                                 <span class="pods-wizard-info"></span>

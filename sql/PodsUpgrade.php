@@ -10,8 +10,11 @@ class PodsUpgrade_2_0 {
 
     public $tables = array();
 
+    private $progress = array();
+
     function __construct () {
         $this->get_tables();
+        $this->get_progress();
     }
 
     function get_tables () {
@@ -21,9 +24,27 @@ class PodsUpgrade_2_0 {
 
         if ( !empty( $tables ) ) {
             foreach ( $tables as $table ) {
-                $this->tables[ ] = $table[ 0 ];
+                $this->tables[] = $table[ 0 ];
             }
         }
+    }
+
+    function get_progress () {
+        $methods = get_class_methods( $this );
+
+        foreach ( $methods as $method ) {
+            if ( 0 === strpos( $method, 'migrate_' ) ) {
+                $this->progress[ str_replace( 'migrate_', '', $method ) ] = false;
+
+                if ( 'migrate_pod' == $method )
+                    $this->progress[ str_replace( 'migrate_', '', $method ) ] = array();
+            }
+        }
+
+        $progress = (array) get_option( 'pods_upgrade_2_0_progress', array() );
+
+        if ( !empty( $progress ) )
+            $this->progress = array_merge( $this->progress, $progress );
     }
 
     function install () {
@@ -161,6 +182,9 @@ class PodsUpgrade_2_0 {
     }
 
     function migrate_pods () {
+        if ( true === $this->check_progress( __FUNCTION__ ) )
+            return '1';
+
         $api = pods_api();
 
         $pod_types = pods_query( "SELECT * FROM `@wp_pod_types`", false );
@@ -280,10 +304,15 @@ class PodsUpgrade_2_0 {
 
         $this->get_tables();
 
+        $this->update_progress( __FUNCTION__, true );
+
         return '1';
     }
 
     function migrate_relationships () {
+        if ( true === $this->check_progress( __FUNCTION__ ) )
+            return '1';
+
         // go through each relationship row
         // convert pod_id to real table id of item
             // lookup pod_id in wp_pod as id field, get tbl_row_id
@@ -304,6 +333,7 @@ class PodsUpgrade_2_0 {
             `tbl_row_id` BIGINT(15) UNSIGNED NULL DEFAULT NULL,
             `weight` INT(10) UNSIGNED NULL DEFAULT '0'
         */
+
         // NEW TABLE:
         /*
             `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -322,6 +352,9 @@ class PodsUpgrade_2_0 {
     }
 
     function migrate_roles () {
+        if ( true === $this->check_progress( __FUNCTION__ ) )
+            return '1';
+
         global $wpdb;
 
         $wp_roles = get_option( "{$wpdb->prefix}user_roles" );
@@ -364,10 +397,15 @@ class PodsUpgrade_2_0 {
 
         update_option( "{$wpdb->prefix}user_roles", $wp_roles );
 
+        $this->update_progress( __FUNCTION__, true );
+
         return '1';
     }
 
     function migrate_templates () {
+        if ( true === $this->check_progress( __FUNCTION__ ) )
+            return '1';
+
         $api = pods_api();
 
         $templates = pods_query( "SELECT * FROM `@wp_pod_templates`", false );
@@ -386,10 +424,15 @@ class PodsUpgrade_2_0 {
             $results[] = $api->save_template( $params );
         }
 
+        $this->update_progress( __FUNCTION__, true );
+
         return '1';
     }
 
     function migrate_pages () {
+        if ( true === $this->check_progress( __FUNCTION__ ) )
+            return '1';
+
         $api = pods_api();
 
         $pages = pods_query( "SELECT * FROM `@wp_pod_pages`", false );
@@ -403,10 +446,15 @@ class PodsUpgrade_2_0 {
             $results[] = $api->save_page( $page );
         }
 
+        $this->update_progress( __FUNCTION__, true );
+
         return '1';
     }
 
     function migrate_helpers () {
+        if ( true === $this->check_progress( __FUNCTION__ ) )
+            return '1';
+
         $api = pods_api();
 
         $helpers = pods_query( "SELECT * FROM `@wp_pod_helpers`", false );
@@ -425,6 +473,8 @@ class PodsUpgrade_2_0 {
 
             $results[] = $api->save_helper( $params );
         }
+
+        $this->update_progress( __FUNCTION__, true );
 
         return '1';
     }
@@ -449,6 +499,9 @@ class PodsUpgrade_2_0 {
         if ( !in_array( "{$wpdb->prefix}pod", $this->tables ) )
             return pods_error( __( 'Pod table not found, items cannot be migrated', 'pods' ) );
 
+        if ( true === $this->check_progress( __FUNCTION__, $pod ) )
+            return '1';
+
         // Copy content from the old table into the new
         $sql = "
             SELECT *
@@ -468,6 +521,8 @@ class PodsUpgrade_2_0 {
         ";
 
         pods_query( $sql );
+
+        $this->update_progress( __FUNCTION__, true, $pod );
 
         return '1';
     }
@@ -501,5 +556,29 @@ class PodsUpgrade_2_0 {
         delete_option( 'pods_upload_require_login_cap' );
         delete_option( 'pods_page_precode_timing' );
         */
+    }
+
+    function update_progress ( $method, $v, $x = null ) {
+        $method = str_replace( 'migrate_', '', $method );
+
+        if ( null !== $x )
+            $this->progress[ $method ][ $x ] = $v;
+        else
+            $this->progress[ $method ] = $v;
+
+        update_option( 'pods_upgrade_2_0_progress', $this->progress );
+    }
+
+    function check_progress ( $method, $x = null ) {
+        $method = str_replace( 'migrate_', '', $method );
+
+        if ( isset( $this->progress[ $method ] ) ) {
+            if ( null === $x )
+                return $this->progress[ $method ];
+            elseif ( isset( $this->progress[ $method ][ $x ] ) )
+                return (boolean) $this->progress[ $method ][ $x ];
+        }
+
+        return false;
     }
 }

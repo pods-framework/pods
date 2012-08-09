@@ -2660,7 +2660,7 @@ class PodsAPI {
         $params = (object) pods_sanitize( $params );
 
         $order = 'ASC';
-        $orderby = 'menu_order';
+        $orderby = 'menu_order title';
         $limit = -1;
 
         $meta_query = array();
@@ -2732,7 +2732,7 @@ class PodsAPI {
         else
             $cache_key = 'pods_get' . $cache_key;
 
-        if ( ( 'pods' != $cache_key || empty( $meta_query ) ) && empty( $limit ) && ( empty ( $orderby ) || 'menu_order' == $orderby ) ) {
+        if ( ( 'pods' != $cache_key || empty( $meta_query ) ) && empty( $limit ) && ( empty ( $orderby ) || 'menu_order title' == $orderby ) ) {
             $the_pods = get_transient( $cache_key );
 
             if ( false !== $the_pods )

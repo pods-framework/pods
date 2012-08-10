@@ -64,7 +64,7 @@
                 $( '#pods-wizard-next' ).show();
             }
         },
-        migrate : function () {
+        migrate : function ( postdata ) {
             var pods_ajaxurl = $( '#pods-wizard-box' ).data( 'url' );
 
             if ( 'undefined' != typeof pods_ajaxurl )
@@ -73,22 +73,24 @@
             if ( 'undefined' != typeof ajaxurl && ('undefined' == typeof pods_ajaxurl || '' == pods_ajaxurl || '?pods_ajax=1' == pods_ajaxurl || document.location.href == pods_ajaxurl || document.location.href.replace( /\?nojs\=1/, '?pods_ajax=1' ) == pods_ajaxurl) )
                 pods_ajaxurl = ajaxurl + '?pods_ajax=1';
 
-            if ( $( '#pods-wizard-panel-3 table tbody tr.pods-wizard-table-pending' )[ 0 ] ) {
-                var $row = $( '#pods-wizard-panel-3 table tbody tr.pods-wizard-table-pending' ).first();
+            if ( 'undefined' != typeof postdata || $( '#pods-wizard-panel-3 table tbody tr.pods-wizard-table-pending' )[ 0 ] ) {
+                if ( 'undefined' == typeof postdata ) {
+                    var $row = $( '#pods-wizard-panel-3 table tbody tr.pods-wizard-table-pending' ).first();
 
-                $row.removeClass( 'pods-wizard-table-pending' ).addClass( 'pods-wizard-table-active' );
+                    $row.removeClass( 'pods-wizard-table-pending' ).addClass( 'pods-wizard-table-active' );
 
-                var postdata = {
-                    'action' : $( '#pods-wizard-box' ).data( 'action' ),
-                    'method' : $( '#pods-wizard-box' ).data( 'method' ),
-                    '_wpnonce' : $( '#pods-wizard-box' ).data( '_wpnonce' ),
-                    'step' : 'migrate',
-                    'type' : $row.data( 'upgrade' ),
-                    'pod' : ''
-                };
+                    var postdata = {
+                        'action' : $( '#pods-wizard-box' ).data( 'action' ),
+                        'method' : $( '#pods-wizard-box' ).data( 'method' ),
+                        '_wpnonce' : $( '#pods-wizard-box' ).data( '_wpnonce' ),
+                        'step' : 'migrate',
+                        'type' : $row.data( 'upgrade' ),
+                        'pod' : ''
+                    };
 
-                if ( 'undefined' != typeof $row.data( 'pod' ) )
-                    postdata[ 'pod' ] = $row.data( 'pod' );
+                    if ( 'undefined' != typeof $row.data( 'pod' ) )
+                        postdata[ 'pod' ] = $row.data( 'pod' );
+                }
 
                 $.ajax( {
                     type : 'POST',
@@ -97,10 +99,16 @@
                     data : postdata,
                     success : function ( d ) {
                         if ( -1 == d.indexOf( '<e>' ) && -1 != d ) {
-                            $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-complete' );
+                            if ( -2 == d ) {
+                                // Run next
+                                return methods[ 'migrate' ]( postdata );
+                            }
+                            else {
+                                $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-complete' );
 
-                            // Run next
-                            return methods[ 'migrate' ]();
+                                // Run next
+                                return methods[ 'migrate' ]();
+                            }
                         }
                         else if ( -1 == d.indexOf( 'Database Error;' ) ) {
                             $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-error' );

@@ -261,7 +261,26 @@ class PodsUpgrade_2_0 {
                 );
 
                 if ( 'pick' == $field_type ) {
+                    $field_params[ 'pick_object' ] = 'pod';
                     $field_params[ 'pick_val' ] = $row->pickval;
+
+                    if ( 'wp_user' == $row->pickval ) {
+                        $field_params[ 'pick_object' ] = 'user';
+                        $field_params[ 'pick_val' ] = '';
+                    }
+                    elseif ( 'wp_post' == $row->pickval ) {
+                        $field_params[ 'pick_object' ] = 'post_type';
+                        $field_params[ 'pick_val' ] = 'post';
+                    }
+                    elseif ( 'wp_page' == $row->pickval ) {
+                        $field_params[ 'pick_object' ] = 'post_type';
+                        $field_params[ 'pick_val' ] = 'page';
+                    }
+                    elseif ( 'wp_taxonomy' == $row->pickval ) {
+                        $field_params[ 'pick_object' ] = 'taxonomy';
+                        $field_params[ 'pick_val' ] = 'category';
+                    }
+
                     $field_params[ 'sister_field_id' ] = $row->sister_field_id;
                     $field_params[ 'pick_filter' ] = $row->pick_filter;
                     $field_params[ 'pick_orderby' ] = $row->pick_orderby;
@@ -323,38 +342,114 @@ class PodsUpgrade_2_0 {
         if ( true === $this->check_progress( __FUNCTION__ ) )
             return '1';
 
-        // go through each relationship row
-        // convert pod_id to real table id of item
-            // lookup pod_id in wp_pod as id field, get tbl_row_id
-        // get real pod_id (Pod ID) of the item being related from
-            // get datatype field that matches id = pod_id
-        // get real relate_pod_id (Pod ID) of the item being related to (if pod)
-            // you can get this by looking at what object the field is related to
-            // or if a sister_pod_id is given, look up that in wp_pod
-        // copy tbl_row_id to related_item_id
-        // copy weight
+        global $wpdb;
 
-        // OLD TABLE:
-        /*
-            `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            `pod_id` BIGINT(15) UNSIGNED NULL DEFAULT NULL,
-            `sister_pod_id` BIGINT(15) UNSIGNED NULL DEFAULT NULL,
-            `field_id` INT(10) UNSIGNED NULL DEFAULT NULL,
-            `tbl_row_id` BIGINT(15) UNSIGNED NULL DEFAULT NULL,
-            `weight` INT(10) UNSIGNED NULL DEFAULT '0'
-        */
+        $api = pods_api();
 
-        // NEW TABLE:
-        /*
-            `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            `pod_id` INT(10) UNSIGNED NULL DEFAULT NULL,
-            `field_id` INT(10) UNSIGNED NULL DEFAULT NULL,
-            `item_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-            `related_pod_id` INT(10) UNSIGNED NULL DEFAULT NULL,
-            `related_field_id` INT(10) UNSIGNED NULL DEFAULT NULL,
-            `related_item_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
-            `weight` SMALLINT(5) UNSIGNED NULL DEFAULT '0'
-        */
+        $last_id = (int) $this->check_progress( __FUNCTION__ );
+
+        $sql = "
+            SELECT *
+            FROM `@wp_pod_rel`
+            WHERE {$last_id} < `id`
+            ORDER BY `id`
+            LIMIT 0, 800
+        ";
+
+        $rel = pods_query( $sql );
+
+        $last_id = true;
+
+        $pod_types = pods_query( "SELECT `id`, `name` FROM `@wp_pod_types` ORDER BY `id`" );
+
+        $types = array();
+
+        $x = 0;
+
+        if ( !empty( $rel ) && !empty( $pod_types ) ) {
+            foreach ( $pod_types as $type ) {
+                $types[ $type->id ] = $api->load_pod( array( 'name' => $type->name ) );
+
+                $pod_fields = pods_query( "SELECT `id`, `name` FROM `@wp_pod_fields` WHERE `datatype` = {$type->id} ORDER BY `id`" );
+
+                foreach ( $pod_fields as $field ) {
+                    $types[ 'old_fields' ][ $field->id ] = $field->name;
+                }
+            }
+
+            foreach ( $rel as $r ) {
+                $r->pod_id = (int) $r->pod_id;
+
+                $p = pods_query( "SELECT `tbl_row_id`, `datatype` FROM `@wp_pod` WHERE `id` = {$r->pod_id}");
+
+                if ( empty( $p ) )
+                    continue;
+
+                if ( !isset( $types[ $p->datatype ] ) || !isset( $types[ $p->datatype ][ 'old_fields' ][ $r->field_id ] ) )
+                    continue;
+
+                if ( !isset( $types[ $p->datatype ][ 'fields' ][ $types[ $p->datatype ][ 'old_fields' ][ $r->field_id ] ] ) )
+                    continue;
+
+                $field = $types[ $p->datatype ][ 'fields' ][ $types[ $p->datatype ][ 'old_fields' ][ $r->field_id ] ];
+
+                if ( !in_array( $field[ 'type' ], array( 'pick', 'file' ) ) )
+                    continue;
+
+                $pod_id = $types[ $p->datatype ][ 'id' ];
+                $field_id = $field[ 'id' ];
+                $item_id = $p->tbl_row_id;
+
+                $related_pod_id = 0;
+                $related_field_id = 0;
+                $related_item_id = $r->tbl_row_id;
+
+                if ( 'pick' == $field[ 'type' ] ) {
+                    if ( 0 < (int) $field[ 'sister_field_id' ] ) {
+                        $related_field = $api->load_field( array( 'id' => $field[ 'sister_field_id' ] ) );
+
+                        if ( empty( $related_field ) )
+                            continue;
+
+                        $related_pod_id = $related_field[ 'pod_id' ];
+                        $related_field_id = $related_field[ 'id' ];
+                    }
+                    elseif ( 'pod' == $field[ 'pick_object' ] && 0 < strlen( $field[ 'pick_val' ] ) ) {
+                        $related_pod = $api->load_pod( array( 'name' => $field[ 'pick_val' ] ), false );
+
+                        if ( empty( $related_pod ) )
+                            continue;
+
+                        $related_pod_id = $related_pod[ 'id' ];
+                    }
+                }
+
+                $sql = "
+                    REPLACE INTO `@wp_pods_rel`
+                    ( `id`, `pod_id`, `field_id`, `item_id`, `related_pod_id`, `related_field_id`, `related_item_id`, `weight` )
+                    VALUES ( {$r->id}, {$pod_id}, {$field_id}, {$item_id}, {$related_pod_id}, {$related_field_id}, {$related_item_id}, {$r->weight} )
+                ";
+
+                pods_query( $sql );
+
+                $last_id = $r->id;
+
+                $x++;
+
+                if ( 10 < $x ) {
+                    $this->update_progress( __FUNCTION__, $last_id );
+
+                    $x = 0;
+                }
+            }
+        }
+
+        $this->update_progress( __FUNCTION__, $last_id );
+
+        if ( 800 == count( $rel ) )
+            echo '-2';
+        else
+            echo '1';
     }
 
     function migrate_settings () {

@@ -1173,12 +1173,12 @@ class PodsAPI {
                     $field[ 'pick_val' ] = pods_str_replace( 'pod-', '', $field[ 'pick_object' ], 1 );
                     $field[ 'pick_object' ] = 'pod';
                 }
-                elseif ( 0 === strpos( 'post-types-', $field[ 'pick_object' ] ) ) {
-                    $field[ 'pick_val' ] = pods_str_replace( 'post-types-', '', $field[ 'pick_object' ], 1 );
+                elseif ( 0 === strpos( 'post-type-', $field[ 'pick_object' ] ) ) {
+                    $field[ 'pick_val' ] = pods_str_replace( 'post-type-', '', $field[ 'pick_object' ], 1 );
                     $field[ 'pick_object' ] = 'post_type';
                 }
-                elseif ( 0 === strpos( 'taxonomies-', $field[ 'pick_object' ] ) ) {
-                    $field[ 'pick_val' ] = pods_str_replace( 'taxonomies-', '', $field[ 'pick_object' ], 1 );
+                elseif ( 0 === strpos( 'taxonomy-', $field[ 'pick_object' ] ) ) {
+                    $field[ 'pick_val' ] = pods_str_replace( 'taxonomy-', '', $field[ 'pick_object' ], 1 );
                     $field[ 'pick_object' ] = 'taxonomy';
                 }
             }
@@ -2953,10 +2953,10 @@ class PodsAPI {
 
             foreach ( $pod[ 'fields' ] as $field ) {
                 if ( empty( $params->name ) && empty( $params->id ) && empty( $params->type ) )
-                    $fields[ $field[ 'id' ] ] = $field;
+                    $fields[ $field[ 'name' ] ] = $field;
 
                 if ( in_array( $fields[ 'name' ], $params->name ) || in_array( $fields[ 'id' ], $params->id ) || in_array( $fields[ 'type' ], $params->type ) )
-                    $fields[ $field[ 'id' ] ] = $field;
+                    $fields[ $field[ 'name' ] ] = $field;
             }
         }
         else {
@@ -2992,7 +2992,7 @@ class PodsAPI {
                     ) );
 
                     if ( empty( $params->type ) || in_array( $fields[ 'type' ], $params->type ) )
-                        $fields[ $field[ 'id' ] ] = $field;
+                        $fields[ $field[ 'name' ] ] = $field;
                 }
             }
         }

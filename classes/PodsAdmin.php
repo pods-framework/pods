@@ -296,6 +296,10 @@ class PodsAdmin {
                     'function' => array( $this, 'admin_components' ),
                     'access' => 'pods_components'
                 ),
+                'pods-upgrade' => array(
+                    'label' => 'Upgrade',
+                    'function' => array( $this, 'admin_upgrade' )
+                ),
                 'pods-help' => array(
                     'label' => 'Help',
                     'function' => array( $this, 'admin_help' )

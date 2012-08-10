@@ -661,96 +661,100 @@ class PodsUI
                 $filterable = true;
                 $this->filters = array();
             }
-            foreach ($fields as $field => $attributes) {
-                if (!is_array($attributes)) {
-                    $attributes = array( 'label' => $attributes );
 
+            foreach ($fields as $field => $attributes) {
+                if ( !is_array( $attributes ) ) {
                     if ( is_int( $field ) ) {
                         $field = $attributes;
                         $attributes = array();
                     }
+                    else
+                        $attributes = array( 'label' => $attributes );
                 }
-                if (!isset($attributes['id']))
-                    $attributes['id'] = '';
-                if (!isset($attributes['real_name']))
-                    $attributes['real_name'] = $field;
-                if (!isset($attributes['label']))
-                    $attributes['label'] = ucwords(str_replace('_', ' ', $field));
-                if (!isset($attributes['type']))
-                    $attributes['type'] = 'text';
-                if ('related' != $attributes['type'] || !isset($attributes['related']))
-                    $attributes['related'] = false;
-                if ('related'!=$attributes['type']||!isset($attributes['related_id']))
-                    $attributes['related_id'] = 'id';
-                if ('related' != $attributes['type'] || !isset($attributes['related_field']))
-                    $attributes['related_field'] = 'name';
-                if ('related' != $attributes['type'] || !isset($attributes['related_multiple']))
-                    $attributes['related_multiple'] = false;
-                if ('related' != $attributes['type'] || !isset($attributes['related_sql']))
-                    $attributes['related_sql'] = false;
-                if ('related' == $attributes['type'] && (is_array($attributes['related']) || strpos($attributes['related'], ','))) {
-                    if (!is_array($attributes['related'])) {
-                        $attributes['related'] = @explode(',', $attributes['related']);
+
+                if ( !isset( $attributes[ 'id' ] ) )
+                    $attributes[ 'id' ] = '';
+                if ( !isset( $attributes[ 'real_name' ] ) )
+                    $attributes[ 'real_name' ] = $field;
+                if ( !isset( $attributes[ 'label' ] ) )
+                    $attributes[ 'label' ] = ucwords( str_replace( '_', ' ', $field ) );
+                if ( !isset( $attributes[ 'type' ] ) )
+                    $attributes[ 'type' ] = 'text';
+                if ( !isset( $attributes[ 'date_format_type' ] ) )
+                    $attributes[ 'date_format_type' ] = 'date';
+                if ( 'related' != $attributes[ 'type' ] || !isset( $attributes[ 'related' ] ) )
+                    $attributes[ 'related' ] = false;
+                if ( 'related' != $attributes[ 'type' ] || !isset( $attributes[ 'related_id' ] ) )
+                    $attributes[ 'related_id' ] = 'id';
+                if ( 'related' != $attributes[ 'type' ] || !isset( $attributes[ 'related_field' ] ) )
+                    $attributes[ 'related_field' ] = 'name';
+                if ( 'related' != $attributes[ 'type' ] || !isset( $attributes[ 'related_multiple' ] ) )
+                    $attributes[ 'related_multiple' ] = false;
+                if ( 'related' != $attributes[ 'type' ] || !isset( $attributes[ 'related_sql' ] ) )
+                    $attributes[ 'related_sql' ] = false;
+                if ( 'related' == $attributes[ 'type' ] && ( is_array( $attributes[ 'related' ] ) || strpos( $attributes[ 'related' ], ',' ) ) ) {
+                    if ( !is_array( $attributes[ 'related' ] ) ) {
+                        $attributes[ 'related' ] = @explode( ',', $attributes[ 'related' ] );
                         $related_items = array();
-                        foreach ($attributes['related'] as $key => $label) {
-                            if (is_numeric($key)) {
+                        foreach ( $attributes[ 'related' ] as $key => $label ) {
+                            if ( is_numeric( $key ) ) {
                                 $key = $label;
-                                $label = ucwords(str_replace('_', ' ', $label));
+                                $label = ucwords( str_replace( '_', ' ', $label ) );
                             }
-                            $related_items[$key] = $label;
+                            $related_items[ $key ] = $label;
                         }
-                        $attributes['related'] = $related_items;
+                        $attributes[ 'related' ] = $related_items;
                     }
-                    if (empty($attributes['related']))
-                        $attributes['related'] = false;
+                    if ( empty( $attributes[ 'related' ] ) )
+                        $attributes[ 'related' ] = false;
                 }
-                if (!isset($attributes['readonly']))
-                    $attributes['readonly'] = false;
-                if (!isset($attributes['date_touch']) || !in_array($attributes['type'], array('date', 'time', 'datetime')))
-                    $attributes['date_touch'] = false;
-                if (!isset($attributes['date_touch_on_create']) || !in_array($attributes['type'], array('date', 'time', 'datetime')))
-                    $attributes['date_touch_on_create'] = false;
-                if (!isset($attributes['display']))
-                    $attributes['display'] = true;
-                if (!isset($attributes['hidden']))
-                    $attributes['hidden'] = false;
-                if (!isset($attributes['sortable']) || false === $this->sortable)
-                    $attributes['sortable'] = (false !== $this->sortable) ? true : false;
-                if (!isset($attributes['search']) || false === $this->searchable)
-                    $attributes['search'] = (false !== $this->searchable) ? true : false;
-                if (!isset($attributes['filter']) || false === $this->searchable)
-                    $attributes['filter'] = false;
-                if (false !== $attributes['filter'] && false !== $filterable)
-                    $this->filters[] = $field;
-                if (false === $attributes['filter'] || !isset($attributes['filter_label']) || !in_array($field, $this->filters))
-                    $attributes['filter_label'] = $attributes['label'];
-                if (false === $attributes['filter'] || !isset($attributes['filter_default']) || !in_array($field, $this->filters))
-                    $attributes['filter_default'] = false;
-                if (false === $attributes['filter'] || !isset($attributes['date_ongoing']) || !in_array($attributes['type'], array('date', 'time', 'datetime')) || !in_array($field, $this->filters))
-                    $attributes['date_ongoing'] = false;
-                if (false === $attributes['filter'] || !isset($attributes['date_ongoing']) || !in_array($attributes['type'], array('date', 'time', 'datetime')) || !isset($attributes['date_ongoing_default']) || !in_array($field, $this->filters))
-                    $attributes['date_ongoing_default'] = false;
-                if (!isset($attributes['export']))
-                    $attributes['export'] = true;
-                if (!isset($attributes['group_related']))
-                    $attributes['group_related'] = false;
-                if (!isset($attributes['comments']))
-                    $attributes['comments'] = '';
-                if (!isset($attributes['comments_top']))
-                    $attributes['comments_top'] = false;
-                if (!isset($attributes['custom_view']))
-                    $attributes['custom_view'] = false;
-                if (!isset($attributes['custom_input']))
-                    $attributes['custom_input'] = false;
-                if (isset($attributes['display_helper'])) // pods ui backward compatibility
-                    $attributes['custom_display'] = $attributes['display_helper'];
-                if (!isset($attributes['custom_display']))
-                    $attributes['custom_display'] = false;
-                if (!isset($attributes['custom_relate']))
-                    $attributes['custom_relate'] = false;
-                if (!isset($attributes['custom_form_display']))
-                    $attributes['custom_form_display'] = false;
-                if ('search_columns' == $which && false === $attributes['search'])
+                if ( !isset( $attributes[ 'readonly' ] ) )
+                    $attributes[ 'readonly' ] = false;
+                if ( !isset( $attributes[ 'date_touch' ] ) || 'date' != $attributes[ 'type' ] )
+                    $attributes[ 'date_touch' ] = false;
+                if ( !isset( $attributes[ 'date_touch_on_create' ] ) || 'date' != $attributes[ 'type' ] )
+                    $attributes[ 'date_touch_on_create' ] = false;
+                if ( !isset( $attributes[ 'display' ] ) )
+                    $attributes[ 'display' ] = true;
+                if ( !isset( $attributes[ 'hidden' ] ) )
+                    $attributes[ 'hidden' ] = false;
+                if ( !isset( $attributes[ 'sortable' ] ) || false === $this->sortable )
+                    $attributes[ 'sortable' ] = ( false !== $this->sortable ) ? true : false;
+                if ( !isset( $attributes[ 'search' ] ) || false === $this->searchable )
+                    $attributes[ 'search' ] = ( false !== $this->searchable ) ? true : false;
+                if ( !isset( $attributes[ 'filter' ] ) || false === $this->searchable )
+                    $attributes[ 'filter' ] = false;
+                if ( false !== $attributes[ 'filter' ] && false !== $filterable )
+                    $this->filters[ ] = $field;
+                if ( false === $attributes[ 'filter' ] || !isset( $attributes[ 'filter_label' ] ) || !in_array( $field, $this->filters ) )
+                    $attributes[ 'filter_label' ] = $attributes[ 'label' ];
+                if ( false === $attributes[ 'filter' ] || !isset( $attributes[ 'filter_default' ] ) || !in_array( $field, $this->filters ) )
+                    $attributes[ 'filter_default' ] = false;
+                if ( false === $attributes[ 'filter' ] || !isset( $attributes[ 'date_ongoing' ] ) || 'date' != $attributes[ 'type' ] || !in_array( $field, $this->filters ) )
+                    $attributes[ 'date_ongoing' ] = false;
+                if ( false === $attributes[ 'filter' ] || !isset( $attributes[ 'date_ongoing' ] ) || 'date' != $attributes[ 'type' ] || !isset( $attributes[ 'date_ongoing_default' ] ) || !in_array( $field, $this->filters ) )
+                    $attributes[ 'date_ongoing_default' ] = false;
+                if ( !isset( $attributes[ 'export' ] ) )
+                    $attributes[ 'export' ] = true;
+                if ( !isset( $attributes[ 'group_related' ] ) )
+                    $attributes[ 'group_related' ] = false;
+                if ( !isset( $attributes[ 'comments' ] ) )
+                    $attributes[ 'comments' ] = '';
+                if ( !isset( $attributes[ 'comments_top' ] ) )
+                    $attributes[ 'comments_top' ] = false;
+                if ( !isset( $attributes[ 'custom_view' ] ) )
+                    $attributes[ 'custom_view' ] = false;
+                if ( !isset( $attributes[ 'custom_input' ] ) )
+                    $attributes[ 'custom_input' ] = false;
+                if ( isset( $attributes[ 'display_helper' ] ) ) // pods ui backward compatibility
+                    $attributes[ 'custom_display' ] = $attributes[ 'display_helper' ];
+                if ( !isset( $attributes[ 'custom_display' ] ) )
+                    $attributes[ 'custom_display' ] = false;
+                if ( !isset( $attributes[ 'custom_relate' ] ) )
+                    $attributes[ 'custom_relate' ] = false;
+                if ( !isset( $attributes[ 'custom_form_display' ] ) )
+                    $attributes[ 'custom_form_display' ] = false;
+                if ( 'search_columns' == $which && false === $attributes[ 'search' ] )
                     continue;
 
                 $attributes = PodsForm::field_setup( $attributes, null, $attributes[ 'type' ] );

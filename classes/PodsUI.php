@@ -1534,26 +1534,32 @@ class PodsUI
                     $name_field = true;
                 $fields[$field] = $attributes;
                 $fields[$field]['field_id'] = $id;
-                $dir = 'ASC';
+                $dir = 'DESC';
+                $current_sort = ' asc';
                 if ($field == $this->orderby) {
-                    $current_sort = 'desc';
-                    if ('ASC' == $this->orderby_dir) {
-                        $dir = 'DESC';
-                        $current_sort = 'asc';
+                    if ('DESC' == $this->orderby_dir) {
+                        $dir = 'ASC';
+                        $current_sort = ' desc';
                     }
                 }
 
+                $att_id = '';
                 if ( !empty( $id ) )
-                    $id = ' id="' . $id . '"';
+                    $att_id = ' id="' . $id . '"';
 
                 if ( $fields[ $field ][ 'sortable' ] ) {
 ?>
-                <th scope="col" id="<?php echo $id; ?>" class="manage-column column-<?php echo $id; ?> sortable <?php echo $current_sort; ?>"><a href="<?php echo pods_var_update(array('orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir), array('limit' . $this->num, 'search' . $this->num), $this->exclusion()); ?>"><span><?php echo $attributes['label']; ?></span><span class="sorting-indicator"></span></a></th>
+                <th scope="col"<?php echo $att_id; ?> class="manage-column column-<?php echo $id; ?> sortable<?php echo $current_sort; ?>">
+                    <a href="<?php echo pods_var_update(array('orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir), array('limit' . $this->num, 'search' . $this->num), $this->exclusion()); ?>">
+                        <span><?php echo $attributes['label']; ?></span>
+                        <span class="sorting-indicator"></span>
+                    </a>
+                </th>
 <?php
                 }
                 else {
 ?>
-                <th scope="col"<?php echo $id; ?> class="manage-column column-<?php echo $id; ?>"><?php echo $attributes['label']; ?></th>
+                <th scope="col"<?php echo $att_id; ?> class="manage-column column-<?php echo $id; ?>"><?php echo $attributes['label']; ?></th>
 <?php
                 }
             }

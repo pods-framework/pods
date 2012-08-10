@@ -663,7 +663,8 @@ class PodsAdmin {
             'replace_package' => array( 'priv' => 'manage_packages' ),
             'security_settings' => array( 'priv' => 'manage_settings' ),
             'select2_ajax' => array('priv' => 'manage_pds', 'format' => 'json'),
-            'upgrade' => array( 'priv' => 'manage_pods' )
+            'upgrade' => array( 'priv' => 'manage_pods' ),
+            'process_form' => array()
         );
 
         $methods = apply_filters( 'pods_admin_ajax_methods', $methods, $this );
@@ -736,6 +737,9 @@ class PodsAdmin {
             }
 
             $params->data = $columns;
+        }
+        elseif ( 'process_form' == $method->name ) {
+            // save data
         }
         elseif ( 'save_pod' == $method->name ) {
             if ( isset( $params->field_data ) && !is_array( $params->field_data ) ) {

@@ -194,18 +194,15 @@ class PodsField_Number extends PodsField {
         else
             $value = number_format( (float) $value, (int) pods_var( 'number_decimals', $options ), $dot, $thousands );
 
-        if ( isset( pods_var( 'number_format_type', $options ) ) && 'currency' == pods_var( 'number_format_type', $options ) ) {
+        if ( 'currency' == pods_var( 'number_format_type', $options ) ) {
             $currency = 'usd';
 
-            if ( isset( pods_var( 'number_format_currency_sign', $options ) ) && isset( self::$currencies[ pods_var( 'number_format_currency_sign', $options ) ] ) )
+            if ( isset( self::$currencies[ pods_var( 'number_format_currency_sign', $options, -1 ) ] ) )
                 $currency = pods_var( 'number_format_currency_sign', $options );
 
             $currency_sign = self::$currencies[ $currency ];
 
-            $placement = 'before';
-
-            if ( isset( pods_var( 'number_format_currency_placement', $options ) ) )
-                $placement = pods_var( 'number_format_currency_placement', $options );
+            $placement = pods_var( 'number_format_currency_placement', $options, 'before', null, true );
 
             if ( 'before' == $placement )
                 $value = $currency_sign . $value;

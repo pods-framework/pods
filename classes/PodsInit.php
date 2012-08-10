@@ -248,7 +248,7 @@ class PodsInit {
                 $cpt_labels[ 'edit_item' ] = pods_var( 'edit_item', $post_type, 'Edit ' . $cpt_singular, null, true );
                 $cpt_labels[ 'view' ] = pods_var( 'view', $post_type, 'View ' . $cpt_singular, null, true );
                 $cpt_labels[ 'view_item' ] = pods_var( 'view_item', $post_type, 'View ' . $cpt_singular, null, true );
-                $cpt_labels[ 'all_items' ] = pods_var( 'all_items', $post_type, 'All ' . $cpt_labelp, null, true );
+                $cpt_labels[ 'all_items' ] = pods_var( 'all_items', $post_type, 'All ' . $cpt_label, null, true );
                 $cpt_labels[ 'search_items' ] = pods_var( 'search_items', $post_type, 'Search ' . $cpt_label, null, true );
                 $cpt_labels[ 'not_found' ] = pods_var( 'not_found', $post_type, 'No ' . $cpt_label . ' Found', null, true );
                 $cpt_labels[ 'not_found_in_trash' ] = pods_var( 'not_found_in_trash', $post_type, 'No ' . $cpt_label . ' Found in Trash', null, true );

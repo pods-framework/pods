@@ -1,6 +1,4 @@
 <?php
-    wp_enqueue_script( 'post' );
-
     $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
     $field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $fields ) ) );
 
@@ -114,9 +112,9 @@
                     </div>
                     <!-- /#normal-sortables -->
 
-                    <div id="advanced-sortables" class="meta-box-sortables ui-sortable">
+                    <!--<div id="advanced-sortables" class="meta-box-sortables ui-sortable">
                     </div>
-                    <!-- /#advanced-sortables -->
+                     /#advanced-sortables -->
 
                 </div>
                 <!-- /#post-body-content -->
@@ -136,6 +134,8 @@
     jQuery( function ( $ ) {
         $( document ).Pods( 'validate' );
         $( document ).Pods( 'submit' );
+        $( document ).Pods( 'dependency' );
+        $( document ).Pods( 'confirm' );
     } );
 
     pods_admin_submit_callback = function ( id ) {

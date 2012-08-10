@@ -112,7 +112,7 @@
                 pods_ajaxurl = pods_ajaxurl + '&action=' + postdata.action;
 
                 // $_POST doesn't like a LOT of items
-                if ( {} != field_data )
+                if ( 0 < field_data.length )
                     postdata[ 'field_data' ] = $.toJSON( field_data );
 
                 $.ajax( {

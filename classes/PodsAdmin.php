@@ -83,7 +83,9 @@ class PodsAdmin {
 
                 wp_enqueue_script( 'pods' );
 
-                if ( false !== strpos( $page, 'pods-manage-' ) && 0 === strpos( $page, 'pods-manage-' ) ) {
+                if ( ( false !== strpos( $page, 'pods-manage-' ) && 0 === strpos( $page, 'pods-manage-' ) ) || ( false !== strpos( $page, 'pods-add-new-' ) && 0 === strpos( $page, 'pods-add-new-' ) ) ) {
+                    wp_enqueue_script( 'post' );
+                    /*
                     wp_enqueue_style( 'pods-manage' );
 
                     // Just for demo
@@ -118,7 +120,7 @@ class PodsAdmin {
 
                     // Select2
                     wp_enqueue_script('jquery-select2');
-                    wp_enqueue_style('jquery-select2');
+                    wp_enqueue_style('jquery-select2');*/
                 }
                 else
                     wp_enqueue_style( 'pods-admin' );

@@ -9,6 +9,7 @@
             <input type="hidden" name="action" value="pods_admin" />
             <input type="hidden" name="method" value="add_pod" />
             <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('pods-add_pod'); ?>" />
+            <input type="hidden" name="create_extend" id="pods_create_extend" value="create" />
 
             <h2 class="italicized"><?php _e('Add New Pod', 'pods'); ?></h2>
 
@@ -36,7 +37,7 @@
                         </div>
                         <div id="pods-wizard-options">
                             <div class="pods-wizard-option">
-                                <a href="#pods-wizard-create">
+                                <a href="#pods-wizard-create" data-opt="create">
                                     <h2><?php _e( 'Create New', 'pods' ); ?></h2>
 
                                     <p><?php _e( 'Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, or <strong>Advanced Content Types</strong> with their own tables.', 'pods' ); ?></p>
@@ -45,7 +46,7 @@
                                 <p><br /></p>
                             </div>
                             <div class="pods-wizard-option">
-                                <a href="#pods-wizard-extend">
+                                <a href="#pods-wizard-extend" data-opt="extend">
                                     <h2><?php _e( 'Extend Existing', 'pods' ); ?></h2>
 
                                     <p><?php _e( 'Extend any existing content type within WordPress, including <strong>Post Types</strong> (Posts, Pages, etc), <strong>Taxonomies</strong> (Categories, Tags, etc), <strong>Media</strong>, <strong>Users</strong>, or <strong>Comments</strong>.', 'pods' ); ?></p>
@@ -220,6 +221,10 @@
 <script type="text/javascript">
     var pods_admin_submit_callback = function ( id ) {
         document.location = 'admin.php?page=pods&action=edit&id=' + id;
+    }
+
+    var pods_admin_option_select_callback = function ( $opt ) {
+        jQuery( '#pods_create_extend' ).val( $opt.data( 'opt' ) );
     }
 
     jQuery( function ( $ ) {

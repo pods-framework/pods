@@ -485,8 +485,14 @@
                 e.preventDefault();
 
                 $( '.pods-wizard-option-content' ).hide();
+
                 var target = $( this ).attr( 'href' );
+
                 $( target ).show();
+
+                if ( 'undefined' != typeof pods_admin_option_select_callback )
+                    pods_admin_option_select_callback( $( this ) );
+
                 methods.stepForward();
             } );
 

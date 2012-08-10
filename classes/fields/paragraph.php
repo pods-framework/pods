@@ -86,7 +86,7 @@ class PodsField_Paragraph extends PodsField {
             ),
             'paragraph_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
-                'default' => 255,
+                'default' => 0,
                 'type' => 'number'
             ),
             'paragraph_size' => array(

@@ -1,4 +1,6 @@
 <?php
+    wp_enqueue_script( 'post' );
+
     $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
     $field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $fields ) ) );
 
@@ -68,8 +70,8 @@
                 <div id="post-body-content">
                     <div id="titlediv">
                         <div id="titlewrap">
-                            <label class="hide-if-no-js" style="" id="title-prompt-text" for="title"><?php _e( 'Name', 'pods' ); ?></label>
-                            <input type="text" name="pods_field_<?php echo $pod->pod_data[ 'field_index' ]; ?>" data-name-clean="pods-field-<?php echo $pod->pod_data[ 'field_index' ]; ?>" id="title" size="30" tabindex="1" value="<?php echo esc_attr( $pod->index() ); ?>" class="pods-form-ui-field-name-pods-field-<?php echo $pod->pod_data[ 'field_index' ]; ?>" autocomplete="off" />
+                            <label class="hide-if-no-js" style="visibility:hidden" id="title-prompt-text" for="title"><?php echo apply_filters( 'pods_enter_name_here', __( 'Enter name here' ), $pod, $fields ); ?></label>
+                            <input type="text" name="pods_field_<?php echo $pod->pod_data[ 'field_index' ]; ?>" data-name-clean="pods-field-<?php echo $pod->pod_data[ 'field_index' ]; ?>" id="title" size="30" tabindex="1" value="<?php echo esc_attr( htmlspecialchars( $pod->index() ) ); ?>" class="pods-form-ui-field-name-pods-field-<?php echo $pod->pod_data[ 'field_index' ]; ?>" autocomplete="off" />
                         </div>
                         <!-- /#titlewrap -->
 
@@ -88,19 +90,23 @@
                             <h3 class="hndle"><span><?php _e( 'More Fields', 'pods' ); ?></span></h3>
 
                             <div class="inside">
-                                <ul class="form-fields">
+                                <table class="form-table pods-metabox">
                                     <?php
                                         foreach ( $fields as $field ) {
                                             if ( $pod->pod_data[ 'field_index' ] == $field[ 'name' ] )
                                                 continue;
                                     ?>
-                                        <li class="pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Podsform::clean( $field[ 'name' ], true ); ?>">
-                                            <?php echo PodsForm::row( 'pods_field_' . $field[ 'name' ], $pod->field( $field[ 'name' ] ), $field[ 'type' ], $field, $pod, $pod->id() ); ?>
-                                        </li>
+                                        <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Podsform::clean( $field[ 'name' ], true ); ?>">
+                                            <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_field_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
+                                            <td>
+                                                <?php echo PodsForm::field( 'pods_field_' . $field[ 'name' ], $pod->field( $field[ 'name' ] ), $field[ 'type' ], $field, $pod, $pod->id() ); ?>
+                                                <?php echo PodsForm::comment( 'pods_field_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
+                                            </td>
+                                        </tr>
                                     <?php
                                         }
                                     ?>
-                                </ul>
+                                </table>
                             </div>
                             <!-- /.inside -->
                         </div>

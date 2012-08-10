@@ -151,9 +151,6 @@ class PodsAdmin {
             'type' => 'pod'
         ) );
 
-        if ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER )
-            $results = false; // not yet!
-
         $old_pods = get_option( 'pods_version' );
         $upgraded = get_option( 'pods_framework_upgraded_1_x' );
         $upgraded = 1; // Upgrade not ready yet!

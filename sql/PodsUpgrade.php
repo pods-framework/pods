@@ -316,7 +316,7 @@ class PodsUpgrade_2_0 {
 
                 if ( 'txt' == $field_type )
                     $field_type = 'text';
-                elseif ( 'desc' == $field_type )
+                elseif ( 'desc' == $field_type || 'code' == $field_type )
                     $field_type = 'paragraph';
                 elseif ( 'bool' == $field_type )
                     $field_type = 'boolean';
@@ -377,6 +377,8 @@ class PodsUpgrade_2_0 {
                     $field_params[ 'number_format_type' ] = 'plain';
                     $field_params[ 'number_decimals' ] = 2;
                 }
+                elseif ( 'desc' == $row->coltype )
+                    $field_params[ 'paragraph_format_type' ] = 'tinymce';
 
                 $fields[] = $field_params;
 

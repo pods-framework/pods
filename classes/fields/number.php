@@ -157,7 +157,7 @@ class PodsField_Number extends PodsField {
         $format = self::$prepare;
 
         if ( 0 < (int) pods_var( 'number_decimals', $options, 0 ) )
-            $format = '%01.' . (int) $options[ 'number_decimals' ] . 'f';
+            $format = '%01.' . (int) pods_var( 'number_decimals', $options ) . 'f';
 
         return $format;
     }
@@ -178,34 +178,34 @@ class PodsField_Number extends PodsField {
         $thousands = ',';
         $dot = '.';
 
-        if ( '9999.99' == $options[ 'number_format' ] )
+        if ( '9999.99' == pods_var( 'number_format', $options ) )
             $thousands = '';
-        elseif ( '9999,99' == $options[ 'number_format' ] ) {
+        elseif ( '9999,99' == pods_var( 'number_format', $options ) ) {
             $thousands = '';
             $dot = ',';
         }
-        elseif ( '9.999,99' == $options[ 'number_format' ] ) {
+        elseif ( '9.999,99' == pods_var( 'number_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
         }
 
-        if ( 'i18n' == $options[ 'number_format' ] )
-            $value = number_format_i18n( (float) $value, (int) $options[ 'number_decimals' ] );
+        if ( 'i18n' == pods_var( 'number_format', $options ) )
+            $value = number_format_i18n( (float) $value, (int) pods_var( 'number_decimals', $options ) );
         else
-            $value = number_format( (float) $value, (int) $options[ 'number_decimals' ], $dot, $thousands );
+            $value = number_format( (float) $value, (int) pods_var( 'number_decimals', $options ), $dot, $thousands );
 
-        if ( isset( $options[ 'number_format_type' ] ) && 'currency' == $options[ 'number_format_type' ] ) {
+        if ( isset( pods_var( 'number_format_type', $options ) ) && 'currency' == pods_var( 'number_format_type', $options ) ) {
             $currency = 'usd';
 
-            if ( isset( $options[ 'number_format_currency_sign' ] ) && isset( self::$currencies[ $options[ 'number_format_currency_sign' ] ] ) )
-                $currency = $options[ 'number_format_currency_sign' ];
+            if ( isset( pods_var( 'number_format_currency_sign', $options ) ) && isset( self::$currencies[ pods_var( 'number_format_currency_sign', $options ) ] ) )
+                $currency = pods_var( 'number_format_currency_sign', $options );
 
             $currency_sign = self::$currencies[ $currency ];
 
             $placement = 'before';
 
-            if ( isset( $options[ 'number_format_currency_placement' ] ) )
-                $placement = $options[ 'number_format_currency_placement' ];
+            if ( isset( pods_var( 'number_format_currency_placement', $options ) ) )
+                $placement = pods_var( 'number_format_currency_placement', $options );
 
             if ( 'before' == $placement )
                 $value = $currency_sign . $value;
@@ -237,7 +237,7 @@ class PodsField_Number extends PodsField {
 
         $field_type = 'number';
 
-        if ( 'range' == $options[ 'number_format_type' ] )
+        if ( 'range' == pods_var( 'number_format_type', $options ) )
             $field_type = 'range';
 
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
@@ -257,13 +257,13 @@ class PodsField_Number extends PodsField {
     public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $thousands = ',';
         $dot = '.';
-        if ( '9999.99' == $options[ 'number_format' ] )
+        if ( '9999.99' == pods_var( 'number_format', $options ) )
             $thousands = '';
-        elseif ( '9999,99' == $options[ 'number_format' ] ) {
+        elseif ( '9999,99' == pods_var( 'number_format', $options ) ) {
             $thousands = '';
             $dot = ',';
         }
-        elseif ( '9.999,99' == $options[ 'number_format' ] ) {
+        elseif ( '9.999,99' == pods_var( 'number_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
         }
@@ -308,8 +308,8 @@ class PodsField_Number extends PodsField {
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $decimals = 0;
 
-        if ( 0 < (int) $options[ 'number_decimals' ] )
-            $decimals = (int) $options[ 'number_decimals' ];
+        if ( 0 < (int) pods_var( 'number_decimals', $options ) )
+            $decimals = (int) pods_var( 'number_decimals', $options );
 
         $value = number_format( (float) $value, $decimals, '.', '' );
 

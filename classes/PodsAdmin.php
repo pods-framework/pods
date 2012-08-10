@@ -154,19 +154,35 @@ class PodsAdmin {
         if ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER )
             $results = false; // not yet!
 
-        if ( false !== $results ) {
+        $old_pods = get_option( 'pods_version' );
+        $upgraded = get_option( 'pods_framework_upgraded_1_x' );
+        $upgraded = 1; // Upgrade not ready yet!
+
+        if ( ( empty( $old_pods ) || 1 == $upgraded ) && false !== $results ) {
             foreach ( (array) $results as $item ) {
                 if ( !is_super_admin() && !current_user_can( 'pods_new_' . $item[ 'name' ] ) && !current_user_can( 'pods_edit_' . $item[ 'name' ] ) && !current_user_can( 'pods_delete_' . $item[ 'name' ] ) )
                     continue;
 
-                $item[ 'options' ][ 'label' ] = ( !empty( $item[ 'options' ][ 'label' ] ) ) ? $item[ 'options' ][ 'label' ] : ucwords( str_replace( '_', ' ', $item[ 'name' ] ) );
-                $item[ 'options' ][ 'label' ] = apply_filters( 'pods_admin_menu_label', $item[ 'options' ][ 'label' ], $item );
+                $label = pods_var( 'menu_name', $item[ 'options' ], pods_var( 'label', $item[ 'options' ], ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true ), null, true );
+                $label = apply_filters( 'pods_admin_menu_label', $label, $item );
+
+                $singular_label = pods_var( 'label_singular', $item[ 'options' ], pods_var( 'label', $item[ 'options' ], ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true), null, true );
+                $plural_label = pods_var( 'label', $item[ 'options' ], ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true );
 
                 if ( 1 == $item[ 'options' ][ 'show_in_menu' ] ) {
-                    add_object_page( $item[ 'options' ][ 'label' ], $item[ 'options' ][ 'label' ], 'read', "pods-manage-{$item['name']}" );
+                    add_object_page( $label, $label, 'read', "pods-manage-{$item['name']}" );
 
                     if ( is_super_admin() || current_user_can( 'pods_edit_' . $item[ 'name' ] ) || current_user_can( 'pods_delete_' . $item[ 'name' ] ) ) {
-                        add_submenu_page( "pods-manage-{$item['name']}", 'Edit', 'Edit', 'read', "pods-manage-{$item['name']}", array(
+                        $all_label = $plural_label;
+
+                        if ( "pods-manage-{$item['name']}" == pods_var( 'page', 'get' ) ) {
+                            if ( 'edit' == pods_var( 'action', 'get', 'manage' ) )
+                                $all_label = __( 'Edit', 'pods' ) . ' ' . $singular_label;
+                            elseif ( 'add' == pods_var( 'action', 'get', 'manage' ) )
+                                $all_label = __( 'Add New', 'pods' ) . ' ' . $singular_label;
+                        }
+
+                        add_submenu_page( "pods-manage-{$item['name']}", $all_label, __( 'All', 'pods' ), 'read', "pods-manage-{$item['name']}", array(
                             $this,
                             'admin_content'
                         ) );
@@ -178,15 +194,25 @@ class PodsAdmin {
                         if ( !is_super_admin() && !current_user_can( 'pods_edit_' . $item[ 'name' ] ) && !current_user_can( 'pods_delete_' . $item[ 'name' ] ) )
                             $page = "pods-manage-{$item['name']}";
 
-                        add_submenu_page( "pods-manage-{$item['name']}", 'Add New', 'Add New', 'read', $page, array(
+                        $add_label = __( 'Add New', 'pods' ) . ' ' . $singular_label;
+
+                        if ( $page == pods_var( 'page', 'get' ) ) {
+                            if ( 'edit' == pods_var( 'action', 'get', 'add' ) )
+                                $add_label = __( 'Edit', 'pods' ) . ' ' . $singular_label;
+                            elseif ( 'manage' == pods_var( 'action', 'get', 'add' ) )
+                                $add_label = $plural_label;
+                        }
+
+                        add_submenu_page( "pods-manage-{$item['name']}", $add_label, __( 'Add New', 'pods' ), 'read', $page, array(
                             $this,
                             'admin_content'
                         ) );
                     }
                 }
                 elseif ( !current_user_can( 'pods_edit_' . $item[ 'name' ] ) && !current_user_can( 'pods_delete_' . $item[ 'name' ] ) )
-                    $submenu[ ] = $item;
+                    $submenu[] = $item;
             }
+
             if ( !empty( $submenu ) ) {
                 $parent = false;
 
@@ -199,7 +225,22 @@ class PodsAdmin {
                         add_object_page( 'Pods', 'Pods', 'read', $parent, null, PODS_URL . '/ui/images/icon16.png' );
                     }
 
-                    add_submenu_page( $parent, "Manage {$item['options']['label']}", "Manage {$item['options']['label']}", 'read', $page, array(
+                    $label = pods_var( 'menu_name', $item[ 'options' ], pods_var( 'label', $item[ 'options' ], ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true ), null, true );
+                    $label = apply_filters( 'pods_admin_menu_label', $label, $item );
+
+                    $singular_label = pods_var( 'label_singular', $item[ 'options' ], pods_var( 'label', $item[ 'options' ], ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true ), null, true );
+                    $plural_label = pods_var( 'label', $item[ 'options' ], ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true );
+
+                    $all_label = $plural_label;
+
+                    if ( $page == pods_var( 'page', 'get' ) ) {
+                        if ( 'edit' == pods_var( 'action', 'get', 'manage' ) )
+                            $all_label = __( 'Edit', 'pods' ) . ' ' . $singular_label;
+                        elseif ( 'add' == pods_var( 'action', 'get', 'manage' ) )
+                            $all_label = __( 'Add New', 'pods' ) . ' ' . $singular_label;
+                    }
+
+                    add_submenu_page( $parent, $all_label, "Manage {$label}", 'read', $page, array(
                         $this,
                         'admin_content'
                     ) );
@@ -255,16 +296,22 @@ class PodsAdmin {
                     'function' => array( $this, 'admin_components' ),
                     'access' => 'pods_components'
                 ),
-                'pods-upgrade' => array(
-                    'label' => 'Preview: Upgrade',
-                    'function' => array( $this, 'admin_temp_upgrade' )
-                ),
                 'pods-help' => array(
                     'label' => 'Help',
                     'function' => array( $this, 'admin_help' )
                 )
             );
         }
+
+        if ( !empty( $old_pods ) && 1 != $upgraded ) {
+            $admin_menus = array(
+                'pods-upgrade' => array(
+                    'label' => 'Upgrade',
+                    'function' => array( $this, 'admin_upgrade' )
+                )
+            );
+        }
+
         $admin_menus = apply_filters( 'pods_admin_menu', $admin_menus );
 
         $parent = false;
@@ -293,7 +340,12 @@ class PodsAdmin {
             if ( false === $parent ) {
                 $parent = $page;
 
-                add_menu_page( 'Pods Admin', 'Pods Admin', 'read', $parent, null, PODS_URL . '/ui/images/icon16.png' );
+                $menu = __( 'Pods Admin', 'pods' );
+
+                if ( 'pods-upgrade' == $parent )
+                    $menu = __( 'Pods Upgrade', 'pods' );
+
+                add_menu_page( $menu, $menu, 'read', $parent, null, PODS_URL . '/ui/images/icon16.png' );
             }
 
             add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'read', $page, $menu_item[ 'function' ] );
@@ -304,29 +356,53 @@ class PodsAdmin {
     }
 
     public function admin_content () {
-        $pod = str_replace( 'pods-manage-', '', $_GET[ 'page' ] );
+        $pod = str_replace( array( 'pods-manage-', 'pods-add-new-' ), '', $_GET[ 'page' ] );
+        $default = 'manage';
 
-        $actions_disabled = array();
+        if ( false !== strpos( $_GET[ 'page' ], 'pods-add-new-' ) )
+            $default = 'add';
 
-        if ( !current_user_can( 'pods_add_' . $pod ) )
-            $actions_disabled[] = 'add';
+        $actions_disabled = array( 'duplicate', 'view', 'export' );
 
-        if ( !current_user_can( 'pods_edit_' . $pod ) )
-            $actions_disabled[] = 'edit';
+        if ( !is_super_admin() ) {
+            if ( !current_user_can( 'pods_add_' . $pod ) ) {
+                $actions_disabled[] = 'add';
+                $default = 'manage';
+            }
 
-        if ( !current_user_can( 'pods_delete_' . $pod ) )
-            $actions_disabled[] = 'delete';
+            if ( !is_super_admin() && !current_user_can( 'pods_edit_' . $pod ) )
+                $actions_disabled[] = 'edit';
 
-        if ( in_array( 'edit', $actions_disabled ) && in_array( 'delete', $actions_disabled ) )
-            $_GET[ 'action' ] = 'add';
+            if ( !is_super_admin() && !current_user_can( 'pods_delete_' . $pod ) )
+                $actions_disabled[] = 'delete';
+        }
 
-        pods_ui( array(
+        $_GET[ 'action' ] = pods_var( 'action', 'get', $default );
+
+        $pod = pods( $pod, pods_var( 'id', 'get', null, null, true ) );
+
+        $ui = array(
             'pod' => $pod,
-            'actions_custom' => array(
-                'form' => array( $this, 'admin_content_form' )
+            'fields' => array(
+                'manage' => array(
+                    $pod->pod_data[ 'field_index' ] => __( 'Name', 'pods' )
+                ),
+                'add' => $pod->pod_data[ 'fields' ],
+                'edit' => $pod->pod_data[ 'fields' ],
+                'duplicate' => $pod->pod_data[ 'fields' ]
             ),
-            'actoins_disabled' => $actions_disabled
-        ) );
+            'item' => pods_var( 'label_singular', $pod->pod_data[ 'options' ], pods_var( 'label_singular', $pod->pod_data[ 'options' ], ucwords( str_replace( '_', ' ', $pod->pod ) ), null, true ), null, true ),
+            'items' => pods_var( 'label', $pod->pod_data[ 'options' ], ucwords( str_replace( '_', ' ', $pod->pod ) ), null, true ),
+            'orderby' => 'id',
+            'orderby_dir' => 'desc',
+            'actions_disabled' => $actions_disabled
+        );
+
+        // @todo Customize the Add New / Manage links to point to their correct menu items
+
+        $ui = apply_filters( 'pods_admin_ui_' . $pod->pod, apply_filters( 'pods_admin_ui', $ui, $pod->pod ), $pod );
+
+        pods_ui( $ui );
     }
 
     public function media_button ( $context ) {
@@ -499,7 +575,7 @@ class PodsAdmin {
         $ui->manage();
     }
 
-    public function admin_temp_upgrade () {
+    public function admin_upgrade () {
         require_once PODS_DIR . 'ui/admin/upgrade.php';
     }
 

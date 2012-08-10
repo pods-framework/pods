@@ -165,8 +165,8 @@
   font-size: 13px;
   line-height: 22px;
 }
-#pods-wizard-box #pods-wizard-main p em {
-  padding: 0 15px;
+#pods-wizard-box #pods-wizard-main p.padded {
+  padding: 0 20px 20px;
 }
 #pods-wizard-box #pods-wizard-main #pods-wizard-choices {
   margin: 15px 20px 25px 20px;

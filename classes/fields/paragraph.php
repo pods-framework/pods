@@ -131,7 +131,7 @@ class PodsField_Paragraph extends PodsField {
      * @since 2.0.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        if ( 1 == $options[ 'paragraph_allow_shortcode' ] )
+        if ( 1 == pods_var( 'paragraph_allow_shortcode', $options ) )
             $value = do_shortcode( $value );
 
         return $value;
@@ -154,16 +154,16 @@ class PodsField_Paragraph extends PodsField {
         if ( is_array( $value ) )
             $value = implode( "\n", $value );
 
-        if ( 'plain' == $options[ 'paragraph_format_type' ] )
+        if ( 'plain' == pods_var( 'paragraph_format_type', $options ) )
             $field_type = 'textarea';
-        elseif ( 'tinymce' == $options[ 'paragraph_format_type' ] )
+        elseif ( 'tinymce' == pods_var( 'paragraph_format_type', $options ) )
             $field_type = 'tinymce';
-        elseif ( 'cleditor' == $options[ 'paragraph_format_type' ] )
+        elseif ( 'cleditor' == pods_var( 'paragraph_format_type', $options ) )
             $field_type = 'cleditor';
         else {
             // Support custom WYSIWYG integration
-            do_action( 'pods_form_ui_field_paragraph_wysiwyg_' . $options[ 'paragraph_format_type' ], $name, $value, $options, $pod, $id );
-            do_action( 'pods_form_ui_field_paragraph_wysiwyg', $options[ 'paragraph_format_type' ], $name, $value, $options, $pod, $id );
+            do_action( 'pods_form_ui_field_paragraph_wysiwyg_' . pods_var( 'paragraph_format_type', $options ), $name, $value, $options, $pod, $id );
+            do_action( 'pods_form_ui_field_paragraph_wysiwyg', pods_var( 'paragraph_format_type', $options ), $name, $value, $options, $pod, $id );
             return;
         }
 
@@ -217,14 +217,14 @@ class PodsField_Paragraph extends PodsField {
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $options = (array) $options;
 
-        if ( 1 == $options[ 'paragraph_allow_html' ] ) {
-            if ( 0 < strlen( $options[ 'paragraph_allowed_html_tags' ] ) )
-                $value = strip_tags( $value, $options[ 'paragraph_allowed_html_tags' ] );
+        if ( 1 == pods_var( 'paragraph_allow_html', $options ) ) {
+            if ( 0 < strlen( pods_var( 'paragraph_allowed_html_tags', $options ) ) )
+                $value = strip_tags( $value, pods_var( 'paragraph_allowed_html_tags', $options ) );
         }
         else
             $value = strip_tags( $value );
 
-        if ( 1 != $options[ 'paragraph_allow_shortcode' ] )
+        if ( 1 != pods_var( 'paragraph_allow_shortcode', $options ) )
             $value = strip_shortcodes( $value );
 
         return $value;

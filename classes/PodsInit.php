@@ -125,7 +125,7 @@ class PodsInit {
             ), '1.0.1' );
         }
 
-        wp_register_style( 'pods-attach', PODS_URL . 'ui/js/jquery.pods.attach.css', array(), PODS_VERSION );
+        wp_register_style( 'pods-attach', PODS_URL . 'ui/css/jquery.pods.attach.css', array(), PODS_VERSION );
         wp_register_script( 'pods-attach', PODS_URL . 'ui/js/jquery.pods.attach.js', array(), PODS_VERSION );
 
         wp_register_style( 'pods-select2', PODS_URL . 'ui/css/select2.css', array(), '2.1' );
@@ -533,29 +533,42 @@ class PodsInit {
         // Setup DB tables
         $pods_version = self::$version;
 
-        if ( 0 < strlen( $pods_version ) ) {
-            if ( false === strpos( $pods_version, '.' ) )
-                $pods_version = pods_version_to_point( $pods_version );
+        $old_version = get_option( 'pods_version' );
 
-            if ( version_compare( $pods_version, '1.15', '<' ) ) {
-                do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
+        $install = false;
 
-                if ( false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] ) )
-                    include( PODS_DIR . 'sql/update.1.x.php' );
+        if ( 0 < strlen( $pods_version ) || 0 < strlen( $old_version ) ) {
+            if ( 0 < strlen( $old_version ) ) {
+                if ( false === strpos( $old_version, '.' ) )
+                    $old_version = pods_version_to_point( $old_version );
 
-                do_action( 'pods_update_post', PODS_VERSION, $pods_version, $_blog_id );
+                if ( version_compare( $old_version, '1.15', '<' ) ) {
+                    do_action( 'pods_update', PODS_VERSION, $old_version, $_blog_id );
+
+                    if ( false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $old_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] ) )
+                        include( PODS_DIR . 'sql/update.1.x.php' );
+
+                    do_action( 'pods_update_post', PODS_VERSION, $old_version, $_blog_id );
+                }
             }
 
-            if ( version_compare( $pods_version, PODS_VERSION, '<' ) ) {
-                do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
+            if ( 0 < strlen( $pods_version ) ) {
+                if ( version_compare( $pods_version, PODS_VERSION, '<' ) ) {
+                    do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
 
-                if ( false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] ) )
-                    include( PODS_DIR . 'sql/update.php' );
+                    if ( false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] ) )
+                        include( PODS_DIR . 'sql/update.php' );
 
-                do_action( 'pods_update_post', PODS_VERSION, $pods_version, $_blog_id );
+                    do_action( 'pods_update_post', PODS_VERSION, $pods_version, $_blog_id );
+                }
             }
+            else
+                $install = true;
         }
-        else {
+        else
+            $install = true;
+
+        if ( $install ) {
             do_action( 'pods_install', PODS_VERSION, $pods_version, $_blog_id );
 
             if ( false !== apply_filters( 'pods_install_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_install' ] ) ) {
@@ -583,8 +596,7 @@ class PodsInit {
             do_action( 'pods_install_post', PODS_VERSION, $pods_version, $_blog_id );
         }
 
-        delete_option( 'pods_framework_version' );
-        add_option( 'pods_framework_version', PODS_VERSION );
+        update_option( 'pods_framework_version', PODS_VERSION );
 
         // Restore DB table prefix (if switched)
         if ( null !== $_blog_id )

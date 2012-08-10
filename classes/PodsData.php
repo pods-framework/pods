@@ -98,82 +98,23 @@ class PodsData {
             if ( isset( $this->pod_data[ 'options' ][ 'detail_page' ] ) )
                 $this->detail_page = $this->pod_data[ 'options' ][ 'detail_page' ];
 
-            if ( 'pod' == $this->pod_data[ 'type' ] ) {
-                $this->table = $wpdb->prefix . self::$prefix . 'tbl_' . $this->pod;
-                $this->field_id = 'id';
-                $this->field_name = 'name';
+            if ( isset( $this->pod_data[ 'table' ] ) )
+                $this->table = $this->pod_data[ 'table' ];
 
-                $this->orderby = '`t`.`name`, `t`.`id` DESC';
-            }
-            elseif ( 'post_type' == $this->pod_data[ 'type' ] || 'media' == $this->pod_data[ 'type' ] ) {
-                $this->table = $wpdb->posts;
-                $this->field_id = 'ID';
-                $this->field_name = 'post_title';
+            if ( isset( $this->pod_data[ 'join' ] ) )
+                $this->join = $this->pod_data[ 'join' ];
 
-                $object = $this->pod;
+            if ( isset( $this->pod_data[ 'field_id' ] ) )
+                $this->field_id = $this->pod_data[ 'field_id' ];
 
-                if ( !empty( $this->pod_data[ 'object' ] ) )
-                    $object = $this->pod_data[ 'object' ];
+            if ( isset( $this->pod_data[ 'field_index' ] ) )
+                $this->field_index = $this->pod_data[ 'field_index' ];
 
-                $this->where = array(
-                    'post_status' => '`t`.`post_status` = "publish"',
-                    'post_type' => '`t`.`post_type` = "' . $object . '"'
-                );
+            if ( isset( $this->pod_data[ 'where' ] ) )
+                $this->where = $this->pod_data[ 'where' ];
 
-                $this->orderby = '`t`.`menu_order`, `t`.`post_title`, `t`.`post_date` DESC';
-            }
-            if ( 'taxonomy' == $this->pod_data[ 'type' ] ) {
-                $this->table = $wpdb->terms;
-                $this->join = "LEFT JOIN `{$wpdb->taxonomy}` AS `tx` ON `tx`.`term_id` = `t`.`term_id`";
-                $this->field_id = 'term_id';
-                $this->field_name = 'name';
-
-                $object = $this->pod;
-
-                if ( !empty( $this->pod_data[ 'object' ] ) )
-                    $object = $this->pod_data[ 'object' ];
-
-                $this->where = array(
-                    'tx.taxonomy' => '`tx`.`taxonomy` = "' . $object . '"'
-                );
-
-                $this->orderby = '`t`.`name`';
-            }
-            elseif ( 'user' == $this->pod_data[ 'type' ] ) {
-                $this->table = $wpdb->users;
-                $this->field_id = 'ID';
-                $this->field_name = 'display_name';
-
-                $this->where = array(
-                    'user_status' => '`t`.`user_status` = 0'
-                );
-
-                $this->orderby = '`t`.`display_name`, `t`.`ID` DESC';
-            }
-            elseif ( 'comment' == $this->pod_data[ 'type' ] ) {
-                $this->table = $wpdb->comments;
-                $this->field_id = 'comment_ID';
-                $this->field_name = 'comment_date';
-
-                $object = 'comment';
-
-                if ( !empty( $this->pod_data[ 'object' ] ) )
-                    $object = $this->pod_data[ 'object' ];
-
-                $this->where = array(
-                    'comment_approved' => '`t`.`comment_approved` = 1',
-                    'comment_type' => '`t`.`comment_type` = "' . $object . '"'
-                );
-
-                $this->orderby = '`t`.`comment_date` DESC, `t`.`comment_ID` DESC';
-            }
-            elseif ( 'table' == $this->pod_data[ 'type' ] ) {
-                $this->table = $this->pod;
-                $this->field_id = 'id';
-                $this->field_name = 'name';
-
-                $this->orderby = '`t`.`name`, `t`.`id` DESC';
-            }
+            if ( isset( $this->pod_data[ 'orderby' ] ) )
+                $this->orderby = $this->pod_data[ 'orderby' ];
 
             if ( null !== $id && !is_array( $id ) && !is_object( $id ) ) {
                 $this->id = pods_absint( $id );
@@ -1142,18 +1083,22 @@ class PodsData {
      * @param string $table
      */
     public static function get_table_columns ($table) {
-        $table_columns = self::query('SHOW COLUMNS FROM ' . $table);
+        global $wpdb;
+
+        self::query( "SHOW COLUMNS FROM `{$table}` " );
+
+        $table_columns = $wpdb->last_result;
 
         $table_cols_and_types = array();
 
-        while ($table_col = mysql_fetch_assoc($table_columns)) {
+        foreach ( $table_columns as $table_col ) {
             // Get only the type, not the attributes
-            if (false === strpos($table_col['Type'], '('))
-                $modified_type = $table_col['Type'];
+            if ( false === strpos( $table_col->Type, '(' ) )
+                $modified_type = $table_col->Type;
             else
-                $modified_type = substr($table_col['Type'], 0, (strpos($table_col['Type'], '(')));
+                $modified_type = substr( $table_col->Type, 0, ( strpos( $table_col->Type, '(' ) ) );
 
-            $table_cols_and_types[$table_col['Field']] = $modified_type;
+            $table_cols_and_types[ $table_col->Field ] = $modified_type;
         }
 
         return $table_cols_and_types;

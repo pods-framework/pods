@@ -96,8 +96,8 @@ class PodsField_Boolean extends PodsField {
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $yesno = array(
-            1 => $options[ 'boolean_yes_label' ],
-            0 => $options[ 'boolean_no_label' ]
+            1 => pods_var( 'boolean_yes_label', $options ),
+            0 => pods_var( 'boolean_no_label', $options )
         );
 
         // Deprecated handling for 1.x
@@ -126,20 +126,20 @@ class PodsField_Boolean extends PodsField {
 
         $field_type = 'checkbox';
 
-        if ( 'checkbox' != $options[ 'boolean_format_type' ] ) {
+        if ( 'checkbox' != pods_var( 'boolean_format_type', $options ) ) {
             $options[ 'data' ] = array(
-                1 => $options[ 'boolean_yes_label' ],
-                0 => $options[ 'boolean_no_label' ]
+                1 => pods_var( 'boolean_yes_label', $options ),
+                0 => pods_var( 'boolean_no_label', $options )
             );
 
-            if ( 'radio' == $options[ 'boolean_format_type' ] )
+            if ( 'radio' == pods_var( 'boolean_format_type', $options ) )
                 $field_type = 'radio';
-            elseif ( 'dropdown' == $options[ 'boolean_format_type' ] )
+            elseif ( 'dropdown' == pods_var( 'boolean_format_type', $options ) )
                 $field_type = 'select';
         }
         else {
             $options[ 'data' ] = array(
-                1 => $options[ 'boolean_yes_label' ]
+                1 => pods_var( 'boolean_yes_label', $options )
             );
         }
 

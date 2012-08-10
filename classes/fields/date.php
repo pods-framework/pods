@@ -334,19 +334,19 @@ class PodsField_Date extends PodsField {
 
         $format = 'Y-m-d H:i:s';
 
-        if ( 'date' == $options[ 'date_format_type' ] )
-            $format = $date_format[ $options[ 'date_format' ] ];
-        elseif ( 'datetime' == $options[ 'date_format_type' ] ) {
-            $format = $date_format[ $options[ 'date_format' ] ] . ' ';
+        if ( 'date' == pods_var( 'date_format_type', $options ) )
+            $format = $date_format[ pods_var( 'date_format', $options ) ];
+        elseif ( 'datetime' == pods_var( 'date_format_type', $options ) ) {
+            $format = $date_format[ pods_var( 'date_format', $options ) ] . ' ';
 
-            if ( 12 == $options[ 'date_time_type' ] )
-                $format .= $time_format[ $options[ 'date_time_format' ] ];
+            if ( 12 == pods_var( 'date_time_type', $options ) )
+                $format .= $time_format[ pods_var( 'date_time_format', $options ) ];
             else
                 $format .= 'H:i';
         }
-        elseif ( 'time' == $options[ 'date_format_type' ] ) {
-            if ( 12 == $options[ 'date_time_type' ] )
-                $format = $time_format[ $options[ 'date_time_format' ] ];
+        elseif ( 'time' == pods_var( 'date_format_type', $options ) ) {
+            if ( 12 == pods_var( 'date_time_type', $options ) )
+                $format = $time_format[ pods_var( 'date_time_format', $options ) ];
             else
                 $format = 'H:i';
         }

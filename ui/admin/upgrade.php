@@ -36,18 +36,15 @@
             <!-- Getting Started Panel -->
             <div id="pods-wizard-panel-1" class="pods-wizard-panel">
                 <div class="pods-wizard-content pods-wizard-grey">
-                    <p><?php _e( '', 'pods' ); ?></p>
+                    <p>
+                        <?php
+                            $intro = __( 'Welcome to #Pods2! We sincerely hope you enjoy over two years worth of planning and work, available to you for <em>free</em>. Due to a number of optimizations in #Pods2, we need to run a few updates to your database. This should not remove or change your existing Pod data from 1.x, so if you wish to rollback to Pods 1.x - you can easily do that.', 'pods' );
+                            echo str_replace( '#Pods2', '<a href="https://twitter.com/#!/search/%23pods2" target="_blank">#Pods2</a>', $intro );
+                        ?>
+                    </p>
                 </div>
-                <p><em><?php _e( '', 'pods' ); ?></em></p>
+                <p class="padded"><?php _e( 'We recommend that you back your database up, it can really save you in a bind or a really weird situation that you may not be expecting. Check out a few options we think are <em>great</em> below.', 'pods' ); ?></p>
                 <div id="pods-wizard-options">
-                    <div class="pods-wizard-option">
-                        <a href="http://vaultpress.com/podsframework/" target="_blank">
-                            <img src="<?php echo PODS_URL; ?>/ui/images/logo_vaultpress.png" alt="Vaultpress" />
-                            <p><?php _e( '1 free month', 'pods' ); ?></p>
-                            <p><strong><?php _e ( 'Click to sign up', 'pods' ); ?></strong></p>
-                        </a>
-                        <p><em><?php _e( 'A service that provides realtime continuous backups, restores, and security scanning.', 'pods' ); ?></em></p>
-                    </div>
                     <div class="pods-wizard-option">
                         <a href="http://ithemes.com/member/go.php?r=31250&i=l44" target="_blank">
                             <img src="<?php echo PODS_URL; ?>/ui/images/logo_backupbuddy.png" alt="Backup Buddy" />
@@ -55,6 +52,14 @@
                             <p><?php _e( 'Coupon Code', 'pods' ); ?>: <strong>PODS25</strong></p>
                         </a>
                         <p><em><?php _e( 'The all-in-one WordPress backup plugin to easily backup, restore, and migrate to any number of local or external locations.', 'pods' ); ?></em></p>
+                    </div>
+                    <div class="pods-wizard-option">
+                        <a href="http://vaultpress.com/podsframework/" target="_blank">
+                            <img src="<?php echo PODS_URL; ?>/ui/images/logo_vaultpress.png" alt="Vaultpress" />
+                            <p><?php _e( '1 free month', 'pods' ); ?></p>
+                            <p><strong><?php _e ( 'Click to sign up', 'pods' ); ?></strong></p>
+                        </a>
+                        <p><em><?php _e( 'A service that provides realtime continuous backups, restores, and security scanning.', 'pods' ); ?></em></p>
                     </div>
                 </div>
             </div>
@@ -74,7 +79,7 @@
                             <th colspan="3"><?php _e( 'Preparing Your Content for Migration', 'pods' ); ?>..</th>
                         </tr>
                     </thead>
-                    <tbody><!-- complete|pending|active <i></i> -->
+                    <tbody>
                         <?php
                             $pods = $wpdb->get_results( "SELECT `name`, `label` FROM `{$wpdb->prefix}pod_types` ORDER BY `name`" );
                             $count = count( $pods );
@@ -271,6 +276,16 @@
                         <?php
                             }
                         ?>
+                        <tr class="pods-wizard-table-pending" data-upgrade="cleanup">
+                            <td class="pods-wizard-right pods-wizard-status">
+                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                            </td>
+                            <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
+                            <td class="pods-wizard-name">
+                                <?php _e( 'Cleanup', 'pods' ); ?>
+                                <span class="pods-wizard-info"></span>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

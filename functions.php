@@ -946,7 +946,7 @@ function pods_version_to_point ( $version ) {
     $point_tmp = str_split( $point_tmp, 3 );
     $point = array();
     foreach ( $point_tmp as $the_point ) {
-        $point[ ] = (int) $the_point;
+        $point[] = (int) $the_point;
     }
     $point = implode( '.', $point );
     return $point;
@@ -972,9 +972,9 @@ function pods_compatible ( $wp = null, $php = null, $mysql = null ) {
         function pods_version_notice_wp () {
 ?>
     <div class="error fade">
-        <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of
-            <strong>WordPress <?php echo PODS_WP_VERSION_MINIMUM; ?>+</strong> to function. You are currently running
-            <strong>WordPress <?php echo get_bloginfo( "version" ); ?></strong> - Please upgrade your WordPress to continue.
+        <p><strong><?php _e( 'NOTICE', 'pods' ); ?>:</strong> Pods <?php echo PODS_VERSION_FULL; ?> <?php _e( 'requires a minimum of', 'pods' ); ?>
+            <strong>WordPress <?php echo PODS_WP_VERSION_MINIMUM; ?>+</strong> <?php _e( 'to function. You are currently running', 'pods' ); ?>
+            <strong>WordPress <?php echo get_bloginfo( "version" ); ?></strong> - <?php _e( 'Please upgrade your WordPress to continue.', 'pods' ); ?>
         </p>
     </div>
 <?php
@@ -986,9 +986,9 @@ function pods_compatible ( $wp = null, $php = null, $mysql = null ) {
         function pods_version_notice_php () {
 ?>
     <div class="error fade">
-        <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of
-            <strong>PHP <?php echo PODS_PHP_VERSION_MINIMUM; ?>+</strong> to function. You are currently running
-            <strong>PHP <?php echo phpversion(); ?></strong> - Please upgrade (or have your Hosting Provider upgrade it for you) your PHP version to continue.
+        <p><strong><?php _e( 'NOTICE', 'pods' ); ?>:</strong> Pods <?php echo PODS_VERSION_FULL; ?> <?php _e( 'requires a minimum of', 'pods' ); ?>
+            <strong>PHP <?php echo PODS_PHP_VERSION_MINIMUM; ?>+</strong> <?php _e( 'to function. You are currently running', 'pods' ); ?>
+            <strong>PHP <?php echo phpversion(); ?></strong> - <?php _e( 'Please upgrade (or have your Hosting Provider upgrade it for you) your PHP version to continue.', 'pods' ); ?>
         </p>
     </div>
 <?php
@@ -1002,9 +1002,9 @@ function pods_compatible ( $wp = null, $php = null, $mysql = null ) {
             $mysql = $wpdb->db_version();
 ?>
     <div class="error fade">
-        <p><strong>NOTICE:</strong> Pods <?php echo PODS_VERSION_FULL; ?> requires a minimum of
-            <strong>MySQL <?php echo PODS_MYSQL_VERSION_MINIMUM; ?>+</strong> to function. You are currently running
-            <strong>MySQL <?php echo $mysql; ?></strong> - Please upgrade (or have your Hosting Provider upgrade it for you) your MySQL version to continue.
+        <p><strong><?php _e( 'NOTICE', 'pods' ); ?>:</strong> Pods <?php echo PODS_VERSION_FULL; ?> <?php _e( 'requires a minimum of', 'pods' ); ?>
+            <strong>MySQL <?php echo PODS_MYSQL_VERSION_MINIMUM; ?>+</strong> <?php _e( 'to function. You are currently running', 'pods' ); ?>
+            <strong>MySQL <?php echo $mysql; ?></strong> - <?php _e( 'Please upgrade (or have your Hosting Provider upgrade it for you) your MySQL version to continue.', 'pods' ); ?>
         </p>
     </div>
 <?php

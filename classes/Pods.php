@@ -1,9 +1,9 @@
 <?php
 class Pods {
 
-    private $api;
+    public $api;
 
-    private $data;
+    public $data;
 
     private $results;
 
@@ -362,7 +362,7 @@ class Pods {
                         // Return an array of single column values
                         else {
                             foreach ( $data as $key => $val ) {
-                                $results[ ] = $val[ $field ];
+                                $results[] = $val[ $field ];
                             }
                         }
                         return $results;
@@ -449,10 +449,10 @@ class Pods {
 
         // Add "`t`." prefix to $orderby if needed
         if ( !empty( $params->orderby ) && false === strpos( $params->orderby, ',' ) && false === strpos( $params->orderby, '(' ) && false === strpos( $params->orderby, '.' ) ) {
-            if ( false !== strpos( $params->orderby, ' ASC' ) )
-                $params->orderby = '`t`.`' . trim( str_replace( array( '`', ' ASC' ), '', $params->orderby ) ) . '` ASC';
+            if ( false !== stripos( $params->orderby, ' ASC' ) )
+                $params->orderby = '`t`.`' . trim( str_ireplace( array( '`', ' ASC' ), '', $params->orderby ) ) . '` ASC';
             else
-                $params->orderby = '`t`.`' . trim( str_replace( array( '`', ' DESC' ), '', $params->orderby ) ) . '` DESC';
+                $params->orderby = '`t`.`' . trim( str_ireplace( array( '`', ' DESC' ), '', $params->orderby ) ) . '` DESC';
         }
 
         $this->data->select( $params );

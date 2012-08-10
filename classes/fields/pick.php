@@ -202,87 +202,87 @@ class PodsField_Pick extends PodsField {
         elseif ( '' != pods_var( 'pick_object', $options, '' ) && array() == pods_var( 'data', $options, array() ) ) {
             $options[ 'data' ] = array( '' => __( '-- Select One --', 'pods' ) );
 
-            $table = $field_id = $field_name = false;
+            $table = $field_id = $field_index = false;
 
             switch ( pods_var( 'pick_object', $options ) ) {
                 case 'pod':
                     $table = $wpdb->prefix . 'pods_tbl_' . pods_var( 'pick_val', $options );
                     $field_id = 'id';
-                    $field_name = 'name';
+                    $field_index = 'name';
                     break;
                 case 'post_type':
                 case 'media':
                     $table = $wpdb->posts;
                     $field_id = 'ID';
-                    $field_name = 'post_title';
+                    $field_index = 'post_title';
                     break;
                 case 'taxonomy':
                     $table = $wpdb->taxonomy;
                     $field_id = 'term_id';
-                    $field_name = 'name';
+                    $field_index = 'name';
                     break;
                 case 'user':
                     $table = $wpdb->users;
                     $field_id = 'ID';
-                    $field_name = 'display_name';
+                    $field_index = 'display_name';
                     break;
                 case 'comment':
                     $table = $wpdb->comments;
                     $field_id = 'comment_ID';
-                    $field_name = 'comment_date';
+                    $field_index = 'comment_date';
                     break;
                 case 'table':
                     $table = pods_var( 'pick_val', $options );
                     $field_id = 'id';
-                    $field_name = 'name';
+                    $field_index = 'name';
                     break;
             }
 
             $data = pods_data();
             $data->table = $table;
             $data->field_id = $field_id;
-            $data->field_name = $field_name;
+            $data->field_index = $field_index;
 
             $results = $data->select( array(
-                                          'select' => "`{$data->field_id}`, `{$data->field_name}`",
+                                          'select' => "`{$data->field_id}`, `{$data->field_index}`",
                                           'table' => $data->table,
                                           'identifier' => $data->field_id,
-                                          'index' => $data->field_name,
+                                          'index' => $data->field_index,
                                           'where' => pods_var( 'pick_where', $options, null, null, true ),
                                           'orderby' => pods_var( 'pick_where', $options, null, null, true ),
                                           'groupby' => pods_var( 'pick_groupby', $options, null, null, true )
                                       ) );
 
             foreach ( $results as $result ) {
-                $options[ 'data' ][ $result->{$field_id} ] = $result->{$field_name};
+                $options[ 'data' ][ $result->{$field_id} ] = $result->{$field_index};
             }
         }
 
-        if ( 'single' == $options[ 'pick_format_type' ] ) {
-            if ( 'dropdown' == $options[ 'pick_format_single' ] )
+        if ( 'single' == pods_var( 'pick_format_type', $options ) ) {
+            if ( 'dropdown' == pods_var( 'pick_format_single', $options ) )
                 $field_type = 'select';
-            elseif ( 'radio' == $options[ 'pick_format_single' ] )
+            elseif ( 'radio' == pods_var( 'pick_format_single', $options ) )
                 $field_type = 'radio';
-            elseif ( 'autocomplete' == $options[ 'pick_format_single' ] )
+            elseif ( 'autocomplete' == pods_var( 'pick_format_single', $options ) )
                 $field_type = 'select2';
             else {
                 // Support custom integration
-                do_action( 'pods_form_ui_field_pick_input_' . $options[ 'pick_format_type' ] . '_' . $options[ 'pick_format_single' ], $name, $value, $options, $pod, $id );
-                do_action( 'pods_form_ui_field_pick_input', $options[ 'pick_format_type' ], $name, $value, $options, $pod, $id );
+                do_action( 'pods_form_ui_field_pick_input_' . pods_var( 'pick_format_type', $options ) . '_' . pods_var( 'pick_format_single', $options ), $name, $value, $options, $pod, $id );
+                do_action( 'pods_form_ui_field_pick_input', pods_var( 'pick_format_type', $options ), $name, $value, $options, $pod, $id );
                 return;
             }
         }
-        elseif ( 'multi' == $options[ 'pick_format_type' ] ) {
-            if ( 'checkbox' == $options[ 'pick_format_multi' ] )
+        elseif ( 'multi' == pods_var( 'pick_format_type', $options ) ) {
+            if ( 'checkbox' == pods_var( 'pick_format_multi', $options ) )
                 $field_type = 'checkbox';
-            elseif ( 'multiselect' == $options[ 'pick_format_multi' ] )
+            elseif ( 'multiselect' == pods_var( 'pick_format_multi', $options ) )
                 $field_type = 'select';
-            elseif ( 'autocomplete' == $options[ 'pick_format_multi' ] )
+            elseif ( 'autocomplete' == pods_var( 'pick_format_multi', $options ) )
                 $field_type = 'select2';
             else {
                 // Support custom integration
-                do_action( 'pods_form_ui_field_pick_input_' . $options[ 'pick_format_type' ] . '_' . $options[ 'pick_format_multi' ], $name, $value, $options, $pod, $id );
-                do_action( 'pods_form_ui_field_pick_input', $options[ 'pick_format_type' ], $name, $value, $options, $pod, $id );
+                do_action( 'pods_form_ui_field_pick_input_' . pods_var( 'pick_format_type', $options ) . '_' . pods_var( 'pick_format_multi', $options ), $name, $value, $options, $pod, $id );
+                do_action( 'pods_form_ui_field_pick_input', pods_var( 'pick_format_type', $options ), $name, $value, $options, $pod, $id );
                 return;
             }
         }

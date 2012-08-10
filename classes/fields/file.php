@@ -177,14 +177,14 @@ class PodsField_File extends PodsField {
             return;
         }
 
-        if ( 'plupload' == $options[ 'file_uploader' ] )
+        if ( 'plupload' == pods_var( 'file_uploader', $options ) )
             $field_type = 'plupload';
-        elseif ( 'attachment' == $options[ 'file_uploader' ] )
+        elseif ( 'attachment' == pods_var( 'file_uploader', $options ) )
             $field_type = 'attachment';
         else {
             // Support custom File Uploader integration
-            do_action( 'pods_form_ui_field_file_uploader_' . $options[ 'file_uploader' ], $name, $value, $options, $pod, $id );
-            do_action( 'pods_form_ui_field_file_uploader', $options[ 'file_uploader' ], $name, $value, $options, $pod, $id );
+            do_action( 'pods_form_ui_field_file_uploader_' . pods_var( 'file_uploader', $options ), $name, $value, $options, $pod, $id );
+            do_action( 'pods_form_ui_field_file_uploader', pods_var( 'file_uploader', $options ), $name, $value, $options, $pod, $id );
             return;
         }
 

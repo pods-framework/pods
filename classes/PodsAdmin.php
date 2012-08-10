@@ -136,7 +136,7 @@ class PodsAdmin {
                     wp_register_script( 'pods-advanced', PODS_URL . 'ui/js/advanced.js', array(), PODS_VERSION );
                     wp_enqueue_script( 'pods-advanced' );
                 }
-                elseif ( 'pods-wizard' == $page || 'pods-upgrade' == $page || ( 'pods' == $page && 'add' == pods_var( 'action', 'get', 'manage' ) ) ) {
+                elseif ( 'pods-wizard' == $page || 'pods-upgrade' == $page || ( 'pods' == $page && in_array( pods_var( 'action', 'get', 'manage' ), array( 'add', 'manage' ) ) ) ) {
                     wp_enqueue_style( 'pods-wizard' );
 
                     if ( 'pods-upgrade' == $page )

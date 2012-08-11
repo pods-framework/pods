@@ -111,8 +111,8 @@
 
                 pods_ajaxurl = pods_ajaxurl + '&action=' + postdata.action;
 
-                // $_POST doesn't like a LOT of items
-                if ( 0 < field_data.length )
+                // $_POST doesn't like a LOT of items, JSON encode it as one string
+                if ( !$.isEmptyObject( field_data ) )
                     postdata[ 'field_data' ] = $.toJSON( field_data );
 
                 $.ajax( {

@@ -117,6 +117,7 @@
 
                 $.ajax( {
                     type : 'POST',
+                    dataType : 'html',
                     url : pods_ajaxurl,
                     cache : false,
                     data : postdata,
@@ -129,17 +130,19 @@
                             else
                                 document.location.reload( true );
                         }
-                        else if ( 'undefined' != typeof pods_admin_submit_error_callback )
-                            pods_admin_submit_error_callback( d.replace( '<e>', '' ).replace( '</e>', '' ) );
                         else if ( 'undefined' != typeof $submittable.data( 'error-location' ) )
                             document.location.href = $submittable.data( 'error-location' );
                         else {
-                            alert( 'Error: ' + d.replace( '<e>', '' ).replace( '</e>', '' ) );
-                            console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
+                            var err_msg = d.replace( '<e>', '' ).replace( '</e>', '' );
+                            if ( 'undefined' != typeof pods_admin_submit_error_callback )
+                                pods_admin_submit_error_callback( err_msg );
 
                             $submittable.css( 'cursor', 'pointer' );
                             $submittable.prop( 'disabled', false );
                             $submittable.parent().find( '.waiting' ).fadeOut();
+
+                            alert( 'Error: ' + err_msg );
+                            console.log( err_msg );
                         }
                     },
                     error : function () {
@@ -148,8 +151,7 @@
                         $submittable.parent().find( '.waiting' ).fadeOut();
 
                         alert( 'Unable to process request, please try again.' );
-                    },
-                    dataType : 'html'
+                    }
                 } );
 
             } );
@@ -178,6 +180,7 @@
 
                 $.ajax( {
                     type : 'POST',
+                    dataType : 'html',
                     url : pods_ajaxurl,
                     cache : false,
                     data : postdata,
@@ -185,24 +188,33 @@
                         if ( -1 == d.indexOf( '<e>' ) && -1 != d ) {
                             if ( 'undefined' != typeof pods_admin_submit_callback )
                                 pods_admin_submit_callback( d );
-                            else if ( 'undefined' != typeof $el.data( 'location' ) )
-                                document.location.href = $el.data( 'location' );
+                            else if ( 'undefined' != typeof $submittable.data( 'location' ) )
+                                document.location.href = $submittable.data( 'location' );
                             else
                                 document.location.reload( true );
                         }
-                        else if ( 'undefined' != typeof pods_admin_submit_error_callback )
-                            pods_admin_submit_error_callback( d.replace( '<e>', '' ).replace( '</e>', '' ) );
-                        else if ( 'undefined' != typeof $el.data( 'error-location' ) )
-                            document.location.href = $el.data( 'error-location' );
+                        else if ( 'undefined' != typeof $submittable.data( 'error-location' ) )
+                            document.location.href = $submittable.data( 'error-location' );
                         else {
-                            alert( 'Error: ' + d.replace( '<e>', '' ).replace( '</e>', '' ) );
-                            console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
+                            var err_msg = d.replace( '<e>', '' ).replace( '</e>', '' );
+                            if ( 'undefined' != typeof pods_admin_submit_error_callback )
+                                pods_admin_submit_error_callback( err_msg );
+
+                            $submittable.css( 'cursor', 'pointer' );
+                            $submittable.prop( 'disabled', false );
+                            $submittable.parent().find( '.waiting' ).fadeOut();
+
+                            alert( 'Error: ' + err_msg );
+                            console.log( err_msg );
                         }
                     },
                     error : function () {
+                        $submittable.css( 'cursor', 'pointer' );
+                        $submittable.prop( 'disabled', false );
+                        $submittable.parent().find( '.waiting' ).fadeOut();
+
                         alert( 'Unable to process request, please try again.' );
-                    },
-                    dataType : 'html'
+                    }
                 } );
             } );
 

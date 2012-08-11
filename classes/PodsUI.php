@@ -1706,7 +1706,7 @@ class PodsUI
                                 $actions['duplicate'] = '<span class="edit"><a href="' . pods_var_update(array('action' . $this->num => 'duplicate', 'id' . $this->num => $row[$this->sql['field_id']]), null, $this->exclusion()) . '" title="' . __('Duplicate this item', 'pods') . '">' . __('Duplicate', 'pods') . '</a></span>';
 
                             if (!in_array('delete', $this->actions_disabled))
-                                $actions['delete'] = '<span class="delete"><a href="' . pods_var_update(array('action' . $this->num => 'delete', 'id' . $this->num => $row[$this->sql['field_id']]), null, $this->exclusion()) . '" title="' . __('Delete this item', 'pods') . '" class="submitdelete" onclick="if(confirm(\'' . esc_js( sprintf( __('You are about to delete this item \'%s\'\n \'Cancel\' to stop, \'OK\' to delete.', 'pods'), htmlentities( $row[ $field ], ENT_COMPAT, get_bloginfo( 'charset' ) ))) . '\')){return true;}return false;">' . __('Delete', 'pods') . '</a></span>';
+                                $actions['delete'] = '<span class="delete"><a href="' . pods_var_update(array('action' . $this->num => 'delete', 'id' . $this->num => $row[$this->sql['field_id']]), null, $this->exclusion()) . '" title="' . __('Delete this item', 'pods') . '" class="submitdelete" onclick="if(confirm(\'' . __('You are about to permanently delete this item\n Choose \\\'Cancel\\\' to stop, \\\'OK\\\' to delete.', 'pods' ) . '\')){return true;}return false;">' . __('Delete', 'pods') . '</a></span>';
 
                             if ( is_array( $this->actions_custom ) ) {
                                 foreach ( $this->actions_custom as $custom_action => $custom_data ) {

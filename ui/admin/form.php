@@ -143,6 +143,6 @@
     } );
 
     pods_admin_submit_callback = function ( id ) {
-        document.location = '<?php echo pods_var_update( array( 'action' . $obj->num => 'manage', 'id' . $obj->num => '' ) ); ?>';
+        document.location = '<?php echo esc_js( $thank_you ); ?>';
     }
 </script>

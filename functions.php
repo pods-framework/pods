@@ -203,26 +203,31 @@ function pods_help ( $text ) {
  *
  * @since 1.2.0
  */
-function pods_sanitize ( $input ) {
+function pods_sanitize ( $input, $nested = false ) {
     $output = array();
 
     if ( empty( $input ) )
         $output = $input;
     elseif ( is_object( $input ) ) {
         $input = get_object_vars( $input );
+
         foreach ( $input as $key => $val ) {
-            $output[ pods_sanitize( $key ) ] = pods_sanitize( $val );
+            $output[ pods_sanitize( $key ) ] = pods_sanitize( $val, true );
         }
+
         $output = (object) $output;
     }
     elseif ( is_array( $input ) ) {
         foreach ( $input as $key => $val ) {
-            $output[ pods_sanitize( $key ) ] = pods_sanitize( $val );
+            $output[ pods_sanitize( $key ) ] = pods_sanitize( $val, true );
         }
     }
     else
         $output = esc_sql( $input );
-    $output = apply_filters( 'pods_sanitize', $output, $input );
+
+    if ( false === $nested )
+        $output = apply_filters( 'pods_sanitize', $output, $input );
+
     return $output;
 }
 
@@ -233,24 +238,67 @@ function pods_sanitize ( $input ) {
  *
  * @since 1.2.0
  */
-function pods_unsanitize ( $input ) {
+function pods_unsanitize ( $input, $nested = false ) {
     $output = array();
+
     if ( empty( $input ) )
         $output = $input;
     elseif ( is_object( $input ) ) {
         $input = get_object_vars( $input );
+
         foreach ( $input as $key => $val ) {
-            $output[ pods_unsanitize( $key ) ] = pods_unsanitize( $val );
+            $output[ pods_unsanitize( $key ) ] = pods_unsanitize( $val, true );
         }
+
         $output = (object) $output;
     }
     elseif ( is_array( $input ) ) {
         foreach ( $input as $key => $val ) {
-            $output[ pods_unsanitize( $key ) ] = pods_unsanitize( $val );
+            $output[ pods_unsanitize( $key ) ] = pods_unsanitize( $val, true );
         }
     }
     else
         $output = stripslashes( $input );
+
+    if ( false === $nested )
+        $output = apply_filters( 'pods_unsanitize', $output, $input );
+
+    return $output;
+}
+
+/**
+ * Filter input and return sanitized output
+ *
+ * @param mixed $input The string, array, or object to sanitize
+ *
+ * @since 1.2.0
+ */
+function pods_trim ( $input, $charlist = null, $lr = null ) {
+    $output = array();
+
+    if ( is_object( $input ) ) {
+        $input = get_object_vars( $input );
+
+        foreach ( $input as $key => $val ) {
+            $output[ pods_sanitize( $key ) ] = pods_trim( $val, $charlist, $lr );
+        }
+
+        $output = (object) $output;
+    }
+    elseif ( is_array( $input ) ) {
+        foreach ( $input as $key => $val ) {
+            $output[ pods_sanitize( $key ) ] = pods_trim( $val, $charlist, $lr );
+        }
+    }
+    else {
+        if ( 'l' == $lr )
+            $output = ltrim( $input, $charlist );
+        elseif ( 'r' == $lr )
+            $output = rtrim( $input, $charlist );
+        else
+            $output = trim( $input, $charlist );
+    }
+
     return $output;
 }
 
@@ -258,7 +306,7 @@ function pods_unsanitize ( $input ) {
  * Return a variable (if exists)
  *
  * @param mixed $var The variable name or URI segment position
- * @param string $type (optional) "url", "get", "post", "request", "server", "session", "cookie", "constant", or "user"
+ * @param string $type (optional) get|url|post|request|server|session|cookie|constant|user|option|site-option|transient|site-transient|cache
  * @param mixed $default (optional) The default value to set if variable doesn't exist
  * @param mixed $allowed (optional) The value(s) allowed
  * @param bool $strict (optional) Only allow values (must not be empty)
@@ -266,14 +314,14 @@ function pods_unsanitize ( $input ) {
  * @return mixed The variable (if exists), or default value
  * @since 1.10.6
  */
-function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false ) {
-    $output = $default;
+function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = true ) {
     if ( is_array( $type ) )
-        $output = isset( $type[ $var ] ) ? $type[ $var ] : $output;
+        $output = isset( $type[ $var ] ) ? $type[ $var ] : $default;
     elseif ( is_object( $type ) )
-        $output = isset( $type->$var ) ? $type->$var : $output;
+        $output = isset( $type->$var ) ? $type->$var : $default;
     else {
         $type = strtolower( (string) $type );
+
         if ( 'get' == $type && isset( $_GET[ $var ] ) )
             $output = stripslashes_deep( $_GET[ $var ] );
         elseif ( in_array( $type, array( 'url', 'uri' ) ) ) {
@@ -303,12 +351,43 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
             $output = constant( $var );
         elseif ( 'user' == $type && is_user_logged_in() ) {
             global $user_ID;
+
             get_currentuserinfo();
+
             $value = get_user_meta( $user_ID, $var, true );
+
             if ( is_array( $value ) || 0 < strlen( $value ) )
                 $output = $value;
         }
+        elseif ( 'option' == $type )
+            $output = get_option( $var, $default );
+        elseif ( 'site-option' == $type )
+            $output = get_site_option( $var, $default );
+        elseif ( 'transient' == $type )
+            $output = get_transient( $var );
+        elseif ( 'site-transient' == $type )
+            $output = get_site_transient( $var );
+        elseif ( 'cache' == $type ) {
+            $group = 'default';
+            $force = false;
+
+            if ( is_array( $var ) ) {
+                if ( isset( $var[ 1 ] ) )
+                    $group = $var[ 1 ];
+
+                if ( isset( $var[ 2 ] ) )
+                    $force = $var[ 2 ];
+
+                if ( isset( $var[ 0 ] ) )
+                    $var = $var[ 0 ];
+            }
+
+            $output = wp_cache_get( $var, $group, $force );
+        }
+        else
+            $output = apply_filters( 'pods_var_' . $type, $default, $var, $allowed, $strict );
     }
+
     if ( null !== $allowed ) {
         if ( is_array( $allowed ) ) {
             if ( !in_array( $output, $allowed ) )
@@ -317,10 +396,27 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
         elseif ( $allowed !== $output )
             $output = $default;
     }
-    if ( true === $strict && empty( $output ) )
-        $output = $default;
-    $output = apply_filters( 'pods_var', $output, $var, $type );
+
+    if ( true === $strict ) {
+        if ( empty( $output ) )
+            $output = $default;
+        elseif ( true === $casting )
+            $output = pods_cast( $output, $default );
+    }
+
     return pods_sanitize( $output );
+}
+
+/**
+ * Cast a variable as a specific type
+ *
+ * @param $var
+ * @param null $default
+ *
+ * @return bool
+ */
+function pods_cast ( $var, $default = null ) {
+    return settype( $var, gettype( $default ) );
 }
 
 /**
@@ -336,6 +432,7 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
 function pods_var_set ( $value, $key = 'last', $type = 'url' ) {
     $type = strtolower( $type );
     $ret = false;
+
     if ( is_array( $type ) ) {
         $type[ $key ] = $value;
         $ret = $type;
@@ -360,8 +457,10 @@ function pods_var_set ( $value, $key = 'last', $type = 'url' ) {
             else
                 $uri[ $key ] = $value;
         }
+
         $url[ 'path' ] = '/' . implode( '/', $uri ) . '/';
         $url[ 'path' ] = trim( $url[ 'path' ], '/' );
+
         $ret = http_build_url( $url );
     }
     elseif ( 'get' == $type )
@@ -378,14 +477,19 @@ function pods_var_set ( $value, $key = 'last', $type = 'url' ) {
         $ret = $_COOKIE[ $key ] = $value;
     elseif ( 'constant' == $type && !defined( $key ) ) {
         define( $key, $value );
+
         $ret = constant( $key );
     }
     elseif ( 'user' == $type && is_user_logged_in() ) {
         global $user_ID;
+
         get_currentuserinfo();
+
         update_user_meta( $user_ID, $key, $value );
+
         $ret = $value;
     }
+
     return apply_filters( 'pods_var_set', $ret, $value, $key, $type );
 }
 
@@ -400,16 +504,20 @@ function pods_var_set ( $value, $key = 'last', $type = 'url' ) {
 function pods_var_update ( $array = null, $allowed = null, $excluded = null, $url = null ) {
     if ( empty( $allowed ) )
         $allowed = array();
+
     if ( empty( $excluded ) )
         $excluded = array();
+
     if ( !isset( $_GET ) )
         $get = array();
     else
         $get = $_GET;
+
     if ( is_array( $array ) ) {
         foreach ( $excluded as $exclusion ) {
             if ( !isset( $array[ $exclusion ] ) && !in_array( $exclusion, $allowed ) )
                 unset( $get[ $exclusion ] );
+
             if ( !isset( $array[ $exclusion ] ) && !in_array( $exclusion, $allowed ) )
                 unset( $get[ $exclusion ] );
         }
@@ -420,9 +528,12 @@ function pods_var_update ( $array = null, $allowed = null, $excluded = null, $ur
                 unset( $get[ $key ] );
         }
     }
+
     if ( empty( $url ) )
         $url = $_SERVER[ 'REQUEST_URI' ];
+
     $url = current( explode( '#', current( explode( '?', $url ) ) ) );
+
     return $url . '?' . http_build_query( $get );
 }
 

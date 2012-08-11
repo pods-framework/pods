@@ -775,7 +775,7 @@ class PodsAPI {
 
             foreach ( $aliases as $alias ) {
                 if ( isset( $options[ $alias ] ) ) {
-                    $pod[ $exclude_field ] = $options[ $alias ];
+                    $pod[ $exclude_field ] = pods_trim( $options[ $alias ] );
 
                     unset( $options[ $alias ] );
                 }
@@ -1152,7 +1152,7 @@ class PodsAPI {
 
             foreach ( $aliases as $alias ) {
                 if ( isset( $options[ $alias ] ) ) {
-                    $field[ $exclude_field ] = trim( $options[ $alias ] );
+                    $field[ $exclude_field ] = pods_trim( $options[ $alias ] );
 
                     unset( $options[ $alias ] );
                 }
@@ -1377,7 +1377,7 @@ class PodsAPI {
 
             foreach ( $aliases as $alias ) {
                 if ( isset( $options[ $alias ] ) ) {
-                    $pod[ $exclude_field ] = $options[ $alias ];
+                    $pod[ $exclude_field ] = pods_trim( $options[ $alias ] );
 
                     unset( $options[ $alias ] );
                 }
@@ -2765,7 +2765,9 @@ class PodsAPI {
 
         if ( isset( $params->object ) && !empty( $params->object ) ) {
             if ( !is_array( $params->object ) )
-                $params->object = array( trim( $params->object ) );
+                $params->object = array( $params->object );
+
+            $params->object = pods_trim( $params->object );
 
             sort( $params->object );
 
@@ -2782,7 +2784,9 @@ class PodsAPI {
         if ( isset( $params->options ) && !empty( $params->options ) && is_array( $params->options ) ) {
             foreach ( $params->options as $option => $value ) {
                 if ( !is_array( $value ) )
-                    $value = array( trim( $value ) );
+                    $value = array( $value );
+
+                $value = pods_trim( $value );
 
                 sort( $value );
 
@@ -3177,7 +3181,9 @@ class PodsAPI {
         if ( isset( $params->options ) && !empty( $params->options ) && is_array( $params->options ) ) {
             foreach ( $params->options as $option => $value ) {
                 if ( !is_array( $value ) )
-                    $value = array( trim( $value ) );
+                    $value = array( $value );
+
+                $value = pods_trim( $value );
 
                 sort( $value );
 

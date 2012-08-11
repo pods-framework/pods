@@ -739,7 +739,7 @@ class PodsAdmin {
             $params->data = $columns;
         }
         elseif ( 'process_form' == $method->name ) {
-            // save data
+            $this->api->process_form();
         }
         elseif ( 'save_pod' == $method->name ) {
             if ( isset( $params->field_data ) && !is_array( $params->field_data ) ) {

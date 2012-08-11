@@ -1080,30 +1080,29 @@ class PodsAPI {
 
         $params->name = pods_clean_name( $params->name );
 
+        if ( !isset( $params->id ) )
+            $params->id = 0;
+
         if ( empty( $params->name ) )
             return pods_error( 'Pod field name is required', $this );
 
-        $field = $this->load_field( array( 'name' => $params->name, 'pod' => $params->pod, 'pod_id' => $params->pod_id ) );
+        $field = $this->load_field( $params );
 
         $old_id = $old_name = $old_type = null;
 
         if ( !empty( $field ) ) {
-            if ( isset( $params->id ) && 0 < $params->id )
-                $old_id = $params->id;
-
-            $params->id = $field[ 'id' ];
-
+            $old_id = $field[ 'id' ];
             $old_name = $field[ 'name' ];
             $old_type = $field[ 'type' ];
 
-            if ( !isset( $params->name ) && empty( $params->name ) )
-                $params->name = $field[ 'name' ];
+            if ( isset( $params->name ) && !empty( $params->name ) )
+                $field[ 'name' ] = $params->name;
 
-            if ( $old_name != $params->name && false !== $this->field_exists( $params ) )
-                return pods_error( sprintf( __( 'Field %s already exists, you cannot rename %s to that', 'pods' ), $params->name, $old_name ), $this );
+            if ( $old_name != $field[ 'name' ] && false !== $this->field_exists( $params ) )
+                return pods_error( sprintf( __( 'Field %s already exists, you cannot rename %s to that', 'pods' ), $field[ 'name' ], $old_name ), $this );
 
-            if ( $old_id != $params->id ) {
-                return pods_error( sprintf( __( 'Field %s already exists', 'pods' ), $params->name ), $this );
+            if ( !empty( $params->id ) && $old_id != $params->id ) {
+                return pods_error( sprintf( __( 'Field %s already exists', 'pods' ), $field[ 'name' ] ), $this );
             }
         }
         else {
@@ -1194,15 +1193,15 @@ class PodsAPI {
 
         // Add new field
         if ( !isset( $params->id ) || empty( $params->id ) || empty( $field ) ) {
-            if ( $table_operation && in_array( $params->name, array( 'created', 'modified', 'author' ) ) )
-                return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $params->name ), $this );
+            if ( $table_operation && in_array( $field[ 'name' ], array( 'created', 'modified', 'author' ) ) )
+                return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field[ 'name' ] ), $this );
 
-            if ( in_array( $params->name, array( 'id', 'ID' ) ) )
-                return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $params->name ), $this );
+            if ( in_array( $field[ 'name' ], array( 'id', 'ID' ) ) )
+                return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field[ 'name' ] ), $this );
 
             foreach ( $object_fields as $object_field => $object_field_opt ) {
-                if ( $object_field == $params->name || in_array( $params->name, $object_field_opt[ 'alias' ] ) )
-                    return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name. Also consider what WordPress and Pods provide you built-in.', 'pods' ), $params->name ), $this );
+                if ( $object_field == $field[ 'name' ] || in_array( $field[ 'name' ], $object_field_opt[ 'alias' ] ) )
+                    return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name. Also consider what WordPress and Pods provide you built-in.', 'pods' ), $field[ 'name' ] ), $this );
             }
 
             if ( 'slug' == $field[ 'type' ] ) {
@@ -1256,15 +1255,15 @@ class PodsAPI {
             );
         }
         else {
-            if ( in_array( $params->name, array( 'id', 'ID' ) ) )
-                return pods_error( sprintf( __( '%s is not editable', 'pods' ), $params->name ), $this );
+            if ( in_array( $field[ 'name' ], array( 'id', 'ID' ) ) )
+                return pods_error( sprintf( __( '%s is not editable', 'pods' ), $field[ 'name' ] ), $this );
 
             foreach ( $object_fields as $object_field => $object_field_opt ) {
-                if ( $object_field == $params->name || in_array( $params->name, $object_field_opt[ 'alias' ] ) )
-                    return pods_error( sprintf( __( '%s is not editable', 'pods' ), $params->name ), $this );
+                if ( $object_field == $field[ 'name' ] || in_array( $field[ 'name' ], $object_field_opt[ 'alias' ] ) )
+                    return pods_error( sprintf( __( '%s is not editable', 'pods' ), $field[ 'name' ] ), $this );
             }
 
-            if ( in_array( $field[ 'name' ], array( 'id', 'ID', 'created', 'modified', 'author' ) ) )
+            if ( ( null !== $old_name || $field[ 'name' ] != $old_name ) && in_array( $field[ 'name' ], array( 'id', 'ID', 'created', 'modified', 'author' ) ) )
                 return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field[ 'name' ] ), $this );
 
             foreach ( $object_fields as $object_field => $object_field_opt ) {
@@ -1294,7 +1293,7 @@ class PodsAPI {
         $definition = false;
 
         if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
-            $definition = "`{$params->name}` " . $this->get_field_definition( $field[ 'type' ] );
+            $definition = '`' . $field[ 'name' ] . '` ' . $this->get_field_definition( $field[ 'type' ] );
 
         if ( $table_operation && 'table' == $pod[ 'storage' ] ) {
             if ( !empty( $old_id ) ) {

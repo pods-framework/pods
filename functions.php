@@ -60,13 +60,18 @@ function pods_do_hook ( $scope, $name, $args = null, &$obj = null ) {
  * @param object / boolean $obj If object, if $obj->display_errors is set, and is set to true: display errors;
  *                              If boolean, and is set to true: display errors
  */
-function pods_error ( $error, &$obj = null ) {
+function pods_error ( $error, $obj = null ) {
     $display_errors = false;
 
     if ( is_object( $obj ) && isset( $obj->display_errors ) && true === $obj->display_errors )
         $display_errors = true;
     elseif ( is_bool( $obj ) && true === $obj )
         $display_errors = true;
+
+    if ( is_object( $error ) && 'Exception' == get_class( $error ) ) {
+        $error = $error->getMessage();
+        $display_errors = false;
+    }
 
     if ( is_array( $error ) )
         $error = __( 'The following issues occured:', 'pods' ) . "\n<ul><li>" . implode( "</li>\n<li>", $error ) . "</li></ul>";
@@ -76,9 +81,20 @@ function pods_error ( $error, &$obj = null ) {
 
     // throw error as Exception and return false if silent
     if ( false !== $display_errors && !empty( $error ) ) {
+        $exception_bypass = apply_filters( 'pods_error_exception', null, $error );
+
+        if ( null !== $exception_bypass )
+            return $exception_bypass;
+
+        set_exception_handler( 'pods_error' );
+
         throw new Exception( $error );
-        return false;
     }
+
+    $die_bypass = apply_filters( 'pods_error_die', null, $error );
+
+    if ( null !== $die_bypass )
+        return $die_bypass;
 
     // die with error
     die( "<e>$error</e>" );

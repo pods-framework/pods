@@ -220,7 +220,7 @@
 </div>
 <script type="text/javascript">
     var pods_admin_submit_callback = function ( id ) {
-        document.location = 'admin.php?page=pods&action=edit&id=' + id;
+        document.location = 'admin.php?page=pods&action=edit&id=' + id + '&do=create';
     }
 
     var pods_admin_option_select_callback = function ( $opt ) {

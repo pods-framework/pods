@@ -169,7 +169,7 @@
         $( document ).Pods( 'confirm' );
     } );
 
-    pods_admin_submit_callback = function ( id ) {
+    var pods_admin_submit_callback = function ( id ) {
         var thank_you = '<?php echo addslashes( $thank_you ); ?>';
 
         document.location = thank_you.replace( 'X_ID_X', id );

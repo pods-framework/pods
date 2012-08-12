@@ -988,26 +988,51 @@ class PodsAPI {
 
         $saved = array();
 
-        if ( isset( $params->fields ) || isset( $params->field_data ) || defined( 'DOING_AJAX' ) ) {
+        if ( isset( $params->fields ) || defined( 'DOING_AJAX' ) ) {
+            $fields = array();
+
+            if ( isset( $params->fields ) ) {
+                $params->fields = (array) $params->fields;
+
+                $weight = 0;
+
+                foreach ( $params->fields as $field ) {
+                    if ( !isset( $field[ 'name' ] ) )
+                        continue;
+
+                    if ( !isset( $field[ 'weight' ] ) ) {
+                        $field[ 'weight' ] = $weight;
+
+                        $weight++;
+                    }
+
+                    $fields[ $field[ 'name' ] ] = $field;
+                }
+            }
+
             $weight = 0;
 
             foreach ( $pod[ 'fields' ] as $field ) {
-                if ( !is_array( $field ) )
+                if ( !is_array( $field ) || !isset( $field[ 'name' ] ) || !isset( $fields[ $field[ 'name'] ] ) )
                     continue;
 
-                $field_name = $field[ 'name' ];
+
+                $field = array_merge( $field, $fields[ $field[ 'name' ] ] );
 
                 $field[ 'pod' ] = $pod;
-                $field[ 'weight' ] = $weight;
+
+                if ( !isset( $field[ 'weight' ] ) ) {
+                    $field[ 'weight' ] = $weight;
+
+                    $weight ++;
+                }
 
                 $field = $this->save_field( $field, $field_table_operation );
 
                 if ( !empty( $field ) && 0 < $field )
                     $saved[ $field ] = true;
                 else
-                    return pods_error( sprintf( __( 'Cannot save the %s field', 'pods' ), $field_name ), $this );
-
-                $weight++;
+                    return pods_error( sprintf( __( 'Cannot save the %s field', 'pods' ), $field[ 'name' ] ), $this );
             }
 
             foreach ( $old_fields as $field ) {
@@ -1167,6 +1192,8 @@ class PodsAPI {
             // Clean up special drop-down in field editor and save out pick_val
             if ( defined( 'DOING_AJAX' ) ) {
                 $field[ 'pick_val' ] = '';
+
+                $field[ 'pick_object' ] = pods_var( 'pick_object', $field, '', null, true );
 
                 if ( 0 === strpos( 'pod-', $field[ 'pick_object' ] ) ) {
                     $field[ 'pick_val' ] = pods_str_replace( 'pod-', '', $field[ 'pick_object' ], 1 );

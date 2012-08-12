@@ -219,6 +219,19 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
             </h2>
         </div>
 
+        <?php
+            if ( isset( $_GET[ 'do' ] ) ) {
+                $action = __( 'saved', 'pods' );
+
+                if ( 'create' == pods_var( 'do', 'get', 'save' ) )
+                    $action = __( 'created', 'pods' );
+
+                $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+
+                echo $obj->message( $message );
+            }
+        ?>
+
         <div id="poststuff">
             <img src="<?php echo PODS_URL; ?>/ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
             <!-- /inner-sidebar -->
@@ -904,4 +917,10 @@ foreach ($field_settings['pick_object'] as $object => $object_label) {
         $( document ).Pods( 'flexible', $( 'tbody.pods-manage-list tr.flexible-row' ) );
         $( document ).Pods( 'confirm' );
     } );
+
+    var pods_admin_submit_callback = function ( id ) {
+        var thank_you = '<?php echo addslashes( pods_var_update( array( 'do' => 'save' ) ) ); ?>';
+
+        document.location = thank_you.replace( 'X_ID_X', id );
+    }
 </script>

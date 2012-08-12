@@ -56,6 +56,9 @@
 
                 var valid_form = true;
 
+                var field_id = 0,
+                    field_index = 0;
+
                 $submittable.find( '.pods-submittable-fields' ).find( 'input, select, textarea' ).each( function () {
                     var $el = $( this );
                     var val = $el.val();
@@ -85,20 +88,43 @@
                         field_name = $el.prop( 'name' );
 
                         if ( 0 == field_name.indexOf( 'field_data' ) ) {
-                            var field_array = field_name.match( /\[(\w*)\]/gi ),
-                                field_id = 0;
+                            var field_array = field_name.match( /\[(\w*|)\]/gi ),
+                                field_name = '';
 
                             for ( var i in field_array ) {
                                 the_field = field_array[ i ].replace( '[', '' ).replace( ']', '' );
 
                                 if ( 0 == i ) {
-                                    field_id = the_field;
+                                    if ( field_index != the_field )
+                                        field_id++;
+
+                                    field_index = the_field;
 
                                     if ( 'undefined' == typeof field_data[ field_id ] )
                                         field_data[ field_id ] = {};
                                 }
-                                else
-                                    field_data[ field_id ][ the_field ] = val;
+                                else if ( 1 == i ) {
+                                    field_name = the_field;
+
+                                    if ( 2 == field_array.length )
+                                        field_data[ field_id ][ field_name ] = val;
+                                }
+                                else if ( 2 == i ) {
+                                    the_field = parseInt( the_field );
+
+                                    if ( 'NaN' == the_field )
+                                        field_data[ field_id ][ field_name ] = val;
+                                    else {
+                                        if ( 'undefined' == typeof field_data[ field_id ][ field_name ] )
+                                            field_data[ field_id ][ field_name ] = {};
+
+                                        while ( 'undefined' != typeof( field_data[ field_id ][ field_name ][ the_field ] ) ) {
+                                            the_field++;
+                                        }
+
+                                        field_data[ field_id ][ field_name ][ the_field ] = val;
+                                    }
+                                }
                             }
                         }
                         else

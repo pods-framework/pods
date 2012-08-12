@@ -74,7 +74,7 @@ class PodsField_File extends PodsField {
             'file_limit' => array(
                 'label' => __( 'File Limit', 'pods' ),
                 'depends-on' => array( 'file_format_type' => 'multi' ),
-                'default' => 5,
+                'default' => 0,
                 'type' => 'number'
             ),
             'file_restrict_filesize' => array(

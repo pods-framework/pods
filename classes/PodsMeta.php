@@ -325,7 +325,7 @@ class PodsMeta {
                 $value = '';
 
                 if ( !empty( $pod ) )
-                    $value = $pod->field( $field[ 'name' ] );
+                    $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
         ?>
             <tr class="form-field">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
@@ -417,7 +417,7 @@ class PodsMeta {
                 $value = '';
 
                 if ( !empty( $pod ) )
-                    $value = $pod->field( $field[ 'name' ] );
+                    $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
 
                 $form_fields[ 'pods_meta_' . $field[ 'name' ] ] = array(
                     'label' => $field[ 'label' ],
@@ -491,7 +491,7 @@ class PodsMeta {
                 $value = '';
 
                 if ( !empty( $pod ) )
-                    $value = $pod->field( $field[ 'name' ] );
+                    $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
 
                 if ( !is_object( $tag ) ) {
 ?>
@@ -585,7 +585,7 @@ class PodsMeta {
                     $value = '';
 
                     if ( !empty( $pod ) )
-                        $value = $pod->field( $field[ 'name' ] );
+                        $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
             ?>
                 <tr class="form-field">
                     <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
@@ -653,7 +653,7 @@ class PodsMeta {
                 $value = '';
 
                 if ( !empty( $pod ) )
-                    $value = $pod->field( $field[ 'name' ] );
+                    $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
 ?>
     <p class="comment-form-author comment-form-pods-meta-<?php echo $field[ 'name' ]; ?>">
         <?php
@@ -686,7 +686,7 @@ class PodsMeta {
                 $value = '';
 
                 if ( !empty( $pod ) )
-                    $value = $pod->field( $field[ 'name' ] );
+                    $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
 
                 ob_start();
 ?>
@@ -729,7 +729,7 @@ class PodsMeta {
                 $value = '';
 
                 if ( !empty( $pod ) )
-                    $value = $pod->field( $field[ 'name' ] );
+                    $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
         ?>
             <tr class="form-field">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>

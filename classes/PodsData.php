@@ -791,19 +791,26 @@ class PodsData {
      * @param string $table
      * @param string $fields
      * @param boolean $if_not_exists
+     *
      * @since 2.0.0
      */
-    public static function table_create ($table, $fields, $if_not_exists = false) {
+    public static function table_create ( $table, $fields, $if_not_exists = false ) {
         global $wpdb;
+
         $sql = "CREATE TABLE";
-        if (true === $if_not_exists)
+
+        if ( true === $if_not_exists )
             $sql .= " IF NOT EXISTS";
+
         $sql .= " `{$wpdb->prefix}" . self::$prefix . "{$table}` ({$fields})";
-        if (!empty($wpdb->charset))
+
+        if ( !empty( $wpdb->charset ) )
             $sql .= " DEFAULT CHARACTER SET {$wpdb->charset}";
-        if (!empty($wpdb->collate))
+
+        if ( !empty( $wpdb->collate ) )
             $sql .= " COLLATE {$wpdb->collate}";
-        return self::query($sql);
+
+        return self::query( $sql );
     }
 
     /**
@@ -811,36 +818,45 @@ class PodsData {
      *
      * @param string $table
      * @param string $changes
+     *
      * @since 2.0.0
      */
-    public static function table_alter ($table, $changes) {
+    public static function table_alter ( $table, $changes ) {
         global $wpdb;
+
         $sql = "ALTER TABLE `{$wpdb->prefix}" . self::$prefix . "{$table}` {$changes}";
-        return self::query($sql);
+
+        return self::query( $sql );
     }
 
     /**
      * Truncate a Table
      *
      * @param string $table
+     *
      * @since 2.0.0
      */
-    public static function table_truncate ($table) {
+    public static function table_truncate ( $table ) {
         global $wpdb;
+
         $sql = "TRUNCATE TABLE `{$wpdb->prefix}" . self::$prefix . "{$table}`";
-        return self::query($sql);
+
+        return self::query( $sql );
     }
 
     /**
      * Drop a Table
      *
      * @param string $table
+     *
      * @since 2.0.0
      */
-    public static function table_drop ($table) {
+    public static function table_drop ( $table ) {
         global $wpdb;
+
         $sql = "DROP TABLE `{$wpdb->prefix}" . self::$prefix . "{$table}`";
-        return self::query($sql);
+
+        return self::query( $sql );
     }
 
     /**

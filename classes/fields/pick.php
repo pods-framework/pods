@@ -175,6 +175,8 @@ class PodsField_Pick extends PodsField {
 
         $options[ 'grouped' ] = 1;
 
+        $options[ 'table_info' ] = array();
+
         $custom = pods_var( 'pick_custom', $options, false );
 
         if ( 'custom-simple' == pods_var( 'pick_object', $options ) && !empty( $custom ) ) {
@@ -202,59 +204,27 @@ class PodsField_Pick extends PodsField {
         elseif ( '' != pods_var( 'pick_object', $options, '' ) && array() == pods_var( 'data', $options, array() ) ) {
             $options[ 'data' ] = array( '' => __( '-- Select One --', 'pods' ) );
 
-            $table = $field_id = $field_index = false;
-
-            switch ( pods_var( 'pick_object', $options ) ) {
-                case 'pod':
-                    $table = $wpdb->prefix . 'pods_tbl_' . pods_var( 'pick_val', $options );
-                    $field_id = 'id';
-                    $field_index = 'name';
-                    break;
-                case 'post_type':
-                case 'media':
-                    $table = $wpdb->posts;
-                    $field_id = 'ID';
-                    $field_index = 'post_title';
-                    break;
-                case 'taxonomy':
-                    $table = $wpdb->taxonomy;
-                    $field_id = 'term_id';
-                    $field_index = 'name';
-                    break;
-                case 'user':
-                    $table = $wpdb->users;
-                    $field_id = 'ID';
-                    $field_index = 'display_name';
-                    break;
-                case 'comment':
-                    $table = $wpdb->comments;
-                    $field_id = 'comment_ID';
-                    $field_index = 'comment_date';
-                    break;
-                case 'table':
-                    $table = pods_var( 'pick_val', $options );
-                    $field_id = 'id';
-                    $field_index = 'name';
-                    break;
-            }
+            $options[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $options ), pods_var( 'pick_val', $options ) );
 
             $data = pods_data();
-            $data->table = $table;
-            $data->field_id = $field_id;
-            $data->field_index = $field_index;
+            $data->table = $options[ 'table_info' ][ 'table' ];
+            $data->field_id = $options[ 'table_info' ][ 'field_id' ];
+            $data->field_index = $options[ 'table_info' ][ 'field_index' ];
 
             $results = $data->select( array(
-                                          'select' => "`{$data->field_id}`, `{$data->field_index}`",
-                                          'table' => $data->table,
-                                          'identifier' => $data->field_id,
-                                          'index' => $data->field_index,
-                                          'where' => pods_var( 'pick_where', $options, null, null, true ),
-                                          'orderby' => pods_var( 'pick_where', $options, null, null, true ),
-                                          'groupby' => pods_var( 'pick_groupby', $options, null, null, true )
-                                      ) );
+                'select' => "`{$data->field_id}`, `{$data->field_index}`",
+                'table' => $data->table,
+                'identifier' => $data->field_id,
+                'index' => $data->field_index,
+                'where' => pods_var( 'pick_where', $options, null, null, true ),
+                'orderby' => pods_var( 'pick_orderby', $options, null, null, true ),
+                'groupby' => pods_var( 'pick_groupby', $options, null, null, true )
+            ) );
 
             foreach ( $results as $result ) {
-                $options[ 'data' ][ $result->{$field_id} ] = $result->{$field_index};
+                $result = get_object_vars( $result );
+
+                $options[ 'data' ][ $result[ $data->field_id ] ] = $result[ $data->field_index ];
             }
         }
 
@@ -358,10 +328,10 @@ class PodsField_Pick extends PodsField {
     /**
      * Perform actions before deleting from the DB
      *
-     * @param string $name
-     * @param string $pod
      * @param int $id
-     * @param object $api
+     * @param string $name
+     * @param array $options
+     * @param object $pod
      *
      * @since 2.0.0
      */
@@ -375,7 +345,7 @@ class PodsField_Pick extends PodsField {
      * @param int $id
      * @param string $name
      * @param array $options
-     * @param array $pod
+     * @param object $pod
      *
      * @since 2.0.0
      */

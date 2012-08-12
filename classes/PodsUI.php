@@ -150,6 +150,8 @@ class PodsUI
     public $actions_hidden = array(); // hide actions to not show them but allow them
     public $actions_custom = array(); // overwrite existing actions or add your own
 
+    public $save = false; // Allow custom save handling for tables that aren't Pod-based
+
     /**
      * Generate UI for Data Management
      *
@@ -854,7 +856,7 @@ class PodsUI
         $this->ui_page = array($this->action);
         if ('add' == $this->action && !in_array($this->action, $this->actions_disabled)) {
             $this->ui_page[] = 'form';
-            if ('create' == $this->do && !in_array('save', $this->actions_disabled) && !in_array($this->do, $this->actions_disabled) && !empty($_POST)) {
+            if ('create' == $this->do && $this->save && !in_array($this->do, $this->actions_disabled) && !empty($_POST)) {
                 $this->ui_page[] = $this->do;
                 $this->save(true);
                 $this->manage();
@@ -879,12 +881,12 @@ class PodsUI
             }
             $this->manage(true);
         }
-        elseif ('save' == $this->do && !in_array('save', $this->actions_disabled) && !in_array($this->do, $this->actions_disabled) && !empty($_POST)) {
+        elseif ('save' == $this->do && $this->save && !in_array($this->do, $this->actions_disabled) && !empty($_POST)) {
             $this->ui_page[] = $this->do;
             $this->save();
             $this->manage();
         }
-        elseif ('create' == $this->do && !in_array('save', $this->actions_disabled) && !in_array($this->do, $this->actions_disabled) && !empty($_POST)) {
+        elseif ('create' == $this->do && $this->save && !in_array($this->do, $this->actions_disabled) && !empty($_POST)) {
             $this->ui_page[] = $this->do;
             $this->save(true);
             $this->manage();
@@ -1044,7 +1046,7 @@ class PodsUI
         $field_sql = array();
         $values = array();
         $data = array();
-        foreach ($this->form_fields as $field => $attributes) {
+        foreach ( $this->fields[ 'form' ] as $field => $attributes ) {
             $vartype = '%s';
             if ('bool' == $attributes['type'])
                 $selected = (1 == pods_var($field, 'post', 0)) ? 1 : 0;

@@ -2629,83 +2629,7 @@ class PodsAPI {
         unset( $pod[ 'options' ][ 'object' ] );
         unset( $pod[ 'options' ][ 'alias' ] );
 
-        if ( 'pod' == $pod[ 'type' ] ) {
-            $pod[ 'table' ] = $wpdb->prefix . 'pods_tbl_' . $pod[ 'name' ];
-            $pod[ 'field_id' ] = 'id';
-            $pod[ 'field_index' ] = 'name';
-
-            $pod[ 'orderby' ] = '`t`.`' . $pod[ 'field_index' ] . '`, `t`.`' . $pod[ 'field_id' ] . '` DESC';
-        }
-        elseif ( 'post_type' == $pod[ 'type' ] || 'media' == $pod[ 'type' ] ) {
-            $pod[ 'table' ] = $wpdb->posts;
-            $pod[ 'field_id' ] = 'ID';
-            $pod[ 'field_index' ] = 'post_title';
-
-            $object = $pod[ 'name' ];
-
-            if ( !empty( $pod[ 'object' ] ) )
-                $object = $pod[ 'object' ];
-
-            $pod[ 'where' ] = array(
-                'post_status' => '`t`.`post_status` = "publish"',
-                'post_type' => '`t`.`post_type` = "' . $object . '"'
-            );
-
-            $pod[ 'orderby' ] = '`t`.`menu_order`, `t`.`post_title`, `t`.`post_date` DESC';
-        }
-        elseif ( 'taxonomy' == $pod[ 'type' ] ) {
-            $pod[ 'table' ] = $wpdb->terms;
-            $pod[ 'join' ] = "LEFT JOIN `{$wpdb->taxonomy}` AS `tx` ON `tx`.`term_id` = `t`.`term_id`";
-            $pod[ 'field_id' ] = 'term_id';
-            $pod[ 'field_index' ] = 'name';
-
-            $object = $pod[ 'name' ];
-
-            if ( !empty( $pod[ 'object' ] ) )
-                $object = $pod[ 'object' ];
-
-            $pod[ 'where' ] = array(
-                'tx.taxonomy' => '`tx`.`taxonomy` = "' . $object . '"'
-            );
-
-            $pod[ 'orderby' ] = '`t`.`name`';
-        }
-        elseif ( 'user' == $pod[ 'type' ] ) {
-            $pod[ 'table' ] = $wpdb->users;
-            $pod[ 'field_id' ] = 'ID';
-            $pod[ 'field_index' ] = 'display_name';
-
-            $pod[ 'where' ] = array(
-                'user_status' => '`t`.`user_status` = 0'
-            );
-
-            $pod[ 'orderby' ] = '`t`.`display_name`, `t`.`ID` DESC';
-        }
-        elseif ( 'comment' == $pod[ 'type' ] ) {
-            $pod[ 'table' ] = $wpdb->comments;
-            $pod[ 'field_id' ] = 'comment_ID';
-            $pod[ 'field_index' ] = 'comment_date';
-
-            $object = 'comment';
-
-            if ( !empty( $pod[ 'object' ] ) )
-                $object = $pod[ 'object' ];
-
-            $pod[ 'where' ] = array(
-                'comment_approved' => '`t`.`comment_approved` = 1',
-                'comment_type' => '`t`.`comment_type` = "' . $object . '"'
-            );
-
-            $pod[ 'orderby' ] = '`t`.`comment_date` DESC, `t`.`comment_ID` DESC';
-        }
-        elseif ( 'table' == $pod[ 'type' ] ) {
-            $object = $pod[ 'name' ];
-
-            if ( !empty( $pod[ 'object' ] ) )
-                $object = $pod[ 'object' ];
-
-            $pod[ 'table' ] = $object;
-        }
+        $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ] ) );
 
         $pod[ 'fields' ] = array();
 
@@ -3076,11 +3000,6 @@ class PodsAPI {
 
             $result = pods_query( "SELECT `ID`, `post_name`, `post_parent` FROM `@wp_posts` WHERE `post_type` = '_pods_field' AND ( {$lookup} )" );
 
-            if ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER ) {
-                pods_debug( $result );
-                pods_debug( $params->type );
-            }
-
             $fields = array();
 
             if ( !empty( $result ) ) {
@@ -3090,9 +3009,6 @@ class PodsAPI {
                         'name' => $field->post_name,
                         'pod_id' => $field->post_parent
                     ) );
-
-                    if ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER )
-                        pods_debug( $field );
 
                     if ( empty( $params->type ) || in_array( $fields[ 'type' ], $params->type ) )
                         $fields[ $field[ 'name' ] ] = $field;
@@ -3569,6 +3485,128 @@ class PodsAPI {
         $validate = $this->do_hook( 'field_validation', $validate, $value, $field, $object_fields, $fields, $pod, $params );
 
         return $validate;
+    }
+
+    /**
+     * Find items related to a parent field
+     *
+     * @param int $field_id The Field ID
+     * @param int $pod_id The Pod ID
+     * @param mixed $ids A comma-separated string (or array) of item IDs
+     *
+     * @since 2.0.0
+     */
+    function lookup_related_items ( $field_id, $pod_id, $ids ) {
+        if ( empty( $ids ) )
+            $ids = 0;
+        else {
+            if ( !is_array( $ids ) )
+                $ids = explode( ',', $ids );
+
+            foreach ( $ids as &$id ) {
+                $id = (int) $id;
+            }
+
+            $ids = implode( ', ', $ids );
+        }
+
+        $field_id = (int) $field_id;
+        $pod_id = (int) $pod_id;
+
+        $sql = "
+            SELECT `related_item_id`
+            FROM `@wp_pods_rel`
+            WHERE
+                `pod_id` = {$pod_id}
+                AND `field_id` = {$field_id}
+                AND `item_id` IN ( {$ids} )
+            ORDER BY `weight
+        ";
+
+        $items = pods_query( $sql );
+
+        if ( !empty( $items ) ) {
+            foreach ( $items as &$item ) {
+                $item = (int) $item->related_item_id;
+            }
+
+            return $items;
+        }
+
+        return false;
+    }
+
+    function get_table_info ( $object_type, $object ) {
+        global $wpdb;
+
+        $info = array(
+            'table' => $object,
+            'join' => null,
+            'field_id' => 'id',
+            'field_index' => 'name',
+            'where' => null,
+            'orderby' => null
+        );
+
+        if ( 'pod' == $object_type )
+            $info[ 'table' ] = $wpdb->prefix . 'pods_tbl_' . $object;
+        elseif ( 'post_type' == $object_type || 'media' == $object_type ) {
+            $info[ 'table' ] = $wpdb->posts;
+            $info[ 'field_id' ] = 'ID';
+            $info[ 'field_index' ] = 'post_title';
+
+            if ( 'media' == $object_type )
+                $object = 'attachment';
+
+            $info[ 'where' ] = array(
+                'post_status' => '`t`.`post_status` = "publish"',
+                'post_type' => '`t`.`post_type` = "' . $object . '"'
+            );
+
+            $info[ 'orderby' ] = '`t`.`menu_order`, `t`.`' . $info[ 'field_index' ] . '`, `t`.`post_date`';
+        }
+        elseif ( 'taxonomy' == $object_type ) {
+            $info[ 'table' ] = $wpdb->terms;
+            $info[ 'join' ] = "LEFT JOIN `{$wpdb->taxonomy}` AS `tx` ON `tx`.`term_id` = `t`.`term_id`";
+            $info[ 'field_id' ] = 'term_id';
+            $info[ 'field_index' ] = 'name';
+
+            $info[ 'where' ] = array(
+                'tx.taxonomy' => '`tx`.`taxonomy` = "' . $object . '"'
+            );
+        }
+        elseif ( 'user' == $object_type ) {
+            $info[ 'table' ] = $wpdb->users;
+            $info[ 'field_id' ] = 'ID';
+            $info[ 'field_index' ] = 'display_name';
+
+            $info[ 'where' ] = array(
+                'user_status' => '`t`.`user_status` = 0'
+            );
+        }
+        elseif ( 'comment' == $object_type ) {
+            $info[ 'table' ] = $wpdb->comments;
+            $info[ 'field_id' ] = 'comment_ID';
+            $info[ 'field_index' ] = 'comment_date';
+
+            $object = 'comment';
+
+            $info[ 'where' ] = array(
+                'comment_approved' => '`t`.`comment_approved` = 1',
+                'comment_type' => '`t`.`comment_type` = "' . $object . '"'
+            );
+
+            $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '` DESC, `t`.`' . $info[ 'field_id' ] . '`';
+        }
+        elseif ( 'table' == $object_type )
+            $info[ 'table' ] = $object;
+
+        if ( empty( $info[ 'orderby' ] ) )
+            $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '`, `t`.`' . $info[ 'field_id' ] . '`';
+
+        $info = $this->do_hook( 'get_table_info', $info, $object_type, $object );
+
+        return $info;
     }
 
     /**

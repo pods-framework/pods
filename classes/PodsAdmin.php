@@ -678,18 +678,20 @@ class PodsAdmin {
             'safe' => null,
             'access_pod_specific' => null,
             'name' => $params->method,
-            'custom_nonce' => false
+            'custom_nonce' => null
         );
 
         $method = (object) array_merge( $defaults, (array) $methods[ $params->method ] );
 
+        if ( true !== $method->custom_nonce && ( !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, 'pods-' . $params->method ) ) )
+            pods_error( __( 'Unauthorized request', 'pods' ), $this );
+
         // Cleaning up $params
         unset( $params->action );
         unset( $params->method );
-        unset( $params->_wpnonce );
 
-        if ( false === $method->custom_nonce && ( !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, 'pods-' . $params->method ) ) )
-            pods_error( __( 'Unauthorized request', 'pods' ), $this );
+        if ( true !== $method->custom_nonce )
+            unset( $params->_wpnonce );
 
         if ( true === $method->access_pod_specific ) {
             $priv_val = false;

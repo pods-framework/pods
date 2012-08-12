@@ -1796,7 +1796,9 @@ class PodsAPI {
                             $object_type = 'post';
 
                         delete_metadata( $object_type, $params->id, $field, true );
-                        update_metadata( $object_type, $params->id, $field, $values );
+
+                        if ( !empty( $values ) )
+                            update_metadata( $object_type, $params->id, $field, $values );
                     }
 
                     // File relationships
@@ -1807,6 +1809,9 @@ class PodsAPI {
                         $weight = 0;
 
                         foreach ( $values as $id ) {
+                            if ( empty( $id ) )
+                                continue;
+
                             pods_query( "INSERT INTO `@wp_pods_rel` (`pod_id`, `field_id`, `item_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d)", array(
                                 $params->pod_id,
                                 $field_id,
@@ -1863,6 +1868,9 @@ class PodsAPI {
                         $weight = 0;
 
                         foreach ( $values as $id ) {
+                            if ( empty( $id ) )
+                                continue;
+
                             if ( !empty( $related_pod_id ) && !empty( $related_field_id ) ) {
                                 if ( 'meta' == $related_pod[ 'storage' ] && !in_array( $related_pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) ) {
                                     $object_type = $related_pod[ 'type' ];
@@ -3055,18 +3063,23 @@ class PodsAPI {
             if ( !empty( $params->name ) ) {
                 $fields = implode( "', '", $params->name );
 
-                $lookup = "`post_name` IN ('{$fields}')";
+                $lookup[] = "`post_name` IN ( '{$fields}' )";
             }
 
             if ( !empty( $params->id ) ) {
                 $fields = implode( ", ", $params->id );
 
-                $lookup = "`ID` IN ({$fields})";
+                $lookup[] = "`ID` IN ( {$fields} )";
             }
 
             $lookup = implode( ' AND ', $lookup );
 
-            $result = pods_query( "SELECT `ID`, `post_name, `post_parent` FROM `@wp_posts` WHERE `post_type` = %s AND ( {$lookup} )" );
+            $result = pods_query( "SELECT `ID`, `post_name`, `post_parent` FROM `@wp_posts` WHERE `post_type` = '_pods_field' AND ( {$lookup} )" );
+
+            if ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER ) {
+                pods_debug( $result );
+                pods_debug( $params->type );
+            }
 
             $fields = array();
 
@@ -3077,6 +3090,9 @@ class PodsAPI {
                         'name' => $field->post_name,
                         'pod_id' => $field->post_parent
                     ) );
+
+                    if ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER )
+                        pods_debug( $field );
 
                     if ( empty( $params->type ) || in_array( $fields[ 'type' ], $params->type ) )
                         $fields[ $field[ 'name' ] ] = $field;

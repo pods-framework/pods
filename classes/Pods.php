@@ -267,9 +267,6 @@ class Pods {
                 pods_no_conflict_off( $this->pod_data[ 'type' ] );
             }
             else {
-                // Not ready yet
-                return $value;
-
                 // Dot-traversal
                 $pod = $this->pod;
                 $tbl_row_ids = $this->id();
@@ -277,14 +274,16 @@ class Pods {
 
                 $lookup = $traverse;
 
-                if ( !empty( $lookup ) )
-                    unset( $lookup[ 0 ] );
+                //if ( 1 < count( $lookup ) )
+                    //unset( $lookup[ 0 ] );
 
                 // Get fields matching traversal names
                 $fields = $this->api->load_fields( array(
                     'name' => $lookup,
                     'type' => $tableless_field_types
                 ) );
+
+                pods_debug( $fields );
 
                 if ( !empty( $fields ) ) {
                     foreach ( $fields as $row ) {

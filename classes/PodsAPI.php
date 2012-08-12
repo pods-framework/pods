@@ -813,7 +813,7 @@ class PodsAPI {
         $field_table_operation = true;
 
         // Add new pod
-        if ( empty( $params->id ) || empty( $pod ) ) {
+        if ( empty( $params->id ) ) {
             $params->name = pods_clean_name( $params->name );
 
             if ( strlen( $params->name ) < 1 )
@@ -1013,9 +1013,8 @@ class PodsAPI {
             $weight = 0;
 
             foreach ( $pod[ 'fields' ] as $field ) {
-                if ( !is_array( $field ) || !isset( $field[ 'name' ] ) || !isset( $fields[ $field[ 'name'] ] ) )
+                if ( !empty( $params->id ) && ( !is_array( $field ) || !isset( $field[ 'name' ] ) || !isset( $fields[ $field[ 'name'] ] ) ) )
                     continue;
-
 
                 $field = array_merge( $field, $fields[ $field[ 'name' ] ] );
 

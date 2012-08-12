@@ -220,8 +220,6 @@ class PodsField_Text extends PodsField {
             $field_type = 'phone';
         elseif ( 'password' == pods_var( 'text_format_type', $options ) )
             $field_type = 'password';
-        elseif ( 'color' == pods_var( 'text_format_type', $options ) )
-            $field_type = 'color';
 
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }

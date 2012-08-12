@@ -3415,6 +3415,7 @@ class PodsAPI {
     public function get_field_types () {
         $types = array(
             'boolean',
+            'color',
             'date',
             'file',
             'number',

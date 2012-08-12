@@ -70,7 +70,7 @@ class PodsComponents {
             if ( !empty( $component_data[ 'Hide' ] ) )
                 continue;
 
-            if ( $component_data[ 'DeveloperMode' ] && ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) )
+            if ( pods_var( 'DeveloperMode', $component_data, false ) && ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) )
                 continue;
 
             if ( !isset( $component_data[ 'object' ] ) || !method_exists( $component_data[ 'object' ], 'admin' ) )

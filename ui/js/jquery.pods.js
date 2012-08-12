@@ -126,9 +126,9 @@
                     success : function ( d ) {
                         if ( -1 == d.indexOf( '<e>' ) && -1 != d ) {
                             if ( 'undefined' != typeof pods_admin_submit_callback )
-                                pods_admin_submit_callback( d );
+                                pods_admin_submit_callback( parseInt( d ) );
                             else if ( 'undefined' != typeof $submittable.data( 'location' ) )
-                                document.location.href = $submittable.data( 'location' );
+                                document.location.href = $submittable.data( 'location' ).replace( 'X_ID_X', parseInt( d ) );
                             else
                                 document.location.reload( true );
                         }
@@ -189,9 +189,9 @@
                     success : function ( d ) {
                         if ( -1 == d.indexOf( '<e>' ) && -1 != d ) {
                             if ( 'undefined' != typeof pods_admin_submit_callback )
-                                pods_admin_submit_callback( d );
+                                pods_admin_submit_callback( parseInt( d ) );
                             else if ( 'undefined' != typeof $submitbutton.data( 'location' ) )
-                                document.location.href = $submitbutton.data( 'location' );
+                                document.location.href = $submitbutton.data( 'location' ).replace( 'X_ID_X', parseInt( d ) );
                             else
                                 document.location.reload( true );
                         }

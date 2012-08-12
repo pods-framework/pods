@@ -984,7 +984,7 @@ class PodsUI
         $vars = array(
             'action' . $this->num => $this->action_after[ 'add' ],
             'do' . $this->num => 'create',
-            'id' . $this->num => ''
+            'id' . $this->num => 'X_ID_X'
         );
 
         if ( false === $create ) {
@@ -1008,7 +1008,7 @@ class PodsUI
                 $vars = array(
                     'action' . $this->num => $this->action_after[ 'duplicate' ],
                     'do' . $this->num => 'create',
-                    'id' . $this->num => ''
+                    'id' . $this->num => 'X_ID_X'
                 );
             }
         }

@@ -4254,8 +4254,11 @@ class PodsAPI {
 
         $id = $this->save_pod_item( $params );
 
-        if ( 0 < $id && !empty( $thank_you ) )
-            echo '<script type="text/javascript">document.location = "' . esc_js( $thank_you ) . '";</script>';
+        if ( 0 < $id && !empty( $thank_you ) ) {
+            $thank_you = str_replace( 'X_ID_X', $id, $thank_you );
+
+            die( '<script type="text/javascript">document.location = \'' . addslashes( $thank_you ) . '\';</script>' );
+        }
 
         return $id;
     }

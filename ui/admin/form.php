@@ -144,6 +144,8 @@
     } );
 
     pods_admin_submit_callback = function ( id ) {
-        document.location = '<?php echo esc_js( $thank_you ); ?>';
+        var thank_you = '<?php echo addslashes( $thank_you ); ?>';
+
+        document.location = thank_you.replace( 'X_ID_X', id );
     }
 </script>

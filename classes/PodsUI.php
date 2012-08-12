@@ -1040,9 +1040,9 @@ class PodsUI
         if (isset($this->actions_custom['save']) && is_callable($this->actions_custom['save']))
             return call_user_func($this->actions_custom['save'], $insert, $this);
         global $wpdb;
-        $action = 'saved';
+        $action = __( 'saved', 'pods' );
         if (true === $insert)
-            $action = 'created';
+            $action = __( 'created', 'pods' );
         $field_sql = array();
         $values = array();
         $data = array();

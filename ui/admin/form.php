@@ -5,22 +5,48 @@
     $nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . session_id() . '_' . $pod->id() . '_' . $uri_hash . '_' . $field_hash );
 
     if ( isset( $_POST[ '_pods_nonce' ] ) ) {
+        $action = __( 'saved', 'pods' );
+
+        if ( 'create' == pods_var( 'do', 'post', 'save' ) )
+            $action = __( 'created', 'pods' );
+
         try {
             $params = stripslashes_deep( (array) $_POST );
             $id = $pod->api->process_form( $params, $pod, $fields, $thank_you );
+
+            $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+            $error = sprintf( __( '<strong>Error:</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+
+            if ( 0 < $id )
+                echo $obj->message( $message );
+            else
+                echo $obj->error( $error );
         }
         catch ( Exception $e ) {
-            echo '<div class="pods-message pods-message-error">' . $e->getMessage() . '</div>';
+            echo $obj->error( $e->getMessage() );
         }
     }
+    elseif ( isset( $_GET[ 'do' ] ) ) {
+        $action = __( 'saved', 'pods' );
 
-    $no_js = pods_var_update( array( '_p_submitted' => 1 ) );
+        if ( 'create' == pods_var( 'do', 'get', 'save' ) )
+            $action = __( 'created', 'pods' );
+
+        $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+        $error = sprintf( __( '<strong>Error:</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+
+        if ( 0 < $id )
+            echo $obj->message( $message );
+        else
+            echo $obj->error( $error );
+    }
 ?>
 
 <form action="" method="post" class="pods-submittable pods-form pods-form-pod-<?php echo $pod->pod; ?>">
     <div class="pods-submittable-fields">
         <?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
         <?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>
+        <?php echo PodsForm::field( 'do', ( 0 < $pod->id() ? 'save' : 'create' ), 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_id', $pod->id(), 'hidden' ); ?>

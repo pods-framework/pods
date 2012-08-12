@@ -6,6 +6,8 @@
  *
  * Version: 1.0
  *
+ * Developer Mode: on
+ *
  * Plugin Dependency: Gravity Forms|gravityforms/gravityforms.php|http://www.gravityforms.com/
  *
  * @package pods

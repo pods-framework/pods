@@ -70,6 +70,9 @@ class PodsComponents {
             if ( !empty( $component_data[ 'Hide' ] ) )
                 continue;
 
+            if ( $component_data[ 'DeveloperMode' ] && ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) )
+                continue;
+
             if ( !isset( $component_data[ 'object' ] ) || !method_exists( $component_data[ 'object' ], 'admin' ) )
                 continue;
 
@@ -93,6 +96,10 @@ class PodsComponents {
         foreach ( (array) $this->settings[ 'components' ] as $component => $options ) {
             if ( !isset( $this->components[ $component ] ) || 0 == $options )
                 continue;
+
+            if ( 'on' == $this->components[ $component ][ 'DeveloperMode' ] )
+                continue;
+
 
             if ( !empty( $this->components[ $component ][ 'PluginDependency' ] ) ) {
                 $dependency = explode( '|', $this->components[ $component ][ 'PluginDependency' ] );
@@ -169,7 +176,8 @@ class PodsComponents {
                 'Author' => 'Author',
                 'Class' => 'Class',
                 'Hide' => 'Hide',
-                'PluginDependency' => 'Plugin Dependency'
+                'PluginDependency' => 'Plugin Dependency',
+                'DeveloperMode' => 'Developer Mode'
             );
 
             $components = array();
@@ -191,6 +199,11 @@ class PodsComponents {
 
                 if ( empty( $component_data[ 'ID' ] ) )
                     $component_data[ 'ID' ] = sanitize_title( $component_data[ 'Name' ] );
+
+                if ( 'on' == $component_data[ 'DeveloperMode' ] || 1 == $component_data[ 'DeveloperMode' ] )
+                    $component_data[ 'DeveloperMode' ] = true;
+                else
+                    $component_data[ 'DeveloperMode' ] = false;
 
                 $component_data[ 'File' ] = $component_file;
 

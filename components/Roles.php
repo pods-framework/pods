@@ -8,6 +8,8 @@
  *
  * Version: 1.0
  *
+ * Developer Mode: on
+ *
  * @package pods
  * @subpackage roles
  */

@@ -416,7 +416,9 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
  * @return bool
  */
 function pods_cast ( $var, $default = null ) {
-    return settype( $var, gettype( $default ) );
+    settype( $var, gettype( $default ) );
+
+    return $var;
 }
 
 /**

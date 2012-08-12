@@ -1766,7 +1766,10 @@ class PodsAPI {
 
                     $sql = $wpdb->prepare( "REPLACE INTO `@wp_pods_tbl_{$params->pod}` ({$table_fields}) VALUES ({$table_formats})", $table_values );
 
-                    $params->id = pods_query( $sql, 'Cannot add/save table row' );
+                    $id = pods_query( $sql, 'Cannot add/save table row' );
+
+                    if ( empty( $params->id ) )
+                        $params->id = $id;
                 }
             }
         }
@@ -4189,48 +4192,50 @@ class PodsAPI {
     }
 
     /**
+     * Process a Pod-based form
+     *
+     * @param mixed $params
      * @param object $obj Pod object
      * @param array $fields Fields being submitted in form ( key => settings )
      * @param string $thank_you URL to send to upon success
      *
      * @return mixed
      */
-    public function process_form ( $obj = null, $fields = null, $thank_you = null ) {
+    public function process_form ( $params, $obj = null, $fields = null, $thank_you = null ) {
         $this->display_errors = false;
 
-        $nonce = $pod = $id = $uri = $form = null;
+        $form = null;
 
-        if ( isset( $_POST[ '_pods_nonce' ] ) )
-            $nonce = $_POST[ '_pods_nonce' ];
+        $nonce = pods_var( '_pods_nonce', $params );
+        $pod = pods_var( '_pods_pod', $params );
+        $id = pods_var( '_pods_id', $params );
+        $uri = pods_var( '_pods_uri', $params );
+        $form = pods_var( '_pods_form', $params );
 
         if ( is_object( $obj ) ) {
             $pod = $obj->pod;
             $id = $obj->id();
         }
-        else {
-            if ( isset( $_POST[ '_pods_pod' ] ) )
-                $pod = $_POST[ '_pods_pod' ];
-
-            if ( isset( $_POST[ '_pods_id' ] ) )
-                $id = $_POST[ '_pods_id' ];
-        }
-
-        if ( isset( $_POST[ '_pods_uri' ] ) )
-            $uri = $_POST[ '_pods_uri' ];
 
         if ( !empty( $fields ) ) {
             $fields = array_keys( $fields );
             $form = implode( ',', $fields );
         }
-        elseif ( isset( $_POST[ '_pods_form' ] ) ) {
-            $form = $_POST[ '_pods_form' ];
+        else
             $fields = explode( ',', $form );
-        }
 
         if ( empty( $nonce) || empty( $pod ) || empty( $uri ) || empty( $fields ) )
             return pods_error( __( 'Invalid submission', 'pods' ), $this );
 
-        $action = 'pods_form_' . $pod . '_' . session_id() . '_' . $id . '_' . $uri . '_' . wp_hash( $form );
+        $uid = @session_id();
+
+        if ( is_user_logged_in() )
+            $uid = 'user_' . get_current_user_id();
+
+        $action = 'pods_form_' . $pod . '_' . $uid . '_' . $id . '_' . $uri . '_' . wp_hash( $form );
+
+        if ( empty( $uid ) )
+            return pods_error( __( 'Access denied for your session, please refresh and try again.', 'pods' ), $this );
 
         if ( wp_verify_nonce( $nonce, $action ) )
             return pods_error( __( 'Access denied, please refresh and try again.', 'pods' ), $this );
@@ -4238,10 +4243,7 @@ class PodsAPI {
         $data = array();
 
         foreach ( $fields as $field ) {
-            $data[ $field ] = '';
-
-            if ( isset( $_POST[ $field ] ) )
-                $data[ $field ] = $_POST[ $field ];
+            $data[ $field ] = pods_var( 'pods_field_' . $field, $params, '' );
         }
 
         $params = array(
@@ -4253,7 +4255,7 @@ class PodsAPI {
         $id = $this->save_pod_item( $params );
 
         if ( 0 < $id && !empty( $thank_you ) )
-            echo '<script type="text/javascript">document.location = "' . esc_url( $thank_you ) . '";</script>';
+            echo '<script type="text/javascript">document.location = "' . esc_js( $thank_you ) . '";</script>';
 
         return $id;
     }

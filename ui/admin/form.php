@@ -6,7 +6,8 @@
 
     if ( isset( $_POST[ '_pods_nonce' ] ) ) {
         try {
-            $id = $pod->api->process_form( $pod, $fields, $thank_you );
+            $params = stripslashes_deep( (array) $_POST );
+            $id = $pod->api->process_form( $params, $pod, $fields, $thank_you );
         }
         catch ( Exception $e ) {
             echo '<div class="pods-message pods-message-error">' . $e->getMessage() . '</div>';

@@ -664,7 +664,7 @@ class PodsAdmin {
             'security_settings' => array( 'priv' => 'manage_settings' ),
             'select2_ajax' => array('priv' => 'manage_pds', 'format' => 'json'),
             'upgrade' => array( 'priv' => 'manage_pods' ),
-            'process_form' => array()
+            'process_form' => array( 'custom_nonce' => true )
         );
 
         $methods = apply_filters( 'pods_admin_ajax_methods', $methods, $this );
@@ -672,15 +672,13 @@ class PodsAdmin {
         if ( !isset( $params->method ) || !isset( $methods[ $params->method ] ) )
             pods_error( 'Invalid AJAX request', $this );
 
-        if ( !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, 'pods-' . $params->method ) )
-            pods_error( 'Unauthorized request', $this );
-
         $defaults = array(
             'priv' => null,
             'format' => null,
             'safe' => null,
             'access_pod_specific' => null,
-            'name' => $params->method
+            'name' => $params->method,
+            'custom_nonce' => false
         );
 
         $method = (object) array_merge( $defaults, (array) $methods[ $params->method ] );
@@ -690,19 +688,22 @@ class PodsAdmin {
         unset( $params->method );
         unset( $params->_wpnonce );
 
+        if ( false === $method->custom_nonce && ( !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, 'pods-' . $params->method ) ) )
+            pods_error( __( 'Unauthorized request', 'pods' ), $this );
+
         if ( true === $method->access_pod_specific ) {
             $priv_val = false;
             if ( isset( $params->pod ) )
                 $priv_val = 'pod_' . $params->pod;
             if ( false === $priv_val || ( !pods_access( $priv_val ) && !pods_access( 'manage_content' ) ) )
-                pods_error( 'Access denied', $this );
+                pods_error( __( 'Access denied', 'pods' ), $this );
         }
 
         // Check permissions (convert to array to support multiple)
         if ( !empty( $method->priv ) ) {
             foreach ( (array) $method->priv as $priv_val ) {
                 if ( !pods_access( $priv_val ) )
-                    pods_error( 'Access denied', $this );
+                    pods_error( __( 'Access denied', 'pods' ), $this );
             }
         }
 
@@ -738,9 +739,6 @@ class PodsAdmin {
 
             $params->data = $columns;
         }
-        elseif ( 'process_form' == $method->name ) {
-            $this->api->process_form();
-        }
         elseif ( 'save_pod' == $method->name ) {
             if ( isset( $params->field_data ) && !is_array( $params->field_data ) ) {
                 $params->field_data = stripslashes( $params->field_data );
@@ -750,7 +748,9 @@ class PodsAdmin {
 
         $params = apply_filters( 'pods_api_' . $method->name, $params, $method );
 
-        if ( 'upgrade' == $method->name ) {
+        if ( 'process_form' == $method->name )
+            $output = $this->api->process_form( $params );
+        elseif ( 'upgrade' == $method->name ) {
             require_once( PODS_DIR . 'sql/PodsUpgrade.php' );
 
             $upgrade = new PodsUpgrade_2_0();
@@ -850,7 +850,7 @@ class PodsAdmin {
             $upload_disabled = true;
 
         if ( true === $upload_disabled || !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, 'pods-' . $params->method . '-' . $params->id ) )
-            pods_error( 'Unauthorized request', $this );
+            pods_error( __( 'Unauthorized request', 'pods' ), $this );
 
         $method = $params->method;
 

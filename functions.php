@@ -416,7 +416,10 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
  * @return bool
  */
 function pods_cast ( $var, $default = null ) {
-    settype( $var, gettype( $default ) );
+    if ( is_object( $var ) && is_array( $default ) )
+        $var = get_object_vars( $var );
+    else
+        settype( $var, gettype( $default ) );
 
     return $var;
 }

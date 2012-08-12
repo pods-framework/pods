@@ -971,69 +971,71 @@ class PodsData {
     public static function query ($sql, $error = 'Database Error', $results_error = null, $no_results_error = null) {
         global $wpdb;
 
-        if ($wpdb->show_errors)
+        if ( $wpdb->show_errors )
             self::$display_errors = true;
 
         $display_errors = self::$display_errors;
 
-        if (is_object($error)) {
-            if (isset($error->display_errors) && false === $error->display_errors)
+        if ( is_object( $error ) ) {
+            if ( isset( $error->display_errors ) && false === $error->display_errors )
                 $display_errors = false;
 
             $error = 'Database Error';
         }
-        elseif (is_bool($error)) {
+        elseif ( is_bool( $error ) ) {
             $display_errors = $error;
 
-            if (false !== $error)
+            if ( false !== $error )
                 $error = 'Database Error';
         }
 
-        $params = (object) array('sql' => $sql,
-                                 'error' => $error,
-                                 'results_error' => $results_error,
-                                 'no_results_error' => $no_results_error,
-                                 'display_errors' => $display_errors);
+        $params = (object) array(
+            'sql' => $sql,
+            'error' => $error,
+            'results_error' => $results_error,
+            'no_results_error' => $no_results_error,
+            'display_errors' => $display_errors
+        );
 
         // Handle Preparations of Values (sprintf format)
-        if (is_array($sql)) {
-            if (isset($sql[0]) && 1 < count($sql)) {
-                if (2 == count($sql)) {
-                    if (!is_array($sql[1]))
-                        $sql[1] = array($sql[1]);
+        if ( is_array( $sql ) ) {
+            if ( isset( $sql[ 0 ] ) && 1 < count( $sql ) ) {
+                if ( 2 == count( $sql ) ) {
+                    if ( !is_array( $sql[ 1 ] ) )
+                        $sql[ 1 ] = array( $sql[ 1 ] );
 
-                    $params->sql = self::prepare($sql[0], $sql[1]);
+                    $params->sql = self::prepare( $sql[ 0 ], $sql[ 1 ] );
                 }
-                elseif (3 == count($sql))
-                    $params->sql = self::prepare($sql[0], array($sql[1], $sql[2]));
+                elseif ( 3 == count( $sql ) )
+                    $params->sql = self::prepare( $sql[ 0 ], array( $sql[ 1 ], $sql[ 2 ] ) );
                 else
-                    $params->sql = self::prepare($sql[0], array($sql[1], $sql[2], $sql[3]));
+                    $params->sql = self::prepare( $sql[ 0 ], array( $sql[ 1 ], $sql[ 2 ], $sql[ 3 ] ) );
             }
             else
-                $params = array_merge($params, $sql);
+                $params = array_merge( $params, $sql );
         }
 
-        $params->sql = trim($params->sql);
+        $params->sql = trim( $params->sql );
 
         // Run Query
-        $params->sql = self::do_hook('query', $params->sql, $params);
+        $params->sql = self::do_hook( 'query', $params->sql, $params );
 
         $result = $wpdb->query( $params->sql );
 
-        $result = self::do_hook('query_result', $result, $params);
+        $result = self::do_hook( 'query_result', $result, $params );
 
-        if (false === $result && !empty($params->error) && !empty($wpdb->last_error))
-            return pods_error("{$params->error}; SQL: {$params->sql}; Response: {$wpdb->last_error}", $params->display_errors);
+        if ( false === $result && !empty( $params->error ) && !empty( $wpdb->last_error ) )
+            return pods_error( "{$params->error}; SQL: {$params->sql}; Response: {$wpdb->last_error}", $params->display_errors );
 
-        if ('INSERT' == substr($params->sql, 0, 6))
+        if ( 'INSERT' == substr( $params->sql, 0, 6 ) || 'REPLACE' == substr( $params->sql, 0, 7 ) )
             $result = $wpdb->insert_id;
-        elseif ('SELECT' == substr($params->sql, 0, 6)) {
+        elseif ( 'SELECT' == substr( $params->sql, 0, 6 ) ) {
             $result = (array) $wpdb->last_result;
 
-            if (!empty($result) && !empty($params->results_error))
-                return pods_error( $params->results_error, $params->display_errors);
-            elseif (empty($result) && !empty($params->no_results_error))
-                return pods_error( $params->no_results_error , $params->display_errors);
+            if ( !empty( $result ) && !empty( $params->results_error ) )
+                return pods_error( $params->results_error, $params->display_errors );
+            elseif ( empty( $result ) && !empty( $params->no_results_error ) )
+                return pods_error( $params->no_results_error, $params->display_errors );
         }
 
         return $result;
@@ -1049,17 +1051,19 @@ class PodsData {
     public static function get_tables ($wp_core = true, $pods_tables = true) {
         global $wpdb;
 
-        $core_wp_tables = array($wpdb->options,
-                                $wpdb->comments,
-                                $wpdb->commentmeta,
-                                $wpdb->posts,
-                                $wpdb->postmeta,
-                                $wpdb->users,
-                                $wpdb->usermeta,
-                                $wpdb->links,
-                                $wpdb->terms,
-                                $wpdb->term_taxonomy,
-                                $wpdb->term_relationships);
+        $core_wp_tables = array(
+            $wpdb->options,
+            $wpdb->comments,
+            $wpdb->commentmeta,
+            $wpdb->posts,
+            $wpdb->postmeta,
+            $wpdb->users,
+            $wpdb->usermeta,
+            $wpdb->links,
+            $wpdb->terms,
+            $wpdb->term_taxonomy,
+            $wpdb->term_relationships
+        );
 
         $showTables = mysql_list_tables(DB_NAME);
 

@@ -3790,7 +3790,7 @@ class PodsAPI {
 
                 pods_query( "DROP TABLE IF EXISTS `@wp_pods_tbl_{$pod['name']}`" );
 
-                pods_query( "CREATE TABLE @wp_pod_tbl_{$pod['name']} ($definitions)" );
+                pods_query( "CREATE TABLE @wp_pods_tbl_{$pod['name']} ($definitions)" );
 
                 if ( !isset( $found[ 'pods' ] ) )
                     $found[ 'pods' ] = array();

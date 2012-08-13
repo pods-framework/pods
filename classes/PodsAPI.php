@@ -704,6 +704,9 @@ class PodsAPI {
 
         $old_fields = $old_options = array();
 
+        if ( isset( $params->name ) )
+            $params->name = pods_clean_name( $params->name );
+
         if ( !empty( $pod ) ) {
             if ( isset( $params->id ) && 0 < $params->id )
                 $old_id = $params->id;
@@ -814,7 +817,6 @@ class PodsAPI {
 
         // Add new pod
         if ( empty( $params->id ) ) {
-            $params->name = pods_clean_name( $params->name );
 
             if ( strlen( $params->name ) < 1 )
                 return pods_error( __('Pod name cannot be empty', 'pods'), $this );
@@ -2212,7 +2214,7 @@ class PodsAPI {
 
         if ( 'table' == $pod[ 'storage' ] ) {
             try {
-                pods_query( "DROP TABLE `@wp_pods_tbl_{$params->name}`", false );
+                pods_query( "DROP TABLE IF EXISTS `@wp_pods_tbl_{$params->name}`", false );
             } catch ( Exception $e ) {
                 // Allow pod to be deleted if the table doesn't exist
                 if ( false === strpos( $e->getMessage(), 'Unknown table' ) )

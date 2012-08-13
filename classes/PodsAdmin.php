@@ -156,6 +156,11 @@ class PodsAdmin {
         $old_pods = get_option( 'pods_version' );
         $upgraded = get_option( 'pods_framework_upgraded_1_x' );
 
+        if ( empty( $old_pods ) && 1 != $upgraded ) {
+            update_option( 'pods_framework_upgraded_1_x', 1 );
+            $upgraded = 1;
+        }
+
         if ( ( empty( $old_pods ) || 1 == $upgraded ) && false !== $results ) {
             foreach ( (array) $results as $item ) {
                 if ( !is_super_admin() && !current_user_can( 'pods_new_' . $item[ 'name' ] ) && !current_user_can( 'pods_edit_' . $item[ 'name' ] ) && !current_user_can( 'pods_delete_' . $item[ 'name' ] ) )

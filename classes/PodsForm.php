@@ -279,10 +279,7 @@ class PodsForm {
         else
             self::field_loader( $type );
 
-        if ( !method_exists( self::$loaded[ $type ], 'options' ) )
-            return apply_filters( 'pods_field_' . $type . '_options', $core_defaults, $type );
-
-        $options = apply_filters( 'pods_field_' . $type . '_options', (array) self::$loaded[ $type ]->options(), $type );
+        $options = apply_filters( 'pods_field_' . $type . '_options', (array) self::$loaded[ $type ]->options(), $type, $core_defaults );
 
         return self::fields_setup( $options, $core_defaults );
     }

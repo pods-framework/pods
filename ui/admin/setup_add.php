@@ -72,7 +72,7 @@
                                             $data = array(
                                                 'post_type' => __( 'Custom Post Type (like Posts or Pages)', 'pods' ),
                                                 'taxonomy' => __( 'Custom Taxonomy (like Categories or Tags)', 'pods' ),
-                                                'pod' => __( 'Advanced Content Type (it\'s own table)', 'pods' )
+                                                'pod' => __( 'Advanced Content Type (separate from WP, blank slate, in it\'s own table)', 'pods' )
                                             );
 
                                             echo PodsForm::field( 'create_pod_type', pods_var( 'create_pod_type', 'post' ), 'pick', array( 'data' => $data, 'class' => 'pods-dependent-toggle' ) );

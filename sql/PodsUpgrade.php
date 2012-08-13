@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: sclark
- * Date: 8/8/12
- * Time: 2:51 PM
- * To change this template use File | Settings | File Templates.
- */
 class PodsUpgrade_2_0 {
 
     public $tables = array();
@@ -429,10 +422,14 @@ class PodsUpgrade_2_0 {
         $last_id = (int) $this->check_progress( __FUNCTION__ );
 
         $sql = "
-            SELECT *
-            FROM `@wp_pod_rel`
-            WHERE {$last_id} < `id`
-            ORDER BY `id`
+            SELECT `r`.*, `p`.`tbl_row_id` AS `real_id`, `p`.`datatype`
+            FROM `@wp_pod_rel` AS `r`
+            LEFT JOIN `@wp_pod` AS `p` ON `p`.`id` = `r`.`pod_id`
+            WHERE {$last_id} < `r`.`id`
+                AND `r`.`pod_id` IS NOT NULL
+                AND `r`.`field_id` IS NOT NULL
+                AND `p`.`id` IS NOT NULL
+            ORDER BY `r`.`id`
             LIMIT 0, 800
         ";
 
@@ -453,32 +450,27 @@ class PodsUpgrade_2_0 {
                 $pod_fields = pods_query( "SELECT `id`, `name` FROM `@wp_pod_fields` WHERE `datatype` = {$type->id} ORDER BY `id`" );
 
                 foreach ( $pod_fields as $field ) {
-                    $types[ 'old_fields' ][ $field->id ] = $field->name;
+                    $types[ $type->id ][ 'old_fields' ][ $field->id ] = $field->name;
                 }
             }
 
             foreach ( $rel as $r ) {
                 $r->pod_id = (int) $r->pod_id;
 
-                $p = pods_query( "SELECT `tbl_row_id`, `datatype` FROM `@wp_pod` WHERE `id` = {$r->pod_id}");
-
-                if ( empty( $p ) )
+                if ( !isset( $types[ $r->datatype ] ) || !isset( $types[ $r->datatype ][ 'old_fields' ][ $r->field_id ] ) )
                     continue;
 
-                if ( !isset( $types[ $p->datatype ] ) || !isset( $types[ $p->datatype ][ 'old_fields' ][ $r->field_id ] ) )
+                if ( !isset( $types[ $r->datatype ][ 'fields' ][ $types[ $r->datatype ][ 'old_fields' ][ $r->field_id ] ] ) )
                     continue;
 
-                if ( !isset( $types[ $p->datatype ][ 'fields' ][ $types[ $p->datatype ][ 'old_fields' ][ $r->field_id ] ] ) )
-                    continue;
-
-                $field = $types[ $p->datatype ][ 'fields' ][ $types[ $p->datatype ][ 'old_fields' ][ $r->field_id ] ];
+                $field = $types[ $r->datatype ][ 'fields' ][ $types[ $r->datatype ][ 'old_fields' ][ $r->field_id ] ];
 
                 if ( !in_array( $field[ 'type' ], array( 'pick', 'file' ) ) )
                     continue;
 
-                $pod_id = $types[ $p->datatype ][ 'id' ];
+                $pod_id = $types[ $r->datatype ][ 'id' ];
                 $field_id = $field[ 'id' ];
-                $item_id = $p->tbl_row_id;
+                $item_id = $r->real_id;
 
                 $related_pod_id = 0;
                 $related_field_id = 0;
@@ -486,7 +478,23 @@ class PodsUpgrade_2_0 {
 
                 if ( 'pick' == $field[ 'type' ] ) {
                     if ( 0 < (int) $field[ 'sister_field_id' ] ) {
-                        $related_field = $api->load_field( array( 'id' => $field[ 'sister_field_id' ] ) );
+                        $sql = "
+                            SELECT `f`.`id`, `f`.`name`, `t`.`name` AS `pod`
+                            FROM `@wp_pod_fields` AS `f`
+                            LEFT JOIN `@wp_pod_types` AS `t` ON `t`.`id` = `f`.`datatype`
+                            WHERE `f`.`id` = " . (int) $field[ 'sister_field_id' ] . " AND `t`.`id` IS NOT NULL
+                            ORDER BY `f`.`id`
+                            LIMIT 1
+                        ";
+
+                        $old_field = pods_query( $sql );
+
+                        if ( empty( $old_field ) )
+                            continue;
+
+                        $old_field = $old_field[ 0 ];
+
+                        $related_field = $api->load_field( array( 'name' => $old_field->name, 'pod' => $old_field->pod ) );
 
                         if ( empty( $related_field ) )
                             continue;
@@ -503,6 +511,15 @@ class PodsUpgrade_2_0 {
                         $related_pod_id = $related_pod[ 'id' ];
                     }
                 }
+
+                $r->id = (int) $r->id;
+                $pod_id = (int) $pod_id;
+                $field_id = (int) $field_id;
+                $item_id = (int) $item_id;
+                $related_pod_id = (int) $related_pod_id;
+                $related_field_id = (int) $related_field_id;
+                $related_item_id = (int) $related_item_id;
+                $r->weight = (int) $r->weight;
 
                 $sql = "
                     REPLACE INTO `@wp_pods_rel`
@@ -699,13 +716,18 @@ class PodsUpgrade_2_0 {
                 $columns[] = pods_sanitize( $field[ 'name' ] );
         }
 
-        $select = '`t`.`id`, `t`.`' . implode( '`, `t`.`', $columns ) . '`';
-        $columns = '`id`, `' . implode( '`, `', $columns ) . '`';
+        $select = '`t`.`id`';
+        $into = '`id`';
+
+        if ( !empty( $columns ) ) {
+            $select .= ', `t`.`' . implode( '`, `t`.`', $columns ) . '`';
+            $into .= ', `' . implode( '`, `', $columns ) . '`';
+        }
 
         // Copy content from the old table into the new
         $sql = "
             REPLACE INTO `@wp_pods_tbl_{$pod}`
-                ( {$columns} )
+                ( {$into} )
                 ( SELECT {$select}
                   FROM `@wp_pod_tbl_{$pod}` AS `t` )
         ";

@@ -365,7 +365,7 @@ class PodsField_Text extends PodsField {
             }
             else {
                 // Clean input
-                $number = preg_replace( '/([^0-9ext])/g', ' ', $value );
+                $number = preg_replace( '/([^0-9ext])/', ' ', $value );
 
                 $number = str_replace(
                     array( '-', '.', 'ext', 'x', 't', 'e', '(', ')' ),
@@ -376,8 +376,8 @@ class PodsField_Text extends PodsField {
                 // Get extension
                 $extension = explode( '|', $number );
                 if ( 1 < count( $extension ) ) {
-                    $number = preg_replace( '/([^0-9])/g', ' ', $extension[ 0 ] );
-                    $extension = preg_replace( '/([^0-9])/g', ' ', $extension[ 1 ] );
+                    $number = preg_replace( '/([^0-9])/', ' ', $extension[ 0 ] );
+                    $extension = preg_replace( '/([^0-9])/', ' ', $extension[ 1 ] );
                 }
                 else
                     $extension = '';

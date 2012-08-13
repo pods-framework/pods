@@ -1,16 +1,7 @@
 <?php
 global $pods_i;
 
-$field_types = array(
-    'date' => 'Date / Time',
-    'number' => 'Number',
-    'boolean' => 'Yes / No',
-    'text' => 'Text',
-    'paragraph' => 'Paragraph Text',
-    'file' => 'File Upload',
-    'slug' => 'Permalink (url-friendly)',
-    'pick' => 'Relationship'
-);
+$field_types = pods_api()->get_field_types();
 
 $advanced_fields = array(
     __( 'Visual', 'pods' ) => array(
@@ -878,10 +869,13 @@ if ('pod' == pods_var('type', $pod)) {
 <script type="text/javascript">
 <?php
 $pods_field_types = array();
-foreach ($field_settings['field_types'] as $field_type => $field_label) {
-    $pods_field_types[] = "'" . esc_js($field_type) . "' : '" . esc_js($field_label) . "'";
+
+foreach ( $field_settings[ 'field_types' ] as $field_type => $field_label ) {
+    $pods_field_types[] = "'" . esc_js( $field_type ) . "' : '" . esc_js( $field_label ) . "'";
 }
+
 $pods_pick_objects = array();
+
 foreach ($field_settings['pick_object'] as $object => $object_label) {
     if ('-- Select --' == $object_label)
         continue;

@@ -155,7 +155,6 @@ class PodsAdmin {
 
         $old_pods = get_option( 'pods_version' );
         $upgraded = get_option( 'pods_framework_upgraded_1_x' );
-        $upgraded = 1; // Upgrade not ready yet!
 
         if ( ( empty( $old_pods ) || 1 == $upgraded ) && false !== $results ) {
             foreach ( (array) $results as $item ) {
@@ -294,10 +293,6 @@ class PodsAdmin {
                     'label' => 'Components',
                     'function' => array( $this, 'admin_components' ),
                     'access' => 'pods_components'
-                ),
-                'pods-upgrade' => array(
-                    'label' => 'Upgrade',
-                    'function' => array( $this, 'admin_upgrade' )
                 ),
                 'pods-help' => array(
                     'label' => 'Help',

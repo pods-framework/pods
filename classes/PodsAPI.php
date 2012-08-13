@@ -892,6 +892,8 @@ class PodsAPI {
                     $definitions[] = "`{$field['name']}` " . $this->get_field_definition( $field[ 'type' ] );
             }
 
+            pods_query( "DROP TABLE IF EXISTS `@wp_pods_tbl_{$params->name}`" );
+
             $result = pods_query( "CREATE TABLE `@wp_pods_tbl_{$params->name}` (" . implode( ', ', $definitions ) . ") DEFAULT CHARSET utf8", $this );
 
             if ( empty( $result ) )
@@ -1013,10 +1015,11 @@ class PodsAPI {
             $weight = 0;
 
             foreach ( $pod[ 'fields' ] as $field ) {
-                if ( !empty( $params->id ) && ( !is_array( $field ) || !isset( $field[ 'name' ] ) || !isset( $fields[ $field[ 'name'] ] ) ) )
+                if ( !empty( $old_id ) && ( !is_array( $field ) || !isset( $field[ 'name' ] ) || !isset( $fields[ $field[ 'name'] ] ) ) )
                     continue;
 
-                $field = array_merge( $field, $fields[ $field[ 'name' ] ] );
+                if ( !empty( $old_id ) )
+                    $field = array_merge( $field, $fields[ $field[ 'name' ] ] );
 
                 $field[ 'pod' ] = $pod;
 
@@ -1189,9 +1192,7 @@ class PodsAPI {
 
         if ( in_array( $field[ 'type' ], $tableless_field_types ) ) {
             // Clean up special drop-down in field editor and save out pick_val
-            if ( defined( 'DOING_AJAX' ) ) {
-                $field[ 'pick_val' ] = '';
-
+            if ( defined( 'DOING_AJAX' ) && 'save_pod' == pods_var( 'method', 'post' ) ) {
                 $field[ 'pick_object' ] = pods_var( 'pick_object', $field, '', null, true );
 
                 if ( 0 === strpos( 'pod-', $field[ 'pick_object' ] ) ) {
@@ -1206,6 +1207,8 @@ class PodsAPI {
                     $field[ 'pick_val' ] = pods_str_replace( 'taxonomy-', '', $field[ 'pick_object' ], 1 );
                     $field[ 'pick_object' ] = 'taxonomy';
                 }
+                elseif ( false !== strpos( '-', $field[ 'pick_object' ] ) )
+                    $field[ 'pick_val' ] = '';
             }
 
             $field[ 'options' ][ 'pick_object' ] = $field[ 'pick_object' ];
@@ -2655,7 +2658,7 @@ class PodsAPI {
         unset( $pod[ 'options' ][ 'object' ] );
         unset( $pod[ 'options' ][ 'alias' ] );
 
-        $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ] ) );
+        $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ] ) );
 
         $pod[ 'fields' ] = array();
 
@@ -2892,6 +2895,13 @@ class PodsAPI {
             }
 
             $_field = $field[ 0 ];
+        }
+
+        if ( empty( $_field ) ) {
+            if ( $strict )
+                return pods_error( __( 'Field not found', 'pods' ), $this );
+
+            return false;
         }
 
         $_field = get_object_vars( $_field );
@@ -3414,15 +3424,15 @@ class PodsAPI {
 
     public function get_field_types () {
         $types = array(
-            'boolean',
-            'color',
             'date',
-            'file',
             'number',
+            'boolean',
+            'text',
             'paragraph',
-            'pick',
             'slug',
-            'text'
+            'color',
+            'file',
+            'pick'
         );
 
         $types = $this->do_hook( 'field_types', $types );
@@ -3432,28 +3442,17 @@ class PodsAPI {
         if ( false === $field_types || count( $types ) != count( $field_types ) ) {
             $field_types = $types;
 
-            foreach ( $field_types as $field_type => $options ) {
-                unset( $field_types[ $field_type ] );
+            foreach ( $field_types as $k => $field_type ) {
+                unset( $field_types[ $k ] );
 
-                $field_type = $options;
+                PodsForm::field_loader( $field_type );
 
-                $options = array(
-                    'type' => $field_type,
-                    'label' => ucwords( str_replace( '_', ' ', $field_type ) ),
-                    'schema' => 'VARCHAR(255)'
-                );
+                $class_vars = get_class_vars( get_class( PodsForm::$loaded[ $field_type ] ) ); // PHP 5.2.x workaround
 
-                PodsForm::field_loader( $options );
+                $field_type = $class_vars[ 'type' ];
+                $field_label = $class_vars[ 'label' ];
 
-                $class_vars = get_class_vars( PodsForm::$loaded[ $options ] ); // PHP 5.2.x workaround
-                $options[ 'type' ] = $field_type = $class_vars[ 'type' ];
-                $options[ 'label' ] = $class_vars[ 'label' ];
-                $options[ 'schema' ] = PodsForm::$loaded[ $options ]->schema();
-                $options[ 'options' ] = PodsForm::options_setup( $options[ 'type' ] );
-
-                $field_types[ $field_type ] = $options;
-
-                set_transient( 'pods_field_types_' . $field_type, $options );
+                $field_types[ $field_type ] = $field_label;
             }
 
             set_transient( 'pods_field_types', $field_types );
@@ -3563,7 +3562,7 @@ class PodsAPI {
         return false;
     }
 
-    function get_table_info ( $object_type, $object ) {
+    function get_table_info ( $object_type, $object, $name = null ) {
         global $wpdb;
 
         $info = array(
@@ -3576,7 +3575,7 @@ class PodsAPI {
         );
 
         if ( 'pod' == $object_type )
-            $info[ 'table' ] = $wpdb->prefix . 'pods_tbl_' . $object;
+            $info[ 'table' ] = $wpdb->prefix . 'pods_tbl_' . ( empty( $object ) ? $name : $object );
         elseif ( 'post_type' == $object_type || 'media' == $object_type ) {
             $info[ 'table' ] = $wpdb->posts;
             $info[ 'field_id' ] = 'ID';
@@ -3626,7 +3625,7 @@ class PodsAPI {
             $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '` DESC, `t`.`' . $info[ 'field_id' ] . '`';
         }
         elseif ( 'table' == $object_type )
-            $info[ 'table' ] = $object;
+            $info[ 'table' ] = ( empty( $object ) ? $name : $object );
 
         if ( empty( $info[ 'orderby' ] ) )
             $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '`, `t`.`' . $info[ 'field_id' ] . '`';
@@ -3786,9 +3785,14 @@ class PodsAPI {
                     $definitions[] = "`$colname` " . $this->get_field_definition( $coltype );
                 }
                 $definitions = implode( ',', $definitions );
+
+                pods_query( "DROP TABLE IF EXISTS `@wp_pods_tbl_{$pod['name']}`" );
+
                 pods_query( "CREATE TABLE @wp_pod_tbl_{$pod['name']} ($definitions)" );
+
                 if ( !isset( $found[ 'pods' ] ) )
                     $found[ 'pods' ] = array();
+
                 $found[ 'pods' ][] = esc_textarea( $pod[ 'name' ] );
             }
         }

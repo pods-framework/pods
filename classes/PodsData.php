@@ -516,7 +516,7 @@ class PodsData {
                         continue;
 
                     if (is_array($field))
-                        $field = $key;
+                        $field = pods_var( 'name', $attributes, $key );
 
                     if (isset($params->filters[$field]))
                         continue;
@@ -526,7 +526,7 @@ class PodsData {
                     if (isset($this->aliases[$field]))
                         $fieldfield = '`' . $this->aliases[$field] . '`';
 
-                    if (false !== $attributes['real_name'])
+                    if (false !== $attributes['real_name'] && !empty( $attributes[ 'real_name' ] ) )
                         $fieldfield = $attributes['real_name'];
 
                     if (false !== $attributes['group_related'])

@@ -677,7 +677,7 @@ class PodsUI
                 if ( !isset( $attributes[ 'id' ] ) )
                     $attributes[ 'id' ] = '';
                 if ( !isset( $attributes[ 'real_name' ] ) )
-                    $attributes[ 'real_name' ] = $field;
+                    $attributes[ 'real_name' ] = pods_var( 'name', $attributes, $field );
                 if ( !isset( $attributes[ 'label' ] ) )
                     $attributes[ 'label' ] = ucwords( str_replace( '_', ' ', $field ) );
                 if ( !isset( $attributes[ 'type' ] ) )

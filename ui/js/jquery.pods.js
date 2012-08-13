@@ -169,6 +169,12 @@
                             $submitbutton.prop( 'disabled', false );
                             $submitbutton.parent().find( '.waiting' ).fadeOut();
 
+                            if ( $( '#pods-wizard-next' )[ 0 ] ) {
+                                $( '#pods-wizard-next' ).css( 'cursor', 'pointer' );
+                                $( '#pods-wizard-next' ).prop( 'disabled', false );
+                                $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'next' ) );
+                            }
+
                             alert( 'Error: ' + err_msg );
                             console.log( err_msg );
                         }
@@ -177,6 +183,12 @@
                         $submitbutton.css( 'cursor', 'pointer' );
                         $submitbutton.prop( 'disabled', false );
                         $submitbutton.parent().find( '.waiting' ).fadeOut();
+
+                        if ( $( '#pods-wizard-next' )[ 0 ] ) {
+                            $( '#pods-wizard-next' ).css( 'cursor', 'pointer' );
+                            $( '#pods-wizard-next' ).prop( 'disabled', false );
+                            $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'next' ) );
+                        }
 
                         alert( 'Unable to process request, please try again.' );
                     }
@@ -452,8 +464,8 @@
                             return check;
                     }
                     else if ( $( '#pods-wizard-box' ).closest( 'form' )[ 0 ] ) {
-                        $( '#pods-wizard-next' ).css( 'cursor', 'pointer' );
-                        $( '#pods-wizard-next' ).attr( 'disabled', true );
+                        $( '#pods-wizard-next' ).css( 'cursor', 'default' );
+                        $( '#pods-wizard-next' ).prop( 'disabled', true );
                         $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'processing' ) );
 
                         $( '#pods-wizard-box' ).closest( 'form' ).submit();

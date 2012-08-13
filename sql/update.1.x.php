@@ -202,6 +202,3 @@ if (version_compare($old_version, '1.11', '<')) {
     }
     update_option('pods_version', '001011000');
 }
-
-// Save this version
-update_option('pods_version', PODS_VERSION);

@@ -97,26 +97,47 @@
 
             <div id="post-body">
                 <div id="post-body-content">
-                    <div id="titlediv">
-                        <div id="titlewrap">
-                            <label class="hide-if-no-js" style="visibility:hidden" id="title-prompt-text" for="title"><?php echo apply_filters( 'pods_enter_name_here', __( 'Enter name here' ), $pod, $fields ); ?></label>
-                            <input type="text" name="pods_field_<?php echo $pod->pod_data[ 'field_index' ]; ?>" data-name-clean="pods-field-<?php echo $pod->pod_data[ 'field_index' ]; ?>" id="title" size="30" tabindex="1" value="<?php echo esc_attr( htmlspecialchars( $pod->index() ) ); ?>" class="pods-form-ui-field-name-pods-field-<?php echo $pod->pod_data[ 'field_index' ]; ?>" autocomplete="off" />
-                        </div>
-                        <!-- /#titlewrap -->
+                    <?php
+                        $more = false;
 
-                        <div class="inside">
-                            <div id="edit-slug-box">
+                        foreach ( $fields as $field ) {
+                            if ( $pod->pod_data[ 'field_index' ] != $field[ 'name' ] )
+                                continue;
+
+                            $more = true;
+                    ?>
+                        <div id="titlediv">
+                            <div id="titlewrap">
+                                <label class="hide-if-no-js" style="visibility:hidden" id="title-prompt-text" for="title"><?php echo apply_filters( 'pods_enter_name_here', __( 'Enter name here' ), $pod, $fields ); ?></label>
+                                <input type="text" name="pods_field_<?php echo $pod->pod_data[ 'field_index' ]; ?>" data-name-clean="pods-field-<?php echo $pod->pod_data[ 'field_index' ]; ?>" id="title" size="30" tabindex="1" value="<?php echo esc_attr( htmlspecialchars( $pod->index() ) ); ?>" class="pods-form-ui-field-name-pods-field-<?php echo $pod->pod_data[ 'field_index' ]; ?>" autocomplete="off" />
                             </div>
-                            <!-- /#edit-slug-box -->
+                            <!-- /#titlewrap -->
+
+                            <div class="inside">
+                                <div id="edit-slug-box">
+                                </div>
+                                <!-- /#edit-slug-box -->
+                            </div>
+                            <!-- /.inside -->
                         </div>
-                        <!-- /.inside -->
-                    </div>
-                    <!-- /#titlediv -->
+                        <!-- /#titlediv -->
+                    <?php
+                        }
+                    ?>
 
                     <div id="normal-sortables" class="meta-box-sortables ui-sortable">
                         <div id="pods-meta-box" class="postbox" style="">
                             <div class="handlediv" title="Click to toggle"><br /></div>
-                            <h3 class="hndle"><span><?php _e( 'More Fields', 'pods' ); ?></span></h3>
+                            <h3 class="hndle">
+                                <span>
+                                    <?php
+                                        if ( $more )
+                                            _e( 'More Fields', 'pods' );
+                                        else
+                                            _e( 'Fields', 'pods' );
+                                    ?>
+                                </span>
+                            </h3>
 
                             <div class="inside">
                                 <table class="form-table pods-metabox">

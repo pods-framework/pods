@@ -249,6 +249,25 @@ class PodsUpgrade_2_0 {
         return $count;
     }
 
+    function migrate_1_x () {
+        $old_version = get_option( 'pods_version' );
+
+        if ( 0 < strlen( $old_version ) ) {
+            if ( false === strpos( $old_version, '.' ) )
+                $old_version = pods_version_to_point( $old_version );
+
+            // Last DB change was 1.11
+            if ( version_compare( $old_version, '1.11', '<' ) ) {
+                do_action( 'pods_update', PODS_VERSION, $old_version );
+
+                if ( false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $old_version ) )
+                    include_once( PODS_DIR . 'sql/update.1.x.php' );
+
+                do_action( 'pods_update_post', PODS_VERSION, $old_version );
+            }
+        }
+    }
+
     function migrate_pods () {
         if ( true === $this->check_progress( __FUNCTION__ ) )
             return '1';

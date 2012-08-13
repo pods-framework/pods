@@ -314,7 +314,7 @@ function pods_trim ( $input, $charlist = null, $lr = null ) {
  * @return mixed The variable (if exists), or default value
  * @since 1.10.6
  */
-function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = true ) {
+function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false ) {
     if ( is_array( $type ) )
         $output = isset( $type[ $var ] ) ? $type[ $var ] : $default;
     elseif ( is_object( $type ) )

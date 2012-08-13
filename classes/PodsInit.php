@@ -631,6 +631,9 @@ class PodsInit {
 
                 update_option( 'pods_framework_version', '2.0.0-a-31' );
             }
+
+            if ( $pods_version != PODS_VERSION )
+                pods_api()->cache_flush_pods();
         }
         else
             $install = true;

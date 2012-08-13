@@ -221,10 +221,12 @@ class PodsField_Pick extends PodsField {
                 'groupby' => pods_var( 'pick_groupby', $options, null, null, true )
             ) );
 
-            foreach ( $results as $result ) {
-                $result = get_object_vars( $result );
+            if ( !empty( $data->table ) ) {
+                foreach ( $results as $result ) {
+                    $result = get_object_vars( $result );
 
-                $options[ 'data' ][ $result[ $data->field_id ] ] = $result[ $data->field_index ];
+                    $options[ 'data' ][ $result[ $data->field_id ] ] = $result[ $data->field_index ];
+                }
             }
         }
 

@@ -393,8 +393,10 @@ class PodsAdmin {
 
         if ( isset( $pod->pod_data[ 'fields' ][ $pod->pod_data[ 'field_index' ] ] ) )
             $label = $pod->pod_data[ 'fields' ][ $pod->pod_data[ 'field_index' ] ];
-        else
+        else {
             $index = $pod->data[ 'field_id' ];
+            $label = __( 'ID', 'pods' );
+        }
 
         $manage = array(
             $index => $label

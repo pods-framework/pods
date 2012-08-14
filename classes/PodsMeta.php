@@ -422,9 +422,8 @@ class PodsMeta {
                 $form_fields[ 'pods_meta_' . $field[ 'name' ] ] = array(
                     'label' => $field[ 'label' ],
                     'input' => 'html',
-                    'html' =>  PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field )
-                               . PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ),
-                    'helps' => $field[ 'options' ][ 'description' ]
+                    'html' =>  PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field ),
+                    'helps' => PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field )
                 );
             }
         }
@@ -440,7 +439,7 @@ class PodsMeta {
 
         $post_id = $attachment;
 
-        if ( is_array( $post ) )
+        if ( is_array( $post ) && !empty( $post ) && isset( $post[ 'ID' ] ) )
             $post_id = $post[ 'ID' ];
 
         $data = array();
@@ -500,9 +499,6 @@ class PodsMeta {
                     echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] );
                     echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field );
                     echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field );
-
-                    if ( isset( $fields[ 'options' ][ 'description' ] ) )
-                        echo wpautop( $field[ 'options' ][ 'description' ] );
         ?>
     </div>
     <?php
@@ -515,9 +511,6 @@ class PodsMeta {
                 <?php
                     echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field );
                     echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field );
-
-                    if ( isset( $fields[ 'options' ][ 'description' ] ) )
-                        echo '<span class="description">' . $field[ 'options' ][ 'description' ] . '</span>';
                 ?>
             </td>
         </tr>

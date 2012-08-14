@@ -3597,7 +3597,7 @@ class PodsAPI {
         }
         elseif ( 'taxonomy' == $object_type ) {
             $info[ 'table' ] = $wpdb->terms;
-            $info[ 'join' ] = "LEFT JOIN `{$wpdb->taxonomy}` AS `tx` ON `tx`.`term_id` = `t`.`term_id`";
+            $info[ 'join' ] = "LEFT JOIN `{$wpdb->term_taxonomy}` AS `tx` ON `tx`.`term_id` = `t`.`term_id`";
             $info[ 'field_id' ] = 'term_id';
             $info[ 'field_index' ] = 'name';
 

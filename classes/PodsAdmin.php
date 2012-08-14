@@ -435,6 +435,34 @@ class PodsAdmin {
         if ( empty( $pods ) && !isset( $_GET[ 'action' ] ) )
             $_GET[ 'action' ] = 'add';
 
+        $types = array(
+            'post_type' => __( 'Post Type (extended)', 'pods' ),
+            'taxonomy' => __( 'Taxonomy (extended)', 'pods' ),
+            'cpt' => __( 'Custom Post Type', 'pods' ),
+            'ct' => __( 'Custom Taxonomy', 'pods' ),
+            'user' => __( 'User (extended)', 'pods' ),
+            'media' => __( 'Media (extended)', 'pods' ),
+            'comment' => __( 'Comments (extended)', 'pods' ),
+            'pod' => __( 'Advanced Content Type', 'pods' )
+        );
+
+        foreach ( $pods as &$pod ) {
+            if ( isset( $types[ $pod[ 'type' ] ] ) ) {
+                if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) ) {
+                    if ( empty( $pod[ 'object' ] ) ) {
+                        if ( 'post_type' == $pod[ 'type' ] )
+                            $pod[ 'type' ] = 'cpt';
+                        else
+                            $pod[ 'type' ] = 'ct';
+                    }
+                }
+
+                $pod[ 'type' ] = $types[ $pod[ 'type' ] ];
+            }
+
+            $pod[ 'storage' ] = ucwords( $pod[ 'storage' ] );
+        }
+
         pods_ui( array(
             'data' => $pods,
             'total' => count( $pods ),
@@ -442,7 +470,14 @@ class PodsAdmin {
             'icon' => PODS_URL . 'ui/images/icon32.png',
             'items' => 'Pods',
             'item' => 'Pod',
-            'fields' => array( 'manage' => array( 'label', 'name', 'type', 'storage' ) ),
+            'fields' => array(
+                'manage' => array(
+                    'label' => array( 'label' => __( 'Label', 'pods' ) ),
+                    'name' => array( 'label' => __( 'Name', 'pods' ) ),
+                    'type' => array( 'label' => __( 'Object Type', 'pods' ) ),
+                    'storage' => array( 'label' => __( 'Storage Type', 'pods' ) )
+                )
+            ),
             'actions_disabled' => array( 'duplicate', 'view', 'export' ),
             'actions_custom' => array(
                 'add' => array( $this, 'admin_setup_add' ),

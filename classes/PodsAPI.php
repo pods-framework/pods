@@ -727,6 +727,12 @@ class PodsAPI {
             if ( $old_name != $params->name && false !== $this->pod_exists( array( 'name' => $params->name ) ) )
                 return pods_error( sprintf( __( 'Pod %s already exists, you cannot rename %s to that', 'pods' ), $params->name, $old_name ), $this );
 
+            if ( $old_name != $params->name && in_array( $pod[ 'type' ], array( 'user', 'comment', 'media' ) ) && in_array( $pod[ 'object' ], array( 'user', 'comment', 'media' ) ) )
+                return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ), $this );
+
+            if ( $old_name != $params->name && in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && !empty( $pod[ 'object' ] ) && $pod[ 'object' ] != $old_name )
+                return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ), $this );
+
             if ( $old_id != $params->id ) {
                 if ( $params->type == $pod[ 'type' ] && isset( $params->object ) && $params->object == $pod[ 'object' ] )
                     return pods_error( sprintf( __( 'Pod using %s already exists, you can not reuse an object across multiple pods', 'pods' ), $params->object ), $this );
@@ -757,6 +763,9 @@ class PodsAPI {
 
         // Setup options
         $options = get_object_vars( $params );
+
+        if ( isset( $options[ 'method' ] ) )
+            unset( $options[ 'method' ] );
 
         $exclude = array(
             'id',
@@ -1158,6 +1167,9 @@ class PodsAPI {
         // Setup options
         $options = get_object_vars( $params );
 
+        if ( isset( $options[ 'method' ] ) )
+            unset( $options[ 'method' ] );
+
         $exclude = array(
             'id',
             'pod_id',
@@ -1400,6 +1412,9 @@ class PodsAPI {
 
         // Setup options
         $options = get_object_vars( $params );
+
+        if ( isset( $options[ 'method' ] ) )
+            unset( $options[ 'method' ] );
 
         $exclude = array(
             'id',

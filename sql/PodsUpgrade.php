@@ -298,12 +298,18 @@ class PodsUpgrade_2_0 {
                     'name' => 'created',
                     'label' => 'Date Created',
                     'type' => 'date',
+                    'options' => array(
+                        'date_format_type' => 'datetime'
+                    ),
                     'weight' => 1
                 ),
                 array(
                     'name' => 'modified',
                     'label' => 'Date Modified',
                     'type' => 'date',
+                    'options' => array(
+                        'date_format_type' => 'datetime'
+                    ),
                     'weight' => 2
                 ),
                 array(
@@ -369,28 +375,30 @@ class PodsUpgrade_2_0 {
                     }
 
                     $field_params[ 'sister_field_id' ] = $row->sister_field_id;
-                    $field_params[ 'pick_filter' ] = $row->pick_filter;
-                    $field_params[ 'pick_orderby' ] = $row->pick_orderby;
-                    $field_params[ 'pick_display' ] = '{@name}';
-                    $field_params[ 'pick_size' ] = 'medium';
+                    $field_params[ 'options' ][ 'pick_filter' ] = $row->pick_filter;
+                    $field_params[ 'options' ][ 'pick_orderby' ] = $row->pick_orderby;
+                    $field_params[ 'options' ][ 'pick_display' ] = '{@name}';
+                    $field_params[ 'options' ][ 'pick_size' ] = 'medium';
 
                     if ( 1 == $row->multiple ) {
-                        $field_params[ 'pick_format_type' ] = 'multi';
-                        $field_params[ 'pick_format_multi' ] = 'checkbox';
-                        $field_params[ 'pick_limit' ] = 0;
+                        $field_params[ 'options' ][ 'pick_format_type' ] = 'multi';
+                        $field_params[ 'options' ][ 'pick_format_multi' ] = 'checkbox';
+                        $field_params[ 'options' ][ 'pick_limit' ] = 0;
                     }
                     else {
-                        $field_params[ 'pick_format_type' ] = 'single';
-                        $field_params[ 'pick_format_single' ] = 'dropdown';
-                        $field_params[ 'pick_limit' ] = 1;
+                        $field_params[ 'options' ][ 'pick_format_type' ] = 'single';
+                        $field_params[ 'options' ][ 'pick_format_single' ] = 'dropdown';
+                        $field_params[ 'options' ][ 'pick_limit' ] = 1;
                     }
                 }
                 elseif ( 'number' == $field_type ) {
-                    $field_params[ 'number_format_type' ] = 'plain';
-                    $field_params[ 'number_decimals' ] = 2;
+                    $field_params[ 'options' ][ 'number_format_type' ] = 'plain';
+                    $field_params[ 'options' ][ 'number_decimals' ] = 2;
                 }
                 elseif ( 'desc' == $row->coltype )
-                    $field_params[ 'paragraph_format_type' ] = 'tinymce';
+                    $field_params[ 'options' ][ 'paragraph_format_type' ] = 'tinymce';
+                elseif ( 'date' == $field_type )
+                    $field_params[ 'options' ][ 'date_format_type' ] = 'datetime';
 
                 $fields[] = $field_params;
 

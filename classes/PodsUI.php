@@ -1637,8 +1637,25 @@ class PodsUI
 
                     if (!isset($row[$field]))
                         $row[$field] = null;
-                    if (false !== $attributes['custom_display'] && is_callable($attributes['custom_display']))
-                        $row[$field] = call_user_func($attributes['custom_display'], $row, $this);
+
+                    if ( false !== $attributes[ 'custom_display' ] && is_callable( $attributes[ 'custom_display' ] ) )
+                        $row[ $field ] = call_user_func( $attributes[ 'custom_display' ], $row, $this );
+                    else {
+                        ob_start();
+
+                        $field_value = trim( (string) PodsForm::field_method( $attributes[ 'type' ], 'ui', $this->id, $row[ $field ], $field, $attributes, $fields, $this->pod ) );
+
+                        $field_output = ob_get_clean();
+
+                        if ( 0 < strlen( $field_value ) )
+                            $row[ $field ] = $field_value;
+                        elseif ( 0 < strlen( $field_output ) )
+                            $row[ $field ] = $field_output;
+                        else {
+                            // run formats
+                        }
+                    }
+
                     if (false !== $attributes['custom_relate']) {
                         global $wpdb;
                         $table = $attributes['custom_relate'];
@@ -1763,60 +1780,14 @@ class PodsUI
                 </td>
 <?php
                     }
-                    elseif ('date' == $attributes['type']) {
+                    elseif ( 'date' == $attributes['type'] ) {
 ?>
-                <td class="date column-date"><abbr title="<?php echo date_i18n('Y/m/d', strtotime($row[$field])); ?>"><?php echo date_i18n('Y/m/d', strtotime($row[$field])); ?></abbr></td>
-<?php
-                    }
-                    elseif ('time' == $attributes['type']) {
-?>
-                <td class="date column-date"><abbr title="<?php echo date_i18n('g:i:s A', strtotime($row[$field])); ?>"><?php echo date_i18n('g:i:s A', strtotime($row[$field])); ?></abbr></td>
-<?php
-                    }
-                    elseif ('datetime' == $attributes['type']) {
-?>
-                <td class="date column-date"><abbr title="<?php echo date_i18n('Y/m/d g:i:s A', strtotime($row[$field])); ?>"><?php echo date_i18n('Y/m/d g:i:s A', strtotime($row[$field])); ?></abbr></td>
-<?php
-                    }
-                    elseif ('related' == $attributes['type'] && false !== $attributes['related']) {
-                        $field_data = array();
-                        $selected_options = explode(',', $row[$field]);
-                        if (!is_array($attributes['related'])) {
-                            $related = $wpdb->get_results('SELECT id,`' . $attributes['related_field'] . '` FROM ' . $attributes['related'] . (!empty($attributes['related_sql'])) ? ' ' . $attributes['related_sql'] : '');
-                            foreach ($related as $option) {
-                                if (in_array($option->id, $selected_options))
-                                    $field_data[$option->id] = $option->$attributes['related_field'];
-                            }
-                        }
-                        else {
-                            $related = $attributes['related'];
-                            foreach ($related as $option_id => $option) {
-                                if (in_array($option_id, $selected_options))
-                                    $field_data[$option_id] = $option;
-                            }
-                        }
-?>
-                <td class="author"><?php echo implode(', ', $field_data); ?></td>
-<?php
-                    }
-                    elseif ('bool' == $attributes['type']) {
-?>
-                <td class="author column-author"><?php echo (1 == $row[$field]) ? 'Yes' : 'No'; ?></td>
-<?php
-                    }
-                    elseif ($attributes['type'] == 'number') {
-?>
-                <td class="author column-author"><?php echo intval($row[$field]); ?></td>
-<?php
-                    }
-                    elseif ($attributes['type'] == 'decimal') {
-?>
-                <td class="author column-author"><?php echo number_format($row[$field], 2); ?></td>
+                <td class="date column-date"><abbr title="<?php echo esc_attr( $row[ $field ] ); ?>"><?php echo $row[ $field ]; ?></abbr></td>
 <?php
                     }
                     else {
 ?>
-                <td class="author"><?php echo $row[$field]; ?></td>
+                <td class="author"><?php echo $row[ $field ]; ?></td>
 <?php
                     }
                 }

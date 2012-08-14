@@ -388,12 +388,25 @@ class PodsAdmin {
 
         $pod = pods( $pod, pods_var( 'id', 'get', null, null, true ) );
 
+        $index = $pod->pod_data[ 'field_index' ];
+        $label = __( 'Name', 'pods' );
+
+        if ( isset( $pod->pod_data[ 'fields' ][ $pod->pod_data[ 'field_index' ] ] ) )
+            $label = $pod->pod_data[ 'fields' ][ $pod->pod_data[ 'field_index' ] ];
+        else
+            $index = $pod->data[ 'field_id' ];
+
+        $manage = array(
+            $index => $label
+        );
+
+        if ( isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) )
+            $manage[ 'modified' ] = $pod->pod_data[ 'fields' ][ 'modified' ];
+
         $ui = array(
             'pod' => $pod,
             'fields' => array(
-                'manage' => array(
-                    $pod->pod_data[ 'field_index' ] => __( 'Name', 'pods' )
-                ),
+                'manage' => $manage,
                 'add' => $pod->pod_data[ 'fields' ],
                 'edit' => $pod->pod_data[ 'fields' ],
                 'duplicate' => $pod->pod_data[ 'fields' ]

@@ -230,7 +230,7 @@ class PodsField_Color extends PodsField {
      *
      * @since 2.0.0
      */
-    public function ui ( $id, &$value, $name = null, $options = null, $fields = null, $pod = null ) {
+    public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         if ( !empty( $value ) )
             $value = $value . ' <span style="display:inline-block;width:25px;height:25px;border:1px solid #333;background-color:' . $value . '"></span>';
     }

@@ -470,7 +470,7 @@ class PodsField_Text extends PodsField {
      *
      * @since 2.0.0
      */
-    public function ui ( $id, &$value, $name = null, $options = null, $fields = null, $pod = null ) {
+    public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         if ( 'website' == pods_var( 'text_format_type', $options ) && 0 < strlen( pods_var( 'text_format_website', $options ) ) )
             $value = make_clickable( $value );
     }

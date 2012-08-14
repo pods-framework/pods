@@ -200,7 +200,7 @@ class PodsField_Slug extends PodsField {
      *
      * @since 2.0.0
      */
-    public function ui ( $id, &$value, $name = null, $options = null, $fields = null, $pod = null ) {
+    public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
 
     }
 }

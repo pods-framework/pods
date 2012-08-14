@@ -300,8 +300,8 @@ class PodsField_Date extends PodsField {
      *
      * @since 2.0.0
      */
-    public function ui ( $id, &$value, $name = null, $options = null, $fields = null, $pod = null ) {
-
+    public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+        return $this->display( $value, $name, $options, $pod, $id );
     }
 
     /**
@@ -335,18 +335,18 @@ class PodsField_Date extends PodsField {
         $format = 'Y-m-d H:i:s';
 
         if ( 'date' == pods_var( 'date_format_type', $options ) )
-            $format = $date_format[ pods_var( 'date_format', $options ) ];
+            $format = $date_format[ pods_var( 'date_format', $options, 'ymd_dash', null, true ) ];
         elseif ( 'datetime' == pods_var( 'date_format_type', $options ) ) {
-            $format = $date_format[ pods_var( 'date_format', $options ) ] . ' ';
+            $format = $date_format[ pods_var( 'date_format', $options, 'ymd_dash', null, true ) ] . ' ';
 
             if ( 12 == pods_var( 'date_time_type', $options ) )
-                $format .= $time_format[ pods_var( 'date_time_format', $options ) ];
+                $format .= $time_format[ pods_var( 'date_time_format', $options, 'hh_mm', null, true ) ];
             else
                 $format .= 'H:i';
         }
         elseif ( 'time' == pods_var( 'date_format_type', $options ) ) {
             if ( 12 == pods_var( 'date_time_type', $options ) )
-                $format = $time_format[ pods_var( 'date_time_format', $options ) ];
+                $format = $time_format[ pods_var( 'date_time_format', $options, 'hh_mm', null, true ) ];
             else
                 $format = 'H:i';
         }

@@ -41,8 +41,6 @@ if ( !defined( 'PODS_MYSQL_VERSION_MINIMUM' ) )
 define( 'PODS_SLUG', plugin_basename( __FILE__ ) );
 define( 'PODS_URL', plugin_dir_url( __FILE__ ) );
 define( 'PODS_DIR', plugin_dir_path( __FILE__ ) );
-if ( !defined( 'WP_INCLUDES_URL' ) )
-    define( 'WP_INCLUDES_URL', includes_url() );
 
 require_once( PODS_DIR . 'functions.php' );
 

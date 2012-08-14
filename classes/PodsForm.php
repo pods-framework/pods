@@ -599,7 +599,7 @@ class PodsForm {
         if ( !class_exists( $class_name ) ) {
             $file = str_replace( '../', '', apply_filters( 'pods_form_field_include', PODS_DIR . 'classes/fields/' . basename( $field_type ) . '.php', $field_type ) );
 
-            if ( 0 === strpos( $file, untrailingslashit( ABSPATH ) ) && file_exists( $file ) )
+            if ( ( 0 === strpos( $file, untrailingslashit( WP_CONTENT_DIR ) ) || 0 === strpos( $file, untrailingslashit( ABSPATH ) ) ) && file_exists( $file ) )
                 include_once $file;
         }
 

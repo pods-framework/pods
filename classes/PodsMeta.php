@@ -474,9 +474,13 @@ class PodsMeta {
         if ( !is_object( $tag ) )
             $taxonomy_name = $tag;
 
-        $groups = $this->groups_get( 'taxonomy', $taxonomy );
+        $groups = $this->groups_get( 'taxonomy', $taxonomy_name );
 
         $id = null;
+
+        if ( is_object( $tag ) )
+            $id = $tag->term_id;
+
         $pod = false;
 
         foreach ( $groups as $group ) {
@@ -526,7 +530,11 @@ class PodsMeta {
         if ( empty( $groups ) )
             return;
 
-        $data = array();
+        $term = get_term( $term_id, $taxonomy );
+
+        $data = array(
+            'name' => $term->name
+        );
 
         $id = $term_id;
         $pod = false;

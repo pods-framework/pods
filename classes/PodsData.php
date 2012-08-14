@@ -341,7 +341,9 @@ class PodsData {
 
             'fields' => array(),
 
-            'sql' => null
+            'sql' => null,
+
+            'strict' => false
         );
 
         $params = (object) array_merge( $defaults, (array) $params );
@@ -365,12 +367,13 @@ class PodsData {
 
         if ( !empty( $params->join ) )
             $params->join = array_merge( (array) $this->join, (array) $params->join );
-        else
+        elseif ( false === $params->strict )
             $params->join = $this->join;
 
         $params->where = (array) $params->where;
 
-        $params->where = array_merge( $params->where, $this->where );
+        if ( false === $params->strict )
+            $params->where = array_merge( $params->where, $this->where );
 
         if ( empty( $params->where ) )
             $params->where = array();
@@ -380,7 +383,7 @@ class PodsData {
         if ( empty( $params->having ) )
             $params->having = array();
 
-        if ( empty( $params->orderby ) && !empty( $this->orderby ) )
+        if ( false === $params->strict && empty( $params->orderby ) && !empty( $this->orderby ) )
             $params->orderby = $this->orderby;
 
         // Get Aliases for future reference
@@ -894,6 +897,8 @@ class PodsData {
     }
 
     public function fetch ( $row = null ) {
+        global $wpdb;
+
         if ( null === $row ) {
             $this->row_number++;
 
@@ -912,6 +917,8 @@ class PodsData {
             if ( !empty($this->pod ) )
                 $row = wp_cache_get( $id, 'pods_items_' . $this->pod );
 
+            $get_table_data = false;
+
             if ( false !== $row && is_array( $row ) )
                 $this->row = $row;
             elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
@@ -919,6 +926,8 @@ class PodsData {
 
                 if ( empty( $this->row ) )
                     $this->row = false;
+
+                $get_table_data = true;
             }
             elseif ( 'taxonomy' == $this->pod_data[ 'type' ] ) {
                 $taxonomy = $this->pod_data[ 'object' ];
@@ -930,6 +939,8 @@ class PodsData {
 
                 if ( empty( $this->row ) )
                     $this->row = false;
+
+                $get_table_data = true;
             }
             elseif ( 'user' == $this->pod_data[ 'type' ] ) {
                 $this->row = get_userdata( $id );
@@ -938,12 +949,16 @@ class PodsData {
                     $this->row = false;
                 else
                     $this->row = get_object_vars( $this->row );
+
+                $get_table_data = true;
             }
             elseif ( 'comment' == $this->pod_data[ 'type' ] ) {
                 $this->row = get_comment( $id, ARRAY_A );
 
                 if ( empty( $this->row ) )
                     $this->row = false;
+
+                $get_table_data = true;
             }
             else {
                 $params = array(
@@ -961,6 +976,34 @@ class PodsData {
                     $this->row = false;
                 else
                     $this->row = get_object_vars( (object) @current( (array) $this->row ) );
+            }
+
+            if ( 'table' == $this->pod_data[ 'storage' ] && false !== $get_table_data ) {
+                $params = array(
+                    'table' => $wpdb->prefix . "pods_tbl_",
+                    'where' => "`id` = {$id}",
+                    'orderby' => "`id` DESC",
+                    'page' => 1,
+                    'limit' => 1,
+                    'search' => false,
+                    'strict' => true
+                );
+
+                if ( empty( $this->pod_data[ 'object' ] ) )
+                    $params[ 'table' ] .= $this->pod_data[ 'name' ];
+                else
+                    $params[ 'table' ] .= $this->pod_data[ 'object' ];
+
+                $row = $this->select( $params );
+
+                if ( !empty( $row ) ) {
+                    $row = get_object_vars( (object) @current( (array) $row ) );
+
+                    if ( is_array( $this->row ) && !empty( $this->row ) )
+                        $this->row = array_merge( $row, $this->row );
+                    else
+                        $this->row = $row;
+                }
             }
 
             if ( !empty( $this->pod ) )

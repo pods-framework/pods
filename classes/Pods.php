@@ -494,6 +494,8 @@ class Pods {
      * @since 2.0.0
      */
     public function find ( $params = null, $limit = 15, $where = null, $sql = null ) {
+        global $wpdb;
+
         $defaults = array(
             'table' => $this->data->table,
             'select' => '`t`.*',
@@ -518,11 +520,12 @@ class Pods {
         else
             $params = (object) $defaults;
 
+        $params = $this->do_hook( 'find', $params );
+
         $this->limit = (int) $params->limit;
         $this->page = (int) $params->page;
         $this->search = (boolean) $params->search;
-
-        $params = $this->do_hook( 'find', $params );
+        $params->join = (array) $params->join;
 
         // Add "`t`." prefix to $params->orderby if needed
         if ( !empty( $params->orderby ) && false === strpos( $params->orderby, ',' ) && false === strpos( $params->orderby, '(' ) && false === strpos( $params->orderby, '.' ) ) {
@@ -530,6 +533,12 @@ class Pods {
                 $params->orderby = '`t`.`' . trim( str_ireplace( array( '`', ' ASC' ), '', $params->orderby ) ) . '` ASC';
             else
                 $params->orderby = '`t`.`' . trim( str_ireplace( array( '`', ' DESC' ), '', $params->orderby ) ) . '` DESC';
+        }
+
+        if ( 'table' == $this->pod_data[ 'storage' ] && 'taxonomy' == $this->pod_data[ 'type' ] ) {
+            $params->select .= ', `pt`.*';
+            $params->join[] = "LEFT JOIN `{$wpdb->prefix}pods_tbl_" . ( empty( $this->pod_data[ 'object' ] ) ? $this->pod_data[ 'name' ] : $this->pod_data[ 'object' ] )
+                . "` AS `pt` ON `pt`.`id` = `t`.`{$this->data->field_id}`";
         }
 
         $this->data->select( $params );

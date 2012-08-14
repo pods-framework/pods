@@ -557,18 +557,21 @@ class PodsAPI {
                     'name' => 'taxonomy',
                     'label' => 'Taxonomy',
                     'type' => 'pick',
-                    'data' => array()
+                    'alias' => array()
                 )
             );
         }
 
         $fields = apply_filters( 'pods_api_get_wp_object_fields', $fields, $object );
 
-        foreach ( $fields as $field => $options ) {
-            if ( !isset( $object_field_opt[ 'alias' ] ) )
-                $object_field_opt[ 'alias' ] = array();
+        foreach ( $fields as $field => &$options ) {
+            if ( !isset( $options[ 'alias' ] ) )
+                $options[ 'alias' ] = array();
             else
-                $object_field_opt[ 'alias' ] = (array) $object_field_opt[ 'alias' ];
+                $options[ 'alias' ] = (array) $options[ 'alias' ];
+
+            if ( !isset( $options[ 'name' ] ) )
+                $options[ 'name' ] = $field;
         }
 
         $fields = PodsForm::fields_setup( $fields );
@@ -1121,7 +1124,7 @@ class PodsAPI {
 
         if ( !empty( $field ) ) {
             $old_id = $field[ 'id' ];
-            $old_name = $field[ 'name' ];
+            $old_name = pods_clean_name( $field[ 'name' ] );
             $old_type = $field[ 'type' ];
 
             if ( isset( $params->name ) && !empty( $params->name ) )
@@ -1338,9 +1341,16 @@ class PodsAPI {
                     elseif ( false !== $definition )
                         pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` CHANGE `{$old_name}` {$definition}" );
                 }
+                elseif ( $old_name != $field[ 'name' ] && false !== $definition ) {
+                    $test = pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` CHANGE `{$old_name}` {$definition}", false );
+
+                    // If the old field doesn't exist, continue to add a new field
+                    if ( false === $test )
+                        pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+                }
             }
             elseif ( false !== $definition )
-                pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+                $test = pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
         }
         elseif ( 0 < $field[ 'sister_field_id' ] )
             update_post_meta( $field[ 'sister_field_id' ], 'sister_field_id', $params->id );
@@ -1773,7 +1783,7 @@ class PodsAPI {
             if ( !in_array( $pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) )
                 $params->id = $this->save_wp_object( $object_type, $object_data );
             elseif ( 'taxonomy' == $pod[ 'type' ] ) {
-                $term = $object_fields[ 'name' ][ 'value' ];
+                $term = pods_var( $object_fields[ 'name' ][ 'name' ], $object_data, '', null, true );
                 $term_data = array();
 
                 if ( empty( $params->id ) || !empty( $term_data ) ) {

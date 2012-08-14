@@ -754,6 +754,8 @@ class PodsAdmin {
             }
         }
 
+        $params->method = $method->name;
+
         $params = apply_filters( 'pods_api_' . $method->name, $params, $method );
 
         if ( 'process_form' == $method->name )

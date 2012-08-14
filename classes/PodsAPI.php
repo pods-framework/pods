@@ -1194,28 +1194,30 @@ class PodsAPI {
 
         if ( in_array( $field[ 'type' ], $tableless_field_types ) ) {
             // Clean up special drop-down in field editor and save out pick_val
-            if ( defined( 'DOING_AJAX' ) && 'save_pod' == pods_var( 'method', 'post' ) ) {
-                $field[ 'pick_object' ] = pods_var( 'pick_object', $field, '', null, true );
+            $field[ 'pick_object' ] = pods_var( 'pick_object', $field, '', null, true );
 
-                if ( 0 === strpos( 'pod-', $field[ 'pick_object' ] ) ) {
-                    $field[ 'pick_val' ] = pods_str_replace( 'pod-', '', $field[ 'pick_object' ], 1 );
-                    $field[ 'pick_object' ] = 'pod';
-                }
-                elseif ( 0 === strpos( 'post-type-', $field[ 'pick_object' ] ) ) {
-                    $field[ 'pick_val' ] = pods_str_replace( 'post-type-', '', $field[ 'pick_object' ], 1 );
-                    $field[ 'pick_object' ] = 'post_type';
-                }
-                elseif ( 0 === strpos( 'taxonomy-', $field[ 'pick_object' ] ) ) {
-                    $field[ 'pick_val' ] = pods_str_replace( 'taxonomy-', '', $field[ 'pick_object' ], 1 );
-                    $field[ 'pick_object' ] = 'taxonomy';
-                }
-                elseif ( false !== strpos( '-', $field[ 'pick_object' ] ) )
-                    $field[ 'pick_val' ] = '';
+            if ( 0 === strpos( 'pod-', $field[ 'pick_object' ] ) ) {
+                $field[ 'pick_val' ] = pods_str_replace( 'pod-', '', $field[ 'pick_object' ], 1 );
+                $field[ 'pick_object' ] = 'pod';
             }
+            elseif ( 0 === strpos( 'post-type-', $field[ 'pick_object' ] ) ) {
+                $field[ 'pick_val' ] = pods_str_replace( 'post-type-', '', $field[ 'pick_object' ], 1 );
+                $field[ 'pick_object' ] = 'post_type';
+            }
+            elseif ( 0 === strpos( 'taxonomy-', $field[ 'pick_object' ] ) ) {
+                $field[ 'pick_val' ] = pods_str_replace( 'taxonomy-', '', $field[ 'pick_object' ], 1 );
+                $field[ 'pick_object' ] = 'taxonomy';
+            }
+            elseif ( false !== strpos( '-', $field[ 'pick_object' ] ) )
+                $field[ 'pick_val' ] = '';
 
             $field[ 'options' ][ 'pick_object' ] = $field[ 'pick_object' ];
             $field[ 'options' ][ 'pick_val' ] = $field[ 'pick_val' ];
             $field[ 'options' ][ 'sister_field_id' ] = $field[ 'sister_field_id' ];
+
+            unset( $field[ 'pick_object' ] );
+            unset( $field[ 'pick_val' ] );
+            unset( $field[ 'sister_field_id' ] );
         }
 
         $field[ 'options' ] = array_merge( $field[ 'options' ], $options );

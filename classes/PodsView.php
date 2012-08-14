@@ -12,9 +12,9 @@ class PodsView {
         if ( !in_array( $cache_mode, self::$cache_modes ) )
             $cache_mode = 'cache';
 
-        $cache_key = sanitize_title( pods_str_replace( array( PODS_DIR . 'ui/', ABSPATH ), array( 'pods-ui-', 'pods-ui-' ), $view, 1 ) );
+        $cache_key = sanitize_title( pods_str_replace( array( PODS_DIR . 'ui/', ABSPATH, WP_CONTENT_DIR ), array( 'pods-ui-', 'pods-ui-' ), $view, 1 ) );
 
-        if ( false === strpos( $view, PODS_DIR . 'ui/' ) && false === strpos( $view, PODS_DIR . 'components/' ) && false === strpos( $view, ABSPATH ) ) {
+        if ( false === strpos( $view, PODS_DIR . 'ui/' ) && false === strpos( $view, PODS_DIR . 'components/' ) && false === strpos( $view, WP_CONTENT_DIR ) && false === strpos( $view, ABSPATH ) ) {
             $output = self::get( $cache_key, $cache_mode );
 
             if ( false !== $output && null !== $output ) {
@@ -132,7 +132,7 @@ class PodsView {
 
         if ( empty( $_view ) )
             return false;
-        elseif ( false === strpos( $_view, PODS_DIR . 'ui/' ) && false === strpos( $_view, PODS_DIR . 'components/' ) && false === strpos( $_view, ABSPATH ) ) {
+        elseif ( false === strpos( $_view, PODS_DIR . 'ui/' ) && false === strpos( $_view, PODS_DIR . 'components/' ) && false === strpos( $view, WP_CONTENT_DIR ) && false === strpos( $_view, ABSPATH ) ) {
             $_view = rtrim( $_view, '/' );
 
             if ( empty( $_view ) )

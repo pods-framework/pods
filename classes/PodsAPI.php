@@ -3641,6 +3641,10 @@ class PodsAPI {
         elseif ( 'table' == $object_type )
             $info[ 'table' ] = ( empty( $object ) ? $name : $object );
 
+        $info[ 'table' ] = pods_clean_name( $info[ 'table' ] );
+        $info[ 'field_id' ] = pods_clean_name( $info[ 'field_id' ] );
+        $info[ 'field_index' ] = pods_clean_name( $info[ 'field_index' ] );
+
         if ( empty( $info[ 'orderby' ] ) )
             $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '`, `t`.`' . $info[ 'field_id' ] . '`';
 

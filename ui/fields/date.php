@@ -62,7 +62,7 @@
 
         $html5_format = 'Y-m-d';
     }
-    elseif ( 'time' == $date_type ) {
+    else { //if ( 'time' == $date_type ) {
         $method = 'timepicker';
 
         $args = array(
@@ -75,8 +75,8 @@
         $html5_format = '\TH:i:s';
     }
 
-    $date = DateTime::createFromFormat( $format, (string) $value );
-    $date_default = DateTime::createFromFormat( 'Y-m-d H:i:s', (string) $value );
+    $date = PodsForm::field_method( 'date', 'createFromFormat', $format, (string) $value );
+    $date_default = PodsForm::field_method( 'date', 'createFromFormat', 'Y-m-d H:i:s', (string) $value );
 
     if ( 'text' != $type ) {
         $formatted_date = $value;

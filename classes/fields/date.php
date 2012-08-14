@@ -146,8 +146,8 @@ class PodsField_Date extends PodsField {
         $format = $this->format( $options );
 
         if ( !empty( $value ) ) {
-            $date = DateTime::createFromFormat( 'Y-m-d H:i:s', (string) $value );
-            $date_local = DateTime::createFromFormat( $format, (string) $value );
+            $date = $this->createFromFormat( 'Y-m-d H:i:s', (string) $value );
+            $date_local = $this->createFromFormat( $format, (string) $value );
 
             if ( false !== $date )
                 $value = $date->format( $format );
@@ -230,7 +230,7 @@ class PodsField_Date extends PodsField {
         if ( !empty( $value ) ) {
             $format = $this->format( $options );
 
-            $date = DateTime::createFromFormat( $format, (string) $value );
+            $date = $this->createFromFormat( $format, (string) $value );
 
             if ( false !== $date )
                 $value = $date->format( 'Y-m-d H:i:s' );
@@ -352,5 +352,12 @@ class PodsField_Date extends PodsField {
         }
 
         return $format;
+    }
+
+    public function createFromFormat ( $format, $date ) {
+        if ( method_exists( 'DateTime', 'createFromFormat' ) )
+            return DateTime::createFromFormat( $format, $date );
+
+        return new DateTime( date( $format, strtotime( $date ) ) );
     }
 }

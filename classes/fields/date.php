@@ -358,6 +358,6 @@ class PodsField_Date extends PodsField {
         if ( method_exists( 'DateTime', 'createFromFormat' ) )
             return DateTime::createFromFormat( $format, $date );
 
-        return new DateTime( date( $format, strtotime( $date ) ) );
+        return new DateTime( date( 'Y-m-d H:i:s', strtotime( $date ) ) );
     }
 }

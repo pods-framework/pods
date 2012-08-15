@@ -303,10 +303,11 @@ class PodsInit {
                     'post-formats' => (boolean) pods_var( 'supports_post_formats', $post_type, false )
                 );
 
-                $cpt_supports = array();
+                // WP needs something, if this was empty and none were enabled, it would show title+editor :(
+                $cpt_supports = array( '_bug_fix_for_wp' );
 
                 foreach ( $cpt_supported as $cpt_support => $supported ) {
-                    if ( false !== $supported )
+                    if ( true === $supported )
                         $cpt_supports[] = $cpt_support;
                 }
 

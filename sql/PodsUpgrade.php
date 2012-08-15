@@ -741,19 +741,21 @@ class PodsUpgrade_2_0 {
             return pods_error( __( 'Pod not found, items cannot be migrated', 'pods' ) );
 
         $columns = array();
+        $old_columns = array();
 
         foreach ( $pod_data[ 'fields' ] as $field ) {
             if ( !in_array( $field[ 'name' ], array( 'created', 'modified', 'author' ) ) && !in_array( $field[ 'type' ], array( 'file', 'pick' ) ) ) {
-                $columns[] = pods_sanitize( pods_var( 'old_name', $field[ 'options' ], $field[ 'name' ], null, false ) );
+                $columns[] = $field[ 'name' ];
+                $old_columns[] = pods_sanitize( pods_var( 'old_name', $field[ 'options' ], $field[ 'name' ], null, false ) );
             }
         }
 
-        $select = '`t`.`id`';
         $into = '`id`';
+        $select = '`t`.`id`';
 
         if ( !empty( $columns ) ) {
-            $select .= ', `t`.`' . implode( '`, `t`.`', $columns ) . '`';
             $into .= ', `' . implode( '`, `', $columns ) . '`';
+            $select .= ', `t`.`' . implode( '`, `t`.`', $old_columns ) . '`';
         }
 
         // Copy content from the old table into the new

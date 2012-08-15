@@ -87,7 +87,7 @@ class PodsAPI {
         pods_no_conflict_on( 'post' );
 
         if ( !is_array( $post_data ) || empty( $post_data ) )
-            return pods_error( __( 'Post data is required but is either invalid or empty', 'pods' ), $this );
+            $post_data = array( 'post_title' => '' );
 
         if ( !is_array( $post_meta ) )
             $post_meta = array();

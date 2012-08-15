@@ -624,19 +624,29 @@ if ('post_type' == pods_var('type', $pod) && strlen( pods_var( 'object', $pod ) 
                                                 <div class="pods-pick-values pods-pick-checkbox">
                                                     <ul>
                                                         <li>
+                                                            <div class="pods-field pods-boolean">
                                                                 <?php echo PodsForm::field( 'supports_title', pods_var( 'supports_title', $pod, true ), 'boolean', array( 'boolean_yes_label' => __( 'Title', 'pods' ) ) ); ?>
+                                                            </div>
                                                         </li>
                                                         <li>
+                                                            <div class="pods-field pods-boolean">
                                                                 <?php echo PodsForm::field( 'supports_editor', pods_var( 'supports_editor', $pod, true ), 'boolean', array( 'boolean_yes_label' => __( 'Editor', 'pods' ) ) ); ?>
+                                                            </div>
                                                         </li>
                                                         <li>
+                                                            <div class="pods-field pods-boolean">
                                                                 <?php echo PodsForm::field( 'supports_author', pods_var( 'supports_author', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Author', 'pods' ) ) ); ?>
+                                                            </div>
                                                         </li>
                                                         <li>
+                                                            <div class="pods-field pods-boolean">
                                                                 <?php echo PodsForm::field( 'supports_thumbnail', pods_var( 'supports_thumbnail', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Featured Image', 'pods' ) ) ); ?>
+                                                            </div>
                                                         </li>
                                                         <li>
+                                                            <div class="pods-field pods-boolean">
                                                                 <?php echo PodsForm::field( 'supports_excerpt', pods_var( 'supports_excerpt', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Excerpt', 'pods' ) ) ); ?>
+                                                            </div>
                                                         </li>
                                                         <li>
                                                             <div class="pods-field pods-boolean">
@@ -707,7 +717,7 @@ elseif ('taxonomy' == pods_var('type', $pod) && strlen( pods_var( 'object', $pod
                                                 <?php echo PodsForm::label('show_ui', __('Show UI', 'pods'), __('help', 'pods')); ?>
                                                 <?php echo PodsForm::field( 'show_ui', pods_var( 'show_ui', $pod, pods_var( 'public', $pod, true ) ), 'boolean', array( 'boolean_yes_label' => '', 'dependency' => true ) ); ?>
                                             </div>
-                                            <div class="pods-field-option pods-depends-on pods-depends-on-ct-show-ui">
+                                            <div class="pods-field-option pods-depends-on pods-depends-on-show-ui">
                                                 <?php echo PodsForm::label('menu_name', __('Menu Name', 'pods'), __('help', 'pods')); ?>
                                                 <?php echo PodsForm::field('menu_name', pods_var('menu_name', $pod), 'text'); ?>
                                             </div>
@@ -723,7 +733,7 @@ elseif ('taxonomy' == pods_var('type', $pod) && strlen( pods_var( 'object', $pod
                                                 <?php echo PodsForm::label('hierarchical', __('Hierarchical', 'pods'), __('help', 'pods')); ?>
                                                 <?php echo PodsForm::field( 'hierarchical', pods_var( 'hierarchical', $pod, false ), 'boolean', array( 'dependency' => true, 'boolean_yes_label' => '' ) ); ?>
                                             </div>
-                                            <div class="pods-field-option-container pods-depends-on pods-depends-on-ct-hierarchical">
+                                            <div class="pods-field-option-container pods-depends-on pods-depends-on-hierarchical">
                                                 <div class="pods-field-option">
                                                     <?php echo PodsForm::label('label_parent_item_colon', __('<strong>Label: </strong> Parent <span class="pods-slugged" data-sluggable="label_singular">Item</span>'), __('help', 'pods')); ?>
                                                     <?php echo PodsForm::field('label_parent_item_colon', pods_var('label_parent_item_colon', $pod), 'text'); ?>
@@ -737,7 +747,7 @@ elseif ('taxonomy' == pods_var('type', $pod) && strlen( pods_var( 'object', $pod
                                                 <?php echo PodsForm::label('rewrite', __('Rewrite', 'pods'), __('help', 'pods')); ?>
                                                 <?php echo PodsForm::field('rewrite', pods_var('rewrite', $pod, true), 'boolean', array('dependency' => true, 'boolean_yes_label' => '')); ?>
                                             </div>
-                                            <div class="pods-field-option-container pods-depends-on pods-depends-on-ct-rewrite">
+                                            <div class="pods-field-option-container pods-depends-on pods-depends-on-rewrite">
                                                 <div class="pods-field-option">
                                                     <?php echo PodsForm::label('rewrite_custom_slug', __('Custom Rewrite Slug', 'pods'), __('help', 'pods')); ?>
                                                     <?php echo PodsForm::field('rewrite_custom_slug', pods_var('rewrite_custom_slug', $pod), 'text'); ?>
@@ -787,7 +797,7 @@ elseif ('taxonomy' == pods_var('type', $pod) && strlen( pods_var( 'object', $pod
                                                 <?php echo PodsForm::field('detail_url', pods_var('detail_url', $pod), 'text'); ?>
                                             </div>
 <?php
-if ('pod' == pods_var('type', $pod)) {
+    if ('pod' == pods_var('type', $pod)) {
 ?>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('show_in_menu', __('Show in Menu', 'pods'), __('help', 'pods')); ?>
@@ -803,8 +813,19 @@ if ('pod' == pods_var('type', $pod)) {
                                                     <?php echo PodsForm::field('menu_icon', pods_var('menu_icon', $pod), 'text'); ?>
                                                 </div>
                                             </div>
+        <?php
+            $index_fields = array( 'id' => 'ID' );
+
+            foreach ( $pod[ 'fields' ] as $field ) {
+                $index_fields[ $field[ 'name' ] ] = $field[ 'label' ];
+            }
+        ?>
+                                            <div class="pods-field-option">
+                                                <?php echo PodsForm::label( 'pod_index', __( 'Title Field', 'pods' ), __( 'If you delete the "name" field, we need to specify the field to use as your primary title field. This field will serve as an index of your content. Most commonly this field represents the name of a person, place, thing, or a summary field.', 'pods' ) ); ?>
+                                                <?php echo PodsForm::field( 'pod_index', pods_var( 'pod_index', $pod ), 'pick', array( 'data' => $index_fields ) ); ?>
+                                            </div>
 <?php
-}
+    }
 ?>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('pre_save_helpers', __('Pre-Save Helper(s)', 'pods'), __('help', 'pods')); ?>

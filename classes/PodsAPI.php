@@ -1237,7 +1237,7 @@ class PodsAPI {
 
         $field[ 'options' ] = array_merge( $field[ 'options' ], $options );
 
-        $object_fields = $this->get_wp_object_fields( $pod[ 'type' ] );
+        $object_fields = $pod[ 'object_fields' ];
 
         // Add new field
         if ( !isset( $params->id ) || empty( $params->id ) || empty( $field ) ) {
@@ -1660,7 +1660,7 @@ class PodsAPI {
 
         $fields = $pod[ 'fields' ];
 
-        $object_fields = $this->get_wp_object_fields( $pod[ 'type' ] );
+        $object_fields = $pod[ 'object_fields' ];
 
         $fields_active = array();
 
@@ -1668,8 +1668,7 @@ class PodsAPI {
         if ( !empty( $params->data ) && is_array( $params->data ) ) {
             foreach ( $params->data as $field => $value ) {
                 if ( isset( $object_fields[ $field ] ) ) {
-                    $fields[ $field ] =& $object_fields[ $field ];
-                    $fields[ $field ][ 'value' ] = $value;
+                    $object_fields[ $field ][ 'value' ] = $value;
                     $fields_active[] = $field;
                 }
                 elseif ( isset( $fields[ $field ] ) ) {
@@ -1679,8 +1678,7 @@ class PodsAPI {
                 else {
                     foreach ( $object_fields as $object_field => $object_field_opt ) {
                         if ( in_array( $field, $object_field_opt[ 'alias' ] ) ) {
-                            $fields[ $object_field ] =& $object_fields[ $object_field ];
-                            $fields[ $object_field ][ 'value' ] = $value;
+                            $object_fields[ $field ][ 'value' ] = $value;
                             $fields_active[] = $object_field;
                         }
                     }
@@ -2687,9 +2685,14 @@ class PodsAPI {
         unset( $pod[ 'options' ][ 'object' ] );
         unset( $pod[ 'options' ][ 'alias' ] );
 
-        $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ] ) );
+        $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
 
         $pod[ 'fields' ] = array();
+
+        $pod[ 'object_fields' ] = array();
+
+        if ( 'pod' != $pod[ 'type' ] )
+            $pod[ 'object_fields' ] = $this->get_wp_object_fields( $pod[ 'type' ] );
 
         $fields = get_posts( array(
             'post_type' => '_pods_field',
@@ -3591,7 +3594,7 @@ class PodsAPI {
         return false;
     }
 
-    function get_table_info ( $object_type, $object, $name = null ) {
+    function get_table_info ( $object_type, $object, $name = null, $pod ) {
         global $wpdb;
 
         $info = array(
@@ -3658,6 +3661,10 @@ class PodsAPI {
 
         $info[ 'table' ] = pods_clean_name( $info[ 'table' ] );
         $info[ 'field_id' ] = pods_clean_name( $info[ 'field_id' ] );
+
+        if ( is_array( $pod ) && isset( $pod[ 'options' ] ) && 'pod' == pods_var( 'type', $pod ) )
+            $info[ 'field_index' ] = pods_var( 'pod_index', $pod[ 'options' ], 'id', null, true );
+
         $info[ 'field_index' ] = pods_clean_name( $info[ 'field_index' ] );
 
         if ( empty( $info[ 'orderby' ] ) )

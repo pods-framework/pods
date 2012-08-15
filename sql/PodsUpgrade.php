@@ -807,6 +807,7 @@ class PodsUpgrade_2_0 {
         }
 
         delete_option( 'pods_framework_upgrade_2_0' );
+        delete_option( 'pods_framework_upgraded_1_x' );
     }
 
     function cleanup () {
@@ -820,6 +821,7 @@ class PodsUpgrade_2_0 {
         delete_option( 'pods_roles' );
         delete_option( 'pods_version' );
         delete_option( 'pods_framework_upgrade_2_0' );
+        delete_option( 'pods_framework_upgraded_1_x' );
 
         /*
          * other options maybe not in 2.0

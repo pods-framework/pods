@@ -65,7 +65,7 @@
 
     <form action="" method="post">
         <h3>Reset Pods 2.0</h3>
-        <p>This tool does not delete any Pods 1.x data, it simply resets the Pods 2.0 settings and removes all of the 2.0 data.</p>
+        <p>This tool does not delete any Pods 1.x data, it simply resets the Pods 2.0 settings, removes all of it's data, and performs a fresh install.</p>
 
         <p class="submit">
             <input type="submit" class="button button-primary" name="reset" value="Reset Pods 2.0 settings and data" onclick="return confirm( 'Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.0, resetting it to a clean first install.' );" />

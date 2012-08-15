@@ -56,13 +56,13 @@ if ( is_admin() ) { // note the use of is_admin() to double check that this is h
     if ( isset( $_GET[ 'pods_force_refresh' ] ) )
         $version = '0.1';
 
-    $update = admin_url( 'update.php?action=update-selected' );
+    $update = admin_url( 'update.php' );
     $update = str_replace( get_bloginfo( 'wpurl' ), '', $update );
 
-    $update_network = network_admin_url( 'update.php?action=update-selected' );
+    $update_network = network_admin_url( 'update.php' );
     $update_network = str_replace( get_bloginfo( 'wpurl' ), '', $update_network );
 
-    if ( false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update ) || false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update_network ) )
+    if ( 'update-selected' == pods_var( 'action' ) && ( false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update ) || false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update_network ) ) )
         $version = '0.1';
 
     $user = 'pods-framework';

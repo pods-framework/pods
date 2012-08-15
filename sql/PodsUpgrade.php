@@ -352,7 +352,8 @@ class PodsUpgrade_2_0 {
                         'required' => $row->required,
                         'unique' => $row->unique,
                         'input_helper' => $row->input_helper,
-                        'old_name' => $old_name
+                        'old_name' => $old_name,
+                        'pod_index' => 'name'
                     )
                 );
 

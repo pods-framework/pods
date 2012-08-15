@@ -327,6 +327,8 @@ class PodsUpgrade_2_0 {
                 if ( 'name' == $row->name )
                     continue;
 
+                $old_name = $row->name;
+
                 if ( in_array( $row->name, array( 'created', 'modified', 'author' ) ) )
                     $row->name .= '2';
 
@@ -349,7 +351,8 @@ class PodsUpgrade_2_0 {
                     'options' => array(
                         'required' => $row->required,
                         'unique' => $row->unique,
-                        'input_helper' => $row->input_helper
+                        'input_helper' => $row->input_helper,
+                        'old_name' => $old_name
                     )
                 );
 
@@ -739,8 +742,9 @@ class PodsUpgrade_2_0 {
         $columns = array();
 
         foreach ( $pod_data[ 'fields' ] as $field ) {
-            if ( !in_array( $field[ 'name' ], array( 'created', 'modified', 'author' ) ) && !in_array( $field[ 'type' ], array( 'file', 'pick' ) ) )
-                $columns[] = pods_sanitize( $field[ 'name' ] );
+            if ( !in_array( $field[ 'name' ], array( 'created', 'modified', 'author' ) ) && !in_array( $field[ 'type' ], array( 'file', 'pick' ) ) ) {
+                $columns[] = pods_sanitize( pods_var( 'old_name', $field[ 'options' ], $field[ 'name' ], null, false ) );
+            }
         }
 
         $select = '`t`.`id`';

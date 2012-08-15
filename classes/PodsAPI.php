@@ -667,6 +667,9 @@ class PodsAPI {
 
                 if ( !empty( $check ) )
                     return pods_error( sprintf( __( 'Post Type %s already exists, try extending it instead', 'pods' ), $pod_params[ 'name' ] ), $this );
+
+                $_params[ 'options' ][ 'supports_title' ] = 1;
+                $_params[ 'options' ][ 'supports_editor' ] = 1;
             }
             elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
                 $check = get_taxonomy( $pod_params[ 'name' ] );

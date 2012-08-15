@@ -625,12 +625,12 @@ if ('post_type' == pods_var('type', $pod) && strlen( pods_var( 'object', $pod ) 
                                                     <ul>
                                                         <li>
                                                             <div class="pods-field pods-boolean">
-                                                                <?php echo PodsForm::field( 'supports_title', pods_var( 'supports_title', $pod, true ), 'boolean', array( 'boolean_yes_label' => __( 'Title', 'pods' ) ) ); ?>
+                                                                <?php echo PodsForm::field( 'supports_title', pods_var( 'supports_title', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Title', 'pods' ) ) ); ?>
                                                             </div>
                                                         </li>
                                                         <li>
                                                             <div class="pods-field pods-boolean">
-                                                                <?php echo PodsForm::field( 'supports_editor', pods_var( 'supports_editor', $pod, true ), 'boolean', array( 'boolean_yes_label' => __( 'Editor', 'pods' ) ) ); ?>
+                                                                <?php echo PodsForm::field( 'supports_editor', pods_var( 'supports_editor', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Editor', 'pods' ) ) ); ?>
                                                             </div>
                                                         </li>
                                                         <li>

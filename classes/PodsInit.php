@@ -290,8 +290,8 @@ class PodsInit {
 
                 // Supported
                 $cpt_supported = array(
-                    'title' => (boolean) pods_var( 'supports_title', $post_type, true ),
-                    'editor' => (boolean) pods_var( 'supports_editor', $post_type, true ),
+                    'title' => (boolean) pods_var( 'supports_title', $post_type, false ),
+                    'editor' => (boolean) pods_var( 'supports_editor', $post_type, false ),
                     'author' => (boolean) pods_var( 'supports_author', $post_type, false ),
                     'thumbnail' => (boolean) pods_var( 'supports_thumbnail', $post_type, false ),
                     'excerpt' => (boolean) pods_var( 'supports_excerpt', $post_type, false ),

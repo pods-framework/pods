@@ -879,6 +879,9 @@ class PodsAPI {
                     'type' => 'slug',
                     'description' => 'Leave blank to auto-generate from Name'
                 );
+
+                if ( !isset( $pod[ 'options' ][ 'pod_index' ] ) )
+                    $pod[ 'options' ][ 'pod_index' ] = 'name';
             }
 
             $field_table_operation = false;

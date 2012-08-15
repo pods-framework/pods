@@ -302,10 +302,11 @@ class PodsInit {
                     'page-attributes' => (boolean) pods_var( 'supports_page_attributes', $post_type, false ),
                     'post-formats' => (boolean) pods_var( 'supports_post_formats', $post_type, false )
                 );
+
                 $cpt_supports = array();
 
-                foreach ( $cpt_supported as $cpt_support => $cpt_supported ) {
-                    if ( false !== $cpt_supported )
+                foreach ( $cpt_supported as $cpt_support => $supported ) {
+                    if ( false !== $supported )
                         $cpt_supports[] = $cpt_support;
                 }
 

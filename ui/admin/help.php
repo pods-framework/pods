@@ -71,12 +71,20 @@
             <input type="submit" class="button button-primary" name="reset" value="Reset Pods 2.0 settings and data" onclick="return confirm( 'Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.0, resetting it to a clean first install.' );" />
         </p>
 
-        <h3>Delete Pods 1.x data</h3>
-        <p>This tool will delete all of your Pods 1.x data, it's only recommended if you've verified your data has been properly migrated into Pods 2.0.</p>
+        <?php
+            $old_version = get_option( 'pods_version' );
 
-        <p class="submit">
-            <input type="submit" class="button button-primary" name="cleanup" value="Delete Pods 1.x settings and data" onclick="return confirm( 'Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds 1.x, resetting it to a clean first install.' );" />
-        </p>
+            if ( !empty( $old_version ) ) {
+        ?>
+            <h3>Delete Pods 1.x data</h3>
+            <p>This tool will delete all of your Pods 1.x data, it's only recommended if you've verified your data has been properly migrated into Pods 2.0.</p>
+
+            <p class="submit">
+                <input type="submit" class="button button-primary" name="cleanup" value="Delete Pods 1.x settings and data" onclick="return confirm( 'Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds 1.x, resetting it to a clean first install.' );" />
+            </p>
+        <?php
+            }
+        ?>
 
         <h3>Deactivate and Delete Pods 2.0 Data</h3>
 

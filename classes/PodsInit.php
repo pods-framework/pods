@@ -677,6 +677,62 @@ class PodsInit {
             restore_current_blog();
     }
 
+    function reset ( $_blog_id = null ) {
+        global $wpdb;
+
+        // Switch DB table prefixes
+        if ( null !== $_blog_id && $_blog_id != $wpdb->blogid )
+            switch_to_blog( pods_absint( $_blog_id ) );
+        else
+            $_blog_id = null;
+
+        $api = pods_api();
+
+        $pods = $api->load_pods();
+
+        foreach ( $pods as $pod ) {
+            $api->delete_pod( array( 'id' => $pod[ 'id' ] ) );
+        }
+
+        $templates = $api->load_templates();
+
+        foreach ( $templates as $template ) {
+            $api->delete_template( array( 'id' => $template[ 'id' ] ) );
+        }
+
+        $pages = $api->load_pages();
+
+        foreach ( $pages as $page ) {
+            $api->delete_page( array( 'id' => $page[ 'id' ] ) );
+        }
+
+        $helpers = $api->load_helpers();
+
+        foreach ( $helpers as $helper ) {
+            $api->delete_helper( array( 'id' => $helper[ 'id' ] ) );
+        }
+
+        $tables = $wpdb->get_results( "SHOW TABLES LIKE '{$wpdb->prefix}pods%'", ARRAY_N );
+
+        if ( !empty( $tables ) ) {
+            foreach ( $tables as $table ) {
+                $table = $table[ 0 ];
+
+                pods_query( "DROP TABLE `{$table}`", false );
+            }
+        }
+
+        delete_option( 'pods_framework_version' );
+        delete_option( 'pods_framework_upgrade_2_0' );
+        delete_option( 'pods_framework_upgraded_1_x' );
+
+        self::$version = '';
+
+        // Restore DB table prefix (if switched)
+        if ( null !== $_blog_id )
+            restore_current_blog();
+    }
+
     // Delete Attachments from relationships
     function delete_attachment ( $_ID ) {
         global $wpdb;

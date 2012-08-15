@@ -801,7 +801,7 @@ class PodsUpgrade_2_0 {
     function restart () {
         global $wpdb;
 
-        foreach ( $this->table as $table ) {
+        foreach ( $this->tables as $table ) {
             if ( false !== strpos( $table, "{$wpdb->prefix}pods" ) )
                 pods_query( "TRUNCATE `{$table}`", false );
         }
@@ -812,7 +812,7 @@ class PodsUpgrade_2_0 {
     function cleanup () {
         global $wpdb;
 
-        foreach ( $this->table as $table ) {
+        foreach ( $this->tables as $table ) {
             if ( false !== strpos( $table, "{$wpdb->prefix}pod_" ) || "{$wpdb->prefix}pod" == $table )
                 pods_query( "DROP TABLE `{$table}`", false );
         }

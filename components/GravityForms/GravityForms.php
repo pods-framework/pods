@@ -86,8 +86,6 @@ class Pods_GravityForms extends PodsComponent {
             )
         );
 
-        pods_debug( $pods_forms, false );
-
         foreach( $pods_forms as &$form ) {
             $gf = RGFormsModel::get_form( $form[ 'id' ] );
             if ( empty( $gf ) || !isset( $gf->title ) )
@@ -184,8 +182,6 @@ class Pods_GravityForms extends PodsComponent {
         $pods_forms = (array) get_option( 'pods_gravity_forms', array() );
 
         $gravity_form = RGFormsModel::get_form( $id );
-
-        pods_debug( $gravity_form, false );
 
         pods_view( dirname( __FILE__ ) . '/ui/edit.php', get_defined_vars() );
     }

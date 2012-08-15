@@ -131,6 +131,35 @@ function pods_debug ( $debug = '_null', $die = false, $prefix = '_null' ) {
 }
 
 /**
+ * Output a message in the WP Dashboard UI
+ *
+ * @param string $msg
+ * @param bool $error Whether or not it is an error message
+ *
+ * @return bool
+ *
+ * @since 1.12
+ */
+function pods_ui_message( $msg, $error = false ) {
+    echo '<div id="message" class="' . ( $error ? 'error' : 'updated' ) . ' fade"><p>' . $msg . '</p></div>';
+
+    return !$error;
+}
+
+/**
+ * Output an error in the WP Dashboard UI
+ *
+ * @param string $msg
+ *
+ * @return bool
+ *
+ * @since 1.12
+ */
+function pods_ui_error ( $msg ) {
+    return pod_ui_message( $msg, true );
+}
+
+/**
  * Marks a function as deprecated and informs when it has been used.
  *
  * There is a hook deprecated_function_run that will be called that can be used

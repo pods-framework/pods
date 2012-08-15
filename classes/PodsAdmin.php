@@ -154,12 +154,11 @@ class PodsAdmin {
         ) );
 
         $old_pods = get_option( 'pods_version' );
-        $upgraded = get_option( 'pods_framework_upgraded_1_x' );
 
-        if ( empty( $old_pods ) && 1 != $upgraded ) {
-            update_option( 'pods_framework_upgraded_1_x', 1 );
+        if ( empty( $old_pods ) )
             $upgraded = 1;
-        }
+        else
+            $upgraded = get_option( 'pods_framework_upgraded_1_x' );
 
         if ( ( empty( $old_pods ) || 1 == $upgraded ) && false !== $results ) {
             foreach ( (array) $results as $item ) {

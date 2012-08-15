@@ -24,7 +24,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-if ( defined( 'PODS_VERSION' ) ) {
+if ( defined( 'PODS_VERSION' ) && defined( 'PODS_DIR' ) && file_exists( untrailingslashit( PODS_DIR ) . '/init.php' ) ) {
     deactivate_plugins( untrailingslashit( PODS_DIR ) . '/init.php' );
 
     // next refresh will load 2.0

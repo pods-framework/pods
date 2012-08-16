@@ -3,7 +3,7 @@
 Plugin Name: Pods Framework
 Plugin URI: http://podsframework.org/
 Description: Create / Manage / Develop / Extend content types: Posts, Pages, Media, Custom Post Types, Categories, Tags, Custom Taxonomy, Comments, Users, Custom Content Types, and Custom Tables
-Version: 2.0.0 Beta 4
+Version: 2.0.0 Beta 5
 Author: The Pods Framework Team
 Author URI: http://podsframework.org/about/
 
@@ -24,72 +24,79 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-if ( defined( 'PODS_VERSION' ) && defined( 'PODS_DIR' ) && file_exists( untrailingslashit( PODS_DIR ) . '/init.php' ) ) {
-    if ( !function_exists( 'deactivate_plugins' ) )
-        include_once ABSPATH . '/wp-admin/includes/plugin.php';
+// Prevent conflicts with Pods 1.x
+if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) ) {
+    define( 'PODS_VERSION', '2.0.0-b-5' );
 
-    deactivate_plugins( untrailingslashit( PODS_DIR ) . '/init.php' );
+    if ( !defined( 'PODS_WP_VERSION_MINIMUM' ) )
+        define( 'PODS_WP_VERSION_MINIMUM', '3.4' );
+    if ( !defined( 'PODS_PHP_VERSION_MINIMUM' ) )
+        define( 'PODS_PHP_VERSION_MINIMUM', '5.2.4' );
+    if ( !defined( 'PODS_MYSQL_VERSION_MINIMUM' ) )
+        define( 'PODS_MYSQL_VERSION_MINIMUM', '5.0' );
 
-    // next refresh will load 2.0
-    return;
+    define( 'PODS_SLUG', plugin_basename( __FILE__ ) );
+    define( 'PODS_URL', plugin_dir_url( __FILE__ ) );
+    define( 'PODS_DIR', plugin_dir_path( __FILE__ ) );
+
+    require_once( PODS_DIR . 'functions.php' );
+
+    if ( is_admin() ) { // note the use of is_admin() to double check that this is happening in the admin
+        // GitHub Plugin Updater
+        // https://github.com/jkudish/WordPress-GitHub-Plugin-Updater
+        require_once( PODS_DIR . 'updater.php' );
+
+        $version = PODS_VERSION;
+
+        if ( isset( $_GET[ 'pods_force_refresh' ] ) )
+            $version = '0.1';
+
+        $update = admin_url( 'update.php' );
+        $update = str_replace( get_bloginfo( 'wpurl' ), '', $update );
+
+        $update_network = network_admin_url( 'update.php' );
+        $update_network = str_replace( get_bloginfo( 'wpurl' ), '', $update_network );
+
+        if ( 'update-selected' == pods_var( 'action' ) && ( false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update ) || false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update_network ) ) )
+            $version = '0.1';
+
+        $user = 'pods-framework';
+        $repo = 'pods';
+        $branch = '2.0';
+        $config = array(
+            'slug' => PODS_SLUG, // this is the slug of your plugin
+            'proper_folder_name' => dirname( PODS_SLUG ), // this is the name of the folder your plugin lives in
+            'api_url' => 'https://api.github.com/repos/' . $user . '/' . $repo, // the github API url of your github repo
+            'raw_url' => 'https://raw.github.com/' . $user . '/' . $repo . '/' . $branch, // the github raw url of your github repo
+            'github_url' => 'https://github.com/' . $user . '/' . $repo, // the github url of your github repo
+            'zip_url' => 'https://github.com/' . $user . '/' . $repo . '/zipball/' . $branch, // the zip url of the github repo
+            'sslverify' => true, // whether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
+            'requires' => '3.4', // which version of WordPress does your plugin require?
+            'tested' => '3.4.1', // which version of WordPress is your plugin tested up to?
+            'version' => $version
+        );
+        new WPGitHubUpdater( $config );
+    }
+
+    global $pods, $pods_init, $pod_page_exists;
+    if ( false !== pods_compatible() && ( !defined( 'SHORTINIT' ) || !SHORTINIT ) ) {
+        if ( !defined( 'PODS_DEPRECATED' ) || PODS_DEPRECATED )
+            require_once( PODS_DIR . 'deprecated/deprecated.php' );
+
+        $pods_init = pods_init();
+    }
 }
+else {
+    function pods_deactivate_1_x () {
+        if ( defined( 'PODS_VERSION' ) && defined( 'PODS_DIR' ) && file_exists( untrailingslashit( PODS_DIR ) . '/init.php' ) ) {
+            if ( !function_exists( 'deactivate_plugins' ) )
+                include_once ABSPATH . '/wp-admin/includes/plugin.php';
 
-define( 'PODS_VERSION', '2.0.0-b-4' );
+            deactivate_plugins( untrailingslashit( PODS_DIR ) . '/init.php' );
 
-if ( !defined( 'PODS_WP_VERSION_MINIMUM' ) )
-    define( 'PODS_WP_VERSION_MINIMUM', '3.4' );
-if ( !defined( 'PODS_PHP_VERSION_MINIMUM' ) )
-    define( 'PODS_PHP_VERSION_MINIMUM', '5.2.4' );
-if ( !defined( 'PODS_MYSQL_VERSION_MINIMUM' ) )
-    define( 'PODS_MYSQL_VERSION_MINIMUM', '5.0' );
-
-define( 'PODS_SLUG', plugin_basename( __FILE__ ) );
-define( 'PODS_URL', plugin_dir_url( __FILE__ ) );
-define( 'PODS_DIR', plugin_dir_path( __FILE__ ) );
-
-require_once( PODS_DIR . 'functions.php' );
-
-if ( is_admin() ) { // note the use of is_admin() to double check that this is happening in the admin
-    // GitHub Plugin Updater
-    // https://github.com/jkudish/WordPress-GitHub-Plugin-Updater
-    require_once( PODS_DIR . 'updater.php' );
-
-    $version = PODS_VERSION;
-
-    if ( isset( $_GET[ 'pods_force_refresh' ] ) )
-        $version = '0.1';
-
-    $update = admin_url( 'update.php' );
-    $update = str_replace( get_bloginfo( 'wpurl' ), '', $update );
-
-    $update_network = network_admin_url( 'update.php' );
-    $update_network = str_replace( get_bloginfo( 'wpurl' ), '', $update_network );
-
-    if ( 'update-selected' == pods_var( 'action' ) && ( false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update ) || false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update_network ) ) )
-        $version = '0.1';
-
-    $user = 'pods-framework';
-    $repo = 'pods';
-    $branch = '2.0';
-    $config = array(
-        'slug' => PODS_SLUG, // this is the slug of your plugin
-        'proper_folder_name' => dirname( PODS_SLUG ), // this is the name of the folder your plugin lives in
-        'api_url' => 'https://api.github.com/repos/' . $user . '/' . $repo, // the github API url of your github repo
-        'raw_url' => 'https://raw.github.com/' . $user . '/' . $repo . '/' . $branch, // the github raw url of your github repo
-        'github_url' => 'https://github.com/' . $user . '/' . $repo, // the github url of your github repo
-        'zip_url' => 'https://github.com/' . $user . '/' . $repo . '/zipball/' . $branch, // the zip url of the github repo
-        'sslverify' => true, // whether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
-        'requires' => '3.4', // which version of WordPress does your plugin require?
-        'tested' => '3.4.1', // which version of WordPress is your plugin tested up to?
-        'version' => $version
-    );
-    new WPGitHubUpdater( $config );
-}
-
-global $pods, $pods_init, $pod_page_exists;
-if ( false !== pods_compatible() && ( !defined( 'SHORTINIT' ) || !SHORTINIT ) ) {
-    if ( !defined( 'PODS_DEPRECATED' ) || PODS_DEPRECATED )
-        require_once( PODS_DIR . 'deprecated/deprecated.php' );
-
-    $pods_init = pods_init();
+            // next refresh will load 2.0
+            return;
+        }
+    }
+    add_action( 'init', 'pods_deactivate_1_x' );
 }

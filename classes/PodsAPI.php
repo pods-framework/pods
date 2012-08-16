@@ -3006,9 +3006,6 @@ class PodsAPI {
             unset( $field[ 'options' ][ 'sister_field_id' ] );
         }
 
-        if ( 'pick' == $field[ 'type' ] && 'custom-simple' != pods_var( 'pick_object', $field ) )
-            $field[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $field ), pods_var( 'pick_val', $field ) );
-
         return $field;
     }
 

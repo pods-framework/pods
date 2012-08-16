@@ -1009,6 +1009,8 @@ class PodsAdmin {
         elseif ( 'multi' == pods_var( 'pick_format_type', $field ) && 'autocomplete' == pods_var( 'pick_format_multi', $field ) )
             pods_error( __( 'Invalid field', 'pods' ), $this );
 
+        $field[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $field ), pods_var( 'pick_val', $field ) );
+
         $data = pods_data();
         $data->table = $field[ 'table_info' ][ 'table' ];
         $data->join = $field[ 'table_info' ][ 'join' ];

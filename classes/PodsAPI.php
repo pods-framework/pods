@@ -2239,7 +2239,7 @@ class PodsAPI {
      *
      * @since 1.7.9
      */
-    public function delete_pod ( $params ) {
+    public function delete_pod ( $params, $strict = false ) {
         global $wpdb;
 
         if ( !is_object( $params ) && !is_array( $params ) ) {
@@ -2253,10 +2253,14 @@ class PodsAPI {
         else
             $params = (object) pods_sanitize( $params );
 
-        $pod = $this->load_pod( $params );
+        $pod = $this->load_pod( $params, $strict );
 
-        if ( false === $pod )
-            return pods_error( __( 'Pod not found', 'pods' ), $this );
+        if ( empty( $pod ) ) {
+            if ( false !== $strict )
+                return pods_error( __( 'Pod not found', 'pods' ), $this );
+
+            return false;
+        }
 
         $params->id = (int) $pod[ 'id' ];
         $params->name = $pod[ 'name' ];

@@ -3640,6 +3640,17 @@ class PodsAPI {
             'orderby' => null
         );
 
+        if ( 'pod' == $object_type && null === $pod ) {
+            if ( !empty( $object ) )
+                $name = $object;
+
+            $pod = $this->load_pod( array( 'name' => $name ) );
+
+            $object_type = $pod[ 'type' ];
+            $name = $pod[ 'name' ];
+            $object = $pod[ 'object' ];
+        }
+
         if ( 'pod' == $object_type )
             $info[ 'table' ] = $wpdb->prefix . 'pods_tbl_' . ( empty( $object ) ? $name : $object );
         elseif ( 'post_type' == $object_type || 'media' == $object_type ) {
@@ -3652,7 +3663,7 @@ class PodsAPI {
 
             $info[ 'where' ] = array(
                 'post_status' => '`t`.`post_status` = "publish"',
-                'post_type' => '`t`.`post_type` = "' . $object . '"'
+                'post_type' => '`t`.`post_type` = "' . ( empty( $object ) ? $name : $object ) . '"'
             );
 
             $info[ 'orderby' ] = '`t`.`menu_order`, `t`.`' . $info[ 'field_index' ] . '`, `t`.`post_date`';
@@ -3664,7 +3675,7 @@ class PodsAPI {
             $info[ 'field_index' ] = 'name';
 
             $info[ 'where' ] = array(
-                'tx.taxonomy' => '`tx`.`taxonomy` = "' . $object . '"'
+                'tx.taxonomy' => '`tx`.`taxonomy` = "' . ( empty( $object ) ? $name : $object ) . '"'
             );
         }
         elseif ( 'user' == $object_type ) {
@@ -3685,7 +3696,7 @@ class PodsAPI {
 
             $info[ 'where' ] = array(
                 'comment_approved' => '`t`.`comment_approved` = 1',
-                'comment_type' => '`t`.`comment_type` = "' . $object . '"'
+                'comment_type' => '`t`.`comment_type` = "' . ( empty( $object ) ? $name : $object ) . '"'
             );
 
             $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '` DESC, `t`.`' . $info[ 'field_id' ] . '`';

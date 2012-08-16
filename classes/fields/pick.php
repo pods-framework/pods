@@ -93,21 +93,21 @@ class PodsField_Pick extends PodsField {
                 'type' => 'text'
             ),
             'pick_where' => array(
-                'label' => __( '', 'pods' ),
+                'label' => __( 'Customized <em>WHERE</em>', 'pods' ),
                 'help' => __( 'help', 'pods' ),
                 'excludes-on' => array( 'pick_object' => 'custom-simple' ),
                 'default' => '',
                 'type' => 'text'
             ),
             'pick_orderby' => array(
-                'label' => __( '', 'pods' ),
+                'label' => __( 'Customized <em>ORDER BY</em>', 'pods' ),
                 'help' => __( 'help', 'pods' ),
                 'excludes-on' => array( 'pick_object' => 'custom-simple' ),
                 'default' => '',
                 'type' => 'text'
             ),
             'pick_groupby' => array(
-                'label' => __( '', 'pods' ),
+                'label' => __( 'Customized <em>GROUP BY</em>', 'pods' ),
                 'help' => __( 'help', 'pods' ),
                 'excludes-on' => array( 'pick_object' => 'custom-simple' ),
                 'default' => '',
@@ -202,31 +202,42 @@ class PodsField_Pick extends PodsField {
             }
         }
         elseif ( '' != pods_var( 'pick_object', $options, '' ) && array() == pods_var( 'data', $options, array() ) ) {
-            $options[ 'data' ] = array( '' => __( '-- Select One --', 'pods' ) );
+            $options[ 'data' ] = array();
 
-            $options[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $options ), pods_var( 'pick_val', $options ) );
+            if ( 'single' == pods_var( 'pick_format_type' ) && 'autocomplete' == pods_var( 'pick_format_single', $options ) ) {
+                // don't lookup data
+            }
+            elseif ( 'multi' == pods_var( 'pick_format_type' ) && 'autocomplete' == pods_var( 'pick_format_multi', $options ) ) {
+                // don't lookup data
+            }
+            else {
+                if ( 'single' == pods_var( 'pick_format_type', $options ) && 'dropdown' == pods_var( 'pick_format_single', $options ) )
+                    $options[ 'data' ] = array( '' => __( '-- Select One --', 'pods' ) );
 
-            $data = pods_data();
-            $data->table = $options[ 'table_info' ][ 'table' ];
-            $data->join = $options[ 'table_info' ][ 'join' ];
-            $data->field_id = $options[ 'table_info' ][ 'field_id' ];
-            $data->field_index = $options[ 'table_info' ][ 'field_index' ];
-            $data->where = $options[ 'table_info' ][ 'where' ];
-            $data->orderby = $options[ 'table_info' ][ 'orderby' ];
+                $options[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $options ), pods_var( 'pick_val', $options ) );
 
-            $results = $data->select( array(
-                'select' => "`{$data->field_id}`, `{$data->field_index}`",
-                'table' => $data->table,
-                'where' => pods_var( 'pick_where', $options, null, null, true ),
-                'orderby' => pods_var( 'pick_orderby', $options, null, null, true ),
-                'groupby' => pods_var( 'pick_groupby', $options, null, null, true )
-            ) );
+                $data = pods_data();
+                $data->table = $options[ 'table_info' ][ 'table' ];
+                $data->join = $options[ 'table_info' ][ 'join' ];
+                $data->field_id = $options[ 'table_info' ][ 'field_id' ];
+                $data->field_index = $options[ 'table_info' ][ 'field_index' ];
+                $data->where = $options[ 'table_info' ][ 'where' ];
+                $data->orderby = $options[ 'table_info' ][ 'orderby' ];
 
-            if ( !empty( $data->table ) ) {
-                foreach ( $results as $result ) {
-                    $result = get_object_vars( $result );
+                $results = $data->select( array(
+                    'select' => "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`",
+                    'table' => $data->table,
+                    'where' => pods_var( 'pick_where', $options, null, null, true ),
+                    'orderby' => pods_var( 'pick_orderby', $options, null, null, true ),
+                    'groupby' => pods_var( 'pick_groupby', $options, null, null, true )
+                ) );
 
-                    $options[ 'data' ][ $result[ $data->field_id ] ] = $result[ $data->field_index ];
+                if ( !empty( $data->table ) ) {
+                    foreach ( $results as $result ) {
+                        $result = get_object_vars( $result );
+
+                        $options[ 'data' ][ $result[ $data->field_id ] ] = $result[ $data->field_index ];
+                    }
                 }
             }
         }

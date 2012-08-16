@@ -15,10 +15,18 @@
     jQuery( function () {
         jQuery( '#color_<?php echo $attributes[ 'id' ]; ?>' ).hide();
 
-        jQuery( '#color_<?php echo $attributes[ 'id' ]; ?>' ).farbtastic( '#color' );
+        jQuery.farbtastic( '#color_<?php echo $attributes[ 'id' ]; ?>', function ( color ) {
+            pods_pickColor( '#<?php echo $attributes[ 'id' ]; ?>', color );
+        } );
 
-        jQuery( '#<?php echo $attributes[ 'id' ]; ?>' ).click( function () {
+        jQuery( '#<?php echo $attributes[ 'id' ]; ?>' ).on( 'click', function () {
             jQuery( '#color_<?php echo $attributes[ 'id' ]; ?>' ).slideToggle();
         } );
+
+        if ( 'undefined' == pods_pickColor ) {
+            function pods_pickColor ( id, color ) {
+                jQuery( id ).val( color );
+            }
+        }
     } );
 </script>

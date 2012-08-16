@@ -1,4 +1,7 @@
 <?php
+    wp_enqueue_style( 'pods-select2' );
+wp_enqueue_script( 'pods-select2' );
+
     $attributes = array();
     $attributes['type'] = 'hidden';
     $attributes['value'] = $value;
@@ -9,7 +12,7 @@
 <input<?php PodsForm::attributes($attributes, $name, PodsForm::$field_type, $options); ?> />
 
 <script type="text/javascript">
-    jQuery( function ( $ ) {
+    jQuery( function () {
         if ( typeof pods_ajaxurl === "undefined" ) {
             var pods_ajaxurl = "<?php echo admin_url( 'admin-ajax.php?pods_ajax=1' ); ?>";
         }
@@ -18,15 +21,15 @@
             var pods_select2_nonce = "<?php echo wp_create_nonce( 'pods-select2_ajax' ); ?>";
         }
 
-        function <?php echo $attributes[ 'id' ]; ?>_podsFormatResult ( item ) {
+        function <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_podsFormatResult ( item ) {
             return item.title;
         }
 
-        function <?php echo $attributes[ 'id' ]; ?>_podsFormatSelection ( item ) {
+        function <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_podsFormatSelection ( item ) {
             return item.title;
         }
 
-        $( '#<?php echo $attributes[ 'id' ]; ?>' ).select2( {
+        jQuery( '#<?php echo $attributes[ 'id' ]; ?>' ).select2( {
             placeholder : {
                 title : 'Start Typing...',
                 id : ''
@@ -48,8 +51,8 @@
                     return data;
                 }
             },
-            formatResult : <?php echo $attributes[ 'id' ]; ?>_podsFormatResult,
-            formatSelection : <?php echo $attributes[ 'id' ]; ?>_podsFormatSelection
+            formatResult : <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_podsFormatResult,
+            formatSelection : <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_podsFormatSelection
         } );
     } );
 </script>

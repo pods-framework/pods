@@ -365,6 +365,9 @@ class PodsData {
         if ( empty( $params->table ) && is_object( $this->pod_data ) && isset( $this->table ) && !empty( $this->table ) )
             $params->table = $this->table;
 
+        if ( false === strpos( $params->table, '(' ) && false === strpos( $params->table, '`' ) )
+            $params->table = '`' . $params->table . '`';
+
         if ( !empty( $params->join ) )
             $params->join = array_merge( (array) $this->join, (array) $params->join );
         elseif ( false === $params->strict )
@@ -372,8 +375,8 @@ class PodsData {
 
         $params->where = (array) $params->where;
 
-        if ( false === $params->strict )
-            $params->where = array_merge( $params->where, $this->where );
+        if ( false === $params->strict && !empty( $this->where ) )
+            $params->where = array_merge( $params->where, (array) $this->where );
 
         if ( empty( $params->where ) )
             $params->where = array();

@@ -1,24 +1,54 @@
 <?php
+/**
+ * @package Pods
+ */
 class PodsMeta {
 
+    /**
+     * @var PodsAPI
+     */
     private $api;
 
+    /**
+     * @var array
+     */
     public static $post_types = array();
 
+    /**
+     * @var array
+     */
     public static $taxonomies = array();
 
+    /**
+     * @var array
+     */
     public static $media = array();
 
+    /**
+     * @var array
+     */
     public static $user = array();
 
+    /**
+     * @var array
+     */
     public static $comment = array();
 
+    /**
+     * @var array
+     */
     public static $groups = array();
 
+    /**
+     *
+     */
     function __construct () {
         $this->api =& pods_api();
     }
 
+    /**
+     * @return PodsMeta
+     */
     public function init () {
         self::$post_types = $this->api->load_pods( array( 'type' => 'post_type' ) );
         self::$taxonomies = $this->api->load_pods( array( 'type' => 'taxonomy' ) );
@@ -111,6 +141,15 @@ class PodsMeta {
         return $this;
     }
 
+    /**
+     * @param $pod
+     * @param $label
+     * @param $fields
+     * @param string $context
+     * @param string $priority
+     *
+     * @return mixed|void
+     */
     public function group_add ( $pod, $label, $fields, $context = 'normal', $priority = 'default' ) {
         $defaults = array(
             'name' => '',
@@ -227,8 +266,13 @@ class PodsMeta {
                 add_action( 'edit_comment', array( $this, 'save_comment' ) );
             }
         }
-    }
+}
 
+    /**
+     * @param $type
+     * @param $name
+     * @return array
+     */
     public function groups_get ( $type, $name ) {
         do_action( 'pods_meta_groups', $type, $name );
 
@@ -282,8 +326,12 @@ class PodsMeta {
             $groups = self::$groups[ $type ][ $name ];
 
         return $groups;
-    }
+}
 
+    /**
+     * @param $post_type
+     * @param null $post
+     */
     public function meta_post_add ( $post_type, $post = null ) {
         if ( is_object( $post ) )
             $post_type = $post->post_type;
@@ -307,8 +355,12 @@ class PodsMeta {
                 array( 'group' => $group )
             );
         }
-    }
+}
 
+    /**
+     * @param $post
+     * @param $metabox
+     */
     public function meta_post ( $post, $metabox ) {
         wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
 ?>
@@ -339,8 +391,13 @@ class PodsMeta {
         ?>
     </table>
 <?php
-    }
+}
 
+    /**
+     * @param $post_id
+     * @param $post
+     * @return mixed
+     */
     public function save_post ( $post_id, $post ) {
         $blacklisted_types = array(
             'revision',
@@ -392,8 +449,13 @@ class PodsMeta {
         pods_no_conflict_off( 'post' );
 
         return $post_id;
-    }
+}
 
+    /**
+     * @param $form_fields
+     * @param $post
+     * @return array
+     */
     public function meta_media ( $form_fields, $post ) {
         $groups = $this->groups_get( 'media', 'media' );
 
@@ -432,8 +494,13 @@ class PodsMeta {
         }
 
         return $form_fields;
-    }
+}
 
+    /**
+     * @param $post
+     * @param $attachment
+     * @return mixed
+     */
     public function save_media ( $post, $attachment ) {
         $groups = $this->groups_get( 'media', 'media' );
 
@@ -470,8 +537,12 @@ class PodsMeta {
             $pod->save( $data );
 
         return $post;
-    }
+}
 
+    /**
+     * @param $tag
+     * @param null $taxonomy
+     */
     public function meta_taxonomy ( $tag, $taxonomy = null ) {
         wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
 
@@ -528,8 +599,13 @@ class PodsMeta {
                 }
             }
         }
-    }
+}
 
+    /**
+     * @param $term_id
+     * @param $term_taxonomy_id
+     * @param $taxonomy
+     */
     public function save_taxonomy ( $term_id, $term_taxonomy_id, $taxonomy ) {
         $groups = $this->groups_get( 'taxonomy', $taxonomy );
 
@@ -563,8 +639,11 @@ class PodsMeta {
 
         if ( !empty( $pod ) )
             $pod->save( $data );
-    }
+}
 
+    /**
+     * @param $user_id
+     */
     public function meta_user ( $user_id ) {
         wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
 
@@ -611,8 +690,11 @@ class PodsMeta {
     </table>
 <?php
         }
-    }
+}
 
+    /**
+     * @param $user_id
+     */
     public function save_user ( $user_id ) {
         $groups = $this->groups_get( 'user', 'user' );
 
@@ -645,8 +727,12 @@ class PodsMeta {
 
         if ( !empty( $pod ) )
             $pod->save( $data );
-    }
+}
 
+    /**
+     * @param $commenter
+     * @param $user_identity
+     */
     public function meta_comment_new_logged_in ( $commenter, $user_identity ) {
         wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
 
@@ -678,8 +764,12 @@ class PodsMeta {
 <?php
             }
         }
-    }
+}
 
+    /**
+     * @param $form_fields
+     * @return array
+     */
     public function meta_comment_new ( $form_fields ) {
         wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
 
@@ -715,8 +805,11 @@ class PodsMeta {
             }
         }
         return $form_fields;
-    }
+}
 
+    /**
+     * @param $comment
+     */
     public function meta_comment_add ( $comment ) {
         wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
 
@@ -757,8 +850,11 @@ class PodsMeta {
     </table>
 <?php
         }
-    }
+}
 
+    /**
+     * @param $comment
+     */
     public function meta_comment ( $comment ) {
         wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
 
@@ -795,8 +891,11 @@ class PodsMeta {
     </table>
 <?php
         }
-    }
+}
 
+    /**
+     * @param $comment_id
+     */
     public function save_comment ( $comment_id ) {
         $groups = $this->groups_get( 'comment', 'comment' );
 
@@ -831,95 +930,131 @@ class PodsMeta {
     /*
      * All *_*_meta filter handler aliases
      */
-    function get_post_meta () {
+    /**
+     * @return mixed
+     */
+    public function get_post_meta () {
         $args = func_get_args();
 
         array_unshift( $args, 'post_type' );
 
         return call_user_func_array( array( $this, 'get_meta' ), $args );
-    }
+}
 
-    function get_user_meta () {
+    /**
+     * @return mixed
+     */
+    public function get_user_meta () {
         $args = func_get_args();
 
         array_unshift( $args, 'user' );
 
         return call_user_func_array( array( $this, 'get_meta' ), $args );
-    }
+}
 
-    function get_comment_meta () {
+    /**
+     * @return mixed
+     */
+    public function get_comment_meta () {
         $args = func_get_args();
 
         array_unshift( $args, 'comment' );
 
         return call_user_func_array( array( $this, 'get_meta' ), $args );
-    }
+}
 
-    function add_post_meta () {
+    /**
+     * @return mixed
+     */
+    public function add_post_meta () {
         $args = func_get_args();
 
         array_unshift( $args, 'post_type' );
 
         return call_user_func_array( array( $this, 'add_meta' ), $args );
-    }
+}
 
-    function add_user_meta () {
+    /**
+     * @return mixed
+     */
+    public function add_user_meta () {
         $args = func_get_args();
 
         array_unshift( $args, 'user' );
 
         return call_user_func_array( array( $this, 'add_meta' ), $args );
-    }
+}
 
-    function add_comment_meta () {
+    /**
+     * @return mixed
+     */
+    public function add_comment_meta () {
         $args = func_get_args();
 
         array_unshift( $args, 'comment' );
 
         return call_user_func_array( array( $this, 'add_meta' ), $args );
-    }
+}
 
-    function update_post_meta () {
+    /**
+     * @return mixed
+     */
+    public function update_post_meta () {
         $args = func_get_args();
 
         array_unshift( $args, 'post_type' );
 
         return call_user_func_array( array( $this, 'update_meta' ), $args );
-    }
+}
 
-    function update_user_meta () {
+    /**
+     * @return mixed
+     */
+    public function update_user_meta () {
         $args = func_get_args();
 
         array_unshift( $args, 'user' );
 
         return call_user_func_array( array( $this, 'update_meta' ), $args );
-    }
+}
 
-    function update_comment_meta () {
+    /**
+     * @return mixed
+     */
+    public function update_comment_meta () {
         $args = func_get_args();
 
         array_unshift( $args, 'comment' );
 
         return call_user_func_array( array( $this, 'update_meta' ), $args );
-    }
+}
 
-    function delete_post_meta () {
+    /**
+     * @return mixed
+     */
+    public function delete_post_meta () {
         $args = func_get_args();
 
         array_unshift( $args, 'post_type' );
 
         return call_user_func_array( array( $this, 'delete_meta' ), $args );
-    }
+}
 
-    function delete_user_meta () {
+    /**
+     * @return mixed
+     */
+    public function delete_user_meta () {
         $args = func_get_args();
 
         array_unshift( $args, 'user' );
 
         return call_user_func_array( array( $this, 'delete_meta' ), $args );
-    }
+}
 
-    function delete_comment_meta () {
+    /**
+     * @return mixed
+     */
+    public function delete_comment_meta () {
         $args = func_get_args();
 
         array_unshift( $args, 'comment' );
@@ -930,7 +1065,13 @@ class PodsMeta {
     /*
      * The real meta functions
      */
-    function get_object ( $object_type, $object_id, $aux = '' ) {
+    /**
+     * @param $object_type
+     * @param $object_id
+     * @param string $aux
+     * @return bool|mixed
+     */
+    public function get_object ( $object_type, $object_id, $aux = '' ) {
         if ( 'post_type' == $object_type )
             $objects = self::$post_types;
         elseif ( 'taxonomy' == $object_type )
@@ -994,9 +1135,17 @@ class PodsMeta {
         }
 
         return false;
-    }
+}
 
-    function get_meta ( $object_type, $_null = null, $object_id = 0, $meta_key = '', $single = false ) {
+    /**
+     * @param $object_type
+     * @param null $_null
+     * @param int $object_id
+     * @param string $meta_key
+     * @param bool $single
+     * @return array|bool|int|mixed|null|string|void
+     */
+    public function get_meta ( $object_type, $_null = null, $object_id = 0, $meta_key = '', $single = false ) {
         $meta_type = $object_type;
 
         if ( 'post_type' == $meta_type )
@@ -1034,9 +1183,18 @@ class PodsMeta {
         pods_no_conflict_off( $meta_type );
 
         return $value;
-    }
+}
 
-    function add_meta ( $object_type, $_null = null, $object_id = 0, $meta_key = '', $meta_value = '', $unique = false ) {
+    /**
+     * @param $object_type
+     * @param null $_null
+     * @param int $object_id
+     * @param string $meta_key
+     * @param string $meta_value
+     * @param bool $unique
+     * @return bool|int|null
+     */
+    public function add_meta ( $object_type, $_null = null, $object_id = 0, $meta_key = '', $meta_value = '', $unique = false ) {
         $meta_type = $object_type;
 
         if ( 'post_type' == $meta_type )
@@ -1053,9 +1211,18 @@ class PodsMeta {
         $id = pods( $object[ 'name' ], $object_id )->save( $meta_key, $meta_value );
 
         return $id;
-    }
+}
 
-    function update_meta ( $object_type, $_null = null, $object_id = 0, $meta_key = '', $meta_value = '', $prev_value = '' ) {
+    /**
+     * @param $object_type
+     * @param null $_null
+     * @param int $object_id
+     * @param string $meta_key
+     * @param string $meta_value
+     * @param string $prev_value
+     * @return bool|int|null
+     */
+    public function update_meta ( $object_type, $_null = null, $object_id = 0, $meta_key = '', $meta_value = '', $prev_value = '' ) {
         $meta_type = $object_type;
 
         if ( 'post_type' == $meta_type )
@@ -1072,9 +1239,18 @@ class PodsMeta {
         $id = pods( $object[ 'name' ], $object_id )->save( $meta_key, $meta_value );
 
         return $id;
-    }
+}
 
-    function delete_meta ( $object_type, $_null = null, $object_id = 0, $meta_key = '', $meta_value = '', $delete_all = false ) {
+    /**
+     * @param $object_type
+     * @param null $_null
+     * @param int $object_id
+     * @param string $meta_key
+     * @param string $meta_value
+     * @param bool $delete_all
+     * @return null
+     */
+    public function delete_meta ( $object_type, $_null = null, $object_id = 0, $meta_key = '', $meta_value = '', $delete_all = false ) {
         $meta_type = $object_type;
 
         if ( 'post_type' == $meta_type )

@@ -3,11 +3,11 @@
     wp_enqueue_script( 'pods-select2' );
 
     $attributes = array();
-    $attributes['type'] = 'hidden';
-    $attributes['value'] = $value;
-    $attributes['data-field-type'] = 'select2';
-    $attributes['style'] = 'max-width: 80%;';
+    $attributes[ 'type' ] = 'hidden';
+    $attributes[ 'value' ] = $value;
+    $attributes[ 'data-field-type' ] = 'select2';
     $attributes = PodsForm::merge_attributes($attributes, $name, PodsForm::$field_type, $options);
+    $attributes[ 'class' ] .= ' pods-form-ui-field-type-select2';
 ?>
 <input<?php PodsForm::attributes($attributes, $name, PodsForm::$field_type, $options); ?> />
 

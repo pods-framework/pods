@@ -175,24 +175,7 @@ class PodsField_Number extends PodsField {
      * @since 2.0.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        $thousands = ',';
-        $dot = '.';
-
-        if ( '9999.99' == pods_var( 'number_format', $options ) )
-            $thousands = '';
-        elseif ( '9999,99' == pods_var( 'number_format', $options ) ) {
-            $thousands = '';
-            $dot = ',';
-        }
-        elseif ( '9.999,99' == pods_var( 'number_format', $options ) ) {
-            $thousands = '.';
-            $dot = ',';
-        }
-
-        if ( 'i18n' == pods_var( 'number_format', $options ) )
-            $value = number_format_i18n( (float) $value, (int) pods_var( 'number_decimals', $options ) );
-        else
-            $value = number_format( (float) $value, (int) pods_var( 'number_decimals', $options ), $dot, $thousands );
+        $value = $this->format( $value, $name, $options, $pod, $id );
 
         if ( 'currency' == pods_var( 'number_format_type', $options ) ) {
             $currency = 'usd';
@@ -231,6 +214,8 @@ class PodsField_Number extends PodsField {
 
         if ( is_array( $value ) )
             $value = implode( '', $value );
+
+        $value = $this->pre_save( $value, $id, $name, $options, null, $pod );
 
         $field_type = 'number';
 
@@ -303,10 +288,23 @@ class PodsField_Number extends PodsField {
      * @since 2.0.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-        $decimals = 0;
+        $thousands = ',';
+        $dot = '.';
 
-        if ( 0 < (int) pods_var( 'number_decimals', $options ) )
-            $decimals = (int) pods_var( 'number_decimals', $options );
+        if ( '9999,99' == pods_var( 'number_format', $options ) ) {
+            $thousands = '.';
+            $dot = ',';
+        }
+        elseif ( '9.999,99' == pods_var( 'number_format', $options ) ) {
+            $thousands = '.';
+            $dot = ',';
+        }
+
+        $value = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
+
+        $value = preg_replace( '/[^0-9\.]/', '', $value );
+
+        $decimals = pods_absint( (int) pods_var( 'number_decimals', $options, 0, null, true ) );
 
         $value = number_format( (float) $value, $decimals, '.', '' );
 
@@ -372,5 +370,40 @@ class PodsField_Number extends PodsField {
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
 
+    }
+
+    /**
+     * Reformat a number to the way the value of the field is displayed
+     *
+     * @param mixed $value
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param int $id
+     *
+     * @since 2.0.0
+     */
+    public function format ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+        $thousands = ',';
+        $dot = '.';
+
+        if ( '9999.99' == pods_var( 'number_format', $options ) )
+            $thousands = '';
+        elseif ( '9999,99' == pods_var( 'number_format', $options ) ) {
+            $thousands = '';
+            $dot = ',';
+        }
+        elseif ( '9.999,99' == pods_var( 'number_format', $options ) ) {
+            $thousands = '.';
+            $dot = ',';
+        }
+
+        if ( 'i18n' == pods_var( 'number_format', $options ) )
+            $value = number_format_i18n( (float) $value, (int) pods_var( 'number_decimals', $options ) );
+        else
+            $value = number_format( (float) $value, (int) pods_var( 'number_decimals', $options ), $dot, $thousands );
+
+        return $value;
     }
 }

@@ -2972,6 +2972,7 @@ class PodsAPI {
             'pick_object' => '',
             'pick_val' => '',
             'sister_field_id' => '',
+            'table_info' => array()
         );
 
         $field[ 'options' ] = get_post_meta( $field[ 'id' ] );
@@ -3004,6 +3005,9 @@ class PodsAPI {
 
             unset( $field[ 'options' ][ 'sister_field_id' ] );
         }
+
+        if ( 'pick' == $field[ 'type' ] && 'custom-simple' != pods_var( 'pick_object', $field ) )
+            $field[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $field ), pods_var( 'pick_val', $field ) );
 
         return $field;
     }
@@ -4444,28 +4448,6 @@ class PodsAPI {
             return false;
         $name = array_shift( $args );
         return pods_do_hook( "api", $name, $args, $this );
-    }
-
-    /**
-     * Return an array of dummy data for select2 autocomplete input
-     */
-    public function select2_ajax() {
-        return array(
-            'results' => array(
-                array(
-                    'id' => 1,
-                    'title' => 'Option 1',
-                ),
-                array(
-                    'id' => 2,
-                    'title' => 'Option 2',
-                ),
-                array(
-                    'id' => 3,
-                    'title' => 'Option 3',
-                )
-            ),
-        );
     }
 
     /**

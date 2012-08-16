@@ -28,6 +28,9 @@ class PodsAdmin {
             add_action( 'wp_ajax_pods_upload', array( $this, 'admin_ajax_upload' ) );
             add_action( 'wp_ajax_nopriv_pods_upload', array( $this, 'admin_ajax_upload' ) );
 
+            add_action( 'wp_ajax_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
+            add_action( 'wp_ajax_nopriv_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
+
             add_filter( 'media_buttons_context', array( $this, 'media_button' ) );
         }
 
@@ -36,7 +39,7 @@ class PodsAdmin {
 
     public function admin_init () {
         // Fix for plugins that *don't do it right* so we don't cause issues for users
-        if ( defined( 'DOING_AJAX' ) && !empty( $_POST ) && ( in_array( pods_var( 'action', 'get' ), array( 'pods_admin', 'pods_upload', 'pods_admin_components' ) ) || in_array( pods_var( 'action', 'post' ), array( 'pods_admin', 'pods_upload', 'pods_admin_components' ) ) ) ) {
+        if ( defined( 'DOING_AJAX' ) && !empty( $_POST ) && ( in_array( pods_var( 'action', 'get' ), array( 'pods_admin', 'pods_relationship', 'pods_upload', 'pods_admin_components' ) ) || in_array( pods_var( 'action', 'post' ), array( 'pods_admin', 'pods_relationship', 'pods_upload', 'pods_admin_components' ) ) ) ) {
             foreach ( $_POST as $key => $value ) {
                 if ( 'action' == $key )
                     continue;
@@ -715,7 +718,6 @@ class PodsAdmin {
             'validate_package' => array( 'priv' => 'manage_packages' ),
             'replace_package' => array( 'priv' => 'manage_packages' ),
             'security_settings' => array( 'priv' => 'manage_settings' ),
-            'select2_ajax' => array('priv' => 'manage_pds', 'format' => 'json'),
             'upgrade' => array( 'priv' => 'manage_pods' ),
             'process_form' => array( 'custom_nonce' => true )
         );
@@ -869,12 +871,16 @@ class PodsAdmin {
 
         // Sanitize input
         $params = stripslashes_deep( (array) $_POST );
+
         foreach ( $params as $key => $value ) {
             if ( 'action' == $key )
                 continue;
+
             unset( $params[ $key ] );
+
             $params[ str_replace( '_podsfix_', '', $key ) ] = $value;
         }
+
         if ( !defined( 'PODS_STRICT_MODE' ) || !PODS_STRICT_MODE )
             $params = pods_sanitize( $params );
 
@@ -884,7 +890,7 @@ class PodsAdmin {
             'upload',
         );
 
-        if ( !isset( $params->method ) || !in_array( $params->method, $methods ) || !isset( $params->id ) || empty( $params->id ) )
+        if ( !isset( $params->method ) || !in_array( $params->method, $methods ) || !isset( $params->pod ) || !isset( $params->field ) || !isset( $params->uri ) || empty( $params->field ) || empty( $params->uri ) )
             pods_error( 'Invalid AJAX request', $this );
 
         // Flash often fails to send cookies with the POST or upload, so we need to pass it in GET or POST instead
@@ -892,8 +898,10 @@ class PodsAdmin {
             $_COOKIE[ SECURE_AUTH_COOKIE ] = $_REQUEST[ 'auth_cookie' ];
         elseif ( empty( $_COOKIE[ AUTH_COOKIE ] ) && !empty( $_REQUEST[ 'auth_cookie' ] ) )
             $_COOKIE[ AUTH_COOKIE ] = $_REQUEST[ 'auth_cookie' ];
+
         if ( empty( $_COOKIE[ LOGGED_IN_COOKIE ] ) && !empty( $_REQUEST[ 'logged_in_cookie' ] ) )
             $_COOKIE[ LOGGED_IN_COOKIE ] = $_REQUEST[ 'logged_in_cookie' ];
+
         global $current_user;
         unset( $current_user );
 
@@ -908,8 +916,20 @@ class PodsAdmin {
         elseif ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && !is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && ( !is_user_logged_in() || !current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) )
             $upload_disabled = true;
 
-        if ( true === $upload_disabled || !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, 'pods-' . $params->method . '-' . $params->id ) )
+        $nonce_check = 'pods_upload_' . (int) $params->pod . '_' . session_id() . '_' . $params->uri . '_' . (int) $params->field;
+
+        if ( true === $upload_disabled || !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, $nonce_check ) )
             pods_error( __( 'Unauthorized request', 'pods' ), $this );
+
+        $api = pods_api();
+        $pod = $api->load_pod( array( 'id' => (int) $params->pod ) );
+        $field = $api->load_field( array( 'id' => (int) $params->field ) );
+
+        if ( empty( $pod ) || empty( $field ) || $pod[ 'id' ] != $field[ 'pod_id' ] || !isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) )
+            pods_error( __( 'Invalid field request', 'pods' ), $this );
+
+        if ( 'file' != $field[ 'type' ] )
+            pods_error( __( 'Invalid field', 'pods' ), $this );
 
         $method = $params->method;
 
@@ -941,6 +961,89 @@ class PodsAdmin {
                 echo json_encode( $attachment );
             }
         }
+
+        die(); // KBAI!
+    }
+
+    public function admin_ajax_relationship () {
+        if ( false === headers_sent() ) {
+            if ( '' == session_id() )
+                @session_start();
+
+            header( 'Content-Type: text/html; charset=' . get_bloginfo( 'charset' ) );
+        }
+
+        // Sanitize input
+        $params = stripslashes_deep( (array) $_POST );
+        foreach ( $params as $key => $value ) {
+            if ( 'action' == $key )
+                continue;
+
+            unset( $params[ $key ] );
+
+            $params[ str_replace( '_podsfix_', '', $key ) ] = $value;
+        }
+
+        if ( !defined( 'PODS_STRICT_MODE' ) || !PODS_STRICT_MODE )
+            $params = pods_sanitize( $params );
+
+        $params = (object) $params;
+
+        $nonce_check = 'pods_relationship_' . (int) $params->pod . '_' . session_id() . '_' . $params->uri . '_' . (int) $params->field;
+
+        if ( !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, $nonce_check ) )
+            pods_error( __( 'Unauthorized request', 'pods' ), $this );
+
+        $api = pods_api();
+        $pod = $api->load_pod( array( 'id' => (int) $params->pod ) );
+        $field = $api->load_field( array( 'id' => (int) $params->field ) );
+
+        if ( empty( $pod ) || empty( $field ) || $pod[ 'id' ] != $field[ 'pod_id' ] || !isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) )
+            pods_error( __( 'Invalid field request', 'pods' ), $this );
+        elseif ( 'pick' != $field[ 'type' ] || empty( $field[ 'table_info' ] ) )
+            pods_error( __( 'Invalid field', 'pods' ), $this );
+        elseif ( 'single' == pods_var( 'pick_format_type', $field ) && 'autocomplete' == pods_var( 'pick_format_single', $field ) )
+            pods_error( __( 'Invalid field', 'pods' ), $this );
+        elseif ( 'multi' == pods_var( 'pick_format_type', $field ) && 'autocomplete' == pods_var( 'pick_format_multi', $field ) )
+            pods_error( __( 'Invalid field', 'pods' ), $this );
+
+        $data = pods_data();
+        $data->table = $field[ 'table_info' ][ 'table' ];
+        $data->join = $field[ 'table_info' ][ 'join' ];
+        $data->field_id = $field[ 'table_info' ][ 'field_id' ];
+        $data->field_index = $field[ 'table_info' ][ 'field_index' ];
+        $data->where = $field[ 'table_info' ][ 'where' ];
+        $data->orderby = $field[ 'table_info' ][ 'orderby' ];
+
+        $params = array(
+            'select' => "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`",
+            'table' => $data->table,
+            'where' => pods_var( 'pick_where', $field, null, null, true ),
+            'orderby' => pods_var( 'pick_orderby', $field, null, null, true ),
+            'groupby' => pods_var( 'pick_groupby', $field, null, null, true ),
+            'limit' => 30
+        );
+
+        $results = $data->select( $params );
+
+        $items = array();
+
+        if ( !empty( $results ) ) {
+            foreach ( $results as $result ) {
+                $result = get_object_vars( $result );
+
+                $items[] = array(
+                    'id' => $result[ $data->field_id ],
+                    'text' => $result[ $data->field_index ]
+                );
+            }
+        }
+
+        $items = array(
+            'results' => $items
+        );
+
+        echo json_encode( $items );
 
         die(); // KBAI!
     }

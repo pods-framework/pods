@@ -8,6 +8,9 @@
     $attributes[ 'data-field-type' ] = 'select2';
     $attributes = PodsForm::merge_attributes($attributes, $name, PodsForm::$field_type, $options);
     $attributes[ 'class' ] .= ' pods-form-ui-field-type-select2';
+
+    $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
+    $field_nonce = wp_create_nonce( 'pods_relationship_' . ( !is_object( $pod ) ? '0' : $pod->pod ) . '_' . session_id() . '_' . $uri_hash . '_' . $options[ 'id' ] );
 ?>
 <input<?php PodsForm::attributes($attributes, $name, PodsForm::$field_type, $options); ?> />
 
@@ -15,10 +18,6 @@
     jQuery( function () {
         if ( typeof pods_ajaxurl === "undefined" ) {
             var pods_ajaxurl = "<?php echo admin_url( 'admin-ajax.php?pods_ajax=1' ); ?>";
-        }
-
-        if ( typeof pods_select2_nonce === "undefined" ) {
-            var pods_select2_nonce = "<?php echo wp_create_nonce( 'pods-select2_ajax' ); ?>";
         }
 
         function <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_podsFormatResult ( item ) {
@@ -54,7 +53,7 @@
             <?php
                 }
 
-                if ( !empty( $options[ 'data' ] ) ) {
+                if ( 1 == 0 && ( !is_object( $pod ) || !empty( $options[ 'data' ] ) ) ) {
             ?>
                 data : [
                     <?php
@@ -77,9 +76,12 @@
                     dataType : 'json',
                     data : function ( term, page ) {
                         return {
-                            _wpnonce : pods_select2_nonce,
-                            action : 'pods_admin',
-                            method : 'select2_ajax',
+                            _wpnonce : '<?php echo $field_nonce; ?>',
+                            action : 'pods_relationship',
+                            method : 'select2',
+                            pod : '<?php echo (int) $pod->pod_id; ?>',
+                            field : '<?php echo (int) $options[ 'id' ]; ?>',
+                            uri : '<?php echo $uri_hash; ?>',
                             query : term
                         };
                     },

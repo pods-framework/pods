@@ -227,9 +227,9 @@ class PodsField_Pick extends PodsField {
 
             $autocomplete = false;
 
-            if ( 'single' == pods_var( 'pick_format_type' ) && 'autocomplete' == pods_var( 'pick_format_single', $options ) )
+            if ( 'single' == pods_var( 'pick_format_type', $options ) && 'autocomplete' == pods_var( 'pick_format_single', $options ) )
                 $autocomplete = true;
-            elseif ( 'multi' == pods_var( 'pick_format_type' ) && 'autocomplete' == pods_var( 'pick_format_multi', $options ) )
+            elseif ( 'multi' == pods_var( 'pick_format_type', $options ) && 'autocomplete' == pods_var( 'pick_format_multi', $options ) )
                 $autocomplete = true;
 
             if ( $autocomplete )

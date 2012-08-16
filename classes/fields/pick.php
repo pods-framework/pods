@@ -204,40 +204,44 @@ class PodsField_Pick extends PodsField {
         elseif ( '' != pods_var( 'pick_object', $options, '' ) && array() == pods_var( 'data', $options, array() ) ) {
             $options[ 'data' ] = array();
 
-            if ( 'single' == pods_var( 'pick_format_type' ) && 'autocomplete' == pods_var( 'pick_format_single', $options ) ) {
-                // don't lookup data
-            }
-            elseif ( 'multi' == pods_var( 'pick_format_type' ) && 'autocomplete' == pods_var( 'pick_format_multi', $options ) ) {
-                // don't lookup data
-            }
-            else {
-                if ( 'single' == pods_var( 'pick_format_type', $options ) && 'dropdown' == pods_var( 'pick_format_single', $options ) )
-                    $options[ 'data' ] = array( '' => __( '-- Select One --', 'pods' ) );
+            if ( 'single' == pods_var( 'pick_format_type', $options ) && 'dropdown' == pods_var( 'pick_format_single', $options ) )
+                $options[ 'data' ] = array( '' => __( '-- Select One --', 'pods' ) );
 
-                $options[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $options ), pods_var( 'pick_val', $options ) );
+            $options[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $options ), pods_var( 'pick_val', $options ) );
 
-                $data = pods_data();
-                $data->table = $options[ 'table_info' ][ 'table' ];
-                $data->join = $options[ 'table_info' ][ 'join' ];
-                $data->field_id = $options[ 'table_info' ][ 'field_id' ];
-                $data->field_index = $options[ 'table_info' ][ 'field_index' ];
-                $data->where = $options[ 'table_info' ][ 'where' ];
-                $data->orderby = $options[ 'table_info' ][ 'orderby' ];
+            $data = pods_data();
+            $data->table = $options[ 'table_info' ][ 'table' ];
+            $data->join = $options[ 'table_info' ][ 'join' ];
+            $data->field_id = $options[ 'table_info' ][ 'field_id' ];
+            $data->field_index = $options[ 'table_info' ][ 'field_index' ];
+            $data->where = $options[ 'table_info' ][ 'where' ];
+            $data->orderby = $options[ 'table_info' ][ 'orderby' ];
 
-                $results = $data->select( array(
-                    'select' => "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`",
-                    'table' => $data->table,
-                    'where' => pods_var( 'pick_where', $options, null, null, true ),
-                    'orderby' => pods_var( 'pick_orderby', $options, null, null, true ),
-                    'groupby' => pods_var( 'pick_groupby', $options, null, null, true )
-                ) );
+            $params = array(
+                'select' => "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`",
+                'table' => $data->table,
+                'where' => pods_var( 'pick_where', $options, null, null, true ),
+                'orderby' => pods_var( 'pick_orderby', $options, null, null, true ),
+                'groupby' => pods_var( 'pick_groupby', $options, null, null, true )
+            );
 
-                if ( !empty( $data->table ) ) {
-                    foreach ( $results as $result ) {
-                        $result = get_object_vars( $result );
+            $autocomplete = false;
 
-                        $options[ 'data' ][ $result[ $data->field_id ] ] = $result[ $data->field_index ];
-                    }
+            if ( 'single' == pods_var( 'pick_format_type' ) && 'autocomplete' == pods_var( 'pick_format_single', $options ) )
+                $autocomplete = true;
+            elseif ( 'multi' == pods_var( 'pick_format_type' ) && 'autocomplete' == pods_var( 'pick_format_multi', $options ) )
+                $autocomplete = true;
+
+            if ( $autocomplete )
+                $params[ 'limit' ] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', 30, $name, $value, $options, $pod, $id  );
+
+            $results = $data->select( $params );
+
+            if ( !empty( $results ) && ( !$autocomplete || $data->total_found() <= $params[ 'limit' ] ) ) {
+                foreach ( $results as $result ) {
+                    $result = get_object_vars( $result );
+
+                    $options[ 'data' ][ $result[ $data->field_id ] ] = $result[ $data->field_index ];
                 }
             }
         }

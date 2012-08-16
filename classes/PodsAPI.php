@@ -3686,11 +3686,13 @@ class PodsAPI {
             if ( !empty( $object ) )
                 $name = $object;
 
-            $pod = $this->load_pod( array( 'name' => $name ) );
+            $pod = $this->load_pod( array( 'name' => $name ), false );
 
-            $object_type = $pod[ 'type' ];
-            $name = $pod[ 'name' ];
-            $object = $pod[ 'object' ];
+            if ( !empty( $pod ) ) {
+                $object_type = $pod[ 'type' ];
+                $name = $pod[ 'name' ];
+                $object = $pod[ 'object' ];
+            }
         }
 
         if ( 'pod' == $object_type )

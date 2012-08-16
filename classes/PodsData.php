@@ -1343,6 +1343,9 @@ class PodsData {
     function traverse_recurse ( $pod, $fields, $joined = 't', $depth = 0 ) {
         global $wpdb;
 
+        if ( empty( $pod ) )
+            return array();
+
         $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
 
         if ( !isset( $this->traversal[ $pod ] ) )

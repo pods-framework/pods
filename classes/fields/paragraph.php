@@ -1,4 +1,7 @@
 <?php
+/**
+ *
+ */
 class PodsField_Paragraph extends PodsField {
 
     /**

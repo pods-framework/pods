@@ -1,6 +1,12 @@
 <?php
+/**
+ *
+ */
 class PodsArray implements ArrayAccess {
 
+    /**
+     * @var array|mixed
+     */
     private $__container = array();
 
     /**

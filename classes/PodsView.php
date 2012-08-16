@@ -1,10 +1,30 @@
 <?php
+/**
+ *
+ */
 class PodsView {
+
+    /**
+     * @var array
+     */
     static $cache_modes = array( 'transient', 'site-transient', 'cache' );
 
+    /**
+     *
+     */
     private function __construct () {
     }
 
+    /**
+     * @static
+     *
+     * @param $view
+     * @param null $data
+     * @param int $expires
+     * @param string $cache_mode
+     *
+     * @return bool|mixed|null|string|void
+     */
     public static function view ( $view, $data = null, $expires = 0, $cache_mode = 'cache' ) {
         if ( (int) $expires < 1 )
             $expires = 0;
@@ -36,8 +56,14 @@ class PodsView {
         $output = apply_filters( 'pods_view', $output, $view, $data, $expires, $cache_mode );
 
         return $output;
-    }
+}
 
+    /**
+     * @static
+     * @param $key
+     * @param string $cache_mode
+     * @return bool|mixed|null|void
+     */
     public static function get ( $key, $cache_mode = 'cache' ) {
         if ( !in_array( $cache_mode, self::$cache_modes ) )
             $cache_mode = 'cache';
@@ -54,8 +80,16 @@ class PodsView {
         $value = apply_filters( 'pods_view_get_' . $cache_mode, $value, $key );
 
         return $value;
-    }
+}
 
+    /**
+     * @static
+     * @param $key
+     * @param $value
+     * @param int $expires
+     * @param null $cache_mode
+     * @return mixed
+     */
     public static function set ( $key, $value, $expires = 0, $cache_mode = null ) {
         if ( (int) $expires < 1 )
             $expires = 0;
@@ -73,8 +107,14 @@ class PodsView {
         do_action( 'pods_view_set_' . $cache_mode, $key, $value, $expires );
 
         return $value;
-    }
+}
 
+    /**
+     * @static
+     * @param $key
+     * @param null $cache_mode
+     * @return bool
+     */
     public static function clear ( $key, $cache_mode = null ) {
         global $wpdb;
 
@@ -107,9 +147,14 @@ class PodsView {
         do_action( 'pods_view_clear_' . $cache_mode, $key );
 
         return true;
-    }
+}
 
-    private static function get_template_part ( $_view, $_data = null ) {
+    /**
+     * @static
+     * @param $_view
+     * @param null $_data
+     * @return bool|mixed|string|void
+     */private static function get_template_part ( $_view, $_data = null ) {
         $_view = self::locate_template( $_view );
         if ( empty( $_view ) )
             return $_view;
@@ -122,9 +167,13 @@ class PodsView {
         $output = ob_get_clean();
 
         return $output;
-    }
+}
 
-    private static function locate_template ( $_view ) {
+    /**
+     * @static
+     * @param $_view
+     * @return bool|mixed|string|void
+     */private static function locate_template ( $_view ) {
         // Keep it safe
         $_view = trim( str_replace( '../', '', (string) $_view ) );
 

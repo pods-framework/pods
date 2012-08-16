@@ -1,4 +1,7 @@
 <?php
+/**
+ *
+ */
 class PodsField_Text extends PodsField {
 
     /**
@@ -475,6 +478,11 @@ class PodsField_Text extends PodsField {
             $value = make_clickable( $value );
     }
 
+    /**
+     * @param $url
+     *
+     * @return string
+     */
     public function build_url ( $url ) {
         if ( function_exists( 'http_build_url' ) )
             return http_build_url( $url );

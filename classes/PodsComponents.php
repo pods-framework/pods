@@ -1,4 +1,7 @@
 <?php
+/**
+ *
+ */
 class PodsComponents {
 
     /**
@@ -220,6 +223,10 @@ class PodsComponents {
         return $this->components;
     }
 
+    /**
+     * @param $component
+     * @param $options
+     */
     public function options ( $component, $options ) {
         if ( !isset( $this->settings[ 'components' ][ $component ] ) || !is_array( $this->settings[ 'components' ][ $component ] ) )
             $this->settings[ 'components' ][ $component ] = array();
@@ -230,6 +237,9 @@ class PodsComponents {
         }
     }
 
+    /**
+     *
+     */
     public function admin_handler () {
         $component = str_replace( 'pods-component-', '', $_GET[ 'page' ] );
 
@@ -237,6 +247,11 @@ class PodsComponents {
             $this->components[ $component ][ 'object' ]->admin( $this->settings[ 'components' ][ $component ] );
     }
 
+    /**
+     * @param $component
+     *
+     * @return bool
+     */
     public function toggle ( $component ) {
         $toggle = false;
 
@@ -254,8 +269,11 @@ class PodsComponents {
         update_option( 'pods_component_settings', $settings );
 
         return $toggle;
-    }
+}
 
+    /**
+     *
+     */
     public function admin_ajax () {
         if ( false === headers_sent() ) {
             if ( '' == session_id() )
@@ -309,7 +327,9 @@ class PodsComponents {
     }
 }
 
-class PodsComponent {
+/**
+ *
+ */class PodsComponent {
 
     /**
      * Do things like register/enqueue scripts and stylesheets

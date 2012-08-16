@@ -1,8 +1,17 @@
 <?php
+/**
+ *
+ */
 class PodsAdmin {
 
+    /**
+     * @var PodsAPI
+     */
     private $api;
 
+    /**
+     * @var PodsData
+     */
     private $data;
 
     /**
@@ -37,6 +46,9 @@ class PodsAdmin {
         add_filter( 'members_get_capabilities', array( $this, 'admin_capabilities' ) );
     }
 
+    /**
+     *
+     */
     public function admin_init () {
         // Fix for plugins that *don't do it right* so we don't cause issues for users
         if ( defined( 'DOING_AJAX' ) && !empty( $_POST ) && ( in_array( pods_var( 'action', 'get' ), array( 'pods_admin', 'pods_relationship', 'pods_upload', 'pods_admin_components' ) ) || in_array( pods_var( 'action', 'post' ), array( 'pods_admin', 'pods_relationship', 'pods_upload', 'pods_admin_components' ) ) ) ) {
@@ -51,6 +63,9 @@ class PodsAdmin {
         }
     }
 
+    /**
+     *
+     */
     public function admin_head () {
         wp_register_style( 'pods-admin', PODS_URL . 'ui/css/pods-admin.css', array(), PODS_VERSION );
 
@@ -149,6 +164,9 @@ class PodsAdmin {
         }
     }
 
+    /**
+     *
+     */
     public function admin_menu () {
         $submenu = array();
 
@@ -364,6 +382,9 @@ class PodsAdmin {
         }
     }
 
+    /**
+     *
+     */
     public function admin_content () {
         $pod = str_replace( array( 'pods-manage-', 'pods-add-new-' ), '', $_GET[ 'page' ] );
         $default = 'manage';
@@ -429,6 +450,11 @@ class PodsAdmin {
         pods_ui( $ui );
     }
 
+    /**
+     * @param $context
+     *
+     * @return string
+     */
     public function media_button ( $context ) {
         $current_page = basename( $_SERVER['PHP_SELF'] );
 
@@ -440,12 +466,18 @@ class PodsAdmin {
         $button = '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox" id="add_pod_button" title="Embed Pods"><img src="' . PODS_URL . 'ui/images/icon16.png" alt="Embed Pods" /></a>';
         $context .= $button;
         return $context;
-    }
+}
 
+    /**
+     *
+     */
     public function mce_popup () {
         pods_view( PODS_DIR . 'ui/admin/shortcode.php' );
-    }
+}
 
+    /**
+     *
+     */
     public function admin_setup () {
         $pods = pods_api()->load_pods();
 
@@ -506,16 +538,28 @@ class PodsAdmin {
             'sortable' => false,
             'pagination' => false
         ) );
-    }
+}
 
+    /**
+     * @param $obj
+     */
     public function admin_setup_add ( $obj ) {
         require_once PODS_DIR . 'ui/admin/setup_add.php';
-    }
+}
 
+    /**
+     * @param $duplicate
+     * @param $obj
+     */
     public function admin_setup_edit ( $duplicate, $obj ) {
         require_once PODS_DIR . 'ui/admin/setup_edit.php';
-    }
+}
 
+    /**
+     * @param $id
+     * @param $obj
+     * @return mixed
+     */
     public function admin_setup_delete ( $id, $obj ) {
         $pod = $this->api->load_pod ( array( 'id' => $id ) );
 
@@ -527,16 +571,25 @@ class PodsAdmin {
         unset( $obj->data[ $pod[ 'id' ] ] );
 
         $obj->message( __( 'Pod deleted successfully.', 'pods' ) );
-    }
+}
 
+    /**
+     *
+     */
     public function admin_advanced () {
         require_once PODS_DIR . 'ui/admin/advanced.php';
-    }
+}
 
+    /**
+     *
+     */
     public function admin_settings () {
 
-    }
+}
 
+    /**
+     *
+     */
     public function admin_packages () {
         /*pods_ui(array('sql' => array('table' => '@wp_pods_objects'),
                       'icon' => PODS_URL .'ui/images/icon32.png',
@@ -547,8 +600,11 @@ class PodsAdmin {
                       'fields' => array('manage' => array('name')),
                       'actions_disabled' => array('edit', 'duplicate', 'view', 'export'),
                       'actions_custom' => array('add' => array($this, 'admin_packages_add'))));*/
-    }
+}
 
+    /**
+     *
+     */
     public function admin_components () {
         $components = PodsInit::$components->components;
 
@@ -583,14 +639,21 @@ class PodsAdmin {
             'sortable' => false,
             'pagination' => false
         ) );
-    }
+}
 
+    /**
+     *
+     */
     public function admin_components_handler () {
         $component = str_replace( 'pods-component-', '', $_GET[ 'page' ] );
 
         PodsInit::$components->admin( $component );
-    }
+}
 
+    /**
+     * @param PodsUI $ui
+     * @return bool
+     */
     public function admin_components_toggle ( PodsUI $ui ) {
         $component = $_GET[ 'id' ];
 
@@ -632,16 +695,26 @@ class PodsAdmin {
         $ui->data = $components;
 
         $ui->manage();
-    }
+}
 
+    /**
+     *
+     */
     public function admin_upgrade () {
         require_once PODS_DIR . 'ui/admin/upgrade.php';
-    }
+}
 
+    /**
+     *
+     */
     public function admin_help () {
         require_once PODS_DIR . 'ui/admin/help.php';
-    }
+}
 
+    /**
+     * @param $capabilities
+     * @return array
+     */
     public function admin_capabilities ( $capabilities ) {
         $pods = pods_api()->load_pods();
 
@@ -663,8 +736,11 @@ class PodsAdmin {
         }
 
         return $capabilities;
-    }
+}
 
+    /**
+     *
+     */
     public function admin_ajax () {
         if ( false === headers_sent() ) {
             if ( '' == session_id() )
@@ -855,8 +931,11 @@ class PodsAdmin {
             echo $output;
 
         die(); // KBAI!
-    }
+}
 
+    /**
+     *
+     */
     public function admin_ajax_upload () {
         if ( false === headers_sent() ) {
             if ( '' == session_id() )
@@ -956,8 +1035,11 @@ class PodsAdmin {
         }
 
         die(); // KBAI!
-    }
+}
 
+    /**
+     *
+     */
     public function admin_ajax_relationship () {
         if ( false === headers_sent() ) {
             if ( '' == session_id() )

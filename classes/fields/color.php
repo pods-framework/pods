@@ -1,4 +1,7 @@
 <?php
+/**
+ *
+ */
 class PodsField_Color extends PodsField {
 
     /**

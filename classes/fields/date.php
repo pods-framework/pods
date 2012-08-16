@@ -1,4 +1,7 @@
 <?php
+/**
+ *
+ */
 class PodsField_Date extends PodsField {
 
     /**
@@ -354,6 +357,12 @@ class PodsField_Date extends PodsField {
         return $format;
     }
 
+    /**
+     * @param $format
+     * @param $date
+     *
+     * @return DateTime
+     */
     public function createFromFormat ( $format, $date ) {
         if ( method_exists( 'DateTime', 'createFromFormat' ) )
             return DateTime::createFromFormat( $format, $date );

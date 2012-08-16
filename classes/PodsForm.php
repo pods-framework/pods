@@ -1,10 +1,22 @@
 <?php
+/**
+ *
+ */
 class PodsForm {
 
+    /**
+     * @var null
+     */
     static $field = null;
 
+    /**
+     * @var null
+     */
     static $field_type = null;
 
+    /**
+     * @var array
+     */
     static $loaded = array();
 
     /**
@@ -215,6 +227,14 @@ class PodsForm {
      *
      * @since 2.0.0
      */
+    /**
+     * @static
+     *
+     * @param $type
+     * @param $options
+     *
+     * @return array
+     */
     public static function options ( $type, $options ) {
         $options = (array) $options;
 
@@ -256,6 +276,11 @@ class PodsForm {
      *
      * @since 2.0.0
      */
+    /**
+     * @static
+     * @param $type
+     * @return array|null
+     */
     public static function options_setup ( $type ) {
         $core_defaults = array(
             'name' => '',
@@ -288,6 +313,13 @@ class PodsForm {
      * Get options for a field and setup defaults
      *
      * @since 2.0.0
+     */
+    /**
+     * @static
+     * @param null $fields
+     * @param null $core_defaults
+     * @param bool $single
+     * @return array|null
      */
     public static function fields_setup ( $fields = null, $core_defaults = null, $single = false ) {
         if ( empty( $core_defaults ) ) {
@@ -326,6 +358,13 @@ class PodsForm {
      * Get options for a field and setup defaults
      *
      * @since 2.0.0
+     */
+    /**
+     * @static
+     * @param null $field
+     * @param null $core_defaults
+     * @param null $type
+     * @return array|null
      */
     public static function field_setup ( $field = null, $core_defaults = null, $type = null ) {
         $options = array();

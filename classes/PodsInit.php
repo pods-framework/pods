@@ -1,14 +1,32 @@
 <?php
+/**
+ *
+ */
 class PodsInit {
 
+    /**
+     * @var array
+     */
     static $no_conflict = array();
 
+    /**
+     * @var PodsComponents
+     */
     static $components;
 
+    /**
+     * @var PodsMeta
+     */
     static $meta;
 
+    /**
+     * @var
+     */
     static $admin;
 
+    /**
+     * @var mixed|void
+     */
     static $version;
 
     /**
@@ -46,6 +64,9 @@ class PodsInit {
         }
     }
 
+    /**
+     *
+     */
     function init () {
         // Session start
         if ( ( ( defined( 'WP_DEBUG' ) && WP_DEBUG ) || false === headers_sent() ) && '' == session_id() )
@@ -94,6 +115,9 @@ class PodsInit {
         add_action( 'widgets_init', array( $this, 'register_widgets' ) );
     }
 
+    /**
+     *
+     */
     function register_assets () {
         if ( !wp_style_is( 'jquery-ui', 'registered' ) )
             wp_register_style( 'jquery-ui', PODS_URL . 'ui/css/smoothness/jquery-ui.custom.css', array(), '1.8.16' );
@@ -134,6 +158,9 @@ class PodsInit {
         wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars.js', array(), '1.0.0.beta.6' );
     }
 
+    /**
+     *
+     */
     function register_pods () {
         $args = array(
             'label' => 'Pods',
@@ -233,10 +260,16 @@ class PodsInit {
         register_post_type( '_pods_object_helper', apply_filters( 'pods_internal_register_post_type_object_helper', $args ) );
     }
 
+    /**
+     *
+     */
     function admin_init () {
         self::$admin = pods_admin();
     }
 
+    /**
+     *
+     */
     function setup_content_types () {
         $post_types = PodsMeta::$post_types;
         $taxonomies = PodsMeta::$taxonomies;
@@ -506,7 +539,13 @@ class PodsInit {
         }
     }
 
-    function object_label_fix ( $args, $type = 'post_type' ) {
+    /**
+     * @param $args
+     * @param string $type
+     *
+     * @return array
+     */
+    public function object_label_fix ( $args, $type = 'post_type' ) {
         if ( !isset( $args[ 'labels' ] ) )
             $args[ 'labels' ] = array();
 
@@ -553,9 +592,12 @@ class PodsInit {
         $args[ 'labels' ] = $labels;
 
         return $args;
-    }
+}
 
-    function page_check () {
+    /**
+     *
+     */
+    public function page_check () {
         global $pod_page_exists, $pods;
 
         if ( !defined( 'PODS_DISABLE_POD_PAGE_CHECK' ) ) {
@@ -577,9 +619,12 @@ class PodsInit {
                 }
             }
         }
-    }
+}
 
-    function activate_install () {
+    /**
+     *
+     */
+    public function activate_install () {
         // Activate and Install
         // @todo: VIP constant check, display notice with a link for user to run install instead of auto install
         register_activation_hook( __FILE__, array( $this, 'activate' ) );
@@ -590,9 +635,12 @@ class PodsInit {
 
         if ( empty( $pods_version ) || version_compare( $pods_version, '2.0.0-a-31', '<' ) )
             $this->setup();
-    }
+}
 
-    function activate () {
+    /**
+     *
+     */
+    public function activate () {
         global $wpdb;
         if ( function_exists( 'is_multisite' ) && is_multisite() && isset( $_GET[ 'networkwide' ] ) && 1 == $_GET[ 'networkwide' ] ) {
             $_blog_ids = $wpdb->get_col( $wpdb->prepare( "SELECT `blog_id` FROM {$wpdb->blogs}" ) );
@@ -603,14 +651,25 @@ class PodsInit {
         }
         else
             $this->setup();
-    }
+}
 
-    function new_blog ( $_blog_id, $user_id, $domain, $path, $site_id, $meta ) {
+    /**
+     * @param $_blog_id
+     * @param $user_id
+     * @param $domain
+     * @param $path
+     * @param $site_id
+     * @param $meta
+     */
+    public function new_blog ( $_blog_id, $user_id, $domain, $path, $site_id, $meta ) {
         if ( function_exists( 'is_multisite' ) && is_multisite() && is_plugin_active_for_network( 'pods/pods.php' ) )
             $this->setup( $_blog_id );
-    }
+}
 
-    function setup ( $_blog_id = null ) {
+    /**
+     * @param null $_blog_id
+     */
+    public function setup ( $_blog_id = null ) {
         global $wpdb;
 
         // Switch DB table prefixes
@@ -675,9 +734,12 @@ class PodsInit {
         // Restore DB table prefix (if switched)
         if ( null !== $_blog_id )
             restore_current_blog();
-    }
+}
 
-    function reset ( $_blog_id = null ) {
+    /**
+     * @param null $_blog_id
+     */
+    public function reset ( $_blog_id = null ) {
         global $wpdb;
 
         // Switch DB table prefixes
@@ -734,7 +796,10 @@ class PodsInit {
     }
 
     // Delete Attachments from relationships
-    function delete_attachment ( $_ID ) {
+    /**
+     * @param $_ID
+     */
+    public function delete_attachment ( $_ID ) {
         global $wpdb;
 
         do_action( 'pods_delete_attachment', $_ID );
@@ -748,7 +813,10 @@ class PodsInit {
     }
 
     // Pod Page Code
-    function precode () {
+    /**
+     *
+     */
+    public function precode () {
         global $pods, $pod_page_exists;
 
         if ( false !== $pod_page_exists ) {
@@ -774,9 +842,12 @@ class PodsInit {
                 remove_action( 'wp', array( $this, 'silence_404' ) );
             }
         }
-    }
+}
 
-    function wp_head () {
+    /**
+     *
+     */
+    public function wp_head () {
         global $pods;
 
         do_action( 'pods_wp_head' );
@@ -809,9 +880,15 @@ class PodsInit {
             if ( isset( $pods->meta_extra ) && 0 < strlen( $pods->meta_extra ) )
                 echo $pods->meta_extra;
         }
-    }
+}
 
-    function wp_title ( $title, $sep, $seplocation ) {
+    /**
+     * @param $title
+     * @param $sep
+     * @param $seplocation
+     * @return mixed|void
+     */
+    public function wp_title ( $title, $sep, $seplocation ) {
         global $pods, $pod_page_exists;
 
         $page_title = $pod_page_exists[ 'title' ];
@@ -839,9 +916,13 @@ class PodsInit {
             $title = $pods->meta[ 'title' ];
 
         return apply_filters( 'pods_title', $title, $sep, $seplocation );
-    }
+}
 
-    function body_class ( $classes ) {
+    /**
+     * @param $classes
+     * @return mixed|void
+     */
+    public function body_class ( $classes ) {
         global $pods, $pod_page_exists;
 
         $classes[] = 'pods';
@@ -867,20 +948,29 @@ class PodsInit {
             $classes[] = $pods->body_classes;
 
         return apply_filters( 'pods_body_class', $classes, $uri );
-    }
+}
 
-    function status_header () {
+    /**
+     * @return string
+     */
+    public function status_header () {
         return $_SERVER[ 'SERVER_PROTOCOL' ] . ' 200 OK';
-    }
+}
 
-    function silence_404 () {
+    /**
+     *
+     */
+    public function silence_404 () {
         global $wp_query;
 
         $wp_query->query_vars[ 'error' ] = '';
         $wp_query->is_404 = false;
-    }
+}
 
-    function template_redirect () {
+    /**
+     *
+     */
+    public function template_redirect () {
         global $pods, $pod_page_exists;
 
         if ( false !== $pod_page_exists ) {
@@ -928,9 +1018,12 @@ class PodsInit {
 
             exit;
         }
-    }
+}
 
-    function register_widgets () {
+    /**
+     *
+     */
+    public function register_widgets () {
         $widgets = array(
             'PodsWidgetSingle',
             'PodsWidgetList',
@@ -945,8 +1038,11 @@ class PodsInit {
 
             register_widget( $widget );
         }
-    }
+}
 
+    /**
+     *
+     */
     public function admin_bar_links () {
         global $wp_admin_bar, $pods;
         $api = pods_api();

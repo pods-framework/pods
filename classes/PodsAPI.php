@@ -1,14 +1,32 @@
 <?php
+/**
+ *
+ */
 class PodsAPI {
 
+    /**
+     * @var bool
+     */
     public $display_errors = false;
 
+    /**
+     * @var array|bool|mixed|null|void
+     */
     public $pod_data;
 
+    /**
+     * @var
+     */
     public $pod;
 
+    /**
+     * @var
+     */
     public $pod_id;
 
+    /**
+     * @var string
+     */
     public $format = 'php';
 
     /**
@@ -3489,6 +3507,9 @@ class PodsAPI {
         return ( array_key_exists( $sql_field, $field_to_field_map ) ) ? $field_to_field_map[ $sql_field ] : 'paragraph';
     }
 
+    /**
+     * @return array|bool|mixed|null
+     */
     public function get_field_types () {
         $types = array(
             'date',
@@ -3528,13 +3549,26 @@ class PodsAPI {
         return $field_types;
     }
 
-    private function get_field_definition ( $type, $options = null ) {
+    /**
+     * @param $type
+     * @param null $options
+     *
+     * @return array|bool|mixed|null
+     */private function get_field_definition ( $type, $options = null ) {
         $definition = PodsForm::field_method( $type, 'schema', $options );
 
         return $this->do_hook( 'field_definition', $definition, $type, $options );
-    }
+}
 
-    private function handle_field_validation ( &$value, $field, $object_fields, $fields, $pod, $params ) {
+    /**
+     * @param $value
+     * @param $field
+     * @param $object_fields
+     * @param $fields
+     * @param $pod
+     * @param $params
+     * @return array|bool|mixed|null|void
+     */private function handle_field_validation ( &$value, $field, $object_fields, $fields, $pod, $params ) {
         $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
 
         $fields = array_merge( $fields, $object_fields );
@@ -3629,7 +3663,14 @@ class PodsAPI {
         return false;
     }
 
-    function get_table_info ( $object_type, $object, $name = null, $pod = null ) {
+    /**
+     * @param $object_type
+     * @param $object
+     * @param null $name
+     * @param null $pod
+     * @return array|bool|mixed|null
+     */
+    public function get_table_info ( $object_type, $object, $name = null, $pod = null ) {
         global $wpdb;
 
         $info = array(

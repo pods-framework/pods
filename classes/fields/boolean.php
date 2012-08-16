@@ -1,4 +1,7 @@
 <?php
+/**
+ *
+ */
 class PodsField_Boolean extends PodsField {
 
     /**

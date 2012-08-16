@@ -748,6 +748,9 @@ function is_pod_page ( $uri = null ) {
  * @since 1.9.6
  */
 if ( !function_exists( 'get_current_url' ) ) {
+    /**
+     * @return mixed|void
+     */
     function get_current_url () {
         $url = 'http';
         if ( isset( $_SERVER[ 'HTTPS' ] ) && 'off' != $_SERVER[ 'HTTPS' ] && 0 != $_SERVER[ 'HTTPS' ] )

@@ -1,73 +1,172 @@
 <?php
+/**
+ *
+ */
 class PodsData {
 
     // base
+    /**
+     * @var string
+     */
     static protected $prefix = 'pods_';
 
+    /**
+     * @var array
+     */
     static protected $field_types = array();
 
+    /**
+     * @var bool
+     */
     public static $display_errors = true;
 
     // pods
+    /**
+     * @var null
+     */
     public $table = null;
 
+    /**
+     * @var null
+     */
     public $pod = null;
 
+    /**
+     * @var array|bool|mixed|null|void
+     */
     public $pod_data = null;
 
+    /**
+     * @var int
+     */
     public $id = 0;
 
+    /**
+     * @var string
+     */
     public $field_id = 'id';
 
+    /**
+     * @var string
+     */
     public $field_index = 'name';
 
+    /**
+     * @var string
+     */
     public $join = '';
 
+    /**
+     * @var array
+     */
     public $where = array();
 
+    /**
+     * @var string
+     */
     public $orderby = '';
 
+    /**
+     * @var array
+     */
     public $fields = array();
 
+    /**
+     * @var array
+     */
     public $aliases = array();
 
+    /**
+     * @var
+     */
     public $detail_page;
 
     // data
+    /**
+     * @var int
+     */
     public $row_number = -1;
 
+    /**
+     * @var
+     */
     public $data;
 
+    /**
+     * @var
+     */
     public $row;
 
+    /**
+     * @var
+     */
     public $insert_id;
 
+    /**
+     * @var
+     */
     public $total;
 
+    /**
+     * @var
+     */
     public $total_found;
 
     // pagination
+    /**
+     * @var string
+     */
     public $page_var = 'pg';
 
+    /**
+     * @var int
+     */
     public $page = 1;
 
+    /**
+     * @var bool
+     */
     public $pagination = true;
 
     // search
+    /**
+     * @var bool
+     */
     public $search = true;
 
+    /**
+     * @var string
+     */
     public $search_var = 'search';
 
+    /**
+     * @var string
+     */
     public $search_mode = 'int'; // int | text | text_like
+    /**
+     * @var string
+     */
     public $search_query = '';
 
+    /**
+     * @var array
+     */
     public $search_fields = array();
 
+    /**
+     * @var string
+     */
     public $search_where = '';
 
+    /**
+     * @var array
+     */
     public $filters = array();
 
     // traversal
+    /**
+     * @var array
+     */
     public $traversal = array();
 
     /**
@@ -899,6 +998,11 @@ class PodsData {
         return $success;
     }
 
+    /**
+     * @param null $row
+     *
+     * @return mixed
+     */
     public function fetch ( $row = null ) {
         global $wpdb;
 
@@ -1014,8 +1118,12 @@ class PodsData {
         }
 
         return $this->row;
-    }
+}
 
+    /**
+     * @param null $row
+     * @return mixed
+     */
     public function reset ( $row = null ) {
         $row = pods_absint( $row );
 
@@ -1028,8 +1136,16 @@ class PodsData {
             $this->row = get_object_vars( $this->data[ $this->row_number ] );
 
         return $this->row;
-    }
+}
 
+    /**
+     * @static
+     * @param $sql
+     * @param string $error
+     * @param null $results_error
+     * @param null $no_results_error
+     * @return array|bool|mixed|null|void
+     */
     public static function query ($sql, $error = 'Database Error', $results_error = null, $no_results_error = null) {
         global $wpdb;
 

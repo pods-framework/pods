@@ -1,44 +1,107 @@
 <?php
+/**
+ *
+ */
 class Pods {
 
+    /**
+     * @var PodsAPI
+     */
     public $api;
 
+    /**
+     * @var PodsData
+     */
     public $data;
 
+    /**
+     * @var
+     */
     private $results;
 
+    /**
+     * @var
+     */
     private $row;
 
+    /**
+     * @var
+     */
     private $deprecated;
 
+    /**
+     * @var bool
+     */
     public $display_errors = false;
 
+    /**
+     * @var array|bool|mixed|null|void
+     */
     public $pod_data;
 
+    /**
+     * @var
+     */
     public $pod;
 
+    /**
+     * @var
+     */
     public $pod_id;
 
+    /**
+     * @var
+     */
     public $fields;
 
+    /**
+     * @var
+     */
     public $detail_page;
 
+    /**
+     * @var int
+     */
     public $id;
 
+    /**
+     * @var int
+     */
     public $limit = 15;
 
+    /**
+     * @var string
+     */
     public $page_var = 'pg';
 
+    /**
+     * @var int|mixed
+     */
     public $page = 1;
 
+    /**
+     * @var bool
+     */
     public $pagination = true;
 
+    /**
+     * @var bool
+     */
     public $search = true;
 
+    /**
+     * @var string
+     */
     public $search_var = 'search';
 
+    /**
+     * @var string
+     */
     public $search_mode = 'int'; // int | text | text_like
 
+    /**
+     * @var
+     */
     public $ui;
 
     /**

@@ -1,12 +1,38 @@
 <?php
+/**
+ *
+ */
 class PodMigrate
 {
+
+    /**
+     * @var null|string
+     */
     var $type = 'php';
+
+    /**
+     * @var array
+     */
     var $types = array('php', 'json', 'sv', 'xml', 'package', 'sql');
+
+    /**
+     * @var null|string
+     */
     var $delimiter = ',';
 
+    /**
+     * @var null
+     */
     var $data;
+
+    /**
+     * @var
+     */
     var $parsed;
+
+    /**
+     * @var
+     */
     var $built;
 
     /**
@@ -27,6 +53,11 @@ class PodMigrate
     /*
     * Importing / Parsing / Validating Code
     */
+    /**
+     * @param null $data
+     * @param null $type
+     * @param null $delimiter
+     */
     function import ($data = null, $type = null, $delimiter = null) {
         if (!empty($data))
             $this->data = $data;
@@ -38,19 +69,36 @@ class PodMigrate
             call_user_func( array( $this, 'parse_' . $this->type ) );
         return $this->import_pod_items();
     }
-    function import_pod ($data = null) {
+
+    /**
+     * @param null $data
+     *
+     * @return bool
+     */
+    public function import_pod ($data = null) {
         if (!empty($data))
             $this->data = $data;
         if (empty($this->data))
             return false;
-    }
-    function import_pod_items ($data = null, $type = null) {
+}
+
+    /**
+     * @param null $data
+     * @param null $type
+     */
+    public function import_pod_items ($data = null, $type = null) {
         if (!empty($data))
             $this->data = $data;
         if (!empty($type) && in_array($type, $this->types))
             $this->type = $type;
-    }
-    function import_package ($data = null, $parse = true) {
+}
+
+    /**
+     * @param null $data
+     * @param bool $parse
+     * @return array|bool|null
+     */
+    public function import_package ($data = null, $parse = true) {
         if (!empty($data))
             $this->data = $data;
         if (false !== $parse)
@@ -85,8 +133,14 @@ class PodMigrate
         if (empty($data))
             return false;
         return $data;
-    }
-    function parse ($data = null, $type = null) {
+}
+
+    /**
+     * @param null $data
+     * @param null $type
+     * @return null
+     */
+    public function parse ($data = null, $type = null) {
         if (!empty($data))
             $this->data = $data;
         if (!empty($type) && in_array($type, $this->types))
@@ -94,8 +148,13 @@ class PodMigrate
         if (method_exists($this,"parse_{$this->type}"))
             call_user_func( array( $this, 'parse_' . $this->type ) );
         return $this->data;
-    }
-    function parse_json ($data = null) {
+}
+
+    /**
+     * @param null $data
+     * @return bool
+     */
+    public function parse_json ($data = null) {
         if (!empty($data))
             $this->data = $data;
         $items = @json_decode($this->data, true);
@@ -113,8 +172,14 @@ class PodMigrate
         }
         $this->parsed = $data;
         return $this->parsed;
-    }
-    function parse_sv ($data = null, $delimiter = null) {
+}
+
+    /**
+     * @param null $data
+     * @param null $delimiter
+     * @return bool
+     */
+    public function parse_sv ($data = null, $delimiter = null) {
         if (!empty($data))
             $this->data = $data;
         if (!empty($delimiter))
@@ -136,8 +201,13 @@ class PodMigrate
         }
         $this->parsed = $data;
         return $this->parsed;
-    }
-    function parse_xml ($data = null) {
+}
+
+    /**
+     * @param null $data
+     * @return bool
+     */
+    public function parse_xml ($data = null) {
         if (!empty($data))
             $this->data = $data;
         $xml = new SimpleXMLElement($this->data);
@@ -186,8 +256,13 @@ class PodMigrate
         }
         $this->parsed = $data;
         return $this->parsed;
-    }
-    function parse_package ($data = null) {
+}
+
+    /**
+     * @param null $data
+     * @return bool
+     */
+    public function parse_package ($data = null) {
         if (!empty($data))
             $this->data = $data;
         if (!is_array($this->data))
@@ -262,8 +337,13 @@ class PodMigrate
             return false;
         $this->parsed = $data;
         return $this->parsed;
-    }
-    function parse_sql ($data = null) {
+}
+
+    /**
+     * @param null $data
+     * @return mixed
+     */
+    public function parse_sql ($data = null) {
         if (!empty($data))
             $this->data = $data;
         $this->parsed = $data;
@@ -273,7 +353,12 @@ class PodMigrate
     /*
     * Exporting / Building Code
     */
-    function export ($data = null, $type = null, $delimiter = null) {
+    /**
+     * @param null $data
+     * @param null $type
+     * @param null $delimiter
+     */
+    public function export ($data = null, $type = null, $delimiter = null) {
         if (!empty($data))
             $this->data = $data;
         if (!empty($type) && in_array($type, $this->types))
@@ -283,12 +368,22 @@ class PodMigrate
         if (method_exists($this,"build_{$this->type}"))
             call_user_func( array( $this, 'build_' . $this->type ) );
         return $this->export_pod_items();
-    }
-    function export_pod_items ($data = null) {
+}
+
+    /**
+     * @param null $data
+     */
+    public function export_pod_items ($data = null) {
         if (!empty($data))
             $this->data = $data;
-    }
-    function build ($data = null, $type = null) {
+}
+
+    /**
+     * @param null $data
+     * @param null $type
+     * @return null
+     */
+    public function build ($data = null, $type = null) {
         if (!empty($data))
             $this->data = $data;
         if (!empty($type) && in_array($type, $this->types))
@@ -296,8 +391,13 @@ class PodMigrate
         if (method_exists($this,"build_{$this->type}"))
             call_user_func( array( $this, 'build_' . $this->type ) );
         return $this->data;
-    }
-    function build_json ($data = null) {
+}
+
+    /**
+     * @param null $data
+     * @return bool
+     */
+    public function build_json ($data = null) {
         if (!empty($data))
             $this->data = $data;
         if (empty($this->data) || !is_array($this->data))
@@ -312,8 +412,14 @@ class PodMigrate
         }
         $this->built = @json_encode($data);
         return $this->built;
-    }
-    function build_sv ($data = null, $delimiter = null) {
+}
+
+    /**
+     * @param null $data
+     * @param null $delimiter
+     * @return bool
+     */
+    public function build_sv ($data = null, $delimiter = null) {
         if (!empty($data))
             $this->data = $data;
         if (!empty($delimiter))
@@ -334,8 +440,13 @@ class PodMigrate
         }
         $this->built = $head.$lines;
         return $this->built;
-    }
-    function build_xml ($data = null) {
+}
+
+    /**
+     * @param null $data
+     * @return bool
+     */
+    public function build_xml ($data = null) {
         if (!empty($data))
             $this->data = $data;
         if (empty($this->data) || !is_array($this->data))
@@ -353,8 +464,13 @@ class PodMigrate
         $foot = '</items>';
         $this->built = $head.$lines.$foot;
         return $this->built;
-    }
-    function build_package ($data = null) {
+}
+
+    /**
+     * @param null $data
+     * @return bool
+     */
+    public function build_package ($data = null) {
         if (!empty($data))
             $this->data = $data;
         if (empty($this->data) || !is_array($this->data))
@@ -402,8 +518,13 @@ class PodMigrate
             return false;
         $this->built = $data;
         return $this->built;
-    }
-    function build_sql ($data = null) {
+}
+
+    /**
+     * @param null $data
+     * @return mixed
+     */
+    public function build_sql ($data = null) {
         if (!empty($data))
             $this->data = $data;
         $this->built = $data;
@@ -432,7 +553,11 @@ class PodMigrate
     //// run import
     pods_import_it($import);
     */
-    function heres_the_beef ($import, $output = true) {
+    /**
+     * @param $import
+     * @param bool $output
+     */
+    public function heres_the_beef ($import, $output = true) {
         global $wpdb;
         $api = pods_api();
         for ($i = 0; $i < 40000; $i++) {

@@ -1,8 +1,18 @@
 <?php
+/**
+ *
+ */
 class PodsUI
 {
     // internal
+    /**
+     * @var bool|PodsData
+     */
     private $pods_data = false;
+
+    /**
+     * @var array
+     */
     private $actions = array(
         'manage',
         'add',
@@ -14,13 +24,35 @@ class PodsUI
         'reorder',
         'export'
     );
+
+    /**
+     * @var array
+     */
     private $ui_page = array();
+
+    /**
+     * @var bool
+     */
     private $unique_identifier = false;
 
     // base
+    /**
+     * @var array|bool|mixed|null|Pods
+     */
     public $pod = false;
+
+    /**
+     * @var int
+     */
     public $id = 0;
+
+    /**
+     * @var string
+     */
     public $num = ''; // allows multiple co-existing PodsUI instances with separate functionality in URL
+    /**
+     * @var array
+     */
     static $excluded = array(
         'do',
         'id',
@@ -39,13 +71,38 @@ class PodsUI
     ); // used in var_update
 
     // ui
+    /**
+     * @var bool
+     */
     public $item = false; // to be set with localized string
+    /**
+     * @var bool
+     */
     public $items = false; // to be set with localized string
+    /**
+     * @var bool
+     */
     public $heading = false; // to be set with localized string array
+    /**
+     * @var bool
+     */
     public $label = false; // to be set with localized string array
+    /**
+     * @var bool
+     */
     public $icon = false;
+
+    /**
+     * @var bool
+     */
     public $css = false; // set to a URL of stylesheet to include
+    /**
+     * @var bool
+     */
     public $wpcss = false; // set to true to include WP Admin stylesheets
+    /**
+     * @var array
+     */
     public $fields = array(
         'manage' => array(),
         'search' => array(),
@@ -57,10 +114,30 @@ class PodsUI
         'reorder' => array(),
         'export' => array()
     );
+
+    /**
+     * @var bool
+     */
     public $searchable = true;
+
+    /**
+     * @var bool
+     */
     public $sortable = true;
+
+    /**
+     * @var bool
+     */
     public $pagination = true;
+
+    /**
+     * @var bool
+     */
     public $pagination_total = true;
+
+    /**
+     * @var array
+     */
     public $export = array(
         'on' => false,
         'formats' => array(
@@ -73,6 +150,9 @@ class PodsUI
         'type' => false
     );
 
+    /**
+     * @var array
+     */
     public $reorder = array(
         'on' => false,
         'limit' => 250,
@@ -80,16 +160,45 @@ class PodsUI
         'orderby_dir' => 'ASC',
         'sql' => null
     );
+
+    /**
+     * @var array
+     */
     public $screen_options = array(); // set to 'page' => 'Text'; false hides link
+    /**
+     * @var array
+     */
     public $help = array(); // set to 'page' => 'Text'; 'page' => array('link' => 'yourhelplink'); false hides link
 
     // data
+    /**
+     * @var bool
+     */
     public $search = false;
+
+    /**
+     * @var array
+     */
     public $filters = array();
+
+    /**
+     * @var bool
+     */
     public $search_across = true;
+
+    /**
+     * @var bool
+     */
     public $search_across_picks = false;
+
+    /**
+     * @var bool
+     */
     public $default_none = false;
 
+    /**
+     * @var array
+     */
     public $where = array(
         'manage' => null,
         'edit' => null,
@@ -97,23 +206,56 @@ class PodsUI
         'delete' => null,
         'reorder' => null
     );
+
+    /**
+     * @var bool
+     */
     public $orderby = false;
+
+    /**
+     * @var string
+     */
     public $orderby_dir = 'DESC';
+
+    /**
+     * @var int
+     */
     public $limit = 25;
+
+    /**
+     * @var int
+     */
     public $page = 1;
+
+    /**
+     * @var int
+     */
     public $total = 0;
+
+    /**
+     * @var int
+     */
     public $total_found = 0;
 
+    /**
+     * @var array
+     */
     public $session = array(
         'search',
         'filters'
     ); // allowed: search, filters, show_per_page, orderby (priority over usermeta)
+    /**
+     * @var array
+     */
     public $user = array(
         'show_per_page',
         'orderby'
     ); // allowed: search, filters, show_per_page, orderby (priority under session)
 
     // advanced data
+    /**
+     * @var array
+     */
     public $sql = array(
         'table' => null,
         'field_id' => 'id',
@@ -121,19 +263,39 @@ class PodsUI
         'select' => null,
         'sql' => null
     );
+
+    /**
+     * @var bool
+     */
     public $data = false;
+
+    /**
+     * @var array
+     */
     public $row = array();
 
     // actions
+    /**
+     * @var string
+     */
     public $action = 'manage';
 
+    /**
+     * @var array
+     */
     public $action_after = array(
         'add' => 'edit',
         'edit' => 'edit',
         'duplicate' => 'edit'
     ); // set action to 'manage'
+    /**
+     * @var bool
+     */
     public $do = false;
 
+    /**
+     * @var array
+     */
     public $action_links = array(
         'add' => null,
         'edit' => null,
@@ -143,13 +305,25 @@ class PodsUI
         'reorder' => null,
         'export' => null
     ); // custom links (callable allowed)
+    /**
+     * @var array
+     */
     public $actions_disabled = array(
         'view',
         'export'
     ); // disable actions
+    /**
+     * @var array
+     */
     public $actions_hidden = array(); // hide actions to not show them but allow them
+    /**
+     * @var array
+     */
     public $actions_custom = array(); // overwrite existing actions or add your own
 
+    /**
+     * @var bool
+     */
     public $save = false; // Allow custom save handling for tables that aren't Pod-based
 
     /**
@@ -217,6 +391,11 @@ class PodsUI
         $this->go();
     }
 
+    /**
+     * @param $deprecated_options
+     *
+     * @return array
+     */
     public function setup_deprecated ( $deprecated_options ) {
         $options = array();
         if ( isset( $deprecated_options[ 'id' ] ) )
@@ -471,13 +650,20 @@ class PodsUI
             $options[ 'wpcss' ] = $deprecated_options[ 'wpcss' ];
 
         return $options;
-    }
+}
 
+    /**
+     *
+     */
     public function deprecated_filters () {
         global $pods_ui_custom_filters;
         echo $pods_ui_custom_filters;
-    }
+}
 
+    /**
+     * @param $options
+     * @return array|bool|mixed|null|PodsArray
+     */
     public function setup ( $options ) {
         $options = pods_array( $options );
 
@@ -615,8 +801,13 @@ class PodsUI
         $this->setup_fields();
 
         return $options;
-    }
+}
 
+    /**
+     * @param null $fields
+     * @param string $which
+     * @return array|bool|mixed|null
+     */
     public function setup_fields ($fields = null, $which = 'fields') {
         $init = false;
         if (null === $fields) {
@@ -820,21 +1011,32 @@ class PodsUI
             }
         }
         return $this->do_hook('setup_fields', $fields, $which, $init);
-    }
+}
 
+    /**
+     * @param $msg
+     * @param bool $error
+     */
     public function message ($msg, $error = false) {
         $msg = $this->do_hook(($error) ? 'error' : 'message', $msg);
 ?>
     <div id="message" class="<?php echo ($error) ? 'error' : 'updated'; ?> fade"><p><?php echo $msg; ?></p></div>
 <?php
-    }
+}
 
+    /**
+     * @param $msg
+     * @return bool
+     */
     public function error ($msg) {
         $this->message($msg, true);
 
         return false;
-    }
+}
 
+    /**
+     * @return mixed
+     */
     public function go () {
         $this->do_hook('go');
         $_GET = pods_unsanitize($_GET); // fix wp sanitization
@@ -917,8 +1119,11 @@ class PodsUI
                 pods_var_set($value, $setting, $method);
             }
         }
-    }
+}
 
+    /**
+     * @return mixed
+     */
     public function add () {
         $this->do_hook('add');
         if (isset($this->actions_custom['add']) && is_callable($this->actions_custom['add']))
@@ -938,8 +1143,12 @@ class PodsUI
         <?php $this->form(true); ?>
     </div>
 <?php
-    }
+}
 
+    /**
+     * @param bool $duplicate
+     * @return mixed
+     */
     public function edit ($duplicate = false) {
         if (!in_array('duplicate', $this->actions_disabled))
             $duplicate = false;
@@ -973,8 +1182,13 @@ class PodsUI
         <?php $this->form(false, $duplicate); ?>
     </div>
 <?php
-    }
+}
 
+    /**
+     * @param bool $create
+     * @param bool $duplicate
+     * @return bool|mixed
+     */
     public function form ($create = false, $duplicate = false) {
         $this->do_hook( 'form' );
 
@@ -1021,8 +1235,11 @@ class PodsUI
         $obj =& $this;
 
         pods_view( PODS_DIR . 'ui/admin/form.php', compact( array_keys( get_defined_vars() ) ) );
-    }
+}
 
+    /**
+     * @return bool|mixed
+     */
     public function view () {
         $this->do_hook('view');
         if (isset($this->actions_custom['view']) && is_callable($this->actions_custom['view']))
@@ -1033,8 +1250,12 @@ class PodsUI
             return $this->error( sprintf( __( '<strong>Error:</strong> %s not found.', 'pods' ), $this->item ) );
         $id = $this->row[$this->sql['field_id']];
         // HOOK INTO FORM CLASS HERE FOR VIEW
-    }
+}
 
+    /**
+     * @param bool $insert
+     * @return mixed
+     */
     public function save ($insert = false) {
         $this->do_hook('pre_save', $insert);
         if (isset($this->actions_custom['save']) && is_callable($this->actions_custom['save']))
@@ -1117,8 +1338,12 @@ class PodsUI
         else
             $this->error(__("<strong>Error:</strong> {$this->item} has not been {$action}.", 'pods'));
         $this->do_hook('post_save', $this->insert_id, $data, $insert);
-    }
+}
 
+    /**
+     * @param null $id
+     * @return bool|mixed
+     */
     public function delete ($id = null) {
         $id = pods_absint($id);
         if (empty($id))
@@ -1137,8 +1362,12 @@ class PodsUI
         else
             $this->error(__("<strong>Error:</strong> {$this->item} has not been deleted.", 'pods'));
         $this->do_hook('post_delete', $id);
-    }
+}
 
+    /**
+     * @param $field
+     * @return array|bool|mixed|null
+     */
     public function get_field ( $field ) {
         $value = null;
 
@@ -1153,8 +1382,11 @@ class PodsUI
             $value = $this->row[ $field ];
 
         return $this->do_hook( 'get_field', $value, $field );
-    }
+}
 
+    /**
+     * @return bool
+     */
     public function get_data () {
         if ( false !== $this->pod && is_object( $this->pod ) && 'Pods' == get_class( $this->pod ) ) {
             $orderby = '';
@@ -1201,8 +1433,11 @@ class PodsUI
         }
 
         return $this->data;
-    }
+}
 
+    /**
+     * @return array
+     */
     public function get_row () {
         if ( false !== $this->pod && is_object( $this->pod ) && 'Pods' == get_class( $this->pod ) ) {
             $this->row = $this->pod->fetch( $this->id );
@@ -1227,8 +1462,12 @@ class PodsUI
         }
 
         return $this->row;
-    }
+}
 
+    /**
+     * @param bool $reorder
+     * @return mixed
+     */
     public function manage ($reorder = false) {
         $this->do_hook('manage', $reorder);
 
@@ -1471,8 +1710,12 @@ class PodsUI
     </form>
 </div>
 <?php
-    }
+}
 
+    /**
+     * @param bool $reorder
+     * @return bool|mixed
+     */
     public function table ($reorder = false) {
         $this->do_hook('table', $reorder);
         if (isset($this->actions_custom['table']) && is_callable($this->actions_custom['table']))
@@ -1823,8 +2066,11 @@ class PodsUI
 ?>
 </script>
 <?php
-    }
+}
 
+    /**
+     *
+     */
     public function screen_meta () {
         $screen_html = $help_html = '';
         $screen_link = $help_link = '';
@@ -1979,8 +2225,12 @@ class PodsUI
 </div>
 <?php
         }
-    }
+}
 
+    /**
+     * @param bool $header
+     * @return mixed
+     */
     public function pagination ($header = false) {
         $this->do_hook('pagination', $header);
         if (isset($this->actions_custom['pagination']) && is_callable($this->actions_custom['pagination']))
@@ -2027,8 +2277,12 @@ class PodsUI
 <?php
             }
         }
-    }
+}
 
+    /**
+     * @param bool $options
+     * @return mixed
+     */
     public function limit ($options = false) {
         $this->do_hook('limit', $options);
         if (isset($this->actions_custom['limit']) && is_callable($this->actions_custom['limit']))
@@ -2043,8 +2297,13 @@ class PodsUI
             else
                 echo ' <a href="' . pods_var_update(array('limit' => $option), array('orderby' . $this->num, 'orderby_dir' . $this->num, 'search' . $this->num), $this->exclusion()) . '">' . $option . '</a>';
         }
-    }
+}
 
+    /**
+     * @param $code
+     * @param bool $row
+     * @return mixed
+     */
     public function do_template ($code, $row = false) {
         if (isset( $this->ui[ 'pod' ] ) && false !== $this->ui['pod'] && is_object($this->ui['pod']))
             return $this->ui['pod']->do_magic_tags($code);
@@ -2060,8 +2319,12 @@ class PodsUI
             }
         }
         return $code;
-    }
+}
 
+    /**
+     * @param $tag
+     * @return string
+     */
     public function do_magic_tags ($tag) {
         $tag = trim($tag, ' {@}');
         $tag = explode(',', $tag);
@@ -2084,8 +2347,12 @@ class PodsUI
         if (0 < strlen($value))
             return $before . $value . $after;
         return;
-    }
+}
 
+    /**
+     * @param bool $exclude
+     * @param bool $array
+     */
     public function hidden_vars ($exclude = false, $array = false) {
         $exclude = $this->do_hook('hidden_vars', $exclude, $array);
         if (false === $exclude)
@@ -2108,8 +2375,11 @@ class PodsUI
         <input type="hidden" name="<?php echo $k; ?>" value="<?php echo $v; ?>" />
 <?php
         }
-    }
+}
 
+    /**
+     * @return array
+     */
     public function exclusion () {
         $exclusion = self::$excluded;
 
@@ -2131,7 +2401,9 @@ class PodsUI
         }
         add_filter('pods_ui_post_init', 'my_filter_function', 10, 2);
     */
-    private function do_hook () {
+    /**
+     * @return array|bool|mixed|null
+     */private function do_hook () {
         $args = func_get_args();
         if (empty($args))
             return false;

@@ -998,7 +998,9 @@ class PodsAdmin {
         $pod = $api->load_pod( array( 'id' => (int) $params->pod ) );
         $field = $api->load_field( array( 'id' => (int) $params->field ) );
 
-        if ( empty( $pod ) || empty( $field ) || $pod[ 'id' ] != $field[ 'pod_id' ] || !isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) )
+        if ( !isset( $params->query ) || strlen( trim( $params->query ) ) < 1 )
+            pods_error( __( 'Invalid field request', 'pods' ), $this );
+        elseif ( empty( $pod ) || empty( $field ) || $pod[ 'id' ] != $field[ 'pod_id' ] || !isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) )
             pods_error( __( 'Invalid field request', 'pods' ), $this );
         elseif ( 'pick' != $field[ 'type' ] || empty( $field[ 'table_info' ] ) )
             pods_error( __( 'Invalid field', 'pods' ), $this );
@@ -1015,10 +1017,19 @@ class PodsAdmin {
         $data->where = $field[ 'table_info' ][ 'where' ];
         $data->orderby = $field[ 'table_info' ][ 'orderby' ];
 
+        $where = pods_var( 'pick_where', $field, null, null, true );
+
+        if ( empty( $where ) )
+            $where = array();
+        else
+            $where = (array) $where;
+
+        $where[] = "`t`.`{$data->field_index}` LIKE '%" . like_escape( $params->query ) . "%'";
+
         $params = array(
             'select' => "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`",
             'table' => $data->table,
-            'where' => pods_var( 'pick_where', $field, null, null, true ),
+            'where' => $where,
             'orderby' => pods_var( 'pick_orderby', $field, null, null, true ),
             'groupby' => pods_var( 'pick_groupby', $field, null, null, true ),
             'limit' => 30

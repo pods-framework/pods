@@ -788,6 +788,8 @@ class PodsInit {
         delete_option( 'pods_framework_upgrade_2_0' );
         delete_option( 'pods_framework_upgraded_1_x' );
 
+        $api->cache_flush_pods();
+
         self::$version = '';
 
         // Restore DB table prefix (if switched)

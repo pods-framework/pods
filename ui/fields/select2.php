@@ -1,6 +1,6 @@
 <?php
     wp_enqueue_style( 'pods-select2' );
-wp_enqueue_script( 'pods-select2' );
+    wp_enqueue_script( 'pods-select2' );
 
     $attributes = array();
     $attributes['type'] = 'hidden';

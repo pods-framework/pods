@@ -25,7 +25,7 @@
 
         if ( 'undefined' == pods_pickColor ) {
             function pods_pickColor ( id, color ) {
-                jQuery( id ).val( color );
+                jQuery( id ).val( color.toUpperCase() );
             }
         }
     } );

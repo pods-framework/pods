@@ -3626,7 +3626,7 @@ class PodsAPI {
         return false;
     }
 
-    function get_table_info ( $object_type, $object, $name = null, $pod ) {
+    function get_table_info ( $object_type, $object, $name = null, $pod = null ) {
         global $wpdb;
 
         $info = array(

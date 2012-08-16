@@ -31,10 +31,20 @@
 
         jQuery( '#<?php echo $attributes[ 'id' ]; ?>' ).select2( {
             placeholder : {
-                title : 'Start Typing...',
+                title : '<?php echo esc_js( __( 'Start Typing...', 'pods' ) ); ?>',
                 id : ''
             },
             minimumInputLength : 1,
+            <?php
+                $pick_limit = (int) pods_var( 'pick_limit', $options, 0 );
+
+                if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit ) {
+            ?>
+                multiple : true,
+                maximumSelectionSize : <?php echo $pick_limit; ?>,
+            <?php
+                }
+            ?>
             ajax : {
                 url : pods_ajaxurl,
                 type : 'POST',

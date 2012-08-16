@@ -2,6 +2,11 @@
     $attributes = array();
     $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
 
+    $pick_limit = (int) pods_var( 'pick_limit', $options, 0 );
+
+    if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit )
+        $attributes[ 'multiple' ] = 'multiple';
+
     if ( !isset( $options[ 'data' ] ) || empty( $options[ 'data' ] ) )
         $options[ 'data' ] = array();
     elseif ( !is_array( $options[ 'data' ] ) )

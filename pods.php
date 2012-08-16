@@ -25,6 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 if ( defined( 'PODS_VERSION' ) && defined( 'PODS_DIR' ) && file_exists( untrailingslashit( PODS_DIR ) . '/init.php' ) ) {
+    if ( !function_exists( 'deactivate_plugins' ) )
+        include_once ABSPATH . '/wp-admin/includes/plugin.php';
+
     deactivate_plugins( untrailingslashit( PODS_DIR ) . '/init.php' );
 
     // next refresh will load 2.0

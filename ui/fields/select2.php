@@ -12,7 +12,9 @@
     $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
     $field_nonce = wp_create_nonce( 'pods_relationship_' . ( !is_object( $pod ) ? '0' : $pod->pod_id ) . '_' . session_id() . '_' . $uri_hash . '_' . $options[ 'id' ] );
 ?>
-<input<?php PodsForm::attributes($attributes, $name, PodsForm::$field_type, $options); ?> />
+<div class="pods-select2">
+    <input<?php PodsForm::attributes($attributes, $name, PodsForm::$field_type, $options); ?> />
+</div>
 
 <script type="text/javascript">
     jQuery( function () {

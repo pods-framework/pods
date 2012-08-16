@@ -101,8 +101,8 @@ class PodsField_Boolean extends PodsField {
         );
 
         // Deprecated handling for 1.x
-        if ( !parent::$deprecated )
-            $value = $yesno[ $value ];
+        if ( !parent::$deprecated && isset( $yesno[ (int) $value ] ) )
+            $value = $yesno[ (int) $value ];
 
         return $value;
     }

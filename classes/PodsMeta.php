@@ -383,6 +383,9 @@ class PodsMeta {
             }
         }
 
+        // Fix for Pods doing it's own sanitization
+        $data = stripslashes_deep( $data );
+
         if ( !empty( $pod ) )
             $pod->save( $data );
 
@@ -459,6 +462,9 @@ class PodsMeta {
                     $data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
             }
         }
+
+        // Fix for Pods doing it's own sanitization
+        $data = stripslashes_deep( $data );
 
         if ( !empty( $pod ) )
             $pod->save( $data );
@@ -552,6 +558,9 @@ class PodsMeta {
             }
         }
 
+        // Fix for Pods doing it's own sanitization
+        $data = stripslashes_deep( $data );
+
         if ( !empty( $pod ) )
             $pod->save( $data );
     }
@@ -630,6 +639,9 @@ class PodsMeta {
                     $data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
             }
         }
+
+        // Fix for Pods doing it's own sanitization
+        $data = stripslashes_deep( $data );
 
         if ( !empty( $pod ) )
             $pod->save( $data );
@@ -808,6 +820,9 @@ class PodsMeta {
                     $data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
             }
         }
+
+        // Fix for Pods doing it's own sanitization
+        $data = stripslashes_deep( $data );
 
         if ( !empty( $pod ) )
             $pod->save( $data );

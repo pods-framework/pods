@@ -675,6 +675,7 @@ class PodsAdmin {
 
         // Sanitize input
         $params = stripslashes_deep( (array) $_POST );
+
         foreach ( $params as $key => $value ) {
             if ( 'action' == $key )
                 continue;
@@ -683,9 +684,6 @@ class PodsAdmin {
 
             $params[ str_replace( '_podsfix_', '', $key ) ] = $value;
         }
-
-        if ( !defined( 'PODS_STRICT_MODE' ) || !PODS_STRICT_MODE )
-            $params = pods_sanitize( $params );
 
         $params = (object) $params;
 
@@ -809,9 +807,7 @@ class PodsAdmin {
 
         $params = apply_filters( 'pods_api_' . $method->name, $params, $method );
 
-        if ( 'process_form' == $method->name )
-            $output = $this->api->process_form( $params );
-        elseif ( 'upgrade' == $method->name ) {
+        if ( 'upgrade' == $method->name ) {
             require_once( PODS_DIR . 'sql/PodsUpgrade.php' );
 
             $upgrade = new PodsUpgrade_2_0();
@@ -880,9 +876,6 @@ class PodsAdmin {
 
             $params[ str_replace( '_podsfix_', '', $key ) ] = $value;
         }
-
-        if ( !defined( 'PODS_STRICT_MODE' ) || !PODS_STRICT_MODE )
-            $params = pods_sanitize( $params );
 
         $params = (object) $params;
 
@@ -975,6 +968,7 @@ class PodsAdmin {
 
         // Sanitize input
         $params = stripslashes_deep( (array) $_POST );
+
         foreach ( $params as $key => $value ) {
             if ( 'action' == $key )
                 continue;
@@ -983,9 +977,6 @@ class PodsAdmin {
 
             $params[ str_replace( '_podsfix_', '', $key ) ] = $value;
         }
-
-        if ( !defined( 'PODS_STRICT_MODE' ) || !PODS_STRICT_MODE )
-            $params = pods_sanitize( $params );
 
         $params = (object) $params;
 

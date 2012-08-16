@@ -1,12 +1,17 @@
 <?php
     if ( !empty( $_POST ) ) {
-        if ( isset( $_POST[ 'reset' ] ) ) {
+        if ( isset( $_POST[ 'clearcache' ] ) ) {
+            pods_api()->cache_flush_pods();
+
+            die( '<script type="text/javascript">document.location = "?page=' . urlencode( $_GET[ 'page' ] ) . '&pods_clearcache=1";</script>' );
+        }
+        elseif ( isset( $_POST[ 'reset' ] ) ) {
             global $pods_init;
 
             $pods_init->reset();
             $pods_init->setup();
 
-            die( '<script type="text/javascript">document.location = "?page=' . urlencode( $_GET[ 'page' ] ) . '&reset=1";</script>' );
+            die( '<script type="text/javascript">document.location = "?page=' . urlencode( $_GET[ 'page' ] ) . '&pods_reset=1";</script>' );
         }
         elseif ( isset( $_POST[ 'reset_deactivate' ] ) ) {
             global $pods_init;
@@ -22,14 +27,16 @@
             $upgrade = new PodsUpgrade_2_0();
             $upgrade->cleanup();
 
-            die( '<script type="text/javascript">document.location = "?page=' . urlencode( $_GET[ 'page' ] ) . '&cleanup=1";</script>' );
+            die( '<script type="text/javascript">document.location = "?page=' . urlencode( $_GET[ 'page' ] ) . '&pods_cleanup=1";</script>' );
         }
     }
 
-    if ( isset( $_GET[ 'reset' ] ) )
+    if ( isset( $_GET[ 'pods_reset' ] ) )
         pods_ui_message( 'Pods 2.0 settings and data have been reset.' );
-    elseif ( isset( $_GET[ 'cleanup' ] ) )
+    elseif ( isset( $_GET[ 'pods_cleanup' ] ) )
         pods_ui_message( 'Pods 1.x data has been deleted.' );
+    elseif ( isset( $_GET[ 'pods_clearcache' ] ) )
+        pods_ui_message( 'Pods 2.0 transients and cache have been cleared.' );
 ?>
 
 <div class="wrap pods-admin">
@@ -64,6 +71,14 @@
     </p>
 
     <form action="" method="post">
+        <h3>Clear Pods 2.0 Cache</h3>
+
+        <p>This tool will clear all of the transients/cache that are used by Pods 2.0.</p>
+
+        <p class="submit">
+            <input type="submit" class="button button-primary" name="clearcache" value="Clear Pods 2.0 Cache" />
+        </p>
+
         <h3>Reset Pods 2.0</h3>
         <p>This tool does not delete any Pods 1.x data, it simply resets the Pods 2.0 settings, removes all of it's data, and performs a fresh install.</p>
 

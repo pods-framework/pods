@@ -189,7 +189,7 @@ div.pods-textfield input,
 	width:150px;
 }
 
-.pods-form-ui-field-type-color {
+input.pods-form-ui-field-type-color {
     width: 80px;
 }
 .pods-form-ui-field-type-select2 {

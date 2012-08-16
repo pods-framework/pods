@@ -228,6 +228,11 @@ class PodsField_Pick extends PodsField {
                 'groupby' => pods_var( 'pick_groupby', $options, null, null, true )
             );
 
+            if ( isset( $options[ 'table_info' ][ 'pod' ] ) && !empty( $options[ 'table_info' ][ 'pod' ] ) ) {
+                $data->pod = $options[ 'table_info' ][ 'pod' ][ 'name' ];
+                $data->fields = $options[ 'table_info' ][ 'pod' ][ 'fields' ];
+            }
+
             $autocomplete = false;
 
             if ( 'single' == pods_var( 'pick_format_type', $options ) && 'autocomplete' == pods_var( 'pick_format_single', $options ) )

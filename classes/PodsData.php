@@ -529,75 +529,77 @@ class PodsData {
             }
         }
 
-        // Traverse the Rabit Hole
-        $haystack = implode( ' ', (array) $params->select )
-                    . ' ' . implode( ' ', (array) $params->where )
-                    . ' ' . implode( ' ', (array) $params->groupby )
-                    . ' ' . implode( ' ', (array) $params->having )
-                    . ' ' . implode( ' ', (array) $params->orderby );
-        $haystack = preg_replace( '/\s/', ' ', $haystack );
-        $haystack = preg_replace( '/\w\(/', ' ', $haystack );
-        $haystack = str_replace( array( '(', ')', '  ' ), ' ', $haystack );
+        // Traverse the Rabbit Hole
+        if ( !empty( $this->pod ) ) {
+            $haystack = implode( ' ', (array) $params->select )
+                        . ' ' . implode( ' ', (array) $params->where )
+                        . ' ' . implode( ' ', (array) $params->groupby )
+                        . ' ' . implode( ' ', (array) $params->having )
+                        . ' ' . implode( ' ', (array) $params->orderby );
+            $haystack = preg_replace( '/\s/', ' ', $haystack );
+            $haystack = preg_replace( '/\w\(/', ' ', $haystack );
+            $haystack = str_replace( array( '(', ')', '  ' ), ' ', $haystack );
 
-        preg_match_all( '/`?[\w]+`?(?:\\.`?[\w]+`?)+(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found, PREG_PATTERN_ORDER );
+            preg_match_all( '/`?[\w]+`?(?:\\.`?[\w]+`?)+(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found, PREG_PATTERN_ORDER );
 
-        $found = (array) @current( $found );
-        $find = $replace = array();
-        foreach ( $found as $key => $value ) {
-            $value = str_replace( '`', '', $value );
-            $value = explode( '.', $value );
-            $dot = array_pop( $value );
-            if ( in_array( '/\b' . trim( $found[ $key ], '`' ) . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $find ) ) {
-                unset( $found[ $key ] );
-                continue;
-            }
-            $find[ $key ] = '/\b' . trim( $found[ $key ], '`' ) . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/';
-            $esc_start = $esc_end = '`';
-            if ( strlen( ltrim( $found[ $key ], '`' ) ) < strlen( $found[ $key ] ) )
-                $esc_start = '';
-            if ( strlen( rtrim( $found[ $key ], '`' ) ) < strlen( $found[ $key ] ) )
-                $esc_end = '';
-            if ( '*' != $dot )
-                $dot = '`' . $dot . $esc_end;
-            $replace[ $key ] = $esc_start . implode( '_', $value ) . '`.' . $dot;
-            if ( in_array( $value[ 0 ], array( 't', 'p' ) ) ) {
-                unset( $found[ $key ] );
-                continue;
-            }
-            unset( $found[ $key ] );
-            if ( !in_array( $value, $found ) )
-                $found[ $key ] = $value;
-        }
-
-        if ( !empty( $this->traverse ) ) {
-            foreach ( (array) $this->traverse as $key => $traverse ) {
-                $traverse = str_replace( '`', '', $traverse );
-                $already_found = false;
-                foreach ( $found as $traversal ) {
-                    if ( is_array( $traversal ) )
-                        $traversal = implode( '.', $traversal );
-                    if ( $traversal == $traverse ) {
-                        $already_found = true;
-                        break;
-                    }
+            $found = (array) @current( $found );
+            $find = $replace = array();
+            foreach ( $found as $key => $value ) {
+                $value = str_replace( '`', '', $value );
+                $value = explode( '.', $value );
+                $dot = array_pop( $value );
+                if ( in_array( '/\b' . trim( $found[ $key ], '`' ) . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $find ) ) {
+                    unset( $found[ $key ] );
+                    continue;
                 }
-                if ( !$already_found )
-                    $found[ 'traverse_' . $key ] = explode( '.', $traverse );
+                $find[ $key ] = '/\b' . trim( $found[ $key ], '`' ) . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/';
+                $esc_start = $esc_end = '`';
+                if ( strlen( ltrim( $found[ $key ], '`' ) ) < strlen( $found[ $key ] ) )
+                    $esc_start = '';
+                if ( strlen( rtrim( $found[ $key ], '`' ) ) < strlen( $found[ $key ] ) )
+                    $esc_end = '';
+                if ( '*' != $dot )
+                    $dot = '`' . $dot . $esc_end;
+                $replace[ $key ] = $esc_start . implode( '_', $value ) . '`.' . $dot;
+                if ( in_array( $value[ 0 ], array( 't', 'p' ) ) ) {
+                    unset( $found[ $key ] );
+                    continue;
+                }
+                unset( $found[ $key ] );
+                if ( !in_array( $value, $found ) )
+                    $found[ $key ] = $value;
             }
-        }
 
-        $joins = array();
-        if ( !empty( $find ) ) {
-            $params->select = preg_replace( $find, $replace, $params->select );
-            $params->where = preg_replace( $find, $replace, $params->where );
-            $params->groupby = preg_replace( $find, $replace, $params->groupby );
-            $params->having = preg_replace( $find, $replace, $params->having );
-            $params->orderby = preg_replace( $find, $replace, $params->orderby );
+            if ( !empty( $this->traverse ) ) {
+                foreach ( (array) $this->traverse as $key => $traverse ) {
+                    $traverse = str_replace( '`', '', $traverse );
+                    $already_found = false;
+                    foreach ( $found as $traversal ) {
+                        if ( is_array( $traversal ) )
+                            $traversal = implode( '.', $traversal );
+                        if ( $traversal == $traverse ) {
+                            $already_found = true;
+                            break;
+                        }
+                    }
+                    if ( !$already_found )
+                        $found[ 'traverse_' . $key ] = explode( '.', $traverse );
+                }
+            }
 
-            if ( !empty( $found ) )
-                $joins = $this->traverse( $found );
-            elseif ( false !== $this->search )
-                $joins = $this->traverse();
+            $joins = array();
+            if ( !empty( $find ) ) {
+                $params->select = preg_replace( $find, $replace, $params->select );
+                $params->where = preg_replace( $find, $replace, $params->where );
+                $params->groupby = preg_replace( $find, $replace, $params->groupby );
+                $params->having = preg_replace( $find, $replace, $params->having );
+                $params->orderby = preg_replace( $find, $replace, $params->orderby );
+
+                if ( !empty( $found ) )
+                    $joins = $this->traverse( $found );
+                elseif ( false !== $this->search )
+                    $joins = $this->traverse();
+            }
         }
 
         if ( !empty( $params->join ) && !empty( $joins ) )

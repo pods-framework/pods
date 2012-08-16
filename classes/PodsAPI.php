@@ -3692,6 +3692,8 @@ class PodsAPI {
                 $object_type = $pod[ 'type' ];
                 $name = $pod[ 'name' ];
                 $object = $pod[ 'object' ];
+
+                $info[ 'pod' ] = $pod;
             }
         }
 

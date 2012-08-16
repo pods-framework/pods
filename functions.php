@@ -592,15 +592,21 @@ function pods_create_slug ( $orig ) {
  * Return a lowercase alphanumeric name (with underscores)
  *
  * @param string $name Input string to clean
+ * @param boolean $lower Force lowercase
  *
  * @since 1.2.0
  */
-function pods_clean_name ( $orig ) {
+function pods_clean_name ( $orig, $lower = true ) {
     $str = preg_replace( "/([- ])/", "_", trim( $orig ) );
-    $str = preg_replace( "/([^0-9a-z_])/", "", strtolower( $str ) );
+
+    if ( $lower )
+        $str = strtolower( $str );
+
+    $str = preg_replace( "/([^0-9a-zA-Z_])/", "", $str );
     $str = preg_replace( "/(_){2,}/", "_", $str );
     $str = trim( $str, '_' );
-    $str = apply_filters( 'pods_clean_name', $str, $orig );
+
+    $str = apply_filters( 'pods_clean_name', $str, $orig, $lower );
 
     return $str;
 }

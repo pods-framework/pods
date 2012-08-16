@@ -1213,32 +1213,34 @@ class PodsAPI {
 
         $field[ 'options' ][ 'type' ] = $field[ 'type' ];
 
-        if ( in_array( $field[ 'type' ], $tableless_field_types ) ) {
+        if ( in_array( $field[ 'options' ][ 'type' ], $tableless_field_types ) ) {
             // Clean up special drop-down in field editor and save out pick_val
             $field[ 'pick_object' ] = pods_var( 'pick_object', $field, '', null, true );
 
-            if ( 0 === strpos( 'pod-', $field[ 'pick_object' ] ) ) {
+            if ( 0 === strpos( $field[ 'pick_object' ], 'pod-' ) ) {
                 $field[ 'pick_val' ] = pods_str_replace( 'pod-', '', $field[ 'pick_object' ], 1 );
                 $field[ 'pick_object' ] = 'pod';
             }
-            elseif ( 0 === strpos( 'post-type-', $field[ 'pick_object' ] ) ) {
+            elseif ( 0 === strpos( $field[ 'pick_object' ], 'post-type-' ) ) {
                 $field[ 'pick_val' ] = pods_str_replace( 'post-type-', '', $field[ 'pick_object' ], 1 );
                 $field[ 'pick_object' ] = 'post_type';
             }
-            elseif ( 0 === strpos( 'taxonomy-', $field[ 'pick_object' ] ) ) {
+            elseif ( 0 === strpos( $field[ 'pick_object' ], 'taxonomy-' ) ) {
                 $field[ 'pick_val' ] = pods_str_replace( 'taxonomy-', '', $field[ 'pick_object' ], 1 );
                 $field[ 'pick_object' ] = 'taxonomy';
             }
-            elseif ( false !== strpos( '-', $field[ 'pick_object' ] ) )
+            elseif ( false !== strpos( $field[ 'pick_object' ], '-' ) )
                 $field[ 'pick_val' ] = '';
 
             $field[ 'options' ][ 'pick_object' ] = $field[ 'pick_object' ];
             $field[ 'options' ][ 'pick_val' ] = $field[ 'pick_val' ];
-            $field[ 'options' ][ 'sister_field_id' ] = $field[ 'sister_field_id' ];
+            $field[ 'options' ][ 'sister_field_id' ] = pods_var( 'sister_field_id', $field );
 
             unset( $field[ 'pick_object' ] );
             unset( $field[ 'pick_val' ] );
-            unset( $field[ 'sister_field_id' ] );
+
+            if ( isset( $field[ 'sister_field_id' ] ) )
+                unset( $field[ 'sister_field_id' ] );
         }
 
         $field[ 'options' ] = array_merge( $field[ 'options' ], $options );
@@ -3691,13 +3693,13 @@ class PodsAPI {
         elseif ( 'table' == $object_type )
             $info[ 'table' ] = ( empty( $object ) ? $name : $object );
 
-        $info[ 'table' ] = pods_clean_name( $info[ 'table' ] );
-        $info[ 'field_id' ] = pods_clean_name( $info[ 'field_id' ] );
+        $info[ 'table' ] = pods_clean_name( $info[ 'table' ], false );
+        $info[ 'field_id' ] = pods_clean_name( $info[ 'field_id' ], false );
 
         if ( is_array( $pod ) && isset( $pod[ 'options' ] ) && 'pod' == pods_var( 'type', $pod ) )
             $info[ 'field_index' ] = pods_var( 'pod_index', $pod[ 'options' ], 'id', null, true );
 
-        $info[ 'field_index' ] = pods_clean_name( $info[ 'field_index' ] );
+        $info[ 'field_index' ] = pods_clean_name( $info[ 'field_index' ], false );
 
         if ( empty( $info[ 'orderby' ] ) )
             $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '`, `t`.`' . $info[ 'field_id' ] . '`';

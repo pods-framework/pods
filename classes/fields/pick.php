@@ -208,14 +208,15 @@ class PodsField_Pick extends PodsField {
 
             $data = pods_data();
             $data->table = $options[ 'table_info' ][ 'table' ];
+            $data->join = $options[ 'table_info' ][ 'join' ];
             $data->field_id = $options[ 'table_info' ][ 'field_id' ];
             $data->field_index = $options[ 'table_info' ][ 'field_index' ];
+            $data->where = $options[ 'table_info' ][ 'where' ];
+            $data->orderby = $options[ 'table_info' ][ 'orderby' ];
 
             $results = $data->select( array(
                 'select' => "`{$data->field_id}`, `{$data->field_index}`",
                 'table' => $data->table,
-                'identifier' => $data->field_id,
-                'index' => $data->field_index,
                 'where' => pods_var( 'pick_where', $options, null, null, true ),
                 'orderby' => pods_var( 'pick_orderby', $options, null, null, true ),
                 'groupby' => pods_var( 'pick_groupby', $options, null, null, true )

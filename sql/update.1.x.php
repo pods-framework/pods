@@ -95,7 +95,7 @@ if (version_compare($old_version, '1.7.6', '<')) {
             $attachment = array(
                 'post_mime_type' => $wp_filetype['type'],
                 'post_title' => preg_replace('/\.[^.]+$/', '', basename($file)),
-                'guid' => str_replace('//wp-content','/wp-content',get_bloginfo('wpurl').$filename),
+                'guid' => str_replace('//wp-content/','/wp-content/',get_bloginfo('wpurl').$filename),
                 'post_content' => '',
                 'post_status' => 'inherit'
             );

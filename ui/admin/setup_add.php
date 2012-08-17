@@ -220,7 +220,10 @@
 </div>
 <script type="text/javascript">
     var pods_admin_submit_callback = function ( id ) {
-        document.location = 'admin.php?page=pods&action=edit&id=' + id + '&do=create';
+        if ( !isNaN( id ) )
+            document.location = 'admin.php?page=pods&action=edit&id=' + id + '&do=create';
+        else
+            document.location = 'admin.php?page=pods&do=create';
     }
 
     var pods_admin_option_select_callback = function ( $opt ) {

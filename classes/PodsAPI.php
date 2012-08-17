@@ -1390,8 +1390,8 @@ class PodsAPI {
             elseif ( false !== $definition )
                 $test = pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
         }
-        elseif ( 0 < $field[ 'sister_field_id' ] )
-            update_post_meta( $field[ 'sister_field_id' ], 'sister_field_id', $params->id );
+        elseif ( 0 < pods_var( 'sister_field_id', $field[ 'options' ], 0 ) )
+            update_post_meta( pods_var( 'sister_field_id', $field[ 'options' ], 0 ), 'sister_field_id', $params->id );
 
         if ( $field[ 'type' ] != $old_type && in_array( $old_type, $tableless_field_types ) ) {
             $wpdb->query( $wpdb->prepare( "DELETE pm FROM {$wpdb->postmeta} AS pm
@@ -1686,7 +1686,10 @@ class PodsAPI {
 
         $fields = $pod[ 'fields' ];
 
-        $object_fields = $pod[ 'object_fields' ];
+        $object_fields = array();
+
+        if ( iseet( $pod[ 'object_fields' ] ) )
+            $object_fields = (array) $pod[ 'object_fields' ];
 
         $fields_active = array();
 

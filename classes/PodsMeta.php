@@ -333,6 +333,9 @@ class PodsMeta {
      * @param null $post
      */
     public function meta_post_add ( $post_type, $post = null ) {
+        if ( 'comment' == $post_type )
+            return;
+
         if ( is_object( $post ) )
             $post_type = $post->post_type;
 

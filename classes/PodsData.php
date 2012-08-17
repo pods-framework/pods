@@ -1120,7 +1120,7 @@ class PodsData {
         }
 
         return $this->row;
-}
+    }
 
     /**
      * @param null $row
@@ -1138,7 +1138,7 @@ class PodsData {
             $this->row = get_object_vars( $this->data[ $this->row_number ] );
 
         return $this->row;
-}
+    }
 
     /**
      * @static

@@ -266,7 +266,7 @@ class PodsMeta {
                 add_action( 'edit_comment', array( $this, 'save_comment' ) );
             }
         }
-}
+    }
 
     /**
      * @param $type
@@ -326,7 +326,7 @@ class PodsMeta {
             $groups = self::$groups[ $type ][ $name ];
 
         return $groups;
-}
+    }
 
     /**
      * @param $post_type
@@ -358,7 +358,7 @@ class PodsMeta {
                 array( 'group' => $group )
             );
         }
-}
+    }
 
     /**
      * @param $post
@@ -394,7 +394,7 @@ class PodsMeta {
         ?>
     </table>
 <?php
-}
+    }
 
     /**
      * @param $post_id
@@ -452,7 +452,7 @@ class PodsMeta {
         pods_no_conflict_off( 'post' );
 
         return $post_id;
-}
+    }
 
     /**
      * @param $form_fields
@@ -497,7 +497,7 @@ class PodsMeta {
         }
 
         return $form_fields;
-}
+    }
 
     /**
      * @param $post
@@ -540,7 +540,7 @@ class PodsMeta {
             $pod->save( $data );
 
         return $post;
-}
+    }
 
     /**
      * @param $tag
@@ -602,7 +602,7 @@ class PodsMeta {
                 }
             }
         }
-}
+    }
 
     /**
      * @param $term_id
@@ -642,7 +642,7 @@ class PodsMeta {
 
         if ( !empty( $pod ) )
             $pod->save( $data );
-}
+    }
 
     /**
      * @param $user_id
@@ -693,7 +693,7 @@ class PodsMeta {
     </table>
 <?php
         }
-}
+    }
 
     /**
      * @param $user_id
@@ -730,7 +730,7 @@ class PodsMeta {
 
         if ( !empty( $pod ) )
             $pod->save( $data );
-}
+    }
 
     /**
      * @param $commenter
@@ -767,7 +767,7 @@ class PodsMeta {
 <?php
             }
         }
-}
+    }
 
     /**
      * @param $form_fields
@@ -808,38 +808,56 @@ class PodsMeta {
             }
         }
         return $form_fields;
-}
+    }
 
     /**
-     * @param $comment
+     * @param $comment_type
+     * @param null $comment
      */
-    public function meta_comment_add ( $comment ) {
-        wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
-
-        $groups = $this->groups_get( 'comment', 'comment' );
-
-        $id = null;
-
+    public function meta_comment_add ( $comment_type, $comment = null ) {
         if ( is_object( $comment ) )
-            $id = $comment->comment_ID;
+            $comment_type = $comment->comment_type;
 
-        $pod = false;
+        $groups = $this->groups_get( 'comment', $comment_type );
 
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            if ( empty( $pod ) )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
-?>
-    <table class="form-table pods-metabox">
-        <?php
-            foreach ( $group[ 'fields' ] as $field ) {
-                $value = '';
+            add_meta_box(
+                $comment_type . '-pods-meta-' . sanitize_title( $group[ 'label' ] ),
+                $group[ 'label' ],
+                array( $this, 'meta_comment' ),
+                $comment_type,
+                $group[ 'context' ],
+                $group[ 'priority' ],
+                array( 'group' => $group )
+            );
+        }
+    }
 
-                if ( !empty( $pod ) )
-                    $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
-        ?>
+    /**
+     * @param $comment
+     * @param $metabox
+     */
+    public function meta_comment ( $comment, $metabox ) {
+        wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
+?>
+    <table class="form-table editcomment pods-metabox">
+<?php
+        $id = null;
+
+        if ( is_object( $comment ) )
+            $id = $comment->comment_ID;
+
+        $pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id );
+
+        foreach ( $metabox[ 'args' ][ 'group' ][ 'fields' ] as $field ) {
+            $value = '';
+
+            if ( !empty( $pod ) )
+                $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
+?>
             <tr class="form-field">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
                 <td>
@@ -847,54 +865,12 @@ class PodsMeta {
                     <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
                 </td>
             </tr>
-        <?php
-            }
-        ?>
-    </table>
 <?php
         }
-}
-
-    /**
-     * @param $comment
-     */
-    public function meta_comment ( $comment ) {
-        wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
-
-        $groups = $this->groups_get( 'comment', 'comment' );
-
-        $id = null;
-
-        if ( is_object( $comment ) )
-            $id = $comment->comment_ID;
-
-        $pod = false;
-
-        foreach ( $groups as $group ) {
-            if ( empty( $group[ 'fields' ] ) )
-                continue;
-
-            if ( empty( $pod ) )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 ?>
-    <table class="form-table pods-metabox">
-        <?php
-                foreach ( $group[ 'fields' ] as $field ) {
-        ?>
-            <tr class="form-field">
-                <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
-                <td>
-                    <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], ( is_object( $comment ) ? get_comment_meta( $comment->comment_ID, $field[ 'name' ] ) : '' ), $field[ 'type' ], $field, $pod, $id ); ?>
-                    <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
-                </td>
-            </tr>
-        <?php
-                }
-        ?>
     </table>
 <?php
-        }
-}
+    }
 
     /**
      * @param $comment_id
@@ -942,7 +918,7 @@ class PodsMeta {
         array_unshift( $args, 'post_type' );
 
         return call_user_func_array( array( $this, 'get_meta' ), $args );
-}
+    }
 
     /**
      * @return mixed
@@ -953,7 +929,7 @@ class PodsMeta {
         array_unshift( $args, 'user' );
 
         return call_user_func_array( array( $this, 'get_meta' ), $args );
-}
+    }
 
     /**
      * @return mixed
@@ -964,7 +940,7 @@ class PodsMeta {
         array_unshift( $args, 'comment' );
 
         return call_user_func_array( array( $this, 'get_meta' ), $args );
-}
+    }
 
     /**
      * @return mixed
@@ -975,7 +951,7 @@ class PodsMeta {
         array_unshift( $args, 'post_type' );
 
         return call_user_func_array( array( $this, 'add_meta' ), $args );
-}
+    }
 
     /**
      * @return mixed
@@ -986,7 +962,7 @@ class PodsMeta {
         array_unshift( $args, 'user' );
 
         return call_user_func_array( array( $this, 'add_meta' ), $args );
-}
+    }
 
     /**
      * @return mixed
@@ -997,7 +973,7 @@ class PodsMeta {
         array_unshift( $args, 'comment' );
 
         return call_user_func_array( array( $this, 'add_meta' ), $args );
-}
+    }
 
     /**
      * @return mixed
@@ -1008,7 +984,7 @@ class PodsMeta {
         array_unshift( $args, 'post_type' );
 
         return call_user_func_array( array( $this, 'update_meta' ), $args );
-}
+    }
 
     /**
      * @return mixed
@@ -1019,7 +995,7 @@ class PodsMeta {
         array_unshift( $args, 'user' );
 
         return call_user_func_array( array( $this, 'update_meta' ), $args );
-}
+    }
 
     /**
      * @return mixed
@@ -1030,7 +1006,7 @@ class PodsMeta {
         array_unshift( $args, 'comment' );
 
         return call_user_func_array( array( $this, 'update_meta' ), $args );
-}
+    }
 
     /**
      * @return mixed
@@ -1041,7 +1017,7 @@ class PodsMeta {
         array_unshift( $args, 'post_type' );
 
         return call_user_func_array( array( $this, 'delete_meta' ), $args );
-}
+    }
 
     /**
      * @return mixed
@@ -1052,7 +1028,7 @@ class PodsMeta {
         array_unshift( $args, 'user' );
 
         return call_user_func_array( array( $this, 'delete_meta' ), $args );
-}
+    }
 
     /**
      * @return mixed
@@ -1138,7 +1114,7 @@ class PodsMeta {
         }
 
         return false;
-}
+    }
 
     /**
      * @param $object_type
@@ -1186,7 +1162,7 @@ class PodsMeta {
         pods_no_conflict_off( $meta_type );
 
         return $value;
-}
+    }
 
     /**
      * @param $object_type
@@ -1214,7 +1190,7 @@ class PodsMeta {
         $id = pods( $object[ 'name' ], $object_id )->save( $meta_key, $meta_value );
 
         return $id;
-}
+    }
 
     /**
      * @param $object_type
@@ -1242,7 +1218,7 @@ class PodsMeta {
         $id = pods( $object[ 'name' ], $object_id )->save( $meta_key, $meta_value );
 
         return $id;
-}
+    }
 
     /**
      * @param $object_type

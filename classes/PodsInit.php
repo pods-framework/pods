@@ -592,7 +592,7 @@ class PodsInit {
         $args[ 'labels' ] = $labels;
 
         return $args;
-}
+    }
 
     /**
      *
@@ -619,7 +619,7 @@ class PodsInit {
                 }
             }
         }
-}
+    }
 
     /**
      *
@@ -635,7 +635,7 @@ class PodsInit {
 
         if ( empty( $pods_version ) || version_compare( $pods_version, '2.0.0-a-31', '<' ) )
             $this->setup();
-}
+    }
 
     /**
      *
@@ -651,7 +651,7 @@ class PodsInit {
         }
         else
             $this->setup();
-}
+    }
 
     /**
      * @param $_blog_id
@@ -664,7 +664,7 @@ class PodsInit {
     public function new_blog ( $_blog_id, $user_id, $domain, $path, $site_id, $meta ) {
         if ( function_exists( 'is_multisite' ) && is_multisite() && is_plugin_active_for_network( 'pods/pods.php' ) )
             $this->setup( $_blog_id );
-}
+    }
 
     /**
      * @param null $_blog_id
@@ -734,7 +734,7 @@ class PodsInit {
         // Restore DB table prefix (if switched)
         if ( null !== $_blog_id )
             restore_current_blog();
-}
+    }
 
     /**
      * @param null $_blog_id
@@ -844,7 +844,7 @@ class PodsInit {
                 remove_action( 'wp', array( $this, 'silence_404' ) );
             }
         }
-}
+    }
 
     /**
      *
@@ -882,7 +882,7 @@ class PodsInit {
             if ( isset( $pods->meta_extra ) && 0 < strlen( $pods->meta_extra ) )
                 echo $pods->meta_extra;
         }
-}
+    }
 
     /**
      * @param $title
@@ -918,7 +918,7 @@ class PodsInit {
             $title = $pods->meta[ 'title' ];
 
         return apply_filters( 'pods_title', $title, $sep, $seplocation );
-}
+    }
 
     /**
      * @param $classes
@@ -950,14 +950,14 @@ class PodsInit {
             $classes[] = $pods->body_classes;
 
         return apply_filters( 'pods_body_class', $classes, $uri );
-}
+    }
 
     /**
      * @return string
      */
     public function status_header () {
         return $_SERVER[ 'SERVER_PROTOCOL' ] . ' 200 OK';
-}
+    }
 
     /**
      *
@@ -967,7 +967,7 @@ class PodsInit {
 
         $wp_query->query_vars[ 'error' ] = '';
         $wp_query->is_404 = false;
-}
+    }
 
     /**
      *
@@ -1020,7 +1020,7 @@ class PodsInit {
 
             exit;
         }
-}
+    }
 
     /**
      *
@@ -1040,7 +1040,7 @@ class PodsInit {
 
             register_widget( $widget );
         }
-}
+    }
 
     /**
      *

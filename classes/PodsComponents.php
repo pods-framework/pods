@@ -269,7 +269,7 @@ class PodsComponents {
         update_option( 'pods_component_settings', $settings );
 
         return $toggle;
-}
+    }
 
     /**
      *

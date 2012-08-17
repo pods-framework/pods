@@ -56,7 +56,7 @@ class PodsView {
         $output = apply_filters( 'pods_view', $output, $view, $data, $expires, $cache_mode );
 
         return $output;
-}
+    }
 
     /**
      * @static
@@ -80,7 +80,7 @@ class PodsView {
         $value = apply_filters( 'pods_view_get_' . $cache_mode, $value, $key );
 
         return $value;
-}
+    }
 
     /**
      * @static
@@ -107,7 +107,7 @@ class PodsView {
         do_action( 'pods_view_set_' . $cache_mode, $key, $value, $expires );
 
         return $value;
-}
+    }
 
     /**
      * @static
@@ -147,14 +147,15 @@ class PodsView {
         do_action( 'pods_view_clear_' . $cache_mode, $key );
 
         return true;
-}
+    }
 
     /**
      * @static
      * @param $_view
      * @param null $_data
      * @return bool|mixed|string|void
-     */private static function get_template_part ( $_view, $_data = null ) {
+     */
+    private static function get_template_part ( $_view, $_data = null ) {
         $_view = self::locate_template( $_view );
         if ( empty( $_view ) )
             return $_view;
@@ -167,13 +168,14 @@ class PodsView {
         $output = ob_get_clean();
 
         return $output;
-}
+    }
 
     /**
      * @static
      * @param $_view
      * @return bool|mixed|string|void
-     */private static function locate_template ( $_view ) {
+     */
+    private static function locate_template ( $_view ) {
         // Keep it safe
         $_view = trim( str_replace( '../', '', (string) $_view ) );
 

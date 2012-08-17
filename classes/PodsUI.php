@@ -650,7 +650,7 @@ class PodsUI
             $options[ 'wpcss' ] = $deprecated_options[ 'wpcss' ];
 
         return $options;
-}
+    }
 
     /**
      *
@@ -658,7 +658,7 @@ class PodsUI
     public function deprecated_filters () {
         global $pods_ui_custom_filters;
         echo $pods_ui_custom_filters;
-}
+    }
 
     /**
      * @param $options
@@ -801,7 +801,7 @@ class PodsUI
         $this->setup_fields();
 
         return $options;
-}
+    }
 
     /**
      * @param null $fields
@@ -1011,7 +1011,7 @@ class PodsUI
             }
         }
         return $this->do_hook('setup_fields', $fields, $which, $init);
-}
+    }
 
     /**
      * @param $msg
@@ -1022,7 +1022,7 @@ class PodsUI
 ?>
     <div id="message" class="<?php echo ($error) ? 'error' : 'updated'; ?> fade"><p><?php echo $msg; ?></p></div>
 <?php
-}
+    }
 
     /**
      * @param $msg
@@ -1032,7 +1032,7 @@ class PodsUI
         $this->message($msg, true);
 
         return false;
-}
+    }
 
     /**
      * @return mixed
@@ -1119,7 +1119,7 @@ class PodsUI
                 pods_var_set($value, $setting, $method);
             }
         }
-}
+    }
 
     /**
      * @return mixed
@@ -1143,7 +1143,7 @@ class PodsUI
         <?php $this->form(true); ?>
     </div>
 <?php
-}
+    }
 
     /**
      * @param bool $duplicate
@@ -1182,7 +1182,7 @@ class PodsUI
         <?php $this->form(false, $duplicate); ?>
     </div>
 <?php
-}
+    }
 
     /**
      * @param bool $create
@@ -1235,7 +1235,7 @@ class PodsUI
         $obj =& $this;
 
         pods_view( PODS_DIR . 'ui/admin/form.php', compact( array_keys( get_defined_vars() ) ) );
-}
+    }
 
     /**
      * @return bool|mixed
@@ -1250,7 +1250,7 @@ class PodsUI
             return $this->error( sprintf( __( '<strong>Error:</strong> %s not found.', 'pods' ), $this->item ) );
         $id = $this->row[$this->sql['field_id']];
         // HOOK INTO FORM CLASS HERE FOR VIEW
-}
+    }
 
     /**
      * @param bool $insert
@@ -1338,7 +1338,7 @@ class PodsUI
         else
             $this->error(__("<strong>Error:</strong> {$this->item} has not been {$action}.", 'pods'));
         $this->do_hook('post_save', $this->insert_id, $data, $insert);
-}
+    }
 
     /**
      * @param null $id
@@ -1362,7 +1362,7 @@ class PodsUI
         else
             $this->error(__("<strong>Error:</strong> {$this->item} has not been deleted.", 'pods'));
         $this->do_hook('post_delete', $id);
-}
+    }
 
     /**
      * @param $field
@@ -1382,7 +1382,7 @@ class PodsUI
             $value = $this->row[ $field ];
 
         return $this->do_hook( 'get_field', $value, $field );
-}
+    }
 
     /**
      * @return bool
@@ -1433,7 +1433,7 @@ class PodsUI
         }
 
         return $this->data;
-}
+    }
 
     /**
      * @return array
@@ -1462,7 +1462,7 @@ class PodsUI
         }
 
         return $this->row;
-}
+    }
 
     /**
      * @param bool $reorder
@@ -1710,7 +1710,7 @@ class PodsUI
     </form>
 </div>
 <?php
-}
+    }
 
     /**
      * @param bool $reorder
@@ -2066,7 +2066,7 @@ class PodsUI
 ?>
 </script>
 <?php
-}
+    }
 
     /**
      *
@@ -2225,7 +2225,7 @@ class PodsUI
 </div>
 <?php
         }
-}
+    }
 
     /**
      * @param bool $header
@@ -2277,7 +2277,7 @@ class PodsUI
 <?php
             }
         }
-}
+    }
 
     /**
      * @param bool $options
@@ -2297,7 +2297,7 @@ class PodsUI
             else
                 echo ' <a href="' . pods_var_update(array('limit' => $option), array('orderby' . $this->num, 'orderby_dir' . $this->num, 'search' . $this->num), $this->exclusion()) . '">' . $option . '</a>';
         }
-}
+    }
 
     /**
      * @param $code
@@ -2319,7 +2319,7 @@ class PodsUI
             }
         }
         return $code;
-}
+    }
 
     /**
      * @param $tag
@@ -2347,7 +2347,7 @@ class PodsUI
         if (0 < strlen($value))
             return $before . $value . $after;
         return;
-}
+    }
 
     /**
      * @param bool $exclude
@@ -2375,7 +2375,7 @@ class PodsUI
         <input type="hidden" name="<?php echo $k; ?>" value="<?php echo $v; ?>" />
 <?php
         }
-}
+    }
 
     /**
      * @return array
@@ -2403,7 +2403,8 @@ class PodsUI
     */
     /**
      * @return array|bool|mixed|null
-     */private function do_hook () {
+     */
+    private function do_hook () {
         $args = func_get_args();
         if (empty($args))
             return false;

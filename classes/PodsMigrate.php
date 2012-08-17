@@ -80,7 +80,7 @@ class PodMigrate
             $this->data = $data;
         if (empty($this->data))
             return false;
-}
+    }
 
     /**
      * @param null $data
@@ -91,7 +91,7 @@ class PodMigrate
             $this->data = $data;
         if (!empty($type) && in_array($type, $this->types))
             $this->type = $type;
-}
+    }
 
     /**
      * @param null $data
@@ -133,7 +133,7 @@ class PodMigrate
         if (empty($data))
             return false;
         return $data;
-}
+    }
 
     /**
      * @param null $data
@@ -148,7 +148,7 @@ class PodMigrate
         if (method_exists($this,"parse_{$this->type}"))
             call_user_func( array( $this, 'parse_' . $this->type ) );
         return $this->data;
-}
+    }
 
     /**
      * @param null $data
@@ -172,7 +172,7 @@ class PodMigrate
         }
         $this->parsed = $data;
         return $this->parsed;
-}
+    }
 
     /**
      * @param null $data
@@ -201,7 +201,7 @@ class PodMigrate
         }
         $this->parsed = $data;
         return $this->parsed;
-}
+    }
 
     /**
      * @param null $data
@@ -256,7 +256,7 @@ class PodMigrate
         }
         $this->parsed = $data;
         return $this->parsed;
-}
+    }
 
     /**
      * @param null $data
@@ -337,7 +337,7 @@ class PodMigrate
             return false;
         $this->parsed = $data;
         return $this->parsed;
-}
+    }
 
     /**
      * @param null $data
@@ -368,7 +368,7 @@ class PodMigrate
         if (method_exists($this,"build_{$this->type}"))
             call_user_func( array( $this, 'build_' . $this->type ) );
         return $this->export_pod_items();
-}
+    }
 
     /**
      * @param null $data
@@ -376,7 +376,7 @@ class PodMigrate
     public function export_pod_items ($data = null) {
         if (!empty($data))
             $this->data = $data;
-}
+    }
 
     /**
      * @param null $data
@@ -391,7 +391,7 @@ class PodMigrate
         if (method_exists($this,"build_{$this->type}"))
             call_user_func( array( $this, 'build_' . $this->type ) );
         return $this->data;
-}
+    }
 
     /**
      * @param null $data
@@ -412,7 +412,7 @@ class PodMigrate
         }
         $this->built = @json_encode($data);
         return $this->built;
-}
+    }
 
     /**
      * @param null $data
@@ -440,7 +440,7 @@ class PodMigrate
         }
         $this->built = $head.$lines;
         return $this->built;
-}
+    }
 
     /**
      * @param null $data
@@ -464,7 +464,7 @@ class PodMigrate
         $foot = '</items>';
         $this->built = $head.$lines.$foot;
         return $this->built;
-}
+    }
 
     /**
      * @param null $data
@@ -518,7 +518,7 @@ class PodMigrate
             return false;
         $this->built = $data;
         return $this->built;
-}
+    }
 
     /**
      * @param null $data

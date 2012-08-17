@@ -466,14 +466,14 @@ class PodsAdmin {
         $button = '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox" id="add_pod_button" title="Embed Pods"><img src="' . PODS_URL . 'ui/images/icon16.png" alt="Embed Pods" /></a>';
         $context .= $button;
         return $context;
-}
+    }
 
     /**
      *
      */
     public function mce_popup () {
         pods_view( PODS_DIR . 'ui/admin/shortcode.php' );
-}
+    }
 
     /**
      *
@@ -538,14 +538,14 @@ class PodsAdmin {
             'sortable' => false,
             'pagination' => false
         ) );
-}
+    }
 
     /**
      * @param $obj
      */
     public function admin_setup_add ( $obj ) {
         require_once PODS_DIR . 'ui/admin/setup_add.php';
-}
+    }
 
     /**
      * @param $duplicate
@@ -553,7 +553,7 @@ class PodsAdmin {
      */
     public function admin_setup_edit ( $duplicate, $obj ) {
         require_once PODS_DIR . 'ui/admin/setup_edit.php';
-}
+    }
 
     /**
      * @param $id
@@ -571,21 +571,21 @@ class PodsAdmin {
         unset( $obj->data[ $pod[ 'id' ] ] );
 
         $obj->message( __( 'Pod deleted successfully.', 'pods' ) );
-}
+    }
 
     /**
      *
      */
     public function admin_advanced () {
         require_once PODS_DIR . 'ui/admin/advanced.php';
-}
+    }
 
     /**
      *
      */
     public function admin_settings () {
 
-}
+    }
 
     /**
      *
@@ -600,7 +600,7 @@ class PodsAdmin {
                       'fields' => array('manage' => array('name')),
                       'actions_disabled' => array('edit', 'duplicate', 'view', 'export'),
                       'actions_custom' => array('add' => array($this, 'admin_packages_add'))));*/
-}
+    }
 
     /**
      *
@@ -639,7 +639,7 @@ class PodsAdmin {
             'sortable' => false,
             'pagination' => false
         ) );
-}
+    }
 
     /**
      *
@@ -648,7 +648,7 @@ class PodsAdmin {
         $component = str_replace( 'pods-component-', '', $_GET[ 'page' ] );
 
         PodsInit::$components->admin( $component );
-}
+    }
 
     /**
      * @param PodsUI $ui
@@ -695,21 +695,21 @@ class PodsAdmin {
         $ui->data = $components;
 
         $ui->manage();
-}
+    }
 
     /**
      *
      */
     public function admin_upgrade () {
         require_once PODS_DIR . 'ui/admin/upgrade.php';
-}
+    }
 
     /**
      *
      */
     public function admin_help () {
         require_once PODS_DIR . 'ui/admin/help.php';
-}
+    }
 
     /**
      * @param $capabilities
@@ -736,7 +736,7 @@ class PodsAdmin {
         }
 
         return $capabilities;
-}
+    }
 
     /**
      *
@@ -931,7 +931,7 @@ class PodsAdmin {
             echo $output;
 
         die(); // KBAI!
-}
+    }
 
     /**
      *
@@ -1035,7 +1035,7 @@ class PodsAdmin {
         }
 
         die(); // KBAI!
-}
+    }
 
     /**
      *

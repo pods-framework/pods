@@ -271,7 +271,7 @@ class Pods_GravityForms extends PodsComponent {
             return '<div class="validation_error gfield_error">' . self::$validation[ 'msg' ] . '</div>';
         }
         return $message;
-}
+    }
 
     /**
      * Detect if there's a valid form already, if there are no errors, return false

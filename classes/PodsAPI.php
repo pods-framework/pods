@@ -3561,11 +3561,12 @@ class PodsAPI {
      * @param null $options
      *
      * @return array|bool|mixed|null
-     */private function get_field_definition ( $type, $options = null ) {
+     */
+    private function get_field_definition ( $type, $options = null ) {
         $definition = PodsForm::field_method( $type, 'schema', $options );
 
         return $this->do_hook( 'field_definition', $definition, $type, $options );
-}
+    }
 
     /**
      * @param $value
@@ -3575,7 +3576,8 @@ class PodsAPI {
      * @param $pod
      * @param $params
      * @return array|bool|mixed|null|void
-     */private function handle_field_validation ( &$value, $field, $object_fields, $fields, $pod, $params ) {
+     */
+    private function handle_field_validation ( &$value, $field, $object_fields, $fields, $pod, $params ) {
         $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
 
         $fields = array_merge( $fields, $object_fields );

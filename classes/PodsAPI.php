@@ -791,8 +791,8 @@ class PodsAPI {
         $exclude = array(
             'id',
             'name',
-            'label' => array( 'cpt_label', 'ct_label' ),
-            'description' => array( 'cpt_description', 'ct_description' ),
+            'label',
+            'description',
             'type',
             'storage',
             'object',

@@ -59,11 +59,7 @@ if (isset($methods[$action])) {
     $safe = isset($methods[$action]['safe']) ? $methods[$action]['safe'] : null;
     $access_pod_specific = isset($methods[$action]['access_pod_specific']) ? $methods[$action]['access_pod_specific'] : null;
 
-    if ('save_pod_item' == $action) {
-        if (isset($params->_wpnonce) && false === wp_verify_nonce($params->_wpnonce, 'pods-' . $action))
-            die('<e>Access denied');
-    }
-    elseif ((!isset($params->_wpnonce) || (false === wp_verify_nonce($params->_wpnonce, 'pods-' . $action) && false === wp_verify_nonce($params->_wpnonce, 'pods-multi'))))
+    if ((!isset($params->_wpnonce) || (false === wp_verify_nonce($params->_wpnonce, 'pods-' . $action) && false === wp_verify_nonce($params->_wpnonce, 'pods-multi'))))
         die('<e>Access denied');
 
     if ($access_pod_specific === true) {

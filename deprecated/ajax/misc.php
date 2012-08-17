@@ -28,7 +28,7 @@ if ('wp_handle_upload' == $params->action || 'wp_handle_upload_advanced' == $par
     unset($current_user);
 }
 
-if (isset($params->_wpnonce) && false === wp_verify_nonce($params->_wpnonce, 'pods-' . $params->action))
+if (!isset($params->_wpnonce) || false === wp_verify_nonce($params->_wpnonce, 'pods-' . $params->action))
     die('<e>Access denied');
 
 /**

@@ -717,9 +717,15 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
                                                 <?php echo PodsForm::label('show_ui', __('Show UI', 'pods'), __('help', 'pods')); ?>
                                                 <?php echo PodsForm::field( 'show_ui', pods_var( 'show_ui', $pod, pods_var( 'public', $pod, true ) ), 'boolean', array( 'boolean_yes_label' => '', 'dependency' => true ) ); ?>
                                             </div>
-                                            <div class="pods-field-option pods-depends-on pods-depends-on-show-ui">
-                                                <?php echo PodsForm::label('menu_name', __('Menu Name', 'pods'), __('help', 'pods')); ?>
-                                                <?php echo PodsForm::field('menu_name', pods_var('menu_name', $pod), 'text'); ?>
+                                            <div class="pods-depends-on pods-depends-on-show-ui">
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label('menu_name', __('Menu Name', 'pods'), __('help', 'pods')); ?>
+                                                    <?php echo PodsForm::field('menu_name', pods_var('menu_name', $pod), 'text'); ?>
+                                                </div>
+                                                <div class="pods-field-option">
+                                                    <?php echo PodsForm::label( 'menu_icon', __( 'Menu Icon', 'pods' ), __( 'help', 'pods' ) ); ?>
+                                                    <?php echo PodsForm::field( 'menu_icon', pods_var( 'menu_icon', $pod ), 'text' ); ?>
+                                                </div>
                                             </div>
                                             <div class="pods-field-option">
                                                 <?php echo PodsForm::label('show_in_nav_menus', __('Show in Nav Menus', 'pods'), __('help', 'pods')); ?>

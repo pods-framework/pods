@@ -897,20 +897,26 @@ foreach ( $field_settings[ 'field_types' ] as $field_type => $field_label ) {
 
 $pods_pick_objects = array();
 
-foreach ($field_settings['pick_object'] as $object => $object_label) {
-    if ('-- Select --' == $object_label)
-        continue;
-    if (is_array($object_label)) {
-        $object = rtrim($object, 's');
-        if (false !== strpos($object, 'ies'))
-            $object = str_replace('ies', 'y', $object);
-        foreach ($object_label as $sub_object => $sub_object_label) {
-            $sub_object_label = preg_replace('/(\s\([\w\d\s]*\))/', '', $sub_object_label);
-            $pods_pick_objects[] = "'" . esc_js($sub_object) . "' : '" . esc_js($sub_object_label) . " <small>(" . esc_js($object) . ")</small>'";
+$pick_object_singular = array(
+    __( 'Pods', 'pods' ) => __( 'Pod', 'pods' ),
+    __( 'Post Types', 'pods' ) => __( 'Post Type', 'pods' ),
+    __( 'Taxonomies', 'pods' ) => __( 'Taxonomy', 'pods' )
+);
+
+foreach ( $field_settings[ 'pick_object' ] as $object => $object_label ) {
+    if ( is_array( $object_label ) ) {
+        if ( isset( $pick_object_singular[ $object ] ) )
+            $object = ' <small>(' . esc_js( $pick_object_singular[ $object ] ) . ')</small>';
+        else
+            $object = '';
+
+        foreach ( $object_label as $sub_object => $sub_object_label ) {
+            $sub_object_label = preg_replace( '/(\s\([\w\d\s]*\))/', '', $sub_object_label );
+            $pods_pick_objects[] = "'" . esc_js( $sub_object ) . "' : '" . esc_js( $sub_object_label ) . $object . "'";
         }
     }
-    else
-        $pods_pick_objects[] = "'" . esc_js($object) . "' : '" . esc_js($object_label) . "'";
+    elseif ( '-- Select --' != $object_label )
+        $pods_pick_objects[] = "'" . esc_js( $object ) . "' : '" . esc_js( $object_label ) . "'";
 }
 ?>
     var pods_field_types = {

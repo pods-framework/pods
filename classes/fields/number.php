@@ -242,6 +242,7 @@ class PodsField_Number extends PodsField {
     public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $thousands = ',';
         $dot = '.';
+
         if ( '9999.99' == pods_var( 'number_format', $options ) )
             $thousands = '';
         elseif ( '9999,99' == pods_var( 'number_format', $options ) ) {

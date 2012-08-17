@@ -1688,7 +1688,7 @@ class PodsAPI {
 
         $object_fields = array();
 
-        if ( iseet( $pod[ 'object_fields' ] ) )
+        if ( isset( $pod[ 'object_fields' ] ) )
             $object_fields = (array) $pod[ 'object_fields' ];
 
         $fields_active = array();

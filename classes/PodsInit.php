@@ -69,7 +69,7 @@ class PodsInit {
      */
     function init () {
         // Session start
-        if ( ( ( defined( 'WP_DEBUG' ) && WP_DEBUG ) || false === headers_sent() ) && '' == session_id() )
+        if ( ( ( defined( 'WP_DEBUG' ) && WP_DEBUG ) || false === headers_sent() ) && '' == session_id() && ( !defined( 'PODS_SESSION_AUTO_START' ) || PODS_SESSION_AUTO_START ) )
             @session_start();
 
         load_plugin_textdomain( 'pods', false, basename( plugin_basename( __FILE__ ) ) . '/languages/' );

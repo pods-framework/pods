@@ -1072,8 +1072,8 @@ class PodsData {
             else {
                 $params = array(
                     'table' => $this->table,
-                    'where' => "`{$this->field_id}` = {$id}",
-                    'orderby' => "`{$this->field_id}` DESC",
+                    'where' => "`t`.`{$this->field_id}` = {$id}",
+                    'orderby' => "`t`.`{$this->field_id}` DESC",
                     'page' => 1,
                     'limit' => 1,
                     'search' => false
@@ -1090,8 +1090,8 @@ class PodsData {
             if ( 'table' == $this->pod_data[ 'storage' ] && false !== $get_table_data ) {
                 $params = array(
                     'table' => $wpdb->prefix . "pods_tbl_",
-                    'where' => "`id` = {$id}",
-                    'orderby' => "`id` DESC",
+                    'where' => "`t`.`id` = {$id}",
+                    'orderby' => "`t`.`id` DESC",
                     'page' => 1,
                     'limit' => 1,
                     'search' => false,

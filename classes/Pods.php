@@ -447,7 +447,7 @@ class Pods {
                             $where = array();
 
                             foreach ( $ids as $id ) {
-                                $where[] = '`' . $table[ 'field_id' ] . '` = ' . (int) $id;
+                                $where[] = '`t`.`' . $table[ 'field_id' ] . '` = ' . (int) $id;
                             }
 
                             if ( !empty( $where ) )

@@ -918,7 +918,7 @@ class PodsUI
                 if ( !isset( $attributes[ 'filter' ] ) || false === $this->searchable )
                     $attributes[ 'filter' ] = false;
                 if ( false !== $attributes[ 'filter' ] && false !== $filterable )
-                    $this->filters[ ] = $field;
+                    $this->filters[] = $field;
                 if ( false === $attributes[ 'filter' ] || !isset( $attributes[ 'filter_label' ] ) || !in_array( $field, $this->filters ) )
                     $attributes[ 'filter_label' ] = $attributes[ 'label' ];
                 if ( false === $attributes[ 'filter' ] || !isset( $attributes[ 'filter_default' ] ) || !in_array( $field, $this->filters ) )

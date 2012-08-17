@@ -1,7 +1,7 @@
-# Pods Framework (2.0 Alpha) for WordPress
+# Pods Framework (2.0 Beta) for WordPress
 ![PodsCMS icon](http://podsframework.org/wp-content/themes/pods/images/logo-pods-header.png)
 
-**Pods is a development framework for creating, managing, and deploying customized content types in WordPress.**
+**Pods is a development framework for creating, extending, managing, and deploying customized content types in WordPress.**
 
 ## Description
 

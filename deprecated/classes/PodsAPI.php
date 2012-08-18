@@ -3,6 +3,16 @@ class PodsAPI_Deprecated {
 
     private $obj;
 
+    var $snap = false;
+
+    var $dt = 0;
+
+    var $dtname = '';
+
+    var $fields = array();
+
+    var $use_pod_id = false;
+
     /**
      * Constructor - PodsAPI Deprecated functionality (pre 2.0)
      *

@@ -25,22 +25,32 @@ class PodsAPI {
     public $pod_id;
 
     /**
-     * @var string
+     * @var
+     * @deprecated 2.0.0
      */
-    public $format = 'php';
+    public $format = null;
+
+    /**
+     * @var
+     */
+    private $deprecated;
 
     /**
      * Store and retrieve data programatically
      *
      * @param string $dtname (optional) The pod name
-     * @param string $format (optional) Format for import/export, "php" or "csv"
+     * @param string $format (deprecated) Format for import/export, "php" or "csv"
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 1.7.1
      */
-    public function __construct ( $pod = null, $format = 'php' ) {
+    public function __construct ( $pod = null, $format = null ) {
         if ( null !== $pod && 0 < strlen( (string) $pod ) ) {
-            $this->format = $format;
+            if ( null !== $format ) {
+                $this->format = $format;
+
+                pods_deprecated( 'pods_api( $pod, $format )', '2.0.0', 'pods_api( $pod )' );
+            }
 
             $pod = $this->load_pod( array( 'name' => $pod ) );
 
@@ -4250,10 +4260,13 @@ class PodsAPI {
      *
      * @since 1.7.1
      */
-    public function import ( $import_data, $numeric_mode = false ) {
+    public function import ( $import_data, $numeric_mode = false, $format = null ) {
         global $wpdb;
 
-        if ( 'csv' == $this->format )
+        if ( null === $format && null !== $this->format )
+            $format = $this->format;
+
+        if ( 'csv' == $format )
             $import_data = $this->csv_to_php( $import_data );
 
         pods_query( "SET NAMES utf8" );
@@ -4502,6 +4515,32 @@ class PodsAPI {
     }
 
     /**
+     * Handle variables that have been deprecated
+     *
+     * @since 2.0.0
+     */
+    public function __get ( $name ) {
+        $name = (string) $name;
+
+        if ( !isset( $this->deprecated ) ) {
+            require_once( PODS_DIR . 'deprecated/classes/PodsAPI.php' );
+            $this->deprecated = new PodsAPI_Deprecated( $this );
+        }
+
+        $var = null;
+
+        if ( isset( $this->deprecated->{$name} ) ) {
+            pods_deprecated( "PodsAPI->{$name}", '2.0.0' );
+
+            $var = $this->deprecated->{$name};
+        }
+        else
+            pods_deprecated( "PodsAPI->{$name}", '2.0.0' );
+
+        return $var;
+    }
+
+    /**
      * Handle methods that have been deprecated
      *
      * @since 2.0.0
@@ -4514,19 +4553,8 @@ class PodsAPI {
             $this->deprecated = new PodsAPI_Deprecated( $this );
         }
 
-        if ( method_exists( $this->deprecated, $name ) ) {
-            $arg_count = count( $args );
-            if ( 0 == $arg_count )
-                $this->deprecated->{$name}();
-            elseif ( 1 == $arg_count )
-                $this->deprecated->{$name}( $args[ 0 ] );
-            elseif ( 2 == $arg_count )
-                $this->deprecated->{$name}( $args[ 0 ], $args[ 1 ] );
-            elseif ( 3 == $arg_count )
-                $this->deprecated->{$name}( $args[ 0 ], $args[ 1 ], $args[ 2 ] );
-            else
-                $this->deprecated->{$name}( $args[ 0 ], $args[ 1 ], $args[ 2 ], $args[ 3 ] );
-        }
+        if ( method_exists( $this->deprecated, $name ) )
+            return call_user_func_array( array( $this->deprecated, $name ), $args );
         else
             pods_deprecated( "PodsAPI::{$name}", '2.0.0' );
     }

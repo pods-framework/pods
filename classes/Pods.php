@@ -25,11 +25,6 @@ class Pods {
     private $row;
 
     /**
-     * @var
-     */
-    private $deprecated;
-
-    /**
      * @var bool
      */
     public $display_errors = false;
@@ -103,6 +98,11 @@ class Pods {
      * @var
      */
     public $ui;
+
+    /**
+     * @var
+     */
+    private $deprecated;
 
     /**
      * Constructor - Pods Framework core
@@ -1052,6 +1052,32 @@ class Pods {
     }
 
     /**
+     * Handle variables that have been deprecated
+     *
+     * @since 2.0.0
+     */
+    public function __get ( $name ) {
+        $name = (string) $name;
+
+        if ( !isset( $this->deprecated ) ) {
+            require_once( PODS_DIR . 'deprecated/classes/Pods.php' );
+            $this->deprecated = new Pods_Deprecated( $this );
+        }
+
+        $var = null;
+
+        if ( isset( $this->deprecated->{$name} ) ) {
+            pods_deprecated( "Pods->{$name}", '2.0.0' );
+
+            $var = $this->deprecated->{$name};
+        }
+        else
+            pods_deprecated( "Pods->{$name}", '2.0.0' );
+
+        return $var;
+    }
+
+    /**
      * Handle methods that have been deprecated
      *
      * @since 2.0.0
@@ -1064,19 +1090,8 @@ class Pods {
             $this->deprecated = new Pods_Deprecated( $this );
         }
 
-        if ( method_exists( $this->deprecated, $name ) ) {
-            $arg_count = count( $args );
-            if ( 0 == $arg_count )
-                $this->deprecated->{$name}();
-            elseif ( 1 == $arg_count )
-                $this->deprecated->{$name}( $args[ 0 ] );
-            elseif ( 2 == $arg_count )
-                $this->deprecated->{$name}( $args[ 0 ], $args[ 1 ] );
-            elseif ( 3 == $arg_count )
-                $this->deprecated->{$name}( $args[ 0 ], $args[ 1 ], $args[ 2 ] );
-            else
-                $this->deprecated->{$name}( $args[ 0 ], $args[ 1 ], $args[ 2 ], $args[ 3 ] );
-        }
+        if ( method_exists( $this->deprecated, $name ) )
+            return call_user_func_array( array( $this->deprecated, $name ), $args );
         else
             pods_deprecated( "Pods::{$name}", '2.0.0' );
     }

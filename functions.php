@@ -1279,7 +1279,7 @@ function pods_ui ( $obj = null ) {
  *
  * @since 2.0.0
  */
-function pods_api ( $pod = null, $format = 'php' ) {
+function pods_api ( $pod = null, $format = null ) {
     require_once( PODS_DIR . 'classes/PodsAPI.php' );
 
     return new PodsAPI( $pod, $format );

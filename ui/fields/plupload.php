@@ -54,19 +54,16 @@
         <tbody>
             <tr class="form-field">
                 <td>
-                    <ul class="pods-files"><?php // no extra space in ul or CSS:empty won't work
+                    <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
                             foreach ( $value as $val ) {
                                 $thumb = wp_get_attachment_image_src( $val[ 'id' ], 'thumbnail', true );
                                 echo $field_file->markup( $attributes, $file_limit, pods_var( 'file_edit_title', $options, 0 ), $val[ 'ID' ], $thumb[ 0 ], basename( $val[ 'guid' ] ) );
                             }
                         ?></ul>
 
-                        <a class="button pods-file-add plupload-add" id="<?php echo $css_id; ?>-upload" href=""><?php _e('Add File', 'pods'); ?></a>
+                    <a class="button pods-file-add plupload-add" id="<?php echo $css_id; ?>-upload" href=""><?php _e('Add File', 'pods'); ?></a>
 
-                    <table class="plupload-queue">
-                        <tbody>
-                        </tbody>
-                    </table>
+                    <ul class="pods-files pods-files-queue"></ul>
                 </td>
             </tr>
         </tbody>
@@ -77,18 +74,20 @@
     </script>
 
     <script type="text/x-handlebars" id="<?php echo $css_id; ?>-progress-template">
-        <tr class="hide" id="{{id}}">
-            <td>{{filename}}</td>
-            <td class="progress" width="175">
-                <div class="progress-bar">&nbsp;</div>
-            </td>
-        </tr>
+        <li class="pods-file" id="{{id}}">
+            <ul class="pods-file-meta media-item">
+                <li class="pods-file-col pods-progress">
+                    <div class="progress-bar">&nbsp;</div>
+                </li>
+                <li class="pods-file-col pods-file-name">{{filename}}</li>
+            </ul>
+        </li>
     </script>
 
     <script>
         jQuery( function ( $ ) {
             // init sortable
-            $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files' ).sortable( {
+            $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ).sortable( {
                 containment : 'parent',
                 axis: 'y',
                 scrollSensitivity : 40,
@@ -100,7 +99,6 @@
             $( '#<?php echo esc_js( $css_id ); ?>' ).on( 'click', 'li.pods-file-delete', function () {
                 var podsfile = $( this ).parent().parent();
                 podsfile.slideUp( function () {
-
                     // check to see if this was the only entry
                     if ( podsfile.parent().children().length == 1 ) { // 1 because we haven't removed our target yet
                         podsfile.parent().hide();
@@ -112,8 +110,8 @@
             } );
 
             var pods_uploader = new plupload.Uploader( <?php echo json_encode( $plupload_init ); ?> ),
-                list = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files' ),
-                queue = $( '#<?php echo esc_js( $css_id ); ?> table.plupload-queue' ),
+                list = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ),
+                queue = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-queue' ),
                 maxFiles = <?php echo esc_js( $file_limit ); ?>;
 
             pods_uploader.init();
@@ -121,16 +119,21 @@
             // Plupload FilesAdded Event Handler
             pods_uploader.bind( 'FilesAdded', function ( up, files ) {
                 // Hide any existing files (for use in single/limited field configuration)
-                if ( 1 == maxFiles )
-                    jQuery( '#<?php echo $css_id; ?> ul.pods-files li.pods-file' ).hide();
+                if ( 1 == maxFiles ) {
+                    jQuery( '#<?php echo $css_id; ?> ul.pods-files-list li.pods-file' ).remove();
+                    jQuery( '#<?php echo $css_id; ?> ul.pods-files-list' ).hide();
+                }
 
                 jQuery.each( files, function ( index, file ) {
                     var binding = { id: file.id, filename: file.name },
                         tmpl = Handlebars.compile( $('#<?php echo esc_js( $css_id ); ?>-progress-template').html() ),
                         html = tmpl( binding );
+
                     queue.append( html );
                     //$('#' + file.id).show('slide', {direction: 'up'}, 1000);
-                    $('#' + file.id).fadeIn(800);
+                    $( '#' + file.id ).fadeIn( 800 );
+
+                    jQuery( '#<?php echo $css_id; ?> ul.pods-files-queue' ).show();
                 } );
 
                 up.refresh();
@@ -140,6 +143,7 @@
             // Plupload UploadProgress Event Handler
             pods_uploader.bind( 'UploadProgress', function ( up, file ) {
                 var prog_bar = $( '#' + file.id ).find( '.progress-bar' );
+
                 prog_bar.css( 'width', file.percent + '%' );
             } );
 
@@ -157,10 +161,13 @@
                     file_div.append( response );
                 }
                 else {
+                    file_div.fadeOut( 800, function () {
+                        list.show();
+                        $( this ).remove();
 
-                    file_div.fadeOut(800, function() {
-                        $(this).remove();
-                    });
+                        if ( $( this ).parent().children().length == 0 )
+                            jQuery( '#<?php echo $css_id; ?> ul.pods-files-queue' ).hide();
+                    } );
                     var json = eval( '(' + response.match( /\{(.*)\}/gi ) + ')' );
 
                     var binding = {

@@ -7,7 +7,7 @@
     if ( isset( $_POST[ '_pods_nonce' ] ) ) {
         $action = __( 'saved', 'pods' );
 
-        if ( 'create' == pods_var( 'do', 'post', 'save' ) )
+        if ( 'create' == pods_var_raw( 'do', 'post', 'save' ) )
             $action = __( 'created', 'pods' );
 
         try {
@@ -29,7 +29,7 @@
     elseif ( isset( $_GET[ 'do' ] ) ) {
         $action = __( 'saved', 'pods' );
 
-        if ( 'create' == pods_var( 'do', 'get', 'save' ) )
+        if ( 'create' == pods_var_raw( 'do', 'get', 'save' ) )
             $action = __( 'created', 'pods' );
 
         $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );

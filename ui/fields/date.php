@@ -26,7 +26,7 @@
 
     $type = 'text';
 
-    $date_type = pods_var( 'date_format_type', $options, 'date' );
+    $date_type = pods_var_raw( 'date_format_type', $options, 'date' );
 
     if ( 1 == $options[ 'date_html5' ] )
         $type = $date_type;

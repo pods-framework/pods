@@ -30,7 +30,7 @@
             if ( isset( $field_option[ 'value' ] ) && 0 < strlen( $field_option[ 'value' ] ) )
                 $value = $field_option[ 'value' ];
             else
-                $value = pods_var( $field_name, $field, $value );
+                $value = pods_var_raw( $field_name, $field, $value );
 ?>
         <div class="pods-field-option">
             <?php echo PodsForm::row( $row_name, $value, $field_option[ 'type' ], $field_option ); ?>
@@ -67,7 +67,7 @@
                             if ( isset( $field_group_option[ 'value' ] ) && 0 < strlen( $field_group_option[ 'value' ] ) )
                                 $value = $field_group_option[ 'value' ];
                             else
-                                $value = pods_var( $field_group_name, $field, $value );
+                                $value = pods_var_raw( $field_group_name, $field, $value );
 
                     ?>
                         <li class="<?php echo $depends_option; ?>">

@@ -11,13 +11,13 @@
     $thousands = ',';
     $dot = '.';
 
-    if ( '9999.99' == pods_var( 'number_format', $options ) )
+    if ( '9999.99' == pods_var_raw( 'number_format', $options ) )
         $thousands = '';
-    elseif ( '9999,99' == pods_var( 'number_format', $options ) ) {
+    elseif ( '9999,99' == pods_var_raw( 'number_format', $options ) ) {
         $thousands = '';
         $dot = ',';
     }
-    elseif ( '9.999,99' == pods_var( 'number_format', $options ) ) {
+    elseif ( '9.999,99' == pods_var_raw( 'number_format', $options ) ) {
         $thousands = '.';
         $dot = ',';
     }

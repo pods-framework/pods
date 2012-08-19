@@ -109,17 +109,17 @@
                 } );
             } );
 
-            var pods_uploader = new plupload.Uploader( <?php echo json_encode( $plupload_init ); ?> ),
-                list = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ),
-                queue = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-queue' ),
-                maxFiles = <?php echo esc_js( $file_limit ); ?>;
+            var pods_uploader_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = new plupload.Uploader( <?php echo json_encode( $plupload_init ); ?> ),
+                list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ),
+                queue_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-queue' ),
+                maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = <?php echo esc_js( $file_limit ); ?>;
 
-            pods_uploader.init();
+            pods_uploader_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.init();
 
             // Plupload FilesAdded Event Handler
-            pods_uploader.bind( 'FilesAdded', function ( up, files ) {
+            pods_uploader_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.bind( 'FilesAdded', function ( up, files ) {
                 // Hide any existing files (for use in single/limited field configuration)
-                if ( 1 == maxFiles ) {
+                if ( 1 == maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> ) {
                     jQuery( '#<?php echo $css_id; ?> ul.pods-files-list li.pods-file' ).remove();
                     jQuery( '#<?php echo $css_id; ?> ul.pods-files-list' ).hide();
                 }
@@ -129,7 +129,7 @@
                         tmpl = Handlebars.compile( $('#<?php echo esc_js( $css_id ); ?>-progress-template').html() ),
                         html = tmpl( binding );
 
-                    queue.append( html );
+                    queue_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.append( html );
                     //$('#' + file.id).show('slide', {direction: 'up'}, 1000);
                     $( '#' + file.id ).fadeIn( 800 );
 
@@ -141,14 +141,14 @@
             } );
 
             // Plupload UploadProgress Event Handler
-            pods_uploader.bind( 'UploadProgress', function ( up, file ) {
+            pods_uploader_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.bind( 'UploadProgress', function ( up, file ) {
                 var prog_bar = $( '#' + file.id ).find( '.progress-bar' );
 
                 prog_bar.css( 'width', file.percent + '%' );
             } );
 
             // Plupload FileUploaded Event Handler
-            pods_uploader.bind( 'FileUploaded', function ( up, file, resp ) {
+            pods_uploader_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.bind( 'FileUploaded', function ( up, file, resp ) {
                 var file_div = jQuery( '#' + file.id ),
                     response = resp.response;
 
@@ -162,12 +162,14 @@
                 }
                 else {
                     file_div.fadeOut( 800, function () {
-                        list.show();
-                        $( this ).remove();
+                        list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.show();
 
-                        if ( $( this ).parent().children().length == 0 )
+                        if ( $( this ).parent().children().length == 1 )
                             jQuery( '#<?php echo $css_id; ?> ul.pods-files-queue' ).hide();
+
+                        $( this ).remove();
                     } );
+
                     var json = eval( '(' + response.match( /\{(.*)\}/gi ) + ')' );
 
                     var binding = {
@@ -180,18 +182,18 @@
 
                     var html = tmpl( binding );
 
-                    list.prepend( html );
-                    list.find( 'li.pods-file:first' ).slideDown( 'fast' );
+                    list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.prepend( html );
+                    list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.find( 'li.pods-file:first' ).slideDown( 'fast' );
 
-                    var items = list.find( 'li.pods-file' ),
+                    var items = list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.find( 'li.pods-file' ),
                         itemCount = items.size();
 
                     $.fn.reverse = [].reverse;
-                    if ( 0 < maxFiles || itemCount > maxFiles ) {
+                    if ( 0 < maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> || itemCount > maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> ) {
                         var reversed = items;
 
                         reversed.each( function ( idx, elem ) {
-                            if ( idx + 1 > maxFiles ) {
+                            if ( idx + 1 > maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> ) {
                                 jQuery( elem ).remove();
                             }
                         } );

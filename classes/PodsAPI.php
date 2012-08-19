@@ -116,7 +116,7 @@ class PodsAPI {
      * @param array $post_meta All meta to be saved (set value to null to delete)
      * @param bool $strict Whether to delete previously saved meta not in $post_meta
      */
-    public function save_post( $post_data, $post_meta = null, $strict = false, $sanitized = false ) {
+    public function save_post ( $post_data, $post_meta = null, $strict = false, $sanitized = false ) {
         pods_no_conflict_on( 'post' );
 
         if ( !is_array( $post_data ) || empty( $post_data ) )
@@ -761,16 +761,14 @@ class PodsAPI {
      *
      * @since 1.7.9
      */
-    public function save_pod ( $params ) {
+    public function save_pod ( $params, $sanitized = false ) {
         $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
 
         $pod = $this->load_pod( $params, false );
 
         $params = (object) $params;
 
-        if ( isset( $params->sanitized ) )
-            unset( $params->sanitized );
-        else
+        if ( false === $sanitized )
             $params = pods_sanitize( $params );
 
         $old_id = $old_name = $old_storage = null;
@@ -1116,10 +1114,7 @@ class PodsAPI {
                     $weight ++;
                 }
 
-                // We sanitized at the start of this call
-                $field[ 'sanitized' ] = true;
-
-                $field = $this->save_field( $field, $field_table_operation );
+                $field = $this->save_field( $field, $field_table_operation, $sanitized );
 
                 if ( !empty( $field ) && 0 < $field )
                     $saved[ $field ] = true;
@@ -1163,14 +1158,12 @@ class PodsAPI {
      *
      * @since 1.7.9
      */
-    public function save_field ( $params, $table_operation = true ) {
+    public function save_field ( $params, $table_operation = true, $sanitized = false ) {
         global $wpdb;
 
         $params = (object) $params;
 
-        if ( isset( $params->sanitized ) )
-            unset( $params->sanitized );
-        else
+        if ( false === $sanitized )
             $params = pods_sanitize( $params );
 
         if ( isset( $params->pod_id ) )
@@ -1416,7 +1409,7 @@ class PodsAPI {
             }
         }
 
-        $params->id = $this->save_post( $post_data, $field[ 'options' ], true, true );
+        $params->id = $this->save_wp_object( 'post', $post_data, $field[ 'options' ], true, true );
 
         if ( false === $params->id )
             return pods_error( __( 'Cannot save Field', 'pods' ), $this );
@@ -1477,8 +1470,11 @@ class PodsAPI {
      *
      * @since 2.0.0
      */
-    public function save_object ( $params ) {
-        $params = (object) pods_sanitize( $params );
+    public function save_object ( $params, $sanitized = false ) {
+        $params = (object) $params;
+
+        if ( false === $sanitized )
+            $params = pods_sanitize( $params );
 
         if ( !isset( $params->name ) || empty( $params->name ) )
             return pods_error( __('Name must be given to save an Object', 'pods'), $this );
@@ -1566,10 +1562,10 @@ class PodsAPI {
      *
      * @since 1.7.9
      */
-    public function save_template ( $params ) {
+    public function save_template ( $params, $sanitized = false ) {
         $params = (object) $params;
         $params->type = 'template';
-        return $this->save_object( $params );
+        return $this->save_object( $params, $sanitized );
     }
 
     /**
@@ -1583,7 +1579,7 @@ class PodsAPI {
      *
      * @since 1.7.9
      */
-    public function save_page ( $params ) {
+    public function save_page ( $params, $sanitized = false ) {
         $params = (object) $params;
         if ( !isset( $params->name ) ) {
             $params->name = $params->uri;
@@ -1591,7 +1587,7 @@ class PodsAPI {
         }
         $params->name = trim( $params->name, '/' );
         $params->type = 'page';
-        return $this->save_object( $params );
+        return $this->save_object( $params, $sanitized );
     }
 
     /**
@@ -1606,30 +1602,10 @@ class PodsAPI {
      *
      * @since 1.7.9
      */
-    public function save_helper ( $params ) {
+    public function save_helper ( $params, $sanitized = false ) {
         $params = (object) $params;
         $params->type = 'helper';
-        return $this->save_object( $params );
-    }
-
-    /**
-     * Save the entire role structure
-     *
-     * @param array $params An associative array of parameters
-     *
-     * @since 1.7.9
-     */
-    public function save_roles ( $params ) {
-        $params = pods_sanitize( $params );
-        $roles = array();
-        foreach ( $params as $key => $val ) {
-            if ( 'action' != $key ) {
-                $tmp = empty( $val ) ? array() : explode( ',', $val );
-                $roles[ $key ] = $tmp;
-            }
-        }
-        delete_option( 'pods_roles' );
-        add_option( 'pods_roles', serialize( $roles ) );
+        return $this->save_object( $params, $sanitized );
     }
 
     /**
@@ -2990,7 +2966,7 @@ class PodsAPI {
      * @since 1.7.9
      */
     public function load_field ( $params, $strict = false ) {
-        $params = (object) pods_sanitize( $params );
+        $params = (object) $params;
 
         if ( isset( $params->post_title ) )
             $_field = $params;
@@ -3013,6 +2989,11 @@ class PodsAPI {
 
             if ( empty( $params->name ) && empty( $params->pod ) && empty( $params->pod_id ) )
                 return pods_error( __( 'Either Field Name or Field ID / Pod ID are required', 'pods' ), $this );
+
+            $params->name = pods_clean_name( $params->name );
+
+            if ( isset( $pod[ 'fields' ][ $params->name ] ) )
+                return $pod[ 'fields' ][ $params->name ];
 
             $field = get_posts( array(
                 'name' => $params->name,

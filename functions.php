@@ -339,11 +339,13 @@ function pods_trim ( $input, $charlist = null, $lr = null ) {
  * @param mixed $default (optional) The default value to set if variable doesn't exist
  * @param mixed $allowed (optional) The value(s) allowed
  * @param bool $strict (optional) Only allow values (must not be empty)
+ * @param bool $casting (optional) Whether to cast the value returned like provided in $default
+ * @param string $context (optional) All returned values are sanitized unless this is set to 'raw'
  *
  * @return mixed The variable (if exists), or default value
  * @since 1.10.6
  */
-function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false ) {
+function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false, $context = 'display' ) {
     if ( is_array( $type ) )
         $output = isset( $type[ $var ] ) ? $type[ $var ] : $default;
     elseif ( is_object( $type ) )
@@ -414,7 +416,7 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
             $output = wp_cache_get( $var, $group, $force );
         }
         else
-            $output = apply_filters( 'pods_var_' . $type, $default, $var, $allowed, $strict );
+            $output = apply_filters( 'pods_var_' . $type, $default, $var, $allowed, $strict, $casting, $context );
     }
 
     if ( null !== $allowed ) {
@@ -433,7 +435,27 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
             $output = pods_cast( $output, $default );
     }
 
-    return pods_sanitize( $output );
+    if ( 'raw' != $context )
+        $output = pods_sanitize( $output );
+
+    return $output;
+}
+
+/**
+ * Return a variable's raw value (if exists)
+ *
+ * @param mixed $var The variable name or URI segment position
+ * @param string $type (optional) get|url|post|request|server|session|cookie|constant|user|option|site-option|transient|site-transient|cache
+ * @param mixed $default (optional) The default value to set if variable doesn't exist
+ * @param mixed $allowed (optional) The value(s) allowed
+ * @param bool $strict (optional) Only allow values (must not be empty)
+ * @param bool $casting (optional) Whether to cast the value returned like provided in $default
+ *
+ * @return mixed The variable (if exists), or default value
+ * @since 2.0.0
+ */
+function pods_var_raw ( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false ) {
+    return pods_var( $var, $type, $default, $allowed, $strict, $casting, 'raw' );
 }
 
 /**

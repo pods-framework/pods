@@ -16,7 +16,7 @@
     $css_id = $attributes[ 'id' ];
 
     $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
-    $field_nonce = wp_create_nonce( 'pods_upload_' . ( !is_object( $pod ) ? '0' : $pod->pod ) . '_' . session_id() . '_' . $uri_hash . '_' . $options[ 'id' ] );
+    $field_nonce = wp_create_nonce( 'pods_upload_' . ( !is_object( $pod ) ? '0' : $pod->pod_id ) . '_' . session_id() . '_' . $uri_hash . '_' . $options[ 'id' ] );
 
     $file_limit = 1;
     if ( isset( $options[ 'file_limit' ] ) && 'multiple' == $options[ 'file_format_type' ] )
@@ -38,7 +38,7 @@
             '_wpnonce' => $field_nonce,
             'action' => 'pods_upload',
             'method' => 'upload',
-            'pod' => $pod->pod,
+            'pod' => $pod->pod_id,
             'field' => $options[ 'id' ],
             'uri' => $uri_hash
         ),

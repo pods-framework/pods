@@ -71,12 +71,17 @@ class PodsAPI {
      * @param array $meta
      * @param bool $strict
      */
-    public function save_wp_object ( $object_type, $data, $meta = array(), $strict = false ) {
+    public function save_wp_object ( $object_type, $data, $meta = array(), $strict = false, $sanitized = false ) {
         if ( in_array( $object_type, array( 'post_type', 'media' ) ) )
             $object_type = 'post';
 
+        if ( $sanitized ) {
+            $data = pods_unsanitize( $data );
+            $meta = pods_unsanitize( $meta );
+        }
+
         if ( in_array( $object_type, array( 'post', 'user', 'comment' ) ) )
-            return call_user_func( array( $this, 'save_' . $object_type ), $data, $meta, $strict );
+            return call_user_func( array( $this, 'save_' . $object_type ), $data, $meta, $strict, false );
 
         return false;
     }
@@ -111,7 +116,7 @@ class PodsAPI {
      * @param array $post_meta All meta to be saved (set value to null to delete)
      * @param bool $strict Whether to delete previously saved meta not in $post_meta
      */
-    public function save_post( $post_data, $post_meta = null, $strict = false ) {
+    public function save_post( $post_data, $post_meta = null, $strict = false, $sanitized = false ) {
         pods_no_conflict_on( 'post' );
 
         if ( !is_array( $post_data ) || empty( $post_data ) )
@@ -119,6 +124,11 @@ class PodsAPI {
 
         if ( !is_array( $post_meta ) )
             $post_meta = array();
+
+        if ( $sanitized ) {
+            $post_data = pods_unsanitize( $post_data );
+            $post_meta = pods_unsanitize( $post_meta );
+        }
 
         if ( !isset( $post_data[ 'ID' ] ) || empty( $post_data[ 'ID' ] ) )
             $post_data[ 'ID' ] = wp_insert_post( $post_data, true );
@@ -150,6 +160,8 @@ class PodsAPI {
 
         if ( !is_array( $post_meta ) )
             $post_meta = array();
+
+        $id = (int) $id;
 
         $meta = get_post_meta( $id );
 
@@ -196,7 +208,7 @@ class PodsAPI {
      * @param array $user_meta All meta to be saved (set value to null to delete)
      * @param bool $strict Whether to delete previously saved meta not in $user_meta
      */
-    public function save_user ( $user_data, $user_meta = null, $strict = false ) {
+    public function save_user ( $user_data, $user_meta = null, $strict = false, $sanitized = false ) {
         if ( !is_array( $user_data ) || empty( $user_data ) )
             return pods_error( __( 'User data is required but is either invalid or empty', 'pods' ), $this );
 
@@ -205,7 +217,12 @@ class PodsAPI {
         if ( !is_array( $user_meta ) )
             $user_meta = array();
 
-        if ( !isset( $user_data[ 'ID' ] ) )
+        if ( $sanitized ) {
+            $user_data = pods_unsanitize( $user_data );
+            $user_meta = pods_unsanitize( $user_meta );
+        }
+
+        if ( !isset( $user_data[ 'ID' ] ) || empty( $user_data[ 'ID' ] ) )
             $user_data[ 'ID' ] = wp_insert_user( $user_data );
         else
             wp_update_user( $user_data );
@@ -235,6 +252,8 @@ class PodsAPI {
 
         if ( !is_array( $user_meta ) )
             $user_meta = array();
+
+        $id = (int) $id;
 
         $meta = get_user_meta( $id );
 
@@ -270,7 +289,7 @@ class PodsAPI {
      * @param array $comment_meta All meta to be saved (set value to null to delete)
      * @param bool $strict Whether to delete previously saved meta not in $comment_meta
      */
-    public function save_comment ( $comment_data, $comment_meta = null, $strict = false ) {
+    public function save_comment ( $comment_data, $comment_meta = null, $strict = false, $sanitized = false ) {
         if ( !is_array( $comment_data ) || empty( $comment_data ) )
             return pods_error( __( 'Comment data is required but is either invalid or empty', 'pods' ), $this );
 
@@ -279,7 +298,12 @@ class PodsAPI {
         if ( !is_array( $comment_meta ) )
             $comment_meta = array();
 
-        if ( !isset( $comment_data[ 'comment_ID' ] ) )
+        if ( $sanitized ) {
+            $comment_data = pods_unsanitize( $comment_data );
+            $comment_meta = pods_unsanitize( $comment_meta );
+        }
+
+        if ( !isset( $comment_data[ 'comment_ID' ] ) || empty( $comment_data[ 'comment_ID' ] ) )
             $comment_data[ 'comment_ID' ] = wp_insert_comment( $comment_data );
         else
             wp_update_comment( $comment_data );
@@ -310,6 +334,8 @@ class PodsAPI {
         if ( !is_array( $comment_meta ) )
             $comment_meta = array();
 
+        $id = (int) $id;
+
         $meta = get_comment_meta( $id );
 
         foreach ( $comment_meta as $meta_key => $meta_value ) {
@@ -328,7 +354,7 @@ class PodsAPI {
         if ( $strict ) {
             foreach ( $meta as $meta_key => $meta_value ) {
                 if ( !isset( $comment_meta[ $meta_key ] ) )
-                    delete_comment_meta( $id, $meta_key, $comment_meta[ $meta_key ] );
+                    delete_comment_meta( (int) $id, $meta_key, $comment_meta[ $meta_key ] );
             }
         }
 
@@ -345,11 +371,19 @@ class PodsAPI {
      * @param string $taxonomy Taxonomy name
      * @param array $term_data All term data to be saved (using wp_insert_term / wp_update_term)
      */
-    public function save_term ( $term_ID, $term, $taxonomy, $term_data ) {
+    public function save_term ( $term_ID, $term, $taxonomy, $term_data, $sanitized = false ) {
         pods_no_conflict_on( 'taxonomy' );
 
         if( !is_array( $term_data ) )
             $term_data = array();
+
+        $term_ID = (int) $term_ID;
+
+        if ( $sanitized ) {
+            $term = pods_unsanitize( $term );
+            $taxonomy = pods_unsanitize( $taxonomy );
+            $term_data = pods_unsanitize( $term_data );
+        }
 
         if ( empty( $term_ID ) )
             $term_ID = wp_insert_term( $term, $taxonomy, $term_data );
@@ -734,7 +768,9 @@ class PodsAPI {
 
         $params = (object) $params;
 
-        if ( !isset( $params->sanitized ) )
+        if ( isset( $params->sanitized ) )
+            unset( $params->sanitized );
+        else
             $params = pods_sanitize( $params );
 
         $old_id = $old_name = $old_storage = null;
@@ -927,7 +963,7 @@ class PodsAPI {
             );
         }
 
-        $params->id = $this->save_post( $post_data, $pod[ 'options' ], true );
+        $params->id = $this->save_post( $post_data, $pod[ 'options' ], true, true );
 
         if ( false === $params->id )
             return pods_error( __( 'Cannot save Pod', 'pods' ), $this );
@@ -1132,7 +1168,9 @@ class PodsAPI {
 
         $params = (object) $params;
 
-        if ( !isset( $params->sanitized ) )
+        if ( isset( $params->sanitized ) )
+            unset( $params->sanitized );
+        else
             $params = pods_sanitize( $params );
 
         if ( isset( $params->pod_id ) )
@@ -1378,7 +1416,7 @@ class PodsAPI {
             }
         }
 
-        $params->id = $this->save_post( $post_data, $field[ 'options' ], true );
+        $params->id = $this->save_post( $post_data, $field[ 'options' ], true, true );
 
         if ( false === $params->id )
             return pods_error( __( 'Cannot save Field', 'pods' ), $this );
@@ -1509,7 +1547,7 @@ class PodsAPI {
             );
         }
 
-        $params->id = $this->save_post( $post_data, $object[ 'options' ], true );
+        $params->id = $this->save_post( $post_data, $object[ 'options' ], true, true );
 
         delete_transient( 'pods_object_' . $params->type );
         delete_transient( 'pods_object_' . $params->type . '_' . $params->name );
@@ -1838,11 +1876,11 @@ class PodsAPI {
         }
 
         if ( 'meta' == $pod[ 'storage' ] && !in_array( $pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) ) {
-            $params->id = $this->save_wp_object( $object_type, $object_data, $object_meta );
+            $params->id = $this->save_wp_object( $object_type, $object_data, $object_meta, false, true );
         }
         else {
             if ( !in_array( $pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) )
-                $params->id = $this->save_wp_object( $object_type, $object_data );
+                $params->id = $this->save_wp_object( $object_type, $object_data, array(), false, true );
             elseif ( 'taxonomy' == $pod[ 'type' ] ) {
                 $term = pods_var( $object_fields[ 'name' ][ 'name' ], $object_data, '', null, true );
                 $term_data = array();
@@ -1853,7 +1891,7 @@ class PodsAPI {
                     if ( !empty( $pod[ 'object' ] ) )
                         $taxonomy = $pod[ 'object' ];
 
-                    $params->id = $this->save_term( $params->id, $term, $taxonomy, $term_data );
+                    $params->id = $this->save_term( $params->id, $term, $taxonomy, $term_data, true );
                 }
             }
 

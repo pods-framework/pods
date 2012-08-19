@@ -414,6 +414,43 @@ class PodsAPI {
     }
 
     /**
+     * Rename a WP object's type
+     *
+     * @param string $object_type Object type: post|taxonomy|comment
+     * @param string $old_name The old name
+     * @param string $new_name The new name
+     *
+     * @since 2.0.0
+     */
+    public function rename_wp_object ( $object_type, $old_name, $new_name ) {
+        global $wpdb;
+
+        if ( in_array( $object_type, array( 'post_type', 'media' ) ) )
+            $object_type = 'post';
+
+        if ( 'post' == $object_type ) {
+            pods_query( "UPDATE `{$wpdb->posts}` SET `post_type` = %s WHERE `post_type` = %s", array(
+                $new_name,
+                $old_name
+            ) );
+        }
+        elseif ( 'taxonomy' == $object_type ) {
+            pods_query( "UPDATE `{$wpdb->term_taxonomy}` SET `taxonomy` = %s WHERE `taxonomy` = %s", array(
+                $new_name,
+                $old_name
+            ) );
+        }
+        elseif ( 'comment' == $object_type ) {
+            pods_query( "UPDATE `{$wpdb->comments}` SET `comment_type` = %s WHERE `comment_type` = %s", array(
+                $new_name,
+                $old_name
+            ) );
+        }
+
+        return true;
+    }
+
+    /**
      * Get a list of core WP object fields for a specific object
      *
      * @param string $object
@@ -994,18 +1031,10 @@ class PodsAPI {
 
         global $wpdb;
 
-        if ( 'post_type' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) && null !== $old_name && $old_name != $params->name ) {
-            pods_query( "UPDATE `{$wpdb->posts}` SET `post_type` = %s WHERE `post_type` = %s", array(
-                $params->name,
-                $old_name
-            ) );
-        }
-        elseif ( 'taxonomy' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) && null !== $old_name && $old_name != $params->name ) {
-            pods_query( "UPDATE `{$wpdb->term_taxonomy}` SET `taxonomy` = %s WHERE `taxonomy` = %s", array(
-                $params->name,
-                $old_name
-            ) );
-        }
+        if ( 'post_type' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) && null !== $old_name && $old_name != $params->name )
+            $this->rename_wp_object( 'post', $old_name, $params->name );
+        elseif ( 'taxonomy' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) && null !== $old_name && $old_name != $params->name )
+            $this->rename_wp_object( 'taxonomy', $old_name, $params->name );
 
         // Sync built-in options for post types and taxonomies
         if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && empty( $pod[ 'object' ] ) ) {

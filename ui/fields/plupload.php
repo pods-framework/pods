@@ -45,7 +45,10 @@
     );
     $plupload_init = apply_filters( 'plupload_init', $plupload_init );
 
-    $value = (array) $value;
+    if ( empty( $value ) )
+        $value = array();
+    else
+        $value = (array) $value;
 ?>
     <table class="form-table pods-metabox" id="<?php echo $css_id; ?>">
         <tbody>
@@ -54,7 +57,7 @@
                     <ul class="pods-files"><?php // no extra space in ul or CSS:empty won't work
                             foreach ( $value as $val ) {
                                 $thumb = wp_get_attachment_image_src( $val[ 'id' ], 'thumbnail', true );
-                                echo $field_file->markup( $attributes, $file_limit, $options[ 'file_edit_title' ], $val[ 'ID' ], $thumb[ 0 ], basename( $val[ 'guid' ] ) );
+                                echo $field_file->markup( $attributes, $file_limit, pods_var( 'file_edit_title', $options, 0 ), $val[ 'ID' ], $thumb[ 0 ], basename( $val[ 'guid' ] ) );
                             }
                         ?></ul>
 
@@ -70,7 +73,7 @@
     </table>
 
     <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
-        <?php echo $field_file->markup( $attributes, $file_limit, $options[ 'file_edit_title' ] ); ?>
+        <?php echo $field_file->markup( $attributes, $file_limit, pods_var( 'file_edit_title', $options, 0 ) ); ?>
     </script>
 
     <script type="text/x-handlebars" id="<?php echo $css_id; ?>-progress-template">

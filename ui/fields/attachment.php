@@ -20,7 +20,10 @@
     if ( isset( $options[ 'file_limit' ] ) && 'multi' == $options[ 'file_format_type' ] )
         $file_limit = (int) $options[ 'file_limit' ];
 
-    $value = (array) $value;
+    if ( empty( $value ) )
+        $value = array();
+    else
+        $value = (array) $value;
 ?>
     <table class="form-table pods-metabox" id="<?php echo $css_id; ?>">
         <tbody>

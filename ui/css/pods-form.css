@@ -50,10 +50,6 @@
 	padding-bottom:8px;
 }
 
-.pods-file input {
-	display:none;
-}
-
 ul.pods-files {
 	background:#fbfbfb;
 	border:1px solid #dfdfdf;

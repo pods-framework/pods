@@ -104,6 +104,10 @@ class Pods {
      */
     private $deprecated;
 
+    public $datatype;
+
+    public $datatype_id;
+
     /**
      * Constructor - Pods Framework core
      *

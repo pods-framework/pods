@@ -732,7 +732,10 @@ class PodsAPI {
 
         $pod = $this->load_pod( $params, false );
 
-        $params = (object) pods_sanitize( $params );
+        $params = (object) $params;
+
+        if ( !isset( $params->sanitized ) )
+            $params = pods_sanitize( $params );
 
         $old_id = $old_name = $old_storage = null;
 
@@ -1077,6 +1080,9 @@ class PodsAPI {
                     $weight ++;
                 }
 
+                // We sanitized at the start of this call
+                $field[ 'sanitized' ] = true;
+
                 $field = $this->save_field( $field, $field_table_operation );
 
                 if ( !empty( $field ) && 0 < $field )
@@ -1124,7 +1130,10 @@ class PodsAPI {
     public function save_field ( $params, $table_operation = true ) {
         global $wpdb;
 
-        $params = (object) pods_sanitize( $params );
+        $params = (object) $params;
+
+        if ( !isset( $params->sanitized ) )
+            $params = pods_sanitize( $params );
 
         if ( isset( $params->pod_id ) )
             $params->pod_id = pods_absint( $params->pod_id );

@@ -872,7 +872,6 @@ class PodsAdmin {
         }
         elseif ( 'save_pod' == $method->name ) {
             if ( isset( $params->field_data ) && !is_array( $params->field_data ) ) {
-                $params->field_data = stripslashes( $params->field_data );
                 $params->fields = (array) @json_decode( $params->field_data, true );
 
                 unset( $params->field_data );

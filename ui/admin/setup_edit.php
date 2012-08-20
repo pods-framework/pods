@@ -436,8 +436,7 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
                 'label' => __( 'Post Type Description', 'pods' ),
                 'help' => __( 'A short descriptive summary of what the post type is.', 'pods' ),
                 'type' => 'text',
-                'default' => pods_var_raw( 'description', $pod, '' ),
-                'value' => pods_var_raw( 'description', $pod, '' )
+                'default' => ''
             ),
             'public' => array(
                 'label' => __( 'Public', 'pods' ),

@@ -19,8 +19,9 @@
     $field_nonce = wp_create_nonce( 'pods_upload_' . ( !is_object( $pod ) ? '0' : $pod->pod_id ) . '_' . session_id() . '_' . $uri_hash . '_' . $options[ 'id' ] );
 
     $file_limit = 1;
-    if ( isset( $options[ 'file_limit' ] ) && 'multiple' == $options[ 'file_format_type' ] )
-        $file_limit = (int) $options[ 'file_limit' ];
+
+    if ( 'multi' == pods_var( 'file_format_type', $options, 'single' ) )
+        $file_limit = (int) pods_var( 'file_limit', $options, 0 );
 
     $plupload_init = array(
         'runtimes' => 'html5,silverlight,flash,html4',

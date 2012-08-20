@@ -145,7 +145,6 @@ class Pod
  */
 class PodAPI
 {
-
     private $new;
 
     function __construct ( $type = null, $format = null ) {

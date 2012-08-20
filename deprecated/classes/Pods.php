@@ -39,7 +39,9 @@ class Pods_Deprecated
      */
     public function set_field ($name, $data = null) {
         pods_deprecated('Pods::set_field', '2.0.0');
+
         $this->obj->data[$name] = $data;
+
         return $this->obj->data[$name];
     }
 
@@ -240,6 +242,7 @@ class Pods_Deprecated
      */
     public function publicForm ($public_fields = null, $label = 'Save Changes', $thankyou_url = null) {
         pods_deprecated('Pods::publicForm', '2.0.0', 'Pods::form');
+
         include PODS_DIR . 'ui/input_form.php';
     }
 
@@ -250,6 +253,7 @@ class Pods_Deprecated
      */
     public function build_field_html ($field) {
         pods_deprecated('Pods::build_field_html', '2.0.0');
+
         include PODS_DIR . 'ui/input_fields.php';
     }
 
@@ -261,6 +265,7 @@ class Pods_Deprecated
      */
     public function fetchRecord () {
         pods_deprecated('Pods::fetchRecord', '2.0.0', 'Pods::fetch');
+
         return $this->obj->fetch();
     }
 
@@ -274,6 +279,7 @@ class Pods_Deprecated
      */
     public function get_field ($name, $orderby = null) {
         pods_deprecated('Pods::get_field', '2.0.0', 'Pods::field');
+
         return $this->obj->field(array('name' => $name, 'orderby' => $orderby));
     }
 
@@ -286,8 +292,10 @@ class Pods_Deprecated
      */
     public function get_pod_id () {
         pods_deprecated('Pods::get_pod_id', '2.0.0');
+
         if (!empty($this->obj->data))
             return $this->obj->data[$this->obj->field_id];
+
         return false;
     }
 
@@ -299,24 +307,32 @@ class Pods_Deprecated
      */
     public function findRecords ($orderby = null, $rows_per_page = 15, $where = null, $sql = null) {
         pods_deprecated('Pods::findRecords', '2.0.0', 'Pods::find');
+
         if (null == $orderby)
             $orderby = "t.`{$this->obj->field_id}` DESC";
-        $params = array('select' => 't.*',
-                        'join' => '',
-                        'where' => $where,
-                        'orderby' => $orderby,
-                        'limit' => $rows_per_page,
-                        'page' => $this->obj->page,
-                        'search' => $this->obj->search,
-                        'search_across' => true,
-                        'search_across_picks' => false,
-                        'sql' => $sql);
+
+        $params = array(
+            'select' => 't.*',
+            'join' => '',
+            'where' => $where,
+            'orderby' => $orderby,
+            'limit' => $rows_per_page,
+            'page' => $this->obj->page,
+            'search' => $this->obj->search,
+            'search_across' => true,
+            'search_across_picks' => false,
+            'sql' => $sql
+        );
+
         if (is_array($orderby))
             $params = array_merge($params, $orderby);
+
         $params = (object) $params;
+
         $this->obj->limit = $params->limit;
         $this->obj->page = $params->page;
         $this->obj->search = $params->search;
+
         return $this->obj->find($params);
     }
 
@@ -328,6 +344,7 @@ class Pods_Deprecated
      */
     public function getRecordById ($id) {
         pods_deprecated('Pods::getRecordById', '2.0.0', 'Pods::fetch_item');
+
         return $this->obj->fetch_item($id);
     }
 
@@ -338,6 +355,7 @@ class Pods_Deprecated
      */
     public function getTotalRows () {
         pods_deprecated('Pods::getTotalRows', '2.0.0', 'Pods::total_found');
+
         return $this->obj->total_found();
     }
 
@@ -348,6 +366,7 @@ class Pods_Deprecated
      */
     public function resetPointer ($row_number = 0) {
         pods_deprecated('Pods::resetPointer', '2.0.0', 'Pods::reset');
+
         return $this->obj->reset($row_number);
     }
 
@@ -358,6 +377,7 @@ class Pods_Deprecated
      */
     public function getPagination ($label = 'Go to page:') {
         pods_deprecated('Pods::getPagination', '2.0.0', 'Pods::pagination');
+
         echo $this->obj->pagination(array('label' => $label));
     }
 
@@ -368,12 +388,17 @@ class Pods_Deprecated
      */
     public function getFilters ($filters = null, $label = 'Filter', $action = '') {
         pods_deprecated('Pods::getFilters', '2.0.0', 'Pods::filters');
-        $params = array('filters' => $filters,
-                        'label' => $label,
-                        'action' => $action,
-                        'show_textbox' => true);
+
+        $params = array(
+            'filters' => $filters,
+            'label' => $label,
+            'action' => $action,
+            'show_textbox' => true
+        );
+
         if(is_array($filters))
             $params = array_merge($params, $filters);
+
         echo $this->obj->filters($params);
     }
 
@@ -387,6 +412,7 @@ class Pods_Deprecated
      */
     public function pod_helper ($helper_name, $value = null, $name = null) {
         pods_deprecated('Pods::pod_helper', '2.0.0', 'Pods::helper');
+
         return $this->obj->helper(array('helper' => $helper_name, 'value' => $value, 'name' => $name));
     }
 
@@ -397,6 +423,7 @@ class Pods_Deprecated
      */
     public function showTemplate ($template_name, $code = null) {
         pods_deprecated('Pods::showTemplate', '2.0.0', 'Pods::template');
+
         return $this->obj->template($template_name, $code);
     }
 }

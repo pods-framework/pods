@@ -629,6 +629,7 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
                                             <?php
                                                 $fields = $advanced_options[ 'cpt_options' ];
                                                 $field_options = PodsForm::fields_setup( $fields );
+                                                $field = $pod;
 
                                                 include PODS_DIR . 'ui/admin/field_option.php';
                                             ?>

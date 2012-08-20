@@ -329,7 +329,7 @@ class PodsField_File extends PodsField {
         if ( empty( $name ) )
             $name = '{{name}}';
 
-        $editable = (bool) $editable;
+        $editable = (boolean) $editable;
 ?>
     <li class="pods-file hidden" id="pods-file-{{id}}">
         <?php echo PodsForm::field( $attributes[ 'name' ] . '[' . $id . '][id]', $id, 'hidden' ); ?>

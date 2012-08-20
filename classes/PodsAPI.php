@@ -1775,8 +1775,10 @@ class PodsAPI {
                     $fields_active[] = $field;
                 }
                 elseif ( isset( $fields[ $field ] ) ) {
-                    $fields[ $field ][ 'value' ] = $value;
-                    $fields_active[] = $field;
+                    if ( true === PodsForm::permission( $fields[ $field ][ 'type' ], $field, $fields[ $field ], $fields, $pod, $params->id, $params ) ) {
+                        $fields[ $field ][ 'value' ] = $value;
+                        $fields_active[] = $field;
+                    }
                 }
                 else {
                     foreach ( $object_fields as $object_field => $object_field_opt ) {

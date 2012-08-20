@@ -437,7 +437,7 @@ class Pods_GravityForms extends PodsComponent {
             $form_id = self::$validation[ 'form_id' ];
 
         if ( null !== $keep_files )
-            self::$keep_files = (bool) $keep_files;
+            self::$keep_files = (boolean) $keep_files;
 
         add_action( 'gform_post_submission' . ( empty( $form_id ) ? '' : '_' . (int) $form_id ), array( get_class(), 'delete_entry' ), 20, 1 );
     }
@@ -460,7 +460,7 @@ class Pods_GravityForms extends PodsComponent {
             return false;
 
         if ( null !== self::$keep_files )
-            $keep_files = (bool) self::$keep_files;
+            $keep_files = (boolean) self::$keep_files;
 
         do_action( "gform_delete_lead", $lead_id );
 

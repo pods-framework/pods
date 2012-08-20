@@ -500,7 +500,7 @@ class Pods {
                             $value = false;
                         else {
                             foreach ( $data as &$item_value ) {
-                                $item_value = get_object_vars( $item_value );
+                                $item_value = get_object_vars( (object) $item_value );
                             }
 
                             // Return entire array

@@ -265,7 +265,7 @@ class PodsUI
     );
 
     /**
-     * @var bool
+     * @var bool|array
      */
     public $data = false;
 
@@ -1865,7 +1865,7 @@ class PodsUI
         if (!empty($this->data) && is_array( $this->data ) ) {
             foreach ( $this->data as $row ) {
                 if (is_object($row))
-                    $row = get_object_vars($row);
+                    $row = get_object_vars( (object) $row );
 
                 $toggle_class = '';
 
@@ -2310,7 +2310,7 @@ class PodsUI
 
     /**
      * @param $code
-     * @param bool $row
+     * @param bool|array $row
      * @return mixed
      */
     public function do_template ($code, $row = false) {
@@ -2359,8 +2359,8 @@ class PodsUI
     }
 
     /**
-     * @param bool $exclude
-     * @param bool $array
+     * @param bool|array $exclude
+     * @param bool|array $array
      */
     public function hidden_vars ($exclude = false, $array = false) {
         $exclude = $this->do_hook('hidden_vars', $exclude, $array);

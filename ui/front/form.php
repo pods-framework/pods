@@ -1,4 +1,8 @@
 <?php
+    if ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER )
+        return;
+
+    // This isn't ready yet
     $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
     $field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $fields ) ) );
 

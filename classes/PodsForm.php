@@ -597,6 +597,53 @@ class PodsForm {
     }
 
     /**
+     * Check if a user has permission to be editing a field
+     *
+     * @param $type
+     * @param null $name
+     * @param null $options
+     * @param null $fields
+     * @param null $pod
+     * @param null $id
+     * @param null $params
+     *
+     * @static
+     *
+     * @since 2.0.0
+     */
+    public static function permission ( $type, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+        $permission = false;
+
+        if ( 1 == pods_var( 'restrict_capability', $options, 0 ) ) {
+            if ( is_user_logged_in() ) {
+                if ( is_super_admin() || current_user_can( 'manage_options' ) )
+                    $permission = true;
+
+                $capabilities = implode( ',', pods_var( 'capability_allowed', $options ) );
+                $capabilities = array_unique( array_filter( $capabilities ) );
+
+                foreach ( $capabilities as $capability ) {
+                    if ( current_user_can( $capability ) ) {
+                        $permission = true;
+
+                        break;
+                    }
+                }
+            }
+        }
+        elseif ( 1 == pods_var( 'admin_only', $options, 0 ) ) {
+            if ( is_user_logged_in() && ( is_super_admin() || current_user_can( 'manage_options' ) ) )
+                $permission = true;
+        }
+        else
+            $permission = true;
+
+        $permission = (boolean) apply_filters( 'pods_form_field_permission', $permission, $type, $name, $options, $fields, $pod, $id, $params );
+
+        return $permission;
+    }
+
+    /**
      * Clean a value for use in class / id
      *
      * @since 2.0.0

@@ -105,6 +105,9 @@
                                 if ( $pod->pod_data[ 'field_index' ] != $field[ 'name' ] )
                                     continue;
 
+                                if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $pod->id() ) )
+                                    continue;
+
                                 $more = true;
                     ?>
                         <div id="titlediv">
@@ -146,6 +149,9 @@
                                     <?php
                                         foreach ( $fields as $field ) {
                                             if ( in_array( $field[ 'name' ], array( $pod->pod_data[ 'field_index' ], 'created', 'modified' ) ) )
+                                                continue;
+
+                                            if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $pod->id() ) )
                                                 continue;
                                     ?>
                                         <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Podsform::clean( $field[ 'name' ], true ); ?>">

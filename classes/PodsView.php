@@ -152,7 +152,7 @@ class PodsView {
     /**
      * @static
      * @param $_view
-     * @param null $_data
+     * @param null|array $_data
      * @return bool|mixed|string|void
      */
     private static function get_template_part ( $_view, $_data = null ) {
@@ -160,7 +160,7 @@ class PodsView {
         if ( empty( $_view ) )
             return $_view;
 
-        if ( is_array( $_data ) )
+        if ( !empty( $_data ) && is_array( $_data ) )
             extract( $_data, EXTR_SKIP );
 
         ob_start();

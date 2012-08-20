@@ -232,7 +232,7 @@
                         <select id="pod_select" name="pod_select">
                             <?php foreach ( $all_pods as $pod ) { ?>
                                 <option value="<?php echo $pod[ 'name' ]; ?>">
-                                    <?php echo $pod[ 'name' ]; ?>
+                                    <?php echo $pod[ 'label' ]; ?>
                                 </option>
                             <?php } ?>
                         </select>

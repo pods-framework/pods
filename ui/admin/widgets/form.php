@@ -26,7 +26,7 @@
                 <?php foreach ($all_pods as $pod): ?>
                     <?php $selected = ($pod['name'] == $pod_type) ? 'selected' : ''; ?>
                     <option value="<?php echo $pod['name']; ?>" <?php echo $selected; ?>>
-                        <?php echo $pod['name']; ?>
+                        <?php echo $pod['label']; ?>
                     </option>
                 <?php endforeach; ?>
             </select>

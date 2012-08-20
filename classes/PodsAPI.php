@@ -422,7 +422,7 @@ class PodsAPI {
      *
      * @since 2.0.0
      */
-    public function rename_wp_object ( $object_type, $old_name, $new_name ) {
+    public function rename_wp_object_type ( $object_type, $old_name, $new_name ) {
         global $wpdb;
 
         if ( 'post_type' == $object_type )
@@ -1032,11 +1032,11 @@ class PodsAPI {
         global $wpdb;
 
         if ( 'post_type' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) && null !== $old_name && $old_name != $params->name )
-            $this->rename_wp_object( 'post', $old_name, $params->name );
+            $this->rename_wp_object_type( 'post', $old_name, $params->name );
         elseif ( 'taxonomy' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) && null !== $old_name && $old_name != $params->name )
-            $this->rename_wp_object( 'taxonomy', $old_name, $params->name );
+            $this->rename_wp_object_type( 'taxonomy', $old_name, $params->name );
         elseif ( 'comment' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) && null !== $old_name && $old_name != $params->name )
-            $this->rename_wp_object( 'comment', $old_name, $params->name );
+            $this->rename_wp_object_type( 'comment', $old_name, $params->name );
 
         // Sync built-in options for post types and taxonomies
         if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && empty( $pod[ 'object' ] ) ) {

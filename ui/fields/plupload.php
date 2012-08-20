@@ -57,8 +57,19 @@
                 <td>
                     <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
                             foreach ( $value as $val ) {
-                                $thumb = wp_get_attachment_image_src( $val[ 'id' ], 'thumbnail', true );
-                                echo $field_file->markup( $attributes, $file_limit, pods_var( 'file_edit_title', $options, 0 ), $val[ 'ID' ], $thumb[ 0 ], basename( $val[ 'guid' ] ) );
+                                $attachment = get_post( $val );
+
+                                if ( empty( $attachment ) )
+                                    continue;
+
+                                $thumb = wp_get_attachment_image_src( $val, 'thumbnail', true );
+
+                                $title = $attachment->post_title;
+
+                                if ( 0 == pods_var( 'file_edit_title', $options, 0 ) )
+                                    $title = basename( $attachment->guid );
+
+                                echo $field_file->markup( $attributes, $file_limit, pods_var( 'file_edit_title', $options, 0 ), $val, $thumb[ 0 ], $title );
                             }
                         ?></ul>
 
@@ -87,14 +98,17 @@
 
     <script>
         jQuery( function ( $ ) {
-            // init sortable
-            $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ).sortable( {
-                containment : 'parent',
-                axis: 'y',
-                scrollSensitivity : 40,
-                tolerance : 'pointer',
-                opacity : 0.6
-            } )
+
+            <?php if ( 1 < $file_limit ) { ?>
+                // init sortable
+                $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ).sortable( {
+                    containment : 'parent',
+                    axis: 'y',
+                    scrollSensitivity : 40,
+                    tolerance : 'pointer',
+                    opacity : 0.6
+                } );
+            <?php } ?>
 
             // hook delete links
             $( '#<?php echo esc_js( $css_id ); ?>' ).on( 'click', 'li.pods-file-delete', function () {
@@ -189,11 +203,8 @@
                     var items = list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.find( 'li.pods-file' ),
                         itemCount = items.size();
 
-                    $.fn.reverse = [].reverse;
                     if ( 0 < maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> || itemCount > maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> ) {
-                        var reversed = items;
-
-                        reversed.each( function ( idx, elem ) {
+                        items.each( function ( idx, elem ) {
                             if ( idx + 1 > maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> ) {
                                 jQuery( elem ).remove();
                             }

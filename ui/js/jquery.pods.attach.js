@@ -2,7 +2,7 @@ var pods_file_context = false; // tracks whether or not we've got a thickbox dis
 var pods_file_thickbox_modder; // stores our interval for making necessary changes to thickbox content
 
 // handle our thickbox mods
-function pods_attachments ( src, limit ) {
+function pods_attachments ( src, file_limit ) {
     var pods_thickbox = jQuery( '#TB_iframeContent' ).contents();
 
     pods_thickbox.find( 'td.savesend input' ).unbind( 'click' ).click( function ( e ) {
@@ -24,10 +24,23 @@ function pods_attachments ( src, limit ) {
 
         var tmpl = Handlebars.compile( source );
 
-        pods_file_context.append( tmpl( binding ) );
+        pods_file_context.prepend( tmpl( binding ) );
         pods_file_context.find( 'li#pods-file-' + wp_media_id ).slideDown( 'fast' );
 
-        if ( 1 < limit ) {
+        var items = pods_file_context.find( 'li.pods-file' ),
+            itemCount = items.size();
+
+        console.log( items );
+
+        if ( 0 < file_limit || itemCount > file_limit ) {
+            items.each( function ( idx, elem ) {
+                if ( idx + 1 > file_limit ) {
+                    jQuery( elem ).remove();
+                }
+            } );
+        }
+
+        if ( 1 < file_limit ) {
             jQuery( this ).after( ' <span class="pods-attached">Added! Choose another or <a href="#">close this box</a>.</span>' );
             jQuery( this ).parent().find( 'span.pods-attached a' ).on( 'click', function ( e ) {
                 parent.eval( 'tb_remove()' );

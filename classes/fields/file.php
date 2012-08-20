@@ -332,7 +332,7 @@ class PodsField_File extends PodsField {
         $editable = (bool) $editable;
 ?>
     <li class="pods-file hidden" id="pods-file-{{id}}">
-        <input type="hidden" class="pods-file-id" name="<?php echo $attributes[ 'name' ]; ?>[{{id}}][id]" value="<?php echo $id; ?>" />
+        <?php echo PodsForm::field( $attributes[ 'name' ] . '[' . $id . '][id]', $id, 'hidden' ); ?>
 
         <ul class="pods-file-meta media-item">
             <?php if ( 1 < $limit ) { ?>
@@ -346,7 +346,7 @@ class PodsField_File extends PodsField {
             <li class="pods-file-col pods-file-name">
                 <?php
                     if ( $editable )
-                        echo PodsForm::field( $attributes[ 'name' ] . '[' . $id . '][id]', $name, 'text' );
+                        echo PodsForm::field( $attributes[ 'name' ] . '[' . $id . '][title]', $name, 'text' );
                     else
                         echo ( empty( $name ) ? '{{name}}' : $name );
                 ?>

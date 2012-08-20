@@ -392,7 +392,7 @@ class Pods {
                         $limit = 0;
 
                         if ( in_array( $type, $tableless_field_types ) ) {
-                            $single_multi = pods_var( "{$type}_format_type", $all_fields[ $pod ][ $field ][ 'options' ], 'multi' );
+                            $single_multi = pods_var( "{$type}_format_type", $all_fields[ $pod ][ $field ][ 'options' ], 'single' );
 
                             if ( 'single' == $single_multi )
                                 $limit = 1;

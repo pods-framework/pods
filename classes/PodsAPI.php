@@ -1961,6 +1961,29 @@ class PodsAPI {
                             if ( empty( $id ) )
                                 continue;
 
+                            $title = false;
+
+                            if ( is_array( $id ) ) {
+                                if ( isset( $id[ 'title' ] ) && 0 < strlen( trim( $id[ 'title' ] ) ) )
+                                    $title = trim( $id[ 'title' ] );
+
+                                if ( isset( $id[ 'id' ] ) )
+                                    $id = $id[ 'id' ];
+                            }
+
+                            if ( empty( $id ) )
+                                continue;
+
+                            // Update the title if set
+                            if ( false !== $title && 1 == pods_var( 'file_edit_title', $fields[ $field ][ 'options' ], 0 ) ) {
+                                $attachment_data = array(
+                                    'ID' => $id,
+                                    'post_title' => $title
+                                );
+
+                                $this->save_wp_object( 'media', $attachment_data );
+                            }
+
                             pods_query( "INSERT INTO `@wp_pods_rel` (`pod_id`, `field_id`, `item_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d)", array(
                                 $params->pod_id,
                                 $field_id,

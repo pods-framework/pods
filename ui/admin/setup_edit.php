@@ -153,15 +153,6 @@ foreach ( $taxonomies as $taxonomy => $label ) {
     $pick_object[ 'Taxonomies' ][ 'taxonomy-' . $taxonomy->name ] = $taxonomy->label;
 }
 
-$field_settings = array(
-    'field_types' => $field_types,
-    'field_defaults' => $field_defaults,
-    'advanced_fields' => $advanced_fields,
-    'pick_object' => $pick_object,
-    'sister_field_id' => array( '' => '-- Select --' ),
-    'input_helper' => array( '' => '-- Select --' )
-);
-
 $pod = $_pods[ $obj->id ];
 
 foreach ( $pod[ 'options' ] as $_option => $_value ) {
@@ -177,6 +168,20 @@ foreach ( $pod[ 'fields' ] as $_field => $_data ) {
 }
 
 $field_defaults = apply_filters( 'pods_field_defaults', apply_filters( 'pods_field_defaults_' . $pod[ 'name' ], $field_defaults, $pod ) );
+
+// WP objects already have slugs
+if ( !in_array( $pod[ 'type' ], array( 'pod', 'table' ) ) )
+    unset( $field_types[ 'slug' ] );
+
+$field_settings = array(
+    'field_types' => $field_types,
+    'field_defaults' => $field_defaults,
+    'advanced_fields' => $advanced_fields,
+    'pick_object' => $pick_object,
+    'sister_field_id' => array( '' => '-- Select --' ),
+    'input_helper' => array( '' => '-- Select --' )
+);
+
 $field_settings = apply_filters( 'pods_field_settings', apply_filters( 'pods_field_settings_' . $pod[ 'name' ], $field_settings, $pod ) );
 
 $pod[ 'fields' ] = apply_filters( 'pods_fields_edit', apply_filters( 'pods_fields_edit_' . $pod[ 'name' ], $pod[ 'fields' ], $pod ) );

@@ -649,6 +649,8 @@ function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, &$obj = null
 
     $id = 0;
 
+    $pod_data = array();
+
     if ( is_object( $pod ) ) {
         if ( isset( $pod->id ) )
             $id = $pod->id;
@@ -656,14 +658,28 @@ function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, &$obj = null
         if ( isset( $pod->pod_id ) )
             $pod_id = $pod->pod_id;
 
-        if ( isset( $pod->datatype ) )
+        if ( isset( $pod->pod_data ) )
+            $pod_data = $pod->pod_data;
+
+        if ( isset( $pod->pod ) )
+            $pod = $pod->pod;
+        elseif ( isset( $pod->datatype ) )
             $pod = $pod->datatype;
         else
-            $pod = '';
+            return $slug;
     }
 
     $pod_id = absint( $pod_id );
     $id = absint( $id );
+
+    if ( empty( $pod_data ) )
+        $pod_data = pods_api()->load_pod( array( 'id' => $pod_id, 'name' => $pod ) );
+
+    if ( empty( $pod_data ) || empty( $pod_id ) || empty( $pod ) )
+        return $slug;
+
+    if ( 'table' != $pod_data[ 'storage' ] || !in_array( $pod_data[ 'type' ], array( 'pod', 'table' ) ) )
+        return $slug;
 
     $check_sql = "
         SELECT DISTINCT `t`.`{$column_name}` AS `slug`
@@ -674,15 +690,17 @@ function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, &$obj = null
 
     $slug_check = pods_query( array( $check_sql, $slug, $id ), $obj );
 
-    if ( $slug_check || apply_filters( 'pods_unique_slug_is_bad_flat_slug', false, $slug, $id, $column_name, $pod, $pod_id, $obj ) ) {
+    if ( !empty( $slug_check ) || apply_filters( 'pods_unique_slug_is_bad_flat_slug', false, $slug, $id, $column_name, $pod, $pod_id, $obj ) ) {
         $suffix = 2;
 
         do {
             $alt_slug = substr( $slug, 0, 200 - ( strlen( $suffix ) + 1 ) ) . "-{$suffix}";
+
             $slug_check = pods_query( array( $check_sql, $alt_slug, $id ), $obj );
+
             $suffix++;
         }
-        while ( $slug_check );
+        while ( !empty( $slug_check ) );
 
         $slug = $alt_slug;
     }

@@ -3779,6 +3779,7 @@ class PodsAPI {
             'join' => null,
             'field_id' => 'id',
             'field_index' => 'name',
+            'field_slug' => null,
             'where' => null,
             'orderby' => null
         );
@@ -3804,6 +3805,7 @@ class PodsAPI {
             $info[ 'table' ] = $wpdb->posts;
             $info[ 'field_id' ] = 'ID';
             $info[ 'field_index' ] = 'post_title';
+            $info[ 'field_slug' ] = 'post_name';
 
             if ( 'media' == $object_type )
                 $object = 'attachment';
@@ -3820,6 +3822,7 @@ class PodsAPI {
             $info[ 'join' ] = "LEFT JOIN `{$wpdb->term_taxonomy}` AS `tx` ON `tx`.`term_id` = `t`.`term_id`";
             $info[ 'field_id' ] = 'term_id';
             $info[ 'field_index' ] = 'name';
+            $info[ 'field_slug' ] = 'slug';
 
             $info[ 'where' ] = array(
                 'tx.taxonomy' => '`tx`.`taxonomy` = "' . ( empty( $object ) ? $name : $object ) . '"'
@@ -3829,6 +3832,7 @@ class PodsAPI {
             $info[ 'table' ] = $wpdb->users;
             $info[ 'field_id' ] = 'ID';
             $info[ 'field_index' ] = 'display_name';
+            $info[ 'field_slug' ] = 'user_nicename';
 
             $info[ 'where' ] = array(
                 'user_status' => '`t`.`user_status` = 0'
@@ -3858,6 +3862,8 @@ class PodsAPI {
             $info[ 'field_index' ] = pods_var( 'pod_index', $pod[ 'options' ], 'id', null, true );
 
         $info[ 'field_index' ] = pods_clean_name( $info[ 'field_index' ], false );
+
+        $info[ 'field_slug' ] = pods_clean_name( $info[ 'field_slug' ], false );
 
         if ( empty( $info[ 'orderby' ] ) )
             $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '`, `t`.`' . $info[ 'field_id' ] . '`';

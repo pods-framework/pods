@@ -1192,6 +1192,8 @@ class PodsAPI {
     public function save_field ( $params, $table_operation = true, $sanitized = false ) {
         global $wpdb;
 
+        $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
+
         $params = (object) $params;
 
         if ( false === $sanitized )
@@ -1234,7 +1236,7 @@ class PodsAPI {
 
         $field = $this->load_field( $params );
 
-        $old_id = $old_name = $old_type = null;
+        $old_id = $old_name = $old_type = $old_definition = null;
 
         if ( !empty( $field ) ) {
             $old_id = $field[ 'id' ];
@@ -1250,6 +1252,9 @@ class PodsAPI {
             if ( !empty( $params->id ) && $old_id != $params->id ) {
                 return pods_error( sprintf( __( 'Field %s already exists', 'pods' ), $field[ 'name' ] ), $this );
             }
+
+            if ( !in_array( $old_type, $tableless_field_types ) )
+                $old_definition = '`' . $old_name . '` ' . $this->get_field_definition( $old_type, $field[ 'options' ] );
         }
         else {
             $field = array(
@@ -1266,8 +1271,6 @@ class PodsAPI {
                 'options' => array()
             );
         }
-
-        $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
 
         // Setup options
         $options = get_object_vars( $params );
@@ -1448,7 +1451,7 @@ class PodsAPI {
         $definition = false;
 
         if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
-            $definition = '`' . $field[ 'name' ] . '` ' . $this->get_field_definition( $field[ 'type' ] );
+            $definition = '`' . $field[ 'name' ] . '` ' . $this->get_field_definition( $field[ 'type' ], $field[ 'options' ] );
 
         if ( $table_operation && 'table' == $pod[ 'storage' ] ) {
             if ( !empty( $old_id ) ) {
@@ -1462,6 +1465,13 @@ class PodsAPI {
                 }
                 elseif ( $old_name != $field[ 'name' ] && false !== $definition ) {
                     $test = pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` CHANGE `{$old_name}` {$definition}", false );
+
+                    // If the old field doesn't exist, continue to add a new field
+                    if ( false === $test )
+                        pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+                }
+                elseif ( null !== $old_definition && false !== $definition && $definition != $old_definition ) {
+                    $test = pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` CHANGE `" . $field[ 'name' ] . "` {$definition}", false );
 
                     // If the old field doesn't exist, continue to add a new field
                     if ( false === $test )

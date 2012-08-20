@@ -145,7 +145,7 @@
                                 <table class="form-table pods-metabox">
                                     <?php
                                         foreach ( $fields as $field ) {
-                                            if ( $pod->pod_data[ 'field_index' ] == $field[ 'name' ] )
+                                            if ( in_array( $field[ 'name' ], array( $pod->pod_data[ 'field_index' ], 'created', 'modified' ) ) )
                                                 continue;
                                     ?>
                                         <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Podsform::clean( $field[ 'name' ], true ); ?>">

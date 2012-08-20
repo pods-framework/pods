@@ -143,7 +143,9 @@ class PodsField_Number extends PodsField {
      * @since 2.0.0
      */
     public function schema ( $options = null ) {
-        $schema = 'DECIMAL(12,2)';
+        $decimals = (int) pods_var( 'number_decimals', $options, 0 );
+
+        $schema = 'DECIMAL(12,' . $decimals . ')';
 
         return $schema;
     }
@@ -254,7 +256,7 @@ class PodsField_Number extends PodsField {
             $dot = ',';
         }
 
-        return '[0-9' . implode( '\\', array_filter( array( $dot, $thousands ) ) ) . ']+';
+        return '[0-9\\' . implode( '\\', array_filter( array( $dot, $thousands ) ) ) . ']+';
     }
 
     /**
@@ -272,7 +274,23 @@ class PodsField_Number extends PodsField {
     public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         $label = pods_var( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
 
-        if ( !is_numeric( $value ) )
+        $thousands = ',';
+        $dot = '.';
+
+        if ( '9999,99' == pods_var( 'number_format', $options ) ) {
+            $thousands = '.';
+            $dot = ',';
+        }
+        elseif ( '9.999,99' == pods_var( 'number_format', $options ) ) {
+            $thousands = '.';
+            $dot = ',';
+        }
+
+        $check = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
+
+        $check = preg_replace( '/[^0-9\.]/', '', $check );
+
+        if ( !is_numeric( $check ) )
             return pods_error( sprintf( __( '%s is not numeric', 'pods' ), $label, $this ) );
 
         return true;

@@ -26,12 +26,12 @@
 <script>
     jQuery( function ( $ ) {
         $( 'input#<?php echo $attributes[ 'id' ]; ?>' ).on( 'blur', function () {
-            if ( !/^[0-9<?php
+            if ( !/^[0-9\<?php
             echo implode( '\\', array_filter( array( $dot, $thousands ) ) );
             ?>]$/.test( $( this ).val() ) ) {
                 var newval = $( this )
                     .val()
-                    .replace( /[^0-9<?php
+                    .replace( /[^0-9\<?php
                               echo implode( '\\', array_filter( array( $dot, $thousands ) ) );
                               ?>]/g, '' );
                 $( this ).val( newval );

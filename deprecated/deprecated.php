@@ -104,11 +104,12 @@ function pod_query ($sql, $error = 'SQL failed', $results_error = null, $no_resu
  */
 class Pod
 {
-    private $deprecated;
     private $new;
 
     function __construct ($type = null, $id = null) {
         pods_deprecated('Pod (class)', '2.0.0', 'pods (function)');
+
+        $this->new = pods( $type, $id );
     }
 
     /**
@@ -119,27 +120,7 @@ class Pod
     public function __get ( $name ) {
         $name = (string) $name;
 
-        if ( !isset( $this->deprecated ) ) {
-            require_once( PODS_DIR . 'deprecated/classes/Pods.php' );
-            $this->deprecated = new Pods_Deprecated( $this );
-        }
-
-        $var = null;
-
-        if ( isset( $this->deprecated->{$name} ) ) {
-            pods_deprecated( "Pod->{$name}", '2.0.0' );
-
-            $var = $this->deprecated->{$name};
-        }
-        else {
-            if ( !isset( $this->new ) )
-                $this->new = pods();
-
-            if ( isset( $this->new->{$name} ) )
-                $var = $this->new->{$name};
-            else
-                pods_deprecated( "Pod->{$name}", '2.0.0' );
-        }
+        $var = $this->new->{$name};
 
         return $var;
     }
@@ -152,22 +133,7 @@ class Pod
     public function __call ( $name, $args ) {
         $name = (string) $name;
 
-        if ( !isset( $this->deprecated ) ) {
-            require_once( PODS_DIR . 'deprecated/classes/Pods.php' );
-            $this->deprecated = new Pods_Deprecated( $this );
-        }
-
-        if ( method_exists( $this->deprecated, $name ) )
-            return call_user_func_array( array( $this->deprecated, $name ), $args );
-        else {
-            if ( !isset( $this->new ) )
-                $this->new = pods();
-
-            if ( method_exists( $this->new, $name ) )
-                return call_user_func_array( array( $this->new, $name ), $args );
-            else
-                pods_deprecated( "Pod::{$name}", '2.0.0' );
-        }
+        return call_user_func_array( array( $this->new, $name ), $args );
     }
 }
 
@@ -179,11 +145,13 @@ class Pod
  */
 class PodAPI
 {
-    private $deprecated;
+
     private $new;
 
-    function __construct ( $type = null, $id = null ) {
+    function __construct ( $type = null, $format = null ) {
         pods_deprecated( 'PodAPI (class)', '2.0.0', 'pods_api (function)' );
+
+        $this->new = pods_api( $type, $format );
     }
 
     /**
@@ -194,27 +162,7 @@ class PodAPI
     public function __get ( $name ) {
         $name = (string) $name;
 
-        if ( !isset( $this->deprecated ) ) {
-            require_once( PODS_DIR . 'deprecated/classes/PodsAPI.php' );
-            $this->deprecated = new PodsAPI_Deprecated( $this );
-        }
-
-        $var = null;
-
-        if ( isset( $this->deprecated->{$name} ) ) {
-            pods_deprecated( "PodAPI->{$name}", '2.0.0' );
-
-            $var = $this->deprecated->{$name};
-        }
-        else {
-            if ( !isset( $this->new ) )
-                $this->new = pods_api();
-
-            if ( isset( $this->new->{$name} ) )
-                $var = $this->new->{$name};
-            else
-                pods_deprecated( "PodAPI->{$name}", '2.0.0' );
-        }
+        $var = $this->new->{$name};
 
         return $var;
     }
@@ -227,22 +175,7 @@ class PodAPI
     public function __call ( $name, $args ) {
         $name = (string) $name;
 
-        if ( !isset( $this->deprecated ) ) {
-            require_once( PODS_DIR . 'deprecated/classes/PodsAPI.php' );
-            $this->deprecated = new PodsAPI_Deprecated( $this );
-        }
-
-        if ( method_exists( $this->deprecated, $name ) )
-            return call_user_func_array( array( $this->deprecated, $name ), $args );
-        else {
-            if ( !isset( $this->new ) )
-                $this->new = pods_api();
-
-            if ( method_exists( $this->new, $name ) )
-                return call_user_func_array( array( $this->new, $name ), $args );
-            else
-                pods_deprecated( "PodAPI::{$name}", '2.0.0' );
-        }
+        return call_user_func_array( array( $this->new, $name ), $args );
     }
 }
 

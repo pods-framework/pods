@@ -230,18 +230,9 @@ class PodsField_Date extends PodsField {
      * @since 2.0.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-        if ( !empty( $value ) ) {
-            $format = $this->format( $options );
+        $format = $this->format( $options );
 
-            $date = $this->createFromFormat( $format, (string) $value );
-
-            if ( false !== $date )
-                $value = $date->format( 'Y-m-d H:i:s' );
-            else
-                $value = date_i18n( 'Y-m-d H:i:s', strtotime( (string) $value ) );
-        }
-        else
-            $value = date_i18n( 'Y-m-d H:i:s' );
+        $value = $this->convert_date( $value, 'Y-m-d H:i:s', $format );
 
         return $value;
     }
@@ -365,8 +356,30 @@ class PodsField_Date extends PodsField {
      */
     public function createFromFormat ( $format, $date ) {
         if ( method_exists( 'DateTime', 'createFromFormat' ) )
-            return DateTime::createFromFormat( $format, $date );
+            return DateTime::createFromFormat( $format, (string) $date );
 
-        return new DateTime( date( 'Y-m-d H:i:s', strtotime( $date ) ) );
+        return new DateTime( date_i18n( 'Y-m-d H:i:s', strtotime( (string) $date ) ) );
+    }
+
+    /**
+     * Convert a date from one format to another
+     *
+     * @param $date
+     * @param $new_format
+     * @param $original_format
+     */
+    public function convert_date ( $value, $new_format, $original_format = 'Y-m-d h:m:s' ) {
+        if ( !empty( $value ) ) {
+            $date = $this->createFromFormat( $original_format, (string) $value );
+
+            if ( false !== $date )
+                $value = $date->format( $new_format );
+            else
+                $value = date_i18n( $new_format, strtotime( (string) $value ) );
+        }
+        else
+            $value = date_i18n( $new_format );
+
+        return $value;
     }
 }

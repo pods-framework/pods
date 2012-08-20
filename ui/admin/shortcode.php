@@ -230,9 +230,9 @@
                     <label for="pod_select">Choose a Pod</label>
                     <?php if ( $pod_count > 0 ) { ?>
                         <select id="pod_select" name="pod_select">
-                            <?php foreach ( $all_pods as $pod => $data ) { ?>
-                                <option value="<?php echo $pod; ?>">
-                                    <?php echo $pod; ?>
+                            <?php foreach ( $all_pods as $pod ) { ?>
+                                <option value="<?php echo $pod[ 'name' ]; ?>">
+                                    <?php echo $pod[ 'name' ]; ?>
                                 </option>
                             <?php } ?>
                         </select>
@@ -242,17 +242,15 @@
                 </div>
                 <div class="pods-section hide">
                     <?php
-                        $templates = $api->load_templates( array(
-                            'orderby' => 'name ASC',
-                        ) );
+                        $templates = $api->load_templates();
                         $template_count = count( $templates );
                     ?>
                     <label for="pod_template">Template</label>
                     <select id="pod_template" name="pod_template">
-                        <option value="">- Custom Template -</option>
-                        <?php foreach ( $templates as $tmpl => $data ) { ?>
-                            <option value="<?php echo $tmpl; ?>">
-                                <?php echo $tmpl; ?>
+                        <option value="">Custom Template</option>
+                        <?php foreach ( $templates as $tmpl ) { ?>
+                            <option value="<?php echo $tmpl[ 'name' ]; ?>">
+                                <?php echo $tmpl[ 'name' ]; ?>
                             </option>
                         <?php } ?>
                     </select>
@@ -292,17 +290,15 @@
                 </div>
                 <div class="pods-section hide">
                     <?php
-                        $helpers = $api->load_helpers( array(
-                            'orderby' => 'name ASC',
-                        ) );
+                        $helpers = $api->load_helpers();
                         $helper_count = count( $helpers );
                     ?>
                     <label for="pod_helper"><?php _e('Helper', 'pods'); ?></label>
                     <select id="pod_helper" name="pod_helper">
                         <option value="">- <?php _e('Helper', 'pods'); ?> -</option>
-                        <?php foreach ( $helpers as $helper => $data ) { ?>
-                            <option value="<?php echo $helper; ?>">
-                                <?php echo $helper; ?>
+                        <?php foreach ( $helpers as $helper ) { ?>
+                            <option value="<?php echo $helper[ 'name' ]; ?>">
+                                <?php echo $helper[ 'name' ]; ?>
                             </option>
                         <?php } ?>
                     </select>

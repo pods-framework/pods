@@ -397,6 +397,18 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
                                                     <?php echo PodsForm::label( 'label_not_found', __( 'Not Found', 'pods' ), __( 'help', 'pods' ) ); ?>
                                                     <?php echo PodsForm::field( 'label_not_found', pods_var_raw( 'label_not_found', $pod ), 'text' ); ?>
                                                 </div>
+
+                                                <?php
+                                                    if ( in_array( pods_var( 'type', $pod ), array( 'post_type', 'pod' ) ) ) {
+                                                ?>
+                                                    <div class="pods-field-option">
+                                                        <?php echo PodsForm::label( 'label_not_found_in_trash', __( 'Not Found', 'pods' ), __( 'help', 'pods' ) ); ?>
+                                                        <?php echo PodsForm::field( 'label_not_found_in_trash', pods_var_raw( 'label_not_found_in_trash', $pod ), 'text' ); ?>
+                                                    </div>
+                                                <?php
+                                                    }
+                                                ?>
+
                                                 <div class="pods-field-option">
                                                     <?php echo PodsForm::label( 'label_popular_items', __( 'Popular <span class="pods-slugged" data-sluggable="label">Items</span>' ), __( 'help', 'pods' ) ); ?>
                                                     <?php echo PodsForm::field( 'label_popular_items', pods_var_raw( 'label_popular_items', $pod ), 'text' ); ?>

@@ -163,11 +163,19 @@ class PodsData {
      */
     public $filters = array();
 
-    // traversal
     /**
+     * Holds Traversal information about Pods
+     *
      * @var array
      */
     public $traversal = array();
+
+    /**
+     * Holds custom Traversals to be included
+     *
+     * @var array
+     */
+    public $traverse = array();
 
     /**
      * Data Abstraction Class for Pods
@@ -439,6 +447,7 @@ class PodsData {
             'filters' => array(),
 
             'fields' => array(),
+            'traverse' => array(),
 
             'sql' => null,
 
@@ -487,6 +496,9 @@ class PodsData {
 
         if ( false === $params->strict && empty( $params->orderby ) && !empty( $this->orderby ) )
             $params->orderby = $this->orderby;
+
+        if ( !empty( $params->traverse ) )
+            $this->traverse = $params->traverse;
 
         // Get Aliases for future reference
         $selectsfound = '';
@@ -544,28 +556,38 @@ class PodsData {
 
             $found = (array) @current( $found );
             $find = $replace = array();
+
             foreach ( $found as $key => $value ) {
                 $value = str_replace( '`', '', $value );
                 $value = explode( '.', $value );
                 $dot = array_pop( $value );
+
                 if ( in_array( '/\b' . trim( $found[ $key ], '`' ) . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $find ) ) {
                     unset( $found[ $key ] );
                     continue;
                 }
+
                 $find[ $key ] = '/\b' . trim( $found[ $key ], '`' ) . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/';
                 $esc_start = $esc_end = '`';
+
                 if ( strlen( ltrim( $found[ $key ], '`' ) ) < strlen( $found[ $key ] ) )
                     $esc_start = '';
+
                 if ( strlen( rtrim( $found[ $key ], '`' ) ) < strlen( $found[ $key ] ) )
                     $esc_end = '';
+
                 if ( '*' != $dot )
                     $dot = '`' . $dot . $esc_end;
+
                 $replace[ $key ] = $esc_start . implode( '_', $value ) . '`.' . $dot;
+
                 if ( in_array( $value[ 0 ], array( 't', 'p' ) ) ) {
                     unset( $found[ $key ] );
                     continue;
                 }
+
                 unset( $found[ $key ] );
+
                 if ( !in_array( $value, $found ) )
                     $found[ $key ] = $value;
             }
@@ -574,14 +596,17 @@ class PodsData {
                 foreach ( (array) $this->traverse as $key => $traverse ) {
                     $traverse = str_replace( '`', '', $traverse );
                     $already_found = false;
+
                     foreach ( $found as $traversal ) {
                         if ( is_array( $traversal ) )
                             $traversal = implode( '.', $traversal );
+
                         if ( $traversal == $traverse ) {
                             $already_found = true;
                             break;
                         }
                     }
+
                     if ( !$already_found )
                         $found[ 'traverse_' . $key ] = explode( '.', $traverse );
                 }

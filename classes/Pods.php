@@ -399,15 +399,13 @@ class Pods {
                         $pick_object = $all_fields[ $pod ][ $field ][ 'pick_object' ];
                         $pick_val = $all_fields[ $pod ][ $field ][ 'pick_val' ];
 
-                        $limit = 0;
-
                         if ( in_array( $type, $tableless_field_types ) ) {
                             $single_multi = pods_var( "{$type}_format_type", $all_fields[ $pod ][ $field ][ 'options' ], 'single' );
 
-                            if ( 'single' == $single_multi )
-                                $limit = 1;
-                            elseif ( 'multi' == $single_multi )
+                            if ( 'multi' == $single_multi )
                                 $limit = (int) pods_var( "{$type}_limit", $all_fields[ $pod ][ $field ][ 'options' ], 0 );
+                            else
+                                $limit = 1;
                         }
 
                         $last_type = $type;

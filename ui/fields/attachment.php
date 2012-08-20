@@ -17,8 +17,9 @@
     $css_id = $attributes[ 'id' ];
 
     $file_limit = 1;
-    if ( isset( $options[ 'file_limit' ] ) && 'multi' == $options[ 'file_format_type' ] )
-        $file_limit = (int) $options[ 'file_limit' ];
+
+    if ( 'multi' == pods_var( 'file_format_type', $options, 'single' ) )
+        $file_limit = (int) pods_var( 'file_limit', $options, 0 );
 
     if ( empty( $value ) )
         $value = array();
@@ -29,7 +30,7 @@
         <tbody>
             <tr class="form-field">
                 <td>
-                    <ul class="pods-files"><?php // no extra space in ul or CSS:empty won't work
+                    <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
                             foreach ( $value as $val ) {
                                 $thumb = wp_get_attachment_image_src( $val[ 'id' ], 'thumbnail', true );
                                 echo $field_file->markup( $attributes, $file_limit, $options[ 'file_edit_title' ], $val[ 'ID' ], $thumb[ 0 ], basename( $val[ 'guid' ] ) );

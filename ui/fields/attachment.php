@@ -33,7 +33,7 @@
                     <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
                             foreach ( $value as $val ) {
                                 $thumb = wp_get_attachment_image_src( $val[ 'id' ], 'thumbnail', true );
-                                echo $field_file->markup( $attributes, $file_limit, $options[ 'file_edit_title' ], $val[ 'ID' ], $thumb[ 0 ], basename( $val[ 'guid' ] ) );
+                                echo $field_file->markup( $attributes, $file_limit, pods_var( 'file_edit_title', $options, 0 ), $val[ 'ID' ], $thumb[ 0 ], basename( $val[ 'guid' ] ) );
                             }
                         ?></ul>
 
@@ -44,7 +44,7 @@
     </table>
 
     <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
-        <?php echo $field_file->markup( $attributes, $file_limit, $options[ 'file_edit_title' ] ); ?>
+        <?php echo $field_file->markup( $attributes, $file_limit, pods_var( 'file_edit_title', $options, 0 ) ); ?>
     </script>
 
     <script type="text/javascript">
@@ -73,6 +73,8 @@
                 } );
             } );
 
+            var maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = <?php echo esc_js( $file_limit ); ?>;
+
             // hook the add link
             $( '#<?php echo esc_js( $css_id ); ?>' ).on( 'click', 'a.pods-file-add', function ( e ) {
                 e.preventDefault();
@@ -86,7 +88,7 @@
                 pods_file_context = trigger.parent().find( 'ul.pods-files' );
                 pods_file_thickbox_modder = setInterval( function () {
                     if ( pods_file_context )
-                        pods_attachments( '<?php echo esc_js( $css_id ); ?>', <?php echo $file_limit; ?> );
+                        pods_attachments( '<?php echo esc_js( $css_id ); ?>', maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> );
                 }, 500 );
 
                 tb_show( 'Attach a file', e.target.href, false );

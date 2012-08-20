@@ -1879,7 +1879,7 @@ class PodsAPI {
                 // Prepare all table (non-relational) data
                 if ( !in_array( $type, $tableless_field_types ) ) {
                     $table_fields[] = "`{$field}`";
-                    $table_formats[] = PodsForm::prepare( $type, $options );
+                    $table_formats[] = PodsForm::prepare( $type, pods_var( 'options', $options, array() ) );
                     $table_values[] = $value;
 
                     $object_meta[ $field ] = $value;

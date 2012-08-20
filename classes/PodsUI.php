@@ -1346,17 +1346,26 @@ class PodsUI
      */
     public function delete ($id = null) {
         $id = pods_absint($id);
+
         if (empty($id))
             $id = pods_absint($this->id);
+
         $this->do_hook('pre_delete', $id);
+
         if (isset($this->actions_custom['delete']) && is_callable($this->actions_custom['delete']))
             return call_user_func_array($this->actions_custom['delete'], array( $id, &$this ) );
+
         if ($id < 1)
             return $this->error(__('<strong>Error:</strong> Invalid Configuration - Missing "id" definition.', 'pods'));
+
         if (false === $id)
             $id = $this->id;
-        //$this->pods_data->delete(); @todo Fix this
-        $check = false;
+
+        if ( is_object( $this->pod ) )
+            $check = $this->pod->delete( $id );
+        else
+            $check = $this->pods_data->delete( $this->table, array( $this->data->field_id => $id ) );
+
         if ($check)
             $this->message(__("<strong>Deleted:</strong> {$this->item} has been deleted.", 'pods'));
         else

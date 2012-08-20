@@ -2647,7 +2647,7 @@ class PodsAPI {
         }
 
         if ( 'table' == $pod[ 'storage' ] )
-            pods_query( "DELETE FROM `@wp_pods_tbl_{$params->datatype}` WHERE `id` = {$params->id} LIMIT 1" );
+            pods_query( "DELETE FROM `@wp_pods_tbl_{$params->pod}` WHERE `id` = {$params->id} LIMIT 1" );
 
         if ( 'taxonomy' == $pod[ 'type' ] ) {
             $taxonomy = $pod[ 'name' ];

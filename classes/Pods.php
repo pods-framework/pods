@@ -492,9 +492,6 @@ class Pods {
                             // Return entire array
                             if ( false === $params->in_form && false !== $field_exists && in_array( $last_type, $tableless_field_types ) )
                                 $value = $data;
-                            // Return a single column value
-                            elseif ( false === $params->in_form && 1 == $limit )
-                                $value = $data[ 0 ];
                             // Return an array of single column values
                             else {
                                 $value = array();
@@ -506,6 +503,10 @@ class Pods {
                                     $value[] = $item[ $field ];
                                 }
                             }
+
+                            // Return a single column value
+                            if ( false === $params->in_form && 1 == $limit && !empty( $value ) && isset( $value[ 0 ] ) )
+                                $value = $value[ 0 ];
                         }
 
                         break;

@@ -9,4 +9,4 @@ $result = $wpdb->get_col("SHOW TABLES LIKE '{$wpdb->prefix}pods%'");
 foreach ((array) $result as $table) {
     $wpdb->query("DROP TABLE `{$table}`");
 }
-$wpdb->query("DELETE FROM `{$wpdb->prefix}` WHERE `option_name` LIKE 'pods_%'");
+$wpdb->query("DELETE FROM `{$wpdb->prefix}` WHERE `option_name` LIKE 'pods_framework_%'");

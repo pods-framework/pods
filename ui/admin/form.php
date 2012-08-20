@@ -100,11 +100,12 @@
                     <?php
                         $more = false;
 
-                        foreach ( $fields as $field ) {
-                            if ( $pod->pod_data[ 'field_index' ] != $field[ 'name' ] )
-                                continue;
+                        if ( $pod->pod_data[ 'field_index' ] != $pod->pod_data[ 'field_id' ] ) {
+                            foreach ( $fields as $field ) {
+                                if ( $pod->pod_data[ 'field_index' ] != $field[ 'name' ] )
+                                    continue;
 
-                            $more = true;
+                                $more = true;
                     ?>
                         <div id="titlediv">
                             <div id="titlewrap">
@@ -122,6 +123,7 @@
                         </div>
                         <!-- /#titlediv -->
                     <?php
+                            }
                         }
                     ?>
 

@@ -409,8 +409,7 @@ class PodsUpgrade_2_0 {
                         'required' => $row->required,
                         'unique' => $row->unique,
                         'input_helper' => $row->input_helper,
-                        'old_name' => $old_name,
-                        'pod_index' => 'name'
+                        'old_name' => $old_name
                     )
                 );
 
@@ -481,6 +480,7 @@ class PodsUpgrade_2_0 {
                     'post_delete_helpers' => $pod_type->post_drop_helpers,
                     'show_in_menu' => $pod_type->is_toplevel,
                     'detail_url' => $pod_type->detail_page,
+                    'pod_index' => 'name'
                 ),
             );
 

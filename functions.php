@@ -182,7 +182,7 @@ function pods_ui_error ( $msg ) {
  * @since 2.0.0
  */
 function pods_deprecated ( $function, $version, $replacement = null ) {
-    if ( !version_compare( $version, PODS_VERSION, '<=' ) )
+    if ( !version_compare( $version, PODS_VERSION, '<=' ) && !version_compare( $version . '-a-0', PODS_VERSION, '<=' ) )
         return;
 
     do_action( 'deprecated_function_run', $function, $replacement, $version );

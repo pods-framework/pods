@@ -211,6 +211,20 @@ class Pods {
     }
 
     /**
+     * Return field array from a Pod
+     *
+     * @since 2.0.0
+     */
+    public function fields () {
+        $this->do_hook( 'fields' );
+
+        if ( empty( $this->fields ) )
+            return false;
+
+        return (array) $this->fields;
+    }
+
+    /**
      * Return row array for an item
      *
      * @since 2.0.0

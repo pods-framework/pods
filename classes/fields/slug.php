@@ -119,7 +119,7 @@ class PodsField_Slug extends PodsField {
             $value = $fields[ $pod[ 'index' ] ][ 'value' ];
 
         if ( !empty( $value ) )
-            $value = pods_unique_slug( $value, $name, pods_var( 'pod', $pod ), pods_var( 'pod_id', $pod ), $id );
+            $value = pods_unique_slug( $value, $name, $pod, 0, $id );
 
         if ( empty( $value ) )
             return false;

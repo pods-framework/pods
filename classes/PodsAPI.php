@@ -1656,7 +1656,7 @@ class PodsAPI {
     public function save_pod_item ( $params ) {
         global $wpdb;
 
-        $params = (object) str_replace( '@wp_', '{prefix}', pods_sanitize( $params ) );
+        $params = (object) str_replace( '@wp_', '{prefix}', $params );
 
         $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
 
@@ -4569,7 +4569,7 @@ class PodsAPI {
         $data = array();
 
         foreach ( $fields as $field ) {
-            $data[ $field ] = pods_var( 'pods_field_' . $field, $params, '' );
+            $data[ $field ] = pods_var_raw( 'pods_field_' . $field, $params, '' );
         }
 
         $params = array(

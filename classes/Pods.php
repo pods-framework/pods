@@ -95,6 +95,16 @@ class Pods {
     public $search_mode = 'int'; // int | text | text_like
 
     /**
+     * @var int
+     */
+    public $total = 0;
+
+    /**
+     * @var int
+     */
+    public $total_found = 0;
+
+    /**
      * @var
      */
     public $ui;

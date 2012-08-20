@@ -644,36 +644,22 @@ function pods_clean_name ( $orig, $lower = true ) {
  * @return string The unique slug name
  * @since 1.7.2
  */
-function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, &$obj = null ) {
+function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, $id = 0, &$obj = null ) {
     $slug = pods_create_slug( $slug );
-
-    $id = 0;
 
     $pod_data = array();
 
-    if ( is_object( $pod ) ) {
-        if ( isset( $pod->id ) )
-            $id = $pod->id;
-
-        if ( isset( $pod->pod_id ) )
-            $pod_id = $pod->pod_id;
-
-        if ( isset( $pod->pod_data ) )
-            $pod_data = $pod->pod_data;
-
-        if ( isset( $pod->pod ) )
-            $pod = $pod->pod;
-        elseif ( isset( $pod->datatype ) )
-            $pod = $pod->datatype;
-        else
-            return $slug;
+    if ( is_array( $pod ) ) {
+        $pod_id = pods_var( 'id', $pod, 0 );
+        $pod = pods_var( 'name', $pod );
+        $pod_data = $pod;
     }
 
     $pod_id = absint( $pod_id );
     $id = absint( $id );
 
     if ( empty( $pod_data ) )
-        $pod_data = pods_api()->load_pod( array( 'id' => $pod_id, 'name' => $pod ) );
+        $pod_data = pods_api()->load_pod( array( 'id' => $pod_id, 'name' => $pod ), false );
 
     if ( empty( $pod_data ) || empty( $pod_id ) || empty( $pod ) )
         return $slug;

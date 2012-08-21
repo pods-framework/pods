@@ -7,7 +7,7 @@
  * Description: Import Custom Post Types and Taxonomies from Custom Post Types UI (<a href="http://webdevstudios.com/plugin/custom-post-type-ui/">http://webdevstudios.com/plugin/custom-post-type-ui/</a>)
  *
  * Version: 1.0
- * 
+ *
  * Developer Mode: on
  *
  * xPlugin Dependency: Custom Post Types UI|custom-post-types-ui/custom-post-types-ui.php|http://webdevstudios.com/plugin/custom-post-type-ui/
@@ -39,6 +39,22 @@ class Pods_Migrate_CPTUI extends PodsComponent {
      */
     public function admin_assets () {
         wp_enqueue_style( 'pods-wizard' );
+    }
+
+    /**
+     * Show the Admin
+     */
+    public function admin () {
+        echo pods_view( PODS_DIR . '/components/Migrate-CPTUI/wizard.php' );
+    }
+
+    /**
+     * Handle the Migration AJAX
+     *
+     * @param $params
+     */
+    public function ajax_migrate ( $params ) {
+        // process the form
     }
 
     /**
@@ -229,13 +245,5 @@ class Pods_Migrate_CPTUI extends PodsComponent {
     public function clean () {
         delete_option( 'cpt_custom_post_types' );
         delete_option( 'cpt_custom_tax_types' );
-    }
-
-    public function admin () {
-        echo pods_view( PODS_DIR . '/components/Migrate-CPTUI/wizard.php' );
-    }
-
-    public function ajax_migrate ( $params ) {
-        // process the form
     }
 }

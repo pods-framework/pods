@@ -1,16 +1,16 @@
 <?php
 /**
- * Name: Migrate: Import from Custom Post Types UI
+ * Name: Migrate: Import from Custom Post Type UI
  *
  * Menu Name: Migrate CPT UI
  *
- * Description: Import Custom Post Types and Taxonomies from Custom Post Types UI (<a href="http://webdevstudios.com/plugin/custom-post-type-ui/">http://webdevstudios.com/plugin/custom-post-type-ui/</a>)
+ * Description: Import Custom Post Types and Taxonomies from Custom Post Type UI (<a href="http://webdevstudios.com/plugin/custom-post-type-ui/">http://webdevstudios.com/plugin/custom-post-type-ui/</a>)
  *
  * Version: 1.0
  *
  * Developer Mode: on
  *
- * xPlugin Dependency: Custom Post Types UI|custom-post-types-ui/custom-post-types-ui.php|http://webdevstudios.com/plugin/custom-post-type-ui/
+ * xPlugin Dependency: Custom Post Type UI|custom-post-types-ui/custom-post-types-ui.php|http://webdevstudios.com/plugin/custom-post-type-ui/
  *
  * @package pods
  * @subpackage migrate-cptui
@@ -19,9 +19,9 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 
     private $api = null;
 
-    private $cpt_post_types = null;
+    private $post_types = null;
 
-    private $cpt_taxonomies = null;
+    private $taxonomies = null;
 
     /**
      * Do things like register scripts and stylesheets
@@ -29,7 +29,8 @@ class Pods_Migrate_CPTUI extends PodsComponent {
      * @since 2.0.0
      */
     public function __construct () {
-
+        $this->post_types = (array) get_option( 'cpt_custom_post_types', array() );
+        $this->taxonomies = (array) get_option( 'cpt_custom_tax_types', array() );
     }
 
     /**
@@ -45,7 +46,10 @@ class Pods_Migrate_CPTUI extends PodsComponent {
      * Show the Admin
      */
     public function admin () {
-        echo pods_view( PODS_DIR . '/components/Migrate-CPTUI/wizard.php' );
+        $post_types = (array) $this->post_types;
+        $taxonomies = (array) $this->taxonomies;
+
+        echo pods_view( PODS_DIR . '/components/Migrate-CPTUI/wizard.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
@@ -54,6 +58,8 @@ class Pods_Migrate_CPTUI extends PodsComponent {
      * @param $params
      */
     public function ajax_migrate ( $params ) {
+
+
         // process the form
     }
 

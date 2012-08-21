@@ -143,7 +143,7 @@ class PodsComponents {
     public function get_components () {
         $components = get_transient( 'pods_components' );
 
-        if ( !is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET[ 'page' ] ) && 'pods-components' == $_GET[ 'page' ] && isset( $_GET[ 'reload_components' ] ) ) ) {
+        if ( !is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET[ 'page' ] ) && 'pods-components' == $_GET[ 'page' ] ) ) {
             $component_dir = @opendir( rtrim( $this->components_dir, '/' ) );
             $component_files = array();
 
@@ -210,6 +210,9 @@ class PodsComponents {
                 else
                     $component_data[ 'DeveloperMode' ] = false;
 
+                if ( true === $component_data[ 'DeveloperMode' ] && ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) )
+                    continue;
+
                 $component_data[ 'File' ] = $component_file;
 
                 $components[ $component_data[ 'ID' ] ] = $component_data;
@@ -246,7 +249,7 @@ class PodsComponents {
         $component = str_replace( 'pods-component-', '', $_GET[ 'page' ] );
 
         if ( isset( $this->components[ $component ] ) && isset( $this->components[ $component ][ 'object' ] ) && method_exists( $this->components[ $component ][ 'object' ], 'admin' ) )
-            $this->components[ $component ][ 'object' ]->admin( $this->settings[ 'components' ][ $component ] );
+            $this->components[ $component ][ 'object' ]->admin( $this->settings[ 'components' ][ $component ], $component );
     }
 
     /**
@@ -304,11 +307,11 @@ class PodsComponents {
         if ( !isset( $component ) || !isset( $this->components[ $component ] ) || !isset( $this->settings[ 'components' ][ $component ] ) )
             pods_error( 'Invalid AJAX request', $this );
 
-        if ( !isset( $this->components[ $component ][ 'object' ] ) || !method_exists( $this->components[ $component ][ 'object' ], 'ajax_' . $method ) )
-            pods_error( 'API method does not exist', $this );
-
         if ( !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, 'pods-component-' . $component . '-' . $method ) )
             pods_error( 'Unauthorized request', $this );
+
+        if ( !isset( $this->components[ $component ][ 'object' ] ) || !method_exists( $this->components[ $component ][ 'object' ], 'ajax_' . $method ) )
+            pods_error( 'API method does not exist', $this );
 
         // Cleaning up $params
         unset( $params->action );

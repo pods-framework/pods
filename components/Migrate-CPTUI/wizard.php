@@ -7,9 +7,9 @@
     <form action="" method="post" class="pods-submittable">
         <div class="pods-submittable-fields">
             <input type="hidden" name="action" value="pods_admin_components" />
-            <input type="hidden" name="component" value="migrate-import-from-custom-post-types-ui" />
-            <input type="hidden" name="method" value="migrate" />
-            <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('pods-component-migrate-import-from-custom-post-types-ui-migrate'); ?>" />
+            <input type="hidden" name="component" value="<?php echo $component; ?>" />
+            <input type="hidden" name="method" value="<?php echo $method; ?>" />
+            <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('pods-component-' . $component . '-' . $method ); ?>" />
             <input type="hidden" name="cleanup" id="pods_cleanup" value="0" />
 
             <h2 class="italicized"><?php _e('Migrate: Import from Custom Post Type UI', 'pods'); ?></h2>
@@ -65,61 +65,85 @@
                         <div class="stuffbox">
                             <h3><label for="link_name"><?php _e( 'Choose Post Types to Import', 'pods' ); ?></label></h3>
 
-                            <div class="inside pods-manage-field pods-dependency">
-                                <div class="pods-field-option-group">
-                                    <p class="pods-field-option-group-label">
-                                        <?php _e( 'Available Post Types', 'pods' ); ?>
-                                    </p>
+                            <?php
+                                if ( !empty( $post_types ) ) {
+                            ?>
+                                <div class="inside pods-manage-field pods-dependency">
+                                    <div class="pods-field-option-group">
+                                        <p class="pods-field-option-group-label">
+                                            <?php _e( 'Available Post Types', 'pods' ); ?>
+                                        </p>
 
-                                    <div class="pods-pick-values pods-pick-checkbox">
-                                        <ul>
-                                            <?php
-                                                foreach ( $post_types as $post_type ) {
-                                                    $post_type_name = pods_var_raw( 'name', $post_type );
-                                                    $post_type_label = pods_var_raw( 'label', $post_type, ucwords( str_replace( '_', ' ', $post_type_name ) ) );
-                                            ?>
-                                                <li>
-                                                    <div class="pods-field pods-boolean">
-                                                        <?php echo PodsForm::field( 'post_type[' . $post_type_name . ']', pods_var_raw( 'post_type[' . $post_type_name . ']', 'post', false ), 'boolean', array( 'boolean_yes_label' => $post_type_label . ' (' . $post_type_name . ')' ) ); ?>
-                                                    </div>
-                                                </li>
-                                            <?php
-                                                }
-                                            ?>
-                                        </ul>
+                                        <div class="pods-pick-values pods-pick-checkbox">
+                                            <ul>
+                                                <?php
+                                                    foreach ( $post_types as $post_type ) {
+                                                        $post_type_name = pods_var_raw( 'name', $post_type );
+                                                        $post_type_label = pods_var_raw( 'label', $post_type, ucwords( str_replace( '_', ' ', $post_type_name ) ) );
+                                                ?>
+                                                    <li>
+                                                        <div class="pods-field pods-boolean">
+                                                            <?php echo PodsForm::field( 'post_type[' . $post_type_name . ']', pods_var_raw( 'post_type[' . $post_type_name . ']', 'post', true ), 'boolean', array( 'boolean_yes_label' => $post_type_label . ' (' . $post_type_name . ')' ) ); ?>
+                                                        </div>
+                                                    </li>
+                                                <?php
+                                                    }
+                                                ?>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            <?php
+                                }
+                                else {
+                            ?>
+                                <p><?php _e( 'No Post Types were found.', 'pods' ); ?></p>
+                            <?php
+                                }
+                            ?>
+
                         </div>
 
                         <div class="stuffbox">
                             <h3><label for="link_name"><?php _e( 'Choose Taxonomies to Import', 'pods' ); ?></label></h3>
 
-                            <div class="inside pods-manage-field pods-dependency">
-                                <div class="pods-field-option-group">
-                                    <p class="pods-field-option-group-label">
-                                        <?php _e( 'Available Taxonomies', 'pods' ); ?>
-                                    </p>
+                            <?php
+                                if ( !empty( $taxonomies ) ) {
+                            ?>
+                                <div class="inside pods-manage-field pods-dependency">
+                                    <div class="pods-field-option-group">
+                                        <p class="pods-field-option-group-label">
+                                            <?php _e( 'Available Taxonomies', 'pods' ); ?>
+                                        </p>
 
-                                    <div class="pods-pick-values pods-pick-checkbox">
-                                        <ul>
-                                            <?php
-                                                foreach ( $taxonomies as $taxonomy ) {
-                                                    $taxonomy_name = pods_var_raw( 'name', $taxonomy );
-                                                    $taxonomy_label = pods_var_raw( 'label', $taxonomy, ucwords( str_replace( '_', ' ', $taxonomy_name ) ) );
-                                            ?>
-                                                <li>
-                                                    <div class="pods-field pods-boolean">
-                                                        <?php echo PodsForm::field( 'taxonomy[' . $taxonomy_name . ']', pods_var_raw( 'taxonomy[' . $taxonomy_name . ']', 'post', false ), 'boolean', array( 'boolean_yes_label' => $taxonomy_label . ' (' . $taxonomy_name . ')' ) ); ?>
-                                                    </div>
-                                                </li>
-                                            <?php
-                                                }
-                                            ?>
-                                        </ul>
+                                        <div class="pods-pick-values pods-pick-checkbox">
+                                            <ul>
+                                                <?php
+                                                    foreach ( $taxonomies as $taxonomy ) {
+                                                        $taxonomy_name = pods_var_raw( 'name', $taxonomy );
+                                                        $taxonomy_label = pods_var_raw( 'label', $taxonomy, ucwords( str_replace( '_', ' ', $taxonomy_name ) ) );
+                                                ?>
+                                                    <li>
+                                                        <div class="pods-field pods-boolean">
+                                                            <?php echo PodsForm::field( 'taxonomy[' . $taxonomy_name . ']', pods_var_raw( 'taxonomy[' . $taxonomy_name . ']', 'post', true ), 'boolean', array( 'boolean_yes_label' => $taxonomy_label . ' (' . $taxonomy_name . ')' ) ); ?>
+                                                        </div>
+                                                    </li>
+                                                <?php
+                                                    }
+                                                ?>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            <?php
+                                }
+                                else {
+                            ?>
+                                <p><?php _e( 'No Taxonomies were found.', 'pods' ); ?></p>
+                            <?php
+                                }
+                            ?>
+
                         </div>
                     </div>
 

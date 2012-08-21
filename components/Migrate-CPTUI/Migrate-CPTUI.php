@@ -8,10 +8,6 @@
  *
  * Version: 1.0
  *
- * Developer Mode: on
- *
- * xPlugin Dependency: Custom Post Type UI|custom-post-types-ui/custom-post-types-ui.php|http://webdevstudios.com/plugin/custom-post-type-ui/
- *
  * @package pods
  * @subpackage migrate-cptui
  */
@@ -45,9 +41,11 @@ class Pods_Migrate_CPTUI extends PodsComponent {
     /**
      * Show the Admin
      */
-    public function admin () {
+    public function admin ( $settings, $component ) {
         $post_types = (array) $this->post_types;
         $taxonomies = (array) $this->taxonomies;
+
+        $method = 'migrate'; // ajax_migrate
 
         echo pods_view( PODS_DIR . '/components/Migrate-CPTUI/wizard.php', compact( array_keys( get_defined_vars() ) ) );
     }
@@ -81,7 +79,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
             if ( !in_array( pods_var( 'name', $post_type ), $migrate_post_types ) )
                 continue;
 
-            $id = $this->migrate_post_type( $post_type, 'meta' );
+            $id = $this->migrate_post_type( $post_type );
 
             if ( 0 < $id )
                 unset( $post_types[ $k ] );
@@ -115,57 +113,57 @@ class Pods_Migrate_CPTUI extends PodsComponent {
      *
      * @since 2.0.0
      */
-    private function migrate_post_type ( $cptui_post_type, $storage ) {
+    private function migrate_post_type ( $post_type ) {
         $params = array(
             'type' => 'post_type',
-            'storage' => $storage,
+            'storage' => 'meta',
             'object' => '',
-            'name' => $cptui_post_type[ 'name' ],
-            'label' => $cptui_post_type[ 'label' ],
-            'label_singular' => $cptui_post_type[ 'singular_label' ],
-            'description' => $cptui_post_type[ 'description' ],
-            'public' => $cptui_post_type[ 'public' ],
-            'show_ui' => (int) $cptui_post_type[ 'show_ui' ],
-            'has_archive' => (int) $cptui_post_type[ 'has_archive' ],
-            'exclude_from_search' => (int) $cptui_post_type[ 'exclude_from_search' ],
-            'capability_type' => $cptui_post_type[ 'capability_type' ], //--!! Needs sanity checking?
-            'hierarchical' => (int) $cptui_post_type[ 'hierarchical' ],
-            'rewrite' => (int) $cptui_post_type[ 'rewrite' ],
-            'rewrite_custom_slug' => $cptui_post_type[ 'rewrite_slug' ],
-            'query_var' => (int) $cptui_post_type[ 'query_var' ],
-            'menu_position' => (int) $cptui_post_type[ 'menu_position' ],
-            'show_in_menu' => (int) $cptui_post_type[ 'show_in_menu' ],
-            'menu_string' => $cptui_post_type[ 'show_in_menu_string' ],
+            'name' => pods_var_raw( 'name', $post_type ),
+            'label' => pods_var_raw( 'label', $post_type ),
+            'label_singular' => pods_var_raw( 'singular_label', $post_type ),
+            'description' => pods_var_raw( 'description', $post_type ),
+            'public' => pods_var_raw( 'public', $post_type ),
+            'show_ui' => (int) pods_var_raw( 'show_ui', $post_type ),
+            'has_archive' => (int) pods_var_raw( 'has_archive', $post_type ),
+            'exclude_from_search' => (int) pods_var_raw( 'exclude_from_search', $post_type ),
+            'capability_type' => pods_var_raw( 'capability_type', $post_type ), //--!! Needs sanity checking?
+            'hierarchical' => (int) pods_var_raw( 'hierarchical', $post_type ),
+            'rewrite' => (int) pods_var_raw( 'rewrite', $post_type ),
+            'rewrite_custom_slug' => pods_var_raw( 'rewrite_slug', $post_type ),
+            'query_var' => (int) pods_var_raw( 'query_var', $post_type ),
+            'menu_position' => (int) pods_var_raw( 'menu_position', $post_type ),
+            'show_in_menu' => (int) pods_var_raw( 'show_in_menu', $post_type ),
+            'menu_string' => pods_var_raw( 'show_in_menu_string', $post_type ),
 
             // 'supports' argument to register_post_type()
-            'supports_title' => ( is_array( $cptui_post_type[ 0 ] ) && in_array( 'title', $cptui_post_type[ 0 ] ) ),
-            'supports_editor' => ( is_array( $cptui_post_type[ 0 ] ) && in_array( 'editor', $cptui_post_type[ 0 ] ) ),
-            'supports_excerpt' => ( is_array( $cptui_post_type[ 0 ] ) && in_array( 'excerpt', $cptui_post_type[ 0 ] ) ),
-            'supports_trackbacks' => ( is_array( $cptui_post_type[ 0 ] ) && in_array( 'trackbacks', $cptui_post_type[ 0 ] ) ),
-            'supports_custom_fields' => ( is_array( $cptui_post_type[ 0 ] ) && in_array( 'custom-fields', $cptui_post_type[ 0 ] ) ),
-            'supports_comments' => ( is_array( $cptui_post_type[ 0 ] ) && in_array( 'comments', $cptui_post_type[ 0 ] ) ),
-            'supports_revisions' => ( is_array( $cptui_post_type[ 0 ] ) && in_array( 'revisions', $cptui_post_type[ 0 ] ) ),
-            'supports_thumbnail' => ( is_array( $cptui_post_type[ 0 ] ) && in_array( 'thumbnail', $cptui_post_type[ 0 ] ) ),
-            'supports_author' => ( is_array( $cptui_post_type[ 0 ] ) && in_array( 'author', $cptui_post_type[ 0 ] ) ),
-            'supports_page_attributes' => ( is_array( $cptui_post_type[ 0 ] ) && in_array( 'page-attributes', $cptui_post_type[ 0 ] ) ),
+            'supports_title' => ( is_array( $post_type[ 0 ] ) && in_array( 'title', $post_type[ 0 ] ) ),
+            'supports_editor' => ( is_array( $post_type[ 0 ] ) && in_array( 'editor', $post_type[ 0 ] ) ),
+            'supports_excerpt' => ( is_array( $post_type[ 0 ] ) && in_array( 'excerpt', $post_type[ 0 ] ) ),
+            'supports_trackbacks' => ( is_array( $post_type[ 0 ] ) && in_array( 'trackbacks', $post_type[ 0 ] ) ),
+            'supports_custom_fields' => ( is_array( $post_type[ 0 ] ) && in_array( 'custom-fields', $post_type[ 0 ] ) ),
+            'supports_comments' => ( is_array( $post_type[ 0 ] ) && in_array( 'comments', $post_type[ 0 ] ) ),
+            'supports_revisions' => ( is_array( $post_type[ 0 ] ) && in_array( 'revisions', $post_type[ 0 ] ) ),
+            'supports_thumbnail' => ( is_array( $post_type[ 0 ] ) && in_array( 'thumbnail', $post_type[ 0 ] ) ),
+            'supports_author' => ( is_array( $post_type[ 0 ] ) && in_array( 'author', $post_type[ 0 ] ) ),
+            'supports_page_attributes' => ( is_array( $post_type[ 0 ] ) && in_array( 'page-attributes', $post_type[ 0 ] ) ),
 
             // 'labels' argument to register_post_type()
-            'menu_name' => $cptui_post_type[ 2 ][ 'menu_name' ],
-            'label_add_new' => $cptui_post_type[ 2 ][ 'add_new' ],
-            'label_add_new_item' => $cptui_post_type[ 2 ][ 'add_new_item' ],
-            'label_edit' => $cptui_post_type[ 2 ][ 'edit' ],
-            'label_edit_item' => $cptui_post_type[ 2 ][ 'edit_item' ],
-            'label_new_item' => $cptui_post_type[ 2 ][ 'new_item' ],
-            'label_view' => $cptui_post_type[ 2 ][ 'view' ],
-            'label_view_item' => $cptui_post_type[ 2 ][ 'view_item' ],
-            'label_search_items' => $cptui_post_type[ 2 ][ 'search_items' ],
-            'label_not_found' => $cptui_post_type[ 2 ][ 'not_found' ],
-            'label_not_found_in_trash' => $cptui_post_type[ 2 ][ 'not_found_in_trash' ],
-            'label_parent' => $cptui_post_type[ 2 ][ 'parent' ],
+            'menu_name' => pods_var_raw( 'menu_name', $post_type[ 2 ] ),
+            'label_add_new' => pods_var_raw( 'add_new', $post_type[ 2 ] ),
+            'label_add_new_item' => pods_var_raw( 'add_new_item', $post_type[ 2 ] ),
+            'label_edit' => pods_var_raw( 'edit', $post_type[ 2 ] ),
+            'label_edit_item' => pods_var_raw( 'edit_item', $post_type[ 2 ] ),
+            'label_new_item' => pods_var_raw( 'new_item', $post_type[ 2 ] ),
+            'label_view' => pods_var_raw( 'view', $post_type[ 2 ] ),
+            'label_view_item' => pods_var_raw( 'view_item', $post_type[ 2 ] ),
+            'label_search_items' => pods_var_raw( 'search_items', $post_type[ 2 ] ),
+            'label_not_found' => pods_var_raw( 'not_found', $post_type[ 2 ] ),
+            'label_not_found_in_trash' => pods_var_raw( 'not_found_in_trash', $post_type[ 2 ] ),
+            'label_parent' => pods_var_raw( 'parent', $post_type[ 2 ] ),
         );
 
         // Migrate built-in taxonomies
-        $builtin = $cptui_post_type[ 1 ];
+        $builtin = $post_type[ 1 ];
         if ( is_array( $builtin ) ) {
             foreach ( $builtin as $taxonomy_name ) {
                 $params[ 'built_in_taxonomies_' . $taxonomy_name ] = 1;
@@ -201,37 +199,37 @@ class Pods_Migrate_CPTUI extends PodsComponent {
      *
      * @since 2.0.0
      */
-    private function migrate_taxonomy ( $cptui_taxonomy ) {
+    private function migrate_taxonomy ( $taxonomy ) {
 
         $params = array(
             'type' => 'taxonomy',
             'storage' => 'table',
             'object' => '',
-            'name' => $cptui_taxonomy[ 'name' ],
-            'label' => $cptui_taxonomy[ 'label' ],
-            'label_singular' => $cptui_taxonomy[ 'singular_label' ],
+            'name' => pods_var_raw( 'name', $taxonomy ),
+            'label' => pods_var_raw( 'label', $taxonomy ),
+            'label_singular' => pods_var_raw( 'singular_label', $taxonomy ),
             'public' => 1,
-            'show_ui' => (int) $cptui_taxonomy[ 'show_ui' ],
-            'hierarchical' => (int) $cptui_taxonomy[ 'hierarchical' ],
-            'query_var' => (int) $cptui_taxonomy[ 'query_var' ],
-            'rewrite' => (int) $cptui_taxonomy[ 'rewrite' ],
-            'rewrite_custom_slug' => $cptui_taxonomy[ 'rewrite_slug' ],
-            'label_search_items' => $cptui_taxonomy[ 0 ][ 'search_items' ],
-            'label_popular_items' => $cptui_taxonomy[ 0 ][ 'popular_items' ],
-            'label_all_items' => $cptui_taxonomy[ 0 ][ 'all_items' ],
-            'label_parent' => $cptui_taxonomy[ 0 ][ 'parent_item' ],
-            'label_parent_item_colon' => $cptui_taxonomy[ 0 ][ 'parent_item_colon' ],
-            'label_edit' => $cptui_taxonomy[ 0 ][ 'edit_item' ],
-            'label_update_item' => $cptui_taxonomy[ 0 ][ 'update_item' ],
-            'label_add_new' => $cptui_taxonomy[ 0 ][ 'add_new_item' ],
-            'label_new_item' => $cptui_taxonomy[ 0 ][ 'new_item_name' ],
-            'label_separate_items_with_commas' => $cptui_taxonomy[ 0 ][ 'separate_items_with_commas' ],
-            'label_add_or_remove_items' => $cptui_taxonomy[ 0 ][ 'add_or_remove_items' ],
-            'label_choose_from_the_most_used' => $cptui_taxonomy[ 0 ][ 'choose_from_most_used' ]
+            'show_ui' => (int) pods_var_raw( 'show_ui', $taxonomy ),
+            'hierarchical' => (int) pods_var_raw( 'hierarchical', $taxonomy ),
+            'query_var' => (int) pods_var_raw( 'query_var', $taxonomy ),
+            'rewrite' => (int) pods_var_raw( 'rewrite', $taxonomy ),
+            'rewrite_custom_slug' => pods_var_raw( 'rewrite_slug', $taxonomy ),
+            'label_search_items' => pods_var_raw( 'search_items', $taxonomy[ 0 ] ),
+            'label_popular_items' => pods_var_raw( 'popular_items', $taxonomy[ 0 ] ),
+            'label_all_items' => pods_var_raw( 'all_items', $taxonomy[ 0 ] ),
+            'label_parent' => pods_var_raw( 'parent_item', $taxonomy[ 0 ] ),
+            'label_parent_item_colon' => pods_var_raw( 'parent_item_colon', $taxonomy[ 0 ] ),
+            'label_edit' => pods_var_raw( 'edit_item', $taxonomy[ 0 ] ),
+            'label_update_item' => pods_var_raw( 'update_item', $taxonomy[ 0 ] ),
+            'label_add_new' => pods_var_raw( 'add_new_item', $taxonomy[ 0 ] ),
+            'label_new_item' => pods_var_raw( 'new_item_name', $taxonomy[ 0 ] ),
+            'label_separate_items_with_commas' => pods_var_raw( 'separate_items_with_commas', $taxonomy[ 0 ] ),
+            'label_add_or_remove_items' => pods_var_raw( 'add_or_remove_items', $taxonomy[ 0 ] ),
+            'label_choose_from_the_most_used' => pods_var_raw( 'choose_from_most_used', $taxonomy[ 0 ] )
         );
 
         // Migrate attach-to
-        $attach = $cptui_taxonomy[ 1 ];
+        $attach = $taxonomy[ 1 ];
         if ( is_array( $attach ) ) {
             foreach ( $attach as $type_name ) {
                 $params[ 'built_in_post_types_' . $type_name ] = 1;

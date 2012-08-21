@@ -6,12 +6,13 @@
 
     <form action="" method="post" class="pods-submittable">
         <div class="pods-submittable-fields">
-            <input type="hidden" name="action" value="pods_admin" />
-            <input type="hidden" name="method" value="add_pod" />
-            <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('pods-add_pod'); ?>" />
+            <input type="hidden" name="action" value="pods_admin_components" />
+            <input type="hidden" name="component" value="migrate-cptui" />
+            <input type="hidden" name="method" value="migrate" />
+            <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('pods-component-migrate-cptui-migrate'); ?>" />
             <input type="hidden" name="create_extend" id="pods_create_extend" value="create" />
 
-            <h2 class="italicized"><?php _e('Add New Pod', 'pods'); ?></h2>
+            <h2 class="italicized"><?php _e('Migrate: Import from Custom Post Types UI', 'pods'); ?></h2>
 
             <img src="<?php echo PODS_URL; ?>/ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
@@ -20,12 +21,12 @@
                     <ul>
                         <li class="pods-wizard-menu-current" data-step="1">
                             <i></i>
-                            <span>1</span> <?php _e( 'Create or Extend', 'pods' ); ?>
+                            <span>1</span> <?php _e( 'Choose Objects', 'pods' ); ?>
                             <em></em>
                         </li>
                         <li data-step="2">
                             <i></i>
-                            <span>2</span> <?php _e( 'Configure', 'pods' ); ?>
+                            <span>2</span> <?php _e( 'Migrate', 'pods' ); ?>
                             <em></em>
                         </li>
                     </ul>

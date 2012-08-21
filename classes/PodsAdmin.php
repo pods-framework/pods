@@ -377,7 +377,7 @@ class PodsAdmin {
 
             add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'read', $page, $menu_item[ 'function' ] );
 
-            if ( 'pods-components' == $page && defined( 'PODS_DEVELOPER' ) )
+            if ( 'pods-components' == $page && defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER )
                 PodsInit::$components->menu( $parent );
         }
     }

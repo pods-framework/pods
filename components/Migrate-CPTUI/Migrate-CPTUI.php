@@ -1,15 +1,21 @@
 <?php
 /**
- * Name: Migration: Import from Custom Post Types UI
+ * Name: Migrate: Import from Custom Post Types UI
  *
- * Description: Import Custom Post Types and Taxonomies from Custom Post Types UI to Pods 2.0 (<a href="http://webdevstudios.com/plugin/custom-post-type-ui/">http://webdevstudios.com/plugin/custom-post-type-ui/</a>)
+ * Menu Name: Migrate CPT UI
+ *
+ * Description: Import Custom Post Types and Taxonomies from Custom Post Types UI (<a href="http://webdevstudios.com/plugin/custom-post-type-ui/">http://webdevstudios.com/plugin/custom-post-type-ui/</a>)
  *
  * Version: 1.0
+ * 
+ * Developer Mode: on
+ *
+ * xPlugin Dependency: Custom Post Types UI|custom-post-types-ui/custom-post-types-ui.php|http://webdevstudios.com/plugin/custom-post-type-ui/
  *
  * @package pods
  * @subpackage migrate-cptui
  */
-class Migrate_CPTUI extends PodsComponent {
+class Pods_Migrate_CPTUI extends PodsComponent {
 
     private $api = null;
 
@@ -18,13 +24,21 @@ class Migrate_CPTUI extends PodsComponent {
     private $cpt_taxonomies = null;
 
     /**
-     * Do things like register/enqueue scripts and stylesheets
+     * Do things like register scripts and stylesheets
      *
      * @since 2.0.0
      */
     public function __construct () {
-        $this->cpt_post_types = get_option( 'cpt_custom_post_types' );
-        $this->cpt_taxonomies = get_option( 'cpt_custom_tax_types' );
+
+    }
+
+    /**
+     * Enqueue styles
+     *
+     * @since 2.0.0
+     */
+    public function admin_assets () {
+        wp_enqueue_style( 'pods-wizard' );
     }
 
     /**
@@ -33,6 +47,8 @@ class Migrate_CPTUI extends PodsComponent {
      * @since 2.0.0
      */
     function get_objects ( $object_type = 'post_type' ) {
+        $this->cpt_post_types = get_option( 'cpt_custom_post_types' );
+        $this->cpt_taxonomies = get_option( 'cpt_custom_tax_types' );
 
         switch ( $object_type ) {
 
@@ -215,4 +231,11 @@ class Migrate_CPTUI extends PodsComponent {
         delete_option( 'cpt_custom_tax_types' );
     }
 
+    public function admin () {
+        echo pods_view( PODS_DIR . '/components/Migrate-CPTUI/wizard.php' );
+    }
+
+    public function ajax_migrate ( $params ) {
+        // process the form
+    }
 }

@@ -73,13 +73,13 @@ class PodsComponents {
             if ( !empty( $component_data[ 'Hide' ] ) )
                 continue;
 
-            if ( pods_var( 'DeveloperMode', $component_data, false ) && ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) )
+            if ( true === (boolean) pods_var( 'DeveloperMode', $component_data, false ) && ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) )
                 continue;
 
             if ( !isset( $component_data[ 'object' ] ) || !method_exists( $component_data[ 'object' ], 'admin' ) )
                 continue;
 
-            add_submenu_page(
+            $page = add_submenu_page(
                 $parent,
                 strip_tags( $component_data[ 'Name' ] ),
                 '- ' . strip_tags( $component_data[ 'MenuName' ] ),
@@ -87,6 +87,9 @@ class PodsComponents {
                 'pods-component-' . $component_data[ 'ID' ],
                 array( $this, 'admin_handler' )
             );
+
+            if ( method_exists( $component_data[ 'object' ], 'admin_assets' ) )
+                add_action( 'admin_print_styles-' . $page, array( $component_data[ 'object' ], 'admin_assets' ) );
         }
     }
 
@@ -100,9 +103,8 @@ class PodsComponents {
             if ( !isset( $this->components[ $component ] ) || 0 == $options )
                 continue;
 
-            if ( 'on' == $this->components[ $component ][ 'DeveloperMode' ] )
+            if ( true === (boolean) pods_var( 'DeveloperMode', $this->components[ $component ], false ) && ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) )
                 continue;
-
 
             if ( !empty( $this->components[ $component ][ 'PluginDependency' ] ) ) {
                 $dependency = explode( '|', $this->components[ $component ][ 'PluginDependency' ] );
@@ -198,7 +200,7 @@ class PodsComponents {
                     $component_data[ 'MenuName' ] = $component_data[ 'Name' ];
 
                 if ( empty( $component_data[ 'Class' ] ) )
-                    $component_data[ 'Class' ] = 'Pods_' . basename( $component_file, '.php' );
+                    $component_data[ 'Class' ] = 'Pods_' . pods_clean_name( basename( $component_file, '.php' ), false );
 
                 if ( empty( $component_data[ 'ID' ] ) )
                     $component_data[ 'ID' ] = sanitize_title( $component_data[ 'Name' ] );
@@ -284,14 +286,15 @@ class PodsComponents {
 
         // Sanitize input
         $params = stripslashes_deep( (array) $_POST );
+
         foreach ( $params as $key => $value ) {
             if ( 'action' == $key )
                 continue;
+
             unset( $params[ $key ] );
+
             $params[ str_replace( '_podsfix_', '', $key ) ] = $value;
         }
-        if ( !defined( 'PODS_STRICT_MODE' ) || !PODS_STRICT_MODE )
-            $params = pods_sanitize( $params );
 
         $params = (object) $params;
 

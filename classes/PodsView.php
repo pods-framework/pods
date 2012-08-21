@@ -183,7 +183,7 @@ class PodsView {
 
         if ( empty( $_view ) )
             return false;
-        elseif ( false === strpos( $_view, PODS_DIR . 'ui/' ) && false === strpos( $_view, PODS_DIR . 'components/' ) && false === strpos( $view, WP_CONTENT_DIR ) && false === strpos( $_view, ABSPATH ) ) {
+        elseif ( false === strpos( $_view, PODS_DIR . 'ui/' ) && false === strpos( $_view, PODS_DIR . 'components/' ) && false === strpos( $_view, WP_CONTENT_DIR ) && false === strpos( $_view, ABSPATH ) ) {
             $_view = rtrim( $_view, '/' );
 
             if ( empty( $_view ) )

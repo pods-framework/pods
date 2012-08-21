@@ -959,13 +959,19 @@ class PodsAPI {
                 $pod[ 'fields' ][] = array(
                     'name' => 'created',
                     'label' => 'Date Created',
-                    'type' => 'date'
+                    'type' => 'date',
+                    'options' => array(
+                        'date_format_type' => 'datetime'
+                    )
                 );
 
                 $pod[ 'fields' ][] = array(
                     'name' => 'modified',
                     'label' => 'Date Modified',
-                    'type' => 'date'
+                    'type' => 'date',
+                    'options' => array(
+                        'date_format_type' => 'datetime'
+                    )
                 );
 
                 $pod[ 'fields' ][] = array(

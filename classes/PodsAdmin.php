@@ -1040,6 +1040,8 @@ class PodsAdmin {
      *
      */
     public function admin_ajax_relationship () {
+        global $wpdb;
+
         if ( false === headers_sent() ) {
             if ( '' == session_id() )
                 @session_start();
@@ -1099,6 +1101,12 @@ class PodsAdmin {
             $where = (array) $where;
 
         $where[] = "`t`.`{$data->field_index}` LIKE '%" . like_escape( $params->query ) . "%'";
+
+        if ( $wpdb->users == $data->table ) {
+            $where[] = "`t`.`display_name` LIKE '%" . like_escape( $params->query ) . "%'";
+            $where[] = "`t`.`user_login` LIKE '%" . like_escape( $params->query ) . "%'";
+            $where[] = "`t`.`user_email` LIKE '%" . like_escape( $params->query ) . "%'";
+        }
 
         $params = array(
             'select' => "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`",

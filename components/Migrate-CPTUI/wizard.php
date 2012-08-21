@@ -63,44 +63,62 @@
                         </div>
 
                         <div class="stuffbox">
-                            <h3><label for="link_name"><?php _e( 'Choose Post Types', 'pods' ); ?></label></h3>
+                            <h3><label for="link_name"><?php _e( 'Choose Post Types to Import', 'pods' ); ?></label></h3>
 
                             <div class="inside pods-manage-field pods-dependency">
-                                <?php
-                                    foreach ( $post_types as $post_type ) {
-                                        $post_type_name = pods_var_raw( 'name', $post_type );
-                                        $post_type_label = pods_var_raw( 'label', $post_type, ucwords( str_replace( '_', ' ', $post_type_name ) ) );
-                                ?>
-                                    <div class="pods-field-option">
-                                        <?php
-                                            echo PodsForm::label( 'post_type_' . $post_type_name, $post_type_label, 'Post Type Name: ' . $post_type_name );
-                                            echo PodsForm::field( 'post_type_' . $post_type_name, pods_var_raw( 'post_type_' . $post_type_name, 'post', 0 ), 'boolean', array( 'boolean_yes_label' => '' ) );
-                                        ?>
+                                <div class="pods-field-option-group">
+                                    <p class="pods-field-option-group-label">
+                                        <?php _e( 'Available Post Types', 'pods' ); ?>
+                                    </p>
+
+                                    <div class="pods-pick-values pods-pick-checkbox">
+                                        <ul>
+                                            <?php
+                                                foreach ( $post_types as $post_type ) {
+                                                    $post_type_name = pods_var_raw( 'name', $post_type );
+                                                    $post_type_label = pods_var_raw( 'label', $post_type, ucwords( str_replace( '_', ' ', $post_type_name ) ) );
+                                            ?>
+                                                <li>
+                                                    <div class="pods-field pods-boolean">
+                                                        <?php echo PodsForm::field( 'post_type_' . $post_type_name, pods_var_raw( 'post_type_' . $post_type_name, 'post', false ), 'boolean', array( 'boolean_yes_label' => $post_type_label . ' (' . $post_type_name . ')' ) ); ?>
+                                                    </div>
+                                                </li>
+                                            <?php
+                                                }
+                                            ?>
+                                        </ul>
                                     </div>
-                                <?php
-                                    }
-                                ?>
+                                </div>
                             </div>
                         </div>
 
                         <div class="stuffbox">
-                            <h3><label for="link_name"><?php _e( 'Choose Taxonomies', 'pods' ); ?></label></h3>
+                            <h3><label for="link_name"><?php _e( 'Choose Taxonomies to Import', 'pods' ); ?></label></h3>
 
                             <div class="inside pods-manage-field pods-dependency">
-                                <?php
-                                    foreach ( $taxonomies as $taxonomy ) {
-                                        $taxonomy_name = pods_var_raw( 'name', $taxonomy );
-                                        $taxonomy_label = pods_var_raw( 'label', $taxonomy, ucwords( str_replace( '_', ' ', $taxonomy_name ) ) );
-                                ?>
-                                    <div class="pods-field-option">
-                                        <?php
-                                            echo PodsForm::label( 'taxonomy_' . $taxonomy_name, $taxonomy_label, 'Taxonomy Name: ' . $taxonomy_name );
-                                            echo PodsForm::field( 'taxonomy_' . $taxonomy_name, pods_var_raw( 'taxonomy_' . $taxonomy_name, 'post', 0 ), 'boolean', array( 'boolean_yes_label' => '' ) );
-                                        ?>
+                                <div class="pods-field-option-group">
+                                    <p class="pods-field-option-group-label">
+                                        <?php _e( 'Available Taxonomies', 'pods' ); ?>
+                                    </p>
+
+                                    <div class="pods-pick-values pods-pick-checkbox">
+                                        <ul>
+                                            <?php
+                                                foreach ( $taxonomies as $taxonomy ) {
+                                                    $taxonomy_name = pods_var_raw( 'name', $taxonomy );
+                                                    $taxonomy_label = pods_var_raw( 'label', $taxonomy, ucwords( str_replace( '_', ' ', $taxonomy_name ) ) );
+                                            ?>
+                                                <li>
+                                                    <div class="pods-field pods-boolean">
+                                                        <?php echo PodsForm::field( 'taxonomy_' . $taxonomy_name, pods_var_raw( 'taxonomy_' . $taxonomy_name, 'post', false ), 'boolean', array( 'boolean_yes_label' => $taxonomy_label . ' (' . $taxonomy_name . ')' ) ); ?>
+                                                    </div>
+                                                </li>
+                                            <?php
+                                                }
+                                            ?>
+                                        </ul>
                                     </div>
-                                <?php
-                                    }
-                                ?>
+                                </div>
                             </div>
                         </div>
                     </div>

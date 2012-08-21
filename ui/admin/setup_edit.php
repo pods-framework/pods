@@ -788,9 +788,9 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
                                                 <?php echo PodsForm::label('query_var', __('Query Var', 'pods'), __('help', 'pods')); ?>
                                                 <?php echo PodsForm::field('query_var', pods_var_raw('query_var', $pod), 'boolean', array( 'boolean_yes_label' => '' ) ); ?>
                                             </div>
-                                            <div class="pods-field-option">
+                                            <div class="pods-field-option-group">
                                                 <p class="pods-field-option-group-label">
-                                                    <?php _e('Associated Post Types'); ?>
+                                                    <?php _e('Associated Post Types', 'pods' ); ?>
                                                 </p>
 
                                                 <div class="pods-pick-values pods-pick-checkbox">

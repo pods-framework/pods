@@ -63,12 +63,12 @@ foreach ( $field_settings[ 'field_types' ] as $field_type => $field_label ) {
                             <div class="pods-tab-group">
                                 <div id="pods-basic-options-<?php echo $pods_i; ?>" class="pods-tab pods-basic-options">
                                     <div class="pods-field-option">
-                                        <?php echo PodsForm::label('field_data[' . $pods_i . '][name]', __('Name', 'pods'), __('help', 'pods')); ?>
-                                        <?php echo PodsForm::field('field_data[' . $pods_i . '][name]', pods_var_raw('name', $field), 'db'); ?>
+                                        <?php echo PodsForm::label( 'field_data[' . $pods_i . '][label]', __( 'Label', 'pods' ), __( 'help', 'pods' ) ); ?>
+                                        <?php echo PodsForm::field( 'field_data[' . $pods_i . '][label]', pods_var_raw( 'label', $field ), 'text', array( 'class' => 'pods-validate pods-validate-required' ) ); ?>
                                     </div>
                                     <div class="pods-field-option">
-                                        <?php echo PodsForm::label('field_data[' . $pods_i . '][label]', __('Label', 'pods'), __('help', 'pods')); ?>
-                                        <?php echo PodsForm::field('field_data[' . $pods_i . '][label]', pods_var_raw('label', $field), 'text'); ?>
+                                        <?php echo PodsForm::label('field_data[' . $pods_i . '][name]', __('Name', 'pods'), __('You will use this name to programatically reference this field throughout WordPress', 'pods')); ?>
+                                        <?php echo PodsForm::field('field_data[' . $pods_i . '][name]', pods_var_raw('name', $field), 'db', array( 'attributes' => array( 'maxlength' => 50, 'data-sluggable' => 'field_data[' . $pods_i . '][label]' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) ); ?>
                                     </div>
                                     <div class="pods-field-option">
                                         <?php echo PodsForm::label('field_data[' . $pods_i . '][description]', __('Description', 'pods'), __('help', 'pods')); ?>

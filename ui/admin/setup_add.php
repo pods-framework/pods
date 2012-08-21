@@ -85,8 +85,8 @@
                                             $max_length_name -= 10; // Allow for WP Multisite or prefix changes in the future
                                             $max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
 
-                                            echo PodsForm::label( 'create_name', __( 'Name', 'pods' ), __( 'help', 'pods' ) );
-                                            echo PodsForm::field( 'create_name', pods_var_raw( 'create_name', 'post' ), 'db', array('attributes' => array( 'maxlength' => $max_length_name, 'size' => 25 ), 'class' => 'pods-validate pods-validate-required' ) );
+                                            echo PodsForm::label( 'create_label_plural', __( 'Plural Label', 'pods' ), __( 'help', 'pods' ) );
+                                            echo PodsForm::field( 'create_label_plural', pods_var_raw( 'create_label_plural', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required' ) );
                                         ?>
                                     </div>
                                     <p>
@@ -96,8 +96,8 @@
                                     <div class="pods-advanced">
                                         <div class="pods-field-option">
                                             <?php
-                                                echo PodsForm::label( 'create_label_plural', __( 'Plural Label', 'pods' ), __( 'help', 'pods' ) );
-                                                echo PodsForm::field( 'create_label_plural', pods_var_raw( 'create_label_plural', 'post' ), 'text' );
+                                                echo PodsForm::label( 'create_name', __( 'Identifier', 'pods' ), __( 'You will use this name to programatically reference this object throughout WordPress', 'pods' ) );
+                                                echo PodsForm::field( 'create_name', pods_var_raw( 'create_name', 'post' ), 'db', array('attributes' => array( 'maxlength' => $max_length_name, 'size' => 25, 'data-sluggable' => 'create_label_plural' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
                                             ?>
                                         </div>
                                         <div class="pods-field-option">
@@ -242,5 +242,6 @@
         $( document ).Pods( 'dependency' );
         $( document ).Pods( 'advanced' );
         $( document ).Pods( 'confirm' );
+        $( document ).Pods( 'sluggable' );
     } );
 </script>

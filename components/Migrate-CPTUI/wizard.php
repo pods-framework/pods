@@ -7,9 +7,9 @@
     <form action="" method="post" class="pods-submittable">
         <div class="pods-submittable-fields">
             <input type="hidden" name="action" value="pods_admin_components" />
-            <input type="hidden" name="component" value="migrate-cptui" />
+            <input type="hidden" name="component" value="migrate-import-from-custom-post-types-ui" />
             <input type="hidden" name="method" value="migrate" />
-            <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('pods-component-migrate-cptui-migrate'); ?>" />
+            <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('pods-component-migrate-import-from-custom-post-types-ui-migrate'); ?>" />
             <input type="hidden" name="cleanup" id="pods_cleanup" value="0" />
 
             <h2 class="italicized"><?php _e('Migrate: Import from Custom Post Type UI', 'pods'); ?></h2>
@@ -80,7 +80,7 @@
                                             ?>
                                                 <li>
                                                     <div class="pods-field pods-boolean">
-                                                        <?php echo PodsForm::field( 'post_type_' . $post_type_name, pods_var_raw( 'post_type_' . $post_type_name, 'post', false ), 'boolean', array( 'boolean_yes_label' => $post_type_label . ' (' . $post_type_name . ')' ) ); ?>
+                                                        <?php echo PodsForm::field( 'post_type[' . $post_type_name . ']', pods_var_raw( 'post_type[' . $post_type_name . ']', 'post', false ), 'boolean', array( 'boolean_yes_label' => $post_type_label . ' (' . $post_type_name . ')' ) ); ?>
                                                     </div>
                                                 </li>
                                             <?php
@@ -110,7 +110,7 @@
                                             ?>
                                                 <li>
                                                     <div class="pods-field pods-boolean">
-                                                        <?php echo PodsForm::field( 'taxonomy_' . $taxonomy_name, pods_var_raw( 'taxonomy_' . $taxonomy_name, 'post', false ), 'boolean', array( 'boolean_yes_label' => $taxonomy_label . ' (' . $taxonomy_name . ')' ) ); ?>
+                                                        <?php echo PodsForm::field( 'taxonomy[' . $taxonomy_name . ']', pods_var_raw( 'taxonomy[' . $taxonomy_name . ']', 'post', false ), 'boolean', array( 'boolean_yes_label' => $taxonomy_label . ' (' . $taxonomy_name . ')' ) ); ?>
                                                     </div>
                                                 </li>
                                             <?php

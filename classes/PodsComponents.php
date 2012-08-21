@@ -321,7 +321,7 @@ class PodsComponents {
         $method = 'ajax_' . $method;
 
         // Dynamically call the component method
-        $output = call_user_func( array( $this->components[ $params->component ][ 'object' ], $method ), $params );
+        $output = call_user_func( array( $this->components[ $component ][ 'object' ], $method ), $params );
 
         if ( !is_bool( $output ) )
             echo $output;

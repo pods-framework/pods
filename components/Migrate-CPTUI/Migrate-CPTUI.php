@@ -58,109 +58,56 @@ class Pods_Migrate_CPTUI extends PodsComponent {
      * @param $params
      */
     public function ajax_migrate ( $params ) {
+        $post_types = (array) $this->post_types;
+        $taxonomies = (array) $this->taxonomies;
 
+        $migrate_post_types = array();
 
-        // process the form
-    }
-
-    /**
-     *
-     *
-     * @since 2.0.0
-     */
-    function get_objects ( $object_type = 'post_type' ) {
-        $this->cpt_post_types = get_option( 'cpt_custom_post_types' );
-        $this->cpt_taxonomies = get_option( 'cpt_custom_tax_types' );
-
-        switch ( $object_type ) {
-
-            case 'post_type':
-                return $this->cpt_post_types;
-                break;
-
-            case 'taxonomy':
-                return $this->cpt_taxonomies;
-                break;
-        }
-    }
-
-    /**
-     *
-     *
-     * @since 2.0.0
-     */
-    public function migrate ( $object_type = 'post_type', $cptui_object, $storage = 'meta' ) {
-
-        switch ( $object_type ) {
-            case 'post_type':
-                return $this->migrate_post_type( $cptui_object, $storage );
-                break;
-
-            case 'taxonomy':
-                return $this->migrate_taxonomy( $cptui_object ); // Taxonomies are currently table-based only
-                break;
-        }
-    }
-
-    /**
-     *
-     *
-     * @since 2.0.0
-     */
-    private function migrate_taxonomy ( $cptui_taxonomy ) {
-
-        $params = array(
-            'type' => 'taxonomy',
-            'storage' => 'table',
-            'object' => '',
-            'name' => $cptui_taxonomy[ 'name' ],
-            'label' => $cptui_taxonomy[ 'label' ],
-            'label_singular' => $cptui_taxonomy[ 'singular_label' ],
-            'public' => 1,
-            'show_ui' => (int) $cptui_taxonomy[ 'show_ui' ],
-            'hierarchical' => (int) $cptui_taxonomy[ 'hierarchical' ],
-            'query_var' => (int) $cptui_taxonomy[ 'query_var' ],
-            'rewrite' => (int) $cptui_taxonomy[ 'rewrite' ],
-            'rewrite_custom_slug' => $cptui_taxonomy[ 'rewrite_slug' ],
-            'label_search_items' => $cptui_taxonomy[ 0 ][ 'search_items' ],
-            'label_popular_items' => $cptui_taxonomy[ 0 ][ 'popular_items' ],
-            'label_all_items' => $cptui_taxonomy[ 0 ][ 'all_items' ],
-            'label_parent' => $cptui_taxonomy[ 0 ][ 'parent_item' ],
-            'label_parent_item_colon' => $cptui_taxonomy[ 0 ][ 'parent_item_colon' ],
-            'label_edit' => $cptui_taxonomy[ 0 ][ 'edit_item' ],
-            'label_update_item' => $cptui_taxonomy[ 0 ][ 'update_item' ],
-            'label_add_new' => $cptui_taxonomy[ 0 ][ 'add_new_item' ],
-            'label_new_item' => $cptui_taxonomy[ 0 ][ 'new_item_name' ],
-            'label_separate_items_with_commas' => $cptui_taxonomy[ 0 ][ 'separate_items_with_commas' ],
-            'label_add_or_remove_items' => $cptui_taxonomy[ 0 ][ 'add_or_remove_items' ],
-            'label_choose_from_the_most_used' => $cptui_taxonomy[ 0 ][ 'choose_from_most_used' ]
-        );
-
-        // Migrate attach-to
-        $attach = $cptui_taxonomy[ 1 ];
-        if ( is_array( $attach ) ) {
-            foreach ( $attach as $type_name ) {
-                $params[ 'built_in_post_types_' . $type_name ] = 1;
+        if ( isset( $params->post_type ) && !empty( $params->post_type ) ) {
+            foreach ( $params->post_type as $post_type => $checked ) {
+                $migrate_post_types[] = $post_type;
             }
         }
 
-        if ( !is_object( $this->api ) )
-            $this->api = pods_api();
+        $migrate_taxonomies = array();
 
-        $id = (int) $this->api->save_pod( $params );
+        if ( isset( $params->taxonomy ) && !empty( $params->taxonomy ) ) {
+            foreach ( $params->taxonomy as $taxonomy => $checked ) {
+                $migrate_taxonomies[] = $taxonomy;
+            }
+        }
 
-        if ( empty( $id ) )
-            return false;
+        foreach ( $post_types as $k =>$post_type ) {
+            if ( !in_array( pods_var( 'name', $post_type ), $migrate_post_types ) )
+                continue;
 
-        $pod = $this->api->load_pod( array( 'id' => $id ), false );
+            $id = $this->migrate_post_type( $post_type, 'meta' );
 
-        if ( empty( $pod ) )
-            return false;
+            if ( 0 < $id )
+                unset( $post_types[ $k ] );
+        }
 
-        if ( $pod[ 'name' ] != $params[ 'name' ] )
-            $this->api->rename_wp_object( $params[ 'type ' ], $params[ 'name' ], $pod[ 'name' ] );
+        foreach ( $taxonomies as $k => $taxonomy ) {
+            if ( !in_array( pods_var( 'name', $taxonomy ), $migrate_taxonomies ) )
+                continue;
 
-        return $id;
+            $id = $this->migrate_taxonomy( $taxonomy );
+
+            if ( 0 < $id )
+                unset( $taxonomies[ $k ] );
+        }
+
+        if ( 1 == pods_var( 'cleanup', $params, 0 ) ) {
+            if ( !empty( $post_types ) )
+                update_option( 'cpt_custom_post_types', $post_types );
+            else
+                delete_option( 'cpt_custom_post_types' );
+
+            if ( !empty( $taxonomies ) )
+                update_option( 'cpt_custom_tax_types', $taxonomies );
+            else
+                delete_option( 'cpt_custom_tax_types' );
+        }
     }
 
     /**
@@ -227,6 +174,77 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 
         if ( !is_object( $this->api ) )
             $this->api = pods_api();
+
+        $pod = $this->api->load_pod( array( 'name' => pods_clean_name( $params[ 'name' ] ) ), false );
+
+        if ( !empty( $pod ) )
+            return pods_error( sprintf( __( 'Pod with the name %s already exists', 'pods' ), pods_clean_name( $params[ 'name' ] ) ) );
+
+        $id = (int) $this->api->save_pod( $params );
+
+        if ( empty( $id ) )
+            return false;
+
+        $pod = $this->api->load_pod( array( 'id' => $id ), false );
+
+        if ( empty( $pod ) )
+            return false;
+
+        if ( $pod[ 'name' ] != $params[ 'name' ] )
+            $this->api->rename_wp_object( $params[ 'type ' ], $params[ 'name' ], $pod[ 'name' ] );
+
+        return $id;
+    }
+
+    /**
+     *
+     *
+     * @since 2.0.0
+     */
+    private function migrate_taxonomy ( $cptui_taxonomy ) {
+
+        $params = array(
+            'type' => 'taxonomy',
+            'storage' => 'table',
+            'object' => '',
+            'name' => $cptui_taxonomy[ 'name' ],
+            'label' => $cptui_taxonomy[ 'label' ],
+            'label_singular' => $cptui_taxonomy[ 'singular_label' ],
+            'public' => 1,
+            'show_ui' => (int) $cptui_taxonomy[ 'show_ui' ],
+            'hierarchical' => (int) $cptui_taxonomy[ 'hierarchical' ],
+            'query_var' => (int) $cptui_taxonomy[ 'query_var' ],
+            'rewrite' => (int) $cptui_taxonomy[ 'rewrite' ],
+            'rewrite_custom_slug' => $cptui_taxonomy[ 'rewrite_slug' ],
+            'label_search_items' => $cptui_taxonomy[ 0 ][ 'search_items' ],
+            'label_popular_items' => $cptui_taxonomy[ 0 ][ 'popular_items' ],
+            'label_all_items' => $cptui_taxonomy[ 0 ][ 'all_items' ],
+            'label_parent' => $cptui_taxonomy[ 0 ][ 'parent_item' ],
+            'label_parent_item_colon' => $cptui_taxonomy[ 0 ][ 'parent_item_colon' ],
+            'label_edit' => $cptui_taxonomy[ 0 ][ 'edit_item' ],
+            'label_update_item' => $cptui_taxonomy[ 0 ][ 'update_item' ],
+            'label_add_new' => $cptui_taxonomy[ 0 ][ 'add_new_item' ],
+            'label_new_item' => $cptui_taxonomy[ 0 ][ 'new_item_name' ],
+            'label_separate_items_with_commas' => $cptui_taxonomy[ 0 ][ 'separate_items_with_commas' ],
+            'label_add_or_remove_items' => $cptui_taxonomy[ 0 ][ 'add_or_remove_items' ],
+            'label_choose_from_the_most_used' => $cptui_taxonomy[ 0 ][ 'choose_from_most_used' ]
+        );
+
+        // Migrate attach-to
+        $attach = $cptui_taxonomy[ 1 ];
+        if ( is_array( $attach ) ) {
+            foreach ( $attach as $type_name ) {
+                $params[ 'built_in_post_types_' . $type_name ] = 1;
+            }
+        }
+
+        if ( !is_object( $this->api ) )
+            $this->api = pods_api();
+
+        $pod = $this->api->load_pod( array( 'name' => pods_clean_name( $params[ 'name' ] ) ), false );
+
+        if ( !empty( $pod ) )
+            return pods_error( sprintf( __( 'Pod with the name %s already exists', 'pods' ), pods_clean_name( $params[ 'name' ] ) ) );
 
         $id = (int) $this->api->save_pod( $params );
 

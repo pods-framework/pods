@@ -963,6 +963,7 @@ foreach ( $field_settings[ 'pick_object' ] as $object => $object_label ) {
         $( document ).Pods( 'dependency' );
         $( document ).Pods( 'flexible', $( 'tbody.pods-manage-list tr.flexible-row' ) );
         $( document ).Pods( 'confirm' );
+        $( document ).Pods( 'exit_confirm' );
     } );
 
     var pods_admin_submit_callback = function ( id ) {

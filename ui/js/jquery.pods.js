@@ -336,7 +336,7 @@
 
             var sluggables = [];
 
-            $( '.pods-slugged[data-sluggable]' ).each( function () {
+            $( '.pods-slugged[data-sluggable], .pods-slugged-lower[data-sluggable]' ).each( function () {
                 if ( -1 == sluggables.indexOf( $( this ).data( 'sluggable' ) ) )
                     sluggables.push( $( this ).data( 'sluggable' ) );
             } );
@@ -346,28 +346,40 @@
 
                 $slug = $( 'input[name="' + sluggable + '"]' );
 
-                var slug = $( '.pods-sluggable .pods-slug-edit input[type=text]' ).val();
-
-                if ( $slug[ 0 ] && 0 < $slug.val().length )
-                    slug = $slug.val();
-
-                slug = slug.replace( /<(?:.)*?>/g, '' ).replace( /([^0-9a-zA-Z ])/g, '' );
-
-                $( '.pods-slugged-lower[data-sluggable="' + sluggable + '"]' ).html( slug.toLowerCase() );
-                $( '.pods-slugged[data-sluggable="' + sluggable + '"]' ).html( slug.charAt( 0 ).toUpperCase() + slug.slice( 1 ) );
-
                 if ( $slug[ 0 ] ) {
                     $slug.on( 'change', function () {
-                        var slug = $( '.pods-sluggable .pods-slug-edit input[type=text]' ).val();
+                        if ( 0 < $( this ).val().length ) {
+                            var slug = $( this ).val();
 
-                        if ( 0 < $( this ).val().length )
-                            slug = $( this ).val();
+                            slug = slug.replace( /<(?:.)*?>/g, '' ).replace( /([^0-9a-zA-Z ])/g, '' );
 
-                        slug = slug.replace( /<(?:.)*?>/g, '' ).replace( /([^0-9a-zA-Z ])/g, '' );
+                            // update fields
+                            $( 'input.pods-slugged[data-sluggable="' + $( this ).prop( 'name' ) + '"]' ).each( function () {
+                                if ( '' == $( this ).val() ) {
+                                    $( this ).val( slug.charAt( 0 ).toUpperCase() + slug.slice( 1 ) );
+                                    $( this ).trigger( 'change' );
+                                }
+                            } );
+                            $( 'input.pods-slugged-lower[data-sluggable="' + $( this ).prop( 'name' ) + '"]' ).each(function () {
+                                if ( '' == $( this ).val() ) {
+                                    $( this ).val( slug.toLowerCase() );
+                                    $( this ).trigger( 'change' );
+                                }
+                            } );
 
-                        $( '.pods-slugged-lower[data-sluggable="' + $( this ).prop( 'name' ) + '"]' ).html( slug.toLowerCase() );
-                        $( '.pods-slugged[data-sluggable="' + $( this ).prop( 'name' ) + '"]' ).html( slug.charAt( 0 ).toUpperCase() + slug.slice( 1 ) );
+                            // update elements
+                            $( '.pods-slugged-lower[data-sluggable="' + $( this ).prop( 'name' ) + '"]:not(input)' ).html( slug.toLowerCase() );
+                            $( '.pods-slugged[data-sluggable="' + $( this ).prop( 'name' ) + '"]:not(input)' ).html( slug.charAt( 0 ).toUpperCase() + slug.slice( 1 ) );
+
+                            // trigger change
+                            $( '.pods-slugged-lower[data-sluggable="' + $( this ).prop( 'name' ) + '"]:not(input)' ).trigger( 'change' );
+                            $( '.pods-slugged[data-sluggable="' + $( this ).prop( 'name' ) + '"]:not(input)' ).trigger( 'change' );
+                        }
                     } );
+
+                    if ( 0 < $( this ).val().length ) {
+                        $slug.trigger( 'change' );
+                    }
                 }
             }
         },

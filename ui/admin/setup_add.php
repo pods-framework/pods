@@ -80,8 +80,13 @@
                                     </div>
                                     <div class="pods-field-option">
                                         <?php
+                                            global $wpdb;
+                                            $max_length_name = 64;
+                                            $max_length_name -= 10; // Allow for WP Multisite or prefix changes in the future
+                                            $max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
+
                                             echo PodsForm::label( 'create_name', __( 'Name', 'pods' ), __( 'help', 'pods' ) );
-                                            echo PodsForm::field( 'create_name', pods_var_raw( 'create_name', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required' ) );
+                                            echo PodsForm::field( 'create_name', pods_var_raw( 'create_name', 'post' ), 'db', array('attributes' => array( 'maxlength' => $max_length_name, 'size' => 25 ), 'class' => 'pods-validate pods-validate-required' ) );
                                         ?>
                                     </div>
                                     <p>

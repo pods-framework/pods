@@ -8,7 +8,7 @@
 <script>
     jQuery( function ( $ ) {
         $( 'input#<?php echo $attributes[ 'id' ]; ?>' ).change( function () {
-            var newval = $( this ).val().toLowerCase().replace( /([- ])/g, '_' ).replace( /([^0-9a-z_])/g, '' ).replace( /(_){2,}/g, '_' );
+            var newval = $( this ).val().toLowerCase().replace( /([- ])/g, '_' ).replace( /([^0-9a-z_])/g, '' ).replace( /(_){2,}/g, '_' ).replace( /_$/, '' );
             $( this ).val( newval );
         } );
     } );

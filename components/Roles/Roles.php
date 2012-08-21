@@ -26,13 +26,22 @@ class Pods_Roles extends PodsComponent {
     }
 
     /**
+     * Enqueue styles
+     *
+     * @since 2.0.0
+     */
+    public function admin_assets () {
+        wp_enqueue_style( 'pods-wizard' );
+    }
+
+    /**
      * Build admin area
      *
      * @param $options
      *
      * @since 2.0.0
      */
-    public function admin ( $options ) {
+    public function admin ( $options, $component ) {
         global $wp_roles;
 
         $default_role = get_option( 'default_role' );
@@ -43,12 +52,15 @@ class Pods_Roles extends PodsComponent {
             $roles[ $key ] = array(
                 'id' => $key,
                 'name' => ucwords( str_replace( '_', ' ', $key ) ),
-                'capabilities' => count( (array) $role->capabilities )
+                'capabilities' => count( (array) $role->capabilities ),
+                'users' => sprintf( _n( '%s User', '%s Users', $this->count_users( $key ), 'pods' ), $this->count_users( $key ) )
             );
+
+            if ( current_user_can( 'list_users' ) )
+                $roles[ $key ][ 'users' ] = '<a href="' . admin_url( esc_url( 'users.php?role=' . $key ) ) . '">' . $roles[ $key ][ 'users' ] . '</a>';
         }
 
         foreach ( $wp_roles->role_names as $role => $name ) {
-            $roles[ $role ][ 'users' ] = 0;
             $roles[ $role ][ 'name' ] = $name;
 
             if ( $default_role == $role )
@@ -62,7 +74,7 @@ class Pods_Roles extends PodsComponent {
             'icon' => PODS_URL . 'ui/images/icon32.png',
             'items' => 'Roles',
             'item' => 'Role',
-            'fields' => array( 'manage' => array( 'name', 'capabilities' ) ),
+            'fields' => array( 'manage' => array( 'name', 'capabilities', 'users' ) ),
             'actions_disabled' => array( 'duplicate', 'view', 'export' ),
             'actions_custom' => array(
                 'add' => array( $this, 'admin_add' ),
@@ -82,13 +94,15 @@ class Pods_Roles extends PodsComponent {
     }
 
     function admin_add () {
-        // name and label
+        $method = 'add'; // ajax_add
+
+        echo pods_view( PODS_DIR . '/components/Roles/add.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     function admin_edit () {
-        // @todo edit role name/label
+        $method = 'edit'; // ajax_edit
 
-        // capabilities form (check existing, add new)
+        echo pods_view( PODS_DIR . '/components/Roles/edit.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     function admin_delete ( $id, &$ui ) {
@@ -144,5 +158,48 @@ class Pods_Roles extends PodsComponent {
         $ui->total_found = count( $roles );
 
         $ui->message( '<strong>' . $name . '</strong> ' . __( 'role removed from site.', 'pods' ) );
+    }
+
+    /**
+     * Handle the Add Role AJAX
+     *
+     * @param $params
+     */
+    public function ajax_add ( $params ) {
+
+    }
+
+    /**
+     * Handle the Edit Role AJAX
+     *
+     * @param $params
+     */
+    public function ajax_edit ( $params ) {
+
+    }
+
+    /**
+     * Basic logic from Members plugin, it counts users of a specific role
+     *
+     * @param $role
+     *
+     * @return array
+     */
+    function count_users ( $role ) {
+        $count_users = count_users();
+
+        $avail_roles = array();
+
+        foreach ( $count_users[ 'avail_roles' ] as $count_role => $count ) {
+            $avail_roles[ $count_role ] = $count;
+        }
+
+        if ( empty( $role ) )
+            return $avail_roles;
+
+        if ( !isset( $avail_roles[ $role ] ) )
+            $avail_roles[ $role ] = 0;
+
+        return $avail_roles[ $role ];
     }
 }

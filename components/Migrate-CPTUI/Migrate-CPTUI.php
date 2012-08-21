@@ -41,7 +41,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
     /**
      * Show the Admin
      */
-    public function admin ( $settings, $component ) {
+    public function admin ( $options, $component ) {
         $post_types = (array) $this->post_types;
         $taxonomies = (array) $this->taxonomies;
 

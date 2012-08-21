@@ -63,6 +63,36 @@
 
                         <div class="stuffbox">
                             <h3><label for="link_name"><?php _e( 'Assign the Capabilities for', 'pods' ); ?> <strong class="pods-slugged" data-sluggable="role_label"></strong></label></h3>
+
+                            <div class="inside pods-manage-field pods-dependency">
+                                <div class="pods-field-option-group">
+                                    <p><a href="#toggle" class="button" id="toggle_all"><?php _e( 'Toggle All Capabilities on / off', 'pods' ); ?></a></p>
+
+                                    <div class="pods-pick-values pods-pick-checkbox pods-zebra">
+                                        <ul>
+                                            <?php
+                                                $zebra = false;
+
+                                                foreach ( $capabilities as $capability ) {
+                                                    $checked = false;
+
+                                                    if ( in_array( $capability, $defaults ) )
+                                                        $checked = true;
+
+                                                    $class = ( $zebra ? 'even' : 'odd' );
+
+                                                    $zebra = ( !$zebra );
+                                            ?>
+                                                <li class="pods-zebra-<?php echo $class; ?>">
+                                                    <?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
+                                                </li>
+                                            <?php
+                                                }
+                                            ?>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -93,5 +123,14 @@
         $( document ).Pods( 'advanced' );
         $( document ).Pods( 'confirm' );
         $( document ).Pods( 'sluggable' );
+
+        var toggle_all = true;
+        $( '#toggle_all' ).on( 'click', function ( e ) {
+            e.preventDefault();
+
+            $( '.pods-field.pods-boolean input[type="checkbox"]' ).prop( 'checked', toggle_all );
+
+            toggle_all = ( !toggle_all );
+        } );
     } );
 </script>

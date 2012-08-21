@@ -638,6 +638,29 @@ tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-save {
     margin: 0;
 }
 
+.pods-manage-field .pods-pick-values.pods-zebra {
+    width: 100%;
+    max-width: 100%;
+}
+
+.pods-manage-field .pods-pick-values.pods-zebra div.pods-boolean {
+    padding: 3px;
+}
+
+.pods-manage-field .pods-pick-values li.pods-zebra-odd {
+    display: block;
+    width: 50%;
+    float: left;
+    clear: both;
+}
+
+.pods-manage-field .pods-pick-values li.pods-zebra-even {
+    display: block;
+    width: 50%;
+    float: left;
+    clear: none;
+}
+
 .pods-manage-field .pods-field.pods-boolean:hover {
     background: #ffffd8;
 }

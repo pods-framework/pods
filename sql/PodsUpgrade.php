@@ -374,6 +374,10 @@ class PodsUpgrade_2_0 {
                     'label' => 'Author',
                     'type' => 'pick',
                     'pick_object' => 'user',
+                    'options' => array(
+                        'pick_format_type' => 'single',
+                        'pick_format_single' => 'autocomplete'
+                    ),
                     'weight' => 3
                 )
             );

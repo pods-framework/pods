@@ -288,7 +288,7 @@ class PodsAdmin {
             )
         );
 
-        if ( defined( 'PODS_DEVELOPER' ) ) {
+        if ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER ) {
             $admin_menus = array(
                 'pods' => array(
                     'label' => 'Setup',

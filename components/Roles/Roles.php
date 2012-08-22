@@ -93,8 +93,14 @@ class Pods_Roles extends PodsComponent {
         if ( isset( $roles[ pods_var( 'id', 'get', -1 ) ] ) )
             $ui[ 'row' ] = $roles[ pods_var( 'id', 'get', -1 ) ];
 
-        if ( count( $roles ) < 2 )
-            $ui[ 'actions_custom' ][] = 'delete';
+        if ( !is_super_admin() && !current_user_can( 'pods_roles_add' ) )
+            $ui[ 'actions_disabled' ][] = 'add';
+
+        if ( !is_super_admin() && !current_user_can( 'pods_roles_edit' ) )
+            $ui[ 'actions_disabled' ][] = 'edit';
+
+        if ( count( $roles ) < 2 || ( !is_super_admin() && !current_user_can( 'pods_roles_delete' ) ) )
+            $ui[ 'actions_disabled' ][] = 'delete';
 
         pods_ui( $ui );
     }

@@ -2,7 +2,7 @@
 /**
  * Name: Gravity Forms
  *
- * Description: Integration with Gravity Forms to map submissions to Pods (http://www.gravityforms.com/)
+ * Description: Integration with Gravity Forms (http://www.gravityforms.com/); Provides a UI for mapping a Form's submissions into a Pod
  *
  * Version: 1.0
  *

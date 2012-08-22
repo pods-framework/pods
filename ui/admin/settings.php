@@ -45,7 +45,7 @@
         <h2><?php _e( 'Pods Settings', 'pods' ); ?></h2>
         <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
-        <p><?php _e( 'The tools below are to help accomplish common tasks.', 'pods' ); ?></p>
+        <p><?php _e( 'The following are settings provided for advanced site configurations.', 'pods' ); ?></p>
 
         <hr />
     <?php } ?>

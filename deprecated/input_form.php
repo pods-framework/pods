@@ -1,7 +1,7 @@
 <?php
-$pods_cache = PodCache::instance();
-$pods_cache->form_count++;
-$form_count = (int) $pods_cache->form_count;
+/*$pods_cache = PodCache::instance();
+$pods_cache->form_count++;*/
+$form_count = (int) 1;
 
 if (1 == $form_count)
 {

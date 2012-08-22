@@ -1,8 +1,9 @@
 <?php
 global $pods_cache, $coltype_exists, $pods_type_exists;
 $pods_type_exists =& $coltype_exists;
-$pods_cache = PodCache::instance();
-$form_count = $pods_cache->form_count;
+/*$pods_cache = PodCache::instance();
+$form_count = $pods_cache->form_count;*/
+$form_count = 1;
 
 $name = $field['name'];
 $label = $field['label'];

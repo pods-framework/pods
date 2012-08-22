@@ -519,7 +519,7 @@ class Pods {
                             }
 
                             // Return a single column value
-                            if ( false === $params->in_form && 1 == $limit && !empty( $value ) && isset( $value[ 0 ] ) )
+                            if ( false === $params->in_form && 1 == $limit && !empty( $value ) && is_array( $value ) && isset( $value[ 0 ] ) )
                                 $value = $value[ 0 ];
                         }
 

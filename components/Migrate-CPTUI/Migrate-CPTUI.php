@@ -1,6 +1,6 @@
 <?php
 /**
- * Name: Migrate: Import from Custom Post Type UI
+ * Name: Migrate: Import from the Custom Post Type UI plugin
  *
  * Menu Name: Migrate CPT UI
  *
@@ -47,7 +47,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 
         $method = 'migrate'; // ajax_migrate
 
-        pods_view( PODS_DIR . 'components/Migrate-CPTUI/wizard.php', compact( array_keys( get_defined_vars() ) ) );
+        pods_view( PODS_DIR . 'components/Migrate-CPTUI/ui/wizard.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**

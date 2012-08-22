@@ -59,7 +59,7 @@ function pod_query ($sql, $error = 'SQL failed', $results_error = null, $no_resu
     $sql = apply_filters('pod_query', $sql, $error, $results_error, $no_results_error);
 
     // Return cached resultset
-    if ('SELECT' == substr($sql, 0, 6)) {
+    /*if ('SELECT' == substr($sql, 0, 6)) {
         $cache = PodCache::instance();
         if ($cache->cache_enabled && isset($cache->results[$sql])) {
             $result = $cache->results[$sql];
@@ -69,30 +69,27 @@ function pod_query ($sql, $error = 'SQL failed', $results_error = null, $no_resu
             $result = apply_filters('pod_query_return', $result, $sql, $error, $results_error, $no_results_error);
             return $result;
         }
-    }
+    }*/
+
     if (false !== $error)
         $result = mysql_query($sql, $wpdb->dbh) or die("<e>$error; SQL: $sql; Response: " . mysql_error($wpdb->dbh));
     else
         $result = @mysql_query($sql, $wpdb->dbh);
 
     if (0 < @mysql_num_rows($result)) {
-        if (!empty($results_error)) {
+        if (!empty($results_error))
             die("<e>$results_error");
-        }
     }
-    elseif (!empty($no_results_error)) {
+    elseif (!empty($no_results_error))
         die("<e>$no_results_error");
-    }
 
-    if ('INSERT' == substr($sql, 0, 6)) {
+    if ('INSERT' == substr($sql, 0, 6))
         $result = mysql_insert_id($wpdb->dbh);
-    }
-    elseif ('SELECT' == substr($sql, 0, 6)) {
-        if ('SELECT FOUND_ROWS()' != $sql) {
-            $cache->results[$sql] = $result;
-        }
-    }
+    /*elseif ('SELECT' == substr($sql, 0, 6) && 'SELECT FOUND_ROWS()' != $sql)
+        $cache->results[$sql] = $result;*/
+
     $result = apply_filters('pod_query_return', $result, $sql, $error, $results_error, $no_results_error);
+
     return $result;
 }
 

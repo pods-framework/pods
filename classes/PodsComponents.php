@@ -143,7 +143,7 @@ class PodsComponents {
     public function get_components () {
         $components = get_transient( 'pods_components' );
 
-        if ( !is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET[ 'page' ] ) && 'pods-components' == $_GET[ 'page' ] ) ) {
+        if ( !is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET[ 'page' ] ) && 'pods-components' == $_GET[ 'page' ] && false !== get_transient( 'pods_components_refresh' ) ) ) {
             $component_dir = @opendir( rtrim( $this->components_dir, '/' ) );
             $component_files = array();
 
@@ -219,6 +219,8 @@ class PodsComponents {
             }
 
             ksort( $components );
+
+            set_transient( 'pods_components_refresh', 1, ( 60 * 60 * 12 ) );
 
             set_transient( 'pods_components', $components );
         }

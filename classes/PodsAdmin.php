@@ -596,6 +596,7 @@ class PodsAdmin {
      *
      */
     public function admin_packages () {
+        pods_view( PODS_DIR . 'ui/admin/packages.php', compact( array_keys( get_defined_vars() ) ) );
         /*pods_ui(array('sql' => array('table' => '@wp_pods_objects'),
                       'icon' => PODS_URL .'ui/images/icon32.png',
                       'items' => 'Packages',
@@ -620,8 +621,12 @@ class PodsAdmin {
                 'description' => make_clickable( $component_data[ 'Description' ] ),
                 'version' => $component_data[ 'Version' ],
                 'author' => $component_data[ 'Author' ],
+                'developermode' => (boolean) pods_var( 'DeveloperMode', $component_data, false ),
                 'toggle' => 0
             );
+
+            if ( true === $component_data[ 'developermode' ] )
+                $component_data[ 'name' ] .= ' <em>(Developer Preview)</em>';
 
             if ( isset( PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] ) && 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] )
                 $component_data[ 'toggle' ] = 1;

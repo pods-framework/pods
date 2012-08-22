@@ -116,7 +116,7 @@ class Pods_Roles extends PodsComponent {
 
         $method = 'add'; // ajax_add
 
-        pods_view( PODS_DIR . 'components/Roles/add.php', compact( array_keys( get_defined_vars() ) ) );
+        pods_view( PODS_DIR . 'components/Roles/ui/add.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     function admin_edit ( $duplicate, $obj ) {
@@ -144,7 +144,7 @@ class Pods_Roles extends PodsComponent {
 
         $method = 'edit'; // ajax_edit
 
-        pods_view( PODS_DIR . 'components/Roles/edit.php', compact( array_keys( get_defined_vars() ) ) );
+        pods_view( PODS_DIR . 'components/Roles/ui/edit.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     function admin_delete ( $id, &$obj ) {

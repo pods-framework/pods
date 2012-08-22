@@ -47,7 +47,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 
         $method = 'migrate'; // ajax_migrate
 
-        echo pods_view( PODS_DIR . '/components/Migrate-CPTUI/wizard.php', compact( array_keys( get_defined_vars() ) ) );
+        pods_view( PODS_DIR . '/components/Migrate-CPTUI/wizard.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**

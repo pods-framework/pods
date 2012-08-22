@@ -65,10 +65,10 @@
                         <div class="stuffbox">
                             <h3><label for="link_name"><?php _e( 'Choose Post Types to Import', 'pods' ); ?></label></h3>
 
-                            <?php
-                                if ( !empty( $post_types ) ) {
-                            ?>
-                                <div class="inside pods-manage-field pods-dependency">
+                            <div class="inside pods-manage-field pods-dependency">
+                                <?php
+                                    if ( !empty( $post_types ) ) {
+                                ?>
                                     <div class="pods-field-option-group">
                                         <p class="pods-field-option-group-label">
                                             <?php _e( 'Available Post Types', 'pods' ); ?>
@@ -92,25 +92,24 @@
                                             </ul>
                                         </div>
                                     </div>
-                                </div>
-                            <?php
-                                }
-                                else {
-                            ?>
-                                <p><?php _e( 'No Post Types were found.', 'pods' ); ?></p>
-                            <?php
-                                }
-                            ?>
-
+                                <?php
+                                    }
+                                    else {
+                                ?>
+                                    <p class="padded"><?php _e( 'No Post Types were found.', 'pods' ); ?></p>
+                                <?php
+                                    }
+                                ?>
+                            </div>
                         </div>
 
                         <div class="stuffbox">
                             <h3><label for="link_name"><?php _e( 'Choose Taxonomies to Import', 'pods' ); ?></label></h3>
 
-                            <?php
-                                if ( !empty( $taxonomies ) ) {
-                            ?>
-                                <div class="inside pods-manage-field pods-dependency">
+                            <div class="inside pods-manage-field pods-dependency">
+                                <?php
+                                    if ( !empty( $taxonomies ) ) {
+                                ?>
                                     <div class="pods-field-option-group">
                                         <p class="pods-field-option-group-label">
                                             <?php _e( 'Available Taxonomies', 'pods' ); ?>
@@ -132,16 +131,15 @@
                                             </ul>
                                         </div>
                                     </div>
-                                </div>
-                            <?php
-                                }
-                                else {
-                            ?>
-                                <p><?php _e( 'No Taxonomies were found.', 'pods' ); ?></p>
-                            <?php
-                                }
-                            ?>
-
+                                <?php
+                                    }
+                                    else {
+                                ?>
+                                    <p class="padded"><?php _e( 'No Taxonomies were found.', 'pods' ); ?></p>
+                                <?php
+                                    }
+                                ?>
+                            </div>
                         </div>
                     </div>
 

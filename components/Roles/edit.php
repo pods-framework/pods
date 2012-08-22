@@ -4,60 +4,135 @@
     </script>
     <div id="icon-pods" class="icon32"><br /></div>
 
-    <form action="" method="post" class="pods-submittable">
+    <form action="" method="post" class="pods-submittable pods-form">
         <div class="pods-submittable-fields">
-            <input type="hidden" name="action" value="pods_admin_components" />
-            <input type="hidden" name="component" value="<?php echo $component; ?>" />
-            <input type="hidden" name="method" value="<?php echo $method; ?>" />
-            <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('pods-component-' . $component . '-' . $method ); ?>" />
+            <?php echo PodsForm::field( 'action', 'pods_admin_components', 'hidden' ); ?>
+            <?php echo PodsForm::field( 'component', $component, 'hidden' ); ?>
+            <?php echo PodsForm::field( 'method', $method, 'hidden' ); ?>
+            <?php echo PodsForm::field( 'id', $id, 'hidden' ); ?>
+            <?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
 
-            <h2 class="italicized"><?php _e('Roles &amp; Capabilities: Edit Role', 'pods'); ?></h2>
+            <h2 class="italicized"><?php _e( 'Roles &amp; Capabilities: Edit Role', 'pods' ); ?></h2>
 
-            <img src="<?php echo PODS_URL; ?>/ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+            <?php
+                if ( isset( $_GET[ 'do' ] ) ) {
+                    $action = __( 'saved', 'pods' );
+
+                    if ( 'create' == pods_var( 'do', 'get', 'save' ) )
+                        $action = __( 'created', 'pods' );
+
+                    $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+
+                    echo $obj->message( $message );
+                }
+            ?>
 
             <p><?php _e( 'Choose below which Capabilities you would like this existing user role to have.', 'pods' ); ?></p>
 
-            <div class="stuffbox">
-                <h3><label for="link_name"><?php _e( 'Assign the Capabilities for', 'pods' ); ?> <strong><?php echo $role_label; ?></strong></label></h3>
+            <div id="poststuff" class="metabox-holder has-right-sidebar"> <!-- class "has-right-sidebar" preps for a sidebar... always present? -->
 
-                <div class="inside pods-manage-field pods-dependency">
-                    <div class="pods-field-option-group">
-                        <p>
-                            <a href="#toggle" class="button" id="toggle_all"><?php _e( 'Toggle All Capabilities on / off', 'pods' ); ?></a>
-                        </p>
+                <div id="side-info-column" class="inner-sidebar">
+                    <div id="side-sortables" class="meta-box-sortables ui-sortable">
+                        <!-- BEGIN PUBLISH DIV -->
+                        <div id="submitdiv" class="postbox">
+                            <div class="handlediv" title="Click to toggle"><br /></div>
+                            <h3 class="hndle"><span><?php _e( 'Manage', 'pods' ); ?></span></h3>
 
-                        <div class="pods-pick-values pods-pick-checkbox pods-zebra">
-                            <ul>
-                                <?php
-                                $zebra = false;
+                            <div class="inside">
+                                <div class="submitbox" id="submitpost">
+                                    <div id="minor-publishing">
+                                        <div id="major-publishing-actions">
+                                            <div id="publishing-action">
+                                                <input type="submit" name="publish" id="publish" class="button-primary" value="<?php _e( 'Save' ); ?>" accesskey="p" />
+                                            </div>
+                                            <!-- /#publishing-action -->
 
-                                foreach ( $capabilities as $capability ) {
-                                    $checked = false;
-
-                                    if ( in_array( $capability, $roles[ 'capabilities' ] ) )
-                                        $checked = true;
-
-                                    $class = ( $zebra ? 'even' : 'odd' );
-
-                                    $zebra = ( !$zebra );
-                                    ?>
-                                    <li class="pods-zebra-<?php echo $class; ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
-                                        <?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
-                                    </li>
-                                    <?php
-                                }
-                                ?>
-                            </ul>
+                                            <div class="clear"></div>
+                                        </div>
+                                        <!-- /#major-publishing-actions -->
+                                    </div>
+                                    <!-- /#minor-publishing -->
+                                </div>
+                                <!-- /#submitpost -->
+                            </div>
+                            <!-- /.inside -->
                         </div>
+                        <!-- /#submitdiv --><!-- END PUBLISH DIV --><!-- TODO: minor column fields -->
                     </div>
+                    <!-- /#side-sortables -->
                 </div>
+                <!-- /#side-info-column -->
+
+                <div id="post-body">
+                    <div id="post-body-content">
+                        <div id="normal-sortables" class="meta-box-sortables ui-sortable">
+                            <div id="pods-meta-box" class="postbox" style="">
+                                <div class="handlediv" title="Click to toggle"><br /></div>
+                                <h3 class="hndle">
+                                    <span>
+                                        <?php _e( 'Assign the Capabilities for', 'pods' ); ?>
+                                        <strong><?php echo $role_label; ?></strong>
+                                    </span>
+                                </h3>
+
+                                <div class="inside pods-manage-field pods-dependency">
+                                    <div class="pods-field-option-group">
+                                        <p>
+                                            <a href="#toggle" class="button" id="toggle_all"><?php _e( 'Toggle All Capabilities on / off', 'pods' ); ?></a>
+                                        </p>
+
+                                        <div class="pods-pick-values pods-pick-checkbox pods-zebra">
+                                            <ul>
+                                                <?php
+                                                    $zebra = false;
+
+                                                    foreach ( $capabilities as $capability ) {
+                                                        $checked = false;
+
+                                                        if ( true === (boolean) pods_var( $capability, $role_capabilities, false ) )
+                                                            $checked = true;
+
+                                                        $class = ( $zebra ? 'even' : 'odd' );
+
+                                                        $zebra = ( !$zebra );
+                                                ?>
+                                                    <li class="pods-zebra-<?php echo $class; ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
+                                                        <?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
+                                                    </li>
+                                                <?php
+                                                    }
+                                                ?>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.inside -->
+                            </div>
+                            <!-- /#pods-meta-box -->
+                        </div>
+                        <!-- /#normal-sortables -->
+
+                        <!--<div id="advanced-sortables" class="meta-box-sortables ui-sortable">
+                      </div>
+                       /#advanced-sortables -->
+
+                    </div>
+                    <!-- /#post-body-content -->
+
+                    <br class="clear" />
+                </div>
+                <!-- /#post-body -->
+
+                <br class="clear" />
             </div>
+            <!-- /#poststuff -->
         </div>
     </form>
+    <!-- /#pods-record -->
 </div>
 <script type="text/javascript">
     var pods_admin_submit_callback = function ( id ) {
-        document.location = 'admin.php?page=pods-component-<?php echo $component; ?>&do=create';
+        document.location = 'admin.php?page=pods-component-<?php echo esc_js( $component ); ?>&action=edit&id=<?php echo esc_js( $id ); ?>&do=save';
     }
 
     jQuery( function ( $ ) {

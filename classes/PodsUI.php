@@ -674,7 +674,7 @@ class PodsUI
         if ( empty( $options->num ) )
             $options->num = '';
 
-        $options->validate( 'id', pods_var( 'id' . $options->num, 'get', $this->id ), 'absint' );
+        $options->validate( 'id', pods_var( 'id' . $options->num, 'get', $this->id ) );
 
         $options->validate( 'do', pods_var( 'do' . $options->num, 'get', $this->do ), 'in_array', array(
             'save',
@@ -1349,15 +1349,15 @@ class PodsUI
      * @return bool|mixed
      */
     public function delete ($id = null) {
-        $id = pods_absint($id);
-
-        if (empty($id))
-            $id = pods_absint($this->id);
-
         $this->do_hook('pre_delete', $id);
 
         if (isset($this->actions_custom['delete']) && is_callable($this->actions_custom['delete']))
             return call_user_func_array($this->actions_custom['delete'], array( $id, &$this ) );
+
+        $id = pods_absint( $id );
+
+        if ( empty( $id ) )
+            $id = pods_absint( $this->id );
 
         if ($id < 1)
             return $this->error(__('<strong>Error:</strong> Invalid Configuration - Missing "id" definition.', 'pods'));

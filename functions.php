@@ -114,19 +114,31 @@ $pods_debug = 0;
  */
 function pods_debug ( $debug = '_null', $die = false, $prefix = '_null' ) {
     global $pods_debug;
+
     $pods_debug++;
+
     ob_start();
+
     if ( '_null' !== $prefix )
         var_dump( $prefix );
+
     if ( '_null' !== $debug )
         var_dump( $debug );
     else
         var_dump( 'Pods Debug #' . $pods_debug );
-    $debug = '<e><pre>' . ob_get_clean() . '</pre>';
+
+    $debug = ob_get_clean();
+
+    if ( !defined( 'DOING_AJAX' ) || !DOING_AJAX )
+        $debug = esc_html( $debug );
+
+    $debug = '<e><pre>' . $debug . '</pre>';
+
     if ( 2 === $die )
         wp_die( $debug );
     elseif ( true === $die )
         die( $debug );
+
     echo $debug;
 }
 

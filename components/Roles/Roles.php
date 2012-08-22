@@ -8,8 +8,6 @@
  *
  * Version: 1.0
  *
- * Developer Mode: on
- *
  * @package pods
  * @subpackage roles
  */
@@ -92,6 +90,9 @@ class Pods_Roles extends PodsComponent {
             'pagination' => false
          );
 
+        if ( isset( $roles[ pods_var( 'id', 'get', -1 ) ] ) )
+            $ui[ 'row' ] = $roles[ pods_var( 'id', 'get', -1 ) ];
+
         if ( count( $roles ) < 2 )
             $ui[ 'actions_custom' ][] = 'delete';
 
@@ -112,22 +113,22 @@ class Pods_Roles extends PodsComponent {
         pods_view( PODS_DIR . '/components/Roles/add.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
-    function admin_edit ( $obj ) {
+    function admin_edit ( $duplicate, $obj ) {
         global $wp_roles;
+
+        $id = $obj->id;
 
         $capabilities = $this->get_capabilities();
 
-        $role = array();
+        $role_name = $role_label = $role_capabilities = null;
 
         foreach ( $wp_roles->role_objects as $key => $role ) {
-            if ( $key != pods_var_raw( 'id', 'get', 0, null, true ) )
+            if ( $key != $id )
                 continue;
 
-            $role = array(
-                'id' => $key,
-                'name' => $wp_roles->role_names[ $key ],
-                'capabilities' => $role->capabilities
-            );
+            $role_name = $key;
+            $role_label = $wp_roles->role_names[ $key ];
+            $role_capabilities = $role->capabilities;
         }
 
         if ( empty( $role ) )
@@ -140,15 +141,18 @@ class Pods_Roles extends PodsComponent {
         pods_view( PODS_DIR . '/components/Roles/edit.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
-    function admin_delete ( $id, &$ui ) {
+    function admin_delete ( $id, &$obj ) {
         global $wp_roles;
 
-        $id = $_GET[ 'id' ];
+        $id = $obj->id;
+
+        if ( !isset( $obj->data[ $id ] ) )
+            return $obj->error( __( 'Role not found, it cannot be deleted.', 'pods' ) );
 
         $default_role = get_option( 'default_role' );
 
         if ( $id == $default_role ) {
-            return $ui->error( sprintf( __( 'You cannot remove the <strong>%s</strong> role, you must set a new default role for the site first.', 'pods' ), $ui->data[ $id ][ 'name' ] ) );
+            return $obj->error( sprintf( __( 'You cannot remove the <strong>%s</strong> role, you must set a new default role for the site first.', 'pods' ), $obj->data[ $id ][ 'name' ] ) );
         }
 
         $wp_user_search = new WP_User_Search( '', '', $id );
@@ -173,26 +177,26 @@ class Pods_Roles extends PodsComponent {
         foreach ( $wp_roles->role_objects as $key => $role ) {
             $roles[ $key ] = array(
                 'id' => $key,
-                'name' => ucwords( str_replace( '_', ' ', $key ) ),
-                'capabilities' => count( (array) $role->capabilities )
+                'label' => $wp_roles->role_names[ $key ],
+                'name' => $key,
+                'capabilities' => count( (array) $role->capabilities ),
+                'users' => sprintf( _n( '%s User', '%s Users', $this->count_users( $key ), 'pods' ), $this->count_users( $key ) )
             );
+
+            if ( $default_role == $key )
+                $roles[ $key ][ 'label' ] .= ' (site default)';
+
+            if ( current_user_can( 'list_users' ) )
+                $roles[ $key ][ 'users' ] = '<a href="' . admin_url( esc_url( 'users.php?role=' . $key ) ) . '">' . $roles[ $key ][ 'users' ] . '</a>';
         }
 
-        foreach ( $wp_roles->role_names as $role => $name ) {
-            $roles[ $role ][ 'users' ] = 0;
-            $roles[ $role ][ 'name' ] = $name;
+        $name = $obj->data[ $id ][ 'label' ] . ' (' . $obj->data[ $id ][ 'name' ] . ')';
 
-            if ( $default_role == $role )
-                $roles[ $role ][ 'name' ] .= ' (site default)';
-        }
+        $obj->data = $roles;
+        $obj->total = count( $roles );
+        $obj->total_found = count( $roles );
 
-        $name = $ui->data[ $id ][ 'name' ];
-
-        $ui->data = $roles;
-        $ui->total = count( $roles );
-        $ui->total_found = count( $roles );
-
-        $ui->message( '<strong>' . $name . '</strong> ' . __( 'role removed from site.', 'pods' ) );
+        $obj->message( '<strong>' . $name . '</strong> ' . __( 'role removed from site.', 'pods' ) );
     }
 
     /**
@@ -211,7 +215,10 @@ class Pods_Roles extends PodsComponent {
         $capabilities = array();
 
         foreach ( $params->capabilities as $capability => $x ) {
-            $capabilities[] = esc_attr( $capability );
+            if ( true !== (boolean) $x )
+                continue;
+
+            $capabilities[ esc_attr( $capability ) ] = true;
         }
 
         if ( empty( $role_name ) )
@@ -229,8 +236,7 @@ class Pods_Roles extends PodsComponent {
     /**
      * Handle the Edit Role AJAX
      *
-     * @todo rename role_name
-     * @todo rename role_label
+     * @todo allow rename role_label
      *
      * @param $params
      */
@@ -239,27 +245,35 @@ class Pods_Roles extends PodsComponent {
 
         $capabilities = $this->get_capabilities();
 
-        $role = array();
+        if ( !isset( $params->capabilities ) )
+            $params->capabilties = array();
 
-        foreach ( $wp_roles->role_objects as $key => $role ) {
-            if ( $key != pods_var_raw( 'id', 'get', 0, null, true ) )
-                continue;
-
-            $role = array(
-                'id' => $key,
-                'name' => $wp_roles->role_names[ $key ],
-                'capabilities' => $role->capabilities
-            );
-        }
-
-        if ( empty( $role ) )
+        if ( !isset( $params->id ) || empty( $params->id ) || !isset( $wp_roles->role_objects[ $params->id ] ) )
             return pods_error( __( 'Role not found, cannot edit it.', 'pods' ) );
 
-        $capabilities_to_remove = array();
+        $role = $wp_roles->role_objects[ $params->id ];
+        $role_name = $params->id;
+        $role_label = $wp_roles->role_names[ $params->id ];
+        $role_capabilities = $role->capabilities;
 
-        foreach ( $role[ 'capabilitles' ] as $capability => $got ) {
+        $new_capabilities = array();
 
+        foreach ( $params->capabilities as $capability => $x ) {
+            if ( true !== (boolean) $x )
+                continue;
+
+            $new_capabilities[] = esc_attr( $capability );
+
+            if ( !$role->has_cap( $capability ) )
+                $role->add_cap( $capability );
         }
+
+        foreach ( $role_capabilities as $capability => $x ) {
+            if ( !in_array( $capability, $new_capabilities ) )
+                $role->remove_cap( $capability );
+        }
+
+        return true;
     }
 
     /**
@@ -320,6 +334,7 @@ class Pods_Roles extends PodsComponent {
         $capabilities = apply_filters( 'pods_roles_get_capabilities', $capabilities );
 
         sort( $capabilities );
+
         $capabilities = array_unique( $capabilities );
 
         return $capabilities;

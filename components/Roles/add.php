@@ -112,7 +112,7 @@
 </div>
 <script type="text/javascript">
     var pods_admin_submit_callback = function ( id ) {
-        document.location = 'admin.php?page=pods-component-<?php echo $component; ?>&do=create';
+        document.location = 'admin.php?page=pods-component-<?php echo esc_js( $component ); ?>&do=create';
     }
 
     jQuery( function ( $ ) {

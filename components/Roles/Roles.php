@@ -217,7 +217,9 @@ class Pods_Roles extends PodsComponent {
         $role_label = pods_var_raw( 'role_label', $params );
 
         $params->capabilities = (array) pods_var_raw( 'capabilities', $params, array() );
+
         $params->custom_capabilities = (array) pods_var_raw( 'custom_capabilities', $params, array() );
+        $params->custom_capabilities = array_filter( array_unique( $params->custom_capabilities ) );
 
         $capabilities = array();
 
@@ -260,7 +262,9 @@ class Pods_Roles extends PodsComponent {
         $capabilities = $this->get_capabilities();
 
         $params->capabilities = (array) pods_var_raw( 'capabilities', $params, array() );
+
         $params->custom_capabilities = (array) pods_var_raw( 'custom_capabilities', $params, array() );
+        $params->custom_capabilities = array_filter( array_unique( $params->custom_capabilities ) );
 
         if ( !isset( $params->id ) || empty( $params->id ) || !isset( $wp_roles->role_objects[ $params->id ] ) )
             return pods_error( __( 'Role not found, cannot edit it.', 'pods' ) );

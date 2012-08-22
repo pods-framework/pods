@@ -1009,27 +1009,38 @@ class PodsAdmin {
         unset( $params->method );
         unset( $params->_wpnonce );
 
+        $params->post_id = pods_var( 'post_id', $params, 0, null, true );
+
         /**
          * Upload a new file (advanced - returns URL and ID)
          */
         if ( 'upload' == $method ) {
-            $attachment_id = media_handle_upload( 'Filedata', 0 );
-            if ( is_object( $attachment_id ) ) {
-                $errors = array();
+            $custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->post_id );
 
-                foreach ( $attachment_id->errors[ 'upload_error' ] as $error_code => $error_message ) {
-                    $errors[] = '[' . $error_code . '] ' . $error_message;
+            if ( null !== $custom_handler ) {
+                $attachment_id = media_handle_upload( 'Filedata', $params->post_id );
+
+                if ( is_object( $attachment_id ) ) {
+                    $errors = array();
+
+                    foreach ( $attachment_id->errors[ 'upload_error' ] as $error_code => $error_message ) {
+                        $errors[] = '[' . $error_code . '] ' . $error_message;
+                    }
+
+                    echo 'Error: <div style="color:#FF0000">' . implode( '</div><div>', $errors ) . '</div>';
                 }
+                else {
+                    $attachment = get_post( $attachment_id, ARRAY_A );
 
-                echo 'Error: <div style="color:#FF0000">' . implode( '</div><div>', $errors ) . '</div>';
-            }
-            else {
-                $attachment = get_post( $attachment_id, ARRAY_A );
-                $attachment[ 'filename' ] = basename( $attachment[ 'guid' ] );
-                $thumb = wp_get_attachment_image_src( $attachment[ 'ID' ], 'thumbnail', true );
-                $attachment[ 'thumbnail' ] = $thumb[ 0 ];
+                    $attachment[ 'filename' ] = basename( $attachment[ 'guid' ] );
 
-                echo json_encode( $attachment );
+                    $thumb = wp_get_attachment_image_src( $attachment[ 'ID' ], 'thumbnail', true );
+                    $attachment[ 'thumbnail' ] = $thumb[ 0 ];
+
+                    $attachment = apply_filters( 'pods_upload_attachment', $attachment, $params->post_id );
+
+                    echo json_encode( $attachment );
+                }
             }
         }
 

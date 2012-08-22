@@ -161,7 +161,7 @@ class Pods_Deprecated
                 $result = pods_query( $sql, $this );
 
                 foreach ( $result as $row ) {
-                    $selected_ids[ ] = $row->related_item_id;
+                    $selected_ids[] = $row->related_item_id;
                 }
 
                 // Use default values for public forms
@@ -175,7 +175,7 @@ class Pods_Deprecated
                         $default_id = pods_absint( $default_id );
 
                         if ( 0 < $default_id )
-                            $selected_ids[ ] = $default_id;
+                            $selected_ids[] = $default_id;
                     }
                 }
 
@@ -190,7 +190,7 @@ class Pods_Deprecated
                     $sql = array( $sql, array( $field[ 'id' ] ) );
 
                     if ( !empty( $id ) )
-                        $sql[ 1 ][ ] = $id;
+                        $sql[ 1 ][] = $id;
 
                     $result = pods_query( $sql, $this );
 
@@ -199,7 +199,7 @@ class Pods_Deprecated
                         $exclude = array();
 
                         foreach ( $result as $row ) {
-                            $exclude[ ] = (int) $row->related_item_id;
+                            $exclude[] = (int) $row->related_item_id;
                         }
 
                         $exclude = implode( ',', $exclude );

@@ -66,7 +66,7 @@ EOI;
                                                         <?php pods_help($columnInfo); ?>
                                                     </td>
 
-                                                    <td> <img src="<?php echo PODS_URL; ?>/ui/images/arrow-right.png" width="12" height="12" style="vertical-align:middle;" /> <input type="text" name="pod_cols[<?php echo $colName; ?>]" value="<?php echo $colName; ?>" /> </td>
+                                                    <td> <img src="<?php echo PODS_URL; ?>ui/images/arrow-right.png" width="12" height="12" style="vertical-align:middle;" /> <input type="text" name="pod_cols[<?php echo $colName; ?>]" value="<?php echo $colName; ?>" /> </td>
     <?php $api = pods_api(); ?>
                                                     <td>
                                                         <select name="pod_col_types[<?php echo $colName; ?>]">

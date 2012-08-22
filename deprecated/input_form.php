@@ -9,7 +9,7 @@ if (1 == $form_count)
     if (!wp_script_is('pods-ui', 'queue') && !wp_script_is('pods-ui', 'to_do') && !wp_script_is('pods-ui', 'done'))
         wp_print_scripts('pods-ui');
 ?>
-<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>/deprecated/style.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>deprecated/style.css" />
 <script type="text/javascript">
 var active_file;
 
@@ -36,7 +36,7 @@ jQuery(function() {
     if ('undefined' != typeof(nicPaneOptions)) {
         var nicEditElements = jQuery(".form.desc");
         var config = {
-            iconsPath : "<?php echo PODS_URL; ?>/deprecated/images/nicEditorIcons.gif",
+            iconsPath : "<?php echo PODS_URL; ?>deprecated/images/nicEditorIcons.gif",
             buttonList : ['bold','italic','underline','fontFormat','left','center','right','justify','ol','ul','indent','outdent','image','link','unlink','xhtml']
         };
 
@@ -97,7 +97,7 @@ function saveForm (form_count) {
 
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/deprecated/ajax/api.php",
+        url: "<?php echo PODS_URL; ?>deprecated/ajax/api.php",
         data: "action=save_pod_item&_wpnonce=<?php echo wp_create_nonce('pods-save_pod_item'); ?>&"+data.join("&"),
         success: function(msg) {
             if (!is_error(msg)) {
@@ -117,7 +117,7 @@ function fileBrowser () {
     var search = jQuery("#file_search").val();
     jQuery.ajax({
         type: "post",
-        url: "<?php echo PODS_URL; ?>/deprecated/ajax/misc.php",
+        url: "<?php echo PODS_URL; ?>deprecated/ajax/misc.php",
         data: "action=browse_files&_wpnonce=<?php echo wp_create_nonce('pods-browse_files'); ?>&search="+encodeURIComponent(search),
         success: function(msg) {
             jQuery(".filebox").html(msg);
@@ -150,7 +150,7 @@ if (1 == $form_count && !(defined('PODS_DISABLE_FILE_BROWSER') && true === PODS_
 $this->showform($this->field($this->column_id), $public_columns, $label);
 ?>
 </div>
-<?php 
+<?php
 //post-form hooks
 do_action('pods_post_form', $form_count, $this);
 do_action("pods_post_form_{$this->pod}", $form_count, $this);

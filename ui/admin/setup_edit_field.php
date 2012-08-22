@@ -20,7 +20,7 @@ foreach ( $field_settings[ 'field_types' ] as $field_type => $field_label ) {
 ?>
         <tr id="row-<?php echo $pods_i; ?>" class="pods-manage-row pods-field-<?php echo esc_attr(pods_var('name', $field)) . ( '--1' === $pods_i ? ' flexible-row' : ' pods-submittable-fields' ); ?>" valign="top" data-row="<?php echo $pods_i; ?>">
             <th scope="row" class="check-field pods-manage-sort">
-                <img src="<?php echo PODS_URL; ?>/ui/images/handle.gif" alt="<?php esc_attr_e( 'Move', 'pods' ); ?>" />
+                <img src="<?php echo PODS_URL; ?>ui/images/handle.gif" alt="<?php esc_attr_e( 'Move', 'pods' ); ?>" />
             </th>
             <td class="pods-manage-row-label">
                 <strong>

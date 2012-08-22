@@ -211,7 +211,7 @@ $max_length_name -= strlen($wpdb->prefix . 'pods_tbl_');
         </div>
 
         <div id="poststuff">
-            <img src="<?php echo PODS_URL; ?>/ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+            <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
             <!-- /inner-sidebar -->
             <div id="post-body" class="meta-box-holder columns-2">
                 <div id="post-body-content">

@@ -191,7 +191,7 @@ $max_length_name = 64;
 $max_length_name -= 10; // Allow for WP Multisite or prefix changes in the future
 $max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
 ?>
-<div class="wrap pods-admin" xmlns="http://www.w3.org/1999/html">
+<div class="wrap pods-admin">
     <div id="icon-pods" class="icon32"><br /></div>
     <form action="" method="post" class="pods-submittable">
         <div class="pods-submittable-fields">
@@ -229,7 +229,7 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
         ?>
 
         <div id="poststuff">
-            <img src="<?php echo PODS_URL; ?>/ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+            <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
             <!-- /inner-sidebar -->
             <div id="post-body" class="meta-box-holder columns-2">
                 <div id="post-body-content">

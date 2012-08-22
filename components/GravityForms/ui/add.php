@@ -11,7 +11,7 @@
             <h2 class="italicized"><?php _e('Add New Gravity Form Mapping', 'pods'); ?></h2>
 
             <div id="poststuff">
-                <img src="<?php echo PODS_URL; ?>/ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+                <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
                 <div class="pods-field-option">
                     <?php

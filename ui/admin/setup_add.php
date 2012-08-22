@@ -13,7 +13,7 @@
 
             <h2 class="italicized"><?php _e('Add New Pod', 'pods'); ?></h2>
 
-            <img src="<?php echo PODS_URL; ?>/ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+            <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
             <div id="pods-wizard-box" class="pods-wizard-steps-2 pods-wizard-hide-first">
                 <div id="pods-wizard-heading">

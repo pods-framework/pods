@@ -1,4 +1,4 @@
-<div class="wrap pods-admin" xmlns="http://www.w3.org/1999/html">
+<div class="wrap pods-admin">
     <script>
         var PODS_URL = '<?php echo PODS_URL; ?>';
     </script>

@@ -94,7 +94,7 @@ Date picker
 elseif ('date' == $type) {
     if (!isset($pods_type_exists[$type]) || empty($pods_type_exists[$type])) {
 ?>
-    <script type="text/javascript" src="<?php echo PODS_URL; ?>/deprecated/js/date_input.js"></script>
+    <script type="text/javascript" src="<?php echo PODS_URL; ?>deprecated/js/date_input.js"></script>
     <script type="text/javascript">
     jQuery(function() {
         jQuery(".pods_form input.date").date_input();
@@ -135,7 +135,7 @@ elseif ('desc' == $type) {
         if (!isset($pods_type_exists[$type]) || empty($pods_type_exists[$type])) {
 ?>
     <style type="text/css" scoped="scoped">
-        @import url("<?php echo PODS_URL; ?>/deprecated/wp-editor/editor-buttons.css");
+        @import url("<?php echo PODS_URL; ?>deprecated/wp-editor/editor-buttons.css");
     </style>
 <?php
         }
@@ -153,7 +153,7 @@ elseif ('desc' == $type) {
     else {
         if (!isset($pods_type_exists[$type]) || empty($pods_type_exists[$type])) {
 ?>
-    <script type="text/javascript" src="<?php echo PODS_URL; ?>/deprecated/js/nicEdit.js"></script>
+    <script type="text/javascript" src="<?php echo PODS_URL; ?>deprecated/js/nicEdit.js"></script>
 <?php
         }
 ?>
@@ -214,7 +214,7 @@ elseif ('file' == $type) {
                 button_placeholder_id: "<?php echo esc_attr($css_id); ?>",
                 button_cursor: SWFUpload.CURSOR.HAND,
                 button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT,
-                upload_url: "<?php echo PODS_URL; ?>/ui/ajax/misc.php",
+                upload_url: "<?php echo PODS_URL; ?>ui/ajax/misc.php",
                 flash_url: "<?php echo WP_INC_URL; ?>/js/swfupload/swfupload.swf",
                 file_types: "*.*",
                 file_size_limit: "<?php echo esc_attr(wp_max_upload_size()); ?>",

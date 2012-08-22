@@ -13,7 +13,7 @@
 
             <h2 class="italicized"><?php _e('Roles &amp; Capabilities: Add New Role', 'pods'); ?></h2>
 
-            <img src="<?php echo PODS_URL; ?>/ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+            <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
             <div id="pods-wizard-box" class="pods-wizard-steps-2">
                 <div id="pods-wizard-heading">

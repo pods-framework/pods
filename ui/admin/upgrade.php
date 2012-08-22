@@ -9,7 +9,7 @@
 
     <h2 class="italicized"><?php _e( 'Upgrade Pods', 'pods' ); ?></h2>
 
-    <img src="<?php echo PODS_URL; ?>/ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
+    <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
     <div id="pods-wizard-box" class="pods-wizard-steps-3" data-action="pods_admin" data-method="upgrade" data-_wpnonce="<?php echo wp_create_nonce( 'pods-upgrade' ); ?>">
         <div id="pods-wizard-heading">
@@ -47,7 +47,7 @@
                 <div id="pods-wizard-options">
                     <div class="pods-wizard-option">
                         <a href="http://ithemes.com/member/go.php?r=31250&i=l44" target="_blank">
-                            <img src="<?php echo PODS_URL; ?>/ui/images/logo_backupbuddy.png" alt="Backup Buddy" />
+                            <img src="<?php echo PODS_URL; ?>ui/images/logo_backupbuddy.png" alt="Backup Buddy" />
                             <p><?php _e( 'Receive 25% off', 'pods' ); ?></p>
                             <p><?php _e( 'Coupon Code', 'pods' ); ?>: <strong>PODS25</strong></p>
                         </a>
@@ -55,7 +55,7 @@
                     </div>
                     <div class="pods-wizard-option">
                         <a href="http://vaultpress.com/podsframework/" target="_blank">
-                            <img src="<?php echo PODS_URL; ?>/ui/images/logo_vaultpress.png" alt="Vaultpress" />
+                            <img src="<?php echo PODS_URL; ?>ui/images/logo_vaultpress.png" alt="Vaultpress" />
                             <p><?php _e( '1 free month', 'pods' ); ?></p>
                             <p><strong><?php _e ( 'Click to sign up', 'pods' ); ?></strong></p>
                         </a>
@@ -86,7 +86,7 @@
                         ?>
                         <tr class="pods-wizard-table-<?php echo ( 0 < $count ? 'complete' : 'pending' ); ?>" data-upgrade="pods">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count"><?php echo ( 0 < $count ? $count : '&mdash;' ); ?></td>
                             <td class="pods-wizard-name">
@@ -96,7 +96,7 @@
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="fields">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -106,7 +106,7 @@
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="relationships">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -116,7 +116,7 @@
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="index">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -126,7 +126,7 @@
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="templates">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -136,7 +136,7 @@
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="pages">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -146,7 +146,7 @@
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="helpers">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -159,7 +159,7 @@
                         ?>
                             <tr class="pods-wizard-table-pending" data-upgrade="pod" data-pod="<?php echo $pod->name; ?>">
                                 <td class="pods-wizard-right pods-wizard-status">
-                                    <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                                    <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
                                 </td>
                                 <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                                 <td class="pods-wizard-name">
@@ -192,7 +192,7 @@
                     <tbody><!-- complete|pending|active <i></i> -->
                         <tr class="pods-wizard-table-pending" data-upgrade="1_x">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -202,7 +202,7 @@
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="pods">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count"><?php echo ( 0 < $count ? $count : '&mdash;' ); ?></td>
                             <td class="pods-wizard-name">
@@ -212,7 +212,7 @@
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="fields">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -222,7 +222,7 @@
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="relationships">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -232,7 +232,7 @@
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="settings">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -242,7 +242,7 @@
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="templates">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -252,7 +252,7 @@
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="pages">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -262,7 +262,7 @@
                         </tr>
                         <tr class="pods-wizard-table-pending" data-upgrade="helpers">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">
@@ -275,7 +275,7 @@
                         ?>
                             <tr class="pods-wizard-table-pending" data-upgrade="pod" data-pod="<?php echo $pod->name; ?>">
                                 <td class="pods-wizard-right pods-wizard-status">
-                                    <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                                    <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
                                 </td>
                                 <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                                 <td class="pods-wizard-name">
@@ -288,7 +288,7 @@
                         ?>
                         <tr class="pods-wizard-table-pending" data-upgrade="cleanup">
                             <td class="pods-wizard-right pods-wizard-status">
-                                <i><img src="<?php echo PODS_URL; ?>/ui/images/spinner.gif" alt="Loading..." /></i>
+                                <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
                             </td>
                             <td class="pods-wizard-right pods-wizard-count">&mdash;</td>
                             <td class="pods-wizard-name">

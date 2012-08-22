@@ -105,7 +105,7 @@
         font-weight: normal;
         color: #5a5a5a;
         font-size: 1.8em;
-        background: url(<?php echo PODS_URL; ?>/ui/images/icon32.png) top left no-repeat;
+        background: url(<?php echo PODS_URL; ?>ui/images/icon32.png) top left no-repeat;
         padding: 8px 0 5px 36px;
         margin-top: 0;
     }

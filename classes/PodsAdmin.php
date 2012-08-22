@@ -245,7 +245,7 @@ class PodsAdmin {
                     if ( false === $parent ) {
                         $parent = $page;
 
-                        add_object_page( 'Pods', 'Pods', 'read', $parent, null, PODS_URL . '/ui/images/icon16.png' );
+                        add_object_page( 'Pods', 'Pods', 'read', $parent, null, PODS_URL . 'ui/images/icon16.png' );
                     }
 
                     $label = pods_var( 'menu_name', $item[ 'options' ], pods_var( 'label', $item[ 'options' ], ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true ), null, true );
@@ -282,6 +282,11 @@ class PodsAdmin {
                 'function' => array( $this, 'admin_components' ),
                 'access' => 'pods_components'
             ),
+            'pods-settings' => array(
+                'label' => 'Settings',
+                'function' => array( $this, 'admin_settings' ),
+                'access' => 'pods_settings'
+            ),
             'pods-help' => array(
                 'label' => 'Help',
                 'function' => array( $this, 'admin_help' )
@@ -304,11 +309,6 @@ class PodsAdmin {
                         'pods_helpers'
                     )
                 ),
-                'pods-settings' => array(
-                    'label' => 'Settings',
-                    'function' => array( $this, 'admin_settings' ),
-                    'access' => 'pods_settings'
-                ),
                 'pods-packages' => array(
                     'label' => 'Import / Export',
                     'function' => array( $this, 'admin_packages' ),
@@ -318,6 +318,11 @@ class PodsAdmin {
                     'label' => 'Components',
                     'function' => array( $this, 'admin_components' ),
                     'access' => 'pods_components'
+                ),
+                'pods-settings' => array(
+                    'label' => 'Settings',
+                    'function' => array( $this, 'admin_settings' ),
+                    'access' => 'pods_settings'
                 ),
                 'pods-help' => array(
                     'label' => 'Help',
@@ -372,7 +377,7 @@ class PodsAdmin {
                 if ( 'pods-upgrade' == $parent )
                     $menu = __( 'Pods Upgrade', 'pods' );
 
-                add_menu_page( $menu, $menu, 'read', $parent, null, PODS_URL . '/ui/images/icon16.png' );
+                add_menu_page( $menu, $menu, 'read', $parent, null, PODS_URL . 'ui/images/icon16.png' );
             }
 
             add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'read', $page, $menu_item[ 'function' ] );
@@ -472,7 +477,7 @@ class PodsAdmin {
      *
      */
     public function mce_popup () {
-        pods_view( PODS_DIR . 'ui/admin/shortcode.php' );
+        pods_view( PODS_DIR . 'ui/admin/shortcode.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
@@ -544,7 +549,7 @@ class PodsAdmin {
      * @param $obj
      */
     public function admin_setup_add ( $obj ) {
-        require_once PODS_DIR . 'ui/admin/setup_add.php';
+        pods_view( PODS_DIR . 'ui/admin/setup_add.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
@@ -552,7 +557,7 @@ class PodsAdmin {
      * @param $obj
      */
     public function admin_setup_edit ( $duplicate, $obj ) {
-        require_once PODS_DIR . 'ui/admin/setup_edit.php';
+        pods_view( PODS_DIR . 'ui/admin/setup_edit.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
@@ -577,14 +582,14 @@ class PodsAdmin {
      *
      */
     public function admin_advanced () {
-        require_once PODS_DIR . 'ui/admin/advanced.php';
+        pods_view( PODS_DIR . 'ui/admin/advanced.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
      *
      */
     public function admin_settings () {
-
+        pods_view( PODS_DIR . 'ui/admin/settings.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
@@ -701,14 +706,14 @@ class PodsAdmin {
      *
      */
     public function admin_upgrade () {
-        require_once PODS_DIR . 'ui/admin/upgrade.php';
+        pods_view( PODS_DIR . 'ui/admin/upgrade.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
      *
      */
     public function admin_help () {
-        require_once PODS_DIR . 'ui/admin/help.php';
+        pods_view( PODS_DIR . 'ui/admin/help.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
@@ -1027,7 +1032,7 @@ class PodsAdmin {
                         $errors[] = '[' . $error_code . '] ' . $error_message;
                     }
 
-                    echo 'Error: <div style="color:#FF0000">' . implode( '</div><div>', $errors ) . '</div>';
+                    pods_error( 'Error: <div style="color:#FF0000">' . implode( '</div><div>', $errors ) . '</div>' );
                 }
                 else {
                     $attachment = get_post( $attachment_id, ARRAY_A );

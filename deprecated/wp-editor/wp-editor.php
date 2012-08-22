@@ -32,7 +32,7 @@ class WP_Pre_33_Editor {
 
 		$set = wp_parse_args( $settings,  array(
 			'wpautop' => true, // use wpautop?
-			'wp_buttons_css' => PODS_URL . '/deprecated/wp-editor/editor-buttons.css', // styles for both visual and HTML editors buttons
+			'wp_buttons_css' => PODS_URL . 'deprecated/wp-editor/editor-buttons.css', // styles for both visual and HTML editors buttons
 			'editor_class' => 'wp-editor-area',
 			'upload_link_title' => 'Upload and insert images or other media',
 			'media_buttons_context' => '',

@@ -217,11 +217,19 @@ class Pods_Roles extends PodsComponent {
         $role_label = pods_var_raw( 'role_label', $params );
 
         $params->capabilities = (array) pods_var_raw( 'capabilities', $params, array() );
+        $params->custom_capabilities = (array) pods_var_raw( 'custom_capabilities', $params, array() );
 
         $capabilities = array();
 
         foreach ( $params->capabilities as $capability => $x ) {
             if ( true !== (boolean) $x )
+                continue;
+
+            $capabilities[ esc_attr( $capability ) ] = true;
+        }
+
+        foreach ( $params->custom_capabilities as $x => $capability ) {
+            if ( '--1' == $x )
                 continue;
 
             $capabilities[ esc_attr( $capability ) ] = true;
@@ -251,8 +259,8 @@ class Pods_Roles extends PodsComponent {
 
         $capabilities = $this->get_capabilities();
 
-        if ( !isset( $params->capabilities ) )
-            $params->capabilties = array();
+        $params->capabilities = (array) pods_var_raw( 'capabilities', $params, array() );
+        $params->custom_capabilities = (array) pods_var_raw( 'custom_capabilities', $params, array() );
 
         if ( !isset( $params->id ) || empty( $params->id ) || !isset( $wp_roles->role_objects[ $params->id ] ) )
             return pods_error( __( 'Role not found, cannot edit it.', 'pods' ) );
@@ -266,6 +274,19 @@ class Pods_Roles extends PodsComponent {
 
         foreach ( $params->capabilities as $capability => $x ) {
             if ( true !== (boolean) $x )
+                continue;
+
+            $new_capabilities[] = esc_attr( $capability );
+
+            if ( !$role->has_cap( $capability ) )
+                $role->add_cap( $capability );
+        }
+
+        foreach ( $params->custom_capabilities as $x => $capability ) {
+            if ( '--1' == $x )
+                continue;
+
+            if ( !in_array( $capability, $new_capabilities ) )
                 continue;
 
             $new_capabilities[] = esc_attr( $capability );

@@ -66,7 +66,7 @@
 
                             <div class="inside pods-manage-field pods-dependency">
                                 <div class="pods-field-option-group">
-                                    <p><a href="#toggle" class="button" id="toggle_all"><?php _e( 'Toggle All Capabilities on / off', 'pods' ); ?></a></p>
+                                    <p><a href="#toggle" class="button" id="toggle-all"><?php _e( 'Toggle All Capabilities on / off', 'pods' ); ?></a></p>
 
                                     <div class="pods-pick-values pods-pick-checkbox pods-zebra">
                                         <ul>
@@ -90,6 +90,29 @@
                                                 }
                                             ?>
                                         </ul>
+                                    </div>
+                                </div>
+
+                                <div class="pods-field-option-group">
+                                    <p class="pods-field-option-group-label">
+                                        <?php
+                                        echo PodsForm::label( 'custom_capabilities[0]', __( 'Custom Capabilities', 'pods' ), __( 'These capabilities will automatically be created and assigned to this role', 'pods' ) );
+                                        ?>
+                                    </p>
+
+                                    <div class="pods-pick-values pods-pick-checkbox">
+                                        <ul id="custom-capabilities">
+                                            <li class="pods-repeater hidden">
+                                                <?php echo PodsForm::field( 'custom_capabilities[--1]', '', 'text' ); ?>
+                                            </li>
+                                            <li>
+                                                <?php echo PodsForm::field( 'custom_capabilities[0]', '', 'text' ); ?>
+                                            </li>
+                                        </ul>
+
+                                        <p>
+                                            <a href="#add-capability" id="add-capability" class="button">Add Another Custom Capability</a>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -125,12 +148,23 @@
         $( document ).Pods( 'sluggable' );
 
         var toggle_all = true;
-        $( '#toggle_all' ).on( 'click', function ( e ) {
+
+        $( '#toggle-all' ).on( 'click', function ( e ) {
             e.preventDefault();
 
             $( '.pods-field.pods-boolean input[type="checkbox"]' ).prop( 'checked', toggle_all );
 
             toggle_all = ( !toggle_all );
+        } );
+
+        $( '#add-capability' ).on( 'click', function ( e ) {
+            e.preventDefault();
+
+            var new_id = $( 'ul#custom-capabilities li' ).length;
+            var html = $( 'ul#custom-capabilities li.pods-repeater' ).html().replace( '--1', new_id );
+
+            $( 'ul#custom-capabilities' ).append( '<li id="capability-' + new_id + '">' + html + '</li>' );
+            $( 'li#capability-' + new_id + ' input' ).focus();
         } );
     } );
 </script>

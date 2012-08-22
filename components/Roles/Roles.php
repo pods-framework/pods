@@ -64,6 +64,7 @@ class Pods_Roles extends PodsComponent {
         }
 
         $ui = array(
+            'component' => $component,
             'data' => $roles,
             'total' => count( $roles ),
             'total_found' => count( $roles ),
@@ -89,19 +90,21 @@ class Pods_Roles extends PodsComponent {
         pods_ui( $ui );
     }
 
-    function admin_add () {
+    function admin_add ( $obj ) {
         global $wp_roles;
 
         $capabilities = $this->get_capabilities();
 
         $defaults = $this->get_default_capabilities();
 
+        $component = $obj->x[ 'component' ];
+
         $method = 'add'; // ajax_add
 
         echo pods_view( PODS_DIR . '/components/Roles/add.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
-    function admin_edit () {
+    function admin_edit ( $obj ) {
         global $wp_roles;
 
         $capabilities = $this->get_capabilities();
@@ -118,6 +121,11 @@ class Pods_Roles extends PodsComponent {
                 'capabilities' => $role->capabilities
             );
         }
+
+        if ( empty( $role ) )
+            return $obj->error( __( 'Role not found, cannot edit it.', 'pods' ) );
+
+        $component = $obj->x[ 'component' ];
 
         $method = 'edit'; // ajax_edit
 
@@ -185,23 +193,65 @@ class Pods_Roles extends PodsComponent {
      * @param $params
      */
     public function ajax_add ( $params ) {
-        // add new role
-        // role_name
-        // role_label
-        // capabilities[x]
+        global $wp_roles;
+
+        $role_name = pods_var_raw( 'role_name', $params );
+        $role_label = pods_var_raw( 'role_label', $params );
+
+        $params->capabilities = (array) pods_var_raw( 'capabilities', $params, array() );
+
+        $capabilities = array();
+
+        foreach ( $params->capabilities as $capability => $x ) {
+            $capabilities[] = esc_attr( $capability );
+        }
+
+        if ( empty( $role_name ) )
+            return pods_error( __( 'Role name is required', 'pods' ) );
+
+        if ( empty( $role_label ) )
+            return pods_error( __( 'Role label is required', 'pods' ) );
+
+        if ( !isset( $wp_roles ) )
+            $wp_roles = new WP_Roles();
+
+        return $wp_roles->add_role( $role_name, $role_label, $capabilities );
     }
 
     /**
      * Handle the Edit Role AJAX
      *
      * @todo rename role_name
+     * @todo rename role_label
      *
      * @param $params
      */
     public function ajax_edit ( $params ) {
-        // edit role
-        // rename role_label
-        // capabilities[x]
+        global $wp_roles;
+
+        $capabilities = $this->get_capabilities();
+
+        $role = array();
+
+        foreach ( $wp_roles->role_objects as $key => $role ) {
+            if ( $key != pods_var_raw( 'id', 'get', 0, null, true ) )
+                continue;
+
+            $role = array(
+                'id' => $key,
+                'name' => $wp_roles->role_names[ $key ],
+                'capabilities' => $role->capabilities
+            );
+        }
+
+        if ( empty( $role ) )
+            return pods_error( __( 'Role not found, cannot edit it.', 'pods' ) );
+
+        $capabilities_to_remove = array();
+
+        foreach ( $role[ 'capabilitles' ] as $capability => $got ) {
+
+        }
     }
 
     /**

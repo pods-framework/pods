@@ -36,6 +36,8 @@ class PodsUI
     private $unique_identifier = false;
 
     // base
+    public $x = array();
+
     /**
      * @var array|bool|mixed|null|Pods
      */
@@ -783,6 +785,8 @@ class PodsUI
             foreach ( $options as $option => $value ) {
                 if ( isset( $this->{$option} ) )
                     $this->{$option} = $value;
+                else
+                    $this->x[ $option ] = $value;
             }
         }
 

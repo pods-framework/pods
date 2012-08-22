@@ -83,7 +83,7 @@
 
                                                     $zebra = ( !$zebra );
                                             ?>
-                                                <li class="pods-zebra-<?php echo $class; ?>">
+                                                <li class="pods-zebra-<?php echo $class; ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
                                                     <?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
                                                 </li>
                                             <?php
@@ -112,7 +112,7 @@
 </div>
 <script type="text/javascript">
     var pods_admin_submit_callback = function ( id ) {
-        document.location = 'admin.php?page=pods&do=create';
+        document.location = 'admin.php?page=pods-component-<?php echo $component; ?>&do=create';
     }
 
     jQuery( function ( $ ) {

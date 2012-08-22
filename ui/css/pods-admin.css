@@ -520,6 +520,14 @@ tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-save {
     cursor: default;
 }
 
+tr.pods-toggled-on {
+    background-color: #FFF;
+}
+
+tr.pods-toggled-off {
+    background-color: #F4F4F4;
+}
+
 /*
  * Pods Dependency
  */

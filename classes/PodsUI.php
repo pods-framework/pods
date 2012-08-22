@@ -2000,8 +2000,17 @@ class PodsUI
                                             if ( !isset( $custom_data[ 'label' ] ) )
                                                 $custom_data[ 'label' ] = ucwords( str_replace( '_', ' ', $custom_action ) );
 
-                                            if ( !isset( $custom_data[ 'link' ] ) )
-                                                $custom_data[ 'link' ] = pods_var_update( array( 'action' => $custom_action, 'id' => $row[ $this->sql[ 'field_id' ] ] ) );
+                                            if ( !isset( $custom_data[ 'link' ] ) ) {
+                                                $vars = array(
+                                                    'action' => $custom_action,
+                                                    'id' => $row[ $this->sql[ 'field_id' ] ]
+                                                );
+
+                                                if ( 'toggle' == $custom_action )
+                                                    $vars[ 'toggle' ] = (int) ( !$row[ 'toggle' ] );
+
+                                                $custom_data[ 'link' ] = pods_var_update( $vars );
+                                            }
 
                                             $actions[ $custom_action ] = '<span class="edit"><a href="' . $this->do_template( $custom_data[ 'link' ], $row ) . '" title="' . esc_attr( $custom_data[ 'label' ] ) . ' this item">' . $custom_data[ 'label' ] . '</a></span>';
                                         }

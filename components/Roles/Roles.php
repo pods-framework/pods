@@ -88,7 +88,7 @@ class Pods_Roles extends PodsComponent {
             'searchable' => false,
             'sortable' => false,
             'pagination' => false
-         );
+        );
 
         if ( isset( $roles[ pods_var( 'id', 'get', -1 ) ] ) )
             $ui[ 'row' ] = $roles[ pods_var( 'id', 'get', -1 ) ];

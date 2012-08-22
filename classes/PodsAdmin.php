@@ -674,9 +674,9 @@ class PodsAdmin {
 
         $toggle = PodsInit::$components->toggle( $component );
 
-        if ( $toggle )
+        if ( true === $toggle )
             $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component enabled', 'pods' ) );
-        else
+        elseif ( false === $toggle )
             $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component disabled', 'pods' ) );
 
         $components = PodsInit::$components->components;

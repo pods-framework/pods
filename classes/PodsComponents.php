@@ -258,15 +258,17 @@ class PodsComponents {
      * @return bool
      */
     public function toggle ( $component ) {
-        $toggle = false;
+        $toggle = null;
 
         if ( isset( $this->components[ $component ] ) ) {
-            if ( !isset( $this->settings[ 'components' ][ $component ] ) || 0 == $this->settings[ 'components' ][ $component ] ) {
+            if ( 1 == pods_var( 'toggle', 'get' ) && ( !isset( $this->settings[ 'components' ][ $component ] ) || 0 == $this->settings[ 'components' ][ $component ] ) ) {
                 $this->settings[ 'components' ][ $component ] = array();
                 $toggle = true;
             }
-            else
+            elseif ( 0 == pods_var( 'toggle', 'get' ) ) {
                 $this->settings[ 'components' ][ $component ] = 0;
+                $toggle = false;
+            }
         }
 
         $settings = json_encode( $this->settings );

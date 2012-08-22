@@ -1022,6 +1022,8 @@
                     if ( $.fn.sortable && $tbody.hasClass( 'pods-manage-sortable' ) )
                         $( this ).closest( 'tbody.pods-manage-list' ).sortable( 'refresh' );
 
+                    pods_changed = true;
+
                     //row_counter--;
                 }
 

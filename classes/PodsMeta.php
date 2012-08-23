@@ -290,7 +290,7 @@ class PodsMeta {
         elseif ( 'comment' == $type )
             $object = self::$comment;
 
-        if ( 'pod' != $type && isset( $object[ $name ] ) )
+        if ( 'pod' != $type && !empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) )
             $fields = $object[ $name ][ 'fields' ];
         else {
             $pod = $this->api->load_pod( array( 'name' => $name ), false );
@@ -821,7 +821,7 @@ class PodsMeta {
         if ( is_object( $comment ) )
             $comment_type = $comment->comment_type;
 
-        $groups = $this->groups_get( 'comment', $comment_type );
+        $groups = $this->groups_get( 'comment', 'comment' );
 
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )

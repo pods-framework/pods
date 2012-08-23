@@ -189,7 +189,13 @@ class PodsData {
     public function __construct ( $pod = null, $id = 0 ) {
         global $wpdb;
 
-        $this->api =& pods_api( $pod );
+        if ( is_object( $pod ) && 'PodsAPI' == get_class( $pod ) ) {
+            $this->api = $pod;
+            $pod = $this->api->pod;
+        }
+        else
+            $this->api =& pods_api( $pod );
+
         $this->api->display_errors =& self::$display_errors;
 
         if ( null !== $pod ) {

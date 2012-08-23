@@ -131,7 +131,7 @@ class Pods {
         $this->api = pods_api( $pod );
         $this->api->display_errors =& $this->display_errors;
 
-        $this->data = pods_data( $pod, $id );
+        $this->data = pods_data( $this->api, $id );
         PodsData::$display_errors =& $this->display_errors;
 
         // Set up page variable

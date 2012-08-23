@@ -52,6 +52,8 @@ class PodsAPI {
                 pods_deprecated( 'pods_api( $pod, $format )', '2.0.0', 'pods_api( $pod )' );
             }
 
+            $pod = pods_clean_name( $pod );
+
             $pod = $this->load_pod( array( 'name' => $pod ) );
 
             if ( !empty( $pod ) ) {

@@ -815,11 +815,16 @@ class PodsMeta {
      * @param null $comment
      */
     public function meta_comment_add ( $comment_type, $comment = null ) {
-        if ( 'comment' == $comment_type )
-            return;
-
-        if ( is_object( $comment ) )
+        if ( is_object( $comment ) && isset( $comment_type->comment_type ) )
             $comment_type = $comment->comment_type;
+
+        if ( is_object( $comment_type ) && isset( $comment_type->comment_type ) ) {
+            $comment = $comment_type;
+            $comment_type = $comment_type->comment_type;
+        }
+
+        if ( is_object( $comment_type ) || 'comment' != $comment_type )
+            return;
 
         $groups = $this->groups_get( 'comment', 'comment' );
 

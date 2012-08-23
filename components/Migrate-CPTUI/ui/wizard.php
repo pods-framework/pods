@@ -6,13 +6,13 @@
 
     <form action="" method="post" class="pods-submittable">
         <div class="pods-submittable-fields">
-            <input type="hidden" name="action" value="pods_admin_components" />
-            <input type="hidden" name="component" value="<?php echo $component; ?>" />
-            <input type="hidden" name="method" value="<?php echo $method; ?>" />
-            <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('pods-component-' . $component . '-' . $method ); ?>" />
-            <input type="hidden" name="cleanup" id="pods_cleanup" value="0" />
+            <?php echo PodsForm::field( 'action', 'pods_admin_components', 'hidden' ); ?>
+            <?php echo PodsForm::field( 'component', $component, 'hidden' ); ?>
+            <?php echo PodsForm::field( 'method', $method, 'hidden' ); ?>
+            <?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
+            <?php echo PodsForm::field( 'cleanup', 0, 'hidden', array( 'attributes' => array( 'id' => 'pods_cleanup' ) ) ); ?>
 
-            <h2 class="italicized"><?php _e('Migrate: Import from Custom Post Type UI', 'pods'); ?></h2>
+            <h2 class="italicized"><?php _e( 'Migrate: Import from Custom Post Type UI', 'pods' ); ?></h2>
 
             <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
@@ -159,6 +159,7 @@
 </div>
 <script type="text/javascript">
     var pods_admin_submit_callback = function ( id ) {
+        id = parseInt( id );
         document.location = 'admin.php?page=pods&do=create';
     }
 

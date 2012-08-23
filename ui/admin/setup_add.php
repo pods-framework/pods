@@ -8,10 +8,10 @@
         <div class="pods-submittable-fields">
             <input type="hidden" name="action" value="pods_admin" />
             <input type="hidden" name="method" value="add_pod" />
-            <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('pods-add_pod'); ?>" />
+            <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce( 'pods-add_pod' ); ?>" />
             <input type="hidden" name="create_extend" id="pods_create_extend" value="create" />
 
-            <h2 class="italicized"><?php _e('Add New Pod', 'pods'); ?></h2>
+            <h2 class="italicized"><?php _e( 'Add New Pod', 'pods' ); ?></h2>
 
             <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
@@ -225,6 +225,8 @@
 </div>
 <script type="text/javascript">
     var pods_admin_submit_callback = function ( id ) {
+        id = parseInt( id );
+
         if ( !isNaN( id ) )
             document.location = 'admin.php?page=pods&action=edit&id=' + id + '&do=create';
         else

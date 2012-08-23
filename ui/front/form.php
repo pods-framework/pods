@@ -51,7 +51,8 @@
         $( document ).Pods( 'submit' );
     } );
 
-    pods_admin_submit_callback = function ( id ) {
+    var pods_admin_submit_callback = function ( id ) {
+        id = parseInt( id );
         document.location = '<?php echo pods_var_update( array( 'action' . $obj->num => 'manage', 'id' . $obj->num => '' ) ); ?>';
     }
 </script>

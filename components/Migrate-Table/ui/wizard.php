@@ -159,6 +159,7 @@
 </div>
 <script type="text/javascript">
     var pods_admin_submit_callback = function ( id ) {
+        id = parseInt( id );
         document.location = 'admin.php?page=pods&do=create';
     }
 

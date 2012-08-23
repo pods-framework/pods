@@ -154,6 +154,7 @@
 
 <script type="text/javascript">
     var pods_admin_submit_callback = function ( id ) {
+        id = parseInt( id );
         document.location = 'admin.php?page=pods-component-<?php echo esc_js( $component ); ?>&action=edit&id=<?php echo esc_js( $id ); ?>&do=save';
     }
 

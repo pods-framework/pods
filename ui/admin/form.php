@@ -199,6 +199,7 @@
     } );
 
     var pods_admin_submit_callback = function ( id ) {
+        id = parseInt( id );
         var thank_you = '<?php echo addslashes( $thank_you ); ?>';
 
         document.location = thank_you.replace( 'X_ID_X', id );

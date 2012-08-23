@@ -967,6 +967,7 @@ foreach ( $field_settings[ 'pick_object' ] as $object => $object_label ) {
     } );
 
     var pods_admin_submit_callback = function ( id ) {
+        id = parseInt( id );
         var thank_you = '<?php echo addslashes( pods_var_update( array( 'do' => 'save' ) ) ); ?>';
 
         document.location = thank_you.replace( 'X_ID_X', id );

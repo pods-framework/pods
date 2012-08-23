@@ -662,9 +662,9 @@ function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, $id = 0, &$o
     $pod_data = array();
 
     if ( is_array( $pod ) ) {
-        $pod_id = pods_var( 'id', $pod, 0 );
-        $pod = pods_var( 'name', $pod );
         $pod_data = $pod;
+        $pod_id = pods_var( 'id', $pod_data, 0 );
+        $pod = pods_var( 'name', $pod_data );
     }
 
     $pod_id = absint( $pod_id );
@@ -688,7 +688,7 @@ function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, $id = 0, &$o
 
     $slug_check = pods_query( array( $check_sql, $slug, $id ), $obj );
 
-    if ( !empty( $slug_check ) || apply_filters( 'pods_unique_slug_is_bad_flat_slug', false, $slug, $id, $column_name, $pod, $pod_id, $obj ) ) {
+    if ( !empty( $slug_check ) || apply_filters( 'pods_unique_slug_is_bad_flat_slug', false, $slug, $column_name, $pod, $pod_id, $id, $pod_data, $obj ) ) {
         $suffix = 2;
 
         do {

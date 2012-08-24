@@ -518,6 +518,15 @@ class PodsAPI {
                         'date_format_type' => 'datetime'
                     )
                 ),
+                'post_modified' => array(
+                    'name' => 'post_modified',
+                    'label' => 'Last Modified Date',
+                    'type' => 'date',
+                    'alias' => array( 'modified' ),
+                    'options' => array(
+                        'date_format_type' => 'datetime'
+                    )
+                ),
                 'post_parent' => array(
                     'name' => 'post_parent',
                     'label' => 'Parent',

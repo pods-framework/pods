@@ -292,8 +292,12 @@ class Pods {
 
         $params->traverse = array();
 
-        if ( 'detail_url' == $params->name )
-            $value = get_bloginfo( 'url' ) . '/' . $this->do_template( $this->detail_page );
+        if ( 'detail_url' == $params->name ) {
+            if ( 0 < strlen( $this->detail_page ) )
+                $value = get_bloginfo( 'url' ) . '/' . $this->do_template( $this->detail_page );
+            elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
+                $value = get_permalink( $this->id() );
+        }
         elseif ( isset( $this->row[ $params->name ] ) ) {
             $value = $this->row[ $params->name ];
 
@@ -309,6 +313,7 @@ class Pods {
         else {
             $object_field_found = false;
 
+            // @todo Handle Author like a pick field
             foreach ( $this->pod_data[ 'object_fields' ] as $object_field => $object_field_opt ) {
                 if ( $object_field == $params->name || in_array( $params->name, $object_field_opt[ 'alias' ] ) ) {
                     if ( isset( $this->row[ $object_field ] ) ) {

@@ -471,37 +471,6 @@ class PodsAPI {
             $post_stati = get_post_stati();
 
             $fields = array(
-                'post_title' => array(
-                    'name' => 'post_title',
-                    'label' => 'Title',
-                    'type' => 'text',
-                    'alias' => array( 'title', 'name' )
-                ),
-                'post_name' => array(
-                    'name' => 'post_name',
-                    'label' => 'Permalink',
-                    'type' => 'slug',
-                    'alias' => array( 'slug', 'permalink' )
-                ),
-                'post_content' => array(
-                    'name' => 'post_content',
-                    'label' => 'Content',
-                    'type' => 'paragraph',
-                    'alias' => array( 'content' )
-                ),
-                'post_excerpt' => array(
-                    'name' => 'post_excerpt',
-                    'label' => 'Excerpt',
-                    'type' => 'paragraph',
-                    'alias' => array( 'excerpt' )
-                ),
-                'post_status' => array(
-                    'name' => 'post_status',
-                    'label' => 'Status',
-                    'type' => 'pick',
-                    'alias' => array( 'status' ),
-                    'data' => $post_stati
-                ),
                 'post_author' => array(
                     'name' => 'post_author',
                     'label' => 'Author',
@@ -518,6 +487,76 @@ class PodsAPI {
                         'date_format_type' => 'datetime'
                     )
                 ),
+                'post_date_gmt' => array(
+                    'name' => 'post_date',
+                    'label' => 'Publish Date (GMT)',
+                    'type' => 'date',
+                    'alias' => array(),
+                    'options' => array(
+                        'date_format_type' => 'datetime'
+                    )
+                ),
+                'post_content' => array(
+                    'name' => 'post_content',
+                    'label' => 'Content',
+                    'type' => 'paragraph',
+                    'alias' => array( 'content' )
+                ),
+                'post_title' => array(
+                    'name' => 'post_title',
+                    'label' => 'Title',
+                    'type' => 'text',
+                    'alias' => array( 'title', 'name' )
+                ),
+                'post_excerpt' => array(
+                    'name' => 'post_excerpt',
+                    'label' => 'Excerpt',
+                    'type' => 'paragraph',
+                    'alias' => array( 'excerpt' )
+                ),
+                'post_status' => array(
+                    'name' => 'post_status',
+                    'label' => 'Status',
+                    'type' => 'pick',
+                    'alias' => array( 'status' ),
+                    'data' => $post_stati
+                ),
+                'comment_status' => array(
+                    'name' => 'comment_status',
+                    'label' => 'Comment Status',
+                    'type' => 'text',
+                    'alias' => array()
+                ),
+                'ping_status' => array(
+                    'name' => 'ping_status',
+                    'label' => 'Ping Status',
+                    'type' => 'text',
+                    'alias' => array()
+                ),
+                'post_password' => array(
+                    'name' => 'post_password',
+                    'label' => 'Password',
+                    'type' => 'text',
+                    'alias' => array()
+                ),
+                'post_name' => array(
+                    'name' => 'post_name',
+                    'label' => 'Permalink',
+                    'type' => 'slug',
+                    'alias' => array( 'slug', 'permalink' )
+                ),
+                'to_ping' => array(
+                    'name' => 'to_ping',
+                    'label' => 'To Ping',
+                    'type' => 'text',
+                    'alias' => array()
+                ),
+                'pinged' => array(
+                    'name' => 'pinged',
+                    'label' => 'Pinged',
+                    'type' => 'text',
+                    'alias' => array()
+                ),
                 'post_modified' => array(
                     'name' => 'post_modified',
                     'label' => 'Last Modified Date',
@@ -527,12 +566,57 @@ class PodsAPI {
                         'date_format_type' => 'datetime'
                     )
                 ),
+                'post_modified_gmt' => array(
+                    'name' => 'post_modified',
+                    'label' => 'Last Modified Date (GMT)',
+                    'type' => 'date',
+                    'alias' => array(),
+                    'options' => array(
+                        'date_format_type' => 'datetime'
+                    )
+                ),
+                'post_content_filtered' => array(
+                    'name' => 'post_content_filtered',
+                    'label' => 'Content (filtered)',
+                    'type' => 'paragraph',
+                    'alias' => array()
+                ),
                 'post_parent' => array(
                     'name' => 'post_parent',
                     'label' => 'Parent',
                     'type' => 'pick',
                     'alias' => array( 'parent' ),
                     'data' => array()
+                ),
+                'guid' => array(
+                    'name' => 'guid',
+                    'label' => 'GUID',
+                    'type' => 'text',
+                    'alias' => array()
+                ),
+                'menu_order' => array(
+                    'name' => 'menu_order',
+                    'label' => 'Menu Order',
+                    'type' => 'number',
+                    'alias' => array()
+                ),
+                'post_type' => array(
+                    'name' => 'post_type',
+                    'label' => 'Type',
+                    'type' => 'text',
+                    'alias' => array( 'type' )
+                ),
+                'post_mime_type' => array(
+                    'name' => 'post_mime_type',
+                    'label' => 'Mime Type',
+                    'type' => 'text',
+                    'alias' => array()
+                ),
+                'comment_count' => array(
+                    'name' => 'comment_count',
+                    'label' => 'Comment Count',
+                    'type' => 'number',
+                    'alias' => array()
                 )
             );
         }

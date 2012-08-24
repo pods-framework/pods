@@ -1148,26 +1148,37 @@ class PodsMeta {
         if ( false !== strpos( '.', $field ) )
             $field = @current( explode( '.', $field ) );
 
-        if ( empty( $object_id ) || !empty( $field ) && empty( $object ) || !isset( $object[ 'fields' ][ $field ] ) )
+        if ( empty( $object_id ) || empty( $field ) || empty( $object ) || ( !isset( $object[ 'fields' ][ $field ] ) && !isset( $object[ 'object_fields' ][ $field ] ) ) )
             return $_null;
-
-        /*$meta_cache = wp_cache_get( $object_id, $meta_type . '_meta' );
-
-        if ( !$meta_cache )
-            $meta_cache = array();
-
-        if ( !empty( $meta_cache ) && !isset( $meta_cache[ $meta_key ][ $field ] ) )
-            $value = pods( $object[ 'name' ], $object_id )->field( $meta_key );
-        elseif ( isset( $meta_cache[ $meta_key ][ $field ] ) )
-            $value = $meta_cache[ $meta_key ][ $field ];
-
-        wp_cache_add( $object_id, $meta_cache, $meta_type . '_meta' );*/
 
         pods_no_conflict_on( $meta_type );
 
-        $value = pods( $object[ 'name' ], $object_id )->field( $meta_key );
+        $meta_cache = array();
+
+        if ( !$single )
+            $meta_cache = wp_cache_get( $object_id, $meta_type . '_meta' );
+
+        if ( !$single || empty( $meta_cache ) || !is_array( $meta_cache ) )
+            $meta_cache = array();
+
+        if ( !empty( $meta_cache ) && isset( $meta_cache[ $meta_key ][ $field ] ) )
+            $value = $meta_cache[ $meta_key ][ $field ];
+        else
+            $meta_cache[ $meta_key ] = $value = pods( $object[ 'name' ], $object_id )->field( $meta_key, $single );
+
+        if ( !$single )
+            wp_cache_add( $object_id, $meta_cache, $meta_type . '_meta' );
 
         pods_no_conflict_off( $meta_type );
+
+        if ( !is_numeric( $value ) && empty( $value ) ) {
+            if ( $single )
+                $value = '';
+            else
+                $value = array();
+        }
+        elseif ( !is_array( $value ) || !isset( $value[ 0 ] ) )
+            $value = array( $value );
 
         return $value;
     }

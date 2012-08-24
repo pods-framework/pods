@@ -307,223 +307,238 @@ class Pods {
             }
         }
         else {
-            $params->traverse = array( $params->name );
+            $object_field_found = false;
 
-            if ( false !== strpos( $params->name, '.' ) ) {
-                $params->traverse = explode( '.', $params->name );
-
-                $params->name = $params->traverse[ 0 ];
-            }
-
-            if ( isset( $this->fields[ $params->name ] ) && isset( $this->fields[ $params->name ][ 'type' ] ) ) {
-                $v = $this->do_hook( 'field_' . $this->fields[ $params->name ][ 'type' ], null, $this->fields[ $params->name ], $this->row, $params );
-
-                if ( null !== $v )
-                    return $v;
-            }
-
-            $simple = false;
-
-            if ( isset( $this->fields[ $params->name ] ) ) {
-                if ( 'meta' == $this->pod_data[ 'storage' ] ) {
-                    if ( !in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) )
-                        $simple = true;
-
-                    $params->single = true;
-                }
-
-                if ( in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
-                    if ( 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] )
-                        $simple = true;
+            foreach ( $this->pod_data[ 'object_fields' ] as $object_field => $object_field_opt ) {
+                if ( $object_field == $params->name || in_array( $params->name, $object_field_opt[ 'alias' ] ) ) {
+                    if ( isset( $this->row[ $object_field ] ) ) {
+                        $value = $this->row[ $object_field ];
+                        $object_field_found = true;
+                    }
+                    else
+                        return null;
                 }
             }
 
-            if ( !isset( $this->fields[ $params->name ] ) || !in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) || $simple ) {
-                pods_no_conflict_on( $this->pod_data[ 'type' ] );
+            if ( false === $object_field_found ) {
+                $params->traverse = array( $params->name );
 
-                if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
-                    $id = $this->id();
+                if ( false !== strpos( $params->name, '.' ) ) {
+                    $params->traverse = explode( '.', $params->name );
 
-                    if ( function_exists( 'icl_get_languages' ) ) {
-                        $master_post_id = (int) get_post_meta( $id, '_icl_lang_duplicate_of', true );
+                    $params->name = $params->traverse[ 0 ];
+                }
 
-                        if ( 0 < $master_post_id )
-                            $id = $master_post_id;
+                if ( isset( $this->fields[ $params->name ] ) && isset( $this->fields[ $params->name ][ 'type' ] ) ) {
+                    $v = $this->do_hook( 'field_' . $this->fields[ $params->name ][ 'type' ], null, $this->fields[ $params->name ], $this->row, $params );
+
+                    if ( null !== $v )
+                        return $v;
+                }
+
+                $simple = false;
+
+                if ( isset( $this->fields[ $params->name ] ) ) {
+                    if ( 'meta' == $this->pod_data[ 'storage' ] ) {
+                        if ( !in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) )
+                            $simple = true;
+
+                        $params->single = true;
                     }
 
-                    $value = get_post_meta( $id, $params->name, $params->single );
-                }
-                elseif ( 'user' == $this->pod_data[ 'type' ] )
-                    $value = get_user_meta( $this->id(), $params->name, $params->single );
-                elseif ( 'comment' == $this->pod_data[ 'type' ] )
-                    $value = get_comment_meta( $this->id(), $params->name, $params->single );
-
-                pods_no_conflict_off( $this->pod_data[ 'type' ] );
-            }
-            else {
-                // Dot-traversal
-                $pod = $this->pod;
-                $ids = array( $this->id() );
-                $all_fields = array(
-                    $this->pod => $this->fields
-                );
-
-                $lookup = $params->traverse;
-
-                if ( !empty( $lookup ) )
-                    unset( $lookup[ 0 ] );
-
-                // Get fields matching traversal names
-                if ( !empty( $lookup ) ) {
-                    $fields = $this->api->load_fields( array(
-                        'name' => $lookup,
-                        'type' => $tableless_field_types
-                    ) );
-
-                    if ( !empty( $fields ) ) {
-                        foreach ( $fields as $row ) {
-                            $field = $this->api->load_field( array(
-                                'pod_id' => $row->post_parent,
-                                'id' => $row->ID,
-                                'name' => $row->post_name
-                            ) );
-
-                            if ( !empty( $field ) )
-                                $all_fields[ $field[ 'pod' ] ][ $field[ 'name' ] ] = $field;
-                        }
+                    if ( in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
+                        if ( 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] )
+                            $simple = true;
                     }
                 }
 
-                $last_type = $last_object = $last_pick_val = '';
+                if ( !isset( $this->fields[ $params->name ] ) || !in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) || $simple ) {
+                    pods_no_conflict_on( $this->pod_data[ 'type' ] );
 
-                $limit = 0;
+                    if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
+                        $id = $this->id();
 
-                // Loop through each traversal level
-                foreach ( $params->traverse as $key => $field ) {
-                    $last_loop = false;
+                        if ( function_exists( 'icl_get_languages' ) ) {
+                            $master_post_id = (int) get_post_meta( $id, '_icl_lang_duplicate_of', true );
 
-                    if ( count( $params->traverse ) <= ( $key + 1 ) )
-                        $last_loop = true;
-
-                    $field_exists = isset( $all_fields[ $pod ][ $field ] );
-
-                    // Tableless handler
-                    if ( $field_exists ) {
-                        $type = $all_fields[ $pod ][ $field ][ 'type' ];
-                        $pick_object = $all_fields[ $pod ][ $field ][ 'pick_object' ];
-                        $pick_val = $all_fields[ $pod ][ $field ][ 'pick_val' ];
-
-                        if ( in_array( $type, $tableless_field_types ) ) {
-                            $single_multi = pods_var( "{$type}_format_type", $all_fields[ $pod ][ $field ][ 'options' ], 'single' );
-
-                            if ( 'multi' == $single_multi )
-                                $limit = (int) pods_var( "{$type}_limit", $all_fields[ $pod ][ $field ][ 'options' ], 0 );
-                            else
-                                $limit = 1;
+                            if ( 0 < $master_post_id )
+                                $id = $master_post_id;
                         }
 
-                        $last_type = $type;
-                        $last_object = $pick_object;
-                        $last_pick_val = $pick_val;
-
-                        // Get related IDs
-                        $ids = $this->api->lookup_related_items(
-                            $all_fields[ $pod ][ $field ][ 'id' ],
-                            $all_fields[ $pod ][ $field ][ 'pod_id' ],
-                            $ids
-                        );
-
-                        // No items found
-                        if ( empty( $ids ) )
-                            return false;
-
-                        // Get $pod if related to a Pod
-                        if ( !empty( $pick_object) && 'pod' == $pick_object && !empty( $pick_val ) )
-                            $pod = $pick_val;
+                        $value = get_post_meta( $id, $params->name, $params->single );
                     }
-                    // Assume last iteration
-                    else {
-                        // Invalid field
-                        if ( 0 == $key )
-                            return false;
+                    elseif ( 'user' == $this->pod_data[ 'type' ] )
+                        $value = get_user_meta( $this->id(), $params->name, $params->single );
+                    elseif ( 'comment' == $this->pod_data[ 'type' ] )
+                        $value = get_comment_meta( $this->id(), $params->name, $params->single );
 
-                        $last_loop = true;
+                    pods_no_conflict_off( $this->pod_data[ 'type' ] );
+                }
+                else {
+                    // Dot-traversal
+                    $pod = $this->pod;
+                    $ids = array( $this->id() );
+                    $all_fields = array(
+                        $this->pod => $this->fields
+                    );
+
+                    $lookup = $params->traverse;
+
+                    if ( !empty( $lookup ) )
+                        unset( $lookup[ 0 ] );
+
+                    // Get fields matching traversal names
+                    if ( !empty( $lookup ) ) {
+                        $fields = $this->api->load_fields( array(
+                            'name' => $lookup,
+                            'type' => $tableless_field_types
+                        ) );
+
+                        if ( !empty( $fields ) ) {
+                            foreach ( $fields as $row ) {
+                                $field = $this->api->load_field( array(
+                                    'pod_id' => $row->post_parent,
+                                    'id' => $row->ID,
+                                    'name' => $row->post_name
+                                ) );
+
+                                if ( !empty( $field ) )
+                                    $all_fields[ $field[ 'pod' ] ][ $field[ 'name' ] ] = $field;
+                            }
+                        }
                     }
 
-                    if ( $last_loop ) {
-                        $object_type = $last_object;
-                        $object = $last_pick_val;
+                    $last_type = $last_object = $last_pick_val = '';
 
-                        if ( 'file' == $last_type ) {
-                            $object_type = 'media';
-                            $object = 'attachment';
-                        }
+                    $limit = 0;
 
-                        $table = $this->api->get_table_info( $object_type, $object );
+                    // Loop through each traversal level
+                    foreach ( $params->traverse as $key => $field ) {
+                        $last_loop = false;
 
-                        $join = $where = '';
+                        if ( count( $params->traverse ) <= ( $key + 1 ) )
+                            $last_loop = true;
 
-                        if ( !empty( $table[ 'join' ] ) ) {
-                            $join = (array) $table[ 'join' ];
+                        $field_exists = isset( $all_fields[ $pod ][ $field ] );
 
-                            $join = implode( ' ', $join );
-                        }
+                        // Tableless handler
+                        if ( $field_exists ) {
+                            $type = $all_fields[ $pod ][ $field ][ 'type' ];
+                            $pick_object = $all_fields[ $pod ][ $field ][ 'pick_object' ];
+                            $pick_val = $all_fields[ $pod ][ $field ][ 'pick_val' ];
 
-                        if ( !empty( $table[ 'where' ] ) || !empty( $ids ) ) {
-                            $where = array();
+                            if ( in_array( $type, $tableless_field_types ) ) {
+                                $single_multi = pods_var( "{$type}_format_type", $all_fields[ $pod ][ $field ][ 'options' ], 'single' );
 
-                            foreach ( $ids as $id ) {
-                                $where[] = '`t`.`' . $table[ 'field_id' ] . '` = ' . (int) $id;
+                                if ( 'multi' == $single_multi )
+                                    $limit = (int) pods_var( "{$type}_limit", $all_fields[ $pod ][ $field ][ 'options' ], 0 );
+                                else
+                                    $limit = 1;
                             }
 
-                            if ( !empty( $where ) )
-                                $where = array( '( ' . implode( ' OR ', $where ) . ' )' );
+                            $last_type = $type;
+                            $last_object = $pick_object;
+                            $last_pick_val = $pick_val;
 
-                            if ( !isset( $table[ 'where' ] ) )
-                                $where = array_merge( $where, (array) $table[ 'where' ] );
+                            // Get related IDs
+                            $ids = $this->api->lookup_related_items(
+                                $all_fields[ $pod ][ $field ][ 'id' ],
+                                $all_fields[ $pod ][ $field ][ 'pod_id' ],
+                                $ids
+                            );
 
-                            $where = implode( ' AND ', $where );
+                            // No items found
+                            if ( empty( $ids ) )
+                                return false;
 
-                            $where = "WHERE {$where}";
+                            // Get $pod if related to a Pod
+                            if ( !empty( $pick_object) && 'pod' == $pick_object && !empty( $pick_val ) )
+                                $pod = $pick_val;
                         }
-
-                        $sql = "
-                            SELECT *
-                            FROM `" . $table[ 'table' ] . "` AS `t`
-                            {$join}
-                            {$where}
-                        ";
-
-                        $data = pods_query( $sql );
-
-                        if ( empty( $data ) )
-                            $value = false;
+                        // Assume last iteration
                         else {
-                            foreach ( $data as &$item_value ) {
-                                $item_value = get_object_vars( (object) $item_value );
-                            }
+                            // Invalid field
+                            if ( 0 == $key )
+                                return false;
 
-                            // Return entire array
-                            if ( false === $params->in_form && false !== $field_exists && in_array( $last_type, $tableless_field_types ) )
-                                $value = $data;
-                            // Return an array of single column values
-                            else {
-                                $value = array();
-
-                                if ( false !== $params->in_form )
-                                    $field = $table[ 'field_id' ];
-
-                                foreach ( $data as $item ) {
-                                    $value[] = $item[ $field ];
-                                }
-                            }
-
-                            // Return a single column value
-                            if ( false === $params->in_form && 1 == $limit && !empty( $value ) && is_array( $value ) && isset( $value[ 0 ] ) )
-                                $value = $value[ 0 ];
+                            $last_loop = true;
                         }
 
-                        break;
+                        if ( $last_loop ) {
+                            $object_type = $last_object;
+                            $object = $last_pick_val;
+
+                            if ( 'file' == $last_type ) {
+                                $object_type = 'media';
+                                $object = 'attachment';
+                            }
+
+                            $table = $this->api->get_table_info( $object_type, $object );
+
+                            $join = $where = '';
+
+                            if ( !empty( $table[ 'join' ] ) ) {
+                                $join = (array) $table[ 'join' ];
+
+                                $join = implode( ' ', $join );
+                            }
+
+                            if ( !empty( $table[ 'where' ] ) || !empty( $ids ) ) {
+                                $where = array();
+
+                                foreach ( $ids as $id ) {
+                                    $where[] = '`t`.`' . $table[ 'field_id' ] . '` = ' . (int) $id;
+                                }
+
+                                if ( !empty( $where ) )
+                                    $where = array( '( ' . implode( ' OR ', $where ) . ' )' );
+
+                                if ( !isset( $table[ 'where' ] ) )
+                                    $where = array_merge( $where, (array) $table[ 'where' ] );
+
+                                $where = implode( ' AND ', $where );
+
+                                $where = "WHERE {$where}";
+                            }
+
+                            $sql = "
+                                SELECT *
+                                FROM `" . $table[ 'table' ] . "` AS `t`
+                                {$join}
+                                {$where}
+                            ";
+
+                            $data = pods_query( $sql );
+
+                            if ( empty( $data ) )
+                                $value = false;
+                            else {
+                                foreach ( $data as &$item_value ) {
+                                    $item_value = get_object_vars( (object) $item_value );
+                                }
+
+                                // Return entire array
+                                if ( false === $params->in_form && false !== $field_exists && in_array( $last_type, $tableless_field_types ) )
+                                    $value = $data;
+                                // Return an array of single column values
+                                else {
+                                    $value = array();
+
+                                    if ( false !== $params->in_form )
+                                        $field = $table[ 'field_id' ];
+
+                                    foreach ( $data as $item ) {
+                                        $value[] = $item[ $field ];
+                                    }
+                                }
+
+                                // Return a single column value
+                                if ( false === $params->in_form && 1 == $limit && !empty( $value ) && is_array( $value ) && isset( $value[ 0 ] ) )
+                                    $value = $value[ 0 ];
+                            }
+
+                            break;
+                        }
                     }
                 }
             }

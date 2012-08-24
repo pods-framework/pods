@@ -966,7 +966,7 @@ function pods_shortcode ( $tags, $content = null ) {
         'helper' => null
     );
 
-    $tags = shortcode_atts( $defaults, $tags );
+    $tags = array_merge( $defaults, $tags );
     $tags = apply_filters( 'pods_shortcode', $tags );
 
     if ( empty( $content ) )

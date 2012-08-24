@@ -1117,20 +1117,74 @@ function pods_content () {
  * Split an array into human readable text (Item, Item, and Item)
  *
  * @param array $value
+ * @param string $field
+ * @param array $fields
  */
-function pods_serial_comma ( $value ) {
+function pods_serial_comma ( $value, $field = null, $fields = null ) {
     $value = (array) $value;
+
+    $field_index = null;
+
+    if ( !empty( $fields ) && is_array( $fields ) && isset( $fields[ $field ] ) ) {
+        $field = $fields[ $field ];
+
+        $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
+
+        if ( !empty( $field ) && is_array( $field ) && in_array( $field[ 'type' ], $tableless_field_types ) ) {
+            $table = $this->api->get_table_info( $field[ 'object' ], $field[ 'pick_val' ] );
+
+            if ( !empty( $table ) )
+                $field_index = $table[ 'field_index' ];
+        }
+    }
 
     $last = '';
 
     if ( !empty( $value ) )
         $last = array_pop( $value );
 
-    if ( !empty( $value ) ) {
-        if ( 1 == count ( $value ) )
-            $value = $value . ' and ' . $last;
+    if ( is_array( $last ) ) {
+        if ( isset( $last[ $field_index ] ) )
+            $last = $last[ $field_index ];
         else
-            $value = implode( ', ', $value ) . ', and ' . $last;
+            $last = '';
+    }
+
+    if ( !empty( $value ) ) {
+        if ( 1 == count ( $value ) ) {
+            if ( is_array( $value ) ) {
+                if ( isset( $value[ $field_index ] ) )
+                    $value = $value[ $field_index ];
+                else
+                    $value = '';
+            }
+
+            if ( 0 < strlen( $value ) && 0 < strlen( $last ) )
+                $value .= ' and ' . $last;
+            elseif ( 0 < strlen( $last ) )
+                $value = $last;
+            else
+                $value = '';
+        }
+        else {
+            foreach ( $value as $k => &$v ) {
+                if ( is_array( $v ) ) {
+                    if ( isset( $v[ $field_index ] ) )
+                        $v = $v[ $field_index ];
+                    else
+                        unset( $value[ $k ] );
+                }
+            }
+
+            $value = implode( ', ', $value );
+
+            if ( 0 < strlen( $value ) && 0 < strlen( $last ) )
+                $value .= ' and ' . $last;
+            elseif ( 0 < strlen( $last ) )
+                $value = $last;
+            else
+                $value = '';
+        }
     }
     else
         $value = $last;

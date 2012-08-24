@@ -55,7 +55,7 @@
             <?php
                 }
 
-                if ( 1 == 0 && ( !is_object( $pod ) || !empty( $options[ 'data' ] ) ) ) {
+                if ( !is_object( $pod ) || !empty( $options[ 'data' ] ) ) {
             ?>
                 data : [
                     <?php

@@ -826,7 +826,7 @@ class PodsMeta {
         if ( is_object( $comment_type ) || 'comment' != $comment_type )
             return;
 
-        $groups = $this->groups_get( 'comment', 'comment' );
+        $groups = $this->groups_get( 'comment', $comment_type );
 
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )

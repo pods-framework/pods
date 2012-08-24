@@ -24,25 +24,31 @@ class PodsAdmin {
         $this->api = pods_api();
         $this->data = pods_data();
 
+        // Scripts / Stylesheets
         add_action( 'admin_enqueue_scripts', array( $this, 'admin_head' ) );
 
+        // AJAX $_POST fix
         add_action( 'admin_init', array( $this, 'admin_init' ), 9 );
 
+        // Menus
         add_action( 'admin_menu', array( $this, 'admin_menu' ), 99 );
 
-        if ( is_admin() ) {
-            add_action( 'wp_ajax_pods_admin', array( $this, 'admin_ajax' ) );
-            add_action( 'wp_ajax_nopriv_pods_admin', array( $this, 'admin_ajax' ) );
+        // AJAX for Admin
+        add_action( 'wp_ajax_pods_admin', array( $this, 'admin_ajax' ) );
+        add_action( 'wp_ajax_nopriv_pods_admin', array( $this, 'admin_ajax' ) );
 
-            add_action( 'wp_ajax_pods_upload', array( $this, 'admin_ajax_upload' ) );
-            add_action( 'wp_ajax_nopriv_pods_upload', array( $this, 'admin_ajax_upload' ) );
+        // AJAX for Uploads
+        add_action( 'wp_ajax_pods_upload', array( $this, 'admin_ajax_upload' ) );
+        add_action( 'wp_ajax_nopriv_pods_upload', array( $this, 'admin_ajax_upload' ) );
 
-            add_action( 'wp_ajax_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
-            add_action( 'wp_ajax_nopriv_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
+        // AJAX for Relationship lookups
+        add_action( 'wp_ajax_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
+        add_action( 'wp_ajax_nopriv_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
 
-            add_filter( 'media_buttons_context', array( $this, 'media_button' ) );
-        }
+        // Add Media Bar button for Shortcode
+        add_filter( 'media_buttons_context', array( $this, 'media_button' ) );
 
+        // Add the Pods capabilities
         add_filter( 'members_get_capabilities', array( $this, 'admin_capabilities' ) );
     }
 

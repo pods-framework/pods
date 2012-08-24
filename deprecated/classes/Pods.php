@@ -340,11 +340,9 @@ class Pods_Deprecated
         pods_deprecated( 'Pods::findRecords', '2.0.0', 'Pods::find' );
 
         if ( null == $orderby )
-            $orderby = "t.`{$this->obj->field_id}` DESC";
+            $orderby = "`t`.`{$this->obj->field_id}` DESC";
 
         $params = array(
-            'select' => 't.*',
-            'join' => '',
             'where' => $where,
             'orderby' => $orderby,
             'limit' => $rows_per_page,

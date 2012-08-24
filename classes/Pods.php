@@ -288,7 +288,7 @@ class Pods {
 
         $value = null;
 
-        $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
 
         $params->traverse = array();
 

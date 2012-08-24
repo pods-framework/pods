@@ -894,7 +894,7 @@ class PodsAPI {
      * @since 1.7.9
      */
     public function save_pod ( $params, $sanitized = false ) {
-        $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
 
         $pod = $this->load_pod( $params, false );
 
@@ -1299,7 +1299,7 @@ class PodsAPI {
     public function save_field ( $params, $table_operation = true, $sanitized = false ) {
         global $wpdb;
 
-        $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
 
         $params = (object) $params;
 
@@ -1775,7 +1775,7 @@ class PodsAPI {
 
         $params = (object) str_replace( '@wp_', '{prefix}', $params );
 
-        $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
 
         // @deprecated 2.0.0
         if ( isset( $params->datatype ) ) {
@@ -2527,7 +2527,7 @@ class PodsAPI {
     public function delete_field ( $params, $table_operation = true ) {
         global $wpdb;
 
-        $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
 
         $params = (object) pods_sanitize( $params );
 
@@ -3789,7 +3789,7 @@ class PodsAPI {
      * @return array|bool|mixed|null|void
      */
     private function handle_field_validation ( &$value, $field, $object_fields, $fields, $pod, $params ) {
-        $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
 
         $fields = array_merge( $fields, $object_fields );
 

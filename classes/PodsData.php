@@ -1397,7 +1397,7 @@ class PodsData {
         if ( empty( $pod ) )
             return array();
 
-        $tableless_field_types = $this->do_hook( 'tableless_field_types', array( 'pick', 'file' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
 
         if ( !isset( $this->traversal[ $pod ] ) )
             $this->traversal[ $pod ] = array();

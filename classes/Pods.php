@@ -1115,6 +1115,9 @@ class Pods {
 
         $value = $this->do_hook( 'do_magic_tags', $value, $field_name, $helper_name, $before, $after );
 
+        if ( is_array( $value ) )
+            $value = pods_serial_comma( $value );
+
         if ( null !== $value && false !== $value )
             return $before . $value . $after;
 

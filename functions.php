@@ -1114,6 +1114,31 @@ function pods_content () {
 }
 
 /**
+ * Split an array into human readable text (Item, Item, and Item)
+ *
+ * @param array $value
+ */
+function pods_serial_comma ( $value ) {
+    $value = (array) $value;
+
+    $last = '';
+
+    if ( !empty( $value ) )
+        $last = array_pop( $value );
+
+    if ( !empty( $value ) ) {
+        if ( 1 == count ( $value ) )
+            $value = $value . ' and ' . $last;
+        else
+            $value = implode( ', ', $value ) . ', and ' . $last;
+    }
+    else
+        $value = $last;
+
+    return (string) $value;
+}
+
+/**
  * Get a Point value from a Pods Version number
  *
  * @since 1.10.1

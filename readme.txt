@@ -1,11 +1,11 @@
-=== Pods Framework (2.0 Alpha) ===
+=== Pods Framework (2.0 Beta) ===
 Contributors: sc0ttkclark, logikal16, jchristopher
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, pods ui, ui, content types, custom post types, relationships, database, framework, drupal, mysql, custom content, php
 Requires at least: 3.4
 Tested up to: 3.4.1
 Stable tag: 1.14.2
-~Current Version:2.0.0-b-8~
+~Current Version:2.0.0-b-9~
 
 Pods is a development framework for creating, managing, and deploying customized content types.
 

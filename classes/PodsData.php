@@ -20,7 +20,11 @@ class PodsData {
      */
     public static $display_errors = true;
 
-    // pods
+    /**
+     * @var null
+     */
+    public $select = null;
+
     /**
      * @var null
      */
@@ -210,6 +214,9 @@ class PodsData {
 
             if ( isset( $this->pod_data[ 'options' ][ 'detail_page' ] ) )
                 $this->detail_page = $this->pod_data[ 'options' ][ 'detail_page' ];
+
+            if ( isset( $this->pod_data[ 'select' ] ) )
+                $this->select = $this->pod_data[ 'select' ];
 
             if ( isset( $this->pod_data[ 'table' ] ) )
                 $this->table = $this->pod_data[ 'table' ];
@@ -530,15 +537,21 @@ class PodsData {
 
         // Build Alias list
         $this->aliases = array();
+
         if (!empty($selectsfound) && false !== stripos($selectsfound, ' AS ')) {
             $theselects = array_filter(explode(', ', $selectsfound));
+
             if (empty($theselects))
                 $theselects = array_filter(explode(',', $selectsfound));
+
             foreach ($theselects as $selected) {
                 $selected = trim($selected);
+
                 if (strlen($selected) < 1)
                     continue;
+
                 $selectfield = explode(' AS ', str_replace(' as ', ' AS ', $selected));
+
                 if (2 == count($selectfield)) {
                     $field = trim(trim($selectfield[1]), '`');
                     $real_field = trim(trim($selectfield[0]), '`');

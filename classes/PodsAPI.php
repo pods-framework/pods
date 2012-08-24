@@ -3810,8 +3810,9 @@ class PodsAPI {
         global $wpdb;
 
         $info = array(
+            //'select' => '`t`.*',
             'table' => $object,
-            'join' => null,
+            'join' => array(),
             'field_id' => 'id',
             'field_index' => 'name',
             'field_slug' => null,
@@ -3854,13 +3855,13 @@ class PodsAPI {
         }
         elseif ( 'taxonomy' == $object_type ) {
             $info[ 'table' ] = $wpdb->terms;
-            $info[ 'join' ] = "LEFT JOIN `{$wpdb->term_taxonomy}` AS `tx` ON `tx`.`term_id` = `t`.`term_id`";
+            $info[ 'join' ][ 'tt' ] = "LEFT JOIN `{$wpdb->term_taxonomy}` AS `tt` ON `tt`.`term_id` = `t`.`term_id`";
             $info[ 'field_id' ] = 'term_id';
             $info[ 'field_index' ] = 'name';
             $info[ 'field_slug' ] = 'slug';
 
             $info[ 'where' ] = array(
-                'tx.taxonomy' => '`tx`.`taxonomy` = "' . ( empty( $object ) ? $name : $object ) . '"'
+                'tt.taxonomy' => '`tt`.`taxonomy` = "' . ( empty( $object ) ? $name : $object ) . '"'
             );
         }
         elseif ( 'user' == $object_type ) {
@@ -3902,6 +3903,11 @@ class PodsAPI {
 
         if ( empty( $info[ 'orderby' ] ) )
             $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '`, `t`.`' . $info[ 'field_id' ] . '`';
+
+        if ( !empty( $pod ) && 'table' == $pod[ 'storage' ] && !in_array( $object_type, array( 'pod', 'table' ) ) ) {
+            $info[ 'join' ][ 'd' ] = "LEFT JOIN `{$wpdb->prefix}pods_tbl_{$name}` AS `d` ON `d`.`id` = `t`.`" . $info[ 'field_id' ] . '`';
+            //$info[ 'select' ] .= ', `d`.*';
+        }
 
         $info = $this->do_hook( 'get_table_info', $info, $object_type, $object );
 

@@ -607,7 +607,7 @@ class Pods {
 
         $defaults = array(
             'table' => $this->data->table,
-            'select' => '`t`.*',
+            'select' => '*',
             'join' => null,
             'where' => $where,
             'groupby' => null,
@@ -636,18 +636,17 @@ class Pods {
         $this->search = (boolean) $params->search;
         $params->join = (array) $params->join;
 
+        $pod_table_prefix = 't';
+
+        if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) )
+            $pod_table_prefix = 'd';
+
         // Add "`t`." prefix to $params->orderby if needed
         if ( !empty( $params->orderby ) && false === strpos( $params->orderby, ',' ) && false === strpos( $params->orderby, '(' ) && false === strpos( $params->orderby, '.' ) ) {
             if ( false !== stripos( $params->orderby, ' ASC' ) )
-                $params->orderby = '`t`.`' . trim( str_ireplace( array( '`', ' ASC' ), '', $params->orderby ) ) . '` ASC';
+                $params->orderby = "`{$pod_table_prefix}`.`" . trim( str_ireplace( array( '`', ' ASC' ), '', $params->orderby ) ) . '` ASC';
             else
-                $params->orderby = '`t`.`' . trim( str_ireplace( array( '`', ' DESC' ), '', $params->orderby ) ) . '` DESC';
-        }
-
-        if ( 'table' == $this->pod_data[ 'storage' ] && 'taxonomy' == $this->pod_data[ 'type' ] ) {
-            $params->select .= ', `pt`.*';
-            $params->join[] = "LEFT JOIN `{$wpdb->prefix}pods_tbl_" . ( empty( $this->pod_data[ 'object' ] ) ? $this->pod_data[ 'name' ] : $this->pod_data[ 'object' ] )
-                . "` AS `pt` ON `pt`.`id` = `t`.`{$this->data->field_id}`";
+                $params->orderby = "`{$pod_table_prefix}`.`" . trim( str_ireplace( array( '`', ' DESC' ), '', $params->orderby ) ) . '` DESC';
         }
 
         $this->data->select( $params );

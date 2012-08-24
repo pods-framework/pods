@@ -641,7 +641,81 @@ class Pods {
         if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) )
             $pod_table_prefix = 'd';
 
-        // Add "`t`." prefix to $params->orderby if needed
+        // Allow where array ( 'field' => 'value' )
+        if ( !empty( $params->where ) && is_array( $params->where ) ) {
+            $params->where = pods_sanitize( $params->where );
+
+            foreach ( $params->where as $k => &$where ) {
+                if ( empty( $where ) ) {
+                    unset( $params->where[ $k ] );
+
+                    continue;
+                }
+
+                if ( !is_numeric( $k ) ) {
+                    $key = '';
+
+                    if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) ) {
+                        if ( isset( $this->pod_data[ 'object_fields' ][ $k ] ) )
+                            $key = "`t`.`{$k}`";
+                        elseif ( 'table' == $this->pod_data[ 'storage' ] && isset( $this->fields[ $k ] ) )
+                            $key = "`d`.`{$k}`";
+                        else {
+                            foreach ( $this->pod_data[ 'object_fields' ] as $object_field => $object_field_opt ) {
+                                if ( $object_field == $k || in_array( $k, $object_field_opt[ 'alias' ] ) )
+                                    $key = "`t`.`{$object_field}`";
+                            }
+                        }
+                    }
+                    elseif ( 'table' == $this->pod_data[ 'storage' ] && isset( $this->fields[ $k ] ) )
+                        $key = "`t`.`{$k}`";
+
+                    if ( empty( $key ) )
+                        $key = "`{$k}`";
+
+                    if ( is_array( $where ) )
+                        $where = "$key IN ( '" . implode( "', '", $where ) . "' )";
+                    else
+                        $where = "$key = '" . (string) $where . "'";
+                }
+            }
+        }
+
+        // Allow orderby array ( 'field' => 'asc|desc' )
+        if ( !empty( $params->orderby ) && is_array( $params->orderby ) ) {
+            foreach ( $params->orderby as $k => &$orderby ) {
+                if ( !is_numeric( $k ) ) {
+                    $key = '';
+
+                    $order = 'ASC';
+
+                    if ( 'DESC' == strtoupper( $orderby ) )
+                        $order = 'DESC';
+
+                    if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) ) {
+                        if ( isset( $this->pod_data[ 'object_fields' ][ $k ] ) )
+                            $key = "`t`.`{$k}`";
+                        elseif ( 'table' == $this->pod_data[ 'storage' ] && isset( $this->fields[ $k ] ) )
+                            $key = "`d`.`{$k}`";
+                        else {
+                            foreach ( $this->pod_data[ 'object_fields' ] as $object_field => $object_field_opt ) {
+                                if ( $object_field == $k || in_array( $k, $object_field_opt[ 'alias' ] ) )
+                                    $key = "`t`.`{$object_field}`";
+                            }
+                        }
+                    }
+                    elseif ( 'table' == $this->pod_data[ 'storage' ] && isset( $this->fields[ $k ] ) )
+                        $key = "`t`.`{$k}`";
+
+                    if ( empty( $key ) )
+                        $key = "`{$k}`";
+
+                    $orderby = "{$key} {$order}";
+                }
+            }
+        }
+
+        // Add prefix to $params->orderby if needed
         if ( !empty( $params->orderby ) && false === strpos( $params->orderby, ',' ) && false === strpos( $params->orderby, '(' ) && false === strpos( $params->orderby, '.' ) ) {
             if ( false !== stripos( $params->orderby, ' ASC' ) )
                 $params->orderby = "`{$pod_table_prefix}`.`" . trim( str_ireplace( array( '`', ' ASC' ), '', $params->orderby ) ) . '` ASC';

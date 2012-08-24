@@ -507,8 +507,13 @@ class PodsData {
         if ( empty( $params->having ) )
             $params->having = array();
 
-        if ( false === $params->strict && empty( $params->orderby ) && !empty( $this->orderby ) )
-            $params->orderby = $this->orderby;
+        $params->orderby = (array) $params->orderby;
+
+        if ( false === $params->strict && !empty( $this->orderby ) )
+            $params->orderby = array_merge( $params->orderby, (array) $this->orderby );
+
+        if ( empty( $params->orderby ) )
+            $params->orderby = array();
 
         if ( !empty( $params->traverse ) )
             $this->traverse = $params->traverse;

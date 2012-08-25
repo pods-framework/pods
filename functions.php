@@ -1138,6 +1138,8 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
         }
     }
 
+    $and = ' ' . __( 'and', 'pods' ) . ' ';
+
     $last = '';
 
     if ( !empty( $value ) )
@@ -1160,7 +1162,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
             }
 
             if ( 0 < strlen( $value ) && 0 < strlen( $last ) )
-                $value .= ' and ' . $last;
+                $value .= $and . $last;
             elseif ( 0 < strlen( $last ) )
                 $value = $last;
             else
@@ -1179,7 +1181,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
             $value = implode( ', ', $value );
 
             if ( 0 < strlen( $value ) && 0 < strlen( $last ) )
-                $value .= ' and ' . $last;
+                $value .= $and . $last;
             elseif ( 0 < strlen( $last ) )
                 $value = $last;
             else

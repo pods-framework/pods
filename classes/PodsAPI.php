@@ -1343,12 +1343,15 @@ class PodsAPI {
 
         $field = $this->load_field( $params );
 
-        $old_id = $old_name = $old_type = $old_definition = null;
+        $old_id = $old_name = $old_type = $old_definition = $old_simple = null;
 
         if ( !empty( $field ) ) {
             $old_id = $field[ 'id' ];
             $old_name = pods_clean_name( $field[ 'name' ] );
             $old_type = $field[ 'type' ];
+
+            $old_simple = ( 'pick' == $old_type && 'custom-simple' == pods_var( 'pick_object', $field ) );
+            $old_simple = (boolean) $this->do_hook( 'tableless_custom', $old_simple, $field, $pod, $params );
 
             if ( isset( $params->name ) && !empty( $params->name ) )
                 $field[ 'name' ] = $params->name;
@@ -1360,7 +1363,7 @@ class PodsAPI {
                 return pods_error( sprintf( __( 'Field %s already exists', 'pods' ), $field[ 'name' ] ), $this );
             }
 
-            if ( !in_array( $old_type, $tableless_field_types ) )
+            if ( !in_array( $old_type, $tableless_field_types ) || $old_simple )
                 $old_definition = '`' . $old_name . '` ' . $this->get_field_definition( $old_type, $field[ 'options' ] );
         }
         else {
@@ -1557,15 +1560,18 @@ class PodsAPI {
 
         $definition = false;
 
-        if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
+        $simple = ( 'pick' == $field[ 'type' ] && 'custom-simple' == pods_var( 'pick_object', $field ) );
+        $simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field, $pod, $params );
+
+        if ( !in_array( $field[ 'type' ], $tableless_field_types ) || $simple )
             $definition = '`' . $field[ 'name' ] . '` ' . $this->get_field_definition( $field[ 'type' ], $field[ 'options' ] );
 
         if ( $table_operation && 'table' == $pod[ 'storage' ] ) {
             if ( !empty( $old_id ) ) {
                 if ( $field[ 'type' ] != $old_type ) {
-                    if ( in_array( $field[ 'type' ], $tableless_field_types ) && !in_array( $old_type, $tableless_field_types ) )
+                    if ( in_array( $field[ 'type' ], $tableless_field_types ) && !$simple && ( !in_array( $old_type, $tableless_field_types ) || $old_simple ) )
                         pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` DROP COLUMN `{$old_name}`" );
-                    elseif ( in_array( $old_type, $tableless_field_types ) )
+                    elseif ( ( in_array( $old_type, $tableless_field_types ) && !$old_simple ) || $simple )
                         pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
                     elseif ( false !== $definition )
                         pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` CHANGE `{$old_name}` {$definition}" );
@@ -1985,8 +1991,18 @@ class PodsAPI {
             if ( isset( $object_fields[ $field ] ) )
                 $object_data[ $field ] = $value;
             else {
+                $simple = ( 'pick' == $type && 'custom-simple' == pods_var( 'pick_object', $options ) );
+                $simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $options, $field, $fields, $pod, $params );
+
                 // Prepare all table (non-relational) data
-                if ( !in_array( $type, $tableless_field_types ) ) {
+                if ( !in_array( $type, $tableless_field_types ) || $simple ) {
+                    if ( is_array( $value ) ) {
+                        if ( empty( $value ) )
+                            $value = '';
+                        else
+                            $value = json_encode( $value );
+                    }
+
                     $table_fields[] = "`{$field}`";
                     $table_formats[] = PodsForm::prepare( $type, pods_var( 'options', $options, array() ) );
                     $table_values[] = $value;

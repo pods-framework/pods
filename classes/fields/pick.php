@@ -141,6 +141,9 @@ class PodsField_Pick extends PodsField {
     public function schema ( $options = null ) {
         $schema = false;
 
+        if ( 'custom-simple' == pods_var( 'pick_object', $options ) )
+            $schema = 'LONGTEXT';
+
         return $schema;
     }
 
@@ -180,7 +183,7 @@ class PodsField_Pick extends PodsField {
 
         $options[ 'table_info' ] = array();
 
-        $custom = pods_var( 'pick_custom', $options, false );
+        $custom = pods_var_raw( 'pick_custom', $options, false );
 
         if ( 'custom-simple' == pods_var( 'pick_object', $options ) && !empty( $custom ) ) {
             if ( !is_array( $custom ) )
@@ -197,8 +200,8 @@ class PodsField_Pick extends PodsField {
                 if ( 1 == count( $custom_label ) )
                     $custom_label = $custom_value;
                 else {
-                    $custom_label = $custom_label[ 1 ];
                     $custom_value = $custom_label[ 0 ];
+                    $custom_label = $custom_label[ 1 ];
                 }
 
                 $options[ 'data' ][ $custom_value ] = $custom_label;

@@ -1560,7 +1560,7 @@ class PodsAPI {
 
         $definition = false;
 
-        $simple = ( 'pick' == $field[ 'type' ] && 'custom-simple' == pods_var( 'pick_object', $field ) );
+        $simple = ( 'pick' == $field[ 'type' ] && 'custom-simple' == pods_var( 'pick_object', $field[ 'options' ] ) );
         $simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field, $pod, $params );
 
         if ( !in_array( $field[ 'type' ], $tableless_field_types ) || $simple )
@@ -1996,7 +1996,9 @@ class PodsAPI {
 
                 // Prepare all table (non-relational) data
                 if ( !in_array( $type, $tableless_field_types ) || $simple ) {
-                    if ( is_array( $value ) ) {
+                    if ( $simple ) {
+                        $value = (array) $value;
+
                         if ( empty( $value ) )
                             $value = '';
                         else
@@ -2580,7 +2582,10 @@ class PodsAPI {
         $params->id = $field[ 'id' ];
         $params->name = $field[ 'name' ];
 
-        if ( $table_operation && 'table' == $pod[ 'storage' ] && !in_array( $field[ 'type' ], $tableless_field_types ) )
+        $simple = ( 'pick' == $field[ 'type' ] && 'custom-simple' == pods_var( 'pick_object', $field ) );
+        $simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field, $pod, $params );
+
+        if ( $table_operation && 'table' == $pod[ 'storage' ] && ( !in_array( $field[ 'type' ], $tableless_field_types ) || $simple ) )
             pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` DROP COLUMN `{$params->name}`" );
 
         $success = wp_delete_post( $params->id );

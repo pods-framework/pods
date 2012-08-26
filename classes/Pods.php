@@ -304,9 +304,18 @@ class Pods {
             if ( isset( $this->fields[ $params->name ] ) && in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
                 if ( 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] ) {
                     if ( empty( $value ) )
-                        return array();
+                        $value = array();
                     else
                         $value = @json_decode( $value, true );
+
+                    $single_multi = pods_var( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
+
+                    if ( 'single' == $single_multi ) {
+                        if ( empty( $value ) )
+                            $value = '';
+                        else
+                            $value = current( $value );
+                    }
                 }
             }
         }

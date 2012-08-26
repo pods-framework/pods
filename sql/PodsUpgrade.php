@@ -286,16 +286,16 @@ class PodsUpgrade_2_0 {
 
         foreach ( $columns as $column => $info ) {
             if ( !in_array( $column, $fields ) )
-                $errors[] = "<strong>{$column}</strong> " . __( 'is not a field in this pod.' );
+                $errors[] = "<strong>{$column}</strong> " . __( 'is a field in the table, but was not found in this pod - the field data will not be migrated.', 'pods' );
         }
 
         foreach ( $fields as $field ) {
             if ( !isset( $columns[ $field ] ) )
-                $errors[] = "<strong>{$field}</strong> " . __( 'was not found in the table.' );
+                $errors[] = "<strong>{$field}</strong> " . __( 'is a field in this pod, but was not found in the table - the field data will not be migrated.', 'pods' );
         }
 
         if ( !empty( $errors ) )
-            return pods_error( implode( ', ', $errors ) );
+            return pods_error( implode( '<br />', $errors ) );
 
         return $count;
 }
@@ -390,7 +390,9 @@ class PodsUpgrade_2_0 {
 
                 $old_name = $row->name;
 
-                if ( in_array( $row->name, array( 'created', 'modified', 'author' ) ) )
+                $row->name = pods_clean_name( $row->name );
+
+                if ( in_array( $row->name, array( 'type', 'created', 'modified', 'author' ) ) )
                     $row->name .= '2';
 
                 $field_type = $row->coltype;
@@ -515,6 +517,9 @@ class PodsUpgrade_2_0 {
 
         global $wpdb;
 
+        $migration_limit = (int) apply_filters( 'pods_upgrade_item_limit', 1500 );
+        $migration_limit = max( $migration_limit, 100 );
+
         $api = pods_api();
 
         $last_id = (int) $this->check_progress( __FUNCTION__ );
@@ -528,7 +533,7 @@ class PodsUpgrade_2_0 {
                 AND `r`.`field_id` IS NOT NULL
                 AND `p`.`id` IS NOT NULL
             ORDER BY `r`.`id`
-            LIMIT 0, 800
+            LIMIT 0, {$migration_limit}
         ";
 
         $rel = pods_query( $sql );
@@ -641,7 +646,7 @@ class PodsUpgrade_2_0 {
 
         $this->update_progress( __FUNCTION__, $last_id );
 
-        if ( 800 == count( $rel ) )
+        if ( $migration_limit == count( $rel ) )
             echo '-2';
         else
             echo '1';

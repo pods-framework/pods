@@ -64,7 +64,7 @@
                 $( '#pods-wizard-next' ).show();
             }
         },
-        migrate : function ( postdata ) {
+        migrate : function ( postdata, $row ) {
             var pods_ajaxurl = $( '#pods-wizard-box' ).data( 'url' );
 
             if ( 'undefined' != typeof pods_ajaxurl )
@@ -74,9 +74,10 @@
                 pods_ajaxurl = ajaxurl + '?pods_ajax=1';
 
             if ( 'undefined' != typeof postdata || $( '#pods-wizard-panel-3 table tbody tr.pods-wizard-table-pending' )[ 0 ] ) {
-                if ( 'undefined' == typeof postdata ) {
+                if ( 'undefined' == typeof $row )
                     var $row = $( '#pods-wizard-panel-3 table tbody tr.pods-wizard-table-pending' ).first();
 
+                if ( 'undefined' == typeof postdata ) {
                     $row.removeClass( 'pods-wizard-table-pending' ).addClass( 'pods-wizard-table-active' );
 
                     var postdata = {
@@ -101,7 +102,7 @@
                         if ( -1 == d.indexOf( '<e>' ) && -1 != d ) {
                             if ( -2 == d ) {
                                 // Run next
-                                return methods[ 'migrate' ]( postdata );
+                                return methods[ 'migrate' ]( postdata, $row );
                             }
                             else {
                                 $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-complete' );

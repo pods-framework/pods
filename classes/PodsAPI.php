@@ -3823,7 +3823,7 @@ class PodsAPI {
         // Verify required fields
         if ( 1 == pods_var( 'required', $options[ 'options' ], 0 ) ) {
             if ( '' == $value || null === $value )
-                return pods_error( "{$label} is empty", $this );
+                return pods_error( sprintf( __( '%s is empty', 'pods' ), $label ), $this );
         }
 
         // Verify unique fields
@@ -3834,21 +3834,21 @@ class PodsAPI {
                 if ( !empty( $params->id ) )
                     $exclude = "AND `id` != {$params->id}";
 
+                $check = false;
+
                 // Trigger an error if not unique
                 if ( 'table' == $pod[ 'storage' ] )
                     $check = pods_query( "SELECT `id` FROM `@wp_pods_tbl_{$params->pod}` WHERE `{$field}` = '{$value}' {$exclude} LIMIT 1", $this );
-                else
-                    $check = false;
 
                 if ( !empty( $check ) )
-                    return pods_error( sprintf(__("%s needs to be unique", 'pods'), $label), $this );
+                    return pods_error( sprintf( __( '%s needs to be unique', 'pods' ), $label ), $this );
             }
             else {
                 // handle tableless check
             }
         }
 
-        $validate = PodsForm::validate( $options[ 'type' ], $value, $field, array_merge( pods_var( 'options', $options, array() ), $options ), $fields, $pod, $params->id );
+        $validate = PodsForm::validate( $options[ 'type' ], $value, $field, array_merge( pods_var( 'options', $options, array() ), $options ), $fields, $pod, $params->id, $params );
 
         $validate = $this->do_hook( 'field_validation', $validate, $value, $field, $object_fields, $fields, $pod, $params );
 

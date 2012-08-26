@@ -650,8 +650,9 @@ function pods_clean_name ( $orig, $lower = true ) {
  *
  * @param string $value The slug value
  * @param string $column_name The column name
- * @param string $pod The datatype name
- * @param int $pod_id The datatype ID
+ * @param string|array $pod The Pod name or array of Pod data
+ * @param int $pod_id The Pod ID
+ * @param int $id The item ID
  *
  * @return string The unique slug name
  * @since 1.7.2
@@ -698,7 +699,7 @@ function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, $id = 0, &$o
 
             $suffix++;
         }
-        while ( !empty( $slug_check ) );
+        while ( !empty( $slug_check ) || apply_filters( 'pods_unique_slug_is_bad_flat_slug', false, $alt_slug, $column_name, $pod, $pod_id, $id, $pod_data, $obj ) );
 
         $slug = $alt_slug;
     }

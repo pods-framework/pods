@@ -118,9 +118,6 @@ class PodsField_Slug extends PodsField {
         if ( empty( $value ) && isset( $fields[ $pod[ 'index' ] ][ 'value' ] ) )
             $value = $fields[ $pod[ 'index' ] ][ 'value' ];
 
-        if ( !empty( $value ) )
-            $value = pods_unique_slug( $value, $name, $pod, 0, $id );
-
         if ( empty( $value ) )
             return false;
 
@@ -141,7 +138,7 @@ class PodsField_Slug extends PodsField {
      * @since 2.0.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-        $value = pods_unique_slug( $value, $name, $pod );
+        $value = pods_unique_slug( $value, $name, $pod, 0, $params->id );
 
         return $value;
     }

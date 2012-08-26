@@ -512,7 +512,7 @@ class PodsForm {
 
         $regex = false;
 
-        if ( method_exists( self::$loaded[ $type ], 'validate' ) )
+        if ( method_exists( self::$loaded[ $type ], 'regex' ) )
             $regex = self::$loaded[ $type ]->regex( $options );
 
         $regex = apply_filters( 'pods_field_' . $type . '_regex', $regex, $options, $type );
@@ -536,7 +536,7 @@ class PodsForm {
 
         $prepare = '%s';
 
-        if ( method_exists( self::$loaded[ $type ], 'validate' ) )
+        if ( method_exists( self::$loaded[ $type ], 'prepare' ) )
             $prepare = self::$loaded[ $type ]->prepare( $options );
 
         $prepare = apply_filters( 'pods_field_' . $type . '_prepare', $prepare, $options, $type );

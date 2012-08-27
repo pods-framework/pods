@@ -11,6 +11,8 @@
 
     $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
     $field_nonce = wp_create_nonce( 'pods_relationship_' . ( !is_object( $pod ) ? '0' : $pod->pod_id ) . '_' . session_id() . '_' . $uri_hash . '_' . $options[ 'id' ] );
+
+    $pick_limit = (int) pods_var( 'pick_limit', $options, 0 );
 ?>
 <div class="pods-select2">
     <input<?php PodsForm::attributes($attributes, $name, PodsForm::$field_type, $options); ?> />
@@ -30,17 +32,50 @@
             return item.text;
         }
 
+        var <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_data = {<?php
+                if ( !is_object( $pod ) || !empty( $options[ 'data' ] ) ) {
+                    $data = array();
+
+                    foreach ( $options[ 'data' ] as $item_id => $item ) {
+                        $data[] = '\'' . esc_js( $item_id ) . '\' : {id : \'' . esc_js( $item_id ) . '\', text: \'' . esc_js( $item ) . '\'}';
+                    }
+
+                    echo implode( ",\n", $data );
+                }
+            ?>};
+
         jQuery( '#<?php echo $attributes[ 'id' ]; ?>' ).select2( {
             minimumInputLength : 1,
+            initSelection : function ( element, callback ) {
+                var data = [];
+
+                jQuery( element.val().split( "," ) ).each( function () {
+                    data.push( {
+                        id : this[ 0 ],
+                        text : <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_data[ this[ 0 ] ].text
+                    } );
+                } );
+
+                <?php
+                    if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit ) {
+                ?>
+                    callback( data );
+                <?php
+                    }
+                    else {
+                ?>
+                    if ( 0 < data.length )
+                        callback( data[ 0 ] );
+                <?php
+                    }
+                ?>
+            },
             <?php
                if ( 1 != (int) pods_var( 'required', $options ) ) {
             ?>
                 allowClear : true,
             <?php
                }
-            ?>
-            <?php
-                $pick_limit = (int) pods_var( 'pick_limit', $options, 0 );
 
                 if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit ) {
             ?>
@@ -70,7 +105,8 @@
                 ]
             <?php
                 }
-                else {
+
+                if ( empty( $options[ 'data' ] ) || ( isset( $ajax ) && $ajax ) ) {
             ?>
                 ajax : {
                     url : pods_ajaxurl,

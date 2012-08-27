@@ -3154,13 +3154,18 @@ class PodsAPI {
      * $params['pod'] string The Pod name
      * $params['id'] int The field ID
      * $params['name'] string The field name
+     * $params['table_info'] boolean Whether to lookup a pick field's table info
      *
      * @param array $params An associative array of parameters
+     * @param boolean $strict Whether to require a field exist or not when loading the info
      *
      * @since 1.7.9
      */
     public function load_field ( $params, $strict = false ) {
         $params = (object) $params;
+
+        if ( !isset( $params->table_info ) )
+            $params->table_info = false;
 
         if ( isset( $params->post_title ) )
             $_field = $params;
@@ -3262,6 +3267,9 @@ class PodsAPI {
 
             unset( $field[ 'options' ][ 'sister_field_id' ] );
         }
+
+        if ( 'pick' == $field[ 'type' ] && true === $params->table_info )
+            $field[ 'table_info' ] = $this->get_table_info( $field[ 'pick_object' ], $field[ 'pick_val' ] );
 
         return $field;
     }

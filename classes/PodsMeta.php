@@ -365,7 +365,7 @@ class PodsMeta {
      * @param $metabox
      */
     public function meta_post ( $post, $metabox ) {
-        wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
+        wp_enqueue_style( 'pods-form' );
 ?>
     <table class="form-table pods-metabox">
         <?php

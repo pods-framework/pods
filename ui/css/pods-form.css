@@ -130,3 +130,11 @@ input.pods-form-ui-field-type-color {
 .pods-select2 .select2-container-multi .select2-choices .select2-search-field input {
     height: auto;
 }
+
+.form-table .pods-field td {
+    line-height: inherit;
+}
+
+.pods-field .wp-editor-container {
+    background-color: #FFF;
+}

@@ -515,8 +515,6 @@ class PodsUpgrade_2_0 {
         if ( true === $this->check_progress( __FUNCTION__ ) )
             return '1';
 
-        global $wpdb;
-
         $migration_limit = (int) apply_filters( 'pods_upgrade_item_limit', 1500 );
         $migration_limit = max( $migration_limit, 100 );
 
@@ -836,8 +834,8 @@ class PodsUpgrade_2_0 {
 
         foreach ( $pod_data[ 'fields' ] as $field ) {
             if ( !in_array( $field[ 'name' ], array( 'created', 'modified', 'author' ) ) && !in_array( $field[ 'type' ], array( 'file', 'pick' ) ) ) {
-                $columns[] = $field[ 'name' ];
-                $old_columns[] = pods_sanitize( pods_var( 'old_name', $field[ 'options' ], $field[ 'name' ], null, false ) );
+                $columns[] = pods_sanitize( $field[ 'name' ] );
+                $old_columns[] = pods_var( 'old_name', $field[ 'options' ], $field[ 'name' ], null, false );
             }
         }
 

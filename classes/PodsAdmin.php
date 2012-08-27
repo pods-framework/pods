@@ -85,6 +85,8 @@ class PodsAdmin {
 
         wp_register_script( 'pods-upgrade', PODS_URL . 'ui/js/jquery.pods.upgrade.js', array(), PODS_VERSION );
 
+        wp_register_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css', array(), PODS_VERSION );
+
         if ( isset( $_GET[ 'page' ] ) ) {
             $page = $_GET[ 'page' ];
             if ( 'pods' == $page || ( false !== strpos( $page, 'pods-' ) && 0 === strpos( $page, 'pods-' ) ) ) {
@@ -107,45 +109,8 @@ class PodsAdmin {
 
                 wp_enqueue_script( 'pods' );
 
-                if ( ( false !== strpos( $page, 'pods-manage-' ) && 0 === strpos( $page, 'pods-manage-' ) ) || ( false !== strpos( $page, 'pods-add-new-' ) && 0 === strpos( $page, 'pods-add-new-' ) ) ) {
+                if ( 0 === strpos( $page, 'pods-manage-' ) || 0 === strpos( $page, 'pods-add-new-' ) )
                     wp_enqueue_script( 'post' );
-                    /*
-                    wp_enqueue_style( 'pods-manage' );
-
-                    // Just for demo
-                    wp_enqueue_script( 'pods-forms' );
-
-                    wp_enqueue_style( 'pods-cleditor' );
-
-                    wp_enqueue_script( 'jquery-effects-core' );
-                    wp_enqueue_script( 'jquery-effects-slide' );
-                    wp_enqueue_script( 'jquery-ui-slider' );
-                    wp_enqueue_script( 'jquery-ui-button' );
-                    wp_enqueue_script( 'jquery-ui-autocomplete' );
-                    wp_enqueue_script( 'pods-cleditor-min' );
-                    // Date
-                    wp_enqueue_script( 'jquery-ui-datepicker' );
-
-                    // Date + Time
-                    wp_enqueue_script( 'jquery-ui-timepicker' );
-                    wp_enqueue_style( 'jquery-ui-timepicker' );
-
-                    // File Upload
-                    wp_enqueue_script( 'thickbox' );
-                    wp_enqueue_style( 'thickbox' );
-
-                    // Plupload scripts
-                    wp_enqueue_script( 'plupload' );
-                    wp_enqueue_script( 'plupload-html5' );
-                    wp_enqueue_script( 'plupload-flash' );
-                    wp_enqueue_script( 'plupload-silverlight' );
-                    wp_enqueue_script( 'plupload-html4' );
-                    wp_enqueue_script( 'handlebars' );
-
-                    // Select2
-                    wp_enqueue_script('jquery-select2');
-                    wp_enqueue_style('jquery-select2');*/
-                }
                 else
                     wp_enqueue_style( 'pods-admin' );
 
@@ -1104,7 +1069,7 @@ class PodsAdmin {
 
         $api = pods_api();
         $pod = $api->load_pod( array( 'id' => (int) $params->pod ) );
-        $field = $api->load_field( array( 'id' => (int) $params->field ) );
+        $field = $api->load_field( array( 'id' => (int) $params->field, 'table_info' => true ) );
 
         if ( !isset( $params->query ) || strlen( trim( $params->query ) ) < 1 )
             pods_error( __( 'Invalid field request', 'pods' ), $this );
@@ -1134,19 +1099,46 @@ class PodsAdmin {
         else
             $where = (array) $where;
 
-        $where[] = "`t`.`{$data->field_index}` LIKE '%" . like_escape( $params->query ) . "%'";
+        $lookup_where = array(
+            "`t`.`{$data->field_index}` LIKE '%" . like_escape( $params->query ) . "%'"
+        );
 
         if ( $wpdb->users == $data->table ) {
-            $where[] = "`t`.`display_name` LIKE '%" . like_escape( $params->query ) . "%'";
-            $where[] = "`t`.`user_login` LIKE '%" . like_escape( $params->query ) . "%'";
-            $where[] = "`t`.`user_email` LIKE '%" . like_escape( $params->query ) . "%'";
+            $lookup_where[] = "`t`.`display_name` LIKE '%" . like_escape( $params->query ) . "%'";
+            $lookup_where[] = "`t`.`user_login` LIKE '%" . like_escape( $params->query ) . "%'";
+            $lookup_where[] = "`t`.`user_email` LIKE '%" . like_escape( $params->query ) . "%'";
         }
+        elseif ( $wpdb->posts == $data->table ) {
+            $lookup_where[] = "`t`.`post_name` LIKE '%" . like_escape( $params->query ) . "%'";
+            $lookup_where[]  = "`t`.`post_content` LIKE '%" . like_escape( $params->query ) . "%'";
+            $lookup_where[] = "`t`.`post_excerpt` LIKE '%" . like_escape( $params->query ) . "%'";
+        }
+        elseif ( $wpdb->terms == $data->table )
+            $lookup_where[ ] = "`t`.`slug` LIKE '%" . like_escape( $params->query ) . "%'";
+        elseif ( $wpdb->comments == $data->table ) {
+            $lookup_where[] = "`t`.`comment_content` LIKE '%" . like_escape( $params->query ) . "%'";
+            $lookup_where[] = "`t`.`comment_author` LIKE '%" . like_escape( $params->query ) . "%'";
+            $lookup_where[] = "`t`.`comment_author_email` LIKE '%" . like_escape( $params->query ) . "%'";
+        }
+
+        $where[] = implode( ' OR ', $lookup_where );
+
+        $orderby = array();
+        $orderby[] = "(`t`.`{$data->field_index}` LIKE '%" . like_escape( $params->query ) . "%' ) DESC";
+
+        $pick_orderby = pods_var( 'pick_orderby', $field, null, null, true );
+
+        if ( 0 < strlen ( $pick_orderby ) )
+            $orderby[] = $pick_orderby;
+
+        $orderby[] = "`t`.`{$data->field_index}`";
+        $orderby[] = "`t`.`{$data->field_id}`";
 
         $params = array(
             'select' => "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`",
             'table' => $data->table,
             'where' => $where,
-            'orderby' => pods_var( 'pick_orderby', $field, null, null, true ),
+            'orderby' => $orderby,
             'groupby' => pods_var( 'pick_groupby', $field, null, null, true ),
             'limit' => 30
         );

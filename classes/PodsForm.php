@@ -105,8 +105,8 @@ class PodsForm {
     public static function field ( $name, $value, $type = 'text', $options = null, $pod = null, $id = null ) {
         $options = self::options( $type, $options );
 
-        if ( isset( $options[ 'default' ] ) && null === $value )
-            $value = $options[ 'default' ];
+        if ( null === $value || empty( $id ) )
+            $value = self::default_value( $value, $type, $name, $options, $pod, $id );
 
         $value = apply_filters( 'pods_form_ui_field_' . $type . '_value', $value, $name, $options, $pod, $id );
 
@@ -641,6 +641,35 @@ class PodsForm {
         $permission = (boolean) apply_filters( 'pods_form_field_permission', $permission, $type, $name, $options, $fields, $pod, $id, $params );
 
         return $permission;
+    }
+
+    /**
+     * Parse the default the value
+     *
+     * @since 2.0.0
+     */
+    public static function default_value ( $value, $type = 'text', $name = null, $options = null, $pod = null, $id = null ) {
+        $default_value = pods_var_raw( 'default_value', $options, $value, null, true );
+        $default_value_parameter = pods_var_raw( 'default_value_parameter', $options, $default_value, null, true );
+        $default = pods_var_raw( 'default', $options, $default_value_parameter, null, true );
+
+        $default = trim( $default, ' {@}' );
+
+        if ( $default != $value ) {
+            $value = $default;
+
+            $default = explode( '.', $default );
+
+            if ( 1 == count( $default ) )
+                $value = pods_var_raw( $default[ 0 ], 'get', '', null, true );
+            elseif ( 2 == count( $default ) )
+                $value = pods_var_raw( $default[ 1 ], $default[ 0 ], '', null, true );
+        }
+
+        if ( is_array( $value ) )
+            $value = pods_serial_comma( $value );
+
+        return apply_filters( 'pods_form_field_default_value', $value, $default, $type, $options, $pod, $id );
     }
 
     /**

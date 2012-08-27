@@ -384,8 +384,12 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
             $output = stripslashes_deep( $_POST[ $var ] );
         elseif ( 'request' == $type && isset( $_REQUEST[ $var ] ) )
             $output = stripslashes_deep( $_REQUEST[ $var ] );
-        elseif ( 'server' == $type && isset( $_SERVER[ $var ] ) )
-            $output = stripslashes_deep( $_SERVER[ $var ] );
+        elseif ( 'server' == $type ) {
+            if ( isset( $_SERVER[ $var ] ) )
+                $output = stripslashes_deep( $_SERVER[ $var ] );
+            elseif ( isset( $_SERVER[ strtoupper( $var ) ] ) )
+                $output = stripslashes_deep( $_SERVER[ strtoupper( $var ) ] );
+        }
         elseif ( 'session' == $type && isset( $_SESSION[ $var ] ) )
             $output = $_SESSION[ $var ];
         elseif ( 'cookie' == $type && isset( $_COOKIE[ $var ] ) )
@@ -393,13 +397,16 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
         elseif ( 'constant' == $type && defined( $var ) )
             $output = constant( $var );
         elseif ( 'user' == $type && is_user_logged_in() ) {
-            global $user_ID;
+            $user = get_userdata( get_current_user_id() );
 
-            get_currentuserinfo();
+            if ( isset( $user->{$var} ) )
+                $value = $user->{$var};
+            else
+                $value = get_user_meta( $user->ID, $var );
 
-            $value = get_user_meta( $user_ID, $var, true );
-
-            if ( is_array( $value ) || 0 < strlen( $value ) )
+            if ( is_array( $value ) && !empty( $value ) )
+                $output = $value;
+            elseif ( !is_array( $value ) && 0 < strlen( $value ) )
                 $output = $value;
         }
         elseif ( 'option' == $type )
@@ -638,7 +645,7 @@ function pods_clean_name ( $orig, $lower = true ) {
 
     $str = preg_replace( "/([^0-9a-zA-Z_])/", "", $str );
     $str = preg_replace( "/(_){2,}/", "_", $str );
-    $str = trim( $str, '_' );
+    $str = trim( $str, ' _' );
 
     $str = apply_filters( 'pods_clean_name', $str, $orig, $lower );
 

@@ -185,11 +185,16 @@ class PodsField_Pick extends PodsField {
 
         $custom = pods_var_raw( 'pick_custom', $options, false );
 
+        $ajax = false;
+
         if ( 'custom-simple' == pods_var( 'pick_object', $options ) && !empty( $custom ) ) {
             if ( !is_array( $custom ) )
                 $custom = explode( "\n", $custom );
 
             $options[ 'data' ] = array();
+
+            if ( 'single' == pods_var( 'pick_format_type', $options ) && 'dropdown' == pods_var( 'pick_format_single', $options ) )
+                $options[ 'data' ] = array( '' => __( '-- Select One --', 'pods' ) );
 
             foreach ( $custom as $custom_value ) {
                 $custom_label = explode( '|', $custom_value );
@@ -255,6 +260,31 @@ class PodsField_Pick extends PodsField {
                     $options[ 'data' ][ $result[ $data->field_id ] ] = $result[ $data->field_index ];
                 }
             }
+            elseif ( !empty( $value ) && $autocomplete && $params[ 'limit' ] < $data->total_found() ) {
+                $ajax = true;
+
+                $ids = $value;
+
+                if ( is_array( $ids ) )
+                    $ids = implode( ', ', $ids );
+
+                if ( !empty( $params[ 'where' ] ) )
+                    $params[ 'where' ] .= ' AND ';
+
+                $params[ 'where' ] .= "`t`.`{$data->field_id}` IN ( " . $ids . " )";
+
+                $results = $data->select( $params );
+
+                if ( !empty( $results ) ) {
+                    foreach ( $results as $result ) {
+                        $result = get_object_vars( $result );
+
+                        $options[ 'data' ][ $result[ $data->field_id ] ] = $result[ $data->field_index ];
+                    }
+                }
+            }
+            elseif ( !empty( $results ) )
+                $ajax = true;
         }
 
         if ( 'single' == pods_var( 'pick_format_type', $options ) ) {

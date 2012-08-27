@@ -45,7 +45,6 @@
             ?>};
 
         jQuery( '#<?php echo $attributes[ 'id' ]; ?>' ).select2( {
-            minimumInputLength : 1,
             initSelection : function ( element, callback ) {
                 var data = [];
 
@@ -102,7 +101,7 @@
 
                         echo implode( ",\n", $data_items );
                     ?>
-                ]
+                ],
             <?php
                 }
 
@@ -128,10 +127,11 @@
                     }
                 },
                 formatResult : <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_podsFormatResult,
-                formatSelection : <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_podsFormatSelection
+                formatSelection : <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_podsFormatSelection,
             <?php
                 }
             ?>
+             minimumInputLength : 1
         } );
     } );
 </script>

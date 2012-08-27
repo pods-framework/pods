@@ -1092,7 +1092,7 @@ class Pods {
      * @since 1.x
      */
     private function do_magic_tags ( $tag ) {
-        if ( is_array( $tag ) && !isset( $tag[ 2 ] ) || 0 < strlen( trim( $tag[ 2 ] ) ) )
+        if ( is_array( $tag ) && !isset( $tag[ 2 ] ) && strlen( trim( $tag[ 2 ] ) ) < 1 )
             return;
 
         if ( is_array( $tag ) )
@@ -1101,7 +1101,7 @@ class Pods {
         $tag = trim( $tag, ' {@}' );
         $tag = explode( ',', $tag );
 
-        if ( empty( $tag ) || !isset( $tag[ 0 ] ) || 0 < strlen( trim( $tag[ 0 ] ) ) )
+        if ( empty( $tag ) || !isset( $tag[ 0 ] ) || strlen( trim( $tag[ 0 ] ) ) < 1 )
             return;
 
         foreach ( $tag as $k => $v ) {

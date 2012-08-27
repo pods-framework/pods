@@ -14,7 +14,7 @@ $advanced_fields = array(
         'input_helper' => array(
             'label' => __( 'Input Helper', 'pods' ),
             'help' => __( 'help', 'pods' ),
-            'type' => 'text',
+            'type' => 'pick',
             'default' => '',
             'data' => array( '' => '-- Select --' )
         )

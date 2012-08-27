@@ -218,6 +218,10 @@ class PodsForm {
 
             $attributes[ 'class' ] = trim( $attributes[ 'class' ] );
         }
+
+        if ( 1 == pods_var( 'required', $options, 0 ) )
+            $attributes[ 'class' ] .= ' pods-validate pods-validate-required';
+
         $attributes = (array) apply_filters( 'pods_form_ui_field_' . $type . '_merge_attributes', $attributes, $name, $options );
         return $attributes;
     }

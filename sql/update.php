@@ -12,6 +12,20 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
     pods_query( "DROP TABLE @wp_pods_objects", false );
 }
 
+if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-10', '<' ) ) {
+    $author_fields = $wpdb->get_results( "SELECT `ID` FROM `{$wpdb->posts}` WHERE `post_name` = 'author' AND `post_type` = '_pods_field'" );
+
+    pods_debug( $author_fields );
+    if ( !empty( $author_fields ) ) {
+        foreach ( $author_fields as $author ) {
+            pods_debug( $author->ID );
+            update_post_meta( $author->ID, 'pick_format_type', 'single' );
+            update_post_meta( $author->ID, 'pick_format_single', 'autocomplete' );
+            update_post_meta( $author->ID, 'default_value', '{@user.ID}' );
+        }
+    }
+}
+
 function pods_2_alpha_migrate_pods () {
     $api = pods_api();
 

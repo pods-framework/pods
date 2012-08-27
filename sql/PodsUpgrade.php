@@ -376,7 +376,8 @@ class PodsUpgrade_2_0 {
                     'pick_object' => 'user',
                     'options' => array(
                         'pick_format_type' => 'single',
-                        'pick_format_single' => 'autocomplete'
+                        'pick_format_single' => 'autocomplete',
+                        'default_value' => '{@user.ID}'
                     ),
                     'weight' => 3
                 )

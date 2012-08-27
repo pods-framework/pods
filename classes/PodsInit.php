@@ -633,7 +633,7 @@ class PodsInit {
 
         $pods_version = self::$version;
 
-        if ( empty( $pods_version ) || version_compare( $pods_version, '2.0.0-a-31', '<' ) )
+        if ( empty( $pods_version ) || version_compare( $pods_version, '2.0.0-b-10', '<' ) )
             $this->setup();
     }
 
@@ -684,7 +684,7 @@ class PodsInit {
         $install = false;
 
         if ( 0 < strlen( $pods_version ) ) {
-            if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-a-31', '<' ) ) {
+            if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-10', '<' ) ) {
                 do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
 
                 if ( false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] ) )

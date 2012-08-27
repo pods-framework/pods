@@ -50,8 +50,8 @@
 
                 jQuery( element.val().split( "," ) ).each( function () {
                     data.push( {
-                        id : this[ 0 ],
-                        text : <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_data[ this[ 0 ] ].text
+                        id : this,
+                        text : <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_data[ this ].text
                     } );
                 } );
 
@@ -128,10 +128,15 @@
                 },
                 formatResult : <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_podsFormatResult,
                 formatSelection : <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_podsFormatSelection,
+                minimumInputLength : 1
+            <?php
+                }
+                else {
+            ?>
+                minimumInputLength : 0
             <?php
                 }
             ?>
-             minimumInputLength : 1
         } );
     } );
 </script>

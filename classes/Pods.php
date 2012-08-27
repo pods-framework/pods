@@ -1073,13 +1073,13 @@ class Pods {
     public function do_template ( $code ) {
         ob_start();
 
-        if ( ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) )
+        if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL )
             eval( "?>$code" );
         else
             echo $code;
 
         $out = ob_get_clean();
-        $out = preg_replace_callback( "/({@(.*?)})/m", array( $this, "do_magic_tags" ), $out );
+        $out = preg_replace_callback( '/({@(.*?)})/m', array( $this, 'do_magic_tags' ), $out );
 
         return $this->do_hook( 'do_template', $out, $code );
     }
@@ -1092,6 +1092,12 @@ class Pods {
      * @since 1.x
      */
     private function do_magic_tags ( $tag ) {
+        if ( is_array( $tag ) && !isset( $tag[ 2 ] ) || 0 < strlen( trim( $tag[ 2 ] ) ) )
+            return;
+
+        if ( is_array( $tag ) )
+            $tag = $tag[ 2 ];
+
         $tag = trim( $tag, ' {@}' );
         $tag = explode( ',', $tag );
 

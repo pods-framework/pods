@@ -197,8 +197,9 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
         <div class="pods-submittable-fields">
             <input type="hidden" name="action" value="pods_admin" />
             <input type="hidden" name="method" value="save_pod" />
-            <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('pods-save_pod'); ?>" />
-            <input type="hidden" name="id" value="<?php echo (int) $pod['id']; ?>" />
+            <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce( 'pods-save_pod' ); ?>" />
+            <input type="hidden" name="id" value="<?php echo (int) $pod[ 'id' ]; ?>" />
+            <input type="hidden" name="old_name" value="<?php echo esc_attr( $pod[ 'name' ] ); ?>" />
 
             <h2>
                 Edit Pod:

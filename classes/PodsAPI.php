@@ -896,7 +896,15 @@ class PodsAPI {
     public function save_pod ( $params, $sanitized = false ) {
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
 
-        $pod = $this->load_pod( $params, false );
+        $load_params = (object) $params;
+
+        if ( isset( $load_params->id ) && isset( $load_params->name ) )
+            unset( $load_params->name );
+
+        if ( isset( $load_params->old_name ) )
+            $load_params->name = $load_params->old_name;
+
+        $pod = $this->load_pod( $load_params, false );
 
         $params = (object) $params;
 

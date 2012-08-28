@@ -692,7 +692,7 @@ class PodsInit {
 
                 do_action( 'pods_update_post', PODS_VERSION, $pods_version, $_blog_id );
 
-                update_option( 'pods_framework_version', '2.0.0-a-31' );
+                update_option( 'pods_framework_version', PODS_VERSION );
             }
 
             if ( $pods_version != PODS_VERSION )

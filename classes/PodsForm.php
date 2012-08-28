@@ -105,7 +105,7 @@ class PodsForm {
     public static function field ( $name, $value, $type = 'text', $options = null, $pod = null, $id = null ) {
         $options = self::options( $type, $options );
 
-        if ( null === $value || empty( $id ) )
+        if ( null === $value || ( !empty( $pod ) && empty( $id ) ) )
             $value = self::default_value( $value, $type, $name, $options, $pod, $id );
 
         $value = apply_filters( 'pods_form_ui_field_' . $type . '_value', $value, $name, $options, $pod, $id );

@@ -51,8 +51,8 @@
                 if ( 'undefined' != typeof ajaxurl && ('' == pods_ajaxurl || '?pods_ajax=1' == pods_ajaxurl || document.location.href == pods_ajaxurl || document.location.href.replace( /\?nojs\=1/, '?pods_ajax=1' ) == pods_ajaxurl) )
                     pods_ajaxurl = ajaxurl + '?pods_ajax=1';
 
-                postdata = {};
-                field_data = {};
+                var postdata = {};
+                var field_data = {};
 
                 var valid_form = true;
 
@@ -132,8 +132,13 @@
                     }
                 } );
 
-                if ( false === valid_form )
+                if ( false === valid_form ) {
+                    $submittable.addClass( 'invalid-form' );
+
                     return false;
+                }
+                else
+                    $submittable.removeClass( 'invalid-form' );
 
                 pods_ajaxurl = pods_ajaxurl + '&action=' + postdata.action;
 
@@ -437,6 +442,39 @@
                 setProgress : function () {
                     $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'next ' ) );
                 },
+                stepBackward : function () {
+                    $( '#pods-wizard-next' ).css( 'cursor', 'pointer' );
+                    $( '#pods-wizard-next' ).prop( 'disabled', false );
+                    $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'next' ) );
+
+                    // Step toolbar menu state forwards
+                    $( 'li.pods-wizard-menu-current' )
+                        .removeClass( 'pods-wizard-menu-current pods-wizard-menu-complete' )
+                        .prev( 'li' )
+                        .removeClass( 'pods-wizard-menu-complete' )
+                        .addClass( 'pods-wizard-menu-current' );
+
+                    // Get current step #
+                    var step = false;
+
+                    if ( $( 'li.pods-wizard-menu-current[data-step]' )[ 0 ] )
+                        step = $( 'li.pods-wizard-menu-current' ).data( 'step' );
+
+                    // Show start over button
+                    if ( 1 == step )
+                        $( '#pods-wizard-start' ).hide();
+                    else
+                        $( '#pods-wizard-start' ).show();
+
+                    // Check if last step
+                    if ( $( 'div.pods-wizard-panel:visible' ).prev( 'div.pods-wizard-panel' ).length ) {
+                        // Show next panel
+                        $( 'div.pods-wizard-panel:visible' )
+                            .hide()
+                            .prev()
+                            .show();
+                    }
+                },
                 stepForward : function () {
                     // Show action bar for second panel if hidden
                     $( 'div.pods-wizard-hide-first' )
@@ -484,6 +522,17 @@
                         $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'processing' ) );
 
                         $( '#pods-wizard-box' ).closest( 'form' ).submit();
+
+                        if ( $( '#pods-wizard-box' ).closest( 'form' ).hasClass( 'invalid-form' ) ) {
+                            $( '#pods-wizard-next' ).css( 'cursor', 'pointer' );
+                            $( '#pods-wizard-next' ).prop( 'disabled', false );
+                            $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'next' ) );
+
+                            // Step toolbar menu state forwards
+                            $( 'li.pods-wizard-menu-complete:last' )
+                                .removeClass( 'pods-wizard-menu-complete' )
+                                .addClass( 'pods-wizard-menu-current' )
+                        }
                     }
                     else {
                         // Allow for override

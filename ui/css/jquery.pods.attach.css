@@ -17,6 +17,10 @@ ul.pods-file-meta {
     position: relative;
 }
 
+form.pods-form ul.pods-files li.pods-file-name {
+    overflow: inherit;
+}
+
 ul.pods-files li.pods-file-col {
     float: left;
     margin: 0;
@@ -66,6 +70,10 @@ ul.pods-files li.pods-file-name {
     padding-top: 5px;
 }
 
+form.pods-form ul.pods-files li.pods-file-name {
+    padding-top: 3px;
+}
+
 ul.pods-files li.pods-file {
     display: block;
     padding: 8px 10px;
@@ -107,6 +115,8 @@ ul.pods-files-queue li.pods-file li.pods-progress div.progress-bar {
     background-color: #4D4D4D;
 }
 
+ul.pods-files li.pods-file:after,
+ul.pods-files li.pods-file ul.pods-file-meta:after,
 ul.pods-files-queue li.pods-file:after,
 ul.pods-files-queue li.pods-file ul.pods-file-meta:after {
     content: "";

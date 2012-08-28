@@ -169,13 +169,24 @@
 
                 if ( "Error: " == resp.response.substr( 0, 7 ) ) {
                     response = response.substr( 7 );
+                    console.log( response );
                     file_div.append( response );
                 }
                 else if ( "<e>" == resp.response.substr( 0, 3 ) ) {
                     response = response.substr( 3 );
+                    console.log( response );
                     file_div.append( response );
                 }
                 else {
+                    var json = eval( '(' + response.match( /\{(.*)\}/gi ) + ')' );
+
+                    if ( 'object' != typeof json || jQuery.isEmptyObject( json ) ) {
+                        console.log( response );
+                        console.log( json );
+                        file_div.append( '<?php echo esc_js( __( 'There was an issue with the file upload, please try again.', 'pods' ) ); ?>' );
+                        return;
+                    }
+
                     file_div.fadeOut( 800, function () {
                         list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.show();
 
@@ -184,8 +195,6 @@
 
                         $( this ).remove();
                     } );
-
-                    var json = eval( '(' + response.match( /\{(.*)\}/gi ) + ')' );
 
                     var binding = {
                         id : json.ID,

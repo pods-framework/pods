@@ -1003,9 +1003,9 @@ class PodsAdmin {
          * Upload a new file (advanced - returns URL and ID)
          */
         if ( 'upload' == $method ) {
-            $custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->post_id );
+            $custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->post_id, $params );
 
-            if ( null !== $custom_handler ) {
+            if ( null === $custom_handler ) {
                 $attachment_id = media_handle_upload( 'Filedata', $params->post_id );
 
                 if ( is_object( $attachment_id ) ) {

@@ -544,7 +544,7 @@ class PodsAdmin {
      * @return mixed
      */
     public function admin_setup_delete ( $id, $obj ) {
-        $pod = $this->api->load_pod ( array( 'id' => $id ) );
+        $pod = $this->api->load_pod( array( 'id' => $id ), false );
 
         if ( empty( $pod ) )
             return $obj->error( __( 'Pod not found.', 'pods' ) );

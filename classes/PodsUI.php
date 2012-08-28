@@ -1077,7 +1077,7 @@ class PodsUI
             $this->edit(('duplicate' == $this->action && !in_array($this->action, $this->actions_disabled)) ? 1 : 0);
         }
         elseif ('delete' == $this->action && !in_array($this->action, $this->actions_disabled)) {
-            $this->delete();
+            $this->delete( $this->id );
             $this->manage();
         }
         elseif ('reorder' == $this->action && !in_array($this->action, $this->actions_disabled) && false !== $this->reorder['on']) {

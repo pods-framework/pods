@@ -178,7 +178,10 @@
                     file_div.append( response );
                 }
                 else {
-                    var json = eval( '(' + response.match( /\{(.*)\}/gi ) + ')' );
+                    var json = response.match( /\{(.*)\}/gi );
+
+                    if ( json[ 0 ] )
+                        json = jQuery.parseJSON( json[ 0 ] );
 
                     if ( 'object' != typeof json || jQuery.isEmptyObject( json ) ) {
                         console.log( response );

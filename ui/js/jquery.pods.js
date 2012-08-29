@@ -70,8 +70,13 @@
                             val = '';
 
                         if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && ('' == $el.val() || 0 == $el.val()) ) {
+                            if ( 0 < $el.parent().find( 'label' ).length )
+                                var label = $el.parent().find( 'label' ).html().trim();
+                            else
+                                var label = $el.prop( 'name' ).trim().replace( '_', ' ' );
+
                             if ( 0 == $el.parent().find( '.pods-validate-error-message' ).length )
-                                $el.parent().append( '<div class="pods-validate-error-message">' + $el.parent().find( 'label' ).html().trim() + ' is required.</div>' );
+                                $el.parent().append( '<div class="pods-validate-error-message">' + label + ' is required.</div>' );
 
                             if ( false !== valid_form )
                                 $el.focus();

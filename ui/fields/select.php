@@ -7,10 +7,10 @@
     if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit )
         $attributes[ 'multiple' ] = 'multiple';
 
-    if ( !isset( $options[ 'data' ] ) || empty( $options[ 'data' ] ) )
-        $options[ 'data' ] = array();
-    elseif ( !is_array( $options[ 'data' ] ) )
+    if ( !is_array( $options[ 'data' ] ) && false !== $options[ 'data' ] && 0 < strlen( $options[ 'data' ] ) )
         $options[ 'data' ] = implode( ',', $options[ 'data' ] );
+    else
+        $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true );
 ?>
 <select<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?>>
     <?php

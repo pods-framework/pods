@@ -1,4 +1,6 @@
 <?php
+    $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true );
+
     if ( 1 == $options[ 'grouped' ] ) {
 ?>
 <div class="pods-pick-values pods-pick-radio">

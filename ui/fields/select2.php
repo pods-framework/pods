@@ -13,6 +13,8 @@
     $field_nonce = wp_create_nonce( 'pods_relationship_' . ( !is_object( $pod ) ? '0' : $pod->pod_id ) . '_' . session_id() . '_' . $uri_hash . '_' . $options[ 'id' ] );
 
     $pick_limit = (int) pods_var( 'pick_limit', $options, 0 );
+
+    $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true );
 ?>
 <div class="pods-select2">
     <input<?php PodsForm::attributes($attributes, $name, PodsForm::$field_type, $options); ?> />

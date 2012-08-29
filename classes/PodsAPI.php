@@ -1923,7 +1923,7 @@ class PodsAPI {
                 else {
                     foreach ( $object_fields as $object_field => $object_field_opt ) {
                         if ( in_array( $field, $object_field_opt[ 'alias' ] ) ) {
-                            $object_fields[ $field ][ 'value' ] = $value;
+                            $object_fields[ $object_field ][ 'value' ] = $value;
                             $fields_active[] = $object_field;
                         }
                     }

@@ -172,7 +172,12 @@ class PodsField_Text extends PodsField {
      * @since 2.0.0
      */
     public function schema ( $options = null ) {
-        $schema = 'VARCHAR(255)';
+        $length = (int) pods_var( 'text_max_length', $options, 255, null, true );
+
+        if ( $length < 1 )
+            $length = 255;
+
+        $schema = 'VARCHAR(' . $length . ')';
 
         return $schema;
     }

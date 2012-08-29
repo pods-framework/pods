@@ -466,6 +466,8 @@ class PodsUpgrade_2_0 {
                     $field_params[ 'options' ][ 'paragraph_format_type' ] = 'tinymce';
                 elseif ( 'date' == $field_type )
                     $field_params[ 'options' ][ 'date_format_type' ] = 'datetime';
+                elseif ( 'text' == $field_type )
+                    $field_params[ 'options' ][ 'text_max_length' ] = 128;
 
                 $fields[] = $field_params;
 

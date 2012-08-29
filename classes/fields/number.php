@@ -117,7 +117,7 @@ class PodsField_Number extends PodsField {
             ),
             'number_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
-                'default' => 255,
+                'default' => 12,
                 'type' => 'number'
             ),
             'number_size' => array(
@@ -143,9 +143,17 @@ class PodsField_Number extends PodsField {
      * @since 2.0.0
      */
     public function schema ( $options = null ) {
-        $decimals = (int) pods_var( 'number_decimals', $options, 0 );
+        $length = (int) pods_var( 'text_max_length', $options, 12, null, true );
 
-        $schema = 'DECIMAL(12,' . $decimals . ')';
+        if ( $length < 1 )
+            $length = 12;
+
+        $decimals = (int) pods_var( 'number_decimals', $options, 0, null, true );
+
+        if ( $decimals < 1 )
+            $decimals = 0;
+
+        $schema = 'DECIMAL(' . $length . ',' . $decimals . ')';
 
         return $schema;
     }

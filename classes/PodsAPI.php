@@ -1222,6 +1222,12 @@ class PodsAPI {
 
         $saved = array();
 
+        $field_index_change = false;
+        $field_index_id = 0;
+
+        if ( 'pod' == $pod[ 'type' ] && !empty( $pod[ 'fields' ] ) && isset( $pod[ 'fields' ][ $pod[ 'field_index' ] ] ) )
+            $field_index_id = $pod[ 'fields' ][ $pod[ 'field_index' ] ];
+
         if ( isset( $params->fields ) || defined( 'DOING_AJAX' ) ) {
             $fields = array();
 
@@ -1261,6 +1267,9 @@ class PodsAPI {
                     $weight ++;
                 }
 
+                if ( $field[ 'id' ] == $field_index_id )
+                    $field_index_change = $field[ 'name' ];
+
                 $field = $this->save_field( $field, $field_table_operation, $sanitized );
 
                 if ( !empty( $field ) && 0 < $field )
@@ -1271,6 +1280,9 @@ class PodsAPI {
 
             foreach ( $old_fields as $field ) {
                 if ( !isset( $saved[ $field[ 'id' ] ] ) ) {
+                    if ( $field[ 'id' ] == $field_index_id )
+                        $field_index_change = 'id';
+
                     $this->delete_field( array(
                         'id' => (int) $field[ 'id' ],
                         'name' => $field[ 'name' ],
@@ -1278,6 +1290,10 @@ class PodsAPI {
                     ), $field_table_operation );
                 }
             }
+
+            // Update field index if the name has changed or the field has been removed
+            if ( false !== $field_index_change )
+                update_post_meta( $pod[ 'id' ], 'pod_index', $field_index_change );
         }
 
         $this->cache_flush_pods( $pod );

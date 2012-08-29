@@ -1225,8 +1225,10 @@ class PodsAPI {
         $field_index_change = false;
         $field_index_id = 0;
 
-        if ( 'pod' == $pod[ 'type' ] && !empty( $pod[ 'fields' ] ) && isset( $pod[ 'fields' ][ $pod[ 'field_index' ] ] ) )
-            $field_index_id = $pod[ 'fields' ][ $pod[ 'field_index' ] ];
+        $field_index = pods_var( 'pod_index', $pod[ 'options' ], 'id', null, true );
+
+        if ( 'pod' == $pod[ 'type' ] && !empty( $pod[ 'fields' ] ) && isset( $pod[ 'fields' ][ $field_index ] ) )
+            $field_index_id = $pod[ 'fields' ][ $field_index ];
 
         if ( isset( $params->fields ) || defined( 'DOING_AJAX' ) ) {
             $fields = array();
@@ -1267,7 +1269,7 @@ class PodsAPI {
                     $weight ++;
                 }
 
-                if ( $field[ 'id' ] == $field_index_id )
+                if ( 0 < $field_index_id && $field[ 'id' ] == $field_index_id )
                     $field_index_change = $field[ 'name' ];
 
                 $field = $this->save_field( $field, $field_table_operation, $sanitized );

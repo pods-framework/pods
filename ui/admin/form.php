@@ -1,6 +1,14 @@
 <?php
     wp_enqueue_style( 'pods-form' );
 
+    // unset fields
+    foreach ( $fields as $k => $field ) {
+        if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) )
+            unset( $fields[ $k ] );
+        elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $pod->id() ) )
+            unset( $fields[ $k ] );
+    }
+
     $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
     $field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $fields ) ) );
 
@@ -104,8 +112,8 @@
                         $more = false;
 
                         if ( $pod->pod_data[ 'field_index' ] != $pod->pod_data[ 'field_id' ] ) {
-                            foreach ( $fields as $field ) {
-                                if ( $pod->pod_data[ 'field_index' ] != $field[ 'name' ] )
+                            foreach ( $fields as $k => $field ) {
+                                if ( $pod->pod_data[ 'field_index' ] != $field[ 'name' ] || 'text' != $field[ 'type' ] )
                                     continue;
 
                                 if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $pod->id() ) )
@@ -129,6 +137,7 @@
                         </div>
                         <!-- /#titlediv -->
                     <?php
+                                unset( $fields[ $k ] );
                             }
                         }
                     ?>
@@ -151,11 +160,6 @@
                                 <table class="form-table pods-metabox">
                                     <?php
                                         foreach ( $fields as $field ) {
-                                            if ( in_array( $field[ 'name' ], array( $pod->pod_data[ 'field_index' ], 'created', 'modified' ) ) )
-                                                continue;
-
-                                            if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $pod->id() ) )
-                                                continue;
                                     ?>
                                         <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Podsform::clean( $field[ 'name' ], true ); ?>">
                                             <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_field_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>

@@ -1915,23 +1915,46 @@ class PodsAPI {
             unset( $params->data );
         }
 
+        if ( 'pod' == $pod[ 'type' ] ) {
+            if ( empty( $params->id ) && !in_array( 'created', $fields_active ) && isset( $fields[ 'created' ] ) ) {
+                $fields[ 'created' ][ 'value' ] = date_i18n( 'Y-m-d H:i:s' );
+                $fields_active[] = 'created';
+            }
+
+            if ( !in_array( 'modified', $fields_active ) && isset( $fields[ 'modified' ] ) ) {
+                $fields[ 'modified' ][ 'value' ] = date_i18n( 'Y-m-d H:i:s' );
+                $fields_active[] = 'modified';
+            }
+        }
+
         $columns =& $fields; // @deprecated 2.0.0
         $active_columns =& $fields_active; // @deprecated 2.0.0
 
         $pre_save_helpers = $post_save_helpers = array();
 
         if ( false === $bypass_helpers ) {
+            $pieces = array( 'fields', 'params', 'pod' );
+
             // Plugin hooks
-            $this->do_hook( 'pre_save_pod_item', $params, $fields, $is_new_item );
-            $this->do_hook( "pre_save_pod_item_{$params->pod}", $params, $fields, $is_new_item );
+            $hooked = $this->do_hook( 'pre_save_pod_item', compact( $pieces ), $is_new_item );
+            extract( $hooked );
+
+            $hooked = $this->do_hook( "pre_save_pod_item_{$params->pod}", compact( $pieces ), $is_new_item );
+            extract( $hooked );
 
             if ( false !== $is_new_item ) {
-                $this->do_hook( 'pre_create_pod_item', $params, $fields );
-                $this->do_hook( "pre_create_pod_item_{$params->pod}", $params, $fields );
+                $hooked = $this->do_hook( 'pre_create_pod_item', compact( $pieces ) );
+                extract( $hooked );
+
+                $hooked = $this->do_hook( "pre_create_pod_item_{$params->pod}", compact( $pieces ) );
+                extract( $hooked );
             }
             else {
-                $this->do_hook( 'pre_edit_pod_item', $params, $fields );
-                $this->do_hook( "pre_edit_pod_item_{$params->pod}", $params, $fields );
+                $hooked = $this->do_hook( 'pre_edit_pod_item', compact( $pieces ) );
+                extract( $hooked );
+
+                $hooked = $this->do_hook( "pre_edit_pod_item_{$params->pod}", compact( $pieces ) );
+                extract( $hooked );
             }
 
             // Call any pre-save helpers (if not bypassed)
@@ -2248,17 +2271,29 @@ class PodsAPI {
         }
 
         if ( false === $bypass_helpers ) {
-            // Plugin hook
-            $this->do_hook( 'post_save_pod_item', $params, $fields );
-            $this->do_hook( "post_save_pod_item_{$params->pod}", $params, $fields );
+            $pieces = array( 'fields', 'params', 'pod' );
+
+            // Plugin hooks
+            $hooked = $this->do_hook( 'post_save_pod_item', compact( $pieces ), $is_new_item );
+            extract( $hooked );
+
+            $hooked = $this->do_hook( "post_save_pod_item_{$params->pod}", compact( $pieces ) );
+            extract( $hooked );
 
             if ( false !== $is_new_item ) {
-                $this->do_hook( 'post_create_pod_item', $params, $fields );
-                $this->do_hook( "post_create_pod_item_{$params->pod}", $params, $fields );
+                $hooked = $this->do_hook( 'post_create_pod_item', compact( $pieces ) );
+                extract( $hooked );
+
+                $hooked = $this->do_hook( "post_create_pod_item_{$params->pod}", compact( $pieces ) );
+                extract( $hooked );
+
             }
             else {
-                $this->do_hook( 'post_edit_pod_item', $params, $fields );
-                $this->do_hook( "post_edit_pod_item_{$params->pod}", $params, $fields );
+                $hooked = $this->do_hook( 'post_edit_pod_item', compact( $pieces ) );
+                extract( $hooked );
+
+                $hooked = $this->do_hook( "post_edit_pod_item_{$params->pod}", compact( $pieces ) );
+                extract( $hooked );
             }
 
             // Call any post-save helpers (if not bypassed)
@@ -2276,6 +2311,7 @@ class PodsAPI {
             }
         }
 
+        // Clear cache
         wp_cache_delete( $params->id, 'pods_items_' . $params->pod );
 
         // Success! Return the id

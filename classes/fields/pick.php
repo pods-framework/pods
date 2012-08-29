@@ -191,6 +191,15 @@ class PodsField_Pick extends PodsField {
             if ( !is_array( $custom ) )
                 $custom = explode( "\n", $custom );
 
+            if ( !empty( $value ) && !is_array( $value ) ) {
+                $json = json_decode( $value, true );
+
+                if ( is_array( $json ) )
+                    $value = $json;
+                else
+                    $value = implode( ',', $value );
+            }
+
             $options[ 'data' ] = array();
 
             if ( 'single' == pods_var( 'pick_format_type', $options ) && 'dropdown' == pods_var( 'pick_format_single', $options ) )

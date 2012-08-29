@@ -298,27 +298,8 @@ class Pods {
             elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
                 $value = get_permalink( $this->id() );
         }
-        elseif ( isset( $this->row[ $params->name ] ) ) {
+        elseif ( isset( $this->row[ $params->name ] ) )
             $value = $this->row[ $params->name ];
-
-            if ( isset( $this->fields[ $params->name ] ) && in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
-                if ( 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] ) {
-                    if ( empty( $value ) )
-                        $value = array();
-                    else
-                        $value = @json_decode( $value, true );
-
-                    $single_multi = pods_var( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
-
-                    if ( 'single' == $single_multi ) {
-                        if ( empty( $value ) )
-                            $value = '';
-                        else
-                            $value = current( $value );
-                    }
-                }
-            }
-        }
         else {
             $object_field_found = false;
 
@@ -558,14 +539,32 @@ class Pods {
             }
         }
 
-        if ( !empty( $params->traverse ) ) {
+        if ( !empty( $params->traverse ) && 1 < count( $params->traverse ) ) {
             $field_names = implode( '.', $params->traverse );
 
             $this->row[ $field_names ] = $value;
         }
-        else
-            $this->row[ $params->name ] = $value;
+        else {
+            if ( isset( $this->fields[ $params->name ] ) && in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
+                if ( 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] ) {
+                    if ( empty( $value ) )
+                        $value = array();
+                    else
+                        $value = @json_decode( $value, true );
 
+                    $single_multi = pods_var( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
+
+                    if ( 'single' == $single_multi ) {
+                        if ( empty( $value ) )
+                            $value = '';
+                        else
+                            $value = current( $value );
+                    }
+                }
+            }
+
+            $this->row[ $params->name ] = $value;
+        }
 
         if ( false === $params->in_form && isset( $this->fields[ $params->name ] ) ) {
             $value = PodsForm::display(

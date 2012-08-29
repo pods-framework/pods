@@ -212,7 +212,7 @@ class PodsField_Pick extends PodsField {
                 $options[ 'data' ][ $custom_value ] = $custom_label;
             }
         }
-        elseif ( '' != pods_var( 'pick_object', $options, '' ) && array() == pods_var( 'data', $options, array() ) ) {
+        elseif ( '' != pods_var( 'pick_object', $options, '' ) && array() == pods_var_raw( 'data', $options, array(), null, true ) ) {
             $options[ 'data' ] = array();
 
             if ( 'single' == pods_var( 'pick_format_type', $options ) && 'dropdown' == pods_var( 'pick_format_single', $options ) )

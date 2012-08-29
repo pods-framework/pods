@@ -3,6 +3,7 @@
     var methods = {
         validate : function () {
             var $form = $( 'form.pods-submittable' );
+
             $form.on( 'change keyup', 'input.pods-validate.pods-validate-required, select.pods-validate.pods-validate-required, textarea.pods-validate.pods-validate-required', function () {
                 var $el = $( this );
 
@@ -70,19 +71,13 @@
                             val = '';
 
                         if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && ('' == $el.val() || 0 == $el.val()) ) {
-                            if ( 0 < $el.parent().find( 'label' ).length )
-                                var label = $el.parent().find( 'label' ).html().trim();
-                            else
-                                var label = $el.prop( 'name' ).trim().replace( '_', ' ' );
-
-                            if ( 0 == $el.parent().find( '.pods-validate-error-message' ).length )
-                                $el.parent().append( '<div class="pods-validate-error-message">' + label + ' is required.</div>' );
+                            $el.trigger( 'change' );
 
                             if ( false !== valid_form )
                                 $el.focus();
 
                             $el.addClass( 'pods-validate-error' );
-                            $el.focus();
+
                             valid_form = false;
                         }
                         else {

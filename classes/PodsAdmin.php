@@ -344,6 +344,10 @@ class PodsAdmin {
                     continue;
             }
 
+            // Don't just show the help page
+            if ( false === $parent && 'pods-help' == $page )
+                continue;
+
             if ( !isset( $menu_item[ 'label' ] ) )
                 $menu_item[ 'label' ] = $page;
 

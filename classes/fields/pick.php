@@ -197,7 +197,7 @@ class PodsField_Pick extends PodsField {
                 if ( is_array( $json ) )
                     $value = $json;
                 else
-                    $value = implode( ',', $value );
+                    $value = explode( ',', $value );
             }
 
             $options[ 'data' ] = array();

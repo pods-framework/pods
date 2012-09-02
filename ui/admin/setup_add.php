@@ -108,7 +108,7 @@
                                         </div>
                                         <div class="pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-post_type">
                                             <?php
-                                                echo PodsForm::label( 'create_storage', __( 'Storage Type', 'pods' ), __( 'Table based storage will operate in a way where each field in your content type becomes a field in a table, where as Meta based relies upon WordPress\' meta storage table for all field data.' ) );
+                                                echo PodsForm::label( 'create_storage', __( 'Storage Type', 'pods' ), __( 'Table based storage will operate in a way where each field you create for your content type becomes a field in a table, where as Meta based relies upon WordPress\' meta storage table for all field data.' ) );
 
                                                 $data = array(
                                                     'meta' => 'Meta Based (WP Default)',
@@ -116,6 +116,18 @@
                                                 );
 
                                                 echo PodsForm::field( 'create_storage', pods_var_raw( 'create_storage', 'post' ), 'pick', array( 'data' => $data ) );
+                                            ?>
+                                        </div>
+                                        <div class="pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-taxonomy">
+                                            <?php
+                                                echo PodsForm::label( 'create_storage_taxonomy', __( 'Storage Type', 'pods' ), __( 'Table based storage will operate in a way where each field you create for your content type becomes a field in a table. No other storage types are available in addition to our table-based storage because this WordPress object does not support additional fields natively.' ) );
+
+                                                $data = array(
+                                                    'none' => 'Do not add additional fields',
+                                                    'table' => 'Table Based'
+                                                );
+
+                                                echo PodsForm::field( 'create_storage_taxonomy', pods_var_raw( 'create_storage_taxonomy', 'post', 'none', null, true ), 'pick', array( 'data' => $data ) );
                                             ?>
                                         </div>
                                     </div>
@@ -162,7 +174,7 @@
                                             }
 
                                             echo PodsForm::label( 'extend_post_type', __( 'Post Type', 'pods' ), __( 'help', 'pods' ) );
-                                            echo PodsForm::field( 'extend_post_type', pods_var_raw( 'extend_post_type', 'post' ), 'pick', array( 'data' => $post_types ) );
+                                            echo PodsForm::field( 'extend_post_type', pods_var_raw( 'extend_post_type', 'post', 'table', null, true ), 'pick', array( 'data' => $post_types ) );
                                         ?>
                                     </div>
                                     <div class="pods-field-option pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-taxonomy">
@@ -184,24 +196,33 @@
                                             echo PodsForm::field( 'extend_taxonomy', pods_var_raw( 'extend_taxonomy', 'post' ), 'pick', array( 'data' => $taxonomies ) );
                                         ?>
                                     </div>
-                                    <div class="pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-post_type pods-depends-on-extend-pod-type-user pods-depends-on-extend-pod-type-comment">
-                                        <p>
-                                            <a href="#pods-advanced" class="pods-advanced-toggle"><?php _e( 'Advanced', 'pods' ); ?> +</a>
-                                        </p>
 
-                                        <div class="pods-advanced">
-                                            <div class="pods-field-option">
-                                                <?php
-                                                    echo PodsForm::label( 'extend_storage', __( 'Storage Type', 'pods' ), __( 'Table based storage will operate in a way where each field in your content type becomes a field in a table, where as Meta based relies upon WordPress\' meta storage table for all field data.' ) );
+                                    <p><a href="#pods-advanced" class="pods-advanced-toggle"><?php _e( 'Advanced', 'pods' ); ?> +</a></p>
 
-                                                    $data = array(
-                                                        'meta' => __( 'Meta Based (WP Default)', 'pods' ),
-                                                        'table' => __( 'Table Based', 'pods' )
-                                                    );
+                                    <div class="pods-advanced">
+                                        <div class="pods-field-option pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-post_type pods-depends-on-extend-pod-type-media pods-depends-on-extend-pod-type-user pods-depends-on-extend-pod-type-comment">
+                                            <?php
+                                                echo PodsForm::label( 'extend_storage', __( 'Storage Type', 'pods' ), __( 'Table based storage will operate in a way where each field you create for your content type becomes a field in a table, where as Meta based relies upon WordPress\' meta storage table for all field data.' ) );
 
-                                                    echo PodsForm::field( 'extend_storage', pods_var_raw( 'extend_storage', 'post' ), 'pick', array( 'data' => $data ) );
-                                                ?>
-                                            </div>
+                                                $data = array(
+                                                    'meta' => __( 'Meta Based (WP Default)', 'pods' ),
+                                                    'table' => __( 'Table Based', 'pods' )
+                                                );
+
+                                                echo PodsForm::field( 'extend_storage', pods_var_raw( 'extend_storage', 'post' ), 'pick', array( 'data' => $data ) );
+                                            ?>
+                                        </div>
+                                        <div class="pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-taxonomy">
+                                            <?php
+                                                echo PodsForm::label( 'extend_storage_taxonomy', __( 'Storage Type', 'pods' ), __( 'Table based storage will operate in a way where each field you create for your content type becomes a field in a table. No other storage types are available in addition to our table-based storage because this WordPress object does not support additional fields natively.' ) );
+
+                                                $data = array(
+                                                    'none' => 'Do not add additional fields',
+                                                    'table' => 'Table Based'
+                                                );
+
+                                                echo PodsForm::field( 'extend_storage_taxonomy', pods_var_raw( 'extend_storage_taxonomy', 'post' ), 'pick', array( 'data' => $data ) );
+                                            ?>
                                         </div>
                                     </div>
                                 </div>

@@ -801,10 +801,12 @@ class PodsAPI {
             'create_label_plural' => '',
             'create_label_singular' => '',
             'create_storage' => 'meta',
+            'create_storage_taxonomy' => 'none',
             'extend_pod_type' => 'post_type',
             'extend_post_type' => 'post',
             'extend_taxonomy' => 'category',
-            'extend_storage' => 'meta'
+            'extend_storage' => 'meta',
+            'extend_storage_taxonomy' => 'table',
         );
 
         $params = (object) array_merge( $defaults, (array) $params );
@@ -836,6 +838,8 @@ class PodsAPI {
 
             if ( 'post_type' == $pod_params[ 'type' ] )
                 $pod_params[ 'storage' ] = $params->create_storage;
+            elseif ( 'taxonomy' == $pod_params[ 'type' ] )
+                $pod_params[ 'storage' ] = $params->create_storage_extend;
         }
         elseif ( 'extend' == $params->create_extend ) {
             $pod_params[ 'type' ] = $params->extend_pod_type;
@@ -844,8 +848,10 @@ class PodsAPI {
                 $pod_params[ 'storage' ] = $params->extend_storage;
                 $pod_params[ 'name' ] = $params->extend_post_type;
             }
-            elseif ( 'taxonomy' == $pod_params[ 'type' ] )
+            elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
+                $pod_params[ 'storage' ] = $params->extend_storage_taxonomy;
                 $pod_params[ 'name' ] = $params->extend_taxonomy;
+            }
             else {
                 $pod_params[ 'storage' ] = $params->extend_storage;
                 $pod_params[ 'name' ] = $params->extend_pod_type;

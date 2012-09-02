@@ -2,6 +2,9 @@
     wp_enqueue_style( 'pods-select2' );
     wp_enqueue_script( 'pods-select2' );
 
+    if ( is_array( $value ) )
+        $value = implode( ',', $value );
+
     $attributes = array();
     $attributes[ 'type' ] = 'hidden';
     $attributes[ 'value' ] = $value;

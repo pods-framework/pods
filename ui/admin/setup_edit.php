@@ -234,83 +234,90 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
             <!-- /inner-sidebar -->
             <div id="post-body" class="meta-box-holder columns-2">
                 <div id="post-body-content">
-                    <p class="pods-manage-row-add pods-float-right">
-                        <a href="#add-field" class="button-primary"><?php _e( 'Add Field', 'pods' ); ?></a>
-                    </p>
+                    <?php
+                        if ( 'none' != pods_var( 'storage', $pod, 'none', null, true ) ) {
+                    ?>
+                        <p class="pods-manage-row-add pods-float-right">
+                            <a href="#add-field" class="button-primary"><?php _e( 'Add Field', 'pods' ); ?></a>
+                        </p>
 
-                    <h2>Manage Fields</h2>
+                        <h2>Manage Fields</h2>
 
-                    <!-- pods table -->
-                    <table class="widefat fixed pages" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th scope="col" id="cb" class="manage-column field-cb check-column">
-                                    <span>&nbsp;</span>
-                                </th>
-                                <th scope="col" id="label" class="manage-column field-label">
-                                    <span>Label<?php pods_help(__("<h6>Label</h6>The label is the descriptive name to identify the Pod field.", 'pods')); ?></span>
-                                </th>
-                                <th scope="col" id="machine-name" class="manage-column field-machine-name">
-                                    <span>Name<?php pods_help(__("<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically.", 'pods')); ?></span>
-                                </th>
-                                <th scope="col" id="field-type" class="manage-column field-field-type">
-                                    <span>Field Type<?php pods_help(__("<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc.", 'pods')); ?></span>
-                                </th><!--
-                                <th scope="col" id="comment" class="manage-column field-comment">
-                                    <span>Comment</span>
-                                </th>-->
-                            </tr>
-                        </thead>
-                        <tfoot>
-                            <tr>
-                                <th scope="col" class="manage-column field-cb check-column">
-                                    <span>&nbsp;</span>
-                                </th>
-                                <th scope="col" class="manage-column field-label">
-                                    <span>Label<?php pods_help(__("<h6>Label</h6>The label is the descriptive name to identify the Pod field.", 'pods')); ?></span>
-                                </th>
-                                <th scope="col" class="manage-column field-machine-name">
-                                    <span>Name<?php pods_help(__("<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically.", 'pods')); ?></span>
-                                </th>
-                                <th scope="col" class="manage-column field-field-type">
-                                    <span>Field Type<?php pods_help(__("<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc.", 'pods')); ?></span>
-                                </th><!--
-                                <th scope="col" id="comment" class="manage-column field-comment">
-                                    <span>Comment</span>
-                                </th>-->
-                            </tr>
-                        </tfoot>
-                        <tbody class="pods-manage-list">
-                            <?php
-                                // Empty Row for Flexible functionality
-                                $pods_i = '--1';
+                        <!-- pods table -->
+                        <table class="widefat fixed pages" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th scope="col" id="cb" class="manage-column field-cb check-column">
+                                        <span>&nbsp;</span>
+                                    </th>
+                                    <th scope="col" id="label" class="manage-column field-label">
+                                        <span>Label<?php pods_help(__("<h6>Label</h6>The label is the descriptive name to identify the Pod field.", 'pods')); ?></span>
+                                    </th>
+                                    <th scope="col" id="machine-name" class="manage-column field-machine-name">
+                                        <span>Name<?php pods_help(__("<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically.", 'pods')); ?></span>
+                                    </th>
+                                    <th scope="col" id="field-type" class="manage-column field-field-type">
+                                        <span>Field Type<?php pods_help(__("<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc.", 'pods')); ?></span>
+                                    </th><!--
+                                    <th scope="col" id="comment" class="manage-column field-comment">
+                                        <span>Comment</span>
+                                    </th>-->
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th scope="col" class="manage-column field-cb check-column">
+                                        <span>&nbsp;</span>
+                                    </th>
+                                    <th scope="col" class="manage-column field-label">
+                                        <span>Label<?php pods_help(__("<h6>Label</h6>The label is the descriptive name to identify the Pod field.", 'pods')); ?></span>
+                                    </th>
+                                    <th scope="col" class="manage-column field-machine-name">
+                                        <span>Name<?php pods_help(__("<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically.", 'pods')); ?></span>
+                                    </th>
+                                    <th scope="col" class="manage-column field-field-type">
+                                        <span>Field Type<?php pods_help(__("<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc.", 'pods')); ?></span>
+                                    </th><!--
+                                    <th scope="col" id="comment" class="manage-column field-comment">
+                                        <span>Comment</span>
+                                    </th>-->
+                                </tr>
+                            </tfoot>
+                            <tbody class="pods-manage-list">
+                                <?php
+                                    // Empty Row for Flexible functionality
+                                    $pods_i = '--1';
 
-                                $field = array(
-                                    'id' => '__1',
-                                    'name' => 'new__1',
-                                    'label' => 'New Field __1',
-                                    'type' => 'text'
-                                );
+                                    $field = array(
+                                        'id' => '__1',
+                                        'name' => 'new__1',
+                                        'label' => 'New Field __1',
+                                        'type' => 'text'
+                                    );
 
-                                include PODS_DIR . 'ui/admin/setup_edit_field.php';
-
-                                $pods_i = 1;
-
-                                foreach ( $pod[ 'fields' ] as $field ) {
                                     include PODS_DIR . 'ui/admin/setup_edit_field.php';
 
-                                    $pods_i++;
-                                }
-                            ?>
-                            <tr class="no-items<?php echo (1 < $pods_i ? ' hidden' : ''); ?>">
-                                <td class="colspanchange" colspan="4">No fields have been added yet</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <!-- /pods table -->
-                    <p class="pods-manage-row-add">
-                        <a href="#add-field" class="button-primary"><?php _e('Add Field', 'pods'); ?></a>
-                    </p>
+                                    $pods_i = 1;
+
+                                    foreach ( $pod[ 'fields' ] as $field ) {
+                                        include PODS_DIR . 'ui/admin/setup_edit_field.php';
+
+                                        $pods_i++;
+                                    }
+                                ?>
+                                <tr class="no-items<?php echo (1 < $pods_i ? ' hidden' : ''); ?>">
+                                    <td class="colspanchange" colspan="4">No fields have been added yet</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <!-- /pods table -->
+                        <p class="pods-manage-row-add">
+                            <a href="#add-field" class="button-primary"><?php _e('Add Field', 'pods'); ?></a>
+                        </p>
+                    <?php
+                        }
+                    ?>
+
                     <div id="pods-advanced" class="pods-toggled postbox closed pods-submittable-fields">
                         <div class="handlediv" title="Click to toggle">
                             <br />
@@ -624,7 +631,7 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
         'pod_options' => array()
     );
 
-    if ('post_type' == pods_var('type', $pod) && strlen( pods_var( 'object', $pod ) ) < 1 ) {
+    if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) ) < 1 ) {
 ?>
                                         <div id="pods-advanced-post-type-options" class="pods-tab">
                                             <?php

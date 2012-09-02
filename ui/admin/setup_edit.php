@@ -315,10 +315,13 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
                             <a href="#add-field" class="button-primary"><?php _e('Add Field', 'pods'); ?></a>
                         </p>
                     <?php
+                            $closed = ' closed';
                         }
+                        else
+                            $closed = '';
                     ?>
 
-                    <div id="pods-advanced" class="pods-toggled postbox closed pods-submittable-fields">
+                    <div id="pods-advanced" class="pods-toggled postbox pods-submittable-fields<?php echo $closed; ?>">
                         <div class="handlediv" title="Click to toggle">
                             <br />
                         </div>

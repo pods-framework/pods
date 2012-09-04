@@ -915,7 +915,8 @@ class Pods {
             'last_label' => __( 'Last &raquo;', 'pods' ),
             'limit' => (int) $this->limit,
             'page' => max( 1, (int) $this->page ),
-            'total_found' => $this->total_found()
+            'total_found' => $this->total_found(),
+            'page_var' => $this->page_var
         );
 
         if ( empty( $params ) )

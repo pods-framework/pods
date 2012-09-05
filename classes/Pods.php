@@ -909,8 +909,8 @@ class Pods {
         $defaults = array(
             'type' => 'simple',
             'label' => __( 'Go to page:', 'pods' ),
-            'next_label' => __( '&lt; Previous', 'pods' ),
-            'prev_label' => __( 'Next &gt;', 'pods' ),
+            'next_label' => __( 'Next &gt;', 'pods' ),
+            'prev_label' => __( '&lt; Previous', 'pods' ),
             'first_label' => __( '&laquo; First', 'pods' ),
             'last_label' => __( 'Last &raquo;', 'pods' ),
             'limit' => (int) $this->limit,

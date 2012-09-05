@@ -588,10 +588,6 @@ function pods_var_update ( $array = null, $allowed = null, $excluded = null, $ur
     else
         $get = $_GET;
 
-    foreach($get as $key => $value) {
-        if(empty($value)) unset($get[$key])
-    }
-
     if ( is_array( $array ) ) {
         foreach ( $excluded as $exclusion ) {
             if ( !isset( $array[ $exclusion ] ) && !in_array( $exclusion, $allowed ) )

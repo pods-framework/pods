@@ -773,7 +773,7 @@ class PodsData {
                 " . (!empty($params->groupby) ? 'GROUP BY ' . (is_array($params->groupby) ? implode(', ', $params->groupby) : $params->groupby) : '') . "
                 " . (!empty($params->having) ? 'HAVING ' . (is_array($params->having) ? implode(' AND ', $params->having) : $params->having) : '') . "
                 " . (!empty($params->orderby) ? 'ORDER BY ' . (is_array($params->orderby) ? implode(', ', $params->orderby) : $params->orderby) : '') . "
-                " . ((0 < $params->page && 0 < $params->limit) ? 'LIMIT ' . (($params->page - 1) * $params->limit) . ', ' . ((($params->page - 1) * $params->limit) + $params->limit) : '') . "
+                " . ((0 < $params->page && 0 < $params->limit) ? 'LIMIT ' . (($params->page - 1) * $params->limit) . ', ' . ($params->limit) : '') . "
             ";
         }
         // Rewrite

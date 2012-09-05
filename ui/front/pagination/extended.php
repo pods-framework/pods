@@ -1,5 +1,5 @@
 <span class="pods-pagination-simple">
-    <span class="pods-pagination-label"><?php echo $label; ?></span>
+    <span class="pods-pagination-label"><?php echo $params->label; ?></span>
 
     <?php
         if ( 1 < $params->page ) {

@@ -613,14 +613,17 @@ class Pods {
     public function find ( $params = null, $limit = 15, $where = null, $sql = null ) {
         global $wpdb;
 
+        $select = '`t`.*';
         $pod_table_prefix = 't';
 
-        if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) )
+        if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) && 'table' == $this->pod_data[ 'storage' ] ) {
+            $select .= ', `d`.*';
             $pod_table_prefix = 'd';
+        }
 
         $defaults = array(
             'table' => $this->data->table,
-            'select' => $pod_table_prefix . '*',
+            'select' => $select,
             'join' => null,
             'where' => $where,
             'groupby' => null,

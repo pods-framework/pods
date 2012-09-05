@@ -613,9 +613,14 @@ class Pods {
     public function find ( $params = null, $limit = 15, $where = null, $sql = null ) {
         global $wpdb;
 
+        $pod_table_prefix = 't';
+
+        if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) )
+            $pod_table_prefix = 'd';
+
         $defaults = array(
             'table' => $this->data->table,
-            'select' => '*',
+            'select' => $pod_table_prefix . '*',
             'join' => null,
             'where' => $where,
             'groupby' => null,
@@ -643,11 +648,6 @@ class Pods {
         $this->page = (int) $params->page;
         $this->search = (boolean) $params->search;
         $params->join = (array) $params->join;
-
-        $pod_table_prefix = 't';
-
-        if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) )
-            $pod_table_prefix = 'd';
 
         // Allow where array ( 'field' => 'value' )
         if ( !empty( $params->where ) && is_array( $params->where ) ) {

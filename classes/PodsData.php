@@ -645,14 +645,16 @@ class PodsData {
                 $params->orderby = preg_replace( $find, $replace, $params->orderby );
 
                 if ( !empty( $found ) )
-                    $joins = $this->traverse( $found );
+                    $joins = $this->traverse( $found, $params->fields );
                 elseif ( false !== $this->search )
-                    $joins = $this->traverse();
+                    $joins = $this->traverse( null, $params->fields );
             }
         }
 
         if ( !empty( $params->join ) && !empty( $joins ) )
             $params->join = array_merge( (array) $params->join, $joins );
+        elseif ( !empty( $joins ) )
+            $params->join = $joins;
 
         if (null !== $params->search && !empty($params->fields)) {
             // Search
@@ -1374,7 +1376,10 @@ class PodsData {
     /**
      * Setup fields for traversal
      */
-    function traverse_build ( $fields ) {
+    function traverse_build ( $fields = null ) {
+        if ( null === $fields )
+            $fields = $this->fields;
+
         $feed = array();
 
         foreach ( $fields as $field => $data ) {
@@ -1537,11 +1542,11 @@ class PodsData {
     /**
      * Recursively join tables based on fields
      */
-    function traverse ( $fields = null ) {
+    function traverse ( $fields = null, $all_fields = null ) {
         $joins = array();
 
         if ( null === $fields )
-            $fields = $this->traverse_build( $this->fields );
+            $fields = $this->traverse_build( $all_fields );
 
         foreach ( (array) $fields as $field_group ) {
             if ( is_array( $field_group ) )

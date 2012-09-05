@@ -569,43 +569,48 @@ function pods_var_set ( $value, $key = 'last', $type = 'url' ) {
 }
 
 /**
- * @param array $array
- * @param array $allowed
- * @param array $excluded
- * @param string $url
+ * Create a new URL off of the current one, with updated parameters
+ *
+ * @param array $array Parameters to be set (empty will remove it)
+ * @param array $allowed Parameters to keep (if empty, all are kept)
+ * @param array $excluded Parameters to always remove
+ * @param string $url URL to base update off of
  *
  * @return mixed
+ *
+ * @since 2.0.0
  */
 function pods_var_update ( $array = null, $allowed = null, $excluded = null, $url = null ) {
-    if ( empty( $allowed ) )
-        $allowed = array();
+    $array = (array) $array;
+    $allowed = (array) $allowed;
+    $excluded = (array) $excluded;
 
-    if ( empty( $excluded ) )
-        $excluded = array();
+    if ( empty( $url ) )
+        $url = $_SERVER[ 'REQUEST_URI' ];
 
     if ( !isset( $_GET ) )
         $get = array();
     else
         $get = $_GET;
 
-    if ( is_array( $array ) ) {
-        foreach ( $excluded as $exclusion ) {
-            if ( !isset( $array[ $exclusion ] ) && !in_array( $exclusion, $allowed ) )
-                unset( $get[ $exclusion ] );
+    foreach ( $get as $key => $val ) {
+        if ( strlen( $val ) < 1 )
+            unset( $get[ $key ] );
+    }
 
-            if ( !isset( $array[ $exclusion ] ) && !in_array( $exclusion, $allowed ) )
+    if ( !empty( $array ) ) {
+        foreach ( $excluded as $exclusion ) {
+            if ( isset( $get[ $exclusion ] ) && !in_array( $exclusion, $allowed ) )
                 unset( $get[ $exclusion ] );
         }
+
         foreach ( $array as $key => $val ) {
             if ( 0 < strlen( $val ) )
                 $get[ $key ] = $val;
-            else
+            elseif ( isset( $get[ $key ] ) )
                 unset( $get[ $key ] );
         }
     }
-
-    if ( empty( $url ) )
-        $url = $_SERVER[ 'REQUEST_URI' ];
 
     $url = current( explode( '#', current( explode( '?', $url ) ) ) );
 

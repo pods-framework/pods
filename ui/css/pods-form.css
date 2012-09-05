@@ -8,6 +8,11 @@
 	display:block;
 }
 
+.pods-field .quicktags-toolbar input {
+	display: inline-block;
+	width: auto;
+}
+
 .pods-field textarea {
 	font-family:monospace;
 	height:100%;

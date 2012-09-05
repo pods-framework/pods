@@ -53,7 +53,7 @@ $advanced_fields = array(
         ),
         'capability_allowed' => array(
             'label' => __( 'Capability Allowed', 'pods' ),
-            'help' => __( 'help', 'pods' ),
+            'help' => __( 'Comma separated list of cababilities, for example add_podname_item , please see the Roles and Capabilities component for the complete list and a way to add your own', 'pods' ),
             'type' => 'text',
             'default' => '',
             'depends-on' => array( 'restrict_capability' => true )

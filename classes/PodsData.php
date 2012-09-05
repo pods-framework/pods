@@ -1447,9 +1447,14 @@ class PodsData {
                 $name = 'comment_date';
                 $recurse = false;
             }
+            elseif ( 'pod' == $table ) {
+                $the_pod = $v;
+                $table = '@wp_pods_tbl_' . $v;
+            }
             elseif ( !empty( $table ) ) {
                 $the_pod = $table;
                 $table = '@wp_pods_tbl_' . $table;
+                $recurse = false;
             }
 
             $traverse = array_merge(

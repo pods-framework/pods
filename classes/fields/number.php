@@ -143,7 +143,7 @@ class PodsField_Number extends PodsField {
      * @since 2.0.0
      */
     public function schema ( $options = null ) {
-        $length = (int) pods_var( 'text_max_length', $options, 12, null, true );
+        $length = (int) pods_var( 'number_max_length', $options, 12, null, true );
 
         if ( $length < 1 )
             $length = 12;

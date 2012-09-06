@@ -133,17 +133,18 @@ elseif ('desc' == $coltype) {
     if (is_admin()) {
         $coltype = 'desc_tinymce';
 
-        // New TinyMCE API by azaozz
-        require_once(PODS_DIR . '/ui/wp-editor/wp-editor.php');
         require_once(ABSPATH . '/wp-admin/includes/template.php');
 
         if (!function_exists('wp_editor') && (!isset($coltype_exists[$coltype]) || empty($coltype_exists[$coltype]))) {
+            // New TinyMCE API by azaozz
+            require_once( PODS_DIR . '/ui/wp-editor/wp-editor.php' );
 ?>
     <style type="text/css" scoped="scoped">
         @import url("<?php echo PODS_URL; ?>/ui/wp-editor/editor-buttons.css");
     </style>
 <?php
         }
+
         $css_classes = str_replace("form desc {$name}", "form {$coltype} {$name}", $css_classes) . ' wp-editor-area';
 
         $media_bar = false;

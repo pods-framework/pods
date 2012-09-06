@@ -70,7 +70,10 @@ function saveForm(form_count) {
         var classname = jQuery(this).attr("class").split(" ");
         if ("pick" == classname[1]) {
             jQuery("." + classname[2] + " .active").each(function() {
-                theval += jQuery(this).data("value") + ",";
+                if ( 0 < parseInt( jQuery( this ).data( 'value' ) ) )
+                    theval += jQuery( this ).data( 'value' ) + ",";
+                else if ( 0 < parseInt( jQuery( this ).attr( 'value' ) ) )
+                    theval += jQuery( this ).attr( 'value' ) + ",";
             });
             theval = theval.slice(0, -1);
         }

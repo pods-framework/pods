@@ -187,13 +187,13 @@ function pods_ui_manage ($obj)
             if($continue_delete)
             {
                 $delete->ui = $object->ui;
-                if($object->ui['custom_delete']===null||!function_exists($object->ui['custom_delete']))
+                if($object->ui['custom_delete']===null||!is_callable($object->ui['custom_delete']))
                 {
                     pods_ui_delete($delete);
                 }
                 else
                 {
-                    $object->ui['custom_delete']($delete);
+                    call_user_func( $object->ui['custom_delete'], $delete );
                 }
             }
         }
@@ -211,13 +211,13 @@ function pods_ui_manage ($obj)
     }
     if($object->ui['action']=='add')
     {
-        if($object->ui['custom_add']===null||!function_exists($object->ui['custom_add']))
+        if($object->ui['custom_add']===null||!is_callable($object->ui['custom_add']))
         {
             pods_ui_form($object,1);
         }
         else
         {
-            $object->ui['custom_add']($object);
+            call_user_func( $object->ui['custom_add'], $object );
         }
     }
     elseif($object->ui['action']=='edit')
@@ -239,13 +239,13 @@ function pods_ui_manage ($obj)
             if($continue_edit)
             {
                 $edit->ui = $object->ui;
-                if($object->ui['custom_edit']===null||!function_exists($object->ui['custom_edit']))
+                if($object->ui['custom_edit']===null||!is_callable($object->ui['custom_edit']))
                 {
                     pods_ui_form($edit);
                 }
                 else
                 {
-                    $object->ui['custom_edit']($edit);
+                    call_user_func( $object->ui['custom_edit'], $edit );
                 }
             }
         }
@@ -273,13 +273,13 @@ function pods_ui_manage ($obj)
             if($continue_duplicate)
             {
                 $duplicate->ui = $object->ui;
-                if($object->ui['custom_duplicate']===null||!function_exists($object->ui['custom_duplicate']))
+                if($object->ui['custom_duplicate']===null||!is_callable($object->ui['custom_duplicate']))
                 {
                     pods_ui_form($duplicate,0,1);
                 }
                 else
                 {
-                    $object->ui['custom_duplicate']($duplicate);
+                    call_user_func( $object->ui['custom_duplicate'], $duplicate );
                 }
             }
         }
@@ -292,9 +292,9 @@ function pods_ui_manage ($obj)
     {
         if($object->ui['action']=='save')
         {
-            if($object->ui['custom_save']!==null||function_exists($object->ui['custom_save']))
+            if($object->ui['custom_save']!==null||is_callable($object->ui['custom_save']))
             {
-                $object->ui['custom_save']($object);
+                call_user_func( $object->ui['custom_save'], $object );
             }
         }
         if(!empty($object->ui['custom_actions']))
@@ -306,24 +306,24 @@ function pods_ui_manage ($obj)
                 foreach($custom->ui['custom_actions'] as $action=> $function_name)
                 {
                     $function_name = (string) $function_name;
-                    if (pods_ui_var('action'.$custom->ui['num'])==$action && null !== $function_name && 0 < strlen($function_name) && function_exists($function_name))
+                    if (pods_ui_var('action'.$custom->ui['num'])==$action && null !== $function_name && 0 < strlen($function_name) && is_callable($function_name))
                     {
-                        $function_name($custom);
+                        call_user_func( $function_name, $custom );
                         return;
                     }
                 }
             }
         }
-        if($object->ui['custom_list']!==null&&function_exists($object->ui['custom_list']))
+        if($object->ui['custom_list']!==null&&is_callable($object->ui['custom_list']))
         {
-            $object->ui['custom_list']($object);
+            call_user_func( $object->ui['custom_list'], $object );
         }
         else
         {
             $oldget = $_GET;
             if(false===$object->ui['search'])
             {
-                $_GET['search'] = '';
+                $_GET['search' . $object->ui[ 'num' ]] = '';
             }
             else
             {
@@ -333,36 +333,37 @@ function pods_ui_manage ($obj)
                     $search = pods_ui_var('search'.$object->ui['unique_md5'],'session');
                     if($search!==false)
                     {
-                        $_GET['search'] = $search;
+                        $_GET['search' . $object->ui[ 'num' ]] = $search;
                     }
                 }
                 $search = stripslashes(pods_ui_var('search'.$object->ui['num'],$oldget));
                 if($search!==false)
                 {
-                    $_GET['search'] = $search;
+                    $_GET['search' . $object->ui[ 'num' ]] = $search;
                     if($object->ui['session_filters']!==false)
                     {
                         pods_ui_var_set('search'.$object->ui['unique_md5'],$search,'session');
                     }
                 }
             }
-            if(pods_ui_var('reset_filters'.$object->ui['num'],$oldget)!==false||pods_ui_var('search')===false)
+            if(pods_ui_var('reset_filters'.$object->ui['num'],$oldget)!==false||pods_ui_var('search' . $object->ui[ 'num' ])===false)
             {
-                $_GET['search'] = '';
+                $_GET['search' . $object->ui[ 'num' ]] = '';
                 if($object->ui['session_filters']!==false)
                     pods_ui_var_set('search'.$object->ui['unique_md5'],'','session');
             }
             $pg = pods_ui_var('pg'.$object->ui['num'],$oldget);
             if($pg!==false)
             {
-                $_GET['pg'] = $pg;
+                $_GET['pg' . $object->ui[ 'num' ]] = $pg;
             }
-            if(pods_ui_var('pg')===false)
+            if(pods_ui_var('pg' . $object->ui[ 'num' ])===false)
             {
-                $_GET['pg'] = '';
+                $_GET['pg' . $object->ui[ 'num' ]] = '';
             }
             if(false!==$object->ui['search']&&is_array($object->ui['filters']))
             {
+                $filter_value = true;
                 foreach($object->ui['filters'] as $filter)
                 {
                     if(pods_ui_var('reset_filters'.$object->ui['num'],$oldget)!==false||pods_ui_var($filter)===false)
@@ -432,8 +433,8 @@ function pods_ui_manage ($obj)
                 }
                 if(!empty($all_where))
                 {
-                    $the_search = $_GET['search'];
-                    $_GET['search'] = '';
+                    $the_search = $_GET['search' . $object->ui[ 'num' ]];
+                    $_GET['search' . $object->ui[ 'num' ]] = '';
                     $all_where = '('.implode(' OR ',$all_where).')';
                     if($object->ui['reorder']!==null&&$object->ui['action']=='reorder')
                     {
@@ -459,6 +460,10 @@ function pods_ui_manage ($obj)
                     }
                 }
             }
+
+            $object->search_var = 'search' . $object->ui[ 'num' ];
+            $object->page_var = 'pg' . $object->ui[ 'num' ];
+
             if($object->ui['reorder']!==null&&$object->ui['action']=='reorder')
             {
                 $params = array();
@@ -532,11 +537,11 @@ function pods_ui_manage ($obj)
             $_GET = array_merge($oldget,$_GET);
             if(!empty($all_where))
             {
-                $_GET['search'] = $the_search;
+                $_GET['search' . $object->ui[ 'num' ]] = $the_search;
             }
             if(pods_ui_var('reset_filters'.$object->ui['num'])!==false)
             {
-                unset($_GET['search']);
+                unset($_GET['search' . $object->ui[ 'num' ]]);
             }
         }
         if($object->ui['reorder']!==null&&$object->ui['action']=='reorder')

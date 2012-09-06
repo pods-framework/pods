@@ -110,6 +110,10 @@ class Pod
             echo "<e>Error: Pod name invalid, no data available</e>";
             return null;
         }
+        // No data
+        elseif ( !isset( $this->data[ 'id' ] ) )
+            return null;
+
         if (isset($this->data[$name])) {
             return $this->data[$name];
         }
@@ -137,7 +141,7 @@ class Pod
             // Dot-traversal
             $last_loop = false;
             $datatype_id = $this->datatype_id;
-            $tbl_row_ids = $this->data['id'];
+            $tbl_row_ids = ( isset( $this->data[ 'id' ] ) ? $this->data[ 'id' ] : 0 ); // allow for custom selects
 
             $traverse = (false !== strpos($name, '.')) ? explode('.', $name) : array($name);
             $traverse_fields = implode("','", $traverse);

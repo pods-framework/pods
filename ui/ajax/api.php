@@ -112,7 +112,12 @@ if (isset($methods[$action])) {
             $params->datatype = $row['datatype'];
             $params->datatype_id = $row['datatype_id'];
         }
-        if (!pods_access($priv_val) && !pods_access('manage_content'))
+
+        if ( 'reorder_pod_item' == $action ) {
+            if ( !pods_access( $priv_val ) && !pods_access( 'manage_content' ) && !pods_access( 'reorder_pod_' . $params->datatype ) )
+                die( '<e>Access denied' );
+        }
+        elseif (!pods_access($priv_val) && !pods_access('manage_content'))
             die('<e>Access denied');
     }
 

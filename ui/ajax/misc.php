@@ -6,6 +6,9 @@ ob_end_clean();
 
 header('Content-Type: text/html; charset=' . get_bloginfo('charset'));
 
+if ( !class_exists( 'PodInit' ) )
+    die( 'Error: <div style="color:#FF0000">Access unavailable. Contact your website admin to resolve.</div>' );
+
 global $wpdb;
 
 // Sanitize input
@@ -28,8 +31,8 @@ if ('wp_handle_upload' == $params->action || 'wp_handle_upload_advanced' == $par
     unset($current_user);
 }
 
-if (isset($params->_wpnonce) && false === wp_verify_nonce($params->_wpnonce, 'pods-' . $params->action))
-    die('<e>Access denied');
+if (!isset($params->_wpnonce) || false === wp_verify_nonce($params->_wpnonce, 'pods-' . $params->action))
+    die( 'Error: <div style="color:#FF0000">Access denied. Contact your website admin to resolve.</div>' );
 
 /**
  * Access Checking
@@ -104,4 +107,4 @@ elseif ('wp_handle_upload_advanced' == $params->action && false === $upload_disa
     }
 }
 else
-    echo 'Error: <div style="color:#FF0000">Access denied. Contact your website admin to resolve.</div>';
+    echo 'Error: <div style="color:#FF0000">Access denied or invalid. Contact your website admin to resolve.</div>';

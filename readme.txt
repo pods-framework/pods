@@ -1,14 +1,14 @@
-=== Pods CMS Framework ===
+=== Pods Framework ===
 Contributors: sc0ttkclark, logikal16, jchristopher
 Donate link: http://podsfoundation.org/donate/
-Tags: pods, cms, cck, pods ui, ui, content types, custom post types, relationships, database, framework, drupal, mysql, custom content, php
+Tags: pods, cms, cck, ui, content types, custom post types, relationships, database, framework, drupal
 Requires at least: 3.1
-Tested up to: 3.3.2
-Stable tag: 1.14.1
+Tested up to: 3.5
+Stable tag: 1.14.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Pods is a CMS framework for creating, managing, and deploying customized content types.
+Pods is a framework for creating, managing, and deploying customized content types.
 
 == Description ==
 
@@ -40,8 +40,8 @@ Pods also includes an easy to use PHP API to allow you to import and export your
 = Introduction to the Pods CMS Framework =
 [vimeo http://vimeo.com/15086927]
 
-= Stay tuned for Pods 2.0 =
-Pods 2.0 is around the corner, so keep up-to-date by following us on Twitter @podsframework or checking out our Pods Development blog at http://dev.podscms.org/
+= Pods 2.0 is now beta! =
+Pods 2.0 is now in beta! Find out more about it at http://dev.podsframework.org/tag/pods2/
 
 Features coming in Pods 2.0 include:
 
@@ -54,10 +54,14 @@ Features coming in Pods 2.0 include:
 * WP core integration with standard theming functions you already use
 * Many more field types and advanced options (less code for you to do!)
 * Many MySQL optimizations and performance tweaks
+* Caching implemented for even better performance
 * Full i18n support
 * Gravity Forms integration for mapping form submissions to a Pod
-* New Templating / Caching / Transients feature for independent partial page caching
-* and more features which can be found at: http://dev.podscms.org/
+* Roles and Capabilities component (optional, enable it to manage Roles and their Capabilities)
+* Markdown Syntax component (for Markdown support on Paragraph text fields)
+* Import from Custom Post Type UI component (migrate all of your custom post types and taxonomies with a couple of clicks)
+* New Templating / Caching / Transients feature for independent partial page caching (think get_template_part but with caching and more)
+* and more features which can be found at: http://dev.podsframework.org/tag/pods2/
 
 == Installation ==
 
@@ -70,13 +74,25 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 == Changelog ==
 
+= 1.14.3 - September 6th, 2012 =
+* Security Update Reminder: As of Pods 1.12+, AJAX API calls all utilize _wpnonce hashes, update your customized publicForm / input helper code AJAX (api.php and misc.php expect `wp_create_nonce('pods-' . $action)` usage)
+* Note: Oh hey, Pods 2.0 is in beta now! Go test it out and let us know if you have any trouble by posting issues on our GitHub: http://github.com/pods-framework/pods/issues
+* Added: Reordering a Pod (using pods_ui_manage) now has a new capability check for pods_reorder_pod_podname (Custom WP capability you can add to the user's role if they don't have pod_podname access already)
+* Added: New pods_page_precode_X action, where X is the Pod Page URI
+* Fixed: get_field from returning values if an id is not set (no data found)
+* Fixed: Moved wp_editor support into an if/else statement to avoid potential overlaps
+* Fixed: Pods UI pagination and search parameter naming for 'num' usage
+
+= 1.14.2 - June 8th, 2012 =
+* Changed: More strictness to the above security update, also setting tighter defaults for security access w/ uploader
+
 = 1.14.1 - May 31st, 2012 =
 * Changed: Uploaded files now uses data-post-id attribute in file row div to avoid issues with IDs, backwards compatibility maintained for old input helpers using IDs
 * Fixed: Uploaded files not showing in form in the order of upload on subsequent edits
 * Fixed: Fixed an issue with adding / editing fields where "Related to" dropdown would not show
 
 = 1.14 - May 21, 2012 =
-* Important Change / Addition: For installations using WordPress 3.3+, we have switched the default uploader to Plupload from SWFUpload due to incompatibilities introduced in WP 3.3.2 that effect all plugins and themes using the styled button. Be sure to update your file upload helpers using our examples at http://podscms.org/packages/file-uploader-input-helpers/
+* Important Change / Addition: For installations using WordPress 3.3+, we have switched the default uploader to Plupload from SWFUpload due to incompatibilities introduced in WP 3.3.2 that effect all plugins and themes using the styled button. Be sure to update your file upload helpers using our examples at http://podsframework.org/packages/file-uploader-input-helpers/
 * Added: edit_where_any option in Pods UI now lets you set (true/false) whether for edit_where to be an ANY or ALL match (default false = ALL)
 * Fixed: Date Input field was throwing a JS error if you used YYYY-mm-dd format without the time included
 * Fixed: parse_url fixes for when path isn't set (localhost or custom ports usually causes this)
@@ -199,27 +215,27 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 * Fixed: Pods non-top-level management has session filters turned off now by default
 * Fixed: Taxonomy PICK unique values handler fixed to reference 't.term_id' instead of just 'id'
 * Fixed: Pagination now using esc_url correctly, which wasn't being used right in 1.10.4
-* Reminder: 1.9.6 Security Update information can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
-* Reminder: Pods 2.0 and How You Can Help - http://dev.podscms.org/2011/06/16/pods-2-0-and-how-you-can-help/
+* Reminder: 1.9.6 Security Update information can be found at: http://dev.podsframework.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
+* Reminder: Pods 2.0 and How You Can Help - http://dev.podsframework.org/2011/06/16/pods-2-0-and-how-you-can-help/
 
 = 1.10.4 - August 1, 2011 =
 * Fixed: Pods UI was breaking 'view' links
 * Fixed: Pods UI reordering fixed
 * Fixed: Better errors for when a Pod doesn't exist to replace SQL errors
-* Reminder: 1.9.6 Security Update information can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
-* Reminder: Pods 2.0 and How You Can Help - http://dev.podscms.org/2011/06/16/pods-2-0-and-how-you-can-help/
+* Reminder: 1.9.6 Security Update information can be found at: http://dev.podsframework.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
+* Reminder: Pods 2.0 and How You Can Help - http://dev.podsframework.org/2011/06/16/pods-2-0-and-how-you-can-help/
 
 = 1.10.3 - July 30, 2011 =
 * Fixed: Shortcode 'where' parameter fixed
 * Fixed: Body Class for Pod Pages not replacing / with - correctly and leaving an extra - at the end with wildcards
-* Reminder: 1.9.6 Security Update information can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
-* Reminder: Pods 2.0 and How You Can Help - http://dev.podscms.org/2011/06/16/pods-2-0-and-how-you-can-help/
+* Reminder: 1.9.6 Security Update information can be found at: http://dev.podsframework.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
+* Reminder: Pods 2.0 and How You Can Help - http://dev.podsframework.org/2011/06/16/pods-2-0-and-how-you-can-help/
 
 = 1.10.2 - July 29, 2011 =
 * Added: Moved the demo.php file from the Pods UI plugin over as pods-ui-demo.php and can now be found distributed with this plugin in the /demo/ plugin.
 * Fixed: PHP error with new Version to Point function
-* Reminder: 1.9.6 Security Update information can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
-* Reminder: Pods 2.0 and How You Can Help - http://dev.podscms.org/2011/06/16/pods-2-0-and-how-you-can-help/
+* Reminder: 1.9.6 Security Update information can be found at: http://dev.podsframework.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
+* Reminder: Pods 2.0 and How You Can Help - http://dev.podsframework.org/2011/06/16/pods-2-0-and-how-you-can-help/
 
 = 1.10.1 - July 28, 2011 =
 * Added: New wp_pod and wp_pod_tbl_* table fix tool under Pods >> Setup >> Settings tab to resync your wp_pod table (clear orphans in wp_pod, and sync from wp_pod_tbl_* to wp_pod what doesn't already exist) - Useful for those who imported directly to wp_pod_tbl_* but forgot to import into wp_pod
@@ -233,8 +249,8 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 * Fixed: Pod :: getFilters now using the correct 'label' for the search button
 * Fixed: On uninstall, now deleting options WHERE option_name LIKE 'pods_%'
 * Fixed: Various minor bug fixes
-* Reminder: 1.9.6 Security Update information can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
-* Reminder: Pods 2.0 and How You Can Help - http://dev.podscms.org/2011/06/16/pods-2-0-and-how-you-can-help/
+* Reminder: 1.9.6 Security Update information can be found at: http://dev.podsframework.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
+* Reminder: Pods 2.0 and How You Can Help - http://dev.podsframework.org/2011/06/16/pods-2-0-and-how-you-can-help/
 
 = 1.10 - July 28, 2011 =
 * Added: Full revamped UI for Content Management via Pods UI (you no longer need two separate plugins - Pods and Pods UI)
@@ -260,8 +276,8 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 * Fixed: misc.php updated to work off of $params object instead of the old ${$key} = $value
 * Fixed: Updated TinyMCE $wp_editor (developed by @azaozz) to hide WP 3.2 fullscreen buttons and only show native TinyMCE fullscreen button
 * Fixed: Various PHP notice fixes and escape/sanitization on output across Pods
-* Reminder: 1.9.6 Security Update information can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
-* Reminder: Pods 2.0 and How You Can Help - http://dev.podscms.org/2011/06/16/pods-2-0-and-how-you-can-help/
+* Reminder: 1.9.6 Security Update information can be found at: http://dev.podsframework.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
+* Reminder: Pods 2.0 and How You Can Help - http://dev.podsframework.org/2011/06/16/pods-2-0-and-how-you-can-help/
 
 = 1.9.8 - July 24, 2011 =
 * Added: New Option to override existing packages during package import
@@ -272,7 +288,7 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 * Fixed: No longer calling $pods_roles immediately, only used when needed in the code
 * Fixed: &$referenced the $pods_cache variable to $cache for backwards compatibility - use $pods_cache going forward
 * Fixed: Minor PHP warnings/notices that come up when WP_DEBUG is defined and set to true
-* Reminder: 1.9.6 Security Update information can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
+* Reminder: 1.9.6 Security Update information can be found at: http://dev.podsframework.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 
 = 1.9.7.4 - July 14, 2011 =
 * Fixed: esc_html replaced with esc_textarea for Package Export and textarea usages to prevent breaking html entities
@@ -297,26 +313,26 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 * Fixed: TinyMCE API update from @azaozz with additional WP 3.2 support
 * Fixed: File Upload field now checks if user has access to upload and/or browse before showing the UI for those (regardless, access when trying to actually use the UI before was still closed off)
 * Fixed: Removed htaccess.txt which was no longer referenced or used
-* Reminder: 1.9.6 Security Update information can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
+* Reminder: 1.9.6 Security Update information can be found at: http://dev.podsframework.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 
 = 1.9.6.3 - June 24, 2011 =
 * Fixed: JS optimization and fixes for nicEdit (also now no longer outputting pods-ui.js on every page)
 * Fixed: Non Top-level menu Pods now appearing in alphabetical order under Pods menu
-* Reminder: 1.9.6 Security Update information can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
+* Reminder: 1.9.6 Security Update information can be found at: http://dev.podsframework.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 
 = 1.9.6.2 - June 23, 2011 =
 * Fixed: TinyMCE API update from @azaozz with additional WP 3.2 support
 * Fixed: Pod Page Precode $pods = 404; bug that wouldn't produce the default WordPress 404 error page
 * Fixed: Fix for nicEdit JS error during init that breaks forms (when on a non top-level menu Pod AJAX-loaded form)
 * Fixed: Fix for PICK error during save that errors out trying to save selections as 'undefined' (when on a non top-level menu Pod AJAX-loaded form)
-* Reminder: 1.9.6 Security Update information can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
+* Reminder: 1.9.6 Security Update information can be found at: http://dev.podsframework.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 
 = 1.9.6.1 - June 23, 2011 =
 * Fixed: Fix for nicEdit JS error during init that breaks forms
-* Reminder: 1.9.6 Security Update information can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
+* Reminder: 1.9.6 Security Update information can be found at: http://dev.podsframework.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 
 = 1.9.6 - June 22, 2011 =
-* Full Details can be found at: http://dev.podscms.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
+* Full Details can be found at: http://dev.podsframework.org/2011/06/22/pods-1-9-6-security-update-new-features-bug-fixes/
 * Security Update: New security settings section in the Pods >> Setup >> Settings tab to restrict access to the File Browser / Uploader used in publicForm, adjust the settings to fit your site if you experience any problems
 * Added: New TinyMCE API for use with the new TinyMCE package update at http://podsframework.org/packages/tinymce-for-pods/
 * Added: New get_current_url() function to get current page URL

@@ -25,7 +25,11 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
 }
 
 if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-11', '<' ) ) {
-    $date_fields = $wpdb->get_results( "SELECT `ID` FROM `{$wpdb->posts}` WHERE ( `post_name` = 'created' OR `post_name` = 'modified' ) AND `post_type` = '_pods_field'" );
+    $date_fields = $wpdb->get_results( "
+            SELECT `ID`
+            FROM `{$wpdb->posts}`
+            WHERE ( `post_name` = 'created' OR `post_name` = 'modified' ) AND `post_type` = '_pods_field'
+        " );
 
     if ( !empty( $date_fields ) ) {
         foreach ( $date_fields as $date ) {
@@ -33,6 +37,22 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
             update_post_meta( $date->ID, 'date_format', 'ymd_slash' );
             update_post_meta( $date->ID, 'date_time_type', '12' );
             update_post_meta( $date->ID, 'date_time_format', 'h_mm_ss_A' );
+        }
+    }
+
+    $number_fields = $wpdb->get_results( "
+            SELECT `p`.`ID`
+            FROM `{$wpdb->posts}` AS `p`
+            LEFT JOIN `{$wpdb->postmeta}` AS `pm`.`post_id` = `p`.`ID`
+            WHERE
+                `p`.`post_type` = '_pods_field'
+                AND `pm`.`meta_key` = 'type'
+                AND `pm`.`meta_value` = 'number'
+        " );
+
+    if ( !empty( $number_fields ) ) {
+        foreach ( $number_fields as $number ) {
+            update_post_meta( $number->ID, 'number_max_length', '12' );
         }
     }
 }

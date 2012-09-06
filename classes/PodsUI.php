@@ -1290,9 +1290,9 @@ class PodsUI
                 if ('time' == $attributes['type'])
                     $format = "H:i:s";
                 if (false !== $attributes['date_touch'] || (false !== $attributes['date_touch_on_create'] && true === $insert && $this->id < 1))
-                    $value = date($format);
+                    $value = date_i18n($format);
                 else
-                    $value = date($format, strtotime(('time' == $attributes['type']) ? date('Y-m-d ') : pods_var($field, 'post', '')));
+                    $value = date_i18n($format, strtotime(('time' == $attributes['type']) ? date_i18n('Y-m-d ') : pods_var($field, 'post', '')));
             }
             else {
                 if ('bool' == $attributes['type']) {

@@ -1072,7 +1072,10 @@ class PodsAPI {
                     'label' => 'Date Created',
                     'type' => 'date',
                     'options' => array(
-                        'date_format_type' => 'datetime'
+                        'date_format_type' => 'datetime',
+                        'date_format' => 'ymd_slash',
+                        'date_time_type' => '12',
+                        'date_time_format' => 'h_mm_ss_A'
                     )
                 );
 
@@ -1081,7 +1084,10 @@ class PodsAPI {
                     'label' => 'Date Modified',
                     'type' => 'date',
                     'options' => array(
-                        'date_format_type' => 'datetime'
+                        'date_format_type' => 'datetime',
+                        'date_format' => 'ymd_slash',
+                        'date_time_type' => '12',
+                        'date_time_format' => 'h_mm_ss_A'
                     )
                 );
 

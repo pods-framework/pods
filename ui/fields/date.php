@@ -9,12 +9,16 @@
         'ymd_dot' => 'yy.mm.dd'
     );
     $time_format = array(
-        'h_mm_A' => 'h:mm TT',
+        'h_mm_A' => 'h:mm:ss TT',
+        'h_mm_ss_A' => 'h:mm TT',
         'hh_mm_A' => 'hh:mm TT',
+        'hh_mm_ss_A' => 'hh:mm:ss TT',
         'h_mma' => 'h:mmtt',
         'hh_mma' => 'hh:mmtt',
         'h_mm' => 'h:mm',
-        'hh_mm' => 'hh:mm'
+        'h_mm_ss' => 'h:mm:ss',
+        'hh_mm' => 'hh:mm',
+        'hh_mm_ss' => 'hh:mm:ss'
     );
 
     wp_enqueue_script('jquery-ui-datepicker');

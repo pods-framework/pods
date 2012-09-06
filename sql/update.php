@@ -24,6 +24,19 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
     }
 }
 
+if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-11', '<' ) ) {
+    $date_fields = $wpdb->get_results( "SELECT `ID` FROM `{$wpdb->posts}` WHERE ( `post_name` = 'created' OR `post_name` = 'modified' ) AND `post_type` = '_pods_field'" );
+
+    if ( !empty( $date_fields ) ) {
+        foreach ( $date_fields as $date ) {
+            update_post_meta( $date->ID, 'date_format_type', 'datetime' );
+            update_post_meta( $date->ID, 'date_format', 'ymd_slash' );
+            update_post_meta( $date->ID, 'date_time_type', '12' );
+            update_post_meta( $date->ID, 'date_time_format', 'h_mm_ss_A' );
+        }
+    }
+}
+
 function pods_2_alpha_migrate_pods () {
     $api = pods_api();
 

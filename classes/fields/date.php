@@ -93,11 +93,15 @@ class PodsField_Date extends PodsField {
                 'type' => 'pick',
                 'data' => array(
                     'h_mm_A' => '1:25 PM',
+                    'h_mm_ss_A' => '1:25:00 PM',
                     'hh_mm_A' => '01:25 PM',
+                    'hh_mm_ss_A' => '01:25:00 PM',
                     'h_mma' => '1:25pm',
                     'hh_mma' => '01:25pm',
                     'h_mm' => '1:25',
-                    'hh_mm' => '01:25'
+                    'h_mm_ss' => '1:25:00',
+                    'hh_mm' => '01:25',
+                    'hh_mm_ss' => '01:25:00'
                 )
             ),
             'date_html5' => array(
@@ -309,11 +313,15 @@ class PodsField_Date extends PodsField {
 
         $time_format = array(
             'h_mm_A' => 'g:i A',
+            'h_mm_ss_A' => 'g:i:s A',
             'hh_mm_A' => 'h:i A',
+            'hh_mm_ss_A' => 'h:i:s A',
             'h_mma' => 'g:ia',
             'hh_mma' => 'h:ia',
             'h_mm' => 'g:i',
-            'hh_mm' => 'h:i'
+            'h_mm_ss' => 'g:i:s',
+            'hh_mm' => 'h:i',
+            'hh_mm_ss' => 'h:i:s'
         );
 
         $format = 'Y-m-d H:i:s';

@@ -413,7 +413,7 @@ class PodsAdmin {
         );
 
         if ( isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) )
-            $manage[ 'modified' ] = $pod->pod_data[ 'fields' ][ 'modified' ];
+            $manage[ 'modified' ] = $pod->pod_data[ 'fields' ][ 'modified' ][ 'label' ];
 
         $ui = array(
             'pod' => $pod,

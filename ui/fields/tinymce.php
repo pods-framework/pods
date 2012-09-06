@@ -14,6 +14,7 @@
         $settings = array_merge( $settings, $options[ 'settings' ] );
 
     $attributes = array();
+    $attributes[ 'tabindex' ] = 2;
     $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
 
     wp_editor( $value, $attributes[ 'id' ], $settings );

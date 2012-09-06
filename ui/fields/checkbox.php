@@ -25,6 +25,7 @@
         $attributes[ 'type' ] = 'checkbox';
 
         $attributes[ 'checked' ] = null;
+        $attributes[ 'tabindex' ] = 2;
 
         if ( $val == $value || ( is_array( $value ) && in_array( $val, $value ) ) )
             $attributes[ 'checked' ] = 'CHECKED';

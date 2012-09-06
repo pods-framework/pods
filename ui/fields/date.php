@@ -32,6 +32,7 @@
         $type = $date_type;
 
     $attributes[ 'type' ] = $type;
+    $attributes[ 'tabindex' ] = 2;
 
     $args = array(
         'timeFormat' => $time_format[ $options[ 'date_time_format' ] ],

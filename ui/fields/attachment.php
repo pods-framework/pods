@@ -12,6 +12,7 @@
 
     $attributes = array();
     $attributes[ 'value' ] = $value;
+    $attributes[ 'tabindex' ] = 2;
     $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
 
     $css_id = $attributes[ 'id' ];

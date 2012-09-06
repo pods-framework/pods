@@ -9,6 +9,7 @@
     $attributes[ 'type' ] = 'hidden';
     $attributes[ 'value' ] = $value;
     $attributes[ 'data-field-type' ] = 'select2';
+    $attributes[ 'tabindex' ] = 2;
     $attributes = PodsForm::merge_attributes($attributes, $name, PodsForm::$field_type, $options);
     $attributes[ 'class' ] .= ' pods-form-ui-field-type-select2';
 

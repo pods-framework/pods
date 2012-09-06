@@ -11,6 +11,7 @@
 
     $attributes = array();
     $attributes[ 'value' ] = $value;
+    $attributes[ 'tabindex' ] = 2;
     $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
 
     $css_id = $attributes[ 'id' ];
@@ -73,7 +74,7 @@
                             }
                         ?></ul>
 
-                    <a class="button pods-file-add plupload-add" id="<?php echo $css_id; ?>-upload" href=""><?php _e('Add File', 'pods'); ?></a>
+                    <a class="button pods-file-add plupload-add" id="<?php echo $css_id; ?>-upload" href="" tabindex="2"><?php _e('Add File', 'pods'); ?></a>
 
                     <ul class="pods-files pods-files-queue"></ul>
                 </td>

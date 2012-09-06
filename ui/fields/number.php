@@ -6,6 +6,7 @@
     $attributes = array();
     $attributes[ 'type' ] = 'text';
     $attributes[ 'value' ] = $value;
+    $attributes[ 'tabindex' ] = 2;
     $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
 
     $thousands = ',';
@@ -22,7 +23,7 @@
         $dot = ',';
     }
 ?>
-<input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
+<input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?>/>
 <script>
     jQuery( function ( $ ) {
         $( 'input#<?php echo $attributes[ 'id' ]; ?>' ).on( 'blur', function () {

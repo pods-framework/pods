@@ -912,7 +912,7 @@
                 var $row = $( this ).closest( 'tr.pods-manage-row' );
                 var $row_label = $row.find( 'td.pods-manage-row-label' );
                 var $row_content = $row_label.find( 'div.pods-manage-row-wrapper' );
-                var color = $.curCSS( $row.get( 0 ), 'backgroundColor' );
+                var color = $.css( $row.get( 0 ), 'backgroundColor' );
                 var row_id = $row.data( 'row' );
 
                 $row.css( 'backgroundColor', '#FFFF33' ).animate(

@@ -65,7 +65,6 @@ class PodsField_Paragraph extends PodsField {
             ),
             'output_options' => array(
                 'label' => __( 'Output Options', 'pods' ),
-                'depends-on' => array( 'paragraph_format_type' => 'plain' ),
                 'group' => array(
                     'paragraph_allow_shortcode' => array(
                         'label' => __( 'Allow Shortcodes?', 'pods' ),
@@ -77,7 +76,8 @@ class PodsField_Paragraph extends PodsField {
                         'label' => __( 'Allow HTML?', 'pods' ),
                         'default' => 1,
                         'type' => 'boolean',
-                        'dependency' => true
+                        'dependency' => true,
+                        'depends-on' => array( 'paragraph_format_type' => 'plain' )
                     )
                 )
             ),
@@ -134,7 +134,7 @@ class PodsField_Paragraph extends PodsField {
      * @since 2.0.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        if ( 1 == pods_var( 'paragraph_allow_shortcode', $options ) )
+        if ( 1 == pods_var( 'paragraph_allow_shortcode', $options, 0 ) )
             $value = do_shortcode( $value );
 
         return $value;
@@ -220,14 +220,14 @@ class PodsField_Paragraph extends PodsField {
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $options = (array) $options;
 
-        if ( 1 == pods_var( 'paragraph_allow_html', $options ) ) {
+        if ( 1 == pods_var( 'paragraph_allow_html', $options ) || 'plain' != pods_var( 'paragraph_format_type', $options, 'plain' ) ) {
             if ( 0 < strlen( pods_var( 'paragraph_allowed_html_tags', $options ) ) )
                 $value = strip_tags( $value, pods_var( 'paragraph_allowed_html_tags', $options ) );
         }
         else
             $value = strip_tags( $value );
 
-        if ( 1 != pods_var( 'paragraph_allow_shortcode', $options ) )
+        if ( 1 != pods_var( 'paragraph_allow_shortcode', $options, 0 ) )
             $value = strip_shortcodes( $value );
 
         return $value;

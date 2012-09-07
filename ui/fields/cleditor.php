@@ -1,4 +1,7 @@
 <?php
+    wp_enqueue_script( 'pods-cleditor' );
+    wp_enqueue_style( 'pods-cleditor' );
+
     $type = 'textarea';
     $attributes = array();
     $attributes[ 'tabindex' ] = 2;

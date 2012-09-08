@@ -704,13 +704,29 @@ class PodsUI
         $options->validate( 'sql', $this->sql, 'array_merge' );
 
         $options->validate( 'sortable', $this->sortable, 'boolean' );
-        $options->validate( 'orderby', pods_var( 'orderby' . $options->num, 'get', $this->orderby ) );
-        $options->validate( 'orderby', $this->sql[ 'field_index' ] ); // fix in case of no value
 
-        $options->validate( 'orderby_dir', pods_var( 'orderby_dir' . $options->num, 'get', $this->orderby_dir ), 'in_array', array(
-            'ASC',
-            'DESC'
-        ) );
+        // Handle Sorting
+        $orderby_dir = pods_var_raw( 'orderby_dir' . $options->num, 'get', $this->orderby_dir, null, true );
+
+        if ( 'asc' == strtolower( $orderby_dir ) )
+            $orderby_dir = 'ASC';
+        else
+            $orderby_dir = 'DESC';
+
+        $orderby = pods_var_raw( 'orderby', $this, null, null, true );
+
+        if ( !empty( $orderby ) ) {
+            $orderby = array(
+                'default' => $orderby . ' ' . $orderby_dir
+            );
+
+            if ( !empty( $options->orderby ) )
+                $orderby = array_merge( $options->orderby, $orderby );
+        }
+        else
+            $orderby = (array) $options->orderby;
+
+        $options->orderby = $orderby;
 
         $options->validate( 'item', __( 'Item', 'pods' ) );
         $options->validate( 'items', __( 'Items', 'pods' ) );

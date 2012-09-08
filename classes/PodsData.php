@@ -684,10 +684,10 @@ class PodsData {
                     if (isset($this->aliases[$field]))
                         $fieldfield = '`' . $this->aliases[$field] . '`';
 
-                    if (false !== $attributes['real_name'] && !empty( $attributes[ 'real_name' ] ) )
+                    if (isset($attributes['real_name']) && false !== $attributes['real_name'] && !empty( $attributes[ 'real_name' ] ) )
                         $fieldfield = $attributes['real_name'];
 
-                    if (false !== $attributes['group_related'])
+                    if (isset($attrbutes['group_related']) && false !== $attributes['group_related'])
                         $having[] = "{$fieldfield} LIKE '%" . pods_sanitize($params->search_query) . "%'";
                     else
                         $where[] = "{$fieldfield} LIKE '%" . pods_sanitize($params->search_query) . "%'";

@@ -32,7 +32,7 @@ function pods_attachments ( src, file_limit ) {
 
         console.log( items );
 
-        if ( 0 < file_limit || itemCount > file_limit ) {
+        if ( 0 < file_limit && itemCount > file_limit ) {
             items.each( function ( idx, elem ) {
                 if ( idx + 1 > file_limit ) {
                     jQuery( elem ).remove();
@@ -40,7 +40,7 @@ function pods_attachments ( src, file_limit ) {
             } );
         }
 
-        if ( 1 < file_limit ) {
+        if ( 1 < file_limit || file_limit == 0 ) {
             jQuery( this ).after( ' <span class="pods-attached">Added! Choose another or <a href="#">close this box</a>.</span>' );
             jQuery( this ).parent().find( 'span.pods-attached a' ).on( 'click', function ( e ) {
                 parent.eval( 'tb_remove()' );

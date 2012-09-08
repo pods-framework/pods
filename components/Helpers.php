@@ -28,7 +28,8 @@ class Pods_Helpers extends PodsComponent {
      *
      * @since 2.0.0
      */
-    public function __construct () {$args = array(
+    public function __construct () {
+        $args = array(
             'label' => 'Helpers',
             'labels' => array( 'singular_name' => 'Helper' ),
             'public' => false,

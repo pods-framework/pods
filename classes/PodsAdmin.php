@@ -273,15 +273,6 @@ class PodsAdmin {
                     'function' => array( $this, 'admin_setup' ),
                     'access' => 'pods'
                 ),
-                'pods-advanced' => array(
-                    'label' => 'Advanced',
-                    'function' => array( $this, 'admin_advanced' ),
-                    'access' => array(
-                        'pods_templates',
-                        'pods_pod_pages',
-                        'pods_helpers'
-                    )
-                ),
                 'pods-packages' => array(
                     'label' => 'Import / Export',
                     'function' => array( $this, 'admin_packages' ),
@@ -759,23 +750,13 @@ class PodsAdmin {
             'add_pod' => array( 'priv' => 'manage_pods' ),
             'save_pod' => array( 'priv' => 'manage_pods' ),
             'save_field' => array( 'priv' => 'manage_pods' ),
-            'save_template' => array( 'priv' => 'manage_templates' ),
-            'save_page' => array( 'priv' => 'manage_pod_pages' ),
-            'save_helper' => array( 'priv' => 'manage_helpers' ),
-            'save_roles' => array( 'priv' => 'manage_roles' ),
             'save_pod_item' => array(),
             'reorder_pod_item' => array( 'access_pod_specific' => true ),
             'delete_pod' => array( 'priv' => 'manage_pods' ),
             'delete_field' => array( 'priv' => 'manage_pods' ),
-            'delete_template' => array( 'priv' => 'manage_templates' ),
-            'delete_page' => array( 'priv' => 'manage_pod_pages' ),
-            'delete_helper' => array( 'priv' => 'manage_helpers' ),
             'delete_pod_item' => array( 'access_pod_specific' => true ),
             'load_pod' => array( 'priv' => 'manage_pods', 'format' => 'json' ),
             'load_field' => array( 'priv' => 'manage_pods', 'format' => 'json' ),
-            'load_template' => array( 'priv' => 'manage_templates', 'format' => 'json' ),
-            'load_page' => array( 'priv' => 'manage_pod_pages', 'format' => 'json' ),
-            'load_helper' => array( 'priv' => 'manage_helpers', 'format' => 'json' ),
             'load_sister_fields' => array( 'priv' => 'manage_pods', 'format' => 'json' ),
             'load_pod_item' => array( 'access_pod_specific' => true ),
             'load_files' => array( 'priv' => 'upload_files' ),

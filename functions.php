@@ -775,24 +775,6 @@ function pods_helper ( $helper_name, $value = null, $name = null ) {
 }
 
 /**
- * Find out if the current page is a Pod Page
- *
- * @param string $uri The Pod Page URI to check if currently on
- *
- * @return bool
- * @since 1.7.5
- */
-function is_pod_page ( $uri = null ) {
-    global $pod_page_exists;
-    if ( false !== $pod_page_exists ) {
-        if ( null === $uri || $uri == $pod_page_exists[ 'uri' ] ) {
-            return true;
-        }
-    }
-    return false;
-}
-
-/**
  * Get current URL of any page
  *
  * @return string
@@ -825,63 +807,6 @@ function is_pod ( $object = null ) {
         return true;
     if ( is_object( $pods ) && isset( $pods->pod ) && !empty( $pods->pod ) )
         return true;
-    return false;
-}
-
-/**
- * Check to see if Pod Page exists and return data
- *
- * $uri not required, if NULL then returns REQUEST_URI matching Pod Page
- *
- * @param string $uri The Pod Page URI to check if exists
- *
- * @return array
- */
-function pod_page_exists ( $uri = null ) {
-    if ( null === $uri ) {
-        $uri = parse_url( get_current_url() );
-        $uri = $uri[ 'path' ];
-        $home = parse_url( get_bloginfo( 'url' ) );
-
-        if ( !empty( $home ) && isset( $home[ 'path' ] ) && '/' != $home[ 'path' ] )
-            $uri = substr( $uri, strlen( $home[ 'path' ] ) );
-    }
-
-    $uri = trim( $uri, '/' );
-    $uri_depth = count( array_filter( explode( '/', $uri ) ) ) - 1;
-
-    if ( false !== strpos( $uri, 'wp-admin' ) || false !== strpos( $uri, 'wp-includes' ) )
-        return false;
-
-    // See if the custom template exists
-    $sql = "SELECT * FROM `@wp_posts` WHERE `post_type` = '_pods_page' AND `post_title` = %s LIMIT 1";
-    $sql = array( $sql, array( $uri ) );
-
-    $result = pods_query( $sql );
-
-    if ( empty( $result ) ) {
-        // Find any wildcards
-        $sql = "SELECT * FROM `@wp_posts` WHERE `post_type` = '_pods_page' AND %s LIKE REPLACE(`post_title`, '*', '%%') AND (LENGTH(`post_title`) - LENGTH(REPLACE(`post_title`, '/', ''))) = %d ORDER BY LENGTH(`post_title`) DESC, `post_title` DESC LIMIT 1";
-        $sql = array( $sql, array( $uri, $uri_depth ) );
-
-        $result = pods_query( $sql );
-    }
-
-    if ( !empty( $result ) ) {
-        $_object = get_object_vars( $result[ 0 ] );
-
-        $object = array(
-            'ID' => $_object[ 'ID' ],
-            'uri' => $_object[ 'post_title' ],
-            'phpcode' => $_object[ 'post_content' ],
-            'precode' => get_post_meta( $_object[ 'ID' ], 'precode', true ),
-            'page_template' => get_post_meta( $_object[ 'ID' ], 'page_template', true ),
-            'title' => get_post_meta( $_object[ 'ID' ], 'page_title', true )
-        );
-
-        return $object;
-    }
-
     return false;
 }
 
@@ -1091,39 +1016,6 @@ function pods_validate_key ( $token, $datatype, $uri_hash, $columns = null, $for
     if ( false !== wp_verify_nonce( $token, 'pods-form-' . $datatype . '-' . (int) $form_count . '-' . $uri_hash . '-' . json_encode( $columns ) ) )
         $success = $columns;
     return apply_filters( 'pods_validate_key', $success, $token, $datatype, $uri_hash, $columns, (int) $form_count );
-}
-
-/**
- * Output Pod Page Content
- */
-function pods_content () {
-    global $pod_page_exists;
-
-    $content = false;
-
-    do_action( 'pods_content_pre', $pod_page_exists );
-
-    if ( false !== $pod_page_exists ) {
-        if ( 0 < strlen( trim( $pod_page_exists[ 'phpcode' ] ) ) )
-            $content = $pod_page_exists[ 'phpcode' ];
-
-        ob_start();
-
-        if ( false !== $content ) {
-            if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) {
-                pods_deprecated( 'Use WP Page Templates or hook into the pods_content filter instead of using Pod Page PHP code', '2.1.0' );
-                eval( "?>$content" );
-            }
-            else
-                echo $content;
-        }
-
-        $content = ob_get_clean();
-
-        echo apply_filters( 'pods_content', $content );
-    }
-
-    do_action( 'pods_content_post', $pod_page_exists, $content );
 }
 
 /**

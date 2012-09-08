@@ -50,7 +50,6 @@ class Pods_Templates extends PodsComponent {
 
         $args = PodsInit::object_label_fix( $args, 'post_type' );
        register_post_type( '_pods_template', apply_filters( 'pods_internal_register_post_type_object_template', $args ) );
-
     }
 
     /**

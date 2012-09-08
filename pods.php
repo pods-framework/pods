@@ -78,7 +78,8 @@ if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) ) {
         new WPGitHubUpdater( $config );
     }
 
-    global $pods, $pods_init, $pod_page_exists;
+    global $pods, $pods_init;
+
     if ( false !== pods_compatible() && ( !defined( 'SHORTINIT' ) || !SHORTINIT ) ) {
         if ( !defined( 'PODS_DEPRECATED' ) || PODS_DEPRECATED )
             require_once( PODS_DIR . 'deprecated/deprecated.php' );

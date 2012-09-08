@@ -18,34 +18,9 @@ if (!defined('PODS_STRICT_MODE') || !PODS_STRICT_MODE) {
 }
 
 $methods = array(
-    'save_pod' => array('priv' => 'manage_pods', 'format' => 'json'),
-    'save_column' => array('priv' => 'manage_pods'),
-    'save_template' => array('priv' => 'manage_templates'),
-    'save_page' => array('priv' => 'manage_pod_pages'),
-    'save_helper' => array('priv' => 'manage_helpers'),
-    'save_roles' => array('priv' => 'manage_roles'),
     'save_pod_item' => array('processor' => 'process_save_pod_item'),
-    'reorder_pod_item' => array('access_pod_specific' => true),
-    'drop_pod' => array('priv' => 'manage_pods'),
-    'drop_column' => array('priv' => 'manage_pods'),
-    'drop_template' => array('priv' => 'manage_templates'),
-    'drop_page' => array('priv' => 'manage_pod_pages'),
-    'drop_helper' => array('priv' => 'manage_helpers'),
-    'drop_pod_item' => array('access_pod_specific' => true),
-    'load_pod' => array('priv' => 'manage_pods', 'format' => 'json'),
-    'load_column' => array('priv' => 'manage_pods', 'format' => 'json'),
-    'load_template' => array('priv' => 'manage_templates', 'format' => 'json'),
-    'load_page' => array('priv' => 'manage_pod_pages', 'format' => 'json'),
-    'load_helper' => array('priv' => 'manage_helpers', 'format' => 'json'),
-    'load_sister_fields' => array('priv' => 'manage_pods', 'format' => 'json'),
     'load_pod_item' => array(),
     'load_files' => array(),
-    'export_package' => array('priv' => 'manage_packages', 'format' => 'json', 'safe' => true),
-    'import_package' => array('priv' => 'manage_packages'),
-    'validate_package' => array('priv' => 'manage_packages'),
-    'replace_package' => array('priv' => 'manage_packages'),
-    'security_settings' => array('priv' => 'manage_settings'),
-    'fix_wp_pod' => array('priv' => 'manage_settings')
 );
 
 $api = new PodAPI();

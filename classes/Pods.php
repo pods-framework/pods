@@ -727,7 +727,7 @@ class Pods {
         }
 
         // Add prefix to $params->orderby if needed
-        if ( !empty( $params->orderby ) && false === strpos( $params->orderby, ',' ) && false === strpos( $params->orderby, '(' ) && false === strpos( $params->orderby, '.' ) ) {
+        if ( !empty( $params->orderby ) && is_string($params->orderby) && false === strpos( $params->orderby, ',' ) && false === strpos( $params->orderby, '(' ) && false === strpos( $params->orderby, '.' ) ) {
             if ( false !== stripos( $params->orderby, ' ASC' ) )
                 $params->orderby = "`{$pod_table_prefix}`.`" . trim( str_ireplace( array( '`', ' ASC' ), '', $params->orderby ) ) . '` ASC';
             else

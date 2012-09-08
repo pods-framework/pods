@@ -712,16 +712,17 @@ class PodsUI
             $orderby_dir = 'ASC';
         else
             $orderby_dir = 'DESC';
+        $options->orderby_dir = $orderby_dir;
 
-        $orderby = pods_var_raw( 'orderby', $this, null, null, true );
+        $orderby = pods_var_raw( 'orderby', 'get', $this->orderby, null, true );
 
         if ( !empty( $orderby ) ) {
             $orderby = array(
-                'default' => $orderby . ' ' . $orderby_dir
+                'default' => $orderby
             );
 
             if ( !empty( $options->orderby ) )
-                $orderby = array_merge( $options->orderby, $orderby );
+                $orderby = array_merge( $orderby, (array) $options->orderby );
         }
         else
             $orderby = (array) $options->orderby;
@@ -1131,8 +1132,8 @@ class PodsUI
                 elseif ('orderby' == $setting) {
                     if ( empty( $this->orderby ) )
                         $value = '';
-                    else
-                        $value = $this->orderby . ' ' . $this->orderby_dir;
+                    elseif (isset($this->orderby['default'])) // save this if we have a default index set
+                        $value = $this->orderby['default']. ' ' . $this->orderby_dir;
                 }
                 else
                     $value = $this->$setting;
@@ -1418,10 +1419,13 @@ class PodsUI
      */
     public function get_data () {
         if ( false !== $this->pod && is_object( $this->pod ) && 'Pods' == get_class( $this->pod ) ) {
-            $orderby = '';
+            $orderby = array();
 
-            if ( !empty( $this->orderby ) )
-                $orderby = '`' . $this->orderby . '` ' . strtoupper( $this->orderby_dir );
+            if ( !empty( $this->orderby ) ) {
+                foreach($this->orderby as $order) {
+                    $orderby[$order] = $this->orderby_dir;
+                }
+            }
 
             $params = array(
                 'page' => (int) $this->page,
@@ -1810,7 +1814,7 @@ class PodsUI
                 $fields[$field]['field_id'] = $id;
                 $dir = 'DESC';
                 $current_sort = ' asc';
-                if ($field == $this->orderby) {
+                if (isset($this->orderby['default']) && $field == $this->orderby['default']) {
                     if ('DESC' == $this->orderby_dir) {
                         $dir = 'ASC';
                         $current_sort = ' desc';

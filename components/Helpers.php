@@ -47,7 +47,7 @@ class Pods_Helpers extends PodsComponent {
 
         $args = PodsInit::object_label_fix( $args, 'post_type' );
 
-        register_post_type( '_pods_object_helper', apply_filters( 'pods_internal_register_post_type_object_helper', $args ) );
+        register_post_type( '_pods_helper', apply_filters( 'pods_internal_register_post_type_object_helper', $args ) );
     }
 
     /**

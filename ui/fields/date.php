@@ -80,6 +80,9 @@
         $html5_format = '\TH:i:s';
     }
 
+    if ( 24 == pods_var( 'date_time_type', $options, 12 ) )
+        $args[ 'ampm' ] = false;
+
     $date = PodsForm::field_method( 'date', 'createFromFormat', $format, (string) $value );
     $date_default = PodsForm::field_method( 'date', 'createFromFormat', 'Y-m-d H:i:s', (string) $value );
 
@@ -105,7 +108,7 @@
 <input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
 <script>
     jQuery( function () {
-        var <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_args = <?php echo json_encode($args); ?>;
+        var <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_args = <?php echo json_encode( $args ); ?>;
 
         <?php
             if ( 'text' != $type ) {

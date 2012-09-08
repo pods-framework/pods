@@ -8,19 +8,10 @@
  *
  * Developer Mode: on
  *
- * Menu: edit.php?post_type=_pods_object_template
+ * Menu: edit.php?post_type=_pods_template
  *
  * @package pods
  * @subpackage templates
- */
-
-/*
- * what do templates enable?
- *
- * template area
- * ->template()
- * magic tag parsing
- * detail url
  */
 
 class Pods_Templates extends PodsComponent {
@@ -55,7 +46,7 @@ class Pods_Templates extends PodsComponent {
         );
 
         if ( !is_super_admin() )
-            $args[ 'capability_type' ] = 'pods_object_template';
+            $args[ 'capability_type' ] = 'pods_template';
 
         $args = PodsInit::object_label_fix( $args, 'post_type' );
        register_post_type( '_pods_template', apply_filters( 'pods_internal_register_post_type_object_template', $args ) );

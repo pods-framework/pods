@@ -211,11 +211,11 @@ class PodsInit {
         );
 
         if ( !is_super_admin() )
-            $args[ 'capability_type' ] = 'pods_object_page';
+            $args[ 'capability_type' ] = 'pods_page';
 
         $args = self::object_label_fix( $args, 'post_type' );
 
-        register_post_type( '_pods_object_page', apply_filters( 'pods_internal_register_post_type_object_page', $args ) );
+        register_post_type( '_pods_page', apply_filters( 'pods_internal_register_post_type_object_page', $args ) );
     }
 
     /**

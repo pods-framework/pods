@@ -854,14 +854,14 @@ function pod_page_exists ( $uri = null ) {
         return false;
 
     // See if the custom template exists
-    $sql = "SELECT * FROM `@wp_posts` WHERE `post_type` = '_pods_object_page' AND `post_title` = %s LIMIT 1";
+    $sql = "SELECT * FROM `@wp_posts` WHERE `post_type` = '_pods_page' AND `post_title` = %s LIMIT 1";
     $sql = array( $sql, array( $uri ) );
 
     $result = pods_query( $sql );
 
     if ( empty( $result ) ) {
         // Find any wildcards
-        $sql = "SELECT * FROM `@wp_posts` WHERE `post_type` = '_pods_object_page' AND %s LIKE REPLACE(`post_title`, '*', '%%') AND (LENGTH(`post_title`) - LENGTH(REPLACE(`post_title`, '/', ''))) = %d ORDER BY LENGTH(`post_title`) DESC, `post_title` DESC LIMIT 1";
+        $sql = "SELECT * FROM `@wp_posts` WHERE `post_type` = '_pods_page' AND %s LIKE REPLACE(`post_title`, '*', '%%') AND (LENGTH(`post_title`) - LENGTH(REPLACE(`post_title`, '/', ''))) = %d ORDER BY LENGTH(`post_title`) DESC, `post_title` DESC LIMIT 1";
         $sql = array( $sql, array( $uri, $uri_depth ) );
 
         $result = pods_query( $sql );

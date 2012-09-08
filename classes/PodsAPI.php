@@ -1723,7 +1723,7 @@ class PodsAPI {
                 'post_name' => $object[ 'name' ],
                 'post_title' => $object[ 'name' ],
                 'post_content' => $object[ 'code' ],
-                'post_type' => '_pods_object_' . $object[ 'type' ],
+                'post_type' => '_pods_' . $object[ 'type' ],
                 'post_status' => 'publish'
             );
         }
@@ -3491,7 +3491,7 @@ class PodsAPI {
             global $wpdb;
 
             if ( isset( $params->name ) ) {
-                $object = $wpdb->get_var( $wpdb->prepare( "SELECT `ID` FROM `{$wpdb->posts}` WHERE `post_title` = %s AND `post_type` = %s LIMIT 1", $params->name, '_pods_object_' . $params->type ) );
+                $object = $wpdb->get_var( $wpdb->prepare( "SELECT `ID` FROM `{$wpdb->posts}` WHERE `post_title` = %s AND `post_type` = %s LIMIT 1", $params->name, '_pods_' . $params->type ) );
 
                 if ( empty( $object ) ) {
                     if ( $strict )
@@ -3519,7 +3519,7 @@ class PodsAPI {
             'id' => $_object[ 'ID' ],
             'name' => $_object[ 'post_title' ],
             'code' => $_object[ 'post_content' ],
-            'type' => str_replace( '_pods_object_', '', $_object[ 'post_type' ] )
+            'type' => str_replace( '_pods_', '', $_object[ 'post_type' ] )
         );
 
         $object[ 'options' ] = get_post_meta( $object[ 'id' ] );
@@ -3604,7 +3604,7 @@ class PodsAPI {
         $the_objects = array();
 
         $objects = get_posts( array(
-            'post_type' => '_pods_object_' . $params->type,
+            'post_type' => '_pods_' . $params->type,
             'nopaging' => true,
             'posts_per_page' => $limit,
             'order' => $order,

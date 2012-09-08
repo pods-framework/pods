@@ -43,7 +43,7 @@ class Pods_Helpers extends PodsComponent {
         );
 
         if ( !is_super_admin() )
-            $args[ 'capability_type' ] = 'pods_object_helper';
+            $args[ 'capability_type' ] = 'pods_helper';
 
         $args = PodsInit::object_label_fix( $args, 'post_type' );
 
@@ -93,29 +93,24 @@ class Pods_Helpers extends PodsComponent {
         if ( !isset( $params->name ) )
             $params->name = null;
 
-        $obj->do_hook( 'pre_pod_helper', $params );
-        $obj>do_hook( "pre_pod_helper_{$params->helper}", $params );
+        $helper = $obj->api->load_helper( array( 'name' => $params->helper ) );
 
         ob_start();
 
-        $helper = $obj->api->load_helper( array( 'name' => $params->helper ) );
         if ( !empty( $helper ) && !empty( $helper[ 'code' ] ) ) {
             if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL )
                 eval( "?>{$helper['code']}" );
             else
                 echo $helper[ 'code' ];
         }
-        elseif ( function_exists( "{$params->helper}" ) ) {
-            $function_name = (string) $params->helper;
-
-            echo $function_name( $params->value, $params->name, $params, $obj );
-        }
+        elseif ( is_callable( (string) $params->helper ) )
+            echo call_user_func( (string) $params->helper, $params->value, $params->name, $params, $obj );
 
         $out = ob_get_clean();
 
-        $obj->do_hook( 'post_pod_helper', $params );
-        $obj->do_hook( "post_pod_helper_{$params->helper}", $params );
+        $out = apply_filters( 'pods_helpers_post_helper', $out, $params, $helper );
+        $out = apply_filters( "pods_helpers_post_helper_{$params->helper}", $out, $params, $helper );
 
-        return $obj->do_hook( 'helper', $out, $params );
+        return $out;
     }
 }

@@ -407,9 +407,9 @@ class PodsMeta {
             'auto-draft',
             '_pods_pod',
             '_pods_field',
-            '_pods_object_template',
-            '_pods_object_page',
-            '_pods_object_helper'
+            '_pods_template',
+            '_pods_page',
+            '_pods_helper'
         );
 
         $blacklisted_types = apply_filters( 'pods_meta_save_post_blacklist', $blacklisted_types, $post_id, $post );
@@ -1069,6 +1069,8 @@ class PodsMeta {
             $objects = self::$user;
         elseif ( 'comment' == $object_type )
             $objects = self::$comment;
+        else
+            return false;
 
         if ( empty( $objects ) )
             return false;
@@ -1095,10 +1097,12 @@ class PodsMeta {
         $reserved_post_types = array(
             '_pods_pod',
             '_pods_field',
-            '_pods_object_template',
-            '_pods_object_page',
-            '_pods_object_helper'
+            '_pods_template',
+            '_pods_page',
+            '_pods_helper'
         );
+
+        $reserved_post_types = apply_filters( 'pods_meta_reserved_post_types', $reserved_post_types, $object_type, $object_id, $object_name, $objects );
 
         if ( empty( $object_name ) || ( 'post_type' == $object_type && in_array( $object_name, $reserved_post_types ) ) )
             return false;

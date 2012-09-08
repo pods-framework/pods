@@ -2011,7 +2011,7 @@ class PodsAPI {
             }
         }
 
-        $table_fields = $table_formats = $table_values = $rel_fields = $rel_field_ids = array();
+        $table_fields = $table_formats = $table_values = $update_values = $rel_fields = $rel_field_ids = array();
 
         $object_type = $pod[ 'type' ];
 
@@ -2071,6 +2071,8 @@ class PodsAPI {
                     $table_formats[] = PodsForm::prepare( $type, pods_var( 'options', $options, array() ) );
                     $table_values[] = $value;
 
+                    $update_values[] = "`{$field}` = VALUES(`{$field}`)";
+
                     $object_meta[ $field ] = $value;
                 }
                 // Store relational field data to be looped through later
@@ -2109,12 +2111,6 @@ class PodsAPI {
                 }
 
                 if ( !empty( $table_fields ) ) {
-                    $update_values = array();
-                    foreach($table_fields as $k => $value) {
-                        if($value == '`id`') continue;                  // this does not need updating
-                        $update_values[] = "$value = VALUES($value)";
-                    }
-
                     $table_fields = implode( ', ', $table_fields );
                     $table_formats = implode( ', ', $table_formats );
                     $update_values = implode(', ', $update_values);

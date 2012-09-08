@@ -2109,10 +2109,17 @@ class PodsAPI {
                 }
 
                 if ( !empty( $table_fields ) ) {
+                    $update_values = array();
+                    foreach($table_fields as $k => $value) {
+                        if($value == '`id`') continue;                  // this does not need updating
+                        $update_values[] = "$value = VALUES($value)";
+                    }
+
                     $table_fields = implode( ', ', $table_fields );
                     $table_formats = implode( ', ', $table_formats );
+                    $update_values = implode(', ', $update_values);
 
-                    $sql = $wpdb->prepare( "REPLACE INTO `@wp_pods_tbl_{$params->pod}` ({$table_fields}) VALUES ({$table_formats})", $table_values );
+                    $sql = $wpdb->prepare( "INSERT INTO `@wp_pods_tbl_{$params->pod}` ({$table_fields}) VALUES ({$table_formats}) ON DUPLICATE KEY UPDATE {$update_values}", $table_values );
 
                     $id = pods_query( $sql, 'Cannot add/save table row' );
 

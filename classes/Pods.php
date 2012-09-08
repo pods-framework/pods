@@ -976,54 +976,10 @@ class Pods {
      *
      * @return mixed Anything returned by the helper
      * @since 2.0.0
-     *
-     * @deprecated deprecated since 2.0.0
      */
     public function helper ( $helper, $value = null, $name = null ) {
-        pods_deprecated( "Pods::helper", '2.0.0' );
-
-        $params = array(
-            'helper' => $helper,
-            'value' => $value,
-            'name' => $name
-        );
-
-        if ( is_array( $helper ) )
-            $params = array_merge( $params, $helper );
-
-        $params = (object) $params;
-
-        if ( empty( $params->helper ) )
-            return pods_error( 'Helper name required', $this );
-
-        if ( !isset( $params->value ) )
-            $params->value = null;
-
-        if ( !isset( $params->name ) )
-            $params->name = null;
-
-        ob_start();
-
-        $this->do_hook( 'pre_pod_helper', $params );
-        $this->do_hook( "pre_pod_helper_{$params->helper}", $params );
-
-        $helper = $this->api->load_helper( array( 'name' => $params->helper ) );
-        if ( !empty( $helper ) && !empty( $helper[ 'code' ] ) ) {
-            if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL )
-                eval( "?>{$helper['code']}" );
-            else
-                echo $helper[ 'code' ];
-        }
-        elseif ( function_exists( "{$params->helper}" ) ) {
-            $function_name = (string) $params->helper;
-
-            echo $function_name( $params->value, $params->name, $params, $this );
-        }
-
-        $this->do_hook( 'post_pod_helper', $params );
-        $this->do_hook( "post_pod_helper_{$params->helper}", $params );
-
-        return $this->do_hook( 'helper', ob_get_clean(), $params );
+        if ( class_exists( 'Pods_Helpers' ) )
+            return Pods_Helpers::helper( $helper, $value, $name, $this );
     }
 
     /**
@@ -1032,115 +988,8 @@ class Pods {
      * @since 2.0.0
      */
     public function template ( $template, $code = null ) {
-        ob_start();
-
-        $this->do_hook( 'pre_template', $template, $code );
-        $this->do_hook( "pre_template_{$template}", $template, $code );
-
-        if ( empty( $code ) ) {
-            $template = $this->api->load_template( array( 'name' => $template ) );
-
-            if ( !empty( $template ) && !empty( $template[ 'code' ] ) )
-                $code = $template[ 'code' ];
-            elseif ( function_exists( "{$template}" ) )
-                $code = $template( $this );
-        }
-
-        $code = $this->do_hook( 'template', $code, $template );
-        $code = $this->do_hook( "template_{$template}", $code, $template );
-
-        if ( !empty( $code ) ) {
-            // Only detail templates need $this->id
-            if ( empty( $this->id ) ) {
-                while ($this->fetch()) {
-                    echo $this->do_template( $code );
-                }
-            }
-            else
-                echo $this->do_template( $code );
-        }
-
-        $this->do_hook( 'post_template', $template, $code );
-        $this->do_hook( "post_template_{$template}", $template, $code );
-
-        return ob_get_clean();
-    }
-
-    /**
-     * Parse a template string
-     *
-     * @param string $code The template string to parse
-     *
-     * @since 1.8.5
-     */
-    public function do_template ( $code ) {
-        ob_start();
-
-        if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL )
-            eval( "?>$code" );
-        else
-            echo $code;
-
-        $out = ob_get_clean();
-        $out = preg_replace_callback( '/({@(.*?)})/m', array( $this, 'do_magic_tags' ), $out );
-
-        return $this->do_hook( 'do_template', $out, $code );
-    }
-
-    /**
-     * Replace magic tags with their values
-     *
-     * @param string $tag The magic tag to evaluate
-     *
-     * @since 1.x
-     */
-    private function do_magic_tags ( $tag ) {
-        if ( is_array( $tag ) && !isset( $tag[ 2 ] ) && strlen( trim( $tag[ 2 ] ) ) < 1 )
-            return;
-
-        if ( is_array( $tag ) )
-            $tag = $tag[ 2 ];
-
-        $tag = trim( $tag, ' {@}' );
-        $tag = explode( ',', $tag );
-
-        if ( empty( $tag ) || !isset( $tag[ 0 ] ) || strlen( trim( $tag[ 0 ] ) ) < 1 )
-            return;
-
-        foreach ( $tag as $k => $v ) {
-            $tag[ $k ] = trim( $v );
-        }
-
-        $field_name = $tag[ 0 ];
-
-        if ( 'type' == $field_name )
-            $value = $this->pod;
-        else
-            $value = $this->field( $field_name );
-
-        $helper_name = $before = $after = '';
-
-        if ( isset( $tag[ 1 ] ) && !empty( $tag[ 1 ] ) ) {
-            $helper_name = $tag[ 1 ];
-            $value = $this->helper( $helper_name, $value, $field_name );
-        }
-
-        if ( isset( $tag[ 2 ] ) && !empty( $tag[ 2 ] ) )
-            $before = $tag[ 2 ];
-
-        if ( isset( $tag[ 3 ] ) && !empty( $tag[ 3 ] ) )
-            $after = $tag[ 3 ];
-
-        $value = $this->do_hook( 'do_magic_tags', $value, $field_name, $helper_name, $before, $after );
-
-        if ( is_array( $value ) )
-            $value = pods_serial_comma( $value, $field_name, $this->fields );
-
-        if ( null !== $value && false !== $value )
-            return $before . $value . $after;
-
-        return;
-
+        if ( class_exists( 'Pods_Templates' ) )
+            return Pods_Templates::template( $template, $code, $this );
     }
 
     /**

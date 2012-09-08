@@ -6,6 +6,8 @@
  *
  * Version: 2.0
  *
+ * Developer Mode: on
+ *
  * @package pods
  * @subpackage pages
  */

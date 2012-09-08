@@ -1469,6 +1469,26 @@ class PodsUI
     }
 
     /**
+     * Sort out data alphabetically by a key
+     */
+    public function sort_data() {
+        // only do this if we have a default orderby
+        if(isset($this->orderby['default'])) {
+            $orderby = $this->orderby['default'];
+            foreach ($this->data as $k => $v)
+                $sorter[$k] = strtolower($v[$orderby]);
+            if ($this->orderby_dir == 'ASC')
+                asort($sorter);
+            else
+                arsort($sorter);
+            foreach ($sorter as $key => $val)
+                $intermediary[] = $this->data[$key];
+            if (isset($intermediary))
+                $this->data = $intermediary;
+        }
+    }
+
+    /**
      * @return array
      */
     public function get_row () {
@@ -1540,6 +1560,8 @@ class PodsUI
 
         if ( false === $this->data )
             $this->get_data();
+        elseif ($this->sortable) // we have the data already as an array
+            $this->sort_data();
 
         if (!in_array('export', $this->actions_disabled) && 'export' == $this->action)
             $this->export();

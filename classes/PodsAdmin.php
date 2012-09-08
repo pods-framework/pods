@@ -522,7 +522,7 @@ class PodsAdmin {
             ),
             'search' => false,
             'searchable' => false,
-            'sortable' => false,
+            'sortable' => true,
             'pagination' => false
         ) );
     }

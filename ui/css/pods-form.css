@@ -1,3 +1,17 @@
+.pods-admin #navigation-actions .previous-item {
+    display: block;
+    text-align: left;
+    float: left;
+    width: 50%;
+}
+
+.pods-admin #navigation-actions .next-item {
+    display: block;
+    text-align: right;
+    float: right;
+    width: 50%;
+}
+
 .pods-field label {
 	cursor:pointer;
 	display:inline-block;

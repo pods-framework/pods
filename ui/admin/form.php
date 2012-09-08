@@ -101,6 +101,25 @@
                         <!-- /.inside -->
                     </div>
                     <!-- /#submitdiv --><!-- END PUBLISH DIV --><!-- TODO: minor column fields -->
+                    <?php if (pods_var_raw('action') == 'edit' ):
+                   $singular_label = $pod->pod_data['options']['label_singular'];
+                    ?>
+                    <div id="navigatediv" class="postbox">
+                        <div class="handlediv" title="Click to toggle"><br/></div>
+                        <h3 class="hndle"><span><?php _e('Navigate', 'pods'); ?></span></h3>
+
+                        <div class="inside">
+                            <div class="pods-admin" id="navigatebox">
+                                <div id="navigation-actions">
+                                    <a class="previous-item" href="<?php echo pods_var_update(array('id' => $pod->prev_pod_item_id())) ?>"><span>&laquo; </span><?php _e('Previous ', 'pods'); echo $singular_label?></a>
+                                    <a class="next-item" href="<?php echo pods_var_update(array('id' => $pod->next_pod_item_id())) ?>"><?php _e('Next ', 'pods'); echo $singular_label ?> &raquo;</a>
+
+                                    <div class="clear"></div>
+                                </div> <!-- /#navigation-actions -->
+                            </div> <!-- /#navigatebox -->
+                        </div> <!-- /.inside -->
+                    </div> <!-- /#navigatediv -->
+                    <?php endif; ?>
                 </div>
                 <!-- /#side-sortables -->
             </div>

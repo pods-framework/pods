@@ -594,6 +594,64 @@ class Pods {
     }
 
     /**
+     * Return the next item ID, loops at the first id to return the last
+     *
+     * @return int
+     * @since 2.0.0
+     */
+    public function next_pod_item_id($id = null) {
+        $pod = new Pods($this->pod);
+        if(!$id)
+            $id = $this->field('id');
+        $params = array(
+            'select' => 'id',
+            'where' => "id > $id",
+            'orderby' => "id ASC",
+            'limit' => 1
+        );
+        $pod->find($params);
+        if(!$pod->total_found() > 0) {
+            $params = array(
+                'select' => 'id',
+                'orderby' => "id ASC",
+                'limit' => 1
+            );
+            $pod->find($params);
+        }
+        return $pod->field('id');
+    }
+
+    /**
+     * Return the previous item ID, loops at the last id to return the first
+     *
+     * @return int
+     * @since 2.0.0
+     */
+    public function prev_pod_item_id($id = null) {
+        $pod = new Pods($this->pod);
+        if(!$id)
+            $id = $this->field('id');
+        $params = array(
+            'select' => 'id',
+            'where' => "id < $id",
+            'orderby' => "id DESC",
+            'limit' => 1
+        );
+        $pod->find($params);
+        if(!$pod->total_found() > 0) {
+            $params = array(
+                'select' => 'id',
+                'orderby' => "id DESC",
+                'limit' => 1
+            );
+            $pod->find($params);
+        }
+
+        return $pod->field('id');
+
+    }
+
+    /**
      * Return the item name
      *
      * @return string

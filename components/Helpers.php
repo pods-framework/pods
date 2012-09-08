@@ -85,7 +85,7 @@ class Pods_Templates extends PodsComponent {
         $params = (object) $params;
 
         if ( empty( $params->helper ) )
-            return pods_error( 'Helper name required', $this );
+            return pods_error( 'Helper name required', $obj );
 
         if ( !isset( $params->value ) )
             $params->value = null;
@@ -93,12 +93,12 @@ class Pods_Templates extends PodsComponent {
         if ( !isset( $params->name ) )
             $params->name = null;
 
-        $this->do_hook( 'pre_pod_helper', $params );
-        $this->do_hook( "pre_pod_helper_{$params->helper}", $params );
+        $obj->do_hook( 'pre_pod_helper', $params );
+        $obj>do_hook( "pre_pod_helper_{$params->helper}", $params );
 
         ob_start();
 
-        $helper = $this->api->load_helper( array( 'name' => $params->helper ) );
+        $helper = $obj->api->load_helper( array( 'name' => $params->helper ) );
         if ( !empty( $helper ) && !empty( $helper[ 'code' ] ) ) {
             if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL )
                 eval( "?>{$helper['code']}" );
@@ -108,14 +108,14 @@ class Pods_Templates extends PodsComponent {
         elseif ( function_exists( "{$params->helper}" ) ) {
             $function_name = (string) $params->helper;
 
-            echo $function_name( $params->value, $params->name, $params, $this );
+            echo $function_name( $params->value, $params->name, $params, $obj );
         }
 
         $out = ob_get_clean();
 
-        $this->do_hook( 'post_pod_helper', $params );
-        $this->do_hook( "post_pod_helper_{$params->helper}", $params );
+        $obj->do_hook( 'post_pod_helper', $params );
+        $obj->do_hook( "post_pod_helper_{$params->helper}", $params );
 
-        return $this->do_hook( 'helper', $out, $params );
+        return $obj->do_hook( 'helper', $out, $params );
     }
 }

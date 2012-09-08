@@ -12,7 +12,7 @@
  * @subpackage helpers
  */
 
-class Pods_Templates extends PodsComponent {
+class Pods_Helpers extends PodsComponent {
 
     /**
      * Pods object

@@ -667,7 +667,7 @@ class PodsData {
                     if (!is_array($attributes))
                         $attributes = array();
 
-                    if (false === $attributes['search'])
+                    if (!$attributes['options']['search'])
                         continue;
 
                     if (in_array($attributes['type'], array('date', 'time', 'datetime')))

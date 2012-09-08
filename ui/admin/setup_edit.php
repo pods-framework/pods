@@ -34,7 +34,7 @@ $advanced_fields = array(
         )
     ),
     __( 'Visibility', 'pods' ) => array(
-        'restrict_access' => array(
+       'restrict_access' => array(
             'label' => __( 'Restrict Access', 'pods' ),
             'group' => array(
                 'admin_only' => array(
@@ -57,6 +57,12 @@ $advanced_fields = array(
             'type' => 'text',
             'default' => '',
             'depends-on' => array( 'restrict_capability' => true )
+        ),
+        'search' => array(
+            'label' => __('Include in search'),
+            'help' => __('help','pods'),
+            'default' => 1,
+            'type' => 'boolean',
         )
     ),
     __( 'Validation', 'pods' ) => array(
@@ -102,6 +108,7 @@ $field_defaults = array(
     'input_helper' => '',
     'default_value' => '',
     'default_value_parameter' => '',
+    'search' => 1,
     'admin_only' => 0,
     'restrict_capability' => 0,
     'capability_allowed' => '',

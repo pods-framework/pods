@@ -894,8 +894,8 @@ class PodsUI
                     $attributes[ 'label' ] = ucwords( str_replace( '_', ' ', $field ) );
                 if ( !isset( $attributes[ 'type' ] ) )
                     $attributes[ 'type' ] = 'text';
-                if ( !isset( $attributes[ 'date_format_type' ] ) )
-                    $attributes[ 'date_format_type' ] = 'date';
+                if ( !isset( $attributes[ 'options' ][ 'date_format_type' ] ) )
+                    $attributes[ 'options' ][ 'date_format_type' ] = 'date';
                 if ( 'related' != $attributes[ 'type' ] || !isset( $attributes[ 'related' ] ) )
                     $attributes[ 'related' ] = false;
                 if ( 'related' != $attributes[ 'type' ] || !isset( $attributes[ 'related_id' ] ) )
@@ -934,8 +934,8 @@ class PodsUI
                     $attributes[ 'hidden' ] = false;
                 if ( !isset( $attributes[ 'sortable' ] ) || false === $this->sortable )
                     $attributes[ 'sortable' ] = ( false !== $this->sortable ) ? true : false;
-                if ( !isset( $attributes[ 'search' ] ) || false === $this->searchable )
-                    $attributes[ 'search' ] = ( false !== $this->searchable ) ? true : false;
+                if ( !isset( $attributes['options'] [ 'search' ] ) || false === $this->searchable )
+                    $attributes[ 'options'] [ 'search' ] = ( false !== $this->searchable ) ? true : false;
                 if ( !isset( $attributes[ 'filter' ] ) || false === $this->searchable )
                     $attributes[ 'filter' ] = false;
                 if ( false !== $attributes[ 'filter' ] && false !== $filterable )
@@ -968,7 +968,7 @@ class PodsUI
                     $attributes[ 'custom_relate' ] = false;
                 if ( !isset( $attributes[ 'custom_form_display' ] ) )
                     $attributes[ 'custom_form_display' ] = false;
-                if ( 'search_columns' == $which && false === $attributes[ 'search' ] )
+                if ( 'search_columns' == $which && !$attributes['options'][ 'search' ] )
                     continue;
 
                 $attributes = PodsForm::field_setup( $attributes, null, $attributes[ 'type' ] );

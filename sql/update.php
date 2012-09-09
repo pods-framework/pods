@@ -57,6 +57,18 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
     }
 }
 
+/*if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-12', '<' ) ) {
+    $oldget = $_GET;
+
+    $_GET[ 'toggle' ] = 1;
+
+    PodsInit::$components->toggle( 'templates' );
+    PodsInit::$components->toggle( 'pages' );
+    PodsInit::$components->toggle( 'helpers' );
+
+    $_GET = $oldget;
+}*/
+
 function pods_2_alpha_migrate_pods () {
     $api = pods_api();
 

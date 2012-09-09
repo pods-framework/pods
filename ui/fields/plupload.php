@@ -216,7 +216,7 @@
                     var items = list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.find( 'li.pods-file' ),
                         itemCount = items.size();
 
-                    if ( 0 < maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> || itemCount > maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> ) {
+                    if ( 0 < maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> && itemCount > maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> ) {
                         items.each( function ( idx, elem ) {
                             if ( idx + 1 > maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> ) {
                                 jQuery( elem ).remove();

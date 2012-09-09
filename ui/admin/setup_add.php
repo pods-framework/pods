@@ -83,7 +83,7 @@
                                             global $wpdb;
                                             $max_length_name = 64;
                                             $max_length_name -= 10; // Allow for WP Multisite or prefix changes in the future
-                                            $max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
+                                            $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
 
                                             echo PodsForm::label( 'create_label_plural', __( 'Plural Label', 'pods' ), __( 'help', 'pods' ) );
                                             echo PodsForm::field( 'create_label_plural', pods_var_raw( 'create_label_plural', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required' ) );

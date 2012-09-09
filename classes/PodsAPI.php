@@ -2764,7 +2764,7 @@ class PodsAPI {
     /**
      * Drop a single pod item
      *
-     * $params['id'] int (optional) The item's ID from the wp_pod_tbl_* table (used with datatype parameter)
+     * $params['id'] int (optional) The item's ID from the wp_pod_* table (used with datatype parameter)
      * $params['pod'] string (optional) The datatype name (used with id parameter)
      * $params['pod_id'] int (optional) The datatype ID (used with id parameter)
      * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers

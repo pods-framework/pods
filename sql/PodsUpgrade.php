@@ -937,14 +937,15 @@ class PodsUpgrade_2_0 {
         delete_option( 'pods_framework_upgrade_2_0' );
         delete_option( 'pods_framework_upgraded_1_x' );
 
-        /*
-         * other options maybe not in 2.0
         delete_option( 'pods_disable_file_browser' );
         delete_option( 'pods_files_require_login' );
         delete_option( 'pods_files_require_login_cap' );
         delete_option( 'pods_disable_file_upload' );
         delete_option( 'pods_upload_require_login' );
         delete_option( 'pods_upload_require_login_cap' );
+
+        /*
+         * other options maybe not in 2.0
         delete_option( 'pods_page_precode_timing' );
         */
 }

@@ -63,7 +63,7 @@ class PodsAPI_Deprecated {
      * $params['pod_id'] string The Pod name
      * $params['columns'] array (optional) Associative array of column names + values
      * $params['data'] array (optional) Associative array of a set of associative arrays of column names + values (for bulk operations)
-     * $params['id'] int The item's ID from the wp_pod_tbl_* table (or alternatively use the pod_id parameter instead)
+     * $params['id'] int The item's ID from the wp_pod_* table (or alternatively use the pod_id parameter instead)
      * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers
      *
      * @param array $params An associative array of parameters
@@ -176,7 +176,7 @@ class PodsAPI_Deprecated {
     /**
      * Drop a single pod item
      *
-     * $params['id'] int (optional) The item's ID from the wp_pod_tbl_* table (used with datatype parameter)
+     * $params['id'] int (optional) The item's ID from the wp_pod_* table (used with datatype parameter)
      * $params['pod'] string (optional) The datatype name (used with id parameter)
      * $params['pod_id'] int (optional) The datatype ID (used with id parameter)
      * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers

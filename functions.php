@@ -694,7 +694,7 @@ function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, $id = 0, &$o
 
     $check_sql = "
         SELECT DISTINCT `t`.`{$column_name}` AS `slug`
-        FROM `@wp_pods_tbl_{$pod}` AS `t`
+        FROM `@wp_pods_{$pod}` AS `t`
         WHERE `t`.`{$column_name}` = %s AND `t`.`id` != %d
         LIMIT 1
     ";

@@ -196,7 +196,7 @@ $pod[ 'fields' ] = apply_filters( 'pods_fields_edit', apply_filters( 'pods_field
 global $wpdb;
 $max_length_name = 64;
 $max_length_name -= 10; // Allow for WP Multisite or prefix changes in the future
-$max_length_name -= strlen( $wpdb->prefix . 'pods_tbl_' );
+$max_length_name -= strlen( $wpdb->prefix . 'pods_' );
 ?>
 <div class="wrap pods-admin">
     <div id="icon-pods" class="icon32"><br /></div>

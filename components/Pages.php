@@ -362,6 +362,8 @@ class Pods_Pages extends PodsComponent {
      *
      */
     public function template_redirect () {
+        global $pods;
+
         if ( false !== self::$exists ) {
             /*
              * Create pods.php in your theme directory, and

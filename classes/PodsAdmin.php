@@ -1106,7 +1106,7 @@ class PodsAdmin {
             $lookup_where[] = "`t`.`post_excerpt` LIKE '%" . like_escape( $params->query ) . "%'";
         }
         elseif ( $wpdb->terms == $data->table )
-            $lookup_where[ ] = "`t`.`slug` LIKE '%" . like_escape( $params->query ) . "%'";
+            $lookup_where[] = "`t`.`slug` LIKE '%" . like_escape( $params->query ) . "%'";
         elseif ( $wpdb->comments == $data->table ) {
             $lookup_where[] = "`t`.`comment_content` LIKE '%" . like_escape( $params->query ) . "%'";
             $lookup_where[] = "`t`.`comment_author` LIKE '%" . like_escape( $params->query ) . "%'";

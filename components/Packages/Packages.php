@@ -20,7 +20,7 @@ class Pods_Packages extends PodsComponent {
      * @since 2.0.0
      */
     public function __construct () {
-        
+
     }
 
     /**
@@ -94,13 +94,13 @@ class Pods_Packages extends PodsComponent {
             $ui[ 'row' ] = $roles[ pods_var( 'id', 'get', -1 ) ];
 
         if ( !is_super_admin() && !current_user_can( 'pods_roles_add' ) )
-            $ui[ 'actions_disabled' ][ ] = 'add';
+            $ui[ 'actions_disabled' ][] = 'add';
 
         if ( !is_super_admin() && !current_user_can( 'pods_roles_edit' ) )
-            $ui[ 'actions_disabled' ][ ] = 'edit';
+            $ui[ 'actions_disabled' ][] = 'edit';
 
         if ( count( $roles ) < 2 || ( !is_super_admin() && !current_user_can( 'pods_roles_delete' ) ) )
-            $ui[ 'actions_disabled' ][ ] = 'delete';
+            $ui[ 'actions_disabled' ][] = 'delete';
 
         pods_ui( $ui );
     }
@@ -280,7 +280,7 @@ class Pods_Packages extends PodsComponent {
             if ( true !== (boolean) $x )
                 continue;
 
-            $new_capabilities[ ] = esc_attr( $capability );
+            $new_capabilities[] = esc_attr( $capability );
 
             if ( !$role->has_cap( $capability ) )
                 $role->add_cap( $capability );
@@ -293,7 +293,7 @@ class Pods_Packages extends PodsComponent {
             if ( !in_array( $capability, $new_capabilities ) )
                 continue;
 
-            $new_capabilities[ ] = esc_attr( $capability );
+            $new_capabilities[] = esc_attr( $capability );
 
             if ( !$role->has_cap( $capability ) )
                 $role->add_cap( $capability );

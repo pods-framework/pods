@@ -665,13 +665,20 @@ class PodsAdmin {
         $components = PodsInit::$components->components;
 
         foreach ( $components as $component => &$component_data ) {
+            $toggle = 0;
+
+            if ( isset( PodsInit::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] ) ) {
+                if ( 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] )
+                    $toggle = 1;
+            }
+
             $component_data = array(
                 'id' => $component_data[ 'ID' ],
                 'name' => $component_data[ 'Name' ],
                 'description' => make_clickable( $component_data[ 'Description' ] ),
                 'version' => $component_data[ 'Version' ],
                 'author' => $component_data[ 'Author' ],
-                'toggle' => ( 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] ? 1 : 0 )
+                'toggle' => $toggle
             );
         }
 

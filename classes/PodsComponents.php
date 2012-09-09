@@ -76,15 +76,20 @@ class PodsComponents {
             if ( true === (boolean) pods_var( 'DeveloperMode', $component_data, false ) && ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) )
                 continue;
 
-            if ( !isset( $component_data[ 'object' ] ) || !method_exists( $component_data[ 'object' ], 'admin' ) )
+            if ( empty( $component_data[ 'MenuPage' ] ) && ( !isset( $component_data[ 'object' ] ) || !method_exists( $component_data[ 'object' ], 'admin' ) ) )
                 continue;
+
+            $menu_page = 'pods-component-' . $component_data[ 'ID' ];
+
+            if ( !empty( $component_data[ 'MenuPage' ] ) )
+                $menu_page = $component_data[ 'MenuPage' ];
 
             $page = add_submenu_page(
                 $parent,
                 strip_tags( $component_data[ 'Name' ] ),
                 '- ' . strip_tags( $component_data[ 'MenuName' ] ),
                 'read',
-                'pods-component-' . $component_data[ 'ID' ],
+                $menu_page,
                 array( $this, 'admin_handler' )
             );
 
@@ -176,6 +181,7 @@ class PodsComponents {
                 'ID' => 'ID',
                 'Name' => 'Name',
                 'MenuName' => 'Menu Name',
+                'MenuPage' => 'Menu Page',
                 'Description' => 'Description',
                 'Version' => 'Version',
                 'Author' => 'Author',

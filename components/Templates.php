@@ -6,9 +6,9 @@
  *
  * Version: 2.0
  *
- * Developer Mode: on
+ * Menu Page: edit.php?post_type=_pods_template
  *
- * Menu: edit.php?post_type=_pods_template
+ * Developer Mode: on
  *
  * @package pods
  * @subpackage templates

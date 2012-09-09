@@ -431,6 +431,8 @@ class PodsAdmin {
     }
 
     /**
+     * Add media button for Pods shortcode
+     *
      * @param $context
      *
      * @return string
@@ -448,20 +450,23 @@ class PodsAdmin {
         return $context;
     }
 
-    function register_media_assets () {
-        if(pods_var_raw('inlineId')=='pods_media_attachment')
-            wp_enqueue_style('pods-attach');
+    /**
+     * Enqueue assets for Media Library Popup
+     */
+    public function register_media_assets () {
+        if( 'pods_media_attachment' == pods_var( 'inlineId', 'get' ) )
+            wp_enqueue_style( 'pods-attach' );
     }
 
     /**
-     *
+     * Output Pods shortcode popup window
      */
     public function mce_popup () {
         pods_view( PODS_DIR . 'ui/admin/shortcode.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
-     *
+     * Handle main Pods Setup area for managing Pods and Fields
      */
     public function admin_setup () {
         $pods = pods_api()->load_pods();

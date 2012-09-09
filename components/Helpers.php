@@ -54,6 +54,15 @@ class Pods_Helpers extends PodsComponent {
     }
 
     /**
+     * Enqueue styles
+     *
+     * @since 2.0.0
+     */
+    public function admin_assets () {
+        wp_enqueue_style( 'pods-admin' );
+    }
+
+    /**
      * Run a helper within a Pod Page or WP Template
      *
      * $params['helper'] string Helper name

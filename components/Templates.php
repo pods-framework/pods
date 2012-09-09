@@ -53,6 +53,15 @@ class Pods_Templates extends PodsComponent {
     }
 
     /**
+     * Enqueue styles
+     *
+     * @since 2.0.0
+     */
+    public function admin_assets () {
+        wp_enqueue_style( 'pods-admin' );
+    }
+
+    /**
      * Display the page template
      *
      * @param string $template The template name

@@ -57,6 +57,15 @@ class Pods_Pages extends PodsComponent {
     }
 
     /**
+     * Enqueue styles
+     *
+     * @since 2.0.0
+     */
+    public function admin_assets () {
+        wp_enqueue_style( 'pods-admin' );
+    }
+
+    /**
      * Check if a Pod Page exists
      */
     public function page_check () {

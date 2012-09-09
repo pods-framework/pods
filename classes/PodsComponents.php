@@ -86,7 +86,7 @@ class PodsComponents {
             $menu_page = 'pods-component-' . $component_data[ 'ID' ];
 
             if ( !empty( $component_data[ 'MenuPage' ] ) )
-                $custom_component_menus[ $menu_page ] = $component_data[ 'MenuPage' ];
+                $custom_component_menus[ $menu_page ] = $component_data;
 
             $page = add_submenu_page(
                 $parent,
@@ -102,11 +102,19 @@ class PodsComponents {
         }
 
         if ( !empty( $custom_component_menus ) ) {
-            foreach ( $custom_component_menus as $menu_page => $new_menu_page ) {
+            foreach ( $custom_component_menus as $menu_page => $component_data ) {
                 if ( isset( $submenu[ $parent ] ) ) {
                     foreach ( $submenu[ $parent ] as $sub => &$menu ) {
-                        if ( $menu[ 2 ] == $menu_page )
-                            $menu[ 2 ] = $new_menu_page;
+                        if ( $menu[ 2 ] == $menu_page ) {
+                            $menu[ 2 ] = $component_data[ 'MenuPage' ];
+
+                            $page = current( explode( '?', $menu[ 2 ] ) );
+
+                            if ( method_exists( $component_data[ 'object' ], 'admin_assets' ) )
+                                add_action( 'admin_print_styles-' . $page, array( $component_data[ 'object' ], 'admin_assets' ) );
+
+                            break;
+                        }
                     }
                 }
             }

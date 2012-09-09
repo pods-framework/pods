@@ -383,7 +383,7 @@ class Pods_Pages extends PodsComponent {
 
             if ( null !== $render_function && is_callable( $render_function ) )
                 call_user_func( $render_function, $template, self::$exists );
-            elseif ( ( !defined( 'PODS_DISABLE_DYNAMIC_TEMPLATE' ) || !PODS_DISABLE_DYNAMIC_TEMPLATE ) && is_object( $pods ) && !is_wp_error( $pods ) && isset( $pods->page_template ) && !empty( $pods->page_template ) && '' != locate_template( array( $pods->page_template ), true ) ) {
+            elseif ( is_object( $pods ) && !is_wp_error( $pods ) && isset( $pods->page_template ) && !empty( $pods->page_template ) && '' != locate_template( array( $pods->page_template ), true ) ) {
                 $template = $pods->page_template;
                 // found the template and included it, we're good to go!
             }

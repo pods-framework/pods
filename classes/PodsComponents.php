@@ -69,6 +69,10 @@ class PodsComponents {
      * @since 2.0.0
      */
     public function menu ( $parent ) {
+        global $submenu;
+
+        $custom_component_menus = array();
+
         foreach ( $this->components as $component => $component_data ) {
             if ( !empty( $component_data[ 'Hide' ] ) )
                 continue;
@@ -82,7 +86,7 @@ class PodsComponents {
             $menu_page = 'pods-component-' . $component_data[ 'ID' ];
 
             if ( !empty( $component_data[ 'MenuPage' ] ) )
-                $menu_page = $component_data[ 'MenuPage' ];
+                $custom_component_menus[ $menu_page ] = $component_data[ 'MenuPage' ];
 
             $page = add_submenu_page(
                 $parent,
@@ -95,6 +99,17 @@ class PodsComponents {
 
             if ( method_exists( $component_data[ 'object' ], 'admin_assets' ) )
                 add_action( 'admin_print_styles-' . $page, array( $component_data[ 'object' ], 'admin_assets' ) );
+        }
+
+        if ( !empty( $custom_component_menus ) ) {
+            foreach ( $custom_component_menus as $menu_page => $new_menu_page ) {
+                if ( isset( $submenu[ $parent ] ) ) {
+                    foreach ( $submenu[ $parent ] as $sub => &$menu ) {
+                        if ( $menu[ 2 ] == $menu_page )
+                            $menu[ 2 ] = $new_menu_page;
+                    }
+                }
+            }
         }
     }
 

@@ -43,7 +43,7 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
     $number_fields = $wpdb->get_results( "
             SELECT `p`.`ID`
             FROM `{$wpdb->posts}` AS `p`
-            LEFT JOIN `{$wpdb->postmeta}` AS `pm`.`post_id` = `p`.`ID`
+            LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
             WHERE
                 `p`.`post_type` = '_pods_field'
                 AND `pm`.`meta_key` = 'type'

@@ -2107,7 +2107,7 @@ class PodsAPI {
                 }
 
                 if ( !empty( $table_data ) ) {
-                    $sql = insertonduplicate("@wp_pods_tbl_{$params->pod}", $table_data, $table_formats);
+                    $sql = PodsData::insertonduplicate("@wp_pods_tbl_{$params->pod}", $table_data, $table_formats);
 
                     $id = pods_query( $sql, 'Cannot add/save table row' );
 

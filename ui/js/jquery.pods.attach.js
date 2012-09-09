@@ -5,6 +5,47 @@ var pods_file_thickbox_modder; // stores our interval for making necessary chang
 function pods_attachments ( src, file_limit ) {
     var pods_thickbox = jQuery( '#TB_iframeContent' ).contents();
 
+    // add quick add text so we dont have to expand each line item
+    var wp_media_show_links = pods_thickbox.find( 'div.media-item a.describe-toggle-on' );
+
+    // loop through each 'Show' link and check if we added an 'Add' action next to it
+    for ( var x = 0, len = wp_media_show_links.length; x < len; x++ ) {
+        var wp_media_show = jQuery( wp_media_show_links[x] );
+
+        if ( wp_media_show.data( 'pods-injected-quick-add') !== true ) {
+            // Create 'Add' link
+            var pods_file_quick_add = jQuery( '<a href="#">Add</a>' ).addClass( 'pods-quick-add' );
+
+            pods_file_quick_add.bind( 'click', function( e ) {
+                var item = jQuery( this );
+                var item_parent = item.parent();
+
+                item.fadeOut( 'fast', function() {
+
+                    // Not sure if the close link should be there for each link?
+                    item.before( '<span class="pods-attached pods-quick-add">Added!</span>' );
+                    //item.before( '<span class="pods-attached pods-quick-add">Added! <a href="#">close this box</a>.</span>' );
+
+                    item.remove(); }
+                );
+
+                item_parent.find( 'td.savesend input' ).trigger( 'click' );
+
+                item_parent.find( 'span.pods-attached a' ).on( 'click', function ( e ) {
+                    parent.eval( 'tb_remove()' );
+                } );
+
+                item_parent.find( 'span.pods-attached' ).delay( 6000 ).fadeOut( 'fast' );
+
+                e.preventDefault();
+            } );
+
+            wp_media_show.after( pods_file_quick_add );
+
+            wp_media_show.data( 'pods-injected-quick-add', true );
+        }
+    }
+
     pods_thickbox.find( 'td.savesend input' ).unbind( 'click' ).click( function ( e ) {
         // grab our meta as per the Media library
         var wp_media_meta = jQuery( this ).parent().parent().parent();

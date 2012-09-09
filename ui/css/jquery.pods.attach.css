@@ -123,3 +123,15 @@ ul.pods-files-queue li.pods-file ul.pods-file-meta:after {
     display: table;
     clear: both;
 }
+
+a.pods-quick-add,
+span.pods-quick-add {
+    display: block;
+    line-height: 36px;
+    float: right;
+    margin-right: 15px;
+}
+div.open a.pods-quick-add,
+div.open span.pods-quick-add {
+    display: none;
+}

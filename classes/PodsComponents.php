@@ -97,7 +97,7 @@ class PodsComponents {
                 array( $this, 'admin_handler' )
             );
 
-            if ( method_exists( $component_data[ 'object' ], 'admin_assets' ) )
+            if ( isset( $component_data[ 'object' ] ) && method_exists( $component_data[ 'object' ], 'admin_assets' ) )
                 add_action( 'admin_print_styles-' . $page, array( $component_data[ 'object' ], 'admin_assets' ) );
         }
 
@@ -117,7 +117,7 @@ class PodsComponents {
 
                             $page = current( explode( '?', $menu[ 2 ] ) );
 
-                            if ( method_exists( $component_data[ 'object' ], 'admin_assets' ) )
+                            if ( isset( $component_data[ 'object' ] ) && method_exists( $component_data[ 'object' ], 'admin_assets' ) )
                                 add_action( 'admin_print_styles-' . $page, array( $component_data[ 'object' ], 'admin_assets' ) );
 
                             break;

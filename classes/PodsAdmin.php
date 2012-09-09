@@ -600,18 +600,48 @@ class PodsAdmin {
         $components = PodsInit::$components->components;
 
         foreach ( $components as $component => &$component_data ) {
+            $component_data[ 'Name' ] = strip_tags( $component_data[ 'Name' ] );
+
+            $meta = array();
+
+            if ( !empty( $component_data[ 'Version' ] ) )
+                $meta[] = 'Version ' . $component_data[ 'Version' ];
+
+            if ( empty( $component_data[ 'Author' ] ) ) {
+                $component_data[ 'Author' ] = 'Pods Framework Team';
+                $component_data[ 'AuthorURI' ] = 'http://pods.io/';
+            }
+
+            if ( !empty( $component_data[ 'AuthorURI' ] ) )
+                $component_data[ 'Author' ] = '<a href="' . $component_data[ 'AuthorURI' ] . '">' . $component_data[ 'Author' ] . '</a>';
+
+            $meta[] = sprintf( __( 'by %s', 'pods' ), $component_data[ 'Author' ] );
+
+            if ( !empty( $component_data[ 'URI' ] ) )
+                $meta[] = '<a href="' . $component_data[ 'URI' ] . '">' . __( 'Visit component site', 'pods' ) . '</a>';
+
+            $component_data[ 'Description' ] = wpautop( make_clickable( strip_tags( $component_data[ 'Description' ], 'em,strong' ) ) );
+
+            if ( !empty( $meta ) )
+                $component_data[ 'Description' ] .= '<div class="pods-component-version-author-uri">' . implode( ' | ', $meta ) . '</div>';
+
             $component_data = array(
                 'id' => $component_data[ 'ID' ],
                 'name' => $component_data[ 'Name' ],
-                'description' => make_clickable( $component_data[ 'Description' ] ),
-                'version' => $component_data[ 'Version' ],
-                'author' => $component_data[ 'Author' ],
+                'description' => $component_data[ 'Description' ],
                 'developermode' => (boolean) pods_var( 'DeveloperMode', $component_data, false ),
                 'toggle' => 0
             );
 
-            if ( true === $component_data[ 'developermode' ] )
-                $component_data[ 'name' ] .= ' <em>(Developer Preview)</em>';
+            if ( true === $component_data[ 'developermode' ] ) {
+                if ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) {
+                    unset( $components[ $component ] );
+
+                    continue;
+                }
+
+                $component_data[ 'name' ] .= ' <em style="font-weight: normal;">(Developer Preview)</em>';
+            }
 
             if ( isset( PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] ) && 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] )
                 $component_data[ 'toggle' ] = 1;
@@ -624,7 +654,18 @@ class PodsAdmin {
             'icon' => PODS_URL . 'ui/images/icon32.png',
             'items' => 'Components',
             'item' => 'Component',
-            'fields' => array( 'manage' => array( 'name', 'description' ) ), //, 'version', 'author' ) ),
+            'fields' => array(
+                'manage' => array(
+                    'name' => array(
+                        'label' => __( 'Name', 'pods' ),
+                        'width' => '30%'
+                    ),
+                    'description' => array(
+                        'label' => __( 'Description', 'pods' ),
+                        'width' => '70%'
+                    )
+                )
+            ),
             'actions_disabled' => array( 'duplicate', 'view', 'export', 'add', 'edit', 'delete' ),
             'actions_custom' => array(
                 'toggle' => array( 'callback' => array( $this, 'admin_components_toggle' ) )

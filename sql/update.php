@@ -57,7 +57,23 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
     }
 }
 
-/*if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-12', '<' ) ) {
+if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-12', '<' ) ) {
+    $tables = $wpdb->get_results( "SHOW TABLES LIKE '{$wpdb->prefix}pods%'", ARRAY_N );
+
+    if ( !empty( $tables ) ) {
+        foreach ( $tables as $table ) {
+            $table = $table[ 0 ];
+
+            if ( "{$wpdb->prefix}pods_rel" == $table )
+                $new_table = "{$wpdb->prefix}podsrel";
+            else
+                $new_table = str_replace( 'pods_tbl_', 'pods_', $table );
+
+            if ( $table != $new_table )
+                $wpdb->query( "ALTER TABLE `{$table}` RENAME `{$new_table}`" );
+        }
+    }
+
     $oldget = $_GET;
 
     $_GET[ 'toggle' ] = 1;
@@ -67,7 +83,7 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
     PodsInit::$components->toggle( 'helpers' );
 
     $_GET = $oldget;
-}*/
+}
 
 function pods_2_alpha_migrate_pods () {
     $api = pods_api();

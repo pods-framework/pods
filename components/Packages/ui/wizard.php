@@ -25,7 +25,7 @@
                         </li>
                         <li data-step="2">
                             <i></i>
-                            <span>2</span> <?php _e( '', 'pods' ); ?>
+                            <span>2</span> <?php _e( 'Choose', 'pods' ); ?>
                             <em></em>
                         </li>
                         <li data-step="3">

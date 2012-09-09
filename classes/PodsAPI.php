@@ -1142,16 +1142,16 @@ class PodsAPI {
                     $definitions[] = "`{$field['name']}` " . $this->get_field_definition( $field[ 'type' ] );
             }
 
-            pods_query( "DROP TABLE IF EXISTS `@wp_pods_tbl_{$params->name}`" );
+            pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$params->name}`" );
 
-            $result = pods_query( "CREATE TABLE `@wp_pods_tbl_{$params->name}` (" . implode( ', ', $definitions ) . ") DEFAULT CHARSET utf8", $this );
+            $result = pods_query( "CREATE TABLE `@wp_pods_{$params->name}` (" . implode( ', ', $definitions ) . ") DEFAULT CHARSET utf8", $this );
 
             if ( empty( $result ) )
                 return pods_error( __( 'Cannot add Database Table for Pod', 'pods' ), $this );
 
         }
         elseif ( 'table' == $pod[ 'storage' ] && $pod[ 'storage' ] == $old_storage && null !== $old_name && $old_name != $params->name ) {
-            $result = pods_query( "ALTER TABLE `@wp_pods_tbl_{$old_name}` RENAME `@wp_pods_tbl_{$params->name}`", $this );
+            $result = pods_query( "ALTER TABLE `@wp_pods_{$old_name}` RENAME `@wp_pods_{$params->name}`", $this );
 
             if ( empty( $result ) )
                 return pods_error( __( 'Cannot update Database Table for Pod', 'pods' ), $this );
@@ -1609,29 +1609,29 @@ class PodsAPI {
             if ( !empty( $old_id ) ) {
                 if ( $field[ 'type' ] != $old_type ) {
                     if ( in_array( $field[ 'type' ], $tableless_field_types ) && !$simple && ( !in_array( $old_type, $tableless_field_types ) || $old_simple ) )
-                        pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` DROP COLUMN `{$old_name}`" );
+                        pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$old_name}`" );
                     elseif ( ( in_array( $old_type, $tableless_field_types ) && !$old_simple ) || $simple )
-                        pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+                        pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
                     elseif ( false !== $definition )
-                        pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` CHANGE `{$old_name}` {$definition}" );
+                        pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `{$old_name}` {$definition}" );
                 }
                 elseif ( $old_name != $field[ 'name' ] && false !== $definition ) {
-                    $test = pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` CHANGE `{$old_name}` {$definition}", false );
+                    $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `{$old_name}` {$definition}", false );
 
                     // If the old field doesn't exist, continue to add a new field
                     if ( false === $test )
-                        pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+                        pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
                 }
                 elseif ( null !== $old_definition && false !== $definition && $definition != $old_definition ) {
-                    $test = pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` CHANGE `" . $field[ 'name' ] . "` {$definition}", false );
+                    $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `" . $field[ 'name' ] . "` {$definition}", false );
 
                     // If the old field doesn't exist, continue to add a new field
                     if ( false === $test )
-                        pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+                        pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
                 }
             }
             elseif ( false !== $definition )
-                $test = pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+                $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
         }
         elseif ( 0 < pods_var( 'sister_field_id', $field[ 'options' ], 0 ) )
             update_post_meta( pods_var( 'sister_field_id', $field[ 'options' ], 0 ), 'sister_field_id', $params->id );
@@ -1642,7 +1642,7 @@ class PodsAPI {
                     ON p.post_type = '_pods_field' AND p.ID = pm.post_id
                 WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_field_id' AND pm.meta_value = %d", $params->id ) );
 
-            pods_query( "DELETE FROM @wp_pods_rel WHERE `field_id` = {$params->id}" );
+            pods_query( "DELETE FROM @wp_podsrel WHERE `field_id` = {$params->id}" );
         }
 
         if ( !$save_pod )
@@ -2107,7 +2107,7 @@ class PodsAPI {
                 }
 
                 if ( !empty( $table_data ) ) {
-                    $sql = PodsData::insertonduplicate("@wp_pods_tbl_{$params->pod}", $table_data, $table_formats);
+                    $sql = PodsData::insertonduplicate("@wp_pods_{$params->pod}", $table_data, $table_formats);
 
                     $id = pods_query( $sql, 'Cannot add/save table row' );
 
@@ -2125,7 +2125,7 @@ class PodsAPI {
                     $field_id = pods_absint( $fields[ $field ][ 'id' ] );
 
                     // Remove existing relationships
-                    pods_query( "DELETE FROM `@wp_pods_rel` WHERE `pod_id` = {$params->pod_id} AND `field_id` = {$field_id} AND `item_id` = {$params->id}", $this );
+                    pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->pod_id} AND `field_id` = {$field_id} AND `item_id` = {$params->id}", $this );
 
                     // Convert values from a comma-separated string into an array
                     if ( !is_array( $values ) )
@@ -2178,7 +2178,7 @@ class PodsAPI {
                                 $this->save_wp_object( 'media', $attachment_data );
                             }
 
-                            pods_query( "INSERT INTO `@wp_pods_rel` (`pod_id`, `field_id`, `item_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d)", array(
+                            pods_query( "INSERT INTO `@wp_podsrel` (`pod_id`, `field_id`, `item_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d)", array(
                                 $params->pod_id,
                                 $field_id,
                                 $params->id,
@@ -2218,7 +2218,7 @@ class PodsAPI {
 
                         // Delete existing sister relationships
                         if ( !empty( $related_field_id ) && !empty( $related_pod_id ) && in_array( $related_field_id, $rel_field_ids ) ) {
-                            pods_query( "DELETE FROM `@wp_pods_rel` WHERE `pod_id` = %d AND `field_id` = %d AND `related_pod_id` = %d AND `related_field_id` = %d AND `related_item_id` = %d", array(
+                            pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = %d AND `field_id` = %d AND `related_pod_id` = %d AND `related_field_id` = %d AND `related_item_id` = %d", array(
                                 $related_pod_id,
                                 $related_field_id,
                                 $params->pod_id,
@@ -2259,7 +2259,7 @@ class PodsAPI {
 
                                 $related_weight = 0;
 
-                                $result = pods_query( "SELECT `weight` FROM `@wp_pods_rel` WHERE `pod_id` = %d AND `field_id` = %d ORDER BY `weight` DESC LIMIT 1", array(
+                                $result = pods_query( "SELECT `weight` FROM `@wp_podsrel` WHERE `pod_id` = %d AND `field_id` = %d ORDER BY `weight` DESC LIMIT 1", array(
                                     $related_pod_id,
                                     $related_field_id
                                 ) );
@@ -2267,7 +2267,7 @@ class PodsAPI {
                                 if ( !empty( $result ) )
                                     $related_weight = pods_absint( $result[ 0 ]->weight ) + 1;
 
-                                pods_query( "INSERT INTO `@wp_pods_rel` (`pod_id`, `field_id`, `item_id`, `related_pod_id`, `related_field_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d, %d, %d)", array(
+                                pods_query( "INSERT INTO `@wp_podsrel` (`pod_id`, `field_id`, `item_id`, `related_pod_id`, `related_field_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d, %d, %d)", array(
                                     $related_pod_id,
                                     $related_field_id,
                                     $id,
@@ -2278,7 +2278,7 @@ class PodsAPI {
                                 ) );
                             }
 
-                            pods_query( "INSERT INTO `@wp_pods_rel` (`pod_id`, `field_id`, `item_id`, `related_pod_id`, `related_field_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d, %d, %d)", array(
+                            pods_query( "INSERT INTO `@wp_podsrel` (`pod_id`, `field_id`, `item_id`, `related_pod_id`, `related_field_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d, %d, %d)", array(
                                 $params->pod_id,
                                 $field_id,
                                 $params->id,
@@ -2382,7 +2382,7 @@ class PodsAPI {
      * Duplicate a pod item
      *
      * $params['pod'] string The Pod name
-     * $params['id'] int The item's ID from the wp_pods_tbl_* table
+     * $params['id'] int The item's ID from the wp_pods_* table
      *
      * @param array $params An associative array of parameters
      *
@@ -2431,7 +2431,7 @@ class PodsAPI {
      * Export a pod item
      *
      * $params['pod'] string The Pod name
-     * $params['id'] int The item's ID from the wp_pods_tbl_* table
+     * $params['id'] int The item's ID from the wp_pods_* table
      * $params['fields'] array The fields to export
      *
      * @param array $params An associative array of parameters
@@ -2488,7 +2488,7 @@ class PodsAPI {
         if ( !is_array( $params->order ) )
             $params->order = explode( ',', $params->order );
         foreach ( $params->order as $order => $id ) {
-            pods_query( "UPDATE `@wp_pods_tbl_{$params->pod}` SET `{$params->field}` = " . pods_absint( $order ) . " WHERE `id` = " . pods_absint( $id ) . " LIMIT 1" );
+            pods_query( "UPDATE `@wp_pods_{$params->pod}` SET `{$params->field}` = " . pods_absint( $order ) . " WHERE `id` = " . pods_absint( $id ) . " LIMIT 1" );
         }
 
         return true;
@@ -2516,10 +2516,10 @@ class PodsAPI {
         $params->name = $pod[ 'name' ];
 
         if ( 'storage' == $pod[ 'type' ] ) {
-            pods_query( "TRUNCATE `@wp_pods_tbl_{$params->name}`" );
+            pods_query( "TRUNCATE `@wp_pods_{$params->name}`" );
         }
 
-        pods_query( "DELETE FROM `@wp_pods_rel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}" );
+        pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}" );
 
         wp_cache_flush(); // only way to reliably clear out cached data across an entire group
 
@@ -2575,7 +2575,7 @@ class PodsAPI {
 
         if ( 'table' == $pod[ 'storage' ] ) {
             try {
-                pods_query( "DROP TABLE IF EXISTS `@wp_pods_tbl_{$params->name}`", false );
+                pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$params->name}`", false );
             } catch ( Exception $e ) {
                 // Allow pod to be deleted if the table doesn't exist
                 if ( false === strpos( $e->getMessage(), 'Unknown table' ) )
@@ -2592,7 +2592,7 @@ class PodsAPI {
                     AND `pm`.`meta_key` = 'pick_val' AND `pm`.`meta_value` = '{$params->name}'" );
         }
 
-        pods_query( "DELETE FROM `@wp_pods_rel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}" );
+        pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}" );
 
         $this->cache_flush_pods( $pod );
 
@@ -2656,7 +2656,7 @@ class PodsAPI {
         $simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field, $pod, $params );
 
         if ( $table_operation && 'table' == $pod[ 'storage' ] && ( !in_array( $field[ 'type' ], $tableless_field_types ) || $simple ) )
-            pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` DROP COLUMN `{$params->name}`" );
+            pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$params->name}`" );
 
         $success = wp_delete_post( $params->id );
 
@@ -2669,7 +2669,7 @@ class PodsAPI {
             WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_field_id' AND pm.meta_value = %d", $params->id ) );
 
         if ( $table_operation )
-            pods_query( "DELETE FROM `@wp_pods_rel` WHERE (`pod_id` = {$params->pod_id} AND `field_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_field_id` = {$params->id})" );
+            pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `field_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_field_id` = {$params->id})" );
 
         if ( !$save_pod )
             $this->cache_flush_pods( $pod );
@@ -2857,7 +2857,7 @@ class PodsAPI {
         }
 
         if ( 'table' == $pod[ 'storage' ] )
-            pods_query( "DELETE FROM `@wp_pods_tbl_{$params->pod}` WHERE `id` = {$params->id} LIMIT 1" );
+            pods_query( "DELETE FROM `@wp_pods_{$params->pod}` WHERE `id` = {$params->id} LIMIT 1" );
 
         if ( 'taxonomy' == $pod[ 'type' ] ) {
             $taxonomy = $pod[ 'name' ];
@@ -2870,7 +2870,7 @@ class PodsAPI {
         elseif ( !in_array( $pod[ 'type' ], array( 'pod', 'table', '', 'taxonomy' ) ) )
             $this->delete_wp_object( $pod[ 'type' ], $params->id );
 
-        pods_query( "DELETE FROM `@wp_pods_rel` WHERE (`pod_id` = {$params->pod_id} AND `item_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_item_id` = {$params->id})" );
+        pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `item_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_item_id` = {$params->id})" );
 
         if ( false === $bypass_helpers ) {
             // Plugin hook
@@ -3916,7 +3916,7 @@ class PodsAPI {
 
                 // Trigger an error if not unique
                 if ( 'table' == $pod[ 'storage' ] )
-                    $check = pods_query( "SELECT `id` FROM `@wp_pods_tbl_{$params->pod}` WHERE `{$field}` = '{$value}' {$exclude} LIMIT 1", $this );
+                    $check = pods_query( "SELECT `id` FROM `@wp_pods_{$params->pod}` WHERE `{$field}` = '{$value}' {$exclude} LIMIT 1", $this );
 
                 if ( !empty( $check ) )
                     return pods_error( sprintf( __( '%s needs to be unique', 'pods' ), $label ), $this );
@@ -3961,7 +3961,7 @@ class PodsAPI {
 
         $sql = "
             SELECT `related_item_id`
-            FROM `@wp_pods_rel`
+            FROM `@wp_podsrel`
             WHERE
                 `pod_id` = {$pod_id}
                 AND `field_id` = {$field_id}
@@ -4019,7 +4019,7 @@ class PodsAPI {
         }
 
         if ( 'pod' == $object_type )
-            $info[ 'table' ] = $wpdb->prefix . 'pods_tbl_' . ( empty( $object ) ? $name : $object );
+            $info[ 'table' ] = $wpdb->prefix . 'pods_' . ( empty( $object ) ? $name : $object );
         elseif ( 'post_type' == $object_type || 'media' == $object_type ) {
             $info[ 'table' ] = $wpdb->posts;
             $info[ 'field_id' ] = 'ID';
@@ -4088,7 +4088,7 @@ class PodsAPI {
             $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '`, `t`.`' . $info[ 'field_id' ] . '`';
 
         if ( !empty( $pod ) && 'table' == $pod[ 'storage' ] && !in_array( $object_type, array( 'pod', 'table' ) ) ) {
-            $info[ 'join' ][ 'd' ] = "LEFT JOIN `{$wpdb->prefix}pods_tbl_{$name}` AS `d` ON `d`.`id` = `t`.`" . $info[ 'field_id' ] . '`';
+            $info[ 'join' ][ 'd' ] = "LEFT JOIN `{$wpdb->prefix}pods_{$name}` AS `d` ON `d`.`id` = `t`.`" . $info[ 'field_id' ] . '`';
             //$info[ 'select' ] .= ', `d`.*';
         }
 
@@ -4248,9 +4248,9 @@ class PodsAPI {
                 }
                 $definitions = implode( ',', $definitions );
 
-                pods_query( "DROP TABLE IF EXISTS `@wp_pods_tbl_{$pod['name']}`" );
+                pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$pod['name']}`" );
 
-                pods_query( "CREATE TABLE @wp_pods_tbl_{$pod['name']} ($definitions)" );
+                pods_query( "CREATE TABLE @wp_pods_{$pod['name']} ($definitions)" );
 
                 if ( !isset( $found[ 'pods' ] ) )
                     $found[ 'pods' ] = array();
@@ -4651,7 +4651,7 @@ class PodsAPI {
                                     $where = "`name` = '" . pods_sanitize( $pick_value ) . "'";
                                     if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )
                                         $where = "`id` = " . pods_absint( $pick_value );
-                                    $result = pods_query( "SELECT `id` FROM `@wp_pods_tbl_{$pickval}` WHERE {$where} ORDER BY `id`", $this );
+                                    $result = pods_query( "SELECT `id` FROM `@wp_pods_{$pickval}` WHERE {$where} ORDER BY `id`", $this );
                                     if ( !empty( $result ) )
                                         $pick_values[ $field_name ] = $result[ 'id' ];
                                 }

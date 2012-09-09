@@ -626,7 +626,7 @@ class PodsUpgrade_2_0 {
                 $r->weight = (int) $r->weight;
 
                 $sql = "
-                    REPLACE INTO `@wp_pods_rel`
+                    REPLACE INTO `@wp_podsrel`
                     ( `id`, `pod_id`, `field_id`, `item_id`, `related_pod_id`, `related_field_id`, `related_item_id`, `weight` )
                     VALUES ( {$r->id}, {$pod_id}, {$field_id}, {$item_id}, {$related_pod_id}, {$related_field_id}, {$related_item_id}, {$r->weight} )
                 ";
@@ -892,6 +892,16 @@ class PodsUpgrade_2_0 {
      */
     public function migrate_cleanup () {
         update_option( 'pods_framework_upgraded_1_x', 1 );
+
+        $oldget = $_GET;
+
+        $_GET[ 'toggle' ] = 1;
+
+        PodsInit::$components->toggle( 'templates' );
+        PodsInit::$components->toggle( 'pages' );
+        PodsInit::$components->toggle( 'helpers' );
+
+        $_GET = $oldget;
 
         return '1';
 }

@@ -714,7 +714,7 @@ class PodsInit {
 
         do_action( 'pods_delete_attachment', $_ID );
 
-        pods_query( "DELETE rel FROM `@wp_pods_rel` AS rel
+        pods_query( "DELETE rel FROM `@wp_podsrel` AS rel
             LEFT JOIN {$wpdb->posts} AS p
                 ON p.`post_type` = '_pods_field' AND ( p.ID = rel.`field_id` OR p.ID = rel.`related_field_id` )
             LEFT JOIN {$wpdb->postmeta} AS pm

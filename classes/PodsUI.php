@@ -1847,9 +1847,14 @@ class PodsUI
                 if ( !empty( $id ) )
                     $att_id = ' id="' . $id . '"';
 
+                $width = '';
+
+                if ( isset( $attributes[ 'width' ] ) && !empty( $attributes[ 'width' ] ) )
+                    $width = ' style="width: ' . $attributes[ 'width' ] . '"';
+
                 if ( $fields[ $field ][ 'sortable' ] ) {
 ?>
-                <th scope="col"<?php echo $att_id; ?> class="manage-column column-<?php echo $id; ?> sortable<?php echo $current_sort; ?>">
+                <th scope="col"<?php echo $att_id; ?> class="manage-column column-<?php echo $id; ?> sortable<?php echo $current_sort; ?>"<?php echo $width; ?>>
                     <a href="<?php echo pods_var_update(array('orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir), array('limit' . $this->num, 'search' . $this->num), $this->exclusion()); ?>">
                         <span><?php echo $attributes['label']; ?></span>
                         <span class="sorting-indicator"></span>
@@ -1859,7 +1864,7 @@ class PodsUI
                 }
                 else {
 ?>
-                <th scope="col"<?php echo $att_id; ?> class="manage-column column-<?php echo $id; ?>"><?php echo $attributes['label']; ?></th>
+                <th scope="col"<?php echo $att_id; ?> class="manage-column column-<?php echo $id; ?>"<?php echo $width; ?>><?php echo $attributes['label']; ?></th>
 <?php
                 }
             }
@@ -1888,14 +1893,20 @@ class PodsUI
                             $current_sort = 'asc';
                         }
                     }
+
+                    $width = '';
+
+                    if ( isset( $attributes[ 'width' ] ) && !empty( $attributes[ 'width' ] ) )
+                        $width = ' style="width: ' . $attributes[ 'width' ] . '"';
+
                     if ( $fields[ $field ][ 'sortable' ] ) {
 ?>
-                <th scope="col" class="manage-column column-<?php echo $id; ?> sortable <?php echo $current_sort; ?>"><a href="<?php echo pods_var_update(array('orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir), array('limit' . $this->num, 'search' . $this->num), $this->exclusion()); ?>"><span><?php echo $attributes['label']; ?></span><span class="sorting-indicator"></span></a></th>
+                <th scope="col" class="manage-column column-<?php echo $id; ?> sortable <?php echo $current_sort; ?>"<?php echo $width; ?>><a href="<?php echo pods_var_update(array('orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir), array('limit' . $this->num, 'search' . $this->num), $this->exclusion()); ?>"><span><?php echo $attributes['label']; ?></span><span class="sorting-indicator"></span></a></th>
 <?php
                     }
                     else {
 ?>
-                <th scope="col" class="manage-column column-<?php echo $id; ?>"><?php echo $attributes['label']; ?></th>
+                <th scope="col" class="manage-column column-<?php echo $id; ?>"<?php echo $width; ?>><?php echo $attributes['label']; ?></th>
 <?php
                     }
                 }

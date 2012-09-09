@@ -1173,7 +1173,7 @@ class PodsData {
 
             if ( 'table' == $this->pod_data[ 'storage' ] && false !== $get_table_data ) {
                 $params = array(
-                    'table' => $wpdb->prefix . "pods_tbl_",
+                    'table' => $wpdb->prefix . "pods_",
                     'where' => "`t`.`id` = {$id}",
                     'orderby' => "`t`.`id` DESC",
                     'page' => 1,
@@ -1482,11 +1482,11 @@ class PodsData {
             }
             elseif ( 'pod' == $table ) {
                 $the_pod = $v;
-                $table = '@wp_pods_tbl_' . $v;
+                $table = '@wp_pods_' . $v;
             }
             elseif ( !empty( $table ) ) {
                 $the_pod = $table;
-                $table = '@wp_pods_tbl_' . $table;
+                $table = '@wp_pods_' . $table;
                 $recurse = false;
             }
 
@@ -1559,7 +1559,7 @@ class PodsData {
 
         $rel_alias = 'rel_' . $field_joined;
         $the_join = "
-            LEFT JOIN `@wp_pods_rel` AS `{$rel_alias}` ON `{$rel_alias}`.`field_id` = {$this->traversal[$pod][$field]['id']} AND `{$rel_alias}`.`item_id` = `{$joined}`.`id`
+            LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON `{$rel_alias}`.`field_id` = {$this->traversal[$pod][$field]['id']} AND `{$rel_alias}`.`item_id` = `{$joined}`.`id`
             LEFT JOIN `{$this->traversal[$pod][$field]['table']}` AS `{$field_joined}` ON `{$field_joined}`.`{$this->traversal[$pod][$field]['on']}` = `{$rel_alias}`.`related_item_id`
         ";
 

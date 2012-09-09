@@ -138,9 +138,6 @@ class PodsComponents {
             if ( !isset( $this->components[ $component ] ) || 0 == $options )
                 continue;
 
-            if ( true === (boolean) pods_var( 'DeveloperMode', $this->components[ $component ], false ) && ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) )
-                continue;
-
             if ( !empty( $this->components[ $component ][ 'PluginDependency' ] ) ) {
                 $dependency = explode( '|', $this->components[ $component ][ 'PluginDependency' ] );
 
@@ -210,12 +207,14 @@ class PodsComponents {
             $default_headers = array(
                 'ID' => 'ID',
                 'Name' => 'Name',
+                'URI' => 'URI',
                 'MenuName' => 'Menu Name',
                 'MenuPage' => 'Menu Page',
                 'MenuAddPage' => 'Menu Add Page',
                 'Description' => 'Description',
                 'Version' => 'Version',
                 'Author' => 'Author',
+                'AuthorURI' => 'Author URI',
                 'Class' => 'Class',
                 'Hide' => 'Hide',
                 'PluginDependency' => 'Plugin Dependency',
@@ -246,9 +245,6 @@ class PodsComponents {
                     $component_data[ 'DeveloperMode' ] = true;
                 else
                     $component_data[ 'DeveloperMode' ] = false;
-
-                if ( true === $component_data[ 'DeveloperMode' ] && ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) )
-                    continue;
 
                 $component_data[ 'File' ] = $component_file;
 

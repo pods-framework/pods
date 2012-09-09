@@ -15,17 +15,22 @@
 
             <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
-            <div id="pods-wizard-box" class="pods-wizard-steps-2">
+            <div id="pods-wizard-box" class="pods-wizard-steps-3">
                 <div id="pods-wizard-heading">
                     <ul>
                         <li class="pods-wizard-menu-current" data-step="1">
                             <i></i>
-                            <span>1</span> <?php _e( 'Naming', 'pods' ); ?>
+                            <span>1</span> <?php _e( 'Import / Export', 'pods' ); ?>
                             <em></em>
                         </li>
                         <li data-step="2">
                             <i></i>
-                            <span>2</span> <?php _e( 'Capabilities', 'pods' ); ?>
+                            <span>2</span> <?php _e( '', 'pods' ); ?>
+                            <em></em>
+                        </li>
+                        <li data-step="3">
+                            <i></i>
+                            <span>2</span> <?php _e( 'Process', 'pods' ); ?>
                             <em></em>
                         </li>
                     </ul>

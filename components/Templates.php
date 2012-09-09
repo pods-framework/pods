@@ -33,8 +33,8 @@ class Pods_Templates extends PodsComponent {
      */
     public function __construct () {
         $args = array(
-            'label' => 'Templates',
-            'labels' => array( 'singular_name' => 'Template' ),
+            'label' => 'Pod Templates',
+            'labels' => array( 'singular_name' => 'Pod Template' ),
             'public' => false,
             'show_ui' => true,
             'show_in_menu' => false,

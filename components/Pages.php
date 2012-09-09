@@ -33,8 +33,8 @@ class Pods_Pages extends PodsComponent {
      */
     public function __construct () {
         $args = array(
-            'label' => 'Pages',
-            'labels' => array( 'singular_name' => 'Page' ),
+            'label' => 'Pod Pages',
+            'labels' => array( 'singular_name' => 'Pod Page' ),
             'public' => false,
             'show_ui' => true,
             'show_in_menu' => false,

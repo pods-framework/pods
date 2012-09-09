@@ -7,6 +7,7 @@
  * Version: 2.0
  *
  * Menu Page: edit.php?post_type=_pods_helper
+ * Menu Add Page: post-new.php?post_type=_pods_helper
  *
  * Developer Mode: on
  *

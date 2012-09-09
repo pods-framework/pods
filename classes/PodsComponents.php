@@ -106,7 +106,14 @@ class PodsComponents {
                 if ( isset( $submenu[ $parent ] ) ) {
                     foreach ( $submenu[ $parent ] as $sub => &$menu ) {
                         if ( $menu[ 2 ] == $menu_page ) {
-                            $menu[ 2 ] = $component_data[ 'MenuPage' ];
+                            $menu_page = $component_data[ 'MenuPage' ];
+
+                            if ( !empty( $component_data[ 'MenuAddPage' ] ) ) {
+                                if ( false !== strpos( $_SERVER[ 'REQUEST_URI' ], $component_data[ 'MenuAddPage' ] ) )
+                                    $menu_page = $component_data[ 'MenuAddPage' ];
+                            }
+
+                            $menu[ 2 ] = $menu_page;
 
                             $page = current( explode( '?', $menu[ 2 ] ) );
 
@@ -205,6 +212,7 @@ class PodsComponents {
                 'Name' => 'Name',
                 'MenuName' => 'Menu Name',
                 'MenuPage' => 'Menu Page',
+                'MenuAddPage' => 'Menu Add Page',
                 'Description' => 'Description',
                 'Version' => 'Version',
                 'Author' => 'Author',

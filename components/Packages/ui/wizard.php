@@ -11,7 +11,7 @@
             <?php echo PodsForm::field( 'method', $method, 'hidden' ); ?>
             <?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
 
-            <h2 class="italicized"><?php _e( 'Roles &amp; Capabilities: Add New Role', 'pods' ); ?></h2>
+            <h2 class="italicized"><?php _e( 'Packages: Import and Export', 'pods' ); ?></h2>
 
             <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 

@@ -1277,14 +1277,16 @@ function pods_components () {
  * Include and Init the Pods class
  *
  * @since 2.0.0
- *
- * $pods = pods('bunny', array('orderby' => 't.name',
- *                             'where' => 't.active=1', 'search' => false));
  */
 function pods ( $type = null, $id = null ) {
     require_once( PODS_DIR . 'classes/Pods.php' );
 
-    return new Pods( $type, $id );
+    $pod = new Pods( $type, $id );
+
+    if ( null !== $type && !$pod->valid() )
+        return false;
+
+    return $pod;
 }
 
 /**

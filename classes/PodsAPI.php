@@ -54,7 +54,7 @@ class PodsAPI {
 
             $pod = pods_clean_name( $pod );
 
-            $pod = $this->load_pod( array( 'name' => $pod ) );
+            $pod = $this->load_pod( array( 'name' => $pod ), false );
 
             if ( !empty( $pod ) ) {
                 $this->pod_data = $pod;

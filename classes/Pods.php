@@ -197,6 +197,18 @@ class Pods {
     }
 
     /**
+     * Whether this Pod object is valid or not
+     *
+     * @since 2.0.0
+     */
+    public function valid () {
+        if ( empty( $this->pod_id ) )
+            return false;
+
+        return true;
+    }
+
+    /**
      * Return data array from a find
      *
      * @since 2.0.0

@@ -33,6 +33,23 @@ class Pods_Packages extends PodsComponent {
     }
 
     /**
+     * Count the number of users by role
+     *
+     * @since  2.0.0
+     * 
+     * @param $key role
+     */
+    public function count_users( $key ) {
+        $users = count_users();
+
+        $num_users = isset( $users[ 'avail_roles' ][ $key ] )
+                   ? (int)$users[ 'avail_roles' ][ $key ]
+                   : 0;
+
+        return $num_users;
+    }
+
+    /**
      * Build admin area
      *
      * @param $options
@@ -47,6 +64,7 @@ class Pods_Packages extends PodsComponent {
         $roles = array();
 
         foreach ( $wp_roles->role_objects as $key => $role ) {
+            
             $roles[ $key ] = array(
                 'id' => $key,
                 'label' => $wp_roles->role_names[ $key ],

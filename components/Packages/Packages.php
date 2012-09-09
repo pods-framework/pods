@@ -306,4 +306,21 @@ class Pods_Packages extends PodsComponent {
 
         return true;
     }
+
+    /**
+     * Count the number of users by role
+     *
+     * @since  2.0.0
+     * 
+     * @param $key role
+     */
+    public function count_users( $key ) {
+        $users = count_users();
+
+        $num_users = isset( $users[ 'avail_roles' ][ $key ] )
+                   ? (int)$users[ 'avail_roles' ][ $key ]
+                   : 0;
+
+        return $num_users;
+    }
 }

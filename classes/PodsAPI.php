@@ -2011,7 +2011,7 @@ class PodsAPI {
             }
         }
 
-        $table_fields = $table_formats = $table_values = $update_values = $rel_fields = $rel_field_ids = array();
+        $table_data = $table_formats = $update_values = $rel_fields = $rel_field_ids = array();
 
         $object_type = $pod[ 'type' ];
 
@@ -2067,11 +2067,8 @@ class PodsAPI {
                             $value = json_encode( $value );
                     }
 
-                    $table_fields[] = "`{$field}`";
+                    $table_data[$field] = $value;
                     $table_formats[] = PodsForm::prepare( $type, pods_var( 'options', $options, array() ) );
-                    $table_values[] = $value;
-
-                    $update_values[] = "`{$field}` = VALUES(`{$field}`)";
 
                     $object_meta[ $field ] = $value;
                 }
@@ -2105,17 +2102,12 @@ class PodsAPI {
 
             if ( 'table' == $pod[ 'storage' ] ) {
                 if ( !empty( $params->id ) ) {
-                    array_unshift( $table_fields, '`id`' );
-                    array_unshift( $table_formats, '%d' );
-                    array_unshift( $table_values, $params->id );
+                    $table_data = array('id' => $params->id) + $table_data;
+                    array_unshift($table_formats, '%d');
                 }
 
-                if ( !empty( $table_fields ) ) {
-                    $table_fields = implode( ', ', $table_fields );
-                    $table_formats = implode( ', ', $table_formats );
-                    $update_values = implode(', ', $update_values);
-
-                    $sql = $wpdb->prepare( "INSERT INTO `@wp_pods_tbl_{$params->pod}` ({$table_fields}) VALUES ({$table_formats}) ON DUPLICATE KEY UPDATE {$update_values}", $table_values );
+                if ( !empty( $table_data ) ) {
+                    $sql = insertonduplicate("@wp_pods_tbl_{$params->pod}", $table_data, $table_formats);
 
                     $id = pods_query( $sql, 'Cannot add/save table row' );
 

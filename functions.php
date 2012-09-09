@@ -1589,3 +1589,35 @@ function pods_no_conflict_off ( $object_type = 'post' ) {
 
     return false;
 }
+
+/**
+ * Insert into a table, if unique key exists just update values.
+ *
+ * Data must be a key value pair array, keys act as table rows.
+ *
+ * Returns the prepared query from wpdb or false for errors
+ *
+ * @param $table string Name of the table to update.
+ * @param $data array key => value pairs, keys are column names.
+ * @param $formats array For $wpdb->prepare, either %s or %d.
+ * @return mixed
+ */
+
+function insertonduplicate($table, $data, $formats)
+{
+    global $wpdb;
+
+    $columns = array_keys($data);
+
+    $update = array();
+    foreach ($columns as $column) {
+        $update[] = "`" . $column . "` = VALUES(`" . $column . "`)";
+    }
+    $columns_data = implode('`,`', $columns);
+    $formats = implode(", ", $formats);
+    $update = implode(', ', $update);
+
+    $sql = "INSERT INTO `$table` (`" . $columns_data . "`) VALUES (" . $formats . ") ON DUPLICATE KEY UPDATE $update";
+
+    return $sql;
+}

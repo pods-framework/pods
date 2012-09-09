@@ -50,6 +50,8 @@ class PodsAdmin {
 
         // Add the Pods capabilities
         add_filter( 'members_get_capabilities', array( $this, 'admin_capabilities' ) );
+
+        add_action( 'admin_head-media-upload-popup', array( $this, 'register_media_assets' ) );
     }
 
     /**
@@ -444,6 +446,11 @@ class PodsAdmin {
         $button = '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox" id="add_pod_button" title="Embed Pods"><img src="' . PODS_URL . 'ui/images/icon16.png" alt="Embed Pods" /></a>';
         $context .= $button;
         return $context;
+    }
+
+    function register_media_assets () {
+        if(pods_var_raw('inlineId')=='pods_media_attachment')
+            wp_enqueue_style('pods-attach');
     }
 
     /**

@@ -39,22 +39,6 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
             update_post_meta( $date->ID, 'date_time_format', 'h_mm_ss_A' );
         }
     }
-
-    $number_fields = $wpdb->get_results( "
-            SELECT `p`.`ID`
-            FROM `{$wpdb->posts}` AS `p`
-            LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
-            WHERE
-                `p`.`post_type` = '_pods_field'
-                AND `pm`.`meta_key` = 'type'
-                AND `pm`.`meta_value` = 'number'
-        " );
-
-    if ( !empty( $number_fields ) ) {
-        foreach ( $number_fields as $number ) {
-            update_post_meta( $number->ID, 'number_max_length', '12' );
-        }
-    }
 }
 
 if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-12', '<' ) ) {
@@ -83,6 +67,22 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
     PodsInit::$components->toggle( 'helpers' );
 
     $_GET = $oldget;
+
+    $number_fields = $wpdb->get_results( "
+            SELECT `p`.`ID`
+            FROM `{$wpdb->posts}` AS `p`
+            LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
+            WHERE
+                `p`.`post_type` = '_pods_field'
+                AND `pm`.`meta_key` = 'type'
+                AND `pm`.`meta_value` = 'number'
+        " );
+
+    if ( !empty( $number_fields ) ) {
+        foreach ( $number_fields as $number ) {
+            update_post_meta( $number->ID, 'number_max_length', '12' );
+        }
+    }
 }
 
 function pods_2_alpha_migrate_pods () {

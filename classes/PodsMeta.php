@@ -448,6 +448,11 @@ class PodsMeta {
 
         if ( !empty( $pod ) )
             $pod->save( $data );
+        elseif ( !empty( $id ) ) {
+            foreach ( $data as $field => $value ) {
+                update_post_meta( $id, $field, $value );
+            }
+        }
 
         pods_no_conflict_off( 'post' );
 
@@ -538,6 +543,11 @@ class PodsMeta {
 
         if ( !empty( $pod ) )
             $pod->save( $data );
+        elseif ( !empty( $id ) ) {
+            foreach ( $data as $field => $value ) {
+                update_post_meta( $id, $field, $value );
+            }
+        }
 
         return $post;
     }
@@ -730,6 +740,11 @@ class PodsMeta {
 
         if ( !empty( $pod ) )
             $pod->save( $data );
+        elseif ( !empty( $id ) ) {
+            foreach ( $data as $field => $value ) {
+                update_user_meta( $id, $field, $value );
+            }
+        }
     }
 
     /**
@@ -912,6 +927,11 @@ class PodsMeta {
 
         if ( !empty( $pod ) )
             $pod->save( $data );
+        elseif ( !empty( $id ) ) {
+            foreach ( $data as $field => $value ) {
+                update_comment_meta( $id, $field, $value );
+            }
+        }
     }
 
     /*

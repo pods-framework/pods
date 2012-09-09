@@ -304,7 +304,7 @@ class PodsData {
         $update = array();
 
         foreach ( $columns as $column ) {
-            $update[] = "`{$column}` = VALUES(`{$column}`)";
+            $update[] = "`{$column}` = VALUES( `{$column}` )";
         }
 
         $columns_data = implode( '`, `', $columns );

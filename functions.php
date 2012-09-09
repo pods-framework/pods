@@ -1618,6 +1618,5 @@ function insertonduplicate($table, $data, $formats)
     $update = implode(', ', $update);
 
     $sql = "INSERT INTO `$table` (`" . $columns_data . "`) VALUES (" . $formats . ") ON DUPLICATE KEY UPDATE $update";
-
-    return $sql;
+    return $wpdb->prepare($sql,$data);
 }

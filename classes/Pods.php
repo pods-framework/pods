@@ -118,6 +118,16 @@ class Pods {
 
     public $datatype_id;
 
+    public $page_template;
+
+    public $body_classes;
+
+    public $meta;
+
+    public $meta_properties;
+
+    public $meta_extra;
+
     /**
      * Constructor - Pods Framework core
      *

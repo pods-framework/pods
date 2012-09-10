@@ -56,25 +56,28 @@ class PodsMeta {
         self::$user = $this->api->load_pods( array( 'type' => 'user' ) );
         self::$comment = $this->api->load_pods( array( 'type' => 'comment' ) );
 
-        if ( !empty( self::$post_types ) ) {
-            // Handle Post Type Editor
-            foreach ( self::$post_types as $post_type ) {
-                $post_type_name = $post_type[ 'name' ];
+        // Handle Post Type Editor (needed for Pods core)
 
-                if ( !empty( $post_type[ 'object' ] ) )
-                    $post_type_name = $post_type[ 'object' ];
+        // Loop through and add meta boxes for individual types (can't use this, Tabify doesn't pick it up)
+        /*
+        foreach ( self::$post_types as $post_type ) {
+            $post_type_name = $post_type[ 'name' ];
 
-                add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
-            }
+            if ( !empty( $post_type[ 'object' ] ) )
+                $post_type_name = $post_type[ 'object' ];
 
-            add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
-
-            // Handle *_post_meta
-            add_filter( 'get_post_metadata', array( $this, 'get_post_meta' ), 10, 4 );
-            add_filter( 'add_post_metadata', array( $this, 'add_post_meta' ), 10, 5 );
-            add_filter( 'update_post_metadata', array( $this, 'update_post_meta' ), 10, 5 );
-            add_filter( 'delete_post_metadata', array( $this, 'delete_post_meta' ), 10, 5 );
+            add_action( 'add_meta_boxes_' . $post_type_name, array( $this, 'meta_post_add' ) );
         }
+        */
+
+        add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
+        add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
+
+        // Handle *_post_meta
+        add_filter( 'get_post_metadata', array( $this, 'get_post_meta' ), 10, 4 );
+        add_filter( 'add_post_metadata', array( $this, 'add_post_meta' ), 10, 5 );
+        add_filter( 'update_post_metadata', array( $this, 'update_post_meta' ), 10, 5 );
+        add_filter( 'delete_post_metadata', array( $this, 'delete_post_meta' ), 10, 5 );
 
         if ( !empty( self::$taxonomies ) ) {
             // Handle Taxonomy Editor
@@ -90,8 +93,7 @@ class PodsMeta {
             add_action( 'edit_term', array( $this, 'save_taxonomy' ), 10, 3 );
             add_action( 'create_term', array( $this, 'save_taxonomy' ), 10, 3 );
 
-            // Handle *_term_meta
-            // LOL just kidding
+            // Handle *_term_meta, LOL just kidding
             /*
             add_filter( 'get_term_metadata', array( $this, 'get_term_meta' ), 10, 4 );
             add_filter( 'add_term_metadata', array( $this, 'add_term_meta' ), 10, 5 );
@@ -1048,6 +1050,11 @@ class PodsMeta {
 
         array_unshift( $args, 'post_type' );
 
+        $_null = apply_filters( 'pods_meta_get_post_meta', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
+
         return call_user_func_array( array( $this, 'get_meta' ), $args );
     }
 
@@ -1058,6 +1065,11 @@ class PodsMeta {
         $args = func_get_args();
 
         array_unshift( $args, 'user' );
+
+        $_null = apply_filters( 'pods_meta_get_user_meta', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
 
         return call_user_func_array( array( $this, 'get_meta' ), $args );
     }
@@ -1070,6 +1082,11 @@ class PodsMeta {
 
         array_unshift( $args, 'comment' );
 
+        $_null = apply_filters( 'pods_meta_get_comment_meta', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
+
         return call_user_func_array( array( $this, 'get_meta' ), $args );
     }
 
@@ -1080,6 +1097,11 @@ class PodsMeta {
         $args = func_get_args();
 
         array_unshift( $args, 'post_type' );
+
+        $_null = apply_filters( 'pods_meta_add_post_meta', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
 
         return call_user_func_array( array( $this, 'add_meta' ), $args );
     }
@@ -1092,6 +1114,11 @@ class PodsMeta {
 
         array_unshift( $args, 'user' );
 
+        $_null = apply_filters( 'pods_meta_add_user_meta', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
+
         return call_user_func_array( array( $this, 'add_meta' ), $args );
     }
 
@@ -1102,6 +1129,11 @@ class PodsMeta {
         $args = func_get_args();
 
         array_unshift( $args, 'comment' );
+
+        $_null = apply_filters( 'pods_meta_add_comment_meta', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
 
         return call_user_func_array( array( $this, 'add_meta' ), $args );
     }
@@ -1114,6 +1146,11 @@ class PodsMeta {
 
         array_unshift( $args, 'post_type' );
 
+        $_null = apply_filters( 'pods_meta_update_post_meta', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
+
         return call_user_func_array( array( $this, 'update_meta' ), $args );
     }
 
@@ -1124,6 +1161,11 @@ class PodsMeta {
         $args = func_get_args();
 
         array_unshift( $args, 'user' );
+
+        $_null = apply_filters( 'pods_meta_update_user_meta', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
 
         return call_user_func_array( array( $this, 'update_meta' ), $args );
     }
@@ -1136,6 +1178,11 @@ class PodsMeta {
 
         array_unshift( $args, 'comment' );
 
+        $_null = apply_filters( 'pods_meta_update_comment_meta', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
+
         return call_user_func_array( array( $this, 'update_meta' ), $args );
     }
 
@@ -1146,6 +1193,11 @@ class PodsMeta {
         $args = func_get_args();
 
         array_unshift( $args, 'post_type' );
+
+        $_null = apply_filters( 'pods_meta_delete_post_meta', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
 
         return call_user_func_array( array( $this, 'delete_meta' ), $args );
     }
@@ -1158,6 +1210,11 @@ class PodsMeta {
 
         array_unshift( $args, 'user' );
 
+        $_null = apply_filters( 'pods_meta_delete_user_meta', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
+
         return call_user_func_array( array( $this, 'delete_meta' ), $args );
     }
 
@@ -1168,6 +1225,11 @@ class PodsMeta {
         $args = func_get_args();
 
         array_unshift( $args, 'comment' );
+
+        $_null = apply_filters( 'pods_meta_delete_comment_meta', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
 
         return call_user_func_array( array( $this, 'delete_meta' ), $args );
     }

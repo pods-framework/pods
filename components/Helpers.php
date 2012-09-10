@@ -52,7 +52,12 @@ class Pods_Helpers extends PodsComponent {
         register_post_type( '_pods_helper', apply_filters( 'pods_internal_register_post_type_object_helper', $args ) );
 
         add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
-        add_action( 'pods_meta_save_post__pods_template', array( $this, 'clear_cache' ), 10, 5 );
+
+        add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
+        add_filter( 'pods_meta_get_post_meta', array( $this, 'get_meta' ), 10, 2 );
+        add_filter( 'pods_meta_update_post_meta', array( $this, 'save_meta' ), 10, 2 );
+
+        add_action( 'pods_meta_save_post__pods_helper', array( $this, 'clear_cache' ), 10, 5 );
         add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
     }
 
@@ -104,8 +109,6 @@ class Pods_Helpers extends PodsComponent {
             return;
 
         add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
-
-        $this->add_meta_boxes();
     }
 
     /**
@@ -119,6 +122,9 @@ class Pods_Helpers extends PodsComponent {
             'type' => 'post_type'
         );
 
+        if ( isset( PodsMeta::$post_types[ $pod[ 'name' ] ] ) )
+            return;
+
         $fields = array(
             array(
                 'name' => 'code',
@@ -131,53 +137,44 @@ class Pods_Helpers extends PodsComponent {
         );
 
         pods_group_add( $pod, __( 'Helper', 'pods' ), $fields, 'normal', 'high' );
-
-        add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 9, 5 );
-        add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 9, 4 );
-    }
-
-    /**
-     * Save the fields
-     *
-     * @param $object_type
-     * @param null $_null
-     * @param int $object_id
-     * @param string $meta_key
-     * @param string $meta_value
-     * @param string $prev_value
-     *
-     * @return bool|int|null
-     */
-    public function save_meta ( $_null = null, $object_id = 0, $meta_key = '', $meta_value = '', $prev_value = '' ) {
-        if ( 'code' == $meta_key ) {
-            $postdata = array(
-                'ID' => $object_id,
-                'post_content' => $meta_value
-            );
-
-            wp_update_post( $postdata );
-
-            return true;
-        }
-
-        return $_null;
     }
 
     /**
      * Get the fields
      *
      * @param null $_null
-     * @param int $object_id
-     * @param string $meta_key
-     * @param bool $single
+     * @param array $args
      *
      * @return array|bool|int|mixed|null|string|void
      */
-    public function get_meta ( $_null = null, $object_id = 0, $meta_key = '', $single = false ) {
-        if ( 'code' == $meta_key ) {
-            $post = get_post( $object_id );
+    public function get_meta ( $_null = null, $args = null ) {
+        if ( 'code' == $args[ 2 ] ) {
+            $post = get_post( $args[ 1 ] );
 
             return $post->post_content;
+        }
+
+        return $_null;
+    }
+
+    /**
+     * Save the fields
+     *
+     * @param $object_type
+     * @param array $args
+     *
+     * @return bool|int|null
+     */
+    public function save_meta ( $_null = null, $args = null ) {
+        if ( 'code' == $args[ 2 ] ) {
+            $postdata = array(
+                'ID' => $args[ 1 ],
+                'post_content' => $args[ 3 ]
+            );
+
+            wp_update_post( $postdata );
+
+            return true;
         }
 
         return $_null;
@@ -231,10 +228,12 @@ class Pods_Helpers extends PodsComponent {
         ob_start();
 
         if ( !empty( $helper ) && !empty( $helper[ 'code' ] ) ) {
+            $code = $helper[ 'code' ];
+
             if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL )
-                eval( "?>{$helper['code']}" );
+                eval( "?>{$code}" );
             else
-                echo $helper[ 'code' ];
+                echo $code;
         }
         elseif ( is_callable( (string) $params->helper ) )
             echo call_user_func( (string) $params->helper, $params->value, $params->name, $params, $obj );

@@ -55,8 +55,22 @@ class Pods_Pages extends PodsComponent {
             add_action( 'init', array( $this, 'page_check' ), 12 );
 
         add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
+
+        add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
+        add_filter( 'pods_meta_get_post_meta', array( $this, 'get_meta' ), 10, 2 );
+        add_filter( 'pods_meta_update_post_meta', array( $this, 'save_meta' ), 10, 2 );
+
         add_action( 'pods_meta_save_post__pods_page', array( $this, 'clear_cache' ), 10, 5 );
         add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
+    }
+
+    /**
+     * Admin Init
+     *
+     * @since 2.0.0
+     */
+    public function admin_init() {
+
     }
 
     /**
@@ -107,8 +121,6 @@ class Pods_Pages extends PodsComponent {
             return;
 
         add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
-
-        $this->add_meta_boxes();
     }
 
     /**
@@ -122,13 +134,20 @@ class Pods_Pages extends PodsComponent {
             'type' => 'post_type'
         );
 
+        if ( isset( PodsMeta::$post_types[ $pod[ 'name' ] ] ) )
+            return;
+
         $page_templates = apply_filters( 'pods_page_templates', get_page_templates() );
 
-        if ( !in_array( 'page.php', $page_templates ) && locate_template( array( 'page.php', false ) ) ) {
+        $page_templates[ __( '-- Page Template --', 'pods' ) ] = '';
+
+        if ( !in_array( 'pods.php', $page_templates ) && locate_template( array( 'pods.php', false ) ) )
+            $page_templates[ 'Pods (Pods Default)' ] = 'pods.php';
+
+        if ( !in_array( 'page.php', $page_templates ) && locate_template( array( 'page.php', false ) ) )
             $page_templates[ 'Page (WP Default)' ] = 'page.php';
 
-            ksort( $page_templates );
-        }
+        ksort( $page_templates );
 
         $page_templates = array_flip( $page_templates );
 
@@ -139,7 +158,7 @@ class Pods_Pages extends PodsComponent {
                 'type' => 'text'
             ),
             array(
-                'name' => 'phpcode',
+                'name' => 'code',
                 'label' => __( 'Page Code', 'pods' ),
                 'type' => 'paragraph',
                 'options' => array(
@@ -163,52 +182,44 @@ class Pods_Pages extends PodsComponent {
         );
 
         pods_group_add( $pod, __( 'Page', 'pods' ), $fields, 'normal', 'high' );
-
-        add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 9, 5 );
-        add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 9, 4 );
-    }
-
-    /**
-     * Save the fields
-     *
-     * @param null $_null
-     * @param int $object_id
-     * @param string $meta_key
-     * @param string $meta_value
-     * @param string $prev_value
-     *
-     * @return bool|int|null
-     */
-    public function save_meta ( $_null = null, $object_id = 0, $meta_key = '', $meta_value = '', $prev_value = '' ) {
-        if ( 'phpcode' == $meta_key ) {
-            $postdata = array(
-                'ID' => $object_id,
-                'post_content' => $meta_value
-            );
-
-            wp_update_post( $postdata );
-
-            return true;
-        }
-
-        return $_null;
     }
 
     /**
      * Get the fields
      *
      * @param null $_null
-     * @param int $object_id
-     * @param string $meta_key
-     * @param bool $single
+     * @param array $args
      *
      * @return array|bool|int|mixed|null|string|void
      */
-    public function get_meta ( $_null = null, $object_id = 0, $meta_key = '', $single = false ) {
-        if ( 'phpcode' == $meta_key ) {
-            $post = get_post( $object_id );
+    public function get_meta( $_null = null, $args = null ) {
+        if ( 'code' == $args[ 2 ] ) {
+            $post = get_post( $args[ 1 ] );
 
             return $post->post_content;
+        }
+
+        return $_null;
+    }
+
+    /**
+     * Save the fields
+     *
+     * @param $object_type
+     * @param array $args
+     *
+     * @return bool|int|null
+     */
+    public function save_meta( $_null = null, $args = null ) {
+        if ( 'code' == $args[ 2 ] ) {
+            $postdata = array(
+                'ID' => $args[ 1 ],
+                'post_content' => $args[ 3 ]
+            );
+
+            wp_update_post( $postdata );
+
+            return true;
         }
 
         return $_null;
@@ -252,8 +263,8 @@ class Pods_Pages extends PodsComponent {
         $content = false;
 
         if ( false !== self::$exists ) {
-            if ( 0 < strlen( trim( self::$exists[ 'phpcode' ] ) ) )
-                $content = self::$exists[ 'phpcode' ];
+            if ( 0 < strlen( trim( self::$exists[ 'code' ] ) ) )
+                $content = self::$exists[ 'code' ];
 
             ob_start();
 
@@ -336,7 +347,8 @@ class Pods_Pages extends PodsComponent {
             $object = array(
                 'ID' => $_object[ 'ID' ],
                 'uri' => $_object[ 'post_title' ],
-                'phpcode' => get_post_meta( $_object[ 'ID' ], 'phpcode', true ),
+                'code' => $_object[ 'post_content' ],
+                'phpcode' => $_object[ 'post_content' ], // deprecated
                 'precode' => get_post_meta( $_object[ 'ID' ], 'precode', true ),
                 'page_template' => get_post_meta( $_object[ 'ID' ], 'page_template', true ),
                 'title' => get_post_meta( $_object[ 'ID' ], 'page_title', true )

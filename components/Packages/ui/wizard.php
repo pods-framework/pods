@@ -100,7 +100,7 @@
 
                                         $exportables = array(
                                             'pods' => array(
-                                                'label' => 'Pods',
+                                                'label' => __( 'Pods &amp; Fields', 'pods' ),
                                                 'help' => __( 'help', 'pods' ),
                                                 'data' => $data
                                             )
@@ -145,6 +145,7 @@
         </div>
     </form>
 </div>
+
 <script type="text/javascript">
     var pods_admin_submit_callback = function ( id ) {
         id = parseInt( id );

@@ -2107,12 +2107,12 @@ class PodsAPI {
 
             if ( 'table' == $pod[ 'storage' ] ) {
                 if ( !empty( $params->id ) ) {
-                    $table_data = array('id' => $params->id) + $table_data;
-                    array_unshift($table_formats, '%d');
+                    $table_data = array( 'id' => $params->id ) + $table_data;
+                    array_unshift( $table_formats, '%d' );
                 }
 
                 if ( !empty( $table_data ) ) {
-                    $sql = PodsData::insert_on_duplicate("@wp_pods_{$params->pod}", $table_data, $table_formats);
+                    $sql = PodsData::insert_on_duplicate( "@wp_pods_{$params->pod}", $table_data, $table_formats );
 
                     $id = pods_query( $sql, 'Cannot add/save table row' );
 

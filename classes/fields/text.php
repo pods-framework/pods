@@ -195,8 +195,17 @@ class PodsField_Text extends PodsField {
      * @since 2.0.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        if ( 1 == pods_var( 'text_allow_shortcode', $options ) )
-            $value = do_shortcode( $value );
+        if ( 'plain' == pods_var( 'text_format_type', $options ) ) {
+            if ( 1 == pods_var( 'text_allow_html', $options ) ) {
+                if ( 0 < strlen( pods_var( 'text_allowed_html_tags', $options ) ) )
+                    $value = strip_tags( $value, pods_var( 'text_allowed_html_tags', $options ) );
+            }
+            else
+                $value = strip_tags( $value );
+
+            if ( 1 == pods_var( 'text_allow_shortcode', $options ) )
+                $value = do_shortcode( $value );
+        }
 
         return $value;
     }

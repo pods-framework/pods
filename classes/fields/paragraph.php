@@ -135,6 +135,13 @@ class PodsField_Paragraph extends PodsField {
      * @since 2.0.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+        if ( 1 == pods_var( 'paragraph_allow_html', $options ) || 'plain' != pods_var( 'paragraph_format_type', $options, 'plain' ) ) {
+            if ( 0 < strlen( pods_var( 'paragraph_allowed_html_tags', $options ) ) )
+                $value = strip_tags( $value, pods_var( 'paragraph_allowed_html_tags', $options ) );
+        }
+        else
+            $value = strip_tags( $value );
+
         if ( 1 == pods_var( 'paragraph_allow_shortcode', $options, 0 ) )
             $value = do_shortcode( $value );
 

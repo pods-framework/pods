@@ -153,7 +153,6 @@ class PodsMeta {
     public function group_add ( $pod, $label, $fields, $context = 'normal', $priority = 'default' ) {
         $defaults = array(
             'name' => '',
-            'object' => 'post',
             'type' => 'post_type'
         );
 
@@ -162,9 +161,9 @@ class PodsMeta {
         else
             $pod = array_merge( $defaults, $pod );
 
-        if ( empty( $pod[ 'name' ] ) )
+        if ( empty( $pod[ 'name' ] ) && isset( $pod[ 'object' ] ) && !empty( $pod[ 'object' ] ) )
             $pod[ 'name' ] = $pod[ 'object' ];
-        elseif ( empty( $pod[ 'object' ] ) )
+        elseif ( !isset( $pod[ 'object' ] ) || empty( $pod[ 'object' ] ) )
             $pod[ 'object' ] = $pod[ 'name' ];
 
         if ( empty( $pod[ 'object' ] ) )

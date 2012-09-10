@@ -413,8 +413,13 @@ class PodsMeta {
 
                 if ( !empty( $pod ) )
                     $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
-                elseif ( !empty( $id ) )
+                elseif ( !empty( $id ) ) {
+                    pods_no_conflict_on( 'post' );
+
                     $value = get_post_meta( $id, $field[ 'name' ], true );
+
+                    pods_no_conflict_off( 'post' );
+                }
         ?>
             <tr class="form-field">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
@@ -483,9 +488,13 @@ class PodsMeta {
         if ( !empty( $pod ) )
             $pod->save( $data );
         elseif ( !empty( $id ) ) {
+            pods_no_conflict_on( 'post' );
+
             foreach ( $data as $field => $value ) {
                 update_post_meta( $id, $field, $value );
             }
+
+            pods_no_conflict_off( 'post' );
         }
 
         pods_no_conflict_off( 'post' );
@@ -525,8 +534,13 @@ class PodsMeta {
 
                 if ( !empty( $pod ) )
                     $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
-                elseif ( !empty( $id ) )
+                elseif ( !empty( $id ) ) {
+                    pods_no_conflict_on( 'post' );
+
                     $value = get_post_meta( $id, $field[ 'name' ], true );
+
+                    pods_no_conflict_off( 'post' );
+                }
 
                 $form_fields[ 'pods_meta_' . $field[ 'name' ] ] = array(
                     'label' => $field[ 'label' ],
@@ -580,9 +594,13 @@ class PodsMeta {
         if ( !empty( $pod ) )
             $pod->save( $data );
         elseif ( !empty( $id ) ) {
+            pods_no_conflict_on( 'post' );
+
             foreach ( $data as $field => $value ) {
                 update_post_meta( $id, $field, $value );
             }
+
+            pods_no_conflict_off( 'post' );
         }
 
         return $post;
@@ -724,8 +742,13 @@ class PodsMeta {
 
                     if ( !empty( $pod ) )
                         $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
-                    elseif ( !empty( $id ) )
+                    elseif ( !empty( $id ) ) {
+                        pods_no_conflict_on( 'user' );
+
                         $value = get_user_meta( $id, $field[ 'name' ], true );
+
+                        pods_no_conflict_off( 'user' );
+                    }
             ?>
                 <tr class="form-field">
                     <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
@@ -779,9 +802,13 @@ class PodsMeta {
         if ( !empty( $pod ) )
             $pod->save( $data );
         elseif ( !empty( $id ) ) {
+            pods_no_conflict_on( 'user' );
+
             foreach ( $data as $field => $value ) {
                 update_user_meta( $id, $field, $value );
             }
+
+            pods_no_conflict_off( 'user' );
         }
     }
 
@@ -809,8 +836,13 @@ class PodsMeta {
 
                 if ( !empty( $pod ) )
                     $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
-                elseif ( !empty( $id ) )
+                elseif ( !empty( $id ) ) {
+                    pods_no_conflict_on( 'comment' );
+
                     $value = get_comment_meta( $id, $field[ 'name' ], true );
+
+                    pods_no_conflict_off( 'comment' );
+                }
 ?>
     <p class="comment-form-author comment-form-pods-meta-<?php echo $field[ 'name' ]; ?>">
         <?php
@@ -848,8 +880,13 @@ class PodsMeta {
 
                 if ( !empty( $pod ) )
                     $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
-                elseif ( !empty( $id ) )
+                elseif ( !empty( $id ) ) {
+                    pods_no_conflict_on( 'comment' );
+
                     $value = get_comment_meta( $id, $field[ 'name' ], true );
+
+                    pods_no_conflict_off( 'comment' );
+                }
 
                 ob_start();
 ?>
@@ -970,9 +1007,13 @@ class PodsMeta {
         if ( !empty( $pod ) )
             $pod->save( $data );
         elseif ( !empty( $id ) ) {
+            pods_no_conflict_on( 'comment' );
+
             foreach ( $data as $field => $value ) {
                 update_comment_meta( $id, $field, $value );
             }
+
+            pods_no_conflict_off( 'comment' );
         }
     }
 

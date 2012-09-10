@@ -26,6 +26,11 @@ class PodsAPI {
 
     /**
      * @var
+     */
+    public $fields;
+
+    /**
+     * @var
      * @deprecated 2.0.0
      */
     public $format = null;

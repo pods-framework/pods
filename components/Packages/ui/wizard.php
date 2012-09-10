@@ -27,7 +27,7 @@
                             <em></em>
                         </li>
                         <li data-step="3">
-                            <i></i> <span>2</span> <?php _e( 'Process', 'pods' ); ?>
+                            <i></i> <span>3</span> <?php _e( 'Process', 'pods' ); ?>
                             <em></em>
                         </li>
                     </ul>
@@ -35,29 +35,31 @@
                 <div id="pods-wizard-main">
                     <div id="pods-wizard-panel-1" class="pods-wizard-panel">
                         <div class="pods-wizard-content">
-                            <p><?php _e( 'Roles allow you to specify which capabilities a user should be able to do within WordPress.', 'pods' ); ?></p>
+                            <p><?php _e( 'Packages allow you to import and export your Pods, Fields, and other settings between different Pods sites.', 'pods' ); ?></p>
                         </div>
 
-                        <div class="stuffbox">
-                            <h3><label for="link_name"><?php _e( 'Name your new Role', 'pods' ); ?></label></h3>
+                        <div id="pods-wizard-options">
+                            <div class="pods-wizard-option">
+                                <a href="#pods-wizard-import" data-opt="create">
+                                    <h2><?php _e( 'Import', 'pods' ); ?></h2>
 
-                            <div class="inside pods-manage-field">
-                                <div class="pods-field-option">
-                                    <?php
-                                    echo PodsForm::label( 'role_label', __( 'Label', 'pods' ), __( 'Users will see this as the name of their role', 'pods' ) );
-                                    echo PodsForm::field( 'role_label', pods_var_raw( 'role_label', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required' ) );
-                                    ?>
-                                </div>
+                                    <p><?php _e( 'Provide the Package code that was exported from another site, to be imported into this Pods site.', 'pods' ); ?></p>
+                                </a>
 
-                                <div class="pods-field-option">
-                                    <?php
-                                    echo PodsForm::label( 'role_name', __( 'Name', 'pods' ), __( 'You will use this name to programatically reference this role throughout WordPress', 'pods' ) );
-                                    echo PodsForm::field( 'role_name', pods_var_raw( 'role_name', 'post' ), 'db', array( 'attributes' => array( 'data-sluggable' => 'role_label' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
-                                    ?>
-                                </div>
+                                <p><br /></p>
+                            </div>
+                            <div class="pods-wizard-option">
+                                <a href="#pods-wizard-export" data-opt="extend">
+                                    <h2><?php _e( 'Export', 'pods' ); ?></h2>
+
+                                    <p><?php _e( 'Export your Pods, Fields, and other settings into a Package which can be pasted into another Pods site.', 'pods' ); ?></p>
+                                </a>
+
+                                <p><br /></p>
                             </div>
                         </div>
                     </div>
+
                     <div id="pods-wizard-panel-2" class="pods-wizard-panel">
                         <div class="pods-wizard-content">
                             <p><?php _e( 'Choose below which Capabilities you would like this new user role to have.', 'pods' ); ?></p>

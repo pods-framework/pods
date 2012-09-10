@@ -69,9 +69,8 @@ class Pods_Helpers extends PodsComponent {
      *
      * @since 2.0.0
      */
-
     public function set_title_text ( $text, $post ) {
-        return 'Enter helper name here';
+        return __( 'Enter helper name here', 'pods' );
     }
 
     /**
@@ -81,9 +80,12 @@ class Pods_Helpers extends PodsComponent {
      */
     public function edit_page_form () {
         global $post_type;
+
         if ( '_pods_helper' != $post_type )
             return;
+
         add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
+
         $this->add_meta_boxes();
     }
 
@@ -92,20 +94,24 @@ class Pods_Helpers extends PodsComponent {
      *
      * @since 2.0.0
      */
-
     public function add_meta_boxes () {
         $pod = array(
             'name' => '_pods_helper',
             'type' => 'post_type'
         );
+
         $fields = array(
             array(
                 'name' => 'code',
-                'label' => 'Code',
-                'type' => 'paragraph'
+                'label' => __( 'Code', 'pods' ),
+                'type' => 'paragraph',
+                'options' => array(
+                    'paragraph_format_type' => 'codemirror'
+                )
             )
         );
-        pods_group_add( $pod, 'Helper', $fields, 'normal', 'high' );
+
+        pods_group_add( $pod, __( 'Helper', 'pods' ), $fields, 'normal', 'high' );
     }
 
     /**

@@ -55,6 +55,7 @@ class Pods_Pages extends PodsComponent {
 
         if ( !is_admin() )
             add_action( 'init', array( $this, 'page_check' ), 12 );
+
         add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
     }
 
@@ -72,9 +73,8 @@ class Pods_Pages extends PodsComponent {
      *
      * @since 2.0.0
      */
-
     public function set_title_text ( $text, $post ) {
-        return 'Enter URL here';
+        return __( 'Enter URL here', 'pods' );
     }
 
     /**
@@ -84,9 +84,12 @@ class Pods_Pages extends PodsComponent {
      */
     public function edit_page_form () {
         global $post_type;
+
         if ( '_pods_page' != $post_type )
             return;
+
         add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
+
         $this->add_page_meta_boxes();
     }
 
@@ -95,7 +98,6 @@ class Pods_Pages extends PodsComponent {
      *
      * @since 2.0.0
      */
-
     public function add_page_meta_boxes () {
         $pod = array(
             'name' => '_pods_page',
@@ -104,22 +106,28 @@ class Pods_Pages extends PodsComponent {
         $fields = array(
             array(
                 'name' => 'page_title',
-                'label' => 'Page Title',
+                'label' => __( 'Page Title', 'pods' ),
                 'type' => 'text'
             ),
             array(
                 'name' => 'phpcode',
-                'label' => 'Page Code',
-                'type' => 'paragraph'
+                'label' => __( 'Page Code', 'pods' ),
+                'type' => 'paragraph',
+                'options' => array(
+                    'paragraph_format_type' => 'codemirror'
+                )
             ),
             array(
                 'name' => 'precode',
-                'label' => 'Page Pre-Code',
-                'type' => 'paragraph'
+                'label' => __( 'Page Precode', 'pods' ),
+                'type' => 'paragraph',
+                'options' => array(
+                    'paragraph_format_type' => 'codemirror'
+                )
             ),
             array(
                 'name' => 'page_template',
-                'label' => 'Page Template',
+                'label' => __( 'Page Template', 'pods' ),
                 'type' => 'pick',
                 'options' => array(
                     'pick_object' => 'post_type',
@@ -128,7 +136,8 @@ class Pods_Pages extends PodsComponent {
 
             )
         );
-        pods_group_add( $pod, 'Page', $fields, 'normal', 'high' );
+
+        pods_group_add( $pod, __( 'Page', 'pods' ), $fields, 'normal', 'high' );
     }
 
     /**

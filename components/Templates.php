@@ -64,25 +64,53 @@ class Pods_Templates extends PodsComponent {
     }
 
     /**
+     * Change post title placeholder text
+     *
+     * @since 2.0.0
+     */
+    public function set_title_text( $text, $post ) {
+        return __( 'Enter template name here', 'pods' );
+    }
+
+    /**
      * Edit page form
      *
      * @since 2.0.0
      */
     public function edit_page_form () {
         global $post_type;
+
         if( '_pods_template' != $post_type )
         		return;
+
         add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
+
+        $this->add_meta_boxes();
     }
 
     /**
-     * Change post title placeholder text
+     * Add meta boxes to the page
      *
      * @since 2.0.0
      */
+    public function add_meta_boxes() {
+        $pod = array(
+            'name' => '_pods_helper',
+            'type' => 'post_type'
+        );
 
-    public function set_title_text($text, $post) {
-        return 'Enter template name here';
+        $fields = array(
+            array(
+                'name' => 'code',
+                'label' => __( 'Content', 'pods' ),
+                'type' => 'paragraph',
+                'options' => array(
+                    'paragraph_format_type' => 'codemirror'
+                )
+            )
+        );
+
+        pods_group_add( $pod, __( 'Template', 'pods' ), $fields, 'normal', 'high' );
     }
 
     /**

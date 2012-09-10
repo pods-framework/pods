@@ -1432,9 +1432,19 @@ function pods_cache_clear ( $key, $cache_mode = 'cache' ) {
  * @param $pod
  * @param $label
  * @param $fields
+ * @param $context
+ * @param $priority
+ * @param $type
  */
-function pods_group_add ( $pod, $label, $fields ) {
-    pods_meta()->group_add( $pod, $label, $fields );
+function pods_group_add ( $pod, $label, $fields, $context = 'normal', $priority = 'default', $type = null ) {
+    if ( !is_array( $pod ) && null !== $type ) {
+        $pod = array(
+            'name' => $pod,
+            'type' => $type
+        );
+    }
+
+    pods_meta()->group_add( $pod, $label, $fields, $context, $priority );
 }
 
 /**

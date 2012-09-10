@@ -9,8 +9,6 @@
  * Menu Page: edit.php?post_type=_pods_template
  * Menu Add Page: post-new.php?post_type=_pods_template
  *
- * Developer Mode: on
- *
  * @package pods
  * @subpackage templates
  */

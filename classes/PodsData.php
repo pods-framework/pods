@@ -205,10 +205,11 @@ class PodsData {
         if ( null !== $pod ) {
             $this->pod_data =& $this->api->pod_data;
 
-            if ( false === $this->pod_data && true === $strict )
-                return pods_error( 'Pod not found', $this );
-            else
-                return $this;
+            if ( false === $this->pod_data)
+                if(true === $strict )
+                    return pods_error( 'Pod not found', $this );
+                else
+                    return $this;
 
             $this->pod_id = $this->pod_data[ 'id' ];
             $this->pod = $this->pod_data[ 'name' ];

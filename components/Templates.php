@@ -55,6 +55,7 @@ class Pods_Templates extends PodsComponent {
 
         add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
         add_action( 'pods_meta_save_post__pods_template', array( $this, 'clear_cache' ), 10, 5 );
+        add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
     }
 
     /**
@@ -71,9 +72,17 @@ class Pods_Templates extends PodsComponent {
      *
      * @since 2.0.0
      */
-    public function clear_cache ( $data, $pod, $id, $groups, $post ) {
-        delete_transient( 'pods_object_template' );
-        delete_transient( 'pods_object_template_' . $post->post_title );
+    public function clear_cache ( $data, $pod = null, $id = null, $groups = null, $post = null ) {
+        if ( !is_array( $data ) && 0 < $data ) {
+            $post = $data;
+            $post = get_post( $post );
+
+            if ( '__pods_template' != $post->post_type )
+                return;
+        }
+
+        delete_transient( 'pods_object_helper' );
+        delete_transient( 'pods_object_helper_' . $post->post_title );
     }
 
     /**
@@ -81,7 +90,7 @@ class Pods_Templates extends PodsComponent {
      *
      * @since 2.0.0
      */
-    public function set_title_text( $text, $post ) {
+    public function set_title_text ( $text, $post ) {
         return __( 'Enter template name here', 'pods' );
     }
 
@@ -106,7 +115,7 @@ class Pods_Templates extends PodsComponent {
      *
      * @since 2.0.0
      */
-    public function add_meta_boxes() {
+    public function add_meta_boxes () {
         $pod = array(
             'name' => '_pods_helper',
             'type' => 'post_type'

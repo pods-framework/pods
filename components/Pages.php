@@ -58,6 +58,7 @@ class Pods_Pages extends PodsComponent {
 
         add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
         add_action( 'pods_meta_save_post__pods_page', array( $this, 'clear_cache' ), 10, 5 );
+        add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
     }
 
     /**
@@ -65,7 +66,7 @@ class Pods_Pages extends PodsComponent {
      *
      * @since 2.0.0
      */
-    public function admin_assets() {
+    public function admin_assets () {
         wp_enqueue_style( 'pods-admin' );
     }
 
@@ -74,9 +75,17 @@ class Pods_Pages extends PodsComponent {
      *
      * @since 2.0.0
      */
-    public function clear_cache( $data, $pod, $id, $groups, $post ) {
-        delete_transient( 'pods_object_page' );
-        delete_transient( 'pods_object_page_' . $post->post_title );
+    public function clear_cache ( $data, $pod = null, $id = null, $groups = null, $post = null ) {
+        if ( !is_array( $data ) && 0 < $data ) {
+            $post = $data;
+            $post = get_post( $post );
+
+            if ( '__pods_template' != $post->post_type )
+                return;
+        }
+
+        delete_transient( 'pods_object_helper' );
+        delete_transient( 'pods_object_helper_' . $post->post_title );
     }
 
     /**
@@ -101,7 +110,7 @@ class Pods_Pages extends PodsComponent {
 
         add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
 
-        $this->add_page_meta_boxes();
+        $this->add_meta_boxes();
     }
 
     /**
@@ -109,7 +118,7 @@ class Pods_Pages extends PodsComponent {
      *
      * @since 2.0.0
      */
-    public function add_page_meta_boxes () {
+    public function add_meta_boxes () {
         $pod = array(
             'name' => '_pods_page',
             'type' => 'post_type'

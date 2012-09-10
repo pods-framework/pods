@@ -139,7 +139,7 @@ class PodsField_Paragraph extends PodsField {
             $allowed_html_tags = '';
 
             if ( 0 < strlen( pods_var( 'paragraph_allowed_html_tags', $options ) ) ) {
-                $allowed_html_tags = explode( ' ', trim ( pods_var( 'paragraph_allowed_html_tags', $options ) ) );
+                $allowed_html_tags = explode( ' ', trim( pods_var( 'paragraph_allowed_html_tags', $options ) ) );
                 $allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
             }
 

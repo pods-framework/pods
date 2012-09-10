@@ -1229,8 +1229,17 @@ class PodsMeta {
 
         if ( !empty( $meta_cache ) && isset( $meta_cache[ $meta_key ][ $field ] ) )
             $value = $meta_cache[ $meta_key ][ $field ];
-        else
-            $meta_cache[ $meta_key ] = $value = pods( $object[ 'name' ], $object_id )->field( $meta_key, $single );
+        else {
+            $pod = pods( $object[ 'name' ], $object_id );
+
+            if ( !empty( $pod ) )
+                $meta_cache[ $meta_key ] = $value = $pod->field( $meta_key, $single );
+            else {
+                pods_no_conflict_off( $meta_type );
+
+                return null;
+            }
+        }
 
         if ( !$single )
             wp_cache_add( $object_id, $meta_cache, $meta_type . '_meta' );

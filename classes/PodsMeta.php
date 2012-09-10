@@ -492,7 +492,8 @@ class PodsMeta {
 
         pods_no_conflict_off( 'post' );
 
-        do_action( 'pods_meta_save_post', $data, $pod, $id, $groups );
+        do_action( 'pods_meta_save_post', $data, $pod, $id, $groups, $post, $post->post_type );
+        do_action( "pods_meta_save_post_{$post->post_type}", $data, $pod, $id, $groups, $post );
 
         return $post_id;
     }
@@ -598,7 +599,7 @@ class PodsMeta {
 
         pods_no_conflict_off( 'post' );
 
-        do_action( 'pods_meta_save_media', $data, $pod, $id, $groups );
+        do_action( 'pods_meta_save_media', $data, $pod, $id, $groups, $post, $attachment );
 
         return $post;
     }
@@ -704,7 +705,8 @@ class PodsMeta {
         if ( !empty( $pod ) )
             $pod->save( $data );
 
-        do_action( 'pods_meta_save_taxonomy', $data, $pod, $id, $groups );
+        do_action( 'pods_meta_save_taxonomy', $data, $pod, $id, $groups, $term_id, $term_taxonomy_id, $taxonomy );
+        do_action( "pods_meta_save_taxonomy_{$taxonomy}", $data, $pod, $id, $groups, $term_id, $term_taxonomy_id, $taxonomy );
     }
 
     /**

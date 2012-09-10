@@ -57,6 +57,7 @@ class Pods_Pages extends PodsComponent {
             add_action( 'init', array( $this, 'page_check' ), 12 );
 
         add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
+        add_action( 'pods_meta_save_post__pods_page', array( $this, 'clear_cache' ), 10, 5 );
     }
 
     /**
@@ -64,8 +65,18 @@ class Pods_Pages extends PodsComponent {
      *
      * @since 2.0.0
      */
-    public function admin_assets () {
+    public function admin_assets() {
         wp_enqueue_style( 'pods-admin' );
+    }
+
+    /**
+     * Clear cache on save
+     *
+     * @since 2.0.0
+     */
+    public function clear_cache( $data, $pod, $id, $groups, $post ) {
+        delete_transient( 'pods_object_page' );
+        delete_transient( 'pods_object_page_' . $post->post_title );
     }
 
     /**

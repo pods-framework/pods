@@ -50,8 +50,11 @@ class Pods_Templates extends PodsComponent {
             $args[ 'capability_type' ] = 'pods_template';
 
         $args = PodsInit::object_label_fix( $args, 'post_type' );
+
         register_post_type( '_pods_template', apply_filters( 'pods_internal_register_post_type_object_template', $args ) );
+
         add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
+        add_action( 'pods_meta_save_post__pods_template', array( $this, 'clear_cache' ), 10, 5 );
     }
 
     /**
@@ -61,6 +64,16 @@ class Pods_Templates extends PodsComponent {
      */
     public function admin_assets () {
         wp_enqueue_style( 'pods-admin' );
+    }
+
+    /**
+     * Clear cache on save
+     *
+     * @since 2.0.0
+     */
+    public function clear_cache ( $data, $pod, $id, $groups, $post ) {
+        delete_transient( 'pods_object_template' );
+        delete_transient( 'pods_object_template_' . $post->post_title );
     }
 
     /**

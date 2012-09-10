@@ -25,6 +25,15 @@ class Pods_Templates extends PodsComponent {
     static $obj = null;
 
     /**
+     * Object type
+     *
+     * @var string
+     *
+     * @since 2.0.0
+     */
+    private $object_type = '_pods_template';
+
+    /**
      * Do things like register/enqueue scripts and stylesheets
      *
      * @since 2.0.0
@@ -49,7 +58,7 @@ class Pods_Templates extends PodsComponent {
 
         $args = PodsInit::object_label_fix( $args, 'post_type' );
 
-        register_post_type( '_pods_template', apply_filters( 'pods_internal_register_post_type_object_template', $args ) );
+        register_post_type( $this->object_type, apply_filters( 'pods_internal_register_post_type_object_template', $args ) );
 
         add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
 
@@ -80,7 +89,7 @@ class Pods_Templates extends PodsComponent {
             $post = $data;
             $post = get_post( $post );
 
-            if ( '_pods_template' != $post->post_type )
+            if ( $this->object_type != $post->post_type )
                 return;
         }
 
@@ -105,7 +114,7 @@ class Pods_Templates extends PodsComponent {
     public function edit_page_form () {
         global $post_type;
 
-        if ( '_pods_template' != $post_type )
+        if ( $this->object_type != $post_type )
             return;
 
         add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
@@ -118,7 +127,7 @@ class Pods_Templates extends PodsComponent {
      */
     public function add_meta_boxes () {
         $pod = array(
-            'name' => '_pods_template',
+            'name' => $this->object_type,
             'type' => 'post_type'
         );
 
@@ -154,7 +163,8 @@ class Pods_Templates extends PodsComponent {
         if ( 'code' == $args[ 2 ] ) {
             $post = get_post( $args[ 1 ] );
 
-            return $post->post_content;
+            if ( $this->object_type == $post->post_type )
+                return $post->post_content;
         }
 
         return $_null;
@@ -170,14 +180,18 @@ class Pods_Templates extends PodsComponent {
      */
     public function save_meta ( $_null = null, $args = null ) {
         if ( 'code' == $args[ 2 ] ) {
-            $postdata = array(
-                'ID' => $args[ 1 ],
-                'post_content' => $args[ 3 ]
-            );
+            $post = get_post( $args[ 1 ] );
 
-            wp_update_post( $postdata );
+            if ( $this->object_type == $post->post_type ) {
+                $postdata = array(
+                    'ID' => $args[ 1 ],
+                    'post_content' => $args[ 3 ]
+                );
 
-            return true;
+                wp_update_post( $postdata );
+
+                return true;
+            }
         }
 
         return $_null;

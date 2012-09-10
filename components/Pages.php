@@ -165,12 +165,12 @@ class Pods_Pages extends PodsComponent {
         pods_group_add( $pod, __( 'Page', 'pods' ), $fields, 'normal', 'high' );
 
         add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 9, 5 );
+        add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 9, 4 );
     }
 
     /**
      * Save the fields
      *
-     * @param $object_type
      * @param null $_null
      * @param int $object_id
      * @param string $meta_key
@@ -189,6 +189,26 @@ class Pods_Pages extends PodsComponent {
             wp_update_post( $postdata );
 
             return true;
+        }
+
+        return $_null;
+    }
+
+    /**
+     * Get the fields
+     *
+     * @param null $_null
+     * @param int $object_id
+     * @param string $meta_key
+     * @param bool $single
+     *
+     * @return array|bool|int|mixed|null|string|void
+     */
+    public function get_meta ( $_null = null, $object_id = 0, $meta_key = '', $single = false ) {
+        if ( 'phpcode' == $meta_key ) {
+            $post = get_post( $object_id );
+
+            return $post->post_content;
         }
 
         return $_null;

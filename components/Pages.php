@@ -333,7 +333,16 @@ class Pods_Pages extends PodsComponent {
             return false;
 
         // See if the custom template exists
-        $sql = "SELECT * FROM `@wp_posts` WHERE `post_type` = '_pods_page' AND `post_title` = %s LIMIT 1";
+        $sql = "
+                SELECT *
+                FROM `@wp_posts`
+                WHERE
+                    `post_type` = '_pods_page'
+                    AND `post_status` = 'publish'
+                    AND `post_title` = %s
+                LIMIT 1
+            ";
+
         $sql = array( $sql, array( $uri ) );
 
         $result = pods_query( $sql );
@@ -345,11 +354,13 @@ class Pods_Pages extends PodsComponent {
                     FROM `@wp_posts`
                     WHERE
                         `post_type` = '_pods_page'
+                        AND `post_status` = 'publish'
                         AND %s LIKE REPLACE(`post_title`, '*', '%%')
                         AND (LENGTH(`post_title`) - LENGTH(REPLACE(`post_title`, '/', ''))) = %d
                     ORDER BY LENGTH(`post_title`) DESC, `post_title` DESC
                     LIMIT 1
                 ";
+
             $sql = array( $sql, array( $uri, $uri_depth ) );
 
             $result = pods_query( $sql );
@@ -460,7 +471,7 @@ class Pods_Pages extends PodsComponent {
             if ( is_object( $pods ) && !is_wp_error( $pods ) )
                 $page_title = preg_replace_callback( "/({@(.*?)})/m", array( $pods, "parse_magic_tags" ), $page_title );
 
-            $title = ( 'right' == $seplocation ) ? $page_title . " $sep " : " $sep " . $page_title;
+            $title = ( 'right' == $seplocation ) ? "{$page_title} {$sep} " : " {$sep} {$page_title}";
         }
         else {
             $uri = explode( '?', $_SERVER[ 'REQUEST_URI' ] );
@@ -471,14 +482,14 @@ class Pods_Pages extends PodsComponent {
             $title = '';
 
             foreach ( $uri as $key => $page_title ) {
-                $title .= ( 'right' == $seplocation ) ? ucwords( $page_title ) . " $sep " : " $sep " . ucwords( $page_title );
+                $title .= ( 'right' == $seplocation ) ? ucwords( $page_title ) . " {$sep} " : " {$sep} " . ucwords( $page_title );
             }
         }
 
         if ( ( !defined( 'PODS_DISABLE_META' ) || !PODS_DISABLE_META ) && is_object( $pods ) && !is_wp_error( $pods ) && isset( $pods->meta ) && is_array( $pods->meta ) && isset( $pods->meta[ 'title' ] ) )
             $title = $pods->meta[ 'title' ];
 
-        return apply_filters( 'pods_title', $title, $sep, $seplocation );
+        return apply_filters( 'pods_title', $title, $sep, $seplocation, self::$exists );
     }
 
     /**

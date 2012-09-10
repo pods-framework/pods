@@ -3489,7 +3489,17 @@ class PodsAPI {
             global $wpdb;
 
             if ( isset( $params->name ) ) {
-                $object = $wpdb->get_var( $wpdb->prepare( "SELECT `ID` FROM `{$wpdb->posts}` WHERE `post_title` = %s AND `post_type` = %s LIMIT 1", $params->name, '_pods_' . $params->type ) );
+                $sql = "
+                        SELECT `ID`
+                        FROM `{$wpdb->posts}`
+                        WHERE
+                            `post_type` = %s
+                            AND `post_status` = 'publish'
+                            AND `post_title` = %s
+                        LIMIT 1
+                    ";
+
+                $object = $wpdb->get_var( $wpdb->prepare( $sql, $params->name, '_pods_' . $params->type ) );
 
                 if ( empty( $object ) ) {
                     if ( $strict )

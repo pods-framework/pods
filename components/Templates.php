@@ -50,7 +50,8 @@ class Pods_Templates extends PodsComponent {
             $args[ 'capability_type' ] = 'pods_template';
 
         $args = PodsInit::object_label_fix( $args, 'post_type' );
-       register_post_type( '_pods_template', apply_filters( 'pods_internal_register_post_type_object_template', $args ) );
+        register_post_type( '_pods_template', apply_filters( 'pods_internal_register_post_type_object_template', $args ) );
+        add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
     }
 
     /**
@@ -60,6 +61,28 @@ class Pods_Templates extends PodsComponent {
      */
     public function admin_assets () {
         wp_enqueue_style( 'pods-admin' );
+    }
+
+    /**
+     * Edit page form
+     *
+     * @since 2.0.0
+     */
+    public function edit_page_form () {
+        global $post_type;
+        if( '_pods_template' != $post_type )
+        		return;
+        add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
+    }
+
+    /**
+     * Change post title placeholder text
+     *
+     * @since 2.0.0
+     */
+
+    public function set_title_text($text, $post) {
+        return 'Enter template name here';
     }
 
     /**
@@ -95,7 +118,7 @@ class Pods_Templates extends PodsComponent {
         if ( !empty( $code ) ) {
             // Only detail templates need $this->id
             if ( empty( $obj->id ) ) {
-                while ($obj->fetch()) {
+                while ( $obj->fetch() ) {
                     echo self::do_template( $code );
                 }
             }

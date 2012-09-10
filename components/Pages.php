@@ -55,6 +55,7 @@ class Pods_Pages extends PodsComponent {
 
         if ( !is_admin() )
             add_action( 'init', array( $this, 'page_check' ), 12 );
+        add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
     }
 
     /**
@@ -64,6 +65,70 @@ class Pods_Pages extends PodsComponent {
      */
     public function admin_assets () {
         wp_enqueue_style( 'pods-admin' );
+    }
+
+    /**
+     * Change post title placeholder text
+     *
+     * @since 2.0.0
+     */
+
+    public function set_title_text ( $text, $post ) {
+        return 'Enter URL here';
+    }
+
+    /**
+     * Edit page form
+     *
+     * @since 2.0.0
+     */
+    public function edit_page_form () {
+        global $post_type;
+        if ( '_pods_page' != $post_type )
+            return;
+        add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
+        $this->add_page_meta_boxes();
+    }
+
+    /**
+     * Add meta boxes to the page
+     *
+     * @since 2.0.0
+     */
+
+    public function add_page_meta_boxes () {
+        $pod = array(
+            'name' => '_pods_page',
+            'type' => 'post_type'
+        );
+        $fields = array(
+            array(
+                'name' => 'page_title',
+                'label' => 'Page Title',
+                'type' => 'text'
+            ),
+            array(
+                'name' => 'phpcode',
+                'label' => 'Page Code',
+                'type' => 'paragraph'
+            ),
+            array(
+                'name' => 'precode',
+                'label' => 'Page Pre-Code',
+                'type' => 'paragraph'
+            ),
+            array(
+                'name' => 'page_template',
+                'label' => 'Page Template',
+                'type' => 'pick',
+                'options' => array(
+                    'pick_object' => 'post_type',
+                    'pick_val' => '_pods_template'
+                )
+
+            )
+        );
+        pods_group_add( $pod, 'Page', $fields, 'normal', 'high' );
     }
 
     /**
@@ -188,7 +253,7 @@ class Pods_Pages extends PodsComponent {
             $object = array(
                 'ID' => $_object[ 'ID' ],
                 'uri' => $_object[ 'post_title' ],
-                'phpcode' => $_object[ 'post_content' ],
+                'phpcode' => get_post_meta( $_object[ 'ID' ], 'phpcode', true ),
                 'precode' => get_post_meta( $_object[ 'ID' ], 'precode', true ),
                 'page_template' => get_post_meta( $_object[ 'ID' ], 'page_template', true ),
                 'title' => get_post_meta( $_object[ 'ID' ], 'page_title', true )

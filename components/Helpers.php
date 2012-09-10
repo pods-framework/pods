@@ -52,6 +52,7 @@ class Pods_Helpers extends PodsComponent {
         $args = PodsInit::object_label_fix( $args, 'post_type' );
 
         register_post_type( '_pods_helper', apply_filters( 'pods_internal_register_post_type_object_helper', $args ) );
+        add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
     }
 
     /**
@@ -61,6 +62,50 @@ class Pods_Helpers extends PodsComponent {
      */
     public function admin_assets () {
         wp_enqueue_style( 'pods-admin' );
+    }
+
+    /**
+     * Change post title placeholder text
+     *
+     * @since 2.0.0
+     */
+
+    public function set_title_text ( $text, $post ) {
+        return 'Enter helper name here';
+    }
+
+    /**
+     * Edit page form
+     *
+     * @since 2.0.0
+     */
+    public function edit_page_form () {
+        global $post_type;
+        if ( '_pods_helper' != $post_type )
+            return;
+        add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
+        $this->add_meta_boxes();
+    }
+
+    /**
+     * Add meta boxes to the page
+     *
+     * @since 2.0.0
+     */
+
+    public function add_meta_boxes () {
+        $pod = array(
+            'name' => '_pods_helper',
+            'type' => 'post_type'
+        );
+        $fields = array(
+            array(
+                'name' => 'code',
+                'label' => 'Code',
+                'type' => 'paragraph'
+            )
+        );
+        pods_group_add( $pod, 'Helper', $fields, 'normal', 'high' );
     }
 
     /**

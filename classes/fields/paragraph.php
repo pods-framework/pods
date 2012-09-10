@@ -240,7 +240,12 @@ class PodsField_Paragraph extends PodsField {
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $options = (array) $options;
 
-        if ( 1 == pods_var( 'paragraph_allow_html', $options ) || 'plain' != pods_var( 'paragraph_format_type', $options, 'plain' ) ) {
+        $paragraph_type = pods_var( 'paragraph_format_type', $options );
+
+        if ( 'codemirror' === $paragraph_type ) {
+            $value = esc_attr( $value );
+        }
+        elseif ( 1 == pods_var( 'paragraph_allow_html', $options ) || 'plain' != $paragraph_type ) {
             $allowed_html_tags = '';
 
             if ( 0 < strlen( pods_var( 'paragraph_allowed_html_tags', $options ) ) ) {
@@ -250,9 +255,6 @@ class PodsField_Paragraph extends PodsField {
 
             if ( !empty( $allowed_html_tags ) && '<>' != $allowed_html_tags )
                 $value = strip_tags( $value, $allowed_html_tags );
-        }
-        else if ( 'codemirror' === pods_var( 'paragraph_format_type', $options ) ) {
-            $value = esc_sql( $value );
         }
         else
             $value = strip_tags( $value );

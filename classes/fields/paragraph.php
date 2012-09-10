@@ -251,6 +251,9 @@ class PodsField_Paragraph extends PodsField {
             if ( !empty( $allowed_html_tags ) && '<>' != $allowed_html_tags )
                 $value = strip_tags( $value, $allowed_html_tags );
         }
+        else if ( 'codemirror' === pods_var( 'paragraph_format_type', $options ) ) {
+            $value = esc_sql( $value );
+        }
         else
             $value = strip_tags( $value );
 

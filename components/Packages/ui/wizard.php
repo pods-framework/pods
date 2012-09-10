@@ -40,7 +40,7 @@
 
                         <div id="pods-wizard-options">
                             <div class="pods-wizard-option">
-                                <a href="#pods-wizard-import" data-opt="create">
+                                <a href="#pods-wizard-import" data-opt="import">
                                     <h2><?php _e( 'Import', 'pods' ); ?></h2>
 
                                     <p><?php _e( 'Provide the Package code that was exported from another site, to be imported into this Pods site.', 'pods' ); ?></p>
@@ -49,7 +49,7 @@
                                 <p><br /></p>
                             </div>
                             <div class="pods-wizard-option">
-                                <a href="#pods-wizard-export" data-opt="extend">
+                                <a href="#pods-wizard-export" data-opt="export">
                                     <h2><?php _e( 'Export', 'pods' ); ?></h2>
 
                                     <p><?php _e( 'Export your Pods, Fields, and other settings into a Package which can be pasted into another Pods site.', 'pods' ); ?></p>
@@ -61,63 +61,72 @@
                     </div>
 
                     <div id="pods-wizard-panel-2" class="pods-wizard-panel">
-                        <div class="pods-wizard-content">
-                            <p><?php _e( 'Choose below which Capabilities you would like this new user role to have.', 'pods' ); ?></p>
-                        </div>
+                        <div class="pods-wizard-option-content pods-wizard-option-content-import">
+                            <div class="pods-wizard-content">
+                                <p><?php _e( 'Paste the Package code you received exactly as it was given to you from the other Pods site.', 'pods' ); ?></p>
+                            </div>
 
-                        <div class="stuffbox">
-                            <h3><label for="link_name"><?php _e( 'Assign the Capabilities for', 'pods' ); ?> <strong class="pods-slugged" data-sluggable="role_label"></strong></label></h3>
+                            <div class="stuffbox">
+                                <h3><label for="link_name"><?php _e( 'Paste the Package Code', 'pods' ); ?></label></h3>
 
-                            <div class="inside pods-manage-field pods-dependency">
-                                <div class="pods-field-option-group">
-                                    <p><a href="#toggle" class="button" id="toggle-all"><?php _e( 'Toggle All Capabilities on / off', 'pods' ); ?></a></p>
-
-                                    <div class="pods-pick-values pods-pick-checkbox pods-zebra">
-                                        <ul>
-                                            <?php
-                                            $zebra = false;
-
-                                            foreach ( $capabilities as $capability ) {
-                                                $checked = false;
-
-                                                if ( in_array( $capability, $defaults ) )
-                                                    $checked = true;
-
-                                                $class = ( $zebra ? 'even' : 'odd' );
-
-                                                $zebra = ( !$zebra );
-                                                ?>
-                                                <li class="pods-zebra-<?php echo $class; ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
-                                                    <?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
-                                                </li>
-                                                <?php
-                                            }
-                                            ?>
-                                        </ul>
+                                <div class="inside pods-manage-field pods-dependency">
+                                    <div class="pods-field-option">
+                                        <?php
+                                            echo PodsForm::label( 'import_package', __( 'Package Code', 'pods' ), __( 'help', 'pods' ) );
+                                            echo PodsForm::field( 'import_package', pods_var_raw( 'import_package', 'post' ), 'paragraph', array( 'attributes' => array( 'style' => 'width: 75%; max-width: 75%; height: 300px;' ) ) );
+                                        ?>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
 
-                                <div class="pods-field-option-group">
-                                    <p class="pods-field-option-group-label">
-                                        <?php
-                                        echo PodsForm::label( 'custom_capabilities[0]', __( 'Custom Capabilities', 'pods' ), __( 'These capabilities will automatically be created and assigned to this role', 'pods' ) );
-                                        ?>
-                                    </p>
+                        <div class="pods-wizard-option-content pods-wizard-option-content-export">
+                            <div class="pods-wizard-content">
+                                <p><?php _e( 'Select what you would like to export from this Pods site, you will be given the Package code to then be pasted into any other Pods site.', 'pods' ); ?></p>
+                            </div>
 
-                                    <div class="pods-pick-values pods-pick-checkbox">
-                                        <ul id="custom-capabilities">
-                                            <li class="pods-repeater hidden">
-                                                <?php echo PodsForm::field( 'custom_capabilities[--1]', '', 'text' ); ?>
-                                            </li>
-                                            <li>
-                                                <?php echo PodsForm::field( 'custom_capabilities[0]', '', 'text' ); ?>
-                                            </li>
-                                        </ul>
+                            <div class="stuffbox">
+                                <h3><label for="link_name"><?php _e( 'Select what to Export', 'pods' ); ?></label></h3>
 
-                                        <p>
-                                            <a href="#add-capability" id="add-capability" class="button">Add Another Custom Capability</a>
-                                        </p>
-                                    </div>
+                                <div class="inside pods-manage-field pods-dependency">
+                                    <?php
+                                        $_pods = pods_api()->load_pods();
+
+                                        $data = array();
+
+                                        foreach ( $_pods as $pod ) {
+                                            $data[ $pod[ 'name' ] ] = $pod[ 'label' ] . ' (' . $pod[ 'name' ] . ')';
+                                        }
+
+                                        $exportables = array(
+                                            'pods' => array(
+                                                'label' => 'Pods',
+                                                'help' => __( 'help', 'pods' ),
+                                                'data' => $data
+                                            )
+                                        );
+
+                                        $exportables = apply_filters( 'pods_packages_wizard_exportables', $exportables );
+
+                                        foreach ( $exportables as $name => $exportable ) {
+                                            if ( !is_array( $exportable ) || !isset( $exportable[ 'data' ] ) || empty( $exportable[ 'data' ] ) )
+                                                continue;
+
+                                            $options = $exportable;
+
+                                            $options[ 'options' ] = array(
+                                                'pick_format_type' => 'multi',
+                                                'pick_format_multi' => 'checkbox'
+                                            );
+                                    ?>
+                                        <div class="pods-field-option">
+                                            <?php echo PodsForm::row( 'export_' . $name, pods_var_raw( 'export_' . $name, 'post' ), 'pick', $options ); ?>
+
+                                            <p><a href="#toggle" class="button pods-wizard-toggle-all" data-toggle="<?php echo 'export_' . $name; ?>"><?php _e( 'Toggle All on / off', 'pods' ); ?></a></p>
+                                        </div>
+                                    <?php
+                                        }
+                                    ?>
                                 </div>
                             </div>
                         </div>
@@ -139,6 +148,8 @@
 <script type="text/javascript">
     var pods_admin_submit_callback = function ( id ) {
         id = parseInt( id );
+        return false;
+
         document.location = 'admin.php?page=pods-component-<?php echo esc_js( $component ); ?>&do=create';
     }
 
@@ -151,24 +162,17 @@
         $( document ).Pods( 'confirm' );
         $( document ).Pods( 'sluggable' );
 
-        var toggle_all = true;
+        var toggle_all = {};
 
-        $( '#toggle-all' ).on( 'click', function ( e ) {
+        $( '.pods-wizard-toggle-all' ).on( 'click', function ( e ) {
             e.preventDefault();
 
-            $( '.pods-field.pods-boolean input[type="checkbox"]' ).prop( 'checked', toggle_all );
+            if ( 'undefined' == typeof toggle_all[ $( this ).data( 'toggle' ) ] )
+                toggle_all[ $( this ).data( 'toggle' ) ] = false;
 
-            toggle_all = ( !toggle_all );
-        } );
+            $( this ).closest( '.pods-field-option' ).find( '.pods-field.pods-boolean input[type="checkbox"]' ).prop( 'checked', ( !toggle_all[ $( this ).data( 'toggle' ) ] ) );
 
-        $( '#add-capability' ).on( 'click', function ( e ) {
-            e.preventDefault();
-
-            var new_id = $( 'ul#custom-capabilities li' ).length;
-            var html = $( 'ul#custom-capabilities li.pods-repeater' ).html().replace( '--1', new_id );
-
-            $( 'ul#custom-capabilities' ).append( '<li id="capability-' + new_id + '">' + html + '</li>' );
-            $( 'li#capability-' + new_id + ' input' ).focus();
+            toggle_all[ $( this ).data( 'toggle' ) ] = ( !toggle_all[ $( this ).data( 'toggle' ) ] );
         } );
     } );
 </script>

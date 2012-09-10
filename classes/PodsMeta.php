@@ -178,6 +178,9 @@ class PodsMeta {
             $pod = array_merge( $defaults, $pod );
         }
 
+        if ( 'post' == $pod[ 'type' ] )
+            $pod[ 'type' ] = 'post_type';
+
         if ( empty( $pod[ 'name' ] ) && isset( $pod[ 'object' ] ) && !empty( $pod[ 'object' ] ) )
             $pod[ 'name' ] = $pod[ 'object' ];
         elseif ( !isset( $pod[ 'object' ] ) || empty( $pod[ 'object' ] ) )
@@ -253,7 +256,7 @@ class PodsMeta {
         self::$groups[ $pod[ 'type' ] ][ $object_name ][] = $group;
 
         // Hook it up!
-        if ( 'post' == $pod[ 'type' ] ) {
+        if ( 'post_type' == $pod[ 'type' ] ) {
             if ( !has_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) ) )
                 add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
 
@@ -410,6 +413,8 @@ class PodsMeta {
 
                 if ( !empty( $pod ) )
                     $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
+                elseif ( !empty( $id ) )
+                    $value = get_post_meta( $id, $field[ 'name' ], true );
         ?>
             <tr class="form-field">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
@@ -457,13 +462,13 @@ class PodsMeta {
         $data = array();
 
         $id = $post_id;
-        $pod = false;
+        $pod = null;
 
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            if ( empty( $pod ) )
+            if ( null === $pod )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 
             foreach ( $group[ 'fields' ] as $field ) {
@@ -506,13 +511,13 @@ class PodsMeta {
         if ( is_object( $post ) )
             $id = $post->ID;
 
-        $pod = false;
+        $pod = null;
 
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            if ( empty( $pod ) )
+            if ( null === $pod )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 
             foreach ( $group[ 'fields' ] as $field ) {
@@ -520,6 +525,8 @@ class PodsMeta {
 
                 if ( !empty( $pod ) )
                     $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
+                elseif ( !empty( $id ) )
+                    $value = get_post_meta( $id, $field[ 'name' ], true );
 
                 $form_fields[ 'pods_meta_' . $field[ 'name' ] ] = array(
                     'label' => $field[ 'label' ],
@@ -552,13 +559,13 @@ class PodsMeta {
         $data = array();
 
         $id = $post_id;
-        $pod = false;
+        $pod = null;
 
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            if ( empty( $pod ) )
+            if ( null === $pod )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 
             foreach ( $group[ 'fields' ] as $field ) {
@@ -600,13 +607,13 @@ class PodsMeta {
         if ( is_object( $tag ) )
             $id = $tag->term_id;
 
-        $pod = false;
+        $pod = null;
 
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            if ( empty( $pod ) )
+            if ( null === $pod )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 
             foreach ( $group[ 'fields' ] as $field ) {
@@ -661,13 +668,13 @@ class PodsMeta {
         );
 
         $id = $term_id;
-        $pod = false;
+        $pod = null;
 
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            if ( empty( $pod ) )
+            if ( null === $pod )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 
             foreach ( $group[ 'fields' ] as $field ) {
@@ -698,13 +705,13 @@ class PodsMeta {
             $user_id = $user_id->ID;
 
         $id = $user_id;
-        $pod = false;
+        $pod = null;
 
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            if ( empty( $pod ) )
+            if ( null === $pod )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 ?>
     <h3><?php echo $group[ 'label' ]; ?></h3>
@@ -717,6 +724,8 @@ class PodsMeta {
 
                     if ( !empty( $pod ) )
                         $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
+                    elseif ( !empty( $id ) )
+                        $value = get_user_meta( $id, $field[ 'name' ], true );
             ?>
                 <tr class="form-field">
                     <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
@@ -749,13 +758,13 @@ class PodsMeta {
         $data = array();
 
         $id = $user_id;
-        $pod = false;
+        $pod = null;
 
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            if ( empty( $pod ) )
+            if ( null === $pod )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 
             foreach ( $group[ 'fields' ] as $field ) {
@@ -786,13 +795,13 @@ class PodsMeta {
         $groups = $this->groups_get( 'comment', 'comment' );
 
         $id = null;
-        $pod = false;
+        $pod = null;
 
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            if ( empty( $pod ) )
+            if ( null === $pod )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 
             foreach ( $group[ 'fields' ] as $field ) {
@@ -800,6 +809,8 @@ class PodsMeta {
 
                 if ( !empty( $pod ) )
                     $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
+                elseif ( !empty( $id ) )
+                    $value = get_comment_meta( $id, $field[ 'name' ], true );
 ?>
     <p class="comment-form-author comment-form-pods-meta-<?php echo $field[ 'name' ]; ?>">
         <?php
@@ -823,13 +834,13 @@ class PodsMeta {
         $groups = $this->groups_get( 'comment', 'comment' );
 
         $id = null;
-        $pod = false;
+        $pod = null;
 
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            if ( empty( $pod ) )
+            if ( null === $pod )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 
             foreach ( $group[ 'fields' ] as $field ) {
@@ -837,6 +848,8 @@ class PodsMeta {
 
                 if ( !empty( $pod ) )
                     $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
+                elseif ( !empty( $id ) )
+                    $value = get_comment_meta( $id, $field[ 'name' ], true );
 
                 ob_start();
 ?>
@@ -936,13 +949,13 @@ class PodsMeta {
         $data = array();
 
         $id = $comment_id;
-        $pod = false;
+        $pod = null;
 
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            if ( empty( $pod ) )
+            if ( null === $pod )
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id );
 
             foreach ( $group[ 'fields' ] as $field ) {

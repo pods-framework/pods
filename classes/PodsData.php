@@ -190,7 +190,7 @@ class PodsData {
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0.0
      */
-    public function __construct ( $pod = null, $id = 0 ) {
+    public function __construct ( $pod = null, $id = 0, $strict = true ) {
         global $wpdb;
 
         if ( is_object( $pod ) && 'PodsAPI' == get_class( $pod ) ) {
@@ -205,8 +205,10 @@ class PodsData {
         if ( null !== $pod ) {
             $this->pod_data =& $this->api->pod_data;
 
-            if ( false === $this->pod_data )
+            if ( false === $this->pod_data && true === $strict )
                 return pods_error( 'Pod not found', $this );
+            else
+                return $this;
 
             $this->pod_id = $this->pod_data[ 'id' ];
             $this->pod = $this->pod_data[ 'name' ];

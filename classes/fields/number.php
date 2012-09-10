@@ -91,7 +91,7 @@ class PodsField_Number extends PodsField {
                     'none' => __( 'None (100)', 'pods' ),
                     'beforeaftercode' => __( 'Before with Currency Code after ($100 USD)', 'pods' )
                 )
-            ),/*
+            ), /*
             'number_range' => array(
                 'label' => __( 'Number Range', 'pods' ),
                 'depends-on' => array( 'number_format_type' => 'range' ),

@@ -99,5 +99,6 @@ else {
             return;
         }
     }
+
     add_action( 'init', 'pods_deactivate_1_x' );
 }

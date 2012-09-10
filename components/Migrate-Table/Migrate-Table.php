@@ -14,6 +14,7 @@
  * @subpackage migrate-table
  */
 class Pods_Migrate_Table extends PodsComponent {
+
     /**
      * Do things like register scripts and stylesheets
      *

@@ -105,7 +105,7 @@ class PodsUpgrade_2_0 {
             return pods_error( __( 'Upgrade method not found.', 'pods' ) );
 
         return call_user_func( array( $this, $params->step . '_' . $params->type ), $params );
-}
+    }
 
     /**
      * @return array|bool|int|mixed|null|void
@@ -124,7 +124,7 @@ class PodsUpgrade_2_0 {
             $count = 0;
 
         return $count;
-}
+    }
 
     /**
      * @return array|bool|int|mixed|null|void
@@ -143,7 +143,7 @@ class PodsUpgrade_2_0 {
             $count = 0;
 
         return $count;
-}
+    }
 
     /**
      * @return array|bool|int|mixed|null|void
@@ -162,7 +162,7 @@ class PodsUpgrade_2_0 {
             $count = 0;
 
         return $count;
-}
+    }
 
     /**
      * @return array|bool|int|mixed|null|void
@@ -181,7 +181,7 @@ class PodsUpgrade_2_0 {
             $count = 0;
 
         return $count;
-}
+    }
 
     /**
      * @return array|bool|int|mixed|null|void
@@ -200,7 +200,7 @@ class PodsUpgrade_2_0 {
             $count = 0;
 
         return $count;
-}
+    }
 
     /**
      * @return array|bool|int|mixed|null|void
@@ -219,7 +219,7 @@ class PodsUpgrade_2_0 {
             $count = 0;
 
         return $count;
-}
+    }
 
     /**
      * @return array|bool|int|mixed|null|void
@@ -238,10 +238,11 @@ class PodsUpgrade_2_0 {
             $count = 0;
 
         return $count;
-}
+    }
 
     /**
      * @param $params
+     *
      * @return array|bool|int|mixed|null|void
      */
     public function prepare_pod ( $params ) {
@@ -298,7 +299,7 @@ class PodsUpgrade_2_0 {
             return pods_error( implode( '<br />', $errors ) );
 
         return $count;
-}
+    }
 
     /**
      *
@@ -320,7 +321,7 @@ class PodsUpgrade_2_0 {
                 do_action( 'pods_update_post', PODS_VERSION, $old_version );
             }
         }
-}
+    }
 
     /**
      * @return array|string
@@ -502,14 +503,14 @@ class PodsUpgrade_2_0 {
         $this->update_progress( __FUNCTION__, true );
 
         return '1';
-}
+    }
 
     /**
      * @return string
      */
     public function migrate_fields () {
         return '1';
-}
+    }
 
     /**
      * @return string
@@ -651,14 +652,14 @@ class PodsUpgrade_2_0 {
             echo '-2';
         else
             echo '1';
-}
+    }
 
     /**
      * @return string
      */
     public function migrate_settings () {
         return $this->migrate_roles();
-}
+    }
 
     /**
      * @return string
@@ -712,7 +713,7 @@ class PodsUpgrade_2_0 {
         $this->update_progress( __FUNCTION__, true );
 
         return '1';
-}
+    }
 
     /**
      * @return array|string
@@ -742,7 +743,7 @@ class PodsUpgrade_2_0 {
         $this->update_progress( __FUNCTION__, true );
 
         return '1';
-}
+    }
 
     /**
      * @return array|string
@@ -767,7 +768,7 @@ class PodsUpgrade_2_0 {
         $this->update_progress( __FUNCTION__, true );
 
         return '1';
-}
+    }
 
     /**
      * @return array|string
@@ -798,10 +799,11 @@ class PodsUpgrade_2_0 {
         $this->update_progress( __FUNCTION__, true );
 
         return '1';
-}
+    }
 
     /**
      * @param $params
+     *
      * @return mixed|string|void
      */
     public function migrate_pod ( $params ) {
@@ -885,7 +887,7 @@ class PodsUpgrade_2_0 {
         $this->update_progress( __FUNCTION__, true, $pod );
 
         return '1';
-}
+    }
 
     /**
      * @return string
@@ -904,7 +906,7 @@ class PodsUpgrade_2_0 {
         $_GET = $oldget;
 
         return '1';
-}
+    }
 
     /**
      *
@@ -919,7 +921,7 @@ class PodsUpgrade_2_0 {
 
         delete_option( 'pods_framework_upgrade_2_0' );
         delete_option( 'pods_framework_upgraded_1_x' );
-}
+    }
 
     /**
      *
@@ -948,7 +950,7 @@ class PodsUpgrade_2_0 {
          * other options maybe not in 2.0
         delete_option( 'pods_page_precode_timing' );
         */
-}
+    }
 
     /**
      * @param $method
@@ -964,11 +966,12 @@ class PodsUpgrade_2_0 {
             $this->progress[ $method ] = $v;
 
         update_option( 'pods_framework_upgrade_2_0', $this->progress );
-}
+    }
 
     /**
      * @param $method
      * @param null $x
+     *
      * @return bool
      */
     public function check_progress ( $method, $x = null ) {

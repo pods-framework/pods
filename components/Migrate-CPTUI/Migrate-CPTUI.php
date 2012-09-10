@@ -75,7 +75,7 @@ class Pods_Migrate_CPTUI extends PodsComponent {
             }
         }
 
-        foreach ( $post_types as $k =>$post_type ) {
+        foreach ( $post_types as $k => $post_type ) {
             if ( !in_array( pods_var( 'name', $post_type ), $migrate_post_types ) )
                 continue;
 

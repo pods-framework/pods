@@ -1,16 +1,16 @@
 <?php
-    $attributes = array();
+$attributes = array();
 
-    $type = 'text';
+$type = 'text';
 
-    if ( 1 == $options[ 'text_html5' ] )
-        $type = 'url';
+if ( 1 == $options[ 'text_html5' ] )
+    $type = 'url';
 
-    $attributes[ 'type' ] = $type;
-    $attributes[ 'value' ] = $value;
-    $attributes[ 'tabindex' ] = 2;
-    $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+$attributes[ 'type' ] = $type;
+$attributes[ 'value' ] = $value;
+$attributes[ 'tabindex' ] = 2;
+$attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
 ?>
 <input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
 <?php
-    PodsForm::regex( PodsForm::$field_type, $options );
+PodsForm::regex( PodsForm::$field_type, $options );

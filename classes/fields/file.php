@@ -174,9 +174,9 @@ class PodsField_File extends PodsField {
                   || ( defined( 'PODS_FILES_REQUIRE_LOGIN' ) && is_bool( PODS_FILES_REQUIRE_LOGIN ) && true === PODS_FILES_REQUIRE_LOGIN && !is_user_logged_in() )
                   || ( defined( 'PODS_FILES_REQUIRE_LOGIN' ) && !is_bool( PODS_FILES_REQUIRE_LOGIN ) && ( !is_user_logged_in() || !current_user_can( PODS_FILES_REQUIRE_LOGIN ) ) ) )
         ) {
-?>
-    <p>You do not have access to upload / browse files. Contact your website admin to resolve.</p>
-<?php
+            ?>
+        <p>You do not have access to upload / browse files. Contact your website admin to resolve.</p>
+        <?php
             return;
         }
 
@@ -320,7 +320,7 @@ class PodsField_File extends PodsField {
     public function markup ( $attributes, $limit = 1, $editable = true, $id = null, $icon = null, $name = null ) {
         ob_start();
 
-        if ( empty ($id ) )
+        if ( empty ( $id ) )
             $id = '{{id}}';
 
         if ( empty ( $icon ) )
@@ -330,13 +330,13 @@ class PodsField_File extends PodsField {
             $name = '{{name}}';
 
         $editable = (boolean) $editable;
-?>
+        ?>
     <li class="pods-file hidden" id="pods-file-{{id}}">
         <?php echo PodsForm::field( $attributes[ 'name' ] . '[' . $id . '][id]', $id, 'hidden' ); ?>
 
         <ul class="pods-file-meta media-item">
             <?php if ( 1 < $limit ) { ?>
-                <li class="pods-file-col pods-file-handle">Handle</li>
+            <li class="pods-file-col pods-file-handle">Handle</li>
             <?php } ?>
 
             <li class="pods-file-col pods-file-icon">
@@ -345,17 +345,17 @@ class PodsField_File extends PodsField {
 
             <li class="pods-file-col pods-file-name">
                 <?php
-                    if ( $editable )
-                        echo PodsForm::field( $attributes[ 'name' ] . '[' . $id . '][title]', $name, 'text' );
-                    else
-                        echo ( empty( $name ) ? '{{name}}' : $name );
+                if ( $editable )
+                    echo PodsForm::field( $attributes[ 'name' ] . '[' . $id . '][title]', $name, 'text' );
+                else
+                    echo ( empty( $name ) ? '{{name}}' : $name );
                 ?>
             </li>
 
             <li class="pods-file-col pods-file-delete">Delete</li>
         </ul>
     </li>
-<?php
+    <?php
         return ob_get_clean();
     }
 }

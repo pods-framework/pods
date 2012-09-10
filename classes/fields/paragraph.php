@@ -53,13 +53,13 @@ class PodsField_Paragraph extends PodsField {
                 'data' => array(
                     'plain' => __( 'Plain Text Area', 'pods' ),
                     __( 'WYSIWYG', 'pods' ) =>
-                        apply_filters(
-                            'pods_form_ui_field_paragraph_wysiwyg_options',
-                            array(
-                                'tinymce' => __( 'TinyMCE (WP Default)', 'pods' ),
-                                'cleditor' => __( 'CLEditor', 'pods' )
-                            )
-                        ),
+                    apply_filters(
+                        'pods_form_ui_field_paragraph_wysiwyg_options',
+                        array(
+                            'tinymce' => __( 'TinyMCE (WP Default)', 'pods' ),
+                            'cleditor' => __( 'CLEditor', 'pods' )
+                        )
+                    ),
                     'codemirror' => __( 'CodeMirror (Syntax Highlighting)', 'pods' )
                 ),
                 'dependency' => true

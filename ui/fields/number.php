@@ -1,27 +1,27 @@
 <?php
-    $field_number = PodsForm::field_loader( 'number' );
+$field_number = PodsForm::field_loader( 'number' );
 
-    $value = $field_number->format( $value, $name, $options, $pod, $id );
+$value = $field_number->format( $value, $name, $options, $pod, $id );
 
-    $attributes = array();
-    $attributes[ 'type' ] = 'text';
-    $attributes[ 'value' ] = $value;
-    $attributes[ 'tabindex' ] = 2;
-    $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+$attributes = array();
+$attributes[ 'type' ] = 'text';
+$attributes[ 'value' ] = $value;
+$attributes[ 'tabindex' ] = 2;
+$attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
 
-    $thousands = ',';
-    $dot = '.';
+$thousands = ',';
+$dot = '.';
 
-    if ( '9999.99' == pods_var_raw( 'number_format', $options ) )
-        $thousands = '';
-    elseif ( '9999,99' == pods_var_raw( 'number_format', $options ) ) {
-        $thousands = '';
-        $dot = ',';
-    }
-    elseif ( '9.999,99' == pods_var_raw( 'number_format', $options ) ) {
-        $thousands = '.';
-        $dot = ',';
-    }
+if ( '9999.99' == pods_var_raw( 'number_format', $options ) )
+    $thousands = '';
+elseif ( '9999,99' == pods_var_raw( 'number_format', $options ) ) {
+    $thousands = '';
+    $dot = ',';
+}
+elseif ( '9.999,99' == pods_var_raw( 'number_format', $options ) ) {
+    $thousands = '.';
+    $dot = ',';
+}
 ?>
 <input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?>/>
 <script>

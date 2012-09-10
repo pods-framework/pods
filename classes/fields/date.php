@@ -142,7 +142,7 @@ class PodsField_Date extends PodsField {
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $format = $this->format( $options );
 
-        if ( !empty( $value ) && !in_array( $value, array( '0000-00-00 00:00:00', '0000-00-00', '00:00:00' )) ) {
+        if ( !empty( $value ) && !in_array( $value, array( '0000-00-00 00:00:00', '0000-00-00', '00:00:00' ) ) ) {
             $date = $this->createFromFormat( 'Y-m-d H:i:s', (string) $value );
             $date_local = $this->createFromFormat( $format, (string) $value );
 

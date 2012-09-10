@@ -389,9 +389,9 @@ class Pods_Pages extends PodsComponent {
         do_action( 'pods_wp_head' );
 
         if ( !defined( 'PODS_DISABLE_VERSION_OUTPUT' ) || !PODS_DISABLE_VERSION_OUTPUT ) {
-?>
-    <!-- Pods Framework <?php echo PODS_VERSION; ?> -->
-<?php
+            ?>
+        <!-- Pods Framework <?php echo PODS_VERSION; ?> -->
+        <?php
         }
         if ( ( !defined( 'PODS_DISABLE_META' ) || !PODS_DISABLE_META ) && is_object( $pods ) && !is_wp_error( $pods ) ) {
 
@@ -399,17 +399,17 @@ class Pods_Pages extends PodsComponent {
                 foreach ( $pods->meta as $name => $content ) {
                     if ( 'title' == $name )
                         continue;
-?>
-    <meta name="<?php echo esc_attr( $name ); ?>" content="<?php echo esc_attr( $content ); ?>" />
-<?php
+                    ?>
+                <meta name="<?php echo esc_attr( $name ); ?>" content="<?php echo esc_attr( $content ); ?>" />
+                <?php
                 }
             }
 
             if ( isset( $pods->meta_properties ) && is_array( $pods->meta_properties ) ) {
                 foreach ( $pods->meta_properties as $property => $content ) {
-?>
-    <meta property="<?php echo esc_attr( $property ); ?>" content="<?php echo esc_attr( $content ); ?>" />
-<?php
+                    ?>
+                <meta property="<?php echo esc_attr( $property ); ?>" content="<?php echo esc_attr( $content ); ?>" />
+                <?php
                 }
             }
 
@@ -422,6 +422,7 @@ class Pods_Pages extends PodsComponent {
      * @param $title
      * @param $sep
      * @param $seplocation
+     *
      * @return mixed|void
      */
     public function wp_title ( $title, $sep, $seplocation ) {
@@ -456,6 +457,7 @@ class Pods_Pages extends PodsComponent {
 
     /**
      * @param $classes
+     *
      * @return mixed|void
      */
     public function body_class ( $classes ) {

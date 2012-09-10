@@ -1,20 +1,21 @@
 <?php
-    wp_enqueue_style( 'farbtastic' );
-    wp_enqueue_script( 'farbtastic' );
+wp_enqueue_style( 'farbtastic' );
+wp_enqueue_script( 'farbtastic' );
 
-    $attributes = array();
-    $attributes[ 'type' ] = 'text';
-    $attributes[ 'value' ] = $value;
-    $attributes[ 'tabindex' ] = 2;
-    $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+$attributes = array();
+$attributes[ 'type' ] = 'text';
+$attributes[ 'value' ] = $value;
+$attributes[ 'tabindex' ] = 2;
+$attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
 ?>
 <input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
 
 <div id="color_<?php echo $attributes[ 'id' ]; ?>"></div>
 
 <script type="text/javascript">
-    if ( 'undefined' == pods_farbastic_changing )
+    if ( 'undefined' == pods_farbastic_changing ) {
         var pods_farbastic_changing = false;
+    }
 
     jQuery( function () {
         jQuery( '#color_<?php echo $attributes[ 'id' ]; ?>' ).hide();

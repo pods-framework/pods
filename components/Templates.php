@@ -100,8 +100,8 @@ class Pods_Templates extends PodsComponent {
     public function edit_page_form () {
         global $post_type;
 
-        if( '_pods_template' != $post_type )
-        		return;
+        if ( '_pods_template' != $post_type )
+            return;
 
         add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
 

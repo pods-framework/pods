@@ -152,7 +152,7 @@ function pods_debug ( $debug = '_null', $die = false, $prefix = '_null' ) {
  *
  * @since 1.12
  */
-function pods_ui_message( $msg, $error = false ) {
+function pods_ui_message ( $msg, $error = false ) {
     echo '<div id="message" class="' . ( $error ? 'error' : 'updated' ) . ' fade"><p>' . $msg . '</p></div>';
 
     return !$error;
@@ -749,7 +749,7 @@ function pods_absint ( $maybeint, $strict = true, $allow_negative = false ) {
  *
  * @return mixed
  */
-function pods_str_replace( $find, $replace, $string, $occurrences = -1 ) {
+function pods_str_replace ( $find, $replace, $string, $occurrences = -1 ) {
     if ( is_array( $find ) ) {
         foreach ( $find as &$f ) {
             $f = '/' . preg_quote( $f, '/' ) . '/';
@@ -1058,7 +1058,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
     }
 
     if ( !empty( $value ) ) {
-        if ( 1 == count ( $value ) ) {
+        if ( 1 == count( $value ) ) {
             if ( is_array( $value ) ) {
                 if ( isset( $value[ $field_index ] ) )
                     $value = $value[ $field_index ];
@@ -1164,28 +1164,28 @@ function pods_compatible ( $wp = null, $php = null, $mysql = null ) {
         $compatible = false;
         add_action( 'admin_notices', 'pods_version_notice_wp' );
         function pods_version_notice_wp () {
-?>
-    <div class="error fade">
-        <p><strong><?php _e( 'NOTICE', 'pods' ); ?>:</strong> Pods <?php echo PODS_VERSION_FULL; ?> <?php _e( 'requires a minimum of', 'pods' ); ?>
-            <strong>WordPress <?php echo PODS_WP_VERSION_MINIMUM; ?>+</strong> <?php _e( 'to function. You are currently running', 'pods' ); ?>
-            <strong>WordPress <?php echo get_bloginfo( "version" ); ?></strong> - <?php _e( 'Please upgrade your WordPress to continue.', 'pods' ); ?>
-        </p>
-    </div>
-<?php
+            ?>
+        <div class="error fade">
+            <p><strong><?php _e( 'NOTICE', 'pods' ); ?>:</strong> Pods <?php echo PODS_VERSION_FULL; ?> <?php _e( 'requires a minimum of', 'pods' ); ?>
+                <strong>WordPress <?php echo PODS_WP_VERSION_MINIMUM; ?>+</strong> <?php _e( 'to function. You are currently running', 'pods' ); ?>
+                <strong>WordPress <?php echo get_bloginfo( "version" ); ?></strong> - <?php _e( 'Please upgrade your WordPress to continue.', 'pods' ); ?>
+            </p>
+        </div>
+        <?php
         }
     }
     if ( !version_compare( $php, PODS_PHP_VERSION_MINIMUM, '>=' ) ) {
         $compatible = false;
         add_action( 'admin_notices', 'pods_version_notice_php' );
         function pods_version_notice_php () {
-?>
-    <div class="error fade">
-        <p><strong><?php _e( 'NOTICE', 'pods' ); ?>:</strong> Pods <?php echo PODS_VERSION_FULL; ?> <?php _e( 'requires a minimum of', 'pods' ); ?>
-            <strong>PHP <?php echo PODS_PHP_VERSION_MINIMUM; ?>+</strong> <?php _e( 'to function. You are currently running', 'pods' ); ?>
-            <strong>PHP <?php echo phpversion(); ?></strong> - <?php _e( 'Please upgrade (or have your Hosting Provider upgrade it for you) your PHP version to continue.', 'pods' ); ?>
-        </p>
-    </div>
-<?php
+            ?>
+        <div class="error fade">
+            <p><strong><?php _e( 'NOTICE', 'pods' ); ?>:</strong> Pods <?php echo PODS_VERSION_FULL; ?> <?php _e( 'requires a minimum of', 'pods' ); ?>
+                <strong>PHP <?php echo PODS_PHP_VERSION_MINIMUM; ?>+</strong> <?php _e( 'to function. You are currently running', 'pods' ); ?>
+                <strong>PHP <?php echo phpversion(); ?></strong> - <?php _e( 'Please upgrade (or have your Hosting Provider upgrade it for you) your PHP version to continue.', 'pods' ); ?>
+            </p>
+        </div>
+        <?php
         }
     }
     if ( !@version_compare( $mysql, PODS_MYSQL_VERSION_MINIMUM, '>=' ) ) {
@@ -1194,14 +1194,14 @@ function pods_compatible ( $wp = null, $php = null, $mysql = null ) {
         function pods_version_notice_mysql () {
             global $wpdb;
             $mysql = $wpdb->db_version();
-?>
-    <div class="error fade">
-        <p><strong><?php _e( 'NOTICE', 'pods' ); ?>:</strong> Pods <?php echo PODS_VERSION_FULL; ?> <?php _e( 'requires a minimum of', 'pods' ); ?>
-            <strong>MySQL <?php echo PODS_MYSQL_VERSION_MINIMUM; ?>+</strong> <?php _e( 'to function. You are currently running', 'pods' ); ?>
-            <strong>MySQL <?php echo $mysql; ?></strong> - <?php _e( 'Please upgrade (or have your Hosting Provider upgrade it for you) your MySQL version to continue.', 'pods' ); ?>
-        </p>
-    </div>
-<?php
+            ?>
+        <div class="error fade">
+            <p><strong><?php _e( 'NOTICE', 'pods' ); ?>:</strong> Pods <?php echo PODS_VERSION_FULL; ?> <?php _e( 'requires a minimum of', 'pods' ); ?>
+                <strong>MySQL <?php echo PODS_MYSQL_VERSION_MINIMUM; ?>+</strong> <?php _e( 'to function. You are currently running', 'pods' ); ?>
+                <strong>MySQL <?php echo $mysql; ?></strong> - <?php _e( 'Please upgrade (or have your Hosting Provider upgrade it for you) your MySQL version to continue.', 'pods' ); ?>
+            </p>
+        </div>
+        <?php
         }
     }
     return $compatible;
@@ -1219,10 +1219,10 @@ function pods_function_or_file ( $function_or_file, $function_name = null, $file
         if ( null === $function_name )
             $function_name = $function_or_file;
         $function_name = str_replace( array(
-                                          '__',
-                                          '__',
-                                          '__'
-                                      ), '_', preg_replace( '/[^a-z^A-Z^_][^a-z^A-Z^0-9^_]*/', '_', (string) $function_name ) );
+            '__',
+            '__',
+            '__'
+        ), '_', preg_replace( '/[^a-z^A-Z^_][^a-z^A-Z^0-9^_]*/', '_', (string) $function_name ) );
         if ( function_exists( 'pods_custom_' . $function_name ) )
             $found = array( 'function' => 'pods_custom_' . $function_name );
         elseif ( function_exists( $function_name ) )
@@ -1232,10 +1232,10 @@ function pods_function_or_file ( $function_or_file, $function_name = null, $file
         if ( null === $file_name )
             $file_name = $function_or_file;
         $file_name = str_replace( array(
-                                      '__',
-                                      '__',
-                                      '__'
-                                  ), '_', preg_replace( '/[^a-z^A-Z^0-9^_]*/', '_', (string) $file_name ) ) . '.php';
+            '__',
+            '__',
+            '__'
+        ), '_', preg_replace( '/[^a-z^A-Z^0-9^_]*/', '_', (string) $file_name ) ) . '.php';
         $custom_location = apply_filters( 'pods_file_directory', null, $function_or_file, $function_name, $file_dir, $file_name );
         if ( defined( 'PODS_FILE_DIRECTORY' ) && false !== PODS_FILE_DIRECTORY )
             $custom_location = PODS_FILE_DIRECTORY;
@@ -1498,9 +1498,7 @@ function pods_no_conflict_on ( $object_type = 'post' ) {
         );
     }
     elseif ( 'taxonomy' == $object_type ) {
-        $no_conflict[ 'filter' ] = array(
-
-        );
+        $no_conflict[ 'filter' ] = array();
 
         $no_conflict[ 'action' ] = array(
             array( 'edit_term', array( PodsInit::$meta, 'save_taxonomy' ), 10, 3 ),
@@ -1512,9 +1510,7 @@ function pods_no_conflict_on ( $object_type = 'post' ) {
             array( 'wp_update_attachment_metadata', array( PodsInit::$meta, 'save_media' ), 10, 2 )
         );
 
-        $no_conflict[ 'action' ] = array(
-
-        );
+        $no_conflict[ 'action' ] = array();
     }
     elseif ( 'user' == $object_type ) {
         $no_conflict[ 'filter' ] = array(

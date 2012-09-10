@@ -372,7 +372,8 @@ class PodsComponents {
 
 /**
  *
- */class PodsComponent {
+ */
+class PodsComponent {
 
     /**
      * Do things like register/enqueue scripts and stylesheets
@@ -450,7 +451,7 @@ class PodsComponents {
      *
      * @since 2.0.0
     public function admin ( $options ) {
-        // run code based on $options set
+    // run code based on $options set
     }
      */
 }

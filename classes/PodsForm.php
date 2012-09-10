@@ -282,7 +282,9 @@ class PodsForm {
      */
     /**
      * @static
+     *
      * @param $type
+     *
      * @return array|null
      */
     public static function options_setup ( $type ) {
@@ -320,9 +322,11 @@ class PodsForm {
      */
     /**
      * @static
+     *
      * @param null $fields
      * @param null $core_defaults
      * @param bool $single
+     *
      * @return array|null
      */
     public static function fields_setup ( $fields = null, $core_defaults = null, $single = false ) {
@@ -365,9 +369,11 @@ class PodsForm {
      */
     /**
      * @static
+     *
      * @param null $field
      * @param null $core_defaults
      * @param null $type
+     *
      * @return array|null
      */
     public static function field_setup ( $field = null, $core_defaults = null, $type = null ) {

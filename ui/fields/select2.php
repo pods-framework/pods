@@ -1,27 +1,27 @@
 <?php
-    wp_enqueue_style( 'pods-select2' );
-    wp_enqueue_script( 'pods-select2' );
+wp_enqueue_style( 'pods-select2' );
+wp_enqueue_script( 'pods-select2' );
 
-    if ( is_array( $value ) )
-        $value = implode( ',', $value );
+if ( is_array( $value ) )
+    $value = implode( ',', $value );
 
-    $attributes = array();
-    $attributes[ 'type' ] = 'hidden';
-    $attributes[ 'value' ] = $value;
-    $attributes[ 'data-field-type' ] = 'select2';
-    $attributes[ 'tabindex' ] = 2;
-    $attributes = PodsForm::merge_attributes($attributes, $name, PodsForm::$field_type, $options);
-    $attributes[ 'class' ] .= ' pods-form-ui-field-type-select2';
+$attributes = array();
+$attributes[ 'type' ] = 'hidden';
+$attributes[ 'value' ] = $value;
+$attributes[ 'data-field-type' ] = 'select2';
+$attributes[ 'tabindex' ] = 2;
+$attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+$attributes[ 'class' ] .= ' pods-form-ui-field-type-select2';
 
-    $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
-    $field_nonce = wp_create_nonce( 'pods_relationship_' . ( !is_object( $pod ) ? '0' : $pod->pod_id ) . '_' . session_id() . '_' . $uri_hash . '_' . $options[ 'id' ] );
+$uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
+$field_nonce = wp_create_nonce( 'pods_relationship_' . ( !is_object( $pod ) ? '0' : $pod->pod_id ) . '_' . session_id() . '_' . $uri_hash . '_' . $options[ 'id' ] );
 
-    $pick_limit = (int) pods_var( 'pick_limit', $options, 0 );
+$pick_limit = (int) pods_var( 'pick_limit', $options, 0 );
 
-    $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true );
+$options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true );
 ?>
 <div class="pods-select2">
-    <input<?php PodsForm::attributes($attributes, $name, PodsForm::$field_type, $options); ?> />
+    <input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
 </div>
 
 <script type="text/javascript">

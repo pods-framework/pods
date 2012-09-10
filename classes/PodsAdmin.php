@@ -92,11 +92,11 @@ class PodsAdmin {
         if ( isset( $_GET[ 'page' ] ) ) {
             $page = $_GET[ 'page' ];
             if ( 'pods' == $page || ( false !== strpos( $page, 'pods-' ) && 0 === strpos( $page, 'pods-' ) ) ) {
-?>
-    <script type="text/javascript">
-        var PODS_URL = "<?php echo PODS_URL; ?>";
-    </script>
-<?php
+                ?>
+            <script type="text/javascript">
+                var PODS_URL = "<?php echo PODS_URL; ?>";
+            </script>
+            <?php
                 wp_enqueue_script( 'jquery' );
                 wp_enqueue_script( 'jquery-ui-core' );
                 wp_enqueue_script( 'jquery-ui-sortable' );
@@ -164,7 +164,7 @@ class PodsAdmin {
                 $label = pods_var( 'menu_name', $item[ 'options' ], pods_var( 'label', $item[ 'options' ], ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true ), null, true );
                 $label = apply_filters( 'pods_admin_menu_label', $label, $item );
 
-                $singular_label = pods_var( 'label_singular', $item[ 'options' ], pods_var( 'label', $item[ 'options' ], ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true), null, true );
+                $singular_label = pods_var( 'label_singular', $item[ 'options' ], pods_var( 'label', $item[ 'options' ], ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true ), null, true );
                 $plural_label = pods_var( 'label', $item[ 'options' ], ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true );
 
                 if ( 1 == $item[ 'options' ][ 'show_in_menu' ] ) {
@@ -438,7 +438,7 @@ class PodsAdmin {
      * @return string
      */
     public function media_button ( $context ) {
-        $current_page = basename( $_SERVER['PHP_SELF'] );
+        $current_page = basename( $_SERVER[ 'PHP_SELF' ] );
 
         if ( $current_page == 'index.php' )
             return $context;
@@ -454,7 +454,7 @@ class PodsAdmin {
      * Enqueue assets for Media Library Popup
      */
     public function register_media_assets () {
-        if( 'pods_media_attachment' == pods_var( 'inlineId', 'get' ) )
+        if ( 'pods_media_attachment' == pods_var( 'inlineId', 'get' ) )
             wp_enqueue_style( 'pods-attach' );
     }
 
@@ -548,6 +548,7 @@ class PodsAdmin {
     /**
      * @param $id
      * @param $obj
+     *
      * @return mixed
      */
     public function admin_setup_delete ( $id, $obj ) {
@@ -688,6 +689,7 @@ class PodsAdmin {
 
     /**
      * @param PodsUI $ui
+     *
      * @return bool
      */
     public function admin_components_toggle ( PodsUI $ui ) {
@@ -756,6 +758,7 @@ class PodsAdmin {
 
     /**
      * @param $capabilities
+     *
      * @return array
      */
     public function admin_capabilities ( $capabilities ) {
@@ -1155,7 +1158,7 @@ class PodsAdmin {
         }
         elseif ( $wpdb->posts == $data->table ) {
             $lookup_where[] = "`t`.`post_name` LIKE '%" . like_escape( $params->query ) . "%'";
-            $lookup_where[]  = "`t`.`post_content` LIKE '%" . like_escape( $params->query ) . "%'";
+            $lookup_where[] = "`t`.`post_content` LIKE '%" . like_escape( $params->query ) . "%'";
             $lookup_where[] = "`t`.`post_excerpt` LIKE '%" . like_escape( $params->query ) . "%'";
         }
         elseif ( $wpdb->terms == $data->table )
@@ -1173,7 +1176,7 @@ class PodsAdmin {
 
         $pick_orderby = pods_var( 'pick_orderby', $field, null, null, true );
 
-        if ( 0 < strlen ( $pick_orderby ) )
+        if ( 0 < strlen( $pick_orderby ) )
             $orderby[] = $pick_orderby;
 
         $orderby[] = "`t`.`{$data->field_index}`";

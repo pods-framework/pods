@@ -258,7 +258,7 @@ class PodsField_Pick extends PodsField {
                 $autocomplete = true;
 
             if ( $autocomplete )
-                $params[ 'limit' ] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', 30, $name, $value, $options, $pod, $id  );
+                $params[ 'limit' ] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', 30, $name, $value, $options, $pod, $id );
 
             $results = $data->select( $params );
 

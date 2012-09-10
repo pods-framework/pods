@@ -17,36 +17,42 @@ class Pods_GravityForms extends PodsComponent {
 
     /**
      * Gravity Forms Validation array, containing message/error and thank you handling (message/redirect/page)
+     *
      * @var array
      */
     static $validation;
 
     /**
      * New ID of Pod item created by GF Map
+     *
      * @var int
      */
     static $new_id;
 
     /**
      * Length of recurring subscription
+     *
      * @var int
      */
     static $paypal_switch_length;
 
     /**
      * Type of recurring subscription
+     *
      * @var string
      */
     static $paypal_switch_type;
 
     /**
      * To keep or delete files when deleting GF entries
+     *
      * @var bool
      */
     static $keep_files;
 
     /**
      * Array of options for Dynamic Select
+     *
      * @var array
      */
     static $dynamic_select;
@@ -86,7 +92,7 @@ class Pods_GravityForms extends PodsComponent {
             )
         );
 
-        foreach( $pods_forms as &$form ) {
+        foreach ( $pods_forms as &$form ) {
             $gf = RGFormsModel::get_form( $form[ 'id' ] );
             if ( empty( $gf ) || !isset( $gf->title ) )
                 $gf_title = '<em>N/A</em>';
@@ -258,9 +264,12 @@ class Pods_GravityForms extends PodsComponent {
 
     /**
      * Intercept validation message and return custom error/message
+     *
      * @static
+     *
      * @param $message
      * @param null $form
+     *
      * @return string
      */
     public static function validation_message ( $message, $form = null ) {
@@ -275,8 +284,11 @@ class Pods_GravityForms extends PodsComponent {
 
     /**
      * Detect if there's a valid form already, if there are no errors, return false
+     *
      * @static
+     *
      * @param array $validation
+     *
      * @return bool|array $validation array if error
      */
     public static function validation_error ( &$validation = null ) {
@@ -299,10 +311,13 @@ class Pods_GravityForms extends PodsComponent {
 
     /**
      * Update Gravity Forms $validation array to redirect upon success
+     *
      * @static
+     *
      * @param string $url URL to redirect to
      * @param array $validation GF Validation array
      * @param string $queryString Optional queryString to add to redirect
+     *
      * @return array GF Validation array
      */
     public static function redirect ( $url, &$validation = null, $queryString = null ) {
@@ -319,9 +334,12 @@ class Pods_GravityForms extends PodsComponent {
 
     /**
      * Update Gravity Forms $validation array to show message upon success
+     *
      * @static
+     *
      * @param string $msg Message to show
      * @param array $validation GF Validation array
+     *
      * @return array GF Validation array
      */
     public static function message ( $msg, &$validation = null ) {
@@ -335,9 +353,12 @@ class Pods_GravityForms extends PodsComponent {
 
     /**
      * Update Gravity Forms $validation array to show error message
+     *
      * @static
+     *
      * @param string $msg Message to show
      * @param array $validation GF Validation array
+     *
      * @return array GF Validation array
      */
     public static function error ( $msg, &$validation = null ) {
@@ -352,8 +373,11 @@ class Pods_GravityForms extends PodsComponent {
     /**
      * Setup a faux $entry field value array like you would get during post-processing,
      * making those values available during pre-processing
+     *
      * @static
+     *
      * @param array $validation GF Validation array
+     *
      * @return array|bool false if failed to detect necessary info
      */
     public static function setup_entry ( $validation = null ) {
@@ -428,7 +452,9 @@ class Pods_GravityForms extends PodsComponent {
 
     /**
      * Setup GF to auto-delete the entry it's about to create
+     *
      * @static
+     *
      * @param int $form_id GF Form ID
      * @param bool $keep_files To keep or delete files when deleting GF entries
      */
@@ -444,9 +470,12 @@ class Pods_GravityForms extends PodsComponent {
 
     /**
      * Delete GF entry that's just been created
+     *
      * @static
+     *
      * @param array|int $entry GF entry array or ID
      * @param bool $keep_files To keep or delete files when deleting GF entries, falls back to self::$keep_files
+     *
      * @return bool Returns false if $entry is invalid
      */
     public static function delete_entry ( $entry, $keep_files = false ) {
@@ -498,7 +527,9 @@ class Pods_GravityForms extends PodsComponent {
 
     /**
      * Switch the length or type out for another value during processing before user is sent to PayPal
+     *
      * @static
+     *
      * @param $form_id Form ID to switch out on
      * @param int $length Length of recurring subscription
      * @param string $type Type of recurring subscription
@@ -509,7 +540,7 @@ class Pods_GravityForms extends PodsComponent {
 
         if ( null !== $length ) {
             self::$paypal_switch_length = max( 1, (int) $length );
-            add_filter('gform_paypal_query_' . $form_id, array( get_class(), 'paypal_switch_length' ), 10, 1 );
+            add_filter( 'gform_paypal_query_' . $form_id, array( get_class(), 'paypal_switch_length' ), 10, 1 );
         }
 
         if ( null !== $type ) {
@@ -523,8 +554,11 @@ class Pods_GravityForms extends PodsComponent {
 
     /**
      * Switch the length out for another value during processing before user is sent to PayPal
+     *
      * @static
+     *
      * @param string $query PayPal Query from Gravity Forms
+     *
      * @return string
      */
     public static function paypal_switch_length ( $query ) {
@@ -534,8 +568,11 @@ class Pods_GravityForms extends PodsComponent {
 
     /**
      * Switch the type out for another value during processing before user is sent to PayPal
+     *
      * @static
+     *
      * @param string $query PayPal Query from Gravity Forms
+     *
      * @return string
      */
     public static function paypal_switch_type ( $query ) {
@@ -547,6 +584,7 @@ class Pods_GravityForms extends PodsComponent {
 
     /**
      * Auto-login a user upon registration (using GF User Registration add-on)
+     *
      * @static
      */
     public static function auto_login () {
@@ -555,23 +593,30 @@ class Pods_GravityForms extends PodsComponent {
 
     /**
      * Auto-login a user upon registration (using GF User Registration add-on)
+     *
      * @static
+     *
      * @param int $user_id User ID
      * @param string $user_config
      * @param array $entry
      * @param string $password User password
+     *
      * @return object
      */
     public static function user_auto_login ( $user_id, $user_config, $entry, $password ) {
         $user = get_userdata( $user_id );
-        return wp_signon( array( 'user_login' => $user->user_login,
-                                 'user_password' => $password,
-                                 'remember' => false ) );
+        return wp_signon( array(
+            'user_login' => $user->user_login,
+            'user_password' => $password,
+            'remember' => false
+        ) );
     }
 
     /**
      * Set a field's values to be dynamically pulled from a Pod
+     *
      * @static
+     *
      * @param int $form_id GF Form ID
      * @param int $field_id GF Field ID
      * @param string $pod_name Pod name
@@ -592,13 +637,16 @@ class Pods_GravityForms extends PodsComponent {
 
     /**
      * Set a field's values to be dynamically pulled from a Pod
+     *
      * @static
+     *
      * @param $form
      * @param int $form_id GF Form ID
      * @param int $field_id GF Field ID
      * @param string $pod_name Pod name
      * @param string $label_column_name Column name to use for label text
      * @param array $params Additional parameters for findRecords
+     *
      * @return array
      */
     public static function add_dynamic_select ( $form, $form_id = null, $field_id = null, $pod_name = null, $label_column_name = null, $params = null ) {
@@ -637,7 +685,7 @@ class Pods_GravityForms extends PodsComponent {
 
         $pod = new Pod( $pod_name, $params );
 
-        foreach ($form[ 'fields' ] as &$field) {
+        foreach ( $form[ 'fields' ] as &$field ) {
             if ( $field_id == $field[ 'id' ] ) {
                 $field[ 'enableChoiceValue' ] = true; // allow value=>label
 
@@ -660,7 +708,9 @@ class Pods_GravityForms extends PodsComponent {
 
     /**
      * Map a GF entry to a new Pod item
+     *
      * @static
+     *
      * @param array $entry Gravity Forms entry array
      * @param string $pod Pod name
      * @param array $mapping Custom mapping of Pod columns
@@ -669,6 +719,7 @@ class Pods_GravityForms extends PodsComponent {
      * @param bool $keep
      * @param bool $keep_files
      * @param bool $bypass_helpers
+     *
      * @return bool|int|null|string|void
      */
     public static function map ( $entry, $pod = null, $mapping = null, $id = null, $related = false, $keep = true, $keep_files = true, $bypass_helpers = false ) {
@@ -682,9 +733,11 @@ class Pods_GravityForms extends PodsComponent {
                 $api->snap = true;
                 $related_strict = true;
                 try {
-                    $id = $api->save_pod_item( array( 'datatype' => $pod,
-                                                      'bypass_helpers' => $bypass_helpers,
-                                                      'columns' => array( 'name' => 1 ) ) );
+                    $id = $api->save_pod_item( array(
+                        'datatype' => $pod,
+                        'bypass_helpers' => $bypass_helpers,
+                        'columns' => array( 'name' => 1 )
+                    ) );
                 }
                 catch ( Exception $e ) {
                     return $e->getMessage();
@@ -766,7 +819,7 @@ class Pods_GravityForms extends PodsComponent {
                 if ( 'pick' == $api->fields[ $map ][ 'coltype' ] && ( 'wp_user' != $api->fields[ $map ][ 'pickval' ] || !is_numeric( $value ) ) && ( !isset( $etc[ 'bypass_value_set' ] ) || false === $etc[ 'bypass_value_set' ] ) ) {
                     $values = explode( '|', $value );
                     $field_counter = 1;
-                    while (isset( $entry[ $field_id . '.' . $field_counter ] )) {
+                    while ( isset( $entry[ $field_id . '.' . $field_counter ] ) ) {
                         $entry[ $field_id . '.' . $field_counter ] = trim( $entry[ $field_id . '.' . $field_counter ] );
                         if ( 0 < strlen( $entry[ $field_id . '.' . $field_counter ] ) ) {
                             $values[] = $entry[ $field_id . '.' . $field_counter ];
@@ -787,11 +840,13 @@ class Pods_GravityForms extends PodsComponent {
                         }
                         else {
                             $lookup = new Pod( $api->fields[ $map ][ 'pickval' ] );
-                            $lookup->findRecords( array( 'orderby' => '(t.name = "' . pods_sanitize( $v ) . '") DESC,(t.name = "' . pods_sanitize( trim( $v, '.' ) ) . '") DESC,t.id',
-                                                       'limit' => 1,
-                                                       'where' => 't.name = "' . pods_sanitize( $v ) . '" OR t.name = "' . pods_sanitize( trim( $v, '.' ) ) . '" OR t.name LIKE "%' . pods_sanitize( $v ) . '%" OR t.name LIKE "%' . pods_sanitize( trim( $v, '.' ) ) . '%" OR t.id = ' . intval( $v ),
-                                                       'search' => false,
-                                                       'page' => 1 ) );
+                            $lookup->findRecords( array(
+                                'orderby' => '(t.name = "' . pods_sanitize( $v ) . '") DESC,(t.name = "' . pods_sanitize( trim( $v, '.' ) ) . '") DESC,t.id',
+                                'limit' => 1,
+                                'where' => 't.name = "' . pods_sanitize( $v ) . '" OR t.name = "' . pods_sanitize( trim( $v, '.' ) ) . '" OR t.name LIKE "%' . pods_sanitize( $v ) . '%" OR t.name LIKE "%' . pods_sanitize( trim( $v, '.' ) ) . '%" OR t.id = ' . intval( $v ),
+                                'search' => false,
+                                'page' => 1
+                            ) );
                             if ( $lookup->fetchRecord() ) {
                                 $values[ $k ] = $lookup->get_field( 'id' );
                             }
@@ -827,9 +882,11 @@ class Pods_GravityForms extends PodsComponent {
             foreach ( $fields as $the_pod => $columns ) {
                 $api = new PodAPI( $the_pod );
                 $api->snap = true;
-                $params = array( 'datatype' => $the_pod,
-                                 'bypass_helpers' => $bypass_helpers,
-                                 'columns' => $columns );
+                $params = array(
+                    'datatype' => $the_pod,
+                    'bypass_helpers' => $bypass_helpers,
+                    'columns' => $columns
+                );
                 if ( !isset( $ids[ $the_pod ] ) ) {
                     $ids[ $the_pod ] = 0;
                 }
@@ -852,9 +909,11 @@ class Pods_GravityForms extends PodsComponent {
             if ( false !== $related && is_array( $related ) ) {
                 $api = new PodAPI( $pod );
                 $api->snap = true;
-                $params = array( 'datatype' => $pod,
-                                 'bypass_helpers' => $bypass_helpers,
-                                 'columns' => array() );
+                $params = array(
+                    'datatype' => $pod,
+                    'bypass_helpers' => $bypass_helpers,
+                    'columns' => array()
+                );
                 if ( !empty( $id ) && false === $related_strict ) {
                     $params[ 'tbl_row_id' ] = $id;
                 }

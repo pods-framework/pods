@@ -1661,7 +1661,9 @@ class PodsUI {
                 }
             }
             ?>
-            &nbsp;&nbsp; <label<?php echo ( empty( $this->filters ) ) ? ' class="screen-reader-text"' : ''; ?> for="page-search-input"><?php _e( 'Search', 'pods' ); ?>:</label> <input type="text" name="search<?php echo $this->num; ?>" id="page-search-input" value="<?php echo $this->search; ?>" /> <input type="submit" value="<?php esc_attr_e( 'Search', 'pods' ); echo ' ' . esc_attr( $this->items ); ?>" class="button" />
+            &nbsp;&nbsp; <label<?php echo ( empty( $this->filters ) ) ? ' class="screen-reader-text"' : ''; ?> for="page-search-input"><?php _e( 'Search', 'pods' ); ?>:</label>
+            <input type="text" name="search<?php echo $this->num; ?>" id="page-search-input" value="<?php echo $this->search; ?>" />
+            <input type="submit" value="<?php esc_attr_e( 'Search', 'pods' ); echo ' ' . esc_attr( $this->items ); ?>" class="button" />
             <?php
             if ( 0 < strlen( $this->search ) ) {
                 $clear_filters = array();
@@ -2219,7 +2221,8 @@ class PodsUI {
                                         if ( false === $attributes[ 'display' ] || true === $attributes[ 'hidden' ] )
                                             continue;
                                         ?>
-                                        <label for="<?php echo $field; ?>-hide"><input class="hide-column-tog" name="<?php echo $this->unique_identifier; ?>_<?php echo $field; ?>-hide" type="checkbox" id="<?php echo $field; ?>-hide" value="<?php echo $field; ?>" checked="checked"><?php echo $attributes[ 'label' ]; ?></label>
+                                        <label for="<?php echo $field; ?>-hide">
+                                            <input class="hide-column-tog" name="<?php echo $this->unique_identifier; ?>_<?php echo $field; ?>-hide" type="checkbox" id="<?php echo $field; ?>-hide" value="<?php echo $field; ?>" checked="checked"><?php echo $attributes[ 'label' ]; ?></label>
                                         <?php
                                     }
                                     ?>
@@ -2238,7 +2241,8 @@ class PodsUI {
                                 }
                                 $this->do_hook( 'screen_meta_screen_submit' );
                                 ?>
-                                <input type="submit" name="screen-options-apply" id="screen-options-apply" class="button" value="Apply"> <input type="hidden" name="wp_screen_options[option]" value="<?php echo $this->unique_identifier; ?>_per_page">
+                                <input type="submit" name="screen-options-apply" id="screen-options-apply" class="button" value="Apply">
+                                <input type="hidden" name="wp_screen_options[option]" value="<?php echo $this->unique_identifier; ?>_per_page">
                                 <?php wp_nonce_field( 'screen-options-nonce', 'screenoptionnonce', false ); ?>
                             </div>
                             <?php

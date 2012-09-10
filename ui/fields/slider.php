@@ -4,7 +4,7 @@
 <script>
     jQuery( function ( $ ) {
         $( "#pods-field-<?php echo $params[ 'name' ]; ?>" ).slider( {
-            <?php if ( !empty( $params[ 'options' ][ 'range' ] ) ) : ?>
+                                                                    <?php if ( !empty( $params[ 'options' ][ 'range' ] ) ) : ?>
                                     range :<?php echo $params[ 'options' ][ 'range' ]; ?>,
                                 <?php else: ?>
             range : false,

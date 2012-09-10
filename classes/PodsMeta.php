@@ -151,15 +151,32 @@ class PodsMeta {
      * @return mixed|void
      */
     public function group_add ( $pod, $label, $fields, $context = 'normal', $priority = 'default' ) {
-        $defaults = array(
-            'name' => '',
-            'type' => 'post_type'
-        );
+        if ( !is_array( $pod ) ) {
+            $_pod = pods_api()->load_pod( array( 'name' => $pod ), false );
 
-        if ( !is_array( $pod ) )
-            $pod = pods_api()->load_pod( array( 'name' => $pod ) );
-        else
+            if ( !empty( $_pod ) )
+                $pod = $_pod;
+            else {
+                $type = 'post_type';
+
+                if ( in_array( $pod, array( 'media', 'user', 'comment' ) ) )
+                    $type = $pod;
+
+                $pod = array(
+                    'name' => $pod,
+                    'type' => $type
+                );
+            }
+        }
+
+        if ( is_array( $pod ) && !isset( $pod[ 'id' ] ) ) {
+            $defaults = array(
+                'name' => '',
+                'type' => 'post_type'
+            );
+
             $pod = array_merge( $defaults, $pod );
+        }
 
         if ( empty( $pod[ 'name' ] ) && isset( $pod[ 'object' ] ) && !empty( $pod[ 'object' ] ) )
             $pod[ 'name' ] = $pod[ 'object' ];

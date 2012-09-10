@@ -131,6 +131,35 @@ class Pods_Helpers extends PodsComponent {
         );
 
         pods_group_add( $pod, __( 'Helper', 'pods' ), $fields, 'normal', 'high' );
+
+        add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 9, 5 );
+    }
+
+    /**
+     * Save the fields
+     *
+     * @param $object_type
+     * @param null $_null
+     * @param int $object_id
+     * @param string $meta_key
+     * @param string $meta_value
+     * @param string $prev_value
+     *
+     * @return bool|int|null
+     */
+    public function save_meta ( $_null = null, $object_id = 0, $meta_key = '', $meta_value = '', $prev_value = '' ) {
+        if ( 'code' == $meta_key ) {
+            $postdata = array(
+                'ID' => $object_id,
+                'post_content' => $meta_value
+            );
+
+            wp_update_post( $postdata );
+
+            return true;
+        }
+
+        return $_null;
     }
 
     /**

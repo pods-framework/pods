@@ -482,6 +482,9 @@ class PodsMeta {
         // Fix for Pods doing it's own sanitization
         $data = stripslashes_deep( $data );
 
+        do_action( 'pods_meta_save_pre_post', $data, $pod, $id, $groups, $post, $post->post_type );
+        do_action( "pods_meta_save_pre_post_{$post->post_type}", $data, $pod, $id, $groups, $post );
+
         if ( !empty( $pod ) )
             $pod->save( $data );
         elseif ( !empty( $id ) ) {
@@ -588,6 +591,8 @@ class PodsMeta {
 
         // Fix for Pods doing it's own sanitization
         $data = stripslashes_deep( $data );
+
+        do_action( 'pods_meta_save_pre_media', $data, $pod, $id, $groups, $post, $attachment );
 
         if ( !empty( $pod ) )
             $pod->save( $data );
@@ -701,6 +706,9 @@ class PodsMeta {
 
         // Fix for Pods doing it's own sanitization
         $data = stripslashes_deep( $data );
+
+        do_action( 'pods_meta_save_pre_taxonomy', $data, $pod, $id, $groups, $term_id, $term_taxonomy_id, $taxonomy );
+        do_action( "pods_meta_save_pre_taxonomy_{$taxonomy}", $data, $pod, $id, $groups, $term_id, $term_taxonomy_id, $taxonomy );
 
         if ( !empty( $pod ) )
             $pod->save( $data );
@@ -1007,6 +1015,8 @@ class PodsMeta {
 
         // Fix for Pods doing it's own sanitization
         $data = stripslashes_deep( $data );
+
+        do_action( 'pods_meta_save_pre_comment', $data, $pod, $id, $groups );
 
         if ( !empty( $pod ) )
             $pod->save( $data );

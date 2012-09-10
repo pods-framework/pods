@@ -133,7 +133,6 @@ class Pods_Pages extends PodsComponent {
                     'pick_object' => 'post_type',
                     'pick_val' => '_pods_template'
                 )
-
             )
         );
 

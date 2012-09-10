@@ -485,16 +485,14 @@ class PodsMeta {
         if ( !empty( $pod ) )
             $pod->save( $data );
         elseif ( !empty( $id ) ) {
-            pods_no_conflict_on( 'post' );
-
             foreach ( $data as $field => $value ) {
                 update_post_meta( $id, $field, $value );
             }
-
-            pods_no_conflict_off( 'post' );
         }
 
         pods_no_conflict_off( 'post' );
+
+        do_action( 'pods_meta_save_post', $data, $pod, $id, $groups );
 
         return $post_id;
     }
@@ -572,6 +570,8 @@ class PodsMeta {
         $id = $post_id;
         $pod = null;
 
+        pods_no_conflict_on( 'post' );
+
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
@@ -591,14 +591,14 @@ class PodsMeta {
         if ( !empty( $pod ) )
             $pod->save( $data );
         elseif ( !empty( $id ) ) {
-            pods_no_conflict_on( 'post' );
-
             foreach ( $data as $field => $value ) {
                 update_post_meta( $id, $field, $value );
             }
-
-            pods_no_conflict_off( 'post' );
         }
+
+        pods_no_conflict_off( 'post' );
+
+        do_action( 'pods_meta_save_media', $data, $pod, $id, $groups );
 
         return $post;
     }
@@ -703,6 +703,8 @@ class PodsMeta {
 
         if ( !empty( $pod ) )
             $pod->save( $data );
+
+        do_action( 'pods_meta_save_taxonomy', $data, $pod, $id, $groups );
     }
 
     /**
@@ -807,6 +809,8 @@ class PodsMeta {
 
             pods_no_conflict_off( 'user' );
         }
+
+        do_action( 'pods_meta_save_user', $data, $pod, $id, $groups );
     }
 
     /**
@@ -898,6 +902,7 @@ class PodsMeta {
                 $form_fields[ 'pods_meta_' . $field[ 'name' ] ] = ob_get_clean();
             }
         }
+
         return $form_fields;
     }
 
@@ -1012,12 +1017,13 @@ class PodsMeta {
 
             pods_no_conflict_off( 'comment' );
         }
+
+        do_action( 'pods_meta_save_comment', $data, $pod, $id, $groups );
     }
 
-    /*
-     * All *_*_meta filter handler aliases
-     */
     /**
+     * All *_*_meta filter handler aliases
+     *
      * @return mixed
      */
     public function get_post_meta () {

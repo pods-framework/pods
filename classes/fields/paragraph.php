@@ -136,8 +136,15 @@ class PodsField_Paragraph extends PodsField {
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         if ( 1 == pods_var( 'paragraph_allow_html', $options ) || 'plain' != pods_var( 'paragraph_format_type', $options, 'plain' ) ) {
-            if ( 0 < strlen( pods_var( 'paragraph_allowed_html_tags', $options ) ) )
-                $value = strip_tags( $value, pods_var( 'paragraph_allowed_html_tags', $options ) );
+            $allowed_html_tags = '';
+
+            if ( 0 < strlen( pods_var( 'paragraph_allowed_html_tags', $options ) ) ) {
+                $allowed_html_tags = explode( ' ', trim ( pods_var( 'paragraph_allowed_html_tags', $options ) ) );
+                $allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
+            }
+
+            if ( !empty( $allowed_html_tags ) && '<>' != $allowed_html_tags )
+                $value = strip_tags( $value, $allowed_html_tags );
         }
         else
             $value = strip_tags( $value );
@@ -231,8 +238,15 @@ class PodsField_Paragraph extends PodsField {
         $options = (array) $options;
 
         if ( 1 == pods_var( 'paragraph_allow_html', $options ) || 'plain' != pods_var( 'paragraph_format_type', $options, 'plain' ) ) {
-            if ( 0 < strlen( pods_var( 'paragraph_allowed_html_tags', $options ) ) )
-                $value = strip_tags( $value, pods_var( 'paragraph_allowed_html_tags', $options ) );
+            $allowed_html_tags = '';
+
+            if ( 0 < strlen( pods_var( 'paragraph_allowed_html_tags', $options ) ) ) {
+                $allowed_html_tags = explode( ' ', trim( pods_var( 'paragraph_allowed_html_tags', $options ) ) );
+                $allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
+            }
+
+            if ( !empty( $allowed_html_tags ) && '<>' != $allowed_html_tags )
+                $value = strip_tags( $value, $allowed_html_tags );
         }
         else
             $value = strip_tags( $value );

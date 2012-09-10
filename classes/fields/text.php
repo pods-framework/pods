@@ -197,8 +197,15 @@ class PodsField_Text extends PodsField {
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         if ( 'plain' == pods_var( 'text_format_type', $options ) ) {
             if ( 1 == pods_var( 'text_allow_html', $options ) ) {
-                if ( 0 < strlen( pods_var( 'text_allowed_html_tags', $options ) ) )
-                    $value = strip_tags( $value, pods_var( 'text_allowed_html_tags', $options ) );
+                $allowed_html_tags = '';
+
+                if ( 0 < strlen( pods_var( 'text_allowed_html_tags', $options ) ) ) {
+                    $allowed_html_tags = explode( ' ', trim( pods_var( 'text_allowed_html_tags', $options ) ) );
+                    $allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
+                }
+
+                if ( !empty( $allowed_html_tags ) && '<>' != $allowed_html_tags )
+                    $value = strip_tags( $value, $allowed_html_tags );
             }
             else
                 $value = strip_tags( $value );
@@ -310,8 +317,15 @@ class PodsField_Text extends PodsField {
 
         if ( 'plain' == pods_var( 'text_format_type', $options ) ) {
             if ( 1 == pods_var( 'text_allow_html', $options ) ) {
-                if ( 0 < strlen( pods_var( 'text_allowed_html_tags', $options ) ) )
-                    $value = strip_tags( $value, pods_var( 'text_allowed_html_tags', $options ) );
+                $allowed_html_tags = '';
+
+                if ( 0 < strlen( pods_var( 'text_allowed_html_tags', $options ) ) ) {
+                    $allowed_html_tags = explode( ' ', trim( pods_var( 'text_allowed_html_tags', $options ) ) );
+                    $allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
+                }
+
+                if ( !empty( $allowed_html_tags ) && '<>' != $allowed_html_tags )
+                    $value = strip_tags( $value, $allowed_html_tags );
             }
             else
                 $value = strip_tags( $value );

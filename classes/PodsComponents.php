@@ -74,6 +74,9 @@ class PodsComponents {
         $custom_component_menus = array();
 
         foreach ( $this->components as $component => $component_data ) {
+            if ( !isset( $this->settings[ 'components' ][ $component_data[ 'ID' ] ] ) || 0 == $this->settings[ 'components' ][ $component_data[ 'ID' ] ] )
+                continue;
+
             if ( !empty( $component_data[ 'Hide' ] ) )
                 continue;
 

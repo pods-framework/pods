@@ -2,7 +2,7 @@
 /**
  * Name: Helpers
  *
- * Description:
+ * Description: A holdover from Pods 1.x, you most likely don't need these and we recommend you use our WP filters and actions instead.
  *
  * Version: 2.0
  *
@@ -75,7 +75,7 @@ class Pods_Helpers extends PodsComponent {
             $post = $data;
             $post = get_post( $post );
 
-            if ( '__pods_template' != $post->post_type )
+            if ( '_pods_helper' != $post->post_type )
                 return;
         }
 

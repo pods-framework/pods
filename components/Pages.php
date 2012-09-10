@@ -2,7 +2,7 @@
 /**
  * Name: Pages
  *
- * Description: Create advanced URL structures using wildcards, they can exist on-top of any existing WordPress URL or be entirely custom. Add a path and select the WP Template to use, the rest is up to you!
+ * Description: Create advanced URL structures using wildcards, they can exist on-top of any existing WordPress URL rewrites or be entirely custom. Add a path and select the WP Template to use, the rest is up to you!
  *
  * Version: 2.0
  *
@@ -78,12 +78,12 @@ class Pods_Pages extends PodsComponent {
             $post = $data;
             $post = get_post( $post );
 
-            if ( '__pods_template' != $post->post_type )
+            if ( '_pods_page' != $post->post_type )
                 return;
         }
 
-        delete_transient( 'pods_object_helper' );
-        delete_transient( 'pods_object_helper_' . $post->post_title );
+        delete_transient( 'pods_object_page' );
+        delete_transient( 'pods_object_page_' . $post->post_title );
     }
 
     /**
@@ -121,6 +121,17 @@ class Pods_Pages extends PodsComponent {
             'name' => '_pods_page',
             'type' => 'post_type'
         );
+
+        $page_templates = apply_filters( 'pods_page_templates', get_page_templates() );
+
+        if ( !in_array( 'page.php', $page_templates ) && locate_template( array( 'page.php', false ) ) ) {
+            $page_templates[ 'Page (WP Default)' ] = 'page.php';
+
+            ksort( $page_templates );
+        }
+
+        $page_templates = array_flip( $page_templates );
+
         $fields = array(
             array(
                 'name' => 'page_title',
@@ -147,10 +158,7 @@ class Pods_Pages extends PodsComponent {
                 'name' => 'page_template',
                 'label' => __( 'Page Template', 'pods' ),
                 'type' => 'pick',
-                'options' => array(
-                    'pick_object' => 'post_type',
-                    'pick_val' => '_pods_template'
-                )
+                'data' => $page_templates
             )
         );
 

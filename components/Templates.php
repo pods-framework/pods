@@ -40,7 +40,7 @@ class Pods_Templates extends PodsComponent {
             'rewrite' => false,
             'has_archive' => false,
             'hierarchical' => false,
-            'supports' => array( 'title', 'editor', 'author', 'revisions' ),
+            'supports' => array( 'title', 'author', 'revisions' ),
             'menu_icon' => PODS_URL . 'ui/images/icon16.png'
         );
 
@@ -75,12 +75,12 @@ class Pods_Templates extends PodsComponent {
             $post = $data;
             $post = get_post( $post );
 
-            if ( '__pods_template' != $post->post_type )
+            if ( '_pods_template' != $post->post_type )
                 return;
         }
 
-        delete_transient( 'pods_object_helper' );
-        delete_transient( 'pods_object_helper_' . $post->post_title );
+        delete_transient( 'pods_object_template' );
+        delete_transient( 'pods_object_template_' . $post->post_title );
     }
 
     /**
@@ -115,7 +115,7 @@ class Pods_Templates extends PodsComponent {
      */
     public function add_meta_boxes () {
         $pod = array(
-            'name' => '_pods_helper',
+            'name' => '_pods_template',
             'type' => 'post_type'
         );
 

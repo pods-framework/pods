@@ -445,10 +445,7 @@ class PodsMeta {
             'revision',
             'auto-draft',
             '_pods_pod',
-            '_pods_field',
-            '_pods_template',
-            '_pods_page',
-            '_pods_helper'
+            '_pods_field'
         );
 
         $blacklisted_types = apply_filters( 'pods_meta_save_post_blacklist', $blacklisted_types, $post_id, $post );
@@ -1199,10 +1196,7 @@ class PodsMeta {
 
         $reserved_post_types = array(
             '_pods_pod',
-            '_pods_field',
-            '_pods_template',
-            '_pods_page',
-            '_pods_helper'
+            '_pods_field'
         );
 
         $reserved_post_types = apply_filters( 'pods_meta_reserved_post_types', $reserved_post_types, $object_type, $object_id, $object_name, $objects );
@@ -1217,10 +1211,8 @@ class PodsMeta {
             if ( $object_name == $pod[ 'object' ] )
                 $recheck[] = $pod;
 
-            if ( '' == $pod[ 'object' ] ) {
-                if ( $object_name == $pod[ 'name' ] )
-                    return $pod;
-            }
+            if ( '' == $pod[ 'object' ] && $object_name == $pod[ 'name' ] )
+                return $pod;
         }
 
         // If no objects created by Pods, return first extended

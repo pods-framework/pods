@@ -817,7 +817,7 @@ class PodsUpgrade_2_0 {
         if ( !in_array( "{$wpdb->prefix}pod_tbl_{$pod}", $this->tables ) )
             return pods_error( __( 'Table not found, items cannot be migrated', 'pods' ) );
 
-        if ( !in_array( "{$wpdb->prefix}pods_tbl_{$pod}", $this->tables ) )
+        if ( !in_array( "{$wpdb->prefix}pods_{$pod}", $this->tables ) )
             return pods_error( __( 'New table not found, items cannot be migrated', 'pods' ) );
 
         if ( !in_array( "{$wpdb->prefix}pod_types", $this->tables ) )
@@ -854,7 +854,7 @@ class PodsUpgrade_2_0 {
 
         // Copy content from the old table into the new
         $sql = "
-            REPLACE INTO `@wp_pods_tbl_{$pod}`
+            REPLACE INTO `@wp_pods_{$pod}`
                 ( {$into} )
                 ( SELECT {$select}
                   FROM `@wp_pod_tbl_{$pod}` AS `t` )
@@ -864,7 +864,7 @@ class PodsUpgrade_2_0 {
 
         // Copy index data from the old index table into the new individual table
         $sql = "
-            UPDATE `@wp_pods_tbl_{$pod}` AS `t`
+            UPDATE `@wp_pods_{$pod}` AS `t`
             LEFT JOIN `@wp_pod_types` AS `x` ON `x`.`name` = '{$pod}'
             LEFT JOIN `@wp_pod` AS `p` ON `p`.`datatype` = `x`.`id` AND `p`.`tbl_row_id` = `t`.`id`
             SET `t`.`created` = `p`.`created`, `t`.`modified` = `p`.`modified`
@@ -875,7 +875,7 @@ class PodsUpgrade_2_0 {
 
         // Copy name data from the old index table into the new individual table (if name empty in indiv table)
         $sql = "
-            UPDATE `@wp_pods_tbl_{$pod}` AS `t`
+            UPDATE `@wp_pods_{$pod}` AS `t`
             LEFT JOIN `@wp_pod_types` AS `x` ON `x`.`name` = '{$pod}'
             LEFT JOIN `@wp_pod` AS `p` ON `p`.`datatype` = `x`.`id` AND `p`.`tbl_row_id` = `t`.`id`
             SET `t`.`name` = `p`.`name`

@@ -59,7 +59,8 @@ class PodsField_Paragraph extends PodsField {
                                 'tinymce' => __( 'TinyMCE (WP Default)', 'pods' ),
                                 'cleditor' => __( 'CLEditor', 'pods' )
                             )
-                        )
+                        ),
+                    'codemirror' => __( 'CodeMirror (Syntax Highlighting)', 'pods' )
                 ),
                 'dependency' => true
             ),
@@ -163,6 +164,8 @@ class PodsField_Paragraph extends PodsField {
             $field_type = 'tinymce';
         elseif ( 'cleditor' == pods_var( 'paragraph_format_type', $options ) )
             $field_type = 'cleditor';
+        elseif ( 'codemirror' == pods_var( 'paragraph_format_type', $options ) )
+            $field_type = 'codemirror';
         else {
             // Support custom WYSIWYG integration
             do_action( 'pods_form_ui_field_paragraph_wysiwyg_' . pods_var( 'paragraph_format_type', $options ), $name, $value, $options, $pod, $id );

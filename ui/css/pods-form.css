@@ -157,3 +157,6 @@ input.pods-form-ui-field-type-color {
 .pods-field .wp-editor-container {
     background-color: #FFF;
 }
+
+/* Codemirror */
+.CodeMirror {border : 1px solid #999; background-color: #fff;}

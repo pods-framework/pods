@@ -24,8 +24,8 @@ foreach ( $field_types as $type => $label ) {
 
 $advanced_fields = array(
     __( 'Visual', 'pods' ) => array(
-        'css_class_name' => array(
-            'label' => __( 'CSS Class Name', 'pods' ),
+        'class' => array(
+            'label' => __( 'Additional CSS Classes', 'pods' ),
             'help' => __( 'help', 'pods' ),
             'type' => 'text',
             'default' => ''

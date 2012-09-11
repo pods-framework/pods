@@ -209,12 +209,14 @@ class PodsForm {
 
             $attributes = array_merge( $_attributes, (array) $attributes );
         }
-        if ( isset( $options[ 'attributes' ] ) && is_array( $options[ 'attributes' ] ) && !empty( $options[ 'attributes' ] ) ) {
+
+        if ( isset( $options[ 'attributes' ] ) && is_array( $options[ 'attributes' ] ) && !empty( $options[ 'attributes' ] ) )
             $attributes = array_merge( $attributes, $options[ 'attributes' ] );
-        }
+
         if ( isset( $options[ 'class' ] ) && !empty( $options[ 'class' ] ) ) {
             if ( is_array( $options[ 'class' ] ) )
                 $options[ 'class' ] = implode( ' ', $options[ 'class' ] );
+
             $options[ 'class' ] = (string) $options[ 'class' ];
             if ( isset( $attributes[ 'class' ] ) )
                 $attributes[ 'class' ] = $attributes[ 'class' ] . ' ' . $options[ 'class' ];

@@ -3845,8 +3845,8 @@ class PodsAPI {
      */
     public function get_field_types () {
         $types = array(
-            'date',
             'datetime',
+            'date',
             'time',
             'number',
             'currency',
@@ -3858,9 +3858,9 @@ class PodsAPI {
             'paragraph',
             'wysiwyg',
             'code',
-            'boolean',
             'slug',
             'color',
+            'boolean',
             'file',
             'pick'
         );

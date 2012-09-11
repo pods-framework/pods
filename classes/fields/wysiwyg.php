@@ -152,9 +152,9 @@ class PodsField_WYSIWYG extends PodsField {
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
 
-        if ( 'tinymce' == pods_var( 'wysiwyg_format_type', $options, 'tinymce', null, true ) )
+        if ( 'tinymce' == pods_var( 'wysiwyg_editor', $options ) )
             $field_type = 'tinymce';
-        elseif ( 'cleditor' == pods_var( 'wysiwyg_format_type', $options ) )
+        elseif ( 'cleditor' == pods_var( 'wysiwyg_editor', $options ) )
             $field_type = 'cleditor';
         else {
             // Support custom WYSIWYG integration

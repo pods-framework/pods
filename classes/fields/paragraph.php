@@ -198,16 +198,7 @@ class PodsField_Paragraph extends PodsField {
     public function strip_html ( $value, $options = null ) {
         $options = (array) $options;
 
-<<<<<<< HEAD
-        $paragraph_type = pods_var( 'paragraph_format_type', $options );
-
-        if ( 'codemirror' === $paragraph_type ) {
-            $value = esc_attr( $value );
-        }
-        elseif ( 1 == pods_var( 'paragraph_allow_html', $options ) || 'plain' != $paragraph_type ) {
-=======
         if ( 1 == pods_var( 'paragraph_allow_html', $options ) ) {
->>>>>>> Updates to Field Types, splitting types out of Text, Paragraph, Number, and Date
             $allowed_html_tags = '';
 
             if ( 0 < strlen( pods_var( 'paragraph_allowed_html_tags', $options ) ) ) {

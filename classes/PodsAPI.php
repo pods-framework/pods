@@ -4030,6 +4030,11 @@ class PodsAPI {
             'orderby' => null
         );
 
+        if ( empty( $object_type ) ) {
+            $object_type = 'post_type';
+            $object = 'post';
+        }
+
         if ( 'pod' == $object_type && null === $pod ) {
             if ( !empty( $object ) )
                 $name = $object;
@@ -4100,6 +4105,7 @@ class PodsAPI {
         }
         elseif ( 'table' == $object_type )
             $info[ 'table' ] = ( empty( $object ) ? $name : $object );
+        else
 
         $info[ 'table' ] = pods_clean_name( $info[ 'table' ], false );
         $info[ 'field_id' ] = pods_clean_name( $info[ 'field_id' ], false );

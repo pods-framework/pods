@@ -235,15 +235,18 @@ function pods_help ( $text, $url = null ) {
     if ( !wp_script_is( 'pods-qtip-init', 'queue' ) && !wp_script_is( 'pods-qtip-init', 'to_do' ) && !wp_script_is( 'pods-qtip-init', 'done' ) )
         wp_enqueue_script( 'pods-qtip-init' );
 
-    if ( 0 < strlen( $url ) ) {
-        if ( is_array( $text ) )
-            $text[ 1 ] = $url;
-        else
-            $text = array( $text, $url );
+    if ( is_array( $text ) ) {
+        if ( isset( $text[ 1 ] ) )
+            $url = $text[ 1 ];
+
+        $text = $text[ 0 ];
     }
 
-    if ( is_array( $text ) )
-        $text = $text[ 0 ] . '<br /><br /><a href="' . $text[ 1 ] . '" target="_blank">' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
+    if ( 'help' == $text )
+        return;
+
+    if ( 0 < strlen( $url ) )
+        $text .= '<br /><br /><a href="' . $url . '" target="_blank">' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
 
     echo '<img src="' . PODS_URL . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';
 }

@@ -212,10 +212,11 @@ function pods_deprecated ( $function, $version, $replacement = null ) {
  * Inline help
  *
  * @param string $text Help text
+ * @param string $url Documentation URL
  *
  * @since 2.0.0
  */
-function pods_help ( $text ) {
+function pods_help ( $text, $url = null ) {
     if ( !wp_script_is( 'pods-qtip', 'registered' ) )
         wp_register_script( 'pods-qtip', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.0-2011-10-02' );
     if ( !wp_script_is( 'pods-qtip', 'queue' ) && !wp_script_is( 'pods-qtip', 'to_do' ) && !wp_script_is( 'pods-qtip', 'done' ) )
@@ -233,6 +234,16 @@ function pods_help ( $text ) {
         ), PODS_VERSION );
     if ( !wp_script_is( 'pods-qtip-init', 'queue' ) && !wp_script_is( 'pods-qtip-init', 'to_do' ) && !wp_script_is( 'pods-qtip-init', 'done' ) )
         wp_enqueue_script( 'pods-qtip-init' );
+
+    if ( 0 < strlen( $url ) ) {
+        if ( is_array( $text ) )
+            $text[ 1 ] = $url;
+        else
+            $text = array( $text, $url );
+    }
+
+    if ( is_array( $text ) )
+        $text = $text[ 0 ] . '<br /><br /><a href="' . $text[ 1 ] . '" target="_blank">' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
 
     echo '<img src="' . PODS_URL . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';
 }

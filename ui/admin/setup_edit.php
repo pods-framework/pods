@@ -280,7 +280,7 @@ if ( 'none' != pods_var( 'storage', $pod, 'none', null, true ) ) {
                 <span>&nbsp;</span>
             </th>
             <th scope="col" id="label" class="manage-column field-label">
-                <span>Label<?php pods_help( __( "<h6>Label</h6>The label is the descriptive name to identify the Pod field.", 'pods' ) ); ?></span>
+                <span>Label<?php pods_help( array( __( "<h6>Label</h6>The label is the descriptive name to identify the Pod field.", 'pods' ), 'http://podsframework.org/codex/' ) ); ?></span>
             </th>
             <th scope="col" id="machine-name" class="manage-column field-machine-name">
                 <span>Name<?php pods_help( __( "<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically.", 'pods' ) ); ?></span>

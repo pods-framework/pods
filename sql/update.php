@@ -22,6 +22,8 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
             update_post_meta( $author->ID, 'default_value', '{@user.ID}' );
         }
     }
+
+    update_option( 'pods_framework_version', '2.0.0-b-10' );
 }
 
 if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-11', '<' ) ) {
@@ -39,6 +41,8 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
             update_post_meta( $date->ID, 'date_time_format', 'h_mm_ss_A' );
         }
     }
+
+    update_option( 'pods_framework_version', '2.0.0-b-11' );
 }
 
 if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-12', '<' ) ) {
@@ -67,6 +71,8 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
             update_post_meta( $number->ID, 'number_max_length', '12' );
         }
     }
+
+    update_option( 'pods_framework_version', '2.0.0-b-12' );
 }
 
 if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-13', '<' ) ) {
@@ -85,6 +91,8 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
                 $wpdb->query( "ALTER TABLE `{$table}` RENAME `{$new_table}`" );
         }
     }
+
+    update_option( 'pods_framework_version', '2.0.0-b-13' );
 }
 
 function pods_2_alpha_migrate_pods () {

@@ -8,8 +8,6 @@ $field_types_select = array();
 foreach ( $field_types as $type => $label ) {
     PodsForm::field_loader( $type );
 
-    pods_debug( PodsForm::$field_group );
-
     if ( !empty( PodsForm::$field_group ) ) {
         if ( !isset( $field_types_select[ PodsForm::$field_group ] ) )
             $field_types_select[ PodsForm::$field_group ] = array();
@@ -19,8 +17,6 @@ foreach ( $field_types as $type => $label ) {
     else
         $field_types_select[ $type ] = $label;
 }
-
-pods_debug( $field_types_select );
 
 $advanced_fields = array(
     __( 'Visual', 'pods' ) => array(

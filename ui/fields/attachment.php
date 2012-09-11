@@ -33,8 +33,19 @@ else
             <td>
                 <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
                     foreach ( $value as $val ) {
-                        $thumb = wp_get_attachment_image_src( $val[ 'id' ], 'thumbnail', true );
-                        echo $field_file->markup( $attributes, $file_limit, pods_var( 'file_edit_title', $options, 0 ), $val[ 'ID' ], $thumb[ 0 ], basename( $val[ 'guid' ] ) );
+                        $attachment = get_post( $val );
+
+                        if ( empty( $attachment ) )
+                            continue;
+
+                        $thumb = wp_get_attachment_image_src( $val, 'thumbnail', true );
+
+                        $title = $attachment->post_title;
+
+                        if ( 0 == pods_var( 'file_edit_title', $options, 0 ) )
+                            $title = basename( $attachment->guid );
+
+                        echo $field_file->markup( $attributes, $file_limit, pods_var( 'file_edit_title', $options, 0 ), $val, $thumb[ 0 ], $title );
                     }
                     ?></ul>
 

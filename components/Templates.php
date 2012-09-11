@@ -138,10 +138,7 @@ class Pods_Templates extends PodsComponent {
             array(
                 'name' => 'code',
                 'label' => __( 'Content', 'pods' ),
-                'type' => 'paragraph',
-                'options' => array(
-                    'paragraph_format_type' => 'codemirror'
-                )
+                'type' => 'code'
             )
         );
 

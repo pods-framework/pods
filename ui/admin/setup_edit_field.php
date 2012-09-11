@@ -73,7 +73,7 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
                             </div>
                             <div class="pods-field-option">
                                 <?php echo PodsForm::label( 'field_data[' . $pods_i . '][type]', __( 'Field Type', 'pods' ), __( 'help', 'pods' ) ); ?>
-                                <?php echo PodsForm::field( 'field_data[' . $pods_i . '][type]', pods_var_raw( 'type', $field ), 'pick', array( 'data' => pods_var_raw( 'field_types', $field_settings ), 'class' => 'pods-dependent-toggle' ) ); ?>
+                                <?php echo PodsForm::field( 'field_data[' . $pods_i . '][type]', pods_var_raw( 'type', $field ), 'pick', array( 'data' => pods_var_raw( 'field_types_select', $field_settings ), 'class' => 'pods-dependent-toggle' ) ); ?>
                             </div>
                             <div class="pods-field-option-container pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-pick">
                                 <div class="pods-field-option">
@@ -113,9 +113,9 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
                                 ?>
                                 <div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-<?php echo PodsForm::clean( $field_type, true ); ?>">
                                     <?php
-                                    $field_options = $field_type_options[ $field_type ];
+                                        $field_options = $field_type_options[ $field_type ];
 
-                                    include PODS_DIR . 'ui/admin/field_option.php';
+                                        include PODS_DIR . 'ui/admin/field_option.php';
                                     ?>
                                 </div>
                                 <?php
@@ -126,14 +126,14 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
                         <div id="pods-advanced-options-<?php echo $pods_i; ?>" class="pods-tab pods-advanced-options">
 
                             <?php
-                            foreach ( $field_settings[ 'advanced_fields' ] as $group => $fields ) {
-                                ?>
+                                foreach ( $field_settings[ 'advanced_fields' ] as $group => $fields ) {
+                            ?>
                                 <h4><?php echo $group; ?></h4>
-                                <?php
-                                $field_options = PodsForm::fields_setup( $fields );
+                            <?php
+                                    $field_options = PodsForm::fields_setup( $fields );
 
-                                include PODS_DIR . 'ui/admin/field_option.php';
-                            }
+                                    include PODS_DIR . 'ui/admin/field_option.php';
+                                }
                             ?>
                         </div>
                     </div>

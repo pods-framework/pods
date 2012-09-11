@@ -8,34 +8,55 @@ $date_format = array(
     'ymd_dash' => 'yy-mm-dd',
     'ymd_dot' => 'yy.mm.dd'
 );
+$time_format = array(
+    'h_mm_A' => 'h:mm:ss TT',
+    'h_mm_ss_A' => 'h:mm TT',
+    'hh_mm_A' => 'hh:mm TT',
+    'hh_mm_ss_A' => 'hh:mm:ss TT',
+    'h_mma' => 'h:mmtt',
+    'hh_mma' => 'hh:mmtt',
+    'h_mm' => 'h:mm',
+    'h_mm_ss' => 'h:mm:ss',
+    'hh_mm' => 'hh:mm',
+    'hh_mm_ss' => 'hh:mm:ss'
+);
 
 wp_enqueue_script( 'jquery-ui-datepicker' );
+wp_enqueue_script( 'jquery-ui-timepicker' );
 wp_enqueue_style( 'jquery-ui' );
+wp_enqueue_style( 'jquery-ui-timepicker' );
 
 $attributes = array();
 
 $type = 'text';
 
-$date_type = 'date';
+$date_type = 'datetime';
 
-if ( 1 == $options[ 'date_html5' ] )
+if ( 1 == $options[ 'datetime_html5' ] )
     $type = $date_type;
 
 $attributes[ 'type' ] = $type;
 $attributes[ 'tabindex' ] = 2;
 
-$format = PodsForm::field_method( 'date', 'format', $options );
+$format = PodsForm::field_method( 'datetime', 'format', $options );
 
-$method = 'datepicker';
+$method = 'datetimepicker';
 
 $args = array(
-    'dateFormat' => $date_format[ $options[ 'date_format' ] ]
+    'timeFormat' => $time_format[ $options[ 'datetime_time_format' ] ],
+    'dateFormat' => $date_format[ $options[ 'datetime_format' ] ]
 );
 
-$html5_format = 'Y-m-d';
+if ( false !== stripos( $args[ 'timeFormat' ], 'tt' ) )
+    $args[ 'ampm' ] = true;
 
-$date = PodsForm::field_method( 'date', 'createFromFormat', $format, (string) $value );
-$date_default = PodsForm::field_method( 'date', 'createFromFormat', 'Y-m-d', (string) $value );
+$html5_format = 'Y-m-d\TH:i:s';
+
+if ( 24 == pods_var( 'datetime_time_type', $options, 12 ) )
+    $args[ 'ampm' ] = false;
+
+$date = PodsForm::field_method( 'datetime', 'createFromFormat', $format, (string) $value );
+$date_default = PodsForm::field_method( 'datetime', 'createFromFormat', 'Y-m-d H:i:s', (string) $value );
 
 if ( 'text' != $type ) {
     $formatted_date = $value;
@@ -50,7 +71,7 @@ if ( 'text' != $type ) {
         $value = date_i18n( $html5_format );
 }
 
-$args = apply_filters( 'pods_form_ui_field_date_args', $args, $type, $options, $attributes, $name, PodsForm::$field_type );
+$args = apply_filters( 'pods_form_ui_field_datetime_args', $args, $type, $options, $attributes, $name, PodsForm::$field_type );
 
 $attributes[ 'value' ] = $value;
 

@@ -401,12 +401,16 @@ class PodsUpgrade_2_0 {
 
                 if ( 'txt' == $field_type )
                     $field_type = 'text';
-                elseif ( 'desc' == $field_type || 'code' == $field_type )
+                elseif ( 'desc' == $field_type )
+                    $field_type = 'wysiwyg';
+                elseif ( 'code' == $field_type )
                     $field_type = 'paragraph';
                 elseif ( 'bool' == $field_type )
                     $field_type = 'boolean';
                 elseif ( 'num' == $field_type )
                     $field_type = 'number';
+                elseif ( 'date' == $field_type )
+                    $field_type = 'datetime';
 
                 $field_params = array(
                     'name' => trim( $row->name ),
@@ -459,14 +463,10 @@ class PodsUpgrade_2_0 {
                         $field_params[ 'options' ][ 'pick_limit' ] = 1;
                     }
                 }
-                elseif ( 'number' == $field_type ) {
-                    $field_params[ 'options' ][ 'number_format_type' ] = 'plain';
+                elseif ( 'number' == $field_type )
                     $field_params[ 'options' ][ 'number_decimals' ] = 2;
-                }
                 elseif ( 'desc' == $row->coltype )
-                    $field_params[ 'options' ][ 'paragraph_format_type' ] = 'tinymce';
-                elseif ( 'date' == $field_type )
-                    $field_params[ 'options' ][ 'date_format_type' ] = 'datetime';
+                    $field_params[ 'options' ][ 'wysiwyg_editor' ] = 'tinymce';
                 elseif ( 'text' == $field_type )
                     $field_params[ 'options' ][ 'text_max_length' ] = 128;
 

@@ -138,10 +138,7 @@ class Pods_Helpers extends PodsComponent {
             array(
                 'name' => 'code',
                 'label' => __( 'Code', 'pods' ),
-                'type' => 'paragraph',
-                'options' => array(
-                    'paragraph_format_type' => 'codemirror'
-                )
+                'type' => 'code'
             )
         );
 

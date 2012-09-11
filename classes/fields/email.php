@@ -2,7 +2,7 @@
 /**
  *
  */
-class PodsField_Text extends PodsField {
+class PodsField_Email extends PodsField {
 
     /**
      * Field Type Group
@@ -18,7 +18,7 @@ class PodsField_Text extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    public static $type = 'text';
+    public static $type = 'email';
 
     /**
      * Field Type Label
@@ -26,7 +26,7 @@ class PodsField_Text extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    public static $label = 'Plain Text';
+    public static $label = 'E-mail';
 
     /**
      * Field Type Preparation
@@ -54,35 +54,17 @@ class PodsField_Text extends PodsField {
      */
     public function options () {
         $options = array(
-            'output_options' => array(
-                'label' => __( 'Output Options', 'pods' ),
-                'group' => array(
-                    'text_allow_shortcode' => array(
-                        'label' => __( 'Allow Shortcodes?', 'pods' ),
-                        'default' => 0,
-                        'type' => 'boolean',
-                        'dependency' => true
-                    ),
-                    'text_allow_html' => array(
-                        'label' => __( 'Allow HTML?', 'pods' ),
-                        'default' => 0,
-                        'type' => 'boolean',
-                        'dependency' => true
-                    )
-                )
-            ),
-            'text_allowed_html_tags' => array(
-                'label' => __( 'Allowed HTML Tags', 'pods' ),
-                'depends-on' => array( 'text_allow_html' => true ),
-                'default' => 'strong em a ul ol li b i',
-                'type' => 'text'
-            ),
-            'text_max_length' => array(
+            'email_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 255,
                 'type' => 'number'
             ),
-            'text_size' => array(
+            'email_html5' => array(
+                'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
+                'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
+                'type' => 'boolean'
+            ),
+            'email_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
                 'type' => 'pick',
@@ -93,7 +75,6 @@ class PodsField_Text extends PodsField {
                 )
             )
         );
-
         return $options;
     }
 
@@ -106,7 +87,7 @@ class PodsField_Text extends PodsField {
      * @since 2.0.0
      */
     public function schema ( $options = null ) {
-        $length = (int) pods_var( 'text_max_length', $options, 255, null, true );
+        $length = (int) pods_var( 'email_max_length', $options, 255, null, true );
 
         if ( $length < 1 )
             $length = 255;
@@ -114,27 +95,6 @@ class PodsField_Text extends PodsField {
         $schema = 'VARCHAR(' . $length . ')';
 
         return $schema;
-    }
-
-    /**
-     * Change the way the value of the field is displayed with Pods::get
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param int $id
-     *
-     * @since 2.0.0
-     */
-    public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        $value = $this->strip_html( $value, $options );
-
-        if ( 1 == pods_var( 'text_allow_shortcode', $options ) )
-            $value = do_shortcode( $value );
-
-        return $value;
     }
 
     /**
@@ -151,7 +111,22 @@ class PodsField_Text extends PodsField {
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
 
-        pods_view( PODS_DIR . 'ui/fields/text.php', compact( array_keys( get_defined_vars() ) ) );
+        pods_view( PODS_DIR . 'ui/fields/email.php', compact( array_keys( get_defined_vars() ) ) );
+    }
+
+    /**
+     * Build regex necessary for JS validation
+     *
+     * @param mixed $value
+     * @param string $name
+     * @param array $options
+     * @param string $pod
+     * @param int $id
+     *
+     * @since 2.0.0
+     */
+    public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+        return false;
     }
 
     /**
@@ -177,6 +152,8 @@ class PodsField_Text extends PodsField {
             if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
                 if ( 1 == pods_var( 'required', $options ) )
                     $errors[] = __( 'This field is required.', 'pods' );
+                else
+                    $errors[] = __( 'Invalid e-mail provided.', 'pods' );
             }
         }
 
@@ -200,7 +177,10 @@ class PodsField_Text extends PodsField {
      * @since 2.0.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-        $value = $this->strip_html( $value, $options );
+        $options = (array) $options;
+
+        if ( !is_email( $value ) )
+            $value = '';
 
         return $value;
     }
@@ -218,38 +198,6 @@ class PodsField_Text extends PodsField {
      * @since 2.0.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-        $value = $this->strip_html( $value, $options );
-
-        $value = wp_trim_words( $value );
-
-        return $value;
-    }
-
-    /**
-     * Strip HTML based on options
-     *
-     * @param string $value
-     * @param array $options
-     *
-     * @return string
-     */
-    public function strip_html ( $value, $options = null ) {
-        $options = (array) $options;
-
-        if ( 1 == pods_var( 'text_allow_html', $options ) ) {
-            $allowed_html_tags = '';
-
-            if ( 0 < strlen( pods_var( 'text_allowed_html_tags', $options ) ) ) {
-                $allowed_html_tags = explode( ' ', trim( pods_var( 'text_allowed_html_tags', $options ) ) );
-                $allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
-            }
-
-            if ( !empty( $allowed_html_tags ) && '<>' != $allowed_html_tags )
-                $value = strip_tags( $value, $allowed_html_tags );
-        }
-        else
-            $value = strip_tags( $value );
-
-        return $value;
+        return '<a href="mailto:' . esc_attr( $value ) . '">' . $value . '</a>';
     }
 }

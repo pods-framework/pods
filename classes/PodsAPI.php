@@ -504,7 +504,7 @@ class PodsAPI {
                 'post_content' => array(
                     'name' => 'post_content',
                     'label' => 'Content',
-                    'type' => 'paragraph',
+                    'type' => 'wysiwyg',
                     'alias' => array( 'content' )
                 ),
                 'post_title' => array(
@@ -698,7 +698,7 @@ class PodsAPI {
                 'comment_content' => array(
                     'name' => 'comment_content',
                     'label' => 'Content',
-                    'type' => 'paragraph',
+                    'type' => 'wysiwyg',
                     'alias' => array( 'content' )
                 ),
                 'comment_approved' => array(
@@ -749,7 +749,7 @@ class PodsAPI {
                 'description' => array(
                     'name' => 'description',
                     'label' => 'Description',
-                    'type' => 'paragraph',
+                    'type' => 'wysiwyg',
                     'alias' => array( 'content' )
                 ),
                 'taxonomy' => array(
@@ -3827,9 +3827,9 @@ class PodsAPI {
             'double' => 'number',
             'decimal' => 'number',
             'date' => 'date',
-            'datetime' => 'date',
-            'timestamp' => 'date',
-            'time' => 'date',
+            'datetime' => 'datetime',
+            'timestamp' => 'datetime',
+            'time' => 'time',
             'year' => 'date',
             'varchar' => 'text',
             'text' => 'paragraph',
@@ -3846,10 +3846,19 @@ class PodsAPI {
     public function get_field_types () {
         $types = array(
             'date',
+            'datetime',
+            'time',
             'number',
-            'boolean',
+            'currency',
             'text',
+            'website',
+            'phone',
+            'email',
+            'password',
             'paragraph',
+            'wysiwyg',
+            'code',
+            'boolean',
             'slug',
             'color',
             'file',

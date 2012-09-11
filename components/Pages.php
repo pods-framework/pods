@@ -169,18 +169,12 @@ class Pods_Pages extends PodsComponent {
             array(
                 'name' => 'code',
                 'label' => __( 'Page Code', 'pods' ),
-                'type' => 'paragraph',
-                'options' => array(
-                    'paragraph_format_type' => 'codemirror'
-                )
+                'type' => 'code'
             ),
             array(
                 'name' => 'precode',
                 'label' => __( 'Page Precode', 'pods' ),
-                'type' => 'paragraph',
-                'options' => array(
-                    'paragraph_format_type' => 'codemirror'
-                )
+                'type' => 'code'
             ),
             array(
                 'name' => 'page_template',

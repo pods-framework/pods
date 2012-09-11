@@ -2,7 +2,7 @@
 /**
  *
  */
-class PodsField_Text extends PodsField {
+class PodsField_WYSIWYG extends PodsField {
 
     /**
      * Field Type Group
@@ -10,7 +10,7 @@ class PodsField_Text extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    public static $group = 'Text';
+    public static $group = 'Paragraph';
 
     /**
      * Field Type Identifier
@@ -18,7 +18,7 @@ class PodsField_Text extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    public static $type = 'text';
+    public static $type = 'wysiwyg';
 
     /**
      * Field Type Label
@@ -26,7 +26,7 @@ class PodsField_Text extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    public static $label = 'Plain Text';
+    public static $label = 'WYSIWYG (Visual Editor)';
 
     /**
      * Field Type Preparation
@@ -54,35 +54,41 @@ class PodsField_Text extends PodsField {
      */
     public function options () {
         $options = array(
+            'wysiwyg_editor' => array(
+                'label' => __( 'Editor', 'pods' ),
+                'default' => 'tinymce',
+                'type' => 'pick',
+                'data' =>
+                    apply_filters(
+                        'pods_form_ui_field_wysiwyg_editors',
+                        array(
+                            'tinymce' => __( 'TinyMCE (WP Default)', 'pods' ),
+                            'cleditor' => __( 'CLEditor', 'pods' )
+                        )
+                    )
+            ),
             'output_options' => array(
                 'label' => __( 'Output Options', 'pods' ),
                 'group' => array(
-                    'text_allow_shortcode' => array(
+                    'wysiwyg_allow_shortcode' => array(
                         'label' => __( 'Allow Shortcodes?', 'pods' ),
-                        'default' => 0,
-                        'type' => 'boolean',
-                        'dependency' => true
-                    ),
-                    'text_allow_html' => array(
-                        'label' => __( 'Allow HTML?', 'pods' ),
                         'default' => 0,
                         'type' => 'boolean',
                         'dependency' => true
                     )
                 )
             ),
-            'text_allowed_html_tags' => array(
+            'wysiwyg_allowed_html_tags' => array(
                 'label' => __( 'Allowed HTML Tags', 'pods' ),
-                'depends-on' => array( 'text_allow_html' => true ),
-                'default' => 'strong em a ul ol li b i',
+                'default' => '',
                 'type' => 'text'
             ),
-            'text_max_length' => array(
+            'wysiwyg_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
-                'default' => 255,
+                'default' => 0,
                 'type' => 'number'
             ),
-            'text_size' => array(
+            'wysiwyg_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
                 'type' => 'pick',
@@ -105,13 +111,8 @@ class PodsField_Text extends PodsField {
      * @return array
      * @since 2.0.0
      */
-    public function schema ( $options = null ) {
-        $length = (int) pods_var( 'text_max_length', $options, 255, null, true );
-
-        if ( $length < 1 )
-            $length = 255;
-
-        $schema = 'VARCHAR(' . $length . ')';
+    public function schema ( $options ) {
+        $schema = 'LONGTEXT';
 
         return $schema;
     }
@@ -131,7 +132,7 @@ class PodsField_Text extends PodsField {
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $value = $this->strip_html( $value, $options );
 
-        if ( 1 == pods_var( 'text_allow_shortcode', $options ) )
+        if ( 1 == pods_var( 'wysiwyg_allow_shortcode', $options, 0 ) )
             $value = do_shortcode( $value );
 
         return $value;
@@ -151,39 +152,19 @@ class PodsField_Text extends PodsField {
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
 
-        pods_view( PODS_DIR . 'ui/fields/text.php', compact( array_keys( get_defined_vars() ) ) );
-    }
-
-    /**
-     * Validate a value before it's saved
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param int $id
-     *
-     * @since 2.0.0
-     */
-    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
-        $errors = array();
-
-        $check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
-
-        if ( is_array( $check ) )
-            $errors = $check;
+        if ( 'tinymce' == pods_var( 'wysiwyg_format_type', $options ) )
+            $field_type = 'tinymce';
+        elseif ( 'cleditor' == pods_var( 'wysiwyg_format_type', $options ) )
+            $field_type = 'cleditor';
         else {
-            if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
-                if ( 1 == pods_var( 'required', $options ) )
-                    $errors[] = __( 'This field is required.', 'pods' );
-            }
+            // Support custom WYSIWYG integration
+            do_action( 'pods_form_ui_field_wysiwyg_' . pods_var( 'wysiwyg_editor', $options ), $name, $value, $options, $pod, $id );
+            do_action( 'pods_form_ui_field_wysiwyg', pods_var( 'wysiwyg_editor', $options ), $name, $value, $options, $pod, $id );
+
+            return;
         }
 
-        if ( !empty( $errors ) )
-            return $errors;
-
-        return true;
+        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
@@ -236,19 +217,15 @@ class PodsField_Text extends PodsField {
     public function strip_html ( $value, $options = null ) {
         $options = (array) $options;
 
-        if ( 1 == pods_var( 'text_allow_html', $options ) ) {
-            $allowed_html_tags = '';
+        $allowed_html_tags = '';
 
-            if ( 0 < strlen( pods_var( 'text_allowed_html_tags', $options ) ) ) {
-                $allowed_html_tags = explode( ' ', trim( pods_var( 'text_allowed_html_tags', $options ) ) );
-                $allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
-            }
-
-            if ( !empty( $allowed_html_tags ) && '<>' != $allowed_html_tags )
-                $value = strip_tags( $value, $allowed_html_tags );
+        if ( 0 < strlen( pods_var( 'wysiwyg_allowed_html_tags', $options ) ) ) {
+            $allowed_html_tags = explode( ' ', trim( pods_var( 'wysiwyg_allowed_html_tags', $options ) ) );
+            $allowed_html_tags = '<' . implode( '><', $allowed_html_tags ) . '>';
         }
-        else
-            $value = strip_tags( $value );
+
+        if ( !empty( $allowed_html_tags ) && '<>' != $allowed_html_tags )
+            $value = strip_tags( $value, $allowed_html_tags );
 
         return $value;
     }

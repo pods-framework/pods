@@ -3,6 +3,25 @@ global $pods_i;
 
 $field_types = pods_api()->get_field_types();
 
+$field_types_select = array();
+
+foreach ( $field_types as $type => $label ) {
+    PodsForm::field_loader( $type );
+
+    pods_debug( PodsForm::$field_group );
+
+    if ( !empty( PodsForm::$field_group ) ) {
+        if ( !isset( $field_types_select[ PodsForm::$field_group ] ) )
+            $field_types_select[ PodsForm::$field_group ] = array();
+
+        $field_types_select[ PodsForm::$field_group ][ $type ] = $label;
+    }
+    else
+        $field_types_select[ $type ] = $label;
+}
+
+pods_debug( $field_types_select );
+
 $advanced_fields = array(
     __( 'Visual', 'pods' ) => array(
         'css_class_name' => array(
@@ -177,11 +196,14 @@ foreach ( $pod[ 'fields' ] as $_field => $_data ) {
 $field_defaults = apply_filters( 'pods_field_defaults', apply_filters( 'pods_field_defaults_' . $pod[ 'name' ], $field_defaults, $pod ) );
 
 // WP objects already have slugs
-if ( !in_array( $pod[ 'type' ], array( 'pod', 'table' ) ) )
+if ( !in_array( $pod[ 'type' ], array( 'pod', 'table' ) ) ) {
     unset( $field_types[ 'slug' ] );
+    unset( $field_types_select[ 'slug' ] );
+}
 
 $field_settings = array(
     'field_types' => $field_types,
+    'field_types_select' => $field_types_select,
     'field_defaults' => $field_defaults,
     'advanced_fields' => $advanced_fields,
     'pick_object' => $pick_object,

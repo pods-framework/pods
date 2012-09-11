@@ -2,7 +2,7 @@
 /**
  *
  */
-class PodsField_Number extends PodsField {
+class PodsField_Currency extends PodsField {
 
     /**
      * Field Type Group
@@ -18,7 +18,7 @@ class PodsField_Number extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    public static $type = 'number';
+    public static $type = 'currency';
 
     /**
      * Field Type Label
@@ -26,7 +26,7 @@ class PodsField_Number extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    public static $label = 'Plain Number';
+    public static $label = 'Currency';
 
     /**
      * Field Type Preparation
@@ -37,12 +37,23 @@ class PodsField_Number extends PodsField {
     public static $prepare = '%d';
 
     /**
+     * Currency Formats
+     *
+     * @var array
+     * @since 2.0.0
+     */
+    public static $currencies = array(
+        'usd' => '$',
+        'cad' => '$'
+    );
+
+    /**
      * Do things like register/enqueue scripts and stylesheets
      *
      * @since 2.0.0
      */
     public function __construct () {
-
+        self::$currencies = apply_filters( 'pods_form_ui_field_currency_currencies', self::$currencies );
     }
 
     /**
@@ -54,7 +65,29 @@ class PodsField_Number extends PodsField {
      */
     public function options () {
         $options = array(
-            'number_format' => array(
+            'currency_format_sign' => array(
+                'label' => __( 'Currency Sign', 'pods' ),
+                'default' => 'usd',
+                'type' => 'pick',
+                'data' => apply_filters( 'pods_form_ui_field_number_currency_options',
+                    array(
+                        'usd' => '$ (USD)',
+                        'cad' => '$ (CAD)'
+                    )
+                )
+            ),
+            'currency_format_placement' => array(
+                'label' => __( 'Currency Placement', 'pods' ),
+                'default' => 'before',
+                'type' => 'pick',
+                'data' => array(
+                    'before' => __( 'Before ($100)', 'pods' ),
+                    'after' => __( 'After (100$)', 'pods' ),
+                    'none' => __( 'None (100)', 'pods' ),
+                    'beforeaftercode' => __( 'Before with Currency Code after ($100 USD)', 'pods' )
+                )
+            ),
+            'currency_format' => array(
                 'label' => __( 'Format', 'pods' ),
                 'default' => 'i18n',
                 'type' => 'pick',
@@ -66,17 +99,17 @@ class PodsField_Number extends PodsField {
                     '9999,99' => '1234,00'
                 )
             ),
-            'number_decimals' => array(
+            'currency_decimals' => array(
                 'label' => __( 'Decimals', 'pods' ),
-                'default' => 0,
+                'default' => 2,
                 'type' => 'number'
             ),
-            'number_max_length' => array(
+            'currency_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 12,
                 'type' => 'number'
             ),
-            'number_size' => array(
+            'currency_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
                 'type' => 'pick',
@@ -99,12 +132,12 @@ class PodsField_Number extends PodsField {
      * @since 2.0.0
      */
     public function schema ( $options = null ) {
-        $length = (int) pods_var( 'number_max_length', $options, 12, null, true );
+        $length = (int) pods_var( 'currency_max_length', $options, 12, null, true );
 
         if ( $length < 1 )
             $length = 12;
 
-        $decimals = (int) pods_var( 'number_decimals', $options, 0, null, true );
+        $decimals = (int) pods_var( 'currency_decimals', $options, 2, null, true );
 
         if ( $decimals < 1 )
             $decimals = 0;
@@ -125,8 +158,8 @@ class PodsField_Number extends PodsField {
     public function prepare ( $options = null ) {
         $format = self::$prepare;
 
-        if ( 0 < (int) pods_var( 'number_decimals', $options, 0 ) )
-            $format = '%01.' . (int) pods_var( 'number_decimals', $options ) . 'f';
+        if ( 0 < (int) pods_var( 'currency_decimals', $options, 0 ) )
+            $format = '%01.' . (int) pods_var( 'currency_decimals', $options ) . 'f';
 
         return $format;
     }
@@ -145,6 +178,22 @@ class PodsField_Number extends PodsField {
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $value = $this->format( $value, $name, $options, $pod, $id );
+
+        $currency = 'usd';
+
+        if ( isset( self::$currencies[ pods_var( 'currency_format_sign', $options, -1 ) ] ) )
+            $currency = pods_var( 'currency_format_sign', $options );
+
+        $currency_sign = self::$currencies[ $currency ];
+
+        $placement = pods_var( 'currency_format_placement', $options, 'before', null, true );
+
+        if ( 'before' == $placement )
+            $value = $currency_sign . $value;
+        elseif ( 'after' == $placement )
+            $value .= $currency_sign;
+        elseif ( 'beforeaftercode' == $placement )
+            $value = $currency_sign . $value . ' ' . strtoupper( $currency );
 
         return $value;
     }
@@ -168,7 +217,9 @@ class PodsField_Number extends PodsField {
 
         $value = $this->pre_save( $value, $id, $name, $options, null, $pod );
 
-        pods_view( PODS_DIR . 'ui/fields/number.php', compact( array_keys( get_defined_vars() ) ) );
+        $field_type = 'currency';
+
+        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
@@ -186,13 +237,13 @@ class PodsField_Number extends PodsField {
         $thousands = ',';
         $dot = '.';
 
-        if ( '9999.99' == pods_var( 'number_format', $options ) )
+        if ( '9999.99' == pods_var( 'currency_format', $options ) )
             $thousands = '';
-        elseif ( '9999,99' == pods_var( 'number_format', $options ) ) {
+        elseif ( '9999,99' == pods_var( 'currency_format', $options ) ) {
             $thousands = '';
             $dot = ',';
         }
-        elseif ( '9.999,99' == pods_var( 'number_format', $options ) ) {
+        elseif ( '9.999,99' == pods_var( 'currency_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
         }
@@ -218,11 +269,11 @@ class PodsField_Number extends PodsField {
         $thousands = ',';
         $dot = '.';
 
-        if ( '9999,99' == pods_var( 'number_format', $options ) ) {
+        if ( '9999,99' == pods_var( 'currency_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
         }
-        elseif ( '9.999,99' == pods_var( 'number_format', $options ) ) {
+        elseif ( '9.999,99' == pods_var( 'currency_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
         }
@@ -254,11 +305,11 @@ class PodsField_Number extends PodsField {
         $thousands = ',';
         $dot = '.';
 
-        if ( '9999,99' == pods_var( 'number_format', $options ) ) {
+        if ( '9999,99' == pods_var( 'currency_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
         }
-        elseif ( '9.999,99' == pods_var( 'number_format', $options ) ) {
+        elseif ( '9.999,99' == pods_var( 'currency_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
         }
@@ -267,7 +318,7 @@ class PodsField_Number extends PodsField {
 
         $value = preg_replace( '/[^0-9\.]/', '', $value );
 
-        $decimals = pods_absint( (int) pods_var( 'number_decimals', $options, 0, null, true ) );
+        $decimals = pods_absint( (int) pods_var( 'currency_decimals', $options, 0, null, true ) );
 
         $value = number_format( (float) $value, $decimals, '.', '' );
 
@@ -306,21 +357,21 @@ class PodsField_Number extends PodsField {
         $thousands = ',';
         $dot = '.';
 
-        if ( '9999.99' == pods_var( 'number_format', $options ) )
+        if ( '9999.99' == pods_var( 'currency_format', $options ) )
             $thousands = '';
-        elseif ( '9999,99' == pods_var( 'number_format', $options ) ) {
+        elseif ( '9999,99' == pods_var( 'currency_format', $options ) ) {
             $thousands = '';
             $dot = ',';
         }
-        elseif ( '9.999,99' == pods_var( 'number_format', $options ) ) {
+        elseif ( '9.999,99' == pods_var( 'currency_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
         }
 
-        if ( 'i18n' == pods_var( 'number_format', $options ) )
-            $value = number_format_i18n( (float) $value, (int) pods_var( 'number_decimals', $options ) );
+        if ( 'i18n' == pods_var( 'currency_format', $options ) )
+            $value = number_format_i18n( (float) $value, (int) pods_var( 'currency_decimals', $options ) );
         else
-            $value = number_format( (float) $value, (int) pods_var( 'number_decimals', $options ), $dot, $thousands );
+            $value = number_format( (float) $value, (int) pods_var( 'currency_decimals', $options ), $dot, $thousands );
 
         return $value;
     }

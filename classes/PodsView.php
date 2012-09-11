@@ -60,8 +60,10 @@ class PodsView {
 
     /**
      * @static
+     *
      * @param $key
      * @param string $cache_mode
+     *
      * @return bool|mixed|null|void
      */
     public static function get ( $key, $cache_mode = 'cache' ) {
@@ -84,10 +86,12 @@ class PodsView {
 
     /**
      * @static
+     *
      * @param $key
      * @param $value
      * @param int $expires
      * @param null $cache_mode
+     *
      * @return mixed
      */
     public static function set ( $key, $value, $expires = 0, $cache_mode = null ) {
@@ -111,8 +115,10 @@ class PodsView {
 
     /**
      * @static
+     *
      * @param $key
      * @param null $cache_mode
+     *
      * @return bool
      */
     public static function clear ( $key, $cache_mode = null ) {
@@ -123,7 +129,7 @@ class PodsView {
 
         if ( 'transient' == $cache_mode ) {
             if ( true === $key ) {
-                $wpdb->query("DELETE FROM `{$wpdb->options}` WHERE option_name LIKE '_transient_pods_view_%'");
+                $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE option_name LIKE '_transient_pods_view_%'" );
                 wp_cache_flush();
             }
             else
@@ -151,8 +157,10 @@ class PodsView {
 
     /**
      * @static
+     *
      * @param $_view
      * @param null|array $_data
+     *
      * @return bool|mixed|string|void
      */
     private static function get_template_part ( $_view, $_data = null ) {
@@ -172,7 +180,9 @@ class PodsView {
 
     /**
      * @static
+     *
      * @param $_view
+     *
      * @return bool|mixed|string|void
      */
     private static function locate_template ( $_view ) {

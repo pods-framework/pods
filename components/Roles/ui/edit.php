@@ -15,16 +15,16 @@
             <h2 class="italicized"><?php _e( 'Roles &amp; Capabilities: Edit Role', 'pods' ); ?></h2>
 
             <?php
-                if ( isset( $_GET[ 'do' ] ) ) {
-                    $action = __( 'saved', 'pods' );
+            if ( isset( $_GET[ 'do' ] ) ) {
+                $action = __( 'saved', 'pods' );
 
-                    if ( 'create' == pods_var( 'do', 'get', 'save' ) )
-                        $action = __( 'created', 'pods' );
+                if ( 'create' == pods_var( 'do', 'get', 'save' ) )
+                    $action = __( 'created', 'pods' );
 
-                    $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+                $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
 
-                    echo $obj->message( $message );
-                }
+                echo $obj->message( $message );
+            }
             ?>
 
             <p><?php _e( 'Choose below which Capabilities you would like this existing user role to have.', 'pods' ); ?></p>
@@ -84,23 +84,23 @@
                                         <div class="pods-pick-values pods-pick-checkbox pods-zebra">
                                             <ul>
                                                 <?php
-                                                    $zebra = false;
+                                                $zebra = false;
 
-                                                    foreach ( $capabilities as $capability ) {
-                                                        $checked = false;
+                                                foreach ( $capabilities as $capability ) {
+                                                    $checked = false;
 
-                                                        if ( true === (boolean) pods_var( $capability, $role_capabilities, false ) )
-                                                            $checked = true;
+                                                    if ( true === (boolean) pods_var( $capability, $role_capabilities, false ) )
+                                                        $checked = true;
 
-                                                        $class = ( $zebra ? 'even' : 'odd' );
+                                                    $class = ( $zebra ? 'even' : 'odd' );
 
-                                                        $zebra = ( !$zebra );
-                                                ?>
+                                                    $zebra = ( !$zebra );
+                                                    ?>
                                                     <li class="pods-zebra-<?php echo $class; ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
                                                         <?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
                                                     </li>
-                                                <?php
-                                                    }
+                                                    <?php
+                                                }
                                                 ?>
                                             </ul>
                                         </div>
@@ -109,7 +109,7 @@
                                     <div class="pods-field-option-group">
                                         <p class="pods-field-option-group-label">
                                             <?php
-                                                echo PodsForm::label( 'custom_capabilities[0]', __( 'Custom Capabilities', 'pods' ), __( 'These capabilities will automatically be created and assigned to this role', 'pods' ) );
+                                            echo PodsForm::label( 'custom_capabilities[0]', __( 'Custom Capabilities', 'pods' ), __( 'These capabilities will automatically be created and assigned to this role', 'pods' ) );
                                             ?>
                                         </p>
 

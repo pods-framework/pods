@@ -271,7 +271,7 @@ elseif ('file' == $type) {
         SELECT
             `p`.`ID`, `p`.`post_title`, `p`.`guid`
         FROM
-            `@wp_pods_rel` `r`
+            `@wp_podsrel` `r`
         INNER JOIN
             `@wp_posts` `p` ON `p`.`post_type` = 'attachment' AND `p`.`ID` = `r`.`related_item_id`
         WHERE

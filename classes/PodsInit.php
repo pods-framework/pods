@@ -135,6 +135,10 @@ class PodsInit {
         wp_register_style( 'pods-cleditor', PODS_URL . 'ui/css/jquery.cleditor.css', array(), '1.3.0' );
         wp_register_script( 'pods-cleditor', PODS_URL . 'ui/js/jquery.cleditor.min.js', array( 'jquery' ), '1.3.0' );
 
+        wp_register_style( 'pods-codemirror', PODS_URL . 'ui/css/codemirror.css', array(), '2.33' );
+        wp_register_script( 'pods-codemirror', PODS_URL . 'ui/js/codemirror.js', array(), '2.33' );
+        wp_register_script( 'pods-codemirror-loadmode', PODS_URL . 'ui/js/codemirror/utils/loadmode.js', '2.33');
+
         if ( !wp_style_is( 'jquery-ui-timepicker', 'registered' ) )
             wp_register_style( 'jquery-ui-timepicker', PODS_URL . 'ui/css/jquery.ui.timepicker.css', array(), '1.0.1' );
 
@@ -211,7 +215,6 @@ class PodsInit {
 
         $existing_post_types = get_post_types();
         $existing_taxonomies = get_taxonomies();
-
 
         $wp_cpt_ct = get_transient( 'pods_wp_cpt_ct' );
 
@@ -500,9 +503,9 @@ class PodsInit {
             $labels[ 'edit' ] = pods_var_raw( 'edit', $labels, __( 'Edit', 'pods' ), null, true );
             $labels[ 'edit_item' ] = pods_var_raw( 'edit_item', $labels, sprintf( __( 'Edit %s', 'pods' ), $singular_label ), null, true );
             $labels[ 'view' ] = pods_var_raw( 'view', $labels, sprintf( __( 'View %s', 'pods' ), $singular_label ), null, true );
-            $labels[ 'view_item' ] = pods_var_raw( 'view_item', $labels, sprintf( __( 'View %s', 'pods' ),$singular_label ), null, true );
-            $labels[ 'all_items' ] = pods_var_raw( 'all_items', $labels, sprintf( __( 'All %s', 'pods' ),$label ), null, true );
-            $labels[ 'search_items' ] = pods_var_raw( 'search_items', $labels, sprintf( __( 'Search %s', 'pods' ),$label ), null, true );
+            $labels[ 'view_item' ] = pods_var_raw( 'view_item', $labels, sprintf( __( 'View %s', 'pods' ), $singular_label ), null, true );
+            $labels[ 'all_items' ] = pods_var_raw( 'all_items', $labels, sprintf( __( 'All %s', 'pods' ), $label ), null, true );
+            $labels[ 'search_items' ] = pods_var_raw( 'search_items', $labels, sprintf( __( 'Search %s', 'pods' ), $label ), null, true );
             $labels[ 'not_found' ] = pods_var_raw( 'not_found', $labels, sprintf( __( 'No %s Found', 'pods' ), $label ), null, true );
             $labels[ 'not_found_in_trash' ] = pods_var_raw( 'not_found_in_trash', $labels, sprintf( __( 'No %s Found in Trash', 'pods' ), $label ), null, true );
             $labels[ 'parent' ] = pods_var_raw( 'parent', $labels, sprintf( __( 'Parent %s', 'pods' ), $singular_label ), null, true );
@@ -714,7 +717,7 @@ class PodsInit {
 
         do_action( 'pods_delete_attachment', $_ID );
 
-        pods_query( "DELETE rel FROM `@wp_pods_rel` AS rel
+        pods_query( "DELETE rel FROM `@wp_podsrel` AS rel
             LEFT JOIN {$wpdb->posts} AS p
                 ON p.`post_type` = '_pods_field' AND ( p.ID = rel.`field_id` OR p.ID = rel.`related_field_id` )
             LEFT JOIN {$wpdb->postmeta} AS pm
@@ -754,7 +757,7 @@ class PodsInit {
         // Round up all the non-CPT pod types
         foreach ( $all_pods as $pod ) {
             if ( $pod[ 'type' ] == "pod" )
-                $non_cpt_pods[] = $pod;
+                $non_cpt_pods[ ] = $pod;
         }
 
         // Add New item links for all non-CPT pods

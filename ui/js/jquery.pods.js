@@ -607,6 +607,7 @@
                 var target = $( this ).attr( 'href' );
 
                 $( target ).show();
+                $( '.pods-wizard-option-content-' + target.replace( '#pods-wizard-', '' ) ).show();
 
                 if ( 'undefined' != typeof pods_admin_option_select_callback )
                     pods_admin_option_select_callback( $( this ) );

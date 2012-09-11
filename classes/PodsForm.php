@@ -12,6 +12,11 @@ class PodsForm {
     /**
      * @var null
      */
+    static $field_group = null;
+
+    /**
+     * @var null
+     */
     static $field_type = null;
 
     /**
@@ -282,7 +287,9 @@ class PodsForm {
      */
     /**
      * @static
+     *
      * @param $type
+     *
      * @return array|null
      */
     public static function options_setup ( $type ) {
@@ -320,9 +327,11 @@ class PodsForm {
      */
     /**
      * @static
+     *
      * @param null $fields
      * @param null $core_defaults
      * @param bool $single
+     *
      * @return array|null
      */
     public static function fields_setup ( $fields = null, $core_defaults = null, $single = false ) {
@@ -365,9 +374,11 @@ class PodsForm {
      */
     /**
      * @static
+     *
      * @param null $field
      * @param null $core_defaults
      * @param null $type
+     *
      * @return array|null
      */
     public static function field_setup ( $field = null, $core_defaults = null, $type = null ) {
@@ -705,8 +716,14 @@ class PodsForm {
      * @since 2.0.0
      */
     public static function field_loader ( $field_type ) {
-        if ( isset( self::$loaded[ $field_type ] ) )
+        if ( isset( self::$loaded[ $field_type ] ) ) {
+            $class_vars = get_class_vars( get_class( self::$loaded[ $field_type ] ) ); // PHP 5.2.x workaround
+
+            self::$field_group = ( isset( $class_vars[ 'group' ] ) ? $class_vars[ 'group' ] : '' );
+            self::$field_type = $class_vars[ 'type' ];
+
             return self::$loaded[ $field_type ];
+        }
 
         include_once PODS_DIR . 'classes/PodsField.php';
 
@@ -730,7 +747,10 @@ class PodsForm {
         }
 
         $class_vars = get_class_vars( $class_name ); // PHP 5.2.x workaround
+
+        self::$field_group = ( isset( $class_vars[ 'group' ] ) ? $class_vars[ 'group' ] : '' );
         self::$field_type = $class_vars[ 'type' ];
+
         self::$loaded[ $field_type ] =& $class;
 
         return self::$loaded[ $field_type ];

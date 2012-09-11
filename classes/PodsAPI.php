@@ -26,6 +26,11 @@ class PodsAPI {
 
     /**
      * @var
+     */
+    public $fields;
+
+    /**
+     * @var
      * @deprecated 2.0.0
      */
     public $format = null;
@@ -54,7 +59,7 @@ class PodsAPI {
 
             $pod = pods_clean_name( $pod );
 
-            $pod = $this->load_pod( array( 'name' => $pod ) );
+            $pod = $this->load_pod( array( 'name' => $pod ), false );
 
             if ( !empty( $pod ) ) {
                 $this->pod_data = $pod;
@@ -376,7 +381,7 @@ class PodsAPI {
     public function save_term ( $term_ID, $term, $taxonomy, $term_data, $sanitized = false ) {
         pods_no_conflict_on( 'taxonomy' );
 
-        if( !is_array( $term_data ) )
+        if ( !is_array( $term_data ) )
             $term_data = array();
 
         $term_ID = (int) $term_ID;
@@ -499,7 +504,7 @@ class PodsAPI {
                 'post_content' => array(
                     'name' => 'post_content',
                     'label' => 'Content',
-                    'type' => 'paragraph',
+                    'type' => 'wysiwyg',
                     'alias' => array( 'content' )
                 ),
                 'post_title' => array(
@@ -693,7 +698,7 @@ class PodsAPI {
                 'comment_content' => array(
                     'name' => 'comment_content',
                     'label' => 'Content',
-                    'type' => 'paragraph',
+                    'type' => 'wysiwyg',
                     'alias' => array( 'content' )
                 ),
                 'comment_approved' => array(
@@ -744,7 +749,7 @@ class PodsAPI {
                 'description' => array(
                     'name' => 'description',
                     'label' => 'Description',
-                    'type' => 'paragraph',
+                    'type' => 'wysiwyg',
                     'alias' => array( 'content' )
                 ),
                 'taxonomy' => array(
@@ -1045,7 +1050,7 @@ class PodsAPI {
         if ( empty( $params->id ) ) {
 
             if ( strlen( $params->name ) < 1 )
-                return pods_error( __('Pod name cannot be empty', 'pods'), $this );
+                return pods_error( __( 'Pod name cannot be empty', 'pods' ), $this );
 
             $post_data = array(
                 'post_name' => $pod[ 'name' ],
@@ -1142,16 +1147,16 @@ class PodsAPI {
                     $definitions[] = "`{$field['name']}` " . $this->get_field_definition( $field[ 'type' ] );
             }
 
-            pods_query( "DROP TABLE IF EXISTS `@wp_pods_tbl_{$params->name}`" );
+            pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$params->name}`" );
 
-            $result = pods_query( "CREATE TABLE `@wp_pods_tbl_{$params->name}` (" . implode( ', ', $definitions ) . ") DEFAULT CHARSET utf8", $this );
+            $result = pods_query( "CREATE TABLE `@wp_pods_{$params->name}` (" . implode( ', ', $definitions ) . ") DEFAULT CHARSET utf8", $this );
 
             if ( empty( $result ) )
                 return pods_error( __( 'Cannot add Database Table for Pod', 'pods' ), $this );
 
         }
         elseif ( 'table' == $pod[ 'storage' ] && $pod[ 'storage' ] == $old_storage && null !== $old_name && $old_name != $params->name ) {
-            $result = pods_query( "ALTER TABLE `@wp_pods_tbl_{$old_name}` RENAME `@wp_pods_tbl_{$params->name}`", $this );
+            $result = pods_query( "ALTER TABLE `@wp_pods_{$old_name}` RENAME `@wp_pods_{$params->name}`", $this );
 
             if ( empty( $result ) )
                 return pods_error( __( 'Cannot update Database Table for Pod', 'pods' ), $this );
@@ -1267,7 +1272,7 @@ class PodsAPI {
             $weight = 0;
 
             foreach ( $pod[ 'fields' ] as $field ) {
-                if ( !empty( $old_id ) && ( !is_array( $field ) || !isset( $field[ 'name' ] ) || !isset( $fields[ $field[ 'name'] ] ) ) )
+                if ( !empty( $old_id ) && ( !is_array( $field ) || !isset( $field[ 'name' ] ) || !isset( $fields[ $field[ 'name' ] ] ) ) )
                     continue;
 
                 if ( !empty( $old_id ) )
@@ -1278,7 +1283,7 @@ class PodsAPI {
                 if ( !isset( $field[ 'weight' ] ) ) {
                     $field[ 'weight' ] = $weight;
 
-                    $weight ++;
+                    $weight++;
                 }
 
                 if ( 0 < $field_index_id && $field[ 'id' ] == $field_index_id )
@@ -1543,7 +1548,7 @@ class PodsAPI {
                     'order' => 'DESC',
                     'posts_per_page' => 1,
                     'post_parent' => $field[ 'pod_id' ]
-                 ) );
+                ) );
 
                 if ( !empty( $bottom_most_field ) )
                     $field[ 'weight' ] = pods_absint( $bottom_most_field[ 0 ]->menu_order ) + 1;
@@ -1609,29 +1614,29 @@ class PodsAPI {
             if ( !empty( $old_id ) ) {
                 if ( $field[ 'type' ] != $old_type ) {
                     if ( in_array( $field[ 'type' ], $tableless_field_types ) && !$simple && ( !in_array( $old_type, $tableless_field_types ) || $old_simple ) )
-                        pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` DROP COLUMN `{$old_name}`" );
+                        pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$old_name}`" );
                     elseif ( ( in_array( $old_type, $tableless_field_types ) && !$old_simple ) || $simple )
-                        pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+                        pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
                     elseif ( false !== $definition )
-                        pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` CHANGE `{$old_name}` {$definition}" );
+                        pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `{$old_name}` {$definition}" );
                 }
                 elseif ( $old_name != $field[ 'name' ] && false !== $definition ) {
-                    $test = pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` CHANGE `{$old_name}` {$definition}", false );
+                    $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `{$old_name}` {$definition}", false );
 
                     // If the old field doesn't exist, continue to add a new field
                     if ( false === $test )
-                        pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+                        pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
                 }
                 elseif ( null !== $old_definition && false !== $definition && $definition != $old_definition ) {
-                    $test = pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` CHANGE `" . $field[ 'name' ] . "` {$definition}", false );
+                    $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `" . $field[ 'name' ] . "` {$definition}", false );
 
                     // If the old field doesn't exist, continue to add a new field
                     if ( false === $test )
-                        pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+                        pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
                 }
             }
             elseif ( false !== $definition )
-                $test = pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+                $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
         }
         elseif ( 0 < pods_var( 'sister_field_id', $field[ 'options' ], 0 ) )
             update_post_meta( pods_var( 'sister_field_id', $field[ 'options' ], 0 ), 'sister_field_id', $params->id );
@@ -1642,7 +1647,7 @@ class PodsAPI {
                     ON p.post_type = '_pods_field' AND p.ID = pm.post_id
                 WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_field_id' AND pm.meta_value = %d", $params->id ) );
 
-            pods_query( "DELETE FROM @wp_pods_rel WHERE `field_id` = {$params->id}" );
+            pods_query( "DELETE FROM @wp_podsrel WHERE `field_id` = {$params->id}" );
         }
 
         if ( !$save_pod )
@@ -1670,10 +1675,10 @@ class PodsAPI {
             $params = pods_sanitize( $params );
 
         if ( !isset( $params->name ) || empty( $params->name ) )
-            return pods_error( __('Name must be given to save an Object', 'pods'), $this );
+            return pods_error( __( 'Name must be given to save an Object', 'pods' ), $this );
 
         if ( !isset( $params->type ) || empty( $params->type ) )
-            return pods_error( __('Type must be given to save an Object', 'pods'), $this );
+            return pods_error( __( 'Type must be given to save an Object', 'pods' ), $this );
 
         $object = array(
             'name' => $params->name,
@@ -1905,7 +1910,7 @@ class PodsAPI {
         $pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod ) );
 
         if ( false === $pod )
-            return pods_error( __('Pod not found', 'pods'), $this );
+            return pods_error( __( 'Pod not found', 'pods' ), $this );
 
         $params->pod = $pod[ 'name' ];
         $params->pod_id = $pod[ 'id' ];
@@ -1999,7 +2004,7 @@ class PodsAPI {
                 }
 
                 if ( !empty( $pre_save_helpers ) ) {
-                    pods_deprecated( sprintf(__('Pre-save helpers are deprecated, use the action pods_pre_save_pod_item_%s instead', 'pods'), $params->pod), '2.0.0' );
+                    pods_deprecated( sprintf( __( 'Pre-save helpers are deprecated, use the action pods_pre_save_pod_item_%s instead', 'pods' ), $params->pod ), '2.0.0' );
 
                     foreach ( $pre_save_helpers as $helper ) {
                         $helper = $this->load_helper( array( 'name' => $helper ) );
@@ -2043,7 +2048,7 @@ class PodsAPI {
             if ( false === $validate )
                 $validate = sprintf( __( 'There was an issue validating the field %s', 'pods' ), $options[ 'label' ] );
 
-            if ( !is_bool( $validate) && !empty( $validate ) )
+            if ( !is_bool( $validate ) && !empty( $validate ) )
                 return pods_error( $validate, $this );
 
             $value = PodsForm::pre_save( $options[ 'type' ], $value, $params->id, $field, array_merge( pods_var( 'options', $options, array() ), $options ), array_merge( $fields, $object_fields ), $pod, $params );
@@ -2067,7 +2072,7 @@ class PodsAPI {
                             $value = json_encode( $value );
                     }
 
-                    $table_data[$field] = $value;
+                    $table_data[ $field ] = $value;
                     $table_formats[] = PodsForm::prepare( $type, pods_var( 'options', $options, array() ) );
 
                     $object_meta[ $field ] = $value;
@@ -2102,12 +2107,12 @@ class PodsAPI {
 
             if ( 'table' == $pod[ 'storage' ] ) {
                 if ( !empty( $params->id ) ) {
-                    $table_data = array('id' => $params->id) + $table_data;
-                    array_unshift($table_formats, '%d');
+                    $table_data = array( 'id' => $params->id ) + $table_data;
+                    array_unshift( $table_formats, '%d' );
                 }
 
                 if ( !empty( $table_data ) ) {
-                    $sql = insertonduplicate("@wp_pods_tbl_{$params->pod}", $table_data, $table_formats);
+                    $sql = PodsData::insert_on_duplicate( "@wp_pods_{$params->pod}", $table_data, $table_formats );
 
                     $id = pods_query( $sql, 'Cannot add/save table row' );
 
@@ -2125,7 +2130,7 @@ class PodsAPI {
                     $field_id = pods_absint( $fields[ $field ][ 'id' ] );
 
                     // Remove existing relationships
-                    pods_query( "DELETE FROM `@wp_pods_rel` WHERE `pod_id` = {$params->pod_id} AND `field_id` = {$field_id} AND `item_id` = {$params->id}", $this );
+                    pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->pod_id} AND `field_id` = {$field_id} AND `item_id` = {$params->id}", $this );
 
                     // Convert values from a comma-separated string into an array
                     if ( !is_array( $values ) )
@@ -2178,7 +2183,7 @@ class PodsAPI {
                                 $this->save_wp_object( 'media', $attachment_data );
                             }
 
-                            pods_query( "INSERT INTO `@wp_pods_rel` (`pod_id`, `field_id`, `item_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d)", array(
+                            pods_query( "INSERT INTO `@wp_podsrel` (`pod_id`, `field_id`, `item_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d)", array(
                                 $params->pod_id,
                                 $field_id,
                                 $params->id,
@@ -2218,7 +2223,7 @@ class PodsAPI {
 
                         // Delete existing sister relationships
                         if ( !empty( $related_field_id ) && !empty( $related_pod_id ) && in_array( $related_field_id, $rel_field_ids ) ) {
-                            pods_query( "DELETE FROM `@wp_pods_rel` WHERE `pod_id` = %d AND `field_id` = %d AND `related_pod_id` = %d AND `related_field_id` = %d AND `related_item_id` = %d", array(
+                            pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = %d AND `field_id` = %d AND `related_pod_id` = %d AND `related_field_id` = %d AND `related_item_id` = %d", array(
                                 $related_pod_id,
                                 $related_field_id,
                                 $params->pod_id,
@@ -2259,7 +2264,7 @@ class PodsAPI {
 
                                 $related_weight = 0;
 
-                                $result = pods_query( "SELECT `weight` FROM `@wp_pods_rel` WHERE `pod_id` = %d AND `field_id` = %d ORDER BY `weight` DESC LIMIT 1", array(
+                                $result = pods_query( "SELECT `weight` FROM `@wp_podsrel` WHERE `pod_id` = %d AND `field_id` = %d ORDER BY `weight` DESC LIMIT 1", array(
                                     $related_pod_id,
                                     $related_field_id
                                 ) );
@@ -2267,7 +2272,7 @@ class PodsAPI {
                                 if ( !empty( $result ) )
                                     $related_weight = pods_absint( $result[ 0 ]->weight ) + 1;
 
-                                pods_query( "INSERT INTO `@wp_pods_rel` (`pod_id`, `field_id`, `item_id`, `related_pod_id`, `related_field_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d, %d, %d)", array(
+                                pods_query( "INSERT INTO `@wp_podsrel` (`pod_id`, `field_id`, `item_id`, `related_pod_id`, `related_field_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d, %d, %d)", array(
                                     $related_pod_id,
                                     $related_field_id,
                                     $id,
@@ -2278,7 +2283,7 @@ class PodsAPI {
                                 ) );
                             }
 
-                            pods_query( "INSERT INTO `@wp_pods_rel` (`pod_id`, `field_id`, `item_id`, `related_pod_id`, `related_field_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d, %d, %d)", array(
+                            pods_query( "INSERT INTO `@wp_podsrel` (`pod_id`, `field_id`, `item_id`, `related_pod_id`, `related_field_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d, %d, %d)", array(
                                 $params->pod_id,
                                 $field_id,
                                 $params->id,
@@ -2324,7 +2329,7 @@ class PodsAPI {
             // Call any post-save helpers (if not bypassed)
             if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) {
                 if ( !empty( $post_save_helpers ) ) {
-                    pods_deprecated( sprintf(__('Post-save helpers are deprecated, use the action pods_post_save_pod_item_%s instead', 'pods'), $params->pod), '2.0.0' );
+                    pods_deprecated( sprintf( __( 'Post-save helpers are deprecated, use the action pods_post_save_pod_item_%s instead', 'pods' ), $params->pod ), '2.0.0' );
 
                     foreach ( $post_save_helpers as $helper ) {
                         $helper = $this->load_helper( array( 'name' => $helper ) );
@@ -2382,7 +2387,7 @@ class PodsAPI {
      * Duplicate a pod item
      *
      * $params['pod'] string The Pod name
-     * $params['id'] int The item's ID from the wp_pods_tbl_* table
+     * $params['id'] int The item's ID from the wp_pods_* table
      *
      * @param array $params An associative array of parameters
      *
@@ -2431,7 +2436,7 @@ class PodsAPI {
      * Export a pod item
      *
      * $params['pod'] string The Pod name
-     * $params['id'] int The item's ID from the wp_pods_tbl_* table
+     * $params['id'] int The item's ID from the wp_pods_* table
      * $params['fields'] array The fields to export
      *
      * @param array $params An associative array of parameters
@@ -2480,7 +2485,7 @@ class PodsAPI {
 
         // @deprecated 2.0.0
         if ( isset( $params->datatype ) ) {
-            pods_deprecated( __('$params->pod instead of $params->datatype', 'pods'), '2.0.0');
+            pods_deprecated( __( '$params->pod instead of $params->datatype', 'pods' ), '2.0.0' );
             $params->pod = $params->datatype;
             unset( $params->datatype );
         }
@@ -2488,7 +2493,7 @@ class PodsAPI {
         if ( !is_array( $params->order ) )
             $params->order = explode( ',', $params->order );
         foreach ( $params->order as $order => $id ) {
-            pods_query( "UPDATE `@wp_pods_tbl_{$params->pod}` SET `{$params->field}` = " . pods_absint( $order ) . " WHERE `id` = " . pods_absint( $id ) . " LIMIT 1" );
+            pods_query( "UPDATE `@wp_pods_{$params->pod}` SET `{$params->field}` = " . pods_absint( $order ) . " WHERE `id` = " . pods_absint( $id ) . " LIMIT 1" );
         }
 
         return true;
@@ -2516,10 +2521,10 @@ class PodsAPI {
         $params->name = $pod[ 'name' ];
 
         if ( 'storage' == $pod[ 'type' ] ) {
-            pods_query( "TRUNCATE `@wp_pods_tbl_{$params->name}`" );
+            pods_query( "TRUNCATE `@wp_pods_{$params->name}`" );
         }
 
-        pods_query( "DELETE FROM `@wp_pods_rel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}" );
+        pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}" );
 
         wp_cache_flush(); // only way to reliably clear out cached data across an entire group
 
@@ -2575,8 +2580,9 @@ class PodsAPI {
 
         if ( 'table' == $pod[ 'storage' ] ) {
             try {
-                pods_query( "DROP TABLE IF EXISTS `@wp_pods_tbl_{$params->name}`", false );
-            } catch ( Exception $e ) {
+                pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$params->name}`", false );
+            }
+            catch ( Exception $e ) {
                 // Allow pod to be deleted if the table doesn't exist
                 if ( false === strpos( $e->getMessage(), 'Unknown table' ) )
                     return pods_error( $e->getMessage(), $this );
@@ -2592,7 +2598,7 @@ class PodsAPI {
                     AND `pm`.`meta_key` = 'pick_val' AND `pm`.`meta_value` = '{$params->name}'" );
         }
 
-        pods_query( "DELETE FROM `@wp_pods_rel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}" );
+        pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}" );
 
         $this->cache_flush_pods( $pod );
 
@@ -2656,7 +2662,7 @@ class PodsAPI {
         $simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field, $pod, $params );
 
         if ( $table_operation && 'table' == $pod[ 'storage' ] && ( !in_array( $field[ 'type' ], $tableless_field_types ) || $simple ) )
-            pods_query( "ALTER TABLE `@wp_pods_tbl_{$params->pod}` DROP COLUMN `{$params->name}`" );
+            pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$params->name}`" );
 
         $success = wp_delete_post( $params->id );
 
@@ -2669,7 +2675,7 @@ class PodsAPI {
             WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_field_id' AND pm.meta_value = %d", $params->id ) );
 
         if ( $table_operation )
-            pods_query( "DELETE FROM `@wp_pods_rel` WHERE (`pod_id` = {$params->pod_id} AND `field_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_field_id` = {$params->id})" );
+            pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `field_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_field_id` = {$params->id})" );
 
         if ( !$save_pod )
             $this->cache_flush_pods( $pod );
@@ -2692,7 +2698,7 @@ class PodsAPI {
         $object = $this->load_object( $params );
 
         if ( empty( $object ) )
-            return pods_error( sprintf(__("%s Object not found", 'pods'), ucwords($params->type)), $this );
+            return pods_error( sprintf( __( "%s Object not found", 'pods' ), ucwords( $params->type ) ), $this );
 
         $success = wp_delete_post( $params->id );
 
@@ -2764,7 +2770,7 @@ class PodsAPI {
     /**
      * Drop a single pod item
      *
-     * $params['id'] int (optional) The item's ID from the wp_pod_tbl_* table (used with datatype parameter)
+     * $params['id'] int (optional) The item's ID from the wp_pod_* table (used with datatype parameter)
      * $params['pod'] string (optional) The datatype name (used with id parameter)
      * $params['pod_id'] int (optional) The datatype ID (used with id parameter)
      * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers
@@ -2779,25 +2785,25 @@ class PodsAPI {
         // @deprecated 2.0.0
         if ( isset( $params->datatype_id ) || isset( $params->datatype ) ) {
             if ( isset( $params->tbl_row_id ) ) {
-                pods_deprecated( __('$params->id instead of $params->tbl_row_id', 'pods'), '2.0.0');
+                pods_deprecated( __( '$params->id instead of $params->tbl_row_id', 'pods' ), '2.0.0' );
                 $params->id = $params->tbl_row_id;
                 unset( $params->tbl_row_id );
             }
 
             if ( isset( $params->pod_id ) ) {
-                pods_deprecated( __('$params->id instead of $params->pod_id', 'pods'), '2.0.0');
+                pods_deprecated( __( '$params->id instead of $params->pod_id', 'pods' ), '2.0.0' );
                 $params->id = $params->pod_id;
                 unset( $params->pod_id );
             }
 
             if ( isset( $params->dataype_id ) ) {
-                pods_deprecated( __('$params->pod_id instead of $params->datatype_id', 'pods'), '2.0.0');
+                pods_deprecated( __( '$params->pod_id instead of $params->datatype_id', 'pods' ), '2.0.0' );
                 $params->pod_id = $params->dataype_id;
                 unset( $params->dataype_id );
             }
 
             if ( isset( $params->datatype ) ) {
-                pods_deprecated( __('$params->pod instead of $params->datatype', 'pods'), '2.0.0');
+                pods_deprecated( __( '$params->pod instead of $params->datatype', 'pods' ), '2.0.0' );
                 $params->pod = $params->datatype;
                 unset( $params->datatype );
             }
@@ -2857,7 +2863,7 @@ class PodsAPI {
         }
 
         if ( 'table' == $pod[ 'storage' ] )
-            pods_query( "DELETE FROM `@wp_pods_tbl_{$params->pod}` WHERE `id` = {$params->id} LIMIT 1" );
+            pods_query( "DELETE FROM `@wp_pods_{$params->pod}` WHERE `id` = {$params->id} LIMIT 1" );
 
         if ( 'taxonomy' == $pod[ 'type' ] ) {
             $taxonomy = $pod[ 'name' ];
@@ -2870,7 +2876,7 @@ class PodsAPI {
         elseif ( !in_array( $pod[ 'type' ], array( 'pod', 'table', '', 'taxonomy' ) ) )
             $this->delete_wp_object( $pod[ 'type' ], $params->id );
 
-        pods_query( "DELETE FROM `@wp_pods_rel` WHERE (`pod_id` = {$params->pod_id} AND `item_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_item_id` = {$params->id})" );
+        pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `item_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_item_id` = {$params->id})" );
 
         if ( false === $bypass_helpers ) {
             // Plugin hook
@@ -3483,7 +3489,17 @@ class PodsAPI {
             global $wpdb;
 
             if ( isset( $params->name ) ) {
-                $object = $wpdb->get_var( $wpdb->prepare( "SELECT `ID` FROM `{$wpdb->posts}` WHERE `post_title` = %s AND `post_type` = %s LIMIT 1", $params->name, '_pods_' . $params->type ) );
+                $sql = "
+                        SELECT `ID`
+                        FROM `{$wpdb->posts}`
+                        WHERE
+                            `post_type` = %s
+                            AND `post_status` = 'publish'
+                            AND `post_title` = %s
+                        LIMIT 1
+                    ";
+
+                $object = $wpdb->get_var( $wpdb->prepare( $sql, $params->name, '_pods_' . $params->type ) );
 
                 if ( empty( $object ) ) {
                     if ( $strict )
@@ -3811,9 +3827,9 @@ class PodsAPI {
             'double' => 'number',
             'decimal' => 'number',
             'date' => 'date',
-            'datetime' => 'date',
-            'timestamp' => 'date',
-            'time' => 'date',
+            'datetime' => 'datetime',
+            'timestamp' => 'datetime',
+            'time' => 'time',
             'year' => 'date',
             'varchar' => 'text',
             'text' => 'paragraph',
@@ -3829,13 +3845,22 @@ class PodsAPI {
      */
     public function get_field_types () {
         $types = array(
+            'datetime',
             'date',
+            'time',
             'number',
-            'boolean',
+            'currency',
             'text',
+            'website',
+            'phone',
+            'email',
+            'password',
             'paragraph',
+            'wysiwyg',
+            'code',
             'slug',
             'color',
+            'boolean',
             'file',
             'pick'
         );
@@ -3885,6 +3910,7 @@ class PodsAPI {
      * @param $fields
      * @param $pod
      * @param $params
+     *
      * @return array|bool|mixed|null|void
      */
     private function handle_field_validation ( &$value, $field, $object_fields, $fields, $pod, $params ) {
@@ -3916,7 +3942,7 @@ class PodsAPI {
 
                 // Trigger an error if not unique
                 if ( 'table' == $pod[ 'storage' ] )
-                    $check = pods_query( "SELECT `id` FROM `@wp_pods_tbl_{$params->pod}` WHERE `{$field}` = '{$value}' {$exclude} LIMIT 1", $this );
+                    $check = pods_query( "SELECT `id` FROM `@wp_pods_{$params->pod}` WHERE `{$field}` = '{$value}' {$exclude} LIMIT 1", $this );
 
                 if ( !empty( $check ) )
                     return pods_error( sprintf( __( '%s needs to be unique', 'pods' ), $label ), $this );
@@ -3961,7 +3987,7 @@ class PodsAPI {
 
         $sql = "
             SELECT `related_item_id`
-            FROM `@wp_pods_rel`
+            FROM `@wp_podsrel`
             WHERE
                 `pod_id` = {$pod_id}
                 AND `field_id` = {$field_id}
@@ -3987,6 +4013,7 @@ class PodsAPI {
      * @param $object
      * @param null $name
      * @param null $pod
+     *
      * @return array|bool|mixed|null
      */
     public function get_table_info ( $object_type, $object, $name = null, $pod = null ) {
@@ -4019,7 +4046,7 @@ class PodsAPI {
         }
 
         if ( 'pod' == $object_type )
-            $info[ 'table' ] = $wpdb->prefix . 'pods_tbl_' . ( empty( $object ) ? $name : $object );
+            $info[ 'table' ] = $wpdb->prefix . 'pods_' . ( empty( $object ) ? $name : $object );
         elseif ( 'post_type' == $object_type || 'media' == $object_type ) {
             $info[ 'table' ] = $wpdb->posts;
             $info[ 'field_id' ] = 'ID';
@@ -4088,7 +4115,7 @@ class PodsAPI {
             $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '`, `t`.`' . $info[ 'field_id' ] . '`';
 
         if ( !empty( $pod ) && 'table' == $pod[ 'storage' ] && !in_array( $object_type, array( 'pod', 'table' ) ) ) {
-            $info[ 'join' ][ 'd' ] = "LEFT JOIN `{$wpdb->prefix}pods_tbl_{$name}` AS `d` ON `d`.`id` = `t`.`" . $info[ 'field_id' ] . '`';
+            $info[ 'join' ][ 'd' ] = "LEFT JOIN `{$wpdb->prefix}pods_{$name}` AS `d` ON `d`.`id` = `t`.`" . $info[ 'field_id' ] . '`';
             //$info[ 'select' ] .= ', `d`.*';
         }
 
@@ -4248,9 +4275,9 @@ class PodsAPI {
                 }
                 $definitions = implode( ',', $definitions );
 
-                pods_query( "DROP TABLE IF EXISTS `@wp_pods_tbl_{$pod['name']}`" );
+                pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$pod['name']}`" );
 
-                pods_query( "CREATE TABLE @wp_pods_tbl_{$pod['name']} ($definitions)" );
+                pods_query( "CREATE TABLE @wp_pods_{$pod['name']} ($definitions)" );
 
                 if ( !isset( $found[ 'pods' ] ) )
                     $found[ 'pods' ] = array();
@@ -4329,27 +4356,27 @@ class PodsAPI {
         if ( true === $output ) {
             if ( !empty( $found ) ) {
                 echo '<br /><div id="message" class="updated fade">';
-                echo '<h3 style="margin-top:10px;">' . __('Package Imported', 'pods') . ':</h3>';
+                echo '<h3 style="margin-top:10px;">' . __( 'Package Imported', 'pods' ) . ':</h3>';
                 if ( isset( $found[ 'pods' ] ) ) {
-                    echo '<h4>' . __('Pod(s)', 'pods') . '</h4>';
+                    echo '<h4>' . __( 'Pod(s)', 'pods' ) . '</h4>';
                     echo '<ul class="pretty"><li>' . implode( '</li><li>', $found[ 'pods' ] ) . '</li></ul>';
                 }
                 if ( isset( $found[ 'templates' ] ) ) {
-                    echo '<h4>' . __('Template(s)', 'pods') . '</h4>';
+                    echo '<h4>' . __( 'Template(s)', 'pods' ) . '</h4>';
                     echo '<ul class="pretty"><li>' . implode( '</li><li>', $found[ 'templates' ] ) . '</li></ul>';
                 }
                 if ( isset( $found[ 'pod_pages' ] ) ) {
-                    echo '<h4>' . __('Pod Page(s)', 'pods') . '</h4>';
+                    echo '<h4>' . __( 'Pod Page(s)', 'pods' ) . '</h4>';
                     echo '<ul class="pretty"><li>' . implode( '</li><li>', $found[ 'pod_pages' ] ) . '</li></ul>';
                 }
                 if ( isset( $found[ 'helpers' ] ) ) {
-                    echo '<h4>' . __('Helper(s)', 'pods') . '</h4>';
+                    echo '<h4>' . __( 'Helper(s)', 'pods' ) . '</h4>';
                     echo '<ul class="pretty"><li>' . implode( '</li><li>', $found[ 'helpers' ] ) . '</li></ul>';
                 }
                 echo '</div>';
             }
             else
-                echo '<e><br /><div id="message" class="error fade"><p>' . __('Error: Package not imported, try again.', 'pods') . '</p></div></e>';
+                echo '<e><br /><div id="message" class="error fade"><p>' . __( 'Error: Package not imported, try again.', 'pods' ) . '</p></div></e>';
         }
 
         if ( !empty( $found ) )
@@ -4385,7 +4412,7 @@ class PodsAPI {
         if ( !is_array( $json_data ) || empty( $json_data ) ) {
             $warnings[] = "This is not a valid package. Please try again.";
             if ( true === $output ) {
-                echo '<e><br /><div id="message" class="error fade"><p>' . __('This is not a valid package. Please try again.', 'pods') . '</p></div></e>';
+                echo '<e><br /><div id="message" class="error fade"><p>' . __( 'This is not a valid package. Please try again.', 'pods' ) . '</p></div></e>';
                 return false;
             }
             else
@@ -4410,7 +4437,7 @@ class PodsAPI {
                 $pods_version = explode( '.', PODS_VERSION );
                 $pods_version = $pods_version[ 0 ] . '.' . $pods_version[ 1 ];
                 if ( version_compare( $pods_version, $compatible_from, '<' ) )
-                    $warnings[ 'version' ] = sprintf(__('This package may only be compatible with the newer <strong>Pods %s</strong>, but you are currently running the older <strong>Pods %s</strong><br/>Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods.', 'pods'), $data['meta']['compatible_from'], PODS_VERSION);
+                    $warnings[ 'version' ] = sprintf( __( 'This package may only be compatible with the newer <strong>Pods %s</strong>, but you are currently running the older <strong>Pods %s</strong><br/>Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods.', 'pods' ), $data[ 'meta' ][ 'compatible_from' ], PODS_VERSION );
             }
         }
         if ( isset( $data[ 'meta' ][ 'compatible_to' ] ) ) {
@@ -4423,7 +4450,7 @@ class PodsAPI {
                 $pods_version = explode( '.', PODS_VERSION );
                 $pods_version = $pods_version[ 0 ] . '.' . $pods_version[ 1 ];
                 if ( version_compare( $compatible_to, $pods_version, '<' ) )
-                    $warnings[ 'version' ] = sprintf(__('This package may only be compatible with the older <strong>Pods %s</strong>, but you are currently running the newer <strong>Pods %s</strong><br />Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods', 'pods'), $data[ 'meta' ][ 'compatible_to' ], PODS_VERSION);
+                    $warnings[ 'version' ] = sprintf( __( 'This package may only be compatible with the older <strong>Pods %s</strong>, but you are currently running the newer <strong>Pods %s</strong><br />Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods', 'pods' ), $data[ 'meta' ][ 'compatible_to' ], PODS_VERSION );
             }
         }
         if ( !isset( $data[ 'meta' ][ 'compatible_from' ] ) && !isset( $data[ 'meta' ][ 'compatible_to' ] ) ) {
@@ -4433,7 +4460,7 @@ class PodsAPI {
                 $pods_version = explode( '.', PODS_VERSION );
                 $pods_version = $pods_version[ 0 ] . '.' . $pods_version[ 1 ];
                 if ( version_compare( $pods_version, $compatible_from, '<' ) )
-                    $warnings[ 'version' ] = sprintf(__('This package was built using the newer <strong>Pods %s</strong>, but you are currently running the older <strong>Pods</strong><br />Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods.', 'pods'), $data[ 'meta' ][ 'version' ], PODS_VERSION);
+                    $warnings[ 'version' ] = sprintf( __( 'This package was built using the newer <strong>Pods %s</strong>, but you are currently running the older <strong>Pods</strong><br />Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods.', 'pods' ), $data[ 'meta' ][ 'version' ], PODS_VERSION );
             }
             elseif ( version_compare( $data[ 'meta' ][ 'version' ], PODS_VERSION, '<' ) ) {
                 $compatible_to = explode( '.', $data[ 'meta' ][ 'version' ] );
@@ -4441,7 +4468,7 @@ class PodsAPI {
                 $pods_version = explode( '.', PODS_VERSION );
                 $pods_version = $pods_version[ 0 ] . '.' . $pods_version[ 1 ];
                 if ( version_compare( $compatible_to, $pods_version, '<' ) )
-                    $warnings[ 'version' ] = sprintf(__('This package was built using the older <strong>Pods %s</strong>, but you are currently running the newer <strong>Pods %s</strong><br/>Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods.', 'pods'), $data['meta']['version'], PODS_VERSION);
+                    $warnings[ 'version' ] = sprintf( __( 'This package was built using the older <strong>Pods %s</strong>, but you are currently running the newer <strong>Pods %s</strong><br/>Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods.', 'pods' ), $data[ 'meta' ][ 'version' ], PODS_VERSION );
             }
         }
 
@@ -4651,7 +4678,7 @@ class PodsAPI {
                                     $where = "`name` = '" . pods_sanitize( $pick_value ) . "'";
                                     if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )
                                         $where = "`id` = " . pods_absint( $pick_value );
-                                    $result = pods_query( "SELECT `id` FROM `@wp_pods_tbl_{$pickval}` WHERE {$where} ORDER BY `id`", $this );
+                                    $result = pods_query( "SELECT `id` FROM `@wp_pods_{$pickval}` WHERE {$where} ORDER BY `id`", $this );
                                     if ( !empty( $result ) )
                                         $pick_values[ $field_name ] = $result[ 'id' ];
                                 }
@@ -4682,7 +4709,7 @@ class PodsAPI {
     public function export () {
         $data = array();
         $pod = pods( $this->pod, array( 'limit' => -1, 'search' => false, 'pagination' => false ) );
-        while ($pod->fetch()) {
+        while ( $pod->fetch() ) {
             $data[ $pod->field( 'id' ) ] = $this->export_pod_item( $pod->field( 'id' ) );
         }
         return $data;
@@ -4774,7 +4801,7 @@ class PodsAPI {
         else
             $fields = explode( ',', $form );
 
-        if ( empty( $nonce) || empty( $pod ) || empty( $uri ) || empty( $fields ) )
+        if ( empty( $nonce ) || empty( $pod ) || empty( $uri ) || empty( $fields ) )
             return pods_error( __( 'Invalid submission', 'pods' ), $this );
 
         $uid = @session_id();

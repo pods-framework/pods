@@ -39,11 +39,39 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
             update_post_meta( $date->ID, 'date_time_format', 'h_mm_ss_A' );
         }
     }
+}
+
+if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-12', '<' ) ) {
+    $tables = $wpdb->get_results( "SHOW TABLES LIKE '{$wpdb->prefix}pods%'", ARRAY_N );
+
+    if ( !empty( $tables ) ) {
+        foreach ( $tables as $table ) {
+            $table = $table[ 0 ];
+
+            if ( "{$wpdb->prefix}pods_rel" == $table )
+                $new_table = "{$wpdb->prefix}podsrel";
+            else
+                $new_table = str_replace( 'pods_tbl_', 'pods_', $table );
+
+            if ( $table != $new_table )
+                $wpdb->query( "ALTER TABLE `{$table}` RENAME `{$new_table}`" );
+        }
+    }
+
+    $oldget = $_GET;
+
+    $_GET[ 'toggle' ] = 1;
+
+    PodsInit::$components->toggle( 'templates' );
+    PodsInit::$components->toggle( 'pages' );
+    PodsInit::$components->toggle( 'helpers' );
+
+    $_GET = $oldget;
 
     $number_fields = $wpdb->get_results( "
             SELECT `p`.`ID`
             FROM `{$wpdb->posts}` AS `p`
-            LEFT JOIN `{$wpdb->postmeta}` AS `pm`.`post_id` = `p`.`ID`
+            LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
             WHERE
                 `p`.`post_type` = '_pods_field'
                 AND `pm`.`meta_key` = 'type'
@@ -57,17 +85,23 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
     }
 }
 
-/*if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-12', '<' ) ) {
-    $oldget = $_GET;
+if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-13', '<' ) ) {
+    $tables = $wpdb->get_results( "SHOW TABLES LIKE '{$wpdb->prefix}pods%'", ARRAY_N );
 
-    $_GET[ 'toggle' ] = 1;
+    if ( !empty( $tables ) ) {
+        foreach ( $tables as $table ) {
+            $table = $table[ 0 ];
 
-    PodsInit::$components->toggle( 'templates' );
-    PodsInit::$components->toggle( 'pages' );
-    PodsInit::$components->toggle( 'helpers' );
+            if ( "{$wpdb->prefix}pods_rel" == $table )
+                $new_table = "{$wpdb->prefix}podsrel";
+            else
+                $new_table = str_replace( 'pods_tbl_', 'pods_', $table );
 
-    $_GET = $oldget;
-}*/
+            if ( $table != $new_table )
+                $wpdb->query( "ALTER TABLE `{$table}` RENAME `{$new_table}`" );
+        }
+    }
+}
 
 function pods_2_alpha_migrate_pods () {
     $api = pods_api();

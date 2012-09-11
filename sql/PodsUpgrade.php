@@ -105,7 +105,7 @@ class PodsUpgrade_2_0 {
             return pods_error( __( 'Upgrade method not found.', 'pods' ) );
 
         return call_user_func( array( $this, $params->step . '_' . $params->type ), $params );
-}
+    }
 
     /**
      * @return array|bool|int|mixed|null|void
@@ -124,7 +124,7 @@ class PodsUpgrade_2_0 {
             $count = 0;
 
         return $count;
-}
+    }
 
     /**
      * @return array|bool|int|mixed|null|void
@@ -143,7 +143,7 @@ class PodsUpgrade_2_0 {
             $count = 0;
 
         return $count;
-}
+    }
 
     /**
      * @return array|bool|int|mixed|null|void
@@ -162,7 +162,7 @@ class PodsUpgrade_2_0 {
             $count = 0;
 
         return $count;
-}
+    }
 
     /**
      * @return array|bool|int|mixed|null|void
@@ -181,7 +181,7 @@ class PodsUpgrade_2_0 {
             $count = 0;
 
         return $count;
-}
+    }
 
     /**
      * @return array|bool|int|mixed|null|void
@@ -200,7 +200,7 @@ class PodsUpgrade_2_0 {
             $count = 0;
 
         return $count;
-}
+    }
 
     /**
      * @return array|bool|int|mixed|null|void
@@ -219,7 +219,7 @@ class PodsUpgrade_2_0 {
             $count = 0;
 
         return $count;
-}
+    }
 
     /**
      * @return array|bool|int|mixed|null|void
@@ -238,10 +238,11 @@ class PodsUpgrade_2_0 {
             $count = 0;
 
         return $count;
-}
+    }
 
     /**
      * @param $params
+     *
      * @return array|bool|int|mixed|null|void
      */
     public function prepare_pod ( $params ) {
@@ -298,7 +299,7 @@ class PodsUpgrade_2_0 {
             return pods_error( implode( '<br />', $errors ) );
 
         return $count;
-}
+    }
 
     /**
      *
@@ -320,7 +321,7 @@ class PodsUpgrade_2_0 {
                 do_action( 'pods_update_post', PODS_VERSION, $old_version );
             }
         }
-}
+    }
 
     /**
      * @return array|string
@@ -400,12 +401,16 @@ class PodsUpgrade_2_0 {
 
                 if ( 'txt' == $field_type )
                     $field_type = 'text';
-                elseif ( 'desc' == $field_type || 'code' == $field_type )
+                elseif ( 'desc' == $field_type )
+                    $field_type = 'wysiwyg';
+                elseif ( 'code' == $field_type )
                     $field_type = 'paragraph';
                 elseif ( 'bool' == $field_type )
                     $field_type = 'boolean';
                 elseif ( 'num' == $field_type )
                     $field_type = 'number';
+                elseif ( 'date' == $field_type )
+                    $field_type = 'datetime';
 
                 $field_params = array(
                     'name' => trim( $row->name ),
@@ -458,14 +463,10 @@ class PodsUpgrade_2_0 {
                         $field_params[ 'options' ][ 'pick_limit' ] = 1;
                     }
                 }
-                elseif ( 'number' == $field_type ) {
-                    $field_params[ 'options' ][ 'number_format_type' ] = 'plain';
+                elseif ( 'number' == $field_type )
                     $field_params[ 'options' ][ 'number_decimals' ] = 2;
-                }
                 elseif ( 'desc' == $row->coltype )
-                    $field_params[ 'options' ][ 'paragraph_format_type' ] = 'tinymce';
-                elseif ( 'date' == $field_type )
-                    $field_params[ 'options' ][ 'date_format_type' ] = 'datetime';
+                    $field_params[ 'options' ][ 'wysiwyg_editor' ] = 'tinymce';
                 elseif ( 'text' == $field_type )
                     $field_params[ 'options' ][ 'text_max_length' ] = 128;
 
@@ -502,14 +503,14 @@ class PodsUpgrade_2_0 {
         $this->update_progress( __FUNCTION__, true );
 
         return '1';
-}
+    }
 
     /**
      * @return string
      */
     public function migrate_fields () {
         return '1';
-}
+    }
 
     /**
      * @return string
@@ -626,7 +627,7 @@ class PodsUpgrade_2_0 {
                 $r->weight = (int) $r->weight;
 
                 $sql = "
-                    REPLACE INTO `@wp_pods_rel`
+                    REPLACE INTO `@wp_podsrel`
                     ( `id`, `pod_id`, `field_id`, `item_id`, `related_pod_id`, `related_field_id`, `related_item_id`, `weight` )
                     VALUES ( {$r->id}, {$pod_id}, {$field_id}, {$item_id}, {$related_pod_id}, {$related_field_id}, {$related_item_id}, {$r->weight} )
                 ";
@@ -651,14 +652,14 @@ class PodsUpgrade_2_0 {
             echo '-2';
         else
             echo '1';
-}
+    }
 
     /**
      * @return string
      */
     public function migrate_settings () {
         return $this->migrate_roles();
-}
+    }
 
     /**
      * @return string
@@ -712,7 +713,7 @@ class PodsUpgrade_2_0 {
         $this->update_progress( __FUNCTION__, true );
 
         return '1';
-}
+    }
 
     /**
      * @return array|string
@@ -742,7 +743,7 @@ class PodsUpgrade_2_0 {
         $this->update_progress( __FUNCTION__, true );
 
         return '1';
-}
+    }
 
     /**
      * @return array|string
@@ -767,7 +768,7 @@ class PodsUpgrade_2_0 {
         $this->update_progress( __FUNCTION__, true );
 
         return '1';
-}
+    }
 
     /**
      * @return array|string
@@ -798,10 +799,11 @@ class PodsUpgrade_2_0 {
         $this->update_progress( __FUNCTION__, true );
 
         return '1';
-}
+    }
 
     /**
      * @param $params
+     *
      * @return mixed|string|void
      */
     public function migrate_pod ( $params ) {
@@ -815,7 +817,7 @@ class PodsUpgrade_2_0 {
         if ( !in_array( "{$wpdb->prefix}pod_tbl_{$pod}", $this->tables ) )
             return pods_error( __( 'Table not found, items cannot be migrated', 'pods' ) );
 
-        if ( !in_array( "{$wpdb->prefix}pods_tbl_{$pod}", $this->tables ) )
+        if ( !in_array( "{$wpdb->prefix}pods_{$pod}", $this->tables ) )
             return pods_error( __( 'New table not found, items cannot be migrated', 'pods' ) );
 
         if ( !in_array( "{$wpdb->prefix}pod_types", $this->tables ) )
@@ -852,7 +854,7 @@ class PodsUpgrade_2_0 {
 
         // Copy content from the old table into the new
         $sql = "
-            REPLACE INTO `@wp_pods_tbl_{$pod}`
+            REPLACE INTO `@wp_pods_{$pod}`
                 ( {$into} )
                 ( SELECT {$select}
                   FROM `@wp_pod_tbl_{$pod}` AS `t` )
@@ -862,7 +864,7 @@ class PodsUpgrade_2_0 {
 
         // Copy index data from the old index table into the new individual table
         $sql = "
-            UPDATE `@wp_pods_tbl_{$pod}` AS `t`
+            UPDATE `@wp_pods_{$pod}` AS `t`
             LEFT JOIN `@wp_pod_types` AS `x` ON `x`.`name` = '{$pod}'
             LEFT JOIN `@wp_pod` AS `p` ON `p`.`datatype` = `x`.`id` AND `p`.`tbl_row_id` = `t`.`id`
             SET `t`.`created` = `p`.`created`, `t`.`modified` = `p`.`modified`
@@ -873,7 +875,7 @@ class PodsUpgrade_2_0 {
 
         // Copy name data from the old index table into the new individual table (if name empty in indiv table)
         $sql = "
-            UPDATE `@wp_pods_tbl_{$pod}` AS `t`
+            UPDATE `@wp_pods_{$pod}` AS `t`
             LEFT JOIN `@wp_pod_types` AS `x` ON `x`.`name` = '{$pod}'
             LEFT JOIN `@wp_pod` AS `p` ON `p`.`datatype` = `x`.`id` AND `p`.`tbl_row_id` = `t`.`id`
             SET `t`.`name` = `p`.`name`
@@ -885,7 +887,7 @@ class PodsUpgrade_2_0 {
         $this->update_progress( __FUNCTION__, true, $pod );
 
         return '1';
-}
+    }
 
     /**
      * @return string
@@ -893,8 +895,18 @@ class PodsUpgrade_2_0 {
     public function migrate_cleanup () {
         update_option( 'pods_framework_upgraded_1_x', 1 );
 
+        $oldget = $_GET;
+
+        $_GET[ 'toggle' ] = 1;
+
+        PodsInit::$components->toggle( 'templates' );
+        PodsInit::$components->toggle( 'pages' );
+        PodsInit::$components->toggle( 'helpers' );
+
+        $_GET = $oldget;
+
         return '1';
-}
+    }
 
     /**
      *
@@ -909,7 +921,7 @@ class PodsUpgrade_2_0 {
 
         delete_option( 'pods_framework_upgrade_2_0' );
         delete_option( 'pods_framework_upgraded_1_x' );
-}
+    }
 
     /**
      *
@@ -927,17 +939,18 @@ class PodsUpgrade_2_0 {
         delete_option( 'pods_framework_upgrade_2_0' );
         delete_option( 'pods_framework_upgraded_1_x' );
 
-        /*
-         * other options maybe not in 2.0
         delete_option( 'pods_disable_file_browser' );
         delete_option( 'pods_files_require_login' );
         delete_option( 'pods_files_require_login_cap' );
         delete_option( 'pods_disable_file_upload' );
         delete_option( 'pods_upload_require_login' );
         delete_option( 'pods_upload_require_login_cap' );
+
+        /*
+         * other options maybe not in 2.0
         delete_option( 'pods_page_precode_timing' );
         */
-}
+    }
 
     /**
      * @param $method
@@ -953,11 +966,12 @@ class PodsUpgrade_2_0 {
             $this->progress[ $method ] = $v;
 
         update_option( 'pods_framework_upgrade_2_0', $this->progress );
-}
+    }
 
     /**
      * @param $method
      * @param null $x
+     *
      * @return bool
      */
     public function check_progress ( $method, $x = null ) {

@@ -18,8 +18,8 @@
 
     <li>
         <?php
-            $api = pods_api();
-            $all_pods = $api->load_pods();
+        $api = pods_api();
+        $all_pods = $api->load_pods();
         ?>
         <label for="<?php echo $this->get_field_id( 'pod_type' ); ?>">
             <?php _e( 'Pod Type', 'pods' ); ?>
@@ -52,7 +52,7 @@
 
     <li>
         <?php
-            $all_helpers = $api->load_helpers( array() );
+        $all_helpers = $api->load_helpers( array() );
         ?>
         <label for="<?php echo $this->get_field_id( 'helper' ); ?>">
             <?php _e( 'Helper', 'pods' ); ?>

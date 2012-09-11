@@ -1,5 +1,5 @@
 <?php
-    global $wpdb;
+global $wpdb;
 ?>
 <div class="wrap pods-admin">
     <script>
@@ -15,18 +15,15 @@
         <div id="pods-wizard-heading">
             <ul>
                 <li class="pods-wizard-menu-current" data-step="1">
-                    <i></i>
-                    <span>1</span> <?php _e( 'Getting Started', 'pods' ); ?>
+                    <i></i> <span>1</span> <?php _e( 'Getting Started', 'pods' ); ?>
                     <em></em>
                 </li>
                 <li data-step="2">
-                    <i></i>
-                    <span>2</span> <?php _e( 'Prepare', 'pods' ); ?>
+                    <i></i> <span>2</span> <?php _e( 'Prepare', 'pods' ); ?>
                     <em></em>
                 </li>
                 <li data-step="3">
-                    <i></i>
-                    <span>3</span> <?php _e( 'Migrate', 'pods' ); ?>
+                    <i></i> <span>3</span> <?php _e( 'Migrate', 'pods' ); ?>
                     <em></em>
                 </li>
             </ul>
@@ -38,27 +35,32 @@
                 <div class="pods-wizard-content pods-wizard-grey">
                     <p>
                         <?php
-                            $intro = __( 'Welcome to #Pods2! We sincerely hope you enjoy over two years worth of planning and work, available to you for <em>free</em>. Due to a number of optimizations in #Pods2, we need to run a few updates to your database. This should not remove or change your existing Pod data from 1.x, so if you wish to rollback to Pods 1.x - you can easily do that.', 'pods' );
-                            echo str_replace( '#Pods2', '<a href="https://twitter.com/#!/search/%23pods2" target="_blank">#Pods2</a>', $intro );
+                        $intro = __( 'Welcome to #Pods2! We sincerely hope you enjoy over two years worth of planning and work, available to you for <em>free</em>. Due to a number of optimizations in #Pods2, we need to run a few updates to your database. This should not remove or change your existing Pod data from 1.x, so if you wish to rollback to Pods 1.x - you can easily do that.', 'pods' );
+                        echo str_replace( '#Pods2', '<a href="https://twitter.com/#!/search/%23pods2" target="_blank">#Pods2</a>', $intro );
                         ?>
                     </p>
                 </div>
                 <p class="padded"><?php _e( 'We recommend that you back your database up, it can really save you in a bind or a really weird situation that you may not be expecting. Check out a few options we think are <em>great</em> below.', 'pods' ); ?></p>
+
                 <div id="pods-wizard-options">
                     <div class="pods-wizard-option">
-                        <a href="http://ithemes.com/member/go.php?r=31250&i=l44" target="_blank">
-                            <img src="<?php echo PODS_URL; ?>ui/images/logo_backupbuddy.png" alt="Backup Buddy" />
+                        <a href="http://ithemes.com/member/go.php?r=31250&i=l44" target="_blank"> <img src="<?php echo PODS_URL; ?>ui/images/logo_backupbuddy.png" alt="Backup Buddy" />
+
                             <p><?php _e( 'Receive 25% off', 'pods' ); ?></p>
+
                             <p><?php _e( 'Coupon Code', 'pods' ); ?>: <strong>PODS25</strong></p>
                         </a>
+
                         <p><em><?php _e( 'The all-in-one WordPress backup plugin to easily backup, restore, and migrate to any number of local or external locations.', 'pods' ); ?></em></p>
                     </div>
                     <div class="pods-wizard-option">
-                        <a href="http://vaultpress.com/podsframework/" target="_blank">
-                            <img src="<?php echo PODS_URL; ?>ui/images/logo_vaultpress.png" alt="Vaultpress" />
+                        <a href="http://vaultpress.com/podsframework/" target="_blank"> <img src="<?php echo PODS_URL; ?>ui/images/logo_vaultpress.png" alt="Vaultpress" />
+
                             <p><?php _e( '1 free month', 'pods' ); ?></p>
-                            <p><strong><?php _e ( 'Click to sign up', 'pods' ); ?></strong></p>
+
+                            <p><strong><?php _e( 'Click to sign up', 'pods' ); ?></strong></p>
                         </a>
+
                         <p><em><?php _e( 'A service that provides realtime continuous backups, restores, and security scanning.', 'pods' ); ?></em></p>
                     </div>
                 </div>
@@ -81,8 +83,8 @@
                     </thead>
                     <tbody>
                         <?php
-                            $pods = $wpdb->get_results( "SELECT `name`, `label` FROM `{$wpdb->prefix}pod_types` ORDER BY `name`" );
-                            $count = count( $pods );
+                        $pods = $wpdb->get_results( "SELECT `name`, `label` FROM `{$wpdb->prefix}pod_types` ORDER BY `name`" );
+                        $count = count( $pods );
                         ?>
                         <tr class="pods-wizard-table-<?php echo ( 0 < $count ? 'complete' : 'pending' ); ?>" data-upgrade="pods">
                             <td class="pods-wizard-right pods-wizard-status">
@@ -155,8 +157,8 @@
                             </td>
                         </tr>
                         <?php
-                            foreach ( $pods as $pod ) {
-                        ?>
+                        foreach ( $pods as $pod ) {
+                            ?>
                             <tr class="pods-wizard-table-pending" data-upgrade="pod" data-pod="<?php echo $pod->name; ?>">
                                 <td class="pods-wizard-right pods-wizard-status">
                                     <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
@@ -167,8 +169,8 @@
                                     <span class="pods-wizard-info"></span>
                                 </td>
                             </tr>
-                        <?php
-                            }
+                            <?php
+                        }
                         ?>
                     </tbody>
                 </table>
@@ -271,8 +273,8 @@
                             </td>
                         </tr>
                         <?php
-                            foreach ( $pods as $pod ) {
-                        ?>
+                        foreach ( $pods as $pod ) {
+                            ?>
                             <tr class="pods-wizard-table-pending" data-upgrade="pod" data-pod="<?php echo $pod->name; ?>">
                                 <td class="pods-wizard-right pods-wizard-status">
                                     <i><img src="<?php echo PODS_URL; ?>ui/images/spinner.gif" alt="Loading..." /></i>
@@ -283,8 +285,8 @@
                                     <span class="pods-wizard-info"></span>
                                 </td>
                             </tr>
-                        <?php
-                            }
+                            <?php
+                        }
                         ?>
                         <tr class="pods-wizard-table-pending" data-upgrade="cleanup">
                             <td class="pods-wizard-right pods-wizard-status">
@@ -304,8 +306,7 @@
         </div>
         <div id="pods-wizard-actions">
             <div id="pods-wizard-toolbar">
-                <a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a>
-                <a href="#next" id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Start using Pods', 'pods' ); ?>"><?php _e( 'Next Step', 'pods' ); ?></a>
+                <a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a> <a href="#next" id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Start using Pods', 'pods' ); ?>"><?php _e( 'Next Step', 'pods' ); ?></a>
             </div>
             <div id="pods-wizard-finished">
                 <?php _e( 'Migration Complete!', 'pods' ); ?>

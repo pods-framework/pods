@@ -190,7 +190,7 @@ class PodsData {
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0.0
      */
-    public function __construct ( $pod = null, $id = 0 ) {
+    public function __construct ( $pod = null, $id = 0, $strict = true ) {
         global $wpdb;
 
         if ( is_object( $pod ) && 'PodsAPI' == get_class( $pod ) ) {
@@ -205,8 +205,12 @@ class PodsData {
         if ( null !== $pod ) {
             $this->pod_data =& $this->api->pod_data;
 
-            if ( false === $this->pod_data )
-                return pods_error( 'Pod not found', $this );
+            if ( false === $this->pod_data ) {
+                if ( true === $strict )
+                    return pods_error( 'Pod not found', $this );
+                else
+                    return $this;
+            }
 
             $this->pod_id = $this->pod_data[ 'id' ];
             $this->pod = $this->pod_data[ 'name' ];
@@ -281,6 +285,39 @@ class PodsData {
             return $this->insert_id;
 
         return false;
+    }
+
+    /**
+     * Insert into a table, if unique key exists just update values.
+     *
+     * Data must be a key value pair array, keys act as table rows.
+     *
+     * Returns the prepared query from wpdb or false for errors
+     *
+     * @param string $table Name of the table to update
+     * @param array $data column => value pairs
+     * @param array $formats For $wpdb->prepare, uses sprintf formatting
+     *
+     * @return mixed
+     */
+    public static function insert_on_duplicate ( $table, $data, $formats ) {
+        global $wpdb;
+
+        $columns = array_keys( $data );
+
+        $update = array();
+
+        foreach ( $columns as $column ) {
+            $update[] = "`{$column}` = VALUES( `{$column}` )";
+        }
+
+        $columns_data = implode( '`, `', $columns );
+        $formats = implode( ", ", $formats );
+        $update = implode( ', ', $update );
+
+        $sql = "INSERT INTO `{$table}` ( `{$columns_data}` ) VALUES ( {$formats} ) ON DUPLICATE KEY UPDATE {$update}";
+
+        return $wpdb->prepare( $sql, $data );
     }
 
     /**
@@ -438,6 +475,7 @@ class PodsData {
      * Build/Rewrite dynamic SQL and handle search/filter/sort
      *
      * @param array $params
+     *
      * @since 2.0.0
      */
     public function build ( &$params ) {
@@ -520,47 +558,51 @@ class PodsData {
 
         // Get Aliases for future reference
         $selectsfound = '';
-        if (!empty($params->select)) {
-            if (is_array($params->select))
-                $selectsfound = implode(', ', $params->select);
+        if ( !empty( $params->select ) ) {
+            if ( is_array( $params->select ) )
+                $selectsfound = implode( ', ', $params->select );
             else
                 $selectsfound = $params->select;
         }
 
         // Pull Aliases from SQL query too
-        if (null !== $params->sql) {
-            $temp_sql = ' ' . trim(str_replace(array("\n", "\r"), ' ', $params->sql));
-            $temp_sql = preg_replace(array('/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i',
-                                      '/\sSELECT\s/i'),
-                                array(' SELECT ',
-                                      ' SELECT SQL_CALC_FOUND_ROWS '),
-                                $temp_sql);
-            preg_match('/\sSELECT SQL_CALC_FOUND_ROWS\s(.*)\sFROM/i', $temp_sql, $selectmatches);
-            if (isset($selectmatches[1]) && !empty($selectmatches[1]) && false !== stripos($selectmatches[1], ' AS '))
-                $selectsfound .= (!empty($selectsfound) ? ', ' : '') . $selectmatches[1];
+        if ( null !== $params->sql ) {
+            $temp_sql = ' ' . trim( str_replace( array( "\n", "\r" ), ' ', $params->sql ) );
+            $temp_sql = preg_replace( array(
+                    '/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i',
+                    '/\sSELECT\s/i'
+                ),
+                array(
+                    ' SELECT ',
+                    ' SELECT SQL_CALC_FOUND_ROWS '
+                ),
+                $temp_sql );
+            preg_match( '/\sSELECT SQL_CALC_FOUND_ROWS\s(.*)\sFROM/i', $temp_sql, $selectmatches );
+            if ( isset( $selectmatches[ 1 ] ) && !empty( $selectmatches[ 1 ] ) && false !== stripos( $selectmatches[ 1 ], ' AS ' ) )
+                $selectsfound .= ( !empty( $selectsfound ) ? ', ' : '' ) . $selectmatches[ 1 ];
         }
 
         // Build Alias list
         $this->aliases = array();
 
-        if (!empty($selectsfound) && false !== stripos($selectsfound, ' AS ')) {
-            $theselects = array_filter(explode(', ', $selectsfound));
+        if ( !empty( $selectsfound ) && false !== stripos( $selectsfound, ' AS ' ) ) {
+            $theselects = array_filter( explode( ', ', $selectsfound ) );
 
-            if (empty($theselects))
-                $theselects = array_filter(explode(',', $selectsfound));
+            if ( empty( $theselects ) )
+                $theselects = array_filter( explode( ',', $selectsfound ) );
 
-            foreach ($theselects as $selected) {
-                $selected = trim($selected);
+            foreach ( $theselects as $selected ) {
+                $selected = trim( $selected );
 
-                if (strlen($selected) < 1)
+                if ( strlen( $selected ) < 1 )
                     continue;
 
-                $selectfield = explode(' AS ', str_replace(' as ', ' AS ', $selected));
+                $selectfield = explode( ' AS ', str_replace( ' as ', ' AS ', $selected ) );
 
-                if (2 == count($selectfield)) {
-                    $field = trim(trim($selectfield[1]), '`');
-                    $real_field = trim(trim($selectfield[0]), '`');
-                    $this->aliases[$field] = $real_field;
+                if ( 2 == count( $selectfield ) ) {
+                    $field = trim( trim( $selectfield[ 1 ] ), '`' );
+                    $real_field = trim( trim( $selectfield[ 0 ] ), '`' );
+                    $this->aliases[ $field ] = $real_field;
                 }
             }
         }
@@ -656,48 +698,48 @@ class PodsData {
         elseif ( !empty( $joins ) )
             $params->join = $joins;
 
-        if (null !== $params->search && !empty($params->fields)) {
+        if ( null !== $params->search && !empty( $params->fields ) ) {
             // Search
-            if (false !== $params->search_query && 0 < strlen($params->search_query)) {
+            if ( false !== $params->search_query && 0 < strlen( $params->search_query ) ) {
                 $where = $having = array();
 
-                foreach ($params->fields as $key => $field) {
+                foreach ( $params->fields as $key => $field ) {
                     $attributes = $field;
 
-                    if (!is_array($attributes))
+                    if ( !is_array( $attributes ) )
                         $attributes = array();
 
-                    if (!$attributes['options']['search'])
+                    if ( !$attributes[ 'options' ][ 'search' ] )
                         continue;
 
-                    if (in_array($attributes['type'], array('date', 'time', 'datetime')))
+                    if ( in_array( $attributes[ 'type' ], array( 'date', 'time', 'datetime' ) ) )
                         continue;
 
-                    if (is_array($field))
+                    if ( is_array( $field ) )
                         $field = pods_var( 'name', $attributes, $key );
 
-                    if (isset($params->filters[$field]))
+                    if ( isset( $params->filters[ $field ] ) )
                         continue;
 
                     $fieldfield = '`' . $field . '`';
 
-                    if (isset($this->aliases[$field]))
-                        $fieldfield = '`' . $this->aliases[$field] . '`';
+                    if ( isset( $this->aliases[ $field ] ) )
+                        $fieldfield = '`' . $this->aliases[ $field ] . '`';
 
-                    if (isset($attributes['real_name']) && false !== $attributes['real_name'] && !empty( $attributes[ 'real_name' ] ) )
-                        $fieldfield = $attributes['real_name'];
+                    if ( isset( $attributes[ 'real_name' ] ) && false !== $attributes[ 'real_name' ] && !empty( $attributes[ 'real_name' ] ) )
+                        $fieldfield = $attributes[ 'real_name' ];
 
-                    if (isset($attrbutes['group_related']) && false !== $attributes['group_related'])
-                        $having[] = "{$fieldfield} LIKE '%" . pods_sanitize($params->search_query) . "%'";
+                    if ( isset( $attrbutes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] )
+                        $having[] = "{$fieldfield} LIKE '%" . pods_sanitize( $params->search_query ) . "%'";
                     else
-                        $where[] = "{$fieldfield} LIKE '%" . pods_sanitize($params->search_query) . "%'";
+                        $where[] = "{$fieldfield} LIKE '%" . pods_sanitize( $params->search_query ) . "%'";
                 }
 
-                if (!empty($where))
-                    $params->where[] = '(' . implode(' OR ', $where) . ')';
+                if ( !empty( $where ) )
+                    $params->where[] = '(' . implode( ' OR ', $where ) . ')';
 
-                if (!empty($having))
-                    $params->having[] = '(' . implode(' OR ', $having) . ')';
+                if ( !empty( $having ) )
+                    $params->having[] = '(' . implode( ' OR ', $having ) . ')';
             }
 
             // Traversal Search
@@ -705,206 +747,212 @@ class PodsData {
                 $params->where[] = $this->search_where;
 
             // Filter
-            foreach ($params->filters as $filter) {
+            foreach ( $params->filters as $filter ) {
                 $where = $having = array();
 
-                if (!isset($params->fields[$filter]))
+                if ( !isset( $params->fields[ $filter ] ) )
                     continue;
 
                 $filterfield = '`' . $filter . '`';
 
-                if (isset($this->aliases[$filter]))
-                    $filterfield = '`' . $this->aliases[$filter] . '`';
+                if ( isset( $this->aliases[ $filter ] ) )
+                    $filterfield = '`' . $this->aliases[ $filter ] . '`';
 
-                if (false !== $params->fields[$filter]['real_name'])
-                    $filterfield = $params->fields[$filter]['real_name'];
+                if ( false !== $params->fields[ $filter ][ 'real_name' ] )
+                    $filterfield = $params->fields[ $filter ][ 'real_name' ];
 
-                if (in_array($params->fields[$filter]['type'], array('date', 'datetime'))) {
-                    $start = date('Y-m-d') . ('datetime' == $params->fields[$filter]['type']) ? ' 00:00:00' : '';
-                    $end = date('Y-m-d') . ('datetime' == $params->fields[$filter]['type']) ? ' 23:59:59' : '';
+                if ( in_array( $params->fields[ $filter ][ 'type' ], array( 'date', 'datetime' ) ) ) {
+                    $start = date( 'Y-m-d' ) . ( 'datetime' == $params->fields[ $filter ][ 'type' ] ) ? ' 00:00:00' : '';
+                    $end = date( 'Y-m-d' ) . ( 'datetime' == $params->fields[ $filter ][ 'type' ] ) ? ' 23:59:59' : '';
 
-                    if (strlen(pods_var('filter_' . $filter . '_start', 'get', false)) < 1 && strlen(pods_var('filter_' . $filter . '_end', 'get', false)) < 1)
+                    if ( strlen( pods_var( 'filter_' . $filter . '_start', 'get', false ) ) < 1 && strlen( pods_var( 'filter_' . $filter . '_end', 'get', false ) ) < 1 )
                         continue;
 
-                    if (0 < strlen(pods_var('filter_' . $filter . '_start', 'get', false)))
-                        $start = date('Y-m-d', strtotime(pods_var('filter_' . $filter . '_start', 'get', false))) . ('datetime' == $params->fields[$filter]['type']) ? ' 00:00:00' : '';
+                    if ( 0 < strlen( pods_var( 'filter_' . $filter . '_start', 'get', false ) ) )
+                        $start = date( 'Y-m-d', strtotime( pods_var( 'filter_' . $filter . '_start', 'get', false ) ) ) . ( 'datetime' == $params->fields[ $filter ][ 'type' ] ) ? ' 00:00:00' : '';
 
-                    if (0 < strlen(pods_var('filter_' . $filter . '_end', 'get', false)))
-                        $end = date('Y-m-d', strtotime(pods_var('filter_' . $filter . '_end', 'get', false))) . ('datetime' == $params->fields[$filter]['type']) ? ' 23:59:59' : '';
-                    if (false !== $params->fields[$filter]['date_ongoing']) {
-                        $date_ongoing = '`' . $params->fields[$filter]['date_ongoing'] . '`';
+                    if ( 0 < strlen( pods_var( 'filter_' . $filter . '_end', 'get', false ) ) )
+                        $end = date( 'Y-m-d', strtotime( pods_var( 'filter_' . $filter . '_end', 'get', false ) ) ) . ( 'datetime' == $params->fields[ $filter ][ 'type' ] ) ? ' 23:59:59' : '';
+                    if ( false !== $params->fields[ $filter ][ 'date_ongoing' ] ) {
+                        $date_ongoing = '`' . $params->fields[ $filter ][ 'date_ongoing' ] . '`';
 
-                        if (isset($this->aliases[$date_ongoing]))
-                            $date_ongoing = '`' . $this->aliases[$date_ongoing] . '`';
+                        if ( isset( $this->aliases[ $date_ongoing ] ) )
+                            $date_ongoing = '`' . $this->aliases[ $date_ongoing ] . '`';
 
-                        if (false !== $params->fields[$filter]['group_related'])
+                        if ( false !== $params->fields[ $filter ][ 'group_related' ] )
                             $having[] = "(({$filterfield} <= '$start' OR ({$filterfield} >= '$start' AND {$filterfield} <= '$end')) AND ({$date_ongoing} >= '$start' OR ({$date_ongoing} >= '$start' AND {$date_ongoing} <= '$end')))";
                         else
                             $where[] = "(({$filterfield} <= '$start' OR ({$filterfield} >= '$start' AND {$filterfield} <= '$end')) AND ({$date_ongoing} >= '$start' OR ({$date_ongoing} >= '$start' AND {$date_ongoing} <= '$end')))";
                     }
                     else {
-                        if (false !== $params->fields[$filter]['group_related'])
+                        if ( false !== $params->fields[ $filter ][ 'group_related' ] )
                             $having[] = "({$filterfield} BETWEEN '$start' AND '$end')";
                         else
                             $where[] = "({$filterfield} BETWEEN '$start' AND '$end')";
                     }
                 }
-                elseif (0 < strlen(pods_var('filter_' . $filter, 'get', false))) {
-                    if (false !== $params->fields[$filter]['group_related'])
-                        $having[] = "{$filterfield} LIKE '%" . pods_sanitize(pods_var('filter_' . $filter, 'get', false)) . "%'";
+                elseif ( 0 < strlen( pods_var( 'filter_' . $filter, 'get', false ) ) ) {
+                    if ( false !== $params->fields[ $filter ][ 'group_related' ] )
+                        $having[] = "{$filterfield} LIKE '%" . pods_sanitize( pods_var( 'filter_' . $filter, 'get', false ) ) . "%'";
                     else
-                        $where[] = "{$filterfield} LIKE '%" . pods_sanitize(pods_var('filter_' . $filter, 'get', false)) . "%'";
+                        $where[] = "{$filterfield} LIKE '%" . pods_sanitize( pods_var( 'filter_' . $filter, 'get', false ) ) . "%'";
                 }
 
-                if (!empty($where))
-                    $params->where[] = '(' . implode(' AND ', $where) . ')';
+                if ( !empty( $where ) )
+                    $params->where[] = '(' . implode( ' AND ', $where ) . ')';
 
-                if (!empty($having))
-                    $params->having[] = '(' . implode(' AND ', $having) . ')';
+                if ( !empty( $having ) )
+                    $params->having[] = '(' . implode( ' AND ', $having ) . ')';
             }
         }
 
         // Build
-        if (null === $params->sql) {
+        if ( null === $params->sql ) {
             $sql = "
                 SELECT SQL_CALC_FOUND_ROWS
-                " . (!empty($params->select) ? (is_array($params->select) ? implode(', ', $params->select) : $params->select) : '*') . "
+                " . ( !empty( $params->select ) ? ( is_array( $params->select ) ? implode( ', ', $params->select ) : $params->select ) : '*' ) . "
                 FROM {$params->table} AS `t`
-                " . (!empty($params->join) ? (is_array($params->join) ? implode("\n                ", $params->join) : $params->join) : '') . "
-                " . (!empty($params->where) ? 'WHERE ' . (is_array($params->where) ? implode(' AND ', $params->where) : $params->where) : '') . "
-                " . (!empty($params->groupby) ? 'GROUP BY ' . (is_array($params->groupby) ? implode(', ', $params->groupby) : $params->groupby) : '') . "
-                " . (!empty($params->having) ? 'HAVING ' . (is_array($params->having) ? implode(' AND ', $params->having) : $params->having) : '') . "
-                " . (!empty($params->orderby) ? 'ORDER BY ' . (is_array($params->orderby) ? implode(', ', $params->orderby) : $params->orderby) : '') . "
-                " . ((0 < $params->page && 0 < $params->limit) ? 'LIMIT ' . (($params->page - 1) * $params->limit) . ', ' . ($params->limit) : '') . "
+                " . ( !empty( $params->join ) ? ( is_array( $params->join ) ? implode( "\n                ", $params->join ) : $params->join ) : '' ) . "
+                " . ( !empty( $params->where ) ? 'WHERE ' . ( is_array( $params->where ) ? implode( ' AND ', $params->where ) : $params->where ) : '' ) . "
+                " . ( !empty( $params->groupby ) ? 'GROUP BY ' . ( is_array( $params->groupby ) ? implode( ', ', $params->groupby ) : $params->groupby ) : '' ) . "
+                " . ( !empty( $params->having ) ? 'HAVING ' . ( is_array( $params->having ) ? implode( ' AND ', $params->having ) : $params->having ) : '' ) . "
+                " . ( !empty( $params->orderby ) ? 'ORDER BY ' . ( is_array( $params->orderby ) ? implode( ', ', $params->orderby ) : $params->orderby ) : '' ) . "
+                " . ( ( 0 < $params->page && 0 < $params->limit ) ? 'LIMIT ' . ( ( $params->page - 1 ) * $params->limit ) . ', ' . ( $params->limit ) : '' ) . "
             ";
         }
         // Rewrite
         else {
-            $sql = ' ' . trim(str_replace(array("\n", "\r"), ' ', $this->sql));
-            $sql = preg_replace(array('/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i',
-                                      '/\sSELECT\s/i'),
-                                array(' SELECT ',
-                                      ' SELECT SQL_CALC_FOUND_ROWS '),
-                                $sql);
+            $sql = ' ' . trim( str_replace( array( "\n", "\r" ), ' ', $this->sql ) );
+            $sql = preg_replace( array(
+                    '/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i',
+                    '/\sSELECT\s/i'
+                ),
+                array(
+                    ' SELECT ',
+                    ' SELECT SQL_CALC_FOUND_ROWS '
+                ),
+                $sql );
 
             // Insert variables based on existing statements
-            if (false === stripos($sql, '%%SELECT%%'))
-                $sql = preg_replace('/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i', ' SELECT SQL_CALC_FOUND_ROWS %%SELECT%% ', $sql);
-            if (false === stripos($sql, '%%WHERE%%'))
-                $sql = preg_replace('/\sWHERE\s(?!.*\sWHERE\s)/gi', ' WHERE %%WHERE%% ', $sql);
-            if (false === stripos($sql, '%%GROUPBY%%'))
-                $sql = preg_replace('/\sGROUP BY\s(?!.*\sGROUP BY\s)/gi', ' GROUP BY %%GROUPBY%% ', $sql);
-            if (false === stripos($sql, '%%HAVING%%'))
-                $sql = preg_replace('/\sHAVING\s(?!.*\sHAVING\s)/gi', ' HAVING %%HAVING%% ', $sql);
-            if (false === stripos($sql, '%%ORDERBY%%'))
-                $sql = preg_replace('/\sORDER BY\s(?!.*\sORDER BY\s)/gi', ' ORDER BY %%ORDERBY%% ', $sql);
+            if ( false === stripos( $sql, '%%SELECT%%' ) )
+                $sql = preg_replace( '/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i', ' SELECT SQL_CALC_FOUND_ROWS %%SELECT%% ', $sql );
+            if ( false === stripos( $sql, '%%WHERE%%' ) )
+                $sql = preg_replace( '/\sWHERE\s(?!.*\sWHERE\s)/gi', ' WHERE %%WHERE%% ', $sql );
+            if ( false === stripos( $sql, '%%GROUPBY%%' ) )
+                $sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/gi', ' GROUP BY %%GROUPBY%% ', $sql );
+            if ( false === stripos( $sql, '%%HAVING%%' ) )
+                $sql = preg_replace( '/\sHAVING\s(?!.*\sHAVING\s)/gi', ' HAVING %%HAVING%% ', $sql );
+            if ( false === stripos( $sql, '%%ORDERBY%%' ) )
+                $sql = preg_replace( '/\sORDER BY\s(?!.*\sORDER BY\s)/gi', ' ORDER BY %%ORDERBY%% ', $sql );
 
             // Insert variables based on other existing statements
-            if (false === stripos($sql, '%%JOIN%%')) {
-                if (false !== stripos($sql, ' WHERE '))
-                    $sql = preg_replace('/\sWHERE\s(?!.*\sWHERE\s)/gi', ' %%JOIN%% WHERE ', $sql);
-                elseif (false !== stripos($sql, ' GROUP BY '))
-                    $sql = preg_replace('/\sGROUP BY\s(?!.*\sGROUP BY\s)/gi', ' %%WHERE%% GROUP BY ', $sql);
-                elseif (false !== stripos($sql, ' ORDER BY '))
-                    $sql = preg_replace('/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%WHERE%% ORDER BY ', $sql);
+            if ( false === stripos( $sql, '%%JOIN%%' ) ) {
+                if ( false !== stripos( $sql, ' WHERE ' ) )
+                    $sql = preg_replace( '/\sWHERE\s(?!.*\sWHERE\s)/gi', ' %%JOIN%% WHERE ', $sql );
+                elseif ( false !== stripos( $sql, ' GROUP BY ' ) )
+                    $sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/gi', ' %%WHERE%% GROUP BY ', $sql );
+                elseif ( false !== stripos( $sql, ' ORDER BY ' ) )
+                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%WHERE%% ORDER BY ', $sql );
                 else
                     $sql .= ' %%JOIN%% ';
             }
-            if (false === stripos($sql, '%%WHERE%%')) {
-                if (false !== stripos($sql, ' GROUP BY '))
-                    $sql = preg_replace('/\sGROUP BY\s(?!.*\sGROUP BY\s)/gi', ' %%WHERE%% GROUP BY ', $sql);
-                elseif (false !== stripos($sql, ' ORDER BY '))
-                    $sql = preg_replace('/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%WHERE%% ORDER BY ', $sql);
+            if ( false === stripos( $sql, '%%WHERE%%' ) ) {
+                if ( false !== stripos( $sql, ' GROUP BY ' ) )
+                    $sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/gi', ' %%WHERE%% GROUP BY ', $sql );
+                elseif ( false !== stripos( $sql, ' ORDER BY ' ) )
+                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%WHERE%% ORDER BY ', $sql );
                 else
                     $sql .= ' %%WHERE%% ';
             }
-            if (false === stripos($sql, '%%GROUPBY%%')) {
-                if (false !== stripos($sql, ' HAVING '))
-                    $sql = preg_replace('/\sHAVING\s(?!.*\sHAVING\s)/gi', ' %%GROUPBY%% HAVING ', $sql);
-                elseif (false !== stripos($sql, ' ORDER BY '))
-                    $sql = preg_replace('/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%GROUPBY%% ORDER BY ', $sql);
+            if ( false === stripos( $sql, '%%GROUPBY%%' ) ) {
+                if ( false !== stripos( $sql, ' HAVING ' ) )
+                    $sql = preg_replace( '/\sHAVING\s(?!.*\sHAVING\s)/gi', ' %%GROUPBY%% HAVING ', $sql );
+                elseif ( false !== stripos( $sql, ' ORDER BY ' ) )
+                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%GROUPBY%% ORDER BY ', $sql );
                 else
                     $sql .= ' %%GROUPBY%% ';
             }
-            if (false === stripos($sql, '%%HAVING%%')) {
-                if (false !== stripos($sql, ' ORDER BY '))
-                    $sql = preg_replace('/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%HAVING%% ORDER BY ', $sql);
+            if ( false === stripos( $sql, '%%HAVING%%' ) ) {
+                if ( false !== stripos( $sql, ' ORDER BY ' ) )
+                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%HAVING%% ORDER BY ', $sql );
                 else
                     $sql .= ' %%HAVING%% ';
             }
-            if (false === stripos($sql, '%%ORDERBY%%'))
+            if ( false === stripos( $sql, '%%ORDERBY%%' ) )
                 $sql .= ' %%ORDERBY%% ';
-            if (false === stripos($sql, '%%LIMIT%%'))
+            if ( false === stripos( $sql, '%%LIMIT%%' ) )
                 $sql .= ' %%LIMIT%% ';
 
             // Replace variables
-            if (0 < strlen($params->select)) {
-                if (false === stripos($sql, '%%SELECT%% FROM '))
-                    $sql = str_ireplace('%%SELECT%%', $params->select . ', ', $sql);
+            if ( 0 < strlen( $params->select ) ) {
+                if ( false === stripos( $sql, '%%SELECT%% FROM ' ) )
+                    $sql = str_ireplace( '%%SELECT%%', $params->select . ', ', $sql );
                 else
-                    $sql = str_ireplace('%%SELECT%%', $params->select, $sql);
+                    $sql = str_ireplace( '%%SELECT%%', $params->select, $sql );
             }
-            if (0 < strlen($params->join))
-                $sql = str_ireplace('%%JOIN%%', $params->join, $sql);
-            if (0 < strlen($params->where)) {
-                if (false !== stripos($sql, ' WHERE ')) {
-                    if (false !== stripos($sql, ' WHERE %%WHERE%% '))
-                        $sql = str_ireplace('%%WHERE%%', $params->where . ' AND ', $sql);
+            if ( 0 < strlen( $params->join ) )
+                $sql = str_ireplace( '%%JOIN%%', $params->join, $sql );
+            if ( 0 < strlen( $params->where ) ) {
+                if ( false !== stripos( $sql, ' WHERE ' ) ) {
+                    if ( false !== stripos( $sql, ' WHERE %%WHERE%% ' ) )
+                        $sql = str_ireplace( '%%WHERE%%', $params->where . ' AND ', $sql );
                     else
-                        $sql = str_ireplace('%%WHERE%%', ' AND ' . $params->where, $sql);
+                        $sql = str_ireplace( '%%WHERE%%', ' AND ' . $params->where, $sql );
                 }
                 else
-                    $sql = str_ireplace('%%WHERE%%', ' WHERE ' . $params->where, $sql);
+                    $sql = str_ireplace( '%%WHERE%%', ' WHERE ' . $params->where, $sql );
             }
-            if (0 < strlen($params->groupby)) {
-                if (false !== stripos($sql, ' GROUP BY ')) {
-                    if (false !== stripos($sql, ' GROUP BY %%GROUPBY%% '))
-                        $sql = str_ireplace('%%GROUPBY%%', $params->groupby . ', ', $sql);
+            if ( 0 < strlen( $params->groupby ) ) {
+                if ( false !== stripos( $sql, ' GROUP BY ' ) ) {
+                    if ( false !== stripos( $sql, ' GROUP BY %%GROUPBY%% ' ) )
+                        $sql = str_ireplace( '%%GROUPBY%%', $params->groupby . ', ', $sql );
                     else
-                        $sql = str_ireplace('%%GROUPBY%%', ', ' . $params->groupby, $sql);
+                        $sql = str_ireplace( '%%GROUPBY%%', ', ' . $params->groupby, $sql );
                 }
                 else
-                    $sql = str_ireplace('%%GROUPBY%%', ' GROUP BY ' . $params->groupby, $sql);
+                    $sql = str_ireplace( '%%GROUPBY%%', ' GROUP BY ' . $params->groupby, $sql );
             }
-            if (0 < strlen($params->having) && false !== stripos($sql, ' GROUP BY ')) {
-                if (false !== stripos($sql, ' HAVING ')) {
-                    if (false !== stripos($sql, ' HAVING %%HAVING%% '))
-                        $sql = str_ireplace('%%HAVING%%', $params->having . ' AND ', $sql);
+            if ( 0 < strlen( $params->having ) && false !== stripos( $sql, ' GROUP BY ' ) ) {
+                if ( false !== stripos( $sql, ' HAVING ' ) ) {
+                    if ( false !== stripos( $sql, ' HAVING %%HAVING%% ' ) )
+                        $sql = str_ireplace( '%%HAVING%%', $params->having . ' AND ', $sql );
                     else
-                        $sql = str_ireplace('%%HAVING%%', ' AND ' . $params->having, $sql);
+                        $sql = str_ireplace( '%%HAVING%%', ' AND ' . $params->having, $sql );
                 }
                 else
-                    $sql = str_ireplace('%%HAVING%%', ' HAVING ' . $params->having, $sql);
+                    $sql = str_ireplace( '%%HAVING%%', ' HAVING ' . $params->having, $sql );
             }
-            if (0 < strlen($params->orderby)) {
-                if (false !== stripos($sql, ' ORDER BY ')) {
-                    if (false !== stripos($sql, ' ORDER BY %%ORDERBY%% '))
-                        $sql = str_ireplace('%%ORDERBY%%', $params->having . ', ', $sql);
+            if ( 0 < strlen( $params->orderby ) ) {
+                if ( false !== stripos( $sql, ' ORDER BY ' ) ) {
+                    if ( false !== stripos( $sql, ' ORDER BY %%ORDERBY%% ' ) )
+                        $sql = str_ireplace( '%%ORDERBY%%', $params->having . ', ', $sql );
                     else
-                        $sql = str_ireplace('%%ORDERBY%%', ', ' . $params->having, $sql);
+                        $sql = str_ireplace( '%%ORDERBY%%', ', ' . $params->having, $sql );
                 }
                 else
-                    $sql = str_ireplace('%%ORDERBY%%', ' ORDER BY ' . $params->groupby, $sql);
+                    $sql = str_ireplace( '%%ORDERBY%%', ' ORDER BY ' . $params->groupby, $sql );
             }
-            if (0 < $params->page && 0 < $params->limit) {
-                $start = ($params->page - 1) * $params->limit;
+            if ( 0 < $params->page && 0 < $params->limit ) {
+                $start = ( $params->page - 1 ) * $params->limit;
                 $end = $start + $params->limit;
                 $sql .= 'LIMIT ' . (int) $start . ', ' . (int) $end;
             }
 
             // Clear any unused variables
-            $sql = str_ireplace(array('%%SELECT%%',
-                                      '%%JOIN%%',
-                                      '%%WHERE%%',
-                                      '%%GROUPBY%%',
-                                      '%%HAVING%%',
-                                      '%%ORDERBY%%',
-                                      '%%LIMIT%%'), '', $sql);
-            $sql = str_replace(array('``', '`'), array('  ', ' '), $sql);
+            $sql = str_ireplace( array(
+                '%%SELECT%%',
+                '%%JOIN%%',
+                '%%WHERE%%',
+                '%%GROUPBY%%',
+                '%%HAVING%%',
+                '%%ORDERBY%%',
+                '%%LIMIT%%'
+            ), '', $sql );
+            $sql = str_replace( array( '``', '`' ), array( '  ', ' ' ), $sql );
         }
 
         // Debug purposes
-        if (1 == pods_var('debug_sql', 'get', 0) && is_user_logged_in() && is_super_admin())
+        if ( 1 == pods_var( 'debug_sql', 'get', 0 ) && is_user_logged_in() && is_super_admin() )
             echo "<textarea cols='130' rows='30'>{$sql}</textarea>";
 
         return $sql;
@@ -938,7 +986,7 @@ class PodsData {
      */
     public function zebra () {
         $zebra = true;
-        if (0 < ($this->row_number % 2)) // Odd numbers
+        if ( 0 < ( $this->row_number % 2 ) ) // Odd numbers
             $zebra = false;
         return $zebra;
     }
@@ -1024,6 +1072,7 @@ class PodsData {
      * @param string $weight_field
      * @param string $id_field
      * @param array $ids
+     *
      * @since 2.0.0
      */
     public function reorder ( $table, $weight_field, $id_field, $ids ) {
@@ -1074,7 +1123,7 @@ class PodsData {
 
             $row = false;
 
-            if ( !empty($this->pod ) )
+            if ( !empty( $this->pod ) )
                 $row = wp_cache_get( $id, 'pods_items_' . $this->pod );
 
             $get_table_data = false;
@@ -1140,7 +1189,7 @@ class PodsData {
 
             if ( 'table' == $this->pod_data[ 'storage' ] && false !== $get_table_data ) {
                 $params = array(
-                    'table' => $wpdb->prefix . "pods_tbl_",
+                    'table' => $wpdb->prefix . "pods_",
                     'where' => "`t`.`id` = {$id}",
                     'orderby' => "`t`.`id` DESC",
                     'page' => 1,
@@ -1175,6 +1224,7 @@ class PodsData {
 
     /**
      * @param null $row
+     *
      * @return mixed
      */
     public function reset ( $row = null ) {
@@ -1193,13 +1243,15 @@ class PodsData {
 
     /**
      * @static
+     *
      * @param $sql
      * @param string $error
      * @param null $results_error
      * @param null $no_results_error
+     *
      * @return array|bool|mixed|null|void
      */
-    public static function query ($sql, $error = 'Database Error', $results_error = null, $no_results_error = null) {
+    public static function query ( $sql, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
         global $wpdb;
 
         if ( $wpdb->show_errors )
@@ -1279,7 +1331,7 @@ class PodsData {
      * @param boolean $wp_core
      * @param boolean $pods_tables restrict Pods 2.x tables
      */
-    public static function get_tables ($wp_core = true, $pods_tables = true) {
+    public static function get_tables ( $wp_core = true, $pods_tables = true ) {
         global $wpdb;
 
         $core_wp_tables = array(
@@ -1296,17 +1348,17 @@ class PodsData {
             $wpdb->term_relationships
         );
 
-        $showTables = mysql_list_tables(DB_NAME);
+        $showTables = mysql_list_tables( DB_NAME );
 
         $finalTables = array();
 
-        while ($table = mysql_fetch_row($showTables)) {
-            if (!$pods_tables && 0 === (strpos($table[0], $wpdb->prefix . rtrim(self::$prefix, '_')))) // don't include pods tables
+        while ( $table = mysql_fetch_row( $showTables ) ) {
+            if ( !$pods_tables && 0 === ( strpos( $table[ 0 ], $wpdb->prefix . rtrim( self::$prefix, '_' ) ) ) ) // don't include pods tables
                 continue;
-            elseif (!$wp_core && in_array($table[0], $core_wp_tables))
+            elseif ( !$wp_core && in_array( $table[ 0 ], $core_wp_tables ) )
                 continue;
             else
-                $finalTables[] = $table[0];
+                $finalTables[] = $table[ 0 ];
         }
 
         return $finalTables;
@@ -1317,7 +1369,7 @@ class PodsData {
      *
      * @param string $table
      */
-    public static function get_table_columns ($table) {
+    public static function get_table_columns ( $table ) {
         global $wpdb;
 
         self::query( "SHOW COLUMNS FROM `{$table}` " );
@@ -1344,17 +1396,17 @@ class PodsData {
      *
      * @param string $table
      */
-    public static function get_column_data ($column_name, $table) {
-        $describe_data = mysql_query('DESCRIBE ' . $table);
+    public static function get_column_data ( $column_name, $table ) {
+        $describe_data = mysql_query( 'DESCRIBE ' . $table );
 
         $column_data = array();
 
-        while ($column_row = mysql_fetch_assoc($describe_data)) {
+        while ( $column_row = mysql_fetch_assoc( $describe_data ) ) {
             $column_data[] = $column_row;
         }
 
-        foreach ($column_data as $single_column) {
-            if ($column_name == $single_column['Field'])
+        foreach ( $column_data as $single_column ) {
+            if ( $column_name == $single_column[ 'Field' ] )
                 return $single_column;
         }
 
@@ -1367,10 +1419,10 @@ class PodsData {
      * @param string $sql
      * @param array $data
      */
-    public static function prepare ($sql, $data) {
+    public static function prepare ( $sql, $data ) {
         global $wpdb;
-        list($sql, $data) = self::do_hook('prepare', array($sql, $data));
-        return $wpdb->prepare($sql, $data);
+        list( $sql, $data ) = self::do_hook( 'prepare', array( $sql, $data ) );
+        return $wpdb->prepare( $sql, $data );
     }
 
     /**
@@ -1449,11 +1501,11 @@ class PodsData {
             }
             elseif ( 'pod' == $table ) {
                 $the_pod = $v;
-                $table = '@wp_pods_tbl_' . $v;
+                $table = '@wp_pods_' . $v;
             }
             elseif ( !empty( $table ) ) {
                 $the_pod = $table;
-                $table = '@wp_pods_tbl_' . $table;
+                $table = '@wp_pods_' . $table;
                 $recurse = false;
             }
 
@@ -1526,7 +1578,7 @@ class PodsData {
 
         $rel_alias = 'rel_' . $field_joined;
         $the_join = "
-            LEFT JOIN `@wp_pods_rel` AS `{$rel_alias}` ON `{$rel_alias}`.`field_id` = {$this->traversal[$pod][$field]['id']} AND `{$rel_alias}`.`item_id` = `{$joined}`.`id`
+            LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON `{$rel_alias}`.`field_id` = {$this->traversal[$pod][$field]['id']} AND `{$rel_alias}`.`item_id` = `{$joined}`.`id`
             LEFT JOIN `{$this->traversal[$pod][$field]['table']}` AS `{$field_joined}` ON `{$field_joined}`.`{$this->traversal[$pod][$field]['on']}` = `{$rel_alias}`.`related_item_id`
         ";
 
@@ -1585,3 +1637,4 @@ class PodsData {
         return pods_do_hook( 'data', $name, $args, $this );
     }
 }
+

@@ -19,7 +19,7 @@ if (!empty($filters)) {
             $pick_column_id = 'id';
             switch ($pick_object) {
                 case 'pod':
-                    $pick_table = "@wp_pods_tbl_{$pick_val}";
+                    $pick_table = "@wp_pods_{$pick_val}";
                     $pick_column_id = 'id';
                     break;
                 case 'post_type':

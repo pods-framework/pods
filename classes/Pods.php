@@ -118,6 +118,16 @@ class Pods {
 
     public $datatype_id;
 
+    public $page_template;
+
+    public $body_classes;
+
+    public $meta;
+
+    public $meta_properties;
+
+    public $meta_extra;
+
     /**
      * Constructor - Pods Framework core
      *
@@ -131,7 +141,7 @@ class Pods {
         $this->api = pods_api( $pod );
         $this->api->display_errors =& $this->display_errors;
 
-        $this->data = pods_data( $this->api, $id );
+        $this->data = pods_data( $this->api, $id, false );
         PodsData::$display_errors =& $this->display_errors;
 
         // Set up page variable
@@ -194,6 +204,18 @@ class Pods {
 
         if ( is_array( $id ) || is_object( $id ) )
             $this->find( $id );
+    }
+
+    /**
+     * Whether this Pod object is valid or not
+     *
+     * @since 2.0.0
+     */
+    public function valid () {
+        if ( empty( $this->pod_id ) )
+            return false;
+
+        return true;
     }
 
     /**
@@ -447,7 +469,7 @@ class Pods {
                                 return false;
 
                             // Get $pod if related to a Pod
-                            if ( !empty( $pick_object) && 'pod' == $pick_object && !empty( $pick_val ) )
+                            if ( !empty( $pick_object ) && 'pod' == $pick_object && !empty( $pick_val ) )
                                 $pod = $pick_val;
                         }
                         // Assume last iteration
@@ -596,58 +618,63 @@ class Pods {
     /**
      * Return the next item ID, loops at the first id to return the last
      *
+     * @param null $id
+     *
      * @return int
      * @since 2.0.0
      */
-    public function next_pod_item_id($id = null) {
-        $pod = new Pods($this->pod);
-        if(!$id)
-            $id = $this->field('id');
+    public function next_pod_item_id ( $id = null ) {
+        $pod = new Pods( $this->pod );
+        if ( !$id )
+            $id = $this->field( 'id' );
         $params = array(
             'select' => 'id',
             'where' => "id > $id",
             'orderby' => "id ASC",
             'limit' => 1
         );
-        $pod->find($params);
-        if(!$pod->total_found() > 0) {
+        $pod->find( $params );
+        if ( !$pod->total_found() > 0 ) {
             $params = array(
                 'select' => 'id',
                 'orderby' => "id ASC",
                 'limit' => 1
             );
-            $pod->find($params);
+            $pod->find( $params );
         }
-        return $pod->field('id');
+
+        return $pod->field( 'id' );
     }
 
     /**
      * Return the previous item ID, loops at the last id to return the first
      *
+     * @param null $id
+     *
      * @return int
      * @since 2.0.0
      */
-    public function prev_pod_item_id($id = null) {
-        $pod = new Pods($this->pod);
-        if(!$id)
-            $id = $this->field('id');
+    public function prev_pod_item_id ( $id = null ) {
+        $pod = new Pods( $this->pod );
+        if ( !$id )
+            $id = $this->field( 'id' );
         $params = array(
             'select' => 'id',
             'where' => "id < $id",
             'orderby' => "id DESC",
             'limit' => 1
         );
-        $pod->find($params);
-        if(!$pod->total_found() > 0) {
+        $pod->find( $params );
+        if ( !$pod->total_found() > 0 ) {
             $params = array(
                 'select' => 'id',
                 'orderby' => "id DESC",
                 'limit' => 1
             );
-            $pod->find($params);
+            $pod->find( $params );
         }
 
-        return $pod->field('id');
+        return $pod->field( 'id' );
 
     }
 
@@ -785,7 +812,7 @@ class Pods {
         }
 
         // Add prefix to $params->orderby if needed
-        if ( !empty( $params->orderby ) && is_string($params->orderby) && false === strpos( $params->orderby, ',' ) && false === strpos( $params->orderby, '(' ) && false === strpos( $params->orderby, '.' ) ) {
+        if ( !empty( $params->orderby ) && is_string( $params->orderby ) && false === strpos( $params->orderby, ',' ) && false === strpos( $params->orderby, '(' ) && false === strpos( $params->orderby, '.' ) ) {
             if ( false !== stripos( $params->orderby, ' ASC' ) )
                 $params->orderby = "`{$pod_table_prefix}`.`" . trim( str_ireplace( array( '`', ' ASC' ), '', $params->orderby ) ) . '` ASC';
             else

@@ -74,6 +74,9 @@ class PodsComponents {
         $custom_component_menus = array();
 
         foreach ( $this->components as $component => $component_data ) {
+            if ( !isset( $this->settings[ 'components' ][ $component_data[ 'ID' ] ] ) || 0 == $this->settings[ 'components' ][ $component_data[ 'ID' ] ] )
+                continue;
+
             if ( !empty( $component_data[ 'Hide' ] ) )
                 continue;
 
@@ -97,7 +100,7 @@ class PodsComponents {
                 array( $this, 'admin_handler' )
             );
 
-            if ( method_exists( $component_data[ 'object' ], 'admin_assets' ) )
+            if ( isset( $component_data[ 'object' ] ) && method_exists( $component_data[ 'object' ], 'admin_assets' ) )
                 add_action( 'admin_print_styles-' . $page, array( $component_data[ 'object' ], 'admin_assets' ) );
         }
 
@@ -117,7 +120,7 @@ class PodsComponents {
 
                             $page = current( explode( '?', $menu[ 2 ] ) );
 
-                            if ( method_exists( $component_data[ 'object' ], 'admin_assets' ) )
+                            if ( isset( $component_data[ 'object' ] ) && method_exists( $component_data[ 'object' ], 'admin_assets' ) )
                                 add_action( 'admin_print_styles-' . $page, array( $component_data[ 'object' ], 'admin_assets' ) );
 
                             break;
@@ -136,9 +139,6 @@ class PodsComponents {
     public function load () {
         foreach ( (array) $this->settings[ 'components' ] as $component => $options ) {
             if ( !isset( $this->components[ $component ] ) || 0 == $options )
-                continue;
-
-            if ( true === (boolean) pods_var( 'DeveloperMode', $this->components[ $component ], false ) && ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) )
                 continue;
 
             if ( !empty( $this->components[ $component ][ 'PluginDependency' ] ) ) {
@@ -210,12 +210,14 @@ class PodsComponents {
             $default_headers = array(
                 'ID' => 'ID',
                 'Name' => 'Name',
+                'URI' => 'URI',
                 'MenuName' => 'Menu Name',
                 'MenuPage' => 'Menu Page',
                 'MenuAddPage' => 'Menu Add Page',
                 'Description' => 'Description',
                 'Version' => 'Version',
                 'Author' => 'Author',
+                'AuthorURI' => 'Author URI',
                 'Class' => 'Class',
                 'Hide' => 'Hide',
                 'PluginDependency' => 'Plugin Dependency',
@@ -246,9 +248,6 @@ class PodsComponents {
                     $component_data[ 'DeveloperMode' ] = true;
                 else
                     $component_data[ 'DeveloperMode' ] = false;
-
-                if ( true === $component_data[ 'DeveloperMode' ] && ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) )
-                    continue;
 
                 $component_data[ 'File' ] = $component_file;
 
@@ -376,7 +375,8 @@ class PodsComponents {
 
 /**
  *
- */class PodsComponent {
+ */
+class PodsComponent {
 
     /**
      * Do things like register/enqueue scripts and stylesheets
@@ -454,7 +454,7 @@ class PodsComponents {
      *
      * @since 2.0.0
     public function admin ( $options ) {
-        // run code based on $options set
+    // run code based on $options set
     }
      */
 }

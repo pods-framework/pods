@@ -125,7 +125,7 @@ class Pods_Deprecated
                 $pick_field_id = 'id';
                 switch ( $pick_object ) {
                     case 'pod':
-                        $pick_table = "@wp_pods_tbl_{$pick_val}";
+                        $pick_table = "@wp_pods_{$pick_val}";
                         $pick_field_id = 'id';
                         break;
                     case 'post_type':
@@ -154,7 +154,7 @@ class Pods_Deprecated
                         break;
                 }
 
-                $sql = "SELECT `related_item_id` FROM `@wp_pods_rel` WHERE `item_id` = %d AND `field_id` = %d";
+                $sql = "SELECT `related_item_id` FROM `@wp_podsrel` WHERE `item_id` = %d AND `field_id` = %d";
 
                 $sql = array( $sql, array( $id, $field[ 'id' ] ) );
 
@@ -185,7 +185,7 @@ class Pods_Deprecated
                 if ( 1 == $field[ 'unique' ] ) {
                     $unique_where = ( empty( $id ) ) ? '' : " AND `item_id` != %d";
 
-                    $sql = "SELECT `related_item_id` FROM `@wp_pods_rel` WHERE `field_id` = %d {$unique_where}";
+                    $sql = "SELECT `related_item_id` FROM `@wp_podsrel` WHERE `field_id` = %d {$unique_where}";
 
                     $sql = array( $sql, array( $field[ 'id' ] ) );
 

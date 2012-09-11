@@ -1,21 +1,21 @@
 <?php
-    if ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER )
-        return;
+if ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER )
+    return;
 
-    // This isn't ready yet
-    $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
-    $field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $fields ) ) );
+// This isn't ready yet
+$uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
+$field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $fields ) ) );
 
-    $nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . session_id() . '_' . $pod->id() . '_' . $uri_hash . '_' . $field_hash );
+$nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . session_id() . '_' . $pod->id() . '_' . $uri_hash . '_' . $field_hash );
 
-    if ( isset( $_POST[ '_pods_nonce' ] ) ) {
-        try {
-            $id = $pod->api->process_form( $pod, $fields, $thank_you );
-        }
-        catch ( Exception $e ) {
-            echo '<div class="pods-message pods-message-error">' . $e->getMessage() . '</div>';
-        }
+if ( isset( $_POST[ '_pods_nonce' ] ) ) {
+    try {
+        $id = $pod->api->process_form( $pod, $fields, $thank_you );
     }
+    catch ( Exception $e ) {
+        echo '<div class="pods-message pods-message-error">' . $e->getMessage() . '</div>';
+    }
+}
 ?>
 <form action="<?php echo pods_var_update( array( '_p_submitted' => 1 ) ); ?>" method="post" class="pods-submittable pods-form pods-form-pod-<?php echo $pod->pod; ?>">
     <div class="pods-submittable-fields">
@@ -30,13 +30,13 @@
                 <div class="inside">
                     <ul class="form-fields">
                         <?php
-                            foreach ( $fields as $field ) {
-                        ?>
+                        foreach ( $fields as $field ) {
+                            ?>
                             <li class="pods-field <?php echo 'pods-form-ui-row-type-' . $type . ' pods-form-ui-row-name-' . Podsform::clean( $name, true ); ?>">
                                 <?php PodsForm::row( 'pods_field_' . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), $field[ 'type' ], $field, $pod, $pod->id() ); ?>
                             </li>
-                        <?php
-                            }
+                            <?php
+                        }
                         ?>
                     </ul>
                 </div>

@@ -50,6 +50,8 @@ class PodsAdmin {
 
         // Add the Pods capabilities
         add_filter( 'members_get_capabilities', array( $this, 'admin_capabilities' ) );
+
+        add_action( 'admin_head-media-upload-popup', array( $this, 'register_media_assets' ) );
     }
 
     /**
@@ -90,11 +92,11 @@ class PodsAdmin {
         if ( isset( $_GET[ 'page' ] ) ) {
             $page = $_GET[ 'page' ];
             if ( 'pods' == $page || ( false !== strpos( $page, 'pods-' ) && 0 === strpos( $page, 'pods-' ) ) ) {
-?>
-    <script type="text/javascript">
-        var PODS_URL = "<?php echo PODS_URL; ?>";
-    </script>
-<?php
+                ?>
+            <script type="text/javascript">
+                var PODS_URL = "<?php echo PODS_URL; ?>";
+            </script>
+            <?php
                 wp_enqueue_script( 'jquery' );
                 wp_enqueue_script( 'jquery-ui-core' );
                 wp_enqueue_script( 'jquery-ui-sortable' );
@@ -162,7 +164,7 @@ class PodsAdmin {
                 $label = pods_var( 'menu_name', $item[ 'options' ], pods_var( 'label', $item[ 'options' ], ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true ), null, true );
                 $label = apply_filters( 'pods_admin_menu_label', $label, $item );
 
-                $singular_label = pods_var( 'label_singular', $item[ 'options' ], pods_var( 'label', $item[ 'options' ], ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true), null, true );
+                $singular_label = pods_var( 'label_singular', $item[ 'options' ], pods_var( 'label', $item[ 'options' ], ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true ), null, true );
                 $plural_label = pods_var( 'label', $item[ 'options' ], ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true );
 
                 if ( 1 == $item[ 'options' ][ 'show_in_menu' ] ) {
@@ -429,12 +431,14 @@ class PodsAdmin {
     }
 
     /**
+     * Add media button for Pods shortcode
+     *
      * @param $context
      *
      * @return string
      */
     public function media_button ( $context ) {
-        $current_page = basename( $_SERVER['PHP_SELF'] );
+        $current_page = basename( $_SERVER[ 'PHP_SELF' ] );
 
         if ( $current_page == 'index.php' )
             return $context;
@@ -447,14 +451,22 @@ class PodsAdmin {
     }
 
     /**
-     *
+     * Enqueue assets for Media Library Popup
+     */
+    public function register_media_assets () {
+        if ( 'pods_media_attachment' == pods_var( 'inlineId', 'get' ) )
+            wp_enqueue_style( 'pods-attach' );
+    }
+
+    /**
+     * Output Pods shortcode popup window
      */
     public function mce_popup () {
         pods_view( PODS_DIR . 'ui/admin/shortcode.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
-     *
+     * Handle main Pods Setup area for managing Pods and Fields
      */
     public function admin_setup () {
         $pods = pods_api()->load_pods();
@@ -536,6 +548,7 @@ class PodsAdmin {
     /**
      * @param $id
      * @param $obj
+     *
      * @return mixed
      */
     public function admin_setup_delete ( $id, $obj ) {
@@ -588,18 +601,48 @@ class PodsAdmin {
         $components = PodsInit::$components->components;
 
         foreach ( $components as $component => &$component_data ) {
+            $component_data[ 'Name' ] = strip_tags( $component_data[ 'Name' ] );
+
+            $meta = array();
+
+            if ( !empty( $component_data[ 'Version' ] ) )
+                $meta[] = 'Version ' . $component_data[ 'Version' ];
+
+            if ( empty( $component_data[ 'Author' ] ) ) {
+                $component_data[ 'Author' ] = 'Pods Framework Team';
+                $component_data[ 'AuthorURI' ] = 'http://pods.io/';
+            }
+
+            if ( !empty( $component_data[ 'AuthorURI' ] ) )
+                $component_data[ 'Author' ] = '<a href="' . $component_data[ 'AuthorURI' ] . '">' . $component_data[ 'Author' ] . '</a>';
+
+            $meta[] = sprintf( __( 'by %s', 'pods' ), $component_data[ 'Author' ] );
+
+            if ( !empty( $component_data[ 'URI' ] ) )
+                $meta[] = '<a href="' . $component_data[ 'URI' ] . '">' . __( 'Visit component site', 'pods' ) . '</a>';
+
+            $component_data[ 'Description' ] = wpautop( make_clickable( strip_tags( $component_data[ 'Description' ], 'em,strong' ) ) );
+
+            if ( !empty( $meta ) )
+                $component_data[ 'Description' ] .= '<div class="pods-component-version-author-uri">' . implode( ' | ', $meta ) . '</div>';
+
             $component_data = array(
                 'id' => $component_data[ 'ID' ],
                 'name' => $component_data[ 'Name' ],
-                'description' => make_clickable( $component_data[ 'Description' ] ),
-                'version' => $component_data[ 'Version' ],
-                'author' => $component_data[ 'Author' ],
+                'description' => $component_data[ 'Description' ],
                 'developermode' => (boolean) pods_var( 'DeveloperMode', $component_data, false ),
                 'toggle' => 0
             );
 
-            if ( true === $component_data[ 'developermode' ] )
-                $component_data[ 'name' ] .= ' <em>(Developer Preview)</em>';
+            if ( true === $component_data[ 'developermode' ] ) {
+                if ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) {
+                    unset( $components[ $component ] );
+
+                    continue;
+                }
+
+                $component_data[ 'name' ] .= ' <em style="font-weight: normal;">(Developer Preview)</em>';
+            }
 
             if ( isset( PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] ) && 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] )
                 $component_data[ 'toggle' ] = 1;
@@ -612,7 +655,18 @@ class PodsAdmin {
             'icon' => PODS_URL . 'ui/images/icon32.png',
             'items' => 'Components',
             'item' => 'Component',
-            'fields' => array( 'manage' => array( 'name', 'description' ) ), //, 'version', 'author' ) ),
+            'fields' => array(
+                'manage' => array(
+                    'name' => array(
+                        'label' => __( 'Name', 'pods' ),
+                        'width' => '30%'
+                    ),
+                    'description' => array(
+                        'label' => __( 'Description', 'pods' ),
+                        'width' => '70%'
+                    )
+                )
+            ),
             'actions_disabled' => array( 'duplicate', 'view', 'export', 'add', 'edit', 'delete' ),
             'actions_custom' => array(
                 'toggle' => array( 'callback' => array( $this, 'admin_components_toggle' ) )
@@ -635,6 +689,7 @@ class PodsAdmin {
 
     /**
      * @param PodsUI $ui
+     *
      * @return bool
      */
     public function admin_components_toggle ( PodsUI $ui ) {
@@ -703,6 +758,7 @@ class PodsAdmin {
 
     /**
      * @param $capabilities
+     *
      * @return array
      */
     public function admin_capabilities ( $capabilities ) {
@@ -1102,11 +1158,11 @@ class PodsAdmin {
         }
         elseif ( $wpdb->posts == $data->table ) {
             $lookup_where[] = "`t`.`post_name` LIKE '%" . like_escape( $params->query ) . "%'";
-            $lookup_where[]  = "`t`.`post_content` LIKE '%" . like_escape( $params->query ) . "%'";
+            $lookup_where[] = "`t`.`post_content` LIKE '%" . like_escape( $params->query ) . "%'";
             $lookup_where[] = "`t`.`post_excerpt` LIKE '%" . like_escape( $params->query ) . "%'";
         }
         elseif ( $wpdb->terms == $data->table )
-            $lookup_where[ ] = "`t`.`slug` LIKE '%" . like_escape( $params->query ) . "%'";
+            $lookup_where[] = "`t`.`slug` LIKE '%" . like_escape( $params->query ) . "%'";
         elseif ( $wpdb->comments == $data->table ) {
             $lookup_where[] = "`t`.`comment_content` LIKE '%" . like_escape( $params->query ) . "%'";
             $lookup_where[] = "`t`.`comment_author` LIKE '%" . like_escape( $params->query ) . "%'";
@@ -1120,7 +1176,7 @@ class PodsAdmin {
 
         $pick_orderby = pods_var( 'pick_orderby', $field, null, null, true );
 
-        if ( 0 < strlen ( $pick_orderby ) )
+        if ( 0 < strlen( $pick_orderby ) )
             $orderby[] = $pick_orderby;
 
         $orderby[] = "`t`.`{$data->field_index}`";

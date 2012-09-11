@@ -5,6 +5,14 @@
 class PodsField_Date extends PodsField {
 
     /**
+     * Field Type Group
+     *
+     * @var string
+     * @since 2.0.0
+     */
+    public static $group = 'Date / Time';
+
+    /**
      * Field Type Identifier
      *
      * @var string
@@ -18,7 +26,7 @@ class PodsField_Date extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    public static $label = 'Date / Time';
+    public static $label = 'Date';
 
     /**
      * Field Type Preparation
@@ -46,20 +54,8 @@ class PodsField_Date extends PodsField {
      */
     public function options () {
         $options = array(
-            'date_format_type' => array(
-                'label' => __( 'Format Type', 'pods' ),
-                'default' => 'date',
-                'type' => 'pick',
-                'data' => array(
-                    'date' => __( 'Date', 'pods' ),
-                    'datetime' => __( 'Date + Time', 'pods' ),
-                    'time' => __( 'Time', 'pods' )
-                ),
-                'dependency' => true
-            ),
             'date_format' => array(
                 'label' => __( 'Date Format', 'pods' ),
-                'depends-on' => array( 'date_format_type' => array( 'date', 'datetime' ) ),
                 'default' => 'mdy',
                 'type' => 'pick',
                 'data' => array(
@@ -72,41 +68,9 @@ class PodsField_Date extends PodsField {
                     'ymd_dot' => 'yyyy.mm.dd'
                 )
             ),
-            'date_time_type' => array(
-                'label' => __( 'Time Format Type', 'pods' ),
-                'depends-on' => array( 'date_format_type' => array( 'datetime', 'time' ) ),
-                'default' => '12',
-                'type' => 'pick',
-                'data' => array(
-                    '12' => __( '12 hour', 'pods' ),
-                    '24' => __( '24 hour', 'pods' )
-                ),
-                'dependency' => true
-            ),
-            'date_time_format' => array(
-                'label' => __( 'Time Format', 'pods' ),
-                'excludes-on' => array(
-                    'date_format_type' => 'date',
-                    'date_time_type' => '24',
-                ),
-                'default' => 'h_mma',
-                'type' => 'pick',
-                'data' => array(
-                    'h_mm_A' => '1:25 PM',
-                    'h_mm_ss_A' => '1:25:00 PM',
-                    'hh_mm_A' => '01:25 PM',
-                    'hh_mm_ss_A' => '01:25:00 PM',
-                    'h_mma' => '1:25pm',
-                    'hh_mma' => '01:25pm',
-                    'h_mm' => '1:25',
-                    'h_mm_ss' => '1:25:00',
-                    'hh_mm' => '01:25',
-                    'hh_mm_ss' => '01:25:00'
-                )
-            ),
             'date_html5' => array(
                 'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
-                'default' => apply_filters( 'pods_form_ui_field_html5', 0, 'date' ),
+                'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
                 'type' => 'boolean'
             )
         );
@@ -122,7 +86,7 @@ class PodsField_Date extends PodsField {
      * @since 2.0.0
      */
     public function schema ( $options = null ) {
-        $schema = 'DATETIME NOT NULL default "0000-00-00 00:00:00"';
+        $schema = 'DATE NOT NULL default "0000-00-00"';
 
         return $schema;
     }
@@ -142,8 +106,8 @@ class PodsField_Date extends PodsField {
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $format = $this->format( $options );
 
-        if ( !empty( $value ) && !in_array( $value, array( '0000-00-00 00:00:00', '0000-00-00', '00:00:00' )) ) {
-            $date = $this->createFromFormat( 'Y-m-d H:i:s', (string) $value );
+        if ( !empty( $value ) && '0000-00-00' != $value ) {
+            $date = $this->createFromFormat( 'Y-m-d', (string) $value );
             $date_local = $this->createFromFormat( $format, (string) $value );
 
             if ( false !== $date )
@@ -180,37 +144,6 @@ class PodsField_Date extends PodsField {
     }
 
     /**
-     * Build regex necessary for JS validation
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param string $pod
-     * @param int $id
-     *
-     * @since 2.0.0
-     */
-    public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        return false;
-    }
-
-    /**
-     * Validate a value before it's saved
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param int $id
-     *
-     * @since 2.0.0
-     */
-    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
-        return true;
-    }
-
-    /**
      * Change the value or perform actions after validation but before saving to the DB
      *
      * @param mixed $value
@@ -226,54 +159,9 @@ class PodsField_Date extends PodsField {
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $format = $this->format( $options );
 
-        $value = $this->convert_date( $value, 'Y-m-d H:i:s', $format );
+        $value = $this->convert_date( $value, 'Y-m-d', $format );
 
         return $value;
-    }
-
-    /**
-     * Perform actions after saving to the DB
-     *
-     * @param mixed $value
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param object $params
-     *
-     * @since 2.0.0
-     */
-    public function post_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-
-    }
-
-    /**
-     * Perform actions before deleting from the DB
-     *
-     * @param string $name
-     * @param string $pod
-     * @param int $id
-     * @param object $api
-     *
-     * @since 2.0.0
-     */
-    public function pre_delete ( $id = null, $name = null, $options = null, $pod = null ) {
-
-    }
-
-    /**
-     * Perform actions after deleting from the DB
-     *
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $pod
-     *
-     * @since 2.0.0
-     */
-    public function post_delete ( $id = null, $name = null, $options = null, $pod = null ) {
-
     }
 
     /**
@@ -311,37 +199,7 @@ class PodsField_Date extends PodsField {
             'ymd_dot' => 'Y.m.d'
         );
 
-        $time_format = array(
-            'h_mm_A' => 'g:i A',
-            'h_mm_ss_A' => 'g:i:s A',
-            'hh_mm_A' => 'h:i A',
-            'hh_mm_ss_A' => 'h:i:s A',
-            'h_mma' => 'g:ia',
-            'hh_mma' => 'h:ia',
-            'h_mm' => 'g:i',
-            'h_mm_ss' => 'g:i:s',
-            'hh_mm' => 'h:i',
-            'hh_mm_ss' => 'h:i:s'
-        );
-
-        $format = 'Y-m-d H:i:s';
-
-        if ( 'date' == pods_var( 'date_format_type', $options ) )
-            $format = $date_format[ pods_var( 'date_format', $options, 'ymd_dash', null, true ) ];
-        elseif ( 'datetime' == pods_var( 'date_format_type', $options ) ) {
-            $format = $date_format[ pods_var( 'date_format', $options, 'ymd_dash', null, true ) ] . ' ';
-
-            if ( 12 == pods_var( 'date_time_type', $options ) )
-                $format .= $time_format[ pods_var( 'date_time_format', $options, 'hh_mm', null, true ) ];
-            else
-                $format .= 'H:i';
-        }
-        elseif ( 'time' == pods_var( 'date_format_type', $options ) ) {
-            if ( 12 == pods_var( 'date_time_type', $options ) )
-                $format = $time_format[ pods_var( 'date_time_format', $options, 'hh_mm', null, true ) ];
-            else
-                $format = 'H:i';
-        }
+        $format = $date_format[ pods_var( 'date_format', $options, 'ymd_dash', null, true ) ];
 
         return $format;
     }
@@ -356,7 +214,7 @@ class PodsField_Date extends PodsField {
         if ( method_exists( 'DateTime', 'createFromFormat' ) )
             return DateTime::createFromFormat( $format, (string) $date );
 
-        return new DateTime( date_i18n( 'Y-m-d H:i:s', strtotime( (string) $date ) ) );
+        return new DateTime( date_i18n( 'Y-m-d', strtotime( (string) $date ) ) );
     }
 
     /**
@@ -366,8 +224,8 @@ class PodsField_Date extends PodsField {
      * @param $new_format
      * @param $original_format
      */
-    public function convert_date ( $value, $new_format, $original_format = 'Y-m-d H:i:s' ) {
-        if ( !empty( $value ) && !in_array( $value, array( '0000-00-00 00:00:00', '0000-00-00', '00:00:00' ) ) ) {
+    public function convert_date ( $value, $new_format, $original_format = 'Y-m-d' ) {
+        if ( !empty( $value ) && '0000-00-00' != $value ) {
             $date = $this->createFromFormat( $original_format, (string) $value );
 
             if ( false !== $date )

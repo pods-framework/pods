@@ -1,8 +1,8 @@
 <label<?php PodsForm::attributes( $attributes, $name, 'label' ); ?>>
     <?php
-        echo $label;
+    echo $label;
 
-        if ( 0 == $options[ 'grouped' ] && 0 < strlen( $help ) && 'help' != $help )
-            pods_help( $help );
+    if ( 0 == $options[ 'grouped' ] && 0 < strlen( $help ) && 'help' != $help )
+        pods_help( $help );
     ?>
 </label>

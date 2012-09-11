@@ -8,7 +8,7 @@
         <div class="pods-submittable-fields">
             <?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
             <?php echo PodsForm::field( 'method', $method, 'hidden' ); ?>
-            <?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-' .$method ), 'hidden' ); ?>
+            <?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-' . $method ), 'hidden' ); ?>
             <?php echo PodsForm::field( 'import_export', '', 'hidden', array( 'attributes' => array( 'id' => 'pods_import_export' ) ) ); ?>
 
             <h2 class="italicized"><?php _e( 'Import and Export Packages', 'pods' ); ?></h2>
@@ -19,13 +19,11 @@
                 <div id="pods-wizard-heading">
                     <ul>
                         <li class="pods-wizard-menu-current" data-step="1">
-                            <i></i>
-                            <span>1</span> <?php _e( 'Choose', 'pods' ); ?>
+                            <i></i> <span>1</span> <?php _e( 'Choose', 'pods' ); ?>
                             <em></em>
                         </li>
                         <li data-step="2">
-                            <i></i>
-                            <span>2</span> <?php _e( 'Import / Export', 'pods' ); ?>
+                            <i></i> <span>2</span> <?php _e( 'Import / Export', 'pods' ); ?>
                             <em></em>
                         </li>
                     </ul>
@@ -90,32 +88,32 @@
 
                                         <div class="pods-pick-values pods-pick-checkbox">
                                             <?php
-                                                $objects = $api->load_pods();
+                                            $objects = $api->load_pods();
 
-                                                if ( !empty( $objects ) ) {
-                                            ?>
+                                            if ( !empty( $objects ) ) {
+                                                ?>
                                                 <ul>
                                                     <?php
-                                                        foreach ( $objects as $object ) {
-                                                            $name = pods_var_raw( 'name', $object );
-                                                            $label = pods_var_raw( 'label', $object, ucwords( str_replace( '_', ' ', $name ) ) );
-                                                    ?>
+                                                    foreach ( $objects as $object ) {
+                                                        $name = pods_var_raw( 'name', $object );
+                                                        $label = pods_var_raw( 'label', $object, ucwords( str_replace( '_', ' ', $name ) ) );
+                                                        ?>
                                                         <li>
                                                             <div class="pods-field pods-boolean">
                                                                 <?php echo PodsForm::field( 'pods[' . $name . ']', pods_var_raw( 'pods[' . $name . ']', 'post', true ), 'boolean', array( 'boolean_yes_label' => $label . ' (' . $name . ')' ) ); ?>
                                                             </div>
                                                         </li>
-                                                    <?php
-                                                        }
+                                                        <?php
+                                                    }
                                                     ?>
                                                 </ul>
-                                            <?php
-                                                }
-                                                else {
-                                            ?>
+                                                <?php
+                                            }
+                                            else {
+                                                ?>
                                                 <p class="padded"><?php _e( 'No Pods found.', 'pods' ); ?></p>
-                                            <?php
-                                                }
+                                                <?php
+                                            }
                                             ?>
                                         </div>
                                     </div>
@@ -127,32 +125,32 @@
 
                                         <div class="pods-pick-values pods-pick-checkbox">
                                             <?php
-                                                $objects = $api->load_templates();
+                                            $objects = $api->load_templates();
 
-                                                if ( !empty( $objects ) ) {
-                                            ?>
+                                            if ( !empty( $objects ) ) {
+                                                ?>
                                                 <ul>
                                                     <?php
-                                                        foreach ( $objects as $object ) {
-                                                            $name = pods_var_raw( 'name', $object );
-                                                            $label = pods_var_raw( 'label', $object, ucwords( str_replace( '_', ' ', $name ) ) );
-                                                    ?>
+                                                    foreach ( $objects as $object ) {
+                                                        $name = pods_var_raw( 'name', $object );
+                                                        $label = pods_var_raw( 'label', $object, ucwords( str_replace( '_', ' ', $name ) ) );
+                                                        ?>
                                                         <li>
                                                             <div class="pods-field pods-boolean">
                                                                 <?php echo PodsForm::field( 'templates[' . $name . ']', pods_var_raw( 'templates[' . $name . ']', 'post', true ), 'boolean', array( 'boolean_yes_label' => $label . ' (' . $name . ')' ) ); ?>
                                                             </div>
                                                         </li>
-                                                    <?php
-                                                        }
+                                                        <?php
+                                                    }
                                                     ?>
                                                 </ul>
-                                            <?php
-                                                }
-                                                else {
-                                            ?>
+                                                <?php
+                                            }
+                                            else {
+                                                ?>
                                                 <p class="padded"><?php _e( 'No Templates found.', 'pods' ); ?></p>
-                                            <?php
-                                                }
+                                                <?php
+                                            }
                                             ?>
                                         </div>
                                     </div>
@@ -164,32 +162,32 @@
 
                                         <div class="pods-pick-values pods-pick-checkbox">
                                             <?php
-                                                $objects = $api->load_pages();
+                                            $objects = $api->load_pages();
 
-                                                if ( !empty( $objects ) ) {
-                                            ?>
+                                            if ( !empty( $objects ) ) {
+                                                ?>
                                                 <ul>
                                                     <?php
-                                                        foreach ( $objects as $object ) {
-                                                            $name = pods_var_raw( 'name', $object );
-                                                            $label = pods_var_raw( 'label', $object, ucwords( str_replace( '_', ' ', $name ) ) );
-                                                    ?>
+                                                    foreach ( $objects as $object ) {
+                                                        $name = pods_var_raw( 'name', $object );
+                                                        $label = pods_var_raw( 'label', $object, ucwords( str_replace( '_', ' ', $name ) ) );
+                                                        ?>
                                                         <li>
                                                             <div class="pods-field pods-boolean">
                                                                 <?php echo PodsForm::field( 'pages[' . $name . ']', pods_var_raw( 'pages[' . $name . ']', 'post', true ), 'boolean', array( 'boolean_yes_label' => $label . ' (' . $name . ')' ) ); ?>
                                                             </div>
                                                         </li>
-                                                    <?php
-                                                        }
+                                                        <?php
+                                                    }
                                                     ?>
                                                 </ul>
-                                            <?php
-                                                }
-                                                else {
-                                            ?>
+                                                <?php
+                                            }
+                                            else {
+                                                ?>
                                                 <p class="padded"><?php _e( 'No Pages found.', 'pods' ); ?></p>
-                                            <?php
-                                                }
+                                                <?php
+                                            }
                                             ?>
                                         </div>
                                     </div>
@@ -201,32 +199,32 @@
 
                                         <div class="pods-pick-values pods-pick-checkbox">
                                             <?php
-                                                $objects = $api->load_pages();
+                                            $objects = $api->load_pages();
 
-                                                if ( !empty( $objects ) ) {
-                                            ?>
+                                            if ( !empty( $objects ) ) {
+                                                ?>
                                                 <ul>
                                                     <?php
-                                                        foreach ( $objects as $object ) {
-                                                            $name = pods_var_raw( 'name', $object );
-                                                            $label = pods_var_raw( 'label', $object, ucwords( str_replace( '_', ' ', $name ) ) );
-                                                    ?>
+                                                    foreach ( $objects as $object ) {
+                                                        $name = pods_var_raw( 'name', $object );
+                                                        $label = pods_var_raw( 'label', $object, ucwords( str_replace( '_', ' ', $name ) ) );
+                                                        ?>
                                                         <li>
                                                             <div class="pods-field pods-boolean">
                                                                 <?php echo PodsForm::field( 'helpers[' . $name . ']', pods_var_raw( 'helpers[' . $name . ']', 'post', true ), 'boolean', array( 'boolean_yes_label' => $label . ' (' . $name . ')' ) ); ?>
                                                             </div>
                                                         </li>
-                                                    <?php
-                                                        }
+                                                        <?php
+                                                    }
                                                     ?>
                                                 </ul>
-                                            <?php
-                                                }
-                                                else {
-                                            ?>
+                                                <?php
+                                            }
+                                            else {
+                                                ?>
                                                 <p class="padded"><?php _e( 'No Helpers found.', 'pods' ); ?></p>
-                                            <?php
-                                                }
+                                                <?php
+                                            }
                                             ?>
                                         </div>
                                     </div>
@@ -238,8 +236,7 @@
 
                     <div id="pods-wizard-actions">
                         <div id="pods-wizard-toolbar">
-                            <a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a>
-                            <a href="#next" id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php _e( 'Next Step', 'pods' ); ?></a>
+                            <a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a> <a href="#next" id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php _e( 'Next Step', 'pods' ); ?></a>
                         </div>
                         <div id="pods-wizard-finished">
 

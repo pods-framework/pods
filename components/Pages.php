@@ -2,14 +2,12 @@
 /**
  * Name: Pages
  *
- * Description: Create advanced URL structures using wildcards, they can exist on-top of any existing WordPress URL or be entirely custom. Add a path and select the WP Template to use, the rest is up to you!
+ * Description: Create advanced URL structures using wildcards, they can exist on-top of any existing WordPress URL rewrites or be entirely custom. Add a path and select the WP Template to use, the rest is up to you!
  *
  * Version: 2.0
  *
  * Menu Page: edit.php?post_type=_pods_page
  * Menu Add Page: post-new.php?post_type=_pods_page
- *
- * Developer Mode: on
  *
  * @package pods
  * @subpackage pages
@@ -27,14 +25,23 @@ class Pods_Pages extends PodsComponent {
     static $exists = null;
 
     /**
+     * Object type
+     *
+     * @var string
+     *
+     * @since 2.0.0
+     */
+    private $object_type = '_pods_page';
+
+    /**
      * Do things like register/enqueue scripts and stylesheets
      *
      * @since 2.0.0
      */
     public function __construct () {
         $args = array(
-            'label' => 'Pages',
-            'labels' => array( 'singular_name' => 'Page' ),
+            'label' => 'Pod Pages',
+            'labels' => array( 'singular_name' => 'Pod Page' ),
             'public' => false,
             'show_ui' => true,
             'show_in_menu' => false,
@@ -51,10 +58,28 @@ class Pods_Pages extends PodsComponent {
 
         $args = PodsInit::object_label_fix( $args, 'post_type' );
 
-        register_post_type( '_pods_page', apply_filters( 'pods_internal_register_post_type_object_page', $args ) );
+        register_post_type( $this->object_type, apply_filters( 'pods_internal_register_post_type_object_page', $args ) );
 
         if ( !is_admin() )
             add_action( 'init', array( $this, 'page_check' ), 12 );
+
+        add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
+
+        add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
+        add_filter( 'pods_meta_get_post_meta', array( $this, 'get_meta' ), 10, 2 );
+        add_filter( 'pods_meta_update_post_meta', array( $this, 'save_meta' ), 10, 2 );
+
+        add_action( 'pods_meta_save_post__pods_page', array( $this, 'clear_cache' ), 10, 5 );
+        add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
+    }
+
+    /**
+     * Admin Init
+     *
+     * @since 2.0.0
+     */
+    public function admin_init() {
+
     }
 
     /**
@@ -64,6 +89,148 @@ class Pods_Pages extends PodsComponent {
      */
     public function admin_assets () {
         wp_enqueue_style( 'pods-admin' );
+    }
+
+    /**
+     * Clear cache on save
+     *
+     * @since 2.0.0
+     */
+    public function clear_cache ( $data, $pod = null, $id = null, $groups = null, $post = null ) {
+        if ( !is_array( $data ) && 0 < $data ) {
+            $post = $data;
+            $post = get_post( $post );
+
+            if ( $this->object_type != $post->post_type )
+                return;
+        }
+
+        delete_transient( 'pods_object_page' );
+        delete_transient( 'pods_object_page_' . $post->post_title );
+    }
+
+    /**
+     * Change post title placeholder text
+     *
+     * @since 2.0.0
+     */
+    public function set_title_text ( $text, $post ) {
+        return __( 'Enter URL here', 'pods' );
+    }
+
+    /**
+     * Edit page form
+     *
+     * @since 2.0.0
+     */
+    public function edit_page_form () {
+        global $post_type;
+
+        if ( $this->object_type != $post_type )
+            return;
+
+        add_filter( 'enter_title_here', array( $this, 'set_title_text' ), 10, 2 );
+    }
+
+    /**
+     * Add meta boxes to the page
+     *
+     * @since 2.0.0
+     */
+    public function add_meta_boxes () {
+        $pod = array(
+            'name' => $this->object_type,
+            'type' => 'post_type'
+        );
+
+        if ( isset( PodsMeta::$post_types[ $pod[ 'name' ] ] ) )
+            return;
+
+        $page_templates = apply_filters( 'pods_page_templates', get_page_templates() );
+
+        $page_templates[ __( '-- Page Template --', 'pods' ) ] = '';
+
+        if ( !in_array( 'pods.php', $page_templates ) && locate_template( array( 'pods.php', false ) ) )
+            $page_templates[ 'Pods (Pods Default)' ] = 'pods.php';
+
+        if ( !in_array( 'page.php', $page_templates ) && locate_template( array( 'page.php', false ) ) )
+            $page_templates[ 'Page (WP Default)' ] = 'page.php';
+
+        ksort( $page_templates );
+
+        $page_templates = array_flip( $page_templates );
+
+        $fields = array(
+            array(
+                'name' => 'page_title',
+                'label' => __( 'Page Title', 'pods' ),
+                'type' => 'text'
+            ),
+            array(
+                'name' => 'code',
+                'label' => __( 'Page Code', 'pods' ),
+                'type' => 'code'
+            ),
+            array(
+                'name' => 'precode',
+                'label' => __( 'Page Precode', 'pods' ),
+                'type' => 'code'
+            ),
+            array(
+                'name' => 'page_template',
+                'label' => __( 'Page Template', 'pods' ),
+                'type' => 'pick',
+                'data' => $page_templates
+            )
+        );
+
+        pods_group_add( $pod, __( 'Page', 'pods' ), $fields, 'normal', 'high' );
+    }
+
+    /**
+     * Get the fields
+     *
+     * @param null $_null
+     * @param array $args
+     *
+     * @return array|bool|int|mixed|null|string|void
+     */
+    public function get_meta ( $_null = null, $args = null ) {
+        if ( 'code' == $args[ 2 ] ) {
+            $post = get_post( $args[ 1 ] );
+
+            if ( $this->object_type == $post->post_type )
+                return $post->post_content;
+        }
+
+        return $_null;
+    }
+
+    /**
+     * Save the fields
+     *
+     * @param $object_type
+     * @param array $args
+     *
+     * @return bool|int|null
+     */
+    public function save_meta ( $_null = null, $args = null ) {
+        if ( 'code' == $args[ 2 ] ) {
+            $post = get_post( $args[ 1 ] );
+
+            if ( $this->object_type == $post->post_type ) {
+                $postdata = array(
+                    'ID' => $args[ 1 ],
+                    'post_content' => $args[ 3 ]
+                );
+
+                wp_update_post( $postdata );
+
+                return true;
+            }
+        }
+
+        return $_null;
     }
 
     /**
@@ -104,8 +271,8 @@ class Pods_Pages extends PodsComponent {
         $content = false;
 
         if ( false !== self::$exists ) {
-            if ( 0 < strlen( trim( self::$exists[ 'phpcode' ] ) ) )
-                $content = self::$exists[ 'phpcode' ];
+            if ( 0 < strlen( trim( self::$exists[ 'code' ] ) ) )
+                $content = self::$exists[ 'code' ];
 
             ob_start();
 
@@ -160,7 +327,16 @@ class Pods_Pages extends PodsComponent {
             return false;
 
         // See if the custom template exists
-        $sql = "SELECT * FROM `@wp_posts` WHERE `post_type` = '_pods_page' AND `post_title` = %s LIMIT 1";
+        $sql = "
+                SELECT *
+                FROM `@wp_posts`
+                WHERE
+                    `post_type` = '_pods_page'
+                    AND `post_status` = 'publish'
+                    AND `post_title` = %s
+                LIMIT 1
+            ";
+
         $sql = array( $sql, array( $uri ) );
 
         $result = pods_query( $sql );
@@ -172,11 +348,13 @@ class Pods_Pages extends PodsComponent {
                     FROM `@wp_posts`
                     WHERE
                         `post_type` = '_pods_page'
+                        AND `post_status` = 'publish'
                         AND %s LIKE REPLACE(`post_title`, '*', '%%')
                         AND (LENGTH(`post_title`) - LENGTH(REPLACE(`post_title`, '/', ''))) = %d
                     ORDER BY LENGTH(`post_title`) DESC, `post_title` DESC
                     LIMIT 1
                 ";
+
             $sql = array( $sql, array( $uri, $uri_depth ) );
 
             $result = pods_query( $sql );
@@ -188,7 +366,8 @@ class Pods_Pages extends PodsComponent {
             $object = array(
                 'ID' => $_object[ 'ID' ],
                 'uri' => $_object[ 'post_title' ],
-                'phpcode' => $_object[ 'post_content' ],
+                'code' => $_object[ 'post_content' ],
+                'phpcode' => $_object[ 'post_content' ], // deprecated
                 'precode' => get_post_meta( $_object[ 'ID' ], 'precode', true ),
                 'page_template' => get_post_meta( $_object[ 'ID' ], 'page_template', true ),
                 'title' => get_post_meta( $_object[ 'ID' ], 'page_title', true )
@@ -241,9 +420,9 @@ class Pods_Pages extends PodsComponent {
         do_action( 'pods_wp_head' );
 
         if ( !defined( 'PODS_DISABLE_VERSION_OUTPUT' ) || !PODS_DISABLE_VERSION_OUTPUT ) {
-?>
-    <!-- Pods Framework <?php echo PODS_VERSION; ?> -->
-<?php
+            ?>
+        <!-- Pods Framework <?php echo PODS_VERSION; ?> -->
+        <?php
         }
         if ( ( !defined( 'PODS_DISABLE_META' ) || !PODS_DISABLE_META ) && is_object( $pods ) && !is_wp_error( $pods ) ) {
 
@@ -251,17 +430,17 @@ class Pods_Pages extends PodsComponent {
                 foreach ( $pods->meta as $name => $content ) {
                     if ( 'title' == $name )
                         continue;
-?>
-    <meta name="<?php echo esc_attr( $name ); ?>" content="<?php echo esc_attr( $content ); ?>" />
-<?php
+                    ?>
+                <meta name="<?php echo esc_attr( $name ); ?>" content="<?php echo esc_attr( $content ); ?>" />
+                <?php
                 }
             }
 
             if ( isset( $pods->meta_properties ) && is_array( $pods->meta_properties ) ) {
                 foreach ( $pods->meta_properties as $property => $content ) {
-?>
-    <meta property="<?php echo esc_attr( $property ); ?>" content="<?php echo esc_attr( $content ); ?>" />
-<?php
+                    ?>
+                <meta property="<?php echo esc_attr( $property ); ?>" content="<?php echo esc_attr( $content ); ?>" />
+                <?php
                 }
             }
 
@@ -274,6 +453,7 @@ class Pods_Pages extends PodsComponent {
      * @param $title
      * @param $sep
      * @param $seplocation
+     *
      * @return mixed|void
      */
     public function wp_title ( $title, $sep, $seplocation ) {
@@ -285,7 +465,7 @@ class Pods_Pages extends PodsComponent {
             if ( is_object( $pods ) && !is_wp_error( $pods ) )
                 $page_title = preg_replace_callback( "/({@(.*?)})/m", array( $pods, "parse_magic_tags" ), $page_title );
 
-            $title = ( 'right' == $seplocation ) ? $page_title . " $sep " : " $sep " . $page_title;
+            $title = ( 'right' == $seplocation ) ? "{$page_title} {$sep} " : " {$sep} {$page_title}";
         }
         else {
             $uri = explode( '?', $_SERVER[ 'REQUEST_URI' ] );
@@ -296,18 +476,19 @@ class Pods_Pages extends PodsComponent {
             $title = '';
 
             foreach ( $uri as $key => $page_title ) {
-                $title .= ( 'right' == $seplocation ) ? ucwords( $page_title ) . " $sep " : " $sep " . ucwords( $page_title );
+                $title .= ( 'right' == $seplocation ) ? ucwords( $page_title ) . " {$sep} " : " {$sep} " . ucwords( $page_title );
             }
         }
 
         if ( ( !defined( 'PODS_DISABLE_META' ) || !PODS_DISABLE_META ) && is_object( $pods ) && !is_wp_error( $pods ) && isset( $pods->meta ) && is_array( $pods->meta ) && isset( $pods->meta[ 'title' ] ) )
             $title = $pods->meta[ 'title' ];
 
-        return apply_filters( 'pods_title', $title, $sep, $seplocation );
+        return apply_filters( 'pods_title', $title, $sep, $seplocation, self::$exists );
     }
 
     /**
      * @param $classes
+     *
      * @return mixed|void
      */
     public function body_class ( $classes ) {

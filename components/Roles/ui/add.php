@@ -19,13 +19,11 @@
                 <div id="pods-wizard-heading">
                     <ul>
                         <li class="pods-wizard-menu-current" data-step="1">
-                            <i></i>
-                            <span>1</span> <?php _e( 'Naming', 'pods' ); ?>
+                            <i></i> <span>1</span> <?php _e( 'Naming', 'pods' ); ?>
                             <em></em>
                         </li>
                         <li data-step="2">
-                            <i></i>
-                            <span>2</span> <?php _e( 'Capabilities', 'pods' ); ?>
+                            <i></i> <span>2</span> <?php _e( 'Capabilities', 'pods' ); ?>
                             <em></em>
                         </li>
                     </ul>
@@ -42,15 +40,15 @@
                             <div class="inside pods-manage-field">
                                 <div class="pods-field-option">
                                     <?php
-                                        echo PodsForm::label( 'role_label', __( 'Label', 'pods' ), __( 'Users will see this as the name of their role', 'pods' ) );
-                                        echo PodsForm::field( 'role_label', pods_var_raw( 'role_label', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required' ) );
+                                    echo PodsForm::label( 'role_label', __( 'Label', 'pods' ), __( 'Users will see this as the name of their role', 'pods' ) );
+                                    echo PodsForm::field( 'role_label', pods_var_raw( 'role_label', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required' ) );
                                     ?>
                                 </div>
 
                                 <div class="pods-field-option">
                                     <?php
-                                        echo PodsForm::label( 'role_name', __( 'Name', 'pods' ), __( 'You will use this name to programatically reference this role throughout WordPress', 'pods' ) );
-                                        echo PodsForm::field( 'role_name', pods_var_raw( 'role_name', 'post' ), 'db', array( 'attributes' => array( 'data-sluggable' => 'role_label' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
+                                    echo PodsForm::label( 'role_name', __( 'Name', 'pods' ), __( 'You will use this name to programatically reference this role throughout WordPress', 'pods' ) );
+                                    echo PodsForm::field( 'role_name', pods_var_raw( 'role_name', 'post' ), 'db', array( 'attributes' => array( 'data-sluggable' => 'role_label' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
                                     ?>
                                 </div>
                             </div>
@@ -71,23 +69,23 @@
                                     <div class="pods-pick-values pods-pick-checkbox pods-zebra">
                                         <ul>
                                             <?php
-                                                $zebra = false;
+                                            $zebra = false;
 
-                                                foreach ( $capabilities as $capability ) {
-                                                    $checked = false;
+                                            foreach ( $capabilities as $capability ) {
+                                                $checked = false;
 
-                                                    if ( in_array( $capability, $defaults ) )
-                                                        $checked = true;
+                                                if ( in_array( $capability, $defaults ) )
+                                                    $checked = true;
 
-                                                    $class = ( $zebra ? 'even' : 'odd' );
+                                                $class = ( $zebra ? 'even' : 'odd' );
 
-                                                    $zebra = ( !$zebra );
-                                            ?>
+                                                $zebra = ( !$zebra );
+                                                ?>
                                                 <li class="pods-zebra-<?php echo $class; ?>" data-capability="<?php echo esc_attr( $capability ); ?>">
                                                     <?php echo PodsForm::field( 'capabilities[' . $capability . ']', pods_var_raw( 'capabilities[' . $capability . ']', 'post', $checked ), 'boolean', array( 'boolean_yes_label' => $capability ) ); ?>
                                                 </li>
-                                            <?php
-                                                }
+                                                <?php
+                                            }
                                             ?>
                                         </ul>
                                     </div>
@@ -121,8 +119,7 @@
 
                     <div id="pods-wizard-actions">
                         <div id="pods-wizard-toolbar">
-                            <a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a>
-                            <a href="#next" id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php _e( 'Next Step', 'pods' ); ?></a>
+                            <a href="#start" id="pods-wizard-start" class="button button-secondary"><?php _e( 'Start Over', 'pods' ); ?></a> <a href="#next" id="pods-wizard-next" class="button button-primary" data-next="<?php esc_attr_e( 'Next Step', 'pods' ); ?>" data-finished="<?php esc_attr_e( 'Finished', 'pods' ); ?>" data-processing="<?php esc_attr_e( 'Processing', 'pods' ); ?>.."><?php _e( 'Next Step', 'pods' ); ?></a>
                         </div>
                         <div id="pods-wizard-finished">
 

@@ -18,7 +18,7 @@ class PodsField_Color extends PodsField {
      * @var string
      * @since 2.0.0
      */
-    public static $label = 'Color';
+    public static $label = 'Color Picker';
 
     /**
      * Field Type Preparation
@@ -98,21 +98,6 @@ class PodsField_Color extends PodsField {
     }
 
     /**
-     * Build regex necessary for JS validation
-     *
-     * @param mixed $value
-     * @param string $name
-     * @param array $options
-     * @param string $pod
-     * @param int $id
-     *
-     * @since 2.0.0
-     */
-    public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        return false;
-    }
-
-    /**
      * Validate a value before it's saved
      *
      * @param mixed $value
@@ -177,51 +162,6 @@ class PodsField_Color extends PodsField {
     }
 
     /**
-     * Perform actions after saving to the DB
-     *
-     * @param mixed $value
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param object $params
-     *
-     * @since 2.0.0
-     */
-    public function post_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-
-    }
-
-    /**
-     * Perform actions before deleting from the DB
-     *
-     * @param string $name
-     * @param string $pod
-     * @param int $id
-     * @param object $api
-     *
-     * @since 2.0.0
-     */
-    public function pre_delete ( $id = null, $name = null, $options = null, $pod = null ) {
-
-    }
-
-    /**
-     * Perform actions after deleting from the DB
-     *
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $pod
-     *
-     * @since 2.0.0
-     */
-    public function post_delete ( $id = null, $name = null, $options = null, $pod = null ) {
-
-    }
-
-    /**
      * Customize the Pods UI manage table column output
      *
      * @param int $id
@@ -236,5 +176,7 @@ class PodsField_Color extends PodsField {
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         if ( !empty( $value ) )
             $value = $value . ' <span style="display:inline-block;width:25px;height:25px;border:1px solid #333;background-color:' . $value . '"></span>';
+
+        return $value;
     }
 }

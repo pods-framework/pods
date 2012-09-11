@@ -141,7 +141,7 @@ if ( version_compare( $old_version, '1.5', '<' ) ) {
             ${$key} = esc_sql( trim( $val ) );
         }
 
-        $posts_to_delete[ ] = $post_id;
+        $posts_to_delete[] = $post_id;
         $all_pod_ids[ $post_id ] = $id;
 
         pods_query( "UPDATE @wp_pod SET name = '$name', created = '$created', modified = '$modified' WHERE id = $id LIMIT 1" );

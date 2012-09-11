@@ -10,6 +10,8 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
     pods_query( "DROP TABLE @wp_pods", false );
     pods_query( "DROP TABLE @wp_pods_fields", false );
     pods_query( "DROP TABLE @wp_pods_objects", false );
+
+    update_option( 'pods_framework_version', '2.0.0-a-31' );
 }
 
 if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-10', '<' ) ) {

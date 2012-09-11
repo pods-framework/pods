@@ -142,4 +142,23 @@ class PodsField_Code extends PodsField {
 
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }
+
+     /**
+     * Change the value or perform actions after validation but before saving to the DB
+     *
+     * @param mixed $value
+     * @param int $id
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param object $params
+     *
+     * @since 2.0.0
+     */
+    public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+        $value = esc_attr($value);
+
+        return $value;
+    }
 }

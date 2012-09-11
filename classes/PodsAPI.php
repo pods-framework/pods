@@ -1485,7 +1485,7 @@ class PodsAPI {
                 $field[ 'pick_val' ] = pods_str_replace( 'taxonomy-', '', $field[ 'pick_object' ], 1 );
                 $field[ 'pick_object' ] = 'taxonomy';
             }
-            elseif ( false !== strpos( $field[ 'pick_object' ], '-' ) )
+            elseif ( false === strpos( $field[ 'pick_object' ], '-' ) )
                 $field[ 'pick_val' ] = '';
 
             $field[ 'options' ][ 'pick_object' ] = $field[ 'pick_object' ];

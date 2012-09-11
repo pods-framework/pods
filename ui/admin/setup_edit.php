@@ -3,7 +3,9 @@ global $pods_i;
 
 $field_types = pods_api()->get_field_types();
 
-$field_types_select = array();
+$field_types_select = array(
+    __( 'Other', 'pods' ) => array()
+);
 
 foreach ( $field_types as $type => $label ) {
     PodsForm::field_loader( $type );
@@ -15,7 +17,7 @@ foreach ( $field_types as $type => $label ) {
         $field_types_select[ PodsForm::$field_group ][ $type ] = $label;
     }
     else
-        $field_types_select[ $type ] = $label;
+        $field_types_select[ __( 'Other', 'pods' ) ][ $type ] = $label;
 }
 
 $advanced_fields = array(

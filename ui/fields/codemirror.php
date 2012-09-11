@@ -11,11 +11,14 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_t
 <div class="code-toolbar"><!-- Placeholder --></div>
 <textarea<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?>><?php echo esc_attr( $value ); ?></textarea>
 <div class="code-footer"><!-- Placeholder --></div>
+
 <script>
     jQuery( function ( $ ) {
-        var $textarea = jQuery( 'textarea#<?php echo $attributes[ 'id' ]; ?>' );
+        var $textarea_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = jQuery( 'textarea#<?php echo $attributes[ 'id' ]; ?>' );
+
         CodeMirror.modeURL = "<?php echo PODS_URL ?>ui/js/codemirror/mode/%N/%N.js";
-        var codemirror = CodeMirror.fromTextArea( document.getElementById( "<?php echo $attributes[ 'id' ] ?>" ), {
+
+        var codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = CodeMirror.fromTextArea( document.getElementById( "<?php echo $attributes[ 'id' ] ?>" ), {
             lineNumbers : true,
             matchBrackets : true,
             mode : "application/x-httpd-php",
@@ -24,11 +27,11 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_t
             enterMode : "keep",
             tabMode : "shift",
             onBlur : function () {
-                var value = codemirror.getValue();
-                $textarea.val( value );
+                var value = codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.getValue();
+                $textarea_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.val( value );
             }
         } );
-        CodeMirror.autoLoadMode( codemirror, 'php' );
-    } );
 
+        CodeMirror.autoLoadMode( codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>, 'php' );
+    } );
 </script>

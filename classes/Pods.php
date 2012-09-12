@@ -617,7 +617,7 @@ class Pods {
             $this->row[ $params->name ] = $value;
         }
 
-        if ( false === $params->in_form && isset( $this->fields[ $params->name ] ) ) {
+        if ( false === $params->in_form && isset( $this->fields[ $params->name ] ) && !in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
             $value = PodsForm::display(
                 $this->fields[ $params->name ][ 'type' ],
                 $value,

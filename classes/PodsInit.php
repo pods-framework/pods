@@ -633,7 +633,12 @@ class PodsInit {
                 $sql = explode( ";\n", str_replace( array( "\r", 'wp_' ), array( "\n", $wpdb->prefix ), $sql ) );
 
                 for ( $i = 0, $z = count( $sql ); $i < $z; $i++ ) {
-                    pods_query( trim( $sql[ $i ] ), 'Cannot setup SQL tables' );
+                    $sql = trim( $sql[ $i ] );
+
+                    if ( empty( $sql ) )
+                        continue;
+
+                    pods_query( $sql, 'Cannot setup SQL tables' );
                 }
             }
 

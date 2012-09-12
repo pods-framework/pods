@@ -261,6 +261,35 @@ class Pods {
     }
 
     /**
+     * Return a field's value(s), through display hook of field type
+     *
+     * @param array $params An associative array of parameters (OR the Field name)
+     * @param boolean $single (optional) For tableless fields, to return an array or the first
+     *
+     * @since 2.0.0
+     */
+    public function display ( $params, $single = false ) {
+        $defaults = array(
+            'name' => $params,
+            'orderby' => null,
+            'single' => $single,
+            'in_form' => false
+        );
+
+        if ( is_array( $params ) || is_object( $params ) )
+            $params = (object) array_merge( $defaults, (array) $params );
+        else
+            $params = (object) $defaults;
+
+        $value = $this->field( $params, $single );
+
+        if ( is_array( $value ) )
+            $value = pods_serial_comma( $value, $params->name, $this->fields );
+
+        return $value;
+    }
+
+    /**
      * Return a field's value(s)
      *
      * @param array $params An associative array of parameters (OR the Field name)

@@ -54,17 +54,6 @@ class PodsField_DateTime extends PodsField {
      */
     public function options () {
         $options = array(
-            'datetime_format_type' => array(
-                'label' => __( 'Format Type', 'pods' ),
-                'default' => 'date',
-                'type' => 'pick',
-                'data' => array(
-                    'date' => __( 'Date', 'pods' ),
-                    'datetime' => __( 'Date + Time', 'pods' ),
-                    'time' => __( 'Time', 'pods' )
-                ),
-                'dependency' => true
-            ),
             'datetime_format' => array(
                 'label' => __( 'Date Format', 'pods' ),
                 'default' => 'mdy',

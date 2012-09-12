@@ -136,6 +136,19 @@ class Pods_Helpers extends PodsComponent {
 
         $fields = array(
             array(
+                'name' => 'type',
+                'label' => __( 'Helper Type', 'pods' ),
+                'type' => 'pick',
+                'data' => array(
+                    'input' => 'Input (change form fields)',
+                    'display' => 'Display (change field output when using magic tags)',
+                    'pre_save' => 'Pre-Save (change form fields before saving)',
+                    'post_save' => 'Post-Save',
+                    'pre_delete' => 'Pre-Delete',
+                    'post_delete' => 'Post-Delete',
+                )
+            ),
+            array(
                 'name' => 'code',
                 'label' => __( 'Code', 'pods' ),
                 'type' => 'code'

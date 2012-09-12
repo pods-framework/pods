@@ -329,11 +329,11 @@ class PodMigrate {
             $data[ 'helpers' ] = array();
             foreach ( $this->data[ 'helpers' ] as $helper ) {
                 foreach ( $helper as $attributes ) {
-                    $params = array_merge( array( 'name' => '', 'helper_type' => '', 'phpcode' => '' ), $attributes );
-                    if ( 'before' == $params[ 'helper_type' ] )
-                        $params[ 'helper_type' ] = 'pre_save';
-                    elseif ( 'after' == $params[ 'helper_type' ] )
-                        $params[ 'helper_type' ] = 'post_save';
+                    $params = array_merge( array( 'name' => '', 'type' => '', 'phpcode' => '' ), $attributes );
+                    if ( 'before' == $params[ 'type' ] )
+                        $params[ 'type' ] = 'pre_save';
+                    elseif ( 'after' == $params[ 'type' ] )
+                        $params[ 'type' ] = 'post_save';
                     $data[ 'helpers' ][] = $params;
                 }
             }

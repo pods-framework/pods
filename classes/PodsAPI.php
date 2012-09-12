@@ -1762,7 +1762,9 @@ class PodsAPI {
      */
     public function save_template ( $params, $sanitized = false ) {
         $params = (object) $params;
+
         $params->type = 'template';
+
         return $this->save_object( $params, $sanitized );
     }
 
@@ -1771,7 +1773,7 @@ class PodsAPI {
      *
      * $params['id'] int The page ID
      * $params['uri'] string The page URI
-     * $params['phpcode'] string The page code
+     * $params['code'] string The page code
      *
      * @param array $params An associative array of parameters
      *
@@ -1779,12 +1781,20 @@ class PodsAPI {
      */
     public function save_page ( $params, $sanitized = false ) {
         $params = (object) $params;
+
         if ( !isset( $params->name ) ) {
             $params->name = $params->uri;
             unset( $params->uri );
         }
+
+        if ( isset( $params->phpcode ) ) {
+            $params->code = $params->phpcode;
+            unset( $params->phpcode );
+        }
+
         $params->name = trim( $params->name, '/' );
         $params->type = 'page';
+
         return $this->save_object( $params, $sanitized );
     }
 
@@ -1793,8 +1803,8 @@ class PodsAPI {
      *
      * $params['id'] int The helper ID
      * $params['name'] string The helper name
-     * $params['helper_type'] string The helper type ("pre_save", "display", etc)
-     * $params['phpcode'] string The helper code
+     * $params['type'] string The helper type ("pre_save", "display", etc)
+     * $params['code'] string The helper code
      *
      * @param array $params An associative array of parameters
      *
@@ -1802,7 +1812,14 @@ class PodsAPI {
      */
     public function save_helper ( $params, $sanitized = false ) {
         $params = (object) $params;
+
+        if ( isset( $params->phpcode ) ) {
+            $params->code = $params->phpcode;
+            unset( $params->phpcode );
+        }
+
         $params->type = 'helper';
+
         return $this->save_object( $params, $sanitized );
     }
 
@@ -4372,13 +4389,13 @@ class PodsAPI {
         if ( isset( $data[ 'helpers' ] ) ) {
             foreach ( $data[ 'helpers' ] as $helper ) {
                 // backwards compatibility
-                if ( isset( $helper[ 'helper_type' ] ) ) {
-                    if ( 'before' == $helper[ 'helper_type' ] )
-                        $helper[ 'helper_type' ] = 'pre_save';
-                    if ( 'after' == $helper[ 'helper_type' ] )
-                        $helper[ 'helper_type' ] = 'post_save';
+                if ( isset( $helper[ 'type' ] ) ) {
+                    if ( 'before' == $helper[ 'type' ] )
+                        $helper[ 'type' ] = 'pre_save';
+                    if ( 'after' == $helper[ 'type' ] )
+                        $helper[ 'type' ] = 'post_save';
                 }
-                $defaults = array( 'name' => '', 'helper_type' => 'display', 'phpcode' => '' );
+                $defaults = array( 'name' => '', 'type' => 'display', 'phpcode' => '' );
                 $params = array_merge( $defaults, $helper );
                 if ( !defined( 'PODS_STRICT_MODE' ) || !PODS_STRICT_MODE )
                     $params = pods_sanitize( $params );

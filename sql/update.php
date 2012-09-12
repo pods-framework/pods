@@ -285,6 +285,9 @@ if ( defined( 'PODS_TEST_UPGRADE' ) && !empty( $pods_version ) && version_compar
 
     pods_no_conflict_off( 'post' );
 
+    // Change helper_type to type
+    $wpdb->query( "UPDATE `{$wpdb->postmeta}` SET `meta_key` = 'type' WHERE `meta_key` = 'helper_type'" );
+
     //update_option( 'pods_framework_version', '2.0.0-b-14' );
 }
 
@@ -382,7 +385,7 @@ function pods_2_alpha_migrate_helpers () {
 
         $helper_params = array(
             'name' => $row->name,
-            'helper_type' => $opts->helper_type,
+            'type' => $opts->type,
             'phpcode' => $opts->phpcode,
         );
 

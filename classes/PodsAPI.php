@@ -4050,8 +4050,32 @@ class PodsAPI {
             }
         }
 
-        if ( 'pod' == $object_type )
+        if ( 'pod' == $object_type ) {
             $info[ 'table' ] = $wpdb->prefix . 'pods_' . ( empty( $object ) ? $name : $object );
+
+            if ( is_array( $pod ) ) {
+                $slug_field = get_posts( array(
+                    'post_type' => '_pods_field',
+                    'posts_per_page' => 1,
+                    'nopaging' => true,
+                    'post_parent' => $pod[ 'id' ],
+                    'orderby' => 'menu_order',
+                    'order' => 'ASC',
+                    'meta_query' => array(
+                        array(
+                            'key' => 'type',
+                            'value' => 'slug',
+                        )
+                    )
+                ) );
+
+                if ( !empty( $slug_field ) ) {
+                    $slug_field = $slug_field[ 0 ];
+
+                    $info[ 'field_slug' ] = $slug_field->post_name;
+                }
+            }
+        }
         elseif ( 'post_type' == $object_type || 'media' == $object_type ) {
             $info[ 'table' ] = $wpdb->posts;
             $info[ 'field_id' ] = 'ID';
@@ -4105,7 +4129,6 @@ class PodsAPI {
         }
         elseif ( 'table' == $object_type )
             $info[ 'table' ] = ( empty( $object ) ? $name : $object );
-        else
 
         $info[ 'table' ] = pods_clean_name( $info[ 'table' ], false );
         $info[ 'field_id' ] = pods_clean_name( $info[ 'field_id' ], false );

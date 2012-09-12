@@ -121,12 +121,12 @@ if ( defined( 'PODS_TEST_UPGRADE' ) && !empty( $pods_version ) && version_compar
         $sql = explode( ";\n", str_replace( array( "\r", 'wp_' ), array( "\n", $wpdb->prefix ), $sql ) );
 
         for ( $i = 0, $z = count( $sql ); $i < $z; $i++ ) {
-            $sql = trim( $sql[ $i ] );
+            $query = trim( $sql[ $i ] );
 
-            if ( empty( $sql ) )
+            if ( empty( $query ) )
                 continue;
 
-            pods_query( $sql, 'Cannot setup SQL tables' );
+            pods_query( $query, 'Cannot setup SQL tables' );
         }
     }
 

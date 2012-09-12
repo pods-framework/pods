@@ -1204,7 +1204,7 @@ class PodsData {
 
                 if ( 'slug' == $mode ) {
                     $id = esc_sql( $id );
-                    $params[ 'where' ] = "`t`.`{$this->field_slug}`` = '{$id}'";
+                    $params[ 'where' ] = "`t`.`{$this->field_slug}` = '{$id}'";
                 }
 
                 $this->row = $this->select( $params );

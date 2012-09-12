@@ -4054,6 +4054,9 @@ class PodsAPI {
             $info[ 'table' ] = $wpdb->prefix . 'pods_' . ( empty( $object ) ? $name : $object );
 
             if ( is_array( $pod ) ) {
+                if ( isset( $pod[ 'options' ] ) && 'pod' == pods_var( 'type', $pod ) )
+                    $info[ 'field_index' ] = pods_var( 'pod_index', $pod[ 'options' ], 'id', null, true );
+
                 $slug_field = get_posts( array(
                     'post_type' => '_pods_field',
                     'posts_per_page' => 1,
@@ -4132,12 +4135,7 @@ class PodsAPI {
 
         $info[ 'table' ] = pods_clean_name( $info[ 'table' ], false );
         $info[ 'field_id' ] = pods_clean_name( $info[ 'field_id' ], false );
-
-        if ( is_array( $pod ) && isset( $pod[ 'options' ] ) && 'pod' == pods_var( 'type', $pod ) )
-            $info[ 'field_index' ] = pods_var( 'pod_index', $pod[ 'options' ], 'id', null, true );
-
         $info[ 'field_index' ] = pods_clean_name( $info[ 'field_index' ], false );
-
         $info[ 'field_slug' ] = pods_clean_name( $info[ 'field_slug' ], false );
 
         if ( empty( $info[ 'orderby' ] ) )

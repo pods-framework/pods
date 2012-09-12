@@ -693,7 +693,6 @@ class PodsData {
                 $params->groupby = preg_replace( $find, $replace, $params->groupby );
                 $params->having = preg_replace( $find, $replace, $params->having );
                 $params->orderby = preg_replace( $find, $replace, $params->orderby );
-
                 if ( !empty( $found ) )
                     $joins = $this->traverse( $found, $params->fields );
                 elseif ( false !== $this->search )
@@ -720,7 +719,7 @@ class PodsData {
                     if ( !$attributes[ 'options' ][ 'search' ] )
                         continue;
 
-                    if ( in_array( $attributes[ 'type' ], array( 'date', 'time', 'datetime' ) ) )
+                    if ( in_array( $attributes[ 'type' ], array( 'date', 'time', 'datetime', 'pick', 'file' ) ) )
                         continue;
 
                     if ( is_array( $field ) )

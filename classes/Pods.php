@@ -441,22 +441,27 @@ class Pods {
                         ) );
 
                         if ( !empty( $fields ) ) {
-                            foreach ( $fields as $row ) {
-                                $field = $this->api->load_field( array(
-                                    'pod_id' => $row->post_parent,
-                                    'id' => $row->ID,
-                                    'name' => $row->post_name
-                                ) );
+                            foreach ( $fields as $field ) {
+                                if ( !empty( $field ) ) {
+                                    if ( !isset( $all_fields[ $field[ 'pod' ] ] ) )
+                                        $all_fields[ $field[ 'pod' ] ] = array();
 
-                                if ( !empty( $field ) )
                                     $all_fields[ $field[ 'pod' ] ][ $field[ 'name' ] ] = $field;
+                                }
                             }
                         }
                     }
 
                     $last_type = $last_object = $last_pick_val = '';
 
-                    $limit = 0;
+                    $single_multi = pods_var( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
+
+                    if ( 'multi' == $single_multi )
+                        $limit = (int) pods_var( $this->fields[ $params->name ][ 'type' ] . '_limit', $this->fields[ $params->name ][ 'options' ], 0 );
+                    else
+                        $limit = 1;
+
+                    $last_limit = 0;
 
                     // Loop through each traversal level
                     foreach ( $params->traverse as $key => $field ) {
@@ -477,9 +482,9 @@ class Pods {
                                 $single_multi = pods_var( "{$type}_format_type", $all_fields[ $pod ][ $field ][ 'options' ], 'single' );
 
                                 if ( 'multi' == $single_multi )
-                                    $limit = (int) pods_var( "{$type}_limit", $all_fields[ $pod ][ $field ][ 'options' ], 0 );
+                                    $last_limit = (int) pods_var( "{$type}_limit", $all_fields[ $pod ][ $field ][ 'options' ], 0 );
                                 else
-                                    $limit = 1;
+                                    $last_limit = 1;
                             }
 
                             $last_type = $type;

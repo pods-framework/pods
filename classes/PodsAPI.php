@@ -3053,6 +3053,8 @@ class PodsAPI {
 
         if ( !empty( $fields ) ) {
             foreach ( $fields as $field ) {
+                $field->pod = $pod[ 'name' ];
+
                 $field = $this->load_field( $field );
 
                 $field = PodsForm::field_setup( $field, null, $field[ 'type' ] );
@@ -3243,6 +3245,8 @@ class PodsAPI {
         if ( !isset( $params->table_info ) )
             $params->table_info = false;
 
+        $pod = array();
+
         if ( isset( $params->post_title ) )
             $_field = $params;
         elseif ( isset( $params->id ) && !empty( $params->id ) )
@@ -3312,6 +3316,16 @@ class PodsAPI {
             'sister_field_id' => '',
             'table_info' => array()
         );
+
+        if ( isset( $pod[ 'name' ] ) )
+            $field[ 'pod' ] = $pod[ 'name' ];
+        elseif ( isset( $_field[ 'pod' ] ) )
+            $field[ 'pod' ] = $_field[ 'pod' ];
+        else {
+            $pod = $this->load_pod( array( 'id' => $field[ 'pod_id' ] ) );
+
+            $field[ 'pod' ] = $pod[ 'name' ];
+        }
 
         $field[ 'options' ] = get_post_meta( $field[ 'id' ] );
 
@@ -3440,7 +3454,7 @@ class PodsAPI {
                         'pod_id' => $field->post_parent
                     ) );
 
-                    if ( empty( $params->type ) || in_array( $fields[ 'type' ], $params->type ) )
+                    if ( empty( $params->type ) || in_array( $field[ 'type' ], $params->type ) )
                         $fields[ $field[ 'name' ] ] = $field;
                 }
             }

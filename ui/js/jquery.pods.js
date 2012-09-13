@@ -720,9 +720,6 @@
                 } );
             } );
 
-            $( '.pods-dependency .pods-dependent-toggle' ).each( function () {
-                $( this ).change();
-            } );
         },
         dependency_tabs : function () {
             // Hide all dependents

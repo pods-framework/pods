@@ -5,10 +5,6 @@
     if ( 1 < $params->page ) {
         ?>
         <a href="<?php echo pods_var_update( array( $params->page_var => ( $params->page - 1 ) ) ); ?>" class="pods-pagination-number pods-pagination-prev"><?php echo $params->prev_label; ?></a>
-        <?php
-    }
-    if ( 1 < $params->page ) {
-        ?>
         <a href="<?php echo pods_var_update( array( $params->page_var => 1 ) ); ?>" class="pods-pagination-number pods-pagination-first">1</a>
         <?php
     }
@@ -60,10 +56,6 @@
     if ( $params->page < $params->total_pages ) {
         ?>
         <a href="<?php echo pods_var_update( array( $params->page_var => $params->total_pages ) ); ?>" class="pods-pagination-number pods-pagination-last"><?php echo $params->total_pages; ?></a>
-        <?php
-    }
-    if ( $params->page < $params->total_pages ) {
-        ?>
         <a href="<?php echo pods_var_update( array( $params->page_var => ( $params->page + 1 ) ) ); ?>" class="pods-pagination-number pods-pagination-next"><?php echo $params->next_label; ?></a>
         <?php
     }

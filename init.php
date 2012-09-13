@@ -41,12 +41,11 @@ if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) ) {
 
     require_once( PODS_DIR . 'functions.php' );
 
-<<<<<<< HEAD
-    if ( isset($_GET['pods_force_refresh']) && is_admin()) { // note the use of is_admin() to double check that this is happening in the admin
-=======
-    if ( is_admin() ) { // note the use of is_admin() to double check that this is happening in the admin
-
->>>>>>> Add PODS_GITHUB_ZIP constant
+    if ( is_admin() &&
+         ( isset( $_GET[ 'pods_force_refresh' ] ) ||
+           ( 'update-selected' == pods_var( 'action' ) &&
+             ( false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update ) ||
+               false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update_network ) ) ) ) ) {
         // GitHub Plugin Updater
         // https://github.com/jkudish/WordPress-GitHub-Plugin-Updater
         require_once( PODS_DIR . 'updater.php' );

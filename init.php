@@ -41,7 +41,7 @@ if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) ) {
 
     require_once( PODS_DIR . 'functions.php' );
 
-    if ( is_admin() ) { // note the use of is_admin() to double check that this is happening in the admin
+    if ( isset($_GET['pods_force_refresh']) && is_admin()) { // note the use of is_admin() to double check that this is happening in the admin
         // GitHub Plugin Updater
         // https://github.com/jkudish/WordPress-GitHub-Plugin-Updater
         require_once( PODS_DIR . 'updater.php' );

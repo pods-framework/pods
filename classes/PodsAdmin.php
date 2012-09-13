@@ -726,6 +726,12 @@ class PodsAdmin {
                 if ( 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] )
                     $toggle = 1;
             }
+            if ( true === $component_data[ 'DeveloperMode' ] ) {
+                if ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) {
+                    unset( $components[ $component ] );
+                    continue;
+                }
+            }
 
             $component_data = array(
                 'id' => $component_data[ 'ID' ],

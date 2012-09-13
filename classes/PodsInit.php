@@ -210,6 +210,8 @@ class PodsInit {
      *
      */
     function setup_content_types () {
+        global $wp_version;
+
         $post_types = PodsMeta::$post_types;
         $taxonomies = PodsMeta::$taxonomies;
 
@@ -274,15 +276,15 @@ class PodsInit {
                     'post-formats' => (boolean) pods_var( 'supports_post_formats', $post_type, false )
                 );
 
-                // WP needs something, if this was empty and none were enabled, it would show title+editor :(
-                $cpt_supports = array();
+                // WP needs something, if this was empty and none were enabled, it would show title+editor pre 3.5 :(
+                $cpt_supports = array( '_bug_fix_pre_35' );
 
                 foreach ( $cpt_supported as $cpt_support => $supported ) {
                     if ( true === $supported )
                         $cpt_supports[] = $cpt_support;
                 }
 
-                if ( empty( $cpt_supports ) )
+                if ( 1 == count( $cpt_supports ) && version_compare( '3.5', $wp_version, '<=' ) )
                     $cpt_supports = false;
 
                 // Rewrite

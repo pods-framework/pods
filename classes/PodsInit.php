@@ -275,12 +275,15 @@ class PodsInit {
                 );
 
                 // WP needs something, if this was empty and none were enabled, it would show title+editor :(
-                $cpt_supports = array( '_bug_fix_for_wp' );
+                $cpt_supports = array();
 
                 foreach ( $cpt_supported as $cpt_support => $supported ) {
                     if ( true === $supported )
                         $cpt_supports[] = $cpt_support;
                 }
+
+                if ( empty( $cpt_supports ) )
+                    $cpt_supports = false;
 
                 // Rewrite
                 $cpt_rewrite = pods_var( 'rewrite', $post_type, true );

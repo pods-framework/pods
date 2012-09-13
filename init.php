@@ -41,7 +41,12 @@ if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) ) {
 
     require_once( PODS_DIR . 'functions.php' );
 
+<<<<<<< HEAD
     if ( isset($_GET['pods_force_refresh']) && is_admin()) { // note the use of is_admin() to double check that this is happening in the admin
+=======
+    if ( is_admin() ) { // note the use of is_admin() to double check that this is happening in the admin
+
+>>>>>>> Add PODS_GITHUB_ZIP constant
         // GitHub Plugin Updater
         // https://github.com/jkudish/WordPress-GitHub-Plugin-Updater
         require_once( PODS_DIR . 'updater.php' );
@@ -75,6 +80,9 @@ if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) ) {
             'tested' => '3.4.1', // which version of WordPress is your plugin tested up to?
             'version' => $version
         );
+
+        define( 'PODS_GITHUB_ZIP', $config[ 'zip_url' ] );
+
         new WPGitHubUpdater( $config );
     }
 

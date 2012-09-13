@@ -262,8 +262,8 @@ class PodsMeta {
             if ( !has_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) ) )
                 add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
 
-            if ( !has_action( 'save_post', array( $this, 'save_post' ), 10, 2 ) )
-                add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
+            /*if ( !has_action( 'save_post', array( $this, 'save_post' ), 10, 2 ) )
+                add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );*/
         }
         elseif ( 'taxonomy' == $pod[ 'type' ] ) {
             if ( !has_action( $pod[ 'object' ] . '_edit_form_fields', array( $this, 'meta_taxonomy' ), 10, 2 ) ) {
@@ -414,15 +414,15 @@ class PodsMeta {
         foreach ( $metabox[ 'args' ][ 'group' ][ 'fields' ] as $field ) {
             $value = '';
 
-            if ( !empty( $pod ) )
-                $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
-            elseif ( !empty( $id ) ) {
+            if ( !empty( $pod ) ) {
                 pods_no_conflict_on( 'post' );
 
-                $value = get_post_meta( $id, $field[ 'name' ], true );
+                $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
 
                 pods_no_conflict_off( 'post' );
             }
+            elseif ( !empty( $id ) )
+                $value = get_post_meta( $id, $field[ 'name' ], true );
             ?>
             <tr class="form-field pods-field">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
@@ -458,12 +458,13 @@ class PodsMeta {
         if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || in_array( $post->post_type, $blacklisted_types ) )
             return $post_id;
 
-        pods_no_conflict_on( 'post' );
-
         $groups = $this->groups_get( 'post_type', $post->post_type );
 
         if ( empty( $groups ) )
             return $post_id;
+
+        // Infinite loop fix
+        remove_action( current_filter(), array( $this, __FUNCTION__ ), 10 );
 
         $data = array();
 
@@ -492,12 +493,14 @@ class PodsMeta {
         if ( !empty( $pod ) )
             $pod->save( $data );
         elseif ( !empty( $id ) ) {
+            pods_no_conflict_on( 'post' );
+
             foreach ( $data as $field => $value ) {
                 update_post_meta( $id, $field, $value );
             }
-        }
 
-        pods_no_conflict_off( 'post' );
+            pods_no_conflict_off( 'post' );
+        }
 
         do_action( 'pods_meta_save_post', $data, $pod, $id, $groups, $post, $post->post_type );
         do_action( "pods_meta_save_post_{$post->post_type}", $data, $pod, $id, $groups, $post );
@@ -580,8 +583,6 @@ class PodsMeta {
         $id = $post_id;
         $pod = null;
 
-        pods_no_conflict_on( 'post' );
-
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
@@ -603,12 +604,14 @@ class PodsMeta {
         if ( !empty( $pod ) )
             $pod->save( $data );
         elseif ( !empty( $id ) ) {
+            pods_no_conflict_on( 'post' );
+
             foreach ( $data as $field => $value ) {
                 update_post_meta( $id, $field, $value );
             }
-        }
 
-        pods_no_conflict_off( 'post' );
+            pods_no_conflict_off( 'post' );
+        }
 
         do_action( 'pods_meta_save_media', $data, $pod, $id, $groups, $post, $attachment );
 

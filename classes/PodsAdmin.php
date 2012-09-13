@@ -106,7 +106,7 @@ class PodsAdmin {
                 wp_enqueue_script( 'pods-floatmenu' );
 
                 wp_enqueue_style( 'pods-qtip' );
-                wp_enqueue_script( 'pods-qtip' );
+                wp_enqueue_script( 'jquery-qtip' );
                 wp_enqueue_script( 'pods-qtip-init' );
 
                 wp_enqueue_script( 'pods' );

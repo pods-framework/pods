@@ -217,8 +217,8 @@ function pods_deprecated ( $function, $version, $replacement = null ) {
  * @since 2.0.0
  */
 function pods_help ( $text, $url = null ) {
-    if ( !wp_script_is( 'pods-qtip', 'registered' ) )
-        wp_register_script( 'pods-qtip', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.0-2011-10-02' );
+    if ( !wp_script_is( 'jquery-qtip', 'registered' ) )
+        wp_register_script( 'jquery-qtip', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.0-2011-10-02' );
     if ( !wp_script_is( 'pods-qtip', 'queue' ) && !wp_script_is( 'pods-qtip', 'to_do' ) && !wp_script_is( 'pods-qtip', 'done' ) )
         wp_enqueue_script( 'pods-qtip' );
 

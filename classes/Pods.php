@@ -1031,12 +1031,16 @@ class Pods {
         $defaults = array(
             'type' => 'simple',
             'label' => __( 'Go to page:', 'pods' ),
+            'show_label' => true,
             'next_label' => __( 'Next &gt;', 'pods' ),
             'prev_label' => __( '&lt; Previous', 'pods' ),
             'first_label' => __( '&laquo; First', 'pods' ),
             'last_label' => __( 'Last &raquo;', 'pods' ),
+            'show_prev_next' => true,
+            'show_first_last' => true,
             'limit' => (int) $this->limit,
             'page' => max( 1, (int) $this->page ),
+            'pages_around' => 2,
             'total_found' => $this->total_found(),
             'page_var' => $this->page_var
         );

@@ -1034,8 +1034,12 @@ class Pods {
      */
     public function pagination ( $params = null ) {
         $url = pods_var_update( null, null, $this->page_var );
+
         $append = '?';
-        if ( strpos( $url, '?' ) ) $append = '&';
+
+        if ( false !== strpos( $url, '?' ) )
+            $append = '&';
+
         $defaults = array(
             'type' => 'advanced',
             'label' => __( 'Go to page:', 'pods' ),
@@ -1068,12 +1072,10 @@ class Pods {
         if ( $params->limit < 1 || $params->total_found < 1 || 1 == $params->total_pages )
             return $this->do_hook( 'pagination', '', $params );
 
-        $pagination = 'advanced';
+        $pagination = $params->type;
 
-        if ( 'simple' == $params->type )
-            $pagination = 'simple';
-        elseif ( 'paginate' == $params->type )
-            $pagination = 'paginate';
+        if ( !in_array( $params->type, array( 'simple', 'advanced', 'paginate' ) ) )
+            $pagination = 'advanced';
 
         ob_start();
 

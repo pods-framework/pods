@@ -69,7 +69,7 @@
             <a href="<?php echo pods_var_update( array( $params->page_var => ( $params->page + 1 ) ) ); ?>" class="pods-pagination-number pods-pagination-next"><?php echo $params->next_text; ?></a>
             <?php } ?>
         <?php if ($params->first_last ) { ?>
-            <a href="<?php echo pods_var_update( array( $params->page_var => $params->total ) ); ?>" class="pods-pagination-number pods-pagination-last"><?php echo $params->next_text; ?></a>
+            <a href="<?php echo pods_var_update( array( $params->page_var => $params->total ) ); ?>" class="pods-pagination-number pods-pagination-last"><?php echo $params->last_text; ?></a>
             <?php } ?>
         <?php
     }

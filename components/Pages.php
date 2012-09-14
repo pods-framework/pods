@@ -348,6 +348,8 @@ class Pods_Pages extends PodsComponent {
      * @return string
      */
     public static function content ( $return = false ) {
+        global $pods, $pod_page_exists;
+
         $content = false;
 
         if ( false !== self::$exists ) {

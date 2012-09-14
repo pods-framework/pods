@@ -1023,26 +1023,37 @@ class Pods {
     }
 
     /**
-     * Display the pagination controls
+     * Display the pagination controls, types supported by default
+     * are simple, paginate and advanced. The base and format parameters
+     * are used only for the paginate view.
      *
+     * @var array $params Associative array of parameteres
+     *
+     * @return bool|mixed
      * @since 2.0.0
      */
     public function pagination ( $params = null ) {
+        $url = pods_var_update( null, null, $this->page_var );
+        $append = '?';
+        if ( strpos( $url, '?' ) ) $append = '&';
         $defaults = array(
-            'type' => 'simple',
+            'type' => 'advanced',
             'label' => __( 'Go to page:', 'pods' ),
             'show_label' => true,
-            'next_label' => __( 'Next &gt;', 'pods' ),
-            'prev_label' => __( '&lt; Previous', 'pods' ),
-            'first_label' => __( '&laquo; First', 'pods' ),
-            'last_label' => __( 'Last &raquo;', 'pods' ),
-            'show_prev_next' => true,
-            'show_first_last' => true,
+            'next_text' => __( 'Next &gt;', 'pods' ),
+            'prev_text' => __( '&lt; Previous', 'pods' ),
+            'first_text' => __( '&laquo; First', 'pods' ),
+            'last_text' => __( 'Last &raquo;', 'pods' ),
+            'prev_next' => true,
+            'first_last' => true,
             'limit' => (int) $this->limit,
             'page' => max( 1, (int) $this->page ),
-            'pages_around' => 2,
+            'mid_size' => 2,
+            'end_size' => 1,
             'total_found' => $this->total_found(),
-            'page_var' => $this->page_var
+            'page_var' => $this->page_var,
+            'base' => "{$url}{$append}%_%",
+            'format' => "{$this->page_var}=%#%"
         );
 
         if ( empty( $params ) )
@@ -1052,15 +1063,17 @@ class Pods {
 
         $params = (object) array_merge( $defaults, $params );
 
-        $params->total_pages = ceil( $params->total_found / $params->limit );
+        $params->total = ceil( $params->total_found / $params->limit );
 
         if ( $params->limit < 1 || $params->total_found < 1 || 1 == $params->total_pages )
             return $this->do_hook( 'pagination', '', $params );
 
-        $pagination = 'extended';
+        $pagination = 'advanced';
 
-        if ( 'basic' == $params->type )
-            $pagination = 'basic';
+        if ( 'simple' == $params->type )
+            $pagination = 'simple';
+        elseif ( 'paginate' == $params->type )
+            $pagination = 'paginate';
 
         ob_start();
 

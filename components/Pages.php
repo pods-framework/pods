@@ -300,8 +300,8 @@ class Pods_Pages extends PodsComponent {
             $object = array(
                 'ID' => $_object[ 'ID' ],
                 'uri' => $_object[ 'post_title' ],
-                'code' => get_post_meta( $_object[ 'ID' ], 'code', true ),
-                'phpcode' => $_object[ 'post_content' ], // deprecated
+                'code' => $_object[ 'post_content' ],
+                'phpcode' => $_object[ 'post_content' ], // phpcode is deprecated
                 'precode' => get_post_meta( $_object[ 'ID' ], 'precode', true ),
                 'page_template' => get_post_meta( $_object[ 'ID' ], 'page_template', true ),
                 'title' => get_post_meta( $_object[ 'ID' ], 'page_title', true )

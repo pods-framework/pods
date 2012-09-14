@@ -77,7 +77,7 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
     update_option( 'pods_framework_version', '2.0.0-b-12' );
 }
 
-if ( defined( 'PODS_TEST_UPGRADE' ) && !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
+if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
     $tables = $wpdb->get_results( "SHOW TABLES LIKE '{$wpdb->prefix}pods%'", ARRAY_N );
 
     $podsrel_found = false;
@@ -288,7 +288,7 @@ if ( defined( 'PODS_TEST_UPGRADE' ) && !empty( $pods_version ) && version_compar
     // Change helper_type to type
     $wpdb->query( "UPDATE `{$wpdb->postmeta}` SET `meta_key` = 'type' WHERE `meta_key` = 'helper_type'" );
 
-    //update_option( 'pods_framework_version', '2.0.0-b-14' );
+    update_option( 'pods_framework_version', '2.0.0-b-14' );
 }
 
 function pods_2_beta_migrate_type ( $id, $options ) {

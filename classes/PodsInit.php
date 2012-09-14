@@ -547,9 +547,7 @@ class PodsInit {
 
         add_action( 'wpmu_new_blog', array( $this, 'new_blog' ), 10, 6 );
 
-        $pods_version = self::$version;
-
-        if ( empty( $pods_version ) || version_compare( $pods_version, '2.0.0-b-10', '<' ) )
+        if ( empty( self::$version ) || version_compare( self::$version, PODS_VERSION, '<' ) )
             $this->setup();
     }
 
@@ -600,7 +598,7 @@ class PodsInit {
         $install = false;
 
         if ( 0 < strlen( $pods_version ) ) {
-            if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-10', '<' ) ) {
+            if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, PODS_VERSION, '<' ) ) {
                 do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
 
                 if ( false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] ) )

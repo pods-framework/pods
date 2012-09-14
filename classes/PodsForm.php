@@ -117,7 +117,14 @@ class PodsForm {
 
         ob_start();
 
-        if ( method_exists( get_class(), 'field_' . $type ) )
+        $helper = false;
+
+        if ( 0 < strlen( pods_var_raw( 'input_helper', $options ) ) )
+            $helper = pods_api()->load_helper( array( 'name' => $options[ 'input_helper' ] ) );
+
+        if ( !empty( $helper ) && 0 < strlen( pods_var_raw( 'code', $helper ) ) && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) )
+            eval( '?>' . $helper[ 'code' ] );
+        elseif ( method_exists( get_class(), 'field_' . $type ) )
             echo call_user_func( array( get_class(), 'field_' . $type ), $name, $value, $options );
         elseif ( is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'input' ) )
             self::$loaded[ $type ]->input( $name, $value, $options, $pod, $id );

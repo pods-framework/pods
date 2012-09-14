@@ -26,7 +26,7 @@ foreach ( $field_types as $type => $label ) {
 
 $input_helpers = array( '' => '-- Select --' );
 
-$helpers = $api->load_helpers( array( 'options' => array( 'type' => 'input' ) ) );
+$helpers = $api->load_helpers( array( 'options' => array( 'helper_type' => 'input' ) ) );
 
 foreach ( $helpers as $helper ) {
     $input_helpers[ $helper[ 'name' ] ] = $helper[ 'name' ];
@@ -909,7 +909,7 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
         <?php
             $pre_save_helpers = array( '' => '-- Select --' );
 
-            $helpers = $api->load_helpers( array( 'options' => array( 'type' => 'pre_save' ) ) );
+            $helpers = $api->load_helpers( array( 'options' => array( 'helper_type' => 'pre_save' ) ) );
 
             foreach ( $helpers as $helper ) {
                 $pre_save_helpers[ $helper[ 'name' ] ] = $helper[ 'name' ];
@@ -923,7 +923,7 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
         <?php
             $post_save_helpers = array( '' => '-- Select --' );
 
-            $helpers = $api->load_helpers( array( 'options' => array( 'type' => 'post_save' ) ) );
+            $helpers = $api->load_helpers( array( 'options' => array( 'helper_type' => 'post_save' ) ) );
 
             foreach ( $helpers as $helper ) {
                 $post_save_helpers[ $helper[ 'name' ] ] = $helper[ 'name' ];
@@ -937,7 +937,7 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
         <?php
             $pre_delete_helpers = array( '' => '-- Select --' );
 
-            $helpers = $api->load_helpers( array( 'options' => array( 'type' => 'pre_delete' ) ) );
+            $helpers = $api->load_helpers( array( 'options' => array( 'helper_type' => 'pre_delete' ) ) );
 
             foreach ( $helpers as $helper ) {
                 $pre_delete_helpers[ $helper[ 'name' ] ] = $helper[ 'name' ];
@@ -951,7 +951,7 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
         <?php
             $post_delete_helpers = array( '' => '-- Select --' );
 
-            $helpers = $api->load_helpers( array( 'options' => array( 'type' => 'post_delete' ) ) );
+            $helpers = $api->load_helpers( array( 'options' => array( 'helper_type' => 'post_delete' ) ) );
 
             foreach ( $helpers as $helper ) {
                 $post_delete_helpers[ $helper[ 'name' ] ] = $helper[ 'name' ];

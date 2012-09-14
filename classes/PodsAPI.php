@@ -2010,7 +2010,7 @@ class PodsAPI {
             }
 
             // Call any pre-save helpers (if not bypassed)
-            if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) {
+            if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) {
                 if ( !empty( $pod[ 'options' ] ) && is_array( $pod[ 'options' ] ) ) {
                     $helpers = array( 'pre_save_helpers', 'post_save_helpers' );
 
@@ -2027,7 +2027,7 @@ class PodsAPI {
                         $helper = $this->load_helper( array( 'name' => $helper ) );
 
                         if ( false !== $helper )
-                            echo eval( '?>' . $helper[ 'code' ] );
+                            eval( '?>' . $helper[ 'code' ] );
                     }
                 }
             }
@@ -2344,15 +2344,15 @@ class PodsAPI {
             }
 
             // Call any post-save helpers (if not bypassed)
-            if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) {
+            if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) {
                 if ( !empty( $post_save_helpers ) ) {
                     pods_deprecated( sprintf( __( 'Post-save helpers are deprecated, use the action pods_post_save_pod_item_%s instead', 'pods' ), $params->pod ), '2.0.0' );
 
                     foreach ( $post_save_helpers as $helper ) {
                         $helper = $this->load_helper( array( 'name' => $helper ) );
 
-                        if ( false !== $helper && ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) )
-                            echo eval( '?>' . $helper[ 'code' ] );
+                        if ( false !== $helper && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) )
+                            eval( '?>' . $helper[ 'code' ] );
                     }
                 }
             }
@@ -2856,7 +2856,7 @@ class PodsAPI {
             $this->do_hook( "pre_delete_pod_item_{$params->pod}", $params, $pod );
 
             // Call any pre-save helpers (if not bypassed)
-            if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) {
+            if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) {
                 if ( !empty( $pod[ 'options' ] ) && is_array( $pod[ 'options' ] ) ) {
                     $helpers = array( 'pre_delete_helpers', 'post_delete_helpers' );
 
@@ -2873,7 +2873,7 @@ class PodsAPI {
                         $helper = $this->load_helper( array( 'name' => $helper ) );
 
                         if ( false !== $helper )
-                            echo eval( '?>' . $helper[ 'code' ] );
+                            eval( '?>' . $helper[ 'code' ] );
                     }
                 }
             }
@@ -2901,7 +2901,7 @@ class PodsAPI {
             $this->do_hook( "post_delete_pod_item_{$params->pod}", $params, $pod );
 
             // Call any post-save helpers (if not bypassed)
-            if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) {
+            if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) {
                 if ( !empty( $post_delete_helpers ) ) {
                     pods_deprecated( sprintf( __( 'Post-delete helpers are deprecated, use the action pods_post_delete_pod_item_%s instead', 'pods' ), $params->pod ), '2.0.0' );
 
@@ -2909,7 +2909,7 @@ class PodsAPI {
                         $helper = $this->load_helper( array( 'name' => $helper ) );
 
                         if ( false !== $helper )
-                            echo eval( '?>' . $helper[ 'code' ] );
+                            eval( '?>' . $helper[ 'code' ] );
                     }
                 }
             }
@@ -3492,9 +3492,7 @@ class PodsAPI {
      * @since 2.0.0
      */
     public function load_object ( $params, $strict = false ) {
-        $params = (object) pods_sanitize( $params );
-
-        if ( isset( $params->post_name ) ) {
+        if ( is_object( $params ) && isset( $params->post_name ) ) {
             $type = ltrim( $params->post_type, '_' );
             $object = get_transient( $type . '_' . $params->post_name );
 
@@ -3504,6 +3502,8 @@ class PodsAPI {
             $_object = get_object_vars( $params );
         }
         else {
+            $params = (object) pods_sanitize( $params );
+
             if ( !isset( $params->type ) || empty( $params->type ) )
                 return pods_error( __( 'Object type is required', 'pods' ), $this );
 

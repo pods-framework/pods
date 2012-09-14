@@ -285,12 +285,27 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
 
     pods_no_conflict_off( 'post' );
 
-    // Change helper_type to type
-    $wpdb->query( "UPDATE `{$wpdb->postmeta}` SET `meta_key` = 'type' WHERE `meta_key` = 'helper_type'" );
-
     update_option( 'pods_framework_version', '2.0.0-b-14' );
 }
 
+if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-15', '<' ) ) {
+    $helpers = $wpdb->get_results( "SELECT `ID` FROM `{$wpdb->posts}` WHERE `post_type` = '_pods_helper'" );
+
+    if ( !empty( $helpers ) ) {
+        foreach ( $helpers as $helper ) {
+            $wpdb->query( "UPDATE `{$wpdb->postmeta}` SET `meta_key` = 'helper_type' WHERE `meta_key` = 'type' AND `post_id` = {$helper->ID}" );
+        }
+    }
+
+    update_option( 'pods_framework_version', '2.0.0-b-15' );
+}
+
+/* ===================================
+ *
+ * Old upgrade code from Alpha to Beta
+ *
+ * ===================================
+ */
 function pods_2_beta_migrate_type ( $id, $options ) {
     global $wpdb;
 

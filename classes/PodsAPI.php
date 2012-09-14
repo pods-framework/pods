@@ -2967,9 +2967,7 @@ class PodsAPI {
         if ( !is_array( $params ) && !is_object( $params ) )
             $params = array( 'name' => $params );
 
-        $params = (object) pods_sanitize( $params );
-
-        if ( isset( $params->post_name ) ) {
+        if ( is_object( $params ) && isset( $params->post_name ) ) {
             $pod = get_transient( 'pods_pod_' . $params->post_name );
 
             if ( false !== $pod )
@@ -2978,6 +2976,8 @@ class PodsAPI {
             $_pod = get_object_vars( $params );
         }
         else {
+            $params = (object) pods_sanitize( $params );
+
             if ( ( !isset( $params->id ) || empty( $params->id ) ) && ( !isset( $params->name ) || empty( $params->name ) ) )
                 return pods_error( 'Either Pod ID or Name are required', $this );
 

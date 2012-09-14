@@ -445,6 +445,9 @@ class PodsData {
         // Build
         $this->sql = $this->build( $params );
 
+        if ( empty( $this->sql ) )
+            return array();
+
         // Get Data
         $results = pods_query( $this->sql, $this );
         $results = $this->do_hook( 'select', $results );
@@ -815,6 +818,9 @@ class PodsData {
 
         // Build
         if ( null === $params->sql ) {
+            if ( empty( $params->table ) )
+                return false;
+
             $sql = "
                 SELECT SQL_CALC_FOUND_ROWS
                 " . ( !empty( $params->select ) ? ( is_array( $params->select ) ? implode( ', ', $params->select ) : $params->select ) : '*' ) . "

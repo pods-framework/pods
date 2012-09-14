@@ -740,6 +740,9 @@ class Pods {
             $pod_table_prefix = 'd';
         }
 
+        if ( empty( $this->data->table ) )
+            return $this;
+
         $defaults = array(
             'table' => $this->data->table,
             'select' => $select,

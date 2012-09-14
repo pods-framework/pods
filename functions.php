@@ -1292,14 +1292,18 @@ function pods_components () {
 /**
  * Include and Init the Pods class
  *
+ * @param string $pod The pod name
+ * @param mixed $id (optional) The ID or slug, to load a single record; Provide array of $params to run 'find'
+ * @param bool $strict If set to true, return false instead of an object if the Pod doesn't exist
+ *
  * @since 2.0.0
  */
-function pods ( $type = null, $id = null ) {
+function pods ( $type = null, $id = null, $strict = false ) {
     require_once( PODS_DIR . 'classes/Pods.php' );
 
     $pod = new Pods( $type, $id );
 
-    if ( null !== $type && !$pod->valid() )
+    if ( true === $strict && null !== $type && !$pod->valid() )
         return false;
 
     return $pod;

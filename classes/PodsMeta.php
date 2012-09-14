@@ -476,7 +476,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
@@ -534,7 +534,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
                 $value = '';
@@ -588,7 +588,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
@@ -644,7 +644,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
                 $value = '';
@@ -705,7 +705,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
@@ -748,7 +748,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
             ?>
         <h3><?php echo $group[ 'label' ]; ?></h3>
 
@@ -806,7 +806,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
@@ -849,7 +849,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
                 $value = '';
@@ -894,7 +894,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
                 $value = '';
@@ -1015,7 +1015,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )

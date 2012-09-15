@@ -111,7 +111,7 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
                         <div class="inside">
                             <div class="pods-admin" id="navigatebox">
                                 <div id="navigation-actions">
-                                    <a class="previous-item" href="<?php echo pods_var_update( array( 'id' => $pod->prev_pod_item_id() ) ) ?>"><span>&laquo; </span><?php _e( 'Previous ', 'pods' ); echo $singular_label?></a> <a class="next-item" href="<?php echo pods_var_update( array( 'id' => $pod->next_pod_item_id() ) ) ?>"><?php _e( 'Next ', 'pods' ); echo $singular_label ?> &raquo;</a>
+                                    <a class="previous-item" href="<?php echo pods_var_update( array( 'id' => $pod->prev_pod_item_id() ), null, 'do' ) ?>"><span>&laquo; </span><?php _e( 'Previous ', 'pods' ); echo $singular_label?></a> <a class="next-item" href="<?php echo pods_var_update( array( 'id' => $pod->next_pod_item_id() ), null, 'do' ) ?>"><?php _e( 'Next ', 'pods' ); echo $singular_label ?> &raquo;</a>
 
                                     <div class="clear"></div>
                                 </div>

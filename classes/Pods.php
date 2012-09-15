@@ -209,6 +209,8 @@ class Pods {
     /**
      * Whether this Pod object is valid or not
      *
+     * @return bool
+     *
      * @since 2.0.0
      */
     public function valid () {
@@ -220,6 +222,8 @@ class Pods {
 
     /**
      * Return data array from a find
+     *
+     * @return array
      *
      * @since 2.0.0
      */
@@ -235,6 +239,8 @@ class Pods {
     /**
      * Return field array from a Pod
      *
+     * @return array
+     *
      * @since 2.0.0
      */
     public function fields () {
@@ -248,6 +254,8 @@ class Pods {
 
     /**
      * Return row array for an item
+     *
+     * @return array
      *
      * @since 2.0.0
      */
@@ -266,6 +274,7 @@ class Pods {
      * @param array $params An associative array of parameters (OR the Field name)
      * @param boolean $single (optional) For tableless fields, to return an array or the first
      *
+     * @return bool|int|mixed|null|string
      * @since 2.0.0
      */
     public function display ( $params, $single = false ) {
@@ -295,6 +304,7 @@ class Pods {
      * @param array $params An associative array of parameters (OR the Field name)
      * @param boolean $single (optional) For tableless fields, to return an array or the first
      *
+     * @return bool|int|mixed|null
      * @since 2.0.0
      */
     public function field ( $params, $single = false ) {
@@ -652,14 +662,14 @@ class Pods {
     /**
      * Return the next item ID, loops at the first id to return the last
      *
-     * @param null $id
+     * @param int $id
      *
      * @return int
      * @since 2.0.0
      */
     public function next_pod_item_id ( $id = null ) {
         $pod = new Pods( $this->pod );
-        if ( !$id )
+        if ( null === $id )
             $id = $this->field( 'id' );
         $params = array(
             'select' => 'id',
@@ -683,14 +693,14 @@ class Pods {
     /**
      * Return the previous item ID, loops at the last id to return the first
      *
-     * @param null $id
+     * @param int $id
      *
      * @return int
      * @since 2.0.0
      */
     public function prev_pod_item_id ( $id = null ) {
         $pod = new Pods( $this->pod );
-        if ( !$id )
+        if ( null === $id )
             $id = $this->field( 'id' );
         $params = array(
             'select' => 'id',
@@ -726,7 +736,11 @@ class Pods {
      * Search and filter items
      *
      * @param array $params An associative array of parameters
+     * @param int $limit (optional) Limit the number of items to find
+     * @param string $where (optional) SQL WHERE declaration to use
+     * @param string $sql (optional)
      *
+     * @return \Pods The pod object
      * @since 2.0.0
      */
     public function find ( $params = null, $limit = 15, $where = null, $sql = null ) {
@@ -864,6 +878,12 @@ class Pods {
     /**
      * Fetch a row
      *
+     * @see PodsData::fetch
+     *
+     * @param int $id ID of the row to fetch
+     *
+     * @return array The row array
+     *
      * @since 2.0.0
      */
     public function fetch ( $id = null ) {
@@ -877,6 +897,12 @@ class Pods {
     /**
      * (Re)set the MySQL result pointer
      *
+     * @see PodsData::reset
+     *
+     * @param int $row ID of the row to reset to
+     *
+     * @return array The row array
+     *
      * @since 2.0.0
      */
     public function reset ( $row = null ) {
@@ -889,6 +915,8 @@ class Pods {
 
     /**
      * Fetch the total row count returned
+     *
+     * @see PodsData::total
      *
      * @return int Number of rows returned by find()
      * @since 2.0.0
@@ -904,6 +932,8 @@ class Pods {
     /**
      * Fetch the total row count total
      *
+     * @see PodsData::total_found
+     *
      * @return int Number of rows found by find()
      * @since 2.0.0
      */
@@ -918,6 +948,8 @@ class Pods {
     /**
      * Fetch the zebra switch
      *
+     * @see PodsData::zebra
+     *
      * @return bool Zebra state
      * @since 1.12
      */
@@ -930,6 +962,13 @@ class Pods {
     /**
      * Add an item
      *
+     * @see PodsAPI::save_pod_item
+     *
+     * @param array|string $data Either an associative array of field information or a field name
+     * @param string $value (optional) Value of the data to add, if data is string
+     *
+     * @return int The item ID
+     *
      * @since 2.0.0
      */
     public function add ( $data = null, $value = null ) {
@@ -939,7 +978,7 @@ class Pods {
         $data = (array) $this->do_hook( 'add', $data );
 
         if ( empty( $data ) )
-            return;
+            return false;
 
         $params = array( 'pod' => $this->pod, 'data' => $data );
 
@@ -948,6 +987,14 @@ class Pods {
 
     /**
      * Save an item
+     *
+     * @see PodsAPI::save_pod_item
+     *
+     * @param null $data Either an associative array of field information or a field name
+     * @param null $value (optional) Value of the data to add, if data is string
+     * @param null $id (optional) Id of the pod item to update
+     *
+     * @return int The item ID
      *
      * @since 2.0.0
      */
@@ -971,6 +1018,12 @@ class Pods {
     /**
      * Delete an item
      *
+     * @see PodsAPI::delete_pod_item
+     *
+     * @param int $id Id of the pod item to delete
+     *
+     * @return bool
+     *
      * @since 2.0.0
      */
     public function delete ( $id = null ) {
@@ -980,7 +1033,7 @@ class Pods {
         $id = (int) $this->do_hook( 'delete', $id );
 
         if ( empty( $id ) )
-            return;
+            return false;
 
         $params = array( 'pod' => $this->pod, 'id' => $id );
 
@@ -989,6 +1042,12 @@ class Pods {
 
     /**
      * Duplicate an item
+     *
+     * @see PodsAPI::duplicate_pod_item
+     *
+     * @param int $id ID of the pod item to duplicate
+     *
+     * @return int|bool ID of the new pod item
      *
      * @since 2.0.0
      */
@@ -999,7 +1058,7 @@ class Pods {
         $id = (int) $this->do_hook( 'duplicate', $id );
 
         if ( empty( $id ) )
-            return;
+            return false;
 
         $params = array( 'pod' => $this->pod, 'id' => $id );
 
@@ -1008,6 +1067,13 @@ class Pods {
 
     /**
      * Export an item's data
+     *
+     * @see PodsApi::export_pod_item
+     *
+     * @param array $fields (optional) Fields to export
+     * @param int $id (optional) ID of the pod item to export
+     *
+     * @return array|bool Data array of the exported pod item
      *
      * @since 2.0.0
      */
@@ -1018,7 +1084,7 @@ class Pods {
         $fields = (array) $this->do_hook( 'export', $fields, $id );
 
         if ( empty( $id ) )
-            return;
+            return false;
 
         $params = array( 'pod' => $this->pod, 'id' => $id, 'fields' => $fields );
 
@@ -1109,22 +1175,35 @@ class Pods {
     /**
      * Run a helper within a Pod Page or WP Template
      *
-     * $params['helper'] string Helper name
-     * $params['value'] string Value to run Helper on
-     * $params['name'] string Field name
+     * @see Pods_Helpers::helper
      *
-     * @param array $params An associative array of parameters
+     * @param string $helper Helper name
+     * @param string $value Value to run the helper on
+     * @param string $name Field name
+     * @internal param array $params An associative array of parameters
      *
      * @return mixed Anything returned by the helper
      * @since 2.0.0
      */
     public function helper ( $helper, $value = null, $name = null ) {
+        $params = array(
+            'helper' => $helper,
+            'value' => $value,
+            'name' => $name
+        );
         if ( class_exists( 'Pods_Helpers' ) )
-            return Pods_Helpers::helper( $helper, $value, $name, $this );
+            return Pods_Helpers::helper( $params, $this );
     }
 
     /**
      * Display the page template
+     *
+     * @see Pods_Templates::template
+     *
+     * @param string $template The template name
+     * @param string $code Custom template code to use instead
+     *
+     * @return mixed Template output
      *
      * @since 2.0.0
      */
@@ -1136,10 +1215,11 @@ class Pods {
     /**
      * Build form for handling add / edit
      *
-     * @param array $params
+     * @param array $params Fields to show on the form
      * @param string $label
-     * @param string $thank_you
+     * @param string $thank_you Thank you message
      *
+     * @return bool|mixed
      * @since 2.0.0
      */
     public function form ( $params, $label = null, $thank_you = null ) {
@@ -1169,6 +1249,8 @@ class Pods {
     /**
      * Handle filters / actions for the class
      *
+     * @see pods_do_hook
+     *
      * @since 2.0.0
      */
     private function do_hook () {
@@ -1184,6 +1266,10 @@ class Pods {
 
     /**
      * Handle variables that have been deprecated
+     *
+     * @var $name
+     *
+     * @return mixed
      *
      * @since 2.0.0
      */
@@ -1210,6 +1296,11 @@ class Pods {
 
     /**
      * Handle methods that have been deprecated
+     *
+     * @var $name
+     * @var $args
+     *
+     * @return mixed
      *
      * @since 2.0.0
      */

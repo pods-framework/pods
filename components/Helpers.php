@@ -207,6 +207,8 @@ class Pods_Helpers extends PodsComponent {
     }
 
     /**
+     * @static
+     *
      * Run a helper within a Pod Page or WP Template
      *
      * $params['helper'] string Helper name
@@ -214,11 +216,12 @@ class Pods_Helpers extends PodsComponent {
      * $params['name'] string Field name
      *
      * @param array $params An associative array of parameters
+     * @param null $obj
      *
      * @return mixed Anything returned by the helper
      * @since 2.0.0
      */
-    public function helper ( $params, $obj = null ) {
+    public static function helper ( $params, $obj = null ) {
         if ( !empty( $obj ) )
             self::$obj =& $obj;
         else

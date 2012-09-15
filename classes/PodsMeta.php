@@ -413,7 +413,7 @@ class PodsMeta {
         if ( is_object( $post ) )
             $id = $post->ID;
 
-        $pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id );
+        $pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id, true );
 
         foreach ( $metabox[ 'args' ][ 'group' ][ 'fields' ] as $field ) {
             $value = '';
@@ -978,7 +978,7 @@ class PodsMeta {
         if ( is_object( $comment ) )
             $id = $comment->comment_ID;
 
-        $pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id );
+        $pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id, true );
 
         foreach ( $metabox[ 'args' ][ 'group' ][ 'fields' ] as $field ) {
             $value = '';

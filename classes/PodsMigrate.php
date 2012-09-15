@@ -2,7 +2,7 @@
 /**
  *
  */
-class PodMigrate {
+class PodsMigrate {
 
     /**
      * @var null|string

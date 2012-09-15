@@ -35,16 +35,18 @@ class PodsView {
         if ( !in_array( $cache_mode, self::$cache_modes ) )
             $cache_mode = 'cache';
 
-        $cache_key = sanitize_title( pods_str_replace( array( PODS_DIR . 'ui/', ABSPATH, WP_CONTENT_DIR ), array( 'pods-ui-', 'pods-ui-' ), $view, 1 ) );
+        $cache_key = sanitize_title( pods_str_replace( array( PODS_DIR . 'ui/', PODS_DIR . 'components/', ABSPATH, WP_CONTENT_DIR, '.php' ), array( 'ui-', 'ui-', 'custom-', 'custom-', '' ), $view, 1 ) );
+
+        $view = apply_filters( 'pods_view_inc_' . $cache_key, $view, $data, $expires, $cache_mode );
 
         if ( false === strpos( $view, PODS_DIR . 'ui/' ) && false === strpos( $view, PODS_DIR . 'components/' ) && false === strpos( $view, WP_CONTENT_DIR ) && false === strpos( $view, ABSPATH ) ) {
-            $output = self::get( $cache_key, $cache_mode );
+            $output = self::get( 'pods-view-' . $cache_key, $cache_mode );
 
             if ( false !== $output && null !== $output ) {
                 if ( 0 < $expires )
                     return $output;
                 else
-                    self::clear( $cache_key, $cache_mode );
+                    self::clear( 'pods-view-' . $cache_key, $cache_mode );
             }
         }
 
@@ -54,9 +56,10 @@ class PodsView {
             return false;
 
         if ( 0 < $expires )
-            self::set( $cache_key, $output, $cache_mode );
+            self::set( 'pods-view-' . $cache_key, $output, $cache_mode );
 
-        $output = apply_filters( 'pods_view', $output, $view, $data, $expires, $cache_mode );
+        $output = apply_filters( 'pods_view_output_' . $cache_key, $output, $view, $data, $expires, $cache_mode );
+        $output = apply_filters( 'pods_view_output', $output, $view, $data, $expires, $cache_mode );
 
         return $output;
     }

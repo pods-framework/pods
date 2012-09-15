@@ -33,6 +33,7 @@
                 }
             ?>
         </h2>
+        <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
         <?php
             $tab = pods_var( 'tab', 'get', $default );

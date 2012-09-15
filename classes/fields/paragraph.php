@@ -67,6 +67,11 @@ class PodsField_Paragraph extends PodsField {
                         'default' => 1,
                         'type' => 'boolean',
                         'dependency' => true
+                    ),
+                    'paragraph_wpautop' => array(
+                        'label' => __( 'Enable wpautop?', 'pods' ),
+                        'default' => 1,
+                        'type' => 'boolean'
                     )
                 )
             ),
@@ -124,6 +129,9 @@ class PodsField_Paragraph extends PodsField {
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $value = $this->strip_html( $value, $options );
+
+        if ( 1 == pods_var( 'paragraph_wpautop', $options, 1 ) )
+            $value = wpautop( $value );
 
         if ( 1 == pods_var( 'paragraph_allow_shortcode', $options, 0 ) )
             $value = do_shortcode( $value );

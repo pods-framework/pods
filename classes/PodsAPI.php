@@ -156,7 +156,12 @@ class PodsAPI {
         if ( is_wp_error( $post_data[ 'ID' ] ) ) {
             pods_no_conflict_off( 'post' );
 
-            return pods_error( $post_data[ 'ID' ]->get_error_message(), $this );
+            /**
+             * @var $post_error WP_Error
+             */
+            $post_error = $post_data[ 'ID' ];
+
+            return pods_error( $post_error->get_error_message(), $this );
         }
 
         $this->save_post_meta( $post_data[ 'ID' ], $post_meta, $strict );
@@ -257,7 +262,12 @@ class PodsAPI {
         if ( is_wp_error( $user_data[ 'ID' ] ) ) {
             pods_no_conflict_off( 'user' );
 
-            return pods_error( $user_data[ 'ID' ]->get_error_message(), $this );
+            /**
+             * @var $user_error WP_Error
+             */
+            $user_error = $user_data[ 'ID' ];
+
+            return pods_error( $user_error->get_error_message(), $this );
         }
 
         $this->save_user_meta( $user_data[ 'ID' ], $user_meta, $strict );
@@ -348,7 +358,12 @@ class PodsAPI {
         if ( is_wp_error( $comment_data[ 'comment_ID' ] ) ) {
             pods_no_conflict_off( 'comment' );
 
-            return pods_error( $comment_data[ 'comment_ID' ]->get_error_message(), $this );
+            /**
+             * @var $comment_error WP_Error
+             */
+            $comment_error = $comment_data[ 'comment_ID' ];
+
+            return pods_error( $comment_error->get_error_message(), $this );
         }
 
         $this->save_comment_meta( $comment_data[ 'comment_ID' ], $comment_meta, $strict );
@@ -1913,11 +1928,6 @@ class PodsAPI {
      * @since 1.7.9
      */
     public function save_pod_item ( $params ) {
-        /**
-         * @var $wpdb wpdb
-         */
-        global $wpdb;
-
         $params = (object) str_replace( '@wp_', '{prefix}', $params );
 
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
@@ -2758,6 +2768,8 @@ class PodsAPI {
 
         $pod = $params->pod;
 
+        $save_pod = false;
+
         if ( !is_array( $pod ) )
             $pod = $this->load_pod( array( 'name' => $pod, 'id' => $params->pod_id ) );
         else
@@ -2802,7 +2814,7 @@ class PodsAPI {
         if ( $table_operation )
             pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `field_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_field_id` = {$params->id})" );
 
-        if ( !$save_pod )
+        if ( true === $save_pod )
             $this->cache_flush_pods( $pod );
 
         return true;
@@ -3081,17 +3093,13 @@ class PodsAPI {
      * $params['id'] int The Pod ID
      * $params['name'] string The Pod name
      *
-     * @param array $params An associative array of parameters or pod name as a string
+     * @param array|object $params An associative array of parameters or pod name as a string
      * @param bool $strict Makes sure the pod exists, throws an error if it doesn't work
      *
      * @return array|bool|mixed|void
      * @since 1.7.9
      */
     public function load_pod ( $params, $strict = true ) {
-        /**
-         * @var $wpdb wpdb
-         */
-        global $wpdb;
 
         if ( !is_array( $params ) && !is_object( $params ) )
             $params = array( 'name' => $params );
@@ -4128,7 +4136,7 @@ class PodsAPI {
      * @param array $object_fields Fields of the object we're validating
      * @param array $fields Array of all fields data
      * @param array $pod Array of pod data
-     * @param array $params Extra parameters to pass to the validation function of the field.
+     * @param array|object $params Extra parameters to pass to the validation function of the field.
      *
      * @return array|bool
      *

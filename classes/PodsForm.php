@@ -588,6 +588,7 @@ class PodsForm {
      * @param array $fields
      * @param array $pod
      * @param int $id
+     * @param array|object $params
      *
      * @static
      *

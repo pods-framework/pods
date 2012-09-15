@@ -76,10 +76,10 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
                                 <div id="minor-publishing">
                                     <div id="major-publishing-actions">
                                         <?php
-                                        if ( is_super_admin() || current_user_can( 'pods_delete_' . $pod->pod ) ) {
+                                        if ( (is_super_admin() || current_user_can( 'pods_delete_' . $pod->pod )) && null !== pods_var_raw('id') ) {
                                             ?>
                                             <div id="delete-action">
-                                                <a class="submitdelete deletion" href="#"><?php _e( 'Delete', 'pods' ); ?></a>
+                                                <a class="submitdelete deletion" href="<?php echo pods_var_update( array( 'action' => 'delete' ) ) ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
                                             </div>
                                             <!-- /#delete-action -->
                                             <?php } ?>

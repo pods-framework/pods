@@ -39,8 +39,6 @@ if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) ) {
     define( 'PODS_URL', plugin_dir_url( __FILE__ ) );
     define( 'PODS_DIR', plugin_dir_path( __FILE__ ) );
 
-    define( 'PODS_GITHUB_ZIP', 'https://github.com/pods-framework/pods/zipball/2.0' );
-
     require_once( PODS_DIR . 'functions.php' );
 
     if ( is_admin() &&
@@ -75,7 +73,7 @@ if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) ) {
             'api_url' => 'https://api.github.com/repos/' . $user . '/' . $repo, // the github API url of your github repo
             'raw_url' => 'https://raw.github.com/' . $user . '/' . $repo . '/' . $branch, // the github raw url of your github repo
             'github_url' => 'https://github.com/' . $user . '/' . $repo, // the github url of your github repo
-            'zip_url' => PODS_GITHUB_ZIP, // the zip url of the github repo
+            'zip_url' => 'https://github.com/' . $user . '/' . $repo . '/zipball/' . $branch, // the zip url of the github repo
             'sslverify' => false, // whether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
             'requires' => '3.4', // which version of WordPress does your plugin require?
             'tested' => '3.4.1', // which version of WordPress is your plugin tested up to?

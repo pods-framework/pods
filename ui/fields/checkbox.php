@@ -54,7 +54,8 @@ foreach ( $options[ 'data' ] as $val => $label ) {
         <?php
         if ( 0 < strlen( $label ) ) {
             $help = '';
-            if ( 0 == $options[ 'grouped' ] && isset( $options[ 'help' ] ) && 0 < strlen( $options[ 'help' ] ) )
+
+            if ( 0 == $options[ 'grouped' ] && isset( $options[ 'help' ] ) && !empty( $options[ 'help' ] ) )
                 $help = $options[ 'help' ];
 
             echo PodsForm::label( $attributes[ 'id' ], $label, $help );

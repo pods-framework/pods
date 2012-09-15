@@ -1,55 +1,109 @@
-<?php
-if ( !empty( $_POST ) ) {
-    if ( isset( $_POST[ 'clearcache' ] ) ) {
-        pods_api()->cache_flush_pods();
-
-        die( '<script type="text/javascript">document.location = "?page=' . urlencode( $_GET[ 'page' ] ) . '&pods_clearcache=1";</script>' );
-    }
-    elseif ( isset( $_POST[ 'reset' ] ) ) {
-        global $pods_init;
-
-        $pods_init->reset();
-        $pods_init->setup();
-
-        die( '<script type="text/javascript">document.location = "?page=' . urlencode( $_GET[ 'page' ] ) . '&pods_reset=1";</script>' );
-    }
-    elseif ( isset( $_POST[ 'reset_deactivate' ] ) ) {
-        global $pods_init;
-
-        $pods_init->reset();
-        deactivate_plugins( PODS_DIR . 'pods.php' );
-
-        die( '<script type="text/javascript">document.location = "index.php";</script>' );
-    }
-    elseif ( isset( $_POST[ 'cleanup' ] ) ) {
-        require_once( PODS_DIR . 'sql/PodsUpgrade.php' );
-
-        $upgrade = new PodsUpgrade_2_0();
-        $upgrade->cleanup();
-
-        die( '<script type="text/javascript">document.location = "?page=' . urlencode( $_GET[ 'page' ] ) . '&pods_cleanup=1";</script>' );
-    }
-}
-
-if ( isset( $_GET[ 'pods_reset' ] ) )
-    pods_ui_message( 'Pods 2.0 settings and data have been reset.' );
-elseif ( isset( $_GET[ 'pods_cleanup' ] ) )
-    pods_ui_message( 'Pods 1.x data has been deleted.' );
-elseif ( isset( $_GET[ 'pods_clearcache' ] ) )
-    pods_ui_message( 'Pods 2.0 transients and cache have been cleared.' );
-?>
-
 <div class="wrap pods-admin">
     <div id="icon-pods" class="icon32"><br /></div>
     <h2><?php _e( 'Pods Help', 'pods' ); ?></h2>
     <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
     <p>
-        This plugin is an <strong>beta</strong> version, it is not meant for use on production/live sites and is not 100% complete with functionality yet. This plugin has been released for developers and users so they can help test, review the new UI, and provide feedback regarding Pods 2.0 and let us know of any bugs they come across.
+        This plugin is an <strong>beta</strong> version, it is not meant for use on production/live sites and is not 100% complete with functionality yet.
+        This plugin has been released for developers and users so they can help test, review the new UI, and provide feedback regarding Pods 2.0 and let us know of any bugs they come across.
     </p>
 
-    <p>To report bugs or request features, go to our <a href="https://github.com/pods-framework/pods/issues?milestone=1&sort=created&direction=desc&state=open" target="_blank">GitHub</a>.</p>
+    <p>To report <strong>bugs or request features</strong>, go to our <a href="https://github.com/pods-framework/pods/issues?milestone=1&sort=created&direction=desc&state=open" target="_blank">GitHub</a>.</p>
 
     <p>It's open source, so if you want to get into the code and submit your own fixes or features, go at it, we'd love to have you contribute on our project! With GitHub, it's really easy to contribute back, so why not give it a try?</p>
+
+    <hr />
+
+    <?php
+        include_once( ABSPATH . WPINC . '/feed.php' );
+
+        $feed = fetch_feed( 'http://podsframework.org/forums/forum/general-discussion/pods-2-x/feed/' );
+
+        if ( !is_wp_error( $feed ) ) {
+            $max_items = $feed->get_item_quantity( 6 );
+            $rss_items = $feed->get_items( 0, $max_items );
+
+            if ( 0 < $max_items ) {
+    ?>
+        <h3>Latest Forum Posts at <a href="http://podsframework.org/forums/forum/general-discussion/pods-2-x/" target="_blank">podsframework.org</a></h3>
+
+        <ul class="ul-disc">
+            <?php
+                foreach ( $rss_items as $item ) {
+                    $authors = $item->get_authors();
+
+                    $author_text = '';
+
+                    foreach ( $authors as $author ) {
+                        $author_text = '<br /> by ';
+
+                        if ( !empty( $author->link ) )
+                            $author_text .= '<a href="' . $author->link . '" target="_blank">';
+
+                        $author_text .= $author->name;
+
+                        if ( !empty( $author->link ) )
+                            $author_text .= '</a>';
+                    }
+            ?>
+                <li>
+                    <a href="<?php echo esc_url( $item->get_permalink() ); ?>"><?php echo esc_html( $item->get_title() ); ?></a>
+                    <?php echo $author_text; ?>
+                    <br />
+                    on <?php echo $item->get_date( 'm/d/Y' ); ?>
+                </li>
+            <?php
+                }
+            ?>
+        </ul>
+
+        <hr />
+    <?php
+            }
+        }
+
+        $feed = fetch_feed( 'https://github.com/pods-framework/pods/commits/2.0.atom' );
+
+        if ( !is_wp_error( $feed ) ) {
+            $max_items = $feed->get_item_quantity( 6 );
+            $rss_items = $feed->get_items( 0, $max_items );
+
+            if ( 0 < $max_items ) {
+    ?>
+        <h3>Latest Activity on <a href="http://github.com/pods-framework/pods" target="_blank">GitHub</h3>
+
+        <ul class="ul-disc">
+            <?php
+                foreach ( $rss_items as $item ) {
+                    $authors = $item->get_authors();
+
+                    $author_text = '';
+
+                    foreach ( $authors as $author ) {
+                        $author_text = '<br /> by ';
+
+                        if ( !empty( $author->link ) )
+                            $author_text .= '<a href="' . $author->link . '" target="_blank">';
+
+                        $author_text .= $author->name;
+
+                        if ( !empty( $author->link ) )
+                            $author_text .= '</a>';
+                    }
+            ?>
+                <li>
+                    <a href="<?php echo esc_url( $item->get_permalink() ); ?>">Commit</a>: <?php echo esc_html( $item->get_title() ); ?>
+                    <?php echo $author_text; ?>
+                    <br />
+                    on <?php echo $item->get_date( 'm/d/Y' ); ?>
+                </li>
+            <?php
+                }
+            ?>
+        </ul>
+    <?php
+            }
+        }
+    ?>
 
 </div>

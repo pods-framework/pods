@@ -3,7 +3,7 @@
 Plugin Name: Pods Framework
 Plugin URI: http://podsframework.org/
 Description: Create / Manage / Develop / Extend content types: Posts, Pages, Media, Custom Post Types, Categories, Tags, Custom Taxonomy, Comments, Users, Custom Content Types, and Custom Tables
-Version: 2.0.0 Beta 13
+Version: 2.0.0 Beta 15
 Author: Pods Framework Team
 Author URI: http://podsframework.org/about/
 
@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // Prevent conflicts with Pods 1.x
 if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) ) {
-    define( 'PODS_VERSION', '2.0.0-b-13' );
+    define( 'PODS_VERSION', '2.0.0-b-15' );
 
     if ( !defined( 'PODS_WP_VERSION_MINIMUM' ) )
         define( 'PODS_WP_VERSION_MINIMUM', '3.4' );
@@ -41,7 +41,11 @@ if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) ) {
 
     require_once( PODS_DIR . 'functions.php' );
 
-    if ( is_admin() ) { // note the use of is_admin() to double check that this is happening in the admin
+    if ( is_admin() &&
+         ( isset( $_GET[ 'pods_force_refresh' ] ) ||
+           ( 'update-selected' == pods_var( 'action' ) &&
+             ( false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update ) ||
+               false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update_network ) ) ) ) ) {
         // GitHub Plugin Updater
         // https://github.com/jkudish/WordPress-GitHub-Plugin-Updater
         require_once( PODS_DIR . 'updater.php' );
@@ -75,6 +79,7 @@ if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) ) {
             'tested' => '3.4.1', // which version of WordPress is your plugin tested up to?
             'version' => $version
         );
+
         new WPGitHubUpdater( $config );
     }
 

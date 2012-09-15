@@ -1485,7 +1485,7 @@ class PodsAPI {
                 $field[ 'pick_val' ] = pods_str_replace( 'taxonomy-', '', $field[ 'pick_object' ], 1 );
                 $field[ 'pick_object' ] = 'taxonomy';
             }
-            elseif ( false !== strpos( $field[ 'pick_object' ], '-' ) )
+            elseif ( false === strpos( $field[ 'pick_object' ], '-' ) )
                 $field[ 'pick_val' ] = '';
 
             $field[ 'options' ][ 'pick_object' ] = $field[ 'pick_object' ];
@@ -1762,7 +1762,9 @@ class PodsAPI {
      */
     public function save_template ( $params, $sanitized = false ) {
         $params = (object) $params;
+
         $params->type = 'template';
+
         return $this->save_object( $params, $sanitized );
     }
 
@@ -1771,7 +1773,7 @@ class PodsAPI {
      *
      * $params['id'] int The page ID
      * $params['uri'] string The page URI
-     * $params['phpcode'] string The page code
+     * $params['code'] string The page code
      *
      * @param array $params An associative array of parameters
      *
@@ -1779,12 +1781,20 @@ class PodsAPI {
      */
     public function save_page ( $params, $sanitized = false ) {
         $params = (object) $params;
+
         if ( !isset( $params->name ) ) {
             $params->name = $params->uri;
             unset( $params->uri );
         }
+
+        if ( isset( $params->phpcode ) ) {
+            $params->code = $params->phpcode;
+            unset( $params->phpcode );
+        }
+
         $params->name = trim( $params->name, '/' );
         $params->type = 'page';
+
         return $this->save_object( $params, $sanitized );
     }
 
@@ -1793,8 +1803,8 @@ class PodsAPI {
      *
      * $params['id'] int The helper ID
      * $params['name'] string The helper name
-     * $params['helper_type'] string The helper type ("pre_save", "display", etc)
-     * $params['phpcode'] string The helper code
+     * $params['type'] string The helper type ("pre_save", "display", etc)
+     * $params['code'] string The helper code
      *
      * @param array $params An associative array of parameters
      *
@@ -1802,7 +1812,14 @@ class PodsAPI {
      */
     public function save_helper ( $params, $sanitized = false ) {
         $params = (object) $params;
+
+        if ( isset( $params->phpcode ) ) {
+            $params->code = $params->phpcode;
+            unset( $params->phpcode );
+        }
+
         $params->type = 'helper';
+
         return $this->save_object( $params, $sanitized );
     }
 
@@ -1993,7 +2010,7 @@ class PodsAPI {
             }
 
             // Call any pre-save helpers (if not bypassed)
-            if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) {
+            if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) {
                 if ( !empty( $pod[ 'options' ] ) && is_array( $pod[ 'options' ] ) ) {
                     $helpers = array( 'pre_save_helpers', 'post_save_helpers' );
 
@@ -2010,7 +2027,7 @@ class PodsAPI {
                         $helper = $this->load_helper( array( 'name' => $helper ) );
 
                         if ( false !== $helper )
-                            echo eval( '?>' . $helper[ 'code' ] );
+                            eval( '?>' . $helper[ 'code' ] );
                     }
                 }
             }
@@ -2327,15 +2344,15 @@ class PodsAPI {
             }
 
             // Call any post-save helpers (if not bypassed)
-            if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) {
+            if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) {
                 if ( !empty( $post_save_helpers ) ) {
                     pods_deprecated( sprintf( __( 'Post-save helpers are deprecated, use the action pods_post_save_pod_item_%s instead', 'pods' ), $params->pod ), '2.0.0' );
 
                     foreach ( $post_save_helpers as $helper ) {
                         $helper = $this->load_helper( array( 'name' => $helper ) );
 
-                        if ( false !== $helper && ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) )
-                            echo eval( '?>' . $helper[ 'code' ] );
+                        if ( false !== $helper && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) )
+                            eval( '?>' . $helper[ 'code' ] );
                     }
                 }
             }
@@ -2839,7 +2856,7 @@ class PodsAPI {
             $this->do_hook( "pre_delete_pod_item_{$params->pod}", $params, $pod );
 
             // Call any pre-save helpers (if not bypassed)
-            if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) {
+            if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) {
                 if ( !empty( $pod[ 'options' ] ) && is_array( $pod[ 'options' ] ) ) {
                     $helpers = array( 'pre_delete_helpers', 'post_delete_helpers' );
 
@@ -2856,7 +2873,7 @@ class PodsAPI {
                         $helper = $this->load_helper( array( 'name' => $helper ) );
 
                         if ( false !== $helper )
-                            echo eval( '?>' . $helper[ 'code' ] );
+                            eval( '?>' . $helper[ 'code' ] );
                     }
                 }
             }
@@ -2884,7 +2901,7 @@ class PodsAPI {
             $this->do_hook( "post_delete_pod_item_{$params->pod}", $params, $pod );
 
             // Call any post-save helpers (if not bypassed)
-            if ( !defined( 'PODS_DISABLE_EVAL' ) || PODS_DISABLE_EVAL ) {
+            if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) {
                 if ( !empty( $post_delete_helpers ) ) {
                     pods_deprecated( sprintf( __( 'Post-delete helpers are deprecated, use the action pods_post_delete_pod_item_%s instead', 'pods' ), $params->pod ), '2.0.0' );
 
@@ -2892,7 +2909,7 @@ class PodsAPI {
                         $helper = $this->load_helper( array( 'name' => $helper ) );
 
                         if ( false !== $helper )
-                            echo eval( '?>' . $helper[ 'code' ] );
+                            eval( '?>' . $helper[ 'code' ] );
                     }
                 }
             }
@@ -2950,9 +2967,7 @@ class PodsAPI {
         if ( !is_array( $params ) && !is_object( $params ) )
             $params = array( 'name' => $params );
 
-        $params = (object) pods_sanitize( $params );
-
-        if ( isset( $params->post_name ) ) {
+        if ( is_object( $params ) && isset( $params->post_name ) ) {
             $pod = get_transient( 'pods_pod_' . $params->post_name );
 
             if ( false !== $pod )
@@ -2961,6 +2976,8 @@ class PodsAPI {
             $_pod = get_object_vars( $params );
         }
         else {
+            $params = (object) pods_sanitize( $params );
+
             if ( ( !isset( $params->id ) || empty( $params->id ) ) && ( !isset( $params->name ) || empty( $params->name ) ) )
                 return pods_error( 'Either Pod ID or Name are required', $this );
 
@@ -3053,6 +3070,8 @@ class PodsAPI {
 
         if ( !empty( $fields ) ) {
             foreach ( $fields as $field ) {
+                $field->pod = $pod[ 'name' ];
+
                 $field = $this->load_field( $field );
 
                 $field = PodsForm::field_setup( $field, null, $field[ 'type' ] );
@@ -3243,6 +3262,8 @@ class PodsAPI {
         if ( !isset( $params->table_info ) )
             $params->table_info = false;
 
+        $pod = array();
+
         if ( isset( $params->post_title ) )
             $_field = $params;
         elseif ( isset( $params->id ) && !empty( $params->id ) )
@@ -3312,6 +3333,16 @@ class PodsAPI {
             'sister_field_id' => '',
             'table_info' => array()
         );
+
+        if ( isset( $pod[ 'name' ] ) )
+            $field[ 'pod' ] = $pod[ 'name' ];
+        elseif ( isset( $_field[ 'pod' ] ) )
+            $field[ 'pod' ] = $_field[ 'pod' ];
+        else {
+            $pod = $this->load_pod( array( 'id' => $field[ 'pod_id' ] ) );
+
+            $field[ 'pod' ] = $pod[ 'name' ];
+        }
 
         $field[ 'options' ] = get_post_meta( $field[ 'id' ] );
 
@@ -3440,7 +3471,7 @@ class PodsAPI {
                         'pod_id' => $field->post_parent
                     ) );
 
-                    if ( empty( $params->type ) || in_array( $fields[ 'type' ], $params->type ) )
+                    if ( empty( $params->type ) || in_array( $field[ 'type' ], $params->type ) )
                         $fields[ $field[ 'name' ] ] = $field;
                 }
             }
@@ -3461,9 +3492,7 @@ class PodsAPI {
      * @since 2.0.0
      */
     public function load_object ( $params, $strict = false ) {
-        $params = (object) pods_sanitize( $params );
-
-        if ( isset( $params->post_name ) ) {
+        if ( is_object( $params ) && isset( $params->post_name ) ) {
             $type = ltrim( $params->post_type, '_' );
             $object = get_transient( $type . '_' . $params->post_name );
 
@@ -3473,6 +3502,8 @@ class PodsAPI {
             $_object = get_object_vars( $params );
         }
         else {
+            $params = (object) pods_sanitize( $params );
+
             if ( !isset( $params->type ) || empty( $params->type ) )
                 return pods_error( __( 'Object type is required', 'pods' ), $this );
 
@@ -4030,6 +4061,11 @@ class PodsAPI {
             'orderby' => null
         );
 
+        if ( empty( $object_type ) ) {
+            $object_type = 'post_type';
+            $object = 'post';
+        }
+
         if ( 'pod' == $object_type && null === $pod ) {
             if ( !empty( $object ) )
                 $name = $object;
@@ -4045,8 +4081,35 @@ class PodsAPI {
             }
         }
 
-        if ( 'pod' == $object_type )
+        if ( 'pod' == $object_type ) {
             $info[ 'table' ] = $wpdb->prefix . 'pods_' . ( empty( $object ) ? $name : $object );
+
+            if ( is_array( $pod ) ) {
+                if ( isset( $pod[ 'options' ] ) && 'pod' == pods_var( 'type', $pod ) )
+                    $info[ 'field_index' ] = pods_var( 'pod_index', $pod[ 'options' ], 'id', null, true );
+
+                $slug_field = get_posts( array(
+                    'post_type' => '_pods_field',
+                    'posts_per_page' => 1,
+                    'nopaging' => true,
+                    'post_parent' => $pod[ 'id' ],
+                    'orderby' => 'menu_order',
+                    'order' => 'ASC',
+                    'meta_query' => array(
+                        array(
+                            'key' => 'type',
+                            'value' => 'slug',
+                        )
+                    )
+                ) );
+
+                if ( !empty( $slug_field ) ) {
+                    $slug_field = $slug_field[ 0 ];
+
+                    $info[ 'field_slug' ] = $slug_field->post_name;
+                }
+            }
+        }
         elseif ( 'post_type' == $object_type || 'media' == $object_type ) {
             $info[ 'table' ] = $wpdb->posts;
             $info[ 'field_id' ] = 'ID';
@@ -4103,12 +4166,7 @@ class PodsAPI {
 
         $info[ 'table' ] = pods_clean_name( $info[ 'table' ], false );
         $info[ 'field_id' ] = pods_clean_name( $info[ 'field_id' ], false );
-
-        if ( is_array( $pod ) && isset( $pod[ 'options' ] ) && 'pod' == pods_var( 'type', $pod ) )
-            $info[ 'field_index' ] = pods_var( 'pod_index', $pod[ 'options' ], 'id', null, true );
-
         $info[ 'field_index' ] = pods_clean_name( $info[ 'field_index' ], false );
-
         $info[ 'field_slug' ] = pods_clean_name( $info[ 'field_slug' ], false );
 
         if ( empty( $info[ 'orderby' ] ) )
@@ -4331,13 +4389,13 @@ class PodsAPI {
         if ( isset( $data[ 'helpers' ] ) ) {
             foreach ( $data[ 'helpers' ] as $helper ) {
                 // backwards compatibility
-                if ( isset( $helper[ 'helper_type' ] ) ) {
-                    if ( 'before' == $helper[ 'helper_type' ] )
-                        $helper[ 'helper_type' ] = 'pre_save';
-                    if ( 'after' == $helper[ 'helper_type' ] )
-                        $helper[ 'helper_type' ] = 'post_save';
+                if ( isset( $helper[ 'type' ] ) ) {
+                    if ( 'before' == $helper[ 'type' ] )
+                        $helper[ 'type' ] = 'pre_save';
+                    if ( 'after' == $helper[ 'type' ] )
+                        $helper[ 'type' ] = 'post_save';
                 }
-                $defaults = array( 'name' => '', 'helper_type' => 'display', 'phpcode' => '' );
+                $defaults = array( 'name' => '', 'type' => 'display', 'phpcode' => '' );
                 $params = array_merge( $defaults, $helper );
                 if ( !defined( 'PODS_STRICT_MODE' ) || !PODS_STRICT_MODE )
                     $params = pods_sanitize( $params );

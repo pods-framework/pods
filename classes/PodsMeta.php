@@ -144,11 +144,15 @@ class PodsMeta {
     }
 
     /**
-     * @param $pod
-     * @param $label
-     * @param $fields
-     * @param string $context
-     * @param string $priority
+     * Add a meta group of fields to add/edit forms
+     *
+     * @param string|array $pod The pod or type of element to attach the group to.
+     * @param string $label Title of the edit screen section, visible to user.
+     * @param string|array $fields Either a comma separated list of text fields or an associative array containing field infomration.
+     * @param string $context (optional) The part of the page where the edit screen section should be shown ('normal', 'advanced', or 'side').
+     * @param string $priority (optional) The priority within the context where the boxes should show ('high', 'core', 'default' or 'low').
+     *
+     * @since 2.0.0
      *
      * @return mixed|void
      */
@@ -262,8 +266,8 @@ class PodsMeta {
             if ( !has_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) ) )
                 add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
 
-            if ( !has_action( 'save_post', array( $this, 'save_post' ), 10, 2 ) )
-                add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
+            /*if ( !has_action( 'save_post', array( $this, 'save_post' ), 10, 2 ) )
+                add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );*/
         }
         elseif ( 'taxonomy' == $pod[ 'type' ] ) {
             if ( !has_action( $pod[ 'object' ] . '_edit_form_fields', array( $this, 'meta_taxonomy' ), 10, 2 ) ) {
@@ -409,22 +413,22 @@ class PodsMeta {
         if ( is_object( $post ) )
             $id = $post->ID;
 
-        $pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id );
+        $pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id, true );
 
         foreach ( $metabox[ 'args' ][ 'group' ][ 'fields' ] as $field ) {
             $value = '';
 
-            if ( !empty( $pod ) )
-                $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
-            elseif ( !empty( $id ) ) {
+            if ( !empty( $pod ) ) {
                 pods_no_conflict_on( 'post' );
 
-                $value = get_post_meta( $id, $field[ 'name' ], true );
+                $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
 
                 pods_no_conflict_off( 'post' );
             }
+            elseif ( !empty( $id ) )
+                $value = get_post_meta( $id, $field[ 'name' ], true );
             ?>
-            <tr class="form-field">
+            <tr class="form-field pods-field">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
                 <td>
                     <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
@@ -458,12 +462,13 @@ class PodsMeta {
         if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || in_array( $post->post_type, $blacklisted_types ) )
             return $post_id;
 
-        pods_no_conflict_on( 'post' );
-
         $groups = $this->groups_get( 'post_type', $post->post_type );
 
         if ( empty( $groups ) )
             return $post_id;
+
+        // Infinite loop fix
+        remove_action( current_filter(), array( $this, __FUNCTION__ ), 10 );
 
         $data = array();
 
@@ -475,7 +480,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
@@ -492,12 +497,14 @@ class PodsMeta {
         if ( !empty( $pod ) )
             $pod->save( $data );
         elseif ( !empty( $id ) ) {
+            pods_no_conflict_on( 'post' );
+
             foreach ( $data as $field => $value ) {
                 update_post_meta( $id, $field, $value );
             }
-        }
 
-        pods_no_conflict_off( 'post' );
+            pods_no_conflict_off( 'post' );
+        }
 
         do_action( 'pods_meta_save_post', $data, $pod, $id, $groups, $post, $post->post_type );
         do_action( "pods_meta_save_post_{$post->post_type}", $data, $pod, $id, $groups, $post );
@@ -531,7 +538,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
                 $value = '';
@@ -580,14 +587,12 @@ class PodsMeta {
         $id = $post_id;
         $pod = null;
 
-        pods_no_conflict_on( 'post' );
-
         foreach ( $groups as $group ) {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
@@ -603,12 +608,14 @@ class PodsMeta {
         if ( !empty( $pod ) )
             $pod->save( $data );
         elseif ( !empty( $id ) ) {
+            pods_no_conflict_on( 'post' );
+
             foreach ( $data as $field => $value ) {
                 update_post_meta( $id, $field, $value );
             }
-        }
 
-        pods_no_conflict_off( 'post' );
+            pods_no_conflict_off( 'post' );
+        }
 
         do_action( 'pods_meta_save_media', $data, $pod, $id, $groups, $post, $attachment );
 
@@ -641,7 +648,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
                 $value = '';
@@ -651,7 +658,7 @@ class PodsMeta {
 
                 if ( !is_object( $tag ) ) {
                     ?>
-                <div class="form-field">
+                <div class="form-field pods-field">
                     <?php
                     echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] );
                     echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id );
@@ -662,7 +669,7 @@ class PodsMeta {
                 }
                 else {
                     ?>
-                <tr class="form-field">
+                <tr class="form-field pods-field">
                     <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
                     <td>
                         <?php
@@ -702,7 +709,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
@@ -745,7 +752,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
             ?>
         <h3><?php echo $group[ 'label' ]; ?></h3>
 
@@ -765,7 +772,7 @@ class PodsMeta {
                         pods_no_conflict_off( 'user' );
                     }
                     ?>
-                    <tr class="form-field">
+                    <tr class="form-field pods-field">
                         <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
                         <td>
                             <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
@@ -803,7 +810,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
@@ -846,7 +853,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
                 $value = '';
@@ -861,7 +868,7 @@ class PodsMeta {
                     pods_no_conflict_off( 'comment' );
                 }
                 ?>
-            <p class="comment-form-author comment-form-pods-meta-<?php echo $field[ 'name' ]; ?>">
+            <p class="comment-form-author comment-form-pods-meta-<?php echo $field[ 'name' ]; ?>  pods-field">
                 <?php
                 echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] );
                 echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id );
@@ -891,7 +898,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
                 $value = '';
@@ -908,7 +915,7 @@ class PodsMeta {
 
                 ob_start();
                 ?>
-            <p class="comment-form-author comment-form-pods-meta-<?php echo $field[ 'name' ]; ?>">
+            <p class="comment-form-author comment-form-pods-meta-<?php echo $field[ 'name' ]; ?> pods-field">
                 <?php
                 echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] );
                 echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id );
@@ -971,7 +978,7 @@ class PodsMeta {
         if ( is_object( $comment ) )
             $id = $comment->comment_ID;
 
-        $pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id );
+        $pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id, true );
 
         foreach ( $metabox[ 'args' ][ 'group' ][ 'fields' ] as $field ) {
             $value = '';
@@ -979,7 +986,7 @@ class PodsMeta {
             if ( !empty( $pod ) )
                 $value = $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) );
             ?>
-            <tr class="form-field">
+            <tr class="form-field pods-field">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
                 <td>
                     <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
@@ -1012,7 +1019,7 @@ class PodsMeta {
                 continue;
 
             if ( null === $pod )
-                $pod = pods( $group[ 'pod' ][ 'name' ], $id );
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
                 if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )

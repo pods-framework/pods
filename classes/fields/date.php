@@ -137,6 +137,9 @@ class PodsField_Date extends PodsField {
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
 
+        if ( is_array( $value ) )
+            $value = implode( ' ', $value );
+
         // Format Value
         $value = $this->display( $value, $name, $options, null, $pod, $id );
 

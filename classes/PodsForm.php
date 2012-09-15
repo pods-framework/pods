@@ -117,7 +117,14 @@ class PodsForm {
 
         ob_start();
 
-        if ( method_exists( get_class(), 'field_' . $type ) )
+        $helper = false;
+
+        if ( 0 < strlen( pods_var_raw( 'input_helper', $options ) ) )
+            $helper = pods_api()->load_helper( array( 'name' => $options[ 'input_helper' ] ) );
+
+        if ( !empty( $helper ) && 0 < strlen( pods_var_raw( 'code', $helper ) ) && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) )
+            eval( '?>' . $helper[ 'code' ] );
+        elseif ( method_exists( get_class(), 'field_' . $type ) )
             echo call_user_func( array( get_class(), 'field_' . $type ), $name, $value, $options );
         elseif ( is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'input' ) )
             self::$loaded[ $type ]->input( $name, $value, $options, $pod, $id );
@@ -195,6 +202,7 @@ class PodsForm {
      */
     public static function merge_attributes ( $attributes, $name = null, $type = null, $options = null ) {
         $options = (array) $options;
+
         if ( !in_array( $type, array( 'label', 'comment' ) ) ) {
             $name_clean = self::clean( $name );
             $name_more_clean = self::clean( $name, true );
@@ -209,12 +217,14 @@ class PodsForm {
 
             $attributes = array_merge( $_attributes, (array) $attributes );
         }
-        if ( isset( $options[ 'attributes' ] ) && is_array( $options[ 'attributes' ] ) && !empty( $options[ 'attributes' ] ) ) {
+
+        if ( isset( $options[ 'attributes' ] ) && is_array( $options[ 'attributes' ] ) && !empty( $options[ 'attributes' ] ) )
             $attributes = array_merge( $attributes, $options[ 'attributes' ] );
-        }
+
         if ( isset( $options[ 'class' ] ) && !empty( $options[ 'class' ] ) ) {
             if ( is_array( $options[ 'class' ] ) )
                 $options[ 'class' ] = implode( ' ', $options[ 'class' ] );
+
             $options[ 'class' ] = (string) $options[ 'class' ];
             if ( isset( $attributes[ 'class' ] ) )
                 $attributes[ 'class' ] = $attributes[ 'class' ] . ' ' . $options[ 'class' ];
@@ -253,6 +263,15 @@ class PodsForm {
             unset( $options[ 'options' ] );
 
             $options = array_merge( $options_temp, $options );
+
+            $override = array(
+                'class'
+            );
+
+            foreach ( $override as $check ) {
+                if ( isset( $options_temp[ $check ] ) )
+                    $options[ $check ] = $options_temp[ $check ];
+            }
         }
 
         $defaults = self::options_setup( $type, $options );
@@ -357,8 +376,8 @@ class PodsForm {
         if ( $single )
             $fields = array( $fields );
 
-        foreach ( $fields as &$field ) {
-            $field = self::field_setup( $field, $core_defaults, pods_var( 'type', $field, 'text' ) );
+        foreach ( $fields as $f => $field ) {
+            $fields[ $f ] = self::field_setup( $field, $core_defaults, pods_var( 'type', $field, 'text' ) );
         }
 
         if ( $single )
@@ -414,8 +433,8 @@ class PodsForm {
             $field = array( 'default' => $field );
 
         if ( isset( $field[ 'group' ] ) && is_array( $field[ 'group' ] ) ) {
-            foreach ( $field[ 'group' ] as &$group_option ) {
-                $group_option = array_merge( $core_defaults, $group_option );
+            foreach ( $field[ 'group' ] as $g => $group_option ) {
+                $field[ 'group' ][ $g ] = array_merge( $core_defaults, $group_option );
             }
         }
 

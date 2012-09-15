@@ -63,8 +63,8 @@ class Pods_Templates extends PodsComponent {
         add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
 
         add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
-        add_filter( 'pods_meta_get_post_meta', array( $this, 'get_meta' ), 10, 2 );
-        add_filter( 'pods_meta_update_post_meta', array( $this, 'save_meta' ), 10, 2 );
+        add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 10, 4 );
+        add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 10, 4 );
 
         add_action( 'pods_meta_save_post__pods_template', array( $this, 'clear_cache' ), 10, 5 );
         add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
@@ -156,9 +156,9 @@ class Pods_Templates extends PodsComponent {
      *
      * @return array|bool|int|mixed|null|string|void
      */
-    public function get_meta ( $_null = null, $args = null ) {
-        if ( 'code' == $args[ 2 ] ) {
-            $post = get_post( $args[ 1 ] );
+    public function get_meta( $_null, $post_ID = null, $meta_key = null, $single = false ) {
+        if ( 'code' == $meta_key ) {
+            $post = get_post( $post_ID );
 
             if ( $this->object_type == $post->post_type )
                 return $post->post_content;
@@ -175,15 +175,17 @@ class Pods_Templates extends PodsComponent {
      *
      * @return bool|int|null
      */
-    public function save_meta ( $_null = null, $args = null ) {
-        if ( 'code' == $args[ 2 ] ) {
-            $post = get_post( $args[ 1 ] );
+    public function save_meta( $_null, $post_ID = null, $meta_key = null, $meta_value = null ) {
+        if ( 'code' == $meta_key ) {
+            $post = get_post( $post_ID );
 
             if ( $this->object_type == $post->post_type ) {
                 $postdata = array(
-                    'ID' => $args[ 1 ],
-                    'post_content' => $args[ 3 ]
+                    'ID' => $post_ID,
+                    'post_content' => $meta_value
                 );
+
+                remove_filter( current_filter(), array( $this, __FUNCTION__ ), 10 );
 
                 wp_update_post( $postdata );
 

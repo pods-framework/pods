@@ -1,7 +1,9 @@
 <?php
 global $pods_i;
 
-$field_types = pods_api()->get_field_types();
+$api = pods_api();
+
+$field_types = $api->get_field_types();
 
 $field_types_select = array();
 
@@ -22,10 +24,18 @@ foreach ( $field_types as $type => $label ) {
     }
 }
 
+$input_helpers = array( '' => '-- Select --' );
+
+$helpers = $api->load_helpers( array( 'options' => array( 'helper_type' => 'input' ) ) );
+
+foreach ( $helpers as $helper ) {
+    $input_helpers[ $helper[ 'name' ] ] = $helper[ 'name' ];
+}
+
 $advanced_fields = array(
     __( 'Visual', 'pods' ) => array(
-        'css_class_name' => array(
-            'label' => __( 'CSS Class Name', 'pods' ),
+        'class' => array(
+            'label' => __( 'Additional CSS Classes', 'pods' ),
             'help' => __( 'help', 'pods' ),
             'type' => 'text',
             'default' => ''
@@ -35,7 +45,7 @@ $advanced_fields = array(
             'help' => __( 'help', 'pods' ),
             'type' => 'pick',
             'default' => '',
-            'data' => array( '' => '-- Select --' )
+            'data' => $input_helpers
         )
     ),
     __( 'Values', 'pods' ) => array(
@@ -149,7 +159,7 @@ $pick_object = array(
     )
 );
 
-$_pods = pods_api()->load_pods();
+$_pods = $api->load_pods();
 
 foreach ( $_pods as $pod ) {
     $pick_object[ 'Pods' ][ 'pod-' . $pod[ 'name' ] ] = $pod[ 'label' ] . ' (' . $pod[ 'name' ] . ')';
@@ -207,8 +217,7 @@ $field_settings = array(
     'field_defaults' => $field_defaults,
     'advanced_fields' => $advanced_fields,
     'pick_object' => $pick_object,
-    'sister_field_id' => array( '' => '-- Select --' ),
-    'input_helper' => array( '' => '-- Select --' )
+    'sister_field_id' => array( '' => '-- Select --' )
 );
 
 $field_settings = apply_filters( 'pods_field_settings', apply_filters( 'pods_field_settings_' . $pod[ 'name' ], $field_settings, $pod ) );
@@ -897,20 +906,60 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
     ?>
 
     <div class="pods-field-option">
-        <?php echo PodsForm::label( 'pre_save_helpers', __( 'Pre-Save Helper(s)', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'pre_save_helpers', pods_var_raw( 'pre_save_helpers', $pod ), 'pick', array( 'data' => array( '' => '-- Select --' ) ) ); ?>
+        <?php
+            $pre_save_helpers = array( '' => '-- Select --' );
+
+            $helpers = $api->load_helpers( array( 'options' => array( 'helper_type' => 'pre_save' ) ) );
+
+            foreach ( $helpers as $helper ) {
+                $pre_save_helpers[ $helper[ 'name' ] ] = $helper[ 'name' ];
+            }
+
+            echo PodsForm::label( 'pre_save_helpers', __( 'Pre-Save Helper(s)', 'pods' ), __( 'help', 'pods' ) );
+            echo PodsForm::field( 'pre_save_helpers', pods_var_raw( 'pre_save_helpers', $pod ), 'pick', array( 'data' => $pre_save_helpers ) );
+        ?>
     </div>
     <div class="pods-field-option">
-        <?php echo PodsForm::label( 'post_save_helpers', __( 'Post-Save Helper(s)', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'post_save_helpers', pods_var_raw( 'post_save_helpers', $pod ), 'pick', array( 'data' => array( '' => '-- Select --' ) ) ); ?>
+        <?php
+            $post_save_helpers = array( '' => '-- Select --' );
+
+            $helpers = $api->load_helpers( array( 'options' => array( 'helper_type' => 'post_save' ) ) );
+
+            foreach ( $helpers as $helper ) {
+                $post_save_helpers[ $helper[ 'name' ] ] = $helper[ 'name' ];
+            }
+
+            echo PodsForm::label( 'post_save_helpers', __( 'Post-Save Helper(s)', 'pods' ), __( 'help', 'pods' ) );
+            echo PodsForm::field( 'post_save_helpers', pods_var_raw( 'post_save_helpers', $pod ), 'pick', array( 'data' => $post_save_helpers ) );
+        ?>
     </div>
     <div class="pods-field-option">
-        <?php echo PodsForm::label( 'pre_delete_helpers', __( 'Pre-Delete Helper(s)', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'pre_delete_helpers', pods_var_raw( 'pre_delete_helpers', $pod ), 'pick', array( 'data' => array( '' => '-- Select --' ) ) ); ?>
+        <?php
+            $pre_delete_helpers = array( '' => '-- Select --' );
+
+            $helpers = $api->load_helpers( array( 'options' => array( 'helper_type' => 'pre_delete' ) ) );
+
+            foreach ( $helpers as $helper ) {
+                $pre_delete_helpers[ $helper[ 'name' ] ] = $helper[ 'name' ];
+            }
+
+            echo PodsForm::label( 'pre_delete_helpers', __( 'Pre-Delete Helper(s)', 'pods' ), __( 'help', 'pods' ) );
+            echo PodsForm::field( 'pre_delete_helpers', pods_var_raw( 'pre_delete_helpers', $pod ), 'pick', array( 'data' => $pre_delete_helpers ) );
+        ?>
     </div>
     <div class="pods-field-option">
-        <?php echo PodsForm::label( 'post_delete_helpers', __( 'Post-Delete Helper(s)', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'post_delete_helpers', pods_var_raw( 'post_delete_helpers', $pod ), 'pick', array( 'data' => array( '' => '-- Select --' ) ) ); ?>
+        <?php
+            $post_delete_helpers = array( '' => '-- Select --' );
+
+            $helpers = $api->load_helpers( array( 'options' => array( 'helper_type' => 'post_delete' ) ) );
+
+            foreach ( $helpers as $helper ) {
+                $post_delete_helpers[ $helper[ 'name' ] ] = $helper[ 'name' ];
+            }
+
+            echo PodsForm::label( 'post_delete_helpers', __( 'Post-Delete Helper(s)', 'pods' ), __( 'help', 'pods' ) );
+            echo PodsForm::field( 'post_delete_helpers', pods_var_raw( 'post_delete_helpers', $pod ), 'pick', array( 'data' => $post_delete_helpers ) );
+        ?>
     </div>
 </div>
 </div>

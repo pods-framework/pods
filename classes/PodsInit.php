@@ -123,21 +123,21 @@ class PodsInit {
         wp_register_script( 'pods-json', PODS_URL . 'ui/js/jquery.json.js', array( 'jquery' ), '2.3' );
 
         wp_register_style( 'pods-qtip', PODS_URL . 'ui/css/jquery.qtip.min.css', array(), '2.0-2012-07-03' );
-        wp_register_script( 'pods-qtip', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.0-2012-07-03' );
+        wp_register_script( 'jquery-qtip', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.0-2012-07-03' );
 
         wp_register_style( 'pods', PODS_URL . 'ui/css/pods-form.css', array(), PODS_VERSION );
         wp_register_script( 'pods', PODS_URL . 'ui/js/jquery.pods.js', array(
             'jquery',
             'pods-json',
-            'pods-qtip'
+            'jquery-qtip'
         ), PODS_VERSION );
 
         wp_register_style( 'pods-cleditor', PODS_URL . 'ui/css/jquery.cleditor.css', array(), '1.3.0' );
         wp_register_script( 'pods-cleditor', PODS_URL . 'ui/js/jquery.cleditor.min.js', array( 'jquery' ), '1.3.0' );
 
         wp_register_style( 'pods-codemirror', PODS_URL . 'ui/css/codemirror.css', array(), '2.33' );
-        wp_register_script( 'pods-codemirror', PODS_URL . 'ui/js/codemirror.js', array(), '2.33' );
-        wp_register_script( 'pods-codemirror-loadmode', PODS_URL . 'ui/js/codemirror/utils/loadmode.js', '2.33');
+        wp_register_script( 'pods-codemirror', PODS_URL . 'ui/js/codemirror.js', array(), '2.33', true );
+        wp_register_script( 'pods-codemirror-loadmode', PODS_URL . 'ui/js/codemirror/utils/loadmode.js', array( 'pods-codemirror' ), '2.33', true );
 
         if ( !wp_style_is( 'jquery-ui-timepicker', 'registered' ) )
             wp_register_style( 'jquery-ui-timepicker', PODS_URL . 'ui/css/jquery.ui.timepicker.css', array(), '1.0.1' );
@@ -210,6 +210,8 @@ class PodsInit {
      *
      */
     function setup_content_types () {
+        global $wp_version;
+
         $post_types = PodsMeta::$post_types;
         $taxonomies = PodsMeta::$taxonomies;
 
@@ -274,13 +276,16 @@ class PodsInit {
                     'post-formats' => (boolean) pods_var( 'supports_post_formats', $post_type, false )
                 );
 
-                // WP needs something, if this was empty and none were enabled, it would show title+editor :(
-                $cpt_supports = array( '_bug_fix_for_wp' );
+                // WP needs something, if this was empty and none were enabled, it would show title+editor pre 3.5 :(
+                $cpt_supports = array( '_bug_fix_pre_35' );
 
                 foreach ( $cpt_supported as $cpt_support => $supported ) {
                     if ( true === $supported )
                         $cpt_supports[] = $cpt_support;
                 }
+
+                if ( 1 == count( $cpt_supports ) && version_compare( '3.5', $wp_version, '<=' ) )
+                    $cpt_supports = false;
 
                 // Rewrite
                 $cpt_rewrite = pods_var( 'rewrite', $post_type, true );
@@ -542,9 +547,7 @@ class PodsInit {
 
         add_action( 'wpmu_new_blog', array( $this, 'new_blog' ), 10, 6 );
 
-        $pods_version = self::$version;
-
-        if ( empty( $pods_version ) || version_compare( $pods_version, '2.0.0-b-10', '<' ) )
+        if ( empty( self::$version ) || version_compare( self::$version, PODS_VERSION, '<' ) )
             $this->setup();
     }
 
@@ -595,7 +598,7 @@ class PodsInit {
         $install = false;
 
         if ( 0 < strlen( $pods_version ) ) {
-            if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-10', '<' ) ) {
+            if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, PODS_VERSION, '<' ) ) {
                 do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
 
                 if ( false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] ) )
@@ -633,7 +636,12 @@ class PodsInit {
                 $sql = explode( ";\n", str_replace( array( "\r", 'wp_' ), array( "\n", $wpdb->prefix ), $sql ) );
 
                 for ( $i = 0, $z = count( $sql ); $i < $z; $i++ ) {
-                    pods_query( trim( $sql[ $i ] ), 'Cannot setup SQL tables' );
+                    $query = trim( $sql[ $i ] );
+
+                    if ( empty( $query ) )
+                        continue;
+
+                    pods_query( $query, 'Cannot setup SQL tables' );
                 }
             }
 

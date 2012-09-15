@@ -732,12 +732,9 @@ class PodsUpgrade_2_0 {
             return $results;
 
         foreach ( $templates as $template ) {
-            $params = array(
-                'name' => $template->name,
-                'code' => $template->code,
-            );
+            unset( $template->id );
 
-            $results[] = $api->save_template( $params );
+            $results[] = $api->save_template( $template );
         }
 
         $this->update_progress( __FUNCTION__, true );
@@ -762,6 +759,8 @@ class PodsUpgrade_2_0 {
             return $results;
 
         foreach ( $pages as $page ) {
+            unset( $page->id );
+
             $results[] = $api->save_page( $page );
         }
 
@@ -787,13 +786,9 @@ class PodsUpgrade_2_0 {
             return $results;
 
         foreach ( $helpers as $helper ) {
-            $params = array(
-                'name' => $helper->name,
-                'helper_type' => $helper->helper_type,
-                'phpcode' => $helper->phpcode,
-            );
+            unset( $helper->id );
 
-            $results[] = $api->save_helper( $params );
+            $results[] = $api->save_helper( $helper );
         }
 
         $this->update_progress( __FUNCTION__, true );

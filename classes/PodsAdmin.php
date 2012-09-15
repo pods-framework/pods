@@ -106,7 +106,7 @@ class PodsAdmin {
                 wp_enqueue_script( 'pods-floatmenu' );
 
                 wp_enqueue_style( 'pods-qtip' );
-                wp_enqueue_script( 'pods-qtip' );
+                wp_enqueue_script( 'jquery-qtip' );
                 wp_enqueue_script( 'pods-qtip-init' );
 
                 wp_enqueue_script( 'pods' );
@@ -274,11 +274,6 @@ class PodsAdmin {
                     'label' => 'Setup',
                     'function' => array( $this, 'admin_setup' ),
                     'access' => 'pods'
-                ),
-                'pods-packages' => array(
-                    'label' => 'Import / Export',
-                    'function' => array( $this, 'admin_packages' ),
-                    'access' => 'pods_packages'
                 ),
                 'pods-components' => array(
                     'label' => 'Components',
@@ -581,22 +576,6 @@ class PodsAdmin {
     /**
      *
      */
-    public function admin_packages () {
-        pods_view( PODS_DIR . 'ui/admin/packages.php', compact( array_keys( get_defined_vars() ) ) );
-        /*pods_ui(array('sql' => array('table' => '@wp_pods_objects'),
-                      'icon' => PODS_URL .'ui/images/icon32.png',
-                      'items' => 'Packages',
-                      'item' => 'Package',
-                      'orderby' => 'name',
-                      'where' => 'type="package"',
-                      'fields' => array('manage' => array('name')),
-                      'actions_disabled' => array('edit', 'duplicate', 'view', 'export'),
-                      'actions_custom' => array('add' => array($this, 'admin_packages_add'))));*/
-    }
-
-    /**
-     *
-     */
     public function admin_components () {
         $components = PodsInit::$components->components;
 
@@ -725,6 +704,12 @@ class PodsAdmin {
             if ( isset( PodsInit::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] ) ) {
                 if ( 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] )
                     $toggle = 1;
+            }
+            if ( true === $component_data[ 'DeveloperMode' ] ) {
+                if ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) {
+                    unset( $components[ $component ] );
+                    continue;
+                }
             }
 
             $component_data = array(

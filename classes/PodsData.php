@@ -58,6 +58,11 @@ class PodsData {
     /**
      * @var string
      */
+    public $field_slug = '';
+
+    /**
+     * @var string
+     */
     public $join = '';
 
     /**
@@ -234,6 +239,9 @@ class PodsData {
             if ( isset( $this->pod_data[ 'field_index' ] ) )
                 $this->field_index = $this->pod_data[ 'field_index' ];
 
+            if ( isset( $this->pod_data[ 'field_slug' ] ) )
+                $this->field_slug = $this->pod_data[ 'field_slug' ];
+
             if ( isset( $this->pod_data[ 'where' ] ) )
                 $this->where = $this->pod_data[ 'where' ];
 
@@ -241,7 +249,7 @@ class PodsData {
                 $this->orderby = $this->pod_data[ 'orderby' ];
 
             if ( null !== $id && !is_array( $id ) && !is_object( $id ) ) {
-                $this->id = pods_absint( $id );
+                $this->id = $id;
 
                 $this->fetch( $this->id );
             }
@@ -436,6 +444,9 @@ class PodsData {
 
         // Build
         $this->sql = $this->build( $params );
+
+        if ( empty( $this->sql ) )
+            return array();
 
         // Get Data
         $results = pods_query( $this->sql, $this );
@@ -685,7 +696,6 @@ class PodsData {
                 $params->groupby = preg_replace( $find, $replace, $params->groupby );
                 $params->having = preg_replace( $find, $replace, $params->having );
                 $params->orderby = preg_replace( $find, $replace, $params->orderby );
-
                 if ( !empty( $found ) )
                     $joins = $this->traverse( $found, $params->fields );
                 elseif ( false !== $this->search )
@@ -712,7 +722,7 @@ class PodsData {
                     if ( !$attributes[ 'options' ][ 'search' ] )
                         continue;
 
-                    if ( in_array( $attributes[ 'type' ], array( 'date', 'time', 'datetime' ) ) )
+                    if ( in_array( $attributes[ 'type' ], array( 'date', 'time', 'datetime', 'pick', 'file' ) ) )
                         continue;
 
                     if ( is_array( $field ) )
@@ -808,6 +818,9 @@ class PodsData {
 
         // Build
         if ( null === $params->sql ) {
+            if ( empty( $params->table ) )
+                return false;
+
             $sql = "
                 SELECT SQL_CALC_FOUND_ROWS
                 " . ( !empty( $params->select ) ? ( is_array( $params->select ) ? implode( ', ', $params->select ) : $params->select ) : '*' ) . "
@@ -1119,7 +1132,13 @@ class PodsData {
         else {
             $this->row_number = -1;
 
+            $mode = 'id';
             $id = pods_absint( $row );
+
+            if ( !is_numeric( $row ) ) {
+                $mode = 'slug';
+                $id = $row;
+            }
 
             $row = false;
 
@@ -1131,7 +1150,10 @@ class PodsData {
             if ( false !== $row && is_array( $row ) )
                 $this->row = $row;
             elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
-                $this->row = get_post( $id, ARRAY_A );
+                if ( 'id' == $mode )
+                    $this->row = get_post( $id, ARRAY_A );
+
+                // @todo Handle slug
 
                 if ( empty( $this->row ) )
                     $this->row = false;
@@ -1144,7 +1166,10 @@ class PodsData {
                 if ( empty( $taxonomy ) )
                     $taxonomy = $this->pod_data[ 'name' ];
 
-                $this->row = get_term( $id, $taxonomy, ARRAY_A );
+                if ( 'id' == $mode )
+                    $this->row = get_term( $id, $taxonomy, ARRAY_A );
+
+                // @todo Handle slug
 
                 if ( empty( $this->row ) )
                     $this->row = false;
@@ -1152,7 +1177,10 @@ class PodsData {
                 $get_table_data = true;
             }
             elseif ( 'user' == $this->pod_data[ 'type' ] ) {
-                $this->row = get_userdata( $id );
+                if ( 'id' == $mode )
+                    $this->row = get_userdata( $id );
+
+                // @todo Handle slug
 
                 if ( empty( $this->row ) )
                     $this->row = false;
@@ -1178,6 +1206,11 @@ class PodsData {
                     'limit' => 1,
                     'search' => false
                 );
+
+                if ( 'slug' == $mode ) {
+                    $id = esc_sql( $id );
+                    $params[ 'where' ] = "`t`.`{$this->field_slug}` = '{$id}'";
+                }
 
                 $this->row = $this->select( $params );
 

@@ -10,6 +10,8 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
     pods_query( "DROP TABLE @wp_pods", false );
     pods_query( "DROP TABLE @wp_pods_fields", false );
     pods_query( "DROP TABLE @wp_pods_objects", false );
+
+    update_option( 'pods_framework_version', '2.0.0-a-31' );
 }
 
 if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-10', '<' ) ) {
@@ -22,6 +24,8 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
             update_post_meta( $author->ID, 'default_value', '{@user.ID}' );
         }
     }
+
+    update_option( 'pods_framework_version', '2.0.0-b-10' );
 }
 
 if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-11', '<' ) ) {
@@ -39,25 +43,11 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
             update_post_meta( $date->ID, 'date_time_format', 'h_mm_ss_A' );
         }
     }
+
+    update_option( 'pods_framework_version', '2.0.0-b-11' );
 }
 
 if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-12', '<' ) ) {
-    $tables = $wpdb->get_results( "SHOW TABLES LIKE '{$wpdb->prefix}pods%'", ARRAY_N );
-
-    if ( !empty( $tables ) ) {
-        foreach ( $tables as $table ) {
-            $table = $table[ 0 ];
-
-            if ( "{$wpdb->prefix}pods_rel" == $table )
-                $new_table = "{$wpdb->prefix}podsrel";
-            else
-                $new_table = str_replace( 'pods_tbl_', 'pods_', $table );
-
-            if ( $table != $new_table )
-                $wpdb->query( "ALTER TABLE `{$table}` RENAME `{$new_table}`" );
-        }
-    }
-
     $oldget = $_GET;
 
     $_GET[ 'toggle' ] = 1;
@@ -83,23 +73,244 @@ if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<'
             update_post_meta( $number->ID, 'number_max_length', '12' );
         }
     }
+
+    update_option( 'pods_framework_version', '2.0.0-b-12' );
 }
 
-if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-13', '<' ) ) {
+if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-14', '<' ) ) {
     $tables = $wpdb->get_results( "SHOW TABLES LIKE '{$wpdb->prefix}pods%'", ARRAY_N );
 
-    if ( !empty( $tables ) ) {
-        foreach ( $tables as $table ) {
-            $table = $table[ 0 ];
+    $podsrel_found = false;
 
-            if ( "{$wpdb->prefix}pods_rel" == $table )
+    if ( !empty( $tables ) ) {
+        foreach ( $tables as &$table ) {
+            $table = $table[ 0 ];
+            $new_table = $table;
+
+            if ( "{$wpdb->prefix}pods_rel" == $table ) {
                 $new_table = "{$wpdb->prefix}podsrel";
+
+                $podsrel_found = true;
+            }
+            elseif ( "{$wpdb->prefix}podsrel" == $table )
+                $podsrel_found = true;
             else
                 $new_table = str_replace( 'pods_tbl_', 'pods_', $table );
 
             if ( $table != $new_table )
                 $wpdb->query( "ALTER TABLE `{$table}` RENAME `{$new_table}`" );
         }
+    }
+
+    if ( !$podsrel_found ) {
+        // rerun install for any bugged versions
+        $sql = file_get_contents( PODS_DIR . 'sql/dump.sql' );
+        $sql = apply_filters( 'pods_install_sql', $sql, PODS_VERSION, $pods_version, $_blog_id );
+
+        $charset_collate = 'DEFAULT CHARSET utf8';
+
+        if ( !empty( $wpdb->charset ) )
+            $charset_collate = "DEFAULT CHARSET {$wpdb->charset}";
+
+        if ( !empty( $wpdb->collate ) )
+            $charset_collate .= " COLLATE {$wpdb->collate}";
+
+        if ( 'DEFAULT CHARSET utf8' != $charset_collate )
+            $sql = str_replace( 'DEFAULT CHARSET utf8', $charset_collate, $sql );
+
+        $sql = explode( ";\n", str_replace( array( "\r", 'wp_' ), array( "\n", $wpdb->prefix ), $sql ) );
+
+        for ( $i = 0, $z = count( $sql ); $i < $z; $i++ ) {
+            $query = trim( $sql[ $i ] );
+
+            if ( empty( $query ) )
+                continue;
+
+            pods_query( $query, 'Cannot setup SQL tables' );
+        }
+    }
+
+    pods_no_conflict_on( 'post' );
+
+    // convert field types based on options set
+
+    $fields = $wpdb->get_results( "
+            SELECT `p`.`ID`
+            FROM `{$wpdb->posts}` AS `p`
+            LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
+            WHERE
+                `p`.`post_type` = '_pods_field'
+                AND `pm`.`meta_key` = 'type'
+                AND `pm`.`meta_value` = 'date'
+        " );
+
+    if ( !empty( $fields ) ) {
+        foreach ( $fields as $field ) {
+            $new_type = get_post_meta( $field->ID, 'date_format_type', true );
+
+            if ( 'datetime' == $new_type ) {
+                $new = array(
+                    'date_format' => 'datetime_format',
+                    'date_time_type' => 'datetime_time_type',
+                    'date_time_format' => 'datetime_time_format',
+                    'date_html5' => 'datetime_html5'
+                );
+
+                update_post_meta( $field->ID, 'type', $new_type );
+            }
+            elseif ( 'time' == $new_type ) {
+                $new = array(
+                    'date_time_type' => 'time_type',
+                    'date_time_format' => 'time_format',
+                    'date_html5' => 'time_html5'
+                );
+
+                update_post_meta( $field->ID, 'type', $new_type );
+            }
+        }
+    }
+
+    $fields = $wpdb->get_results( "
+            SELECT `p`.`ID`
+            FROM `{$wpdb->posts}` AS `p`
+            LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
+            WHERE
+                `p`.`post_type` = '_pods_field'
+                AND `pm`.`meta_key` = 'type'
+                AND `pm`.`meta_value` = 'number'
+        " );
+
+    if ( !empty( $fields ) ) {
+        foreach ( $fields as $field ) {
+            $new_type = get_post_meta( $field->ID, 'number_format_type', true );
+
+            if ( 'currency' == $new_type ) {
+                $new = array(
+                    'number_format_currency_sign' => 'currency_format_sign',
+                    'number_format_currency_placement' => 'currency_format_placement',
+                    'number_format' => 'currency_format',
+                    'number_decimals' => 'currency_decimals',
+                    'number_max_length' => 'currency_max_length',
+                    'number_size' => 'currency_size'
+                );
+
+                update_post_meta( $field->ID, 'type', $new_type );
+            }
+        }
+    }
+
+    $fields = $wpdb->get_results( "
+            SELECT `p`.`ID`
+            FROM `{$wpdb->posts}` AS `p`
+            LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
+            WHERE
+                `p`.`post_type` = '_pods_field'
+                AND `pm`.`meta_key` = 'type'
+                AND `pm`.`meta_value` = 'paragraph'
+        " );
+
+    if ( !empty( $fields ) ) {
+        foreach ( $fields as $field ) {
+            $new_type = get_post_meta( $field->ID, 'paragraph_format_type', true );
+
+            if ( 'plain' != $new_type ) {
+                $new_type = 'wysiwyg';
+
+                $new = array(
+                    'paragraph_format_type' => 'wysiwyg_editor',
+                    'paragraph_allow_shortcode' => 'wysiwyg_allow_shortcode',
+                    'paragraph_allowed_html_tags' => 'wysiwyg_allowed_html_tags',
+                    'paragraph_max_length' => 'wysiwyg_max_length',
+                    'paragraph_size' => 'wysiwyg_size'
+                );
+
+                update_post_meta( $field->ID, 'type', $new_type );
+            }
+        }
+    }
+
+    $fields = $wpdb->get_results( "
+            SELECT `p`.`ID`
+            FROM `{$wpdb->posts}` AS `p`
+            LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
+            WHERE
+                `p`.`post_type` = '_pods_field'
+                AND `pm`.`meta_key` = 'type'
+                AND `pm`.`meta_value` = 'text'
+        " );
+
+    if ( !empty( $fields ) ) {
+        foreach ( $fields as $field ) {
+            $new_type = get_post_meta( $field->ID, 'text_format_type', true );
+
+            if ( 'website' == $new_type ) {
+                $new = array(
+                    'text_format_website' => 'website_format',
+                    'text_max_length' => 'website_max_length',
+                    'text_html5' => 'website_html5',
+                    'text_size' => 'website_size'
+                );
+
+                update_post_meta( $field->ID, 'type', $new_type );
+            }
+            elseif ( 'phone' == $new_type ) {
+                $new = array(
+                    'text_format_phone' => 'phone_format',
+                    'text_max_length' => 'phone_max_length',
+                    'text_html5' => 'phone_html5',
+                    'text_size' => 'phone_size'
+                );
+
+                update_post_meta( $field->ID, 'type', $new_type );
+            }
+            elseif ( 'email' == $new_type ) {
+                $new = array(
+                    'text_max_length' => 'email_max_length',
+                    'text_html5' => 'email_html5',
+                    'text_size' => 'email_size'
+                );
+
+                update_post_meta( $field->ID, 'type', $new_type );
+            }
+            elseif ( 'password' == $new_type ) {
+                $new = array(
+                    'text_max_length' => 'password_max_length',
+                    'text_size' => 'password_size'
+                );
+
+                update_post_meta( $field->ID, 'type', $new_type );
+            }
+        }
+    }
+
+    pods_no_conflict_off( 'post' );
+
+    update_option( 'pods_framework_version', '2.0.0-b-14' );
+}
+
+if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-b-15', '<' ) ) {
+    $helpers = $wpdb->get_results( "SELECT `ID` FROM `{$wpdb->posts}` WHERE `post_type` = '_pods_helper'" );
+
+    if ( !empty( $helpers ) ) {
+        foreach ( $helpers as $helper ) {
+            $wpdb->query( "UPDATE `{$wpdb->postmeta}` SET `meta_key` = 'helper_type' WHERE `meta_key` = 'type' AND `post_id` = {$helper->ID}" );
+        }
+    }
+
+    update_option( 'pods_framework_version', '2.0.0-b-15' );
+}
+
+/* ===================================
+ *
+ * Old upgrade code from Alpha to Beta
+ *
+ * ===================================
+ */
+function pods_2_beta_migrate_type ( $id, $options ) {
+    global $wpdb;
+
+    foreach ( $options as $old => $new ) {
+        $wpdb->query( $wpdb->prepare( "UPDATE `{$wpdb->postmeta}` SET `meta_key` = %s WHERE `meta_key` = %s", array( $new, $old ) ) );
     }
 }
 
@@ -189,7 +400,7 @@ function pods_2_alpha_migrate_helpers () {
 
         $helper_params = array(
             'name' => $row->name,
-            'helper_type' => $opts->helper_type,
+            'type' => $opts->type,
             'phpcode' => $opts->phpcode,
         );
 

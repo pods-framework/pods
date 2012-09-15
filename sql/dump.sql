@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS wp_podsrel;
+DROP TABLE IF EXISTS `wp_podsrel`;
 
 CREATE TABLE `wp_podsrel` (
     `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,

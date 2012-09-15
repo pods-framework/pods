@@ -61,13 +61,13 @@ class Pods_Pages extends PodsComponent {
         register_post_type( $this->object_type, apply_filters( 'pods_internal_register_post_type_object_page', $args ) );
 
         if ( !is_admin() )
-            add_action( 'init', array( $this, 'page_check' ), 12 );
+            add_action( 'load_textdomain', array( $this, 'page_check' ), 12 );
 
         add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
 
         add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
-        add_filter( 'pods_meta_get_post_meta', array( $this, 'get_meta' ), 10, 2 );
-        add_filter( 'pods_meta_update_post_meta', array( $this, 'save_meta' ), 10, 2 );
+        add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 10, 4 );
+        add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 10, 4 );
 
         add_action( 'pods_meta_save_post__pods_page', array( $this, 'clear_cache' ), 10, 5 );
         add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
@@ -195,9 +195,9 @@ class Pods_Pages extends PodsComponent {
      *
      * @return array|bool|int|mixed|null|string|void
      */
-    public function get_meta ( $_null = null, $args = null ) {
-        if ( 'code' == $args[ 2 ] ) {
-            $post = get_post( $args[ 1 ] );
+    public function get_meta ( $_null, $post_ID = null, $meta_key = null, $single = false ) {
+        if ( 'code' == $meta_key ) {
+            $post = get_post( $post_ID );
 
             if ( $this->object_type == $post->post_type )
                 return $post->post_content;
@@ -214,15 +214,17 @@ class Pods_Pages extends PodsComponent {
      *
      * @return bool|int|null
      */
-    public function save_meta ( $_null = null, $args = null ) {
-        if ( 'code' == $args[ 2 ] ) {
-            $post = get_post( $args[ 1 ] );
+    public function save_meta ( $_null, $post_ID = null, $meta_key = null, $meta_value = null ) {
+        if ( 'code' == $meta_key ) {
+            $post = get_post( $post_ID );
 
             if ( $this->object_type == $post->post_type ) {
                 $postdata = array(
-                    'ID' => $args[ 1 ],
-                    'post_content' => $args[ 3 ]
+                    'ID' => $post_ID,
+                    'post_content' => $meta_value
                 );
+
+                remove_filter( current_filter(), array( $this, __FUNCTION__ ), 10 );
 
                 wp_update_post( $postdata );
 
@@ -234,74 +236,6 @@ class Pods_Pages extends PodsComponent {
     }
 
     /**
-     * Check if a Pod Page exists
-     */
-    public function page_check () {
-        global $pods;
-
-        if ( !defined( 'PODS_DISABLE_POD_PAGE_CHECK' ) || !PODS_DISABLE_POD_PAGE_CHECK ) {
-            if ( null === self::$exists )
-                self::$exists = pod_page_exists();
-
-            if ( false !== self::$exists ) {
-                $pods = apply_filters( 'pods_global', $pods, self::$exists );
-
-                if ( 404 != $pods && ( !is_object( $pods ) || !is_wp_error( $pods ) ) ) {
-                    add_action( 'template_redirect', array( $this, 'template_redirect' ) );
-                    add_filter( 'redirect_canonical', '__return_false' );
-                    add_action( 'wp_head', array( $this, 'wp_head' ) );
-                    add_filter( 'wp_title', array( $this, 'wp_title' ), 0, 3 );
-                    add_filter( 'body_class', array( $this, 'body_class' ), 0, 1 );
-                    add_filter( 'status_header', array( $this, 'status_header' ) );
-                    add_action( 'after_setup_theme', array( $this, 'precode' ) );
-                    add_action( 'wp', array( $this, 'silence_404' ) );
-                }
-            }
-        }
-    }
-
-    /**
-     * Output Pod Page Content
-     *
-     * @param bool $return Whether to return or not (default is to echo)
-     *
-     * @return string
-     */
-    public static function content ( $return = false ) {
-        $content = false;
-
-        if ( false !== self::$exists ) {
-            if ( 0 < strlen( trim( self::$exists[ 'code' ] ) ) )
-                $content = self::$exists[ 'code' ];
-
-            ob_start();
-
-            do_action( 'pods_content_pre', self::$exists, $content );
-
-            if ( false !== $content ) {
-                if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) {
-                    pods_deprecated( 'Use WP Page Templates or hook into the pods_content filter instead of using Pod Page PHP code', '2.1.0' );
-
-                    eval( "?>$content" );
-                }
-                else
-                    echo $content;
-            }
-
-            do_action( 'pods_content_post', self::$exists, $content );
-
-            $content = ob_get_clean();
-        }
-
-        $content = apply_filters( 'pods_content', $content, self::$exists );
-
-        if ( $return )
-            return $content;
-
-        echo $content;
-    }
-
-    /**
      * Check to see if Pod Page exists and return data
      *
      * $uri not required, if NULL then returns REQUEST_URI matching Pod Page
@@ -310,7 +244,7 @@ class Pods_Pages extends PodsComponent {
      *
      * @return array|bool
      */
-    public static function exists ( $uri = null ) {
+    public static function exists( $uri = null ) {
         if ( null === $uri ) {
             $uri = parse_url( get_current_url() );
             $uri = $uri[ 'path' ];
@@ -367,7 +301,7 @@ class Pods_Pages extends PodsComponent {
                 'ID' => $_object[ 'ID' ],
                 'uri' => $_object[ 'post_title' ],
                 'code' => $_object[ 'post_content' ],
-                'phpcode' => $_object[ 'post_content' ], // deprecated
+                'phpcode' => $_object[ 'post_content' ], // phpcode is deprecated
                 'precode' => get_post_meta( $_object[ 'ID' ], 'precode', true ),
                 'page_template' => get_post_meta( $_object[ 'ID' ], 'page_template', true ),
                 'title' => get_post_meta( $_object[ 'ID' ], 'page_title', true )
@@ -377,6 +311,76 @@ class Pods_Pages extends PodsComponent {
         }
 
         return false;
+    }
+
+    /**
+     * Check if a Pod Page exists
+     */
+    public function page_check () {
+        global $pods;
+
+        if ( !defined( 'PODS_DISABLE_POD_PAGE_CHECK' ) || !PODS_DISABLE_POD_PAGE_CHECK ) {
+            if ( null === self::$exists )
+                self::$exists = pod_page_exists();
+
+            if ( false !== self::$exists ) {
+                $pods = apply_filters( 'pods_global', $pods, self::$exists );
+
+                if ( 404 != $pods && ( !is_object( $pods ) || !is_wp_error( $pods ) ) ) {
+                    add_action( 'template_redirect', array( $this, 'template_redirect' ) );
+                    add_filter( 'redirect_canonical', '__return_false' );
+                    add_action( 'wp_head', array( $this, 'wp_head' ) );
+                    add_filter( 'wp_title', array( $this, 'wp_title' ), 0, 3 );
+                    add_filter( 'body_class', array( $this, 'body_class' ), 0, 1 );
+                    add_filter( 'status_header', array( $this, 'status_header' ) );
+                    add_action( 'after_setup_theme', array( $this, 'precode' ) );
+                    add_action( 'wp', array( $this, 'silence_404' ) );
+                }
+            }
+        }
+    }
+
+    /**
+     * Output Pod Page Content
+     *
+     * @param bool $return Whether to return or not (default is to echo)
+     *
+     * @return string
+     */
+    public static function content ( $return = false ) {
+        global $pods, $pod_page_exists;
+
+        $content = false;
+
+        if ( false !== self::$exists ) {
+            if ( 0 < strlen( trim( self::$exists[ 'code' ] ) ) )
+                $content = self::$exists[ 'code' ];
+
+            ob_start();
+
+            do_action( 'pods_content_pre', self::$exists, $content );
+
+            if ( false !== $content ) {
+                if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) {
+                    pods_deprecated( 'Use WP Page Templates or hook into the pods_content filter instead of using Pod Page PHP code', '2.1.0' );
+
+                    eval( "?>$content" );
+                }
+                else
+                    echo $content;
+            }
+
+            do_action( 'pods_content_post', self::$exists, $content );
+
+            $content = ob_get_clean();
+        }
+
+        $content = apply_filters( 'pods_content', $content, self::$exists );
+
+        if ( $return )
+            return $content;
+
+        echo $content;
     }
 
     /**

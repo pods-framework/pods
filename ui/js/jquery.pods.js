@@ -720,9 +720,6 @@
                 } );
             } );
 
-            $( '.pods-dependency .pods-dependent-toggle' ).each( function () {
-                $( this ).change();
-            } );
         },
         dependency_tabs : function () {
             // Hide all dependents
@@ -897,6 +894,9 @@
                     $row.toggleClass( 'pods-manage-row-expanded' );
                     $row_label.prop( 'colspan', '3' );
                     $row_content.slideDown();
+                    $row_content.find('.pods-dependency .pods-dependent-toggle' ).each( function () {
+                       $( this ).trigger( 'change' );
+                    });
                 }
 
                 $( this ).css( 'cursor', 'pointer' );

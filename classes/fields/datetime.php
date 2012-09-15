@@ -54,17 +54,6 @@ class PodsField_DateTime extends PodsField {
      */
     public function options () {
         $options = array(
-            'datetime_format_type' => array(
-                'label' => __( 'Format Type', 'pods' ),
-                'default' => 'date',
-                'type' => 'pick',
-                'data' => array(
-                    'date' => __( 'Date', 'pods' ),
-                    'datetime' => __( 'Date + Time', 'pods' ),
-                    'time' => __( 'Time', 'pods' )
-                ),
-                'dependency' => true
-            ),
             'datetime_format' => array(
                 'label' => __( 'Date Format', 'pods' ),
                 'default' => 'mdy',
@@ -173,6 +162,9 @@ class PodsField_DateTime extends PodsField {
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
+
+        if ( is_array( $value ) )
+            $value = implode( ' ', $value );
 
         // Format Value
         $value = $this->display( $value, $name, $options, null, $pod, $id );

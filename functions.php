@@ -4,11 +4,13 @@
  *
  * @see PodsData::query
  *
- * @param string $query The SQL query
+ * @param $sql
  * @param string $error (optional) The failure message
  * @param string $results_error (optional) Throw an error if a records are found
  * @param string $no_results_error (optional) Throw an error if no records are found
  *
+ * @internal param string $query The SQL query
+ * @return array|bool|mixed|null|void
  * @since 2.0.0
  */
 function pods_query ( $sql, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
@@ -37,6 +39,7 @@ function pods_query ( $sql, $error = 'Database Error', $results_error = null, $n
  * @param mixed $args (optional) Arguments to send to filter / action
  * @param object $obj (optional) Object to reference for filter / action
  *
+ * @return mixed
  * @since 2.0.0
  * @todo Need to figure out how to handle $scope = 'pods' for the Pods class
  */
@@ -59,6 +62,8 @@ function pods_do_hook ( $scope, $name, $args = null, &$obj = null ) {
  * @param string $error The error message to be thrown / displayed
  * @param object / boolean $obj If object, if $obj->display_errors is set, and is set to true: display errors;
  *                              If boolean, and is set to true: display errors
+ * @throws Exception
+ * @return mixed|void
  */
 function pods_error ( $error, $obj = null ) {
     $display_errors = false;
@@ -110,7 +115,8 @@ $pods_debug = 0;
  *
  * @param mixed $debug The error message to be thrown / displayed
  * @param boolean $die If set to true, a die() will occur, if set to (int) 2 then a wp_die() will occur
- * @param boolean $identifier If set to true, an identifying # will be output
+ * @param string $prefix
+ * @internal param bool $identifier If set to true, an identifying # will be output
  */
 function pods_debug ( $debug = '_null', $die = false, $prefix = '_null' ) {
     global $pods_debug;
@@ -168,7 +174,7 @@ function pods_ui_message ( $msg, $error = false ) {
  * @since 1.12
  */
 function pods_ui_error ( $msg ) {
-    return pod_ui_message( $msg, true );
+    return pods_ui_message( $msg, true );
 }
 
 /**
@@ -212,12 +218,13 @@ function pods_deprecated ( $function, $version, $replacement = null ) {
  * Inline help
  *
  * @param string $text Help text
+ * @param string $url Documentation URL
  *
  * @since 2.0.0
  */
-function pods_help ( $text ) {
-    if ( !wp_script_is( 'pods-qtip', 'registered' ) )
-        wp_register_script( 'pods-qtip', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.0-2011-10-02' );
+function pods_help ( $text, $url = null ) {
+    if ( !wp_script_is( 'jquery-qtip', 'registered' ) )
+        wp_register_script( 'jquery-qtip', PODS_URL . 'ui/js/jquery.qtip.min.js', array( 'jquery' ), '2.0-2011-10-02' );
     if ( !wp_script_is( 'pods-qtip', 'queue' ) && !wp_script_is( 'pods-qtip', 'to_do' ) && !wp_script_is( 'pods-qtip', 'done' ) )
         wp_enqueue_script( 'pods-qtip' );
 
@@ -234,6 +241,19 @@ function pods_help ( $text ) {
     if ( !wp_script_is( 'pods-qtip-init', 'queue' ) && !wp_script_is( 'pods-qtip-init', 'to_do' ) && !wp_script_is( 'pods-qtip-init', 'done' ) )
         wp_enqueue_script( 'pods-qtip-init' );
 
+    if ( is_array( $text ) ) {
+        if ( isset( $text[ 1 ] ) )
+            $url = $text[ 1 ];
+
+        $text = $text[ 0 ];
+    }
+
+    if ( 'help' == $text )
+        return;
+
+    if ( 0 < strlen( $url ) )
+        $text .= '<br /><br /><a href="' . $url . '" target="_blank">' . __( 'Find out more', 'pods' ) . ' &raquo;</a>';
+
     echo '<img src="' . PODS_URL . 'ui/images/help.png" alt="' . esc_attr( $text ) . '" class="pods-icon pods-qtip" />';
 }
 
@@ -241,7 +261,9 @@ function pods_help ( $text ) {
  * Filter input and return sanitized output
  *
  * @param mixed $input The string, array, or object to sanitize
+ * @param bool $nested
  *
+ * @return array|mixed|object|string|void
  * @since 1.2.0
  */
 function pods_sanitize ( $input, $nested = false ) {
@@ -276,7 +298,9 @@ function pods_sanitize ( $input, $nested = false ) {
  * Filter input and return unsanitized output
  *
  * @param mixed $input The string, array, or object to unsanitize
+ * @param bool $nested
  *
+ * @return array|mixed|object|string|void
  * @since 1.2.0
  */
 function pods_unsanitize ( $input, $nested = false ) {
@@ -311,7 +335,10 @@ function pods_unsanitize ( $input, $nested = false ) {
  * Filter input and return sanitized output
  *
  * @param mixed $input The string, array, or object to sanitize
+ * @param string $charlist (optional) List of characters to be stripped from the input.
+ * @param string $lr Direction of the trim, can either be 'l' or 'r'.
  *
+ * @return array|object|string
  * @since 1.2.0
  */
 function pods_trim ( $input, $charlist = null, $lr = null ) {
@@ -596,14 +623,18 @@ function pods_var_update ( $array = null, $allowed = null, $excluded = null, $ur
     foreach ( $get as $key => $val ) {
         if ( strlen( $val ) < 1 )
             unset( $get[ $key ] );
+        elseif ( !empty( $allowed ) && !in_array( $key, $allowed ) )
+            unset( $get[ $key ] );
     }
 
-    if ( !empty( $array ) ) {
+    if ( !empty( $excluded ) ) {
         foreach ( $excluded as $exclusion ) {
             if ( isset( $get[ $exclusion ] ) && !in_array( $exclusion, $allowed ) )
                 unset( $get[ $exclusion ] );
         }
+    }
 
+    if ( !empty( $array ) ) {
         foreach ( $array as $key => $val ) {
             if ( 0 < strlen( $val ) )
                 $get[ $key ] = $val;
@@ -620,7 +651,9 @@ function pods_var_update ( $array = null, $allowed = null, $excluded = null, $ur
 /**
  * Create a slug from an input string
  *
- * @param string $str
+ * @param $orig
+ *
+ * @return mixed|void
  *
  * @since 1.8.9
  */
@@ -637,9 +670,10 @@ function pods_create_slug ( $orig ) {
 /**
  * Return a lowercase alphanumeric name (with underscores)
  *
- * @param string $name Input string to clean
+ * @param string $orig Input string to clean
  * @param boolean $lower Force lowercase
  *
+ * @return mixed|void
  * @since 1.2.0
  */
 function pods_clean_name ( $orig, $lower = true ) {
@@ -660,11 +694,12 @@ function pods_clean_name ( $orig, $lower = true ) {
 /**
  * Build a unique slug
  *
- * @param string $value The slug value
+ * @param string $slug The slug value
  * @param string $column_name The column name
  * @param string|array $pod The Pod name or array of Pod data
  * @param int $pod_id The Pod ID
  * @param int $id The item ID
+ * @param object $obj (optional)
  *
  * @return string The unique slug name
  * @since 1.7.2
@@ -725,6 +760,8 @@ function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, $id = 0, &$o
  * Get the Absolute Integer of a value
  *
  * @param string $maybeint
+ * @param bool $strict (optional) Check if $maybeint is a integer.
+ * @param bool $allow_negative (optional)
  *
  * @return integer
  * @since 2.0.0
@@ -745,7 +782,7 @@ function pods_absint ( $maybeint, $strict = true, $allow_negative = false ) {
  * @param mixed $find
  * @param mixed $replace
  * @param string $string
- * @param int $occurrences
+ * @param int $occurrences (optional)
  *
  * @return mixed
  */
@@ -764,14 +801,15 @@ function pods_str_replace ( $find, $replace, $string, $occurrences = -1 ) {
 /**
  * Run a Pods Helper
  *
- * @param string $uri The Pod Page URI to check if currently on
+ * @param string $helper_name Helper Name
+ * @param string $value Value to run Helper on
+ * @param string $name Field name.
  *
  * @return bool
  * @since 1.7.5
  */
 function pods_helper ( $helper_name, $value = null, $name = null ) {
-    $pod = new Pod();
-    return $pod->helper( $helper_name, $value, $name );
+    return pods()->helper( $helper_name, $value, $name );
 }
 
 /**
@@ -813,7 +851,7 @@ function is_pod ( $object = null ) {
 /**
  * See if the current user has a certain privilege
  *
- * @param mixed $priv The privilege name or names (array if multiple)
+ * @param mixed $privs The privilege name or names (array if multiple)
  * @param string $method The access method ("AND", "OR")
  *
  * @return bool
@@ -878,6 +916,7 @@ function pods_access ( $privs, $method = 'OR' ) {
  * @param array $tags An associative array of shortcode properties
  * @param string $content A string that represents a template override
  *
+ * @return string
  * @since 1.6.7
  */
 function pods_shortcode ( $tags, $content = null ) {
@@ -1024,6 +1063,8 @@ function pods_validate_key ( $token, $datatype, $uri_hash, $columns = null, $for
  * @param array $value
  * @param string $field
  * @param array $fields
+ *
+ * @return string
  */
 function pods_serial_comma ( $value, $field = null, $fields = null ) {
     $value = (array) $value;
@@ -1149,6 +1190,12 @@ function pods_version_to_point ( $version ) {
 /**
  * Check if Pods is compatible with WP / PHP / MySQL or not
  *
+ * @param string $wp (optional) Wordpress version
+ * @param string $php (optional) PHP Version
+ * @param string $mysql (optional) MySQL Version
+ *
+ * @return bool
+ *
  * @since 1.10
  */
 function pods_compatible ( $wp = null, $php = null, $mysql = null ) {
@@ -1210,6 +1257,13 @@ function pods_compatible ( $wp = null, $php = null, $mysql = null ) {
 /**
  * Check if a Function exists or File exists in Theme / Child Theme
  *
+ * @param string $function_or_file Function or file name to look for.
+ * @param string $function_name (optional) Function name to look for.
+ * @param string $file_dir (optional) Drectory to look into
+ * @param string $file_name (optional) Filename to look for
+ *
+ * @return mixed
+ *
  * @since 1.12
  */
 function pods_function_or_file ( $function_or_file, $function_name = null, $file_dir = null, $file_name = null ) {
@@ -1248,11 +1302,36 @@ function pods_function_or_file ( $function_or_file, $function_name = null, $file
         elseif ( locate_template( 'pods/' . ( !empty( $file_dir ) ? $file_dir . '-' : '' ) . $file_name ) )
             $found = array( 'file' => 'pods/' . ( !empty( $file_dir ) ? $file_dir . '-' : '' ) . $file_name );
     }
+
     return apply_filters( 'pods_function_or_file', $found, $function_or_file, $function_name, $file_name );
 }
 
 /**
+ * Redirects to another page.
+ *
+ * @param string $location The path to redirect to
+ * @param int $status Status code to use
+ *
+ * @since 2.0.0
+ */
+function pods_redirect ( $location, $status = 302 ) {
+    if ( !headers_sent() ) {
+        wp_redirect( $location, $status );
+        die();
+    }
+    else {
+        die( '<script type="text/javascript">'
+            . 'document.location = "' . esc_js( $location ) . '";'
+            . '</script>' );
+    }
+}
+
+/**
  * Include and Init the Pods class
+ *
+ * @see PodsInit
+ *
+ * @return PodsInit
  *
  * @since 2.0.0
  */
@@ -1265,6 +1344,10 @@ function pods_init () {
 /**
  * Include and Init the Pods Components class
  *
+ * @see PodsComponents
+ *
+ * @return PodsComponents
+ *
  * @since 2.0.0
  */
 function pods_components () {
@@ -1276,14 +1359,21 @@ function pods_components () {
 /**
  * Include and Init the Pods class
  *
+ * @see Pods
+ *
+ * @param string $type The pod name
+ * @param mixed $id (optional) The ID or slug, to load a single record; Provide array of $params to run 'find'
+ * @param bool $strict (optional) If set to true, return false instead of an object if the Pod doesn't exist
+ *
+ * @return bool|\Pods
  * @since 2.0.0
  */
-function pods ( $type = null, $id = null ) {
+function pods ( $type = null, $id = null, $strict = false ) {
     require_once( PODS_DIR . 'classes/Pods.php' );
 
     $pod = new Pods( $type, $id );
 
-    if ( null !== $type && !$pod->valid() )
+    if ( true === $strict && null !== $type && !$pod->valid() )
         return false;
 
     return $pod;
@@ -1291,6 +1381,12 @@ function pods ( $type = null, $id = null ) {
 
 /**
  * Include and Init the PodsUI class
+ *
+ * @see PodsUI
+ *
+ * @param null|array|Pods $obj (optional) configuration options for the UI
+ *
+ * @return PodsUI
  *
  * @since 2.0.0
  */
@@ -1303,6 +1399,13 @@ function pods_ui ( $obj = null ) {
 /**
  * Include and Init the PodsAPI class
  *
+ * @see PodsAPI
+ *
+ * @param string $pod The pod name to load
+ * @param null $format (deprecated) used for backwards compatibility and may be removed in the future.
+ *
+ * @return PodsAPI
+ *
  * @since 2.0.0
  */
 function pods_api ( $pod = null, $format = null ) {
@@ -1314,9 +1417,17 @@ function pods_api ( $pod = null, $format = null ) {
 /**
  * Include and Init the PodsData class
  *
+ * @see PodsData
+ *
+ * @param string|\Pod $pod The pod object to load
+ * @param int $id (optional) Id of the pod to fetch
+ * @param bool $strict (optional) If true throw an error if pod does not exist
+ *
+ * @return PodsData
+ *
  * @since 2.0.0
  */
-function pods_data ( $pod = null, $id = null ) {
+function pods_data ( $pod = null, $id = null, $strict = true ) {
     require_once( PODS_DIR . 'classes/PodsData.php' );
 
     return new PodsData( $pod, $id );
@@ -1324,6 +1435,10 @@ function pods_data ( $pod = null, $id = null ) {
 
 /**
  * Include and Init the PodsFormUI class
+ *
+ * @see PodsForm
+ *
+ * @return PodsForm
  *
  * @since 2.0.0
  */
@@ -1336,6 +1451,10 @@ function pods_form () {
 /**
  * Include and Init the PodsFormUI class
  *
+ * @see PodsMeta
+ *
+ * @return PodsMeta
+ *
  * @since 2.0.0
  */
 function pods_meta () {
@@ -1347,6 +1466,10 @@ function pods_meta () {
 /**
  * Include and Init the PodsAdminUI class
  *
+ * @see PodsAdmin
+ *
+ * @return PodsAdmin
+ *
  * @since 2.0.0
  */
 function pods_admin () {
@@ -1356,18 +1479,13 @@ function pods_admin () {
 }
 
 /**
- * Include and Init the PodsMigrate class
- *
- * @since 2.0.0
- */
-function pods_migrate ( $type = null, $delimiter = null, $data = null ) {
-    require_once( PODS_DIR . 'classes/PodsMigrate.php' );
-
-    return new PodsMigrate( $type, $delimiter, $data );
-}
-
-/**
  * Include and Init the PodsArray class
+ *
+ * @see PodsArray
+ *
+ * @param mixed $container Object (or existing Array)
+ *
+ * @return PodsArray
  *
  * @since 2.0.0
  */
@@ -1379,6 +1497,16 @@ function pods_array ( $container ) {
 
 /**
  * Load a view
+ *
+ * @see PodsView::view
+ *
+ * @param string $view Path of the view file
+ * @param array|null $data (optional) Data to pass on to the template
+ * @param int $expires (optional) Time in seconds for the cache to expire, if 0 caching is disabled.
+ * @param string $cache_mode (optional) Decides the caching method to use for the view.
+ * @param bool $return (optional) If true doesn not echo the result of the view, the function returns it
+ *
+ * @return bool|mixed|null|string|void
  *
  * @since 2.0.0
  */
@@ -1396,6 +1524,15 @@ function pods_view ( $view, $data = null, $expires = 0, $cache_mode = 'cache', $
 /**
  * Set a cached value
  *
+ * @see PodsView::set
+ *
+ * @param string $key Key for the cache
+ * @param mixed $value Value to add to the cache
+ * @param int $expires (optional) Time in seconds for the cache to expire, if 0 caching is disabled.
+ * @param string $cache_mode (optional) Decides the caching method to use for the view.
+ *
+ * @return bool|mixed|null|string|void
+ *
  * @since 2.0.0
  */
 function pods_cache_set ( $key, $value, $expires = 0, $cache_mode = 'cache' ) {
@@ -1405,7 +1542,14 @@ function pods_cache_set ( $key, $value, $expires = 0, $cache_mode = 'cache' ) {
 }
 
 /**
- * Set a cached value
+ * Get a cached value
+ *
+ * @see PodsView::get
+ *
+ * @param string $key Key for the cache
+ * @param string $cache_mode (optional) Decides the caching method to use for the view.
+ *
+ * @return bool|mixed|null|void
  *
  * @since 2.0.0
  */
@@ -1418,6 +1562,13 @@ function pods_cache_get ( $key, $cache_mode = 'cache' ) {
 /**
  * Clear a cached value
  *
+ * @see PodsView::clear
+ *
+ * @param string $key Key for the cache
+ * @param string $cache_mode (optional) Decides the caching method to use for the view.
+ *
+ * @return bool
+ *
  * @since 2.0.0
  */
 function pods_cache_clear ( $key, $cache_mode = 'cache' ) {
@@ -1429,12 +1580,16 @@ function pods_cache_clear ( $key, $cache_mode = 'cache' ) {
 /**
  * Add a meta group of fields to add/edit forms
  *
- * @param $pod
- * @param $label
- * @param $fields
- * @param $context
- * @param $priority
- * @param $type
+ * @see PodsMeta::group_add
+ *
+ * @param string|array $pod The pod or type of element to attach the group to.
+ * @param string $label Title of the edit screen section, visible to user.
+ * @param string|array $fields Either a comma separated list of text fields or an associative array containing field infomration.
+ * @param string $context (optional) The part of the page where the edit screen section should be shown ('normal', 'advanced', or 'side').
+ * @param string $priority (optional) The priority within the context where the boxes should show ('high', 'core', 'default' or 'low').
+ * @param string $type (optional) Type of the post to attach to.
+ *
+ * @since 2.0.0
  */
 function pods_group_add ( $pod, $label, $fields, $context = 'normal', $priority = 'default', $type = null ) {
     if ( !is_array( $pod ) && null !== $type ) {
@@ -1450,9 +1605,11 @@ function pods_group_add ( $pod, $label, $fields, $context = 'normal', $priority 
 /**
  * Check if a plugin is active on non-admin pages (is_plugin_active() only available in admin)
  *
- * @param $plugin
+ * @param string $plugin Plugin name.
  *
  * @return bool
+ *
+ * @since 2.0.0
  */
 function pods_is_plugin_active ( $plugin ) {
     if ( function_exists( 'is_plugin_active' ) )
@@ -1470,6 +1627,8 @@ function pods_is_plugin_active ( $plugin ) {
  * Turn off conflicting / recursive actions for an object type that Pods hooks into
  *
  * @param string $object_type
+ *
+ * @return bool
  */
 function pods_no_conflict_on ( $object_type = 'post' ) {
     if ( 'post_type' == $object_type )
@@ -1564,6 +1723,8 @@ function pods_no_conflict_on ( $object_type = 'post' ) {
  * Turn on actions after running code during pods_conflict
  *
  * @param string $object_type
+ *
+ * @return bool
  */
 function pods_no_conflict_off ( $object_type = 'post' ) {
     if ( 'post_type' == $object_type )

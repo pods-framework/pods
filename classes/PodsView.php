@@ -5,7 +5,7 @@
 class PodsView {
 
     /**
-     * @var array
+     * @var array $cache_modes Array of available cache modes
      */
     static $cache_modes = array( 'transient', 'site-transient', 'cache' );
 
@@ -18,12 +18,15 @@ class PodsView {
     /**
      * @static
      *
-     * @param $view
-     * @param null $data
-     * @param int $expires
-     * @param string $cache_mode
+     * @param string $view Path of the view file
+     * @param array|null $data (optional) Data to pass on to the template
+     * @param int $expires (optional) Time in seconds for the cache to expire, if 0 caching is disabled.
+     * @param string $cache_mode (optional) Decides the caching method to use for the view.
+     * @internal param bool $return (optional) If true doesn not echo the result of the view, the function returns it
      *
      * @return bool|mixed|null|string|void
+     *
+     * @since 2.0.0
      */
     public static function view ( $view, $data = null, $expires = 0, $cache_mode = 'cache' ) {
         if ( (int) $expires < 1 )
@@ -32,16 +35,18 @@ class PodsView {
         if ( !in_array( $cache_mode, self::$cache_modes ) )
             $cache_mode = 'cache';
 
-        $cache_key = sanitize_title( pods_str_replace( array( PODS_DIR . 'ui/', ABSPATH, WP_CONTENT_DIR ), array( 'pods-ui-', 'pods-ui-' ), $view, 1 ) );
+        $cache_key = sanitize_title( pods_str_replace( array( PODS_DIR . 'ui/', PODS_DIR . 'components/', ABSPATH, WP_CONTENT_DIR, '.php' ), array( 'ui-', 'ui-', 'custom-', 'custom-', '' ), $view, 1 ) );
+
+        $view = apply_filters( 'pods_view_inc_' . $cache_key, $view, $data, $expires, $cache_mode );
 
         if ( false === strpos( $view, PODS_DIR . 'ui/' ) && false === strpos( $view, PODS_DIR . 'components/' ) && false === strpos( $view, WP_CONTENT_DIR ) && false === strpos( $view, ABSPATH ) ) {
-            $output = self::get( $cache_key, $cache_mode );
+            $output = self::get( 'pods-view-' . $cache_key, $cache_mode );
 
             if ( false !== $output && null !== $output ) {
                 if ( 0 < $expires )
                     return $output;
                 else
-                    self::clear( $cache_key, $cache_mode );
+                    self::clear( 'pods-view-' . $cache_key, $cache_mode );
             }
         }
 
@@ -51,9 +56,10 @@ class PodsView {
             return false;
 
         if ( 0 < $expires )
-            self::set( $cache_key, $output, $cache_mode );
+            self::set( 'pods-view-' . $cache_key, $output, $cache_mode );
 
-        $output = apply_filters( 'pods_view', $output, $view, $data, $expires, $cache_mode );
+        $output = apply_filters( 'pods_view_output_' . $cache_key, $output, $view, $data, $expires, $cache_mode );
+        $output = apply_filters( 'pods_view_output', $output, $view, $data, $expires, $cache_mode );
 
         return $output;
     }
@@ -61,10 +67,12 @@ class PodsView {
     /**
      * @static
      *
-     * @param $key
-     * @param string $cache_mode
+     * @param string $key Key for the cache
+     * @param string $cache_mode (optional) Decides the caching method to use for the view.
      *
      * @return bool|mixed|null|void
+     *
+     * @since 2.0.0
      */
     public static function get ( $key, $cache_mode = 'cache' ) {
         if ( !in_array( $cache_mode, self::$cache_modes ) )
@@ -87,12 +95,16 @@ class PodsView {
     /**
      * @static
      *
-     * @param $key
-     * @param $value
-     * @param int $expires
-     * @param null $cache_mode
+     * Set a cached value
      *
-     * @return mixed
+     * @param string $key Key for the cache
+     * @param mixed $value Value to add to the cache
+     * @param int $expires (optional) Time in seconds for the cache to expire, if 0 caching is disabled.
+     * @param string $cache_mode (optional) Decides the caching method to use for the view.
+     *
+     * @return bool|mixed|null|string|void
+     *
+     * @since 2.0.0
      */
     public static function set ( $key, $value, $expires = 0, $cache_mode = null ) {
         if ( (int) $expires < 1 )
@@ -116,10 +128,14 @@ class PodsView {
     /**
      * @static
      *
-     * @param $key
-     * @param null $cache_mode
+     * Clear a cached value
+     *
+     * @param string $key Key for the cache
+     * @param string $cache_mode (optional) Decides the caching method to use for the view.
      *
      * @return bool
+     *
+     * @since 2.0.0
      */
     public static function clear ( $key, $cache_mode = null ) {
         global $wpdb;

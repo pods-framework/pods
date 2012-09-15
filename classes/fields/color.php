@@ -94,6 +94,9 @@ class PodsField_Color extends PodsField {
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
 
+        if ( is_array( $value ) )
+            $value = implode( ' ', $value );
+
         pods_view( PODS_DIR . 'ui/fields/color.php', compact( array_keys( get_defined_vars() ) ) );
     }
 

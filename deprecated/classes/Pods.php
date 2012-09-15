@@ -407,7 +407,7 @@ class Pods_Deprecated
     public function getPagination ( $label = 'Go to page:' ) {
         pods_deprecated( 'Pods::getPagination', '2.0.0', 'Pods::pagination' );
 
-        echo $this->obj->pagination( array( 'label' => $label ) );
+        echo $this->obj->pagination( array( 'type' => 'simple', 'label' => $label ) );
     }
 
     /**

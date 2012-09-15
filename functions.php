@@ -623,6 +623,8 @@ function pods_var_update ( $array = null, $allowed = null, $excluded = null, $ur
     foreach ( $get as $key => $val ) {
         if ( strlen( $val ) < 1 )
             unset( $get[ $key ] );
+        elseif ( !empty( $allowed ) && !in_array( $key, $allowed ) )
+            unset( $get[ $key ] );
     }
 
     if ( !empty( $excluded ) ) {
@@ -1300,7 +1302,28 @@ function pods_function_or_file ( $function_or_file, $function_name = null, $file
         elseif ( locate_template( 'pods/' . ( !empty( $file_dir ) ? $file_dir . '-' : '' ) . $file_name ) )
             $found = array( 'file' => 'pods/' . ( !empty( $file_dir ) ? $file_dir . '-' : '' ) . $file_name );
     }
+
     return apply_filters( 'pods_function_or_file', $found, $function_or_file, $function_name, $file_name );
+}
+
+/**
+ * Redirects to another page.
+ *
+ * @param string $location The path to redirect to
+ * @param int $status Status code to use
+ *
+ * @since 2.0.0
+ */
+function pods_redirect ( $location, $status = 302 ) {
+    if ( !headers_sent() ) {
+        wp_redirect( $location, $status );
+        die();
+    }
+    else {
+        die( '<script type="text/javascript">'
+            . 'document.location = "' . esc_js( $location ) . '";'
+            . '</script>' );
+    }
 }
 
 /**
@@ -1453,25 +1476,6 @@ function pods_admin () {
     require_once( PODS_DIR . 'classes/PodsAdmin.php' );
 
     return new PodsAdmin();
-}
-
-/**
- * Include and Init the PodsMigrate class
- *
- * @see PodsMigrate
- *
- * @param string $type (optional) Type of the migration, currently supported are php, json, sv, xml, package, sql
- * @param string $delimiter (optional) Delimiter for entries
- * @param string|array $data (optional) Data that should be used in import or export functions
- *
- * @return PodsMigrate
- *
- * @since 2.0.0
- */
-function pods_migrate ( $type = null, $delimiter = null, $data = null ) {
-    require_once( PODS_DIR . 'classes/PodsMigrate.php' );
-
-    return new PodsMigrate( $type, $delimiter, $data );
 }
 
 /**

@@ -57,21 +57,57 @@ class PodsField_Paragraph extends PodsField {
             'output_options' => array(
                 'label' => __( 'Output Options', 'pods' ),
                 'group' => array(
-                    'paragraph_allow_shortcode' => array(
-                        'label' => __( 'Allow Shortcodes?', 'pods' ),
-                        'default' => 0,
-                        'type' => 'boolean'
-                    ),
                     'paragraph_allow_html' => array(
                         'label' => __( 'Allow HTML?', 'pods' ),
                         'default' => 1,
                         'type' => 'boolean',
                         'dependency' => true
                     ),
+                    'paragraph_oembed' => array(
+                        'label' => __( 'Enable oEmbed?', 'pods' ),
+                        'default' => 0,
+                        'type' => 'boolean',
+                        'help' => array(
+                            __( 'Embed videos, images, tweets, and other content.', 'pods' ),
+                            'http://codex.wordpress.org/Embeds'
+                        )
+                    ),
+                    'paragraph_wptexturize' => array(
+                        'label' => __( 'Enable wptexturize?', 'pods' ),
+                        'default' => 1,
+                        'type' => 'boolean',
+                        'help' => array(
+                            __( 'Transforms less-beautfiul text characters into stylized equivilents.', 'pods' ),
+                            'http://codex.wordpress.org/Function_Reference/wptexturize'
+                        )
+                    ),
+                    'paragraph_convert_chars' => array(
+                        'label' => __( 'Enable convert_chars?', 'pods' ),
+                        'default' => 1,
+                        'type' => 'boolean',
+                        'help' => array(
+                            __( 'Converts text into valid XHTML and Unicode', 'pods' ),
+                            'http://codex.wordpress.org/Function_Reference/convert_chars'
+                        )
+                    ),
                     'paragraph_wpautop' => array(
                         'label' => __( 'Enable wpautop?', 'pods' ),
                         'default' => 1,
-                        'type' => 'boolean'
+                        'type' => 'boolean',
+                        'help' => array(
+                            __( 'Changes double line-breaks in the text into HTML paragraphs', 'pods' ),
+                            'http://codex.wordpress.org/Function_Reference/wpautop'
+                        )
+                    ),
+                    'paragraph_allow_shortcode' => array(
+                        'label' => __( 'Allow Shortcodes?', 'pods' ),
+                        'default' => 0,
+                        'type' => 'boolean',
+                        'dependency' => true,
+                        'help' => array(
+                            __( 'Embed [shortcodes] that help transform your static content into dynamic content.', 'pods' ),
+                            'http://codex.wordpress.org/Shortcode_API'
+                        )
                     )
                 )
             ),
@@ -130,11 +166,27 @@ class PodsField_Paragraph extends PodsField {
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $value = $this->strip_html( $value, $options );
 
-        if ( 1 == pods_var( 'paragraph_wpautop', $options, 1 ) )
+        if ( 1 == pods_var( 'wysiwyg_oembed', $options, 0 ) ) {
+            $embed = $GLOBALS[ 'wp_embed' ];
+            $value = $embed->run_shortcode( $value );
+            $value = $embed->autoembed( $value );
+        }
+
+        if ( 1 == pods_var( 'wysiwyg_wptexturize', $options, 1 ) )
+            $value = wptexturize( $value );
+
+        if ( 1 == pods_var( 'wysiwyg_convert_chars', $options, 1 ) )
+            $value = convert_chars( $value );
+
+        if ( 1 == pods_var( 'wysiwyg_wpautop', $options, 1 ) )
             $value = wpautop( $value );
 
-        if ( 1 == pods_var( 'paragraph_allow_shortcode', $options, 0 ) )
+        if ( 1 == pods_var( 'wysiwyg_allow_shortcode', $options, 0 ) ) {
+            if ( 1 == pods_var( 'wysiwyg_wpautop', $options, 1 ) )
+                $value = shortcode_unautop( $value );
+
             $value = do_shortcode( $value );
+        }
 
         return $value;
     }

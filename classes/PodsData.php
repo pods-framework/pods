@@ -191,6 +191,7 @@ class PodsData {
      *
      * @param string $pod Pod name
      * @param integer $id Pod Item ID
+     * @param bool $strict If true throws an error if a pod is not found.
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0.0
@@ -259,13 +260,20 @@ class PodsData {
     /**
      * Insert an item, eventually mapping to WPDB::insert
      *
-     * @param string $table
-     * @param array $data
-     * @param array $format
+     * @param string $table Table name
+     * @param array $data Data to insert (in column => value pairs). Both $data columns and $data values should be "raw" (neither should be SQL escaped).
+     * @param array $format (optional) An array of formats to be mapped to each of the value in $data.
+     *
+     * @return int|bool The ID of the item
+     *
+     * @uses wpdb::insert
      *
      * @since 2.0.0
      */
     public function insert ( $table, $data, $format = null ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
 
         if ( strlen( $table ) < 1 || empty( $data ) || !is_array( $data ) )
@@ -296,6 +304,8 @@ class PodsData {
     }
 
     /**
+     * @static
+     *
      * Insert into a table, if unique key exists just update values.
      *
      * Data must be a key value pair array, keys act as table rows.
@@ -306,9 +316,16 @@ class PodsData {
      * @param array $data column => value pairs
      * @param array $formats For $wpdb->prepare, uses sprintf formatting
      *
-     * @return mixed
+     * @return mixed Sanitized query string
+     *
+     * @uses wpdb::prepare
+     *
+     * @since 2.0.0
      */
     public static function insert_on_duplicate ( $table, $data, $formats ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
 
         $columns = array_keys( $data );
@@ -331,15 +348,19 @@ class PodsData {
     /**
      * Update an item, eventually mapping to WPDB::update
      *
-     * @param string $table
-     * @param array $data
-     * @param array $where
-     * @param array $format
-     * @param array $where_format
+     * @param string $table Table name
+     * @param array $data Data to update (in column => value pairs). Both $data columns and $data values should be "raw" (neither should be SQL escaped).
+     * @param array $where A named array of WHERE clauses (in column => value pairs). Multiple clauses will be joined with ANDs. Both $where columns and $where values should be "raw".
+     * @param array $format (optional) An array of formats to be mapped to each of the values in $data.
+     * @param array $where_format (optional) An array of formats to be mapped to each of the values in $where.
      *
+     * @return bool
      * @since 2.0.0
      */
     public function update ( $table, $data, $where, $format = null, $where_format = null ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
 
         if ( strlen( $table ) < 1 || empty( $data ) || !is_array( $data ) )
@@ -394,13 +415,21 @@ class PodsData {
     /**
      * Delete an item
      *
-     * @param string $table
-     * @param array $where
-     * @param array $where_format
+     * @param string $table Table name
+     * @param array $where A named array of WHERE clauses (in column => value pairs). Multiple clauses will be joined with ANDs. Both $where columns and $where values should be "raw".
+     * @param array $where_format (optional) An array of formats to be mapped to each of the values in $where.
+     *
+     * @return array|bool|mixed|null|void
+     *
+     * @uses PodsData::query
+     * @uses PodsData::prepare
      *
      * @since 2.0.0
      */
     public function delete ( $table, $where, $where_format = null ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
 
         if ( strlen( $table ) < 1 || empty( $where ) || !is_array( $where ) )
@@ -429,7 +458,7 @@ class PodsData {
             array_values( $where )
         ), $table, $where, $where_format, $wheres );
 
-        return $this->query( $this->prepare( $sql, $where ) );
+        return $this->query( self::prepare( $sql, $where ) );
     }
 
     /**
@@ -437,9 +466,13 @@ class PodsData {
      *
      * @param array $params
      *
+     * @return array|bool|mixed
      * @since 2.0.0
      */
     public function select ( $params ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
 
         // Build
@@ -487,6 +520,7 @@ class PodsData {
      *
      * @param array $params
      *
+     * @return bool|mixed|string
      * @since 2.0.0
      */
     public function build ( &$params ) {
@@ -1007,13 +1041,20 @@ class PodsData {
     /**
      * Create a Table
      *
-     * @param string $table
+     * @param string $table Table name
      * @param string $fields
-     * @param boolean $if_not_exists
+     * @param boolean $if_not_exists Check if the table exists.
+     *
+     * @return array|bool|mixed|null|void
+     *
+     * @uses PodsData::query
      *
      * @since 2.0.0
      */
     public static function table_create ( $table, $fields, $if_not_exists = false ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
 
         $sql = "CREATE TABLE";
@@ -1035,12 +1076,19 @@ class PodsData {
     /**
      * Alter a Table
      *
-     * @param string $table
+     * @param string $table Table name
      * @param string $changes
+     *
+     * @return array|bool|mixed|null|void
+     *
+     * @uses PodsData::query
      *
      * @since 2.0.0
      */
     public static function table_alter ( $table, $changes ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
 
         $sql = "ALTER TABLE `{$wpdb->prefix}" . self::$prefix . "{$table}` {$changes}";
@@ -1051,11 +1099,18 @@ class PodsData {
     /**
      * Truncate a Table
      *
-     * @param string $table
+     * @param string $table Table name
+     *
+     * @return array|bool|mixed|null|void
+     *
+     * @uses PodsData::query
      *
      * @since 2.0.0
      */
     public static function table_truncate ( $table ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
 
         $sql = "TRUNCATE TABLE `{$wpdb->prefix}" . self::$prefix . "{$table}`";
@@ -1066,11 +1121,20 @@ class PodsData {
     /**
      * Drop a Table
      *
-     * @param string $table
+     * @param string $table Table name
+     *
+     * @uses PodsData::query
+     *
+     * @return array|bool|mixed|null|void
+     *
+     * @uses PodsData::query
      *
      * @since 2.0.0
      */
     public static function table_drop ( $table ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
 
         $sql = "DROP TABLE `{$wpdb->prefix}" . self::$prefix . "{$table}`";
@@ -1081,10 +1145,14 @@ class PodsData {
     /**
      * Reorder Items
      *
-     * @param string $table
+     * @param string $table Table name
      * @param string $weight_field
      * @param string $id_field
      * @param array $ids
+     *
+     * @return bool
+     *
+     * @uses PodsData::update
      *
      * @since 2.0.0
      */
@@ -1114,9 +1182,13 @@ class PodsData {
     }
 
     /**
-     * @param null $row
+     * Fetch a new row for the current pod_data
+     *
+     * @param int $row Row number to fetch
      *
      * @return mixed
+     *
+     * @since 2.0.0
      */
     public function fetch ( $row = null ) {
         global $wpdb;
@@ -1256,9 +1328,13 @@ class PodsData {
     }
 
     /**
-     * @param null $row
+     * Reset the current data
+     *
+     * @param int $row Row number to reset to
      *
      * @return mixed
+     *
+     * @since 2.0.0
      */
     public function reset ( $row = null ) {
         $row = pods_absint( $row );
@@ -1277,14 +1353,21 @@ class PodsData {
     /**
      * @static
      *
-     * @param $sql
-     * @param string $error
-     * @param null $results_error
-     * @param null $no_results_error
+     * Do a query on the database
      *
-     * @return array|bool|mixed|null|void
+     * @param string|array $sql The SQL to execute
+     * @param string $error Error to throw on problems
+     * @param null $results_error (optional)
+     * @param null $no_results_error (optional)
+     *
+     * @return array|bool|mixed|null|void Result of the query
+     *
+     * @since 2.0.0
      */
     public static function query ( $sql, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
 
         if ( $wpdb->show_errors )
@@ -1363,6 +1446,10 @@ class PodsData {
      *
      * @param boolean $wp_core
      * @param boolean $pods_tables restrict Pods 2.x tables
+     *
+     * @return array
+     *
+     * @since 2.0.0
      */
     public static function get_tables ( $wp_core = true, $pods_tables = true ) {
         global $wpdb;
@@ -1400,7 +1487,11 @@ class PodsData {
     /**
      * Gets column information from a table
      *
-     * @param string $table
+     * @param string $table Table Name
+     *
+     * @return array
+     *
+     * @since 2.0.0
      */
     public static function get_table_columns ( $table ) {
         global $wpdb;
@@ -1427,7 +1518,12 @@ class PodsData {
     /**
      * Gets column data information from a table
      *
-     * @param string $table
+     * @param string $column_name Column name
+     * @param string $table Table name
+     *
+     * @return array
+     *
+     * @since 2.0.0
      */
     public static function get_column_data ( $column_name, $table ) {
         $describe_data = mysql_query( 'DESCRIBE ' . $table );
@@ -1449,10 +1545,17 @@ class PodsData {
     /**
      * Prepare values for the DB
      *
-     * @param string $sql
-     * @param array $data
+     * @param string $sql SQL to prepare
+     * @param array $data Data to add to the sql prepare statement
+     *
+     * @return bool|null|string
+     *
+     * @since 2.0.0
      */
     public static function prepare ( $sql, $data ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
         list( $sql, $data ) = self::do_hook( 'prepare', array( $sql, $data ) );
         return $wpdb->prepare( $sql, $data );
@@ -1460,6 +1563,12 @@ class PodsData {
 
     /**
      * Setup fields for traversal
+     *
+     * @param array $fields Associative array of fields data
+     *
+     * @return array Traverse feed
+     *
+     * @since 2.0.0
      */
     function traverse_build ( $fields = null ) {
         if ( null === $fields )
@@ -1480,6 +1589,15 @@ class PodsData {
 
     /**
      * Recursively join tables based on fields
+     *
+     * @param string $pod Pod name to traverse
+     * @param $fields Array of fields to traverse
+     * @param string $joined
+     * @param int $depth
+     *
+     * @return array
+     *
+     * @since 2.0.0
      */
     function traverse_recurse ( $pod, $fields, $joined = 't', $depth = 0 ) {
         global $wpdb;
@@ -1631,6 +1749,11 @@ class PodsData {
 
     /**
      * Recursively join tables based on fields
+     *
+     * @param array $fields Fields to recurse
+     * @param null $all_fields (optional) If $fields is empty then traverse all fields, argument does not need to be passed
+     *
+     * @return array Array of joins
      */
     function traverse ( $fields = null, $all_fields = null ) {
         $joins = array();

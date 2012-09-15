@@ -55,7 +55,9 @@ class PodsAdmin {
     }
 
     /**
+     * Init the admin area
      *
+     * @since 2.0.0
      */
     public function admin_init () {
         // Fix for plugins that *don't do it right* so we don't cause issues for users
@@ -72,7 +74,9 @@ class PodsAdmin {
     }
 
     /**
+     * Attach requirements to admin header
      *
+     * @since 2.0.0
      */
     public function admin_head () {
         wp_register_style( 'pods-admin', PODS_URL . 'ui/css/pods-admin.css', array(), PODS_VERSION );
@@ -140,7 +144,9 @@ class PodsAdmin {
     }
 
     /**
+     * Buld the admin menus
      *
+     * @since 2.0.0
      */
     public function admin_menu () {
         $submenu = array();
@@ -358,7 +364,7 @@ class PodsAdmin {
     }
 
     /**
-     *
+     * Create PodsUI content for the administration pages
      */
     public function admin_content () {
         $pod = str_replace( array( 'pods-manage-', 'pods-add-new-' ), '', $_GET[ 'page' ] );
@@ -526,6 +532,8 @@ class PodsAdmin {
     }
 
     /**
+     * Get the add page of an object
+     *
      * @param $obj
      */
     public function admin_setup_add ( $obj ) {
@@ -533,6 +541,8 @@ class PodsAdmin {
     }
 
     /**
+     * Get the edit page of an object
+     *
      * @param $duplicate
      * @param $obj
      */
@@ -541,6 +551,8 @@ class PodsAdmin {
     }
 
     /**
+     * Delete a pod
+     *
      * @param $id
      * @param $obj
      *
@@ -560,21 +572,21 @@ class PodsAdmin {
     }
 
     /**
-     *
+     * Get advanced administration view.
      */
     public function admin_advanced () {
         pods_view( PODS_DIR . 'ui/admin/advanced.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
-     *
+     * Get settings administration view
      */
     public function admin_settings () {
         pods_view( PODS_DIR . 'ui/admin/settings.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
-     *
+     * Get components administration UI
      */
     public function admin_components () {
         $components = PodsInit::$components->components;
@@ -658,7 +670,7 @@ class PodsAdmin {
     }
 
     /**
-     *
+     * Runs component specific admin functions
      */
     public function admin_components_handler () {
         $component = str_replace( 'pods-component-', '', $_GET[ 'page' ] );
@@ -667,6 +679,8 @@ class PodsAdmin {
     }
 
     /**
+     * Toggle a component on or off
+     *
      * @param PodsUI $ui
      *
      * @return bool
@@ -728,21 +742,23 @@ class PodsAdmin {
     }
 
     /**
-     *
+     * Get the admin upgrade page
      */
     public function admin_upgrade () {
         pods_view( PODS_DIR . 'ui/admin/upgrade.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
-     *
+     * Get the admin help page
      */
     public function admin_help () {
         pods_view( PODS_DIR . 'ui/admin/help.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
-     * @param $capabilities
+     * Add pods specific capabilities.
+     *
+     * @param $capabilities List of extra capabilities to add
      *
      * @return array
      */
@@ -770,7 +786,7 @@ class PodsAdmin {
     }
 
     /**
-     *
+     * Handle ajax calls for the administration
      */
     public function admin_ajax () {
         if ( false === headers_sent() ) {
@@ -954,7 +970,7 @@ class PodsAdmin {
     }
 
     /**
-     *
+     * Handle ajax upload
      */
     public function admin_ajax_upload () {
         if ( false === headers_sent() ) {
@@ -1069,7 +1085,7 @@ class PodsAdmin {
     }
 
     /**
-     *
+     * handle ajax relationship
      */
     public function admin_ajax_relationship () {
         global $wpdb;

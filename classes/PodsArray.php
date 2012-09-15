@@ -29,6 +29,7 @@ class PodsArray implements ArrayAccess {
      * @param mixed $offset Used to set index of Array or Variable name on Object
      * @param mixed $value Value to be set
      *
+     * @return mixed|void
      * @since 2.0.0
      */
     public function offsetSet ( $offset, $value ) {
@@ -44,6 +45,7 @@ class PodsArray implements ArrayAccess {
      *
      * @param mixed $offset Used to get value of Array or Variable on Object
      *
+     * @return mixed|null
      * @since 2.0.0
      */
     public function offsetGet ( $offset ) {
@@ -62,6 +64,7 @@ class PodsArray implements ArrayAccess {
      *
      * @param mixed $offset Used to get value of Array or Variable on Object
      *
+     * @return bool
      * @since 2.0.0
      */
     public function offsetExists ( $offset ) {
@@ -92,6 +95,7 @@ class PodsArray implements ArrayAccess {
      * @param string $type Used to force a specific type of variable (allowed: array, object, integer, absint, boolean)
      * @param mixed $extra Used in advanced types of variables
      *
+     * @return array|bool|int|mixed|null|number|object
      * @since 2.0.0
      */
     public function validate ( $offset, $default = null, $type = null, $extra = null ) {
@@ -147,6 +151,9 @@ class PodsArray implements ArrayAccess {
     }
 
     /**
+     * Dump the PodsArray object to array
+     *
+     * @return array Array version of the object
      *
      * @since 2.0.0
      */

@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * Component managing class
  */
 class PodsComponents {
 
@@ -19,7 +19,6 @@ class PodsComponents {
      *
      * @var string
      *
-     * @private
      * @since 2.0.0
      */
     public $components = array();
@@ -29,7 +28,6 @@ class PodsComponents {
      *
      * @var string
      *
-     * @private
      * @since 2.0.0
      */
     public $settings = array();
@@ -66,7 +64,11 @@ class PodsComponents {
     /**
      * Add menu item
      *
+     * @param string $parent The parent slug.
+     *
      * @since 2.0.0
+     *
+     * @uses add_submenu_page
      */
     public function menu ( $parent ) {
         global $submenu;
@@ -267,8 +269,12 @@ class PodsComponents {
     }
 
     /**
+     * Set component options
+     *
      * @param $component
      * @param $options
+     *
+     * @since 2.0.0
      */
     public function options ( $component, $options ) {
         if ( !isset( $this->settings[ 'components' ][ $component ] ) || !is_array( $this->settings[ 'components' ][ $component ] ) )
@@ -281,7 +287,9 @@ class PodsComponents {
     }
 
     /**
+     * Call component specific admin functions
      *
+     * @since 2.0.0
      */
     public function admin_handler () {
         $component = str_replace( 'pods-component-', '', $_GET[ 'page' ] );
@@ -291,9 +299,13 @@ class PodsComponents {
     }
 
     /**
-     * @param $component
+     * Toggle a component on or off
+     *
+     * @param string $component The component name to toggle
      *
      * @return bool
+     *
+     * @since 2.0.0
      */
     public function toggle ( $component ) {
         $toggle = null;
@@ -317,7 +329,9 @@ class PodsComponents {
     }
 
     /**
+     * Handle admin ajax
      *
+     * @since 2.0.0
      */
     public function admin_ajax () {
         if ( false === headers_sent() ) {
@@ -374,7 +388,7 @@ class PodsComponents {
 }
 
 /**
- *
+ * The base component class, all components should extend this.
  */
 class PodsComponent {
 

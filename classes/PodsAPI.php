@@ -43,7 +43,7 @@ class PodsAPI {
     /**
      * Store and retrieve data programatically
      *
-     * @param string $dtname (optional) The pod name
+     * @param string $pod (optional) The pod name
      * @param string $format (deprecated) Format for import/export, "php" or "csv"
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
@@ -75,8 +75,13 @@ class PodsAPI {
      *
      * @param string $object_type Object type: post|user|comment
      * @param array $data All post data to be saved
-     * @param array $meta
-     * @param bool $strict
+     * @param array $meta (optional) Associative array of meta keys and values
+     * @param bool $strict (optional) Decides wether the previous saved meta should be deleted or not
+     * @param bool $sanitized (optional) Will unsanitize the data, should be passed if the data is sanitized before sending.
+     *
+     * @return bool|mixed
+     *
+     * @since 2.0.0
      */
     public function save_wp_object ( $object_type, $data, $meta = array(), $strict = false, $sanitized = false ) {
         if ( in_array( $object_type, array( 'post_type', 'media' ) ) )
@@ -98,7 +103,11 @@ class PodsAPI {
      *
      * @param string $object_type Object type: post|user|comment
      * @param int $id Object ID
-     * @param bool $force_delete Force deletion instead of trashing (post types only)
+     * @param bool $force_delete (optional) Force deletion instead of trashing (post types only)
+     *
+     * @return bool|mixed
+     *
+     * @since 2.0.0
      */
     public function delete_wp_object ( $object_type, $id, $force_delete = true ) {
         if ( in_array( $object_type, array( 'post_type', 'media' ) ) )
@@ -120,8 +129,10 @@ class PodsAPI {
      * Save a post and it's meta
      *
      * @param array $post_data All post data to be saved (using wp_insert_post / wp_update_post)
-     * @param array $post_meta All meta to be saved (set value to null to delete)
-     * @param bool $strict Whether to delete previously saved meta not in $post_meta
+     * @param array $post_meta (optional) All meta to be saved (set value to null to delete)
+     * @param bool $strict (optional) Whether to delete previously saved meta not in $post_meta
+     * @param bool $sanitized (optional) Will unsanitize the data, should be passed if the data is sanitized before sending.
+     * @return mixed|void
      */
     public function save_post ( $post_data, $post_meta = null, $strict = false, $sanitized = false ) {
         pods_no_conflict_on( 'post' );
@@ -161,6 +172,10 @@ class PodsAPI {
      * @param int $id Post ID
      * @param array $post_meta All meta to be saved (set value to null to delete)
      * @param bool $strict Whether to delete previously saved meta not in $post_meta
+     *
+     * @return int Id of the post with the meta
+     *
+     * @since 2.0.0
      */
     public function save_post_meta ( $id, $post_meta = null, $strict = false ) {
         pods_no_conflict_on( 'post' );
@@ -212,8 +227,13 @@ class PodsAPI {
      * Save a user and it's meta
      *
      * @param array $user_data All user data to be saved (using wp_insert_user / wp_update_user)
-     * @param array $user_meta All meta to be saved (set value to null to delete)
-     * @param bool $strict Whether to delete previously saved meta not in $user_meta
+     * @param array $user_meta (optional) All meta to be saved (set value to null to delete)
+     * @param bool $strict (optional) Whether to delete previously saved meta not in $user_meta
+     * @param bool $sanitized (optional) Will unsanitize the data, should be passed if the data is sanitized before sending.
+     *
+     * @return int Returns user id on success
+     *
+     * @since 2.0.0
      */
     public function save_user ( $user_data, $user_meta = null, $strict = false, $sanitized = false ) {
         if ( !is_array( $user_data ) || empty( $user_data ) )
@@ -251,8 +271,13 @@ class PodsAPI {
      * Save a user meta
      *
      * @param int $id User ID
-     * @param array $user_meta All meta to be saved (set value to null to delete)
-     * @param bool $strict Whether to delete previously saved meta not in $user_meta
+     * @param array $user_meta (optional) All meta to be saved (set value to null to delete)
+     * @param bool $strict (optional) Whether to delete previously saved meta not in $user_meta
+     *
+     * @return int User ID
+     *
+     * @since 2.0.0
+     *
      */
     public function save_user_meta ( $id, $user_meta = null, $strict = false ) {
         pods_no_conflict_on( 'user' );
@@ -293,8 +318,13 @@ class PodsAPI {
      * Save a comment and it's meta
      *
      * @param array $comment_data All comment data to be saved (using wp_insert_comment / wp_update_comment)
-     * @param array $comment_meta All meta to be saved (set value to null to delete)
-     * @param bool $strict Whether to delete previously saved meta not in $comment_meta
+     * @param array $comment_meta (optional) All meta to be saved (set value to null to delete)
+     * @param bool $strict (optional) Whether to delete previously saved meta not in $comment_meta
+     * @param bool $sanitized (optional) Will unsanitize the data, should be passed if the data is sanitized before sending.
+     *
+     * @return int Comment ID
+     *
+     * @since 2.0.0
      */
     public function save_comment ( $comment_data, $comment_meta = null, $strict = false, $sanitized = false ) {
         if ( !is_array( $comment_data ) || empty( $comment_data ) )
@@ -332,8 +362,12 @@ class PodsAPI {
      * Save a comment meta
      *
      * @param int $id Comment ID
-     * @param array $comment_meta All meta to be saved (set value to null to delete)
-     * @param bool $strict Whether to delete previously saved meta not in $comment_meta
+     * @param array $comment_meta (optional) All meta to be saved (set value to null to delete)
+     * @param bool $strict (optional) Whether to delete previously saved meta not in $comment_meta
+     *
+     * @return int Comment ID
+     *
+     * @since 2.0.0
      */
     public function save_comment_meta ( $id, $comment_meta = null, $strict = false ) {
         pods_no_conflict_on( 'comment' );
@@ -377,6 +411,11 @@ class PodsAPI {
      * @param string $term Term name
      * @param string $taxonomy Taxonomy name
      * @param array $term_data All term data to be saved (using wp_insert_term / wp_update_term)
+     * @param bool $sanitized (optional) Will unsanitize the data, should be passed if the data is sanitized before sending.
+     *
+     * @return int Term ID
+     *
+     * @since 2.0.0
      */
     public function save_term ( $term_ID, $term, $taxonomy, $term_data, $sanitized = false ) {
         pods_no_conflict_on( 'taxonomy' );
@@ -427,9 +466,14 @@ class PodsAPI {
      * @param string $old_name The old name
      * @param string $new_name The new name
      *
+     * @return bool
+     *
      * @since 2.0.0
      */
     public function rename_wp_object_type ( $object_type, $old_name, $new_name ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
 
         if ( 'post_type' == $object_type )
@@ -460,9 +504,9 @@ class PodsAPI {
     /**
      * Get a list of core WP object fields for a specific object
      *
-     * @param string $object
+     * @param string $object The post type to look for, possible values: post_type, user, comment, taxonomy
      *
-     * @return array
+     * @return array Array of fields
      */
     public function get_wp_object_fields ( $object = 'post_type' ) {
         $fields = get_transient( 'pods_api_object_fields_' . $object );
@@ -781,6 +825,9 @@ class PodsAPI {
     }
 
     /**
+     *
+     * @see PodsAPI::save_pod
+     *
      * Add a Pod via the Wizard
      *
      * $params['create_extend'] string Create or Extend a Content Type
@@ -796,6 +843,7 @@ class PodsAPI {
      *
      * @param array $params An associative array of parameters
      *
+     * @return bool|int Pod ID
      * @since 2.0.0
      */
     public function add_pod ( $params ) {
@@ -901,7 +949,9 @@ class PodsAPI {
      * $params['options'] array Options
      *
      * @param array $params An associative array of parameters
+     * @param bool $sanitized (optional) Decides wether the params have been sanitized before being passed, will sanitize them if false.
      *
+     * @return int Pod ID
      * @since 1.7.9
      */
     public function save_pod ( $params, $sanitized = false ) {
@@ -1162,6 +1212,10 @@ class PodsAPI {
                 return pods_error( __( 'Cannot update Database Table for Pod', 'pods' ), $this );
         }
 
+        /**
+         * @var $wpdb wpdb
+         */
+
         global $wpdb;
 
         if ( 'post_type' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) && null !== $old_name && $old_name != $params->name )
@@ -1336,11 +1390,16 @@ class PodsAPI {
      * $params['options'] array The field options
      *
      * @param array $params An associative array of parameters
-     * @param bool $table_operation Whether or not to handle table operations
+     * @param bool $table_operation (optional) Whether or not to handle table operations
+     * @param bool $sanitized (optional) Decides wether the params have been sanitized before being passed, will sanitize them if false.
      *
+     * @return int The field ID
      * @since 1.7.9
      */
     public function save_field ( $params, $table_operation = true, $sanitized = false ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
 
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
@@ -1664,8 +1723,10 @@ class PodsAPI {
      * $params['type'] string The Object type
      * $params['options'] Associative array of Object options
      *
-     * @param array $params An associative array of parameters
+     * @param array|object $params An associative array of parameters
+     * @param bool $sanitized (optional) Decides wether the params have been sanitized before being passed, will sanitize them if false.
      *
+     * @return int The Object ID
      * @since 2.0.0
      */
     public function save_object ( $params, $sanitized = false ) {
@@ -1750,13 +1811,18 @@ class PodsAPI {
     }
 
     /**
+     * @see PodsAPI::save_object
+     *
      * Add or edit a Pod Template
      *
      * $params['id'] int The template ID
      * $params['name'] string The template name
      * $params['code'] string The template code
      *
-     * @param array $params An associative array of parameters
+     * @param array|object $params An associative array of parameters
+     * @param bool $sanitized  (optional) Decides wether the params have been sanitized before being passed, will sanitize them if false.
+     *
+     * @return int The Template ID
      *
      * @since 1.7.9
      */
@@ -1769,14 +1835,18 @@ class PodsAPI {
     }
 
     /**
+     * @see PodsAPI::save_object
+     *
      * Add or edit a Pod Page
      *
      * $params['id'] int The page ID
      * $params['uri'] string The page URI
      * $params['code'] string The page code
      *
-     * @param array $params An associative array of parameters
+     * @param array|object $params An associative array of parameters
+     * @param bool $sanitized  (optional) Decides wether the params have been sanitized before being passed, will sanitize them if false.
      *
+     * @return int The page ID
      * @since 1.7.9
      */
     public function save_page ( $params, $sanitized = false ) {
@@ -1799,6 +1869,8 @@ class PodsAPI {
     }
 
     /**
+     * @see PodsAPI::save_object
+     *
      * Add or edit a Pod Helper
      *
      * $params['id'] int The helper ID
@@ -1807,7 +1879,9 @@ class PodsAPI {
      * $params['code'] string The helper code
      *
      * @param array $params An associative array of parameters
+     * @param bool $sanitized  (optional) Decides wether the params have been sanitized before being passed, will sanitize them if false.
      *
+     * @return int The helper ID
      * @since 1.7.9
      */
     public function save_helper ( $params, $sanitized = false ) {
@@ -1832,12 +1906,16 @@ class PodsAPI {
      * $params['data'] array (optional) Associative array of field names + values
      * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers
      *
-     * @param array $params An associative array of parameters
+     * @param array|object $params An associative array of parameters
      *
      * @return int The item ID
+     *
      * @since 1.7.9
      */
     public function save_pod_item ( $params ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
 
         $params = (object) str_replace( '@wp_', '{prefix}', $params );
@@ -2366,6 +2444,7 @@ class PodsAPI {
     }
 
     /**
+     * @see PodsAPI::save_pod_item
      * Add multiple pod items
      *
      * $params['pod'] string The Pod name (pod or pod_id is required)
@@ -2375,7 +2454,7 @@ class PodsAPI {
      * $data['id'] int The item ID (optional)
      * $data['data'] array An associative array of field names + values
      *
-     * @param array $params An associative array of parameters, data excluded
+     * @param array|object $params An associative array of parameters, data excluded
      * @param array $data An associative array of pod ids and field names + values (arrays of field data)
      *
      * @return int The item ID
@@ -2401,6 +2480,8 @@ class PodsAPI {
     }
 
     /**
+     * @see PodsAPI::save_pod_item
+     *
      * Duplicate a pod item
      *
      * $params['pod'] string The Pod name
@@ -2450,6 +2531,8 @@ class PodsAPI {
     }
 
     /**
+     * @see pods()
+     *
      * Export a pod item
      *
      * $params['pod'] string The Pod name
@@ -2495,6 +2578,8 @@ class PodsAPI {
      *
      * @param array $params An associative array of parameters
      *
+     * @return bool
+     *
      * @since 1.9.0
      */
     public function reorder_pod_item ( $params ) {
@@ -2517,12 +2602,18 @@ class PodsAPI {
     }
 
     /**
+     *
      * Delete all content for a Pod
      *
      * $params['id'] int The Pod ID
      * $params['name'] string The Pod name
      *
      * @param array $params An associative array of parameters
+     *
+     * @return bool
+     *
+     * @uses pods_query
+     * @uses wp_cache_flush
      *
      * @since 1.9.0
      */
@@ -2555,10 +2646,19 @@ class PodsAPI {
      * $params['name'] string The Pod name
      *
      * @param array $params An associative array of parameters
+     * @param bool $strict (optional) Makes sure a pod exists, if it doesn't throws an error
      *
+     * @uses PodsAPI::load_pod
+     * @uses wp_delete_post
+     * @uses pods_query
+     *
+     * @return bool
      * @since 1.7.9
      */
     public function delete_pod ( $params, $strict = false ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
 
         if ( !is_object( $params ) && !is_array( $params ) ) {
@@ -2633,9 +2733,17 @@ class PodsAPI {
      * @param array $params An associative array of parameters
      * @param bool $table_operation Whether or not to handle table operations
      *
+     * @uses PodsAPI::load_field
+     * @uses wp_delete_post
+     * @uses pods_query
+     *
+     * @return bool
      * @since 1.7.9
      */
     public function delete_field ( $params, $table_operation = true ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
 
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
@@ -2707,11 +2815,15 @@ class PodsAPI {
      * $params['name'] string The object name
      * $params['type'] string The object type
      *
-     * @param array $params An associative array of parameters
+     * @param array|object $params An associative array of parameters
      *
+     * @uses wp_delete_post
+     *
+     * @return bool
      * @since 2.0.0
      */
     public function delete_object ( $params ) {
+        $params = (object) $params;
         $object = $this->load_object( $params );
 
         if ( empty( $object ) )
@@ -2731,6 +2843,8 @@ class PodsAPI {
     }
 
     /**
+     * @see PodsAPI::delete_object
+     *
      * Drop a Pod Template
      *
      * $params['id'] int The template ID
@@ -2738,6 +2852,7 @@ class PodsAPI {
      *
      * @param array $params An associative array of parameters
      *
+     * @return bool
      * @since 1.7.9
      */
     public function delete_template ( $params ) {
@@ -2747,6 +2862,8 @@ class PodsAPI {
     }
 
     /**
+     * @see PodsAPI::delete_object
+     *
      * Drop a Pod Page
      *
      * $params['id'] int The page ID
@@ -2754,6 +2871,7 @@ class PodsAPI {
      *
      * @param array $params An associative array of parameters
      *
+     * @return bool
      * @since 1.7.9
      */
     public function delete_page ( $params ) {
@@ -2769,6 +2887,8 @@ class PodsAPI {
     }
 
     /**
+     * @see PodsAPI::delete_object
+     *
      * Drop a Pod Helper
      *
      * $params['id'] int The helper ID
@@ -2776,6 +2896,7 @@ class PodsAPI {
      *
      * @param array $params An associative array of parameters
      *
+     * @return bool
      * @since 1.7.9
      */
     public function delete_helper ( $params ) {
@@ -2794,6 +2915,7 @@ class PodsAPI {
      *
      * @param array $params An associative array of parameters
      *
+     * @return bool
      * @since 1.7.9
      */
     public function delete_pod_item ( $params ) {
@@ -2928,6 +3050,8 @@ class PodsAPI {
      *
      * @param array $params An associative array of parameters
      *
+     * @return bool True if exists
+     *
      * @since 1.12
      */
     public function pod_exists ( $params ) {
@@ -2958,10 +3082,15 @@ class PodsAPI {
      * $params['name'] string The Pod name
      *
      * @param array $params An associative array of parameters or pod name as a string
+     * @param bool $strict Makes sure the pod exists, throws an error if it doesn't work
      *
+     * @return array|bool|mixed|void
      * @since 1.7.9
      */
     public function load_pod ( $params, $strict = true ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
 
         if ( !is_array( $params ) && !is_object( $params ) )
@@ -3097,6 +3226,10 @@ class PodsAPI {
      *
      * @param array $params An associative array of parameters
      *
+     * @return array|mixed
+     *
+     * @uses PodsAPI::load_pod
+     *
      * @since 2.0.0
      */
     public function load_pods ( $params = null ) {
@@ -3218,6 +3351,8 @@ class PodsAPI {
      *
      * @param array $params An associative array of parameters
      *
+     * @return bool
+     *
      * @since 1.12
      */
     public function field_exists ( $params ) {
@@ -3254,6 +3389,7 @@ class PodsAPI {
      * @param array $params An associative array of parameters
      * @param boolean $strict Whether to require a field exist or not when loading the info
      *
+     * @return array|bool Array with field data, false if field not found
      * @since 1.7.9
      */
     public function load_field ( $params, $strict = false ) {
@@ -3391,6 +3527,9 @@ class PodsAPI {
      * $params['type'] array The field types
      *
      * @param array $params An associative array of parameters
+     * @param bool $strict  Whether to require a field exist or not when loading the info
+     *
+     * @return array Array of field data.
      *
      * @since 1.7.9
      */
@@ -3487,8 +3626,10 @@ class PodsAPI {
      * $params['name'] string The Object name
      * $params['type'] string The Object type
      *
-     * @param array $params An associative array of parameters
+     * @param array|object $params An associative array of parameters
+     * @param bool $strict
      *
+     * @return array|bool
      * @since 2.0.0
      */
     public function load_object ( $params, $strict = false ) {
@@ -3517,6 +3658,9 @@ class PodsAPI {
                     return $object;
             }
 
+            /**
+             * @var $wpdb wpdb
+             */
             global $wpdb;
 
             if ( isset( $params->name ) ) {
@@ -3582,7 +3726,10 @@ class PodsAPI {
      * $params['limit'] string Number of objects to return
      * $params['where'] string WHERE clause of query
      *
-     * @param array $params An associative array of parameters
+     * @param array|object $params An associative array of parameters
+     *
+     * @return array
+     * @since 2.0.0
      */
     public function load_objects ( $params ) {
         $params = (object) pods_sanitize( $params );
@@ -3664,6 +3811,8 @@ class PodsAPI {
     }
 
     /**
+     * @see PodsAPI::load_object
+     *
      * Load a Pod Template
      *
      * $params['id'] int The template ID
@@ -3671,6 +3820,7 @@ class PodsAPI {
      *
      * @param array $params An associative array of parameters
      *
+     * @return array|bool
      * @since 1.7.9
      */
     public function load_template ( $params ) {
@@ -3680,6 +3830,8 @@ class PodsAPI {
     }
 
     /**
+     * @see PodsAPI::load_objects
+     *
      * Load Multiple Pod Templates
      *
      * $params['where'] string The WHERE clause of query
@@ -3687,7 +3839,8 @@ class PodsAPI {
      * $params['orderby'] string ORDER BY clause of query
      * $params['limit'] string Number of templates to return
      *
-     * @param array $params An associative array of parameters
+     * @param array $params (optional) An associative array of parameters
+     * @return array
      */
     public function load_templates ( $params = null ) {
         $params = (object) $params;
@@ -3696,6 +3849,8 @@ class PodsAPI {
     }
 
     /**
+     * @see PodsAPI::load_object
+     *
      * Load a Pod Page
      *
      * $params['id'] int The page ID
@@ -3703,6 +3858,7 @@ class PodsAPI {
      *
      * @param array $params An associative array of parameters
      *
+     * @return array|bool
      * @since 1.7.9
      */
     public function load_page ( $params ) {
@@ -3716,6 +3872,8 @@ class PodsAPI {
     }
 
     /**
+     * @see PodsAPI::load_objects
+     *
      * Load Multiple Pod Pages
      *
      * $params['where'] string The WHERE clause of query
@@ -3723,7 +3881,8 @@ class PodsAPI {
      * $params['orderby'] string ORDER BY clause of query
      * $params['limit'] string Number of pages to return
      *
-     * @param array $params An associative array of parameters
+     * @param array $params (optional) An associative array of parameters
+     * @return array
      */
     public function load_pages ( $params = null ) {
         $params = (object) $params;
@@ -3732,6 +3891,8 @@ class PodsAPI {
     }
 
     /**
+     * @see PodsAPI::load_object
+     *
      * Load a Pod Helper
      *
      * $params['id'] int The helper ID
@@ -3739,6 +3900,7 @@ class PodsAPI {
      *
      * @param array $params An associative array of parameters
      *
+     * @return array|bool
      * @since 1.7.9
      */
     public function load_helper ( $params ) {
@@ -3748,6 +3910,8 @@ class PodsAPI {
     }
 
     /**
+     * @see PodsAPI::load_objects
+     *
      * Load Multiple Pod Helpers
      *
      * $params['where'] string The WHERE clause of query
@@ -3755,7 +3919,8 @@ class PodsAPI {
      * $params['orderby'] string ORDER BY clause of query
      * $params['limit'] string Number of pages to return
      *
-     * @param array $params An associative array of parameters
+     * @param array $params (optional) An associative array of parameters
+     * @return array
      */
     public function load_helpers ( $params = null ) {
         $params = (object) $params;
@@ -3770,6 +3935,10 @@ class PodsAPI {
      * $params['id'] int (optional) The item's ID
      *
      * @param array $params An associative array of parameters
+     *
+     * @return bool|\Pods
+     *
+     * @uses pods()
      *
      * @since 2.0.0
      */
@@ -3800,9 +3969,12 @@ class PodsAPI {
      * $params['related_pod'] string The related Pod name
      *
      * @param array $params An associative array of parameters
-     * @param array $pod Array of Pod data to use (to avoid lookup)
+     * @param array $pod (optional) Array of Pod data to use (to avoid lookup)
      *
+     * @return array|bool
      * @since 1.7.9
+     *
+     * @uses PodsAPI::load_pod
      *
      * @todo Implement with load_pod / fields and use AJAX for new admin
      */
@@ -3841,9 +4013,11 @@ class PodsAPI {
     /**
      * Takes a sql field such as tinyint and returns the pods field type, such as num.
      *
-     * @param type $sql_field
+     * @param string $sql_field The SQL field to look for
      *
-     * @return type
+     * @return string The field type
+     *
+     * @since 2.0.0
      */
     public static function detect_pod_field_from_sql_data_type ( $sql_field ) {
         $sql_field = strtolower( $sql_field );
@@ -3872,7 +4046,13 @@ class PodsAPI {
     }
 
     /**
-     * @return array|bool|mixed|null
+     * Gets all field types
+     *
+     * @return array Array of field types
+     *
+     * @uses PodsForm::field_loader
+     *
+     * @since 2.0.0
      */
     public function get_field_types () {
         $types = array(
@@ -3923,10 +4103,14 @@ class PodsAPI {
     }
 
     /**
-     * @param $type
-     * @param null $options
+     * Gets the schema definition of a field.
+     *
+     * @param string $type Field type to look for
+     * @param array $options (optional) Options of the field to pass to the schema function.
      *
      * @return array|bool|mixed|null
+     *
+     * @since 2.0.0
      */
     private function get_field_definition ( $type, $options = null ) {
         $definition = PodsForm::field_method( $type, 'schema', $options );
@@ -3935,14 +4119,22 @@ class PodsAPI {
     }
 
     /**
-     * @param $value
-     * @param $field
-     * @param $object_fields
-     * @param $fields
-     * @param $pod
-     * @param $params
+     * @see PodsForm:validate
      *
-     * @return array|bool|mixed|null|void
+     * Validates the value of a field.
+     *
+     * @param mixed $value The value to validate
+     * @param string $field Field to use for validation
+     * @param array $object_fields Fields of the object we're validating
+     * @param array $fields Array of all fields data
+     * @param array $pod Array of pod data
+     * @param array $params Extra parameters to pass to the validation function of the field.
+     *
+     * @return array|bool
+     *
+     * @uses PodsForm::validate
+     *
+     * @since 2.0.0
      */
     private function handle_field_validation ( &$value, $field, $object_fields, $fields, $pod, $params ) {
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
@@ -3997,7 +4189,11 @@ class PodsAPI {
      * @param int $pod_id The Pod ID
      * @param mixed $ids A comma-separated string (or array) of item IDs
      *
+     * @return array|bool
+     *
      * @since 2.0.0
+     *
+     * @uses pods_query()
      */
     function lookup_related_items ( $field_id, $pod_id, $ids ) {
         if ( empty( $ids ) )
@@ -4040,14 +4236,21 @@ class PodsAPI {
     }
 
     /**
-     * @param $object_type
-     * @param $object
-     * @param null $name
-     * @param null $pod
+     * Get information about an objects MySQL table
      *
-     * @return array|bool|mixed|null
+     * @param string $object_type
+     * @param string $object The object to look for
+     * @param null $name (optional) Name of the pod to laod
+     * @param array $pod (optional) Array with pod information
+     *
+     * @return array|bool
+     *
+     * @since 2.0.0
      */
     public function get_table_info ( $object_type, $object, $name = null, $pod = null ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
 
         $info = array(
@@ -4192,6 +4395,8 @@ class PodsAPI {
      *
      * @param array $params An associative array of parameters
      *
+     * @return array|bool
+     *
      * @since 1.9.0
      */
     public function export_package ( $params ) {
@@ -4241,9 +4446,9 @@ class PodsAPI {
     /**
      * Replace an existing package
      *
-     *
      * @param mixed $data (optional) An associative array containing a package, or the json encoded package
      *
+     * @return bool
      * @since 1.9.8
      */
     public function replace_package ( $data = false ) {
@@ -4253,10 +4458,10 @@ class PodsAPI {
     /**
      * Import a package
      *
-     *
      * @param mixed $data (optional) An associative array containing a package, or the json encoded package
      * @param bool $replace (optional) Replace existing items when found
      *
+     * @return bool
      * @since 1.9.0
      */
     public function import_package ( $data = false, $replace = false ) {
@@ -4445,9 +4650,10 @@ class PodsAPI {
     /**
      * Validate a package
      *
-     *
      * @param mixed $data (optional) An associative array containing a package, or the json encoded package
+     * @param bool $output (optional)
      *
+     * @return array|bool
      * @since 1.9.0
      */
     public function validate_package ( $data = false, $output = false ) {
@@ -4654,10 +4860,15 @@ class PodsAPI {
      *
      * @param mixed $import_data PHP associative array or CSV input
      * @param bool $numeric_mode Use IDs instead of the name field when matching
+     * @param null $format (deprecated)
      *
+     * @return array
      * @since 1.7.1
      */
     public function import ( $import_data, $numeric_mode = false, $format = null ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
 
         if ( null === $format && null !== $this->format )
@@ -4778,6 +4989,7 @@ class PodsAPI {
      *
      * @param string $data The CSV input
      *
+     * @return array
      * @since 1.7.1
      */
     public function csv_to_php ( $data ) {
@@ -4810,6 +5022,9 @@ class PodsAPI {
      * @param array $pod
      */
     public function cache_flush_pods ( $pod = null ) {
+        /**
+         * @var $wpdb wpdb
+         */
         global $wpdb;
 
         delete_transient( 'pods' );

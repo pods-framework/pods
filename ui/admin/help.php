@@ -50,7 +50,7 @@
                     <a href="<?php echo esc_url( $item->get_permalink() ); ?>"><?php echo esc_html( $item->get_title() ); ?></a>
                     <?php echo $author_text; ?>
                     <br />
-                    at <?php echo $item->get_date( 'g:ia \o\n m/d/Y' ); ?>
+                    on <?php echo $item->get_date( 'm/d/Y' ); ?>
                 </li>
             <?php
                 }
@@ -95,7 +95,7 @@
                     <a href="<?php echo esc_url( $item->get_permalink() ); ?>">Commit</a>: <?php echo esc_html( $item->get_title() ); ?>
                     <?php echo $author_text; ?>
                     <br />
-                    at <?php echo $item->get_date( 'g:ia \o\n m/d/Y' ); ?>
+                    on <?php echo $item->get_date( 'm/d/Y' ); ?>
                 </li>
             <?php
                 }

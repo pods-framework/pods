@@ -10,7 +10,7 @@
  *
  * Developer Mode: on
  *
- * @package pods
+ * @package Pods
  * @subpackage convert-storagetype
  */
 class Pods_Convert_StorageType extends PodsComponent {

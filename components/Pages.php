@@ -9,7 +9,7 @@
  * Menu Page: edit.php?post_type=_pods_page
  * Menu Add Page: post-new.php?post_type=_pods_page
  *
- * @package pods
+ * @package Pods
  * @subpackage pages
  */
 

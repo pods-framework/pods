@@ -6,7 +6,7 @@
  *
  * Version: 1.0
  *
- * @package pods
+ * @package Pods
  * @subpackage markdown
  */
 

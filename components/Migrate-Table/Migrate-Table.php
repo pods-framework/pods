@@ -10,7 +10,7 @@
  *
  * Developer Mode: on
  *
- * @package pods
+ * @package Pods
  * @subpackage migrate-table
  */
 class Pods_Migrate_Table extends PodsComponent {

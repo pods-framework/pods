@@ -8,7 +8,7 @@
  *
  * Developer Mode: on
  *
- * @package pods
+ * @package Pods
  * @subpackage helpers
  */
 

@@ -8,7 +8,7 @@
  *
  * Version: 1.0
  *
- * @package pods
+ * @package Pods
  * @subpackage migrate-cptui
  */
 class Pods_Migrate_CPTUI extends PodsComponent {

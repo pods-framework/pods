@@ -907,7 +907,7 @@ class PodsAPI {
             if ( 'post_type' == $pod_params[ 'type' ] )
                 $pod_params[ 'storage' ] = $params->create_storage;
             elseif ( 'taxonomy' == $pod_params[ 'type' ] )
-                $pod_params[ 'storage' ] = $params->create_storage_extend;
+                $pod_params[ 'storage' ] = $params->create_storage_taxonomy;
         }
         elseif ( 'extend' == $params->create_extend ) {
             $pod_params[ 'type' ] = $params->extend_pod_type;

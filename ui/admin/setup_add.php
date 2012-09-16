@@ -265,5 +265,9 @@
         $( document ).Pods( 'advanced' );
         $( document ).Pods( 'confirm' );
         $( document ).Pods( 'sluggable' );
+
+        $( document ).find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
+            $( this ).trigger( 'change' );
+        } );
     } );
 </script>

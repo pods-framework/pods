@@ -65,7 +65,7 @@
                     var val = $el.val();
 
                     if ( '' != $el.prop( 'name' ) ) {
-                        if ( $el.is( 'input[type=checkbox]' ) && 1 == val && !$el.is( ':checked' ) )
+                        if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) )
                             val = 0;
                         else if ( $el.is( 'input[type=radio]' ) && !$el.is( ':checked' ) )
                             val = '';

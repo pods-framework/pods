@@ -41,6 +41,12 @@ if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) ) {
 
     require_once( PODS_DIR . 'functions.php' );
 
+    $update = admin_url( 'update.php' );
+    $update = str_replace( get_bloginfo( 'wpurl' ), '', $update );
+
+    $update_network = network_admin_url( 'update.php' );
+    $update_network = str_replace( get_bloginfo( 'wpurl' ), '', $update_network );
+
     if ( is_admin() &&
          ( isset( $_GET[ 'pods_force_refresh' ] ) ||
            ( 'update-selected' == pods_var( 'action' ) &&
@@ -54,12 +60,6 @@ if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) ) {
 
         if ( isset( $_GET[ 'pods_force_refresh' ] ) )
             $version = '0.1';
-
-        $update = admin_url( 'update.php' );
-        $update = str_replace( get_bloginfo( 'wpurl' ), '', $update );
-
-        $update_network = network_admin_url( 'update.php' );
-        $update_network = str_replace( get_bloginfo( 'wpurl' ), '', $update_network );
 
         if ( 'update-selected' == pods_var( 'action' ) && ( false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update ) || false !== strpos( $_SERVER[ 'REQUEST_URI' ], $update_network ) ) )
             $version = '0.1';

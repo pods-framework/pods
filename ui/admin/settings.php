@@ -4,7 +4,7 @@
         <div id="icon-pods" class="icon32"><br /></div>
 
         <?php
-            $default = 'settings';
+            $default = 'tools';
 
             $tabs = array(
                 //'settings' => __( 'Settings', 'pods' ),

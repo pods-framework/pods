@@ -2694,16 +2694,16 @@ class PodsAPI {
         $params->id = (int) $pod[ 'id' ];
         $params->name = $pod[ 'name' ];
 
-        $success = wp_delete_post( $params->id );
-
-        if ( !$success )
-            return pods_error( __( 'Pod unable to be deleted', 'pods' ), $this );
-
         foreach ( $pod[ 'fields' ] as $field ) {
             $field[ 'pod' ] = $pod;
 
             $this->delete_field( $field, false );
         }
+
+        // Only delete the post once the fields are taken care of, it's not required anymore
+        $success = wp_delete_post( $params->id );
+        if ( !$success )
+            return pods_error( __( 'Pod unable to be deleted', 'pods' ), $this );
 
         if ( 'table' == $pod[ 'storage' ] ) {
             try {

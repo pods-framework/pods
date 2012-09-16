@@ -60,14 +60,16 @@ class Pods_Helpers extends PodsComponent {
 
         register_post_type( $this->object_type, apply_filters( 'pods_internal_register_post_type_object_helper', $args ) );
 
-        add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
+        if ( is_admin() ) {
+            add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
 
-        add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
-        add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 10, 4 );
-        add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 10, 4 );
+            add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
+            add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 10, 4 );
+            add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 10, 4 );
 
-        add_action( 'pods_meta_save_post__pods_helper', array( $this, 'clear_cache' ), 10, 5 );
-        add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
+            add_action( 'pods_meta_save_post__pods_helper', array( $this, 'clear_cache' ), 10, 5 );
+            add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
+        }
     }
 
     /**

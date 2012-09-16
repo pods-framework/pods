@@ -62,15 +62,16 @@ class Pods_Pages extends PodsComponent {
 
         if ( !is_admin() )
             add_action( 'load_textdomain', array( $this, 'page_check' ), 12 );
+        else {
+            add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
 
-        add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
+            add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
+            add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 10, 4 );
+            add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 10, 4 );
 
-        add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
-        add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 10, 4 );
-        add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 10, 4 );
-
-        add_action( 'pods_meta_save_post__pods_page', array( $this, 'clear_cache' ), 10, 5 );
-        add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
+            add_action( 'pods_meta_save_post__pods_page', array( $this, 'clear_cache' ), 10, 5 );
+            add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
+        }
     }
 
     /**

@@ -146,6 +146,9 @@ class Pods_Pages extends PodsComponent {
         if ( isset( PodsMeta::$post_types[ $pod[ 'name' ] ] ) )
             return;
 
+        if ( !function_exists( 'get_page_templates' ) )
+            include_once ABSPATH . WPINC . '/themes.php';
+
         $page_templates = apply_filters( 'pods_page_templates', get_page_templates() );
 
         $page_templates[ __( '-- Page Template --', 'pods' ) ] = '';

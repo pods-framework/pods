@@ -9,8 +9,8 @@
  * Menu Page: edit.php?post_type=_pods_template
  * Menu Add Page: post-new.php?post_type=_pods_template
  *
- * @package Pods
- * @subpackage templates
+ * @package Pods\Components
+ * @subpackage Templates
  */
 
 class Pods_Templates extends PodsComponent {

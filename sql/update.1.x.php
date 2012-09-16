@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Pods\Upgrade
+ */
 global $wpdb;
 
 if ( version_compare( $old_version, '1.2.6', '<' ) ) {

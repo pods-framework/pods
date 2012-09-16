@@ -1,4 +1,8 @@
 <?php
+/**
+ * @package Pods\Demo
+ */
+
 /*
 Plugin Name: Pods UI Demo
 Plugin URI: http://podscms.org/

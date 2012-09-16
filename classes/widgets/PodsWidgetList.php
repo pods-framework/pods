@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Pods\Widgets
+ */
 class PodsWidgetList extends WP_Widget {
 
     /**

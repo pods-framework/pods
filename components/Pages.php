@@ -1,5 +1,8 @@
 <?php
 /**
+ * @package Pods\Components\Pages
+ */
+/**
  * Name: Pages
  *
  * Description: Create advanced URL structures using wildcards, they can exist on-top of any existing WordPress URL rewrites or be entirely custom. Add a path and select the WP Template to use, the rest is up to you!
@@ -9,8 +12,8 @@
  * Menu Page: edit.php?post_type=_pods_page
  * Menu Add Page: post-new.php?post_type=_pods_page
  *
- * @package Pods
- * @subpackage pages
+ * @package Pods\Components
+ * @subpackage Pages
  */
 
 class Pods_Pages extends PodsComponent {

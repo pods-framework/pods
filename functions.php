@@ -1,5 +1,8 @@
 <?php
 /**
+ * @package Pods\Global
+ */
+/**
  * Standardize queries and error reporting
  *
  * @see PodsData::query

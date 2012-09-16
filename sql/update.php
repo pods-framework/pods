@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Pods\Upgrade
+ */
 global $wpdb;
 
 if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, '2.0.0-a-31', '<' ) ) {

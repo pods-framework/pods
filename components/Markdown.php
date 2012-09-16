@@ -6,8 +6,8 @@
  *
  * Version: 1.0
  *
- * @package Pods
- * @subpackage markdown
+ * @package Pods\Components
+ * @subpackage Markdown
  */
 
 function pods_markdown_add_option ( $options, $type ) {
@@ -118,7 +118,11 @@ if (strcasecmp(substr(__FILE__, -16), "classTextile.php") == 0) {
 	# Try to include PHP SmartyPants. Should be in the same directory.
 	@include_once 'smartypants.php';
 	# Fake Textile class. It calls Markdown instead.
-	class Textile {
+    /**
+     * @package Pods\Components
+     * @subpackage Markdown
+     */
+    class Textile {
 		function TextileThis($text, $lite='', $encode='') {
 			if ($lite == '' && $encode == '')    $text = Markdown($text);
 			if (function_exists('SmartyPants'))  $text = SmartyPants($text);
@@ -138,6 +142,10 @@ if (strcasecmp(substr(__FILE__, -16), "classTextile.php") == 0) {
 #
 # Markdown Parser Class
 #
+/**
+* @package Pods\Components
+* @subpackage Markdown
+*/
 
 class Markdown_Parser {
 

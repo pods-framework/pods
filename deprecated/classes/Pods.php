@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Pods\Deprecated
+ */
 class Pods_Deprecated
 {
     private $obj;

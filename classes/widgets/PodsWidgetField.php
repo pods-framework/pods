@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Pods\Widgets
+ */
 class PodsWidgetField extends WP_Widget {
 
     /**

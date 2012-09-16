@@ -8,8 +8,8 @@
  *
  * Developer Mode: on
  *
- * @package Pods
- * @subpackage helpers
+ * @package Pods\Components
+ * @subpackage Packages
  */
 
 class Pods_Packages extends PodsComponent {

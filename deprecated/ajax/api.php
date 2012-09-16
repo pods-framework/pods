@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Pods\Deprecated
+ */
 ob_start();
 require_once(preg_replace("/wp-content.*/","wp-load.php",__FILE__));
 ob_end_clean();

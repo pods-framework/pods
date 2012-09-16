@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * @package Pods
  */
 class PodsField {
 

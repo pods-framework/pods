@@ -1,6 +1,8 @@
 <?php
 /**
+ * Handles code field data and operations
  *
+ * @package Pods\Fields
  */
 class PodsField_Code extends PodsField {
 

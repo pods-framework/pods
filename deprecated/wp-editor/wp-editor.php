@@ -6,6 +6,9 @@
 // global $wp_editor;
 // $wp_editor->editor($content, $editor_id, $settings, $media_buttons);
 if ( !class_exists('WP_Pre_33_Editor') ) :
+/**
+ * @package Pods\Deprecated
+ */
 class WP_Pre_33_Editor {
 
 	var $editor_ids = array();

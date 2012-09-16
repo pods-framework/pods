@@ -10,7 +10,7 @@
  *
  * Plugin Dependency: Gravity Forms|gravityforms/gravityforms.php|http://www.gravityforms.com/
  *
- * @package Pods
+ * @package Pods\Components
  * @subpackage gravityforms
  */
 class Pods_GravityForms extends PodsComponent {

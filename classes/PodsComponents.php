@@ -1,6 +1,8 @@
 <?php
 /**
  * Component managing class
+ *
+ * @package Pods
  */
 class PodsComponents {
 
@@ -389,6 +391,8 @@ class PodsComponents {
 
 /**
  * The base component class, all components should extend this.
+ *
+ * @package Pods
  */
 class PodsComponent {
 

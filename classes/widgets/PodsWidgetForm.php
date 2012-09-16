@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Pods\Widgets
+ */
 class PodsWidgetForm extends WP_Widget {
 
     public function PodsWidgetForm () {

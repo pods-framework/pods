@@ -8,8 +8,8 @@
  *
  * Version: 1.0
  *
- * @package Pods
- * @subpackage roles
+ * @package Pods\Components
+ * @subpackage Roles
  */
 
 class Pods_Roles extends PodsComponent {

@@ -1,6 +1,8 @@
 <?php
 /**
+ * Handles boolean field type data and operations.
  *
+ * @package Pods\Fields
  */
 class PodsField_Boolean extends PodsField {
 
@@ -40,7 +42,7 @@ class PodsField_Boolean extends PodsField {
     /**
      * Add options and set defaults to
      *
-     * @param array $options
+     * @return array Array of available options
      *
      * @since 2.0.0
      */
@@ -91,10 +93,10 @@ class PodsField_Boolean extends PodsField {
      * @param mixed $value
      * @param string $name
      * @param array $options
-     * @param array $fields
      * @param array $pod
      * @param int $id
      *
+     * @return mixed|null
      * @since 2.0.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
@@ -158,6 +160,7 @@ class PodsField_Boolean extends PodsField {
      * @param string $pod
      * @param int $id
      *
+     * @return bool
      * @since 2.0.0
      */
     public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
@@ -173,7 +176,9 @@ class PodsField_Boolean extends PodsField {
      * @param array $fields
      * @param array $pod
      * @param int $id
+     * @param null $params
      *
+     * @return bool
      * @since 2.0.0
      */
     public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
@@ -191,6 +196,7 @@ class PodsField_Boolean extends PodsField {
      * @param array $pod
      * @param object $params
      *
+     * @return int|mixed
      * @since 2.0.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
@@ -220,11 +226,12 @@ class PodsField_Boolean extends PodsField {
     /**
      * Perform actions before deleting from the DB
      *
-     * @param string $name
-     * @param string $pod
      * @param int $id
-     * @param object $api
+     * @param string $name
+     * @param null $options
+     * @param string $pod
      *
+     * @return void
      * @since 2.0.0
      */
     public function pre_delete ( $id = null, $name = null, $options = null, $pod = null ) {

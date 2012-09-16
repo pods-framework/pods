@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * @package Pods\Fields
  */
 class PodsField_Time extends PodsField {
 

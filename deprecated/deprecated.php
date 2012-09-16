@@ -1,4 +1,12 @@
 <?php
+/**
+ * @package Pods\Deprecated
+ */
+
+/**
+ *
+ */
+
 // JSON support
 if (!function_exists('json_encode')) {
     require_once(ABSPATH . '/wp-includes/js/tinymce/plugins/spellchecker/classes/utils/JSON.php');
@@ -98,6 +106,7 @@ function pod_query ($sql, $error = 'SQL failed', $results_error = null, $no_resu
  *
  * @since 1.x
  * @deprecated deprecated since version 2.0.0
+ * @package Pods\Deprecated
  */
 class Pod
 {
@@ -139,6 +148,7 @@ class Pod
  *
  * @since 1.x
  * @deprecated deprecated since version 2.0.0
+ * @package Pods\Deprecated
  */
 class PodAPI
 {

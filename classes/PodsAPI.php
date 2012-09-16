@@ -5046,6 +5046,11 @@ class PodsAPI {
 
         $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods_%'" );
 
+        if ( in_array( $pod[ 'type' ], array( 'taxonomy', 'post_type' ) ) ) {
+            global $wp_rewrite;
+            $wp_rewrite->flush_rules();
+        }
+
         wp_cache_flush();
     }
 

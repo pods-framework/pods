@@ -265,7 +265,7 @@ class PodInit
         return false;
     }
 
-    function wp_title($title, $sep, $seplocation) {
+    function wp_title($title, $sep = '&raquo;', $seplocation = '') {
         global $pods, $pod_page_exists;
 
         $page_title = $pod_page_exists['title'];
@@ -278,7 +278,9 @@ class PodInit
                 $title = " " . $sep . " " . $page_title;
         }
         else {
-            $home_path = parse_url(home_url());
+            $home_path = @parse_url(home_url());
+            if ( empty( $home_path ) )
+                $home_path = parse_url( pods_get_current_url() );
             if ( !isset( $home_path[ 'path' ] ) )
                 $home_path[ 'path' ] = '/';
             $uri = preg_replace('|^' . preg_quote($home_path['path'], '|') . '|', '', $_SERVER['REQUEST_URI']);

@@ -446,6 +446,20 @@
     background: #fff;
 }
 
+.pods_admin .fb_preview,
+.pods_form .fb_preview {
+    display: none;
+    width: 154px;
+    height: 137px;
+    background: #e4f2fd;
+    background-repeat: no-repeat;
+    background-position: center;
+    border: 2px solid #c6d9e9;
+    position: absolute;
+    left: 300px;
+    top: -15px;
+}
+
 * iframe.jqm {
     top: 0;
     left: 0;

@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, ui, content types, custom post types, relationships, database, framework, drupal
 Requires at least: 3.1
 Tested up to: 3.5
-Stable tag: 1.14.3
+Stable tag: 1.14.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,14 +30,14 @@ There are several ways to get Pods data to show up throughout your site:
 * The Pods API allows you to retrieve raw data from and save data to the database.
 
 = Customized Management Panels =
-Utilize Pods UI (included in Pods 1.10+) to build your own Custom Management panels for your Pods.
+Utilize Pods UI (included since Pods 1.10+) to build your own Custom Management panels for your Pods. See http://podsframework.org/codex/pods_ui_manage/
 
 = Migrate! =
 Pods includes a Package Manager, which allows you to import/export Pods (structure-only, no data yet), Pod Templates, Pod Pages, and/or Pod Helpers. You can select which features you want to "package up" and export it for easy migration to other sites or to share your code with other users in our Package Directory.
 
 Pods also includes an easy to use PHP API to allow you to import and export your data via CSV, and other more complex operations.
 
-= Introduction to the Pods CMS Framework =
+= Introduction to the Pods Framework =
 [vimeo http://vimeo.com/15086927]
 
 = Pods 2.0 is now beta! =
@@ -74,9 +74,17 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 == Changelog ==
 
-= 1.14.3 - September 6th, 2012 =
+= 1.14.4 - September 16th, 2012 =
 * Security Update Reminder: As of Pods 1.12+, AJAX API calls all utilize _wpnonce hashes, update your customized publicForm / input helper code AJAX (api.php and misc.php expect `wp_create_nonce('pods-' . $action)` usage)
-* Note: Oh hey, Pods 2.0 is in beta now! Go test it out and let us know if you have any trouble by posting issues on our GitHub: http://github.com/pods-framework/pods/issues
+* Note: Oh hey, Pods 2.0 is coming out September 21st! Please help us continue to test the beta this week: http://dev.podsframework.org/tag/pods2/
+* Changed: get_current_url was an older function added by Pods a while back, pods_get_current_url is the new function name which is future-proof (get_current_url will point at the new one)
+* Added: A new check will deactivate the plugin if you happen to have another version of the plugin activated for testing purposes
+* Added: A quick enhancement for all to enjoy as a final farewell to Pods 1.x, File Browser now has a mouse-over image enlarge function (props @WallabyKid), see: http://podsframework.org/forums/topic/add-thumbnail-preview-to-jqmwindow-file-browser-for-image-files/
+* Fixed: Some plugins/themes use the wp_title filter incorrectly and do not pass the $sep and $seplocation variables, we now set defaults in those cases
+* Fixed: Some sites experienced PHP notices from the way we've been using parse_url, we now have a fallback for that handling which clears those up
+* Q & A: What's going to happen to Pods 1.x when Pods 2.0 comes out? We're going to release maintenence updates to Pods 1.14.x for a period of time, but there will be no further features added
+
+= 1.14.3 - September 6th, 2012 =
 * Added: Reordering a Pod (using pods_ui_manage) now has a new capability check for pods_reorder_pod_podname (Custom WP capability you can add to the user's role if they don't have pod_podname access already)
 * Added: New pods_page_precode_X action, where X is the Pod Page URI
 * Fixed: get_field from returning values if an id is not set (no data found)

@@ -120,7 +120,7 @@ function pods_var($key = 'last', $type = 'get', $default = null, $allowed = null
         if ('get' == $type && isset($_GET[$key]))
             $output = stripslashes_deep($_GET[$key]);
         elseif (in_array($type, array('url', 'uri'))) {
-            $url = parse_url(get_current_url());
+            $url = parse_url( pods_get_current_url());
             if ( !isset( $url[ 'path' ] ) )
                 $url[ 'path' ] = '/';
             $uri = trim($url['path'], '/');
@@ -189,7 +189,7 @@ function pods_var_set($value, $key = 'last', $type = 'url') {
         $ret = $type;
     }
     elseif ('url' == $type) {
-        $url = parse_url(get_current_url());
+        $url = parse_url( pods_get_current_url());
         if ( !isset( $url[ 'path' ] ) )
             $url[ 'path' ] = '/';
         $uri = trim($url['path'], '/');
@@ -368,12 +368,23 @@ function is_pod_page($uri = null) {
  */
 if (!function_exists('get_current_url')) {
     function get_current_url() {
-        $url = 'http';
-        if (isset($_SERVER['HTTPS']) && 'off' != $_SERVER['HTTPS'] && 0 != $_SERVER['HTTPS'])
-            $url = 'https';
-        $url .= '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-        return apply_filters('get_current_url', $url);
+        $url = pods_get_current_url();
+        return apply_filters( 'get_current_url', $url );
     }
+}
+
+/**
+ * Get current URL of any page
+ *
+ * @return string
+ * @since 1.14.4
+ */
+function pods_get_current_url () {
+    $url = 'http';
+    if ( isset( $_SERVER[ 'HTTPS' ] ) && 'off' != $_SERVER[ 'HTTPS' ] && 0 != $_SERVER[ 'HTTPS' ] )
+        $url = 'https';
+    $url .= '://' . $_SERVER[ 'HTTP_HOST' ] . $_SERVER[ 'REQUEST_URI' ];
+    return apply_filters( 'pods_get_current_url', $url );
 }
 
 /**
@@ -386,11 +397,13 @@ if (!function_exists('get_current_url')) {
  */
 function pod_page_exists($uri = null) {
     if (null === $uri) {
-        $uri = parse_url(get_current_url());
+        $uri = parse_url( pods_get_current_url());
         if ( !isset( $uri[ 'path' ] ) )
             $uri[ 'path' ] = '/';
         $uri = $uri['path'];
-        $home = parse_url(get_bloginfo('url'));
+        $home = @parse_url(get_bloginfo('url'));
+        if ( empty( $home ) )
+            $home = parse_url( pods_get_current_url() );
         if ( !isset( $home[ 'path' ] ) )
             $home[ 'path' ] = '/';
         if(!empty($home) && isset($home['path']) && '/' != $home['path'])

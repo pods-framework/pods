@@ -335,12 +335,12 @@ if ( 'none' != pods_var( 'storage', $pod, 'none', null, true ) ) {
             'type' => 'text'
         );
 
-        include PODS_DIR . 'ui/admin/setup_edit_field.php';
+        include PODS_DIR . 'ui/admin/setup-edit-field.php';
 
         $pods_i = 1;
 
         foreach ( $pod[ 'fields' ] as $field ) {
-            include PODS_DIR . 'ui/admin/setup_edit_field.php';
+            include PODS_DIR . 'ui/admin/setup-edit-field.php';
 
             $pods_i++;
         }
@@ -683,7 +683,7 @@ if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod
     $field_options = PodsForm::fields_setup( $fields );
     $field = $pod;
 
-    include PODS_DIR . 'ui/admin/field_option.php';
+    include PODS_DIR . 'ui/admin/field-option.php';
     ?>
     <div class="pods-field-option-group">
         <p class="pods-field-option-group-label">

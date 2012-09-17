@@ -537,7 +537,7 @@ class PodsAdmin {
      * @param $obj
      */
     public function admin_setup_add ( $obj ) {
-        pods_view( PODS_DIR . 'ui/admin/setup_add.php', compact( array_keys( get_defined_vars() ) ) );
+        pods_view( PODS_DIR . 'ui/admin/setup-add.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
@@ -547,7 +547,7 @@ class PodsAdmin {
      * @param $obj
      */
     public function admin_setup_edit ( $duplicate, $obj ) {
-        pods_view( PODS_DIR . 'ui/admin/setup_edit.php', compact( array_keys( get_defined_vars() ) ) );
+        pods_view( PODS_DIR . 'ui/admin/setup-edit.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**

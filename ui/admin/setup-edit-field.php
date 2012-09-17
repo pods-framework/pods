@@ -115,7 +115,7 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
                                     <?php
                                         $field_options = $field_type_options[ $field_type ];
 
-                                        include PODS_DIR . 'ui/admin/field_option.php';
+                                        include PODS_DIR . 'ui/admin/field-option.php';
                                     ?>
                                 </div>
                                 <?php
@@ -132,7 +132,7 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
                             <?php
                                     $field_options = PodsForm::fields_setup( $fields );
 
-                                    include PODS_DIR . 'ui/admin/field_option.php';
+                                    include PODS_DIR . 'ui/admin/field-option.php';
                                 }
                             ?>
                         </div>

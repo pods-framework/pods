@@ -1,8 +1,10 @@
 <?php
 /**
- * Name: Import Pods 1.x Packages
+ * Name: Migrate: Import Pods 1.x Packages
  *
- * Description: Import and Export your Pods, Fields, and other settings from one Pods site to any other
+ * Menu Name: Migrate Packages
+ *
+ * Description: Import your Pods, Fields, and other settings from any Pods 1.x site
  *
  * Version: 2.0
  *
@@ -40,7 +42,7 @@ class Pods_Migrate_ImportPackages extends PodsComponent {
      * @since 2.0.0
      */
     public function admin ( $options, $component ) {
-        $method = 'import_export'; // ajax_import_export
+        $method = 'import'; // ajax_import
 
         pods_view( PODS_DIR . 'components/Packages/ui/wizard.php', compact( array_keys( get_defined_vars() ) ) );
     }
@@ -50,7 +52,7 @@ class Pods_Migrate_ImportPackages extends PodsComponent {
      *
      * @param $params
      */
-    public function ajax_import_export ( $params ) {
+    public function ajax_import ( $params ) {
 
     }
 }

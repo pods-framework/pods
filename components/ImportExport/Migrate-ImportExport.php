@@ -1,18 +1,20 @@
 <?php
 /**
- * Name: Import Pods 1.x Packages
+ * Name: Migrate: Import and Export between Pods sites
  *
- * Description: Import and Export your Pods, Fields, and other settings from one Pods site to any other
+ * Menu Name: Import &amp; Export
+ *
+ * Description: Import and Export your Pods, Fields, Content and other settings from one Pods site to any other
  *
  * Version: 2.0
  *
  * Developer Mode: on
  *
  * @package Pods\Components
- * @subpackage Migrate-ImportPackages
+ * @subpackage Migrate-ImportExport
  */
 
-class Pods_Migrate_ImportPackages extends PodsComponent {
+class Pods_Migrate_ImportExport extends PodsComponent {
 
     /**
      * Do things like register/enqueue scripts and stylesheets

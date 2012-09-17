@@ -43,6 +43,7 @@ class Pods_Templates extends PodsComponent {
             'label' => 'Pod Templates',
             'labels' => array( 'singular_name' => 'Pod Template' ),
             'public' => false,
+            'can_export' => false,
             'show_ui' => true,
             'show_in_menu' => false,
             'query_var' => false,

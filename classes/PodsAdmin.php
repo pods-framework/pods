@@ -1061,16 +1061,20 @@ class PodsAdmin {
             if ( !empty( $limit_size ) ) {
                 if ( false !== stripos( $limit_size, 'MB' ) ) {
                     $limit_size = (float) trim( str_ireplace( 'MB', '', $limit_size ) );
-                    $limit_size = $limit_size * 1025; // convert to KB
+                    $limit_size = $limit_size * 1025 * 1025; // convert to KB to B
                 }
-                elseif ( false !== stripos( $limit_size, 'KB' ) )
+                elseif ( false !== stripos( $limit_size, 'KB' ) ) {
                     $limit_size = (float) trim( str_ireplace( 'KB', '', $limit_size ) );
+                    $limit_size = $limit_size * 1025 * 1025; // convert to B
+                }
                 elseif ( false !== stripos( $limit_size, 'GB' ) ) {
                     $limit_size = (float) trim( str_ireplace( 'GB', '', $limit_size ) );
-                    $limit_size = $limit_size * 1025 * 1025; // convert to MB to KB
+                    $limit_size = $limit_size * 1025 * 1025 * 1025; // convert to MB to KB to B
                 }
+                elseif ( false !== stripos( $limit_size, 'B' ) )
+                    $limit_size = (float) trim( str_ireplace( 'B', '', $limit_size ) );
                 else
-                    $limit_size = wp_max_upload_size() / 1025; // convert to KB
+                    $limit_size = wp_max_upload_size();
 
                 if ( 0 < $limit_size && $limit_size < $file[ 'size' ] ) {
                     $error = __( 'File size too large, max size is %s', 'pods' );
@@ -1099,7 +1103,7 @@ class PodsAdmin {
                 foreach ( $limit_types as $limit_type ) {
                     $limit_type = '.' . trim( $limit_type, ' .' );
                     $pos =  strlen( $file[ 'name' ] ) - strlen( $limit_type ) - 1;
-                    
+
                     if ( $pos === stripos( $file[ 'name' ], $limit_type ) ) {
                         $ok = true;
 

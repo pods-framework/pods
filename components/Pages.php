@@ -46,6 +46,7 @@ class Pods_Pages extends PodsComponent {
             'label' => 'Pod Pages',
             'labels' => array( 'singular_name' => 'Pod Page' ),
             'public' => false,
+            'can_export' => false,
             'show_ui' => true,
             'show_in_menu' => false,
             'query_var' => false,

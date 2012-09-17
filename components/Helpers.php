@@ -43,6 +43,7 @@ class Pods_Helpers extends PodsComponent {
             'label' => 'Pod Helpers',
             'labels' => array( 'singular_name' => 'Pod Helper' ),
             'public' => false,
+            'can_export' => false,
             'show_ui' => true,
             'show_in_menu' => false,
             'query_var' => false,

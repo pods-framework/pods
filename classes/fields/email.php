@@ -63,7 +63,7 @@ class PodsField_Email extends PodsField {
                 'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
                 'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
                 'type' => 'boolean'
-            ),
+            )/*,
             'email_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
@@ -73,7 +73,7 @@ class PodsField_Email extends PodsField {
                     'medium' => __( 'Medium', 'pods' ),
                     'large' => __( 'Large', 'pods' )
                 )
-            )
+            )*/
         );
         return $options;
     }

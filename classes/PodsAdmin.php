@@ -650,11 +650,13 @@ class PodsAdmin {
                 'manage' => array(
                     'name' => array(
                         'label' => __( 'Name', 'pods' ),
-                        'width' => '30%'
+                        'width' => '30%',
+                        'type' => 'plain'
                     ),
                     'description' => array(
                         'label' => __( 'Description', 'pods' ),
-                        'width' => '70%'
+                        'width' => '70%',
+                        'type' => 'plain'
                     )
                 )
             ),
@@ -1052,6 +1054,67 @@ class PodsAdmin {
          * Upload a new file (advanced - returns URL and ID)
          */
         if ( 'upload' == $method ) {
+            $file = $_FILES[ 'Filedata' ];
+
+            $limit_size = pods_var( 'file_restrict_filesize', $field[ 'options' ] );
+
+            if ( !empty( $limit_size ) ) {
+                if ( false !== stripos( $limit_size, 'MB' ) ) {
+                    $limit_size = (float) trim( str_ireplace( 'MB', '', $limit_size ) );
+                    $limit_size = $limit_size * 1025; // convert to KB
+                }
+                elseif ( false !== stripos( $limit_size, 'KB' ) )
+                    $limit_size = (float) trim( str_ireplace( 'KB', '', $limit_size ) );
+                elseif ( false !== stripos( $limit_size, 'GB' ) ) {
+                    $limit_size = (float) trim( str_ireplace( 'GB', '', $limit_size ) );
+                    $limit_size = $limit_size * 1025 * 1025; // convert to MB to KB
+                }
+                else
+                    $limit_size = wp_max_upload_size() / 1025; // convert to KB
+
+                if ( 0 < $limit_size && $limit_size < $file[ 'size' ] ) {
+                    $error = __( 'File size too large, max size is %s', 'pods' );
+                    $error = sprintf( $error, pods_var( 'file_restrict_filesize', $field[ 'options' ] ) );
+
+                    pods_error( 'Error: <div style="color:#FF0000">' . $error . '</div>' );
+                }
+            }
+
+            $limit_file_type = pods_var( 'file_type', $field[ 'options' ], 'images' );
+
+            if ( 'images' == $limit_file_type )
+                $limit_types = 'jpg,png,gif';
+            elseif ( 'video' == $limit_file_type )
+                $limit_types = 'mpg,mov,flv,mp4';
+            elseif ( 'any' == $limit_file_type )
+                $limit_types = '';
+            else
+                $limit_types = pods_var( 'file_allowed_extensions', $field[ 'options' ] );
+
+            $limit_types = explode( ',', $limit_types );
+
+            if ( !empty( $limit_types ) ) {
+                $ok = false;
+
+                foreach ( $limit_types as $limit_type ) {
+                    $limit_type = '.' . trim( $limit_type, ' .' );
+                    $pos =  strlen( $file[ 'name' ] ) - strlen( $limit_type ) - 1;
+                    
+                    if ( $pos === stripos( $file[ 'name' ], $limit_type ) ) {
+                        $ok = true;
+
+                        break;
+                    }
+                }
+
+                if ( false === $ok ) {
+                    $error = __( 'File type not allowed, please use one of the following: %s', 'pods' );
+                    $error = sprintf( $error, '.' . implode( ', .', $limit_types ) );
+
+                    pods_error( 'Error: <div style="color:#FF0000">' . $error . '</div>' );
+                }
+            }
+
             $custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->post_id, $params );
 
             if ( null === $custom_handler ) {

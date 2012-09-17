@@ -188,10 +188,33 @@ class PodsForm {
      */
     public static function attributes ( $attributes, $name = null, $type = null, $options = null ) {
         $attributes = (array) apply_filters( 'pods_form_ui_field_' . $type . '_attributes', $attributes, $name, $options );
+
         foreach ( $attributes as $attribute => $value ) {
             if ( null === $value )
                 continue;
+
             echo ' ' . esc_attr( (string) $attribute ) . '="' . esc_attr( (string) $value ) . '"';
+        }
+    }
+
+    /**
+     * Output a field's data (for use with jQuery)
+     *
+     * @since 2.0.0
+     */
+    public static function data ( $data, $name = null, $type = null, $options = null ) {
+        $data = (array) apply_filters( 'pods_form_ui_field_' . $type . '_data', $data, $name, $options );
+
+        foreach ( $data as $key => $value ) {
+            if ( null === $value )
+                continue;
+
+            $key = sanitize_title( $key );
+
+            if ( is_array( $value ) )
+                $value = implode( ',', $value );
+
+            echo ' data-' . esc_attr( (string) $key ) . '="' . esc_attr( (string) $value ) . '"';
         }
     }
 

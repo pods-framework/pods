@@ -115,7 +115,7 @@ class PodsField_Pick extends PodsField {
                 'excludes-on' => array( 'pick_object' => 'custom-simple' ),
                 'default' => '',
                 'type' => 'text'
-            ),
+            )/*,
             'pick_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
@@ -125,7 +125,7 @@ class PodsField_Pick extends PodsField {
                     'medium' => __( 'Medium', 'pods' ),
                     'large' => __( 'Large', 'pods' )
                 )
-            )
+            )*/
         );
         return $options;
     }

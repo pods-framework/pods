@@ -44,7 +44,7 @@ class Pods_Migrate_ImportPackages extends PodsComponent {
     public function admin ( $options, $component ) {
         $method = 'import'; // ajax_import
 
-        pods_view( PODS_DIR . 'components/Packages/ui/wizard.php', compact( array_keys( get_defined_vars() ) ) );
+        pods_view( PODS_DIR . 'components/Migrate-ImportPackages/ui/wizard.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**

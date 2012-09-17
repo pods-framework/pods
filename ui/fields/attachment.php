@@ -17,17 +17,37 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_t
 
 $css_id = $attributes[ 'id' ];
 
+$limit_file_type = pods_var( 'file_type', $field[ 'options' ], 'images' );
+
+if ( 'images' == $limit_file_type )
+    $limit_types = 'jpg,png,gif';
+elseif ( 'video' == $limit_file_type )
+    $limit_types = 'mpg,mov,flv,mp4';
+elseif ( 'any' == $limit_file_type )
+    $limit_types = '';
+else
+    $limit_types = pods_var( 'file_allowed_extensions', $field[ 'options' ] );
+
+$limit_types = str_replace( ' ', '', $limit_types );
+
+$tab = pods_var( 'file_attachment_tab', $options, 'type', null, true );
+
 $file_limit = 1;
 
 if ( 'multi' == pods_var( 'file_format_type', $options, 'single' ) )
     $file_limit = (int) pods_var( 'file_limit', $options, 0 );
+
+$data = array(
+    'limit-types' => $limit_types,
+    'limit-files' => $file_limit
+);
 
 if ( empty( $value ) )
     $value = array();
 else
     $value = (array) $value;
 ?>
-<table class="form-table pods-metabox" id="<?php echo $css_id; ?>">
+<table class="form-table pods-metabox" id="<?php echo $css_id; ?>"<?php echo PodsForm::data( $data, $name, PodsForm::$field_type, $options ); ?>>
     <tbody>
         <tr class="form-field">
             <td>
@@ -49,7 +69,7 @@ else
                     }
                     ?></ul>
 
-                <a class="button pods-file-add" href="media-upload.php?inlineId=pods_media_attachment&amp;TB_iframe=1&amp;width=640&amp;height=1500"><?php _e( 'Add File', 'pods' ); ?></a>
+                <a class="button pods-file-add" href="media-upload.php?inlineId=pods_media_attachment&amp;type=<?php echo $tab; ?>&amp;TB_iframe=1&amp;width=640&amp;height=1500"><?php _e( 'Add File', 'pods' ); ?></a>
             </td>
         </tr>
     </tbody>

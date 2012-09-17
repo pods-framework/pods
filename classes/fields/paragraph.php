@@ -121,7 +121,7 @@ class PodsField_Paragraph extends PodsField {
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 0,
                 'type' => 'number'
-            ),
+            )/*,
             'paragraph_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
@@ -131,7 +131,7 @@ class PodsField_Paragraph extends PodsField {
                     'medium' => __( 'Medium', 'pods' ),
                     'large' => __( 'Large', 'pods' )
                 )
-            )
+            )*/
         );
 
         return $options;

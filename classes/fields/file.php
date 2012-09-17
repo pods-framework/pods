@@ -69,6 +69,15 @@ class PodsField_File extends PodsField {
                 ),
                 'dependency' => true
             ),
+            'file_attachment_tab' => array(
+                'label' => __( 'Attachments Default Tab', 'pods' ),
+                'default' => 'type',
+                'type' => 'pick',
+                'data' => array(
+                    'type' => __( 'Upload File', 'pods' ),
+                    'library' => __( 'Media Library', 'pods' )
+                )
+            ),
             'file_edit_title' => array(
                 'label' => __( 'Editable Title', 'pods' ),
                 'default' => 1,
@@ -82,11 +91,13 @@ class PodsField_File extends PodsField {
             ),
             'file_restrict_filesize' => array(
                 'label' => __( 'Restrict File Size', 'pods' ),
+                'excludes-on' => array( 'file_uploader' => 'attachment' ),
                 'default' => '10MB',
                 'type' => 'text'
             ),
             'file_type' => array(
                 'label' => __( 'Restrict File Types', 'pods' ),
+                'excludes-on' => array( 'file_uploader' => 'attachment' ),
                 'default' => 'images',
                 'type' => 'pick',
                 'data' => apply_filters(
@@ -94,6 +105,7 @@ class PodsField_File extends PodsField {
                     array(
                         'images' => __( 'Images (jpg, png, gif)', 'pods' ),
                         'video' => __( 'Video (mpg, mov, flv, mp4)', 'pods' ),
+                        'any' => __( 'Any Type (no restriction)', 'pods' ),
                         'other' => __( 'Other (customize allowed extensions)', 'pods' )
                     )
                 ),
@@ -103,9 +115,10 @@ class PodsField_File extends PodsField {
                 'label' => __( 'Allowed File Extensions', 'pods' ),
                 'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov)', 'pods' ),
                 'depends-on' => array( 'file_type' => 'other' ),
+                'excludes-on' => array( 'file_uploader' => 'attachment' ),
                 'default' => '',
                 'type' => 'text'
-            ),
+            )/*,
             'file_image_size' => array(
                 'label' => __( 'Excluded Image Sizes', 'pods' ),
                 'description' => __( 'Image sizes not to generate when processing the image', 'pods' ),
@@ -118,7 +131,7 @@ class PodsField_File extends PodsField {
                     'pods_form_ui_field_file_image_size_options',
                     $image_sizes
                 )
-            )
+            )*/
         );
         return $options;
     }

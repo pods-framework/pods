@@ -51,6 +51,7 @@ function pods_attachments ( src, file_limit ) {
         var wp_media_meta = jQuery( this ).parent().parent().parent();
         var wp_media_title = wp_media_meta.find( 'tr.post_title td.field input' ).val();
         var wp_media_caption = wp_media_meta.find( 'tr.post_excerpt td.field input' ).val();
+        var wp_media_url = wp_media_meta.find( 'tr.url td.field input.urlfield' ).val();
         var wp_media_id = wp_media_meta.find( 'td.imgedit-response' ).attr( 'id' ).replace( 'imgedit-response-', '' );
         var wp_media_thumb = wp_media_meta.parent().find( 'img.thumbnail' ).attr( 'src' );
 
@@ -103,9 +104,8 @@ function pods_attachments ( src, file_limit ) {
     }
 
     // hide the URL tab
-    if ( pods_thickbox.find( '#tab-type_url' ).length ) {
+    if ( pods_thickbox.find( '#tab-type_url' ).length )
         pods_thickbox.find( '#tab-type_url' ).hide();
-    }
 
     // we need to ALWAYS get the fullsize since we're retrieving the guid
     // if the user inserts an image somewhere else and chooses another size, everything breaks, so we'll force it

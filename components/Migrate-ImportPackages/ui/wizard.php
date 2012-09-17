@@ -31,7 +31,7 @@
                 <div id="pods-wizard-main">
                     <div id="pods-wizard-panel-1" class="pods-wizard-panel">
                         <div class="pods-wizard-content">
-                            <p><?php _e( 'Packages allow you to import your Pods, Fields, and other settings from any Pods 1.x sites. Paste the Package code you received exactly as it was given to you from the other Pods site.', 'pods' ); ?></p>
+                            <p><?php _e( 'Packages allow you to import your Pods, Fields, and other settings from any Pods 1.x sites.', 'pods' ); ?></p>
                         </div>
 
                         <div class="stuffbox">
@@ -40,8 +40,7 @@
                             <div class="inside pods-manage-field pods-dependency">
                                 <div class="pods-field-option">
                                     <?php
-                                        echo PodsForm::label( 'import_package', __( 'Package Code', 'pods' ), __( 'help', 'pods' ) );
-                                        echo PodsForm::field( 'import_package', pods_var_raw( 'import_package', 'post' ), 'paragraph', array( 'attributes' => array( 'style' => 'width: 75%; max-width: 75%; height: 300px;' ) ) );
+                                        echo PodsForm::field( 'import_package', pods_var_raw( 'import_package', 'post' ), 'paragraph', array( 'attributes' => array( 'style' => 'width: 94%; max-width: 94%; height: 300px;' ) ) );
                                     ?>
                                 </div>
                             </div>

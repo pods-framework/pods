@@ -108,7 +108,7 @@ class PodsField_Currency extends PodsField {
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 12,
                 'type' => 'number'
-            ),
+            )/*,
             'currency_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
@@ -118,7 +118,7 @@ class PodsField_Currency extends PodsField {
                     'medium' => __( 'Medium', 'pods' ),
                     'large' => __( 'Large', 'pods' )
                 )
-            )
+            )*/
         );
         return $options;
     }

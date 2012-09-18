@@ -1080,7 +1080,7 @@ class PodsAdmin {
                     $error = __( 'File size too large, max size is %s', 'pods' );
                     $error = sprintf( $error, pods_var( 'file_restrict_filesize', $field[ 'options' ] ) );
 
-                    pods_error( 'Error: <div style="color:#FF0000">' . $error . '</div>' );
+                    pods_error( '<div style="color:#FF0000">Error: ' . $error . '</div>' );
                 }
             }
 
@@ -1102,7 +1102,7 @@ class PodsAdmin {
 
                 foreach ( $limit_types as $limit_type ) {
                     $limit_type = '.' . trim( $limit_type, ' .' );
-                    $pos =  strlen( $file[ 'name' ] ) - strlen( $limit_type ) - 1;
+                    $pos =  strlen( $file[ 'name' ] ) - strlen( $limit_type );
 
                     if ( $pos === stripos( $file[ 'name' ], $limit_type ) ) {
                         $ok = true;
@@ -1115,7 +1115,7 @@ class PodsAdmin {
                     $error = __( 'File type not allowed, please use one of the following: %s', 'pods' );
                     $error = sprintf( $error, '.' . implode( ', .', $limit_types ) );
 
-                    pods_error( 'Error: <div style="color:#FF0000">' . $error . '</div>' );
+                    pods_error( '<div style="color:#FF0000">Error: ' . $error . '</div>' );
                 }
             }
 
@@ -1131,7 +1131,7 @@ class PodsAdmin {
                         $errors[] = '[' . $error_code . '] ' . $error_message;
                     }
 
-                    pods_error( 'Error: <div style="color:#FF0000">' . implode( '</div><div>', $errors ) . '</div>' );
+                    pods_error( '<div style="color:#FF0000">Error: ' . implode( '</div><div>', $errors ) . '</div>' );
                 }
                 else {
                     $attachment = get_post( $attachment_id, ARRAY_A );

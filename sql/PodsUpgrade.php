@@ -463,6 +463,8 @@ class PodsUpgrade_2_0 {
                         $field_params[ 'options' ][ 'pick_limit' ] = 1;
                     }
                 }
+                elseif ( 'file' == $field_type )
+                    $field_params[ 'options' ][ 'file_type' ] = 'any';
                 elseif ( 'number' == $field_type )
                     $field_params[ 'options' ][ 'number_decimals' ] = 2;
                 elseif ( 'desc' == $row->coltype )
@@ -626,11 +628,20 @@ class PodsUpgrade_2_0 {
                 $related_item_id = (int) $related_item_id;
                 $r->weight = (int) $r->weight;
 
-                $sql = "
-                    REPLACE INTO `@wp_podsrel`
-                    ( `id`, `pod_id`, `field_id`, `item_id`, `related_pod_id`, `related_field_id`, `related_item_id`, `weight` )
-                    VALUES ( {$r->id}, {$pod_id}, {$field_id}, {$item_id}, {$related_pod_id}, {$related_field_id}, {$related_item_id}, {$r->weight} )
-                ";
+                $table_data = array(
+                    'id' => $r->id,
+                    'pod_id' => $pod_id,
+                    'field_id' => $field_id,
+                    'item_id' => $item_id,
+                    'related_pod_id' => $related_pod_id,
+                    'related_field_id' => $related_field_id,
+                    'related_item_id' => $related_item_id,
+                    'weight' => $r->weight,
+                );
+
+                $table_formats = array_fill( 0, count( $table_data ), '%d' );
+
+                $sql = PodsData::insert_on_duplicate( "@wp_podsrel", $table_data, $table_formats );
 
                 pods_query( $sql );
 

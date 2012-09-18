@@ -322,7 +322,7 @@ class PodsData {
      *
      * @since 2.0.0
      */
-    public static function insert_on_duplicate ( $table, $data, $formats ) {
+    public static function insert_on_duplicate ( $table, $data, $formats = array() ) {
         /**
          * @var $wpdb wpdb
          */
@@ -331,10 +331,15 @@ class PodsData {
         $columns = array_keys( $data );
 
         $update = array();
+        $values = array();
 
         foreach ( $columns as $column ) {
             $update[] = "`{$column}` = VALUES( `{$column}` )";
+            $values[] = "%s";
         }
+
+        if ( empty( $formats ) )
+            $formats = $values;
 
         $columns_data = implode( '`, `', $columns );
         $formats = implode( ", ", $formats );

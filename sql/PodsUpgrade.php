@@ -33,6 +33,9 @@ class PodsUpgrade_2_0 {
      *
      */
     function get_tables () {
+        /**
+         * @var $wpdb WPDB
+         */
         global $wpdb;
 
         $tables = $wpdb->get_results( "SHOW TABLES LIKE '{$wpdb->prefix}pod%'", ARRAY_N );
@@ -69,6 +72,9 @@ class PodsUpgrade_2_0 {
      *
      */
     function install () {
+        /**
+         * @var $wpdb WPDB
+         */
         global $wpdb;
 
         $pods_version = get_option( 'pods_version' );
@@ -118,6 +124,9 @@ class PodsUpgrade_2_0 {
      * @return array|bool|int|mixed|null|void
      */
     public function prepare_pods () {
+        /**
+         * @var $wpdb WPDB
+         */
         global $wpdb;
 
         if ( !in_array( "{$wpdb->prefix}pod_types", $this->tables ) )
@@ -137,6 +146,9 @@ class PodsUpgrade_2_0 {
      * @return array|bool|int|mixed|null|void
      */
     public function prepare_fields () {
+        /**
+         * @var $wpdb WPDB
+         */
         global $wpdb;
 
         if ( !in_array( "{$wpdb->prefix}pod_fields", $this->tables ) )
@@ -156,6 +168,9 @@ class PodsUpgrade_2_0 {
      * @return array|bool|int|mixed|null|void
      */
     public function prepare_relationships () {
+        /**
+         * @var $wpdb WPDB
+         */
         global $wpdb;
 
         if ( !in_array( "{$wpdb->prefix}pod_fields", $this->tables ) )
@@ -175,6 +190,9 @@ class PodsUpgrade_2_0 {
      * @return array|bool|int|mixed|null|void
      */
     public function prepare_index () {
+        /**
+         * @var $wpdb WPDB
+         */
         global $wpdb;
 
         if ( !in_array( "{$wpdb->prefix}pod", $this->tables ) )
@@ -194,6 +212,9 @@ class PodsUpgrade_2_0 {
      * @return array|bool|int|mixed|null|void
      */
     public function prepare_templates () {
+        /**
+         * @var $wpdb WPDB
+         */
         global $wpdb;
 
         if ( !in_array( "{$wpdb->prefix}pod_templates", $this->tables ) )
@@ -213,6 +234,9 @@ class PodsUpgrade_2_0 {
      * @return array|bool|int|mixed|null|void
      */
     public function prepare_pages () {
+        /**
+         * @var $wpdb WPDB
+         */
         global $wpdb;
 
         if ( !in_array( "{$wpdb->prefix}pod_pages", $this->tables ) )
@@ -232,6 +256,9 @@ class PodsUpgrade_2_0 {
      * @return array|bool|int|mixed|null|void
      */
     public function prepare_helpers () {
+        /**
+         * @var $wpdb WPDB
+         */
         global $wpdb;
 
         if ( !in_array( "{$wpdb->prefix}pod_helpers", $this->tables ) )
@@ -253,6 +280,9 @@ class PodsUpgrade_2_0 {
      * @return array|bool|int|mixed|null|void
      */
     public function prepare_pod ( $params ) {
+        /**
+         * @var $wpdb WPDB
+         */
         global $wpdb;
 
         if ( !isset( $params->pod ) )
@@ -682,6 +712,9 @@ class PodsUpgrade_2_0 {
         if ( true === $this->check_progress( __FUNCTION__ ) )
             return '1';
 
+        /**
+         * @var $wpdb WPDB
+         */
         global $wpdb;
 
         $wp_roles = get_option( "{$wpdb->prefix}user_roles" );
@@ -810,6 +843,9 @@ class PodsUpgrade_2_0 {
      * @return mixed|string|void
      */
     public function migrate_pod ( $params ) {
+        /**
+         * @var $wpdb WPDB
+         */
         global $wpdb;
 
         if ( !isset( $params->pod ) )
@@ -917,6 +953,9 @@ class PodsUpgrade_2_0 {
      *
      */
     public function restart () {
+        /**
+         * @var $wpdb WPDB
+         */
         global $wpdb;
 
         foreach ( $this->tables as $table ) {
@@ -932,6 +971,9 @@ class PodsUpgrade_2_0 {
      *
      */
     public function cleanup () {
+        /**
+         * @var $wpdb WPDB
+         */
         global $wpdb;
 
         foreach ( $this->tables as $table ) {

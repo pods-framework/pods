@@ -60,6 +60,10 @@
                 var field_id = 0,
                     field_index = 0;
 
+                // See if we have any instances of tinyMCE and save them
+                if( 'undefined' != typeof tinyMCE)
+                    tinyMCE.triggerSave();
+
                 $submittable.find( '.pods-submittable-fields' ).find( 'input, select, textarea' ).each( function () {
                     var $el = $( this );
                     var val = $el.val();

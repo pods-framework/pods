@@ -314,7 +314,12 @@ class Pods_Deprecated
     public function get_field ( $name, $orderby = null ) {
         pods_deprecated( 'Pods::get_field', '2.0.0', 'Pods::field' );
 
-        return $this->obj->field( array( 'name' => $name, 'orderby' => $orderby ) );
+        $value = $this->obj->field( array( 'name' => $name, 'orderby' => $orderby ) );
+
+        if ( is_array( $value ) && false === strpos( $name, '.' ) && !empty( $value ) && !isset( $value[ 0 ] ) )
+            $value = array( $value ); // fix for single tableless fields
+
+        return $value;
     }
 
     /**

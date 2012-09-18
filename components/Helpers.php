@@ -139,7 +139,7 @@ class Pods_Helpers extends PodsComponent {
 
         $fields = array(
             array(
-                'name' => 'helper_type',
+                'name' => 'type',
                 'label' => __( 'Helper Type', 'pods' ),
                 'type' => 'pick',
                 'data' => array(
@@ -173,7 +173,7 @@ class Pods_Helpers extends PodsComponent {
         if ( 'code' == $meta_key ) {
             $post = get_post( $post_ID );
 
-            if ( $this->object_type == $post->post_type )
+            if ( is_object( $post ) && $this->object_type == $post->post_type )
                 return $post->post_content;
         }
 
@@ -188,11 +188,11 @@ class Pods_Helpers extends PodsComponent {
      *
      * @return bool|int|null
      */
-    public function save_meta( $_null, $post_ID = null, $meta_key = null, $meta_value = null ) {
+    public function save_meta ( $_null, $post_ID = null, $meta_key = null, $meta_value = null ) {
         if ( 'code' == $meta_key ) {
             $post = get_post( $post_ID );
 
-            if ( $this->object_type == $post->post_type ) {
+            if ( is_object( $post ) && $this->object_type == $post->post_type ) {
                 $postdata = array(
                     'ID' => $post_ID,
                     'post_content' => $meta_value

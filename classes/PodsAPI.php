@@ -1772,9 +1772,10 @@ class PodsAPI {
         $exclude = array(
             'id',
             'name',
-            'type',
+            'helper_type',
             'code',
-            'options'
+            'options',
+            'status'
         );
 
         foreach ( $exclude as $k => $exclude_field ) {
@@ -1787,14 +1788,16 @@ class PodsAPI {
 
             foreach ( $aliases as $alias ) {
                 if ( isset( $options[ $alias ] ) ) {
-                    $pod[ $exclude_field ] = pods_trim( $options[ $alias ] );
+                    $object[ $exclude_field ] = pods_trim( $options[ $alias ] );
 
                     unset( $options[ $alias ] );
                 }
             }
         }
 
-        $object[ 'options' ][ 'type' ] = $object[ 'type' ];
+        if ( 'helper' == $object[ 'type' ] )
+            $object[ 'options' ][ 'helper_type' ] = $object[ 'helper_type' ];
+
         $object[ 'options' ][ 'code' ] = $object[ 'code' ];
 
         $object[ 'options' ] = array_merge( $object[ 'options' ], $options );
@@ -1816,6 +1819,9 @@ class PodsAPI {
                 'post_content' => $object[ 'code' ]
             );
         }
+
+        if ( null !== pods_var( 'status', $object, null, null, true ) )
+            $post_data[ 'post_status' ] = pods_var( 'status', $object, null, null, true );
 
         $params->id = $this->save_post( $post_data, $object[ 'options' ], true, true );
 
@@ -1855,7 +1861,7 @@ class PodsAPI {
      * Add or edit a Pod Page
      *
      * $params['id'] int The page ID
-     * $params['uri'] string The page URI
+     * $params['name'] string The page URI
      * $params['code'] string The page code
      *
      * @param array|object $params An associative array of parameters
@@ -1890,7 +1896,7 @@ class PodsAPI {
      *
      * $params['id'] int The helper ID
      * $params['name'] string The helper name
-     * $params['type'] string The helper type ("pre_save", "display", etc)
+     * $params['helper_type'] string The helper type ("pre_save", "display", etc)
      * $params['code'] string The helper code
      *
      * @param array $params An associative array of parameters
@@ -1905,6 +1911,11 @@ class PodsAPI {
         if ( isset( $params->phpcode ) ) {
             $params->code = $params->phpcode;
             unset( $params->phpcode );
+        }
+
+        if ( isset( $params->type ) ) {
+            $params->helper_type = $params->type;
+            unset( $params->type );
         }
 
         $params->type = 'helper';

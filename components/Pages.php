@@ -204,7 +204,7 @@ class Pods_Pages extends PodsComponent {
         if ( 'code' == $meta_key ) {
             $post = get_post( $post_ID );
 
-            if ( $this->object_type == $post->post_type )
+            if ( is_object( $post ) && $this->object_type == $post->post_type )
                 return $post->post_content;
         }
 
@@ -223,7 +223,7 @@ class Pods_Pages extends PodsComponent {
         if ( 'code' == $meta_key ) {
             $post = get_post( $post_ID );
 
-            if ( $this->object_type == $post->post_type ) {
+            if ( is_object( $post ) && $this->object_type == $post->post_type ) {
                 $postdata = array(
                     'ID' => $post_ID,
                     'post_content' => $meta_value

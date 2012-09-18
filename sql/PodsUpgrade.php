@@ -826,13 +826,25 @@ class PodsUpgrade_2_0 {
         if ( empty( $helpers ) )
             return $results;
 
+        $notice = false;
+
         foreach ( $helpers as $helper ) {
             unset( $helper->id );
+
+            if ( 'input' == $helper->helper_type ) {
+                $helper->status = 'draft';
+
+                $notice = true;
+            }
 
             $results[] = $this->api->save_helper( $helper );
         }
 
         $this->update_progress( __FUNCTION__, true );
+
+        if ( $notice ) {
+            return pods_error( 'Input Helpers may not function in our new forms, we have imported and disabled them for your review.', 'pods' );
+        }
 
         return '1';
     }

@@ -15,9 +15,16 @@ class PodsUpgrade_2_0 {
     private $progress = array();
 
     /**
+     * @var PodsAPI
+     */
+    private $api = null;
+
+    /**
      *
      */
     function __construct () {
+        $this->api = pods_api();
+
         $this->get_tables();
         $this->get_progress();
     }
@@ -330,8 +337,6 @@ class PodsUpgrade_2_0 {
         if ( true === $this->check_progress( __FUNCTION__ ) )
             return '1';
 
-        $api = pods_api();
-
         $pod_types = pods_query( "SELECT * FROM `@wp_pod_types`", false );
 
         $pod_ids = array();
@@ -496,7 +501,7 @@ class PodsUpgrade_2_0 {
                 ),
             );
 
-            $pod_id = $api->save_pod( $pod_params );
+            $pod_id = $this->api->save_pod( $pod_params );
             $pod_ids[] = $pod_id;
         }
 
@@ -524,8 +529,6 @@ class PodsUpgrade_2_0 {
         $migration_limit = (int) apply_filters( 'pods_upgrade_item_limit', 1500 );
         $migration_limit = max( $migration_limit, 100 );
 
-        $api = pods_api();
-
         $last_id = (int) $this->check_progress( __FUNCTION__ );
 
         $sql = "
@@ -552,7 +555,7 @@ class PodsUpgrade_2_0 {
 
         if ( !empty( $rel ) && !empty( $pod_types ) ) {
             foreach ( $pod_types as $type ) {
-                $types[ $type->id ] = $api->load_pod( array( 'name' => $type->name ) );
+                $types[ $type->id ] = $this->api->load_pod( array( 'name' => $type->name ) );
 
                 $pod_fields = pods_query( "SELECT `id`, `name` FROM `@wp_pod_fields` WHERE `datatype` = {$type->id} ORDER BY `id`" );
 
@@ -601,7 +604,7 @@ class PodsUpgrade_2_0 {
 
                         $old_field = $old_field[ 0 ];
 
-                        $related_field = $api->load_field( array( 'name' => $old_field->name, 'pod' => $old_field->pod ) );
+                        $related_field = $this->api->load_field( array( 'name' => $old_field->name, 'pod' => $old_field->pod ) );
 
                         if ( empty( $related_field ) )
                             continue;
@@ -610,7 +613,7 @@ class PodsUpgrade_2_0 {
                         $related_field_id = $related_field[ 'id' ];
                     }
                     elseif ( 'pod' == $field[ 'pick_object' ] && 0 < strlen( $field[ 'pick_val' ] ) ) {
-                        $related_pod = $api->load_pod( array( 'name' => $field[ 'pick_val' ] ), false );
+                        $related_pod = $this->api->load_pod( array( 'name' => $field[ 'pick_val' ] ), false );
 
                         if ( empty( $related_pod ) )
                             continue;
@@ -733,8 +736,6 @@ class PodsUpgrade_2_0 {
         if ( true === $this->check_progress( __FUNCTION__ ) )
             return '1';
 
-        $api = pods_api();
-
         $templates = pods_query( "SELECT * FROM `@wp_pod_templates`", false );
 
         $results = array();
@@ -745,7 +746,7 @@ class PodsUpgrade_2_0 {
         foreach ( $templates as $template ) {
             unset( $template->id );
 
-            $results[] = $api->save_template( $template );
+            $results[] = $this->api->save_template( $template );
         }
 
         $this->update_progress( __FUNCTION__, true );
@@ -760,8 +761,6 @@ class PodsUpgrade_2_0 {
         if ( true === $this->check_progress( __FUNCTION__ ) )
             return '1';
 
-        $api = pods_api();
-
         $pages = pods_query( "SELECT * FROM `@wp_pod_pages`", false );
 
         $results = array();
@@ -772,7 +771,7 @@ class PodsUpgrade_2_0 {
         foreach ( $pages as $page ) {
             unset( $page->id );
 
-            $results[] = $api->save_page( $page );
+            $results[] = $this->api->save_page( $page );
         }
 
         $this->update_progress( __FUNCTION__, true );
@@ -787,8 +786,6 @@ class PodsUpgrade_2_0 {
         if ( true === $this->check_progress( __FUNCTION__ ) )
             return '1';
 
-        $api = pods_api();
-
         $helpers = pods_query( "SELECT * FROM `@wp_pod_helpers`", false );
 
         $results = array();
@@ -799,7 +796,7 @@ class PodsUpgrade_2_0 {
         foreach ( $helpers as $helper ) {
             unset( $helper->id );
 
-            $results[] = $api->save_helper( $helper );
+            $results[] = $this->api->save_helper( $helper );
         }
 
         $this->update_progress( __FUNCTION__, true );
@@ -835,7 +832,7 @@ class PodsUpgrade_2_0 {
         if ( true === $this->check_progress( __FUNCTION__, $pod ) )
             return '1';
 
-        $pod_data = pods_api()->load_pod( array( 'name' => $pod ) );
+        $pod_data = $this->api->load_pod( array( 'name' => $pod ) );
 
         if ( empty( $pod_data ) )
             return pods_error( __( 'Pod not found, items cannot be migrated', 'pods' ) );
@@ -910,6 +907,8 @@ class PodsUpgrade_2_0 {
         PodsInit::$components->toggle( 'helpers' );
 
         $_GET = $oldget;
+
+        $this->api->cache_flush_pods();
 
         return '1';
     }

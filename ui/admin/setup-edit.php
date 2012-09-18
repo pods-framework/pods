@@ -175,7 +175,7 @@ foreach ( $post_types as $post_type => $label ) {
     }
 
     $post_type = get_post_type_object( $post_type );
-    $pick_object[ 'Post Types' ][ 'post-type-' . $post_type->name ] = $post_type->label;
+    $pick_object[ 'Post Types' ][ 'post_type-' . $post_type->name ] = $post_type->label;
 }
 
 $taxonomies = get_taxonomies();

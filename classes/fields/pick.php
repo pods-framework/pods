@@ -115,7 +115,8 @@ class PodsField_Pick extends PodsField {
                 'excludes-on' => array( 'pick_object' => 'custom-simple' ),
                 'default' => '',
                 'type' => 'text'
-            )/*,
+            )
+            /*,
             'pick_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
@@ -275,6 +276,9 @@ class PodsField_Pick extends PodsField {
         $custom = pods_var_raw( 'pick_custom', $options, false );
 
         if ( 'custom-simple' == pods_var( 'pick_object', $options ) && !empty( $custom ) ) {
+            if ( !is_array( $custom ) )
+                $custom = explode( "\n", $custom );
+
             if ( 'single' == pods_var( 'pick_format_type', $options ) && 'dropdown' == pods_var( 'pick_format_single', $options ) )
                 $options[ 'data' ] = array( '' => __( '-- Select One --', 'pods' ) );
 

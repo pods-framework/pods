@@ -130,7 +130,7 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
                             <a class="submitdelete deletion" href="#delete-field"><?php _e( 'Delete Field', 'pods' ); ?></a>
                         </div>
                         <p class="pods-manage-row-save">
-                            <a class="pods-manage-row-cancel" href="#cancel-edit-field"><?php _e( 'Cancel', 'pods' ); ?></a> &nbsp;&nbsp; <a href="#save-field" class="button-primary"><?php _e( 'Update Field', 'pods' ); ?></a>
+                            <a class="pods-manage-row-cancel" href="#cancel-edit-field"><?php _e( 'Cancel', 'pods' ); ?></a> &nbsp;&nbsp; <a href="#save-field" class="button-primary pods-button-update"><?php _e( 'Update Field', 'pods' ); ?></a><a href="#save-field" class="button-primary pods-button-add"><?php _e( 'Add Field', 'pods' ); ?></a>
                         </p>
                     </div>
                 </div>

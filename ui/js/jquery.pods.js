@@ -21,13 +21,13 @@
 
                 if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) ) {
                     if ( 0 == $el.parent().find( '.pods-validate-error-message' ).length )
-                        $el.parent().append( '<div class="pods-validate-error-message">' + label.replace( /(<([^>]+)>)/ig, '' ) + ' is required.</div>' );
+                       $el.parent().append( '<div class="pods-validate-error-message">' + label.replace( /(<([^>]+)>)/ig, '' ) + ' is required.</div>' );
 
                     $el.addClass( 'pods-validate-error' );
                 }
                 else if ( '' == $el.val() || 0 == $el.val() ) {
                     if ( 0 == $el.parent().find( '.pods-validate-error-message' ).length )
-                        $el.parent().append( '<div class="pods-validate-error-message">' + label.replace( /(<([^>]+)>)/ig, '' ) + ' is required.</div>' );
+                       $el.parent().append( '<div class="pods-validate-error-message">' + label.replace( /(<([^>]+)>)/ig, '' ) + ' is required.</div>' );
 
                     $el.addClass( 'pods-validate-error' );
                 }
@@ -145,9 +145,9 @@
                         }
                     },
                     error : function () {
-                        $submitbutton.css( 'cursor', 'pointer' );
-                        $submitbutton.prop( 'disabled', false );
-                        $submitbutton.parent().find( '.waiting' ).fadeOut();
+                       $submitbutton.css( 'cursor', 'pointer' );
+                       $submitbutton.prop( 'disabled', false );
+                       $submitbutton.parent().find( '.waiting' ).fadeOut();
 
                         if ( $( '#pods-wizard-next' )[ 0 ] ) {
                             $( '#pods-wizard-next' ).css( 'cursor', 'pointer' );
@@ -165,8 +165,8 @@
 
                 e.preventDefault();
 
-                 $( 'div#message' ).slideUp( 'fast', function() {
-                     $( this ).remove();
+                $( 'div#message' ).slideUp( 'fast', function() {
+                    $( this ).remove();
                  } );
 
                 var $submitbutton = $( this );
@@ -234,9 +234,9 @@
                         }
                     },
                     error : function () {
-                        $submitbutton.css( 'cursor', 'pointer' );
-                        $submitbutton.prop( 'disabled', false );
-                        $submitbutton.parent().find( '.waiting' ).fadeOut();
+                       $submitbutton.css( 'cursor', 'pointer' );
+                       $submitbutton.prop( 'disabled', false );
+                       $submitbutton.parent().find( '.waiting' ).fadeOut();
 
                         alert( 'Unable to process request, please try again.' );
                     }
@@ -329,13 +329,13 @@
                         slug = slug.replace( /<(?:.)*?>/g, '' ).replace( /([^0-9a-zA-Z ])/g, '' );
 
                         // update fields
-                        $( 'input.pods-slugged[data-sluggable="' + $( this ).prop( 'name' ).replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]' ).each( function () {
+                       $( 'input.pods-slugged[data-sluggable="' + $( this ).prop( 'name' ).replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]' ).each( function () {
                             if ( '' == $( this ).val() ) {
                                 $( this ).val( slug.charAt( 0 ).toUpperCase() + slug.slice( 1 ) );
                                 $( this ).trigger( 'change' );
                             }
                         } );
-                        $( 'input.pods-slugged-lower[data-sluggable="' + $( this ).prop( 'name' ).replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]' ).each( function () {
+                       $( 'input.pods-slugged-lower[data-sluggable="' + $( this ).prop( 'name' ).replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]' ).each( function () {
                             if ( '' == $( this ).val() ) {
                                 $( this ).val( slug.toLowerCase() );
                                 $( this ).trigger( 'change' );
@@ -343,12 +343,12 @@
                         } );
 
                         // update elements and trigger change
-                        $( '.pods-slugged-lower[data-sluggable="' + $( this ).prop( 'name' ).replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]:not(input)' )
+                       $( '.pods-slugged-lower[data-sluggable="' + $( this ).prop( 'name' ).replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]:not(input)' )
                             .html( slug.toLowerCase() )
                             .trigger( 'change' );
 
                         // trigger change
-                        $( '.pods-slugged[data-sluggable="' + $( this ).prop( 'name' ).replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]:not(input)' )
+                       $( '.pods-slugged[data-sluggable="' + $( this ).prop( 'name' ).replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]:not(input)' )
                             .html( slug.charAt( 0 ).toUpperCase() + slug.slice( 1 ) )
                             .trigger( 'change' );
                     }
@@ -385,7 +385,7 @@
                 }
                 else {
                     $tabbed.find( '.pods-tab-group .pods-tab' ).not( tab_hash ).slideUp( 'fast', function () {
-                        $tabbed.find( '.pods-tab-group .pods-tab' ).filter( tab_hash ).slideDown( 'fast' );
+                       $tabbed.find( '.pods-tab-group .pods-tab' ).filter( tab_hash ).slideDown( 'fast' );
                     } );
                 }
 
@@ -430,14 +430,14 @@
 
                     // Show start over button
                     if ( 1 == step )
-                        $( '#pods-wizard-start' ).hide();
+                       $( '#pods-wizard-start' ).hide();
                     else
-                        $( '#pods-wizard-start' ).show();
+                       $( '#pods-wizard-start' ).show();
 
                     // Check if last step
                     if ( $( 'div.pods-wizard-panel:visible' ).prev( 'div.pods-wizard-panel' ).length ) {
                         // Show next panel
-                        $( 'div.pods-wizard-panel:visible' )
+                       $( 'div.pods-wizard-panel:visible' )
                             .hide()
                             .prev()
                             .show();
@@ -472,7 +472,7 @@
                     // Check if last step
                     if ( $( 'div.pods-wizard-panel:visible' ).next( 'div.pods-wizard-panel' ).length ) {
                         // Show next panel
-                        $( 'div.pods-wizard-panel:visible' )
+                       $( 'div.pods-wizard-panel:visible' )
                             .hide()
                             .next()
                             .show();
@@ -485,11 +485,11 @@
                             return check;
                     }
                     else if ( $( '#pods-wizard-box' ).closest( 'form' )[ 0 ] ) {
-                        $( '#pods-wizard-next' ).css( 'cursor', 'default' );
-                        $( '#pods-wizard-next' ).prop( 'disabled', true );
-                        $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'processing' ) );
+                       $( '#pods-wizard-next' ).css( 'cursor', 'default' );
+                       $( '#pods-wizard-next' ).prop( 'disabled', true );
+                       $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'processing' ) );
 
-                        $( '#pods-wizard-box' ).closest( 'form' ).submit();
+                       $( '#pods-wizard-box' ).closest( 'form' ).submit();
 
                         if ( $( '#pods-wizard-box' ).closest( 'form' ).hasClass( 'invalid-form' ) ) {
                             $( '#pods-wizard-next' ).css( 'cursor', 'pointer' );
@@ -520,7 +520,7 @@
                     // If first panel and action bar is supposed to be hidden, hide it.
                     var $box = $( '#pods-wizard-box' );
                     if ( $box.data( 'hide' ) )
-                        $box.addClass( 'pods-wizard-hide-first' );
+                       $box.addClass( 'pods-wizard-hide-first' );
 
                     // Revert to first current menu item
                     $( '#pods-wizard-heading ul li' )
@@ -850,14 +850,14 @@
                 // Row active, hide it
                 if ( $row_content.is( ':visible' ) ) {
                     if ( !$row.hasClass( 'pods-field-new' ) ) {
-                        $row_content.find( 'input, select, textarea' ).each( function () {
-                            if ( 'undefined' != typeof orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] )
-                                $( this ).val( orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] );
-                        } );
-
                         $row_content.slideUp( 'slow', function () {
                             $row.toggleClass( 'pods-manage-row-expanded' );
                             $row_label.prop( 'colspan', '1' );
+
+                            $row_content.find( 'input, select, textarea' ).each( function () {
+                                if ( 'undefined' != typeof orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] )
+                                    $( this ).val( orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] );
+                            } );
                         } );
                     }
                     else {
@@ -925,7 +925,7 @@
                         $row.removeClass( 'pods-field-init' );
                     }
                     else {
-                        $row_content.find( 'input, select, textarea' ).each( function () {
+                       $row_content.find( 'input, select, textarea' ).each( function () {
                             orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).val();
                         } );
                     }
@@ -954,16 +954,6 @@
                 var $field_wrapper = $row_content.find( 'div.pods-manage-field' );
                 var color = $.css( $row.get( 0 ), 'backgroundColor' );
                 var row_id = $row.data( 'row' );
-
-                $row.css( 'backgroundColor', '#FFFF33' ).animate(
-                    { backgroundColor : color },
-                    {
-                        duration : 'slow',
-                        complete : function () {
-                            $( this ).css( 'backgroundColor', '' );
-                        }
-                    }
-                );
 
                 var field_data = {};
 
@@ -1028,48 +1018,59 @@
                      }
                  } );
 
-                 $row_content.find( 'input.field_data' ).val( $.toJSON( field_data ) );
+                if ( valid_form ) {
+                    $row_content.find( 'input.field_data' ).val( $.toJSON( field_data ) );
 
-                if ( 'undefined' != typeof pods_field_types && null !== pods_field_types ) {
-                    $row.find( 'td.pods-manage-row-label a.row-label' ).html( $row_content.find( 'input#pods-form-ui-field-data-' + row_id + '-label' ).val() );
+                    $row.css( 'backgroundColor', '#FFFF33' ).animate(
+                        { backgroundColor : color },
+                        {
+                            duration : 'slow',
+                            complete : function () {
+                                $( this ).css( 'backgroundColor', '' );
+                            }
+                        }
+                    );
 
-                    if ( $row_content.find( 'input#pods-form-ui-field-data-' + row_id + '-required' ).is( ':checked' ) )
-                        $row.find( 'td.pods-manage-row-label abbr.required' ).show();
-                    else
-                        $row.find( 'td.pods-manage-row-label abbr.required' ).hide();
+                    if ( 'undefined' != typeof pods_field_types && null !== pods_field_types ) {
+                        $row.find( 'td.pods-manage-row-label a.row-label' ).html( $row_content.find( 'input#pods-form-ui-field-data-' + row_id + '-label' ).val() );
 
-                    $row.find( 'td.pods-manage-row-name a' ).html( $row_content.find( 'input#pods-form-ui-field-data-' + row_id + '-name' ).val() );
+                        if ( $row_content.find( 'input#pods-form-ui-field-data-' + row_id + '-required' ).is( ':checked' ) )
+                           $row.find( 'td.pods-manage-row-label abbr.required' ).show();
+                        else
+                           $row.find( 'td.pods-manage-row-label abbr.required' ).hide();
 
-                    var field_type = $row_content.find( 'select#pods-form-ui-field-data-' + row_id + '-type' ).val();
-                    var pick_object = $row_content.find( 'select#pods-form-ui-field-data-' + row_id + '-pick-object' ).val();
-                    var field_type_desc = '';
+                        $row.find( 'td.pods-manage-row-name a' ).html( $row_content.find( 'input#pods-form-ui-field-data-' + row_id + '-name' ).val() );
 
-                    if ( 'pick' == field_type && 0 != pick_object ) {
-                        $.each( pods_pick_objects, function ( i, n ) {
-                            if ( pick_object == i ) {
-                                field_type_desc = '<br /><span class="pods-manage-field-type-desc">&rsaquo; ' + n + '</span>';
+                        var field_type = $row_content.find( 'select#pods-form-ui-field-data-' + row_id + '-type' ).val();
+                        var pick_object = $row_content.find( 'select#pods-form-ui-field-data-' + row_id + '-pick-object' ).val();
+                        var field_type_desc = '';
+
+                        if ( 'pick' == field_type && 0 != pick_object ) {
+                           $.each( pods_pick_objects, function ( i, n ) {
+                                if ( pick_object == i ) {
+                                    field_type_desc = '<br /><span class="pods-manage-field-type-desc">&rsaquo; ' + n + '</span>';
+                                    return false;
+                                }
+                            } );
+                        }
+                        $.each( pods_field_types, function ( i, n ) {
+                            if ( field_type == i ) {
+                                field_type = n;
                                 return false;
                             }
                         } );
+
+                        $row.find( 'td.pods-manage-row-type' ).html( field_type
+                            + field_type_desc
+                            + ' <span class="pods-manage-row-more">[type: ' + $row_content.find( 'select#pods-form-ui-field-data-' + row_id + '-type' ).val() + ']</span>' );
                     }
-                    $.each( pods_field_types, function ( i, n ) {
-                        if ( field_type == i ) {
-                            field_type = n;
-                            return false;
-                        }
+
+                    $row_content.slideUp( 'slow', function () {
+                        $row.toggleClass( 'pods-manage-row-expanded' );
+                        $row_label.prop( 'colspan', '1' );
+                        $row.removeClass( 'pods-field-new' );
                     } );
-
-                    $row.find( 'td.pods-manage-row-type' ).html( field_type
-                        + field_type_desc
-                        + ' <span class="pods-manage-row-more">[type: ' + $row_content.find( 'select#pods-form-ui-field-data-' + row_id + '-type' ).val() + ']</span>' );
                 }
-
-                $row_content.slideUp( 'slow', function () {
-                    $row.toggleClass( 'pods-manage-row-expanded' );
-                    $row_label.prop( 'colspan', '1' );
-                } );
-
-                 $row.removeClass( 'pods-field-new' );
 
                 $( this ).css( 'cursor', 'pointer' );
                 $( this ).prop( 'disabled', false );
@@ -1123,18 +1124,18 @@
                     $new_row.find( '.pods-dependency .pods-excludes-on' ).hide();
 
                     $new_row.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
-                        $( this ).trigger( 'change' );
+                       $( this ).trigger( 'change' );
                     } );
 
                     $new_row.find( '.pods-manage-row-wrapper' ).hide( 0, function () {
-                        $new_row.find( 'a.row-label.pods-manage-row-edit' ).click();
+                       $new_row.find( 'a.row-label.pods-manage-row-edit' ).click();
                     } );
 
                     $( '.pods-tabs .pods-tab:first a', $new_row ).addClass( 'selected' );
                     $( '.pods-tab-group', $new_row ).find( '.pods-tab:first' ).show();
 
                     if ( $.fn.sortable && $tbody.hasClass( 'pods-manage-sortable' ) )
-                        $tbody.sortable( 'refresh' );
+                       $tbody.sortable( 'refresh' );
 
                     var sluggables = [];
 
@@ -1169,13 +1170,13 @@
                     $row.animate( {backgroundColor : '#B80000'} );
 
                     $row.fadeOut( 'slow', function () {
-                        $( this ).remove();
+                       $( this ).remove();
                         if ( 0 == $( 'tbody.pods-manage-list tr.pods-manage-row' ).length )
                             $tbody.find( 'tr.no-items' ).show();
                     } );
 
                     if ( $.fn.sortable && $tbody.hasClass( 'pods-manage-sortable' ) )
-                        $( this ).closest( 'tbody.pods-manage-list' ).sortable( 'refresh' );
+                       $( this ).closest( 'tbody.pods-manage-list' ).sortable( 'refresh' );
 
                     pods_changed = true;
 

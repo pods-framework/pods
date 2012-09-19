@@ -504,6 +504,16 @@ tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-save {
     width: 40%;
 }
 
+tbody.pods-manage-list tr.pods-field-new div.pods-manage-row-wrapper .pods-manage-row-delete a.submitdelete,
+tbody.pods-manage-list tr div.pods-manage-row-wrapper .pods-manage-row-save a.pods-button-add,
+tbody.pods-manage-list tr.pods-field-new div.pods-manage-row-wrapper .pods-manage-row-save a.pods-button-update {
+    display: none;
+}
+
+tbody.pods-manage-list tr.pods-field-new div.pods-manage-row-wrapper .pods-manage-row-save a.pods-button-add {
+    display: inline;
+}
+
 /*
  * Pods Toggled
  */

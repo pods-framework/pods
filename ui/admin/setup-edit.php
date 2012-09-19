@@ -330,8 +330,8 @@ if ( 'none' != pods_var( 'storage', $pod, 'none', null, true ) ) {
 
         $field = array(
             'id' => '__1',
-            'name' => 'new__1',
-            'label' => 'New Field __1',
+            'name' => '',
+            'label' => '',
             'type' => 'text'
         );
 

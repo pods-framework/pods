@@ -553,8 +553,8 @@
             $( '#pods-wizard-start' )
                 .hide()
                 .on( 'click', function ( e ) {
-                         e.preventDefault();
-                         methods.startOver();
+                        e.preventDefault();
+                        methods.startOver();
                      } );
 
             // Upgrade choice button event binding
@@ -860,6 +860,20 @@
                             $row_label.prop( 'colspan', '1' );
                         } );
                     }
+                    else {
+                        var $tbody = $( this ).closest( 'tbody.pods-manage-list' );
+
+                        $row.animate( {backgroundColor : '#B80000'} );
+
+                        $row.fadeOut( 'slow', function () {
+                            $( this ).remove();
+                            if ( 0 == $( 'tbody.pods-manage-list tr.pods-manage-row' ).length )
+                                $tbody.find( 'tr.no-items' ).show();
+                        } );
+
+                        if ( $.fn.sortable && $tbody.hasClass( 'pods-manage-sortable' ) )
+                            $( this ).closest( 'tbody.pods-manage-list' ).sortable( 'refresh' );
+                    }
                 }
                 // Row inactive, show it
                 else {
@@ -1016,8 +1030,6 @@
 
                  $row_content.find( 'input.field_data' ).val( $.toJSON( field_data ) );
 
-                 // @todo save values to JSON and place inside input
-
                 if ( 'undefined' != typeof pods_field_types && null !== pods_field_types ) {
                     $row.find( 'td.pods-manage-row-label a.row-label' ).html( $row_content.find( 'input#pods-form-ui-field-data-' + row_id + '-label' ).val() );
 
@@ -1056,6 +1068,8 @@
                     $row.toggleClass( 'pods-manage-row-expanded' );
                     $row_label.prop( 'colspan', '1' );
                 } );
+
+                 $row.removeClass( 'pods-field-new' );
 
                 $( this ).css( 'cursor', 'pointer' );
                 $( this ).prop( 'disabled', false );
@@ -1100,7 +1114,7 @@
                     var $tbody = $( this ).parent().parent().find( 'tbody.pods-manage-list' );
 
                     $tbody.find( 'tr.no-items' ).hide();
-                    $tbody.append( '<tr id="row-' + row_counter + '" class="pods-manage-row pods-field-add pods-field-' + row_counter + ' pods-submittable-fields" valign="top">' + add_row + '</tr>' );
+                    $tbody.append( '<tr id="row-' + row_counter + '" class="pods-manage-row pods-field-new pods-field-' + row_counter + ' pods-submittable-fields" valign="top">' + add_row + '</tr>' );
 
                     $new_row = $tbody.find( 'tr#row-' + row_counter );
 
@@ -1200,8 +1214,8 @@
         }
         // Don't need this part (yet)
         /*
-         else if (typeof method === 'object' || !method) {
-         return methods.init.apply(this, arguments);
+        else if (typeof method === 'object' || !method) {
+        return methods.init.apply(this, arguments);
          }
          */
         else {

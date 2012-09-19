@@ -916,7 +916,9 @@ class PodsAdmin {
                 unset( $params->field_data_json );
 
                 foreach ( $params->fields as $k => $v ) {
-                    if ( !is_array( $v ) )
+                    if ( empty( $v ) )
+                        unset( $params->fields[ $k ] );
+                    elseif ( !is_array( $v ) )
                         $params->fields[ $k ] = (array) @json_decode( $v, true );
                 }
             }

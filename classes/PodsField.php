@@ -156,6 +156,24 @@ class PodsField {
     }
 
     /**
+     * Get the data from the field
+     *
+     * @param string $name The name of the field
+     * @param string|array $value The value of the field
+     * @param array $options
+     * @param array $pod
+     * @param int $id
+     *
+     * @return array Array of possible field data
+     *
+     * @since 2.0.0
+     */
+
+    public function data ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+        return (array) $value;
+    }
+
+    /**
      * Build regex necessary for JS validation
      *
      * @param mixed $value

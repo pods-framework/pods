@@ -131,24 +131,41 @@ class PodsField_Boolean extends PodsField {
 
         $field_type = 'checkbox';
 
+        if ( 'radio' == pods_var( 'boolean_format_type', $options ) )
+            $field_type = 'radio';
+        elseif ( 'dropdown' == pods_var( 'boolean_format_type', $options ) )
+            $field_type = 'select';
+
+        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+    }
+
+    /**
+     * Get the data from the field
+     *
+     * @param string $name The name of the field
+     * @param string|array $value The value of the field
+     * @param array $options
+     * @param array $pod
+     * @param int $id
+     *
+     * @return array Array of possible field data
+     *
+     * @since 2.0.0
+     */
+    public function data ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+
         if ( 'checkbox' != pods_var( 'boolean_format_type', $options ) ) {
-            $options[ 'data' ] = array(
+            $data = array(
                 1 => pods_var( 'boolean_yes_label', $options ),
                 0 => pods_var( 'boolean_no_label', $options )
             );
-
-            if ( 'radio' == pods_var( 'boolean_format_type', $options ) )
-                $field_type = 'radio';
-            elseif ( 'dropdown' == pods_var( 'boolean_format_type', $options ) )
-                $field_type = 'select';
         }
         else {
-            $options[ 'data' ] = array(
+            $data = array(
                 1 => pods_var( 'boolean_yes_label', $options )
             );
         }
-
-        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
+        return $data;
     }
 
     /**

@@ -3693,7 +3693,7 @@ class PodsAPI {
                         LIMIT 1
                     ";
 
-                $object = $wpdb->get_var( $wpdb->prepare( $sql, $params->name, '_pods_' . $params->type ) );
+                $object = $wpdb->get_var( $wpdb->prepare( $sql, '_pods_' . $params->type, $params->name) );
 
                 if ( empty( $object ) ) {
                     if ( $strict )

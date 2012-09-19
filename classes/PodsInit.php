@@ -220,7 +220,7 @@ class PodsInit {
         $existing_post_types = get_post_types();
         $existing_taxonomies = get_taxonomies();
 
-        $wp_cpt_ct = get_transient( 'pods_wp_cpt_ct' );
+        $wp_cpt_ct = pods_transient_get( 'pods_wp_cpt_ct' );
 
         if ( false === $wp_cpt_ct ) {
             $wp_cpt_ct = array(
@@ -461,7 +461,7 @@ class PodsInit {
                 $wp_cpt_ct[ 'post_types' ][ $post_type ] = $options;
             }
 
-            set_transient( 'pods_wp_cpt_ct', $wp_cpt_ct );
+            pods_transient_set( 'pods_wp_cpt_ct', $wp_cpt_ct );
         }
 
         foreach ( $wp_cpt_ct[ 'taxonomies' ] as $taxonomy => $options ) {

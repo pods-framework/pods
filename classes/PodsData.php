@@ -1220,7 +1220,7 @@ class PodsData {
             $row = false;
 
             if ( !empty( $this->pod ) )
-                $row = wp_cache_get( $id, 'pods_items_' . $this->pod );
+                $row = pods_cache_get( $id, 'pods_items_' . $this->pod );
 
             $get_table_data = false;
 
@@ -1326,7 +1326,7 @@ class PodsData {
             }
 
             if ( !empty( $this->pod ) )
-                wp_cache_set( $id, $this->row, 'pods_items_' . $this->pod );
+                pods_cache_set( $id, $this->row, 0, 'pods_items_' . $this->pod );
         }
 
         return $this->row;

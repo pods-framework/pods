@@ -524,7 +524,7 @@ class PodsAPI {
      * @return array Array of fields
      */
     public function get_wp_object_fields ( $object = 'post_type' ) {
-        $fields = get_transient( 'pods_api_object_fields_' . $object );
+        $fields = pods_transient_get( 'pods_api_object_fields_' . $object );
 
         if ( false !== $fields )
             return apply_filters( 'pods_api_get_wp_object_fields', $fields, $object );
@@ -834,7 +834,7 @@ class PodsAPI {
 
         $fields = PodsForm::fields_setup( $fields );
 
-        set_transient( 'pods_api_object_fields_' . $object, $fields );
+        pods_transient_set( 'pods_api_object_fields_' . $object, $fields );
 
         return $fields;
     }
@@ -2458,7 +2458,7 @@ class PodsAPI {
         }
 
         // Clear cache
-        wp_cache_delete( $params->id, 'pods_items_' . $params->pod );
+        pods_cache_clear( $params->id, 'pods_items_' . $params->pod );
 
         // Success! Return the id
         return $params->id;
@@ -2634,7 +2634,7 @@ class PodsAPI {
      * @return bool
      *
      * @uses pods_query
-     * @uses wp_cache_flush
+     * @uses pods_cache_clear
      *
      * @since 1.9.0
      */
@@ -2655,7 +2655,7 @@ class PodsAPI {
 
         pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}" );
 
-        wp_cache_flush(); // only way to reliably clear out cached data across an entire group
+        pods_cache_clear( true ); // only way to reliably clear out cached data across an entire group
 
         return true;
     }
@@ -3060,7 +3060,7 @@ class PodsAPI {
             }
         }
 
-        wp_cache_delete( $params->id, 'pods_items_' . $params->pod );
+        pods_cache_clear( $params->id, 'pods_items_' . $params->pod );
 
         return true;
     }
@@ -3116,7 +3116,7 @@ class PodsAPI {
             $params = array( 'name' => $params );
 
         if ( is_object( $params ) && isset( $params->post_name ) ) {
-            $pod = get_transient( 'pods_pod_' . $params->post_name );
+            $pod = pods_transient_get( 'pods_pod_' . $params->post_name );
 
             if ( false !== $pod )
                 return $pod;
@@ -3130,7 +3130,7 @@ class PodsAPI {
                 return pods_error( 'Either Pod ID or Name are required', $this );
 
             if ( isset( $params->name ) ) {
-                $pod = get_transient( 'pods_pod_' . $params->name );
+                $pod = pods_transient_get( 'pods_pod_' . $params->name );
 
                 if ( false !== $pod )
                     return $pod;
@@ -3228,7 +3228,7 @@ class PodsAPI {
             }
         }
 
-        set_transient( 'pods_pod_' . $pod[ 'name' ], $pod );
+        pods_transient_set( 'pods_pod_' . $pod[ 'name' ], $pod );
 
         return $pod;
     }
@@ -3332,7 +3332,7 @@ class PodsAPI {
             $cache_key = 'pods_get' . $cache_key;
 
         if ( !empty( $cache_key ) && ( 'pods' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty ( $orderby ) || 'menu_order title' == $orderby ) ) {
-            $the_pods = get_transient( $cache_key );
+            $the_pods = pods_transient_get( $cache_key );
 
             if ( false !== $the_pods )
                 return $the_pods;
@@ -3356,7 +3356,7 @@ class PodsAPI {
         }
 
         if ( !empty( $cache_key ) && ( 'pods' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty ( $orderby ) || 'menu_order title' == $orderby ) )
-            set_transient( $cache_key, $the_pods );
+            pods_transient_set( $cache_key, $the_pods );
 
         return $the_pods;
     }
@@ -3654,7 +3654,7 @@ class PodsAPI {
     public function load_object ( $params, $strict = false ) {
         if ( is_object( $params ) && isset( $params->post_name ) ) {
             $type = ltrim( $params->post_type, '_' );
-            $object = get_transient( $type . '_' . $params->post_name );
+            $object = pods_transient_get( $type . '_' . $params->post_name );
 
             if ( false !== $object )
                 return $object;
@@ -3671,7 +3671,7 @@ class PodsAPI {
                 return pods_error( __( 'Either Object ID or Name are required', 'pods' ), $this );
 
             if ( isset( $params->name ) ) {
-                $object = get_transient( 'pods_object_' . $params->type . '_' . $params->name );
+                $object = pods_transient_get( 'pods_object_' . $params->type . '_' . $params->name );
 
                 if ( false !== $object )
                     return $object;
@@ -3731,7 +3731,7 @@ class PodsAPI {
                 $value = $value[ 0 ];
         }
 
-        set_transient( 'pods_object_' . $object[ 'type' ] . '_' . $object[ 'name' ], $object );
+        pods_transient_set( 'pods_object_' . $object[ 'type' ] . '_' . $object[ 'name' ], $object );
 
         return $object;
     }
@@ -3800,7 +3800,7 @@ class PodsAPI {
             $cache_key = 'pods_objects_' . $params->type . '_get' . $cache_key;
 
         if ( ( 'pods_objects_' . $params->type != $cache_key || empty( $meta_query ) ) && empty( $limit ) && ( empty ( $orderby ) || 'menu_order' == $orderby ) ) {
-            $the_objects = get_transient( $cache_key );
+            $the_objects = pods_transient_get( $cache_key );
 
             if ( false !== $the_objects )
                 return $the_objects;
@@ -3824,7 +3824,7 @@ class PodsAPI {
         }
 
         if ( ( 'pods_objects_' . $params->type != $cache_key || empty( $meta_query ) ) && empty( $limit ) && ( empty ( $orderby ) || 'menu_order' == $orderby ) )
-            set_transient( $cache_key, $the_objects );
+            pods_transient_set( $cache_key, $the_objects );
 
         return $the_objects;
     }
@@ -3969,14 +3969,14 @@ class PodsAPI {
         if ( !isset( $params->id ) || empty( $params->id ) )
             return pods_error( __( 'Item ID required', 'pods' ), $this );
 
-        $pod = wp_cache_get( $params->id, 'pods_items_' . $params->pod );
+        $pod = pods_cache_get( $params->id, 'pods_items_' . $params->pod );
 
         if ( false !== $pod )
             return $pod;
 
         $pod = pods( $params->pod, $params->id );
 
-        wp_cache_set( $params->id, $pod, 'pods_items_' . $params->pod );
+        pods_cache_set( $params->id, $pod, 'pods_items_' . $params->pod );
 
         return $pod;
     }
@@ -4097,7 +4097,7 @@ class PodsAPI {
 
         $types = $this->do_hook( 'field_types', $types );
 
-        $field_types = get_transient( 'pods_field_types' );
+        $field_types = pods_transient_get( 'pods_field_types' );
 
         if ( false === $field_types || count( $types ) != count( $field_types ) ) {
             $field_types = $types;
@@ -4115,7 +4115,7 @@ class PodsAPI {
                 $field_types[ $field_type ] = $field_label;
             }
 
-            set_transient( 'pods_field_types', $field_types );
+            pods_transient_set( 'pods_field_types', $field_types );
         }
 
         return $field_types;
@@ -5068,7 +5068,7 @@ class PodsAPI {
             $wp_rewrite->flush_rules();
         }
 
-        wp_cache_flush();
+        pods_cache_clear( true );
     }
 
     /**

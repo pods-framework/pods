@@ -1505,7 +1505,7 @@ function pods_array ( $container ) {
  *
  * @param string $view Path of the view file
  * @param array|null $data (optional) Data to pass on to the template
- * @param int $expires (optional) Time in seconds for the cache to expire, if 0 caching is disabled.
+ * @param int|bool $expires (optional) Time in seconds for the cache to expire, if false caching is disabled.
  * @param string $cache_mode (optional) Decides the caching method to use for the view.
  * @param bool $return (optional) If true doesn not echo the result of the view, the function returns it
  *
@@ -1513,7 +1513,7 @@ function pods_array ( $container ) {
  *
  * @since 2.0.0
  */
-function pods_view ( $view, $data = null, $expires = 0, $cache_mode = 'cache', $return = false ) {
+function pods_view ( $view, $data = null, $expires = false, $cache_mode = 'cache', $return = false ) {
     require_once( PODS_DIR . 'classes/PodsView.php' );
 
     $view = PodsView::view( $view, $data, $expires, $cache_mode );
@@ -1533,15 +1533,16 @@ function pods_view ( $view, $data = null, $expires = 0, $cache_mode = 'cache', $
  * @param mixed $value Value to add to the cache
  * @param int $expires (optional) Time in seconds for the cache to expire, if 0 caching is disabled.
  * @param string $cache_mode (optional) Decides the caching method to use for the view.
+ * @param string $group Key for the group
  *
  * @return bool|mixed|null|string|void
  *
  * @since 2.0.0
  */
-function pods_cache_set ( $key, $value, $expires = 0, $cache_mode = 'cache' ) {
+function pods_view_set ( $key, $value, $expires = 0, $cache_mode = 'cache', $group = '' ) {
     require_once( PODS_DIR . 'classes/PodsView.php' );
 
-    return PodsView::set( $key, $value, $expires, $cache_mode );
+    return PodsView::set( $key, $value, $expires, $cache_mode, $group );
 }
 
 /**
@@ -1551,15 +1552,53 @@ function pods_cache_set ( $key, $value, $expires = 0, $cache_mode = 'cache' ) {
  *
  * @param string $key Key for the cache
  * @param string $cache_mode (optional) Decides the caching method to use for the view.
+ * @param string $group Key for the group
  *
  * @return bool|mixed|null|void
  *
  * @since 2.0.0
  */
-function pods_cache_get ( $key, $cache_mode = 'cache' ) {
+function pods_view_get ( $key, $cache_mode = 'cache', $group = '' ) {
     require_once( PODS_DIR . 'classes/PodsView.php' );
 
-    return PodsView::get( $key, $cache_mode );
+    return PodsView::get( $key, $cache_mode, $group );
+}
+
+/**
+ * Clear a cached value
+ *
+ * @see PodsView::clear
+ *
+ * @param string|bool $key Key for the cache
+ * @param string $cache_mode (optional) Decides the caching method to use for the view.
+ * @param string $group Key for the group
+ *
+ * @return bool
+ *
+ * @since 2.0.0
+ */
+function pods_view_clear ( $key = true, $cache_mode = 'cache', $group = '' ) {
+    require_once( PODS_DIR . 'classes/PodsView.php' );
+
+    return PodsView::clear( $key, $cache_mode, $group );
+}
+
+/**
+ * Set a cached value
+ *
+ * @see PodsView::set
+ *
+ * @param string $key Key for the cache
+ * @param mixed $value Value to add to the cache
+ * @param string $group Key for the group
+ * @param int $expires (optional) Time in seconds for the cache to expire, if 0 caching is disabled.
+ *
+ * @return bool|mixed|null|string|void
+ *
+ * @since 2.0.0
+ */
+function pods_cache_set ( $key, $value, $group = '', $expires = 0) {
+    return pods_view_set( $key, $value, $expires, 'cache', $group );
 }
 
 /**
@@ -1568,16 +1607,77 @@ function pods_cache_get ( $key, $cache_mode = 'cache' ) {
  * @see PodsView::clear
  *
  * @param string $key Key for the cache
- * @param string $cache_mode (optional) Decides the caching method to use for the view.
+ * @param string $group Key for the group
  *
  * @return bool
  *
  * @since 2.0.0
  */
-function pods_cache_clear ( $key, $cache_mode = 'cache' ) {
-    require_once( PODS_DIR . 'classes/PodsView.php' );
+function pods_cache_get ( $key, $group = '' ) {
+    return pods_view_get( $key, 'cache', $group );
+}
 
-    return PodsView::clear( $key, $cache_mode );
+/**
+ * Get a cached value
+ *
+ * @see PodsView::get
+ *
+ * @param string|bool $key Key for the cache
+ * @param string $group Key for the group
+ *
+ * @return bool|mixed|null|void
+ *
+ * @since 2.0.0
+ */
+function pods_cache_clear ( $key = true, $group = '' ) {
+    return pods_view_clear( $key, 'cache', $group );
+}
+
+/**
+ * Set a cached value
+ *
+ * @see PodsView::set
+ *
+ * @param string $key Key for the cache
+ * @param mixed $value Value to add to the cache
+ * @param int $expires (optional) Time in seconds for the cache to expire, if 0 caching is disabled.
+ *
+ * @return bool|mixed|null|string|void
+ *
+ * @since 2.0.0
+ */
+function pods_transient_set ( $key, $value, $expires = 0 ) {
+    return pods_view_set( $key, $value, $expires, 'transient' );
+}
+
+/**
+ * Get a cached value
+ *
+ * @see PodsView::get
+ *
+ * @param string $key Key for the cache
+ *
+ * @return bool|mixed|null|void
+ *
+ * @since 2.0.0
+ */
+function pods_transient_get ( $key ) {
+    return pods_view_get( $key, 'transient' );
+}
+
+/**
+ * Clear a cached value
+ *
+ * @see PodsView::clear
+ *
+ * @param string|bool $key Key for the cache
+ *
+ * @return bool
+ *
+ * @since 2.0.0
+ */
+function pods_transient_clear ( $key = true ) {
+    return pods_view_clear( $key, 'transient' );
 }
 
 /**

@@ -903,6 +903,8 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
         </div>
         <?php
     }
+
+    if ( class_exists( 'Pods_Helper' ) ) {
     ?>
 
     <div class="pods-field-option">
@@ -961,6 +963,9 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
             echo PodsForm::field( 'post_delete_helpers', pods_var_raw( 'post_delete_helpers', $pod ), 'pick', array( 'data' => $post_delete_helpers ) );
         ?>
     </div>
+    <?php
+    }
+    ?>
 </div>
 </div>
 </div>

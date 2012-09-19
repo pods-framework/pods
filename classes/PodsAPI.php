@@ -1551,8 +1551,8 @@ class PodsAPI {
                 $field[ 'pick_val' ] = pods_str_replace( 'pod-', '', $field[ 'pick_object' ], 1 );
                 $field[ 'pick_object' ] = 'pod';
             }
-            elseif ( 0 === strpos( $field[ 'pick_object' ], 'post-type-' ) ) {
-                $field[ 'pick_val' ] = pods_str_replace( 'post-type-', '', $field[ 'pick_object' ], 1 );
+            elseif ( 0 === strpos( $field[ 'pick_object' ], 'post_type-' ) ) {
+                $field[ 'pick_val' ] = pods_str_replace( 'post_type-', '', $field[ 'pick_object' ], 1 );
                 $field[ 'pick_object' ] = 'post_type';
             }
             elseif ( 0 === strpos( $field[ 'pick_object' ], 'taxonomy-' ) ) {
@@ -4332,7 +4332,7 @@ class PodsAPI {
                 }
             }
         }
-        elseif ( 'post_type' == $object_type || 'media' == $object_type ) {
+        elseif ( strstr($object_type, 'post_type') || 'media' == $object_type ) {
             $info[ 'table' ] = $wpdb->posts;
             $info[ 'field_id' ] = 'ID';
             $info[ 'field_index' ] = 'post_title';
@@ -4340,6 +4340,12 @@ class PodsAPI {
 
             if ( 'media' == $object_type )
                 $object = 'attachment';
+            if ( empty( $name ) ) {
+                $prefix = 'post_type-';
+                // Make sure we actually have the prefix before trying anything with the name
+                if ( substr( $object_type, 0, strlen( $prefix ) ) == $prefix )
+                    $name = substr( $object_type, strlen( $prefix ), strlen( $object_type ) );
+            }
 
             $info[ 'where' ] = array(
                 'post_status' => '`t`.`post_status` = "publish"',

@@ -1,4 +1,4 @@
-=== Pods Framework ===
+=== Pods - Custom Content Types and Fields ===
 Contributors: sc0ttkclark, logikal16, jchristopher
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, ui, content types, custom post types, relationships, database, framework, drupal
@@ -9,14 +9,14 @@ Stable tag: 1.14.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Pods is a framework for creating, managing, and deploying customized content types.
+Pods is a framework for creating, managing, and deploying customized content types and fields.
 
 == Description ==
 
 Check out http://podsframework.org/ for our User Guide and many other resources to help you develop with Pods.
 
 = Create your own content types =
-A Pod is a content type which contains a user-defined set of fields. Each content type is stored in it's own table, where as WordPress Custom Post Types are normally all stored in one single table for them all.
+A Pod is a content type which contains a custom defined set of fields. Each content type is stored in it's own table, where as WordPress Custom Post Types are normally all stored in one single table for them all.
 
 Create a variety of different fields including: text, paragraph text, date, number, file upload, and relationship (called "pick") fields.
 

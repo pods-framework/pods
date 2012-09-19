@@ -21,13 +21,13 @@
 
                 if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) ) {
                     if ( 0 == $el.parent().find( '.pods-validate-error-message' ).length )
-                        $el.parent().append( '<div class="pods-validate-error-message">' + label + ' is required.</div>' );
+                        $el.parent().append( '<div class="pods-validate-error-message">' + label.replace( /(<([^>]+)>)/ig, '' ) + ' is required.</div>' );
 
                     $el.addClass( 'pods-validate-error' );
                 }
                 else if ( '' == $el.val() || 0 == $el.val() ) {
                     if ( 0 == $el.parent().find( '.pods-validate-error-message' ).length )
-                        $el.parent().append( '<div class="pods-validate-error-message">' + label + ' is required.</div>' );
+                        $el.parent().append( '<div class="pods-validate-error-message">' + label.replace( /(<([^>]+)>)/ig, '' ) + ' is required.</div>' );
 
                     $el.addClass( 'pods-validate-error' );
                 }
@@ -69,8 +69,9 @@
                 $submittable.find( '.pods-submittable-fields' ).find( 'input, select, textarea' ).each( function () {
                     var $el = $( this );
                     var val = $el.val();
+                    var field_name = $el.prop( 'name' );
 
-                    if ( '' != $el.prop( 'name' ) ) {
+                    if ( '' != field_name && 0 != field_name.indexOf( 'field_data[' ) ) {
                         if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) )
                             val = 0;
                         else if ( $el.is( 'input[type=radio]' ) && !$el.is( ':checked' ) )
@@ -91,50 +92,7 @@
                             $el.removeClass( 'pods-validate-error' );
                         }
 
-                        field_name = $el.prop( 'name' );
-
-                        if ( 0 == field_name.indexOf( 'field_data' ) ) {
-                            var field_array = field_name.match( /\[(\w*|)\]/gi ),
-                                field_name = '';
-
-                            for ( var i in field_array ) {
-                                the_field = field_array[ i ].replace( '[', '' ).replace( ']', '' );
-
-                                if ( 0 == i ) {
-                                    if ( field_index != the_field )
-                                        field_id++;
-
-                                    field_index = the_field;
-
-                                    if ( 'undefined' == typeof field_data[ field_id ] )
-                                        field_data[ field_id ] = {};
-                                }
-                                else if ( 1 == i ) {
-                                    field_name = the_field;
-
-                                    if ( 2 == field_array.length )
-                                        field_data[ field_id ][ field_name ] = val;
-                                }
-                                else if ( 2 == i ) {
-                                    the_field = parseInt( the_field );
-
-                                    if ( 'NaN' == the_field )
-                                        field_data[ field_id ][ field_name ] = val;
-                                    else {
-                                        if ( 'undefined' == typeof field_data[ field_id ][ field_name ] )
-                                            field_data[ field_id ][ field_name ] = {};
-
-                                        while ( 'undefined' != typeof( field_data[ field_id ][ field_name ][ the_field ] ) ) {
-                                            the_field++;
-                                        }
-
-                                        field_data[ field_id ][ field_name ][ the_field ] = val;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                            postdata[ field_name ] = val;
+                        postdata[ field_name ] = val;
                     }
                 } );
 
@@ -147,10 +105,6 @@
                     $submittable.removeClass( 'invalid-form' );
 
                 pods_ajaxurl = pods_ajaxurl + '&action=' + postdata.action;
-
-                // $_POST doesn't like a LOT of items, JSON encode it as one string
-                if ( !$.isEmptyObject( field_data ) )
-                    postdata[ 'field_data' ] = $.toJSON( field_data );
 
                 $submitbutton = $submittable.find( 'input[type=submit], button[type=submit]' );
 
@@ -205,6 +159,22 @@
                     }
                 } );
 
+            } )// Handle submit button and show waiting image
+            .on( 'click', 'input[type=submit], button[type=submit]', function ( e ) {
+                pods_changed = false;
+
+                e.preventDefault();
+
+                 $( 'div#message' ).slideUp( 'fast', function() {
+                     $( this ).remove();
+                 } );
+
+                var $submitbutton = $( this );
+                $submitbutton.css( 'cursor', 'default' );
+                $submitbutton.prop( 'disabled', true );
+                $submitbutton.parent().find( '.waiting' ).fadeIn();
+
+                $( 'form.pods-submittable' ).trigger( 'submit' );
             } );
 
             // Handle submit via link and translate to AJAX
@@ -224,6 +194,10 @@
 
                 if ( 'undefined' != typeof $submitbutton.data( 'confirm' ) && !confirm( $submitbutton.data( 'confirm' ) ) )
                     return false;
+
+                $( 'div#message' ).slideUp( 'fast', function () {
+                    $( this ).remove();
+                } );
 
                 pods_changed = false;
 
@@ -267,18 +241,6 @@
                         alert( 'Unable to process request, please try again.' );
                     }
                 } );
-            } ) // Handle submit button and show waiting image
-                .on( 'click', 'input[type=submit], button[type=submit]', function ( e ) {
-                    pods_changed = false;
-
-                    e.preventDefault();
-
-                    var $submitbutton = $( this );
-                    $submitbutton.css( 'cursor', 'default' );
-                    $submitbutton.prop( 'disabled', true );
-                    $submitbutton.parent().find( '.waiting' ).fadeIn();
-
-                    $( 'form.pods-submittable' ).trigger( 'submit' );
             } );
         },
         sluggable : function () {
@@ -398,7 +360,7 @@
             }
         },
         tabbed : function () {
-            $( '.pods_admin' ).on( 'click', '.pods-tabs .pods-tab a', function ( e ) {
+            $( '.pods-admin' ).on( 'click', '.pods-tabs .pods-tab a', function ( e ) {
                 $( this ).css( 'cursor', 'default' );
                 $( this ).prop( 'disabled', true );
 
@@ -732,7 +694,7 @@
             $( '.pods-dependency-tabs .pods-depends-on' ).hide();
 
             // Handle dependent toggle
-            $( '.pods-dependency-tabs' ).on( 'click', '.pods-dependent-tab', function ( e ) {
+            $( '.pods-admin' ).on( 'click', '.pods-dependency-tabs .pods-dependent-tab', function ( e ) {
                 var $el = $( this );
                 var $current = $el.closest( '.pods-dependency-tabs' );
                 var $field = $el;
@@ -847,7 +809,7 @@
         advanced : function () {
             $( '.pods-advanced' ).hide();
 
-            $( '.pods_admin' ).on( 'click', '.pods-advanced-toggle', function ( e ) {
+            $( '.pods-admin' ).on( 'click', '.pods-advanced-toggle', function ( e ) {
                 $advanced = $( this ).closest( 'div' ).find( '.pods-advanced' );
 
                 if ( $advanced.is( ':visible' ) ) {
@@ -862,7 +824,12 @@
                 e.preventDefault();
             } );
         },
-        collapsible : function () {
+        collapsible : function ( row ) {
+            var new_row = row;
+
+            if ( new_row[ 0 ] )
+                new_row = new_row.html();
+
             // Hide all rows
             $( 'div.pods-manage-row-wrapper' ).hide();
 
@@ -877,48 +844,100 @@
                 var $row_label = $row.find( 'td.pods-manage-row-label' );
                 var $row_content = $row_label.find( 'div.pods-manage-row-wrapper' );
 
-                if ( 'undefined' == typeof orig_fields[$row.data( 'id' )] )
-                    orig_fields[$row.data( 'id' )] = {};
+                if ( 'undefined' == typeof orig_fields[ $row.data( 'id' ) ] )
+                    orig_fields[ $row.data( 'id' ) ] = {};
 
                 // Row active, hide it
                 if ( $row_content.is( ':visible' ) ) {
-                    $row_content.find( 'input, select' ).each( function () {
-                        $( this ).val( orig_fields[$row.data( 'id' )][$( this ).prop( 'name' )] );
-                    } );
+                    if ( !$row.hasClass( 'pods-field-new' ) ) {
+                        $row_content.find( 'input, select, textarea' ).each( function () {
+                            if ( 'undefined' != typeof orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] )
+                                $( this ).val( orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] );
+                        } );
 
-                    $row_content.slideUp( 'slow', function () {
-                        $row.toggleClass( 'pods-manage-row-expanded' );
-                        $row_label.prop( 'colspan', '1' );
-                    } );
+                        $row_content.slideUp( 'slow', function () {
+                            $row.toggleClass( 'pods-manage-row-expanded' );
+                            $row_label.prop( 'colspan', '1' );
+                        } );
+                    }
                 }
                 // Row inactive, show it
                 else {
-                    $row_content.find( 'input, select' ).each( function () {
-                        orig_fields[$row.data( 'id' )][$( this ).prop( 'name' )] = $( this ).val();
-                    } );
+                    if ( $row.hasClass( 'pods-field-init' ) && 'undefined' != typeof new_row && null !== new_row ) {
+                        var row_counter = $row.data( 'row' );
+
+                        var edit_row = new_row.replace( /\_\_1/gi, row_counter ).replace( /\-\-1/gi, row_counter );
+                        var $field_wrapper = $row_content.find( 'div.pods-manage-field' );
+
+                        $field_wrapper.append( edit_row );
+
+                        $field_wrapper.find( '.pods-depends-on' ).hide();
+                        $field_wrapper.find( '.pods-excludes-on' ).hide();
+
+                        $field_wrapper.find( '.pods-dependent-toggle' ).each( function () {
+                            $( this ).trigger( 'change' );
+                        } );
+
+                        var field_json = jQuery.parseJSON( $row_content.find( 'input.field_data' ).val() );
+
+                        var field_array_counter = 0;
+
+                        $field_wrapper.find( 'input, select, textarea' ).each( function () {
+                            json_name = $( this ).prop( 'name' ).replace( 'field_data[' + row_counter + '][', '' ).replace( '[', '' ).replace( ']', '' );
+
+                            if ( 0 < $( this ).prop( 'name' ).indexOf( '[]' ) ) {
+                                if ( 'undefined' != typeof field_json[ json_name ] && 'undefined' != typeof field_json[ json_name ][ field_array_counter ] ) {
+                                    $( this ).val( field_json[ json_name ][ field_array_counter ] );
+
+                                    orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).val();
+                                }
+
+                                field_array_counter++;
+                            }
+                            else {
+                                field_array_counter = 0;
+
+                                if ( 'undefined' != typeof field_json[ json_name ] ) {
+                                    $( this ).val( field_json[ json_name ] );
+
+                                    orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).val();
+                                }
+                            }
+                        } );
+
+                        $field_wrapper.find( '.pods-tabbed ul.pods-tabs .pods-tab:first a' ).addClass( 'selected' );
+                        $field_wrapper.find( '.pods-tabbed .pods-tab-group .pods-tab:first' ).show();
+
+                        $row.removeClass( 'pods-field-init' );
+                    }
+                    else {
+                        $row_content.find( 'input, select, textarea' ).each( function () {
+                            orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).val();
+                        } );
+                    }
 
                     $row.toggleClass( 'pods-manage-row-expanded' );
                     $row_label.prop( 'colspan', '3' );
                     $row_content.slideDown();
                     $row_content.find('.pods-dependency .pods-dependent-toggle' ).each( function () {
                        $( this ).trigger( 'change' );
-                    });
+                    } );
                 }
 
                 $( this ).css( 'cursor', 'pointer' );
                 $( this ).prop( 'disabled', false );
 
                 e.preventDefault();
-            } );
-
+            } )
             // Handle 'Save' action
-            $( 'tbody.pods-manage-list' ).on( 'click', '.pods-manage-row-save a.button-primary', function ( e ) {
+            .on( 'click', '.pods-manage-row-save a.button-primary', function ( e ) {
                 $( this ).css( 'cursor', 'default' );
                 $( this ).prop( 'disabled', true );
 
                 var $row = $( this ).closest( 'tr.pods-manage-row' );
                 var $row_label = $row.find( 'td.pods-manage-row-label' );
                 var $row_content = $row_label.find( 'div.pods-manage-row-wrapper' );
+                var $field_wrapper = $row_content.find( 'div.pods-manage-field' );
                 var color = $.css( $row.get( 0 ), 'backgroundColor' );
                 var row_id = $row.data( 'row' );
 
@@ -931,6 +950,73 @@
                         }
                     }
                 );
+
+                var field_data = {};
+
+                var valid_form = true;
+
+                $field_wrapper.find( 'input, select, textarea' ).each( function () {
+                    var $el = $( this );
+                    var val = $el.val();
+
+                    if ( '' != $el.prop( 'name' ) ) {
+                        if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) )
+                            val = 0;
+                        else if ( $el.is( 'input[type=radio]' ) && !$el.is( ':checked' ) )
+                            val = '';
+
+                        if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && ('' == $el.val() || 0 == $el.val()) ) {
+                            $el.trigger( 'change' );
+
+                            if ( false !== valid_form )
+                                $el.focus();
+
+                            $el.addClass( 'pods-validate-error' );
+
+                            valid_form = false;
+                        }
+                        else {
+                            $el.parent().find( '.pods-validate-error-message' ).remove();
+                            $el.removeClass( 'pods-validate-error' );
+                        }
+
+                        field_name = $el.prop( 'name' );
+
+                        var field_array = field_name.match( /\[(\w*|)\]/gi ),
+                            field_name = '';
+
+                        for ( var i in field_array ) {
+                            the_field = field_array[ i ].replace( '[', '' ).replace( ']', '' );
+
+                            if ( 1 == i ) {
+                                field_name = the_field;
+
+                                if ( 2 == field_array.length )
+                                    field_data[ field_name ] = val;
+                            }
+                            else if ( 2 == i ) {
+                                the_field = parseInt( the_field );
+
+                                if ( 'NaN' == the_field )
+                                    field_data[ field_name ] = val;
+                                else {
+                                    if ( 'undefined' == typeof field_data[ field_name ] )
+                                        field_data[ field_name ] = {};
+
+                                    while ( 'undefined' != typeof( field_data[ field_name ][ the_field ] ) ) {
+                                        the_field++;
+                                    }
+
+                                    field_data[ field_name ][ the_field ] = val;
+                                }
+                            }
+                        }
+                     }
+                 } );
+
+                 $row_content.find( 'input.field_data' ).val( $.toJSON( field_data ) );
+
+                 // @todo save values to JSON and place inside input
 
                 if ( 'undefined' != typeof pods_field_types && null !== pods_field_types ) {
                     $row.find( 'td.pods-manage-row-label a.row-label' ).html( $row_content.find( 'input#pods-form-ui-field-data-' + row_id + '-label' ).val() );
@@ -975,10 +1061,9 @@
                 $( this ).prop( 'disabled', false );
 
                 e.preventDefault();
-            } );
-
+            } )
             // Handle 'Cancel' action
-            $( 'tbody.pods-manage-list' ).on( 'click', '.pods-manage-row-actions a.pods-manage-row-cancel', function ( e ) {
+            .on( 'click', '.pods-manage-row-actions a.pods-manage-row-cancel', function ( e ) {
                 $( this ).closest( 'tr.pods-manage-row' ).find( 'a.pods-manage-row-edit' ).click();
 
                 e.preventDefault();
@@ -1015,7 +1100,7 @@
                     var $tbody = $( this ).parent().parent().find( 'tbody.pods-manage-list' );
 
                     $tbody.find( 'tr.no-items' ).hide();
-                    $tbody.append( '<tr id="row-' + row_counter + '" class="pods-manage-row pods-field-' + row_counter + ' pods-submittable-fields" valign="top">' + add_row + '</tr>' );
+                    $tbody.append( '<tr id="row-' + row_counter + '" class="pods-manage-row pods-field-add pods-field-' + row_counter + ' pods-submittable-fields" valign="top">' + add_row + '</tr>' );
 
                     $new_row = $tbody.find( 'tr#row-' + row_counter );
 

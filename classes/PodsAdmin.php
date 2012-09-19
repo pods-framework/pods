@@ -910,10 +910,15 @@ class PodsAdmin {
             $params->data = $columns;
         }
         elseif ( 'save_pod' == $method->name ) {
-            if ( isset( $params->field_data ) && !is_array( $params->field_data ) ) {
-                $params->fields = (array) @json_decode( $params->field_data, true );
+            if ( isset( $params->field_data_json ) && is_array( $params->field_data_json ) ) {
+                $params->fields = $params->field_data_json;
 
-                unset( $params->field_data );
+                unset( $params->field_data_json );
+
+                foreach ( $params->fields as $k => $v ) {
+                    if ( !is_array( $v ) )
+                        $params->fields[ $k ] = (array) @json_decode( $v, true );
+                }
             }
         }
 

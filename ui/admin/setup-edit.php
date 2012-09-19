@@ -86,14 +86,14 @@ $advanced_fields = array(
             'type' => 'text',
             'default' => '',
             'depends-on' => array( 'restrict_capability' => true )
-        ),
+        )/*,
         'search' => array(
-            'label' => __( 'Include in search' ),
+            'label' => __( 'Include in searches' ),
             'help' => __( 'help', 'pods' ),
             'default' => 1,
             'type' => 'boolean',
-        )
-    ),
+        )*/
+    )/*,
     __( 'Validation', 'pods' ) => array(
         'regex_validation' => array(
             'label' => __( 'RegEx Validation', 'pods' ),
@@ -121,7 +121,7 @@ $advanced_fields = array(
             'default' => '',
             'depends-on' => array( 'unique' => true )
         )
-    )
+    )*/
 );
 
 $field_defaults = array(
@@ -137,14 +137,14 @@ $field_defaults = array(
     'input_helper' => '',
     'default_value' => '',
     'default_value_parameter' => '',
-    'search' => 1,
+    //'search' => 1,
     'admin_only' => 0,
     'restrict_capability' => 0,
-    'capability_allowed' => '',
+    'capability_allowed' => ''/*,
     'regex_validation' => '',
     'message_regex' => '',
     'message_required' => '',
-    'message_unique' => ''
+    'message_unique' => ''*/
 );
 
 $pick_object = array(
@@ -335,7 +335,7 @@ if ( 'none' != pods_var( 'storage', $pod, 'none', null, true ) ) {
             'type' => 'text'
         );
 
-        include PODS_DIR . 'ui/admin/setup-edit-field.php';
+        include PODS_DIR . 'ui/admin/setup-edit-field-fluid.php';
 
         $pods_i = 1;
 
@@ -1047,7 +1047,7 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
         $( document ).Pods( 'submit' );
         $( document ).Pods( 'sluggable' );
         $( document ).Pods( 'sortable' );
-        $( document ).Pods( 'collapsible' );
+        $( document ).Pods( 'collapsible', $( 'tbody.pods-manage-list tr.flexible-row div.pods-manage-field' ) );
         $( document ).Pods( 'toggled' );
         $( document ).Pods( 'tabbed' );
         $( document ).Pods( 'dependency' );

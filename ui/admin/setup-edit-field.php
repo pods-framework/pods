@@ -1,12 +1,18 @@
 <?php
     $field = array_merge( $field_settings[ 'field_defaults' ], $field );
 
+    // Set pick object
+    $field[ 'pick_object' ] = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_val', $field ), '-' );
+
+    // Unset pick_val for the field to be used above
+    if ( isset( $field[ 'pick_val'  ] ) )
+        unset( $field[ 'pick_val' ] );
+
     // Remove weight as we're going to allow reordering here
     unset( $field[ 'weight' ] );
 
     $data = array(
-        'row' => $pods_i,
-        'pick-object' => trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_val', $field ), '-' )
+        'row' => $pods_i
     );
 ?>
 <tr id="row-<?php echo $pods_i; ?>" class="pods-manage-row pods-field-init pods-field-<?php echo esc_attr( pods_var( 'name', $field ) ) . ( '--1' === $pods_i ? ' flexible-row' : ' pods-submittable-fields' ); ?>" valign="top"<?php PodsForm::data( $data ); ?>>

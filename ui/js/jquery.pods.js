@@ -919,8 +919,6 @@
                             }
                         } );
 
-                        $field_wrapper.find( 'select.pods-form-ui-field-name-field-data-pick-object' ).val( $row.data( 'pick-object' ) );
-
                         $field_wrapper.find( '.pods-tabbed ul.pods-tabs .pods-tab:first a' ).addClass( 'selected' );
                         $field_wrapper.find( '.pods-tabbed .pods-tab-group .pods-tab:first' ).show();
 

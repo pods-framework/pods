@@ -1867,7 +1867,7 @@ class PodsUI {
                             if ( $fields[ $field ][ 'sortable' ] ) {
                                 ?>
                                 <th scope="col"<?php echo $att_id; ?> class="manage-column column-<?php echo $id; ?> sortable<?php echo $current_sort; ?>"<?php echo $width; ?>>
-                                    <a href="<?php echo pods_var_update( array( 'orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir ), array( 'limit' . $this->num, 'search' . $this->num ), $this->exclusion() ); ?>"> <span><?php echo $attributes[ 'label' ]; ?></span> <span class="sorting-indicator"></span> </a>
+                                    <a href="<?php echo pods_var_update( array( 'orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir ), array( 'limit' . $this->num, 'search' . $this->num, 'page' . $this->num ), $this->exclusion() ); ?>"> <span><?php echo $attributes[ 'label' ]; ?></span> <span class="sorting-indicator"></span> </a>
                                 </th>
                                 <?php
                             }
@@ -1910,7 +1910,7 @@ class PodsUI {
 
                                 if ( $fields[ $field ][ 'sortable' ] ) {
                                     ?>
-                                    <th scope="col" class="manage-column column-<?php echo $id; ?> sortable <?php echo $current_sort; ?>"<?php echo $width; ?>><a href="<?php echo pods_var_update( array( 'orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir ), array( 'limit' . $this->num, 'search' . $this->num ), $this->exclusion() ); ?>"><span><?php echo $attributes[ 'label' ]; ?></span><span class="sorting-indicator"></span></a></th>
+                                    <th scope="col" class="manage-column column-<?php echo $id; ?> sortable <?php echo $current_sort; ?>"<?php echo $width; ?>><a href="<?php echo pods_var_update( array( 'orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir ), array( 'limit' . $this->num, 'search' . $this->num, 'page' . $this->num ), $this->exclusion() ); ?>"><span><?php echo $attributes[ 'label' ]; ?></span><span class="sorting-indicator"></span></a></th>
                                     <?php
                                 }
                                 else {

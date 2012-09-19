@@ -1,6 +1,9 @@
 <?php
     $field = array_merge( $field_settings[ 'field_defaults' ], $field );
 
+    // Remove weight as we're going to allow reordering here
+    unset( $field[ 'weight' ] );
+
     $data = array(
         'row' => $pods_i,
         'pick-object' => trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_val', $field ), '-' )

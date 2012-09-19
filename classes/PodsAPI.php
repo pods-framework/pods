@@ -1061,7 +1061,7 @@ class PodsAPI {
             'object',
             'alias',
             'options',
-            'fields' => array( 'field_data' )
+            'fields'
         );
 
         foreach ( $exclude as $k => $exclude_field ) {

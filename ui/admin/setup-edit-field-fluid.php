@@ -46,9 +46,7 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
                     </span>
         </div>
         <div class="pods-manage-row-wrapper" id="pods-manage-field-<?php echo $pods_i; ?>">
-            <?php if ( '__1' != pods_var( 'id', $field ) ) { ?>
-            <input type="hidden" name="field_data[<?php echo $pods_i; ?>][id]" value="<?php echo pods_var( 'id', $field ); ?>" />
-            <?php } ?>
+            <input type="hidden" name="field_data_json[<?php echo $pods_i; ?>]" value="<?php echo esc_attr( json_encode( $field ) ); ?>" class="field_data" />
 
             <div class="pods-manage-field pods-dependency">
                 <div class="pods-tabbed">

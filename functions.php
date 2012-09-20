@@ -1326,7 +1326,7 @@ function pods_redirect ( $location, $status = 302 ) {
     }
     else {
         die( '<script type="text/javascript">'
-            . 'document.location = "' . esc_js( $location ) . '";'
+            . 'document.location = "' . str_replace( '&amp;', '&', esc_js( $location ) ) . '";'
             . '</script>' );
     }
 }

@@ -54,12 +54,8 @@ class PodsUpgrade_2_0 {
         $methods = get_class_methods( $this );
 
         foreach ( $methods as $method ) {
-            if ( 0 === strpos( $method, 'migrate_' ) ) {
+            if ( 0 === strpos( $method, 'migrate_' ) )
                 $this->progress[ str_replace( 'migrate_', '', $method ) ] = false;
-
-                if ( 'migrate_pod' == $method )
-                    $this->progress[ str_replace( 'migrate_', '', $method ) ] = array();
-            }
         }
 
         $progress = (array) get_option( 'pods_framework_upgrade_2_0', array() );
@@ -367,179 +363,196 @@ class PodsUpgrade_2_0 {
         if ( true === $this->check_progress( __FUNCTION__ ) )
             return '1';
 
-        $pod_types = pods_query( "SELECT * FROM `@wp_pod_types`", false );
+        $migration_limit = (int) apply_filters( 'pods_upgrade_pod_limit', 1 );
+        $migration_limit = max( $migration_limit, 1 );
 
-        $pod_ids = array();
+        $last_id = (int) $this->check_progress( __FUNCTION__ );
 
-        if ( empty( $pod_types ) )
-            return $pod_ids;
+        $sql = "
+            SELECT *
+            FROM `@wp_pod_types`
+            WHERE {$last_id} < `id`
+            ORDER BY `id`
+            LIMIT 0, {$migration_limit}
+        ";
 
-        foreach ( $pod_types as $pod_type ) {
-            $field_rows = pods_query( "SELECT * FROM `@wp_pod_fields` WHERE `datatype` = {$pod_type->id} ORDER BY `weight`, `name`" );
+        $pod_types = pods_query( $sql );
 
-            $fields = array(
-                array(
-                    'name' => 'name',
-                    'label' => 'Name',
-                    'type' => 'text',
-                    'weight' => 0,
-                    'options' => array(
-                        'required' => '1'
-                    )
-                ),
-                array(
-                    'name' => 'created',
-                    'label' => 'Date Created',
-                    'type' => 'date',
-                    'options' => array(
-                        'date_format_type' => 'datetime'
+        $last_id = true;
+
+        if ( !empty( $pod_types ) ) {
+            foreach ( $pod_types as $pod_type ) {
+                $field_rows = pods_query( "SELECT * FROM `@wp_pod_fields` WHERE `datatype` = {$pod_type->id} ORDER BY `weight`, `name`" );
+
+                $fields = array(
+                    array(
+                        'name' => 'name',
+                        'label' => 'Name',
+                        'type' => 'text',
+                        'weight' => 0,
+                        'options' => array(
+                            'required' => '1'
+                        )
                     ),
-                    'weight' => 1
-                ),
-                array(
-                    'name' => 'modified',
-                    'label' => 'Date Modified',
-                    'type' => 'date',
-                    'options' => array(
-                        'date_format_type' => 'datetime'
+                    array(
+                        'name' => 'created',
+                        'label' => 'Date Created',
+                        'type' => 'date',
+                        'options' => array(
+                            'date_format_type' => 'datetime'
+                        ),
+                        'weight' => 1
                     ),
-                    'weight' => 2
-                ),
-                array(
-                    'name' => 'author',
-                    'label' => 'Author',
-                    'type' => 'pick',
-                    'pick_object' => 'user',
-                    'options' => array(
-                        'pick_format_type' => 'single',
-                        'pick_format_single' => 'autocomplete',
-                        'default_value' => '{@user.ID}'
+                    array(
+                        'name' => 'modified',
+                        'label' => 'Date Modified',
+                        'type' => 'date',
+                        'options' => array(
+                            'date_format_type' => 'datetime'
+                        ),
+                        'weight' => 2
                     ),
-                    'weight' => 3
-                )
-            );
-
-            $weight = 4;
-
-            foreach ( $field_rows as $row ) {
-                if ( 'name' == $row->name )
-                    continue;
-
-                $old_name = $row->name;
-
-                $row->name = pods_clean_name( $row->name );
-
-                if ( in_array( $row->name, array( 'type', 'created', 'modified', 'author' ) ) )
-                    $row->name .= '2';
-
-                $field_type = $row->coltype;
-
-                if ( 'txt' == $field_type )
-                    $field_type = 'text';
-                elseif ( 'desc' == $field_type )
-                    $field_type = 'wysiwyg';
-                elseif ( 'code' == $field_type )
-                    $field_type = 'paragraph';
-                elseif ( 'bool' == $field_type )
-                    $field_type = 'boolean';
-                elseif ( 'num' == $field_type )
-                    $field_type = 'number';
-                elseif ( 'date' == $field_type )
-                    $field_type = 'datetime';
-
-                $field_params = array(
-                    'name' => trim( $row->name ),
-                    'label' => trim( $row->label ),
-                    'type' => $field_type,
-                    'weight' => $weight,
-                    'options' => array(
-                        'required' => $row->required,
-                        'unique' => $row->unique,
-                        'input_helper' => $row->input_helper,
-                        'old_name' => $old_name
+                    array(
+                        'name' => 'author',
+                        'label' => 'Author',
+                        'type' => 'pick',
+                        'pick_object' => 'user',
+                        'options' => array(
+                            'pick_format_type' => 'single',
+                            'pick_format_single' => 'autocomplete',
+                            'default_value' => '{@user.ID}'
+                        ),
+                        'weight' => 3
                     )
                 );
 
-                if ( 'pick' == $field_type ) {
-                    $field_params[ 'pick_object' ] = 'pod';
-                    $field_params[ 'pick_val' ] = $row->pickval;
+                $weight = 4;
 
-                    if ( 'wp_user' == $row->pickval ) {
-                        $field_params[ 'pick_object' ] = 'user';
-                        $field_params[ 'pick_val' ] = '';
-                    }
-                    elseif ( 'wp_post' == $row->pickval ) {
-                        $field_params[ 'pick_object' ] = 'post_type';
-                        $field_params[ 'pick_val' ] = 'post';
-                    }
-                    elseif ( 'wp_page' == $row->pickval ) {
-                        $field_params[ 'pick_object' ] = 'post_type';
-                        $field_params[ 'pick_val' ] = 'page';
-                    }
-                    elseif ( 'wp_taxonomy' == $row->pickval ) {
-                        $field_params[ 'pick_object' ] = 'taxonomy';
-                        $field_params[ 'pick_val' ] = 'category';
-                    }
+                foreach ( $field_rows as $row ) {
+                    if ( 'name' == $row->name )
+                        continue;
 
-                    $field_params[ 'sister_field_id' ] = $row->sister_field_id;
-                    $field_params[ 'options' ][ 'pick_filter' ] = $row->pick_filter;
-                    $field_params[ 'options' ][ 'pick_orderby' ] = $row->pick_orderby;
-                    $field_params[ 'options' ][ 'pick_display' ] = '{@name}';
-                    $field_params[ 'options' ][ 'pick_size' ] = 'medium';
+                    $old_name = $row->name;
 
-                    if ( 1 == $row->multiple ) {
-                        $field_params[ 'options' ][ 'pick_format_type' ] = 'multi';
-                        $field_params[ 'options' ][ 'pick_format_multi' ] = 'checkbox';
-                        $field_params[ 'options' ][ 'pick_limit' ] = 0;
+                    $row->name = pods_clean_name( $row->name );
+
+                    if ( in_array( $row->name, array( 'type', 'created', 'modified', 'author' ) ) )
+                        $row->name .= '2';
+
+                    $field_type = $row->coltype;
+
+                    if ( 'txt' == $field_type )
+                        $field_type = 'text';
+                    elseif ( 'desc' == $field_type )
+                        $field_type = 'wysiwyg';
+                    elseif ( 'code' == $field_type )
+                        $field_type = 'paragraph';
+                    elseif ( 'bool' == $field_type )
+                        $field_type = 'boolean';
+                    elseif ( 'num' == $field_type )
+                        $field_type = 'number';
+                    elseif ( 'date' == $field_type )
+                        $field_type = 'datetime';
+
+                    $field_params = array(
+                        'name' => trim( $row->name ),
+                        'label' => trim( $row->label ),
+                        'type' => $field_type,
+                        'weight' => $weight,
+                        'options' => array(
+                            'required' => $row->required,
+                            'unique' => $row->unique,
+                            'input_helper' => $row->input_helper,
+                            'old_name' => $old_name
+                        )
+                    );
+
+                    if ( 'pick' == $field_type ) {
+                        $field_params[ 'pick_object' ] = 'pod';
+                        $field_params[ 'pick_val' ] = $row->pickval;
+
+                        if ( 'wp_user' == $row->pickval ) {
+                            $field_params[ 'pick_object' ] = 'user';
+                            $field_params[ 'pick_val' ] = '';
+                        }
+                        elseif ( 'wp_post' == $row->pickval ) {
+                            $field_params[ 'pick_object' ] = 'post_type';
+                            $field_params[ 'pick_val' ] = 'post';
+                        }
+                        elseif ( 'wp_page' == $row->pickval ) {
+                            $field_params[ 'pick_object' ] = 'post_type';
+                            $field_params[ 'pick_val' ] = 'page';
+                        }
+                        elseif ( 'wp_taxonomy' == $row->pickval ) {
+                            $field_params[ 'pick_object' ] = 'taxonomy';
+                            $field_params[ 'pick_val' ] = 'category';
+                        }
+
+                        $field_params[ 'sister_field_id' ] = $row->sister_field_id;
+                        $field_params[ 'options' ][ 'pick_filter' ] = $row->pick_filter;
+                        $field_params[ 'options' ][ 'pick_orderby' ] = $row->pick_orderby;
+                        $field_params[ 'options' ][ 'pick_display' ] = '{@name}';
+                        $field_params[ 'options' ][ 'pick_size' ] = 'medium';
+
+                        if ( 1 == $row->multiple ) {
+                            $field_params[ 'options' ][ 'pick_format_type' ] = 'multi';
+                            $field_params[ 'options' ][ 'pick_format_multi' ] = 'checkbox';
+                            $field_params[ 'options' ][ 'pick_limit' ] = 0;
+                        }
+                        else {
+                            $field_params[ 'options' ][ 'pick_format_type' ] = 'single';
+                            $field_params[ 'options' ][ 'pick_format_single' ] = 'dropdown';
+                            $field_params[ 'options' ][ 'pick_limit' ] = 1;
+                        }
                     }
-                    else {
-                        $field_params[ 'options' ][ 'pick_format_type' ] = 'single';
-                        $field_params[ 'options' ][ 'pick_format_single' ] = 'dropdown';
-                        $field_params[ 'options' ][ 'pick_limit' ] = 1;
-                    }
+                    elseif ( 'file' == $field_type )
+                        $field_params[ 'options' ][ 'file_type' ] = 'any';
+                    elseif ( 'number' == $field_type )
+                        $field_params[ 'options' ][ 'number_decimals' ] = 2;
+                    elseif ( 'desc' == $row->coltype )
+                        $field_params[ 'options' ][ 'wysiwyg_editor' ] = 'tinymce';
+                    elseif ( 'text' == $field_type )
+                        $field_params[ 'options' ][ 'text_max_length' ] = 128;
+
+                    $fields[] = $field_params;
+
+                    $weight++;
                 }
-                elseif ( 'file' == $field_type )
-                    $field_params[ 'options' ][ 'file_type' ] = 'any';
-                elseif ( 'number' == $field_type )
-                    $field_params[ 'options' ][ 'number_decimals' ] = 2;
-                elseif ( 'desc' == $row->coltype )
-                    $field_params[ 'options' ][ 'wysiwyg_editor' ] = 'tinymce';
-                elseif ( 'text' == $field_type )
-                    $field_params[ 'options' ][ 'text_max_length' ] = 128;
 
-                $fields[] = $field_params;
+                $pod_type->name = pods_sanitize( pods_clean_name( $pod_type->name ) );
 
-                $weight++;
+                $pod_params = array(
+                    'name' => $pod_type->name,
+                    'label' => $pod_type->label,
+                    'type' => 'pod',
+                    'storage' => 'table',
+                    'fields' => $fields,
+                    'options' => array(
+                        'pre_save_helpers' => $pod_type->pre_save_helpers,
+                        'post_save_helpers' => $pod_type->post_save_helpers,
+                        'pre_delete_helpers' => $pod_type->pre_drop_helpers,
+                        'post_delete_helpers' => $pod_type->post_drop_helpers,
+                        'show_in_menu' => $pod_type->is_toplevel,
+                        'detail_url' => $pod_type->detail_page,
+                        'pod_index' => 'name'
+                    ),
+                );
+
+                $pod_id = $this->api->save_pod( $pod_params );
+
+                if ( 0 < $pod_id )
+                    $last_id = $pod_type->id;
+                else
+                    pods_error( 'Error: ' . $pod_id );
             }
-
-            $pod_type->name = pods_sanitize( pods_clean_name( $pod_type->name ) );
-
-            $pod_params = array(
-                'name' => $pod_type->name,
-                'label' => $pod_type->label,
-                'type' => 'pod',
-                'storage' => 'table',
-                'fields' => $fields,
-                'options' => array(
-                    'pre_save_helpers' => $pod_type->pre_save_helpers,
-                    'post_save_helpers' => $pod_type->post_save_helpers,
-                    'pre_delete_helpers' => $pod_type->pre_drop_helpers,
-                    'post_delete_helpers' => $pod_type->post_drop_helpers,
-                    'show_in_menu' => $pod_type->is_toplevel,
-                    'detail_url' => $pod_type->detail_page,
-                    'pod_index' => 'name'
-                ),
-            );
-
-            $pod_id = $this->api->save_pod( $pod_params );
-            $pod_ids[] = $pod_id;
         }
 
-        $this->get_tables();
+        $this->update_progress( __FUNCTION__, $last_id );
 
-        $this->update_progress( __FUNCTION__, true );
-
-        return '1';
+        if ( $migration_limit == count( $pod_types ) )
+            echo '-2';
+        else
+            echo '1';
     }
 
     /**

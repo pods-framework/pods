@@ -1515,8 +1515,8 @@ class PodsUI {
      * @return array
      */
     public function get_row () {
-        if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
-            $this->row = $this->pod->fetch( $this->id );
+        if ( is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
+            $this->row = $this->pod->fetch();
             $this->total = $this->pod->total();
             $this->total_found = $this->pod->total_found();
         }
@@ -1552,6 +1552,9 @@ class PodsUI {
             return call_user_func( $this->actions_custom[ 'manage' ], $reorder, $this );
 
         $this->screen_meta();
+
+        if ( true === $reorder && !in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder[ 'on' ] )
+            wp_enqueue_script( 'jquery-ui-sortable' );
         ?>
     <div class="wrap">
         <div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
@@ -1608,7 +1611,7 @@ class PodsUI {
                             continue;
                         if ( in_array( $this->fields[ 'search' ][ $filter ][ 'type' ], array( 'date', 'datetime' ) ) ) {
                             if ( false === $date_exists ) {
-                                $date_exists = true;
+                                $date_exists = true;/*
                                 ?>
                                 <link type="text/css" rel="stylesheet" href="<?php echo $this->assets_url; ?>/jquery/ui.datepicker.css" />
                                 <script type="text/javascript">
@@ -1618,7 +1621,7 @@ class PodsUI {
                                         } );
                                     } );
                                 </script>
-                                <?php
+                                <?php*/
                             }
                             $start = pods_var( 'filter_' . $filter . '_start', 'get', $this->fields[ 'search' ][ $filter ][ 'filter_default' ] );
                             $end = pods_var( 'filter_' . $filter . '_end', 'get', $this->fields[ 'search' ][ $filter ][ 'filter_ongoing_default' ] );
@@ -1814,7 +1817,7 @@ class PodsUI {
             }
 
             .dragme {
-                background: url(<?php echo $this->assets_url; ?>/move.png) no-repeat;
+                background: url(<?php echo PODS_URL; ?>/ui/images/handle.gif) no-repeat;
                 background-position: 8px 5px;
                 cursor: pointer;
             }
@@ -1942,7 +1945,7 @@ class PodsUI {
             <tbody id="the-list"<?php echo ( true === $reorder && !in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder[ 'on' ] ) ? ' class="reorderable"' : ''; ?>>
                 <?php
                 if ( !empty( $this->data ) && is_array( $this->data ) ) {
-                    foreach ( $this->data as $row ) {
+                    while ( $row = $this->get_row() ) {
                         if ( is_object( $row ) )
                             $row = get_object_vars( (object) $row );
 

@@ -952,10 +952,14 @@
                 var $row_label = $row.find( 'td.pods-manage-row-label' );
                 var $row_content = $row_label.find( 'div.pods-manage-row-wrapper' );
                 var $field_wrapper = $row_content.find( 'div.pods-manage-field' );
+                var $row_value = $row_content.find( 'input.field_data' ).val();
                 var color = $.css( $row.get( 0 ), 'backgroundColor' );
                 var row_id = $row.data( 'row' );
+                var field_data = {};
 
-                var field_data = jQuery.parseJSON( $row_content.find( 'input.field_data' ).val() );
+                if ( 'undefined' != typeof $row_value && null != $row_value && '' != $row_value ) {
+                    field_data = jQuery.parseJSON( $row_value);
+                }
 
                 var valid_form = true;
 

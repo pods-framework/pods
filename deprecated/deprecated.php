@@ -126,7 +126,13 @@ class Pod
     public function __get ( $name ) {
         $name = (string) $name;
 
-        $var = $this->new->{$name};
+        if ( 'data' == $name ) {
+            pods_deprecated( "Pods->{$name}", '2.0.0', "Pods->row()" );
+
+            $var = $this->new->row();
+        }
+        else
+            $var = $this->new->{$name};
 
         return $var;
     }

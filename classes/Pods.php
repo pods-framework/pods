@@ -112,7 +112,7 @@ class Pods {
     /**
      * @var
      */
-    private $deprecated;
+    public $deprecated;
 
     public $datatype;
 

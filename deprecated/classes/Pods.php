@@ -24,8 +24,10 @@ class Pods_Deprecated
     public function __construct ( &$obj ) {
         // backwards-compatibility with references to $this->var_name
         $vars = get_object_vars( $obj );
+
         foreach ( (array) $vars as $key => $val ) {
-            $this->{$key} = $val;
+            if ( !in_array( $key, array( 'obj', 'data' ) ) )
+                $this->{$key} = $val;
         }
 
         // keeping references pointing back to the source
@@ -243,7 +245,7 @@ class Pods_Deprecated
             'type' => 'button',
             'class' => 'button btn_save',
             'value' => $label,
-            'onclick' => "saveForm({$pods_cache->form_count})"
+            'onclick' => "saveForm(1)"
         );
 
         $save_button_atts = apply_filters( 'pods_showform_save_button_atts', $save_button_atts, $this );

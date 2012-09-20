@@ -1,6 +1,9 @@
 <?php
 wp_enqueue_style( 'farbtastic' );
-wp_enqueue_script( 'farbtastic' );
+if(!is_admin()) {
+    wp_register_script('farbtastic', admin_url("js/farbtastic.js"), array( 'jquery' ),'1.2',true);
+}
+wp_enqueue_script('farbtastic');
 
 $attributes = array();
 $attributes[ 'type' ] = 'text';

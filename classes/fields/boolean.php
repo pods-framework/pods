@@ -101,8 +101,8 @@ class PodsField_Boolean extends PodsField {
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $yesno = array(
-            1 => pods_var( 'boolean_yes_label', $options ),
-            0 => pods_var( 'boolean_no_label', $options )
+            1 => pods_var_raw( 'boolean_yes_label', $options ),
+            0 => pods_var_raw( 'boolean_no_label', $options )
         );
 
         // Deprecated handling for 1.x
@@ -156,13 +156,13 @@ class PodsField_Boolean extends PodsField {
 
         if ( 'checkbox' != pods_var( 'boolean_format_type', $options ) ) {
             $data = array(
-                1 => pods_var( 'boolean_yes_label', $options ),
-                0 => pods_var( 'boolean_no_label', $options )
+                1 => pods_var_raw( 'boolean_yes_label', $options ),
+                0 => pods_var_raw( 'boolean_no_label', $options )
             );
         }
         else {
             $data = array(
-                1 => pods_var( 'boolean_yes_label', $options )
+                1 => pods_var_raw( 'boolean_yes_label', $options )
             );
         }
         return $data;
@@ -282,6 +282,14 @@ class PodsField_Boolean extends PodsField {
      * @since 2.0.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-        return $this->display( $value, $name, $options, $pod, $id );
+        $yesno = array(
+            1 => pods_var_raw( 'boolean_yes_label', $options, __( 'Yes', 'pods' ), null, true ),
+            0 => pods_var_raw( 'boolean_no_label', $options, __( 'No', 'pods' ), null, true )
+        );
+
+        if ( isset( $yesno[ (int) $value ] ) )
+            $value = strip_tags( $yesno[ (int) $value ], '<strong><a><em><span><img>' );
+
+        return $value;
     }
 }

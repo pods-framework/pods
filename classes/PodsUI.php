@@ -888,10 +888,14 @@ class PodsUI {
                         $attributes = array( 'label' => $attributes );
                 }
 
-                if ( !isset( $attributes[ 'id' ] ) )
-                    $attributes[ 'id' ] = '';
                 if ( !isset( $attributes[ 'real_name' ] ) )
                     $attributes[ 'real_name' ] = pods_var( 'name', $attributes, $field );
+
+                if ( is_object( $this->pod ) && isset( $this->pod->fields ) && isset( $this->pod->fields[ $attributes[ 'real_name' ] ] ) )
+                    $attributes = array_merge( $this->pod->fields[ $attributes[ 'real_name' ] ], $attributes );
+
+                if ( !isset( $attributes[ 'id' ] ) )
+                    $attributes[ 'id' ] = '';
                 if ( !isset( $attributes[ 'label' ] ) )
                     $attributes[ 'label' ] = ucwords( str_replace( '_', ' ', $field ) );
                 if ( !isset( $attributes[ 'type' ] ) )
@@ -1961,8 +1965,12 @@ class PodsUI {
                                 if ( !isset( $row[ $field ] ) )
                                     $row[ $field ] = null;
 
-                                if ( false !== $attributes[ 'custom_display' ] && is_callable( $attributes[ 'custom_display' ] ) )
-                                    $row[ $field ] = call_user_func( $attributes[ 'custom_display' ], $row, $this );
+                                if ( false !== $attributes[ 'custom_display' ] ) {
+                                    if ( is_callable( $attributes[ 'custom_display' ] ) )
+                                        $row[ $field ] = call_user_func( $attributes[ 'custom_display' ], $row, $this );
+                                    elseif ( is_object( $this->pod ) && class_exists( 'Pods_Helpers' ) )
+                                        $row[ $field ] = $this->pod->helper( $attributes[ 'custom_display' ], $row[ $field ], $field );
+                                }
                                 else {
                                     ob_start();
 

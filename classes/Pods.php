@@ -1202,13 +1202,8 @@ class Pods {
             'name' => $name
         );
 
-        if ( class_exists( 'Pods_Helpers' ) ) {
-            // code is here so it has access to $this when the PHP runs
-            // to be addressed in the future
-            // return Pods_Helpers::helper( $params, $this );
-
-
-        }
+        if ( class_exists( 'Pods_Helpers' ) )
+            return Pods_Helpers::helper( $params, $this );
     }
 
     /**

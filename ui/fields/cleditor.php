@@ -11,13 +11,9 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_t
 <script>
     jQuery( function ( $ ) {
         var $textarea = $( 'textarea#<?php echo $attributes[ 'id' ]; ?>' );
-        if ( $textarea.data( 'width' ) ) {
-            $textarea.cleditor( {
-                width : $textarea.data( 'width' )
-            } );
-        }
-        else {
-            $textarea.cleditor();
-        }
+        var editorWidth = $textarea.outerWidth();
+        $textarea.cleditor( {
+            width : editorWidth
+        } );
     } );
 </script>

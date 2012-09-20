@@ -24,6 +24,7 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_t
             mode : "application/x-httpd-php",
             indentUnit : 4,
             indentWithTabs : false,
+            lineWrapping : true,
             enterMode : "keep",
             tabMode : "shift",
             onBlur : function () {

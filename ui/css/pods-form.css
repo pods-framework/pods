@@ -159,4 +159,4 @@ input.pods-form-ui-field-type-color {
 }
 
 /* Codemirror */
-.CodeMirror {border : 1px solid #999; background-color: #fff;}
+.pods-field .CodeMirror { width: 95%; border : 1px solid #999; background-color: #fff;}

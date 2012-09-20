@@ -1419,8 +1419,12 @@ class PodsUI {
         if ( isset( $this->actions_custom[ 'get_field' ] ) && is_callable( $this->actions_custom[ 'get_field' ] ) )
             return call_user_func( $this->actions_custom[ 'get_field' ], $field, $this );
 
-        if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) )
-            $value = $this->pod->field( $field );
+        if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
+            if ( 'Pod' == get_class( $this->pod ) )
+                $value = $this->pod->get_field( $field );
+            else
+                $value = $this->pod->field( $field );
+        }
         elseif ( isset( $this->row[ $field ] ) )
             $value = $this->row[ $field ];
 
@@ -1963,7 +1967,7 @@ class PodsUI {
                                     continue;
 
                                 if ( !isset( $row[ $field ] ) )
-                                    $row[ $field ] = null;
+                                    $row[ $field ] = $this->get_field( $field );
 
                                 if ( false !== $attributes[ 'custom_display' ] ) {
                                     if ( is_callable( $attributes[ 'custom_display' ] ) )

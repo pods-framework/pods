@@ -231,3 +231,10 @@ input.pods-form-ui-field-type-color {
 .pods-form-front .pods-submit {
     float: right;
 }
+
+.pods-form-front .pods-validate-error-message {
+    color: #790000;
+    font-weight: bold;
+    padding: 5px 10px 4px;
+    display: inline-block;
+}

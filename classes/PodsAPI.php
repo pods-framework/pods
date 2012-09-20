@@ -1803,23 +1803,16 @@ class PodsAPI {
 
         $object[ 'options' ] = array_merge( $object[ 'options' ], $options );
 
-        if ( isset( $params->id ) && !empty( $params->id ) ) {
-            $post_data = array(
-                'post_name' => $object[ 'name' ],
-                'post_title' => $object[ 'name' ],
-                'post_content' => $object[ 'code' ],
-                'post_type' => '_pods_' . $object[ 'type' ],
-                'post_status' => 'publish'
-            );
-        }
-        else {
-            $post_data = array(
-                'ID' => $object[ 'id' ],
-                'post_name' => $object[ 'name' ],
-                'post_title' => $object[ 'name' ],
-                'post_content' => $object[ 'code' ]
-            );
-        }
+        $post_data = array(
+            'post_name' => $object[ 'name' ],
+            'post_title' => $object[ 'name' ],
+            'post_content' => $object[ 'code' ],
+            'post_type' => '_pods_' . $object[ 'type' ],
+            'post_status' => 'publish'
+        );
+
+        if ( isset( $params->id ) && !empty( $params->id ) )
+            $post_data[ 'ID' ] = $object[ 'id' ];
 
         if ( null !== pods_var( 'status', $object, null, null, true ) )
             $post_data[ 'post_status' ] = pods_var( 'status', $object, null, null, true );
@@ -4239,7 +4232,7 @@ class PodsAPI {
                 `pod_id` = {$pod_id}
                 AND `field_id` = {$field_id}
                 AND `item_id` IN ( {$ids} )
-            ORDER BY `weight
+            ORDER BY `weight`
         ";
 
         $items = pods_query( $sql );

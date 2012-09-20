@@ -290,7 +290,20 @@ class Pods {
         else
             $params = (object) $defaults;
 
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
+
         $value = $this->field( $params, $single );
+
+        if ( false === $params->in_form && isset( $this->fields[ $params->name ] ) ) {
+            $value = PodsForm::display(
+                $this->fields[ $params->name ][ 'type' ],
+                $value,
+                $params->name,
+                array_merge( $this->fields[ $params->name ][ 'options' ], $this->fields[ $params->name ] ),
+                $this->pod_data,
+                $this->id()
+            );
+        }
 
         if ( is_array( $value ) )
             $value = pods_serial_comma( $value, $params->name, $this->fields );
@@ -632,18 +645,6 @@ class Pods {
             $this->row[ $params->name ] = $value;
         }
 
-        if ( false === $params->in_form && isset( $this->fields[ $params->name ] ) && !in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
-            $value = PodsForm::display(
-                $this->fields[ $params->name ][ 'type' ],
-                $value,
-                $params->name,
-                array_merge( $this->fields[ $params->name ][ 'options' ], $this->fields[ $params->name ] ),
-                $this->pod_data,
-                $this->id(),
-                $params->traverse
-            );
-        }
-
         $value = $this->do_hook( 'field', $value, $this->row, $params );
 
         return $value;
@@ -778,6 +779,8 @@ class Pods {
 
         if ( is_array( $params ) )
             $params = (object) array_merge( $defaults, $params );
+        if ( is_object( $params ) )
+            $params = (object) array_merge( $defaults, get_object_vars( $params ) );
         else
             $params = (object) $defaults;
 

@@ -111,7 +111,7 @@
                                 return methods[ 'migrate' ]();
                             }
                         }
-                        else if ( -1 == d.indexOf( 'Database Error;' ) ) {
+                        else if ( -1 < d.indexOf( 'Database Error;' ) ) {
                             $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-error' );
                             $row.find( 'td span.pods-wizard-info' ).html( d.replace( '<e>', '' ).replace( '</e>', '' ) );
                             console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );

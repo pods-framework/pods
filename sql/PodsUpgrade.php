@@ -469,25 +469,16 @@ class PodsUpgrade_2_0 {
                     );
 
                     if ( 'pick' == $field_type ) {
-                        $field_params[ 'pick_object' ] = 'pod';
-                        $field_params[ 'pick_val' ] = $row->pickval;
+                        $field_params[ 'pick_object' ] = 'pod-' . $row->pickval;
 
-                        if ( 'wp_user' == $row->pickval ) {
+                        if ( 'wp_user' == $row->pickval )
                             $field_params[ 'pick_object' ] = 'user';
-                            $field_params[ 'pick_val' ] = '';
-                        }
-                        elseif ( 'wp_post' == $row->pickval ) {
-                            $field_params[ 'pick_object' ] = 'post_type';
-                            $field_params[ 'pick_val' ] = 'post';
-                        }
-                        elseif ( 'wp_page' == $row->pickval ) {
-                            $field_params[ 'pick_object' ] = 'post_type';
-                            $field_params[ 'pick_val' ] = 'page';
-                        }
-                        elseif ( 'wp_taxonomy' == $row->pickval ) {
-                            $field_params[ 'pick_object' ] = 'taxonomy';
-                            $field_params[ 'pick_val' ] = 'category';
-                        }
+                        elseif ( 'wp_post' == $row->pickval )
+                            $field_params[ 'pick_object' ] = 'post_type-post';
+                        elseif ( 'wp_page' == $row->pickval )
+                            $field_params[ 'pick_object' ] = 'post_type-page';
+                        elseif ( 'wp_taxonomy' == $row->pickval )
+                            $field_params[ 'pick_object' ] = 'taxonomy-category';
 
                         $field_params[ 'sister_field_id' ] = $row->sister_field_id;
                         $field_params[ 'options' ][ 'pick_filter' ] = $row->pick_filter;
@@ -856,9 +847,8 @@ class PodsUpgrade_2_0 {
 
         $this->update_progress( __FUNCTION__, true );
 
-        if ( $notice ) {
-            return __( 'Input Helpers may not function in our new forms, we have imported and disabled them for your review.', 'pods' );
-        }
+        if ( $notice )
+            return pods_error( __( 'Input Helpers may not function in our new forms, we have imported and disabled them for your review.', 'pods' ) );
 
         return '1';
     }

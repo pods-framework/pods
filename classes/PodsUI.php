@@ -1456,6 +1456,7 @@ class PodsUI {
             );
 
             $this->data = $this->pod->find( $params )->data();
+            $this->data_keys = array_keys( $this->data );
             $this->total = $this->pod->total();
             $this->total_found = $this->pod->total_found();
         }
@@ -1482,6 +1483,7 @@ class PodsUI {
             );
 
             $this->data = $this->pods_data->data;
+            $this->data_keys = array_keys( $this->data );
             $this->total = $this->pods_data->total();
             $this->total_found = $this->pods_data->total_found();
         }
@@ -1506,35 +1508,44 @@ class PodsUI {
             foreach ( $sorter as $key => $val ) {
                 $intermediary[] = $this->data[ $key ];
             }
-            if ( isset( $intermediary ) )
+            if ( isset( $intermediary ) ) {
                 $this->data = $intermediary;
+                $this->data_keys = array_keys( $this->data );
+            }
         }
     }
 
     /**
      * @return array
      */
-    public function get_row () {
-        if ( is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
+    public function get_row ( &$counter = 0 ) {
+        if ( is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) )
             $this->row = $this->pod->fetch();
-            $this->total = $this->pod->total();
-            $this->total_found = $this->pod->total_found();
-        }
         else {
-            if ( !empty( $this->data ) && count( $this->data ) == $this->total_found && isset( $this->data[ $this->id ] ) )
-                return $this->data[ $this->id ];
+            $this->row = false;
 
-            $this->pods_data->select(
-                array(
-                    'table' => $this->sql[ 'table' ],
-                    'where' => '`' . $this->sql[ 'field_id' ] . '` = ' . (int) $this->id,
-                    'limit' => 1
-                )
-            );
+            if ( !empty( $this->data ) ) {
+                if ( empty( $this->data_keys ) || count( $this->data ) != count( $this->data_keys ) )
+                    $this->data_keys = array_keys( $this->data );
 
-            $this->row = $this->pods_data->fetch();
-            $this->total = $this->pods_data->total();
-            $this->total_found = $this->pods_data->total_found();
+                if ( count( $this->data ) == $this->total_found && isset( $this->data_keys[ $counter ] ) && isset( $this->data[ $this->data_keys[ $counter ] ] ) ) {
+                    $this->row = $this->data[ $this->data_keys[ $counter ] ];
+
+                    $counter++;
+                }
+            }
+
+            if ( false === $this->row && 0 < (int) $this->id ) {
+                $this->pods_data->select(
+                    array(
+                        'table' => $this->sql[ 'table' ],
+                        'where' => '`' . $this->sql[ 'field_id' ] . '` = ' . (int) $this->id,
+                        'limit' => 1
+                    )
+                );
+
+                $this->row = $this->pods_data->fetch();
+            }
         }
 
         return $this->row;
@@ -1945,7 +1956,9 @@ class PodsUI {
             <tbody id="the-list"<?php echo ( true === $reorder && !in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder[ 'on' ] ) ? ' class="reorderable"' : ''; ?>>
                 <?php
                 if ( !empty( $this->data ) && is_array( $this->data ) ) {
-                    while ( $row = $this->get_row() ) {
+                    $counter = 0;
+
+                    while ( $row = $this->get_row( $counter ) ) {
                         if ( is_object( $row ) )
                             $row = get_object_vars( (object) $row );
 

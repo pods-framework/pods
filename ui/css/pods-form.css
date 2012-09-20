@@ -238,3 +238,8 @@ input.pods-form-ui-field-type-color {
     padding: 5px 10px 4px;
     display: inline-block;
 }
+
+.pods-form img.waiting {
+    display: none;
+    vertical-align: middle;
+}

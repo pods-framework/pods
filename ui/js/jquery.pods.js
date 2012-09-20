@@ -99,6 +99,14 @@
                 if ( false === valid_form ) {
                     $submittable.addClass( 'invalid-form' );
 
+                    // re-enable the submit button
+                    $( $submittable ).find( 'input[type=submit], button[type=submit]' ).each( function () {
+                        var $submitbutton = $( this );
+                        $submitbutton.css( 'cursor', 'pointer' );
+                        $submitbutton.prop( 'disabled', false );
+                        $submitbutton.parent().find( '.waiting' ).fadeOut();
+                    } );
+
                     return false;
                 }
                 else

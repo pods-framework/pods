@@ -10,7 +10,7 @@ $nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . session_id() . '_' . 
 
 if ( isset( $_POST[ '_pods_nonce' ] ) ) {
     try {
-        $id = $pod->api->process_form( $pod, $fields, $thank_you );
+        $id = $pod->api->process_form($_POST, $pod, $fields, $thank_you );
     }
     catch ( Exception $e ) {
         echo '<div class="pods-message pods-message-error">' . $e->getMessage() . '</div>';
@@ -47,6 +47,7 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
         </ul>
 
         <p class="pods-submit">
+            <img class="waiting" src="<?php echo admin_url() . '/images/wpspin_light.gif' ?>" alt="">
             <input type="submit" value=" <?php echo esc_attr( $label ); ?> " class="pods-submit-button" />
 
             <?php do_action( 'pods_form_after_submit', $pod, $fields ); ?>

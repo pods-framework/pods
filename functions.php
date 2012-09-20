@@ -1082,7 +1082,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
 
         if ( !empty( $field ) && is_array( $field ) && in_array( $field[ 'type' ], $tableless_field_types ) ) {
-            $table = $this->api->get_table_info( $field[ 'object' ], $field[ 'pick_val' ] );
+            $table = pods_api()->get_table_info( $field[ 'object' ], $field[ 'pick_val' ] );
 
             if ( !empty( $table ) )
                 $field_index = $table[ 'field_index' ];

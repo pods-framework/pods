@@ -69,7 +69,7 @@ else
                     }
                     ?></ul>
 
-                <a class="button pods-file-add" href="media-upload.php?inlineId=pods_media_attachment&amp;tab=<?php echo $tab; ?>&amp;TB_iframe=1&amp;width=640&amp;height=1500"><?php _e( 'Add File', 'pods' ); ?></a>
+                <a class="button pods-file-add" href="<?php echo admin_url() ?>media-upload.php?inlineId=pods_media_attachment&amp;tab=<?php echo $tab; ?>&amp;TB_iframe=1&amp;width=640&amp;height=1500"><?php _e( 'Add File', 'pods' ); ?></a>
             </td>
         </tr>
     </tbody>

@@ -1576,7 +1576,7 @@ class PodsAPI {
 
         $field[ 'options' ] = array_merge( $field[ 'options' ], $options );
 
-        $object_fields = $pod[ 'object_fields' ];
+        $object_fields = (array) $pod[ 'object_fields' ];
 
         // Add new field
         if ( !isset( $params->id ) || empty( $params->id ) || empty( $field ) ) {

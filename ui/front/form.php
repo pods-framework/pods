@@ -49,7 +49,7 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
             ?>
         </ul>
 
-        <p class="submit">
+        <p class="pods-submit">
             <input type="submit" value=" <?php echo esc_attr( $label ); ?> " class="pods-submit-button" />
 
             <?php do_action( 'pods_form_after_submit', $pod, $fields ); ?>

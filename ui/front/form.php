@@ -1,7 +1,4 @@
 <?php
-if ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER )
-    return;
-
 wp_enqueue_script( 'pods', false, array( 'jquery' ), false, true );
 wp_enqueue_style( 'pods-form', false, array(), false, true );
 

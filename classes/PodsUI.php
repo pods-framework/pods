@@ -350,7 +350,7 @@ class PodsUI {
                 unset( $object->ui );
             }
 
-            if ( is_object( $object ) && 'Pods' == get_class( $object ) )
+            if ( is_object( $object ) && ( 'Pods' == get_class( $object ) || 'Pod' == get_class( $object ) ) )
                 $this->pod = &$object;
         }
 
@@ -1414,7 +1414,7 @@ class PodsUI {
         if ( isset( $this->actions_custom[ 'get_field' ] ) && is_callable( $this->actions_custom[ 'get_field' ] ) )
             return call_user_func( $this->actions_custom[ 'get_field' ], $field, $this );
 
-        if ( false !== $this->pod && is_object( $this->pod ) && 'Pods' == get_class( $this->pod ) )
+        if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) )
             $value = $this->pod->field( $field );
         elseif ( isset( $this->row[ $field ] ) )
             $value = $this->row[ $field ];
@@ -1426,7 +1426,7 @@ class PodsUI {
      * @return bool
      */
     public function get_data () {
-        if ( false !== $this->pod && is_object( $this->pod ) && 'Pods' == get_class( $this->pod ) ) {
+        if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
             $orderby = array();
 
             if ( !empty( $this->orderby ) ) {
@@ -1502,7 +1502,7 @@ class PodsUI {
      * @return array
      */
     public function get_row () {
-        if ( false !== $this->pod && is_object( $this->pod ) && 'Pods' == get_class( $this->pod ) ) {
+        if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
             $this->row = $this->pod->fetch( $this->id );
             $this->total = $this->pod->total();
             $this->total_found = $this->pod->total_found();

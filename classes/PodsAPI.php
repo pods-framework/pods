@@ -1209,7 +1209,7 @@ class PodsAPI {
 
             foreach ( $pod[ 'fields' ] as $field ) {
                 if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
-                    $definitions[] = "`{$field['name']}` " . $this->get_field_definition( $field[ 'type' ] );
+                    $definitions[] = "`{$field['name']}` " . $this->get_field_definition( $field[ 'type' ], $field[ 'options' ] );
             }
 
             pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$params->name}`" );
@@ -1461,12 +1461,13 @@ class PodsAPI {
 
         $field = $this->load_field( $params );
 
-        $old_id = $old_name = $old_type = $old_definition = $old_simple = null;
+        $old_id = $old_name = $old_type = $old_definition = $old_simple = $old_options = null;
 
         if ( !empty( $field ) ) {
             $old_id = $field[ 'id' ];
             $old_name = pods_clean_name( $field[ 'name' ] );
             $old_type = $field[ 'type' ];
+            $old_options = $field[ 'options' ];
 
             $old_simple = ( 'pick' == $old_type && 'custom-simple' == pods_var( 'pick_object', $field ) );
             $old_simple = (boolean) $this->do_hook( 'tableless_custom', $old_simple, $field, $pod, $params );
@@ -1482,7 +1483,7 @@ class PodsAPI {
             }
 
             if ( !in_array( $old_type, $tableless_field_types ) || $old_simple )
-                $old_definition = '`' . $old_name . '` ' . $this->get_field_definition( $old_type, $field[ 'options' ] );
+                $old_definition = '`' . $old_name . '` ' . $this->get_field_definition( $old_type, $old_options );
         }
         else {
             $field = array(

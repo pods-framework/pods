@@ -36,7 +36,9 @@ class Pods_Roles extends PodsComponent {
      * Build admin area
      *
      * @param $options
+     * @param $component
      *
+     * @return void
      * @since 2.0.0
      */
     public function admin ( $options, $component ) {
@@ -209,6 +211,7 @@ class Pods_Roles extends PodsComponent {
      * Handle the Add Role AJAX
      *
      * @param $params
+     * @return mixed|void
      */
     public function ajax_add ( $params ) {
         global $wp_roles;
@@ -255,6 +258,7 @@ class Pods_Roles extends PodsComponent {
      * @todo allow rename role_label
      *
      * @param $params
+     * @return bool|mixed|void
      */
     public function ajax_edit ( $params ) {
         global $wp_roles;

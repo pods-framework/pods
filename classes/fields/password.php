@@ -48,9 +48,10 @@ class PodsField_Password extends PodsField {
     /**
      * Add options and set defaults to
      *
-     * @param array $options
+     * @return array
      *
      * @since 2.0.0
+     * @return array
      */
     public function options () {
         $options = array(
@@ -122,7 +123,9 @@ class PodsField_Password extends PodsField {
      * @param array $fields
      * @param array $pod
      * @param int $id
+     * @param null $params
      *
+     * @return array|bool
      * @since 2.0.0
      */
     public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {

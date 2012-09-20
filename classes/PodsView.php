@@ -20,9 +20,8 @@ class PodsView {
      *
      * @param string $view Path of the view file
      * @param array|null $data (optional) Data to pass on to the template
-     * @param int $expires (optional) Time in seconds for the cache to expire, if 0 caching is disabled.
+     * @param bool|int $expires (optional) Time in seconds for the cache to expire, if 0 caching is disabled.
      * @param string $cache_mode (optional) Decides the caching method to use for the view.
-     * @internal param bool $return (optional) If true doesn not echo the result of the view, the function returns it
      *
      * @return bool|mixed|null|string|void
      *

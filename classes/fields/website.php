@@ -255,7 +255,9 @@ class PodsField_Website extends PodsField {
     }
 
     /**
-     * @param $url
+     * Build an url
+     *
+     * @param array|string $url
      *
      * @return string
      */

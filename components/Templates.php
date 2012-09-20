@@ -155,7 +155,9 @@ class Pods_Templates extends PodsComponent {
      * Get the fields
      *
      * @param null $_null
-     * @param array $args
+     * @param int $post_ID
+     * @param string $meta_key
+     * @param bool $single
      *
      * @return array|bool|int|mixed|null|string|void
      */
@@ -173,8 +175,10 @@ class Pods_Templates extends PodsComponent {
     /**
      * Save the fields
      *
-     * @param $object_type
-     * @param array $args
+     * @param $_null
+     * @param int $post_ID
+     * @param string $meta_key
+     * @param string $meta_value
      *
      * @return bool|int|null
      */
@@ -206,6 +210,7 @@ class Pods_Templates extends PodsComponent {
      * @param string $code Custom template code to use instead
      * @param object $obj The Pods object
      *
+     * @return mixed|string|void
      * @since 2.0.0
      */
     public static function template ( $template, $code = null, $obj = null ) {

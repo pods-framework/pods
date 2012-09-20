@@ -48,8 +48,8 @@ class PodsField_Text extends PodsField {
     /**
      * Add options and set defaults to
      *
-     * @param array $options
      *
+     * @return array
      * @since 2.0.0
      */
     public function options () {
@@ -122,10 +122,10 @@ class PodsField_Text extends PodsField {
      * @param mixed $value
      * @param string $name
      * @param array $options
-     * @param array $fields
      * @param array $pod
      * @param int $id
      *
+     * @return mixed|null|string
      * @since 2.0.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
@@ -167,6 +167,8 @@ class PodsField_Text extends PodsField {
      * @param array $pod
      * @param int $id
      *
+     * @param null $params
+     * @return array|bool
      * @since 2.0.0
      */
     public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
@@ -200,6 +202,7 @@ class PodsField_Text extends PodsField {
      * @param array $pod
      * @param object $params
      *
+     * @return mixed|string
      * @since 2.0.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
@@ -218,6 +221,7 @@ class PodsField_Text extends PodsField {
      * @param array $fields
      * @param array $pod
      *
+     * @return mixed|string
      * @since 2.0.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {

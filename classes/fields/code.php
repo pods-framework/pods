@@ -50,8 +50,7 @@ class PodsField_Code extends PodsField {
     /**
      * Add options and set defaults to
      *
-     * @param array $options
-     *
+     * @return array
      * @since 2.0.0
      */
     public function options () {

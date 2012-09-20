@@ -165,7 +165,9 @@ class Pods_Helpers extends PodsComponent {
      * Get the fields
      *
      * @param null $_null
-     * @param array $args
+     * @param null $post_ID
+     * @param null $meta_key
+     * @param bool $single
      *
      * @return array|bool|int|mixed|null|string|void
      */
@@ -183,8 +185,10 @@ class Pods_Helpers extends PodsComponent {
     /**
      * Save the fields
      *
-     * @param $object_type
-     * @param array $args
+     * @param $_null
+     * @param int $post_ID
+     * @param string $meta_key
+     * @param string $meta_value
      *
      * @return bool|int|null
      */

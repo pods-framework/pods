@@ -499,8 +499,10 @@ class PodsUpgrade_2_0 {
                             $field_params[ 'options' ][ 'pick_limit' ] = 1;
                         }
                     }
-                    elseif ( 'file' == $field_type )
+                    elseif ( 'file' == $field_type ) {
+                        $field_params[ 'options' ][ 'file_format_type' ] = 'multi';
                         $field_params[ 'options' ][ 'file_type' ] = 'any';
+                    }
                     elseif ( 'number' == $field_type )
                         $field_params[ 'options' ][ 'number_decimals' ] = 2;
                     elseif ( 'desc' == $row->coltype )

@@ -524,7 +524,7 @@ class PodsMeta {
         if ( empty( $groups ) )
             return $form_fields;
 
-        wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
+        wp_enqueue_style( 'pods-form' );
 
         $id = null;
 
@@ -627,7 +627,7 @@ class PodsMeta {
      * @param null $taxonomy
      */
     public function meta_taxonomy ( $tag, $taxonomy = null ) {
-        wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
+        wp_enqueue_style( 'pods-form' );
 
         $taxonomy_name = $taxonomy;
 
@@ -734,7 +734,7 @@ class PodsMeta {
      * @param $user_id
      */
     public function meta_user ( $user_id ) {
-        wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
+        wp_enqueue_style( 'pods-form' );
 
         if ( is_object( $user_id ) )
             $user_id = $user_id->ID;
@@ -841,7 +841,7 @@ class PodsMeta {
      * @param $user_identity
      */
     public function meta_comment_new_logged_in ( $commenter, $user_identity ) {
-        wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
+        wp_enqueue_style( 'pods-form' );
 
         $groups = $this->groups_get( 'comment', 'comment' );
 
@@ -886,7 +886,7 @@ class PodsMeta {
      * @return array
      */
     public function meta_comment_new ( $form_fields ) {
-        wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
+        wp_enqueue_style( 'pods-form' );
 
         $groups = $this->groups_get( 'comment', 'comment' );
 
@@ -969,7 +969,7 @@ class PodsMeta {
      * @param $metabox
      */
     public function meta_comment ( $comment, $metabox ) {
-        wp_enqueue_style( 'pods-form', PODS_URL . 'ui/css/pods-form.css' );
+        wp_enqueue_style( 'pods-form' );
         ?>
     <table class="form-table editcomment pods-metabox">
         <?php

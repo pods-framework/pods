@@ -1233,7 +1233,7 @@ class Pods {
      * @return bool|mixed
      * @since 2.0.0
      */
-    public function form ( $params, $label = null, $thank_you = null ) {
+    public function form ( $params = null, $label = null, $thank_you = null ) {
         $defaults = array(
             'fields' => $params,
             'label' => $label,
@@ -1244,8 +1244,19 @@ class Pods {
             $params = array_merge( $defaults, $params );
 
         $pod =& $this;
+
+        $params = apply_filters( 'pods_form_params', $params, $pod );
+
         $fields = $params[ 'fields' ];
+
+        if ( empty( $fields ) )
+            $fields = $this->fields;
+
         $label = $params[ 'label' ];
+
+        if ( empty( $label ) )
+            $label = __( 'Save Changes', 'pods' );
+
         $thank_you = $params[ 'thank_you' ];
 
         ob_start();

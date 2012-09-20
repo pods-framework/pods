@@ -892,7 +892,7 @@
                             $( this ).trigger( 'change' );
                         } );
 
-                        var field_json = jQuery.parseJSON( $row_content.find( 'input.field_data' ).val() );
+                        var field_data = jQuery.parseJSON( $row_content.find( 'input.field_data' ).val() );
 
                         var field_array_counter = 0;
 
@@ -900,8 +900,8 @@
                             json_name = $( this ).prop( 'name' ).replace( 'field_data[' + row_counter + '][', '' ).replace( '[', '' ).replace( ']', '' );
 
                             if ( 0 < $( this ).prop( 'name' ).indexOf( '[]' ) ) {
-                                if ( 'undefined' != typeof field_json[ json_name ] && 'undefined' != typeof field_json[ json_name ][ field_array_counter ] ) {
-                                    $( this ).val( field_json[ json_name ][ field_array_counter ] );
+                                if ( 'undefined' != typeof field_data[ json_name ] && 'undefined' != typeof field_data[ json_name ][ field_array_counter ] ) {
+                                    $( this ).val( field_data[ json_name ][ field_array_counter ] );
 
                                     orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).val();
                                 }
@@ -911,8 +911,8 @@
                             else {
                                 field_array_counter = 0;
 
-                                if ( 'undefined' != typeof field_json[ json_name ] ) {
-                                    $( this ).val( field_json[ json_name ] );
+                                if ( 'undefined' != typeof field_data[ json_name ] ) {
+                                    $( this ).val( field_data[ json_name ] );
 
                                     orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).val();
                                 }
@@ -955,7 +955,7 @@
                 var color = $.css( $row.get( 0 ), 'backgroundColor' );
                 var row_id = $row.data( 'row' );
 
-                var field_data = {};
+                var field_data = jQuery.parseJSON( $row_content.find( 'input.field_data' ).val() );
 
                 var valid_form = true;
 

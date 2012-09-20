@@ -274,6 +274,11 @@ class PodsUI {
     /**
      * @var array
      */
+    public $data_keys = array();
+
+    /**
+     * @var array
+     */
     public $row = array();
 
     // actions

@@ -211,9 +211,11 @@ function pods_deprecated ( $function, $version, $replacement = null ) {
     // Allow plugin to filter the output error trigger
     if ( WP_DEBUG && apply_filters( 'deprecated_function_trigger_error', true ) ) {
         if ( !is_null( $replacement ) )
-            trigger_error( sprintf( __( '%1$s is <strong>deprecated</strong> since Pods version %2$s! Use %3$s instead.', 'pods' ), $function, $version, $replacement ) );
+            $error = __( '%1$s has been <strong>deprecated</strong> since Pods version %2$s! Use %3$s instead.', 'pods' );
         else
-            trigger_error( sprintf( __( '%1$s is <strong>deprecated</strong> since Pods version %2$s with no alternative available.', 'pods' ), $function, $version ) );
+            $error = __( '%1$s has been <strong>deprecated</strong> since Pods version %2$s with no alternative available.', 'pods' );
+
+        trigger_error( sprintf( $error, $function, $version, $replacement ) );
     }
 }
 

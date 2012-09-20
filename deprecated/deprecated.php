@@ -147,6 +147,20 @@ class Pod
 
         return call_user_func_array( array( $this->new, $name ), $args );
     }
+
+    /**
+     * Handle variables that have been deprecated
+     *
+     * @since 2.0.0
+     */
+    public function __isset ( $name ) {
+        $name = (string) $name;
+
+        if ( 'data' == $name )
+            return true;
+        else
+            return isset( $this->new->{$name} );
+    }
 }
 
 /**

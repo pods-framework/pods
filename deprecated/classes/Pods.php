@@ -123,40 +123,47 @@ class Pods_Deprecated
                 if ( 'pod' == $pick_object ) {
                     $pick_pod = $this->obj->api->load_pod( array( 'name' => $pick_val ) );
                     $pick_object = $pick_pod[ 'type' ];
-                    $pick_val = $pick_pod[ 'object' ];
+                    $pick_val = $pick_pod[ 'name' ];
                 }
 
                 $pick_table = $pick_join = $pick_where = '';
 
                 $pick_field_id = 'id';
+                $pick_field_name = 'name';
                 switch ( $pick_object ) {
                     case 'pod':
                         $pick_table = "@wp_pods_{$pick_val}";
                         $pick_field_id = 'id';
+                        $pick_field_name = 'name';
                         break;
                     case 'post_type':
                         $pick_table = '@wp_posts';
                         $pick_field_id = 'ID';
+                        $pick_field_name = 'post_title';
                         $pick_where = "t.`post_type` = '{$pick_val}'";
                         break;
                     case 'taxonomy':
                         $pick_table = '@wp_terms';
                         $pick_field_id = 'term_id';
+                        $pick_field_name = 'name';
                         $pick_join = "`@wp_term_taxonomy` AS tx ON tx.`term_id` = t.`term_id";
                         $pick_where = "tx.`taxonomy` = '{$pick_val}' AND tx.`taxonomy` IS NOT NULL";
                         break;
                     case 'user':
                         $pick_table = '@wp_users';
                         $pick_field_id = 'ID';
+                        $pick_field_name = 'user_login';
                         break;
                     case 'comment':
                         $pick_table = '@wp_comments';
                         $pick_field_id = 'comment_ID';
+                        $pick_field_name = 'comment_date';
                         $pick_where = "t.`comment_type` = '{$pick_val}'";
                         break;
                     case 'table':
                         $pick_table = "{$pick_val}";
                         $pick_field_id = 'id';
+                        $pick_field_name = 'name';
                         break;
                 }
 
@@ -219,13 +226,14 @@ class Pods_Deprecated
                     'exclude' => $exclude,
                     'selected_ids' => $selected_ids,
                     'table' => $pick_table,
-                    'field' => $pick_field_id,
+                    'field_id' => $pick_field_id,
+                    'field_name' => $pick_field_name,
                     'join' => $pick_join,
                     'orderby' => $field[ 'options' ][ 'pick_orderby' ],
                     'where' => $pick_where
                 );
 
-                $this->obj->row[ $key ] = $this->obj->get_dropdown_values( $params );
+                $this->obj->row[ $key ] = $this->get_dropdown_values( $params );
             }
             else {
                 // Set a default value if no value is entered
@@ -269,6 +277,59 @@ class Pods_Deprecated
     </div>
 <?php
         do_action( 'pods_showform_post', $pod_id, $public_fields, $label, $this );
+    }
+
+    /**
+     * Get pod or category drop-down values
+     *
+     * @param array $params
+     *
+     * @return array
+     */
+    public function get_dropdown_values ( $params ) {
+        pods_deprecated( 'Pods::get_dropdown_values', '2.0.0' );
+
+        global $wpdb;
+
+        $params = (object) $params;
+
+        $params->orderby = empty( $params->orderby ) ? '' : ' ORDER BY ' . $params->orderby;
+        $params->join = empty( $params->join ) ? '' : ' LEFT JOIN ' . $params->join;
+
+        $where = ( false !== $params->exclude ) ? "WHERE `t`.term_id NOT IN ({$params->exclude})" : '';
+
+        if ( !empty( $params->pick_filter ) ) {
+            $where .= ( empty( $where ) ? ' WHERE ' : ' AND ' ) . $params->pick_filter;
+        }
+
+        if ( !empty( $params->where ) ) {
+            $where .= ( empty( $where ) ? ' WHERE ' : ' AND ' ) . $params->where;
+        }
+
+        $sql = "
+            SELECT
+                `t`.`{$params->field_id}` AS `id`,
+                `t`.`{$params->field_name}` AS `name`
+            FROM `{$params->table}` AS `t`
+            {$params->join}
+            {$where}
+            {$params->orderby}
+        ";
+
+        //override with custom dropdown values
+        $sql = apply_filters( 'pods_get_dropdown_values', $sql, $params, $this );
+
+        $val = array();
+        $result = pods_query( $sql );
+        foreach ( $result as $row ) {
+            $row = get_object_vars( $row );
+            $row[ 'active' ] = false;
+            if ( !empty( $params->selected_ids ) ) {
+                $row[ 'active' ] = in_array( $row[ 'id' ], $params->selected_ids );
+            }
+            $val[] = $row;
+        }
+        return $val;
     }
 
     /**

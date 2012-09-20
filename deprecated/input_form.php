@@ -29,7 +29,6 @@ jQuery(function() {
         var file_id = jQuery(this).attr("rel");
         var file_name = jQuery(this).html();
         jQuery(".rightside." + active_file + " .form").append('<div id="' + file_id + '" class="success"><div class="btn dropme"></div>' + file_name + '</div>');
-        jQuery("#dialog").jqmHide();
     });
 <?php
     }
@@ -45,13 +44,6 @@ jQuery(function() {
             new nicEditor(config).panelInstance(nicEditElements[i].id);
         }
     }
-<?php
-    if (!(defined('PODS_DISABLE_FILE_BROWSER') && true === PODS_DISABLE_FILE_BROWSER) && !(defined('PODS_FILES_REQUIRE_LOGIN') && is_bool(PODS_FILES_REQUIRE_LOGIN) && true === PODS_FILES_REQUIRE_LOGIN && !is_user_logged_in()) && !(defined('PODS_FILES_REQUIRE_LOGIN') && !is_bool(PODS_FILES_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_FILES_REQUIRE_LOGIN)))) {
-?>
-    jQuery("#dialog").jqm();
-<?php
-    }
-?>
 });
 
 function saveForm (form_count) {
@@ -109,25 +101,6 @@ function saveForm (form_count) {
     });
     return false;
 }
-<?php
-    if (!(defined('PODS_DISABLE_FILE_BROWSER') && true === PODS_DISABLE_FILE_BROWSER) && !(defined('PODS_FILES_REQUIRE_LOGIN') && is_bool(PODS_FILES_REQUIRE_LOGIN) && true === PODS_FILES_REQUIRE_LOGIN && !is_user_logged_in()) && !(defined('PODS_FILES_REQUIRE_LOGIN') && !is_bool(PODS_FILES_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_FILES_REQUIRE_LOGIN)))) {
-?>
-function fileBrowser () {
-    jQuery("#dialog").jqmShow();
-    jQuery(".filebox").html("Loading...");
-    var search = jQuery("#file_search").val();
-    jQuery.ajax({
-        type: "post",
-        url: "<?php echo PODS_URL; ?>deprecated/ajax/misc.php",
-        data: "action=browse_files&_wpnonce=<?php echo wp_create_nonce('pods-browse_files'); ?>&search="+encodeURIComponent(search),
-        success: function(msg) {
-            jQuery(".filebox").html(msg);
-        }
-    });
-}
-<?php
-    }
-?>
 </script>
 <?php
 }
@@ -139,15 +112,6 @@ do_action("pods_pre_form_{$this->pod}", $form_count, $this);
 
 <div class="pods_form form_<?php echo esc_attr($this->pod); ?> form_<?php echo $form_count; ?>">
 <?php
-if (1 == $form_count && !(defined('PODS_DISABLE_FILE_BROWSER') && true === PODS_DISABLE_FILE_BROWSER) && !(defined('PODS_FILES_REQUIRE_LOGIN') && is_bool(PODS_FILES_REQUIRE_LOGIN) && true === PODS_FILES_REQUIRE_LOGIN && !is_user_logged_in()) && !(defined('PODS_FILES_REQUIRE_LOGIN') && !is_bool(PODS_FILES_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_FILES_REQUIRE_LOGIN)))) {
-?>
-<div class="jqmWindow" id="dialog">
-    <input type="text" id="file_search" value="" />
-    <input type="button" class="button" value="Narrow results" onclick="fileBrowser()" />
-    <div class="filebox"></div>
-</div>
-<?php
-}
 $this->showform($this->get_field( $this->data->field_id ), $public_columns, $label);
 ?>
 </div>

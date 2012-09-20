@@ -16,18 +16,29 @@ $name = $field['name'];
 $label = $field['label'];
 $comment = $field['description'];
 $type = $coltype = $field['type'];
+$oldcoltype = $field[ 'type' ];
+
+if ( 'paragraph' == $coltype )
+    $oldcoltype = 'code';
+elseif ( 'wysiwyg' == $coltype )
+    $oldcoltype = 'desc';
+elseif ( 'number' == $coltype )
+    $oldcoltype = 'num';
+elseif ( 'text' == $coltype )
+    $oldcoltype = 'txt';
+
 $input_helper = pods_var_raw( 'input_helper', $field );
 $hidden = (empty($field['hidden'])) ? '' : ' hidden';
 $value = '';
 
-if ( isset( $this->row[ $name ] ) )
-    $value = (is_array($this->row[$name])) ? $this->row[$name] : stripslashes($this->row[$name]);
+if ( isset( $this->obj->row[ $name ] ) )
+    $value = (is_array($this->obj->row[$name])) ? $this->obj->row[$name] : stripslashes($this->obj->row[$name]);
 
 $css_id = 'pods_form' . $form_count . '_' . $name;
 
 // The first 3 CSS classes will be DEPRECATED in 2.0.0
-$css_classes = "form $coltype $name pods_field pods_field_$name pods_coltype_$coltype";
-if ( 'multi' == pods_var( 'pick_format_type', $field )) {
+$css_classes = "form $oldcoltype $name pods_field pods_field_$name pods_coltype_$oldcoltype";
+if ( 'single' == pods_var( 'pick_format_type', $field, 'single', null, true )) {
     $css_classes = str_replace(' pick ', ' pick1 ', $css_classes);
 }
 
@@ -308,7 +319,7 @@ elseif ('file' == $type) {
 Multi-select PICK
 ==================================================
 */
-elseif ('pick' == $type && 'multi' == pods_var( 'pick_format_type', $field )) {
+elseif ('pick' == $type && 'multi' == pods_var( 'pick_format_type', $field, 'single', null, true ) ) {
 ?>
     <div class="<?php echo esc_attr($css_classes); ?>" id="<?php echo esc_attr($css_id); ?>">
 <?php
@@ -329,7 +340,7 @@ elseif ('pick' == $type && 'multi' == pods_var( 'pick_format_type', $field )) {
 Single-select PICK
 ==================================================
 */
-elseif ('pick' == $type) {
+elseif ('pick' == $type && 'single' == pods_var( 'pick_format_type', $field, 'single', null, true )) {
 ?>
     <select name="<?php echo esc_attr($name); ?>" class="<?php echo esc_attr($css_classes); ?>" id="<?php echo esc_attr($css_id); ?>">
         <option value="">-- Select one --</option>

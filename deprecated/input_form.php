@@ -6,8 +6,9 @@ $form_count = (int) 1;
 if (1 == $form_count)
 {
     do_action('pods_form_init', $this);
-    if (!wp_script_is('pods-ui', 'queue') && !wp_script_is('pods-ui', 'to_do') && !wp_script_is('pods-ui', 'done'))
-        wp_print_scripts('pods-ui');
+    wp_register_script( 'pods-ui-deprecated', PODS_URL . 'deprecated/js/pods.ui.js', array(), PODS_VERSION );
+    if (!wp_script_is('pods-ui-deprecated', 'queue') && !wp_script_is('pods-ui-deprecated', 'to_do') && !wp_script_is('pods-ui-deprecated', 'done'))
+        wp_print_scripts('pods-ui-deprecated');
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo PODS_URL; ?>deprecated/style.css" />
 <script type="text/javascript">
@@ -147,7 +148,7 @@ if (1 == $form_count && !(defined('PODS_DISABLE_FILE_BROWSER') && true === PODS_
 </div>
 <?php
 }
-$this->showform($this->field($this->column_id), $public_columns, $label);
+$this->showform($this->get_field( $this->data->field_id ), $public_columns, $label);
 ?>
 </div>
 <?php

@@ -26,8 +26,7 @@ class Pods_Deprecated
         $vars = get_object_vars( $obj );
 
         foreach ( (array) $vars as $key => $val ) {
-            if ( !in_array( $key, array( 'obj', 'data' ) ) )
-                $this->{$key} = $val;
+            $this->{$key} = $val;
         }
 
         // keeping references pointing back to the source
@@ -46,9 +45,9 @@ class Pods_Deprecated
     public function set_field ( $name, $data = null ) {
         pods_deprecated( 'Pods::set_field', '2.0.0' );
 
-        $this->obj->data[ $name ] = $data;
+        $this->obj->row[ $name ] = $data;
 
-        return $this->obj->data[ $name ];
+        return $this->obj->row[ $name ];
     }
 
     /**
@@ -58,6 +57,8 @@ class Pods_Deprecated
      */
     public function showform ( $id = null, $public_fields = null, $label = 'Save changes' ) {
         pods_deprecated( 'Pods::showform', '2.0.0' );
+
+        $public_columns =& $public_fields;
 
         $pod = $this->obj->pod;
         $pod_id = $this->obj->pod_id;
@@ -224,15 +225,15 @@ class Pods_Deprecated
                     'where' => $pick_where
                 );
 
-                $this->obj->data[ $key ] = $this->obj->get_dropdown_values( $params );
+                $this->obj->row[ $key ] = $this->obj->get_dropdown_values( $params );
             }
             else {
                 // Set a default value if no value is entered
-                if ( !isset( $this->obj->data[ $key ] ) || ( null === $this->obj->data[ $key ] || false === $this->obj->data[ $key ] ) ) {
+                if ( !isset( $this->obj->row[ $key ] ) || ( null === $this->obj->row[ $key ] || false === $this->obj->row[ $key ] ) ) {
                     if ( !empty( $field[ 'default' ] ) )
-                        $this->obj->data[ $key ] = $field[ 'default' ];
+                        $this->obj->row[ $key ] = $field[ 'default' ];
                     else
-                        $this->obj->data[ $key ] = null;
+                        $this->obj->row[ $key ] = null;
                 }
             }
 
@@ -261,8 +262,8 @@ class Pods_Deprecated
     <input type="hidden" class="form num id" value="<?php echo $id; ?>" />
     <input type="hidden" class="form txt pod" value="<?php echo $pod; ?>" />
     <input type="hidden" class="form txt pod_id" value="<?php echo $pod_id; ?>" />
-    <input type="hidden" class="form txt form_count" value="<?php echo $pods_cache->form_count; ?>" />
-    <input type="hidden" class="form txt token" value="<?php echo pods_generate_key($pod, $uri_hash, $public_fields, $pods_cache->form_count); ?>" />
+    <input type="hidden" class="form txt form_count" value="1" />
+    <input type="hidden" class="form txt token" value="<?php echo pods_generate_key($pod, $uri_hash, $public_fields, 1); ?>" />
     <input type="hidden" class="form txt uri_hash" value="<?php echo $uri_hash; ?>" />
     <?php echo apply_filters('pods_showform_save_button', $save_button, $save_button_atts, $this); ?>
     </div>
@@ -278,7 +279,9 @@ class Pods_Deprecated
     public function publicForm ( $public_fields = null, $label = 'Save Changes', $thankyou_url = null ) {
         pods_deprecated( 'Pods::publicForm', '2.0.0', 'Pods::form' );
 
-        include PODS_DIR . 'ui/input_form.php';
+        $public_columns =& $public_fields;
+
+        include PODS_DIR . 'deprecated/input_form.php';
     }
 
     /**
@@ -289,7 +292,7 @@ class Pods_Deprecated
     public function build_field_html ( $field ) {
         pods_deprecated( 'Pods::build_field_html', '2.0.0' );
 
-        include PODS_DIR . 'ui/input_fields.php';
+        include PODS_DIR . 'deprecated/input_fields.php';
     }
 
     /**
@@ -334,8 +337,8 @@ class Pods_Deprecated
     public function get_pod_id () {
         pods_deprecated( 'Pods::get_pod_id', '2.0.0' );
 
-        if ( !empty( $this->obj->data ) )
-            return $this->obj->data[ $this->obj->field_id ];
+        if ( !empty( $this->obj->row ) )
+            return $this->obj->row[ $this->obj->data->field_id ];
 
         return false;
     }

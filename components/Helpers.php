@@ -266,6 +266,9 @@ class Pods_Helpers extends PodsComponent {
         if ( !empty( $helper ) && !empty( $helper[ 'code' ] ) ) {
             $code = $helper[ 'code' ];
 
+            $code = str_replace( '$this->', '$obj->', $code );
+            $value =& $params->value;
+
             if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL )
                 eval( "?>{$code}" );
             else

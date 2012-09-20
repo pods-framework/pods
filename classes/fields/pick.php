@@ -211,6 +211,8 @@ class PodsField_Pick extends PodsField {
             elseif ( 'multi' == pods_var( 'pick_format_type', $options ) && 'autocomplete' == pods_var( 'pick_format_multi', $options ) )
                 $autocomplete = true;
 
+            $params[ 'limit' ] = -1;
+
             if ( $autocomplete )
                 $params[ 'limit' ] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', 30, $name, $value, $options, $pod, $id );
 

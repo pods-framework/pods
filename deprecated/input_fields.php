@@ -5,18 +5,29 @@ $pods_type_exists =& $coltype_exists;
 $form_count = $pods_cache->form_count;*/
 $form_count = 1;
 
+if ( isset( $field[ 'options' ] ) ) {
+    $options = $field[ 'options' ];
+    unset( $field[ 'options' ] );
+
+    $field = array_merge( $options, $field );
+}
+
 $name = $field['name'];
 $label = $field['label'];
-$comment = $field['comment'];
-$type = $coltype = $field['coltype'];
-$input_helper = $field['input_helper'];
+$comment = $field['description'];
+$type = $coltype = $field['type'];
+$input_helper = pods_var_raw( 'input_helper', $field );
 $hidden = (empty($field['hidden'])) ? '' : ' hidden';
-$value = (is_array($this->data[$name])) ? $this->data[$name] : stripslashes($this->data[$name]);
+$value = '';
+
+if ( isset( $this->row[ $name ] ) )
+    $value = (is_array($this->row[$name])) ? $this->row[$name] : stripslashes($this->row[$name]);
+
 $css_id = 'pods_form' . $form_count . '_' . $name;
 
 // The first 3 CSS classes will be DEPRECATED in 2.0.0
 $css_classes = "form $coltype $name pods_field pods_field_$name pods_coltype_$coltype";
-if (1 > $field['multiple']) {
+if ( 'multi' == pods_var( 'pick_format_type', $field )) {
     $css_classes = str_replace(' pick ', ' pick1 ', $css_classes);
 }
 
@@ -80,7 +91,7 @@ if (!empty($input_helper)) {
 Boolean checkbox
 ==================================================
 */
-elseif ('bool' == $type) {
+elseif ('boolean' == $type) {
     $value = (empty($value)) ? '' : ' checked';
 ?>
     <input name="<?php echo esc_attr($name); ?>" type="checkbox" class="<?php echo esc_attr($css_classes); ?>" id="<?php echo esc_attr($css_id); ?>"<?php echo $value; ?> />
@@ -92,7 +103,7 @@ elseif ('bool' == $type) {
 Date picker
 ==================================================
 */
-elseif ('date' == $type) {
+elseif ('datetime' == $type) {
     if (!isset($pods_type_exists[$type]) || empty($pods_type_exists[$type])) {
 ?>
     <script type="text/javascript" src="<?php echo PODS_URL; ?>deprecated/js/date_input.js"></script>
@@ -114,7 +125,7 @@ elseif ('date' == $type) {
 Standard text box
 ==================================================
 */
-elseif ('num' == $type || 'txt' == $type || 'slug' == $type) {
+elseif ('number' == $type || 'text' == $type || 'slug' == $type) {
 ?>
     <input name="<?php echo esc_attr($name); ?>" type="text" class="<?php echo esc_attr($css_classes); ?>" id="<?php echo esc_attr($css_id); ?>" value="<?php echo esc_attr($value); ?>" maxlength="<?php echo ($coltype=='num')?15:128; ?>" />
 <?php
@@ -125,7 +136,7 @@ elseif ('num' == $type || 'txt' == $type || 'slug' == $type) {
 Textarea box
 ==================================================
 */
-elseif ('desc' == $type) {
+elseif ('wysiwyg' == $type) {
     if (is_admin()) {
         $type = 'desc_tinymce';
 
@@ -168,7 +179,7 @@ elseif ('desc' == $type) {
 Textarea box (no WYSIWYG)
 ==================================================
 */
-elseif ('code' == $type) {
+elseif ('paragraph' == $type) {
 ?>
     <textarea name="<?php echo esc_attr($name); ?>" class="<?php echo esc_attr($css_classes); ?>" id="<?php echo esc_attr($css_id); ?>"><?php echo esc_textarea($value); ?></textarea>
 <?php
@@ -297,7 +308,7 @@ elseif ('file' == $type) {
 Multi-select PICK
 ==================================================
 */
-elseif ('pick' == $type && 0 < $field['multiple']) {
+elseif ('pick' == $type && 'multi' == pods_var( 'pick_format_type', $field )) {
 ?>
     <div class="<?php echo esc_attr($css_classes); ?>" id="<?php echo esc_attr($css_id); ?>">
 <?php

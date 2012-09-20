@@ -272,6 +272,8 @@ class Pods_Templates extends PodsComponent {
 
         ob_start();
 
+        $code = str_replace( '$this->', '$obj->', $code );
+
         if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL )
             eval( "?>$code" );
         else

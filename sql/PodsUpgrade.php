@@ -391,7 +391,8 @@ class PodsUpgrade_2_0 {
                         'type' => 'text',
                         'weight' => 0,
                         'options' => array(
-                            'required' => '1'
+                            'required' => 1,
+                            'text_max_length' => 128
                         )
                     ),
                     array(
@@ -856,7 +857,7 @@ class PodsUpgrade_2_0 {
         $this->update_progress( __FUNCTION__, true );
 
         if ( $notice ) {
-            return pods_error( 'Input Helpers may not function in our new forms, we have imported and disabled them for your review.', 'pods' );
+            return __( 'Input Helpers may not function in our new forms, we have imported and disabled them for your review.', 'pods' );
         }
 
         return '1';

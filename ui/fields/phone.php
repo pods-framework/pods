@@ -3,7 +3,7 @@ $attributes = array();
 
 $type = 'text';
 
-if ( 1 == $options[ 'text_html5' ] )
+if ( 1 == $options[ 'phone_html5' ] )
     $type = 'tel';
 
 $attributes[ 'type' ] = $type;

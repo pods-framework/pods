@@ -1242,6 +1242,8 @@ class Pods {
 
         if ( isset( $params[ 'fields' ] ) )
             $params = array_merge( $defaults, $params );
+        else
+            $params = $defaults;
 
         $pod =& $this;
 

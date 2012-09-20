@@ -354,6 +354,8 @@ class PodsUpgrade_2_0 {
                 do_action( 'pods_update_post', PODS_VERSION, $old_version );
             }
         }
+
+        return '1';
     }
 
     /**
@@ -778,13 +780,12 @@ class PodsUpgrade_2_0 {
 
         $results = array();
 
-        if ( empty( $templates ) )
-            return $results;
+        if ( !empty( $templates ) ) {
+            foreach ( $templates as $template ) {
+                unset( $template->id );
 
-        foreach ( $templates as $template ) {
-            unset( $template->id );
-
-            $results[] = $this->api->save_template( $template );
+                $results[] = $this->api->save_template( $template );
+            }
         }
 
         $this->update_progress( __FUNCTION__, true );
@@ -801,15 +802,12 @@ class PodsUpgrade_2_0 {
 
         $pages = pods_query( "SELECT * FROM `@wp_pod_pages`", false );
 
-        $results = array();
+        if ( !empty( $pages ) ) {
+            foreach ( $pages as $page ) {
+                unset( $page->id );
 
-        if ( empty( $pages ) )
-            return $results;
-
-        foreach ( $pages as $page ) {
-            unset( $page->id );
-
-            $results[] = $this->api->save_page( $page );
+                $this->api->save_page( $page );
+            }
         }
 
         $this->update_progress( __FUNCTION__, true );
@@ -826,23 +824,20 @@ class PodsUpgrade_2_0 {
 
         $helpers = pods_query( "SELECT * FROM `@wp_pod_helpers`", false );
 
-        $results = array();
-
-        if ( empty( $helpers ) )
-            return $results;
-
         $notice = false;
 
-        foreach ( $helpers as $helper ) {
-            unset( $helper->id );
+        if ( !empty( $helpers ) ) {
+            foreach ( $helpers as $helper ) {
+                unset( $helper->id );
 
-            if ( 'input' == $helper->helper_type ) {
-                $helper->status = 'draft';
+                if ( 'input' == $helper->helper_type ) {
+                    $helper->status = 'draft';
 
-                $notice = true;
+                    $notice = true;
+                }
+
+                $this->api->save_helper( $helper );
             }
-
-            $results[] = $this->api->save_helper( $helper );
         }
 
         $this->update_progress( __FUNCTION__, true );

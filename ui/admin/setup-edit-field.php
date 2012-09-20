@@ -46,6 +46,7 @@
             <input type="hidden" name="field_data_json[<?php echo $pods_i; ?>]" value="<?php echo esc_attr( json_encode( $field ) ); ?>" class="field_data" />
 
             <div class="pods-manage-field pods-dependency">
+                <input type="hidden" name="field_data[<?php echo $pods_i; ?>][id]" value="<?php echo esc_attr( pods_var_raw( 'id', $field ) ); ?>" />
             <div>
         </div>
     </td>

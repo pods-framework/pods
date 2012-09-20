@@ -1390,15 +1390,16 @@ function pods ( $type = null, $id = null, $strict = false ) {
  * @see PodsUI
  *
  * @param null|array|Pods $obj (optional) configuration options for the UI
+ * @param boolean $deprecated (optional) enable deprecated options
  *
  * @return PodsUI
  *
  * @since 2.0.0
  */
-function pods_ui ( $obj = null ) {
+function pods_ui ( $obj = null, $deprecated = false ) {
     require_once( PODS_DIR . 'classes/PodsUI.php' );
 
-    return new PodsUI( $obj );
+    return new PodsUI( $obj, $deprecated );
 }
 
 /**

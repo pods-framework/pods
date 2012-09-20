@@ -321,8 +321,7 @@ class PodsField_File extends PodsField {
      * @since 2.0.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-        // link to file in new target
-        // show thumbnail
+        // @todo link to file in new target and show thumbnail
     }
 
     /**

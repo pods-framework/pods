@@ -214,7 +214,7 @@ class PodAPI
 function pods_ui_manage ($obj) {
     pods_deprecated('pods_ui_manage', '2.0.0', 'pods_ui');
 
-    return pods_ui($obj);
+    return pods_ui($obj, true);
 }
 
 

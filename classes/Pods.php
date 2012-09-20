@@ -17,7 +17,7 @@ class Pods {
     /**
      * @var
      */
-    public $results;
+    private $results;
 
     /**
      * @var
@@ -857,10 +857,17 @@ class Pods {
                     elseif ( 'table' == $this->pod_data[ 'storage' ] && isset( $this->fields[ $k ] ) )
                         $key = "`t`.`{$k}`";
 
-                    if ( empty( $key ) )
-                        $key = "`{$k}`";
+                    if ( empty( $key ) ) {
+                        $key = $k;
 
-                    $orderby = "{$key} {$order}";
+                        if ( false === strpos( $key, ' ' ) )
+                            $key = "`{$key}`";
+                    }
+
+                    $orderby = $key;
+
+                    if ( false === strpos( $orderby, ' ' ) )
+                        $orderby .= ' ' . $order;
                 }
             }
         }

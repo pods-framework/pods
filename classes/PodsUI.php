@@ -371,7 +371,7 @@ class PodsUI {
             unset( $options[ 'pod' ] );
         }
 
-        if ( false !== $deprecated )
+        if ( false !== $deprecated || ( is_object( $this->pod ) && 'Pod' == get_class( $object ) ) )
             $options = $this->setup_deprecated( $options );
 
         if ( is_object( $this->pod ) && is_object( $this->pod->data ) )
@@ -1136,7 +1136,8 @@ class PodsUI {
                     if ( empty( $this->orderby ) )
                         $value = '';
                     elseif ( isset( $this->orderby[ 'default' ] ) ) // save this if we have a default index set
-                        $value = $this->orderby[ 'default' ] . ' ' . $this->orderby_dir;
+                        $value = $this->orderby[ 'default' ] . ' '
+                             . ( false === strpos( $this->orderby[ 'default' ], ' ' ) ? $this->orderby_dir : '' );
                 }
                 else
                     $value = $this->$setting;
@@ -1431,7 +1432,10 @@ class PodsUI {
 
             if ( !empty( $this->orderby ) ) {
                 foreach ( $this->orderby as $order ) {
-                    $orderby[ $order ] = $this->orderby_dir;
+                    if ( false === strpos( ' ', $order ) )
+                        $orderby[ $order ] = $this->orderby_dir;
+                    else
+                        $orderby[ $order ] = null;
                 }
             }
 
@@ -1454,7 +1458,8 @@ class PodsUI {
             $orderby = '';
 
             if ( !empty( $this->orderby ) )
-                $orderby = '`' . $this->orderby . '` ' . strtoupper( $this->orderby_dir );
+                $orderby = '`' . $this->orderby . '` '
+                       . ( false === strpos( $this->orderby, ' ' ) ? strtoupper( $this->orderby_dir ) : '' );
 
             $this->pods_data->select(
                 array(

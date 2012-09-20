@@ -25,7 +25,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
 </div>
 
 <script type="text/javascript">
-    jQuery( function () {
+    jQuery( function ( $ ) {
         if ( typeof pods_ajaxurl === "undefined" ) {
             var pods_ajaxurl = "<?php echo admin_url( 'admin-ajax.php?pods_ajax=1' ); ?>";
         }
@@ -49,8 +49,10 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                     echo implode( ",\n", $data );
                 }
             ?>};
+        var $element = $('#<?php echo $attributes[ 'id' ] ?>' );
 
-        jQuery( '#<?php echo $attributes[ 'id' ]; ?>' ).select2( {
+        $element.select2( {
+            width : 'resolve',
             initSelection : function ( element, callback ) {
                 var data = [];
 

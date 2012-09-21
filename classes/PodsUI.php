@@ -2467,24 +2467,31 @@ class PodsUI {
     public function do_magic_tags ( $tag ) {
         $tag = trim( $tag, ' {@}' );
         $tag = explode( ',', $tag );
+
         if ( empty( $tag ) || !isset( $tag[ 0 ] ) || 0 < strlen( trim( $tag[ 0 ] ) ) )
             return;
+
         foreach ( $tag as $k => $v ) {
             $tag[ $k ] = trim( $v );
         }
+
         $field_name = $tag[ 0 ];
         $value = $this->get_field( $field_name );
-        if ( isset( $tag[ 1 ] ) && !empty( $tag[ 1 ] ) ) {
-            $helper_name = $tag[ 1 ];
-            $value = $$helper_name( $value, $field_name, $this->row, &$this );
-        }
+
+        if ( isset( $tag[ 1 ] ) && !empty( $tag[ 1 ] ) && is_callable( $tag[ 1 ] ) )
+            $value = call_user_func_array( $tag[ 1 ], array( $value, $field_name, $this->row, &$this ) );
+
         $before = $after = '';
+
         if ( isset( $tag[ 2 ] ) && !empty( $tag[ 2 ] ) )
             $before = $tag[ 2 ];
+
         if ( isset( $tag[ 3 ] ) && !empty( $tag[ 3 ] ) )
             $after = $tag[ 3 ];
+
         if ( 0 < strlen( $value ) )
             return $before . $value . $after;
+
         return;
     }
 

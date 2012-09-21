@@ -415,8 +415,8 @@ class PodsAdmin {
                 'edit' => $pod->pod_data[ 'fields' ],
                 'duplicate' => $pod->pod_data[ 'fields' ]
             ),
-            'item' => pods_var( 'label_singular', $pod->pod_data[ 'options' ], pods_var( 'label_singular', $pod->pod_data[ 'options' ], ucwords( str_replace( '_', ' ', $pod->pod ) ), null, true ), null, true ),
-            'items' => pods_var( 'label', $pod->pod_data[ 'options' ], ucwords( str_replace( '_', ' ', $pod->pod ) ), null, true ),
+            'item' => pods_var_raw( 'label', $pod->pod_data, pods_var_raw( 'label_singular', $pod->pod_data[ 'options' ], ucwords( str_replace( '_', ' ', $pod->pod ) ), null, true ), null, true ),
+            'items' => pods_var_raw( 'label', $pod->pod_data, ucwords( str_replace( '_', ' ', $pod->pod ) ), null, true ),
             'orderby' => 'id',
             'orderby_dir' => 'desc',
             'actions_disabled' => $actions_disabled
@@ -1219,7 +1219,7 @@ class PodsAdmin {
         $data->where = $field[ 'table_info' ][ 'where' ];
         $data->orderby = $field[ 'table_info' ][ 'orderby' ];
 
-        $where = pods_var( 'pick_where', $field, null, null, true );
+        $where = pods_var_raw( 'pick_where', $field, null, null, true );
 
         if ( empty( $where ) )
             $where = array();
@@ -1253,7 +1253,7 @@ class PodsAdmin {
         $orderby = array();
         $orderby[] = "(`t`.`{$data->field_index}` LIKE '%" . like_escape( $params->query ) . "%' ) DESC";
 
-        $pick_orderby = pods_var( 'pick_orderby', $field, null, null, true );
+        $pick_orderby = pods_var_raw( 'pick_orderby', $field, null, null, true );
 
         if ( 0 < strlen( $pick_orderby ) )
             $orderby[] = $pick_orderby;
@@ -1266,7 +1266,7 @@ class PodsAdmin {
             'table' => $data->table,
             'where' => $where,
             'orderby' => $orderby,
-            'groupby' => pods_var( 'pick_groupby', $field, null, null, true ),
+            'groupby' => pods_var_raw( 'pick_groupby', $field, null, null, true ),
             'limit' => 30
         );
 

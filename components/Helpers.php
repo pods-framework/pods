@@ -250,8 +250,6 @@ class Pods_Helpers extends PodsComponent {
 
         $params = (object) $params;
 
-        pods_debug( $params );
-
         if ( empty( $params->helper ) )
             return pods_error( 'Helper name required', $obj );
 

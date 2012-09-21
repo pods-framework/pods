@@ -3549,18 +3549,18 @@ class PodsAPI {
     public function load_fields ( $params, $strict = false ) {
         $params = (object) pods_sanitize( $params );
 
-        if ( !isset( $params->pod ) )
+        if ( !isset( $params->pod ) || empty( $params->pod ) )
             $params->pod = '';
 
-        if ( !isset( $params->pod_id ) )
+        if ( !isset( $params->pod_id ) || empty( $params->pod_id ) )
             $params->pod_id = 0;
 
-        if ( !isset( $params->name ) )
+        if ( !isset( $params->name ) || empty( $params->name ) )
             $params->name = array();
         else
             $params->name = (array) $params->name;
 
-        if ( !isset( $params->id ) )
+        if ( !isset( $params->id ) || empty( $params->id ) )
             $params->id = array();
         else {
             $params->id = (array) $params->id;
@@ -3570,7 +3570,7 @@ class PodsAPI {
             }
         }
 
-        if ( !isset( $params->type ) )
+        if ( !isset( $params->type ) || empty( $params->type ) )
             $params->type = array();
         else
             $params->type = (array) $params->type;
@@ -3624,7 +3624,7 @@ class PodsAPI {
                     ) );
 
                     if ( empty( $params->type ) || in_array( $field[ 'type' ], $params->type ) )
-                        $fields[ $field[ 'name' ] ] = $field;
+                        $fields[] = $field;
                 }
             }
         }

@@ -123,7 +123,7 @@
                     cache : false,
                     data : postdata,
                     success : function ( d ) {
-                        if ( -1 == d.indexOf( '<e>' ) && -1 != d ) {
+                        if ( -1 == d.indexOf( '<e>' ) && -1 == d.indexOf('</e>') && -1 != d ) {
                             if ( 'undefined' != typeof pods_admin_submit_callback )
                                 pods_admin_submit_callback( d );
                             else if ( 'undefined' != typeof $submittable.data( 'location' ) )

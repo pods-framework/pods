@@ -1169,7 +1169,7 @@ class PodsUI {
             <?php
             echo $this->heading[ 'add' ] . ' ' . $this->item;
 
-            $link = pods_var_update( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), null, $this->exclusion() );
+            $link = pods_var_update( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), array( 'page' ), $this->exclusion() );
             ?>
             <a href="<?php echo $link; ?>" class="add-new-h2">&laquo; <?php _e( 'Back to', 'pods' ); ?> <?php echo $this->heading[ 'manage' ]; ?></a>
         </h2>
@@ -1200,13 +1200,13 @@ class PodsUI {
             echo ( true === $duplicate ) ? $this->heading[ 'duplicate' ] : $this->heading[ 'edit' ] . ' ' . $this->item;
 
             if ( !in_array( 'add', $this->actions_disabled ) ) {
-                $link = pods_var_update( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), null, $this->exclusion() );
+                $link = pods_var_update( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), array( 'page' ), $this->exclusion() );
                 ?>
                 <a href="<?php echo $link; ?>" class="add-new-h2">&laquo; <?php _e( 'Back to', 'pods' ); ?> <?php echo $this->heading[ 'manage' ]; ?></a>
                 <?php
             }
             else {
-                $link = pods_var_update( array( 'action' . $this->num => 'add', 'id' . $this->num => '' ), null, $this->exclusion() );
+                $link = pods_var_update( array( 'action' . $this->num => 'add', 'id' . $this->num => '' ), array( 'page' ), $this->exclusion() );
                 ?>
                 <a href="<?php echo $link; ?>" class="add-new-h2"><?php echo $this->heading[ 'add' ]; ?></a>
                 <?php
@@ -1267,7 +1267,7 @@ class PodsUI {
 
         $fields =& $this->fields[ $this->action ];
         $pod =& $this->pod;
-        $thank_you = pods_var_update( $vars, null, $this->exclusion() );
+        $thank_you = pods_var_update( $vars, array( 'page' ), $this->exclusion() );
         $obj =& $this;
 
         pods_view( PODS_DIR . 'ui/admin/form.php', compact( array_keys( get_defined_vars() ) ) );
@@ -1461,7 +1461,10 @@ class PodsUI {
             );
 
             $this->data = $this->pod->find( $params )->data();
-            $this->data_keys = array_keys( $this->data );
+
+            if ( !empty( $this->data ) )
+           co    $this->data_keys = array_keys( $this->data );
+
             $this->total = $this->pod->total();
             $this->total_found = $this->pod->total_found();
         }
@@ -1579,24 +1582,24 @@ class PodsUI {
             if ( true === $reorder && !in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder[ 'on' ] ) {
                 echo $this->heading[ 'reorder' ] . ' ' . $this->items;
                 ?>
-                <small>(<a href="<?php echo pods_var_update( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), null, $this->exclusion() ); ?>">&laquo; <?php _e( 'Back to Manage', 'pods' ); ?></a>)</small>
+                <small>(<a href="<?php echo pods_var_update( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), array( 'page' ), $this->exclusion() ); ?>">&laquo; <?php _e( 'Back to Manage', 'pods' ); ?></a>)</small>
                 <?php
             }
             else
                 echo $this->heading[ 'manage' ] . ' ' . $this->items;
             if ( !in_array( 'add', $this->actions_disabled ) && !in_array( 'add', $this->actions_hidden ) ) {
                 ?>
-                <a href="<?php echo pods_var_update( array( 'action' . $this->num => 'add' ), null, $this->exclusion() ); ?>" class="add-new-h2"><?php echo $this->label[ 'add' ]; ?></a>
+                <a href="<?php echo pods_var_update( array( 'action' . $this->num => 'add' ), array( 'page' ), $this->exclusion() ); ?>" class="add-new-h2"><?php echo $this->label[ 'add' ]; ?></a>
                 <?php
             }
             if ( !in_array( 'reorder', $this->actions_disabled ) && !in_array( 'reorder', $this->actions_hidden ) && false !== $this->reorder[ 'on' ] ) {
                 ?>
-                <a href="<?php echo pods_var_update( array( 'action' . $this->num => 'reorder' ), null, $this->exclusion() ); ?>" class="add-new-h2"><?php echo $this->label[ 'reorder' ]; ?></a>
+                <a href="<?php echo pods_var_update( array( 'action' . $this->num => 'reorder' ), array( 'page' ), $this->exclusion() ); ?>" class="add-new-h2"><?php echo $this->label[ 'reorder' ]; ?></a>
                 <?php
             }
             ?>
         </h2>
-        <form id="posts-filter" action="<?php echo pods_var_update( array( 'pg' . $this->num => '' ), null, $this->exclusion() ); ?>" method="get">
+        <form id="posts-filter" action="<?php echo pods_var_update( array( 'pg' . $this->num => '' ), array( 'page' ), $this->exclusion() ); ?>" method="get">
             <?php
             if ( isset( $this->actions_custom[ 'header' ] ) && is_callable( $this->actions_custom[ 'header' ] ) )
                 return call_user_func( $this->actions_custom[ 'header' ], $reorder, $this );
@@ -1706,7 +1709,7 @@ class PodsUI {
                         }
                         ?>
                         <br class="clear" />
-                        <small>[<a href="<?php echo pods_var_update( $clear_filters, array( 'orderby' . $this->num, 'orderby_dir' . $this->num, 'limit' . $this->num ), $this->exclusion() ); ?>"><?php _e( 'Reset Filters', 'pods' ); ?></a>]</small>
+                        <small>[<a href="<?php echo pods_var_update( $clear_filters, array( 'orderby' . $this->num, 'orderby_dir' . $this->num, 'limit' . $this->num, 'page' ), $this->exclusion() ); ?>"><?php _e( 'Reset Filters', 'pods' ); ?></a>]</small>
                         <br class="clear" />
                         <?php
                     }
@@ -1734,7 +1737,7 @@ class PodsUI {
                     if ( true === $reorder && !in_array( 'reorder', $this->actions_disabled ) && !in_array( 'delete', $this->actions_hidden ) && false !== $this->reorder[ 'on' ] ) {
                         ?>
                         <input type="button" value="<?php _e( 'Update Order', 'pods' ); ?>" class="button" onclick="jQuery('form.admin_ui_reorder_form').submit();" />
-                        <input type="button" value="<?php _e( 'Cancel', 'pods' ); ?>" class="button" onclick="document.location='<?php echo pods_var_update( array( 'action' . $this->num => 'manage' ), null, $this->exclusion() ); ?>';" />
+                        <input type="button" value="<?php _e( 'Cancel', 'pods' ); ?>" class="button" onclick="document.location='<?php echo pods_var_update( array( 'action' . $this->num => 'manage' ), array( 'page' ), $this->exclusion() ); ?>';" />
                         <?php
                     }
                     /*
@@ -1755,7 +1758,7 @@ class PodsUI {
                             <?php
                             foreach ( $this->export[ 'formats' ] as $format => $separator ) {
                                 ?>
-                                <input type="button" value=" <?php echo strtoupper( $format ); ?> " class="button" onclick="document.location='<?php echo pods_var_update( array( 'action' . $this->num => 'export', 'export_type' . $this->num => $format ), null, $this->exclusion() ); ?>';" />
+                                <input type="button" value=" <?php echo strtoupper( $format ); ?> " class="button" onclick="document.location='<?php echo pods_var_update( array( 'action' . $this->num => 'export', 'export_type' . $this->num => $format ), array( 'page' ), $this->exclusion() ); ?>';" />
                                 <?php
                             }
                             ?>
@@ -1842,7 +1845,7 @@ class PodsUI {
                 margin-left: 30px;
             }
         </style>
-<form action="<?php echo pods_var_update( array( 'action' . $this->num => 'reorder', 'do' . $this->num => 'save' ), null, $this->exclusion() ); ?>" method="post" class="admin_ui_reorder_form">
+<form action="<?php echo pods_var_update( array( 'action' . $this->num => 'reorder', 'do' . $this->num => 'save' ), array( 'page' ), $this->exclusion() ); ?>" method="post" class="admin_ui_reorder_form">
 <?php
         }
         $table_fields = $this->fields[ 'manage' ];
@@ -1899,7 +1902,7 @@ class PodsUI {
                             if ( $fields[ $field ][ 'sortable' ] ) {
                                 ?>
                                 <th scope="col"<?php echo $att_id; ?> class="manage-column column-<?php echo $id; ?> sortable<?php echo $current_sort; ?>"<?php echo $width; ?>>
-                                    <a href="<?php echo pods_var_update( array( 'orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir ), array( 'limit' . $this->num, 'search' . $this->num, 'page' . $this->num ), $this->exclusion() ); ?>"> <span><?php echo $attributes[ 'label' ]; ?></span> <span class="sorting-indicator"></span> </a>
+                                    <a href="<?php echo pods_var_update( array( 'orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir ), array( 'limit' . $this->num, 'search' . $this->num, 'pg' . $this->num, 'page' ), $this->exclusion() ); ?>"> <span><?php echo $attributes[ 'label' ]; ?></span> <span class="sorting-indicator"></span> </a>
                                 </th>
                                 <?php
                             }
@@ -1942,7 +1945,7 @@ class PodsUI {
 
                                 if ( $fields[ $field ][ 'sortable' ] ) {
                                     ?>
-                                    <th scope="col" class="manage-column column-<?php echo $id; ?> sortable <?php echo $current_sort; ?>"<?php echo $width; ?>><a href="<?php echo pods_var_update( array( 'orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir ), array( 'limit' . $this->num, 'search' . $this->num, 'page' . $this->num ), $this->exclusion() ); ?>"><span><?php echo $attributes[ 'label' ]; ?></span><span class="sorting-indicator"></span></a></th>
+                                    <th scope="col" class="manage-column column-<?php echo $id; ?> sortable <?php echo $current_sort; ?>"<?php echo $width; ?>><a href="<?php echo pods_var_update( array( 'orderby' . $this->num => $field, 'orderby_dir' . $this->num => $dir ), array( 'limit' . $this->num, 'search' . $this->num, 'pg' . $this->num, 'page' ), $this->exclusion() ); ?>"><span><?php echo $attributes[ 'label' ]; ?></span><span class="sorting-indicator"></span></a></th>
                                     <?php
                                 }
                                 else {
@@ -2053,12 +2056,12 @@ class PodsUI {
                                 if ( 'title' == $attributes[ 'field_id' ] ) {
                                     if ( !in_array( 'edit', $this->actions_disabled ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) ) {
                                         ?>
-                <td class="post-title page-title column-title"><strong><a class="row-title" href="<?php echo pods_var_update( array( 'action' . $this->num => 'edit', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), null, $this->exclusion() ); ?>" title="Edit &#8220;<?php echo htmlentities( $row[ $field ], ENT_COMPAT, get_bloginfo( 'charset' ) ); ?>&#8221;"><?php echo $row[ $field ]; ?></a></strong>
+                <td class="post-title page-title column-title"><strong><a class="row-title" href="<?php echo pods_var_update( array( 'action' . $this->num => 'edit', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), array( 'page' ), $this->exclusion() ); ?>" title="Edit &#8220;<?php echo htmlentities( $row[ $field ], ENT_COMPAT, get_bloginfo( 'charset' ) ); ?>&#8221;"><?php echo $row[ $field ]; ?></a></strong>
                                         <?php
                                     }
                                     elseif ( !in_array( 'view', $this->actions_disabled ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) ) {
                                         ?>
-                <td class="post-title page-title column-title"><strong><a class="row-title" href="<?php echo pods_var_update( array( 'action' . $this->num => 'view', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), null, $this->exclusion() ); ?>" title="View &#8220;<?php echo htmlentities( $row[ $field ], ENT_COMPAT, get_bloginfo( 'charset' ) ); ?>&#8221;"><?php echo $row[ $field ]; ?></a></strong>
+                <td class="post-title page-title column-title"><strong><a class="row-title" href="<?php echo pods_var_update( array( 'action' . $this->num => 'view', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), array( 'page' ), $this->exclusion() ); ?>" title="View &#8220;<?php echo htmlentities( $row[ $field ], ENT_COMPAT, get_bloginfo( 'charset' ) ); ?>&#8221;"><?php echo $row[ $field ]; ?></a></strong>
                                         <?php
                                     }
                                     else {
@@ -2072,16 +2075,16 @@ class PodsUI {
                                         $actions = array();
 
                                         if ( !in_array( 'view', $this->actions_disabled ) )
-                                            $actions[ 'view' ] = '<span class="view"><a href="' . pods_var_update( array( 'action' . $this->num => 'view', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), null, $this->exclusion() ) . '" title="' . __( 'View this item', 'pods' ) . '">' . __( 'View', 'pods' ) . '</a></span>';
+                                            $actions[ 'view' ] = '<span class="view"><a href="' . pods_var_update( array( 'action' . $this->num => 'view', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), array( 'page' ), $this->exclusion() ) . '" title="' . __( 'View this item', 'pods' ) . '">' . __( 'View', 'pods' ) . '</a></span>';
 
                                         if ( !in_array( 'edit', $this->actions_disabled ) )
-                                            $actions[ 'edit' ] = '<span class="edit"><a href="' . pods_var_update( array( 'action' . $this->num => 'edit', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), null, $this->exclusion() ) . '" title="' . __( 'Edit this item', 'pods' ) . '">' . __( 'Edit', 'pods' ) . '</a></span>';
+                                            $actions[ 'edit' ] = '<span class="edit"><a href="' . pods_var_update( array( 'action' . $this->num => 'edit', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), array( 'page' ), $this->exclusion() ) . '" title="' . __( 'Edit this item', 'pods' ) . '">' . __( 'Edit', 'pods' ) . '</a></span>';
 
                                         if ( !in_array( 'duplicate', $this->actions_disabled ) )
-                                            $actions[ 'duplicate' ] = '<span class="edit"><a href="' . pods_var_update( array( 'action' . $this->num => 'duplicate', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), null, $this->exclusion() ) . '" title="' . __( 'Duplicate this item', 'pods' ) . '">' . __( 'Duplicate', 'pods' ) . '</a></span>';
+                                            $actions[ 'duplicate' ] = '<span class="edit"><a href="' . pods_var_update( array( 'action' . $this->num => 'duplicate', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), array( 'page' ), $this->exclusion() ) . '" title="' . __( 'Duplicate this item', 'pods' ) . '">' . __( 'Duplicate', 'pods' ) . '</a></span>';
 
                                         if ( !in_array( 'delete', $this->actions_disabled ) )
-                                            $actions[ 'delete' ] = '<span class="delete"><a href="' . pods_var_update( array( 'action' . $this->num => 'delete', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), null, $this->exclusion() ) . '" title="' . __( 'Delete this item', 'pods' ) . '" class="submitdelete" onclick="if(confirm(\'' . __( 'You are about to permanently delete this item\n Choose \\\'Cancel\\\' to stop, \\\'OK\\\' to delete.', 'pods' ) . '\')){return true;}return false;">' . __( 'Delete', 'pods' ) . '</a></span>';
+                                            $actions[ 'delete' ] = '<span class="delete"><a href="' . pods_var_update( array( 'action' . $this->num => 'delete', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), array( 'page' ), $this->exclusion() ) . '" title="' . __( 'Delete this item', 'pods' ) . '" class="submitdelete" onclick="if(confirm(\'' . __( 'You are about to permanently delete this item\n Choose \\\'Cancel\\\' to stop, \\\'OK\\\' to delete.', 'pods' ) . '\')){return true;}return false;">' . __( 'Delete', 'pods' ) . '</a></span>';
 
                                         if ( is_array( $this->actions_custom ) ) {
                                             foreach ( $this->actions_custom as $custom_action => $custom_data ) {
@@ -2360,7 +2363,7 @@ class PodsUI {
         if ( isset( $this->actions_custom[ 'pagination' ] ) && is_callable( $this->actions_custom[ 'pagination' ] ) )
             return call_user_func( $this->actions_custom[ 'pagination' ], $header, $this );
         $total_pages = ceil( $this->total_found / $this->limit );
-        $request_uri = pods_var_update( array( 'pg' . $this->num => '' ), array( 'limit' . $this->num, 'orderby' . $this->num, 'orderby_dir' . $this->num, 'search' . $this->num ), $this->exclusion() );
+        $request_uri = pods_var_update( array( 'pg' . $this->num => '' ), array( 'limit' . $this->num, 'orderby' . $this->num, 'orderby_dir' . $this->num, 'search' . $this->num, 'page' ), $this->exclusion() );
 
         if ( false !== $this->pagination_total ) {
             ?>
@@ -2421,7 +2424,7 @@ class PodsUI {
             if ( $option == $this->limit )
                 echo " <span class=\"page-numbers current\">{$option}</span>";
             else
-                echo ' <a href="' . pods_var_update( array( 'limit' => $option ), array( 'orderby' . $this->num, 'orderby_dir' . $this->num, 'search' . $this->num ), $this->exclusion() ) . '">' . $option . '</a>';
+                echo ' <a href="' . pods_var_update( array( 'limit' => $option ), array( 'orderby' . $this->num, 'orderby_dir' . $this->num, 'search' . $this->num, 'page' ), $this->exclusion() ) . '">' . $option . '</a>';
         }
     }
 

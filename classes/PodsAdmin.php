@@ -211,7 +211,7 @@ class PodsAdmin {
                         ) );
                     }
                 }
-                elseif ( !current_user_can( 'pods_edit_' . $item[ 'name' ] ) && !current_user_can( 'pods_delete_' . $item[ 'name' ] ) )
+                elseif ( current_user_can( 'pods_edit_' . $item[ 'name' ] ) || current_user_can( 'pods_delete_' . $item[ 'name' ] ) )
                     $submenu[] = $item;
             }
 

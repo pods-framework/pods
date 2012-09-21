@@ -534,6 +534,9 @@ class PodsUpgrade_2_0 {
                     ),
                 );
 
+                if ( empty( $pod_params[ 'label' ] ) )
+                    $pod_params[ 'label' ] = ucwords( str_replace( '_', ' ', $pod_params[ 'name' ] ) );
+
                 $pod_id = $this->api->save_pod( $pod_params );
 
                 if ( 0 < $pod_id )

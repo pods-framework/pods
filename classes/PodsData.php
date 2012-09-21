@@ -187,6 +187,13 @@ class PodsData {
     public $traverse = array();
 
     /**
+     * Last select() query SQL
+     *
+     * @var string
+     */
+    public $sql = false;
+
+    /**
      * Data Abstraction Class for Pods
      *
      * @param string $pod Pod name
@@ -569,10 +576,8 @@ class PodsData {
         if ( 0 == $params->limit )
             $params->limit = -1;
 
-        $params->offset = ( $params->limit * ( $params->page - 1 ) );
-
-        if ( null !== $params->offset )
-            $params->offset += (int) $params->offset;
+        if ( null === $params->offset )
+            $params->offset = ( $params->limit * ( $params->page - 1 ) );
 
         if ( ( empty( $params->fields ) || !is_array( $params->fields ) ) && is_object( $this->pod_data ) && isset( $this->fields ) && !empty( $this->fields ) )
             $params->fields = $this->fields;
@@ -601,7 +606,7 @@ class PodsData {
         else
             $params->having = array();
 
-        if ( !empty( $params->having ) )
+        if ( !empty( $params->orderby ) )
             $params->orderby = (array) $params->orderby;
         else
             $params->orderby = array();
@@ -735,12 +740,14 @@ class PodsData {
             }
 
             $joins = array();
+
             if ( !empty( $find ) ) {
                 $params->select = preg_replace( $find, $replace, $params->select );
                 $params->where = preg_replace( $find, $replace, $params->where );
                 $params->groupby = preg_replace( $find, $replace, $params->groupby );
                 $params->having = preg_replace( $find, $replace, $params->having );
                 $params->orderby = preg_replace( $find, $replace, $params->orderby );
+
                 if ( !empty( $found ) )
                     $joins = $this->traverse( $found, $params->fields );
                 elseif ( false !== $this->search )

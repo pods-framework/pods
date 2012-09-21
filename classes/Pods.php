@@ -128,6 +128,8 @@ class Pods {
 
     public $meta_extra;
 
+    public $sql;
+
     /**
      * Constructor - Pods Framework core
      *
@@ -874,14 +876,36 @@ class Pods {
         }
 
         // Add prefix to $params->orderby if needed
-        if ( !empty( $params->orderby ) && is_string( $params->orderby ) && false === strpos( $params->orderby, ',' ) && false === strpos( $params->orderby, '(' ) && false === strpos( $params->orderby, '.' ) ) {
-            if ( false !== stripos( $params->orderby, ' ASC' ) )
-                $params->orderby = "`{$pod_table_prefix}`.`" . trim( str_ireplace( array( '`', ' ASC' ), '', $params->orderby ) ) . '` ASC';
-            else
-                $params->orderby = "`{$pod_table_prefix}`.`" . trim( str_ireplace( array( '`', ' DESC' ), '', $params->orderby ) ) . '` DESC';
+        if ( !empty( $params->orderby ) ) {
+            if ( is_array( $params->orderby ) ) {
+                foreach ( $params->orderby as &$prefix_orderby ) {
+                    if ( false === strpos( $prefix_orderby, ',' ) && false === strpos( $prefix_orderby, '(' ) && false === strpos( $prefix_orderby, '.' ) ) {
+                        if ( false !== stripos( $prefix_orderby, ' ASC' ) ) {
+                            $o = trim( str_ireplace( array( '`', ' ASC' ), '', $prefix_orderby ) );
+                            $prefix_orderby = "`{$pod_table_prefix}`.`" . $o . '` ASC';
+                        }
+                        else {
+                            $o = trim( str_ireplace( array( '`', ' DESC' ), '', $prefix_orderby ) );
+                            $prefix_orderby = "`{$pod_table_prefix}`.`" . $o . '` DESC';
+                        }
+                    }
+                }
+            }
+            elseif ( false === strpos( $params->orderby, ',' ) && false === strpos( $params->orderby, '(' ) && false === strpos( $params->orderby, '.' ) ) {
+                if ( false !== stripos( $params->orderby, ' ASC' ) ) {
+                    $o = trim( str_ireplace( array( '`', ' ASC' ), '', $params->orderby ) );
+                    $params->orderby = "`{$pod_table_prefix}`.`" . $o . '` ASC';
+                }
+                else {
+                    $o = trim( str_ireplace( array( '`', ' DESC' ), '', $params->orderby ) );
+                    $params->orderby = "`{$pod_table_prefix}`.`" . $o . '` DESC';
+                }
+            }
         }
 
         $this->data->select( $params );
+
+        $this->sql = $this->data->sql;
 
         return $this;
     }
@@ -902,6 +926,8 @@ class Pods {
 
         $this->data->fetch( $id );
 
+        $this->sql = $this->data->sql;
+
         return $this->row;
     }
 
@@ -920,6 +946,8 @@ class Pods {
         $this->do_hook( 'reset', $row );
 
         $this->data->reset( $row );
+
+        $this->sql = $this->data->sql;
 
         return $this->row;
     }

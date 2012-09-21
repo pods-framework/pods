@@ -417,8 +417,6 @@ class PodsAdmin {
             ),
             'item' => pods_var_raw( 'label_singular', $pod->pod_data[ 'options' ], pods_var_raw( 'label', $pod->pod_data, ucwords( str_replace( '_', ' ', $pod->pod ) ), null, true ), null, true ),
             'items' => pods_var_raw( 'label', $pod->pod_data, ucwords( str_replace( '_', ' ', $pod->pod ) ), null, true ),
-            'orderby' => 'id',
-            'orderby_dir' => 'desc',
             'actions_disabled' => $actions_disabled
         );
 

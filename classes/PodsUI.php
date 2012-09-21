@@ -1447,8 +1447,6 @@ class PodsUI {
                 foreach ( $this->orderby as $order ) {
                     if ( false === strpos( ' ', $order ) )
                         $orderby[ $order ] = $this->orderby_dir;
-                    else
-                        $orderby[ $order ] = null;
                 }
             }
 
@@ -2360,8 +2358,10 @@ class PodsUI {
      */
     public function pagination ( $header = false ) {
         $this->do_hook( 'pagination', $header );
+
         if ( isset( $this->actions_custom[ 'pagination' ] ) && is_callable( $this->actions_custom[ 'pagination' ] ) )
             return call_user_func( $this->actions_custom[ 'pagination' ], $header, $this );
+
         $total_pages = ceil( $this->total_found / $this->limit );
         $request_uri = pods_var_update( array( 'pg' . $this->num => '' ), array( 'limit' . $this->num, 'orderby' . $this->num, 'orderby_dir' . $this->num, 'search' . $this->num, 'page' ), $this->exclusion() );
 

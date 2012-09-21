@@ -257,3 +257,31 @@ function pods_url_variable ($key = 'last', $type = 'url') {
     $output = apply_filters('pods_url_variable', pods_var($key, $type), $key, $type);
     return $output;
 }
+
+/**
+ * Generate form key - INTERNAL USE
+ *
+ * @since 1.2.0
+ * @deprecated deprecated since version 2.0.0
+ */
+function pods_generate_key( $datatype, $uri_hash, $columns, $form_count = 1 ) {
+    $token = wp_create_nonce( 'pods-form-' . $datatype . '-' . (int) $form_count . '-' . $uri_hash . '-' . json_encode( $columns ) );
+    $token = apply_filters( 'pods_generate_key', $token, $datatype, $uri_hash, $columns, (int) $form_count );
+    $_SESSION[ 'pods_form_' . $token ] = $columns;
+    return $token;
+}
+
+/**
+ * Validate form key - INTERNAL USE
+ *
+ * @since 1.2.0
+ * @deprecated deprecated since version 2.0.0
+ */
+function pods_validate_key( $token, $datatype, $uri_hash, $columns = null, $form_count = 1 ) {
+    if ( null === $columns && !empty( $_SESSION ) && isset( $_SESSION[ 'pods_form_' . $token ] ) )
+        $columns = $_SESSION[ 'pods_form_' . $token ];
+    $success = false;
+    if ( false !== wp_verify_nonce( $token, 'pods-form-' . $datatype . '-' . (int) $form_count . '-' . $uri_hash . '-' . json_encode( $columns ) ) )
+        $success = $columns;
+    return apply_filters( 'pods_validate_key', $success, $token, $datatype, $uri_hash, $columns, (int) $form_count );
+}

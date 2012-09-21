@@ -151,11 +151,11 @@ elseif ('wysiwyg' == $type) {
     if (is_admin()) {
         $type = 'desc_tinymce';
 
-        // New TinyMCE API by azaozz
-        require_once(PODS_DIR . 'ui/wp-editor/wp-editor.php');
         require_once(ABSPATH . '/wp-admin/includes/template.php');
 
-        if (!isset($pods_type_exists[$type]) || empty($pods_type_exists[$type])) {
+        if ( !function_exists( 'wp_editor' ) && ( !isset($pods_type_exists[$type]) || empty($pods_type_exists[$type] ) ) ) {
+            // New TinyMCE API by azaozz
+            require_once( PODS_DIR . 'ui/wp-editor/wp-editor.php' );
 ?>
     <style type="text/css" scoped="scoped">
         @import url("<?php echo PODS_URL; ?>deprecated/wp-editor/editor-buttons.css");
@@ -170,8 +170,13 @@ elseif ('wysiwyg' == $type) {
                 && !(defined('PODS_UPLOAD_REQUIRE_LOGIN') && !is_bool(PODS_UPLOAD_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_UPLOAD_REQUIRE_LOGIN)))) {
             $media_bar = true;
         }
-        global $wp_editor;
-        echo $wp_editor->editor($value, $css_id, array('editor_class' => $css_classes, 'media_buttons_context' => 'Upload/Insert ', 'textarea_rows' => 10), $media_bar);
+        if (function_exists('wp_editor')) {
+            wp_editor($value, $css_id, array('editor_class' => $css_classes, 'media_buttons' => $media_bar));
+        }
+        else {
+            global $wp_editor;
+            echo $wp_editor->editor($value, $css_id, array('editor_class' => $css_classes, 'media_buttons_context' => 'Upload/Insert ', 'textarea_rows' => 10), $media_bar);
+        }
     }
     else {
         if (!isset($pods_type_exists[$type]) || empty($pods_type_exists[$type])) {
@@ -220,64 +225,95 @@ elseif ('file' == $type) {
 
             if (!isset($pods_type_exists[$type]) || empty($pods_type_exists[$type])) {
 ?>
-    <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/swfupload/swfupload.js'; ?>"></script>
+    <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.js'; ?>"></script>
+    <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.html4.js'; ?>"></script>
+    <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.html5.js'; ?>"></script>
+    <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.flash.js'; ?>"></script>
+    <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.silverlight.js'; ?>"></script>
 <?php
             }
             $button_height = (function_exists('is_super_admin') ? 23 : 24);
 ?>
     <script type="text/javascript">
         jQuery(function() {
-            swfu_<?php echo esc_attr($name); ?> = new SWFUpload({
-                button_text: '<span class="button">Select + Upload</span>',
-                button_text_style: '.button { text-align:center; color:#464646; font-size:11px; font-family:"Lucida Grande",Verdana,Arial,"Bitstream Vera Sans",sans-serif; }',
-                button_width: "132",
-                button_height: "<?php echo $button_height; ?>",
-                button_text_top_padding: 3,
-                button_image_url: "<?php echo WP_INC_URL; ?>/images/upload.png",
-                button_placeholder_id: "<?php echo esc_attr($css_id); ?>",
-                button_cursor: SWFUpload.CURSOR.HAND,
-                button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT,
-                upload_url: "<?php echo PODS_URL; ?>ui/ajax/misc.php",
-                flash_url: "<?php echo WP_INC_URL; ?>/js/swfupload/swfupload.swf",
-                file_types: "*.*",
-                file_size_limit: "<?php echo esc_attr(wp_max_upload_size()); ?>",
-                post_params: {"action": "wp_handle_upload_advanced", "_wpnonce": "<?php echo wp_create_nonce('pods-wp_handle_upload_advanced'); ?>", "auth_cookie": "<?php echo (is_ssl() ? esc_attr($_COOKIE[SECURE_AUTH_COOKIE]) : esc_attr($_COOKIE[AUTH_COOKIE])); ?>", "logged_in_cookie": "<?php echo esc_attr($_COOKIE[LOGGED_IN_COOKIE]); ?>"},
-                file_dialog_complete_handler: function(num_files, num_queued_files, total_queued_files) {
-                    this.startUpload();
-                },
-                file_queued_handler: function(file) {
-                    jQuery(".rightside.<?php echo esc_attr($name); ?> .form").append('<div id="' + file.id + '">' + file.name + '<div class="pods-progress"><div class="pods-bar"></div></div></div>');
-                },
-                upload_progress_handler: function(file, bytes_complete, bytes_total) {
-                    var percent = Math.ceil(100 * (bytes_complete / bytes_total));
-                    jQuery("#"+file.id+" .pods-bar").css("width", percent + "%");
-                },
-                upload_success_handler: function(file, server_data, response) {
-                    jQuery("#"+file.id+" .pods-progress").remove();
-
-                    if ("Error" == server_data.substr(0, 5)) {
-                        server_data = server_data.substr(7);
-                        jQuery("#"+file.id).append(server_data);
-                    }
-                    else if ("<e>" == server_data.substr(0, 3)) {
-                        jQuery("#"+file.id).append(server_data);
-                    }
-                    else {
-                        server_data = eval('('+server_data+')');
-                        jQuery("#"+file.id).html('<div class="btn dropme"></div> <a href="' + server_data.guid + '" target="_blank">' + server_data.post_title + '</a>');
-                        jQuery("#"+file.id).attr("class", "success");
-                        jQuery("#"+file.id).attr("id", server_data.ID);
-                    }
-                },
-                upload_complete_handler: function(file) {
-                    this.startUpload();
+            plup_<?php echo esc_attr($name); ?> = new plupload.Uploader({
+                runtimes: 'html5,flash,silverlight,html4',
+                browse_button: '<?php echo esc_attr($css_id); ?>',
+                container: 'plupload-container-<?php echo esc_attr($css_id); ?>',
+                file_data_name: 'Filedata',
+                max_file_size: '<?php echo wp_max_upload_size(); ?>b',
+                url: '<?php echo PODS_URL; ?>/ui/ajax/misc.php',
+                flash_swf_url: '<?php echo includes_url('js/plupload/plupload.flash.swf'); ?>',
+                silverlight_xap_url: '<?php echo includes_url('js/plupload/plupload.silverlight.xap'); ?>',
+                multipart: true,
+                urlstresm_upload: true,
+                multipart_params: {
+                    "_wpnonce": "<?php echo wp_create_nonce('pods-wp_handle_upload_advanced'); ?>",
+                    "action": "wp_handle_upload_advanced",
+                    "auth_cookie": "<?php echo (is_ssl() ? esc_attr($_COOKIE[SECURE_AUTH_COOKIE]) : esc_attr($_COOKIE[AUTH_COOKIE])); ?>",
+                    "logged_in_cookie": "<?php echo esc_attr($_COOKIE[LOGGED_IN_COOKIE]); ?>"
                 }
             });
-        });
+            plup_<?php echo esc_attr($name); ?>.init();
+
+            // Plupload Init Event Handler
+            plup_<?php echo esc_attr($name); ?>.bind('Init', function(up, params) {
+
+            });
+
+            // Plupload FilesAdded Event Handler
+            plup_<?php echo esc_attr($name); ?>.bind('FilesAdded', function(up, files) {
+                // Hide any existing files (for use in single/limited field configuration)
+                // jQuery('.pods_field_<?php echo $name; ?> .success').hide();
+
+                jQuery.each(files, function(index, file) {
+                    jQuery(".rightside.<?php echo esc_attr($name); ?> .form").append('<div id="' + file.id + '">' + file.name + '<div class="pods-progress"><div class="pods-bar"></div></div></div>');
+                });
+
+                up.refresh();
+                up.start();
+            });
+
+            // Plupload UploadProgress Event Handler
+            plup_<?php echo esc_attr($name); ?>.bind('UploadProgress', function(up, file) {
+                jQuery('#' + file.id + ' .pods-bar').css('width', file.percent + '%');
+            });
+
+            // Plupload FileUploaded Event Handler
+            <?php $queue_limit = 1; ?>
+            plup_<?php echo esc_attr($name); ?>.bind('FileUploaded', function(up, file, resp) {
+                var file_div = jQuery('#' + file.id);
+                var queue_limit = <?php echo $queue_limit; ?>;
+                file_div.find('.pods-progress').remove();
+
+                if ("Error" == resp.response.substr(0, 5)) {
+                    var response = resp.response.substr(7);
+                    file_div.append(response);
+                } else if ("<e>" == resp.response.substr(0, 3)) {
+                    var response = resp.response;
+                    file_div.append(resp.response);
+                } else {
+                    var response = eval( '(' +resp.response.match( /\{(.*)\}/gi ) + ')' );
+                    file_div.html('<div class="btn dropme"></div><a href="' + response.guid + '" target="_blank">' + response.post_title + '</a>');
+                    file_div.attr('class', 'success');
+                    file_div.data('post-id', response.ID);
+                }
+
+                /**
+                 * Field limit
+                jQuery.fn.reverse = [].reverse;
+                var files = jQuery('.pods_field_<?php echo $name; ?> .success'), file_count = files.size();
+                files.reverse().each(function(idx, elem) {
+                    if (idx + 1 > queue_limit) {
+                        jQuery(elem).remove();
+                    }
+                });
+                */
+
+            });
+        } );
     </script>
-    <input type="button" id="<?php echo esc_attr($css_id); ?>" value="swfupload not loaded" />
 <?php
-        }
         if (!(defined('PODS_DISABLE_FILE_BROWSER') && true === PODS_DISABLE_FILE_BROWSER)
                 && !(defined('PODS_FILES_REQUIRE_LOGIN') && is_bool(PODS_FILES_REQUIRE_LOGIN) && true === PODS_FILES_REQUIRE_LOGIN && !is_user_logged_in())
                 && !(defined('PODS_FILES_REQUIRE_LOGIN') && !is_bool(PODS_FILES_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_FILES_REQUIRE_LOGIN)))) {
@@ -289,28 +325,28 @@ elseif ('file' == $type) {
     <div class="<?php echo esc_attr($css_classes); ?>">
 <?php
         // Retrieve uploaded files
-        $sql = "
-        SELECT
-            `p`.`ID`, `p`.`post_title`, `p`.`guid`
-        FROM
-            `@wp_podsrel` `r`
-        INNER JOIN
-            `@wp_posts` `p` ON `p`.`post_type` = 'attachment' AND `p`.`ID` = `r`.`related_item_id`
-        WHERE
-            `r`.`item_id` = %d AND `r`.`field_id` = %d
-        ";
-        $sql = array($sql, array($id, $field['id']));
-        $result = pods_query($sql, $this);
-        foreach ($result as $row) {
+        $field_id = (int) $field['id'];
+        $files = $this->get_field( $field[ 'name' ] );
+        if ( !empty( $files ) && isset( $files[ 'ID' ] ) )
+            $files = array( $files );
+
+        if ( !empty( $files ) ) {
+            foreach ( $files as $file ) {
+                $filepath = $file[ 'guid' ];
+                $filename = substr($filepath, strrpos($filepath, '/') + 1);
 ?>
-        <div id="<?php echo esc_attr($row->ID); ?>" class="success">
-            <div class="btn dropme"></div> <a href="<?php echo esc_attr($row->guid); ?>" target="_blank"><?php echo esc_html($row->post_title); ?></a>
+        <div data-post-id="<?php echo (int) $file[ 'ID' ]; ?>" class="success">
+            <div class="btn dropme"></div>
+            <a href="<?php echo esc_attr( $file[ 'guid' ] ); ?>" target="_blank"><?php echo esc_html( $filename ); ?></a>
         </div>
 <?php
+            }
         }
 ?>
+        </div>
     </div>
 <?php
+    }
     }
 }
 
@@ -340,7 +376,7 @@ elseif ('pick' == $type && 'multi' == pods_var( 'pick_format_type', $field, 'sin
 Single-select PICK
 ==================================================
 */
-elseif ('pick' == $type && 'single' == pods_var( 'pick_format_type', $field, 'single', null, true )) {
+elseif ('pick' == $type && 'single' == pods_var( 'pick_format_type', $field, 'single', null, true ) ) {
 ?>
     <select name="<?php echo esc_attr($name); ?>" class="<?php echo esc_attr($css_classes); ?>" id="<?php echo esc_attr($css_id); ?>">
         <option value="">-- Select one --</option>

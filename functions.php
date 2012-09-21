@@ -83,6 +83,8 @@ function pods_error ( $error, $obj = null ) {
 
     if ( is_array( $error ) )
         $error = __( 'The following issues occured:', 'pods' ) . "\n<ul><li>" . implode( "</li>\n<li>", $error ) . "</li></ul>";
+    elseif ( is_object( $error ) )
+        $error = __( 'An unknown error has occurred', 'pods' );
 
     // log error in WP
     $log_error = new WP_Error( 'pods-error-' . md5( $error ), $error );
@@ -1034,32 +1036,6 @@ function pods_shortcode ( $tags, $content = null ) {
         echo $pod->filters( $tags[ 'filters' ], $tags[ 'filters_label' ] );
 
     return ob_get_clean();
-}
-
-/**
- * Generate form key - INTERNAL USE
- *
- * @since 1.2.0
- */
-function pods_generate_key ( $datatype, $uri_hash, $columns, $form_count = 1 ) {
-    $token = wp_create_nonce( 'pods-form-' . $datatype . '-' . (int) $form_count . '-' . $uri_hash . '-' . json_encode( $columns ) );
-    $token = apply_filters( 'pods_generate_key', $token, $datatype, $uri_hash, $columns, (int) $form_count );
-    $_SESSION[ 'pods_form_' . $token ] = $columns;
-    return $token;
-}
-
-/**
- * Validate form key - INTERNAL USE
- *
- * @since 1.2.0
- */
-function pods_validate_key ( $token, $datatype, $uri_hash, $columns = null, $form_count = 1 ) {
-    if ( null === $columns && !empty( $_SESSION ) && isset( $_SESSION[ 'pods_form_' . $token ] ) )
-        $columns = $_SESSION[ 'pods_form_' . $token ];
-    $success = false;
-    if ( false !== wp_verify_nonce( $token, 'pods-form-' . $datatype . '-' . (int) $form_count . '-' . $uri_hash . '-' . json_encode( $columns ) ) )
-        $success = $columns;
-    return apply_filters( 'pods_validate_key', $success, $token, $datatype, $uri_hash, $columns, (int) $form_count );
 }
 
 /**

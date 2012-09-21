@@ -102,7 +102,7 @@ if (isset($methods[$action])) {
 function process_save_pod_item ($params, $api) {
     $params = (object) $params;
 
-    $columns = pods_validate_key($params->token, $params->datatype, $params->uri_hash, null, $params->form_count);
+    $columns = pods_validate_key($params->token, $params->pod, $params->uri_hash, null, $params->form_count);
     if (false === $columns)
         die("<e>This form has expired. Please reload the page and ensure your session is still active.");
 
@@ -116,7 +116,7 @@ function process_save_pod_item ($params, $api) {
         }
     }
     else {
-        $tmp = $api->load_pod(array('name' => $params->datatype));
+        $tmp = $api->load_pod(array('name' => $params->pod));
         $columns = array();
         foreach ($tmp['fields'] as $field_data) {
             $column = $field_data['name'];

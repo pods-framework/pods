@@ -484,6 +484,8 @@ class PodsAdmin {
             'pod' => __( 'Advanced Content Type', 'pods' )
         );
 
+        $row = false;
+
         foreach ( $pods as &$pod ) {
             if ( isset( $types[ $pod[ 'type' ] ] ) ) {
                 if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) ) {
@@ -499,10 +501,14 @@ class PodsAdmin {
             }
 
             $pod[ 'storage' ] = ucwords( $pod[ 'storage' ] );
+
+            if ( $pod[ 'id' ] == pods_var( 'id' ) )
+                $row = $pod;
         }
 
         pods_ui( array(
             'data' => $pods,
+            'row' => $row,
             'total' => count( $pods ),
             'total_found' => count( $pods ),
             'icon' => PODS_URL . 'ui/images/icon32.png',

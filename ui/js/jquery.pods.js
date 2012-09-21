@@ -878,8 +878,12 @@
                             $row_label.prop( 'colspan', '1' );
 
                             $row_content.find( 'input, select, textarea' ).each( function () {
-                                if ( 'undefined' != typeof orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] )
-                                    $( this ).val( orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] );
+                                if ( 'undefined' != typeof orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] ) {
+                                    if ( $( this ).is( 'input[type=checkbox]' ) )
+                                        $( this ).prop( 'checked', orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] );
+                                    else
+                                        $( this ).val( orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] );
+                                }
                             } );
                         } );
                     }
@@ -924,9 +928,16 @@
 
                             if ( 0 < $( this ).prop( 'name' ).indexOf( '[]' ) ) {
                                 if ( 'undefined' != typeof field_data[ json_name ] && 'undefined' != typeof field_data[ json_name ][ field_array_counter ] ) {
-                                    $( this ).val( field_data[ json_name ][ field_array_counter ] );
+                                    if ( $( this ).is( 'input[type=checkbox]' ) ) {
+                                        $( this ).prop( 'checked', ( $( this ).val() == field_data[ json_name ][ field_array_counter ] ) );
 
-                                    orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).val();
+                                        orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).prop( 'checked' );
+                                    }
+                                    else {
+                                        $( this ).val( field_data[ json_name ][ field_array_counter ] );
+
+                                        orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).val();
+                                    }
                                 }
 
                                 field_array_counter++;
@@ -935,9 +946,16 @@
                                 field_array_counter = 0;
 
                                 if ( 'undefined' != typeof field_data[ json_name ] ) {
-                                    $( this ).val( field_data[ json_name ] );
+                                    if ( $( this ).is( 'input[type=checkbox]' ) ) {
+                                        $( this ).prop( 'checked', ( $( this ).val() == field_data[ json_name ] ) );
 
-                                    orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).val();
+                                        orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).prop( 'checked' );
+                                    }
+                                    else {
+                                        $( this ).val( field_data[ json_name ] );
+
+                                        orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).val();
+                                    }
                                 }
                             }
                         } );
@@ -951,7 +969,10 @@
                     }
                     else {
                        $row_content.find( 'input, select, textarea' ).each( function () {
-                            orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).val();
+                           if ( $( this ).is( 'input[type=checkbox]' ) )
+                               orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).prop( 'checked' );
+                           else
+                               orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).val();
                         } );
                     }
 

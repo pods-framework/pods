@@ -192,7 +192,7 @@ class PodsAPI {
 
         $meta = get_post_meta( $id );
 
-        foreach ( $meta as $option => &$value ) {
+        foreach ( $meta as &$value ) {
             if ( is_array( $value ) && 1 == count( $value ) && isset( $value[ 0 ] ) )
                 $value = $value[ 0 ];
         }

@@ -931,6 +931,8 @@
                         $field_wrapper.find( '.pods-tabbed .pods-tab-group .pods-tab:first' ).show();
 
                         $row.removeClass( 'pods-field-init' );
+
+                        $( document ).Pods('qtip', $row);
                     }
                     else {
                        $row_content.find( 'input, select, textarea' ).each( function () {
@@ -1165,6 +1167,8 @@
                     $( this ).css( 'cursor', 'pointer' );
                     $( this ).prop( 'disabled', false );
 
+                    $(document ).Pods('qtip',$new_row);
+
                     e.preventDefault();
                 } );
             }
@@ -1218,6 +1222,31 @@
                         return 'Navigating away from this page will discard any changes you have made.';
                 }
             } );
+        },
+        qtip: function(element) {
+            $( element ).find('.pods-qtip').qtip( {
+                content : {
+                    attr : 'alt'
+                },
+                style : {
+                    classes : 'ui-tooltip-light ui-tooltip-shadow ui-tooltip-rounded'
+                },
+                show : {
+                    effect : function ( offset ) {
+                        $( this ).fadeIn( 'fast' );
+                    }
+                },
+                hide : {
+                    fixed : true,
+                    delay : 300
+                },
+                position : {
+                    my : 'bottom left',
+                    adjust : {
+                        y : -14
+                    }
+                }
+            } );
         }
     };
 
@@ -1237,28 +1266,3 @@
     };
 })( jQuery );
 
-jQuery( function ( $ ) {
-    $( '.pods-qtip' ).qtip( {
-        content : {
-            attr : 'alt'
-        },
-        style : {
-            classes : 'ui-tooltip-light ui-tooltip-shadow ui-tooltip-rounded'
-        },
-        show : {
-            effect : function ( offset ) {
-                $( this ).fadeIn( 'fast' );
-            }
-        },
-        hide : {
-            fixed : true,
-            delay : 300
-        },
-        position : {
-            my : 'bottom left',
-            adjust : {
-                y : -14
-            }
-        }
-    } );
-} );

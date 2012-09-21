@@ -1147,9 +1147,12 @@ class PodsUI {
                     elseif ( isset( $this->orderby[ 'default' ] ) ) // save this if we have a default index set
                         $value = $this->orderby[ 'default' ] . ' '
                              . ( false === strpos( $this->orderby[ 'default' ], ' ' ) ? $this->orderby_dir : '' );
+                    else
+                        $value = '';
                 }
                 else
                     $value = $this->$setting;
+
                 pods_var_set( $value, $setting, $method );
             }
         }

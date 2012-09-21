@@ -570,6 +570,9 @@ class PodsAdmin {
 
         unset( $obj->data[ $pod[ 'id' ] ] );
 
+        $obj->total = count( $obj->data );
+        $obj->total_found = count( $obj->data );
+
         $obj->message( __( 'Pod deleted successfully.', 'pods' ) );
     }
 

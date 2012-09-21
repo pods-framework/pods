@@ -1463,7 +1463,7 @@ class PodsUI {
             $this->data = $this->pod->find( $params )->data();
 
             if ( !empty( $this->data ) )
-               $this->data_keys = array_keys( $this->data );
+                $this->data_keys = array_keys( $this->data );
 
             $this->total = $this->pod->total();
             $this->total_found = $this->pod->total_found();

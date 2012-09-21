@@ -576,8 +576,12 @@ class PodsData {
         if ( 0 == $params->limit )
             $params->limit = -1;
 
-        if ( null === $params->offset )
-            $params->offset = ( $params->limit * ( $params->page - 1 ) );
+        $offset = ( $params->limit * ( $params->page - 1 ) );
+
+        if ( 0 < (int) $params->offset )
+            $params->offset += $offset;
+        else
+            $params->offset = $offset;
 
         if ( ( empty( $params->fields ) || !is_array( $params->fields ) ) && is_object( $this->pod_data ) && isset( $this->fields ) && !empty( $this->fields ) )
             $params->fields = $this->fields;

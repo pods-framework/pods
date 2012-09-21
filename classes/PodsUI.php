@@ -1444,6 +1444,8 @@ class PodsUI {
             $orderby = array();
 
             if ( !empty( $this->orderby ) ) {
+                $this->orderby = (array) $this->orderby;
+
                 foreach ( $this->orderby as $order ) {
                     if ( false === strpos( ' ', $order ) )
                         $orderby[ $order ] = $this->orderby_dir;

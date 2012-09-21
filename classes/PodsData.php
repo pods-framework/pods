@@ -538,6 +538,7 @@ class PodsData {
             'having' => null,
             'orderby' => null,
             'limit' => -1,
+            'offset' => null,
 
             'identifier' => 'id',
             'index' => 'name',
@@ -567,6 +568,11 @@ class PodsData {
 
         if ( 0 == $params->limit )
             $params->limit = -1;
+
+        $params->offset = ( $params->limit * ( $params->page - 1 ) );
+
+        if ( null !== $params->offset )
+            $params->offset += (int) $params->offset;
 
         if ( ( empty( $params->fields ) || !is_array( $params->fields ) ) && is_object( $this->pod_data ) && isset( $this->fields ) && !empty( $this->fields ) )
             $params->fields = $this->fields;
@@ -869,7 +875,7 @@ class PodsData {
                 " . ( !empty( $params->groupby ) ? 'GROUP BY ' . ( is_array( $params->groupby ) ? implode( ', ', $params->groupby ) : $params->groupby ) : '' ) . "
                 " . ( !empty( $params->having ) ? 'HAVING ' . ( is_array( $params->having ) ? implode( ' AND ', $params->having ) : $params->having ) : '' ) . "
                 " . ( !empty( $params->orderby ) ? 'ORDER BY ' . ( is_array( $params->orderby ) ? implode( ', ', $params->orderby ) : $params->orderby ) : '' ) . "
-                " . ( ( 0 < $params->page && 0 < $params->limit ) ? 'LIMIT ' . ( ( $params->page - 1 ) * $params->limit ) . ', ' . ( $params->limit ) : '' ) . "
+                " . ( ( 0 < $params->page && 0 < $params->limit ) ? 'LIMIT ' . $params->offset . ', ' . ( $params->limit ) : '' ) . "
             ";
         }
         // Rewrite

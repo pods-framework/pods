@@ -767,6 +767,7 @@ class Pods {
             'having' => null,
             'orderby' => null,
             'limit' => (int) $limit,
+            'offset' => null,
             'page' => (int) $this->page,
             'search' => (boolean) $this->search,
             'search_query' => pods_var( $this->search_var, 'get', '' ),

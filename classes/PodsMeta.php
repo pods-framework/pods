@@ -416,6 +416,9 @@ class PodsMeta {
         $pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id, true );
 
         foreach ( $metabox[ 'args' ][ 'group' ][ 'fields' ] as $field ) {
+            if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $metabox[ 'args' ][ 'group' ][ 'fields' ], $pod, $id ) )
+                continue;
+
             $value = '';
 
             if ( !empty( $pod ) ) {
@@ -483,6 +486,11 @@ class PodsMeta {
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
+                if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) )
+                    continue;
+
+                $data[ $field[ 'name' ] ] = '';
+
                 if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
                     $data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
             }
@@ -541,6 +549,9 @@ class PodsMeta {
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
+                if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) )
+                    continue;
+
                 $value = '';
 
                 if ( !empty( $pod ) )
@@ -595,6 +606,11 @@ class PodsMeta {
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
+                if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) )
+                    continue;
+
+                $data[ $field[ 'name' ] ] = '';
+
                 if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
                     $data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
             }
@@ -651,6 +667,9 @@ class PodsMeta {
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
+                if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) )
+                    continue;
+
                 $value = '';
 
                 if ( !empty( $pod ) )
@@ -712,6 +731,11 @@ class PodsMeta {
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
+                if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) )
+                    continue;
+
+                $data[ $field[ 'name' ] ] = '';
+
                 if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
                     $data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
             }
@@ -760,6 +784,9 @@ class PodsMeta {
             <tbody>
                 <?php
                 foreach ( $group[ 'fields' ] as $field ) {
+                    if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) )
+                        continue;
+
                     $value = '';
 
                     if ( !empty( $pod ) )
@@ -813,6 +840,11 @@ class PodsMeta {
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
+                if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) )
+                    continue;
+
+                $data[ $field[ 'name' ] ] = '';
+
                 if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
                     $data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
             }
@@ -856,6 +888,9 @@ class PodsMeta {
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
+                if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) )
+                    continue;
+
                 $value = '';
 
                 if ( !empty( $pod ) )
@@ -901,6 +936,9 @@ class PodsMeta {
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
+                if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) )
+                    continue;
+
                 $value = '';
 
                 if ( !empty( $pod ) )
@@ -981,6 +1019,9 @@ class PodsMeta {
         $pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id, true );
 
         foreach ( $metabox[ 'args' ][ 'group' ][ 'fields' ] as $field ) {
+            if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $metabox[ 'args' ][ 'group' ][ 'fields' ], $pod, $id ) )
+                continue;
+
             $value = '';
 
             if ( !empty( $pod ) )
@@ -1022,6 +1063,11 @@ class PodsMeta {
                 $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
 
             foreach ( $group[ 'fields' ] as $field ) {
+                if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) )
+                    continue;
+
+                $data[ $field[ 'name' ] ] = '';
+
                 if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
                     $data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
             }

@@ -975,9 +975,10 @@
 
                 $field_wrapper.find( 'input, select, textarea' ).each( function () {
                     var $el = $( this );
-                    var val = $el.val();
 
                     if ( '' != $el.prop( 'name' ) ) {
+                        var val = $el.val();
+
                         if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) )
                             val = 0;
                         else if ( $el.is( 'input[type=radio]' ) && !$el.is( ':checked' ) )

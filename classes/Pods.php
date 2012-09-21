@@ -379,7 +379,7 @@ class Pods {
         else {
             $object_field_found = false;
 
-            // @todo Handle Author like a pick field
+            // @todo Handle Author WP object fields like they are pick fields
             foreach ( $this->pod_data[ 'object_fields' ] as $object_field => $object_field_opt ) {
                 if ( $object_field == $params->name || in_array( $params->name, $object_field_opt[ 'alias' ] ) ) {
                     if ( isset( $this->row[ $object_field ] ) ) {
@@ -1228,7 +1228,8 @@ class Pods {
         $params = array(
             'helper' => $helper,
             'value' => $value,
-            'name' => $name
+            'name' => $name,
+            'deprecated' => false
         );
 
         if ( is_array( $helper ) )
@@ -1245,14 +1246,15 @@ class Pods {
      *
      * @param string $template The template name
      * @param string $code Custom template code to use instead
+     * @param bool $deprecated Whether to use deprecated functionality based on old function usage
      *
      * @return mixed Template output
      *
      * @since 2.0.0
      */
-    public function template ( $template, $code = null ) {
+    public function template ( $template, $code = null, $deprecated = false ) {
         if ( class_exists( 'Pods_Templates' ) )
-            return Pods_Templates::template( $template, $code, $this );
+            return Pods_Templates::template( $template, $code, $this, $deprecated );
     }
 
     /**

@@ -241,7 +241,8 @@ class Pods_Helpers extends PodsComponent {
         $defaults = array(
             'helper' => '',
             'value' => '',
-            'name' => ''
+            'name' => '',
+            'deprecated' => false
         );
 
         if ( is_array( $params ) )
@@ -256,6 +257,9 @@ class Pods_Helpers extends PodsComponent {
 
         if ( !isset( $params->value ) )
             $params->value = null;
+
+        if ( true === $params->deprecated && is_array( $params->value ) && !empty( $params->value ) && !isset( $params->value[ 0 ] ) )
+            $params->value = array( $params->value );
 
         if ( !isset( $params->name ) )
             $params->name = null;

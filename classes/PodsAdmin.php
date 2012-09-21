@@ -500,7 +500,7 @@ class PodsAdmin {
 
             $pod[ 'storage' ] = ucwords( $pod[ 'storage' ] );
 
-            if ( $pod[ 'id' ] == pods_var( 'id' ) )
+            if ( $pod[ 'id' ] == pods_var( 'id' ) && 'delete' != pods_var( 'action' ) )
                 $row = $pod;
         }
 
@@ -560,7 +560,7 @@ class PodsAdmin {
      *
      * @return mixed
      */
-    public function admin_setup_delete ( $id, $obj ) {
+    public function admin_setup_delete ( $id, &$obj ) {
         $pod = $this->api->load_pod( array( 'id' => $id ), false );
 
         if ( empty( $pod ) )

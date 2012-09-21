@@ -602,6 +602,10 @@ class PodsUpgrade_2_0 {
                 $pod_fields = pods_query( "SELECT `id`, `name` FROM `@wp_pod_fields` WHERE `datatype` = {$type->id} ORDER BY `id`" );
 
                 foreach ( $pod_fields as $field ) {
+                    // Handle name changes
+                    if ( in_array( $field->name, array( 'type', 'created', 'modified', 'author' ) ) )
+                        $field->name .= '2';
+
                     $types[ $type->id ][ 'old_fields' ][ $field->id ] = $field->name;
                 }
             }

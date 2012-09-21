@@ -90,7 +90,7 @@ class Pods_Deprecated
         do_action( 'pods_showform_pre', $pod_id, $public_fields, $label, $this );
 
         foreach ( $fields as $key => $field ) {
-            if ( !is_array( $field ) )
+            if ( !is_array( $field ) || in_array( $key, array( 'created', 'modified' ) ) )
                 continue;
 
             // Pass options so they can be manipulated via form
@@ -558,7 +558,14 @@ class Pods_Deprecated
     public function pod_helper ( $helper_name, $value = null, $name = null ) {
         pods_deprecated( 'Pods::pod_helper', '2.0.0', 'Pods::helper' );
 
-        return $this->obj->helper( array( 'helper' => $helper_name, 'value' => $value, 'name' => $name ) );
+        $params = array(
+            'helper' => $helper_name,
+            'value' => $value,
+            'name' => $name,
+            'deprecated' => true
+        );
+
+        return $this->obj->helper( $params );
     }
 
     /**
@@ -569,6 +576,6 @@ class Pods_Deprecated
     public function showTemplate ( $template_name, $code = null ) {
         pods_deprecated( 'Pods::showTemplate', '2.0.0', 'Pods::template' );
 
-        return $this->obj->template( $template_name, $code );
+        return $this->obj->template( $template_name, $code, true );
     }
 }

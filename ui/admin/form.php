@@ -137,9 +137,6 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
                             if ( $pod->pod_data[ 'field_index' ] != $field[ 'name' ] || 'text' != $field[ 'type' ] )
                                 continue;
 
-                            if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $pod->id() ) )
-                                continue;
-
                             $more = true;
                             ?>
                             <div id="titlediv">

@@ -25,6 +25,15 @@ class Pods_Templates extends PodsComponent {
     static $obj = null;
 
     /**
+     * Whether to enable deprecated functionality based on old function usage
+     *
+     * @var bool
+     *
+     * @since 2.0.0
+     */
+    static $deprecated = false;
+
+    /**
      * Object type
      *
      * @var string
@@ -209,15 +218,18 @@ class Pods_Templates extends PodsComponent {
      * @param string $template The template name
      * @param string $code Custom template code to use instead
      * @param object $obj The Pods object
+     * @param bool $deprecated Whether to use deprecated functionality based on old function usage
      *
      * @return mixed|string|void
      * @since 2.0.0
      */
-    public static function template ( $template, $code = null, $obj = null ) {
+    public static function template ( $template, $code = null, $obj = null, $deprecated = false ) {
         if ( !empty( $obj ) )
             self::$obj =& $obj;
         else
             $obj =& self::$obj;
+
+        self::$deprecated = $deprecated;
 
         if ( empty( $obj ) || !is_object( $obj ) )
             return '';
@@ -341,7 +353,8 @@ class Pods_Templates extends PodsComponent {
             $params = array(
                 'helper' => $helper_name,
                 'value' => $value,
-                'name' => $field_name
+                'name' => $field_name,
+                'deprecated' => self::$deprecated
             );
 
             if ( class_exists( 'Pods_Helpers' ) )

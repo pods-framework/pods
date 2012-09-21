@@ -2,6 +2,14 @@
 wp_enqueue_script( 'pods', false, array( 'jquery' ), false, true );
 wp_enqueue_style( 'pods-form', false, array(), false, true );
 
+// unset fields
+foreach ( $fields as $k => $field ) {
+    if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) )
+        unset( $fields[ $k ] );
+    elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $pod->id() ) )
+        unset( $fields[ $k ] );
+}
+
 // This isn't ready yet
 $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
 $field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $fields ) ) );

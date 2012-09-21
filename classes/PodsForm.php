@@ -226,7 +226,7 @@ class PodsForm {
      *
      * @since 2.0.0
      */
-    public static function merge_attributes ( $attributes, $name = null, $type = null, $options = null ) {
+    public static function merge_attributes ( $attributes, $name = null, $type = null, $options = null, $classes = '' ) {
         $options = (array) $options;
 
         if ( !in_array( $type, array( 'label', 'comment' ) ) ) {
@@ -258,6 +258,13 @@ class PodsForm {
                 $attributes[ 'class' ] = $options[ 'class' ];
 
             $attributes[ 'class' ] = trim( $attributes[ 'class' ] );
+        }
+
+        if ( !empty( $classes ) ) {
+            if ( isset( $attributes[ 'class' ] ) )
+                $attributes[ 'class' ] = $attributes[ 'class' ] . ' ' . $classes;
+            else
+                $attributes[ 'class' ] = $classes;
         }
 
         if ( 1 == pods_var( 'required', $options, 0 ) )

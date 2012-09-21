@@ -19,6 +19,13 @@
                 else
                     label = $el.prop( 'name' ).trim().replace( '_', ' ' );
 
+                // TinyMCE support
+                if ( 'object' == typeof( tinyMCE ) && -1 < $el.prop( 'class' ).indexOf( 'pods-ui-field-tinymce' ) ) {
+                    var ed = tinyMCE.get( $el.prop( 'id' ) );
+
+                    $el.val( ed.getContent() );
+                }
+
                 if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) ) {
                     if ( 0 == $el.parent().find( '.pods-validate-error-message' ).length )
                        $el.parent().append( '<div class="pods-validate-error-message">' + label.replace( /(<([^>]+)>)/ig, '' ) + ' is required.</div>' );
@@ -68,10 +75,18 @@
 
                 $submittable.find( '.pods-submittable-fields' ).find( 'input, select, textarea' ).each( function () {
                     var $el = $( this );
-                    var val = $el.val();
                     var field_name = $el.prop( 'name' );
 
                     if ( '' != field_name && 0 != field_name.indexOf( 'field_data[' ) ) {
+                        // TinyMCE support
+                        if ( 'object' == typeof( tinyMCE ) && -1 < $el.prop( 'class' ).indexOf( 'pods-ui-field-tinymce' ) ) {
+                            var ed = tinyMCE.get( $el.prop( 'id' ) );
+
+                            $el.val( ed.getContent() );
+                        }
+
+                        var val = $el.val();
+
                         if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) )
                             val = 0;
                         else if ( $el.is( 'input[type=radio]' ) && !$el.is( ':checked' ) )
@@ -977,6 +992,13 @@
                     var $el = $( this );
 
                     if ( '' != $el.prop( 'name' ) ) {
+                        // TinyMCE support
+                        if ( 'object' == typeof( tinyMCE ) && -1 < $el.prop( 'class' ).indexOf( 'pods-ui-field-tinymce' ) ) {
+                            var ed = tinyMCE.get( $el.prop( 'id' ) );
+
+                            $el.val( ed.getContent() );
+                        }
+
                         var val = $el.val();
 
                         if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) )

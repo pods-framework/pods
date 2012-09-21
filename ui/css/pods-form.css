@@ -166,6 +166,11 @@ input.pods-form-ui-field-type-color {
     background-color: #fff;
 }
 
+.pods-form-front ul.pods-form-fields {
+    list-style: none;
+    margin: 0;
+}
+
 .pods-form-front .pods-submittable-fields:after {
     content: '.';
     visibility: hidden;
@@ -200,6 +205,11 @@ input.pods-form-ui-field-type-color {
 .pods-form .pods-field-input textarea {
     width: 95%;
     min-height: 200px;
+}
+
+.pods-form-front .pods-field-input .quicktags-toolbar input {
+    display: inline-block;
+    width: auto;
 }
 
 .pods-form-front .pods-field-input .pods-boolean input {

@@ -367,8 +367,8 @@ class Pods {
         $params->traverse = array();
 
         if ( 'detail_url' == $params->name ) {
-            if ( 0 < strlen( $this->detail_page ) )
-                $value = get_bloginfo( 'url' ) . '/' . $this->do_template( $this->detail_page );
+            if ( 0 < strlen( $this->detail_page ) && class_exists( 'Pods_Templates' ) )
+                $value = get_bloginfo( 'url' ) . '/' . Pods_Templates::do_template( $this->detail_page, $this );
             elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
                 $value = get_permalink( $this->id() );
         }

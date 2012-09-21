@@ -262,24 +262,31 @@ class Pods_Templates extends PodsComponent {
      * @since 1.8.5
      */
     public static function do_template ( $code, $obj = null ) {
-        if ( !empty( $obj ) )
+        $php = true;
+
+        if ( !empty( $obj ) ) {
             self::$obj =& $obj;
+
+            $php = false;
+        }
         else
             $obj =& self::$obj;
 
         if ( empty( $obj ) || !is_object( $obj ) )
             return '';
 
-        ob_start();
-
         $code = str_replace( '$this->', '$obj->', $code );
 
-        if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL )
-            eval( "?>$code" );
-        else
-            echo $code;
+        if ( $php && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) ) {
+            ob_start();
 
-        $out = ob_get_clean();
+            eval( "?>$code" );
+
+            $out = ob_get_clean();
+        }
+        else
+            $out = $code;
+
         $out = preg_replace_callback( '/({@(.*?)})/m', array( 'self', 'do_magic_tags' ), $out );
 
         return apply_filters( 'pods_templates_do_template', $out, $code, $obj );

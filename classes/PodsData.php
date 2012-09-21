@@ -222,8 +222,8 @@ class PodsData {
             $this->pod = $this->pod_data[ 'name' ];
             $this->fields = $this->pod_data[ 'fields' ];
 
-            if ( isset( $this->pod_data[ 'options' ][ 'detail_page' ] ) )
-                $this->detail_page = $this->pod_data[ 'options' ][ 'detail_page' ];
+            if ( isset( $this->pod_data[ 'options' ][ 'detail_url' ] ) )
+                $this->detail_page = $this->pod_data[ 'options' ][ 'detail_url' ];
 
             if ( isset( $this->pod_data[ 'select' ] ) )
                 $this->select = $this->pod_data[ 'select' ];

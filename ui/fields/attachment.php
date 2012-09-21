@@ -102,7 +102,8 @@ else
                 }
 
                 // remove the entry
-                podsfile.remove();
+                $(this).remove();
+
             } );
         } );
 

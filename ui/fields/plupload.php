@@ -119,9 +119,8 @@ else
                 if ( podsfile.parent().children().length == 1 ) { // 1 because we haven't removed our target yet
                     podsfile.parent().hide();
                 }
-
                 // remove the entry
-                podsfile.remove();
+                $(this).remove();
             } );
         } );
 

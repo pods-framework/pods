@@ -582,26 +582,26 @@ class PodsData {
         elseif ( false === $params->strict )
             $params->join = $this->join;
 
-        $params->where = (array) $params->where;
+        if ( !empty( $params->where ) )
+            $params->where = (array) $params->where;
+        else
+            $params->where = array();
 
         if ( false === $params->strict && !empty( $this->where ) )
             $params->where = array_merge( $params->where, (array) $this->where );
 
-        if ( empty( $params->where ) )
-            $params->where = array();
-
-        $params->having = (array) $params->having;
-
-        if ( empty( $params->having ) )
+        if ( !empty( $params->having ) )
+            $params->having = (array) $params->having;
+        else
             $params->having = array();
 
-        $params->orderby = (array) $params->orderby;
+        if ( !empty( $params->having ) )
+            $params->orderby = (array) $params->orderby;
+        else
+            $params->orderby = array();
 
         if ( false === $params->strict && !empty( $this->orderby ) )
             $params->orderby = array_merge( $params->orderby, (array) $this->orderby );
-
-        if ( empty( $params->orderby ) )
-            $params->orderby = array();
 
         if ( !empty( $params->traverse ) )
             $this->traverse = $params->traverse;

@@ -416,6 +416,44 @@ class Pods_Deprecated
         if ( null == $orderby )
             $orderby = "`t`.`{$this->obj->field_id}` DESC";
 
+        $find = array(
+            ' p.created',
+            '`p`.`created`',
+            '`p`.created',
+            ' p.`created`',
+            ' p.modified',
+            '`p`.`modified`',
+            '`p`.modified',
+            ' p.`modified`',
+            ' p.id',
+            '`p`.`id`',
+            '`p`.id',
+            ' p.`id`',
+            ' p.pod_id',
+            '`p`.`pod_id`',
+            '`p`.pod_id',
+            ' p.`pod_id`'
+        );
+
+        $replace = array(
+            ' t.created',
+            '`t`.`created`',
+            '`t`.created',
+            ' t.`created`',
+            ' t.modified',
+            '`t`.`modified`',
+            '`t`.modified',
+            ' t.`modified`',
+            ' t.id',
+            '`t`.`id`',
+            '`t`.id',
+            ' t.`id`',
+            ' t.id',
+            '`t`.`id`',
+            '`t`.id',
+            ' t.`id`'
+        );
+
         $params = array(
             'where' => $where,
             'orderby' => $orderby,
@@ -429,6 +467,9 @@ class Pods_Deprecated
 
         if ( is_array( $orderby ) )
             $params = array_merge( $params, $orderby );
+
+        $params[ 'where' ] = str_replace( $find, $replace, $params[ 'where' ] );
+        $params[ 'orderby' ] = str_replace( $find, $replace, $params[ 'orderby' ] );
 
         $params = (object) $params;
 
@@ -481,7 +522,7 @@ class Pods_Deprecated
     public function getPagination ( $label = 'Go to page:' ) {
         pods_deprecated( 'Pods::getPagination', '2.0.0', 'Pods::pagination' );
 
-        echo $this->obj->pagination( array( 'type' => 'simple', 'label' => $label ) );
+        echo $this->obj->pagination( array( 'type' => 'advanced', 'label' => $label ) );
     }
 
     /**

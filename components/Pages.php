@@ -336,7 +336,7 @@ class Pods_Pages extends PodsComponent {
             if ( false !== self::$exists ) {
                 $pods = apply_filters( 'pods_global', $pods, self::$exists );
 
-                if ( 404 != $pods && ( !is_object( $pods ) || !is_wp_error( $pods ) ) ) {
+                if ( ( is_object( $pods ) || 404 != $pods  ) && ( !is_object( $pods ) || !is_wp_error( $pods ) ) ) {
                     add_action( 'template_redirect', array( $this, 'template_redirect' ) );
                     add_filter( 'redirect_canonical', '__return_false' );
                     add_action( 'wp_head', array( $this, 'wp_head' ) );

@@ -250,6 +250,8 @@ class Pods_Helpers extends PodsComponent {
 
         $params = (object) $params;
 
+        pods_debug( $params );
+
         if ( empty( $params->helper ) )
             return pods_error( 'Helper name required', $obj );
 
@@ -268,11 +270,14 @@ class Pods_Helpers extends PodsComponent {
 
             $code = str_replace( '$this->', '$obj->', $code );
             $value =& $params->value;
+            $_safe_params = $params;
 
             if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL )
                 eval( "?>{$code}" );
             else
                 echo $code;
+
+            $params = $_safe_params;
         }
         elseif ( is_callable( (string) $params->helper ) )
             echo call_user_func( (string) $params->helper, $params->value, $params->name, $params, $obj );

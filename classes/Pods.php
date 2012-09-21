@@ -1123,8 +1123,8 @@ class Pods {
             'type' => 'advanced',
             'label' => __( 'Go to page:', 'pods' ),
             'show_label' => true,
-            'next_text' => __( 'Next &gt;', 'pods' ),
-            'prev_text' => __( '&lt; Previous', 'pods' ),
+            'next_text' => __( 'Next &rsaquo;', 'pods' ),
+            'prev_text' => __( '&lsaquo; Previous', 'pods' ),
             'first_text' => __( '&laquo; First', 'pods' ),
             'last_text' => __( 'Last &raquo;', 'pods' ),
             'prev_next' => true,
@@ -1148,7 +1148,7 @@ class Pods {
 
         $params->total = ceil( $params->total_found / $params->limit );
 
-        if ( $params->limit < 1 || $params->total_found < 1 || 1 == $params->total_pages )
+        if ( $params->limit < 1 || $params->total_found < 1 || 1 == $params->total )
             return $this->do_hook( 'pagination', '', $params );
 
         $pagination = $params->type;
@@ -1201,6 +1201,9 @@ class Pods {
             'value' => $value,
             'name' => $name
         );
+
+        if ( is_array( $helper ) )
+            $params = array_merge( $params, $helper );
 
         if ( class_exists( 'Pods_Helpers' ) )
             return Pods_Helpers::helper( $params, $this );

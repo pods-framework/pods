@@ -67,12 +67,14 @@ function pods_attachments ( src, file_limit ) {
         var tmpl = Handlebars.compile( source );
 
         pods_file_context.prepend( tmpl( binding ) );
+
+        if(!pods_file_context.is(':visible'))
+            pods_file_context.show();
+
         pods_file_context.find( 'li#pods-file-' + wp_media_id ).slideDown( 'fast' );
 
         var items = pods_file_context.find( 'li.pods-file' ),
             itemCount = items.size();
-
-        console.log( items );
 
         if ( 0 < file_limit && itemCount > file_limit ) {
             items.each( function ( idx, elem ) {

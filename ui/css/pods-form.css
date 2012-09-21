@@ -201,6 +201,7 @@ input.pods-form-ui-field-type-color {
     width: 95%;
     min-height: 200px;
 }
+
 .pods-form-front .pods-field-input .pods-boolean input {
     width: auto;
 }
@@ -223,6 +224,7 @@ input.pods-form-ui-field-type-color {
 .pods-form-front ul.pods-files li.pods-file-icon img {
     width: 40px;
 }
+
 .pods-form-front .pods-file-add {
     display: block;
     margin: 10px;
@@ -242,4 +244,12 @@ input.pods-form-ui-field-type-color {
 .pods-form img.waiting {
     display: none;
     vertical-align: middle;
+}
+
+.pods-form-front-success {
+    color: #4F8A10;
+    border: 1px solid;
+    margin: 10px 0;
+    padding: 15px 10px 15px 50px;
+    background: #DFF2BF url(../images/green-check.png) no-repeat 10px center;
 }

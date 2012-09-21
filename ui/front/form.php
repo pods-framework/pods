@@ -10,14 +10,19 @@ $nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . session_id() . '_' . 
 
 if ( isset( $_POST[ '_pods_nonce' ] ) ) {
     try {
-        $id = $pod->api->process_form($_POST, $pod, $fields, $thank_you );
+        $id = $pod->api->process_form( $_POST, $pod, $fields, $thank_you );
     }
     catch ( Exception $e ) {
         echo '<div class="pods-message pods-message-error">' . $e->getMessage() . '</div>';
     }
 }
-?>
-<form action="<?php echo pods_var_update( array( '_p_submitted' => 1 ) ); ?>" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo $pod->pod; ?>" data-thank-you="<?php echo esc_attr( $thank_you ) ; ?>">
+if ( isset( $_GET[ 'success' ] ) && 1 == $_GET[ 'success' ] ): ?>
+    <div class="pods-form-front-success">
+            <?php echo $thank_you ?>
+    </div>
+
+<?php else: ?>
+<form action="<?php echo pods_var_update( array( '_p_submitted' => 1 ) ); ?>" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo $pod->pod; ?>" data-location="<?php echo pods_var_update( array( 'success' => true ) ) ?>">
     <div class="pods-submittable-fields">
         <?php echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' ); ?>
@@ -27,9 +32,9 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
 
         <ul class="pods-form-fields">
             <?php
-                foreach ( $fields as $field ) {
-                    do_action( 'pods_form_pre_field', $field, $fields, $pod );
-            ?>
+            foreach ( $fields as $field ) {
+                do_action( 'pods_form_pre_field', $field, $fields, $pod );
+                ?>
                 <li class="pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Podsform::clean( $name, true ); ?>">
                     <div class="pods-field-label">
                         <?php echo PodsForm::label( 'pods_field_' . $field[ 'name' ], $field ); ?>
@@ -41,8 +46,8 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
                         <?php echo PodsForm::comment( 'pods_field_' . $field[ 'name' ], null, $field ); ?>
                     </div>
                 </li>
-            <?php
-                }
+                <?php
+            }
             ?>
         </ul>
 
@@ -61,3 +66,4 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
         $( document ).Pods( 'submit' );
     } );
 </script>
+<?php endif;

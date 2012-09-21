@@ -5,7 +5,7 @@ Tags: pods, cms, cck, ui, content types, custom post types, relationships, datab
 Requires at least: 3.4
 Tested up to: 3.5
 Stable tag: 1.14.3
-~Current Version:2.0.0-b-15~
+~Current Version:2.0.0-rc-1~
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 

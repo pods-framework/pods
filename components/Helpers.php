@@ -139,9 +139,10 @@ class Pods_Helpers extends PodsComponent {
 
         $fields = array(
             array(
-                'name' => 'type',
+                'name' => 'helper_type',
                 'label' => __( 'Helper Type', 'pods' ),
                 'type' => 'pick',
+                'default' => 'display',
                 'data' => array(
                     'input' => 'Input (change form fields)',
                     'display' => 'Display (change field output when using magic tags)',

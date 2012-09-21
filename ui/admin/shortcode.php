@@ -299,7 +299,7 @@
                 </div>
                 <div class="pods-section hide">
                     <?php
-                    $helpers = $api->load_helpers();
+                    $helpers = $api->load_helpers( array( 'options' => array( 'helper_type' => 'display' ) ) );
                     $helper_count = count( $helpers );
                     ?>
                     <label for="pod_helper"><?php _e( 'Helper', 'pods' ); ?></label> <select id="pod_helper" name="pod_helper">

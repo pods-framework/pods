@@ -52,7 +52,7 @@
 
     <li>
         <?php
-        $all_helpers = $api->load_helpers( array() );
+        $all_helpers = $api->load_helpers( array( 'options' => array( 'helper_type' => 'display' ) ) );
         ?>
         <label for="<?php echo $this->get_field_id( 'helper' ); ?>">
             <?php _e( 'Helper', 'pods' ); ?>

@@ -25,9 +25,9 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
     }
 }
 if ( isset( $_GET[ 'success' ] ) && 1 == $_GET[ 'success' ] ): ?>
-    <div class="pods-form-front-success">
-            <?php echo $thank_you ?>
-    </div>
+<div class="pods-form-front-success">
+    <?php echo $thank_you ?>
+</div>
 
 <?php else: ?>
 <form action="<?php echo pods_var_update( array( '_p_submitted' => 1 ) ); ?>" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo $pod->pod; ?>" data-location="<?php echo pods_var_update( array( 'success' => true ) ) ?>">
@@ -41,9 +41,11 @@ if ( isset( $_GET[ 'success' ] ) && 1 == $_GET[ 'success' ] ): ?>
         <ul class="pods-form-fields">
             <?php
             foreach ( $fields as $field ) {
+                if ( false === PodsForm::permission( $field[ 'type' ], 'pods_field_' . $field[ 'name' ], $field[ 'options' ], $fields, $pod, $pod->id() ) )
+                    continue;
                 do_action( 'pods_form_pre_field', $field, $fields, $pod );
                 ?>
-                <li class="pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Podsform::clean( $name, true ); ?>">
+                <li class="pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Podsform::clean( $field[ 'name' ], true ); ?>">
                     <div class="pods-field-label">
                         <?php echo PodsForm::label( 'pods_field_' . $field[ 'name' ], $field ); ?>
                     </div>

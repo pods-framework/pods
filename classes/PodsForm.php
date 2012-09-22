@@ -113,6 +113,9 @@ class PodsForm {
         if ( null === $value || ( !empty( $pod ) && empty( $id ) ) )
             $value = self::default_value( $value, $type, $name, $options, $pod, $id );
 
+        if ( false === PodsForm::permission( $type, $name, $options, null, $pod, $id ) )
+            return false;
+
         $value = apply_filters( 'pods_form_ui_field_' . $type . '_value', $value, $name, $options, $pod, $id );
 
         ob_start();
@@ -687,7 +690,7 @@ class PodsForm {
                 if ( is_super_admin() || current_user_can( 'manage_options' ) )
                     $permission = true;
 
-                $capabilities = implode( ',', pods_var( 'capability_allowed', $options ) );
+                $capabilities = explode( ',', pods_var( 'capability_allowed', $options ) );
                 $capabilities = array_unique( array_filter( $capabilities ) );
 
                 foreach ( $capabilities as $capability ) {

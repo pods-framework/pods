@@ -76,7 +76,7 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
                                 <div id="minor-publishing">
                                     <div id="major-publishing-actions">
                                         <?php
-                                        if ( (is_super_admin() || current_user_can( 'pods_delete_' . $pod->pod )) && null !== pods_var_raw('id') ) {
+                                        if ( ( is_super_admin() || current_user_can( 'pods_delete_' . $pod->pod ) ) && null !== pods_var_raw( 'id' ) ) {
                                             ?>
                                             <div id="delete-action">
                                                 <a class="submitdelete deletion" href="<?php echo pods_var_update( array( 'action' => 'delete' ) ) ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
@@ -178,6 +178,8 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
                                 <table class="form-table pods-metabox">
                                     <?php
                                     foreach ( $fields as $field ) {
+                                        if ( false === PodsForm::permission( $field[ 'type' ],$field[ 'name' ], $field['options'], $fields, $pod, $pod->id() ) )
+                                            continue;
                                         ?>
                                         <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Podsform::clean( $field[ 'name' ], true ); ?>">
                                             <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_field_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>

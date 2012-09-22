@@ -593,6 +593,7 @@ class Pods_Pages extends PodsComponent {
             else {
                 // templates not found in theme, default output
                 do_action( 'pods_page_default', $template, self::$exists );
+                wp_enqueue_script('jquery');
 
                 get_header();
                 pods_content();

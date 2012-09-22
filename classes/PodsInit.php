@@ -38,6 +38,8 @@ class PodsInit {
     function __construct () {
         self::$version = get_option( 'pods_framework_version' );
 
+        add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
+
         add_action( 'init', array( $this, 'activate_install' ), 9 );
 
         if ( !empty( self::$version ) ) {
@@ -63,7 +65,14 @@ class PodsInit {
     }
 
     /**
-     *
+     * Load the plugin textdomain.
+     */
+    function load_textdomain () {
+        load_plugin_textdomain( 'pods', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+    }
+
+    /**
+     * Set up the Pods core
      */
     function init () {
         // Session start

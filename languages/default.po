@@ -1,0 +1,2401 @@
+# This file is distributed under the same license as the Pods Framework package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2012-09-22 11:15:40+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/0.1\n"
+"Project-Id-Version: Pods Framework\n"
+
+#: classes/Pods.php:1153
+msgid "Go to page:"
+msgstr ""
+
+#: classes/Pods.php:1157
+msgid "&laquo; First"
+msgstr ""
+
+#: classes/Pods.php:1158
+msgid "Last &raquo;"
+msgstr ""
+
+#: classes/PodsAPI.php:245
+msgid "User data is required but is either invalid or empty"
+msgstr ""
+
+#: classes/PodsAPI.php:341
+msgid "Comment data is required but is either invalid or empty"
+msgstr ""
+
+#: classes/PodsAPI.php:458
+msgid "Taxonomy term data is required but is either invalid or empty"
+msgstr ""
+
+#: classes/PodsAPI.php:883
+msgid "Please choose whether to Create or Extend a Content Type"
+msgstr ""
+
+#: classes/PodsAPI.php:937
+msgid "Post Type %s already exists, try extending it instead"
+msgstr ""
+
+#: classes/PodsAPI.php:946
+msgid "Taxonomy %s already exists, try extending it instead"
+msgstr ""
+
+#: classes/PodsAPI.php:1012
+msgid "Pod %s already exists, you cannot rename %s to that"
+msgstr ""
+
+#: classes/PodsAPI.php:1015 classes/PodsAPI.php:1018
+msgid "Pod %s cannot be renamed, it extends an existing WP Object"
+msgstr ""
+
+#: classes/PodsAPI.php:1022
+msgid "Pod using %s already exists, you can not reuse an object across multiple pods"
+msgstr ""
+
+#: classes/PodsAPI.php:1024
+msgid "Pod %s already exists"
+msgstr ""
+
+#: classes/PodsAPI.php:1102
+msgid "Post Type %s already exists, you cannot rename %s to that"
+msgstr ""
+
+#: classes/PodsAPI.php:1108
+msgid "Taxonomy %s already exists, you cannot rename %s to that"
+msgstr ""
+
+#: classes/PodsAPI.php:1118
+msgid "Pod name cannot be empty"
+msgstr ""
+
+#: classes/PodsAPI.php:1202
+msgid "Cannot save Pod"
+msgstr ""
+
+#: classes/PodsAPI.php:1220
+msgid "Cannot add Database Table for Pod"
+msgstr ""
+
+#: classes/PodsAPI.php:1227
+msgid "Cannot update Database Table for Pod"
+msgstr ""
+
+#: classes/PodsAPI.php:1366
+msgid "Cannot save the %s field"
+msgstr ""
+
+#: classes/PodsAPI.php:1434
+msgid "Pod ID or name is required"
+msgstr ""
+
+#: classes/PodsAPI.php:1449 classes/PodsAPI.php:2023 classes/PodsAPI.php:2516
+#: classes/PodsAPI.php:2568 classes/PodsAPI.php:2641 classes/PodsAPI.php:2694
+#: classes/PodsAPI.php:2784 classes/PodsAPI.php:2979 classes/PodsAPI.php:3145
+#: classes/PodsAPI.php:3430 classes/PodsAPI.php:3582 classes/PodsAPI.php:4001
+#: classes/PodsAPI.php:4912
+msgid "Pod not found"
+msgstr ""
+
+#: classes/PodsAPI.php:1479
+msgid "Field %s already exists, you cannot rename %s to that"
+msgstr ""
+
+#: classes/PodsAPI.php:1482
+msgid "Field %s already exists"
+msgstr ""
+
+#: classes/PodsAPI.php:1584 classes/PodsAPI.php:1587 classes/PodsAPI.php:1654
+msgid "%s is reserved for internal Pods usage, please try a different name"
+msgstr ""
+
+#: classes/PodsAPI.php:1591
+msgid "%s is reserved for internal WordPress or Pods usage, please try a different name. Also consider what WordPress and Pods provide you built-in."
+msgstr ""
+
+#: classes/PodsAPI.php:1596
+msgid "This pod already has an internal WordPress permalink field"
+msgstr ""
+
+#: classes/PodsAPI.php:1613
+msgid "This pod already has a permalink field"
+msgstr ""
+
+#: classes/PodsAPI.php:1646 classes/PodsAPI.php:1650
+msgid "%s is not editable"
+msgstr ""
+
+#: classes/PodsAPI.php:1658
+msgid "%s is reserved for internal WordPress or Pods usage, please try a different name"
+msgstr ""
+
+#: classes/PodsAPI.php:1678
+msgid "Cannot save Field"
+msgstr ""
+
+#: classes/PodsAPI.php:1694 classes/PodsAPI.php:1703 classes/PodsAPI.php:1710
+#: classes/PodsAPI.php:1714
+msgid "Cannot create new field"
+msgstr ""
+
+#: classes/PodsAPI.php:1755
+msgid "Name must be given to save an Object"
+msgstr ""
+
+#: classes/PodsAPI.php:1758
+msgid "Type must be given to save an Object"
+msgstr ""
+
+#: classes/PodsAPI.php:2117
+msgid "Pre-save helpers are deprecated, use the action pods_pre_save_pod_item_%s instead"
+msgstr ""
+
+#: classes/PodsAPI.php:2159
+msgid "There was an issue validating the field %s"
+msgstr ""
+
+#: classes/PodsAPI.php:2442
+msgid "Post-save helpers are deprecated, use the action pods_post_save_pod_item_%s instead"
+msgstr ""
+
+#: classes/PodsAPI.php:2605 classes/PodsAPI.php:2962
+msgid "$params->pod instead of $params->datatype"
+msgstr ""
+
+#: classes/PodsAPI.php:2711
+msgid "Pod unable to be deleted"
+msgstr ""
+
+#: classes/PodsAPI.php:2798 classes/PodsAPI.php:3452 classes/PodsAPI.php:3462
+msgid "Field not found"
+msgstr ""
+
+#: classes/PodsAPI.php:2812
+msgid "Field unable to be deleted"
+msgstr ""
+
+#: classes/PodsAPI.php:2847
+msgid "%s Object not found"
+msgstr ""
+
+#: classes/PodsAPI.php:2852
+msgid "%s Object not deleted"
+msgstr ""
+
+#: classes/PodsAPI.php:2944
+msgid "$params->id instead of $params->tbl_row_id"
+msgstr ""
+
+#: classes/PodsAPI.php:2950
+msgid "$params->id instead of $params->pod_id"
+msgstr ""
+
+#: classes/PodsAPI.php:2956
+msgid "$params->pod_id instead of $params->datatype_id"
+msgstr ""
+
+#: classes/PodsAPI.php:3009
+msgid "Pre-delete helpers are deprecated, use the action pods_pre_delete_pod_item_%s instead"
+msgstr ""
+
+#: classes/PodsAPI.php:3045
+msgid "Post-delete helpers are deprecated, use the action pods_post_delete_pod_item_%s instead"
+msgstr ""
+
+#: classes/PodsAPI.php:3436
+msgid "Either Field Name or Field ID / Pod ID are required"
+msgstr ""
+
+#: classes/PodsAPI.php:3596
+msgid "Either Field Name / Field ID / Field Type, or Pod Name / Pod ID are required"
+msgstr ""
+
+#: classes/PodsAPI.php:3662
+msgid "Object type is required"
+msgstr ""
+
+#: classes/PodsAPI.php:3665
+msgid "Either Object ID or Name are required"
+msgstr ""
+
+#: classes/PodsAPI.php:3694 classes/PodsAPI.php:3706
+msgid "Object not found"
+msgstr ""
+
+#: classes/PodsAPI.php:3751
+msgid "Pods Object type is required"
+msgstr ""
+
+#: classes/PodsAPI.php:3962
+msgid "Pod name required"
+msgstr ""
+
+#: classes/PodsAPI.php:3964
+msgid "Item ID required"
+msgstr ""
+
+#: classes/PodsAPI.php:4009
+msgid "Related Pod not found"
+msgstr ""
+
+#: classes/PodsAPI.php:4166
+msgid "%s is empty"
+msgstr ""
+
+#: classes/PodsAPI.php:4184
+msgid "%s needs to be unique"
+msgstr ""
+
+#: classes/PodsAPI.php:4641
+msgid "Package Imported"
+msgstr ""
+
+#: classes/PodsAPI.php:4643 classes/PodsAPI.php:4845
+msgid "Pod(s)"
+msgstr ""
+
+#: classes/PodsAPI.php:4647 classes/PodsAPI.php:4829 classes/PodsAPI.php:4849
+msgid "Template(s)"
+msgstr ""
+
+#: classes/PodsAPI.php:4651 classes/PodsAPI.php:4833 classes/PodsAPI.php:4853
+msgid "Pod Page(s)"
+msgstr ""
+
+#: classes/PodsAPI.php:4655 classes/PodsAPI.php:4837 classes/PodsAPI.php:4857
+msgid "Helper(s)"
+msgstr ""
+
+#: classes/PodsAPI.php:4661
+msgid "Error: Package not imported, try again."
+msgstr ""
+
+#: classes/PodsAPI.php:4698
+msgid "This is not a valid package. Please try again."
+msgstr ""
+
+#: classes/PodsAPI.php:4723
+msgid "This package may only be compatible with the newer <strong>Pods %s</strong>, but you are currently running the older <strong>Pods %s</strong><br/>Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods."
+msgstr ""
+
+#: classes/PodsAPI.php:4736
+msgid "This package may only be compatible with the older <strong>Pods %s</strong>, but you are currently running the newer <strong>Pods %s</strong><br />Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods"
+msgstr ""
+
+#: classes/PodsAPI.php:4746
+msgid "This package was built using the newer <strong>Pods %s</strong>, but you are currently running the older <strong>Pods</strong><br />Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods."
+msgstr ""
+
+#: classes/PodsAPI.php:4754
+msgid "This package was built using the older <strong>Pods %s</strong>, but you are currently running the newer <strong>Pods %s</strong><br/>Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods."
+msgstr ""
+
+#: classes/PodsAPI.php:4821
+msgid "Package Contents"
+msgstr ""
+
+#: classes/PodsAPI.php:5102
+msgid "Invalid submission"
+msgstr ""
+
+#: classes/PodsAPI.php:5112
+msgid "Access denied for your session, please refresh and try again."
+msgstr ""
+
+#: classes/PodsAPI.php:5115
+msgid "Access denied, please refresh and try again."
+msgstr ""
+
+#: classes/PodsAdmin.php:182 classes/PodsAdmin.php:203
+#: classes/PodsAdmin.php:240 classes/PodsInit.php:507 classes/PodsUI.php:744
+#: classes/PodsUI.php:752 classes/PodsUI.php:2087
+#: ui/admin/setup-edit-field-fluid.php:32 ui/admin/setup-edit-field.php:39
+#: ui/admin/setup-edit.php:421
+msgid "Edit"
+msgstr ""
+
+#: classes/PodsAdmin.php:184 classes/PodsAdmin.php:199
+#: classes/PodsAdmin.php:208 classes/PodsAdmin.php:242 classes/PodsInit.php:504
+#: classes/PodsUI.php:743 classes/PodsUI.php:751 ui/admin/setup-edit.php:409
+msgid "Add New"
+msgstr ""
+
+#: classes/PodsAdmin.php:187
+msgid "All"
+msgstr ""
+
+#: classes/PodsAdmin.php:349
+msgid "Pods Admin"
+msgstr ""
+
+#: classes/PodsAdmin.php:352
+msgid "Pods Upgrade"
+msgstr ""
+
+#: classes/PodsAdmin.php:394 classes/PodsAdmin.php:518
+#: classes/PodsAdmin.php:657 classes/PodsUI.php:761
+#: components/Roles/Roles.php:78 components/Roles/ui/add.php:50
+#: ui/admin/setup-edit-field-fluid.php:55
+msgid "Name"
+msgstr ""
+
+#: classes/PodsAdmin.php:400
+msgid "ID"
+msgstr ""
+
+#: classes/PodsAdmin.php:475
+msgid "Post Type (extended)"
+msgstr ""
+
+#: classes/PodsAdmin.php:476
+msgid "Taxonomy (extended)"
+msgstr ""
+
+#: classes/PodsAdmin.php:477
+msgid "Custom Post Type"
+msgstr ""
+
+#: classes/PodsAdmin.php:478
+msgid "Custom Taxonomy"
+msgstr ""
+
+#: classes/PodsAdmin.php:479
+msgid "User (extended)"
+msgstr ""
+
+#: classes/PodsAdmin.php:480
+msgid "Media (extended)"
+msgstr ""
+
+#: classes/PodsAdmin.php:481
+msgid "Comments (extended)"
+msgstr ""
+
+#: classes/PodsAdmin.php:482
+msgid "Advanced Content Type"
+msgstr ""
+
+#: classes/PodsAdmin.php:517 components/Roles/Roles.php:77
+#: components/Roles/ui/add.php:43 ui/admin/setup-edit-field-fluid.php:51
+#: ui/admin/setup-edit.php:401
+msgid "Label"
+msgstr ""
+
+#: classes/PodsAdmin.php:519
+msgid "Object Type"
+msgstr ""
+
+#: classes/PodsAdmin.php:520 ui/admin/setup-add.php:109
+#: ui/admin/setup-add.php:121 ui/admin/setup-add.php:203
+#: ui/admin/setup-add.php:215
+msgid "Storage Type"
+msgstr ""
+
+#: classes/PodsAdmin.php:567
+msgid "Pod not found."
+msgstr ""
+
+#: classes/PodsAdmin.php:576
+msgid "Pod deleted successfully."
+msgstr ""
+
+#: classes/PodsAdmin.php:615
+msgid "by %s"
+msgstr ""
+
+#: classes/PodsAdmin.php:618
+msgid "Visit component site"
+msgstr ""
+
+#: classes/PodsAdmin.php:662 ui/admin/setup-edit-field-fluid.php:59
+msgid "Description"
+msgstr ""
+
+#: classes/PodsAdmin.php:707
+msgid "This component requires that you have the <strong>%s</strong> plugin installed and activated. You can find it at %s"
+msgstr ""
+
+#: classes/PodsAdmin.php:716
+msgid "Component enabled"
+msgstr ""
+
+#: classes/PodsAdmin.php:718
+msgid "Component disabled"
+msgstr ""
+
+#: classes/PodsAdmin.php:860 classes/PodsAdmin.php:1044
+#: classes/PodsAdmin.php:1196
+msgid "Unauthorized request"
+msgstr ""
+
+#: classes/PodsAdmin.php:874 classes/PodsAdmin.php:881
+msgid "Access denied"
+msgstr ""
+
+#: classes/PodsAdmin.php:1051 classes/PodsAdmin.php:1203
+#: classes/PodsAdmin.php:1205
+msgid "Invalid field request"
+msgstr ""
+
+#: classes/PodsAdmin.php:1054 classes/PodsAdmin.php:1207
+#: classes/PodsAdmin.php:1209 classes/PodsAdmin.php:1211
+msgid "Invalid field"
+msgstr ""
+
+#: classes/PodsInit.php:494 classes/PodsUI.php:739
+msgid "Items"
+msgstr ""
+
+#: classes/PodsInit.php:495 classes/PodsUI.php:738
+msgid "Item"
+msgstr ""
+
+#: classes/PodsInit.php:505 classes/PodsInit.php:527
+msgid "Add New %s"
+msgstr ""
+
+#: classes/PodsInit.php:506
+msgid "New %s"
+msgstr ""
+
+#: classes/PodsInit.php:508 classes/PodsInit.php:525
+msgid "Edit %s"
+msgstr ""
+
+#: classes/PodsInit.php:509 classes/PodsInit.php:510
+msgid "View %s"
+msgstr ""
+
+#: classes/PodsInit.php:511 classes/PodsInit.php:522
+msgid "All %s"
+msgstr ""
+
+#: classes/PodsInit.php:512 classes/PodsInit.php:520
+msgid "Search %s"
+msgstr ""
+
+#: classes/PodsInit.php:513
+msgid "No %s Found"
+msgstr ""
+
+#: classes/PodsInit.php:514
+msgid "No %s Found in Trash"
+msgstr ""
+
+#: classes/PodsInit.php:515 classes/PodsInit.php:523
+msgid "Parent %s"
+msgstr ""
+
+#: classes/PodsInit.php:516
+msgid "Parent %s:"
+msgstr ""
+
+#: classes/PodsInit.php:521
+msgid "Popular %s"
+msgstr ""
+
+#: classes/PodsInit.php:524
+msgid "Parent %s :"
+msgstr ""
+
+#: classes/PodsInit.php:526
+msgid "Update %s"
+msgstr ""
+
+#: classes/PodsInit.php:528
+msgid "New %s Name"
+msgstr ""
+
+#: classes/PodsInit.php:529
+msgid "Separate %s with commas"
+msgstr ""
+
+#: classes/PodsInit.php:530
+msgid "Add or remove %s"
+msgstr ""
+
+#: classes/PodsInit.php:531
+msgid "Choose from the most used %s"
+msgstr ""
+
+#: classes/PodsMeta.php:196
+msgid "Object required to add a Pods meta group"
+msgstr ""
+
+#: classes/PodsMeta.php:357 ui/admin/form.php:170
+msgid "More Fields"
+msgstr ""
+
+#: classes/PodsUI.php:393
+msgid "<strong>Error:</strong> Pods UI needs a Pods object or a Table definition to run from, see the User Guide for more information."
+msgstr ""
+
+#: classes/PodsUI.php:742 components/Roles/ui/edit.php:39 ui/admin/form.php:72
+msgid "Manage"
+msgstr ""
+
+#: classes/PodsUI.php:745 classes/PodsUI.php:753 classes/PodsUI.php:2090
+msgid "Duplicate"
+msgstr ""
+
+#: classes/PodsUI.php:746 classes/PodsUI.php:755 classes/PodsUI.php:2084
+#: ui/admin/setup-edit.php:433
+msgid "View"
+msgstr ""
+
+#: classes/PodsUI.php:747 classes/PodsUI.php:756
+msgid "Reorder"
+msgstr ""
+
+#: classes/PodsUI.php:754
+msgid "Delete this"
+msgstr ""
+
+#: classes/PodsUI.php:1177 classes/PodsUI.php:1208
+msgid "Back to"
+msgstr ""
+
+#: classes/PodsUI.php:1250 classes/PodsUI.php:1289
+msgid "<strong>Error:</strong> %s not found."
+msgstr ""
+
+#: classes/PodsUI.php:1304 components/Roles/ui/edit.php:19 ui/admin/form.php:18
+#: ui/admin/form.php:40 ui/admin/setup-edit.php:259
+msgid "saved"
+msgstr ""
+
+#: classes/PodsUI.php:1306 components/Roles/ui/edit.php:22 ui/admin/form.php:21
+#: ui/admin/form.php:43 ui/admin/setup-edit.php:262
+msgid "created"
+msgstr ""
+
+#: classes/PodsUI.php:1400
+msgid "<strong>Error:</strong> Invalid Configuration - Missing \"id\" definition."
+msgstr ""
+
+#: classes/PodsUI.php:1591 ui/admin/setup-edit.php:984
+msgid "Back to Manage"
+msgstr ""
+
+#: classes/PodsUI.php:1669 classes/PodsUI.php:1685
+msgid "Show All"
+msgstr ""
+
+#: classes/PodsUI.php:1705 classes/PodsUI.php:1707
+msgid "Search"
+msgstr ""
+
+#: classes/PodsUI.php:1718
+msgid "Reset Filters"
+msgstr ""
+
+#: classes/PodsUI.php:1745
+msgid "Update Order"
+msgstr ""
+
+#: classes/PodsUI.php:1746 ui/admin/setup-edit-field-fluid.php:133
+msgid "Cancel"
+msgstr ""
+
+#: classes/PodsUI.php:1763
+msgid "Export"
+msgstr ""
+
+#: classes/PodsUI.php:1789
+msgid "Please use the search filter(s) above to display data"
+msgstr ""
+
+#: classes/PodsUI.php:1789
+msgid "or click on an Export to download a full copy of the data"
+msgstr ""
+
+#: classes/PodsUI.php:1833
+msgid "No %s found"
+msgstr ""
+
+#: classes/PodsUI.php:1861
+msgid "<strong>Error:</strong> Invalid Configuration - Missing \"fields\" definition."
+msgstr ""
+
+#: classes/PodsUI.php:2084
+msgid "View this item"
+msgstr ""
+
+#: classes/PodsUI.php:2087
+msgid "Edit this item"
+msgstr ""
+
+#: classes/PodsUI.php:2090
+msgid "Duplicate this item"
+msgstr ""
+
+#: classes/PodsUI.php:2093
+msgid "Delete this item"
+msgstr ""
+
+#: classes/PodsUI.php:2093
+msgid ""
+"You are about to permanently delete this item\n"
+" Choose \\'Cancel\\' to stop, \\'OK\\' to delete."
+msgstr ""
+
+#: classes/PodsUI.php:2094 ui/admin/form.php:82
+#: ui/admin/setup-edit-field-fluid.php:35 ui/admin/setup-edit-field.php:42
+msgid "Delete"
+msgstr ""
+
+#: classes/PodsUI.php:2103
+msgid "Enable"
+msgstr ""
+
+#: classes/PodsUI.php:2104
+msgid "Disable"
+msgstr ""
+
+#: classes/PodsUI.php:2261 classes/PodsUI.php:2279
+msgid "Show on screen"
+msgstr ""
+
+#: classes/PodsUI.php:2386
+msgid "Go to the first page"
+msgstr ""
+
+#: classes/PodsUI.php:2387
+msgid "Go to the previous page"
+msgstr ""
+
+#: classes/PodsUI.php:2391
+msgid "Current page"
+msgstr ""
+
+#: classes/PodsUI.php:2391 classes/PodsUI.php:2408
+msgid "of"
+msgstr ""
+
+#: classes/PodsUI.php:2412
+msgid "Go to the next page"
+msgstr ""
+
+#: classes/PodsUI.php:2413
+msgid "Go to the last page"
+msgstr ""
+
+#: classes/fields/boolean.php:52
+msgid "Format Type"
+msgstr ""
+
+#: classes/fields/boolean.php:56
+msgid "Checkbox"
+msgstr ""
+
+#: classes/fields/boolean.php:57 classes/fields/pick.php:62
+msgid "Radio Buttons"
+msgstr ""
+
+#: classes/fields/boolean.php:58 classes/fields/pick.php:61
+msgid "Drop Down"
+msgstr ""
+
+#: classes/fields/boolean.php:63
+msgid "Yes Label"
+msgstr ""
+
+#: classes/fields/boolean.php:64 classes/fields/boolean.php:286
+msgid "Yes"
+msgstr ""
+
+#: classes/fields/boolean.php:68
+msgid "No Label"
+msgstr ""
+
+#: classes/fields/boolean.php:69 classes/fields/boolean.php:287
+msgid "No"
+msgstr ""
+
+#: classes/fields/code.php:59 classes/fields/paragraph.php:58
+#: classes/fields/text.php:58 classes/fields/wysiwyg.php:71
+msgid "Output Options"
+msgstr ""
+
+#: classes/fields/code.php:62 classes/fields/paragraph.php:103
+#: classes/fields/text.php:61 classes/fields/wysiwyg.php:110
+msgid "Allow Shortcodes?"
+msgstr ""
+
+#: classes/fields/code.php:70 classes/fields/currency.php:107
+#: classes/fields/email.php:58 classes/fields/number.php:75
+#: classes/fields/paragraph.php:121 classes/fields/password.php:59
+#: classes/fields/phone.php:83 classes/fields/text.php:81
+#: classes/fields/website.php:71 classes/fields/wysiwyg.php:127
+msgid "Maximum Length"
+msgstr ""
+
+#: classes/fields/color.php:128 classes/fields/email.php:160
+#: classes/fields/password.php:141 classes/fields/phone.php:167
+#: classes/fields/text.php:184 classes/fields/website.php:155
+msgid "This field is required."
+msgstr ""
+
+#: classes/fields/color.php:131
+msgid "Invalid value provided for this field."
+msgstr ""
+
+#: classes/fields/color.php:135
+msgid "Invalid Hex Color value provided for this field."
+msgstr ""
+
+#: classes/fields/currency.php:68
+msgid "Currency Sign"
+msgstr ""
+
+#: classes/fields/currency.php:79
+msgid "Currency Placement"
+msgstr ""
+
+#: classes/fields/currency.php:83
+msgid "Before ($100)"
+msgstr ""
+
+#: classes/fields/currency.php:84
+msgid "After (100$)"
+msgstr ""
+
+#: classes/fields/currency.php:85
+msgid "None (100)"
+msgstr ""
+
+#: classes/fields/currency.php:86
+msgid "Before with Currency Code after ($100 USD)"
+msgstr ""
+
+#: classes/fields/currency.php:90 classes/fields/number.php:58
+#: classes/fields/phone.php:58 classes/fields/pick.php:53
+#: classes/fields/pick.php:69 classes/fields/website.php:58
+msgid "Format"
+msgstr ""
+
+#: classes/fields/currency.php:94 classes/fields/number.php:62
+msgid "Localized Default"
+msgstr ""
+
+#: classes/fields/currency.php:102 classes/fields/number.php:70
+msgid "Decimals"
+msgstr ""
+
+#: classes/fields/currency.php:288 classes/fields/number.php:238
+msgid "%s is not numeric"
+msgstr ""
+
+#: classes/fields/date.php:58 classes/fields/datetime.php:58
+msgid "Date Format"
+msgstr ""
+
+#: classes/fields/date.php:72 classes/fields/datetime.php:98
+#: classes/fields/email.php:63 classes/fields/phone.php:88
+#: classes/fields/time.php:83 classes/fields/website.php:76
+msgid "Enable HTML5 Input Field?"
+msgstr ""
+
+#: classes/fields/datetime.php:72 classes/fields/time.php:57
+msgid "Time Format Type"
+msgstr ""
+
+#: classes/fields/datetime.php:76 classes/fields/time.php:61
+msgid "12 hour"
+msgstr ""
+
+#: classes/fields/datetime.php:77 classes/fields/time.php:62
+msgid "24 hour"
+msgstr ""
+
+#: classes/fields/datetime.php:81 classes/fields/time.php:66
+msgid "Time Format"
+msgstr ""
+
+#: classes/fields/email.php:162
+msgid "Invalid e-mail provided."
+msgstr ""
+
+#: classes/fields/file.php:50
+msgid "File Type"
+msgstr ""
+
+#: classes/fields/file.php:54 classes/fields/pick.php:47
+msgid "Single Select"
+msgstr ""
+
+#: classes/fields/file.php:55 classes/fields/pick.php:48
+msgid "Multiple Select"
+msgstr ""
+
+#: classes/fields/file.php:60
+msgid "File Uploader"
+msgstr ""
+
+#: classes/fields/file.php:66
+msgid "Plupload"
+msgstr ""
+
+#: classes/fields/file.php:67
+msgid "Attachments (WP Media Library)"
+msgstr ""
+
+#: classes/fields/file.php:82
+msgid "Editable Title"
+msgstr ""
+
+#: classes/fields/file.php:87
+msgid "File Limit"
+msgstr ""
+
+#: classes/fields/file.php:93
+msgid "Restrict File Size"
+msgstr ""
+
+#: classes/fields/file.php:99
+msgid "Restrict File Types"
+msgstr ""
+
+#: classes/fields/file.php:106
+msgid "Images (jpg, png, gif)"
+msgstr ""
+
+#: classes/fields/file.php:107
+msgid "Video (mpg, mov, flv, mp4)"
+msgstr ""
+
+#: classes/fields/file.php:109
+msgid "Other (customize allowed extensions)"
+msgstr ""
+
+#: classes/fields/file.php:115
+msgid "Allowed File Extensions"
+msgstr ""
+
+#: classes/fields/file.php:116
+msgid "Separate file extensions with a comma (ex. jpg,png,mp4,mov)"
+msgstr ""
+
+#: classes/fields/paragraph.php:61 classes/fields/text.php:67
+msgid "Allow HTML?"
+msgstr ""
+
+#: classes/fields/paragraph.php:115 classes/fields/text.php:75
+#: classes/fields/wysiwyg.php:122
+msgid "Allowed HTML Tags"
+msgstr ""
+
+#: classes/fields/phone.php:62
+msgid "US"
+msgstr ""
+
+#: classes/fields/phone.php:67
+msgid "International"
+msgstr ""
+
+#: classes/fields/phone.php:68
+msgid "Any (no validation available)"
+msgstr ""
+
+#: classes/fields/phone.php:73
+msgid "Phone Options"
+msgstr ""
+
+#: classes/fields/phone.php:76
+msgid "Enable Phone Extension?"
+msgstr ""
+
+#: classes/fields/phone.php:169
+msgid "Invalid phone number provided."
+msgstr ""
+
+#: classes/fields/pick.php:42
+msgid "Selection Type"
+msgstr ""
+
+#: classes/fields/pick.php:43 classes/fields/pick.php:54
+#: classes/fields/pick.php:70 classes/fields/pick.php:86
+#: classes/fields/pick.php:100 classes/fields/pick.php:107
+#: classes/fields/pick.php:114 ui/admin/setup-add.php:68
+#: ui/admin/setup-add.php:86 ui/admin/setup-add.php:103
+#: ui/admin/setup-add.php:146 ui/admin/setup-add.php:174
+#: ui/admin/setup-add.php:193 ui/admin/setup-edit-field-fluid.php:51
+#: ui/admin/setup-edit-field-fluid.php:59
+#: ui/admin/setup-edit-field-fluid.php:63
+#: ui/admin/setup-edit-field-fluid.php:68
+#: ui/admin/setup-edit-field-fluid.php:76
+#: ui/admin/setup-edit-field-fluid.php:88
+#: ui/admin/setup-edit-field-fluid.php:91 ui/admin/setup-edit.php:39
+#: ui/admin/setup-edit.php:45 ui/admin/setup-edit.php:54
+#: ui/admin/setup-edit.php:60 ui/admin/setup-edit.php:401
+#: ui/admin/setup-edit.php:405 ui/admin/setup-edit.php:409
+#: ui/admin/setup-edit.php:413 ui/admin/setup-edit.php:417
+#: ui/admin/setup-edit.php:421 ui/admin/setup-edit.php:425
+#: ui/admin/setup-edit.php:429 ui/admin/setup-edit.php:433
+#: ui/admin/setup-edit.php:437 ui/admin/setup-edit.php:441
+#: ui/admin/setup-edit.php:445 ui/admin/setup-edit.php:449
+#: ui/admin/setup-edit.php:457 ui/admin/setup-edit.php:465
+#: ui/admin/setup-edit.php:469 ui/admin/setup-edit.php:473
+#: ui/admin/setup-edit.php:477 ui/admin/setup-edit.php:495
+#: ui/admin/setup-edit.php:502 ui/admin/setup-edit.php:509
+#: ui/admin/setup-edit.php:516 ui/admin/setup-edit.php:523
+#: ui/admin/setup-edit.php:531 ui/admin/setup-edit.php:538
+#: ui/admin/setup-edit.php:545 ui/admin/setup-edit.php:552
+#: ui/admin/setup-edit.php:559 ui/admin/setup-edit.php:566
+#: ui/admin/setup-edit.php:573 ui/admin/setup-edit.php:585
+#: ui/admin/setup-edit.php:592 ui/admin/setup-edit.php:599
+#: ui/admin/setup-edit.php:607 ui/admin/setup-edit.php:614
+#: ui/admin/setup-edit.php:621 ui/admin/setup-edit.php:629
+#: ui/admin/setup-edit.php:644 ui/admin/setup-edit.php:652
+#: ui/admin/setup-edit.php:660 ui/admin/setup-edit.php:667
+#: ui/admin/setup-edit.php:782 ui/admin/setup-edit.php:786
+#: ui/admin/setup-edit.php:791 ui/admin/setup-edit.php:795
+#: ui/admin/setup-edit.php:800 ui/admin/setup-edit.php:804
+#: ui/admin/setup-edit.php:808 ui/admin/setup-edit.php:813
+#: ui/admin/setup-edit.php:817 ui/admin/setup-edit.php:822
+#: ui/admin/setup-edit.php:827 ui/admin/setup-edit.php:835
+#: ui/admin/setup-edit.php:840 ui/admin/setup-edit.php:874
+#: ui/admin/setup-edit.php:878 ui/admin/setup-edit.php:883
+#: ui/admin/setup-edit.php:887 ui/admin/setup-edit.php:920
+#: ui/admin/setup-edit.php:934 ui/admin/setup-edit.php:948
+#: ui/admin/setup-edit.php:962
+msgid "help"
+msgstr ""
+
+#: classes/fields/pick.php:63 classes/fields/pick.php:79
+msgid "Autocomplete"
+msgstr ""
+
+#: classes/fields/pick.php:77
+msgid "Checkboxes"
+msgstr ""
+
+#: classes/fields/pick.php:78
+msgid "Multi Select"
+msgstr ""
+
+#: classes/fields/pick.php:85
+msgid "Selection Limit"
+msgstr ""
+
+#: classes/fields/pick.php:92
+msgid "Display Field in Selection List"
+msgstr ""
+
+#: classes/fields/pick.php:93
+msgid "You can use {@magic_tags} to reference field names on the related object."
+msgstr ""
+
+#: classes/fields/pick.php:99
+msgid "Customized <em>WHERE</em>"
+msgstr ""
+
+#: classes/fields/pick.php:106
+msgid "Customized <em>ORDER BY</em>"
+msgstr ""
+
+#: classes/fields/pick.php:113
+msgid "Customized <em>GROUP BY</em>"
+msgstr ""
+
+#: classes/fields/pick.php:285 classes/fields/pick.php:305
+msgid "-- Select One --"
+msgstr ""
+
+#: classes/fields/website.php:62
+msgid "http://example.com/"
+msgstr ""
+
+#: classes/fields/website.php:63
+msgid "http://example.com/ (remove www)"
+msgstr ""
+
+#: classes/fields/website.php:64
+msgid "http://www.example.com/ (force www if no sub-domain provided)"
+msgstr ""
+
+#: classes/fields/website.php:65
+msgid "example.com"
+msgstr ""
+
+#: classes/fields/website.php:66
+msgid "example.com (force removal of www)"
+msgstr ""
+
+#: classes/fields/website.php:67
+msgid "www.example.com (force www if no sub-domain provided)"
+msgstr ""
+
+#: classes/fields/website.php:157
+msgid "Invalid website provided."
+msgstr ""
+
+#: classes/fields/wysiwyg.php:58 ui/admin/setup-edit.php:702
+msgid "Editor"
+msgstr ""
+
+#: classes/fields/wysiwyg.php:65
+msgid "TinyMCE (WP Default)"
+msgstr ""
+
+#: classes/fields/wysiwyg.php:66
+msgid "CLEditor"
+msgstr ""
+
+#: classes/PodsAdmin.php:255 classes/PodsAdmin.php:278
+#: components/Migrate-CPTUI/ui/wizard.php:23
+msgid "Setup"
+msgstr ""
+
+#: components/Migrate-CPTUI/ui/wizard.php:60
+msgid "Choose below which Custom Post Types and Taxonomies you want to import into Pods 2.0"
+msgstr ""
+
+#: components/Migrate-CPTUI/ui/wizard.php:64
+msgid "Choose Post Types to Import"
+msgstr ""
+
+#: components/Migrate-CPTUI/ui/wizard.php:72
+msgid "Available Post Types"
+msgstr ""
+
+#: components/Migrate-CPTUI/ui/wizard.php:97
+msgid "No Post Types were found."
+msgstr ""
+
+#: components/Migrate-CPTUI/ui/wizard.php:146 components/Roles/ui/add.php:122
+#: ui/admin/setup-add.php:233 ui/admin/upgrade.php:309
+msgid "Start Over"
+msgstr ""
+
+#: components/Migrate-CPTUI/ui/wizard.php:146 components/Roles/ui/add.php:122
+#: ui/admin/setup-add.php:233 ui/admin/upgrade.php:309
+msgid "Next Step"
+msgstr ""
+
+#: components/Migrate-CPTUI/ui/wizard.php:146 components/Roles/ui/add.php:122
+#: ui/admin/setup-add.php:233
+msgid "Finished"
+msgstr ""
+
+#: components/Migrate-CPTUI/ui/wizard.php:146 components/Roles/ui/add.php:122
+#: ui/admin/setup-add.php:233
+msgid "Processing"
+msgstr ""
+
+#: ui/admin/setup-edit.php:1023
+msgid "Post Types"
+msgstr ""
+
+#: ui/admin/setup-edit.php:1024
+msgid "Taxonomies"
+msgstr ""
+
+#: components/Roles/Roles.php:80 ui/admin/setup-add.php:152
+msgid "Users"
+msgstr ""
+
+#: ui/admin/setup-add.php:153 ui/admin/setup-edit.php:732
+msgid "Comments"
+msgstr ""
+
+#: components/Roles/ui/add.php:14
+msgid "Roles &amp; Capabilities: Add New Role"
+msgstr ""
+
+#: components/Roles/ui/add.php:22
+msgid "Naming"
+msgstr ""
+
+#: components/Roles/Roles.php:79 components/Roles/ui/add.php:26
+msgid "Capabilities"
+msgstr ""
+
+#: components/Roles/ui/add.php:34
+msgid "Roles allow you to specify which capabilities a user should be able to do within WordPress."
+msgstr ""
+
+#: components/Roles/ui/add.php:38
+msgid "Name your new Role"
+msgstr ""
+
+#: components/Roles/ui/add.php:43
+msgid "Users will see this as the name of their role"
+msgstr ""
+
+#: components/Roles/ui/add.php:50
+msgid "You will use this name to programatically reference this role throughout WordPress"
+msgstr ""
+
+#: components/Roles/ui/add.php:59
+msgid "Choose below which Capabilities you would like this new user role to have."
+msgstr ""
+
+#: components/Roles/ui/add.php:63 components/Roles/ui/edit.php:73
+msgid "Assign the Capabilities for"
+msgstr ""
+
+#: components/Roles/ui/add.php:67 components/Roles/ui/edit.php:81
+msgid "Toggle All Capabilities on / off"
+msgstr ""
+
+#: components/Roles/ui/add.php:97 components/Roles/ui/edit.php:112
+msgid "Custom Capabilities"
+msgstr ""
+
+#: components/Roles/ui/add.php:97 components/Roles/ui/edit.php:112
+msgid "These capabilities will automatically be created and assigned to this role"
+msgstr ""
+
+#: components/Roles/ui/edit.php:15
+msgid "Roles &amp; Capabilities: Edit Role"
+msgstr ""
+
+#: components/Roles/ui/edit.php:24 ui/admin/form.php:27 ui/admin/form.php:45
+#: ui/admin/setup-edit.php:264
+msgid "<strong>Success!</strong> %s %s successfully."
+msgstr ""
+
+#: components/Roles/ui/edit.php:30
+msgid "Choose below which Capabilities you would like this existing user role to have."
+msgstr ""
+
+#: components/Roles/ui/edit.php:46 ui/admin/form.php:89
+msgid "Save"
+msgstr ""
+
+#: ui/admin/setup-edit-field-fluid.php:23 ui/admin/setup-edit-field.php:20
+msgid "Move"
+msgstr ""
+
+#: ui/admin/setup-edit-field-fluid.php:26
+#: ui/admin/setup-edit-field-fluid.php:32 ui/admin/setup-edit-field.php:23
+#: ui/admin/setup-edit-field.php:39
+msgid "Edit this field"
+msgstr ""
+
+#: ui/admin/setup-edit-field-fluid.php:35 ui/admin/setup-edit-field.php:42
+msgid "Delete this field"
+msgstr ""
+
+#: ui/admin/setup-edit-field-fluid.php:44
+msgid "Basic"
+msgstr ""
+
+#: ui/admin/setup-edit-field-fluid.php:45
+msgid "Additional Field Options"
+msgstr ""
+
+#: ui/admin/setup-add.php:91 ui/admin/setup-add.php:198
+#: ui/admin/setup-edit-field-fluid.php:46
+msgid "Advanced"
+msgstr ""
+
+#: ui/admin/setup-edit-field-fluid.php:63
+msgid "Field Type"
+msgstr ""
+
+#: ui/admin/setup-edit-field-fluid.php:68
+msgid "Related To"
+msgstr ""
+
+#: ui/admin/setup-edit-field-fluid.php:72
+msgid "Custom Defined Options"
+msgstr ""
+
+#: ui/admin/setup-edit-field-fluid.php:72
+msgid "One option per line, use <em>value|Label</em> for separate values and labels"
+msgstr ""
+
+#: ui/admin/setup-edit-field-fluid.php:76
+msgid "Bi-Directional Related"
+msgstr ""
+
+#: ui/admin/setup-edit-field-fluid.php:82
+msgid "Options"
+msgstr ""
+
+#: ui/admin/setup-edit-field-fluid.php:88
+msgid "Required"
+msgstr ""
+
+#: ui/admin/setup-edit-field-fluid.php:91
+msgid "Unique"
+msgstr ""
+
+#: ui/admin/setup-edit-field-fluid.php:130
+msgid "Delete Field"
+msgstr ""
+
+#: ui/admin/setup-edit-field-fluid.php:133
+msgid "Update Field"
+msgstr ""
+
+#: components/Helpers.php:109
+msgid "Enter helper name here"
+msgstr ""
+
+#: components/Helpers.php:143
+msgid "Helper Type"
+msgstr ""
+
+#: components/Helpers.php:157
+msgid "Code"
+msgstr ""
+
+#: components/Helpers.php:162 ui/admin/shortcode.php:305
+#: ui/admin/shortcode.php:306 ui/admin/widgets/field.php:58
+#: ui/admin/widgets/field.php:62
+msgid "Helper"
+msgstr ""
+
+#: components/Markdown.php:15
+msgid "Allow Markdown Syntax?"
+msgstr ""
+
+#: components/Migrate-CPTUI/Migrate-CPTUI.php:179
+#: components/Migrate-CPTUI/Migrate-CPTUI.php:245
+msgid "Pod with the name %s already exists"
+msgstr ""
+
+#: components/Migrate-CPTUI/ui/wizard.php:15
+msgid "Migrate: Import from Custom Post Type UI"
+msgstr ""
+
+#: components/Migrate-CPTUI/ui/wizard.php:27 ui/admin/upgrade.php:26
+msgid "Migrate"
+msgstr ""
+
+#: components/Migrate-CPTUI/ui/wizard.php:35
+msgid "Custom Post Type UI provides an interface to create Custom Post Types and Custom Taxonomies. You can import these and their settings directly into Pods 2.0"
+msgstr ""
+
+#: components/Migrate-CPTUI/ui/wizard.php:40
+msgid "Import Only"
+msgstr ""
+
+#: components/Migrate-CPTUI/ui/wizard.php:42
+msgid "This will import your Custom Post Types and Taxonomies."
+msgstr ""
+
+#: components/Migrate-CPTUI/ui/wizard.php:49
+msgid "Import and Clean Up"
+msgstr ""
+
+#: components/Migrate-CPTUI/ui/wizard.php:51
+msgid "This will import your Custom Post Types and Taxonomies, and then remove them from Custom Post Type UI."
+msgstr ""
+
+#: components/Migrate-CPTUI/ui/wizard.php:105
+msgid "Choose Taxonomies to Import"
+msgstr ""
+
+#: components/Migrate-CPTUI/ui/wizard.php:113
+msgid "Available Taxonomies"
+msgstr ""
+
+#: components/Migrate-CPTUI/ui/wizard.php:136
+msgid "No Taxonomies were found."
+msgstr ""
+
+#: components/Pages.php:123
+msgid "Enter URL here"
+msgstr ""
+
+#: components/Pages.php:156
+msgid "-- Page Template --"
+msgstr ""
+
+#: components/Pages.php:171
+msgid "Page Title"
+msgstr ""
+
+#: components/Pages.php:176
+msgid "Page Code"
+msgstr ""
+
+#: components/Pages.php:181
+msgid "Page Precode"
+msgstr ""
+
+#: components/Pages.php:187
+msgid "Page Template"
+msgstr ""
+
+#: components/Pages.php:193 ui/admin/setup-edit.php:578
+msgid "Page"
+msgstr ""
+
+#: components/Roles/Roles.php:57 components/Roles/Roles.php:191
+msgid "%s User"
+msgid_plural "%s Users"
+msgstr[0] ""
+msgstr[1] ""
+
+#: components/Roles/Roles.php:143 components/Roles/Roles.php:274
+msgid "Role not found, cannot edit it."
+msgstr ""
+
+#: components/Roles/Roles.php:158
+msgid "Role not found, it cannot be deleted."
+msgstr ""
+
+#: components/Roles/Roles.php:163
+msgid "You cannot remove the <strong>%s</strong> role, you must set a new default role for the site first."
+msgstr ""
+
+#: components/Roles/Roles.php:207
+msgid "role removed from site."
+msgstr ""
+
+#: components/Roles/Roles.php:244
+msgid "Role name is required"
+msgstr ""
+
+#: components/Roles/Roles.php:247
+msgid "Role label is required"
+msgstr ""
+
+#: components/Templates.php:118
+msgid "Enter template name here"
+msgstr ""
+
+#: components/Templates.php:152 ui/admin/upgrade.php:168
+#: ui/admin/upgrade.php:284
+msgid "Content"
+msgstr ""
+
+#: components/Templates.php:157 ui/admin/widgets/list.php:43
+#: ui/admin/widgets/single.php:43
+msgid "Template"
+msgstr ""
+
+#: deprecated/wp-editor/wp-editor.php:77
+msgid "HTML"
+msgstr ""
+
+#: deprecated/wp-editor/wp-editor.php:78 ui/admin/setup-edit.php:36
+msgid "Visual"
+msgstr ""
+
+#: functions.php:85
+msgid "The following issues occured:"
+msgstr ""
+
+#: functions.php:262
+msgid "Find out more"
+msgstr ""
+
+#: functions.php:1068
+msgid "and"
+msgstr ""
+
+#: functions.php:1197 functions.php:1211 functions.php:1227
+msgid "NOTICE"
+msgstr ""
+
+#: functions.php:1197 functions.php:1211 functions.php:1227
+msgid "requires a minimum of"
+msgstr ""
+
+#: functions.php:1198 functions.php:1212 functions.php:1228
+msgid "to function. You are currently running"
+msgstr ""
+
+#: functions.php:1199
+msgid "Please upgrade your WordPress to continue."
+msgstr ""
+
+#: functions.php:1213
+msgid "Please upgrade (or have your Hosting Provider upgrade it for you) your PHP version to continue."
+msgstr ""
+
+#: functions.php:1229
+msgid "Please upgrade (or have your Hosting Provider upgrade it for you) your MySQL version to continue."
+msgstr ""
+
+#: sql/PodsUpgrade.php:108
+msgid "Invalid upgrade process."
+msgstr ""
+
+#: sql/PodsUpgrade.php:111
+msgid "Invalid upgrade method."
+msgstr ""
+
+#: sql/PodsUpgrade.php:114
+msgid "Upgrade method not found."
+msgstr ""
+
+#: sql/PodsUpgrade.php:129 sql/PodsUpgrade.php:151 sql/PodsUpgrade.php:173
+#: sql/PodsUpgrade.php:195 sql/PodsUpgrade.php:217 sql/PodsUpgrade.php:239
+#: sql/PodsUpgrade.php:261 sql/PodsUpgrade.php:290
+msgid "Table not found, it cannot be migrated"
+msgstr ""
+
+#: sql/PodsUpgrade.php:285 sql/PodsUpgrade.php:872
+msgid "Invalid Pod."
+msgstr ""
+
+#: sql/PodsUpgrade.php:304
+msgid "Pod not found, it cannot be migrated"
+msgstr ""
+
+#: sql/PodsUpgrade.php:323
+msgid "is a field in the table, but was not found in this pod - the field data will not be migrated."
+msgstr ""
+
+#: sql/PodsUpgrade.php:328
+msgid "is a field in this pod, but was not found in the table - the field data will not be migrated."
+msgstr ""
+
+#: sql/PodsUpgrade.php:877
+msgid "Table not found, items cannot be migrated"
+msgstr ""
+
+#: sql/PodsUpgrade.php:880
+msgid "New table not found, items cannot be migrated"
+msgstr ""
+
+#: sql/PodsUpgrade.php:883
+msgid "Pod Types table not found, items cannot be migrated"
+msgstr ""
+
+#: sql/PodsUpgrade.php:886
+msgid "Pod table not found, items cannot be migrated"
+msgstr ""
+
+#: sql/PodsUpgrade.php:894
+msgid "Pod not found, items cannot be migrated"
+msgstr ""
+
+#: ui/admin/form.php:28 ui/admin/form.php:46
+msgid "<strong>Error:</strong> %s %s successfully."
+msgstr ""
+
+#: ui/admin/form.php:109
+msgid "Navigate"
+msgstr ""
+
+#: ui/admin/form.php:114
+msgid "Previous "
+msgstr ""
+
+#: ui/admin/form.php:114
+msgid "Next "
+msgstr ""
+
+#: ui/admin/form.php:144
+msgid "Enter name here"
+msgstr ""
+
+#: ui/admin/form.php:172 ui/admin/upgrade.php:105 ui/admin/upgrade.php:221
+msgid "Fields"
+msgstr ""
+
+#: ui/admin/help.php:3
+msgid "Pods Help"
+msgstr ""
+
+#: ui/admin/upgrade.php:135 ui/admin/upgrade.php:251
+msgid "Templates"
+msgstr ""
+
+#: ui/admin/upgrade.php:155 ui/admin/upgrade.php:271
+msgid "Helpers"
+msgstr ""
+
+#: ui/admin/settings-settings.php:1
+msgid "The following are settings provided for advanced site configurations."
+msgstr ""
+
+#: ui/admin/settings-tools.php:13
+msgid "Force an update of this beta from GitHub"
+msgstr ""
+
+#: ui/admin/settings-tools.php:15
+msgid "This tool lets you update your Pods 2.0 beta installation to the latest, usually only when you've been instructed to do so."
+msgstr ""
+
+#: ui/admin/settings-tools.php:25
+msgid "Force Plugin Refresh/Update from GitHub"
+msgstr ""
+
+#: ui/admin/settings-tools.php:30 ui/admin/settings-tools.php:35
+msgid "Clear Pods 2.0 Cache"
+msgstr ""
+
+#: ui/admin/settings-tools.php:32
+msgid "This tool will clear all of the transients/cache that are used by Pods 2.0. "
+msgstr ""
+
+#: ui/admin/settings-reset.php:50
+msgid "Reset Pods 2.0"
+msgstr ""
+
+#: ui/admin/settings-reset.php:55
+msgid ""
+"Are you sure you want to do this?\n"
+"\n"
+"This is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.0, resetting it to a clean first install."
+msgstr ""
+
+#: ui/admin/settings-reset.php:58
+msgid "Reset Pods 2.0 settings and data"
+msgstr ""
+
+#: ui/admin/settings-reset.php:34
+msgid "Delete Pods 1.x data"
+msgstr ""
+
+#: ui/admin/settings-reset.php:39
+msgid ""
+"Are you sure you want to do this?\n"
+"\n"
+"This is a good time to make sure you have a backup. We are deleting all of the data that surrounds 1.x, resetting it to a clean first install."
+msgstr ""
+
+#: ui/admin/settings-reset.php:42
+msgid "Delete Pods 1.x settings and data"
+msgstr ""
+
+#: ui/admin/settings-reset.php:63 ui/admin/settings-reset.php:71
+msgid "Deactivate and Delete Pods 2.0 data"
+msgstr ""
+
+#: ui/admin/settings-reset.php:68
+msgid ""
+"Are you sure you want to do this?\n"
+"\n"
+"This is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.0 with no turning back."
+msgstr ""
+
+#: ui/admin/settings-tools.php:40
+msgid "Debug Information"
+msgstr ""
+
+#: ui/admin/setup-add.php:14
+msgid "Add New Pod"
+msgstr ""
+
+#: ui/admin/setup-add.php:22
+msgid "Create or Extend"
+msgstr ""
+
+#: ui/admin/setup-add.php:26
+msgid "Configure"
+msgstr ""
+
+#: ui/admin/setup-add.php:34
+msgid "Pods are content types that you can customize and define fields for based on your needs. You can choose to create a Custom Post Type, Custom Taxonomy, or a Custom Pod which operate completely seperate from normal WordPress Objects. You can also extend existing content types like WP Objects such as Post Types, Taxonomies, Users, or Comments"
+msgstr ""
+
+#: ui/admin/setup-add.php:39
+msgid "Create New"
+msgstr ""
+
+#: ui/admin/setup-add.php:41
+msgid "Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, or <strong>Advanced Content Types</strong> with their own tables."
+msgstr ""
+
+#: ui/admin/setup-add.php:48
+msgid "Extend Existing"
+msgstr ""
+
+#: ui/admin/setup-add.php:50
+msgid "Extend any existing content type within WordPress, including <strong>Post Types</strong> (Posts, Pages, etc), <strong>Taxonomies</strong> (Categories, Tags, etc), <strong>Media</strong>, <strong>Users</strong>, or <strong>Comments</strong>."
+msgstr ""
+
+#: ui/admin/setup-add.php:60
+msgid "Creating a new Content Type allows you to control exactly what that content type does, acts like, the field it has, and the way you manage it."
+msgstr ""
+
+#: ui/admin/setup-add.php:63
+msgid "Create a Content Type"
+msgstr ""
+
+#: ui/admin/setup-add.php:68 ui/admin/setup-add.php:146
+msgid "Content Type"
+msgstr ""
+
+#: ui/admin/setup-add.php:71
+msgid "Custom Post Type (like Posts or Pages)"
+msgstr ""
+
+#: ui/admin/setup-add.php:72
+msgid "Custom Taxonomy (like Categories or Tags)"
+msgstr ""
+
+#: ui/admin/setup-add.php:73
+msgid "Advanced Content Type (separate from WP, blank slate, in its own table)"
+msgstr ""
+
+#: ui/admin/setup-add.php:86
+msgid "Plural Label"
+msgstr ""
+
+#: ui/admin/setup-add.php:97
+msgid "Identifier"
+msgstr ""
+
+#: ui/admin/setup-add.php:97
+msgid "You will use this name to programatically reference this object throughout WordPress"
+msgstr ""
+
+#: ui/admin/setup-add.php:103 ui/admin/setup-edit.php:405
+msgid "Singular Label"
+msgstr ""
+
+#: ui/admin/setup-add.php:109 ui/admin/setup-add.php:203
+msgid "Table based storage will operate in a way where each field you create for your content type becomes a field in a table, where as Meta based relies upon WordPress' meta storage table for all field data."
+msgstr ""
+
+#: ui/admin/setup-add.php:121 ui/admin/setup-add.php:215
+msgid "Table based storage will operate in a way where each field you create for your content type becomes a field in a table. No other storage types are available in addition to our table-based storage because this WordPress object does not support additional fields natively."
+msgstr ""
+
+#: ui/admin/setup-add.php:137
+msgid "Extending an existing Content Type allows you to add fields to it and take advantage of the Pods architecture for management and optionally for theming."
+msgstr ""
+
+#: ui/admin/setup-add.php:140
+msgid "Extend a Content Type"
+msgstr ""
+
+#: ui/admin/setup-add.php:149
+msgid "Post Types (Posts, Pages, etc..)"
+msgstr ""
+
+#: ui/admin/setup-add.php:150
+msgid "Taxonomies (Categories, Tags, etc..)"
+msgstr ""
+
+#: ui/admin/setup-add.php:151
+msgid "Media"
+msgstr ""
+
+#: ui/admin/setup-add.php:174 ui/admin/setup-edit.php:1023
+msgid "Post Type"
+msgstr ""
+
+#: ui/admin/setup-add.php:193 ui/admin/setup-edit.php:1024
+msgid "Taxonomy"
+msgstr ""
+
+#: ui/admin/setup-add.php:206
+msgid "Meta Based (WP Default)"
+msgstr ""
+
+#: ui/admin/setup-add.php:207
+msgid "Table Based"
+msgstr ""
+
+#: ui/admin/setup-edit.php:20 ui/admin/setup-edit.php:21
+#: ui/admin/setup-edit.php:23
+msgid "Other"
+msgstr ""
+
+#: ui/admin/setup-edit.php:38
+msgid "Additional CSS Classes"
+msgstr ""
+
+#: ui/admin/setup-edit.php:44
+msgid "Input Helper"
+msgstr ""
+
+#: ui/admin/setup-edit.php:51
+msgid "Values"
+msgstr ""
+
+#: ui/admin/setup-edit.php:53
+msgid "Default Value"
+msgstr ""
+
+#: ui/admin/setup-edit.php:59
+msgid "Set Default Value via Parameter"
+msgstr ""
+
+#: ui/admin/setup-edit.php:65
+msgid "Visibility"
+msgstr ""
+
+#: ui/admin/setup-edit.php:67
+msgid "Restrict Access"
+msgstr ""
+
+#: ui/admin/setup-edit.php:70
+msgid "Show to Admins Only?"
+msgstr ""
+
+#: ui/admin/setup-edit.php:76
+msgid "Restrict access by Capability?"
+msgstr ""
+
+#: ui/admin/setup-edit.php:84
+msgid "Capability Allowed"
+msgstr ""
+
+#: ui/admin/setup-edit.php:85
+msgid "Comma-separated list of cababilities, for example add_podname_item, please see the Roles and Capabilities component for the complete list and a way to add your own."
+msgstr ""
+
+#: ui/admin/setup-edit-field-fluid.php:133 ui/admin/setup-edit.php:279
+#: ui/admin/setup-edit.php:355
+msgid "Add Field"
+msgstr ""
+
+#: ui/admin/setup-edit.php:292 ui/admin/setup-edit.php:312
+msgid "<h6>Label</h6>The label is the descriptive name to identify the Pod field."
+msgstr ""
+
+#: ui/admin/setup-edit.php:295 ui/admin/setup-edit.php:315
+msgid "<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically."
+msgstr ""
+
+#: ui/admin/setup-edit.php:298 ui/admin/setup-edit.php:318
+msgid "<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc."
+msgstr ""
+
+#: ui/admin/setup-edit.php:413
+msgid "Add New <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
+msgstr ""
+
+#: ui/admin/setup-edit.php:417
+msgid "New <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
+msgstr ""
+
+#: ui/admin/setup-edit.php:425
+msgid "Edit <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
+msgstr ""
+
+#: ui/admin/setup-edit.php:429
+msgid "Update <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
+msgstr ""
+
+#: ui/admin/setup-edit.php:437
+msgid "View <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
+msgstr ""
+
+#: ui/admin/setup-edit.php:441
+msgid "All <span class=\"pods-slugged\" data-sluggable=\"label\">Items</span>"
+msgstr ""
+
+#: ui/admin/setup-edit.php:445
+msgid "Search <span class=\"pods-slugged\" data-sluggable=\"label\">Items</span>"
+msgstr ""
+
+#: ui/admin/setup-edit.php:449
+msgid "Not Found"
+msgstr ""
+
+#: ui/admin/setup-edit.php:457
+msgid "Not Found in Trash"
+msgstr ""
+
+#: ui/admin/setup-edit.php:465
+msgid "Popular <span class=\"pods-slugged\" data-sluggable=\"label\">Items</span>"
+msgstr ""
+
+#: ui/admin/setup-edit.php:469
+msgid "Separate <span class=\"pods-slugged-lower\" data-sluggable=\"label\">items</span> with commas"
+msgstr ""
+
+#: ui/admin/setup-edit.php:473
+msgid "Add or remove <span class=\"pods-slugged-lower\" data-sluggable=\"label\">items</span>"
+msgstr ""
+
+#: ui/admin/setup-edit.php:477
+msgid "Choose from the most used"
+msgstr ""
+
+#: ui/admin/setup-edit.php:488
+msgid "Post Type Description"
+msgstr ""
+
+#: ui/admin/setup-edit.php:489
+msgid "A short descriptive summary of what the post type is."
+msgstr ""
+
+#: ui/admin/setup-edit.php:494 ui/admin/setup-edit.php:782
+msgid "Public"
+msgstr ""
+
+#: ui/admin/setup-edit.php:501
+msgid "Publicly Queryable"
+msgstr ""
+
+#: ui/admin/setup-edit.php:508
+msgid "Exclude from Search"
+msgstr ""
+
+#: ui/admin/setup-edit.php:515
+msgid "Show Admin UI"
+msgstr ""
+
+#: ui/admin/setup-edit.php:522
+msgid "Show Admin Menu in Dashboard"
+msgstr ""
+
+#: ui/admin/setup-edit.php:530 ui/admin/setup-edit.php:791
+#: ui/admin/setup-edit.php:883
+msgid "Menu Name"
+msgstr ""
+
+#: ui/admin/setup-edit.php:537
+msgid "Menu Position"
+msgstr ""
+
+#: ui/admin/setup-edit.php:544
+msgid "Menu Icon URL"
+msgstr ""
+
+#: ui/admin/setup-edit.php:551
+msgid "<strong>Label: </strong> Parent Page"
+msgstr ""
+
+#: ui/admin/setup-edit.php:558
+msgid "Show in Navigation Menus"
+msgstr ""
+
+#: ui/admin/setup-edit.php:565
+msgid "Show in Admin Bar \"New\" Menu"
+msgstr ""
+
+#: ui/admin/setup-edit.php:572
+msgid "Capability Type"
+msgstr ""
+
+#: ui/admin/setup-edit.php:577
+msgid "Post"
+msgstr ""
+
+#: ui/admin/setup-edit.php:579
+msgid "Custom"
+msgstr ""
+
+#: ui/admin/setup-edit.php:584
+msgid "Custom Capability Type"
+msgstr ""
+
+#: ui/admin/setup-edit.php:591
+msgid "Has Archive"
+msgstr ""
+
+#: ui/admin/setup-edit.php:598 ui/admin/setup-edit.php:808
+msgid "Hierarchical"
+msgstr ""
+
+#: ui/admin/setup-edit.php:606 ui/admin/setup-edit.php:813
+msgid "<strong>Label: </strong> Parent <span class=\"pods-slugged\" data-sluggable=\"label_singular\">Item</span>"
+msgstr ""
+
+#: ui/admin/setup-edit.php:613 ui/admin/setup-edit.php:817
+msgid "<strong>Label: </strong> Parent"
+msgstr ""
+
+#: ui/admin/setup-edit.php:620 ui/admin/setup-edit.php:822
+msgid "Rewrite"
+msgstr ""
+
+#: ui/admin/setup-edit.php:628 ui/admin/setup-edit.php:827
+msgid "Custom Rewrite Slug"
+msgstr ""
+
+#: ui/admin/setup-edit.php:635
+msgid "Rewrite with Front"
+msgstr ""
+
+#: ui/admin/setup-edit.php:636 ui/admin/setup-edit.php:831
+msgid "Allows permalinks to be prepended with front base (example: if your permalink structure is /blog/, then your links will be: Checked->/news/, Unchecked->/blog/news/)"
+msgstr ""
+
+#: ui/admin/setup-edit.php:643
+msgid "Rewrite Feeds"
+msgstr ""
+
+#: ui/admin/setup-edit.php:651
+msgid "Rewrite Pages"
+msgstr ""
+
+#: ui/admin/setup-edit.php:659 ui/admin/setup-edit.php:840
+msgid "Query Var"
+msgstr ""
+
+#: ui/admin/setup-edit.php:666
+msgid "Exportable"
+msgstr ""
+
+#: ui/admin/setup-edit.php:690
+msgid "Supports"
+msgstr ""
+
+#: ui/admin/setup-edit.php:697 ui/admin/widgets/field.php:15
+#: ui/admin/widgets/form.php:15 ui/admin/widgets/list.php:15
+#: ui/admin/widgets/single.php:15
+msgid "Title"
+msgstr ""
+
+#: ui/admin/setup-edit.php:707
+msgid "Author"
+msgstr ""
+
+#: ui/admin/setup-edit.php:712
+msgid "Featured Image"
+msgstr ""
+
+#: ui/admin/setup-edit.php:717
+msgid "Excerpt"
+msgstr ""
+
+#: ui/admin/setup-edit.php:722
+msgid "Trackbacks"
+msgstr ""
+
+#: ui/admin/setup-edit.php:727
+msgid "Custom Fields"
+msgstr ""
+
+#: ui/admin/setup-edit.php:737
+msgid "Revisions"
+msgstr ""
+
+#: ui/admin/setup-edit.php:742
+msgid "Page Attributes"
+msgstr ""
+
+#: ui/admin/setup-edit.php:747
+msgid "Post Formats"
+msgstr ""
+
+#: ui/admin/setup-edit.php:755
+msgid "Built-in Taxonomies"
+msgstr ""
+
+#: ui/admin/setup-edit.php:786
+msgid "Show UI"
+msgstr ""
+
+#: ui/admin/setup-edit.php:795 ui/admin/setup-edit.php:887
+msgid "Menu Icon"
+msgstr ""
+
+#: ui/admin/setup-edit.php:800
+msgid "Show in Nav Menus"
+msgstr ""
+
+#: ui/admin/setup-edit.php:804
+msgid "Allow in Tagcloud Widget"
+msgstr ""
+
+#: ui/admin/setup-edit.php:831
+msgid "Allow Front Prepend"
+msgstr ""
+
+#: ui/admin/setup-edit.php:835
+msgid "Hierarchical Permalinks"
+msgstr ""
+
+#: ui/admin/setup-edit.php:845
+msgid "Associated Post Types"
+msgstr ""
+
+#: ui/admin/setup-edit.php:874
+msgid "Detail Page URL"
+msgstr ""
+
+#: ui/admin/setup-edit.php:878
+msgid "Show in Menu"
+msgstr ""
+
+#: ui/admin/setup-edit.php:901
+msgid "Title Field"
+msgstr ""
+
+#: ui/admin/setup-edit.php:901
+msgid "If you delete the \"name\" field, we need to specify the field to use as your primary title field. This field will serve as an index of your content. Most commonly this field represents the name of a person, place, thing, or a summary field."
+msgstr ""
+
+#: ui/admin/setup-edit.php:920
+msgid "Pre-Save Helper(s)"
+msgstr ""
+
+#: ui/admin/setup-edit.php:934
+msgid "Post-Save Helper(s)"
+msgstr ""
+
+#: ui/admin/setup-edit.php:948
+msgid "Pre-Delete Helper(s)"
+msgstr ""
+
+#: ui/admin/setup-edit.php:962
+msgid "Post-Delete Helper(s)"
+msgstr ""
+
+#: ui/admin/setup-edit.php:990
+msgid "Are you sure you want to delete this Pod? All fields and data will be removed."
+msgstr ""
+
+#: ui/admin/setup-edit.php:1022 ui/admin/upgrade.php:95
+#: ui/admin/upgrade.php:211
+msgid "Pods"
+msgstr ""
+
+#: ui/admin/setup-edit.php:1022
+msgid "Pod"
+msgstr ""
+
+#: ui/admin/setup-edit-field-fluid.php:55
+msgid "You will use this name to programatically reference this field throughout WordPress"
+msgstr ""
+
+#: ui/admin/shortcode.php:217
+msgid "Pods &raquo; Embed"
+msgstr ""
+
+#: ui/admin/shortcode.php:222
+msgid "What would you like to do?"
+msgstr ""
+
+#: ui/admin/shortcode.php:224
+msgid "Display a single Pod item"
+msgstr ""
+
+#: ui/admin/shortcode.php:225
+msgid "List multiple Pod items"
+msgstr ""
+
+#: ui/admin/shortcode.php:226
+msgid "Display a field from a single Pod item"
+msgstr ""
+
+#: ui/admin/shortcode.php:248 ui/admin/widgets/field.php:37
+#: ui/admin/widgets/list.php:35 ui/admin/widgets/single.php:35
+msgid "None Found"
+msgstr ""
+
+#: ui/admin/shortcode.php:266 ui/admin/widgets/list.php:55
+#: ui/admin/widgets/single.php:55
+msgid "Custom Template"
+msgstr ""
+
+#: ui/admin/shortcode.php:269
+msgid "ID or Slug"
+msgstr ""
+
+#: ui/admin/shortcode.php:273 ui/admin/widgets/list.php:59
+msgid "Limit"
+msgstr ""
+
+#: ui/admin/shortcode.php:277 ui/admin/widgets/list.php:64
+msgid "Order By"
+msgstr ""
+
+#: ui/admin/shortcode.php:280 ui/admin/widgets/list.php:69
+msgid "Order Direction"
+msgstr ""
+
+#: ui/admin/shortcode.php:282
+msgid "Ascending"
+msgstr ""
+
+#: ui/admin/shortcode.php:285
+msgid "Descending"
+msgstr ""
+
+#: ui/admin/shortcode.php:290 ui/admin/widgets/list.php:76
+msgid "Where"
+msgstr ""
+
+#: ui/admin/shortcode.php:294 ui/admin/widgets/field.php:49
+msgid "Field"
+msgstr ""
+
+#: ui/admin/shortcode.php:297
+msgid "Fields (comma-separated)"
+msgstr ""
+
+#: ui/admin/shortcode.php:315
+msgid "Insert"
+msgstr ""
+
+#: ui/admin/upgrade.php:10
+msgid "Upgrade Pods"
+msgstr ""
+
+#: ui/admin/upgrade.php:18
+msgid "Getting Started"
+msgstr ""
+
+#: ui/admin/upgrade.php:22
+msgid "Prepare"
+msgstr ""
+
+#: ui/admin/upgrade.php:38
+msgid "Welcome to #Pods2! We sincerely hope you enjoy over two years worth of planning and work, available to you for <em>free</em>. Due to a number of optimizations in #Pods2, we need to run a few updates to your database. This should not remove or change your existing Pod data from 1.x, so if you wish to rollback to Pods 1.x - you can easily do that."
+msgstr ""
+
+#: ui/admin/upgrade.php:43
+msgid "We recommend that you back your database up, it can really save you in a bind or a really weird situation that you may not be expecting. Check out a few options we think are <em>great</em> below."
+msgstr ""
+
+#: ui/admin/upgrade.php:49
+msgid "Receive 25% off"
+msgstr ""
+
+#: ui/admin/upgrade.php:51
+msgid "Coupon Code"
+msgstr ""
+
+#: ui/admin/upgrade.php:54
+msgid "The all-in-one WordPress backup plugin to easily backup, restore, and migrate to any number of local or external locations."
+msgstr ""
+
+#: ui/admin/upgrade.php:59
+msgid "1 free month"
+msgstr ""
+
+#: ui/admin/upgrade.php:61
+msgid "Click to sign up"
+msgstr ""
+
+#: ui/admin/upgrade.php:64
+msgid "A service that provides realtime continuous backups, restores, and security scanning."
+msgstr ""
+
+#: ui/admin/upgrade.php:73
+msgid "We will prepare all of your Pods, Settings, and Content for migration. If any issues are found they will be displayed below for your review. Be sure to backup your database before continuing onto the next step for Migration."
+msgstr ""
+
+#: ui/admin/upgrade.php:81
+msgid "Preparing Your Content for Migration"
+msgstr ""
+
+#: ui/admin/upgrade.php:115 ui/admin/upgrade.php:231
+msgid "Relationships"
+msgstr ""
+
+#: ui/admin/upgrade.php:125
+msgid "Item Indexes"
+msgstr ""
+
+#: ui/admin/upgrade.php:145 ui/admin/upgrade.php:261
+msgid "Pod Pages"
+msgstr ""
+
+#: ui/admin/upgrade.php:183
+msgid "During this process your Pods, Settings, and Content will be migrated into the optimized Pods 2.0 architecture. We will not delete any of your old data, the tables will remain until you choose to clean them up after a successful upgrade."
+msgstr ""
+
+#: ui/admin/upgrade.php:191
+msgid "Migrating Your Content"
+msgstr ""
+
+#: ui/admin/upgrade.php:201
+msgid "1.x Updates"
+msgstr ""
+
+#: classes/PodsAdmin.php:265 classes/PodsAdmin.php:288
+#: classes/PodsAdmin.php:306 ui/admin/upgrade.php:241
+msgid "Settings"
+msgstr ""
+
+#: ui/admin/upgrade.php:297
+msgid "Cleanup"
+msgstr ""
+
+#: ui/admin/upgrade.php:309
+msgid "Start using Pods"
+msgstr ""
+
+#: ui/admin/upgrade.php:312
+msgid "Migration Complete!"
+msgstr ""
+
+#: ui/admin/widgets/field.php:25 ui/admin/widgets/form.php:23
+#: ui/admin/widgets/list.php:24 ui/admin/widgets/single.php:24
+msgid "Pod Type"
+msgstr ""
+
+#: ui/admin/widgets/field.php:43
+msgid "Slug or ID"
+msgstr ""
+
+#: ui/fields/attachment.php:72 ui/fields/plupload.php:77
+msgid "Add File"
+msgstr ""
+
+#: ui/fields/plupload.php:36
+msgid "Allowed Files"
+msgstr ""
+
+#: ui/fields/plupload.php:190
+msgid "There was an issue with the file upload, please try again."
+msgstr ""
+
+#: ui/fields/select2.php:89 ui/fields/select2.php:96
+msgid "Start Typing..."
+msgstr ""
+
+#: updater.php:348
+msgid "The plugin has been updated, but could not be reactivated. Please reactivate it manually."
+msgstr ""
+
+#: updater.php:349
+msgid "Plugin reactivated successfully."
+msgstr ""
+
+#: classes/Pods.php:1155
+msgid "Next &rsaquo;"
+msgstr ""
+
+#: classes/Pods.php:1156
+msgid "&lsaquo; Previous"
+msgstr ""
+
+#: classes/Pods.php:1294
+msgid "Save Changes"
+msgstr ""
+
+#: classes/PodsAdmin.php:1092
+msgid "File size too large, max size is %s"
+msgstr ""
+
+#: classes/PodsAdmin.php:1127
+msgid "File type not allowed, please use one of the following: %s"
+msgstr ""
+
+#: classes/fields/file.php:73
+msgid "Attachments Default Tab"
+msgstr ""
+
+#: classes/fields/file.php:77
+msgid "Upload File"
+msgstr ""
+
+#: classes/fields/file.php:78
+msgid "Media Library"
+msgstr ""
+
+#: classes/fields/file.php:108
+msgid "Any Type (no restriction)"
+msgstr ""
+
+#: classes/fields/paragraph.php:67 classes/fields/wysiwyg.php:74
+msgid "Enable oEmbed?"
+msgstr ""
+
+#: classes/fields/paragraph.php:71 classes/fields/wysiwyg.php:78
+msgid "Embed videos, images, tweets, and other content."
+msgstr ""
+
+#: classes/fields/paragraph.php:76 classes/fields/wysiwyg.php:83
+msgid "Enable wptexturize?"
+msgstr ""
+
+#: classes/fields/paragraph.php:80 classes/fields/wysiwyg.php:87
+msgid "Transforms less-beautfiul text characters into stylized equivilents."
+msgstr ""
+
+#: classes/fields/paragraph.php:85 classes/fields/wysiwyg.php:92
+msgid "Enable convert_chars?"
+msgstr ""
+
+#: classes/fields/paragraph.php:89 classes/fields/wysiwyg.php:96
+msgid "Converts text into valid XHTML and Unicode"
+msgstr ""
+
+#: classes/fields/paragraph.php:94 classes/fields/wysiwyg.php:101
+msgid "Enable wpautop?"
+msgstr ""
+
+#: classes/fields/paragraph.php:98 classes/fields/wysiwyg.php:105
+msgid "Changes double line-breaks in the text into HTML paragraphs"
+msgstr ""
+
+#: classes/fields/paragraph.php:108 classes/fields/wysiwyg.php:115
+msgid "Embed [shortcodes] that help transform your static content into dynamic content."
+msgstr ""
+
+#: components/Pages.php:183
+msgid "Precode will run before your theme outputs the page. It is expected that this value will be a block of PHP. You must open the PHP tag here, as we do not open it for you by default."
+msgstr ""
+
+#: functions.php:87
+msgid "An unknown error has occurred"
+msgstr ""
+
+#: functions.php:216
+msgid "%1$s has been <strong>deprecated</strong> since Pods version %2$s! Use %3$s instead."
+msgstr ""
+
+#: functions.php:218
+msgid "%1$s has been <strong>deprecated</strong> since Pods version %2$s with no alternative available."
+msgstr ""
+
+#: sql/PodsUpgrade.php:855
+msgid "Input Helpers may not function in our new forms, we have imported and disabled them for your review."
+msgstr ""
+
+#: ui/admin/settings-reset.php:36
+msgid "This will delete all of your Pods 1.x data, it's only recommended if you've verified your data has been properly migrated into Pods 2.0."
+msgstr ""
+
+#: ui/admin/settings-reset.php:52
+msgid "This does not delete any Pods 1.x data, it simply resets the Pods 2.0 settings, removes all of it's data, and performs a fresh install."
+msgstr ""
+
+#: ui/admin/settings-reset.php:65
+msgid "This will delete Pods 2.0 settings, data, and deactivate itself once done. Your database will be as if Pods 2.0 never existed."
+msgstr ""
+
+#: ui/admin/settings.php:11
+msgid "Tools"
+msgstr ""
+
+#: ui/admin/settings.php:12
+msgid "Cleanup &amp; Reset"
+msgstr ""
+
+#: ui/admin/setup-edit-field-fluid.php:27
+msgid "New Field"
+msgstr ""
+
+#: classes/PodsAdmin.php:260 classes/PodsAdmin.php:283
+msgid "Components"
+msgstr ""
+
+#: classes/PodsAdmin.php:270 classes/PodsAdmin.php:293
+#: classes/PodsAdmin.php:311
+msgid "Help"
+msgstr ""
+
+#: classes/PodsAdmin.php:302
+msgid "Upgrade"
+msgstr ""
+
+#: init.php:0
+msgid "Pods Framework"
+msgstr ""
+
+#: init.php:0
+msgid "http://podsframework.org/"
+msgstr ""
+
+#: init.php:0
+msgid "Create / Manage / Develop / Extend content types: Posts, Pages, Media, Custom Post Types, Categories, Tags, Custom Taxonomy, Comments, Users, Custom Content Types, and Custom Tables"
+msgstr ""
+
+#: init.php:0
+msgid "Pods Framework Team"
+msgstr ""
+
+#: init.php:0
+msgid "http://podsframework.org/about/"
+msgstr ""
+
+#: init.php:0
+msgid "2.0.0"
+msgstr ""

@@ -43,7 +43,7 @@
                                     <div id="minor-publishing">
                                         <div id="major-publishing-actions">
                                             <div id="publishing-action">
-                                                <input type="submit" name="publish" id="publish" class="button-primary" value="<?php _e( 'Save' ); ?>" accesskey="p" />
+                                                <input type="submit" name="publish" id="publish" class="button-primary" value="<?php _e( 'Save', 'pods' ); ?>" accesskey="p" />
                                             </div>
                                             <!-- /#publishing-action -->
 

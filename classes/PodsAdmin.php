@@ -252,22 +252,22 @@ class PodsAdmin {
 
         $admin_menus = array(
             'pods' => array(
-                'label' => 'Setup',
+                'label' => __( 'Setup', 'pods' ),
                 'function' => array( $this, 'admin_setup' ),
                 'access' => 'pods'
             ),
             'pods-components' => array(
-                'label' => 'Components',
+                'label' => __( 'Components', 'pods' ),
                 'function' => array( $this, 'admin_components' ),
                 'access' => 'pods_components'
             ),
             'pods-settings' => array(
-                'label' => 'Settings',
+                'label' => __( 'Settings', 'pods' ),
                 'function' => array( $this, 'admin_settings' ),
                 'access' => 'pods_settings'
             ),
             'pods-help' => array(
-                'label' => 'Help',
+                'label' => __( 'Help', 'pods' ),
                 'function' => array( $this, 'admin_help' )
             )
         );
@@ -275,22 +275,22 @@ class PodsAdmin {
         if ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER ) {
             $admin_menus = array(
                 'pods' => array(
-                    'label' => 'Setup',
+                    'label' => __( 'Setup', 'pods' ),
                     'function' => array( $this, 'admin_setup' ),
                     'access' => 'pods'
                 ),
                 'pods-components' => array(
-                    'label' => 'Components',
+                    'label' => __( 'Components', 'pods' ),
                     'function' => array( $this, 'admin_components' ),
                     'access' => 'pods_components'
                 ),
                 'pods-settings' => array(
-                    'label' => 'Settings',
+                    'label' => __( 'Settings', 'pods' ),
                     'function' => array( $this, 'admin_settings' ),
                     'access' => 'pods_settings'
                 ),
                 'pods-help' => array(
-                    'label' => 'Help',
+                    'label' => __( 'Help', 'pods' ),
                     'function' => array( $this, 'admin_help' )
                 )
             );
@@ -299,16 +299,16 @@ class PodsAdmin {
         if ( !empty( $old_pods ) && 1 != $upgraded ) {
             $admin_menus = array(
                 'pods-upgrade' => array(
-                    'label' => 'Upgrade',
+                    'label' => __( 'Upgrade', 'pods' ),
                     'function' => array( $this, 'admin_upgrade' )
                 ),
                 'pods-settings' => array(
-                    'label' => 'Settings',
+                    'label' => __( 'Settings', 'pods' ),
                     'function' => array( $this, 'admin_settings' ),
                     'access' => 'pods_settings'
                 ),
                 'pods-help' => array(
-                    'label' => 'Help',
+                    'label' => __( 'Help', 'pods' ),
                     'function' => array( $this, 'admin_help' )
                 )
             );

@@ -24,7 +24,7 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
     </th>
     <td class="pods-manage-row-label">
         <strong> <a class="pods-manage-row-edit row-label" title="<?php esc_attr_e( 'Edit this field', 'pods' ); ?>" href="#edit-field">
-            <?php _e( 'New Field' ); ?>
+            <?php _e( 'New Field', 'pods' ); ?>
         </a> <abbr title="required" class="required hidden">*</abbr> </strong>
 
         <div class="row-actions">
@@ -69,7 +69,7 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
                                     <?php echo PodsForm::field( 'field_data[' . $pods_i . '][pick_object]', $pick_object, 'pick', array( 'data' => pods_var_raw( 'pick_object', $field_settings ), 'class' => 'pods-dependent-toggle' ) ); ?>
                                 </div>
                                 <div class="pods-field-option pods-depends-on pods-depends-on-field-data-pick-object pods-depends-on-field-data-pick-object-custom-simple">
-                                    <?php echo PodsForm::label( 'field_data[' . $pods_i . '][pick_custom]', __( 'Custom Defined Options', 'pods' ), __( 'One option per line, use <em>value|Label</em> for separate values and labels' ) ); ?>
+                                    <?php echo PodsForm::label( 'field_data[' . $pods_i . '][pick_custom]', __( 'Custom Defined Options', 'pods' ), __( 'One option per line, use <em>value|Label</em> for separate values and labels', 'pods' ) ); ?>
                                     <?php echo PodsForm::field( 'field_data[' . $pods_i . '][pick_custom]', pods_var_raw( 'pick_custom', $field ), 'paragraph' ); ?>
                                 </div>
                                 <div class="pods-field-option pods-depends-on pods-depends-on-field-data-pick-object pods-depends-on-field-data-pick-object-pod- pods-depends-on-wildcard">

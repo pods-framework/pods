@@ -1,11 +1,10 @@
 === Pods - Custom Content Types and Fields ===
-Contributors: sc0ttkclark, logikal16, jchristopher
+Contributors: sc0ttkclark, dan.stefan, pglewis, Mike Green, jchristopher, logikal16
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, ui, content types, custom post types, relationships, database, framework, drupal
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 1.14.3
-~Current Version:2.0.0-rc-1~
+Stable tag: 2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,56 +12,70 @@ Pods is a framework for creating, managing, and deploying customized content typ
 
 == Description ==
 
-Check out http://podsframework.org/ for our User Guide and many other resources to help you develop with Pods.
+Check out http://podsframework.org/ for our User Guide, Forums, and other resources to help you develop with Pods.
 
-= Create your own content types =
-A Pod is a content type which contains a custom defined set of fields. Each content type is stored in it's own table, where as WordPress Custom Post Types are normally all stored in one single table for them all.
+= Content types that evolve with your needs =
+Create any type of content that you want -- small or lage -- we've got you covered. Every content type created with Pods gets all the love it needs to grow up big and strong. You'll get an easy to use interface that lets you manage custom fields and how your content type will function.
 
-Create a variety of different fields including: text, paragraph text, date, number, file upload, and relationship (called "pick") fields.
+We now give you the power you've never before had with a single plugin because we've reimagined how to manage content types from the ground up.
 
-Pick fields are useful if you want to create relationships between your content types. One example is if you want to relate an "event" with one or more "speaker".
+= Create new content types =
+With Pods, you can create entirely new content types:
+
+* Custom Post Types - Content types that look and function like Posts and Pages, but in their own separate areas
+* Custom Taxonomies - Content types that look and function like Categories and Tags, but in their own separate areas
+* Advanced Content Types - These are entirely separate from WordPress and function off their own database tables
+
+= Extend existing content types =
+Not satisfied? How about the power of being able to extend existing content types? We've got you covered with extending these major WordPress objects:
+
+* Post Types - Create and manage fields for any existing Post Type (Posts, Pages, etc), even those created by plugins or themes
+* Taxonomies - Create and manage fields for any existing Taxonomies (Categories, Tags, etc), even those created by plugins or themes
+* Media - Create and manage fields for your media uploads, easily add additional information and context to any file you want
+* Users - Create and manage fields for your user profiles, this is truly the bees knees!
+* Comments - Create and manage fields for your visitor comments, easily add additional information and context to any file you want
+
+= Use our field types, or make your own =
+We have a lot of common field types available for you to use, or you can build your own with our extensible field type classes.
+
+Each of these field type have their own set of options, if those aren't enough they are also easily extended:
+
+* Date / Time - Date, Time, or both
+* Number - Plain Number or Currency
+* Text - Plain Text, Website, Phone, E-mail, or Password
+* Paragraph Text - Plain Paragraph, WYSIWYG (TinyMCE or CLEditor, or add your own), or Code (Syntax Highlighting)
+* Color Picker - Choose colors, because colors are great
+* Yes / No - You can't really go wrong with a checkbox, but we've added a few charms to make it stand out
+* File / Image / Video - Upload new media or select from existing ones with our Media Library integration, or use a simple uploader, your choice
+* Relationships - Relate any item, to any item of any WP object type or another Pod
 
 = Easily display your content =
-There are several ways to get Pods data to show up throughout your site:
+There are several ways to get Pods data to show up throughout your site, but with any WP object type you create or extend with Pods, you can use all of the functions and methods you're already used to -- out of the box!
 
-* Add Pod Pages from within the admin area. Pod Pages support PHP and Wildcard URLs. For example, the Pod Page "events/*" will be the default handler for all pages beginning with "events/". This allows you to have a single page to handle a myriad of different items.
-* Add PHP code directly into your WP template files, or wherever else PHP is supported.
-* Use shortcode to display lists of Pod items or details of a Pod item within WP Pages or Posts.
-* The Pods API allows you to retrieve raw data from and save data to the database.
+We'll add some more documentation here about our fully revamped theming API, stay tuned! Our united theming API lets you theme your content types across every type of Pod, regardless if it's a post type or taxonomy, or.. you get the picture.
 
 = Customized Management Panels =
 Utilize Pods UI (included in Pods 1.10+) to build your own Custom Management panels for your Pods.
 
-= Migrate! =
-Pods includes a Package Manager, which allows you to import/export Pods (structure-only, no data yet), Pod Templates, Pod Pages, and/or Pod Helpers. You can select which features you want to "package up" and export it for easy migration to other sites or to share your code with other users in our Package Directory.
+= Optional Components to do even more =
+You can enable some of our included components to extend your WordPress site even further:
 
-Pods also includes an easy to use PHP API to allow you to import and export your data via CSV, and other more complex operations.
+* Roles and Capabilities - Create or edit Roles for your site, and customize their corresponding capabilities
+* Pages - Create custom pages that function off of your site's path, with wildcard support, and choose the Page Template to use
+* Templates - Use our templating engine to create templates that can be handed off to clients for carefree management
+* Helpers - Customize how Pods works right from the admin area with simple to advanced reusable code snippets
 
-= Introduction to the Pods CMS Framework =
+= Migrate to Pods, find out what you've been missing =
+Using another solution? We've built additional components to help you transition:
+
+* Import from Custom Post Type UI
+* More coming soon including Importing from Custom Field Suite, Advanced Custom Fields, and Custom Tables
+
+= Watch our Launch Party from Sept 21st =
+[youtube http://www.youtube.com/watch?v=SutU2B64eoY]
+
+= Introduction to the Pods Framework (1.x) =
 [vimeo http://vimeo.com/15086927]
-
-= Pods 2.0 is now beta! =
-Pods 2.0 is now in beta! Find out more about it at http://dev.podsframework.org/tag/pods2/
-
-Features coming in Pods 2.0 include:
-
-* Completely revamped UI
-* Pods UI refactoring / revamp
-* Create and Extend Post Types (post, page, and custom post types)
-* Create and Extend Taxonomies (category, tag, and custom taxonomies)
-* Extend Users, Comments, and Media (add new fields to the front / admin forms!)
-* Meta storage integration for Post Types, Users, Comments, and Media
-* WP core integration with standard theming functions you already use
-* Many more field types and advanced options (less code for you to do!)
-* Many MySQL optimizations and performance tweaks
-* Caching implemented for even better performance
-* Full i18n support
-* Gravity Forms integration for mapping form submissions to a Pod
-* Roles and Capabilities component (optional, enable it to manage Roles and their Capabilities)
-* Markdown Syntax component (for Markdown support on Paragraph text fields)
-* Import from Custom Post Type UI component (migrate all of your custom post types and taxonomies with a couple of clicks)
-* New Templating / Caching / Transients feature for independent partial page caching (think get_template_part but with caching and more)
-* and more features which can be found at: http://dev.podsframework.org/tag/pods2/
 
 == Installation ==
 
@@ -74,6 +87,21 @@ Features coming in Pods 2.0 include:
 OR you can just install it with WordPress by going to Plugins >> Add New >> and type this plugin's name
 
 == Changelog ==
+
+= 2.0 - September 21st, 2012 =
+* An all new, fully revamped Pods has arrived! Check our plugin page for all the details
+* Please backup your site database before upgrading, even though we've tested migration it's never a bad idea to be safe
+* Create and extend WP objects like Post Types, Taxonomies, Media, Users, and Comments, plus everything you love about Pods from before
+
+= 1.14.4 - September 16th, 2012 =
+* Security Update Reminder: As of Pods 1.12+, AJAX API calls all utilize _wpnonce hashes, update your customized publicForm / input helper code AJAX (api.php and misc.php expect `wp_create_nonce('pods-' . $action)` usage)
+* Note: Oh hey, Pods 2.0 is coming out September 21st! Please help us continue to test the beta this week: http://dev.podsframework.org/tag/pods2/
+* Changed: get_current_url was an older function added by Pods a while back, pods_get_current_url is the new function name which is future-proof (get_current_url will point at the new one)
+* Added: A new check will deactivate the plugin if you happen to have another version of the plugin activated for testing purposes
+* Added: A quick enhancement for all to enjoy as a final farewell to Pods 1.x, File Browser now has a mouse-over image enlarge function (props @WallabyKid), see: http://podsframework.org/forums/topic/add-thumbnail-preview-to-jqmwindow-file-browser-for-image-files/
+* Fixed: Some plugins/themes use the wp_title filter incorrectly and do not pass the $sep and $seplocation variables, we now set defaults in those cases
+* Fixed: Some sites experienced PHP notices from the way we've been using parse_url, we now have a fallback for that handling which clears those up
+* Q & A: What's going to happen to Pods 1.x when Pods 2.0 comes out? We're going to release maintenence updates to Pods 1.14.x for a period of time, but there will be no further features added
 
 = 1.14.3 - September 6th, 2012 =
 * Security Update Reminder: As of Pods 1.12+, AJAX API calls all utilize _wpnonce hashes, update your customized publicForm / input helper code AJAX (api.php and misc.php expect `wp_create_nonce('pods-' . $action)` usage)

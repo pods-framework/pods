@@ -4850,7 +4850,7 @@ class PodsAPI {
                     echo '<ul class="pretty"><li>' . implode( '</li><li>', $warnings[ 'templates' ] ) . '</li></ul>';
                 }
                 if ( isset( $warnings[ 'pod_pages' ] ) ) {
-                    echo '<h4>' . __( 'Pod Page(s)' ) . '</h4>';
+                    echo '<h4>' . __( 'Pod Page(s)', 'pods' ) . '</h4>';
                     echo '<ul class="pretty"><li>' . implode( '</li><li>', $warnings[ 'pod_pages' ] ) . '</li></ul>';
                 }
                 if ( isset( $warnings[ 'helpers' ] ) ) {

@@ -594,8 +594,10 @@ class Pods_Pages extends PodsComponent {
                 // templates not found in theme, default output
                 do_action( 'pods_page_default', $template, self::$exists );
 
+                $content = pods_content(true); // Process content of the page before header to get all required javascript.
+
                 get_header();
-                pods_content();
+                echo $content;
                 get_sidebar();
                 get_footer();
             }

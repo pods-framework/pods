@@ -5117,6 +5117,9 @@ class PodsAPI {
         $data = array();
 
         foreach ( $fields as $field ) {
+            if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $id ) )
+                continue;
+
             $data[ $field ] = pods_var_raw( 'pods_field_' . $field, $params, '' );
         }
 

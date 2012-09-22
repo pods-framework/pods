@@ -5,6 +5,7 @@ Tags: pods, cms, cck, ui, content types, custom post types, relationships, datab
 Requires at least: 3.4
 Tested up to: 3.5
 Stable tag: 2.0
+~Current Version:2.0.0~
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,7 +16,7 @@ Pods is a framework for creating, managing, and deploying customized content typ
 Check out http://podsframework.org/ for our User Guide, Forums, and other resources to help you develop with Pods.
 
 = Content types that evolve with your needs =
-Create any type of content that you want -- small or lage -- we've got you covered. Every content type created with Pods gets all the love it needs to grow up big and strong. You'll get an easy to use interface that lets you manage custom fields and how your content type will function.
+Create any type of content that you want -- small or large -- we've got you covered. Every content type created with Pods gets all the love it needs to grow up big and strong. You'll get an easy to use interface that lets you manage custom fields and how your content type will function.
 
 We now give you the power you've never before had with a single plugin because we've reimagined how to manage content types from the ground up.
 
@@ -33,7 +34,7 @@ Not satisfied? How about the power of being able to extend existing content type
 * Taxonomies - Create and manage fields for any existing Taxonomies (Categories, Tags, etc), even those created by plugins or themes
 * Media - Create and manage fields for your media uploads, easily add additional information and context to any file you want
 * Users - Create and manage fields for your user profiles, this is truly the bees knees!
-* Comments - Create and manage fields for your visitor comments, easily add additional information and context to any file you want
+* Comments - Create and manage fields for your visitor comments, easily add fields to fit the way you use comments as reviews and more
 
 = Use our field types, or make your own =
 We have a lot of common field types available for you to use, or you can build your own with our extensible field type classes.
@@ -52,7 +53,7 @@ Each of these field type have their own set of options, if those aren't enough t
 = Easily display your content =
 There are several ways to get Pods data to show up throughout your site, but with any WP object type you create or extend with Pods, you can use all of the functions and methods you're already used to -- out of the box!
 
-We'll add some more documentation here about our fully revamped theming API, stay tuned! Our united theming API lets you theme your content types across every type of Pod, regardless if it's a post type or taxonomy, or.. you get the picture.
+We'll add some more documentation here about our fully revamped Theming API, stay tuned! Our United Theming API lets you theme your content types across every type of Pod, regardless if it's a post type or taxonomy, or.. you get the picture.
 
 = Customized Management Panels =
 Utilize Pods UI (included in Pods 1.10+) to build your own Custom Management panels for your Pods.
@@ -62,7 +63,7 @@ You can enable some of our included components to extend your WordPress site eve
 
 * Roles and Capabilities - Create or edit Roles for your site, and customize their corresponding capabilities
 * Pages - Create custom pages that function off of your site's path, with wildcard support, and choose the Page Template to use
-* Templates - Use our templating engine to create templates that can be handed off to clients for carefree management
+* Templates - Use our template engine to create templates that can be handed off to clients for carefree management
 * Helpers - Customize how Pods works right from the admin area with simple to advanced reusable code snippets
 
 = Migrate to Pods, find out what you've been missing =
@@ -71,8 +72,8 @@ Using another solution? We've built additional components to help you transition
 * Import from Custom Post Type UI
 * More coming soon including Importing from Custom Field Suite, Advanced Custom Fields, and Custom Tables
 
-= Watch our Launch Party from Sept 21st =
-[youtube http://www.youtube.com/watch?v=SutU2B64eoY]
+= Introduction to the Pods Framework (2.0) =
+Coming soon!
 
 = Introduction to the Pods Framework (1.x) =
 [vimeo http://vimeo.com/15086927]

@@ -70,7 +70,7 @@ class PodsInit {
         if ( ( ( defined( 'WP_DEBUG' ) && WP_DEBUG ) || false === headers_sent() ) && '' == session_id() && ( !defined( 'PODS_SESSION_AUTO_START' ) || PODS_SESSION_AUTO_START ) )
             @session_start();
 
-        load_plugin_textdomain( 'pods', false, basename( plugin_basename( __FILE__ ) ) . '/languages/' );
+        load_plugin_textdomain( 'pods', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
         add_shortcode( 'pods', 'pods_shortcode' );
 

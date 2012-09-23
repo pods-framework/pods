@@ -1298,7 +1298,7 @@ class Pods {
                 elseif ( isset( $field[ 'name' ] ) )
                     $name = $field[ 'name' ];
 
-                if ( !isset( $this->fields[ $name ] ) )
+                if ( !isset( $this->fields[ $name ] ) || pods_var_raw( 'hidden', $field, false, null, true ) )
                     unset( $fields[ $k ] );
                 else
                     $fields[ $k ] = array_merge( $this->fields[ $name ], $field );

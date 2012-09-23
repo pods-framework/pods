@@ -340,9 +340,7 @@ class Pods_Deprecated
     public function publicForm ( $public_fields = null, $label = 'Save Changes', $thankyou_url = null ) {
         pods_deprecated( 'Pods::publicForm', '2.0.0', 'Pods::form' );
 
-        $public_columns =& $public_fields;
-
-        include PODS_DIR . 'deprecated/input_form.php';
+        echo $this->obj->form( $public_fields, $label, $thankyou_url );
     }
 
     /**
@@ -469,8 +467,8 @@ class Pods_Deprecated
         elseif ( !empty( $orderby ) )
             $params[ 'orderby' ] = $orderby;
 
-        $params[ 'where' ] = str_replace( $find, $replace, $params[ 'where' ] );
-        $params[ 'orderby' ] = str_replace( $find, $replace, $params[ 'orderby' ] );
+        $params[ 'where' ] = trim( str_replace( $find, $replace, ' ' . $params[ 'where' ] ) );
+        $params[ 'orderby' ] = trim( str_replace( $find, $replace, ' ' . $params[ 'orderby' ] ) );
 
         $params = (object) $params;
 

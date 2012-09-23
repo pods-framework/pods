@@ -57,7 +57,7 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
         <p class="pods-submit">
             <img class="waiting" src="<?php echo admin_url() . '/images/wpspin_light.gif' ?>" alt="">
             <input type="submit" value=" <?php echo esc_attr( $label ); ?> " class="pods-submit-button" />
-d
+
             <?php do_action( 'pods_form_after_submit', $pod, $fields ); ?>
         </p>
     </div>

@@ -1287,6 +1287,23 @@ class Pods {
 
         if ( empty( $fields ) )
             $fields = $this->fields;
+        else {
+            foreach ( $fields as $k => $field ) {
+                $name = $k;
+
+                if ( !is_array( $field ) ) {
+                    $name = $field;
+                    $field = array();
+                }
+                elseif ( isset( $field[ 'name' ] ) )
+                    $name = $field[ 'name' ];
+
+                if ( !isset( $this->fields[ $name ] ) )
+                    unset( $fields[ $name ] );
+
+                $fields[ $k ] = array_merge( $this->fields[ $name ], $field );
+            }
+        }
 
         $label = $params[ 'label' ];
 

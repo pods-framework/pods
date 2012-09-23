@@ -22,17 +22,7 @@ jQuery(function() {
     jQuery(".file .btn.dropme").live("click", function() {
         jQuery(this).parent().remove();
     });
-<?php
-    if (!(defined('PODS_DISABLE_FILE_BROWSER') && true === PODS_DISABLE_FILE_BROWSER) && !(defined('PODS_FILES_REQUIRE_LOGIN') && is_bool(PODS_FILES_REQUIRE_LOGIN) && true === PODS_FILES_REQUIRE_LOGIN && !is_user_logged_in()) && !(defined('PODS_FILES_REQUIRE_LOGIN') && !is_bool(PODS_FILES_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_FILES_REQUIRE_LOGIN)))) {
-?>
-    jQuery(".file_match").live("click", function() {
-        var file_id = jQuery(this).attr("rel");
-        var file_name = jQuery(this).html();
-        jQuery(".rightside." + active_file + " .form").append('<div id="' + file_id + '" class="success"><div class="btn dropme"></div>' + file_name + '</div>');
-    });
-<?php
-    }
-?>
+
     if ('undefined' != typeof(nicPaneOptions)) {
         var nicEditElements = jQuery(".form.desc");
         var config = {

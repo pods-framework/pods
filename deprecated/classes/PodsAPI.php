@@ -205,7 +205,7 @@ class PodsAPI_Deprecated {
      * @since 1.7.9
      */
     public function load_column ($params) {
-        pods_deprecated( 'PodsAPI::load_field', '2.0.0' );
+        pods_deprecated( 'PodsAPI::load_column', '2.0.0', 'PodsAPI::load_field' );
 
         return $this->obj->load_field( $params );
     }

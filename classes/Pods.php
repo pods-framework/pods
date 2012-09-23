@@ -1299,9 +1299,9 @@ class Pods {
                     $name = $field[ 'name' ];
 
                 if ( !isset( $this->fields[ $name ] ) )
-                    unset( $fields[ $name ] );
-
-                $fields[ $k ] = array_merge( $this->fields[ $name ], $field );
+                    unset( $fields[ $k ] );
+                else
+                    $fields[ $k ] = array_merge( $this->fields[ $name ], $field );
             }
         }
 

@@ -337,10 +337,32 @@ class Pods_Deprecated
      *
      * @deprecated deprecated since 2.0.0
      */
-    public function publicForm ( $public_fields = null, $label = 'Save Changes', $thankyou_url = null ) {
+    public function publicForm ( $fields = null, $label = 'Save Changes', $thankyou_url = null ) {
         pods_deprecated( 'Pods::publicForm', '2.0.0', 'Pods::form' );
 
-        echo $this->obj->form( $public_fields, $label, $thankyou_url );
+
+        if ( !empty( $fields ) ) {
+            foreach ( $fields as $k => $field ) {
+                $name = $k;
+
+                if ( !is_array( $field ) ) {
+                    $name = $field;
+                    $field = array();
+                }
+                elseif ( isset( $field[ 'name' ] ) )
+                    $name = $field[ 'name' ];
+
+                if ( in_array( $name, array( 'created', 'modified', 'author' ) ) && isset( $this->obj->fields[ $name . '2' ] ) )
+                    $name .= '2';
+
+                if ( !isset( $this->obj->fields[ $name ] ) )
+                    unset( $fields[ $k ] );
+                else
+                    $fields[ $k ] = array_merge( $this->obj->fields[ $name ], $field );
+            }
+        }
+
+        echo $this->obj->form( $fields, $label, $thankyou_url );
     }
 
     /**

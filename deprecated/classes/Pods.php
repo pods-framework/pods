@@ -413,9 +413,6 @@ class Pods_Deprecated
     public function findRecords ( $orderby = null, $rows_per_page = 15, $where = null, $sql = null ) {
         pods_deprecated( 'Pods::findRecords', '2.0.0', 'Pods::find' );
 
-        if ( null == $orderby )
-            $orderby = "`t`.`{$this->obj->field_id}` DESC";
-
         $find = array(
             ' p.created',
             '`p`.`created`',
@@ -454,10 +451,12 @@ class Pods_Deprecated
             ' t.`id`'
         );
 
-        $params = array(
+        $params = $orderby;
+
+        $defaults = array(
             'where' => $where,
-            'orderby' => $orderby,
-            'limit' => $rows_per_page,
+            'orderby' => "`t`.`{$this->obj->field_id}` DESC",
+            'limit' => (int) $rows_per_page,
             'page' => $this->obj->page,
             'search' => $this->obj->search,
             'search_across' => true,
@@ -466,7 +465,9 @@ class Pods_Deprecated
         );
 
         if ( is_array( $orderby ) )
-            $params = array_merge( $params, $orderby );
+            $params = array_merge( $defaults, $orderby );
+        elseif ( !empty( $orderby ) )
+            $params[ 'orderby' ] = $orderby;
 
         $params[ 'where' ] = str_replace( $find, $replace, $params[ 'where' ] );
         $params[ 'orderby' ] = str_replace( $find, $replace, $params[ 'orderby' ] );

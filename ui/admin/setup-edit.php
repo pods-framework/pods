@@ -875,7 +875,7 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
             <?php echo PodsForm::field( 'detail_url', pods_var_raw( 'detail_url', $pod ), 'text' ); ?>
         </div>
         <div class="pods-field-option">
-            <?php echo PodsForm::label( 'show_in_menu', __( 'Show in Menu', 'pods' ), __( 'help', 'pods' ) ); ?>
+            <?php echo PodsForm::label( 'show_in_menu', __( 'Show Admin Menu in Dashboard', 'pods' ), __( 'help', 'pods' ) ); ?>
             <?php echo PodsForm::field( 'show_in_menu', pods_var_raw( 'show_in_menu', $pod ), 'boolean', array( 'dependency' => true, 'boolean_yes_label' => '' ) ); ?>
         </div>
         <div class="pods-field-option-container pods-depends-on pods-depends-on-show-in-menu">

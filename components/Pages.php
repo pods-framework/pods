@@ -578,7 +578,7 @@ class Pods_Pages extends PodsComponent {
 
             if ( null !== $render_function && is_callable( $render_function ) )
                 call_user_func( $render_function, $template, self::$exists );
-            elseif ( is_object( $pods ) && !is_wp_error( $pods ) && isset( $pods->page_template ) && !empty( $pods->page_template ) && '' != locate_template( array( $pods->page_template ), true ) ) {
+            elseif ( ( !defined( 'PODS_DISABLE_DYNAMIC_TEMPLATE' ) || !PODS_DISABLE_DYNAMIC_TEMPLATE ) && is_object( $pods ) && !is_wp_error( $pods ) && isset( $pods->page_template ) && !empty( $pods->page_template ) && '' != locate_template( array( $pods->page_template ), true ) ) {
                 $template = $pods->page_template;
                 // found the template and included it, we're good to go!
             }
@@ -594,10 +594,10 @@ class Pods_Pages extends PodsComponent {
                 // templates not found in theme, default output
                 do_action( 'pods_page_default', $template, self::$exists );
 
-                $content = pods_content(true); // Process content of the page before header to get all required javascript.
+                wp_enqueue_script( 'jquery' ); // @todo Load this as needed
 
                 get_header();
-                echo $content;
+                pods_content();
                 get_sidebar();
                 get_footer();
             }

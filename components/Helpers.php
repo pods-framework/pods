@@ -68,6 +68,7 @@ class Pods_Helpers extends PodsComponent {
             add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 10, 4 );
             add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 10, 4 );
 
+            add_action( 'pods_meta_save_pre__pods_helper', array( $this, 'fix_filters' ), 10, 5 );
             add_action( 'pods_meta_save_post__pods_helper', array( $this, 'clear_cache' ), 10, 5 );
             add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
         }
@@ -80,6 +81,15 @@ class Pods_Helpers extends PodsComponent {
      */
     public function admin_assets () {
         wp_enqueue_style( 'pods-admin' );
+    }
+
+    /**
+     * Fix filters, specifically removing balanceTags
+     *
+     * @since 2.0.1
+     */
+    public function fix_filters( $data, $pod = null, $id = null, $groups = null, $post = null ) {
+        remove_filter( 'content_save_pre', 'balanceTags', 50 );
     }
 
     /**

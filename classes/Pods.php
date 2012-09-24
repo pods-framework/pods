@@ -670,27 +670,23 @@ class Pods {
      * @return int
      * @since 2.0.0
      */
-    public function next_pod_item_id ( $id = null ) {
-        $pod = new Pods( $this->pod );
+    public function next_id( $id = null ) {
         if ( null === $id )
             $id = $this->field( 'id' );
+
         $params = array(
-            'select' => 'id',
-            'where' => "id > $id",
-            'orderby' => "id ASC",
+            'select' => $this->data->field_id,
+            'where' => $id . ' < ' . $this->data->field_id,
+            'orderby' => 't.' . $this->data->field_id . ' ASC',
             'limit' => 1
         );
-        $pod->find( $params );
-        if ( !$pod->total_found() > 0 ) {
-            $params = array(
-                'select' => 'id',
-                'orderby' => "id ASC",
-                'limit' => 1
-            );
-            $pod->find( $params );
-        }
 
-        return $pod->field( 'id' );
+        $pod = pods( $this->pod, $params );
+
+        if ( $pod->fetch() )
+            return $pod->id();
+
+        return 0;
     }
 
     /**
@@ -701,28 +697,23 @@ class Pods {
      * @return int
      * @since 2.0.0
      */
-    public function prev_pod_item_id ( $id = null ) {
-        $pod = new Pods( $this->pod );
+    public function prev_id ( $id = null ) {
         if ( null === $id )
             $id = $this->field( 'id' );
+
         $params = array(
-            'select' => 'id',
-            'where' => "id < $id",
-            'orderby' => "id DESC",
+            'select' => $this->data->field_id,
+            'where' => $this->data->field_id . ' < ' . $id,
+            'orderby' => 't.' . $this->data->field_id . ' DESC',
             'limit' => 1
         );
-        $pod->find( $params );
-        if ( !$pod->total_found() > 0 ) {
-            $params = array(
-                'select' => 'id',
-                'orderby' => "id DESC",
-                'limit' => 1
-            );
-            $pod->find( $params );
-        }
 
-        return $pod->field( 'id' );
+        $pod = pods( $this->pod, $params );
 
+        if ( $pod->fetch() )
+            return $pod->id();
+
+        return 0;
     }
 
     /**
@@ -747,8 +738,6 @@ class Pods {
      * @since 2.0.0
      */
     public function find ( $params = null, $limit = 15, $where = null, $sql = null ) {
-        global $wpdb;
-
         $select = '`t`.*';
         $pod_table_prefix = 't';
 

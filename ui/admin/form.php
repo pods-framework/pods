@@ -112,7 +112,34 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
                         <div class="inside">
                             <div class="pods-admin" id="navigatebox">
                                 <div id="navigation-actions">
-                                    <a class="previous-item" href="<?php echo pods_var_update( array( 'id' => $pod->prev_pod_item_id() ), null, 'do' ) ?>"><span>&laquo; </span><?php _e( 'Previous ', 'pods' ); echo $singular_label?></a> <a class="next-item" href="<?php echo pods_var_update( array( 'id' => $pod->next_pod_item_id() ), null, 'do' ) ?>"><?php _e( 'Next ', 'pods' ); echo $singular_label ?> &raquo;</a>
+                                    <?php
+                                        $prev = $pod->prev_id();
+                                        $next = $pod->next_id();
+
+                                        if ( 0 < $prev ) {
+                                    ?>
+                                        <a class="previous-item" href="<?php echo pods_var_update( array( 'id' => $prev ), null, 'do' ) ?>">
+                                            <span>&laquo;</span>
+                                            <?php
+                                                _e( 'Previous', 'pods' );
+                                                echo ' ' . $singular_label;
+                                            ?>
+                                        </a>
+                                    <?php
+                                        }
+
+                                        if ( 0 < $next ) {
+                                    ?>
+                                        <a class="next-item" href="<?php echo pods_var_update( array( 'id' => $next ), null, 'do' ) ?>">
+                                            <?php
+                                                _e( 'Next', 'pods' );
+                                                echo ' ' . $singular_label;
+                                            ?>
+                                            <span>&raquo;</span>
+                                        </a>
+                                    <?php
+                                        }
+                                    ?>
 
                                     <div class="clear"></div>
                                 </div>

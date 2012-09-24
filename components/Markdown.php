@@ -19,6 +19,7 @@ function pods_markdown_add_option ( $options, $type ) {
 
     return $options;
 }
+add_filter( 'pods_field_wysiwyg_options', 'pods_markdown_add_option', 10, 2 );
 add_filter( 'pods_field_paragraph_options', 'pods_markdown_add_option', 10, 2 );
 
 function pods_markdown_output ( $value, $options, $type ) {
@@ -27,6 +28,7 @@ function pods_markdown_output ( $value, $options, $type ) {
 
     return $value;
 }
+add_filter( 'pods_field_wysiwyg_output', 'pods_markdown_output' );
 add_filter( 'pods_field_paragraph_output', 'pods_markdown_output' );
 
 if ( !function_exists( 'Markdown' ) ) :

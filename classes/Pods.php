@@ -15,12 +15,12 @@ class Pods {
     public $data;
 
     /**
-     * @var
+     * @var Array of pod item arrays
      */
-    private $results;
+    public $rows;
 
     /**
-     * @var
+     * @var Current pod item array
      */
     public $row;
 
@@ -202,7 +202,7 @@ class Pods {
         $this->detail_page =& $this->data->detail_page;
         $this->id =& $this->data->id;
         $this->row =& $this->data->row;
-        $this->results =& $this->data->data;
+        $this->rows =& $this->data->data;
 
         if ( is_array( $id ) || is_object( $id ) )
             $this->find( $id );
@@ -232,10 +232,10 @@ class Pods {
     public function data () {
         $this->do_hook( 'data' );
 
-        if ( empty( $this->results ) )
+        if ( empty( $this->rows ) )
             return false;
 
-        return (array) $this->results;
+        return (array) $this->rows;
     }
 
     /**

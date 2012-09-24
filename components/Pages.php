@@ -651,5 +651,5 @@ function pods_content ( $return = false ) {
 /*
  * Deprecated global variable
  */
-global $pod_page_exists;
-$pod_page_exists =& Pods_Pages::$exists;
+global $pod_page_exists
+$GLOBALS[ 'pod_page_exists' ] =& Pods_Pages::$exists;

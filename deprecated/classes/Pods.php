@@ -486,7 +486,10 @@ class Pods_Deprecated
 
         if ( is_array( $orderby ) )
             $params = array_merge( $defaults, $orderby );
-        elseif ( !empty( $orderby ) )
+        else
+            $params = $defaults;
+
+        if ( !empty( $orderby ) )
             $params[ 'orderby' ] = $orderby;
 
         $params[ 'where' ] = trim( str_replace( $find, $replace, ' ' . $params[ 'where' ] ) );

@@ -90,7 +90,7 @@
                         if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) )
                             val = 0;
                         else if ( $el.is( 'input[type=radio]' ) && !$el.is( ':checked' ) )
-                            val = '';
+                            return true; // This input is not checked, continue the loop
 
                         if ( $el.is( ':visible' ) && $el.hasClass( 'pods-validate pods-validate-required' ) && ('' == $el.val() || 0 == $el.val()) ) {
                             $el.trigger( 'change' );

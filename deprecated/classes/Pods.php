@@ -471,9 +471,7 @@ class Pods_Deprecated
             ' t.`id`'
         );
 
-        $params = $orderby;
-
-        $defaults = array(
+        $params = array(
             'where' => $where,
             'orderby' => "`t`.`{$this->obj->field_id}` DESC",
             'limit' => (int) $rows_per_page,
@@ -485,11 +483,8 @@ class Pods_Deprecated
         );
 
         if ( is_array( $orderby ) )
-            $params = array_merge( $defaults, $orderby );
-        else
-            $params = $defaults;
-
-        if ( !empty( $orderby ) )
+            $params = array_merge( $params, $orderby );
+        elseif ( !empty( $orderby ) )
             $params[ 'orderby' ] = $orderby;
 
         $params[ 'where' ] = trim( str_replace( $find, $replace, ' ' . $params[ 'where' ] ) );

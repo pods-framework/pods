@@ -1576,7 +1576,7 @@ class PodsAPI {
 
         $field[ 'options' ] = array_merge( $field[ 'options' ], $options );
 
-        $object_fields = (array) $pod[ 'object_fields' ];
+        $object_fields = (array) pods_var_raw( 'object_fields', $pod, array(), null, true );
 
         // Add new field
         if ( !isset( $params->id ) || empty( $params->id ) || empty( $field ) ) {
@@ -2027,10 +2027,7 @@ class PodsAPI {
 
         $fields = $pod[ 'fields' ];
 
-        $object_fields = array();
-
-        if ( isset( $pod[ 'object_fields' ] ) )
-            $object_fields = (array) $pod[ 'object_fields' ];
+        $object_fields = (array) pods_var_raw( 'object_fields', $pod, array(), null, true );
 
         $fields_active = array();
 

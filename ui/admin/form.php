@@ -101,8 +101,9 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
                         <!-- /.inside -->
                     </div>
                     <!-- /#submitdiv --><!-- END PUBLISH DIV --><!-- TODO: minor column fields -->
-                    <?php if ( pods_var_raw( 'action' ) == 'edit' ):
-                    $singular_label = $pod->pod_data[ 'options' ][ 'label_singular' ];
+                    <?php
+                        if ( pods_var_raw( 'action' ) == 'edit' ) {
+                            $singular_label = pods_var_raw( 'label_singular', $pod->pod_data[ 'options' ], pods_var_raw( 'label', $pod->pod_data[ 'options' ], ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) ), null, true ), null, true );
                     ?>
                     <div id="navigatediv" class="postbox">
                         <div class="handlediv" title="Click to toggle"><br /></div>
@@ -121,7 +122,9 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
                         </div>
                         <!-- /.inside -->
                     </div> <!-- /#navigatediv -->
-                    <?php endif; ?>
+                    <?php
+                        }
+                    ?>
                 </div>
                 <!-- /#side-sortables -->
             </div>

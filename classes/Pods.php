@@ -147,7 +147,7 @@ class Pods {
         PodsData::$display_errors =& $this->display_errors;
 
         // Set up page variable
-        if ( !defined( 'PODS_STRICT_MODE' ) || PODS_STRICT_MODE ) {
+        if ( defined( 'PODS_STRICT_MODE' ) && PODS_STRICT_MODE ) {
             $this->page = 1;
             $this->pagination = false;
             $this->search = false;

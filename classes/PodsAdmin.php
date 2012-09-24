@@ -1107,9 +1107,10 @@ class PodsAdmin {
             else
                 $limit_types = pods_var( 'file_allowed_extensions', $field[ 'options' ] );
 
-            $limit_types = explode( ',', $limit_types );
-
             if ( !empty( $limit_types ) ) {
+
+                $limit_types = explode( ',', $limit_types );
+
                 $ok = false;
 
                 foreach ( $limit_types as $limit_type ) {

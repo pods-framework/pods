@@ -20,11 +20,8 @@
                     label = $el.prop( 'name' ).trim().replace( '_', ' ' );
 
                 // TinyMCE support
-                if ( 'object' == typeof( tinyMCE ) && -1 < $el.prop( 'class' ).indexOf( 'pods-ui-field-tinymce' ) ) {
-                    var ed = tinyMCE.get( $el.prop( 'id' ) );
-
-                    $el.val( ed.getContent() );
-                }
+                if ( 'object' == typeof( tinyMCE ) && -1 < $el.prop( 'class' ).indexOf( 'pods-ui-field-tinymce' ) )
+                    tinyMCE.triggerSave();
 
                 if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) ) {
                     if ( 0 == $el.parent().find( '.pods-validate-error-message' ).length )
@@ -70,7 +67,7 @@
                     field_index = 0;
 
                 // See if we have any instances of tinyMCE and save them
-                if( 'undefined' != typeof tinyMCE)
+                if( 'undefined' != typeof tinyMCE )
                     tinyMCE.triggerSave();
 
                 $submittable.find( '.pods-submittable-fields' ).find( 'input, select, textarea' ).each( function () {

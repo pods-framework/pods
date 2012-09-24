@@ -351,6 +351,9 @@ class PodsMeta {
         elseif ( empty( $pod[ 'object' ] ) )
             $pod[ 'object' ] = $pod[ 'name' ];
 
+        if ( $pod[ 'type' ] != $type )
+            return array();
+
         $groups = array(
             array(
                 'pod' => $pod,

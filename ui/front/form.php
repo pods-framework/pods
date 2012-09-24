@@ -6,7 +6,7 @@ wp_enqueue_style( 'pods-form', false, array(), false, true );
 foreach ( $fields as $k => $field ) {
     if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) )
         unset( $fields[ $k ] );
-    elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $fields, $pod, $pod->id() ) )
+    elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field['options'], $fields, $pod, $pod->id() ) )
         unset( $fields[ $k ] );
 }
 

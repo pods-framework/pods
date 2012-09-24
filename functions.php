@@ -412,7 +412,7 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
                 $var = -1;
 
             if ( is_numeric( $var ) )
-                $output = ( $var < 0 ) ? $uri[ count( $uri ) + $var ] : $uri[ $var ];
+                $output = ( $var < 0 ) ? pods_var_raw( count( $uri ) + $var, $uri ) : pods_var_raw( $var, $uri );
         }
         elseif ( 'post' == $type && isset( $_POST[ $var ] ) )
             $output = stripslashes_deep( $_POST[ $var ] );

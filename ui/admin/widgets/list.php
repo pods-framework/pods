@@ -32,7 +32,7 @@
             <?php endforeach; ?>
         </select>
         <?php else: ?>
-        <strong class="red"><?php _e( 'None Found', 'pods' ); ?></strong>
+        <strong class="red"><?php _e( 'None Found', 'title' ); ?></strong>
         <?php endif; ?>
     </li>
 

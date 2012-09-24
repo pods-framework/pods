@@ -337,12 +337,32 @@ class Pods_Deprecated
      *
      * @deprecated deprecated since 2.0.0
      */
-    public function publicForm ( $public_fields = null, $label = 'Save Changes', $thankyou_url = null ) {
+    public function publicForm ( $fields = null, $label = 'Save Changes', $thankyou_url = null ) {
         pods_deprecated( 'Pods::publicForm', '2.0.0', 'Pods::form' );
 
-        $public_columns =& $public_fields;
 
-        include PODS_DIR . 'deprecated/input_form.php';
+        if ( !empty( $fields ) ) {
+            foreach ( $fields as $k => $field ) {
+                $name = $k;
+
+                if ( !is_array( $field ) ) {
+                    $name = $field;
+                    $field = array();
+                }
+                elseif ( isset( $field[ 'name' ] ) )
+                    $name = $field[ 'name' ];
+
+                if ( in_array( $name, array( 'created', 'modified', 'author' ) ) && isset( $this->obj->fields[ $name . '2' ] ) )
+                    $name .= '2';
+
+                if ( !isset( $this->obj->fields[ $name ] ) || pods_var_raw( 'hidden', $field, false, null, true ) )
+                    unset( $fields[ $k ] );
+                else
+                    $fields[ $k ] = array_merge( $this->obj->fields[ $name ], $field );
+            }
+        }
+
+        echo $this->obj->form( $fields, $label, $thankyou_url );
     }
 
     /**
@@ -413,9 +433,6 @@ class Pods_Deprecated
     public function findRecords ( $orderby = null, $rows_per_page = 15, $where = null, $sql = null ) {
         pods_deprecated( 'Pods::findRecords', '2.0.0', 'Pods::find' );
 
-        if ( null == $orderby )
-            $orderby = "`t`.`{$this->obj->field_id}` DESC";
-
         $find = array(
             ' p.created',
             '`p`.`created`',
@@ -454,10 +471,12 @@ class Pods_Deprecated
             ' t.`id`'
         );
 
-        $params = array(
+        $params = $orderby;
+
+        $defaults = array(
             'where' => $where,
-            'orderby' => $orderby,
-            'limit' => $rows_per_page,
+            'orderby' => "`t`.`{$this->obj->field_id}` DESC",
+            'limit' => (int) $rows_per_page,
             'page' => $this->obj->page,
             'search' => $this->obj->search,
             'search_across' => true,
@@ -466,10 +485,12 @@ class Pods_Deprecated
         );
 
         if ( is_array( $orderby ) )
-            $params = array_merge( $params, $orderby );
+            $params = array_merge( $defaults, $orderby );
+        elseif ( !empty( $orderby ) )
+            $params[ 'orderby' ] = $orderby;
 
-        $params[ 'where' ] = str_replace( $find, $replace, $params[ 'where' ] );
-        $params[ 'orderby' ] = str_replace( $find, $replace, $params[ 'orderby' ] );
+        $params[ 'where' ] = trim( str_replace( $find, $replace, ' ' . $params[ 'where' ] ) );
+        $params[ 'orderby' ] = trim( str_replace( $find, $replace, ' ' . $params[ 'orderby' ] ) );
 
         $params = (object) $params;
 

@@ -1105,15 +1105,22 @@ class PodsAdmin {
             elseif ( 'any' == $limit_file_type )
                 $limit_types = '';
             else
-                $limit_types = pods_var( 'file_allowed_extensions', $field[ 'options' ] );
+                $limit_types = pods_var( 'file_allowed_extensions', $field[ 'options' ], '', null, true );
+
+            $limit_types = trim( str_replace( array( ' ', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_types ), '.,' );
 
             $limit_types = explode( ',', $limit_types );
+
+            $limit_types = array_filter( array_unique( $limit_types ) );
 
             if ( !empty( $limit_types ) ) {
                 $ok = false;
 
                 foreach ( $limit_types as $limit_type ) {
                     $limit_type = '.' . trim( $limit_type, ' .' );
+
+                    if ( $limit_type)
+
                     $pos =  strlen( $file[ 'name' ] ) - strlen( $limit_type );
 
                     if ( $pos === stripos( $file[ 'name' ], $limit_type ) ) {

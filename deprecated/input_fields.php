@@ -223,13 +223,16 @@ elseif ('file' == $type) {
                 && !(defined('PODS_UPLOAD_REQUIRE_LOGIN') && !is_bool(PODS_UPLOAD_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_UPLOAD_REQUIRE_LOGIN)))) {
             require_once(realpath(ABSPATH . '/wp-admin/includes/template.php'));
 
+            if ( is_multisite() )
+                require_once( realpath( ABSPATH . '/wp-admin/includes/ms.php' ) );
+
             if (!isset($pods_type_exists[$type]) || empty($pods_type_exists[$type])) {
 ?>
-    <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.js'; ?>"></script>
-    <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.html4.js'; ?>"></script>
-    <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.html5.js'; ?>"></script>
-    <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.flash.js'; ?>"></script>
-    <script type="text/javascript" src="<?php echo WP_INC_URL . '/js/plupload/plupload.silverlight.js'; ?>"></script>
+    <script type="text/javascript" src="<?php echo includes_url( 'js/plupload/plupload.js' ); ?>"></script>
+    <script type="text/javascript" src="<?php echo includes_url( 'js/plupload/plupload.html4.js' ); ?>"></script>
+    <script type="text/javascript" src="<?php echo includes_url( 'js/plupload/plupload.html5.js' ); ?>"></script>
+    <script type="text/javascript" src="<?php echo includes_url( 'js/plupload/plupload.flash.js' ); ?>"></script>
+    <script type="text/javascript" src="<?php echo includes_url( 'js/plupload/plupload.silverlight.js' ); ?>"></script>
 <?php
             }
             $button_height = (function_exists('is_super_admin') ? 23 : 24);
@@ -250,8 +253,8 @@ elseif ('file' == $type) {
                 multipart_params: {
                     "_wpnonce": "<?php echo wp_create_nonce('pods-wp_handle_upload_advanced'); ?>",
                     "action": "wp_handle_upload_advanced",
-                    "auth_cookie": "<?php echo (is_ssl() ? esc_attr($_COOKIE[SECURE_AUTH_COOKIE]) : esc_attr($_COOKIE[AUTH_COOKIE])); ?>",
-                    "logged_in_cookie": "<?php echo esc_attr($_COOKIE[LOGGED_IN_COOKIE]); ?>"
+                    "auth_cookie": "<?php echo (is_ssl() ? esc_attr( pods_var_raw( SECURE_AUTH_COOKIE, 'cookie' )) : esc_attr( pods_var_raw( AUTH_COOKIE, 'cookie' ))); ?>",
+                    "logged_in_cookie": "<?php echo esc_attr(pods_var_raw( LOGGED_IN_COOKIE, 'cookie' )); ?>"
                 }
             });
             plup_<?php echo esc_attr($name); ?>.init();
@@ -313,16 +316,10 @@ elseif ('file' == $type) {
             });
         } );
     </script>
-<?php
-        if (!(defined('PODS_DISABLE_FILE_BROWSER') && true === PODS_DISABLE_FILE_BROWSER)
-                && !(defined('PODS_FILES_REQUIRE_LOGIN') && is_bool(PODS_FILES_REQUIRE_LOGIN) && true === PODS_FILES_REQUIRE_LOGIN && !is_user_logged_in())
-                && !(defined('PODS_FILES_REQUIRE_LOGIN') && !is_bool(PODS_FILES_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_FILES_REQUIRE_LOGIN)))) {
-?>
-    <input type="button" class="button" value="Browse Server" onclick="active_file = '<?php echo esc_attr($name); ?>'; fileBrowser();" />
-<?php
-        }
-?>
-    <div class="<?php echo esc_attr($css_classes); ?>">
+
+    <input type="button" class="button" value="Upload File" id="<?php echo $css_id; ?>" />
+
+    <div class="<?php echo esc_attr($css_classes); ?>" id="plupload-container-<?php echo $css_id; ?>">
 <?php
         // Retrieve uploaded files
         $field_id = (int) $field['id'];
@@ -343,7 +340,6 @@ elseif ('file' == $type) {
             }
         }
 ?>
-        </div>
     </div>
 <?php
     }

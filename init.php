@@ -71,11 +71,3 @@ else {
 
     add_action( 'init', 'pods_deactivate_1_x' );
 }
-
-/**
- * Load the plugin textdomain.
- */
-function pods_textdomain () {
-	load_plugin_textdomain( 'pods', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-}
-add_action( 'plugins_loaded', 'pods_textdomain' );

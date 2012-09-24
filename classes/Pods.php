@@ -147,7 +147,7 @@ class Pods {
         PodsData::$display_errors =& $this->display_errors;
 
         // Set up page variable
-        if ( !defined( 'PODS_STRICT_MODE' ) || PODS_STRICT_MODE ) {
+        if ( defined( 'PODS_STRICT_MODE' ) && PODS_STRICT_MODE ) {
             $this->page = 1;
             $this->pagination = false;
             $this->search = false;
@@ -1287,6 +1287,23 @@ class Pods {
 
         if ( empty( $fields ) )
             $fields = $this->fields;
+        else {
+            foreach ( $fields as $k => $field ) {
+                $name = $k;
+
+                if ( !is_array( $field ) ) {
+                    $name = $field;
+                    $field = array();
+                }
+                elseif ( isset( $field[ 'name' ] ) )
+                    $name = $field[ 'name' ];
+
+                if ( !isset( $this->fields[ $name ] ) || pods_var_raw( 'hidden', $field, false, null, true ) )
+                    unset( $fields[ $k ] );
+                else
+                    $fields[ $k ] = array_merge( $this->fields[ $name ], $field );
+            }
+        }
 
         $label = $params[ 'label' ];
 

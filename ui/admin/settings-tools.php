@@ -10,6 +10,23 @@
         pods_ui_message( 'Pods 2.0 transients and cache have been cleared.' );
 ?>
 
+<h3><?php _e( 'Force an update of this beta from GitHub', 'pods' ); ?></h3>
+
+<p><?php _e( 'This tool lets you update your Pods 2.0 beta installation to the latest, usually only when you\'ve been instructed to do so.', 'pods' ); ?></p>
+
+<?php
+    $update = admin_url( 'update-core.php?pods_force_refresh=1' );
+
+    if ( is_multisite() )
+        $update = network_admin_url( 'update-core.php?pods_force_refresh=1' );
+?>
+
+<p class="submit">
+    <a href="<?php echo $update; ?>" class="button button-primary"><?php esc_html_e( 'Force Plugin Refresh/Update from GitHub', 'pods' ); ?></a>
+</p>
+
+<hr />
+
 <h3><?php _e( 'Clear Pods 2.0 Cache', 'pods' ); ?></h3>
 
 <p><?php _e( 'This tool will clear all of the transients/cache that are used by Pods 2.0. ', 'pods' ); ?></p>

@@ -180,8 +180,12 @@ class PodsField_File extends PodsField {
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
 
-        if(!is_admin())
-            include_once(ABSPATH.'/wp-admin/includes/template.php');
+        if ( !is_admin() ) {
+            include_once( ABSPATH . '/wp-admin/includes/template.php' );
+
+            if ( is_multisite() )
+                include_once( ABSPATH . '/wp-admin/includes/ms.php' );
+        }
 
         if ( ( ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD )
                || ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && true === PODS_UPLOAD_REQUIRE_LOGIN && !is_user_logged_in() )

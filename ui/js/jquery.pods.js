@@ -78,13 +78,6 @@
                     var field_name = $el.prop( 'name' );
 
                     if ( '' != field_name && 0 != field_name.indexOf( 'field_data[' ) ) {
-                        // TinyMCE support
-                        if ( 'object' == typeof( tinyMCE ) && -1 < $el.prop( 'class' ).indexOf( 'pods-ui-field-tinymce' ) ) {
-                            var ed = tinyMCE.get( $el.prop( 'id' ) );
-
-                            $el.val( ed.getContent() );
-                        }
-
                         var val = $el.val();
 
                         if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) )

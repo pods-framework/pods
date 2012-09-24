@@ -904,7 +904,7 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
         <?php
     }
 
-    if ( class_exists( 'Pods_Helper' ) ) {
+    if ( class_exists( 'Pods_Helpers' ) ) {
     ?>
 
     <div class="pods-field-option">

@@ -1002,24 +1002,24 @@ class PodsUI {
                 $this->fields[ 'manage' ] = $fields;
 
             if ( !in_array( 'add', $this->actions_disabled ) || !in_array( 'edit', $this->actions_disabled ) || !in_array( 'duplicate', $this->actions_disabled ) ) {
-                if ( 'form' != $which && !empty( $this->fields[ 'form' ] ) )
+                if ( 'form' != $which && is_array( $this->fields[ 'form' ] ) )
                     $this->fields[ 'form' ] = $this->setup_fields( $this->fields[ 'form' ], 'form' );
                 else
                     $this->fields[ 'form' ] = $fields;
                 if ( !in_array( 'add', $this->actions_disabled ) ) {
-                    if ( 'add' != $which && !empty( $this->fields[ 'add' ] ) )
+                    if ( 'add' != $which && is_array( $this->fields[ 'add' ] ) )
                         $this->fields[ 'add' ] = $this->setup_fields( $this->fields[ 'add' ], 'add' );
                     else
                         $this->fields[ 'add' ] = $fields;
                 }
                 if ( !in_array( 'edit', $this->actions_disabled ) ) {
-                    if ( 'edit' != $which && !empty( $this->fields[ 'edit' ] ) )
+                    if ( 'edit' != $which && is_array( $this->fields[ 'edit' ] ) )
                         $this->fields[ 'edit' ] = $this->setup_fields( $this->fields[ 'edit' ], 'edit' );
                     else
                         $this->fields[ 'edit' ] = $fields;
                 }
                 if ( !in_array( 'duplicate', $this->actions_disabled ) ) {
-                    if ( 'duplicate' != $which && !empty( $this->fields[ 'duplicate' ] ) )
+                    if ( 'duplicate' != $which && is_array( $this->fields[ 'duplicate' ] ) )
                         $this->fields[ 'duplicate' ] = $this->setup_fields( $this->fields[ 'duplicate' ], 'duplicate' );
                     else
                         $this->fields[ 'duplicate' ] = $fields;

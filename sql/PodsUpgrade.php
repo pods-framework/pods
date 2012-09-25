@@ -400,18 +400,22 @@ class PodsUpgrade_2_0 {
                     array(
                         'name' => 'created',
                         'label' => 'Date Created',
-                        'type' => 'date',
+                        'type' => 'datetime',
                         'options' => array(
-                            'date_format_type' => 'datetime'
+                            'datetime_format' => 'ymd_slash',
+                            'datetime_time_type' => '12',
+                            'datetime_time_format' => 'h_mm_ss_A'
                         ),
                         'weight' => 1
                     ),
                     array(
                         'name' => 'modified',
                         'label' => 'Date Modified',
-                        'type' => 'date',
+                        'type' => 'datetime',
                         'options' => array(
-                            'date_format_type' => 'datetime'
+                            'datetime_format' => 'ymd_slash',
+                            'datetime_time_type' => '12',
+                            'datetime_time_format' => 'h_mm_ss_A'
                         ),
                         'weight' => 2
                     ),

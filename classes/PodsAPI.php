@@ -851,6 +851,7 @@ class PodsAPI {
      * $params['create_label_plural'] string Plural Label (for Creating)
      * $params['create_label_singular'] string Singular Label (for Creating)
      * $params['create_storage'] string Storage Type (for Creating Post Types)
+     * $params['create_storage_taxonomy'] string Storage Type (for Creating Taxonomies)
      * $params['extend_pod_type'] string Pod Type (for Extending)
      * $params['extend_post_type'] string Post Type (for Extending Post Types)
      * $params['extend_taxonomy'] string Taxonomy (for Extending Taxonomies)
@@ -873,8 +874,7 @@ class PodsAPI {
             'extend_pod_type' => 'post_type',
             'extend_post_type' => 'post',
             'extend_taxonomy' => 'category',
-            'extend_storage' => 'meta',
-            'extend_storage_taxonomy' => 'table',
+            'extend_storage' => 'meta'
         );
 
         $params = (object) array_merge( $defaults, (array) $params );
@@ -917,7 +917,7 @@ class PodsAPI {
                 $pod_params[ 'name' ] = $params->extend_post_type;
             }
             elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
-                $pod_params[ 'storage' ] = $params->extend_storage_taxonomy;
+                $pod_params[ 'storage' ] = 'table';
                 $pod_params[ 'name' ] = $params->extend_taxonomy;
             }
             else {
@@ -1140,24 +1140,22 @@ class PodsAPI {
                 $pod[ 'fields' ][] = array(
                     'name' => 'created',
                     'label' => 'Date Created',
-                    'type' => 'date',
+                    'type' => 'datetime',
                     'options' => array(
-                        'date_format_type' => 'datetime',
-                        'date_format' => 'ymd_slash',
-                        'date_time_type' => '12',
-                        'date_time_format' => 'h_mm_ss_A'
+                        'datetime_format' => 'ymd_slash',
+                        'datetime_time_type' => '12',
+                        'datetime_time_format' => 'h_mm_ss_A'
                     )
                 );
 
                 $pod[ 'fields' ][] = array(
                     'name' => 'modified',
                     'label' => 'Date Modified',
-                    'type' => 'date',
+                    'type' => 'datetime',
                     'options' => array(
-                        'date_format_type' => 'datetime',
-                        'date_format' => 'ymd_slash',
-                        'date_time_type' => '12',
-                        'date_time_format' => 'h_mm_ss_A'
+                        'datetime_format' => 'ymd_slash',
+                        'datetime_time_type' => '12',
+                        'datetime_time_format' => 'h_mm_ss_A'
                     )
                 );
 

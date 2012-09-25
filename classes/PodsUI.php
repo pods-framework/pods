@@ -375,11 +375,15 @@ class PodsUI {
 
             unset( $options[ 'pod' ] );
         }
+        elseif ( is_object( $object ) )
+            $this->pod = $object;
 
         if ( false !== $deprecated || ( is_object( $this->pod ) && 'Pod' == get_class( $object ) ) )
             $options = $this->setup_deprecated( $options );
 
-        if ( is_object( $this->pod ) && is_object( $this->pod->data ) )
+        if ( is_object( $this->pod ) && 'Pod' == get_class( $object ) && is_object( $this->pod->_data ) )
+            $this->pods_data =& $this->pod->_data;
+        elseif ( is_object( $this->pod ) && 'Pods' == get_class( $object ) && is_object( $this->pod->data ) )
             $this->pods_data =& $this->pod->data;
         elseif ( is_object( $this->pod ) )
             $this->pods_data =& pods_data( $this->pod->pod );
@@ -388,6 +392,9 @@ class PodsUI {
 
         $options = $this->do_hook( 'pre_init', $options );
         $this->setup( $options );
+
+        if ( is_object( $this->pods_data ) && is_object( $this->pod ) && 0 < $this->id && $this->id != $this->pods_data->id )
+            $this->pods_data->fetch( $this->id );
 
         if ( ( !is_object( $this->pod ) || 'Pods' != get_class( $this->pod ) ) && false === $this->sql[ 'table' ] && false === $this->data ) {
             echo $this->error( __( '<strong>Error:</strong> Pods UI needs a Pods object or a Table definition to run from, see the User Guide for more information.', 'pods' ) );
@@ -1272,6 +1279,8 @@ class PodsUI {
         $pod =& $this->pod;
         $thank_you = pods_var_update( $vars, array( 'page' ), $this->exclusion() );
         $obj =& $this;
+        $singular_label = $this->item;
+        $label = $this->items;
 
         pods_view( PODS_DIR . 'ui/admin/form.php', compact( array_keys( get_defined_vars() ) ) );
     }
@@ -1462,11 +1471,14 @@ class PodsUI {
         if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
             $orderby = array();
 
+            if ( 'reorder' == $this->action && empty( $this->reorder[ 'orderby' ] ) )
+                $orderby[ $this->reorder[ 'on' ] ] = $this->reorder[ 'orderby_dir' ];
+
             if ( !empty( $this->orderby ) ) {
                 $this->orderby = (array) $this->orderby;
 
                 foreach ( $this->orderby as $order ) {
-                    if ( false === strpos( ' ', $order ) )
+                    if ( false === strpos( ' ', $order ) && !isset( $orderby[ $order ] ) )
                         $orderby[ $order ] = $this->orderby_dir;
                 }
             }

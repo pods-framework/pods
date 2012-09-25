@@ -112,7 +112,9 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
                             <div class="pods-admin" id="navigatebox">
                                 <div id="navigation-actions">
                                     <?php
-                                        $singular_label = ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) );
+                                        if ( !isset( $singular_label ) )
+                                            $singular_label = ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) );
+
                                         $singular_label = pods_var_raw( 'label', $pod->pod_data[ 'options' ], $singular_label, null, true );
                                         $singular_label = pods_var_raw( 'label_singular', $pod->pod_data[ 'options' ], $singular_label, null, true );
 

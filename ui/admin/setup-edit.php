@@ -359,6 +359,15 @@ if ( 'none' != pods_var( 'storage', $pod, 'none', null, true ) ) {
 }
 else
     $closed = '';
+
+$advanced = true;
+
+if ( 'post_type' == pods_var( 'type', $pod ) && 0 < strlen( pods_var( 'object', $pod ) ) )
+    $advanced = false;
+elseif ( 'taxonomy' == pods_var( 'type', $pod ) && 0 < strlen( pods_var( 'object', $pod ) ) )
+    $advanced = false;
+
+if ( $advanced ) {
 ?>
 
 <div id="pods-advanced" class="pods-toggled postbox pods-submittable-fields<?php echo $closed; ?>">
@@ -977,6 +986,7 @@ elseif ( 'pod' == pods_var( 'type', $pod ) ) {
 <!-- /inside -->
 </div>
 <!-- /pods-pod-advanced-settings -->
+<?php } ?>
 </div>
 <!-- /#post-body-content -->
 

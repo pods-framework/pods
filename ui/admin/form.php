@@ -262,6 +262,7 @@ if ( !isset( $label ) )
         $( document ).Pods( 'submit' );
         $( document ).Pods( 'dependency' );
         $( document ).Pods( 'confirm' );
+        $( document ).Pods( 'exit_confirm' );
     } );
 
     var pods_admin_submit_callback = function ( id ) {

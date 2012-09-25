@@ -6,7 +6,7 @@
                 form_fields = 'input.pods-validate, select.pods-validate, textarea.pods-validate';
 
             // handle required
-            $containers.on( 'change keyup', form_fields.replace( ',', '.pods-validate-required,' ) + '.pods-validate-required', function () {
+            $containers.on( 'change keyup blur', form_fields.replace( ',', '.pods-validate-required,' ) + '.pods-validate-required', function () {
                 var $el = $( this );
 
                 $el.removeClass( 'pods-validate-error' );

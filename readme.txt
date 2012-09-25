@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, ui, content types, custom post types, relationships, database, framework, drupal
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 2.0
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,7 +88,12 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 == Changelog ==
 
-= 2.0 - September 21st, 2012 =
+= 2.0.1 - September 25th, 2012 =
+* With the help of our awesome users, we've been able to quickly fix 14 bugs
+* Improved backwards compatibility
+* Fixed Pods UI reordering saving bug
+
+= 2.0.0 - September 21st, 2012 =
 * An all new, fully revamped Pods has arrived! Check our plugin page for all the details
 * Please backup your site database before upgrading, even though we've tested migration it's never a bad idea to be safe
 * Create and extend WP objects like Post Types, Taxonomies, Media, Users, and Comments, plus everything you love about Pods from before

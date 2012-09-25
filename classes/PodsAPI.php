@@ -1040,7 +1040,7 @@ class PodsAPI {
         }
 
         // Blank out fields and options for AJAX calls (everything should be sent to it for a full overwrite)
-        if ( defined( 'DOING_AJAX' ) ) {
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
             $pod[ 'fields' ] = array();
             $pod[ 'options' ] = array();
         }
@@ -1316,7 +1316,7 @@ class PodsAPI {
         if ( 'pod' == $pod[ 'type' ] && !empty( $pod[ 'fields' ] ) && isset( $pod[ 'fields' ][ $field_index ] ) )
             $field_index_id = $pod[ 'fields' ][ $field_index ];
 
-        if ( isset( $params->fields ) || defined( 'DOING_AJAX' ) ) {
+        if ( isset( $params->fields ) || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
             $fields = array();
 
             if ( isset( $params->fields ) ) {
@@ -1576,7 +1576,7 @@ class PodsAPI {
 
         $field[ 'options' ] = array_merge( $field[ 'options' ], $options );
 
-        $object_fields = (array) $pod[ 'object_fields' ];
+        $object_fields = (array) pods_var_raw( 'object_fields', $pod, array(), null, true );
 
         // Add new field
         if ( !isset( $params->id ) || empty( $params->id ) || empty( $field ) ) {
@@ -2027,10 +2027,7 @@ class PodsAPI {
 
         $fields = $pod[ 'fields' ];
 
-        $object_fields = array();
-
-        if ( isset( $pod[ 'object_fields' ] ) )
-            $object_fields = (array) $pod[ 'object_fields' ];
+        $object_fields = (array) pods_var_raw( 'object_fields', $pod, array(), null, true );
 
         $fields_active = array();
 
@@ -2603,12 +2600,18 @@ class PodsAPI {
         // @deprecated 2.0.0
         if ( isset( $params->datatype ) ) {
             pods_deprecated( __( '$params->pod instead of $params->datatype', 'pods' ), '2.0.0' );
+
             $params->pod = $params->datatype;
+
             unset( $params->datatype );
         }
 
+        if ( null === pods_var_raw( 'pod', $params, null, null, true ) )
+            return pods_error( __( '$params->pod is required', 'pods' ), $this );
+
         if ( !is_array( $params->order ) )
             $params->order = explode( ',', $params->order );
+
         foreach ( $params->order as $order => $id ) {
             pods_query( "UPDATE `@wp_pods_{$params->pod}` SET `{$params->field}` = " . pods_absint( $order ) . " WHERE `id` = " . pods_absint( $id ) . " LIMIT 1" );
         }

@@ -589,6 +589,9 @@ class PodsData {
         if ( empty( $params->table ) && is_object( $this->pod_data ) && isset( $this->table ) && !empty( $this->table ) )
             $params->table = $this->table;
 
+        if ( empty( $params->table ) )
+            return false;
+
         if ( false === strpos( $params->table, '(' ) && false === strpos( $params->table, '`' ) )
             $params->table = '`' . $params->table . '`';
 

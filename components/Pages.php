@@ -73,6 +73,7 @@ class Pods_Pages extends PodsComponent {
             add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 10, 4 );
             add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 10, 4 );
 
+            add_action( 'pods_meta_save_pre__pods_page', array( $this, 'fix_filters' ), 10, 5 );
             add_action( 'pods_meta_save_post__pods_page', array( $this, 'clear_cache' ), 10, 5 );
             add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
         }
@@ -94,6 +95,15 @@ class Pods_Pages extends PodsComponent {
      */
     public function admin_assets () {
         wp_enqueue_style( 'pods-admin' );
+    }
+
+    /**
+     * Fix filters, specifically removing balanceTags
+     *
+     * @since 2.0.1
+     */
+    public function fix_filters( $data, $pod = null, $id = null, $groups = null, $post = null ) {
+        remove_filter( 'content_save_pre', 'balanceTags', 50 );
     }
 
     /**
@@ -578,7 +588,7 @@ class Pods_Pages extends PodsComponent {
 
             if ( null !== $render_function && is_callable( $render_function ) )
                 call_user_func( $render_function, $template, self::$exists );
-            elseif ( is_object( $pods ) && !is_wp_error( $pods ) && isset( $pods->page_template ) && !empty( $pods->page_template ) && '' != locate_template( array( $pods->page_template ), true ) ) {
+            elseif ( ( !defined( 'PODS_DISABLE_DYNAMIC_TEMPLATE' ) || !PODS_DISABLE_DYNAMIC_TEMPLATE ) && is_object( $pods ) && !is_wp_error( $pods ) && isset( $pods->page_template ) && !empty( $pods->page_template ) && '' != locate_template( array( $pods->page_template ), true ) ) {
                 $template = $pods->page_template;
                 // found the template and included it, we're good to go!
             }
@@ -594,10 +604,8 @@ class Pods_Pages extends PodsComponent {
                 // templates not found in theme, default output
                 do_action( 'pods_page_default', $template, self::$exists );
 
-                $content = pods_content(true); // Process content of the page before header to get all required javascript.
-
                 get_header();
-                echo $content;
+                pods_content();
                 get_sidebar();
                 get_footer();
             }
@@ -651,5 +659,4 @@ function pods_content ( $return = false ) {
 /*
  * Deprecated global variable
  */
-global $pod_page_exists;
-$pod_page_exists =& Pods_Pages::$exists;
+$GLOBALS[ 'pod_page_exists' ] =& Pods_Pages::$exists;

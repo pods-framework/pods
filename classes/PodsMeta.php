@@ -351,6 +351,9 @@ class PodsMeta {
         elseif ( empty( $pod[ 'object' ] ) )
             $pod[ 'object' ] = $pod[ 'name' ];
 
+        if ( $pod[ 'type' ] != $type )
+            return array();
+
         $groups = array(
             array(
                 'pod' => $pod,
@@ -454,15 +457,23 @@ class PodsMeta {
     public function save_post ( $post_id, $post ) {
         $blacklisted_types = array(
             'revision',
-            'auto-draft',
             '_pods_pod',
             '_pods_field'
         );
 
-        $blacklisted_types = apply_filters( 'pods_meta_save_post_blacklist', $blacklisted_types, $post_id, $post );
+        $blacklisted_types = apply_filters( 'pods_meta_save_post_blacklist_types', $blacklisted_types, $post_id, $post );
 
         // @todo Figure out how to hook into autosave for saving meta
         if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || in_array( $post->post_type, $blacklisted_types ) )
+            return $post_id;
+
+        $blacklisted_status = array(
+            'auto-draft'
+        );
+
+        $blacklisted_status = apply_filters( 'pods_meta_save_post_blacklist_status', $blacklisted_status, $post_id, $post );
+
+        if ( in_array( $post->post_status, $blacklisted_status ) )
             return $post_id;
 
         $groups = $this->groups_get( 'post_type', $post->post_type );
@@ -471,7 +482,7 @@ class PodsMeta {
             return $post_id;
 
         // Infinite loop fix
-        remove_action( current_filter(), array( $this, __FUNCTION__ ), 10 );
+        remove_action( current_filter(), array( $this, __FUNCTION__ ), 10, 2 );
 
         $data = array();
 

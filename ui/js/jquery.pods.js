@@ -2,9 +2,11 @@
     var pods_changed = false;
     var methods = {
         validate : function () {
-            var $form = $( 'form.pods-submittable' );
+            var $containers = $( 'form.pods-submittable, .pods-validation' ),
+                form_fields = 'input.pods-validate, select.pods-validate, textarea.pods-validate';
 
-            $form.on( 'change keyup', 'input.pods-validate.pods-validate-required, select.pods-validate.pods-validate-required, textarea.pods-validate.pods-validate-required', function () {
+            // handle required
+            $containers.on( 'change keyup blur', form_fields.replace( ',', '.pods-validate-required,' ) + '.pods-validate-required', function () {
                 var $el = $( this );
 
                 $el.removeClass( 'pods-validate-error' );

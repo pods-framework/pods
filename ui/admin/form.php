@@ -103,7 +103,6 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
                     <!-- /#submitdiv --><!-- END PUBLISH DIV --><!-- TODO: minor column fields -->
                     <?php
                         if ( pods_var_raw( 'action' ) == 'edit' ) {
-                            $singular_label = pods_var_raw( 'label_singular', $pod->pod_data[ 'options' ], pods_var_raw( 'label', $pod->pod_data[ 'options' ], ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) ), null, true ), null, true );
                     ?>
                     <div id="navigatediv" class="postbox">
                         <div class="handlediv" title="Click to toggle"><br /></div>
@@ -113,12 +112,16 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
                             <div class="pods-admin" id="navigatebox">
                                 <div id="navigation-actions">
                                     <?php
+                                        $singular_label = ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) );
+                                        $singular_label = pods_var_raw( 'label', $pod->pod_data[ 'options' ], $singular_label, null, true );
+                                        $singular_label = pods_var_raw( 'label_singular', $pod->pod_data[ 'options' ], $singular_label, null, true );
+
                                         $prev = $pod->prev_id();
                                         $next = $pod->next_id();
 
                                         if ( 0 < $prev ) {
                                     ?>
-                                        <a class="previous-item" href="<?php echo pods_var_update( array( 'id' => $prev ), null, 'do' ) ?>">
+                                        <a class="previous-item" href="<?php echo pods_var_update( array( 'id' => $prev ), null, 'do' ); ?>">
                                             <span>&laquo;</span>
                                             <?php
                                                 _e( 'Previous', 'pods' );
@@ -130,7 +133,7 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
 
                                         if ( 0 < $next ) {
                                     ?>
-                                        <a class="next-item" href="<?php echo pods_var_update( array( 'id' => $next ), null, 'do' ) ?>">
+                                        <a class="next-item" href="<?php echo pods_var_update( array( 'id' => $next ), null, 'do' ); ?>">
                                             <?php
                                                 _e( 'Next', 'pods' );
                                                 echo ' ' . $singular_label;

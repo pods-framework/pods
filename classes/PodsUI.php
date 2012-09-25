@@ -1484,9 +1484,10 @@ class PodsUI {
             }
 
             $params = array(
+                'where' => pods_var_raw( $this->action, $this->where, null, null, true ),
+                'orderby' => $orderby,
                 'page' => (int) $this->page,
                 'limit' => (int) $this->limit,
-                'orderby' => $orderby,
                 'search' => $this->searchable,
                 'search_query' => $this->search
             );
@@ -1515,9 +1516,10 @@ class PodsUI {
             $this->pods_data->select(
                 array(
                     'table' => $this->sql[ 'table' ],
+                    'where' => pods_var_raw( $this->action, $this->where, null, null, true ),
+                    'orderby' => $orderby,
                     'page' => (int) $this->page,
                     'limit' => (int) $this->limit,
-                    'orderby' => $orderby,
                     'search' => $this->searchable,
                     'search_query' => $this->search,
                     'fields' => $this->fields[ 'search' ]

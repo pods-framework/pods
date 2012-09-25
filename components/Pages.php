@@ -280,6 +280,11 @@ class Pods_Pages extends PodsComponent {
         if ( false !== strpos( $uri, 'wp-admin' ) || false !== strpos( $uri, 'wp-includes' ) )
             return false;
 
+        $object = pods_transient_get( 'pods_object_page_' . $uri );
+
+        if ( false !== $object )
+            return $object;
+
         // See if the custom template exists
         $sql = "
                 SELECT *
@@ -295,7 +300,14 @@ class Pods_Pages extends PodsComponent {
 
         $result = pods_query( $sql );
 
+        $wildcard = false;
+
         if ( empty( $result ) ) {
+            $object = pods_cache_get( $uri, 'pods_object_page_wildcard' );
+
+            if ( false !== $object )
+                return $object;
+
             // Find any wildcards
             $sql = "
                     SELECT *
@@ -312,6 +324,8 @@ class Pods_Pages extends PodsComponent {
             $sql = array( $sql, array( $uri, $uri_depth ) );
 
             $result = pods_query( $sql );
+
+            $wildcard = true;
         }
 
         if ( !empty( $result ) ) {
@@ -326,6 +340,11 @@ class Pods_Pages extends PodsComponent {
                 'page_template' => get_post_meta( $_object[ 'ID' ], 'page_template', true ),
                 'title' => get_post_meta( $_object[ 'ID' ], 'page_title', true )
             );
+
+            if ( $wildcard )
+                pods_cache_set( $uri, $object, 'pods_object_page_wildcard', 3600 );
+            else
+                pods_transient_set( 'pods_object_page_' . $uri, $object );
 
             return $object;
         }

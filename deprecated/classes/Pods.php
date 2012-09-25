@@ -473,7 +473,7 @@ class Pods_Deprecated
 
         $params = array(
             'where' => $where,
-            'orderby' => "`t`.`{$this->obj->field_id}` DESC",
+            'orderby' => "`t`.`{$this->obj->data->field_id}` DESC",
             'limit' => (int) $rows_per_page,
             'page' => $this->obj->page,
             'search' => $this->obj->search,

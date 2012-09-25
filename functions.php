@@ -107,7 +107,10 @@ function pods_error ( $error, $obj = null ) {
         return $die_bypass;
 
     // die with error
-    die( "<e>$error</e>" );
+    if ( !defined( 'DOING_AJAX' ) && !headers_sent() )
+        wp_die( $error );
+    else
+        die( "<e>$error</e>" );
 }
 
 /**

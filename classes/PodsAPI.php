@@ -1040,7 +1040,7 @@ class PodsAPI {
         }
 
         // Blank out fields and options for AJAX calls (everything should be sent to it for a full overwrite)
-        if ( defined( 'DOING_AJAX' ) ) {
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
             $pod[ 'fields' ] = array();
             $pod[ 'options' ] = array();
         }
@@ -1316,7 +1316,7 @@ class PodsAPI {
         if ( 'pod' == $pod[ 'type' ] && !empty( $pod[ 'fields' ] ) && isset( $pod[ 'fields' ][ $field_index ] ) )
             $field_index_id = $pod[ 'fields' ][ $field_index ];
 
-        if ( isset( $params->fields ) || defined( 'DOING_AJAX' ) ) {
+        if ( isset( $params->fields ) || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
             $fields = array();
 
             if ( isset( $params->fields ) ) {

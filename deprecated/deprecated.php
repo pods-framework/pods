@@ -132,9 +132,9 @@ class Pod
             $var = $this->new->row();
         }
         elseif ( 'total_rows' == $name ) {
-            pods_deprecated( "Pods->{$name}", '2.0.0', "Pods->total()" );
+            pods_deprecated( "Pods->{$name}", '2.0.0', "Pods->total_found()" );
 
-            $var = $this->new->total();
+            $var = $this->new->total_found();
         }
         else
             $var = $this->new->{$name};

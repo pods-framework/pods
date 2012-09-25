@@ -604,8 +604,6 @@ class Pods_Pages extends PodsComponent {
                 // templates not found in theme, default output
                 do_action( 'pods_page_default', $template, self::$exists );
 
-                wp_enqueue_script( 'jquery' ); // @todo Load this as needed
-
                 get_header();
                 pods_content();
                 get_sidebar();

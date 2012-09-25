@@ -1,6 +1,9 @@
 <?php
 wp_enqueue_style( 'pods-form' );
 
+if ( empty( $fields ) || !is_array( $fields ) )
+    $fields = $obj->pod->fields;
+
 // unset fields
 foreach ( $fields as $k => $field ) {
     if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) )
@@ -50,6 +53,9 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
     else
         echo $obj->error( $error );
 }
+
+if ( !isset( $label ) )
+    $label = _e( 'Save', 'pods' );
 ?>
 
 <form action="" method="post" class="pods-submittable pods-form pods-form-pod-<?php echo $pod->pod; ?>">
@@ -86,7 +92,7 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
 
                                         <div id="publishing-action">
                                             <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
-                                            <input type="submit" name="publish" id="publish" class="button-primary" value="<?php _e( 'Save', 'pods' ); ?>" accesskey="p" />
+                                            <input type="submit" name="publish" id="publish" class="button-primary" value="<?php echo esc_attr( $label ); ?>" accesskey="p" />
                                         </div>
                                         <!-- /#publishing-action -->
 

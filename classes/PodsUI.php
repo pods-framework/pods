@@ -1241,7 +1241,7 @@ class PodsUI {
         if ( isset( $this->actions_custom[ 'form' ] ) && is_callable( $this->actions_custom[ 'form' ] ) )
             return call_user_func_array( $this->actions_custom[ 'form' ], array( &$this ) );
 
-        $submit = $this->label[ 'add' ];
+        $label = $this->label[ 'add' ];
         $id = null;
         $vars = array(
             'action' . $this->num => $this->action_after[ 'add' ],
@@ -1256,7 +1256,7 @@ class PodsUI {
             if ( empty( $this->row ) )
                 return $this->error( sprintf( __( '<strong>Error:</strong> %s not found.', 'pods' ), $this->item ) );
 
-            $submit = $this->label[ 'edit' ];
+            $label = $this->label[ 'edit' ];
             $id = $this->row[ $this->sql[ 'field_id' ] ];
             $vars = array(
                 'action' . $this->num => $this->action_after[ 'edit' ],
@@ -1265,7 +1265,7 @@ class PodsUI {
             );
 
             if ( 1 == $duplicate ) {
-                $submit = $this->label[ 'duplicate' ];
+                $label = $this->label[ 'duplicate' ];
                 $id = null;
                 $vars = array(
                     'action' . $this->num => $this->action_after[ 'duplicate' ],
@@ -1280,7 +1280,7 @@ class PodsUI {
         $thank_you = pods_var_update( $vars, array( 'page' ), $this->exclusion() );
         $obj =& $this;
         $singular_label = $this->item;
-        $label = $this->items;
+        $plural_label = $this->items;
 
         pods_view( PODS_DIR . 'ui/admin/form.php', compact( array_keys( get_defined_vars() ) ) );
     }

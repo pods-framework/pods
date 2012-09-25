@@ -131,6 +131,11 @@ class Pod
 
             $var = $this->new->row();
         }
+        elseif ( 'total' == $name ) {
+            pods_deprecated( "Pods->{$name}", '2.0.0', "Pods->total()" );
+
+            $var = $this->new->total();
+        }
         elseif ( 'total_rows' == $name ) {
             pods_deprecated( "Pods->{$name}", '2.0.0', "Pods->total_found()" );
 
@@ -161,7 +166,7 @@ class Pod
     public function __isset ( $name ) {
         $name = (string) $name;
 
-        if ( in_array( $name, array( 'data', 'total_rows' ) ) )
+        if ( in_array( $name, array( 'data', 'total', 'total_rows' ) ) )
             return true;
         else
             return isset( $this->new->{$name} );

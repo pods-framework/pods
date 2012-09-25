@@ -2600,12 +2600,18 @@ class PodsAPI {
         // @deprecated 2.0.0
         if ( isset( $params->datatype ) ) {
             pods_deprecated( __( '$params->pod instead of $params->datatype', 'pods' ), '2.0.0' );
+
             $params->pod = $params->datatype;
+
             unset( $params->datatype );
         }
 
+        if ( null === pods_var_raw( 'pod', $params, null, null, true ) )
+            return pods_error( __( '$params->pod is required', 'pods' ), $this );
+
         if ( !is_array( $params->order ) )
             $params->order = explode( ',', $params->order );
+
         foreach ( $params->order as $order => $id ) {
             pods_query( "UPDATE `@wp_pods_{$params->pod}` SET `{$params->field}` = " . pods_absint( $order ) . " WHERE `id` = " . pods_absint( $id ) . " LIMIT 1" );
         }

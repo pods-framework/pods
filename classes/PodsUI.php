@@ -1292,6 +1292,22 @@ class PodsUI {
     }
 
     /**
+     * Reorder data
+     */
+    public function reorder () {
+        // loop through order
+        $order = (array) pods_var_raw( 'order', 'post', array(), null, true );
+
+        $params = array(
+            'pod' => $this->pod->pod,
+            'field' => $this->reorder[ 'on' ],
+            'order' => $order
+        );
+
+        return pods_api()->reorder_pod_item( $params );
+    }
+
+    /**
      * @param bool $insert
      *
      * @return mixed
@@ -1578,14 +1594,14 @@ class PodsUI {
 
         $this->screen_meta();
 
-        if ( true === $reorder && !in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder[ 'on' ] )
+        if ( true === $reorder )
             wp_enqueue_script( 'jquery-ui-sortable' );
         ?>
     <div class="wrap">
         <div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
         <h2>
             <?php
-            if ( true === $reorder && !in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder[ 'on' ] ) {
+            if ( true === $reorder ) {
                 echo $this->heading[ 'reorder' ] . ' ' . $this->items;
                 ?>
                 <small>(<a href="<?php echo pods_var_update( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), array( 'page' ), $this->exclusion() ); ?>">&laquo; <?php _e( 'Back to Manage', 'pods' ); ?></a>)</small>
@@ -1605,7 +1621,9 @@ class PodsUI {
             }
             ?>
         </h2>
+        <?php if ( true !== $reorder ) { ?>
         <form id="posts-filter" action="<?php echo pods_var_update( array( 'pg' . $this->num => '' ), array( 'page' ), $this->exclusion() ); ?>" method="get">
+        <?php } ?>
             <?php
             if ( isset( $this->actions_custom[ 'header' ] ) && is_callable( $this->actions_custom[ 'header' ] ) )
                 return call_user_func_array( $this->actions_custom[ 'header' ], array( $reorder, &$this ) );
@@ -1729,18 +1747,19 @@ class PodsUI {
                 <?php
             }
 
-            if ( !empty( $this->data ) && ( false !== $this->pagination_total || false !== $this->pagination || ( true === $reorder && !in_array( 'reorder', $this->actions_disabled ) && !in_array( 'delete', $this->actions_hidden ) && false !== $this->reorder[ 'on' ] ) ) || ( !in_array( 'export', $this->actions_disabled ) && !in_array( 'export', $this->actions_hidden ) ) ) {
+            if ( !empty( $this->data ) && ( false !== $this->pagination_total || false !== $this->pagination || true === $reorder ) || ( !in_array( 'export', $this->actions_disabled ) && !in_array( 'export', $this->actions_hidden ) ) ) {
                 ?>
                 <div class="tablenav">
                     <?php
-                    if ( false !== $this->pagination_total || false !== $this->pagination ) {
+                    if ( true !== $reorder && ( false !== $this->pagination_total || false !== $this->pagination ) ) {
                         ?>
                         <div class="tablenav-pages<?php echo ( $this->limit < $this->total_found || 1 < $this->page ) ? '' : ' one-page'; ?>">
                             <?php $this->pagination( 1 ); ?>
                         </div>
                         <?php
                     }
-                    if ( true === $reorder && !in_array( 'reorder', $this->actions_disabled ) && !in_array( 'delete', $this->actions_hidden ) && false !== $this->reorder[ 'on' ] ) {
+
+                    if ( true === $reorder ) {
                         ?>
                         <input type="button" value="<?php _e( 'Update Order', 'pods' ); ?>" class="button" onclick="jQuery('form.admin_ui_reorder_form').submit();" />
                         <input type="button" value="<?php _e( 'Cancel', 'pods' ); ?>" class="button" onclick="document.location='<?php echo pods_var_update( array( 'action' . $this->num => 'manage' ), array( 'page' ), $this->exclusion() ); ?>';" />
@@ -1802,7 +1821,7 @@ class PodsUI {
             </div>
     <?php
                 }*/
-                if ( false !== $this->pagination_total || false !== $this->pagination ) {
+                if ( true !== $reorder && ( false !== $this->pagination_total || false !== $this->pagination ) ) {
                     ?>
                     <div class="tablenav">
                         <div class="tablenav-pages<?php echo ( $this->limit < $this->total_found || 1 < $this->page ) ? '' : ' one-page'; ?>">
@@ -1813,8 +1832,11 @@ class PodsUI {
                     <?php
                 }
             }
+
+            if ( true !== $reorder ) {
             ?>
         </form>
+        <?php } ?>
     </div>
     <?php
     }

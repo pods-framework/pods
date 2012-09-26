@@ -1364,6 +1364,8 @@ class PodsData {
     public function reset ( $row = null ) {
         $row = pods_absint( $row );
 
+        $this->row = false;
+
         if ( isset( $this->data[ $row ] ) )
             $this->row = get_object_vars( $this->data[ $row ] );
 

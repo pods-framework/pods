@@ -1817,8 +1817,8 @@ class PodsAPI {
 
         $params->id = $this->save_post( $post_data, $object[ 'options' ], true, true );
 
-        delete_transient( 'pods_object_' . $params->type );
-        delete_transient( 'pods_object_' . $params->type . '_' . $params->name );
+        pods_transient_clear( 'pods_object_' . $params->type );
+        pods_transient_clear( 'pods_object_' . $params->type . '_' . $params->name );
 
         return $params->id;
     }
@@ -2852,10 +2852,10 @@ class PodsAPI {
         if ( !$success )
             return pods_error( sprintf( __( "%s Object not deleted", 'pods' ), ucwords( $params->type ) ), $this );
 
-        delete_transient( 'pods_object_' . $params->type );
+        pods_transient_clear( 'pods_object_' . $params->type );
 
         if ( isset( $params->name ) )
-            delete_transient( 'pods_object_' . $params->type . '_' . $params->name );
+            pods_transient_clear( 'pods_object_' . $params->type . '_' . $params->name );
 
         return true;
     }
@@ -5093,13 +5093,13 @@ class PodsAPI {
          */
         global $wpdb;
 
-        delete_transient( 'pods' );
+        pods_transient_clear( 'pods' );
 
         if ( null !== $pod && is_array( $pod ) ) {
-            delete_transient( 'pods_pod_' . $pod[ 'name' ] );
+            pods_transient_clear( 'pods_pod_' . $pod[ 'name' ] );
 
             if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) )
-                delete_transient( 'pods_wp_cpt_ct' );
+                pods_transient_clear( 'pods_wp_cpt_ct' );
         }
 
         $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods%'" );

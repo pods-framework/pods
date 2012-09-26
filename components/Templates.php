@@ -115,8 +115,8 @@ class Pods_Templates extends PodsComponent {
                 return;
         }
 
-        delete_transient( 'pods_object_template' );
-        delete_transient( 'pods_object_template_' . $post->post_title );
+        pods_transient_clear( 'pods_object_template' );
+        pods_transient_clear( 'pods_object_template_' . $post->post_title );
     }
 
     /**

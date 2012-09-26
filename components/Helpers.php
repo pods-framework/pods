@@ -106,8 +106,8 @@ class Pods_Helpers extends PodsComponent {
                 return;
         }
 
-        delete_transient( 'pods_object_helper' );
-        delete_transient( 'pods_object_helper_' . $post->post_title );
+        pods_transient_clear( 'pods_object_helper' );
+        pods_transient_clear( 'pods_object_helper_' . $post->post_title );
     }
 
     /**

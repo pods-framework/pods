@@ -120,8 +120,9 @@ class Pods_Pages extends PodsComponent {
                 return;
         }
 
-        delete_transient( 'pods_object_page' );
-        delete_transient( 'pods_object_page_' . $post->post_title );
+        pods_transient_clear( 'pods_object_page' );
+        pods_transient_clear( 'pods_object_page_' . $post->post_title );
+        pods_cache_clear( $post->post_title, 'pods_object_page_wildcard', 3600 );
     }
 
     /**

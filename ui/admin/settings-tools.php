@@ -8,6 +8,8 @@
     }
     elseif ( 1 == pods_var( 'pods_clearcache' ) )
         pods_ui_message( 'Pods 2.0 transients and cache have been cleared.' );
+
+    if ( PODS_GITHUB_UPDATE ) {
 ?>
 
 <h3><?php _e( 'Force an update of this beta from GitHub', 'pods' ); ?></h3>
@@ -26,6 +28,8 @@
 </p>
 
 <hr />
+
+<?php } ?>
 
 <h3><?php _e( 'Clear Pods 2.0 Cache', 'pods' ); ?></h3>
 

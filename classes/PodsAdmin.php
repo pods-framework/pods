@@ -314,6 +314,8 @@ class PodsAdmin {
                     'function' => array( $this, 'admin_help' )
                 )
             );
+
+            add_action( 'admin_notices', array( $this, 'upgrade_notice' ) );
         }
 
         $admin_menus = apply_filters( 'pods_admin_menu', $admin_menus );
@@ -361,6 +363,15 @@ class PodsAdmin {
             if ( 'pods-components' == $page )
                 PodsInit::$components->menu( $parent );
         }
+    }
+
+    public function upgrade_notice () {
+        echo '<div class="error fade"><p>';
+        echo sprintf(
+            __( '<strong>NOTICE:</strong> Pods 2.0 requires your action to complete the upgrade. Please run the <a href="%s">Upgrade Wizard</a>.', 'pods' ),
+            admin_url( 'admin.php?page=pods-upgrade' )
+        );
+        echo '</p></div>';
     }
 
     /**

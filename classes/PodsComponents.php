@@ -154,10 +154,10 @@ class PodsComponents {
 
             $component_data = $this->components[ $component ];
 
-            if ( !file_exists( $component_data[ 'File' ] ) )
+            if ( !file_exists( ABSPATH . $component_data[ 'File' ] ) )
                 continue;
 
-            include_once $component_data[ 'File' ];
+            include_once ABSPATH . $component_data[ 'File' ];
 
             if ( !empty( $component_data[ 'Class' ] ) && class_exists( $component_data[ 'Class' ] ) && !isset( $this->components[ $component ][ 'object' ] ) ) {
                 $this->components[ $component ][ 'object' ] = new $component_data[ 'Class' ];
@@ -253,7 +253,7 @@ class PodsComponents {
                 else
                     $component_data[ 'DeveloperMode' ] = false;
 
-                $component_data[ 'File' ] = $component_file;
+                $component_data[ 'File' ] = str_replace( ABSPATH, '', $component_file );
 
                 $components[ $component_data[ 'ID' ] ] = $component_data;
             }

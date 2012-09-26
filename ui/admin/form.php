@@ -12,6 +12,9 @@ foreach ( $fields as $k => $field ) {
         unset( $fields[ $k ] );
 }
 
+if ( !isset( $thank_you_alt ) )
+    $thank_you_alt = $thank_you;
+
 $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
 $field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $fields ) ) );
 
@@ -268,7 +271,11 @@ if ( !isset( $label ) )
     var pods_admin_submit_callback = function ( id ) {
         id = parseInt( id );
         var thank_you = '<?php echo addslashes( $thank_you ); ?>';
+        var thank_you_alt = '<?php echo addslashes( $thank_you_alt ); ?>';
 
-        document.location = thank_you.replace( 'X_ID_X', id );
+        if ( 'NaN' == id )
+            document.location = thank_you.replace( 'X_ID_X', id );
+        else
+            document.location = thank_you_alt.replace( 'X_ID_X', 0 );
     }
 </script>

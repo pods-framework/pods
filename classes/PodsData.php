@@ -1297,14 +1297,14 @@ class PodsData {
             else {
                 $params = array(
                     'table' => $this->table,
-                    'where' => "`t`.`{$this->field_id}` = {$id}",
+                    'where' => "`t`.`{$this->field_id}` = " . (int) $id,
                     'orderby' => "`t`.`{$this->field_id}` DESC",
                     'page' => 1,
                     'limit' => 1,
                     'search' => false
                 );
 
-                if ( 'slug' == $mode ) {
+                if ( 'slug' == $mode && !empty( $this->field_slug ) ) {
                     $id = esc_sql( $id );
                     $params[ 'where' ] = "`t`.`{$this->field_slug}` = '{$id}'";
                 }

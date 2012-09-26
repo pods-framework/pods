@@ -322,7 +322,7 @@ class Pods_Templates extends PodsComponent {
      *
      * @since 1.x
      */
-    public static function do_magic_tags ( $tag, $obj = null ) {
+    public static function do_magic_tags( $tag, $obj = null ) {
         if ( !empty( $obj ) )
             self::$obj =& $obj;
         else
@@ -386,6 +386,6 @@ class Pods_Templates extends PodsComponent {
             return $before . $value . $after;
 
         return;
-
     }
+
 }

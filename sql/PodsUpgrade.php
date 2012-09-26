@@ -486,7 +486,7 @@ class PodsUpgrade_2_0 {
                         elseif ( 'wp_taxonomy' == $row->pickval )
                             $field_params[ 'pick_object' ] = 'taxonomy-category';
 
-                        $field_params[ 'sister_field_id' ] = $row->sister_field_id;
+                        $field_params[ 'sister_field_id' ] = $row->sister_field_id; // @todo Update this to the right ID
                         $field_params[ 'options' ][ 'pick_filter' ] = $row->pick_filter;
                         $field_params[ 'options' ][ 'pick_orderby' ] = $row->pick_orderby;
                         $field_params[ 'options' ][ 'pick_display' ] = '{@name}';

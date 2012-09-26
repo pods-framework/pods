@@ -4302,6 +4302,13 @@ class PodsAPI {
             $info = $_info;
         else {
             if ( 'pod' == $object_type && null === $pod ) {
+                if ( empty( $name ) ) {
+                    $prefix = 'pod-';
+
+                    // Make sure we actually have the prefix before trying anything with the name
+                    if ( 0 === strpos( $object_type, $prefix ) )
+                        $name = substr( $object_type, strlen( $prefix ), strlen( $object_type ) );
+                }
                 if ( !empty( $object ) )
                     $name = $object;
 
@@ -4316,7 +4323,15 @@ class PodsAPI {
                 }
             }
 
-            if ( 'pod' == $object_type ) {
+            if ( 0 === strpos( $object_type, 'pod' ) ) {
+                if ( empty( $name ) ) {
+                    $prefix = 'pod-';
+
+                    // Make sure we actually have the prefix before trying anything with the name
+                    if ( 0 === strpos( $object_type, $prefix ) )
+                        $name = substr( $object_type, strlen( $prefix ), strlen( $object_type ) );
+                }
+
                 $info[ 'table' ] = $wpdb->prefix . 'pods_' . ( empty( $object ) ? $name : $object );
 
                 if ( is_array( $pod ) ) {
@@ -4345,7 +4360,7 @@ class PodsAPI {
                     }
                 }
             }
-            elseif ( strstr($object_type, 'post_type') || 'media' == $object_type ) {
+            elseif ( 0 === strpos( $object_type, 'post_type' ) || 'media' == $object_type ) {
                 $info[ 'table' ] = $wpdb->posts;
                 $info[ 'field_id' ] = 'ID';
                 $info[ 'field_index' ] = 'post_title';
@@ -4353,10 +4368,12 @@ class PodsAPI {
 
                 if ( 'media' == $object_type )
                     $object = 'attachment';
+
                 if ( empty( $name ) ) {
                     $prefix = 'post_type-';
+
                     // Make sure we actually have the prefix before trying anything with the name
-                    if ( substr( $object_type, 0, strlen( $prefix ) ) == $prefix )
+                    if ( 0 === strpos( $object_type, $prefix ) )
                         $name = substr( $object_type, strlen( $prefix ), strlen( $object_type ) );
                 }
 
@@ -4367,12 +4384,20 @@ class PodsAPI {
 
                 $info[ 'orderby' ] = '`t`.`menu_order`, `t`.`' . $info[ 'field_index' ] . '`, `t`.`post_date`';
             }
-            elseif ( 'taxonomy' == $object_type ) {
+            elseif ( 0 === strpos( $object_type, 'taxonomy' ) ) {
                 $info[ 'table' ] = $wpdb->terms;
                 $info[ 'join' ][ 'tt' ] = "LEFT JOIN `{$wpdb->term_taxonomy}` AS `tt` ON `tt`.`term_id` = `t`.`term_id`";
                 $info[ 'field_id' ] = 'term_id';
                 $info[ 'field_index' ] = 'name';
                 $info[ 'field_slug' ] = 'slug';
+
+                if ( empty( $name ) ) {
+                    $prefix = 'taxonomy-';
+
+                    // Make sure we actually have the prefix before trying anything with the name
+                    if ( 0 === strpos( $object_type, $prefix ) )
+                        $name = substr( $object_type, strlen( $prefix ), strlen( $object_type ) );
+                }
 
                 $info[ 'where' ] = array(
                     'tt.taxonomy' => '`tt`.`taxonomy` = "' . ( empty( $object ) ? $name : $object ) . '"'
@@ -5077,9 +5102,10 @@ class PodsAPI {
                 delete_transient( 'pods_wp_cpt_ct' );
         }
 
-        $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods_%'" );
+        $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods%'" );
+        $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_timeout_pods%'" );
 
-        if ( in_array( $pod[ 'type' ], array( 'taxonomy', 'post_type' ) ) ) {
+        if ( null !== $pod && is_array( $pod ) && in_array( $pod[ 'type' ], array( 'taxonomy', 'post_type' ) ) ) {
             global $wp_rewrite;
             $wp_rewrite->flush_rules();
         }

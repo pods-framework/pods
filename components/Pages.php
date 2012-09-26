@@ -161,6 +161,9 @@ class Pods_Pages extends PodsComponent {
         if ( isset( PodsMeta::$post_types[ $pod[ 'name' ] ] ) )
             return;
 
+        if ( !function_exists( 'get_page_templates' ) )
+            include_once ABSPATH . 'wp-admin/includes/theme.php';
+
         $page_templates = apply_filters( 'pods_page_templates', get_page_templates() );
 
         $page_templates[ __( '-- Page Template --', 'pods' ) ] = '';
@@ -506,7 +509,7 @@ class Pods_Pages extends PodsComponent {
 
         if ( 0 < strlen( trim( $page_title ) ) ) {
             if ( is_object( $pods ) && !is_wp_error( $pods ) )
-                $page_title = preg_replace_callback( "/({@(.*?)})/m", array( $pods, "parse_magic_tags" ), $page_title );
+                $page_title = preg_replace_callback( "/({@(.*?)})/m", array( $this, "do_magic_tags" ), $page_title );
 
             $title = ( 'right' == $seplocation ) ? "{$page_title} {$sep} " : " {$sep} {$page_title}";
         }
@@ -633,6 +636,79 @@ class Pods_Pages extends PodsComponent {
 
             exit;
         }
+    }
+
+    /**
+     * Replace magic tags with their values
+     *
+     * @param string $tag The magic tag to evaluate
+     * @param object $obj The Pods object
+     *
+     * @since 2.0.2
+     */
+    public function do_magic_tags ( $tag, $obj = null ) {
+        global $pods;
+
+        $obj = $pods;
+
+        if ( empty( $obj ) || !is_object( $obj ) )
+            return '';
+
+        if ( is_array( $tag ) ) {
+            if ( !isset( $tag[ 2 ] ) && strlen( trim( $tag[ 2 ] ) ) < 1 )
+                return;
+
+            $tag = $tag[ 2 ];
+        }
+
+        $tag = trim( $tag, ' {@}' );
+        $tag = explode( ',', $tag );
+
+        if ( empty( $tag ) || !isset( $tag[ 0 ] ) || strlen( trim( $tag[ 0 ] ) ) < 1 )
+            return;
+
+        foreach ( $tag as $k => $v ) {
+            $tag[ $k ] = trim( $v );
+        }
+
+        $field_name = $tag[ 0 ];
+
+        if ( 'type' == $field_name )
+            $value = $obj->pod;
+        else
+            $value = $obj->field( $field_name );
+
+        $helper_name = $before = $after = '';
+
+        if ( isset( $tag[ 1 ] ) && !empty( $tag[ 1 ] ) ) {
+            $helper_name = $tag[ 1 ];
+
+            $params = array(
+                'helper' => $helper_name,
+                'value' => $value,
+                'name' => $field_name,
+                'deprecated' => self::$deprecated
+            );
+
+            if ( class_exists( 'Pods_Helpers' ) )
+                $value = Pods_Helpers::helper( $params, $obj );
+        }
+
+        if ( isset( $tag[ 2 ] ) && !empty( $tag[ 2 ] ) )
+            $before = $tag[ 2 ];
+
+        if ( isset( $tag[ 3 ] ) && !empty( $tag[ 3 ] ) )
+            $after = $tag[ 3 ];
+
+        $value = apply_filters( 'pods_templates_do_magic_tags', $value, $field_name, $helper_name, $before, $after );
+
+        if ( is_array( $value ) )
+            $value = pods_serial_comma( $value, $field_name, $obj->fields );
+
+        if ( null !== $value && false !== $value )
+            return $before . $value . $after;
+
+        return;
     }
 }
 

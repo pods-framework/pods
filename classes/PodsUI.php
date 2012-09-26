@@ -1249,6 +1249,10 @@ class PodsUI {
             'id' . $this->num => 'X_ID_X'
         );
 
+        $alt_vars = $vars;
+        $alt_vars[ 'action' ] = 'manage';
+        unset( $alt_vars[ 'id' ] );
+
         if ( false === $create ) {
             if ( empty( $this->row ) )
                 $this->get_row();
@@ -1264,6 +1268,10 @@ class PodsUI {
                 'id' . $this->num => $id
             );
 
+            $alt_vars = $vars;
+            $alt_vars[ 'action' ] = 'manage';
+            unset( $alt_vars[ 'id' ] );
+
             if ( 1 == $duplicate ) {
                 $label = $this->label[ 'duplicate' ];
                 $id = null;
@@ -1272,12 +1280,17 @@ class PodsUI {
                     'do' . $this->num => 'create',
                     'id' . $this->num => 'X_ID_X'
                 );
+
+                $alt_vars = $vars;
+                $alt_vars[ 'action' ] = 'manage';
+                unset( $alt_vars[ 'id' ] );
             }
         }
 
         $fields =& $this->fields[ $this->action ];
         $pod =& $this->pod;
         $thank_you = pods_var_update( $vars, array( 'page' ), $this->exclusion() );
+        $thank_you_alt = pods_var_update( $alt_vars, array( 'page' ), $this->exclusion() );
         $obj =& $this;
         $singular_label = $this->item;
         $plural_label = $this->items;

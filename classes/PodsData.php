@@ -1365,7 +1365,7 @@ class PodsData {
         $row = pods_absint( $row );
 
         if ( empty( $row ) )
-            $this->row_number = 0;
+            $this->row_number = -1;
 
         $this->row = false;
 

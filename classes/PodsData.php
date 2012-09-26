@@ -1364,13 +1364,13 @@ class PodsData {
     public function reset ( $row = null ) {
         $row = pods_absint( $row );
 
+        if ( isset( $this->data[ $row ] ) )
+            $this->row = get_object_vars( $this->data[ $row ] );
+
         if ( empty( $row ) )
             $this->row_number = -1;
-
-        $this->row = false;
-
-        if ( isset( $this->data[ $this->row_number ] ) )
-            $this->row = get_object_vars( $this->data[ $this->row_number ] );
+        else
+            $this->row_number = $row - 1;
 
         return $this->row;
     }

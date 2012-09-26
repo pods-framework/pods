@@ -58,7 +58,7 @@ class PodsInit {
                 add_action( 'init', array( $this, 'admin_init' ), 12 );
 
             // Show admin bar links
-            add_action( 'wp_before_admin_bar_render', array( $this, 'admin_bar_links' ) );
+            //add_action( 'wp_before_admin_bar_render', array( $this, 'admin_bar_links' ) );
 
             // Init Pods Meta
             self::$meta = pods_meta()->init();
@@ -839,7 +839,8 @@ class PodsInit {
 
         // Add New item links for all non-CPT pods
         foreach ( $non_cpt_pods as $pod ) {
-            $label = isset( $pod[ 'options' ][ 'label' ] ) ? $pod[ 'options' ][ 'label' ] : $pod[ 'name' ];
+            $label = pods_var_raw( 'label', $pod, $pod[ 'name' ], null, true );
+
             $wp_admin_bar->add_node( array(
                 'id' => 'new-pod-' . $pod[ 'name' ],
                 'title' => $label,
@@ -850,14 +851,16 @@ class PodsInit {
 
         // Add edit link if we're on a pods page
         // @todo Fill in correct href and test this once PodsAPI is capable of adding new pod items to the database
-        /*
         if ( is_object( $pods ) && !is_wp_error( $pods ) && !empty( $pods->id ) ) {
+            $label = pods_var_raw( 'label', $pod, $pod[ 'name' ], null, true );
+            $label = pods_var_raw( 'label_singular', $pod[ 'options' ], $label, null, true );
+
             $wp_admin_bar->add_node( array(
-                'title' => 'Edit Pod Item',
+                'title' => sprintf( __( 'Edit %s', 'pods' ), $label ),
                 'id' => 'edit-pod',
-                'href' => '#'
+                'href' => admin_url( 'admin.php?page=pods-manage-' . $pod[ 'name' ] . '&action=edit&id=' . $pod->id )
             ) );
-        }*/
+        }
 
     }
 }

@@ -3,7 +3,7 @@
 Plugin Name: Pods - Custom Content Types and Fields
 Plugin URI: http://podsframework.org/
 Description: Pods is a framework for creating, managing, and deploying customized content types and fields
-Version: 2.0.2 Alpha 2
+Version: 2.0.2 Alpha
 Author: Pods Framework Team
 Author URI: http://podsframework.org/about/
 Text Domain: pods
@@ -32,13 +32,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // Prevent conflicts with Pods 1.x
 if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) && !function_exists( 'pods_ui_manage' ) ) {
-    define( 'PODS_VERSION', '2.0.2-a-2' );
+    define( 'PODS_VERSION', '2.0.2-a' );
 
     if ( !defined( 'PODS_GITHUB_BRANCH' ) )
-        define( 'PODS_GITHUB_BRANCH', '2.0.2' );
+        define( 'PODS_GITHUB_BRANCH', '2.1' );
 
     if ( !defined( 'PODS_GITHUB_UPDATE' ) )
-        define( 'PODS_GITHUB_UPDATE', true );
+        define( 'PODS_GITHUB_UPDATE', false );
 
     if ( !defined( 'PODS_WP_VERSION_MINIMUM' ) )
         define( 'PODS_WP_VERSION_MINIMUM', '3.4' );

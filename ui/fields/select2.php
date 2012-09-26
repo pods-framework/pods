@@ -50,7 +50,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                 }
             ?>};
         var $element = $('#<?php echo $attributes[ 'id' ] ?>' );
-
+        
         $element.select2( {
             width : 'resolve',
             initSelection : function ( element, callback ) {
@@ -146,5 +146,13 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                 }
             ?>
         } );
+
+        <?php if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit ) { ?>
+            $element.select2("container").find("ul.select2-choices").sortable({
+                containment: 'parent',
+                start: function() { $element.select2("onSortStart"); },
+                update: function() { $element.select2("onSortEnd"); }
+            });
+        <?php } ?>
     } );
 </script>

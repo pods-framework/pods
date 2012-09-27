@@ -60,11 +60,12 @@ function pod_query ($sql, $error = 'SQL failed', $results_error = null, $no_resu
 
     $sql = trim($sql);
     // Using @wp_users is deprecated! use $wpdb->users instead!
-    $sql = str_replace('@wp_users', $wpdb->users, $sql);
-    $sql = str_replace('@wp_', $wpdb->prefix, $sql);
-    $sql = str_replace('{prefix}', '@wp_', $sql);
+    $sql = str_replace( '@wp_pod_tbl_', $wpdb->prefix . 'pods_', $sql );
+    $sql = str_replace( '@wp_users', $wpdb->users, $sql );
+    $sql = str_replace( '@wp_', $wpdb->prefix, $sql );
+    $sql = str_replace( '{prefix}', '@wp_', $sql );
 
-    $sql = apply_filters('pod_query', $sql, $error, $results_error, $no_results_error);
+    $sql = apply_filters( 'pod_query', $sql, $error, $results_error, $no_results_error );
 
     // Return cached resultset
     /*if ('SELECT' == substr($sql, 0, 6)) {

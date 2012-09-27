@@ -1008,19 +1008,19 @@ class PodsUI {
                     $this->fields[ 'form' ] = $fields;
 
                 if ( !in_array( 'add', $this->actions_disabled ) ) {
-                    if ( 'add' != $which && is_array( $this->fields[ 'add' ] ) )
+                    if ( 'add' != $which && isset( $this->fields[ 'add' ] ) && is_array( $this->fields[ 'add' ] ) )
                         $this->fields[ 'add' ] = $this->setup_fields( $this->fields[ 'add' ], 'add' );
                     else
                         $this->fields[ 'add' ] = $fields;
                 }
                 if ( !in_array( 'edit', $this->actions_disabled ) ) {
-                    if ( 'edit' != $which && is_array( $this->fields[ 'edit' ] ) )
+                    if ( 'edit' != $which && isset( $this->fields[ 'edit' ] ) &&is_array( $this->fields[ 'edit' ] ) )
                         $this->fields[ 'edit' ] = $this->setup_fields( $this->fields[ 'edit' ], 'edit' );
                     else
                         $this->fields[ 'edit' ] = $fields;
                 }
                 if ( !in_array( 'duplicate', $this->actions_disabled ) ) {
-                    if ( 'duplicate' != $which && is_array( $this->fields[ 'duplicate' ] ) )
+                    if ( 'duplicate' != $which && isset( $this->fields[ 'duplicate' ] ) &&is_array( $this->fields[ 'duplicate' ] ) )
                         $this->fields[ 'duplicate' ] = $this->setup_fields( $this->fields[ 'duplicate' ], 'duplicate' );
                     else
                         $this->fields[ 'duplicate' ] = $fields;
@@ -1028,7 +1028,7 @@ class PodsUI {
             }
 
             if ( false !== $this->searchable ) {
-                if ( 'search' != $which && !empty( $this->fields[ 'search' ] ) )
+                if ( 'search' != $which && isset( $this->fields[ 'search' ] ) &&!empty( $this->fields[ 'search' ] ) )
                     $this->fields[ 'search' ] = $this->setup_fields( $this->fields[ 'search' ], 'search' );
                 else
                     $this->fields[ 'search' ] = $fields;
@@ -1037,14 +1037,14 @@ class PodsUI {
                 $this->fields[ 'search' ] = false;
 
             if ( !in_array( 'export', $this->actions_disabled ) ) {
-                if ( 'export' != $which && !empty( $this->fields[ 'export' ] ) )
+                if ( 'export' != $which && isset( $this->fields[ 'export' ] ) &&!empty( $this->fields[ 'export' ] ) )
                     $this->fields[ 'export' ] = $this->setup_fields( $this->fields[ 'export' ], 'export' );
                 else
                     $this->fields[ 'export' ] = $fields;
             }
 
             if ( !in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder[ 'on' ] ) {
-                if ( 'reorder' != $which && !empty( $this->fields[ 'reorder' ] ) )
+                if ( 'reorder' != $which && isset( $this->fields[ 'reorder' ] ) &&!empty( $this->fields[ 'reorder' ] ) )
                     $this->fields[ 'reorder' ] = $this->setup_fields( $this->fields[ 'reorder' ], 'reorder' );
                 else
                     $this->fields[ 'reorder' ] = $fields;

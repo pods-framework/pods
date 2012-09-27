@@ -333,12 +333,13 @@ class PodsMeta {
         elseif ( 'comment' == $type )
             $object = self::$comment;
 
-        $pod = array();
-
         if ( 'pod' != $type && !empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) )
             $pod = $object[ $name ];
         else
             $pod = $this->api->load_pod( array( 'name' => $name ), false );
+
+        if ( empty( $pod ) )
+            return array();
 
         $defaults = array(
             'name' => 'post',
@@ -356,7 +357,7 @@ class PodsMeta {
         if ( $pod[ 'type' ] != $type )
             return array();
 
-        return $object;
+        return $pod;
     }
 
     /**
@@ -1636,6 +1637,12 @@ class PodsMeta {
         if ( empty( $object ) )
             return false;
 
-        return pods_api()->delete_pod_item( array( 'pod' => $object[ 'name' ], 'id' => $id ), false );
+        $params = array(
+            'pod' => pods_var( 'name', $object ),
+            'pod_id' => pods_var( 'id', $object ),
+            'id' => $id
+        );
+
+        return pods_api()->delete_pod_item( $params, false );
     }
 }

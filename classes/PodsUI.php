@@ -378,12 +378,12 @@ class PodsUI {
         elseif ( is_object( $object ) )
             $this->pod = $object;
 
-        if ( false !== $deprecated || ( is_object( $this->pod ) && 'Pod' == get_class( $object ) ) )
+        if ( false !== $deprecated || ( is_object( $this->pod ) && 'Pod' == get_class( $this->pod ) ) )
             $options = $this->setup_deprecated( $options );
 
-        if ( is_object( $this->pod ) && 'Pod' == get_class( $object ) && is_object( $this->pod->_data ) )
+        if ( is_object( $this->pod ) && 'Pod' == get_class( $this->pod ) && is_object( $this->pod->_data ) )
             $this->pods_data =& $this->pod->_data;
-        elseif ( is_object( $this->pod ) && 'Pods' == get_class( $object ) && is_object( $this->pod->data ) )
+        elseif ( is_object( $this->pod ) && 'Pods' == get_class( $this->pod ) && is_object( $this->pod->data ) )
             $this->pods_data =& $this->pod->data;
         elseif ( is_object( $this->pod ) )
             $this->pods_data =& pods_data( $this->pod->pod );

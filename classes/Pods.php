@@ -122,11 +122,11 @@ class Pods {
 
     public $body_classes;
 
-    public $meta;
+    public $meta = array();
 
-    public $meta_properties;
+    public $meta_properties = array();
 
-    public $meta_extra;
+    public $meta_extra = '';
 
     public $sql;
 

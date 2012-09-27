@@ -473,7 +473,7 @@ class Pods_Pages extends PodsComponent {
         }
         if ( ( !defined( 'PODS_DISABLE_META' ) || !PODS_DISABLE_META ) && is_object( $pods ) && !is_wp_error( $pods ) ) {
 
-            if ( isset( $pods->meta ) && is_array( $pods->meta ) ) {
+            if ( isset( $pods->meta ) && is_array( $pods->meta ) && !empty( $pods->meta ) ) {
                 foreach ( $pods->meta as $name => $content ) {
                     if ( 'title' == $name )
                         continue;
@@ -483,7 +483,7 @@ class Pods_Pages extends PodsComponent {
                 }
             }
 
-            if ( isset( $pods->meta_properties ) && is_array( $pods->meta_properties ) ) {
+            if ( isset( $pods->meta_properties ) && is_array( $pods->meta_properties ) && !empty( $pods->meta_properties ) ) {
                 foreach ( $pods->meta_properties as $property => $content ) {
                     ?>
                 <meta property="<?php echo esc_attr( $property ); ?>" content="<?php echo esc_attr( $content ); ?>" />

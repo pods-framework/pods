@@ -23,7 +23,7 @@ $type = 'text';
 
 $date_type = 'time';
 
-if ( 1 == $options[ 'time_html5' ] )
+if ( 1 == pods_var( 'time_html5', $options ) )
     $type = $date_type;
 
 $attributes[ 'type' ] = $type;
@@ -34,7 +34,7 @@ $format = PodsForm::field_method( 'time', 'format', $options );
 $method = 'timepicker';
 
 $args = array(
-    'timeFormat' => $time_format[ $options[ 'time_format' ] ]
+    'timeFormat' => $time_format[ pods_var( 'time_format', $options, 'h_mma', null, true ) ]
 );
 
 if ( false !== stripos( $args[ 'timeFormat' ], 'tt' ) )

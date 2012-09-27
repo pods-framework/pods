@@ -3,7 +3,7 @@ $attributes = array();
 
 $type = 'text';
 
-if ( 1 == $options[ 'phone_html5' ] )
+if ( 1 == pods_var( 'phone_html5', $options ) )
     $type = 'tel';
 
 $attributes[ 'type' ] = $type;

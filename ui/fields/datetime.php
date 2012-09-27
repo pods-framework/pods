@@ -32,7 +32,7 @@ $type = 'text';
 
 $date_type = 'datetime';
 
-if ( 1 == $options[ 'datetime_html5' ] )
+if ( 1 == pods_var( 'datetime_html5', $options ) )
     $type = $date_type;
 
 $attributes[ 'type' ] = $type;
@@ -43,8 +43,8 @@ $format = PodsForm::field_method( 'datetime', 'format', $options );
 $method = 'datetimepicker';
 
 $args = array(
-    'timeFormat' => $time_format[ $options[ 'datetime_time_format' ] ],
-    'dateFormat' => $date_format[ $options[ 'datetime_format' ] ]
+    'timeFormat' => $time_format[ pods_var( 'datetime_time_format', $options, 'h_mma', null, true ) ],
+    'dateFormat' => $date_format[ pods_var( 'datetime_format', $options, 'mdy', null, true ) ]
 );
 
 if ( false !== stripos( $args[ 'timeFormat' ], 'tt' ) )

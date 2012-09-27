@@ -370,7 +370,7 @@ class Pods {
 
         if ( 'detail_url' == $params->name ) {
             if ( 0 < strlen( $this->detail_page ) )
-                $value = get_bloginfo( 'url' ) . '/' . $this->do_magic_tags( $this->detail_page, $this );
+                $value = get_bloginfo( 'url' ) . '/' . $this->do_magic_tags( $this->detail_page );
             elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
                 $value = get_permalink( $this->id() );
         }
@@ -1374,9 +1374,11 @@ class Pods {
             $params = array(
                 'helper' => $helper_name,
                 'value' => $value,
-                'name' => $field_name,
-                'deprecated' => self::$deprecated
+                'name' => $field_name
             );
+
+            if ( class_exists( 'Pods_Templates' ) )
+                $params[ 'deprecated' ] = Pods_Templates::$deprecated;
 
             if ( class_exists( 'Pods_Helpers' ) )
                 $value = Pods_Helpers::helper( $params, $this );

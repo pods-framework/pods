@@ -1061,7 +1061,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
 
         if ( !empty( $field ) && is_array( $field ) && in_array( $field[ 'type' ], $tableless_field_types ) ) {
-            $table = pods_api()->get_table_info( $field[ 'object' ], $field[ 'pick_val' ] );
+            $table = pods_api()->get_table_info( $field[ 'pick_object' ], $field[ 'pick_val' ] );
 
             if ( !empty( $table ) )
                 $field_index = $table[ 'field_index' ];
@@ -1083,22 +1083,32 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
     }
 
     if ( !empty( $value ) ) {
+        if ( isset( $value[ $field_index ] ) )
+            return $value[ $field_index ];
+
         if ( 1 == count( $value ) ) {
-            if ( is_array( $value ) ) {
-                if ( isset( $value[ $field_index ] ) )
-                    $value = $value[ $field_index ];
+            if ( isset( $value[ 0 ] ) )
+                $value = $value[ 0 ];
+
+            if ( isset( $value[ $field_index ] ) ) {
+                $value = $value[ $field_index ];
+
+                if ( 0 < strlen( $value ) && 0 < strlen( $last ) )
+                    $value .= $and . $last;
+                elseif ( 0 < strlen( $last ) )
+                    $value = $last;
                 else
                     $value = '';
             }
-
-            if ( 0 < strlen( $value ) && 0 < strlen( $last ) )
-                $value .= $and . $last;
-            elseif ( 0 < strlen( $last ) )
-                $value = $last;
             else
                 $value = '';
         }
         else {
+            if ( isset( $value[ $field_index ] ) )
+                return $value[ $field_index ];
+            elseif ( !isset( $value[ 0 ] ) )
+                $value = array( $value );
+
             foreach ( $value as $k => &$v ) {
                 if ( is_array( $v ) ) {
                     if ( isset( $v[ $field_index ] ) )

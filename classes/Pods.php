@@ -738,6 +738,8 @@ class Pods {
      * @since 2.0.0
      */
     public function find ( $params = null, $limit = 15, $where = null, $sql = null ) {
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
+
         $select = '`t`.*';
         $pod_table_prefix = 't';
 
@@ -834,26 +836,35 @@ class Pods {
                     if ( 'DESC' == strtoupper( $orderby ) )
                         $order = 'DESC';
 
-                    if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) ) {
-                        if ( isset( $this->pod_data[ 'object_fields' ][ $k ] ) )
-                            $key = "`t`.`{$k}`";
-                        elseif ( 'table' == $this->pod_data[ 'storage' ] && isset( $this->fields[ $k ] ) )
-                            $key = "`d`.`{$k}`";
-                        else {
-                            foreach ( $this->pod_data[ 'object_fields' ] as $object_field => $object_field_opt ) {
-                                if ( $object_field == $k || in_array( $k, $object_field_opt[ 'alias' ] ) )
-                                    $key = "`t`.`{$object_field}`";
-                            }
-                        }
+                    if ( isset( $this->fields[ $k ] ) && in_array( $this->fields[ $k ][ 'type' ], $tableless_field_types ) ) {
+                        $table = $this->api->get_table_info( $this->fields[ $k ][ 'pick_object' ], $this->fields[ $k ][ 'pick_val' ] );
+
+                        if ( !empty( $table ) )
+                            $key = "`{$k}`.`" . $table[ 'field_index' ] . '`';
                     }
-                    elseif ( 'table' == $this->pod_data[ 'storage' ] && isset( $this->fields[ $k ] ) )
-                        $key = "`t`.`{$k}`";
 
                     if ( empty( $key ) ) {
-                        $key = $k;
+                        if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) ) {
+                            if ( isset( $this->pod_data[ 'object_fields' ][ $k ] ) )
+                                $key = "`t`.`{$k}`";
+                            elseif ( 'table' == $this->pod_data[ 'storage' ] && isset( $this->fields[ $k ] ) )
+                                $key = "`d`.`{$k}`";
+                            else {
+                                foreach ( $this->pod_data[ 'object_fields' ] as $object_field => $object_field_opt ) {
+                                    if ( $object_field == $k || in_array( $k, $object_field_opt[ 'alias' ] ) )
+                                        $key = "`t`.`{$object_field}`";
+                                }
+                            }
+                        }
+                        elseif ( 'table' == $this->pod_data[ 'storage' ] && isset( $this->fields[ $k ] ) )
+                            $key = "`t`.`{$k}`";
 
-                        if ( false === strpos( $key, ' ' ) )
-                            $key = "`{$key}`";
+                        if ( empty( $key ) ) {
+                            $key = $k;
+
+                            if ( false === strpos( $key, ' ' ) )
+                                $key = "`{$key}`";
+                        }
                     }
 
                     $orderby = $key;

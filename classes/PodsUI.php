@@ -2527,6 +2527,7 @@ class PodsUI {
         }
 
         $field_name = $tag[ 0 ];
+
         $value = $this->get_field( $field_name );
 
         if ( isset( $tag[ 1 ] ) && !empty( $tag[ 1 ] ) && is_callable( $tag[ 1 ] ) )

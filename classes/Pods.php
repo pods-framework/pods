@@ -369,8 +369,8 @@ class Pods {
         $params->traverse = array();
 
         if ( 'detail_url' == $params->name ) {
-            if ( 0 < strlen( $this->detail_page ) && class_exists( 'Pods_Templates' ) )
-                $value = get_bloginfo( 'url' ) . '/' . Pods_Templates::do_magic_tags( $this->detail_page, $this );
+            if ( 0 < strlen( $this->detail_page ) )
+                $value = get_bloginfo( 'url' ) . '/' . $this->do_magic_tags( $this->detail_page, $this );
             elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
                 $value = get_permalink( $this->id() );
         }
@@ -670,7 +670,7 @@ class Pods {
      * @return int
      * @since 2.0.0
      */
-    public function next_id( $id = null ) {
+    public function next_id ( $id = null ) {
         if ( null === $id )
             $id = $this->field( 'id' );
 
@@ -1319,6 +1319,84 @@ class Pods {
         $output = ob_get_clean();
 
         return $this->do_hook( 'form', $output, $fields, $label, $thank_you, $this, $this->id() );
+    }
+
+    /**
+     * Replace magic tags with their values
+     *
+     * @param string $code The content to evaluate
+     * @param object $obj The Pods object
+     *
+     * @since 2.0.0
+     */
+    public function do_magic_tags( $code ) {
+        return preg_replace_callback( '/({@(.*?)})/m', array( $this, 'process_magic_tags' ), $code );
+    }
+
+    /**
+     * Replace magic tags with their values
+     *
+     * @param string $tag The magic tag to process
+     * @param object $obj The Pods object
+     *
+     * @since 2.0.2
+     */
+    public function process_magic_tags ( $tag ) {
+        if ( is_array( $tag ) ) {
+            if ( !isset( $tag[ 2 ] ) && strlen( trim( $tag[ 2 ] ) ) < 1 )
+                return;
+
+            $tag = $tag[ 2 ];
+        }
+
+        $tag = trim( $tag, ' {@}' );
+        $tag = explode( ',', $tag );
+
+        if ( empty( $tag ) || !isset( $tag[ 0 ] ) || strlen( trim( $tag[ 0 ] ) ) < 1 )
+            return;
+
+        foreach ( $tag as $k => $v ) {
+            $tag[ $k ] = trim( $v );
+        }
+
+        $field_name = $tag[ 0 ];
+
+        if ( 'type' == $field_name )
+            $value = $this->pod;
+        else
+            $value = $this->field( $field_name );
+
+        $helper_name = $before = $after = '';
+
+        if ( isset( $tag[ 1 ] ) && !empty( $tag[ 1 ] ) ) {
+            $helper_name = $tag[ 1 ];
+
+            $params = array(
+                'helper' => $helper_name,
+                'value' => $value,
+                'name' => $field_name,
+                'deprecated' => self::$deprecated
+            );
+
+            if ( class_exists( 'Pods_Helpers' ) )
+                $value = Pods_Helpers::helper( $params, $this );
+        }
+
+        if ( isset( $tag[ 2 ] ) && !empty( $tag[ 2 ] ) )
+            $before = $tag[ 2 ];
+
+        if ( isset( $tag[ 3 ] ) && !empty( $tag[ 3 ] ) )
+            $after = $tag[ 3 ];
+
+        $value = apply_filters( 'pods_do_magic_tags', $value, $field_name, $helper_name, $before, $after );
+
+        if ( is_array( $value ) )
+            $value = pods_serial_comma( $value, $field_name, $this->fields );
+
+        if ( null !== $value && false !== $value )
+            return $before . $value . $after;
+
+        return;
     }
 
     /**

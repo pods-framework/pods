@@ -1228,7 +1228,6 @@ class PodsAPI {
         /**
          * @var $wpdb wpdb
          */
-
         global $wpdb;
 
         if ( 'post_type' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) && null !== $old_name && $old_name != $params->name )
@@ -1237,6 +1236,30 @@ class PodsAPI {
             $this->rename_wp_object_type( 'taxonomy', $old_name, $params->name );
         elseif ( 'comment' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) && null !== $old_name && $old_name != $params->name )
             $this->rename_wp_object_type( 'comment', $old_name, $params->name );
+
+        // Sync any related fields
+        if ( null !== $old_name && $old_name != $params->name ) {
+            // change pick val
+
+            $fields = pods_query( "
+                SELECT `p`.`ID`
+                FROM `{$wpdb->posts}` AS `p`
+                LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
+                LEFT JOIN `{$wpdb->postmeta}` AS `pm2` ON `pm2`.`post_id` = `p`.`ID`
+                WHERE
+                    `p`.`post_type` = '_pods_field'
+                    AND `pm`.`meta_key` = 'pick_object'
+                    AND `pm`.`meta_value` = 'pod'
+                    AND `pm2`.`meta_key` = 'pick_val'
+                    AND `pm2`.`meta_value` = '{$old_name}'
+            " );
+
+            if ( !empty( $fields ) ) {
+                foreach ( $fields as $field ) {
+                    update_post_meta( $field->ID, 'pick_val', $params->name );
+                }
+            }
+        }
 
         // Sync built-in options for post types and taxonomies
         if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && empty( $pod[ 'object' ] ) ) {

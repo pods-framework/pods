@@ -240,6 +240,9 @@ class Pods_Helpers extends PodsComponent {
      * @since 2.0.0
      */
     public static function helper ( $params, $obj = null ) {
+        /**
+         * @var $obj Pods
+         */
         if ( !empty( $obj ) )
             self::$obj =& $obj;
         else

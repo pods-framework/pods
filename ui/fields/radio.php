@@ -47,10 +47,10 @@ foreach ( $options[ 'data' ] as $val => $label ) {
         <input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
         <?php
         if ( 0 < strlen( $label ) ) {
-            $help = '';
+            $help = pods_var_raw( 'help', $options );
 
-            if ( 0 == pods_var( 'grouped', $options, 0, null, true ) && 0 < strlen( pods_var_raw( 'help', $options, '', null, true ) ) )
-                $help = pods_var_raw( 'help', $options, '', null, true );
+            if ( 1 == pods_var( 'grouped', $options, 0, null, true ) || empty( $help ) )
+                $help = '';
 
             echo PodsForm::label( $attributes[ 'id' ], $label, $help );
         }

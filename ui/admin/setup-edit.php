@@ -1,6 +1,8 @@
 <?php
 global $pods_i;
 
+$tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
+
 $api = pods_api();
 
 $field_types = $api->get_field_types();
@@ -904,7 +906,8 @@ elseif ( 'pod' == pods_var( 'type', $pod ) ) {
     $index_fields = array( 'id' => 'ID' );
 
     foreach ( $pod[ 'fields' ] as $field ) {
-        $index_fields[ $field[ 'name' ] ] = $field[ 'label' ];
+        if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
+            $index_fields[ $field[ 'name' ] ] = $field[ 'label' ];
     }
     ?>
 

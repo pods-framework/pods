@@ -2,7 +2,7 @@
     <?php
         echo $label;
 
-        if ( 0 == pods_var( 'grouped', $options ) && !empty( $help ) && 'help' != $help )
+        if ( 0 == pods_var( 'grouped', $options, 0, null, true ) && !empty( $help ) && 'help' != $help )
             pods_help( $help );
     ?>
 </label>

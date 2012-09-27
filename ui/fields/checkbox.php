@@ -4,7 +4,7 @@ $data_count = count( $options[ 'data' ] );
 
 if ( 0 < $data_count ) {
 
-    if ( 1 == pods_var( 'grouped', $options ) ) {
+    if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
         ?>
 <div class="pods-pick-values pods-pick-checkbox">
     <ul>
@@ -46,7 +46,7 @@ if ( 0 < $data_count ) {
         if ( 1 < $data_count )
             $attributes[ 'id' ] = $primary_id . $counter;
 
-        if ( 1 == pods_var( 'grouped', $options ) ) {
+        if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
             ?>
         <li>
 <?php
@@ -58,8 +58,8 @@ if ( 0 < $data_count ) {
             if ( 0 < strlen( $label ) ) {
                 $help = '';
 
-                if ( 0 == pods_var( 'grouped', $options ) && 0 < strlen( pods_var_raw( 'help', $options ) ) )
-                    $help = pods_var_raw( 'help', $options );
+                if ( 0 == pods_var( 'grouped', $options, 0, null, true ) && 0 < strlen( pods_var_raw( 'help', $options, '', null, true ) ) )
+                    $help = pods_var_raw( 'help', $options, '', null, true );
 
                 echo PodsForm::label( $attributes[ 'id' ], $label, $help );
             }
@@ -67,7 +67,7 @@ if ( 0 < $data_count ) {
         </div>
         <?php
 
-        if ( 1 == pods_var( 'grouped', $options ) ) {
+        if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
             ?>
         </li>
 <?php
@@ -76,7 +76,7 @@ if ( 0 < $data_count ) {
         $counter++;
     }
 
-    if ( 1 == pods_var( 'grouped', $options ) ) {
+    if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
         ?>
     </ul>
 </div>

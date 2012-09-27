@@ -13,26 +13,30 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_t
 <div class="code-footer"><!-- Placeholder --></div>
 
 <script>
+    var $textarea_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>, codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>;
+
     jQuery( function ( $ ) {
-        var $textarea_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = jQuery( 'textarea#<?php echo $attributes[ 'id' ]; ?>' );
+        $textarea_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = jQuery( 'textarea#<?php echo $attributes[ 'id' ]; ?>' );
 
         CodeMirror.modeURL = "<?php echo PODS_URL ?>ui/js/codemirror/mode/%N/%N.js";
+        if ( typeof codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ) ?> == 'undefined' ) {
 
-        var codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = CodeMirror.fromTextArea( document.getElementById( "<?php echo $attributes[ 'id' ] ?>" ), {
-            lineNumbers : true,
-            matchBrackets : true,
-            mode : "application/x-httpd-php",
-            indentUnit : 4,
-            indentWithTabs : false,
-            lineWrapping : true,
-            enterMode : "keep",
-            tabMode : "shift",
-            onBlur : function () {
-                var value = codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.getValue();
-                $textarea_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.val( value );
-            }
-        } );
+            codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = CodeMirror.fromTextArea( document.getElementById( "<?php echo $attributes[ 'id' ] ?>" ), {
+                lineNumbers : true,
+                matchBrackets : true,
+                mode : "application/x-httpd-php",
+                indentUnit : 4,
+                indentWithTabs : false,
+                lineWrapping : true,
+                enterMode : "keep",
+                tabMode : "shift",
+                onBlur : function () {
+                    var value = codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.getValue();
+                    $textarea_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.val( value );
+                }
+            } );
 
-        CodeMirror.autoLoadMode( codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>, 'php' );
+            CodeMirror.autoLoadMode( codemirror_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>, 'php' );
+        }
     } );
 </script>

@@ -79,6 +79,8 @@ class PodsMeta {
         add_filter( 'update_post_metadata', array( $this, 'update_post_meta' ), 10, 5 );
         add_filter( 'delete_post_metadata', array( $this, 'delete_post_meta' ), 10, 5 );
 
+        add_action( 'delete_post', array( $this, 'delete_post' ), 10, 1 );
+
         if ( !empty( self::$taxonomies ) ) {
             // Handle Taxonomy Editor
             foreach ( self::$taxonomies as $taxonomy ) {
@@ -90,6 +92,7 @@ class PodsMeta {
                 add_action( $taxonomy_name . '_add_form_fields', array( $this, 'meta_taxonomy' ), 10, 1 );
             }
 
+            // Handle Term Editor
             add_action( 'edit_term', array( $this, 'save_taxonomy' ), 10, 3 );
             add_action( 'create_term', array( $this, 'save_taxonomy' ), 10, 3 );
 
@@ -100,6 +103,9 @@ class PodsMeta {
             add_filter( 'update_term_metadata', array( $this, 'update_term_meta' ), 10, 5 );
             add_filter( 'delete_term_metadata', array( $this, 'delete_term_meta' ), 10, 5 );
             */
+
+            // Handle Delete
+            add_action( 'delete_term_taxonomy', array( $this, 'delete_taxonomy' ), 10, 1 );
         }
 
         if ( !empty( self::$media ) ) {
@@ -107,6 +113,9 @@ class PodsMeta {
             add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
             add_filter( 'attachment_fields_to_save', array( $this, 'save_media' ), 10, 2 );
             add_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 );
+
+            // Handle Delete
+            add_action( 'delete_attachment', array( $this, 'delete_media' ), 10, 1 );
         }
 
         if ( !empty( self::$user ) ) {
@@ -121,6 +130,9 @@ class PodsMeta {
             add_filter( 'add_user_metadata', array( $this, 'add_user_meta' ), 10, 5 );
             add_filter( 'update_user_metadata', array( $this, 'update_user_meta' ), 10, 5 );
             add_filter( 'delete_user_metadata', array( $this, 'delete_user_meta' ), 10, 5 );
+
+            // Handle Delete
+            add_action( 'delete_user', array( $this, 'delete_user' ), 10, 1 );
         }
 
         if ( !empty( self::$comment ) ) {
@@ -136,6 +148,9 @@ class PodsMeta {
             add_filter( 'add_comment_metadata', array( $this, 'add_comment_meta' ), 10, 5 );
             add_filter( 'update_comment_metadata', array( $this, 'update_comment_meta' ), 10, 5 );
             add_filter( 'delete_comment_metadata', array( $this, 'delete_comment_meta' ), 10, 5 );
+
+            // Handle Delete
+            add_action( 'delete_comment', array( $this, 'delete_comment' ), 10, 1 );
         }
 
         do_action( 'pods_meta_init' );
@@ -304,6 +319,44 @@ class PodsMeta {
                 add_action( 'edit_comment', array( $this, 'save_comment' ) );
             }
         }
+    }
+
+    public function object_get ( $type, $name ) {
+        $object = self::$post_types;
+
+        if ( 'taxonomy' == $type )
+            $object = self::$taxonomies;
+        elseif ( 'media' == $type )
+            $object = self::$media;
+        elseif ( 'user' == $type )
+            $object = self::$user;
+        elseif ( 'comment' == $type )
+            $object = self::$comment;
+
+        $pod = array();
+
+        if ( 'pod' != $type && !empty( $object ) && is_array( $object ) && isset( $object[ $name ] ) )
+            $pod = $object[ $name ];
+        else
+            $pod = $this->api->load_pod( array( 'name' => $name ), false );
+
+        $defaults = array(
+            'name' => 'post',
+            'object' => 'post',
+            'type' => 'post_type'
+        );
+
+        $pod = array_merge( $defaults, (array) $pod );
+
+        if ( empty( $pod[ 'name' ] ) )
+            $pod[ 'name' ] = $pod[ 'object' ];
+        elseif ( empty( $pod[ 'object' ] ) )
+            $pod[ 'object' ] = $pod[ 'name' ];
+
+        if ( $pod[ 'type' ] != $type )
+            return array();
+
+        return $object;
     }
 
     /**
@@ -1531,5 +1584,58 @@ class PodsMeta {
         $id = pods( $object[ 'name' ], $object_id )->save( $fields );
 
         return $_null;
+    }
+
+    public function delete_post ( $id ) {
+        $post = get_post( $id );
+
+        if ( empty( $post ) )
+            return;
+
+        $id = $post->ID;
+        $post_type = $post->post_type;
+
+        return $this->delete_object( 'post_type', $id, $post_type );
+    }
+
+    public function delete_taxonomy ( $id ) {
+        /**
+         * @var $wpdb WPDB
+         */
+        global $wpdb;
+
+        $term = $wpdb->get_row( "SELECT `term_id`, `taxonomy` FROM `{$wpdb->term_taxonomy}` WHERE `term_taxonomy_id` = {$id}" );
+
+        if ( empty( $term ) )
+            return;
+
+        $id = $term->term_id;
+        $taxonomy = $term->taxonomy;
+
+        return $this->delete_object( 'taxonomy', $id, $taxonomy );
+    }
+
+    public function delete_user ( $id ) {
+        return $this->delete_object( 'user', $id );
+    }
+
+    public function delete_comment ( $id ) {
+        return $this->delete_object( 'comment', $id );
+    }
+
+    public function delete_media ( $id ) {
+        return $this->delete_object( 'media', $id );
+    }
+
+    public function delete_object ( $type, $id, $name = null ) {
+        if ( empty( $name ) )
+            $name = $type;
+
+        $object = $this->object_get( $type, $name );
+
+        if ( empty( $object ) )
+            return false;
+
+        return pods_api()->delete_pod_item( array( 'pod' => $object[ 'name' ], 'id' => $id ), false );
     }
 }

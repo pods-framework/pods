@@ -2546,17 +2546,23 @@ class PodsAPI {
 
         foreach ( $fields as $field ) {
             $field = $field[ 'name' ];
-            if ( 'pick' == $field[ 'coltype' ] ) {
+
+            if ( 'pick' == $field[ 'type' ] ) {
                 $field = $field . '.id';
-                if ( 'wp_taxonomy' == $field[ 'pickval' ] )
+
+                if ( 'taxonomy' == $field[ 'pick_object' ] )
                     $field = $field . '.term_id';
             }
-            if ( 'file' == $field[ 'coltype' ] )
+
+            if ( 'file' == $field[ 'type' ] )
                 $field = $field . '.ID';
+
             $value = $pod->field( $field );
+
             if ( 0 < strlen( $value ) )
                 $params[ 'data' ][ $field[ 'name' ] ] = $value;
         }
+
         $params = $this->do_hook( 'duplicate_pod_item', $params, $pod->pod, $pod->field( 'id' ) );
         $id = $this->save_pod_item( $params );
 
@@ -2950,16 +2956,17 @@ class PodsAPI {
      * Drop a single pod item
      *
      * $params['id'] int (optional) The item's ID from the wp_pod_* table (used with datatype parameter)
-     * $params['pod'] string (optional) The datatype name (used with id parameter)
-     * $params['pod_id'] int (optional) The datatype ID (used with id parameter)
+     * $params['pod'] string (optional) The Pod name (used with id parameter)
+     * $params['pod_id'] int (optional) The Pod ID (used with id parameter)
      * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers
      *
      * @param array $params An associative array of parameters
+     * @param bool $wp Whether to run WP object delete action
      *
      * @return bool
      * @since 1.7.9
      */
-    public function delete_pod_item ( $params ) {
+    public function delete_pod_item ( $params, $wp = true ) {
         $params = (object) pods_sanitize( $params );
 
         // @deprecated 2.0.0
@@ -3045,7 +3052,7 @@ class PodsAPI {
         if ( 'table' == $pod[ 'storage' ] )
             pods_query( "DELETE FROM `@wp_pods_{$params->pod}` WHERE `id` = {$params->id} LIMIT 1" );
 
-        if ( 'taxonomy' == $pod[ 'type' ] ) {
+        if ( $wp && 'taxonomy' == $pod[ 'type' ] ) {
             $taxonomy = $pod[ 'name' ];
 
             if ( !empty( $pod[ 'object' ] ) )
@@ -3053,7 +3060,7 @@ class PodsAPI {
 
             wp_delete_term( $params->id, $taxonomy );
         }
-        elseif ( !in_array( $pod[ 'type' ], array( 'pod', 'table', '', 'taxonomy' ) ) )
+        elseif ( $wp && !in_array( $pod[ 'type' ], array( 'pod', 'table', '', 'taxonomy' ) ) )
             $this->delete_wp_object( $pod[ 'type' ], $params->id );
 
         pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `item_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_item_id` = {$params->id})" );
@@ -4990,63 +4997,91 @@ class PodsAPI {
             foreach ( $fields as $field_name => $field_data ) {
                 $field_id = $field_data[ 'id' ];
                 $type = $field_data[ 'type' ];
-                $pickval = $field_data[ 'pickval' ];
+                $pick_object = $field_data[ 'pick_object' ];
+                $pick_val = $field_data[ 'pick_val' ];
                 $field_value = $data_row[ $field_name ];
 
                 if ( null != $field_value && false !== $field_value ) {
                     if ( 'pick' == $type || 'file' == $type ) {
                         $field_values = is_array( $field_value ) ? $field_value : array( $field_value );
                         $pick_values = array();
+
                         foreach ( $field_values as $pick_value ) {
-                            if ( 'file' == $type ) {
+                            if ( 'file' == $type || 'media' == $pick_object ) {
                                 $where = "`guid` = '" . pods_sanitize( $pick_value ) . "'";
+
                                 if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )
                                     $where = "`ID` = " . pods_absint( $pick_value );
+
                                 $result = pods_query( "SELECT `ID` AS `id` FROM `{$wpdb->posts}` WHERE `post_type` = 'attachment' AND {$where} ORDER BY `ID`", $this );
+
                                 if ( !empty( $result ) )
-                                    $pick_values[ $field_name ] = $result[ 'id' ];
+                                    $pick_values[ $field_name ] = $result[ 0 ]->id;
                             }
                             elseif ( 'pick' == $type ) {
-                                if ( 'wp_taxonomy' == $pickval ) {
-                                    $where = "`name` = '" . pods_sanitize( $pick_value ) . "'";
+                                if ( 'taxonomy' == $pick_object ) {
+                                    $where = "`t`.`name` = '" . pods_sanitize( $pick_value ) . "'";
+
                                     if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )
-                                        $where = "`term_id` = " . pods_absint( $pick_value );
-                                    $result = pods_query( "SELECT `term_id` AS `id` FROM `{$wpdb->terms}` WHERE {$where} ORDER BY `term_id`", $this );
+                                        $where = "`tt`.`term_id` = " . pods_absint( $pick_value );
+
+                                    $result = pods_query( "SELECT `t`.`term_id` AS `id` FROM `{$wpdb->term_taxonomy}` AS `tt` LEFT JOIN `{$wpdb->terms}` AS `t` ON `t`.`term_id` = `tt`.`term_id` WHERE `taxonomy` = '{$pick_val}' AND {$where} ORDER BY `term_id`", $this );
+
                                     if ( !empty( $result ) )
-                                        $pick_values[ $field_name ] = $result[ 'id' ];
+                                        $pick_values[ $field_name ] = $result[ 0 ]->id;
                                 }
-                                elseif ( 'wp_page' == $pickval || 'wp_post' == $pickval ) {
-                                    $pickval = str_replace( 'wp_', '', $pickval );
+                                elseif ( 'post_type' == $pick_object || 'media' == $pick_object ) {
                                     $where = "`post_title` = '" . pods_sanitize( $pick_value ) . "'";
+
                                     if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )
                                         $where = "`ID` = " . pods_absint( $pick_value );
-                                    $result = pods_query( "SELECT `ID` AS `id` FROM `{$wpdb->posts}` WHERE `post_type` = '$pickval' AND {$where} ORDER BY `ID`", $this );
+
+                                    $result = pods_query( "SELECT `ID` AS `id` FROM `{$wpdb->posts}` WHERE `post_type` = '{$pick_val}' AND {$where} ORDER BY `ID`", $this );
+
                                     if ( !empty( $result ) )
-                                        $pick_values[ $field_name ] = $result[ 'id' ];
+                                        $pick_values[ $field_name ] = $result[ 0 ]->id;
                                 }
-                                elseif ( 'wp_user' == $pickval ) {
-                                    $where = "`display_name` = '" . pods_sanitize( $pick_value ) . "'";
+                                elseif ( 'user' == $pick_object ) {
+                                    $where = "`user_login` = '" . pods_sanitize( $pick_value ) . "'";
+
                                     if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )
                                         $where = "`ID` = " . pods_absint( $pick_value );
+
                                     $result = pods_query( "SELECT `ID` AS `id` FROM `{$wpdb->users}` WHERE {$where} ORDER BY `ID`", $this );
+
                                     if ( !empty( $result ) )
-                                        $pick_values[ $field_name ] = $result[ 'id' ];
+                                        $pick_values[ $field_name ] = $result[ 0 ]->id;
+                                }
+                                elseif ( 'comment' == $pick_object ) {
+                                    $where = "`comment_ID` = " . pods_absint( $pick_value );
+
+                                    $result = pods_query( "SELECT `comment_ID` AS `id` FROM `{$wpdb->comments}` WHERE {$where} ORDER BY `ID`", $this );
+
+                                    if ( !empty( $result ) )
+                                        $pick_values[ $field_name ] = $result[ 0 ]->id;
                                 }
                                 else {
+                                    // @todo Lookup field_index
                                     $where = "`name` = '" . pods_sanitize( $pick_value ) . "'";
+
                                     if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )
                                         $where = "`id` = " . pods_absint( $pick_value );
-                                    $result = pods_query( "SELECT `id` FROM `@wp_pods_{$pickval}` WHERE {$where} ORDER BY `id`", $this );
+
+                                    $result = pods_query( "SELECT `id` FROM `@wp_pods_{$pick_val}` WHERE {$where} ORDER BY `id`", $this );
+
                                     if ( !empty( $result ) )
-                                        $pick_values[ $field_name ] = $result[ 'id' ];
+                                        $pick_values[ $field_name ] = $result[ 0 ]->id;
                                 }
                             }
                         }
+
                         $field_value = implode( ',', $pick_values );
                     }
+
                     $data[ $field_name ] = pods_sanitize( $field_value );
                 }
             }
+
             if ( !empty( $data ) ) {
                 $params = array(
                     'pod' => $this->pod,
@@ -5056,6 +5091,7 @@ class PodsAPI {
                 $ids[] = $this->save_pod_item( $params );
             }
         }
+
         return $ids;
     }
 

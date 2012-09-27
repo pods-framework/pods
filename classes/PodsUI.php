@@ -1295,6 +1295,7 @@ class PodsUI {
         $obj =& $this;
         $singular_label = $this->item;
         $plural_label = $this->items;
+        $label = sprintf( __( 'Save %s', 'pods' ), $this->item );
 
         pods_view( PODS_DIR . 'ui/admin/form.php', compact( array_keys( get_defined_vars() ) ) );
     }

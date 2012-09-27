@@ -464,6 +464,7 @@ class PodsUpgrade_2_0 {
                     $field_params = array(
                         'name' => trim( $row->name ),
                         'label' => trim( $row->label ),
+                        'description' => trim( $row->comment ),
                         'type' => $field_type,
                         'weight' => $weight,
                         'options' => array(

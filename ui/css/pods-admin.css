@@ -727,3 +727,7 @@ div.row-actions.row-actions-toggle {
     display: block;
     visibility: visible;
 }
+
+.pods-field-option select:focus, .pods-field input[type=checkbox]:focus + label{
+    background: #ffffcc;
+}

@@ -309,7 +309,7 @@ class Pods_Templates extends PodsComponent {
         else
             $out = $code;
 
-        $out = preg_replace_callback( '/({@(.*?)})/m', array( 'self', 'do_magic_tags' ), $out );
+        $out = self::do_magic_tags( $out );
 
         return apply_filters( 'pods_templates_do_template', $out, $code, $obj );
     }
@@ -317,12 +317,27 @@ class Pods_Templates extends PodsComponent {
     /**
      * Replace magic tags with their values
      *
-     * @param string $tag The magic tag to evaluate
+     * @param string $code The content to evaluate
      * @param object $obj The Pods object
      *
-     * @since 1.x
+     * @since 2.0.0
      */
-    public static function do_magic_tags( $tag, $obj = null ) {
+    public static function do_magic_tags ( $code, $obj = null ) {
+        if ( !empty( $obj ) )
+            self::$obj =& $obj;
+
+        return preg_replace_callback( '/({@(.*?)})/m', array( 'self', 'process_magic_tags' ), $code );
+    }
+
+    /**
+     * Replace magic tags with their values
+     *
+     * @param string $tag The magic tag to process
+     * @param object $obj The Pods object
+     *
+     * @since 2.0.2
+     */
+    public static function process_magic_tags ( $tag, $obj = null ) {
         if ( !empty( $obj ) )
             self::$obj =& $obj;
         else

@@ -1052,7 +1052,12 @@ class PodsAdmin {
         elseif ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && !is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && ( !is_user_logged_in() || !current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) )
             $upload_disabled = true;
 
-        $nonce_check = 'pods_upload_' . (int) $params->pod . '_' . session_id() . '_' . $params->uri . '_' . (int) $params->field;
+        $uid = @session_id();
+
+        if ( is_user_logged_in() )
+            $uid = 'user_' . get_current_user_id();
+
+        $nonce_check = 'pods_upload_' . (int) $params->pod . '_' . $uid . '_' . $params->uri . '_' . (int) $params->field;
 
         if ( true === $upload_disabled || !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, $nonce_check ) )
             pods_error( __( 'Unauthorized request', 'pods' ), $this );
@@ -1211,7 +1216,12 @@ class PodsAdmin {
 
         $params = (object) $params;
 
-        $nonce_check = 'pods_relationship_' . (int) $params->pod . '_' . session_id() . '_' . $params->uri . '_' . (int) $params->field;
+        $uid = @session_id();
+
+        if ( is_user_logged_in() )
+            $uid = 'user_' . get_current_user_id();
+
+        $nonce_check = 'pods_relationship_' . (int) $params->pod . '_' . $uid . '_' . $params->uri . '_' . (int) $params->field;
 
         if ( !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, $nonce_check ) )
             pods_error( __( 'Unauthorized request', 'pods' ), $this );

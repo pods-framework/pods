@@ -16,7 +16,12 @@ foreach ( $fields as $k => $field ) {
 $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
 $field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $fields ) ) );
 
-$nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . session_id() . '_' . $pod->id() . '_' . $uri_hash . '_' . $field_hash );
+$uid = @session_id();
+
+if ( is_user_logged_in() )
+    $uid = 'user_' . get_current_user_id();
+
+$nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . $uid . '_' . $pod->id() . '_' . $uri_hash . '_' . $field_hash );
 
 if ( isset( $_POST[ '_pods_nonce' ] ) ) {
     try {

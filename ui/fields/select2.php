@@ -14,7 +14,13 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_t
 $attributes[ 'class' ] .= ' pods-form-ui-field-type-select2';
 
 $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
-$field_nonce = wp_create_nonce( 'pods_relationship_' . ( !is_object( $pod ) ? '0' : $pod->pod_id ) . '_' . session_id() . '_' . $uri_hash . '_' . $options[ 'id' ] );
+
+$uid = @session_id();
+
+if ( is_user_logged_in() )
+    $uid = 'user_' . get_current_user_id();
+
+$field_nonce = wp_create_nonce( 'pods_relationship_' . ( !is_object( $pod ) ? '0' : $pod->pod_id ) . '_' . $uid . '_' . $uri_hash . '_' . $options[ 'id' ] );
 
 $pick_limit = (int) pods_var( 'pick_limit', $options, 0 );
 

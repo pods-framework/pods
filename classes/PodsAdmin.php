@@ -162,7 +162,7 @@ class PodsAdmin {
 
         if ( ( empty( $old_pods ) || 1 == $upgraded ) && false !== $results ) {
             foreach ( (array) $results as $item ) {
-                if ( !is_super_admin() && !current_user_can( 'pods_add_' . $item[ 'name' ] ) && !current_user_can( 'pods_edit_' . $item[ 'name' ] ) && !current_user_can( 'pods_delete_' . $item[ 'name' ] ) )
+                if ( !is_super_admin() && !current_user_can( 'pods' ) && !current_user_can( 'pods_add_' . $item[ 'name' ] ) && !current_user_can( 'pods_edit_' . $item[ 'name' ] ) && !current_user_can( 'pods_delete_' . $item[ 'name' ] ) )
                     continue;
 
                 $label = pods_var_raw( 'menu_name', $item[ 'options' ], pods_var_raw( 'label', $item, ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true ), null, true );
@@ -176,7 +176,7 @@ class PodsAdmin {
                 if ( 1 == $item[ 'options' ][ 'show_in_menu' ] ) {
                     add_object_page( $label, $label, 'read', "pods-manage-{$item['name']}", '', $menu_icon );
 
-                    if ( is_super_admin() || current_user_can( 'pods_add_' . $item[ 'name' ] ) || current_user_can( 'pods_edit_' . $item[ 'name' ] ) || current_user_can( 'pods_delete_' . $item[ 'name' ] ) ) {
+                    if ( is_super_admin() || current_user_can( 'pods' ) || current_user_can( 'pods_add_' . $item[ 'name' ] ) || current_user_can( 'pods_edit_' . $item[ 'name' ] ) || current_user_can( 'pods_delete_' . $item[ 'name' ] ) ) {
                         $all_label = $plural_label;
 
                         if ( "pods-manage-{$item['name']}" == pods_var( 'page', 'get' ) ) {
@@ -192,10 +192,10 @@ class PodsAdmin {
                         ) );
                     }
 
-                    if ( is_super_admin() || current_user_can( 'pods_add_' . $item[ 'name' ] ) ) {
+                    if ( is_super_admin() || current_user_can( 'pods' ) || current_user_can( 'pods_add_' . $item[ 'name' ] ) ) {
                         $page = "pods-add-new-{$item['name']}";
 
-                        if ( !is_super_admin() && !current_user_can( 'pods_edit_' . $item[ 'name' ] ) && !current_user_can( 'pods_delete_' . $item[ 'name' ] ) )
+                        if ( !is_super_admin() && !current_user_can( 'pods' ) && !current_user_can( 'pods_edit_' . $item[ 'name' ] ) && !current_user_can( 'pods_delete_' . $item[ 'name' ] ) )
                             $page = "pods-manage-{$item['name']}";
 
                         $add_label = __( 'Add New', 'pods' ) . ' ' . $singular_label;
@@ -213,7 +213,7 @@ class PodsAdmin {
                         ) );
                     }
                 }
-                elseif ( current_user_can( 'pods_add_' . $item[ 'name' ] ) || current_user_can( 'pods_edit_' . $item[ 'name' ] ) || current_user_can( 'pods_delete_' . $item[ 'name' ] ) )
+                elseif ( is_super_admin() || current_user_can( 'pods' ) || current_user_can( 'pods_add_' . $item[ 'name' ] ) || current_user_can( 'pods_edit_' . $item[ 'name' ] ) || current_user_can( 'pods_delete_' . $item[ 'name' ] ) )
                     $submenu[] = $item;
             }
 
@@ -386,7 +386,7 @@ class PodsAdmin {
 
         $actions_disabled = array( 'duplicate', 'view', 'export' );
 
-        if ( !is_super_admin() ) {
+        if ( !is_super_admin() && !current_user_can( 'pods' ) ) {
             if ( !current_user_can( 'pods_add_' . $pod ) ) {
                 $actions_disabled[] = 'add';
                 $default = 'manage';
@@ -1044,6 +1044,7 @@ class PodsAdmin {
          * Access Checking
          */
         $upload_disabled = false;
+
         if ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD )
             $upload_disabled = true;
         elseif ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && true === PODS_UPLOAD_REQUIRE_LOGIN && !is_user_logged_in() )

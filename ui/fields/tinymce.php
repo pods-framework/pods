@@ -15,8 +15,8 @@ if ( isset( $options[ 'settings' ] ) )
 
 $attributes = array();
 $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options, 'pods-ui-field-tinymce' );
-$attributes = array( 'class' => $attributes[ 'class' ] );
+$class_attributes = array( 'class' => $attributes[ 'class' ] );
 ?>
-<div<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?>>
+<div<?php PodsForm::attributes( $class_attributes, $name, PodsForm::$field_type, $options ); ?>>
     <?php wp_editor( $value, $attributes[ 'id' ], $settings ); ?>
 </div>

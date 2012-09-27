@@ -402,8 +402,12 @@ class Pods_Deprecated
 
         $value = $this->obj->field( array( 'name' => $name, 'orderby' => $orderby ) );
 
-        if ( is_array( $value ) && false === strpos( $name, '.' ) && !empty( $value ) && !isset( $value[ 0 ] ) )
-            $value = array( $value ); // fix for single tableless fields
+        if ( is_array( $value ) && !empty( $value ) ) {
+            if ( false === strpos( $name, '.' ) && !isset( $value[ 0 ] ) )
+                $value = array( $value ); // fix for single tableless fields
+            elseif ( 1 == count( $value ) && isset( $value[ 0 ] ) )
+                $value = $value[ 0 ];
+        }
 
         return $value;
     }

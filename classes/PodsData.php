@@ -553,6 +553,7 @@ class PodsData {
             'page' => 1,
             'search' => null,
             'search_query' => null,
+            'search_mode' => null,
             'filters' => array(),
 
             'fields' => array(),
@@ -624,8 +625,14 @@ class PodsData {
         if ( !empty( $params->traverse ) )
             $this->traverse = $params->traverse;
 
+        $allowed_search_modes = array( 'int', 'text', 'text_like' );
+
+        if ( !empty( $params->search_mode ) && in_array( $params->search_mode, $allowed_search_modes ) )
+            $this->search_mode = $params->search_mode;
+
         // Get Aliases for future reference
         $selectsfound = '';
+
         if ( !empty( $params->select ) ) {
             if ( is_array( $params->select ) )
                 $selectsfound = implode( ', ', $params->select );
@@ -757,7 +764,7 @@ class PodsData {
 
                 if ( !empty( $found ) )
                     $joins = $this->traverse( $found, $params->fields );
-                elseif ( false !== $this->search )
+                elseif ( false !== $params->search )
                     $joins = $this->traverse( null, $params->fields );
             }
         }
@@ -778,7 +785,7 @@ class PodsData {
                     if ( !is_array( $attributes ) )
                         $attributes = array();
 
-                    if ( !$attributes[ 'options' ][ 'search' ] )
+                    if ( isset( $attributes[ 'options' ][ 'search' ] ) && !$attributes[ 'options' ][ 'search' ] )
                         continue;
 
                     if ( in_array( $attributes[ 'type' ], array( 'date', 'time', 'datetime', 'pick', 'file' ) ) )

@@ -764,7 +764,7 @@ class Pods {
             'page' => (int) $this->page,
             'search' => (boolean) $this->search,
             'search_query' => pods_var( $this->search_var, 'get', '' ),
-            'search_mode' => pods_var( $this->search_var, 'get', '' ),
+            'search_mode' => $this->search_mode,
             'search_across' => true,
             'search_across_picks' => false,
             'fields' => $this->fields,

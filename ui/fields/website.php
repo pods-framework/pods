@@ -3,7 +3,7 @@ $attributes = array();
 
 $type = 'text';
 
-if ( 1 == pods_var( 'phone_html5', $options ) )
+if ( 1 == pods_var( 'website_html5', $options ) )
     $type = 'url';
 
 $attributes[ 'type' ] = $type;

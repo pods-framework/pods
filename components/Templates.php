@@ -260,11 +260,11 @@ class Pods_Templates extends PodsComponent {
             // Only detail templates need $this->id
             if ( empty( $obj->id ) ) {
                 while ( $obj->fetch() ) {
-                    echo self::do_template( $code );
+                    echo self::do_template( $code, $obj );
                 }
             }
             else
-                echo self::do_template( $code );
+                echo self::do_template( $code, $obj );
         }
 
         $out = ob_get_clean();

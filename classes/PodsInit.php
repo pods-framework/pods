@@ -535,7 +535,7 @@ class PodsInit {
                 10 => sprintf( __( '%s draft updated. <a target="_blank" href="%s">Preview %s</a>', 'pods' ), $labels[ 'singular_name' ], esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels[ 'singular_name' ] )
             );
 
-            if ( false === (boolean) $wp_cpt_ct[ 'post_types' ][ $post_type[ 'name ' ] ][ 'public' ] ) {
+            if ( false === (boolean) $wp_cpt_ct[ 'post_types' ][ $post_type[ 'name' ] ][ 'public' ] ) {
                 $messages[ $post_type[ 'name' ] ][ 1 ] = sprintf( __( '%s updated.', 'pods' ), $labels[ 'singular_name' ] );
                 $messages[ $post_type[ 'name' ] ][ 6 ] = sprintf( __( '%s published.', 'pods' ), $labels[ 'singular_name' ] );
                 $messages[ $post_type[ 'name' ] ][ 8 ] = sprintf( __( '%s submitted.', 'pods' ), $labels[ 'singular_name' ] );

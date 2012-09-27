@@ -86,8 +86,12 @@ class PodsView {
         $original_key = $key;
 
         // Patch for limitations in DB
-        if ( 44 < strlen( $group_key . $key ) )
+        if ( 44 < strlen( $group_key . $key ) ) {
             $key = md5( $key );
+
+            if ( empty( $group_key ) )
+                $group_key = 'pods_';
+        }
 
         $value = null;
 
@@ -133,8 +137,12 @@ class PodsView {
         $original_key = $key;
 
         // Patch for limitations in DB
-        if ( 44 < strlen( $group_key . $key ) )
+        if ( 44 < strlen( $group_key . $key ) ) {
             $key = md5( $key );
+
+            if ( empty( $group_key ) )
+                $group_key = 'pods_';
+        }
 
         if ( 'transient' == $cache_mode )
             set_transient( $group_key . $key, $value, $expires );
@@ -175,8 +183,12 @@ class PodsView {
         $original_key = $key;
 
         // Patch for limitations in DB
-        if ( 44 < strlen( $group_key . $key ) )
+        if ( 44 < strlen( $group_key . $key ) ) {
             $key = md5( $key );
+
+            if ( empty( $group_key ) )
+                $group_key = 'pods_';
+        }
 
         if ( 'transient' == $cache_mode ) {
             if ( true === $key ) {

@@ -50,7 +50,7 @@ if ( empty( $value ) )
 else
     $value = (array) $value;
 ?>
-<div<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?>>
+<div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ] ), $name, PodsForm::$field_type, $options ); ?>>
     <table class="form-table pods-metabox" id="<?php echo $css_id; ?>">
         <tbody>
             <tr class="form-field">

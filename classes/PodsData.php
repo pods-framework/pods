@@ -780,19 +780,22 @@ class PodsData {
                 $where = $having = array();
 
                 foreach ( $params->fields as $key => $field ) {
-                    $attributes = $field;
-
-                    if ( !is_array( $attributes ) )
-                        $attributes = array();
+                    if ( is_array( $field ) ) {
+                        $field = pods_var( 'name', $field, $key, null, true );
+                        $attributes = $field;
+                    }
+                    else {
+                        $attributes = array(
+                            'type' => '',
+                            'options' => array()
+                        );
+                    }
 
                     if ( isset( $attributes[ 'options' ][ 'search' ] ) && !$attributes[ 'options' ][ 'search' ] )
                         continue;
 
                     if ( in_array( $attributes[ 'type' ], array( 'date', 'time', 'datetime', 'pick', 'file' ) ) )
                         continue;
-
-                    if ( is_array( $field ) )
-                        $field = pods_var( 'name', $attributes, $key );
 
                     if ( isset( $params->filters[ $field ] ) )
                         continue;

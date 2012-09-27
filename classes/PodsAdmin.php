@@ -171,7 +171,7 @@ class PodsAdmin {
                 $singular_label = pods_var_raw( 'label_singular', $item[ 'options' ], pods_var_raw( 'label', $item, ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true ), null, true );
                 $plural_label = pods_var_raw( 'label', $item, ucwords( str_replace( '_', ' ', $item[ 'name' ] ) ), null, true );
 
-                $menu_icon = pods_var_raw( 'menu_icon', $item, '', null, true );
+                $menu_icon = pods_var_raw( 'menu_icon', $item[ 'options' ], '', null, true );
 
                 if ( 1 == $item[ 'options' ][ 'show_in_menu' ] ) {
                     add_object_page( $label, $label, 'read', "pods-manage-{$item['name']}", '', $menu_icon );

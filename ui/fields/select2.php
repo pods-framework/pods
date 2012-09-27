@@ -18,6 +18,9 @@ $field_nonce = wp_create_nonce( 'pods_relationship_' . ( !is_object( $pod ) ? '0
 
 $pick_limit = (int) pods_var( 'pick_limit', $options, 0 );
 
+if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit )
+    wp_enqueue_script( 'jquery-ui-sortable' );
+
 $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true );
 ?>
 <div class="pods-select2">
@@ -50,7 +53,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                 }
             ?>};
         var $element = $('#<?php echo $attributes[ 'id' ] ?>' );
-        
+
         $element.select2( {
             width : 'resolve',
             initSelection : function ( element, callback ) {

@@ -317,9 +317,9 @@ class PodsField_Pick extends PodsField {
             $params = array(
                 'select' => "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`",
                 'table' => $search_data->table,
-                'where' => pods_var( 'pick_where', $options, null, null, true ),
-                'orderby' => pods_var( 'pick_orderby', $options, null, null, true ),
-                'groupby' => pods_var( 'pick_groupby', $options, null, null, true )
+                'where' => pods_var_raw( 'pick_where', $options, null, null, true ),
+                'orderby' => pods_var_raw( 'pick_orderby', $options, null, null, true ),
+                'groupby' => pods_var_raw( 'pick_groupby', $options, null, null, true )
             );
 
             if ( isset( $options[ 'table_info' ][ 'pod' ] ) && !empty( $options[ 'table_info' ][ 'pod' ] ) ) {

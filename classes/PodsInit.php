@@ -58,7 +58,7 @@ class PodsInit {
                 add_action( 'init', array( $this, 'admin_init' ), 12 );
 
             // Show admin bar links
-            //add_action( 'wp_before_admin_bar_render', array( $this, 'admin_bar_links' ) );
+            add_action( 'wp_before_admin_bar_render', array( $this, 'admin_bar_links' ) );
 
             // Init Pods Meta
             self::$meta = pods_meta()->init();
@@ -827,39 +827,40 @@ class PodsInit {
      */
     public function admin_bar_links () {
         global $wp_admin_bar, $pods;
-        $api = pods_api();
-        $all_pods = $api->load_pods();
-        $non_cpt_pods = array();
 
-        // Round up all the non-CPT pod types
+        $all_pods = pods_api()->load_pods( array( 'type' => 'pod' ) );
+
+        // Add New item links for all pods
         foreach ( $all_pods as $pod ) {
-            if ( $pod[ 'type' ] == "pod" )
-                $non_cpt_pods[ ] = $pod;
-        }
+            if ( 0 == $pod[ 'options' ][ 'show_in_menu' ] )
+                continue;
 
-        // Add New item links for all non-CPT pods
-        foreach ( $non_cpt_pods as $pod ) {
-            $label = pods_var_raw( 'label', $pod, $pod[ 'name' ], null, true );
+            if ( !is_super_admin() && !current_user_can( 'pods' ) && !current_user_can( 'pods_add_' . $pod[ 'name' ] ) )
+                continue;
+
+            $singular_label = pods_var_raw( 'label_singular', $pod[ 'options' ], pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true ), null, true );
 
             $wp_admin_bar->add_node( array(
                 'id' => 'new-pod-' . $pod[ 'name' ],
-                'title' => $label,
+                'title' => $singular_label,
                 'parent' => 'new-content',
                 'href' => admin_url( 'admin.php?page=pods-manage-' . $pod[ 'name' ] . '&action=add' )
             ) );
         }
 
         // Add edit link if we're on a pods page
-        // @todo Fill in correct href and test this once PodsAPI is capable of adding new pod items to the database
-        if ( is_object( $pods ) && !is_wp_error( $pods ) && !empty( $pods->id ) ) {
-            $label = pods_var_raw( 'label', $pod, $pod[ 'name' ], null, true );
-            $label = pods_var_raw( 'label_singular', $pod[ 'options' ], $label, null, true );
+        if ( is_object( $pods ) && !is_wp_error( $pods ) && !empty( $pods->id ) && isset( $pods->pod_data ) && !empty( $pods->pod_data ) && 'pod' == $pods->pod_data[ 'type' ] ) {
+            $pod = $pods->pod_data;
 
-            $wp_admin_bar->add_node( array(
-                'title' => sprintf( __( 'Edit %s', 'pods' ), $label ),
-                'id' => 'edit-pod',
-                'href' => admin_url( 'admin.php?page=pods-manage-' . $pod[ 'name' ] . '&action=edit&id=' . $pod->id )
-            ) );
+            if ( is_super_admin() || current_user_can( 'pods' ) || current_user_can( 'pods_edit_' . $pod[ 'name' ] ) ) {
+                $singular_label = pods_var_raw( 'label_singular', $pod[ 'options' ], pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true ), null, true );
+
+                $wp_admin_bar->add_node( array(
+                    'title' => sprintf( __( 'Edit %s', 'pods' ), $singular_label ),
+                    'id' => 'edit-pod',
+                    'href' => admin_url( 'admin.php?page=pods-manage-' . $pod[ 'name' ] . '&action=edit&id=' . $pods->id() )
+                ) );
+            }
         }
 
     }

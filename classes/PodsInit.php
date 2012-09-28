@@ -58,7 +58,7 @@ class PodsInit {
                 add_action( 'init', array( $this, 'admin_init' ), 12 );
 
             // Show admin bar links
-            add_action( 'wp_before_admin_bar_render', array( $this, 'admin_bar_links' ) );
+            add_action( 'admin_bar_menu', array( $this, 'admin_bar_links' ), 81 );
 
             // Init Pods Meta
             self::$meta = pods_meta()->init();
@@ -827,6 +827,9 @@ class PodsInit {
      */
     public function admin_bar_links () {
         global $wp_admin_bar, $pods;
+
+        if ( !is_user_logged_in() || !is_admin_bar_showing() )
+            return;
 
         $all_pods = pods_api()->load_pods( array( 'type' => 'pod' ) );
 

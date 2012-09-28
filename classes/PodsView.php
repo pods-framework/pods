@@ -75,6 +75,11 @@ class PodsView {
      * @since 2.0.0
      */
     public static function get ( $key, $cache_mode = 'cache', $group = '' ) {
+        $object_cache = false;
+
+        if ( isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) )
+            $object_cache = true;
+
         if ( !in_array( $cache_mode, self::$cache_modes ) )
             $cache_mode = 'cache';
 
@@ -99,7 +104,7 @@ class PodsView {
             $value = get_transient( $group_key . $key );
         elseif ( 'site-transient' == $cache_mode )
             $value = get_site_transient( $group_key . $key );
-        elseif ( 'cache' == $cache_mode )
+        elseif ( 'cache' == $cache_mode && $object_cache )
             $value = wp_cache_get( $key, ( empty( $group ) ? 'pods_view' : $group ) );
 
         $value = apply_filters( 'pods_view_get_' . $cache_mode, $value, $original_key, $group );
@@ -123,6 +128,11 @@ class PodsView {
      * @since 2.0.0
      */
     public static function set ( $key, $value, $expires = 0, $cache_mode = null, $group = '' ) {
+        $object_cache = false;
+
+        if ( isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) )
+            $object_cache = true;
+
         if ( (int) $expires < 1 )
             $expires = 0;
 
@@ -148,7 +158,7 @@ class PodsView {
             set_transient( $group_key . $key, $value, $expires );
         elseif ( 'site-transient' == $cache_mode )
             set_site_transient( $group_key . $key, $value, $expires );
-        elseif ( 'cache' == $cache_mode )
+        elseif ( 'cache' == $cache_mode && $object_cache )
             wp_cache_set( $key, $value, ( empty( $group ) ? 'pods_view' : $group ), $expires );
 
         do_action( 'pods_view_set_' . $cache_mode, $original_key, $value, $expires, $group );
@@ -170,6 +180,11 @@ class PodsView {
      * @since 2.0.0
      */
     public static function clear ( $key = true, $cache_mode = null, $group = '' ) {
+        $object_cache = false;
+
+        if ( isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) )
+            $object_cache = true;
+
         global $wpdb;
 
         if ( !in_array( $cache_mode, self::$cache_modes ) )
@@ -206,7 +221,7 @@ class PodsView {
             else
                 delete_site_transient( $group_key . $key );
         }
-        elseif ( 'cache' == $cache_mode ) {
+        elseif ( 'cache' == $cache_mode && $object_cache ) {
             if ( true === $key )
                 wp_cache_flush();
             else

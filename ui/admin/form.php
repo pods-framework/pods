@@ -280,8 +280,8 @@ if ( !isset( $label ) )
         var thank_you_alt = '<?php echo addslashes( $thank_you_alt ); ?>';
 
         if ( 'NaN' == id )
-            document.location = thank_you.replace( 'X_ID_X', id );
-        else
             document.location = thank_you_alt.replace( 'X_ID_X', 0 );
+        else
+            document.location = thank_you.replace( 'X_ID_X', id );
     }
 </script>

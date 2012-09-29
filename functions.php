@@ -454,7 +454,7 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
             $output = get_transient( $var );
         elseif ( 'site-transient' == $type )
             $output = get_site_transient( $var );
-        elseif ( 'cache' == $type ) {
+        elseif ( 'cache' == $type && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) ) {
             $group = 'default';
             $force = false;
 

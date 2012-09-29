@@ -1459,7 +1459,7 @@ class PodsMeta {
 
         $meta_cache = array();
 
-        if ( !$single )
+        if ( !$single && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) )
             $meta_cache = wp_cache_get( $object_id, $meta_type . '_meta' );
 
         if ( !$single || empty( $meta_cache ) || !is_array( $meta_cache ) )
@@ -1479,7 +1479,7 @@ class PodsMeta {
             }
         }
 
-        if ( !$single )
+        if ( !$single && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) )
             wp_cache_add( $object_id, $meta_cache, $meta_type . '_meta' );
 
         pods_no_conflict_off( $meta_type );

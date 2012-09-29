@@ -47,7 +47,7 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
             ?>
                 <li class="pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Podsform::clean( $field[ 'name' ], true ); ?>">
                     <div class="pods-field-label">
-                        <?php echo PodsForm::label( 'pods_field_' . $field[ 'name' ], $field ); ?>
+                        <?php echo PodsForm::label( 'pods_field_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?>
                     </div>
 
                     <div class="pods-field-input">

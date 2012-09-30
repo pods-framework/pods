@@ -1733,7 +1733,7 @@ class PodsUI {
                                     <?php
                                     foreach ( $related as $option_id => $option ) {
                                         ?>
-                                        <option value="<?php echo $option_id; ?>"<?php echo ( $option->id == $selected ? ' SELECTED' : '' ); ?>><?php echo $option; ?></option>
+                                        <option value="<?php echo $option_id; ?>"<?php echo ( $option_id == $selected ? ' SELECTED' : '' ); ?>><?php echo $option; ?></option>
                                         <?php
                                     }
                                     ?>

@@ -165,7 +165,7 @@ class PodsData {
     /**
      * @var string
      */
-    public $search_where = '';
+    public $search_where = array();
 
     /**
      * @var array
@@ -808,7 +808,7 @@ class PodsData {
                     if ( isset( $attributes[ 'real_name' ] ) && false !== $attributes[ 'real_name' ] && !empty( $attributes[ 'real_name' ] ) )
                         $fieldfield = $attributes[ 'real_name' ];
 
-                    if ( isset( $attrbutes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] )
+                    if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] )
                         $having[] = "{$fieldfield} LIKE '%" . pods_sanitize( $params->search_query ) . "%'";
                     else
                         $where[] = "{$fieldfield} LIKE '%" . pods_sanitize( $params->search_query ) . "%'";
@@ -822,8 +822,8 @@ class PodsData {
             }
 
             // Traversal Search
-            if ( 0 < strlen( $this->search_where ) )
-                $params->where[] = $this->search_where;
+            if ( !empty( $this->search_where ) )
+                $params->where = array_merge( (array) $this->search_where, $params->where );
 
             // Filter
             foreach ( $params->filters as $filter ) {
@@ -1760,7 +1760,7 @@ class PodsData {
                     $search = "`{$field_joined}`.`{$on}` LIKE '%{$val}%'";
                 }
 
-                $this->search_where .= " AND {$search} ";
+                $this->search_where[] = " {$search} ";
             }
         }
 

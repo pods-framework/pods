@@ -154,6 +154,8 @@ class PodsComponents {
 
             $component_data = $this->components[ $component ];
 
+            $component_data[ 'File' ] = str_replace( ABSPATH, '', $component_data[ 'File' ] );
+
             if ( !file_exists( ABSPATH . $component_data[ 'File' ] ) )
                 continue;
 

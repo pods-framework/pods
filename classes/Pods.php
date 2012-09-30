@@ -1285,8 +1285,12 @@ class Pods {
 
         $fields = $params[ 'fields' ];
 
-        if ( empty( $fields ) )
-            $fields = $this->fields;
+        if ( empty( $fields ) ) {
+            // Add core object fields if $fields is empty
+            $fields = (array) pods_var_raw( 'object_fields', $this->pod_data, array(), null, true );
+
+            $fields = array_merge( $fields, $this->fields );
+        }
         else {
             foreach ( $fields as $k => $field ) {
                 $name = $k;

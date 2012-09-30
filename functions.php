@@ -60,6 +60,26 @@ function pods_do_hook ( $scope, $name, $args = null, &$obj = null ) {
 }
 
 /**
+ * Message / Notice handling for Admin UI
+ *
+ * @param string $message The notice / error message shown
+ * @param string $type Message type
+ */
+function pods_message ( $message, $type = null ) {
+    if ( empty( $type ) || !in_array( $type, array( 'notice', 'error' ) ) )
+        $type = 'notice';
+
+    $class = '';
+
+    if ( 'notice' == $type )
+        $class = 'updated';
+    elseif ( 'error' == $type )
+        $class = 'error';
+
+    echo '<div id="message" class="' . $class . ' fade"><p>' . $message . '</p></div>';
+}
+
+/**
  * Error Handling which throws / displays errors
  *
  * @param string $error The error message to be thrown / displayed

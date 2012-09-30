@@ -92,8 +92,13 @@ class PodsComponents {
 
             $component_data[ 'File' ] = realpath( PODS_DIR . $component_data[ 'File' ] );
 
-            if ( !file_exists( $component_data[ 'File' ] ) )
+            if ( !file_exists( $component_data[ 'File' ] ) ) {
+                pods_message( 'Pods Component not found: ' . $component_data[ 'File' ] );
+
+                pods_transient_clear( 'pods_components' );
+
                 continue;
+            }
 
             $menu_page = 'pods-component-' . $component_data[ 'ID' ];
 
@@ -161,8 +166,13 @@ class PodsComponents {
 
             $component_data[ 'File' ] = realpath( PODS_DIR . $component_data[ 'File' ] );
 
-            if ( !file_exists( $component_data[ 'File' ] ) )
+            if ( !file_exists( $component_data[ 'File' ] ) ) {
+                pods_message( 'Pods Component not found: ' . $component_data[ 'File' ] );
+
+                pods_transient_clear( 'pods_components' );
+
                 continue;
+            }
 
             include_once $component_data[ 'File' ];
 

@@ -340,7 +340,6 @@ class Pods_Deprecated
     public function publicForm ( $fields = null, $label = 'Save Changes', $thankyou_url = null ) {
         pods_deprecated( 'Pods::publicForm', '2.0.0', 'Pods::form' );
 
-
         if ( !empty( $fields ) ) {
             foreach ( $fields as $k => $field ) {
                 $name = $k;

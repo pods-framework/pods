@@ -90,7 +90,7 @@ class PodsComponents {
             if ( empty( $component_data[ 'MenuPage' ] ) && ( !isset( $component_data[ 'object' ] ) || !method_exists( $component_data[ 'object' ], 'admin' ) ) )
                 continue;
 
-            $component_data[ 'File' ] = realpath( PODS_DIR . str_replace( array( PODS_DIR, ABSPATH ), '', $component_data[ 'File' ] ) );
+            $component_data[ 'File' ] = realpath( PODS_DIR . $component_data[ 'File' ] );
 
             if ( !file_exists( $component_data[ 'File' ] ) )
                 continue;
@@ -159,7 +159,7 @@ class PodsComponents {
 
             $component_data = $this->components[ $component ];
 
-            $component_data[ 'File' ] = realpath( PODS_DIR . str_replace( array( PODS_DIR, ABSPATH ), '', $component_data[ 'File' ] ) );
+            $component_data[ 'File' ] = realpath( PODS_DIR . $component_data[ 'File' ] );
 
             if ( !file_exists( $component_data[ 'File' ] ) )
                 continue;

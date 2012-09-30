@@ -90,6 +90,11 @@ class PodsComponents {
             if ( empty( $component_data[ 'MenuPage' ] ) && ( !isset( $component_data[ 'object' ] ) || !method_exists( $component_data[ 'object' ], 'admin' ) ) )
                 continue;
 
+            $component_data[ 'File' ] = realpath( PODS_DIR . str_replace( array( PODS_DIR, ABSPATH ), '', $component_data[ 'File' ] ) );
+
+            if ( !file_exists( $component_data[ 'File' ] ) )
+                continue;
+
             $menu_page = 'pods-component-' . $component_data[ 'ID' ];
 
             if ( !empty( $component_data[ 'MenuPage' ] ) )
@@ -154,12 +159,12 @@ class PodsComponents {
 
             $component_data = $this->components[ $component ];
 
-            $component_data[ 'File' ] = str_replace( PODS_DIR, '', str_replace( ABSPATH, '', $component_data[ 'File' ] ) );
+            $component_data[ 'File' ] = realpath( PODS_DIR . str_replace( array( PODS_DIR, ABSPATH ), '', $component_data[ 'File' ] ) );
 
-            if ( !file_exists( PODS_DIR . $component_data[ 'File' ] ) )
+            if ( !file_exists( $component_data[ 'File' ] ) )
                 continue;
 
-            include_once PODS_DIR . $component_data[ 'File' ];
+            include_once $component_data[ 'File' ];
 
             if ( !empty( $component_data[ 'Class' ] ) && class_exists( $component_data[ 'Class' ] ) && !isset( $this->components[ $component ][ 'object' ] ) ) {
                 $this->components[ $component ][ 'object' ] = new $component_data[ 'Class' ];
@@ -185,7 +190,7 @@ class PodsComponents {
         $components = pods_transient_get( 'pods_components' );
 
         if ( !is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET[ 'page' ] ) && 'pods-components' == $_GET[ 'page' ] && false !== pods_transient_get( 'pods_components_refresh' ) ) ) {
-            $component_dir = @opendir( rtrim( $this->components_dir, '/' ) );
+            $component_dir = @opendir( untrailingslashit( $this->components_dir ) );
             $component_files = array();
 
             if ( false !== $component_dir ) {
@@ -200,7 +205,7 @@ class PodsComponents {
                                 if ( '.' == substr( $subfile, 0, 1 ) )
                                     continue;
                                 elseif ( '.php' == substr( $subfile, -4 ) )
-                                    $component_files[] = $this->components_dir . $file . '/' . $subfile;
+                                    $component_files[] = realpath( $this->components_dir . $file . '/' . $subfile );
                             }
 
                             closedir( $component_subdir );

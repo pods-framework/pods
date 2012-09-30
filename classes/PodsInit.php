@@ -667,7 +667,7 @@ class PodsInit {
         $install = false;
 
         if ( 0 < strlen( $pods_version ) ) {
-            if ( !empty( $pods_version ) && version_compare( '2.0.0-a-1', $pods_version, '<' ) && version_compare( $pods_version, PODS_VERSION, '<' ) ) {
+            if ( !empty( $pods_version ) && version_compare( '2.0.0-a-0', $pods_version, '<' ) && version_compare( $pods_version, PODS_VERSION, '<' ) ) {
                 do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
 
                 if ( false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] ) )
@@ -676,10 +676,9 @@ class PodsInit {
                 do_action( 'pods_update_post', PODS_VERSION, $pods_version, $_blog_id );
 
                 update_option( 'pods_framework_version', PODS_VERSION );
-            }
 
-            if ( $pods_version != PODS_VERSION )
                 pods_api()->cache_flush_pods();
+            }
         }
         else
             $install = true;

@@ -5158,6 +5158,7 @@ class PodsAPI {
         global $wpdb;
 
         pods_transient_clear( 'pods' );
+        pods_transient_clear( 'pods_components' );
 
         if ( null !== $pod && is_array( $pod ) ) {
             pods_transient_clear( 'pods_pod_' . $pod[ 'name' ] );

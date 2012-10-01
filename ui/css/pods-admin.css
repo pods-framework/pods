@@ -522,6 +522,10 @@ tbody.pods-manage-list tr.pods-field-new div.pods-manage-row-wrapper .pods-manag
     margin-top: 30px;
 }
 
+.pods-toggled.pods-toggled-only {
+    margin-top: 0;
+}
+
 .pods-toggled h3 {
     cursor: pointer;
 }

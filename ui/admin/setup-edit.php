@@ -360,7 +360,7 @@ if ( 'none' != pods_var( 'storage', $pod, 'none', null, true ) ) {
     $closed = ' closed';
 }
 else
-    $closed = '';
+    $closed = ' pods-toggled-only';
 
 $advanced = true;
 

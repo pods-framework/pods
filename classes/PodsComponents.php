@@ -166,6 +166,12 @@ class PodsComponents {
 
             $component_data[ 'File' ] = realpath( PODS_DIR . $component_data[ 'File' ] );
 
+            if ( empty( $component_data[ 'File' ] ) ) {
+                pods_transient_clear( 'pods_components' );
+
+                continue;
+            }
+
             if ( !file_exists( $component_data[ 'File' ] ) ) {
                 pods_message( 'Pods Component not found: ' . $component_data[ 'File' ] );
 

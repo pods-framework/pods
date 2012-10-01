@@ -906,6 +906,8 @@ class PodsUI {
                 if ( is_object( $this->pod ) && isset( $this->pod->fields ) && isset( $this->pod->fields[ $attributes[ 'real_name' ] ] ) )
                     $attributes = array_merge( $this->pod->fields[ $attributes[ 'real_name' ] ], $attributes );
 
+                if ( !isset( $attributes[ 'options' ] ) )
+                    $attributes[ 'options' ] = array();
                 if ( !isset( $attributes[ 'id' ] ) )
                     $attributes[ 'id' ] = '';
                 if ( !isset( $attributes[ 'label' ] ) )
@@ -951,20 +953,20 @@ class PodsUI {
                 if ( !isset( $attributes[ 'hidden' ] ) )
                     $attributes[ 'hidden' ] = false;
                 if ( !isset( $attributes[ 'sortable' ] ) || false === $this->sortable )
-                    $attributes[ 'sortable' ] = ( false !== $this->sortable ) ? true : false;
-                if ( !isset( $attributes[ 'options' ] [ 'search' ] ) || false === $this->searchable )
-                    $attributes[ 'options' ] [ 'search' ] = ( false !== $this->searchable ) ? true : false;
-                if ( !isset( $attributes[ 'filter' ] ) || false === $this->searchable )
-                    $attributes[ 'filter' ] = false;
-                if ( false !== $attributes[ 'filter' ] && false !== $filterable )
-                    $this->filters[] = $field;
-                if ( false === $attributes[ 'filter' ] || !isset( $attributes[ 'filter_label' ] ) || !in_array( $field, $this->filters ) )
+                    $attributes[ 'sortable' ] = $this->sortable;
+                if ( !isset( $attributes[ 'options' ][ 'search' ] ) || false === $this->searchable )
+                    $attributes[ 'options' ][ 'search' ] = $this->searchable;
+                if ( !isset( $attributes[ 'options' ][ 'filter' ] ) || false === $this->searchable )
+                    $attributes[ 'options' ][ 'filter' ] = $this->searchable;
+                /*if ( false !== $attributes[ 'options' ][ 'filter' ] && false !== $filterable )
+                    $this->filters[] = $field;*/
+                if ( false === $attributes[ 'options' ][ 'filter' ] || !isset( $attributes[ 'filter_label' ] ) || !in_array( $field, $this->filters ) )
                     $attributes[ 'filter_label' ] = $attributes[ 'label' ];
-                if ( false === $attributes[ 'filter' ] || !isset( $attributes[ 'filter_default' ] ) || !in_array( $field, $this->filters ) )
+                if ( false === $attributes[ 'options' ][ 'filter' ] || !isset( $attributes[ 'filter_default' ] ) || !in_array( $field, $this->filters ) )
                     $attributes[ 'filter_default' ] = false;
-                if ( false === $attributes[ 'filter' ] || !isset( $attributes[ 'date_ongoing' ] ) || 'date' != $attributes[ 'type' ] || !in_array( $field, $this->filters ) )
+                if ( false === $attributes[ 'options' ][ 'filter' ] || !isset( $attributes[ 'date_ongoing' ] ) || 'date' != $attributes[ 'type' ] || !in_array( $field, $this->filters ) )
                     $attributes[ 'date_ongoing' ] = false;
-                if ( false === $attributes[ 'filter' ] || !isset( $attributes[ 'date_ongoing' ] ) || 'date' != $attributes[ 'type' ] || !isset( $attributes[ 'date_ongoing_default' ] ) || !in_array( $field, $this->filters ) )
+                if ( false === $attributes[ 'options' ][ 'filter' ] || !isset( $attributes[ 'date_ongoing' ] ) || 'date' != $attributes[ 'type' ] || !isset( $attributes[ 'date_ongoing_default' ] ) || !in_array( $field, $this->filters ) )
                     $attributes[ 'date_ongoing_default' ] = false;
                 if ( !isset( $attributes[ 'export' ] ) )
                     $attributes[ 'export' ] = true;
@@ -1504,7 +1506,10 @@ class PodsUI {
                 'page' => (int) $this->page,
                 'limit' => (int) $this->limit,
                 'search' => $this->searchable,
-                'search_query' => $this->search
+                'search_query' => $this->search,
+                'search_across' => $this->search_across,
+                'search_across_picks' => $this->search_across_picks,
+                'filters' => $this->filters
             );
 
             $this->data = $this->pod->find( $params )->data();
@@ -1681,20 +1686,12 @@ class PodsUI {
                         // use PodsFormUI fields
                         if ( !isset( $this->fields[ 'search' ][ $filter ] ) )
                             continue;
-                        if ( in_array( $this->fields[ 'search' ][ $filter ][ 'type' ], array( 'date', 'datetime' ) ) ) {
-                            if ( false === $date_exists ) {
-                                $date_exists = true;/*
-                                ?>
-                                <link type="text/css" rel="stylesheet" href="<?php echo $this->assets_url; ?>/jquery/ui.datepicker.css" />
-                                <script type="text/javascript">
-                                    jQuery( document ).ready( function () {
-                                        jQuery.getScript( '<?php echo $this->assets_url; ?>/jquery/ui.datepicker.js', function () {
-                                            jQuery( 'input.admin_ui_date' ).datepicker();
-                                        } );
-                                    } );
-                                </script>
-                                <?php*/
-                            }
+
+                        // @todo Implement new form class field()
+                        if ( in_array( $this->fields[ 'search' ][ $filter ][ 'type' ], array( 'date', 'datetime', 'time' ) ) ) {
+                            if ( false === $date_exists )
+                                $date_exists = true;
+
                             $start = pods_var( 'filter_' . $filter . '_start', 'get', $this->fields[ 'search' ][ $filter ][ 'filter_default' ] );
                             $end = pods_var( 'filter_' . $filter . '_end', 'get', $this->fields[ 'search' ][ $filter ][ 'filter_ongoing_default' ] );
                             ?>

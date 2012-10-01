@@ -1286,11 +1286,11 @@ class Pods {
 
         $fields = $params[ 'fields' ];
 
+        $object_fields = (array) pods_var_raw( 'object_fields', $this->pod_data, array(), null, true );
+
         if ( empty( $fields ) ) {
             // Add core object fields if $fields is empty
-            $fields = (array) pods_var_raw( 'object_fields', $this->pod_data, array(), null, true );
-
-            $fields = array_merge( $fields, $this->fields );
+            $fields = array_merge( $object_fields, $this->fields );
         }
         else {
             foreach ( $fields as $k => $field ) {
@@ -1303,10 +1303,14 @@ class Pods {
                 elseif ( isset( $field[ 'name' ] ) )
                     $name = $field[ 'name' ];
 
-                if ( !isset( $this->fields[ $name ] ) || pods_var_raw( 'hidden', $field, false, null, true ) )
+                if ( pods_var_raw( 'hidden', $field, false, null, true ) )
                     unset( $fields[ $k ] );
-                else
+                elseif ( isset( $object_fields[ $name ] ) )
+                    $fields[ $k ] = array_merge( $object_fields[ $name ], $field );
+                elseif ( isset( $this->fields[ $name ] ) )
                     $fields[ $k ] = array_merge( $this->fields[ $name ], $field );
+                else
+                    unset( $fields[ $k ] );
             }
         }
 

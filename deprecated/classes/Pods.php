@@ -354,10 +354,9 @@ class Pods_Deprecated
                 if ( in_array( $name, array( 'created', 'modified', 'author' ) ) && isset( $this->obj->fields[ $name . '2' ] ) )
                     $name .= '2';
 
-                if ( !isset( $this->obj->fields[ $name ] ) || pods_var_raw( 'hidden', $field, false, null, true ) )
-                    unset( $fields[ $k ] );
-                else
-                    $fields[ $k ] = array_merge( $this->obj->fields[ $name ], $field );
+                $field[ 'name' ] = $name;
+
+                $fields[ $k ] = $field;
             }
         }
 

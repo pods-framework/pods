@@ -651,7 +651,9 @@ function pods_var_update ( $array = null, $allowed = null, $excluded = null, $ur
         $get = $_GET;
 
     foreach ( $get as $key => $val ) {
-        if ( strlen( $val ) < 1 )
+        if ( is_array( $val ) && empty( $val ) )
+            unset( $get[ $key ] );
+        elseif ( !is_array( $val ) && strlen( $val ) < 1 )
             unset( $get[ $key ] );
         elseif ( !empty( $allowed ) && !in_array( $key, $allowed ) )
             unset( $get[ $key ] );
@@ -666,7 +668,9 @@ function pods_var_update ( $array = null, $allowed = null, $excluded = null, $ur
 
     if ( !empty( $array ) ) {
         foreach ( $array as $key => $val ) {
-            if ( 0 < strlen( $val ) )
+            if ( is_array( $val ) && !empty( $val ) )
+                $get[ $key ] = $val;
+            elseif ( !is_array( $val ) && 0 < strlen( $val ) )
                 $get[ $key ] = $val;
             elseif ( isset( $get[ $key ] ) )
                 unset( $get[ $key ] );

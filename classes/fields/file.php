@@ -368,7 +368,7 @@ class PodsField_File extends PodsField {
 
         <ul class="pods-file-meta media-item">
             <?php if ( 1 < $limit ) { ?>
-            <li class="pods-file-col pods-file-handle">Handle</li>
+                <li class="pods-file-col pods-file-handle">Handle</li>
             <?php } ?>
 
             <li class="pods-file-col pods-file-icon">

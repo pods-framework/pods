@@ -889,6 +889,20 @@ class PodsAdmin {
         else {
             if ( !method_exists( $this->api, $method->name ) )
                 pods_error( 'API method does not exist', $this );
+            elseif ( 'save_pod' == $method->name ) {
+                if ( isset( $params->field_data_json ) && is_array( $params->field_data_json ) ) {
+                    $params->fields = $params->field_data_json;
+
+                    unset( $params->field_data_json );
+
+                    foreach ( $params->fields as $k => $v ) {
+                        if ( empty( $v ) )
+                            unset( $params->fields[ $k ] );
+                        elseif ( !is_array( $v ) )
+                            $params->fields[ $k ] = (array) @json_decode( $v, true );
+                    }
+                }
+            }
 
             // Dynamically call the API method
             $params = (array) $params;

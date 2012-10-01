@@ -1319,6 +1319,15 @@ class Pods {
 
         ob_start();
 
+        if ( empty( $thank_you ) ) {
+            $thank_you = pods_var_update( array( 'success' => true ) );
+
+            if ( 1 == pods_var( 'success', 'get', 0 ) ) {
+                echo '<div id="message" class="pods-form-front-success">'
+                     . __( 'Form submitted successfully', 'pods' ) . '</div>';
+            }
+        }
+
         pods_view( PODS_DIR . 'ui/front/form.php', compact( array_keys( get_defined_vars() ) ) );
 
         $output = ob_get_clean();

@@ -535,12 +535,35 @@ class PodsAPI {
             $post_stati = get_post_stati();
 
             $fields = array(
+                'post_title' => array(
+                    'name' => 'post_title',
+                    'label' => 'Title',
+                    'type' => 'text',
+                    'alias' => array( 'title', 'name' )
+                ),
+                'post_content' => array(
+                    'name' => 'post_content',
+                    'label' => 'Content',
+                    'type' => 'wysiwyg',
+                    'alias' => array( 'content' )
+                ),
+                'post_excerpt' => array(
+                    'name' => 'post_excerpt',
+                    'label' => 'Excerpt',
+                    'type' => 'paragraph',
+                    'alias' => array( 'excerpt' )
+                ),
                 'post_author' => array(
                     'name' => 'post_author',
                     'label' => 'Author',
                     'type' => 'pick',
                     'alias' => array( 'author' ),
-                    'data' => array()
+                    'pick_object' => 'user',
+                    'options' => array(
+                        'pick_format_type' => 'single',
+                        'pick_format_single' => 'autocomplete',
+                        'default_value' => '{@user.ID}'
+                    )
                 ),
                 'post_date' => array(
                     'name' => 'post_date',
@@ -556,27 +579,10 @@ class PodsAPI {
                     'label' => 'Publish Date (GMT)',
                     'type' => 'date',
                     'alias' => array(),
+                    'hide' => true,
                     'options' => array(
                         'date_format_type' => 'datetime'
                     )
-                ),
-                'post_content' => array(
-                    'name' => 'post_content',
-                    'label' => 'Content',
-                    'type' => 'wysiwyg',
-                    'alias' => array( 'content' )
-                ),
-                'post_title' => array(
-                    'name' => 'post_title',
-                    'label' => 'Title',
-                    'type' => 'text',
-                    'alias' => array( 'title', 'name' )
-                ),
-                'post_excerpt' => array(
-                    'name' => 'post_excerpt',
-                    'label' => 'Excerpt',
-                    'type' => 'paragraph',
-                    'alias' => array( 'excerpt' )
                 ),
                 'post_status' => array(
                     'name' => 'post_status',
@@ -626,6 +632,7 @@ class PodsAPI {
                     'label' => 'Last Modified Date',
                     'type' => 'date',
                     'alias' => array( 'modified' ),
+                    'hide' => true,
                     'options' => array(
                         'date_format_type' => 'datetime'
                     )
@@ -635,6 +642,7 @@ class PodsAPI {
                     'label' => 'Last Modified Date (GMT)',
                     'type' => 'date',
                     'alias' => array(),
+                    'hide' => true,
                     'options' => array(
                         'date_format_type' => 'datetime'
                     )
@@ -778,6 +786,7 @@ class PodsAPI {
                     'label' => 'Author',
                     'type' => 'pick',
                     'alias' => array( 'author' ),
+                    'pick_object' => 'user',
                     'data' => array()
                 ),
                 'comment_date' => array(

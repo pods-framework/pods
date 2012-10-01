@@ -60,6 +60,9 @@
                 if ( 'undefined' != typeof ajaxurl && ('' == pods_ajaxurl || '?pods_ajax=1' == pods_ajaxurl || document.location.href == pods_ajaxurl || document.location.href.replace( /\?nojs\=1/, '?pods_ajax=1' ) == pods_ajaxurl) )
                     pods_ajaxurl = ajaxurl + '?pods_ajax=1';
 
+                if ( 'undefined' != typeof ajaxurl && $submittable.hasClass( 'pods-submittable-ajax' ) )
+                    pods_ajaxurl = ajaxurl + '?pods_ajax=1';
+
                 var postdata = {};
                 var field_data = {};
 

@@ -313,6 +313,7 @@ class PodsForm {
         $defaults = self::options_setup( $type, $options );
 
         $core_defaults = array(
+            'id' => 0,
             'label' => '',
             'description' => '',
             'help' => '',
@@ -349,6 +350,7 @@ class PodsForm {
      */
     public static function options_setup ( $type ) {
         $core_defaults = array(
+            'id' => 0,
             'name' => '',
             'label' => '',
             'description' => '',
@@ -392,6 +394,7 @@ class PodsForm {
     public static function fields_setup ( $fields = null, $core_defaults = null, $single = false ) {
         if ( empty( $core_defaults ) ) {
             $core_defaults = array(
+                'id' => 0,
                 'name' => '',
                 'label' => '',
                 'description' => '',
@@ -441,6 +444,7 @@ class PodsForm {
 
         if ( empty( $core_defaults ) ) {
             $core_defaults = array(
+                'id' => 0,
                 'name' => '',
                 'label' => '',
                 'description' => '',

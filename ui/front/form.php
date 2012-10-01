@@ -32,7 +32,7 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
     }
 }
 ?>
-<form action="<?php echo pods_var_update( array( '_p_submitted' => 1 ) ); ?>" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo $pod->pod; ?>" data-location="<?php echo pods_var_update( array( 'success' => true ) ) ?>">
+<form action="<?php echo pods_var_update( array( '_p_submitted' => 1 ) ); ?>" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo $pod->pod; ?> pods-submittable-ajax" data-location="<?php echo $thank_you; ?>">
     <div class="pods-submittable-fields">
         <?php echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' ); ?>

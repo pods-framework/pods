@@ -1488,8 +1488,12 @@ class PodsUI {
         if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
             $orderby = array();
 
-            if ( 'reorder' == $this->action && empty( $this->reorder[ 'orderby' ] ) )
-                $orderby[ $this->reorder[ 'on' ] ] = $this->reorder[ 'orderby_dir' ];
+            if ( 'reorder' == $this->action ) {
+                if ( !empty( $this->reorder[ 'orderby' ] ) )
+                    $orderby[ $this->reorder[ 'orderby' ] ] = $this->reorder[ 'orderby_dir' ];
+                else
+                    $orderby[ $this->reorder[ 'on' ] ] = $this->reorder[ 'orderby_dir' ];
+            }
 
             if ( !empty( $this->orderby ) ) {
                 $this->orderby = (array) $this->orderby;

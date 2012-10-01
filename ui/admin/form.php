@@ -118,6 +118,16 @@ if ( !isset( $label ) )
                     <!-- /#submitdiv --><!-- END PUBLISH DIV --><!-- TODO: minor column fields -->
                     <?php
                         if ( pods_var_raw( 'action' ) == 'edit' ) {
+                            if ( !isset( $singular_label ) )
+                                $singular_label = ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) );
+
+                            $singular_label = pods_var_raw( 'label', $pod->pod_data[ 'options' ], $singular_label, null, true );
+                            $singular_label = pods_var_raw( 'label_singular', $pod->pod_data[ 'options' ], $singular_label, null, true );
+
+                            $prev = $pod->prev_id();
+                            $next = $pod->next_id();
+
+                            if ( 0 < $prev || 0 < $next ) {
                     ?>
                     <div id="navigatediv" class="postbox">
                         <div class="handlediv" title="Click to toggle"><br /></div>
@@ -127,15 +137,6 @@ if ( !isset( $label ) )
                             <div class="pods-admin" id="navigatebox">
                                 <div id="navigation-actions">
                                     <?php
-                                        if ( !isset( $singular_label ) )
-                                            $singular_label = ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) );
-
-                                        $singular_label = pods_var_raw( 'label', $pod->pod_data[ 'options' ], $singular_label, null, true );
-                                        $singular_label = pods_var_raw( 'label_singular', $pod->pod_data[ 'options' ], $singular_label, null, true );
-
-                                        $prev = $pod->prev_id();
-                                        $next = $pod->next_id();
-
                                         if ( 0 < $prev ) {
                                     ?>
                                         <a class="previous-item" href="<?php echo pods_var_update( array( 'id' => $prev ), null, 'do' ); ?>">
@@ -170,6 +171,7 @@ if ( !isset( $label ) )
                         <!-- /.inside -->
                     </div> <!-- /#navigatediv -->
                     <?php
+                            }
                         }
                     ?>
                 </div>

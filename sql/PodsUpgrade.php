@@ -349,7 +349,7 @@ class PodsUpgrade_2_0 {
                 do_action( 'pods_update', PODS_VERSION, $old_version );
 
                 if ( false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $old_version ) )
-                    include_once( PODS_DIR . 'sql/update.1.x.php' );
+                    include_once( PODS_DIR . 'sql/update-1.x.php' );
 
                 do_action( 'pods_update_post', PODS_VERSION, $old_version );
             }

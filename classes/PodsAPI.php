@@ -568,21 +568,15 @@ class PodsAPI {
                 'post_date' => array(
                     'name' => 'post_date',
                     'label' => 'Publish Date',
-                    'type' => 'date',
-                    'alias' => array( 'created', 'date' ),
-                    'options' => array(
-                        'date_format_type' => 'datetime'
-                    )
+                    'type' => 'datetime',
+                    'alias' => array( 'created', 'date' )
                 ),
                 'post_date_gmt' => array(
                     'name' => 'post_date',
                     'label' => 'Publish Date (GMT)',
-                    'type' => 'date',
+                    'type' => 'datetime',
                     'alias' => array(),
-                    'hide' => true,
-                    'options' => array(
-                        'date_format_type' => 'datetime'
-                    )
+                    'hidden' => true
                 ),
                 'post_status' => array(
                     'name' => 'post_status',
@@ -630,22 +624,16 @@ class PodsAPI {
                 'post_modified' => array(
                     'name' => 'post_modified',
                     'label' => 'Last Modified Date',
-                    'type' => 'date',
+                    'type' => 'datetime',
                     'alias' => array( 'modified' ),
-                    'hide' => true,
-                    'options' => array(
-                        'date_format_type' => 'datetime'
-                    )
+                    'hidden' => true
                 ),
                 'post_modified_gmt' => array(
                     'name' => 'post_modified',
                     'label' => 'Last Modified Date (GMT)',
-                    'type' => 'date',
+                    'type' => 'datetime',
                     'alias' => array(),
-                    'hide' => true,
-                    'options' => array(
-                        'date_format_type' => 'datetime'
-                    )
+                    'hidden' => true
                 ),
                 'post_content_filtered' => array(
                     'name' => 'post_content_filtered',

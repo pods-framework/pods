@@ -712,9 +712,6 @@
                     var $dependent_el = $( this );
                     var wildcard = $dependent_el.data( 'wildcard' );
 
-                    console.log( wildcard_value );
-                    console.log( wildcard );
-                    console.log( wildcard_value.match( wildcard ) );
                     if ( $dependent_el.parent().is( ':visible' ) ) {
                         if ( null !== wildcard_value.match( wildcard ) ) {
                             $dependent_el.slideDown().addClass( 'pods-dependent-visible' );

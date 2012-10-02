@@ -46,7 +46,7 @@ class PodsAPI_Deprecated {
      * $params['type'] string The column type ("txt", "desc", "pick", etc)
      * $params['pick_object'] string The related PICK object name
      * $params['pick_val'] string The related PICK object value
-     * $params['sister_field_id'] int (optional) The related field ID
+     * $params['sister_id'] int (optional) The related field ID
      * $params['weight'] int The field weight
      * $params['options'] array The field options
      *

@@ -73,8 +73,8 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
                                     <?php echo PodsForm::field( 'field_data[' . $pods_i . '][pick_custom]', pods_var_raw( 'pick_custom', $field ), 'paragraph' ); ?>
                                 </div>
                                 <div class="pods-field-option pods-depends-on pods-depends-on-field-data-pick-object pods-depends-on-field-data-pick-object-pod- pods-depends-on-wildcard">
-                                    <?php echo PodsForm::label( 'field_data[' . $pods_i . '][sister_field_id]', __( 'Bi-Directional Related', 'pods' ), __( 'help', 'pods' ) ); ?>
-                                    <?php echo PodsForm::field( 'field_data[' . $pods_i . '][sister_field_id]', pods_var_raw( 'sister_field_id', $field ), 'text' ); //, array( 'data' => pods_var_raw( 'sister_field_id', $field_settings ) ) ); ?>
+                                    <?php echo PodsForm::label( 'field_data[' . $pods_i . '][sister_id]', __( 'Bi-Directional Related', 'pods' ), __( 'help', 'pods' ) ); ?>
+                                    <?php echo PodsForm::field( 'field_data[' . $pods_i . '][sister_id]', pods_var_raw( 'sister_id', $field ), 'text' ); //, array( 'data' => pods_var_raw( 'sister_id', $field_settings ) ) ); ?>
                                 </div>
                             </div>
                             <div class="pods-field-option-group">

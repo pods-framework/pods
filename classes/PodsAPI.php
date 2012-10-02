@@ -1418,7 +1418,7 @@ class PodsAPI {
      * $params['type'] string The field type ("txt", "desc", "pick", etc)
      * $params['pick_object'] string The related PICK object name
      * $params['pick_val'] string The related PICK object value
-     * $params['sister_field_id'] int (optional) The related field ID
+     * $params['sister_id'] int (optional) The related field ID
      * $params['weight'] int The field weight
      * $params['options'] array The field options
      *
@@ -1513,7 +1513,7 @@ class PodsAPI {
                 'type' => 'text',
                 'pick_object' => '',
                 'pick_val' => '',
-                'sister_field_id' => '',
+                'sister_id' => '',
                 'weight' => null,
                 'options' => array()
             );
@@ -1535,7 +1535,7 @@ class PodsAPI {
             'type',
             'pick_object',
             'pick_val',
-            'sister_field_id',
+            'sister_id',
             'weight',
             'options'
         );
@@ -1583,13 +1583,13 @@ class PodsAPI {
 
             $field[ 'options' ][ 'pick_object' ] = $field[ 'pick_object' ];
             $field[ 'options' ][ 'pick_val' ] = $field[ 'pick_val' ];
-            $field[ 'options' ][ 'sister_field_id' ] = pods_var( 'sister_field_id', $field );
+            $field[ 'options' ][ 'sister_id' ] = pods_var( 'sister_id', $field );
 
             unset( $field[ 'pick_object' ] );
             unset( $field[ 'pick_val' ] );
 
-            if ( isset( $field[ 'sister_field_id' ] ) )
-                unset( $field[ 'sister_field_id' ] );
+            if ( isset( $field[ 'sister_id' ] ) )
+                unset( $field[ 'sister_id' ] );
         }
 
         $field[ 'options' ] = array_merge( $field[ 'options' ], $options );
@@ -1731,14 +1731,14 @@ class PodsAPI {
             elseif ( false !== $definition )
                 $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
         }
-        elseif ( 0 < pods_var( 'sister_field_id', $field[ 'options' ], 0 ) )
-            update_post_meta( pods_var( 'sister_field_id', $field[ 'options' ], 0 ), 'sister_field_id', $params->id );
+        elseif ( 0 < pods_var( 'sister_id', $field[ 'options' ], 0 ) )
+            update_post_meta( pods_var( 'sister_id', $field[ 'options' ], 0 ), 'sister_id', $params->id );
 
         if ( $field[ 'type' ] != $old_type && in_array( $old_type, $tableless_field_types ) ) {
             $wpdb->query( $wpdb->prepare( "DELETE pm FROM {$wpdb->postmeta} AS pm
                 LEFT JOIN {$wpdb->posts} AS p
                     ON p.post_type = '_pods_field' AND p.ID = pm.post_id
-                WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_field_id' AND pm.meta_value = %d", $params->id ) );
+                WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_id' AND pm.meta_value = %d", $params->id ) );
 
             pods_query( "DELETE FROM @wp_podsrel WHERE `field_id` = {$params->id}" );
         }
@@ -2334,9 +2334,9 @@ class PodsAPI {
                             if ( false !== $related_pod )
                                 $related_pod_id = $related_pod[ 'id' ];
 
-                            if ( 0 < $fields[ $field ][ 'sister_field_id' ] ) {
+                            if ( 0 < $fields[ $field ][ 'sister_id' ] ) {
                                 foreach ( $related_pod[ 'fields' ] as $field ) {
-                                    if ( 'pick' == $field[ 'type' ] && $fields[ $field ][ 'sister_field_id' ] == $field[ 'id' ] ) {
+                                    if ( 'pick' == $field[ 'type' ] && $fields[ $field ][ 'sister_id' ] == $field[ 'id' ] ) {
                                         $related_field_id = $field[ 'id' ];
                                         $related_field = $field[ 'name' ];
 
@@ -2881,7 +2881,7 @@ class PodsAPI {
         $wpdb->query( $wpdb->prepare( "DELETE pm FROM {$wpdb->postmeta} AS pm
             LEFT JOIN {$wpdb->posts} AS p
                 ON p.post_type = '_pods_field' AND p.ID = pm.post_id
-            WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_field_id' AND pm.meta_value = %d", $params->id ) );
+            WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_id' AND pm.meta_value = %d", $params->id ) );
 
         if ( $table_operation )
             pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `field_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_field_id` = {$params->id})" );
@@ -3552,7 +3552,7 @@ class PodsAPI {
             'pod_id' => $_field[ 'post_parent' ],
             'pick_object' => '',
             'pick_val' => '',
-            'sister_field_id' => '',
+            'sister_id' => '',
             'table_info' => array()
         );
 
@@ -3591,11 +3591,14 @@ class PodsAPI {
             unset( $field[ 'options' ][ 'pick_val' ] );
         }
 
-        if ( isset( $field[ 'options' ][ 'sister_field_id' ] ) ) {
-            $field[ 'sister_field_id' ] = $field[ 'options' ][ 'sister_field_id' ];
+        if ( isset( $field[ 'options' ][ 'sister_id' ] ) ) {
+            $field[ 'sister_id' ] = $field[ 'options' ][ 'sister_id' ];
 
-            unset( $field[ 'options' ][ 'sister_field_id' ] );
+            unset( $field[ 'options' ][ 'sister_id' ] );
         }
+
+        // Deprecated sister_field_id
+        $field[ 'sister_field_id' ] =& $field[ 'sister_id' ];
 
         if ( 'pick' == $field[ 'type' ] && true === $params->table_info )
             $field[ 'table_info' ] = $this->get_table_info( $field[ 'pick_object' ], $field[ 'pick_val' ] );

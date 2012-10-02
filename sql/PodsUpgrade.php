@@ -490,9 +490,10 @@ class PodsUpgrade_2_0 {
                         elseif ( 'wp_taxonomy' == $row->pickval )
                             $field_params[ 'pick_object' ] = 'taxonomy-category';
 
-                        $field_params[ 'sister_field_id' ] = $row->sister_field_id;
+                        $field_params[ 'sister_id' ] = $row->sister_field_id;
 
                         $sister_ids[ $row->id ] = $row->sister_field_id; // Old Sister Field ID
+                        $field_params[ 'options' ][ '_pods_1x_sister_id' ] = $row->sister_field_id;
 
                         $field_params[ 'options' ][ 'pick_filter' ] = $row->pick_filter;
                         $field_params[ 'options' ][ 'pick_orderby' ] = $row->pick_orderby;
@@ -577,26 +578,29 @@ class PodsUpgrade_2_0 {
 
         $sister_ids = (array) get_option( 'pods_framework_upgrade_2_0_sister_ids', array() );
 
-        foreach ( $sister_ids as $old_field_id => $old_sister_field_id ) {
+        foreach ( $sister_ids as $old_field_id => $old_sister_id ) {
             $old_field_id = (int) $old_field_id;
-            $old_sister_field_id = (int) $old_sister_field_id;
+            $old_sister_id = (int) $old_sister_id;
 
-            $new_field_id = pods_query( "SELECT `post_id` FROM @wp_postmeta WHERE `meta_key` = '_pods_1x_field_id' AND `meta_value` = '{$old_field_id}' LIMIT 1" );
+            $new_field_id = pods_query( "SELECT `post_id` FROM `@wp_postmeta` WHERE `meta_key` = '_pods_1x_field_id' AND `meta_value` = '{$old_field_id}' LIMIT 1" );
 
             if ( !empty( $new_field_id ) ) {
                 $new_field_id = (int) $new_field_id[ 0 ]->post_id;
 
-                $new_sister_field_id = pods_query( "SELECT `post_id` FROM @wp_postmeta WHERE `meta_key` = '_pods_1x_field_id' AND `meta_value` = '{$old_sister_field_id}' LIMIT 1" );
+                $new_sister_id = pods_query( "SELECT `post_id` FROM `@wp_postmeta` WHERE `meta_key` = '_pods_1x_field_id' AND `meta_value` = '{$old_sister_id}' LIMIT 1" );
 
-                if ( !empty( $new_sister_field_id ) ) {
-                    $new_sister_field_id = (int) $new_sister_field_id[ 0 ]->post_id;
+                if ( !empty( $new_sister_id ) ) {
+                    $new_sister_id = (int) $new_sister_id[ 0 ]->post_id;
 
-                    update_post_meta( $new_field_id, 'sister_field_id', $new_sister_field_id );
+                    update_post_meta( $new_field_id, 'sister_id', $new_sister_id );
                 }
                 else
-                    delete_post_meta( $new_field_id, 'sister_field_id' );
+                    delete_post_meta( $new_field_id, 'sister_id' );
             }
         }
+
+        // We were off the grid, so let's flush and allow for resync
+        $this->api->cache_flush_pods();
 
         $this->update_progress( __FUNCTION__, true );
 
@@ -643,6 +647,8 @@ class PodsUpgrade_2_0 {
 
                 $pod_fields = pods_query( "SELECT `id`, `name` FROM `@wp_pod_fields` WHERE `datatype` = {$type->id} ORDER BY `id`" );
 
+                $types[ $type->id ][ 'old_fields' ] = array();
+
                 foreach ( $pod_fields as $field ) {
                     // Handle name changes
                     if ( in_array( $field->name, array( 'type', 'created', 'modified', 'author' ) ) )
@@ -675,12 +681,14 @@ class PodsUpgrade_2_0 {
                 $related_item_id = $r->tbl_row_id;
 
                 if ( 'pick' == $field[ 'type' ] ) {
-                    if ( 0 < (int) $field[ 'sister_field_id' ] ) {
+                    $old_sister_id = (int) pods_var( '_pods_1x_sister_id', $field[ 'options' ], 0 );
+
+                    if ( 0 < $old_sister_id ) {
                         $sql = "
                             SELECT `f`.`id`, `f`.`name`, `t`.`name` AS `pod`
                             FROM `@wp_pod_fields` AS `f`
                             LEFT JOIN `@wp_pod_types` AS `t` ON `t`.`id` = `f`.`datatype`
-                            WHERE `f`.`id` = " . (int) $field[ 'sister_field_id' ] . " AND `t`.`id` IS NOT NULL
+                            WHERE `f`.`id` = " . $old_sister_id . " AND `t`.`id` IS NOT NULL
                             ORDER BY `f`.`id`
                             LIMIT 1
                         ";
@@ -1056,6 +1064,8 @@ class PodsUpgrade_2_0 {
         delete_option( 'pods_disable_file_upload' );
         delete_option( 'pods_upload_require_login' );
         delete_option( 'pods_upload_require_login_cap' );
+
+        pods_query( "DELETE FROM `@wp_postmeta` WHERE `meta_key` LIKE '_pods_1x_%'" );
 
         /*
          * other options maybe not in 2.0

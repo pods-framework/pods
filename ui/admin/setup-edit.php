@@ -132,7 +132,7 @@ $field_defaults = array(
     'description' => '',
     'type' => 'text',
     'pick_object' => '',
-    'sister_field_id' => '',
+    'sister_id' => '',
     'required' => 0,
     'unique' => 0,
     'css_class_name' => '',
@@ -219,7 +219,7 @@ $field_settings = array(
     'field_defaults' => $field_defaults,
     'advanced_fields' => $advanced_fields,
     'pick_object' => $pick_object,
-    'sister_field_id' => array( '' => '-- Select --' )
+    'sister_id' => array( '' => '-- Select --' )
 );
 
 $field_settings = apply_filters( 'pods_field_settings', apply_filters( 'pods_field_settings_' . $pod[ 'name' ], $field_settings, $pod ) );

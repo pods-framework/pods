@@ -92,7 +92,7 @@ class Pods_Pages extends PodsComponent {
     public function setup_updated_messages ( $messages ) {
         global $post, $post_ID;
 
-        $post_type = get_post_type_object( self::$object_type );
+        $post_type = get_post_type_object( $this->object_type );
 
         $labels = $post_type->labels;
 

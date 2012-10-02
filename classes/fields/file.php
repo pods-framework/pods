@@ -58,19 +58,20 @@ class PodsField_File extends PodsField {
             ),
             'file_uploader' => array(
                 'label' => __( 'File Uploader', 'pods' ),
-                'default' => 'plupload',
+                'default' => 'attachment',
                 'type' => 'pick',
                 'data' => apply_filters(
                     'pods_form_ui_field_file_uploader_options',
                     array(
-                        'plupload' => __( 'Plupload', 'pods' ),
-                        'attachment' => __( 'Attachments (WP Media Library)', 'pods' )
+                        'attachment' => __( 'Attachments (WP Media Library)', 'pods' ),
+                        'plupload' => __( 'Plupload', 'pods' )
                     )
                 ),
                 'dependency' => true
             ),
             'file_attachment_tab' => array(
                 'label' => __( 'Attachments Default Tab', 'pods' ),
+                'depends-on' => array( 'file_uploader' => 'attachment' ),
                 'default' => 'type',
                 'type' => 'pick',
                 'data' => array(

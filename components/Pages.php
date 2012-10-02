@@ -297,7 +297,18 @@ class Pods_Pages extends PodsComponent {
 
                 remove_filter( current_filter(), array( $this, __FUNCTION__ ), 10 );
 
+                $revisions = false;
+
+                if ( has_action( 'pre_post_update', 'wp_save_post_revision' ) ) {
+                    remove_action( 'pre_post_update', 'wp_save_post_revision' );
+
+                    $revisions = true;
+                }
+
                 wp_update_post( $postdata );
+
+                if ( $revisions )
+                    add_action( 'pre_post_update', 'wp_save_post_revision' );
 
                 return true;
             }

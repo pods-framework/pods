@@ -28,12 +28,12 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
         </a> <abbr title="required" class="required hidden">*</abbr> </strong>
 
         <div class="row-actions">
-                    <span class="edit">
-                        <a title="<?php esc_attr_e( 'Edit this field', 'pods' ); ?>" class="pods-manage-row-edit" href="#edit-field"><?php _e( 'Edit', 'pods' ); ?></a> |
-                    </span>
-                    <span class="pods-manage-row-delete">
-                        <a class="submitdelete" title="<?php esc_attr_e( 'Delete this field', 'pods' ); ?>" href="#delete-field"><?php _e( 'Delete', 'pods' ); ?></a>
-                    </span>
+            <span class="edit">
+                <a title="<?php esc_attr_e( 'Edit this field', 'pods' ); ?>" class="pods-manage-row-edit" href="#edit-field"><?php _e( 'Edit', 'pods' ); ?></a> |
+            </span>
+            <span class="pods-manage-row-delete">
+                <a class="submitdelete" title="<?php esc_attr_e( 'Delete this field', 'pods' ); ?>" href="#delete-field"><?php _e( 'Delete', 'pods' ); ?></a>
+            </span>
         </div>
         <div class="pods-manage-row-wrapper" id="pods-manage-field-<?php echo $pods_i; ?>">
             <input type="hidden" name="field_data_json[<?php echo $pods_i; ?>]" value="" class="field_data" />

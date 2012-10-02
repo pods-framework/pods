@@ -2581,18 +2581,58 @@ class PodsAPI {
      * @since 1.12
      */
     public function export_pod_item ( $params ) {
-        $params = (object) pods_sanitize( $params );
+        $fields = array();
 
-        $pod = $this->load_pod( array( 'name' => $params->pod ) );
+        if ( is_object( $params ) && 'Pods' == get_class( $params ) ) {
+            $pod = $params;
+        }
+        else {
+            $params = (object) pods_sanitize( $params );
 
-        if ( false === $pod )
-            return pods_error( __( 'Pod not found', 'pods' ), $this );
+            $pod = pods( $params->pod, $params->id, false );
 
-        $fields = $pod[ 'fields' ];
-        $params->pod = $pod[ 'name' ];
-        $params->pod_id = $pod[ 'id' ];
+            if ( empty( $pod ) )
+                return false;
 
-        $pod = pods( $params->pod, $params->id );
+            $fields = (array) pods_var_raw( 'fields', $params, array(), null, true );
+        }
+
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
+
+        $object_fields = (array) pods_var_raw( 'object_fields', $pod->pod_data, array(), null, true );
+
+        if ( empty( $fields ) ) {
+            $fields = $pod->fields;
+            $fields = array_merge( $object_fields, $fields );
+        }
+
+        foreach ( $fields as $k => $field ) {
+            if ( !is_array( $field ) )
+                $field = array( 'name' => $field );
+
+            if ( isset( $pod->fields[ $field[ 'name' ] ] ) ) {
+                $field = $pod->fields[ $field[ 'name' ] ];
+                $field[ 'lookup_name' ] = $field[ 'name' ];
+
+                if ( in_array( $field[ 'type' ], $tableless_field_types ) ) {
+                    if ( 'pick' == $field[ 'type' ] ) {
+                        if ( empty( $field[ 'table_info' ] ) )
+                            $field[ 'table_info' ] = $this->get_table_info( pods_var_raw( 'pick_object', $field ), pods_var_raw( 'pick_val', $field ) );
+
+                        if ( !empty( $field[ 'table_info' ] ) )
+                            $field[ 'lookup_name' ] .= '.' . $field[ 'table_info' ][ 'field_id' ];
+                    }
+                    else
+                        $field[ 'lookup_name' ] .= '.guid';
+                }
+            }
+            elseif ( isset( $object_fields[ $field[ 'name' ] ] ) ) {
+                $field = $object_fields[ $field[ 'name' ] ];
+                $field[ 'lookup_name' ] = $field[ 'name' ];
+            }
+            else
+                unset( $fields[ $k ] );
+        }
 
         $data = array();
 
@@ -2600,7 +2640,7 @@ class PodsAPI {
             $data[ $field[ 'name' ] ] = $pod->field( $field[ 'name' ] );
         }
 
-        $data = $this->do_hook( 'export_pod_item', $data, $pod->pod, $pod->field( 'id' ) );
+        $data = $this->do_hook( 'export_pod_item', $data, $pod->pod, $pod->id(), $pod, $fields, $object_fields );
 
         return $data;
     }
@@ -5103,11 +5143,16 @@ class PodsAPI {
      * @since 1.7.1
      */
     public function export () {
-        $data = array();
         $pod = pods( $this->pod, array( 'limit' => -1, 'search' => false, 'pagination' => false ) );
+
+        $data = array();
+
         while ( $pod->fetch() ) {
-            $data[ $pod->field( 'id' ) ] = $this->export_pod_item( $pod->field( 'id' ) );
+            $data[ $pod->id() ] = $this->export_pod_item( $pod->id() );
         }
+
+        $data = $this->do_hook( 'export', $data, $this->pod, $pod );
+
         return $data;
     }
 

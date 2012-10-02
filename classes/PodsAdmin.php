@@ -838,10 +838,11 @@ class PodsAdmin {
         $params = (object) $params;
 
         $methods = array(
-            'add_pod' => array( 'priv' => 'pods' ),
-            'save_pod' => array( 'priv' => 'pods' ),
+            'add_pod' => array( 'priv' => true ),
+            'save_pod' => array( 'priv' => true ),
+            'load_sister_fields' => array( 'priv' => true ),
             'process_form' => array( 'custom_nonce' => true ), // priv handled through nonce
-            'upgrade' => array( 'priv' => 'pods' )
+            'upgrade' => array( 'priv' => true )
         );
 
         $methods = apply_filters( 'pods_admin_ajax_methods', $methods, $this );
@@ -869,9 +870,11 @@ class PodsAdmin {
 
         // Check permissions (convert to array to support multiple)
         if ( !empty( $method->priv ) && !is_super_admin() && !current_user_can( 'pods' ) ) {
-            foreach ( (array) $method->priv as $priv_val ) {
-                if ( !current_user_can( $priv_val ) )
-                    pods_error( __( 'Access denied', 'pods' ), $this );
+            if ( true !== $method->priv ) {
+                foreach ( (array) $method->priv as $priv_val ) {
+                    if ( !current_user_can( $priv_val ) )
+                        pods_error( __( 'Access denied', 'pods' ), $this );
+                }
             }
         }
 

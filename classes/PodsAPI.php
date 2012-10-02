@@ -4058,7 +4058,7 @@ class PodsAPI {
     }
 
     /**
-     * Load a bi-directional (sister) field
+     * Load potential sister fields for a specific field
      *
      * $params['pod'] int The Pod name
      * $params['related_pod'] string The related Pod name
@@ -4070,8 +4070,6 @@ class PodsAPI {
      * @since 1.7.9
      *
      * @uses PodsAPI::load_pod
-     *
-     * @todo Implement with load_pod / fields and use AJAX for new admin
      */
     public function load_sister_fields ( $params, $pod = null ) {
         $params = (object) pods_sanitize( $params );
@@ -4087,6 +4085,7 @@ class PodsAPI {
         $params->pod = $pod[ 'name' ];
 
         $related_pod = $this->load_pod( array( 'name' => $params->related_pod ) );
+
         if ( false === $pod )
             return pods_error( __( 'Related Pod not found', 'pods' ), $this );
 
@@ -4095,13 +4094,15 @@ class PodsAPI {
 
         if ( 'pod' == $related_pod[ 'type' ] ) {
             $sister_fields = array();
+
             foreach ( $related_pod[ 'fields' ] as $field ) {
-                if ( 'pick' == $field[ 'type' ] && $params->pod == $field[ 'pick_val' ] ) {
-                    $sister_fields[] = $field;
-                }
+                if ( 'pick' == $field[ 'type' ] && 'pod' == $field[ 'pick_object' ] && $params->pod == $field[ 'pick_val' ] )
+                    $sister_fields[ $field[ 'id' ] ] = $field[ 'name' ];
             }
+
             return $sister_fields;
         }
+
         return false;
     }
 

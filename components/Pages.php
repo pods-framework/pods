@@ -67,6 +67,8 @@ class Pods_Pages extends PodsComponent {
         if ( !is_admin() )
             add_action( 'load_textdomain', array( $this, 'page_check' ), 12 );
         else {
+            add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
+
             add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
 
             add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
@@ -80,12 +82,57 @@ class Pods_Pages extends PodsComponent {
     }
 
     /**
-     * Admin Init
+     * Update Post Type messages
      *
-     * @since 2.0.0
+     * @param array $messages
+     *
+     * @return array
+     * @since 2.0.2
      */
-    public function admin_init() {
+    public function setup_updated_messages ( $messages ) {
+        global $post, $post_ID;
 
+        $post_type = get_post_type_object( self::$object_type );
+
+        $labels = $post_type->labels;
+
+        $messages[ $post_type->name ] = array(
+            1 => sprintf( __( '%s updated. <a href="%s">%s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
+            2 => __( 'Custom field updated.', 'pods' ),
+            3 => __( 'Custom field deleted.', 'pods' ),
+            4 => sprintf( __( '%s updated.', 'pods' ), $labels->singular_name ),
+            /* translators: %s: date and time of the revision */
+            5 => isset( $_GET[ 'revision' ] ) ? sprintf( __( '%s restored to revision from %s', 'pods' ), $labels->singular_name, wp_post_revision_title( (int) $_GET[ 'revision' ], false ) ) : false,
+            6 => sprintf( __( '%s published. <a href="%s">%s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
+            7 => sprintf( __( '%s saved.', 'pods' ), $labels->singular_name ),
+            8 => sprintf( __( '%s submitted. <a target="_blank" href="%s">Preview %s</a>', 'pods' ),
+                $labels->singular_name,
+                esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ),
+                $labels->singular_name
+            ),
+            9 => sprintf( __( '%s scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview %s</a>', 'pods' ),
+                $labels->singular_name,
+                // translators: Publish box date format, see http://php.net/date
+                date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ),
+                esc_url( get_permalink( $post_ID ) ),
+                $labels->singular_name
+            ),
+            10 => sprintf( __( '%s draft updated. <a target="_blank" href="%s">Preview %s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name )
+        );
+
+        if ( false === (boolean) $post_type->public ) {
+            $messages[ $post_type->name ][ 1 ] = sprintf( __( '%s updated.', 'pods' ), $labels->singular_name );
+            $messages[ $post_type->name ][ 6 ] = sprintf( __( '%s published.', 'pods' ), $labels->singular_name );
+            $messages[ $post_type->name ][ 8 ] = sprintf( __( '%s submitted.', 'pods' ), $labels->singular_name );
+            $messages[ $post_type->name ][ 9 ] = sprintf( __( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ),
+                $labels->singular_name,
+                // translators: Publish box date format, see http://php.net/date
+                date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) )
+            );
+            $messages[ $post_type->name ][ 10 ] = sprintf( __( '%s draft updated.', 'pods' ), $labels->singular_name );
+        }
+
+        return $messages;
     }
 
     /**

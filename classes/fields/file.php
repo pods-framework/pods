@@ -368,7 +368,7 @@ class PodsField_File extends PodsField {
         <?php echo PodsForm::field( $attributes[ 'name' ] . '[' . $id . '][id]', $id, 'hidden' ); ?>
 
         <ul class="pods-file-meta media-item">
-            <?php if ( 1 < $limit ) { ?>
+            <?php if ( 1 != $limit ) { ?>
                 <li class="pods-file-col pods-file-handle">Handle</li>
             <?php } ?>
 

@@ -106,7 +106,7 @@ else
 <script>
     jQuery( function ( $ ) {
 
-    <?php if ( 1 < $file_limit ) { ?>
+    <?php if ( 1 != $file_limit ) { ?>
         // init sortable
         $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ).sortable( {
                     containment : 'parent',

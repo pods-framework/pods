@@ -73,7 +73,8 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
                                     <?php echo PodsForm::field( 'field_data[' . $pods_i . '][pick_custom]', pods_var_raw( 'pick_custom', $field ), 'paragraph' ); ?>
                                 </div>
                                 <div class="pods-field-option pods-wildcard-on pods-wildcard-on-field-data-pick-object" data-wildcard="pod-" data-dependency-trigger="pods_sister_field">
-                                    <?php echo PodsForm::label( 'field_data[' . $pods_i . '][sister_id]', __( 'Bi-Directional Related', 'pods' ), __( 'help', 'pods' ) ); ?>
+                                    <?php echo PodsForm::label( 'field_data[' . $pods_i . '][sister_id]', __( 'Bi-directional Field', 'pods' ), __( 'Bi-directional fields will update their related field for any item you select. This feature is only available for two relationships between two Pods.<br /><br />For example, when you update a Parent pod item to relate to a Child item, when you go to edit that Child item you will see the Parent pod item selected.', 'pods' ) ); ?>
+
                                     <div class="pods-sister-field">
                                         <?php echo PodsForm::field( 'field_data[' . $pods_i . '][sister_id]', pods_var_raw( 'sister_id', $field ), 'text' ); ?>
                                     </div>

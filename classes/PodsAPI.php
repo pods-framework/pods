@@ -4075,7 +4075,7 @@ class PodsAPI {
         $params = (object) pods_sanitize( $params );
 
         if ( empty( $pod ) ) {
-            $pod = $this->load_pod( array( 'name' => $params->pod ) );
+            $pod = $this->load_pod( array( 'name' => $params->pod ), false );
 
             if ( false === $pod )
                 return pods_error( __( 'Pod not found', 'pods' ), $this );
@@ -4084,7 +4084,7 @@ class PodsAPI {
         $params->pod_id = $pod[ 'id' ];
         $params->pod = $pod[ 'name' ];
 
-        $related_pod = $this->load_pod( array( 'name' => $params->related_pod ) );
+        $related_pod = $this->load_pod( array( 'name' => $params->related_pod ), false );
 
         if ( false === $pod )
             return pods_error( __( 'Related Pod not found', 'pods' ), $this );
@@ -4092,18 +4092,14 @@ class PodsAPI {
         $params->related_pod_id = $related_pod[ 'id' ];
         $params->related_pod = $related_pod[ 'name' ];
 
-        if ( 'pod' == $related_pod[ 'type' ] ) {
-            $sister_fields = array();
+        $sister_fields = array();
 
-            foreach ( $related_pod[ 'fields' ] as $field ) {
-                if ( 'pick' == $field[ 'type' ] && 'pod' == $field[ 'pick_object' ] && $params->pod == $field[ 'pick_val' ] )
-                    $sister_fields[ $field[ 'id' ] ] = $field[ 'name' ];
-            }
-
-            return $sister_fields;
+        foreach ( $related_pod[ 'fields' ] as $field ) {
+            if ( 'pick' == $field[ 'type' ] && 'pod' == $field[ 'pick_object' ] && $params->pod == $field[ 'pick_val' ] )
+                $sister_fields[ $field[ 'id' ] ] = esc_html( $field[ 'label' ] . ' (' . $field[ 'name' ] . ')' );
         }
 
-        return false;
+        return $sister_fields;
     }
 
     /**

@@ -72,9 +72,11 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
                                     <?php echo PodsForm::label( 'field_data[' . $pods_i . '][pick_custom]', __( 'Custom Defined Options', 'pods' ), __( 'One option per line, use <em>value|Label</em> for separate values and labels' ) ); ?>
                                     <?php echo PodsForm::field( 'field_data[' . $pods_i . '][pick_custom]', pods_var_raw( 'pick_custom', $field ), 'paragraph' ); ?>
                                 </div>
-                                <div class="pods-field-option pods-wildcard-on pods-wildcard-on-field-data-pick-object" data-wildcard="pod-">
+                                <div class="pods-field-option pods-wildcard-on pods-wildcard-on-field-data-pick-object" data-wildcard="pod-" data-dependency-trigger="pods_sister_field">
                                     <?php echo PodsForm::label( 'field_data[' . $pods_i . '][sister_id]', __( 'Bi-Directional Related', 'pods' ), __( 'help', 'pods' ) ); ?>
-                                    <?php echo PodsForm::field( 'field_data[' . $pods_i . '][sister_id]', pods_var_raw( 'sister_id', $field ), 'text' ); //, array( 'data' => pods_var_raw( 'sister_id', $field_settings ) ) ); ?>
+                                    <div class="pods-sister-field">
+                                        <?php echo PodsForm::field( 'field_data[' . $pods_i . '][sister_id]', pods_var_raw( 'sister_id', $field ), 'text' ); ?>
+                                    </div>
                                 </div>
                             </div>
                             <div class="pods-field-option-group">

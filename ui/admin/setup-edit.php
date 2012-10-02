@@ -219,7 +219,7 @@ $field_settings = array(
     'field_defaults' => $field_defaults,
     'advanced_fields' => $advanced_fields,
     'pick_object' => $pick_object,
-    'sister_id' => array( '' => '-- Select --' )
+    'sister_id' => array( '' => __( 'No Related Fields Found', 'pods' ) )
 );
 
 $field_settings = apply_filters( 'pods_field_settings', apply_filters( 'pods_field_settings_' . $pod[ 'name' ], $field_settings, $pod ) );
@@ -1082,5 +1082,68 @@ elseif ( 'pod' == pods_var( 'type', $pod ) ) {
         var thank_you = '<?php echo addslashes( pods_var_update( array( 'do' => 'save' ) ) ); ?>';
 
         document.location = thank_you.replace( 'X_ID_X', id );
+    }
+
+    var pods_sister_field = function ( $el ) {
+        var id = $el.closest( 'tr.pods-manage-row' ).data( 'row' );
+
+        var default_select = '<?php echo addslashes( str_replace( array( "\n", "\r" ), ' ', PodsForm::field( 'field_data[--1][sister_id]', '', 'pick', array( 'data' => pods_var_raw( 'sister_id', $field_settings ) ) ) ) ); ?>';
+        default_select = default_select.replace( /\-\-1/g, id );
+
+        var related_pod_name = jQuery( '#pods-form-ui-field-data-' + id + '-pick-object' ).val();
+        related_pod_name = related_pod_name.replace( 'pod-', '' );
+
+        var selected_value = jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val();
+
+        var select_container = default_select.match( /<select[^<]*>/g );
+
+        $el.find( '.pods-sister-field' ).html( select_container + '<option value=""><?php esc_attr_e( 'Loading available fields..', 'pods' ); ?></option></select>' );
+
+        postdata = {
+            action : 'pods_admin',
+            method : 'load_sister_fields',
+            _wpnonce : '<?php echo wp_create_nonce( 'pods-load_sister_fields' ); ?>',
+            pod : '<?php echo pods_var( 'name', $pod ); ?>',
+            related_pod : related_pod_name
+        };
+
+        jQuery.ajax( {
+            type : 'POST',
+            dataType : 'html',
+            url : ajaxurl + '?pods_ajax=1',
+            cache : false,
+            data : postdata,
+            success : function ( d ) {
+                if ( -1 == d.indexOf( '<e>' ) && -1 == d.indexOf('</e>') && -1 != d && '[]' != d ) {
+                    d = jQuery.parseJSON( d );
+
+                    var select_container = default_select.match( /<select[^<]*>/g );
+                    select_container += '<option value=""><?php esc_attr_e( '-- Select Related Field --', 'pods' ); ?></option>';
+
+                    for ( var field_id in d ) {
+                        var field_name = d[ field_id ];
+
+                        select_container += '<option value="' + field_id + '">' + field_name + '</option>';
+                    }
+
+                    select_container += '</select>';
+
+                    $el.find( '.pods-sister-field' ).html( select_container );
+
+                    console.log( select_container );
+                    console.log( selected_value );
+
+                    jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val( selected_value );
+                }
+                else {
+                    // None found
+                    $el.find( '.pods-sister-field' ).html( default_select );
+                }
+            },
+            error : function () {
+                // None found
+                $el.find( '.pods-sister-field' ).html( default_select );
+            }
+        } );
     }
 </script>

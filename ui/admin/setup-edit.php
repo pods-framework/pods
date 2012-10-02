@@ -1130,9 +1130,6 @@ elseif ( 'pod' == pods_var( 'type', $pod ) ) {
 
                     $el.find( '.pods-sister-field' ).html( select_container );
 
-                    console.log( select_container );
-                    console.log( selected_value );
-
                     jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val( selected_value );
                 }
                 else {

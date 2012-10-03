@@ -1707,7 +1707,7 @@ class PodsAPI {
             if ( !empty( $old_id ) ) {
                 if ( $field[ 'type' ] != $old_type ) {
                     if ( in_array( $field[ 'type' ], $tableless_field_types ) && !$simple && ( !in_array( $old_type, $tableless_field_types ) || $old_simple ) )
-                        pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$old_name}`" );
+                        pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$old_name}`", false );
                     elseif ( ( in_array( $old_type, $tableless_field_types ) && !$old_simple ) || $simple )
                         pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
                     elseif ( false !== $definition )
@@ -2871,7 +2871,7 @@ class PodsAPI {
         $simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field, $pod, $params );
 
         if ( $table_operation && 'table' == $pod[ 'storage' ] && ( !in_array( $field[ 'type' ], $tableless_field_types ) || $simple ) )
-            pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$params->name}`" );
+            pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$params->name}`", false );
 
         $success = wp_delete_post( $params->id );
 

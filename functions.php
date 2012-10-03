@@ -1041,9 +1041,12 @@ function pods_shortcode ( $tags, $content = null ) {
         $found = $pod->total();
     }
     elseif ( !empty( $tags[ 'field' ] ) ) {
-        $val = $pod->field( $tags[ 'field' ] );
+        if ( empty( $tags[ 'helper' ] ) )
+            $val = $pod->display( $tags[ 'field' ] );
+        else
+            $val = $pod->helper( $tags[ 'helper' ], $pod->field( $tags[ 'field' ] ), $tags[ 'field' ] );
 
-        return empty( $tags[ 'helper' ] ) ? $val : $pod->helper( $tags[ 'helper' ], $val );
+        return $val;
     }
 
     ob_start();

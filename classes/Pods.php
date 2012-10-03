@@ -1379,14 +1379,14 @@ class Pods {
 
         $field_name = $tag[ 0 ];
 
-        if ( 'type' == $field_name )
-            $value = $this->pod;
-        else
-            $value = $this->field( $field_name );
-
         $helper_name = $before = $after = '';
 
-        if ( isset( $tag[ 1 ] ) && !empty( $tag[ 1 ] ) ) {
+        if ( isset( $tag[ 1 ] ) && !empty( $tag[ 1 ] ) && class_exists( 'Pods_Helpers' ) ) {
+            if ( 'type' == $field_name )
+                $value = $this->pod;
+            else
+                $value = $this->field( $field_name );
+
             $helper_name = $tag[ 1 ];
 
             $params = array(
@@ -1398,8 +1398,13 @@ class Pods {
             if ( class_exists( 'Pods_Templates' ) )
                 $params[ 'deprecated' ] = Pods_Templates::$deprecated;
 
-            if ( class_exists( 'Pods_Helpers' ) )
-                $value = Pods_Helpers::helper( $params, $this );
+            $value = Pods_Helpers::helper( $params, $this );
+        }
+        else {
+            if ( 'type' == $field_name )
+                $value = $this->pod;
+            else
+                $value = $this->display( $field_name );
         }
 
         if ( isset( $tag[ 2 ] ) && !empty( $tag[ 2 ] ) )

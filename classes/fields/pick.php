@@ -203,7 +203,7 @@ class PodsField_Pick extends PodsField {
                     $value = explode( ',', $value );
             }
         }
-        elseif ( '' != pods_var( 'pick_object', $options, '' ) && array() == pods_var_raw( 'data', $options, array(), null, true ) ) {
+        elseif ( '' != pods_var( 'pick_object', $options, '', null, true ) ) {
             $autocomplete = false;
 
             if ( 'single' == pods_var( 'pick_format_type', $options ) && 'autocomplete' == pods_var( 'pick_format_single', $options ) )
@@ -216,14 +216,7 @@ class PodsField_Pick extends PodsField {
             if ( $autocomplete )
                 $params[ 'limit' ] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', 30, $name, $value, $options, $pod, $id );
 
-            if ( !empty( $results ) && ( !$autocomplete || count( $options[ 'data' ] ) <= $params[ 'limit' ] ) ) {
-                $ajax = false;
-            }
-            elseif ( !empty( $value ) && $autocomplete && $params[ 'limit' ] < count( $options[ 'data' ] ) ) {
-                $ajax = true;
-            }
-            elseif ( !empty( $results ) )
-                $ajax = true;
+            $ajax = true;
         }
 
         if ( 'single' == pods_var( 'pick_format_type', $options ) ) {

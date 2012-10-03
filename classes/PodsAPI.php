@@ -4994,11 +4994,11 @@ class PodsAPI {
     }
 
     /**
-     * Import data
+     * Import data from an array or a CSV file.
      *
      * @param mixed $import_data PHP associative array or CSV input
      * @param bool $numeric_mode Use IDs instead of the name field when matching
-     * @param null $format (deprecated)
+     * @param string $format Format of import data, options are php or csv
      *
      * @return array
      * @since 1.7.1

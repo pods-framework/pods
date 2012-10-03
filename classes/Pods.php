@@ -223,9 +223,12 @@ class Pods {
     }
 
     /**
-     * Return data array from a find
+     * Return an array of all rows returned from a find() call.
      *
-     * @return array
+     * Most of the time, you will want to loop through data using fetch()
+     * instead of using this function.
+     *
+     * @return array|bool An array of all rows returned from a find() call, or false if no items returned
      *
      * @since 2.0.0
      */
@@ -314,24 +317,28 @@ class Pods {
     }
 
     /**
-     * Return a field's value(s)
+     * Return the value for a field.
      *
-     * @param array $params An associative array of parameters (OR the Field name)
-     * @param boolean $single (optional) For tableless fields, to return an array or the first
+     * If you are getting a field for output in a theme, most of the time you will want to use display() instead.
      *
-     * @return bool|int|mixed|null
+     * This function will return arrays for relationship and file fields.
+     *
+     * @param string|array $name The field name, or an associative array of parameters
+     * @param boolean $single (optional) For tableless fields, to return the whole array or the just the first item
+     *
+     * @return mixed|null Value returned depends on the field type, null is returned if the field doesn't exist
      * @since 2.0.0
      */
-    public function field ( $params, $single = false ) {
+    public function field ( $name, $single = false ) {
         $defaults = array(
-            'name' => $params,
+            'name' => $name,
             'orderby' => null,
             'single' => $single,
             'in_form' => false
         );
 
-        if ( is_array( $params ) || is_object( $params ) )
-            $params = (object) array_merge( $defaults, (array) $params );
+        if ( is_array( $name ) || is_object( $name ) )
+            $params = (object) array_merge( $defaults, (array) $name );
         else
             $params = (object) $defaults;
 
@@ -727,12 +734,12 @@ class Pods {
     }
 
     /**
-     * Search and filter items
+     * Find items of a pod, much like WP_Query, but with advanced table handling.
      *
      * @param array $params An associative array of parameters
-     * @param int $limit (optional) Limit the number of items to find
-     * @param string $where (optional) SQL WHERE declaration to use
-     * @param string $sql (optional)
+     * @param int $limit (optional) (deprecated) Limit the number of items to find, use -1 to return all items with no limit
+     * @param string $where (optional) (deprecated) SQL WHERE declaration to use
+     * @param string $sql (optional) (deprecated) For advanced use, a custom SQL query to run
      *
      * @return \Pods The pod object
      * @since 2.0.0
@@ -755,21 +762,31 @@ class Pods {
             'table' => $this->data->table,
             'select' => $select,
             'join' => null,
+
             'where' => $where,
             'groupby' => null,
             'having' => null,
             'orderby' => null,
+
             'limit' => (int) $limit,
             'offset' => null,
             'page' => (int) $this->page,
+            'page_var' => $this->page_var,
+            'pagination' => (boolean) $this->pagination,
+
             'search' => (boolean) $this->search,
-            'search_query' => pods_var( $this->search_var, 'get', '' ),
+            'search_var' => $this->search_var,
+            'search_query' => null,
             'search_mode' => $this->search_mode,
             'search_across' => false,
             'search_across_picks' => false,
             'search_across_files' => false,
+
             'fields' => $this->fields,
-            'sql' => $sql
+            'sql' => $sql,
+
+            'expires' => null,
+            'cache_mode' => 'cache'
         );
 
         if ( is_array( $params ) )
@@ -783,8 +800,14 @@ class Pods {
 
         $this->limit = (int) $params->limit;
         $this->page = (int) $params->page;
+        $this->page_var = $params->page_var;
+        $this->pagination = (boolean) $params->pagination;
         $this->search = (boolean) $params->search;
+        $this->search_var = $params->search_var;
         $params->join = (array) $params->join;
+
+        if ( empty( $params->search_query ) )
+            $params->search_query = pods_var( $this->search_var, 'get', '' );
 
         // Allow where array ( 'field' => 'value' )
         if ( !empty( $params->where ) && is_array( $params->where ) ) {
@@ -1000,12 +1023,15 @@ class Pods {
     }
 
     /**
-     * Add an item
+     * Add an item to a Pod by giving an array of field data or set a specific field to
+     * a specific value if you're just wanting to add a new item but only set one field.
+     *
+     * You may be looking for save() in most cases where you're setting a specific field.
      *
      * @see PodsAPI::save_pod_item
      *
      * @param array|string $data Either an associative array of field information or a field name
-     * @param string $value (optional) Value of the data to add, if data is string
+     * @param mixed $value (optional) Value of the field, if $data is a field name
      *
      * @return int The item ID
      *
@@ -1026,13 +1052,16 @@ class Pods {
     }
 
     /**
-     * Save an item
+     * Save an item by giving an array of field data or set a specific field to a specific value.
+     *
+     * Though this function has the capacity to add new items, best practice should direct you
+     * to use add() for that instead.
      *
      * @see PodsAPI::save_pod_item
      *
-     * @param null $data Either an associative array of field information or a field name
-     * @param null $value (optional) Value of the data to add, if data is string
-     * @param null $id (optional) Id of the pod item to update
+     * @param array|string $data Either an associative array of field information or a field name
+     * @param mixed $value (optional) Value of the field, if $data is a field name
+     * @param int $id (optional) ID of the pod item to update
      *
      * @return int The item ID
      *

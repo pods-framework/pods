@@ -487,14 +487,33 @@ class PodsData {
          */
         global $wpdb;
 
-        // Build
-        $this->sql = $this->build( $params );
+        $cache_key = $results = false;
 
-        if ( empty( $this->sql ) )
-            return array();
+        // Get from cache if enabled
+        if ( null !== pods_var( 'expires', $params, null, null, true ) ) {
+            $cache_key = md5( serialize( get_object_vars( $params ) ) );
 
-        // Get Data
-        $results = pods_query( $this->sql, $this );
+            $results = pods_view_get( $cache_key, pods_var( 'cache_mode', $params, 'cache', null, true ), 'pods_data_select' );
+
+            if ( empty( $results ) )
+                $results = false;
+        }
+
+        if ( empty( $results ) ) {
+            // Build
+            $this->sql = $this->build( $params );
+
+            if ( empty( $this->sql ) )
+                return array();
+
+            // Get Data
+            $results = pods_query( $this->sql, $this );
+
+            // Cache if enabled
+            if ( false !== $cache_key )
+                pods_view_set( $cache_key, $results, pods_var( 'expires', $params, 0, null, true ), pods_var( 'cache_mode', $params, 'cache', null, true ), 'pods_data_select' );
+        }
+
         $results = $this->do_hook( 'select', $results );
 
         $this->data = $results;

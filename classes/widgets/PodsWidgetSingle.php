@@ -65,11 +65,12 @@ class PodsWidgetSingle extends WP_Widget {
      * Widget Form
      */
     public function form ( $instance ) {
-        $title = esc_attr( $instance[ 'title' ] );
-        $pod_type = esc_attr( $instance[ 'pod_type' ] );
-        $template = esc_attr( $instance[ 'template' ] );
-        $template_custom = esc_attr( $instance[ 'template_custom' ] );
-        $slug = esc_attr( $instance[ 'slug' ] );
+        $title = pods_var_raw( 'title', $instance, '' );
+        $pod_type = pods_var_raw( 'pod_type', $instance, '' );
+        $template = pods_var_raw( 'template', $instance, '' );
+        $template_custom = pods_var_raw( 'template_custom', $instance, '' );
+        $slug = pods_var_raw( 'slug', $instance, '' );
+
         require PODS_DIR . 'ui/admin/widgets/single.php';
     }
 }

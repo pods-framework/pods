@@ -13,7 +13,7 @@
 <ol class="pods_field_widget_form">
     <li>
         <label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title', 'pods' ); ?></label>
-        <input class="widefat" type="text" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo $title; ?>" />
+        <input class="widefat" type="text" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo esc_attr( $title ); ?>" />
     </li>
 
     <li>
@@ -27,10 +27,10 @@
         <?php if ( 0 < count( $all_pods ) ): ?>
         <select id="<?php $this->get_field_id( 'pod_type' ); ?>" name="<?php echo $this->get_field_name( 'pod_type' ); ?>">
             <?php foreach ( $all_pods as $pod ): ?>
-            <?php $selected = ( $pod[ 'name' ] == $pod_type ) ? 'selected' : ''; ?>
-            <option value="<?php echo $pod[ 'name' ]; ?>" <?php echo $selected; ?>>
-                <?php echo $pod[ 'label' ]; ?>
-            </option>
+                <?php $selected = ( $pod[ 'name' ] == $pod_type ) ? 'selected' : ''; ?>
+                <option value="<?php echo $pod[ 'name' ]; ?>" <?php echo $selected; ?>>
+                    <?php echo esc_html( $pod[ 'label' ] ); ?>
+                </option>
             <?php endforeach; ?>
         </select>
         <?php else: ?>
@@ -42,12 +42,12 @@
         <label for="<?php echo $this->get_field_id( 'slug' ); ?>">
             <?php _e( 'Slug or ID', 'pods' ); ?>
         </label>
-        <input class="widefat" type="text" id="<?php echo $this->get_field_id( 'slug' ); ?>" name="<?php echo $this->get_field_name( 'slug' ); ?>" value="<?php echo $slug; ?>" />
+        <input class="widefat" type="text" id="<?php echo $this->get_field_id( 'slug' ); ?>" name="<?php echo $this->get_field_name( 'slug' ); ?>" value="<?php echo esc_attr( $slug ); ?>" />
     </li>
 
     <li>
         <label for="<?php $this->get_field_id( 'field' ); ?>"><?php _e( 'Field', 'pods' ); ?></label>
-        <input class="widefat" type="text" name="<?php echo $this->get_field_name( 'field' ); ?>" id="<?php echo $this->get_field_id( 'field' ); ?>" value="<?php echo $field; ?>" />
+        <input class="widefat" type="text" name="<?php echo $this->get_field_name( 'field' ); ?>" id="<?php echo $this->get_field_id( 'field' ); ?>" value="<?php echo esc_attr( $field ); ?>" />
     </li>
 
     <li>
@@ -61,10 +61,10 @@
         <select name="<?php echo $this->get_field_name( 'helper' ); ?>" id="<?php echo $this->get_field_id( 'helper' ); ?>">
             <option value="">- <?php _e( 'Helper', 'pods' ); ?> -</option>
             <?php foreach ( $all_helpers as $hlp ): ?>
-            <?php $selected = ( $hlp[ 'name' ] == $helper ) ? 'selected' : ''; ?>
-            <option value="<?php echo $hlp[ 'name' ]; ?>" <?php echo $selected; ?>>
-                <?php echo $hlp[ 'name' ]; ?>
-            </option>
+                <?php $selected = ( $hlp[ 'name' ] == $helper ) ? 'selected' : ''; ?>
+                <option value="<?php echo $hlp[ 'name' ]; ?>" <?php echo $selected; ?>>
+                    <?php echo esc_html( $hlp[ 'name' ] ); ?>
+                </option>
             <?php endforeach; ?>
         </select>
     </li>

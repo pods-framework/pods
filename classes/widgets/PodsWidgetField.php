@@ -7,10 +7,10 @@ class PodsWidgetField extends WP_Widget {
     /**
      * Register the widget
      */
-    public function PodsWidgetFolumn () {
+    public function PodsWidgetField () {
         $this->WP_Widget(
             'pods_widget_field',
-            'Pods Folumn Value',
+            'Pods Field Value',
             array( 'classname' => 'pods_widget_field', 'description' => "Display a single Pod item's field value" ),
             array( 'width' => 200 )
         );
@@ -22,6 +22,7 @@ class PodsWidgetField extends WP_Widget {
     public function widget ( $args, $instance ) {
         extract( $args );
 
+        // Get widget field values
         $title = apply_filters( 'widget_title', $instance[ 'title' ] );
         $pod_type = pods_var( 'pod_type', $instance, '' );
         $slug = pods_var( 'slug', $instance, '' );
@@ -64,11 +65,12 @@ class PodsWidgetField extends WP_Widget {
      * Widget Form
      */
     public function form ( $instance ) {
-        $title = pods_var( 'title', $instance, '' );
-        $pod_type = pods_var( 'pod_type', $instance, '' );
-        $slug = pods_var( 'slug', $instance, '' );
-        $field = pods_var( 'field', $instance, '' );
-        $helper = pods_var( 'helper', $instance, '' );
+        $title = pods_var_raw( 'title', $instance, '' );
+        $pod_type = pods_var_raw( 'pod_type', $instance, '' );
+        $slug = pods_var_raw( 'slug', $instance, '' );
+        $field = pods_var_raw( 'field', $instance, '' );
+        $helper = pods_var_raw( 'helper', $instance, '' );
+
         require PODS_DIR . 'ui/admin/widgets/field.php';
     }
 }

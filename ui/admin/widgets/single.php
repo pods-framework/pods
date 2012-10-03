@@ -13,7 +13,7 @@
 <ol class="pods_single_widget_form">
     <li>
         <label for="<?php echo $this->get_field_id( 'title' ); ?>"> <?php _e( 'Title', 'pods' ); ?></label>
-        <input type="text" class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo $title; ?>" />
+        <input type="text" class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo esc_attr( $title ); ?>" />
     </li>
 
     <li>
@@ -27,7 +27,7 @@
             <?php foreach ( $all_pods as $pod ): ?>
             <?php $selected = ( $pod[ 'name' ] == $pod_type ) ? 'selected' : ''; ?>
             <option value="<?php echo $pod[ 'name' ]; ?>" <?php echo $selected; ?>>
-                <?php echo $pod[ 'label' ]; ?>
+                <?php echo esc_html( $pod[ 'label' ] ); ?>
             </option>
             <?php endforeach; ?>
         </select>
@@ -45,7 +45,7 @@
         <?php foreach ( $all_templates as $tpl ): ?>
         <?php $selected = ( $tpl[ 'name' ] == $template ) ? 'selected' : ''; ?>
         <option value="<?php echo $tpl[ 'name' ]; ?>" <?php echo $selected; ?>>
-            <?php echo $tpl[ 'name' ]; ?>
+            <?php echo esc_html( $tpl[ 'name' ] ); ?>
         </option>
         <?php endforeach; ?>
     </select>

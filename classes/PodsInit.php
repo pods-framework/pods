@@ -41,6 +41,7 @@ class PodsInit {
         add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
 
         add_action( 'init', array( $this, 'activate_install' ), 9 );
+        add_action( 'widgets_init', array( $this, 'register_widgets' ) );
 
         if ( !empty( self::$version ) ) {
             // Init Pods Form
@@ -117,8 +118,6 @@ class PodsInit {
         $this->register_assets();
 
         $this->register_pods();
-
-        add_action( 'widgets_init', array( $this, 'register_widgets' ) );
     }
 
     /**
@@ -816,14 +815,17 @@ class PodsInit {
         $widgets = array(
             'PodsWidgetSingle',
             'PodsWidgetList',
-            'PodsWidgetColumn'
+            'PodsWidgetField'
         );
 
         if ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER )
             $widgets[] = 'PodsWidgetForm';
 
         foreach ( $widgets as $widget ) {
-            require_once PODS_DIR . 'classes/widgets/' . basename( $widget ) . '.php';
+            if ( !file_exists( PODS_DIR . 'classes/widgets/' . $widget . '.php' ) )
+                continue;
+
+            require_once PODS_DIR . 'classes/widgets/' . $widget . '.php';
 
             register_widget( $widget );
         }

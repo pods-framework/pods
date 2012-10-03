@@ -13,7 +13,7 @@
 <ol class="pods_form_widget_form">
     <li>
         <label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title', 'pods' ); ?></label>
-        <input class="widefat" type="text" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo $title; ?>">
+        <input class="widefat" type="text" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo esc_html( $title ); ?>">
     </li>
     <li>
         <?php
@@ -26,7 +26,7 @@
             <?php foreach ( $all_pods as $pod ): ?>
             <?php $selected = ( $pod[ 'name' ] == $pod_type ) ? 'selected' : ''; ?>
             <option value="<?php echo $pod[ 'name' ]; ?>" <?php echo $selected; ?>>
-                <?php echo $pod[ 'label' ]; ?>
+                <?php echo esc_html( $pod[ 'label' ] ); ?>
             </option>
             <?php endforeach; ?>
         </select>

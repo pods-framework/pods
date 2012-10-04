@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, cms, cck, ui, content types, custom post types, relationships, database, framework, drupal
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,7 +86,23 @@ Coming soon!
 
 OR you can just install it with WordPress by going to Plugins >> Add New >> and type this plugin's name
 
+== Screenshots ==
+
+1. Create new content types or extend existing ones
+2. Add fields of many different types, with individual options for each so you can define your content type to be what you ned it to be
+3. Post Type pods will add fields to the Post editor
+4. Taxonomy pods will add fields to the Taxonomy forms
+5. User pods will add fields to the User forms
+6. Comment pods will add fields to the Comment forms
+7. Media pods will add fields to the Media forms
+8. Create Advanced Content Types that exist only as you define them, outside of the normal WP object structure
+
 == Changelog ==
+
+= 2.0.2 - September 27th, 2012 =
+* Even more bugs have now been fixed including additional backwards compatibility fixes
+* Caching improvements and fixes, things should be even more responsive, try enabling object caching to see super speed!
+* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://github.com/pods-framework/pods/issues/new
 
 = 2.0.1 - September 25th, 2012 =
 * With the help of our awesome users, we've been able to quickly fix 14 bugs

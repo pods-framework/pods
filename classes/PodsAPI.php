@@ -4368,7 +4368,7 @@ class PodsAPI {
         $pod_id = (int) $pod_id;
 
         $sql = "
-            SELECT `related_item_id`
+            SELECT *
             FROM `@wp_podsrel`
             WHERE
                 (
@@ -4388,11 +4388,16 @@ class PodsAPI {
         $items = pods_query( $sql );
 
         if ( !empty( $items ) ) {
-            foreach ( $items as &$item ) {
-                $item = (int) $item->related_item_id;
+            $related_ids = array();
+
+            foreach ( $items as $k => $v ) {
+                if ( $pod_id == $v->pod_id && $field_id == $v->field_id && !in_array( $v->related_item_id, $related_ids ) )
+                    $related_ids[] = (int) $v->related_item_id;
+                elseif ( $pod_id == $v->related_pod_id && $field_id == $v->related_field_id && !in_array( $v->item_id, $related_ids ) )
+                    $related_ids[] = (int) $v->item_id;
             }
 
-            return $items;
+            return $related_ids;
         }
 
         return false;

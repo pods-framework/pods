@@ -4352,7 +4352,7 @@ class PodsAPI {
      */
     function lookup_related_items ( $field_id, $pod_id, $ids ) {
         if ( empty( $ids ) )
-            $ids = 0;
+            $ids = '0';
         else {
             if ( !is_array( $ids ) )
                 $ids = explode( ',', $ids );
@@ -4372,20 +4372,20 @@ class PodsAPI {
             FROM `@wp_podsrel`
             WHERE
                 (
-                    `pod_id` = {$pod_id}
-                    AND `field_id` = {$field_id}
-                    AND `item_id` IN ( {$ids} )
+                    `pod_id` = %d
+                    AND `field_id` = %d
+                    AND `item_id` IN ( %s )
                 )
                 OR
                 (
-                    `related_pod_id` = {$pod_id}
-                    AND `related_field_id` = {$field_id}
-                    AND `related_item_id` IN ( {$ids} )
+                    `related_pod_id` = %d
+                    AND `related_field_id` = %d
+                    AND `related_item_id` IN ( %s )
                 )
             ORDER BY `weight`
         ";
 
-        $items = pods_query( $sql );
+        $items = pods_query( $sql, array( $pod_id, $field_id, $ids, $pod_id, $field_id, $ids ) );
 
         if ( !empty( $items ) ) {
             $related_ids = array();

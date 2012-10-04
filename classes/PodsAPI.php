@@ -4388,11 +4388,11 @@ class PodsAPI {
         if ( !empty( $items ) ) {
             $related_ids = array();
 
-            foreach ( $items as $k => $v ) {
-                if ( $pod_id == $v->pod_id && $field_id == $v->field_id && !in_array( $v->related_item_id, $related_ids ) )
-                    $related_ids[] = (int) $v->related_item_id;
-                elseif ( $pod_id == $v->related_pod_id && $field_id == $v->related_field_id && !in_array( $v->item_id, $related_ids ) )
-                    $related_ids[] = (int) $v->item_id;
+            foreach ( $items as $item ) {
+                if ( $field_id == $item->field_id && !in_array( $item->related_item_id, $related_ids ) )
+                    $related_ids[] = (int) $item->related_item_id;
+                elseif ( $field_id == $item->related_field_id && !in_array( $item->item_id, $related_ids ) )
+                    $related_ids[] = (int) $item->item_id;
             }
 
             return $related_ids;

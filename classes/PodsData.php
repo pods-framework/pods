@@ -1873,7 +1873,7 @@ class PodsData {
             LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
                 (
                     `{$rel_alias}`.`field_id` = {$this->traversal[$pod][$field]['id']}
-                    AND `{$rel_alias}`.`item_id` = `{$joined}`.`id` )
+                    AND `{$rel_alias}`.`item_id` = `{$joined}`.`id`
                 )
                 OR (
                     `{$rel_alias}`.`related_field_id` = {$this->traversal[$pod][$field]['id']}

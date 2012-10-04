@@ -347,6 +347,7 @@ class Pods_Deprecated
         pods_deprecated( 'Pods::publicForm', '2.0.0', 'Pods::form' );
 
         if ( !empty( $fields ) ) {
+            // Just update field name here, form() will handle the rest
             foreach ( $fields as $k => $field ) {
                 $name = $k;
 

@@ -1350,7 +1350,11 @@ class Pods {
             $fields = array_merge( $object_fields, $this->fields );
         }
         else {
-            foreach ( $fields as $k => $field ) {
+            $form_fields = $fields; // Temporary
+
+            $fields = array();
+
+            foreach ( $form_fields as $k => $field ) {
                 $name = $k;
 
                 if ( !is_array( $field ) ) {
@@ -1361,14 +1365,14 @@ class Pods {
                     $name = $field[ 'name' ];
 
                 if ( pods_var_raw( 'hidden', $field, false, null, true ) )
-                    unset( $fields[ $k ] );
+                    continue;
                 elseif ( isset( $object_fields[ $name ] ) )
-                    $fields[ $k ] = array_merge( $object_fields[ $name ], $field );
+                    $fields[ $name ] = array_merge( $object_fields[ $name ], $field );
                 elseif ( isset( $this->fields[ $name ] ) )
-                    $fields[ $k ] = array_merge( $this->fields[ $name ], $field );
-                else
-                    unset( $fields[ $k ] );
+                    $fields[ $name ] = array_merge( $this->fields[ $name ], $field );
             }
+
+            unset( $form_fields ); // Cleanup
         }
 
         $label = $params[ 'label' ];

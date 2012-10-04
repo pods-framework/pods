@@ -1870,13 +1870,21 @@ class PodsData {
 
         $rel_alias = 'rel_' . $field_joined;
         $the_join = "
-            LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON `{$rel_alias}`.`field_id` = {$this->traversal[$pod][$field]['id']} AND `{$rel_alias}`.`item_id` = `{$joined}`.`id`
+            LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
+                (
+                    `{$rel_alias}`.`field_id` = {$this->traversal[$pod][$field]['id']}
+                    AND `{$rel_alias}`.`item_id` = `{$joined}`.`id` )
+                )
+                OR (
+                    `{$rel_alias}`.`related_field_id` = {$this->traversal[$pod][$field]['id']}
+                    AND `{$rel_alias}`.`related_item_id` = `{$joined}`.`id`
+                )
             LEFT JOIN `{$this->traversal[$pod][$field]['table']}` AS `{$field_joined}` ON `{$field_joined}`.`{$this->traversal[$pod][$field]['on']}` = `{$rel_alias}`.`related_item_id`
         ";
 
         if ( !in_array( $this->traversal[ $pod ][ $field ][ 'type' ], array( 'pick', 'file' ) ) ) {
             $the_join = "
-            LEFT JOIN `{$this->traversal[$pod][$field]['table']}` AS `{$field_joined}` ON `{$field_joined}`.`{$this->traversal[$pod][$field]['on']}` = CONVERT(`{$joined}`.`{$field_joined}`, SIGNED)
+                LEFT JOIN `{$this->traversal[$pod][$field]['table']}` AS `{$field_joined}` ON `{$field_joined}`.`{$this->traversal[$pod][$field]['on']}` = CONVERT(`{$joined}`.`{$field_joined}`, SIGNED)
             ";
         }
 

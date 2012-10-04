@@ -1479,13 +1479,14 @@ class PodsAPI {
 
         $field = $this->load_field( $params );
 
-        $old_id = $old_name = $old_type = $old_definition = $old_simple = $old_options = null;
+        $old_id = $old_name = $old_type = $old_definition = $old_simple = $old_options = $old_sister_id = null;
 
         if ( !empty( $field ) ) {
             $old_id = $field[ 'id' ];
             $old_name = pods_clean_name( $field[ 'name' ] );
             $old_type = $field[ 'type' ];
             $old_options = $field[ 'options' ];
+            $old_sister_id = (int) pods_var( 'sister_id', $old_options, 0 );
 
             $old_simple = ( 'pick' == $old_type && 'custom-simple' == pods_var( 'pick_object', $field ) );
             $old_simple = (boolean) $this->do_hook( 'tableless_custom', $old_simple, $field, $pod, $params );
@@ -1706,6 +1707,8 @@ class PodsAPI {
         if ( !in_array( $field[ 'type' ], $tableless_field_types ) || $simple )
             $definition = '`' . $field[ 'name' ] . '` ' . $this->get_field_definition( $field[ 'type' ], $field[ 'options' ] );
 
+        $sister_id = (int) pods_var( 'sister_id', $field[ 'options' ], 0 );
+
         if ( $table_operation && 'table' == $pod[ 'storage' ] ) {
             if ( !empty( $old_id ) ) {
                 if ( $field[ 'type' ] != $old_type ) {
@@ -1734,8 +1737,6 @@ class PodsAPI {
             elseif ( false !== $definition )
                 $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
         }
-        elseif ( 0 < pods_var( 'sister_id', $field[ 'options' ], 0 ) )
-            update_post_meta( pods_var( 'sister_id', $field[ 'options' ], 0 ), 'sister_id', $params->id );
 
         if ( $field[ 'type' ] != $old_type && in_array( $old_type, $tableless_field_types ) ) {
             $wpdb->query( $wpdb->prepare( "DELETE pm FROM {$wpdb->postmeta} AS pm
@@ -1744,6 +1745,43 @@ class PodsAPI {
                 WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_id' AND pm.meta_value = %d", $params->id ) );
 
             pods_query( "DELETE FROM @wp_podsrel WHERE `field_id` = {$params->id}" );
+
+            delete_post_meta( $old_sister_id, 'sister_id' );
+
+            pods_query( "
+                    UPDATE `@wp_podsrel`
+                    SET `related_field_id` = 0
+                    WHERE `field_id` = %d
+                ", array(
+                    $old_sister_id
+                )
+            );
+        }
+        elseif ( 0 < $sister_id ) {
+            update_post_meta( $sister_id, 'sister_id', $params->id );
+
+            pods_query( "
+                    UPDATE `@wp_podsrel`
+                    SET `related_field_id` = %d
+                    WHERE `field_id` = %d
+                ",
+                array(
+                    $params->id,
+                    $sister_id
+                )
+            );
+        }
+        elseif ( 0 < $old_sister_id ) {
+            delete_post_meta( $old_sister_id, 'sister_id' );
+
+            pods_query( "
+                    UPDATE `@wp_podsrel`
+                    SET `related_field_id` = 0
+                    WHERE `field_id` = %d
+                ", array(
+                    $old_sister_id
+                )
+            );
         }
 
         if ( !$save_pod )
@@ -2258,7 +2296,19 @@ class PodsAPI {
                     $field_id = pods_absint( $fields[ $field ][ 'id' ] );
 
                     // Remove existing relationships
-                    pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->pod_id} AND `field_id` = {$field_id} AND `item_id` = {$params->id}", $this );
+                    pods_query( "
+                        DELETE FROM `@wp_podsrel`
+                        WHERE
+                            (
+                                `pod_id` = {$params->pod_id}
+                                AND `field_id` = {$field_id}
+                                AND `item_id` = {$params->id}
+                            ) OR (
+                                `related_pod_id` = {$params->pod_id}
+                                AND `related_field_id` = {$field_id}
+                                AND `related_item_id` = {$params->id}
+                            )
+                        ", $this );
 
                     // Convert values from a comma-separated string into an array
                     if ( !is_array( $values ) )
@@ -4321,9 +4371,17 @@ class PodsAPI {
             SELECT `related_item_id`
             FROM `@wp_podsrel`
             WHERE
-                `pod_id` = {$pod_id}
-                AND `field_id` = {$field_id}
-                AND `item_id` IN ( {$ids} )
+                (
+                    `pod_id` = {$pod_id}
+                    AND `field_id` = {$field_id}
+                    AND `item_id` IN ( {$ids} )
+                )
+                OR
+                (
+                    `related_pod_id` = {$pod_id}
+                    AND `related_field_id` = {$field_id}
+                    AND `related_item_id` IN ( {$ids} )
+                )
             ORDER BY `weight`
         ";
 

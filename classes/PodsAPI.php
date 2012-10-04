@@ -1609,6 +1609,9 @@ class PodsAPI {
                     return pods_error( sprintf( __( '%s is reserved for internal WordPress or Pods usage, please try a different name. Also consider what WordPress and Pods provide you built-in.', 'pods' ), $field[ 'name' ] ), $this );
             }
 
+            if ( in_array( $field[ 'name' ], array( 'rss' ) ) ) // Reserved post_name values that can't be used as field names
+                $field[ 'name' ] .= '2';
+
             if ( 'slug' == $field[ 'type' ] ) {
                 if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy', 'user' ) ) )
                     return pods_error( __( 'This pod already has an internal WordPress permalink field', 'pods' ), $this );

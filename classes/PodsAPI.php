@@ -2130,6 +2130,7 @@ class PodsAPI {
 
         $columns =& $fields; // @deprecated 2.0.0
         $active_columns =& $fields_active; // @deprecated 2.0.0
+        $params->tbl_row_id =& $params->id;
 
         $pre_save_helpers = $post_save_helpers = array();
 

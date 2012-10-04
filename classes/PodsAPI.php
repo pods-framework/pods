@@ -4372,20 +4372,18 @@ class PodsAPI {
             FROM `@wp_podsrel`
             WHERE
                 (
-                    `pod_id` = %d
-                    AND `field_id` = %d
+                    `field_id` = %d
                     AND `item_id` IN ( %s )
                 )
                 OR
                 (
-                    `related_pod_id` = %d
-                    AND `related_field_id` = %d
+                    `related_field_id` = %d
                     AND `related_item_id` IN ( %s )
                 )
             ORDER BY `weight`
         ";
 
-        $items = pods_query( $sql, array( $pod_id, $field_id, $ids, $pod_id, $field_id, $ids ) );
+        $items = pods_query( $sql, array( $field_id, $ids, $field_id, $ids ) );
 
         if ( !empty( $items ) ) {
             $related_ids = array();

@@ -4365,7 +4365,6 @@ class PodsAPI {
         }
 
         $field_id = (int) $field_id;
-        $pod_id = (int) $pod_id;
 
         $sql = "
             SELECT *
@@ -4383,16 +4382,16 @@ class PodsAPI {
             ORDER BY `weight`
         ";
 
-        $items = pods_query( $sql, array( $field_id, $ids, $field_id, $ids ) );
+        $relationships = pods_query( $sql, array( $field_id, $ids, $field_id, $ids ) );
 
-        if ( !empty( $items ) ) {
+        if ( !empty( $relationships ) ) {
             $related_ids = array();
 
-            foreach ( $items as $item ) {
-                if ( $field_id == $item->field_id && !in_array( $item->related_item_id, $related_ids ) )
-                    $related_ids[] = (int) $item->related_item_id;
-                elseif ( $field_id == $item->related_field_id && !in_array( $item->item_id, $related_ids ) )
-                    $related_ids[] = (int) $item->item_id;
+            foreach ( $relationships as $relation ) {
+                if ( $field_id == $relation->field_id && !in_array( $relation->related_item_id, $related_ids ) )
+                    $related_ids[] = (int) $relation->related_item_id;
+                elseif ( $field_id == $relation->related_field_id && !in_array( $relation->item_id, $related_ids ) )
+                    $related_ids[] = (int) $relation->item_id;
             }
 
             return $related_ids;

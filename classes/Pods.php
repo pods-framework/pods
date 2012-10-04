@@ -369,8 +369,8 @@ class Pods {
         if ( $this->data->field_id == $params->name ) {
             if ( isset( $this->row[ $params->name ] ) )
                 return $this->row[ $params->name ];
-            else
-                return 0;
+
+            return 0;
         }
 
         $value = null;
@@ -424,8 +424,6 @@ class Pods {
                     if ( 'meta' == $this->pod_data[ 'storage' ] ) {
                         if ( !in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) )
                             $simple = true;
-
-                        $params->single = true;
                     }
 
                     if ( in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
@@ -657,6 +655,9 @@ class Pods {
 
             $this->row[ $params->name ] = $value;
         }
+
+        if ( true === $params->single && is_array( $value ) && isset( $value[ 0 ] ) )
+            $value = $value[ 0 ];
 
         $value = $this->do_hook( 'field', $value, $this->row, $params );
 
@@ -1448,7 +1449,8 @@ class Pods {
             $params = array(
                 'helper' => $helper_name,
                 'value' => $value,
-                'name' => $field_name
+                'name' => $field_name,
+                'deprecated' => false
             );
 
             if ( class_exists( 'Pods_Templates' ) )

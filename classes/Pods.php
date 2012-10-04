@@ -1107,9 +1107,9 @@ class Pods {
      *
      * @see PodsAPI::delete_pod_item
      *
-     * @param int $id Id of the pod item to delete
+     * @param int $id ID of the Pod item to delete
      *
-     * @return bool
+     * @return bool Whether the item was successfully deleted
      *
      * @since 2.0.0
      * @link http://podsframework.org/docs/delete/

@@ -1422,12 +1422,12 @@ function pods_ui ( $obj, $deprecated = false ) {
 }
 
 /**
- * Include and Init the PodsAPI class
+ * Include and get the PodsAPI object, for use with all calls that Pods makes for add, save, delete, and more.
  *
  * @see PodsAPI
  *
- * @param string $pod The pod name to load
- * @param null $format (deprecated) used for backwards compatibility and may be removed in the future.
+ * @param string $pod (optional) (deprecated) The Pod name
+ * @param string $format (optional) (deprecated) Format used in import() and export()
  *
  * @return PodsAPI
  *

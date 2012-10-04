@@ -2352,13 +2352,22 @@ class PodsAPI {
 
                         // Delete existing sister relationships
                         if ( !empty( $related_field_id ) && !empty( $related_pod_id ) && in_array( $related_field_id, $rel_field_ids ) ) {
-                            pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = %d AND `field_id` = %d AND `related_pod_id` = %d AND `related_field_id` = %d AND `related_item_id` = %d", array(
-                                $related_pod_id,
-                                $related_field_id,
-                                $params->pod_id,
-                                $field_id,
-                                $params->id
-                            ) );
+                            pods_query( "
+                                    DELETE FROM `@wp_podsrel`
+                                    WHERE
+                                        `pod_id` = %d
+                                        AND `field_id` = %d
+                                        AND `related_pod_id` = %d
+                                        AND `related_field_id` = %d
+                                        AND `related_item_id` = %d
+                                ", array(
+                                    $related_pod_id,
+                                    $related_field_id,
+                                    $params->pod_id,
+                                    $field_id,
+                                    $params->id
+                                )
+                            );
                         }
 
                         if ( empty( $values ) )

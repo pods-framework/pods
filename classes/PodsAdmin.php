@@ -1206,7 +1206,7 @@ class PodsAdmin {
             $lookup_where[] = "`t`.`comment_author_email` LIKE '%" . like_escape( $params->query ) . "%'";
         }
 
-        $where[] = implode( ' OR ', $lookup_where );
+        $where[] = ' ( ' . implode( ' OR ', $lookup_where ) . ' ) ';
 
         $orderby = array();
         $orderby[] = "(`t`.`{$data->field_index}` LIKE '%" . like_escape( $params->query ) . "%' ) DESC";

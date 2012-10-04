@@ -2323,6 +2323,7 @@ class PodsAPI {
                     elseif ( 'pick' == $type ) {
                         $pick_object = pods_var( 'pick_object', $fields[ $field ], '' ); // pod, post_type, taxonomy, etc..
                         $pick_val = pods_var( 'pick_val', $fields[ $field ], '' ); // pod name, post type name, taxonomy name, etc..
+                        $pick_sister_id = (int) pods_var( 'sister_id', $fields[ $field ], 0 );
 
                         $related_pod_id = $related_field_id = 0;
 
@@ -2334,11 +2335,11 @@ class PodsAPI {
                             if ( false !== $related_pod )
                                 $related_pod_id = $related_pod[ 'id' ];
 
-                            if ( 0 < $fields[ $field ][ 'sister_id' ] ) {
-                                foreach ( $related_pod[ 'fields' ] as $field ) {
-                                    if ( 'pick' == $field[ 'type' ] && $fields[ $field ][ 'sister_id' ] == $field[ 'id' ] ) {
-                                        $related_field_id = $field[ 'id' ];
-                                        $related_field = $field[ 'name' ];
+                            if ( 0 < $pick_sister_id ) {
+                                foreach ( $related_pod[ 'fields' ] as $related_pod_field ) {
+                                    if ( 'pick' == $related_pod_field[ 'type' ] && $pick_sister_id == $related_pod_field[ 'id' ] ) {
+                                        $related_field_id = $related_pod_field[ 'id' ];
+                                        $related_field = $related_pod_field[ 'name' ];
 
                                         break;
                                     }

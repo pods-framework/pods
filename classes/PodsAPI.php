@@ -3301,7 +3301,7 @@ class PodsAPI {
     }
 
     /**
-     * Load Pods and filter by options
+     * Load a list of Pods based on filters specified.
      *
      * $params['type'] string/array Pod Type(s) to filter by
      * $params['object'] string/array Pod Object(s) to filter by

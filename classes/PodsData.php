@@ -1346,8 +1346,23 @@ class PodsData {
             elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
                 if ( 'id' == $mode )
                     $this->row = get_post( $id, ARRAY_A );
+                else {
+                    $post_type = $this->pod_data[ 'object' ];
 
-                // @todo Handle slug
+                    if ( empty( $post_type ) )
+                        $post_type = $this->pod_data[ 'object' ];
+
+                    $args = array(
+                        'post_type' => $post_type,
+                        'name' => $id,
+                        'numberposts' => 5
+                    );
+
+                    $find = get_posts( $args );
+
+                    if ( !empty( $find ) )
+                        $this->row = get_object_vars( $find[ 0 ] );
+                }
 
                 if ( empty( $this->row ) )
                     $this->row = false;
@@ -1362,8 +1377,8 @@ class PodsData {
 
                 if ( 'id' == $mode )
                     $this->row = get_term( $id, $taxonomy, ARRAY_A );
-
-                // @todo Handle slug
+                else
+                    $this->row = get_term_by( 'slug', $id, $taxonomy, ARRAY_A );
 
                 if ( empty( $this->row ) )
                     $this->row = false;
@@ -1373,8 +1388,8 @@ class PodsData {
             elseif ( 'user' == $this->pod_data[ 'type' ] ) {
                 if ( 'id' == $mode )
                     $this->row = get_userdata( $id );
-
-                // @todo Handle slug
+                else
+                    $this->row = get_user_by( 'slug', $mode );
 
                 if ( empty( $this->row ) )
                     $this->row = false;
@@ -1385,6 +1400,8 @@ class PodsData {
             }
             elseif ( 'comment' == $this->pod_data[ 'type' ] ) {
                 $this->row = get_comment( $id, ARRAY_A );
+
+                // No slug handling here
 
                 if ( empty( $this->row ) )
                     $this->row = false;

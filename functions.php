@@ -1388,6 +1388,7 @@ function pods_components () {
  *
  * @return bool|\Pods
  * @since 2.0.0
+ * @link http://podsframework.org/docs/pods/
  */
 function pods ( $type = null, $id = null, $strict = false ) {
     require_once( PODS_DIR . 'classes/Pods.php' );
@@ -1401,18 +1402,20 @@ function pods ( $type = null, $id = null, $strict = false ) {
 }
 
 /**
- * Include and Init the PodsUI class
+ * Easily create content admin screens with in-depth customization. This is the primary interface function that Pods
+ * runs off of. It's also the only function required to be run in order to have a fully functional Manage interface.
  *
  * @see PodsUI
  *
- * @param null|array|Pods $obj (optional) configuration options for the UI
- * @param boolean $deprecated (optional) enable deprecated options
+ * @param array|string|Pods $obj (optional) Configuration options for the UI
+ * @param boolean $deprecated (optional) Whether to enable deprecated options (used by pods_ui_manage)
  *
  * @return PodsUI
  *
  * @since 2.0.0
+ * @link http://podsframework.org/docs/pods-ui/
  */
-function pods_ui ( $obj = null, $deprecated = false ) {
+function pods_ui ( $obj, $deprecated = false ) {
     require_once( PODS_DIR . 'classes/PodsUI.php' );
 
     return new PodsUI( $obj, $deprecated );
@@ -1429,6 +1432,7 @@ function pods_ui ( $obj = null, $deprecated = false ) {
  * @return PodsAPI
  *
  * @since 2.0.0
+ * @link http://podsframework.org/docs/pods-api/
  */
 function pods_api ( $pod = null, $format = null ) {
     require_once( PODS_DIR . 'classes/PodsAPI.php' );

@@ -1694,6 +1694,9 @@ class PodsAPI {
             }
         }
 
+        if ( !has_filter( 'wp_unique_post_slug', array( $this, 'save_field_slug_fix' ) ) )
+            add_filter( 'wp_unique_post_slug', array( $this, 'save_field_slug_fix' ), 100, 6 );
+
         $params->id = $this->save_wp_object( 'post', $post_data, $field[ 'options' ], true, true );
 
         if ( false === $params->id )
@@ -1788,6 +1791,15 @@ class PodsAPI {
             $this->cache_flush_pods( $pod );
 
         return $params->id;
+    }
+
+    public function save_field_slug_fix ( $slug, $post_ID, $post_status, $post_type, $post_parent, $original_slug ) {
+        if ( in_array( $post_type, array( '_pods_field', '_pods_pod' ) ) && false !== strpos( $slug, '-' ) ) {
+            $slug = explode( '-', $slug );
+            $slug = $slug[ 0 ];
+        }
+
+        return $slug;
     }
 
     /**

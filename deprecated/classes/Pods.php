@@ -405,7 +405,7 @@ class Pods_Deprecated
     public function get_field ( $name, $orderby = null ) {
         pods_deprecated( 'Pods::get_field', '2.0.0', 'Pods::field' );
 
-        $value = $this->obj->field( array( 'name' => $name, 'orderby' => $orderby ) );
+        $value = $this->obj->field( array( 'name' => $name, 'orderby' => $orderby, 'deprecated' => true ) );
 
         if ( is_array( $value ) && !empty( $value ) ) {
             if ( false === strpos( $name, '.' ) && !isset( $value[ 0 ] ) )

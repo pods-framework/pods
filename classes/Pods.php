@@ -315,7 +315,7 @@ class Pods {
         else
             $params = (object) $defaults;
 
-        $value = $this->field( $params, $single );
+        $value = $this->field( $params );
 
         if ( false === $params->in_form && isset( $this->fields[ $params->name ] ) ) {
             $value = PodsForm::display(
@@ -343,17 +343,20 @@ class Pods {
      *
      * @param string|array $name The field name, or an associative array of parameters
      * @param boolean $single (optional) For tableless fields, to return the whole array or the just the first item
+     * @param boolean $raw (optional) Whether to return the raw value, or to run through the field type's display method
      *
      * @return mixed|null Value returned depends on the field type, null if the field doesn't exist, false if no value returned for tableless fields
      * @since 2.0.0
      * @link http://podsframework.org/docs/field/
      */
-    public function field ( $name, $single = false ) {
+    public function field ( $name, $single = false, $raw = false ) {
         $defaults = array(
             'name' => $name,
             'orderby' => null,
             'single' => $single,
-            'in_form' => false
+            'in_form' => false,
+            'raw' => $raw,
+            'deprecated' => false
         );
 
         if ( is_array( $name ) || is_object( $name ) )
@@ -391,6 +394,8 @@ class Pods {
         $value = null;
 
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
+
+        $tableless = false;
 
         $params->traverse = array();
 
@@ -442,6 +447,8 @@ class Pods {
                     }
 
                     if ( in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
+                        $tableless = true;
+
                         if ( 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] )
                             $simple = true;
                     }
@@ -610,6 +617,9 @@ class Pods {
 
                             $data = pods_query( $sql );
 
+                            if ( in_array( $last_type, $tableless_field_types ) )
+                                $tableless = true;
+
                             if ( empty( $data ) )
                                 $value = false;
                             else {
@@ -673,6 +683,18 @@ class Pods {
 
         if ( true === $params->single && is_array( $value ) && isset( $value[ 0 ] ) )
             $value = $value[ 0 ];
+
+        // @todo Expand this into traversed fields too
+        if ( false === $params->raw && false === $params->in_form && false === $tableless && isset( $this->fields[ $params->name ] ) ) {
+            $value = PodsForm::display(
+                $this->fields[ $params->name ][ 'type' ],
+                $value,
+                $params->name,
+                array_merge( $this->fields[ $params->name ][ 'options' ], $this->fields[ $params->name ] ),
+                $this->pod_data,
+                $this->id()
+            );
+        }
 
         $value = $this->do_hook( 'field', $value, $this->row, $params );
 

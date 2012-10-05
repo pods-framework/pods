@@ -5,6 +5,11 @@ wp_enqueue_style( 'pods-form' );
 if ( empty( $fields ) || !is_array( $fields ) )
     $fields = $obj->pod->fields;
 
+if ( !isset( $duplicate ) )
+    $duplicate = false;
+else
+    $duplicate = (boolean) $duplicate;
+
 // unset fields
 foreach ( $fields as $k => $field ) {
     if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) )
@@ -24,13 +29,15 @@ $uid = @session_id();
 if ( is_user_logged_in() )
     $uid = 'user_' . get_current_user_id();
 
-$nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . $uid . '_' . $pod->id() . '_' . $uri_hash . '_' . $field_hash );
+$nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . $uid . '_' . ( $duplicate ? 0 : $pod->id() ) . '_' . $uri_hash . '_' . $field_hash );
 
 if ( isset( $_POST[ '_pods_nonce' ] ) ) {
     $action = __( 'saved', 'pods' );
 
     if ( 'create' == pods_var_raw( 'do', 'post', 'save' ) )
         $action = __( 'created', 'pods' );
+    elseif ( 'duplicate' == pods_var_raw( 'do', 'get', 'save' ) )
+        $action = __( 'duplicated', 'pods' );
 
     try {
         $params = stripslashes_deep( (array) $_POST );
@@ -53,6 +60,8 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
 
     if ( 'create' == pods_var_raw( 'do', 'get', 'save' ) )
         $action = __( 'created', 'pods' );
+    elseif ( 'duplicate' == pods_var_raw( 'do', 'get', 'save' ) )
+        $action = __( 'duplicated', 'pods' );
 
     $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
     $error = sprintf( __( '<strong>Error:</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
@@ -65,16 +74,25 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
 
 if ( !isset( $label ) )
     $label = _e( 'Save', 'pods' );
+
+$do = 'create';
+
+if ( 0 < $pod->id() ) {
+    if ( $duplicate )
+        $do = 'duplicate';
+    else
+        $do = 'save';
+}
 ?>
 
 <form action="" method="post" class="pods-submittable pods-form pods-form-pod-<?php echo $pod->pod; ?>">
     <div class="pods-submittable-fields">
         <?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
         <?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>
-        <?php echo PodsForm::field( 'do', ( 0 < $pod->id() ? 'save' : 'create' ), 'hidden' ); ?>
+        <?php echo PodsForm::field( 'do', $do, 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' ); ?>
-        <?php echo PodsForm::field( '_pods_id', $pod->id(), 'hidden' ); ?>
+        <?php echo PodsForm::field( '_pods_id', ( $duplicate ? 0 : $pod->id() ), 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $fields ) ), 'hidden' ); ?>
 

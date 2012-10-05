@@ -1198,7 +1198,7 @@ class PodsUI {
      * @return mixed
      */
     public function edit ( $duplicate = false ) {
-        if ( !in_array( 'duplicate', $this->actions_disabled ) )
+        if ( in_array( 'duplicate', $this->actions_disabled ) )
             $duplicate = false;
         if ( empty( $this->row ) )
             $this->get_row();
@@ -1239,6 +1239,9 @@ class PodsUI {
      * @return bool|mixed
      */
     public function form ( $create = false, $duplicate = false ) {
+        if ( in_array( 'duplicate', $this->actions_disabled ) )
+            $duplicate = false;
+
         $this->do_hook( 'form' );
 
         if ( isset( $this->actions_custom[ 'form' ] ) && is_callable( $this->actions_custom[ 'form' ] ) )
@@ -1275,7 +1278,7 @@ class PodsUI {
             $alt_vars[ 'action' ] = 'manage';
             unset( $alt_vars[ 'id' ] );
 
-            if ( 1 == $duplicate ) {
+            if ( $duplicate ) {
                 $label = $this->label[ 'duplicate' ];
                 $id = null;
                 $vars = array(

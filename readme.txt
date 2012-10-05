@@ -101,6 +101,7 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 = 2.0.3.1 - October 5th, 2012 =
 * Fixed an upgrade issue a few users were reporting where the upgrade wouldn't start
+* Fixed reserved post_name issues with our internal post types for Pods and Fields (rss, date, and any other feeds)
 * Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://github.com/pods-framework/pods/issues/new
 
 = 2.0.3 - October 4th, 2012 =

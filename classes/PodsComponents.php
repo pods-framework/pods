@@ -205,7 +205,7 @@ class PodsComponents {
     public function get_components () {
         $components = pods_transient_get( 'pods_components' );
 
-        if ( !is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET[ 'page' ] ) && 'pods-components' == $_GET[ 'page' ] && false !== pods_transient_get( 'pods_components_refresh' ) ) ) {
+        if ( PodsInit::$version != PODS_VERSION || !is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET[ 'page' ] ) && 'pods-components' == $_GET[ 'page' ] && false !== pods_transient_get( 'pods_components_refresh' ) ) ) {
             $component_dir = @opendir( untrailingslashit( $this->components_dir ) );
             $component_files = array();
 

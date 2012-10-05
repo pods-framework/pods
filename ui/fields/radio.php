@@ -1,7 +1,7 @@
 <?php
 $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true );
 
-if ( 1 == $options[ 'grouped' ] ) {
+if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
     ?>
 <div class="pods-pick-values pods-pick-radio">
     <ul>
@@ -37,7 +37,7 @@ foreach ( $options[ 'data' ] as $val => $label ) {
     if ( 1 < count( $options[ 'data' ] ) )
         $attributes[ 'id' ] = $primary_id . $counter;
 
-    if ( 1 == $options[ 'grouped' ] ) {
+    if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
         ?>
         <li>
 <?php
@@ -47,10 +47,10 @@ foreach ( $options[ 'data' ] as $val => $label ) {
         <input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
         <?php
         if ( 0 < strlen( $label ) ) {
-            $help = '';
+            $help = pods_var_raw( 'help', $options );
 
-            if ( 0 == $options[ 'grouped' ] && isset( $options[ 'help' ] ) && !empty( $options[ 'help' ] ) )
-                $help = $options[ 'help' ];
+            if ( 1 == pods_var( 'grouped', $options, 0, null, true ) || empty( $help ) )
+                $help = '';
 
             echo PodsForm::label( $attributes[ 'id' ], $label, $help );
         }
@@ -58,7 +58,7 @@ foreach ( $options[ 'data' ] as $val => $label ) {
     </div>
     <?php
 
-    if ( 1 == $options[ 'grouped' ] ) {
+    if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
         ?>
         </li>
 <?php
@@ -67,7 +67,7 @@ foreach ( $options[ 'data' ] as $val => $label ) {
     $counter++;
 }
 
-if ( 1 == $options[ 'grouped' ] ) {
+if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
     ?>
     </ul>
 </div>

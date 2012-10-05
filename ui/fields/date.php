@@ -18,7 +18,7 @@ $type = 'text';
 
 $date_type = 'date';
 
-if ( 1 == $options[ 'date_html5' ] )
+if ( 1 == pods_var( 'date_html5', $options ) )
     $type = $date_type;
 
 $attributes[ 'type' ] = $type;
@@ -29,7 +29,7 @@ $format = PodsForm::field_method( 'date', 'format', $options );
 $method = 'datepicker';
 
 $args = array(
-    'dateFormat' => $date_format[ $options[ 'date_format' ] ]
+    'dateFormat' => $date_format[ pods_var( 'date_format', $options, 'mdy', null, true ) ]
 );
 
 $html5_format = 'Y-m-d';

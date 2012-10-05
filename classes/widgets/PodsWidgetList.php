@@ -77,14 +77,15 @@ class PodsWidgetList extends WP_Widget {
      * Widget Form
      */
     public function form ( $instance ) {
-        $title = pods_var( 'title', $instance, '' );
-        $pod_type = pods_var( 'pod_type', $instance, '' );
-        $template = pods_var( 'template', $instance, '' );
-        $template_custom = pods_var( 'template_custom', $instance, '' );
-        $limit = pods_var( 'limit', $instance, '' );
-        $orderby = pods_var( 'orderby', $instance, '' );
-        $direction = pods_var( 'direction', $instance, '' );
-        $where = pods_var( 'where', $instance, '' );
+        $title = pods_var_raw( 'title', $instance, '' );
+        $pod_type = pods_var_raw( 'pod_type', $instance, '' );
+        $template = pods_var_raw( 'template', $instance, '' );
+        $template_custom = pods_var_raw( 'template_custom', $instance, '' );
+        $limit = pods_var_raw( 'limit', $instance, '' );
+        $orderby = pods_var_raw( 'orderby', $instance, '' );
+        $direction = pods_var_raw( 'direction', $instance, '' );
+        $where = pods_var_raw( 'where', $instance, '' );
+
         require PODS_DIR . 'ui/admin/widgets/list.php';
     }
 }

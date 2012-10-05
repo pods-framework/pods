@@ -14,7 +14,9 @@ if ( isset( $options[ 'settings' ] ) )
     $settings = array_merge( $settings, $options[ 'settings' ] );
 
 $attributes = array();
-$attributes[ 'tabindex' ] = 2;
 $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options, 'pods-ui-field-tinymce' );
-
-wp_editor( $value, $attributes[ 'id' ], $settings );
+$class_attributes = array( 'class' => $attributes[ 'class' ] );
+?>
+<div<?php PodsForm::attributes( $class_attributes, $name, PodsForm::$field_type, $options ); ?>>
+    <?php wp_editor( $value, $attributes[ 'id' ], $settings ); ?>
+</div>

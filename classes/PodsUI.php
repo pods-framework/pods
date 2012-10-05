@@ -378,12 +378,12 @@ class PodsUI {
         elseif ( is_object( $object ) )
             $this->pod = $object;
 
-        if ( false !== $deprecated || ( is_object( $this->pod ) && 'Pod' == get_class( $object ) ) )
+        if ( false !== $deprecated || ( is_object( $this->pod ) && 'Pod' == get_class( $this->pod ) ) )
             $options = $this->setup_deprecated( $options );
 
-        if ( is_object( $this->pod ) && 'Pod' == get_class( $object ) && is_object( $this->pod->_data ) )
+        if ( is_object( $this->pod ) && 'Pod' == get_class( $this->pod ) && is_object( $this->pod->_data ) )
             $this->pods_data =& $this->pod->_data;
-        elseif ( is_object( $this->pod ) && 'Pods' == get_class( $object ) && is_object( $this->pod->data ) )
+        elseif ( is_object( $this->pod ) && 'Pods' == get_class( $this->pod ) && is_object( $this->pod->data ) )
             $this->pods_data =& $this->pod->data;
         elseif ( is_object( $this->pod ) )
             $this->pods_data =& pods_data( $this->pod->pod );
@@ -906,6 +906,8 @@ class PodsUI {
                 if ( is_object( $this->pod ) && isset( $this->pod->fields ) && isset( $this->pod->fields[ $attributes[ 'real_name' ] ] ) )
                     $attributes = array_merge( $this->pod->fields[ $attributes[ 'real_name' ] ], $attributes );
 
+                if ( !isset( $attributes[ 'options' ] ) )
+                    $attributes[ 'options' ] = array();
                 if ( !isset( $attributes[ 'id' ] ) )
                     $attributes[ 'id' ] = '';
                 if ( !isset( $attributes[ 'label' ] ) )
@@ -951,20 +953,20 @@ class PodsUI {
                 if ( !isset( $attributes[ 'hidden' ] ) )
                     $attributes[ 'hidden' ] = false;
                 if ( !isset( $attributes[ 'sortable' ] ) || false === $this->sortable )
-                    $attributes[ 'sortable' ] = ( false !== $this->sortable ) ? true : false;
-                if ( !isset( $attributes[ 'options' ] [ 'search' ] ) || false === $this->searchable )
-                    $attributes[ 'options' ] [ 'search' ] = ( false !== $this->searchable ) ? true : false;
-                if ( !isset( $attributes[ 'filter' ] ) || false === $this->searchable )
-                    $attributes[ 'filter' ] = false;
-                if ( false !== $attributes[ 'filter' ] && false !== $filterable )
-                    $this->filters[] = $field;
-                if ( false === $attributes[ 'filter' ] || !isset( $attributes[ 'filter_label' ] ) || !in_array( $field, $this->filters ) )
+                    $attributes[ 'sortable' ] = $this->sortable;
+                if ( !isset( $attributes[ 'options' ][ 'search' ] ) || false === $this->searchable )
+                    $attributes[ 'options' ][ 'search' ] = $this->searchable;
+                if ( !isset( $attributes[ 'options' ][ 'filter' ] ) || false === $this->searchable )
+                    $attributes[ 'options' ][ 'filter' ] = $this->searchable;
+                /*if ( false !== $attributes[ 'options' ][ 'filter' ] && false !== $filterable )
+                    $this->filters[] = $field;*/
+                if ( false === $attributes[ 'options' ][ 'filter' ] || !isset( $attributes[ 'filter_label' ] ) || !in_array( $field, $this->filters ) )
                     $attributes[ 'filter_label' ] = $attributes[ 'label' ];
-                if ( false === $attributes[ 'filter' ] || !isset( $attributes[ 'filter_default' ] ) || !in_array( $field, $this->filters ) )
+                if ( false === $attributes[ 'options' ][ 'filter' ] || !isset( $attributes[ 'filter_default' ] ) || !in_array( $field, $this->filters ) )
                     $attributes[ 'filter_default' ] = false;
-                if ( false === $attributes[ 'filter' ] || !isset( $attributes[ 'date_ongoing' ] ) || 'date' != $attributes[ 'type' ] || !in_array( $field, $this->filters ) )
+                if ( false === $attributes[ 'options' ][ 'filter' ] || !isset( $attributes[ 'date_ongoing' ] ) || 'date' != $attributes[ 'type' ] || !in_array( $field, $this->filters ) )
                     $attributes[ 'date_ongoing' ] = false;
-                if ( false === $attributes[ 'filter' ] || !isset( $attributes[ 'date_ongoing' ] ) || 'date' != $attributes[ 'type' ] || !isset( $attributes[ 'date_ongoing_default' ] ) || !in_array( $field, $this->filters ) )
+                if ( false === $attributes[ 'options' ][ 'filter' ] || !isset( $attributes[ 'date_ongoing' ] ) || 'date' != $attributes[ 'type' ] || !isset( $attributes[ 'date_ongoing_default' ] ) || !in_array( $field, $this->filters ) )
                     $attributes[ 'date_ongoing_default' ] = false;
                 if ( !isset( $attributes[ 'export' ] ) )
                     $attributes[ 'export' ] = true;
@@ -1002,24 +1004,25 @@ class PodsUI {
                 $this->fields[ 'manage' ] = $fields;
 
             if ( !in_array( 'add', $this->actions_disabled ) || !in_array( 'edit', $this->actions_disabled ) || !in_array( 'duplicate', $this->actions_disabled ) ) {
-                if ( 'form' != $which && !empty( $this->fields[ 'form' ] ) )
+                if ( 'form' != $which && isset( $this->fields[ 'form' ] ) && is_array( $this->fields[ 'form' ] ) )
                     $this->fields[ 'form' ] = $this->setup_fields( $this->fields[ 'form' ], 'form' );
                 else
                     $this->fields[ 'form' ] = $fields;
+
                 if ( !in_array( 'add', $this->actions_disabled ) ) {
-                    if ( 'add' != $which && !empty( $this->fields[ 'add' ] ) )
+                    if ( 'add' != $which && isset( $this->fields[ 'add' ] ) && is_array( $this->fields[ 'add' ] ) )
                         $this->fields[ 'add' ] = $this->setup_fields( $this->fields[ 'add' ], 'add' );
                     else
                         $this->fields[ 'add' ] = $fields;
                 }
                 if ( !in_array( 'edit', $this->actions_disabled ) ) {
-                    if ( 'edit' != $which && !empty( $this->fields[ 'edit' ] ) )
+                    if ( 'edit' != $which && isset( $this->fields[ 'edit' ] ) &&is_array( $this->fields[ 'edit' ] ) )
                         $this->fields[ 'edit' ] = $this->setup_fields( $this->fields[ 'edit' ], 'edit' );
                     else
                         $this->fields[ 'edit' ] = $fields;
                 }
                 if ( !in_array( 'duplicate', $this->actions_disabled ) ) {
-                    if ( 'duplicate' != $which && !empty( $this->fields[ 'duplicate' ] ) )
+                    if ( 'duplicate' != $which && isset( $this->fields[ 'duplicate' ] ) &&is_array( $this->fields[ 'duplicate' ] ) )
                         $this->fields[ 'duplicate' ] = $this->setup_fields( $this->fields[ 'duplicate' ], 'duplicate' );
                     else
                         $this->fields[ 'duplicate' ] = $fields;
@@ -1027,7 +1030,7 @@ class PodsUI {
             }
 
             if ( false !== $this->searchable ) {
-                if ( 'search' != $which && !empty( $this->fields[ 'search' ] ) )
+                if ( 'search' != $which && isset( $this->fields[ 'search' ] ) &&!empty( $this->fields[ 'search' ] ) )
                     $this->fields[ 'search' ] = $this->setup_fields( $this->fields[ 'search' ], 'search' );
                 else
                     $this->fields[ 'search' ] = $fields;
@@ -1036,14 +1039,14 @@ class PodsUI {
                 $this->fields[ 'search' ] = false;
 
             if ( !in_array( 'export', $this->actions_disabled ) ) {
-                if ( 'export' != $which && !empty( $this->fields[ 'export' ] ) )
+                if ( 'export' != $which && isset( $this->fields[ 'export' ] ) &&!empty( $this->fields[ 'export' ] ) )
                     $this->fields[ 'export' ] = $this->setup_fields( $this->fields[ 'export' ], 'export' );
                 else
                     $this->fields[ 'export' ] = $fields;
             }
 
             if ( !in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder[ 'on' ] ) {
-                if ( 'reorder' != $which && !empty( $this->fields[ 'reorder' ] ) )
+                if ( 'reorder' != $which && isset( $this->fields[ 'reorder' ] ) &&!empty( $this->fields[ 'reorder' ] ) )
                     $this->fields[ 'reorder' ] = $this->setup_fields( $this->fields[ 'reorder' ], 'reorder' );
                 else
                     $this->fields[ 'reorder' ] = $fields;
@@ -1241,13 +1244,17 @@ class PodsUI {
         if ( isset( $this->actions_custom[ 'form' ] ) && is_callable( $this->actions_custom[ 'form' ] ) )
             return call_user_func_array( $this->actions_custom[ 'form' ], array( &$this ) );
 
-        $submit = $this->label[ 'add' ];
+        $label = $this->label[ 'add' ];
         $id = null;
         $vars = array(
             'action' . $this->num => $this->action_after[ 'add' ],
             'do' . $this->num => 'create',
             'id' . $this->num => 'X_ID_X'
         );
+
+        $alt_vars = $vars;
+        $alt_vars[ 'action' ] = 'manage';
+        unset( $alt_vars[ 'id' ] );
 
         if ( false === $create ) {
             if ( empty( $this->row ) )
@@ -1256,7 +1263,7 @@ class PodsUI {
             if ( empty( $this->row ) )
                 return $this->error( sprintf( __( '<strong>Error:</strong> %s not found.', 'pods' ), $this->item ) );
 
-            $submit = $this->label[ 'edit' ];
+            $label = $this->label[ 'edit' ];
             $id = $this->row[ $this->sql[ 'field_id' ] ];
             $vars = array(
                 'action' . $this->num => $this->action_after[ 'edit' ],
@@ -1264,23 +1271,33 @@ class PodsUI {
                 'id' . $this->num => $id
             );
 
+            $alt_vars = $vars;
+            $alt_vars[ 'action' ] = 'manage';
+            unset( $alt_vars[ 'id' ] );
+
             if ( 1 == $duplicate ) {
-                $submit = $this->label[ 'duplicate' ];
+                $label = $this->label[ 'duplicate' ];
                 $id = null;
                 $vars = array(
                     'action' . $this->num => $this->action_after[ 'duplicate' ],
                     'do' . $this->num => 'create',
                     'id' . $this->num => 'X_ID_X'
                 );
+
+                $alt_vars = $vars;
+                $alt_vars[ 'action' ] = 'manage';
+                unset( $alt_vars[ 'id' ] );
             }
         }
 
         $fields =& $this->fields[ $this->action ];
         $pod =& $this->pod;
         $thank_you = pods_var_update( $vars, array( 'page' ), $this->exclusion() );
+        $thank_you_alt = pods_var_update( $alt_vars, array( 'page' ), $this->exclusion() );
         $obj =& $this;
         $singular_label = $this->item;
-        $label = $this->items;
+        $plural_label = $this->items;
+        $label = sprintf( __( 'Save %s', 'pods' ), $this->item );
 
         pods_view( PODS_DIR . 'ui/admin/form.php', compact( array_keys( get_defined_vars() ) ) );
     }
@@ -1471,8 +1488,12 @@ class PodsUI {
         if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
             $orderby = array();
 
-            if ( 'reorder' == $this->action && empty( $this->reorder[ 'orderby' ] ) )
-                $orderby[ $this->reorder[ 'on' ] ] = $this->reorder[ 'orderby_dir' ];
+            if ( 'reorder' == $this->action ) {
+                if ( !empty( $this->reorder[ 'orderby' ] ) )
+                    $orderby[ $this->reorder[ 'orderby' ] ] = $this->reorder[ 'orderby_dir' ];
+                else
+                    $orderby[ $this->reorder[ 'on' ] ] = $this->reorder[ 'orderby_dir' ];
+            }
 
             if ( !empty( $this->orderby ) ) {
                 $this->orderby = (array) $this->orderby;
@@ -1484,11 +1505,15 @@ class PodsUI {
             }
 
             $params = array(
+                'where' => pods_var_raw( $this->action, $this->where, null, null, true ),
+                'orderby' => $orderby,
                 'page' => (int) $this->page,
                 'limit' => (int) $this->limit,
-                'orderby' => $orderby,
                 'search' => $this->searchable,
-                'search_query' => $this->search
+                'search_query' => $this->search,
+                'search_across' => $this->search_across,
+                'search_across_picks' => $this->search_across_picks,
+                'filters' => $this->filters
             );
 
             $this->data = $this->pod->find( $params )->data();
@@ -1515,9 +1540,10 @@ class PodsUI {
             $this->pods_data->select(
                 array(
                     'table' => $this->sql[ 'table' ],
+                    'where' => pods_var_raw( $this->action, $this->where, null, null, true ),
+                    'orderby' => $orderby,
                     'page' => (int) $this->page,
                     'limit' => (int) $this->limit,
-                    'orderby' => $orderby,
                     'search' => $this->searchable,
                     'search_query' => $this->search,
                     'fields' => $this->fields[ 'search' ]
@@ -1664,20 +1690,12 @@ class PodsUI {
                         // use PodsFormUI fields
                         if ( !isset( $this->fields[ 'search' ][ $filter ] ) )
                             continue;
-                        if ( in_array( $this->fields[ 'search' ][ $filter ][ 'type' ], array( 'date', 'datetime' ) ) ) {
-                            if ( false === $date_exists ) {
-                                $date_exists = true;/*
-                                ?>
-                                <link type="text/css" rel="stylesheet" href="<?php echo $this->assets_url; ?>/jquery/ui.datepicker.css" />
-                                <script type="text/javascript">
-                                    jQuery( document ).ready( function () {
-                                        jQuery.getScript( '<?php echo $this->assets_url; ?>/jquery/ui.datepicker.js', function () {
-                                            jQuery( 'input.admin_ui_date' ).datepicker();
-                                        } );
-                                    } );
-                                </script>
-                                <?php*/
-                            }
+
+                        // @todo Implement new form class field()
+                        if ( in_array( $this->fields[ 'search' ][ $filter ][ 'type' ], array( 'date', 'datetime', 'time' ) ) ) {
+                            if ( false === $date_exists )
+                                $date_exists = true;
+
                             $start = pods_var( 'filter_' . $filter . '_start', 'get', $this->fields[ 'search' ][ $filter ][ 'filter_default' ] );
                             $end = pods_var( 'filter_' . $filter . '_end', 'get', $this->fields[ 'search' ][ $filter ][ 'filter_ongoing_default' ] );
                             ?>
@@ -1716,7 +1734,7 @@ class PodsUI {
                                     <?php
                                     foreach ( $related as $option_id => $option ) {
                                         ?>
-                                        <option value="<?php echo $option_id; ?>"<?php echo ( $option->id == $selected ? ' SELECTED' : '' ); ?>><?php echo $option; ?></option>
+                                        <option value="<?php echo $option_id; ?>"<?php echo ( $option_id == $selected ? ' SELECTED' : '' ); ?>><?php echo $option; ?></option>
                                         <?php
                                     }
                                     ?>
@@ -2510,6 +2528,7 @@ class PodsUI {
         }
 
         $field_name = $tag[ 0 ];
+
         $value = $this->get_field( $field_name );
 
         if ( isset( $tag[ 1 ] ) && !empty( $tag[ 1 ] ) && is_callable( $tag[ 1 ] ) )

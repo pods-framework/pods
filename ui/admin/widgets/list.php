@@ -13,7 +13,7 @@
 <ol class="pods_list_widget_form">
     <li>
         <label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title', 'pods' ); ?></label>
-        <input class="widefat" type="text" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo $title; ?>" />
+        <input class="widefat" type="text" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo esc_attr( $title ); ?>" />
     </li>
 
     <li>
@@ -27,7 +27,7 @@
             <?php foreach ( $all_pods as $pod ): ?>
             <?php $selected = ( $pod[ 'name' ] == $pod_type ) ? 'selected' : ''; ?>
             <option value="<?php echo $pod[ 'name' ]; ?>" <?php echo $selected; ?>>
-                <?php echo $pod[ 'label' ]; ?>
+                <?php echo esc_html( $pod[ 'label' ] ); ?>
             </option>
             <?php endforeach; ?>
         </select>
@@ -45,7 +45,7 @@
         <?php foreach ( $all_templates as $tpl ): ?>
         <?php $selected = ( $tpl[ 'name' ] == $template ) ? 'selected' : ''; ?>
         <option value="<?php echo $tpl[ 'name' ]; ?>" <?php echo $selected; ?>>
-            <?php echo $tpl[ 'name' ]; ?>
+            <?php echo esc_html( $tpl[ 'name' ] ); ?>
         </option>
         <?php endforeach; ?>
     </select>
@@ -57,12 +57,12 @@
 
     <li>
         <label for="<?php echo $this->get_field_id( 'limit' ); ?>"><?php _e( 'Limit', 'pods' ); ?></label>
-        <input class="widefat" type="text" id="<?php echo $this->get_field_id( 'limit' ); ?>" name="<?php echo $this->get_field_name( 'limit' ); ?>" value="<?php echo $limit; ?>" />
+        <input class="widefat" type="text" id="<?php echo $this->get_field_id( 'limit' ); ?>" name="<?php echo $this->get_field_name( 'limit' ); ?>" value="<?php echo esc_attr( $limit ); ?>" />
     </li>
 
     <li>
         <label for="<?php echo $this->get_field_id( 'orderby' ); ?>"><?php _e( 'Order By', 'pods' ); ?></label>
-        <input class="widefat" type="text" id="<?php echo $this->get_field_id( 'orderby' ); ?>" name="<?php echo $this->get_field_name( 'orderby' ); ?>" value="<?php echo $orderby; ?>" />
+        <input class="widefat" type="text" id="<?php echo $this->get_field_id( 'orderby' ); ?>" name="<?php echo $this->get_field_name( 'orderby' ); ?>" value="<?php echo esc_attr( $orderby ); ?>" />
     </li>
 
     <li>
@@ -74,6 +74,6 @@
 
     <li>
         <label for="<?php echo $this->get_field_id( 'where' ); ?>"><?php _e( 'Where', 'pods' ); ?></label>
-        <input class="widefat" type="text" id="<?php echo $this->get_field_id( 'where' ); ?>" name="<?php echo $this->get_field_name( 'where' ); ?>" value="<?php echo $where; ?>" />
+        <input class="widefat" type="text" id="<?php echo $this->get_field_id( 'where' ); ?>" name="<?php echo $this->get_field_name( 'where' ); ?>" value="<?php echo esc_attr( $where ); ?>" />
     </li>
 </ol>

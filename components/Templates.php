@@ -71,6 +71,8 @@ class Pods_Templates extends PodsComponent {
         register_post_type( $this->object_type, apply_filters( 'pods_internal_register_post_type_object_template', $args ) );
 
         if ( is_admin() ) {
+            add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
+
             add_action( 'dbx_post_advanced', array( $this, 'edit_page_form' ), 10 );
 
             add_action( 'pods_meta_groups', array( $this, 'add_meta_boxes' ) );
@@ -81,6 +83,60 @@ class Pods_Templates extends PodsComponent {
             add_action( 'pods_meta_save_post__pods_template', array( $this, 'clear_cache' ), 10, 5 );
             add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
         }
+    }
+
+    /**
+     * Update Post Type messages
+     *
+     * @param array $messages
+     *
+     * @return array
+     * @since 2.0.2
+     */
+    public function setup_updated_messages ( $messages ) {
+        global $post, $post_ID;
+
+        $post_type = get_post_type_object( $this->object_type );
+
+        $labels = $post_type->labels;
+
+        $messages[ $post_type->name ] = array(
+            1 => sprintf( __( '%s updated. <a href="%s">%s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
+            2 => __( 'Custom field updated.', 'pods' ),
+            3 => __( 'Custom field deleted.', 'pods' ),
+            4 => sprintf( __( '%s updated.', 'pods' ), $labels->singular_name ),
+            /* translators: %s: date and time of the revision */
+            5 => isset( $_GET[ 'revision' ] ) ? sprintf( __( '%s restored to revision from %s', 'pods' ), $labels->singular_name, wp_post_revision_title( (int) $_GET[ 'revision' ], false ) ) : false,
+            6 => sprintf( __( '%s published. <a href="%s">%s</a>', 'pods' ), $labels->singular_name, esc_url( get_permalink( $post_ID ) ), $labels->view_item ),
+            7 => sprintf( __( '%s saved.', 'pods' ), $labels->singular_name ),
+            8 => sprintf( __( '%s submitted. <a target="_blank" href="%s">Preview %s</a>', 'pods' ),
+                $labels->singular_name,
+                esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ),
+                $labels->singular_name
+            ),
+            9 => sprintf( __( '%s scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview %s</a>', 'pods' ),
+                $labels->singular_name,
+                // translators: Publish box date format, see http://php.net/date
+                date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ),
+                esc_url( get_permalink( $post_ID ) ),
+                $labels->singular_name
+            ),
+            10 => sprintf( __( '%s draft updated. <a target="_blank" href="%s">Preview %s</a>', 'pods' ), $labels->singular_name, esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ), $labels->singular_name )
+        );
+
+        if ( false === (boolean) $post_type->public ) {
+            $messages[ $post_type->name ][ 1 ] = sprintf( __( '%s updated.', 'pods' ), $labels->singular_name );
+            $messages[ $post_type->name ][ 6 ] = sprintf( __( '%s published.', 'pods' ), $labels->singular_name );
+            $messages[ $post_type->name ][ 8 ] = sprintf( __( '%s submitted.', 'pods' ), $labels->singular_name );
+            $messages[ $post_type->name ][ 9 ] = sprintf( __( '%s scheduled for: <strong>%1$s</strong>.', 'pods' ),
+                $labels->singular_name,
+                // translators: Publish box date format, see http://php.net/date
+                date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) )
+            );
+            $messages[ $post_type->name ][ 10 ] = sprintf( __( '%s draft updated.', 'pods' ), $labels->singular_name );
+        }
+
+        return $messages;
     }
 
     /**
@@ -115,8 +171,8 @@ class Pods_Templates extends PodsComponent {
                 return;
         }
 
-        delete_transient( 'pods_object_template' );
-        delete_transient( 'pods_object_template_' . $post->post_title );
+        pods_transient_clear( 'pods_object_template' );
+        pods_transient_clear( 'pods_object_template_' . $post->post_title );
     }
 
     /**
@@ -208,12 +264,23 @@ class Pods_Templates extends PodsComponent {
             if ( is_object( $post ) && $this->object_type == $post->post_type ) {
                 $postdata = array(
                     'ID' => $post_ID,
-                    'post_content' => $meta_value
+                    'post_content' => pods_sanitize( $meta_value )
                 );
 
                 remove_filter( current_filter(), array( $this, __FUNCTION__ ), 10 );
 
+                $revisions = false;
+
+                if ( has_action( 'pre_post_update', 'wp_save_post_revision' ) ) {
+                    remove_action( 'pre_post_update', 'wp_save_post_revision' );
+
+                    $revisions = true;
+                }
+
                 wp_update_post( $postdata );
+
+                if ( $revisions )
+                    add_action( 'pre_post_update', 'wp_save_post_revision' );
 
                 return true;
             }
@@ -260,11 +327,11 @@ class Pods_Templates extends PodsComponent {
             // Only detail templates need $this->id
             if ( empty( $obj->id ) ) {
                 while ( $obj->fetch() ) {
-                    echo self::do_template( $code );
+                    echo self::do_template( $code, $obj );
                 }
             }
             else
-                echo self::do_template( $code );
+                echo self::do_template( $code, $obj );
         }
 
         $out = ob_get_clean();
@@ -284,13 +351,8 @@ class Pods_Templates extends PodsComponent {
      * @since 1.8.5
      */
     public static function do_template ( $code, $obj = null ) {
-        $php = true;
-
-        if ( !empty( $obj ) ) {
+        if ( !empty( $obj ) )
             self::$obj =& $obj;
-
-            $php = false;
-        }
         else
             $obj =& self::$obj;
 
@@ -299,7 +361,7 @@ class Pods_Templates extends PodsComponent {
 
         $code = str_replace( '$this->', '$obj->', $code );
 
-        if ( $php && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) ) {
+        if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) {
             ob_start();
 
             eval( "?>$code" );
@@ -309,83 +371,9 @@ class Pods_Templates extends PodsComponent {
         else
             $out = $code;
 
-        $out = preg_replace_callback( '/({@(.*?)})/m', array( 'self', 'do_magic_tags' ), $out );
+        $out = $obj->do_magic_tags( $out );
 
         return apply_filters( 'pods_templates_do_template', $out, $code, $obj );
     }
 
-    /**
-     * Replace magic tags with their values
-     *
-     * @param string $tag The magic tag to evaluate
-     * @param object $obj The Pods object
-     *
-     * @since 1.x
-     */
-    public static function do_magic_tags ( $tag, $obj = null ) {
-        if ( !empty( $obj ) )
-            self::$obj =& $obj;
-        else
-            $obj =& self::$obj;
-
-        if ( empty( $obj ) || !is_object( $obj ) )
-            return '';
-
-        if ( is_array( $tag ) ) {
-            if ( !isset( $tag[ 2 ] ) && strlen( trim( $tag[ 2 ] ) ) < 1 )
-                return;
-
-            $tag = $tag[ 2 ];
-        }
-
-        $tag = trim( $tag, ' {@}' );
-        $tag = explode( ',', $tag );
-
-        if ( empty( $tag ) || !isset( $tag[ 0 ] ) || strlen( trim( $tag[ 0 ] ) ) < 1 )
-            return;
-
-        foreach ( $tag as $k => $v ) {
-            $tag[ $k ] = trim( $v );
-        }
-
-        $field_name = $tag[ 0 ];
-
-        if ( 'type' == $field_name )
-            $value = $obj->pod;
-        else
-            $value = $obj->field( $field_name );
-
-        $helper_name = $before = $after = '';
-
-        if ( isset( $tag[ 1 ] ) && !empty( $tag[ 1 ] ) ) {
-            $helper_name = $tag[ 1 ];
-
-            $params = array(
-                'helper' => $helper_name,
-                'value' => $value,
-                'name' => $field_name,
-                'deprecated' => self::$deprecated
-            );
-
-            if ( class_exists( 'Pods_Helpers' ) )
-                $value = Pods_Helpers::helper( $params, $obj );
-        }
-
-        if ( isset( $tag[ 2 ] ) && !empty( $tag[ 2 ] ) )
-            $before = $tag[ 2 ];
-
-        if ( isset( $tag[ 3 ] ) && !empty( $tag[ 3 ] ) )
-            $after = $tag[ 3 ];
-
-        $value = apply_filters( 'pods_templates_do_magic_tags', $value, $field_name, $helper_name, $before, $after );
-
-        if ( is_array( $value ) )
-            $value = pods_serial_comma( $value, $field_name, $obj->fields );
-
-        if ( null !== $value && false !== $value )
-            return $before . $value . $after;
-
-        return;
-
-    }
 }

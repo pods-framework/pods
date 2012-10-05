@@ -227,7 +227,8 @@ class PodsField_Text extends PodsField {
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->strip_html( $value, $options );
 
-        $value = wp_trim_words( $value );
+        if ( 0 == pods_var( 'text_allow_html', $options, 0, null, true ) )
+            $value = wp_trim_words( $value );
 
         return $value;
     }
@@ -243,7 +244,7 @@ class PodsField_Text extends PodsField {
     public function strip_html ( $value, $options = null ) {
         $options = (array) $options;
 
-        if ( 1 == pods_var( 'text_allow_html', $options ) ) {
+        if ( 1 == pods_var( 'text_allow_html', $options, 0, null, true ) ) {
             $allowed_html_tags = '';
 
             if ( 0 < strlen( pods_var( 'text_allowed_html_tags', $options ) ) ) {

@@ -49,19 +49,24 @@ class Pods_Roles extends PodsComponent {
         $roles = array();
 
         foreach ( $wp_roles->role_objects as $key => $role ) {
+            $count = $this->count_users( $key );
+
             $roles[ $key ] = array(
                 'id' => $key,
                 'label' => $wp_roles->role_names[ $key ],
                 'name' => $key,
                 'capabilities' => count( (array) $role->capabilities ),
-                'users' => sprintf( _n( '%s User', '%s Users', $this->count_users( $key ), 'pods' ), $this->count_users( $key ) )
+                'users' => sprintf( _n( '%s User', '%s Users', $count, 'pods' ), $count )
             );
 
             if ( $default_role == $key )
                 $roles[ $key ][ 'label' ] .= ' (site default)';
 
-            if ( current_user_can( 'list_users' ) )
-                $roles[ $key ][ 'users' ] = '<a href="' . admin_url( esc_url( 'users.php?role=' . $key ) ) . '">' . $roles[ $key ][ 'users' ] . '</a>';
+            if ( 0 < $count && ( is_super_admin() || current_user_can( 'list_users' ) ) ) {
+                $roles[ $key ][ 'users' ] .= '<br /><a href="'
+                                             . admin_url( esc_url( 'users.php?role=' . $key ) ) . '">'
+                                             . __( 'View Users', 'pods' ) . '</a>';
+            }
         }
 
         $ui = array(
@@ -77,7 +82,12 @@ class Pods_Roles extends PodsComponent {
                     'label' => array( 'label' => __( 'Label', 'pods' ) ),
                     'name' => array( 'label' => __( 'Name', 'pods' ) ),
                     'capabilities' => array( 'label' => __( 'Capabilities', 'pods' ) ),
-                    'users' => array( 'label' => __( 'Users', 'pods' ) )
+                    'users' => array(
+                        'label' => __( 'Users', 'pods' ),
+                        'type' => 'text',
+                        'text_allow_html' => 1,
+                        'text_allowed_html_tags' => ''
+                    )
                 )
             ),
             'actions_disabled' => array( 'duplicate', 'view', 'export' ),
@@ -183,19 +193,24 @@ class Pods_Roles extends PodsComponent {
         $roles = array();
 
         foreach ( $wp_roles->role_objects as $key => $role ) {
+            $count = $this->count_users( $key );
+
             $roles[ $key ] = array(
                 'id' => $key,
                 'label' => $wp_roles->role_names[ $key ],
                 'name' => $key,
                 'capabilities' => count( (array) $role->capabilities ),
-                'users' => sprintf( _n( '%s User', '%s Users', $this->count_users( $key ), 'pods' ), $this->count_users( $key ) )
+                'users' => sprintf( _n( '%s User', '%s Users', $count, 'pods' ), $count )
             );
 
             if ( $default_role == $key )
                 $roles[ $key ][ 'label' ] .= ' (site default)';
 
-            if ( current_user_can( 'list_users' ) )
-                $roles[ $key ][ 'users' ] = '<a href="' . admin_url( esc_url( 'users.php?role=' . $key ) ) . '">' . $roles[ $key ][ 'users' ] . '</a>';
+            if ( 0 < $count && ( is_super_admin() || current_user_can( 'list_users' ) ) ) {
+                $roles[ $key ][ 'users' ] .= '<br /><a href="'
+                                             . admin_url( esc_url( 'users.php?role=' . $key ) ) . '">'
+                                             . __( 'View Users', 'pods' ) . '</a>';
+            }
         }
 
         $name = $obj->data[ $id ][ 'label' ] . ' (' . $obj->data[ $id ][ 'name' ] . ')';

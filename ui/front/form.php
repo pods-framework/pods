@@ -16,7 +16,12 @@ foreach ( $fields as $k => $field ) {
 $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
 $field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $fields ) ) );
 
-$nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . session_id() . '_' . $pod->id() . '_' . $uri_hash . '_' . $field_hash );
+$uid = @session_id();
+
+if ( is_user_logged_in() )
+    $uid = 'user_' . get_current_user_id();
+
+$nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . $uid . '_' . $pod->id() . '_' . $uri_hash . '_' . $field_hash );
 
 if ( isset( $_POST[ '_pods_nonce' ] ) ) {
     try {
@@ -27,8 +32,11 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
     }
 }
 ?>
-<form action="<?php echo pods_var_update( array( '_p_submitted' => 1 ) ); ?>" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo $pod->pod; ?>" data-location="<?php echo pods_var_update( array( 'success' => true ) ) ?>">
+<form action="<?php echo pods_var_update( array( '_p_submitted' => 1 ) ); ?>" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo $pod->pod; ?> pods-submittable-ajax" data-location="<?php echo $thank_you; ?>">
     <div class="pods-submittable-fields">
+        <?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
+        <?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>
+        <?php echo PodsForm::field( 'do', ( 0 < $pod->id() ? 'save' : 'create' ), 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_id', $pod->id(), 'hidden' ); ?>
@@ -42,7 +50,7 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
             ?>
                 <li class="pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Podsform::clean( $field[ 'name' ], true ); ?>">
                     <div class="pods-field-label">
-                        <?php echo PodsForm::label( 'pods_field_' . $field[ 'name' ], $field ); ?>
+                        <?php echo PodsForm::label( 'pods_field_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?>
                     </div>
 
                     <div class="pods-field-input">

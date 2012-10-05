@@ -349,7 +349,7 @@ class PodsUpgrade_2_0 {
                 do_action( 'pods_update', PODS_VERSION, $old_version );
 
                 if ( false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $old_version ) )
-                    include_once( PODS_DIR . 'sql/update.1.x.php' );
+                    include_once( PODS_DIR . 'sql/update-1.x.php' );
 
                 do_action( 'pods_update_post', PODS_VERSION, $old_version );
             }
@@ -364,6 +364,8 @@ class PodsUpgrade_2_0 {
     public function migrate_pods () {
         if ( true === $this->check_progress( __FUNCTION__ ) )
             return '1';
+
+        $sister_ids = (array) get_option( 'pods_framework_upgrade_2_0_sister_ids', array() );
 
         $migration_limit = (int) apply_filters( 'pods_upgrade_pod_limit', 1 );
         $migration_limit = max( $migration_limit, 1 );
@@ -400,18 +402,22 @@ class PodsUpgrade_2_0 {
                     array(
                         'name' => 'created',
                         'label' => 'Date Created',
-                        'type' => 'date',
+                        'type' => 'datetime',
                         'options' => array(
-                            'date_format_type' => 'datetime'
+                            'datetime_format' => 'ymd_slash',
+                            'datetime_time_type' => '12',
+                            'datetime_time_format' => 'h_mm_ss_A'
                         ),
                         'weight' => 1
                     ),
                     array(
                         'name' => 'modified',
                         'label' => 'Date Modified',
-                        'type' => 'date',
+                        'type' => 'datetime',
                         'options' => array(
-                            'date_format_type' => 'datetime'
+                            'datetime_format' => 'ymd_slash',
+                            'datetime_time_type' => '12',
+                            'datetime_time_format' => 'h_mm_ss_A'
                         ),
                         'weight' => 2
                     ),
@@ -460,13 +466,15 @@ class PodsUpgrade_2_0 {
                     $field_params = array(
                         'name' => trim( $row->name ),
                         'label' => trim( $row->label ),
+                        'description' => trim( $row->comment ),
                         'type' => $field_type,
                         'weight' => $weight,
                         'options' => array(
                             'required' => $row->required,
                             'unique' => $row->unique,
                             'input_helper' => $row->input_helper,
-                            'old_name' => $old_name
+                            '_pods_1x_field_name' => $old_name,
+                            '_pods_1x_field_id' => $row->id
                         )
                     );
 
@@ -482,7 +490,11 @@ class PodsUpgrade_2_0 {
                         elseif ( 'wp_taxonomy' == $row->pickval )
                             $field_params[ 'pick_object' ] = 'taxonomy-category';
 
-                        $field_params[ 'sister_field_id' ] = $row->sister_field_id;
+                        $field_params[ 'sister_id' ] = $row->sister_field_id;
+
+                        $sister_ids[ $row->id ] = $row->sister_field_id; // Old Sister Field ID
+                        $field_params[ 'options' ][ '_pods_1x_sister_id' ] = $row->sister_field_id;
+
                         $field_params[ 'options' ][ 'pick_filter' ] = $row->pick_filter;
                         $field_params[ 'options' ][ 'pick_orderby' ] = $row->pick_orderby;
                         $field_params[ 'options' ][ 'pick_display' ] = '{@name}';
@@ -530,7 +542,8 @@ class PodsUpgrade_2_0 {
                         'post_delete_helpers' => $pod_type->post_drop_helpers,
                         'show_in_menu' => $pod_type->is_toplevel,
                         'detail_url' => $pod_type->detail_page,
-                        'pod_index' => 'name'
+                        'pod_index' => 'name',
+                        '_pods_1x_pod_id' => $pod_type->id
                     ),
                 );
 
@@ -546,18 +559,51 @@ class PodsUpgrade_2_0 {
             }
         }
 
+        update_option( 'pods_framework_upgrade_2_0_sister_ids', $sister_ids );
+
         $this->update_progress( __FUNCTION__, $last_id );
 
         if ( $migration_limit == count( $pod_types ) )
-            echo '-2';
+            return '-2';
         else
-            echo '1';
+            return '1';
     }
 
     /**
      * @return string
      */
     public function migrate_fields () {
+        if ( true === $this->check_progress( __FUNCTION__ ) )
+            return '1';
+
+        $sister_ids = (array) get_option( 'pods_framework_upgrade_2_0_sister_ids', array() );
+
+        foreach ( $sister_ids as $old_field_id => $old_sister_id ) {
+            $old_field_id = (int) $old_field_id;
+            $old_sister_id = (int) $old_sister_id;
+
+            $new_field_id = pods_query( "SELECT `post_id` FROM `@wp_postmeta` WHERE `meta_key` = '_pods_1x_field_id' AND `meta_value` = '{$old_field_id}' LIMIT 1" );
+
+            if ( !empty( $new_field_id ) ) {
+                $new_field_id = (int) $new_field_id[ 0 ]->post_id;
+
+                $new_sister_id = pods_query( "SELECT `post_id` FROM `@wp_postmeta` WHERE `meta_key` = '_pods_1x_field_id' AND `meta_value` = '{$old_sister_id}' LIMIT 1" );
+
+                if ( !empty( $new_sister_id ) ) {
+                    $new_sister_id = (int) $new_sister_id[ 0 ]->post_id;
+
+                    update_post_meta( $new_field_id, 'sister_id', $new_sister_id );
+                }
+                else
+                    delete_post_meta( $new_field_id, 'sister_id' );
+            }
+        }
+
+        // We were off the grid, so let's flush and allow for resync
+        $this->api->cache_flush_pods();
+
+        $this->update_progress( __FUNCTION__, true );
+
         return '1';
     }
 
@@ -601,6 +647,8 @@ class PodsUpgrade_2_0 {
 
                 $pod_fields = pods_query( "SELECT `id`, `name` FROM `@wp_pod_fields` WHERE `datatype` = {$type->id} ORDER BY `id`" );
 
+                $types[ $type->id ][ 'old_fields' ] = array();
+
                 foreach ( $pod_fields as $field ) {
                     // Handle name changes
                     if ( in_array( $field->name, array( 'type', 'created', 'modified', 'author' ) ) )
@@ -633,12 +681,14 @@ class PodsUpgrade_2_0 {
                 $related_item_id = $r->tbl_row_id;
 
                 if ( 'pick' == $field[ 'type' ] ) {
-                    if ( 0 < (int) $field[ 'sister_field_id' ] ) {
+                    $old_sister_id = (int) pods_var( '_pods_1x_sister_id', $field[ 'options' ], 0 );
+
+                    if ( 0 < $old_sister_id ) {
                         $sql = "
                             SELECT `f`.`id`, `f`.`name`, `t`.`name` AS `pod`
                             FROM `@wp_pod_fields` AS `f`
                             LEFT JOIN `@wp_pod_types` AS `t` ON `t`.`id` = `f`.`datatype`
-                            WHERE `f`.`id` = " . (int) $field[ 'sister_field_id' ] . " AND `t`.`id` IS NOT NULL
+                            WHERE `f`.`id` = " . $old_sister_id . " AND `t`.`id` IS NOT NULL
                             ORDER BY `f`.`id`
                             LIMIT 1
                         ";
@@ -709,9 +759,9 @@ class PodsUpgrade_2_0 {
         $this->update_progress( __FUNCTION__, $last_id );
 
         if ( $migration_limit == count( $rel ) )
-            echo '-2';
+            return '-2';
         else
-            echo '1';
+            return '1';
     }
 
     /**
@@ -899,7 +949,7 @@ class PodsUpgrade_2_0 {
         foreach ( $pod_data[ 'fields' ] as $field ) {
             if ( !in_array( $field[ 'name' ], array( 'created', 'modified', 'author' ) ) && !in_array( $field[ 'type' ], array( 'file', 'pick' ) ) ) {
                 $columns[] = pods_sanitize( $field[ 'name' ] );
-                $old_columns[] = pods_var( 'old_name', $field[ 'options' ], $field[ 'name' ], null, false );
+                $old_columns[] = pods_var( '_pods_1x_field_name', $field[ 'options' ], $field[ 'name' ], null, false );
             }
         }
 
@@ -984,6 +1034,7 @@ class PodsUpgrade_2_0 {
         }
 
         delete_option( 'pods_framework_upgrade_2_0' );
+        delete_option( 'pods_framework_upgrade_2_0_sister_ids' );
         delete_option( 'pods_framework_upgraded_1_x' );
     }
 
@@ -1004,6 +1055,7 @@ class PodsUpgrade_2_0 {
         delete_option( 'pods_roles' );
         delete_option( 'pods_version' );
         delete_option( 'pods_framework_upgrade_2_0' );
+        delete_option( 'pods_framework_upgrade_2_0_sister_ids' );
         delete_option( 'pods_framework_upgraded_1_x' );
 
         delete_option( 'pods_disable_file_browser' );
@@ -1012,6 +1064,8 @@ class PodsUpgrade_2_0 {
         delete_option( 'pods_disable_file_upload' );
         delete_option( 'pods_upload_require_login' );
         delete_option( 'pods_upload_require_login_cap' );
+
+        pods_query( "DELETE FROM `@wp_postmeta` WHERE `meta_key` LIKE '_pods_1x_%'" );
 
         /*
          * other options maybe not in 2.0

@@ -1,81 +1,85 @@
 <?php
 $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true );
+$data_count = count( $options[ 'data' ] );
 
-if ( 1 == $options[ 'grouped' ] ) {
-    ?>
+if ( 0 < $data_count ) {
+
+    if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
+        ?>
 <div class="pods-pick-values pods-pick-checkbox">
     <ul>
 <?php
-}
-
-$counter = 1;
-$primary_name = $name;
-$primary_id = 'pods-form-ui-' . PodsForm::clean( $name );
-
-foreach ( $options[ 'data' ] as $val => $label ) {
-    if ( is_array( $label ) ) {
-        if ( isset( $label[ 'label' ] ) )
-            $label = $label[ 'label' ];
-        else
-            $label = $val;
     }
 
-    $attributes = array();
+    $counter = 1;
+    $primary_name = $name;
+    $primary_id = 'pods-form-ui-' . PodsForm::clean( $name );
 
-    $attributes[ 'type' ] = 'checkbox';
+    foreach ( $options[ 'data' ] as $val => $label ) {
+        if ( is_array( $label ) ) {
+            if ( isset( $label[ 'label' ] ) )
+                $label = $label[ 'label' ];
+            else
+                $label = $val;
+        }
 
-    $attributes[ 'checked' ] = null;
-    $attributes[ 'tabindex' ] = 2;
+        $attributes = array();
 
-    if ( $val == $value || ( is_array( $value ) && in_array( $val, $value ) ) )
-        $attributes[ 'checked' ] = 'CHECKED';
+        $attributes[ 'type' ] = 'checkbox';
 
-    $attributes[ 'value' ] = $val;
+        $attributes[ 'checked' ] = null;
+        $attributes[ 'tabindex' ] = 2;
 
-    if ( 1 < count( $options[ 'data' ] ) && false === strpos( $primary_name, '[]' ) )
-        $name = $primary_name . '[' . ( $counter - 1 ) . ']';
+        if ( $val == $value || ( is_array( $value ) && in_array( $val, $value ) ) )
+            $attributes[ 'checked' ] = 'CHECKED';
 
-    $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+        $attributes[ 'value' ] = $val;
 
-    if ( strlen( $label ) < 1 )
-        $attributes[ 'class' ] .= ' pods-form-ui-no-label';
+        if ( 1 < $data_count && false === strpos( $primary_name, '[]' ) )
+            $name = $primary_name . '[' . ( $counter - 1 ) . ']';
 
-    if ( 1 < count( $options[ 'data' ] ) )
-        $attributes[ 'id' ] = $primary_id . $counter;
+        $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
 
-    if ( 1 == $options[ 'grouped' ] ) {
-        ?>
+        if ( strlen( $label ) < 1 )
+            $attributes[ 'class' ] .= ' pods-form-ui-no-label';
+
+        if ( 1 < $data_count )
+            $attributes[ 'id' ] = $primary_id . $counter;
+
+        if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
+            ?>
         <li>
 <?php
-    }
-    ?>
-    <div class="pods-field pods-boolean">
-        <input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
-        <?php
-        if ( 0 < strlen( $label ) ) {
-            $help = '';
-
-            if ( 0 == $options[ 'grouped' ] && isset( $options[ 'help' ] ) && !empty( $options[ 'help' ] ) )
-                $help = $options[ 'help' ];
-
-            echo PodsForm::label( $attributes[ 'id' ], $label, $help );
         }
         ?>
-    </div>
-    <?php
+        <div class="pods-field pods-boolean">
+            <input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
+            <?php
+            if ( 0 < strlen( $label ) ) {
+                $help = pods_var_raw( 'help', $options );
 
-    if ( 1 == $options[ 'grouped' ] ) {
-        ?>
+                if ( 1 == pods_var( 'grouped', $options, 0, null, true ) || empty( $help ) )
+                    $help = '';
+
+                echo PodsForm::label( $attributes[ 'id' ], $label, $help );
+            }
+            ?>
+        </div>
+        <?php
+
+        if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
+            ?>
         </li>
 <?php
+        }
+
+        $counter++;
     }
 
-    $counter++;
-}
-
-if ( 1 == $options[ 'grouped' ] ) {
-    ?>
+    if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
+        ?>
     </ul>
 </div>
 <?php
+    }
 }

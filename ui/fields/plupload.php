@@ -10,14 +10,18 @@ wp_enqueue_style( 'pods-attach' );
 $field_file = PodsForm::field_loader( 'file' );
 
 $attributes = array();
-$attributes[ 'value' ] = $value;
-$attributes[ 'tabindex' ] = 2;
 $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
 
 $css_id = $attributes[ 'id' ];
 
 $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
-$field_nonce = wp_create_nonce( 'pods_upload_' . ( !is_object( $pod ) ? '0' : $pod->pod_id ) . '_' . session_id() . '_' . $uri_hash . '_' . $options[ 'id' ] );
+
+$uid = @session_id();
+
+if ( is_user_logged_in() )
+    $uid = 'user_' . get_current_user_id();
+
+$field_nonce = wp_create_nonce( 'pods_upload_' . ( !is_object( $pod ) ? '0' : $pod->pod_id ) . '_' . $uid . '_' . $uri_hash . '_' . $options[ 'id' ] );
 
 $file_limit = 1;
 
@@ -52,35 +56,37 @@ if ( empty( $value ) )
 else
     $value = (array) $value;
 ?>
-<table class="form-table pods-metabox" id="<?php echo $css_id; ?>">
-    <tbody>
-        <tr class="form-field">
-            <td>
-                <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
-                    foreach ( $value as $val ) {
-                        $attachment = get_post( $val );
+<div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ] ), $name, PodsForm::$field_type, $options ); ?>>
+    <table class="form-table pods-metabox" id="<?php echo $css_id; ?>">
+        <tbody>
+            <tr class="form-field">
+                <td>
+                    <ul class="pods-files pods-files-list"><?php // no extra space in ul or CSS:empty won't work
+                        foreach ( $value as $val ) {
+                            $attachment = get_post( $val );
 
-                        if ( empty( $attachment ) )
-                            continue;
+                            if ( empty( $attachment ) )
+                                continue;
 
-                        $thumb = wp_get_attachment_image_src( $val, 'thumbnail', true );
+                            $thumb = wp_get_attachment_image_src( $val, 'thumbnail', true );
 
-                        $title = $attachment->post_title;
+                            $title = $attachment->post_title;
 
-                        if ( 0 == pods_var( 'file_edit_title', $options, 0 ) )
-                            $title = basename( $attachment->guid );
+                            if ( 0 == pods_var( 'file_edit_title', $options, 0 ) )
+                                $title = basename( $attachment->guid );
 
-                        echo $field_file->markup( $attributes, $file_limit, pods_var( 'file_edit_title', $options, 0 ), $val, $thumb[ 0 ], $title );
-                    }
-                    ?></ul>
+                            echo $field_file->markup( $attributes, $file_limit, pods_var( 'file_edit_title', $options, 0 ), $val, $thumb[ 0 ], $title );
+                        }
+                        ?></ul>
 
-                <a class="button pods-file-add plupload-add" id="<?php echo $css_id; ?>-upload" href="" tabindex="2"><?php _e( 'Add File', 'pods' ); ?></a>
+                    <a class="button pods-file-add plupload-add" id="<?php echo $css_id; ?>-upload" href="" tabindex="2"><?php _e( 'Add File', 'pods' ); ?></a>
 
-                <ul class="pods-files pods-files-queue"></ul>
-            </td>
-        </tr>
-    </tbody>
-</table>
+                    <ul class="pods-files pods-files-queue"></ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
     <?php echo $field_file->markup( $attributes, $file_limit, pods_var( 'file_edit_title', $options, 0 ) ); ?>
@@ -100,7 +106,7 @@ else
 <script>
     jQuery( function ( $ ) {
 
-    <?php if ( 1 < $file_limit ) { ?>
+    <?php if ( 1 != $file_limit ) { ?>
         // init sortable
         $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ).sortable( {
                     containment : 'parent',

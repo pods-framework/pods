@@ -5,8 +5,10 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_t
 
 $pick_limit = (int) pods_var( 'pick_limit', $options, 0 );
 
-if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit )
+if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit ) {
+    $name .= '[]';
     $attributes[ 'multiple' ] = 'multiple';
+}
 
 if ( !is_array( $options[ 'data' ] ) && false !== $options[ 'data' ] && 0 < strlen( $options[ 'data' ] ) )
     $options[ 'data' ] = implode( ',', $options[ 'data' ] );

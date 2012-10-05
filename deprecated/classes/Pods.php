@@ -14,6 +14,12 @@ class Pods_Deprecated
 
     var $datatype_id;
 
+    var $meta = array();
+
+    var $meta_properties = array();
+
+    var $meta_extra = '';
+
     /**
      * Constructor - Pods Deprecated functionality (pre 2.0)
      *
@@ -340,8 +346,8 @@ class Pods_Deprecated
     public function publicForm ( $fields = null, $label = 'Save Changes', $thankyou_url = null ) {
         pods_deprecated( 'Pods::publicForm', '2.0.0', 'Pods::form' );
 
-
         if ( !empty( $fields ) ) {
+            // Just update field name here, form() will handle the rest
             foreach ( $fields as $k => $field ) {
                 $name = $k;
 
@@ -355,10 +361,9 @@ class Pods_Deprecated
                 if ( in_array( $name, array( 'created', 'modified', 'author' ) ) && isset( $this->obj->fields[ $name . '2' ] ) )
                     $name .= '2';
 
-                if ( !isset( $this->obj->fields[ $name ] ) || pods_var_raw( 'hidden', $field, false, null, true ) )
-                    unset( $fields[ $k ] );
-                else
-                    $fields[ $k ] = array_merge( $this->obj->fields[ $name ], $field );
+                $field[ 'name' ] = $name;
+
+                $fields[ $k ] = $field;
             }
         }
 
@@ -402,8 +407,12 @@ class Pods_Deprecated
 
         $value = $this->obj->field( array( 'name' => $name, 'orderby' => $orderby ) );
 
-        if ( is_array( $value ) && false === strpos( $name, '.' ) && !empty( $value ) && !isset( $value[ 0 ] ) )
-            $value = array( $value ); // fix for single tableless fields
+        if ( is_array( $value ) && !empty( $value ) ) {
+            if ( false === strpos( $name, '.' ) && !isset( $value[ 0 ] ) )
+                $value = array( $value ); // fix for single tableless fields
+            elseif ( false !== strpos( $name, '.' ) && 1 == count( $value ) && isset( $value[ 0 ] ) )
+                $value = $value[ 0 ];
+        }
 
         return $value;
     }
@@ -473,7 +482,7 @@ class Pods_Deprecated
 
         $params = array(
             'where' => $where,
-            'orderby' => "`t`.`{$this->obj->field_id}` DESC",
+            'orderby' => "`t`.`{$this->obj->data->field_id}` DESC",
             'limit' => (int) $rows_per_page,
             'page' => $this->obj->page,
             'search' => $this->obj->search,

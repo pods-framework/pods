@@ -60,6 +60,26 @@ function pods_do_hook ( $scope, $name, $args = null, &$obj = null ) {
 }
 
 /**
+ * Message / Notice handling for Admin UI
+ *
+ * @param string $message The notice / error message shown
+ * @param string $type Message type
+ */
+function pods_message ( $message, $type = null ) {
+    if ( empty( $type ) || !in_array( $type, array( 'notice', 'error' ) ) )
+        $type = 'notice';
+
+    $class = '';
+
+    if ( 'notice' == $type )
+        $class = 'updated';
+    elseif ( 'error' == $type )
+        $class = 'error';
+
+    echo '<div id="message" class="' . $class . ' fade"><p>' . $message . '</p></div>';
+}
+
+/**
  * Error Handling which throws / displays errors
  *
  * @param string $error The error message to be thrown / displayed
@@ -107,7 +127,7 @@ function pods_error ( $error, $obj = null ) {
         return $die_bypass;
 
     // die with error
-    if ( !defined( 'DOING_AJAX' ) && !headers_sent() )
+    if ( !defined( 'DOING_AJAX' ) && !headers_sent() && is_admin() )
         wp_die( $error );
     else
         die( "<e>$error</e>" );
@@ -454,7 +474,7 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
             $output = get_transient( $var );
         elseif ( 'site-transient' == $type )
             $output = get_site_transient( $var );
-        elseif ( 'cache' == $type ) {
+        elseif ( 'cache' == $type && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) ) {
             $group = 'default';
             $force = false;
 
@@ -631,7 +651,9 @@ function pods_var_update ( $array = null, $allowed = null, $excluded = null, $ur
         $get = $_GET;
 
     foreach ( $get as $key => $val ) {
-        if ( strlen( $val ) < 1 )
+        if ( is_array( $val ) && empty( $val ) )
+            unset( $get[ $key ] );
+        elseif ( !is_array( $val ) && strlen( $val ) < 1 )
             unset( $get[ $key ] );
         elseif ( !empty( $allowed ) && !in_array( $key, $allowed ) )
             unset( $get[ $key ] );
@@ -646,7 +668,9 @@ function pods_var_update ( $array = null, $allowed = null, $excluded = null, $ur
 
     if ( !empty( $array ) ) {
         foreach ( $array as $key => $val ) {
-            if ( 0 < strlen( $val ) )
+            if ( is_array( $val ) && !empty( $val ) )
+                $get[ $key ] = $val;
+            elseif ( !is_array( $val ) && 0 < strlen( $val ) )
                 $get[ $key ] = $val;
             elseif ( isset( $get[ $key ] ) )
                 unset( $get[ $key ] );
@@ -1017,9 +1041,12 @@ function pods_shortcode ( $tags, $content = null ) {
         $found = $pod->total();
     }
     elseif ( !empty( $tags[ 'field' ] ) ) {
-        $val = $pod->field( $tags[ 'field' ] );
+        if ( empty( $tags[ 'helper' ] ) )
+            $val = $pod->display( $tags[ 'field' ] );
+        else
+            $val = $pod->helper( $tags[ 'helper' ], $pod->field( $tags[ 'field' ] ), $tags[ 'field' ] );
 
-        return empty( $tags[ 'helper' ] ) ? $val : $pod->helper( $tags[ 'helper' ], $val );
+        return $val;
     }
 
     ob_start();
@@ -1061,10 +1088,14 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
 
         if ( !empty( $field ) && is_array( $field ) && in_array( $field[ 'type' ], $tableless_field_types ) ) {
-            $table = pods_api()->get_table_info( $field[ 'object' ], $field[ 'pick_val' ] );
+            if ( 'file' == $field[ 'type' ] )
+                $field_index = 'guid';
+            else {
+                $table = pods_api()->get_table_info( $field[ 'pick_object' ], $field[ 'pick_val' ] );
 
-            if ( !empty( $table ) )
-                $field_index = $table[ 'field_index' ];
+                if ( !empty( $table ) )
+                    $field_index = $table[ 'field_index' ];
+            }
         }
     }
 
@@ -1083,22 +1114,32 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
     }
 
     if ( !empty( $value ) ) {
+        if ( isset( $value[ $field_index ] ) )
+            return $value[ $field_index ];
+
         if ( 1 == count( $value ) ) {
-            if ( is_array( $value ) ) {
-                if ( isset( $value[ $field_index ] ) )
-                    $value = $value[ $field_index ];
+            if ( isset( $value[ 0 ] ) )
+                $value = $value[ 0 ];
+
+            if ( isset( $value[ $field_index ] ) ) {
+                $value = $value[ $field_index ];
+
+                if ( 0 < strlen( $value ) && 0 < strlen( $last ) )
+                    $value .= $and . $last;
+                elseif ( 0 < strlen( $last ) )
+                    $value = $last;
                 else
                     $value = '';
             }
-
-            if ( 0 < strlen( $value ) && 0 < strlen( $last ) )
-                $value .= $and . $last;
-            elseif ( 0 < strlen( $last ) )
-                $value = $last;
             else
                 $value = '';
         }
         else {
+            if ( isset( $value[ $field_index ] ) )
+                return $value[ $field_index ];
+            elseif ( !isset( $value[ 0 ] ) )
+                $value = array( $value );
+
             foreach ( $value as $k => &$v ) {
                 if ( is_array( $v ) ) {
                     if ( isset( $v[ $field_index ] ) )
@@ -1351,6 +1392,7 @@ function pods_components () {
  *
  * @return bool|\Pods
  * @since 2.0.0
+ * @link http://podsframework.org/docs/pods/
  */
 function pods ( $type = null, $id = null, $strict = false ) {
     require_once( PODS_DIR . 'classes/Pods.php' );
@@ -1364,34 +1406,37 @@ function pods ( $type = null, $id = null, $strict = false ) {
 }
 
 /**
- * Include and Init the PodsUI class
+ * Easily create content admin screens with in-depth customization. This is the primary interface function that Pods
+ * runs off of. It's also the only function required to be run in order to have a fully functional Manage interface.
  *
  * @see PodsUI
  *
- * @param null|array|Pods $obj (optional) configuration options for the UI
- * @param boolean $deprecated (optional) enable deprecated options
+ * @param array|string|Pods $obj (optional) Configuration options for the UI
+ * @param boolean $deprecated (optional) Whether to enable deprecated options (used by pods_ui_manage)
  *
  * @return PodsUI
  *
  * @since 2.0.0
+ * @link http://podsframework.org/docs/pods-ui/
  */
-function pods_ui ( $obj = null, $deprecated = false ) {
+function pods_ui ( $obj, $deprecated = false ) {
     require_once( PODS_DIR . 'classes/PodsUI.php' );
 
     return new PodsUI( $obj, $deprecated );
 }
 
 /**
- * Include and Init the PodsAPI class
+ * Include and get the PodsAPI object, for use with all calls that Pods makes for add, save, delete, and more.
  *
  * @see PodsAPI
  *
- * @param string $pod The pod name to load
- * @param null $format (deprecated) used for backwards compatibility and may be removed in the future.
+ * @param string $pod (optional) (deprecated) The Pod name
+ * @param string $format (optional) (deprecated) Format used in import() and export()
  *
  * @return PodsAPI
  *
  * @since 2.0.0
+ * @link http://podsframework.org/docs/pods-api/
  */
 function pods_api ( $pod = null, $format = null ) {
     require_once( PODS_DIR . 'classes/PodsAPI.php' );

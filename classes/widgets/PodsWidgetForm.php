@@ -21,6 +21,7 @@ class PodsWidgetForm extends WP_Widget {
 
         if ( !empty( $pod_type ) ) {
             $shortcode = '[pods name="' . $pod_type . '" form="true"]';
+
             require PODS_DIR . 'ui/front/widgets/pods_widget_output.php';
         }
     }
@@ -34,8 +35,8 @@ class PodsWidgetForm extends WP_Widget {
     }
 
     public function form ( $instance ) {
-        $title = pods_var( 'title', $instance, '' );
-        $pod_type = pods_var( 'pod_type', $instance, '' );
+        $title = pods_var_raw( 'title', $instance, '' );
+        $pod_type = pods_var_raw( 'pod_type', $instance, '' );
 
         require PODS_DIR . 'ui/admin/widgets/form.php';
     }

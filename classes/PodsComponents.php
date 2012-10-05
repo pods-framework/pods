@@ -90,6 +90,16 @@ class PodsComponents {
             if ( empty( $component_data[ 'MenuPage' ] ) && ( !isset( $component_data[ 'object' ] ) || !method_exists( $component_data[ 'object' ], 'admin' ) ) )
                 continue;
 
+            $component_data[ 'File' ] = realpath( PODS_DIR . $component_data[ 'File' ] );
+
+            if ( !file_exists( $component_data[ 'File' ] ) ) {
+                pods_message( 'Pods Component not found: ' . $component_data[ 'File' ] );
+
+                pods_transient_clear( 'pods_components' );
+
+                continue;
+            }
+
             $menu_page = 'pods-component-' . $component_data[ 'ID' ];
 
             if ( !empty( $component_data[ 'MenuPage' ] ) )
@@ -154,8 +164,21 @@ class PodsComponents {
 
             $component_data = $this->components[ $component ];
 
-            if ( !file_exists( $component_data[ 'File' ] ) )
+            $component_data[ 'File' ] = realpath( PODS_DIR . $component_data[ 'File' ] );
+
+            if ( empty( $component_data[ 'File' ] ) ) {
+                pods_transient_clear( 'pods_components' );
+
                 continue;
+            }
+
+            if ( !file_exists( $component_data[ 'File' ] ) ) {
+                pods_message( 'Pods Component not found: ' . $component_data[ 'File' ] );
+
+                pods_transient_clear( 'pods_components' );
+
+                continue;
+            }
 
             include_once $component_data[ 'File' ];
 
@@ -182,8 +205,8 @@ class PodsComponents {
     public function get_components () {
         $components = pods_transient_get( 'pods_components' );
 
-        if ( !is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET[ 'page' ] ) && 'pods-components' == $_GET[ 'page' ] && false !== pods_transient_get( 'pods_components_refresh' ) ) ) {
-            $component_dir = @opendir( rtrim( $this->components_dir, '/' ) );
+        if ( PodsInit::$version != PODS_VERSION || !is_array( $components ) || empty( $components ) || ( is_admin() && isset( $_GET[ 'page' ] ) && 'pods-components' == $_GET[ 'page' ] && false !== pods_transient_get( 'pods_components_refresh' ) ) ) {
+            $component_dir = @opendir( untrailingslashit( $this->components_dir ) );
             $component_files = array();
 
             if ( false !== $component_dir ) {
@@ -198,7 +221,7 @@ class PodsComponents {
                                 if ( '.' == substr( $subfile, 0, 1 ) )
                                     continue;
                                 elseif ( '.php' == substr( $subfile, -4 ) )
-                                    $component_files[] = $this->components_dir . $file . '/' . $subfile;
+                                    $component_files[] = realpath( $this->components_dir . $file . '/' . $subfile );
                             }
 
                             closedir( $component_subdir );
@@ -253,7 +276,7 @@ class PodsComponents {
                 else
                     $component_data[ 'DeveloperMode' ] = false;
 
-                $component_data[ 'File' ] = $component_file;
+                $component_data[ 'File' ] = str_replace( PODS_DIR, '', $component_file );
 
                 $components[ $component_data[ 'ID' ] ] = $component_data;
             }

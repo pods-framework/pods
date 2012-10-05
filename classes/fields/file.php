@@ -58,19 +58,20 @@ class PodsField_File extends PodsField {
             ),
             'file_uploader' => array(
                 'label' => __( 'File Uploader', 'pods' ),
-                'default' => 'plupload',
+                'default' => 'attachment',
                 'type' => 'pick',
                 'data' => apply_filters(
                     'pods_form_ui_field_file_uploader_options',
                     array(
-                        'plupload' => __( 'Plupload', 'pods' ),
-                        'attachment' => __( 'Attachments (WP Media Library)', 'pods' )
+                        'attachment' => __( 'Attachments (WP Media Library)', 'pods' ),
+                        'plupload' => __( 'Plupload', 'pods' )
                     )
                 ),
                 'dependency' => true
             ),
             'file_attachment_tab' => array(
                 'label' => __( 'Attachments Default Tab', 'pods' ),
+                'depends-on' => array( 'file_uploader' => 'attachment' ),
                 'default' => 'type',
                 'type' => 'pick',
                 'data' => array(
@@ -328,7 +329,12 @@ class PodsField_File extends PodsField {
      * @since 2.0.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-        // @todo link to file in new target and show thumbnail
+        if ( !empty( $value ) && isset( $value[ 'ID' ] ) )
+            $value = array( $value );
+
+        foreach ( $value as $v ) {
+            echo wp_get_attachment_image( $v[ 'ID' ], 'thumbnail', true );
+        }
     }
 
     /**
@@ -362,8 +368,8 @@ class PodsField_File extends PodsField {
         <?php echo PodsForm::field( $attributes[ 'name' ] . '[' . $id . '][id]', $id, 'hidden' ); ?>
 
         <ul class="pods-file-meta media-item">
-            <?php if ( 1 < $limit ) { ?>
-            <li class="pods-file-col pods-file-handle">Handle</li>
+            <?php if ( 1 != $limit ) { ?>
+                <li class="pods-file-col pods-file-handle">Handle</li>
             <?php } ?>
 
             <li class="pods-file-col pods-file-icon">

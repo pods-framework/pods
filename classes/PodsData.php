@@ -165,7 +165,7 @@ class PodsData {
     /**
      * @var string
      */
-    public $search_where = '';
+    public $search_where = array();
 
     /**
      * @var array
@@ -487,14 +487,33 @@ class PodsData {
          */
         global $wpdb;
 
-        // Build
-        $this->sql = $this->build( $params );
+        $cache_key = $results = false;
 
-        if ( empty( $this->sql ) )
-            return array();
+        // Get from cache if enabled
+        if ( null !== pods_var( 'expires', $params, null, null, true ) ) {
+            $cache_key = md5( serialize( get_object_vars( $params ) ) );
 
-        // Get Data
-        $results = pods_query( $this->sql, $this );
+            $results = pods_view_get( $cache_key, pods_var( 'cache_mode', $params, 'cache', null, true ), 'pods_data_select' );
+
+            if ( empty( $results ) )
+                $results = false;
+        }
+
+        if ( empty( $results ) ) {
+            // Build
+            $this->sql = $this->build( $params );
+
+            if ( empty( $this->sql ) )
+                return array();
+
+            // Get Data
+            $results = pods_query( $this->sql, $this );
+
+            // Cache if enabled
+            if ( false !== $cache_key )
+                pods_view_set( $cache_key, $results, pods_var( 'expires', $params, 0, null, true ), pods_var( 'cache_mode', $params, 'cache', null, true ), 'pods_data_select' );
+        }
+
         $results = $this->do_hook( 'select', $results );
 
         $this->data = $results;
@@ -547,12 +566,16 @@ class PodsData {
             'limit' => -1,
             'offset' => null,
 
-            'identifier' => 'id',
-            'index' => 'name',
+            'id' => null,
+            'index' => null,
 
             'page' => 1,
             'search' => null,
             'search_query' => null,
+            'search_mode' => null,
+            'search_across' => false,
+            'search_across_picks' => false,
+            'search_across_files' => false,
             'filters' => array(),
 
             'fields' => array(),
@@ -585,6 +608,12 @@ class PodsData {
 
         if ( ( empty( $params->fields ) || !is_array( $params->fields ) ) && is_object( $this->pod_data ) && isset( $this->fields ) && !empty( $this->fields ) )
             $params->fields = $this->fields;
+
+        if ( empty( $params->index ) )
+            $params->index = $this->field_index;
+
+        if ( empty( $params->id ) )
+            $params->id = $this->field_id;
 
         if ( empty( $params->table ) && is_object( $this->pod_data ) && isset( $this->table ) && !empty( $this->table ) )
             $params->table = $this->table;
@@ -624,8 +653,14 @@ class PodsData {
         if ( !empty( $params->traverse ) )
             $this->traverse = $params->traverse;
 
+        $allowed_search_modes = array( 'int', 'text', 'text_like' );
+
+        if ( !empty( $params->search_mode ) && in_array( $params->search_mode, $allowed_search_modes ) )
+            $this->search_mode = $params->search_mode;
+
         // Get Aliases for future reference
         $selectsfound = '';
+
         if ( !empty( $params->select ) ) {
             if ( is_array( $params->select ) )
                 $selectsfound = implode( ', ', $params->select );
@@ -675,6 +710,170 @@ class PodsData {
             }
         }
 
+        // Search
+        if ( null !== $params->search && !empty( $params->fields ) ) {
+            if ( false !== $params->search_query && 0 < strlen( $params->search_query ) ) {
+                $where = $having = array();
+
+                if ( false !== $params->search_across ) {
+                    foreach ( $params->fields as $key => $field ) {
+                        if ( is_array( $field ) ) {
+                            $attributes = $field;
+                            $field = pods_var( 'name', $field, $key, null, true );
+                        }
+                        else {
+                            $attributes = array(
+                                'type' => '',
+                                'options' => array()
+                            );
+                        }
+
+                        if ( isset( $attributes[ 'options' ][ 'search' ] ) && !$attributes[ 'options' ][ 'search' ] )
+                            continue;
+
+                        if ( in_array( $attributes[ 'type' ], array( 'date', 'time', 'datetime', 'number', 'decimal', 'currency', 'phone', 'password', 'boolean' ) ) )
+                            continue;
+
+                        if ( in_array( $field, $params->filters ) )
+                            continue;
+
+                        $fieldfield = '`' . $field . '`';
+
+                        if ( 'pick' == $attributes[ 'type' ] ) {
+                            if ( false === $params->search_across_picks )
+                                continue;
+                            else {
+                                if ( !isset( $attributes[ 'table_info' ] ) || empty( $attributes[ 'table_info' ] ) )
+                                    $attributes[ 'table_info' ] = $this->api->get_table_info( pods_var( 'pick_object', $attributes ), pods_var( 'pick_val', $attributes ) );
+
+                                if ( empty( $attributes[ 'table_info' ][ 'field_index' ] ) )
+                                    continue;
+
+                                $fieldfield = '`' . $field . '`.`' . $attributes[ 'table_info' ][ 'field_index' ] . '`';
+                            }
+                        }
+                        elseif ( 'file' == $attributes[ 'type' ] ) {
+                            if ( false === $params->search_across_files )
+                                continue;
+                            else
+                                $fieldfield = '`' . $field . '`.`post_title`';
+                        }
+                        else
+                            $fieldfield = '`t`.' . $fieldfield;
+
+                        if ( isset( $this->aliases[ $field ] ) )
+                            $fieldfield = '`' . $this->aliases[ $field ] . '`';
+
+                        if ( isset( $attributes[ 'real_name' ] ) && !empty( $attributes[ 'real_name' ] ) )
+                            $fieldfield = $attributes[ 'real_name' ];
+
+                        if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] )
+                            $having[] = "{$fieldfield} LIKE '%" . pods_sanitize( $params->search_query ) . "%'";
+                        else
+                            $where[] = "{$fieldfield} LIKE '%" . pods_sanitize( $params->search_query ) . "%'";
+                    }
+                }
+                elseif ( !empty( $params->index ) ) {
+                    $attributes = array();
+
+                    if ( isset( $params->fields[ $params->index ] ) )
+                        $attributes = $params->fields[ $params->index ];
+
+                    $fieldfield = '`' . $params->index . '`';
+
+                    if ( isset( $attributes[ 'real_name' ] ) && false !== $attributes[ 'real_name' ] && !empty( $attributes[ 'real_name' ] ) )
+                        $fieldfield = $attributes[ 'real_name' ];
+
+                    if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] )
+                        $having[] = "{$fieldfield} LIKE '%" . pods_sanitize( $params->search_query ) . "%'";
+                    else
+                        $where[] = "{$fieldfield} LIKE '%" . pods_sanitize( $params->search_query ) . "%'";
+                }
+
+                if ( !empty( $where ) )
+                    $params->where[] = '(' . implode( ' OR ', $where ) . ')';
+
+                if ( !empty( $having ) )
+                    $params->having[] = '(' . implode( ' OR ', $having ) . ')';
+            }
+
+            // Filter
+            foreach ( $params->filters as $filter ) {
+                $where = $having = array();
+
+                if ( !isset( $params->fields[ $filter ] ) )
+                    continue;
+
+                $attributes = $params->fields[ $filter ];
+                $field = pods_var( 'name', $attributes, $filter, null, true );
+
+                $filterfield = '`' . $field . '`';
+
+                if ( 'pick' == $attributes[ 'type' ] ) {
+                    if ( !isset( $attributes[ 'table_info' ] ) || empty( $attributes[ 'table_info' ] ) )
+                        $attributes[ 'table_info' ] = $this->api->get_table_info( pods_var( 'pick_object', $attributes ), pods_var( 'pick_val', $attributes ) );
+
+                    if ( empty( $attributes[ 'table_info' ][ 'field_index' ] ) )
+                        continue;
+
+                    $filterfield = '`' . $field . '`.`' . $attributes[ 'table_info' ][ 'field_index' ] . '`';
+                }
+                elseif ( 'file' == $attributes[ 'type' ] )
+                    $filterfield = '`' . $field . '`.`post_title`';
+                else
+                    $filterfield = '`t`.' . $filterfield;
+
+                if ( isset( $this->aliases[ $field ] ) )
+                    $filterfield = '`' . $this->aliases[ $field ] . '`';
+
+                if ( isset( $attributes[ 'real_name' ] ) && false !== $attributes[ 'real_name' ] && !empty( $attributes[ 'real_name' ] ) )
+                    $filterfield = $attributes[ 'real_name' ];
+
+                if ( in_array( $attributes[ 'type' ], array( 'date', 'datetime' ) ) ) {
+                    $start = date( 'Y-m-d' ) . ( 'datetime' == $attributes[ 'type' ] ) ? ' 00:00:00' : '';
+                    $end = date( 'Y-m-d' ) . ( 'datetime' == $attributes[ 'type' ] ) ? ' 23:59:59' : '';
+
+                    if ( strlen( pods_var( 'filter_' . $field . '_start', 'get', false ) ) < 1 && strlen( pods_var( 'filter_' . $field . '_end', 'get', false ) ) < 1 )
+                        continue;
+
+                    if ( 0 < strlen( pods_var( 'filter_' . $field . '_start', 'get', false ) ) )
+                        $start = date( 'Y-m-d', strtotime( pods_var( 'filter_' . $field . '_start', 'get', false ) ) ) . ( 'datetime' == $attributes[ 'type' ] ) ? ' 00:00:00' : '';
+
+                    if ( 0 < strlen( pods_var( 'filter_' . $field . '_end', 'get', false ) ) )
+                        $end = date( 'Y-m-d', strtotime( pods_var( 'filter_' . $field . '_end', 'get', false ) ) ) . ( 'datetime' == $attributes[ 'type' ] ) ? ' 23:59:59' : '';
+                    if ( false !== $attributes[ 'date_ongoing' ] ) {
+                        $date_ongoing = '`' . $attributes[ 'date_ongoing' ] . '`';
+
+                        if ( isset( $this->aliases[ $date_ongoing ] ) )
+                            $date_ongoing = '`' . $this->aliases[ $date_ongoing ] . '`';
+
+                        if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] )
+                            $having[] = "(({$filterfield} <= '$start' OR ({$filterfield} >= '$start' AND {$filterfield} <= '$end')) AND ({$date_ongoing} >= '$start' OR ({$date_ongoing} >= '$start' AND {$date_ongoing} <= '$end')))";
+                        else
+                            $where[] = "(({$filterfield} <= '$start' OR ({$filterfield} >= '$start' AND {$filterfield} <= '$end')) AND ({$date_ongoing} >= '$start' OR ({$date_ongoing} >= '$start' AND {$date_ongoing} <= '$end')))";
+                    }
+                    else {
+                        if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] )
+                            $having[] = "({$filterfield} BETWEEN '$start' AND '$end')";
+                        else
+                            $where[] = "({$filterfield} BETWEEN '$start' AND '$end')";
+                    }
+                }
+                elseif ( 0 < strlen( pods_var( 'filter_' . $field, 'get', false ) ) ) {
+                    if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] )
+                        $having[] = "{$filterfield} LIKE '%" . pods_sanitize( pods_var( 'filter_' . $field, 'get', false ) ) . "%'";
+                    else
+                        $where[] = "{$filterfield} LIKE '%" . pods_sanitize( pods_var( 'filter_' . $field, 'get', false ) ) . "%'";
+                }
+
+                if ( !empty( $where ) )
+                    $params->where[] = '(' . implode( ' AND ', $where ) . ')';
+
+                if ( !empty( $having ) )
+                    $params->having[] = '(' . implode( ' AND ', $having ) . ')';
+            }
+        }
+
         // Traverse the Rabbit Hole
         if ( !empty( $this->pod ) ) {
             $haystack = implode( ' ', (array) $params->select )
@@ -698,6 +897,7 @@ class PodsData {
 
                 if ( in_array( '/\b' . trim( $found[ $key ], '`' ) . '\b(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $find ) ) {
                     unset( $found[ $key ] );
+
                     continue;
                 }
 
@@ -715,8 +915,9 @@ class PodsData {
 
                 $replace[ $key ] = $esc_start . implode( '_', $value ) . '`.' . $dot;
 
-                if ( in_array( $value[ 0 ], array( 't', 'p' ) ) ) {
+                if ( 't' == $value[ 0 ] ) {
                     unset( $found[ $key ] );
+
                     continue;
                 }
 
@@ -757,123 +958,19 @@ class PodsData {
 
                 if ( !empty( $found ) )
                     $joins = $this->traverse( $found, $params->fields );
-                elseif ( false !== $this->search )
+                elseif ( false !== $params->search )
                     $joins = $this->traverse( null, $params->fields );
             }
         }
+
+        // Traversal Search
+        if ( !empty( $this->search_where ) )
+            $params->where = array_merge( (array) $this->search_where, $params->where );
 
         if ( !empty( $params->join ) && !empty( $joins ) )
             $params->join = array_merge( (array) $params->join, $joins );
         elseif ( !empty( $joins ) )
             $params->join = $joins;
-
-        if ( null !== $params->search && !empty( $params->fields ) ) {
-            // Search
-            if ( false !== $params->search_query && 0 < strlen( $params->search_query ) ) {
-                $where = $having = array();
-
-                foreach ( $params->fields as $key => $field ) {
-                    $attributes = $field;
-
-                    if ( !is_array( $attributes ) )
-                        $attributes = array();
-
-                    if ( !$attributes[ 'options' ][ 'search' ] )
-                        continue;
-
-                    if ( in_array( $attributes[ 'type' ], array( 'date', 'time', 'datetime', 'pick', 'file' ) ) )
-                        continue;
-
-                    if ( is_array( $field ) )
-                        $field = pods_var( 'name', $attributes, $key );
-
-                    if ( isset( $params->filters[ $field ] ) )
-                        continue;
-
-                    $fieldfield = '`' . $field . '`';
-
-                    if ( isset( $this->aliases[ $field ] ) )
-                        $fieldfield = '`' . $this->aliases[ $field ] . '`';
-
-                    if ( isset( $attributes[ 'real_name' ] ) && false !== $attributes[ 'real_name' ] && !empty( $attributes[ 'real_name' ] ) )
-                        $fieldfield = $attributes[ 'real_name' ];
-
-                    if ( isset( $attrbutes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] )
-                        $having[] = "{$fieldfield} LIKE '%" . pods_sanitize( $params->search_query ) . "%'";
-                    else
-                        $where[] = "{$fieldfield} LIKE '%" . pods_sanitize( $params->search_query ) . "%'";
-                }
-
-                if ( !empty( $where ) )
-                    $params->where[] = '(' . implode( ' OR ', $where ) . ')';
-
-                if ( !empty( $having ) )
-                    $params->having[] = '(' . implode( ' OR ', $having ) . ')';
-            }
-
-            // Traversal Search
-            if ( 0 < strlen( $this->search_where ) )
-                $params->where[] = $this->search_where;
-
-            // Filter
-            foreach ( $params->filters as $filter ) {
-                $where = $having = array();
-
-                if ( !isset( $params->fields[ $filter ] ) )
-                    continue;
-
-                $filterfield = '`' . $filter . '`';
-
-                if ( isset( $this->aliases[ $filter ] ) )
-                    $filterfield = '`' . $this->aliases[ $filter ] . '`';
-
-                if ( false !== $params->fields[ $filter ][ 'real_name' ] )
-                    $filterfield = $params->fields[ $filter ][ 'real_name' ];
-
-                if ( in_array( $params->fields[ $filter ][ 'type' ], array( 'date', 'datetime' ) ) ) {
-                    $start = date( 'Y-m-d' ) . ( 'datetime' == $params->fields[ $filter ][ 'type' ] ) ? ' 00:00:00' : '';
-                    $end = date( 'Y-m-d' ) . ( 'datetime' == $params->fields[ $filter ][ 'type' ] ) ? ' 23:59:59' : '';
-
-                    if ( strlen( pods_var( 'filter_' . $filter . '_start', 'get', false ) ) < 1 && strlen( pods_var( 'filter_' . $filter . '_end', 'get', false ) ) < 1 )
-                        continue;
-
-                    if ( 0 < strlen( pods_var( 'filter_' . $filter . '_start', 'get', false ) ) )
-                        $start = date( 'Y-m-d', strtotime( pods_var( 'filter_' . $filter . '_start', 'get', false ) ) ) . ( 'datetime' == $params->fields[ $filter ][ 'type' ] ) ? ' 00:00:00' : '';
-
-                    if ( 0 < strlen( pods_var( 'filter_' . $filter . '_end', 'get', false ) ) )
-                        $end = date( 'Y-m-d', strtotime( pods_var( 'filter_' . $filter . '_end', 'get', false ) ) ) . ( 'datetime' == $params->fields[ $filter ][ 'type' ] ) ? ' 23:59:59' : '';
-                    if ( false !== $params->fields[ $filter ][ 'date_ongoing' ] ) {
-                        $date_ongoing = '`' . $params->fields[ $filter ][ 'date_ongoing' ] . '`';
-
-                        if ( isset( $this->aliases[ $date_ongoing ] ) )
-                            $date_ongoing = '`' . $this->aliases[ $date_ongoing ] . '`';
-
-                        if ( false !== $params->fields[ $filter ][ 'group_related' ] )
-                            $having[] = "(({$filterfield} <= '$start' OR ({$filterfield} >= '$start' AND {$filterfield} <= '$end')) AND ({$date_ongoing} >= '$start' OR ({$date_ongoing} >= '$start' AND {$date_ongoing} <= '$end')))";
-                        else
-                            $where[] = "(({$filterfield} <= '$start' OR ({$filterfield} >= '$start' AND {$filterfield} <= '$end')) AND ({$date_ongoing} >= '$start' OR ({$date_ongoing} >= '$start' AND {$date_ongoing} <= '$end')))";
-                    }
-                    else {
-                        if ( false !== $params->fields[ $filter ][ 'group_related' ] )
-                            $having[] = "({$filterfield} BETWEEN '$start' AND '$end')";
-                        else
-                            $where[] = "({$filterfield} BETWEEN '$start' AND '$end')";
-                    }
-                }
-                elseif ( 0 < strlen( pods_var( 'filter_' . $filter, 'get', false ) ) ) {
-                    if ( false !== $params->fields[ $filter ][ 'group_related' ] )
-                        $having[] = "{$filterfield} LIKE '%" . pods_sanitize( pods_var( 'filter_' . $filter, 'get', false ) ) . "%'";
-                    else
-                        $where[] = "{$filterfield} LIKE '%" . pods_sanitize( pods_var( 'filter_' . $filter, 'get', false ) ) . "%'";
-                }
-
-                if ( !empty( $where ) )
-                    $params->where[] = '(' . implode( ' AND ', $where ) . ')';
-
-                if ( !empty( $having ) )
-                    $params->having[] = '(' . implode( ' AND ', $having ) . ')';
-            }
-        }
 
         // Build
         if ( null === $params->sql ) {
@@ -1249,8 +1346,23 @@ class PodsData {
             elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
                 if ( 'id' == $mode )
                     $this->row = get_post( $id, ARRAY_A );
+                else {
+                    $post_type = $this->pod_data[ 'object' ];
 
-                // @todo Handle slug
+                    if ( empty( $post_type ) )
+                        $post_type = $this->pod_data[ 'object' ];
+
+                    $args = array(
+                        'post_type' => $post_type,
+                        'name' => $id,
+                        'numberposts' => 5
+                    );
+
+                    $find = get_posts( $args );
+
+                    if ( !empty( $find ) )
+                        $this->row = get_object_vars( $find[ 0 ] );
+                }
 
                 if ( empty( $this->row ) )
                     $this->row = false;
@@ -1265,8 +1377,8 @@ class PodsData {
 
                 if ( 'id' == $mode )
                     $this->row = get_term( $id, $taxonomy, ARRAY_A );
-
-                // @todo Handle slug
+                else
+                    $this->row = get_term_by( 'slug', $id, $taxonomy, ARRAY_A );
 
                 if ( empty( $this->row ) )
                     $this->row = false;
@@ -1276,8 +1388,8 @@ class PodsData {
             elseif ( 'user' == $this->pod_data[ 'type' ] ) {
                 if ( 'id' == $mode )
                     $this->row = get_userdata( $id );
-
-                // @todo Handle slug
+                else
+                    $this->row = get_user_by( 'slug', $mode );
 
                 if ( empty( $this->row ) )
                     $this->row = false;
@@ -1289,6 +1401,8 @@ class PodsData {
             elseif ( 'comment' == $this->pod_data[ 'type' ] ) {
                 $this->row = get_comment( $id, ARRAY_A );
 
+                // No slug handling here
+
                 if ( empty( $this->row ) )
                     $this->row = false;
 
@@ -1297,14 +1411,14 @@ class PodsData {
             else {
                 $params = array(
                     'table' => $this->table,
-                    'where' => "`t`.`{$this->field_id}` = {$id}",
+                    'where' => "`t`.`{$this->field_id}` = " . (int) $id,
                     'orderby' => "`t`.`{$this->field_id}` DESC",
                     'page' => 1,
                     'limit' => 1,
                     'search' => false
                 );
 
-                if ( 'slug' == $mode ) {
+                if ( 'slug' == $mode && !empty( $this->field_slug ) ) {
                     $id = esc_sql( $id );
                     $params[ 'where' ] = "`t`.`{$this->field_slug}` = '{$id}'";
                 }
@@ -1364,13 +1478,15 @@ class PodsData {
     public function reset ( $row = null ) {
         $row = pods_absint( $row );
 
-        if ( empty( $row ) )
-            $this->row_number = 0;
-
         $this->row = false;
 
-        if ( isset( $this->data[ $this->row_number ] ) )
-            $this->row = get_object_vars( $this->data[ $this->row_number ] );
+        if ( isset( $this->data[ $row ] ) )
+            $this->row = get_object_vars( $this->data[ $row ] );
+
+        if ( empty( $row ) )
+            $this->row_number = -1;
+        else
+            $this->row_number = $row - 1;
 
         return $this->row;
     }
@@ -1748,19 +1864,27 @@ class PodsData {
                     $search = "`{$field_joined}`.`{$on}` LIKE '%{$val}%'";
                 }
 
-                $this->search_where .= " AND {$search} ";
+                $this->search_where[] = " {$search} ";
             }
         }
 
         $rel_alias = 'rel_' . $field_joined;
         $the_join = "
-            LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON `{$rel_alias}`.`field_id` = {$this->traversal[$pod][$field]['id']} AND `{$rel_alias}`.`item_id` = `{$joined}`.`id`
+            LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
+                (
+                    `{$rel_alias}`.`field_id` = {$this->traversal[$pod][$field]['id']}
+                    AND `{$rel_alias}`.`item_id` = `{$joined}`.`id`
+                )
+                OR (
+                    `{$rel_alias}`.`related_field_id` = {$this->traversal[$pod][$field]['id']}
+                    AND `{$rel_alias}`.`related_item_id` = `{$joined}`.`id`
+                )
             LEFT JOIN `{$this->traversal[$pod][$field]['table']}` AS `{$field_joined}` ON `{$field_joined}`.`{$this->traversal[$pod][$field]['on']}` = `{$rel_alias}`.`related_item_id`
         ";
 
         if ( !in_array( $this->traversal[ $pod ][ $field ][ 'type' ], array( 'pick', 'file' ) ) ) {
             $the_join = "
-            LEFT JOIN `{$this->traversal[$pod][$field]['table']}` AS `{$field_joined}` ON `{$field_joined}`.`{$this->traversal[$pod][$field]['on']}` = CONVERT(`{$joined}`.`{$field_joined}`, SIGNED)
+                LEFT JOIN `{$this->traversal[$pod][$field]['table']}` AS `{$field_joined}` ON `{$field_joined}`.`{$this->traversal[$pod][$field]['on']}` = CONVERT(`{$joined}`.`{$field_joined}`, SIGNED)
             ";
         }
 

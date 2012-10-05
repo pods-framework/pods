@@ -468,6 +468,7 @@ class PodsAdmin {
 
         $button = '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox" id="add_pod_button" title="Pods Shortcode"><img src="' . PODS_URL . 'ui/images/icon16.png" alt="Pods Shortcode" /></a>';
         $context .= $button;
+
         return $context;
     }
 

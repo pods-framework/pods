@@ -133,6 +133,11 @@ class PodsData {
     public $page = 1;
 
     /**
+     * @var int
+     */
+    public $limit = 15;
+
+    /**
      * @var bool
      */
     public $pagination = true;
@@ -598,6 +603,8 @@ class PodsData {
 
         if ( 0 == $params->limit )
             $params->limit = -1;
+
+        $this->limit = $params->limit;
 
         $offset = ( $params->limit * ( $params->page - 1 ) );
 

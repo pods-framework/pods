@@ -185,6 +185,7 @@ class Pods {
 
         // Sync Settings
         $this->data->page =& $this->page;
+        $this->data->limit =& $this->limit;
         $this->data->pagination =& $this->pagination;
         $this->data->search =& $this->search;
         $this->data->search_mode =& $this->search_mode;
@@ -804,7 +805,12 @@ class Pods {
 
         $params = $this->do_hook( 'find', $params );
 
-        $this->limit = (int) $params->limit;
+        $params->limit = (int) $params->limit;
+
+        if ( 0 == $params->limit )
+            $params->limit = -1;
+
+        $this->limit = $params->limit;
         $this->page = (int) $params->page;
         $this->page_var = $params->page_var;
         $this->pagination = (boolean) $params->pagination;

@@ -192,7 +192,7 @@
                 $submitbutton.prop( 'disabled', true );
                 $submitbutton.parent().find( '.waiting' ).fadeIn();
 
-                $( 'form.pods-submittable' ).trigger( 'submit' );
+                $( this ).closest( 'form.pods-submittable' ).trigger( 'submit' );
             } );
 
             // Handle submit via link and translate to AJAX

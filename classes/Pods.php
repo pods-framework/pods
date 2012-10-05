@@ -225,6 +225,20 @@ class Pods {
     }
 
     /**
+     * Whether a Pod item exists or not when using fetch() or construct with an ID or slug
+     *
+     * @return bool
+     *
+     * @since 2.0.0
+     */
+    public function exists () {
+        if ( empty( $this->row ) )
+            return false;
+
+        return true;
+    }
+
+    /**
      * Return an array of all rows returned from a find() call.
      *
      * Most of the time, you will want to loop through data using fetch()

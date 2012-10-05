@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 2.0.3
+Stable tag: 2.0.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -99,6 +99,10 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 == Changelog ==
 
+= 2.0.3.1 - October 5th, 2012 =
+* Fixed an upgrade issue a few users were reporting where the upgrade wouldn't start
+* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://github.com/pods-framework/pods/issues/new
+
 = 2.0.3 - October 4th, 2012 =
 * We've fixed many more bugs, that means even more stability and backwards compatibility for those who have been holding off on upgrading
 * Added: 'expires' parameter to find() / findRecords() calls, defaults to null, but set it to 0 or above (in seconds) and it will cache the results for as long as you'd like.
@@ -111,7 +115,6 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 * Improved: Search handling has been improved along with the above tweaks
 * Check out the new screenshots we added to our plugin page if you're new to the plugin
 * While we have been working on our new Pods 2.0 documentation for our site, we went ahead and synced all of that good stuff over into the code comments along with links back to the documentation.
-* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://github.com/pods-framework/pods/issues/new
 
 = 2.0.2 - September 27th, 2012 =
 * Even more bugs have now been fixed including additional backwards compatibility fixes

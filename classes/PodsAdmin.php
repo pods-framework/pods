@@ -456,8 +456,12 @@ class PodsAdmin {
      */
     public function media_button ( $context ) {
         $current_page = basename( $_SERVER[ 'PHP_SELF' ] );
+        $current_page = explode( '?', $current_page );
+        $current_page = explode( '#', $current_page[ 0 ] );
+        $current_page = $current_page[ 0 ];
 
-        if ( $current_page == 'index.php' )
+        // Only show the button on post type pages
+        if ( !in_array( $current_page, array( 'post-new.php', 'post.php' ) ) )
             return $context;
 
         add_action( 'admin_footer', array( $this, 'mce_popup' ) );

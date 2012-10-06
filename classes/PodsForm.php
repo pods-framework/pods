@@ -691,7 +691,7 @@ class PodsForm {
 
         if ( 1 == pods_var( 'restrict_capability', $options, 0 ) ) {
             if ( is_user_logged_in() ) {
-                if ( is_super_admin() || current_user_can( 'manage_options' ) )
+                if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'manage_options' ) )
                     $permission = true;
 
                 $capabilities = explode( ',', pods_var( 'capability_allowed', $options ) );
@@ -707,7 +707,7 @@ class PodsForm {
             }
         }
         elseif ( 1 == pods_var( 'admin_only', $options, 0 ) ) {
-            if ( is_user_logged_in() && ( is_super_admin() || current_user_can( 'manage_options' ) ) )
+            if ( is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'manage_options' ) ) )
                 $permission = true;
         }
         else

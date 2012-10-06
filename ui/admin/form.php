@@ -109,7 +109,7 @@ if ( 0 < $pod->id() ) {
                                 <div id="minor-publishing">
                                     <div id="major-publishing-actions">
                                         <?php
-                                            if ( ( is_super_admin() || current_user_can( 'pods_delete_' . $pod->pod ) ) && null !== $pod->id() && !$duplicate ) {
+                                            if ( ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods_delete_' . $pod->pod ) ) && null !== $pod->id() && !$duplicate ) {
                                         ?>
                                             <div id="delete-action">
                                                 <a class="submitdelete deletion" href="<?php echo pods_var_update( array( 'action' => 'delete' ) ) ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>

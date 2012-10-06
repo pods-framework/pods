@@ -562,6 +562,7 @@ class PodsData {
     public function build ( &$params ) {
         $defaults = array(
             'select' => '*',
+            'distinct' => true,
             'table' => null,
             'join' => null,
             'where' => null,
@@ -986,6 +987,7 @@ class PodsData {
 
             $sql = "
                 SELECT SQL_CALC_FOUND_ROWS
+                " . ( $params->distinct ? 'DISTINCT' : '' ) . "
                 " . ( !empty( $params->select ) ? ( is_array( $params->select ) ? implode( ', ', $params->select ) : $params->select ) : '*' ) . "
                 FROM {$params->table} AS `t`
                 " . ( !empty( $params->join ) ? ( is_array( $params->join ) ? implode( "\n                ", $params->join ) : $params->join ) : '' ) . "

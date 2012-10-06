@@ -70,7 +70,7 @@ class PodsInit {
      * Load the plugin textdomain.
      */
     function load_textdomain () {
-        load_plugin_textdomain( 'pods', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+        load_plugin_textdomain( 'pods', false, dirname( PODS_DIR . 'init.php' ) . '/languages/' );
     }
 
     /**

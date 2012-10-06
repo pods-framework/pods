@@ -68,35 +68,47 @@
                 return false;
             }
 
+            // Slash and burn
+            pod_select = ( pod_select + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            slug = ( slug + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            orderby = ( orderby + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            limit = ( limit + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            where = ( where + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            template = ( template + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            field = ( field + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            fields = ( fields + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            label = ( label + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            thank_you = ( thank_you + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+
             shortcode += ' name="' + pod_select + '"';
 
-            if ( slug && slug.length )
+            if ( slug.length )
                 shortcode += ' slug="' + slug + '"';
 
-            if ( orderby && orderby.length )
+            if ( orderby.length )
                 shortcode += ' orderby="' + orderby + '"';
 
-            if ( limit && limit.length )
+            if ( limit.length )
                 shortcode += ' limit="' + limit + '"';
 
-            if ( where && where.length )
+            if ( where.length )
                 shortcode += ' where="' + where + '"';
 
             <?php if ( class_exists( 'Pods_Templates' ) ) { ?>
-                if ( template && template.length )
+                if ( template.length )
                     shortcode += ' template="' + template + '"';
             <?php } ?>
 
-            if ( field && field.length )
+            if ( field.length )
                 shortcode += ' field="' + field + '"';
 
-            if ( fields && fields.length )
+            if ( fields.length )
                 shortcode += ' fields="' + fields + '"';
 
-            if ( label && label.length )
+            if ( label.length )
                 shortcode += ' label="' + label + '"';
 
-            if ( thank_you && thank_you.length )
+            if ( thank_you.length )
                 shortcode += ' thank-you="' + thank_you + '"';
 
             shortcode += ']';

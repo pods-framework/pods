@@ -1888,7 +1888,15 @@ class PodsData {
                     `{$rel_alias}`.`related_field_id` = {$this->traversal[$pod][$field]['id']}
                     AND `{$rel_alias}`.`related_item_id` = `{$joined}`.`id`
                 )
-            LEFT JOIN `{$this->traversal[$pod][$field]['table']}` AS `{$field_joined}` ON `{$field_joined}`.`{$this->traversal[$pod][$field]['on']}` = `{$rel_alias}`.`related_item_id`
+            LEFT JOIN `{$this->traversal[$pod][$field]['table']}` AS `{$field_joined}` ON
+                (
+                    `{$rel_alias}`.`field_id` = {$this->traversal[$pod][$field]['id']}
+                    AND `{$field_joined}`.`{$this->traversal[$pod][$field]['on']}` = `{$rel_alias}`.`related_item_id`
+                )
+                OR (
+                    `{$rel_alias}`.`related_field_id` = {$this->traversal[$pod][$field]['id']}
+                    AND `{$field_joined}`.`{$this->traversal[$pod][$field]['on']}` = `{$rel_alias}`.`item_id`
+                )
         ";
 
         if ( !in_array( $this->traversal[ $pod ][ $field ][ 'type' ], array( 'pick', 'file' ) ) ) {

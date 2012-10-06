@@ -22,23 +22,18 @@ class PodsWidgetField extends WP_Widget {
     public function widget ( $args, $instance ) {
         extract( $args );
 
-        // Get widget field values
+        // Get widget fields
         $title = apply_filters( 'widget_title', $instance[ 'title' ] );
-        $pod_type = pods_var( 'pod_type', $instance, '' );
-        $slug = pods_var( 'slug', $instance, '' );
-        $field = pods_var( 'field', $instance, '' );
 
-        if ( !empty( $pod_type ) && !empty( $slug ) && !empty( $field ) ) {
-            $shortcode = '[pods ';
-            $shortcode .= "name=\"{$pod_type}\" ";
-            $shortcode .= "slug=\"{$slug}\" ";
-            $shortcode .= "field=\"{$field}\" ";
+        $args = array(
+            'name' => trim( pods_var_raw( 'pod_type', $instance, '' ) ),
+            'slug' => trim( pods_var_raw( 'slug', $instance, '' ) ),
+            'field' => trim( pods_var_raw( 'field', $instance, '' ) )
+        );
 
-            $shortcode .= ']';
-
-            require PODS_DIR . 'ui/front/widgets/pods_widget_output.php';
+        if ( 0 < strlen( $args[ 'name' ] ) && 0 < strlen( $args[ 'slug' ] ) && 0 < strlen( $args[ 'field' ] ) ) {
+            require PODS_DIR . 'ui/front/widgets.php';
         }
-
     }
 
     /**

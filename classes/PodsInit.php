@@ -663,33 +663,21 @@ class PodsInit {
         // Setup DB tables
         $pods_version = self::$version;
 
+        // Update Pods and run any necessary DB updates
         if ( 0 < strlen( $pods_version ) ) {
-            if ( PODS_VERSION != $pods_version ) {
-                // Update alpha / beta sites
-                if ( version_compare( '2.0.0-a-1', $pods_version, '<=' ) && version_compare( $pods_version, '2.0.0-b-15', '<=' ) ) {
-                    do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
+            if ( PODS_VERSION != $pods_version && false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] )) {
+                do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
 
-                    if ( false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] ) ) {
-                        include( PODS_DIR . 'sql/update-2.0-beta.php' );
-                        include( PODS_DIR . 'sql/update.php' );
-                    }
+                // Update 2.0 alpha / beta sites
+                if ( version_compare( '2.0.0-a-1', $pods_version, '<=' ) && version_compare( $pods_version, '2.0.0-b-15', '<=' ) )
+                    include( PODS_DIR . 'sql/update-2.0-beta.php' );
 
-                    do_action( 'pods_update_post', PODS_VERSION, $pods_version, $_blog_id );
-                }
-                else {
-                    do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
+                include( PODS_DIR . 'sql/update.php' );
 
-                    if ( false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] ) )
-                        include( PODS_DIR . 'sql/update.php' );
-
-                    do_action( 'pods_update_post', PODS_VERSION, $pods_version, $_blog_id );
-                }
-
-                update_option( 'pods_framework_version', PODS_VERSION );
-
-                pods_api()->cache_flush_pods();
+                do_action( 'pods_update_post', PODS_VERSION, $pods_version, $_blog_id );
             }
         }
+        // Install Pods
         else {
             do_action( 'pods_install', PODS_VERSION, $pods_version, $_blog_id );
 
@@ -721,11 +709,11 @@ class PodsInit {
             }
 
             do_action( 'pods_install_post', PODS_VERSION, $pods_version, $_blog_id );
-
-            update_option( 'pods_framework_version', PODS_VERSION );
-
-            pods_api()->cache_flush_pods();
         }
+
+        update_option( 'pods_framework_version', PODS_VERSION );
+
+        pods_api()->cache_flush_pods();
 
         // Restore DB table prefix (if switched)
         if ( null !== $_blog_id )

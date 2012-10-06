@@ -16,17 +16,20 @@ class PodsWidgetForm extends WP_Widget {
     public function widget ( $args, $instance ) {
         extract( $args );
 
+        // Get widget fields
         $title = apply_filters( 'widget_title', $instance[ 'title' ] );
-        $pod_type = pods_var( 'pod_type', $instance, '' );
-        $slug = pods_var( 'slug', $instance, '' );
-        $fields = pods_var( 'fields', $instance, '' );
-        $label = pods_var( 'label', $instance, __( 'Submit', 'pods' ), null, true );
-        $thank_you = pods_var( 'thank_you', $instance, '' );
 
-        if ( !empty( $pod_type ) ) {
-            $shortcode = '[pods name="' . $pod_type . '" form="1" fields="' . $fields . '" slug="' . $slug . '" label="' . $label . '" thank_you="' . $thank_you . '"]';
+        $args = array(
+            'name' => trim( pods_var_raw( 'pod_type', $instance, '' ) ),
+            'slug' => trim( pods_var_raw( 'slug', $instance, '' ) ),
+            'fields' => trim( pods_var_raw( 'fields', $instance, '' ) ),
+            'label' => trim( pods_var_raw( 'label', $instance, __( 'Submit', 'pods' ), null, true ) ),
+            'thank_you' => trim( pods_var_raw( 'thank_you', $instance, '' ) ),
+            'form' => 1
+        );
 
-            require PODS_DIR . 'ui/front/widgets/pods_widget_output.php';
+        if ( 0 < strlen( $args[ 'name' ] ) ) {
+            require PODS_DIR . 'ui/front/widgets.php';
         }
     }
 

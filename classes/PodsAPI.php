@@ -2786,7 +2786,7 @@ class PodsAPI {
         $params->id = $pod[ 'id' ];
         $params->name = $pod[ 'name' ];
 
-        if ( 'storage' == $pod[ 'type' ] ) {
+        if ( 'table' == $pod[ 'storage' ] ) {
             pods_query( "TRUNCATE `@wp_pods_{$params->name}`" );
         }
 

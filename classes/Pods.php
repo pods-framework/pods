@@ -452,6 +452,9 @@ class Pods {
                         if ( 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] )
                             $simple = true;
                     }
+
+                    if ( 'boolean' == $this->fields[ $params->name ][ 'type' ] )
+                        $params->raw = true;
                 }
 
                 if ( !isset( $this->fields[ $params->name ] ) || !in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) || $simple ) {
@@ -619,6 +622,8 @@ class Pods {
 
                             if ( in_array( $last_type, $tableless_field_types ) )
                                 $tableless = true;
+                            elseif ( 'boolean' == $last_type )
+                                $params->raw = true;
 
                             if ( empty( $data ) )
                                 $value = false;

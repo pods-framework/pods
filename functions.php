@@ -974,7 +974,11 @@ function pods_shortcode ( $tags, $content = null ) {
         'field' => null,
         'col' => null,
         'template' => null,
-        'helper' => null
+        'helper' => null,
+        'form' => null,
+        'fields' => null,
+        'label' => null,
+        'thank_you' => null
     );
 
     $tags = array_merge( $defaults, $tags );
@@ -984,16 +988,23 @@ function pods_shortcode ( $tags, $content = null ) {
         $content = null;
 
     if ( empty( $tags[ 'name' ] ) ) {
-        return '<e>Please provide a Pod name';
+        return '<p>Please provide a Pod name</p>';
     }
 
     if ( !empty( $tags[ 'col' ] ) ) {
         $tags[ 'field' ] = $tags[ 'col' ];
+
         unset( $tags[ 'col' ] );
     }
 
+    if ( !empty( $tags[ 'order' ] ) ) {
+        $tags[ 'orderby' ] = $tags[ 'order' ];
+
+        unset( $tags[ 'order' ] );
+    }
+
     if ( empty( $content ) && empty( $tags[ 'template' ] ) && empty( $tags[ 'field' ] ) ) {
-        return '<e>Please provide either a template or field name';
+        return '<p>Please provide either a template or field name</p>';
     }
 
     // id > slug (if both exist)
@@ -1010,11 +1021,10 @@ function pods_shortcode ( $tags, $content = null ) {
 
     $found = 0;
 
-    if ( empty( $id ) ) {
+    if ( !empty( $tags[ 'form' ] ) )
+        return $pod->form( $tags[ 'fields' ], $tags[ 'label' ], $tags[ 'thank_you' ] );
+    elseif ( empty( $id ) ) {
         $params = array();
-
-        if ( 0 < strlen( $tags[ 'order' ] ) )
-            $params[ 'orderby' ] = $tags[ 'order' ];
 
         if ( 0 < strlen( $tags[ 'orderby' ] ) )
             $params[ 'orderby' ] = $tags[ 'orderby' ];

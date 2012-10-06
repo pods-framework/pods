@@ -32,7 +32,10 @@ class PodsWidgetSingle extends WP_Widget {
         if ( !empty( $pod_type ) && !empty( $template ) && !empty( $slug ) ) {
             $shortcode = '[pods ';
             $shortcode .= "name=\"{$pod_type}\" ";
-            $shortcode .= "template=\"{$template}\" ";
+
+            if ( !empty( $template ) )
+                $shortcode .= "template=\"{$template}\" ";
+
             $shortcode .= "slug=\"{$slug}\" ";
             $shortcode .= "]";
 

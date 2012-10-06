@@ -27,16 +27,12 @@ class PodsWidgetField extends WP_Widget {
         $pod_type = pods_var( 'pod_type', $instance, '' );
         $slug = pods_var( 'slug', $instance, '' );
         $field = pods_var( 'field', $instance, '' );
-        $helper = pods_var( 'helper', $instance, '' );
 
         if ( !empty( $pod_type ) && !empty( $slug ) && !empty( $field ) ) {
             $shortcode = '[pods ';
             $shortcode .= "name=\"{$pod_type}\" ";
             $shortcode .= "slug=\"{$slug}\" ";
             $shortcode .= "field=\"{$field}\" ";
-
-            if ( !empty( $helper ) )
-                $shortcode .= "helper=\"{$helper}\" ";
 
             $shortcode .= ']';
 
@@ -56,7 +52,6 @@ class PodsWidgetField extends WP_Widget {
         $instance[ 'pod_type' ] = pods_var( 'pod_type', $new_instance, '' );
         $instance[ 'slug' ] = pods_var( 'slug', $new_instance, '' );
         $instance[ 'field' ] = pods_var( 'field', $new_instance, '' );
-        $instance[ 'helper' ] = pods_var( 'helper', $new_instance, '' );
 
         return $instance;
     }
@@ -69,7 +64,6 @@ class PodsWidgetField extends WP_Widget {
         $pod_type = pods_var_raw( 'pod_type', $instance, '' );
         $slug = pods_var_raw( 'slug', $instance, '' );
         $field = pods_var_raw( 'field', $instance, '' );
-        $helper = pods_var_raw( 'helper', $instance, '' );
 
         require PODS_DIR . 'ui/admin/widgets/field.php';
     }

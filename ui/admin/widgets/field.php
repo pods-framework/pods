@@ -13,28 +13,30 @@
 <ol class="pods_field_widget_form">
     <li>
         <label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title', 'pods' ); ?></label>
+
         <input class="widefat" type="text" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo esc_attr( $title ); ?>" />
     </li>
 
     <li>
         <?php
-        $api = pods_api();
-        $all_pods = $api->load_pods();
+            $api = pods_api();
+            $all_pods = $api->load_pods();
         ?>
         <label for="<?php echo $this->get_field_id( 'pod_type' ); ?>">
-            <?php _e( 'Pod Type', 'pods' ); ?>
+            <?php _e( 'Pod', 'pods' ); ?>
         </label>
+
         <?php if ( 0 < count( $all_pods ) ): ?>
-        <select id="<?php $this->get_field_id( 'pod_type' ); ?>" name="<?php echo $this->get_field_name( 'pod_type' ); ?>">
-            <?php foreach ( $all_pods as $pod ): ?>
-                <?php $selected = ( $pod[ 'name' ] == $pod_type ) ? 'selected' : ''; ?>
-                <option value="<?php echo $pod[ 'name' ]; ?>" <?php echo $selected; ?>>
-                    <?php echo esc_html( $pod[ 'label' ] ); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
+            <select id="<?php $this->get_field_id( 'pod_type' ); ?>" name="<?php echo $this->get_field_name( 'pod_type' ); ?>">
+                <?php foreach ( $all_pods as $pod ): ?>
+                    <?php $selected = ( $pod[ 'name' ] == $pod_type ) ? 'selected' : ''; ?>
+                    <option value="<?php echo $pod[ 'name' ]; ?>" <?php echo $selected; ?>>
+                        <?php echo esc_html( $pod[ 'label' ] ); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
         <?php else: ?>
-        <strong class="red"><?php _e( 'None Found', 'pods' ); ?></strong>
+            <strong class="red"><?php _e( 'None Found', 'pods' ); ?></strong>
         <?php endif; ?>
     </li>
 
@@ -42,30 +44,13 @@
         <label for="<?php echo $this->get_field_id( 'slug' ); ?>">
             <?php _e( 'Slug or ID', 'pods' ); ?>
         </label>
+
         <input class="widefat" type="text" id="<?php echo $this->get_field_id( 'slug' ); ?>" name="<?php echo $this->get_field_name( 'slug' ); ?>" value="<?php echo esc_attr( $slug ); ?>" />
     </li>
 
     <li>
         <label for="<?php $this->get_field_id( 'field' ); ?>"><?php _e( 'Field', 'pods' ); ?></label>
+
         <input class="widefat" type="text" name="<?php echo $this->get_field_name( 'field' ); ?>" id="<?php echo $this->get_field_id( 'field' ); ?>" value="<?php echo esc_attr( $field ); ?>" />
-    </li>
-
-    <li>
-        <?php
-        $all_helpers = $api->load_helpers( array( 'options' => array( 'helper_type' => 'display' ) ) );
-        ?>
-        <label for="<?php echo $this->get_field_id( 'helper' ); ?>">
-            <?php _e( 'Helper', 'pods' ); ?>
-        </label>
-
-        <select name="<?php echo $this->get_field_name( 'helper' ); ?>" id="<?php echo $this->get_field_id( 'helper' ); ?>">
-            <option value="">- <?php _e( 'Helper', 'pods' ); ?> -</option>
-            <?php foreach ( $all_helpers as $hlp ): ?>
-                <?php $selected = ( $hlp[ 'name' ] == $helper ) ? 'selected' : ''; ?>
-                <option value="<?php echo $hlp[ 'name' ]; ?>" <?php echo $selected; ?>>
-                    <?php echo esc_html( $hlp[ 'name' ] ); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
     </li>
 </ol>

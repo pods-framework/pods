@@ -817,11 +817,9 @@ class PodsInit {
         $widgets = array(
             'PodsWidgetSingle',
             'PodsWidgetList',
-            'PodsWidgetField'
+            'PodsWidgetField',
+            'PodsWidgetForm'
         );
-
-        if ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER )
-            $widgets[] = 'PodsWidgetForm';
 
         foreach ( $widgets as $widget ) {
             if ( !file_exists( PODS_DIR . 'classes/widgets/' . $widget . '.php' ) )

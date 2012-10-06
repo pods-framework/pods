@@ -1296,7 +1296,7 @@ class Pods {
      * @link http://podsframework.org/docs/filters/
      */
     public function filters ( $params = null ) {
-        // handle $params deprecated
+        // @todo handle $params deprecated
 
         ob_start();
 
@@ -1350,7 +1350,31 @@ class Pods {
      * @link http://podsframework.org/docs/template/
      */
     public function template ( $template, $code = null, $deprecated = false ) {
-        if ( class_exists( 'Pods_Templates' ) )
+        if ( !empty( $code ) ) {
+            $code = apply_filters( 'pods_templates_pre_template', $code, $template, $this );
+            $code = apply_filters( "pods_templates_pre_template_{$template}", $code, $template, $this );
+
+            ob_start();
+
+            if ( !empty( $code ) ) {
+                // Only detail templates need $this->id
+                if ( empty( $this->id ) ) {
+                    while ( $this->fetch() ) {
+                        echo $this->do_magic_tags( $code );
+                    }
+                }
+                else
+                    echo $this->do_magic_tags( $code, $this );
+            }
+
+            $out = ob_get_clean();
+
+            $out = apply_filters( 'pods_templates_post_template', $out, $code, $template, $this );
+            $out = apply_filters( "pods_templates_post_template_{$template}", $out, $code, $template, $this );
+
+            return $out;
+        }
+        elseif ( class_exists( 'Pods_Templates' ) )
             return Pods_Templates::template( $template, $code, $this, $deprecated );
     }
 
@@ -1450,7 +1474,7 @@ class Pods {
      *
      * @since 2.0.0
      */
-    public function do_magic_tags( $code ) {
+    public function do_magic_tags ( $code ) {
         return preg_replace_callback( '/({@(.*?)})/m', array( $this, 'process_magic_tags' ), $code );
     }
 

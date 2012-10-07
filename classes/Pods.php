@@ -444,6 +444,7 @@ class Pods {
                     if ( 'meta' == $this->pod_data[ 'storage' ] ) {
                         if ( !in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) )
                             $simple = true;
+                            $params->single = true;
                     }
 
                     if ( in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {

@@ -4391,6 +4391,7 @@ class PodsAPI {
      * @param int $field_id The Field ID
      * @param int $pod_id The Pod ID
      * @param mixed $ids A comma-separated string (or array) of item IDs
+     * @param array $field Field data array
      *
      * @return array|bool
      *
@@ -4398,7 +4399,7 @@ class PodsAPI {
      *
      * @uses pods_query()
      */
-    function lookup_related_items ( $field_id, $pod_id, $ids ) {
+    function lookup_related_items ( $field_id, $pod_id, $ids, $field = null ) {
         if ( empty( $ids ) )
             $ids = '0';
         else {
@@ -4413,11 +4414,15 @@ class PodsAPI {
         }
 
         $field_id = (int) $field_id;
+        $sister_id = (int) pods_var_raw( 'sister_id', $field, 0 );
 
-        $sql = "
-            SELECT *
-            FROM `@wp_podsrel`
-            WHERE
+        $related_where = "
+            `field_id` = %d
+            AND `item_id` IN ( %s )
+        ";
+
+        if ( 0 < $sister_id ) {
+            $related_where = "
                 (
                     `field_id` = %d
                     AND `item_id` IN ( %s )
@@ -4427,6 +4432,14 @@ class PodsAPI {
                     `related_field_id` = %d
                     AND `related_item_id` IN ( %s )
                 )
+            ";
+        }
+
+        $sql = "
+            SELECT *
+            FROM `@wp_podsrel`
+            WHERE
+                {$related_where}
             ORDER BY `weight`
         ";
 
@@ -4438,7 +4451,7 @@ class PodsAPI {
             foreach ( $relationships as $relation ) {
                 if ( $field_id == $relation->field_id && !in_array( $relation->related_item_id, $related_ids ) )
                     $related_ids[] = (int) $relation->related_item_id;
-                elseif ( $field_id == $relation->related_field_id && !in_array( $relation->item_id, $related_ids ) )
+                elseif ( 0 < $sister_id && $field_id == $relation->related_field_id && !in_array( $relation->item_id, $related_ids ) )
                     $related_ids[] = (int) $relation->item_id;
             }
 

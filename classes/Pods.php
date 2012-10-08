@@ -554,7 +554,8 @@ class Pods {
                             $ids = $this->api->lookup_related_items(
                                 $all_fields[ $pod ][ $field ][ 'id' ],
                                 $all_fields[ $pod ][ $field ][ 'pod_id' ],
-                                $ids
+                                $ids,
+                                $all_fields[ $pod ][ $field ]
                             );
 
                             // No items found

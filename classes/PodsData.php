@@ -1878,8 +1878,20 @@ class PodsData {
         }
 
         $rel_alias = 'rel_' . $field_joined;
-        $the_join = "
-            LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
+        $sister_id = (int) pods_var_raw( 'sister_id', $this->traversal[ $pod ][ $field ], 0 );
+
+        $related_on = "
+            `{$rel_alias}`.`field_id` = {$this->traversal[$pod][$field]['id']}
+            AND `{$rel_alias}`.`item_id` = `{$joined}`.`id`
+        ";
+
+        $table_related_on = "
+            `{$rel_alias}`.`field_id` = {$this->traversal[$pod][$field]['id']}
+            AND `{$field_joined}`.`{$this->traversal[$pod][$field]['on']}` = `{$rel_alias}`.`related_item_id`
+        ";
+
+        if ( 0 < $sister_id ) {
+            $related_on = "
                 (
                     `{$rel_alias}`.`field_id` = {$this->traversal[$pod][$field]['id']}
                     AND `{$rel_alias}`.`item_id` = `{$joined}`.`id`
@@ -1888,7 +1900,9 @@ class PodsData {
                     `{$rel_alias}`.`related_field_id` = {$this->traversal[$pod][$field]['id']}
                     AND `{$rel_alias}`.`related_item_id` = `{$joined}`.`id`
                 )
-            LEFT JOIN `{$this->traversal[$pod][$field]['table']}` AS `{$field_joined}` ON
+            ";
+
+            $table_related_on = "
                 (
                     `{$rel_alias}`.`field_id` = {$this->traversal[$pod][$field]['id']}
                     AND `{$field_joined}`.`{$this->traversal[$pod][$field]['on']}` = `{$rel_alias}`.`related_item_id`
@@ -1897,6 +1911,14 @@ class PodsData {
                     `{$rel_alias}`.`related_field_id` = {$this->traversal[$pod][$field]['id']}
                     AND `{$field_joined}`.`{$this->traversal[$pod][$field]['on']}` = `{$rel_alias}`.`item_id`
                 )
+            ";
+        }
+
+        $the_join = "
+            LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
+                {$related_on}
+            LEFT JOIN `{$this->traversal[$pod][$field]['table']}` AS `{$field_joined}` ON
+                {$table_related_on}
         ";
 
         if ( !in_array( $this->traversal[ $pod ][ $field ][ 'type' ], array( 'pick', 'file' ) ) ) {

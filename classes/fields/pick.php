@@ -268,9 +268,9 @@ class PodsField_Pick extends PodsField {
     public function data ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array();
 
-        $custom = pods_var_raw( 'pick_custom', $options, false );
+        $custom = trim( pods_var_raw( 'pick_custom', $options, '' ) );
 
-        if ( 'custom-simple' == pods_var( 'pick_object', $options ) && !empty( $custom ) ) {
+        if ( 'custom-simple' == pods_var( 'pick_object', $options ) && 0 < strlen( $custom ) ) {
             if ( !is_array( $custom ) )
                 $custom = explode( "\n", $custom );
 

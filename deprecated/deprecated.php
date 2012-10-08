@@ -157,6 +157,19 @@ class Pod
     }
 
     /**
+     * Handle variables that have been deprecated
+     *
+     * @since 2.0.0
+     */
+    public function __set ( $name, $value ) {
+        $name = (string) $name;
+
+        $this->new->{$name} = $value;
+
+        return $value;
+    }
+
+    /**
      * Handle methods that have been deprecated
      *
      * @since 2.0.0

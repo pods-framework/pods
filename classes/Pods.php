@@ -395,8 +395,6 @@ class Pods {
 
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
 
-        $tableless = false;
-
         $params->traverse = array();
 
         if ( 'detail_url' == $params->name ) {
@@ -447,13 +445,15 @@ class Pods {
                     }
 
                     if ( in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
-                        $tableless = true;
+                        $params->raw = true;
 
-                        if ( 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] )
+                        if ( 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] ) {
                             $simple = true;
-                    }
 
-                    if ( 'boolean' == $this->fields[ $params->name ][ 'type' ] )
+                            $params->single = true;
+                        }
+                    }
+                    elseif ( 'boolean' == $this->fields[ $params->name ][ 'type' ] )
                         $params->raw = true;
                 }
 
@@ -620,9 +620,7 @@ class Pods {
 
                             $data = pods_query( $sql );
 
-                            if ( in_array( $last_type, $tableless_field_types ) )
-                                $tableless = true;
-                            elseif ( 'boolean' == $last_type )
+                            if ( in_array( $last_type, $tableless_field_types ) || 'boolean' == $last_type )
                                 $params->raw = true;
 
                             if ( empty( $data ) )
@@ -669,7 +667,7 @@ class Pods {
                 if ( 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] ) {
                     if ( empty( $value ) )
                         $value = array();
-                    else
+                    elseif ( !is_array( $value ) )
                         $value = @json_decode( $value, true );
 
                     $single_multi = pods_var( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
@@ -680,6 +678,8 @@ class Pods {
                         else
                             $value = current( $value );
                     }
+
+                    $params->single = false;
                 }
             }
 
@@ -690,7 +690,7 @@ class Pods {
             $value = $value[ 0 ];
 
         // @todo Expand this into traversed fields too
-        if ( false === $params->raw && false === $params->in_form && false === $tableless && isset( $this->fields[ $params->name ] ) ) {
+        if ( false === $params->raw && false === $params->in_form && isset( $this->fields[ $params->name ] ) ) {
             $value = PodsForm::display(
                 $this->fields[ $params->name ][ 'type' ],
                 $value,

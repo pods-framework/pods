@@ -2209,57 +2209,92 @@ class PodsAPI {
         if ( !empty( $params->id ) )
             $object_data[ $object_ID ] = $params->id;
 
+        $fields_active = array_unique( $fields_active );
+
         // Loop through each active field, validating and preparing the table data
         foreach ( $fields_active as $field ) {
             if ( isset( $object_fields[ $field ] ) )
-                $options = $object_fields[ $field ];
+                $field_data = $object_fields[ $field ];
             elseif ( isset( $fields[ $field ] ) )
-                $options = $fields[ $field ];
+                $field_data = $fields[ $field ];
             else
                 continue;
 
-            $value = $options[ 'value' ];
-            $type = $options[ 'type' ];
+            $value = $field_data[ 'value' ];
+            $type = $field_data[ 'type' ];
+            $options = pods_var( 'options', $field_data, array() );
 
             // Validate value
             $validate = $this->handle_field_validation( $value, $field, $object_fields, $fields, $pod, $params );
 
             if ( false === $validate )
-                $validate = sprintf( __( 'There was an issue validating the field %s', 'pods' ), $options[ 'label' ] );
+                $validate = sprintf( __( 'There was an issue validating the field %s', 'pods' ), $field_data[ 'label' ] );
 
             if ( !is_bool( $validate ) && !empty( $validate ) )
                 return pods_error( $validate, $this );
 
-            $value = PodsForm::pre_save( $options[ 'type' ], $value, $params->id, $field, array_merge( pods_var( 'options', $options, array() ), $options ), array_merge( $fields, $object_fields ), $pod, $params );
+            $value = PodsForm::pre_save( $field_data[ 'type' ], $value, $params->id, $field, array_merge( $options, $field_data ), array_merge( $fields, $object_fields ), $pod, $params );
 
-            $options[ 'value' ] = $value;
+            $field_data[ 'value' ] = $value;
 
             if ( isset( $object_fields[ $field ] ) )
                 $object_data[ $field ] = $value;
             else {
-                $simple = ( 'pick' == $type && 'custom-simple' == pods_var( 'pick_object', $options ) );
-                $simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $options, $field, $fields, $pod, $params );
+                $simple = ( 'pick' == $type && 'custom-simple' == pods_var( 'pick_object', $field_data ) );
+                $simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field_data, $field, $fields, $pod, $params );
+
+                // Handle Simple Relationships
+                if ( $simple ) {
+                    $value = (array) $value;
+
+                    $custom = pods_var_raw( 'pick_custom', $options, '' );
+
+                    if ( empty( $value ) || empty( $custom ) )
+                        $value = '';
+                    elseif ( !empty( $custom ) ) {
+                        if ( !is_array( $custom ) )
+                            $custom = explode( "\n", $custom );
+
+                        $custom_values = array();
+
+                        foreach ( $custom as $c => $cv ) {
+                            if ( 0 < strlen( $cv ) ) {
+                                $custom_label = explode( '|', $cv );
+
+                                if ( !isset( $custom_label[ 1 ] ) )
+                                    $custom_label[ 1 ] = $custom_label[ 0 ];
+
+                                $custom_values[ $custom_label[ 0 ] ] = $custom_label[ 1 ];
+                            }
+                        }
+
+                        $values = array();
+
+                        foreach ( $value as $k => $v ) {
+                            if ( isset( $custom_values[ $v ] ) )
+                                $values[ $k ] = $v;
+                        }
+
+                        $value = $values;
+                    }
+
+                    if ( empty( $value ) )
+                        $value = '';
+                    elseif ( is_array( $value ) && 'table' == pods_var( 'storage', $pod ) )
+                        $value = json_encode( $value );
+                }
 
                 // Prepare all table (non-relational) data
                 if ( !in_array( $type, $tableless_field_types ) || $simple ) {
-                    if ( $simple ) {
-                        $value = (array) $value;
-
-                        if ( empty( $value ) )
-                            $value = '';
-                        else
-                            $value = json_encode( $value );
-                    }
-
                     $table_data[ $field ] = $value;
-                    $table_formats[] = PodsForm::prepare( $type, pods_var( 'options', $options, array() ) );
+                    $table_formats[] = PodsForm::prepare( $type, $options );
 
                     $object_meta[ $field ] = $value;
                 }
                 // Store relational field data to be looped through later
                 else {
                     $rel_fields[ $type ][ $field ] = $value;
-                    $rel_field_ids[] = $options[ 'id' ];
+                    $rel_field_ids[] = $field_data[ 'id' ];
                 }
             }
         }

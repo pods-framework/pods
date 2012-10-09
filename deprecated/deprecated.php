@@ -113,6 +113,14 @@ class Pod
 {
     private $new;
 
+    public $body_classes;
+
+    public $meta = array();
+
+    public $meta_properties = array();
+
+    public $meta_extra = '';
+
     function __construct ($type = null, $id = null) {
         pods_deprecated('Pod (class)', '2.0.0', 'pods (function)');
 
@@ -132,9 +140,8 @@ class Pod
 
             $var = $this->new->row();
         }
-        elseif ( '_data' == $name ) {
-            $var =& $this->new->data;
-        }
+        elseif ( '_data' == $name )
+            $var = $this->new->data;
         elseif ( 'total' == $name ) {
             pods_deprecated( "Pods->{$name}", '2.0.0', "Pods->total()" );
 
@@ -151,7 +158,7 @@ class Pod
             $var = $this->new->zebra();
         }
         else
-            $var =& $this->new->{$name};
+            $var = $this->new->{$name};
 
         return $var;
     }
@@ -189,6 +196,8 @@ class Pod
         $name = (string) $name;
 
         if ( in_array( $name, array( '_data', 'data', 'total', 'total_rows', 'zebra' ) ) )
+            return true;
+        elseif ( in_array( $name, array( 'meta', 'meta_properties', 'meta_extra' ) ) )
             return true;
         else
             return isset( $this->new->{$name} );

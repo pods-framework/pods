@@ -252,6 +252,10 @@ input.pods-form-ui-field-type-color {
     display: inline-block;
 }
 
+.pods-form {
+    overflow: hidden;
+}
+
 .pods-form img.waiting {
     display: none;
     vertical-align: middle;

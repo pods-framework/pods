@@ -2310,6 +2310,15 @@ class PodsAPI {
             }
         }
 
+        if ( 'post_type' == $pod[ 'type' ] ) {
+            $post_type = $pod[ 'name' ];
+
+            if ( !empty( $pod[ 'object' ] ) )
+                $post_type = $pod[ 'object' ];
+
+            $object_data[ 'post_type' ] = $post_type;
+        }
+
         if ( 'meta' == $pod[ 'storage' ] && !in_array( $pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) ) {
             $params->id = $this->save_wp_object( $object_type, $object_data, $object_meta, false, true );
         }

@@ -668,12 +668,22 @@ function pods_var_update ( $array = null, $allowed = null, $excluded = null, $ur
 
     if ( !empty( $array ) ) {
         foreach ( $array as $key => $val ) {
-            if ( is_array( $val ) && !empty( $val ) )
-                $get[ $key ] = $val;
-            elseif ( !is_array( $val ) && 0 < strlen( $val ) )
-                $get[ $key ] = $val;
-            elseif ( isset( $get[ $key ] ) )
-                unset( $get[ $key ] );
+            if ( null !== $val || false === strpos( $key, '*' ) ) {
+                if ( is_array( $val ) && !empty( $val ) )
+                    $get[ $key ] = $val;
+                elseif ( !is_array( $val ) && 0 < strlen( $val ) )
+                    $get[ $key ] = $val;
+                elseif ( isset( $get[ $key ] ) )
+                    unset( $get[ $key ] );
+            }
+            else {
+                $key = str_replace( '*', '', $key );
+
+                foreach ( $get as $k => $v ) {
+                    if ( false !== strpos( $k, $key ) )
+                        unset( $get[ $k ] );
+                }
+            }
         }
     }
 

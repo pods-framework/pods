@@ -1604,12 +1604,19 @@ class Pods {
 
         $thank_you = $params[ 'thank_you' ];
 
+        PodsForm::$form_counter++;
+
         ob_start();
 
         if ( empty( $thank_you ) ) {
-            $thank_you = pods_var_update( array( 'success' => true ) );
+            $success = 'success';
 
-            if ( 1 == pods_var( 'success', 'get', 0 ) ) {
+            if ( 1 < PodsForm::$form_counter )
+                $success .= PodsForm::$form_counter;
+
+            $thank_you = pods_var_update( array( 'success*' => null, $success => 1 ) );
+
+            if ( 1 == pods_var( $success, 'get', 0 ) ) {
                 echo '<div id="message" class="pods-form-front-success">'
                      . __( 'Form submitted successfully', 'pods' ) . '</div>';
             }

@@ -919,10 +919,12 @@ class PodsAdmin {
         }
 
         // Output in json format
-        if ( 'upgrade' == $method->name )
-            echo $output;
-        elseif ( false !== $output )
-            echo json_encode( $output );
+        if ( false !== $output ) {
+            if ( is_array( $output ) || is_object( $output ) )
+                echo json_encode( $output );
+            else
+                echo $output;
+        }
         else
             pods_error( 'There was a problem with your request.' );
 

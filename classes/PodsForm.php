@@ -25,6 +25,11 @@ class PodsForm {
     static $loaded = array();
 
     /**
+     * @var int
+     */
+    static $form_counter = 0;
+
+    /**
      * Generate UI for a Form and it's Fields
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html

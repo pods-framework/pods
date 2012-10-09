@@ -166,7 +166,16 @@ if ( !class_exists( 'WPGitHubUpdater' ) ) :
                     )
                 );
 
-                if ( is_wp_error( $raw_response ) ) {
+                $__version = false;
+
+                if ( !is_wp_error( $raw_response ) ) {
+                    $__version = explode( '~Current Version:', $raw_response[ 'body' ] );
+
+                    if ( !isset( $__version[ '1' ] ) )
+                        $__version = false;
+                }
+
+                if ( !$__version || is_wp_error( $raw_response ) ) {
                     $raw_response = wp_remote_get(
                         trailingslashit( $this->config[ 'raw_url' ] ) . 'README.md',
                         array(
@@ -176,9 +185,9 @@ if ( !class_exists( 'WPGitHubUpdater' ) ) :
 
                     if ( is_wp_error( $raw_response ) )
                         return false;
-                }
 
-                $__version = explode( '~Current Version:', $raw_response[ 'body' ] );
+                    $__version = explode( '~Current Version:', $raw_response[ 'body' ] );
+                }
 
                 if ( !isset( $__version[ '1' ] ) )
                     return false;

@@ -494,6 +494,10 @@ class PodsData {
 
         $cache_key = $results = false;
 
+        // Debug purposes
+        if ( 1 == pods_var( 'pods_debug_params', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
+            pods_debug( $params );
+
         // Get from cache if enabled
         if ( null !== pods_var( 'expires', $params, null, null, true ) ) {
             $cache_key = md5( serialize( get_object_vars( $params ) ) );
@@ -507,6 +511,10 @@ class PodsData {
         if ( empty( $results ) ) {
             // Build
             $this->sql = $this->build( $params );
+
+            // Debug purposes
+            if ( 1 == pods_var( 'pods_debug_sql', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
+                echo "<textarea cols='130' rows='30'>{$this->sql}</textarea>";
 
             if ( empty( $this->sql ) )
                 return array();
@@ -1128,10 +1136,6 @@ class PodsData {
             ), '', $sql );
             $sql = str_replace( array( '``', '`' ), array( '  ', ' ' ), $sql );
         }
-
-        // Debug purposes
-        if ( 1 == pods_var( 'debug_sql', 'get', 0 ) && is_user_logged_in() && is_super_admin() )
-            echo "<textarea cols='130' rows='30'>{$sql}</textarea>";
 
         return $sql;
     }

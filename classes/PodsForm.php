@@ -737,9 +737,9 @@ class PodsForm {
         $default_value_parameter = pods_var_raw( 'default_value_parameter', $options, $default_value, null, true );
         $default = pods_var_raw( 'default', $options, $default_value_parameter, null, true );
 
-        $default = trim( $default, ' {@}' );
+        $default_value = trim( $default, ' {@}' );
 
-        if ( $default != $value ) {
+        if ( $default != $default_value ) {
             $value = $default;
 
             $default = explode( '.', $default );
@@ -749,6 +749,8 @@ class PodsForm {
             elseif ( 2 == count( $default ) )
                 $value = pods_var_raw( $default[ 1 ], $default[ 0 ], '', null, true );
         }
+        elseif ( $default != $value )
+            $value = $default;
 
         if ( is_array( $value ) )
             $value = pods_serial_comma( $value );

@@ -213,6 +213,8 @@ class PodsAdmin {
                     $submenu[] = $item;
             }
 
+            $submenu = apply_filters( 'pods_admin_menu_secondary_content', $submenu );
+
             if ( !empty( $submenu ) ) {
                 $parent_page = null;
 

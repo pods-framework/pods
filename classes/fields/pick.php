@@ -275,7 +275,7 @@ class PodsField_Pick extends PodsField {
                 $custom = explode( "\n", $custom );
 
             if ( 'single' == pods_var( 'pick_format_type', $options ) && 'dropdown' == pods_var( 'pick_format_single', $options ) )
-                $options[ 'data' ] = array( '' => __( '-- Select One --', 'pods' ) );
+                $options[ 'data' ] = array( '' => pods_var_raw( 'pick_select_text', $options, __( '-- Select One --', 'pods' ), null, true ) );
 
             foreach ( $custom as $custom_value ) {
                 $custom_label = explode( '|', $custom_value );

@@ -774,10 +774,12 @@ class Pods {
         if ( null === $id )
             $id = $this->field( 'id' );
 
+        $id = (int) $id;
+
         $params = array(
-            'select' => $this->data->field_id,
-            'where' => $id . ' < ' . $this->data->field_id,
-            'orderby' => 't.' . $this->data->field_id . ' ASC',
+            'select' => "`t`.{$this->data->field_id}`",
+            'where' => "{$id} < `t`.{$this->data->field_id}`",
+            'orderby' => "`t`.{$this->data->field_id}` ASC",
             'limit' => 1
         );
 
@@ -801,10 +803,12 @@ class Pods {
         if ( null === $id )
             $id = $this->field( 'id' );
 
+        $id = (int) $id;
+
         $params = array(
-            'select' => $this->data->field_id,
-            'where' => $this->data->field_id . ' < ' . $id,
-            'orderby' => 't.' . $this->data->field_id . ' DESC',
+            'select' => "`t`.{$this->data->field_id}`",
+            'where' => "`t`.{$this->data->field_id}` < {$id}",
+            'orderby' => "`t`.{$this->data->field_id}` DESC",
             'limit' => 1
         );
 
@@ -1440,7 +1444,78 @@ class Pods {
      * @link http://podsframework.org/docs/filters/
      */
     public function filters ( $params = null ) {
-        // @todo handle $params deprecated
+        $defaults = array(
+            'fields' => $params,
+            'label' => '',
+            'action' => '',
+            'search' => ''
+        );
+
+        if ( is_array( $params ) )
+            $params = array_merge( $defaults, $params );
+        else
+            $params = $defaults;
+
+        $pod =& $this;
+
+        $params = apply_filters( 'pods_filters_params', $params, $pod );
+
+        $fields = $params[ 'fields' ];
+
+        if ( null !== $fields && !is_array( $fields ) && 0 < strlen( $fields ) )
+            $fields = explode( ',', $fields );
+
+        $object_fields = (array) pods_var_raw( 'object_fields', $this->pod_data, array(), null, true );
+
+        // Force array
+        if ( empty( $fields ) )
+            $fields = array();
+        else {
+            $filter_fields = $fields; // Temporary
+
+            $fields = array();
+
+            foreach ( $filter_fields as $k => $field ) {
+                $name = $k;
+
+                $defaults = array(
+                    'name' => $name
+                );
+
+                if ( !is_array( $field ) ) {
+                    $name = $field;
+
+                    $field = array(
+                        'name' => $name
+                    );
+                }
+
+                $field = array_merge( $defaults, $field );
+
+                $field[ 'name' ] = trim( $field[ 'name' ] );
+
+                if ( pods_var_raw( 'hidden', $field, false, null, true ) )
+                    continue;
+                elseif ( isset( $object_fields[ $field[ 'name' ] ] ) )
+                    $fields[ $field[ 'name' ] ] = array_merge( $object_fields[ $field[ 'name' ] ], $field );
+                elseif ( isset( $this->fields[ $field[ 'name' ] ] ) )
+                    $fields[ $field[ 'name' ] ] = array_merge( $this->fields[ $field[ 'name' ] ], $field );
+            }
+
+            unset( $filter_fields ); // Cleanup
+        }
+
+        $label = $params[ 'label' ];
+
+        if ( strlen( $label ) < 1 )
+            $label = __( 'Search', 'pods' );
+
+        $action = $params[ 'action' ];
+
+        $search = trim( $params[ 'search' ] );
+
+        if ( strlen( $search ) < 1 )
+            $search = pods_var_raw( $pod->search_var, 'get', '' );
 
         ob_start();
 

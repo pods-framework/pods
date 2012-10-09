@@ -321,14 +321,17 @@ class Pods_Deprecated
 
         $val = array();
         $result = pods_query( $sql );
+
         foreach ( $result as $row ) {
             $row = get_object_vars( $row );
             $row[ 'active' ] = false;
-            if ( !empty( $params->selected_ids ) ) {
+
+            if ( !empty( $params->selected_ids ) )
                 $row[ 'active' ] = in_array( $row[ 'id' ], $params->selected_ids );
-            }
+
             $val[] = $row;
         }
+
         return $val;
     }
 

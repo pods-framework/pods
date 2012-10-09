@@ -125,10 +125,10 @@ class PodsComponents {
                         if ( $menu[ 2 ] == $menu_page ) {
                             $menu_page = $component_data[ 'MenuPage' ];
 
-                            if ( !empty( $component_data[ 'MenuAddPage' ] ) ) {
+                            /*if ( !empty( $component_data[ 'MenuAddPage' ] ) ) {
                                 if ( false !== strpos( $_SERVER[ 'REQUEST_URI' ], $component_data[ 'MenuAddPage' ] ) )
                                     $menu_page = $component_data[ 'MenuAddPage' ];
-                            }
+                            }*/
 
                             $menu[ 2 ] = $menu_page;
 

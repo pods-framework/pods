@@ -1717,7 +1717,7 @@ class PodsAPI {
                 if ( $field[ 'type' ] != $old_type ) {
                     if ( in_array( $field[ 'type' ], $tableless_field_types ) && !$simple && ( !in_array( $old_type, $tableless_field_types ) || $old_simple ) )
                         pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$old_name}`", false );
-                    elseif ( ( in_array( $old_type, $tableless_field_types ) && !$old_simple ) || $simple )
+                    elseif ( ( in_array( $old_type, $tableless_field_types ) && !$old_simple ) || ( in_array( $old_type, $tableless_field_types ) && $simple ) )
                         pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
                     elseif ( false !== $definition )
                         pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `{$old_name}` {$definition}" );
@@ -1793,7 +1793,7 @@ class PodsAPI {
         return $params->id;
     }
 
-    public function save_field_slug_fix ( $slug, $post_ID, $post_status, $post_type, $post_parent, $original_slug ) {
+    public function save_field_slug_fix ( $slug, $post_ID, $post_status, $post_type, $post_parent = 0, $original_slug = null ) {
         if ( in_array( $post_type, array( '_pods_field', '_pods_pod' ) ) && false !== strpos( $slug, '-' ) ) {
             $slug = explode( '-', $slug );
             $slug = $slug[ 0 ];
@@ -2248,6 +2248,7 @@ class PodsAPI {
                     $value = (array) $value;
 
                     $custom = pods_var_raw( 'pick_custom', $options, '' );
+                    $pick_limit = (int) pods_var_raw( 'pick_limit', $options, 0 );
 
                     if ( empty( $value ) || empty( $custom ) )
                         $value = '';
@@ -2276,12 +2277,22 @@ class PodsAPI {
                         }
 
                         $value = $values;
+
+                        if ( 0 < $pick_limit && !empty( $value ) )
+                            $value = array_slice( $value, 0, $pick_limit );
                     }
 
+                    // Don't save an empty array, just make it an empty string
                     if ( empty( $value ) )
                         $value = '';
-                    elseif ( is_array( $value ) && 'table' == pods_var( 'storage', $pod ) )
-                        $value = json_encode( $value );
+                    elseif ( is_array( $value ) ) {
+                        // If there's just one item, don't save as an array, save the string
+                        if ( 1 == $pick_limit )
+                            $value = implode( '', $value );
+                        // If storage is set to table, json encode, otherwise WP will serialize automatically
+                        elseif ( 'table' == pods_var( 'storage', $pod ) )
+                            $value = json_encode( $value );
+                    }
                 }
 
                 // Prepare all table (non-relational) data
@@ -4584,7 +4595,7 @@ class PodsAPI {
                 }
 
                 $info[ 'where' ] = array(
-                    'post_status' => '`t`.`post_status` = IN ( "inherit", "publish" )',
+                    'post_status' => '`t`.`post_status` IN ( "inherit", "publish" )',
                     'post_type' => '`t`.`post_type` = "' . ( empty( $object ) ? $name : $object ) . '"'
                 );
 
@@ -5309,14 +5320,22 @@ class PodsAPI {
         $out = array();
         foreach ( $lines as $line ) {
             // Skip the empty line
-            if ( empty( $line ) )
+            if ( strlen ( $line ) < 1 )
                 continue;
+
             $row = array();
-            $fields = preg_split( $expr, trim( $line ) );
-            $fields = preg_replace( "/^\"(.*)\"$/s", "$1", $fields );
+
+            if ( function_exists( 'str_getcsv' ) )
+                $fields = str_getcsv( $line );
+            else {
+                $fields = preg_split( $expr, trim( $line ) );
+                $fields = preg_replace( "/^\"(.*)\"$/s", "$1", $fields );
+            }
+
             foreach ( $field_names as $key => $field ) {
                 $row[ $field ] = $fields[ $key ];
             }
+
             $out[] = $row;
         }
         return $out;

@@ -14,12 +14,6 @@ class Pods_Deprecated
 
     var $datatype_id;
 
-    var $meta = array();
-
-    var $meta_properties = array();
-
-    var $meta_extra = '';
-
     /**
      * Constructor - Pods Deprecated functionality (pre 2.0)
      *

@@ -166,8 +166,6 @@ class PodsField_Number extends PodsField {
         if ( is_array( $value ) )
             $value = implode( '', $value );
 
-        $value = $this->pre_save( $value, $id, $name, $options, null, $pod );
-
         pods_view( PODS_DIR . 'ui/fields/number.php', compact( array_keys( get_defined_vars() ) ) );
     }
 

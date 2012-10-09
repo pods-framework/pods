@@ -403,8 +403,12 @@ class Pods {
             elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
                 $value = get_permalink( $this->id() );
         }
-        elseif ( isset( $this->row[ $params->name ] ) )
+        elseif ( isset( $this->row[ $params->name ] ) ) {
+            if ( !isset( $this->fields[ $params->name ] ) || 'boolean' == $this->fields[ $params->name ][ 'type' ] || in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) )
+                $params->raw = true;
+
             $value = $this->row[ $params->name ];
+        }
         else {
             $object_field_found = false;
 
@@ -477,6 +481,25 @@ class Pods {
                     elseif ( 'comment' == $this->pod_data[ 'type' ] )
                         $value = get_comment_meta( $this->id(), $params->name, $params->single );
 
+                    // Handle Simple Relationships
+                    if ( $simple ) {
+                        if ( !is_array( $value ) && !empty( $value ) )
+                            $simple = @json_decode( $value );
+
+                        if ( is_array( $simple ) )
+                            $value = $simple;
+
+                        $single_multi = pods_var( 'pick_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
+
+                        if ( 'multi' == $single_multi )
+                            $limit = (int) pods_var( 'pick_limit', $this->fields[ $params->name ][ 'options' ], 0 );
+                        else
+                            $limit = 1;
+
+                        if ( is_array( $value ) && 0 < $limit )
+                            array_splice( $value, 0, $limit );
+                    }
+
                     pods_no_conflict_off( $this->pod_data[ 'type' ] );
                 }
                 else {
@@ -531,11 +554,18 @@ class Pods {
 
                         $field_exists = isset( $all_fields[ $pod ][ $field ] );
 
+                        $simple = false;
+
+                        if ( 'pick' == $all_fields[ $pod ][ $field ][ 'type' ] && 'custom-simple' == $all_fields[ $pod ][ $field ][ 'pick_object' ] )
+                            $simple = true;
+
                         // Tableless handler
-                        if ( $field_exists ) {
+                        if ( $field_exists && ( 'pick' != $all_fields[ $pod ][ $field ][ 'type' ] || !$simple ) ) {
                             $type = $all_fields[ $pod ][ $field ][ 'type' ];
                             $pick_object = $all_fields[ $pod ][ $field ][ 'pick_object' ];
                             $pick_val = $all_fields[ $pod ][ $field ][ 'pick_val' ];
+
+                            $last_limit = 0;
 
                             if ( in_array( $type, $tableless_field_types ) ) {
                                 $single_multi = pods_var( "{$type}_format_type", $all_fields[ $pod ][ $field ][ 'options' ], 'single' );
@@ -561,6 +591,8 @@ class Pods {
                             // No items found
                             if ( empty( $ids ) )
                                 return false;
+                            elseif ( 0 < $last_limit )
+                                array_splice( $ids, 0, $last_limit );
 
                             // Get $pod if related to a Pod
                             if ( !empty( $pick_object ) && 'pod' == $pick_object && !empty( $pick_val ) )
@@ -583,6 +615,8 @@ class Pods {
                                 $object_type = 'media';
                                 $object = 'attachment';
                             }
+
+                            $data = array();
 
                             $table = $this->api->get_table_info( $object_type, $object );
 
@@ -612,14 +646,16 @@ class Pods {
                                 $where = "WHERE {$where}";
                             }
 
-                            $sql = "
-                                SELECT *
-                                FROM `" . $table[ 'table' ] . "` AS `t`
-                                {$join}
-                                {$where}
-                            ";
+                            if ( !empty( $table[ 'table' ] ) ) {
+                                $sql = "
+                                    SELECT *
+                                    FROM `" . $table[ 'table' ] . "` AS `t`
+                                    {$join}
+                                    {$where}
+                                ";
 
-                            $data = pods_query( $sql );
+                                $data = pods_query( $sql );
+                            }
 
                             if ( in_array( $last_type, $tableless_field_types ) || 'boolean' == $last_type )
                                 $params->raw = true;
@@ -644,6 +680,15 @@ class Pods {
                                     foreach ( $data as $item ) {
                                         $value[] = $item[ $field ];
                                     }
+                                }
+
+                                // Handle Simple Relationships
+                                if ( $simple ) {
+                                    if ( !is_array( $value ) && !empty( $value ) )
+                                        $simple = @json_decode( $value );
+
+                                    if ( is_array( $simple ) )
+                                        $value = $simple;
                                 }
 
                                 // Return a single column value
@@ -867,38 +912,115 @@ class Pods {
         if ( !empty( $params->where ) && is_array( $params->where ) ) {
             $params->where = pods_sanitize( $params->where );
 
-            foreach ( $params->where as $k => &$where ) {
+            foreach ( $params->where as $k => $where ) {
                 if ( empty( $where ) ) {
                     unset( $params->where[ $k ] );
 
                     continue;
                 }
 
+                // @todo Implement meta_query like arguments for $where
                 if ( !is_numeric( $k ) ) {
+                    $where_args = array(
+                        'key' => $k,
+                        'value' => '',
+                        'compare' => '=',
+                        'type' => 'CHAR'
+                    );
+
+                    if ( !is_array( $where ) ) {
+                        $where_args[ 'value' ] = $where;
+
+                        $where = $where_args;
+                    }
+                    else
+                        $where = array_merge( $where_args, $where );
+
+                    $where[ 'key' ] = trim( $where[ 'key' ] );
+                    $where[ 'compare' ] = trim( $where[ 'compare' ] );
+                    $where[ 'type' ] = trim( $where[ 'type' ] );
+
+                    if ( strlen( $where[ 'key' ] ) < 1 ) {
+                        unset( $params->where[ $k ] );
+
+                        continue;
+                    }
+
+                    $where[ 'compare' ] = strtotime( $where[ 'compare' ] );
+
+                    if ( !in_array( $where[ 'compare' ], array( '=', '!=', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) ) )
+                        $where[ 'compare' ] = '=';
+
+                    $where[ 'type' ] = strtotime( $where[ 'type' ] );
+
+                    if ( !in_array( $where[ 'type' ], array( 'NUMERIC', 'BINARY', 'CHAR', 'DATE', 'DATETIME', 'DECIMAL', 'SIGNED', 'TIME', 'UNSIGNED' ) ) )
+                        $where[ 'type' ] = 'CHAR';
+
+                    if ( is_array( $where[ 'value' ] ) && !in_array( $where[ 'compare' ], array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) ) ) {
+                        if ( in_array( $where[ 'compare' ], array( '!=', 'NOT LIKE' ) ) )
+                            $where[ 'compare' ] = 'NOT IN';
+                        else
+                            $where[ 'compare' ] = 'IN';
+                    }
+
                     $key = '';
 
-                    if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) ) {
-                        if ( isset( $this->pod_data[ 'object_fields' ][ $k ] ) )
-                            $key = "`t`.`{$k}`";
-                        elseif ( 'table' == $this->pod_data[ 'storage' ] && isset( $this->fields[ $k ] ) )
-                            $key = "`d`.`{$k}`";
-                        else {
-                            foreach ( $this->pod_data[ 'object_fields' ] as $object_field => $object_field_opt ) {
-                                if ( $object_field == $k || in_array( $k, $object_field_opt[ 'alias' ] ) )
-                                    $key = "`t`.`{$object_field}`";
+                    if ( false === strpos( $k, '`' ) && false === strpos( $k, ' ' ) ) {
+                        if ( isset( $this->fields[ $k ] ) && in_array( $this->fields[ $k ][ 'type' ], $tableless_field_types ) ) {
+                            if ( 'custom-simple' == $this->fields[ $k ][ 'pick_object' ] ) {
+                                if ( 'table' == $this->pod_data[ 'storage' ] )
+                                    $key = "`t`.`{$k}`";
+                                else
+                                    $key = "`{$k}`.`meta_value`";
+                            }
+                            else {
+                                $table = $this->api->get_table_info( $this->fields[ $k ][ 'pick_object' ], $this->fields[ $k ][ 'pick_val' ] );
+
+                                if ( !empty( $table ) )
+                                    $key = "`{$k}`.`" . $table[ 'field_index' ] . '`';
                             }
                         }
+
+                        if ( empty( $key ) ) {
+                            if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) ) {
+                                if ( isset( $this->pod_data[ 'object_fields' ][ $k ] ) )
+                                    $key = "`t`.`{$k}`";
+                                elseif ( isset( $this->fields[ $k ] ) ) {
+                                    if ( 'table' == $this->pod_data[ 'storage' ] )
+                                        $key = "`d`.`{$k}`";
+                                    else
+                                        $key = "`{$k}`.`meta_value`";
+                                }
+                                else {
+                                    foreach ( $this->pod_data[ 'object_fields' ] as $object_field => $object_field_opt ) {
+                                        if ( $object_field == $k || in_array( $k, $object_field_opt[ 'alias' ] ) )
+                                            $key = "`t`.`{$object_field}`";
+                                    }
+                                }
+                            }
+                            elseif ( isset( $this->fields[ $k ] ) ) {
+                                if ( 'table' == $this->pod_data[ 'storage' ] )
+                                    $key = "`t`.`{$k}`";
+                                else
+                                    $key = "`{$k}`.`meta_value`";
+                            }
+
+                            if ( empty( $key ) )
+                                $key = "`{$k}`";
+                        }
                     }
-                    elseif ( 'table' == $this->pod_data[ 'storage' ] && isset( $this->fields[ $k ] ) )
-                        $key = "`t`.`{$k}`";
 
-                    if ( empty( $key ) )
-                        $key = "`{$k}`";
+                    if ( !empty( $key ) )
+                        $where[ 'key' ] = $key;
 
-                    if ( is_array( $where ) )
-                        $where = "$key IN ( '" . implode( "', '", $where ) . "' )";
+                    $where_args = $where;
+
+                    if ( is_array( $where[ 'value' ] ) )
+                        $where = $where[ 'key' ] . ' ' . $where[ 'compare' ] . ' ( "' . implode( '", "', $where[ 'value' ] ) . '" )';
                     else
-                        $where = "$key = '" . (string) $where . "'";
+                        $where = $where[ 'key' ] . ' "' . (string) $where[ 'value' ] . '"';
+
+                    $params->where[ $k ] = apply_filters( 'pods_find_where_query', $where, $where_args );
                 }
             }
         }
@@ -915,18 +1037,30 @@ class Pods {
                         $order = 'DESC';
 
                     if ( isset( $this->fields[ $k ] ) && in_array( $this->fields[ $k ][ 'type' ], $tableless_field_types ) ) {
-                        $table = $this->api->get_table_info( $this->fields[ $k ][ 'pick_object' ], $this->fields[ $k ][ 'pick_val' ] );
+                        if ( 'custom-simple' == $this->fields[ $k ][ 'pick_object' ] ) {
+                            if ( 'table' == $this->pod_data[ 'storage' ] )
+                                $key = "`t`.`{$k}`";
+                            else
+                                $key = "`{$k}`.`meta_value`";
+                        }
+                        else {
+                            $table = $this->api->get_table_info( $this->fields[ $k ][ 'pick_object' ], $this->fields[ $k ][ 'pick_val' ] );
 
-                        if ( !empty( $table ) )
-                            $key = "`{$k}`.`" . $table[ 'field_index' ] . '`';
+                            if ( !empty( $table ) )
+                                $key = "`{$k}`.`" . $table[ 'field_index' ] . '`';
+                        }
                     }
 
                     if ( empty( $key ) ) {
                         if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) ) {
                             if ( isset( $this->pod_data[ 'object_fields' ][ $k ] ) )
                                 $key = "`t`.`{$k}`";
-                            elseif ( 'table' == $this->pod_data[ 'storage' ] && isset( $this->fields[ $k ] ) )
-                                $key = "`d`.`{$k}`";
+                            elseif ( isset( $this->fields[ $k ] ) ) {
+                                if ( 'table' == $this->pod_data[ 'storage' ] )
+                                    $key = "`d`.`{$k}`";
+                                else
+                                    $key = "`{$k}`.`meta_value`";
+                            }
                             else {
                                 foreach ( $this->pod_data[ 'object_fields' ] as $object_field => $object_field_opt ) {
                                     if ( $object_field == $k || in_array( $k, $object_field_opt[ 'alias' ] ) )
@@ -934,8 +1068,12 @@ class Pods {
                                 }
                             }
                         }
-                        elseif ( 'table' == $this->pod_data[ 'storage' ] && isset( $this->fields[ $k ] ) )
-                            $key = "`t`.`{$k}`";
+                        elseif ( isset( $this->fields[ $k ] ) ) {
+                            if ( 'table' == $this->pod_data[ 'storage' ] )
+                                $key = "`t`.`{$k}`";
+                            else
+                                $key = "`{$k}`.`meta_value`";
+                        }
 
                         if ( empty( $key ) ) {
                             $key = $k;

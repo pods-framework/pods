@@ -559,10 +559,9 @@ class Pods_Deprecated
         pods_deprecated( 'Pods::getFilters', '2.0.0', 'Pods::filters' );
 
         $params = array(
-            'filters' => $filters,
+            'fields' => $filters,
             'label' => $label,
-            'action' => $action,
-            'show_textbox' => true
+            'action' => $action
         );
 
         if ( is_array( $filters ) )

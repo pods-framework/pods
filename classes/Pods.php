@@ -638,12 +638,15 @@ class Pods {
                                 if ( !empty( $where ) )
                                     $where = array( '( ' . implode( ' OR ', $where ) . ' )' );
 
-                                if ( !isset( $table[ 'where' ] ) )
+                                if ( !empty( $table[ 'where' ] ) )
                                     $where = array_merge( $where, (array) $table[ 'where' ] );
 
                                 $where = implode( ' AND ', $where );
 
-                                $where = "WHERE {$where}";
+                                if ( empty( $where ) )
+                                    $where = '';
+                                else
+                                    $where = "WHERE {$where}";
                             }
 
                             if ( !empty( $table[ 'table' ] ) ) {

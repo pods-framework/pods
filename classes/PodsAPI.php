@@ -2340,10 +2340,13 @@ class PodsAPI {
             }
 
             if ( 'table' == $pod[ 'storage' ] ) {
-                if ( !empty( $params->id ) ) {
-                    $table_data = array( 'id' => $params->id ) + $table_data;
-                    array_unshift( $table_formats, '%d' );
-                }
+                // Every row should have an id set here, otherwise Pods with nothing
+                // but relationship fields won't get properly ID'd
+                if ( empty( $params->id ) )
+                    $params->id = 0;
+
+                $table_data = array( 'id' => $params->id ) + $table_data;
+                array_unshift( $table_formats, '%d' );
 
                 if ( !empty( $table_data ) ) {
                     $sql = PodsData::insert_on_duplicate( "@wp_pods_{$params->pod}", $table_data, $table_formats );

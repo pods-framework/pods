@@ -835,7 +835,7 @@ class PodsInit {
             if ( 0 == $pod[ 'options' ][ 'show_in_menu' ] )
                 continue;
 
-            if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_add_' . $pod[ 'name' ] ) )
+            if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_content' ) && !current_user_can( 'pods_add_' . $pod[ 'name' ] ) )
                 continue;
 
             $singular_label = pods_var_raw( 'label_singular', $pod[ 'options' ], pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true ), null, true );
@@ -852,7 +852,7 @@ class PodsInit {
         if ( is_object( $pods ) && !is_wp_error( $pods ) && !empty( $pods->id ) && isset( $pods->pod_data ) && !empty( $pods->pod_data ) && 'pod' == $pods->pod_data[ 'type' ] ) {
             $pod = $pods->pod_data;
 
-            if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_edit_' . $pod[ 'name' ] ) ) {
+            if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) || current_user_can( 'pods_edit_' . $pod[ 'name' ] ) ) {
                 $singular_label = pods_var_raw( 'label_singular', $pod[ 'options' ], pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true ), null, true );
 
                 $wp_admin_bar->add_node( array(

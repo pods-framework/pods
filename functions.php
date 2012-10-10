@@ -915,7 +915,7 @@ function pods_access ( $privs, $method = 'OR' ) {
     if ( !is_user_logged_in() )
         return false;
 
-    if ( current_user_can( 'administrator' ) || current_user_can( 'pods' ) || is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'delete_users' ) )
+    if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) )
         return true;
 
     // Store approved privs when using "AND"

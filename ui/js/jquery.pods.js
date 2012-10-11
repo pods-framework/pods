@@ -758,6 +758,7 @@
                     }
                 } );
             } );
+            $( '.pods-admin .pods-dependent-toggle').trigger('change');
 
         },
         dependency_tabs : function () {

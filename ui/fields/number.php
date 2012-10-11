@@ -29,12 +29,12 @@ elseif ( '9.999,99' == pods_var_raw( 'number_format', $options ) ) {
         $( 'input#<?php echo $attributes[ 'id' ]; ?>' ).on( 'blur', function () {
             if ( !/^[0-9\<?php
             echo implode( '\\', array_filter( array( $dot, $thousands ) ) );
-            ?>]$/.test( $( this ).val() ) ) {
+            ?>\-]$/.test( $( this ).val() ) ) {
                 var newval = $( this )
                     .val()
                     .replace( /[^0-9\<?php
                               echo implode( '\\', array_filter( array( $dot, $thousands ) ) );
-                              ?>]/g, '' );
+                              ?>\-]/g, '' );
                 $( this ).val( newval );
             }
         } );

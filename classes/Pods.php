@@ -1103,11 +1103,11 @@ class Pods {
                     if ( false === strpos( $prefix_orderby, ',' ) && false === strpos( $prefix_orderby, '(' ) && false === strpos( $prefix_orderby, '.' ) ) {
                         if ( false !== stripos( $prefix_orderby, ' ASC' ) ) {
                             $o = trim( str_ireplace( array( '`', ' ASC' ), '', $prefix_orderby ) );
-                            $prefix_orderby = "`{$pod_table_prefix}`.`" . $o . '` ASC';
+                            $prefix_orderby = (false === strpos(strtoupper($params->select), strtoupper('AS '.$o))?"`{$pod_table_prefix}`.`":'`'). $o . '` ASC';
                         }
                         else {
                             $o = trim( str_ireplace( array( '`', ' DESC' ), '', $prefix_orderby ) );
-                            $prefix_orderby = "`{$pod_table_prefix}`.`" . $o . '` DESC';
+                            $prefix_orderby = (false === strpos(strtoupper($params->select), strtoupper('AS '.$o))?"`{$pod_table_prefix}`.`":'`'). $o . '` DESC';
                         }
                     }
                 }
@@ -1115,11 +1115,11 @@ class Pods {
             elseif ( false === strpos( $params->orderby, ',' ) && false === strpos( $params->orderby, '(' ) && false === strpos( $params->orderby, '.' ) ) {
                 if ( false !== stripos( $params->orderby, ' ASC' ) ) {
                     $o = trim( str_ireplace( array( '`', ' ASC' ), '', $params->orderby ) );
-                    $params->orderby = "`{$pod_table_prefix}`.`" . $o . '` ASC';
+                    $params->orderby = (false === strpos(strtoupper($params->select), strtoupper('AS '.$o))?"`{$pod_table_prefix}`.`":'`'). $o . '` ASC';
                 }
                 else {
                     $o = trim( str_ireplace( array( '`', ' DESC' ), '', $params->orderby ) );
-                    $params->orderby = "`{$pod_table_prefix}`.`" . $o . '` DESC';
+                    $params->orderby = (false === strpos(strtoupper($params->select), strtoupper('AS '.$o))?"`{$pod_table_prefix}`.`":'`'). $o . '` DESC';
                 }
             }
         }

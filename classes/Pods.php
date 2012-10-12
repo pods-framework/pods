@@ -496,8 +496,8 @@ class Pods {
                         else
                             $limit = 1;
 
-                        if ( is_array( $value ) && 0 < $limit )
-                            array_splice( $value, 0, $limit );
+                        if ( is_array( $value ) && isset( $value[ 0 ] ) && 0 < $limit )
+                            $value = array_slice( $value, 0, $limit, true );
                     }
 
                     pods_no_conflict_off( $this->pod_data[ 'type' ] );
@@ -592,7 +592,7 @@ class Pods {
                             if ( empty( $ids ) )
                                 return false;
                             elseif ( 0 < $last_limit )
-                                array_splice( $ids, 0, $last_limit );
+                                $ids = array_slice( $ids, 0, $last_limit );
 
                             // Get $pod if related to a Pod
                             if ( !empty( $pick_object ) && 'pod' == $pick_object && !empty( $pick_val ) )

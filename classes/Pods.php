@@ -1112,6 +1112,8 @@ class Pods {
                         $dir = 'DESC';
                     }
 
+                    $key = $k;
+
                     if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) ) {
                         if ( isset( $this->pod_data[ 'object_fields' ][ $k ] ) )
                             $key = "`t`.`{$k}`";

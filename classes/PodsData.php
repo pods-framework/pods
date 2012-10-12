@@ -602,6 +602,9 @@ class PodsData {
 
         $params = (object) array_merge( $defaults, (array) $params );
 
+        if ( 0 < strlen( $params->sql ) )
+            return $params->sql;
+
         // Validate
         $params->page = pods_absint( $params->page );
 

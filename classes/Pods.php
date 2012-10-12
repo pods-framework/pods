@@ -1102,7 +1102,7 @@ class Pods {
                 $params->orderby = array( $params->orderby );
 
             foreach ( $params->orderby as &$prefix_orderby ) {
-                if ( false === strpos( $prefix_orderby, ',' ) && false === strpos( $prefix_orderby, '(' ) && false === stripos( $params->orderby, ' AS ' ) && false === strpos( $params->orderby, '`' ) && false === strpos( $prefix_orderby, '.' ) ) {
+                if ( false === strpos( $prefix_orderby, ',' ) && false === strpos( $prefix_orderby, '(' ) && false === stripos( $prefix_orderby, ' AS ' ) && false === strpos( $prefix_orderby, '`' ) && false === strpos( $prefix_orderby, '.' ) ) {
                     if ( false !== stripos( $prefix_orderby, ' ASC' ) ) {
                         $k = trim( str_ireplace( array( '`', ' ASC' ), '', $prefix_orderby ) );
                         $dir = 'ASC';

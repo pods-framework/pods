@@ -2147,28 +2147,40 @@ class PodsAPI {
         $pre_save_helpers = $post_save_helpers = array();
 
         if ( false === $bypass_helpers ) {
-            $pieces = array( 'fields', 'params', 'pod' );
+            $pieces = array( 'fields', 'params', 'pod', 'fields_active' );
 
             // Plugin hooks
             $hooked = $this->do_hook( 'pre_save_pod_item', compact( $pieces ), $is_new_item );
-            extract( $hooked );
+
+            if ( is_array( $hooked ) && !empty( $hooked ) )
+                extract( $hooked );
 
             $hooked = $this->do_hook( "pre_save_pod_item_{$params->pod}", compact( $pieces ), $is_new_item );
-            extract( $hooked );
+
+            if ( is_array( $hooked ) && !empty( $hooked ) )
+                extract( $hooked );
 
             if ( false !== $is_new_item ) {
                 $hooked = $this->do_hook( 'pre_create_pod_item', compact( $pieces ) );
-                extract( $hooked );
+
+                if ( is_array( $hooked ) && !empty( $hooked ) )
+                    extract( $hooked );
 
                 $hooked = $this->do_hook( "pre_create_pod_item_{$params->pod}", compact( $pieces ) );
-                extract( $hooked );
+
+                if ( is_array( $hooked ) && !empty( $hooked ) )
+                    extract( $hooked );
             }
             else {
                 $hooked = $this->do_hook( 'pre_edit_pod_item', compact( $pieces ) );
-                extract( $hooked );
+
+                if ( is_array( $hooked ) && !empty( $hooked ) )
+                    extract( $hooked );
 
                 $hooked = $this->do_hook( "pre_edit_pod_item_{$params->pod}", compact( $pieces ) );
-                extract( $hooked );
+
+                if ( is_array( $hooked ) && !empty( $hooked ) )
+                    extract( $hooked );
             }
 
             // Call any pre-save helpers (if not bypassed)
@@ -2560,29 +2572,21 @@ class PodsAPI {
         }
 
         if ( false === $bypass_helpers ) {
-            $pieces = array( 'fields', 'params', 'pod' );
+            $pieces = array( 'fields', 'params', 'pod', 'fields_active' );
+
+            $pieces = compact( $pieces );
 
             // Plugin hooks
-            $hooked = $this->do_hook( 'post_save_pod_item', compact( $pieces ), $is_new_item );
-            extract( $hooked );
-
-            $hooked = $this->do_hook( "post_save_pod_item_{$params->pod}", compact( $pieces ) );
-            extract( $hooked );
+            $this->do_hook( 'post_save_pod_item', $pieces, $is_new_item );
+            $this->do_hook( "post_save_pod_item_{$params->pod}", $pieces, $is_new_item );
 
             if ( false !== $is_new_item ) {
-                $hooked = $this->do_hook( 'post_create_pod_item', compact( $pieces ) );
-                extract( $hooked );
-
-                $hooked = $this->do_hook( "post_create_pod_item_{$params->pod}", compact( $pieces ) );
-                extract( $hooked );
-
+                $this->do_hook( 'post_create_pod_item', $pieces );
+                $this->do_hook( "post_create_pod_item_{$params->pod}", $pieces );
             }
             else {
-                $hooked = $this->do_hook( 'post_edit_pod_item', compact( $pieces ) );
-                extract( $hooked );
-
-                $hooked = $this->do_hook( "post_edit_pod_item_{$params->pod}", compact( $pieces ) );
-                extract( $hooked );
+                $this->do_hook( 'post_edit_pod_item', $pieces );
+                $this->do_hook( "post_edit_pod_item_{$params->pod}", $pieces );
             }
 
             // Call any post-save helpers (if not bypassed)

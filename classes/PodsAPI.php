@@ -3141,7 +3141,7 @@ class PodsAPI {
         $params = (object) pods_sanitize( $params );
 
         // @deprecated 2.0.0
-        if ( isset( $params->datatype_id ) || isset( $params->datatype ) ) {
+        if ( isset( $params->datatype_id ) || isset( $params->datatype ) || isset( $params->tbl_row_id ) ) {
             if ( isset( $params->tbl_row_id ) ) {
                 pods_deprecated( __( '$params->id instead of $params->tbl_row_id', 'pods' ), '2.0.0' );
                 $params->id = $params->tbl_row_id;
@@ -3166,6 +3166,9 @@ class PodsAPI {
                 unset( $params->datatype );
             }
         }
+
+        if ( !isset( $params->id ) )
+            return pods_error( __( 'Pod Item not found', 'pods' ), $this );
 
         $params->id = pods_absint( $params->id );
 

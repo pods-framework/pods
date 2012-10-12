@@ -60,6 +60,9 @@ class PodsComponents {
         if ( is_admin() ) {
             add_action( 'wp_ajax_pods_admin_components', array( $this, 'admin_ajax' ) );
             add_action( 'wp_ajax_nopriv_pods_admin_components', array( $this, 'admin_ajax' ) );
+
+            // Add the Pods Components capabilities
+            add_filter( 'members_get_capabilities', array( $this, 'admin_capabilities' ) );
         }
     }
 
@@ -99,6 +102,14 @@ class PodsComponents {
 
                 continue;
             }
+
+            $capability = 'pods_component_' . strip_tags( $component_data[ 'Name' ] );
+
+            if ( 0 < strlen( $component_data[ 'Capability' ] ) )
+                $capability = $component_data[ 'Capability' ];
+
+            if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_components' ) && !current_user_can( $capability ) )
+                continue;
 
             $menu_page = 'pods-component-' . $component_data[ 'ID' ];
 
@@ -248,7 +259,8 @@ class PodsComponents {
                 'Class' => 'Class',
                 'Hide' => 'Hide',
                 'PluginDependency' => 'Plugin Dependency',
-                'DeveloperMode' => 'Developer Mode'
+                'DeveloperMode' => 'Developer Mode',
+                'Capability' => 'Capability'
             );
 
             $components = array();
@@ -351,6 +363,36 @@ class PodsComponents {
         update_option( 'pods_component_settings', $settings );
 
         return $toggle;
+    }
+
+    /**
+     * Add pods specific capabilities.
+     *
+     * @param $capabilities List of extra capabilities to add
+     *
+     * @return array
+     */
+    public function admin_capabilities ( $capabilities ) {
+        foreach ( $this->components as $component => $component_data ) {
+            if ( !empty( $component_data[ 'Hide' ] ) )
+                continue;
+
+            if ( true === (boolean) pods_var( 'DeveloperMode', $component_data, false ) && ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) )
+                continue;
+
+            if ( empty( $component_data[ 'MenuPage' ] ) && ( !isset( $component_data[ 'object' ] ) || !method_exists( $component_data[ 'object' ], 'admin' ) ) )
+                continue;
+
+            $capability = 'pods_component_' . strip_tags( $component_data[ 'Name' ] );
+
+            if ( 0 < strlen ( $component_data[ 'Capability' ] ) )
+                $capability = $component_data[ 'Capability' ];
+
+            if ( !in_array( $capability, $capabilities ) )
+                $capabilities[] = $capability;
+        }
+
+        return $capabilities;
     }
 
     /**

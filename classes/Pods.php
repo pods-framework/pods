@@ -1083,8 +1083,8 @@ class Pods {
                         if ( empty( $key ) ) {
                             $key = $k;
 
-                            if ( false === strpos( $key, ' ' ) )
-                                $key = "`{$key}`";
+                            if ( false === strpos( $key, ' ' ) && false === strpos( $key, '`' ) )
+                                $key = '`' . str_replace( '.', '`.`', $key ) . '`';
                         }
                     }
 
@@ -1100,7 +1100,7 @@ class Pods {
         if ( !empty( $params->orderby ) ) {
             if ( is_array( $params->orderby ) ) {
                 foreach ( $params->orderby as &$prefix_orderby ) {
-                    if ( false === strpos( $prefix_orderby, ',' ) && false === strpos( $prefix_orderby, '(' ) && false === strpos( $prefix_orderby, '.' ) ) {
+                    if ( false === strpos( $prefix_orderby, ',' ) && false === strpos( $prefix_orderby, '(' ) && false === stripos( $params->orderby, ' AS ' ) && false === strpos( $params->orderby, '`' ) && false === strpos( $prefix_orderby, '.' ) ) {
                         if ( false !== stripos( $prefix_orderby, ' ASC' ) ) {
                             $o = trim( str_ireplace( array( '`', ' ASC' ), '', $prefix_orderby ) );
                             $prefix_orderby = "`{$pod_table_prefix}`.`" . $o . '` ASC';
@@ -1112,7 +1112,7 @@ class Pods {
                     }
                 }
             }
-            elseif ( false === strpos( $params->orderby, ',' ) && false === strpos( $params->orderby, '(' ) && false === strpos( $params->orderby, '.' ) ) {
+            elseif ( false === strpos( $params->orderby, ',' ) && false === strpos( $params->orderby, '(' ) && false === stripos( $params->orderby, ' AS ' ) && false === strpos( $params->orderby, '`' ) && false === strpos( $params->orderby, '.' ) ) {
                 if ( false !== stripos( $params->orderby, ' ASC' ) ) {
                     $o = trim( str_ireplace( array( '`', ' ASC' ), '', $params->orderby ) );
                     $params->orderby = "`{$pod_table_prefix}`.`" . $o . '` ASC';

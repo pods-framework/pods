@@ -103,7 +103,7 @@ class PodsComponents {
                 continue;
             }
 
-            $capability = 'pods_component_' . strip_tags( $component_data[ 'Name' ] );
+            $capability = 'pods_component_' . str_replace( '-', '_', sanitize_title( str_replace( ' and ', ' ', strip_tags( $component_data[ 'Name' ] ) ) ) );
 
             if ( 0 < strlen( $component_data[ 'Capability' ] ) )
                 $capability = $component_data[ 'Capability' ];
@@ -383,7 +383,7 @@ class PodsComponents {
             if ( empty( $component_data[ 'MenuPage' ] ) && ( !isset( $component_data[ 'object' ] ) || !method_exists( $component_data[ 'object' ], 'admin' ) ) )
                 continue;
 
-            $capability = 'pods_component_' . strip_tags( $component_data[ 'Name' ] );
+            $capability = 'pods_component_' . str_replace( '-', '_', sanitize_title( str_replace( ' and ', ' ', strip_tags( $component_data[ 'Name' ] ) ) ) );
 
             if ( 0 < strlen ( $component_data[ 'Capability' ] ) )
                 $capability = $component_data[ 'Capability' ];

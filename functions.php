@@ -31,6 +31,19 @@ function pods_query ( $sql, $error = 'Database Error', $results_error = null, $n
         $error = 'Database Error';
     }
 
+    if ( 1 == pods_var( 'pods_debug_sql_all', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) ) {
+        $debug_sql = $sql;
+
+        echo '<textarea cols="100" rows="24">';
+
+        if ( is_array( $debug_sql ) )
+            print_r( $debug_sql );
+        else
+            echo $debug_sql;
+
+        echo '</textarea>';
+    }
+
     return $podsdata->query( $sql, $error, $results_error, $no_results_error );
 }
 

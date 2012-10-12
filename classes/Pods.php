@@ -632,7 +632,7 @@ class Pods {
                                 $where = array();
 
                                 foreach ( $ids as $id ) {
-                                    $where[] = '`t`.`' . $table[ 'field_id' ] . '` = ' . (int) $id;
+                                    $where[ $id ] = '`t`.`' . $table[ 'field_id' ] . '` = ' . (int) $id;
                                 }
 
                                 if ( !empty( $where ) )
@@ -649,13 +649,37 @@ class Pods {
 
                             if ( !empty( $table[ 'table' ] ) ) {
                                 $sql = "
-                                    SELECT *
+                                    SELECT *, `" . $table[ 'field_id' ] . "` AS `pod_item_id`
                                     FROM `" . $table[ 'table' ] . "` AS `t`
                                     {$join}
                                     {$where}
                                 ";
 
-                                $data = pods_query( $sql );
+                                $item_data = pods_query( $sql );
+                                $items = array();
+
+                                foreach ( $item_data as $item ) {
+                                    if ( empty( $item->pod_item_id ) )
+                                        continue;
+
+                                    // Get Item ID
+                                    $item_id = $item->pod_item_id;
+
+                                    // Cleanup
+                                    unset( $item->pod_item_id );
+
+                                    // Pass item data into $data
+                                    $items[ $item_id ] = $item;
+                                }
+
+                                // Cleanup
+                                unset( $item_data );
+
+                                // Return all of the data in the order expected
+                                foreach ( $ids as $id ) {
+                                    if ( isset( $items[ $id ] ) )
+                                        $data[] = $items[ $id ];
+                                }
                             }
 
                             if ( in_array( $last_type, $tableless_field_types ) || 'boolean' == $last_type )

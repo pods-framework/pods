@@ -513,8 +513,8 @@ class PodsData {
             $this->sql = $this->build( $params );
 
             // Debug purposes
-            if ( 1 == pods_var( 'pods_debug_sql', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
-                echo "<textarea cols='130' rows='30'>{$this->sql}</textarea>";
+            if ( ( 1 == pods_var( 'pods_debug_sql', 'get', 0 ) || 1 == pods_var( 'pods_debug_sql_all', 'get', 0 ) )&& is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
+                echo "<textarea cols='100' rows='24'>{$this->sql}</textarea>";
 
             if ( empty( $this->sql ) )
                 return array();

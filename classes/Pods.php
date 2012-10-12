@@ -1098,28 +1098,44 @@ class Pods {
 
         // Add prefix to $params->orderby if needed
         if ( !empty( $params->orderby ) ) {
-            if ( is_array( $params->orderby ) ) {
-                foreach ( $params->orderby as &$prefix_orderby ) {
-                    if ( false === strpos( $prefix_orderby, ',' ) && false === strpos( $prefix_orderby, '(' ) && false === stripos( $params->orderby, ' AS ' ) && false === strpos( $params->orderby, '`' ) && false === strpos( $prefix_orderby, '.' ) ) {
-                        if ( false !== stripos( $prefix_orderby, ' ASC' ) ) {
-                            $o = trim( str_ireplace( array( '`', ' ASC' ), '', $prefix_orderby ) );
-                            $prefix_orderby = "`{$pod_table_prefix}`.`" . $o . '` ASC';
+            if ( !is_array( $params->orderby ) )
+                $params->orderby = array( $params->orderby );
+
+            foreach ( $params->orderby as &$prefix_orderby ) {
+                if ( false === strpos( $prefix_orderby, ',' ) && false === strpos( $prefix_orderby, '(' ) && false === stripos( $params->orderby, ' AS ' ) && false === strpos( $params->orderby, '`' ) && false === strpos( $prefix_orderby, '.' ) ) {
+                    if ( false !== stripos( $prefix_orderby, ' ASC' ) ) {
+                        $k = trim( str_ireplace( array( '`', ' ASC' ), '', $prefix_orderby ) );
+                        $dir = 'ASC';
+                    }
+                    else {
+                        $k = trim( str_ireplace( array( '`', ' DESC' ), '', $prefix_orderby ) );
+                        $dir = 'DESC';
+                    }
+
+                    if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) ) {
+                        if ( isset( $this->pod_data[ 'object_fields' ][ $k ] ) )
+                            $key = "`t`.`{$k}`";
+                        elseif ( isset( $this->fields[ $k ] ) ) {
+                            if ( 'table' == $this->pod_data[ 'storage' ] )
+                                $key = "`d`.`{$k}`";
+                            else
+                                $key = "`{$k}`.`meta_value`";
                         }
                         else {
-                            $o = trim( str_ireplace( array( '`', ' DESC' ), '', $prefix_orderby ) );
-                            $prefix_orderby = "`{$pod_table_prefix}`.`" . $o . '` DESC';
+                            foreach ( $this->pod_data[ 'object_fields' ] as $object_field => $object_field_opt ) {
+                                if ( $object_field == $k || in_array( $k, $object_field_opt[ 'alias' ] ) )
+                                    $key = "`t`.`{$object_field}`";
+                            }
                         }
                     }
-                }
-            }
-            elseif ( false === strpos( $params->orderby, ',' ) && false === strpos( $params->orderby, '(' ) && false === stripos( $params->orderby, ' AS ' ) && false === strpos( $params->orderby, '`' ) && false === strpos( $params->orderby, '.' ) ) {
-                if ( false !== stripos( $params->orderby, ' ASC' ) ) {
-                    $o = trim( str_ireplace( array( '`', ' ASC' ), '', $params->orderby ) );
-                    $params->orderby = "`{$pod_table_prefix}`.`" . $o . '` ASC';
-                }
-                else {
-                    $o = trim( str_ireplace( array( '`', ' DESC' ), '', $params->orderby ) );
-                    $params->orderby = "`{$pod_table_prefix}`.`" . $o . '` DESC';
+                    elseif ( isset( $this->fields[ $k ] ) ) {
+                        if ( 'table' == $this->pod_data[ 'storage' ] )
+                            $key = "`t`.`{$k}`";
+                        else
+                            $key = "`{$k}`.`meta_value`";
+                    }
+
+                    $prefix_orderby = "{$key} {$dir}";
                 }
             }
         }

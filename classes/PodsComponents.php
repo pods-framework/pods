@@ -40,7 +40,7 @@ class PodsComponents {
      * @since 2.0.0
      */
     public function __construct () {
-        $this->components_dir = apply_filters( 'pods_components_dir', PODS_DIR . 'components/' );
+        $this->components_dir = realpath( apply_filters( 'pods_components_dir', PODS_DIR . 'components/' ) );
 
         $settings = get_option( 'pods_component_settings', '' );
 
@@ -93,7 +93,7 @@ class PodsComponents {
             if ( empty( $component_data[ 'MenuPage' ] ) && ( !isset( $component_data[ 'object' ] ) || !method_exists( $component_data[ 'object' ], 'admin' ) ) )
                 continue;
 
-            $component_data[ 'File' ] = realpath( PODS_DIR . $component_data[ 'File' ] );
+            $component_data[ 'File' ] = realpath( $this->components_dir . $component_data[ 'File' ] );
 
             if ( !file_exists( $component_data[ 'File' ] ) ) {
                 pods_message( 'Pods Component not found: ' . $component_data[ 'File' ] );
@@ -175,7 +175,7 @@ class PodsComponents {
 
             $component_data = $this->components[ $component ];
 
-            $component_data[ 'File' ] = realpath( PODS_DIR . $component_data[ 'File' ] );
+            $component_data[ 'File' ] = realpath( $this->components_dir . $component_data[ 'File' ] );
 
             if ( empty( $component_data[ 'File' ] ) ) {
                 pods_transient_clear( 'pods_components' );
@@ -269,6 +269,8 @@ class PodsComponents {
                 if ( !is_readable( $component_file ) )
                     continue;
 
+                $component_file = realpath ( $component_file );
+
                 $component_data = get_file_data( $component_file, $default_headers, 'pods_component' );
 
                 if ( empty( $component_data[ 'Name' ] ) || 'yes' == $component_data[ 'Hide' ] )
@@ -288,7 +290,7 @@ class PodsComponents {
                 else
                     $component_data[ 'DeveloperMode' ] = false;
 
-                $component_data[ 'File' ] = str_replace( PODS_DIR, '', $component_file );
+                $component_data[ 'File' ] = str_replace( $this->components_dir, '', $component_file );
 
                 $components[ $component_data[ 'ID' ] ] = $component_data;
             }

@@ -40,7 +40,7 @@ class PodsComponents {
      * @since 2.0.0
      */
     public function __construct () {
-        $this->components_dir = realpath( apply_filters( 'pods_components_dir', PODS_DIR . 'components/' ) );
+        $this->components_dir = realpath( apply_filters( 'pods_components_dir', PODS_DIR . 'components' ) ) . '/';
 
         $settings = get_option( 'pods_component_settings', '' );
 
@@ -232,7 +232,7 @@ class PodsComponents {
                                 if ( '.' == substr( $subfile, 0, 1 ) )
                                     continue;
                                 elseif ( '.php' == substr( $subfile, -4 ) )
-                                    $component_files[] = $file . '/' . $subfile;
+                                    $component_files[] = str_replace( '\\', '/', $file . '/' . $subfile );
                             }
 
                             closedir( $component_subdir );
@@ -269,7 +269,7 @@ class PodsComponents {
                 if ( !is_readable( $this->components_dir . $component_file ) )
                     continue;
 
-                $component_data = get_file_data( $component_file, $default_headers, 'pods_component' );
+                $component_data = get_file_data( $this->components_dir . $component_file, $default_headers, 'pods_component' );
 
                 if ( empty( $component_data[ 'Name' ] ) || 'yes' == $component_data[ 'Hide' ] )
                     continue;
@@ -278,7 +278,7 @@ class PodsComponents {
                     $component_data[ 'MenuName' ] = $component_data[ 'Name' ];
 
                 if ( empty( $component_data[ 'Class' ] ) )
-                    $component_data[ 'Class' ] = 'Pods_' . pods_clean_name( basename( $component_file, '.php' ), false );
+                    $component_data[ 'Class' ] = 'Pods_' . pods_clean_name( basename( $this->components_dir . $component_file, '.php' ), false );
 
                 if ( empty( $component_data[ 'ID' ] ) )
                     $component_data[ 'ID' ] = sanitize_title( $component_data[ 'Name' ] );
@@ -299,6 +299,9 @@ class PodsComponents {
 
             pods_transient_set( 'pods_components', $components );
         }
+
+        if ( 1 == pods_var( 'pods_debug_components', 'get', 0 ) )
+            pods_debug( $components );
 
         $this->components = $components;
 

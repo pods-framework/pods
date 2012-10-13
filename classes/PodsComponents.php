@@ -232,14 +232,14 @@ class PodsComponents {
                                 if ( '.' == substr( $subfile, 0, 1 ) )
                                     continue;
                                 elseif ( '.php' == substr( $subfile, -4 ) )
-                                    $component_files[] = realpath( $this->components_dir . $file . '/' . $subfile );
+                                    $component_files[] = $file . '/' . $subfile;
                             }
 
                             closedir( $component_subdir );
                         }
                     }
                     elseif ( '.php' == substr( $file, -4 ) )
-                        $component_files[] = $this->components_dir . $file;
+                        $component_files[] = $file;
                 }
 
                 closedir( $component_dir );
@@ -266,10 +266,8 @@ class PodsComponents {
             $components = array();
 
             foreach ( $component_files as $component_file ) {
-                if ( !is_readable( $component_file ) )
+                if ( !is_readable( $this->components_dir . $component_file ) )
                     continue;
-
-                $component_file = realpath ( $component_file );
 
                 $component_data = get_file_data( $component_file, $default_headers, 'pods_component' );
 
@@ -290,7 +288,7 @@ class PodsComponents {
                 else
                     $component_data[ 'DeveloperMode' ] = false;
 
-                $component_data[ 'File' ] = str_replace( $this->components_dir, '', $component_file );
+                $component_data[ 'File' ] = $component_file;
 
                 $components[ $component_data[ 'ID' ] ] = $component_data;
             }

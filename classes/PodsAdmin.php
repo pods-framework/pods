@@ -393,19 +393,23 @@ class PodsAdmin {
         if ( false !== strpos( $_GET[ 'page' ], 'pods-add-new-' ) )
             $default = 'add';
 
-        $actions_disabled = array( 'duplicate', 'view', 'export' );
+        $actions_disabled = array(
+            'duplicate' => 'duplicate',
+            'view' => 'view',
+            'export' => 'export'
+        );
 
         if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_content' ) ) {
             if ( !current_user_can( 'pods_add_' . $pod ) ) {
-                $actions_disabled[] = 'add';
+                $actions_disabled[ 'add' ] = 'add';
                 $default = 'manage';
             }
 
             if ( !current_user_can( 'pods_edit_' . $pod ) )
-                $actions_disabled[] = 'edit';
+                $actions_disabled[ 'edit' ] = 'edit';
 
             if ( !current_user_can( 'pods_delete_' . $pod ) )
-                $actions_disabled[] = 'delete';
+                $actions_disabled[ 'delete' ] = 'delete';
         }
 
         $_GET[ 'action' ] = pods_var( 'action', 'get', $default );

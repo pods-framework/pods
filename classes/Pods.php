@@ -349,7 +349,7 @@ class Pods {
      * @since 2.0.0
      * @link http://podsframework.org/docs/field/
      */
-    public function field ( $name, $single = false, $raw = false ) {
+    public function field ( $name, $single = null, $raw = false ) {
         $defaults = array(
             'name' => $name,
             'orderby' => null,
@@ -365,14 +365,15 @@ class Pods {
             $params = (object) $defaults;
 
         // Support old $orderby variable
-        if ( !is_bool( $params->single ) && empty( $params->orderby ) ) {
+        if ( null !== $params->single && !is_bool( $params->single ) && empty( $params->orderby ) ) {
             pods_deprecated( 'Pods::field', '2.0.0', 'Use $params[ \'orderby\' ] instead' );
 
             $params->orderby = $params->single;
             $params->single = false;
         }
 
-        $params->single = (boolean) $params->single;
+        if ( null !== $params->single )
+            $params->single = (boolean) $params->single;
 
         if ( is_array( $params->name ) || strlen( $params->name ) < 1 )
             return null;
@@ -462,6 +463,13 @@ class Pods {
                 }
 
                 if ( !isset( $this->fields[ $params->name ] ) || !in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) || $simple ) {
+                    if ( null === $params->single ) {
+                        if ( isset( $this->fields[ $params->name ] ) && !in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) )
+                            $params->single = true;
+                        else
+                            $params->single = false;
+                    }
+
                     pods_no_conflict_on( $this->pod_data[ 'type' ] );
 
                     if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {

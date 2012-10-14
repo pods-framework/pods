@@ -302,7 +302,7 @@ class Pods {
      * @since 2.0.0
      * @link http://podsframework.org/docs/display/
      */
-    public function display ( $name, $single = false ) {
+    public function display ( $name, $single = null ) {
         $defaults = array(
             'name' => $name,
             'orderby' => null,
@@ -442,6 +442,7 @@ class Pods {
                 }
 
                 $simple = false;
+                $simple_data = array();
 
                 if ( isset( $this->fields[ $params->name ] ) ) {
                     if ( 'meta' == $this->pod_data[ 'storage' ] ) {
@@ -454,6 +455,28 @@ class Pods {
 
                         if ( 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] ) {
                             $simple = true;
+                            $custom = trim( pods_var_raw( 'pick_custom', $this->fields[ $params->name ][ 'options' ], '' ) );
+
+                            if ( 0 < strlen ( $custom ) ) {
+                                if ( !is_array( $custom ) )
+                                    $custom = explode( "\n", $custom );
+
+                                foreach ( $custom as $custom_value ) {
+                                    $custom_label = explode( '|', $custom_value );
+
+                                    if ( empty( $custom_label ) )
+                                        continue;
+
+                                    if ( 1 == count( $custom_label ) )
+                                        $custom_label = $custom_value;
+                                    else {
+                                        $custom_value = $custom_label[ 0 ];
+                                        $custom_label = $custom_label[ 1 ];
+                                    }
+
+                                    $simple_data[ $custom_value ] = $custom_label;
+                                }
+                            }
 
                             $params->single = true;
                         }
@@ -494,9 +517,6 @@ class Pods {
                         if ( !is_array( $value ) && !empty( $value ) )
                             $simple = @json_decode( $value );
 
-                        if ( is_array( $simple ) )
-                            $value = $simple;
-
                         $single_multi = pods_var( 'pick_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
 
                         if ( 'multi' == $single_multi )
@@ -504,8 +524,35 @@ class Pods {
                         else
                             $limit = 1;
 
-                        if ( is_array( $value ) && isset( $value[ 0 ] ) && 0 < $limit )
+                        if ( is_array( $simple ) ) {
+                            $value = $simple;
+
+                            if ( !empty( $simple_data ) ) {
+                                $val = array();
+
+                                foreach ( $value as $k => $v ) {
+                                    if ( isset( $simple_data[ $v ] ) ) {
+                                        if ( false === $params->in_form ) {
+                                            $k = $v;
+                                            $v = $simple_data[ $v ];
+                                        }
+
+                                        $val[ $k ] = $v;
+                                    }
+                                }
+
+                                $value = $val;
+                            }
+                        }
+                        elseif ( isset( $simple_data[ $value ] ) && false === $params->in_form )
+                            $value = $simple_data[ $value ];
+
+                        if ( is_array( $value ) && 0 < $limit && isset( $value[ 0 ] ) )
                             $value = array_slice( $value, 0, $limit, true );
+                        elseif ( !is_array( $value ) && null !== $value && 0 < strlen( $value ) ) {
+                            if ( 1 != $limit || ( true === $params->in_form && 'multi' == $single_multi ) )
+                                $value = array( $value );
+                        }
                     }
 
                     pods_no_conflict_off( $this->pod_data[ 'type' ] );

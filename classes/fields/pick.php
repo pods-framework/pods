@@ -195,12 +195,10 @@ class PodsField_Pick extends PodsField {
 
         if ( 'custom-simple' == pods_var( 'pick_object', $options ) && !empty( $custom ) ) {
             if ( !empty( $value ) && !is_array( $value ) ) {
-                $json = json_decode( $value, true );
+                $json = @json_decode( $value, true );
 
                 if ( is_array( $json ) )
                     $value = $json;
-                else
-                    $value = explode( ',', $value );
             }
         }
         elseif ( '' != pods_var( 'pick_object', $options, '', null, true ) ) {
@@ -364,8 +362,10 @@ class PodsField_Pick extends PodsField {
                 }
             }
         }
+
         if ( empty( $data ) && !empty( $options[ 'data' ] ) )
             $data = $options[ 'data' ];
+
         return $data;
     }
 

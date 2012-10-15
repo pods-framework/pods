@@ -318,6 +318,9 @@ class Pods {
         $value = $this->field( $params );
 
         if ( false === $params->in_form && isset( $this->fields[ $params->name ] ) ) {
+            if ( 'pick' == $this->fields[ $params->name ][ 'type' ] && 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] )
+                $value = PodsForm::field_method( 'pick', 'simple_value', $value, $this->fields[ $params->name ] );
+
             $value = PodsForm::display(
                 $this->fields[ $params->name ][ 'type' ],
                 $value,
@@ -330,6 +333,37 @@ class Pods {
 
         if ( is_array( $value ) )
             $value = pods_serial_comma( $value, $params->name, $this->fields );
+
+        return $value;
+    }
+
+    /**
+     * Return the raw output for a field If you want the raw value for use in PHP for custom manipulation,
+     * you will want to use field() instead. This function will automatically convert arrays into a
+     * list of text such as "Rick, John, and Gary"
+     *
+     * @param string|array $name The field name, or an associative array of parameters
+     * @param boolean $single (optional) For tableless fields, to return an array or the first
+     *
+     * @return string|null|false The output from the field, null if the field doesn't exist, false if no value returned for tableless fields
+     * @since 2.0.0
+     * @link http://podsframework.org/docs/display/
+     */
+    public function raw ( $name, $single = null ) {
+        $defaults = array(
+            'name' => $name,
+            'orderby' => null,
+            'single' => $single,
+            'in_form' => false,
+            'raw' => true
+        );
+
+        if ( is_array( $name ) || is_object( $name ) )
+            $params = (object) array_merge( $defaults, (array) $name );
+        else
+            $params = (object) $defaults;
+
+        $value = $this->field( $params );
 
         return $value;
     }
@@ -413,7 +447,7 @@ class Pods {
             $value = $this->row[ $params->name ];
 
             if ( !is_array( $value ) && isset( $this->fields[ $params->name ] ) && 'pick' == $this->fields[ $params->name ][ 'type' ] && 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] )
-                $value = PodsForm::field_method( 'pick', 'simple_value', $value, $this->fields[ $params->name ], $params->in_form );
+                $value = PodsForm::field_method( 'pick', 'simple_value', $value, $this->fields[ $params->name ], true );
         }
         else {
             $object_field_found = false;
@@ -499,7 +533,7 @@ class Pods {
                         if ( null === $single )
                             $params->single = false;
 
-                        $value = PodsForm::field_method( 'pick', 'simple_value', $value, $this->fields[ $params->name ], $params->in_form );
+                        $value = PodsForm::field_method( 'pick', 'simple_value', $value, $this->fields[ $params->name ], true );
                     }
 
                     pods_no_conflict_off( $this->pod_data[ 'type' ] );
@@ -718,7 +752,7 @@ class Pods {
                                     if ( null === $single )
                                         $params->single = false;
 
-                                    $value = PodsForm::field_method( 'pick', 'simple_value', $value, $simple_options, $params->in_form );
+                                    $value = PodsForm::field_method( 'pick', 'simple_value', $value, $simple_options, true );
                                 }
 
                                 // Return a single column value

@@ -1111,7 +1111,11 @@ function pods_shortcode ( $tags, $content = null ) {
  * @return string
  */
 function pods_serial_comma ( $value, $field = null, $fields = null ) {
-    $value = (array) $value;
+    if ( is_object( $value ) )
+        $value = get_object_vars( $value );
+
+    if ( !is_array( $value ) )
+        return $value;
 
     $field_index = null;
 

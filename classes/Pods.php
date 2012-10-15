@@ -410,7 +410,7 @@ class Pods {
 
             $value = $this->row[ $params->name ];
 
-            if ( isset( $this->fields[ $params->name ] ) && 'pick' == $this->fields[ $params->name ][ 'type' ] && 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] )
+            if ( !is_array( $value ) && isset( $this->fields[ $params->name ] ) && 'pick' == $this->fields[ $params->name ][ 'type' ] && 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] )
                 $value = PodsForm::field_method( 'pick', 'simple_value', $value, $this->fields[ $params->name ], $params->in_form );
         }
         else {
@@ -729,29 +729,8 @@ class Pods {
 
             $this->row[ $field_names ] = $value;
         }
-        else {
-            if ( isset( $this->fields[ $params->name ] ) && in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
-                if ( 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] ) {
-                    if ( empty( $value ) )
-                        $value = array();
-                    elseif ( !is_array( $value ) )
-                        $value = @json_decode( $value, true );
-
-                    $single_multi = pods_var( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
-
-                    if ( 'single' == $single_multi ) {
-                        if ( empty( $value ) )
-                            $value = '';
-                        else
-                            $value = current( $value );
-                    }
-
-                    $params->single = false;
-                }
-            }
-
+        else
             $this->row[ $params->name ] = $value;
-        }
 
         if ( true === $params->single && is_array( $value ) && isset( $value[ 0 ] ) )
             $value = $value[ 0 ];

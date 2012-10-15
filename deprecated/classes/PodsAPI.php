@@ -27,6 +27,7 @@ class PodsAPI_Deprecated {
     public function __construct ( &$obj ) {
         // backwards-compatibility with references to $this->var_name
         $vars = get_object_vars( $obj );
+
         foreach ( (array) $vars as $key => $val ) {
             $this->{$key} = $val;
         }
@@ -189,9 +190,9 @@ class PodsAPI_Deprecated {
      * @since 1.7.9
      */
     public function drop_pod_item ( $params ) {
-        pods_deprecated( 'PodsAPI::delete_item', '2.0.0' );
+        pods_deprecated( 'PodsAPI::delete_pod_item', '2.0.0' );
 
-        return $this->obj->delete_item( $params );
+        return $this->obj->delete_pod_item( $params );
     }
 
     /**
@@ -208,35 +209,5 @@ class PodsAPI_Deprecated {
         pods_deprecated( 'PodsAPI::load_column', '2.0.0', 'PodsAPI::load_field' );
 
         return $this->obj->load_field( $params );
-    }
-
-    /**
-     * Handle methods that have been deprecated
-     *
-     * @since 2.0.0
-     */
-    public function __call ( $name, $args ) {
-        $name = (string) $name;
-
-        if ( !isset( $this->deprecated ) ) {
-            require_once( PODS_DIR . 'deprecated/classes/PodsAPI.php' );
-            $this->deprecated = new PodsAPI_Deprecated( $this );
-        }
-
-        if ( method_exists( $this->deprecated, $name ) ) {
-            $arg_count = count( $args );
-            if ( 0 == $arg_count )
-                $this->deprecated->{$name}();
-            elseif ( 1 == $arg_count )
-                $this->deprecated->{$name}( $args[ 0 ] );
-            elseif ( 2 == $arg_count )
-                $this->deprecated->{$name}( $args[ 0 ], $args[ 1 ] );
-            elseif ( 3 == $arg_count )
-                $this->deprecated->{$name}( $args[ 0 ], $args[ 1 ], $args[ 2 ] );
-            else
-                $this->deprecated->{$name}( $args[ 0 ], $args[ 1 ], $args[ 2 ], $args[ 3 ] );
-        }
-        else
-            pods_deprecated( "PodsAPI::{$name}", '2.0.0' );
     }
 }

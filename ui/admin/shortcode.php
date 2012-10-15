@@ -8,7 +8,7 @@
                 orderby = $( '#pod_orderby' ).val(),
                 limit = $( '#pod_limit' ).val(),
                 where = $( '#pod_where' ).val(),
-                <?php if ( class_exists( 'Pods_Template' ) ) { ?>
+                <?php if ( class_exists( 'Pods_Templates' ) ) { ?>
                     template = $( '#pod_template' ).val(),
                 <?php } else { ?>
                     template = '',

@@ -1158,7 +1158,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
             if ( isset( $value[ 0 ] ) )
                 $value = $value[ 0 ];
 
-            if ( isset( $value[ $field_index ] ) ) {
+            if ( is_array( $value ) && isset( $value[ $field_index ] ) ) {
                 $value = $value[ $field_index ];
 
                 if ( 0 < strlen( $value ) && 0 < strlen( $last ) )

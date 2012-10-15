@@ -384,4 +384,88 @@ class PodsField_Pick extends PodsField {
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         return $this->display( $value, $name, $options, $pod, $id );
     }
+
+    /**
+     * Convert a simple value to the correct value
+     *
+     * @param mixed $value Value ofo field
+     * @param array $options Field options
+     */
+    public function simple_value ( $value, $options, $raw = false ) {
+        if ( 'custom-simple' == $options[ 'pick_object' ] ) {
+            $simple_data = array();
+
+            $custom = trim( pods_var_raw( 'pick_custom', $options[ 'options' ], '' ) );
+
+            if ( 0 < strlen( $custom ) ) {
+                if ( !is_array( $custom ) )
+                    $custom = explode( "\n", $custom );
+
+                foreach ( $custom as $custom_value ) {
+                    $custom_label = explode( '|', $custom_value );
+
+                    if ( empty( $custom_label ) )
+                        continue;
+
+                    if ( 1 == count( $custom_label ) )
+                        $custom_label = $custom_value;
+                    else {
+                        $custom_value = $custom_label[ 0 ];
+                        $custom_label = $custom_label[ 1 ];
+                    }
+
+                    $simple_data[ $custom_value ] = $custom_label;
+                }
+            }
+
+            $simple = false;
+
+            if ( !is_array( $value ) && !empty( $value ) )
+                $simple = @json_decode( $value );
+
+            $single_multi = pods_var( 'pick_format_type', $options[ 'options' ], 'single' );
+
+            if ( 'multi' == $single_multi )
+                $limit = (int) pods_var( 'pick_limit', $options[ 'options' ], 0 );
+            else
+                $limit = 1;
+
+            if ( is_array( $simple ) ) {
+                $value = $simple;
+
+                if ( !empty( $simple_data ) ) {
+                    $val = array();
+
+                    foreach ( $value as $k => $v ) {
+                        if ( isset( $simple_data[ $v ] ) ) {
+                            if ( false === $raw ) {
+                                $k = $v;
+                                $v = $simple_data[ $v ];
+                            }
+
+                            $val[ $k ] = $v;
+                        }
+                    }
+
+                    $value = $val;
+                }
+            }
+            elseif ( isset( $simple_data[ $value ] ) && false === $raw ) {
+                $key = $value;
+                $value = $simple_data[ $value ];
+            }
+
+            if ( is_array( $value ) && 0 < $limit && isset( $value[ 0 ] ) )
+                $value = array_slice( $value, 0, $limit, true );
+            elseif ( !is_array( $value ) && null !== $value && 0 < strlen( $value ) ) {
+                if ( 1 != $limit || ( true === $raw && 'multi' == $single_multi ) ) {
+                    $value = array(
+                        $key => $value
+                    );
+                }
+            }
+        }
+
+        return $value;
+    }
 }

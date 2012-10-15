@@ -38,7 +38,7 @@ if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) && !function_exists( '
         define( 'PODS_GITHUB_UPDATE', false );
 
     if ( !defined( 'PODS_GITHUB_BRANCH' ) )
-        define( 'PODS_GITHUB_BRANCH', '2.1' );
+        define( 'PODS_GITHUB_BRANCH', '2.0.x' );
 
     if ( !defined( 'PODS_WP_VERSION_MINIMUM' ) )
         define( 'PODS_WP_VERSION_MINIMUM', '3.4' );

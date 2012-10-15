@@ -409,6 +409,9 @@ class Pods {
                 $params->raw = true;
 
             $value = $this->row[ $params->name ];
+
+            if ( isset( $this->fields[ $params->name ] ) && 'pick' == $this->fields[ $params->name ][ 'type' ] && 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] )
+                $value = PodsForm::field_method( 'pick', 'simple_value', $value, $this->fields[ $params->name ], $params->in_form );
         }
         else {
             $object_field_found = false;
@@ -455,29 +458,6 @@ class Pods {
 
                         if ( 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] ) {
                             $simple = true;
-                            $custom = trim( pods_var_raw( 'pick_custom', $this->fields[ $params->name ][ 'options' ], '' ) );
-
-                            if ( 0 < strlen ( $custom ) ) {
-                                if ( !is_array( $custom ) )
-                                    $custom = explode( "\n", $custom );
-
-                                foreach ( $custom as $custom_value ) {
-                                    $custom_label = explode( '|', $custom_value );
-
-                                    if ( empty( $custom_label ) )
-                                        continue;
-
-                                    if ( 1 == count( $custom_label ) )
-                                        $custom_label = $custom_value;
-                                    else {
-                                        $custom_value = $custom_label[ 0 ];
-                                        $custom_label = $custom_label[ 1 ];
-                                    }
-
-                                    $simple_data[ $custom_value ] = $custom_label;
-                                }
-                            }
-
                             $params->single = true;
                         }
                     }
@@ -513,47 +493,8 @@ class Pods {
                         $value = get_comment_meta( $this->id(), $params->name, $params->single );
 
                     // Handle Simple Relationships
-                    if ( $simple ) {
-                        if ( !is_array( $value ) && !empty( $value ) )
-                            $simple = @json_decode( $value );
-
-                        $single_multi = pods_var( 'pick_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
-
-                        if ( 'multi' == $single_multi )
-                            $limit = (int) pods_var( 'pick_limit', $this->fields[ $params->name ][ 'options' ], 0 );
-                        else
-                            $limit = 1;
-
-                        if ( is_array( $simple ) ) {
-                            $value = $simple;
-
-                            if ( !empty( $simple_data ) ) {
-                                $val = array();
-
-                                foreach ( $value as $k => $v ) {
-                                    if ( isset( $simple_data[ $v ] ) ) {
-                                        if ( false === $params->in_form ) {
-                                            $k = $v;
-                                            $v = $simple_data[ $v ];
-                                        }
-
-                                        $val[ $k ] = $v;
-                                    }
-                                }
-
-                                $value = $val;
-                            }
-                        }
-                        elseif ( isset( $simple_data[ $value ] ) && false === $params->in_form )
-                            $value = $simple_data[ $value ];
-
-                        if ( is_array( $value ) && 0 < $limit && isset( $value[ 0 ] ) )
-                            $value = array_slice( $value, 0, $limit, true );
-                        elseif ( !is_array( $value ) && null !== $value && 0 < strlen( $value ) ) {
-                            if ( 1 != $limit || ( true === $params->in_form && 'multi' == $single_multi ) )
-                                $value = array( $value );
-                        }
-                    }
+                    if ( $simple )
+                        $value = PodsForm::field_method( 'pick', 'simple_value', $value, $this->fields[ $params->name ], $params->in_form );
 
                     pods_no_conflict_off( $this->pod_data[ 'type' ] );
                 }
@@ -704,7 +645,7 @@ class Pods {
 
                             if ( !empty( $table[ 'table' ] ) ) {
                                 $sql = "
-                                    SELECT *, t.`" . $table[ 'field_id' ] . "` AS `pod_item_id`
+                                    SELECT *, `t`.`" . $table[ 'field_id' ] . "` AS `pod_item_id`
                                     FROM `" . $table[ 'table' ] . "` AS `t`
                                     {$join}
                                     {$where}

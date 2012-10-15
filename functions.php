@@ -1161,18 +1161,12 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
             if ( isset( $value[ 0 ] ) )
                 $value = $value[ 0 ];
 
-            if ( is_array( $value ) && isset( $value[ $field_index ] ) ) {
-                $value = $value[ $field_index ];
-
-                if ( 0 < strlen( $value ) && 0 < strlen( $last ) )
-                    $value .= $and . $last;
-                elseif ( 0 < strlen( $last ) )
-                    $value = $last;
+            if ( is_array( $value ) ) {
+                if ( isset( $value[ $field_index ] ) )
+                    $value = $value[ $field_index ];
                 else
                     $value = '';
             }
-            else
-                $value = '';
         }
         else {
             if ( isset( $value[ $field_index ] ) )
@@ -1190,14 +1184,14 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
             }
 
             $value = implode( ', ', $value );
-
-            if ( 0 < strlen( $value ) && 0 < strlen( $last ) )
-                $value .= $and . $last;
-            elseif ( 0 < strlen( $last ) )
-                $value = $last;
-            else
-                $value = '';
         }
+
+        if ( 0 < strlen( $value ) && 0 < strlen( $last ) )
+            $value .= $and . $last;
+        elseif ( 0 < strlen( $last ) )
+            $value = $last;
+        else
+            $value = '';
     }
     else
         $value = $last;

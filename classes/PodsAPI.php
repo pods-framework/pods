@@ -5328,15 +5328,25 @@ class PodsAPI {
      * @return array
      * @since 1.7.1
      */
-    public function csv_to_php ( $data ) {
-        $delimiter = ",";
+    public function csv_to_php ( $data, $delimiter = ',' ) {
         $expr = "/{$delimiter}(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))/";
+
         $data = str_replace( "\r\n", "\n", $data );
         $data = str_replace( "\r", "\n", $data );
+
         $lines = explode( "\n", $data );
-        $field_names = explode( $delimiter, array_shift( $lines ) );
-        $field_names = preg_replace( "/^\"(.*)\"$/s", "$1", $field_names );
+
+        $field_names = array_shift( $lines );
+
+        if ( function_exists( 'str_getcsv' ) )
+            $field_names = str_getcsv( $field_names, $delimiter );
+        else {
+            $field_names = explode( $delimiter, $field_names );
+            $field_names = preg_replace( "/^\"(.*)\"$/s", "$1", $field_names );
+        }
+
         $out = array();
+
         foreach ( $lines as $line ) {
             // Skip the empty line
             if ( strlen ( $line ) < 1 )
@@ -5345,7 +5355,7 @@ class PodsAPI {
             $row = array();
 
             if ( function_exists( 'str_getcsv' ) )
-                $fields = str_getcsv( $line );
+                $fields = str_getcsv( $line, $delimiter );
             else {
                 $fields = preg_split( $expr, trim( $line ) );
                 $fields = preg_replace( "/^\"(.*)\"$/s", "$1", $fields );

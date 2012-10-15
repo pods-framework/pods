@@ -375,6 +375,8 @@ class Pods {
         if ( null !== $params->single )
             $params->single = (boolean) $params->single;
 
+        $single = $params->single;
+
         if ( is_array( $params->name ) || strlen( $params->name ) < 1 )
             return null;
 
@@ -493,8 +495,12 @@ class Pods {
                         $value = get_comment_meta( $this->id(), $params->name, $params->single );
 
                     // Handle Simple Relationships
-                    if ( $simple )
+                    if ( $simple ) {
+                        if ( null === $single )
+                            $params->single = false;
+
                         $value = PodsForm::field_method( 'pick', 'simple_value', $value, $this->fields[ $params->name ], $params->in_form );
+                    }
 
                     pods_no_conflict_off( $this->pod_data[ 'type' ] );
                 }
@@ -551,9 +557,12 @@ class Pods {
                         $field_exists = isset( $all_fields[ $pod ][ $field ] );
 
                         $simple = false;
+                        $simple_options = array();
 
-                        if ( 'pick' == $all_fields[ $pod ][ $field ][ 'type' ] && 'custom-simple' == $all_fields[ $pod ][ $field ][ 'pick_object' ] )
+                        if ( 'pick' == $all_fields[ $pod ][ $field ][ 'type' ] && 'custom-simple' == $all_fields[ $pod ][ $field ][ 'pick_object' ] ) {
                             $simple = true;
+                            $simple_options = $all_fields[ $pod ][ $field ];
+                        }
 
                         // Tableless handler
                         if ( $field_exists && ( 'pick' != $all_fields[ $pod ][ $field ][ 'type' ] || !$simple ) ) {
@@ -575,6 +584,7 @@ class Pods {
                             $last_type = $type;
                             $last_object = $pick_object;
                             $last_pick_val = $pick_val;
+                            $last_options = $all_fields[ $pod ][ $field ];
 
                             // Get related IDs
                             $ids = $this->api->lookup_related_items(
@@ -705,11 +715,10 @@ class Pods {
 
                                 // Handle Simple Relationships
                                 if ( $simple ) {
-                                    if ( !is_array( $value ) && !empty( $value ) )
-                                        $simple = @json_decode( $value );
+                                    if ( null === $single )
+                                        $params->single = false;
 
-                                    if ( is_array( $simple ) )
-                                        $value = $simple;
+                                    $value = PodsForm::field_method( 'pick', 'simple_value', $value, $simple_options, $params->in_form );
                                 }
 
                                 // Return a single column value

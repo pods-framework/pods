@@ -193,15 +193,7 @@ class PodsField_Pick extends PodsField {
 
         $ajax = false;
 
-        if ( 'custom-simple' == pods_var( 'pick_object', $options ) && !empty( $custom ) ) {
-            if ( !empty( $value ) && !is_array( $value ) ) {
-                $json = @json_decode( $value, true );
-
-                if ( is_array( $json ) )
-                    $value = $json;
-            }
-        }
-        elseif ( '' != pods_var( 'pick_object', $options, '', null, true ) ) {
+        if ( ( 'custom-simple' != pods_var( 'pick_object', $options ) || empty( $custom ) ) && '' != pods_var( 'pick_object', $options, '', null, true ) ) {
             $autocomplete = false;
 
             if ( 'single' == pods_var( 'pick_format_type', $options ) && 'autocomplete' == pods_var( 'pick_format_single', $options ) )
@@ -388,14 +380,22 @@ class PodsField_Pick extends PodsField {
     /**
      * Convert a simple value to the correct value
      *
-     * @param mixed $value Value ofo field
+     * @param mixed $value Value of the field
      * @param array $options Field options
+     * @param boolean $raw Whether to return the raw list of keys (true) or convert to key=>value (false)
      */
     public function simple_value ( $value, $options, $raw = false ) {
-        if ( 'custom-simple' == $options[ 'pick_object' ] ) {
+        if ( isset( $options[ 'options' ] ) ) {
+            $options = array_merge( $options[ 'options' ], $options );
+            unset( $options[ 'options' ] );
+        }
+
+        pods_debug( $value );
+
+        if ( 'custom-simple' == pods_var( 'pick_object', $options ) ) {
             $simple_data = array();
 
-            $custom = trim( pods_var_raw( 'pick_custom', $options[ 'options' ], '' ) );
+            $custom = trim( pods_var_raw( 'pick_custom', $options, '' ) );
 
             if ( 0 < strlen( $custom ) ) {
                 if ( !is_array( $custom ) )
@@ -419,20 +419,15 @@ class PodsField_Pick extends PodsField {
             }
 
             $simple = false;
+            $key = 0;
 
             if ( !is_array( $value ) && !empty( $value ) )
                 $simple = @json_decode( $value );
 
-            $single_multi = pods_var( 'pick_format_type', $options[ 'options' ], 'single' );
-
-            if ( 'multi' == $single_multi )
-                $limit = (int) pods_var( 'pick_limit', $options[ 'options' ], 0 );
-            else
-                $limit = 1;
-
-            if ( is_array( $simple ) ) {
+            if ( is_array( $simple ) )
                 $value = $simple;
 
+            if ( is_array( $value ) ) {
                 if ( !empty( $simple_data ) ) {
                     $val = array();
 
@@ -454,6 +449,13 @@ class PodsField_Pick extends PodsField {
                 $key = $value;
                 $value = $simple_data[ $value ];
             }
+
+            $single_multi = pods_var( 'pick_format_type', $options, 'single' );
+
+            if ( 'multi' == $single_multi )
+                $limit = (int) pods_var( 'pick_limit', $options, 0 );
+            else
+                $limit = 1;
 
             if ( is_array( $value ) && 0 < $limit ) {
                 if ( 1 == $limit )

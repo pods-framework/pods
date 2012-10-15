@@ -179,7 +179,10 @@ function pods_debug ( $debug = '_null', $die = false, $prefix = '_null' ) {
     if ( !defined( 'DOING_AJAX' ) || !DOING_AJAX )
         $debug = esc_html( $debug );
 
-    $debug = '<e><pre>' . $debug . '</pre>';
+    if ( false === strpos( $debug, "<pre class='xdebug-var-dump' dir='ltr'>" ) )
+        $debug = '<e><pre>' . $debug . '</pre>';
+    else
+        $debug = '<e>' . $debug;
 
     if ( 2 === $die )
         wp_die( $debug );

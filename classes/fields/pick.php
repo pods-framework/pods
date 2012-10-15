@@ -455,8 +455,12 @@ class PodsField_Pick extends PodsField {
                 $value = $simple_data[ $value ];
             }
 
-            if ( is_array( $value ) && 0 < $limit && isset( $value[ 0 ] ) )
-                $value = array_slice( $value, 0, $limit, true );
+            if ( is_array( $value ) && 0 < $limit ) {
+                if ( 1 == $limit )
+                    $value = current( $value );
+                else
+                    $value = array_slice( $value, 0, $limit, true );
+            }
             elseif ( !is_array( $value ) && null !== $value && 0 < strlen( $value ) ) {
                 if ( 1 != $limit || ( true === $raw && 'multi' == $single_multi ) ) {
                     $value = array(

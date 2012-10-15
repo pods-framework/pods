@@ -1196,6 +1196,9 @@ class PodsAdmin {
             "`t`.`{$data->field_index}` LIKE '%" . like_escape( $params->query ) . "%'"
         );
 
+        $extra = '';
+
+        // @todo Hook into WPML for each table
         if ( $wpdb->users == $data->table ) {
             $lookup_where[] = "`t`.`display_name` LIKE '%" . like_escape( $params->query ) . "%'";
             $lookup_where[] = "`t`.`user_login` LIKE '%" . like_escape( $params->query ) . "%'";
@@ -1205,6 +1208,7 @@ class PodsAdmin {
             $lookup_where[] = "`t`.`post_name` LIKE '%" . like_escape( $params->query ) . "%'";
             $lookup_where[] = "`t`.`post_content` LIKE '%" . like_escape( $params->query ) . "%'";
             $lookup_where[] = "`t`.`post_excerpt` LIKE '%" . like_escape( $params->query ) . "%'";
+            $extra = ', `t`.`post_type`';
         }
         elseif ( $wpdb->terms == $data->table )
             $lookup_where[] = "`t`.`slug` LIKE '%" . like_escape( $params->query ) . "%'";
@@ -1228,7 +1232,7 @@ class PodsAdmin {
         $orderby[] = "`t`.`{$data->field_id}`";
 
         $params = array(
-            'select' => "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`",
+            'select' => "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`" . $extra,
             'table' => $data->table,
             'where' => $where,
             'orderby' => $orderby,
@@ -1239,15 +1243,35 @@ class PodsAdmin {
         $results = $data->select( $params );
 
         $items = array();
+        $ids = array();
 
         if ( !empty( $results ) ) {
             foreach ( $results as $result ) {
                 $result = get_object_vars( $result );
 
-                $items[] = array(
-                    'id' => $result[ $data->field_id ],
-                    'text' => $result[ $data->field_index ]
-                );
+                // WPML integration for Post Types
+                if ( $wpdb->posts == $data->table && function_exists( 'icl_object_id' ) ) {
+                    $id = icl_object_id( $result[ $data->field_id ], $result[ 'post_type' ] );
+
+                    if ( 0 < $id && !in_array( $id, $ids ) ) {
+                        $text = get_the_title( $id );
+
+                        $items[] = array(
+                            'id' => $id,
+                            'text' => $text
+                        );
+
+                        $ids[] = $id;
+                    }
+                }
+                elseif( !in_array( $result[ $data->field_id ], $ids ) ) {
+                    $items[] = array(
+                        'id' => $result[ $data->field_id ],
+                        'text' => $result[ $data->field_index ]
+                    );
+
+                    $ids[] = $result[ $data->field_id ];
+                }
             }
         }
 

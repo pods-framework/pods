@@ -416,14 +416,12 @@ class PodsAdmin {
 
         $pod = pods( $pod, pods_var( 'id', 'get', null, null, true ) );
 
-        $index = $pod->pod_data[ 'field_index' ];
-        $label = __( 'Name', 'pods' );
+        $index = $pod->pod_data[ 'field_id' ];
+        $label = __( 'ID', 'pods' );
 
-        if ( isset( $pod->pod_data[ 'fields' ][ $pod->pod_data[ 'field_index' ] ] ) )
+        if ( isset( $pod->pod_data[ 'fields' ][ $pod->pod_data[ 'field_index' ] ] ) ) {
+            $index = $pod->pod_data[ 'field_index' ];
             $label = $pod->pod_data[ 'fields' ][ $pod->pod_data[ 'field_index' ] ];
-        else {
-            $index = $pod->pod_data[ 'field_id' ];
-            $label = __( 'ID', 'pods' );
         }
 
         $manage = array(
@@ -441,8 +439,6 @@ class PodsAdmin {
                 'edit' => $pod->pod_data[ 'fields' ],
                 'duplicate' => $pod->pod_data[ 'fields' ]
             ),
-            'item' => pods_var_raw( 'label_singular', $pod->pod_data[ 'options' ], pods_var_raw( 'label', $pod->pod_data, ucwords( str_replace( '_', ' ', $pod->pod ) ), null, true ), null, true ),
-            'items' => pods_var_raw( 'label', $pod->pod_data, ucwords( str_replace( '_', ' ', $pod->pod ) ), null, true ),
             'actions_disabled' => $actions_disabled
         );
 

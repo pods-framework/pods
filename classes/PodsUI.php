@@ -742,8 +742,16 @@ class PodsUI {
 
         $options->orderby = $orderby;
 
-        $options->validate( 'item', __( 'Item', 'pods' ) );
-        $options->validate( 'items', __( 'Items', 'pods' ) );
+        $item = __( 'Item', 'pods' );
+        $items = __( 'Items', 'pods' );
+
+        if ( is_object( $this->pod ) ) {
+            $item = pods_var_raw( 'label_singular', $this->pod->pod_data[ 'options' ], pods_var_raw( 'label', $this->pod->pod_data, $item, null, true ), null, true );
+            $items = pods_var_raw( 'label', $this->pod->pod_data, $items, null, true );
+        }
+
+        $options->validate( 'item', $item );
+        $options->validate( 'items', $items );
 
         $options->validate( 'heading', array(
             'manage' => __( 'Manage', 'pods' ),

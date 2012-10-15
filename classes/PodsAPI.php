@@ -4614,7 +4614,7 @@ class PodsAPI {
                 }
 
                 $info[ 'where' ] = array(
-                    'post_status' => '`t`.`post_status` IN ( "inherit", "publish" )',
+                    //'post_status' => '`t`.`post_status` IN ( "inherit", "publish" )', // @todo Figure out what statuses Attachments can be
                     'post_type' => '`t`.`post_type` = "' . ( empty( $object ) ? $name : $object ) . '"'
                 );
 

@@ -390,8 +390,6 @@ class PodsField_Pick extends PodsField {
             unset( $options[ 'options' ] );
         }
 
-        pods_debug( $value );
-
         if ( 'custom-simple' == pods_var( 'pick_object', $options ) ) {
             $simple_data = array();
 

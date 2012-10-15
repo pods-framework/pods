@@ -704,7 +704,7 @@ class Pods {
 
                             if ( !empty( $table[ 'table' ] ) ) {
                                 $sql = "
-                                    SELECT *, `" . $table[ 'field_id' ] . "` AS `pod_item_id`
+                                    SELECT *, t.`" . $table[ 'field_id' ] . "` AS `pod_item_id`
                                     FROM `" . $table[ 'table' ] . "` AS `t`
                                     {$join}
                                     {$where}

@@ -61,29 +61,6 @@ class PodsAPI_Deprecated {
     }
 
     /**
-     * Add or edit a single pod item
-     *
-     * $params['pod'] string The Pod name
-     * $params['pod_id'] string The Pod name
-     * $params['columns'] array (optional) Associative array of column names + values
-     * $params['data'] array (optional) Associative array of a set of associative arrays of column names + values (for bulk operations)
-     * $params['id'] int The item's ID from the wp_pod_* table (or alternatively use the pod_id parameter instead)
-     * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers
-     *
-     * @param array $params An associative array of parameters
-     *
-     * @return int The item ID
-     * @since 1.7.9
-     *
-     * @todo Determine new name
-     */
-    /*public function save_pod_item ( $params ) {
-        pods_deprecated( 'PodsAPI::save', '2.0.0' );
-
-        return $this->obj->save( $params );
-    }*/
-
-    /**
      * Save the entire role structure
      *
      * @param array $params An associative array of parameters

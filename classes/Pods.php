@@ -559,7 +559,7 @@ class Pods {
                         $simple = false;
                         $simple_options = array();
 
-                        if ( 'pick' == $all_fields[ $pod ][ $field ][ 'type' ] && 'custom-simple' == $all_fields[ $pod ][ $field ][ 'pick_object' ] ) {
+                        if ( $field_exists && 'pick' == $all_fields[ $pod ][ $field ][ 'type' ] && 'custom-simple' == $all_fields[ $pod ][ $field ][ 'pick_object' ] ) {
                             $simple = true;
                             $simple_options = $all_fields[ $pod ][ $field ];
                         }

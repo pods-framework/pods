@@ -934,8 +934,10 @@ class Pods {
             $params = (object) array_merge( $defaults, $params );
         if ( is_object( $params ) )
             $params = (object) array_merge( $defaults, get_object_vars( $params ) );
-        else
+        else {
+            $defaults[ 'orderby' ] = $params;
             $params = (object) $defaults;
+        }
 
         $params = $this->do_hook( 'find', $params );
 

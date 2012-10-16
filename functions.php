@@ -31,6 +31,19 @@ function pods_query ( $sql, $error = 'Database Error', $results_error = null, $n
         $error = 'Database Error';
     }
 
+    if ( 1 == pods_var( 'pods_debug_sql_all', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) ) {
+        $debug_sql = $sql;
+
+        echo '<textarea cols="100" rows="24">';
+
+        if ( is_array( $debug_sql ) )
+            print_r( $debug_sql );
+        else
+            echo $debug_sql;
+
+        echo '</textarea>';
+    }
+
     return $podsdata->query( $sql, $error, $results_error, $no_results_error );
 }
 
@@ -166,7 +179,10 @@ function pods_debug ( $debug = '_null', $die = false, $prefix = '_null' ) {
     if ( !defined( 'DOING_AJAX' ) || !DOING_AJAX )
         $debug = esc_html( $debug );
 
-    $debug = '<e><pre>' . $debug . '</pre>';
+    if ( false === strpos( $debug, "<pre class='xdebug-var-dump' dir='ltr'>" ) )
+        $debug = '<e><pre>' . $debug . '</pre>';
+    else
+        $debug = '<e>' . $debug;
 
     if ( 2 === $die )
         wp_die( $debug );
@@ -668,12 +684,22 @@ function pods_var_update ( $array = null, $allowed = null, $excluded = null, $ur
 
     if ( !empty( $array ) ) {
         foreach ( $array as $key => $val ) {
-            if ( is_array( $val ) && !empty( $val ) )
-                $get[ $key ] = $val;
-            elseif ( !is_array( $val ) && 0 < strlen( $val ) )
-                $get[ $key ] = $val;
-            elseif ( isset( $get[ $key ] ) )
-                unset( $get[ $key ] );
+            if ( null !== $val || false === strpos( $key, '*' ) ) {
+                if ( is_array( $val ) && !empty( $val ) )
+                    $get[ $key ] = $val;
+                elseif ( !is_array( $val ) && 0 < strlen( $val ) )
+                    $get[ $key ] = $val;
+                elseif ( isset( $get[ $key ] ) )
+                    unset( $get[ $key ] );
+            }
+            else {
+                $key = str_replace( '*', '', $key );
+
+                foreach ( $get as $k => $v ) {
+                    if ( false !== strpos( $k, $key ) )
+                        unset( $get[ $k ] );
+                }
+            }
         }
     }
 
@@ -905,7 +931,7 @@ function pods_access ( $privs, $method = 'OR' ) {
     if ( !is_user_logged_in() )
         return false;
 
-    if ( current_user_can( 'administrator' ) || current_user_can( 'pods_administrator' ) || is_super_admin() )
+    if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) )
         return true;
 
     // Store approved privs when using "AND"
@@ -974,7 +1000,11 @@ function pods_shortcode ( $tags, $content = null ) {
         'field' => null,
         'col' => null,
         'template' => null,
-        'helper' => null
+        'helper' => null,
+        'form' => null,
+        'fields' => null,
+        'label' => null,
+        'thank_you' => null
     );
 
     $tags = array_merge( $defaults, $tags );
@@ -984,16 +1014,23 @@ function pods_shortcode ( $tags, $content = null ) {
         $content = null;
 
     if ( empty( $tags[ 'name' ] ) ) {
-        return '<e>Please provide a Pod name';
+        return '<p>Please provide a Pod name</p>';
     }
 
     if ( !empty( $tags[ 'col' ] ) ) {
         $tags[ 'field' ] = $tags[ 'col' ];
+
         unset( $tags[ 'col' ] );
     }
 
+    if ( !empty( $tags[ 'order' ] ) ) {
+        $tags[ 'orderby' ] = $tags[ 'order' ];
+
+        unset( $tags[ 'order' ] );
+    }
+
     if ( empty( $content ) && empty( $tags[ 'template' ] ) && empty( $tags[ 'field' ] ) ) {
-        return '<e>Please provide either a template or field name';
+        return '<p>Please provide either a template or field name</p>';
     }
 
     // id > slug (if both exist)
@@ -1010,11 +1047,10 @@ function pods_shortcode ( $tags, $content = null ) {
 
     $found = 0;
 
-    if ( empty( $id ) ) {
+    if ( !empty( $tags[ 'form' ] ) )
+        return $pod->form( $tags[ 'fields' ], $tags[ 'label' ], $tags[ 'thank_you' ] );
+    elseif ( empty( $id ) ) {
         $params = array();
-
-        if ( 0 < strlen( $tags[ 'order' ] ) )
-            $params[ 'orderby' ] = $tags[ 'order' ];
 
         if ( 0 < strlen( $tags[ 'orderby' ] ) )
             $params[ 'orderby' ] = $tags[ 'orderby' ];
@@ -1078,7 +1114,11 @@ function pods_shortcode ( $tags, $content = null ) {
  * @return string
  */
 function pods_serial_comma ( $value, $field = null, $fields = null ) {
-    $value = (array) $value;
+    if ( is_object( $value ) )
+        $value = get_object_vars( $value );
+
+    if ( !is_array( $value ) )
+        return $value;
 
     $field_index = null;
 
@@ -1121,18 +1161,12 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
             if ( isset( $value[ 0 ] ) )
                 $value = $value[ 0 ];
 
-            if ( isset( $value[ $field_index ] ) ) {
-                $value = $value[ $field_index ];
-
-                if ( 0 < strlen( $value ) && 0 < strlen( $last ) )
-                    $value .= $and . $last;
-                elseif ( 0 < strlen( $last ) )
-                    $value = $last;
+            if ( is_array( $value ) ) {
+                if ( isset( $value[ $field_index ] ) )
+                    $value = $value[ $field_index ];
                 else
                     $value = '';
             }
-            else
-                $value = '';
         }
         else {
             if ( isset( $value[ $field_index ] ) )
@@ -1150,14 +1184,14 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
             }
 
             $value = implode( ', ', $value );
-
-            if ( 0 < strlen( $value ) && 0 < strlen( $last ) )
-                $value .= $and . $last;
-            elseif ( 0 < strlen( $last ) )
-                $value = $last;
-            else
-                $value = '';
         }
+
+        if ( 0 < strlen( $value ) && 0 < strlen( $last ) )
+            $value .= $and . $last;
+        elseif ( 0 < strlen( $last ) )
+            $value = $last;
+        else
+            $value = '';
     }
     else
         $value = $last;

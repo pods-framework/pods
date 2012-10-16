@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 2.0.3.1
+Stable tag: 2.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -99,10 +99,14 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 == Changelog ==
 
+= 2.0.4 - October 15th, 2012 =
+* Big bug fix release, we've fixed tons of bugs and improved backwards compatibility even further - stability, stability, stability!
+* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://github.com/pods-framework/pods/issues/new
+* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code and contribute notes and patches all from the web
+
 = 2.0.3.1 - October 5th, 2012 =
 * Fixed an upgrade issue a few users were reporting where the upgrade wouldn't start
 * Fixed reserved post_name issues with our internal post types for Pods and Fields (rss, date, and any other feeds)
-* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://github.com/pods-framework/pods/issues/new
 
 = 2.0.3 - October 4th, 2012 =
 * We've fixed many more bugs, that means even more stability and backwards compatibility for those who have been holding off on upgrading

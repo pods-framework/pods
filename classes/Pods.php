@@ -107,7 +107,7 @@ class Pods {
     /**
      * @var
      */
-    public $ui;
+    public $ui = array();
 
     /**
      * @var

@@ -115,6 +115,8 @@ class Pod
 
     public $body_classes;
 
+    public $ui = array();
+
     public $meta = array();
 
     public $meta_properties = array();

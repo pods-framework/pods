@@ -43,6 +43,7 @@
                                     <div id="minor-publishing">
                                         <div id="major-publishing-actions">
                                             <div id="publishing-action">
+                                                <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
                                                 <input type="submit" name="publish" id="publish" class="button-primary" value="<?php _e( 'Save', 'pods' ); ?>" accesskey="p" />
                                             </div>
                                             <!-- /#publishing-action -->

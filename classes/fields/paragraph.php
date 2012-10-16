@@ -77,7 +77,7 @@ class PodsField_Paragraph extends PodsField {
                         'default' => 1,
                         'type' => 'boolean',
                         'help' => array(
-                            __( 'Transforms less-beautfiul text characters into stylized equivilents.', 'pods' ),
+                            __( 'Transforms less-beautfiul text characters into stylized equivalents.', 'pods' ),
                             'http://codex.wordpress.org/Function_Reference/wptexturize'
                         )
                     ),
@@ -166,23 +166,23 @@ class PodsField_Paragraph extends PodsField {
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $value = $this->strip_html( $value, $options );
 
-        if ( 1 == pods_var( 'wysiwyg_oembed', $options, 0 ) ) {
+        if ( 1 == pods_var( 'paragraph_oembed', $options, 0 ) ) {
             $embed = $GLOBALS[ 'wp_embed' ];
             $value = $embed->run_shortcode( $value );
             $value = $embed->autoembed( $value );
         }
 
-        if ( 1 == pods_var( 'wysiwyg_wptexturize', $options, 1 ) )
+        if ( 1 == pods_var( 'paragraph_wptexturize', $options, 1 ) )
             $value = wptexturize( $value );
 
-        if ( 1 == pods_var( 'wysiwyg_convert_chars', $options, 1 ) )
+        if ( 1 == pods_var( 'paragraph_convert_chars', $options, 1 ) )
             $value = convert_chars( $value );
 
-        if ( 1 == pods_var( 'wysiwyg_wpautop', $options, 1 ) )
+        if ( 1 == pods_var( 'paragraph_wpautop', $options, 1 ) )
             $value = wpautop( $value );
 
-        if ( 1 == pods_var( 'wysiwyg_allow_shortcode', $options, 0 ) ) {
-            if ( 1 == pods_var( 'wysiwyg_wpautop', $options, 1 ) )
+        if ( 1 == pods_var( 'paragraph_allow_shortcode', $options, 0 ) ) {
+            if ( 1 == pods_var( 'paragraph_wpautop', $options, 1 ) )
                 $value = shortcode_unautop( $value );
 
             $value = do_shortcode( $value );

@@ -84,7 +84,7 @@ class PodsField_WYSIWYG extends PodsField {
                         'default' => 1,
                         'type' => 'boolean',
                         'help' => array(
-                            __( 'Transforms less-beautfiul text characters into stylized equivilents.', 'pods' ),
+                            __( 'Transforms less-beautfiul text characters into stylized equivalents.', 'pods' ),
                             'http://codex.wordpress.org/Function_Reference/wptexturize'
                         )
                     ),

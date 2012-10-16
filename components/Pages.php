@@ -420,6 +420,12 @@ class Pods_Pages extends PodsComponent {
     public function page_check () {
         global $pods;
 
+        // Fix any global confusion wherever this runs
+        if ( isset( $pods ) && !isset( $GLOBALS[ 'pods' ] ) )
+            $GLOBALS[ 'pods' ] =& $pods;
+        elseif ( !isset( $pods ) && isset( $GLOBALS[ 'pods' ] ) )
+            $pods =& $GLOBALS[ 'pods' ];
+
         if ( !defined( 'PODS_DISABLE_POD_PAGE_CHECK' ) || !PODS_DISABLE_POD_PAGE_CHECK ) {
             if ( null === self::$exists )
                 self::$exists = pod_page_exists();
@@ -450,6 +456,12 @@ class Pods_Pages extends PodsComponent {
      */
     public static function content ( $return = false ) {
         global $pods;
+
+        // Fix any global confusion wherever this runs
+        if ( isset( $pods ) && !isset( $GLOBALS[ 'pods' ] ) )
+            $GLOBALS[ 'pods' ] =& $pods;
+        elseif ( !isset( $pods ) && isset( $GLOBALS[ 'pods' ] ) )
+            $pods =& $GLOBALS[ 'pods' ];
 
         $content = false;
 
@@ -489,6 +501,12 @@ class Pods_Pages extends PodsComponent {
      */
     public function precode () {
         global $pods;
+
+        // Fix any global confusion wherever this runs
+        if ( isset( $pods ) && !isset( $GLOBALS[ 'pods' ] ) )
+            $GLOBALS[ 'pods' ] =& $pods;
+        elseif ( !isset( $pods ) && isset( $GLOBALS[ 'pods' ] ) )
+            $pods =& $GLOBALS[ 'pods' ];
 
         if ( false !== self::$exists ) {
             $content = false;

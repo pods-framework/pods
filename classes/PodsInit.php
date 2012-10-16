@@ -70,7 +70,7 @@ class PodsInit {
      * Load the plugin textdomain.
      */
     function load_textdomain () {
-        load_plugin_textdomain( 'pods', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+        load_plugin_textdomain( 'pods', false, dirname( PODS_DIR . 'init.php' ) . '/languages/' );
     }
 
     /**
@@ -663,33 +663,21 @@ class PodsInit {
         // Setup DB tables
         $pods_version = self::$version;
 
+        // Update Pods and run any necessary DB updates
         if ( 0 < strlen( $pods_version ) ) {
-            if ( PODS_VERSION != $pods_version ) {
-                // Update alpha / beta sites
-                if ( version_compare( '2.0.0-a-1', $pods_version, '<=' ) && version_compare( $pods_version, '2.0.0-b-15', '<=' ) ) {
-                    do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
+            if ( PODS_VERSION != $pods_version && false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] )) {
+                do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
 
-                    if ( false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] ) ) {
-                        include( PODS_DIR . 'sql/update-2.0-beta.php' );
-                        include( PODS_DIR . 'sql/update.php' );
-                    }
+                // Update 2.0 alpha / beta sites
+                if ( version_compare( '2.0.0-a-1', $pods_version, '<=' ) && version_compare( $pods_version, '2.0.0-b-15', '<=' ) )
+                    include( PODS_DIR . 'sql/update-2.0-beta.php' );
 
-                    do_action( 'pods_update_post', PODS_VERSION, $pods_version, $_blog_id );
-                }
-                else {
-                    do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
+                include( PODS_DIR . 'sql/update.php' );
 
-                    if ( false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] ) )
-                        include( PODS_DIR . 'sql/update.php' );
-
-                    do_action( 'pods_update_post', PODS_VERSION, $pods_version, $_blog_id );
-                }
-
-                update_option( 'pods_framework_version', PODS_VERSION );
-
-                pods_api()->cache_flush_pods();
+                do_action( 'pods_update_post', PODS_VERSION, $pods_version, $_blog_id );
             }
         }
+        // Install Pods
         else {
             do_action( 'pods_install', PODS_VERSION, $pods_version, $_blog_id );
 
@@ -721,11 +709,11 @@ class PodsInit {
             }
 
             do_action( 'pods_install_post', PODS_VERSION, $pods_version, $_blog_id );
-
-            update_option( 'pods_framework_version', PODS_VERSION );
-
-            pods_api()->cache_flush_pods();
         }
+
+        update_option( 'pods_framework_version', PODS_VERSION );
+
+        pods_api()->cache_flush_pods();
 
         // Restore DB table prefix (if switched)
         if ( null !== $_blog_id )
@@ -817,11 +805,9 @@ class PodsInit {
         $widgets = array(
             'PodsWidgetSingle',
             'PodsWidgetList',
-            'PodsWidgetField'
+            'PodsWidgetField',
+            'PodsWidgetForm'
         );
-
-        if ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER )
-            $widgets[] = 'PodsWidgetForm';
 
         foreach ( $widgets as $widget ) {
             if ( !file_exists( PODS_DIR . 'classes/widgets/' . $widget . '.php' ) )
@@ -849,7 +835,7 @@ class PodsInit {
             if ( 0 == $pod[ 'options' ][ 'show_in_menu' ] )
                 continue;
 
-            if ( !is_super_admin() && !current_user_can( 'pods' ) && !current_user_can( 'pods_add_' . $pod[ 'name' ] ) )
+            if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_content' ) && !current_user_can( 'pods_add_' . $pod[ 'name' ] ) )
                 continue;
 
             $singular_label = pods_var_raw( 'label_singular', $pod[ 'options' ], pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true ), null, true );
@@ -866,7 +852,7 @@ class PodsInit {
         if ( is_object( $pods ) && !is_wp_error( $pods ) && !empty( $pods->id ) && isset( $pods->pod_data ) && !empty( $pods->pod_data ) && 'pod' == $pods->pod_data[ 'type' ] ) {
             $pod = $pods->pod_data;
 
-            if ( is_super_admin() || current_user_can( 'pods' ) || current_user_can( 'pods_edit_' . $pod[ 'name' ] ) ) {
+            if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) || current_user_can( 'pods_edit_' . $pod[ 'name' ] ) ) {
                 $singular_label = pods_var_raw( 'label_singular', $pod[ 'options' ], pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true ), null, true );
 
                 $wp_admin_bar->add_node( array(

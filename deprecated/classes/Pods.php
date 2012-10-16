@@ -14,12 +14,6 @@ class Pods_Deprecated
 
     var $datatype_id;
 
-    var $meta = array();
-
-    var $meta_properties = array();
-
-    var $meta_extra = '';
-
     /**
      * Constructor - Pods Deprecated functionality (pre 2.0)
      *
@@ -327,14 +321,17 @@ class Pods_Deprecated
 
         $val = array();
         $result = pods_query( $sql );
+
         foreach ( $result as $row ) {
             $row = get_object_vars( $row );
             $row[ 'active' ] = false;
-            if ( !empty( $params->selected_ids ) ) {
+
+            if ( !empty( $params->selected_ids ) )
                 $row[ 'active' ] = in_array( $row[ 'id' ], $params->selected_ids );
-            }
+
             $val[] = $row;
         }
+
         return $val;
     }
 
@@ -405,7 +402,7 @@ class Pods_Deprecated
     public function get_field ( $name, $orderby = null ) {
         pods_deprecated( 'Pods::get_field', '2.0.0', 'Pods::field' );
 
-        $value = $this->obj->field( array( 'name' => $name, 'orderby' => $orderby ) );
+        $value = $this->obj->field( array( 'name' => $name, 'orderby' => $orderby, 'deprecated' => true ) );
 
         if ( is_array( $value ) && !empty( $value ) ) {
             if ( false === strpos( $name, '.' ) && !isset( $value[ 0 ] ) )
@@ -562,10 +559,9 @@ class Pods_Deprecated
         pods_deprecated( 'Pods::getFilters', '2.0.0', 'Pods::filters' );
 
         $params = array(
-            'filters' => $filters,
+            'fields' => $filters,
             'label' => $label,
-            'action' => $action,
-            'show_textbox' => true
+            'action' => $action
         );
 
         if ( is_array( $filters ) )

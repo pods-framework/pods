@@ -12,7 +12,6 @@ foreach ( $fields as $k => $field ) {
         unset( $fields[ $k ] );
 }
 
-// This isn't ready yet
 $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
 $field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $fields ) ) );
 
@@ -32,7 +31,7 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
     }
 }
 ?>
-<form action="<?php echo pods_var_update( array( '_p_submitted' => 1 ) ); ?>" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo $pod->pod; ?> pods-submittable-ajax" data-location="<?php echo $thank_you; ?>">
+<form action="<?php echo pods_var_update( array( '_p_submitted' => 1, 'success*' => null ) ); ?>" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo $pod->pod; ?> pods-submittable-ajax" data-location="<?php echo $thank_you; ?>">
     <div class="pods-submittable-fields">
         <?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
         <?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>
@@ -74,8 +73,12 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
 </form>
 
 <script type="text/javascript">
-    jQuery( function ( $ ) {
-        $( document ).Pods( 'validate' );
-        $( document ).Pods( 'submit' );
-    } );
+    if ( 'undefined' == typeof  pods_form_init ) {
+        var pods_form_init = true;
+
+        jQuery( function ( $ ) {
+            $( document ).Pods( 'validate' );
+            $( document ).Pods( 'submit' );
+        } );
+    }
 </script>

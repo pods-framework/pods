@@ -197,7 +197,7 @@ class PodsField_Phone extends PodsField {
         }
         else {
             // Clean input
-            $number = preg_replace( '/([^0-9ext])/', ' ', $value );
+            $number = preg_replace( '/([^0-9ext])/', '', $value );
 
             $number = str_replace(
                 array( '-', '.', 'ext', 'x', 't', 'e', '(', ')' ),
@@ -208,8 +208,8 @@ class PodsField_Phone extends PodsField {
             // Get extension
             $extension = explode( '|', $number );
             if ( 1 < count( $extension ) ) {
-                $number = preg_replace( '/([^0-9])/', ' ', $extension[ 0 ] );
-                $extension = preg_replace( '/([^0-9])/', ' ', $extension[ 1 ] );
+                $number = preg_replace( '/([^0-9])/', '', $extension[ 0 ] );
+                $extension = preg_replace( '/([^0-9])/', '', $extension[ 1 ] );
             }
             else
                 $extension = '';
@@ -237,7 +237,7 @@ class PodsField_Phone extends PodsField {
                 $value = implode( '-', $numbers );
 
             // Add extension
-            if ( 1 == pods_var( 'phone_enable_phone_extension', $options ) && false !== $extension )
+            if ( 1 == pods_var( 'phone_enable_phone_extension', $options ) && 0 < strlen( $extension ) )
                 $value .= ' x' . $extension;
         }
 

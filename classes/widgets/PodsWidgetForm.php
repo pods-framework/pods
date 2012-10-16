@@ -8,7 +8,7 @@ class PodsWidgetForm extends WP_Widget {
         $this->WP_Widget(
             'pods_widget_form',
             'Pods Form',
-            array( 'classname' => 'pods_widget_form', 'description' => 'Display a form for creating Pod items' ),
+            array( 'classname' => 'pods_widget_form', 'description' => 'Display a form for creating and editing Pod items' ),
             array( 'width' => 200 )
         );
     }
@@ -16,13 +16,20 @@ class PodsWidgetForm extends WP_Widget {
     public function widget ( $args, $instance ) {
         extract( $args );
 
+        // Get widget fields
         $title = apply_filters( 'widget_title', $instance[ 'title' ] );
-        $pod_type = pods_var( 'pod_type', $instance, '' );
 
-        if ( !empty( $pod_type ) ) {
-            $shortcode = '[pods name="' . $pod_type . '" form="true"]';
+        $args = array(
+            'name' => trim( pods_var_raw( 'pod_type', $instance, '' ) ),
+            'slug' => trim( pods_var_raw( 'slug', $instance, '' ) ),
+            'fields' => trim( pods_var_raw( 'fields', $instance, '' ) ),
+            'label' => trim( pods_var_raw( 'label', $instance, __( 'Submit', 'pods' ), null, true ) ),
+            'thank_you' => trim( pods_var_raw( 'thank_you', $instance, '' ) ),
+            'form' => 1
+        );
 
-            require PODS_DIR . 'ui/front/widgets/pods_widget_output.php';
+        if ( 0 < strlen( $args[ 'name' ] ) ) {
+            require PODS_DIR . 'ui/front/widgets.php';
         }
     }
 
@@ -30,6 +37,10 @@ class PodsWidgetForm extends WP_Widget {
         $instance = $old_instance;
         $instance[ 'title' ] = pods_var( 'title', $new_instance, '' );
         $instance[ 'pod_type' ] = pods_var( 'pod_type', $new_instance, '' );
+        $instance[ 'slug' ] = pods_var( 'slug', $new_instance, '' );
+        $instance[ 'fields' ] = pods_var( 'fields', $new_instance, '' );
+        $instance[ 'label' ] = pods_var( 'label', $new_instance, __( 'Submit', 'pods' ), null, true );
+        $instance[ 'thank_you' ] = pods_var( 'thank_you', $new_instance, '' );
 
         return $instance;
     }
@@ -37,6 +48,10 @@ class PodsWidgetForm extends WP_Widget {
     public function form ( $instance ) {
         $title = pods_var_raw( 'title', $instance, '' );
         $pod_type = pods_var_raw( 'pod_type', $instance, '' );
+        $slug = pods_var_raw( 'slug', $instance, '' );
+        $fields = pods_var_raw( 'fields', $instance, '' );
+        $label = pods_var_raw( 'label', $instance, __( 'Submit', 'pods' ), null, true );
+        $thank_you = pods_var_raw( 'thank_you', $instance, '' );
 
         require PODS_DIR . 'ui/admin/widgets/form.php';
     }

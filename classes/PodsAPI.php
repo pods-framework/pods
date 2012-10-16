@@ -1717,7 +1717,7 @@ class PodsAPI {
                 if ( $field[ 'type' ] != $old_type ) {
                     if ( in_array( $field[ 'type' ], $tableless_field_types ) && !$simple && ( !in_array( $old_type, $tableless_field_types ) || $old_simple ) )
                         pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$old_name}`", false );
-                    elseif ( ( in_array( $old_type, $tableless_field_types ) && !$old_simple ) || $simple )
+                    elseif ( ( in_array( $old_type, $tableless_field_types ) && !$old_simple ) || ( in_array( $old_type, $tableless_field_types ) && $simple ) )
                         pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
                     elseif ( false !== $definition )
                         pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `{$old_name}` {$definition}" );
@@ -1793,7 +1793,7 @@ class PodsAPI {
         return $params->id;
     }
 
-    public function save_field_slug_fix ( $slug, $post_ID, $post_status, $post_type, $post_parent, $original_slug ) {
+    public function save_field_slug_fix ( $slug, $post_ID, $post_status, $post_type, $post_parent = 0, $original_slug = null ) {
         if ( in_array( $post_type, array( '_pods_field', '_pods_pod' ) ) && false !== strpos( $slug, '-' ) ) {
             $slug = explode( '-', $slug );
             $slug = $slug[ 0 ];
@@ -2147,28 +2147,40 @@ class PodsAPI {
         $pre_save_helpers = $post_save_helpers = array();
 
         if ( false === $bypass_helpers ) {
-            $pieces = array( 'fields', 'params', 'pod' );
+            $pieces = array( 'fields', 'params', 'pod', 'fields_active' );
 
             // Plugin hooks
             $hooked = $this->do_hook( 'pre_save_pod_item', compact( $pieces ), $is_new_item );
-            extract( $hooked );
+
+            if ( is_array( $hooked ) && !empty( $hooked ) )
+                extract( $hooked );
 
             $hooked = $this->do_hook( "pre_save_pod_item_{$params->pod}", compact( $pieces ), $is_new_item );
-            extract( $hooked );
+
+            if ( is_array( $hooked ) && !empty( $hooked ) )
+                extract( $hooked );
 
             if ( false !== $is_new_item ) {
                 $hooked = $this->do_hook( 'pre_create_pod_item', compact( $pieces ) );
-                extract( $hooked );
+
+                if ( is_array( $hooked ) && !empty( $hooked ) )
+                    extract( $hooked );
 
                 $hooked = $this->do_hook( "pre_create_pod_item_{$params->pod}", compact( $pieces ) );
-                extract( $hooked );
+
+                if ( is_array( $hooked ) && !empty( $hooked ) )
+                    extract( $hooked );
             }
             else {
                 $hooked = $this->do_hook( 'pre_edit_pod_item', compact( $pieces ) );
-                extract( $hooked );
+
+                if ( is_array( $hooked ) && !empty( $hooked ) )
+                    extract( $hooked );
 
                 $hooked = $this->do_hook( "pre_edit_pod_item_{$params->pod}", compact( $pieces ) );
-                extract( $hooked );
+
+                if ( is_array( $hooked ) && !empty( $hooked ) )
+                    extract( $hooked );
             }
 
             // Call any pre-save helpers (if not bypassed)
@@ -2209,59 +2221,114 @@ class PodsAPI {
         if ( !empty( $params->id ) )
             $object_data[ $object_ID ] = $params->id;
 
+        $fields_active = array_unique( $fields_active );
+
         // Loop through each active field, validating and preparing the table data
         foreach ( $fields_active as $field ) {
             if ( isset( $object_fields[ $field ] ) )
-                $options = $object_fields[ $field ];
+                $field_data = $object_fields[ $field ];
             elseif ( isset( $fields[ $field ] ) )
-                $options = $fields[ $field ];
+                $field_data = $fields[ $field ];
             else
                 continue;
 
-            $value = $options[ 'value' ];
-            $type = $options[ 'type' ];
+            $value = $field_data[ 'value' ];
+            $type = $field_data[ 'type' ];
+            $options = pods_var( 'options', $field_data, array() );
 
             // Validate value
             $validate = $this->handle_field_validation( $value, $field, $object_fields, $fields, $pod, $params );
 
             if ( false === $validate )
-                $validate = sprintf( __( 'There was an issue validating the field %s', 'pods' ), $options[ 'label' ] );
+                $validate = sprintf( __( 'There was an issue validating the field %s', 'pods' ), $field_data[ 'label' ] );
 
             if ( !is_bool( $validate ) && !empty( $validate ) )
                 return pods_error( $validate, $this );
 
-            $value = PodsForm::pre_save( $options[ 'type' ], $value, $params->id, $field, array_merge( pods_var( 'options', $options, array() ), $options ), array_merge( $fields, $object_fields ), $pod, $params );
+            $value = PodsForm::pre_save( $field_data[ 'type' ], $value, $params->id, $field, array_merge( $options, $field_data ), array_merge( $fields, $object_fields ), $pod, $params );
 
-            $options[ 'value' ] = $value;
+            $field_data[ 'value' ] = $value;
 
             if ( isset( $object_fields[ $field ] ) )
                 $object_data[ $field ] = $value;
             else {
-                $simple = ( 'pick' == $type && 'custom-simple' == pods_var( 'pick_object', $options ) );
-                $simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $options, $field, $fields, $pod, $params );
+                $simple = ( 'pick' == $type && 'custom-simple' == pods_var( 'pick_object', $field_data ) );
+                $simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field_data, $field, $fields, $pod, $params );
+
+                // Handle Simple Relationships
+                if ( $simple ) {
+                    $value = (array) $value;
+
+                    $custom = pods_var_raw( 'pick_custom', $options, '' );
+                    $pick_limit = (int) pods_var_raw( 'pick_limit', $options, 0 );
+
+                    if ( empty( $value ) || empty( $custom ) )
+                        $value = '';
+                    elseif ( !empty( $custom ) ) {
+                        if ( !is_array( $custom ) )
+                            $custom = explode( "\n", $custom );
+
+                        $custom_values = array();
+
+                        foreach ( $custom as $c => $cv ) {
+                            if ( 0 < strlen( $cv ) ) {
+                                $custom_label = explode( '|', $cv );
+
+                                if ( !isset( $custom_label[ 1 ] ) )
+                                    $custom_label[ 1 ] = $custom_label[ 0 ];
+
+                                $custom_values[ $custom_label[ 0 ] ] = $custom_label[ 1 ];
+                            }
+                        }
+
+                        $values = array();
+
+                        foreach ( $value as $k => $v ) {
+                            if ( isset( $custom_values[ $v ] ) )
+                                $values[ $k ] = $v;
+                        }
+
+                        $value = $values;
+
+                        if ( 0 < $pick_limit && !empty( $value ) )
+                            $value = array_slice( $value, 0, $pick_limit );
+                    }
+
+                    // Don't save an empty array, just make it an empty string
+                    if ( empty( $value ) )
+                        $value = '';
+                    elseif ( is_array( $value ) ) {
+                        // If there's just one item, don't save as an array, save the string
+                        if ( 1 == $pick_limit )
+                            $value = implode( '', $value );
+                        // If storage is set to table, json encode, otherwise WP will serialize automatically
+                        elseif ( 'table' == pods_var( 'storage', $pod ) )
+                            $value = json_encode( $value );
+                    }
+                }
 
                 // Prepare all table (non-relational) data
                 if ( !in_array( $type, $tableless_field_types ) || $simple ) {
-                    if ( $simple ) {
-                        $value = (array) $value;
-
-                        if ( empty( $value ) )
-                            $value = '';
-                        else
-                            $value = json_encode( $value );
-                    }
-
                     $table_data[ $field ] = $value;
-                    $table_formats[] = PodsForm::prepare( $type, pods_var( 'options', $options, array() ) );
+                    $table_formats[] = PodsForm::prepare( $type, $options );
 
                     $object_meta[ $field ] = $value;
                 }
                 // Store relational field data to be looped through later
                 else {
                     $rel_fields[ $type ][ $field ] = $value;
-                    $rel_field_ids[] = $options[ 'id' ];
+                    $rel_field_ids[] = $field_data[ 'id' ];
                 }
             }
+        }
+
+        if ( 'post_type' == $pod[ 'type' ] ) {
+            $post_type = $pod[ 'name' ];
+
+            if ( !empty( $pod[ 'object' ] ) )
+                $post_type = $pod[ 'object' ];
+
+            $object_data[ 'post_type' ] = $post_type;
         }
 
         if ( 'meta' == $pod[ 'storage' ] && !in_array( $pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) ) {
@@ -2285,10 +2352,13 @@ class PodsAPI {
             }
 
             if ( 'table' == $pod[ 'storage' ] ) {
-                if ( !empty( $params->id ) ) {
-                    $table_data = array( 'id' => $params->id ) + $table_data;
-                    array_unshift( $table_formats, '%d' );
-                }
+                // Every row should have an id set here, otherwise Pods with nothing
+                // but relationship fields won't get properly ID'd
+                if ( empty( $params->id ) )
+                    $params->id = 0;
+
+                $table_data = array( 'id' => $params->id ) + $table_data;
+                array_unshift( $table_formats, '%d' );
 
                 if ( !empty( $table_data ) ) {
                     $sql = PodsData::insert_on_duplicate( "@wp_pods_{$params->pod}", $table_data, $table_formats );
@@ -2502,29 +2572,21 @@ class PodsAPI {
         }
 
         if ( false === $bypass_helpers ) {
-            $pieces = array( 'fields', 'params', 'pod' );
+            $pieces = array( 'fields', 'params', 'pod', 'fields_active' );
+
+            $pieces = compact( $pieces );
 
             // Plugin hooks
-            $hooked = $this->do_hook( 'post_save_pod_item', compact( $pieces ), $is_new_item );
-            extract( $hooked );
-
-            $hooked = $this->do_hook( "post_save_pod_item_{$params->pod}", compact( $pieces ) );
-            extract( $hooked );
+            $this->do_hook( 'post_save_pod_item', $pieces, $is_new_item );
+            $this->do_hook( "post_save_pod_item_{$params->pod}", $pieces, $is_new_item );
 
             if ( false !== $is_new_item ) {
-                $hooked = $this->do_hook( 'post_create_pod_item', compact( $pieces ) );
-                extract( $hooked );
-
-                $hooked = $this->do_hook( "post_create_pod_item_{$params->pod}", compact( $pieces ) );
-                extract( $hooked );
-
+                $this->do_hook( 'post_create_pod_item', $pieces );
+                $this->do_hook( "post_create_pod_item_{$params->pod}", $pieces );
             }
             else {
-                $hooked = $this->do_hook( 'post_edit_pod_item', compact( $pieces ) );
-                extract( $hooked );
-
-                $hooked = $this->do_hook( "post_edit_pod_item_{$params->pod}", compact( $pieces ) );
-                extract( $hooked );
+                $this->do_hook( 'post_edit_pod_item', $pieces );
+                $this->do_hook( "post_edit_pod_item_{$params->pod}", $pieces );
             }
 
             // Call any post-save helpers (if not bypassed)
@@ -2786,7 +2848,7 @@ class PodsAPI {
         $params->id = $pod[ 'id' ];
         $params->name = $pod[ 'name' ];
 
-        if ( 'storage' == $pod[ 'type' ] ) {
+        if ( 'table' == $pod[ 'storage' ] ) {
             pods_query( "TRUNCATE `@wp_pods_{$params->name}`" );
         }
 
@@ -3083,7 +3145,7 @@ class PodsAPI {
         $params = (object) pods_sanitize( $params );
 
         // @deprecated 2.0.0
-        if ( isset( $params->datatype_id ) || isset( $params->datatype ) ) {
+        if ( isset( $params->datatype_id ) || isset( $params->datatype ) || isset( $params->tbl_row_id ) ) {
             if ( isset( $params->tbl_row_id ) ) {
                 pods_deprecated( __( '$params->id instead of $params->tbl_row_id', 'pods' ), '2.0.0' );
                 $params->id = $params->tbl_row_id;
@@ -3108,6 +3170,9 @@ class PodsAPI {
                 unset( $params->datatype );
             }
         }
+
+        if ( !isset( $params->id ) )
+            return pods_error( __( 'Pod Item not found', 'pods' ), $this );
 
         $params->id = pods_absint( $params->id );
 
@@ -4356,6 +4421,7 @@ class PodsAPI {
      * @param int $field_id The Field ID
      * @param int $pod_id The Pod ID
      * @param mixed $ids A comma-separated string (or array) of item IDs
+     * @param array $field Field data array
      *
      * @return array|bool
      *
@@ -4363,7 +4429,7 @@ class PodsAPI {
      *
      * @uses pods_query()
      */
-    function lookup_related_items ( $field_id, $pod_id, $ids ) {
+    function lookup_related_items ( $field_id, $pod_id, $ids, $field = null ) {
         if ( empty( $ids ) )
             $ids = '0';
         else {
@@ -4378,11 +4444,15 @@ class PodsAPI {
         }
 
         $field_id = (int) $field_id;
+        $sister_id = (int) pods_var_raw( 'sister_id', $field, 0 );
 
-        $sql = "
-            SELECT *
-            FROM `@wp_podsrel`
-            WHERE
+        $related_where = "
+            `field_id` = %d
+            AND `item_id` IN ( %s )
+        ";
+
+        if ( 0 < $sister_id ) {
+            $related_where = "
                 (
                     `field_id` = %d
                     AND `item_id` IN ( %s )
@@ -4392,6 +4462,14 @@ class PodsAPI {
                     `related_field_id` = %d
                     AND `related_item_id` IN ( %s )
                 )
+            ";
+        }
+
+        $sql = "
+            SELECT *
+            FROM `@wp_podsrel`
+            WHERE
+                {$related_where}
             ORDER BY `weight`
         ";
 
@@ -4403,7 +4481,7 @@ class PodsAPI {
             foreach ( $relationships as $relation ) {
                 if ( $field_id == $relation->field_id && !in_array( $relation->related_item_id, $related_ids ) )
                     $related_ids[] = (int) $relation->related_item_id;
-                elseif ( $field_id == $relation->related_field_id && !in_array( $relation->item_id, $related_ids ) )
+                elseif ( 0 < $sister_id && $field_id == $relation->related_field_id && !in_array( $relation->item_id, $related_ids ) )
                     $related_ids[] = (int) $relation->item_id;
             }
 
@@ -4536,7 +4614,7 @@ class PodsAPI {
                 }
 
                 $info[ 'where' ] = array(
-                    'post_status' => '`t`.`post_status` = "publish"',
+                    //'post_status' => '`t`.`post_status` IN ( "inherit", "publish" )', // @todo Figure out what statuses Attachments can be
                     'post_type' => '`t`.`post_type` = "' . ( empty( $object ) ? $name : $object ) . '"'
                 );
 
@@ -5250,25 +5328,43 @@ class PodsAPI {
      * @return array
      * @since 1.7.1
      */
-    public function csv_to_php ( $data ) {
-        $delimiter = ",";
+    public function csv_to_php ( $data, $delimiter = ',' ) {
         $expr = "/{$delimiter}(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))/";
+
         $data = str_replace( "\r\n", "\n", $data );
         $data = str_replace( "\r", "\n", $data );
+
         $lines = explode( "\n", $data );
-        $field_names = explode( $delimiter, array_shift( $lines ) );
-        $field_names = preg_replace( "/^\"(.*)\"$/s", "$1", $field_names );
+
+        $field_names = array_shift( $lines );
+
+        if ( function_exists( 'str_getcsv' ) )
+            $field_names = str_getcsv( $field_names, $delimiter );
+        else {
+            $field_names = explode( $delimiter, $field_names );
+            $field_names = preg_replace( "/^\"(.*)\"$/s", "$1", $field_names );
+        }
+
         $out = array();
+
         foreach ( $lines as $line ) {
             // Skip the empty line
-            if ( empty( $line ) )
+            if ( strlen ( $line ) < 1 )
                 continue;
+
             $row = array();
-            $fields = preg_split( $expr, trim( $line ) );
-            $fields = preg_replace( "/^\"(.*)\"$/s", "$1", $fields );
+
+            if ( function_exists( 'str_getcsv' ) )
+                $fields = str_getcsv( $line, $delimiter );
+            else {
+                $fields = preg_split( $expr, trim( $line ) );
+                $fields = preg_replace( "/^\"(.*)\"$/s", "$1", $fields );
+            }
+
             foreach ( $field_names as $key => $field ) {
                 $row[ $field ] = $fields[ $key ];
             }
+
             $out[] = $row;
         }
         return $out;

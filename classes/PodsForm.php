@@ -25,6 +25,11 @@ class PodsForm {
     static $loaded = array();
 
     /**
+     * @var int
+     */
+    static $form_counter = 0;
+
+    /**
      * Generate UI for a Form and it's Fields
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
@@ -272,6 +277,11 @@ class PodsForm {
 
         if ( 1 == pods_var( 'required', $options, 0 ) )
             $attributes[ 'class' ] .= ' pods-validate pods-validate-required';
+
+        if ( isset( $options[ 'maxlength' ] ) && !empty( $options[ 'maxlength' ] ) )
+            $attributes[ 'maxlength' ] = (int) $options[ 'maxlength' ];
+        elseif ( isset( $options[ $type . '_max_length' ] ) && !empty( $options[ $type . '_max_length' ] ) )
+            $attributes[ 'maxlength' ] = (int) $options[ $type . '_max_length' ];
 
         $attributes = (array) apply_filters( 'pods_form_ui_field_' . $type . '_merge_attributes', $attributes, $name, $options );
         return $attributes;
@@ -564,8 +574,17 @@ class PodsForm {
     public static function display ( $type, $value = null, $name = null, $options = null, $pod = null, $id = null, $traverse = null ) {
         self::field_loader( $type );
 
-        if ( method_exists( self::$loaded[ $type ], 'display' ) )
-            $value = call_user_func_array( array( self::$loaded[ $type ], 'display' ), array( $value, $name, $options, $pod, $id, $traverse ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
+
+        if ( method_exists( self::$loaded[ $type ], 'display' ) ) {
+            if ( is_array( $value ) && in_array( $type, $tableless_field_types ) ) {
+                foreach ( $value as &$display_value ) {
+                    $display_value = call_user_func_array( array( self::$loaded[ $type ], 'display' ), array( $display_value, $name, $options, $pod, $id, $traverse ) );
+                }
+            }
+            else
+                $value = call_user_func_array( array( self::$loaded[ $type ], 'display' ), array( $value, $name, $options, $pod, $id, $traverse ) );
+        }
 
         return $value;
     }
@@ -691,7 +710,7 @@ class PodsForm {
 
         if ( 1 == pods_var( 'restrict_capability', $options, 0 ) ) {
             if ( is_user_logged_in() ) {
-                if ( is_super_admin() || current_user_can( 'manage_options' ) )
+                if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'manage_options' ) )
                     $permission = true;
 
                 $capabilities = explode( ',', pods_var( 'capability_allowed', $options ) );
@@ -707,7 +726,7 @@ class PodsForm {
             }
         }
         elseif ( 1 == pods_var( 'admin_only', $options, 0 ) ) {
-            if ( is_user_logged_in() && ( is_super_admin() || current_user_can( 'manage_options' ) ) )
+            if ( is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'manage_options' ) ) )
                 $permission = true;
         }
         else
@@ -728,9 +747,9 @@ class PodsForm {
         $default_value_parameter = pods_var_raw( 'default_value_parameter', $options, $default_value, null, true );
         $default = pods_var_raw( 'default', $options, $default_value_parameter, null, true );
 
-        $default = trim( $default, ' {@}' );
+        $default_value = trim( $default, ' {@}' );
 
-        if ( $default != $value ) {
+        if ( $default != $default_value ) {
             $value = $default;
 
             $default = explode( '.', $default );
@@ -740,6 +759,8 @@ class PodsForm {
             elseif ( 2 == count( $default ) )
                 $value = pods_var_raw( $default[ 1 ], $default[ 0 ], '', null, true );
         }
+        elseif ( $default != $value )
+            $value = $default;
 
         if ( is_array( $value ) )
             $value = pods_serial_comma( $value );

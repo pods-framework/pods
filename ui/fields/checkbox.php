@@ -1,5 +1,6 @@
 <?php
 $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true );
+
 $data_count = count( $options[ 'data' ] );
 
 if ( 0 < $data_count ) {
@@ -26,8 +27,6 @@ if ( 0 < $data_count ) {
         $attributes = array();
 
         $attributes[ 'type' ] = 'checkbox';
-
-        $attributes[ 'checked' ] = null;
         $attributes[ 'tabindex' ] = 2;
 
         if ( $val == $value || ( is_array( $value ) && in_array( $val, $value ) ) )

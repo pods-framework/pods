@@ -193,17 +193,7 @@ class PodsField_Pick extends PodsField {
 
         $ajax = false;
 
-        if ( 'custom-simple' == pods_var( 'pick_object', $options ) && !empty( $custom ) ) {
-            if ( !empty( $value ) && !is_array( $value ) ) {
-                $json = json_decode( $value, true );
-
-                if ( is_array( $json ) )
-                    $value = $json;
-                else
-                    $value = explode( ',', $value );
-            }
-        }
-        elseif ( '' != pods_var( 'pick_object', $options, '', null, true ) ) {
+        if ( ( 'custom-simple' != pods_var( 'pick_object', $options ) || empty( $custom ) ) && '' != pods_var( 'pick_object', $options, '', null, true ) ) {
             $autocomplete = false;
 
             if ( 'single' == pods_var( 'pick_format_type', $options ) && 'autocomplete' == pods_var( 'pick_format_single', $options ) )
@@ -268,14 +258,14 @@ class PodsField_Pick extends PodsField {
     public function data ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array();
 
-        $custom = pods_var_raw( 'pick_custom', $options, false );
+        $custom = trim( pods_var_raw( 'pick_custom', $options, '' ) );
 
-        if ( 'custom-simple' == pods_var( 'pick_object', $options ) && !empty( $custom ) ) {
+        if ( 'custom-simple' == pods_var( 'pick_object', $options ) && 0 < strlen( $custom ) ) {
             if ( !is_array( $custom ) )
                 $custom = explode( "\n", $custom );
 
             if ( 'single' == pods_var( 'pick_format_type', $options ) && 'dropdown' == pods_var( 'pick_format_single', $options ) )
-                $options[ 'data' ] = array( '' => __( '-- Select One --', 'pods' ) );
+                $options[ 'data' ] = array( '' => pods_var_raw( 'pick_select_text', $options, __( '-- Select One --', 'pods' ), null, true ) );
 
             foreach ( $custom as $custom_value ) {
                 $custom_label = explode( '|', $custom_value );
@@ -364,8 +354,10 @@ class PodsField_Pick extends PodsField {
                 }
             }
         }
+
         if ( empty( $data ) && !empty( $options[ 'data' ] ) )
             $data = $options[ 'data' ];
+
         return $data;
     }
 
@@ -382,6 +374,104 @@ class PodsField_Pick extends PodsField {
      * @since 2.0.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+        $value = $this->simple_value( $value, $options );
+
         return $this->display( $value, $name, $options, $pod, $id );
+    }
+
+    /**
+     * Convert a simple value to the correct value
+     *
+     * @param mixed $value Value of the field
+     * @param array $options Field options
+     * @param boolean $raw Whether to return the raw list of keys (true) or convert to key=>value (false)
+     */
+    public function simple_value ( $value, $options, $raw = false ) {
+        if ( isset( $options[ 'options' ] ) ) {
+            $options = array_merge( $options[ 'options' ], $options );
+            unset( $options[ 'options' ] );
+        }
+
+        if ( 'custom-simple' == pods_var( 'pick_object', $options ) ) {
+            $simple_data = array();
+
+            $custom = trim( pods_var_raw( 'pick_custom', $options, '' ) );
+
+            if ( 0 < strlen( $custom ) ) {
+                if ( !is_array( $custom ) )
+                    $custom = explode( "\n", $custom );
+
+                foreach ( $custom as $custom_value ) {
+                    $custom_label = explode( '|', $custom_value );
+
+                    if ( empty( $custom_label ) )
+                        continue;
+
+                    if ( 1 == count( $custom_label ) )
+                        $custom_label = $custom_value;
+                    else {
+                        $custom_value = $custom_label[ 0 ];
+                        $custom_label = $custom_label[ 1 ];
+                    }
+
+                    $simple_data[ $custom_value ] = $custom_label;
+                }
+            }
+
+            $simple = false;
+            $key = 0;
+
+            if ( !is_array( $value ) && !empty( $value ) )
+                $simple = @json_decode( $value );
+
+            if ( is_array( $simple ) )
+                $value = $simple;
+
+            if ( is_array( $value ) ) {
+                if ( !empty( $simple_data ) ) {
+                    $val = array();
+
+                    foreach ( $value as $k => $v ) {
+                        if ( isset( $simple_data[ $v ] ) ) {
+                            if ( false === $raw ) {
+                                $k = $v;
+                                $v = $simple_data[ $v ];
+                            }
+
+                            $val[ $k ] = $v;
+                        }
+                    }
+
+                    $value = $val;
+                }
+            }
+            elseif ( isset( $simple_data[ $value ] ) && false === $raw ) {
+                $key = $value;
+                $value = $simple_data[ $value ];
+            }
+
+            $single_multi = pods_var( 'pick_format_type', $options, 'single' );
+
+            if ( 'multi' == $single_multi )
+                $limit = (int) pods_var( 'pick_limit', $options, 0 );
+            else
+                $limit = 1;
+
+            if ( is_array( $value ) && 0 < $limit ) {
+                if ( 1 == $limit )
+                    $value = current( $value );
+                else
+                    $value = array_slice( $value, 0, $limit, true );
+            }
+            elseif ( !is_array( $value ) && null !== $value && 0 < strlen( $value ) ) {
+                if ( 1 != $limit || ( true === $raw && 'multi' == $single_multi ) ) {
+                    $value = array(
+                        $key => $value
+                    );
+                }
+            }
+        }
+
+        return $value;
     }
 }

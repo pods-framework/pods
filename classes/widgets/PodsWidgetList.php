@@ -24,32 +24,19 @@ class PodsWidgetList extends WP_Widget {
 
         // Get widget fields
         $title = apply_filters( 'widget_title', $instance[ 'title' ] );
-        $pod_type = pods_var( 'pod_type', $instance, '' );
-        $template = pods_var( 'template', $instance, '' );
-        $template_custom = pods_var( 'template_custom', $instance, '' );
-        $limit = pods_var( 'limit', $instance, '' );
-        $orderby = pods_var( 'orderby', $instance, '' );
-        $direction = pods_var( 'direction', $instance, '' );
-        $where = pods_var( 'where', $instance, '' );
 
-        if ( !empty( $pod_type ) && !empty( $template ) ) {
-            $shortcode = '[pods ';
-            $shortcode .= "name=\"{$pod_type}\" ";
-            $shortcode .= "template=\"{$template}\" ";
+        $args = array(
+            'name' => trim( pods_var_raw( 'pod_type', $instance, '' ) ),
+            'template' => trim( pods_var_raw( 'template', $instance, '' ) ),
+            'limit' => (int) pods_var_raw( 'limit', $instance, 15, null, true ),
+            'orderby' => trim( pods_var_raw( 'orderby', $instance, '' ) ),
+            'where' => trim( pods_var_raw( 'where', $instance, '' ) )
+        );
 
-            if ( !empty( $limit ) )
-                $shortcode .= "limit=\"{$limit}\" ";
-            if ( !empty( $orderby ) && !empty( $direction ) )
-                $shortcode .= "orderby=\"{$orderby} {$direction}\" ";
-            if ( !empty( $where ) )
-                $shortcode .= "where=\"{$where}\" ";
+        $content = trim( pods_var_raw( 'template_custom', $instance, '' ) );
 
-            $shortcode .= "]";
-
-            if ( !empty ( $template_custom ) )
-                $shortcode .= $template_custom . '[/pods]';
-
-            require PODS_DIR . 'ui/front/widgets/pods_widget_output.php';
+        if ( 0 < strlen( $args[ 'name' ] ) && ( 0 < strlen( $args[ 'template' ] ) || 0 < strlen( $content ) ) ) {
+            require PODS_DIR . 'ui/front/widgets.php';
         }
     }
 
@@ -65,9 +52,8 @@ class PodsWidgetList extends WP_Widget {
         $instance[ 'pod_type' ] = pods_var( 'pod_type', $new_instance, '' );
         $instance[ 'template' ] = pods_var( 'template', $new_instance, '' );
         $instance[ 'template_custom' ] = pods_var( 'template_custom', $new_instance, '' );
-        $instance[ 'limit' ] = pods_var( 'limit', $new_instance, '' );
+        $instance[ 'limit' ] = (int) pods_var( 'limit', $new_instance, 15, null, true );
         $instance[ 'orderby' ] = pods_var( 'orderby', $new_instance, '' );
-        $instance[ 'direction' ] = pods_var( 'direction', $new_instance, '' );
         $instance[ 'where' ] = pods_var( 'where', $new_instance, '' );
 
         return $instance;
@@ -81,9 +67,8 @@ class PodsWidgetList extends WP_Widget {
         $pod_type = pods_var_raw( 'pod_type', $instance, '' );
         $template = pods_var_raw( 'template', $instance, '' );
         $template_custom = pods_var_raw( 'template_custom', $instance, '' );
-        $limit = pods_var_raw( 'limit', $instance, '' );
+        $limit = (int) pods_var_raw( 'limit', $instance, 15, null, true );
         $orderby = pods_var_raw( 'orderby', $instance, '' );
-        $direction = pods_var_raw( 'direction', $instance, '' );
         $where = pods_var_raw( 'where', $instance, '' );
 
         require PODS_DIR . 'ui/admin/widgets/list.php';

@@ -40,7 +40,7 @@ class PodsComponents {
      * @since 2.0.0
      */
     public function __construct () {
-        $this->components_dir = apply_filters( 'pods_components_dir', PODS_DIR . 'components/' );
+        $this->components_dir = realpath( apply_filters( 'pods_components_dir', PODS_DIR . 'components' ) ) . '/';
 
         $settings = get_option( 'pods_component_settings', '' );
 
@@ -60,6 +60,9 @@ class PodsComponents {
         if ( is_admin() ) {
             add_action( 'wp_ajax_pods_admin_components', array( $this, 'admin_ajax' ) );
             add_action( 'wp_ajax_nopriv_pods_admin_components', array( $this, 'admin_ajax' ) );
+
+            // Add the Pods Components capabilities
+            add_filter( 'members_get_capabilities', array( $this, 'admin_capabilities' ) );
         }
     }
 
@@ -90,7 +93,7 @@ class PodsComponents {
             if ( empty( $component_data[ 'MenuPage' ] ) && ( !isset( $component_data[ 'object' ] ) || !method_exists( $component_data[ 'object' ], 'admin' ) ) )
                 continue;
 
-            $component_data[ 'File' ] = realpath( PODS_DIR . $component_data[ 'File' ] );
+            $component_data[ 'File' ] = realpath( $this->components_dir . $component_data[ 'File' ] );
 
             if ( !file_exists( $component_data[ 'File' ] ) ) {
                 pods_message( 'Pods Component not found: ' . $component_data[ 'File' ] );
@@ -99,6 +102,14 @@ class PodsComponents {
 
                 continue;
             }
+
+            $capability = 'pods_component_' . str_replace( '-', '_', sanitize_title( str_replace( ' and ', ' ', strip_tags( $component_data[ 'Name' ] ) ) ) );
+
+            if ( 0 < strlen( $component_data[ 'Capability' ] ) )
+                $capability = $component_data[ 'Capability' ];
+
+            if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_components' ) && !current_user_can( $capability ) )
+                continue;
 
             $menu_page = 'pods-component-' . $component_data[ 'ID' ];
 
@@ -125,10 +136,10 @@ class PodsComponents {
                         if ( $menu[ 2 ] == $menu_page ) {
                             $menu_page = $component_data[ 'MenuPage' ];
 
-                            if ( !empty( $component_data[ 'MenuAddPage' ] ) ) {
+                            /*if ( !empty( $component_data[ 'MenuAddPage' ] ) ) {
                                 if ( false !== strpos( $_SERVER[ 'REQUEST_URI' ], $component_data[ 'MenuAddPage' ] ) )
                                     $menu_page = $component_data[ 'MenuAddPage' ];
-                            }
+                            }*/
 
                             $menu[ 2 ] = $menu_page;
 
@@ -164,7 +175,7 @@ class PodsComponents {
 
             $component_data = $this->components[ $component ];
 
-            $component_data[ 'File' ] = realpath( PODS_DIR . $component_data[ 'File' ] );
+            $component_data[ 'File' ] = realpath( $this->components_dir . $component_data[ 'File' ] );
 
             if ( empty( $component_data[ 'File' ] ) ) {
                 pods_transient_clear( 'pods_components' );
@@ -221,14 +232,14 @@ class PodsComponents {
                                 if ( '.' == substr( $subfile, 0, 1 ) )
                                     continue;
                                 elseif ( '.php' == substr( $subfile, -4 ) )
-                                    $component_files[] = realpath( $this->components_dir . $file . '/' . $subfile );
+                                    $component_files[] = str_replace( '\\', '/', $file . '/' . $subfile );
                             }
 
                             closedir( $component_subdir );
                         }
                     }
                     elseif ( '.php' == substr( $file, -4 ) )
-                        $component_files[] = $this->components_dir . $file;
+                        $component_files[] = $file;
                 }
 
                 closedir( $component_dir );
@@ -248,16 +259,17 @@ class PodsComponents {
                 'Class' => 'Class',
                 'Hide' => 'Hide',
                 'PluginDependency' => 'Plugin Dependency',
-                'DeveloperMode' => 'Developer Mode'
+                'DeveloperMode' => 'Developer Mode',
+                'Capability' => 'Capability'
             );
 
             $components = array();
 
             foreach ( $component_files as $component_file ) {
-                if ( !is_readable( $component_file ) )
+                if ( !is_readable( $this->components_dir . $component_file ) )
                     continue;
 
-                $component_data = get_file_data( $component_file, $default_headers, 'pods_component' );
+                $component_data = get_file_data( $this->components_dir . $component_file, $default_headers, 'pods_component' );
 
                 if ( empty( $component_data[ 'Name' ] ) || 'yes' == $component_data[ 'Hide' ] )
                     continue;
@@ -266,7 +278,7 @@ class PodsComponents {
                     $component_data[ 'MenuName' ] = $component_data[ 'Name' ];
 
                 if ( empty( $component_data[ 'Class' ] ) )
-                    $component_data[ 'Class' ] = 'Pods_' . pods_clean_name( basename( $component_file, '.php' ), false );
+                    $component_data[ 'Class' ] = 'Pods_' . pods_clean_name( basename( $this->components_dir . $component_file, '.php' ), false );
 
                 if ( empty( $component_data[ 'ID' ] ) )
                     $component_data[ 'ID' ] = sanitize_title( $component_data[ 'Name' ] );
@@ -276,7 +288,7 @@ class PodsComponents {
                 else
                     $component_data[ 'DeveloperMode' ] = false;
 
-                $component_data[ 'File' ] = str_replace( PODS_DIR, '', $component_file );
+                $component_data[ 'File' ] = $component_file;
 
                 $components[ $component_data[ 'ID' ] ] = $component_data;
             }
@@ -287,6 +299,9 @@ class PodsComponents {
 
             pods_transient_set( 'pods_components', $components );
         }
+
+        if ( 1 == pods_var( 'pods_debug_components', 'get', 0 ) )
+            pods_debug( $components );
 
         $this->components = $components;
 
@@ -351,6 +366,36 @@ class PodsComponents {
         update_option( 'pods_component_settings', $settings );
 
         return $toggle;
+    }
+
+    /**
+     * Add pods specific capabilities.
+     *
+     * @param $capabilities List of extra capabilities to add
+     *
+     * @return array
+     */
+    public function admin_capabilities ( $capabilities ) {
+        foreach ( $this->components as $component => $component_data ) {
+            if ( !empty( $component_data[ 'Hide' ] ) )
+                continue;
+
+            if ( true === (boolean) pods_var( 'DeveloperMode', $component_data, false ) && ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) )
+                continue;
+
+            if ( empty( $component_data[ 'MenuPage' ] ) && ( !isset( $component_data[ 'object' ] ) || !method_exists( $component_data[ 'object' ], 'admin' ) ) )
+                continue;
+
+            $capability = 'pods_component_' . str_replace( '-', '_', sanitize_title( str_replace( ' and ', ' ', strip_tags( $component_data[ 'Name' ] ) ) ) );
+
+            if ( 0 < strlen ( $component_data[ 'Capability' ] ) )
+                $capability = $component_data[ 'Capability' ];
+
+            if ( !in_array( $capability, $capabilities ) )
+                $capabilities[] = $capability;
+        }
+
+        return $capabilities;
     }
 
     /**

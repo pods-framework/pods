@@ -227,33 +227,29 @@ class PodsMeta {
             $fields = explode( ',', $fields );
 
         foreach ( $fields as $k => $field ) {
+            $name = $k;
+
+            $defaults = array(
+                'name' => $name,
+                'label' => $name,
+                'type' => 'text'
+            );
+
             if ( !is_array( $field ) ) {
-                if ( is_numeric( $k ) )
-                    $k = $field;
+                $name = trim( $field );
 
-                if ( !is_array( $k ) && isset( $pod[ 'fields' ] ) && isset( $pod[ 'fields' ][ $k ] ) ) {
-                    if ( is_array( $field ) )
-                        $field = array_merge( $pod[ 'fields' ][ $k ], $field );
-                    else
-                        $field = $pod[ 'fields' ][ $k ];
-                }
-                elseif ( is_array( $field ) ) {
-                    $defaults = array(
-                        'name' => '',
-                        'label' => '',
-                        'type' => 'text'
-                    );
-
-                    $field = array_merge( $defaults, $field );
-                }
-                else {
-                    $field = array(
-                        'name' => $k,
-                        'label' => $field,
-                        'type' => 'text'
-                    );
-                }
+                $field = array(
+                    'name' => $name,
+                    'label' => $name
+                );
             }
+
+            $field = array_merge( $defaults, $field );
+
+            $field[ 'name' ] = trim( $field[ 'name' ] );
+
+            if ( isset( $pod[ 'fields' ] ) && isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) )
+                $field = array_merge( $field, $pod[ 'fields' ][ $field[ 'name' ] ] );
 
             $_fields[ $k ] = $field;
         }

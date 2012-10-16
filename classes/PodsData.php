@@ -133,6 +133,11 @@ class PodsData {
     public $page = 1;
 
     /**
+     * @var int
+     */
+    public $limit = 15;
+
+    /**
      * @var bool
      */
     public $pagination = true;
@@ -489,6 +494,10 @@ class PodsData {
 
         $cache_key = $results = false;
 
+        // Debug purposes
+        if ( 1 == pods_var( 'pods_debug_params', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
+            pods_debug( $params );
+
         // Get from cache if enabled
         if ( null !== pods_var( 'expires', $params, null, null, true ) ) {
             $cache_key = md5( serialize( get_object_vars( $params ) ) );
@@ -502,6 +511,10 @@ class PodsData {
         if ( empty( $results ) ) {
             // Build
             $this->sql = $this->build( $params );
+
+            // Debug purposes
+            if ( ( 1 == pods_var( 'pods_debug_sql', 'get', 0 ) || 1 == pods_var( 'pods_debug_sql_all', 'get', 0 ) )&& is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
+                echo "<textarea cols='100' rows='24'>{$this->sql}</textarea>";
 
             if ( empty( $this->sql ) )
                 return array();
@@ -557,6 +570,7 @@ class PodsData {
     public function build ( &$params ) {
         $defaults = array(
             'select' => '*',
+            'distinct' => true,
             'table' => null,
             'join' => null,
             'where' => null,
@@ -588,6 +602,9 @@ class PodsData {
 
         $params = (object) array_merge( $defaults, (array) $params );
 
+        if ( 0 < strlen( $params->sql ) )
+            return $params->sql;
+
         // Validate
         $params->page = pods_absint( $params->page );
 
@@ -598,6 +615,8 @@ class PodsData {
 
         if ( 0 == $params->limit )
             $params->limit = -1;
+
+        $this->limit = $params->limit;
 
         $offset = ( $params->limit * ( $params->page - 1 ) );
 
@@ -979,6 +998,7 @@ class PodsData {
 
             $sql = "
                 SELECT SQL_CALC_FOUND_ROWS
+                " . ( $params->distinct ? 'DISTINCT' : '' ) . "
                 " . ( !empty( $params->select ) ? ( is_array( $params->select ) ? implode( ', ', $params->select ) : $params->select ) : '*' ) . "
                 FROM {$params->table} AS `t`
                 " . ( !empty( $params->join ) ? ( is_array( $params->join ) ? implode( "\n                ", $params->join ) : $params->join ) : '' ) . "
@@ -1119,10 +1139,6 @@ class PodsData {
             ), '', $sql );
             $sql = str_replace( array( '``', '`' ), array( '  ', ' ' ), $sql );
         }
-
-        // Debug purposes
-        if ( 1 == pods_var( 'debug_sql', 'get', 0 ) && is_user_logged_in() && is_super_admin() )
-            echo "<textarea cols='130' rows='30'>{$sql}</textarea>";
 
         return $sql;
     }
@@ -1869,8 +1885,20 @@ class PodsData {
         }
 
         $rel_alias = 'rel_' . $field_joined;
-        $the_join = "
-            LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
+        $sister_id = (int) pods_var_raw( 'sister_id', $this->traversal[ $pod ][ $field ], 0 );
+
+        $related_on = "
+            `{$rel_alias}`.`field_id` = {$this->traversal[$pod][$field]['id']}
+            AND `{$rel_alias}`.`item_id` = `{$joined}`.`id`
+        ";
+
+        $table_related_on = "
+            `{$rel_alias}`.`field_id` = {$this->traversal[$pod][$field]['id']}
+            AND `{$field_joined}`.`{$this->traversal[$pod][$field]['on']}` = `{$rel_alias}`.`related_item_id`
+        ";
+
+        if ( 0 < $sister_id ) {
+            $related_on = "
                 (
                     `{$rel_alias}`.`field_id` = {$this->traversal[$pod][$field]['id']}
                     AND `{$rel_alias}`.`item_id` = `{$joined}`.`id`
@@ -1879,7 +1907,25 @@ class PodsData {
                     `{$rel_alias}`.`related_field_id` = {$this->traversal[$pod][$field]['id']}
                     AND `{$rel_alias}`.`related_item_id` = `{$joined}`.`id`
                 )
-            LEFT JOIN `{$this->traversal[$pod][$field]['table']}` AS `{$field_joined}` ON `{$field_joined}`.`{$this->traversal[$pod][$field]['on']}` = `{$rel_alias}`.`related_item_id`
+            ";
+
+            $table_related_on = "
+                (
+                    `{$rel_alias}`.`field_id` = {$this->traversal[$pod][$field]['id']}
+                    AND `{$field_joined}`.`{$this->traversal[$pod][$field]['on']}` = `{$rel_alias}`.`related_item_id`
+                )
+                OR (
+                    `{$rel_alias}`.`related_field_id` = {$this->traversal[$pod][$field]['id']}
+                    AND `{$field_joined}`.`{$this->traversal[$pod][$field]['on']}` = `{$rel_alias}`.`item_id`
+                )
+            ";
+        }
+
+        $the_join = "
+            LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
+                {$related_on}
+            LEFT JOIN `{$this->traversal[$pod][$field]['table']}` AS `{$field_joined}` ON
+                {$table_related_on}
         ";
 
         if ( !in_array( $this->traversal[ $pod ][ $field ][ 'type' ], array( 'pick', 'file' ) ) ) {

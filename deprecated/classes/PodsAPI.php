@@ -27,6 +27,7 @@ class PodsAPI_Deprecated {
     public function __construct ( &$obj ) {
         // backwards-compatibility with references to $this->var_name
         $vars = get_object_vars( $obj );
+
         foreach ( (array) $vars as $key => $val ) {
             $this->{$key} = $val;
         }
@@ -58,29 +59,6 @@ class PodsAPI_Deprecated {
 
         return $this->obj->save_field( $params );
     }
-
-    /**
-     * Add or edit a single pod item
-     *
-     * $params['pod'] string The Pod name
-     * $params['pod_id'] string The Pod name
-     * $params['columns'] array (optional) Associative array of column names + values
-     * $params['data'] array (optional) Associative array of a set of associative arrays of column names + values (for bulk operations)
-     * $params['id'] int The item's ID from the wp_pod_* table (or alternatively use the pod_id parameter instead)
-     * $params['bypass_helpers'] bool Set to true to bypass running pre-save and post-save helpers
-     *
-     * @param array $params An associative array of parameters
-     *
-     * @return int The item ID
-     * @since 1.7.9
-     *
-     * @todo Determine new name
-     */
-    /*public function save_pod_item ( $params ) {
-        pods_deprecated( 'PodsAPI::save', '2.0.0' );
-
-        return $this->obj->save( $params );
-    }*/
 
     /**
      * Save the entire role structure
@@ -189,9 +167,9 @@ class PodsAPI_Deprecated {
      * @since 1.7.9
      */
     public function drop_pod_item ( $params ) {
-        pods_deprecated( 'PodsAPI::delete_item', '2.0.0' );
+        pods_deprecated( 'PodsAPI::delete_pod_item', '2.0.0' );
 
-        return $this->obj->delete_item( $params );
+        return $this->obj->delete_pod_item( $params );
     }
 
     /**
@@ -208,35 +186,5 @@ class PodsAPI_Deprecated {
         pods_deprecated( 'PodsAPI::load_column', '2.0.0', 'PodsAPI::load_field' );
 
         return $this->obj->load_field( $params );
-    }
-
-    /**
-     * Handle methods that have been deprecated
-     *
-     * @since 2.0.0
-     */
-    public function __call ( $name, $args ) {
-        $name = (string) $name;
-
-        if ( !isset( $this->deprecated ) ) {
-            require_once( PODS_DIR . 'deprecated/classes/PodsAPI.php' );
-            $this->deprecated = new PodsAPI_Deprecated( $this );
-        }
-
-        if ( method_exists( $this->deprecated, $name ) ) {
-            $arg_count = count( $args );
-            if ( 0 == $arg_count )
-                $this->deprecated->{$name}();
-            elseif ( 1 == $arg_count )
-                $this->deprecated->{$name}( $args[ 0 ] );
-            elseif ( 2 == $arg_count )
-                $this->deprecated->{$name}( $args[ 0 ], $args[ 1 ] );
-            elseif ( 3 == $arg_count )
-                $this->deprecated->{$name}( $args[ 0 ], $args[ 1 ], $args[ 2 ] );
-            else
-                $this->deprecated->{$name}( $args[ 0 ], $args[ 1 ], $args[ 2 ], $args[ 3 ] );
-        }
-        else
-            pods_deprecated( "PodsAPI::{$name}", '2.0.0' );
     }
 }

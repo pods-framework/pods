@@ -192,7 +192,7 @@
                 $submitbutton.prop( 'disabled', true );
                 $submitbutton.parent().find( '.waiting' ).fadeIn();
 
-                $( 'form.pods-submittable' ).trigger( 'submit' );
+                $( this ).closest( 'form.pods-submittable' ).trigger( 'submit' );
             } );
 
             // Handle submit via link and translate to AJAX
@@ -403,7 +403,11 @@
                 }
                 else {
                     $tabbed.find( '.pods-tab-group .pods-tab' ).not( tab_hash ).slideUp( 'fast', function () {
-                       $tabbed.find( '.pods-tab-group .pods-tab' ).filter( tab_hash ).slideDown( 'fast' );
+                        $tabbed.find( '.pods-tab-group .pods-tab' ).filter( tab_hash ).each( function () {
+                            $this = $( this );
+                            $( '.pods-dependent-toggle', $this ).trigger( 'change' );
+                            $this.slideDown( 'fast' );
+                        } );
                     } );
                 }
 
@@ -417,8 +421,13 @@
                 e.preventDefault();
             } );
 
-            $( '.pods-tabbed' ).find( 'ul.pods-tabs .pods-tab:first a' ).addClass( 'selected' );
-            $( '.pods-tabbed' ).find( '.pods-tab-group .pods-tab:first' ).show();
+            $( '.pods-tabbed' ).each( function () {
+                $( 'ul.pods-tabs .pods-tab:first a', this ).addClass( 'selected' );
+                $( '.pods-tab-group .pods-tab:first' ).each( function () {
+                    $( '.pods-dependent-toggle', this ).trigger( 'change' );
+                    $( this ).show();
+                } )
+            } );
         },
         wizard : function () {
             var methods = {

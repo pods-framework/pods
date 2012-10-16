@@ -121,9 +121,6 @@ class PodsField_Slug extends PodsField {
         if ( empty( $value ) && isset( $fields[ $pod[ 'index' ] ] ) )
             $value = $fields[ $pod[ 'index' ] ][ 'value' ];
 
-        if ( empty( $value ) )
-            return sprintf( __( '%s is empty.', 'pods' ), pods_var_raw( 'label', $options, $name, null, true ) );
-
         return true;
     }
 

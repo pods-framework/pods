@@ -742,8 +742,16 @@ class PodsUI {
 
         $options->orderby = $orderby;
 
-        $options->validate( 'item', __( 'Item', 'pods' ) );
-        $options->validate( 'items', __( 'Items', 'pods' ) );
+        $item = __( 'Item', 'pods' );
+        $items = __( 'Items', 'pods' );
+
+        if ( is_object( $this->pod ) ) {
+            $item = pods_var_raw( 'label_singular', $this->pod->pod_data[ 'options' ], pods_var_raw( 'label', $this->pod->pod_data, $item, null, true ), null, true );
+            $items = pods_var_raw( 'label', $this->pod->pod_data, $items, null, true );
+        }
+
+        $options->validate( 'item', $item );
+        $options->validate( 'items', $items );
 
         $options->validate( 'heading', array(
             'manage' => __( 'Manage', 'pods' ),
@@ -1198,7 +1206,7 @@ class PodsUI {
      * @return mixed
      */
     public function edit ( $duplicate = false ) {
-        if ( !in_array( 'duplicate', $this->actions_disabled ) )
+        if ( in_array( 'duplicate', $this->actions_disabled ) )
             $duplicate = false;
         if ( empty( $this->row ) )
             $this->get_row();
@@ -1239,6 +1247,9 @@ class PodsUI {
      * @return bool|mixed
      */
     public function form ( $create = false, $duplicate = false ) {
+        if ( in_array( 'duplicate', $this->actions_disabled ) )
+            $duplicate = false;
+
         $this->do_hook( 'form' );
 
         if ( isset( $this->actions_custom[ 'form' ] ) && is_callable( $this->actions_custom[ 'form' ] ) )
@@ -1275,7 +1286,7 @@ class PodsUI {
             $alt_vars[ 'action' ] = 'manage';
             unset( $alt_vars[ 'id' ] );
 
-            if ( 1 == $duplicate ) {
+            if ( $duplicate ) {
                 $label = $this->label[ 'duplicate' ];
                 $id = null;
                 $vars = array(
@@ -1895,7 +1906,7 @@ class PodsUI {
 
             .dragme {
                 background: url(<?php echo PODS_URL; ?>/ui/images/handle.gif) no-repeat;
-                background-position: 8px 5px;
+                background-position: 8px 8px;
                 cursor: pointer;
             }
 

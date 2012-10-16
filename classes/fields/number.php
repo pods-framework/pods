@@ -166,8 +166,6 @@ class PodsField_Number extends PodsField {
         if ( is_array( $value ) )
             $value = implode( '', $value );
 
-        $value = $this->pre_save( $value, $id, $name, $options, null, $pod );
-
         pods_view( PODS_DIR . 'ui/fields/number.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
@@ -198,7 +196,7 @@ class PodsField_Number extends PodsField {
             $dot = ',';
         }
 
-        return '[0-9\\' . implode( '\\', array_filter( array( $dot, $thousands ) ) ) . ']+';
+        return '\-*[0-9\\' . implode( '\\', array_filter( array( $dot, $thousands ) ) ) . ']+';
     }
 
     /**
@@ -232,7 +230,7 @@ class PodsField_Number extends PodsField {
 
         $check = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
 
-        $check = preg_replace( '/[^0-9\.]/', '', $check );
+        $check = preg_replace( '/[^0-9\.\-]/', '', $check );
 
         if ( !is_numeric( $check ) )
             return pods_error( sprintf( __( '%s is not numeric', 'pods' ), $label, $this ) );
@@ -269,7 +267,7 @@ class PodsField_Number extends PodsField {
 
         $value = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
 
-        $value = preg_replace( '/[^0-9\.]/', '', $value );
+        $value = preg_replace( '/[^0-9\.\-]/', '', $value );
 
         $decimals = pods_absint( (int) pods_var( 'number_decimals', $options, 0, null, true ) );
 

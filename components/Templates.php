@@ -236,7 +236,7 @@ class Pods_Templates extends PodsComponent {
      *
      * @return array|bool|int|mixed|null|string|void
      */
-    public function get_meta( $_null, $post_ID = null, $meta_key = null, $single = false ) {
+    public function get_meta ( $_null, $post_ID = null, $meta_key = null, $single = false ) {
         if ( 'code' == $meta_key ) {
             $post = get_post( $post_ID );
 
@@ -257,7 +257,7 @@ class Pods_Templates extends PodsComponent {
      *
      * @return bool|int|null
      */
-    public function save_meta( $_null, $post_ID = null, $meta_key = null, $meta_value = null ) {
+    public function save_meta ( $_null, $post_ID = null, $meta_key = null, $meta_value = null ) {
         if ( 'code' == $meta_key ) {
             $post = get_post( $post_ID );
 

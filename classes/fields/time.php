@@ -118,7 +118,7 @@ class PodsField_Time extends PodsField {
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $format = $this->format( $options );
 
-        if ( !empty( $value ) && '00:00:00' != $value ) {
+        if ( !empty( $value ) && !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
             $date = $this->createFromFormat( 'H:i:s', (string) $value );
             $date_local = $this->createFromFormat( $format, (string) $value );
 
@@ -175,7 +175,10 @@ class PodsField_Time extends PodsField {
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $format = $this->format( $options );
 
-        $value = $this->convert_date( $value, 'H:i:s', $format );
+        if ( !empty( $value ) && !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
+            $value = $this->convert_date( $value, 'H:i:s', $format );
+        else
+            $value = '00:00:00';
 
         return $value;
     }

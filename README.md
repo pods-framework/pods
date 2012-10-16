@@ -8,4 +8,4 @@
 Check out <http://podsframework.org/> for our User Guide and many other resources to help you develop with Pods.
 
 ## GitHub Update Note
-~Current Version: 2.0.4~
+~Current Version: 2.0.5-a-1~

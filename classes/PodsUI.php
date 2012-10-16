@@ -1906,7 +1906,7 @@ class PodsUI {
 
             .dragme {
                 background: url(<?php echo PODS_URL; ?>/ui/images/handle.gif) no-repeat;
-                background-position: 8px 5px;
+                background-position: 8px 8px;
                 cursor: pointer;
             }
 

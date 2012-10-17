@@ -763,12 +763,12 @@ class PodsUI {
         ), 'array_merge' );
 
         $options->validate( 'label', array(
-            'add' => __( 'Add New', 'pods' ) . " {$this->item}",
-            'edit' => __( 'Edit', 'pods' ) . " {$this->item}",
-            'duplicate' => __( 'Duplicate', 'pods' ) . " {$this->item}",
-            'delete' => __( 'Delete this', 'pods' ) . " {$this->item}",
-            'view' => __( 'View', 'pods' ) . " {$this->item}",
-            'reorder' => __( 'Reorder', 'pods' ) . " {$this->items}"
+            'add' => __( 'Add New', 'pods' ) . " {$options->item}",
+            'edit' => __( 'Edit', 'pods' ) . " {$options->item}",
+            'duplicate' => __( 'Duplicate', 'pods' ) . " {$options->item}",
+            'delete' => __( 'Delete this', 'pods' ) . " {$options->item}",
+            'view' => __( 'View', 'pods' ) . " {$options->item}",
+            'reorder' => __( 'Reorder', 'pods' ) . " {$options->items}"
         ), 'array_merge' );
 
         $options->validate( 'fields', array(
@@ -1255,7 +1255,8 @@ class PodsUI {
         if ( isset( $this->actions_custom[ 'form' ] ) && is_callable( $this->actions_custom[ 'form' ] ) )
             return call_user_func_array( $this->actions_custom[ 'form' ], array( &$this ) );
 
-        $label = $this->label[ 'add' ];
+        //$label = $this->label[ 'add' ];
+        $label = sprintf( __( 'Save %s', 'pods' ), $this->item );
         $id = null;
         $vars = array(
             'action' . $this->num => $this->action_after[ 'add' ],
@@ -1274,7 +1275,8 @@ class PodsUI {
             if ( empty( $this->row ) )
                 return $this->error( sprintf( __( '<strong>Error:</strong> %s not found.', 'pods' ), $this->item ) );
 
-            $label = $this->label[ 'edit' ];
+            //$label = $this->label[ 'edit' ];
+            $label = sprintf( __( 'Save %s', 'pods' ), $this->item );
             $id = $this->row[ $this->sql[ 'field_id' ] ];
             $vars = array(
                 'action' . $this->num => $this->action_after[ 'edit' ],
@@ -1308,7 +1310,6 @@ class PodsUI {
         $obj =& $this;
         $singular_label = $this->item;
         $plural_label = $this->items;
-        $label = sprintf( __( 'Save %s', 'pods' ), $this->item );
 
         pods_view( PODS_DIR . 'ui/admin/form.php', compact( array_keys( get_defined_vars() ) ) );
     }

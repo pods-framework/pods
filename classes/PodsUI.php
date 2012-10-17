@@ -763,9 +763,9 @@ class PodsUI {
         ), 'array_merge' );
 
         $options->validate( 'label', array(
-            'add' => __( 'Add New', 'pods' ) . " {$options->item}",
-            'edit' => __( 'Edit', 'pods' ) . " {$options->item}",
-            'duplicate' => __( 'Duplicate', 'pods' ) . " {$options->item}",
+            'add' => __( 'Save New', 'pods' ) . " {$options->item}",
+            'edit' => __( 'Save', 'pods' ) . " {$options->item}",
+            'duplicate' => __( 'Save New', 'pods' ) . " {$options->item}",
             'delete' => __( 'Delete this', 'pods' ) . " {$options->item}",
             'view' => __( 'View', 'pods' ) . " {$options->item}",
             'reorder' => __( 'Reorder', 'pods' ) . " {$options->items}"
@@ -1208,8 +1208,10 @@ class PodsUI {
     public function edit ( $duplicate = false ) {
         if ( in_array( 'duplicate', $this->actions_disabled ) )
             $duplicate = false;
+
         if ( empty( $this->row ) )
             $this->get_row();
+
         $this->do_hook( 'edit', $duplicate );
         if ( isset( $this->actions_custom[ 'edit' ] ) && is_callable( $this->actions_custom[ 'edit' ] ) )
             return call_user_func_array( $this->actions_custom[ 'edit' ], array( $duplicate, &$this ) );
@@ -1218,7 +1220,7 @@ class PodsUI {
         <div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
         <h2>
             <?php
-            echo ( true === $duplicate ) ? $this->heading[ 'duplicate' ] : $this->heading[ 'edit' ] . ' ' . $this->item;
+            echo ( $duplicate ? $this->heading[ 'duplicate' ] : $this->heading[ 'edit' ] ) . ' ' . $this->item;
 
             if ( !in_array( 'add', $this->actions_disabled ) ) {
                 $link = pods_var_update( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), array( 'page' ), $this->exclusion() );
@@ -1255,8 +1257,7 @@ class PodsUI {
         if ( isset( $this->actions_custom[ 'form' ] ) && is_callable( $this->actions_custom[ 'form' ] ) )
             return call_user_func_array( $this->actions_custom[ 'form' ], array( &$this ) );
 
-        //$label = $this->label[ 'add' ];
-        $label = sprintf( __( 'Save %s', 'pods' ), $this->item );
+        $label = $this->label[ 'add' ];
         $id = null;
         $vars = array(
             'action' . $this->num => $this->action_after[ 'add' ],
@@ -1275,8 +1276,7 @@ class PodsUI {
             if ( empty( $this->row ) )
                 return $this->error( sprintf( __( '<strong>Error:</strong> %s not found.', 'pods' ), $this->item ) );
 
-            //$label = $this->label[ 'edit' ];
-            $label = sprintf( __( 'Save %s', 'pods' ), $this->item );
+            $label = $this->label[ 'edit' ];
             $id = $this->row[ $this->sql[ 'field_id' ] ];
             $vars = array(
                 'action' . $this->num => $this->action_after[ 'edit' ],

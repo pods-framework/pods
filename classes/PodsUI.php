@@ -2489,7 +2489,7 @@ class PodsUI {
             return call_user_func_array( $this->actions_custom[ 'limit' ], array( $options, &$this ) );
         if ( false === $options || !is_array( $options ) || empty( $options ) )
             $options = array( 10, 25, 50, 100, 200 );
-        if ( !in_array( $this->limit, $options ) )
+        if ( !in_array( $this->limit, $options ) && -1 != $this->limit )
             $this->limit = $options[ 1 ];
         foreach ( $options as $option ) {
             if ( $option == $this->limit )

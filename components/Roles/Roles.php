@@ -242,14 +242,14 @@ class Pods_Roles extends PodsComponent {
         $capabilities = array();
 
         foreach ( $params->capabilities as $capability => $x ) {
-            if ( true !== (boolean) $x )
+            if ( empty( $capability ) || true !== (boolean) $x )
                 continue;
 
             $capabilities[ esc_attr( $capability ) ] = true;
         }
 
         foreach ( $params->custom_capabilities as $x => $capability ) {
-            if ( '--1' == $x )
+            if ( empty( $capability ) || '--1' == $x )
                 continue;
 
             $capabilities[ esc_attr( $capability ) ] = true;
@@ -296,7 +296,7 @@ class Pods_Roles extends PodsComponent {
         $new_capabilities = array();
 
         foreach ( $params->capabilities as $capability => $x ) {
-            if ( true !== (boolean) $x )
+            if ( empty( $capability ) || true !== (boolean) $x )
                 continue;
 
             $new_capabilities[] = esc_attr( $capability );
@@ -306,10 +306,10 @@ class Pods_Roles extends PodsComponent {
         }
 
         foreach ( $params->custom_capabilities as $x => $capability ) {
-            if ( '--1' == $x )
+            if ( empty( $capability ) )
                 continue;
 
-            if ( !in_array( $capability, $new_capabilities ) )
+            if ( in_array( $capability, $new_capabilities ) )
                 continue;
 
             $new_capabilities[] = esc_attr( $capability );

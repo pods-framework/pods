@@ -63,7 +63,8 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 
         if ( isset( $params->post_type ) && !empty( $params->post_type ) ) {
             foreach ( $params->post_type as $post_type => $checked ) {
-                $migrate_post_types[] = $post_type;
+                if ( true === (boolean) $checked )
+                    $migrate_post_types[] = $post_type;
             }
         }
 
@@ -71,7 +72,8 @@ class Pods_Migrate_CPTUI extends PodsComponent {
 
         if ( isset( $params->taxonomy ) && !empty( $params->taxonomy ) ) {
             foreach ( $params->taxonomy as $taxonomy => $checked ) {
-                $migrate_taxonomies[] = $taxonomy;
+                if ( true === (boolean) $checked )
+                    $migrate_taxonomies[] = $taxonomy;
             }
         }
 

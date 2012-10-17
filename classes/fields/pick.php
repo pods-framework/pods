@@ -422,7 +422,8 @@ class PodsField_Pick extends PodsField {
             $key = 0;
 
             if ( !is_array( $value ) && !empty( $value ) )
-                $simple = @json_decode( $value );
+                $simple = @json_decode( $value, true );
+
 
             if ( is_array( $simple ) )
                 $value = $simple;

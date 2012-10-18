@@ -1007,14 +1007,28 @@ function pods_shortcode ( $tags, $content = null ) {
         'thank_you' => null
     );
 
-    $tags = array_merge( $defaults, $tags );
+    if ( !empty( $tags ) )
+        $tags = array_merge( $defaults, $tags );
+    else
+        $tags = $defaults;
+
     $tags = apply_filters( 'pods_shortcode', $tags );
 
     if ( empty( $content ) )
         $content = null;
 
     if ( empty( $tags[ 'name' ] ) ) {
-        return '<p>Please provide a Pod name</p>';
+        if ( in_the_loop() || is_singular() ) {
+            $pod = pods( get_post_type(), get_the_ID(), false );
+
+            if ( !empty( $pod ) ) {
+                $tags[ 'name' ] = get_post_type();
+                $tags[ 'id' ] = get_the_ID();
+            }
+        }
+
+        if ( empty( $tags[ 'name' ] ) )
+            return '<p>Please provide a Pod name</p>';
     }
 
     if ( !empty( $tags[ 'col' ] ) ) {
@@ -1043,7 +1057,8 @@ function pods_shortcode ( $tags, $content = null ) {
             $id = absint( $id );
     }
 
-    $pod = pods( $tags[ 'name' ], $id );
+    if ( !isset( $pod ) )
+        $pod = pods( $tags[ 'name' ], $id );
 
     $found = 0;
 

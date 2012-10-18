@@ -12,10 +12,11 @@
 
 <ol class="pods_form_widget_form">
     <li>
-        <label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title', 'pods' ); ?></label>
+        <label for="<?php echo $this->get_field_id( 'title' ); ?>"> <?php _e( 'Title', 'pods' ); ?></label>
 
-        <input class="widefat" type="text" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo esc_html( $title ); ?>">
+        <input type="text" class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo esc_attr( $title ); ?>" />
     </li>
+
     <li>
         <?php
             $api = pods_api();

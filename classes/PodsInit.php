@@ -611,7 +611,8 @@ class PodsInit {
     public function activate_install () {
         // Activate and Install
         // @todo: VIP constant check, display notice with a link for user to run install instead of auto install
-        register_activation_hook( __FILE__, array( $this, 'activate' ) );
+        register_activation_hook( PODS_DIR . 'init.php', array( $this, 'activate' ) );
+        register_deactivation_hook( PODS_DIR . 'init.php', array( $this, 'deactivate' ) );
 
         add_action( 'wpmu_new_blog', array( $this, 'new_blog' ), 10, 6 );
 
@@ -622,7 +623,7 @@ class PodsInit {
     /**
      *
      */
-    public function activate () {
+    public function activate() {
         global $wpdb;
         if ( function_exists( 'is_multisite' ) && is_multisite() && isset( $_GET[ 'networkwide' ] ) && 1 == $_GET[ 'networkwide' ] ) {
             $_blog_ids = $wpdb->get_col( $wpdb->prepare( "SELECT `blog_id` FROM {$wpdb->blogs}" ) );
@@ -633,6 +634,17 @@ class PodsInit {
         }
         else
             $this->setup();
+    }
+
+    /**
+     *
+     */
+    public function deactivate () {
+        pods_api()->cache_flush_pods();
+
+        global $wp_rewrite;
+
+        $wp_rewrite->flush_rules();
     }
 
     /**
@@ -714,6 +726,10 @@ class PodsInit {
         update_option( 'pods_framework_version', PODS_VERSION );
 
         pods_api()->cache_flush_pods();
+
+        global $wp_rewrite;
+
+        $wp_rewrite->flush_rules();
 
         // Restore DB table prefix (if switched)
         if ( null !== $_blog_id )

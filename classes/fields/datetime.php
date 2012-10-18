@@ -94,6 +94,11 @@ class PodsField_DateTime extends PodsField {
                     'hh_mm_ss' => '01:25:00'
                 )
             ),
+            'datetime_allow_empty' => array(
+                'label' => __( 'Allow empty value?', 'pods' ),
+                'default' => 1,
+                'type' => 'boolean'
+            ),
             'datetime_html5' => array(
                 'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
                 'default' => apply_filters( 'pods_form_ui_field_html5', 0, self::$type ),
@@ -132,7 +137,7 @@ class PodsField_DateTime extends PodsField {
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $format = $this->format( $options );
 
-        if ( !empty( $value ) && !in_array( $value, array( '0000-00-00 00:00:00', '0000-00-00', '00:00:00' ) ) ) {
+        if ( !empty( $value ) && !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
             $date = $this->createFromFormat( 'Y-m-d H:i:s', (string) $value );
             $date_local = $this->createFromFormat( $format, (string) $value );
 
@@ -143,7 +148,7 @@ class PodsField_DateTime extends PodsField {
             else
                 $value = date_i18n( $format, strtotime( (string) $value ) );
         }
-        else
+        elseif ( 0 == pods_var( 'datetime_allow_empty', $options, 1 ) )
             $value = date_i18n( $format );
 
         return $value;
@@ -189,7 +194,12 @@ class PodsField_DateTime extends PodsField {
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $format = $this->format( $options );
 
-        $value = $this->convert_date( $value, 'Y-m-d H:i:s', $format );
+        if ( !empty( $value ) && ( 0 == pods_var( 'datetime_allow_empty', $options, 1 ) || !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
+            $value = $this->convert_date( $value, 'Y-m-d H:i:s', $format );
+        elseif ( 1 == pods_var( 'datetime_allow_empty', $options, 1 ) )
+            $value = '0000-00-00 00:00:00';
+        else
+            $value = date_i18n( 'Y-m-d H:i:s' );
 
         return $value;
     }
@@ -276,7 +286,7 @@ class PodsField_DateTime extends PodsField {
      * @return string
      */
     public function convert_date ( $value, $new_format, $original_format = 'Y-m-d H:i:s' ) {
-        if ( !empty( $value ) && '0000-00-00 00:00:00' != $value ) {
+        if ( !empty( $value ) && !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) {
             $date = $this->createFromFormat( $original_format, (string) $value );
 
             if ( false !== $date )

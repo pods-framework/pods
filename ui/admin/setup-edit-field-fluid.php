@@ -100,8 +100,8 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
 
                         <div id="pods-additional-field-options-<?php echo $pods_i; ?>" class="pods-tab pods-additional-field-options">
                             <?php
-                            foreach ( $field_settings[ 'field_types' ] as $field_type => $field_label ) {
-                                ?>
+                                foreach ( $field_settings[ 'field_types' ] as $field_type => $field_label ) {
+                            ?>
                                 <div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-<?php echo PodsForm::clean( $field_type, true ); ?>">
                                     <?php
                                         $field_options = $field_type_options[ $field_type ];
@@ -109,13 +109,12 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
                                         include PODS_DIR . 'ui/admin/field-option.php';
                                     ?>
                                 </div>
-                                <?php
-                            }
+                            <?php
+                                }
                             ?>
                         </div>
 
                         <div id="pods-advanced-options-<?php echo $pods_i; ?>" class="pods-tab pods-advanced-options">
-
                             <?php
                                 foreach ( $field_settings[ 'advanced_fields' ] as $group => $fields ) {
                             ?>
@@ -126,6 +125,10 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
                                     include PODS_DIR . 'ui/admin/field-option.php';
                                 }
                             ?>
+
+                            <?php if ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER ) { ?>
+                                <h4><?php _e( 'Conditional Logic', 'pods' ); ?></h4>
+                            <?php } ?>
                         </div>
                     </div>
                     <div class="pods-manage-row-actions submitbox">

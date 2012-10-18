@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 2.0.4
+Stable tag: 2.0.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -99,10 +99,20 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 == Changelog ==
 
-= 2.0.4 - October 15th, 2012 =
-* Big bug fix release, we've fixed tons of bugs and improved backwards compatibility even further - stability, stability, stability!
+= 2.0.4.1 - October 17th, 2012 =
+* Updated: Pods UI duplicate method labels were confusing
+* Fixed: Simple Relationships were returning raw data for table-based Pods
+* Fixed: Specify specific content types to import in Migrate Custom Post Types UI component
+* Fixed: Add Custom Capabilities bug with first text box wouldn't save in Roles component
+* Fixed: Various Widget fixes to Widget UI
+* Fixed: XHTML balance tags option in Writing settings was adding a space in <?php tags for Pod Pages / Helpers / Templates
+* Fixed: Date / Time field now allows an empty value to be saved rather than setting the current date / time, this is an option that can be turned off
+* Fixed: WP Rewrites are properly flushed upon adding / editing / deleting Pods
 * Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://github.com/pods-framework/pods/issues/new
 * Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code and contribute notes and patches all from the web
+
+= 2.0.4 - October 15th, 2012 =
+* Big bug fix release, we've fixed tons of bugs and improved backwards compatibility even further - stability, stability, stability!
 
 = 2.0.3.1 - October 5th, 2012 =
 * Fixed an upgrade issue a few users were reporting where the upgrade wouldn't start

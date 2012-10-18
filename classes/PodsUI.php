@@ -763,12 +763,12 @@ class PodsUI {
         ), 'array_merge' );
 
         $options->validate( 'label', array(
-            'add' => __( 'Add New', 'pods' ) . " {$this->item}",
-            'edit' => __( 'Edit', 'pods' ) . " {$this->item}",
-            'duplicate' => __( 'Duplicate', 'pods' ) . " {$this->item}",
-            'delete' => __( 'Delete this', 'pods' ) . " {$this->item}",
-            'view' => __( 'View', 'pods' ) . " {$this->item}",
-            'reorder' => __( 'Reorder', 'pods' ) . " {$this->items}"
+            'add' => __( 'Save New', 'pods' ) . " {$options->item}",
+            'edit' => __( 'Save', 'pods' ) . " {$options->item}",
+            'duplicate' => __( 'Save New', 'pods' ) . " {$options->item}",
+            'delete' => __( 'Delete this', 'pods' ) . " {$options->item}",
+            'view' => __( 'View', 'pods' ) . " {$options->item}",
+            'reorder' => __( 'Reorder', 'pods' ) . " {$options->items}"
         ), 'array_merge' );
 
         $options->validate( 'fields', array(
@@ -1208,8 +1208,10 @@ class PodsUI {
     public function edit ( $duplicate = false ) {
         if ( in_array( 'duplicate', $this->actions_disabled ) )
             $duplicate = false;
+
         if ( empty( $this->row ) )
             $this->get_row();
+
         $this->do_hook( 'edit', $duplicate );
         if ( isset( $this->actions_custom[ 'edit' ] ) && is_callable( $this->actions_custom[ 'edit' ] ) )
             return call_user_func_array( $this->actions_custom[ 'edit' ], array( $duplicate, &$this ) );
@@ -1218,7 +1220,7 @@ class PodsUI {
         <div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
         <h2>
             <?php
-            echo ( true === $duplicate ) ? $this->heading[ 'duplicate' ] : $this->heading[ 'edit' ] . ' ' . $this->item;
+            echo ( $duplicate ? $this->heading[ 'duplicate' ] : $this->heading[ 'edit' ] ) . ' ' . $this->item;
 
             if ( !in_array( 'add', $this->actions_disabled ) ) {
                 $link = pods_var_update( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), array( 'page' ), $this->exclusion() );
@@ -1308,7 +1310,6 @@ class PodsUI {
         $obj =& $this;
         $singular_label = $this->item;
         $plural_label = $this->items;
-        $label = sprintf( __( 'Save %s', 'pods' ), $this->item );
 
         pods_view( PODS_DIR . 'ui/admin/form.php', compact( array_keys( get_defined_vars() ) ) );
     }
@@ -2489,7 +2490,7 @@ class PodsUI {
             return call_user_func_array( $this->actions_custom[ 'limit' ], array( $options, &$this ) );
         if ( false === $options || !is_array( $options ) || empty( $options ) )
             $options = array( 10, 25, 50, 100, 200 );
-        if ( !in_array( $this->limit, $options ) )
+        if ( !in_array( $this->limit, $options ) && -1 != $this->limit )
             $this->limit = $options[ 1 ];
         foreach ( $options as $option ) {
             if ( $option == $this->limit )

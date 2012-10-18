@@ -39,6 +39,14 @@
         <?php endif; ?>
     </li>
 
+    <li>
+        <label for="<?php echo $this->get_field_id( 'slug' ); ?>">
+            <?php _e( 'Slug or ID', 'pods' ); ?>
+        </label>
+
+        <input class="widefat" type="text" id="<?php echo $this->get_field_id( 'slug' ); ?>" name="<?php echo $this->get_field_name( 'slug' ); ?>" value="<?php echo esc_attr( $slug ); ?>" />
+    </li>
+
     <?php if ( class_exists( 'Pods_Templates' ) ) { ?>
         <li>
             <?php

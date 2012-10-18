@@ -27,8 +27,8 @@ class PodsWidgetSingle extends WP_Widget {
 
         $args = array(
             'name' => trim( pods_var_raw( 'pod_type', $instance, '' ) ),
-            'template' => trim( pods_var_raw( 'template', $instance, '' ) ),
-            'slug' => trim( pods_var_raw( 'slug', $instance, '' ) )
+            'slug' => trim( pods_var_raw( 'slug', $instance, '' ) ),
+            'template' => trim( pods_var_raw( 'template', $instance, '' ) )
         );
 
         $content = trim( pods_var_raw( 'template_custom', $instance, '' ) );
@@ -48,9 +48,9 @@ class PodsWidgetSingle extends WP_Widget {
 
         $instance[ 'title' ] = pods_var( 'title', $new_instance, '' );
         $instance[ 'pod_type' ] = pods_var( 'pod_type', $new_instance, '' );
+        $instance[ 'slug' ] = pods_var( 'slug', $new_instance, '' );
         $instance[ 'template' ] = pods_var( 'template', $new_instance, '' );
         $instance[ 'template_custom' ] = pods_var( 'template_custom', $new_instance, '' );
-        $instance[ 'slug' ] = pods_var( 'slug', $new_instance, '' );
 
         return $instance;
     }
@@ -60,10 +60,10 @@ class PodsWidgetSingle extends WP_Widget {
      */
     public function form ( $instance ) {
         $title = pods_var_raw( 'title', $instance, '' );
+        $slug = pods_var_raw( 'slug', $instance, '' );
         $pod_type = pods_var_raw( 'pod_type', $instance, '' );
         $template = pods_var_raw( 'template', $instance, '' );
         $template_custom = pods_var_raw( 'template_custom', $instance, '' );
-        $slug = pods_var_raw( 'slug', $instance, '' );
 
         require PODS_DIR . 'ui/admin/widgets/single.php';
     }

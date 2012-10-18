@@ -182,7 +182,7 @@
             e.preventDefault();
 
             var new_id = $( 'ul#custom-capabilities li' ).length;
-            var html = $( 'ul#custom-capabilities li.pods-repeater' ).html().replace( '--1', new_id );
+            var html = $( 'ul#custom-capabilities li.pods-repeater' ).html().replace( /\-\-1/g, new_id );
 
             $( 'ul#custom-capabilities' ).append( '<li id="capability-' + new_id + '">' + html + '</li>' );
             $( 'li#capability-' + new_id + ' input' ).focus();

@@ -486,6 +486,13 @@ class PodsInit {
 
             register_post_type( $post_type, $options );
         }
+
+        $flush = pods_transient_get( 'pods_flush_rewrites' );
+
+        if ( 1 == $flush ) {
+            flush_rewrite_rules( false );
+            pods_transient_set( 'pods_flush_rewrites', 0 );
+        }
     }
 
     /**
@@ -641,10 +648,6 @@ class PodsInit {
      */
     public function deactivate () {
         pods_api()->cache_flush_pods();
-
-        global $wp_rewrite;
-
-        $wp_rewrite->flush_rules();
     }
 
     /**
@@ -726,10 +729,6 @@ class PodsInit {
         update_option( 'pods_framework_version', PODS_VERSION );
 
         pods_api()->cache_flush_pods();
-
-        global $wp_rewrite;
-
-        $wp_rewrite->flush_rules();
 
         // Restore DB table prefix (if switched)
         if ( null !== $_blog_id )

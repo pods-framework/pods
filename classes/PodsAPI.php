@@ -5389,16 +5389,14 @@ class PodsAPI {
 
             if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) )
                 pods_transient_clear( 'pods_wp_cpt_ct' );
-
-            global $wp_rewrite;
-
-            $wp_rewrite->flush_rules();
         }
 
         $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods%'" );
         $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_timeout_pods%'" );
 
         pods_cache_clear( true );
+
+        pods_transient_set( 'pods_flush_rewrites', 1 );
     }
 
     /**

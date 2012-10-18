@@ -768,14 +768,14 @@ class PodsData {
                                 if ( empty( $attributes[ 'table_info' ][ 'field_index' ] ) )
                                     continue;
 
-                                $fieldfield = '`' . $field . '`.`' . $attributes[ 'table_info' ][ 'field_index' ] . '`';
+                                $fieldfield = $fieldfield . '.`' . $attributes[ 'table_info' ][ 'field_index' ] . '`';
                             }
                         }
                         elseif ( 'file' == $attributes[ 'type' ] ) {
                             if ( false === $params->search_across_files )
                                 continue;
                             else
-                                $fieldfield = '`' . $field . '`.`post_title`';
+                                $fieldfield = $fieldfield . '.`post_title`';
                         }
                         else
                             $fieldfield = '`t`.' . $fieldfield;
@@ -835,10 +835,10 @@ class PodsData {
                     if ( empty( $attributes[ 'table_info' ][ 'field_index' ] ) )
                         continue;
 
-                    $filterfield = '`' . $field . '`.`' . $attributes[ 'table_info' ][ 'field_index' ] . '`';
+                    $filterfield = $filterfield . '.`' . $attributes[ 'table_info' ][ 'field_index' ] . '`';
                 }
                 elseif ( 'file' == $attributes[ 'type' ] )
-                    $filterfield = '`' . $field . '`.`post_title`';
+                    $filterfield = $filterfield . '.`post_title`';
                 else
                     $filterfield = '`t`.' . $filterfield;
 

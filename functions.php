@@ -3,11 +3,11 @@
  * @package Pods\Global
  */
 /**
- * Standardize queries and error reporting
+ * Standardize queries and error reporting. It replaces @wp_ with $wpdb->prefix.
  *
  * @see PodsData::query
  *
- * @param $sql
+ * @param string $sql SQL Query
  * @param string $error (optional) The failure message
  * @param string $results_error (optional) Throw an error if a records are found
  * @param string $no_results_error (optional) Throw an error if no records are found

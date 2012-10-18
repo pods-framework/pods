@@ -2309,7 +2309,7 @@ class PodsAPI {
 
                 // Prepare all table (non-relational) data
                 if ( !in_array( $type, $tableless_field_types ) || $simple ) {
-                    $table_data[ $field ] = $value;
+                    $table_data[ $field ] = str_replace( array( '{prefix}', '@wp_' ), array( '{/prefix/}', '{prefix}' ), $value ); // Fix for pods_query
                     $table_formats[] = PodsForm::prepare( $type, $options );
 
                     $object_meta[ $field ] = $value;

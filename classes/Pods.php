@@ -1501,7 +1501,9 @@ class Pods {
     }
 
     /**
-     * Display the list filters
+     * Output a filter form for searching a Pod
+     *
+     * @var array|string $params Comma-separated list of fields or array of parameters
      *
      * @since 2.0.0
      * @link http://podsframework.org/docs/filters/

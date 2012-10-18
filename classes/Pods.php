@@ -1440,9 +1440,9 @@ class Pods {
      * are simple, paginate and advanced. The base and format parameters
      * are used only for the paginate view.
      *
-     * @var array $params Associative array of parameteres
+     * @var array $params Associative array of parameters
      *
-     * @return bool|mixed
+     * @return string Pagination HTML
      * @since 2.0.0
      * @link http://podsframework.org/docs/pagination/
      */
@@ -1458,9 +1458,9 @@ class Pods {
             'type' => 'advanced',
             'label' => __( 'Go to page:', 'pods' ),
             'show_label' => true,
-            'next_text' => __( 'Next &rsaquo;', 'pods' ),
-            'prev_text' => __( '&lsaquo; Previous', 'pods' ),
             'first_text' => __( '&laquo; First', 'pods' ),
+            'prev_text' => __( '&lsaquo; Previous', 'pods' ),
+            'next_text' => __( 'Next &rsaquo;', 'pods' ),
             'last_text' => __( 'Last &raquo;', 'pods' ),
             'prev_next' => true,
             'first_last' => true,
@@ -1501,7 +1501,9 @@ class Pods {
     }
 
     /**
-     * Display the list filters
+     * Output a filter form for searching a Pod
+     *
+     * @var array|string $params Comma-separated list of fields or array of parameters
      *
      * @since 2.0.0
      * @link http://podsframework.org/docs/filters/

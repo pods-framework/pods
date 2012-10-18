@@ -764,6 +764,7 @@ class PodsUI {
 
         $options->validate( 'label', array(
             'add' => __( 'Save New', 'pods' ) . " {$options->item}",
+            'add_new' => __( 'Add New', 'pods' ) . " {$options->item}",
             'edit' => __( 'Save', 'pods' ) . " {$options->item}",
             'duplicate' => __( 'Save New', 'pods' ) . " {$options->item}",
             'delete' => __( 'Delete this', 'pods' ) . " {$options->item}",
@@ -1661,7 +1662,7 @@ class PodsUI {
                 echo $this->heading[ 'manage' ] . ' ' . $this->items;
             if ( !in_array( 'add', $this->actions_disabled ) && !in_array( 'add', $this->actions_hidden ) ) {
                 ?>
-                <a href="<?php echo pods_var_update( array( 'action' . $this->num => 'add' ), array( 'page' ), $this->exclusion() ); ?>" class="add-new-h2"><?php echo $this->label[ 'add' ]; ?></a>
+                <a href="<?php echo pods_var_update( array( 'action' . $this->num => 'add' ), array( 'page' ), $this->exclusion() ); ?>" class="add-new-h2"><?php echo $this->label[ 'add_new' ]; ?></a>
                 <?php
             }
             if ( !in_array( 'reorder', $this->actions_disabled ) && !in_array( 'reorder', $this->actions_hidden ) && false !== $this->reorder[ 'on' ] ) {

@@ -58,7 +58,7 @@ if ( 24 == pods_var( 'datetime_time_type', $options, 12 ) )
 $date = PodsForm::field_method( 'datetime', 'createFromFormat', $format, (string) $value );
 $date_default = PodsForm::field_method( 'datetime', 'createFromFormat', 'Y-m-d H:i:s', (string) $value );
 
-if ( 'text' != $type ) {
+if ( 'text' != $type && ( 0 == pods_var( 'datetime_allow_empty', $options, 1 ) || !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) ) {
     $formatted_date = $value;
 
     if ( false !== $date )

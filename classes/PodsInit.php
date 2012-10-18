@@ -786,8 +786,11 @@ class PodsInit {
         delete_option( 'pods_framework_version' );
         delete_option( 'pods_framework_upgrade_2_0' );
         delete_option( 'pods_framework_upgraded_1_x' );
+        delete_option( 'pods_component_settings' );
 
         $api->cache_flush_pods();
+
+        delete_transient( 'pods_flush_rewrites' );
 
         self::$version = '';
 

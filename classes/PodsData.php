@@ -798,7 +798,7 @@ class PodsData {
                     if ( isset( $params->fields[ $params->index ] ) )
                         $attributes = $params->fields[ $params->index ];
 
-                    $fieldfield = '`' . $params->index . '`';
+                    $fieldfield = '`t`.`' . $params->index . '`';
 
                     if ( isset( $attributes[ 'real_name' ] ) && false !== $attributes[ 'real_name' ] && !empty( $attributes[ 'real_name' ] ) )
                         $fieldfield = $attributes[ 'real_name' ];

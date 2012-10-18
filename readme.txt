@@ -1,7 +1,7 @@
 === Pods - Custom Content Types and Fields ===
 Contributors: sc0ttkclark, dan.stefan, pglewis, mikedamage, jchristopher, logikal16
 Donate link: http://podsfoundation.org/donate/
-Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal
+Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types
 Requires at least: 3.4
 Tested up to: 3.5
 Stable tag: 2.0.4.1

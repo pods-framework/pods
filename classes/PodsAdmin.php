@@ -1185,14 +1185,10 @@ class PodsAdmin {
         $data->where = $field[ 'table_info' ][ 'where' ];
         $data->orderby = $field[ 'table_info' ][ 'orderby' ];
 
-        $where = pods_var_raw( 'pick_where', $field, null, null, true );
+        $where = pods_var_raw( 'pick_where', $field, (array) $field[ 'table_info' ][ 'where_default' ], null, true );
 
-        if ( empty( $where ) ) {
-            if ( !empty( $field[ 'table_info' ][ 'where_default' ] ) )
-                $where = (array) $field[ 'table_info' ][ 'where_default' ];
-            else
-                $where = array();
-        }
+        if ( empty( $where ) )
+            $where = array();
         else
             $where = (array) $where;
 

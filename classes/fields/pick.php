@@ -303,7 +303,7 @@ class PodsField_Pick extends PodsField {
             $params = array(
                 'select' => "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`",
                 'table' => $search_data->table,
-                'where' => pods_var_raw( 'pick_where', $options, null, null, true ),
+                'where' => pods_var_raw( 'pick_where', $options, (array) $options[ 'table_info' ][ 'where_default' ], null, true ),
                 'orderby' => pods_var_raw( 'pick_orderby', $options, null, null, true ),
                 'groupby' => pods_var_raw( 'pick_groupby', $options, null, null, true )
             );

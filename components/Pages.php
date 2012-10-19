@@ -590,7 +590,7 @@ class Pods_Pages extends PodsComponent {
 
             $title = ( 'right' == $seplocation ) ? "{$page_title} {$sep} " : " {$sep} {$page_title}";
         }
-        elseif ( 0 < strlen( trim( $title ) ) ) {
+        elseif ( strlen( trim( $title ) ) < 1 ) {
             $uri = explode( '?', $_SERVER[ 'REQUEST_URI' ] );
             $uri = preg_replace( '@^([/]?)(.*?)([/]?)$@', '$2', $uri[ 0 ] );
             $uri = preg_replace( '@(-|_)@', ' ', $uri );

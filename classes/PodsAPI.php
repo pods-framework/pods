@@ -4517,6 +4517,7 @@ class PodsAPI {
             'field_index' => 'name',
             'field_slug' => null,
             'where' => null,
+            'where_default' => null,
             'orderby' => null
         );
 
@@ -4617,6 +4618,9 @@ class PodsAPI {
                     //'post_status' => '`t`.`post_status` IN ( "inherit", "publish" )', // @todo Figure out what statuses Attachments can be
                     'post_type' => '`t`.`post_type` = "' . ( empty( $object ) ? $name : $object ) . '"'
                 );
+
+                if ( 0 === strpos( $object_type, 'post_type' ) )
+                    $info[ 'where_default' ] = '`t`.`post_status` = "publish"';
 
                 $info[ 'orderby' ] = '`t`.`menu_order`, `t`.`' . $info[ 'field_index' ] . '`, `t`.`post_date`';
             }

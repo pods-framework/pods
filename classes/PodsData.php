@@ -71,6 +71,11 @@ class PodsData {
     public $where = array();
 
     /**
+     * @var array
+     */
+    public $where_default = array();
+
+    /**
      * @var string
      */
     public $orderby = '';
@@ -234,32 +239,37 @@ class PodsData {
             $this->pod = $this->pod_data[ 'name' ];
             $this->fields = $this->pod_data[ 'fields' ];
 
+            $table_info = pods_var_raw( 'table_info', $this->pod_data, array(), null, true );
+
             if ( isset( $this->pod_data[ 'options' ][ 'detail_url' ] ) )
                 $this->detail_page = $this->pod_data[ 'options' ][ 'detail_url' ];
 
-            if ( isset( $this->pod_data[ 'select' ] ) )
-                $this->select = $this->pod_data[ 'select' ];
+            if ( isset( $table_info[ 'select' ] ) )
+                $this->select = $table_info[ 'select' ];
 
-            if ( isset( $this->pod_data[ 'table' ] ) )
-                $this->table = $this->pod_data[ 'table' ];
+            if ( isset( $table_info[ 'table' ] ) )
+                $this->table = $table_info[ 'table' ];
 
-            if ( isset( $this->pod_data[ 'join' ] ) )
-                $this->join = $this->pod_data[ 'join' ];
+            if ( isset( $table_info[ 'join' ] ) )
+                $this->join = $table_info[ 'join' ];
 
-            if ( isset( $this->pod_data[ 'field_id' ] ) )
-                $this->field_id = $this->pod_data[ 'field_id' ];
+            if ( isset( $table_info[ 'field_id' ] ) )
+                $this->field_id = $table_info[ 'field_id' ];
 
-            if ( isset( $this->pod_data[ 'field_index' ] ) )
-                $this->field_index = $this->pod_data[ 'field_index' ];
+            if ( isset( $table_info[ 'field_index' ] ) )
+                $this->field_index = $table_info[ 'field_index' ];
 
-            if ( isset( $this->pod_data[ 'field_slug' ] ) )
-                $this->field_slug = $this->pod_data[ 'field_slug' ];
+            if ( isset( $table_info[ 'field_slug' ] ) )
+                $this->field_slug = $table_info[ 'field_slug' ];
 
-            if ( isset( $this->pod_data[ 'where' ] ) )
-                $this->where = $this->pod_data[ 'where' ];
+            if ( isset( $table_info[ 'where' ] ) )
+                $this->where = $table_info[ 'where' ];
 
-            if ( isset( $this->pod_data[ 'orderby' ] ) )
-                $this->orderby = $this->pod_data[ 'orderby' ];
+            if ( isset( $table_info[ 'where_default' ] ) )
+                $this->where_default = $table_info[ 'where_default' ];
+
+            if ( isset( $table_info[ 'orderby' ] ) )
+                $this->orderby = $table_info[ 'orderby' ];
 
             if ( null !== $id && !is_array( $id ) && !is_object( $id ) ) {
                 $this->id = $id;
@@ -653,8 +663,12 @@ class PodsData {
         else
             $params->where = array();
 
-        if ( false === $params->strict && !empty( $this->where ) )
+        if ( false === $params->strict && !empty( $this->where ) ) {
+            if ( empty( $params->where ) && !empty( $this->where_default ) )
+                $params->where = array_merge( $params->where, (array) $this->where_default );
+
             $params->where = array_merge( $params->where, (array) $this->where );
+        }
 
         if ( !empty( $params->having ) )
             $params->having = (array) $params->having;

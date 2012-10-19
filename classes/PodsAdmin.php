@@ -1187,8 +1187,12 @@ class PodsAdmin {
 
         $where = pods_var_raw( 'pick_where', $field, null, null, true );
 
-        if ( empty( $where ) )
-            $where = array();
+        if ( empty( $where ) ) {
+            if ( !empty( $field[ 'table_info' ][ 'where_default' ] ) )
+                $where = (array) $field[ 'table_info' ][ 'where_default' ];
+            else
+                $where = array();
+        }
         else
             $where = (array) $where;
 

@@ -2180,8 +2180,10 @@ class PodsUI {
                                                                 'id' => $row[ $this->sql[ 'field_id' ] ]
                                                             );
 
-                                                            if ( 'toggle' == $custom_action )
+                                                            if ( 'toggle' == $custom_action ) {
                                                                 $vars[ 'toggle' ] = (int) ( !$row[ 'toggle' ] );
+                                                                $vars[ 'toggled' ] = 1;
+                                                            }
 
                                                             $custom_data[ 'link' ] = pods_var_update( $vars );
                                                         }

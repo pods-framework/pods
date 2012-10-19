@@ -737,40 +737,52 @@ class PodsAdmin {
             }
         }
 
-        $toggle = PodsInit::$components->toggle( $component );
+        if ( 1 == pods_var( 'toggled' ) ) {
+            $toggle = PodsInit::$components->toggle( $component );
 
-        if ( true === $toggle )
-            $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component enabled', 'pods' ) );
-        elseif ( false === $toggle )
-            $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component disabled', 'pods' ) );
+            if ( true === $toggle )
+                $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component enabled', 'pods' ) );
+            elseif ( false === $toggle )
+                $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component disabled', 'pods' ) );
 
-        $components = PodsInit::$components->components;
+            $components = PodsInit::$components->components;
 
-        foreach ( $components as $component => &$component_data ) {
-            $toggle = 0;
+            foreach ( $components as $component => &$component_data ) {
+                $toggle = 0;
 
-            if ( isset( PodsInit::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] ) ) {
-                if ( 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] )
-                    $toggle = 1;
-            }
-            if ( true === $component_data[ 'DeveloperMode' ] ) {
-                if ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) {
-                    unset( $components[ $component ] );
-                    continue;
+                if ( isset( PodsInit::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] ) ) {
+                    if ( 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] )
+                        $toggle = 1;
                 }
+                if ( true === $component_data[ 'DeveloperMode' ] ) {
+                    if ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) {
+                        unset( $components[ $component ] );
+                        continue;
+                    }
+                }
+
+                $component_data = array(
+                    'id' => $component_data[ 'ID' ],
+                    'name' => $component_data[ 'Name' ],
+                    'description' => make_clickable( $component_data[ 'Description' ] ),
+                    'version' => $component_data[ 'Version' ],
+                    'author' => $component_data[ 'Author' ],
+                    'toggle' => $toggle
+                );
             }
 
-            $component_data = array(
-                'id' => $component_data[ 'ID' ],
-                'name' => $component_data[ 'Name' ],
-                'description' => make_clickable( $component_data[ 'Description' ] ),
-                'version' => $component_data[ 'Version' ],
-                'author' => $component_data[ 'Author' ],
-                'toggle' => $toggle
-            );
-        }
+            $ui->data = $components;
 
-        $ui->data = $components;
+            pods_transient_clear( 'pods_components' );
+
+            $url = pods_var_update( array( 'toggled' => null ) );
+
+            pods_redirect( $url );
+        }
+        elseif ( 1 == pods_var( 'toggle' ) )
+            $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component enabled', 'pods' ) );
+        else
+            $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component disabled', 'pods' ) );
 
         $ui->manage();
     }

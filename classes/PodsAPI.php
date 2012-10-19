@@ -871,6 +871,7 @@ class PodsAPI {
             'extend_pod_type' => 'post_type',
             'extend_post_type' => 'post',
             'extend_taxonomy' => 'category',
+            'extend_storage_taxonomy' => 'table',
             'extend_storage' => 'meta'
         );
 
@@ -914,7 +915,7 @@ class PodsAPI {
                 $pod_params[ 'name' ] = $params->extend_post_type;
             }
             elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
-                $pod_params[ 'storage' ] = 'table';
+                $pod_params[ 'storage' ] = $params->extend_storage_taxonomy;
                 $pod_params[ 'name' ] = $params->extend_taxonomy;
             }
             else {

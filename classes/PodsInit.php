@@ -659,7 +659,7 @@ class PodsInit {
      * @param $meta
      */
     public function new_blog ( $_blog_id, $user_id, $domain, $path, $site_id, $meta ) {
-        if ( function_exists( 'is_multisite' ) && is_multisite() && is_plugin_active_for_network( 'pods/pods.php' ) )
+        if ( function_exists( 'is_multisite' ) && is_multisite() && is_plugin_active_for_network( 'pods/init.php' ) )
             $this->setup( $_blog_id );
     }
 

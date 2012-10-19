@@ -23,6 +23,7 @@ function pods_query ( $sql, $error = 'Database Error', $results_error = null, $n
     $sql = str_replace( '@wp_users', $wpdb->users, $sql );
     $sql = str_replace( '@wp_', $wpdb->prefix, $sql );
     $sql = str_replace( '{prefix}', '@wp_', $sql );
+    $sql = str_replace( '{/prefix/}', '{prefix}', $sql );
 
     if ( is_array( $error ) ) {
         if ( !is_array( $sql ) )

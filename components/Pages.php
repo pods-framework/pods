@@ -701,7 +701,7 @@ class Pods_Pages extends PodsComponent {
                 $uri = explode( '?', self::$exists[ 'uri' ] );
                 $uri = explode( '#', $uri[ 0 ] );
 
-                $page_path = explode( '/', $uri );
+                $page_path = explode( '/', $uri[ 0 ] );
 
                 while ( $last = array_pop( $page_path ) ) {
                     $file_name = str_replace( '*', '-w-', implode( '/', $page_path ) . '/' . $last );

@@ -329,6 +329,11 @@ class PodsField_Pick extends PodsField {
                 foreach ( $results as $result ) {
                     $result = get_object_vars( $result );
 
+                    $result[ $search_data->field_index ] = trim( $result[ $search_data->field_index ] );
+
+                    if ( strlen( $result[ $search_data->field_index ] ) < 1 )
+                        $result[ $search_data->field_index ] = '(No Title)';
+
                     $data[ $result[ $search_data->field_id ] ] = $result[ $search_data->field_index ];
                 }
             }
@@ -348,6 +353,11 @@ class PodsField_Pick extends PodsField {
                 if ( !empty( $results ) ) {
                     foreach ( $results as $result ) {
                         $result = get_object_vars( $result );
+
+                        $result[ $search_data->field_index ] = trim( $result[ $search_data->field_index ] );
+
+                        if ( strlen( $result[ $search_data->field_index ] ) < 1 )
+                            $result[ $search_data->field_index ] = '(No Title)';
 
                         $data[ $result[ $search_data->field_id ] ] = $result[ $search_data->field_index ];
                     }

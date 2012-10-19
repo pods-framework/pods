@@ -1254,7 +1254,10 @@ class PodsAdmin {
                     $id = icl_object_id( $result[ $data->field_id ], $result[ 'post_type' ] );
 
                     if ( 0 < $id && !in_array( $id, $ids ) ) {
-                        $text = get_the_title( $id );
+                        $text = trim( get_the_title( $id ) );
+
+                        if ( strlen( $text ) < 1 )
+                            $text = '(No Title)';
 
                         $items[] = array(
                             'id' => $id,
@@ -1265,6 +1268,11 @@ class PodsAdmin {
                     }
                 }
                 elseif( !in_array( $result[ $data->field_id ], $ids ) ) {
+                    $result[ $data->field_index ] = trim( $result[ $data->field_index ] );
+
+                    if ( strlen( $result[ $data->field_index ] ) < 1 )
+                        $result[ $data->field_index ] = '(No Title)';
+
                     $items[] = array(
                         'id' => $result[ $data->field_id ],
                         'text' => $result[ $data->field_index ]

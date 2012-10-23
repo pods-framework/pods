@@ -5,6 +5,14 @@
 class PodsField_Pick extends PodsField {
 
     /**
+     * Field Type Group
+     *
+     * @var string
+     * @since 2.0.0
+     */
+    public static $group = 'Relationships / Media';
+
+    /**
      * Field Type Identifier
      *
      * @var string
@@ -61,7 +69,7 @@ class PodsField_Pick extends PodsField {
                         'dropdown' => __( 'Drop Down', 'pods' ),
                         'radio' => __( 'Radio Buttons', 'pods' ),
                         'autocomplete' => __( 'Autocomplete', 'pods' )
-                    )
+                    ) + ( ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER ) ? array( 'flexible' => __( 'Flexible', 'pods' ) ) : array() )
                 ),
                 'dependency' => true
             ),
@@ -77,7 +85,7 @@ class PodsField_Pick extends PodsField {
                         'checkbox' => __( 'Checkboxes', 'pods' ),
                         'multiselect' => __( 'Multi Select', 'pods' ),
                         'autocomplete' => __( 'Autocomplete', 'pods' )
-                    )
+                    ) + ( ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER ) ? array( 'flexible' => __( 'Flexible', 'pods' ) ) : array() )
                 ),
                 'dependency' => true
             ),
@@ -87,14 +95,14 @@ class PodsField_Pick extends PodsField {
                 'depends-on' => array( 'pick_format_type' => 'multi' ),
                 'default' => 0,
                 'type' => 'number'
-            ),/*
+            ),
             'pick_display' => array(
                 'label' => __( 'Display Field in Selection List', 'pods' ),
-                'help' => __( 'You can use {@magic_tags} to reference field names on the related object.', 'pods' ),
+                'help' => __( 'Provide the name of a field on the related object to reference, example: post_title', 'pods' ),
                 'excludes-on' => array( 'pick_object' => 'custom-simple' ),
-                'default' => '{@name}',
+                'default' => '',
                 'type' => 'text'
-            ),*/
+            ),
             'pick_where' => array(
                 'label' => __( 'Customized <em>WHERE</em>', 'pods' ),
                 'help' => __( 'help', 'pods' ),
@@ -297,8 +305,10 @@ class PodsField_Pick extends PodsField {
             $search_data->where = $options[ 'table_info' ][ 'where' ];
             $search_data->orderby = $options[ 'table_info' ][ 'orderby' ];
 
-            if ( isset( $options[ 'table_info' ][ 'pod' ] ) && is_array( $options[ 'table_info' ][ 'pod' ] ) )
+            if ( isset( $options[ 'table_info' ][ 'pod' ] ) && !empty( $options[ 'table_info' ][ 'pod' ] ) ) {
+                $search_data->pod = $options[ 'table_info' ][ 'pod' ][ 'name' ];
                 $search_data->fields = $options[ 'table_info' ][ 'pod' ][ 'fields' ];
+            }
 
             $params = array(
                 'select' => "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`",
@@ -308,9 +318,29 @@ class PodsField_Pick extends PodsField {
                 'groupby' => pods_var_raw( 'pick_groupby', $options, null, null, true )
             );
 
-            if ( isset( $options[ 'table_info' ][ 'pod' ] ) && !empty( $options[ 'table_info' ][ 'pod' ] ) ) {
-                $search_data->pod = $options[ 'table_info' ][ 'pod' ][ 'name' ];
-                $search_data->fields = $options[ 'table_info' ][ 'pod' ][ 'fields' ];
+            $display = trim( pods_var( 'pick_display', $options ), ' {@}' );
+
+            if ( 0 < strlen( $display ) ) {
+                if ( isset( $options[ 'table_info' ][ 'pod' ] ) && !empty( $options[ 'table_info' ][ 'pod' ] ) ) {
+                    if ( isset( $options[ 'table_info' ][ 'pod' ][ 'object_fields' ] ) && isset( $options[ 'table_info' ][ 'pod' ][ 'object_fields' ][ $display ] ) ) {
+                        $search_data->field_index = $display;
+
+                        $params[ 'select' ] = "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`";
+                    }
+                    elseif ( isset( $options[ 'table_info' ][ 'pod' ][ 'fields' ][ $display ] ) ) {
+                        $search_data->field_index = $display;
+
+                        if ( 'table' == $options[ 'table_info' ][ 'pod' ][ 'storage' ] && !in_array( $options[ 'table_info' ][ 'pod' ][ 'type' ], array( 'pod', 'table' ) ) )
+                            $params[ 'select' ] = "`t`.`{$search_data->field_id}`, `d`.`{$search_data->field_index}`";
+                        else
+                            $params[ 'select' ] = "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`";
+                    }
+                }
+                else {
+                    $search_data->field_index = $display;
+
+                    $params[ 'select' ] = "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`";
+                }
             }
 
             $autocomplete = false;
@@ -367,6 +397,8 @@ class PodsField_Pick extends PodsField {
 
         if ( empty( $data ) && !empty( $options[ 'data' ] ) )
             $data = $options[ 'data' ];
+
+        $data = apply_filters( 'pods_field_pick_data', $data, $name, $value, $options, $pod, $id );
 
         return $data;
     }

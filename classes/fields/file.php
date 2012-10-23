@@ -5,6 +5,14 @@
 class PodsField_File extends PodsField {
 
     /**
+     * Field Type Group
+     *
+     * @var string
+     * @since 2.0.0
+     */
+    public static $group = 'Relationships / Media';
+
+    /**
      * Field Type Identifier
      *
      * @var string

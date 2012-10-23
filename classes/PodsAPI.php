@@ -4290,11 +4290,6 @@ class PodsAPI {
      */
     public function get_field_types () {
         $types = array(
-            'datetime',
-            'date',
-            'time',
-            'number',
-            'currency',
             'text',
             'website',
             'phone',
@@ -4303,12 +4298,20 @@ class PodsAPI {
             'paragraph',
             'wysiwyg',
             'code',
-            'slug',
-            'color',
-            'boolean',
+            'datetime',
+            'date',
+            'time',
+            'number',
+            'currency',
             'file',
-            'pick'
+            'pick',
+            'boolean',
+            'color',
+            'slug'
         );
+
+        if ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER )
+            $types[] = 'loop';
 
         $types = $this->do_hook( 'field_types', $types );
 

@@ -35,42 +35,52 @@ class PodsInit {
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 1.8.9
      */
-    function __construct () {
+    function __construct() {
         self::$version = get_option( 'pods_framework_version' );
 
         add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
 
         add_action( 'init', array( $this, 'activate_install' ), 9 );
-        add_action( 'widgets_init', array( $this, 'register_widgets' ) );
 
         if ( !empty( self::$version ) ) {
-            // Init Pods Form
-            pods_form();
-
-            self::$components = pods_components();
+            // Meta handling and Components
+            add_action( 'plugins_loaded', array( $this, 'load' ) );
 
             add_action( 'init', array( $this, 'init' ), 11 );
 
             add_action( 'init', array( $this, 'setup_content_types' ), 11 );
+
             add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
             add_action( 'delete_attachment', array( $this, 'delete_attachment' ) );
 
             if ( is_admin() )
                 add_action( 'init', array( $this, 'admin_init' ), 12 );
 
+            // Register widgets
+            add_action( 'widgets_init', array( $this, 'register_widgets' ) );
+
             // Show admin bar links
             add_action( 'admin_bar_menu', array( $this, 'admin_bar_links' ), 81 );
-
-            // Init Pods Meta
-            self::$meta = pods_meta()->init();
         }
     }
 
     /**
      * Load the plugin textdomain.
      */
-    function load_textdomain () {
+    function load_textdomain() {
         load_plugin_textdomain( 'pods', false, dirname( PODS_DIR . 'init.php' ) . '/languages/' );
+    }
+
+    /**
+     * Load Pods Meta and Components
+     */
+    function load() {
+        // Init Pods Form
+        pods_form();
+
+        self::$meta = pods_meta()->init();
+
+        self::$components = pods_components();
     }
 
     /**

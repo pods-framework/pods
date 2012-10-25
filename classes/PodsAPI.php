@@ -520,14 +520,15 @@ class PodsAPI {
      * Get a list of core WP object fields for a specific object
      *
      * @param string $object The post type to look for, possible values: post_type, user, comment, taxonomy
+     * @param array $pod Array of Pod data
      *
      * @return array Array of fields
      */
-    public function get_wp_object_fields ( $object = 'post_type' ) {
+    public function get_wp_object_fields ( $object = 'post_type', $pod = null ) {
         $fields = pods_transient_get( 'pods_api_object_fields_' . $object );
 
         if ( false !== $fields )
-            return apply_filters( 'pods_api_get_wp_object_fields', $fields, $object );
+            return apply_filters( 'pods_api_get_wp_object_fields', $fields, $object, $pod );
 
         $fields = array();
 
@@ -817,7 +818,7 @@ class PodsAPI {
             );
         }
 
-        $fields = apply_filters( 'pods_api_get_wp_object_fields', $fields, $object );
+        $fields = apply_filters( 'pods_api_get_wp_object_fields', $fields, $object, $pod );
 
         foreach ( $fields as $field => &$options ) {
             if ( !isset( $options[ 'alias' ] ) )
@@ -3414,7 +3415,7 @@ class PodsAPI {
         $pod[ 'object_fields' ] = array();
 
         if ( 'pod' != $pod[ 'type' ] )
-            $pod[ 'object_fields' ] = $this->get_wp_object_fields( $pod[ 'type' ] );
+            $pod[ 'object_fields' ] = $this->get_wp_object_fields( $pod[ 'type' ], $pod );
 
         $fields = get_posts( array(
             'post_type' => '_pods_field',
@@ -4510,8 +4511,9 @@ class PodsAPI {
     public function get_table_info ( $object_type, $object, $name = null, $pod = null ) {
         /**
          * @var $wpdb wpdb
+         * @var $sitepress SitePress
          */
-        global $wpdb;
+        global $wpdb, $sitepress;
 
         $info = array(
             //'select' => '`t`.*',
@@ -4618,15 +4620,35 @@ class PodsAPI {
                         $name = substr( $object_type, strlen( $prefix ), strlen( $object_type ) );
                 }
 
+                $post_type = pods_sanitize( ( empty( $object ) ? $name : $object ) );
+
                 $info[ 'where' ] = array(
                     //'post_status' => '`t`.`post_status` IN ( "inherit", "publish" )', // @todo Figure out what statuses Attachments can be
-                    'post_type' => '`t`.`post_type` = "' . ( empty( $object ) ? $name : $object ) . '"'
+                    'post_type' => '`t`.`post_type` = "' . $post_type . '"'
                 );
 
                 if ( 0 === strpos( $object_type, 'post_type' ) )
                     $info[ 'where_default' ] = '`t`.`post_status` = "publish"';
 
                 $info[ 'orderby' ] = '`t`.`menu_order`, `t`.`' . $info[ 'field_index' ] . '`, `t`.`post_date`';
+
+                if ( is_object( $sitepress ) && $sitepress->is_translated_post_type( $post_type ) ) {
+                    $current_language = pods_sanitize( $sitepress->get_current_language() );
+
+                    $info[ 'join' ][ 'wpml_translations' ] = "
+                        LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
+                            ON `wpml_translations`.`element_id` = `t`.`ID`
+                                AND `wpml_translations`.`element_type` = 'post_{$post_type}'
+                                AND `wpml_translations`.`language_code` = '{$current_language}'
+                    ";
+
+                    $info[ 'join' ][ 'wpml_languages' ] = "
+                        LEFT JOIN `{$wpdb->prefix}icl_languages` AS `wpml_languages`
+                            ON `wpml_languages`.`code` = `wpml_translations`.`language_code` AND `wpml_languages`.`active` = 1
+                    ";
+
+                    $info[ 'where' ][ 'wpml_language_code' ] = "`wpml_languages`.`code` IS NOT NULL";
+                }
             }
             elseif ( 0 === strpos( $object_type, 'taxonomy' ) ) {
                 $info[ 'table' ] = $wpdb->terms;
@@ -4643,9 +4665,29 @@ class PodsAPI {
                         $name = substr( $object_type, strlen( $prefix ), strlen( $object_type ) );
                 }
 
+                $taxonomy = ( empty( $object ) ? $name : $object );
+
                 $info[ 'where' ] = array(
-                    'tt.taxonomy' => '`tt`.`taxonomy` = "' . ( empty( $object ) ? $name : $object ) . '"'
+                    'tt.taxonomy' => '`tt`.`taxonomy` = "' . $taxonomy . '"'
                 );
+
+                if ( is_object( $sitepress ) && $sitepress->is_translated_taxonomy( $taxonomy ) ) {
+                    $current_language = pods_sanitize( $sitepress->get_current_language() );
+
+                    $info[ 'join' ][ 'wpml_translations' ] = "
+                        LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
+                            ON `wpml_translations`.`element_id` = `tt`.`term_taxonomy_id`
+                                AND `wpml_translations`.`element_type` = 'tax_{$taxonomy}'
+                                AND `wpml_translations`.`language_code` = '{$current_language}'
+                    ";
+
+                    $info[ 'join' ][ 'wpml_languages' ] = "
+                        LEFT JOIN `{$wpdb->prefix}icl_languages` AS `wpml_languages`
+                            ON `wpml_languages`.`code` = `wpml_translations`.`language_code` AND `wpml_languages`.`active` = 1
+                    ";
+
+                    $info[ 'where' ][ 'wpml_language_code' ] = "`wpml_languages`.`code` IS NOT NULL";
+                }
             }
             elseif ( 'user' == $object_type ) {
                 $info[ 'table' ] = $wpdb->users;

@@ -360,9 +360,12 @@ class PodsUI {
         }
 
         if ( !is_array( $options ) ) {
-            parse_str( $options, $options );
-            // need to come back to this and allow for multi-dimensional strings
+            // @todo need to come back to this and allow for multi-dimensional strings
             // like: option=value&option2=value2&option3=key[val],key2[val2]&option4=this,that,another
+            if ( false !== strpos( $options, '=' ) || false !== strpos( $options, '&' ) )
+                parse_str( $options, $options );
+            else
+                $options = array( 'pod' => $options );
         }
 
         if ( !is_object( $object ) && isset( $options[ 'pod' ] ) ) {
@@ -2442,7 +2445,7 @@ class PodsUI {
 
         if ( false !== $this->pagination_total ) {
             ?>
-        <span class="displaying-num"><?php echo $this->total_found; ?> item<?php echo ( 1 == $this->total_found ) ? '' : 's'; ?></span>
+        <span class="displaying-num"><?php echo number_format_i18n( $this->total_found ); ?> <?php _n( 'item', 'items', $this->total_found, 'pods' ); ?></span>
         <?php
         }
 
@@ -2471,7 +2474,7 @@ class PodsUI {
                 }
                 else {
                     ?>
-                <span class="paging-input"><?php echo $this->page; ?> <?php _e( 'of', 'pods' ); ?> <span class="total-pages"><?php echo $total_pages; ?></span></span>
+                <span class="paging-input"><?php echo $this->page; ?> <?php _e( 'of', 'pods' ); ?> <span class="total-pages"><?php echo number_format_i18n( $total_pages ); ?></span></span>
                 <?php
                 }
                 ?>

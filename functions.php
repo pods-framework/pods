@@ -62,7 +62,7 @@ function pods_query ( $sql, $error = 'Database Error', $results_error = null, $n
  */
 function pods_do_hook ( $scope, $name, $args = null, &$obj = null ) {
     // Add filter name
-    array_unshift( $args, "pods_{$scope}_{$name}" );
+    array_unshift( $args, str_replace( 'pods_pods_', 'pods_', "pods_{$scope}_{$name}" ) );
 
     // Add object
     $args[] = $obj;

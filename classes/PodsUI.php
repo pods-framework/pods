@@ -397,7 +397,7 @@ class PodsUI {
         $this->setup( $options );
 
         if ( is_object( $this->pods_data ) && is_object( $this->pod ) && 0 < $this->id && $this->id != $this->pods_data->id )
-            $this->pods_data->fetch( $this->id );
+            $this->row = $this->pods_data->fetch( $this->id );
 
         if ( ( !is_object( $this->pod ) || 'Pods' != get_class( $this->pod ) ) && false === $this->sql[ 'table' ] && false === $this->data ) {
             echo $this->error( __( '<strong>Error:</strong> Pods UI needs a Pods object or a Table definition to run from, see the User Guide for more information.', 'pods' ) );
@@ -1024,20 +1024,14 @@ class PodsUI {
                 if ( !in_array( 'add', $this->actions_disabled ) ) {
                     if ( 'add' != $which && isset( $this->fields[ 'add' ] ) && is_array( $this->fields[ 'add' ] ) )
                         $this->fields[ 'add' ] = $this->setup_fields( $this->fields[ 'add' ], 'add' );
-                    else
-                        $this->fields[ 'add' ] = $fields;
                 }
                 if ( !in_array( 'edit', $this->actions_disabled ) ) {
-                    if ( 'edit' != $which && isset( $this->fields[ 'edit' ] ) &&is_array( $this->fields[ 'edit' ] ) )
+                    if ( 'edit' != $which && isset( $this->fields[ 'edit' ] ) && is_array( $this->fields[ 'edit' ] ) )
                         $this->fields[ 'edit' ] = $this->setup_fields( $this->fields[ 'edit' ], 'edit' );
-                    else
-                        $this->fields[ 'edit' ] = $fields;
                 }
                 if ( !in_array( 'duplicate', $this->actions_disabled ) ) {
-                    if ( 'duplicate' != $which && isset( $this->fields[ 'duplicate' ] ) &&is_array( $this->fields[ 'duplicate' ] ) )
+                    if ( 'duplicate' != $which && isset( $this->fields[ 'duplicate' ] ) && is_array( $this->fields[ 'duplicate' ] ) )
                         $this->fields[ 'duplicate' ] = $this->setup_fields( $this->fields[ 'duplicate' ], 'duplicate' );
-                    else
-                        $this->fields[ 'duplicate' ] = $fields;
                 }
             }
 
@@ -1307,7 +1301,53 @@ class PodsUI {
             }
         }
 
-        $fields =& $this->fields[ $this->action ];
+        $fields = $this->fields[ $this->action ];
+
+        $object_fields = (array) pods_var_raw( 'object_fields', $this->pod->pod_data, array(), null, true );
+
+        if ( empty( $fields ) ) {
+            // Add core object fields if $fields is empty
+            $fields = array_merge( $object_fields, $this->pod->fields );
+        }
+
+        $form_fields = $fields; // Temporary
+
+        $fields = array();
+
+        foreach ( $form_fields as $k => $field ) {
+            $name = $k;
+
+            $defaults = array(
+                'name' => $name
+            );
+
+            if ( !is_array( $field ) ) {
+                $name = $field;
+
+                $field = array(
+                    'name' => $name
+                );
+            }
+
+            $field = array_merge( $defaults, $field );
+
+            $field[ 'name' ] = trim( $field[ 'name' ] );
+
+            if ( empty( $field[ 'name' ] ) )
+                $field[ 'name' ] = trim( $name );
+
+            if ( pods_var_raw( 'hidden', $field, false, null, true ) )
+                continue;
+            elseif ( isset( $object_fields[ $field[ 'name' ] ] ) )
+                $fields[ $field[ 'name' ] ] = array_merge( $object_fields[ $field[ 'name' ] ], $field );
+            elseif ( isset( $this->pod->fields[ $field[ 'name' ] ] ) )
+                $fields[ $field[ 'name' ] ] = array_merge( $this->pod->fields[ $field[ 'name' ] ], $field );
+        }
+
+        unset( $form_fields ); // Cleanup
+
+        $fields = $this->do_hook( 'form_fields', $fields, $this->pod );
+
         $pod =& $this->pod;
         $thank_you = pods_var_update( $vars, array( 'page' ), $this->exclusion() );
         $thank_you_alt = pods_var_update( $alt_vars, array( 'page' ), $this->exclusion() );

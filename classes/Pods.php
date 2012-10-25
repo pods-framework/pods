@@ -1702,40 +1702,42 @@ class Pods {
             // Add core object fields if $fields is empty
             $fields = array_merge( $object_fields, $this->fields );
         }
-        else {
-            $form_fields = $fields; // Temporary
 
-            $fields = array();
+        $form_fields = $fields; // Temporary
 
-            foreach ( $form_fields as $k => $field ) {
-                $name = $k;
+        $fields = array();
 
-                $defaults = array(
+        foreach ( $form_fields as $k => $field ) {
+            $name = $k;
+
+            $defaults = array(
+                'name' => $name
+            );
+
+            if ( !is_array( $field ) ) {
+                $name = $field;
+
+                $field = array(
                     'name' => $name
                 );
-
-                if ( !is_array( $field ) ) {
-                    $name = $field;
-
-                    $field = array(
-                        'name' => $name
-                    );
-                }
-
-                $field = array_merge( $defaults, $field );
-
-                $field[ 'name' ] = trim( $field[ 'name' ] );
-
-                if ( pods_var_raw( 'hidden', $field, false, null, true ) )
-                    continue;
-                elseif ( isset( $object_fields[ $field[ 'name' ] ] ) )
-                    $fields[ $field[ 'name' ] ] = array_merge( $object_fields[ $field[ 'name' ] ], $field );
-                elseif ( isset( $this->fields[ $field[ 'name' ] ] ) )
-                    $fields[ $field[ 'name' ] ] = array_merge( $this->fields[ $field[ 'name' ] ], $field );
             }
 
-            unset( $form_fields ); // Cleanup
+            $field = array_merge( $defaults, $field );
+
+            $field[ 'name' ] = trim( $field[ 'name' ] );
+
+            if ( empty( $field[ 'name' ] ) )
+                $field[ 'name' ] = trim( $name );
+
+            if ( pods_var_raw( 'hidden', $field, false, null, true ) )
+                continue;
+            elseif ( isset( $object_fields[ $field[ 'name' ] ] ) )
+                $fields[ $field[ 'name' ] ] = array_merge( $object_fields[ $field[ 'name' ] ], $field );
+            elseif ( isset( $this->fields[ $field[ 'name' ] ] ) )
+                $fields[ $field[ 'name' ] ] = array_merge( $this->fields[ $field[ 'name' ] ], $field );
         }
+
+        unset( $form_fields ); // Cleanup
 
         $fields = $this->do_hook( 'form_fields', $fields, $params );
 

@@ -583,6 +583,7 @@ class PodsAPI {
                     'name' => 'post_status',
                     'label' => 'Status',
                     'type' => 'pick',
+                    'default' => 'draft',
                     'alias' => array( 'status' ),
                     'data' => $post_stati
                 ),
@@ -590,13 +591,23 @@ class PodsAPI {
                     'name' => 'comment_status',
                     'label' => 'Comment Status',
                     'type' => 'text',
-                    'alias' => array()
+                    'default' => get_option( 'default_comment_status', 'open' ),
+                    'alias' => array(),
+                    'data' => array(
+                        'open' => __( 'Open', 'pods' ),
+                        'closed' => __( 'Closed', 'pods' )
+                    )
                 ),
                 'ping_status' => array(
                     'name' => 'ping_status',
                     'label' => 'Ping Status',
+                    'default' => get_option( 'default_ping_status', 'open' ),
                     'type' => 'text',
-                    'alias' => array()
+                    'alias' => array(),
+                    'data' => array(
+                        'open' => __( 'Open', 'pods' ),
+                        'closed' => __( 'Closed', 'pods' )
+                    )
                 ),
                 'post_password' => array(
                     'name' => 'post_password',
@@ -614,13 +625,15 @@ class PodsAPI {
                     'name' => 'to_ping',
                     'label' => 'To Ping',
                     'type' => 'text',
-                    'alias' => array()
+                    'alias' => array(),
+                    'hidden' => true
                 ),
                 'pinged' => array(
                     'name' => 'pinged',
                     'label' => 'Pinged',
                     'type' => 'text',
-                    'alias' => array()
+                    'alias' => array(),
+                    'hidden' => true
                 ),
                 'post_modified' => array(
                     'name' => 'post_modified',
@@ -640,20 +653,23 @@ class PodsAPI {
                     'name' => 'post_content_filtered',
                     'label' => 'Content (filtered)',
                     'type' => 'paragraph',
-                    'alias' => array()
+                    'alias' => array(),
+                    'hidden' => true
                 ),
                 'post_parent' => array(
                     'name' => 'post_parent',
                     'label' => 'Parent',
                     'type' => 'pick',
                     'alias' => array( 'parent' ),
-                    'data' => array()
+                    'data' => array(),
+                    'hidden' => true
                 ),
                 'guid' => array(
                     'name' => 'guid',
                     'label' => 'GUID',
                     'type' => 'text',
-                    'alias' => array()
+                    'alias' => array(),
+                    'hidden' => true
                 ),
                 'menu_order' => array(
                     'name' => 'menu_order',
@@ -665,19 +681,22 @@ class PodsAPI {
                     'name' => 'post_type',
                     'label' => 'Type',
                     'type' => 'text',
-                    'alias' => array( 'type' )
+                    'alias' => array( 'type' ),
+                    'hidden' => true
                 ),
                 'post_mime_type' => array(
                     'name' => 'post_mime_type',
                     'label' => 'Mime Type',
                     'type' => 'text',
-                    'alias' => array()
+                    'alias' => array(),
+                    'hidden' => true
                 ),
                 'comment_count' => array(
                     'name' => 'comment_count',
                     'label' => 'Comment Count',
                     'type' => 'number',
-                    'alias' => array()
+                    'alias' => array(),
+                    'hidden' => true
                 )
             );
         }

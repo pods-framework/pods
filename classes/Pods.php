@@ -1689,7 +1689,7 @@ class Pods {
 
         $pod =& $this;
 
-        $params = apply_filters( 'pods_form_params', $params, $pod );
+        $params = $this->do_hook( 'form_params', $params );
 
         $fields = $params[ 'fields' ];
 
@@ -1736,6 +1736,8 @@ class Pods {
 
             unset( $form_fields ); // Cleanup
         }
+
+        $fields = $this->do_hook( 'form_fields', $fields, $params );
 
         $label = $params[ 'label' ];
 

@@ -102,6 +102,9 @@
             if ( field.length )
                 shortcode += ' field="' + field + '"';
 
+            if ( fields.length || label.length || thank_you.length )
+                shortcode += ' form="1"';
+
             if ( fields.length )
                 shortcode += ' fields="' + fields + '"';
 

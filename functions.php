@@ -1044,7 +1044,7 @@ function pods_shortcode ( $tags, $content = null ) {
         unset( $tags[ 'order' ] );
     }
 
-    if ( empty( $content ) && empty( $tags[ 'template' ] ) && empty( $tags[ 'field' ] ) ) {
+    if ( empty( $content ) && empty( $tags[ 'template' ] ) && empty( $tags[ 'field' ] ) && empty( $tags[ 'form' ] ) ) {
         return '<p>Please provide either a template or field name</p>';
     }
 

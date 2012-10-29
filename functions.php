@@ -1024,7 +1024,7 @@ function pods_shortcode ( $tags, $content = null ) {
 
             if ( !empty( $pod ) ) {
                 $tags[ 'name' ] = get_post_type();
-                $tags[ 'id' ] = get_the_ID();
+                $id = $tags[ 'id' ] = get_the_ID();
             }
         }
 
@@ -1048,14 +1048,16 @@ function pods_shortcode ( $tags, $content = null ) {
         return '<p>Please provide either a template or field name</p>';
     }
 
-    // id > slug (if both exist)
-    $id = empty( $tags[ 'slug' ] ) ? null : $tags[ 'slug' ];
+    if ( !isset( $id ) ) {
+        // id > slug (if both exist)
+        $id = empty( $tags[ 'slug' ] ) ? null : $tags[ 'slug' ];
 
-    if ( !empty ( $tags[ 'id' ] ) ) {
-        $id = $tags[ 'id' ];
+        if ( !empty ( $tags[ 'id' ] ) ) {
+            $id = $tags[ 'id' ];
 
-        if ( is_numeric( $id ) )
-            $id = absint( $id );
+            if ( is_numeric( $id ) )
+                $id = absint( $id );
+        }
     }
 
     if ( !isset( $pod ) )

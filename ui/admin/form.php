@@ -64,9 +64,9 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
         $action = __( 'duplicated', 'pods' );
 
     $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
-    $error = sprintf( __( '<strong>Error:</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+    $error = sprintf( __( '<strong>Error:</strong> %s not %s.', 'pods' ), $obj->item, $action );
 
-    if ( 0 < $id )
+    if ( 0 < $pod->id() )
         echo $obj->message( $message );
     else
         echo $obj->error( $error );

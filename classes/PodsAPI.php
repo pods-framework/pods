@@ -4471,20 +4471,20 @@ class PodsAPI {
         $sister_id = (int) pods_var_raw( 'sister_id', $field, 0 );
 
         $related_where = "
-            `field_id` = %d
-            AND `item_id` IN ( %s )
+            `field_id` = {$field_id}
+            AND `item_id` IN ( {$ids} )
         ";
 
         if ( 0 < $sister_id ) {
             $related_where = "
                 (
-                    `field_id` = %d
-                    AND `item_id` IN ( %s )
+                    `field_id` = {$field_id}
+                    AND `item_id` IN ( {$ids} )
                 )
                 OR
                 (
-                    `related_field_id` = %d
-                    AND `related_item_id` IN ( %s )
+                    `related_field_id` = {$field_id}
+                    AND `related_item_id` IN ( {$ids} )
                 )
             ";
         }
@@ -4497,7 +4497,7 @@ class PodsAPI {
             ORDER BY `weight`
         ";
 
-        $relationships = pods_query( $sql, array( $field_id, $ids, $field_id, $ids ) );
+        $relationships = pods_query( $sql );
 
         if ( !empty( $relationships ) ) {
             $related_ids = array();

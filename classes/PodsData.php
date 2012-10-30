@@ -1581,6 +1581,9 @@ class PodsData {
             }
             else
                 $params = array_merge( $params, $sql );
+
+            if ( 1 == pods_var( 'pods_debug_sql_all', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
+                echo '<textarea cols="100" rows="24">' . $params->sql . '</textarea>';
         }
 
         $params->sql = trim( $params->sql );

@@ -144,6 +144,16 @@ class PodsArray implements ArrayAccess {
             elseif ( !in_array( $value, $extra ) )
                 $value = $default;
         }
+        elseif ( 'isset' == $type && is_array( $default ) ) {
+            if ( is_array( $value ) ) {
+                foreach ( $value as $k => $v ) {
+                    if ( !isset( $extra[ $v ] ) )
+                        unset( $value[ $k ] );
+                }
+            }
+            elseif ( !isset( $extra[ $value ] ) )
+                $value = $default;
+        }
 
         $this->offsetSet( $offset, $value );
 

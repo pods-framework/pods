@@ -868,11 +868,12 @@ class PodsData {
                         continue;
 
                     if ( 0 < strlen( pods_var( 'filter_' . $field . '_start', 'get', false ) ) )
-                        $start = date( 'Y-m-d', strtotime( pods_var( 'filter_' . $field . '_start', 'get', false ) ) ) . ( 'datetime' == $attributes[ 'type' ] ) ? ' 00:00:00' : '';
+                        $start = date( 'Y-m-d', strtotime( pods_var( 'filter_' . $field . '_start', 'get', false ) ) ) . ( 'datetime' == $attributes[ 'type' ] ? ' 00:00:00' : '' );
 
                     if ( 0 < strlen( pods_var( 'filter_' . $field . '_end', 'get', false ) ) )
-                        $end = date( 'Y-m-d', strtotime( pods_var( 'filter_' . $field . '_end', 'get', false ) ) ) . ( 'datetime' == $attributes[ 'type' ] ) ? ' 23:59:59' : '';
-                    if ( false !== $attributes[ 'date_ongoing' ] ) {
+                        $end = date( 'Y-m-d', strtotime( pods_var( 'filter_' . $field . '_end', 'get', false ) ) ) . ( 'datetime' == $attributes[ 'type' ] ? ' 23:59:59' : '' );
+
+                    if ( true === $attributes[ 'date_ongoing' ] ) {
                         $date_ongoing = '`' . $attributes[ 'date_ongoing' ] . '`';
 
                         if ( isset( $this->aliases[ $date_ongoing ] ) )

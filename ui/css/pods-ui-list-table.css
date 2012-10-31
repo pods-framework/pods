@@ -1,0 +1,244 @@
+.pods-ui-filter-bar {
+    margin: 10px 0 20px;
+}
+
+.pods-ui-filter-bar-primary {
+    padding: 8px 15px;
+    line-height: 32px;
+
+    -moz-box-shadow: inset 0 1px 0 #fff;
+    -webkit-box-shadow: inset 0 1px 0 white;
+    box-shadow: inset 0 1px 0 white;
+    border-color: #DFDFDF;
+
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+
+    background-color: #F1F1F1;
+    background-image: -ms-linear-gradient(top, #F9F9F9, #ECECEC);
+    background-image: -moz-linear-gradient(top, #F9F9F9, #ECECEC);
+    background-image: -o-linear-gradient(top, #F9F9F9, #ECECEC);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#F9F9F9), to(#ECECEC));
+    background-image: -webkit-linear-gradient(top, #F9F9F9, #ECECEC);
+    background-image: linear-gradient(top, #F9F9F9, #ECECEC);
+
+    border: 1px solid #DFDFDF;
+    position: relative;
+    height: auto;
+    line-height: 35px;
+    text-shadow: 0 1px 0 white;
+    overflow: hidden;
+    word-wrap: break-word;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub {
+    margin: 0 0 0 4px;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li {
+    margin-right: 5px;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li.status-label {
+    margin-right: 8px;
+
+    color: #222;
+    font-size: 14px;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li a {
+    text-decoration: none;
+    font-size: 12px;
+    line-height: 13px;
+    padding: 3px 10px;
+    cursor: pointer;
+    -webkit-border-radius: 11px;
+    border-radius: 11px;
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+
+    border: 1px solid #BBB;
+    color: #464646;
+
+    background: #F2F2F2 url(/wp-admin/images/white-grad.png) repeat-x scroll left top;
+    text-shadow: rgba(255, 255, 255, 1) 0 1px 0;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li a:hover {
+    color: #000;
+    border-color: #666;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li a:active {
+    background: #EEE url(/wp-admin/images/white-grad-active.png) repeat-x scroll left top;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li a.current {
+    border: none;
+
+    font-weight: bold;
+    color: white;
+    background: #21759B url(/wp-admin/images/button-grad.png) repeat-x scroll left top;
+    text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li a.current:hover {
+    border-color: #13455B;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li a.current:active {
+    background: #21759B url(/wp-admin/images/button-grad-active.png) repeat-x scroll left top;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li a.current:hover,
+.pods-ui-filter-bar-primary ul.subsubsub li a.current:active {
+    color: #EAF2FA;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li a span {
+    font-size: 11px;
+}
+
+.pods-ui-filter-bar-primary ul.subsubsub li a.current span {
+    color: #F7F7F7;
+}
+
+.pods-ui-filter-bar-primary p.search-box {
+    margin: 0;
+}
+
+.pods-ui-filter-bar-primary p.search-box a.pods-ui-filter-reset {
+    margin-right: 6px;
+    font-size: 11px;
+}
+
+.pods-ui-filter-bar-secondary {
+    margin: 0 auto;
+    width: 97%;
+    background: #e1ecf2;
+    border: 1px solid #c0d4e0;
+    padding: 6px 8px;
+    text-align: right;
+
+    -webkit-border-bottom-right-radius: 8px;
+    -webkit-border-bottom-left-radius: 8px;
+    -moz-border-radius-bottomright: 8px;
+    -moz-border-radius-bottomleft: 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub {
+    margin: 0;
+    float: none;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-add-filter {
+    margin-right: 8px;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-add-filter a {
+    font-size: 13px;
+    font-weight: normal;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter {
+    text-decoration: none;
+    font-size: 12px;
+    line-height: 13px;
+    margin-left: 8px;
+    padding: 4px 12px;
+    cursor: pointer;
+    -webkit-border-radius: 11px;
+    border-radius: 11px;
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+
+    border: none;
+    background: #21759B url(/wp-admin/images/button-grad.png) repeat-x scroll left top;
+    text-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter a {
+    color: white;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter:hover {
+    border-color: #13455B;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter:active {
+    background: #21759B url(/wp-admin/images/button-grad-active.png) repeat-x scroll left top;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter:hover a:hover,
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter:active a {
+    color: #EAF2FA;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter a.remove-filter {
+    padding-left: 7px;
+    margin-left: 3px;
+    border-left: 1px solid #888;
+    text-transform: uppercase;
+    font-size: 11px;
+    color: #CCC;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter:hover a.remove-filter {
+    color: #CCC;
+}
+
+.pods-ui-filter-bar-secondary ul.subsubsub li.pods-ui-filter-bar-filter:hover a.remove-filter:hover {
+    color: #CCC;
+}
+
+.pods-ui-posts-filter-popup .pods-ui-posts-filters,
+.pods-ui-posts-filter-popup .pods-ui-posts-filters p.clear {
+    clear: both;
+}
+
+.pods-ui-posts-filter-popup label {
+    display: block;
+    margin: 7px 0;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.pods-ui-posts-filter-popup .pods-ui-posts-filter-toggle {
+    color: #21759B;
+    font-size: 10px;
+    margin-left: 9px;
+    vertical-align: 1px;
+}
+
+.pods-ui-posts-filter-popup .pods-ui-posts-filter-toggle:active,
+.pods-ui-posts-filter-popup .pods-ui-posts-filter-toggle:hover {
+    color: #D54E21;
+}
+
+.pods-ui-posts-filter-popup p {
+    display: block;
+    float: left;
+    width: 40%;
+    margin: 0 10% 0 0;
+}
+
+.pods-ui-posts-filter-popup p.submit {
+    margin-top: 10px;
+    width: auto;
+    float: none;
+    clear: both;
+    text-align: right;
+}
+
+.pods-ui-posts-filter-popup p.clear:after
+.pods-ui-posts-filter-popup .pods-ui-posts-filters:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}

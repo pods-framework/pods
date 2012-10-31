@@ -3392,8 +3392,7 @@ class PodsAPI {
             'id' => $_pod[ 'ID' ],
             'name' => $_pod[ 'post_name' ],
             'label' => $_pod[ 'post_title' ],
-            'description' => $_pod[ 'post_content' ],
-            'index' => 'name'
+            'description' => $_pod[ 'post_content' ]
         );
 
         if ( strlen( $pod[ 'label' ] ) < 1 )

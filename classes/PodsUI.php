@@ -194,6 +194,11 @@ class PodsUI {
     public $filters = array();
 
     /**
+     * @var array
+     */
+    public $views = array();
+
+    /**
      * @var bool
      */
     public $search_across = true;
@@ -733,6 +738,7 @@ class PodsUI {
         $options->validate( 'search_across', $this->search_across, 'boolean' );
         $options->validate( 'search_across_picks', $this->search_across_picks, 'boolean' );
         $options->validate( 'filters', $this->filters, 'array' );
+        $options->validate( 'views', $this->views, 'array' );
         $options->validate( 'where', $this->where, 'array_merge' );
 
         $options->validate( 'pagination', $this->pagination, 'boolean' );
@@ -794,7 +800,8 @@ class PodsUI {
             'duplicate' => __( 'Duplicate', 'pods' ),
             'view' => __( 'View', 'pods' ),
             'reorder' => __( 'Reorder', 'pods' ),
-            'search' => __( 'Search', 'pods' )
+            'search' => __( 'Search', 'pods' ),
+            'views' => __( 'View', 'pods' )
         ), 'array_merge' );
 
         $options->validate( 'header', array(
@@ -2025,15 +2032,13 @@ class PodsUI {
     <div class="pods-ui-filter-bar">
         <div class="pods-ui-filter-bar-primary">
             <?php
-                $views = array();
-
-                if ( !empty( $views ) ) {
+                if ( !empty( $this->views ) ) {
             ?>
                 <ul class="subsubsub">
-                    <li class="status-label"><strong>Status</strong></li>
+                    <li class="status-label"><strong><?php echo $this->heading[ 'views' ]; ?></strong></li>
 
                     <?php
-                        foreach ( $views as $class => $view ) {
+                        foreach ( $this->views as $class => $view ) {
                     ?>
                         <li class="<?php echo $class; ?>"><?php echo $view; ?></li>
                     <?php

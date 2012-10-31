@@ -3471,6 +3471,7 @@ class PodsAPI {
      * $params['orderby'] string ORDER BY clause of query
      * $params['limit'] string Number of Pods to return
      * $params['where'] string WHERE clause of query
+     * $params['ids'] string|array IDs of Objects
      *
      * @param array $params An associative array of parameters
      *
@@ -3486,6 +3487,7 @@ class PodsAPI {
         $order = 'ASC';
         $orderby = 'menu_order title';
         $limit = -1;
+        $ids = false;
 
         $meta_query = array();
         $cache_key = '';
@@ -3555,12 +3557,22 @@ class PodsAPI {
         if ( isset( $params->limit ) && !empty( $params->limit ) )
             $limit = pods_absint( $params->limit );
 
+        if ( isset( $params->ids ) && !empty( $params->ids ) ) {
+            $ids = $params->ids;
+
+            if ( !is_array( $ids ) )
+                $ids = explode( ',', $ids );
+        }
+
+        if ( empty( $ids ) )
+            $ids = false;
+
         if ( empty( $cache_key ) )
             $cache_key = 'pods';
         else
             $cache_key = 'pods_get' . $cache_key;
 
-        if ( !empty( $cache_key ) && ( 'pods' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) ) {
+        if ( !empty( $cache_key ) && ( 'pods' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
             $the_pods = pods_transient_get( $cache_key );
 
             if ( false !== $the_pods )
@@ -3575,7 +3587,8 @@ class PodsAPI {
             'posts_per_page' => $limit,
             'order' => $order,
             'orderby' => $orderby,
-            'meta_query' => $meta_query
+            'meta_query' => $meta_query,
+            'post__in' => $ids
         ) );
 
         foreach ( $pods as $pod ) {
@@ -3584,7 +3597,7 @@ class PodsAPI {
             $the_pods[ $pod[ 'id' ] ] = $pod;
         }
 
-        if ( !empty( $cache_key ) && ( 'pods' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) )
+        if ( !empty( $cache_key ) && ( 'pods' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) )
             pods_transient_set( $cache_key, $the_pods );
 
         return $the_pods;
@@ -3982,6 +3995,7 @@ class PodsAPI {
      * $params['orderby'] string ORDER BY clause of query
      * $params['limit'] string Number of objects to return
      * $params['where'] string WHERE clause of query
+     * $params['ids'] string|array IDs of Objects
      *
      * @param array|object $params An associative array of parameters
      *
@@ -3997,6 +4011,7 @@ class PodsAPI {
         $order = 'ASC';
         $orderby = 'menu_order';
         $limit = -1;
+        $ids = false;
 
         $meta_query = array();
         $cache_key = '';
@@ -4032,12 +4047,22 @@ class PodsAPI {
         if ( isset( $params->limit ) && !empty( $params->limit ) )
             $limit = pods_absint( $params->limit );
 
+        if ( isset( $params->ids ) && !empty( $params->ids ) ) {
+            $ids = $params->ids;
+
+            if ( !is_array( $ids ) )
+                $ids = explode( ',', $ids );
+        }
+
+        if ( empty( $ids ) )
+            $ids = false;
+
         if ( empty( $cache_key ) )
             $cache_key = 'pods_objects_' . $params->type;
         else
             $cache_key = 'pods_objects_' . $params->type . '_get' . $cache_key;
 
-        if ( ( 'pods_objects_' . $params->type != $cache_key || empty( $meta_query ) ) && empty( $limit ) && ( empty( $orderby ) || 'menu_order' == $orderby ) ) {
+        if ( ( 'pods_objects_' . $params->type != $cache_key || empty( $meta_query ) ) && empty( $limit ) && ( empty( $orderby ) || 'menu_order' == $orderby ) && empty( $ids ) ) {
             $the_objects = pods_transient_get( $cache_key );
 
             if ( false !== $the_objects )
@@ -4052,7 +4077,8 @@ class PodsAPI {
             'posts_per_page' => $limit,
             'order' => $order,
             'orderby' => $orderby,
-            'meta_query' => $meta_query
+            'meta_query' => $meta_query,
+            'post__in' => $ids
         ) );
 
         foreach ( $objects as $object ) {
@@ -4061,7 +4087,7 @@ class PodsAPI {
             $the_objects[ $object[ 'name' ] ] = $object;
         }
 
-        if ( ( 'pods_objects_' . $params->type != $cache_key || empty( $meta_query ) ) && empty( $limit ) && ( empty( $orderby ) || 'menu_order' == $orderby ) )
+        if ( ( 'pods_objects_' . $params->type != $cache_key || empty( $meta_query ) ) && empty( $limit ) && ( empty( $orderby ) || 'menu_order' == $orderby ) && empty( $ids ) )
             pods_transient_set( $cache_key, $the_objects );
 
         return $the_objects;
@@ -4769,49 +4795,13 @@ class PodsAPI {
      * @return array|bool
      *
      * @since 1.9.0
+     * @deprecated 2.0.0
      */
     public function export_package ( $params ) {
-        $export = array(
-            'meta' => array(
-                'version' => PODS_VERSION,
-                'build' => date( 'U' ),
-            )
-        );
+        if ( class_exists( 'Pods_Migrate_Packages' ) )
+            return Pods_Migrate_Packages::export( $params );
 
-        $pod_ids = $params[ 'pods' ];
-        $template_ids = $params[ 'templates' ];
-        $page_ids = $params[ 'pages' ];
-        $helper_ids = $params[ 'helpers' ];
-
-        if ( !empty( $pod_ids ) ) {
-            $pod_ids = explode( ',', $pod_ids );
-            foreach ( $pod_ids as $pod_id ) {
-                $export[ 'pods' ][ $pod_id ] = $this->load_pod( array( 'id' => $pod_id ) );
-            }
-        }
-        if ( !empty( $template_ids ) ) {
-            $template_ids = explode( ',', $template_ids );
-            foreach ( $template_ids as $template_id ) {
-                $export[ 'templates' ][ $template_id ] = $this->load_template( array( 'id' => $template_id ) );
-            }
-        }
-        if ( !empty( $page_ids ) ) {
-            $page_ids = explode( ',', $page_ids );
-            foreach ( $page_ids as $page_id ) {
-                $export[ 'pod_pages' ][ $page_id ] = $this->load_page( array( 'id' => $page_id ) );
-            }
-        }
-        if ( !empty( $helper_ids ) ) {
-            $helper_ids = explode( ',', $helper_ids );
-            foreach ( $helper_ids as $helper_id ) {
-                $export[ 'helpers' ][ $helper_id ] = $this->load_helper( array( 'id' => $helper_id ) );
-            }
-        }
-
-        if ( 1 == count( $export ) )
-            return false;
-
-        return $export;
+        return false;
     }
 
     /**
@@ -4820,7 +4810,9 @@ class PodsAPI {
      * @param mixed $data (optional) An associative array containing a package, or the json encoded package
      *
      * @return bool
+     *
      * @since 1.9.8
+     * @deprecated 2.0.0
      */
     public function replace_package ( $data = false ) {
         return $this->import_package( $data, true );
@@ -4833,188 +4825,14 @@ class PodsAPI {
      * @param bool $replace (optional) Replace existing items when found
      *
      * @return bool
+     *
      * @since 1.9.0
+     * @deprecated 2.0.0
      */
     public function import_package ( $data = false, $replace = false ) {
-        $output = false;
-        if ( false === $data || isset( $data[ 'action' ] ) ) {
-            $data = get_option( 'pods_package' );
-            $output = true;
-        }
-        if ( !is_array( $data ) ) {
-            $json_data = @json_decode( $data, true );
-            if ( !is_array( $json_data ) )
-                $json_data = @json_decode( stripslashes( $data ), true );
-            $data = $json_data;
-        }
-        if ( !is_array( $data ) || empty( $data ) ) {
-            return false;
-        }
+        if ( class_exists( 'Pods_Migrate_Packages' ) )
+            return Pods_Migrate_Packages::import( $data, $replace );
 
-        $found = array();
-
-        if ( isset( $data[ 'pods' ] ) ) {
-            $pod_fields = '';
-            foreach ( $data[ 'pods' ] as $pod ) {
-                $pod = pods_sanitize( $pod );
-
-                $table_fields = array();
-                $pod_fields = $pod[ 'fields' ];
-                unset( $pod[ 'fields' ] );
-
-                if ( false !== $replace ) {
-                    $existing = $this->load_pod( array( 'name' => $pod[ 'name' ] ) );
-                    if ( is_array( $existing ) )
-                        $this->delete_pod( array( 'id' => $existing[ 'id' ] ) );
-                }
-
-                if ( empty( $pod_fields ) )
-                    $pod_fields = implode( "`,`", array_keys( $pod ) );
-                // Backward-compatibility (before/after helpers)
-                $pod_fields = str_replace( 'before_helpers', 'pre_save_helpers', $pod_fields );
-                $pod_fields = str_replace( 'after_helpers', 'post_save_helpers', $pod_fields );
-
-                $values = implode( "','", $pod );
-                $dt = pods_query( "INSERT INTO @wp_pod_types (`$pod_fields`) VALUES ('$values')" );
-
-                $tupples = array();
-                $field_columns = '';
-                foreach ( $pod_fields as $fieldval ) {
-                    // Escape the values
-                    foreach ( $fieldval as $k => $v ) {
-                        if ( empty( $v ) )
-                            $v = 'null';
-                        else
-                            $v = pods_sanitize( $v );
-                        $fieldval[ $k ] = $v;
-                    }
-
-                    // Store all table fields
-                    if ( 'pick' != $fieldval[ 'coltype' ] && 'file' != $fieldval[ 'coltype' ] )
-                        $table_fields[ $fieldval[ 'name' ] ] = $fieldval[ 'coltype' ];
-
-                    $fieldval[ 'datatype' ] = $dt;
-                    if ( empty( $field_columns ) )
-                        $field_columns = implode( "`,`", array_keys( $fieldval ) );
-                    $tupples[] = implode( "','", $fieldval );
-                }
-                $tupples = implode( "'),('", $tupples );
-                $tupples = str_replace( "'null'", 'null', $tupples );
-                pods_query( "INSERT INTO @wp_pod_fields (`$field_columns`) VALUES ('$tupples')" );
-
-                // Create the actual table with any non-PICK fields
-                $definitions = array( "id INT unsigned auto_increment primary key" );
-                foreach ( $table_fields as $colname => $coltype ) {
-                    $definitions[] = "`$colname` " . $this->get_field_definition( $coltype );
-                }
-                $definitions = implode( ',', $definitions );
-
-                pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$pod['name']}`" );
-
-                pods_query( "CREATE TABLE @wp_pods_{$pod['name']} ($definitions)" );
-
-                if ( !isset( $found[ 'pods' ] ) )
-                    $found[ 'pods' ] = array();
-
-                $found[ 'pods' ][] = esc_textarea( $pod[ 'name' ] );
-            }
-        }
-
-        if ( isset( $data[ 'templates' ] ) ) {
-            foreach ( $data[ 'templates' ] as $template ) {
-                $defaults = array( 'name' => '', 'code' => '' );
-                $params = array_merge( $defaults, $template );
-                if ( !defined( 'PODS_STRICT_MODE' ) || !PODS_STRICT_MODE )
-                    $params = pods_sanitize( $params );
-                if ( false !== $replace ) {
-                    $existing = $this->load_template( array( 'name' => $params[ 'name' ] ) );
-                    if ( is_array( $existing ) )
-                        $params[ 'id' ] = $existing[ 'id' ];
-                }
-                $this->save_template( $params );
-                if ( !isset( $found[ 'templates' ] ) )
-                    $found[ 'templates' ] = array();
-                $found[ 'templates' ][] = esc_textarea( $params[ 'name' ] );
-            }
-        }
-
-        if ( isset( $data[ 'pod_pages' ] ) ) {
-            foreach ( $data[ 'pod_pages' ] as $pod_page ) {
-                $defaults = array(
-                    'uri' => '',
-                    'title' => '',
-                    'phpcode' => '',
-                    'precode' => '',
-                    'page_template' => ''
-                );
-                $params = array_merge( $defaults, $pod_page );
-                if ( !defined( 'PODS_STRICT_MODE' ) || !PODS_STRICT_MODE )
-                    $params = pods_sanitize( $params );
-                if ( false !== $replace ) {
-                    $existing = $this->load_page( array( 'uri' => $params[ 'uri' ] ) );
-                    if ( is_array( $existing ) )
-                        $params[ 'id' ] = $existing[ 'id' ];
-                }
-                $this->save_page( $params );
-                if ( !isset( $found[ 'pod_pages' ] ) )
-                    $found[ 'pod_pages' ] = array();
-                $found[ 'pod_pages' ][] = esc_textarea( $params[ 'uri' ] );
-            }
-        }
-
-        if ( isset( $data[ 'helpers' ] ) ) {
-            foreach ( $data[ 'helpers' ] as $helper ) {
-                // backwards compatibility
-                if ( isset( $helper[ 'type' ] ) ) {
-                    if ( 'before' == $helper[ 'type' ] )
-                        $helper[ 'type' ] = 'pre_save';
-                    if ( 'after' == $helper[ 'type' ] )
-                        $helper[ 'type' ] = 'post_save';
-                }
-                $defaults = array( 'name' => '', 'type' => 'display', 'phpcode' => '' );
-                $params = array_merge( $defaults, $helper );
-                if ( !defined( 'PODS_STRICT_MODE' ) || !PODS_STRICT_MODE )
-                    $params = pods_sanitize( $params );
-                if ( false !== $replace ) {
-                    $existing = $this->load_helper( array( 'name' => $params[ 'name' ] ) );
-                    if ( is_array( $existing ) )
-                        $params[ 'id' ] = $existing[ 'id' ];
-                }
-                $this->save_helper( $params );
-                if ( !isset( $found[ 'helpers' ] ) )
-                    $found[ 'helpers' ] = array();
-                $found[ 'helpers' ][] = esc_textarea( $params[ 'name' ] );
-            }
-        }
-
-        if ( true === $output ) {
-            if ( !empty( $found ) ) {
-                echo '<br /><div id="message" class="updated fade">';
-                echo '<h3 style="margin-top:10px;">' . __( 'Package Imported', 'pods' ) . ':</h3>';
-                if ( isset( $found[ 'pods' ] ) ) {
-                    echo '<h4>' . __( 'Pod(s)', 'pods' ) . '</h4>';
-                    echo '<ul class="pretty"><li>' . implode( '</li><li>', $found[ 'pods' ] ) . '</li></ul>';
-                }
-                if ( isset( $found[ 'templates' ] ) ) {
-                    echo '<h4>' . __( 'Template(s)', 'pods' ) . '</h4>';
-                    echo '<ul class="pretty"><li>' . implode( '</li><li>', $found[ 'templates' ] ) . '</li></ul>';
-                }
-                if ( isset( $found[ 'pod_pages' ] ) ) {
-                    echo '<h4>' . __( 'Pod Page(s)', 'pods' ) . '</h4>';
-                    echo '<ul class="pretty"><li>' . implode( '</li><li>', $found[ 'pod_pages' ] ) . '</li></ul>';
-                }
-                if ( isset( $found[ 'helpers' ] ) ) {
-                    echo '<h4>' . __( 'Helper(s)', 'pods' ) . '</h4>';
-                    echo '<ul class="pretty"><li>' . implode( '</li><li>', $found[ 'helpers' ] ) . '</li></ul>';
-                }
-                echo '</div>';
-            }
-            else
-                echo '<e><br /><div id="message" class="error fade"><p>' . __( 'Error: Package not imported, try again.', 'pods' ) . '</p></div></e>';
-        }
-
-        if ( !empty( $found ) )
-            return true;
         return false;
     }
 
@@ -5025,9 +4843,13 @@ class PodsAPI {
      * @param bool $output (optional)
      *
      * @return array|bool
+     *
      * @since 1.9.0
+     * @deprecated 2.0.0
      */
     public function validate_package ( $data = false, $output = false ) {
+        return false;
+
         if ( is_array( $data ) && isset( $data[ 'data' ] ) ) {
             $data = $data[ 'data' ];
             $output = true;

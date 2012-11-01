@@ -16,7 +16,7 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_t
 <div id="color_<?php echo $attributes[ 'id' ]; ?>"></div>
 
 <script type="text/javascript">
-    if ( 'undefined' == pods_farbastic_changing ) {
+    if ( 'undefined' == typeof pods_farbastic_changing ) {
         var pods_farbastic_changing = false;
     }
 

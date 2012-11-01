@@ -373,11 +373,10 @@ class PodsField_Pick extends PodsField {
                 if ( is_array( $ids ) )
                     $ids = implode( ', ', $ids );
 
-                if ( !empty( $params[ 'where' ] ) ) {
-                    if ( is_array( $params[ 'where' ] ) )
-                        $params[ 'where' ] = implode( ' AND ', $params[ 'where' ] );
+                if ( is_array( $params[ 'where' ] ) )
+                    $params[ 'where' ] = implode( ' AND ', $params[ 'where' ] );
+                if ( !empty( $params[ 'where' ] ) )
                     $params[ 'where' ] .= ' AND ';
-                }
 
                 $params[ 'where' ] .= "`t`.`{$search_data->field_id}` IN ( " . $ids . " )";
 

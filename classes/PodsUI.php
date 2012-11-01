@@ -2088,67 +2088,77 @@ class PodsUI {
             </p>
         </div>
 
-        <div class="pods-ui-filter-bar-secondary">
-            <ul class="subsubsub">
-                <?php
-                    if ( !$filtered ) {
-                ?>
-                    <li class="pods-ui-filter-bar-add-filter">
-                        <a href="#TB_inline?width=640&inlineId=pods-ui-posts-filter-popup" class="thickbox" title="<?php esc_attr_e( 'Advanced Filters', 'pods' ); ?>"><?php _e( 'Advanced Filters', 'pods' ); ?></a>
-                    </li>
-                <?php
-                    }
-                    else {
-                ?>
-                    <li class="pods-ui-filter-bar-add-filter">
-                        <a href="#TB_inline?width=640&inlineId=pods-ui-posts-filter-popup" class="thickbox" title="<?php esc_attr_e( 'Advanced Filters', 'pods' ); ?>">+ <?php _e( 'Add Filter', 'pods' ); ?></a>
-                    </li>
-                <?php } ?>
-
-                <?php
-                    foreach ( $filters as $filter ) {
-                        $value = pods_var_raw( 'filter_' . $filter, 'get', '', null, true );
-                        $data_filter = 'filter_' . $filter;
-
-                        $start = $end = '';
-
-                        if ( in_array( $this->pod->fields[ $filter ][ 'type' ], array( 'date', 'datetime', 'time' ) ) ) {
-                            $start = pods_var_raw( 'filter_' . $filter . '_start', 'get', '', null, true );
-                            $end = pods_var_raw( 'filter_' . $filter . '_end', 'get', '', null, true );
-
-                            if ( !empty( $start ) && !in_array( $start, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
-                                $start = PodsForm::field_method( $this->pod->fields[ $filter ][ 'type' ], 'convert_date', $start, 'n/j/Y' );
-
-                            if ( !empty( $end ) && !in_array( $end, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
-                                $end = PodsForm::field_method( $this->pod->fields[ $filter ][ 'type' ], 'convert_date', $end, 'n/j/Y' );
-
-                            $value = trim( $start . ' - ' . $end, ' -' );
-
-                            $data_filter = 'filter_' . $filter . '_start';
+        <?php
+            if ( !empty( $this->filters ) ) {
+        ?>
+            <div class="pods-ui-filter-bar-secondary">
+                <ul class="subsubsub">
+                    <?php
+                        if ( !$filtered ) {
+                    ?>
+                        <li class="pods-ui-filter-bar-add-filter">
+                            <a href="#TB_inline?width=640&inlineId=pods-ui-posts-filter-popup" class="thickbox" title="<?php esc_attr_e( 'Advanced Filters', 'pods' ); ?>">
+                                <?php _e( 'Advanced Filters', 'pods' ); ?>
+                            </a>
+                        </li>
+                    <?php
                         }
-                ?>
-                    <li class="pods-ui-filter-bar-filter" data-filter="<?php echo $data_filter; ?>">
-                        <a href="#TB_inline?width=640&inlineId=pods-ui-posts-filter-popup" class="thickbox" title="<?php esc_attr_e( 'Advanced Filters', 'pods' ); ?>">
-                            <strong><?php echo $this->pod->fields[ $filter ][ 'label' ]; ?>:</strong>
-                            <?php echo esc_html( $value ); ?>
-                        </a>
+                        else {
+                    ?>
+                        <li class="pods-ui-filter-bar-add-filter">
+                            <a href="#TB_inline?width=640&inlineId=pods-ui-posts-filter-popup" class="thickbox" title="<?php esc_attr_e( 'Advanced Filters', 'pods' ); ?>">
+                                + <?php _e( 'Add Filter', 'pods' ); ?>
+                            </a>
+                        </li>
+                    <?php
+                        }
 
-                        <a href="#remove-filter" class="remove-filter" title="<?php esc_attr_e( 'Remove Filter', 'pods' ); ?>">x</a>
+                        foreach ( $filters as $filter ) {
+                            $value = pods_var_raw( 'filter_' . $filter, 'get', '', null, true );
+                            $data_filter = 'filter_' . $filter;
 
-                        <?php
+                            $start = $end = '';
+
                             if ( in_array( $this->pod->fields[ $filter ][ 'type' ], array( 'date', 'datetime', 'time' ) ) ) {
-                                echo PodsForm::field( 'filter_' . $filter . '_start', $start, 'hidden' );
-                                echo PodsForm::field( 'filter_' . $filter . '_end', $end, 'hidden' );
+                                $start = pods_var_raw( 'filter_' . $filter . '_start', 'get', '', null, true );
+                                $end = pods_var_raw( 'filter_' . $filter . '_end', 'get', '', null, true );
+
+                                if ( !empty( $start ) && !in_array( $start, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
+                                    $start = PodsForm::field_method( $this->pod->fields[ $filter ][ 'type' ], 'convert_date', $start, 'n/j/Y' );
+
+                                if ( !empty( $end ) && !in_array( $end, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
+                                    $end = PodsForm::field_method( $this->pod->fields[ $filter ][ 'type' ], 'convert_date', $end, 'n/j/Y' );
+
+                                $value = trim( $start . ' - ' . $end, ' -' );
+
+                                $data_filter = 'filter_' . $filter . '_start';
                             }
-                            else
-                                echo PodsForm::field( $data_filter, $value, 'hidden' );
-                        ?>
-                    </li>
-                <?php
-                    }
-                ?>
-            </ul>
-        </div>
+                    ?>
+                        <li class="pods-ui-filter-bar-filter" data-filter="<?php echo $data_filter; ?>">
+                            <a href="#TB_inline?width=640&inlineId=pods-ui-posts-filter-popup" class="thickbox" title="<?php esc_attr_e( 'Advanced Filters', 'pods' ); ?>">
+                                <strong><?php echo $this->pod->fields[ $filter ][ 'label' ]; ?>:</strong>
+                                <?php echo esc_html( $value ); ?>
+                            </a>
+
+                            <a href="#remove-filter" class="remove-filter" title="<?php esc_attr_e( 'Remove Filter', 'pods' ); ?>">x</a>
+
+                            <?php
+                                if ( in_array( $this->pod->fields[ $filter ][ 'type' ], array( 'date', 'datetime', 'time' ) ) ) {
+                                    echo PodsForm::field( 'filter_' . $filter . '_start', $start, 'hidden' );
+                                    echo PodsForm::field( 'filter_' . $filter . '_end', $end, 'hidden' );
+                                }
+                                else
+                                    echo PodsForm::field( $data_filter, $value, 'hidden' );
+                            ?>
+                        </li>
+                    <?php
+                        }
+                    ?>
+                </ul>
+            </div>
+        <?php
+            }
+        ?>
     </div>
 
     <script type="text/javascript">

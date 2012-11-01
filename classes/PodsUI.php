@@ -65,6 +65,7 @@ class PodsUI {
         'limit',
         'action',
         'action_bulk',
+        'view',
         'export',
         'export_type',
         'export_delimiter',
@@ -192,6 +193,11 @@ class PodsUI {
      * @var array
      */
     public $filters = array();
+
+    /**
+     * @var string
+     */
+    public $view = false;
 
     /**
      * @var array
@@ -732,6 +738,7 @@ class PodsUI {
 
         $options->validate( 'action', pods_var( 'action' . $options->num, 'get', $this->action, null, true ), 'in_array', $this->actions );
         $options->validate( 'action_bulk', pods_var( 'action_bulk' . $options->num, 'get', $this->action_bulk, null, true ), 'isset', $this->actions_bulk );
+        $options->validate( 'view', pods_var( 'view' . $options->num, 'get', $this->view, null, true ), 'isset', $this->views );
 
         $options->validate( 'searchable', $this->searchable, 'boolean' );
         $options->validate( 'search', pods_var( 'search' . $options->num, 'get' ) );
@@ -2035,12 +2042,20 @@ class PodsUI {
                 if ( !empty( $this->views ) ) {
             ?>
                 <ul class="subsubsub">
-                    <li class="status-label"><strong><?php echo $this->heading[ 'views' ]; ?></strong></li>
+                    <li class="pods-ui-filter-view-label"><strong><?php echo $this->heading[ 'views' ]; ?></strong></li>
 
                     <?php
-                        foreach ( $this->views as $class => $view ) {
+                        foreach ( $this->views as $view => $label ) {
+                            if ( false === strpos( $label, '<a' ) ) {
+                                $link = pods_var_update( array( 'view' . $this->num => $view, 'pg' . $this->num => '' ), array( 'page' ), $this->exclusion() );
+
+                                if ( $this->view == $view )
+                                    $label = '<a href="' . $link . '" class="current">' . $label . '</a>';
+                                else
+                                    $label = '<a href="' . $link . '">' . $label . '</a>';
+                            }
                     ?>
-                        <li class="<?php echo $class; ?>"><?php echo $view; ?></li>
+                        <li class="<?php echo $view; ?>"><?php echo $label; ?></li>
                     <?php
                         }
                     ?>
@@ -2167,7 +2182,7 @@ class PodsUI {
 
             <div class="pods-ui-posts-filters">
                 <?php
-                    $excluded_filters = array( 'search' . $this->num, 'pg' . $this->num, 'action' . $this->num, 'action_bulk' . $this->num );
+                    $excluded_filters = array( 'search' . $this->num, 'pg' . $this->num, 'action' . $this->num, 'action_bulk' . $this->num  );
 
                     foreach ( $filters as $filter ) {
                         $excluded_filters[] = 'filter_' . $filter . '_start';

@@ -101,13 +101,13 @@
                                             $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
 
                                             echo PodsForm::label( 'create_label_plural', __( 'Plural Label', 'pods' ), __( '<h6>Plural Label</h6> This is the label for more than 1 item (Plural) that will appear throughout the WordPress admin area for managing the content.', 'pods' ) );
-                                            echo PodsForm::field( 'create_label_plural', pods_var_raw( 'create_label_plural', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required', 'text_max_length' => 20 ) );
+                                            echo PodsForm::field( 'create_label_plural', pods_var_raw( 'create_label_plural', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required', 'text_max_length' => 30 ) );
                                         ?>
                                     </div>
                                     <div class="pods-field-option">
                                         <?php
                                             echo PodsForm::label( 'create_label_singular', __( 'Singular Label', 'pods' ), __( '<h6>Singular Label</h6> This is the label for 1 item (Singular) that will appear throughout the WordPress admin area for managing the content.', 'pods' ) );
-                                            echo PodsForm::field( 'create_label_singular', pods_var_raw( 'create_label_singular', 'post' ), 'text', array( 'text_max_length' => 20 ) );
+                                            echo PodsForm::field( 'create_label_singular', pods_var_raw( 'create_label_singular', 'post' ), 'text', array( 'text_max_length' => 30 ) );
                                         ?>
                                     </div>
 

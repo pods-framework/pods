@@ -1394,7 +1394,7 @@ class PodsAPI {
                     $weight++;
                 }
 
-                if ( 0 < $field_index_id && $field[ 'id' ] == $field_index_id )
+                if ( 0 < $field_index_id && pods_var( 'id', $field ) == $field_index_id )
                     $field_index_change = $field[ 'name' ];
 
                 $field = $this->save_field( $field, $field_table_operation, $sanitized );
@@ -1618,9 +1618,12 @@ class PodsAPI {
 
         $object_fields = (array) pods_var_raw( 'object_fields', $pod, array(), null, true );
 
+        if ( 0 < $old_id && defined( 'PODS_FIELD_STRICT' ) && !PODS_FIELD_STRICT )
+            $params->id = $field[ 'id' ] = $old_id;
+
         // Add new field
         if ( !isset( $params->id ) || empty( $params->id ) || empty( $field ) ) {
-            if ( $table_operation && in_array( $field[ 'name' ], array( 'created', 'modified', 'author' ) ) )
+            if ( $table_operation && in_array( $field[ 'name' ], array( 'created', 'modified', 'author' ) ) && ( !defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT ) )
                 return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field[ 'name' ] ), $this );
 
             if ( in_array( $field[ 'name' ], array( 'id', 'ID' ) ) )

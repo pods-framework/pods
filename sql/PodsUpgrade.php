@@ -445,7 +445,7 @@ class PodsUpgrade_2_0 {
 
                     $row->name = pods_clean_name( $row->name );
 
-                    if ( in_array( $row->name, array( 'type', 'created', 'modified', 'author' ) ) )
+                    if ( in_array( $row->name, array( 'created', 'modified', 'author' ) ) )
                         $row->name .= '2';
 
                     $field_type = $row->coltype;
@@ -651,7 +651,7 @@ class PodsUpgrade_2_0 {
 
                 foreach ( $pod_fields as $field ) {
                     // Handle name changes
-                    if ( in_array( $field->name, array( 'type', 'created', 'modified', 'author' ) ) )
+                    if ( in_array( $field->name, array( 'created', 'modified', 'author' ) ) )
                         $field->name .= '2';
 
                     $types[ $type->id ][ 'old_fields' ][ $field->id ] = $field->name;

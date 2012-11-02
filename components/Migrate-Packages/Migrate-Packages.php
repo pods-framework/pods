@@ -53,7 +53,9 @@ class Pods_Migrate_Packages extends PodsComponent {
      * @param $params
      */
     public function ajax_import ( $params ) {
+        $data = $params->import_package;
 
+        var_dump( $this->import( $data ) );
     }
 
     /**
@@ -68,6 +70,9 @@ class Pods_Migrate_Packages extends PodsComponent {
      * @since 2.0.5
      */
     public static function import ( $data, $replace = false ) {
+        if ( !defined( 'PODS_FIELD_STRICT' ) )
+            define( 'PODS_FIELD_STRICT', false );
+
         if ( !is_array( $data ) ) {
             $json_data = @json_decode( $data, true );
 
@@ -113,7 +118,54 @@ class Pods_Migrate_Packages extends PodsComponent {
                     $pod = array( 'fields' => array() );
 
                 // Backwards compatibility
-                if ( version_compare( $data[ 'meta' ][ 'version' ], '2.0.0' ) ) {
+                if ( version_compare( $data[ 'meta' ][ 'version' ], '2.0.0', '<' ) ) {
+                    $core_fields = array(
+                        array(
+                            'name' => 'name',
+                            'label' => 'Name',
+                            'type' => 'text',
+                            'weight' => 0,
+                            'options' => array(
+                                'required' => 1,
+                                'text_max_length' => 128
+                            )
+                        ),
+                        array(
+                            'name' => 'created',
+                            'label' => 'Date Created',
+                            'type' => 'datetime',
+                            'options' => array(
+                                'datetime_format' => 'ymd_slash',
+                                'datetime_time_type' => '12',
+                                'datetime_time_format' => 'h_mm_ss_A'
+                            ),
+                            'weight' => 1
+                        ),
+                        array(
+                            'name' => 'modified',
+                            'label' => 'Date Modified',
+                            'type' => 'datetime',
+                            'options' => array(
+                                'datetime_format' => 'ymd_slash',
+                                'datetime_time_type' => '12',
+                                'datetime_time_format' => 'h_mm_ss_A'
+                            ),
+                            'weight' => 2
+                        ),
+                        array(
+                            'name' => 'author',
+                            'label' => 'Author',
+                            'type' => 'pick',
+                            'pick_object' => 'user',
+                            'options' => array(
+                                'pick_format_type' => 'single',
+                                'pick_format_single' => 'autocomplete',
+                                'default_value' => '{@user.ID}'
+                            ),
+                            'weight' => 3
+                        )
+                    );
+
                     if ( !empty( $pod_data[ 'fields' ] ) ) {
                         foreach ( $pod_data[ 'fields' ] as $k => $field ) {
                             $field_type = $field[ 'coltype' ];
@@ -145,6 +197,9 @@ class Pods_Migrate_Packages extends PodsComponent {
                                     'input_helper' => $field[ 'input_helper' ]
                                 )
                             );
+
+                            if ( in_array( $new_field[ 'name' ], array( 'created', 'modified', 'author' ) ) )
+                                $new_field[ 'name' ] .= '2';
 
                             if ( 'pick' == $field_type ) {
                                 $new_field[ 'pick_object' ] = 'pod-' . $field[ 'pickval' ];
@@ -194,6 +249,9 @@ class Pods_Migrate_Packages extends PodsComponent {
                             $pod_data[ 'fields' ][ $k ] = $new_field;
                         }
                     }
+
+                    if ( pods_var( 'id', $pod, 0 ) < 1 )
+                        $pod_data[ 'fields' ] = array_merge( $core_fields, $pod_data[ 'fields' ] );
 
                     if ( empty( $pod_data[ 'label' ] ) )
                         $pod_data[ 'label' ] = ucwords( str_replace( '_', ' ', $pod_data[ 'name' ] ) );
@@ -325,7 +383,7 @@ class Pods_Migrate_Packages extends PodsComponent {
                     $page = array();
 
                 // Backwards compatibility
-                if ( version_compare( $data[ 'meta' ][ 'version' ], '2.0.0' ) ) {
+                if ( version_compare( $data[ 'meta' ][ 'version' ], '2.0.0', '<' ) ) {
                     if ( isset( $page_data[ 'uri' ] ) ) {
                         $page_data[ 'name' ] = $page_data[ 'uri' ];
 
@@ -371,7 +429,7 @@ class Pods_Migrate_Packages extends PodsComponent {
                     $helper = array();
 
                 // Backwards compatibility
-                if ( version_compare( $data[ 'meta' ][ 'version' ], '2.0.0' ) ) {
+                if ( version_compare( $data[ 'meta' ][ 'version' ], '2.0.0', '<' ) ) {
                     if ( isset( $helper_data[ 'phpcode' ] ) ) {
                         $helper_data[ 'code' ] = $helper_data[ 'phpcode' ];
 

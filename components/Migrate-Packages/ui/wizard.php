@@ -79,6 +79,8 @@
     var pods_admin_submit_callback = function ( id ) {
         console.log( id );
 
+        jQuery( '#pods-wizard-panel-2 div.inside' ).html( '<pre>' + id + '</pre>' );
+
         return true;
         //document.location = 'admin.php?page=pods-component-<?php echo esc_js( $component ); ?>&do=create';
     }

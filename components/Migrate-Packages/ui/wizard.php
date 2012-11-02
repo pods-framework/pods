@@ -56,7 +56,9 @@
                             <h3><label for="link_name"><?php _e( 'Results', 'pods' ); ?></label></h3>
 
                             <div class="inside">
-                                <p>Click Continue to start the import process.</p>
+                                <div class="pods-wizard-content">
+                                    <p>Click Continue to start the import process.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -79,7 +81,7 @@
     var pods_admin_submit_callback = function ( id ) {
         console.log( id );
 
-        jQuery( '#pods-wizard-panel-2 div.inside' ).html( id );
+        jQuery( '#pods-wizard-panel-2 div.inside div.pods-wizard-content' ).html( id );
 
         return true;
         //document.location = 'admin.php?page=pods-component-<?php echo esc_js( $component ); ?>&do=create';

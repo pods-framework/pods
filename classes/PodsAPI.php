@@ -1912,6 +1912,8 @@ class PodsAPI {
         if ( null !== pods_var( 'status', $object, null, null, true ) )
             $post_data[ 'post_status' ] = pods_var( 'status', $object, null, null, true );
 
+        remove_filter( 'content_save_pre', 'balanceTags', 50 );
+
         $params->id = $this->save_post( $post_data, $object[ 'options' ], true, true );
 
         pods_transient_clear( 'pods_object_' . $params->type );

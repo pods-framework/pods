@@ -1497,6 +1497,43 @@ function pods_image_url ( $image, $size = 'thumbnail', $default = 0 ) {
 }
 
 /**
+ * Check if a user has permission to be doing something based on standard permission options
+ *
+ * @param array $options
+ *
+ * @since 2.0.5
+ */
+function pods_permission ( $options ) {
+    $permission = false;
+
+    if ( 1 == pods_var( 'restrict_capability', $options, 0 ) ) {
+        if ( is_user_logged_in() ) {
+            if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'manage_options' ) )
+                $permission = true;
+
+            $capabilities = explode( ',', pods_var( 'capability_allowed', $options ) );
+            $capabilities = array_unique( array_filter( $capabilities ) );
+
+            foreach ( $capabilities as $capability ) {
+                if ( current_user_can( $capability ) ) {
+                    $permission = true;
+
+                    break;
+                }
+            }
+        }
+    }
+    elseif ( 1 == pods_var( 'admin_only', $options, 0 ) ) {
+        if ( is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'manage_options' ) ) )
+            $permission = true;
+    }
+    else
+        $permission = true;
+
+    return $permission;
+}
+
+/**
  * Include and Init the Pods class
  *
  * @see PodsInit

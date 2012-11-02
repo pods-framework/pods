@@ -458,8 +458,9 @@ class PodsMeta {
      */
     public function meta_post ( $post, $metabox ) {
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
         ?>
-    <table class="form-table pods-metabox">
+    <table class="form-table pods-metabox pods-admin pods-dependency">
         <?php
         $id = null;
 
@@ -483,8 +484,10 @@ class PodsMeta {
             }
             elseif ( !empty( $id ) )
                 $value = get_post_meta( $id, $field[ 'name' ], true );
+
+            $depends = PodsForm::dependencies( $field, 'pods-meta-' );
             ?>
-            <tr class="form-field pods-field">
+            <tr class="form-field pods-field <?php echo $depends; ?>">
                 <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
                 <td>
                     <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
@@ -495,6 +498,11 @@ class PodsMeta {
         }
         ?>
     </table>
+    <script type="text/javascript">
+        jQuery( function ( $ ) {
+            $( document ).Pods( 'dependency', true );
+        } );
+    </script>
     <?php
     }
 

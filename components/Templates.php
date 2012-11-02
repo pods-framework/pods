@@ -222,8 +222,32 @@ class Pods_Templates extends PodsComponent {
 
         pods_group_add( $pod, __( 'Template', 'pods' ), $fields, 'normal', 'high' );
 
-        add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 9, 5 );
-        add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 9, 4 );
+        $fields = array(
+            array(
+                'name' => 'admin_only',
+                'label' => __( 'Show to Admins Only?', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'dependency' => true
+            ),
+            array(
+                'name' => 'restrict_capability',
+                'label' => __( 'Restrict access by Capability?', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'dependency' => true
+            ),
+            array(
+                'name' => 'capability_allowed',
+                'label' => __( 'Capability Allowed', 'pods' ),
+                'help' => __( 'Comma-separated list of cababilities, for example add_podname_item, please see the Roles and Capabilities component for the complete list and a way to add your own.', 'pods' ),
+                'type' => 'text',
+                'default' => '',
+                'depends-on' => array( 'restrict_capability' => true )
+            )
+        );
+
+        pods_group_add( $pod, __( 'Restrict Access', 'pods' ), $fields, 'normal', 'high' );
     }
 
     /**
@@ -314,8 +338,18 @@ class Pods_Templates extends PodsComponent {
         if ( empty( $code ) && !empty( $template ) ) {
             $template = $obj->api->load_template( array( 'name' => $template ) );
 
-            if ( !empty( $template ) && !empty( $template[ 'code' ] ) )
-                $code = $template[ 'code' ];
+            if ( !empty( $template ) ) {
+                if ( !empty( $template[ 'code' ] ) )
+                    $code = $template[ 'code' ];
+
+                $permission = pods_permission( $template[ 'options' ] );
+
+                $permission = (boolean) apply_filters( 'pods_templates_permission', $permission, $code, $template, $obj );
+
+                if ( !$permission ) {
+                    return apply_filters( 'pods_templates_permission_denied', __( 'You do not have access to view this content.' ), $code, $template, $obj );
+                }
+            }
         }
 
         $code = apply_filters( 'pods_templates_pre_template', $code, $template, $obj );

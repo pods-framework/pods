@@ -252,6 +252,33 @@ class Pods_Pages extends PodsComponent {
         );
 
         pods_group_add( $pod, __( 'Page', 'pods' ), $fields, 'normal', 'high' );
+
+        $fields = array(
+            array(
+                'name' => 'admin_only',
+                'label' => __( 'Show to Admins Only?', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'dependency' => true
+            ),
+            array(
+                'name' => 'restrict_capability',
+                'label' => __( 'Restrict access by Capability?', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'dependency' => true
+            ),
+            array(
+                'name' => 'capability_allowed',
+                'label' => __( 'Capability Allowed', 'pods' ),
+                'help' => __( 'Comma-separated list of cababilities, for example add_podname_item, please see the Roles and Capabilities component for the complete list and a way to add your own.', 'pods' ),
+                'type' => 'text',
+                'default' => '',
+                'depends-on' => array( 'restrict_capability' => true )
+            )
+        );
+
+        pods_group_add( $pod, __( 'Restrict Access', 'pods' ), $fields, 'normal', 'high' );
     }
 
     /**
@@ -400,7 +427,12 @@ class Pods_Pages extends PodsComponent {
                 'phpcode' => $_object[ 'post_content' ], // phpcode is deprecated
                 'precode' => get_post_meta( $_object[ 'ID' ], 'precode', true ),
                 'page_template' => get_post_meta( $_object[ 'ID' ], 'page_template', true ),
-                'title' => get_post_meta( $_object[ 'ID' ], 'page_title', true )
+                'title' => get_post_meta( $_object[ 'ID' ], 'page_title', true ),
+                'options' => array(
+                    'admin_only' => (boolean) get_post_meta( $_object[ 'ID' ], 'admin_only', true ),
+                    'restrict_capability' => (boolean) get_post_meta( $_object[ 'ID' ], 'restrict_capability', true ),
+                    'capability_allowed' => get_post_meta( $_object[ 'ID' ], 'capability_allowed', true )
+                )
             );
 
             if ( $wildcard )
@@ -509,20 +541,26 @@ class Pods_Pages extends PodsComponent {
             $pods =& $GLOBALS[ 'pods' ];
 
         if ( false !== self::$exists ) {
-            $content = false;
+            $permission = pods_permission( self::$exists[ 'options' ] );
 
-            if ( 0 < strlen( trim( self::$exists[ 'precode' ] ) ) )
-                $content = self::$exists[ 'precode' ];
+            $permission = (boolean) apply_filters( 'pods_pages_permission', $permission, self::$exists );
 
-            if ( false !== $content && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) ) {
-                pods_deprecated( 'Use WP Page Templates or hook into the pods_page_precode action instead of using Pod Page Precode', '2.1.0' );
+            if ( $permission ) {
+                $content = false;
 
-                eval( "?>$content" );
+                if ( 0 < strlen( trim( self::$exists[ 'precode' ] ) ) )
+                    $content = self::$exists[ 'precode' ];
+
+                if ( false !== $content && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) ) {
+                    pods_deprecated( 'Use WP Page Templates or hook into the pods_page_precode action instead of using Pod Page Precode', '2.1.0' );
+
+                    eval( "?>$content" );
+                }
+
+                do_action( 'pods_page_precode', self::$exists, $pods, $content );
             }
 
-            do_action( 'pods_page_precode', self::$exists, $pods, $content );
-
-            if ( !is_object( $pods ) && ( 404 == $pods || is_wp_error( $pods ) ) ) {
+            if ( !$permission || ( !is_object( $pods ) && ( 404 == $pods || is_wp_error( $pods ) ) ) ) {
                 remove_action( 'template_redirect', array( $this, 'template_redirect' ) );
                 remove_action( 'wp_head', array( $this, 'wp_head' ) );
                 remove_filter( 'redirect_canonical', '__return_false' );

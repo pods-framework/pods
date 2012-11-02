@@ -4559,8 +4559,9 @@ class PodsAPI {
         /**
          * @var $wpdb wpdb
          * @var $sitepress SitePress
+         * @var $icl_adjust_id_url_filter_off boolean
          */
-        global $wpdb, $sitepress;
+        global $wpdb, $sitepress, $icl_adjust_id_url_filter_off;
 
         $info = array(
             //'select' => '`t`.*',
@@ -4679,7 +4680,7 @@ class PodsAPI {
 
                 $info[ 'orderby' ] = '`t`.`menu_order`, `t`.`' . $info[ 'field_index' ] . '`, `t`.`post_date`';
 
-                if ( is_object( $sitepress ) && $sitepress->is_translated_post_type( $post_type ) ) {
+                if ( is_object( $sitepress ) && $sitepress->is_translated_post_type( $post_type ) && !$icl_adjust_id_url_filter_off ) {
                     $current_language = pods_sanitize( $sitepress->get_current_language() );
 
                     $info[ 'join' ][ 'wpml_translations' ] = "
@@ -4718,7 +4719,7 @@ class PodsAPI {
                     'tt.taxonomy' => '`tt`.`taxonomy` = "' . $taxonomy . '"'
                 );
 
-                if ( is_object( $sitepress ) && $sitepress->is_translated_taxonomy( $taxonomy ) ) {
+                if ( is_object( $sitepress ) && $sitepress->is_translated_taxonomy( $taxonomy ) && !$icl_adjust_id_url_filter_off ) {
                     $current_language = pods_sanitize( $sitepress->get_current_language() );
 
                     $info[ 'join' ][ 'wpml_translations' ] = "

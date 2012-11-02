@@ -736,6 +736,8 @@ class PodsUI {
             'create'
         ) );
 
+        $options->validate( 'excluded', self::$excluded, 'array_merge' );
+
         $options->validate( 'action', pods_var( 'action' . $options->num, 'get', $this->action, null, true ), 'in_array', $this->actions );
         $options->validate( 'action_bulk', pods_var( 'action_bulk' . $options->num, 'get', $this->action_bulk, null, true ), 'isset', $this->actions_bulk );
         $options->validate( 'view', pods_var( 'view' . $options->num, 'get', $this->view, null, true ), 'isset', $this->views );
@@ -1916,7 +1918,7 @@ class PodsUI {
                     if ( !empty( $this->actions_bulk ) ) {
                 ?>
                     <div class="alignleft actions">
-                        <select name="action_bulk">
+                        <select name="action_bulk<?php echo $this->num; ?>">
                             <option value="-1" selected="selected"><?php _e( 'Bulk Actions', 'pods' ); ?></option>
 
                             <?php
@@ -1930,7 +1932,7 @@ class PodsUI {
                             ?>
                         </select>
 
-                        <input type="submit" id="doaction_bulk" class="button-secondary action" value="<?php _e( 'Apply', 'pods' ); ?>">
+                        <input type="submit" id="doaction_bulk<?php echo $this->num; ?>" class="button-secondary action" value="<?php _e( 'Apply', 'pods' ); ?>">
                     </div>
                 <?php
                     }
@@ -2172,7 +2174,7 @@ class PodsUI {
 
                 jQuery( 'form#posts-filter [name="pg"]' ).prop( 'disabled', true );
                 jQuery( 'form#posts-filter [name="action"]' ).prop( 'disabled', true );
-                jQuery( 'form#posts-filter [name="action_bulk"]' ).prop( 'disabled', true );
+                jQuery( 'form#posts-filter [name="action_bulk<?php echo $this->num; ?>"]' ).prop( 'disabled', true );
 
                 jQuery( 'form#posts-filter' ).submit();
 
@@ -2467,7 +2469,7 @@ class PodsUI {
                             <?php
                                 if ( !empty( $this->actions_bulk ) ) {
             ?>
-                                <th scope="row" class="check-column"><input type="checkbox" name="pods_bulk[]" value="<?php echo $row[$this->sql['field_id']]; ?>"></th>
+                                <th scope="row" class="check-column"><input type="checkbox" name="pods_bulk<?php echo $this->num; ?>[]" value="<?php echo $row[$this->sql['field_id']]; ?>"></th>
             <?php
                                 }
 
@@ -2487,12 +2489,14 @@ class PodsUI {
                                 else {
                                     ob_start();
 
-                                    $field_value = trim( (string) PodsForm::field_method( $attributes[ 'type' ], 'ui', $this->id, $row[ $field ], $field, $attributes[ 'options' ], $fields, $this->pod ) );
+                                    $field_value = PodsForm::field_method( $attributes[ 'type' ], 'ui', $this->id, $row[ $field ], $field, $attributes[ 'options' ], $fields, $this->pod );
 
-                                    $field_output = ob_get_clean();
+                                    $field_output = trim( (string) ob_get_clean() );
 
-                                    if ( 0 < strlen( $field_value ) )
-                                        $row[ $field ] = $field_value;
+                                    if ( false === $field_value )
+                                        $row[ $field ] = '';
+                                    elseif ( 0 < strlen( trim( (string) $field_value ) ) )
+                                        $row[ $field ] = trim( (string) $field_value );
                                     elseif ( 0 < strlen( $field_output ) )
                                         $row[ $field ] = $field_output;
                                     else {

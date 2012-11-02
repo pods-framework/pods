@@ -96,6 +96,9 @@ class Pods_Migrate_Packages extends PodsComponent {
 
         if ( isset( $data[ 'pods' ] ) && is_array( $data[ 'pods' ] ) ) {
             foreach ( $data[ 'pods' ] as $pod_data ) {
+                if ( isset( $pod_data[ 'id' ] ) )
+                    unset( $pod_data[ 'id' ] );
+
                 $pod = $api->load_pod( array( 'name' => $pod_data[ 'name' ] ), false );
 
                 if ( !empty( $pod ) ) {
@@ -196,19 +199,13 @@ class Pods_Migrate_Packages extends PodsComponent {
                         $pod_data[ 'label' ] = ucwords( str_replace( '_', ' ', $pod_data[ 'name' ] ) );
 
                     if ( isset( $pod_data[ 'is_toplevel' ] ) ) {
-                        $pod_data[ 'show_in_menu' ] = $pod_data[ 'is_toplevel' ];
+                        $pod_data[ 'show_in_menu' ] = ( 1 == $pod_data[ 'is_toplevel' ] ? 1 : 0 );
 
                         unset( $pod_data[ 'is_toplevel' ] );
                     }
 
-                    if ( isset( $pod_data[ 'is_toplevel' ] ) ) {
-                        $pod_data[ 'show_in_menu' ] = $pod_data[ 'is_toplevel' ];
-
-                        unset( $pod_data[ 'is_toplevel' ] );
-                    }
-
-                    if ( isset( $pod_data[ 'is_toplevel' ] ) ) {
-                        $pod_data[ 'show_in_menu' ] = $pod_data[ 'detail_page' ];
+                    if ( isset( $pod_data[ 'detail_page' ] ) ) {
+                        $pod_data[ 'detail_url' ] = $pod_data[ 'detail_page' ];
 
                         unset( $pod_data[ 'detail_page' ] );
                     }
@@ -246,18 +243,23 @@ class Pods_Migrate_Packages extends PodsComponent {
                         'storage' => 'table',
                         'fields' => $pod_data[ 'fields' ],
                         'options' => array(
-                            'pre_save_helpers' => $pod_data[ 'pre_save_helpers' ],
-                            'post_save_helpers' => $pod_data[ 'post_save_helpers' ],
-                            'pre_delete_helpers' => $pod_data[ 'pre_delete_helpers' ],
-                            'post_delete_helpers' => $pod_data[ 'post_delete_helpers' ],
-                            'show_in_menu' => $pod_data[ 'show_in_menu' ],
-                            'detail_url' => $pod_data[ 'detail_url' ],
+                            'pre_save_helpers' => pods_var_raw( 'pre_save_helpers', $pod_data ),
+                            'post_save_helpers' => pods_var_raw( 'post_save_helpers', $pod_data ),
+                            'pre_delete_helpers' => pods_var_raw( 'pre_delete_helpers', $pod_data ),
+                            'post_delete_helpers' => pods_var_raw( 'post_delete_helpers', $pod_data ),
+                            'show_in_menu' => ( 1 == pods_var_raw( 'show_in_menu', $pod_data, 0 ) ? 1 : 0 ),
+                            'detail_url' => pods_var_raw( 'detail_url', $pod_data ),
                             'pod_index' => 'name'
                         ),
                     );
                 }
 
                 $pod = array_merge( $pod, $pod_data );
+
+                foreach ( $pod[ 'fields' ] as $k => $field ) {
+                    if ( isset( $field[ 'id' ] ) )
+                        unset( $pod[ 'fields' ][ $k ][ 'id' ] );
+                }
 
                 $api->save_pod( $pod );
 
@@ -270,6 +272,9 @@ class Pods_Migrate_Packages extends PodsComponent {
 
         if ( isset( $data[ 'templates' ] ) && is_array( $data[ 'templates' ] ) ) {
             foreach ( $data[ 'templates' ] as $template_data ) {
+                if ( isset( $template_data[ 'id' ] ) )
+                    unset( $template_data[ 'id' ] );
+
                 $template = $api->load_template( array( 'name' => $template_data[ 'name' ] ) );
 
                 if ( !empty( $template ) ) {
@@ -303,6 +308,9 @@ class Pods_Migrate_Packages extends PodsComponent {
 
         if ( isset( $data[ 'pages' ] ) && is_array( $data[ 'pages' ] ) ) {
             foreach ( $data[ 'pages' ] as $page_data ) {
+                if ( isset( $page_data[ 'id' ] ) )
+                    unset( $page_data[ 'id' ] );
+
                 $page = $api->load_page( array( 'name' => pods_var_raw( 'name', $page_data, pods_var_raw( 'uri', $page_data ), null, true ) ) );
 
                 if ( !empty( $page ) ) {
@@ -346,6 +354,9 @@ class Pods_Migrate_Packages extends PodsComponent {
 
         if ( isset( $data[ 'helpers' ] ) && is_array( $data[ 'helpers' ] ) ) {
             foreach ( $data[ 'helpers' ] as $helper_data ) {
+                if ( isset( $helper_data[ 'id' ] ) )
+                    unset( $helper_data[ 'id' ] );
+
                 $helper = $api->load_helper( array( 'name' => $helper_data[ 'name' ] ) );
 
                 if ( !empty( $helper ) ) {

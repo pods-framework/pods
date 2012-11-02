@@ -77,10 +77,12 @@
                     if ( is_array( $object_label ) ) {
                         foreach ( $object_label as $sub_object => $sub_object_label ) {
                             if ( $pick_object == $sub_object ) {
-                                $object = rtrim( $object, 's' );
+                                $ies = strlen( $object ) - 3;
 
-                                if ( false !== strpos( $object, 'ie' ) )
-                                    $object = substr( $object, 0, strlen( $object ) - 2 ) . 'y';
+                                if ( $ies === strpos( $object, 'ies' ) )
+                                    $object = substr( $object, 0, $ies ) . 'y';
+
+                                $object = rtrim( $object, 's' );
 
                                 $sub_object_label = preg_replace( '/(\s\([\w\d\s]*\))/', '', $sub_object_label );
                                 $pick_object_name = esc_html( $sub_object_label ) . ' <small>(' . esc_html( $object ) . ')</small>';

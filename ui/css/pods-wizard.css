@@ -192,6 +192,17 @@
 #pods-wizard-box #pods-wizard-main .stuffbox .inside {
   padding: 0;
 }
+#pods-wizard-box #pods-wizard-main .stuffbox .inside ul {
+    margin: 15px 0;
+    list-style: circle;
+}
+#pods-wizard-box #pods-wizard-main .stuffbox .inside ul li {
+    margin: 0 0 8px 30px;
+    padding-left: 4px;
+    line-height: 22px;
+    font-size: 14px;
+    list-style: circle;
+}
 #pods-wizard-box #pods-wizard-main .pods-wizard-panel {
   display: none;
   border-left: 1px solid #dfdfdf;

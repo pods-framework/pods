@@ -55,7 +55,22 @@ class Pods_Migrate_Packages extends PodsComponent {
     public function ajax_import ( $params ) {
         $data = $params->import_package;
 
-        var_dump( $this->import( $data ) );
+        $imported = $this->import( $data );
+
+        if ( !empty( $imported ) )
+            echo '<p>Import Complete! The following items were imported:</p>';
+
+        foreach ( $imported as $type => $import ) {
+            echo '<h4>' . ucwords( $type ) . '</h4>';
+
+            echo '<ul class="normal">';
+
+            foreach ( $import as $k => $what ) {
+                echo '<li>' . esc_html( $what ) . '</li>';
+            }
+
+            echo '</ul>';
+        }
     }
 
     /**

@@ -121,16 +121,6 @@ class Pods_Migrate_Packages extends PodsComponent {
                 if ( version_compare( $data[ 'meta' ][ 'version' ], '2.0.0', '<' ) ) {
                     $core_fields = array(
                         array(
-                            'name' => 'name',
-                            'label' => 'Name',
-                            'type' => 'text',
-                            'weight' => 0,
-                            'options' => array(
-                                'required' => 1,
-                                'text_max_length' => 128
-                            )
-                        ),
-                        array(
                             'name' => 'created',
                             'label' => 'Date Created',
                             'type' => 'datetime',

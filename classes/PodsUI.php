@@ -709,7 +709,7 @@ class PodsUI {
         $remaining_options = array_diff_assoc( $options, $deprecated_options );
 
         foreach ( $remaining_options as $option => $value ) {
-            if ( isset( $this->$option ) )
+            if ( isset( $deprecated_options[ $option ] ) && isset( $this->$option ) )
                 $options[ $option ] = $value;
         }
 

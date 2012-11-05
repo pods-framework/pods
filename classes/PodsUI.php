@@ -2029,6 +2029,7 @@ class PodsUI {
     }
 
     public function filters () {
+        wp_enqueue_script( 'thickbox' );
         wp_enqueue_style( 'pods-ui-list-table', PODS_URL . 'ui/css/pods-ui-list-table.css', array( 'thickbox' ), PODS_VERSION );
 
         $filters = $this->filters;

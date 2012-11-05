@@ -388,18 +388,16 @@ class Pods_Migrate_Packages extends PodsComponent {
                     $page = array();
 
                 // Backwards compatibility
-                if ( version_compare( $data[ 'meta' ][ 'version' ], '2.0.0', '<' ) ) {
-                    if ( isset( $page_data[ 'uri' ] ) ) {
-                        $page_data[ 'name' ] = $page_data[ 'uri' ];
+                if ( isset( $page_data[ 'uri' ] ) ) {
+                    $page_data[ 'name' ] = $page_data[ 'uri' ];
 
-                        unset( $page_data[ 'uri' ] );
-                    }
+                    unset( $page_data[ 'uri' ] );
+                }
 
-                    if ( isset( $page_data[ 'phpcode' ] ) ) {
-                        $page_data[ 'code' ] = $page_data[ 'phpcode' ];
+                if ( isset( $page_data[ 'phpcode' ] ) ) {
+                    $page_data[ 'code' ] = $page_data[ 'phpcode' ];
 
-                        unset( $page_data[ 'phpcode' ] );
-                    }
+                    unset( $page_data[ 'phpcode' ] );
                 }
 
                 $page = array_merge( $page, $page_data );
@@ -434,19 +432,17 @@ class Pods_Migrate_Packages extends PodsComponent {
                     $helper = array();
 
                 // Backwards compatibility
-                if ( version_compare( $data[ 'meta' ][ 'version' ], '2.0.0', '<' ) ) {
-                    if ( isset( $helper_data[ 'phpcode' ] ) ) {
-                        $helper_data[ 'code' ] = $helper_data[ 'phpcode' ];
+                if ( isset( $helper_data[ 'phpcode' ] ) ) {
+                    $helper_data[ 'code' ] = $helper_data[ 'phpcode' ];
 
-                        unset( $helper_data[ 'phpcode' ] );
-                    }
+                    unset( $helper_data[ 'phpcode' ] );
+                }
 
-                    if ( isset( $helper_data[ 'type' ] ) ) {
-                        if ( 'before' == $helper_data[ 'type' ] )
-                            $helper_data[ 'type' ] = 'pre_save';
-                        elseif ( 'after' == $helper_data[ 'type' ] )
-                            $helper_data[ 'type' ] = 'post_save';
-                    }
+                if ( isset( $helper_data[ 'type' ] ) ) {
+                    if ( 'before' == $helper_data[ 'type' ] )
+                        $helper_data[ 'type' ] = 'pre_save';
+                    elseif ( 'after' == $helper_data[ 'type' ] )
+                        $helper_data[ 'type' ] = 'post_save';
                 }
 
                 $helper = array_merge( $helper, $helper_data );

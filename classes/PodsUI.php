@@ -747,6 +747,7 @@ class PodsUI {
         $options->validate( 'search_across', $this->search_across, 'boolean' );
         $options->validate( 'search_across_picks', $this->search_across_picks, 'boolean' );
         $options->validate( 'filters', $this->filters, 'array' );
+        $options->validate( 'filters_enhanced', $this->filters_enhanced, 'boolean' );
         $options->validate( 'views', $this->views, 'array' );
         $options->validate( 'where', $this->where, 'array_merge' );
 

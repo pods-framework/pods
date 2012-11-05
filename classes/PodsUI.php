@@ -389,7 +389,7 @@ class PodsUI {
             $options = array();
 
             if ( isset( $object->ui ) ) {
-                $options = $object->ui;
+                $options = (array) $object->ui;
 
                 unset( $object->ui );
             }
@@ -454,6 +454,7 @@ class PodsUI {
      */
     public function setup_deprecated ( $deprecated_options ) {
         $options = array();
+
         if ( isset( $deprecated_options[ 'id' ] ) )
             $options[ 'id' ] = $deprecated_options[ 'id' ];
         if ( isset( $deprecated_options[ 'action' ] ) )
@@ -704,6 +705,13 @@ class PodsUI {
 
         if ( isset( $deprecated_options[ 'wpcss' ] ) )
             $options[ 'wpcss' ] = $deprecated_options[ 'wpcss' ];
+
+        $remaining_options = array_diff_assoc( $options, $deprecated_options );
+
+        foreach ( $remaining_options as $option => $value ) {
+            if ( isset( $this->$option ) )
+                $options[ $option ] = $value;
+        }
 
         return $options;
     }

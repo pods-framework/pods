@@ -770,7 +770,7 @@ class PodsData {
 
                         $fieldfield = '`' . $field . '`';
 
-                        if ( 'pick' == $attributes[ 'type' ] ) {
+                        if ( 'pick' == $attributes[ 'type' ] && 'custom-simple' != pods_var( 'pick_object', $attributes ) ) {
                             if ( false === $params->search_across_picks )
                                 continue;
                             else {

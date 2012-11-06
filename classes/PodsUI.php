@@ -1288,16 +1288,16 @@ class PodsUI {
             <?php
             echo ( $duplicate ? $this->header[ 'duplicate' ] : $this->header[ 'edit' ] );
 
-            if ( !in_array( 'add', $this->actions_disabled ) ) {
-                $link = pods_var_update( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), array( 'page' ), $this->exclusion() );
-                ?>
-                <a href="<?php echo $link; ?>" class="add-new-h2">&laquo; <?php _e( 'Back to', 'pods' ); ?> <?php echo $this->heading[ 'manage' ]; ?></a>
-                <?php
-            }
-            else {
+            if ( !in_array( 'add', $this->actions_disabled ) && !in_array( 'add', $this->actions_hidden ) ) {
                 $link = pods_var_update( array( 'action' . $this->num => 'add', 'id' . $this->num => '' ), array( 'page' ), $this->exclusion() );
                 ?>
                 <a href="<?php echo $link; ?>" class="add-new-h2"><?php echo $this->heading[ 'add' ]; ?></a>
+                <?php
+            }
+            elseif ( !in_array( 'manage', $this->actions_disabled ) && !in_array( 'manage', $this->actions_hidden ) ) {
+                $link = pods_var_update( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), array( 'page' ), $this->exclusion() );
+                ?>
+                <a href="<?php echo $link; ?>" class="add-new-h2">&laquo; <?php _e( 'Back to', 'pods' ); ?> <?php echo $this->heading[ 'manage' ]; ?></a>
                 <?php
             }
             ?>
@@ -1932,6 +1932,9 @@ class PodsUI {
 
                             <?php
                                 foreach ( $this->actions_bulk as $action => $action_data ) {
+                                    if ( in_array( $action, $this->actions_hidden ) || in_array( $action, $this->actions_hidden ) )
+                                        continue;
+
                                     if ( !isset( $action_data[ 'label' ] ) )
                                         $action_data[ 'label' ] = ucwords( str_replace( '_', ' ', $action ) );
                             ?>
@@ -2573,21 +2576,21 @@ class PodsUI {
                                         $toggle = false;
                                         $actions = array();
 
-                                        if ( !in_array( 'view', $this->actions_disabled ) )
+                                        if ( !in_array( 'view', $this->actions_disabled ) && !in_array( 'view', $this->actions_hidden ) )
                                             $actions[ 'view' ] = '<span class="view"><a href="' . pods_var_update( array( 'action' . $this->num => 'view', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), array( 'page' ), $this->exclusion() ) . '" title="' . __( 'View this item', 'pods' ) . '">' . __( 'View', 'pods' ) . '</a></span>';
 
-                                        if ( !in_array( 'edit', $this->actions_disabled ) )
+                                        if ( !in_array( 'edit', $this->actions_disabled ) && !in_array( 'edit', $this->actions_hidden ) )
                                             $actions[ 'edit' ] = '<span class="edit"><a href="' . pods_var_update( array( 'action' . $this->num => 'edit', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), array( 'page' ), $this->exclusion() ) . '" title="' . __( 'Edit this item', 'pods' ) . '">' . __( 'Edit', 'pods' ) . '</a></span>';
 
-                                        if ( !in_array( 'duplicate', $this->actions_disabled ) )
+                                        if ( !in_array( 'duplicate', $this->actions_disabled ) && !in_array( 'duplicate', $this->actions_hidden ) )
                                             $actions[ 'duplicate' ] = '<span class="edit"><a href="' . pods_var_update( array( 'action' . $this->num => 'duplicate', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), array( 'page' ), $this->exclusion() ) . '" title="' . __( 'Duplicate this item', 'pods' ) . '">' . __( 'Duplicate', 'pods' ) . '</a></span>';
 
-                                        if ( !in_array( 'delete', $this->actions_disabled ) )
+                                        if ( !in_array( 'delete', $this->actions_disabled ) && !in_array( 'delete', $this->actions_hidden ) )
                                             $actions[ 'delete' ] = '<span class="delete"><a href="' . pods_var_update( array( 'action' . $this->num => 'delete', 'id' . $this->num => $row[ $this->sql[ 'field_id' ] ] ), array( 'page' ), $this->exclusion() ) . '" title="' . __( 'Delete this item', 'pods' ) . '" class="submitdelete" onclick="if(confirm(\'' . __( 'You are about to permanently delete this item\n Choose \\\'Cancel\\\' to stop, \\\'OK\\\' to delete.', 'pods' ) . '\')){return true;}return false;">' . __( 'Delete', 'pods' ) . '</a></span>';
 
                                         if ( is_array( $this->actions_custom ) ) {
                                             foreach ( $this->actions_custom as $custom_action => $custom_data ) {
-                                                if ( is_array( $custom_data ) && ( isset( $custom_data[ 'link' ] ) || isset( $custom_data[ 'callback' ] ) ) ) {
+                                                if ( is_array( $custom_data ) && ( isset( $custom_data[ 'link' ] ) || isset( $custom_data[ 'callback' ] ) ) && !in_array( $custom_action, $this->actions_disabled ) && !in_array( $custom_action, $this->actions_hidden ) ) {
                                                     if ( !in_array( $custom_action, array( 'add', 'view', 'edit', 'duplicate', 'delete', 'save', 'export', 'reorder' ) ) ) {
                                                         if ( 'toggle' == $custom_action ) {
                                                             $toggle = true;
@@ -2616,7 +2619,7 @@ class PodsUI {
                                                             $custom_data[ 'link' ] = pods_var_update( $vars );
                                                         }
 
-                                                        $actions[ $custom_action ] = '<span class="edit"><a href="' . $this->do_template( $custom_data[ 'link' ], $row ) . '" title="' . esc_attr( $custom_data[ 'label' ] ) . ' this item">' . $custom_data[ 'label' ] . '</a></span>';
+                                                        $actions[ $custom_action ] = '<span class="edit action-' . $custom_action . '"><a href="' . $this->do_template( $custom_data[ 'link' ], $row ) . '" title="' . esc_attr( $custom_data[ 'label' ] ) . ' this item">' . $custom_data[ 'label' ] . '</a></span>';
                                                     }
                                                 }
                                             }

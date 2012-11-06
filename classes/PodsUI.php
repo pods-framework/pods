@@ -2229,7 +2229,7 @@ class PodsUI {
 
                     foreach ( $filters as $filter ) {
                 ?>
-                    <p<?php echo ( $zebra ? ' class="clear"' : '' ); ?>>
+                    <p class="pods-ui-posts-filter-toggled pods-ui-posts-filter-<?php echo $filter . ( $zebra ? ' clear' : '' ); ?>">
                         <?php
                             if ( in_array( $this->pod->fields[ $filter ][ 'type' ], array( 'date', 'datetime', 'time' ) ) ) {
                                 $start = pods_var_raw( 'filter_' . $filter . '_start', 'get', pods_var_raw( 'filter_default', $this->pod->fields[ $filter ], '', null, true ), null, true );
@@ -2241,15 +2241,15 @@ class PodsUI {
                                 if ( !empty( $end ) && !in_array( $end, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
                                     $end = PodsForm::field_method( $this->pod->fields[ $filter ][ 'type' ], 'convert_date', $end, 'n/j/Y' );
                         ?>
+                            <span class="pods-ui-posts-filter-toggle toggle-on<?php echo ( ( empty( $start ) && empty( $end ) ) ? '' : ' hidden' ); ?>">+</span>
+                            <span class="pods-ui-posts-filter-toggle toggle-off<?php echo ( ( empty( $start ) && empty( $end ) ) ? ' hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
+
                             <label for="pods-form-ui-filter-<?php echo $filter; ?>_start">
                                 <?php echo $this->pod->fields[ $filter ][ 'label' ]; ?>
-
-                                <span class="pods-ui-posts-filter-toggle toggle-on<?php echo ( ( empty( $start ) && empty( $end ) ) ? '' : ' hidden' ); ?>">+ <?php _e( 'Filter', 'pods' ); ?></span>
-                                <span class="pods-ui-posts-filter-toggle toggle-off<?php echo ( ( empty( $start ) && empty( $end ) ) ? ' hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
                             </label>
 
                             <span class="pods-ui-posts-filter<?php echo ( ( empty( $start ) && empty( $end ) ) ? ' hidden' : '' ); ?>">
-                                <?php echo PodsForm::field( 'filter_' . $filter. '_start', $start, $this->pod->fields[ $filter ][ 'type' ], $this->pod->fields[ $filter ] ); ?>
+                                <?php echo PodsForm::field( 'filter_' . $filter . '_start', $start, $this->pod->fields[ $filter ][ 'type' ], $this->pod->fields[ $filter ] ); ?>
 
                                 <label for="pods-form-ui-filter-<?php echo $filter; ?>_end">to</label>
                                 <?php echo PodsForm::field( 'filter_' . $filter . '_end', $end, $this->pod->fields[ $filter ][ 'type' ], $this->pod->fields[ $filter ] ); ?>
@@ -2259,11 +2259,11 @@ class PodsUI {
                             else {
                                 $value = pods_var_raw( 'filter_' . $filter, 'get', pods_var( 'filter_default', $this->pod->fields[ $filter ], '', null, true ), null, true );
                         ?>
+                            <span class="pods-ui-posts-filter-toggle toggle-on<?php echo ( empty( $value ) ? '' : ' hidden' ); ?>">+</span>
+                            <span class="pods-ui-posts-filter-toggle toggle-off<?php echo ( empty( $value ) ? ' hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
+
                             <label for="pods-form-ui-filter-<?php echo $filter; ?>">
                                 <?php echo $this->pod->fields[ $filter ][ 'label' ]; ?>
-
-                                <span class="pods-ui-posts-filter-toggle toggle-on<?php echo ( empty( $value ) ? '' : ' hidden' ); ?>">+ <?php _e( 'Filter', 'pods' ); ?></span>
-                                <span class="pods-ui-posts-filter-toggle toggle-off<?php echo ( empty( $value ) ? ' hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
                             </label>
 
                             <span class="pods-ui-posts-filter<?php echo ( empty( $value ) ? ' hidden' : '' ); ?>">
@@ -2278,32 +2278,42 @@ class PodsUI {
                     }
                 ?>
 
-                <p<?php echo ( $zebra ? ' class="clear"' : '' ); ?>>
+                <p class="pods-ui-posts-filter-toggled pods-ui-posts-filter-search<?php echo ( $zebra ? ' clear' : '' ); ?>">
                     <label for="pods-form-ui-search<?php echo $this->num; ?>"><?php _e( 'Search Text', 'pods' ); ?></label>
                     <?php echo PodsForm::field( 'search' . $this->num, pods_var_raw( 'search' . $this->num, 'get' ), 'text' ); ?>
                 </p>
+
+                <?php $zebra = empty( $zebra ); ?>
             </div>
 
-            <p class="submit"><input type="submit" value="<?php echo esc_attr( $this->header[ 'search' ] ); ?>" class="button button-primary" /></p>
+            <p class="submit<?php echo ( $zebra ? ' clear' : '' ); ?>"><input type="submit" value="<?php echo esc_attr( $this->header[ 'search' ] ); ?>" class="button button-primary" /></p>
         </form>
     </div>
 
     <script type="text/javascript">
         jQuery( function () {
             jQuery( document ).on( 'click', '.pods-ui-posts-filter-toggle.toggle-on', function ( e ) {
-                jQuery( this ).parent().parent().find( 'span.pods-ui-posts-filter' ).slideDown( 'fast' );
+                jQuery( this ).parent().find( '.pods-ui-posts-filter' ).removeClass( 'hidden' );
 
                 jQuery( this ).hide();
                 jQuery( this ).parent().find( '.toggle-off' ).show();
             } );
 
             jQuery( document ).on( 'click', '.pods-ui-posts-filter-toggle.toggle-off', function ( e ) {
-                jQuery( this ).parent().parent().find( 'span.pods-ui-posts-filter' ).slideUp( 'fast', function () {
-                    jQuery( this ).find( 'select, input' ).val( '' );
-                } );
+                jQuery( this ).parent().find( '.pods-ui-posts-filter' ).addClass( 'hidden' );
+                jQuery( this ).parent().find( 'select, input' ).val( '' );
 
                 jQuery( this ).hide();
                 jQuery( this ).parent().find( '.toggle-on' ).show();
+            } );
+
+            jQuery( document ).on( 'click', '.pods-ui-posts-filter-toggled label', function ( e ) {
+                if ( jQuery( this ).parent().find( '.pods-ui-posts-filter' ).hasClass( 'hidden' ) ) {
+                    jQuery( this ).parent().find( '.pods-ui-posts-filter' ).removeClass( 'hidden' );
+
+                    jQuery( this ).parent().find( '.toggle-on' ).hide();
+                    jQuery( this ).parent().find( '.toggle-off' ).show();
+                }
             } );
         } );
     </script>

@@ -462,7 +462,7 @@ class Pods_Pages extends PodsComponent {
             $_object = get_object_vars( $result[ 0 ] );
 
             $object = array(
-                'ID' => $_object[ 'ID' ],
+                'id' => $_object[ 'ID' ],
                 'uri' => $_object[ 'post_title' ],
                 'code' => $_object[ 'post_content' ],
                 'phpcode' => $_object[ 'post_content' ], // phpcode is deprecated
@@ -827,7 +827,7 @@ class Pods_Pages extends PodsComponent {
  * @since 1.7.5
  */
 function is_pod_page ( $uri = null ) {
-    if ( false !== Pods_Pages::$exists && ( null === $uri || $uri == Pods_Pages::$exists[ 'uri' ] ) )
+    if ( false !== Pods_Pages::$exists && ( null === $uri || $uri == Pods_Pages::$exists[ 'uri' ] || $uri == Pods_Pages::$exists[ 'id' ] ) )
         return true;
 
     return false;

@@ -73,6 +73,8 @@ class Pods_Helpers extends PodsComponent {
             add_action( 'pods_meta_save_pre_post__pods_helper', array( $this, 'fix_filters' ), 10, 5 );
             add_action( 'pods_meta_save_post__pods_helper', array( $this, 'clear_cache' ), 10, 5 );
             add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
+            add_filter( 'post_row_actions', array( $this, 'remove_row_actions' ), 10, 2 );
+            add_filter( 'bulk_actions-edit-' . $this->object_type, array( $this, 'remove_bulk_actions' ) );
         }
     }
 
@@ -146,6 +148,45 @@ class Pods_Helpers extends PodsComponent {
      */
     public function fix_filters( $data, $pod = null, $id = null, $groups = null, $post = null ) {
         remove_filter( 'content_save_pre', 'balanceTags', 50 );
+    }
+
+    /**
+     * Remove unused row actions
+     *
+     * @since 2.0.5
+     */
+    function remove_row_actions ( $actions, $post ) {
+        global $current_screen;
+
+        if ( $this->object_type != $current_screen->post_type )
+            return $actions;
+
+        if ( isset( $actions[ 'edit' ] ) )
+            unset( $actions[ 'edit' ] );
+
+        if ( isset( $actions[ 'view' ] ) )
+            unset( $actions[ 'view' ] );
+
+        if ( isset( $actions[ 'inline hide-if-no-js' ] ) )
+            unset( $actions[ 'inline hide-if-no-js' ] );
+
+        // W3 Total Cache
+        if ( isset( $actions[ 'pgcache_purge' ] ) )
+            unset( $actions[ 'pgcache_purge' ] );
+
+        return $actions;
+    }
+
+    /**
+     * Remove unused bulk actions
+     *
+     * @since 2.0.5
+     */
+    public function remove_bulk_actions ( $actions ) {
+        if ( isset( $actions[ 'edit' ] ) )
+            unset( $actions[ 'edit' ] );
+
+        return $actions;
     }
 
     /**

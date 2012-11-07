@@ -262,6 +262,11 @@
     max-width: 100%;
 }
 
+.pods-ui-posts-filter-popup p input,
+.pods-ui-posts-filter-popup p textarea {
+    width: 100%;
+}
+
 .pods-ui-posts-filter-popup p.pods-ui-posts-filter-search {
     padding-bottom: 0;
     border-bottom: none;

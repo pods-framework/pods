@@ -2258,8 +2258,11 @@ class PodsUI {
                             }
                             elseif ( 'pick' == $this->pod->fields[ $filter ][ 'type' ] ) {
                                 $value = pods_var_raw( 'filter_' . $filter, 'get', pods_var( 'filter_default', $this->pod->fields[ $filter ], '', null, true ), null, true );
+
                                 $this->pod->fields[ $filter ][ 'options' ][ 'pick_format_type' ] = 'single';
                                 $this->pod->fields[ $filter ][ 'options' ][ 'pick_format_single' ] = 'dropdown';
+
+                                $options = array_merge( $this->pod->fields[ $filter ], $this->pod->fields[ $filter ][ 'options' ] );
                         ?>
                             <span class="pods-ui-posts-filter-toggle toggle-on<?php echo ( empty( $value ) ? '' : ' hidden' ); ?>">+</span>
                             <span class="pods-ui-posts-filter-toggle toggle-off<?php echo ( empty( $value ) ? ' hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
@@ -2269,7 +2272,7 @@ class PodsUI {
                             </label>
 
                             <span class="pods-ui-posts-filter<?php echo ( empty( $value ) ? ' hidden' : '' ); ?>">
-                                <?php echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $this->pod->fields[ $filter ][ 'options' ] ); ?>
+                                <?php echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $options_); ?>
                             </span>
                         <?php
                             }

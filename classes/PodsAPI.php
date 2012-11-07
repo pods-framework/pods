@@ -4699,6 +4699,8 @@ class PodsAPI {
 
                     $info[ 'where' ][ 'wpml_language_code' ] = "`wpml_languages`.`code` IS NOT NULL";
                 }
+
+                $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type );
             }
             elseif ( 0 === strpos( $object_type, 'taxonomy' ) ) {
                 $info[ 'table' ] = $wpdb->terms;
@@ -4738,6 +4740,8 @@ class PodsAPI {
 
                     $info[ 'where' ][ 'wpml_language_code' ] = "`wpml_languages`.`code` IS NOT NULL";
                 }
+
+                $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type );
             }
             elseif ( 'user' == $object_type ) {
                 $info[ 'table' ] = $wpdb->users;
@@ -4748,6 +4752,8 @@ class PodsAPI {
                 $info[ 'where' ] = array(
                     'user_status' => '`t`.`user_status` = 0'
                 );
+
+                $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type );
             }
             elseif ( 'comment' == $object_type ) {
                 $info[ 'table' ] = $wpdb->comments;
@@ -4762,6 +4768,8 @@ class PodsAPI {
                 );
 
                 $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '` DESC, `t`.`' . $info[ 'field_id' ] . '`';
+
+                $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type );
             }
             elseif ( 'table' == $object_type )
                 $info[ 'table' ] = ( empty( $object ) ? $name : $object );

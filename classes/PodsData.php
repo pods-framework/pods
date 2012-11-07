@@ -1379,7 +1379,7 @@ class PodsData {
                     $post_type = $this->pod_data[ 'object' ];
 
                     if ( empty( $post_type ) )
-                        $post_type = $this->pod_data[ 'object' ];
+                        $post_type = $this->pod_data[ 'name' ];
 
                     $args = array(
                         'post_type' => $post_type,

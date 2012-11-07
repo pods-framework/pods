@@ -2256,6 +2256,23 @@ class PodsUI {
                             </span>
                         <?php
                             }
+                            elseif ( 'pick' == $this->pod->fields[ $filter ][ 'type' ] ) {
+                                $value = pods_var_raw( 'filter_' . $filter, 'get', pods_var( 'filter_default', $this->pod->fields[ $filter ], '', null, true ), null, true );
+                                $this->pod->fields[ $filter ][ 'options' ][ 'pick_format_type' ] = 'single';
+                                $this->pod->fields[ $filter ][ 'options' ][ 'pick_format_single' ] = 'dropdown';
+                        ?>
+                            <span class="pods-ui-posts-filter-toggle toggle-on<?php echo ( empty( $value ) ? '' : ' hidden' ); ?>">+</span>
+                            <span class="pods-ui-posts-filter-toggle toggle-off<?php echo ( empty( $value ) ? ' hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
+
+                            <label for="pods-form-ui-filter-<?php echo $filter; ?>">
+                                <?php echo $this->pod->fields[ $filter ][ 'label' ]; ?>
+                            </label>
+
+                            <span class="pods-ui-posts-filter<?php echo ( empty( $value ) ? ' hidden' : '' ); ?>">
+                                <?php echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $this->pod->fields[ $filter ][ 'options' ] ); ?>
+                            </span>
+                        <?php
+                            }
                             else {
                                 $value = pods_var_raw( 'filter_' . $filter, 'get', pods_var( 'filter_default', $this->pod->fields[ $filter ], '', null, true ), null, true );
                         ?>
@@ -2313,6 +2330,13 @@ class PodsUI {
 
                     jQuery( this ).parent().find( '.toggle-on' ).hide();
                     jQuery( this ).parent().find( '.toggle-off' ).show();
+                }
+                else {
+                    jQuery( this ).parent().find( '.pods-ui-posts-filter' ).addClass( 'hidden' );
+                    jQuery( this ).parent().find( 'select, input' ).val( '' );
+
+                    jQuery( this ).parent().find( '.toggle-on' ).show();
+                    jQuery( this ).parent().find( '.toggle-off' ).hide();
                 }
             } );
         } );

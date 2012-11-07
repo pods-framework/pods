@@ -247,9 +247,13 @@
 .pods-ui-posts-filter-popup p {
     display: block;
     float: left;
-    width: 45%;
-    margin: 7px 5% 20px 0;
+    width: 47%;
+    margin: 7px 0 20px 5%;
     border-bottom: 1px solid #BABABA;
+}
+
+.pods-ui-posts-filter-popup p.clear {
+    margin-left: 0;
 }
 
 .pods-ui-posts-filter-popup p input,

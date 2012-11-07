@@ -2113,6 +2113,12 @@ class PodsAPI {
         if ( isset( $params->bypass_helpers ) && false !== $params->bypass_helpers )
             $bypass_helpers = true;
 
+        // Allow Custom Fields not defined by Pods to be saved
+        $custom = false;
+
+        if ( isset( $params->custom ) && false !== $params->custom )
+            $custom = true;
+
         // Get array of Pods
         $pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod ) );
 
@@ -2127,9 +2133,12 @@ class PodsAPI {
         $object_fields = (array) pods_var_raw( 'object_fields', $pod, array(), null, true );
 
         $fields_active = array();
+        $custom_data = array();
 
         // Find the active fields (loop through $params->data to retain order)
         if ( !empty( $params->data ) && is_array( $params->data ) ) {
+            $custom_fields = array();
+
             foreach ( $params->data as $field => $value ) {
                 if ( isset( $object_fields[ $field ] ) ) {
                     $object_fields[ $field ][ 'value' ] = $value;
@@ -2142,12 +2151,24 @@ class PodsAPI {
                     }
                 }
                 else {
+                    $found = false;
+
                     foreach ( $object_fields as $object_field => $object_field_opt ) {
                         if ( in_array( $field, $object_field_opt[ 'alias' ] ) ) {
                             $object_fields[ $object_field ][ 'value' ] = $value;
                             $fields_active[] = $object_field;
+                            $found = true;
                         }
                     }
+
+                    if ( $custom && !$found )
+                        $custom_fields[] = $field;
+                }
+            }
+
+            if ( $custom && !empty( $custom_fields ) ) {
+                foreach ( $custom_fields as $field ) {
+                    $custom_data[ $field ] = $params->data[ $field ];
                 }
             }
 
@@ -2361,6 +2382,9 @@ class PodsAPI {
         }
 
         if ( 'meta' == $pod[ 'storage' ] && !in_array( $pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) ) {
+            if ( $custom && !empty( $custom_data ) )
+                $object_meta = array_merge( $custom_data, $object_meta );
+
             $params->id = $this->save_wp_object( $object_type, $object_data, $object_meta, false, true );
         }
         else {

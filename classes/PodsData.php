@@ -1492,6 +1492,8 @@ class PodsData {
                 pods_cache_set( $id, $this->row, 0, 'pods_items_' . $this->pod );
         }
 
+        $this->row = $this->do_hook( 'fetch', $this->row, $id, $this->row_number );
+
         return $this->row;
     }
 

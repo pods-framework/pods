@@ -2272,7 +2272,7 @@ class PodsUI {
                             </label>
 
                             <span class="pods-ui-posts-filter<?php echo ( empty( $value ) ? ' hidden' : '' ); ?>">
-                                <?php echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $options_); ?>
+                                <?php echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $options ); ?>
                             </span>
                         <?php
                             }

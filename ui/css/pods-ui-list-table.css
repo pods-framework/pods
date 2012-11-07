@@ -262,7 +262,7 @@
     max-width: 100%;
 }
 
-.pods-ui-posts-filter-popup p input,
+.pods-ui-posts-filter-popup p input[type="text"],
 .pods-ui-posts-filter-popup p textarea {
     width: 100%;
 }

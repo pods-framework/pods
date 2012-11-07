@@ -726,14 +726,14 @@ class PodsForm {
         $default_value = trim( $default, ' {@}' );
 
         if ( $default != $default_value ) {
-            $value = $default;
+            $value = $default_value;
 
-            $default = explode( '.', $default );
+            $default_value = explode( '.', $default_value );
 
-            if ( 1 == count( $default ) )
-                $value = pods_var_raw( $default[ 0 ], 'get', '', null, true );
-            elseif ( 2 == count( $default ) )
-                $value = pods_var_raw( $default[ 1 ], $default[ 0 ], '', null, true );
+            if ( 1 == count( $default_value ) )
+                $value = pods_var_raw( $default_value[ 0 ], 'get', '', null, true );
+            elseif ( 2 == count( $default_value ) )
+                $value = pods_var_raw( $default_value[ 1 ], $default_value[ 0 ], '', null, true );
         }
         elseif ( $default != $value )
             $value = $default;

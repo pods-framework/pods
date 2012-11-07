@@ -272,7 +272,7 @@ class PodsField_Pick extends PodsField {
 
         $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $name, $value, $options, $pod, $id );
 
-        if ( 'custom-simple' == pods_var( 'pick_object', $options ) && 0 < strlen( $custom ) ) {
+        if ( 'custom-simple' == pods_var( 'pick_object', $options ) && !empty( $custom ) ) {
             if ( !is_array( $custom ) )
                 $custom = explode( "\n", $custom );
 
@@ -448,7 +448,7 @@ class PodsField_Pick extends PodsField {
 
             $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, pods_var( 'name', $options ), $value, $options, null, null );
 
-            if ( 0 < strlen( $custom ) ) {
+            if ( !empty( $custom ) ) {
                 if ( !is_array( $custom ) )
                     $custom = explode( "\n", $custom );
 

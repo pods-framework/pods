@@ -1708,19 +1708,20 @@ function pods_array ( $container ) {
 }
 
 /**
- * Load a view
+ * Include a file that's child/parent theme-aware, and can be cached into object cache or transients
  *
  * @see PodsView::view
  *
- * @param string $view Path of the view file
- * @param array|null $data (optional) Data to pass on to the template
+ * @param string $view Path of the file to be included, this is relative to the current theme
+ * @param array|null $data (optional) Data to pass on to the template, using variable => value format
  * @param int|bool $expires (optional) Time in seconds for the cache to expire, if false caching is disabled.
- * @param string $cache_mode (optional) Decides the caching method to use for the view.
- * @param bool $return (optional) If true doesn not echo the result of the view, the function returns it
+ * @param string $cache_mode (optional) Specify the caching method to use for the view, available options include cache, transient, or site-transient
+ * @param bool $return (optional) Whether to return the view or not, defaults to false and will echo it
  *
- * @return bool|mixed|null|string|void
+ * @return string|bool The view output
  *
  * @since 2.0.0
+ * @link http://podsframework.org/docs/pods-view/
  */
 function pods_view ( $view, $data = null, $expires = false, $cache_mode = 'cache', $return = false ) {
     require_once( PODS_DIR . 'classes/PodsView.php' );

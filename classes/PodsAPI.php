@@ -2286,6 +2286,9 @@ class PodsAPI {
                     $value = (array) $value;
 
                     $custom = pods_var_raw( 'pick_custom', $options, '' );
+
+                    $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $field_data[ 'name' ], $value, array_merge( $options, $field_data ), $pod, $params->id );
+
                     $pick_limit = (int) pods_var_raw( 'pick_limit', $options, 0 );
 
                     if ( empty( $value ) || empty( $custom ) )
@@ -4768,8 +4771,6 @@ class PodsAPI {
                 );
 
                 $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '` DESC, `t`.`' . $info[ 'field_id' ] . '`';
-
-                $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type );
             }
             elseif ( 'table' == $object_type )
                 $info[ 'table' ] = ( empty( $object ) ? $name : $object );

@@ -199,6 +199,8 @@ class PodsField_Pick extends PodsField {
 
         $custom = pods_var_raw( 'pick_custom', $options, false );
 
+        $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $name, $value, $options, $pod, $id );
+
         $ajax = false;
 
         if ( ( 'custom-simple' != pods_var( 'pick_object', $options ) || empty( $custom ) ) && '' != pods_var( 'pick_object', $options, '', null, true ) ) {
@@ -267,6 +269,8 @@ class PodsField_Pick extends PodsField {
         $data = array();
 
         $custom = trim( pods_var_raw( 'pick_custom', $options, '' ) );
+
+        $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $name, $value, $options, $pod, $id );
 
         if ( 'custom-simple' == pods_var( 'pick_object', $options ) && 0 < strlen( $custom ) ) {
             if ( !is_array( $custom ) )
@@ -433,6 +437,7 @@ class PodsField_Pick extends PodsField {
     public function simple_value ( $value, $options, $raw = false ) {
         if ( isset( $options[ 'options' ] ) ) {
             $options = array_merge( $options[ 'options' ], $options );
+
             unset( $options[ 'options' ] );
         }
 
@@ -440,6 +445,8 @@ class PodsField_Pick extends PodsField {
             $simple_data = array();
 
             $custom = trim( pods_var_raw( 'pick_custom', $options, '' ) );
+
+            $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, pods_var( 'name', $options ), $value, $options, null, null );
 
             if ( 0 < strlen( $custom ) ) {
                 if ( !is_array( $custom ) )

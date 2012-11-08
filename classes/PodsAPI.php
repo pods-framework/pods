@@ -4489,9 +4489,11 @@ class PodsAPI {
 
                 $check = false;
 
+                $check_value = pods_sanitize( $value );
+
                 // Trigger an error if not unique
                 if ( 'table' == $pod[ 'storage' ] )
-                    $check = pods_query( "SELECT `id` FROM `@wp_pods_{$params->pod}` WHERE `{$field}` = '{$value}' {$exclude} LIMIT 1", $this );
+                    $check = pods_query( "SELECT `id` FROM `@wp_pods_{$params->pod}` WHERE `{$field}` = '{$check_value}' {$exclude} LIMIT 1", $this );
 
                 if ( !empty( $check ) )
                     return pods_error( sprintf( __( '%s needs to be unique', 'pods' ), $label ), $this );

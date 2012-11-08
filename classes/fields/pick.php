@@ -271,6 +271,9 @@ class PodsField_Pick extends PodsField {
         if ( 'single' != pods_var( 'pick_format_type', $options ) || 'dropdown' != pods_var( 'pick_format_single', $options ) )
             $data = array();
 
+        if ( isset( $options[ 'data' ] ) && !empty( $options[ 'data' ] ) )
+            $data = (array) $options[ 'data' ];
+
         $custom = trim( pods_var_raw( 'pick_custom', $options, '' ) );
 
         $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $name, $value, $options, $pod, $id );
@@ -400,9 +403,6 @@ class PodsField_Pick extends PodsField {
                 }
             }
         }
-
-        if ( isset( $options[ 'data' ] ) && !empty( $options[ 'data' ] ) )
-            $data = $options[ 'data' ];
 
         $data = apply_filters( 'pods_field_pick_data', $data, $name, $value, $options, $pod, $id );
 

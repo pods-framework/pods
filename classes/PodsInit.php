@@ -643,7 +643,7 @@ class PodsInit {
     public function activate() {
         global $wpdb;
         if ( function_exists( 'is_multisite' ) && is_multisite() && isset( $_GET[ 'networkwide' ] ) && 1 == $_GET[ 'networkwide' ] ) {
-            $_blog_ids = $wpdb->get_col( $wpdb->prepare( "SELECT `blog_id` FROM {$wpdb->blogs}" ) );
+            $_blog_ids = $wpdb->get_col( "SELECT `blog_id` FROM `{$wpdb->blogs}`" );
 
             foreach ( $_blog_ids as $_blog_id ) {
                 $this->setup( $_blog_id );

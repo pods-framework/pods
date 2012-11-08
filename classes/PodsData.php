@@ -1344,6 +1344,8 @@ class PodsData {
     public function fetch ( $row = null ) {
         global $wpdb;
 
+        $id = $row;
+
         if ( null === $row ) {
             $this->row_number++;
 

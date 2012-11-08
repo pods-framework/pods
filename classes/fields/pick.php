@@ -264,7 +264,6 @@ class PodsField_Pick extends PodsField {
      *
      * @since 2.0.0
      */
-
     public function data ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array( '' => pods_var_raw( 'pick_select_text', $options, __( '-- Select One --', 'pods' ), null, true ) );
 

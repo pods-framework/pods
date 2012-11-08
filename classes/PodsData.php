@@ -840,7 +840,7 @@ class PodsData {
 
                 $filterfield = '`' . $field . '`';
 
-                if ( 'pick' == $attributes[ 'type' ] ) {
+                if ( 'pick' == $attributes[ 'type' ] && 'custom-simple' != pods_var( 'pick_object', $attributes ) ) {
                     if ( !isset( $attributes[ 'table_info' ] ) || empty( $attributes[ 'table_info' ] ) )
                         $attributes[ 'table_info' ] = $this->api->get_table_info( pods_var( 'pick_object', $attributes ), pods_var( 'pick_val', $attributes ) );
 
@@ -860,18 +860,41 @@ class PodsData {
                 if ( isset( $attributes[ 'real_name' ] ) && false !== $attributes[ 'real_name' ] && !empty( $attributes[ 'real_name' ] ) )
                     $filterfield = $attributes[ 'real_name' ];
 
-                if ( in_array( $attributes[ 'type' ], array( 'date', 'datetime' ) ) ) {
-                    $start = date( 'Y-m-d' ) . ( 'datetime' == $attributes[ 'type' ] ) ? ' 00:00:00' : '';
-                    $end = date( 'Y-m-d' ) . ( 'datetime' == $attributes[ 'type' ] ) ? ' 23:59:59' : '';
+                if ( 'pick' == $attributes[ 'type' ] ) {
+                    if ( 'custom-simple' == pods_var( 'pick_object', $attributes ) ) {
+                        if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] ) {
+                            $having[] = "( {$filterfield} = '" . pods_sanitize( pods_var( 'filter_' . $field, 'get', false ) ) . "'"
+                                        . " OR {$filterfield} LIKE '%\"" . pods_sanitize( pods_var( 'filter_' . $field, 'get', false ) ) . "\"%' )";
+                        }
+                        else {
+                            $where[] = "( {$filterfield} = '" . pods_sanitize( pods_var( 'filter_' . $field, 'get', false ) ) . "'"
+                                        . " OR {$filterfield} LIKE '%\"" . pods_sanitize( pods_var( 'filter_' . $field, 'get', false ) ) . "\"%' )";
+                        }
+                    }
+                    else {
+                        if ( empty( $attributes[ 'table_info' ][ 'field_id' ] ) )
+                            continue;
+
+                        $filterfield = '`' . $field . '`.`' . $attributes[ 'table_info' ][ 'field_id' ] . '`';
+
+                        if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] )
+                            $having[] = "{$filterfield} = " . (int) pods_var( 'filter_' . $field, 'get', false );
+                        else
+                            $where[] = "{$filterfield} = " . (int) pods_var( 'filter_' . $field, 'get', false );
+                    }
+                }
+                elseif ( in_array( $attributes[ 'type' ], array( 'date', 'datetime' ) ) ) {
+                    $start = date_i18n( 'Y-m-d' ) . ( 'datetime' == $attributes[ 'type' ] ) ? ' 00:00:00' : '';
+                    $end = date_i18n( 'Y-m-d' ) . ( 'datetime' == $attributes[ 'type' ] ) ? ' 23:59:59' : '';
 
                     if ( strlen( pods_var( 'filter_' . $field . '_start', 'get', false ) ) < 1 && strlen( pods_var( 'filter_' . $field . '_end', 'get', false ) ) < 1 )
                         continue;
 
                     if ( 0 < strlen( pods_var( 'filter_' . $field . '_start', 'get', false ) ) )
-                        $start = date( 'Y-m-d', strtotime( pods_var( 'filter_' . $field . '_start', 'get', false ) ) ) . ( 'datetime' == $attributes[ 'type' ] ? ' 00:00:00' : '' );
+                        $start = date_i18n( 'Y-m-d', strtotime( pods_var( 'filter_' . $field . '_start', 'get', false ) ) ) . ( 'datetime' == $attributes[ 'type' ] ? ' 00:00:00' : '' );
 
                     if ( 0 < strlen( pods_var( 'filter_' . $field . '_end', 'get', false ) ) )
-                        $end = date( 'Y-m-d', strtotime( pods_var( 'filter_' . $field . '_end', 'get', false ) ) ) . ( 'datetime' == $attributes[ 'type' ] ? ' 23:59:59' : '' );
+                        $end = date_i18n( 'Y-m-d', strtotime( pods_var( 'filter_' . $field . '_end', 'get', false ) ) ) . ( 'datetime' == $attributes[ 'type' ] ? ' 23:59:59' : '' );
 
                     if ( true === $attributes[ 'date_ongoing' ] ) {
                         $date_ongoing = '`' . $attributes[ 'date_ongoing' ] . '`';

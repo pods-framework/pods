@@ -1771,7 +1771,7 @@ class PodsAPI {
                     ON p.post_type = '_pods_field' AND p.ID = pm.post_id
                 WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_id' AND pm.meta_value = %d", $params->id ) );
 
-            pods_query( "DELETE FROM @wp_podsrel WHERE `field_id` = {$params->id}" );
+            pods_query( "DELETE FROM @wp_podsrel WHERE `field_id` = {$params->id}", false );
 
             delete_post_meta( $old_sister_id, 'sister_id' );
 
@@ -2451,7 +2451,7 @@ class PodsAPI {
                                 AND `related_field_id` = {$field_id}
                                 AND `related_item_id` = {$params->id}
                             )
-                        ", $this );
+                        ", false );
 
                     // Convert values from a comma-separated string into an array
                     if ( !is_array( $values ) )
@@ -2545,21 +2545,26 @@ class PodsAPI {
 
                         // Delete existing sister relationships
                         if ( !empty( $related_field_id ) && !empty( $related_pod_id ) && in_array( $related_field_id, $rel_field_ids ) ) {
-                            pods_query( "
-                                    DELETE FROM `@wp_podsrel`
-                                    WHERE
-                                        `pod_id` = %d
-                                        AND `field_id` = %d
-                                        AND `related_pod_id` = %d
-                                        AND `related_field_id` = %d
-                                        AND `related_item_id` = %d
-                                ", array(
-                                    $related_pod_id,
-                                    $related_field_id,
-                                    $params->pod_id,
-                                    $field_id,
-                                    $params->id
-                                )
+                            pods_query(
+                                array(
+                                    "
+                                        DELETE FROM `@wp_podsrel`
+                                        WHERE
+                                            `pod_id` = %d
+                                            AND `field_id` = %d
+                                            AND `related_pod_id` = %d
+                                            AND `related_field_id` = %d
+                                            AND `related_item_id` = %d
+                                    ",
+                                    array(
+                                        $related_pod_id,
+                                        $related_field_id,
+                                        $params->pod_id,
+                                        $field_id,
+                                        $params->id
+                                    )
+                                ),
+                                false
                             );
                         }
 
@@ -2912,7 +2917,7 @@ class PodsAPI {
             pods_query( "TRUNCATE `@wp_pods_{$params->name}`" );
         }
 
-        pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}" );
+        pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}", false );
 
         pods_cache_clear( true ); // only way to reliably clear out cached data across an entire group
 
@@ -2995,7 +3000,7 @@ class PodsAPI {
                     AND `pm`.`meta_key` = 'pick_val' AND `pm`.`meta_value` = '{$params->name}'" );
         }
 
-        pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}" );
+        pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}", false );
 
         $this->cache_flush_pods( $pod );
 
@@ -3082,7 +3087,7 @@ class PodsAPI {
             WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_id' AND pm.meta_value = %d", $params->id ) );
 
         if ( $table_operation )
-            pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `field_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_field_id` = {$params->id})" );
+            pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `field_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_field_id` = {$params->id})", false );
 
         if ( true === $save_pod )
             $this->cache_flush_pods( $pod );
@@ -3301,7 +3306,7 @@ class PodsAPI {
         elseif ( $wp && !in_array( $pod[ 'type' ], array( 'pod', 'table', '', 'taxonomy' ) ) )
             $this->delete_wp_object( $pod[ 'type' ], $params->id );
 
-        pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `item_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_item_id` = {$params->id})" );
+        pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `item_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_item_id` = {$params->id})", false );
 
         if ( false === $bypass_helpers ) {
             // Plugin hook

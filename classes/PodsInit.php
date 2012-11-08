@@ -823,7 +823,7 @@ class PodsInit {
                 ON p.`post_type` = '_pods_field' AND ( p.ID = rel.`field_id` OR p.ID = rel.`related_field_id` )
             LEFT JOIN {$wpdb->postmeta} AS pm
                 ON pm.`post_id` = p.`ID` AND pm.`meta_key` = 'type' AND pm.`meta_value` = 'file'
-            WHERE p.`ID` IS NOT NULL AND pm.`meta_id` IS NOT NULL AND rel.`item_id` = " . (int) $_ID );
+            WHERE p.`ID` IS NOT NULL AND pm.`meta_id` IS NOT NULL AND rel.`item_id` = " . (int) $_ID, false );
     }
 
     /**

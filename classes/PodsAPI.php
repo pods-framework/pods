@@ -2114,10 +2114,10 @@ class PodsAPI {
             $bypass_helpers = true;
 
         // Allow Custom Fields not defined by Pods to be saved
-        $custom = false;
+        $allow_custom_fields = false;
 
-        if ( isset( $params->custom ) && false !== $params->custom )
-            $custom = true;
+        if ( isset( $params->allow_custom_fields ) && false !== $params->allow_custom_fields )
+            $allow_custom_fields = true;
 
         // Get array of Pods
         $pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod ) );
@@ -2157,16 +2157,19 @@ class PodsAPI {
                         if ( in_array( $field, $object_field_opt[ 'alias' ] ) ) {
                             $object_fields[ $object_field ][ 'value' ] = $value;
                             $fields_active[] = $object_field;
+
                             $found = true;
+
+                            break;
                         }
                     }
 
-                    if ( $custom && !$found )
+                    if ( $allow_custom_fields && !$found )
                         $custom_fields[] = $field;
                 }
             }
 
-            if ( $custom && !empty( $custom_fields ) ) {
+            if ( $allow_custom_fields && !empty( $custom_fields ) ) {
                 foreach ( $custom_fields as $field ) {
                     $custom_data[ $field ] = $params->data[ $field ];
                 }
@@ -2315,21 +2318,25 @@ class PodsAPI {
                     if ( empty( $value ) || empty( $custom ) )
                         $value = '';
                     elseif ( !empty( $custom ) ) {
-                        if ( !is_array( $custom ) )
+
+                        if ( !is_array( $custom ) ) {
                             $custom = explode( "\n", $custom );
 
-                        $custom_values = array();
+                            $custom_values = array();
 
-                        foreach ( $custom as $c => $cv ) {
-                            if ( 0 < strlen( $cv ) ) {
-                                $custom_label = explode( '|', $cv );
+                            foreach ( $custom as $c => $cv ) {
+                                if ( 0 < strlen( $cv ) ) {
+                                    $custom_label = explode( '|', $cv );
 
-                                if ( !isset( $custom_label[ 1 ] ) )
-                                    $custom_label[ 1 ] = $custom_label[ 0 ];
+                                    if ( !isset( $custom_label[ 1 ] ) )
+                                        $custom_label[ 1 ] = $custom_label[ 0 ];
 
-                                $custom_values[ $custom_label[ 0 ] ] = $custom_label[ 1 ];
+                                    $custom_values[ $custom_label[ 0 ] ] = $custom_label[ 1 ];
+                                }
                             }
                         }
+                        else
+                            $custom_values = $custom;
 
                         $values = array();
 
@@ -2382,7 +2389,7 @@ class PodsAPI {
         }
 
         if ( 'meta' == $pod[ 'storage' ] && !in_array( $pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) ) {
-            if ( $custom && !empty( $custom_data ) )
+            if ( $allow_custom_fields && !empty( $custom_data ) )
                 $object_meta = array_merge( $custom_data, $object_meta );
 
             $params->id = $this->save_wp_object( $object_type, $object_data, $object_meta, false, true );

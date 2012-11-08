@@ -273,27 +273,31 @@ class PodsField_Pick extends PodsField {
         $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $name, $value, $options, $pod, $id );
 
         if ( 'custom-simple' == pods_var( 'pick_object', $options ) && !empty( $custom ) ) {
-            if ( !is_array( $custom ) )
-                $custom = explode( "\n", $custom );
 
             if ( 'single' == pods_var( 'pick_format_type', $options ) && 'dropdown' == pods_var( 'pick_format_single', $options ) )
                 $options[ 'data' ] = array( '' => pods_var_raw( 'pick_select_text', $options, __( '-- Select One --', 'pods' ), null, true ) );
 
-            foreach ( $custom as $custom_value ) {
-                $custom_label = explode( '|', $custom_value );
+            if ( !is_array( $custom ) ) {
+                $custom = explode( "\n", $custom );
 
-                if ( empty( $custom_label ) )
-                    continue;
+                foreach ( $custom as $custom_value ) {
+                    $custom_label = explode( '|', $custom_value );
 
-                if ( 1 == count( $custom_label ) )
-                    $custom_label = $custom_value;
-                else {
-                    $custom_value = $custom_label[ 0 ];
-                    $custom_label = $custom_label[ 1 ];
+                    if ( empty( $custom_label ) )
+                        continue;
+
+                    if ( 1 == count( $custom_label ) )
+                        $custom_label = $custom_value;
+                    else {
+                        $custom_value = $custom_label[ 0 ];
+                        $custom_label = $custom_label[ 1 ];
+                    }
+
+                    $data[ $custom_value ] = $custom_label;
                 }
-
-                $data[ $custom_value ] = $custom_label;
             }
+            else
+                $data = $custom;
         }
         elseif ( '' != pods_var( 'pick_object', $options, '' ) && array() == pods_var_raw( 'data', $options, array(), null, true ) ) {
             if ( 'single' == pods_var( 'pick_format_type', $options ) && 'dropdown' == pods_var( 'pick_format_single', $options ) )
@@ -449,24 +453,27 @@ class PodsField_Pick extends PodsField {
             $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, pods_var( 'name', $options ), $value, $options, null, null );
 
             if ( !empty( $custom ) ) {
-                if ( !is_array( $custom ) )
+                if ( !is_array( $custom ) ) {
                     $custom = explode( "\n", $custom );
 
-                foreach ( $custom as $custom_value ) {
-                    $custom_label = explode( '|', $custom_value );
+                    foreach ( $custom as $custom_value ) {
+                        $custom_label = explode( '|', $custom_value );
 
-                    if ( empty( $custom_label ) )
-                        continue;
+                        if ( empty( $custom_label ) )
+                            continue;
 
-                    if ( 1 == count( $custom_label ) )
-                        $custom_label = $custom_value;
-                    else {
-                        $custom_value = $custom_label[ 0 ];
-                        $custom_label = $custom_label[ 1 ];
+                        if ( 1 == count( $custom_label ) )
+                            $custom_label = $custom_value;
+                        else {
+                            $custom_value = $custom_label[ 0 ];
+                            $custom_label = $custom_label[ 1 ];
+                        }
+
+                        $simple_data[ $custom_value ] = $custom_label;
                     }
-
-                    $simple_data[ $custom_value ] = $custom_label;
                 }
+                else
+                    $simple_data = $custom;
             }
 
             $simple = false;

@@ -1317,7 +1317,7 @@ class Pods {
         if ( empty( $data ) )
             return false;
 
-        $params = array( 'pod' => $this->pod, 'data' => $data, 'custom' => true );
+        $params = array( 'pod' => $this->pod, 'data' => $data, 'allow_custom_fields' => true );
 
         return $this->api->save_pod_item( $params );
     }
@@ -1351,7 +1351,7 @@ class Pods {
         if ( empty( $data ) )
             return false;
 
-        $params = array( 'pod' => $this->pod, 'id' => $id, 'data' => $data, 'custom' => true );
+        $params = array( 'pod' => $this->pod, 'id' => $id, 'data' => $data, 'allow_custom_fields' => true );
 
         return $this->api->save_pod_item( $params );
     }

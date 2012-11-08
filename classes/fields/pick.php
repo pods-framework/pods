@@ -297,8 +297,11 @@ class PodsField_Pick extends PodsField {
                     $data[ $custom_value ] = $custom_label;
                 }
             }
-            else
-                $data = array_merge( $data, $custom );
+            else {
+                foreach ( $custom as $custom_value => $custom_label ) {
+                    $data[ $custom_value ] = $custom_label;
+                }
+            }
         }
         elseif ( '' != pods_var( 'pick_object', $options, '' ) && array() == pods_var_raw( 'data', $options, array(), null, true ) ) {
             $options[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $options ), pods_var( 'pick_val', $options ) );

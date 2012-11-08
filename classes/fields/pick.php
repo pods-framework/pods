@@ -266,17 +266,16 @@ class PodsField_Pick extends PodsField {
      */
 
     public function data ( $name, $value = null, $options = null, $pod = null, $id = null ) {
-        $data = array();
+        $data = array( '' => pods_var_raw( 'pick_select_text', $options, __( '-- Select One --', 'pods' ), null, true ) );
+
+        if ( 'single' != pods_var( 'pick_format_type', $options ) || 'dropdown' != pods_var( 'pick_format_single', $options ) )
+            $data = array();
 
         $custom = trim( pods_var_raw( 'pick_custom', $options, '' ) );
 
         $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, $name, $value, $options, $pod, $id );
 
         if ( 'custom-simple' == pods_var( 'pick_object', $options ) && !empty( $custom ) ) {
-
-            if ( 'single' == pods_var( 'pick_format_type', $options ) && 'dropdown' == pods_var( 'pick_format_single', $options ) )
-                $options[ 'data' ] = array( '' => pods_var_raw( 'pick_select_text', $options, __( '-- Select One --', 'pods' ), null, true ) );
-
             if ( !is_array( $custom ) ) {
                 $custom = explode( "\n", $custom );
 
@@ -297,12 +296,9 @@ class PodsField_Pick extends PodsField {
                 }
             }
             else
-                $data = $custom;
+                $data = array_merge( $data, $custom );
         }
         elseif ( '' != pods_var( 'pick_object', $options, '' ) && array() == pods_var_raw( 'data', $options, array(), null, true ) ) {
-            if ( 'single' == pods_var( 'pick_format_type', $options ) && 'dropdown' == pods_var( 'pick_format_single', $options ) )
-                $data = array( '' => __( '-- Select One --', 'pods' ) );
-
             $options[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $options ), pods_var( 'pick_val', $options ) );
 
             $search_data = pods_data();
@@ -405,7 +401,7 @@ class PodsField_Pick extends PodsField {
             }
         }
 
-        if ( empty( $data ) && !empty( $options[ 'data' ] ) )
+        if ( isset( $options[ 'data' ] ) && !empty( $options[ 'data' ] ) )
             $data = $options[ 'data' ];
 
         $data = apply_filters( 'pods_field_pick_data', $data, $name, $value, $options, $pod, $id );

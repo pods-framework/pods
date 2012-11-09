@@ -204,6 +204,13 @@ class PodsData {
     public $sql = false;
 
     /**
+     * Last total sql
+     *
+     * @var string
+     */
+    public $total_sql = false;
+
+    /**
      * Data Abstraction Class for Pods
      *
      * @param string $pod Pod name
@@ -521,7 +528,7 @@ class PodsData {
             $this->sql = $this->build( $params );
 
             // Debug purposes
-            if ( ( 1 == pods_var( 'pods_debug_sql', 'get', 0 ) || 1 == pods_var( 'pods_debug_sql_all', 'get', 0 ) )&& is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
+            if ( ( 1 == pods_var( 'pods_debug_sql', 'get', 0 ) || 1 == pods_var( 'pods_debug_sql_all', 'get', 0 ) ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
                 echo "<textarea cols='100' rows='24'>{$this->sql}</textarea>";
 
             if ( empty( $this->sql ) )
@@ -554,7 +561,10 @@ class PodsData {
         }
 
         // Set totals
-        $total = @current( $wpdb->get_col( "SELECT FOUND_ROWS()" ) );
+        if(false !== $this->total_sql)
+            $total = @current( $wpdb->get_col( $this->get_sql( $this->total_sql ) ) );
+        else
+            $total = @current( $wpdb->get_col( "SELECT FOUND_ROWS()" ) );
         $total = $this->do_hook( 'select_total', $total );
 
         $this->total_found = 0;
@@ -1033,7 +1043,7 @@ class PodsData {
                 return false;
 
             $sql = "
-                SELECT SQL_CALC_FOUND_ROWS
+                SELECT
                 " . ( $params->distinct ? 'DISTINCT' : '' ) . "
                 " . ( !empty( $params->select ) ? ( is_array( $params->select ) ? implode( ', ', $params->select ) : $params->select ) : '*' ) . "
                 FROM {$params->table} AS `t`
@@ -1043,6 +1053,16 @@ class PodsData {
                 " . ( !empty( $params->having ) ? 'HAVING ' . ( is_array( $params->having ) ? implode( ' AND ', $params->having ) : $params->having ) : '' ) . "
                 " . ( !empty( $params->orderby ) ? 'ORDER BY ' . ( is_array( $params->orderby ) ? implode( ', ', $params->orderby ) : $params->orderby ) : '' ) . "
                 " . ( ( 0 < $params->page && 0 < $params->limit ) ? 'LIMIT ' . $params->offset . ', ' . ( $params->limit ) : '' ) . "
+            ";
+            $this->total_sql = "
+                SELECT
+                " . ( $params->distinct ? 'DISTINCT' : '' ) . "
+                COUNT(*) FROM {$params->table} AS `t`
+                " . ( !empty( $params->join ) ? ( is_array( $params->join ) ? implode( "\n                ", $params->join ) : $params->join ) : '' ) . "
+                " . ( !empty( $params->where ) ? 'WHERE ' . ( is_array( $params->where ) ? implode( ' AND ', $params->where ) : $params->where ) : '' ) . "
+                " . ( !empty( $params->groupby ) ? 'GROUP BY ' . ( is_array( $params->groupby ) ? implode( ', ', $params->groupby ) : $params->groupby ) : '' ) . "
+                " . ( !empty( $params->having ) ? 'HAVING ' . ( is_array( $params->having ) ? implode( ' AND ', $params->having ) : $params->having ) : '' ) . "
+                " . ( !empty( $params->orderby ) ? 'ORDER BY ' . ( is_array( $params->orderby ) ? implode( ', ', $params->orderby ) : $params->orderby ) : '' ) . "
             ";
         }
         // Rewrite
@@ -2029,6 +2049,23 @@ class PodsData {
         $name = array_shift( $args );
 
         return pods_do_hook( 'data', $name, $args, $this );
+    }
+
+    /**
+     * Get the complete sql
+     *
+     * @since 2.0.5
+     */
+    public function get_sql ( $sql ) {
+        global $wpdb;
+        if ( empty( $sql ) )
+            $sql = $this->sql;
+
+        $sql = str_replace( '@wp_users', $wpdb->users, $sql );
+        $sql = str_replace( '@wp_', $wpdb->prefix, $sql );
+        $sql = str_replace( '{prefix}', '@wp_', $sql );
+        $sql = str_replace( '{/prefix/}', '{prefix}', $sql );
+        return $sql;
     }
 }
 

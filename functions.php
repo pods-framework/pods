@@ -18,12 +18,8 @@
  */
 function pods_query ( $sql, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
     $podsdata = pods_data();
-    global $wpdb;
     $sql = apply_filters( 'pods_query_sql', $sql, $error, $results_error, $no_results_error );
-    $sql = str_replace( '@wp_users', $wpdb->users, $sql );
-    $sql = str_replace( '@wp_', $wpdb->prefix, $sql );
-    $sql = str_replace( '{prefix}', '@wp_', $sql );
-    $sql = str_replace( '{/prefix/}', '{prefix}', $sql );
+    $sql = $podsdata->get_sql($sql);
 
     if ( is_array( $error ) ) {
         if ( !is_array( $sql ) )

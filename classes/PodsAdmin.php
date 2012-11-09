@@ -215,7 +215,7 @@ class PodsAdmin {
 
             $submenu = apply_filters( 'pods_admin_menu_secondary_content', $submenu );
 
-            if ( !empty( $submenu ) ) {
+            if ( !current_user_can( 'pods_disable_content_menu' ) && !empty( $submenu ) ) {
                 $parent_page = null;
 
                 foreach ( $submenu as $item ) {
@@ -331,46 +331,48 @@ class PodsAdmin {
 
         $parent = false;
 
-        foreach ( $admin_menus as $page => $menu_item ) {
-            if ( !is_super_admin() && !current_user_can( 'delete_users' ) && isset( $menu_item[ 'access' ] ) ) {
-                $access = (array) $menu_item[ 'access' ];
+        if ( !current_user_can( 'pods_disable_admin_menu' ) && !empty( $admin_menus ) ) {
+            foreach ( $admin_menus as $page => $menu_item ) {
+                if ( !is_super_admin() && !current_user_can( 'delete_users' ) && isset( $menu_item[ 'access' ] ) ) {
+                    $access = (array) $menu_item[ 'access' ];
 
-                $ok = false;
+                    $ok = false;
 
-                foreach ( $access as $cap ) {
-                    if ( current_user_can( $cap ) ) {
-                        $ok = true;
+                    foreach ( $access as $cap ) {
+                        if ( current_user_can( $cap ) ) {
+                            $ok = true;
 
-                        break;
+                            break;
+                        }
                     }
+
+                    if ( !$ok )
+                        continue;
                 }
 
-                if ( !$ok )
+                // Don't just show the help page
+                if ( false === $parent && 'pods-help' == $page )
                     continue;
+
+                if ( !isset( $menu_item[ 'label' ] ) )
+                    $menu_item[ 'label' ] = $page;
+
+                if ( false === $parent ) {
+                    $parent = $page;
+
+                    $menu = __( 'Pods Admin', 'pods' );
+
+                    if ( 'pods-upgrade' == $parent )
+                        $menu = __( 'Pods Upgrade', 'pods' );
+
+                    add_menu_page( $menu, $menu, 'read', $parent, null, PODS_URL . 'ui/images/icon16.png' );
+                }
+
+                add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'read', $page, $menu_item[ 'function' ] );
+
+                if ( 'pods-components' == $page )
+                    PodsInit::$components->menu( $parent );
             }
-
-            // Don't just show the help page
-            if ( false === $parent && 'pods-help' == $page )
-                continue;
-
-            if ( !isset( $menu_item[ 'label' ] ) )
-                $menu_item[ 'label' ] = $page;
-
-            if ( false === $parent ) {
-                $parent = $page;
-
-                $menu = __( 'Pods Admin', 'pods' );
-
-                if ( 'pods-upgrade' == $parent )
-                    $menu = __( 'Pods Upgrade', 'pods' );
-
-                add_menu_page( $menu, $menu, 'read', $parent, null, PODS_URL . 'ui/images/icon16.png' );
-            }
-
-            add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'read', $page, $menu_item[ 'function' ] );
-
-            if ( 'pods-components' == $page )
-                PodsInit::$components->menu( $parent );
         }
     }
 
@@ -815,6 +817,10 @@ class PodsAdmin {
         $capabilities[] = 'pods_content';
         $capabilities[] = 'pods_settings';
         $capabilities[] = 'pods_components';
+
+        // Disable the menus if user has edit_users or pods capabilities
+        $capabilities[] = 'pods_disable_content_menu';
+        $capabilities[] = 'pods_disable_admin_menu';
 
         foreach ( $pods as $pod ) {
             if ( !in_array( $pod[ 'type' ], array( 'pod', 'table' ) ) )

@@ -1530,6 +1530,37 @@ function pods_permission ( $options ) {
 }
 
 /**
+ * Return a variable if a user is logged in or anonymous, or a specific capability
+ *
+ * @param mixed $anon Variable to return if user is anonymous (not logged in)
+ * @param mixed $user Variable to return if user is logged in
+ * @param string|array $capability Capability or array of Capabilities to check to return $user on
+ *
+ * @since 2.0.5
+ */
+function pods_var_user ( $anon = false, $user = true, $capability = null ) {
+    $value = $anon;
+
+    if ( is_user_logged_in() ) {
+        if ( empty( $capability ) )
+            $value = $user;
+        else {
+            $capabilities = (array) $capability;
+
+            foreach ( $capabilities as $capability ) {
+                if ( current_user_can( $capability ) ) {
+                    $value = $user;
+
+                    break;
+                }
+            }
+        }
+    }
+
+    return $value;
+}
+
+/**
  * Include and Init the Pods class
  *
  * @see PodsInit
@@ -2067,5 +2098,3 @@ function pods_no_conflict_off ( $object_type = 'post' ) {
 
     return false;
 }
-
-

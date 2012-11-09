@@ -331,7 +331,7 @@ class PodsAdmin {
 
         $parent = false;
 
-        if ( !current_user_can( 'pods_disable_admin_menu' ) && !empty( $admin_menus ) ) {
+        if ( !current_user_can( 'pods_disable_admin_menu' ) && !empty( $admin_menus ) && ( !defined( 'PODS_DISABLE_ADMIN' ) || !PODS_DISABLE_ADMIN ) ) {
             foreach ( $admin_menus as $page => $menu_item ) {
                 if ( !is_super_admin() && !current_user_can( 'delete_users' ) && isset( $menu_item[ 'access' ] ) ) {
                     $access = (array) $menu_item[ 'access' ];

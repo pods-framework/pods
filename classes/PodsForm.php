@@ -337,8 +337,10 @@ class PodsForm {
 
         foreach ( $defaults as $option => $settings ) {
             $default = $settings;
+
             if ( is_array( $settings ) && isset( $settings[ 'default' ] ) )
                 $default = $settings[ 'default' ];
+
             if ( !isset( $options[ $option ] ) )
                 $options[ $option ] = $default;
         }

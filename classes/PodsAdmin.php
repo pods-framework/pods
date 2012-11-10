@@ -215,7 +215,7 @@ class PodsAdmin {
 
             $submenu = apply_filters( 'pods_admin_menu_secondary_content', $submenu );
 
-            if ( !current_user_can( 'pods_disable_content_menu' ) && !empty( $submenu ) ) {
+            if ( !empty( $submenu ) && ( !defined( 'PODS_DISABLE_CONTENT_MENU' ) || PODS_DISABLE_CONTENT_MENU ) ) {
                 $parent_page = null;
 
                 foreach ( $submenu as $item ) {
@@ -331,7 +331,7 @@ class PodsAdmin {
 
         $parent = false;
 
-        if ( !current_user_can( 'pods_disable_admin_menu' ) && !empty( $admin_menus ) && ( !defined( 'PODS_DISABLE_ADMIN' ) || !PODS_DISABLE_ADMIN ) ) {
+        if ( !empty( $admin_menus ) && ( !defined( 'PODS_DISABLE_ADMIN_MENU' ) || !PODS_DISABLE_ADMIN_MENU ) ) {
             foreach ( $admin_menus as $page => $menu_item ) {
                 if ( !is_super_admin() && !current_user_can( 'delete_users' ) && isset( $menu_item[ 'access' ] ) ) {
                     $access = (array) $menu_item[ 'access' ];
@@ -817,10 +817,6 @@ class PodsAdmin {
         $capabilities[] = 'pods_content';
         $capabilities[] = 'pods_settings';
         $capabilities[] = 'pods_components';
-
-        // Disable the menus if user has edit_users or pods capabilities
-        $capabilities[] = 'pods_disable_content_menu';
-        $capabilities[] = 'pods_disable_admin_menu';
 
         foreach ( $pods as $pod ) {
             if ( !in_array( $pod[ 'type' ], array( 'pod', 'table' ) ) )

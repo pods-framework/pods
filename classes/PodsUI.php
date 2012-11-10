@@ -1826,74 +1826,67 @@ class PodsUI {
                     }
 
                     $this->hidden_vars( $excluded_filters );
-                    $date_exists = false;
 
                     foreach ( $this->filters as $filter ) {
                         // use PodsFormUI fields
                         if ( !isset( $this->fields[ 'search' ][ $filter ] ) )
                             continue;
 
-                        // @todo Implement new form class field()
-                        if ( in_array( $this->fields[ 'search' ][ $filter ][ 'type' ], array( 'date', 'datetime', 'time' ) ) ) {
-                            if ( false === $date_exists )
-                                $date_exists = true;
+                        if ( in_array( $this->pod->fields[ $filter ][ 'type' ], array( 'date', 'datetime', 'time' ) ) ) {
+                            $start = pods_var_raw( 'filter_' . $filter . '_start', 'get', pods_var_raw( 'filter_default', $this->pod->fields[ $filter ], '', null, true ), null, true );
+                            $end = pods_var_raw( 'filter_' . $filter . '_end', 'get', pods_var_raw( 'filter_ongoing_default', $this->pod->fields[ $filter ], '', null, true ), null, true );
 
-                            $start = pods_var( 'filter_' . $filter . '_start', 'get', $this->fields[ 'search' ][ $filter ][ 'filter_default' ] );
-                            $end = pods_var( 'filter_' . $filter . '_end', 'get', $this->fields[ 'search' ][ $filter ][ 'filter_ongoing_default' ] );
-                            ?>
-                            &nbsp;&nbsp; <label for="admin_ui_filter_<?php echo $filter; ?>_start"><?php echo $this->fields[ 'search' ][ $filter ][ 'filter_label' ]; ?>:</label>
-                            <input type="text" name="filter_<?php echo $filter; ?>_start" class="admin_ui_filter admin_ui_date" id="admin_ui_filter_<?php echo $filter; ?>_start" value="<?php echo ( false !== $start && 0 < strlen( $start ) ) ? date_i18n( 'm/d/Y', strtotime( $start ) ) : ''; ?>" />
-                            <label for="admin_ui_filter_<?php echo $filter; ?>_end">to</label>
-                            <input type="text" name="filter_<?php echo $filter; ?>_end" class="admin_ui_filter admin_ui_date" id="admin_ui_filter_<?php echo $filter; ?>_end" value="<?php echo ( false !== $end && 0 < strlen( $end ) ) ? date_i18n( 'm/d/Y', strtotime( $end ) ) : ''; ?>" />
-                            <?php
+                            if ( !empty( $start ) && !in_array( $start, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
+                                $start = PodsForm::field_method( $this->pod->fields[ $filter ][ 'type' ], 'convert_date', $start, 'n/j/Y' );
+
+                            if ( !empty( $end ) && !in_array( $end, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
+                                $end = PodsForm::field_method( $this->pod->fields[ $filter ][ 'type' ], 'convert_date', $end, 'n/j/Y' );
+                    ?>
+                        <label for="pods-form-ui-filter-<?php echo $filter; ?>_start">
+                            <?php echo $this->pod->fields[ $filter ][ 'label' ]; ?>
+                        </label>
+                        <?php echo PodsForm::field( 'filter_' . $filter . '_start', $start, $this->pod->fields[ $filter ][ 'type' ], $this->pod->fields[ $filter ] ); ?>
+
+                        <label for="pods-form-ui-filter-<?php echo $filter; ?>_end">
+                            to
+                        </label>
+                    <?php
+                            echo PodsForm::field( 'filter_' . $filter . '_end', $end, $this->pod->fields[ $filter ][ 'type' ], $this->pod->fields[ $filter ] );
                         }
-                        elseif ( 'related' == $this->fields[ 'search' ][ $filter ][ 'type' ] && false !== $this->fields[ 'search' ][ $filter ][ 'related' ] ) {
-                            $selected = pods_var( 'filter_' . $filter, 'get', $this->fields[ 'search' ][ $filter ][ 'filter_default' ] );
-                            if ( !is_array( $this->fields[ 'search' ][ $filter ][ 'related' ] ) ) {
-                                // use PodsData to pull data
-                                global $wpdb;
-                                $related = $wpdb->get_results( 'SELECT `' . $this->fields[ 'search' ][ $filter ][ 'related_id' ] . '`,`' . $this->fields[ 'search' ][ $filter ][ 'related_field' ] . '` FROM ' . $this->fields[ 'search' ][ $filter ][ 'related' ] . ( !empty( $this->fields[ 'search' ][ $filter ][ 'related_sql' ] ) ? ' ' . $this->fields[ 'search' ][ $filter ][ 'related_sql' ] : '' ) );
-                                ?>
-                                <label for="admin_ui_filter_<?php echo $filter; ?>"><?php echo $this->fields[ 'search' ][ $filter ][ 'filter_label' ]; ?>:</label>
-                                <select name="filter_<?php echo $filter; ?><?php echo ( false !== $this->fields[ 'search' ][ $filter ][ 'related_multiple' ] ? '[]' : '' ); ?>" id="admin_ui_filter_<?php echo $filter; ?>"<?php echo ( false !== $this->fields[ 'search' ][ $filter ][ 'related_multiple' ] ? ' size="10" style="height:auto;" MULTIPLE' : '' ); ?>>
-                                    <option value="">-- <?php _e( 'Show All', 'pods' ); ?> --</option>
-                                    <?php
-                                    foreach ( $related as $option ) {
-                                        ?>
-                                        <option value="<?php echo $option->{$this->fields[ 'search' ][ $filter ][ 'related_id' ]}; ?>"<?php echo ( $option->{$this->fields[ 'search' ][ $filter ][ 'related_id' ]} == $selected ? ' SELECTED' : '' ); ?>><?php echo $option->{$this->fields[ 'search' ][ $filter ][ 'related_field' ]}; ?></option>
-                                        <?php
-                                    }
-                                    ?>
-                                </select>
-                                <?php
-                            }
-                            else {
-                                $related = $this->fields[ 'search' ][ $filter ][ 'related' ];
-                                ?>
-                                <label for="admin_ui_filter_<?php echo $filter; ?>"><?php echo $this->fields[ 'search' ][ $filter ][ 'filter_label' ]; ?>:</label>
-                                <select name="filter_<?php echo $filter; ?><?php echo ( false !== $this->fields[ 'search' ][ $filter ][ 'related_multiple' ] ? '[]' : '' ); ?>" id="admin_ui_filter_<?php echo $filter; ?>"<?php echo ( false !== $this->fields[ 'search' ][ $filter ][ 'related_multiple' ] ? ' size="10" style="height:auto;" MULTIPLE' : '' ); ?>>
-                                    <option value="">-- <?php _e( 'Show All', 'pods' ); ?> --</option>
-                                    <?php
-                                    foreach ( $related as $option_id => $option ) {
-                                        ?>
-                                        <option value="<?php echo $option_id; ?>"<?php echo ( $option_id == $selected ? ' SELECTED' : '' ); ?>><?php echo $option; ?></option>
-                                        <?php
-                                    }
-                                    ?>
-                                </select>
-                                <?php
-                            }
+                        elseif ( 'pick' == $this->pod->fields[ $filter ][ 'type' ] ) {
+                            $value = pods_var_raw( 'filter_' . $filter, 'get', pods_var_raw( 'filter_default', $this->pod->fields[ $filter ], '', null, true ), null, true );
+
+                            $this->pod->fields[ $filter ][ 'options' ][ 'pick_format_type' ] = 'single';
+                            $this->pod->fields[ $filter ][ 'options' ][ 'pick_format_single' ] = 'dropdown';
+
+                            $this->pod->fields[ $filter ][ 'options' ][ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
+                            $this->pod->fields[ $filter ][ 'options' ][ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $this->pod->fields[ $filter ][ 'options' ], $this->pod->fields[ $filter ][ 'options' ][ 'input_helper' ], null, true );
+
+                            $options = array_merge( $this->pod->fields[ $filter ], $this->pod->fields[ $filter ][ 'options' ] );
+                    ?>
+                        <label for="pods-form-ui-filter-<?php echo $filter; ?>">
+                            <?php echo $this->pod->fields[ $filter ][ 'label' ]; ?>
+                        </label>
+                    <?php
+                            echo PodsForm::field( 'filter_' . $filter, $value, 'pick', $options );
                         }
                         else {
-                            ?>
-                            <label for="admin_ui_filter_<?php echo $filter; ?>"><?php echo $this->fields[ 'search' ][ $filter ][ 'filter_label' ]; ?>:</label>
-                            <input type="text" name="filter_<?php echo $filter; ?>" class="admin_ui_filter" id="admin_ui_filter_<?php echo $filter; ?>" value="<?php echo pods_var( 'filter_' . $filter, 'get', $this->fields[ 'search' ][ $filter ][ 'filter_default' ] ); ?>" />
-                            <?php
+                            $value = pods_var_raw( 'filter_' . $filter, 'get', pods_var_raw( 'filter_default', $this->pod->fields[ $filter ], '', null, true ), null, true );
+
+                            $options = array();
+                            $options[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
+                            $options[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $options, $this->pod->fields[ $filter ][ 'options' ][ 'input_helper' ], null, true );
+                    ?>
+                        <label for="pods-form-ui-filter-<?php echo $filter; ?>">
+                            <?php echo $this->pod->fields[ $filter ][ 'label' ]; ?>
+                        </label>
+                    <?php
+                            echo PodsForm::field( 'filter_' . $filter, $value, 'text', $options );
                         }
                     }
                     ?>
                     &nbsp;&nbsp; <label<?php echo ( empty( $this->filters ) ) ? ' class="screen-reader-text"' : ''; ?> for="page-search-input"><?php _e( 'Search', 'pods' ); ?>:</label>
-                    <input type="text" name="search<?php echo $this->num; ?>" id="page-search-input" value="<?php echo $this->search; ?>" />
+                    <?php echo PodsForm::field( 'search' . $this->num, $this->search, 'text', array( 'attributes' => array( 'id' => 'page-search-input' ) ) ); ?>
                     <input type="submit" value="<?php esc_attr_e( 'Search', 'pods' ); echo ' ' . esc_attr( $this->items ); ?>" class="button" />
                     <?php
                     if ( 0 < strlen( $this->search ) ) {
@@ -2257,10 +2250,13 @@ class PodsUI {
                         <?php
                             }
                             elseif ( 'pick' == $this->pod->fields[ $filter ][ 'type' ] ) {
-                                $value = pods_var_raw( 'filter_' . $filter, 'get', pods_var( 'filter_default', $this->pod->fields[ $filter ], '', null, true ), null, true );
+                                $value = pods_var_raw( 'filter_' . $filter, 'get', pods_var_raw( 'filter_default', $this->pod->fields[ $filter ], '', null, true ), null, true );
 
                                 $this->pod->fields[ $filter ][ 'options' ][ 'pick_format_type' ] = 'single';
                                 $this->pod->fields[ $filter ][ 'options' ][ 'pick_format_single' ] = 'dropdown';
+
+                                $this->pod->fields[ $filter ][ 'options' ][ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
+                                $this->pod->fields[ $filter ][ 'options' ][ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $this->pod->fields[ $filter ][ 'options' ], $this->pod->fields[ $filter ][ 'options' ][ 'input_helper' ], null, true );
 
                                 $options = array_merge( $this->pod->fields[ $filter ], $this->pod->fields[ $filter ][ 'options' ] );
                         ?>
@@ -2277,7 +2273,11 @@ class PodsUI {
                         <?php
                             }
                             else {
-                                $value = pods_var_raw( 'filter_' . $filter, 'get', pods_var( 'filter_default', $this->pod->fields[ $filter ], '', null, true ), null, true );
+                                $value = pods_var_raw( 'filter_' . $filter, 'get', pods_var_raw( 'filter_default', $this->pod->fields[ $filter ], '', null, true ), null, true );
+
+                                $options = array();
+                                $options[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', pods_var_raw( 'options', pods_var_raw( $filter, $this->fields[ 'search' ], array(), null, true ), array(), null, true ), '', null, true );
+                                $options[ 'input_helper' ] = pods_var_raw( 'ui_input_helper', $options, $this->pod->fields[ $filter ][ 'options' ][ 'input_helper' ], null, true );
                         ?>
                             <span class="pods-ui-posts-filter-toggle toggle-on<?php echo ( empty( $value ) ? '' : ' hidden' ); ?>">+</span>
                             <span class="pods-ui-posts-filter-toggle toggle-off<?php echo ( empty( $value ) ? ' hidden' : '' ); ?>"><?php _e( 'Clear', 'pods' ); ?></span>
@@ -2287,7 +2287,7 @@ class PodsUI {
                             </label>
 
                             <span class="pods-ui-posts-filter<?php echo ( empty( $value ) ? ' hidden' : '' ); ?>">
-                                <?php echo PodsForm::field( 'filter_' . $filter, $value, 'text' ); ?>
+                                <?php echo PodsForm::field( 'filter_' . $filter, $value, 'text', $options ); ?>
                             </span>
                         <?php
                             }

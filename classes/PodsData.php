@@ -871,40 +871,50 @@ class PodsData {
                     $filterfield = $attributes[ 'real_name' ];
 
                 if ( 'pick' == $attributes[ 'type' ] ) {
+                    $filter_value = pods_var( 'filter_' . $field, 'get', false, null, true );
+
                     if ( 'custom-simple' == pods_var( 'pick_object', $attributes ) ) {
+                        if ( strlen( $filter_value ) < 1 )
+                            continue;
+
                         if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] ) {
-                            $having[] = "( {$filterfield} = '" . pods_sanitize( pods_var( 'filter_' . $field, 'get', false ) ) . "'"
-                                        . " OR {$filterfield} LIKE '%\"" . pods_sanitize( pods_var( 'filter_' . $field, 'get', false ) ) . "\"%' )";
+                            $having[] = "( {$filterfield} = '" . $filter_value . "'"
+                                        . " OR {$filterfield} LIKE '%\"" . $filter_value . "\"%' )";
                         }
                         else {
-                            $where[] = "( {$filterfield} = '" . pods_sanitize( pods_var( 'filter_' . $field, 'get', false ) ) . "'"
-                                        . " OR {$filterfield} LIKE '%\"" . pods_sanitize( pods_var( 'filter_' . $field, 'get', false ) ) . "\"%' )";
+                            $where[] = "( {$filterfield} = '" . $filter_value . "'"
+                                        . " OR {$filterfield} LIKE '%\"" . $filter_value . "\"%' )";
                         }
                     }
                     else {
-                        if ( empty( $attributes[ 'table_info' ][ 'field_id' ] ) )
+                        $filter_value = (int) $filter_value;
+
+                        if ( empty( $filter_value ) || empty( $attributes[ 'table_info' ][ 'field_id' ] ) )
                             continue;
 
                         $filterfield = '`' . $field . '`.`' . $attributes[ 'table_info' ][ 'field_id' ] . '`';
 
                         if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] )
-                            $having[] = "{$filterfield} = " . (int) pods_var( 'filter_' . $field, 'get', false );
+                            $having[] = "{$filterfield} = " . $filter_value;
                         else
-                            $where[] = "{$filterfield} = " . (int) pods_var( 'filter_' . $field, 'get', false );
+                            $where[] = "{$filterfield} = " . $filter_value;
                     }
                 }
                 elseif ( in_array( $attributes[ 'type' ], array( 'date', 'datetime' ) ) ) {
                     $start = date_i18n( 'Y-m-d' ) . ( 'datetime' == $attributes[ 'type' ] ) ? ' 00:00:00' : '';
                     $end = date_i18n( 'Y-m-d' ) . ( 'datetime' == $attributes[ 'type' ] ) ? ' 23:59:59' : '';
 
-                    if ( strlen( pods_var( 'filter_' . $field . '_start', 'get', false ) ) < 1 && strlen( pods_var( 'filter_' . $field . '_end', 'get', false ) ) < 1 )
+                    $start_value = pods_var( 'filter_' . $field . '_start', 'get', false );
+                    $end_value = pods_var( 'filter_' . $field . '_end', 'get', false );
+
+                    if ( empty( $start_value ) && empty( $end_value ) )
                         continue;
 
-                    if ( 0 < strlen( pods_var( 'filter_' . $field . '_start', 'get', false ) ) )
-                        $start = date_i18n( 'Y-m-d', strtotime( pods_var( 'filter_' . $field . '_start', 'get', false ) ) ) . ( 'datetime' == $attributes[ 'type' ] ? ' 00:00:00' : '' );
+                    if ( !empty( $start_value ) )
+                        $start = date_i18n( 'Y-m-d', strtotime( $start_value ) ) . ( 'datetime' == $attributes[ 'type' ] ? ' 00:00:00' : '' );
 
-                    if ( 0 < strlen( pods_var( 'filter_' . $field . '_end', 'get', false ) ) )
-                        $end = date_i18n( 'Y-m-d', strtotime( pods_var( 'filter_' . $field . '_end', 'get', false ) ) ) . ( 'datetime' == $attributes[ 'type' ] ? ' 23:59:59' : '' );
+                    if ( !empty( $end_value ) )
+                        $end = date_i18n( 'Y-m-d', strtotime( $end_value ) ) . ( 'datetime' == $attributes[ 'type' ] ? ' 23:59:59' : '' );
 
                     if ( true === $attributes[ 'date_ongoing' ] ) {
                         $date_ongoing = '`' . $attributes[ 'date_ongoing' ] . '`';
@@ -924,11 +934,16 @@ class PodsData {
                             $where[] = "({$filterfield} BETWEEN '$start' AND '$end')";
                     }
                 }
-                elseif ( 0 < strlen( pods_var( 'filter_' . $field, 'get', false ) ) ) {
+                else {
+                    $filter_value = pods_var( 'filter_' . $field, 'get', '' );
+
+                    if ( strlen( $filter_value ) < 1 )
+                        continue;
+
                     if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] )
-                        $having[] = "{$filterfield} LIKE '%" . pods_sanitize( pods_var( 'filter_' . $field, 'get', false ) ) . "%'";
+                        $having[] = "{$filterfield} LIKE '%" . $filter_value . "%'";
                     else
-                        $where[] = "{$filterfield} LIKE '%" . pods_sanitize( pods_var( 'filter_' . $field, 'get', false ) ) . "%'";
+                        $where[] = "{$filterfield} LIKE '%" . $filter_value . "%'";
                 }
 
                 if ( !empty( $where ) )

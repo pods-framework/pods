@@ -823,7 +823,7 @@ class PodsUI {
         ), 'array_merge' );
 
         $options->validate( 'header', array(
-            'manage' => $options->heading[ 'manage' ] . " {$options->items}",
+            'manage' => $options->items,
             'add' => $options->heading[ 'add' ] . " {$options->item}",
             'edit' => $options->heading[ 'edit' ] . " {$options->item}",
             'duplicate' => $options->heading[ 'duplicate' ] . " {$options->item}",
@@ -834,7 +834,7 @@ class PodsUI {
 
         $options->validate( 'label', array(
             'add' => __( 'Save New', 'pods' ) . " {$options->item}",
-            'add_new' => __( 'Add New', 'pods' ) . " {$options->item}",
+            'add_new' => __( 'Add New', 'pods' ),
             'edit' => __( 'Save', 'pods' ) . " {$options->item}",
             'duplicate' => __( 'Save New', 'pods' ) . " {$options->item}",
             'delete' => __( 'Delete this', 'pods' ) . " {$options->item}",

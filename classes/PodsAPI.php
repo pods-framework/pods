@@ -2308,6 +2308,9 @@ class PodsAPI {
 
                     $pick_limit = (int) pods_var_raw( 'pick_limit', $options, 0 );
 
+                    if ( 'single' == pods_var_raw( 'pick_format_type', $options ) )
+                        $pick_limit = 1;
+
                     if ( empty( $value ) || empty( $custom ) )
                         $value = '';
                     elseif ( !empty( $custom ) ) {
@@ -2349,7 +2352,7 @@ class PodsAPI {
                         $value = '';
                     elseif ( is_array( $value ) ) {
                         // If there's just one item, don't save as an array, save the string
-                        if ( 1 == $pick_limit )
+                        if ( 1 == $pick_limit || 1 == count( $value ) )
                             $value = implode( '', $value );
                         // If storage is set to table, json encode, otherwise WP will serialize automatically
                         elseif ( 'table' == pods_var( 'storage', $pod ) )
@@ -4899,6 +4902,7 @@ class PodsAPI {
             $data = $data[ 'data' ];
             $output = true;
         }
+
         if ( is_array( $data ) )
             $data = esc_textarea( json_encode( $data ) );
 

@@ -76,7 +76,7 @@ class PodsAPI {
      * @param string $object_type Object type: post|user|comment
      * @param array $data All post data to be saved
      * @param array $meta (optional) Associative array of meta keys and values
-     * @param bool $strict (optional) Decides wether the previous saved meta should be deleted or not
+     * @param bool $strict (optional) Decides whether the previous saved meta should be deleted or not
      * @param bool $sanitized (optional) Will unsanitize the data, should be passed if the data is sanitized before sending.
      *
      * @return bool|mixed
@@ -198,13 +198,6 @@ class PodsAPI {
         }
 
         foreach ( $post_meta as $meta_key => $meta_value ) {
-            if ( $strict ) {
-                if ( !is_array( $meta_value ) && strlen( $meta_value ) < 1 )
-                    $meta_value = null;
-                elseif ( is_array( $meta_value ) && empty( $meta_value ) )
-                    $meta_value = null;
-            }
-
             if ( null === $meta_value ) {
                 $old_meta_value = '';
 

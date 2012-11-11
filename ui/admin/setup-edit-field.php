@@ -11,6 +11,9 @@
     // Remove weight as we're going to allow reordering here
     unset( $field[ 'weight' ] );
 
+    // Remove options, we don't need it in the JSON
+    unset( $field[ 'options' ] );
+
     $data = array(
         'row' => $pods_i
     );

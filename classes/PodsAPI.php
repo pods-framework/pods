@@ -539,13 +539,30 @@ class PodsAPI {
                     'name' => 'post_content',
                     'label' => 'Content',
                     'type' => 'wysiwyg',
-                    'alias' => array( 'content' )
+                    'alias' => array( 'content' ),
+                    'options' => array(
+                        'wysiwyg_oembed' => 1,
+                        'wysiwyg_wptexturize' => 1,
+                        'wysiwyg_convert_chars' => 1,
+                        'wysiwyg_wpautop' => 1,
+                        'wysiwyg_allow_shortcode' => 1,
+                        'wysiwyg_allowed_html_tags' => ''
+                    )
                 ),
                 'post_excerpt' => array(
                     'name' => 'post_excerpt',
                     'label' => 'Excerpt',
                     'type' => 'paragraph',
-                    'alias' => array( 'excerpt' )
+                    'alias' => array( 'excerpt' ),
+                    'options' => array(
+                        'paragraph_allow_html' => 1,
+                        'paragraph_oembed' => 1,
+                        'paragraph_wptexturize' => 1,
+                        'paragraph_convert_chars' => 1,
+                        'paragraph_wpautop' => 1,
+                        'paragraph_allow_shortcode' => 1,
+                        'paragraph_allowed_html_tags' => ''
+                    )
                 ),
                 'post_author' => array(
                     'name' => 'post_author',
@@ -647,7 +664,16 @@ class PodsAPI {
                     'label' => 'Content (filtered)',
                     'type' => 'paragraph',
                     'alias' => array(),
-                    'hidden' => true
+                    'hidden' => true,
+                    'options' => array(
+                        'paragraph_allow_html' => 1,
+                        'paragraph_oembed' => 1,
+                        'paragraph_wptexturize' => 1,
+                        'paragraph_convert_chars' => 1,
+                        'paragraph_wpautop' => 1,
+                        'paragraph_allow_shortcode' => 1,
+                        'paragraph_allowed_html_tags' => ''
+                    )
                 ),
                 'post_parent' => array(
                     'name' => 'post_parent',

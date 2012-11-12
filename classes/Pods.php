@@ -1447,6 +1447,13 @@ class Pods {
      * @link http://podsframework.org/docs/pagination/
      */
     public function pagination ( $params = null ) {
+        if ( empty( $params ) )
+            $params = array();
+        elseif ( !is_array( $params ) )
+            $params = array( 'label' => $params );
+
+        $this->page_var = pods_var_raw( 'page_var', $params, $this->page_var );
+
         $url = pods_var_update( null, null, $this->page_var );
 
         $append = '?';
@@ -1473,11 +1480,6 @@ class Pods {
             'base' => "{$url}{$append}%_%",
             'format' => "{$this->page_var}=%#%"
         );
-
-        if ( empty( $params ) )
-            $params = array();
-        elseif ( !is_array( $params ) )
-            $params = array( 'label' => $params );
 
         $params = (object) array_merge( $defaults, $params );
 

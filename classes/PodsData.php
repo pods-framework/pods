@@ -1661,9 +1661,9 @@ class PodsData {
         if ( false === $result && !empty( $params->error ) && !empty( $wpdb->last_error ) )
             return pods_error( "{$params->error}; SQL: {$params->sql}; Response: {$wpdb->last_error}", $params->display_errors );
 
-        if ( 'INSERT' == substr( $params->sql, 0, 6 ) || 'REPLACE' == substr( $params->sql, 0, 7 ) )
+        if ( 'INSERT' == strtoupper( substr( $params->sql, 0, 6 ) ) || 'REPLACE' == strtoupper( substr( $params->sql, 0, 7 ) ) )
             $result = $wpdb->insert_id;
-        elseif ( 'SELECT' == substr( $params->sql, 0, 6 ) ) {
+        elseif ( 'SELECT' == strtoupper( substr( $params->sql, 0, 6 ) ) ) {
             $result = (array) $wpdb->last_result;
 
             if ( !empty( $result ) && !empty( $params->results_error ) )

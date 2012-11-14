@@ -663,6 +663,8 @@ function pods_var_update ( $array = null, $allowed = null, $excluded = null, $ur
     else
         $get = $_GET;
 
+    $get = pods_unsanitize( $get );
+
     foreach ( $get as $key => $val ) {
         if ( is_array( $val ) && empty( $val ) )
             unset( $get[ $key ] );

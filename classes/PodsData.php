@@ -752,7 +752,7 @@ class PodsData {
         }
 
         // Search
-        if ( null !== $params->search && !empty( $params->fields ) ) {
+        if ( !empty( $params->search ) && !empty( $params->fields ) ) {
             if ( false !== $params->search_query && 0 < strlen( $params->search_query ) ) {
                 $where = $having = array();
 
@@ -1044,7 +1044,7 @@ class PodsData {
         }
 
         // Traversal Search
-        if ( !empty( $this->search_where ) )
+        if ( !empty( $params->search ) && !empty( $this->search_where ) )
             $params->where = array_merge( (array) $this->search_where, $params->where );
 
         if ( !empty( $params->join ) && !empty( $joins ) )

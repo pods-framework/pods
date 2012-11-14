@@ -533,6 +533,13 @@ class PodsAdmin {
                 $row = $pod;
         }
 
+        if ( false === $row && 0 < pods_var( 'id' ) && 'delete' != pods_var( 'action' ) ) {
+            pods_message( 'Pod not found', 'error' );
+
+            unset( $_GET[ 'id' ] );
+            unset( $_GET[ 'action' ] );
+        }
+
         pods_ui( array(
             'data' => $pods,
             'row' => $row,

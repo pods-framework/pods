@@ -526,7 +526,8 @@ class PodsMeta {
             return $post_id;
 
         $blacklisted_status = array(
-            'auto-draft'
+            'auto-draft',
+            'trash'
         );
 
         $blacklisted_status = apply_filters( 'pods_meta_save_post_blacklist_status', $blacklisted_status, $post_id, $post );

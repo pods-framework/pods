@@ -963,7 +963,7 @@ class PodsData {
                         . ' ' . implode( ' ', (array) $params->orderby );
             $haystack = preg_replace( '/\s/', ' ', $haystack );
             $haystack = preg_replace( '/\w\(/', ' ', $haystack );
-            $haystack = str_replace( array( '(', ')', '  ' ), ' ', $haystack );
+            $haystack = str_replace( array( '(', ')', '  ', '\\\'', "\\\"" ), ' ', $haystack );
 
             preg_match_all( '/`?[\w]+`?(?:\\.`?[\w]+`?)+(?=[^"\']*(?:"[^"]*"[^"]*|\'[^\']*\'[^\']*)*$)/', $haystack, $found, PREG_PATTERN_ORDER );
 

@@ -722,7 +722,7 @@ function pods_create_slug ( $orig, $strict = true ) {
     if ( $strict )
         $str = preg_replace( "/([^0-9a-z-])/", "", strtolower( $str ) );
     else
-        $str = sanitize_title( strtolower( $str ) );
+        $str = urldecode( sanitize_title( strtolower( $str ) ) );
 
     $str = preg_replace( "/(-){2,}/", "-", $str );
     $str = trim( $str, '-' );

@@ -441,7 +441,7 @@ class Pods {
                 $value = get_permalink( $this->id() );
         }
         elseif ( isset( $this->row[ $params->name ] ) ) {
-            if ( !isset( $this->fields[ $params->name ] ) || 'boolean' == $this->fields[ $params->name ][ 'type' ] || in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) )
+            if ( !isset( $this->fields[ $params->name ] ) || in_array( $this->fields[ $params->name ][ 'type' ], array( 'boolean', 'number', 'currency' ) ) || in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) )
                 $params->raw = true;
 
             $value = $this->row[ $params->name ];
@@ -497,7 +497,7 @@ class Pods {
                             $params->single = true;
                         }
                     }
-                    elseif ( 'boolean' == $this->fields[ $params->name ][ 'type' ] )
+                    elseif ( in_array( $this->fields[ $params->name ][ 'type' ], array( 'boolean', 'number', 'currency' ) ) )
                         $params->raw = true;
                 }
 
@@ -722,7 +722,7 @@ class Pods {
                                 }
                             }
 
-                            if ( in_array( $last_type, $tableless_field_types ) || 'boolean' == $last_type )
+                            if ( in_array( $last_type, $tableless_field_types ) || in_array( $last_type, array( 'boolean', 'number', 'currency' ) ) )
                                 $params->raw = true;
 
                             if ( empty( $data ) )

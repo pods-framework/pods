@@ -1815,7 +1815,7 @@ class PodsData {
             if ( !is_array( $data ) )
                 $field = $data;
 
-            if ( isset( $_GET[ $field ] ) || isset( $_GET[ 'filter_' . $field ] ) )
+            if ( 0 < strlen( pods_var( 'filter_' . $field ) ) )
                 $feed[ 'traverse_' . $field ] = array( $field );
         }
 
@@ -1941,7 +1941,7 @@ class PodsData {
         if ( 0 < $depth && 't' != $joined )
             $field_joined = $joined . '_' . $field;
 
-        if ( false !== $this->search ) {
+        if ( !empty( $this->search ) ) {
             if ( 0 < strlen( pods_var( 'filter_' . $field_joined, 'get' ) ) ) {
                 $val = absint( pods_var( 'filter_' . $field_joined, 'get' ) );
                 $on = $this->traversal[ $pod ][ $field ][ 'on' ];

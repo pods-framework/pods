@@ -1143,6 +1143,8 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
 
     $field_index = null;
 
+    $simple = false;
+
     if ( !empty( $fields ) && is_array( $fields ) && isset( $fields[ $field ] ) ) {
         $field = $fields[ $field ];
 
@@ -1151,6 +1153,8 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
         if ( !empty( $field ) && is_array( $field ) && in_array( $field[ 'type' ], $tableless_field_types ) ) {
             if ( 'file' == $field[ 'type' ] )
                 $field_index = 'guid';
+            elseif ( 'custom-simple' == $field[ 'pick_object' ] )
+                $simple = true;
             else {
                 $table = pods_api()->get_table_info( $field[ 'pick_object' ], $field[ 'pick_val' ] );
 
@@ -1168,14 +1172,18 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
         $last = array_pop( $value );
 
     if ( is_array( $last ) ) {
-        if ( isset( $last[ $field_index ] ) )
+        if ( null !== $field_index && isset( $last[ $field_index ] ) )
             $last = $last[ $field_index ];
+        elseif ( isset( $last[ 0 ] ) )
+            $last = $last[ 0 ];
+        elseif ( $simple )
+            $last = current( $last );
         else
             $last = '';
     }
 
     if ( !empty( $value ) ) {
-        if ( isset( $value[ $field_index ] ) )
+        if ( null !== $field_index && isset( $value[ $field_index ] ) )
             return $value[ $field_index ];
 
         if ( 1 == count( $value ) ) {
@@ -1183,32 +1191,41 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
                 $value = $value[ 0 ];
 
             if ( is_array( $value ) ) {
-                if ( isset( $value[ $field_index ] ) )
+                if ( null !== $field_index && isset( $value[ $field_index ] ) )
                     $value = $value[ $field_index ];
+                elseif ( $simple )
+                    $value = implode( ', ', $value );
                 else
                     $value = '';
             }
+
+            $value = trim( $value, ', ' ) . ', ';
         }
         else {
-            if ( isset( $value[ $field_index ] ) )
+            if ( null !== $field_index && isset( $value[ $field_index ] ) )
                 return $value[ $field_index ];
             elseif ( !isset( $value[ 0 ] ) )
                 $value = array( $value );
 
             foreach ( $value as $k => &$v ) {
                 if ( is_array( $v ) ) {
-                    if ( isset( $v[ $field_index ] ) )
+                    if ( null !== $field_index && isset( $v[ $field_index ] ) )
                         $v = $v[ $field_index ];
+                    elseif ( $simple )
+                        $v = trim( implode( ', ', $v ), ', ' );
                     else
                         unset( $value[ $k ] );
                 }
             }
 
-            $value = implode( ', ', $value );
+            $value = trim( implode( ', ', $value ), ', ' ) . ', ';
         }
 
+        $value = trim( $value );
+        $last = trim( $last );
+
         if ( 0 < strlen( $value ) && 0 < strlen( $last ) )
-            $value .= $and . $last;
+            $value = $value . $and . $last;
         elseif ( 0 < strlen( $last ) )
             $value = $last;
         else
@@ -1216,6 +1233,8 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
     }
     else
         $value = $last;
+
+    $value = trim( $value, ', ' );
 
     return (string) $value;
 }

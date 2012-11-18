@@ -173,6 +173,8 @@ class PodsField_Pick extends PodsField {
 
         if ( is_object( $pod ) && isset( $pod->fields ) )
             $fields = $pod->fields;
+        elseif ( is_array( $pod ) && isset( $pod[ 'fields' ] ) )
+            $fields = $pod[ 'fields' ];
 
         return pods_serial_comma( $value, $name, $fields );
     }

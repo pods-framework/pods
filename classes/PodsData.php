@@ -1942,18 +1942,18 @@ class PodsData {
             $field_joined = $joined . '_' . $field;
 
         if ( false !== $this->search ) {
-            if ( 0 < strlen( pods_var( $field_joined, 'get' ) ) ) {
-                $val = absint( pods_var( $field_joined, 'get' ) );
+            if ( 0 < strlen( pods_var( 'filter_' . $field_joined, 'get' ) ) ) {
+                $val = absint( pods_var( 'filter_' . $field_joined, 'get' ) );
                 $on = $this->traversal[ $pod ][ $field ][ 'on' ];
                 $search = "`{$field_joined}`.`{$on}` = {$val}";
 
                 if ( 'text' == $this->search_mode ) {
-                    $val = pods_var( $field_joined, 'get' );
+                    $val = pods_var( 'filter_' . $field_joined, 'get' );
                     $on = $this->traversal[ $pod ][ $field ][ 'name' ];
                     $search = "`{$field_joined}`.`{$on}` = '{$val}'";
                 }
                 elseif ( 'text_like' == $this->search_mode ) {
-                    $val = pods_sanitize( like_escape( $_GET[ $field_joined ] ) );
+                    $val = pods_sanitize( like_escape( pods_var_raw( 'filter_' . $field_joined ) ) );
                     $on = $this->traversal[ $pod ][ $field ][ 'name' ];
                     $search = "`{$field_joined}`.`{$on}` LIKE '%{$val}%'";
                 }

@@ -141,7 +141,7 @@ class PodsField_Slug extends PodsField {
      * @since 2.0.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-        $value = pods_unique_slug( $value, $name, $pod, 0, $params->id );
+        $value = pods_unique_slug( $value, $name, $pod, 0, $params->id, null, false );
 
         return $value;
     }

@@ -407,7 +407,7 @@ class PodsMeta {
         $groups = array(
             array(
                 'pod' => $pod,
-                'label' => __( 'More Fields', 'pods' ),
+                'label' => apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $pod, $fields, $type, $name ),
                 'fields' => $fields,
                 'context' => 'normal',
                 'priority' => 'default'

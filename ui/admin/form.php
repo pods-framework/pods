@@ -237,9 +237,11 @@ if ( 0 < $pod->id() ) {
                                 <span>
                                     <?php
                                     if ( $more )
-                                        _e( 'More Fields', 'pods' );
+                                        $title = __( 'More Fields', 'pods' );
                                     else
-                                        _e( 'Fields', 'pods' );
+                                        $title = __( 'Fields', 'pods' );
+
+                                    echo apply_filters( 'pods_meta_default_box_title', $title, $pod, $fields );
                                     ?>
                                 </span>
                             </h3>

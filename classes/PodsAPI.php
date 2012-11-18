@@ -1830,6 +1830,22 @@ class PodsAPI {
             );
         }
 
+        if ( !empty( $old_id ) && $old_name != $field[ 'name' ] ) {
+            pods_query( "
+                    UPDATE `@wp_postmeta`
+                    SET `meta_value` = %s
+                    WHERE
+                        `post_id` = %d
+                        `meta_key` = 'pod_index'
+                        `meta_value` = %s
+                ", array(
+                    $field[' name' ],
+                    $pod[ 'id' ],
+                    $old_name
+                )
+            );
+        }
+
         if ( !$save_pod )
             $this->cache_flush_pods( $pod );
 

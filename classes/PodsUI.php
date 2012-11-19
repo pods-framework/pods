@@ -1612,11 +1612,21 @@ class PodsUI {
         if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
             $orderby = array();
 
+            $limit = $this->limit;
+
+            $sql = null;
+
             if ( 'reorder' == $this->action ) {
                 if ( !empty( $this->reorder[ 'orderby' ] ) )
                     $orderby[ $this->reorder[ 'orderby' ] ] = $this->reorder[ 'orderby_dir' ];
                 else
                     $orderby[ $this->reorder[ 'on' ] ] = $this->reorder[ 'orderby_dir' ];
+
+                if ( !empty( $this->reorder[ 'limit' ] ) )
+                    $limit = $this->reorder[ 'limit' ];
+
+                if ( !empty( $this->reorder[ 'sql' ] ) )
+                    $sql = $this->reorder[ 'sql' ];
             }
 
             if ( !empty( $this->orderby ) ) {
@@ -1632,12 +1642,13 @@ class PodsUI {
                 'where' => pods_var_raw( $this->action, $this->where, null, null, true ),
                 'orderby' => $orderby,
                 'page' => (int) $this->page,
-                'limit' => (int) $this->limit,
+                'limit' => (int) $limit,
                 'search' => $this->searchable,
                 'search_query' => $this->search,
                 'search_across' => $this->search_across,
                 'search_across_picks' => $this->search_across_picks,
-                'filters' => $this->filters
+                'filters' => $this->filters,
+                'sql' => $sql
             );
 
             $params = array_merge( $params, (array) $this->params );

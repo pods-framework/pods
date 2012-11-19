@@ -2086,9 +2086,13 @@ class PodsAPI {
             }
 
             if ( isset( $params->data ) && !empty( $params->data ) && is_array( $params->data ) ) {
-                pods_deprecated( 'PodsAPI::save_pod_items', '2.0.0' );
+                $check = current( $params->data );
 
-                return $this->save_pod_items( $params, $params->data );
+                if ( is_array( $check ) ) {
+                    pods_deprecated( 'PodsAPI::save_pod_items', '2.0.0' );
+
+                    return $this->save_pod_items( $params, $params->data );
+                }
             }
         }
 

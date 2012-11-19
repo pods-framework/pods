@@ -525,6 +525,14 @@ class PodsMeta {
         if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || in_array( $post->post_type, $blacklisted_types ) )
             return $post_id;
 
+        // Block Quick Edits
+        if ( 'inline-save' == pods_var( 'action', 'post' ) )
+            return $post_id;
+
+        // Block Trash
+        if ( in_array( pods_var( 'action', 'get' ), array( 'untrash', 'trash' ) ) )
+            return $post_id;
+
         $blacklisted_status = array(
             'auto-draft',
             'trash'

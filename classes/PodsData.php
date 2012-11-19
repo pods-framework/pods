@@ -1844,6 +1844,7 @@ class PodsData {
 
         if ( !isset( $this->traversal[ $pod ] ) )
             $this->traversal[ $pod ] = array();
+
         $pod_data = $this->api->load_pod( array( 'name' => $pod ) );
 
         if ( empty( $pod_data ) )
@@ -1886,8 +1887,12 @@ class PodsData {
                 $recurse = false;
             }
             elseif ( 'pod' == $table ) {
+                $table_data = $this->api->load_pod( array( 'name' => $v ) );
+
                 $the_pod = $v;
-                $table = '@wp_pods_' . $v;
+                $table = $table_data[ 'table' ];
+                $on = $table_data[ 'field_id' ];
+                $name = $table_data[ 'field_index' ];
             }
             elseif ( !empty( $table ) ) {
                 $the_pod = $table;

@@ -522,6 +522,8 @@ class PodsMeta {
         $blacklisted_types = apply_filters( 'pods_meta_save_post_blacklist_types', $blacklisted_types, $post_id, $post );
 
         // @todo Figure out how to hook into autosave for saving meta
+
+        // Block Autosave and Revisions
         if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || in_array( $post->post_type, $blacklisted_types ) )
             return $post_id;
 
@@ -533,6 +535,7 @@ class PodsMeta {
         if ( in_array( pods_var( 'action', 'get' ), array( 'untrash', 'trash' ) ) )
             return $post_id;
 
+        // Block Auto-drafting and Trash (not via Admin action)
         $blacklisted_status = array(
             'auto-draft',
             'trash'

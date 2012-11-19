@@ -136,7 +136,15 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                             pod : '<?php echo (int) $pod->pod_id; ?>',
                             field : '<?php echo (int) $options[ 'id' ]; ?>',
                             uri : '<?php echo $uri_hash; ?>',
-                            query : term
+                            query : term<?php
+                                global $sitepress, $icl_adjust_id_url_filter_off;
+
+                                if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off ) {
+                            ?>,
+                                lang : '<?php echo ICL_LANGUAGE_CODE; ?>'
+                            <?php
+                                }
+                            ?>
                         };
                     },
                     results : function ( data, page ) {

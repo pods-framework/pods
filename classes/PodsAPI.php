@@ -1836,8 +1836,8 @@ class PodsAPI {
                     SET `meta_value` = %s
                     WHERE
                         `post_id` = %d
-                        `meta_key` = 'pod_index'
-                        `meta_value` = %s
+                        AND `meta_key` = 'pod_index'
+                        AND `meta_value` = %s
                 ", array(
                     $field[' name' ],
                     $pod[ 'id' ],
@@ -4668,6 +4668,12 @@ class PodsAPI {
 
         $transient = 'pods_get_table_info_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name );
 
+        if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off ) {
+            $current_language = pods_sanitize( ICL_LANGUAGE_CODE );
+
+            $transient .= 'pods_get_table_info_' . $current_language . '_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name );
+        }
+
         $_info = pods_transient_get( $transient );
 
         if ( false !== $_info )
@@ -4762,8 +4768,6 @@ class PodsAPI {
                 $info[ 'orderby' ] = '`t`.`menu_order`, `t`.`' . $info[ 'field_index' ] . '`, `t`.`post_date`';
 
                 if ( is_object( $sitepress ) && $sitepress->is_translated_post_type( $post_type ) && !$icl_adjust_id_url_filter_off ) {
-                    $current_language = pods_sanitize( $sitepress->get_current_language() );
-
                     $info[ 'join' ][ 'wpml_translations' ] = "
                         LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
                             ON `wpml_translations`.`element_id` = `t`.`ID`
@@ -4803,8 +4807,6 @@ class PodsAPI {
                 );
 
                 if ( is_object( $sitepress ) && $sitepress->is_translated_taxonomy( $taxonomy ) && !$icl_adjust_id_url_filter_off ) {
-                    $current_language = pods_sanitize( $sitepress->get_current_language() );
-
                     $info[ 'join' ][ 'wpml_translations' ] = "
                         LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
                             ON `wpml_translations`.`element_id` = `tt`.`term_taxonomy_id`

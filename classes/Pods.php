@@ -1486,7 +1486,7 @@ class Pods {
         $params->total = ceil( $params->total_found / $params->limit );
 
         if ( $params->limit < 1 || $params->total_found < 1 || 1 == $params->total )
-            return $this->do_hook( 'pagination', '', $params );
+            return $this->do_hook( 'pagination', $this->do_hook( 'pagination_' . $params->type, '', $params ), $params );
 
         $pagination = $params->type;
 
@@ -1499,7 +1499,7 @@ class Pods {
 
         $output = ob_get_clean();
 
-        return $this->do_hook( 'pagination', $output, $params );
+        return $this->do_hook( 'pagination', $this->do_hook( 'pagination_' . $params->type, $output, $params ), $params );
     }
 
     /**

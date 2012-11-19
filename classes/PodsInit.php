@@ -304,7 +304,7 @@ class PodsInit {
                     $cpt_supports = false;
 
                 // Rewrite
-                $cpt_rewrite = pods_var( 'rewrite', $post_type, true );
+                $cpt_rewrite = (boolean) pods_var( 'rewrite', $post_type, true );
                 $cpt_rewrite_array = array(
                     'slug' => pods_var( 'rewrite_custom_slug', $post_type, pods_var( 'name', $post_type ) ),
                     'with_front' => (boolean) pods_var( 'rewrite_with_front', $post_type, true ),
@@ -342,7 +342,7 @@ class PodsInit {
                     //'permalink_epmask' => EP_PERMALINK,
                     'has_archive' => (boolean) pods_var( 'has_archive', $post_type, false ),
                     'rewrite' => $cpt_rewrite,
-                    'query_var' => ( false !== pods_var( 'query_var', $post_type, true ) ? pods_var( 'query_var_string', $post_type, pods_var( 'name', $post_type ) ) : false ),
+                    'query_var' => ( false !== (boolean) pods_var( 'query_var', $post_type, true ) ? pods_var( 'query_var_string', $post_type, pods_var( 'name', $post_type ) ) : false ),
                     'can_export' => (boolean) pods_var( 'can_export', $post_type, true ),
                     'show_in_nav_menus' => (boolean) pods_var( 'show_in_nav_menus', $post_type, (boolean) pods_var( 'public', $post_type, false ) )
                 );
@@ -403,7 +403,7 @@ class PodsInit {
                 $ct_labels[ 'choose_from_most_used' ] = pods_var_raw( 'label_choose_from_most_used', $taxonomy, '', null, true );
 
                 // Rewrite
-                $ct_rewrite = pods_var( 'rewrite', $taxonomy, true );
+                $ct_rewrite = (boolean) pods_var( 'rewrite', $taxonomy, true );
                 $ct_rewrite_array = array(
                     'slug' => pods_var( 'rewrite_custom_slug', $taxonomy, pods_var( 'name', $taxonomy ) ),
                     'with_front' => (boolean) pods_var( 'rewrite_with_front', $taxonomy, true ),
@@ -423,7 +423,7 @@ class PodsInit {
                     'show_tagcloud' => (boolean) pods_var( 'show_tagcloud', $taxonomy, pods_var( 'show_ui', $taxonomy, pods_var( 'public', $taxonomy, true ) ) ),
                     'hierarchical' => (boolean) pods_var( 'hierarchical', $taxonomy ),
                     //'update_count_callback' => pods_var('update_count_callback', $taxonomy),
-                    'query_var' => ( false !== pods_var( 'query_var', $taxonomy, true ) ? pods_var( 'query_var_string', $taxonomy, pods_var( 'name', $taxonomy ) ) : false ),
+                    'query_var' => ( false !== (boolean) pods_var( 'query_var', $taxonomy, true ) ? pods_var( 'query_var_string', $taxonomy, pods_var( 'name', $taxonomy ) ) : false ),
                     'rewrite' => $ct_rewrite
                 );
 

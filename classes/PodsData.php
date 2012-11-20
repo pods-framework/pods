@@ -565,6 +565,7 @@ class PodsData {
             $total = @current( $wpdb->get_col( $this->get_sql( $this->total_sql ) ) );
         else
             $total = @current( $wpdb->get_col( "SELECT FOUND_ROWS()" ) );
+
         $total = $this->do_hook( 'select_total', $total );
 
         $this->total_found = 0;

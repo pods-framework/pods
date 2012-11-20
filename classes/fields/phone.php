@@ -157,6 +157,8 @@ class PodsField_Phone extends PodsField {
     public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         $errors = array();
 
+        $label = strip_tags( pods_var_raw( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) ) );
+
         $check = $this->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
         if ( is_array( $check ) )
@@ -164,9 +166,9 @@ class PodsField_Phone extends PodsField {
         else {
             if ( 0 < strlen( $value ) && strlen( $check ) < 1 ) {
                 if ( 1 == pods_var( 'required', $options ) )
-                    $errors[] = __( 'This field is required.', 'pods' );
+                    $errors[] = sprintf( __( 'The %s field is required.', 'pods' ), $label );
                 else
-                    $errors[] = __( 'Invalid phone number provided.', 'pods' );
+                    $errors[] = sprintf( __( 'Invalid phone number provided for the field %s.', 'pods' ), $label );
             }
         }
 

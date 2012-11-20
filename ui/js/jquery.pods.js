@@ -3,7 +3,8 @@
     var methods = {
         validate : function () {
             var $containers = $( 'form.pods-submittable, .pods-validation' ),
-                form_fields = 'input.pods-validate, select.pods-validate, textarea.pods-validate';
+                form_fields = 'input.pods-validate, select.pods-validate, textarea.pods-validate',
+                form_field_names = [];
 
             // handle required
             $containers.on( 'change keyup blur', form_fields.replace( ',', '.pods-validate-required,' ) + '.pods-validate-required', function () {
@@ -16,13 +17,20 @@
 
                 var label = '';
 
-                if ( 0 < $el.parent().find( 'label' ).length )
+                if ( -1 == form_field_names.indexOf( $el.prop( 'name' ) ) )
+                    form_field_names.push( $el.prop( 'name' ) );
+                else
+                    return;
+
+                if ( 'undefined' != typeof $el.data( 'label' ) )
+                    label = $el.data( 'label' );
+                else if ( 0 < $el.parent().find( 'label' ).length )
                     label = $el.parent().find( 'label' ).html().trim();
                 else
                     label = $el.prop( 'name' ).trim().replace( '_', ' ' );
 
                 // TinyMCE support
-                if ( 'object' == typeof( tinyMCE ) && -1 < $el.prop( 'class' ).indexOf( 'pods-ui-field-tinymce' ) )
+                if ( 'object' == typeof tinyMCE && -1 < $el.prop( 'class' ).indexOf( 'pods-ui-field-tinymce' ) )
                     tinyMCE.triggerSave();
 
                 if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) ) {

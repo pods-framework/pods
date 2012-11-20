@@ -243,6 +243,10 @@ class PodsForm {
             $_attributes = array();
             $_attributes[ 'name' ] = $name;
             $_attributes[ 'data-name-clean' ] = $name_more_clean;
+
+            if ( 0 < strlen( pods_var_raw( 'label', $options, '' ) ) )
+                $_attributes[ 'data-label' ] = strip_tags( pods_var_raw( 'label', $options ) );
+
             $_attributes[ 'id' ] = 'pods-form-ui-' . $name_clean;
             $_attributes[ 'class' ] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
 

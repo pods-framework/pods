@@ -488,7 +488,7 @@ class PodsMeta {
             $depends = PodsForm::dependencies( $field, 'pods-meta-' );
             ?>
             <tr class="form-field pods-field <?php echo $depends; ?>">
-                <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
+                <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], pods_var_raw( 'label_options', $field ) ); ?></th>
                 <td>
                     <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
                     <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>

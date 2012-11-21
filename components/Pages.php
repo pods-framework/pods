@@ -276,7 +276,15 @@ class Pods_Pages extends PodsComponent {
             array(
                 'name' => 'code',
                 'label' => __( 'Page Code', 'pods' ),
-                'type' => 'code'
+                'type' => 'code',
+                'attributes' => array(
+                    'id' => 'content'
+                ),
+                'label_options' => array(
+                    'attributes' => array(
+                        'for' => 'content'
+                    )
+                )
             ),
             array(
                 'name' => 'precode',

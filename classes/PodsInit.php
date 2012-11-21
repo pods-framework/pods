@@ -793,6 +793,16 @@ class PodsInit {
             }
         }
 
+        // Remove any orphans
+        $wpdb->query( "
+                DELETE `p`, `pm`
+                FROM `{$wpdb->posts}` AS `p`
+                LEFT JOIN `{$wpdb->postmeta}` AS `pm`
+                    ON `pm`.`post_id` = `p`.`ID`
+                WHERE
+                    `p`.`post_type` LIKE '_pods_%'
+            " );
+
         delete_option( 'pods_framework_version' );
         delete_option( 'pods_framework_upgrade_2_0' );
         delete_option( 'pods_framework_upgraded_1_x' );

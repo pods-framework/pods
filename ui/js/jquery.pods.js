@@ -1384,7 +1384,7 @@
             } );
         },
         exit_confirm : function () {
-            $( 'form.pods-submittable .pods-submittable-fields' ).on( 'change', 'input:not(:button,:submit),textarea,select', function () {
+            $( 'form.pods-submittable' ).on( 'change', '.pods-submittable-fields input:not(:button,:submit), .pods-submittable-fields textarea, .pods-submittable-fields select', function () {
                 pods_changed = true;
 
                 window.onbeforeunload = function () {

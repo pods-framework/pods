@@ -111,8 +111,12 @@ function pods_error ( $error, $obj = null ) {
         $display_errors = false;
     }
 
-    if ( is_array( $error ) )
-        $error = __( 'The following issues occured:', 'pods' ) . "\n<ul><li>" . implode( "</li>\n<li>", $error ) . "</li></ul>";
+    if ( is_array( $error ) ) {
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
+            $error = __( 'The following issues occured:', 'pods' ) . "\n\n- " . implode( "\n- ", $error );
+        else
+            $error = __( 'The following issues occured:', 'pods' ) . "\n<ul><li>" . implode( "</li>\n<li>", $error ) . "</li></ul>";
+    }
     elseif ( is_object( $error ) )
         $error = __( 'An unknown error has occurred', 'pods' );
 

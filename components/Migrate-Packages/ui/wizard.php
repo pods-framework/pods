@@ -295,18 +295,18 @@
 
         jQuery( '#pods-wizard-next' ).text( jQuery( '#pods-wizard-next' ).data( 'next' ) );
 
-        if ( 'export' == jQuery( '#pods-form-ui-import-export' ).val() ) {
-            window.location.hash = 'import-export';
+        window.location.hash = 'import-export';
 
+        if ( 'export' == jQuery( '#pods-form-ui-import-export' ).val() ) {
             // @todo We need copy/paste functionality here
             //jQuery( '#pods-wizard-panel-2 div#import-export-results div.inside textarea' ).select();
         }
 
-        return true;
+        return false;
     };
 
     var pods_admin_option_select_callback = function ( $opt ) {
-        jQuery( '#pods_import_export' ).val( $opt.data( 'opt' ) );
+        jQuery( '#pods-form-ui-import-export' ).val( $opt.data( 'opt' ) );
     };
 
     var pods_admin_wizard_startover_callback = function () {

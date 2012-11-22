@@ -52,26 +52,31 @@ class Pods_Migrate_Packages extends PodsComponent {
      */
     public function ajax_import_export ( $params ) {
         if ( 'import' == $params->import_export ) {
-            $data = $params->import_package;
-
-            $imported = $this->import( $data );
+            $data = trim( $params->import_package );
 
             echo '<div class="pods-wizard-content">';
 
-            if ( !empty( $imported ) )
-                echo '<p>Import Complete! The following items were imported:</p>';
+            if ( !empty( $data ) ) {
+                $imported = $this->import( $data );
 
-            foreach ( $imported as $type => $import ) {
-                echo '<h4>' . ucwords( $type ) . '</h4>';
+                if ( !empty( $imported ) ) {
+                    echo '<p>Import Complete! The following items were imported:</p>';
 
-                echo '<ul class="normal">';
+                    foreach ( $imported as $type => $import ) {
+                        echo '<h4>' . ucwords( $type ) . '</h4>';
 
-                foreach ( $import as $k => $what ) {
-                    echo '<li>' . esc_html( $what ) . '</li>';
+                        echo '<ul class="normal">';
+
+                        foreach ( $import as $k => $what ) {
+                            echo '<li>' . esc_html( $what ) . '</li>';
+                        }
+
+                        echo '</ul>';
+                    }
                 }
-
-                echo '</ul>';
             }
+            else
+                echo '<p>Import Error: Invalid Package</p>';
 
             echo '</div>';
         }

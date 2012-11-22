@@ -475,6 +475,8 @@
                                 .prev()
                                 .show();
                         }
+
+                        window.location.hash = '';
                     },
                     stepForward : function () {
                         // Show action bar for second panel if hidden
@@ -505,7 +507,7 @@
                         // Check if last step
                         if ( $( 'div.pods-wizard-panel:visible' ).next( 'div.pods-wizard-panel' ).length ) {
                             // Show next panel
-                           $( 'div.pods-wizard-panel:visible' )
+                            $( 'div.pods-wizard-panel:visible' )
                                 .hide()
                                 .next()
                                 .show();
@@ -516,13 +518,15 @@
 
                             if ( false === check )
                                 return check;
+
+                            window.location.hash = '';
                         }
                         else if ( $( '#pods-wizard-box' ).closest( 'form' )[ 0 ] ) {
-                           $( '#pods-wizard-next' ).css( 'cursor', 'default' );
-                           $( '#pods-wizard-next' ).prop( 'disabled', true );
-                           $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'processing' ) );
+                            $( '#pods-wizard-next' ).css( 'cursor', 'default' );
+                            $( '#pods-wizard-next' ).prop( 'disabled', true );
+                            $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'processing' ) );
 
-                           $( '#pods-wizard-box' ).closest( 'form' ).submit();
+                            $( '#pods-wizard-box' ).closest( 'form' ).submit();
 
                             if ( $( '#pods-wizard-box' ).closest( 'form' ).hasClass( 'invalid-form' ) ) {
                                 $( '#pods-wizard-next' ).css( 'cursor', 'pointer' );
@@ -544,6 +548,8 @@
                                 return check;
 
                             methods.setFinished();
+
+                            window.location.hash = '';
                         }
                     },
                     startOver : function () {
@@ -575,6 +581,8 @@
 
                         if ( 'undefined' != typeof pods_admin_wizard_startover_callback )
                             pods_admin_wizard_startover_callback( $( this ) );
+
+                        window.location.hash = '';
                     }
                 }
 

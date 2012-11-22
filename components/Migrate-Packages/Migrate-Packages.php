@@ -487,6 +487,8 @@ class Pods_Migrate_Packages extends PodsComponent {
             }
         }
 
+        $found = apply_filters( 'pods_packages_import', $found, $data, $replace );
+
         if ( !empty( $found ) )
             return $found;
 

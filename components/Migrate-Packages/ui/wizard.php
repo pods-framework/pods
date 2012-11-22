@@ -12,7 +12,7 @@
             <?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-' . $method ), 'hidden' ); ?>
             <?php echo PodsForm::field( 'import_export', 'export', 'hidden' ); ?>
 
-            <h2 class="italicized"><?php _e( 'Import Pods 1.x Packages', 'pods' ); ?></h2>
+            <h2 class="italicized"><?php _e( 'Migrate: Packages', 'pods' ); ?></h2>
 
             <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 

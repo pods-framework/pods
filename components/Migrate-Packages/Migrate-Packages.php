@@ -1,14 +1,12 @@
 <?php
 /**
- * Name: Migrate: Pods 1.x Packages
+ * Name: Migrate: Packages
  *
  * Menu Name: Migrate Packages
  *
- * Description: Import/Export your Pods, Fields, and other settings from any Pods 1.x site or export to any Pods 2.0 site; Includes an API to import/export Packages.
+ * Description: Import/Export your Pods, Fields, and other settings from any Pods site; Includes an API to Import/Export Packages via PHP
  *
  * Version: 2.0
- *
- * Developer Mode: on
  *
  * @package Pods\Components
  * @subpackage Migrate-Packages

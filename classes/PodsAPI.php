@@ -4192,6 +4192,9 @@ class PodsAPI {
      * @since 1.7.9
      */
     public function load_template ( $params ) {
+        if ( !class_exists( 'Pods_Templates' ) )
+            return false;
+
         $params = (object) $params;
         $params->type = 'template';
         return $this->load_object( $params );
@@ -4211,6 +4214,9 @@ class PodsAPI {
      * @return array
      */
     public function load_templates ( $params = null ) {
+        if ( !class_exists( 'Pods_Templates' ) )
+            return array();
+
         $params = (object) $params;
         $params->type = 'template';
         return $this->load_objects( $params );
@@ -4230,6 +4236,9 @@ class PodsAPI {
      * @since 1.7.9
      */
     public function load_page ( $params ) {
+        if ( !class_exists( 'Pods_Pages' ) )
+            return false;
+
         $params = (object) $params;
         if ( !isset( $params->name ) && isset( $params->uri ) ) {
             $params->name = $params->uri;
@@ -4253,6 +4262,9 @@ class PodsAPI {
      * @return array
      */
     public function load_pages ( $params = null ) {
+        if ( !class_exists( 'Pods_Pages' ) )
+            return array();
+
         $params = (object) $params;
         $params->type = 'page';
         return $this->load_objects( $params );
@@ -4272,6 +4284,9 @@ class PodsAPI {
      * @since 1.7.9
      */
     public function load_helper ( $params ) {
+        if ( !class_exists( 'Pods_Helpers' ) )
+            return false;
+
         $params = (object) $params;
         $params->type = 'helper';
         return $this->load_object( $params );
@@ -4291,6 +4306,9 @@ class PodsAPI {
      * @return array
      */
     public function load_helpers ( $params = null ) {
+        if ( !class_exists( 'Pods_Helpers' ) )
+            return array();
+
         $params = (object) $params;
         $params->type = 'helper';
         return $this->load_objects( $params );

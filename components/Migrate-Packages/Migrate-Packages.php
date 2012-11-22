@@ -42,7 +42,7 @@ class Pods_Migrate_Packages extends PodsComponent {
      * @since 2.0.0
      */
     public function admin ( $options, $component ) {
-        $method = 'import'; // ajax_import
+        $method = 'import_export'; // ajax_import
 
         pods_view( PODS_DIR . 'components/Migrate-Packages/ui/wizard.php', compact( array_keys( get_defined_vars() ) ) );
     }
@@ -52,25 +52,47 @@ class Pods_Migrate_Packages extends PodsComponent {
      *
      * @param $params
      */
-    public function ajax_import ( $params ) {
-        $data = $params->import_package;
+    public function ajax_import_export ( $params ) {
+        if ( 'import' == $params->import_export ) {
+            $data = $params->import_package;
 
-        $imported = $this->import( $data );
+            $imported = $this->import( $data );
 
-        if ( !empty( $imported ) )
-            echo '<p>Import Complete! The following items were imported:</p>';
+            echo '<div class="pods-wizard-content">';
 
-        foreach ( $imported as $type => $import ) {
-            echo '<h4>' . ucwords( $type ) . '</h4>';
+            if ( !empty( $imported ) )
+                echo '<p>Import Complete! The following items were imported:</p>';
 
-            echo '<ul class="normal">';
+            foreach ( $imported as $type => $import ) {
+                echo '<h4>' . ucwords( $type ) . '</h4>';
 
-            foreach ( $import as $k => $what ) {
-                echo '<li>' . esc_html( $what ) . '</li>';
+                echo '<ul class="normal">';
+
+                foreach ( $import as $k => $what ) {
+                    echo '<li>' . esc_html( $what ) . '</li>';
+                }
+
+                echo '</ul>';
             }
 
-            echo '</ul>';
+            echo '</div>';
         }
+        elseif ( 'export' == $params->import_export ) {
+            $params = get_object_vars( $params );
+            foreach ( $params as $k => $v ) {
+                if ( is_array( $v ) )
+                    $params[ $k ] = array_keys( $v );
+            }
+
+            $package = $this->export( $params );
+
+            echo '<div class="pods-field-option">';
+
+            echo PodsForm::field( 'export_package', $package, 'paragraph', array( 'attributes' => array( 'style' => 'width: 94%; max-width: 94%; height: 300px;' ) ) );
+
+            echo '</div>';
+        }
+
     }
 
     /**
@@ -491,6 +513,9 @@ class Pods_Migrate_Packages extends PodsComponent {
             )
         );
 
+        if ( is_object( $params ) )
+            $params = get_object_vars( $params );
+
         $api = pods_api();
 
         $pod_ids = pods_var_raw( 'pods', $params );
@@ -499,40 +524,42 @@ class Pods_Migrate_Packages extends PodsComponent {
         $helper_ids = pods_var_raw( 'helpers', $params );
 
         if ( !empty( $pod_ids ) ) {
-            $params = array();
+            $api_params = array();
 
             if ( true !== $pod_ids )
-                $params = array( 'ids' => $pod_ids );
+                $api_params[ 'ids' ] = (array) $pod_ids;
 
-            $export[ 'pods' ] = $api->load_pods( $params );
+            $export[ 'pods' ] = $api->load_pods( $api_params );
         }
 
         if ( !empty( $template_ids ) ) {
-            $params = array();
+            $api_params = array();
 
             if ( true !== $template_ids )
-                $params = array( 'ids' => $template_ids );
+                $api_params[ 'ids' ] = (array) $template_ids;
 
-            $export[ 'templates' ] = $api->load_templates( $params );
+            $export[ 'templates' ] = $api->load_templates( $api_params );
         }
 
         if ( !empty( $page_ids ) ) {
-            $params = array();
+            $api_params = array();
 
             if ( true !== $page_ids )
-                $params = array( 'ids' => $page_ids );
+                $api_params[ 'ids' ] = (array) $page_ids;
 
-            $export[ 'pages' ] = $api->load_pages( $params );
+            $export[ 'pages' ] = $api->load_pages( $api_params );
         }
 
         if ( !empty( $helper_ids ) ) {
-            $params = array();
+            $api_params = array();
 
             if ( true !== $helper_ids )
-                $params = array( 'ids' => $helper_ids );
+                $api_params[ 'ids' ] = (array) $helper_ids;
 
-            $export[ 'helpers' ] = $api->load_helpers( $params );
+            $export[ 'helpers' ] = $api->load_helpers( $api_params );
         }
+
+        $export = apply_filters( 'pods_packages_export', $export, $params );
 
         if ( 1 == count( $export ) )
             return false;

@@ -572,6 +572,9 @@
                         $( '#pods-wizard-start' ).hide();
                         $( 'div.pods-wizard-option-cont' ).hide();
                         $( '#pods-wizard-choices' ).fadeIn( 'fast' );
+
+                        if ( 'undefined' != typeof pods_admin_wizard_startover_callback )
+                            pods_admin_wizard_startover_callback( $( this ) );
                     }
                 }
 

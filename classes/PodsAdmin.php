@@ -46,7 +46,7 @@ class PodsAdmin {
         add_action( 'wp_ajax_nopriv_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
 
         // Add Media Bar button for Shortcode
-        add_filter( 'media_buttons_context', array( $this, 'media_button' ) );
+        add_action( 'media_buttons', array( $this, 'media_button' ), 12 );
 
         // Add the Pods capabilities
         add_filter( 'members_get_capabilities', array( $this, 'admin_capabilities' ) );
@@ -458,7 +458,7 @@ class PodsAdmin {
      *
      * @return string
      */
-    public function media_button ( $context ) {
+    public function media_button ( $context = null ) {
         $current_page = basename( $_SERVER[ 'PHP_SELF' ] );
         $current_page = explode( '?', $current_page );
         $current_page = explode( '#', $current_page[ 0 ] );
@@ -470,10 +470,7 @@ class PodsAdmin {
 
         add_action( 'admin_footer', array( $this, 'mce_popup' ) );
 
-        $button = '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox" id="add_pod_button" title="Pods Shortcode"><img src="' . PODS_URL . 'ui/images/icon16.png" alt="Pods Shortcode" /></a>';
-        $context .= $button;
-
-        return $context;
+        echo '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox" id="add_pod_button" title="Pods Shortcode"><img src="' . PODS_URL . 'ui/images/icon16.png" alt="Pods Shortcode" /></a>';
     }
 
     /**

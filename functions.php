@@ -454,6 +454,25 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
             if ( is_numeric( $var ) )
                 $output = ( $var < 0 ) ? pods_var_raw( count( $uri ) + $var, $uri ) : pods_var_raw( $var, $uri );
         }
+        elseif ( 'url-relative' == $type ) {
+            $url_raw = get_current_url();
+            $prefix = get_bloginfo( 'wpurl' );
+
+            if ( substr( $url_raw, 0, strlen( $prefix ) ) == $prefix )
+                $url_raw = substr( $url_raw, strlen( $prefix ) + 1, strlen( $url_raw ) );
+
+            $url = parse_url( $url_raw );
+            $uri = trim( $url[ 'path' ], '/' );
+            $uri = array_filter( explode( '/', $uri ) );
+
+            if ( 'first' == $var )
+                $var = 0;
+            elseif ( 'last' == $var )
+                $var = -1;
+
+            if ( is_numeric( $var ) )
+                $output = ( $var < 0 ) ? pods_var_raw( count( $uri ) + $var, $uri ) : pods_var_raw( $var, $uri );
+        }
         elseif ( 'post' == $type && isset( $_POST[ $var ] ) )
             $output = stripslashes_deep( $_POST[ $var ] );
         elseif ( 'request' == $type && isset( $_REQUEST[ $var ] ) )

@@ -431,9 +431,3 @@ div.row-actions.row-actions-toggle {
 .pods-field-option select:focus, .pods-field input[type=checkbox]:focus + label{
     background: #ffffcc;
 }
-
-/* Thickbox Inline content fix */
-#TB_ajaxContent {
-    width: auto !important;
-    height: auto !important;
-}

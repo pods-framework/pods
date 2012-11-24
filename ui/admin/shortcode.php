@@ -198,6 +198,12 @@
     .pods-shortcode strong.red {
         color: red;
     }
+
+    /* Thickbox Inline content fix */
+    #TB_ajaxContent {
+        width: auto !important;
+        height: auto !important;
+    }
 </style>
 
 <div id="pods_shortcode_form" style="display: none;">

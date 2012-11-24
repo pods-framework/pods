@@ -300,7 +300,7 @@ class PodsInit {
                         $cpt_supports[] = $cpt_support;
                 }
 
-                if ( 1 == count( $cpt_supports ) && version_compare( '3.5', $wp_version, '<=' ) )
+                if ( 1 == count( $cpt_supports ) && version_compare( '3.5-alpha', $wp_version, '<=' ) )
                     $cpt_supports = false;
 
                 // Rewrite

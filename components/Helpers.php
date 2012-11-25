@@ -161,9 +161,6 @@ class Pods_Helpers extends PodsComponent {
         if ( $this->object_type != $current_screen->post_type )
             return $actions;
 
-        if ( isset( $actions[ 'edit' ] ) )
-            unset( $actions[ 'edit' ] );
-
         if ( isset( $actions[ 'view' ] ) )
             unset( $actions[ 'view' ] );
 

@@ -96,7 +96,7 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 == Changelog ==
 
-= 2.0.5 - November 22nd, 2012 =
+= 2.0.5 - November 24th, 2012 =
 * Another big set of stability fixes to improve performance and functionality
 * Added: Migrate Packages component - Our Package manager makes a return! You may remember it from Pods 1.x, but we've cleaned it up and improved the interface to make it easier to migrate your settings between sites or share them with others
 * Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/

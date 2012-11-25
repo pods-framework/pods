@@ -67,14 +67,14 @@ class PodsInit {
     /**
      * Load the plugin textdomain.
      */
-    function load_textdomain() {
+    public function load_textdomain () {
         load_plugin_textdomain( 'pods', false, dirname( PODS_DIR . 'init.php' ) . '/languages/' );
     }
 
     /**
      * Load Pods Meta and Components
      */
-    function load() {
+    public function load () {
         // Init Pods Form
         pods_form();
 
@@ -86,7 +86,7 @@ class PodsInit {
     /**
      * Set up the Pods core
      */
-    function init () {
+    public function init () {
         // Session start
         if ( ( ( defined( 'WP_DEBUG' ) && WP_DEBUG ) || false === headers_sent() ) && '' == session_id() && ( !defined( 'PODS_SESSION_AUTO_START' ) || PODS_SESSION_AUTO_START ) )
             @session_start();
@@ -133,7 +133,7 @@ class PodsInit {
     /**
      * Register Scripts and Styles
      */
-    function register_assets () {
+    public function register_assets () {
         if ( !wp_style_is( 'jquery-ui', 'registered' ) )
             wp_register_style( 'jquery-ui', PODS_URL . 'ui/css/smoothness/jquery-ui.custom.css', array(), '1.8.16' );
 
@@ -177,7 +177,7 @@ class PodsInit {
     /**
      * Register internal Post Types
      */
-    function register_pods () {
+    public function register_pods () {
         $args = array(
             'label' => 'Pods',
             'labels' => array( 'singular_name' => 'Pod' ),
@@ -218,7 +218,7 @@ class PodsInit {
     /**
      * Include Admin
      */
-    function admin_init () {
+    public function admin_init () {
         self::$admin = pods_admin();
     }
 
@@ -623,11 +623,12 @@ class PodsInit {
     }
 
     /**
-     *
+     * Activate and Install
      */
     public function activate_install () {
-        // Activate and Install
-        // @todo: VIP constant check, display notice with a link for user to run install instead of auto install
+        if ( !defined( 'PODS_TABLELESS' ) )
+            define( 'PODS_TABLELESS', true );
+
         register_activation_hook( PODS_DIR . 'init.php', array( $this, 'activate' ) );
         register_deactivation_hook( PODS_DIR . 'init.php', array( $this, 'deactivate' ) );
 
@@ -640,8 +641,9 @@ class PodsInit {
     /**
      *
      */
-    public function activate() {
+    public function activate () {
         global $wpdb;
+
         if ( function_exists( 'is_multisite' ) && is_multisite() && isset( $_GET[ 'networkwide' ] ) && 1 == $_GET[ 'networkwide' ] ) {
             $_blog_ids = $wpdb->get_col( "SELECT `blog_id` FROM `{$wpdb->blogs}`" );
 
@@ -819,21 +821,226 @@ class PodsInit {
             restore_current_blog();
     }
 
-    // Delete Attachments from relationships
     /**
-     * @param $_ID
+     * Delete Attachments from relationships
+     *
+     * @param int $_ID
      */
     public function delete_attachment ( $_ID ) {
         global $wpdb;
 
+        $_ID = (int) $_ID;
+
         do_action( 'pods_delete_attachment', $_ID );
 
-        pods_query( "DELETE rel FROM `@wp_podsrel` AS rel
-            LEFT JOIN {$wpdb->posts} AS p
-                ON p.`post_type` = '_pods_field' AND ( p.ID = rel.`field_id` OR p.ID = rel.`related_field_id` )
-            LEFT JOIN {$wpdb->postmeta} AS pm
-                ON pm.`post_id` = p.`ID` AND pm.`meta_key` = 'type' AND pm.`meta_value` = 'file'
-            WHERE p.`ID` IS NOT NULL AND pm.`meta_id` IS NOT NULL AND rel.`item_id` = " . (int) $_ID, false );
+        if ( ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) ) {
+            $sql = "
+                DELETE `rel` FROM `@wp_podsrel` AS `rel`
+                LEFT JOIN `{$wpdb->posts}` AS `p`
+                    ON
+                        `p`.`post_type` = '_pods_field'
+                        AND ( `p`.`ID` = `rel`.`field_id` OR `p`.`ID` = `rel`.`related_field_id` )
+                LEFT JOIN `{$wpdb->postmeta}` AS `pm`
+                    ON
+                        `pm`.`post_id` = `p`.`ID`
+                        AND `pm`.`meta_key` = 'type'
+                        AND `pm`.`meta_value` = 'file'
+                WHERE
+                    `p`.`ID` IS NOT NULL
+                    AND `pm`.`meta_id` IS NOT NULL
+                    AND `rel`.`item_id` = " . $_ID;
+
+            pods_query( $sql, false );
+        }
+
+        // Post Meta
+        if ( !empty( PodsMeta::$post_types ) ) {
+            $sql =  "
+                DELETE `rel`
+                FROM `@wp_postmeta` AS `rel`
+                LEFT JOIN `{$wpdb->posts}` AS `p`
+                    ON
+                        `p`.`post_type` = '_pods_field'
+                        AND ( `p`.`ID` = `rel`.`field_id` OR `p`.`ID` = `rel`.`related_field_id` )
+                LEFT JOIN `{$wpdb->postmeta}` AS `pm`
+                    ON
+                        `pm`.`post_id` = `p`.`ID`
+                        AND `pm`.`meta_key` = 'type'
+                        AND `pm`.`meta_value` = 'file'
+                WHERE
+                    `p`.`ID` IS NOT NULL
+                    AND `pm`.`meta_id` IS NOT NULL
+                    AND `rel`.`meta_key` = `p`.`post_name`
+                    AND `rel`.`meta_value` = '" . $_ID . "'";
+
+            pods_query( $sql, false );
+
+            $sql = "
+                SELECT `rel`.`post_id`, `rel`.`meta_key`, `rel`.`meta_value`
+                FROM `@wp_postmeta` AS `rel`
+                LEFT JOIN `{$wpdb->posts}` AS `p`
+                    ON
+                        `p`.`post_type` = '_pods_field'
+                        AND ( `p`.`ID` = `rel`.`field_id` OR `p`.`ID` = `rel`.`related_field_id` )
+                LEFT JOIN `{$wpdb->postmeta}` AS `pm`
+                    ON
+                        `pm`.`post_id` = `p`.`ID`
+                        AND `pm`.`meta_key` = 'type'
+                        AND `pm`.`meta_value` = 'file'
+                WHERE
+                    `p`.`ID` IS NOT NULL
+                    AND `pm`.`meta_id` IS NOT NULL
+                    AND `rel`.`meta_key` = `p`.`post_name`
+                    AND `rel`.`meta_value` LIKE '\"" . $_ID . "\"'";
+
+            $fields = pods_query( $sql, false );
+
+            if ( !empty( $fields ) ) {
+                pods_no_conflict_on( 'post' );
+
+                foreach ( $fields as $field ) {
+                    $value = maybe_unserialize( $field->meta_value );
+
+                    if ( !empty( $value ) && is_array( $value ) ) {
+                        $found = array_search( $_ID, $value );
+
+                        if ( false !== $found ) {
+                            unset( $value[ $found ] );
+
+                            update_post_meta( $field->post_id, $field->meta_key, $value );
+                        }
+                    }
+                }
+
+                pods_no_conflict_off( 'post' );
+            }
+        }
+
+        // User Meta
+        if ( !empty( PodsMeta::$user ) ) {
+            $sql = "
+                DELETE `rel`
+                FROM `@wp_usermeta` AS `rel`
+                LEFT JOIN `{$wpdb->posts}` AS `p`
+                    ON
+                        `p`.`post_type` = '_pods_field'
+                        AND ( `p`.`ID` = `rel`.`field_id` OR `p`.`ID` = `rel`.`related_field_id` )
+                LEFT JOIN `{$wpdb->postmeta}` AS `pm`
+                    ON
+                        `pm`.`post_id` = `p`.`ID`
+                        AND `pm`.`meta_key` = 'type'
+                        AND `pm`.`meta_value` = 'file'
+                WHERE
+                    `p`.`ID` IS NOT NULL
+                    AND `pm`.`meta_id` IS NOT NULL
+                    AND `rel`.`meta_key` = `p`.`post_name`
+                    AND `rel`.`meta_value` = '" . $_ID . "'";
+
+            pods_query( $sql, false );
+
+            $sql = "
+                SELECT `rel`.`user_id`, `rel`.`meta_key`, `rel`.`meta_value`
+                FROM `@wp_usermeta` AS `rel`
+                LEFT JOIN `{$wpdb->posts}` AS `p`
+                    ON
+                        `p`.`post_type` = '_pods_field'
+                        AND ( `p`.`ID` = `rel`.`field_id` OR `p`.`ID` = `rel`.`related_field_id` )
+                LEFT JOIN `{$wpdb->postmeta}` AS `pm`
+                    ON
+                        `pm`.`post_id` = `p`.`ID`
+                        AND `pm`.`meta_key` = 'type'
+                        AND `pm`.`meta_value` = 'file'
+                WHERE
+                    `p`.`ID` IS NOT NULL
+                    AND `pm`.`meta_id` IS NOT NULL
+                    AND `rel`.`meta_key` = `p`.`post_name`
+                    AND `rel`.`meta_value` LIKE '\"" . $_ID . "\"'";
+
+            $fields = pods_query( $sql, false );
+
+            if ( !empty( $fields ) ) {
+                pods_no_conflict_on( 'user' );
+
+                foreach ( $fields as $field ) {
+                    $value = maybe_unserialize( $field->meta_value );
+
+                    if ( !empty( $value ) && is_array( $value ) ) {
+                        $found = array_search( $_ID, $value );
+
+                        if ( false !== $found ) {
+                            unset( $value[ $found ] );
+
+                            update_user_meta( $field->user_id, $field->meta_key, $value );
+                        }
+                    }
+                }
+
+                pods_no_conflict_off( 'user' );
+            }
+        }
+
+        // Comment Meta
+        if ( !empty( PodsMeta::$comment ) ) {
+            $sql = "
+                DELETE `rel`
+                FROM `@wp_commentmeta` AS `rel`
+                LEFT JOIN `{$wpdb->posts}` AS `p`
+                    ON
+                        `p`.`post_type` = '_pods_field'
+                        AND ( `p`.`ID` = `rel`.`field_id` OR `p`.`ID` = `rel`.`related_field_id` )
+                LEFT JOIN `{$wpdb->postmeta}` AS `pm`
+                    ON
+                        `pm`.`post_id` = `p`.`ID`
+                        AND `pm`.`meta_key` = 'type'
+                        AND `pm`.`meta_value` = 'file'
+                WHERE
+                    `p`.`ID` IS NOT NULL
+                    AND `pm`.`meta_id` IS NOT NULL
+                    AND `rel`.`meta_key` = `p`.`post_name`
+                    AND `rel`.`meta_value` = '" . $_ID . "'";
+
+            pods_query( $sql, false );
+
+            $sql = "
+                SELECT `rel`.`comment_id`, `rel`.`meta_key`, `rel`.`meta_value`
+                FROM `@wp_commentmeta` AS `rel`
+                LEFT JOIN `{$wpdb->posts}` AS `p`
+                    ON
+                        `p`.`post_type` = '_pods_field'
+                        AND ( `p`.`ID` = `rel`.`field_id` OR `p`.`ID` = `rel`.`related_field_id` )
+                LEFT JOIN `{$wpdb->postmeta}` AS `pm`
+                    ON
+                        `pm`.`post_id` = `p`.`ID`
+                        AND `pm`.`meta_key` = 'type'
+                        AND `pm`.`meta_value` = 'file'
+                WHERE
+                    `p`.`ID` IS NOT NULL
+                    AND `pm`.`meta_id` IS NOT NULL
+                    AND `rel`.`meta_key` = `p`.`post_name`
+                    AND `rel`.`meta_value` LIKE '\"" . $_ID . "\"'";
+
+            $fields = pods_query( $sql, false );
+
+            if ( !empty( $fields ) ) {
+                pods_no_conflict_on( 'comment' );
+
+                foreach ( $fields as $field ) {
+                    $value = maybe_unserialize( $field->meta_value );
+
+                    if ( !empty( $value ) && is_array( $value ) ) {
+                        $found = array_search( $_ID, $value );
+
+                        if ( false !== $found ) {
+                            unset( $value[ $found ] );
+
+                            update_comment_meta( $field->comment_id, $field->meta_key, $value );
+                        }
+                    }
+                }
+
+                pods_no_conflict_off( 'comment' );
+            }
+        }
     }
 
     /**

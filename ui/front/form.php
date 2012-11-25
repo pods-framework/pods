@@ -31,7 +31,7 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
     }
 }
 ?>
-<form action="<?php echo pods_var_update( array( '_p_submitted' => 1, 'success*' => null ) ); ?>" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo $pod->pod; ?> pods-submittable-ajax" data-location="<?php echo $thank_you; ?>">
+<form action="" method="post" class="pods-submittable pods-form pods-form-front pods-form-pod-<?php echo $pod->pod; ?> pods-submittable-ajax" data-location="<?php echo $thank_you; ?>">
     <div class="pods-submittable-fields">
         <?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
         <?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>

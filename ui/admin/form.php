@@ -73,7 +73,7 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
 }
 
 if ( !isset( $label ) )
-    $label = _e( 'Save', 'pods' );
+    $label = __( 'Save', 'pods' );
 
 $do = 'create';
 

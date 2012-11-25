@@ -941,24 +941,48 @@ class PodsAPI {
                 'show_ui' => 1
             );
 
-            if ( 'post_type' == $pod_params[ 'type' ] )
+            if ( 'post_type' == $pod_params[ 'type' ] ) {
                 $pod_params[ 'storage' ] = $params->create_storage;
-            elseif ( 'taxonomy' == $pod_params[ 'type' ] )
+
+                if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS )
+                    $pod_params[ 'storage' ] = 'meta';
+            }
+            elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
                 $pod_params[ 'storage' ] = $params->create_storage_taxonomy;
+
+                if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS )
+                    $pod_params[ 'storage' ] = 'none';
+            }
+            elseif ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) {
+                $pod_params[ 'type' ] = 'post_type';
+                $pod_params[ 'storage' ] = 'meta';
+            }
         }
         elseif ( 'extend' == $params->create_extend ) {
             $pod_params[ 'type' ] = $params->extend_pod_type;
 
             if ( 'post_type' == $pod_params[ 'type' ] ) {
                 $pod_params[ 'storage' ] = $params->extend_storage;
+
+                if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS )
+                    $pod_params[ 'storage' ] = 'meta';
+
                 $pod_params[ 'name' ] = $params->extend_post_type;
             }
             elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
                 $pod_params[ 'storage' ] = $params->extend_storage_taxonomy;
+
+                if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS )
+                    $pod_params[ 'storage' ] = 'none';
+
                 $pod_params[ 'name' ] = $params->extend_taxonomy;
             }
             else {
                 $pod_params[ 'storage' ] = $params->extend_storage;
+
+                if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS )
+                    $pod_params[ 'storage' ] = 'meta';
+
                 $pod_params[ 'name' ] = $params->extend_pod_type;
             }
 
@@ -1115,6 +1139,18 @@ class PodsAPI {
 
                     unset( $options[ $alias ] );
                 }
+            }
+        }
+
+        if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) {
+            if ( 'pod' == $pod[ 'type' ] )
+                $pod[ 'type' ] = 'post_type';
+
+            if ( 'table' == $pod[ 'storage' ] ) {
+                if ( 'taxonomy' == $pod[ 'type' ] )
+                    $pod[ 'storage' ] = 'none';
+                else
+                    $pod[ 'storage' ] = 'meta';
             }
         }
 

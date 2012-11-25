@@ -9,7 +9,7 @@ Author URI: http://podsframework.org/about/
 Text Domain: pods
 Domain Path: /languages/
 
-Copyright 2009-2013  The Pods Framework Team  (email : contact@podsframework.org)
+Copyright 2009-2013  Pods Foundation, Inc  (email : contact@podsfoundation.org)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

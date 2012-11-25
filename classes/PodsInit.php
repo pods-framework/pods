@@ -833,7 +833,7 @@ class PodsInit {
 
         do_action( 'pods_delete_attachment', $_ID );
 
-        if ( ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) ) {
+        if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
             $sql = "
                 DELETE `rel` FROM `@wp_podsrel` AS `rel`
                 LEFT JOIN `{$wpdb->posts}` AS `p`

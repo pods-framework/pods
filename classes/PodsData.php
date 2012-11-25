@@ -2005,12 +2005,18 @@ class PodsData {
             ";
         }
 
-        $the_join = "
-            LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
-                {$related_on}
-            LEFT JOIN `{$this->traversal[$pod][$field]['table']}` AS `{$field_joined}` ON
-                {$table_related_on}
-        ";
+        // @todo Handle meta storage lookups
+        if ( 'table' == $pod_data[ 'storage' ] && ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) ) {
+            $the_join = "
+                LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
+                    {$related_on}
+                LEFT JOIN `{$this->traversal[$pod][$field]['table']}` AS `{$field_joined}` ON
+                    {$table_related_on}
+            ";
+        }
+        else {
+
+        }
 
         if ( !in_array( $this->traversal[ $pod ][ $field ][ 'type' ], array( 'pick', 'file' ) ) ) {
             $the_join = "

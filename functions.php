@@ -421,7 +421,7 @@ function pods_trim ( $input, $charlist = null, $lr = null ) {
  * Return a variable (if exists)
  *
  * @param mixed $var The variable name or URI segment position
- * @param string $type (optional) get|url|post|request|server|session|cookie|constant|user|option|site-option|transient|site-transient|cache
+ * @param string $type (optional) get|url|post|request|server|session|cookie|constant|global|user|option|site-option|transient|site-transient|cache
  * @param mixed $default (optional) The default value to set if variable doesn't exist
  * @param mixed $allowed (optional) The value(s) allowed
  * @param bool $strict (optional) Only allow values (must not be empty)
@@ -485,6 +485,8 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
         }
         elseif ( 'session' == $type && isset( $_SESSION[ $var ] ) )
             $output = $_SESSION[ $var ];
+        elseif ( in_array( $type, array( 'global', 'globals' ) ) && isset( $GLOBALS[ $var ] ) )
+            $output = $GLOBALS[ $var ];
         elseif ( 'cookie' == $type && isset( $_COOKIE[ $var ] ) )
             $output = stripslashes_deep( $_COOKIE[ $var ] );
         elseif ( 'constant' == $type && defined( $var ) )

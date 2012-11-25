@@ -18,7 +18,7 @@
     elseif ( isset( $_POST[ 'reset_deactivate' ] ) ) {
         $pods_init->reset();
 
-        deactivate_plugins( PODS_DIR . 'pods.php' );
+        deactivate_plugins( PODS_DIR . 'init.php' );
 
         pods_redirect( 'index.php' );
     }

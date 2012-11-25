@@ -80,8 +80,10 @@ class Pods_Templates extends PodsComponent {
             add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 10, 4 );
 
             add_action( 'pods_meta_save_pre_post__pods_template', array( $this, 'fix_filters' ), 10, 5 );
-            add_action( 'pods_meta_save_post__pods_template', array( $this, 'clear_cache' ), 10, 5 );
+            add_action( 'post_updated', array( $this, 'clear_cache' ), 10, 3 );
             add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
+            add_filter( 'post_row_actions', array( $this, 'remove_row_actions' ), 10, 2 );
+            add_filter( 'bulk_actions-edit-' . $this->object_type, array( $this, 'remove_bulk_actions' ) );
         }
     }
 
@@ -158,6 +160,45 @@ class Pods_Templates extends PodsComponent {
     }
 
     /**
+     * Remove unused row actions
+     *
+     * @since 2.0.5
+     */
+    function remove_row_actions ( $actions, $post ) {
+        global $current_screen;
+
+        if ( $this->object_type != $current_screen->post_type )
+            return $actions;
+
+        if ( isset( $actions[ 'edit' ] ) )
+            unset( $actions[ 'edit' ] );
+
+        if ( isset( $actions[ 'view' ] ) )
+            unset( $actions[ 'view' ] );
+
+        if ( isset( $actions[ 'inline hide-if-no-js' ] ) )
+            unset( $actions[ 'inline hide-if-no-js' ] );
+
+        // W3 Total Cache
+        if ( isset( $actions[ 'pgcache_purge' ] ) )
+            unset( $actions[ 'pgcache_purge' ] );
+
+        return $actions;
+    }
+
+    /**
+     * Remove unused bulk actions
+     *
+     * @since 2.0.5
+     */
+    public function remove_bulk_actions ( $actions ) {
+        if ( isset( $actions[ 'edit' ] ) )
+            unset( $actions[ 'edit' ] );
+
+        return $actions;
+    }
+
+    /**
      * Clear cache on save
      *
      * @since 2.0.0
@@ -167,9 +208,15 @@ class Pods_Templates extends PodsComponent {
             $post = $data;
             $post = get_post( $post );
 
-            if ( $this->object_type != $post->post_type )
-                return;
+            if ( is_object( $id ) ) {
+                $old_post = $id;
+
+                pods_transient_clear( 'pods_object_template_' . $old_post->post_title );
+            }
         }
+
+        if ( $this->object_type != $post->post_type )
+            return;
 
         pods_transient_clear( 'pods_object_template' );
         pods_transient_clear( 'pods_object_template_' . $post->post_title );
@@ -222,8 +269,32 @@ class Pods_Templates extends PodsComponent {
 
         pods_group_add( $pod, __( 'Template', 'pods' ), $fields, 'normal', 'high' );
 
-        add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 9, 5 );
-        add_filter( 'get_post_metadata', array( $this, 'get_meta' ), 9, 4 );
+        $fields = array(
+            array(
+                'name' => 'admin_only',
+                'label' => __( 'Show to Admins Only?', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'dependency' => true
+            ),
+            array(
+                'name' => 'restrict_capability',
+                'label' => __( 'Restrict access by Capability?', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'dependency' => true
+            ),
+            array(
+                'name' => 'capability_allowed',
+                'label' => __( 'Capability Allowed', 'pods' ),
+                'help' => __( 'Comma-separated list of cababilities, for example add_podname_item, please see the Roles and Capabilities component for the complete list and a way to add your own.', 'pods' ),
+                'type' => 'text',
+                'default' => '',
+                'depends-on' => array( 'restrict_capability' => true )
+            )
+        );
+
+        pods_group_add( $pod, __( 'Restrict Access', 'pods' ), $fields, 'normal', 'high' );
     }
 
     /**
@@ -314,8 +385,18 @@ class Pods_Templates extends PodsComponent {
         if ( empty( $code ) && !empty( $template ) ) {
             $template = $obj->api->load_template( array( 'name' => $template ) );
 
-            if ( !empty( $template ) && !empty( $template[ 'code' ] ) )
-                $code = $template[ 'code' ];
+            if ( !empty( $template ) ) {
+                if ( !empty( $template[ 'code' ] ) )
+                    $code = $template[ 'code' ];
+
+                $permission = pods_permission( $template[ 'options' ] );
+
+                $permission = (boolean) apply_filters( 'pods_templates_permission', $permission, $code, $template, $obj );
+
+                if ( !$permission ) {
+                    return apply_filters( 'pods_templates_permission_denied', __( 'You do not have access to view this content.' ), $code, $template, $obj );
+                }
+            }
         }
 
         $code = apply_filters( 'pods_templates_pre_template', $code, $template, $obj );

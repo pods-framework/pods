@@ -20,7 +20,7 @@ class PodsView {
      *
      * @param string $view Path of the view file
      * @param array|null $data (optional) Data to pass on to the template
-     * @param bool|int $expires (optional) Time in seconds for the cache to expire, if 0 caching is disabled.
+     * @param bool|int|array $expires (optional) Time in seconds for the cache to expire, if 0 caching is disabled.
      * @param string $cache_mode (optional) Decides the caching method to use for the view.
      *
      * @return bool|mixed|null|string|void
@@ -28,7 +28,16 @@ class PodsView {
      * @since 2.0.0
      */
     public static function view ( $view, $data = null, $expires = false, $cache_mode = 'cache' ) {
-        if ( false !== $expires && (int) $expires < 1 )
+        // Different $expires if user is anonymous or logged in or specific capability
+        if ( is_array( $expires ) ) {
+            $anon = pods_var_raw( 0, $expires, false );
+            $user = pods_var_raw( 1, $expires, false );
+            $capability = pods_var_raw( 2, $expires, null, null, true );
+
+            $expires = pods_var_user( $anon, $user, $capability );
+        }
+
+        if ( false !== $expires && empty( $expires ) )
             $expires = 0;
 
         if ( !in_array( $cache_mode, self::$cache_modes ) )

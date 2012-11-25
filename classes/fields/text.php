@@ -242,6 +242,14 @@ class PodsField_Text extends PodsField {
      * @return string
      */
     public function strip_html ( $value, $options = null ) {
+        if ( is_array( $value ) )
+            $value = @implode( ' ', $value );
+
+        $value = trim( $value );
+
+        if ( empty( $value ) )
+            return $value;
+
         $options = (array) $options;
 
         if ( 1 == pods_var( 'text_allow_html', $options, 0, null, true ) ) {

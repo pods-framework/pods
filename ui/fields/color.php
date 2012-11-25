@@ -1,9 +1,10 @@
 <?php
-wp_enqueue_style( 'farbtastic' );
-if(!is_admin()) {
-    wp_register_script('farbtastic', admin_url("js/farbtastic.js"), array( 'jquery' ),'1.2',true);
-}
-wp_enqueue_script('farbtastic');
+wp_enqueue_style( 'wp-color-picker' );
+
+if ( !is_admin() )
+    wp_register_script( 'wp-color-picker', admin_url( "js/color-picker.js" ), array( 'jquery' ), '3.5', true );
+
+wp_enqueue_script( 'wp-color-picker' );
 
 $attributes = array();
 $attributes[ 'type' ] = 'text';
@@ -13,22 +14,11 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_t
 ?>
 <input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
 
-<div id="color_<?php echo $attributes[ 'id' ]; ?>"></div>
-
 <script type="text/javascript">
-    if ( 'undefined' == pods_farbastic_changing ) {
-        var pods_farbastic_changing = false;
-    }
-
     jQuery( function () {
         jQuery( '#color_<?php echo $attributes[ 'id' ]; ?>' ).hide();
 
-        var pods_farbtastic_<?php echo pods_clean_name( $attributes[ 'id' ] ); ?> = jQuery.farbtastic(
-                '#color_<?php echo $attributes[ 'id' ]; ?>',
-                function ( color ) {
-                    pods_pickColor( '#<?php echo $attributes[ 'id' ]; ?>', color );
-                }
-        );
+        var pods_wp_color_obj_<?php echo pods_clean_name( $attributes[ 'id' ] ); ?> = jQuery( '#<?php echo $attributes[ 'id' ]; ?>' ).wpColorPicker();
 
         jQuery( '#<?php echo $attributes[ 'id' ]; ?>' ).on( 'focus blur', function () {
             jQuery( '#color_<?php echo $attributes[ 'id' ]; ?>' ).slideToggle();
@@ -37,19 +27,8 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_t
         jQuery( '#<?php echo $attributes[ 'id' ]; ?>' ).on( 'keyup', function () {
             var color = jQuery( this ).val();
 
-            pods_farbastic_changing = true;
-
             if ( '' != color.replace( '#', '' ) && color.match( '#' ) )
-                pods_farbtastic_<?php echo pods_clean_name( $attributes[ 'id' ] ); ?>.setColor( color );
-
-            pods_farbastic_changing = false;
+                pods_wp_color_obj_<?php echo pods_clean_name( $attributes[ 'id' ] ); ?>.wpColorPicker( 'color', color );
         } );
-
-        if ( 'undefined' == pods_pickColor ) {
-            function pods_pickColor ( id, color ) {
-                if ( !pods_farbastic_changing )
-                    jQuery( id ).val( color.toUpperCase() );
-            }
-        }
     } );
 </script>

@@ -232,7 +232,7 @@ class PodsField_Number extends PodsField {
 
         $check = preg_replace( '/[^0-9\.\-]/', '', $check );
 
-        if ( !is_numeric( $check ) )
+        if ( 0 < strlen( $check ) && !is_numeric( $check ) )
             return pods_error( sprintf( __( '%s is not numeric', 'pods' ), $label, $this ) );
 
         return true;

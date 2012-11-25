@@ -243,6 +243,10 @@ class PodsForm {
             $_attributes = array();
             $_attributes[ 'name' ] = $name;
             $_attributes[ 'data-name-clean' ] = $name_more_clean;
+
+            if ( 0 < strlen( pods_var_raw( 'label', $options, '' ) ) )
+                $_attributes[ 'data-label' ] = strip_tags( pods_var_raw( 'label', $options ) );
+
             $_attributes[ 'id' ] = 'pods-form-ui-' . $name_clean;
             $_attributes[ 'class' ] = 'pods-form-ui-field-type-' . $type . ' pods-form-ui-field-name-' . $name_more_clean;
 
@@ -337,8 +341,10 @@ class PodsForm {
 
         foreach ( $defaults as $option => $settings ) {
             $default = $settings;
+
             if ( is_array( $settings ) && isset( $settings[ 'default' ] ) )
                 $default = $settings[ 'default' ];
+
             if ( !isset( $options[ $option ] ) )
                 $options[ $option ] = $default;
         }
@@ -706,31 +712,7 @@ class PodsForm {
      * @since 2.0.0
      */
     public static function permission ( $type, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
-        $permission = false;
-
-        if ( 1 == pods_var( 'restrict_capability', $options, 0 ) ) {
-            if ( is_user_logged_in() ) {
-                if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'manage_options' ) )
-                    $permission = true;
-
-                $capabilities = explode( ',', pods_var( 'capability_allowed', $options ) );
-                $capabilities = array_unique( array_filter( $capabilities ) );
-
-                foreach ( $capabilities as $capability ) {
-                    if ( current_user_can( $capability ) ) {
-                        $permission = true;
-
-                        break;
-                    }
-                }
-            }
-        }
-        elseif ( 1 == pods_var( 'admin_only', $options, 0 ) ) {
-            if ( is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'manage_options' ) ) )
-                $permission = true;
-        }
-        else
-            $permission = true;
+        $permission = pods_permission( $options );
 
         $permission = (boolean) apply_filters( 'pods_form_field_permission', $permission, $type, $name, $options, $fields, $pod, $id, $params );
 
@@ -750,14 +732,14 @@ class PodsForm {
         $default_value = trim( $default, ' {@}' );
 
         if ( $default != $default_value ) {
-            $value = $default;
+            $value = $default_value;
 
-            $default = explode( '.', $default );
+            $default_value = explode( '.', $default_value );
 
-            if ( 1 == count( $default ) )
-                $value = pods_var_raw( $default[ 0 ], 'get', '', null, true );
-            elseif ( 2 == count( $default ) )
-                $value = pods_var_raw( $default[ 1 ], $default[ 0 ], '', null, true );
+            if ( 1 == count( $default_value ) )
+                $value = pods_var_raw( $default_value[ 0 ], 'get', '', null, true );
+            elseif ( 2 == count( $default_value ) )
+                $value = pods_var_raw( $default_value[ 1 ], $default_value[ 0 ], '', null, true );
         }
         elseif ( $default != $value )
             $value = $default;

@@ -46,7 +46,7 @@ class PodsAdmin {
         add_action( 'wp_ajax_nopriv_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
 
         // Add Media Bar button for Shortcode
-        add_filter( 'media_buttons_context', array( $this, 'media_button' ) );
+        add_action( 'media_buttons', array( $this, 'media_button' ), 12 );
 
         // Add the Pods capabilities
         add_filter( 'members_get_capabilities', array( $this, 'admin_capabilities' ) );
@@ -215,7 +215,7 @@ class PodsAdmin {
 
             $submenu = apply_filters( 'pods_admin_menu_secondary_content', $submenu );
 
-            if ( !empty( $submenu ) ) {
+            if ( !empty( $submenu ) && ( !defined( 'PODS_DISABLE_CONTENT_MENU' ) || PODS_DISABLE_CONTENT_MENU ) ) {
                 $parent_page = null;
 
                 foreach ( $submenu as $item ) {
@@ -331,46 +331,48 @@ class PodsAdmin {
 
         $parent = false;
 
-        foreach ( $admin_menus as $page => $menu_item ) {
-            if ( !is_super_admin() && !current_user_can( 'delete_users' ) && isset( $menu_item[ 'access' ] ) ) {
-                $access = (array) $menu_item[ 'access' ];
+        if ( !empty( $admin_menus ) && ( !defined( 'PODS_DISABLE_ADMIN_MENU' ) || !PODS_DISABLE_ADMIN_MENU ) ) {
+            foreach ( $admin_menus as $page => $menu_item ) {
+                if ( !is_super_admin() && !current_user_can( 'delete_users' ) && isset( $menu_item[ 'access' ] ) ) {
+                    $access = (array) $menu_item[ 'access' ];
 
-                $ok = false;
+                    $ok = false;
 
-                foreach ( $access as $cap ) {
-                    if ( current_user_can( $cap ) ) {
-                        $ok = true;
+                    foreach ( $access as $cap ) {
+                        if ( current_user_can( $cap ) ) {
+                            $ok = true;
 
-                        break;
+                            break;
+                        }
                     }
+
+                    if ( !$ok )
+                        continue;
                 }
 
-                if ( !$ok )
+                // Don't just show the help page
+                if ( false === $parent && 'pods-help' == $page )
                     continue;
+
+                if ( !isset( $menu_item[ 'label' ] ) )
+                    $menu_item[ 'label' ] = $page;
+
+                if ( false === $parent ) {
+                    $parent = $page;
+
+                    $menu = __( 'Pods Admin', 'pods' );
+
+                    if ( 'pods-upgrade' == $parent )
+                        $menu = __( 'Pods Upgrade', 'pods' );
+
+                    add_menu_page( $menu, $menu, 'read', $parent, null, PODS_URL . 'ui/images/icon16.png' );
+                }
+
+                add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'read', $page, $menu_item[ 'function' ] );
+
+                if ( 'pods-components' == $page )
+                    PodsInit::$components->menu( $parent );
             }
-
-            // Don't just show the help page
-            if ( false === $parent && 'pods-help' == $page )
-                continue;
-
-            if ( !isset( $menu_item[ 'label' ] ) )
-                $menu_item[ 'label' ] = $page;
-
-            if ( false === $parent ) {
-                $parent = $page;
-
-                $menu = __( 'Pods Admin', 'pods' );
-
-                if ( 'pods-upgrade' == $parent )
-                    $menu = __( 'Pods Upgrade', 'pods' );
-
-                add_menu_page( $menu, $menu, 'read', $parent, null, PODS_URL . 'ui/images/icon16.png' );
-            }
-
-            add_submenu_page( $parent, $menu_item[ 'label' ], $menu_item[ 'label' ], 'read', $page, $menu_item[ 'function' ] );
-
-            if ( 'pods-components' == $page )
-                PodsInit::$components->menu( $parent );
         }
     }
 
@@ -456,7 +458,7 @@ class PodsAdmin {
      *
      * @return string
      */
-    public function media_button ( $context ) {
+    public function media_button ( $context = null ) {
         $current_page = basename( $_SERVER[ 'PHP_SELF' ] );
         $current_page = explode( '?', $current_page );
         $current_page = explode( '#', $current_page[ 0 ] );
@@ -468,10 +470,7 @@ class PodsAdmin {
 
         add_action( 'admin_footer', array( $this, 'mce_popup' ) );
 
-        $button = '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox" id="add_pod_button" title="Pods Shortcode"><img src="' . PODS_URL . 'ui/images/icon16.png" alt="Pods Shortcode" /></a>';
-        $context .= $button;
-
-        return $context;
+        echo '<a href="#TB_inline?width=640&inlineId=pods_shortcode_form" class="thickbox" id="add_pod_button" title="Pods Shortcode"><img src="' . PODS_URL . 'ui/images/icon16.png" alt="Pods Shortcode" /></a>';
     }
 
     /**
@@ -529,6 +528,13 @@ class PodsAdmin {
 
             if ( $pod[ 'id' ] == pods_var( 'id' ) && 'delete' != pods_var( 'action' ) )
                 $row = $pod;
+        }
+
+        if ( false === $row && 0 < pods_var( 'id' ) && 'delete' != pods_var( 'action' ) ) {
+            pods_message( 'Pod not found', 'error' );
+
+            unset( $_GET[ 'id' ] );
+            unset( $_GET[ 'action' ] );
         }
 
         pods_ui( array(
@@ -737,40 +743,52 @@ class PodsAdmin {
             }
         }
 
-        $toggle = PodsInit::$components->toggle( $component );
+        if ( 1 == pods_var( 'toggled' ) ) {
+            $toggle = PodsInit::$components->toggle( $component );
 
-        if ( true === $toggle )
-            $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component enabled', 'pods' ) );
-        elseif ( false === $toggle )
-            $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component disabled', 'pods' ) );
+            if ( true === $toggle )
+                $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component enabled', 'pods' ) );
+            elseif ( false === $toggle )
+                $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component disabled', 'pods' ) );
 
-        $components = PodsInit::$components->components;
+            $components = PodsInit::$components->components;
 
-        foreach ( $components as $component => &$component_data ) {
-            $toggle = 0;
+            foreach ( $components as $component => &$component_data ) {
+                $toggle = 0;
 
-            if ( isset( PodsInit::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] ) ) {
-                if ( 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] )
-                    $toggle = 1;
-            }
-            if ( true === $component_data[ 'DeveloperMode' ] ) {
-                if ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) {
-                    unset( $components[ $component ] );
-                    continue;
+                if ( isset( PodsInit::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] ) ) {
+                    if ( 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'ID' ] ] )
+                        $toggle = 1;
                 }
+                if ( true === $component_data[ 'DeveloperMode' ] ) {
+                    if ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) {
+                        unset( $components[ $component ] );
+                        continue;
+                    }
+                }
+
+                $component_data = array(
+                    'id' => $component_data[ 'ID' ],
+                    'name' => $component_data[ 'Name' ],
+                    'description' => make_clickable( $component_data[ 'Description' ] ),
+                    'version' => $component_data[ 'Version' ],
+                    'author' => $component_data[ 'Author' ],
+                    'toggle' => $toggle
+                );
             }
 
-            $component_data = array(
-                'id' => $component_data[ 'ID' ],
-                'name' => $component_data[ 'Name' ],
-                'description' => make_clickable( $component_data[ 'Description' ] ),
-                'version' => $component_data[ 'Version' ],
-                'author' => $component_data[ 'Author' ],
-                'toggle' => $toggle
-            );
-        }
+            $ui->data = $components;
 
-        $ui->data = $components;
+            pods_transient_clear( 'pods_components' );
+
+            $url = pods_var_update( array( 'toggled' => null ) );
+
+            pods_redirect( $url );
+        }
+        elseif ( 1 == pods_var( 'toggle' ) )
+            $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component enabled', 'pods' ) );
+        else
+            $ui->message( PodsInit::$components->components[ $component ][ 'Name' ] . ' ' . __( 'Component disabled', 'pods' ) );
 
         $ui->manage();
     }
@@ -1185,7 +1203,7 @@ class PodsAdmin {
         $data->where = $field[ 'table_info' ][ 'where' ];
         $data->orderby = $field[ 'table_info' ][ 'orderby' ];
 
-        $where = pods_var_raw( 'pick_where', $field, null, null, true );
+        $where = pods_var_raw( 'pick_where', $field, (array) $field[ 'table_info' ][ 'where_default' ], null, true );
 
         if ( empty( $where ) )
             $where = array();
@@ -1254,7 +1272,10 @@ class PodsAdmin {
                     $id = icl_object_id( $result[ $data->field_id ], $result[ 'post_type' ] );
 
                     if ( 0 < $id && !in_array( $id, $ids ) ) {
-                        $text = get_the_title( $id );
+                        $text = trim( get_the_title( $id ) );
+
+                        if ( strlen( $text ) < 1 )
+                            $text = '(No Title)';
 
                         $items[] = array(
                             'id' => $id,
@@ -1265,6 +1286,11 @@ class PodsAdmin {
                     }
                 }
                 elseif( !in_array( $result[ $data->field_id ], $ids ) ) {
+                    $result[ $data->field_index ] = trim( $result[ $data->field_index ] );
+
+                    if ( strlen( $result[ $data->field_index ] ) < 1 )
+                        $result[ $data->field_index ] = '(No Title)';
+
                     $items[] = array(
                         'id' => $result[ $data->field_id ],
                         'text' => $result[ $data->field_index ]

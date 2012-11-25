@@ -71,8 +71,10 @@ class Pods_Helpers extends PodsComponent {
             add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 10, 4 );
 
             add_action( 'pods_meta_save_pre_post__pods_helper', array( $this, 'fix_filters' ), 10, 5 );
-            add_action( 'pods_meta_save_post__pods_helper', array( $this, 'clear_cache' ), 10, 5 );
+            add_action( 'post_updated', array( $this, 'clear_cache' ), 10, 3 );
             add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
+            add_filter( 'post_row_actions', array( $this, 'remove_row_actions' ), 10, 2 );
+            add_filter( 'bulk_actions-edit-' . $this->object_type, array( $this, 'remove_bulk_actions' ) );
         }
     }
 
@@ -149,6 +151,45 @@ class Pods_Helpers extends PodsComponent {
     }
 
     /**
+     * Remove unused row actions
+     *
+     * @since 2.0.5
+     */
+    function remove_row_actions ( $actions, $post ) {
+        global $current_screen;
+
+        if ( $this->object_type != $current_screen->post_type )
+            return $actions;
+
+        if ( isset( $actions[ 'edit' ] ) )
+            unset( $actions[ 'edit' ] );
+
+        if ( isset( $actions[ 'view' ] ) )
+            unset( $actions[ 'view' ] );
+
+        if ( isset( $actions[ 'inline hide-if-no-js' ] ) )
+            unset( $actions[ 'inline hide-if-no-js' ] );
+
+        // W3 Total Cache
+        if ( isset( $actions[ 'pgcache_purge' ] ) )
+            unset( $actions[ 'pgcache_purge' ] );
+
+        return $actions;
+    }
+
+    /**
+     * Remove unused bulk actions
+     *
+     * @since 2.0.5
+     */
+    public function remove_bulk_actions ( $actions ) {
+        if ( isset( $actions[ 'edit' ] ) )
+            unset( $actions[ 'edit' ] );
+
+        return $actions;
+    }
+
+    /**
      * Clear cache on save
      *
      * @since 2.0.0
@@ -158,9 +199,15 @@ class Pods_Helpers extends PodsComponent {
             $post = $data;
             $post = get_post( $post );
 
-            if ( $this->object_type != $post->post_type )
-                return;
+            if ( is_object( $id ) ) {
+                $old_post = $id;
+
+                pods_transient_clear( 'pods_object_helper_' . $old_post->post_title );
+            }
         }
+
+        if ( $this->object_type != $post->post_type )
+            return;
 
         pods_transient_clear( 'pods_object_helper' );
         pods_transient_clear( 'pods_object_helper_' . $post->post_title );
@@ -354,7 +401,10 @@ class Pods_Helpers extends PodsComponent {
             $code = $helper[ 'code' ];
 
             $code = str_replace( '$this->', '$obj->', $code );
+
             $value =& $params->value;
+            $name =& $params->name;
+
             $_safe_params = $params;
 
             if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL )

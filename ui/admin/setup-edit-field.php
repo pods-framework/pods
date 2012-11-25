@@ -11,6 +11,9 @@
     // Remove weight as we're going to allow reordering here
     unset( $field[ 'weight' ] );
 
+    // Remove options, we don't need it in the JSON
+    unset( $field[ 'options' ] );
+
     $data = array(
         'row' => $pods_i
     );
@@ -77,10 +80,12 @@
                     if ( is_array( $object_label ) ) {
                         foreach ( $object_label as $sub_object => $sub_object_label ) {
                             if ( $pick_object == $sub_object ) {
-                                $object = rtrim( $object, 's' );
+                                $ies = strlen( $object ) - 3;
 
-                                if ( false !== strpos( $object, 'ies' ) )
-                                    $object = str_replace( 'ies', 'y', $object );
+                                if ( $ies === strpos( $object, 'ies' ) )
+                                    $object = substr( $object, 0, $ies ) . 'y';
+
+                                $object = rtrim( $object, 's' );
 
                                 $sub_object_label = preg_replace( '/(\s\([\w\d\s]*\))/', '', $sub_object_label );
                                 $pick_object_name = esc_html( $sub_object_label ) . ' <small>(' . esc_html( $object ) . ')</small>';

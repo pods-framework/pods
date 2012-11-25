@@ -35,42 +35,52 @@ class PodsInit {
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 1.8.9
      */
-    function __construct () {
+    function __construct() {
         self::$version = get_option( 'pods_framework_version' );
 
         add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
 
         add_action( 'init', array( $this, 'activate_install' ), 9 );
-        add_action( 'widgets_init', array( $this, 'register_widgets' ) );
 
         if ( !empty( self::$version ) ) {
-            // Init Pods Form
-            pods_form();
-
-            self::$components = pods_components();
+            // Meta handling and Components
+            add_action( 'plugins_loaded', array( $this, 'load' ) );
 
             add_action( 'init', array( $this, 'init' ), 11 );
 
             add_action( 'init', array( $this, 'setup_content_types' ), 11 );
+
             add_filter( 'post_updated_messages', array( $this, 'setup_updated_messages' ), 10, 1 );
             add_action( 'delete_attachment', array( $this, 'delete_attachment' ) );
 
             if ( is_admin() )
                 add_action( 'init', array( $this, 'admin_init' ), 12 );
 
+            // Register widgets
+            add_action( 'widgets_init', array( $this, 'register_widgets' ) );
+
             // Show admin bar links
             add_action( 'admin_bar_menu', array( $this, 'admin_bar_links' ), 81 );
-
-            // Init Pods Meta
-            self::$meta = pods_meta()->init();
         }
     }
 
     /**
      * Load the plugin textdomain.
      */
-    function load_textdomain () {
+    function load_textdomain() {
         load_plugin_textdomain( 'pods', false, dirname( PODS_DIR . 'init.php' ) . '/languages/' );
+    }
+
+    /**
+     * Load Pods Meta and Components
+     */
+    function load() {
+        // Init Pods Form
+        pods_form();
+
+        self::$meta = pods_meta()->init();
+
+        self::$components = pods_components();
     }
 
     /**
@@ -290,11 +300,11 @@ class PodsInit {
                         $cpt_supports[] = $cpt_support;
                 }
 
-                if ( 1 == count( $cpt_supports ) && version_compare( '3.5', $wp_version, '<=' ) )
+                if ( 1 == count( $cpt_supports ) && version_compare( '3.5-alpha', $wp_version, '<=' ) )
                     $cpt_supports = false;
 
                 // Rewrite
-                $cpt_rewrite = pods_var( 'rewrite', $post_type, true );
+                $cpt_rewrite = (boolean) pods_var( 'rewrite', $post_type, true );
                 $cpt_rewrite_array = array(
                     'slug' => pods_var( 'rewrite_custom_slug', $post_type, pods_var( 'name', $post_type ) ),
                     'with_front' => (boolean) pods_var( 'rewrite_with_front', $post_type, true ),
@@ -332,7 +342,7 @@ class PodsInit {
                     //'permalink_epmask' => EP_PERMALINK,
                     'has_archive' => (boolean) pods_var( 'has_archive', $post_type, false ),
                     'rewrite' => $cpt_rewrite,
-                    'query_var' => ( false !== pods_var( 'query_var', $post_type, true ) ? pods_var( 'query_var_string', $post_type, pods_var( 'name', $post_type ) ) : false ),
+                    'query_var' => ( false !== (boolean) pods_var( 'query_var', $post_type, true ) ? pods_var( 'query_var_string', $post_type, pods_var( 'name', $post_type ) ) : false ),
                     'can_export' => (boolean) pods_var( 'can_export', $post_type, true ),
                     'show_in_nav_menus' => (boolean) pods_var( 'show_in_nav_menus', $post_type, (boolean) pods_var( 'public', $post_type, false ) )
                 );
@@ -393,7 +403,7 @@ class PodsInit {
                 $ct_labels[ 'choose_from_most_used' ] = pods_var_raw( 'label_choose_from_most_used', $taxonomy, '', null, true );
 
                 // Rewrite
-                $ct_rewrite = pods_var( 'rewrite', $taxonomy, true );
+                $ct_rewrite = (boolean) pods_var( 'rewrite', $taxonomy, true );
                 $ct_rewrite_array = array(
                     'slug' => pods_var( 'rewrite_custom_slug', $taxonomy, pods_var( 'name', $taxonomy ) ),
                     'with_front' => (boolean) pods_var( 'rewrite_with_front', $taxonomy, true ),
@@ -413,7 +423,7 @@ class PodsInit {
                     'show_tagcloud' => (boolean) pods_var( 'show_tagcloud', $taxonomy, pods_var( 'show_ui', $taxonomy, pods_var( 'public', $taxonomy, true ) ) ),
                     'hierarchical' => (boolean) pods_var( 'hierarchical', $taxonomy ),
                     //'update_count_callback' => pods_var('update_count_callback', $taxonomy),
-                    'query_var' => ( false !== pods_var( 'query_var', $taxonomy, true ) ? pods_var( 'query_var_string', $taxonomy, pods_var( 'name', $taxonomy ) ) : false ),
+                    'query_var' => ( false !== (boolean) pods_var( 'query_var', $taxonomy, true ) ? pods_var( 'query_var_string', $taxonomy, pods_var( 'name', $taxonomy ) ) : false ),
                     'rewrite' => $ct_rewrite
                 );
 
@@ -633,7 +643,7 @@ class PodsInit {
     public function activate() {
         global $wpdb;
         if ( function_exists( 'is_multisite' ) && is_multisite() && isset( $_GET[ 'networkwide' ] ) && 1 == $_GET[ 'networkwide' ] ) {
-            $_blog_ids = $wpdb->get_col( $wpdb->prepare( "SELECT `blog_id` FROM {$wpdb->blogs}" ) );
+            $_blog_ids = $wpdb->get_col( "SELECT `blog_id` FROM `{$wpdb->blogs}`" );
 
             foreach ( $_blog_ids as $_blog_id ) {
                 $this->setup( $_blog_id );
@@ -659,7 +669,7 @@ class PodsInit {
      * @param $meta
      */
     public function new_blog ( $_blog_id, $user_id, $domain, $path, $site_id, $meta ) {
-        if ( function_exists( 'is_multisite' ) && is_multisite() && is_plugin_active_for_network( 'pods/pods.php' ) )
+        if ( function_exists( 'is_multisite' ) && is_multisite() && is_plugin_active_for_network( 'pods/init.php' ) )
             $this->setup( $_blog_id );
     }
 
@@ -783,11 +793,24 @@ class PodsInit {
             }
         }
 
+        // Remove any orphans
+        $wpdb->query( "
+                DELETE `p`, `pm`
+                FROM `{$wpdb->posts}` AS `p`
+                LEFT JOIN `{$wpdb->postmeta}` AS `pm`
+                    ON `pm`.`post_id` = `p`.`ID`
+                WHERE
+                    `p`.`post_type` LIKE '_pods_%'
+            " );
+
         delete_option( 'pods_framework_version' );
         delete_option( 'pods_framework_upgrade_2_0' );
         delete_option( 'pods_framework_upgraded_1_x' );
+        delete_option( 'pods_component_settings' );
 
         $api->cache_flush_pods();
+
+        delete_transient( 'pods_flush_rewrites' );
 
         self::$version = '';
 
@@ -810,7 +833,7 @@ class PodsInit {
                 ON p.`post_type` = '_pods_field' AND ( p.ID = rel.`field_id` OR p.ID = rel.`related_field_id` )
             LEFT JOIN {$wpdb->postmeta} AS pm
                 ON pm.`post_id` = p.`ID` AND pm.`meta_key` = 'type' AND pm.`meta_value` = 'file'
-            WHERE p.`ID` IS NOT NULL AND pm.`meta_id` IS NOT NULL AND rel.`item_id` = " . (int) $_ID );
+            WHERE p.`ID` IS NOT NULL AND pm.`meta_id` IS NOT NULL AND rel.`item_id` = " . (int) $_ID, false );
     }
 
     /**

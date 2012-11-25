@@ -64,9 +64,9 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
         $action = __( 'duplicated', 'pods' );
 
     $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
-    $error = sprintf( __( '<strong>Error:</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+    $error = sprintf( __( '<strong>Error:</strong> %s not %s.', 'pods' ), $obj->item, $action );
 
-    if ( 0 < $id )
+    if ( 0 < $pod->id() )
         echo $obj->message( $message );
     else
         echo $obj->error( $error );
@@ -109,7 +109,7 @@ if ( 0 < $pod->id() ) {
                                 <div id="minor-publishing">
                                     <div id="major-publishing-actions">
                                         <?php
-                                            if ( ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods_delete_' . $pod->pod ) ) && null !== $pod->id() && !$duplicate ) {
+                                            if ( ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods_delete_' . $pod->pod ) ) && null !== $pod->id() && !$duplicate && !in_array( 'delete', $obj->actions_disabled ) && !in_array( 'delete', $obj->actions_hidden ) ) {
                                         ?>
                                             <div id="delete-action">
                                                 <a class="submitdelete deletion" href="<?php echo pods_var_update( array( 'action' => 'delete' ) ) ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
@@ -135,7 +135,7 @@ if ( 0 < $pod->id() ) {
                     </div>
                     <!-- /#submitdiv --><!-- END PUBLISH DIV --><!-- TODO: minor column fields -->
                     <?php
-                        if ( pods_var_raw( 'action' ) == 'edit' && !$duplicate ) {
+                        if ( pods_var_raw( 'action' ) == 'edit' && !$duplicate && !in_array( 'navigate', $obj->actions_disabled ) && !in_array( 'navigate', $obj->actions_hidden ) ) {
                             if ( !isset( $singular_label ) )
                                 $singular_label = ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) );
 
@@ -237,9 +237,11 @@ if ( 0 < $pod->id() ) {
                                 <span>
                                     <?php
                                     if ( $more )
-                                        _e( 'More Fields', 'pods' );
+                                        $title = __( 'More Fields', 'pods' );
                                     else
-                                        _e( 'Fields', 'pods' );
+                                        $title = __( 'Fields', 'pods' );
+
+                                    echo apply_filters( 'pods_meta_default_box_title', $title, $pod, $fields );
                                     ?>
                                 </span>
                             </h3>

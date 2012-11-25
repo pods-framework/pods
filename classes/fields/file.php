@@ -5,6 +5,14 @@
 class PodsField_File extends PodsField {
 
     /**
+     * Field Type Group
+     *
+     * @var string
+     * @since 2.0.0
+     */
+    public static $group = 'Relationships / Media';
+
+    /**
      * Field Type Identifier
      *
      * @var string
@@ -329,11 +337,14 @@ class PodsField_File extends PodsField {
      * @since 2.0.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+        if ( empty( $value ) )
+            return;
+
         if ( !empty( $value ) && isset( $value[ 'ID' ] ) )
             $value = array( $value );
 
         foreach ( $value as $v ) {
-            echo wp_get_attachment_image( $v[ 'ID' ], 'thumbnail', true );
+            echo pods_image( $v, 'thumbnail' );
         }
     }
 

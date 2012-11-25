@@ -10,7 +10,7 @@ $field_types = $api->get_field_types();
 $field_types_select = array();
 
 foreach ( $field_types as $type => $label ) {
-    PodsForm::field_loader( $type );
+    $field_type = PodsForm::field_loader( $type );
 
     if ( !empty( PodsForm::$field_group ) ) {
         if ( !isset( $field_types_select[ PodsForm::$field_group ] ) )
@@ -209,8 +209,11 @@ $field_defaults = apply_filters( 'pods_field_defaults', apply_filters( 'pods_fie
 
 // WP objects already have slugs
 if ( !in_array( $pod[ 'type' ], array( 'pod', 'table' ) ) ) {
-    unset( $field_types[ 'slug' ] );
-    unset( $field_types_select[ 'slug' ] );
+    if ( isset( $field_types[ 'slug' ] ) )
+        unset( $field_types[ 'slug' ] );
+
+    if ( isset( $field_types_select[ __( 'Other', 'pods' ) ][ 'slug' ] ) )
+        unset( $field_types_select[ __( 'Other', 'pods' ) ][ 'slug' ] );
 }
 
 $field_settings = array(
@@ -414,11 +417,11 @@ if ( strlen( pods_var( 'object', $pod ) ) < 1 ) {
 <div id="pods-advanced-labels" class="pods-tab">
     <div class="pods-field-option">
         <?php echo PodsForm::label( 'label', __( 'Label', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label', pods_var_raw( 'label', $pod ), 'text', array( 'text_max_length' => 20 ) ); ?>
+        <?php echo PodsForm::field( 'label', pods_var_raw( 'label', $pod ), 'text', array( 'text_max_length' => 30 ) ); ?>
     </div>
     <div class="pods-field-option">
         <?php echo PodsForm::label( 'label_singular', __( 'Singular Label', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_singular', pods_var_raw( 'label_singular', $pod, pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', pods_var_raw( 'name', $pod ) ) ) ) ), 'text', array( 'text_max_length' => 20 ) ); ?>
+        <?php echo PodsForm::field( 'label_singular', pods_var_raw( 'label_singular', $pod, pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', pods_var_raw( 'name', $pod ) ) ) ) ), 'text', array( 'text_max_length' => 30 ) ); ?>
     </div>
     <div class="pods-field-option">
         <?php echo PodsForm::label( 'label_add_new', __( 'Add New', 'pods' ), __( 'help', 'pods' ) ); ?>

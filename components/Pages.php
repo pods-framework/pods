@@ -76,8 +76,10 @@ class Pods_Pages extends PodsComponent {
             add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 10, 4 );
 
             add_action( 'pods_meta_save_pre_post__pods_page', array( $this, 'fix_filters' ), 10, 5 );
-            add_action( 'pods_meta_save_post__pods_page', array( $this, 'clear_cache' ), 10, 5 );
+            add_action( 'post_updated', array( $this, 'clear_cache' ), 10, 3 );
             add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
+            add_filter( 'post_row_actions', array( $this, 'remove_row_actions' ), 10, 2 );
+            add_filter( 'bulk_actions-edit-' . $this->object_type, array( $this, 'remove_bulk_actions' ) );
         }
     }
 
@@ -154,6 +156,45 @@ class Pods_Pages extends PodsComponent {
     }
 
     /**
+     * Remove unused row actions
+     *
+     * @since 2.0.5
+     */
+    public function remove_row_actions ( $actions, $post ) {
+        global $current_screen;
+
+        if ( $this->object_type != $current_screen->post_type )
+            return $actions;
+
+        if ( isset( $actions[ 'edit' ] ) )
+            unset( $actions[ 'edit' ] );
+
+        if ( isset( $actions[ 'view' ] ) )
+            unset( $actions[ 'view' ] );
+
+        if ( isset( $actions[ 'inline hide-if-no-js' ] ) )
+            unset( $actions[ 'inline hide-if-no-js' ] );
+
+        // W3 Total Cache
+        if ( isset( $actions[ 'pgcache_purge' ] ) )
+            unset( $actions[ 'pgcache_purge' ] );
+
+        return $actions;
+    }
+
+    /**
+     * Remove unused bulk actions
+     *
+     * @since 2.0.5
+     */
+    public function remove_bulk_actions ( $actions ) {
+        if ( isset( $actions[ 'edit' ] ) )
+            unset( $actions[ 'edit' ] );
+
+        return $actions;
+    }
+
+    /**
      * Clear cache on save
      *
      * @since 2.0.0
@@ -163,13 +204,20 @@ class Pods_Pages extends PodsComponent {
             $post = $data;
             $post = get_post( $post );
 
-            if ( $this->object_type != $post->post_type )
-                return;
+            if ( is_object( $id ) ) {
+                $old_post = $id;
+
+                pods_transient_clear( 'pods_object_page_' . $old_post->post_title );
+                pods_cache_clear( $old_post->post_title, 'pods_object_page_wildcard' );
+            }
         }
+
+        if ( $this->object_type != $post->post_type )
+            return;
 
         pods_transient_clear( 'pods_object_page' );
         pods_transient_clear( 'pods_object_page_' . $post->post_title );
-        pods_cache_clear( $post->post_title, 'pods_object_page_wildcard', 3600 );
+        pods_cache_clear( $post->post_title, 'pods_object_page_wildcard' );
     }
 
     /**
@@ -235,7 +283,15 @@ class Pods_Pages extends PodsComponent {
             array(
                 'name' => 'code',
                 'label' => __( 'Page Code', 'pods' ),
-                'type' => 'code'
+                'type' => 'code',
+                'attributes' => array(
+                    'id' => 'content'
+                ),
+                'label_options' => array(
+                    'attributes' => array(
+                        'for' => 'content'
+                    )
+                )
             ),
             array(
                 'name' => 'precode',
@@ -252,6 +308,33 @@ class Pods_Pages extends PodsComponent {
         );
 
         pods_group_add( $pod, __( 'Page', 'pods' ), $fields, 'normal', 'high' );
+
+        $fields = array(
+            array(
+                'name' => 'admin_only',
+                'label' => __( 'Show to Admins Only?', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'dependency' => true
+            ),
+            array(
+                'name' => 'restrict_capability',
+                'label' => __( 'Restrict access by Capability?', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'dependency' => true
+            ),
+            array(
+                'name' => 'capability_allowed',
+                'label' => __( 'Capability Allowed', 'pods' ),
+                'help' => __( 'Comma-separated list of cababilities, for example add_podname_item, please see the Roles and Capabilities component for the complete list and a way to add your own.', 'pods' ),
+                'type' => 'text',
+                'default' => '',
+                'depends-on' => array( 'restrict_capability' => true )
+            )
+        );
+
+        pods_group_add( $pod, __( 'Restrict Access', 'pods' ), $fields, 'normal', 'high' );
     }
 
     /**
@@ -394,13 +477,18 @@ class Pods_Pages extends PodsComponent {
             $_object = get_object_vars( $result[ 0 ] );
 
             $object = array(
-                'ID' => $_object[ 'ID' ],
+                'id' => $_object[ 'ID' ],
                 'uri' => $_object[ 'post_title' ],
                 'code' => $_object[ 'post_content' ],
                 'phpcode' => $_object[ 'post_content' ], // phpcode is deprecated
                 'precode' => get_post_meta( $_object[ 'ID' ], 'precode', true ),
                 'page_template' => get_post_meta( $_object[ 'ID' ], 'page_template', true ),
-                'title' => get_post_meta( $_object[ 'ID' ], 'page_title', true )
+                'title' => get_post_meta( $_object[ 'ID' ], 'page_title', true ),
+                'options' => array(
+                    'admin_only' => (boolean) get_post_meta( $_object[ 'ID' ], 'admin_only', true ),
+                    'restrict_capability' => (boolean) get_post_meta( $_object[ 'ID' ], 'restrict_capability', true ),
+                    'capability_allowed' => get_post_meta( $_object[ 'ID' ], 'capability_allowed', true )
+                )
             );
 
             if ( $wildcard )
@@ -509,20 +597,26 @@ class Pods_Pages extends PodsComponent {
             $pods =& $GLOBALS[ 'pods' ];
 
         if ( false !== self::$exists ) {
-            $content = false;
+            $permission = pods_permission( self::$exists[ 'options' ] );
 
-            if ( 0 < strlen( trim( self::$exists[ 'precode' ] ) ) )
-                $content = self::$exists[ 'precode' ];
+            $permission = (boolean) apply_filters( 'pods_pages_permission', $permission, self::$exists );
 
-            if ( false !== $content && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) ) {
-                pods_deprecated( 'Use WP Page Templates or hook into the pods_page_precode action instead of using Pod Page Precode', '2.1.0' );
+            if ( $permission ) {
+                $content = false;
 
-                eval( "?>$content" );
+                if ( 0 < strlen( trim( self::$exists[ 'precode' ] ) ) )
+                    $content = self::$exists[ 'precode' ];
+
+                if ( false !== $content && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) ) {
+                    pods_deprecated( 'Use WP Page Templates or hook into the pods_page_precode action instead of using Pod Page Precode', '2.1.0' );
+
+                    eval( "?>$content" );
+                }
+
+                do_action( 'pods_page_precode', self::$exists, $pods, $content );
             }
 
-            do_action( 'pods_page_precode', self::$exists, $pods, $content );
-
-            if ( !is_object( $pods ) && ( 404 == $pods || is_wp_error( $pods ) ) ) {
+            if ( !$permission || ( !is_object( $pods ) && ( 404 == $pods || is_wp_error( $pods ) ) ) ) {
                 remove_action( 'template_redirect', array( $this, 'template_redirect' ) );
                 remove_action( 'wp_head', array( $this, 'wp_head' ) );
                 remove_filter( 'redirect_canonical', '__return_false' );
@@ -590,7 +684,7 @@ class Pods_Pages extends PodsComponent {
 
             $title = ( 'right' == $seplocation ) ? "{$page_title} {$sep} " : " {$sep} {$page_title}";
         }
-        else {
+        elseif ( strlen( trim( $title ) ) < 1 ) {
             $uri = explode( '?', $_SERVER[ 'REQUEST_URI' ] );
             $uri = preg_replace( '@^([/]?)(.*?)([/]?)$@', '$2', $uri[ 0 ] );
             $uri = preg_replace( '@(-|_)@', ' ', $uri );
@@ -695,18 +789,41 @@ class Pods_Pages extends PodsComponent {
                 $template = self::$exists[ 'page_template' ];
                 // found the template and included it, we're good to go!
             }
-            elseif ( '' != locate_template( apply_filters( 'pods_page_default_templates', array( 'pods.php' ) ), true ) ) {
-                $template = 'pods.php';
-                // found the template and included it, we're good to go!
-            }
             else {
-                // templates not found in theme, default output
-                do_action( 'pods_page_default', $template, self::$exists );
+                $default_templates = array();
 
-                get_header();
-                pods_content();
-                get_sidebar();
-                get_footer();
+                $uri = explode( '?', self::$exists[ 'uri' ] );
+                $uri = explode( '#', $uri[ 0 ] );
+
+                $page_path = explode( '/', $uri[ 0 ] );
+
+                while ( $last = array_pop( $page_path ) ) {
+                    $file_name = str_replace( '*', '-w-', implode( '/', $page_path ) . '/' . $last );
+                    $sanitized = sanitize_title( $file_name );
+
+                    $default_templates[] = 'pods-' . trim( str_replace( '--', '-', $sanitized ), ' -' ) . '.php';
+                }
+
+                $default_templates[] = 'pods.php';
+
+                $default_templates = apply_filters( 'pods_page_default_templates', $default_templates );
+
+                $template = locate_template( $default_templates, true );
+
+                if ( '' != $template ) {
+                    // found the template and included it, we're good to go!
+                }
+                else {
+                    $template = false;
+
+                    // templates not found in theme, default output
+                    do_action( 'pods_page_default', $template, self::$exists );
+
+                    get_header();
+                    pods_content();
+                    get_sidebar();
+                    get_footer();
+                }
             }
 
             do_action( 'pods_page_end', $template, self::$exists );
@@ -725,7 +842,7 @@ class Pods_Pages extends PodsComponent {
  * @since 1.7.5
  */
 function is_pod_page ( $uri = null ) {
-    if ( false !== Pods_Pages::$exists && ( null === $uri || $uri == Pods_Pages::$exists[ 'uri' ] ) )
+    if ( false !== Pods_Pages::$exists && ( null === $uri || $uri == Pods_Pages::$exists[ 'uri' ] || $uri == Pods_Pages::$exists[ 'id' ] ) )
         return true;
 
     return false;

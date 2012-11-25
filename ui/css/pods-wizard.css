@@ -179,6 +179,12 @@
 #pods-wizard-box #pods-wizard-main .pods-wizard-option-content {
   display: none;
 }
+#pods-wizard-box #pods-wizard-main .pods-wizard-option-content .pods-package-import-group .pods-field-option-group {
+  padding-top: 0;
+}
+#pods-wizard-box #pods-wizard-main .pods-wizard-option-content .pods-package-import-group .pods-field-option-group p {
+  margin-top: 0;
+}
 #pods-wizard-box #pods-wizard-main .stuffbox {
   margin: 15px 15px 0px 15px;
 }
@@ -191,6 +197,21 @@
 }
 #pods-wizard-box #pods-wizard-main .stuffbox .inside {
   padding: 0;
+}
+#pods-wizard-box #pods-wizard-main .stuffbox .inside div.pods-wizard-content h3 {
+  margin: 1.33em 20px;
+  font-size: 1.33em;
+}
+#pods-wizard-box #pods-wizard-main .stuffbox .inside div.pods-wizard-content ul.normal {
+  margin: 15px 20px;
+  list-style: circle;
+}
+#pods-wizard-box #pods-wizard-main .stuffbox .inside div.pods-wizard-content ul.normal li {
+  margin: 0 0 8px 30px;
+  padding-left: 4px;
+  line-height: 22px;
+  font-size: 14px;
+  list-style: circle;
 }
 #pods-wizard-box #pods-wizard-main .pods-wizard-panel {
   display: none;

@@ -407,7 +407,7 @@ class PodsMeta {
         $groups = array(
             array(
                 'pod' => $pod,
-                'label' => __( 'More Fields', 'pods' ),
+                'label' => apply_filters( 'pods_meta_default_box_title', __( 'More Fields', 'pods' ), $pod, $fields, $type, $name ),
                 'fields' => $fields,
                 'context' => 'normal',
                 'priority' => 'default'
@@ -458,8 +458,9 @@ class PodsMeta {
      */
     public function meta_post ( $post, $metabox ) {
         wp_enqueue_style( 'pods-form' );
+        wp_enqueue_script( 'pods' );
         ?>
-    <table class="form-table pods-metabox">
+    <table class="form-table pods-metabox pods-admin pods-dependency">
         <?php
         $id = null;
 
@@ -483,9 +484,11 @@ class PodsMeta {
             }
             elseif ( !empty( $id ) )
                 $value = get_post_meta( $id, $field[ 'name' ], true );
+
+            $depends = PodsForm::dependencies( $field, 'pods-meta-' );
             ?>
-            <tr class="form-field pods-field">
-                <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ] ); ?></th>
+            <tr class="form-field pods-field <?php echo $depends; ?>">
+                <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_meta_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], pods_var_raw( 'label_options', $field ) ); ?></th>
                 <td>
                     <?php echo PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ); ?>
                     <?php echo PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
@@ -495,6 +498,11 @@ class PodsMeta {
         }
         ?>
     </table>
+    <script type="text/javascript">
+        jQuery( function ( $ ) {
+            $( document ).Pods( 'dependency', true );
+        } );
+    </script>
     <?php
     }
 
@@ -514,11 +522,23 @@ class PodsMeta {
         $blacklisted_types = apply_filters( 'pods_meta_save_post_blacklist_types', $blacklisted_types, $post_id, $post );
 
         // @todo Figure out how to hook into autosave for saving meta
+
+        // Block Autosave and Revisions
         if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || in_array( $post->post_type, $blacklisted_types ) )
             return $post_id;
 
+        // Block Quick Edits
+        if ( 'inline-save' == pods_var( 'action', 'post' ) )
+            return $post_id;
+
+        // Block Trash
+        if ( in_array( pods_var( 'action', 'get' ), array( 'untrash', 'trash' ) ) )
+            return $post_id;
+
+        // Block Auto-drafting and Trash (not via Admin action)
         $blacklisted_status = array(
-            'auto-draft'
+            'auto-draft',
+            'trash'
         );
 
         $blacklisted_status = apply_filters( 'pods_meta_save_post_blacklist_status', $blacklisted_status, $post_id, $post );

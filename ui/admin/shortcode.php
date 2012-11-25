@@ -102,6 +102,9 @@
             if ( field.length )
                 shortcode += ' field="' + field + '"';
 
+            if ( fields.length || label.length || thank_you.length )
+                shortcode += ' form="1"';
+
             if ( fields.length )
                 shortcode += ' fields="' + fields + '"';
 
@@ -194,6 +197,12 @@
 
     .pods-shortcode strong.red {
         color: red;
+    }
+
+    /* Thickbox Inline content fix */
+    #TB_ajaxContent {
+        width: auto !important;
+        height: auto !important;
     }
 </style>
 

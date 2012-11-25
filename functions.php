@@ -18,11 +18,8 @@
  */
 function pods_query ( $sql, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
     $podsdata = pods_data();
-    global $wpdb;
     $sql = apply_filters( 'pods_query_sql', $sql, $error, $results_error, $no_results_error );
-    $sql = str_replace( '@wp_users', $wpdb->users, $sql );
-    $sql = str_replace( '@wp_', $wpdb->prefix, $sql );
-    $sql = str_replace( '{prefix}', '@wp_', $sql );
+    $sql = $podsdata->get_sql($sql);
 
     if ( is_array( $error ) ) {
         if ( !is_array( $sql ) )
@@ -114,8 +111,12 @@ function pods_error ( $error, $obj = null ) {
         $display_errors = false;
     }
 
-    if ( is_array( $error ) )
-        $error = __( 'The following issues occured:', 'pods' ) . "\n<ul><li>" . implode( "</li>\n<li>", $error ) . "</li></ul>";
+    if ( is_array( $error ) ) {
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
+            $error = __( 'The following issues occured:', 'pods' ) . "\n\n- " . implode( "\n- ", $error );
+        else
+            $error = __( 'The following issues occured:', 'pods' ) . "\n<ul><li>" . implode( "</li>\n<li>", $error ) . "</li></ul>";
+    }
     elseif ( is_object( $error ) )
         $error = __( 'An unknown error has occurred', 'pods' );
 
@@ -453,6 +454,25 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
             if ( is_numeric( $var ) )
                 $output = ( $var < 0 ) ? pods_var_raw( count( $uri ) + $var, $uri ) : pods_var_raw( $var, $uri );
         }
+        elseif ( 'url-relative' == $type ) {
+            $url_raw = get_current_url();
+            $prefix = get_bloginfo( 'wpurl' );
+
+            if ( substr( $url_raw, 0, strlen( $prefix ) ) == $prefix )
+                $url_raw = substr( $url_raw, strlen( $prefix ) + 1, strlen( $url_raw ) );
+
+            $url = parse_url( $url_raw );
+            $uri = trim( $url[ 'path' ], '/' );
+            $uri = array_filter( explode( '/', $uri ) );
+
+            if ( 'first' == $var )
+                $var = 0;
+            elseif ( 'last' == $var )
+                $var = -1;
+
+            if ( is_numeric( $var ) )
+                $output = ( $var < 0 ) ? pods_var_raw( count( $uri ) + $var, $uri ) : pods_var_raw( $var, $uri );
+        }
         elseif ( 'post' == $type && isset( $_POST[ $var ] ) )
             $output = stripslashes_deep( $_POST[ $var ] );
         elseif ( 'request' == $type && isset( $_REQUEST[ $var ] ) )
@@ -666,6 +686,8 @@ function pods_var_update ( $array = null, $allowed = null, $excluded = null, $ur
     else
         $get = $_GET;
 
+    $get = pods_unsanitize( $get );
+
     foreach ( $get as $key => $val ) {
         if ( is_array( $val ) && empty( $val ) )
             unset( $get[ $key ] );
@@ -717,9 +739,14 @@ function pods_var_update ( $array = null, $allowed = null, $excluded = null, $ur
  *
  * @since 1.8.9
  */
-function pods_create_slug ( $orig ) {
+function pods_create_slug ( $orig, $strict = true ) {
     $str = preg_replace( "/([_ ])/", "-", trim( $orig ) );
-    $str = preg_replace( "/([^0-9a-z-])/", "", strtolower( $str ) );
+
+    if ( $strict )
+        $str = preg_replace( "/([^0-9a-z-])/", "", strtolower( $str ) );
+    else
+        $str = urldecode( sanitize_title( strtolower( $str ) ) );
+
     $str = preg_replace( "/(-){2,}/", "-", $str );
     $str = trim( $str, '-' );
     $str = apply_filters( 'pods_create_slug', $str, $orig );
@@ -764,8 +791,8 @@ function pods_clean_name ( $orig, $lower = true ) {
  * @return string The unique slug name
  * @since 1.7.2
  */
-function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, $id = 0, &$obj = null ) {
-    $slug = pods_create_slug( $slug );
+function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj = null, $strict = true ) {
+    $slug = pods_create_slug( $slug, $strict );
 
     $pod_data = array();
 
@@ -1023,7 +1050,7 @@ function pods_shortcode ( $tags, $content = null ) {
 
             if ( !empty( $pod ) ) {
                 $tags[ 'name' ] = get_post_type();
-                $tags[ 'id' ] = get_the_ID();
+                $id = $tags[ 'id' ] = get_the_ID();
             }
         }
 
@@ -1043,18 +1070,20 @@ function pods_shortcode ( $tags, $content = null ) {
         unset( $tags[ 'order' ] );
     }
 
-    if ( empty( $content ) && empty( $tags[ 'template' ] ) && empty( $tags[ 'field' ] ) ) {
+    if ( empty( $content ) && empty( $tags[ 'template' ] ) && empty( $tags[ 'field' ] ) && empty( $tags[ 'form' ] ) ) {
         return '<p>Please provide either a template or field name</p>';
     }
 
-    // id > slug (if both exist)
-    $id = empty( $tags[ 'slug' ] ) ? null : $tags[ 'slug' ];
+    if ( !isset( $id ) ) {
+        // id > slug (if both exist)
+        $id = empty( $tags[ 'slug' ] ) ? null : $tags[ 'slug' ];
 
-    if ( !empty ( $tags[ 'id' ] ) ) {
-        $id = $tags[ 'id' ];
+        if ( !empty ( $tags[ 'id' ] ) ) {
+            $id = $tags[ 'id' ];
 
-        if ( is_numeric( $id ) )
-            $id = absint( $id );
+            if ( is_numeric( $id ) )
+                $id = absint( $id );
+        }
     }
 
     if ( !isset( $pod ) )
@@ -1137,6 +1166,8 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
 
     $field_index = null;
 
+    $simple = false;
+
     if ( !empty( $fields ) && is_array( $fields ) && isset( $fields[ $field ] ) ) {
         $field = $fields[ $field ];
 
@@ -1145,6 +1176,8 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
         if ( !empty( $field ) && is_array( $field ) && in_array( $field[ 'type' ], $tableless_field_types ) ) {
             if ( 'file' == $field[ 'type' ] )
                 $field_index = 'guid';
+            elseif ( 'custom-simple' == $field[ 'pick_object' ] )
+                $simple = true;
             else {
                 $table = pods_api()->get_table_info( $field[ 'pick_object' ], $field[ 'pick_val' ] );
 
@@ -1162,14 +1195,18 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
         $last = array_pop( $value );
 
     if ( is_array( $last ) ) {
-        if ( isset( $last[ $field_index ] ) )
+        if ( null !== $field_index && isset( $last[ $field_index ] ) )
             $last = $last[ $field_index ];
+        elseif ( isset( $last[ 0 ] ) )
+            $last = $last[ 0 ];
+        elseif ( $simple )
+            $last = current( $last );
         else
             $last = '';
     }
 
     if ( !empty( $value ) ) {
-        if ( isset( $value[ $field_index ] ) )
+        if ( null !== $field_index && isset( $value[ $field_index ] ) )
             return $value[ $field_index ];
 
         if ( 1 == count( $value ) ) {
@@ -1177,32 +1214,41 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
                 $value = $value[ 0 ];
 
             if ( is_array( $value ) ) {
-                if ( isset( $value[ $field_index ] ) )
+                if ( null !== $field_index && isset( $value[ $field_index ] ) )
                     $value = $value[ $field_index ];
+                elseif ( $simple )
+                    $value = implode( ', ', $value );
                 else
                     $value = '';
             }
+
+            $value = trim( $value, ', ' ) . ', ';
         }
         else {
-            if ( isset( $value[ $field_index ] ) )
+            if ( null !== $field_index && isset( $value[ $field_index ] ) )
                 return $value[ $field_index ];
             elseif ( !isset( $value[ 0 ] ) )
                 $value = array( $value );
 
             foreach ( $value as $k => &$v ) {
                 if ( is_array( $v ) ) {
-                    if ( isset( $v[ $field_index ] ) )
+                    if ( null !== $field_index && isset( $v[ $field_index ] ) )
                         $v = $v[ $field_index ];
+                    elseif ( $simple )
+                        $v = trim( implode( ', ', $v ), ', ' );
                     else
                         unset( $value[ $k ] );
                 }
             }
 
-            $value = implode( ', ', $value );
+            $value = trim( implode( ', ', $value ), ', ' ) . ', ';
         }
 
+        $value = trim( $value );
+        $last = trim( $last );
+
         if ( 0 < strlen( $value ) && 0 < strlen( $last ) )
-            $value .= $and . $last;
+            $value = $value . $and . $last;
         elseif ( 0 < strlen( $last ) )
             $value = $last;
         else
@@ -1210,6 +1256,8 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
     }
     else
         $value = $last;
+
+    $value = trim( $value, ', ' );
 
     return (string) $value;
 }
@@ -1401,6 +1449,167 @@ function pods_redirect ( $location, $status = 302 ) {
 }
 
 /**
+ * Get the Attachment ID for a specific image field
+ *
+ * @param array|int|string $image The image field array, ID, or guid
+ *
+ * @return int Attachment ID
+ */
+function pods_image_id_from_field ( $image ) {
+    $id = 0;
+
+    if ( !empty( $image ) ) {
+        if ( is_array( $image ) ) {
+            if ( isset( $image[ 0 ] ) )
+                $id = pods_image_id_from_field( $image[ 0 ] );
+            elseif ( isset( $image[ 'ID' ] ) )
+                $id = $image[ 'ID' ];
+            elseif ( isset( $image[ 'guid' ] ) )
+                $id = pods_image_id_from_field( $image[ 'guid' ] );
+        }
+        else {
+            if ( false === strpos( $image, '.' ) && is_numeric( $image ) )
+                $id = $image;
+            else {
+                $guid = pods_query( "SELECT `ID` FROM @wp_posts WHERE `post_type` = 'attachment' AND `guid` = %s", array( $image ) );
+
+                if ( !empty( $guid ) )
+                    $id = $guid[ 0 ]->ID;
+            }
+        }
+    }
+
+    $id = (int) $id;
+
+    return $id;
+}
+
+/**
+ * Get the <img> HTML for a specific image field
+ *
+ * @param array|int|string $image The image field array, ID, or guid
+ * @param string $size Image size to use
+ * @param int $default Default image to show if image not found, can be field array, ID, or guid
+ * @param string|array $attributes <img> Attributes array or string (passed to wp_get_attachment_image
+ *
+ * @return string <img> HTML or empty if image not found
+ */
+function pods_image ( $image, $size = 'thumbnail', $default = 0, $attributes = '' ) {
+    $html = '';
+
+    $id = pods_image_id_from_field( $image );
+    $default = pods_image_id_from_field( $default );
+
+    if ( 0 < $id )
+        $html = wp_get_attachment_image( $id, $size, false, $attributes );
+
+    if ( empty( $html ) && 0 < $default )
+        $html = wp_get_attachment_image( $id, $size, false, $attributes );
+
+    return $html;
+}
+
+/**
+ * Get the Image URL for a specific image field
+ *
+ * @param array|int|string $image The image field array, ID, or guid
+ * @param string $size Image size to use
+ * @param int $default Default image to show if image not found, can be field array, ID, or guid
+ *
+ * @return string Image URL or empty if image not found
+ */
+function pods_image_url ( $image, $size = 'thumbnail', $default = 0 ) {
+    $url = '';
+
+    $id = pods_image_id_from_field( $image );
+    $default = pods_image_id_from_field( $default );
+
+    if ( 0 < $id ) {
+        $src = wp_get_attachment_image_src( $id, $size );
+
+        if ( !empty( $src ) )
+            $url = $src[ 0 ];
+    }
+
+    if ( empty( $url ) && 0 < $default ) {
+        $src = wp_get_attachment_image_src( $default, $size );
+
+        if ( !empty( $src ) )
+            $url = $src[ 0 ];
+    }
+
+    return $url;
+}
+
+/**
+ * Check if a user has permission to be doing something based on standard permission options
+ *
+ * @param array $options
+ *
+ * @since 2.0.5
+ */
+function pods_permission ( $options ) {
+    $permission = false;
+
+    if ( 1 == pods_var( 'restrict_capability', $options, 0 ) ) {
+        if ( is_user_logged_in() ) {
+            if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'manage_options' ) )
+                $permission = true;
+
+            $capabilities = explode( ',', pods_var( 'capability_allowed', $options ) );
+            $capabilities = array_unique( array_filter( $capabilities ) );
+
+            foreach ( $capabilities as $capability ) {
+                if ( current_user_can( $capability ) ) {
+                    $permission = true;
+
+                    break;
+                }
+            }
+        }
+    }
+    elseif ( 1 == pods_var( 'admin_only', $options, 0 ) ) {
+        if ( is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'manage_options' ) ) )
+            $permission = true;
+    }
+    else
+        $permission = true;
+
+    return $permission;
+}
+
+/**
+ * Return a variable if a user is logged in or anonymous, or a specific capability
+ *
+ * @param mixed $anon Variable to return if user is anonymous (not logged in)
+ * @param mixed $user Variable to return if user is logged in
+ * @param string|array $capability Capability or array of Capabilities to check to return $user on
+ *
+ * @since 2.0.5
+ */
+function pods_var_user ( $anon = false, $user = true, $capability = null ) {
+    $value = $anon;
+
+    if ( is_user_logged_in() ) {
+        if ( empty( $capability ) )
+            $value = $user;
+        else {
+            $capabilities = (array) $capability;
+
+            foreach ( $capabilities as $capability ) {
+                if ( current_user_can( $capability ) ) {
+                    $value = $user;
+
+                    break;
+                }
+            }
+        }
+    }
+
+    return $value;
+}
+
+/**
  * Include and Init the Pods class
  *
  * @see PodsInit
@@ -1575,19 +1784,20 @@ function pods_array ( $container ) {
 }
 
 /**
- * Load a view
+ * Include a file that's child/parent theme-aware, and can be cached into object cache or transients
  *
  * @see PodsView::view
  *
- * @param string $view Path of the view file
- * @param array|null $data (optional) Data to pass on to the template
+ * @param string $view Path of the file to be included, this is relative to the current theme
+ * @param array|null $data (optional) Data to pass on to the template, using variable => value format
  * @param int|bool $expires (optional) Time in seconds for the cache to expire, if false caching is disabled.
- * @param string $cache_mode (optional) Decides the caching method to use for the view.
- * @param bool $return (optional) If true doesn not echo the result of the view, the function returns it
+ * @param string $cache_mode (optional) Specify the caching method to use for the view, available options include cache, transient, or site-transient
+ * @param bool $return (optional) Whether to return the view or not, defaults to false and will echo it
  *
- * @return bool|mixed|null|string|void
+ * @return string|bool The view output
  *
  * @since 2.0.0
+ * @link http://podsframework.org/docs/pods-view/
  */
 function pods_view ( $view, $data = null, $expires = false, $cache_mode = 'cache', $return = false ) {
     require_once( PODS_DIR . 'classes/PodsView.php' );
@@ -1763,12 +1973,13 @@ function pods_transient_clear ( $key = true ) {
  *
  * @param string|array $pod The pod or type of element to attach the group to.
  * @param string $label Title of the edit screen section, visible to user.
- * @param string|array $fields Either a comma separated list of text fields or an associative array containing field infomration.
+ * @param string|array $fields Either a comma separated list of text fields or an associative array containing field information.
  * @param string $context (optional) The part of the page where the edit screen section should be shown ('normal', 'advanced', or 'side').
  * @param string $priority (optional) The priority within the context where the boxes should show ('high', 'core', 'default' or 'low').
  * @param string $type (optional) Type of the post to attach to.
  *
  * @since 2.0.0
+ * @link http://podsframework.org/docs/pods-group-add/
  */
 function pods_group_add ( $pod, $label, $fields, $context = 'normal', $priority = 'default', $type = null ) {
     if ( !is_array( $pod ) && null !== $type ) {
@@ -1937,5 +2148,3 @@ function pods_no_conflict_off ( $object_type = 'post' ) {
 
     return false;
 }
-
-

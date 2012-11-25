@@ -441,7 +441,7 @@ class Pods {
                 $value = get_permalink( $this->id() );
         }
         elseif ( isset( $this->row[ $params->name ] ) ) {
-            if ( !isset( $this->fields[ $params->name ] ) || 'boolean' == $this->fields[ $params->name ][ 'type' ] || in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) )
+            if ( !isset( $this->fields[ $params->name ] ) || in_array( $this->fields[ $params->name ][ 'type' ], array( 'boolean', 'number', 'currency' ) ) || in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) )
                 $params->raw = true;
 
             $value = $this->row[ $params->name ];
@@ -497,7 +497,7 @@ class Pods {
                             $params->single = true;
                         }
                     }
-                    elseif ( 'boolean' == $this->fields[ $params->name ][ 'type' ] )
+                    elseif ( in_array( $this->fields[ $params->name ][ 'type' ], array( 'boolean', 'number', 'currency' ) ) )
                         $params->raw = true;
                 }
 
@@ -722,7 +722,7 @@ class Pods {
                                 }
                             }
 
-                            if ( in_array( $last_type, $tableless_field_types ) || 'boolean' == $last_type )
+                            if ( in_array( $last_type, $tableless_field_types ) || in_array( $last_type, array( 'boolean', 'number', 'currency' ) ) )
                                 $params->raw = true;
 
                             if ( empty( $data ) )
@@ -1317,7 +1317,7 @@ class Pods {
         if ( empty( $data ) )
             return false;
 
-        $params = array( 'pod' => $this->pod, 'data' => $data );
+        $params = array( 'pod' => $this->pod, 'data' => $data, 'allow_custom_fields' => true );
 
         return $this->api->save_pod_item( $params );
     }
@@ -1351,7 +1351,7 @@ class Pods {
         if ( empty( $data ) )
             return false;
 
-        $params = array( 'pod' => $this->pod, 'id' => $id, 'data' => $data );
+        $params = array( 'pod' => $this->pod, 'id' => $id, 'data' => $data, 'allow_custom_fields' => true );
 
         return $this->api->save_pod_item( $params );
     }
@@ -1447,6 +1447,13 @@ class Pods {
      * @link http://podsframework.org/docs/pagination/
      */
     public function pagination ( $params = null ) {
+        if ( empty( $params ) )
+            $params = array();
+        elseif ( !is_array( $params ) )
+            $params = array( 'label' => $params );
+
+        $this->page_var = pods_var_raw( 'page_var', $params, $this->page_var );
+
         $url = pods_var_update( null, null, $this->page_var );
 
         $append = '?';
@@ -1474,17 +1481,12 @@ class Pods {
             'format' => "{$this->page_var}=%#%"
         );
 
-        if ( empty( $params ) )
-            $params = array();
-        elseif ( !is_array( $params ) )
-            $params = array( 'label' => $params );
-
         $params = (object) array_merge( $defaults, $params );
 
         $params->total = ceil( $params->total_found / $params->limit );
 
         if ( $params->limit < 1 || $params->total_found < 1 || 1 == $params->total )
-            return $this->do_hook( 'pagination', '', $params );
+            return $this->do_hook( 'pagination', $this->do_hook( 'pagination_' . $params->type, '', $params ), $params );
 
         $pagination = $params->type;
 
@@ -1497,7 +1499,7 @@ class Pods {
 
         $output = ob_get_clean();
 
-        return $this->do_hook( 'pagination', $output, $params );
+        return $this->do_hook( 'pagination', $this->do_hook( 'pagination_' . $params->type, $output, $params ), $params );
     }
 
     /**
@@ -1689,7 +1691,7 @@ class Pods {
 
         $pod =& $this;
 
-        $params = apply_filters( 'pods_form_params', $params, $pod );
+        $params = $this->do_hook( 'form_params', $params );
 
         $fields = $params[ 'fields' ];
 
@@ -1702,40 +1704,44 @@ class Pods {
             // Add core object fields if $fields is empty
             $fields = array_merge( $object_fields, $this->fields );
         }
-        else {
-            $form_fields = $fields; // Temporary
 
-            $fields = array();
+        $form_fields = $fields; // Temporary
 
-            foreach ( $form_fields as $k => $field ) {
-                $name = $k;
+        $fields = array();
 
-                $defaults = array(
+        foreach ( $form_fields as $k => $field ) {
+            $name = $k;
+
+            $defaults = array(
+                'name' => $name
+            );
+
+            if ( !is_array( $field ) ) {
+                $name = $field;
+
+                $field = array(
                     'name' => $name
                 );
-
-                if ( !is_array( $field ) ) {
-                    $name = $field;
-
-                    $field = array(
-                        'name' => $name
-                    );
-                }
-
-                $field = array_merge( $defaults, $field );
-
-                $field[ 'name' ] = trim( $field[ 'name' ] );
-
-                if ( pods_var_raw( 'hidden', $field, false, null, true ) )
-                    continue;
-                elseif ( isset( $object_fields[ $field[ 'name' ] ] ) )
-                    $fields[ $field[ 'name' ] ] = array_merge( $object_fields[ $field[ 'name' ] ], $field );
-                elseif ( isset( $this->fields[ $field[ 'name' ] ] ) )
-                    $fields[ $field[ 'name' ] ] = array_merge( $this->fields[ $field[ 'name' ] ], $field );
             }
 
-            unset( $form_fields ); // Cleanup
+            $field = array_merge( $defaults, $field );
+
+            $field[ 'name' ] = trim( $field[ 'name' ] );
+
+            if ( empty( $field[ 'name' ] ) )
+                $field[ 'name' ] = trim( $name );
+
+            if ( pods_var_raw( 'hidden', $field, false, null, true ) )
+                continue;
+            elseif ( isset( $object_fields[ $field[ 'name' ] ] ) )
+                $fields[ $field[ 'name' ] ] = array_merge( $object_fields[ $field[ 'name' ] ], $field );
+            elseif ( isset( $this->fields[ $field[ 'name' ] ] ) )
+                $fields[ $field[ 'name' ] ] = array_merge( $this->fields[ $field[ 'name' ] ], $field );
         }
+
+        unset( $form_fields ); // Cleanup
+
+        $fields = $this->do_hook( 'form_fields', $fields, $params );
 
         $label = $params[ 'label' ];
 
@@ -1812,10 +1818,7 @@ class Pods {
         $helper_name = $before = $after = '';
 
         if ( isset( $tag[ 1 ] ) && !empty( $tag[ 1 ] ) && class_exists( 'Pods_Helpers' ) ) {
-            if ( 'type' == $field_name )
-                $value = $this->pod;
-            else
-                $value = $this->field( $field_name );
+            $value = $this->field( $field_name );
 
             $helper_name = $tag[ 1 ];
 
@@ -1831,12 +1834,8 @@ class Pods {
 
             $value = Pods_Helpers::helper( $params, $this );
         }
-        else {
-            if ( 'type' == $field_name )
-                $value = $this->pod;
-            else
-                $value = $this->display( $field_name );
-        }
+        else
+            $value = $this->display( $field_name );
 
         if ( isset( $tag[ 2 ] ) && !empty( $tag[ 2 ] ) )
             $before = $tag[ 2 ];

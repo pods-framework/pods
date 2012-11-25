@@ -27,12 +27,6 @@
     width: auto;
 }
 
-.pods-field textarea {
-    font-family: monospace;
-    height: 100%;
-    resize: none;
-}
-
 .pods-field p.pods-field-comment {
     color: #aaa;
     font-size: .9em;
@@ -129,6 +123,12 @@ div.pods-textfield input,
 
 .pods-date input, .pods-number input {
     min-width: 125px;
+}
+
+textarea.pods-form-ui-field-type-paragraph {
+    font-family: monospace;
+    min-height: 100px;
+    resize: vertical;
 }
 
 .pods-date input.pods-date-field.hasDatepicker {
@@ -245,11 +245,15 @@ input.pods-form-ui-field-type-color {
     float: right;
 }
 
-.pods-form-front .pods-validate-error-message {
+.pods-form .pods-validate-error-message {
     color: #790000;
     font-weight: bold;
-    padding: 5px 10px 4px;
+    padding: 2px 0 5px;
     display: inline-block;
+}
+
+.pods-form-front .pods-validate-error-message {
+    padding: 5px 10px 4px;
 }
 
 .pods-form {

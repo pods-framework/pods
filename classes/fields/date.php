@@ -192,7 +192,12 @@ class PodsField_Date extends PodsField {
      * @since 2.0.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
-        return $this->display( $value, $name, $options, $pod, $id );
+        $value = $this->display( $value, $name, $options, $pod, $id );
+
+        if ( 1 == pods_var( 'datetime_allow_empty', $options, 1 ) && in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
+            $value = false;
+
+        return $value;
     }
 
     /**

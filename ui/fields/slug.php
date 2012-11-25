@@ -13,7 +13,7 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_t
                 .val()
                 .toLowerCase()
                 .replace( /([_ ])/g, '-' )
-                .replace( /([^0-9a-z-])/g, '' )
+                .replace( /([`~!@#$%^&*()_|+=?;:'",.<>\{\}\[\]\\\/])/g, '' )
                 .replace( /(-){2,}/g, '-' );
             $( this ).val( newval );
         } );

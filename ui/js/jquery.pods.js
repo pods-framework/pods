@@ -37,6 +37,7 @@
 
                     if ( !valid_field && ( !$el.is( 'input[type=checkbox]' ) || !$el.hasClass( 'pods-form-ui-field-type-pick' ) ) ) {
                         if ( -1 == pods_form_field_names.indexOf( $el.prop( 'name' ) ) ) {
+                            $el.parent().find( '.pods-validate-error-message' ).remove();
                             $el.parent().append( '<div class="pods-validate-error-message">' + label.replace( /(<([^>]+)>)/ig, '' ) + ' is required.</div>' );
                             $el.addClass( 'pods-validate-error' );
 

@@ -76,7 +76,7 @@ class Pods_Pages extends PodsComponent {
             add_filter( 'update_post_metadata', array( $this, 'save_meta' ), 10, 4 );
 
             add_action( 'pods_meta_save_pre_post__pods_page', array( $this, 'fix_filters' ), 10, 5 );
-            add_action( 'pods_meta_save_post__pods_page', array( $this, 'clear_cache' ), 10, 5 );
+            add_action( 'post_updated', array( $this, 'clear_cache' ), 10, 3 );
             add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
             add_filter( 'post_row_actions', array( $this, 'remove_row_actions' ), 10, 2 );
             add_filter( 'bulk_actions-edit-' . $this->object_type, array( $this, 'remove_bulk_actions' ) );
@@ -204,13 +204,20 @@ class Pods_Pages extends PodsComponent {
             $post = $data;
             $post = get_post( $post );
 
-            if ( $this->object_type != $post->post_type )
-                return;
+            if ( is_object( $id ) ) {
+                $old_post = $id;
+
+                pods_transient_clear( 'pods_object_page_' . $old_post->post_title );
+                pods_cache_clear( $old_post->post_title, 'pods_object_page_wildcard' );
+            }
         }
+
+        if ( $this->object_type != $post->post_type )
+            return;
 
         pods_transient_clear( 'pods_object_page' );
         pods_transient_clear( 'pods_object_page_' . $post->post_title );
-        pods_cache_clear( $post->post_title, 'pods_object_page_wildcard', 3600 );
+        pods_cache_clear( $post->post_title, 'pods_object_page_wildcard' );
     }
 
     /**

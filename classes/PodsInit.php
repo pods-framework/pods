@@ -627,7 +627,7 @@ class PodsInit {
      */
     public function activate_install () {
         if ( !defined( 'PODS_TABLELESS' ) )
-            define( 'PODS_TABLELESS', true );
+            define( 'PODS_TABLELESS', false );
 
         register_activation_hook( PODS_DIR . 'init.php', array( $this, 'activate' ) );
         register_deactivation_hook( PODS_DIR . 'init.php', array( $this, 'deactivate' ) );

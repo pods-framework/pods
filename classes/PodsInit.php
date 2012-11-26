@@ -306,7 +306,7 @@ class PodsInit {
                 // Rewrite
                 $cpt_rewrite = (boolean) pods_var( 'rewrite', $post_type, true );
                 $cpt_rewrite_array = array(
-                    'slug' => pods_var( 'rewrite_custom_slug', $post_type, pods_var( 'name', $post_type ) ),
+                    'slug' => pods_var( 'rewrite_custom_slug', $post_type, pods_var( 'name', $post_type ), null, true ),
                     'with_front' => (boolean) pods_var( 'rewrite_with_front', $post_type, true ),
                     'feeds' => pods_var( 'rewrite_feeds', $post_type, pods_var( 'has_archive', $post_type, false ) ),
                     'pages' => (boolean) pods_var( 'rewrite_pages', $post_type, true )
@@ -405,7 +405,7 @@ class PodsInit {
                 // Rewrite
                 $ct_rewrite = (boolean) pods_var( 'rewrite', $taxonomy, true );
                 $ct_rewrite_array = array(
-                    'slug' => pods_var( 'rewrite_custom_slug', $taxonomy, pods_var( 'name', $taxonomy ) ),
+                    'slug' => pods_var( 'rewrite_custom_slug', $taxonomy, pods_var( 'name', $taxonomy ), null, true ),
                     'with_front' => (boolean) pods_var( 'rewrite_with_front', $taxonomy, true ),
                     'hierarchical' => pods_var( 'rewrite_hierarchical', $taxonomy, pods_var( 'hierarchical', $taxonomy, false ) )
                 );

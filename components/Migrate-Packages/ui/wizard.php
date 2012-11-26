@@ -39,10 +39,10 @@
                         $pod_pages = $api->load_pages();
                         $pod_helpers = $api->load_helpers();
 
-                        $import = true;
+                        $export = true;
 
                         if ( empty( $pods ) && empty( $pod_templates ) && empty( $pod_pages ) && empty( $pod_helpers ) )
-                            $import = false;
+                            $export = false;
                     ?>
 
                     <div id="pods-wizard-panel-1" class="pods-wizard-panel">
@@ -51,9 +51,6 @@
                         </div>
 
                         <div id="pods-wizard-options">
-                            <?php
-                                if ( $import ) {
-                            ?>
                             <div class="pods-wizard-option">
                                 <a href="#pods-wizard-import" data-opt="import">
                                     <h2><?php _e( 'Import', 'pods' ); ?></h2>
@@ -63,10 +60,10 @@
 
                                 <p><br /></p>
                             </div>
-                            <?php
-                                }
-                            ?>
 
+                            <?php
+                                if ( $export ) {
+                            ?>
                             <div class="pods-wizard-option">
                                 <a href="#pods-wizard-export" data-opt="export">
                                     <h2><?php _e( 'Export', 'pods' ); ?></h2>
@@ -76,6 +73,9 @@
 
                                 <p><br /></p>
                             </div>
+                            <?php
+                                }
+                            ?>
                         </div>
                     </div>
 

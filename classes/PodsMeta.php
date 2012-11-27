@@ -153,9 +153,56 @@ class PodsMeta {
             add_action( 'delete_comment', array( $this, 'delete_comment' ), 10, 1 );
         }
 
+        if ( is_admin() )
+            $this->integrations();
+
         do_action( 'pods_meta_init' );
 
         return $this;
+    }
+
+    public function integrations () {
+        add_filter( 'cpac-get-meta-by-type', array( $this, 'cpac_meta_keys' ), 10, 2 );
+        add_filter( 'cpac-get-post-types', array( $this, 'cpac_post_types' ), 10, 1 );
+    }
+
+    public function cpac_meta_keys ( $meta_fields, $type ) {
+        $object_type = 'post_type';
+
+        $object = $type;
+
+        if ( 'wp-media' == $type )
+            $object_type = $object = 'media';
+        elseif ( 'wp-users' == $type )
+            $object_type = $object = 'user';
+        elseif ( 'wp-comments' == $type )
+            $object_type = $object = 'comment';
+
+        $pod = pods_api()->load_pod( array( 'name' => $object ), false );
+
+        // Add Pods fields
+        if ( !empty( $pod ) && $object_type == $pod[ 'type' ] ) {
+            foreach ( $pod[ 'fields' ] as $field => $field_data ) {
+                if ( !in_array( $field, $meta_fields ) )
+                    $meta_fields[] = $field;
+            }
+        }
+
+        // Remove internal Pods fields
+        foreach ( $meta_fields as $field => $meta_field ) {
+            if ( 0 === strpos( $meta_field, '_pods_' ) )
+                unset( $meta_fields[ $meta_field ] );
+        }
+
+        return $meta_fields;
+    }
+
+    public function cpac_post_types ( $post_types ) {
+        // Remove internal Pods post types
+        foreach ( $post_types as $post_type => $post_type_name ) {
+            if ( 0 === strpos( $post_type, '_pods_' ) || 0 === strpos( $post_type_name, '_pods_' ) )
+                unset( $post_types[ $post_type ] );
+        }
     }
 
     /**

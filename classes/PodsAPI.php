@@ -2981,8 +2981,24 @@ class PodsAPI {
         if ( !is_array( $params->order ) )
             $params->order = explode( ',', $params->order );
 
+        $pod = $this->load_pod( array( 'name' => $params->name ) );
+
+        $params->name = $pod[ 'name' ];
+
+        if ( false === $pod )
+            return pods_error( __( 'Pod is required', 'pods' ), $this );
+
         foreach ( $params->order as $order => $id ) {
-            pods_query( "UPDATE `@wp_pods_{$params->pod}` SET `{$params->field}` = " . pods_absint( $order ) . " WHERE `id` = " . pods_absint( $id ) . " LIMIT 1" );
+            if ( isset( $pod[ 'fields' ][ $params->field ] ) || isset( $pod[ 'object_fields' ][ $params->field ] ) ) {
+                if ( 'table' == $pod[ 'storage' ] && ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) ) {
+                    if ( isset( $pod[ 'fields' ][ $params->field ] ) )
+                        pods_query( "UPDATE `@wp_pods_{$params->name}` SET `{$params->field}` = " . pods_absint( $order ) . " WHERE `id` = " . pods_absint( $id ) . " LIMIT 1" );
+                    else
+                        pods_query( "UPDATE `{$pod['table']}` SET `{$params->field}` = " . pods_absint( $order ) . " WHERE `{$pod['field_id']}` = " . pods_absint( $id ) . " LIMIT 1" );
+                }
+                else
+                    $this->save_pod_item( array( 'pod' => $params->pod, 'pod_id' => $params->pod_id, 'id' => $id, 'data' => array( $params->field => pods_absint( $order ) ) ) );
+            }
         }
 
         return true;

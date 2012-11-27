@@ -3896,6 +3896,8 @@ class PodsAPI {
         // Deprecated sister_field_id
         $field[ 'sister_field_id' ] =& $field[ 'sister_id' ];
 
+        $field[ 'table_info' ] = array();
+
         if ( 'pick' == $field[ 'type' ] && true === $params->table_info )
             $field[ 'table_info' ] = $this->get_table_info( $field[ 'pick_object' ], $field[ 'pick_val' ] );
 
@@ -4687,7 +4689,7 @@ class PodsAPI {
      *
      * @param string $object_type
      * @param string $object The object to look for
-     * @param null $name (optional) Name of the pod to laod
+     * @param null $name (optional) Name of the pod to load
      * @param array $pod (optional) Array with pod information
      *
      * @return array|bool
@@ -4705,13 +4707,25 @@ class PodsAPI {
         $info = array(
             //'select' => '`t`.*',
             'table' => $object,
-            'join' => array(),
+            'meta_table' => $object,
+
             'field_id' => 'id',
             'field_index' => 'name',
             'field_slug' => null,
+
+            'meta_field_id' => 'id',
+            'meta_field_index' => 'name',
+            'meta_field_value' => 'name',
+
+            'join' => array(),
+
             'where' => null,
             'where_default' => null,
-            'orderby' => null
+
+            'orderby' => null,
+
+            'pod' => null,
+            'recurse' => false
         );
 
         if ( empty( $object_type ) ) {
@@ -4768,11 +4782,11 @@ class PodsAPI {
                         $name = substr( $object_type, strlen( $prefix ), strlen( $object_type ) );
                 }
 
-                $info[ 'table' ] = $wpdb->prefix . 'pods_' . ( empty( $object ) ? $name : $object );
+                $info[ 'table' ] = $info[ 'meta_table' ] = $wpdb->prefix . 'pods_' . ( empty( $object ) ? $name : $object );
 
                 if ( is_array( $pod ) ) {
                     if ( isset( $pod[ 'options' ] ) && 'pod' == pods_var( 'type', $pod ) )
-                        $info[ 'field_index' ] = pods_var( 'pod_index', $pod[ 'options' ], 'id', null, true );
+                        $info[ 'field_index' ] = $info[ 'meta_field_index' ] = $info[ 'meta_field_value' ] = pods_var( 'pod_index', $pod[ 'options' ], 'id', null, true );
 
                     $slug_field = get_posts( array(
                         'post_type' => '_pods_field',
@@ -4798,9 +4812,15 @@ class PodsAPI {
             }
             elseif ( 0 === strpos( $object_type, 'post_type' ) || 'media' == $object_type ) {
                 $info[ 'table' ] = $wpdb->posts;
+                $info[ 'meta_table' ] = $wpdb->postmeta;
+
                 $info[ 'field_id' ] = 'ID';
                 $info[ 'field_index' ] = 'post_title';
                 $info[ 'field_slug' ] = 'post_name';
+
+                $info[ 'meta_field_id' ] = 'post_id';
+                $info[ 'meta_field_index' ] = 'meta_key';
+                $info[ 'meta_field_value' ] = 'meta_value';
 
                 if ( 'media' == $object_type )
                     $object = 'attachment';
@@ -4844,10 +4864,11 @@ class PodsAPI {
                 $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type );
             }
             elseif ( 0 === strpos( $object_type, 'taxonomy' ) ) {
-                $info[ 'table' ] = $wpdb->terms;
+                $info[ 'table' ] = $info[ 'meta_table' ] = $wpdb->terms;
+
                 $info[ 'join' ][ 'tt' ] = "LEFT JOIN `{$wpdb->term_taxonomy}` AS `tt` ON `tt`.`term_id` = `t`.`term_id`";
-                $info[ 'field_id' ] = 'term_id';
-                $info[ 'field_index' ] = 'name';
+                $info[ 'field_id' ] = $info[ 'meta_field_id' ] = 'term_id';
+                $info[ 'field_index' ] = $info[ 'meta_field_index' ] = $info[ 'meta_field_value' ] = 'name';
                 $info[ 'field_slug' ] = 'slug';
 
                 if ( empty( $name ) ) {
@@ -4884,9 +4905,15 @@ class PodsAPI {
             }
             elseif ( 'user' == $object_type ) {
                 $info[ 'table' ] = $wpdb->users;
+                $info[ 'meta_table' ] = $wpdb->usermeta;
+
                 $info[ 'field_id' ] = 'ID';
                 $info[ 'field_index' ] = 'display_name';
                 $info[ 'field_slug' ] = 'user_nicename';
+
+                $info[ 'meta_field_id' ] = 'user_id';
+                $info[ 'meta_field_index' ] = 'meta_key';
+                $info[ 'meta_field_value' ] = 'meta_value';
 
                 $info[ 'where' ] = array(
                     'user_status' => '`t`.`user_status` = 0'
@@ -4896,8 +4923,14 @@ class PodsAPI {
             }
             elseif ( 'comment' == $object_type ) {
                 $info[ 'table' ] = $wpdb->comments;
+                $info[ 'meta_table' ] = $wpdb->commentmeta;
+
                 $info[ 'field_id' ] = 'comment_ID';
                 $info[ 'field_index' ] = 'comment_date';
+
+                $info[ 'meta_field_id' ] = 'comment_id';
+                $info[ 'meta_field_index' ] = 'meta_key';
+                $info[ 'meta_field_value' ] = 'meta_value';
 
                 $object = 'comment';
 
@@ -4912,9 +4945,15 @@ class PodsAPI {
                 $info[ 'table' ] = ( empty( $object ) ? $name : $object );
 
             $info[ 'table' ] = pods_clean_name( $info[ 'table' ], false );
+            $info[ 'meta_table' ] = pods_clean_name( $info[ 'meta_table' ], false );
+
             $info[ 'field_id' ] = pods_clean_name( $info[ 'field_id' ], false );
             $info[ 'field_index' ] = pods_clean_name( $info[ 'field_index' ], false );
             $info[ 'field_slug' ] = pods_clean_name( $info[ 'field_slug' ], false );
+
+            $info[ 'meta_field_id' ] = pods_clean_name( $info[ 'meta_field_id' ], false );
+            $info[ 'meta_field_index' ] = pods_clean_name( $info[ 'meta_field_index' ], false );
+            $info[ 'meta_field_value' ] = pods_clean_name( $info[ 'meta_field_value' ], false );
 
             if ( empty( $info[ 'orderby' ] ) )
                 $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '`, `t`.`' . $info[ 'field_id' ] . '`';
@@ -4922,6 +4961,11 @@ class PodsAPI {
             if ( !empty( $pod ) && 'table' == $pod[ 'storage' ] && !in_array( $object_type, array( 'pod', 'table' ) ) ) {
                 $info[ 'join' ][ 'd' ] = "LEFT JOIN `{$wpdb->prefix}pods_{$name}` AS `d` ON `d`.`id` = `t`.`" . $info[ 'field_id' ] . '`';
                 //$info[ 'select' ] .= ', `d`.*';
+            }
+
+            if ( !empty( $pod ) ) {
+                $info[ 'pod' ] = $pod[ 'name' ];
+                $info[ 'recurse' ] = true;
             }
 
             pods_transient_set( $transient, $info );

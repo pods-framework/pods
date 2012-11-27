@@ -1934,6 +1934,8 @@ class PodsData {
                             `{$field_joined}`.`{$table_info['meta_field_index']}` = '{$traverse['name']}'
                             AND `{$field_joined}`.`{$table_info['meta_field_id']}` = `{$joined}`.`{$joined_id}`
                     ";
+
+                    $table_info[ 'recurse' ] = false;
                 }
                 else {
                     $the_join = "
@@ -1945,9 +1947,9 @@ class PodsData {
                             `{$field_joined}`.`{$table_info['meta_field_index']}` = '{$traverse['name']}'
                             AND `{$field_joined}`.`{$table_info['meta_field_id']}` = CONVERT( `{$rel_alias}`.`{$table_info['meta_field_value']}`, SIGNED )
                     ";
-                }
 
-                $joined_id = $table_info[ 'meta_field_id' ];
+                    $joined_id = $table_info[ 'meta_field_id' ];
+                }
             }
         }
         else {
@@ -1958,6 +1960,8 @@ class PodsData {
                             `{$field_joined}`.`{$table_info['meta_field_index']}` = '{$traverse['name']}'
                             AND `{$field_joined}`.`{$table_info['meta_field_id']}` = `{$joined}`.`{$joined_id}`
                     ";
+
+                    $table_info[ 'recurse' ] = false;
                 }
                 else {
                     $the_join = "
@@ -1969,9 +1973,9 @@ class PodsData {
                             `{$field_joined}`.`{$table_info['meta_field_index']}` = '{$traverse['name']}'
                             AND `{$field_joined}`.`{$table_info['meta_field_id']}` = `{$rel_alias}`.`related_item_id`
                     ";
-                }
 
-                $joined_id = $table_info[ 'meta_field_id' ];
+                    $joined_id = $table_info[ 'meta_field_id' ];
+                }
             }
             elseif ( 'table' == $pod_data[ 'storage' ] && in_array( $traverse[ 'type' ], $tableless_field_types ) ) {
                 $the_join = "
@@ -1987,7 +1991,7 @@ class PodsData {
             }
         }
 
-        $the_join = apply_filters( 'pods_traverse_the_join', $the_join, $pod, $fields, $joined, $depth, $this );
+        $the_join = apply_filters( 'pods_traverse_the_join', $the_join, compact( 'pod', 'fields', 'joined', 'depth', 'joined_id' ), $this );
 
         if ( empty( $the_join ) )
             return $joins;

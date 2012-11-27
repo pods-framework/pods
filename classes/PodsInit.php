@@ -874,46 +874,6 @@ class PodsInit {
                     AND `rel`.`meta_value` = '" . $_ID . "'";
 
             pods_query( $sql, false );
-
-            $sql = "
-                SELECT `rel`.`post_id`, `rel`.`meta_key`, `rel`.`meta_value`
-                FROM `@wp_postmeta` AS `rel`
-                LEFT JOIN `{$wpdb->posts}` AS `p`
-                    ON
-                        `p`.`post_type` = '_pods_field'
-                        AND ( `p`.`ID` = `rel`.`field_id` OR `p`.`ID` = `rel`.`related_field_id` )
-                LEFT JOIN `{$wpdb->postmeta}` AS `pm`
-                    ON
-                        `pm`.`post_id` = `p`.`ID`
-                        AND `pm`.`meta_key` = 'type'
-                        AND `pm`.`meta_value` = 'file'
-                WHERE
-                    `p`.`ID` IS NOT NULL
-                    AND `pm`.`meta_id` IS NOT NULL
-                    AND `rel`.`meta_key` = `p`.`post_name`
-                    AND `rel`.`meta_value` LIKE '\"" . $_ID . "\"'";
-
-            $fields = pods_query( $sql, false );
-
-            if ( !empty( $fields ) ) {
-                pods_no_conflict_on( 'post' );
-
-                foreach ( $fields as $field ) {
-                    $value = maybe_unserialize( $field->meta_value );
-
-                    if ( !empty( $value ) && is_array( $value ) ) {
-                        $found = array_search( $_ID, $value );
-
-                        if ( false !== $found ) {
-                            unset( $value[ $found ] );
-
-                            update_post_meta( $field->post_id, $field->meta_key, $value );
-                        }
-                    }
-                }
-
-                pods_no_conflict_off( 'post' );
-            }
         }
 
         // User Meta
@@ -937,46 +897,6 @@ class PodsInit {
                     AND `rel`.`meta_value` = '" . $_ID . "'";
 
             pods_query( $sql, false );
-
-            $sql = "
-                SELECT `rel`.`user_id`, `rel`.`meta_key`, `rel`.`meta_value`
-                FROM `@wp_usermeta` AS `rel`
-                LEFT JOIN `{$wpdb->posts}` AS `p`
-                    ON
-                        `p`.`post_type` = '_pods_field'
-                        AND ( `p`.`ID` = `rel`.`field_id` OR `p`.`ID` = `rel`.`related_field_id` )
-                LEFT JOIN `{$wpdb->postmeta}` AS `pm`
-                    ON
-                        `pm`.`post_id` = `p`.`ID`
-                        AND `pm`.`meta_key` = 'type'
-                        AND `pm`.`meta_value` = 'file'
-                WHERE
-                    `p`.`ID` IS NOT NULL
-                    AND `pm`.`meta_id` IS NOT NULL
-                    AND `rel`.`meta_key` = `p`.`post_name`
-                    AND `rel`.`meta_value` LIKE '\"" . $_ID . "\"'";
-
-            $fields = pods_query( $sql, false );
-
-            if ( !empty( $fields ) ) {
-                pods_no_conflict_on( 'user' );
-
-                foreach ( $fields as $field ) {
-                    $value = maybe_unserialize( $field->meta_value );
-
-                    if ( !empty( $value ) && is_array( $value ) ) {
-                        $found = array_search( $_ID, $value );
-
-                        if ( false !== $found ) {
-                            unset( $value[ $found ] );
-
-                            update_user_meta( $field->user_id, $field->meta_key, $value );
-                        }
-                    }
-                }
-
-                pods_no_conflict_off( 'user' );
-            }
         }
 
         // Comment Meta
@@ -1000,46 +920,6 @@ class PodsInit {
                     AND `rel`.`meta_value` = '" . $_ID . "'";
 
             pods_query( $sql, false );
-
-            $sql = "
-                SELECT `rel`.`comment_id`, `rel`.`meta_key`, `rel`.`meta_value`
-                FROM `@wp_commentmeta` AS `rel`
-                LEFT JOIN `{$wpdb->posts}` AS `p`
-                    ON
-                        `p`.`post_type` = '_pods_field'
-                        AND ( `p`.`ID` = `rel`.`field_id` OR `p`.`ID` = `rel`.`related_field_id` )
-                LEFT JOIN `{$wpdb->postmeta}` AS `pm`
-                    ON
-                        `pm`.`post_id` = `p`.`ID`
-                        AND `pm`.`meta_key` = 'type'
-                        AND `pm`.`meta_value` = 'file'
-                WHERE
-                    `p`.`ID` IS NOT NULL
-                    AND `pm`.`meta_id` IS NOT NULL
-                    AND `rel`.`meta_key` = `p`.`post_name`
-                    AND `rel`.`meta_value` LIKE '\"" . $_ID . "\"'";
-
-            $fields = pods_query( $sql, false );
-
-            if ( !empty( $fields ) ) {
-                pods_no_conflict_on( 'comment' );
-
-                foreach ( $fields as $field ) {
-                    $value = maybe_unserialize( $field->meta_value );
-
-                    if ( !empty( $value ) && is_array( $value ) ) {
-                        $found = array_search( $_ID, $value );
-
-                        if ( false !== $found ) {
-                            unset( $value[ $found ] );
-
-                            update_comment_meta( $field->comment_id, $field->meta_key, $value );
-                        }
-                    }
-                }
-
-                pods_no_conflict_off( 'comment' );
-            }
         }
     }
 

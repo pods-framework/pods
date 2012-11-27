@@ -38,7 +38,7 @@ class PodsInit {
     function __construct() {
         self::$version = get_option( 'pods_framework_version' );
 
-        add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
+        add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
 
         add_action( 'init', array( $this, 'activate_install' ), 9 );
 
@@ -65,9 +65,15 @@ class PodsInit {
     }
 
     /**
-     * Load the plugin textdomain.
+     * Load the plugin textdomain and set default constants
      */
-    public function load_textdomain () {
+    public function plugins_loaded () {
+        if ( !defined( 'PODS_LIGHT' ) )
+            define( 'PODS_LIGHT', false );
+
+        if ( !defined( 'PODS_TABLELESS' ) )
+            define( 'PODS_TABLELESS', false );
+
         load_plugin_textdomain( 'pods', false, dirname( PODS_DIR . 'init.php' ) . '/languages/' );
     }
 
@@ -80,7 +86,8 @@ class PodsInit {
 
         self::$meta = pods_meta()->init();
 
-        self::$components = pods_components();
+        if ( !defined( 'PODS_LIGHT' ) || !PODS_LIGHT )
+            self::$components = pods_components();
     }
 
     /**
@@ -626,9 +633,6 @@ class PodsInit {
      * Activate and Install
      */
     public function activate_install () {
-        if ( !defined( 'PODS_TABLELESS' ) )
-            define( 'PODS_TABLELESS', false );
-
         register_activation_hook( PODS_DIR . 'init.php', array( $this, 'activate' ) );
         register_deactivation_hook( PODS_DIR . 'init.php', array( $this, 'deactivate' ) );
 
@@ -924,7 +928,7 @@ class PodsInit {
     }
 
     /**
-     *
+     * Register widgets for Pods
      */
     public function register_widgets () {
         $widgets = array(
@@ -945,7 +949,7 @@ class PodsInit {
     }
 
     /**
-     *
+     * Add Admin Bar links
      */
     public function admin_bar_links () {
         global $wp_admin_bar, $pods;

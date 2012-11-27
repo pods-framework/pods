@@ -183,7 +183,7 @@ foreach ( $post_types as $post_type => $label ) {
 }
 
 $taxonomies = get_taxonomies();
-$ignore = array( 'nav_menu', 'link_category', 'post_format' );
+$ignore = array( 'nav_menu', 'post_format' );
 
 foreach ( $taxonomies as $taxonomy => $label ) {
     if ( in_array( $taxonomy, $ignore ) || empty( $taxonomy ) )

@@ -1562,7 +1562,20 @@ function pods_permission ( $options ) {
             $capabilities = array_unique( array_filter( $capabilities ) );
 
             foreach ( $capabilities as $capability ) {
-                if ( current_user_can( $capability ) ) {
+                $must_have_capabilities = explode( '&&', $capability );
+                $must_have_capabilities = array_unique( array_filter( $must_have_capabilities ) );
+
+                $must_have_permission = true;
+
+                foreach ( $must_have_capabilities as $must_have_capability ) {
+                    if ( !current_user_can( $must_have_capability ) ) {
+                        $must_have_permission = false;
+
+                        break;
+                    }
+                }
+
+                if ( $must_have_permission ) {
                     $permission = true;
 
                     break;

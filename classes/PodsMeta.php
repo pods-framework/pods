@@ -10,6 +10,16 @@ class PodsMeta {
     private $api;
 
     /**
+     * @var int
+     */
+    public static $object_identifier = -1;
+
+    /**
+     * @var array
+     */
+    public static $advanced_content_types = array();
+
+    /**
      * @var array
      */
     public static $post_types = array();
@@ -37,6 +47,11 @@ class PodsMeta {
     /**
      * @var array
      */
+    public static $queue = array();
+
+    /**
+     * @var array
+     */
     public static $groups = array();
 
     /**
@@ -50,6 +65,7 @@ class PodsMeta {
      * @return PodsMeta
      */
     public function init () {
+        self::$advanced_content_types = $this->api->load_pods( array( 'type' => 'pod' ) );
         self::$post_types = $this->api->load_pods( array( 'type' => 'post_type' ) );
         self::$taxonomies = $this->api->load_pods( array( 'type' => 'taxonomy' ) );
         self::$media = $this->api->load_pods( array( 'type' => 'media' ) );
@@ -156,9 +172,78 @@ class PodsMeta {
         if ( is_admin() )
             $this->integrations();
 
+        add_action( 'init', array( $this, 'enqueue' ), 9 );
+
         do_action( 'pods_meta_init' );
 
         return $this;
+    }
+
+    public static function enqueue () {
+        foreach ( self::$queue as $type => $objects ) {
+            foreach ( $objects as $pod_name => $pod ) {
+                pods_transient_set( 'pods_pod_' . $pod_name, $pod );
+            }
+
+            self::$$type = array_merge( self::$$type, $objects );
+        }
+    }
+
+    public function register ( $type, $pod ) {
+        $pod_type = $type;
+
+        if ( 'post_type' == $type )
+            $type = 'post_types';
+        elseif ( 'taxonomy' == $type )
+            $type = 'taxonomies';
+        elseif ( 'pod' == $type )
+            $type = 'advanced_content_types';
+
+        if ( !isset( self::$queue[ $type ] ) )
+            self::$queue[ $type ] = array();
+
+        $pod[ 'type' ] = $pod_type;
+        $pod = $this->api->save_pod( $pod, false, self::$object_identifier );
+
+        if ( !empty( $pod ) ) {
+            self::$object_identifier--;
+
+            self::$queue[ $type ][ $pod[ 'name' ] ] = $pod;
+
+            return $pod;
+        }
+
+        return false;
+    }
+
+    public function register_field ( $pod, $field ) {
+        $pod = $this->api->load_pod( array( 'name' => $pod ), false );
+
+        if ( !empty( $pod ) ) {
+            $type = $pod[ 'type' ];
+
+            if ( 'post_type' == $pod[ 'type' ] )
+                $type = 'post_types';
+            elseif ( 'taxonomy' == $pod[ 'type' ] )
+                $type = 'taxonomies';
+            elseif ( 'pod' == $pod[ 'type' ] )
+                $type = 'advanced_content_types';
+
+            if ( !isset( self::$queue[ $pod[ 'type' ] ] ) )
+                self::$queue[ $type ] = array();
+
+            $field = $this->api->save_field( $field, false, false, $pod[ 'id' ] );
+
+            if ( !empty( $field ) ) {
+                $pod[ 'fields' ][ $field[ 'name' ] ] = $field;
+
+                self::$queue[ $type ][ $pod[ 'name' ] ] = $pod;
+
+                return $field;
+            }
+        }
+
+        return false;
     }
 
     public function integrations () {
@@ -178,7 +263,7 @@ class PodsMeta {
         elseif ( 'wp-comments' == $type )
             $object_type = $object = 'comment';
 
-        $pod = pods_api()->load_pod( array( 'name' => $object ), false );
+        $pod = $this->api->load_pod( array( 'name' => $object ), false );
 
         // Add Pods fields
         if ( !empty( $pod ) && $object_type == $pod[ 'type' ] ) {
@@ -220,7 +305,7 @@ class PodsMeta {
      */
     public function group_add ( $pod, $label, $fields, $context = 'normal', $priority = 'default' ) {
         if ( !is_array( $pod ) ) {
-            $_pod = pods_api()->load_pod( array( 'name' => $pod ), false );
+            $_pod = $this->api->load_pod( array( 'name' => $pod ), false );
 
             if ( !empty( $_pod ) )
                 $pod = $_pod;
@@ -1713,6 +1798,6 @@ class PodsMeta {
             'id' => $id
         );
 
-        return pods_api()->delete_pod_item( $params, false );
+        return $this->api->delete_pod_item( $params, false );
     }
 }

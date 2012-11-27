@@ -1982,6 +1982,48 @@ function pods_transient_clear ( $key = true ) {
 }
 
 /**
+ * Add a new Pod outside of the DB
+ *
+ * @see PodsMeta::register
+ *
+ * @param string $type The pod type ('post_type', 'taxonomy', 'media', 'user', 'comment')
+ * @param string $name The pod name
+ * @param array $object (optional) Pod array, including any 'fields' arrays
+ *
+ * @since 2.1.0
+ */
+function pods_register_type ( $type, $name, $object = null ) {
+    if ( empty( $object ) )
+        $object = array();
+
+    if ( !empty( $name ) )
+        $object[ 'name' ] = $name;
+
+    pods_meta()->register( $type, $object );
+}
+
+/**
+ * Add a new Pod field outside of the DB
+ *
+ * @see PodsMeta::register_field
+ *
+ * @param string $pod The pod name
+ * @param string $name The name of the Pod
+ * @param array $object (optional) Pod array, including any 'fields' arrays
+ *
+ * @since 2.1.0
+ */
+function pods_register_field ( $pod, $name, $field = null ) {
+    if ( empty( $field ) )
+        $field = array();
+
+    if ( !empty( $name ) )
+        $field[ 'name' ] = $name;
+
+    pods_meta()->register_field( $pod, $field );
+}
+
+/**
  * Add a meta group of fields to add/edit forms
  *
  * @see PodsMeta::group_add

@@ -300,7 +300,7 @@ class PodsComponents {
             pods_transient_set( 'pods_components', $components );
         }
 
-        if ( 1 == pods_var( 'pods_debug_components', 'get', 0 ) )
+        if ( 1 == pods_var( 'pods_debug_components', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
             pods_debug( $components );
 
         $this->components = $components;

@@ -3649,7 +3649,7 @@ class PodsAPI {
         unset( $pod[ 'options' ][ 'object' ] );
         unset( $pod[ 'options' ][ 'alias' ] );
 
-        $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
+        $pod = array_merge( $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ), $pod );
 
         $pod[ 'fields' ] = array();
 
@@ -4793,6 +4793,8 @@ class PodsAPI {
 
         $info = array(
             //'select' => '`t`.*',
+            'object_type' => null,
+
             'table' => $object,
             'meta_table' => $object,
 
@@ -4869,6 +4871,8 @@ class PodsAPI {
                         $name = substr( $object_type, strlen( $prefix ), strlen( $object_type ) );
                 }
 
+                $object_type = 'pod';
+
                 $info[ 'table' ] = $info[ 'meta_table' ] = $wpdb->prefix . 'pods_' . ( empty( $object ) ? $name : $object );
 
                 if ( is_array( $pod ) ) {
@@ -4920,6 +4924,9 @@ class PodsAPI {
                         $name = substr( $object_type, strlen( $prefix ), strlen( $object_type ) );
                 }
 
+                if ( 'media' != $object_type )
+                    $object_type = 'post_type';
+
                 $post_type = pods_sanitize( ( empty( $object ) ? $name : $object ) );
 
                 $info[ 'where' ] = array(
@@ -4927,7 +4934,7 @@ class PodsAPI {
                     'post_type' => '`t`.`post_type` = "' . $post_type . '"'
                 );
 
-                if ( 0 === strpos( $object_type, 'post_type' ) )
+                if ( 'post_type' == $object_type )
                     $info[ 'where_default' ] = '`t`.`post_status` = "publish"';
 
                 $info[ 'orderby' ] = '`t`.`menu_order`, `t`.`' . $info[ 'field_index' ] . '`, `t`.`post_date`';
@@ -4970,6 +4977,9 @@ class PodsAPI {
                     if ( 0 === strpos( $object_type, $prefix ) )
                         $name = substr( $object_type, strlen( $prefix ), strlen( $object_type ) );
                 }
+
+                if ( !in_array( $object_type, array( 'nav_menu', 'post_format' ) ) )
+                    $object_type = 'taxonomy';
 
                 $taxonomy = ( empty( $object ) ? $name : $object );
 
@@ -5059,6 +5069,8 @@ class PodsAPI {
                 $info[ 'pod' ] = $pod[ 'name' ];
                 $info[ 'recurse' ] = true;
             }
+
+            $info[ 'type' ] = $object_type;
 
             pods_transient_set( $transient, $info );
         }

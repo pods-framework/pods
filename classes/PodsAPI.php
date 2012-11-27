@@ -4745,20 +4745,6 @@ class PodsAPI {
             AND `item_id` IN ( {$ids} )
         ";
 
-        if ( 0 < $sister_id ) {
-            $related_where = "
-                (
-                    `field_id` = {$field_id}
-                    AND `item_id` IN ( {$ids} )
-                )
-                OR
-                (
-                    `related_field_id` = {$field_id}
-                    AND `related_item_id` IN ( {$ids} )
-                )
-            ";
-        }
-
         $sql = "
             SELECT *
             FROM `@wp_podsrel`
@@ -4964,13 +4950,18 @@ class PodsAPI {
 
                 $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type );
             }
-            elseif ( 0 === strpos( $object_type, 'taxonomy' ) ) {
+            elseif ( 0 === strpos( $object_type, 'taxonomy' ) || in_array( $object_type, array( 'nav_menu', 'post_format' ) ) ) {
                 $info[ 'table' ] = $info[ 'meta_table' ] = $wpdb->terms;
 
                 $info[ 'join' ][ 'tt' ] = "LEFT JOIN `{$wpdb->term_taxonomy}` AS `tt` ON `tt`.`term_id` = `t`.`term_id`";
                 $info[ 'field_id' ] = $info[ 'meta_field_id' ] = 'term_id';
                 $info[ 'field_index' ] = $info[ 'meta_field_index' ] = $info[ 'meta_field_value' ] = 'name';
                 $info[ 'field_slug' ] = 'slug';
+
+                if ( 'nav_menu' == $object_type )
+                    $object = 'nav_menu';
+                elseif ( 'post_format' == $object_type )
+                    $object = 'post_format';
 
                 if ( empty( $name ) ) {
                     $prefix = 'taxonomy-';

@@ -157,7 +157,9 @@ $pick_object = array(
     'Taxonomies' => array(),
     'Other WP Objects' => array(
         'user' => 'Users',
-        'comment' => 'Comments'
+        'comment' => 'Comments',
+        'nav_menu' => 'Navigation Menus',
+        'post_format' => 'Post Formats'
     )
 );
 

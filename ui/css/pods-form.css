@@ -272,3 +272,8 @@ input.pods-form-ui-field-type-color {
     padding: 15px 10px 15px 50px;
     background: #DFF2BF url(../images/green-check.png) no-repeat 10px center;
 }
+
+.pods-form-ui-row-type-hidden {
+    display: none;
+    visibility: hidden;
+}

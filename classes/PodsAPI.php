@@ -2272,6 +2272,23 @@ class PodsAPI {
             }
         }
 
+        // Handle hidden fields
+        if ( empty( $params->id ) ) {
+            foreach ( $fields as $field => $field_data ) {
+                if ( in_array( $field, $fields_active ) )
+                    continue;
+
+                if ( true === PodsForm::permission( $fields[ $field ][ 'type' ], $field, $fields[ $field ], $fields, $pod, $params->id, $params ) ) {
+                    $value = PodsForm::default_value( pods_var_raw( $field, 'post' ), $field_data[ 'type' ], $field, $field[ 'options' ], $pod, $params->id );
+
+                    if ( null !== $value && '' !== $value && false !== $value ) {
+                        $fields[ $field ][ 'value' ] = $value;
+                        $fields_active[] = $field;
+                    }
+                }
+            }
+        }
+
         $columns =& $fields; // @deprecated 2.0.0
         $active_columns =& $fields_active; // @deprecated 2.0.0
         $params->tbl_row_id =& $params->id;

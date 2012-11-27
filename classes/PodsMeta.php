@@ -596,7 +596,7 @@ class PodsMeta {
         <?php
         $id = null;
 
-        if ( is_object( $post ) )
+        if ( is_object( $post ) && false === strpos( $_SERVER[ 'REQUEST_URI' ], '/post-new.php?' ) )
             $id = $post->ID;
 
         $pod = pods( $metabox[ 'args' ][ 'group' ][ 'pod' ][ 'name' ], $id, true );

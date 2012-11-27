@@ -153,7 +153,6 @@ class PodsField_Boolean extends PodsField {
      * @since 2.0.0
      */
     public function data ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
-
         if ( 'checkbox' != pods_var( 'boolean_format_type', $options ) ) {
             $data = array(
                 1 => pods_var_raw( 'boolean_yes_label', $options ),

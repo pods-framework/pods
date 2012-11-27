@@ -20,7 +20,8 @@
                     '_wpnonce' : $( '#pods-wizard-box' ).data( '_wpnonce' ),
                     'step' : 'prepare',
                     'type' : $row.data( 'upgrade' ),
-                    'pod' : ''
+                    'pod' : '',
+                    'version' : $( '#pods-wizard-box' ).data( 'version' )
                 };
 
                 if ( 'undefined' != typeof $row.data( 'pod' ) )
@@ -86,7 +87,8 @@
                         '_wpnonce' : $( '#pods-wizard-box' ).data( '_wpnonce' ),
                         'step' : 'migrate',
                         'type' : $row.data( 'upgrade' ),
-                        'pod' : ''
+                        'pod' : '',
+                        'version' : $( '#pods-wizard-box' ).data( 'version' )
                     };
 
                     if ( 'undefined' != typeof $row.data( 'pod' ) )
@@ -154,7 +156,7 @@
                 } );
             }
             else {
-                $( '#pods-wizard-next' ).click().text( 'Start using Pods 2.0' ).addClass( 'finished' );
+                $( '#pods-wizard-next' ).click().text( 'Start using Pods' ).addClass( 'finished' );
                 $( '#pods-wizard-next' ).off( 'click' );
                 $( '#pods-wizard-next' ).prop( 'href', 'admin.php?page=pods' );
                 $( '#pods-wizard-next' ).show();

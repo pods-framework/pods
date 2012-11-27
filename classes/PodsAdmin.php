@@ -799,7 +799,10 @@ class PodsAdmin {
      * Get the admin upgrade page
      */
     public function admin_upgrade () {
-        pods_view( PODS_DIR . 'ui/admin/upgrade.php', compact( array_keys( get_defined_vars() ) ) );
+        if ( version_compare( PODS_VERSION, '2.1.0', '<' ) )
+            pods_view( PODS_DIR . 'ui/admin/upgrade/upgrade_2_1.php', compact( array_keys( get_defined_vars() ) ) );
+        elseif ( version_compare( PODS_VERSION, '2.0.0', '<' ) )
+            pods_view( PODS_DIR . 'ui/admin/upgrade/upgrade_2_0.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
@@ -907,9 +910,9 @@ class PodsAdmin {
         $params = apply_filters( 'pods_api_' . $method->name, $params, $method );
 
         if ( 'upgrade' == $method->name ) {
-            require_once( PODS_DIR . 'sql/PodsUpgrade.php' );
+            require_once( PODS_DIR . 'sql/upgrade/PodsUpgrade.php' );
 
-            $upgrade = new PodsUpgrade_2_0();
+            $upgrade = pods_upgrade( $params->version );
 
             $output = (string) $upgrade->ajax( $params );
         }

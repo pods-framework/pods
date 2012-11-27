@@ -4,7 +4,7 @@
     if ( isset( $_POST[ 'cleanup' ] ) ) {
         require_once( PODS_DIR . 'sql/PodsUpgrade.php' );
 
-        $upgrade = new PodsUpgrade_2_0();
+        $upgrade = new PodsUpgrade();
         $upgrade->cleanup();
 
         pods_redirect( pods_var_update( array( 'pods_cleanup' => 1 ), array( 'page', 'tab' ) ) );

@@ -11,7 +11,7 @@ global $wpdb;
 
     <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
-    <div id="pods-wizard-box" class="pods-wizard-steps-3" data-action="pods_admin" data-method="upgrade" data-_wpnonce="<?php echo wp_create_nonce( 'pods-upgrade' ); ?>">
+    <div id="pods-wizard-box" class="pods-wizard-steps-3" data-action="pods_admin" data-method="upgrade" data-_wpnonce="<?php echo wp_create_nonce( 'pods-upgrade' ); ?>" data-version="2.0">
         <div id="pods-wizard-heading">
             <ul>
                 <li class="pods-wizard-menu-current" data-step="1">
@@ -35,8 +35,10 @@ global $wpdb;
                 <div class="pods-wizard-content pods-wizard-grey">
                     <p>
                         <?php
-                        $intro = __( 'Welcome to #Pods2! We sincerely hope you enjoy over two years worth of planning and work, available to you for <em>free</em>. Due to a number of optimizations in #Pods2, we need to run a few updates to your database. This should not remove or change your existing Pod data from 1.x, so if you wish to rollback to Pods 1.x - you can easily do that.', 'pods' );
-                        echo str_replace( '#Pods2', '<a href="https://twitter.com/#!/search/%23pods2" target="_blank">#Pods2</a>', $intro );
+                            $intro = __( 'Welcome to #Pods2! We sincerely hope you enjoy over two years worth of planning and work, available to you for <em>free</em>.', 'pods' )
+                                . ' ' . __( 'Due to a number of optimizations in #Pods2, we need to run a few updates to your database. This should not remove or change your existing Pod data from 1.x, so if you wish to rollback to Pods 1.x - you can easily do that.', 'pods' );
+
+                            echo str_replace( '#Pods2', '<a href="https://twitter.com/#!/search/%23pods2" target="_blank">#Pods2</a>', $intro );
                         ?>
                     </p>
                 </div>

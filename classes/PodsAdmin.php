@@ -433,6 +433,8 @@ class PodsAdmin {
         if ( isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) )
             $manage[ 'modified' ] = $pod->pod_data[ 'fields' ][ 'modified' ][ 'label' ];
 
+        $manage = apply_filters( 'pods_admin_ui_fields_' . $pod->pod, apply_filters( 'pods_admin_ui_fields', $manage, $pod->pod, $pod ), $pod->pod, $pod );
+
         $ui = array(
             'pod' => $pod,
             'fields' => array(
@@ -446,7 +448,7 @@ class PodsAdmin {
 
         // @todo Customize the Add New / Manage links to point to their correct menu items
 
-        $ui = apply_filters( 'pods_admin_ui_' . $pod->pod, apply_filters( 'pods_admin_ui', $ui, $pod->pod ), $pod );
+        $ui = apply_filters( 'pods_admin_ui_' . $pod->pod, apply_filters( 'pods_admin_ui', $ui, $pod->pod, $pod ), $pod->pod, $pod );
 
         pods_ui( $ui );
     }

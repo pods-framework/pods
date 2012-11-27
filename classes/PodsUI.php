@@ -1454,7 +1454,12 @@ class PodsUI {
             'order' => $order
         );
 
-        return pods_api()->reorder_pod_item( $params );
+        $reorder = pods_api()->reorder_pod_item( $params );
+
+        if ( $reorder )
+            $this->message( sprintf( __( "<strong>Success!</strong> %s reordered successfully.", 'pods' ), $this->items ) );
+        else
+            $this->error( sprintf( __( "<strong>Error:</strong> %s has not been reordered.", 'pods' ), $this->items ) );
     }
 
     /**

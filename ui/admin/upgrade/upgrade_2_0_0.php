@@ -11,7 +11,7 @@ global $wpdb;
 
     <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 
-    <div id="pods-wizard-box" class="pods-wizard-steps-3" data-action="pods_admin" data-method="upgrade" data-_wpnonce="<?php echo wp_create_nonce( 'pods-upgrade' ); ?>" data-version="2.0">
+    <div id="pods-wizard-box" class="pods-wizard-steps-3" data-action="pods_admin" data-method="upgrade" data-_wpnonce="<?php echo wp_create_nonce( 'pods-upgrade' ); ?>" data-version="2.0.0">
         <div id="pods-wizard-heading">
             <ul>
                 <li class="pods-wizard-menu-current" data-step="1">

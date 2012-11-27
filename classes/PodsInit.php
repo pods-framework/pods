@@ -30,6 +30,11 @@ class PodsInit {
     static $version;
 
     /**
+     * @var array
+     */
+    static $upgrades = array( '2.0.0', '2.1.0' );
+
+    /**
      * Setup and Initiate Pods
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
@@ -694,7 +699,7 @@ class PodsInit {
         // Setup DB tables
         $pods_version = self::$version;
 
-        // Update Pods and run any necessary DB updates
+        // Update Pods and run any required DB updates
         if ( 0 < strlen( $pods_version ) ) {
             if ( PODS_VERSION != $pods_version && false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] )) {
                 do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
@@ -710,36 +715,7 @@ class PodsInit {
         }
         // Install Pods
         else {
-            do_action( 'pods_install', PODS_VERSION, $pods_version, $_blog_id );
-
-            if ( ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) && false !== apply_filters( 'pods_install_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_install' ] ) ) {
-                $sql = file_get_contents( PODS_DIR . 'sql/dump.sql' );
-                $sql = apply_filters( 'pods_install_sql', $sql, PODS_VERSION, $pods_version, $_blog_id );
-
-                $charset_collate = 'DEFAULT CHARSET utf8';
-
-                if ( !empty( $wpdb->charset ) )
-                    $charset_collate = "DEFAULT CHARSET {$wpdb->charset}";
-
-                if ( !empty( $wpdb->collate ) )
-                    $charset_collate .= " COLLATE {$wpdb->collate}";
-
-                if ( 'DEFAULT CHARSET utf8' != $charset_collate )
-                    $sql = str_replace( 'DEFAULT CHARSET utf8', $charset_collate, $sql );
-
-                $sql = explode( ";\n", str_replace( array( "\r", 'wp_' ), array( "\n", $wpdb->prefix ), $sql ) );
-
-                for ( $i = 0, $z = count( $sql ); $i < $z; $i++ ) {
-                    $query = trim( $sql[ $i ] );
-
-                    if ( empty( $query ) )
-                        continue;
-
-                    pods_query( $query, 'Cannot setup SQL tables' );
-                }
-            }
-
-            do_action( 'pods_install_post', PODS_VERSION, $pods_version, $_blog_id );
+            pods_upgrade()->install( $_blog_id );
         }
 
         update_option( 'pods_framework_version', PODS_VERSION );
@@ -810,8 +786,13 @@ class PodsInit {
             " );
 
         delete_option( 'pods_framework_version' );
+
         delete_option( 'pods_framework_upgrade_2_0' );
         delete_option( 'pods_framework_upgraded_1_x' );
+
+        delete_option( 'pods_framework_upgrade_2_1' );
+        delete_option( 'pods_framework_upgraded_2_1' );
+
         delete_option( 'pods_component_settings' );
 
         $api->cache_flush_pods();

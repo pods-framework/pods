@@ -909,13 +909,8 @@ class PodsAdmin {
 
         $params = apply_filters( 'pods_api_' . $method->name, $params, $method );
 
-        if ( 'upgrade' == $method->name ) {
-            require_once( PODS_DIR . 'sql/upgrade/PodsUpgrade.php' );
-
-            $upgrade = pods_upgrade( $params->version );
-
-            $output = (string) $upgrade->ajax( $params );
-        }
+        if ( 'upgrade' == $method->name )
+            $output = (string) pods_upgrade( $params->version )->ajax( $params );
         else {
             if ( !method_exists( $this->api, $method->name ) )
                 pods_error( 'API method does not exist', $this );

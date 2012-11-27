@@ -1752,7 +1752,7 @@ function pods_form () {
 }
 
 /**
- * Include and Init the PodsFormUI class
+ * Include and Init the PodsMeta class
  *
  * @see PodsMeta
  *
@@ -1767,7 +1767,7 @@ function pods_meta () {
 }
 
 /**
- * Include and Init the PodsAdminUI class
+ * Include and Init the PodsAdmin class
  *
  * @see PodsAdmin
  *
@@ -1779,6 +1779,38 @@ function pods_admin () {
     require_once( PODS_DIR . 'classes/PodsAdmin.php' );
 
     return new PodsAdmin();
+}
+
+/**
+ * Include and Init the PodsUpgrade class
+ *
+ * @param string $version Version number of upgrade to get
+ *
+ * @see PodsUpgrade
+ *
+ * @return PodsUpgrade
+ *
+ * @since 2.1.0
+ */
+function pods_upgrade ( $version = '' ) {
+    $class_name = str_replace( '.', '_', $version );
+    $class_name = "PodsUpgrade_{$class_name}";
+
+    $class_name = trim( $class_name, '_' );
+
+    if ( !class_exists( $class_name ) ) {
+        $file = PODS_DIR . 'sql/upgrade/' . basename( $class_name ) . '.php';
+
+        if ( file_exists( $file ) )
+            include_once $file;
+    }
+
+    $class = false;
+
+    if ( class_exists( $class_name ) )
+        $class = new $class_name();
+
+    return $class;
 }
 
 /**

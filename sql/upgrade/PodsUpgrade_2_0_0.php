@@ -2,7 +2,12 @@
 /**
  * @package Pods\Upgrade
  */
-class PodsUpgrade_2_0 extends PodsUpgrade {
+class PodsUpgrade_2_0_0 extends PodsUpgrade {
+
+    /**
+     * @var string
+     */
+    protected $version = '2.0.0';
 
     /**
      *
@@ -969,10 +974,5 @@ class PodsUpgrade_2_0 extends PodsUpgrade {
         delete_option( 'pods_upload_require_login_cap' );
 
         pods_query( "DELETE FROM `@wp_postmeta` WHERE `meta_key` LIKE '_pods_1x_%'" );
-
-        /*
-         * other options maybe not in 2.0
-        delete_option( 'pods_page_precode_timing' );
-        */
     }
 }

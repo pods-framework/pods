@@ -1826,44 +1826,51 @@ class PodsAPI {
                     ON p.post_type = '_pods_field' AND p.ID = pm.post_id
                 WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_id' AND pm.meta_value = %d", $params->id ) );
 
-            pods_query( "DELETE FROM @wp_podsrel WHERE `field_id` = {$params->id}", false );
+            if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS )
+                pods_query( "DELETE FROM @wp_podsrel WHERE `field_id` = {$params->id}", false );
 
             delete_post_meta( $old_sister_id, 'sister_id' );
 
-            pods_query( "
-                    UPDATE `@wp_podsrel`
-                    SET `related_field_id` = 0
-                    WHERE `field_id` = %d
-                ", array(
-                    $old_sister_id
-                )
-            );
+            if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
+                pods_query( "
+                        UPDATE `@wp_podsrel`
+                        SET `related_field_id` = 0
+                        WHERE `field_id` = %d
+                    ", array(
+                        $old_sister_id
+                    )
+                );
+            }
         }
         elseif ( 0 < $sister_id ) {
             update_post_meta( $sister_id, 'sister_id', $params->id );
 
-            pods_query( "
-                    UPDATE `@wp_podsrel`
-                    SET `related_field_id` = %d
-                    WHERE `field_id` = %d
-                ",
-                array(
-                    $params->id,
-                    $sister_id
-                )
-            );
+            if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
+                pods_query( "
+                        UPDATE `@wp_podsrel`
+                        SET `related_field_id` = %d
+                        WHERE `field_id` = %d
+                    ",
+                    array(
+                        $params->id,
+                        $sister_id
+                    )
+                );
+            }
         }
         elseif ( 0 < $old_sister_id ) {
             delete_post_meta( $old_sister_id, 'sister_id' );
 
-            pods_query( "
-                    UPDATE `@wp_podsrel`
-                    SET `related_field_id` = 0
-                    WHERE `field_id` = %d
-                ", array(
-                    $old_sister_id
-                )
-            );
+            if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
+                pods_query( "
+                        UPDATE `@wp_podsrel`
+                        SET `related_field_id` = 0
+                        WHERE `field_id` = %d
+                    ", array(
+                        $old_sister_id
+                    )
+                );
+            }
         }
 
         if ( !empty( $old_id ) && $old_name != $field[ 'name' ] ) {
@@ -2972,6 +2979,7 @@ class PodsAPI {
      * $params['name'] string The Pod name
      *
      * @param array $params An associative array of parameters
+     * @param array $pod Pod data
      *
      * @return bool
      *
@@ -2980,10 +2988,11 @@ class PodsAPI {
      *
      * @since 1.9.0
      */
-    public function reset_pod ( $params ) {
+    public function reset_pod ( $params, $pod = false ) {
         $params = (object) pods_sanitize( $params );
 
-        $pod = $this->load_pod( $params );
+        if ( empty( $pod ) )
+            $pod = $this->load_pod( $params );
 
         if ( false === $pod )
             return pods_error( __( 'Pod not found', 'pods' ), $this );
@@ -2991,11 +3000,76 @@ class PodsAPI {
         $params->id = $pod[ 'id' ];
         $params->name = $pod[ 'name' ];
 
-        if ( 'table' == $pod[ 'storage' ] ) {
-            pods_query( "TRUNCATE `@wp_pods_{$params->name}`" );
+        if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
+            if ( 'table' == $pod[ 'storage' ] ) {
+                try {
+                    pods_query( "TRUNCATE `@wp_pods_{$params->name}`", false );
+                }
+                catch ( Exception $e ) {
+                    // Allow pod to be reset if the table doesn't exist
+                    if ( false === strpos( $e->getMessage(), 'Unknown table' ) )
+                        return pods_error( $e->getMessage(), $this );
+                }
+            }
+
+            pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}", false );
         }
 
-        pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}", false );
+        // @todo Delete relationships from tableless relationships
+
+        // Delete all posts/revisions from this post type
+        if ( in_array( $pod[ 'type' ], array( 'post_type', 'media' ) ) ) {
+            $type = pods_var( 'object', $pod, $pod[ 'name' ], null, true );
+
+            $sql = "
+                DELETE `t`, `r`, `m`
+                FROM `{$pod['table']}` AS `t`
+                LEFT JOIN `{$pod['meta_table']}` AS `m`
+                    ON `m`.`{$pod['meta_id']}` = `t`.`{$pod['field_id']}`
+                LEFT JOIN `{$pod['table']}` AS `r`
+                    ON `r`.`post_parent` = `t`.`{$pod['field_id']}` AND `r`.`post_status` = 'inherit'
+                WHERE `t`.`{$pod['field_type']}` = '{$type}'
+            ";
+
+            pods_query( $sql, false );
+        }
+        // Delete all terms from this taxonomy
+        elseif ( 'taxonomy' == $pod[ 'type' ] ) {
+            $type = pods_var( 'object', $pod, $pod[ 'name' ], null, true );
+
+            $sql = "
+                DELETE FROM `{$pod['table']}` AS `t`
+                WHERE `t`.`{$pod['field_type']}` = '{$type}'
+            ";
+
+            pods_query( $sql, false );
+        }
+        // Delete all users except the current one
+        elseif ( 'user' == $pod[ 'type' ] ) {
+            $sql = "
+                DELETE `t`, `m`
+                FROM `{$pod['table']}` AS `t`
+                LEFT JOIN `{$pod['meta_table']}` AS `m`
+                    ON `m`.`{$pod['meta_id']}` = `t`.`{$pod['field_id']}`
+                WHERE `t`.`{$pod['field_id']}` != " . (int) get_current_user_id() . "
+            ";
+
+            pods_query( $sql, false );
+        }
+        // Delete all comments
+        elseif ( 'comment' == $pod[ 'type' ] ) {
+            $type = pods_var( 'object', $pod, $pod[ 'name' ], null, true );
+
+            $sql = "
+                DELETE `t`, `m`
+                FROM `{$pod['table']}` AS `t`
+                LEFT JOIN `{$pod['meta_table']}` AS `m`
+                    ON `m`.`{$pod['meta_id']}` = `t`.`{$pod['field_id']}`
+                WHERE `t`.`{$pod['field_type']}` = '{$type}'
+            ";
+
+            pods_query( $sql, false );
+        }
 
         pods_cache_clear( true ); // only way to reliably clear out cached data across an entire group
 
@@ -3003,13 +3077,14 @@ class PodsAPI {
     }
 
     /**
-     * Drop a Pod and all its content
+     * Delete a Pod and all its content
      *
      * $params['id'] int The Pod ID
      * $params['name'] string The Pod name
      *
      * @param array $params An associative array of parameters
      * @param bool $strict (optional) Makes sure a pod exists, if it doesn't throws an error
+     * @param bool $delete_all (optional) Whether to delete all content from a WP object
      *
      * @uses PodsAPI::load_pod
      * @uses wp_delete_post
@@ -3018,7 +3093,7 @@ class PodsAPI {
      * @return bool
      * @since 1.7.9
      */
-    public function delete_pod ( $params, $strict = false ) {
+    public function delete_pod ( $params, $strict = false, $delete_all = false ) {
         /**
          * @var $wpdb wpdb
          */
@@ -3055,30 +3130,50 @@ class PodsAPI {
 
         // Only delete the post once the fields are taken care of, it's not required anymore
         $success = wp_delete_post( $params->id );
+
         if ( !$success )
             return pods_error( __( 'Pod unable to be deleted', 'pods' ), $this );
 
-        if ( 'table' == $pod[ 'storage' ] ) {
-            try {
-                pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$params->name}`", false );
-            }
-            catch ( Exception $e ) {
-                // Allow pod to be deleted if the table doesn't exist
-                if ( false === strpos( $e->getMessage(), 'Unknown table' ) )
-                    return pods_error( $e->getMessage(), $this );
+        // Reset content
+        if ( $delete_all )
+            $this->reset_pod( $params, $pod );
+
+        if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
+            if ( 'table' == $pod[ 'storage' ] ) {
+                try {
+                    pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$params->name}`", false );
+                }
+                catch ( Exception $e ) {
+                    // Allow pod to be deleted if the table doesn't exist
+                    if ( false === strpos( $e->getMessage(), 'Unknown table' ) )
+                        return pods_error( $e->getMessage(), $this );
+                }
             }
 
-            $wpdb->query( "DELETE `pm` FROM `{$wpdb->postmeta}` AS `pm`
-                LEFT JOIN `{$wpdb->posts}` AS `p`
-                    ON `p`.`post_type` = '_pods_field' AND `p`.`ID` = `pm`.`post_id`
-                LEFT JOIN `{$wpdb->postmeta}` AS `pm2`
-                    ON `pm2`.`meta_key` = 'pick_object' AND `pm2`.`meta_value` = 'pod' AND `pm2`.`post_id` = `pm`.`post_id`
-                WHERE
-                    `p`.`ID` IS NOT NULL AND `pm2`.`meta_id` IS NOT NULL
-                    AND `pm`.`meta_key` = 'pick_val' AND `pm`.`meta_value` = '{$params->name}'" );
+            pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}", false );
         }
 
-        pods_query( "DELETE FROM `@wp_podsrel` WHERE `pod_id` = {$params->id} OR `related_pod_id` = {$params->id}", false );
+        // @todo Delete relationships from tableless relationships
+
+        // Delete any relationship references
+        $sql = "
+            DELETE `pm`
+            FROM `{$wpdb->postmeta}` AS `pm`
+            LEFT JOIN `{$wpdb->posts}` AS `p`
+                ON `p`.`post_type` = '_pods_field'
+                    AND `p`.`ID` = `pm`.`post_id`
+            LEFT JOIN `{$wpdb->postmeta}` AS `pm2`
+                ON `pm2`.`meta_key` = 'pick_object'
+                    AND `pm2`.`meta_value` = 'pod'
+                    AND `pm2`.`post_id` = `pm`.`post_id`
+            WHERE
+                `p`.`ID` IS NOT NULL
+                AND `pm2`.`meta_id` IS NOT NULL
+                AND `pm`.`meta_key` = 'pick_val'
+                AND `pm`.`meta_value` = '{$params->name}'
+        ";
+
+        pods_query( $sql );
 
         $this->cache_flush_pods( $pod );
 
@@ -3164,8 +3259,11 @@ class PodsAPI {
                 ON p.post_type = '_pods_field' AND p.ID = pm.post_id
             WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_id' AND pm.meta_value = %d", $params->id ) );
 
-        if ( $table_operation )
+        if ( ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) && $table_operation ) {
             pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `field_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_field_id` = {$params->id})", false );
+        }
+
+        // @todo Delete tableless relationship meta
 
         if ( true === $save_pod )
             $this->cache_flush_pods( $pod );
@@ -3384,7 +3482,10 @@ class PodsAPI {
         elseif ( $wp && !in_array( $pod[ 'type' ], array( 'pod', 'table', '', 'taxonomy' ) ) )
             $this->delete_wp_object( $pod[ 'type' ], $params->id );
 
-        pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `item_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_item_id` = {$params->id})", false );
+        if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS )
+            pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `item_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_item_id` = {$params->id})", false );
+
+        // @todo Delete tableless relationship meta where related
 
         if ( false === $bypass_helpers ) {
             // Plugin hook

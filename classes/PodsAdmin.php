@@ -1180,7 +1180,7 @@ class PodsAdmin {
         $data->where = $field[ 'table_info' ][ 'where' ];
         $data->orderby = $field[ 'table_info' ][ 'orderby' ];
 
-        $where = pods_var_raw( 'pick_where', $field, (array) $field[ 'table_info' ][ 'where_default' ], null, true );
+        $where = pods_var_raw( 'pick_where', $field[ 'options' ], (array) $field[ 'table_info' ][ 'where_default' ], null, true );
 
         if ( empty( $where ) )
             $where = array();
@@ -1218,7 +1218,7 @@ class PodsAdmin {
         $orderby = array();
         $orderby[] = "(`t`.`{$data->field_index}` LIKE '%" . like_escape( $params->query ) . "%' ) DESC";
 
-        $pick_orderby = pods_var_raw( 'pick_orderby', $field, null, null, true );
+        $pick_orderby = pods_var_raw( 'pick_orderby', $field[ 'options' ], null, null, true );
 
         if ( 0 < strlen( $pick_orderby ) )
             $orderby[] = $pick_orderby;
@@ -1231,7 +1231,7 @@ class PodsAdmin {
             'table' => $data->table,
             'where' => $where,
             'orderby' => $orderby,
-            'groupby' => pods_var_raw( 'pick_groupby', $field, null, null, true ),
+            'groupby' => pods_var_raw( 'pick_groupby', $field[ 'options' ], null, null, true ),
             'limit' => 30
         );
 

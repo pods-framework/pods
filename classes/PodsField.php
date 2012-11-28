@@ -37,6 +37,14 @@ class PodsField {
     public static $prepare = '%s';
 
     /**
+     * Pod Types supported on (true for all, false for none, or give array of specific types supported)
+     *
+     * @var array|bool
+     * @since 2.1
+     */
+    public static $pod_types = true;
+
+    /**
      * Do things like register/enqueue scripts and stylesheets
      *
      * @since 2.0.0

@@ -580,7 +580,7 @@ class PodsForm {
     public static function display ( $type, $value = null, $name = null, $options = null, $pod = null, $id = null, $traverse = null ) {
         self::field_loader( $type );
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar' ) );
 
         if ( method_exists( self::$loaded[ $type ], 'display' ) ) {
             if ( is_array( $value ) && in_array( $type, $tableless_field_types ) ) {

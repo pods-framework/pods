@@ -867,6 +867,8 @@ class PodsInit {
 
         do_action( 'pods_delete_attachment', $_ID );
 
+        $file_types = "'" . implode( "', '", apply_filters( 'pods_file_field_types', array( 'file', 'avatar' ) ) ) . "'";
+
         if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
             $sql = "
                 DELETE `rel` FROM `@wp_podsrel` AS `rel`
@@ -878,11 +880,11 @@ class PodsInit {
                     ON
                         `pm`.`post_id` = `p`.`ID`
                         AND `pm`.`meta_key` = 'type'
-                        AND `pm`.`meta_value` = 'file'
+                        AND `pm`.`meta_value` IN ( {$file_types} )
                 WHERE
                     `p`.`ID` IS NOT NULL
                     AND `pm`.`meta_id` IS NOT NULL
-                    AND `rel`.`item_id` = " . $_ID;
+                    AND `rel`.`item_id` = {$_ID}";
 
             pods_query( $sql, false );
         }
@@ -900,12 +902,12 @@ class PodsInit {
                     ON
                         `pm`.`post_id` = `p`.`ID`
                         AND `pm`.`meta_key` = 'type'
-                        AND `pm`.`meta_value` = 'file'
+                        AND `pm`.`meta_value` IN ( {$file_types} )
                 WHERE
                     `p`.`ID` IS NOT NULL
                     AND `pm`.`meta_id` IS NOT NULL
                     AND `rel`.`meta_key` = `p`.`post_name`
-                    AND `rel`.`meta_value` = '" . $_ID . "'";
+                    AND `rel`.`meta_value` = '{$_ID}'";
 
             pods_query( $sql, false );
         }
@@ -923,12 +925,12 @@ class PodsInit {
                     ON
                         `pm`.`post_id` = `p`.`ID`
                         AND `pm`.`meta_key` = 'type'
-                        AND `pm`.`meta_value` = 'file'
+                        AND `pm`.`meta_value` IN ( {$file_types} )
                 WHERE
                     `p`.`ID` IS NOT NULL
                     AND `pm`.`meta_id` IS NOT NULL
                     AND `rel`.`meta_key` = `p`.`post_name`
-                    AND `rel`.`meta_value` = '" . $_ID . "'";
+                    AND `rel`.`meta_value` = '{$_ID}'";
 
             pods_query( $sql, false );
         }
@@ -946,12 +948,12 @@ class PodsInit {
                     ON
                         `pm`.`post_id` = `p`.`ID`
                         AND `pm`.`meta_key` = 'type'
-                        AND `pm`.`meta_value` = 'file'
+                        AND `pm`.`meta_value` IN ( {$file_types} )
                 WHERE
                     `p`.`ID` IS NOT NULL
                     AND `pm`.`meta_id` IS NOT NULL
                     AND `rel`.`meta_key` = `p`.`post_name`
-                    AND `rel`.`meta_value` = '" . $_ID . "'";
+                    AND `rel`.`meta_value` = '{$_ID}'";
 
             pods_query( $sql, false );
         }

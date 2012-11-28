@@ -15,7 +15,7 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_t
 
 $css_id = $attributes[ 'id' ];
 
-$limit_file_type = pods_var( 'file_type', $options, 'images' );
+$limit_file_type = pods_var( PodsForm::$field_type . '_type', $options, 'images' );
 
 if ( 'images' == $limit_file_type )
     $limit_types = 'jpg,png,gif';
@@ -24,16 +24,16 @@ elseif ( 'video' == $limit_file_type )
 elseif ( 'any' == $limit_file_type )
     $limit_types = '';
 else
-    $limit_types = pods_var( 'file_allowed_extensions', $options );
+    $limit_types = pods_var( PodsForm::$field_type . '_allowed_extensions', $options, '' );
 
 $limit_types = str_replace( ' ', '', $limit_types );
 
-$tab = pods_var( 'file_attachment_tab', $options, 'type', null, true );
+$tab = pods_var( PodsForm::$field_type . '_attachment_tab', $options, 'type', null, true );
 
 $file_limit = 1;
 
-if ( 'multi' == pods_var( 'file_format_type', $options, 'single' ) )
-    $file_limit = (int) pods_var( 'file_limit', $options, 0 );
+if ( 'multi' == pods_var( PodsForm::$field_type . '_format_type', $options, 'single' ) )
+    $file_limit = (int) pods_var( PodsForm::$field_type . '_limit', $options, 0 );
 
 $data = array(
     'limit-types' => $limit_types,
@@ -61,10 +61,10 @@ else
 
                             $title = $attachment->post_title;
 
-                            if ( 0 == pods_var( 'file_edit_title', $options, 0 ) )
+                            if ( 0 == pods_var( PodsForm::$field_type . '_edit_title', $options, 0 ) )
                                 $title = basename( $attachment->guid );
 
-                            echo $field_file->markup( $attributes, $file_limit, pods_var( 'file_edit_title', $options, 0 ), $val, $thumb[ 0 ], $title );
+                            echo $field_file->markup( $attributes, $file_limit, pods_var( PodsForm::$field_type . '_edit_title', $options, 0 ), $val, $thumb[ 0 ], $title );
                         }
                         ?></ul>
 
@@ -76,7 +76,7 @@ else
 </div>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
-    <?php echo $field_file->markup( $attributes, $file_limit, pods_var( 'file_edit_title', $options, 0 ) ); ?>
+    <?php echo $field_file->markup( $attributes, $file_limit, pods_var( PodsForm::$field_type . '_edit_title', $options, 0 ) ); ?>
 </script>
 
 <script type="text/javascript">

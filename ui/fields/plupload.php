@@ -25,8 +25,8 @@ $field_nonce = wp_create_nonce( 'pods_upload_' . ( !is_object( $pod ) ? '0' : $p
 
 $file_limit = 1;
 
-if ( 'multi' == pods_var( 'file_format_type', $options, 'single' ) )
-    $file_limit = (int) pods_var( 'file_limit', $options, 0 );
+if ( 'multi' == pods_var( PodsForm::$field_type . '_format_type', $options, 'single' ) )
+    $file_limit = (int) pods_var( PodsForm::$field_type . '_limit', $options, 0 );
 
 $plupload_init = array(
     'runtimes' => 'html5,silverlight,flash,html4',
@@ -72,10 +72,10 @@ else
 
                             $title = $attachment->post_title;
 
-                            if ( 0 == pods_var( 'file_edit_title', $options, 0 ) )
+                            if ( 0 == pods_var( PodsForm::$field_type . '_edit_title', $options, 0 ) )
                                 $title = basename( $attachment->guid );
 
-                            echo $field_file->markup( $attributes, $file_limit, pods_var( 'file_edit_title', $options, 0 ), $val, $thumb[ 0 ], $title );
+                            echo $field_file->markup( $attributes, $file_limit, pods_var( PodsForm::$field_type . '_edit_title', $options, 0 ), $val, $thumb[ 0 ], $title );
                         }
                         ?></ul>
 
@@ -89,7 +89,7 @@ else
 </div>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
-    <?php echo $field_file->markup( $attributes, $file_limit, pods_var( 'file_edit_title', $options, 0 ) ); ?>
+    <?php echo $field_file->markup( $attributes, $file_limit, pods_var( PodsForm::$field_type . '_edit_title', $options, 0 ) ); ?>
 </script>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-progress-template">

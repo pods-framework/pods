@@ -2643,7 +2643,7 @@ class PodsAPI {
                                 continue;
 
                             // Update the title if set
-                            if ( false !== $title && 1 == pods_var( 'file_edit_title', $fields[ $field ][ 'options' ], 0 ) ) {
+                            if ( false !== $title && 1 == pods_var( $fields[ $field ][ 'type' ] . '_edit_title', $fields[ $field ][ 'options' ], 0 ) ) {
                                 $attachment_data = array(
                                     'ID' => $id,
                                     'post_title' => $title

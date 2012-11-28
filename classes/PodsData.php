@@ -799,7 +799,7 @@ class PodsData {
                                 $fieldfield = $fieldfield . '.`' . $attributes[ 'table_info' ][ 'field_index' ] . '`';
                             }
                         }
-                        elseif ( 'file' == $attributes[ 'type' ] ) {
+                        elseif ( in_array( $attributes[ 'type' ], apply_filters( 'pods_file_field_types', array( 'file', 'avatar' ) ) ) ) {
                             if ( false === $params->search_across_files )
                                 continue;
                             else
@@ -865,7 +865,7 @@ class PodsData {
 
                     $filterfield = $filterfield . '.`' . $attributes[ 'table_info' ][ 'field_index' ] . '`';
                 }
-                elseif ( 'file' == $attributes[ 'type' ] )
+                elseif ( in_array( $attributes[ 'type' ], apply_filters( 'pods_file_field_types', array( 'file', 'avatar' ) ) ) )
                     $filterfield = $filterfield . '.`post_title`';
                 else
                     $filterfield = '`t`.' . $filterfield;
@@ -1847,7 +1847,7 @@ class PodsData {
         if ( empty( $pod ) )
             return array();
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar' ) );
 
         if ( !isset( $this->traversal[ $pod ] ) )
             $this->traversal[ $pod ] = array();

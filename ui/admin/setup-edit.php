@@ -1,7 +1,11 @@
 <?php
 global $pods_i;
 
-$tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
+$_pods = $api->load_pods();
+
+$pod = $_pods[ $obj->id ];
+
+$tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar' ) );
 
 $api = pods_api();
 
@@ -10,7 +14,14 @@ $field_types = $api->get_field_types();
 $field_types_select = array();
 
 foreach ( $field_types as $type => $label ) {
+    /**
+     * @var $field_type PodsField
+     */
     $field_type = PodsForm::field_loader( $type );
+
+    // Only show supported field types
+    if ( empty( $field_type::$pod_types ) || pods_var( 'type', $pod ) == $field_type::$pod_types || ( is_array( $field_type::$pod_types ) && in_array( pods_var( 'type', $pod ), $field_type::$pod_types ) ) )
+        continue;
 
     if ( !empty( PodsForm::$field_group ) ) {
         if ( !isset( $field_types_select[ PodsForm::$field_group ] ) )
@@ -163,10 +174,8 @@ $pick_object = array(
     )
 );
 
-$_pods = $api->load_pods();
-
-foreach ( $_pods as $pod ) {
-    $pick_object[ 'Pods' ][ 'pod-' . $pod[ 'name' ] ] = $pod[ 'label' ] . ' (' . $pod[ 'name' ] . ')';
+foreach ( $_pods as $the_pod ) {
+    $pick_object[ 'Pods' ][ 'pod-' . $the_pod[ 'name' ] ] = $the_pod[ 'label' ] . ' (' . $the_pod[ 'name' ] . ')';
 }
 
 $post_types = get_post_types();
@@ -193,8 +202,6 @@ foreach ( $taxonomies as $taxonomy => $label ) {
     $pick_object[ 'Taxonomies' ][ 'taxonomy-' . $taxonomy->name ] = $taxonomy->label;
 }
 
-$pod = $_pods[ $obj->id ];
-
 foreach ( $pod[ 'options' ] as $_option => $_value ) {
     $pod[ $_option ] = $_value;
 }
@@ -210,7 +217,7 @@ foreach ( $pod[ 'fields' ] as $_field => $_data ) {
 $field_defaults = apply_filters( 'pods_field_defaults', apply_filters( 'pods_field_defaults_' . $pod[ 'name' ], $field_defaults, $pod ) );
 
 // WP objects already have slugs
-if ( !in_array( $pod[ 'type' ], array( 'pod', 'table' ) ) ) {
+if ( !in_array( pods_var( 'type', $pod ), array( 'pod', 'table' ) ) ) {
     if ( isset( $field_types[ 'slug' ] ) )
         unset( $field_types[ 'slug' ] );
 

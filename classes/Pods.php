@@ -430,7 +430,7 @@ class Pods {
 
         $value = null;
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar' ) );
 
         $params->traverse = array();
 
@@ -651,7 +651,7 @@ class Pods {
                             $object_type = $last_object;
                             $object = $last_pick_val;
 
-                            if ( 'file' == $last_type ) {
+                            if ( in_array( $last_type, apply_filters( 'pods_file_field_types', array( 'file', 'avatar' ) ) ) ) {
                                 $object_type = 'media';
                                 $object = 'attachment';
                             }
@@ -886,7 +886,7 @@ class Pods {
      * @link http://podsframework.org/docs/find/
      */
     public function find ( $params = null, $limit = 15, $where = null, $sql = null ) {
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar' ) );
 
         $select = '`t`.*';
         $pod_table_prefix = 't';

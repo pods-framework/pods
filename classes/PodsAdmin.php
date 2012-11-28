@@ -998,7 +998,7 @@ class PodsAdmin {
         if ( empty( $pod ) || empty( $field ) || $pod[ 'id' ] != $field[ 'pod_id' ] || !isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) )
             pods_error( __( 'Invalid field request', 'pods' ), $this );
 
-        if ( 'file' != $field[ 'type' ] )
+        if ( !in_array( $field[ 'type' ], apply_filters( 'pods_file_field_types', array( 'file', 'avatar' ) ) ) )
             pods_error( __( 'Invalid field', 'pods' ), $this );
 
         $method = $params->method;
@@ -1016,7 +1016,7 @@ class PodsAdmin {
         if ( 'upload' == $method ) {
             $file = $_FILES[ 'Filedata' ];
 
-            $limit_size = pods_var( 'file_restrict_filesize', $field[ 'options' ] );
+            $limit_size = pods_var( $field[ 'type' ] . '_restrict_filesize', $field[ 'options' ] );
 
             if ( !empty( $limit_size ) ) {
                 if ( false !== stripos( $limit_size, 'MB' ) ) {
@@ -1038,13 +1038,13 @@ class PodsAdmin {
 
                 if ( 0 < $limit_size && $limit_size < $file[ 'size' ] ) {
                     $error = __( 'File size too large, max size is %s', 'pods' );
-                    $error = sprintf( $error, pods_var( 'file_restrict_filesize', $field[ 'options' ] ) );
+                    $error = sprintf( $error, pods_var( $field[ 'type' ] . '_restrict_filesize', $field[ 'options' ] ) );
 
                     pods_error( '<div style="color:#FF0000">Error: ' . $error . '</div>' );
                 }
             }
 
-            $limit_file_type = pods_var( 'file_type', $field[ 'options' ], 'images' );
+            $limit_file_type = pods_var( $field[ 'type' ] . '_type', $field[ 'options' ], 'images' );
 
             if ( 'images' == $limit_file_type )
                 $limit_types = 'jpg,png,gif';
@@ -1053,7 +1053,7 @@ class PodsAdmin {
             elseif ( 'any' == $limit_file_type )
                 $limit_types = '';
             else
-                $limit_types = pods_var( 'file_allowed_extensions', $field[ 'options' ], '', null, true );
+                $limit_types = pods_var( $field[ 'type' ] . '_allowed_extensions', $field[ 'options' ], '', null, true );
 
             $limit_types = trim( str_replace( array( ' ', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_types ), '.,' );
 

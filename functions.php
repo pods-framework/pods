@@ -1173,10 +1173,10 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
     if ( !empty( $fields ) && is_array( $fields ) && isset( $fields[ $field ] ) ) {
         $field = $fields[ $field ];
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar' ) );
 
         if ( !empty( $field ) && is_array( $field ) && in_array( $field[ 'type' ], $tableless_field_types ) ) {
-            if ( 'file' == $field[ 'type' ] )
+            if ( in_array( $field[ 'type' ], apply_filters( 'pods_file_field_types', array( 'file', 'avatar' ) ) ) )
                 $field_index = 'guid';
             elseif ( 'custom-simple' == $field[ 'pick_object' ] )
                 $simple = true;

@@ -151,7 +151,7 @@ class PodsAdmin {
             'type' => 'pod'
         ) );
 
-        if ( !PodsInit::$upgrade_needed && defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER ) {
+        if ( !PodsInit::$upgrade_needed && ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) ) {
             if ( false !== $results ) {
                 $submenu = array();
 

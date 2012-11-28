@@ -68,7 +68,7 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
          */
         global $wpdb;
 
-        if ( !in_array( "{$wpdb->prefix}pod_fields", $this->tables ) )
+        if ( !in_array( "{$wpdb->prefix}pod_rel", $this->tables ) )
             return pods_error( __( 'Table not found, it cannot be migrated', 'pods' ) );
 
         $count = pods_query( "SELECT COUNT(*) AS `count` FROM `@wp_pod_rel`", false );

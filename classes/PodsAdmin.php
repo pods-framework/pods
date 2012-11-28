@@ -775,7 +775,7 @@ class PodsAdmin {
             if ( version_compare( $old_version, PodsInit::$version_last, '<=' ) && version_compare( PodsInit::$version_last, $new_version, '<' ) ) {
                 $new_version = str_replace( '.', '_', $new_version );
 
-                pods_view( PODS_DIR . 'ui/admin/upgrade/upgrade_' . $new_version . '.php' );
+                pods_view( PODS_DIR . 'ui/admin/upgrade/upgrade_' . $new_version . '.php', compact( array_keys( get_defined_vars() ) ) );
 
                 break;
             }

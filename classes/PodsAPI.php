@@ -1975,6 +1975,7 @@ class PodsAPI {
             return pods_error( __( 'Type must be given to save an Object', 'pods' ), $this );
 
         $object = array(
+            'id' => 0,
             'name' => $params->name,
             'type' => $params->type,
             'code' => '',
@@ -2016,7 +2017,8 @@ class PodsAPI {
         if ( 'helper' == $object[ 'type' ] )
             $object[ 'options' ][ 'helper_type' ] = $object[ 'helper_type' ];
 
-        $object[ 'options' ][ 'code' ] = $object[ 'code' ];
+        if ( isset( $object[ 'options' ][ 'code' ] ) )
+            unset( $object[ 'options' ][ 'code' ] );
 
         $object[ 'options' ] = array_merge( $object[ 'options' ], $options );
 
@@ -2028,7 +2030,7 @@ class PodsAPI {
             'post_status' => 'publish'
         );
 
-        if ( isset( $params->id ) && !empty( $params->id ) )
+        if ( !empty( $object[ 'id' ] ) )
             $post_data[ 'ID' ] = $object[ 'id' ];
 
         if ( null !== pods_var( 'status', $object, null, null, true ) )

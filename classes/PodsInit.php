@@ -30,9 +30,26 @@ class PodsInit {
     static $version;
 
     /**
+     * @var mixed|void
+     */
+    static $version_last;
+
+    /**
+     * Upgrades to trigger (last installed version => upgrade version)
+     *
      * @var array
      */
-    static $upgrades = array( '2.0.0', '2.1.0' );
+    static $upgrades = array(
+        '1.0.0' => '2.0.0',
+        '2.0.0' => '2.1.0'
+    );
+
+    /**
+     * Whether an Upgrade is needed
+     *
+     * @var bool
+     */
+    static $upgrade_needed = false;
 
     /**
      * Setup and Initiate Pods
@@ -42,6 +59,21 @@ class PodsInit {
      */
     function __construct() {
         self::$version = get_option( 'pods_framework_version' );
+        self::$version_last = get_option( 'pods_framework_version_last' );
+
+        if ( !empty( self::$version ) ) {
+            self::$upgrade_needed = false;
+
+            foreach ( self::$upgrades as $old_version => $new_version ) {
+                if ( '2.1.0' == $new_version && ( !defined( 'PODS_DEVELOPER' ) || PODS_DEVELOPER ) )
+                    continue;
+
+                if ( version_compare( $old_version, self::$version, '<=' ) && version_compare( self::$version, $new_version, '<' ) )
+                    self::$upgrade_needed = true;
+            }
+        }
+        elseif ( 0 < strlen( get_option( 'pods_version' ) ) )
+            self::$upgrade_needed = true;
 
         add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
 
@@ -697,25 +729,42 @@ class PodsInit {
             $_blog_id = null;
 
         // Setup DB tables
-        $pods_version = self::$version;
+        $pods_version = get_option( 'pods_framework_version' );
 
         // Update Pods and run any required DB updates
         if ( 0 < strlen( $pods_version ) ) {
-            if ( PODS_VERSION != $pods_version && false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] )) {
-                do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
+            if ( !self::$upgrade_needed ) {
+                if ( PODS_VERSION != $pods_version && false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] )) {
+                    do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
 
-                // Update 2.0 alpha / beta sites
-                if ( version_compare( '2.0.0-a-1', $pods_version, '<=' ) && version_compare( $pods_version, '2.0.0-b-15', '<=' ) )
-                    include( PODS_DIR . 'sql/update-2.0-beta.php' );
+                    // Update 2.0 alpha / beta sites
+                    if ( version_compare( '2.0.0-a-1', $pods_version, '<=' ) && version_compare( $pods_version, '2.0.0-b-15', '<=' ) )
+                        include( PODS_DIR . 'sql/update-2.0-beta.php' );
 
-                include( PODS_DIR . 'sql/update.php' );
+                    include( PODS_DIR . 'sql/update.php' );
 
-                do_action( 'pods_update_post', PODS_VERSION, $pods_version, $_blog_id );
+                    do_action( 'pods_update_post', PODS_VERSION, $pods_version, $_blog_id );
+                }
+
+                update_option( 'pods_framework_version_last', $pods_version );
+
+                self::$version_last = $pods_version;
             }
         }
         // Install Pods
         else {
             pods_upgrade()->install( $_blog_id );
+
+            $old_version = get_option( 'pods_version' );
+
+            if ( !empty( $old_version ) ) {
+                if ( false === strpos( $old_version, '.' ) )
+                    $old_version = pods_version_to_point( $old_version );
+
+                update_option( 'pods_framework_version_last', $old_version );
+
+                self::$version_last = $pods_version;
+            }
         }
 
         update_option( 'pods_framework_version', PODS_VERSION );

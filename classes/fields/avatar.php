@@ -322,7 +322,7 @@ class PodsField_Avatar extends PodsField {
             $avatar_field = pods_transient_get( 'pods_avatar_field' );
 
             if ( empty( $avatar_field ) ) {
-                foreach ( PodsMeta::$user[ 'fields' ] as $field_name => $field ) {
+                foreach ( PodsMeta::$user[ 'fields' ] as $field ) {
                     if ( 'avatar' == $field[ 'type' ] ) {
                         $avatar_field = $field;
 
@@ -340,10 +340,17 @@ class PodsField_Avatar extends PodsField {
             if ( !empty( $avatar_field ) ) {
                 $user_avatar = get_user_meta( $_user_ID, $avatar_field[ 'name' ] . '.ID', true );
 
-                $user_avatar = pods_image( $user_avatar, array( $size, $size ) );
+                if ( !empty( $user_avatar ) ) {
+                    $attributes = null;
 
-                if ( !empty( $user_avatar ) )
-                    $avatar = $user_avatar;
+                    if ( !empty( $alt ) )
+                        $attributes = array( 'alt' => $alt );
+
+                    $user_avatar = pods_image( $user_avatar, array( $size, $size ), 0, $attributes );
+
+                    if ( !empty( $user_avatar ) )
+                        $avatar = $user_avatar;
+                }
             }
         }
 

@@ -367,12 +367,14 @@ if ( 'none' != pods_var( 'storage', $pod, 'none', null, true ) ) {
 else
     $closed = ' pods-toggled-only';
 
-$advanced = true;
+$advanced = false;
 
-if ( 'post_type' == pods_var( 'type', $pod ) && 0 < strlen( pods_var( 'object', $pod ) ) )
-    $advanced = false;
-elseif ( 'taxonomy' == pods_var( 'type', $pod ) && 0 < strlen( pods_var( 'object', $pod ) ) )
-    $advanced = false;
+if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) < 1 ) )
+    $advanced = true;
+elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) ) < 1 )
+    $advanced = true;
+elseif ( 'pod' == pods_var( 'type', $pod ) )
+    $advanced = true;
 
 if ( $advanced ) {
 ?>

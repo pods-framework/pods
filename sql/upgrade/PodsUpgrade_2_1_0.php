@@ -53,11 +53,22 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 
         $last_id = (int) $this->check_progress( __FUNCTION__ );
 
-        // get list of all relationship fields
+        $relationship_fields = $this->api->load_fields( array( 'type' => 'pick' ) );
 
-        // loop through all relationship field meta for items that are pods
+        foreach ( $relationship_fields as $field ) {
+            $pod = $this->api->load_pod( array( 'pod' => $field[ 'pod' ] ) );
 
-        // if serialized (or array), save as individual meta items and save new order meta key
+            // Only target pods that are meta-enabled
+            if ( !in_array( $pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) )
+                continue;
+
+            // Get and loop through relationship meta
+            $sql = "
+
+            ";
+
+            // if serialized (or array), save as individual meta items and save new order meta key
+        }
 
         $last_id = true;
 

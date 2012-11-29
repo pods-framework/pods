@@ -4085,7 +4085,7 @@ class PodsAPI {
     }
 
     /**
-     * Load fields by name or by Pod
+     * Load fields by Pod, ID, Name, and/or Type
      *
      * $params['pod_id'] int The Pod ID
      * $params['pod'] string The Pod name

@@ -566,7 +566,7 @@ $advanced_options = array(
             'label' => __( 'Menu Position', 'pods' ),
             'help' => __( 'help', 'pods' ),
             'type' => 'number',
-            'default' => '',
+            'default' => 20,
             'depends-on' => array( 'show_in_menu' => true )
         ),
         'menu_icon' => array(

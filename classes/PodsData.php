@@ -1043,9 +1043,9 @@ class PodsData {
                 $params->orderby = preg_replace( $find, $replace, $params->orderby );
 
                 if ( !empty( $found ) )
-                    $joins = $this->traverse( $found, $params->fields );
+                    $joins = $this->traverse( $found, $params->fields, $params );
                 elseif ( false !== $params->search )
-                    $joins = $this->traverse( null, $params->fields );
+                    $joins = $this->traverse( null, $params->fields, $params );
             }
         }
 
@@ -1808,12 +1808,19 @@ class PodsData {
      * @param array $fields Associative array of fields data
      *
      * @return array Traverse feed
+     * @param object $params (optional) Parameters from build()
      *
      * @since 2.0.0
      */
-    function traverse_build ( $fields = null ) {
+    function traverse_build ( $fields = null, $params = null ) {
         if ( null === $fields )
             $fields = $this->fields;
+
+        if ( empty( $fields ) && !empty( $params ) ) {
+            $table = $params->table;
+
+
+        }
 
         $feed = array();
 
@@ -1836,28 +1843,59 @@ class PodsData {
      * @param string $joined
      * @param int $depth
      * @param string $joined_id
+     * @param object $params (optional) Parameters from build()
      *
      * @return array
      *
      * @since 2.0.0
      */
-    function traverse_recurse ( $pod, $fields, $joined = 't', $depth = 0, $joined_id = 'id' ) {
+    function traverse_recurse ( $pod, $fields, $joined = 't', $depth = 0, $joined_id = 'id', $params = null ) {
         global $wpdb;
 
-        if ( empty( $pod ) )
-            return array();
+        $table_mode = false;
+
+        if ( empty( $pod ) ) {
+            if ( !empty( $params ) && !empty( $params->table ) && 0 === strpos( $params->table, $wpdb->prefix ) ) {
+                $pod = trim( str_replace( $wpdb->prefix, '', $params->table ), 's' );
+
+                if ( in_array( $pod, array( 'post', 'user', 'comment' ) ) ) {
+                    $table_mode = true;
+
+                    $pod = trim( $pod, 's' );
+
+                    if ( 'post' == $pod )
+                        $pod = 'post_type';
+
+                    $pod_data = array(
+                        'id' => 0,
+                        'name' => '_table_' . $pod,
+                        'type' => $pod,
+                        'storage' => 'meta',
+                        'fields' => array()
+                    );
+
+                    $pod = $pod_data[ 'name' ];
+                }
+                else
+                    return array();
+            }
+            else
+                return array();
+        }
 
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar' ) );
 
         if ( !isset( $this->traversal[ $pod ] ) )
             $this->traversal[ $pod ] = array();
 
-        $pod_data = $this->api->load_pod( array( 'name' => $pod ) );
+        if ( !$table_mode ) {
+            $pod_data = $this->api->load_pod( array( 'name' => $pod ), false );
 
-        if ( empty( $pod_data ) )
-            return array();
+            if ( empty( $pod_data ) )
+                return array();
 
-        $pod_id = (int) $pod_data[ 'id' ];
+            $pod_id = (int) $pod_data[ 'id' ];
+        }
 
         $joins = array();
 
@@ -1884,7 +1922,7 @@ class PodsData {
         if ( isset( $this->traversal[ $pod ][ $traverse[ 'name' ] ] ) )
             $traverse = array_merge( $traverse, (array) $this->traversal[ $pod ][ $traverse[ 'name' ] ] );
 
-        $traverse = $this->do_hook( 'traverse', $traverse, $pod, $fields, $joined, $depth, $field );
+        $traverse = $this->do_hook( 'traverse', $traverse, compact( 'pod', 'fields', 'joined', 'depth', 'joined_id', 'params' ) );
 
         if ( empty( $traverse ) )
             return $joins;
@@ -1991,7 +2029,7 @@ class PodsData {
             }
         }
 
-        $the_join = apply_filters( 'pods_traverse_the_join', $the_join, compact( 'pod', 'fields', 'joined', 'depth', 'joined_id' ), $this );
+        $the_join = $this->do_hook( 'traverse_the_join', $the_join, compact( 'pod', 'fields', 'joined', 'depth', 'joined_id', 'params' ) );
 
         if ( empty( $the_join ) )
             return $joins;
@@ -1999,7 +2037,7 @@ class PodsData {
         $joins[ $pod . '_' . $depth . '_' . $traverse[ 'id' ] ] = $the_join;
 
         if ( ( $depth + 1 ) < count( $fields ) && null !== $table_info[ 'pod' ] && false !== $table_info[ 'recurse' ] )
-            $joins = array_merge( $joins, $this->traverse_recurse( $table_info[ 'pod' ], $fields, $field_joined, ( $depth + 1 ) ), $joined_id );
+            $joins = array_merge( $joins, $this->traverse_recurse( $table_info[ 'pod' ], $fields, $field_joined, ( $depth + 1 ) ), $joined_id, $params );
 
         return $joins;
     }
@@ -2009,20 +2047,21 @@ class PodsData {
      *
      * @param array $fields Fields to recurse
      * @param null $all_fields (optional) If $fields is empty then traverse all fields, argument does not need to be passed
+     * @param object $params (optional) Parameters from build()
      *
      * @return array Array of joins
      */
-    function traverse ( $fields = null, $all_fields = null ) {
+    function traverse ( $fields = null, $all_fields = null, $params = null ) {
         $joins = array();
 
         if ( null === $fields )
-            $fields = $this->traverse_build( $all_fields );
+            $fields = $this->traverse_build( $all_fields, $params );
 
         foreach ( (array) $fields as $field_group ) {
             if ( is_array( $field_group ) )
-                $joins = array_merge( $joins, $this->traverse_recurse( $this->pod, $field_group ) );
+                $joins = array_merge( $joins, $this->traverse_recurse( $this->pod, $field_group, 't', 0, 'id', $params ) );
             else {
-                $joins = array_merge( $joins, $this->traverse_recurse( $this->pod, $fields ) );
+                $joins = array_merge( $joins, $this->traverse_recurse( $this->pod, $fields, 't', 0, 'id', $params ) );
                 $joins = array_filter( $joins );
 
                 return $joins;

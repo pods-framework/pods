@@ -1170,17 +1170,24 @@ class PodsAdmin {
         elseif ( 'multi' == pods_var( 'pick_format_type', $field ) && 'autocomplete' == pods_var( 'pick_format_multi', $field ) )
             pods_error( __( 'Invalid field', 'pods' ), $this );
 
-        $field[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $field ), pods_var( 'pick_val', $field ) );
+        if ( 'pod' == pods_var( 'pick_object', $field ) && 0 < strlen( pods_var( 'pick_val', $field ) ) ) {
+            $data = pods_data( pods_var( 'pick_val', $field ) );
 
-        $data = pods_data();
-        $data->table = $field[ 'table_info' ][ 'table' ];
-        $data->join = $field[ 'table_info' ][ 'join' ];
-        $data->field_id = $field[ 'table_info' ][ 'field_id' ];
-        $data->field_index = $field[ 'table_info' ][ 'field_index' ];
-        $data->where = $field[ 'table_info' ][ 'where' ];
-        $data->orderby = $field[ 'table_info' ][ 'orderby' ];
+            $where = pods_var_raw( 'pick_where', $field[ 'options' ] );
+        }
+        else {
+            $field[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $field ), pods_var( 'pick_val', $field ) );
 
-        $where = pods_var_raw( 'pick_where', $field[ 'options' ], (array) $field[ 'table_info' ][ 'where_default' ], null, true );
+            $data = pods_data();
+            $data->table = $field[ 'table_info' ][ 'table' ];
+            $data->join = $field[ 'table_info' ][ 'join' ];
+            $data->field_id = $field[ 'table_info' ][ 'field_id' ];
+            $data->field_index = $field[ 'table_info' ][ 'field_index' ];
+            $data->where = $field[ 'table_info' ][ 'where' ];
+            $data->orderby = $field[ 'table_info' ][ 'orderby' ];
+
+            $where = pods_var_raw( 'pick_where', $field[ 'options' ], $field[ 'table_info' ][ 'where_default' ], null, true );
+        }
 
         if ( empty( $where ) )
             $where = array();

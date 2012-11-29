@@ -761,11 +761,12 @@ function pods_create_slug ( $orig, $strict = true ) {
  *
  * @param string $orig Input string to clean
  * @param boolean $lower Force lowercase
+ * @param boolean $trim_underscores Whether to trim off underscores
  *
  * @return mixed|void
  * @since 1.2.0
  */
-function pods_clean_name ( $orig, $lower = true ) {
+function pods_clean_name ( $orig, $lower = true, $trim_underscores = true ) {
     $str = preg_replace( "/([- ])/", "_", trim( $orig ) );
 
     if ( $lower )
@@ -773,7 +774,10 @@ function pods_clean_name ( $orig, $lower = true ) {
 
     $str = preg_replace( "/([^0-9a-zA-Z_])/", "", $str );
     $str = preg_replace( "/(_){2,}/", "_", $str );
-    $str = trim( $str, ' _' );
+    $str = trim( $str );
+
+    if ( $trim_underscores )
+        $str = trim( $str, '_' );
 
     $str = apply_filters( 'pods_clean_name', $str, $orig, $lower );
 

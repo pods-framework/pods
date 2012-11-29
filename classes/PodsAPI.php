@@ -5125,16 +5125,16 @@ class PodsAPI {
             elseif ( 'table' == $object_type )
                 $info[ 'table' ] = ( empty( $object ) ? $name : $object );
 
-            $info[ 'table' ] = pods_clean_name( $info[ 'table' ], false );
-            $info[ 'meta_table' ] = pods_clean_name( $info[ 'meta_table' ], false );
+            $info[ 'table' ] = pods_clean_name( $info[ 'table' ], false, false );
+            $info[ 'meta_table' ] = pods_clean_name( $info[ 'meta_table' ], false, false );
 
-            $info[ 'field_id' ] = pods_clean_name( $info[ 'field_id' ], false );
-            $info[ 'field_index' ] = pods_clean_name( $info[ 'field_index' ], false );
-            $info[ 'field_slug' ] = pods_clean_name( $info[ 'field_slug' ], false );
+            $info[ 'field_id' ] = pods_clean_name( $info[ 'field_id' ], false, false );
+            $info[ 'field_index' ] = pods_clean_name( $info[ 'field_index' ], false, false );
+            $info[ 'field_slug' ] = pods_clean_name( $info[ 'field_slug' ], false, false );
 
-            $info[ 'meta_field_id' ] = pods_clean_name( $info[ 'meta_field_id' ], false );
-            $info[ 'meta_field_index' ] = pods_clean_name( $info[ 'meta_field_index' ], false );
-            $info[ 'meta_field_value' ] = pods_clean_name( $info[ 'meta_field_value' ], false );
+            $info[ 'meta_field_id' ] = pods_clean_name( $info[ 'meta_field_id' ], false, false );
+            $info[ 'meta_field_index' ] = pods_clean_name( $info[ 'meta_field_index' ], false, false );
+            $info[ 'meta_field_value' ] = pods_clean_name( $info[ 'meta_field_value' ], false, false );
 
             if ( empty( $info[ 'orderby' ] ) )
                 $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '`, `t`.`' . $info[ 'field_id' ] . '`';

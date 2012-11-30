@@ -1498,6 +1498,8 @@ class PodsAPI {
                     if ( !isset( $saved[ $field[ 'id' ] ] ) ) {
                         if ( $field[ 'id' ] == $field_index_id )
                             $field_index_change = 'id';
+                        elseif ( $field[ 'name' ] == $field_index )
+                            $field_index_change = 'id';
 
                         $this->delete_field( array(
                             'id' => (int) $field[ 'id' ],

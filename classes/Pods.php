@@ -1479,7 +1479,8 @@ class Pods {
             'page_var' => $this->page_var,
             'base' => "{$url}{$append}%_%",
             'format' => "{$this->page_var}=%#%",
-            'class' => ""
+            'class' => "",
+            'link_class'
         );
 
         $params = (object) array_merge( $defaults, $params );

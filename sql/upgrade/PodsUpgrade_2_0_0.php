@@ -751,6 +751,8 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
             foreach ( $templates as $template ) {
                 unset( $template->id );
 
+                $template = pods_sanitize( $template );
+
                 $results[] = $this->api->save_template( $template );
             }
         }
@@ -772,6 +774,8 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
         if ( !empty( $pages ) ) {
             foreach ( $pages as $page ) {
                 unset( $page->id );
+
+                $page = pods_sanitize( $page );
 
                 $this->api->save_page( $page );
             }
@@ -802,6 +806,8 @@ class PodsUpgrade_2_0_0 extends PodsUpgrade {
 
                     $notice = true;
                 }
+
+                $helper = pods_sanitize( $helper );
 
                 $this->api->save_helper( $helper );
             }

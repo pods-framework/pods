@@ -1,13 +1,13 @@
 <?php
 global $pods_i;
 
+$api = pods_api();
+
 $_pods = $api->load_pods();
 
 $pod = $_pods[ $obj->id ];
 
 $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar' ) );
-
-$api = pods_api();
 
 $field_types = $api->get_field_types();
 

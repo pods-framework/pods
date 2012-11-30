@@ -131,6 +131,11 @@ class PodsData {
      */
     public $total_found;
 
+    /**
+     * @var bool
+     */
+    public $total_found_calculated;
+
     // pagination
     /**
      * @var string
@@ -507,10 +512,6 @@ class PodsData {
      * @since 2.0.0
      */
     public function select ( $params ) {
-        /**
-         * @var $wpdb wpdb
-         */
-        global $wpdb;
 
         $cache_key = $results = false;
 
@@ -564,23 +565,30 @@ class PodsData {
 
             $this->fields = PodsForm::fields_setup( $this->fields );
         }
+        $this->total_found_calculated = false;
 
+        $this->total = count( (array) $this->data );
+
+        return $this->data;
+    }
+
+    public function calculate_totals () {
+        /**
+         * @var $wpdb wpdb
+         */
+        global $wpdb;
         // Set totals
-        if(false !== $this->total_sql)
+        if ( false !== $this->total_sql )
             $total = @current( $wpdb->get_col( $this->get_sql( $this->total_sql ) ) );
         else
             $total = @current( $wpdb->get_col( "SELECT FOUND_ROWS()" ) );
 
         $total = $this->do_hook( 'select_total', $total );
-
         $this->total_found = 0;
+        $this->total_found_calculated = true;
 
         if ( is_numeric( $total ) )
             $this->total_found = $total;
-
-        $this->total = count( (array) $this->data );
-
-        return $this->data;
     }
 
     /**
@@ -885,7 +893,7 @@ class PodsData {
 
                         if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] ) {
                             $having[] = "( {$filterfield} = '" . $filter_value . "'"
-                                        . " OR {$filterfield} LIKE '%\"" . $filter_value . "\"%' )";
+                                         . " OR {$filterfield} LIKE '%\"" . $filter_value . "\"%' )";
                         }
                         else {
                             $where[] = "( {$filterfield} = '" . $filter_value . "'"
@@ -1237,6 +1245,9 @@ class PodsData {
      * @since 2.0.0
      */
     public function total_found () {
+        if(false === $this->total_found_calculated)
+            $this->calculate_totals();
+
         return (int) $this->total_found;
     }
 
@@ -1819,7 +1830,6 @@ class PodsData {
         if ( empty( $fields ) && !empty( $params ) ) {
             $table = $params->table;
 
-
         }
 
         $feed = array();
@@ -1943,17 +1953,17 @@ class PodsData {
             if ( 0 < strlen( pods_var( 'filter_' . $field_joined, 'get' ) ) ) {
                 $val = absint( pods_var( 'filter_' . $field_joined, 'get' ) );
 
-                $search = "`{$field_joined}`.`{$table_info['field_id']}` = {$val}";
+                $search = "`{$field_joined}`.`{$table_info[ 'field_id' ]}` = {$val}";
 
                 if ( 'text' == $this->search_mode ) {
                     $val = pods_var( 'filter_' . $field_joined, 'get' );
 
-                    $search = "`{$field_joined}`.`{$traverse['name']}` = '{$val}'";
+                    $search = "`{$field_joined}`.`{$traverse[ 'name' ]}` = '{$val}'";
                 }
                 elseif ( 'text_like' == $this->search_mode ) {
                     $val = pods_sanitize( like_escape( pods_var_raw( 'filter_' . $field_joined ) ) );
 
-                    $search = "`{$field_joined}`.`{$traverse['name']}` LIKE '%{$val}%'";
+                    $search = "`{$field_joined}`.`{$traverse[ 'name' ]}` LIKE '%{$val}%'";
                 }
 
                 $this->search_where[] = " {$search} ";
@@ -1968,22 +1978,22 @@ class PodsData {
             if ( 'meta' == $pod_data[ 'storage' ] ) {
                 if ( !in_array( $traverse[ 'type' ], $tableless_field_types ) ) {
                     $the_join = "
-                        LEFT JOIN `{$table_info['meta_table']}` AS `{$field_joined}` ON
-                            `{$field_joined}`.`{$table_info['meta_field_index']}` = '{$traverse['name']}'
-                            AND `{$field_joined}`.`{$table_info['meta_field_id']}` = `{$joined}`.`{$joined_id}`
+                        LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
+                            `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+                            AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = `{$joined}`.`{$joined_id}`
                     ";
 
                     $table_info[ 'recurse' ] = false;
                 }
                 else {
                     $the_join = "
-                        LEFT JOIN `{$table_info['meta_table']}` AS `{$rel_alias}` ON
-                            `{$rel_alias}`.`{$table_info['meta_field_index']}` = '{$traverse['name']}'
-                            AND `{$rel_alias}`.`{$table_info['meta_field_id']}` = `{$joined}`.`{$joined_id}`
+                        LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$rel_alias}` ON
+                            `{$rel_alias}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+                            AND `{$rel_alias}`.`{$table_info[ 'meta_field_id' ]}` = `{$joined}`.`{$joined_id}`
 
-                        LEFT JOIN `{$table_info['meta_table']}` AS `{$field_joined}` ON
-                            `{$field_joined}`.`{$table_info['meta_field_index']}` = '{$traverse['name']}'
-                            AND `{$field_joined}`.`{$table_info['meta_field_id']}` = CONVERT( `{$rel_alias}`.`{$table_info['meta_field_value']}`, SIGNED )
+                        LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
+                            `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+                            AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = CONVERT( `{$rel_alias}`.`{$table_info[ 'meta_field_value' ]}`, SIGNED )
                     ";
 
                     $joined_id = $table_info[ 'meta_field_id' ];
@@ -1994,9 +2004,9 @@ class PodsData {
             if ( 'meta' == $pod_data[ 'storage' ] ) {
                 if ( !in_array( $traverse[ 'type' ], $tableless_field_types ) ) {
                     $the_join = "
-                        LEFT JOIN `{$table_info['meta_table']}` AS `{$field_joined}` ON
-                            `{$field_joined}`.`{$table_info['meta_field_index']}` = '{$traverse['name']}'
-                            AND `{$field_joined}`.`{$table_info['meta_field_id']}` = `{$joined}`.`{$joined_id}`
+                        LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
+                            `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+                            AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = `{$joined}`.`{$joined_id}`
                     ";
 
                     $table_info[ 'recurse' ] = false;
@@ -2004,12 +2014,12 @@ class PodsData {
                 else {
                     $the_join = "
                         LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
-                            `{$rel_alias}`.`field_id` = {$traverse['id']}
+                            `{$rel_alias}`.`field_id` = {$traverse[ 'id' ]}
                             AND `{$rel_alias}`.`item_id` = `{$joined}`.`{$joined_id}`
 
-                        LEFT JOIN `{$table_info['meta_table']}` AS `{$field_joined}` ON
-                            `{$field_joined}`.`{$table_info['meta_field_index']}` = '{$traverse['name']}'
-                            AND `{$field_joined}`.`{$table_info['meta_field_id']}` = `{$rel_alias}`.`related_item_id`
+                        LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
+                            `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+                            AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = `{$rel_alias}`.`related_item_id`
                     ";
 
                     $joined_id = $table_info[ 'meta_field_id' ];
@@ -2018,11 +2028,11 @@ class PodsData {
             elseif ( 'table' == $pod_data[ 'storage' ] && in_array( $traverse[ 'type' ], $tableless_field_types ) ) {
                 $the_join = "
                     LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
-                        `{$rel_alias}`.`field_id` = {$traverse['id']}
+                        `{$rel_alias}`.`field_id` = {$traverse[ 'id' ]}
                         AND `{$rel_alias}`.`item_id` = `{$joined}`.`id`
 
-                    LEFT JOIN `{$traverse['table']}` AS `{$field_joined}` ON
-                        `{$field_joined}`.`{$table_info['field_id']}` = `{$rel_alias}`.`related_item_id`
+                    LEFT JOIN `{$traverse[ 'table' ]}` AS `{$field_joined}` ON
+                        `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_alias}`.`related_item_id`
                 ";
 
                 $joined_id = 'id';

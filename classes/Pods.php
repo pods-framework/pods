@@ -1478,7 +1478,8 @@ class Pods {
             'total_found' => $this->total_found(),
             'page_var' => $this->page_var,
             'base' => "{$url}{$append}%_%",
-            'format' => "{$this->page_var}=%#%"
+            'format' => "{$this->page_var}=%#%",
+            'class' => ""
         );
 
         $params = (object) array_merge( $defaults, $params );

@@ -878,6 +878,7 @@ function pods_absint ( $maybeint, $strict = true, $allow_negative = false ) {
  * @param int $occurrences (optional)
  *
  * @return mixed
+ * @version 2.0.0
  */
 function pods_str_replace ( $find, $replace, $string, $occurrences = -1 ) {
     if ( is_array( $find ) ) {
@@ -889,6 +890,57 @@ function pods_str_replace ( $find, $replace, $string, $occurrences = -1 ) {
         $find = '/' . preg_quote( $find, '/' ) . '/';
 
     return preg_replace( $find, $replace, $string, $occurrences );
+}
+
+/**
+ * Evaluate tags like magic tags but through pods_var
+ *
+ * @param string $tags
+ *
+ * @return string
+ * @version 2.1.0
+ */
+function pods_evaluate_tags ( $tags ) {
+    return preg_replace_callback( '/({@(.*?)})/m', 'pods_evaluate_tag', (string) $tags );
+}
+
+/**
+ * Evaluate tag like magic tag but through pods_var
+ *
+ * @param string|array $tag
+ *
+ * @return string
+ * @version 2.1.0
+ */
+function pods_evaluate_tag ( $tag ) {
+    // Handle pods_evaluate_tags
+    if ( is_array( $tag ) ) {
+        if ( !isset( $tag[ 2 ] ) && strlen( trim( $tag[ 2 ] ) ) < 1 )
+            return;
+
+        $tag = $tag[ 2 ];
+    }
+
+    $tag = trim( $tag, ' {@}' );
+    $tag = explode( ',', $tag );
+
+    if ( empty( $tag ) || !isset( $tag[ 0 ] ) || strlen( trim( $tag[ 0 ] ) ) < 1 )
+        return;
+
+    foreach ( $tag as $k => $v ) {
+        $tag[ $k ] = trim( $v );
+    }
+
+    $value = '';
+
+    if ( 1 == count( $tag ) )
+        $value = pods_var_raw( $tag[ 0 ], 'get', '', null, true );
+    elseif ( 2 == count( $tag ) )
+        $value = pods_var_raw( $tag[ 1 ], $tag[ 0 ], '', null, true );
+
+    $value = apply_filters( 'pods_evaluate_tag', $value, $tag );
+
+    return $value;
 }
 
 /**

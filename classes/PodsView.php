@@ -43,11 +43,21 @@ class PodsView {
         if ( !in_array( $cache_mode, self::$cache_modes ) )
             $cache_mode = 'cache';
 
-        $cache_key = sanitize_title( pods_str_replace( array( PODS_DIR . 'ui/', PODS_DIR . 'components/', ABSPATH, WP_CONTENT_DIR, '.php' ), array( 'ui-', 'ui-', 'custom-', 'custom-', '' ), $view, 1 ) );
+        $view_key = $view;
+
+        if ( is_array( $view_key ) )
+            $view_key = implode( '-', $view_key ) . '.php';
+
+        $cache_key = sanitize_title( pods_str_replace( array( PODS_DIR . 'ui/', PODS_DIR . 'components/', ABSPATH, WP_CONTENT_DIR, '.php' ), array( 'ui-', 'ui-', 'custom-', 'custom-', '' ), $view_key, 1 ) );
 
         $view = apply_filters( 'pods_view_inc_' . $cache_key, $view, $data, $expires, $cache_mode );
 
-        if ( false === strpos( $view, PODS_DIR . 'ui/' ) && false === strpos( $view, PODS_DIR . 'components/' ) && false === strpos( $view, WP_CONTENT_DIR ) && false === strpos( $view, ABSPATH ) ) {
+        $view_key = $view;
+
+        if ( is_array( $view_key ) )
+            $view_key = implode( '-', $view_key ) . '.php';
+
+        if ( false === strpos( $view_key, PODS_DIR . 'ui/' ) && false === strpos( $view_key, PODS_DIR . 'components/' ) && false === strpos( $view_key, WP_CONTENT_DIR ) && false === strpos( $view_key, ABSPATH ) ) {
             $output = self::get( 'pods-view-' . $cache_key, $cache_mode, 'pods_view' );
 
             if ( false !== $output && null !== $output ) {
@@ -256,6 +266,7 @@ class PodsView {
      */
     private static function get_template_part ( $_view, $_data = null ) {
         $_view = self::locate_template( $_view );
+
         if ( empty( $_view ) )
             return $_view;
 
@@ -277,6 +288,29 @@ class PodsView {
      * @return bool|mixed|string|void
      */
     private static function locate_template ( $_view ) {
+        if ( is_array( $_view ) ) {
+            $_views = array();
+
+            $_view_count = count( $_view );
+
+            for ( $_view_x = $_view_count; 0 < $_view_x; $_view_x-- ) {
+                $_view_v = array_slice( $_view, 0, $_view_x );
+
+                $_views[] = implode( '-', $_view_v ) . '.php';
+            }
+
+            $_view = false;
+
+            foreach ( $_views as $_view_check ) {
+                $_view = self::locate_template( $_view_check );
+
+                if ( !empty( $_view ) )
+                    break;
+            }
+
+            return $_view;
+        }
+
         // Keep it safe
         $_view = trim( str_replace( '../', '', (string) $_view ) );
 
@@ -301,5 +335,12 @@ class PodsView {
             $located = apply_filters( 'pods_view_locate_template', $located, $_view );
 
         return $located;
+    }
+
+    private static function filter_callback ( $value ) {
+        if ( in_array( $value, array( '', null, false ) ) )
+            return false;
+
+        return true;
     }
 }

@@ -4693,6 +4693,7 @@ class PodsAPI {
             'number',
             'currency',
             'file',
+            'avatar',
             'pick',
             'boolean',
             'color',

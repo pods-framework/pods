@@ -20,7 +20,7 @@ foreach ( $field_types as $type => $label ) {
     $field_type = PodsForm::field_loader( $type );
 
     // Only show supported field types
-    if ( empty( $field_type::$pod_types ) || pods_var( 'type', $pod ) == $field_type::$pod_types || ( is_array( $field_type::$pod_types ) && in_array( pods_var( 'type', $pod ), $field_type::$pod_types ) ) )
+    if ( true !== $field_type::$pod_types && ( empty( $field_type::$pod_types ) || pods_var( 'type', $pod ) == $field_type::$pod_types || ( is_array( $field_type::$pod_types ) && in_array( pods_var( 'type', $pod ), $field_type::$pod_types ) ) ) )
         continue;
 
     if ( !empty( PodsForm::$field_group ) ) {
@@ -215,15 +215,6 @@ foreach ( $pod[ 'fields' ] as $_field => $_data ) {
 }
 
 $field_defaults = apply_filters( 'pods_field_defaults', apply_filters( 'pods_field_defaults_' . $pod[ 'name' ], $field_defaults, $pod ) );
-
-// WP objects already have slugs
-if ( !in_array( pods_var( 'type', $pod ), array( 'pod', 'table' ) ) ) {
-    if ( isset( $field_types[ 'slug' ] ) )
-        unset( $field_types[ 'slug' ] );
-
-    if ( isset( $field_types_select[ __( 'Other', 'pods' ) ][ 'slug' ] ) )
-        unset( $field_types_select[ __( 'Other', 'pods' ) ][ 'slug' ] );
-}
 
 $field_settings = array(
     'field_types' => $field_types,
@@ -1098,7 +1089,14 @@ elseif ( 'pod' == pods_var( 'type', $pod ) ) {
         document.location = thank_you.replace( 'X_ID_X', id );
     }
 
+    var pods_sister_field_going = false;
+
     var pods_sister_field = function ( $el ) {
+        if ( pods_sister_field_going )
+            return;
+
+        pods_sister_field_going = true;
+
         var id = $el.closest( 'tr.pods-manage-row' ).data( 'row' );
 
         var default_select = '<?php echo addslashes( str_replace( array( "\n", "\r" ), ' ', PodsForm::field( 'field_data[--1][sister_id]', '', 'pick', array( 'data' => pods_var_raw( 'sister_id', $field_settings ) ) ) ) ); ?>';
@@ -1145,15 +1143,21 @@ elseif ( 'pod' == pods_var( 'type', $pod ) ) {
                     $el.find( '.pods-sister-field' ).html( select_container );
 
                     jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val( selected_value );
+
+                    pods_sister_field_going = false;
                 }
                 else {
                     // None found
                     $el.find( '.pods-sister-field' ).html( default_select );
+
+                    pods_sister_field_going = false;
                 }
             },
             error : function () {
                 // None found
                 $el.find( '.pods-sister-field' ).html( default_select );
+
+                pods_sister_field_going = false;
             }
         } );
     }

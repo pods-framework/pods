@@ -278,7 +278,7 @@
                     if ( $sluggable.find( '.pods-slug-edit input[type=text]' )[ 0 ] ) {
                         last_slug = $sluggable.find( '.pods-slug-edit input[type=text]' ).val();
 
-                        last_slug = last_slug.replace( /<(?:.)*?>/g, '' ).replace( /([^0-9a-zA-Z ])/g, '' );
+                        last_slug = last_slug.replace( /<(?:.)*?>/g, '' ).replace( /([^0-9a-zA-Z\_\- ])/g, '' );
 
                         $( '.pods-slugged-lower:not(.pods-slugged[data-sluggable])' ).html( last_slug.toLowerCase() );
                         $( '.pods-slugged:not(.pods-slugged[data-sluggable])' ).html( last_slug.charAt( 0 ).toUpperCase() + last_slug.slice( 1 ) );
@@ -303,7 +303,7 @@
 
                         last_slug = $( this ).parent().find( 'input[type=text]' ).val();
 
-                        last_slug = last_slug.replace( /<(?:.)*?>/g, '' ).replace( /([^0-9a-zA-Z ])/g, '' );
+                        last_slug = last_slug.replace( /<(?:.)*?>/g, '' ).replace( /([^0-9a-zA-Z\_\- ])/g, '' );
 
                         $( this ).closest( '.pods-sluggable' ).find( '.pods-slug em' ).html( last_slug );
                         $( '.pods-slugged-lower:not(.pods-slugged[data-sluggable])' ).html( last_slug.toLowerCase() );
@@ -351,7 +351,7 @@
                         if ( 0 < $( this ).val().length ) {
                             var slug = $( this ).val();
 
-                            slug = slug.replace( /<(?:.)*?>/g, '' ).replace( /([^0-9a-zA-Z ])/g, '' );
+                            slug = slug.replace( /<(?:.)*?>/g, '' ).replace( /([^0-9a-zA-Z\_\- ])/g, '' );
 
                             // update fields
                            $( 'input.pods-slugged[data-sluggable="' + $( this ).prop( 'name' ).replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]' ).each( function () {

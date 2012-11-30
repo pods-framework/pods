@@ -329,6 +329,16 @@ class PodsField_Pick extends PodsField {
                 'groupby' => pods_var_raw( 'pick_groupby', $options, null, null, true )
             );
 
+            if ( !empty( $params[ 'where' ] ) && (array) $options[ 'table_info' ][ 'where_default' ] != $params[ 'where' ]  )
+                $params[ 'where' ] = pods_evaluate_tags( $params[ 'where' ], true );
+
+            /* not needed yet
+            if ( !empty( $params[ 'orderby' ] ) )
+                $params[ 'orderby' ] = pods_evaluate_tags( $params[ 'orderby' ], true );
+
+            if ( !empty( $params[ 'groupby' ] ) )
+                $params[ 'groupby' ] = pods_evaluate_tags( $params[ 'groupby' ], true );*/
+
             $display = trim( pods_var( 'pick_display', $options ), ' {@}' );
 
             if ( 0 < strlen( $display ) ) {

@@ -895,24 +895,50 @@ function pods_str_replace ( $find, $replace, $string, $occurrences = -1 ) {
 /**
  * Evaluate tags like magic tags but through pods_var
  *
- * @param string $tags
+ * @param string|array $tags String to be evaluated
+ * @param bool $sanitize Whether to sanitize tags
  *
  * @return string
  * @version 2.1.0
  */
-function pods_evaluate_tags ( $tags ) {
-    return preg_replace_callback( '/({@(.*?)})/m', 'pods_evaluate_tag', (string) $tags );
+function pods_evaluate_tags ( $tags, $sanitize = false ) {
+    if ( is_array( $tags ) ) {
+        foreach ( $tags as $k => $tag ) {
+            $tags[ $k ] = pods_evaluate_tags( $tag, $sanitize );
+        }
+
+        return $tags;
+    }
+
+    if ( $sanitize )
+        return preg_replace_callback( '/({@(.*?)})/m', 'pods_evaluate_tag_sanitized', (string) $tags );
+    else
+        return preg_replace_callback( '/({@(.*?)})/m', 'pods_evaluate_tag', (string) $tags );
 }
 
 /**
- * Evaluate tag like magic tag but through pods_var
+ * Evaluate tag like magic tag but through pods_var_raw and sanitized
  *
  * @param string|array $tag
  *
  * @return string
  * @version 2.1.0
+ * @see pods_evaluate_tag
  */
-function pods_evaluate_tag ( $tag ) {
+function pods_evaluate_tag_sanitized ( $tag ) {
+    return pods_evaluate_tag( $tag, true );
+}
+
+/**
+ * Evaluate tag like magic tag but through pods_var_raw
+ *
+ * @param string|array $tag
+ * @param bool $sanitize Whether to sanitize tags
+ *
+ * @return string
+ * @version 2.1.0
+ */
+function pods_evaluate_tag ( $tag, $sanitize = false ) {
     // Handle pods_evaluate_tags
     if ( is_array( $tag ) ) {
         if ( !isset( $tag[ 2 ] ) && strlen( trim( $tag[ 2 ] ) ) < 1 )
@@ -939,6 +965,9 @@ function pods_evaluate_tag ( $tag ) {
         $value = pods_var_raw( $tag[ 1 ], $tag[ 0 ], '', null, true );
 
     $value = apply_filters( 'pods_evaluate_tag', $value, $tag );
+
+    if ( $sanitize )
+        $value = pods_sanitize( $value );
 
     return $value;
 }

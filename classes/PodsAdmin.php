@@ -1187,6 +1187,16 @@ class PodsAdmin {
             $data->orderby = $field[ 'table_info' ][ 'orderby' ];
 
             $where = pods_var_raw( 'pick_where', $field[ 'options' ], $field[ 'table_info' ][ 'where_default' ], null, true );
+
+            if ( !empty( $where ) && $field[ 'table_info' ][ 'where_default' ] != $where )
+                $where = pods_evaluate_tags( $params[ 'where' ], true );
+
+            /* not needed yet
+            if ( !empty( $params[ 'orderby' ] ) )
+                $params[ 'orderby' ] = pods_evaluate_tags( $params[ 'orderby' ], true );
+
+            if ( !empty( $params[ 'groupby' ] ) )
+                $params[ 'groupby' ] = pods_evaluate_tags( $params[ 'groupby' ], true );*/
         }
 
         if ( empty( $where ) )

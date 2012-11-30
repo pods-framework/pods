@@ -1411,6 +1411,7 @@ class PodsAPI {
                     if ( !empty( $results ) ) {
                         foreach ( $results as $the_pod ) {
                             delete_post_meta( $the_pod->ID, $lookup_option );
+
                             add_post_meta( $the_pod->ID, $lookup_option, $val );
                         }
                     }
@@ -1419,9 +1420,12 @@ class PodsAPI {
         }
 
         $saved = array();
+        $errors = array();
 
         $field_index_change = false;
         $field_index_id = 0;
+
+        $id_required = false;
 
         $field_index = pods_var( 'pod_index', $pod[ 'options' ], 'id', null, true );
 
@@ -1470,6 +1474,12 @@ class PodsAPI {
                 if ( 0 < $field_index_id && pods_var( 'id', $field ) == $field_index_id )
                     $field_index_change = $field[ 'name' ];
 
+                if ( 0 < pods_var( 'id', $field ) )
+                    $id_required = true;
+
+                if ( $id_required )
+                    $field[ 'id_required' ] = true;
+
                 $field = $this->save_field( $field, $field_table_operation, $sanitized, $db );
 
 
@@ -1479,7 +1489,7 @@ class PodsAPI {
                     if ( !empty( $field ) && 0 < $field )
                         $saved[ $field ] = true;
                     else
-                        return pods_error( sprintf( __( 'Cannot save the %s field', 'pods' ), $field[ 'name' ] ), $this );
+                        $errors[] = sprintf( __( 'Cannot save the %s field', 'pods' ), $field[ 'name' ] );
                 }
             }
 
@@ -1504,6 +1514,9 @@ class PodsAPI {
         }
 
         $this->cache_flush_pods( $pod );
+
+        if ( !empty( $errors ) )
+            return pods_error( $errors, $this );
 
         if ( true === $db )
             return $params->id;
@@ -1558,6 +1571,13 @@ class PodsAPI {
 
         $pod = null;
         $save_pod = false;
+        $id_required = false;
+
+        if ( isset( $params->id_required ) ) {
+            unset( $params->id_required );
+
+            $id_required = true;
+        }
 
         if ( ( !isset( $params->pod ) || empty( $params->pod ) ) && ( !isset( $params->pod_id ) || empty( $params->pod_id ) ) )
             return pods_error( __( 'Pod ID or name is required', 'pods' ), $this );
@@ -1608,7 +1628,7 @@ class PodsAPI {
             if ( $old_name != $field[ 'name' ] && false !== $this->field_exists( $params ) )
                 return pods_error( sprintf( __( 'Field %s already exists, you cannot rename %s to that', 'pods' ), $field[ 'name' ], $old_name ), $this );
 
-            if ( !empty( $params->id ) && $old_id != $params->id ) {
+            if ( ( $id_required || !empty( $params->id ) ) && $old_id != $params->id ) {
                 return pods_error( sprintf( __( 'Field %s already exists', 'pods' ), $field[ 'name' ] ), $this );
             }
 
@@ -5659,6 +5679,8 @@ class PodsAPI {
             if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) )
                 pods_transient_clear( 'pods_wp_cpt_ct' );
         }
+        else
+            pods_transient_clear( 'pods_wp_cpt_ct' );
 
         $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_pods%'" );
         $wpdb->query( "DELETE FROM `{$wpdb->options}` WHERE `option_name` LIKE '_transient_timeout_pods%'" );

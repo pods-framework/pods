@@ -207,7 +207,7 @@ tbody.pods-manage-list tr.pods-field-new div.pods-manage-row-wrapper .pods-manag
 }
 
 tbody.pods-manage-list tr.pods-field-new div.pods-manage-row-wrapper .pods-manage-row-save a.pods-button-add {
-    display: inline;
+    display: inline-block;
 }
 
 /*

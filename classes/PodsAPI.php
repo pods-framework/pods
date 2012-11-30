@@ -1601,6 +1601,7 @@ class PodsAPI {
 
         $params->pod_id = $pod[ 'id' ];
         $params->pod = $pod[ 'name' ];
+        $params->pod_data = $pod;
 
         $params->name = pods_clean_name( $params->name );
 
@@ -1611,6 +1612,8 @@ class PodsAPI {
             return pods_error( 'Pod field name is required', $this );
 
         $field = $this->load_field( $params );
+
+        unset( $params->pod_data );
 
         $old_id = $old_name = $old_type = $old_definition = $old_simple = $old_options = $old_sister_id = null;
 
@@ -3997,10 +4000,14 @@ class PodsAPI {
             if ( !isset( $params->pod_id ) )
                 $params->pod_id = 0;
 
-            $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id ) );
+            if ( isset( $params->pod_data ) )
+                $pod = $params->pod_data;
+            else {
+                    $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id ) );
 
-            if ( false === $pod )
-                return pods_error( __( 'Pod not found', 'pods' ), $this );
+                if ( false === $pod )
+                    return pods_error( __( 'Pod not found', 'pods' ), $this );
+            }
 
             $params->pod_id = $pod[ 'id' ];
             $params->pod = $pod[ 'name' ];

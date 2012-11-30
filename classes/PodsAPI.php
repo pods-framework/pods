@@ -2060,6 +2060,8 @@ class PodsAPI {
 
         remove_filter( 'content_save_pre', 'balanceTags', 50 );
 
+        $post_data = pods_sanitize( $post_data );
+
         $params->id = $this->save_post( $post_data, $object[ 'options' ], true, true );
 
         pods_transient_clear( 'pods_object_' . $params->type );

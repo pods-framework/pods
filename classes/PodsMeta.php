@@ -152,11 +152,12 @@ class PodsMeta {
         }
 
         if ( !empty( self::$comment ) ) {
-            // Handle Comment Editor
+            // Handle Comment Form / Editor
             add_action( 'comment_form_logged_in_after', array( $this, 'meta_comment_new_logged_in' ), 10, 2 );
             add_filter( 'comment_form_default_fields', array( $this, 'meta_comment_new' ) );
             add_action( 'add_meta_boxes_comment', array( $this, 'meta_comment_add' ) );
-            add_action( 'wp_insert_comment', array( $this, 'save_comment' ) );
+            add_action( 'pre_comment_approved', array( $this, 'validate_comment' ), 10, 2 );
+            add_action( 'comment_post', array( $this, 'save_comment' ) );
             add_action( 'edit_comment', array( $this, 'save_comment' ) );
 
             // Handle *_comment_meta
@@ -1258,6 +1259,48 @@ class PodsMeta {
         ?>
     </table>
     <?php
+    }
+
+    /**
+     * @param $approved
+     * @param $commentdata
+     */
+    public function validate_comment ( $approved, $commentdata ) {
+        $groups = $this->groups_get( 'comment', 'comment' );
+
+        if ( empty( $groups ) )
+            return;
+
+        $data = array();
+
+        $pod = null;
+        $id = null;
+
+        foreach ( $groups as $group ) {
+            if ( empty( $group[ 'fields' ] ) )
+                continue;
+
+            if ( null === $pod )
+                $pod = pods( $group[ 'pod' ][ 'name' ], $id, true );
+
+            foreach ( $group[ 'fields' ] as $field ) {
+                if ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ], $pod, $id ) )
+                    continue;
+
+                $data[ $field[ 'name' ] ] = '';
+
+                if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
+                    $data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
+
+                $validate = $this->api->handle_field_validation( $data[ $field[ 'name' ] ], $field, $this->api->get_wp_object_fields( 'comment' ), $pod->fields(), $pod, array() );
+
+                if ( false === $validate )
+                    $validate = sprintf( __( 'There was an issue validating the field %s', 'pods' ), $field[ 'label' ] );
+
+                if ( !is_bool( $validate ) && !empty( $validate ) )
+                    return pods_error( $validate, $this );
+            }
+        }
     }
 
     /**

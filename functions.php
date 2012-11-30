@@ -2257,7 +2257,8 @@ function pods_no_conflict_on ( $object_type = 'post' ) {
         );
 
         $no_conflict[ 'action' ] = array(
-            array( 'wp_insert_comment', array( PodsInit::$meta, 'save_comment' ) ),
+            array( 'pre_comment_approved', array( PodsInit::$meta, 'validate_comment' ), 10, 2 ),
+            array( 'comment_post', array( PodsInit::$meta, 'save_comment' ) ),
             array( 'edit_comment', array( PodsInit::$meta, 'save_comment' ) )
         );
     }

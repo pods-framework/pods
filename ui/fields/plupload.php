@@ -1,4 +1,6 @@
 <?php
+global $post_ID;
+
 wp_enqueue_script( 'pods-handlebars' );
 wp_enqueue_script( 'jquery-ui-core' );
 wp_enqueue_script( 'jquery-ui-sortable' );
@@ -49,6 +51,12 @@ $plupload_init = array(
         'uri' => $uri_hash
     ),
 );
+
+if ( is_admin() && false !== strpos( $_SERVER[ 'REQUEST_URI' ], '/post.php' ) && 0 < pods_var( 'post' ) && 'edit' == pods_var( 'action' ) )
+    $plupload_init[ 'multipart_params' ][ 'post_id' ] = (int) pods_var( 'post' );
+elseif ( is_admin() && false !== strpos( $_SERVER[ 'REQUEST_URI' ], '/post.php' ) && 0 < $post_ID )
+    $plupload_init[ 'multipart_params' ][ 'post_id' ] = (int) $post_ID;
+
 $plupload_init = apply_filters( 'plupload_init', $plupload_init );
 
 if ( empty( $value ) )

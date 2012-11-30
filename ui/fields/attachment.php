@@ -1,4 +1,6 @@
 <?php
+global $post_ID;
+
 wp_enqueue_script( 'pods-handlebars' );
 wp_enqueue_script( 'jquery-ui-core' );
 wp_enqueue_script( 'jquery-ui-sortable' );
@@ -40,13 +42,20 @@ $data = array(
     'limit-files' => $file_limit
 );
 
+$the_post_id = '';
+
+if ( is_admin() && false !== strpos( $_SERVER[ 'REQUEST_URI' ], '/post.php' ) && 0 < pods_var( 'post' ) && 'edit' == pods_var( 'action' ) )
+    $the_post_id = '&amp;post_id=' .(int) pods_var( 'post' );
+elseif ( is_admin() && false !== strpos( $_SERVER[ 'REQUEST_URI' ], '/post-new.php' ) && 0 < $post_ID )
+    $the_post_id = '&amp;post_id=' . (int) $post_ID;
+
 if ( empty( $value ) )
     $value = array();
 else
     $value = (array) $value;
 ?>
 <div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ] ), $name, PodsForm::$field_type, $options ); ?>>
-    <table class="form-table pods-metabox" id="<?php echo $css_id; ?>"<?php echo PodsForm::data( $data, $name, PodsForm::$field_type, $options ); ?>>
+    <table class="form-table pods-metabox" id="<?php echo $css_id; ?>"<?php PodsForm::data( $data, $name, PodsForm::$field_type, $options ); ?>>
         <tbody>
             <tr class="form-field">
                 <td>
@@ -68,7 +77,7 @@ else
                         }
                         ?></ul>
 
-                    <a class="button pods-file-add" href="<?php echo admin_url() ?>media-upload.php?inlineId=pods_media_attachment&amp;tab=<?php echo $tab; ?>&amp;TB_iframe=1&amp;width=640&amp;height=1500"><?php _e( 'Add File', 'pods' ); ?></a>
+                    <a class="button pods-file-add" href="<?php echo admin_url() ?>media-upload.php?inlineId=pods_media_attachment<?php echo $the_post_id; ?>&amp;tab=<?php echo $tab; ?>&amp;TB_iframe=1&amp;width=640&amp;height=1500"><?php _e( 'Add File', 'pods' ); ?></a>
                 </td>
             </tr>
         </tbody>

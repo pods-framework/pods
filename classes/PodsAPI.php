@@ -5263,7 +5263,7 @@ class PodsAPI {
     /**
      * Validate a package
      *
-     * @param mixed $data (optional) An associative array containing a package, or the json encoded package
+     * @param array|string $data (optional) An associative array containing a package, or the json encoded package
      * @param bool $output (optional)
      *
      * @return array|bool
@@ -5272,205 +5272,7 @@ class PodsAPI {
      * @deprecated 2.0.0
      */
     public function validate_package ( $data = false, $output = false ) {
-        return false;
-
-        if ( is_array( $data ) && isset( $data[ 'data' ] ) ) {
-            $data = $data[ 'data' ];
-            $output = true;
-        }
-
-        if ( is_array( $data ) )
-            $data = esc_textarea( json_encode( $data ) );
-
-        $found = array();
-        $warnings = array();
-
-        update_option( 'pods_package', $data );
-
-        $json_data = @json_decode( $data, true );
-        if ( !is_array( $json_data ) )
-            $json_data = @json_decode( stripslashes( $data ), true );
-
-        if ( !is_array( $json_data ) || empty( $json_data ) ) {
-            $warnings[] = "This is not a valid package. Please try again.";
-            if ( true === $output ) {
-                echo '<e><br /><div id="message" class="error fade"><p>' . __( 'This is not a valid package. Please try again.', 'pods' ) . '</p></div></e>';
-                return false;
-            }
-            else
-                return $warnings;
-        }
-        $data = $json_data;
-
-        if ( 0 < strlen( $data[ 'meta' ][ 'version' ] ) && false === strpos( $data[ 'meta' ][ 'version' ], '.' ) && (int) $data[ 'meta' ][ 'version' ] < 1000 ) { // older style
-            $data[ 'meta' ][ 'version' ] = implode( '.', str_split( $data[ 'meta' ][ 'version' ] ) );
-        }
-        elseif ( 0 < strlen( $data[ 'meta' ][ 'version' ] ) && false === strpos( $data[ 'meta' ][ 'version' ], '.' ) ) { // old style
-            $data[ 'meta' ][ 'version' ] = pods_version_to_point( $data[ 'meta' ][ 'version' ] );
-        }
-
-        if ( isset( $data[ 'meta' ][ 'compatible_from' ] ) ) {
-            if ( 0 < strlen( $data[ 'meta' ][ 'compatible_from' ] ) && false === strpos( $data[ 'meta' ][ 'compatible_from' ], '.' ) ) { // old style
-                $data[ 'meta' ][ 'compatible_from' ] = pods_version_to_point( $data[ 'meta' ][ 'compatible_from' ] );
-            }
-            if ( version_compare( PODS_VERSION, $data[ 'meta' ][ 'compatible_from' ], '<' ) ) {
-                $compatible_from = explode( '.', $data[ 'meta' ][ 'compatible_from' ] );
-                $compatible_from = $compatible_from[ 0 ] . '.' . $compatible_from[ 1 ];
-                $pods_version = explode( '.', PODS_VERSION );
-                $pods_version = $pods_version[ 0 ] . '.' . $pods_version[ 1 ];
-                if ( version_compare( $pods_version, $compatible_from, '<' ) )
-                    $warnings[ 'version' ] = sprintf( __( 'This package may only be compatible with the newer <strong>Pods %s</strong>, but you are currently running the older <strong>Pods %s</strong><br/>Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods.', 'pods' ), $data[ 'meta' ][ 'compatible_from' ], PODS_VERSION );
-            }
-        }
-        if ( isset( $data[ 'meta' ][ 'compatible_to' ] ) ) {
-            if ( 0 < strlen( $data[ 'meta' ][ 'compatible_to' ] ) && false === strpos( $data[ 'meta' ][ 'compatible_to' ], '.' ) ) { // old style
-                $data[ 'meta' ][ 'compatible_to' ] = pods_version_to_point( $data[ 'meta' ][ 'compatible_to' ] );
-            }
-            if ( version_compare( $data[ 'meta' ][ 'compatible_to' ], PODS_VERSION, '<' ) ) {
-                $compatible_to = explode( '.', $data[ 'meta' ][ 'compatible_to' ] );
-                $compatible_to = $compatible_to[ 0 ] . '.' . $compatible_to[ 1 ];
-                $pods_version = explode( '.', PODS_VERSION );
-                $pods_version = $pods_version[ 0 ] . '.' . $pods_version[ 1 ];
-                if ( version_compare( $compatible_to, $pods_version, '<' ) )
-                    $warnings[ 'version' ] = sprintf( __( 'This package may only be compatible with the older <strong>Pods %s</strong>, but you are currently running the newer <strong>Pods %s</strong><br />Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods', 'pods' ), $data[ 'meta' ][ 'compatible_to' ], PODS_VERSION );
-            }
-        }
-        if ( !isset( $data[ 'meta' ][ 'compatible_from' ] ) && !isset( $data[ 'meta' ][ 'compatible_to' ] ) ) {
-            if ( version_compare( PODS_VERSION, $data[ 'meta' ][ 'version' ], '<' ) ) {
-                $compatible_from = explode( '.', $data[ 'meta' ][ 'version' ] );
-                $compatible_from = $compatible_from[ 0 ] . '.' . $compatible_from[ 1 ];
-                $pods_version = explode( '.', PODS_VERSION );
-                $pods_version = $pods_version[ 0 ] . '.' . $pods_version[ 1 ];
-                if ( version_compare( $pods_version, $compatible_from, '<' ) )
-                    $warnings[ 'version' ] = sprintf( __( 'This package was built using the newer <strong>Pods %s</strong>, but you are currently running the older <strong>Pods</strong><br />Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods.', 'pods' ), $data[ 'meta' ][ 'version' ], PODS_VERSION );
-            }
-            elseif ( version_compare( $data[ 'meta' ][ 'version' ], PODS_VERSION, '<' ) ) {
-                $compatible_to = explode( '.', $data[ 'meta' ][ 'version' ] );
-                $compatible_to = $compatible_to[ 0 ] . '.' . $compatible_to[ 1 ];
-                $pods_version = explode( '.', PODS_VERSION );
-                $pods_version = $pods_version[ 0 ] . '.' . $pods_version[ 1 ];
-                if ( version_compare( $compatible_to, $pods_version, '<' ) )
-                    $warnings[ 'version' ] = sprintf( __( 'This package was built using the older <strong>Pods %s</strong>, but you are currently running the newer <strong>Pods %s</strong><br/>Unless the package author has specified it is compatible, it may not have been tested to work with your installed version of Pods.', 'pods' ), $data[ 'meta' ][ 'version' ], PODS_VERSION );
-            }
-        }
-
-        if ( isset( $data[ 'pods' ] ) ) {
-            foreach ( $data[ 'pods' ] as $pod ) {
-                $pod = pods_sanitize( $pod );
-                $existing = $this->load_pod( array( 'name' => $pod[ 'name' ] ) );
-                if ( is_array( $existing ) ) {
-                    if ( !isset( $warnings[ 'pods' ] ) )
-                        $warnings[ 'pods' ] = array();
-                    $warnings[ 'pods' ][] = esc_textarea( $pod[ 'name' ] );
-                }
-                if ( !isset( $found[ 'pods' ] ) )
-                    $found[ 'pods' ] = array();
-                $found[ 'pods' ][] = esc_textarea( $pod[ 'name' ] );
-            }
-        }
-
-        if ( isset( $data[ 'templates' ] ) ) {
-            foreach ( $data[ 'templates' ] as $template ) {
-                $template = pods_sanitize( $template );
-                $existing = $this->load_template( array( 'name' => $template[ 'name' ] ) );
-                if ( is_array( $existing ) ) {
-                    if ( !isset( $warnings[ 'templates' ] ) )
-                        $warnings[ 'templates' ] = array();
-                    $warnings[ 'templates' ][] = esc_textarea( $template[ 'name' ] );
-                }
-                if ( !isset( $found[ 'templates' ] ) )
-                    $found[ 'templates' ] = array();
-                $found[ 'templates' ][] = esc_textarea( $template[ 'name' ] );
-            }
-        }
-
-        if ( isset( $data[ 'pod_pages' ] ) ) {
-            foreach ( $data[ 'pod_pages' ] as $pod_page ) {
-                $pod_page = pods_sanitize( $pod_page );
-                $existing = $this->load_page( array( 'uri' => $pod_page[ 'uri' ] ) );
-                if ( is_array( $existing ) ) {
-                    if ( !isset( $warnings[ 'pod_pages' ] ) )
-                        $warnings[ 'pod_pages' ] = array();
-                    $warnings[ 'pod_pages' ][] = esc_textarea( $pod_page[ 'uri' ] );
-                }
-                if ( !isset( $found[ 'pod_pages' ] ) )
-                    $found[ 'pod_pages' ] = array();
-                $found[ 'pod_pages' ][] = esc_textarea( $pod_page[ 'uri' ] );
-            }
-        }
-
-        if ( isset( $data[ 'helpers' ] ) ) {
-            foreach ( $data[ 'helpers' ] as $helper ) {
-                $helper = pods_sanitize( $helper );
-                $existing = $this->load_helper( array( 'name' => $helper[ 'name' ] ) );
-                if ( is_array( $existing ) ) {
-                    if ( !isset( $warnings[ 'helpers' ] ) )
-                        $warnings[ 'helpers' ] = array();
-                    $warnings[ 'helpers' ][] = esc_textarea( $helper[ 'name' ] );
-                }
-                if ( !isset( $found[ 'helpers' ] ) )
-                    $found[ 'helpers' ] = array();
-                $found[ 'helpers' ][] = esc_textarea( $helper[ 'name' ] );
-            }
-        }
-
-        if ( true === $output ) {
-            if ( !empty( $found ) ) {
-                echo '<hr />';
-                echo '<h3>' . __( 'Package Contents', 'pods' ) . ':</h3>';
-                if ( isset( $warnings[ 'version' ] ) )
-                    echo '<p><em><strong>NOTICE:</strong> ' . $warnings[ 'version' ] . '</em></p>';
-                if ( isset( $found[ 'pods' ] ) ) {
-                    echo '<h4>Pod(s)</h4>';
-                    echo '<ul class="pretty"><li>' . implode( '</li><li>', $found[ 'pods' ] ) . '</li></ul>';
-                }
-                if ( isset( $found[ 'templates' ] ) ) {
-                    echo '<h4>' . __( 'Template(s)', 'pods' ) . '</h4>';
-                    echo '<ul class="pretty"><li>' . implode( '</li><li>', $found[ 'templates' ] ) . '</li></ul>';
-                }
-                if ( isset( $found[ 'pod_pages' ] ) ) {
-                    echo '<h4>' . __( 'Pod Page(s)', 'pods' ) . '</h4>';
-                    echo '<ul class="pretty"><li>' . implode( '</li><li>', $found[ 'pod_pages' ] ) . '</li></ul>';
-                }
-                if ( isset( $found[ 'helpers' ] ) ) {
-                    echo '<h4>' . __( 'Helper(s)', 'pods' ) . '</h4>';
-                    echo '<ul class="pretty"><li>' . implode( '</li><li>', $found[ 'helpers' ] ) . '</li></ul>';
-                }
-            }
-            if ( 0 < count( $warnings ) && ( !isset( $warnings[ 'version' ] ) || 1 < count( $warnings ) ) ) {
-                echo '<hr />';
-                echo '<h3 class="red">WARNING: There are portions of this package that already exist</h3>';
-                if ( isset( $warnings[ 'pods' ] ) ) {
-                    echo '<h4>' . __( 'Pod(s)', 'pods' ) . '</h4>';
-                    echo '<ul class="pretty"><li>' . implode( '</li><li>', $warnings[ 'pods' ] ) . '</li></ul>';
-                }
-                if ( isset( $warnings[ 'templates' ] ) ) {
-                    echo '<h4>' . __( 'Template(s)', 'pods' ) . '</h4>';
-                    echo '<ul class="pretty"><li>' . implode( '</li><li>', $warnings[ 'templates' ] ) . '</li></ul>';
-                }
-                if ( isset( $warnings[ 'pod_pages' ] ) ) {
-                    echo '<h4>' . __( 'Pod Page(s)', 'pods' ) . '</h4>';
-                    echo '<ul class="pretty"><li>' . implode( '</li><li>', $warnings[ 'pod_pages' ] ) . '</li></ul>';
-                }
-                if ( isset( $warnings[ 'helpers' ] ) ) {
-                    echo '<h4>' . __( 'Helper(s)', 'pods' ) . '</h4>';
-                    echo '<ul class="pretty"><li>' . implode( '</li><li>', $warnings[ 'helpers' ] ) . '</li></ul>';
-                }
-                echo '<p><input type="button" class="button-primary" style="background:#f39400;border-color:#d56500;" onclick="podsImport(\'replace_package\')" value=" Overwrite the existing package (Step 2 of 2) " />&nbsp;&nbsp;&nbsp;<input type="button" class="button-secondary" onclick="podsImportCancel()" value=" Cancel " /></p>';
-                return false;
-            }
-            elseif ( !empty( $found ) ) {
-                echo '<p><input type="button" class="button-primary" onclick="podsImport(\'import_package\')" value=" Import Package (Step 2 of 2) " />&nbsp;&nbsp;&nbsp;<input type="button" class="button-secondary" onclick="podsImportCancel()" value=" Cancel " /></p>';
-                return false;
-            }
-            echo '<e><br /><div id="message" class="error fade"><p>Error: This package is empty, there is nothing to import.</p></div></e>';
-            return false;
-        }
-        if ( 0 < count( $warnings ) )
-            return $warnings;
-        elseif ( !empty( $found ) )
-            return true;
-        return false;
+        return true;
     }
 
     /**
@@ -5482,6 +5284,7 @@ class PodsAPI {
      *
      * @return array
      * @since 1.7.1
+     * @todo This needs some love and use of table_info etc for relationships
      */
     public function import ( $import_data, $numeric_mode = false, $format = null ) {
         /**
@@ -5547,7 +5350,7 @@ class PodsAPI {
                                     if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )
                                         $where = "`tt`.`term_id` = " . pods_absint( $pick_value );
 
-                                    $result = pods_query( "SELECT `t`.`term_id` AS `id` FROM `{$wpdb->term_taxonomy}` AS `tt` LEFT JOIN `{$wpdb->terms}` AS `t` ON `t`.`term_id` = `tt`.`term_id` WHERE `taxonomy` = '{$pick_val}' AND {$where} ORDER BY `term_id`", $this );
+                                    $result = pods_query( "SELECT `t`.`term_id` AS `id` FROM `{$wpdb->term_taxonomy}` AS `tt` LEFT JOIN `{$wpdb->terms}` AS `t` ON `t`.`term_id` = `tt`.`term_id` WHERE `taxonomy` = '{$pick_val}' AND {$where} ORDER BY `t`.`term_id`", $this );
 
                                     if ( !empty( $result ) )
                                         $pick_values[ $field_name ] = $result[ 0 ]->id;

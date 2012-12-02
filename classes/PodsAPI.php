@@ -4787,6 +4787,17 @@ class PodsAPI {
         if ( 1 == pods_var( 'required', $options[ 'options' ], 0 ) ) {
             if ( '' == $value || null === $value )
                 return pods_error( sprintf( __( '%s is empty', 'pods' ), $label ), $this );
+            if ( 'multi' == pods_var( 'pick_format_type', $options[ 'options' ] ) && 'autocomplete' != pods_var( 'pick_format_multi', $options[ 'options' ] ) ) {
+
+                $has_value = false;
+                foreach ( $value as $val ) {
+                    if ( $val != 0 )
+                        $has_value = true;
+                }
+                if ( !$has_value )
+                    return pods_error( sprintf( __( '%s is required', 'pods' ), $label ), $this );
+            }
+
         }
 
         // Verify unique fields

@@ -28,27 +28,37 @@
 
                     var valid_field = true;
 
-                    if ( $el.is( 'input[type=checkbox]' ) ) {
-                        if ( !$el.is( ':checked' ) && !$el.hasClass( 'pods-form-ui-field-type-pick' ) )
-                            valid_field = false;
+                    if ( $el.is( 'input[type=checkbox]' ) && !($el.is( ':checked' )) ) {
+                        valid_field = false;
+
+                        // extra check for relationship checkboxes to see if siblings are checked
+                        if ( $el.hasClass( 'pods-form-ui-field-type-pick' ) ) {
+                            $el.closest( '.pods-pick-checkbox' ).find( 'input[type=checkbox]' ).each( function () {
+                                if ( $( this ).is( ':checked' ) ) {
+                                    valid_field = true;
+                                }
+                            } )
+
+                        }
+
                     }
                     else if ( '' == $el.val() )
                         valid_field = false;
 
-                    if ( !valid_field && ( !$el.is( 'input[type=checkbox]' ) || !$el.hasClass( 'pods-form-ui-field-type-pick' ) ) ) {
+                    if ( !valid_field ) {
                         if ( -1 == pods_form_field_names.indexOf( $el.prop( 'name' ) ) ) {
-                            $el.parent().find( '.pods-validate-error-message' ).remove();
-                            $el.parent().append( '<div class="pods-validate-error-message">' + label.replace( /(<([^>]+)>)/ig, '' ) + ' is required.</div>' );
+                            $el.closest( '.pods-field-input' ).find( '.pods-validate-error-message' ).remove();
+                            $el.closest( '.pods-field-input' ).append( '<div class="pods-validate-error-message">' + label.replace( /(<([^>]+)>)/ig, '' ) + ' is required.</div>' );
                             $el.addClass( 'pods-validate-error' );
 
                             pods_form_field_names.push( $el.prop( 'name' ) );
                         }
                     }
                     else {
-                        $el.parent().find( '.pods-validate-error-message' ).remove();
+                        $el.closest( '.pods-field-input' ).find( '.pods-validate-error-message' ).remove();
                         $el.removeClass( 'pods-validate-error' );
 
-                        if ( 0 < pods_form_field_names.indexOf( $el.prop( 'name' ) ) )
+                        if ( 0 <= pods_form_field_names.indexOf( $el.prop( 'name' ) ) )
                             pods_form_field_names.splice( pods_form_field_names.indexOf( $el.prop( 'name' ) ), 1 );
                     }
                 } );

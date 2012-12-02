@@ -19,24 +19,12 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
      * @return array|bool|int|mixed|null|void
      */
     public function prepare_relationships () {
-        /**
-         * @var $wpdb WPDB
-         */
-        global $wpdb;
+        $relationship_fields = $this->api->load_fields( array( 'type' => 'pick' ) );
 
-        if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
-            if ( !in_array( "{$wpdb->prefix}podsrel", $this->tables ) )
-                return pods_error( __( 'Table not found, it cannot be migrated', 'pods' ) );
+        $count = 0;
 
-            $count = pods_query( "SELECT COUNT(*) AS `count` FROM `@wp_podsrel`", false );
-
-            if ( !empty( $count ) )
-                $count = (int) $count[ 0 ]->count;
-            else
-                $count = 0;
-        }
-        else
-            $count = 0;
+        if ( !empty( $relationship_fields ) )
+            $count = count( $relationship_fields );
 
         return $count;
     }

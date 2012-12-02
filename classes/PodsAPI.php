@@ -5385,6 +5385,8 @@ class PodsAPI {
                                     if ( !empty( $result ) )
                                         $pick_values[ $field_name ] = $result[ 0 ]->id;
                                 }
+                                elseif ( 'custom-simple' == $pick_object )
+                                    $pick_values[ $field_name ] = $pick_value;
                                 else {
                                     // @todo Lookup field_index
                                     $where = "`name` = '" . pods_sanitize( $pick_value ) . "'";

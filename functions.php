@@ -1710,6 +1710,49 @@ function pods_var_user ( $anon = false, $user = true, $capability = null ) {
 }
 
 /**
+ * Get a field value from a Pod
+ *
+ * @param string $pod The pod name
+ * @param mixed $id (optional) The ID or slug, to load a single record; Provide array of $params to run 'find'
+ * @param string|array $name The field name, or an associative array of parameters
+ * @param boolean $single (optional) For tableless fields, to return the whole array or the just the first item
+ *
+ * @return mixed Field value
+ */
+function pods_field ( $pod, $id, $name, $single = false ) {
+    return pods( $pod, $id )->field( $name, $single );
+}
+
+/**
+ * Get a field display value from a Pod
+ *
+ * @param string $pod The pod name
+ * @param mixed $id (optional) The ID or slug, to load a single record; Provide array of $params to run 'find'
+ * @param string|array $name The field name, or an associative array of parameters
+ * @param boolean $single (optional) For tableless fields, to return the whole array or the just the first item
+ *
+ * @return mixed Field value
+ */
+function pods_field_display ( $pod, $id, $name, $single = false ) {
+    return pods( $pod, $id )->display( $name, $single );
+}
+
+/**
+ * Get a field raw value from a Pod
+ *
+ * @param string $pod The pod name
+ * @param mixed $id (optional) The ID or slug, to load a single record; Provide array of $params to run 'find'
+ * @param string|array $name The field name, or an associative array of parameters
+ * @param boolean $single (optional) For tableless fields, to return the whole array or the just the first item
+ *
+ * @return mixed Field value
+ */
+function pods_field_raw ( $pod, $id, $name, $single = false ) {
+    return pods( $pod, $id )->raw( $name, $single );
+
+}
+
+/**
  * Include and Init the Pods class
  *
  * @see PodsInit

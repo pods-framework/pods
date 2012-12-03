@@ -726,7 +726,7 @@ class PodsForm {
      */
     public static function default_value ( $value, $type = 'text', $name = null, $options = null, $pod = null, $id = null ) {
         $default_value = pods_var_raw( 'default_value', $options, $value, null, true );
-        $default_value_parameter = pods_var_raw( 'default_value_parameter', $options, $default_value, null, true );
+        $default_value_parameter = pods_var_raw( 'default_value_parameter', 'request', $default_value, null, true );
         $default = pods_var_raw( 'default', $options, $default_value_parameter, null, true );
 
         $default_value = str_replace( array( '{@', '}' ), '', trim( $default ) );

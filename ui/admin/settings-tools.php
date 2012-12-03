@@ -65,6 +65,7 @@
         'Server Software' => $_SERVER[ 'SERVER_SOFTWARE' ],
         'Your User Agent' => $_SERVER[ 'HTTP_USER_AGENT' ],
         'Pods Install Location' => PODS_DIR,
+        'WPDB Prefix' => $wpdb->prefix,
         'Currently Active Plugins' => $plugins
     );
 

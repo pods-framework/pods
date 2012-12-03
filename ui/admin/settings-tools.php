@@ -64,8 +64,10 @@
         'MySQL Version' => $mysql,
         'Server Software' => $_SERVER[ 'SERVER_SOFTWARE' ],
         'Your User Agent' => $_SERVER[ 'HTTP_USER_AGENT' ],
-        'Pods Install Location' => PODS_DIR,
         'WPDB Prefix' => $wpdb->prefix,
+        'WP Multisite Mode' => ( is_multisite() ? 'Yes' : 'No' ),
+        'Pods Network-Wide Activated' => ( is_plugin_active_for_network( basename( PODS_DIR ) . '/init.php' ) ? 'Yes' : 'No' ),
+        'Pods Install Location' => PODS_DIR,
         'Currently Active Plugins' => $plugins
     );
 

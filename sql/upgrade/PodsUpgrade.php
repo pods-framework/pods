@@ -193,4 +193,34 @@ class PodsUpgrade {
 
         update_option( 'pods_framework_upgraded', $upgraded );
     }
+
+    /**
+     *
+     */
+    public function cleanup() {
+        /**
+         * @var $wpdb WPDB
+         */
+        global $wpdb;
+
+        foreach ( $this->tables as $table ) {
+            if ( false !== strpos( $table, "{$wpdb->prefix}pod_" ) || "{$wpdb->prefix}pod" == $table )
+                pods_query( "DROP TABLE `{$table}`", false );
+        }
+
+        delete_option( 'pods_roles' );
+        delete_option( 'pods_version' );
+        delete_option( 'pods_framework_upgrade_2_0' );
+        delete_option( 'pods_framework_upgrade_2_0_sister_ids' );
+        delete_option( 'pods_framework_upgraded_1_x' );
+
+        delete_option( 'pods_disable_file_browser' );
+        delete_option( 'pods_files_require_login' );
+        delete_option( 'pods_files_require_login_cap' );
+        delete_option( 'pods_disable_file_upload' );
+        delete_option( 'pods_upload_require_login' );
+        delete_option( 'pods_upload_require_login_cap' );
+
+        pods_query( "DELETE FROM `@wp_postmeta` WHERE `meta_key` LIKE '_pods_1x_%'" );
+    }
 }

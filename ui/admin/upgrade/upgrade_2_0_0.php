@@ -160,7 +160,7 @@ global $wpdb;
             <!-- Migrate Panel -->
             <div id="pods-wizard-panel-3" class="pods-wizard-panel">
                 <div class="pods-wizard-content">
-                    <p><?php _e( 'During this process your Pods, Settings, and Content will be migrated into the optimized Pods 2.0 architecture. We will not delete any of your old data, the tables will remain until you choose to clean them up after a successful upgrade.', 'pods' ); ?></p>
+                    <p><?php _e( 'During this process your Pods, Settings, and Content will be migrated into the optimized Pods 2.x architecture. We will not delete any of your old data, the tables will remain until you choose to clean them up after a successful upgrade.', 'pods' ); ?></p>
                 </div>
                 <table cellpadding="0" cellspacing="0">
                     <col style="width: 70px">

@@ -1,10 +1,6 @@
 <?php
 $field = array_merge( $field_settings[ 'field_defaults' ], $field );
 
-// fix 2.0 alpha bug
-if ( 'permalink' == $field[ 'type' ] )
-    $field[ 'type' ] = 'slug';
-
 $no_advanced = array();
 
 $field_type_options = array();

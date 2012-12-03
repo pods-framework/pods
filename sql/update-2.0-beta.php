@@ -351,6 +351,9 @@ function pods_2_alpha_migrate_pods () {
         foreach ( $field_rows as $row ) {
             $field_opts = json_decode( $row->options, true );
 
+            if ( 'permalink' == $row->type )
+                $row->type = 'slug';
+
             $field_params = array(
                 'name' => $row->name,
                 'label' => $row->label,

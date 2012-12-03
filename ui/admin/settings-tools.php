@@ -7,14 +7,14 @@
         }
     }
     elseif ( 1 == pods_var( 'pods_clearcache' ) )
-        pods_ui_message( 'Pods 2.0 transients and cache have been cleared.' );
+        pods_ui_message( 'Pods 2.x transients and cache have been cleared.' );
 
     if ( PODS_GITHUB_UPDATE ) {
 ?>
 
 <h3><?php _e( 'Force an update of this beta from GitHub', 'pods' ); ?></h3>
 
-<p><?php _e( 'This tool lets you update your Pods 2.0 beta installation to the latest, usually only when you\'ve been instructed to do so.', 'pods' ); ?></p>
+<p><?php _e( 'This tool lets you update your Pods 2.x beta installation to the latest, usually only when you\'ve been instructed to do so.', 'pods' ); ?></p>
 
 <?php
     $update = admin_url( 'update-core.php?pods_force_refresh=1' );
@@ -31,12 +31,12 @@
 
 <?php } ?>
 
-<h3><?php _e( 'Clear Pods 2.0 Cache', 'pods' ); ?></h3>
+<h3><?php _e( 'Clear Pods 2.x Cache', 'pods' ); ?></h3>
 
-<p><?php _e( 'This tool will clear all of the transients/cache that are used by Pods 2.0. ', 'pods' ); ?></p>
+<p><?php _e( 'This tool will clear all of the transients/cache that are used by Pods 2.x. ', 'pods' ); ?></p>
 
 <p class="submit">
-    <input type="submit" class="button button-primary" name="clearcache" value="<?php esc_attr_e( 'Clear Pods 2.0 Cache', 'pods' ); ?>" />
+    <input type="submit" class="button button-primary" name="clearcache" value="<?php esc_attr_e( 'Clear Pods 2.x Cache', 'pods' ); ?>" />
 </p>
 
 <hr />

@@ -1052,7 +1052,7 @@ msgid "Setup"
 msgstr ""
 
 #: components/Migrate-CPTUI/ui/wizard.php:60
-msgid "Choose below which Custom Post Types and Taxonomies you want to import into Pods 2.0"
+msgid "Choose below which Custom Post Types and Taxonomies you want to import into Pods 2.x"
 msgstr ""
 
 #: components/Migrate-CPTUI/ui/wizard.php:64
@@ -1271,7 +1271,7 @@ msgid "Migrate"
 msgstr ""
 
 #: components/Migrate-CPTUI/ui/wizard.php:35
-msgid "Custom Post Type UI provides an interface to create Custom Post Types and Custom Taxonomies. You can import these and their settings directly into Pods 2.0"
+msgid "Custom Post Type UI provides an interface to create Custom Post Types and Custom Taxonomies. You can import these and their settings directly into Pods 2.x"
 msgstr ""
 
 #: components/Migrate-CPTUI/ui/wizard.php:40
@@ -1517,7 +1517,7 @@ msgid "Force an update of this beta from GitHub"
 msgstr ""
 
 #: ui/admin/settings-tools.php:15
-msgid "This tool lets you update your Pods 2.0 beta installation to the latest, usually only when you've been instructed to do so."
+msgid "This tool lets you update your Pods 2.x beta installation to the latest, usually only when you've been instructed to do so."
 msgstr ""
 
 #: ui/admin/settings-tools.php:25
@@ -1525,26 +1525,26 @@ msgid "Force Plugin Refresh/Update from GitHub"
 msgstr ""
 
 #: ui/admin/settings-tools.php:30 ui/admin/settings-tools.php:35
-msgid "Clear Pods 2.0 Cache"
+msgid "Clear Pods 2.x Cache"
 msgstr ""
 
 #: ui/admin/settings-tools.php:32
-msgid "This tool will clear all of the transients/cache that are used by Pods 2.0. "
+msgid "This tool will clear all of the transients/cache that are used by Pods 2.x. "
 msgstr ""
 
 #: ui/admin/settings-reset.php:50
-msgid "Reset Pods 2.0"
+msgid "Reset Pods 2.x"
 msgstr ""
 
 #: ui/admin/settings-reset.php:55
 msgid ""
 "Are you sure you want to do this?\n"
 "\n"
-"This is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.0, resetting it to a clean first install."
+"This is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.x, resetting it to a clean first install."
 msgstr ""
 
 #: ui/admin/settings-reset.php:58
-msgid "Reset Pods 2.0 settings and data"
+msgid "Reset Pods 2.x settings and data"
 msgstr ""
 
 #: ui/admin/settings-reset.php:34
@@ -1563,14 +1563,14 @@ msgid "Delete Pods 1.x settings and data"
 msgstr ""
 
 #: ui/admin/settings-reset.php:63 ui/admin/settings-reset.php:71
-msgid "Deactivate and Delete Pods 2.0 data"
+msgid "Deactivate and Delete Pods 2.x data"
 msgstr ""
 
 #: ui/admin/settings-reset.php:68
 msgid ""
 "Are you sure you want to do this?\n"
 "\n"
-"This is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.0 with no turning back."
+"This is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.x with no turning back."
 msgstr ""
 
 #: ui/admin/settings-tools.php:40
@@ -2186,7 +2186,7 @@ msgid "Pod Pages"
 msgstr ""
 
 #: ui/admin/upgrade.php:183
-msgid "During this process your Pods, Settings, and Content will be migrated into the optimized Pods 2.0 architecture. We will not delete any of your old data, the tables will remain until you choose to clean them up after a successful upgrade."
+msgid "During this process your Pods, Settings, and Content will be migrated into the optimized Pods 2.x architecture. We will not delete any of your old data, the tables will remain until you choose to clean them up after a successful upgrade."
 msgstr ""
 
 #: ui/admin/upgrade.php:191
@@ -2340,15 +2340,15 @@ msgid "Input Helpers may not function in our new forms, we have imported and dis
 msgstr ""
 
 #: ui/admin/settings-reset.php:36
-msgid "This will delete all of your Pods 1.x data, it's only recommended if you've verified your data has been properly migrated into Pods 2.0."
+msgid "This will delete all of your Pods 1.x data, it's only recommended if you've verified your data has been properly migrated into Pods 2.x."
 msgstr ""
 
 #: ui/admin/settings-reset.php:52
-msgid "This does not delete any Pods 1.x data, it simply resets the Pods 2.0 settings, removes all of it's data, and performs a fresh install."
+msgid "This does not delete any Pods 1.x data, it simply resets the Pods 2.x settings, removes all of it's data, and performs a fresh install."
 msgstr ""
 
 #: ui/admin/settings-reset.php:65
-msgid "This will delete Pods 2.0 settings, data, and deactivate itself once done. Your database will be as if Pods 2.0 never existed."
+msgid "This will delete Pods 2.x settings, data, and deactivate itself once done. Your database will be as if Pods 2.x never existed."
 msgstr ""
 
 #: ui/admin/settings.php:11
@@ -2397,5 +2397,5 @@ msgid "http://podsframework.org/about/"
 msgstr ""
 
 #: init.php:0
-msgid "2.0.0"
+msgid "2.x.0"
 msgstr ""

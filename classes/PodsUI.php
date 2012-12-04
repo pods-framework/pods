@@ -747,7 +747,10 @@ class PodsUI {
         $options->validate( 'excluded', self::$excluded, 'array_merge' );
 
         $options->validate( 'action', pods_var( 'action' . $options->num, 'get', $this->action, null, true ), 'in_array', $this->actions );
+        $options->validate( 'actions_bulk', $this->actions_bulk, 'array_merge' );
         $options->validate( 'action_bulk', pods_var( 'action_bulk' . $options->num, 'get', $this->action_bulk, null, true ), 'isset', $this->actions_bulk );
+
+        $options->validate( 'views', $this->views, 'array' );
         $options->validate( 'view', pods_var( 'view' . $options->num, 'get', $this->view, null, true ), 'isset', $this->views );
 
         $options->validate( 'searchable', $this->searchable, 'boolean' );
@@ -756,7 +759,6 @@ class PodsUI {
         $options->validate( 'search_across_picks', $this->search_across_picks, 'boolean' );
         $options->validate( 'filters', $this->filters, 'array' );
         $options->validate( 'filters_enhanced', $this->filters_enhanced, 'boolean' );
-        $options->validate( 'views', $this->views, 'array' );
         $options->validate( 'where', $this->where, 'array_merge' );
 
         $options->validate( 'pagination', $this->pagination, 'boolean' );
@@ -870,7 +872,6 @@ class PodsUI {
         $options->validate( 'actions_disabled', $this->actions_disabled, 'array' );
         $options->validate( 'actions_hidden', $this->actions_hidden, 'array_merge' );
         $options->validate( 'actions_custom', $this->actions_custom, 'array_merge' );
-        $options->validate( 'actions_bulk', $this->actions_bulk, 'array_merge' );
 
         $options->validate( 'icon', $this->icon );
         $options->validate( 'css', $this->css );

@@ -4,7 +4,7 @@ Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 2.0.5
+Stable tag: 2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,6 +13,9 @@ Pods is a framework for creating, managing, and deploying customized content typ
 == Description ==
 
 Check out http://podsframework.org/ for our User Guide, Forums, and other resources to help you develop with Pods.
+
+= Introduction (new!) =
+[youtube http://www.youtube.com/watch?v=tkBDNOAQJxg]
 
 = Content types that evolve with your needs =
 Create any type of content that you want -- small or large -- we've got you covered. Every content type created with Pods gets all the love it needs to grow up big and strong. You'll get an easy to use interface that lets you manage custom fields and how your content type will function.
@@ -47,7 +50,8 @@ Each of these field type have their own set of options, if those aren't enough t
 * Color Picker - Choose colors, because colors are great
 * Yes / No - You can't really go wrong with a checkbox, but we've added a few charms to make it stand out
 * File / Image / Video - Upload new media or select from existing ones with our Media Library integration, or use a simple uploader, your choice
-* Relationships - Relate any item, to any item of any WP object type or another Pod
+* Avatars - Upload new media or select from existing ones, automatically integrates with get_avatar calls for Users extended by Pods
+* Relationships - Relate any item, to any item of any WP object type, another Pod, or a custom user-defined list
 
 = Easily display your content =
 There are several ways to get Pods data to show up throughout your site, but with any WP object type you create or extend with Pods, you can use all of the functions and methods you're already used to -- out of the box!
@@ -71,9 +75,6 @@ Using another solution? We've built additional components to help you transition
 * Import from Custom Post Type UI
 * More coming soon including Importing from Custom Field Suite, Advanced Custom Fields, and Custom Tables
 
-= Introduction to the Pods Framework (1.x) =
-[vimeo http://vimeo.com/15086927]
-
 == Installation ==
 
 1. Unpack the entire contents of this plugin zip file into your `wp-content/plugins/` folder locally
@@ -96,11 +97,26 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 == Changelog ==
 
+= 2.1 - December 5th, 2012 =
+* Added: New Tableless mode (for WordPress VIP compatibility!) lets Pods run on any site w/ table-based storage turned off and wp_podsrel won't be utilized (or even created if tableless mode is on during activation) - define( 'PODS_TABLELESS', true )
+* Added: New Light mode disables all Components - define( 'PODS_LIGHT', true )
+* Added: New Avatar field type available for when you extend the Users object with Pods - Automatically takes over get_avatar calls!
+* Added: New Relate to options available for relationships fields for Post Formats and WP Nav Menus
+* Added: API to register pods and fields from a theme or another plugin (doesn't save into the DB): pods_register_type and pods_register_field - See https://github.com/pods-framework/pods/issues/700
+* Added: Now you can look up meta field values within find() calls, just use the field_name.meta_value syntax (instead of t.field_name) and Pods will auto-join the table needed
+* Updated: Relationship 'where' option in Field editor now more robust and has all fields (including relationships, or meta like above) can be referenced
+* Updated: Relationship 'where' option in Field editor now supports {@user.ID} lookups which maps to pods_var( 'ID', 'user' ) to sanitize (ex. user.ID != '{@user.ID}' in the Pick WHERE will return all users not the current user); You can use any pods_var enabled option, documentation coming this month
+* Updated: Relationship saving has been optimized for both bi-directional relationships and regular relationships
+* And many more bug fixes and enhancements, over 60 in total
+* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
+* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code and contribute notes and patches all from the web at: http://pods.io/github/
+
+= 2.0.5.1 - November 25th, 2012 =
+* Fixed: 'Edit' link wasn't appearing for Pod Pages / Templates / Helpers (you could click the title though)
+
 = 2.0.5 - November 24th, 2012 =
 * Another big set of stability fixes to improve performance and functionality
 * Added: Migrate Packages component - Our Package manager makes a return! You may remember it from Pods 1.x, but we've cleaned it up and improved the interface to make it easier to migrate your settings between sites or share them with others
-* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
-* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code and contribute notes and patches all from the web at: http://pods.io/github/
 
 = 2.0.4.1 - October 17th, 2012 =
 * Updated: Pods UI duplicate method labels were confusing

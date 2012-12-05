@@ -421,7 +421,7 @@ function pods_trim ( $input, $charlist = null, $lr = null ) {
  * Return a variable (if exists)
  *
  * @param mixed $var The variable name or URI segment position
- * @param string $type (optional) get|url|post|request|server|session|cookie|constant|global|user|option|site-option|transient|site-transient|cache
+ * @param string $type (optional) get|url|post|request|server|session|cookie|constant|global|user|option|site-option|transient|site-transient|cache|date
  * @param mixed $default (optional) The default value to set if variable doesn't exist
  * @param mixed $allowed (optional) The value(s) allowed
  * @param bool $strict (optional) Only allow values (must not be empty)
@@ -528,6 +528,12 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
             }
 
             $output = wp_cache_get( $var, $group, $force );
+        }
+        elseif ( 'date' == $type ) {
+            $var = explode( '|', $var );
+
+            if ( !empty( $var ) )
+                $output = date_i18n( $var[ 0 ], ( isset( $var[ 1 ] ) ? strtotime( $var[ 1 ] ) : false ) );
         }
         else
             $output = apply_filters( 'pods_var_' . $type, $default, $var, $allowed, $strict, $casting, $context );
@@ -948,10 +954,21 @@ function pods_evaluate_tag ( $tag, $sanitize = false ) {
     }
 
     $tag = trim( $tag, ' {@}' );
-    $tag = explode( ',', $tag );
+    $tag = explode( '.', $tag );
 
     if ( empty( $tag ) || !isset( $tag[ 0 ] ) || strlen( trim( $tag[ 0 ] ) ) < 1 )
         return;
+
+    // Fix formatting that may be after the first .
+    if ( 2 < count( $tag ) ) {
+        $first_tag = $tag[ 0 ];
+        unset( $tag[ 0 ] );
+
+        $tag = array(
+            $first_tag,
+            implode( '.', $tag )
+        );
+    }
 
     foreach ( $tag as $k => $v ) {
         $tag[ $k ] = trim( $v );

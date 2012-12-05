@@ -63,6 +63,7 @@
         'PHP Version' => $php,
         'MySQL Version' => $mysql,
         'Server Software' => $_SERVER[ 'SERVER_SOFTWARE' ],
+        'WP Memory Limit' => WP_MEMORY_LIMIT,
         'Your User Agent' => $_SERVER[ 'HTTP_USER_AGENT' ],
         'WPDB Prefix' => $wpdb->prefix,
         'WP Multisite Mode' => ( is_multisite() ? 'Yes' : 'No' ),

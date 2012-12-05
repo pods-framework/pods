@@ -1248,9 +1248,6 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
     if ( is_object( $value ) )
         $value = get_object_vars( $value );
 
-    if ( !is_array( $value ) )
-        return $value;
-
     $field_index = null;
 
     $simple = false;
@@ -1274,12 +1271,21 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
         }
     }
 
+    if ( $simple && is_array( $field ) && !is_array( $value ) && !empty( $value ) )
+        $value = PodsForm::field_method( 'pick', 'simple_value', $value, $field );
+
+    if ( !is_array( $value ) )
+        return $value;
+
     $and = ' ' . __( 'and', 'pods' ) . ' ';
 
     $last = '';
 
     if ( !empty( $value ) )
         $last = array_pop( $value );
+
+    if ( $simple && is_array( $field ) && !is_array( $last ) && !empty( $last ) )
+        $last = PodsForm::field_method( 'pick', 'simple_value', $last, $field );
 
     if ( is_array( $last ) ) {
         if ( null !== $field_index && isset( $last[ $field_index ] ) )
@@ -1300,6 +1306,9 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
             if ( isset( $value[ 0 ] ) )
                 $value = $value[ 0 ];
 
+            if ( $simple && is_array( $field ) && !is_array( $value ) && !empty( $value ) )
+                $value = PodsForm::field_method( 'pick', 'simple_value', $value, $field );
+
             if ( is_array( $value ) ) {
                 if ( null !== $field_index && isset( $value[ $field_index ] ) )
                     $value = $value[ $field_index ];
@@ -1318,6 +1327,9 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
                 $value = array( $value );
 
             foreach ( $value as $k => &$v ) {
+                if ( $simple && is_array( $field ) && !is_array( $v ) && !empty( $v ) )
+                    $v = PodsForm::field_method( 'pick', 'simple_value', $v, $field );
+
                 if ( is_array( $v ) ) {
                     if ( null !== $field_index && isset( $v[ $field_index ] ) )
                         $v = $v[ $field_index ];

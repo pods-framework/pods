@@ -68,6 +68,8 @@
         'WP Multisite Mode' => ( is_multisite() ? 'Yes' : 'No' ),
         'Pods Network-Wide Activated' => ( is_plugin_active_for_network( basename( PODS_DIR ) . '/init.php' ) ? 'Yes' : 'No' ),
         'Pods Install Location' => PODS_DIR,
+        'Pods Tableless Mode' => ( ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) ? 'Yes' : 'No' ),
+        'Pods Light Mode' => ( ( defined( 'PODS_LIGHT' ) && PODS_LIGHT ) ? 'Yes' : 'No' ),
         'Currently Active Plugins' => $plugins
     );
 

@@ -2458,14 +2458,19 @@ class PodsAPI {
             $type = $field_data[ 'type' ];
             $options = pods_var( 'options', $field_data, array() );
 
-            // Validate value
-            $validate = $this->handle_field_validation( $value, $field, $object_fields, $fields, $pod, $params );
+            // WPML AJAX compatibility
+            if ( is_admin() && isset( $_GET[ 'page' ] ) && false !== strpos( $_GET[ 'page' ], '/menu/languages.php' ) && isset( $_POST[ 'icl_ajx_action' ] ) && isset( $_POST[ '_icl_nonce' ] ) && wp_verify_nonce( $_POST[ '_icl_nonce' ], $_POST[ 'icl_ajx_action' ] . '_nonce' ) )
+                $options[ 'unique' ] = $fields[ $field ][ 'options' ][ 'unique' ] = $options[ 'required' ] = $fields[ $field ][ 'options' ][ 'required' ] = 0;
+            else {
+                // Validate value
+                $validate = $this->handle_field_validation( $value, $field, $object_fields, $fields, $pod, $params );
 
-            if ( false === $validate )
-                $validate = sprintf( __( 'There was an issue validating the field %s', 'pods' ), $field_data[ 'label' ] );
+                if ( false === $validate )
+                    $validate = sprintf( __( 'There was an issue validating the field %s', 'pods' ), $field_data[ 'label' ] );
 
-            if ( !is_bool( $validate ) && !empty( $validate ) )
-                return pods_error( $validate, $this );
+                if ( !is_bool( $validate ) && !empty( $validate ) )
+                    return pods_error( $validate, $this );
+            }
 
             $value = PodsForm::pre_save( $field_data[ 'type' ], $value, $params->id, $field, array_merge( $options, $field_data ), array_merge( $fields, $object_fields ), $pod, $params );
 

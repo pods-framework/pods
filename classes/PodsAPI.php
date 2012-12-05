@@ -2610,94 +2610,68 @@ class PodsAPI {
             // E.g. $rel_fields['pick']['related_events'] = '3,15';
             foreach ( $rel_fields as $type => $data ) {
                 foreach ( $data as $field => $values ) {
-                    $field_id = pods_absint( $fields[ $field ][ 'id' ] );
+                    // Only handle tableless fields
+                    if ( !in_array( $type, $tableless_field_types ) )
+                        continue;
 
-                    // Remove existing relationships
-                    pods_query( "
-                        DELETE FROM `@wp_podsrel`
-                        WHERE
-                            (
-                                `pod_id` = {$params->pod_id}
-                                AND `field_id` = {$field_id}
-                                AND `item_id` = {$params->id}
-                            ) OR (
-                                `related_pod_id` = {$params->pod_id}
-                                AND `related_field_id` = {$field_id}
-                                AND `related_item_id` = {$params->id}
-                            )
-                        ", false );
+                    $field_id = pods_absint( $fields[ $field ][ 'id' ] );
 
                     // Convert values from a comma-separated string into an array
                     if ( !is_array( $values ) )
                         $values = explode( ',', $values );
 
+                    // Enforce integers / unique values for IDs
+                    if ( 'pick' != $type || 'custom-simple' != $fields[ $field ][ 'pick_object' ] ) {
+                        foreach ( $values as $k => $v ) {
+                            if ( empty( $v ) )
+                                unset( $values[ $k ] );
+                            elseif ( !is_array( $v ) ) {
+                                $v = (int) $v;
+
+                                if ( empty( $v ) || in_array( $v, $values ) )
+                                    unset( $values[ $k ] );
+                                else
+                                    $values[ $k ] = $v;
+                            }
+                        }
+                    }
+
+                    $existing_relationships = array();
+
                     // Save relationships to meta if meta-based
-                    if ( 'meta' == $pod[ 'storage' ] && !in_array( $pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) ) {
+                    if ( in_array( $pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) ) {
                         $object_type = $pod[ 'type' ];
 
                         if ( 'post_type' == $object_type || 'media' == $object_type )
                             $object_type = 'post';
 
-                        delete_metadata( $object_type, $params->id, $field, true );
+                        if ( 'pick' != $type || 'custom-simple' != $fields[ $field ][ 'pick_object' ] ) {
+                            delete_metadata( $object_type, $params->id, $field, true );
 
-                        if ( !empty( $values ) )
-                            update_metadata( $object_type, $params->id, $field, $values );
-                    }
+                            if ( !empty( $values ) ) {
+                                update_metadata( $object_type, $params->id, '_pods_' . $field, $values, true );
 
-                    // File relationships
-                    if ( 'file' == $type ) {
-                        if ( empty( $values ) )
-                            continue;
-
-                        $weight = 0;
-
-                        foreach ( $values as $id ) {
-                            if ( empty( $id ) )
-                                continue;
-
-                            $title = false;
-
-                            if ( is_array( $id ) ) {
-                                if ( isset( $id[ 'title' ] ) && 0 < strlen( trim( $id[ 'title' ] ) ) )
-                                    $title = trim( $id[ 'title' ] );
-
-                                if ( isset( $id[ 'id' ] ) )
-                                    $id = $id[ 'id' ];
+                                foreach ( $values as $v ) {
+                                    add_metadata( $object_type, $params->id, $field, $v, true );
+                                }
                             }
-
-                            if ( empty( $id ) )
-                                continue;
-
-                            // Update the title if set
-                            if ( false !== $title && 1 == pods_var( $fields[ $field ][ 'type' ] . '_edit_title', $fields[ $field ][ 'options' ], 0 ) ) {
-                                $attachment_data = array(
-                                    'ID' => $id,
-                                    'post_title' => $title
-                                );
-
-                                $this->save_wp_object( 'media', $attachment_data );
-                            }
-
-                            pods_query( "INSERT INTO `@wp_podsrel` (`pod_id`, `field_id`, `item_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d)", array(
-                                $params->pod_id,
-                                $field_id,
-                                $params->id,
-                                $id,
-                                $weight
-                            ) );
-
-                            $weight++;
+                            else
+                                delete_metadata( $object_type, $params->id, '_pods_' . $field, true );
                         }
+                        elseif ( !empty( $values ) )
+                            update_metadata( $object_type, $params->id, $field, $values );
+                        else
+                            delete_metadata( $object_type, $params->id, $field, true );
                     }
-                    // Pick relationships
-                    elseif ( 'pick' == $type ) {
+
+                    $related_pod_id = $related_field_id = 0;
+
+                    $related_pod = $related_field = false;
+
+                    if ( 'pick' == $type && 'custom-simple' != $fields[ $field ][ 'pick_object' ] ) {
                         $pick_object = pods_var( 'pick_object', $fields[ $field ], '' ); // pod, post_type, taxonomy, etc..
                         $pick_val = pods_var( 'pick_val', $fields[ $field ], '' ); // pod name, post type name, taxonomy name, etc..
                         $pick_sister_id = (int) pods_var( 'sister_id', $fields[ $field ], 0 );
-
-                        $related_pod_id = $related_field_id = 0;
-
-                        $related_pod = $related_field = false;
 
                         if ( 'pod' == $pick_object ) {
                             $related_pod = $this->load_pod( array( 'name' => $pick_val ) );
@@ -2715,95 +2689,171 @@ class PodsAPI {
                                     }
                                 }
                             }
-                        }
 
-                        // Delete existing sister relationships
-                        if ( !empty( $related_field_id ) && !empty( $related_pod_id ) && in_array( $related_field_id, $rel_field_ids ) ) {
-                            pods_query(
-                                array(
-                                    "
-                                        DELETE FROM `@wp_podsrel`
-                                        WHERE
-                                            `pod_id` = %d
-                                            AND `field_id` = %d
-                                            AND `related_pod_id` = %d
-                                            AND `related_field_id` = %d
-                                            AND `related_item_id` = %d
-                                    ",
-                                    array(
-                                        $related_pod_id,
-                                        $related_field_id,
-                                        $params->pod_id,
-                                        $field_id,
-                                        $params->id
+                            // @todo Delete sister relationships in meta
+
+                            foreach ( $values as $id ) {
+                                if ( !empty( $related_pod_id ) && !empty( $related_field_id ) ) {
+                                    if ( in_array( $related_pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) ) {
+                                        $object_type = $related_pod[ 'type' ];
+
+                                        if ( 'post_type' == $object_type || 'media' == $object_type )
+                                            $object_type = 'post';
+
+                                        $ids = get_metadata( $object_type, $id, '_pods_' . $related_field, true );
+
+                                        if ( empty( $ids ) )
+                                            $ids = get_metadata( $object_type, $id, $related_field, true );
+
+                                        if ( empty( $ids ) )
+                                            $ids = array( $params->id );
+                                        else {
+                                            if ( !is_array( $ids ) )
+                                                $ids = array( $ids );
+
+                                            if ( !in_array( $params->id, $ids ) )
+                                                $ids[ ] = $params->id;
+                                        }
+
+                                        delete_metadata( $object_type, $id, $related_field, true );
+
+                                        if ( !empty( $ids ) ) {
+                                            update_metadata( $object_type, $id, '_pods_' . $related_field, $values, true );
+
+                                            foreach ( $ids as $rel_id ) {
+                                                add_metadata( $object_type, $id, $related_field, $rel_id, true );
+                                            }
+                                        }
+                                        else
+                                            delete_metadata( $object_type, $id, '_pods_' . $related_field, true );
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if ( 'pick' != $type || 'custom-simple' != $fields[ $field ][ 'pick_object' ] ) {
+                        if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
+                            if ( !empty( $values ) )
+                                $value_ids = explode( ', ', $values );
+                            else
+                                $value_ids = '0';
+
+                            // Remove relationships
+                            $sql = "
+                                DELETE FROM `@wp_podsrel`
+                                WHERE
+                                    (
+                                        `pod_id` = {$params->pod_id}
+                                        AND `field_id` = {$field_id}
+                                        AND `item_id` = {$params->id}
+                                    ) OR (
+                                        `related_pod_id` = {$params->pod_id}
+                                        AND `related_field_id` = {$field_id}
+                                        AND `related_item_id` = {$params->id}
+                                        AND `item_id` NOT IN ( {$value_ids} )
                                     )
-                                ),
-                                false
-                            );
+                            ";
+
+                            pods_query( $sql, false );
                         }
 
                         if ( empty( $values ) )
                             continue;
 
-                        // Add relationship values
-                        $weight = 0;
+                        // File relationships
+                        if ( 'file' == $type ) {
+                            $weight = 0;
 
-                        foreach ( $values as $id ) {
-                            if ( empty( $id ) )
-                                continue;
+                            foreach ( $values as $id ) {
+                                $title = false;
 
-                            if ( !empty( $related_pod_id ) && !empty( $related_field_id ) ) {
-                                if ( 'meta' == $related_pod[ 'storage' ] && !in_array( $related_pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) ) {
-                                    $object_type = $related_pod[ 'type' ];
+                                if ( is_array( $id ) ) {
+                                    if ( isset( $id[ 'title' ] ) && 0 < strlen( trim( $id[ 'title' ] ) ) )
+                                        $title = trim( $id[ 'title' ] );
 
-                                    if ( 'post_type' == $object_type || 'media' == $object_type )
-                                        $object_type = 'post';
-
-                                    $ids = get_metadata( $object_type, $id, $related_field, true );
-
-                                    if ( !is_array( $ids ) )
-                                        $ids = array( $id );
-                                    else
-                                        $ids[] = $ids;
-
-                                    $ids = array_unique( $ids );
-
-                                    delete_metadata( $object_type, $id, $related_field, true );
-                                    update_metadata( $object_type, $id, $related_field, $ids );
+                                    if ( isset( $id[ 'id' ] ) )
+                                        $id = $id[ 'id' ];
                                 }
 
-                                $related_weight = 0;
+                                if ( empty( $id ) )
+                                    continue;
 
-                                $result = pods_query( "SELECT `weight` FROM `@wp_podsrel` WHERE `pod_id` = %d AND `field_id` = %d ORDER BY `weight` DESC LIMIT 1", array(
-                                    $related_pod_id,
-                                    $related_field_id
-                                ) );
+                                // Update the title if set
+                                if ( false !== $title && 1 == pods_var( $fields[ $field ][ 'type' ] . '_edit_title', $fields[ $field ][ 'options' ], 0 ) ) {
+                                    $attachment_data = array(
+                                        'ID' => $id,
+                                        'post_title' => $title
+                                    );
 
-                                if ( !empty( $result ) )
-                                    $related_weight = pods_absint( $result[ 0 ]->weight ) + 1;
+                                    $this->save_wp_object( 'media', $attachment_data );
+                                }
+
+                                if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
+                                    pods_query( "INSERT INTO `@wp_podsrel` (`pod_id`, `field_id`, `item_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d)", array(
+                                        $params->pod_id,
+                                        $field_id,
+                                        $params->id,
+                                        $id,
+                                        $weight
+                                    ) );
+
+                                    $weight++;
+                                }
+                            }
+                        }
+                        // Pick relationships
+                        elseif ( 'pick' == $type && ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) ) {
+                            // Add relationship values
+                            $weight = 0;
+
+                            foreach ( $values as $id ) {
+                                if ( !empty( $related_pod_id ) && !empty( $related_field_id ) ) {
+                                    $related_weight = 0;
+
+                                    $related_ids = pods_query( "SELECT `related_item_id`, `weight` FROM `@wp_podsrel` WHERE `pod_id` = %d AND `field_id` = %d AND `item_id` = %d ORDER BY `weight` DESC", array(
+                                        $related_pod_id,
+                                        $related_field_id,
+                                        $id
+                                    ) );
+
+                                    $save_related = true;
+
+                                    foreach ( $related_ids as $related_id_data ) {
+                                        if ( $params->id == $related_id_data->related_item_id ) {
+                                            $save_related = false;
+
+                                            break;
+                                        }
+                                        elseif ( empty( $related_weight ) )
+                                            $related_weight = ( (int) $related_id_data->weight ) + 1;
+                                    }
+
+                                    if ( $save_related ) {
+                                        pods_query( "INSERT INTO `@wp_podsrel` (`pod_id`, `field_id`, `item_id`, `related_pod_id`, `related_field_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d, %d, %d)", array(
+                                            $related_pod_id,
+                                            $related_field_id,
+                                            $id,
+                                            $params->pod_id,
+                                            $field_id,
+                                            $params->id,
+                                            $related_weight
+                                        ) );
+                                    }
+                                }
 
                                 pods_query( "INSERT INTO `@wp_podsrel` (`pod_id`, `field_id`, `item_id`, `related_pod_id`, `related_field_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d, %d, %d)", array(
-                                    $related_pod_id,
-                                    $related_field_id,
-                                    $id,
                                     $params->pod_id,
                                     $field_id,
                                     $params->id,
-                                    $related_weight
+                                    $related_pod_id,
+                                    $related_field_id,
+                                    $id,
+                                    $weight
                                 ) );
+
+                                $weight++;
                             }
-
-                            pods_query( "INSERT INTO `@wp_podsrel` (`pod_id`, `field_id`, `item_id`, `related_pod_id`, `related_field_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d, %d, %d)", array(
-                                $params->pod_id,
-                                $field_id,
-                                $params->id,
-                                $related_pod_id,
-                                $related_field_id,
-                                $id,
-                                $weight
-                            ) );
-
-                            $weight++;
                         }
                     }
                 }

@@ -2493,7 +2493,6 @@ class PodsAPI {
                     if ( empty( $value ) || empty( $custom ) )
                         $value = '';
                     elseif ( !empty( $custom ) ) {
-
                         if ( !is_array( $custom ) ) {
                             $custom = explode( "\n", $custom );
 
@@ -4862,7 +4861,9 @@ class PodsAPI {
         if ( !is_array( $ids ) )
             $ids = explode( ',', $ids );
 
-        if ( empty( $ids ) )
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar' ) );
+
+        if ( empty( $ids ) || !in_array( pods_var( 'type', $field ), $tableless_field_types ) )
             return false;
 
         if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {

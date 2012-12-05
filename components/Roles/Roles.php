@@ -85,8 +85,10 @@ class Pods_Roles extends PodsComponent {
                     'users' => array(
                         'label' => __( 'Users', 'pods' ),
                         'type' => 'text',
-                        'text_allow_html' => 1,
-                        'text_allowed_html_tags' => ''
+                        'options' => array(
+                            'text_allow_html' => 1,
+                            'text_allowed_html_tags' => ''
+                        )
                     )
                 )
             ),

@@ -209,7 +209,10 @@ class PodsField_File extends PodsField {
             return;
         }
 
-        if ( 'plupload' == pods_var( 'file_uploader', $options ) )
+        // Use plupload if attachment isn't available
+        if ( 'attachment' == pods_var( 'file_uploader', $options ) && ( !is_user_logged_in() || ( !current_user_can( 'upload_files' ) && !current_user_can( 'edit_files' ) ) ) )
+            $field_type = 'plupload';
+        elseif ( 'plupload' == pods_var( 'file_uploader', $options ) )
             $field_type = 'plupload';
         elseif ( 'attachment' == pods_var( 'file_uploader', $options ) )
             $field_type = 'attachment';

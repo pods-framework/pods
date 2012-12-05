@@ -17,6 +17,15 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_t
 
 $css_id = $attributes[ 'id' ];
 
+$uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
+
+$uid = @session_id();
+
+if ( is_user_logged_in() )
+    $uid = 'user_' . get_current_user_id();
+
+$field_nonce = wp_create_nonce( 'pods_upload_' . ( !is_object( $pod ) ? '0' : $pod->pod_id ) . '_' . $uid . '_' . $uri_hash . '_' . $options[ 'id' ] );
+
 $limit_file_type = pods_var( PodsForm::$field_type . '_type', $options, 'images' );
 
 if ( 'images' == $limit_file_type )
@@ -77,7 +86,7 @@ else
                         }
                         ?></ul>
 
-                    <a class="button pods-file-add" href="<?php echo admin_url() ?>media-upload.php?inlineId=pods_media_attachment<?php echo $the_post_id; ?>&amp;tab=<?php echo $tab; ?>&amp;TB_iframe=1&amp;width=640&amp;height=1500"><?php _e( 'Add File', 'pods' ); ?></a>
+                    <a class="button pods-file-add" href="<?php echo admin_url() ?>media-upload.php?inlineId=pods_media_attachment<?php echo $the_post_id; ?>&amp;tab=<?php echo $tab; ?>&amp;TB_iframe=1&amp;width=640&amp;height=1500&pods_pod=<?php echo $pod->pod; ?>&pods_pod_id=<?php echo $pod->pod; ?>&pods_field=<?php echo $options[ 'name' ]; ?>&pods_field_id=<?php echo $options[ 'id' ]; ?>&pods_uri_hash=<?php echo $uri_hash; ?>&pods_field_nonce=<?php echo $field_nonce; ?>"><?php _e( 'Add File', 'pods' ); ?></a>
                 </td>
             </tr>
         </tbody>

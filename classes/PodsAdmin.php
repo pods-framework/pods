@@ -1069,7 +1069,7 @@ class PodsAdmin {
 
                     if ( $limit_type)
 
-                    $pos =  strlen( $file[ 'name' ] ) - strlen( $limit_type );
+                    $pos = ( strlen( $file[ 'name' ] ) - strlen( $limit_type ) );
 
                     if ( $pos === stripos( $file[ 'name' ], $limit_type ) ) {
                         $ok = true;

@@ -4772,12 +4772,17 @@ class PodsAPI {
      *
      * @since 2.0.0
      */
-    private function handle_field_validation ( &$value, $field, $object_fields, $fields, $pod, $params ) {
+    public function handle_field_validation ( &$value, $field, $object_fields, $fields, $pod, $params ) {
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
 
         $fields = array_merge( $fields, $object_fields );
 
         $options = $fields[ $field ];
+
+        $id = ( is_object( $params ) ? $params->id : ( is_object( $pod ) ? $pod->id() : 0 ) );
+
+        if ( is_object( $pod ) )
+            $pod = $pod->pod_data;
 
         $type = $options[ 'type' ];
         $label = $options[ 'label' ];
@@ -4806,11 +4811,14 @@ class PodsAPI {
 
         // Verify unique fields
         if ( 1 == pods_var( 'unique', $options[ 'options' ], 0 ) ) {
+            if ( empty( $pod ) )
+                return false;
+
             if ( !in_array( $type, $tableless_field_types ) ) {
                 $exclude = '';
 
-                if ( !empty( $params->id ) )
-                    $exclude = "AND `id` != {$params->id}";
+                if ( !empty( $id ) )
+                    $exclude = "AND `id` != {$id}";
 
                 $check = false;
 
@@ -4818,17 +4826,17 @@ class PodsAPI {
 
                 // Trigger an error if not unique
                 if ( 'table' == $pod[ 'storage' ] )
-                    $check = pods_query( "SELECT `id` FROM `@wp_pods_{$params->pod}` WHERE `{$field}` = '{$check_value}' {$exclude} LIMIT 1", $this );
+                    $check = pods_query( "SELECT `id` FROM `@wp_pods_" . $pod[ 'name' ] . "` WHERE `{$field}` = '{$check_value}' {$exclude} LIMIT 1", $this );
 
                 if ( !empty( $check ) )
                     return pods_error( sprintf( __( '%s needs to be unique', 'pods' ), $label ), $this );
             }
             else {
-                // handle tableless check
+                // @todo handle tableless check
             }
         }
 
-        $validate = PodsForm::validate( $options[ 'type' ], $value, $field, array_merge( pods_var( 'options', $options, array() ), $options ), $fields, $pod, $params->id, $params );
+        $validate = PodsForm::validate( $options[ 'type' ], $value, $field, array_merge( pods_var( 'options', $options, array() ), $options ), $fields, $pod, $id, $params );
 
         $validate = $this->do_hook( 'field_validation', $validate, $value, $field, $object_fields, $fields, $pod, $params );
 

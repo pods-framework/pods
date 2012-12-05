@@ -156,7 +156,7 @@ class PodsMeta {
             add_action( 'comment_form_logged_in_after', array( $this, 'meta_comment_new_logged_in' ), 10, 2 );
             add_filter( 'comment_form_default_fields', array( $this, 'meta_comment_new' ) );
             add_action( 'add_meta_boxes_comment', array( $this, 'meta_comment_add' ) );
-            add_action( 'pre_comment_approved', array( $this, 'validate_comment' ), 10, 2 );
+            add_filter( 'pre_comment_approved', array( $this, 'validate_comment' ), 10, 2 );
             add_action( 'comment_post', array( $this, 'save_comment' ) );
             add_action( 'edit_comment', array( $this, 'save_comment' ) );
 
@@ -1269,7 +1269,7 @@ class PodsMeta {
         $groups = $this->groups_get( 'comment', 'comment' );
 
         if ( empty( $groups ) )
-            return;
+            return $approved;
 
         $data = array();
 
@@ -1292,7 +1292,7 @@ class PodsMeta {
                 if ( isset( $_POST[ 'pods_meta_' . $field[ 'name' ] ] ) )
                     $data[ $field[ 'name' ] ] = $_POST[ 'pods_meta_' . $field[ 'name' ] ];
 
-                $validate = $this->api->handle_field_validation( $data[ $field[ 'name' ] ], $field, $this->api->get_wp_object_fields( 'comment' ), $pod->fields(), $pod, array() );
+                $validate = $this->api->handle_field_validation( $data[ $field[ 'name' ] ], $field[ 'name' ], $this->api->get_wp_object_fields( 'comment' ), $pod->fields(), $pod, array() );
 
                 if ( false === $validate )
                     $validate = sprintf( __( 'There was an issue validating the field %s', 'pods' ), $field[ 'label' ] );
@@ -1301,6 +1301,8 @@ class PodsMeta {
                     return pods_error( $validate, $this );
             }
         }
+
+        return $approved;
     }
 
     /**
@@ -1310,7 +1312,7 @@ class PodsMeta {
         $groups = $this->groups_get( 'comment', 'comment' );
 
         if ( empty( $groups ) )
-            return;
+            return $comment_id;
 
         $data = array();
 
@@ -1354,6 +1356,8 @@ class PodsMeta {
         }
 
         do_action( 'pods_meta_save_comment', $data, $pod, $id, $groups );
+
+        return $comment_id;
     }
 
     /**

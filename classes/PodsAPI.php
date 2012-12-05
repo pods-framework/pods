@@ -4850,6 +4850,7 @@ class PodsAPI {
      * @param int $pod_id The Pod ID
      * @param mixed $ids A comma-separated string (or array) of item IDs
      * @param array $field Field data array
+     * @param array $pod Pod data array
      *
      * @return array|bool
      *
@@ -4857,49 +4858,85 @@ class PodsAPI {
      *
      * @uses pods_query()
      */
-    function lookup_related_items ( $field_id, $pod_id, $ids, $field = null ) {
-        if ( empty( $ids ) )
-            $ids = '0';
-        else {
-            if ( !is_array( $ids ) )
-                $ids = explode( ',', $ids );
+    public function lookup_related_items ( $field_id, $pod_id, $ids, $field = null, $pod = null ) {
+        if ( !is_array( $ids ) )
+            $ids = explode( ',', $ids );
 
+        if ( empty( $ids ) )
+            return false;
+
+        if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
             foreach ( $ids as &$id ) {
                 $id = (int) $id;
             }
 
             $ids = implode( ', ', $ids );
-        }
 
-        $field_id = (int) $field_id;
-        $sister_id = (int) pods_var_raw( 'sister_id', $field, 0 );
+            $field_id = (int) $field_id;
+            $sister_id = (int) pods_var_raw( 'sister_id', $field, 0 );
 
-        $related_where = "
-            `field_id` = {$field_id}
-            AND `item_id` IN ( {$ids} )
-        ";
+            $related_where = "
+                `field_id` = {$field_id}
+                AND `item_id` IN ( {$ids} )
+            ";
 
-        $sql = "
-            SELECT *
-            FROM `@wp_podsrel`
-            WHERE
-                {$related_where}
-            ORDER BY `weight`
-        ";
+            $sql = "
+                SELECT *
+                FROM `@wp_podsrel`
+                WHERE
+                    {$related_where}
+                ORDER BY `weight`
+            ";
 
-        $relationships = pods_query( $sql );
+            $relationships = pods_query( $sql );
 
-        if ( !empty( $relationships ) ) {
-            $related_ids = array();
+            if ( !empty( $relationships ) ) {
+                $related_ids = array();
 
-            foreach ( $relationships as $relation ) {
-                if ( $field_id == $relation->field_id && !in_array( $relation->related_item_id, $related_ids ) )
-                    $related_ids[] = (int) $relation->related_item_id;
-                elseif ( 0 < $sister_id && $field_id == $relation->related_field_id && !in_array( $relation->item_id, $related_ids ) )
-                    $related_ids[] = (int) $relation->item_id;
+                foreach ( $relationships as $relation ) {
+                    if ( $field_id == $relation->field_id && !in_array( $relation->related_item_id, $related_ids ) )
+                        $related_ids[] = (int) $relation->related_item_id;
+                    elseif ( 0 < $sister_id && $field_id == $relation->related_field_id && !in_array( $relation->item_id, $related_ids ) )
+                        $related_ids[] = (int) $relation->item_id;
+                }
+
+                $related_ids = array_unique( array_filter( $related_ids ) );
+
+                return $related_ids;
             }
+        }
+        else {
+            if ( !is_array( $pod ) )
+                $pod = $this->load_pod( array( 'id' => $pod_id ), false );
 
-            return $related_ids;
+            if ( !empty( $pod ) && in_array( $pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) ) {
+                $related_ids = array();
+
+                $meta_type = $pod[ 'type' ];
+
+                if ( in_array( $pod[ 'type' ], array( 'post_type', 'media' ) ) )
+                    $meta_type = 'post';
+
+                foreach ( $ids as $id ) {
+                    $related_id = get_metadata( $meta_type, $id, $field[ 'name' ] );
+
+                    if ( is_array( $related_id ) && !empty( $related_id ) ) {
+                        foreach ( $related_id as $related ) {
+                            if ( is_array( $related ) && !empty( $related ) ) {
+                                foreach ( $related as $r ) {
+                                    $related_ids[] = (int) $r;
+                                }
+                            }
+                            else
+                                $related_ids[] = (int) $related;
+                        }
+                    }
+                }
+
+                $related_ids = array_unique( array_filter( $related_ids ) );
+
+                return $related_ids;
+            }
         }
 
         return false;

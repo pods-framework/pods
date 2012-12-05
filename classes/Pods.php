@@ -660,17 +660,12 @@ class Pods {
 
                             $table = $this->api->get_table_info( $object_type, $object );
 
-                            $join = $where = '';
+                            $join = $where = array();
 
-                            if ( !empty( $table[ 'join' ] ) ) {
+                            if ( !empty( $table[ 'join' ] ) )
                                 $join = (array) $table[ 'join' ];
 
-                                $join = implode( ' ', $join );
-                            }
-
                             if ( !empty( $table[ 'where' ] ) || !empty( $ids ) ) {
-                                $where = array();
-
                                 foreach ( $ids as $id ) {
                                     $where[ $id ] = '`t`.`' . $table[ 'field_id' ] . '` = ' . (int) $id;
                                 }
@@ -680,22 +675,18 @@ class Pods {
 
                                 if ( !empty( $table[ 'where' ] ) )
                                     $where = array_merge( $where, (array) $table[ 'where' ] );
-
-                                $where = trim( implode( ' AND ', $where ) );
-
-                                if ( !empty( $where ) )
-                                    $where = "WHERE {$where}";
                             }
 
                             if ( !empty( $table[ 'table' ] ) ) {
-                                $sql = "
-                                    SELECT *, `t`.`" . $table[ 'field_id' ] . "` AS `pod_item_id`
-                                    FROM `" . $table[ 'table' ] . "` AS `t`
-                                    {$join}
-                                    {$where}
-                                ";
+                                $sql = array(
+                                    'select' => '*, `t`.`' . $table[ 'field_id' ] . '` AS `pod_item_id`',
+                                    'table' => $table[ 'table' ],
+                                    'join' => $join,
+                                    'where' => $where
+                                );
 
-                                $item_data = pods_query( $sql );
+                                $item_data = PodsData::select( $sql );
+
                                 $items = array();
 
                                 foreach ( $item_data as $item ) {

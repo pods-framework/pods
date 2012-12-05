@@ -40,8 +40,8 @@ class PodsInit {
      * @var array
      */
     static $upgrades = array(
-        '1.0.0' => '2.0.0',
-        '2.0.0' => '2.1.0'
+        '1.0.0' => '2.0.0'
+        //'2.0.0' => '2.1.0'
     );
 
     /**
@@ -65,8 +65,8 @@ class PodsInit {
             self::$upgrade_needed = false;
 
             foreach ( self::$upgrades as $old_version => $new_version ) {
-                if ( '2.1.0' == $new_version && ( !defined( 'PODS_DEVELOPER' ) || PODS_DEVELOPER ) )
-                    continue;
+                /*if ( '2.1.0' == $new_version && ( !defined( 'PODS_DEVELOPER' ) || PODS_DEVELOPER ) )
+                    continue;*/
 
                 if ( version_compare( $old_version, self::$version, '<=' ) && version_compare( self::$version, $new_version, '<' ) )
                     self::$upgrade_needed = true;
@@ -760,7 +760,7 @@ class PodsInit {
 
                 update_option( 'pods_framework_version_last', $old_version );
 
-                self::$version_last = $pods_version;
+                self::$version_last = $old_version;
             }
         }
 
@@ -835,9 +835,6 @@ class PodsInit {
 
         delete_option( 'pods_framework_upgrade_2_0' );
         delete_option( 'pods_framework_upgraded_1_x' );
-
-        delete_option( 'pods_framework_upgrade_2_1' );
-        delete_option( 'pods_framework_upgraded_2_1' );
 
         delete_option( 'pods_component_settings' );
 

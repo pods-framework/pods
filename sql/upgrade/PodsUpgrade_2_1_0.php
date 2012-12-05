@@ -41,13 +41,24 @@ class PodsUpgrade_2_1_0 extends PodsUpgrade {
 
         $last_id = (int) $this->check_progress( __FUNCTION__ );
 
-        $relationship_fields = $this->api->load_fields( array( 'type' => 'pick' ) );
+        $relationship_fields = $this->api->load_fields( array( 'type' => array( 'pick', 'file' ) ) );
 
         foreach ( $relationship_fields as $field ) {
             $pod = $this->api->load_pod( array( 'pod' => $field[ 'pod' ] ) );
 
             // Only target pods that are meta-enabled
             if ( !in_array( $pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) )
+                continue;
+
+            // Only target multi-select relationships
+            $single_multi = pods_var( $field[ 'type' ] . '_format_type', $field[ 'options' ], 'single' );
+
+            if ( 'multi' == $single_multi )
+                $limit = (int) pods_var( $field[ 'type' ] . '_limit', $field[ 'options' ], 0 );
+            else
+                $limit = 1;
+
+            if ( $limit <= 1 )
                 continue;
 
             // Get and loop through relationship meta

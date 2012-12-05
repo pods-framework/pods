@@ -53,7 +53,7 @@ if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) && !function_exists( '
     define( 'PODS_URL', plugin_dir_url( __FILE__ ) );
     define( 'PODS_DIR', plugin_dir_path( __FILE__ ) );
 
-    global $pods, $pods_init;
+    global $pods, $pods_init, $pods_form;
 
     require_once( PODS_DIR . 'functions.php' );
 
@@ -108,6 +108,8 @@ if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) && !function_exists( '
     if ( false !== pods_compatible() && ( !defined( 'SHORTINIT' ) || !SHORTINIT ) ) {
         if ( !defined( 'PODS_DEPRECATED' ) || PODS_DEPRECATED )
             require_once( PODS_DIR . 'deprecated/deprecated.php' );
+
+        $pods_form = pods_form();
 
         $pods_init = pods_init();
     }

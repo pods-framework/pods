@@ -118,9 +118,6 @@ class PodsInit {
      * Load Pods Meta and Components
      */
     public function load () {
-        // Init Pods Form
-        pods_form();
-
         self::$meta = pods_meta()->init();
 
         if ( !defined( 'PODS_LIGHT' ) || !PODS_LIGHT )

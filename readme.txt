@@ -1,7 +1,7 @@
 === Pods - Custom Content Types and Fields ===
 Contributors: sc0ttkclark, dan.stefan, pglewis, mikedamage, jchristopher, logikal16
 Donate link: http://podsfoundation.org/donate/
-Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types
+Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
 Tested up to: 3.5
 Stable tag: 2.1
@@ -87,7 +87,7 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 == Screenshots ==
 
 1. Create new content types or extend existing ones
-2. Add fields of many different types, with individual options for each so you can define your content type to be what you ned it to be
+2. Add fields of many different types, with individual options for each so you can define your content type to be what you need it to be
 3. Post Type pods will add fields to the Post editor
 4. Taxonomy pods will add fields to the Taxonomy forms
 5. User pods will add fields to the User forms
@@ -97,7 +97,8 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 == Changelog ==
 
-= 2.1 - December 5th, 2012 =
+= 2.1 - December 6th, 2012 =
+* Pods is now WordPress 3.5 compatible as we've added a number of fixes for all the 3.5 media goodness! We're also working on some tighter integration with the new 3.5 media popups (thanks to the awesome work of @jchristopher) - watch for that in Pods 2.2 soon
 * Added: New Tableless mode (for WordPress VIP compatibility!) lets Pods run on any site w/ table-based storage turned off and wp_podsrel won't be utilized (or even created if tableless mode is on during activation) - define( 'PODS_TABLELESS', true )
 * Added: New Light mode disables all Components - define( 'PODS_LIGHT', true )
 * Added: New Avatar field type available for when you extend the Users object with Pods - Automatically takes over get_avatar calls!

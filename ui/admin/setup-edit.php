@@ -19,8 +19,13 @@ foreach ( $field_types as $type => $label ) {
      */
     $field_type = PodsForm::field_loader( $type );
 
+    $field_type_vars = get_class_vars( get_class( $field_type ) );
+
+    if ( !isset( $field_type_vars[ 'pod_types' ] ) )
+        $field_type_vars[ 'pod_types' ] = true;
+
     // Only show supported field types
-    if ( true !== $field_type::$pod_types && ( empty( $field_type::$pod_types ) || pods_var( 'type', $pod ) != $field_type::$pod_types || ( is_array( $field_type::$pod_types ) && !in_array( pods_var( 'type', $pod ), $field_type::$pod_types ) ) ) )
+    if ( true !== $field_type_vars[ 'pod_types' ] && ( empty( $field_type_vars[ 'pod_types' ] ) || pods_var( 'type', $pod ) != $field_type_vars[ 'pod_types' ] || ( is_array( $field_type_vars[ 'pod_types' ] ) && !in_array( pods_var( 'type', $pod ), $field_type_vars[ 'pod_types' ] ) ) ) )
         continue;
 
     if ( !empty( PodsForm::$field_group ) ) {

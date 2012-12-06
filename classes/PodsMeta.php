@@ -128,8 +128,8 @@ class PodsMeta {
             // Handle Media Editor
             if ( pods_wp_version( '3.5-alpha' ) )
                 add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
-            else
-                add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
+
+            add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
 
             add_filter( 'attachment_fields_to_save', array( $this, 'save_media' ), 10, 2 );
             add_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 );
@@ -430,10 +430,11 @@ class PodsMeta {
         }
         elseif ( 'media' == $pod[ 'type' ] ) {
             if ( !has_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 ) ) {
+                // Handle Media Editor
                 if ( pods_wp_version( '3.5-alpha' ) )
                     add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
-                else
-                    add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
+
+                add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
 
                 add_filter( 'attachment_fields_to_save', array( $this, 'save_media' ), 10, 2 );
                 add_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 );
@@ -757,7 +758,7 @@ class PodsMeta {
     public function meta_media ( $form_fields, $post ) {
         $groups = $this->groups_get( 'media', 'media' );
 
-        if ( empty( $groups ) )
+        if ( empty( $groups ) || 'attachment' == pods_var( 'typenow', 'global' ) )
             return $form_fields;
 
         wp_enqueue_style( 'pods-form' );

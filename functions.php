@@ -990,6 +990,27 @@ function pods_evaluate_tag ( $tag, $sanitize = false ) {
 }
 
 /**
+ * Check whether or not WordPress is a specific version minimum and/or maximum
+ *
+ * @param string $minimum_version Minimum WordPress version
+ * @param string $comparison Comparison operator
+ * @param string $maximum_version Maximum WordPress version
+ *
+ * @return bool
+ */
+function pods_wp_version ( $minimum_version, $comparison = '<=', $maximum_version = null ) {
+    global $wp_version;
+
+    if ( !empty( $minimum_version ) && !version_compare( $minimum_version, $wp_version, $comparison ) )
+        return false;
+
+    if ( !empty( $maximum_version ) && !version_compare( $wp_version, $maximum_version, $comparison ) )
+        return false;
+
+    return true;
+}
+
+/**
  * Run a Pods Helper
  *
  * @param string $helper_name Helper Name

@@ -126,7 +126,11 @@ class PodsMeta {
 
         if ( !empty( self::$media ) ) {
             // Handle Media Editor
-            add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
+            if ( pods_wp_version( '3.5' ) && is_admin() )
+                add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
+            else
+                add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
+
             add_filter( 'attachment_fields_to_save', array( $this, 'save_media' ), 10, 2 );
             add_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 );
 
@@ -425,8 +429,12 @@ class PodsMeta {
             }
         }
         elseif ( 'media' == $pod[ 'type' ] ) {
-            if ( !has_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 ) ) {
-                add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
+            if ( !has_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 ) ) {
+                if ( pods_wp_version( '3.5' ) && is_admin() )
+                    add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
+                else
+                    add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
+
                 add_filter( 'attachment_fields_to_save', array( $this, 'save_media' ), 10, 2 );
                 add_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 );
             }
@@ -496,6 +504,12 @@ class PodsMeta {
      * @return array
      */
     public function groups_get ( $type, $name ) {
+        // @todo WP 3.5 media editor compatibility
+        /*if ( 'post_type' == $type && 'attachment' == $name ) {
+            $type = 'media';
+            $name = 'media';
+        }*/
+
         do_action( 'pods_meta_groups', $type, $name );
 
         $pod = array();

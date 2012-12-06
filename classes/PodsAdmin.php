@@ -1174,6 +1174,9 @@ class PodsAdmin {
             $data = pods_data( pods_var( 'pick_val', $field ) );
 
             $where = pods_var_raw( 'pick_where', $field[ 'options' ] );
+
+            if ( !empty( $where ) )
+                $where = pods_evaluate_tags( $where, true );
         }
         else {
             $field[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $field ), pods_var( 'pick_val', $field ) );
@@ -1251,6 +1254,31 @@ class PodsAdmin {
             'groupby' => pods_var_raw( 'pick_groupby', $field[ 'options' ], null, null, true ),
             'limit' => 30
         );
+
+        $display = trim( pods_var( 'pick_display', $field[ 'options' ] ), ' {@}' );
+
+        if ( 0 < strlen( $display ) ) {
+            if ( isset( $options[ 'table_info' ][ 'pod' ] ) && !empty( $options[ 'table_info' ][ 'pod' ] ) ) {
+                if ( isset( $options[ 'table_info' ][ 'pod' ][ 'object_fields' ] ) && isset( $options[ 'table_info' ][ 'pod' ][ 'object_fields' ][ $display ] ) ) {
+                    $data->field_index = $display;
+
+                    $params[ 'select' ] = "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`";
+                }
+                elseif ( isset( $options[ 'table_info' ][ 'pod' ][ 'fields' ][ $display ] ) ) {
+                    $data->field_index = $display;
+
+                    if ( 'table' == $options[ 'table_info' ][ 'pod' ][ 'storage' ] && !in_array( $options[ 'table_info' ][ 'pod' ][ 'type' ], array( 'pod', 'table' ) ) )
+                        $params[ 'select' ] = "`t`.`{$data->field_id}`, `d`.`{$data->field_index}`";
+                    else
+                        $params[ 'select' ] = "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`";
+                }
+            }
+            elseif ( isset( $options[ 'table_info' ][ 'object_fields' ] ) && isset( $options[ 'table_info' ][ 'object_fields' ][ $display ] ) ) {
+                $data->field_index = $display;
+
+                $params[ 'select' ] = "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`";
+            }
+        }
 
         $results = $data->select( $params );
 

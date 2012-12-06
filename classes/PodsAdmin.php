@@ -1207,7 +1207,7 @@ class PodsAdmin {
         else
             $where = (array) $where;
 
-        $params = array(
+        $data_params = array(
             'select' => "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`",
             'table' => $data->table,
             'where' => $where,
@@ -1222,25 +1222,21 @@ class PodsAdmin {
                 if ( isset( $options[ 'table_info' ][ 'pod' ][ 'object_fields' ] ) && isset( $options[ 'table_info' ][ 'pod' ][ 'object_fields' ][ $display ] ) ) {
                     $data->field_index = $display;
 
-                    $params[ 'select' ] = "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`";
+                    $data_params[ 'select' ] = "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`";
                 }
                 elseif ( isset( $options[ 'table_info' ][ 'pod' ][ 'fields' ][ $display ] ) ) {
                     $data->field_index = $display;
 
-                    if ( 'table' == $options[ 'table_info' ][ 'pod' ][ 'storage' ] && !in_array( $options[ 'table_info' ][ 'pod' ][ 'type' ], array(
-                        'pod',
-                        'table'
-                    ) )
-                    )
-                        $params[ 'select' ] = "`t`.`{$data->field_id}`, `d`.`{$data->field_index}`";
+                    if ( 'table' == $options[ 'table_info' ][ 'pod' ][ 'storage' ] && !in_array( $options[ 'table_info' ][ 'pod' ][ 'type' ], array( 'pod', 'table' ) ) )
+                        $data_params[ 'select' ] = "`t`.`{$data->field_id}`, `d`.`{$data->field_index}`";
                     else
-                        $params[ 'select' ] = "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`";
+                        $data_params[ 'select' ] = "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`";
                 }
             }
             elseif ( isset( $options[ 'table_info' ][ 'object_fields' ] ) && isset( $options[ 'table_info' ][ 'object_fields' ][ $display ] ) ) {
                 $data->field_index = $display;
 
-                $params[ 'select' ] = "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`";
+                $data_params[ 'select' ] = "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`";
             }
         }
 
@@ -1283,10 +1279,10 @@ class PodsAdmin {
         $orderby[] = "`t`.`{$data->field_index}`";
         $orderby[] = "`t`.`{$data->field_id}`";
 
-        $params[ 'select' ] .= $extra;
-        $params[ 'orderby' ] = $orderby;
+        $data_params[ 'select' ] .= $extra;
+        $data_params[ 'orderby' ] = $orderby;
 
-        $results = $data->select( $params );
+        $results = $data->select( $data_params );
 
         $items = array();
         $ids = array();

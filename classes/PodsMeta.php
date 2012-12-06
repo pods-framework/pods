@@ -125,9 +125,10 @@ class PodsMeta {
         }
 
         if ( !empty( self::$media ) ) {
-            // Handle Media Editor
-            if ( pods_wp_version( '3.5-alpha' ) )
+            if ( pods_wp_version( '3.5-alpha' ) ) {
                 add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
+                add_action( 'wp_ajax_save-attachment-compat', array( $this, 'save_media_ajax' ), 0 );
+            }
 
             add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
 
@@ -430,9 +431,10 @@ class PodsMeta {
         }
         elseif ( 'media' == $pod[ 'type' ] ) {
             if ( !has_filter( 'wp_update_attachment_metadata', array( $this, 'save_media' ), 10, 2 ) ) {
-                // Handle Media Editor
-                if ( pods_wp_version( '3.5-alpha' ) )
+                if ( pods_wp_version( '3.5-alpha' ) ) {
                     add_action( 'add_meta_boxes', array( $this, 'meta_post_add' ) );
+                    add_action( 'wp_ajax_save-attachment-compat', array( $this, 'save_media_ajax' ), 0 );
+                }
 
                 add_filter( 'attachment_fields_to_edit', array( $this, 'meta_media' ), 10, 2 );
 
@@ -819,8 +821,11 @@ class PodsMeta {
 
         $post_id = $attachment;
 
-        if ( is_array( $post ) && !empty( $post ) && isset( $post[ 'ID' ] ) )
+        if ( is_array( $post ) && !empty( $post ) && isset( $post[ 'ID' ] ) && 'attachment' == $post[ 'post_type' ] )
             $post_id = $post[ 'ID' ];
+
+        if ( is_array( $post_id ) || empty( $post_id ) )
+            return $post;
 
         $data = array();
 
@@ -866,6 +871,37 @@ class PodsMeta {
         do_action( 'pods_meta_save_media', $data, $pod, $id, $groups, $post, $attachment );
 
         return $post;
+    }
+
+    public function save_media_ajax () {
+        if ( !isset( $_POST[ 'id' ] ) || empty( $_POST[ 'id' ] ) || absint( $_POST[ 'id' ] ) < 1 )
+            return;
+
+        $id = absint( $_POST[ 'id' ] );
+
+        if ( !isset( $_POST[ 'nonce' ] ) || empty( $_POST[ 'nonce' ] ) )
+            return;
+
+        check_ajax_referer( 'update-post_' . $id, 'nonce' );
+
+        if ( !current_user_can( 'edit_post', $id ) )
+            return;
+
+        $post = get_post( $id, ARRAY_A );
+
+    	if ( 'attachment' != $post[ 'post_type' ] )
+            return;
+
+        // fix ALL THE THINGS
+
+        if ( !isset( $_REQUEST[ 'attachments' ] ) )
+            $_REQUEST[ 'attachments' ] = array();
+
+        if ( !isset( $_REQUEST[ 'attachments' ][ $id ] ) )
+            $_REQUEST[ 'attachments' ][ $id ] = array();
+
+        if ( empty( $_REQUEST[ 'attachments' ][ $id ] ) )
+            $_REQUEST[ 'attachments' ][ $id ][ '_fix_wp' ] = 1;
     }
 
     /**

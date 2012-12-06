@@ -512,7 +512,6 @@ class PodsData {
      * @since 2.0.0
      */
     public function select ( $params ) {
-
         $cache_key = $results = false;
 
         // Debug purposes
@@ -577,6 +576,7 @@ class PodsData {
          * @var $wpdb wpdb
          */
         global $wpdb;
+
         // Set totals
         if ( false !== $this->total_sql )
             $total = @current( $wpdb->get_col( $this->get_sql( $this->total_sql ) ) );
@@ -599,7 +599,7 @@ class PodsData {
      * @return bool|mixed|string
      * @since 2.0.0
      */
-    public function build ( &$params ) {
+    public function build ( $params ) {
         $defaults = array(
             'select' => '*',
             'distinct' => true,

@@ -511,47 +511,22 @@ class Pods {
 
                     pods_no_conflict_on( $this->pod_data[ 'type' ] );
 
-                    // New check for optimized relationships
-                    if ( isset( $this->fields[ $params->name ] ) && in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) && 'custom-simple' != $this->fields[ $params->name ][ 'pick_object' ] ) {
-                        if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
-                            $id = $this->id();
+                    if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
+                        $id = $this->id();
 
-                            if ( function_exists( 'icl_get_languages' ) ) {
-                                $master_post_id = (int) get_post_meta( $id, '_icl_lang_duplicate_of', true );
+                        if ( function_exists( 'icl_get_languages' ) ) {
+                            $master_post_id = (int) get_post_meta( $id, '_icl_lang_duplicate_of', true );
 
-                                if ( 0 < $master_post_id )
-                                    $id = $master_post_id;
-                            }
-
-                            $value = get_post_meta( $id, '_pods_' . $params->name, true );
+                            if ( 0 < $master_post_id )
+                                $id = $master_post_id;
                         }
-                        elseif ( 'user' == $this->pod_data[ 'type' ] )
-                            $value = get_user_meta( $this->id(), '_pods_' . $params->name, true );
-                        elseif ( 'comment' == $this->pod_data[ 'type' ] )
-                            $value = get_comment_meta( $this->id(), '_pods_' . $params->name, true );
 
-                        if ( empty( $value ) )
-                            $value = null;
+                        $value = get_post_meta( $id, $params->name, $params->single );
                     }
-
-                    if ( null === $value ) {
-                        if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
-                            $id = $this->id();
-
-                            if ( function_exists( 'icl_get_languages' ) ) {
-                                $master_post_id = (int) get_post_meta( $id, '_icl_lang_duplicate_of', true );
-
-                                if ( 0 < $master_post_id )
-                                    $id = $master_post_id;
-                            }
-
-                            $value = get_post_meta( $id, $params->name, $params->single );
-                        }
-                        elseif ( 'user' == $this->pod_data[ 'type' ] )
-                            $value = get_user_meta( $this->id(), $params->name, $params->single );
-                        elseif ( 'comment' == $this->pod_data[ 'type' ] )
-                            $value = get_comment_meta( $this->id(), $params->name, $params->single );
-                    }
+                    elseif ( 'user' == $this->pod_data[ 'type' ] )
+                        $value = get_user_meta( $this->id(), $params->name, $params->single );
+                    elseif ( 'comment' == $this->pod_data[ 'type' ] )
+                        $value = get_comment_meta( $this->id(), $params->name, $params->single );
 
                     // Handle Simple Relationships
                     if ( $simple ) {
@@ -710,7 +685,7 @@ class Pods {
                                     'where' => $where
                                 );
 
-                                $item_data = PodsData::select( $sql );
+                                $item_data = pods_data()->select( $sql );
 
                                 $items = array();
 

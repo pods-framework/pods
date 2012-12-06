@@ -2600,7 +2600,7 @@ class PodsAPI {
                 array_unshift( $table_formats, '%d' );
 
                 if ( !empty( $table_data ) ) {
-                    $sql = PodsData::insert_on_duplicate( "@wp_pods_{$params->pod}", $table_data, $table_formats );
+                    $sql = pods_data()->insert_on_duplicate( "@wp_pods_{$params->pod}", $table_data, $table_formats );
 
                     $id = pods_query( $sql, 'Cannot add/save table row' );
 
@@ -2614,11 +2614,11 @@ class PodsAPI {
         if ( !empty( $rel_fields ) ) {
             // E.g. $rel_fields['pick']['related_events'] = '3,15';
             foreach ( $rel_fields as $type => $data ) {
-                foreach ( $data as $field => $values ) {
-                    // Only handle tableless fields
-                    if ( !in_array( $type, $tableless_field_types ) )
-                        continue;
+                // Only handle tableless fields
+                if ( !in_array( $type, $tableless_field_types ) )
+                    continue;
 
+                foreach ( $data as $field => $values ) {
                     $field_id = pods_absint( $fields[ $field ][ 'id' ] );
 
                     // Convert values from a comma-separated string into an array
@@ -2627,21 +2627,23 @@ class PodsAPI {
 
                     // Enforce integers / unique values for IDs
                     if ( 'pick' != $type || 'custom-simple' != $fields[ $field ][ 'pick_object' ] ) {
-                        foreach ( $values as $k => $v ) {
-                            if ( empty( $v ) )
-                                unset( $values[ $k ] );
-                            elseif ( !is_array( $v ) ) {
-                                $v = (int) $v;
+                        $new_values = array();
 
-                                if ( empty( $v ) || in_array( $v, $values ) )
-                                    unset( $values[ $k ] );
-                                else
-                                    $values[ $k ] = $v;
+                        foreach ( $values as $k => $v ) {
+                            if ( !empty( $v ) ) {
+                                if ( !is_array( $v ) ) {
+                                    $v = (int) $v;
+
+                                    if ( !empty( $v ) && !in_array( $v, $new_values ) )
+                                        $new_values[] = $v;
+                                }
+                                elseif ( 'file' == $type )
+                                    $new_values[] = $v;
                             }
                         }
-                    }
 
-                    $existing_relationships = array();
+                        $values = $new_values;
+                    }
 
                     // Save relationships to meta if meta-based
                     if ( in_array( $pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) ) {

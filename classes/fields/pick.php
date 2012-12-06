@@ -98,7 +98,7 @@ class PodsField_Pick extends PodsField {
             ),
             'pick_display' => array(
                 'label' => __( 'Display Field in Selection List', 'pods' ),
-                'help' => __( 'Provide the name of a field on the related object to reference, example: post_title', 'pods' ),
+                'help' => __( 'Provide the name of a field on the related object to reference, example: {@post_title}', 'pods' ),
                 'excludes-on' => array( 'pick_object' => 'custom-simple' ),
                 'default' => '',
                 'type' => 'text'

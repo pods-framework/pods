@@ -1207,6 +1207,43 @@ class PodsAdmin {
         else
             $where = (array) $where;
 
+        $params = array(
+            'select' => "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`",
+            'table' => $data->table,
+            'where' => $where,
+            'groupby' => pods_var_raw( 'pick_groupby', $field[ 'options' ], null, null, true ),
+            'limit' => 30
+        );
+
+        $display = trim( pods_var( 'pick_display', $field[ 'options' ] ), ' {@}' );
+
+        if ( 0 < strlen( $display ) ) {
+            if ( isset( $options[ 'table_info' ][ 'pod' ] ) && !empty( $options[ 'table_info' ][ 'pod' ] ) ) {
+                if ( isset( $options[ 'table_info' ][ 'pod' ][ 'object_fields' ] ) && isset( $options[ 'table_info' ][ 'pod' ][ 'object_fields' ][ $display ] ) ) {
+                    $data->field_index = $display;
+
+                    $params[ 'select' ] = "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`";
+                }
+                elseif ( isset( $options[ 'table_info' ][ 'pod' ][ 'fields' ][ $display ] ) ) {
+                    $data->field_index = $display;
+
+                    if ( 'table' == $options[ 'table_info' ][ 'pod' ][ 'storage' ] && !in_array( $options[ 'table_info' ][ 'pod' ][ 'type' ], array(
+                        'pod',
+                        'table'
+                    ) )
+                    )
+                        $params[ 'select' ] = "`t`.`{$data->field_id}`, `d`.`{$data->field_index}`";
+                    else
+                        $params[ 'select' ] = "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`";
+                }
+            }
+            elseif ( isset( $options[ 'table_info' ][ 'object_fields' ] ) && isset( $options[ 'table_info' ][ 'object_fields' ][ $display ] ) ) {
+                $data->field_index = $display;
+
+                $params[ 'select' ] = "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`";
+            }
+        }
+
         $lookup_where = array(
             "`t`.`{$data->field_index}` LIKE '%" . like_escape( $params->query ) . "%'"
         );
@@ -1246,39 +1283,8 @@ class PodsAdmin {
         $orderby[] = "`t`.`{$data->field_index}`";
         $orderby[] = "`t`.`{$data->field_id}`";
 
-        $params = array(
-            'select' => "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`" . $extra,
-            'table' => $data->table,
-            'where' => $where,
-            'orderby' => $orderby,
-            'groupby' => pods_var_raw( 'pick_groupby', $field[ 'options' ], null, null, true ),
-            'limit' => 30
-        );
-
-        $display = trim( pods_var( 'pick_display', $field[ 'options' ] ), ' {@}' );
-
-        if ( 0 < strlen( $display ) ) {
-            if ( isset( $options[ 'table_info' ][ 'pod' ] ) && !empty( $options[ 'table_info' ][ 'pod' ] ) ) {
-                if ( isset( $options[ 'table_info' ][ 'pod' ][ 'object_fields' ] ) && isset( $options[ 'table_info' ][ 'pod' ][ 'object_fields' ][ $display ] ) ) {
-                    $data->field_index = $display;
-
-                    $params[ 'select' ] = "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`";
-                }
-                elseif ( isset( $options[ 'table_info' ][ 'pod' ][ 'fields' ][ $display ] ) ) {
-                    $data->field_index = $display;
-
-                    if ( 'table' == $options[ 'table_info' ][ 'pod' ][ 'storage' ] && !in_array( $options[ 'table_info' ][ 'pod' ][ 'type' ], array( 'pod', 'table' ) ) )
-                        $params[ 'select' ] = "`t`.`{$data->field_id}`, `d`.`{$data->field_index}`";
-                    else
-                        $params[ 'select' ] = "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`";
-                }
-            }
-            elseif ( isset( $options[ 'table_info' ][ 'object_fields' ] ) && isset( $options[ 'table_info' ][ 'object_fields' ][ $display ] ) ) {
-                $data->field_index = $display;
-
-                $params[ 'select' ] = "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`";
-            }
-        }
+        $params[ 'select' ] .= $extra;
+        $params[ 'orderby' ] = $orderby;
 
         $results = $data->select( $params );
 

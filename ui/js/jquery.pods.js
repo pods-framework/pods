@@ -1406,6 +1406,10 @@
                             return 'Navigating away from this page will discard any changes you have made.';
                     }
                 } );
+
+                $( 'form.pods-submittable' ).on( 'click', '.submitdelete', function () {
+                    pods_changed = false;
+                } );
             },
             qtip: function(element) {
                 $( element ).find('.pods-qtip').qtip( {

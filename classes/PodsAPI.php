@@ -2745,7 +2745,7 @@ class PodsAPI {
                     if ( 'pick' != $type || 'custom-simple' != $fields[ $field ][ 'pick_object' ] ) {
                         if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
                             if ( !empty( $values ) )
-                                $value_ids = explode( ', ', $values );
+                                $value_ids = implode( ', ', $values );
                             else
                                 $value_ids = '0';
 

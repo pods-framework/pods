@@ -316,7 +316,7 @@ class PodsField_Pick extends PodsField {
             $search_data->where = $options[ 'table_info' ][ 'where' ];
             $search_data->orderby = $options[ 'table_info' ][ 'orderby' ];
 
-            if ( isset( $options[ 'table_info' ][ 'pod' ] ) && !empty( $options[ 'table_info' ][ 'pod' ] ) ) {
+            if ( isset( $options[ 'table_info' ][ 'pod' ] ) && !empty( $options[ 'table_info' ][ 'pod' ] ) && isset( $options[ 'table_info' ][ 'pod' ][ 'name' ] ) ) {
                 $search_data->pod = $options[ 'table_info' ][ 'pod' ][ 'name' ];
                 $search_data->fields = $options[ 'table_info' ][ 'pod' ][ 'fields' ];
             }

@@ -2618,6 +2618,9 @@ class PodsAPI {
                 if ( !in_array( $type, $tableless_field_types ) )
                     continue;
 
+                if ( !is_array( $data ) )
+                    $data = explode( ',', $data );
+
                 foreach ( $data as $field => $values ) {
                     $field_id = pods_absint( $fields[ $field ][ 'id' ] );
 
@@ -2653,22 +2656,22 @@ class PodsAPI {
                             $object_type = 'post';
 
                         if ( 'pick' != $type || 'custom-simple' != $fields[ $field ][ 'pick_object' ] ) {
-                            delete_metadata( $object_type, $params->id, $field, true );
+                            delete_metadata( $object_type, $params->id, $field, '', true );
 
                             if ( !empty( $values ) ) {
-                                update_metadata( $object_type, $params->id, '_pods_' . $field, $values, true );
+                                update_metadata( $object_type, $params->id, '_pods_' . $field, $values );
 
                                 foreach ( $values as $v ) {
-                                    add_metadata( $object_type, $params->id, $field, $v, true );
+                                    add_metadata( $object_type, $params->id, $field, $v );
                                 }
                             }
                             else
-                                delete_metadata( $object_type, $params->id, '_pods_' . $field, true );
+                                delete_metadata( $object_type, $params->id, '_pods_' . $field, '', true );
                         }
                         elseif ( !empty( $values ) )
                             update_metadata( $object_type, $params->id, $field, $values );
                         else
-                            delete_metadata( $object_type, $params->id, $field, true );
+                            delete_metadata( $object_type, $params->id, $field, '', true );
                     }
 
                     $related_pod_id = $related_field_id = 0;
@@ -2719,20 +2722,20 @@ class PodsAPI {
                                                 $ids = array( $ids );
 
                                             if ( !in_array( $params->id, $ids ) )
-                                                $ids[ ] = $params->id;
+                                                $ids[] = $params->id;
                                         }
 
-                                        delete_metadata( $object_type, $id, $related_field, true );
+                                        delete_metadata( $object_type, $id, $related_field, '', true );
 
                                         if ( !empty( $ids ) ) {
-                                            update_metadata( $object_type, $id, '_pods_' . $related_field, $values, true );
+                                            update_metadata( $object_type, $id, '_pods_' . $related_field, $values );
 
                                             foreach ( $ids as $rel_id ) {
-                                                add_metadata( $object_type, $id, $related_field, $rel_id, true );
+                                                add_metadata( $object_type, $id, $related_field, $rel_id );
                                             }
                                         }
                                         else
-                                            delete_metadata( $object_type, $id, '_pods_' . $related_field, true );
+                                            delete_metadata( $object_type, $id, '_pods_' . $related_field, '', true );
                                     }
                                 }
                             }
@@ -3720,7 +3723,6 @@ class PodsAPI {
      * @since 1.7.9
      */
     public function load_pod ( $params, $strict = true ) {
-
         if ( !is_array( $params ) && !is_object( $params ) )
             $params = array( 'name' => $params );
 
@@ -4975,8 +4977,13 @@ class PodsAPI {
                 if ( in_array( $pod[ 'type' ], array( 'post_type', 'media' ) ) )
                     $meta_type = 'post';
 
+                pods_no_conflict_on( $meta_type );
+
                 foreach ( $ids as $id ) {
-                    $related_id = get_metadata( $meta_type, $id, $field[ 'name' ] );
+                    $related_id = get_metadata( $meta_type, $id, '_pods_' . $field[ 'name' ], true );
+
+                    if ( empty( $related_id ) )
+                        $related_id = get_metadata( $meta_type, $id, $field[ 'name' ], true );
 
                     if ( is_array( $related_id ) && !empty( $related_id ) ) {
                         foreach ( $related_id as $related ) {
@@ -4990,6 +4997,8 @@ class PodsAPI {
                         }
                     }
                 }
+
+                pods_no_conflict_off( $meta_type );
 
                 $related_ids = array_unique( array_filter( $related_ids ) );
 

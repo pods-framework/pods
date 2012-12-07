@@ -2035,7 +2035,7 @@ class PodsData {
                         `{$rel_alias}`.`field_id` = {$traverse[ 'id' ]}
                         AND `{$rel_alias}`.`item_id` = `{$joined}`.`id`
 
-                    LEFT JOIN `{$traverse[ 'table' ]}` AS `{$field_joined}` ON
+                    LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
                         `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_alias}`.`related_item_id`
                 ";
 

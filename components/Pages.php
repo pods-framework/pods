@@ -276,6 +276,9 @@ class Pods_Pages extends PodsComponent {
         if ( !in_array( 'page.php', $page_templates ) && locate_template( array( 'page.php', false ) ) )
             $page_templates[ 'Page (WP Default)' ] = 'page.php';
 
+        if ( !in_array( 'index.php', $page_templates ) && locate_template( array( 'index.php', false ) ) )
+            $page_templates[ 'Index (WP Fallback)' ] = 'index.php';
+
         ksort( $page_templates );
 
         $page_templates = array_flip( $page_templates );

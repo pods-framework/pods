@@ -462,7 +462,7 @@ class PodsInit {
                     'show_in_nav_menus' => (boolean) pods_var( 'show_in_nav_menus', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ),
                     'show_ui' => (boolean) pods_var( 'show_ui', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ),
                     'show_tagcloud' => (boolean) pods_var( 'show_tagcloud', $taxonomy, (boolean) pods_var( 'show_ui', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ) ),
-                    'hierarchical' => (boolean) pods_var( 'hierarchical', $taxonomy ),
+                    'hierarchical' => (boolean) pods_var( 'hierarchical', $taxonomy, false ),
                     //'update_count_callback' => pods_var('update_count_callback', $taxonomy),
                     'query_var' => ( false !== (boolean) pods_var( 'query_var', $taxonomy, true ) ? pods_var( 'query_var_string', $taxonomy, pods_var( 'name', $taxonomy ), null, true ) : false ),
                     'rewrite' => $ct_rewrite

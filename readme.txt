@@ -97,7 +97,7 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 == Changelog ==
 
-= 2.1 - December 6th, 2012 =
+= 2.1 - December 7th, 2012 =
 * Pods is now WordPress 3.5 compatible as we've added a number of fixes for all the 3.5 media goodness! We're also working on some tighter integration with the new 3.5 media popups (thanks to the awesome work of @jchristopher) - watch for that in Pods 2.2 soon
 * Added: New Tableless mode (for WordPress VIP compatibility!) lets Pods run on any site w/ table-based storage turned off and wp_podsrel won't be utilized (or even created if tableless mode is on during activation) - define( 'PODS_TABLELESS', true )
 * Added: New Light mode disables all Components - define( 'PODS_LIGHT', true )

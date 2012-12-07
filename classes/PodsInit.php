@@ -72,8 +72,20 @@ class PodsInit {
                     self::$upgrade_needed = true;
             }
         }
-        elseif ( 0 < strlen( get_option( 'pods_version' ) ) )
+        elseif ( 0 < strlen( get_option( 'pods_version' ) ) ) {
             self::$upgrade_needed = true;
+
+            $old_version = get_option( 'pods_version' );
+
+            if ( !empty( $old_version ) ) {
+                if ( false === strpos( $old_version, '.' ) )
+                    $old_version = pods_version_to_point( $old_version );
+
+                update_option( 'pods_framework_version_last', $old_version );
+
+                self::$version_last = $old_version;
+            }
+        }
 
         add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
 

@@ -622,7 +622,10 @@ class PodsInit {
      * @return array
      */
     public static function object_label_fix ( $args, $type = 'post_type' ) {
-        if ( !isset( $args[ 'labels' ] ) )
+        if ( empty( $args ) || !is_array( $args ) )
+            $args = array();
+
+        if ( !isset( $args[ 'labels' ] ) || !is_array( $args[ 'labels' ] ) )
             $args[ 'labels' ] = array();
 
         $label = pods_var_raw( 'name', $args[ 'labels' ], pods_var_raw( 'label', $args, __( 'Items', 'pods' ), null, true ), null, true );

@@ -347,7 +347,7 @@ class PodsInit {
                 // Rewrite
                 $cpt_rewrite = (boolean) pods_var( 'rewrite', $post_type, true );
                 $cpt_rewrite_array = array(
-                    'slug' => pods_var( 'rewrite_custom_slug', $post_type, pods_var( 'name', $post_type ), null, true ),
+                    'slug' => pods_var( 'rewrite_custom_slug', $post_type, str_replace( '_', '-', pods_var( 'name', $post_type ) ), null, true ),
                     'with_front' => (boolean) pods_var( 'rewrite_with_front', $post_type, true ),
                     'feeds' => (boolean) pods_var( 'rewrite_feeds', $post_type, (boolean) pods_var( 'has_archive', $post_type, false ) ),
                     'pages' => (boolean) pods_var( 'rewrite_pages', $post_type, true )
@@ -446,7 +446,7 @@ class PodsInit {
                 // Rewrite
                 $ct_rewrite = (boolean) pods_var( 'rewrite', $taxonomy, true );
                 $ct_rewrite_array = array(
-                    'slug' => pods_var( 'rewrite_custom_slug', $taxonomy, pods_var( 'name', $taxonomy ), null, true ),
+                    'slug' => pods_var( 'rewrite_custom_slug', $taxonomy, str_replace( '_', '-', pods_var( 'name', $taxonomy ) ), null, true ),
                     'with_front' => (boolean) pods_var( 'rewrite_with_front', $taxonomy, true ),
                     'hierarchical' => (boolean) pods_var( 'rewrite_hierarchical', $taxonomy, (boolean) pods_var( 'hierarchical', $taxonomy, false ) )
                 );
@@ -463,10 +463,14 @@ class PodsInit {
                     'show_ui' => (boolean) pods_var( 'show_ui', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ),
                     'show_tagcloud' => (boolean) pods_var( 'show_tagcloud', $taxonomy, (boolean) pods_var( 'show_ui', $taxonomy, (boolean) pods_var( 'public', $taxonomy, true ) ) ),
                     'hierarchical' => (boolean) pods_var( 'hierarchical', $taxonomy, false ),
-                    //'update_count_callback' => pods_var('update_count_callback', $taxonomy),
+                    'update_count_callback' => pods_var( 'update_count_callback', $taxonomy, null, null, true ),
                     'query_var' => ( false !== (boolean) pods_var( 'query_var', $taxonomy, true ) ? pods_var( 'query_var_string', $taxonomy, pods_var( 'name', $taxonomy ), null, true ) : false ),
-                    'rewrite' => $ct_rewrite
+                    'rewrite' => $ct_rewrite,
+                    'sort' => (boolean) pods_var( 'sort', $taxonomy, false )
                 );
+
+                if ( is_array( $ct_rewrite ) && !$pods_taxonomies[ pods_var( 'name', $taxonomy ) ][ 'query_var' ] )
+                    $pods_taxonomies[ pods_var( 'name', $taxonomy ) ] = pods_var( 'query_var_string', $taxonomy, pods_var( 'name', $taxonomy ), null, true );
 
                 // Post Types
                 $ct_post_types = array();
@@ -541,7 +545,10 @@ class PodsInit {
         $flush = pods_transient_get( 'pods_flush_rewrites' );
 
         if ( 1 == $flush ) {
-            flush_rewrite_rules( false );
+            global $wp_rewrite;
+            $wp_rewrite->flush_rules();
+            $wp_rewrite->init();
+
             pods_transient_set( 'pods_flush_rewrites', 0 );
         }
     }

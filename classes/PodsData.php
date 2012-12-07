@@ -1435,7 +1435,7 @@ class PodsData {
             $mode = 'id';
             $id = pods_absint( $row );
 
-            if ( !is_numeric( $row ) ) {
+            if ( !is_numeric( $row ) || 0 === strpos( $row, '0' ) ) {
                 $mode = 'slug';
                 $id = $row;
             }

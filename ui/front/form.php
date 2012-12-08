@@ -73,8 +73,11 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
 </form>
 
 <script type="text/javascript">
-    if ( 'undefined' == typeof  pods_form_init ) {
+    if ( 'undefined' == typeof pods_form_init ) {
         var pods_form_init = true;
+
+        if ( 'undefined' == typeof ajaxurl )
+            var ajaxurl = '<?php echo admin_url( 'admin-ajax.php' ); ?>';
 
         jQuery( function ( $ ) {
             $( document ).Pods( 'validate' );

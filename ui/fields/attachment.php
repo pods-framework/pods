@@ -28,6 +28,8 @@ $field_nonce = wp_create_nonce( 'pods_upload_' . ( !is_object( $pod ) ? '0' : $p
 
 $limit_file_type = pods_var( PodsForm::$field_type . '_type', $options, 'images' );
 
+$title_editable = pods_var( PodsForm::$field_type . '_edit_title', $options, 0 );
+
 if ( 'images' == $limit_file_type )
     $limit_types = 'jpg,png,gif';
 elseif ( 'video' == $limit_file_type )
@@ -54,7 +56,7 @@ $data = array(
 $the_post_id = '';
 
 if ( is_admin() && false !== strpos( $_SERVER[ 'REQUEST_URI' ], '/post.php' ) && 0 < pods_var( 'post' ) && 'edit' == pods_var( 'action' ) )
-    $the_post_id = '&amp;post_id=' .(int) pods_var( 'post' );
+    $the_post_id = '&amp;post_id=' . (int) pods_var( 'post' );
 elseif ( is_admin() && false !== strpos( $_SERVER[ 'REQUEST_URI' ], '/post-new.php' ) && 0 < $post_ID )
     $the_post_id = '&amp;post_id=' . (int) $post_ID;
 
@@ -82,7 +84,7 @@ else
                             if ( 0 == pods_var( PodsForm::$field_type . '_edit_title', $options, 0 ) )
                                 $title = basename( $attachment->guid );
 
-                            echo $field_file->markup( $attributes, $file_limit, pods_var( PodsForm::$field_type . '_edit_title', $options, 0 ), $val, $thumb[ 0 ], $title );
+                            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title );
                         }
                         ?></ul>
 
@@ -94,7 +96,7 @@ else
 </div>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
-    <?php echo $field_file->markup( $attributes, $file_limit, pods_var( PodsForm::$field_type . '_edit_title', $options, 0 ) ); ?>
+    <?php echo $field_file->markup( $attributes, $file_limit, $title_editable ); ?>
 </script>
 
 <script type="text/javascript">
@@ -120,7 +122,7 @@ else
                 }
 
                 // remove the entry
-                $(this).remove();
+                $( this ).remove();
 
             } );
         } );

@@ -2744,10 +2744,19 @@ class PodsAPI {
 
                     if ( 'pick' != $type || 'custom-simple' != $fields[ $field ][ 'pick_object' ] ) {
                         if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
-                            if ( !empty( $values ) )
-                                $value_ids = implode( ', ', $values );
-                            else
+                            if ( !empty( $values ) ) {
+                                $values_to_impode = array();
+                                foreach ( $values as $id ) {
+                                    if ( is_array( $id ) )
+                                        $values_to_impode[] = $id[ 'id' ];
+                                    else
+                                        $values_to_impode[] = $id;
+                                }
+                                $value_ids = implode( ',', $values_to_impode );
+                            }
+                            else {
                                 $value_ids = '0';
+                            }
 
                             // Remove relationships
                             $sql = "

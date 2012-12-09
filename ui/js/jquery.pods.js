@@ -193,7 +193,6 @@
                             alert( 'Unable to process request, please try again.' );
                         }
                     } );
-
                 } )// Handle submit button and show waiting image
                 .on( 'click', 'input[type=submit], button[type=submit]', function ( e ) {
                     pods_changed = false;

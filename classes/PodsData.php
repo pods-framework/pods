@@ -1499,7 +1499,7 @@ class PodsData {
                 if ( 'id' == $mode )
                     $this->row = get_userdata( $id );
                 else
-                    $this->row = get_user_by( 'slug', $mode );
+                    $this->row = get_user_by( 'slug', $id );
 
                 if ( empty( $this->row ) )
                     $this->row = false;

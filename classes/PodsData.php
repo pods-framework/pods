@@ -1446,6 +1446,7 @@ class PodsData {
                 $row = pods_cache_get( $id, 'pods_items_' . $this->pod );
 
             $get_table_data = false;
+            $current_row_id = false;
 
             if ( false !== $row && is_array( $row ) )
                 $this->row = $row;
@@ -1477,6 +1478,7 @@ class PodsData {
                 if ( empty( $this->row ) )
                     $this->row = false;
 
+                $current_row_id = $this->row['ID'];
                 $get_table_data = true;
             }
             elseif ( 'taxonomy' == $this->pod_data[ 'type' ] ) {
@@ -1493,6 +1495,8 @@ class PodsData {
                 if ( empty( $this->row ) )
                     $this->row = false;
 
+                $current_row_id = $this->row['term_id'];
+
                 $get_table_data = true;
             }
             elseif ( 'user' == $this->pod_data[ 'type' ] ) {
@@ -1506,6 +1510,8 @@ class PodsData {
                 else
                     $this->row = get_object_vars( $this->row );
 
+                $current_row_id = $this->row['user_id'];
+
                 $get_table_data = true;
             }
             elseif ( 'comment' == $this->pod_data[ 'type' ] ) {
@@ -1515,6 +1521,8 @@ class PodsData {
 
                 if ( empty( $this->row ) )
                     $this->row = false;
+
+                $current_row_id = $this->row['comment_ID'];
 
                 $get_table_data = true;
             }
@@ -1541,10 +1549,10 @@ class PodsData {
                     $this->row = get_object_vars( (object) @current( (array) $this->row ) );
             }
 
-            if ( 'table' == $this->pod_data[ 'storage' ] && false !== $get_table_data ) {
+            if ( 'table' == $this->pod_data[ 'storage' ] && false !== $get_table_data && is_numeric($current_row_id)) {
                 $params = array(
                     'table' => $wpdb->prefix . "pods_",
-                    'where' => "`t`.`id` = {$id}",
+                    'where' => "`t`.`id` = {$current_row_id}",
                     'orderby' => "`t`.`id` DESC",
                     'page' => 1,
                     'limit' => 1,

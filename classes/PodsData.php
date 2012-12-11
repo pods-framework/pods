@@ -1510,7 +1510,7 @@ class PodsData {
                 else
                     $this->row = get_object_vars( $this->row );
 
-                $current_row_id = $this->row['user_id'];
+                $current_row_id = $this->row['ID'];
 
                 $get_table_data = true;
             }

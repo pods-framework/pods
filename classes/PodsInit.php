@@ -482,7 +482,7 @@ class PodsInit {
                 );
 
                 if ( is_array( $ct_rewrite ) && !$pods_taxonomies[ pods_var( 'name', $taxonomy ) ][ 'query_var' ] )
-                    $pods_taxonomies[ pods_var( 'name', $taxonomy ) ] = pods_var( 'query_var_string', $taxonomy, pods_var( 'name', $taxonomy ), null, true );
+                    $pods_taxonomies[ pods_var( 'name', $taxonomy ) ] ['query_var'] = pods_var( 'query_var_string', $taxonomy, pods_var( 'name', $taxonomy ), null, true );
 
                 // Post Types
                 $ct_post_types = array();

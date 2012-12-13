@@ -294,6 +294,7 @@ class PodsMeta {
             if ( 0 === strpos( $post_type, '_pods_' ) || 0 === strpos( $post_type_name, '_pods_' ) )
                 unset( $post_types[ $post_type ] );
         }
+		return $post_types;
     }
 
     /**

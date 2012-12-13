@@ -44,6 +44,8 @@ class PodsInit {
         //'2.0.0' => '2.1.0'
     );
 
+		static $upgraded;
+
     /**
      * Whether an Upgrade is needed
      *
@@ -60,6 +62,7 @@ class PodsInit {
     function __construct() {
         self::$version = get_option( 'pods_framework_version' );
         self::$version_last = get_option( 'pods_framework_version_last' );
+				self::$upgraded = get_option( 'pods_framework_upgraded_1_x' );
 
         if ( !empty( self::$version ) ) {
             self::$upgrade_needed = false;
@@ -68,8 +71,11 @@ class PodsInit {
                 /*if ( '2.1.0' == $new_version && ( !defined( 'PODS_DEVELOPER' ) || PODS_DEVELOPER ) )
                     continue;*/
 
-                if ( version_compare( $old_version, self::$version, '<=' ) && version_compare( self::$version, $new_version, '<' ) )
-                    self::$upgrade_needed = true;
+							if ( version_compare( self::$version_last, $old_version, '>=' )
+								&& version_compare( self::$version_last, $new_version, '<' )
+								&& version_compare( self::$version, $new_version, '>=' )
+								&& 1 != self::$upgraded )
+								self::$upgrade_needed = true;
             }
         }
         elseif ( 0 < strlen( get_option( 'pods_version' ) ) ) {

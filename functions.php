@@ -1967,6 +1967,8 @@ function pods_admin () {
  * @since 2.1.0
  */
 function pods_upgrade ( $version = '' ) {
+		include_once PODS_DIR . 'sql/upgrade/PodsUpgrade.php';
+
     $class_name = str_replace( '.', '_', $version );
     $class_name = "PodsUpgrade_{$class_name}";
 

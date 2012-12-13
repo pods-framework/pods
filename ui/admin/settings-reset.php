@@ -33,7 +33,7 @@
     <p><?php _e( 'This will delete all of your Pods 1.x data, it\'s only recommended if you\'ve verified your data has been properly migrated into Pods 2.x.', 'pods' ); ?></p>
 
     <p class="submit">
-        <?php $confirm = __( 'Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds 1.x, resetting it to a clean first install.', 'pods' ); ?>
+        <?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds 1.x, resetting it to a clean first install.", 'pods' ); ?>
         <input type="submit" class="button button-primary" name="cleanup_1x" value="<?php esc_attr_e( 'Delete Pods 1.x settings and data', 'pods' ); ?>" onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
     </p>
 
@@ -45,7 +45,7 @@
     <p><?php _e( '<strong>Please Note:</strong> This does not remove any items from any Post Types, Taxonomies, Media, Users, or Comments data you have added/modified.', 'pods' ); ?></p>
 
     <p class="submit">
-        <?php $confirm = __( 'Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.x, resetting it to a clean first install.', 'pods' ); ?>
+        <?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.x, resetting it to a clean first install.", 'pods' ); ?>
         <input type="submit" class="button button-primary" name="reset" value="<?php esc_attr_e( 'Reset Pods 2.x settings and data', 'pods' ); ?>" onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
     </p>
 
@@ -57,7 +57,7 @@
     <p><?php _e( '<strong>Please Note:</strong> This does not remove any items from any Post Types, Taxonomies, Media, Users, or Comments data you have added/modified.', 'pods' ); ?></p>
 
     <p class="submit">
-        <?php $confirm = __( 'Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.x with no turning back.', 'pods' ); ?>
+        <?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds 2.x with no turning back.", 'pods' ); ?>
         <input type="submit" class="button button-primary" name="reset_deactivate" value=" <?php esc_attr_e( 'Deactivate and Delete Pods 2.x data', 'pods' ); ?>" onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
     </p>
 <?php
@@ -70,7 +70,7 @@
     <p><?php _e( '<strong>Please Note:</strong> This does not remove any items from any Post Types, Taxonomies, Media, Users, or Comments data you have added/modified.', 'pods' ); ?></p>
 
     <p class="submit">
-        <?php $confirm = __( 'Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds Pods, resetting it to a clean, first install.', 'pods' ); ?>
+        <?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds Pods, resetting it to a clean, first install.", 'pods' ); ?>
         <input type="submit" class="button button-primary" name="reset" value="<?php esc_attr_e( 'Reset Pods settings and data', 'pods' ); ?>" onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
     </p>
 
@@ -82,7 +82,7 @@
     <p><?php _e( '<strong>Please Note:</strong> This does not remove any items from any Post Types, Taxonomies, Media, Users, or Comments data you have added/modified.', 'pods' ); ?></p>
 
     <p class="submit">
-        <?php $confirm = __( 'Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds with no turning back.', 'pods' ); ?>
+        <?php $confirm = __( "Are you sure you want to do this?\n\nThis is a good time to make sure you have a backup. We are deleting all of the data that surrounds with no turning back.", 'pods' ); ?>
         <input type="submit" class="button button-primary" name="reset_deactivate" value=" <?php esc_attr_e( 'Deactivate and Delete Pods data', 'pods' ); ?>" onclick="return confirm( '<?php echo esc_js( $confirm ); ?>' );" />
     </p>
 <?php

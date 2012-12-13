@@ -280,10 +280,12 @@ class PodsMeta {
         }
 
         // Remove internal Pods fields
-        foreach ( $meta_fields as $field => $meta_field ) {
-            if ( 0 === strpos( $meta_field, '_pods_' ) )
-                unset( $meta_fields[ $meta_field ] );
-        }
+		if ( $meta_fields ) {
+			foreach ( $meta_fields as $field => $meta_field ) {
+				if ( 0 === strpos( $meta_field, '_pods_' ) )
+					unset( $meta_fields[ $meta_field ] );
+			}
+		}
 
         return $meta_fields;
     }

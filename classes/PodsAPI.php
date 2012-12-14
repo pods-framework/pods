@@ -3122,7 +3122,7 @@ class PodsAPI {
         if ( !is_array( $params->order ) )
             $params->order = explode( ',', $params->order );
 
-        $pod = $this->load_pod( array( 'name' => $params->name ) );
+        $pod = $this->load_pod( array( 'name' => $params->pod ) );
 
         $params->name = $pod[ 'name' ];
 

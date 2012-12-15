@@ -2352,7 +2352,7 @@ class PodsAPI {
                     continue;
 
                 if ( true === PodsForm::permission( $fields[ $field ][ 'type' ], $field, $fields[ $field ], $fields, $pod, $params->id, $params ) ) {
-                    $value = PodsForm::default_value( pods_var_raw( $field, 'post' ), $field_data[ 'type' ], $field, $field[ 'options' ], $pod, $params->id );
+                    $value = PodsForm::default_value( pods_var_raw( $field, 'post' ), $field_data[ 'type' ], $field, $field_data[ 'options' ], $pod, $params->id );
 
                     if ( null !== $value && '' !== $value && false !== $value ) {
                         $fields[ $field ][ 'value' ] = $value;

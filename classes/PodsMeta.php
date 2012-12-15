@@ -274,16 +274,18 @@ class PodsMeta {
         // Add Pods fields
         if ( !empty( $pod ) && $object_type == $pod[ 'type' ] ) {
             foreach ( $pod[ 'fields' ] as $field => $field_data ) {
-                if ( !in_array( $field, $meta_fields ) )
+                if ( is_array( $meta_fields ) && !in_array( $field, $meta_fields ) )
                     $meta_fields[] = $field;
             }
         }
 
         // Remove internal Pods fields
-        foreach ( $meta_fields as $field => $meta_field ) {
-            if ( 0 === strpos( $meta_field, '_pods_' ) )
-                unset( $meta_fields[ $meta_field ] );
-        }
+				if ( is_array($meta_fields) ) {
+						foreach ( $meta_fields as $field => $meta_field ) {
+								if ( 0 === strpos( $meta_field, '_pods_' ) )
+										unset( $meta_fields[ $meta_field ] );
+						}
+				}
 
         return $meta_fields;
     }
@@ -294,6 +296,8 @@ class PodsMeta {
             if ( 0 === strpos( $post_type, '_pods_' ) || 0 === strpos( $post_type_name, '_pods_' ) )
                 unset( $post_types[ $post_type ] );
         }
+
+				return $post_types;
     }
 
     /**

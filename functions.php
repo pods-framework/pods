@@ -1319,6 +1319,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
 
     $last = '';
 
+		$original_value = $value;
     if ( !empty( $value ) )
         $last = array_pop( $value );
 
@@ -1337,8 +1338,8 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
     }
 
     if ( !empty( $value ) ) {
-        if ( null !== $field_index && isset( $value[ $field_index ] ) )
-            return $value[ $field_index ];
+        if ( null !== $field_index && isset( $original_value[ $field_index ] ) )
+            return $original_value[ $field_index ];
 
         if ( 1 == count( $value ) ) {
             if ( isset( $value[ 0 ] ) )

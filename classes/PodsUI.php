@@ -1370,7 +1370,8 @@ class PodsUI {
             }
         }
 
-        $fields = $this->fields[ $this->action ];
+        if ( isset( $this->fields[ $this->action ] ) )
+						$fields = $this->fields[ $this->action ];
 
         $object_fields = (array) pods_var_raw( 'object_fields', $this->pod->pod_data, array(), null, true );
 

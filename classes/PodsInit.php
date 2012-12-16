@@ -864,7 +864,15 @@ class PodsInit {
         delete_option( 'pods_framework_upgrade_2_0' );
         delete_option( 'pods_framework_upgraded_1_x' );
 
-        delete_option( 'pods_component_settings' );
+				/*
+				 * ToDo: Make sure all entries are being cleaned and do something about the
+				 * pods_framework_upgrade_{version} dynamic entries created by PodsUpgrade
+				 */
+				delete_option( 'pods_framework_upgrade_2_0_0' );
+				delete_option( 'pods_framework_upgrade_2_0_sister_ids' );
+				delete_option( 'pods_framework_version_last');
+
+				delete_option( 'pods_component_settings' );
 
         $api->cache_flush_pods();
 

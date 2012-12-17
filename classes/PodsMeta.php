@@ -280,12 +280,12 @@ class PodsMeta {
         }
 
         // Remove internal Pods fields
-				if ( is_array($meta_fields) ) {
-						foreach ( $meta_fields as $field => $meta_field ) {
-								if ( 0 === strpos( $meta_field, '_pods_' ) )
-										unset( $meta_fields[ $meta_field ] );
-						}
-				}
+        if ( is_array( $meta_fields ) ) {
+            foreach ( $meta_fields as $meta_field ) {
+                if ( 0 === strpos( $meta_field, '_pods_' ) )
+                    unset( $meta_fields[ $meta_field ] );
+            }
+        }
 
         return $meta_fields;
     }
@@ -297,7 +297,7 @@ class PodsMeta {
                 unset( $post_types[ $post_type ] );
         }
 
-				return $post_types;
+        return $post_types;
     }
 
     /**

@@ -48,13 +48,13 @@ class PodsWidgetList extends WP_Widget {
     public function update ( $new_instance, $old_instance ) {
         $instance = $old_instance;
 
-        $instance[ 'title' ] = pods_var( 'title', $new_instance, '' );
-        $instance[ 'pod_type' ] = pods_var( 'pod_type', $new_instance, '' );
-        $instance[ 'template' ] = pods_var( 'template', $new_instance, '' );
-        $instance[ 'template_custom' ] = pods_var( 'template_custom', $new_instance, '' );
-        $instance[ 'limit' ] = (int) pods_var( 'limit', $new_instance, 15, null, true );
-        $instance[ 'orderby' ] = pods_var( 'orderby', $new_instance, '' );
-        $instance[ 'where' ] = pods_var( 'where', $new_instance, '' );
+        $instance[ 'title' ] = pods_var_raw( 'title', $new_instance, '' );
+        $instance[ 'pod_type' ] = pods_var_raw( 'pod_type', $new_instance, '' );
+        $instance[ 'template' ] = pods_var_raw( 'template', $new_instance, '' );
+        $instance[ 'template_custom' ] = pods_var_raw( 'template_custom', $new_instance, '' );
+        $instance[ 'limit' ] = (int) pods_var_raw( 'limit', $new_instance, 15, null, true );
+        $instance[ 'orderby' ] = pods_var_raw( 'orderby', $new_instance, '' );
+        $instance[ 'where' ] = pods_var_raw( 'where', $new_instance, '' );
 
         return $instance;
     }

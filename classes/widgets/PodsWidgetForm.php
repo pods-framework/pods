@@ -35,12 +35,12 @@ class PodsWidgetForm extends WP_Widget {
 
     public function update ( $new_instance, $old_instance ) {
         $instance = $old_instance;
-        $instance[ 'title' ] = pods_var( 'title', $new_instance, '' );
-        $instance[ 'pod_type' ] = pods_var( 'pod_type', $new_instance, '' );
-        $instance[ 'slug' ] = pods_var( 'slug', $new_instance, '' );
-        $instance[ 'fields' ] = pods_var( 'fields', $new_instance, '' );
-        $instance[ 'label' ] = pods_var( 'label', $new_instance, __( 'Submit', 'pods' ), null, true );
-        $instance[ 'thank_you' ] = pods_var( 'thank_you', $new_instance, '' );
+        $instance[ 'title' ] = pods_var_raw( 'title', $new_instance, '' );
+        $instance[ 'pod_type' ] = pods_var_raw( 'pod_type', $new_instance, '' );
+        $instance[ 'slug' ] = pods_var_raw( 'slug', $new_instance, '' );
+        $instance[ 'fields' ] = pods_var_raw( 'fields', $new_instance, '' );
+        $instance[ 'label' ] = pods_var_raw( 'label', $new_instance, __( 'Submit', 'pods' ), null, true );
+        $instance[ 'thank_you' ] = pods_var_raw( 'thank_you', $new_instance, '' );
 
         return $instance;
     }

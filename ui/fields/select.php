@@ -1,7 +1,6 @@
 <?php
 $attributes = array();
 $attributes[ 'tabindex' ] = 2;
-$attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
 
 $pick_limit = (int) pods_var( 'pick_limit', $options, 0 );
 
@@ -14,6 +13,8 @@ if ( !is_array( $options[ 'data' ] ) && false !== $options[ 'data' ] && 0 < strl
     $options[ 'data' ] = implode( ',', $options[ 'data' ] );
 else
     $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true );
+
+$attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
 ?>
 <select<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?>>
     <?php

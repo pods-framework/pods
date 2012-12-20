@@ -200,7 +200,11 @@
 }
 #pods-wizard-box #pods-wizard-main .stuffbox .inside div.pods-wizard-content h3 {
   margin: 1.33em 20px;
-  font-size: 1.33em;
+  font-size: 1.35em;
+}
+#pods-wizard-box #pods-wizard-main .stuffbox .inside div.pods-wizard-content h4 {
+  margin: 1.33em 20px;
+  font-size: 1.2em;
 }
 #pods-wizard-box #pods-wizard-main .stuffbox .inside div.pods-wizard-content ul.normal {
   margin: 15px 20px;

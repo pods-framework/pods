@@ -1618,7 +1618,7 @@ class PodsAPI {
         $old_id = $old_name = $old_type = $old_definition = $old_simple = $old_options = $old_sister_id = null;
 
         if ( !empty( $field ) ) {
-            $old_id = $field[ 'id' ];
+            $old_id = pods_var( 'id', $field );
             $old_name = pods_clean_name( $field[ 'name' ] );
             $old_type = $field[ 'type' ];
             $old_options = $field[ 'options' ];
@@ -1633,9 +1633,11 @@ class PodsAPI {
             if ( $old_name != $field[ 'name' ] && false !== $this->field_exists( $params ) )
                 return pods_error( sprintf( __( 'Field %s already exists, you cannot rename %s to that', 'pods' ), $field[ 'name' ], $old_name ), $this );
 
-            if ( ( $id_required || !empty( $params->id ) ) && $old_id != $params->id ) {
+            if ( ( $id_required || !empty( $params->id ) ) && ( empty( $old_id ) || $old_id != $params->id ) )
                 return pods_error( sprintf( __( 'Field %s already exists', 'pods' ), $field[ 'name' ] ), $this );
-            }
+
+            if ( empty( $params->id ) )
+                $params->id = $old_id;
 
             if ( !in_array( $old_type, $tableless_field_types ) || $old_simple )
                 $old_definition = '`' . $old_name . '` ' . $this->get_field_definition( $old_type, $old_options );
@@ -4073,7 +4075,7 @@ class PodsAPI {
             if ( isset( $params->pod_data ) )
                 $pod = $params->pod_data;
             else {
-                    $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id ) );
+                $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id ) );
 
                 if ( false === $pod )
                     return pods_error( __( 'Pod not found', 'pods' ), $this );
@@ -4087,7 +4089,7 @@ class PodsAPI {
 
             $params->name = pods_clean_name( $params->name );
 
-            if ( isset( $pod[ 'fields' ][ $params->name ] ) )
+            if ( isset( $pod[ 'fields' ][ $params->name ] ) && isset( $pod[ 'fields' ][ $params->name ][ 'id' ] ) )
                 return $pod[ 'fields' ][ $params->name ];
 
             $field = get_posts( array(

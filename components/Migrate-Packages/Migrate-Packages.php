@@ -347,6 +347,12 @@ class Pods_Migrate_Packages extends PodsComponent {
                 foreach ( $pod[ 'fields' ] as $k => $field ) {
                     if ( isset( $field[ 'id' ] ) )
                         unset( $pod[ 'fields' ][ $k ][ 'id' ] );
+
+                    if ( isset( $field[ 'pod_id' ] ) )
+                        unset( $pod[ 'fields' ][ $k ][ 'pod_id' ] );
+
+                    if ( isset( $field[ 'pod' ] ) )
+                        unset( $pod[ 'fields' ][ $k ][ 'pod' ] );
                 }
 
                 $api->save_pod( $pod );

@@ -1886,32 +1886,33 @@ class PodsAPI {
                 $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
         }
 
-        if ( $field[ 'type' ] != $old_type && in_array( $old_type, $tableless_field_types ) && true === $db ) {
-            $wpdb->query( $wpdb->prepare( "DELETE pm FROM {$wpdb->postmeta} AS pm
-                LEFT JOIN {$wpdb->posts} AS p
-                    ON p.post_type = '_pods_field' AND p.ID = pm.post_id
-                WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_id' AND pm.meta_value = %d", $params->id ) );
-
-            if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS )
-                pods_query( "DELETE FROM @wp_podsrel WHERE `field_id` = {$params->id}", false );
-
+        if ( $field[ 'type' ] != $old_type && in_array( $old_type, $tableless_field_types ) ) {
             delete_post_meta( $old_sister_id, 'sister_id' );
 
-            if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
-                pods_query( "
-                        UPDATE `@wp_podsrel`
-                        SET `related_field_id` = 0
-                        WHERE `field_id` = %d
-                    ", array(
-                        $old_sister_id
-                    )
-                );
+            if ( true === $db ) {
+                $wpdb->query( $wpdb->prepare( "DELETE pm FROM {$wpdb->postmeta} AS pm
+                    LEFT JOIN {$wpdb->posts} AS p
+                        ON p.post_type = '_pods_field' AND p.ID = pm.post_id
+                    WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_id' AND pm.meta_value = %d", $params->id ) );
+
+                if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
+                    pods_query( "DELETE FROM @wp_podsrel WHERE `field_id` = {$params->id}", false );
+
+                    pods_query( "
+                            UPDATE `@wp_podsrel`
+                            SET `related_field_id` = 0
+                            WHERE `field_id` = %d
+                        ", array(
+                            $old_sister_id
+                        )
+                    );
+                }
             }
         }
-        elseif ( 0 < $sister_id && true === $db ) {
+        elseif ( 0 < $sister_id ) {
             update_post_meta( $sister_id, 'sister_id', $params->id );
 
-            if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
+            if ( true === $db && ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) ) {
                 pods_query( "
                         UPDATE `@wp_podsrel`
                         SET `related_field_id` = %d
@@ -1924,10 +1925,10 @@ class PodsAPI {
                 );
             }
         }
-        elseif ( 0 < $old_sister_id && true === $db ) {
+        elseif ( 0 < $old_sister_id ) {
             delete_post_meta( $old_sister_id, 'sister_id' );
 
-            if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
+            if ( true === $db && ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) ) {
                 pods_query( "
                         UPDATE `@wp_podsrel`
                         SET `related_field_id` = 0

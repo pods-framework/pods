@@ -46,7 +46,7 @@
                         valid_field = false;
 
                     if ( !valid_field ) {
-                        if ( -1 == pods_form_field_names.indexOf( $el.prop( 'name' ) ) ) {
+                        if ( -1 == jQuery.inArray( $el.prop( 'name' ), pods_form_field_names ) ) {
                             $el.closest( '.pods-field-input' ).find( '.pods-validate-error-message' ).remove();
                             $el.closest( '.pods-field-input' ).append( '<div class="pods-validate-error-message">' + label.replace( /(<([^>]+)>)/ig, '' ) + ' is required.</div>' );
                             $el.addClass( 'pods-validate-error' );
@@ -58,8 +58,8 @@
                         $el.closest( '.pods-field-input' ).find( '.pods-validate-error-message' ).remove();
                         $el.removeClass( 'pods-validate-error' );
 
-                        if ( 0 <= pods_form_field_names.indexOf( $el.prop( 'name' ) ) )
-                            pods_form_field_names.splice( pods_form_field_names.indexOf( $el.prop( 'name' ) ), 1 );
+                        if ( -1 < jQuery.inArray( $el.prop( 'name' ), pods_form_field_names ) )
+                            pods_form_field_names.splice( jQuery.inArray( $el.prop( 'name' ), pods_form_field_names ), 1 );
                     }
                 } );
             },
@@ -342,7 +342,7 @@
                 var sluggables = [];
 
                 $( '.pods-slugged[data-sluggable], .pods-slugged-lower[data-sluggable]' ).each( function () {
-                    if ( -1 == sluggables.indexOf( $( this ).data( 'sluggable' ) ) )
+                    if ( -1 == jQuery.inArray( $( this ).data( 'sluggable' ), sluggables ) )
                         sluggables.push( $( this ).data( 'sluggable' ) );
                 } );
 
@@ -1337,7 +1337,7 @@
                         var sluggables = [];
 
                         $( 'tr#row-' + row_counter + ' .pods-slugged[data-sluggable], tr#row-' + row_counter + ' .pods-slugged-lower[data-sluggable]' ).each( function () {
-                            if ( -1 == sluggables.indexOf( $( this ).data( 'sluggable' ) ) )
+                            if ( -1 == jQuery.inArray( $( this ).data( 'sluggable' ), sluggables ) )
                                 sluggables.push( $( this ).data( 'sluggable' ) );
                         } );
 

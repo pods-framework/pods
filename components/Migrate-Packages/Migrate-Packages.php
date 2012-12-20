@@ -248,7 +248,7 @@ class Pods_Migrate_Packages extends PodsComponent {
 
                                 $new_field[ 'options' ][ 'pick_filter' ] = $field[ 'pick_filter' ];
                                 $new_field[ 'options' ][ 'pick_orderby' ] = $field[ 'pick_orderby' ];
-                                $new_field[ 'options' ][ 'pick_display' ] = '{@name}';
+                                $new_field[ 'options' ][ 'pick_display' ] = '';
                                 $new_field[ 'options' ][ 'pick_size' ] = 'medium';
 
                                 if ( 1 == $multiple ) {

@@ -901,7 +901,8 @@ class PodsInit {
 
         if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
             $sql = "
-                DELETE `rel` FROM `@wp_podsrel` AS `rel`
+                DELETE `rel`
+                FROM `@wp_podsrel` AS `rel`
                 LEFT JOIN `{$wpdb->posts}` AS `p`
                     ON
                         `p`.`post_type` = '_pods_field'
@@ -927,7 +928,6 @@ class PodsInit {
                 LEFT JOIN `{$wpdb->posts}` AS `p`
                     ON
                         `p`.`post_type` = '_pods_field'
-                        AND ( `p`.`ID` = `rel`.`field_id` OR `p`.`ID` = `rel`.`related_field_id` )
                 LEFT JOIN `{$wpdb->postmeta}` AS `pm`
                     ON
                         `pm`.`post_id` = `p`.`ID`
@@ -950,7 +950,6 @@ class PodsInit {
                 LEFT JOIN `{$wpdb->posts}` AS `p`
                     ON
                         `p`.`post_type` = '_pods_field'
-                        AND ( `p`.`ID` = `rel`.`field_id` OR `p`.`ID` = `rel`.`related_field_id` )
                 LEFT JOIN `{$wpdb->postmeta}` AS `pm`
                     ON
                         `pm`.`post_id` = `p`.`ID`
@@ -973,7 +972,6 @@ class PodsInit {
                 LEFT JOIN `{$wpdb->posts}` AS `p`
                     ON
                         `p`.`post_type` = '_pods_field'
-                        AND ( `p`.`ID` = `rel`.`field_id` OR `p`.`ID` = `rel`.`related_field_id` )
                 LEFT JOIN `{$wpdb->postmeta}` AS `pm`
                     ON
                         `pm`.`post_id` = `p`.`ID`

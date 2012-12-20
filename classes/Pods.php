@@ -1374,6 +1374,28 @@ class Pods {
     }
 
     /**
+     * Reset Pod
+     *
+     * @see PodsAPI::reset_pod
+     *
+     * @return bool Whether the Pod was successfully reset
+     *
+     * @since 2.1.1
+     */
+    public function reset_pod () {
+        $params = array( 'id' => $this->pod_id );
+
+        $this->data->id = null;
+        $this->data->row = array();
+        $this->data->data = array();
+
+        $this->data->total = 0;
+        $this->data->total_found = 0;
+
+        return $this->api->reset_pod( $params );
+    }
+
+    /**
      * Duplicate an item
      *
      * @see PodsAPI::duplicate_pod_item

@@ -2511,7 +2511,7 @@ class PodsAPI {
                                     if ( !isset( $custom_label[ 1 ] ) )
                                         $custom_label[ 1 ] = $custom_label[ 0 ];
 
-                                    $custom_values[ $custom_label[ 0 ] ] = $custom_label[ 1 ];
+                                    $custom_values[ pods_sanitize( $custom_label[ 0 ] ) ] = $custom_label[ 1 ];
                                 }
                             }
                         }

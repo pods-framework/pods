@@ -183,12 +183,12 @@ else
 
             if ( "Error: " == resp.response.substr( 0, 7 ) ) {
                 response = response.substr( 7 );
-                console.log( response );
+                if ( window.console ) console.log( response );
                 file_div.append( response );
             }
             else if ( "<e>" == resp.response.substr( 0, 3 ) ) {
                 response = response.substr( 3 );
-                console.log( response );
+                if ( window.console ) console.log( response );
                 file_div.append( response );
             }
             else {
@@ -199,8 +199,8 @@ else
                 }
 
                 if ( 'object' != typeof json || jQuery.isEmptyObject( json ) ) {
-                    console.log( response );
-                    console.log( json );
+                    if ( window.console ) console.log( response );
+                    if ( window.console ) console.log( json );
                     file_div.append( '<?php echo esc_js( __( 'There was an issue with the file upload, please try again.', 'pods' ) ); ?>' );
                     return;
                 }

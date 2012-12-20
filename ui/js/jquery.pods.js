@@ -176,7 +176,7 @@
                                 }
 
                                 alert( 'Error: ' + err_msg );
-                                console.log( err_msg );
+                                if ( window.console ) console.log( err_msg );
                             }
                         },
                         error : function () {
@@ -264,7 +264,7 @@
                                 $submitbutton.parent().find( '.waiting' ).fadeOut();
 
                                 alert( 'Error: ' + err_msg );
-                                console.log( err_msg );
+                                if ( window.console ) console.log( err_msg );
                             }
                         },
                         error : function () {

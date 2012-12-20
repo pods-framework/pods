@@ -174,7 +174,7 @@
 
 <script type="text/javascript">
     var pods_admin_submit_callback = function ( id ) {
-        console.log( id );
+        if ( window.console ) console.log( id );
 
         return true;
         //document.location = 'admin.php?page=pods-component-<?php echo esc_js( $component ); ?>&do=create';

@@ -48,7 +48,7 @@
                         else {
                             $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-warning' );
                             $row.find( 'td span.pods-wizard-info' ).html( d.replace( '<e>', '' ).replace( '</e>', '' ) );
-                            console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
+                            if ( window.console ) console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
 
                             // Run next
                             return methods[ 'prepare' ]();
@@ -115,7 +115,7 @@
                             else if ( ( d.length - 2 ) == d.indexOf( '-2' ) ) {
                                 $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-warning' );
                                 $row.find( 'td span.pods-wizard-info' ).html( d.replace( '<e>', '' ).replace( '</e>', '' ) );
-                                console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
+                                if ( window.console ) console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
 
                                 // Run next
                                 return methods[ 'migrate' ]( postdata, $row );
@@ -123,7 +123,7 @@
                             else if ( ( d.length - 1 ) == d.indexOf( '1' ) ) {
                                 $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-warning' );
                                 $row.find( 'td span.pods-wizard-info' ).html( d.replace( '<e>', '' ).replace( '</e>', '' ) );
-                                console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
+																if ( window.console ) console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
 
                                 // Run next
                                 return methods[ 'migrate' ]();
@@ -131,18 +131,18 @@
                             else {
                                 $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-error' );
                                 $row.find( 'td span.pods-wizard-info' ).html( d.replace( '<e>', '' ).replace( '</e>', '' ) );
-                                console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
+																if ( window.console ) console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
                             }
                         }
                         else if ( -1 < d.indexOf( 'Database Error;' ) ) {
                             $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-error' );
                             $row.find( 'td span.pods-wizard-info' ).html( d.replace( '<e>', '' ).replace( '</e>', '' ) );
-                            console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
+														if ( window.console ) console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
                         }
                         else {
                             $row.removeClass( 'pods-wizard-table-active' ).addClass( 'pods-wizard-table-warning' );
                             $row.find( 'td span.pods-wizard-info' ).html( d.replace( '<e>', '' ).replace( '</e>', '' ) );
-                            console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
+														if ( window.console ) console.log( d.replace( '<e>', '' ).replace( '</e>', '' ) );
 
                             // Run next
                             return methods[ 'migrate' ]();

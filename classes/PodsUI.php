@@ -781,6 +781,19 @@ class PodsUI {
         }
         $options->validate( 'sql', $this->sql, 'array_merge' );
 
+        $options->validate( 'orderby_dir', strtoupper( pods_var_raw( 'orderby_dir' . $options[ 'num' ], 'get', $this->orderby_dir, null, true ) ), 'in_array', array( 'ASC', 'DESC' ) );
+
+        $orderby = pods_var_raw( 'orderby' . $options->num, 'get', $this->orderby, null, true );
+
+        if ( !empty( $orderby ) ) {
+            $orderby = array(
+                'default' => $orderby
+            );
+        }
+        else
+            $orderby = array();
+
+        $options->validate( 'orderby', $orderby, 'array_merge' );
         $options->validate( 'sortable', $this->sortable, 'boolean' );
 
         $options->validate( 'params', $this->params, 'array' );
@@ -872,31 +885,6 @@ class PodsUI {
         }
 
         $options = $options->dump();
-
-        // Handle Sorting
-        $orderby_dir = pods_var_raw( 'orderby_dir' . $options[ 'num' ], 'get', $this->orderby_dir, null, true );
-
-        if ( 'asc' == strtolower( $orderby_dir ) )
-            $orderby_dir = 'ASC';
-        else
-            $orderby_dir = 'DESC';
-
-        $options[ 'orderby_dir' ] = $orderby_dir;
-
-        $orderby = pods_var_raw( 'orderby' . $options[ 'num' ], 'get', $this->orderby, null, true );
-
-        if ( !empty( $orderby ) ) {
-            $orderby = array(
-                'default' => $orderby
-            );
-
-            if ( !empty( $options[ 'orderby' ] ) )
-                $orderby = array_merge( $orderby, (array) $options[ 'orderby' ] );
-        }
-        else
-            $orderby = (array) $options[ 'orderby' ];
-
-        $options[ 'orderby' ] = $orderby;
 
         $options = $this->do_hook( 'setup_options', $options );
 

@@ -2059,7 +2059,7 @@ class PodsData {
         $joins[ $pod . '_' . $depth . '_' . $traverse[ 'id' ] ] = $the_join;
 
         if ( ( $depth + 1 ) < count( $fields ) && null !== $table_info[ 'pod' ] && false !== $table_info[ 'recurse' ] )
-            $joins = array_merge( $joins, $this->traverse_recurse( $table_info[ 'pod' ], $fields, $field_joined, ( $depth + 1 ), $joined_id, $params ) );
+            $joins = array_merge( $joins, $this->traverse_recurse( $table_info[ 'pod' ][ 'name' ], $fields, $field_joined, ( $depth + 1 ), $joined_id, $params ) );
 
         return $joins;
     }

@@ -5317,10 +5317,8 @@ class PodsAPI {
                 //$info[ 'select' ] .= ', `d`.*';
             }
 
-            if ( !empty( $pod ) ) {
-                $info[ 'pod' ] = $pod[ 'name' ];
+            if ( !empty( $info[ 'pod' ] ) && is_array( $info[ 'pod' ] ) )
                 $info[ 'recurse' ] = true;
-            }
 
             $info[ 'type' ] = $object_type;
 

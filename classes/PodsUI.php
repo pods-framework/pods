@@ -1844,11 +1844,13 @@ class PodsUI {
         if ( isset( $this->actions_custom[ 'manage' ] ) && is_callable( $this->actions_custom[ 'manage' ] ) )
             return call_user_func_array( $this->actions_custom[ 'manage' ], array( $reorder, &$this ) );
 
-        if ( !empty( $this->action_bulk ) && !empty( $this->actions_bulk ) && isset( $this->actions_bulk[ $this->action_bulk ] ) ) {
+        if ( !empty( $this->action_bulk ) && !empty( $this->actions_bulk ) && isset( $this->actions_bulk[ $this->action_bulk ] ) && !in_array( $this->action_bulk, $this->actions_disabled ) ) {
             if ( is_callable( $this->actions_bulk[ $this->action_bulk ] ) )
                 return call_user_func_array( $this->actions_bulk[ $this->action_bulk ], array( &$this ) );
             elseif ( isset( $this->actions_bulk[ $this->action_bulk ][ 'callback' ] ) && is_callable( $this->actions_bulk[ $this->action_bulk ][ 'callback' ] ) )
                 return call_user_func_array( $this->actions_bulk[ $this->action_bulk ][ 'callback' ], array( &$this ) );
+            elseif ( 'delete' == $this->action_bulk )
+                return $this->delete_bulk();
         }
 
         $this->screen_meta();

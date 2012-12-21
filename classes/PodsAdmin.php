@@ -419,7 +419,7 @@ class PodsAdmin {
         );
 
         if ( !in_array( 'delete', $ui[ 'actions_disabled' ] ) ) {
-            $options[ 'actions_bulk' ] = array(
+            $ui[ 'actions_bulk' ] = array(
                 'delete' => array(
                     'label' => __( 'Delete', 'pods' )
                     // callback not needed, Pods has this built-in for delete

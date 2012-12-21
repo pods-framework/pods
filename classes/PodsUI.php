@@ -1621,7 +1621,7 @@ class PodsUI {
             }
 
             if ( $success )
-                pods_redirect( pods_var_update( array( 'deleted_bulk' => 1 ), array( 'page', 'lang', 'action', 'id' ) ) );
+                pods_redirect( pods_var_update( array( 'action_bulk' => 'delete', 'deleted_bulk' => 1 ), array( 'page', 'lang', 'action', 'id' ) ) );
             else
                 $this->error( __( "<strong>Error:</strong> {$this->item} has not been deleted.", 'pods' ) );
         }
@@ -2591,7 +2591,7 @@ class PodsUI {
                             <?php
                                 if ( !empty( $this->actions_bulk ) ) {
             ?>
-                                <th scope="row" class="check-column"><input type="checkbox" name="pods_bulk<?php echo $this->num; ?>[]" value="<?php echo $row[$this->sql['field_id']]; ?>"></th>
+                                <th scope="row" class="check-column"><input type="checkbox" name="action_bulk_ids<?php echo $this->num; ?>[]" value="<?php echo $row[$this->sql['field_id']]; ?>"></th>
             <?php
                                 }
 

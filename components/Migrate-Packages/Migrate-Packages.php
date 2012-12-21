@@ -84,7 +84,7 @@ class Pods_Migrate_Packages extends PodsComponent {
             $params = get_object_vars( $params );
             foreach ( $params as $k => $v ) {
                 if ( is_array( $v ) )
-                    $params[ $k ] = array_keys( $v );
+                    $params[ $k ] = array_keys( array_filter( $v ) );
             }
 
             $package = $this->export( $params );

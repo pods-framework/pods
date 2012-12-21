@@ -65,6 +65,7 @@ class PodsUI {
         'limit',
         'action',
         'action_bulk',
+        'action_bulk_ids',
         'view',
         'export',
         'export_type',
@@ -317,6 +318,11 @@ class PodsUI {
      * @var string
      */
     public $action_bulk = false;
+
+    /**
+     * @var array
+     */
+    public $bulk = array();
 
     /**
      * @var array
@@ -749,6 +755,7 @@ class PodsUI {
         $options->validate( 'action', pods_var( 'action' . $options->num, 'get', $this->action, null, true ), 'in_array', $this->actions );
         $options->validate( 'actions_bulk', $this->actions_bulk, 'array_merge' );
         $options->validate( 'action_bulk', pods_var( 'action_bulk' . $options->num, 'get', $this->action_bulk, null, true ), 'isset', $this->actions_bulk );
+        $options->validate( 'bulk', pods_var( 'action_bulk_ids' . $options->num, 'get', array(), null, true ), 'array_merge', $this->bulk );
 
         $options->validate( 'views', $this->views, 'array' );
         $options->validate( 'view', pods_var( 'view' . $options->num, 'get', $this->view, null, true ), 'isset', $this->views );
@@ -783,6 +790,7 @@ class PodsUI {
             $orderby_dir = 'ASC';
         else
             $orderby_dir = 'DESC';
+
         $options->orderby_dir = $orderby_dir;
 
         $orderby = pods_var_raw( 'orderby', 'get', $this->orderby, null, true );
@@ -872,6 +880,12 @@ class PodsUI {
         $options->validate( 'actions_disabled', $this->actions_disabled, 'array' );
         $options->validate( 'actions_hidden', $this->actions_hidden, 'array_merge' );
         $options->validate( 'actions_custom', $this->actions_custom, 'array_merge' );
+
+        if ( !in_array( 'delete', $options->actions_disabled ) && !isset( $options->actions_bulk[ 'delete' ] ) ) {
+            $options->actions_bulk[ 'delete' ] = array(
+                'label' => __( 'Delete', 'pods' )
+            );
+        }
 
         $options->validate( 'icon', $this->icon );
         $options->validate( 'css', $this->css );
@@ -1584,7 +1598,63 @@ class PodsUI {
             $this->message( __( "<strong>Deleted:</strong> {$this->item} has been deleted.", 'pods' ) );
         else
             $this->error( __( "<strong>Error:</strong> {$this->item} has not been deleted.", 'pods' ) );
+
         $this->do_hook( 'post_delete', $id );
+    }
+
+    /**
+     * @param null $id
+     *
+     * @return bool|mixed
+     */
+    public function delete_bulk () {
+        $this->do_hook( 'pre_delete_bulk' );
+
+        if ( 1 != pods_var( 'deleted_bulk', 'get', 0 ) ) {
+            $ids = $this->bulk;
+
+            $success = false;
+
+            if ( !empty( $ids ) ) {
+                foreach ( $ids as $id ) {
+                    $id = pods_absint( $id );
+
+                    if ( empty( $id ) )
+                        continue;
+
+                    if ( isset( $this->actions_custom[ 'delete' ] ) && is_callable( $this->actions_custom[ 'delete' ] ) ) {
+                        $check = call_user_func_array( $this->actions_custom[ 'delete' ], array( $id, &$this ) );
+
+                        if ( false !== $check )
+                            $check = true;
+                    }
+                    elseif ( is_object( $this->pod ) )
+                        $check = $this->pod->delete( $id );
+                    else
+                        $check = $this->pods_data->delete( $this->table, array( $this->data->field_id => $id ) );
+
+                    if ( $check )
+                        $success = true;
+                }
+            }
+
+            if ( $success )
+                pods_redirect( pods_var_update( array( 'deleted_bulk' => 1 ), array( 'page', 'lang', 'action', 'id' ) ) );
+            else
+                $this->error( __( "<strong>Error:</strong> {$this->item} has not been deleted.", 'pods' ) );
+        }
+        else {
+            $this->message( __( "<strong>Deleted:</strong> {$this->items} have been deleted.", 'pods' ) );
+
+            unset( $_GET[ 'deleted_bulk' ] );
+        }
+
+        $this->action_bulk = false;
+        unset( $_GET[ 'action_bulk' ] );
+
+        $this->do_hook( 'post_delete_bulk' );
+
+        $this->manage();
     }
 
     /**

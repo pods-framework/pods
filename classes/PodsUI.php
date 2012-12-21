@@ -783,31 +783,6 @@ class PodsUI {
 
         $options->validate( 'sortable', $this->sortable, 'boolean' );
 
-        // Handle Sorting
-        $orderby_dir = pods_var_raw( 'orderby_dir' . $options->num, 'get', $this->orderby_dir, null, true );
-
-        if ( 'asc' == strtolower( $orderby_dir ) )
-            $orderby_dir = 'ASC';
-        else
-            $orderby_dir = 'DESC';
-
-        $options->orderby_dir = $orderby_dir;
-
-        $orderby = pods_var_raw( 'orderby', 'get', $this->orderby, null, true );
-
-        if ( !empty( $orderby ) ) {
-            $orderby = array(
-                'default' => $orderby
-            );
-
-            if ( !empty( $options->orderby ) )
-                $orderby = array_merge( $orderby, (array) $options->orderby );
-        }
-        else
-            $orderby = (array) $options->orderby;
-
-        $options->orderby = $orderby;
-
         $options->validate( 'params', $this->params, 'array' );
 
         $item = __( 'Item', 'pods' );
@@ -881,12 +856,6 @@ class PodsUI {
         $options->validate( 'actions_hidden', $this->actions_hidden, 'array_merge' );
         $options->validate( 'actions_custom', $this->actions_custom, 'array_merge' );
 
-        if ( !in_array( 'delete', $options->actions_disabled ) && !isset( $options->actions_bulk[ 'delete' ] ) ) {
-            $options->actions_bulk[ 'delete' ] = array(
-                'label' => __( 'Delete', 'pods' )
-            );
-        }
-
         $options->validate( 'icon', $this->icon );
         $options->validate( 'css', $this->css );
         $options->validate( 'wpcss', $this->wpcss, 'boolean' );
@@ -903,6 +872,31 @@ class PodsUI {
         }
 
         $options = $options->dump();
+
+        // Handle Sorting
+        $orderby_dir = pods_var_raw( 'orderby_dir' . $options[ 'num' ], 'get', $this->orderby_dir, null, true );
+
+        if ( 'asc' == strtolower( $orderby_dir ) )
+            $orderby_dir = 'ASC';
+        else
+            $orderby_dir = 'DESC';
+
+        $options[ 'orderby_dir' ] = $orderby_dir;
+
+        $orderby = pods_var_raw( 'orderby' . $options[ 'num' ], 'get', $this->orderby, null, true );
+
+        if ( !empty( $orderby ) ) {
+            $orderby = array(
+                'default' => $orderby
+            );
+
+            if ( !empty( $options[ 'orderby' ] ) )
+                $orderby = array_merge( $orderby, (array) $options[ 'orderby' ] );
+        }
+        else
+            $orderby = (array) $options[ 'orderby' ];
+
+        $options[ 'orderby' ] = $orderby;
 
         $options = $this->do_hook( 'setup_options', $options );
 

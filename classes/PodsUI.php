@@ -1828,9 +1828,9 @@ class PodsUI {
 
         if ( !empty( $this->action_bulk ) && !empty( $this->actions_bulk ) && isset( $this->actions_bulk[ $this->action_bulk ] ) && !in_array( $this->action_bulk, $this->actions_disabled ) ) {
             if ( is_callable( $this->actions_bulk[ $this->action_bulk ] ) )
-                return call_user_func_array( $this->actions_bulk[ $this->action_bulk ], array( &$this ) );
+                return call_user_func_array( $this->actions_bulk[ $this->action_bulk ], array( &$this, $this->bulk ) );
             elseif ( isset( $this->actions_bulk[ $this->action_bulk ][ 'callback' ] ) && is_callable( $this->actions_bulk[ $this->action_bulk ][ 'callback' ] ) )
-                return call_user_func_array( $this->actions_bulk[ $this->action_bulk ][ 'callback' ], array( &$this ) );
+                return call_user_func_array( $this->actions_bulk[ $this->action_bulk ][ 'callback' ], array( &$this, $this->bulk ) );
             elseif ( 'delete' == $this->action_bulk )
                 return $this->delete_bulk();
         }

@@ -781,32 +781,20 @@ class PodsUI {
         }
         $options->validate( 'sql', $this->sql, 'array_merge' );
 
-        $options->validate( 'sortable', $this->sortable, 'boolean' );
+        $options->validate( 'orderby_dir', strtoupper( pods_var_raw( 'orderby_dir' . $options[ 'num' ], 'get', $this->orderby_dir, null, true ) ), 'in_array', array( 'ASC', 'DESC' ) );
 
-        // Handle Sorting
-        $orderby_dir = pods_var_raw( 'orderby_dir' . $options->num, 'get', $this->orderby_dir, null, true );
-
-        if ( 'asc' == strtolower( $orderby_dir ) )
-            $orderby_dir = 'ASC';
-        else
-            $orderby_dir = 'DESC';
-
-        $options->orderby_dir = $orderby_dir;
-
-        $orderby = pods_var_raw( 'orderby', 'get', $this->orderby, null, true );
+        $orderby = pods_var_raw( 'orderby' . $options->num, 'get', $this->orderby, null, true );
 
         if ( !empty( $orderby ) ) {
             $orderby = array(
                 'default' => $orderby
             );
-
-            if ( !empty( $options->orderby ) )
-                $orderby = array_merge( $orderby, (array) $options->orderby );
         }
         else
-            $orderby = (array) $options->orderby;
+            $orderby = array();
 
-        $options->orderby = $orderby;
+        $options->validate( 'orderby', $orderby, 'array_merge' );
+        $options->validate( 'sortable', $this->sortable, 'boolean' );
 
         $options->validate( 'params', $this->params, 'array' );
 
@@ -880,12 +868,6 @@ class PodsUI {
         $options->validate( 'actions_disabled', $this->actions_disabled, 'array' );
         $options->validate( 'actions_hidden', $this->actions_hidden, 'array_merge' );
         $options->validate( 'actions_custom', $this->actions_custom, 'array_merge' );
-
-        if ( !in_array( 'delete', $options->actions_disabled ) && !isset( $options->actions_bulk[ 'delete' ] ) ) {
-            $options->actions_bulk[ 'delete' ] = array(
-                'label' => __( 'Delete', 'pods' )
-            );
-        }
 
         $options->validate( 'icon', $this->icon );
         $options->validate( 'css', $this->css );
@@ -1639,7 +1621,7 @@ class PodsUI {
             }
 
             if ( $success )
-                pods_redirect( pods_var_update( array( 'deleted_bulk' => 1 ), array( 'page', 'lang', 'action', 'id' ) ) );
+                pods_redirect( pods_var_update( array( 'action_bulk' => 'delete', 'deleted_bulk' => 1 ), array( 'page', 'lang', 'action', 'id' ) ) );
             else
                 $this->error( __( "<strong>Error:</strong> {$this->item} has not been deleted.", 'pods' ) );
         }
@@ -2609,7 +2591,7 @@ class PodsUI {
                             <?php
                                 if ( !empty( $this->actions_bulk ) ) {
             ?>
-                                <th scope="row" class="check-column"><input type="checkbox" name="pods_bulk<?php echo $this->num; ?>[]" value="<?php echo $row[$this->sql['field_id']]; ?>"></th>
+                                <th scope="row" class="check-column"><input type="checkbox" name="action_bulk_ids<?php echo $this->num; ?>[]" value="<?php echo $row[$this->sql['field_id']]; ?>"></th>
             <?php
                                 }
 

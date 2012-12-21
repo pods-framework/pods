@@ -418,6 +418,15 @@ class PodsAdmin {
             'actions_disabled' => $actions_disabled
         );
 
+        if ( !in_array( 'delete', $ui[ 'actions_disabled' ] ) ) {
+            $ui[ 'actions_bulk' ] = array(
+                'delete' => array(
+                    'label' => __( 'Delete', 'pods' )
+                    // callback not needed, Pods has this built-in for delete
+                )
+            );
+        }
+
         // @todo Customize the Add New / Manage links to point to their correct menu items
 
         $ui = apply_filters( 'pods_admin_ui_' . $pod->pod, apply_filters( 'pods_admin_ui', $ui, $pod->pod, $pod ), $pod->pod, $pod );

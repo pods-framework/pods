@@ -361,7 +361,7 @@ class PodsComponents {
             }
         }
 
-        $settings = json_encode( $this->settings );
+        $settings = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $this->settings, JSON_UNESCAPED_UNICODE ) : json_encode( $this->settings );
 
         update_option( 'pods_component_settings', $settings );
 

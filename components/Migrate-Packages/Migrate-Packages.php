@@ -575,7 +575,7 @@ class Pods_Migrate_Packages extends PodsComponent {
         if ( 1 == count( $export ) )
             return false;
 
-        $export = json_encode( $export );
+        $export = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $export, JSON_UNESCAPED_UNICODE ) : json_encode( $export );
 
         return $export;
     }

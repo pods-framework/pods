@@ -46,7 +46,7 @@
                     </span>
         </div>
         <div class="pods-manage-row-wrapper" id="pods-manage-field-<?php echo $pods_i; ?>">
-            <input type="hidden" name="field_data_json[<?php echo $pods_i; ?>]" value="<?php echo esc_attr( json_encode( $field ) ); ?>" class="field_data" />
+            <input type="hidden" name="field_data_json[<?php echo $pods_i; ?>]" value="<?php echo esc_attr( ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $field, JSON_UNESCAPED_UNICODE ) : json_encode( $field ) ) ); ?>" class="field_data" />
 
             <div class="pods-manage-field pods-dependency">
                 <input type="hidden" name="field_data[<?php echo $pods_i; ?>][id]" value="<?php echo esc_attr( pods_var_raw( 'id', $field ) ); ?>" />

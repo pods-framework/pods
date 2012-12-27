@@ -2541,7 +2541,7 @@ class PodsAPI {
                             $value = implode( '', $value );
                         // If storage is set to table, json encode, otherwise WP will serialize automatically
                         elseif ( 'table' == pods_var( 'storage', $pod ) )
-                            $value = json_encode( $value );
+                            $value = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $value, JSON_UNESCAPED_UNICODE ) : json_encode( $value );
                     }
                 }
 
@@ -5075,7 +5075,7 @@ class PodsAPI {
         $pod_name = $pod;
 
         if ( is_array( $pod_name ) )
-            $pod_name = pods_var_raw( 'name', $pod_name, json_encode( $pod_name ), null, true );
+            $pod_name = pods_var_raw( 'name', $pod_name, ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $pod_name, JSON_UNESCAPED_UNICODE ) : json_encode( $pod_name ) ), null, true );
 
         $transient = 'pods_get_table_info_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name );
 

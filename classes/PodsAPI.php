@@ -5465,7 +5465,7 @@ class PodsAPI {
                                 $result = pods_query( "SELECT `ID` AS `id` FROM `{$wpdb->posts}` WHERE `post_type` = 'attachment' AND {$where} ORDER BY `ID`", $this );
 
                                 if ( !empty( $result ) )
-                                    $pick_values[ $field_name ] = $result[ 0 ]->id;
+                                    $pick_values[] = $result[ 0 ]->id;
                             }
                             elseif ( 'pick' == $type ) {
                                 if ( 'taxonomy' == $pick_object ) {
@@ -5477,7 +5477,7 @@ class PodsAPI {
                                     $result = pods_query( "SELECT `t`.`term_id` AS `id` FROM `{$wpdb->term_taxonomy}` AS `tt` LEFT JOIN `{$wpdb->terms}` AS `t` ON `t`.`term_id` = `tt`.`term_id` WHERE `taxonomy` = '{$pick_val}' AND {$where} ORDER BY `t`.`term_id`", $this );
 
                                     if ( !empty( $result ) )
-                                        $pick_values[ $field_name ] = $result[ 0 ]->id;
+                                        $pick_values[] = $result[ 0 ]->id;
                                 }
                                 elseif ( 'post_type' == $pick_object || 'media' == $pick_object ) {
                                     $where = "`post_title` = '" . pods_sanitize( $pick_value ) . "'";
@@ -5488,7 +5488,7 @@ class PodsAPI {
                                     $result = pods_query( "SELECT `ID` AS `id` FROM `{$wpdb->posts}` WHERE `post_type` = '{$pick_val}' AND {$where} ORDER BY `ID`", $this );
 
                                     if ( !empty( $result ) )
-                                        $pick_values[ $field_name ] = $result[ 0 ]->id;
+                                        $pick_values[] = $result[ 0 ]->id;
                                 }
                                 elseif ( 'user' == $pick_object ) {
                                     $where = "`user_login` = '" . pods_sanitize( $pick_value ) . "'";
@@ -5499,7 +5499,7 @@ class PodsAPI {
                                     $result = pods_query( "SELECT `ID` AS `id` FROM `{$wpdb->users}` WHERE {$where} ORDER BY `ID`", $this );
 
                                     if ( !empty( $result ) )
-                                        $pick_values[ $field_name ] = $result[ 0 ]->id;
+                                        $pick_values[] = $result[ 0 ]->id;
                                 }
                                 elseif ( 'comment' == $pick_object ) {
                                     $where = "`comment_ID` = " . pods_absint( $pick_value );
@@ -5507,21 +5507,25 @@ class PodsAPI {
                                     $result = pods_query( "SELECT `comment_ID` AS `id` FROM `{$wpdb->comments}` WHERE {$where} ORDER BY `ID`", $this );
 
                                     if ( !empty( $result ) )
-                                        $pick_values[ $field_name ] = $result[ 0 ]->id;
+                                        $pick_values[] = $result[ 0 ]->id;
                                 }
                                 elseif ( 'custom-simple' == $pick_object )
-                                    $pick_values[ $field_name ] = $pick_value;
+                                    $pick_values[] = $pick_value;
                                 else {
-                                    // @todo Lookup field_index
-                                    $where = "`name` = '" . pods_sanitize( $pick_value ) . "'";
+                                    $related_pod = $this->load_pod( array( 'name' => $pick_val ), false );
+
+                                    if ( empty( $related_pod ) )
+                                        continue;
+
+                                    $where = "`" . $related_pod[ 'table_info' ][ 'field_index' ] . "` = '" . pods_sanitize( $pick_value ) . "'";
 
                                     if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )
-                                        $where = "`id` = " . pods_absint( $pick_value );
+                                        $where = "`" . $related_pod[ 'table_info' ][ 'field_id' ] . "` = " . pods_absint( $pick_value );
 
-                                    $result = pods_query( "SELECT `id` FROM `@wp_pods_{$pick_val}` WHERE {$where} ORDER BY `id`", $this );
+                                    $result = pods_query( "SELECT `id` FROM `" . $related_pod[ 'table_info' ][ 'table' ] . "` WHERE {$where} ORDER BY `" . $related_pod[ 'table_info' ][ 'field_id' ] . "`", $this );
 
                                     if ( !empty( $result ) )
-                                        $pick_values[ $field_name ] = $result[ 0 ]->id;
+                                        $pick_values[] = $result[ 0 ]->id;
                                 }
                             }
                         }

@@ -5516,12 +5516,12 @@ class PodsAPI {
                                     if ( empty( $related_pod ) )
                                         continue;
 
-                                    $where = "`" . $related_pod[ 'table_info' ][ 'field_index' ] . "` = '" . pods_sanitize( $pick_value ) . "'";
+                                    $where = "`" . $related_pod[ 'field_index' ] . "` = '" . pods_sanitize( $pick_value ) . "'";
 
                                     if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )
-                                        $where = "`" . $related_pod[ 'table_info' ][ 'field_id' ] . "` = " . pods_absint( $pick_value );
+                                        $where = "`" . $related_pod[ 'field_id' ] . "` = " . pods_absint( $pick_value );
 
-                                    $result = pods_query( "SELECT `id` FROM `" . $related_pod[ 'table_info' ][ 'table' ] . "` WHERE {$where} ORDER BY `" . $related_pod[ 'table_info' ][ 'field_id' ] . "`", $this );
+                                    $result = pods_query( "SELECT `id` FROM `" . $related_pod[ 'table' ] . "` WHERE {$where} ORDER BY `" . $related_pod[ 'field_id' ] . "`", $this );
 
                                     if ( !empty( $result ) )
                                         $pick_values[] = $result[ 0 ]->id;

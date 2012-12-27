@@ -91,15 +91,13 @@ class PodsField_Color extends PodsField {
      * @since 2.0.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
-        global $wp_version;
-
         $options = (array) $options;
 
         if ( is_array( $value ) )
             $value = implode( ' ', $value );
 
-        // Farbtastic for 3.4 and before
-        if ( version_compare( $wp_version, '3.5-alpha', '<' ) )
+        // Farbtastic for below 3.5
+        if ( pods_wp_version( '3.5', '>' ) )
             pods_view( PODS_DIR . 'ui/fields/farbtastic.php', compact( array_keys( get_defined_vars() ) ) );
         // WP Color Picker for 3.5+
         else

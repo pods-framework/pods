@@ -5043,6 +5043,7 @@ class PodsAPI {
         $info = array(
             //'select' => '`t`.*',
             'object_type' => null,
+            'type' => null,
 
             'table' => $object,
             'meta_table' => $object,

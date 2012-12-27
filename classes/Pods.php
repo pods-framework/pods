@@ -723,6 +723,14 @@ class Pods {
                                     $item_value = get_object_vars( (object) $item_value );
                                 }
 
+                                $object_type = $table[ 'type' ];
+
+                                if ( in_array( $table[ 'type' ], array( 'post_type', 'attachment' ) ) )
+                                    $object_type = 'post';
+
+                                if ( in_array( $object_type, array( 'post', 'user', 'comment' ) ) )
+                                    pods_no_conflict_on( $object_type );
+
                                 // Return entire array
                                 if ( false === $params->in_form && false !== $field_exists && in_array( $last_type, $tableless_field_types ) )
                                     $value = $data;
@@ -733,10 +741,16 @@ class Pods {
                                     if ( false !== $params->in_form )
                                         $field = $table[ 'field_id' ];
 
-                                    foreach ( $data as $item ) {
-                                        $value[] = $item[ $field ];
+                                    foreach ( $data as $item_id => $item ) {
+                                        if ( isset( $item[ $field ] ) )
+                                            $value[] = $item[ $field ];
+                                        elseif ( in_array( $object_type, array( 'post', 'user', 'comment' ) ) )
+                                            $value[] = get_metadata( $object_type, $item_id, $field, true );
                                     }
                                 }
+
+                                if ( in_array( $object_type, array( 'post', 'user', 'comment' ) ) )
+                                    pods_no_conflict_off( $object_type );
 
                                 // Handle Simple Relationships
                                 if ( $simple ) {

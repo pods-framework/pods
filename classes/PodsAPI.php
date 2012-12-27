@@ -1982,7 +1982,7 @@ class PodsAPI {
      * $params['options'] Associative array of Object options
      *
      * @param array|object $params An associative array of parameters
-     * @param bool $sanitized (optional) Decides wether the params have been sanitized before being passed, will sanitize them if false.
+     * @param bool $sanitized (optional) Decides whether the params have been sanitized before being passed, will sanitize them if false.
      *
      * @return int The Object ID
      * @since 2.0.0
@@ -2048,7 +2048,7 @@ class PodsAPI {
         $object[ 'options' ] = array_merge( $object[ 'options' ], $options );
 
         $post_data = array(
-            'post_name' => $object[ 'name' ],
+            'post_name' => pods_clean_name( $object[ 'name' ], true),
             'post_title' => $object[ 'name' ],
             'post_content' => $object[ 'code' ],
             'post_type' => '_pods_' . $object[ 'type' ],
@@ -2068,7 +2068,7 @@ class PodsAPI {
         $params->id = $this->save_post( $post_data, $object[ 'options' ], true, true );
 
         pods_transient_clear( 'pods_object_' . $params->type );
-        pods_transient_clear( 'pods_object_' . $params->type . '_' . $params->name );
+        pods_transient_clear( 'pods_object_' . $params->type . '_' . pods_clean_name( $params->name, true ) );
 
         return $params->id;
     }
@@ -3476,7 +3476,7 @@ class PodsAPI {
         pods_transient_clear( 'pods_object_' . $params->type );
 
         if ( isset( $params->name ) )
-            pods_transient_clear( 'pods_object_' . $params->type . '_' . $params->name );
+            pods_transient_clear( 'pods_object_' . $params->type . '_' . $object[ 'slug' ] );
 
         return true;
     }
@@ -4332,7 +4332,7 @@ class PodsAPI {
             global $wpdb;
 
             if ( isset( $params->name ) ) {
-                $object = pods_transient_get( 'pods_object_' . $params->type . '_' . $params->name );
+                $object = pods_transient_get( 'pods_object_' . $params->type . '_' . pods_clean_name( $params->name, true ) );
 
                 if ( false !== $object )
                     return $object;
@@ -4375,7 +4375,8 @@ class PodsAPI {
             'id' => $_object[ 'ID' ],
             'name' => $_object[ 'post_title' ],
             'code' => $_object[ 'post_content' ],
-            'type' => str_replace( '_pods_', '', $_object[ 'post_type' ] )
+            'type' => str_replace( '_pods_', '', $_object[ 'post_type' ] ),
+            'slug' => $_object[ 'post_name' ]
         );
 
         $object[ 'options' ] = get_post_meta( $object[ 'id' ] );
@@ -4385,7 +4386,7 @@ class PodsAPI {
                 $value = $value[ 0 ];
         }
 
-        pods_transient_set( 'pods_object_' . $object[ 'type' ] . '_' . $object[ 'name' ], $object );
+        pods_transient_set( 'pods_object_' . $object[ 'type' ] . '_' . $object[ 'slug' ], $object );
 
         return $object;
     }

@@ -417,7 +417,7 @@ class Pods_Helpers extends PodsComponent {
         $out = ob_get_clean();
 
         $out = apply_filters( 'pods_helpers_post_helper', $out, $params, $helper );
-        $out = apply_filters( "pods_helpers_post_helper_{$params->helper}", $out, $params, $helper );
+        $out = apply_filters( 'pods_helpers_post_helper_' . pods_clean_name( $helper[ 'name' ], true ), $out, $params, $helper );
 
         return $out;
     }

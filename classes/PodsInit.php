@@ -129,7 +129,7 @@ class PodsInit {
         if ( !defined( 'PODS_TABLELESS' ) )
             define( 'PODS_TABLELESS', false );
 
-        load_plugin_textdomain( 'pods', false, dirname( PODS_DIR . 'init.php' ) . '/languages/' );
+        load_plugin_textdomain( 'pods', false, dirname( plugin_basename( PODS_DIR . 'init.php' ) ) . '/languages/' );
     }
 
     /**
@@ -486,6 +486,7 @@ class PodsInit {
                     'update_count_callback' => pods_var( 'update_count_callback', $taxonomy, null, null, true ),
                     'query_var' => ( false !== (boolean) pods_var( 'query_var', $taxonomy, true ) ? pods_var( 'query_var_string', $taxonomy, pods_var( 'name', $taxonomy ), null, true ) : false ),
                     'rewrite' => $ct_rewrite,
+                    'show_admin_column' => (boolean) pods_var( 'show_admin_column', $taxonomy, false ),
                     'sort' => (boolean) pods_var( 'sort', $taxonomy, false )
                 );
 
@@ -524,6 +525,7 @@ class PodsInit {
 
             foreach ( $pods_taxonomies as $taxonomy => $options ) {
                 $ct_post_types = null;
+
                 if ( isset( $supported_post_types[ $taxonomy ] ) && !empty( $supported_post_types[ $taxonomy ] ) )
                     $ct_post_types = $supported_post_types[ $taxonomy ];
 

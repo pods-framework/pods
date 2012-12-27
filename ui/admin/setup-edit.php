@@ -876,6 +876,10 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
         <?php echo PodsForm::field( 'sort', pods_var_raw( 'sort', $pod ), 'boolean', array( 'boolean_yes_label' => '' ) ); ?>
     </div>
     <div class="pods-field-option">
+        <?php echo PodsForm::label( 'show_admin_column', __( 'Show Taxonomy column on Post Types', 'pods' ), __( 'Whether to allow automatic creation of taxonomy columns on associated post-types', 'pods' ) ); ?>
+        <?php echo PodsForm::field( 'show_admin_column', pods_var_raw( 'show_admin_column', $pod ), 'boolean', array( 'boolean_yes_label' => '' ) ); ?>
+    </div>
+    <div class="pods-field-option">
         <?php echo PodsForm::label( 'update_count_callback', __( 'Function to call when updating counts', 'pods' ), __( 'help', 'pods' ) ); ?>
         <?php echo PodsForm::field( 'update_count_callback', pods_var_raw( 'update_count_callback', $pod ), 'text' ); ?>
     </div>
@@ -887,17 +891,23 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
         <div class="pods-pick-values pods-pick-checkbox">
             <ul>
                 <?php
-                foreach ( (array) $field_settings[ 'pick_object' ][ 'Post Types' ] as $post_type => $label ) {
-                    $post_type = pods_str_replace( 'post_type-', '', $post_type, 1 );
-                    ?>
+                    foreach ( (array) $field_settings[ 'pick_object' ][ 'Post Types' ] as $post_type => $label ) {
+                        $post_type = pods_str_replace( 'post_type-', '', $post_type, 1 );
+                ?>
                     <li>
                         <div class="pods-field pods-boolean">
                             <?php echo PodsForm::field( 'built_in_post_types_' . $post_type, pods_var_raw( 'built_in_post_types_' . $post_type, $pod, false ), 'boolean', array( 'boolean_yes_label' => $label ) ); ?>
                         </div>
                     </li>
-                    <?php
-                }
+                <?php
+                    }
                 ?>
+
+                <li>
+                    <div class="pods-field pods-boolean">
+                        <?php echo PodsForm::field( 'built_in_post_types_attachment', pods_var_raw( 'built_in_post_types_attachment', $pod, false ), 'boolean', array( 'boolean_yes_label' => 'Media (attachment)' ) ); ?>
+                    </div>
+                </li>
             </ul>
         </div>
     </div>

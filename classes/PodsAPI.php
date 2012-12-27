@@ -727,8 +727,7 @@ class PodsAPI {
                     'type' => 'text',
                     'alias' => array( 'login' ),
                     'options' => array(
-                        'required' => 1,
-                        'unique' => 1
+                        'required' => 1
                     )
                 ),
                 'user_nicename' => array(
@@ -760,7 +759,6 @@ class PodsAPI {
                     'alias' => array( 'email' ),
                     'options' => array(
                         'required' => 1,
-                        'unique' => 1,
                         'text_format_type' => 'email'
                     )
                 ),
@@ -771,7 +769,6 @@ class PodsAPI {
                     'alias' => array( 'url', 'website' ),
                     'options' => array(
                         'required' => 1,
-                        'unique' => 1,
                         'text_format_type' => 'website',
                         'text_format_website' => 'normal'
                     )

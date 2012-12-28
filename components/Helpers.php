@@ -199,7 +199,7 @@ class Pods_Helpers extends PodsComponent {
             if ( is_object( $id ) ) {
                 $old_post = $id;
 
-                pods_transient_clear( 'pods_object_helper_' . $old_post->post_title );
+                pods_transient_clear( 'pods_object_helper_' . $old_post->post_name );
             }
         }
 
@@ -207,7 +207,7 @@ class Pods_Helpers extends PodsComponent {
             return;
 
         pods_transient_clear( 'pods_object_helper' );
-        pods_transient_clear( 'pods_object_helper_' . $post->post_title );
+        pods_transient_clear( 'pods_object_helper_' . $post->post_name );
     }
 
     /**
@@ -417,7 +417,7 @@ class Pods_Helpers extends PodsComponent {
         $out = ob_get_clean();
 
         $out = apply_filters( 'pods_helpers_post_helper', $out, $params, $helper );
-        $out = apply_filters( 'pods_helpers_post_helper_' . pods_clean_name( $helper[ 'name' ], true ), $out, $params, $helper );
+        $out = apply_filters( 'pods_helpers_post_helper_' . $helper[ 'slug' ], $out, $params, $helper );
 
         return $out;
     }

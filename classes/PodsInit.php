@@ -35,6 +35,11 @@ class PodsInit {
     static $version_last;
 
     /**
+     * @var mixed|void
+     */
+    static $db_version;
+
+    /**
      * Upgrades to trigger (last installed version => upgrade version)
      *
      * @var array
@@ -44,7 +49,12 @@ class PodsInit {
         //'2.0.0' => '2.1.0'
     );
 
-		static $upgraded;
+    /**
+     * Whether an Upgrade for 1.x has happened
+     *
+     * @var bool
+     */
+    static $upgraded;
 
     /**
      * Whether an Upgrade is needed
@@ -62,7 +72,8 @@ class PodsInit {
     function __construct() {
         self::$version = get_option( 'pods_framework_version' );
         self::$version_last = get_option( 'pods_framework_version_last' );
-				self::$upgraded = get_option( 'pods_framework_upgraded_1_x' );
+        self::$db_version = get_option( 'pods_framework_db_version' );
+        self::$upgraded = get_option( 'pods_framework_upgraded_1_x' );
 
         if ( !empty( self::$version ) ) {
             self::$upgrade_needed = false;
@@ -795,6 +806,7 @@ class PodsInit {
         }
 
         update_option( 'pods_framework_version', PODS_VERSION );
+        update_option( 'pods_framework_db_version', PODS_DB_VERSION );
 
         pods_api()->cache_flush_pods();
 
@@ -862,19 +874,16 @@ class PodsInit {
             " );
 
         delete_option( 'pods_framework_version' );
-
+        delete_option( 'pods_framework_db_version' );
         delete_option( 'pods_framework_upgrade_2_0' );
         delete_option( 'pods_framework_upgraded_1_x' );
 
-				/*
-				 * ToDo: Make sure all entries are being cleaned and do something about the
-				 * pods_framework_upgrade_{version} dynamic entries created by PodsUpgrade
-				 */
-				delete_option( 'pods_framework_upgrade_2_0_0' );
-				delete_option( 'pods_framework_upgrade_2_0_sister_ids' );
-				delete_option( 'pods_framework_version_last');
+        // @todo Make sure all entries are being cleaned and do something about the pods_framework_upgrade_{version} dynamic entries created by PodsUpgrade
+        delete_option( 'pods_framework_upgrade_2_0_0' );
+        delete_option( 'pods_framework_upgrade_2_0_sister_ids' );
+        delete_option( 'pods_framework_version_last' );
 
-				delete_option( 'pods_component_settings' );
+        delete_option( 'pods_component_settings' );
 
         $api->cache_flush_pods();
 

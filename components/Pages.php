@@ -213,7 +213,7 @@ class Pods_Pages extends PodsComponent {
             if ( is_object( $id ) ) {
                 $old_post = $id;
 
-                pods_transient_clear( 'pods_object_page_' . $old_post->post_title );
+                pods_transient_clear( 'pods_object_page_' . $old_post->post_name );
                 pods_cache_clear( $old_post->post_title, 'pods_object_page_wildcard' );
             }
         }
@@ -222,7 +222,7 @@ class Pods_Pages extends PodsComponent {
             return;
 
         pods_transient_clear( 'pods_object_page' );
-        pods_transient_clear( 'pods_object_page_' . $post->post_title );
+        pods_transient_clear( 'pods_object_page_' . $post->post_name );
         pods_cache_clear( $post->post_title, 'pods_object_page_wildcard' );
     }
 

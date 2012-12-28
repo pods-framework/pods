@@ -208,7 +208,7 @@ class Pods_Templates extends PodsComponent {
             if ( is_object( $id ) ) {
                 $old_post = $id;
 
-                pods_transient_clear( 'pods_object_template_' . $old_post->post_title );
+                pods_transient_clear( 'pods_object_template_' . $old_post->post_name );
             }
         }
 
@@ -216,7 +216,7 @@ class Pods_Templates extends PodsComponent {
             return;
 
         pods_transient_clear( 'pods_object_template' );
-        pods_transient_clear( 'pods_object_template_' . $post->post_title );
+        pods_transient_clear( 'pods_object_template_' . $post->post_name );
     }
 
     /**

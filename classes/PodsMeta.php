@@ -680,8 +680,8 @@ class PodsMeta {
         if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || in_array( $post->post_type, $blacklisted_types ) )
             return $post_id;
 
-        // Block Quick Edits
-        if ( 'inline-save' == pods_var( 'action', 'post' ) )
+        // Block Quick Edits / Bulk Edits
+        if ( 'edit.php' == pods_var( 'pagenow', 'global' ) && ( 'inline-save' == pods_var( 'action', 'post' ) || null != pods_var( 'bulk_edit', 'get' ) || is_array( pods_var( 'post', 'get' ) ) ) )
             return $post_id;
 
         // Block Trash

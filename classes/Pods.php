@@ -1322,7 +1322,11 @@ class Pods {
         if ( empty( $data ) )
             return false;
 
-        $params = array( 'pod' => $this->pod, 'data' => $data, 'allow_custom_fields' => true );
+        $params = array(
+            'pod' => $this->pod,
+            'data' => $data,
+            'allow_custom_fields' => true
+        );
 
         return $this->api->save_pod_item( $params );
     }
@@ -1356,7 +1360,12 @@ class Pods {
         if ( empty( $data ) )
             return false;
 
-        $params = array( 'pod' => $this->pod, 'id' => $id, 'data' => $data, 'allow_custom_fields' => true );
+        $params = array(
+            'pod' => $this->pod,
+            'id' => $id,
+            'data' => $data,
+            'allow_custom_fields' => true
+        );
 
         return $this->api->save_pod_item( $params );
     }
@@ -1382,7 +1391,10 @@ class Pods {
         if ( empty( $id ) )
             return false;
 
-        $params = array( 'pod' => $this->pod, 'id' => $id );
+        $params = array(
+            'pod' => $this->pod,
+            'id' => $id
+        );
 
         return $this->api->delete_pod_item( $params );
     }
@@ -1430,7 +1442,10 @@ class Pods {
         if ( empty( $id ) )
             return false;
 
-        $params = array( 'pod' => $this->pod, 'id' => $id );
+        $params = array(
+            'pod' => $this->pod,
+            'id' => $id
+        );
 
         return $this->api->duplicate_pod_item( $params );
     }
@@ -1457,7 +1472,11 @@ class Pods {
         if ( empty( $id ) )
             return false;
 
-        $params = array( 'pod' => $this->pod, 'id' => $id, 'fields' => $fields );
+        $params = array(
+            'pod' => $this->pod,
+            'id' => $id,
+            'fields' => $fields
+        );
 
         return $this->api->export_pod_item( $params );
     }

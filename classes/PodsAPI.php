@@ -150,7 +150,7 @@ class PodsAPI {
 
         if ( !isset( $post_data[ 'ID' ] ) || empty( $post_data[ 'ID' ] ) )
             $post_data[ 'ID' ] = wp_insert_post( $post_data, true );
-        else
+        elseif ( 2 < count( $post_data ) || !isset( $post_data[ 'post_type' ] ) )
             wp_update_post( $post_data );
 
         if ( is_wp_error( $post_data[ 'ID' ] ) ) {
@@ -2612,6 +2612,8 @@ class PodsAPI {
             }
         }
 
+        pods_no_conflict_on( 'post' );
+
         // Save relational field data
         if ( !empty( $rel_fields ) ) {
             // E.g. $rel_fields['pick']['related_events'] = '3,15';
@@ -2880,6 +2882,8 @@ class PodsAPI {
                 }
             }
         }
+
+        pods_no_conflict_off( 'post' );
 
         if ( false === $bypass_helpers ) {
             $pieces = array( 'fields', 'params', 'pod', 'fields_active' );

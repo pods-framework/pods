@@ -704,9 +704,6 @@ class PodsMeta {
         if ( empty( $groups ) )
             return $post_id;
 
-        // Infinite loop fix
-        remove_action( current_filter(), array( $this, __FUNCTION__ ), 10, 2 );
-
         $data = array();
 
         $id = $post_id;
@@ -733,6 +730,8 @@ class PodsMeta {
         do_action( 'pods_meta_save_pre_post', $data, $pod, $id, $groups, $post, $post->post_type );
         do_action( "pods_meta_save_pre_post_{$post->post_type}", $data, $pod, $id, $groups, $post );
 
+        pods_no_conflict_on( 'post' );
+
         if ( !empty( $pod ) ) {
             // Fix for Pods doing it's own sanitization
             $data = stripslashes_deep( $data );
@@ -740,14 +739,12 @@ class PodsMeta {
             $pod->save( $data );
         }
         elseif ( !empty( $id ) ) {
-            pods_no_conflict_on( 'post' );
-
             foreach ( $data as $field => $value ) {
                 update_post_meta( $id, $field, $value );
             }
-
-            pods_no_conflict_off( 'post' );
         }
+
+        pods_no_conflict_off( 'post' );
 
         do_action( 'pods_meta_save_post', $data, $pod, $id, $groups, $post, $post->post_type );
         do_action( "pods_meta_save_post_{$post->post_type}", $data, $pod, $id, $groups, $post );

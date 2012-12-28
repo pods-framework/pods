@@ -394,7 +394,7 @@
                 }
             },
             tabbed : function () {
-                $( '.pods-admin' ).on( 'click', '.pods-tabs .pods-tab a', function ( e ) {
+                $( '.pods-admin' ).on( 'click', '.pods-tabs .pods-tab a.pods-tab-link', function ( e ) {
                     $( this ).css( 'cursor', 'default' );
                     $( this ).prop( 'disabled', true );
 

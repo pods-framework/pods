@@ -1000,8 +1000,6 @@ class Pods {
                         continue;
                     }
 
-                    $where[ 'compare' ] = strtotime( $where[ 'compare' ] );
-
                     if ( !in_array( $where[ 'compare' ], array( '=', '!=', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) ) )
                         $where[ 'compare' ] = '=';
 

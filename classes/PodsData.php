@@ -1993,11 +1993,20 @@ class PodsData {
         if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) {
             if ( 'meta' == $pod_data[ 'storage' ] ) {
                 if ( !in_array( $traverse[ 'type' ], $tableless_field_types ) ) {
-                    $the_join = "
-                        LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
-                            `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
-                            AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = `{$joined}`.`{$joined_id}`
-                    ";
+                    if ( ( $depth + 2 ) == count( $fields ) ) {
+                        $the_join = "
+                            LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
+                                `{$field_joined}`.`{$table_info[ 'field_index' ]}` = '{$traverse[ 'name' ]}'
+                                AND `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$joined}`.`{$joined_id}`
+                        ";
+                    }
+                    else {
+                        $the_join = "
+                            LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
+                                `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+                                AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = `{$joined}`.`{$joined_id}`
+                        ";
+                    }
 
                     $table_info[ 'recurse' ] = false;
                 }
@@ -2019,11 +2028,20 @@ class PodsData {
         else {
             if ( 'meta' == $pod_data[ 'storage' ] ) {
                 if ( !in_array( $traverse[ 'type' ], $tableless_field_types ) ) {
-                    $the_join = "
-                        LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
-                            `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
-                            AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = `{$joined}`.`{$joined_id}`
-                    ";
+                    if ( ( $depth + 2 ) == count( $fields ) ) {
+                        $the_join = "
+                            LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
+                                `{$field_joined}`.`{$table_info[ 'field_index' ]}` = '{$traverse[ 'name' ]}'
+                                AND `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$joined}`.`{$joined_id}`
+                        ";
+                    }
+                    else {
+                        $the_join = "
+                            LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
+                                `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+                                AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = `{$joined}`.`{$joined_id}`
+                        ";
+                    }
 
                     $table_info[ 'recurse' ] = false;
                 }

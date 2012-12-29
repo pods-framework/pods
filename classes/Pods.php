@@ -999,13 +999,13 @@ class Pods {
 
                         continue;
                     }
-
-                    $where[ 'compare' ] = strtotime( $where[ 'compare' ] );
+                    
+                    $where[ 'compare' ] = strtoupper( $where[ 'compare' ] );
 
                     if ( !in_array( $where[ 'compare' ], array( '=', '!=', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) ) )
                         $where[ 'compare' ] = '=';
 
-                    $where[ 'type' ] = strtotime( $where[ 'type' ] );
+                    $where[ 'type' ] = strtoupper( $where[ 'type' ] );
 
                     if ( !in_array( $where[ 'type' ], array( 'NUMERIC', 'BINARY', 'CHAR', 'DATE', 'DATETIME', 'DECIMAL', 'SIGNED', 'TIME', 'UNSIGNED' ) ) )
                         $where[ 'type' ] = 'CHAR';
@@ -1015,6 +1015,15 @@ class Pods {
                             $where[ 'compare' ] = 'NOT IN';
                         else
                             $where[ 'compare' ] = 'IN';
+                    }
+                    
+                    if ( is_array( $where[ 'value' ] ) ) {
+                        if ( in_array( $where[ 'compare' ], array( 'BETWEEN', 'NOT BETWEEN' ) ) )
+                            $where[ 'value' ] = '"' . implode( '" AND "', $where[ 'value' ] ) . '"';
+                        else
+                            $where[ 'value' ] = '( "' . implode( '", "', $where[ 'value' ] ) . '" )';
+                    } else {
+                        $where[ 'value' ] = '"' . (string) $where[ 'value' ] . '"';
                     }
 
                     $key = '';
@@ -1069,10 +1078,7 @@ class Pods {
 
                     $where_args = $where;
 
-                    if ( is_array( $where[ 'value' ] ) )
-                        $where = $where[ 'key' ] . ' ' . $where[ 'compare' ] . ' ( "' . implode( '", "', $where[ 'value' ] ) . '" )';
-                    else
-                        $where = $where[ 'key' ] . ' ' . $where[ 'compare' ] . ' "' . (string) $where[ 'value' ] . '"';
+                    $where = $where[ 'key' ] . ' ' . $where[ 'compare' ] . ' ' . $where[ 'value' ];
 
                     $params->where[ $k ] = apply_filters( 'pods_find_where_query', $where, $where_args );
                 }

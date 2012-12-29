@@ -1014,15 +1014,15 @@ class Pods {
                         else
                             $where[ 'compare' ] = 'IN';
                     }
-					
-					if ( is_array( $where[ 'value' ] ) ) {
+                    
+                    if ( is_array( $where[ 'value' ] ) ) {
                         if ( in_array( $where[ 'compare' ], array( 'BETWEEN', 'NOT BETWEEN' ) ) )
                             $where[ 'value' ] = '"' . implode( '" AND "', $where[ 'value' ] ) . '"';
                         else
                             $where[ 'value' ] = '( "' . implode( '", "', $where[ 'value' ] ) . '" )';
                     } else {
-						$where[ 'value' ] = '"' . (string) $where[ 'value' ] . '"';
-					}
+                        $where[ 'value' ] = '"' . (string) $where[ 'value' ] . '"';
+                    }
 
                     $key = '';
 

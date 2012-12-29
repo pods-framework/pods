@@ -401,23 +401,23 @@ if ( $advanced ) {
     <?php
     if ( strlen( pods_var( 'object', $pod ) ) < 1 ) {
         ?>
-        <li class="pods-tab"><a href="#pods-advanced-labels">Labels</a></li>
+        <li class="pods-tab"><a href="#pods-advanced-labels" class="pods-tab-link">Labels</a></li>
         <?php
     }
 
     if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) ) < 1 ) {
         ?>
-        <li class="pods-tab"><a href="#pods-advanced-post-type-options">Post Type Options</a></li>
+        <li class="pods-tab"><a href="#pods-advanced-post-type-options" class="pods-tab-link">Post Type Options</a></li>
         <?php
     }
     elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) ) < 1 ) {
         ?>
-        <li class="pods-tab"><a href="#pods-advanced-taxonomy-options">Taxonomy Options</a></li>
+        <li class="pods-tab"><a href="#pods-advanced-taxonomy-options" class="pods-tab-link">Taxonomy Options</a></li>
         <?php
     }
     elseif ( 'pod' == pods_var( 'type', $pod ) ) {
         ?>
-        <li class="pods-tab"><a href="#pods-advanced-options">Pod Options</a></li>
+        <li class="pods-tab"><a href="#pods-advanced-options" class="pods-tab-link">Pod Options</a></li>
         <?php
     }
     ?>

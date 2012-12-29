@@ -182,6 +182,13 @@ class PodsField_Website extends PodsField {
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $options = (array) $options;
 
+        if ( is_array( $value ) ) {
+            if ( isset( $value[ 'scheme' ] ) )
+                $value = $this->build_url( $value );
+            else
+                $value = implode( '', $value );
+        }
+
         if ( false === strpos( $value, '://' ) )
             $value = 'http://' . $value;
 

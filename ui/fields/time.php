@@ -42,8 +42,10 @@ if ( false !== stripos( $args[ 'timeFormat' ], 'tt' ) )
 
 $html5_format = '\TH:i:s';
 
-if ( 24 == pods_var( 'time_type', $options, 12 ) )
+if ( 24 == pods_var( 'time_type', $options, 12 ) ) {
     $args[ 'ampm' ] = false;
+    $args[ 'timeFormat' ] = str_replace( 'h', 'H', $args[ 'timeFormat' ] );
+}
 
 $date = PodsForm::field_method( 'time', 'createFromFormat', $format, (string) $value );
 $date_default = PodsForm::field_method( 'time', 'createFromFormat', 'H:i:s', (string) $value );

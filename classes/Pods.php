@@ -999,11 +999,13 @@ class Pods {
 
                         continue;
                     }
+                    
+                    $where[ 'compare' ] = strtoupper( $where[ 'compare' ] );
 
                     if ( !in_array( $where[ 'compare' ], array( '=', '!=', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) ) )
                         $where[ 'compare' ] = '=';
 
-                    $where[ 'type' ] = strtotime( $where[ 'type' ] );
+                    $where[ 'type' ] = strtoupper( $where[ 'type' ] );
 
                     if ( !in_array( $where[ 'type' ], array( 'NUMERIC', 'BINARY', 'CHAR', 'DATE', 'DATETIME', 'DECIMAL', 'SIGNED', 'TIME', 'UNSIGNED' ) ) )
                         $where[ 'type' ] = 'CHAR';

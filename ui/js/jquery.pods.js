@@ -1300,8 +1300,8 @@
 
                 row_counter += $( 'tr.pods-manage-row' ).length;
 
-                // Handle 'Add' action
                 if ( 'undefined' != typeof new_row && null !== new_row ) {
+                    // Handle 'Add' action
                     $( '.pods-manage-row-add' ).on( 'click', 'a', function ( e ) {
                         $( this ).css( 'cursor', 'default' );
                         $( this ).prop( 'disabled', true );
@@ -1336,7 +1336,7 @@
 
                         var sluggables = [];
 
-                        $( 'tr#row-' + row_counter + ' .pods-slugged[data-sluggable], tr#row-' + row_counter + ' .pods-slugged-lower[data-sluggable]' ).each( function () {
+                        $new_row.find( '.pods-slugged[data-sluggable], .pods-slugged-lower[data-sluggable]' ).each( function () {
                             if ( -1 == jQuery.inArray( $( this ).data( 'sluggable' ), sluggables ) )
                                 sluggables.push( $( this ).data( 'sluggable' ) );
                         } );
@@ -1350,7 +1350,75 @@
                         $( this ).css( 'cursor', 'pointer' );
                         $( this ).prop( 'disabled', false );
 
-                        $(document ).Pods('qtip',$new_row);
+                        $( document ).Pods( 'qtip', $new_row );
+
+                        e.preventDefault();
+                    } );
+
+                    // Handle 'Duplicate' action
+                    $( 'tbody.pods-manage-list' ).on( 'click', 'a.pods-manage-row-duplicate', function ( e ) {
+                        $( this ).css( 'cursor', 'default' );
+                        $( this ).prop( 'disabled', true );
+
+                        var $row = $( this ).closest( 'tr.pods-manage-row' );
+                        var $row_label = $row.find( 'td.pods-manage-row-label' );
+                        var $row_content = $row_label.find( 'div.pods-manage-row-wrapper' );
+
+                        var field_data = jQuery.parseJSON( $row_content.find( 'input.field_data' ).val() );
+
+                        row_counter++;
+
+                        var add_row = new_row.replace( /\_\_1/gi, row_counter ).replace( /\-\-1/gi, row_counter );
+                        var $tbody = $( this ).closest( 'tbody.pods-manage-list' );
+
+                        $tbody.find( 'tr.no-items' ).hide();
+                        $tbody.append( '<tr id="row-' + row_counter + '" class="pods-manage-row pods-field-init pods-field-' + row_counter + ' pods-submittable-fields" valign="top">' + add_row + '</tr>' );
+
+                        var $new_row = $tbody.find( 'tr#row-' + row_counter );
+                        var $new_row_label = $new_row.find( 'td.pods-manage-row-label' );
+                        var $new_row_content = $new_row_label.find( 'div.pods-manage-row-wrapper' );
+
+                        field_data[ 'name' ] += '_copy';
+                        field_data[ 'label' ] += ' (Copy)';
+                        field_data[ 'id' ] = 0;
+
+                        $new_row_content.find( 'input.field_data' ).val( $.toJSON( field_data ) );
+
+                        $new_row.data( 'row', row_counter );
+                        $new_row.find( '.pods-dependency .pods-depends-on' ).hide();
+                        $new_row.find( '.pods-dependency .pods-excludes-on' ).hide();
+
+                        $new_row.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
+                            $( this ).trigger( 'change' );
+                        } );
+
+                        $new_row.find( '.pods-manage-row-wrapper' ).hide( 0, function () {
+                            $new_row.find( 'a.pods-manage-row-edit' ).click();
+                        } );
+
+                        $( '.pods-tabs .pods-tab:first a', $new_row ).addClass( 'selected' );
+                        $( '.pods-tab-group', $new_row ).find( '.pods-tab:first' ).show();
+
+                        if ( $.fn.sortable && $tbody.hasClass( 'pods-manage-sortable' ) )
+                           $tbody.sortable( 'refresh' );
+
+                        var sluggables = [];
+
+                        $new_row.find( '.pods-slugged[data-sluggable], .pods-slugged-lower[data-sluggable]' ).each( function () {
+                            if ( -1 == jQuery.inArray( $( this ).data( 'sluggable' ), sluggables ) )
+                                sluggables.push( $( this ).data( 'sluggable' ) );
+                        } );
+
+                        for ( var i in sluggables ) {
+                            var sluggable = sluggables[ i ];
+
+                            methods[ 'sluggable_single' ]( sluggable );
+                        }
+
+                        $( this ).css( 'cursor', 'pointer' );
+                        $( this ).prop( 'disabled', false );
+
+                        $( document ).Pods( 'qtip', $new_row );
 
                         e.preventDefault();
                     } );

@@ -4177,8 +4177,8 @@ class PodsAPI {
             unset( $field[ 'options' ][ 'sister_id' ] );
         }
 
-        // Deprecated sister_field_id
-        $field[ 'sister_field_id' ] =& $field[ 'sister_id' ];
+        if ( isset( $field[ 'options' ][ 'sister_field_id' ] ) )
+            unset( $field[ 'options' ][ 'sister_field_id' ] );
 
         $field[ 'table_info' ] = array();
 

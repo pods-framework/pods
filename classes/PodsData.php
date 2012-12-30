@@ -1072,155 +1072,155 @@ class PodsData {
                 FROM {$params->table} AS `t`
             ";
         } else {
-        	$sql = $params->sql;
+            $sql = $params->sql;
         }
 
         if ( is_array( $params->select ) )
-        	$params->select = implode( ', ', $params->select );
+            $params->select = implode( ', ', $params->select );
         if ( is_array( $params->join ) )
-        	$params->join = implode( "\n                ", $params->join );
+            $params->join = implode( "\n                ", $params->join );
         if ( is_array( $params->where ) )
-        	$params->where = implode( ' AND ', $params->where );
+            $params->where = implode( ' AND ', $params->where );
         if ( is_array( $params->groupby ) )
-        	$params->groupby = implode( ', ', $params->groupby );
+            $params->groupby = implode( ', ', $params->groupby );
         if ( is_array( $params->having ) )
-        	$params->having = implode( ' AND ', $params->having );
+            $params->having = implode( ' AND ', $params->having );
         if ( is_array( $params->orderby ) )
-        	$params->orderby = implode( ', ', $params->orderby );
+            $params->orderby = implode( ', ', $params->orderby );
 
         // Rewrite
-		$sql = preg_replace( array(
-				'/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i',
-				'/\sSELECT\s/i'
-			),
-			array(
-				' SELECT ',
-				' SELECT SQL_CALC_FOUND_ROWS '
-			),
-			$sql );
+        $sql = preg_replace( array(
+                '/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i',
+                '/\sSELECT\s/i'
+            ),
+            array(
+                ' SELECT ',
+                ' SELECT SQL_CALC_FOUND_ROWS '
+            ),
+            $sql );
 
-		// Insert variables based on existing statements
-		if ( false === stripos( $sql, '%%SELECT%%' ) )
-			$sql = preg_replace( '/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i', ' SELECT SQL_CALC_FOUND_ROWS %%SELECT%% ', $sql );
-		if ( false === stripos( $sql, '%%WHERE%%' ) )
-			$sql = preg_replace( '/\sWHERE\s(?!.*\sWHERE\s)/i', ' WHERE %%WHERE%% ', $sql );
-		if ( false === stripos( $sql, '%%GROUPBY%%' ) )
-			$sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/i', ' GROUP BY %%GROUPBY%% ', $sql );
-		if ( false === stripos( $sql, '%%HAVING%%' ) )
-			$sql = preg_replace( '/\sHAVING\s(?!.*\sHAVING\s)/i', ' HAVING %%HAVING%% ', $sql );
-		if ( false === stripos( $sql, '%%ORDERBY%%' ) )
-			$sql = preg_replace( '/\sORDER BY\s(?!.*\sORDER BY\s)/i', ' ORDER BY %%ORDERBY%% ', $sql );
+        // Insert variables based on existing statements
+        if ( false === stripos( $sql, '%%SELECT%%' ) )
+            $sql = preg_replace( '/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i', ' SELECT SQL_CALC_FOUND_ROWS %%SELECT%% ', $sql );
+        if ( false === stripos( $sql, '%%WHERE%%' ) )
+            $sql = preg_replace( '/\sWHERE\s(?!.*\sWHERE\s)/i', ' WHERE %%WHERE%% ', $sql );
+        if ( false === stripos( $sql, '%%GROUPBY%%' ) )
+            $sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/i', ' GROUP BY %%GROUPBY%% ', $sql );
+        if ( false === stripos( $sql, '%%HAVING%%' ) )
+            $sql = preg_replace( '/\sHAVING\s(?!.*\sHAVING\s)/i', ' HAVING %%HAVING%% ', $sql );
+        if ( false === stripos( $sql, '%%ORDERBY%%' ) )
+            $sql = preg_replace( '/\sORDER BY\s(?!.*\sORDER BY\s)/i', ' ORDER BY %%ORDERBY%% ', $sql );
 
-		// Insert variables based on other existing statements
-		if ( false === stripos( $sql, '%%JOIN%%' ) ) {
-			if ( false !== stripos( $sql, ' WHERE ' ) )
-				$sql = preg_replace( '/\sWHERE\s(?!.*\sWHERE\s)/i', ' %%JOIN%% WHERE ', $sql );
-			elseif ( false !== stripos( $sql, ' GROUP BY ' ) )
-				$sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/i', ' %%WHERE%% GROUP BY ', $sql );
-			elseif ( false !== stripos( $sql, ' ORDER BY ' ) )
-				$sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%WHERE%% ORDER BY ', $sql );
-			else
-				$sql .= ' %%JOIN%% ';
-		}
-		if ( false === stripos( $sql, '%%WHERE%%' ) ) {
-			if ( false !== stripos( $sql, ' GROUP BY ' ) )
-				$sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/i', ' %%WHERE%% GROUP BY ', $sql );
-			elseif ( false !== stripos( $sql, ' ORDER BY ' ) )
-				$sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%WHERE%% ORDER BY ', $sql );
-			else
-				$sql .= ' %%WHERE%% ';
-		}
-		if ( false === stripos( $sql, '%%GROUPBY%%' ) ) {
-			if ( false !== stripos( $sql, ' HAVING ' ) )
-				$sql = preg_replace( '/\sHAVING\s(?!.*\sHAVING\s)/i', ' %%GROUPBY%% HAVING ', $sql );
-			elseif ( false !== stripos( $sql, ' ORDER BY ' ) )
-				$sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%GROUPBY%% ORDER BY ', $sql );
-			else
-				$sql .= ' %%GROUPBY%% ';
-		}
-		if ( false === stripos( $sql, '%%HAVING%%' ) ) {
-			if ( false !== stripos( $sql, ' ORDER BY ' ) )
-				$sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%HAVING%% ORDER BY ', $sql );
-			else
-				$sql .= ' %%HAVING%% ';
-		}
-		if ( false === stripos( $sql, '%%ORDERBY%%' ) )
-			$sql .= ' %%ORDERBY%% ';
-		if ( false === stripos( $sql, '%%LIMIT%%' ) )
-			$sql .= ' %%LIMIT%% ';
+        // Insert variables based on other existing statements
+        if ( false === stripos( $sql, '%%JOIN%%' ) ) {
+            if ( false !== stripos( $sql, ' WHERE ' ) )
+                $sql = preg_replace( '/\sWHERE\s(?!.*\sWHERE\s)/i', ' %%JOIN%% WHERE ', $sql );
+            elseif ( false !== stripos( $sql, ' GROUP BY ' ) )
+                $sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/i', ' %%WHERE%% GROUP BY ', $sql );
+            elseif ( false !== stripos( $sql, ' ORDER BY ' ) )
+                $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%WHERE%% ORDER BY ', $sql );
+            else
+                $sql .= ' %%JOIN%% ';
+        }
+        if ( false === stripos( $sql, '%%WHERE%%' ) ) {
+            if ( false !== stripos( $sql, ' GROUP BY ' ) )
+                $sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/i', ' %%WHERE%% GROUP BY ', $sql );
+            elseif ( false !== stripos( $sql, ' ORDER BY ' ) )
+                $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%WHERE%% ORDER BY ', $sql );
+            else
+                $sql .= ' %%WHERE%% ';
+        }
+        if ( false === stripos( $sql, '%%GROUPBY%%' ) ) {
+            if ( false !== stripos( $sql, ' HAVING ' ) )
+                $sql = preg_replace( '/\sHAVING\s(?!.*\sHAVING\s)/i', ' %%GROUPBY%% HAVING ', $sql );
+            elseif ( false !== stripos( $sql, ' ORDER BY ' ) )
+                $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%GROUPBY%% ORDER BY ', $sql );
+            else
+                $sql .= ' %%GROUPBY%% ';
+        }
+        if ( false === stripos( $sql, '%%HAVING%%' ) ) {
+            if ( false !== stripos( $sql, ' ORDER BY ' ) )
+                $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%HAVING%% ORDER BY ', $sql );
+            else
+                $sql .= ' %%HAVING%% ';
+        }
+        if ( false === stripos( $sql, '%%ORDERBY%%' ) )
+            $sql .= ' %%ORDERBY%% ';
+        if ( false === stripos( $sql, '%%LIMIT%%' ) )
+            $sql .= ' %%LIMIT%% ';
 
-		// Replace variables
-		if ( 0 < strlen( $params->join ) )
-			$sql = str_ireplace( '%%JOIN%%', $params->join, $sql );
-		if ( 0 < strlen( $params->where ) ) {
-			if ( false !== stripos( $sql, ' WHERE ' ) ) {
-				if ( false !== stripos( $sql, ' WHERE %%WHERE%% ' ) )
-					$sql = str_ireplace( '%%WHERE%%', $params->where . ' AND ', $sql );
-				else
-					$sql = str_ireplace( '%%WHERE%%', ' AND ' . $params->where, $sql );
-			}
-			else
-				$sql = str_ireplace( '%%WHERE%%', ' WHERE ' . $params->where, $sql );
-		}
-		if ( 0 < strlen( $params->groupby ) ) {
-			if ( false !== stripos( $sql, ' GROUP BY ' ) ) {
-				if ( false !== stripos( $sql, ' GROUP BY %%GROUPBY%% ' ) )
-					$sql = str_ireplace( '%%GROUPBY%%', $params->groupby . ', ', $sql );
-				else
-					$sql = str_ireplace( '%%GROUPBY%%', ', ' . $params->groupby, $sql );
-			}
-			else
-				$sql = str_ireplace( '%%GROUPBY%%', ' GROUP BY ' . $params->groupby, $sql );
-		}
-		if ( 0 < strlen( $params->having ) && false !== stripos( $sql, ' GROUP BY ' ) ) {
-			if ( false !== stripos( $sql, ' HAVING ' ) ) {
-				if ( false !== stripos( $sql, ' HAVING %%HAVING%% ' ) )
-					$sql = str_ireplace( '%%HAVING%%', $params->having . ' AND ', $sql );
-				else
-					$sql = str_ireplace( '%%HAVING%%', ' AND ' . $params->having, $sql );
-			}
-			else
-				$sql = str_ireplace( '%%HAVING%%', ' HAVING ' . $params->having, $sql );
-		}
-		if ( 0 < strlen( $params->orderby ) ) {
-			if ( false !== stripos( $sql, ' ORDER BY ' ) ) {
-				if ( false !== stripos( $sql, ' ORDER BY %%ORDERBY%% ' ) )
-					$sql = str_ireplace( '%%ORDERBY%%', $params->orderby . ', ', $sql );
-				else
-					$sql = str_ireplace( '%%ORDERBY%%', ', ' . $params->orderby, $sql );
-			}
-			else
-				$sql = str_ireplace( '%%ORDERBY%%', ' ORDER BY ' . $params->orderby, $sql );
-		}
-		$this->total_sql = $sql;
-		if ( 0 < strlen( $params->select ) ) {
-			if ( false !== stripos( $sql, '%%SELECT%% FROM ' ) ) {
-				$sql = str_ireplace( '%%SELECT%%', $params->select . ', ', $sql );
-			} else {
-				$sql = str_ireplace( '%%SELECT%%', $params->select, $sql );
-			}
-		}
-		if ( false !== stripos( $this->total_sql, '%%SELECT%% FROM ' ) ) {
-			$this->total_sql = str_ireplace( '%%SELECT%%', 'COUNT(*), ', $this->total_sql );
-		} else {
-			$this->total_sql = str_ireplace( '%%SELECT%%', 'COUNT(*)', $this->total_sql );
-		}
-		if ( 0 < $params->page && 0 < $params->limit ) {
-			$start = ( $params->page - 1 ) * $params->limit;
-			$end = $start + $params->limit;
-			$sql = str_ireplace( '%%LIMIT%%', 'LIMIT ' . (int) $start . ', ' . (int) $end, $sql );
-		}
+        // Replace variables
+        if ( 0 < strlen( $params->join ) )
+            $sql = str_ireplace( '%%JOIN%%', $params->join, $sql );
+        if ( 0 < strlen( $params->where ) ) {
+            if ( false !== stripos( $sql, ' WHERE ' ) ) {
+                if ( false !== stripos( $sql, ' WHERE %%WHERE%% ' ) )
+                    $sql = str_ireplace( '%%WHERE%%', $params->where . ' AND ', $sql );
+                else
+                    $sql = str_ireplace( '%%WHERE%%', ' AND ' . $params->where, $sql );
+            }
+            else
+                $sql = str_ireplace( '%%WHERE%%', ' WHERE ' . $params->where, $sql );
+        }
+        if ( 0 < strlen( $params->groupby ) ) {
+            if ( false !== stripos( $sql, ' GROUP BY ' ) ) {
+                if ( false !== stripos( $sql, ' GROUP BY %%GROUPBY%% ' ) )
+                    $sql = str_ireplace( '%%GROUPBY%%', $params->groupby . ', ', $sql );
+                else
+                    $sql = str_ireplace( '%%GROUPBY%%', ', ' . $params->groupby, $sql );
+            }
+            else
+                $sql = str_ireplace( '%%GROUPBY%%', ' GROUP BY ' . $params->groupby, $sql );
+        }
+        if ( 0 < strlen( $params->having ) && false !== stripos( $sql, ' GROUP BY ' ) ) {
+            if ( false !== stripos( $sql, ' HAVING ' ) ) {
+                if ( false !== stripos( $sql, ' HAVING %%HAVING%% ' ) )
+                    $sql = str_ireplace( '%%HAVING%%', $params->having . ' AND ', $sql );
+                else
+                    $sql = str_ireplace( '%%HAVING%%', ' AND ' . $params->having, $sql );
+            }
+            else
+                $sql = str_ireplace( '%%HAVING%%', ' HAVING ' . $params->having, $sql );
+        }
+        if ( 0 < strlen( $params->orderby ) ) {
+            if ( false !== stripos( $sql, ' ORDER BY ' ) ) {
+                if ( false !== stripos( $sql, ' ORDER BY %%ORDERBY%% ' ) )
+                    $sql = str_ireplace( '%%ORDERBY%%', $params->orderby . ', ', $sql );
+                else
+                    $sql = str_ireplace( '%%ORDERBY%%', ', ' . $params->orderby, $sql );
+            }
+            else
+                $sql = str_ireplace( '%%ORDERBY%%', ' ORDER BY ' . $params->orderby, $sql );
+        }
+        $this->total_sql = $sql;
+        if ( 0 < strlen( $params->select ) ) {
+            if ( false !== stripos( $sql, '%%SELECT%% FROM ' ) ) {
+                $sql = str_ireplace( '%%SELECT%%', $params->select . ', ', $sql );
+            } else {
+                $sql = str_ireplace( '%%SELECT%%', $params->select, $sql );
+            }
+        }
+        if ( false !== stripos( $this->total_sql, '%%SELECT%% FROM ' ) ) {
+            $this->total_sql = str_ireplace( '%%SELECT%%', 'COUNT(*), ', $this->total_sql );
+        } else {
+            $this->total_sql = str_ireplace( '%%SELECT%%', 'COUNT(*)', $this->total_sql );
+        }
+        if ( 0 < $params->page && 0 < $params->limit ) {
+            $start = ( $params->page - 1 ) * $params->limit;
+            $end = $start + $params->limit;
+            $sql = str_ireplace( '%%LIMIT%%', 'LIMIT ' . (int) $start . ', ' . (int) $end, $sql );
+        }
 
-		// Clear any unused variables
-		list($sql, $this->total_sql) = str_ireplace( array(
-			'%%SELECT%%',
-			'%%JOIN%%',
-			'%%WHERE%%',
-			'%%GROUPBY%%',
-			'%%HAVING%%',
-			'%%ORDERBY%%',
-			'%%LIMIT%%'
-		), '', array($sql, $this->total_sql) );
+        // Clear any unused variables
+        list($sql, $this->total_sql) = str_ireplace( array(
+            '%%SELECT%%',
+            '%%JOIN%%',
+            '%%WHERE%%',
+            '%%GROUPBY%%',
+            '%%HAVING%%',
+            '%%ORDERBY%%',
+            '%%LIMIT%%'
+        ), '', array($sql, $this->total_sql) );
 
         return $sql;
     }

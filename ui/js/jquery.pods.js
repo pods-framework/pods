@@ -1388,6 +1388,8 @@
                         field_data[ 'label' ] += ' (Copy)';
                         field_data[ 'id' ] = 0;
 
+                        $new_row_label.find( 'a.pods-manage-row-edit.row-label' ).html( field_data[ 'label' ] );
+
                         $new_row_content.find( 'input.field_data' ).val( $.toJSON( field_data ) );
 
                         $new_row.data( 'row', row_counter );

@@ -1,0 +1,150 @@
+
+.librow{
+    padding: 3px;
+    border-bottom: 1px dashed #EFEFEF;
+    margin-bottom: 5px;
+    clear: both;
+    height: 70px;
+}
+.librow .description{
+    clear: both;
+}
+.librow label{
+    display: block;
+}
+.librow .libItem{
+    float: left;
+    width: 460px;    
+}
+.libItem.liblocation{
+    width: 100px;
+}
+
+.attributeItem {
+    border-top: 1px dashed #DDDDDD;
+    clear: both;
+    line-height: 1em;
+    padding-bottom: 15px;
+    padding-left: 5px;
+    padding-top: 10px;
+    position: relative;
+}
+
+.attributeItem:hover {
+	background: #F1F1F1;
+}
+.attribute-row-left{
+    float: left;
+    width:200px;
+}
+.attribute-row-left .attributeField{
+    width:198px;
+    padding-bottom: 2px;
+}
+.attribute-row-left .attributeField label{
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    width: 73px;
+}
+.attribute-row-right{
+    float: left;
+    width:200px;
+    line-height: 16px;
+}
+.attribute-row-right .attributeField{
+    width:200px;
+}
+.attribute-row-right .attributeField label{
+    margin: 5px 0 0 0;
+    padding: 0;
+    width: 45px;
+    display: block;
+    float:left;
+}
+.attribute-row-right textarea{
+    width: 152px;
+    height: 70px;
+}
+.attribute-row-right input{
+    width: 100%;
+}
+.attributeItem .attributeFooter{
+    background-color: #F4F4F4;
+    bottom: 0;
+    clear: both;
+    left: 0;
+    padding: 5px 0 5px 267px;
+    position: absolute;
+    right: 0;
+}
+.attributeItem .attributeFooter .removal{
+    margin-left: 20px;
+}
+
+.pat_configOption {
+	padding: 5px 0;
+}
+
+.pat_configOption label {
+	display: inline-block;
+	padding: 5px 0;
+	width: 130px;
+}
+
+.pat_configOption .mspro_captionLine {
+	margin-left: 135px;
+	font-style: italic;
+}
+
+.pat_configOption.radio .multiLable {
+	float: left;
+	padding-top: 0;
+}
+
+.pat_configOption.checkbox .mspro_captionLine {
+	margin-left: 23px;
+}
+
+.pat_configOption .toggleConfigOption {
+	margin-left: 140px;
+}
+
+
+#saveIndicator {	
+    width:10px;
+    display:none;
+}
+#saveIndicator progress{ width:50px;}
+
+/*!
+ * Bootstrap v2.0.4
+ *
+ * Copyright 2012 Twitter, Inc
+ * Licensed under the Apache License v2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Designed and built with all the love in the world @twitter by @mdo and @fat.
+ */
+.clearfix{*zoom:1;}.clearfix:before,.clearfix:after{display:table;content:"";}
+.clearfix:after{clear:both;}
+.hide-text{font:0/0 a;color:transparent;text-shadow:none;background-color:transparent;border:0;}
+.input-block-level{display:block;width:100%;min-height:28px;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;-ms-box-sizing:border-box;box-sizing:border-box;}
+.dropup,.dropdown{position:relative;}
+.dropdown-toggle{*margin-bottom:-3px;}
+.dropdown-toggle:active,.open .dropdown-toggle{outline:0;}
+.caret{display:inline-block;width:0;height:0;vertical-align:top;border-top:4px solid #000000;border-right:4px solid transparent;border-left:4px solid transparent;content:"";opacity:0.3;filter:alpha(opacity=30);}
+.dropdown .caret{margin-top:8px;margin-left:2px;}
+.dropdown:hover .caret,.open .caret{opacity:1;filter:alpha(opacity=100);}
+.dropdown-menu{position:absolute;top:100%;left:0;z-index:1000;display:none;float:left;min-width:160px;padding:4px 0;margin:1px 0 0;list-style:none;background-color:#ffffff;border:1px solid #ccc;border:1px solid rgba(0, 0, 0, 0.2);*border-right-width:2px;*border-bottom-width:2px;-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px;-webkit-box-shadow:0 5px 10px rgba(0, 0, 0, 0.2);-moz-box-shadow:0 5px 10px rgba(0, 0, 0, 0.2);box-shadow:0 5px 10px rgba(0, 0, 0, 0.2);-webkit-background-clip:padding-box;-moz-background-clip:padding;background-clip:padding-box;}.dropdown-menu.pull-right{right:0;left:auto;}
+.dropdown-menu .divider{*width:100%;height:1px;margin:8px 1px;*margin:-5px 0 5px;overflow:hidden;background-color:#e5e5e5;border-bottom:1px solid #ffffff;}
+.dropdown-menu a{display:block;padding:3px 15px;clear:both;font-weight:normal;line-height:18px;color:#333333;white-space:nowrap;}
+.dropdown-menu li>a:hover,.dropdown-menu .active>a,.dropdown-menu .active>a:hover{color:#ffffff;text-decoration:none;background-color:#89AD2E;}
+.open{*z-index:1000;}.open >.dropdown-menu{display:block;}
+.pull-right>.dropdown-menu{right:0;left:auto;}
+.dropup .caret,.navbar-fixed-bottom .dropdown .caret{border-top:0;border-bottom:4px solid #000000;content:"\2191";}
+.dropup .dropdown-menu,.navbar-fixed-bottom .dropdown .dropdown-menu{top:auto;bottom:100%;margin-bottom:1px;}
+.typeahead{margin-top:2px;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;min-width: 223px;font-family: "Lucida Grande",Sans-serif;}
+.typeahead a{text-decoration: none;}
+
+/*89AD2E*/

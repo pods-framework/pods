@@ -1055,7 +1055,10 @@
                             var edit_row = new_row.replace( /\_\_1/gi, row_counter ).replace( /\-\-1/gi, row_counter );
                             var $field_wrapper = $row_content.find( 'div.pods-manage-field' );
 
-                            $field_wrapper.append( edit_row );
+                            if ( $row.hasClass( 'pods-field-duplicated' ) )
+                                $row.removeClass( 'pods-field-duplicated' );
+                            else
+                                $field_wrapper.append( edit_row );
 
                             $field_wrapper.find( '.pods-depends-on' ).hide();
                             $field_wrapper.find( '.pods-excludes-on' ).hide();
@@ -1144,7 +1147,7 @@
                     var $row_content = $row_label.find( 'div.pods-manage-row-wrapper' );
                     var $field_wrapper = $row_content.find( 'div.pods-manage-field' );
                     var $row_value = $row_content.find( 'input.field_data' ).val();
-                    var color = $.css( $row.get( 0 ), 'backgroundColor' );
+                    var color = ( $row.hasClass( 'alternate' ) ? '#F1F1F1' : '#FFFFFF' );
                     var row_id = $row.data( 'row' );
                     var field_data = {};
 
@@ -1221,7 +1224,7 @@
                         $row.css( 'backgroundColor', '#FFFF33' ).animate(
                             { backgroundColor : color },
                             {
-                                duration : 'slow',
+                                duration : 600,
                                 complete : function () {
                                     $( this ).css( 'backgroundColor', '' );
                                 }
@@ -1334,6 +1337,9 @@
                         if ( $.fn.sortable && $tbody.hasClass( 'pods-manage-sortable' ) )
                            $tbody.sortable( 'refresh' );
 
+                        $( 'tr.pods-manage-row' ).removeClass( 'alternate' );
+                        $( 'tr.pods-manage-row:even' ).addClass( 'alternate' );
+
                         var sluggables = [];
 
                         $new_row.find( '.pods-slugged[data-sluggable], .pods-slugged-lower[data-sluggable]' ).each( function () {
@@ -1372,7 +1378,7 @@
                         var $tbody = $( this ).closest( 'tbody.pods-manage-list' );
 
                         $tbody.find( 'tr.no-items' ).hide();
-                        $tbody.append( '<tr id="row-' + row_counter + '" class="pods-manage-row pods-field-init pods-field-' + row_counter + ' pods-submittable-fields" valign="top">' + add_row + '</tr>' );
+                        $tbody.append( '<tr id="row-' + row_counter + '" class="pods-manage-row pods-field-init pods-field-new pods-field-duplicated pods-field-' + row_counter + ' pods-submittable-fields" valign="top">' + add_row + '</tr>' );
 
                         var $new_row = $tbody.find( 'tr#row-' + row_counter );
                         var $new_row_label = $new_row.find( 'td.pods-manage-row-label' );
@@ -1401,6 +1407,9 @@
 
                         if ( $.fn.sortable && $tbody.hasClass( 'pods-manage-sortable' ) )
                            $tbody.sortable( 'refresh' );
+
+                        $( 'tr.pods-manage-row' ).removeClass( 'alternate' );
+                        $( 'tr.pods-manage-row:even' ).addClass( 'alternate' );
 
                         var sluggables = [];
 

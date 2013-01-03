@@ -2017,71 +2017,25 @@ class PodsData {
                 $joined_id = 'id';
             }
         }
-<<<<<<< HEAD
-        else {
-            if ( in_array( $traverse[ 'type' ], $tableless_field_types ) ) {
-                $the_join = "
-                    LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
-                        `{$rel_alias}`.`field_id` = {$traverse[ 'id' ]}
-                        AND `{$rel_alias}`.`item_id` = `{$joined}`.`id`
-
-                    LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
-                        `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_alias}`.`related_item_id`
-                ";
-
-                $joined_id = 'id';
-            }
-            elseif ( 'meta' == $pod_data[ 'storage' ] ) {
-                if ( !in_array( $traverse[ 'type' ], $tableless_field_types ) ) {
-                    if ( ( $depth + 2 ) == count( $fields ) ) {
-                        $the_join = "
-                            LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
-                                `{$field_joined}`.`{$table_info[ 'field_index' ]}` = '{$traverse[ 'name' ]}'
-                                AND `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$joined}`.`{$joined_id}`
-                        ";
-                    }
-                    else {
-                        $the_join = "
-                            LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
-                                `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
-                                AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = `{$joined}`.`{$joined_id}`
-                        ";
-                    }
-
-                    $table_info[ 'recurse' ] = false;
-                }
-                else {
-                    $the_join = "
-                        LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
-                            `{$rel_alias}`.`field_id` = {$traverse[ 'id' ]}
-                            AND `{$rel_alias}`.`item_id` = `{$joined}`.`{$joined_id}`
-
-                        LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
-                            `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
-                            AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = `{$rel_alias}`.`related_item_id`
-                    ";
-
-                    $joined_id = $table_info[ 'meta_field_id' ];
-                }
-=======
         elseif ( 'meta' == $pod_data[ 'storage' ] ) {
             if ( ( $depth + 2 ) == count( $fields ) ) {
                 $the_join = "
-                LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
-                    `{$field_joined}`.`{$table_info[ 'field_index' ]}` = '{$traverse[ 'name' ]}'
-                    AND `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$joined}`.`{$joined_id}`
-            ";
+                    LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
+                        `{$field_joined}`.`{$table_info[ 'field_index' ]}` = '{$traverse[ 'name' ]}'
+                        AND `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$joined}`.`{$joined_id}`
+                ";
+
+                $table_info[ 'recurse' ] = false;
             }
             else {
                 $the_join = "
-                LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
-                    `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
-                    AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = `{$joined}`.`{$joined_id}`
-            ";
->>>>>>> More fixes for #894
-            }
+                    LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$field_joined}` ON
+                        `{$field_joined}`.`{$table_info[ 'meta_field_index' ]}` = '{$traverse[ 'name' ]}'
+                        AND `{$field_joined}`.`{$table_info[ 'meta_field_id' ]}` = `{$joined}`.`{$joined_id}`
+                ";
 
-            $table_info[ 'recurse' ] = false;
+                $joined_id = $table_info[ 'meta_field_id' ];
+            }
         }
 
         $the_join = $this->do_hook( 'traverse_the_join', $the_join, compact( 'pod', 'fields', 'joined', 'depth', 'joined_id', 'params' ) );

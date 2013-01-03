@@ -3205,7 +3205,7 @@ class PodsAPI {
                 DELETE `t`, `r`, `m`
                 FROM `{$pod['table']}` AS `t`
                 LEFT JOIN `{$pod['meta_table']}` AS `m`
-                    ON `m`.`{$pod['meta_id']}` = `t`.`{$pod['field_id']}`
+                    ON `m`.`{$pod['meta_field_id']}` = `t`.`{$pod['field_id']}`
                 LEFT JOIN `{$pod['table']}` AS `r`
                     ON `r`.`post_parent` = `t`.`{$pod['field_id']}` AND `r`.`post_status` = 'inherit'
                 WHERE `t`.`{$pod['field_type']}` = '{$type}'
@@ -3219,7 +3219,8 @@ class PodsAPI {
 
             $sql = "
                 DELETE FROM `{$pod['table']}` AS `t`
-                WHERE `t`.`{$pod['field_type']}` = '{$type}'
+                " . $pod['join']['tt'] . "
+                WHERE " . implode( ' AND ', $pod['where'] ) . "
             ";
 
             pods_query( $sql, false );
@@ -3230,7 +3231,7 @@ class PodsAPI {
                 DELETE `t`, `m`
                 FROM `{$pod['table']}` AS `t`
                 LEFT JOIN `{$pod['meta_table']}` AS `m`
-                    ON `m`.`{$pod['meta_id']}` = `t`.`{$pod['field_id']}`
+                    ON `m`.`{$pod['meta_field_id']}` = `t`.`{$pod['field_id']}`
                 WHERE `t`.`{$pod['field_id']}` != " . (int) get_current_user_id() . "
             ";
 
@@ -3244,7 +3245,7 @@ class PodsAPI {
                 DELETE `t`, `m`
                 FROM `{$pod['table']}` AS `t`
                 LEFT JOIN `{$pod['meta_table']}` AS `m`
-                    ON `m`.`{$pod['meta_id']}` = `t`.`{$pod['field_id']}`
+                    ON `m`.`{$pod['meta_field_id']}` = `t`.`{$pod['field_id']}`
                 WHERE `t`.`{$pod['field_type']}` = '{$type}'
             ";
 
@@ -5056,6 +5057,7 @@ class PodsAPI {
             'field_id' => 'id',
             'field_index' => 'name',
             'field_slug' => null,
+            'field_type' => null,
 
             'meta_field_id' => 'id',
             'meta_field_index' => 'name',
@@ -5163,6 +5165,7 @@ class PodsAPI {
                 $info[ 'field_id' ] = 'ID';
                 $info[ 'field_index' ] = 'post_title';
                 $info[ 'field_slug' ] = 'post_name';
+                $info[ 'field_type' ] = 'post_type';
 
                 $info[ 'meta_field_id' ] = 'post_id';
                 $info[ 'meta_field_index' ] = 'meta_key';
@@ -5219,6 +5222,7 @@ class PodsAPI {
                 $info[ 'field_id' ] = $info[ 'meta_field_id' ] = 'term_id';
                 $info[ 'field_index' ] = $info[ 'meta_field_index' ] = $info[ 'meta_field_value' ] = 'name';
                 $info[ 'field_slug' ] = 'slug';
+                $info[ 'field_type' ] = 'taxonomy';
 
                 if ( 'nav_menu' == $object_type )
                     $object = 'nav_menu';
@@ -5284,6 +5288,7 @@ class PodsAPI {
 
                 $info[ 'field_id' ] = 'comment_ID';
                 $info[ 'field_index' ] = 'comment_date';
+                $info[ 'field_type' ] = 'comment_type';
 
                 $info[ 'meta_field_id' ] = 'comment_id';
                 $info[ 'meta_field_index' ] = 'meta_key';

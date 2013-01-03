@@ -540,6 +540,11 @@ class PodsAdmin {
             'actions_custom' => array(
                 'add' => array( $this, 'admin_setup_add' ),
                 'edit' => array( $this, 'admin_setup_edit' ),
+                'reset' => array(
+                    'label' => __( 'Delete All Items', 'pods' ),
+                    'confirm' => __( 'Are you sure you want to delete all items from this Pod?', 'pods' ),
+                    'callback' => array( $this, 'admin_setup_reset' )
+                ),
                 'delete' => array( $this, 'admin_setup_delete' )
             ),
             'search' => false,
@@ -590,6 +595,27 @@ class PodsAdmin {
         $obj->total_found = count( $obj->data );
 
         $obj->message( __( 'Pod deleted successfully.', 'pods' ) );
+    }
+
+    /**
+     * Reset a pod
+     *
+     * @param $id
+     * @param $obj
+     *
+     * @return mixed
+     */
+    public function admin_setup_reset ( &$obj, $id ) {
+        $pod = $this->api->load_pod( array( 'id' => $id ), false );
+
+        if ( empty( $pod ) )
+            return $obj->error( __( 'Pod not found.', 'pods' ) );
+
+        $this->api->reset_pod( array( 'id' => $id ) );
+
+        $obj->message( __( 'Pod reset successfully.', 'pods' ) );
+
+        $obj->manage();
     }
 
     /**

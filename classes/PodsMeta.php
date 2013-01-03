@@ -677,7 +677,7 @@ class PodsMeta {
 
         $blacklisted_types = apply_filters( 'pods_meta_save_post_blacklist_types', $blacklisted_types, $post_id, $post );
 
-        if ( empty( $_POST ) || 1 == pods_var( 'pods_meta_save', 'post' ) )
+        if ( empty( $_POST ) || 1 != pods_var( 'pods_meta_save', 'post' ) )
             return $post_id;
 
         // @todo Figure out how to hook into autosave for saving meta

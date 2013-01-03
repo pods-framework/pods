@@ -2026,7 +2026,19 @@ class PodsData {
             }
         }
         else {
-            if ( 'meta' == $pod_data[ 'storage' ] ) {
+					if ( in_array( $traverse[ 'type' ], $tableless_field_types ) ) {
+							$the_join = "
+											LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
+													`{$rel_alias}`.`field_id` = {$traverse[ 'id' ]}
+													AND `{$rel_alias}`.`item_id` = `{$joined}`.`id`
+
+											LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
+													`{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_alias}`.`related_item_id`
+									";
+
+							$joined_id = 'id';
+						}
+            elseif ( 'meta' == $pod_data[ 'storage' ] ) {
                 if ( !in_array( $traverse[ 'type' ], $tableless_field_types ) ) {
                     if ( ( $depth + 2 ) == count( $fields ) ) {
                         $the_join = "
@@ -2058,18 +2070,6 @@ class PodsData {
 
                     $joined_id = $table_info[ 'meta_field_id' ];
                 }
-            }
-            elseif ( 'table' == $pod_data[ 'storage' ] && in_array( $traverse[ 'type' ], $tableless_field_types ) ) {
-                $the_join = "
-                    LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
-                        `{$rel_alias}`.`field_id` = {$traverse[ 'id' ]}
-                        AND `{$rel_alias}`.`item_id` = `{$joined}`.`id`
-
-                    LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
-                        `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_alias}`.`related_item_id`
-                ";
-
-                $joined_id = 'id';
             }
         }
 

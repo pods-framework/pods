@@ -6,8 +6,6 @@
  *
  * Version: 1.0
  *
- * Developer Mode: on
- *
  * Theme Dependency: Builder|builder|http://www.ithemes.com/
  *
  * @package Pods\Components

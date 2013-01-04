@@ -1,58 +1,144 @@
 <?php
 /**
- * @package Pods\Widgets
+ * @package Pods\Components
+ * @subpackage Builder
  */
-class PodsWidgetForm extends WP_Widget {
+if ( !is_admin() || !class_exists( 'LayoutModule' ) )
+    return;
 
-    public function PodsWidgetForm () {
-        $this->WP_Widget(
-            'pods_widget_form',
-            'Pods Form',
-            array( 'classname' => 'pods_widget_form', 'description' => 'Display a form for creating and editing Pod items' ),
-            array( 'width' => 200 )
-        );
-    }
+if ( !class_exists( 'PodsBuilderModuleForm' ) ) {
+    class PodsBuilderModuleForm extends LayoutModule {
 
-    public function widget ( $args, $instance ) {
-        extract( $args );
+        var $_name = '';
+        var $_var = 'pods-builder-form';
+        var $_description = '';
+        var $_editor_width = 500;
+        var $_can_remove_wrappers = true;
 
-        // Get widget fields
-        $title = apply_filters( 'widget_title', $instance[ 'title' ] );
+        /**
+         * Register the Module
+         */
+        public function PodsBuilderModuleField () {
+            $this->_name = __( 'Pods Form', 'pods' );
+            $this->_description = __( 'Display a form for creating and editing Pod items', 'pods' );
+            $this->module_path = dirname( __FILE__ );
 
-        $args = array(
-            'name' => trim( pods_var_raw( 'pod_type', $instance, '' ) ),
-            'slug' => trim( pods_var_raw( 'slug', $instance, '' ) ),
-            'fields' => trim( pods_var_raw( 'fields', $instance, '' ) ),
-            'label' => trim( pods_var_raw( 'label', $instance, __( 'Submit', 'pods' ), null, true ) ),
-            'thank_you' => trim( pods_var_raw( 'thank_you', $instance, '' ) ),
-            'form' => 1
-        );
-
-        if ( 0 < strlen( $args[ 'name' ] ) ) {
-            require PODS_DIR . 'ui/front/widgets.php';
+            $this->LayoutModule();
         }
-    }
 
-    public function update ( $new_instance, $old_instance ) {
-        $instance = $old_instance;
-        $instance[ 'title' ] = pods_var_raw( 'title', $new_instance, '' );
-        $instance[ 'pod_type' ] = pods_var_raw( 'pod_type', $new_instance, '' );
-        $instance[ 'slug' ] = pods_var_raw( 'slug', $new_instance, '' );
-        $instance[ 'fields' ] = pods_var_raw( 'fields', $new_instance, '' );
-        $instance[ 'label' ] = pods_var_raw( 'label', $new_instance, __( 'Submit', 'pods' ), null, true );
-        $instance[ 'thank_you' ] = pods_var_raw( 'thank_you', $new_instance, '' );
+        /**
+         * Set default variables
+         *
+         * @param $defaults
+         *
+         * @return mixed
+         */
+        function _get_defaults ( $defaults ) {
+            $new_defaults = array(
+                'pod_type' => '',
+                'slug' => '',
+                'fields' => '',
+                'label' => __( 'Submit', 'pods' ),
+                'thank_you' => ''
+            );
 
-        return $instance;
-    }
+            return ITUtility::merge_defaults( $new_defaults, $defaults );
+        }
 
-    public function form ( $instance ) {
-        $title = pods_var_raw( 'title', $instance, '' );
-        $pod_type = pods_var_raw( 'pod_type', $instance, '' );
-        $slug = pods_var_raw( 'slug', $instance, '' );
-        $fields = pods_var_raw( 'fields', $instance, '' );
-        $label = pods_var_raw( 'label', $instance, __( 'Submit', 'pods' ), null, true );
-        $thank_you = pods_var_raw( 'thank_you', $instance, '' );
+        /**
+         * Output something before the table form
+         *
+         * @param object $form Form class
+         * @param bool $results
+         */
+        function _before_table_edit ( $form, $results = true ) {
+?>
+    <p><?php _e( 'Display a form for creating and editing Pod items', 'pods' ); ?></p>
+<?php
+        }
 
-        require PODS_DIR . 'ui/admin/widgets/form.php';
+        /**
+         * Output something at the start of the table form
+         *
+         * @param object $form Form class
+         * @param bool $results
+         */
+        function _start_table_edit ( $form, $results = true ) {
+            $api = pods_api();
+            $all_pods = $api->load_pods();
+
+            $pod_types = array();
+
+            foreach ( $all_pods as $pod ) {
+                $pod_types[ $pod[ 'name' ] ] = $pod[ 'label' ];
+            }
+?>
+    <tr>
+        <td valign="top">
+            <label for="pod_type"><?php _e( 'Pod', 'pods' ); ?></label>
+        </td>
+        <td>
+            <?php
+                if ( 0 < count( $all_pods ) )
+                    $form->add_drop_down( 'pod_type', $pod_types );
+                else
+                    echo '<strong class="red">' . __( 'None Found', 'pods' ) . '</strong>';
+            ?>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">
+            <label for="slug"><?php _e( 'Slug or ID', 'pods' ); ?></label>
+        </td>
+        <td>
+            <?php $form->add_text_box( 'slug' ); ?>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">
+            <label for="fields"><?php _e( 'Fields (comma-separated)', 'pods' ); ?></label>
+        </td>
+        <td>
+            <?php $form->add_text_box( 'fields' ); ?>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">
+            <label for="label"><?php _e( 'Submit Label', 'pods' ); ?></label>
+        </td>
+        <td>
+            <?php $form->add_text_box( 'label' ); ?>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">
+            <label for="thank_you"><?php _e( 'Thank You URL upon submission', 'pods' ); ?></label>
+        </td>
+        <td>
+            <?php $form->add_text_box( 'thank_you' ); ?>
+        </td>
+    </tr>
+<?php
+        }
+
+        /**
+         * Module Output
+         */
+        function _render ( $fields ) {
+            $args = array(
+                'name' => trim( pods_var_raw( 'pod_type', $fields, '' ) ),
+                'slug' => trim( pods_var_raw( 'slug', $fields, '' ) ),
+                'fields' => trim( pods_var_raw( 'fields', $fields, '' ) ),
+                'label' => trim( pods_var_raw( 'label', $fields, __( 'Submit', 'pods' ), null, true ) ),
+                'thank_you' => trim( pods_var_raw( 'thank_you', $fields, '' ) ),
+                'form' => 1
+            );
+
+            if ( 0 < strlen( $args[ 'name' ] ) )
+                echo pods_shortcode( $args, ( isset( $content ) ? $content : null ) );
+        }
+
     }
 }
+
+new PodsBuilderModuleForm();

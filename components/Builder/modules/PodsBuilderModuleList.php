@@ -1,76 +1,174 @@
 <?php
 /**
- * @package Pods\Widgets
+ * @package Pods\Components
+ * @subpackage Builder
  */
-class PodsWidgetList extends WP_Widget {
+if ( !is_admin() || !class_exists( 'LayoutModule' ) )
+    return;
 
-    /**
-     * Register the widget
-     */
-    public function PodsWidgetList () {
-        $this->WP_Widget(
-            'pods_widget_list',
-            'Pods List',
-            array( 'classname' => 'pods_widget_list', 'description' => 'Display multiple Pod items' ),
-            array( 'width' => 200 )
-        );
-    }
+if ( !class_exists( 'PodsBuilderModuleList' ) ) {
+    class PodsBuilderModuleList extends LayoutModule {
 
-    /**
-     * Output of widget
-     */
-    public function widget ( $args, $instance ) {
-        extract( $args );
+        var $_name = '';
+        var $_var = 'pods-builder-list';
+        var $_description = '';
+        var $_editor_width = 500;
+        var $_can_remove_wrappers = true;
 
-        // Get widget fields
-        $title = apply_filters( 'widget_title', $instance[ 'title' ] );
+        /**
+         * Register the Module
+         */
+        public function PodsBuilderModuleField () {
+            $this->_name = __( 'Pods List', 'pods' );
+            $this->_description = __( 'Display multiple Pod items', 'pods' );
+            $this->module_path = dirname( __FILE__ );
 
-        $args = array(
-            'name' => trim( pods_var_raw( 'pod_type', $instance, '' ) ),
-            'template' => trim( pods_var_raw( 'template', $instance, '' ) ),
-            'limit' => (int) pods_var_raw( 'limit', $instance, 15, null, true ),
-            'orderby' => trim( pods_var_raw( 'orderby', $instance, '' ) ),
-            'where' => trim( pods_var_raw( 'where', $instance, '' ) )
-        );
-
-        $content = trim( pods_var_raw( 'template_custom', $instance, '' ) );
-
-        if ( 0 < strlen( $args[ 'name' ] ) && ( 0 < strlen( $args[ 'template' ] ) || 0 < strlen( $content ) ) ) {
-            require PODS_DIR . 'ui/front/widgets.php';
+            $this->LayoutModule();
         }
-    }
 
-    /**
-     * Updates the new instance of widget arguments
-     *
-     * @returns array $instance Updated instance
-     */
-    public function update ( $new_instance, $old_instance ) {
-        $instance = $old_instance;
+        /**
+         * Set default variables
+         *
+         * @param $defaults
+         *
+         * @return mixed
+         */
+        function _get_defaults ( $defaults ) {
+            $new_defaults = array(
+                'pod_type' => '',
+                'template' => '',
+                'template_custom' => '',
+                'limit' => 15,
+                'orderby' => '',
+                'where' => ''
+            );
 
-        $instance[ 'title' ] = pods_var_raw( 'title', $new_instance, '' );
-        $instance[ 'pod_type' ] = pods_var_raw( 'pod_type', $new_instance, '' );
-        $instance[ 'template' ] = pods_var_raw( 'template', $new_instance, '' );
-        $instance[ 'template_custom' ] = pods_var_raw( 'template_custom', $new_instance, '' );
-        $instance[ 'limit' ] = (int) pods_var_raw( 'limit', $new_instance, 15, null, true );
-        $instance[ 'orderby' ] = pods_var_raw( 'orderby', $new_instance, '' );
-        $instance[ 'where' ] = pods_var_raw( 'where', $new_instance, '' );
+            return ITUtility::merge_defaults( $new_defaults, $defaults );
+        }
 
-        return $instance;
-    }
+        /**
+         * Output something before the table form
+         *
+         * @param object $form Form class
+         * @param bool $results
+         */
+        function _before_table_edit ( $form, $results = true ) {
+?>
+    <p><?php _e( 'Display multiple Pod items', 'pods' ); ?></p>
+<?php
+        }
 
-    /**
-     * Widget Form
-     */
-    public function form ( $instance ) {
-        $title = pods_var_raw( 'title', $instance, '' );
-        $pod_type = pods_var_raw( 'pod_type', $instance, '' );
-        $template = pods_var_raw( 'template', $instance, '' );
-        $template_custom = pods_var_raw( 'template_custom', $instance, '' );
-        $limit = (int) pods_var_raw( 'limit', $instance, 15, null, true );
-        $orderby = pods_var_raw( 'orderby', $instance, '' );
-        $where = pods_var_raw( 'where', $instance, '' );
+        /**
+         * Output something at the start of the table form
+         *
+         * @param object $form Form class
+         * @param bool $results
+         */
+        function _start_table_edit ( $form, $results = true ) {
+            $api = pods_api();
+            $all_pods = $api->load_pods();
 
-        require PODS_DIR . 'ui/admin/widgets/list.php';
+            $pod_types = array();
+
+            foreach ( $all_pods as $pod ) {
+                $pod_types[ $pod[ 'name' ] ] = $pod[ 'label' ];
+            }
+?>
+    <tr>
+        <td valign="top">
+            <label for="pod_type"><?php _e( 'Pod', 'pods' ); ?></label>
+        </td>
+        <td>
+            <?php
+                if ( 0 < count( $all_pods ) )
+                    $form->add_drop_down( 'pod_type', $pod_types );
+                else
+                    echo '<strong class="red">' . __( 'None Found', 'pods' ) . '</strong>';
+            ?>
+        </td>
+    </tr>
+
+    <?php
+        if ( class_exists( 'Pods_Templates' ) ) {
+            $all_templates = (array) $api->load_templates( array() );
+
+            $templates = array();
+
+            foreach ( $all_templates as $template ) {
+                $templates[ $template[ 'name' ] ] = $template[ 'name' ];
+            }
+    ?>
+        <tr>
+            <td valign="top">
+                <label for="template"><?php _e( 'Template', 'pods' ); ?></label>
+            </td>
+            <td>
+                <?php
+                    if ( 0 < count( $all_templates ) )
+                        $form->add_drop_down( 'template', $all_templates );
+                    else
+                        echo '<strong class="red">' . __( 'None Found', 'pods' ) . '</strong>';
+                ?>
+            </td>
+        </tr>
+    <?php
+        }
+    ?>
+
+    <tr>
+        <td valign="top">
+            <label for="custom_template"><?php _e( 'Custom Template', 'pods' ); ?></label>
+        </td>
+        <td>
+            <?php $form->add_text_area( 'custom_template' ); ?>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">
+            <label for="limit"><?php _e( 'Limit', 'pods' ); ?></label>
+        </td>
+        <td>
+            <?php $form->add_text_box( 'limit' ); ?>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">
+            <label for="orderby"><?php _e( 'Order By', 'pods' ); ?></label>
+        </td>
+        <td>
+            <?php $form->add_text_box( 'orderby' ); ?>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">
+            <label for="where"><?php _e( 'Where', 'pods' ); ?></label>
+        </td>
+        <td>
+            <?php $form->add_text_box( 'where' ); ?>
+        </td>
+    </tr>
+<?php
+        }
+
+        /**
+         * Module Output
+         */
+        function _render ( $fields ) {
+            $args = array(
+                'name' => trim( pods_var_raw( 'pod_type', $fields, '' ) ),
+                'template' => trim( pods_var_raw( 'template', $fields, '' ) ),
+                'limit' => (int) pods_var_raw( 'limit', $fields, 15, null, true ),
+                'orderby' => trim( pods_var_raw( 'orderby', $fields, '' ) ),
+                'where' => trim( pods_var_raw( 'where', $fields, '' ) )
+            );
+
+            $content = trim( pods_var_raw( 'template_custom', $fields, '' ) );
+
+            if ( 0 < strlen( $args[ 'name' ] ) && ( 0 < strlen( $args[ 'template' ] ) || 0 < strlen( $content ) ) )
+                echo pods_shortcode( $args, ( isset( $content ) ? $content : null ) );
+        }
+
     }
 }
+
+new PodsBuilderModuleList();

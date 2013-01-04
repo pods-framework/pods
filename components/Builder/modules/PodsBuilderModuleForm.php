@@ -39,7 +39,8 @@ if ( !class_exists( 'PodsBuilderModuleForm' ) ) {
                 'slug' => '',
                 'fields' => '',
                 'label' => __( 'Submit', 'pods' ),
-                'thank_you' => ''
+                'thank_you' => '',
+                'sidebar' => 'none'
             );
 
             return ITUtility::merge_defaults( $new_defaults, $defaults );

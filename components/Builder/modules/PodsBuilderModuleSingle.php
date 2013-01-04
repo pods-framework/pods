@@ -38,7 +38,8 @@ if ( !class_exists( 'PodsBuilderModuleSingle' ) ) {
                 'pod_type' => '',
                 'slug' => '',
                 'template' => '',
-                'template_custom' => ''
+                'template_custom' => '',
+                'sidebar' => 'none'
             );
 
             return ITUtility::merge_defaults( $new_defaults, $defaults );

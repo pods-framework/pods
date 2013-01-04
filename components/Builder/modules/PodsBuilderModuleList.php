@@ -40,7 +40,8 @@ if ( !class_exists( 'PodsBuilderModuleList' ) ) {
                 'template_custom' => '',
                 'limit' => 15,
                 'orderby' => '',
-                'where' => ''
+                'where' => '',
+                'sidebar' => 'none'
             );
 
             return ITUtility::merge_defaults( $new_defaults, $defaults );

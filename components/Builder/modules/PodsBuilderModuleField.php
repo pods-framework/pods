@@ -37,7 +37,8 @@ if ( !class_exists( 'PodsBuilderModuleField' ) ) {
             $new_defaults = array(
                 'pod_type' => '',
                 'slug' => '',
-                'field' => ''
+                'field' => '',
+                'sidebar' => 'none'
             );
 
             return ITUtility::merge_defaults( $new_defaults, $defaults );

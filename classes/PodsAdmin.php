@@ -131,7 +131,7 @@ class PodsAdmin {
                 }
                 elseif ( 'pods-packages' == $page )
                     wp_enqueue_style( 'pods-wizard' );
-                elseif ( 'pods-wizard' == $page || 'pods-upgrade' == $page || ( 'pods' == $page && in_array( pods_var( 'action', 'get', 'manage' ), array( 'add', 'manage' ) ) ) ) {
+                elseif ( 'pods-wizard' == $page || 'pods-upgrade' == $page || ( in_array( $page, array( 'pods', 'pods-add-new' ) ) && in_array( pods_var( 'action', 'get', 'manage' ), array( 'add', 'manage' ) ) ) ) {
                     wp_enqueue_style( 'pods-wizard' );
 
                     if ( 'pods-upgrade' == $page )
@@ -150,6 +150,8 @@ class PodsAdmin {
         $results = $this->api->load_pods( array(
             'type' => 'pod'
         ) );
+
+        $all_pods = $this->api->load_pods();
 
         if ( !PodsInit::$upgrade_needed ) {
             if ( false !== $results ) {
@@ -257,7 +259,12 @@ class PodsAdmin {
 
             $admin_menus = array(
                 'pods' => array(
-                    'label' => __( 'Setup', 'pods' ),
+                    'label' => __( 'Edit Pods', 'pods' ),
+                    'function' => array( $this, 'admin_setup' ),
+                    'access' => 'pods'
+                ),
+                'pods-add-new' => array(
+                    'label' => __( 'Add New', 'pods' ),
                     'function' => array( $this, 'admin_setup' ),
                     'access' => 'pods'
                 ),
@@ -276,6 +283,9 @@ class PodsAdmin {
                     'function' => array( $this, 'admin_help' )
                 )
             );
+
+            if ( empty( $all_pods ) )
+                unset( $admin_menus[ 'pods' ] );
         }
         else {
             $admin_menus = array(
@@ -475,10 +485,20 @@ class PodsAdmin {
      * Handle main Pods Setup area for managing Pods and Fields
      */
     public function admin_setup () {
-        $pods = pods_api()->load_pods();
+        $pods = $this->api->load_pods();
 
         if ( empty( $pods ) && !isset( $_GET[ 'action' ] ) )
             $_GET[ 'action' ] = 'add';
+
+        if ( 'pods-add-new' == $_GET[ 'page' ] ) {
+            if ( isset( $_GET[ 'action' ] ) && 'add' != $_GET[ 'action' ] )
+                pods_redirect( pods_var_update( array( 'page' => 'pods', 'action' => $_GET[ 'action' ] ) ) );
+            else
+                $_GET[ 'action' ] = 'add';
+        }
+        elseif ( isset( $_GET[ 'action' ] ) && 'add' == $_GET[ 'action' ] )
+            pods_redirect( pods_var_update( array( 'page' => 'pods-add-new', 'action' => '' ) ) );
+
 
         $types = array(
             'post_type' => __( 'Post Type (extended)', 'pods' ),
@@ -546,6 +566,9 @@ class PodsAdmin {
                     'callback' => array( $this, 'admin_setup_reset' )
                 ),
                 'delete' => array( $this, 'admin_setup_delete' )
+            ),
+            'action_links' => array(
+                'add' => pods_var_update( array( 'page' => 'pods-add-new', 'action' => '' ) )
             ),
             'search' => false,
             'searchable' => false,
@@ -832,7 +855,7 @@ class PodsAdmin {
      * @return array
      */
     public function admin_capabilities ( $capabilities ) {
-        $pods = pods_api()->load_pods();
+        $pods = $this->api->load_pods();
 
         $capabilities[] = 'pods';
         $capabilities[] = 'pods_content';
@@ -1026,9 +1049,8 @@ class PodsAdmin {
         if ( true === $upload_disabled || !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, $nonce_check ) )
             pods_error( __( 'Unauthorized request', 'pods' ), $this );
 
-        $api = pods_api();
-        $pod = $api->load_pod( array( 'id' => (int) $params->pod ) );
-        $field = $api->load_field( array( 'id' => (int) $params->field ) );
+        $pod = $this->api->load_pod( array( 'id' => (int) $params->pod ) );
+        $field = $this->api->load_field( array( 'id' => (int) $params->field ) );
 
         if ( empty( $pod ) || empty( $field ) || $pod[ 'id' ] != $field[ 'pod_id' ] || !isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) )
             pods_error( __( 'Invalid field request', 'pods' ), $this );
@@ -1190,9 +1212,8 @@ class PodsAdmin {
         if ( !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, $nonce_check ) )
             pods_error( __( 'Unauthorized request', 'pods' ), $this );
 
-        $api = pods_api();
-        $pod = $api->load_pod( array( 'id' => (int) $params->pod ) );
-        $field = $api->load_field( array( 'id' => (int) $params->field, 'table_info' => true ) );
+        $pod = $this->api->load_pod( array( 'id' => (int) $params->pod ) );
+        $field = $this->api->load_field( array( 'id' => (int) $params->field, 'table_info' => true ) );
 
         if ( !isset( $params->query ) || strlen( trim( $params->query ) ) < 1 )
             pods_error( __( 'Invalid field request', 'pods' ), $this );
@@ -1214,7 +1235,7 @@ class PodsAdmin {
                 $where = pods_evaluate_tags( $where, true );
         }
         else {
-            $field[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $field ), pods_var( 'pick_val', $field ) );
+            $field[ 'table_info' ] = $this->api->get_table_info( pods_var( 'pick_object', $field ), pods_var( 'pick_val', $field ) );
 
             $data = pods_data();
             $data->table = $field[ 'table_info' ][ 'table' ];

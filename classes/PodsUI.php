@@ -1287,6 +1287,9 @@ class PodsUI {
 
             if ( !in_array( 'add', $this->actions_disabled ) && !in_array( 'add', $this->actions_hidden ) ) {
                 $link = pods_var_update( array( 'action' . $this->num => 'add', 'id' . $this->num => '' ), array( 'page' ), $this->exclusion() );
+
+                if ( !empty( $this->action_links[ 'add' ] ) )
+                    $link = $this->action_links[ 'add' ];
                 ?>
                 <a href="<?php echo $link; ?>" class="add-new-h2"><?php echo $this->heading[ 'add' ]; ?></a>
                 <?php
@@ -1853,8 +1856,12 @@ class PodsUI {
             else
                 echo $this->header[ 'manage' ];
             if ( !in_array( 'add', $this->actions_disabled ) && !in_array( 'add', $this->actions_hidden ) ) {
+                $link = pods_var_update( array( 'action' . $this->num => 'add' ), array( 'page' ), $this->exclusion() );
+
+                if ( !empty( $this->action_links[ 'add' ] ) )
+                    $link = $this->action_links[ 'add' ];
                 ?>
-                <a href="<?php echo pods_var_update( array( 'action' . $this->num => 'add' ), array( 'page' ), $this->exclusion() ); ?>" class="add-new-h2"><?php echo $this->label[ 'add_new' ]; ?></a>
+                <a href="<?php echo $link; ?>" class="add-new-h2"><?php echo $this->label[ 'add_new' ]; ?></a>
                 <?php
             }
             if ( !in_array( 'reorder', $this->actions_disabled ) && !in_array( 'reorder', $this->actions_hidden ) && false !== $this->reorder[ 'on' ] ) {

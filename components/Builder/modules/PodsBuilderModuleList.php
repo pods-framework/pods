@@ -120,7 +120,7 @@ if ( !class_exists( 'PodsBuilderModuleList' ) ) {
             <label for="custom_template"><?php _e( 'Custom Template', 'pods' ); ?></label>
         </td>
         <td>
-            <?php $form->add_text_area( 'custom_template' ); ?>
+            <?php $form->add_text_area( 'custom_template', array( 'style' => 'width:90%; max-width:100%; min-height:100px;', 'rows' => '8' ) ); ?>
         </td>
     </tr>
     <tr>

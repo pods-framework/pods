@@ -3,21 +3,19 @@
  * @package Pods\Components
  * @subpackage Builder
  */
-if ( !class_exists( 'LayoutModule' ) )
+if ( !is_admin() || !class_exists( 'LayoutModule' ) || class_exists( 'PodsBuilderModuleField' ) )
     return;
 
 class PodsBuilderModuleField extends LayoutModule {
 
     var $_name = '';
-
     var $_var = 'pods-builder-field';
-
     var $_description = '';
-
-    var $_editor_width = 450;
+    var $_editor_width = 500;
+    var $_can_remove_wrappers = true;
 
     /**
-     * Register the widget
+     * Register the Module
      */
     public function PodsBuilderModuleField () {
         $this->_name = __( 'Pods Field Value', 'pods' );
@@ -28,34 +26,96 @@ class PodsBuilderModuleField extends LayoutModule {
     }
 
     /**
-     * Module Output
+     * Set default variables
+     *
+     * @param $defaults
+     *
+     * @return mixed
      */
-    public function render ( $args, $instance ) {
-        extract( $args );
-
-        // Get widget fields
-        $title = apply_filters( 'widget_title', $instance[ 'title' ] );
-
-        $args = array(
-            'name' => trim( pods_var_raw( 'pod_type', $instance, '' ) ),
-            'slug' => trim( pods_var_raw( 'slug', $instance, '' ) ),
-            'field' => trim( pods_var_raw( 'field', $instance, '' ) )
+    function _get_defaults ( $defaults ) {
+        $new_defaults = array(
+            'name' => '',
+            'slug' => 'none',
+            'field' => ''
         );
 
-        if ( 0 < strlen( $args[ 'name' ] ) && 0 < strlen( $args[ 'slug' ] ) && 0 < strlen( $args[ 'field' ] ) ) {
-            require PODS_DIR . 'ui/front/widgets.php';
-        }
+        return ITUtility::merge_defaults( $new_defaults, $defaults );
     }
 
     /**
-     * Module Form
+     * Output something before the table form
+     *
+     * @param object $form Form class
+     * @param bool $results
      */
-    public function form ( $instance ) {
-        $title = pods_var_raw( 'title', $instance, '' );
-        $pod_type = pods_var_raw( 'pod_type', $instance, '' );
-        $slug = pods_var_raw( 'slug', $instance, '' );
-        $field = pods_var_raw( 'field', $instance, '' );
+    function _before_table_edit ( $form, $results = true ) {
+?>
+    <p><?php _e( "Display a single Pod item's field value", 'pods' ); ?></p>
+<?php
+    }
 
-        require PODS_DIR . 'ui/admin/widgets/field.php';
+    /**
+     * Output something at the start of the table form
+     *
+     * @param object $form Form class
+     * @param bool $results
+     */
+    function _start_table_edit ( $form, $results = true ) {
+        $api = pods_api();
+        $all_pods = $api->load_pods();
+
+        $pod_types = array();
+
+        foreach ( $all_pods as $pod ) {
+            $pod_types[ $pod[ 'name' ] ] = $pod[ 'label' ];
+        }
+?>
+    <tr>
+        <td valign="top">
+            <label for="pod_type"><?php _e( 'Pod', 'pods' ); ?></label>
+        </td>
+        <td>
+            <?php
+                if ( 0 < count( $all_pods ) )
+                    $form->add_drop_down( 'pod_type', $pod_types );
+                else
+                    echo '<strong class="red">' . __( 'None Found', 'pods' ) . '</strong>';
+            ?>
+            <?php $form->add_text_box( 'pod_type' ); ?>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">
+            <label for="slug"><?php _e( 'Slug or ID', 'pods' ); ?></label>
+        </td>
+        <td>
+            <?php $form->add_text_box( 'slug' ); ?>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">
+            <label for="slug"><?php _e( 'Field', 'pods' ); ?></label>
+        </td>
+        <td>
+            <?php $form->add_text_box( 'field' ); ?>
+        </td>
+    </tr>
+<?php
+    }
+
+    /**
+     * Module Output
+     */
+    function _render ( $fields ) {
+        $args = array(
+            'name' => trim( pods_var_raw( 'pod_type', $fields, '' ) ),
+            'slug' => trim( pods_var_raw( 'slug', $fields, '' ) ),
+            'field' => trim( pods_var_raw( 'field', $fields, '' ) )
+        );
+
+        if ( 0 < strlen( $args[ 'name' ] ) && 0 < strlen( $args[ 'slug' ] ) && 0 < strlen( $args[ 'field' ] ) )
+            echo pods_shortcode( $args, ( isset( $content ) ? $content : null ) );
     }
 }
+
+new PodsBuilderModuleField();

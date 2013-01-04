@@ -18,7 +18,7 @@ if ( !class_exists( 'PodsBuilderModuleList' ) ) {
         /**
          * Register the Module
          */
-        public function PodsBuilderModuleField () {
+        public function PodsBuilderModuleList () {
             $this->_name = __( 'Pods List', 'pods' );
             $this->_description = __( 'Display multiple Pod items', 'pods' );
             $this->module_path = dirname( __FILE__ );

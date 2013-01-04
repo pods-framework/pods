@@ -18,7 +18,7 @@ if ( !class_exists( 'PodsBuilderModuleForm' ) ) {
         /**
          * Register the Module
          */
-        public function PodsBuilderModuleField () {
+        public function PodsBuilderModuleForm () {
             $this->_name = __( 'Pods Form', 'pods' );
             $this->_description = __( 'Display a form for creating and editing Pod items', 'pods' );
             $this->module_path = dirname( __FILE__ );

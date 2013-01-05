@@ -1908,7 +1908,7 @@ class PodsUI {
 
                     foreach ( $this->filters as $filter ) {
                         // use PodsFormUI fields
-                        if ( !isset( $this->fields[ 'search' ][ $filter ] ) )
+                        if ( !isset( $this->pod->fields[ $filter ] ) )
                             continue;
 
                         if ( in_array( $this->pod->fields[ $filter ][ 'type' ], array( 'date', 'datetime', 'time' ) ) ) {

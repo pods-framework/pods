@@ -1881,6 +1881,7 @@ class PodsData {
         $traverse_recurse = array_merge( $defaults, $traverse_recurse );
 
         $table_mode = false;
+        $joins = array();
 
         if ( empty( $traverse_recurse[ 'pod' ] ) ) {
             if ( !empty( $traverse_recurse[ 'params' ] ) && !empty( $traverse_recurse[ 'params' ]->table ) && 0 === strpos( $traverse_recurse[ 'params' ]->table, $wpdb->prefix ) ) {
@@ -1891,7 +1892,7 @@ class PodsData {
                 elseif ( $wpdb->comments == $traverse_recurse[ 'params' ]->table )
                     $traverse_recurse[ 'pod' ] = 'comment';
                 else
-                    return array();
+                    return $joins;
 
                 $pod_data = array();
                 $table_mode = true;
@@ -1916,7 +1917,7 @@ class PodsData {
                 }
             }
             else
-                return array();
+                return $joins;
         }
 
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar' ) );
@@ -1928,10 +1929,8 @@ class PodsData {
             $pod_data = $this->api->load_pod( array( 'name' => $traverse_recurse[ 'pod' ] ), false );
 
             if ( empty( $pod_data ) )
-                return array();
+                return $joins;
         }
-
-        $joins = array();
 
         if ( empty( $traverse_recurse[ 'fields' ] ) || !isset( $traverse_recurse[ 'fields' ][ $traverse_recurse[ 'depth' ] ] ) || empty( $traverse_recurse[ 'fields' ][ $traverse_recurse[ 'depth' ] ] ) )
             return $joins;
@@ -1973,7 +1972,7 @@ class PodsData {
         if ( 0 < $traverse_recurse[ 'depth' ] && 't' != $traverse_recurse[ 'joined' ] )
             $field_joined = $traverse_recurse[ 'joined' ] . '_' . $field;
 
-        if ( !empty( $this->search ) ) {
+        /*if ( !empty( $this->search ) && 1 == 0 ) {
             if ( 0 < strlen( pods_var( 'filter_' . $field_joined, 'get' ) ) ) {
                 $val = absint( pods_var( 'filter_' . $field_joined, 'get' ) );
 
@@ -1992,7 +1991,7 @@ class PodsData {
 
                 $this->search_where[] = " {$search} ";
             }
-        }
+        }*/
 
         $rel_alias = 'rel_' . $field_joined;
 
@@ -2001,7 +2000,7 @@ class PodsData {
         $joined_id = $table_info[ 'field_id' ];
         $joined_index = $table_info[ 'field_index' ];
 
-        if ( in_array( $traverse[ 'type' ], $tableless_field_types ) ) {
+        if ( in_array( $traverse[ 'type' ], $tableless_field_types ) && ( 'pick' != $traverse[ 'type' ] || 'custom-simple' != pods_var( 'pick_object', $traverse ) ) ) {
             if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) {
                 $the_join = "
                     LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$rel_alias}` ON

@@ -1899,7 +1899,7 @@ class PodsData {
                 if ( in_array( $traverse_recurse[ 'pod' ], array( 'user', 'comment' ) ) ) {
                     $pod = $this->api->load_pod( array( 'name' => $traverse_recurse[ 'pod' ] ) );
 
-                    if ( !empty( $pod ) && $pod[ 'object' ] == $pod )
+                    if ( !empty( $pod ) && $pod[ 'type' ] == $pod )
                         $pod_data = $pod;
                 }
 

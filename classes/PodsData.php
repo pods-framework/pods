@@ -1843,11 +1843,6 @@ class PodsData {
         if ( null === $fields )
             $fields = $this->fields;
 
-        if ( empty( $fields ) && !empty( $params ) ) {
-            $table = $params->table;
-
-        }
-
         $feed = array();
 
         foreach ( $fields as $field => $data ) {
@@ -1889,28 +1884,36 @@ class PodsData {
 
         if ( empty( $traverse_recurse[ 'pod' ] ) ) {
             if ( !empty( $traverse_recurse[ 'params' ] ) && !empty( $traverse_recurse[ 'params' ]->table ) && 0 === strpos( $traverse_recurse[ 'params' ]->table, $wpdb->prefix ) ) {
-                $traverse_recurse[ 'pod' ] = trim( str_replace( $wpdb->prefix, '', $traverse_recurse[ 'params' ]->table ), 's' );
+                if ( $wpdb->posts == $traverse_recurse[ 'params' ]->table )
+                    $traverse_recurse[ 'pod' ] = 'post_type';
+                elseif ( $wpdb->users == $traverse_recurse[ 'params' ]->table )
+                    $traverse_recurse[ 'pod' ] = 'user';
+                elseif ( $wpdb->comments == $traverse_recurse[ 'params' ]->table )
+                    $traverse_recurse[ 'pod' ] = 'comment';
+                else
+                    return array();
 
-                if ( in_array( $traverse_recurse[ 'pod' ], array( 'post', 'user', 'comment' ) ) ) {
-                    $table_mode = true;
+                $pod_data = array();
+                $table_mode = true;
 
-                    $traverse_recurse[ 'pod' ] = trim( $traverse_recurse[ 'pod' ], 's' );
+                if ( in_array( $traverse_recurse[ 'pod' ], array( 'user', 'comment' ) ) ) {
+                    $pod = $this->api->load_pod( array( 'name' => $traverse_recurse[ 'pod' ] ) );
 
-                    if ( 'post' == $traverse_recurse[ 'pod' ] )
-                        $traverse_recurse[ 'pod' ] = 'post_type';
+                    if ( !empty( $pod ) && $pod[ 'object' ] == $pod )
+                        $pod_data = $pod;
+                }
 
+                if ( empty( $pod_data ) ) {
                     $pod_data = array(
                         'id' => 0,
                         'name' => '_table_' . $traverse_recurse[ 'pod' ],
                         'type' => $traverse_recurse[ 'pod' ],
                         'storage' => 'meta',
-                        'fields' => array()
+                        'fields' => $this->api->get_wp_object_fields( $traverse_recurse[ 'pod' ] )
                     );
 
                     $traverse_recurse[ 'pod' ] = $pod_data[ 'name' ];
                 }
-                else
-                    return array();
             }
             else
                 return array();

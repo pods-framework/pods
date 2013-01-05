@@ -10,7 +10,7 @@ class PodsWidgetSingle extends WP_Widget {
     public function PodsWidgetSingle () {
         $this->WP_Widget(
             'pods_widget_single',
-            'Pods Single Item',
+            'Pods - Single Item',
             array( 'classname' => 'pods_widget_single', 'description' => 'Display a Single Pod Item' ),
             array( 'width' => 200 )
         );

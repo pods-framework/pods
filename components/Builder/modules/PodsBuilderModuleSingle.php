@@ -19,7 +19,7 @@ if ( !class_exists( 'PodsBuilderModuleSingle' ) ) {
          * Register the Module
          */
         public function PodsBuilderModuleSingle () {
-            $this->_name = __( 'Pods Single Item', 'pods' );
+            $this->_name = __( 'Pods - Single Item', 'pods' );
             $this->_description = __( 'Display a single Pod item', 'pods' );
             $this->module_path = dirname( __FILE__ );
 

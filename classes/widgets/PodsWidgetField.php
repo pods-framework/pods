@@ -10,7 +10,7 @@ class PodsWidgetField extends WP_Widget {
     public function PodsWidgetField () {
         $this->WP_Widget(
             'pods_widget_field',
-            'Pods Field Value',
+            'Pods - Field Value',
             array( 'classname' => 'pods_widget_field', 'description' => "Display a single Pod item's field value" ),
             array( 'width' => 200 )
         );

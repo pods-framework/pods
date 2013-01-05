@@ -10,7 +10,7 @@ class PodsWidgetList extends WP_Widget {
     public function PodsWidgetList () {
         $this->WP_Widget(
             'pods_widget_list',
-            'Pods List',
+            'Pods - List Items',
             array( 'classname' => 'pods_widget_list', 'description' => 'Display multiple Pod items' ),
             array( 'width' => 200 )
         );

@@ -232,7 +232,8 @@ class Pods_Migrate_Packages extends PodsComponent {
                                 $new_field[ 'name' ] .= '2';
 
                             if ( 'pick' == $field_type ) {
-                                $new_field[ 'pick_object' ] = 'pod-' . $field[ 'pickval' ];
+                                $new_field[ 'pick_object' ] = 'pod';
+                                $new_field[ 'pick_val' ] = $field[ 'pickval' ];
 
                                 if ( 'wp_user' == $field[ 'pickval' ] )
                                     $new_field[ 'pick_object' ] = 'user';

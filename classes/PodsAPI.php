@@ -1344,6 +1344,7 @@ class PodsAPI {
 
             if ( !empty( $fields ) ) {
                 foreach ( $fields as $field ) {
+                    update_post_meta( $field->ID, 'pick_object', 'pod' );
                     update_post_meta( $field->ID, 'pick_val', $params->name );
                 }
             }

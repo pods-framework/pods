@@ -176,7 +176,7 @@ class PodsComponents {
             if ( !empty( $this->components[ $component ][ 'ThemeDependency' ] ) ) {
                 $dependency = explode( '|', $this->components[ $component ][ 'ThemeDependency' ] );
 
-                if ( strtolower( $dependency[ 1 ] ) != get_template() )
+                if ( strtolower( $dependency[ 1 ] ) != strtolower( get_template() ) )
                     continue;
             }
 

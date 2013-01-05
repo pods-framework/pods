@@ -93,7 +93,9 @@ if ( !class_exists( 'PodsBuilderModuleList' ) ) {
         if ( class_exists( 'Pods_Templates' ) ) {
             $all_templates = (array) $api->load_templates( array() );
 
-            $templates = array();
+            $templates = array(
+                '' => '- ' . __( 'Custom Template', 'pods' ) . ' -'
+            );
 
             foreach ( $all_templates as $template ) {
                 $templates[ $template[ 'name' ] ] = $template[ 'name' ];
@@ -106,7 +108,7 @@ if ( !class_exists( 'PodsBuilderModuleList' ) ) {
             <td>
                 <?php
                     if ( 0 < count( $all_templates ) )
-                        $form->add_drop_down( 'template', $all_templates );
+                        $form->add_drop_down( 'template', $templates );
                     else
                         echo '<strong class="red">' . __( 'None Found', 'pods' ) . '</strong>';
                 ?>

@@ -69,7 +69,7 @@ class PodsInit {
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 1.8.9
      */
-    function __construct() {
+    function __construct () {
         self::$version = get_option( 'pods_framework_version' );
         self::$version_last = get_option( 'pods_framework_version_last' );
         self::$db_version = get_option( 'pods_framework_db_version' );

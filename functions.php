@@ -1957,6 +1957,21 @@ function pods_admin () {
 }
 
 /**
+ * Include and Init the PodsMigrate class
+ *
+ * @see PodsMigrate
+ *
+ * @return PodsMigrate
+ *
+ * @since 2.2
+ */
+function pods_migrate () {
+    require_once( PODS_DIR . 'classes/PodsMigrate.php' );
+
+    return new PodsMigrate();
+}
+
+/**
  * Include and Init the PodsUpgrade class
  *
  * @param string $version Version number of upgrade to get

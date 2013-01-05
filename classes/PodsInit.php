@@ -224,7 +224,7 @@ class PodsInit {
         wp_register_script( 'pods-codemirror-loadmode', PODS_URL . 'ui/js/codemirror/utils/loadmode.js', array( 'pods-codemirror' ), '2.33', true );
 
         if ( !wp_style_is( 'jquery-ui-timepicker', 'registered' ) )
-            wp_register_style( 'jquery-ui-timepicker', PODS_URL . 'ui/css/jquery.ui.timepicker.css', array(), '1.0.1' );
+            wp_register_style( 'jquery-ui-timepicker', PODS_URL . 'ui/css/jquery.ui.timepicker.css', array(), '1.1.1' );
 
         if ( !wp_script_is( 'jquery-ui-timepicker', 'registered' ) ) {
             wp_register_script( 'jquery-ui-timepicker', PODS_URL . 'ui/js/jquery.ui.timepicker.min.js', array(
@@ -232,7 +232,7 @@ class PodsInit {
                 'jquery-ui-core',
                 'jquery-ui-datepicker',
                 'jquery-ui-slider'
-            ), '1.0.1' );
+            ), '1.1.1' );
         }
 
         wp_register_style( 'pods-attach', PODS_URL . 'ui/css/jquery.pods.attach.css', array(), PODS_VERSION );

@@ -3,7 +3,7 @@
  * @package Pods\Components
  * @subpackage Builder
  */
-if ( !is_admin() || !class_exists( 'LayoutModule' ) )
+if ( !class_exists( 'LayoutModule' ) )
     return;
 
 if ( !class_exists( 'PodsBuilderModuleList' ) ) {
@@ -158,14 +158,14 @@ if ( !class_exists( 'PodsBuilderModuleList' ) ) {
          */
         function _render ( $fields ) {
             $args = array(
-                'name' => trim( pods_var_raw( 'pod_type', $fields, '' ) ),
-                'template' => trim( pods_var_raw( 'template', $fields, '' ) ),
-                'limit' => (int) pods_var_raw( 'limit', $fields, 15, null, true ),
-                'orderby' => trim( pods_var_raw( 'orderby', $fields, '' ) ),
-                'where' => trim( pods_var_raw( 'where', $fields, '' ) )
+                'name' => trim( pods_var_raw( 'pod_type', $fields[ 'data' ], '' ) ),
+                'template' => trim( pods_var_raw( 'template', $fields[ 'data' ], '' ) ),
+                'limit' => (int) pods_var_raw( 'limit', $fields[ 'data' ], 15, null, true ),
+                'orderby' => trim( pods_var_raw( 'orderby', $fields[ 'data' ], '' ) ),
+                'where' => trim( pods_var_raw( 'where', $fields[ 'data' ], '' ) )
             );
 
-            $content = trim( pods_var_raw( 'template_custom', $fields, '' ) );
+            $content = trim( pods_var_raw( 'template_custom', $fields[ 'data' ], '' ) );
 
             if ( 0 < strlen( $args[ 'name' ] ) && ( 0 < strlen( $args[ 'template' ] ) || 0 < strlen( $content ) ) )
                 echo pods_shortcode( $args, ( isset( $content ) ? $content : null ) );

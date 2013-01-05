@@ -3,7 +3,7 @@
  * @package Pods\Components
  * @subpackage Builder
  */
-if ( !is_admin() || !class_exists( 'LayoutModule' ) )
+if ( !class_exists( 'LayoutModule' ) )
     return;
 
 if ( !class_exists( 'PodsBuilderModuleForm' ) ) {
@@ -127,11 +127,11 @@ if ( !class_exists( 'PodsBuilderModuleForm' ) ) {
          */
         function _render ( $fields ) {
             $args = array(
-                'name' => trim( pods_var_raw( 'pod_type', $fields, '' ) ),
-                'slug' => trim( pods_var_raw( 'slug', $fields, '' ) ),
-                'fields' => trim( pods_var_raw( 'fields', $fields, '' ) ),
-                'label' => trim( pods_var_raw( 'label', $fields, __( 'Submit', 'pods' ), null, true ) ),
-                'thank_you' => trim( pods_var_raw( 'thank_you', $fields, '' ) ),
+                'name' => trim( pods_var_raw( 'pod_type', $fields[ 'data' ], '' ) ),
+                'slug' => trim( pods_var_raw( 'slug', $fields[ 'data' ], '' ) ),
+                'fields' => trim( pods_var_raw( 'fields', $fields[ 'data' ], '' ) ),
+                'label' => trim( pods_var_raw( 'label', $fields[ 'data' ], __( 'Submit', 'pods' ), null, true ) ),
+                'thank_you' => trim( pods_var_raw( 'thank_you', $fields[ 'data' ], '' ) ),
                 'form' => 1
             );
 

@@ -13,9 +13,9 @@
  */
 
 function pods_builder_modules_init () {
-    require_once( PODS_DIR . 'components/Builder/modules/PodsBuilderModuleField.php' );
-    require_once( PODS_DIR . 'components/Builder/modules/PodsBuilderModuleForm.php' );
-    require_once( PODS_DIR . 'components/Builder/modules/PodsBuilderModuleList.php' );
-    require_once( PODS_DIR . 'components/Builder/modules/PodsBuilderModuleSingle.php' );
+    require_once( PODS_DIR . 'components/Builder/modules/field/PodsBuilderModuleField.php' );
+    require_once( PODS_DIR . 'components/Builder/modules/form/PodsBuilderModuleForm.php' );
+    require_once( PODS_DIR . 'components/Builder/modules/list/PodsBuilderModuleList.php' );
+    require_once( PODS_DIR . 'components/Builder/modules/single/PodsBuilderModuleSingle.php' );
 }
 add_action( 'builder_modules_loaded', 'pods_builder_modules_init' );

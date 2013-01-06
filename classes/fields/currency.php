@@ -44,8 +44,8 @@ class PodsField_Currency extends PodsField {
      */
     public static $currencies = array(
         'usd' => '$',
-        'cad' => '$'
-    	'euro' => '&euro;',
+        'cad' => '$',
+        'euro' => '&euro;'
     );
 
     /**
@@ -73,7 +73,7 @@ class PodsField_Currency extends PodsField {
                     array(
                         'usd' => '$ (USD)',
                         'cad' => '$ (CAD)',
-                    	'euro' => '&euro; (Euro)'
+                        'euro' => '&euro; (Euro)'
                     )
                 )
             ),
@@ -82,10 +82,10 @@ class PodsField_Currency extends PodsField {
                 'default' => 'before',
                 'type' => 'pick',
                 'data' => array(
-                    'before' => __( 'Before ($100)', 'pods' ),
-                    'after' => __( 'After (100$)', 'pods' ),
-                    'none' => __( 'None (100)', 'pods' ),
-                    'beforeaftercode' => __( 'Before with Currency Code after ($100 USD)', 'pods' )
+                    'before' => __( 'Before (ex. $100)', 'pods' ),
+                    'after' => __( 'After (ex. 100$)', 'pods' ),
+                    'none' => __( 'None (ex. 100)', 'pods' ),
+                    'beforeaftercode' => __( 'Before with Currency Code after (ex. $100 USD)', 'pods' )
                 )
             ),
             'currency_format' => array(

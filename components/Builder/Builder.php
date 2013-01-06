@@ -2,11 +2,11 @@
 /**
  * Name: Builder Integration
  *
- * Description: Integration with the Builder theme / child themes from iThemes
+ * Description: Integration with the Builder theme / child themes from iThemes; Adds new modules to the Layout engine
  *
  * Version: 1.0
  *
- * Theme Dependency: Builder|builder|http://www.ithemes.com/
+ * Theme Dependency: Builder|builder|http://ithemes.com/
  *
  * @package Pods\Components
  * @subpackage Builder

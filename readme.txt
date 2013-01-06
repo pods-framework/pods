@@ -3,8 +3,8 @@ Contributors: sc0ttkclark, dan.stefan, pglewis, mikedamage, jchristopher, logika
 Donate link: http://podsfoundation.org/donate/
 Tags: pods, custom post types, custom taxonomies, user fields, custom fields, cck, cms, content types, database, framework, drupal, post types, avatars, comment fields, media fields
 Requires at least: 3.4
-Tested up to: 3.5
-Stable tag: 2.1.1
+Tested up to: 3.5.1
+Stable tag: 2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -97,6 +97,15 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 == Changelog ==
 
+= 2.2 - January 5th, 2013 =
+* Added: New 'Duplicate Field' option, that lets you copy a field's settings into a new field in the Pod editor
+* Added: New iThemes Builder component - Adds four new modules available for use in Builder Layouts -- Field Value, Form, List Items, and Single Item
+* Updated: Split up the old Pods Admin > Setup menu into two separate items -- Edit Pods and Add New
+* Fixed: Upgrade from Pods 1.x to Pods 2.x now fixed, in Pods 2.1 the upgrade wizard was not shown
+* And many more bug fixes and enhancements, nearly 90 in total
+* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
+* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code and contribute notes and patches all from the web at: http://pods.io/github/
+
 = 2.1 - December 7th, 2012 =
 * Pods is now WordPress 3.5 compatible as we've added a number of fixes for all the 3.5 media goodness! We're also working on some tighter integration with the new 3.5 media popups (thanks to the awesome work of @jchristopher) - watch for that in Pods 2.2 soon
 * Added: New Tableless mode (for WordPress VIP compatibility!) lets Pods run on any site w/ table-based storage turned off and wp_podsrel won't be utilized (or even created if tableless mode is on during activation) - define( 'PODS_TABLELESS', true )
@@ -109,8 +118,6 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 * Updated: Relationship 'where' option in Field editor now supports {@user.ID} lookups which maps to pods_var( 'ID', 'user' ) to sanitize (ex. user.ID != '{@user.ID}' in the Pick WHERE will return all users not the current user); You can use any pods_var enabled option, documentation coming this month
 * Updated: Relationship saving has been optimized for both bi-directional relationships and regular relationships
 * And many more bug fixes and enhancements, over 60 in total
-* Found a bug? Have a great feature idea? Get on GitHub and tell us about it and we'll get right on it: https://pods.io/submit/
-* Our GitHub also has a full list of issues closed for this release and all previous 2.x releases, you can even browse our code and contribute notes and patches all from the web at: http://pods.io/github/
 
 = 2.0.5.1 - November 25th, 2012 =
 * Fixed: 'Edit' link wasn't appearing for Pod Pages / Templates / Helpers (you could click the title though)

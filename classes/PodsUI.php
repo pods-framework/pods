@@ -2220,6 +2220,9 @@ class PodsUI {
 
                                 $data_filter = 'filter_' . $filter . '_start';
                             }
+                            elseif ( 'pick' == $this->pod->fields[ $filter ][ 'type' ] ) {
+                                // $value = 'Real Label'
+                            }
                     ?>
                         <li class="pods-ui-filter-bar-filter" data-filter="<?php echo $data_filter; ?>">
                             <a href="#TB_inline?width=640&inlineId=pods-ui-posts-filter-popup" class="thickbox" title="<?php esc_attr_e( 'Advanced Filters', 'pods' ); ?>">

@@ -464,6 +464,35 @@ class Pods {
                 }
             }
 
+            if ( 'post_type' == $this->pod_data[ 'type' ] ) {
+                if ( 'post_thumbnail' == $params->name || 0 === strpos( $params->name, 'post_thumbnail.' ) ) {
+                    $size = 'thumbnail';
+
+                    if ( 0 === strpos( $params->name, 'post_thumbnail.' ) ) {
+                        $field_names = explode( '.', $params->name );
+
+                        if ( isset( $field_names[ 1 ] ) )
+                            $size = $field_names[ 1 ];
+                    }
+
+                    // Pods will auto-get the thumbnail ID if this isn't an attachment
+                    $value = pods_image( $this->id(), $size );
+                }
+                elseif ( 'post_thumbnail_url' == $params->name || 0 === strpos( $params->name, 'post_thumbnail_url.' ) ) {
+                    $size = 'thumbnail';
+
+                    if ( 0 === strpos( $params->name, 'post_thumbnail_url.' ) ) {
+                        $field_names = explode( '.', $params->name );
+
+                        if ( isset( $field_names[ 1 ] ) )
+                            $size = $field_names[ 1 ];
+                    }
+
+                    // Pods will auto-get the thumbnail ID if this isn't an attachment
+                    $value = pods_image_url( $this->id(), $size );
+                }
+            }
+
             if ( false === $object_field_found ) {
                 $params->traverse = array( $params->name );
 
@@ -999,7 +1028,7 @@ class Pods {
 
                         continue;
                     }
-                    
+
                     $where[ 'compare' ] = strtoupper( $where[ 'compare' ] );
 
                     if ( !in_array( $where[ 'compare' ], array( '=', '!=', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) ) )
@@ -1016,7 +1045,7 @@ class Pods {
                         else
                             $where[ 'compare' ] = 'IN';
                     }
-                    
+
                     if ( is_array( $where[ 'value' ] ) ) {
                         if ( in_array( $where[ 'compare' ], array( 'BETWEEN', 'NOT BETWEEN' ) ) )
                             $where[ 'value' ] = '"' . implode( '" AND "', $where[ 'value' ] ) . '"';

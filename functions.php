@@ -1606,8 +1606,16 @@ function pods_image_id_from_field ( $image ) {
                 $id = pods_image_id_from_field( $image[ 'guid' ] );
         }
         else {
-            if ( false === strpos( $image, '.' ) && is_numeric( $image ) )
+            if ( false === strpos( $image, '.' ) && is_numeric( $image ) ) {
                 $id = $image;
+
+                $the_post_type = get_post_type( $id );
+
+                if ( false === $the_post_type )
+                    $id = 0;
+                elseif ( 'attachment' != $the_post_type )
+                    $id = get_post_thumbnail_id( $id );
+            }
             else {
                 $guid = pods_query( "SELECT `ID` FROM @wp_posts WHERE `post_type` = 'attachment' AND `guid` = %s", array( $image ) );
 

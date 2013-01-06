@@ -477,6 +477,8 @@ class Pods {
 
                     // Pods will auto-get the thumbnail ID if this isn't an attachment
                     $value = pods_image( $this->id(), $size );
+
+                    $object_field_found = true;
                 }
                 elseif ( 'post_thumbnail_url' == $params->name || 0 === strpos( $params->name, 'post_thumbnail_url.' ) ) {
                     $size = 'thumbnail';
@@ -490,7 +492,49 @@ class Pods {
 
                     // Pods will auto-get the thumbnail ID if this isn't an attachment
                     $value = pods_image_url( $this->id(), $size );
+
+                    $object_field_found = true;
                 }
+            }
+            elseif ( 'image_attachment' == $params->name || 0 === strpos( $params->name, 'image_attachment.' ) ) {
+                $size = 'thumbnail';
+
+                $image_id = 0;
+
+                if ( 0 === strpos( $params->name, 'image_attachment.' ) ) {
+                    $field_names = explode( '.', $params->name );
+
+                    if ( isset( $field_names[ 1 ] ) )
+                        $image_id = $field_names[ 1 ];
+
+                    if ( isset( $field_names[ 2 ] ) )
+                        $size = $field_names[ 2 ];
+                }
+
+                if ( !empty( $image_id ) )
+                    $value = pods_image_url( $image_id, $size );
+
+                $object_field_found = true;
+            }
+            elseif ( 'image_attachment_url' == $params->name || 0 === strpos( $params->name, 'image_attachment_url.' ) ) {
+                $size = 'thumbnail';
+
+                $image_id = 0;
+
+                if ( 0 === strpos( $params->name, 'image_attachment_url.' ) ) {
+                    $field_names = explode( '.', $params->name );
+
+                    if ( isset( $field_names[ 1 ] ) )
+                        $image_id = $field_names[ 1 ];
+
+                    if ( isset( $field_names[ 2 ] ) )
+                        $size = $field_names[ 2 ];
+                }
+
+                if ( !empty( $image_id ) )
+                    $value = pods_image_url( $image_id, $size );
+
+                $object_field_found = true;
             }
 
             if ( false === $object_field_found ) {

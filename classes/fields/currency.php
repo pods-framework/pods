@@ -71,7 +71,8 @@ class PodsField_Currency extends PodsField {
                 'data' => apply_filters( 'pods_form_ui_field_number_currency_options',
                     array(
                         'usd' => '$ (USD)',
-                        'cad' => '$ (CAD)'
+                        'cad' => '$ (CAD)',
+                        'euro' => '$ (Euro)',
                     )
                 )
             ),

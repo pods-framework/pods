@@ -2204,7 +2204,7 @@ class PodsUI {
                             $value = pods_var_raw( 'filter_' . $filter, 'get', '', null, true );
                             $data_filter = 'filter_' . $filter;
 
-                            $start = $end = '';
+                            $start = $end = $value_label = '';
 
                             if ( in_array( $this->pod->fields[ $filter ][ 'type' ], array( 'date', 'datetime', 'time' ) ) ) {
                                 $start = pods_var_raw( 'filter_' . $filter . '_start', 'get', '', null, true );
@@ -2220,14 +2220,16 @@ class PodsUI {
 
                                 $data_filter = 'filter_' . $filter . '_start';
                             }
-                            elseif ( 'pick' == $this->pod->fields[ $filter ][ 'type' ] ) {
-                                // $value = 'Real Label'
-                            }
+                            elseif ( 'pick' == $this->pod->fields[ $filter ][ 'type' ] )
+                                $value_label = trim( PodsForm::field_method( 'pick', 'value_to_label', $this->pod->pod_data, $this->pod->fields[ $filter ], $value ) );
+
+                            if ( strlen( $value_label ) < 1 )
+                                $value_label = $value;
                     ?>
                         <li class="pods-ui-filter-bar-filter" data-filter="<?php echo $data_filter; ?>">
                             <a href="#TB_inline?width=640&inlineId=pods-ui-posts-filter-popup" class="thickbox" title="<?php esc_attr_e( 'Advanced Filters', 'pods' ); ?>">
                                 <strong><?php echo $this->pod->fields[ $filter ][ 'label' ]; ?>:</strong>
-                                <?php echo esc_html( $value ); ?>
+                                <?php echo esc_html( $value_label ); ?>
                             </a>
 
                             <a href="#remove-filter" class="remove-filter" title="<?php esc_attr_e( 'Remove Filter', 'pods' ); ?>">x</a>

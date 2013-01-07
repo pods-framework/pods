@@ -487,6 +487,8 @@ class PodsAdmin {
     public function admin_setup () {
         $pods = $this->api->load_pods();
 
+        $view = pods_var( 'view', 'get', 'all', null, true );
+
         if ( empty( $pods ) && !isset( $_GET[ 'action' ] ) )
             $_GET[ 'action' ] = 'add';
 
@@ -498,7 +500,6 @@ class PodsAdmin {
         }
         elseif ( isset( $_GET[ 'action' ] ) && 'add' == $_GET[ 'action' ] )
             pods_redirect( pods_var_update( array( 'page' => 'pods-add-new', 'action' => '' ) ) );
-
 
         $types = array(
             'post_type' => __( 'Post Type (extended)', 'pods' ),
@@ -513,7 +514,9 @@ class PodsAdmin {
 
         $row = false;
 
-        foreach ( $pods as &$pod ) {
+        $pod_types_found = array();
+
+        foreach ( $pods as $k => &$pod ) {
             if ( isset( $types[ $pod[ 'type' ] ] ) ) {
                 if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) ) {
                     if ( empty( $pod[ 'object' ] ) ) {
@@ -524,8 +527,21 @@ class PodsAdmin {
                     }
                 }
 
+                if ( !isset( $pod_types_found[ $pod[ 'type' ] ] ) )
+                    $pod_types_found[ $pod[ 'type' ] ] = 1;
+                else
+                    $pod_types_found[ $pod[ 'type' ] ]++;
+
+                if ( 'all' != $view && $view != $pod[ 'type' ] ) {
+                    unset( $pods[ $k ] );
+
+                    continue;
+                }
+
                 $pod[ 'type' ] = $types[ $pod[ 'type' ] ];
             }
+            elseif ( 'all' != $view )
+                continue;
 
             $pod[ 'storage' ] = ucwords( $pod[ 'storage' ] );
 
@@ -540,7 +556,7 @@ class PodsAdmin {
             unset( $_GET[ 'action' ] );
         }
 
-        pods_ui( array(
+        $ui = array(
             'data' => $pods,
             'row' => $row,
             'total' => count( $pods ),
@@ -574,7 +590,20 @@ class PodsAdmin {
             'searchable' => false,
             'sortable' => true,
             'pagination' => false
-        ) );
+        );
+
+        if ( 1 < count( $pod_types_found ) ) {
+            $ui[ 'views' ] = array( 'all' => __( 'All', 'pods' ) );
+            $ui[ 'view' ] = $view;
+            $ui[ 'heading' ] = array( 'views' => __( 'Object Type', 'pods' ) );
+            $ui[ 'filters_enhanced' ] = true;
+
+            foreach ( $pod_types_found as $pod_type => $number_found ) {
+                $ui[ 'views' ][ $pod_type ] = $types[ $pod_type ];
+            }
+        }
+
+        pods_ui( $ui );
     }
 
     /**
@@ -757,6 +786,9 @@ class PodsAdmin {
                 'advanced' => __( 'Advanced', 'pods' )
             ),
             'view' => $view,
+            'heading' => array(
+                'views' => __( 'Category', 'pods' )
+            ),
             'search' => false,
             'searchable' => false,
             'sortable' => false,

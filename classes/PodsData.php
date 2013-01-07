@@ -1062,15 +1062,12 @@ class PodsData {
             $params->where = array_merge( (array) $this->search_where, $params->where );
 
         if ( !empty( $params->join ) && !empty( $joins ) )
-            $params->join = array_merge( (array) $params->join, $joins );
+            $params->join = array_merge( $joins, (array) $params->join );
         elseif ( !empty( $joins ) )
             $params->join = $joins;
 
         // Build
         if ( null === $params->sql ) {
-            if ( empty( $params->table ) )
-                return false;
-
             $sql = "
                 SELECT
                 " . ( $params->distinct ? 'DISTINCT' : '' ) . "
@@ -1096,7 +1093,7 @@ class PodsData {
         }
         // Rewrite
         else {
-            $sql = ' ' . trim( str_replace( array( "\n", "\r" ), ' ', $this->sql ) );
+            $sql = ' ' . trim( str_replace( array( "\n", "\r" ), ' ', $params->sql ) );
             $sql = preg_replace( array(
                     '/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i',
                     '/\sSELECT\s/i'
@@ -1111,44 +1108,44 @@ class PodsData {
             if ( false === stripos( $sql, '%%SELECT%%' ) )
                 $sql = preg_replace( '/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i', ' SELECT SQL_CALC_FOUND_ROWS %%SELECT%% ', $sql );
             if ( false === stripos( $sql, '%%WHERE%%' ) )
-                $sql = preg_replace( '/\sWHERE\s(?!.*\sWHERE\s)/gi', ' WHERE %%WHERE%% ', $sql );
+                $sql = preg_replace( '/\sWHERE\s(?!.*\sWHERE\s)/i', ' WHERE %%WHERE%% ', $sql );
             if ( false === stripos( $sql, '%%GROUPBY%%' ) )
-                $sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/gi', ' GROUP BY %%GROUPBY%% ', $sql );
+                $sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/i', ' GROUP BY %%GROUPBY%% ', $sql );
             if ( false === stripos( $sql, '%%HAVING%%' ) )
-                $sql = preg_replace( '/\sHAVING\s(?!.*\sHAVING\s)/gi', ' HAVING %%HAVING%% ', $sql );
+                $sql = preg_replace( '/\sHAVING\s(?!.*\sHAVING\s)/i', ' HAVING %%HAVING%% ', $sql );
             if ( false === stripos( $sql, '%%ORDERBY%%' ) )
-                $sql = preg_replace( '/\sORDER BY\s(?!.*\sORDER BY\s)/gi', ' ORDER BY %%ORDERBY%% ', $sql );
+                $sql = preg_replace( '/\sORDER BY\s(?!.*\sORDER BY\s)/i', ' ORDER BY %%ORDERBY%% ', $sql );
 
             // Insert variables based on other existing statements
             if ( false === stripos( $sql, '%%JOIN%%' ) ) {
                 if ( false !== stripos( $sql, ' WHERE ' ) )
-                    $sql = preg_replace( '/\sWHERE\s(?!.*\sWHERE\s)/gi', ' %%JOIN%% WHERE ', $sql );
+                    $sql = preg_replace( '/\sWHERE\s(?!.*\sWHERE\s)/i', ' %%JOIN%% WHERE ', $sql );
                 elseif ( false !== stripos( $sql, ' GROUP BY ' ) )
-                    $sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/gi', ' %%WHERE%% GROUP BY ', $sql );
+                    $sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/i', ' %%WHERE%% GROUP BY ', $sql );
                 elseif ( false !== stripos( $sql, ' ORDER BY ' ) )
-                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%WHERE%% ORDER BY ', $sql );
+                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%WHERE%% ORDER BY ', $sql );
                 else
                     $sql .= ' %%JOIN%% ';
             }
             if ( false === stripos( $sql, '%%WHERE%%' ) ) {
                 if ( false !== stripos( $sql, ' GROUP BY ' ) )
-                    $sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/gi', ' %%WHERE%% GROUP BY ', $sql );
+                    $sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/i', ' %%WHERE%% GROUP BY ', $sql );
                 elseif ( false !== stripos( $sql, ' ORDER BY ' ) )
-                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%WHERE%% ORDER BY ', $sql );
+                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%WHERE%% ORDER BY ', $sql );
                 else
                     $sql .= ' %%WHERE%% ';
             }
             if ( false === stripos( $sql, '%%GROUPBY%%' ) ) {
                 if ( false !== stripos( $sql, ' HAVING ' ) )
-                    $sql = preg_replace( '/\sHAVING\s(?!.*\sHAVING\s)/gi', ' %%GROUPBY%% HAVING ', $sql );
+                    $sql = preg_replace( '/\sHAVING\s(?!.*\sHAVING\s)/i', ' %%GROUPBY%% HAVING ', $sql );
                 elseif ( false !== stripos( $sql, ' ORDER BY ' ) )
-                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%GROUPBY%% ORDER BY ', $sql );
+                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%GROUPBY%% ORDER BY ', $sql );
                 else
                     $sql .= ' %%GROUPBY%% ';
             }
             if ( false === stripos( $sql, '%%HAVING%%' ) ) {
                 if ( false !== stripos( $sql, ' ORDER BY ' ) )
-                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%HAVING%% ORDER BY ', $sql );
+                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%HAVING%% ORDER BY ', $sql );
                 else
                     $sql .= ' %%HAVING%% ';
             }
@@ -1199,9 +1196,9 @@ class PodsData {
             if ( 0 < strlen( $params->orderby ) ) {
                 if ( false !== stripos( $sql, ' ORDER BY ' ) ) {
                     if ( false !== stripos( $sql, ' ORDER BY %%ORDERBY%% ' ) )
-                        $sql = str_ireplace( '%%ORDERBY%%', $params->having . ', ', $sql );
+                        $sql = str_ireplace( '%%ORDERBY%%', $params->groupby . ', ', $sql );
                     else
-                        $sql = str_ireplace( '%%ORDERBY%%', ', ' . $params->having, $sql );
+                        $sql = str_ireplace( '%%ORDERBY%%', ', ' . $params->groupby, $sql );
                 }
                 else
                     $sql = str_ireplace( '%%ORDERBY%%', ' ORDER BY ' . $params->groupby, $sql );

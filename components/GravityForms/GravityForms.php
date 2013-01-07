@@ -6,6 +6,8 @@
  *
  * Version: 1.0
  *
+ * Category: Integration
+ *
  * Developer Mode: on
  *
  * Plugin Dependency: Gravity Forms|gravityforms/gravityforms.php|http://www.gravityforms.com/

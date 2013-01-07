@@ -6,6 +6,8 @@
  *
  * Version: 1.0
  *
+ * Category: Integration
+ *
  * Theme Dependency: Builder|builder|http://ithemes.com/
  *
  * @package Pods\Components

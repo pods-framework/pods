@@ -661,7 +661,15 @@ class PodsAdmin {
     public function admin_components () {
         $components = PodsInit::$components->components;
 
+        $view = pods_var( 'view', 'get', 'all', null, true );
+
         foreach ( $components as $component => &$component_data ) {
+            if ( 'all' != $view && ( !isset( $component_data[ 'Category' ] ) || $view != strtolower( $component_data[ 'Category' ] ) ) ) {
+                unset( $components[ $component ] );
+
+                continue;
+            }
+
             $component_data[ 'Name' ] = strip_tags( $component_data[ 'Name' ] );
 
             $meta = array();
@@ -690,6 +698,7 @@ class PodsAdmin {
             $component_data = array(
                 'id' => $component_data[ 'ID' ],
                 'name' => $component_data[ 'Name' ],
+                'category' => $component_data[ 'Category' ],
                 'description' => $component_data[ 'Description' ],
                 'developermode' => (boolean) pods_var( 'DeveloperMode', $component_data, false ),
                 'toggle' => 0
@@ -709,7 +718,7 @@ class PodsAdmin {
                 $component_data[ 'toggle' ] = 1;
         }
 
-        pods_ui( array(
+        $ui = array(
             'data' => $components,
             'total' => count( $components ),
             'total_found' => count( $components ),
@@ -721,12 +730,17 @@ class PodsAdmin {
                     'name' => array(
                         'label' => __( 'Name', 'pods' ),
                         'width' => '30%',
-                        'type' => 'plain'
+                        'type' => 'text'
+                    ),
+                    'category' => array(
+                        'label' => __( 'Category', 'pods' ),
+                        'width' => '10%',
+                        'type' => 'text'
                     ),
                     'description' => array(
                         'label' => __( 'Description', 'pods' ),
-                        'width' => '70%',
-                        'type' => 'plain'
+                        'width' => '60%',
+                        'type' => 'text'
                     )
                 )
             ),
@@ -734,11 +748,22 @@ class PodsAdmin {
             'actions_custom' => array(
                 'toggle' => array( 'callback' => array( $this, 'admin_components_toggle' ) )
             ),
+            'filters_enhanced' => true,
+            'views' => array(
+                'all' => __( 'All', 'pods' ),
+                'tools' => __( 'Tools', 'pods' ),
+                'integration' => __( 'Integration', 'pods' ),
+                'migration' => __( 'Migration', 'pods' ),
+                'advanced' => __( 'Advanced', 'pods' )
+            ),
+            'view' => $view,
             'search' => false,
             'searchable' => false,
             'sortable' => false,
             'pagination' => false
-        ) );
+        );
+
+        pods_ui( $ui );
     }
 
     /**

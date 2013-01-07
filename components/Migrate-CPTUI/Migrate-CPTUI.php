@@ -6,6 +6,8 @@
  *
  * Description: Import Custom Post Types and Taxonomies from Custom Post Type UI (<a href="http://webdevstudios.com/plugin/custom-post-type-ui/">http://webdevstudios.com/plugin/custom-post-type-ui/</a>)
  *
+ * Category: Migration
+ *
  * Version: 1.0
  *
  * @package Pods\Components

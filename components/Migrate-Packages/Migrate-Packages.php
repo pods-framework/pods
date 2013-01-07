@@ -8,6 +8,8 @@
  *
  * Version: 2.0
  *
+ * Category: Migration
+ *
  * @package Pods\Components
  * @subpackage Migrate-Packages
  */

@@ -6,6 +6,8 @@
  *
  * Version: 2.0
  *
+ * Category: Advanced
+ *
  * Menu Page: edit.php?post_type=_pods_template
  * Menu Add Page: post-new.php?post_type=_pods_template
  *

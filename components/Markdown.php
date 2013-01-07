@@ -6,6 +6,8 @@
  *
  * Version: 1.0
  *
+ * Category: Field Types
+ *
  * @package Pods\Components
  * @subpackage Markdown
  */

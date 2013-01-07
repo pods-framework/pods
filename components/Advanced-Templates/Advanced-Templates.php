@@ -6,9 +6,11 @@
  * Description: Creates advanced view templates for displaying Pod data on the front end via a Shortcode.
  *
  * Version: <strong>PROTOTYPE</strong>
- * 
+ *
+ * Category: Advanced
+ *
  * Developer Mode: on
- * 
+ *
  * Menu Page: edit.php?post_type=_pods_adv_template
  * Menu Add Page: post-new.php?post_type=_pods_adv_template
  * @package Pods\Components
@@ -21,36 +23,36 @@
  * so please go easy on me.
  * I still dont know the api or your coding standards so I'm just winging it for now.
  * I do hope that my thought patterns are not to far off others.
- * 
- * 
- * 
+ *
+ *
+ *
  * ==SOME NOTES==
- * 
+ *
  * Comments:
  * I still struggle to comment my work effectivly. I will try to be more consistant.
- * 
+ *
  * The UI:
  * I know some people are very much against custom UI's in WordPress.
  * I did try with the WordPress UI, but space became an issue and somethings
  * just wouldn't work.
  * I did try model the Editor UI within Wordpress so it looked at least like it belonged.
  * Please let me know if it will be an issue.
- * 
+ *
  * What it does:
  * This aim of this component is to allow you build wrapper elements around a pod,
- * and display it on a page via a shortcode or as a widget. 
- * 
+ * and display it on a page via a shortcode or as a widget.
+ *
  * I'm not sure of the name "Advanced Templates" but I'll leave it for now.
  * Maybe something like Pod Elements or what ever.
- * 
+ *
  * It current just works on a loop. I'm going to add options to set the template up
  * for single view, list, parameters setting, things like that...
- * 
+ *
  * Anyway, this is just a prototype component to help me learn and understand pods better
  * and hey, It might be useful.
- * 
+ *
  * ~ David
- * 
+ *
  */
 class Pods_Advanced_Templates extends PodsComponent {
 
@@ -64,43 +66,43 @@ class Pods_Advanced_Templates extends PodsComponent {
      * component name
      *
      * @since 0.1
-     */    
+     */
     private $component_name = 'Advanced Templates';
     /**
      * menu name for switching between post type and custom UI
      *
      * @since 0.1
-     */    
+     */
     private $pods_menu = 'pods';
     /**
      * template buffer
      *
      * @since 0.1
-     */    
+     */
     private $template_data = array();
     /**
      * burrered list of pods
      *
      * @since 0.1
-     */        
+     */
     private $pods_list = array();
     /**
      * footer scripts buffer
      *
      * @since 0.1
-     */    
+     */
     private $template_foot;
     /**
      * shortcodes used buffer
      *
      * @since 0.1
-     */        
+     */
     private $shortcodes_used;
     /**
      * header buffer
      *
      * @since 0.1
-     */       
+     */
     private $template_head;
 
     public function __construct() {
@@ -130,13 +132,13 @@ class Pods_Advanced_Templates extends PodsComponent {
         $args = PodsInit::object_label_fix($args, 'post_type');
         register_post_type($this->object_type, apply_filters('pods_internal_register_post_type_object_adv_template', $args));
 
-        
+
         if (is_admin()) {
             # on save finds and caches used shortcodes so we dont need to check on each page load
             add_action('post_updated', array($this, 'build_cache'), 10, 3);
             # Clear the cache of used shortcodes on delete
             add_action('delete_post', array($this, 'clear_cache'), 10, 1);
-            
+
             add_filter('post_row_actions', array($this, 'remove_row_actions'), 10, 2);
             add_filter('bulk_actions-edit-' . $this->object_type, array($this, 'remove_bulk_actions'));
 
@@ -144,7 +146,7 @@ class Pods_Advanced_Templates extends PodsComponent {
             add_filter('manage_' . $this->object_type . '_posts_columns', array($this, 'edit_columns'));
             add_action('manage_' . $this->object_type . '_posts_custom_column', array($this, 'column_content'), 10, 2);
         } else {
-            
+
             # Prefetch page ID for hooking in early so we can the PHP early.
             # This allows a template to be able to add_actions and filters
             add_action('init', array($this, 'pre_process'), 1);
@@ -157,7 +159,7 @@ class Pods_Advanced_Templates extends PodsComponent {
                 unset($_POST['_wpnonce']);
                 unset($_POST['_wp_http_referer']);
                 $data = stripslashes_deep($_POST['data']);
-                
+
                 $shortcodes = get_transient('pods_advtemplates');
                 # Manually build a custom post for a template
                 $templateArgs = array(
@@ -180,17 +182,17 @@ class Pods_Advanced_Templates extends PodsComponent {
                 }
                 # Save template settings as a post meta.
                 update_post_meta($lastPost, '_pods_adv_template', $data);
-                
+
                 # Add shortcode to shortcode list.
                 $shortcodes[$lastPost] = $data['slug'];
                 set_transient('pods_advtemplates', $shortcodes);
-                
+
                 # Send back to post type manager
                 wp_redirect('edit.php?post_type='.$this->object_type.'&last=' . $lastPost);
                 die;
             }
         }
-        
+
         # Grab the default edit page - direct to UI
         # Editing: redirect with edit=ID
         if (isset($_GET['post']) && isset($_GET['action'])) {
@@ -226,7 +228,7 @@ class Pods_Advanced_Templates extends PodsComponent {
      *  then push headers .
      *  This needs to be done on init action to allow the use of adding actions and filters
      *  in the PHP tab of a template.
-     * 
+     *
      */
     function pre_process() {
 
@@ -235,7 +237,7 @@ class Pods_Advanced_Templates extends PodsComponent {
          * I'm basically guessing my way through this.
          * Any suggestions?
          */
-        
+
         # Convert request URL to post ID
         $postID = url_to_postid($_SERVER['REQUEST_URI']);
         if (empty($postID)) {
@@ -255,14 +257,14 @@ class Pods_Advanced_Templates extends PodsComponent {
             # Found the ID, load it up.
             $posts[] = get_post($postID);
         }
-        
+
         # Cant find anything, just get out.
         if (empty($posts))
             return;
-        
+
         # Load up the cache of shortcode tempaltes used on this page
         $usedCache = get_transient('pods_adv_template_used');
-        
+
         #loop through the posts found
         foreach ($posts as $post) {
             # If there are shortcode templates used on this post process it.
@@ -277,15 +279,15 @@ class Pods_Advanced_Templates extends PodsComponent {
                         $templateData = $this->shortcodes_used[$code];
                     }
                     # Dynamically add the shortcode so we dont need to register everything.
-                    add_shortcode($code, array($this, 'render_shortcode'));    
-                    
+                    add_shortcode($code, array($this, 'render_shortcode'));
+
                     #Execute the PHP code of the template.
                     # Any add_filter or add_action for after init will now work
                     # Any php function should be available
                     if (!empty($templateData['phpCode'])) {
                         eval($templateData['phpCode']);
                     }
-                    
+
                     # enqueue external script libraries correctly.
                     if (!empty($templateData['jsLib'])) {
                         foreach ($templateData['jsLib'] as $key => $url) {
@@ -371,12 +373,12 @@ class Pods_Advanced_Templates extends PodsComponent {
         $pods = pods($this->pods_list[$this->shortcodes_used[$code]['pod']]['name']);
         # Just get everything for now.
         $pods->find();
-                
+
         # find the loop statment to get the loopable area for each pod record.
         $pattern = '\[(\[?)(loop)\b([^\]\/]*(?:\/(?!\])[^\]\/]*)*?)(?:(\/)\]|\](?:([^\[]*+(?:\[(?!\/\2\])[^\[]*+)*+)\[\/\2\])?)(\]?)';
         preg_match_all('/' . $pattern . '/s', $this->shortcodes_used[$code]['htmlCode'], $loops);
         if (!empty($loops)) {
-            foreach ($loops[0] as $loopKey => $loopcode) {                    
+            foreach ($loops[0] as $loopKey => $loopcode) {
                 if (!empty($loops[2][$loopKey]) && !empty($loops[5][$loopKey])) {
                     $this->shortcodes_used[$code]['htmlCode'] = str_replace($loopcode, Pods_Templates::template(null, $loops[5][$loopKey], $pods), $this->shortcodes_used[$code]['htmlCode']);
                 }
@@ -384,7 +386,7 @@ class Pods_Advanced_Templates extends PodsComponent {
             ob_start();
             eval('?> ' . $this->shortcodes_used[$code]['htmlCode']);
             $return = ob_get_clean();
-            
+
         }else{
             # Push the full template as a loop
             # Process php in the template
@@ -397,7 +399,7 @@ class Pods_Advanced_Templates extends PodsComponent {
             # Push it to the template renderer
             $return = Pods_Templates::template(null, $this->shortcodes_used[$code]['htmlCode'], $pods);
         }
-        
+
         # Do it again for embeded shortcodes in the templates.
         return do_shortcode($return);
     }
@@ -451,10 +453,10 @@ class Pods_Advanced_Templates extends PodsComponent {
                 . ')?'
                 . ')'
                 . '(\\]?)';                          # 6: Optional second closing brocket for escaping shortcodes: [[tag]]
-        
+
         preg_match_all('/' . $regex . '/s', $content, $found);
         $foundList = array();
-        # If found any shortcodes process them        
+        # If found any shortcodes process them
         if (!empty($found[2])) {
             foreach ($found[2] as $foundCode) {
                 if (!isset($foundList[$codesList[$foundCode]])) {
@@ -464,7 +466,7 @@ class Pods_Advanced_Templates extends PodsComponent {
                     $foundTemplate = get_post_meta($codesList[$foundCode], '_pods_adv_template', true);
                     # if there is content in the html tab, process it to find
                     # embeded shortcodes.
-                    # And yes you can create a endless loop by placing its own 
+                    # And yes you can create a endless loop by placing its own
                     # shortcode in its html tab. Don't do it!
                     if (!empty($foundTemplate['htmlCode']))
                         $foundList = $foundList + $this->get_used($foundTemplate['htmlCode'], $codes);
@@ -477,7 +479,7 @@ class Pods_Advanced_Templates extends PodsComponent {
 
     /**
      * Output Footer Scripts
-     * 
+     *
      */
     function footer_scripts() {
         # Simply echo out the javascript
@@ -509,7 +511,7 @@ class Pods_Advanced_Templates extends PodsComponent {
      * Column content for list edit
      */
     function column_content($column, $post_id) {
-        
+
         global $post, $_pod;
 
         if (empty($this->template_data[$post_id])) {
@@ -543,7 +545,7 @@ class Pods_Advanced_Templates extends PodsComponent {
 
     /**
      * Manage menu overides for switching between post type and admin page
-     * 
+     *
      */
     public function admin_menu_switch() {
         global $submenu;
@@ -561,7 +563,7 @@ class Pods_Advanced_Templates extends PodsComponent {
      * @since 2.0.0
      */
     public function admin_assets() {
-        
+
         if (!isset($_GET['post_type'])) {
             global $submenu;
             # Cleanup my overide.

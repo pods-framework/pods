@@ -8,6 +8,8 @@
  *
  * Version: 1.0
  *
+ * Category: Tools
+ *
  * @package Pods\Components
  * @subpackage Roles
  */

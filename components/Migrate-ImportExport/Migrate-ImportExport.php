@@ -8,6 +8,8 @@
  *
  * Version: 2.0
  *
+ * Category: Migration
+ *
  * Developer Mode: on
  *
  * @package Pods\Components

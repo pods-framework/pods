@@ -261,6 +261,7 @@ class PodsComponents {
                 'MenuAddPage' => 'Menu Add Page',
                 'Description' => 'Description',
                 'Version' => 'Version',
+                'Category' => 'Category',
                 'Author' => 'Author',
                 'AuthorURI' => 'Author URI',
                 'Class' => 'Class',

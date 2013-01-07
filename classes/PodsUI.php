@@ -1890,7 +1890,7 @@ class PodsUI {
             if ( !in_array( 'export', $this->actions_disabled ) && 'export' == $this->action )
                 $this->export();
 
-            if ( ( !empty( $this->data ) || false !== $this->search ) && false !== $this->searchable ) {
+            if ( ( !empty( $this->data ) || false !== $this->search || ( $this->filters_enhanced && !empty( $this->views ) ) ) && ( ( $this->filters_enhanced && !empty( $this->views ) ) || false !== $this->searchable ) ) {
                 if ( $this->filters_enhanced )
                     $this->filters();
                 else {
@@ -2151,28 +2151,34 @@ class PodsUI {
                 }
             ?>
 
-            <p class="search-box">
-                <?php
-                    if ( $filtered || '' != pods_var_raw( 'search' . $this->num, 'get', '', null, true ) ) {
-                        $clear_filters = array();
+            <?php
+                if ( false !== $this->search && false !== $this->searchable ) {
+            ?>
+                <p class="search-box">
+                    <?php
+                        if ( $filtered || '' != pods_var_raw( 'search' . $this->num, 'get', '', null, true ) ) {
+                            $clear_filters = array();
 
-                        foreach ( $this->filters as $filter ) {
-                            $clear_filters[ 'filter_' . $filter . '_start' ] = '';
-                            $clear_filters[ 'filter_' . $filter . '_end' ] = '';
-                            $clear_filters[ 'filter_' . $filter ] = '';
+                            foreach ( $this->filters as $filter ) {
+                                $clear_filters[ 'filter_' . $filter . '_start' ] = '';
+                                $clear_filters[ 'filter_' . $filter . '_end' ] = '';
+                                $clear_filters[ 'filter_' . $filter ] = '';
+                            }
+                    ?>
+                        <a href="<?php echo pods_var_update( $clear_filters, array( 'orderby' . $this->num, 'orderby_dir' . $this->num, 'limit' . $this->num, 'page' ), $this->exclusion() ); ?>" class="pods-ui-filter-reset">[<?php _e( 'Reset', 'pods' ); ?>]</a>
+                    <?php
                         }
-                ?>
-                    <a href="<?php echo pods_var_update( $clear_filters, array( 'orderby' . $this->num, 'orderby_dir' . $this->num, 'limit' . $this->num, 'page' ), $this->exclusion() ); ?>" class="pods-ui-filter-reset">[<?php _e( 'Reset', 'pods' ); ?>]</a>
-                <?php
-                    }
-                ?>
+                    ?>
 
-                <label class="screen-reader-text" for="search<?php echo $this->num; ?>-input"><?php _e( 'Search', 'pods' ); ?>:</label>
+                    <label class="screen-reader-text" for="search<?php echo $this->num; ?>-input"><?php _e( 'Search', 'pods' ); ?>:</label>
 
-                <input type="search" id="search<?php echo $this->num; ?>-input" name="search<?php echo $this->num; ?>" value="<?php echo esc_attr( $this->search ); ?>" />
+                    <input type="search" id="search<?php echo $this->num; ?>-input" name="search<?php echo $this->num; ?>" value="<?php echo esc_attr( $this->search ); ?>" />
 
-                <?php submit_button( $this->header[ 'search' ], 'button', false, false, array('id' => 'search-submit') ); ?>
-            </p>
+                    <?php submit_button( $this->header[ 'search' ], 'button', false, false, array('id' => 'search-submit') ); ?>
+                </p>
+            <?php
+                }
+            ?>
         </div>
 
         <?php

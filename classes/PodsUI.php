@@ -1661,7 +1661,7 @@ class PodsUI {
         $columns = array();
 
         if ( empty( $this->fields[ 'export' ] ) ) {
-            $this->fields[ 'export' ] = $this->fields[ 'manage' ];
+            $this->fields[ 'export' ] = $this->pod->fields;
 
             $columns = array(
                 $this->pod->pod_data[ 'field_id' ] => 'ID'
@@ -1681,7 +1681,7 @@ class PodsUI {
 
         $migrate = pods_migrate( $type, $delimiter, $data );
 
-        $export = $migrate->export();
+        $migrate->export();
 
         $export_file = $migrate->save();
 

@@ -224,6 +224,9 @@ class PodsField_Website extends PodsField {
             elseif ( 'no-http' == pods_var( 'website_format', $options ) ) {
                 $value = $this->build_url( $url );
                 $value = str_replace( $url[ 'scheme' ] . '://', '', $value );
+
+                if ( '/' == $url[ 'path' ] )
+                    $value = trim( $value, '/' );
             }
             elseif ( 'no-http-no-www' == pods_var( 'website_format', $options ) ) {
                 if ( 0 === strpos( $url[ 'host' ], 'www.' ) )
@@ -231,6 +234,9 @@ class PodsField_Website extends PodsField {
 
                 $value = $this->build_url( $url );
                 $value = str_replace( $url[ 'scheme' ] . '://', '', $value );
+
+                if ( '/' == $url[ 'path' ] )
+                    $value = trim( $value, '/' );
             }
             elseif ( 'no-http-force-www' == pods_var( 'website_format', $options ) ) {
                 if ( false !== strpos( $url[ 'host' ], '.' ) && false === strpos( $url[ 'host' ], '.', 1 ) )
@@ -238,6 +244,9 @@ class PodsField_Website extends PodsField {
 
                 $value = $this->build_url( $url );
                 $value = str_replace( $url[ 'scheme' ] . '://', '', $value );
+
+                if ( '/' == $url[ 'path' ] )
+                    $value = trim( $value, '/' );
             }
         }
 

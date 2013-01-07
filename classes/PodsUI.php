@@ -1117,8 +1117,6 @@ class PodsUI {
             if ( !in_array( 'export', $this->actions_disabled ) ) {
                 if ( 'export' != $which && isset( $this->fields[ 'export' ] ) &&!empty( $this->fields[ 'export' ] ) )
                     $this->fields[ 'export' ] = $this->setup_fields( $this->fields[ 'export' ], 'export' );
-                else
-                    $this->fields[ 'export' ] = $fields;
             }
 
             if ( !in_array( 'reorder', $this->actions_disabled ) && false !== $this->reorder[ 'on' ] ) {

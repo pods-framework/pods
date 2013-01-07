@@ -652,7 +652,7 @@ class PodsMeta {
         ?>
     </table>
 
-    <input type="hidden" name="pods_meta_save" value="1" />
+    <input type="hidden" name="pods_metasave" value="1" />
 
     <script type="text/javascript">
         jQuery( function ( $ ) {
@@ -677,7 +677,7 @@ class PodsMeta {
 
         $blacklisted_types = apply_filters( 'pods_meta_save_post_blacklist_types', $blacklisted_types, $post_id, $post );
 
-        if ( empty( $_POST ) || 1 != pods_var( 'pods_meta_save', 'post' ) )
+        if ( empty( $_POST ) || 1 != pods_var( 'pods_metasave', 'post' ) )
             return $post_id;
 
         // @todo Figure out how to hook into autosave for saving meta
@@ -805,7 +805,7 @@ class PodsMeta {
                 $form_fields[ 'pods_meta_' . $field[ 'name' ] ] = array(
                     'label' => $field[ 'label' ],
                     'input' => 'html',
-                    'html' => PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ),
+                    'html' => PodsForm::field( 'pods_meta_' . $field[ 'name' ], $value, $field[ 'type' ], $field, $pod, $id ) . PodsForm::field( 'pods_metasave', 1, 'hidden' ),
                     'helps' => PodsForm::comment( 'pods_meta_' . $field[ 'name' ], $field[ 'description' ], $field )
                 );
             }
@@ -827,6 +827,9 @@ class PodsMeta {
             return $post;
 
         $post_id = $attachment;
+
+        if ( empty( $_POST ) || 1 != pods_var( 'pods_metasave', 'post' ) )
+            return $post;
 
         if ( is_array( $post ) && !empty( $post ) && isset( $post[ 'ID' ] ) && 'attachment' == $post[ 'post_type' ] )
             $post_id = $post[ 'ID' ];

@@ -932,6 +932,10 @@ elseif ( 'pod' == pods_var( 'type', $pod ) ) {
 ?>
 <div id="pods-advanced-options" class="pods-tab">
     <div class="pods-field-option">
+        <?php echo PodsForm::label( 'ui_export', __( 'Enable Export from Management UI?', 'pods' ), __( 'help', 'pods' ) ); ?>
+        <?php echo PodsForm::field( 'ui_export', pods_var_raw( 'ui_export', $pod ), 'boolean', array( 'dependency' => true, 'boolean_yes_label' => '' ) ); ?>
+    </div>
+    <div class="pods-field-option">
         <?php echo PodsForm::label( 'detail_url', __( 'Detail Page URL', 'pods' ), __( 'help', 'pods' ) ); ?>
         <?php echo PodsForm::field( 'detail_url', pods_var_raw( 'detail_url', $pod ), 'text' ); ?>
     </div>

@@ -371,7 +371,10 @@ class PodsAdmin {
      * Create PodsUI content for the administration pages
      */
     public function admin_content () {
-        $pod = str_replace( array( 'pods-manage-', 'pods-add-new-' ), '', $_GET[ 'page' ] );
+        $pod_name = str_replace( array( 'pods-manage-', 'pods-add-new-' ), '', $_GET[ 'page' ] );
+
+        $pod = pods( $pod_name, pods_var( 'id', 'get', null, null, true ) );
+
         $default = 'manage';
 
         if ( false !== strpos( $_GET[ 'page' ], 'pods-add-new-' ) )
@@ -383,22 +386,26 @@ class PodsAdmin {
             'export' => 'export'
         );
 
+        if ( 1 == pods_var( 'ui_export', $pod->pod_data[ 'options' ], 0 ) )
+            unset( $actions_disabled[ 'export' ] );
+
         if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_content' ) ) {
-            if ( !current_user_can( 'pods_add_' . $pod ) ) {
+            if ( !current_user_can( 'pods_add_' . $pod_name ) ) {
                 $actions_disabled[ 'add' ] = 'add';
                 $default = 'manage';
             }
 
-            if ( !current_user_can( 'pods_edit_' . $pod ) )
+            if ( !current_user_can( 'pods_edit_' . $pod_name ) )
                 $actions_disabled[ 'edit' ] = 'edit';
 
-            if ( !current_user_can( 'pods_delete_' . $pod ) )
+            if ( !current_user_can( 'pods_delete_' . $pod_name ) )
                 $actions_disabled[ 'delete' ] = 'delete';
+
+            if ( !current_user_can( 'pods_export_' . $pod_name ) )
+                $actions_disabled[ 'export' ] = 'export';
         }
 
         $_GET[ 'action' ] = pods_var( 'action', 'get', $default );
-
-        $pod = pods( $pod, pods_var( 'id', 'get', null, null, true ) );
 
         $index = $pod->pod_data[ 'field_id' ];
         $label = __( 'ID', 'pods' );
@@ -933,6 +940,9 @@ class PodsAdmin {
 
             if ( isset( $pod[ 'fields' ][ 'author' ] ) && 'pick' == $pod[ 'fields' ][ 'author' ][ 'type' ] && 'user' == $pod[ 'fields' ][ 'author' ][ 'pick_object' ] )
                 $capabilities[] = 'pods_delete_others_' . $pod[ 'name' ];
+
+            if ( 1 == pods_var( 'ui_export', $pod[ 'options' ], 0 ) )
+                $capabilities[] = 'pods_export_' . $pod[ 'name' ];
         }
 
         return $capabilities;

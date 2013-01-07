@@ -11,7 +11,20 @@
             <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce( 'pods-add_pod' ); ?>" />
             <input type="hidden" name="create_extend" id="pods_create_extend" value="create" />
 
-            <h2 class="italicized"><?php _e( 'Add New Pod', 'pods' ); ?></h2>
+            <h2 class="italicized">
+                <?php
+                    _e( 'Add New Pod', 'pods' );
+
+                    $pods = pods_api()->load_pods();
+
+                    if ( !empty( $pods ) ) {
+                        $link = pods_var_update( array( 'page' => 'pods', 'action' . $obj->num => 'manage' ) );
+                ?>
+                    <a href="<?php echo $link; ?>" class="add-new-h2">&laquo; <?php _e( 'Back to Manage', 'pods' ); ?></a>
+                <?php
+                    }
+                ?>
+            </h2>
 
             <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 

@@ -15,6 +15,16 @@ class PodsMigrate {
     var $types = array( 'php', 'json', 'sv', 'xml' );
 
     /**
+     * @var array
+     */
+    var $mimes = array(
+        'json' => 'application/json',
+        'csv' => 'text/csv',
+        'tsv' => 'text/tsv',
+        'xml' => 'text/xml',
+    );
+
+    /**
      * @var null|string
      */
     var $delimiter = ',';
@@ -37,25 +47,30 @@ class PodsMigrate {
     /**
      * Migrate Data to and from Pods
      *
+     * @param string $type Export Type (php, json, sv, xml)
+     * @param string $delimiter Delimiter for export type 'sv'
+     * @param array $data Array of data
+     *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0.0
      */
     function __construct ( $type = null, $delimiter = null, $data = null ) {
         if ( !empty( $type ) && in_array( $type, $this->types ) )
             $this->type = $type;
+
         if ( !empty( $delimiter ) )
             $this->delimiter = $delimiter;
+
         if ( !empty( $data ) )
             $this->data = $data;
     }
 
-    /*
-    * Importing / Parsing / Validating Code
-    */
     /**
-     * @param null $data
-     * @param null $type
-     * @param null $delimiter
+     * Importing / Parsing / Validating Code
+     *
+     * @param array $data Array of data
+     * @param string $type Export Type (php, json, sv, xml)
+     * @param string $delimiter Delimiter for export type 'sv'
      */
     function import ( $data = null, $type = null, $delimiter = null ) {
         if ( !empty( $data ) )
@@ -74,8 +89,8 @@ class PodsMigrate {
     }
 
     /**
-     * @param null $data
-     * @param null $type
+     * @param array $data Array of data
+     * @param string $type Export Type (php, json, sv, xml)
      */
     public function import_pod_items ( $data = null, $type = null ) {
         if ( !empty( $data ) )
@@ -86,8 +101,8 @@ class PodsMigrate {
     }
 
     /**
-     * @param null $data
-     * @param null $type
+     * @param array $data Array of data
+     * @param string $type Export Type (php, json, sv, xml)
      *
      * @return null
      */
@@ -105,7 +120,7 @@ class PodsMigrate {
     }
 
     /**
-     * @param null $data
+     * @param array $data Array of data
      *
      * @return bool
      */
@@ -138,8 +153,8 @@ class PodsMigrate {
     }
 
     /**
-     * @param null $data
-     * @param null $delimiter
+     * @param array $data Array of data
+     * @param string $delimiter Delimiter for export type 'sv'
      *
      * @return bool
      */
@@ -178,7 +193,7 @@ class PodsMigrate {
     }
 
     /**
-     * @param null $data
+     * @param array $data Array of data
      *
      * @return bool
      */
@@ -255,7 +270,7 @@ class PodsMigrate {
     }
 
     /**
-     * @param null $data
+     * @param array $data Array of data
      *
      * @return mixed
      *
@@ -270,13 +285,12 @@ class PodsMigrate {
         return $this->parsed;
     }
 
-    /*
-    * Exporting / Building Code
-    */
     /**
-     * @param null $data
-     * @param null $type
-     * @param null $delimiter
+     * Exporting / Building Code
+     *
+     * @param array $data Array of data
+     * @param string $type Export Type (php, json, sv, xml)
+     * @param string $delimiter Delimiter for export type 'sv'
      */
     public function export ( $data = null, $type = null, $delimiter = null ) {
         if ( !empty( $data ) )
@@ -291,11 +305,11 @@ class PodsMigrate {
         if ( method_exists( $this, "build_{$this->type}" ) )
             call_user_func( array( $this, 'build_' . $this->type ) );
 
-        return $this->export_pod_items();
+        return $this->built;
     }
 
     /**
-     * @param null $data
+     * @param array $data Array of data
      */
     public function export_pod_items ( $data = null ) {
         if ( !empty( $data ) )
@@ -303,8 +317,8 @@ class PodsMigrate {
     }
 
     /**
-     * @param null $data
-     * @param null $type
+     * @param array $data Array of data
+     * @param string $type Export Type (php, json, sv, xml)
      *
      * @return null
      */
@@ -322,7 +336,7 @@ class PodsMigrate {
     }
 
     /**
-     * @param null $data
+     * @param array $data Array of data
      *
      * @return bool
      */
@@ -333,13 +347,36 @@ class PodsMigrate {
         if ( empty( $this->data ) || !is_array( $this->data ) )
             return false;
 
-        $data = array( 'items' => array( 'count' => count( $this->data[ 'items' ] ), 'item' => array() ) );
+        $data = array(
+            'items' => array(
+                'count' => count( $this->data[ 'items' ] ),
+                'item' => array()
+            )
+        );
 
         foreach ( $this->data[ 'items' ] as $item ) {
             $row = array();
 
-            foreach ( $this->data[ 'columns' ] as $column ) {
-                $row[ $column ] = $item[ $column ];
+            foreach ( $this->data[ 'columns' ] as $column => $label ) {
+                if ( is_numeric( $column ) && ( ( is_object( $item ) && !isset( $item->$column ) ) || ( is_array( $item ) && !isset( $item[ $column ] ) ) ) )
+                    $column = $label;
+
+                $value = '';
+
+                if ( is_object( $item ) ) {
+                    if ( !isset( $item->$column ) )
+                        $item->$column = '';
+
+                    $value = $item->$column;
+                }
+                elseif ( is_array( $item ) ) {
+                    if ( !isset( $item[ $column ] ) )
+                        $item[ $column ] = '';
+
+                    $value = $item[ $column ];
+                }
+
+                $row[ $column ] = $value;
             }
 
             $data[ 'items' ][ 'item' ][] = $row;
@@ -351,8 +388,8 @@ class PodsMigrate {
     }
 
     /**
-     * @param null $data
-     * @param null $delimiter
+     * @param array $data Array of data
+     * @param string $delimiter Delimiter for export type 'sv'
      *
      * @return bool
      */
@@ -368,8 +405,8 @@ class PodsMigrate {
 
         $head = $lines = '';
 
-        foreach ( $this->data[ 'columns' ] as $column ) {
-            $head .= '"' . $column . '"' . $this->delimiter;
+        foreach ( $this->data[ 'columns' ] as $column => $label ) {
+            $head .= '"' . $label . '"' . $this->delimiter;
         }
 
         $head = substr( $head, 0, -1 );
@@ -377,12 +414,35 @@ class PodsMigrate {
         foreach ( $this->data[ 'items' ] as $item ) {
             $line = '';
 
-            foreach ( $this->data[ 'columns' ] as $column ) {
-                $line .= '"' . $item[ $column ] . '"' . $this->delimiter;
+            foreach ( $this->data[ 'columns' ] as $column => $label ) {
+                if ( is_numeric( $column ) && ( ( is_object( $item ) && !isset( $item->$column ) ) || ( is_array( $item ) && !isset( $item[ $column ] ) ) ) )
+                    $column = $label;
+
+                $value = '';
+
+                if ( is_object( $item ) ) {
+                    if ( !isset( $item->$column ) )
+                        $item->$column = '';
+
+                    $value = $item->$column;
+                }
+                elseif ( is_array( $item ) ) {
+                    if ( !isset( $item[ $column ] ) )
+                        $item[ $column ] = '';
+
+                    $value = $item[ $column ];
+                }
+
+                $value = str_replace( array( '"', "\r\n", "\r", "\n" ), array( '\\"', "\n", "\n", '\n' ), $value );
+
+                $line .= '"' . $value . '"' . $this->delimiter;
             }
 
-            $lines .= substr( $line, 0, -1 );
+            $lines .= substr( $line, 0, -1 ) . "\n";
         }
+
+        if ( !empty( $lines ) )
+            $lines = "\n" . substr( $lines, 0, -1 );
 
         $this->built = $head . $lines;
 
@@ -390,7 +450,7 @@ class PodsMigrate {
     }
 
     /**
-     * @param null $data
+     * @param array $data Array of data
      *
      * @return bool
      */
@@ -401,14 +461,42 @@ class PodsMigrate {
         if ( empty( $this->data ) || !is_array( $this->data ) )
             return false;
 
-        $head = '<' . '?' . 'xml version="1.0" encoding="utf-8" ' . '?' . '>' . "\r\n<items count=\"" . count( $this->full_data ) . "\">\r\n";
+        $head = '<' . '?' . 'xml version="1.0" encoding="utf-8" ' . '?' . '>' . "\r\n<items count=\"" . count( $this->data[ 'items' ] ) . "\">\r\n";
         $lines = '';
 
         foreach ( $this->data[ 'items' ] as $item ) {
             $line = "\t<item>\r\n";
 
-            foreach ( $this->data[ 'columns' ] as $column ) {
-                $line .= "\t\t<{$column}><![CDATA[" . $item[ $column ] . "]]></{$column}>\r\n";
+            foreach ( $this->data[ 'columns' ] as $column => $label ) {
+                if ( is_numeric( $column ) && ( ( is_object( $item ) && !isset( $item->$column ) ) || ( is_array( $item ) && !isset( $item[ $column ] ) ) ) )
+                    $column = $label;
+
+                $value = '';
+
+                if ( is_object( $item ) ) {
+                    if ( !isset( $item->$column ) )
+                        $item->$column = '';
+
+                    $value = $item->$column;
+                }
+                elseif ( is_array( $item ) ) {
+                    if ( !isset( $item[ $column ] ) )
+                        $item[ $column ] = '';
+
+                    $value = $item[ $column ];
+                }
+
+                $line .= "\t\t<{$column}>";
+
+                if ( false !== strpos( $value, '<' ) ) {
+                    $value = str_replace( array( '<![CDATA[', ']]>' ), array( '&lt;![CDATA[', ']]&gt;' ), $value );
+
+                    $line .= "<![CDATA[" . $value . "]]>";
+                }
+                else
+                    $line .= $value;
+
+                $line .= "</{$column}>\r\n";
             }
 
             $line .= "\t</item>\r\n";
@@ -423,7 +511,7 @@ class PodsMigrate {
     }
 
     /**
-     * @param null $data
+     * @param array $data Array of data
      *
      * @return mixed
      */
@@ -434,6 +522,61 @@ class PodsMigrate {
         $this->built = $data;
 
         return $this->built;
+    }
+
+    /**
+     * Save export to a file
+     */
+    public function save() {
+        $extension = 'txt';
+
+        if ( 'sv' == $this->type ) {
+            if ( ',' == $this->delimiter )
+                $extension = 'csv';
+            elseif ( "\t" == $this->delimiter )
+                $extension = 'tsv';
+        }
+        else
+            $extension = $this->type;
+
+        $export_file = 'pods_export_' . wp_create_nonce( date_i18n( 'm-d-Y_h-i-sa' ) ) . '.' . $extension;
+
+        if ( !( ( $uploads = wp_upload_dir( current_time( 'mysql' ) ) ) && false === $uploads[ 'error' ] ) )
+            return pods_error( __( 'There was an issue saving the export file in your uploads folder.', 'pods' ), true );
+
+        // Generate unique file name
+        $filename = wp_unique_filename( $uploads[ 'path' ], $export_file );
+
+        // move the file to the uploads dir
+        $new_file = $uploads[ 'path' ] . '/' . $filename;
+
+        file_put_contents( $new_file, $this->built );
+
+        // Set correct file permissions
+        $stat = stat( dirname( $new_file ) );
+        $perms = $stat[ 'mode' ] & 0000666;
+        @chmod( $new_file, $perms );
+
+        // Get the file type
+        $wp_filetype = wp_check_filetype( $filename, $this->mimes );
+
+        // construct the attachment array
+        $attachment = array(
+            'post_mime_type' => ( !$wp_filetype[ 'type' ] ? 'text/' . $extension : $wp_filetype[ 'type' ] ),
+            'guid' => $uploads[ 'url' ] . '/' . $filename,
+            'post_parent' => null,
+            'post_title' => '',
+            'post_content' => '',
+        );
+
+        // insert attachment
+        $attachment_id = wp_insert_attachment( $attachment, $new_file );
+
+        // error!
+        if ( is_wp_error( $attachment_id ) )
+            return pods_error( __( 'There was an issue saving the export file in your uploads folder.', 'pods' ), true );
+
+        return $attachment[ 'guid' ];
     }
 
     /*

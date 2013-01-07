@@ -1983,14 +1983,18 @@ function pods_admin () {
  *
  * @see PodsMigrate
  *
+ * @param string $type Export Type (php, json, sv, xml)
+ * @param string $delimiter Delimiter for export type 'sv'
+ * @param array $data Array of data
+ *
  * @return PodsMigrate
  *
  * @since 2.2
  */
-function pods_migrate () {
+function pods_migrate ( $type = null, $delimiter = null, $data = null ) {
     require_once( PODS_DIR . 'classes/PodsMigrate.php' );
 
-    return new PodsMigrate();
+    return new PodsMigrate( $type, $delimiter, $data );
 }
 
 /**

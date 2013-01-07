@@ -568,7 +568,7 @@ class PodsAdmin {
                 'manage' => array(
                     'label' => array( 'label' => __( 'Label', 'pods' ) ),
                     'name' => array( 'label' => __( 'Name', 'pods' ) ),
-                    'type' => array( 'label' => __( 'Object Type', 'pods' ) ),
+                    'type' => array( 'label' => __( 'Type', 'pods' ) ),
                     'storage' => array( 'label' => __( 'Storage Type', 'pods' ) )
                 )
             ),
@@ -595,7 +595,7 @@ class PodsAdmin {
         if ( 1 < count( $pod_types_found ) ) {
             $ui[ 'views' ] = array( 'all' => __( 'All', 'pods' ) );
             $ui[ 'view' ] = $view;
-            $ui[ 'heading' ] = array( 'views' => __( 'Object Type', 'pods' ) );
+            $ui[ 'heading' ] = array( 'views' => __( 'Type', 'pods' ) );
             $ui[ 'filters_enhanced' ] = true;
 
             foreach ( $pod_types_found as $pod_type => $number_found ) {

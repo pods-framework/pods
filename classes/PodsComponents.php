@@ -87,7 +87,7 @@ class PodsComponents {
             if ( !empty( $component_data[ 'Hide' ] ) )
                 continue;
 
-            if ( true === (boolean) pods_var( 'DeveloperMode', $component_data, false ) && ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) )
+            if ( true === (boolean) pods_var( 'DeveloperMode', $component_data, false ) && ( !pods_developer() ) )
                 continue;
 
             if ( empty( $component_data[ 'MenuPage' ] ) && ( !isset( $component_data[ 'object' ] ) || !method_exists( $component_data[ 'object' ], 'admin' ) ) )
@@ -388,7 +388,7 @@ class PodsComponents {
             if ( !empty( $component_data[ 'Hide' ] ) )
                 continue;
 
-            if ( true === (boolean) pods_var( 'DeveloperMode', $component_data, false ) && ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) )
+            if ( true === (boolean) pods_var( 'DeveloperMode', $component_data, false ) && ( !pods_developer() ) )
                 continue;
 
             if ( empty( $component_data[ 'MenuPage' ] ) && ( !isset( $component_data[ 'object' ] ) || !method_exists( $component_data[ 'object' ], 'admin' ) ) )

@@ -696,7 +696,7 @@ class PodsAdmin {
             );
 
             if ( true === $component_data[ 'developermode' ] ) {
-                if ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) {
+                if ( !pods_developer() ) {
                     unset( $components[ $component ] );
 
                     continue;
@@ -793,7 +793,7 @@ class PodsAdmin {
                         $toggle = 1;
                 }
                 if ( true === $component_data[ 'DeveloperMode' ] ) {
-                    if ( !defined( 'PODS_DEVELOPER' ) || !PODS_DEVELOPER ) {
+                    if ( !pods_developer() ) {
                         unset( $components[ $component ] );
                         continue;
                     }
@@ -868,7 +868,14 @@ class PodsAdmin {
 
             $capabilities[] = 'pods_add_' . $pod[ 'name' ];
             $capabilities[] = 'pods_edit_' . $pod[ 'name' ];
+
+            if ( isset( $pod[ 'fields' ][ 'author' ] ) && 'pick' == $pod[ 'fields' ][ 'author' ][ 'type' ] && 'user' == $pod[ 'fields' ][ 'author' ][ 'pick_object' ] )
+                $capabilities[] = 'pods_edit_others_' . $pod[ 'name' ];
+
             $capabilities[] = 'pods_delete_' . $pod[ 'name' ];
+
+            if ( isset( $pod[ 'fields' ][ 'author' ] ) && 'pick' == $pod[ 'fields' ][ 'author' ][ 'type' ] && 'user' == $pod[ 'fields' ][ 'author' ][ 'pick_object' ] )
+                $capabilities[] = 'pods_delete_others_' . $pod[ 'name' ];
         }
 
         return $capabilities;

@@ -69,7 +69,7 @@ class PodsField_Pick extends PodsField {
                         'dropdown' => __( 'Drop Down', 'pods' ),
                         'radio' => __( 'Radio Buttons', 'pods' ),
                         'autocomplete' => __( 'Autocomplete', 'pods' )
-                    ) + ( ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER ) ? array( 'flexible' => __( 'Flexible', 'pods' ) ) : array() )
+                    ) + ( ( pods_developer() ) ? array( 'flexible' => __( 'Flexible', 'pods' ) ) : array() )
                 ),
                 'dependency' => true
             ),
@@ -85,7 +85,7 @@ class PodsField_Pick extends PodsField {
                         'checkbox' => __( 'Checkboxes', 'pods' ),
                         'multiselect' => __( 'Multi Select', 'pods' ),
                         'autocomplete' => __( 'Autocomplete', 'pods' )
-                    ) + ( ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER ) ? array( 'flexible' => __( 'Flexible', 'pods' ) ) : array() )
+                    ) + ( ( pods_developer() ) ? array( 'flexible' => __( 'Flexible', 'pods' ) ) : array() )
                 ),
                 'dependency' => true
             ),

@@ -2036,7 +2036,7 @@ class PodsUI {
                         <?php
                     }
                     /*
-                    elseif (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && defined('PODS_DEVELOPER')) {
+                    elseif (!in_array('delete', $this->actions_disabled) && !in_array('delete', $this->actions_hidden) && is_developer() ) {
         ?>
                     <div class="alignleft actions">
                         <select name="action">

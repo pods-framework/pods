@@ -125,7 +125,7 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
                                 }
                             ?>
 
-                            <?php if ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER ) { ?>
+                            <?php if ( pods_developer() ) { ?>
                                 <h4><?php _e( 'Conditional Logic', 'pods' ); ?></h4>
                             <?php } ?>
                         </div>

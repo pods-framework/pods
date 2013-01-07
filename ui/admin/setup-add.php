@@ -101,11 +101,6 @@
                                     </div>
                                     <div class="pods-field-option">
                                         <?php
-                                            global $wpdb;
-                                            $max_length_name = 64;
-                                            $max_length_name -= 10; // Allow for WP Multisite or prefix changes in the future
-                                            $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
-
                                             echo PodsForm::label( 'create_label_plural', __( 'Plural Label', 'pods' ), __( '<h6>Plural Label</h6> This is the label for more than 1 item (Plural) that will appear throughout the WordPress admin area for managing the content.', 'pods' ) );
                                             echo PodsForm::field( 'create_label_plural', pods_var_raw( 'create_label_plural', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required', 'text_max_length' => 30 ) );
                                         ?>
@@ -124,6 +119,11 @@
                                     <div class="pods-advanced">
                                         <div class="pods-field-option">
                                             <?php
+                                                global $wpdb;
+                                                $max_length_name = 64;
+                                                $max_length_name -= 10; // Allow for WP Multisite or prefix changes in the future
+                                                $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
+
                                                 echo PodsForm::label( 'create_name', __( 'Identifier', 'pods' ), __( '<h6>Pod Indentifier</h6> This is different than the labels users will see in the WordPress admin areas, it is the name you will use to programatically reference this object throughout your theme, WordPress, and other PHP.', 'pods' ) );
                                                 echo PodsForm::field( 'create_name', pods_var_raw( 'create_name', 'post' ), 'db', array( 'attributes' => array( 'maxlength' => $max_length_name, 'size' => 25, 'data-sluggable' => 'create_label_plural' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
                                             ?>

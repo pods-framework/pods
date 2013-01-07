@@ -4785,7 +4785,7 @@ class PodsAPI {
             'slug'
         );
 
-        if ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER )
+        if ( pods_developer() )
             $types[] = 'loop';
 
         $types = $this->do_hook( 'field_types', $types );

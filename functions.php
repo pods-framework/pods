@@ -194,6 +194,20 @@ function pods_debug ( $debug = '_null', $die = false, $prefix = '_null' ) {
 }
 
 /**
+ * Determine if Developer Mode is enabled
+ *
+ * @return bool Whether Developer Mode is enabled
+ *
+ * @since 2.3
+ */
+function pods_developer () {
+    if ( defined( 'PODS_DEVELOPER' ) && PODS_DEVELOPER )
+        return true;
+
+    return false;
+}
+
+/**
  * Output a message in the WP Dashboard UI
  *
  * @param string $msg

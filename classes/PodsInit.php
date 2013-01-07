@@ -79,7 +79,7 @@ class PodsInit {
             self::$upgrade_needed = false;
 
             foreach ( self::$upgrades as $old_version => $new_version ) {
-                /*if ( '2.1.0' == $new_version && ( !defined( 'PODS_DEVELOPER' ) || PODS_DEVELOPER ) )
+                /*if ( '2.1.0' == $new_version && ( is_developer() ) )
                     continue;*/
 
 							if ( version_compare( self::$version_last, $old_version, '>=' )

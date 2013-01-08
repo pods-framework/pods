@@ -109,8 +109,10 @@ class PodsInit {
         add_action( 'init', array( $this, 'activate_install' ), 9 );
 
         if ( !empty( self::$version ) ) {
-            // Meta handling and Components
-            add_action( 'plugins_loaded', array( $this, 'load' ) );
+            if ( !defined( 'PODS_LIGHT' ) || !PODS_LIGHT )
+                add_action( 'plugins_loaded', array( $this, 'load_components' ) );
+
+            add_action( 'setup_theme', array( $this, 'load_meta' ) );
 
             add_action( 'init', array( $this, 'init' ), 11 );
 
@@ -144,13 +146,17 @@ class PodsInit {
     }
 
     /**
-     * Load Pods Meta and Components
+     * Load Pods Components
      */
-    public function load () {
-        self::$meta = pods_meta()->init();
+    public function load_components () {
+        self::$components = pods_components();
+    }
 
-        if ( !defined( 'PODS_LIGHT' ) || !PODS_LIGHT )
-            self::$components = pods_components();
+    /**
+     * Load Pods Meta
+     */
+    public function load_meta () {
+        self::$meta = pods_meta()->init();
     }
 
     /**

@@ -3740,6 +3740,11 @@ class PodsAPI {
      * @since 1.7.9
      */
     public function load_pod ( $params, $strict = true ) {
+        /**
+         * @var $sitepress SitePress
+         */
+        global $sitepress, $icl_adjust_id_url_filter_off;
+
         if ( !is_array( $params ) && !is_object( $params ) )
             $params = array( 'name' => $params );
 
@@ -3789,8 +3794,12 @@ class PodsAPI {
 
         $pod = pods_transient_get( 'pods_pod_' . $_pod[ 'post_name' ] );
 
-        if ( false !== $pod )
+        if ( false !== $pod ) {
+            if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
+                $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
+
             return $pod;
+        }
 
         $pod = array(
             'id' => $_pod[ 'ID' ],

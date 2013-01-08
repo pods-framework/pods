@@ -416,7 +416,7 @@ class Pods_Pages extends PodsComponent {
      *
      * @return array|bool
      */
-    public static function exists( $uri = null ) {
+    public static function exists ( $uri = null ) {
         if ( null === $uri ) {
             $uri = parse_url( get_current_url() );
             $uri = $uri[ 'path' ];

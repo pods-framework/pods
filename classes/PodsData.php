@@ -1939,9 +1939,11 @@ class PodsData {
 
         // Fallback to meta table if the pod type supports it
         if ( !isset( $pod_data[ 'fields' ][ $field ] ) ) {
+            $last = end( $traverse_recurse[ 'fields' ] );
+
             if ( isset( $pod_data[ 'object_fields' ] ) && isset( $pod_data[ 'object_fields'][ $field ] ) && in_array( $pod_data[ 'object_fields' ][ $field ][ 'type' ], $tableless_field_types ) )
                 $pod_data[ 'fields' ][ $field ] = $pod_data[ 'object_fields' ][ $field ];
-            elseif ( in_array( $pod_data[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) )
+            elseif ( in_array( $pod_data[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) && 'meta_value' == $last )
                 $pod_data[ 'fields' ][ $field ] = PodsForm::field_setup( array( 'name' => $field ) );
             else
                 return $joins;
@@ -2002,8 +2004,6 @@ class PodsData {
         $joined_id = $table_info[ 'field_id' ];
         $joined_index = $table_info[ 'field_index' ];
 
-        $last = end( $traverse_recurse[ 'fields' ] );
-
         if ( 'taxonomy' == $traverse[ 'type' ] ) {
             $rel_tt_alias = 'rel_tt_' . $field_joined;
 
@@ -2050,7 +2050,7 @@ class PodsData {
                 ";
             }
         }
-        elseif ( 'meta' == $pod_data[ 'storage' ] && 'meta_value' == $last ) {
+        elseif ( 'meta' == $pod_data[ 'storage' ] ) {
             if ( ( $traverse_recurse[ 'depth' ] + 2 ) == count( $traverse_recurse[ 'fields' ] ) ) {
                 $the_join = "
                     LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON

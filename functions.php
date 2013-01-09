@@ -749,7 +749,10 @@ function pods_var_update ( $array = null, $allowed = null, $excluded = null, $ur
 
     $url = current( explode( '#', current( explode( '?', $url ) ) ) );
 
-    return $url . '?' . http_build_query( $get );
+    if ( !empty( $get ) )
+        $url = $url . '?' . http_build_query( $get );
+
+    return $url;
 }
 
 /**

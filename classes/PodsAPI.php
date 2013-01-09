@@ -518,7 +518,9 @@ class PodsAPI {
      * @return array Array of fields
      */
     public function get_wp_object_fields ( $object = 'post_type', $pod = null ) {
-        $fields = pods_transient_get( 'pods_api_object_fields_' . $object );
+        $pod_name = pods_var_raw( 'name', $pod );
+
+        $fields = pods_transient_get( trim( 'pods_api_object_fields_' . $object . $pod_name . '_', '_' ) );
 
         if ( false !== $fields )
             return apply_filters( 'pods_api_get_wp_object_fields', $fields, $object, $pod );
@@ -881,7 +883,7 @@ class PodsAPI {
 
         $fields = PodsForm::fields_setup( $fields );
 
-        pods_transient_set( 'pods_api_object_fields_' . $object, $fields );
+        pods_transient_set( trim( 'pods_api_object_fields_' . $object . $pod_name . '_', '_' ), $fields );
 
         return $fields;
     }

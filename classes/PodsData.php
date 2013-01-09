@@ -1951,7 +1951,9 @@ class PodsData {
 
         $traverse = $pod_data[ 'fields' ][ $field ];
 
-        if ( !in_array( $traverse[ 'type' ], $tableless_field_types ) )
+        if ( 'taxonomy' == $traverse[ 'type' ] )
+            $traverse[ 'table_info' ] = $this->api->get_table_info( $traverse[ 'type' ], $traverse[ 'name' ] );
+        elseif ( !in_array( $traverse[ 'type' ], $tableless_field_types ) )
             $traverse[ 'table_info' ] = $this->api->get_table_info( $pod_data[ 'type' ], $pod_data[ 'name' ], $pod_data[ 'name' ], $pod_data );
         elseif ( empty( $traverse[ 'table_info' ] ) )
             $traverse[ 'table_info' ] = $this->api->get_table_info( $traverse[ 'pick_object' ], $traverse[ 'pick_val' ] );

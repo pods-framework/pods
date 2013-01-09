@@ -1939,7 +1939,9 @@ class PodsData {
 
         // Fallback to meta table if the pod type supports it
         if ( !isset( $pod_data[ 'fields' ][ $field ] ) ) {
-            if ( in_array( $pod_data[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) )
+            if ( isset( $pod_data[ 'object_fields' ] ) && isset( $pod_data[ 'object_fields'][ $field ] ) && in_array( $pod_data[ 'object_fields' ][ $field ][ 'type' ], $tableless_field_types ) )
+                $pod_data[ 'fields' ][ $field ] = $pod_data[ 'object_fields' ][ $field ];
+            elseif ( in_array( $pod_data[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) )
                 $pod_data[ 'fields' ][ $field ] = PodsForm::field_setup( array( 'name' => $field ) );
             else
                 return $joins;

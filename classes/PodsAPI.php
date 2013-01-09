@@ -718,6 +718,20 @@ class PodsAPI {
                     'hidden' => true
                 )
             );
+
+            if ( !empty( $pod ) ) {
+                $taxonomies = get_object_taxonomies( pods_var_raw( 'name', $pod ), 'objects' );
+
+                foreach ( $taxonomies as $taxonomy ) {
+                    $fields[ $taxonomy ] = array(
+                        'name' => $taxonomy,
+                        'label' => $taxonomy->labels->name,
+                        'type' => 'taxonomy',
+                        'alias' => array(),
+                        'hidden' => true
+                    );
+                }
+            }
         }
         elseif ( 'user' == $object ) {
             $fields = array(

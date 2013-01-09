@@ -1941,7 +1941,10 @@ class PodsData {
         if ( !isset( $pod_data[ 'fields' ][ $field ] ) ) {
             $last = end( $traverse_recurse[ 'fields' ] );
 
-            if ( isset( $pod_data[ 'object_fields' ] ) && isset( $pod_data[ 'object_fields'][ $field ] ) && in_array( $pod_data[ 'object_fields' ][ $field ][ 'type' ], $tableless_field_types ) )
+            if ( 'post_type' == $pod_data[ 'type' ] && !isset( $pod_data[ 'object_fields' ] ) )
+                $pod_data[ 'object_fields' ] = $this->api->get_wp_object_fields( 'post_type', $pod_data );
+
+            if ( 'post_type' == $pod_data[ 'type' ] && isset( $pod_data[ 'object_fields'][ $field ] ) && in_array( $pod_data[ 'object_fields' ][ $field ][ 'type' ], $tableless_field_types ) )
                 $pod_data[ 'fields' ][ $field ] = $pod_data[ 'object_fields' ][ $field ];
             elseif ( in_array( $pod_data[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) && 'meta_value' == $last )
                 $pod_data[ 'fields' ][ $field ] = PodsForm::field_setup( array( 'name' => $field ) );

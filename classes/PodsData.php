@@ -1917,7 +1917,7 @@ class PodsData {
                 return $joins;
         }
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
 
         if ( !isset( $this->traversal[ $traverse_recurse[ 'pod' ] ] ) )
             $this->traversal[ $traverse_recurse[ 'pod' ] ] = array();
@@ -2000,7 +2000,29 @@ class PodsData {
         $joined_id = $table_info[ 'field_id' ];
         $joined_index = $table_info[ 'field_index' ];
 
-        if ( in_array( $traverse[ 'type' ], $tableless_field_types ) && ( 'pick' != $traverse[ 'type' ] || 'custom-simple' != pods_var( 'pick_object', $traverse ) ) ) {
+        $last = end( $traverse_recurse[ 'fields' ] );
+
+        if ( 'taxonomy' == $traverse[ 'type' ] ) {
+            $rel_tt_alias = 'rel_tt_' . $field_joined;
+
+            $the_join = "
+                LEFT JOIN `{$wpdb->term_relationships}` AS `{$rel_alias}` ON
+                    `{$rel_alias}`.`object_id` = '{$traverse[ 'name' ]}'
+                    AND `{$rel_alias}`.`object_id` = `{$traverse_recurse[ 'joined' ]}`.`ID`
+
+                LEFT JOIN `{$wpdb->term_taxonomy}` AS `{$rel_tt_alias}` ON
+                    `{$rel_tt_alias}`.`taxonomy` = '{$traverse[ 'name' ]}'
+                    AND `{$rel_tt_alias}`.`term_taxonomy_id` = `{$rel_alias}`.`term_taxonomy_id`
+
+                LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
+                    `{$field_joined}`.`{$table_info[ 'field_index' ]}` = '{$traverse[ 'name' ]}'
+                    AND `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_tt_alias}`.`{$table_info[ 'field_id' ]}`, SIGNED )
+            ";
+
+            $joined_id = $table_info[ 'field_id' ];
+            $joined_index = $table_info[ 'field_index' ];
+        }
+        elseif ( in_array( $traverse[ 'type' ], $tableless_field_types ) && ( 'pick' != $traverse[ 'type' ] || 'custom-simple' != pods_var( 'pick_object', $traverse ) ) ) {
             if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) {
                 $the_join = "
                     LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$rel_alias}` ON
@@ -2026,7 +2048,7 @@ class PodsData {
                 ";
             }
         }
-        elseif ( 'meta' == $pod_data[ 'storage' ] ) {
+        elseif ( 'meta' == $pod_data[ 'storage' ] && 'meta_value' == $last ) {
             if ( ( $traverse_recurse[ 'depth' ] + 2 ) == count( $traverse_recurse[ 'fields' ] ) ) {
                 $the_join = "
                     LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON

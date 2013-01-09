@@ -7,7 +7,7 @@ $_pods = $api->load_pods();
 
 $pod = $_pods[ $obj->id ];
 
-$tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar' ) );
+$tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
 
 $field_types = $api->get_field_types();
 

@@ -1029,7 +1029,7 @@ class PodsAPI {
      * @since 1.7.9
      */
     public function save_pod ( $params, $sanitized = false, $db = true ) {
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
 
         $load_params = (object) $params;
 
@@ -1556,7 +1556,7 @@ class PodsAPI {
         if ( true !== $db )
             $table_operation = false;
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
 
         $params = (object) $params;
 
@@ -2184,7 +2184,7 @@ class PodsAPI {
     public function save_pod_item ( $params ) {
         $params = (object) str_replace( '@wp_', '{prefix}', $params );
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
 
         // @deprecated 2.0.0
         if ( isset( $params->datatype ) ) {
@@ -3050,7 +3050,7 @@ class PodsAPI {
             $fields = (array) pods_var_raw( 'fields', $params, array(), null, true );
         }
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
 
         $object_fields = (array) pods_var_raw( 'object_fields', $pod->pod_data, array(), null, true );
 
@@ -3386,7 +3386,7 @@ class PodsAPI {
          */
         global $wpdb;
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
 
         $params = (object) pods_sanitize( $params );
 
@@ -4858,7 +4858,7 @@ class PodsAPI {
      * @since 2.0.0
      */
     public function handle_field_validation ( &$value, $field, $object_fields, $fields, $pod, $params ) {
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
 
         $fields = array_merge( $fields, $object_fields );
 
@@ -4947,7 +4947,7 @@ class PodsAPI {
         if ( !is_array( $ids ) )
             $ids = explode( ',', $ids );
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
 
         if ( empty( $ids ) || !in_array( pods_var( 'type', $field ), $tableless_field_types ) )
             return false;

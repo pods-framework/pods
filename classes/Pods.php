@@ -430,7 +430,7 @@ class Pods {
 
         $value = null;
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
 
         $params->traverse = array();
 
@@ -964,7 +964,7 @@ class Pods {
      * @link http://podsframework.org/docs/find/
      */
     public function find ( $params = null, $limit = 15, $where = null, $sql = null ) {
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
 
         $select = '`t`.*';
         $pod_table_prefix = 't';

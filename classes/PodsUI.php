@@ -422,9 +422,9 @@ class PodsUI {
             if ( is_object( $options[ 'pod' ] ) )
                 $this->pod = $options[ 'pod' ];
             elseif ( isset( $options[ 'id' ] ) )
-                $this->pod =& pods( $options[ 'pod' ], $options[ 'id' ] );
+                $this->pod = pods( $options[ 'pod' ], $options[ 'id' ] );
             else
-                $this->pod =& pods( $options[ 'pod' ] );
+                $this->pod = pods( $options[ 'pod' ] );
 
             unset( $options[ 'pod' ] );
         }
@@ -439,9 +439,9 @@ class PodsUI {
         elseif ( is_object( $this->pod ) && 'Pods' == get_class( $this->pod ) && is_object( $this->pod->data ) )
             $this->pods_data =& $this->pod->data;
         elseif ( is_object( $this->pod ) )
-            $this->pods_data =& pods_data( $this->pod->pod );
+            $this->pods_data = pods_data( $this->pod->pod );
         elseif ( !is_object( $this->pod ) )
-            $this->pods_data =& pods_data( $this->pod );
+            $this->pods_data = pods_data( $this->pod );
 
         $options = $this->do_hook( 'pre_init', $options );
         $this->setup( $options );

@@ -58,7 +58,7 @@ class PodsMeta {
      *
      */
     function __construct () {
-        $this->api =& pods_api();
+        $this->api = pods_api();
     }
 
     /**

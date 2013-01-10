@@ -238,7 +238,7 @@ class PodsData {
             $pod = $this->api->pod;
         }
         else
-            $this->api =& pods_api( $pod );
+            $this->api = pods_api( $pod );
 
         $this->api->display_errors =& self::$display_errors;
 

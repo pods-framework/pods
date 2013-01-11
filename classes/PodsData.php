@@ -2024,22 +2024,30 @@ class PodsData {
         if ( 'taxonomy' == $traverse[ 'type' ] ) {
             $rel_tt_alias = 'rel_tt_' . $field_joined;
 
-            $the_join = "
-                LEFT JOIN `{$wpdb->term_relationships}` AS `{$rel_alias}` ON
-                    `{$rel_alias}`.`object_id` = '{$traverse[ 'name' ]}'
-                    AND `{$rel_alias}`.`object_id` = `{$traverse_recurse[ 'joined' ]}`.`ID`
+            if ( $meta_data_table ) {
+                $the_join = "
+                    LEFT JOIN `{$table_info[ 'pod_table' ]}` AS `{$field_joined}` ON
+                        `{$field_joined}`.`{$table_info[ 'pod_field_id' ]}` = `{$traverse_recurse[ 'rel_alias' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
+                ";
+            }
+            else {
+                $the_join = "
+                    LEFT JOIN `{$wpdb->term_relationships}` AS `{$rel_alias}` ON
+                        `{$rel_alias}`.`object_id` = '{$traverse[ 'name' ]}'
+                        AND `{$rel_alias}`.`object_id` = `{$traverse_recurse[ 'joined' ]}`.`ID`
 
-                LEFT JOIN `{$wpdb->term_taxonomy}` AS `{$rel_tt_alias}` ON
-                    `{$rel_tt_alias}`.`taxonomy` = '{$traverse[ 'name' ]}'
-                    AND `{$rel_tt_alias}`.`term_taxonomy_id` = `{$rel_alias}`.`term_taxonomy_id`
+                    LEFT JOIN `{$wpdb->term_taxonomy}` AS `{$rel_tt_alias}` ON
+                        `{$rel_tt_alias}`.`taxonomy` = '{$traverse[ 'name' ]}'
+                        AND `{$rel_tt_alias}`.`term_taxonomy_id` = `{$rel_alias}`.`term_taxonomy_id`
 
-                LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
-                    `{$field_joined}`.`{$table_info[ 'field_index' ]}` = '{$traverse[ 'name' ]}'
-                    AND `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_tt_alias}`.`{$table_info[ 'field_id' ]}`, SIGNED )
-            ";
+                    LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
+                        `{$field_joined}`.`{$table_info[ 'field_index' ]}` = '{$traverse[ 'name' ]}'
+                        AND `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_tt_alias}`.`{$table_info[ 'field_id' ]}`, SIGNED )
+                ";
 
-            $joined_id = $table_info[ 'field_id' ];
-            $joined_index = $table_info[ 'field_index' ];
+                $joined_id = $table_info[ 'field_id' ];
+                $joined_index = $table_info[ 'field_index' ];
+            }
         }
         elseif ( in_array( $traverse[ 'type' ], $tableless_field_types ) && ( 'pick' != $traverse[ 'type' ] || 'custom-simple' != pods_var( 'pick_object', $traverse ) ) ) {
             if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) {
@@ -2059,7 +2067,7 @@ class PodsData {
             elseif ( $meta_data_table ) {
                 $the_join = "
                     LEFT JOIN `{$table_info[ 'pod_table' ]}` AS `{$field_joined}` ON
-                        `{$field_joined}`.`{$table_info[ 'pod_field_id' ]}` = `{$traverse_recurse[ 'rel_alias' ]}`.`related_item_id`
+                        `{$field_joined}`.`{$table_info[ 'pod_field_id' ]}` = `{$traverse_recurse[ 'rel_alias' ]}`.`{$traverse_recurse[ 'joined_id' ]}`
                 ";
             }
             else {

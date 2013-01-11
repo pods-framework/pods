@@ -2056,7 +2056,7 @@ class PodsData {
             }
         }
         elseif ( 'meta' == $pod_data[ 'storage' ] ) {
-            if ( ( $traverse_recurse[ 'depth' ] + 2 ) == count( $traverse_recurse[ 'fields' ] ) ) {
+            if ( ( $traverse_recurse[ 'depth' ] + 2 ) == count( $traverse_recurse[ 'fields' ] ) && ( 'pick' != $traverse[ 'type' ] || 'custom-simple' != pods_var( 'pick_object', $traverse ) ) ) {
                 $the_join = "
                     LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
                         `{$field_joined}`.`{$table_info[ 'field_index' ]}` = '{$traverse[ 'name' ]}'

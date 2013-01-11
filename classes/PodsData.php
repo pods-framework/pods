@@ -2172,7 +2172,7 @@ class PodsData {
      *
      * @since 2.0.0
      */
-    private function do_hook () {
+    private static function do_hook () {
         $args = func_get_args();
 
         if ( empty( $args ) )
@@ -2180,7 +2180,7 @@ class PodsData {
 
         $name = array_shift( $args );
 
-        return pods_do_hook( 'data', $name, $args, $this );
+        return pods_do_hook( 'data', $name, $args);
     }
 
     /**

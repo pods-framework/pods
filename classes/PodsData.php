@@ -238,7 +238,7 @@ class PodsData {
             $pod = $this->api->pod;
         }
         else
-            $this->api =& pods_api( $pod );
+            $this->api = pods_api( $pod );
 
         $this->api->display_errors =& self::$display_errors;
 
@@ -1062,12 +1062,15 @@ class PodsData {
             $params->where = array_merge( (array) $this->search_where, $params->where );
 
         if ( !empty( $params->join ) && !empty( $joins ) )
-            $params->join = array_merge( $joins, (array) $params->join );
+            $params->join = array_merge( (array) $params->join, $joins );
         elseif ( !empty( $joins ) )
             $params->join = $joins;
 
         // Build
         if ( null === $params->sql ) {
+            if ( empty( $params->table ) )
+                return false;
+
             $sql = "
                 SELECT
                 " . ( $params->distinct ? 'DISTINCT' : '' ) . "
@@ -1093,7 +1096,7 @@ class PodsData {
         }
         // Rewrite
         else {
-            $sql = ' ' . trim( str_replace( array( "\n", "\r" ), ' ', $params->sql ) );
+            $sql = ' ' . trim( str_replace( array( "\n", "\r" ), ' ', $this->sql ) );
             $sql = preg_replace( array(
                     '/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i',
                     '/\sSELECT\s/i'
@@ -1108,44 +1111,44 @@ class PodsData {
             if ( false === stripos( $sql, '%%SELECT%%' ) )
                 $sql = preg_replace( '/\sSELECT\sSQL_CALC_FOUND_ROWS\s/i', ' SELECT SQL_CALC_FOUND_ROWS %%SELECT%% ', $sql );
             if ( false === stripos( $sql, '%%WHERE%%' ) )
-                $sql = preg_replace( '/\sWHERE\s(?!.*\sWHERE\s)/i', ' WHERE %%WHERE%% ', $sql );
+                $sql = preg_replace( '/\sWHERE\s(?!.*\sWHERE\s)/gi', ' WHERE %%WHERE%% ', $sql );
             if ( false === stripos( $sql, '%%GROUPBY%%' ) )
-                $sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/i', ' GROUP BY %%GROUPBY%% ', $sql );
+                $sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/gi', ' GROUP BY %%GROUPBY%% ', $sql );
             if ( false === stripos( $sql, '%%HAVING%%' ) )
-                $sql = preg_replace( '/\sHAVING\s(?!.*\sHAVING\s)/i', ' HAVING %%HAVING%% ', $sql );
+                $sql = preg_replace( '/\sHAVING\s(?!.*\sHAVING\s)/gi', ' HAVING %%HAVING%% ', $sql );
             if ( false === stripos( $sql, '%%ORDERBY%%' ) )
-                $sql = preg_replace( '/\sORDER BY\s(?!.*\sORDER BY\s)/i', ' ORDER BY %%ORDERBY%% ', $sql );
+                $sql = preg_replace( '/\sORDER BY\s(?!.*\sORDER BY\s)/gi', ' ORDER BY %%ORDERBY%% ', $sql );
 
             // Insert variables based on other existing statements
             if ( false === stripos( $sql, '%%JOIN%%' ) ) {
                 if ( false !== stripos( $sql, ' WHERE ' ) )
-                    $sql = preg_replace( '/\sWHERE\s(?!.*\sWHERE\s)/i', ' %%JOIN%% WHERE ', $sql );
+                    $sql = preg_replace( '/\sWHERE\s(?!.*\sWHERE\s)/gi', ' %%JOIN%% WHERE ', $sql );
                 elseif ( false !== stripos( $sql, ' GROUP BY ' ) )
-                    $sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/i', ' %%WHERE%% GROUP BY ', $sql );
+                    $sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/gi', ' %%WHERE%% GROUP BY ', $sql );
                 elseif ( false !== stripos( $sql, ' ORDER BY ' ) )
-                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%WHERE%% ORDER BY ', $sql );
+                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%WHERE%% ORDER BY ', $sql );
                 else
                     $sql .= ' %%JOIN%% ';
             }
             if ( false === stripos( $sql, '%%WHERE%%' ) ) {
                 if ( false !== stripos( $sql, ' GROUP BY ' ) )
-                    $sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/i', ' %%WHERE%% GROUP BY ', $sql );
+                    $sql = preg_replace( '/\sGROUP BY\s(?!.*\sGROUP BY\s)/gi', ' %%WHERE%% GROUP BY ', $sql );
                 elseif ( false !== stripos( $sql, ' ORDER BY ' ) )
-                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%WHERE%% ORDER BY ', $sql );
+                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%WHERE%% ORDER BY ', $sql );
                 else
                     $sql .= ' %%WHERE%% ';
             }
             if ( false === stripos( $sql, '%%GROUPBY%%' ) ) {
                 if ( false !== stripos( $sql, ' HAVING ' ) )
-                    $sql = preg_replace( '/\sHAVING\s(?!.*\sHAVING\s)/i', ' %%GROUPBY%% HAVING ', $sql );
+                    $sql = preg_replace( '/\sHAVING\s(?!.*\sHAVING\s)/gi', ' %%GROUPBY%% HAVING ', $sql );
                 elseif ( false !== stripos( $sql, ' ORDER BY ' ) )
-                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%GROUPBY%% ORDER BY ', $sql );
+                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%GROUPBY%% ORDER BY ', $sql );
                 else
                     $sql .= ' %%GROUPBY%% ';
             }
             if ( false === stripos( $sql, '%%HAVING%%' ) ) {
                 if ( false !== stripos( $sql, ' ORDER BY ' ) )
-                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/i', ' %%HAVING%% ORDER BY ', $sql );
+                    $sql = preg_replace( '/\ORDER BY\s(?!.*\ORDER BY\s)/gi', ' %%HAVING%% ORDER BY ', $sql );
                 else
                     $sql .= ' %%HAVING%% ';
             }
@@ -1196,9 +1199,9 @@ class PodsData {
             if ( 0 < strlen( $params->orderby ) ) {
                 if ( false !== stripos( $sql, ' ORDER BY ' ) ) {
                     if ( false !== stripos( $sql, ' ORDER BY %%ORDERBY%% ' ) )
-                        $sql = str_ireplace( '%%ORDERBY%%', $params->groupby . ', ', $sql );
+                        $sql = str_ireplace( '%%ORDERBY%%', $params->having . ', ', $sql );
                     else
-                        $sql = str_ireplace( '%%ORDERBY%%', ', ' . $params->groupby, $sql );
+                        $sql = str_ireplace( '%%ORDERBY%%', ', ' . $params->having, $sql );
                 }
                 else
                     $sql = str_ireplace( '%%ORDERBY%%', ' ORDER BY ' . $params->groupby, $sql );
@@ -1917,7 +1920,7 @@ class PodsData {
                 return $joins;
         }
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar' ) );
 
         if ( !isset( $this->traversal[ $traverse_recurse[ 'pod' ] ] ) )
             $this->traversal[ $traverse_recurse[ 'pod' ] ] = array();
@@ -1934,19 +1937,9 @@ class PodsData {
 
         $field = $traverse_recurse[ 'fields' ][ $traverse_recurse[ 'depth' ] ];
 
-        if ( 'wpml_languages' == $field )
-            return $joins;
-
         // Fallback to meta table if the pod type supports it
         if ( !isset( $pod_data[ 'fields' ][ $field ] ) ) {
-            $last = end( $traverse_recurse[ 'fields' ] );
-
-            if ( 'post_type' == $pod_data[ 'type' ] && !isset( $pod_data[ 'object_fields' ] ) )
-                $pod_data[ 'object_fields' ] = $this->api->get_wp_object_fields( 'post_type', $pod_data );
-
-            if ( 'post_type' == $pod_data[ 'type' ] && isset( $pod_data[ 'object_fields'][ $field ] ) && in_array( $pod_data[ 'object_fields' ][ $field ][ 'type' ], $tableless_field_types ) )
-                $pod_data[ 'fields' ][ $field ] = $pod_data[ 'object_fields' ][ $field ];
-            elseif ( in_array( $pod_data[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) && 'meta_value' == $last )
+            if ( in_array( $pod_data[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) )
                 $pod_data[ 'fields' ][ $field ] = PodsForm::field_setup( array( 'name' => $field ) );
             else
                 return $joins;
@@ -1954,9 +1947,7 @@ class PodsData {
 
         $traverse = $pod_data[ 'fields' ][ $field ];
 
-        if ( 'taxonomy' == $traverse[ 'type' ] )
-            $traverse[ 'table_info' ] = $this->api->get_table_info( $traverse[ 'type' ], $traverse[ 'name' ] );
-        elseif ( !in_array( $traverse[ 'type' ], $tableless_field_types ) )
+        if ( !in_array( $traverse[ 'type' ], $tableless_field_types ) )
             $traverse[ 'table_info' ] = $this->api->get_table_info( $pod_data[ 'type' ], $pod_data[ 'name' ], $pod_data[ 'name' ], $pod_data );
         elseif ( empty( $traverse[ 'table_info' ] ) )
             $traverse[ 'table_info' ] = $this->api->get_table_info( $traverse[ 'pick_object' ], $traverse[ 'pick_val' ] );
@@ -2009,27 +2000,7 @@ class PodsData {
         $joined_id = $table_info[ 'field_id' ];
         $joined_index = $table_info[ 'field_index' ];
 
-        if ( 'taxonomy' == $traverse[ 'type' ] ) {
-            $rel_tt_alias = 'rel_tt_' . $field_joined;
-
-            $the_join = "
-                LEFT JOIN `{$wpdb->term_relationships}` AS `{$rel_alias}` ON
-                    `{$rel_alias}`.`object_id` = '{$traverse[ 'name' ]}'
-                    AND `{$rel_alias}`.`object_id` = `{$traverse_recurse[ 'joined' ]}`.`ID`
-
-                LEFT JOIN `{$wpdb->term_taxonomy}` AS `{$rel_tt_alias}` ON
-                    `{$rel_tt_alias}`.`taxonomy` = '{$traverse[ 'name' ]}'
-                    AND `{$rel_tt_alias}`.`term_taxonomy_id` = `{$rel_alias}`.`term_taxonomy_id`
-
-                LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
-                    `{$field_joined}`.`{$table_info[ 'field_index' ]}` = '{$traverse[ 'name' ]}'
-                    AND `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_tt_alias}`.`{$table_info[ 'field_id' ]}`, SIGNED )
-            ";
-
-            $joined_id = $table_info[ 'field_id' ];
-            $joined_index = $table_info[ 'field_index' ];
-        }
-        elseif ( in_array( $traverse[ 'type' ], $tableless_field_types ) && ( 'pick' != $traverse[ 'type' ] || 'custom-simple' != pods_var( 'pick_object', $traverse ) ) ) {
+        if ( in_array( $traverse[ 'type' ], $tableless_field_types ) && ( 'pick' != $traverse[ 'type' ] || 'custom-simple' != pods_var( 'pick_object', $traverse ) ) ) {
             if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) {
                 $the_join = "
                     LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$rel_alias}` ON
@@ -2145,7 +2116,7 @@ class PodsData {
      *
      * @since 2.0.0
      */
-    private function do_hook () {
+    private static function do_hook () {
         $args = func_get_args();
 
         if ( empty( $args ) )
@@ -2153,7 +2124,7 @@ class PodsData {
 
         $name = array_shift( $args );
 
-        return pods_do_hook( 'data', $name, $args, $this );
+        return pods_do_hook( 'data', $name, $args );
     }
 
     /**

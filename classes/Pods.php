@@ -434,13 +434,20 @@ class Pods {
 
         $params->traverse = array();
 
-        if ( 'detail_url' == $params->name ) {
+        if ( 'detail_url' == $params->name || ( in_array( $params->name, array( 'permalink', 'the_permalink' ) ) && in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) ) {
             if ( 0 < strlen( $this->detail_page ) )
                 $value = get_bloginfo( 'url' ) . '/' . $this->do_magic_tags( $this->detail_page );
             elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
                 $value = get_permalink( $this->id() );
+            elseif ( 'taxonomy' == $this->pod_data[ 'type' ] )
+                $value = get_term_link( $this->id(), $this->pod_data[ 'name' ] );
+            elseif ( 'user' == $this->pod_data[ 'type' ] )
+                $value = get_author_posts_url( $this->id() );
+            elseif ( 'comment' == $this->pod_data[ 'type' ] )
+                $value = get_comment_link( $this->id() );
         }
-        elseif ( isset( $this->row[ $params->name ] ) ) {
+
+        if ( empty( $value ) && isset( $this->row[ $params->name ] ) ) {
             if ( !isset( $this->fields[ $params->name ] ) || in_array( $this->fields[ $params->name ][ 'type' ], array( 'boolean', 'number', 'currency' ) ) || in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) )
                 $params->raw = true;
 
@@ -449,16 +456,21 @@ class Pods {
             if ( !is_array( $value ) && isset( $this->fields[ $params->name ] ) && 'pick' == $this->fields[ $params->name ][ 'type' ] && 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] )
                 $value = PodsForm::field_method( 'pick', 'simple_value', $value, $this->fields[ $params->name ], true );
         }
-        else {
+        elseif ( empty( $value ) ) {
             $object_field_found = false;
+
+            $first_field = explode( '.', $params->name );
+            $first_field = $first_field[ 0 ];
 
             // @todo Handle Author WP object fields like they are pick fields
             foreach ( $this->pod_data[ 'object_fields' ] as $object_field => $object_field_opt ) {
-                if ( $object_field == $params->name || in_array( $params->name, $object_field_opt[ 'alias' ] ) ) {
+                if ( $object_field == $first_field || in_array( $first_field, $object_field_opt[ 'alias' ] ) ) {
                     if ( isset( $this->row[ $object_field ] ) ) {
                         $value = $this->row[ $object_field ];
                         $object_field_found = true;
                     }
+                    elseif ( in_array( $object_field_opt[ 'type' ], $tableless_field_types ) )
+                        $this->fields[ $object_field ] = $object_field_opt;
                     else
                         return null;
                 }

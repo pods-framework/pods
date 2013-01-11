@@ -1937,6 +1937,14 @@ class PodsData {
         if ( 'wpml_languages' == $field )
             return $joins;
 
+        $meta_data_table = false;
+
+        if ( !isset( $pod_data[ 'fields' ][ $field ] ) && 'd' == $field && isset( $traverse_recurse[ 'fields' ][ $traverse_recurse[ 'depth' ] - 1 ] ) ) {
+            $field = $traverse_recurse[ 'fields' ][ $traverse_recurse[ 'depth' ] - 1 ];
+
+            $meta_data_table = true;
+        }
+
         // Fallback to meta table if the pod type supports it
         if ( !isset( $pod_data[ 'fields' ][ $field ] ) ) {
             $last = end( $traverse_recurse[ 'fields' ] );
@@ -1978,8 +1986,14 @@ class PodsData {
 
         $field_joined = $field;
 
-        if ( 0 < $traverse_recurse[ 'depth' ] && 't' != $traverse_recurse[ 'joined' ] )
-            $field_joined = $traverse_recurse[ 'joined' ] . '_' . $field;
+        if ( 0 < $traverse_recurse[ 'depth' ] && 't' != $traverse_recurse[ 'joined' ] ) {
+            if ( $meta_data_table )
+                $field_joined = $traverse_recurse[ 'joined' ] . '_d';
+            else
+                $field_joined = $traverse_recurse[ 'joined' ] . '_' . $field;
+        }
+
+        $rel_alias = 'rel_' . $field_joined;
 
         /*if ( !empty( $this->search ) && 1 == 0 ) {
             if ( 0 < strlen( pods_var( 'filter_' . $field_joined, 'get' ) ) ) {
@@ -2001,8 +2015,6 @@ class PodsData {
                 $this->search_where[] = " {$search} ";
             }
         }*/
-
-        $rel_alias = 'rel_' . $field_joined;
 
         $the_join = null;
 
@@ -2044,6 +2056,12 @@ class PodsData {
                 $joined_id = $table_info[ 'meta_field_id' ];
                 $joined_index = $table_info[ 'meta_field_index' ];
             }
+            elseif ( $meta_data_table ) {
+                $the_join = "
+                    LEFT JOIN `{$table_info[ 'pod_table' ]}` AS `{$field_joined}` ON
+                        `{$field_joined}`.`{$table_info[ 'pod_field_id' ]}` = `{$traverse_recurse[ 'rel_alias' ]}`.`related_item_id`
+                ";
+            }
             else {
                 $the_join = "
                     LEFT JOIN `@wp_podsrel` AS `{$rel_alias}` ON
@@ -2084,7 +2102,8 @@ class PodsData {
             'depth' => ( $traverse_recurse[ 'depth' ] + 1 ),
             'joined_id' => $joined_id,
             'joined_index' => $joined_index,
-            'params' => $traverse_recurse[ 'params' ]
+            'params' => $traverse_recurse[ 'params' ],
+            'rel_alias' => $rel_alias
         );
 
         $the_join = $this->do_hook( 'traverse_the_join', $the_join, $traverse_recurse, $traverse_recursive );

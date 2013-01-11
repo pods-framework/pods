@@ -5079,6 +5079,7 @@ class PodsAPI {
 
             'table' => $object,
             'meta_table' => $object,
+            'pod_table' => $object,
 
             'field_id' => 'id',
             'field_index' => 'name',
@@ -5088,6 +5089,9 @@ class PodsAPI {
             'meta_field_id' => 'id',
             'meta_field_index' => 'name',
             'meta_field_value' => 'name',
+
+            'pod_field_id' => 'id',
+            'pod_field_index' => 'name',
 
             'join' => array(),
 
@@ -5112,8 +5116,15 @@ class PodsAPI {
 
         $transient = 'pods_get_table_info_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name );
 
+        // WPML support
         if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off ) {
             $current_language = pods_sanitize( ICL_LANGUAGE_CODE );
+
+            $transient .= 'pods_get_table_info_' . $current_language . '_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name );
+        }
+        // Polylang support
+        elseif ( 1 == 0 ) {
+            $current_language = '';
 
             $transient .= 'pods_get_table_info_' . $current_language . '_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name );
         }
@@ -5351,8 +5362,12 @@ class PodsAPI {
                 //$info[ 'select' ] .= ', `d`.*';
             }
 
-            if ( !empty( $info[ 'pod' ] ) && is_array( $info[ 'pod' ] ) )
+            if ( !empty( $info[ 'pod' ] ) && is_array( $info[ 'pod' ] ) ) {
                 $info[ 'recurse' ] = true;
+
+                if ( !empty( $pod ) && 'table' == $pod[ 'storage' ] && !in_array( $object_type, array( 'pod', 'table' ) ) )
+                    $info[ 'pod_table' ] = "{$wpdb->prefix}pods_{$name}";
+            }
 
             $info[ 'type' ] = $object_type;
 

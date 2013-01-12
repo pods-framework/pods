@@ -310,6 +310,8 @@ class PodsInit {
 
         $pods_cpt_ct = pods_transient_get( 'pods_wp_cpt_ct' );
 
+        $cpt_positions = array();
+
         if ( false === $pods_cpt_ct ) {
             $pods_cpt_ct = array(
                 'post_types' => array(),
@@ -368,7 +370,10 @@ class PodsInit {
                 );
 
                 // WP needs something, if this was empty and none were enabled, it would show title+editor pre 3.5 :(
-                $cpt_supports = array( '_bug_fix_pre_35' );
+                $cpt_supports = array();
+
+                if ( !pods_wp_version( '3.5' ) )
+                    $cpt_supports = array( '_bug_fix_pre_35' );
 
                 foreach ( $cpt_supported as $cpt_support => $supported ) {
                     if ( true === $supported )
@@ -421,6 +426,11 @@ class PodsInit {
                     'can_export' => (boolean) pods_var( 'can_export', $post_type, true ),
                     'show_in_nav_menus' => (boolean) pods_var( 'show_in_nav_menus', $post_type, (boolean) pods_var( 'public', $post_type, true ) )
                 );
+
+                if ( !in_array( $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ], $cpt_positions ) )
+                    $cpt_positions[] = $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ];
+                else
+                    $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ]++;
 
                 // Taxonomies
                 $cpt_taxonomies = array();
@@ -512,7 +522,7 @@ class PodsInit {
                 $ct_post_types = array();
                 $_post_types = get_post_types();
                 $_post_types = array_merge_recursive( $_post_types, $pods_post_types );
-                $ignore = array( 'attachment', 'revision', 'nav_menu_item' );
+                $ignore = array( 'revision', 'nav_menu_item' );
 
                 foreach ( $_post_types as $post_type => $options ) {
                     if ( in_array( $post_type, $ignore ) )
@@ -568,6 +578,9 @@ class PodsInit {
 
             $options = self::object_label_fix( $options, 'taxonomy' );
 
+            // Max length for taxonomies are 32 characters
+            $taxonomy = substr( $taxonomy, 0, 32 );
+
             register_taxonomy( $taxonomy, $ct_post_types, $options );
         }
 
@@ -575,6 +588,9 @@ class PodsInit {
             $options = apply_filters( 'pods_register_post_type_' . $post_type, $options );
 
             $options = self::object_label_fix( $options, 'post_type' );
+
+            // Max length for post types are 20 characters
+            $post_type = substr( $post_type, 0, 20 );
 
             register_post_type( $post_type, $options );
         }

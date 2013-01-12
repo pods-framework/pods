@@ -1178,6 +1178,15 @@ class PodsAPI {
         if ( strlen( $pod[ 'label' ] ) < 1 )
             $pod[ 'label' ] = $pod[ 'name' ];
 
+        if ( 'post_type' == $pod[ 'type' ] ) {
+            // Max length for post types are 20 characters
+            $pod[ 'name' ] = substr( $pod[ 'name' ], 0, 20 );
+        }
+        elseif ( 'taxonomy' == $pod[ 'type' ] ) {
+            // Max length for taxonomies are 32 characters
+            $pod[ 'name' ] = substr( $pod[ 'name' ], 0, 32 );
+        }
+
         $params->id = $pod[ 'id' ];
         $params->name = $pod[ 'name' ];
 

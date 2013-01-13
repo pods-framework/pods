@@ -871,7 +871,7 @@ class PodsAPI {
 
         $fields = apply_filters( 'pods_api_get_wp_object_fields', $fields, $object, $pod );
 
-        foreach ( $fields as $field => &$options ) {
+        foreach ( $fields as $field => $options ) {
             if ( !isset( $options[ 'alias' ] ) )
                 $options[ 'alias' ] = array();
             else
@@ -879,6 +879,8 @@ class PodsAPI {
 
             if ( !isset( $options[ 'name' ] ) )
                 $options[ 'name' ] = $field;
+
+            $fields[ $field ] = $options;
         }
 
         $fields = PodsForm::fields_setup( $fields );
@@ -3061,9 +3063,8 @@ class PodsAPI {
     public function export_pod_item ( $params ) {
         $fields = array();
 
-        if ( is_object( $params ) && 'Pods' == get_class( $params ) ) {
+        if ( is_object( $params ) && 'Pods' == get_class( $params ) )
             $pod = $params;
-        }
         else {
             $params = (object) pods_sanitize( $params );
 
@@ -5591,7 +5592,7 @@ class PodsAPI {
                         $field_value = implode( ',', $pick_values );
                     }
 
-                    $data[ $field_name ] = pods_sanitize( $field_value );
+                    $data[ $field_name ] = $field_value;
                 }
             }
 

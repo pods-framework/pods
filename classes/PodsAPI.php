@@ -5496,7 +5496,7 @@ class PodsAPI {
         if ( false === $pod )
             return pods_error( __( 'Pod not found', 'pods' ), $this );
 
-        $fields = $pod[ 'fields' ];
+        $fields = array_merge( $pod[ 'fields' ], $pod[ 'object_fields' ] );
 
         foreach ( $import_data as $key => $data_row ) {
             $data = array();

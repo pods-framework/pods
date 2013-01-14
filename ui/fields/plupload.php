@@ -87,7 +87,7 @@ else
                         }
                         ?></ul>
 
-                    <a class="button pods-file-add plupload-add" id="<?php echo $css_id; ?>-upload" href="" tabindex="2"><?php _e( 'Add File', 'pods' ); ?></a>
+                    <a class="button pods-file-add plupload-add" id="<?php echo $css_id; ?>-upload" href="" tabindex="2"><?php echo pods_var_raw( PodsForm::$field_type . '_add_button', $options, __( 'Add File', 'pods' ) ); ?></a>
 
                     <ul class="pods-files pods-files-queue"></ul>
                 </td>

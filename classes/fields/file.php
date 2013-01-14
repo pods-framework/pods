@@ -93,6 +93,23 @@ class PodsField_File extends PodsField {
                 'default' => 1,
                 'type' => 'boolean'
             ),
+            'file_add_button' => array(
+                'label' => __( 'Add Button Text', 'pods' ),
+                'default' => __( 'Add File', 'pods' ),
+                'type' => 'text'
+            ),
+            'file_modal_title' => array(
+                'label' => __( 'Modal Title', 'pods' ),
+                'depends-on' => array( 'file_uploader' => 'media' ),
+                'default' => __( 'Attach a file', 'pods' ),
+                'type' => 'text'
+            ),
+            'file_modal_add_button' => array(
+                'label' => __( 'Modal Add Button Text', 'pods' ),
+                'depends-on' => array( 'file_uploader' => 'media' ),
+                'default' => __( 'Add File', 'pods' ),
+                'type' => 'text'
+            ),
             'file_limit' => array(
                 'label' => __( 'File Limit', 'pods' ),
                 'depends-on' => array( 'file_format_type' => 'multi' ),

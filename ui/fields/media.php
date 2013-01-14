@@ -49,7 +49,7 @@ else
                         }
                         ?></ul>
 
-                    <a class="button pods-file-add pods-media-add" id="<?php echo $css_id; ?>-upload" href="#" tabindex="2"><?php _e( 'Add File', 'pods' ); ?></a>
+                    <a class="button pods-file-add pods-media-add" id="<?php echo $css_id; ?>-upload" href="#" tabindex="2"><?php echo pods_var_raw( PodsForm::$field_type . '_add_button', $options, __( 'Add File', 'pods' ) ); ?></a>
                 </td>
             </tr>
         </tbody>
@@ -89,26 +89,26 @@ else
 
 
         // set up our modal
-        var $element     = $('#<?php echo $css_id; ?>'),
-            title        = "<?php esc_js( __( 'Add File', 'pods' ) ); ?>",
-            button       = "<?php esc_js( __( 'Add File', 'pods' ) ); ?>",
+        var $element_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $('#<?php echo $css_id; ?>'),
+            title_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php esc_js( pods_var_raw( PodsForm::$field_type . '_modal_title', $options, __( 'Attach a file', 'pods' ) ) ); ?>",
+            button_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php esc_js( pods_var_raw( PodsForm::$field_type . '_modal_add_button', $options, __( 'Add File', 'pods' ) ) ); ?>",
             list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ),
-            frame;
+            frame_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>;
 
-        $element.on( 'click', '.pods-file-add', function( event ) {
+        $element_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.on( 'click', '.pods-file-add', function( event ) {
             var options, attachment;
 
             event.preventDefault();
 
             // if the frame already exists, open it
-            if ( frame ) {
-                frame.open();
+            if ( frame_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> ) {
+                frame_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.open();
                 return;
             }
 
             // set our seetings
-            frame = wp.media({
-                title: title,
+            frame_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = wp.media({
+                title: title_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>,
 
                 <?php if( $file_limit !== 1 ) : ?>
                     multiple: true,
@@ -122,14 +122,14 @@ else
                 // Customize the submit button.
                 button: {
                     // Set the text of the button.
-                    text: button
+                    text: button_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>
                 }
             });
 
             // set up our select handler
-            frame.on( 'select', function() {
+            frame_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.on( 'select', function() {
 
-                selection = frame.state().get('selection');
+                selection = frame_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.state().get('selection');
 
                 if ( ! selection )
                     return;
@@ -183,7 +183,7 @@ else
             });
 
             // open the frame
-            frame.open();
+            frame_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.open();
 
         });
 

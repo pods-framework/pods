@@ -202,11 +202,6 @@ else
 
                 // loop through the selected files
                 selection.each( function( attachment ) {
-
-                    <?php if( $file_limit === 1 ) : ?>
-                        jQuery( '#<?php echo $css_id; ?> ul.pods-files-list li.pods-file' ).remove();
-                    <?php endif; ?>
-
                     // by default use the generic icon
                     attachment_thumbnail = attachment.attributes.icon;
 

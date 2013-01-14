@@ -71,7 +71,7 @@ class PodsField_File extends PodsField {
                 'data' => apply_filters(
                     'pods_form_ui_field_file_uploader_options',
                     array(
-                        'media' => __( 'Media Modal (WP Media Library)', 'pods' ),          // TODO: this should only be available if we're running WordPress 3.5+
+                        'media' => __( 'Attachments Media Modal (WP Media Library)', 'pods' ),
                         'attachment' => __( 'Attachments (WP Media Library)', 'pods' ),
                         'plupload' => __( 'Plupload', 'pods' )
                     )
@@ -80,7 +80,7 @@ class PodsField_File extends PodsField {
             ),
             'file_attachment_tab' => array(
                 'label' => __( 'Attachments Default Tab', 'pods' ),
-                'depends-on' => array( 'file_uploader' => 'attachment' ),
+                'depends-on' => array( 'file_uploader' => array( 'media', 'attachment' ) ),
                 'default' => 'type',
                 'type' => 'pick',
                 'data' => array(
@@ -101,13 +101,13 @@ class PodsField_File extends PodsField {
             ),
             'file_restrict_filesize' => array(
                 'label' => __( 'Restrict File Size', 'pods' ),
-                'excludes-on' => array( 'file_uploader' => 'attachment' ),
+                'excludes-on' => array( 'file_uploader' => array( 'media', 'attachment' ) ),
                 'default' => '10MB',
                 'type' => 'text'
             ),
             'file_type' => array(
                 'label' => __( 'Restrict File Types', 'pods' ),
-                'excludes-on' => array( 'file_uploader' => 'attachment' ),
+                'excludes-on' => array( 'file_uploader' => array( 'media', 'attachment' ) ),
                 'default' => 'images',
                 'type' => 'pick',
                 'data' => apply_filters(
@@ -125,7 +125,7 @@ class PodsField_File extends PodsField {
                 'label' => __( 'Allowed File Extensions', 'pods' ),
                 'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov)', 'pods' ),
                 'depends-on' => array( 'file_type' => 'other' ),
-                'excludes-on' => array( 'file_uploader' => 'attachment' ),
+                'excludes-on' => array( 'file_uploader' => array( 'media', 'attachment' ) ),
                 'default' => '',
                 'type' => 'text'
             )/*,
@@ -143,6 +143,12 @@ class PodsField_File extends PodsField {
                 )
             )*/
         );
+
+        if ( !pods_wp_version( '3.5' ) )
+            unset( $options[ 'file_uploader' ][ 'data' ][ 'media' ] );
+        /*else
+            unset( $options[ 'file_uploader' ][ 'data' ][ 'attachment' ] );*/
+
         return $options;
     }
 

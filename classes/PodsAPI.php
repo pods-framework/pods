@@ -585,7 +585,7 @@ class PodsAPI {
                     'alias' => array( 'created', 'date' )
                 ),
                 'post_date_gmt' => array(
-                    'name' => 'post_date',
+                    'name' => 'post_date_gmt',
                     'label' => 'Publish Date (GMT)',
                     'type' => 'datetime',
                     'alias' => array(),
@@ -656,7 +656,7 @@ class PodsAPI {
                     'hidden' => true
                 ),
                 'post_modified_gmt' => array(
-                    'name' => 'post_modified',
+                    'name' => 'post_modified_gmt',
                     'label' => 'Last Modified Date (GMT)',
                     'type' => 'datetime',
                     'alias' => array(),

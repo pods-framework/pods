@@ -124,14 +124,16 @@ class PodsField_File extends PodsField {
             ),
             'file_type' => array(
                 'label' => __( 'Restrict File Types', 'pods' ),
-                'excludes-on' => array( 'file_uploader' => array( 'media', 'attachment' ) ),
+                'excludes-on' => array( 'file_uploader' => 'attachment' ),
                 'default' => 'images',
                 'type' => 'pick',
                 'data' => apply_filters(
                     'pods_form_ui_field_file_type_options',
                     array(
-                        'images' => __( 'Images (jpg, png, gif)', 'pods' ),
-                        'video' => __( 'Video (mpg, mov, flv, mp4)', 'pods' ),
+                        'images' => __( 'Images (jpg, png, gif, etc..)', 'pods' ),
+                        'video' => __( 'Video (mpg, mov, flv, mp4, etc..)', 'pods' ),
+                        'audio' => __( 'Audio (mp3, m4a, wav, wma, etc..)', 'pods' ),
+                        'text' => __( 'Text (txt, csv, tsv, rtx, etc..)', 'pods' ),
                         'any' => __( 'Any Type (no restriction)', 'pods' ),
                         'other' => __( 'Other (customize allowed extensions)', 'pods' )
                     )

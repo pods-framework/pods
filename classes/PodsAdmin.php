@@ -1181,10 +1181,33 @@ class PodsAdmin {
                 $limit_types = 'jpg,png,gif';
             elseif ( 'video' == $limit_file_type )
                 $limit_types = 'mpg,mov,flv,mp4';
+            elseif ( 'audio' == $limit_file_type )
+                $limit_types = 'mp3,m4a,wav,wma';
+            elseif ( 'text' == $limit_file_type )
+                $limit_types = 'txt,rtx,csv,tsv';
             elseif ( 'any' == $limit_file_type )
                 $limit_types = '';
             else
-                $limit_types = pods_var( $field[ 'type' ] . '_allowed_extensions', $field[ 'options' ], '', null, true );
+                $limit_types = str_replace( ' ', '', pods_var( $field[ 'type' ] . '_allowed_extensions', $field[ 'options' ], '', null, true ) );
+
+            if ( pods_wp_version( '3.5' ) ) {
+                $mime_types = wp_get_mime_types();
+
+                if ( in_array( $limit_file_type, array( 'images', 'audio', 'video' ) ) ) {
+                    $new_limit_types = array();
+
+                    foreach ( $mime_types as $type => $mime ) {
+                        if ( 0 === strpos( $mime, $limit_file_type ) ) {
+                            $type = explode( '|', $type );
+
+                            $new_limit_types = array_merge( $new_limit_types, $type );
+                        }
+                    }
+
+                    if ( !empty( $new_limit_types ) )
+                        $limit_types = implode( ',', $new_limit_types );
+                }
+            }
 
             $limit_types = trim( str_replace( array( ' ', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_types ), '.,' );
 

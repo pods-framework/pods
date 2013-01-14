@@ -16,10 +16,64 @@ $css_id = $attributes[ 'id' ];
 
 $file_limit = 1;
 
+// @todo: File limit not yet supported in the UI, it's either single or multiple
 if ( 'multi' == pods_var( PodsForm::$field_type . '_format_type', $options, 'single' ) )
     $file_limit = (int) pods_var( PodsForm::$field_type . '_limit', $options, 0 );
 
-// @todo: File limit not yet supported in the UI
+$limit_file_type = pods_var( PodsForm::$field_type . '_type', $options, 'images' );
+
+if ( 'images' == $limit_file_type )
+    $limit_types = 'image';
+elseif ( 'video' == $limit_file_type )
+    $limit_types = 'video';
+elseif ( 'audio' == $limit_file_type )
+    $limit_types = 'audio';
+elseif ( 'text' == $limit_file_type )
+    $limit_types = 'text';
+elseif ( 'any' == $limit_file_type )
+    $limit_types = '';
+else
+    $limit_types = str_replace( ' ', '', pods_var( PodsForm::$field_type . '_allowed_extensions', $options, '', null, true ) );
+
+$mime_types = wp_get_mime_types();
+
+if ( !in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'any' ) ) ) {
+    $new_limit_types = array();
+
+    $limit_types = explode( ',', $limit_types );
+
+    foreach ( $limit_types as $k => $limit_type ) {
+        if ( isset( $mime_types[ $limit_type ] ) ) {
+            $mime = explode( '/', $mime_types[ $limit_type ] );
+            $mime = $mime[ 0 ];
+
+            if ( !in_array( $mime, $new_limit_types ) )
+                $new_limit_types[] = $mime;
+        }
+        else {
+            $found = false;
+
+            foreach ( $mime_types as $type => $mime ) {
+                if ( false !== strpos( $type, $limit_type ) ) {
+                    $mime = explode( '/', $mime );
+                    $mime = $mime[ 0 ];
+
+                    if ( !in_array( $mime, $new_limit_types ) )
+                        $new_limit_types[] = $mime;
+
+                    $found = true;
+                }
+            }
+
+            if ( !$found )
+                $new_limit_types[] = $limit_type;
+        }
+    }
+
+    if ( !empty( $new_limit_types ) )
+        $limit_types = implode( ', ', $new_limit_types );
+}
+
 
 if ( empty( $value ) )
     $value = array();
@@ -114,10 +168,11 @@ else
                     multiple: true,
                 <?php endif; ?>
 
-                // TODO: Support type/subtype instead of file extensions, need to map one to the other
-                // library: {
-                //    type: ''
-                // },
+                <?php if ( !empty( $limit_types ) ) : ?>
+                    library: {
+                        type: '<?php echo esc_js( $limit_types ); ?>'
+                    },
+                <?php endif; ?>
 
                 // Customize the submit button.
                 button: {

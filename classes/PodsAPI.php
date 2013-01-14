@@ -682,6 +682,7 @@ class PodsAPI {
                     'name' => 'post_parent',
                     'label' => 'Parent',
                     'type' => 'pick',
+                    'pick_object' => 'post_type',
                     'alias' => array( 'parent' ),
                     'data' => array(),
                     'hidden' => true

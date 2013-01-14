@@ -393,6 +393,9 @@ class PodsField_File extends PodsField {
      * @since 2.0.0
      */
     public function markup ( $attributes, $limit = 1, $editable = true, $id = null, $icon = null, $name = null ) {
+        // Preserve current file type
+        $field_type = PodsForm::$field_type;
+
         ob_start();
 
         if ( empty ( $id ) )
@@ -431,6 +434,8 @@ class PodsField_File extends PodsField {
         </ul>
     </li>
     <?php
+        PodsForm::$field_type = $field_type;
+
         return ob_get_clean();
     }
 }

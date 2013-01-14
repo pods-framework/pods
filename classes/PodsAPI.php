@@ -595,6 +595,7 @@ class PodsAPI {
                     'name' => 'post_status',
                     'label' => 'Status',
                     'type' => 'pick',
+                    'pick_object' => 'custom-simple',
                     'default' => 'draft',
                     'alias' => array( 'status' ),
                     'data' => $post_stati

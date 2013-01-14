@@ -150,7 +150,8 @@ else
             title_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php echo esc_js( pods_var_raw( PodsForm::$field_type . '_modal_title', $options, __( 'Attach a file', 'pods' ) ) ); ?>",
             button_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php echo esc_js( pods_var_raw( PodsForm::$field_type . '_modal_add_button', $options, __( 'Add File', 'pods' ) ) ); ?>",
             list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ),
-            frame_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>;
+            frame_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>,
+            maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = <?php echo esc_js( $file_limit ); ?>;
 
         $element_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.on( 'click', '.pods-file-add', function( event ) {
             var options, attachment;
@@ -242,6 +243,13 @@ else
                     var items = list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.find( 'li.pods-file' ),
                         itemCount = items.size();
 
+                    if ( 0 < maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> && itemCount > maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> ) {
+                        items.each( function ( idx, elem ) {
+                            if ( idx + 1 > maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> ) {
+                                jQuery( elem ).remove();
+                            }
+                        } );
+                    }
                 });
             });
 

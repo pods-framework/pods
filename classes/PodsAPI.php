@@ -5505,8 +5505,8 @@ class PodsAPI {
             foreach ( $fields as $field_name => $field_data ) {
                 $field_id = $field_data[ 'id' ];
                 $type = $field_data[ 'type' ];
-                $pick_object = $field_data[ 'pick_object' ];
-                $pick_val = $field_data[ 'pick_val' ];
+                $pick_object = isset( $field_data[ 'pick_object' ] ) ? $field_data[ 'pick_object' ] : '';
+                $pick_val = isset( $field_data[ 'pick_val' ] ) ?  $field_data[ 'pick_val' ] : '';
                 $field_value = $data_row[ $field_name ];
 
                 if ( null != $field_value && false !== $field_value ) {

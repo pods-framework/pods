@@ -71,6 +71,7 @@ class PodsField_File extends PodsField {
                 'data' => apply_filters(
                     'pods_form_ui_field_file_uploader_options',
                     array(
+                        'media' => __( 'Media Modal (WP Media Library)', 'pods' ),          // TODO: this should only be available if we're running WordPress 3.5+
                         'attachment' => __( 'Attachments (WP Media Library)', 'pods' ),
                         'plupload' => __( 'Plupload', 'pods' )
                     )
@@ -216,6 +217,8 @@ class PodsField_File extends PodsField {
             $field_type = 'plupload';
         elseif ( 'attachment' == pods_var( 'file_uploader', $options ) )
             $field_type = 'attachment';
+        elseif ( 'media' == pods_var( 'file_uploader', $options ) )
+            $field_type = 'media';
         else {
             // Support custom File Uploader integration
             do_action( 'pods_form_ui_field_file_uploader_' . pods_var( 'file_uploader', $options ), $name, $value, $options, $pod, $id );

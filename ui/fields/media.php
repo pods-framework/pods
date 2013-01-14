@@ -4,6 +4,7 @@ global $post_ID;
 wp_enqueue_script( 'pods-handlebars' );
 wp_enqueue_script( 'jquery-ui-core' );
 wp_enqueue_script( 'jquery-ui-sortable' );
+wp_enqueue_style( 'pods-attach' );
 
 wp_enqueue_media( array( 'post' => $post_ID ) );
 
@@ -144,8 +145,8 @@ else
 
         // set up our modal
         var $element_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $('#<?php echo $css_id; ?>'),
-            title_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php esc_js( pods_var_raw( PodsForm::$field_type . '_modal_title', $options, __( 'Attach a file', 'pods' ) ) ); ?>",
-            button_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php esc_js( pods_var_raw( PodsForm::$field_type . '_modal_add_button', $options, __( 'Add File', 'pods' ) ) ); ?>",
+            title_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php echo esc_js( pods_var_raw( PodsForm::$field_type . '_modal_title', $options, __( 'Attach a file', 'pods' ) ) ); ?>",
+            button_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php echo esc_js( pods_var_raw( PodsForm::$field_type . '_modal_add_button', $options, __( 'Add File', 'pods' ) ) ); ?>",
             list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ),
             frame_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>;
 

@@ -80,7 +80,7 @@ class PodsField_File extends PodsField {
             ),
             'file_attachment_tab' => array(
                 'label' => __( 'Attachments Default Tab', 'pods' ),
-                'depends-on' => array( 'file_uploader' => array( 'media', 'attachment' ) ),
+                'depends-on' => array( 'file_uploader' => 'attachment' ),
                 'default' => 'type',
                 'type' => 'pick',
                 'data' => array(
@@ -93,23 +93,6 @@ class PodsField_File extends PodsField {
                 'default' => 1,
                 'type' => 'boolean'
             ),
-            'file_add_button' => array(
-                'label' => __( 'Add Button Text', 'pods' ),
-                'default' => __( 'Add File', 'pods' ),
-                'type' => 'text'
-            ),
-            'file_modal_title' => array(
-                'label' => __( 'Modal Title', 'pods' ),
-                'depends-on' => array( 'file_uploader' => 'media' ),
-                'default' => __( 'Attach a file', 'pods' ),
-                'type' => 'text'
-            ),
-            'file_modal_add_button' => array(
-                'label' => __( 'Modal Add Button Text', 'pods' ),
-                'depends-on' => array( 'file_uploader' => 'media' ),
-                'default' => __( 'Add File', 'pods' ),
-                'type' => 'text'
-            ),
             'file_limit' => array(
                 'label' => __( 'File Limit', 'pods' ),
                 'depends-on' => array( 'file_format_type' => 'multi' ),
@@ -118,7 +101,7 @@ class PodsField_File extends PodsField {
             ),
             'file_restrict_filesize' => array(
                 'label' => __( 'Restrict File Size', 'pods' ),
-                'excludes-on' => array( 'file_uploader' => array( 'media', 'attachment' ) ),
+                'depends-on' => array( 'file_uploader' => 'plupload' ),
                 'default' => '10MB',
                 'type' => 'text'
             ),
@@ -144,10 +127,10 @@ class PodsField_File extends PodsField {
                 'label' => __( 'Allowed File Extensions', 'pods' ),
                 'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov)', 'pods' ),
                 'depends-on' => array( 'file_type' => 'other' ),
-                'excludes-on' => array( 'file_uploader' => array( 'media', 'attachment' ) ),
+                'excludes-on' => array( 'file_uploader' => 'attachment' ),
                 'default' => '',
                 'type' => 'text'
-            )/*,
+            ),/*
             'file_image_size' => array(
                 'label' => __( 'Excluded Image Sizes', 'pods' ),
                 'description' => __( 'Image sizes not to generate when processing the image', 'pods' ),
@@ -160,7 +143,24 @@ class PodsField_File extends PodsField {
                     'pods_form_ui_field_file_image_size_options',
                     $image_sizes
                 )
-            )*/
+            ),*/
+            'file_add_button' => array(
+                'label' => __( 'Add Button Text', 'pods' ),
+                'default' => __( 'Add File', 'pods' ),
+                'type' => 'text'
+            ),
+            'file_modal_title' => array(
+                'label' => __( 'Modal Title', 'pods' ),
+                'depends-on' => array( 'file_uploader' => 'media' ),
+                'default' => __( 'Attach a file', 'pods' ),
+                'type' => 'text'
+            ),
+            'file_modal_add_button' => array(
+                'label' => __( 'Modal Add Button Text', 'pods' ),
+                'depends-on' => array( 'file_uploader' => 'media' ),
+                'default' => __( 'Add File', 'pods' ),
+                'type' => 'text'
+            )
         );
 
         if ( !pods_wp_version( '3.5' ) )

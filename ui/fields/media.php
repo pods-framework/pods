@@ -34,7 +34,9 @@ elseif ( 'text' == $limit_file_type )
 elseif ( 'any' == $limit_file_type )
     $limit_types = '';
 else
-    $limit_types = str_replace( ' ', '', pods_var( PodsForm::$field_type . '_allowed_extensions', $options, '', null, true ) );
+    $limit_types = pods_var( PodsForm::$field_type . '_allowed_extensions', $options, '', null, true );
+
+$limit_types = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_types ), ',' );
 
 $mime_types = wp_get_mime_types();
 
@@ -216,6 +218,11 @@ else
                             }
                         }
                     }
+
+                    <?php if ( !empty( $limit_types ) ) : ?>
+                        if ( '<?php echo implode( '\' != attachment.attributes.type || \'', explode( ',', $limit_types ) ); ?>' != attachment.attributes.type )
+                            return;
+                    <?php endif; ?>
 
                     // set our object properties
                     var binding = {

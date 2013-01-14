@@ -65,7 +65,9 @@ elseif ( 'text' == $limit_file_type )
 elseif ( 'any' == $limit_file_type )
     $limit_types = '';
 else
-    $limit_types = str_replace( ' ', '', pods_var( PodsForm::$field_type . '_allowed_extensions', $options, '', null, true ) );
+    $limit_types = pods_var( PodsForm::$field_type . '_allowed_extensions', $options, '', null, true );
+
+$limit_types = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_types ), ',' );
 
 if ( pods_wp_version( '3.5' ) ) {
     $mime_types = wp_get_mime_types();
@@ -83,6 +85,34 @@ if ( pods_wp_version( '3.5' ) ) {
 
         if ( !empty( $new_limit_types ) )
             $limit_types = implode( ',', $new_limit_types );
+    }
+    elseif ( 'any' != $limit_file_type ) {
+        $new_limit_types = array();
+
+        $limit_types = explode( ',', $limit_types );
+
+        foreach ( $limit_types as $k => $limit_type ) {
+            $found = false;
+
+            foreach ( $mime_types as $type => $mime ) {
+                if ( 0 === strpos( $mime, $limit_type ) ) {
+                    $type = explode( '|', $type );
+
+                    foreach ( $type as $t ) {
+                        if ( !in_array( $t, $new_limit_types ) )
+                            $new_limit_types[] = $t;
+                    }
+
+                    $found = true;
+                }
+            }
+
+            if ( !$found )
+                $new_limit_types[] = $limit_type;
+        }
+
+        if ( !empty( $new_limit_types ) )
+            $limit_types = implode( ', ', $new_limit_types );
     }
 }
 

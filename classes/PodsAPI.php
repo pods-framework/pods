@@ -71,7 +71,7 @@ class PodsAPI {
     }
 
     /**
-     * Save a WP object and it's meta
+     * Save a WP object and its meta
      *
      * @param string $object_type Object type: post|user|comment
      * @param array $data All post data to be saved
@@ -3084,7 +3084,7 @@ class PodsAPI {
 
         if ( empty( $fields ) ) {
             $fields = $pod->fields;
-            $fields = array_merge( $object_fields, $fields );
+            $fields = array_merge( $fields, $object_fields );
         }
 
         foreach ( $fields as $k => $field ) {

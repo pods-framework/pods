@@ -164,7 +164,7 @@ else
                 return;
             }
 
-            // set our seetings
+            // set our settings
             frame_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = wp.media({
                 title: title_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>,
 

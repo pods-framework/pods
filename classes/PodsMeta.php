@@ -255,6 +255,7 @@ class PodsMeta {
     public function integrations () {
         add_filter( 'cpac-get-meta-by-type', array( $this, 'cpac_meta_keys' ), 10, 2 );
         add_filter( 'cpac-get-post-types', array( $this, 'cpac_post_types' ), 10, 1 );
+        add_filter( 'cpac_get_column_value_custom_field', array( $this, 'cpac_meta_values' ), 10, 5 );
     }
 
     public function cpac_meta_keys ( $meta_fields, $type ) {
@@ -301,6 +302,28 @@ class PodsMeta {
         }
 
         return $post_types;
+    }
+
+    public function cpac_meta_values ( $meta, $fieldtype, $field, $type, $object_id ) {
+        if ( !empty( $fieldtype ) )
+            return $meta;
+
+        $object = $type;
+
+        if ( 'wp-media' == $type )
+            $object = 'media';
+        elseif ( 'wp-users' == $type )
+            $object = 'user';
+        elseif ( 'wp-comments' == $type )
+            $object = 'comment';
+
+        $pod = $this->api->load_pod( array( 'name' => $object ), false );
+
+        // Add Pods fields
+        if ( !empty( $pod ) && isset( $pod[ 'fields' ][ $field ] ) )
+            $meta = PodsForm::field_method( $pod[ 'fields' ][ $field ][ 'type' ], 'ui', $object_id, $meta, $field, array_merge( $pod[ 'fields' ][ $field ][ 'options' ], $pod[ 'fields' ][ $field ] ), $pod[ 'fields' ], $pod[ 'name' ] );
+
+        return $meta;
     }
 
     /**

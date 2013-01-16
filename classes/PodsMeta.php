@@ -274,7 +274,10 @@ class PodsMeta {
         // Add Pods fields
         if ( !empty( $pod ) && $object_type == $pod[ 'type' ] ) {
             foreach ( $pod[ 'fields' ] as $field => $field_data ) {
-                if ( is_array( $meta_fields ) && !in_array( $field, $meta_fields ) )
+                if ( !is_array( $meta_fields ) )
+                    $meta_fields = array();
+
+                if ( !in_array( $field, $meta_fields ) )
                     $meta_fields[] = $field;
             }
         }

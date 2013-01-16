@@ -150,7 +150,7 @@ else
             title_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php echo esc_js( pods_var_raw( PodsForm::$field_type . '_modal_title', $options, __( 'Attach a file', 'pods' ) ) ); ?>",
             button_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php echo esc_js( pods_var_raw( PodsForm::$field_type . '_modal_add_button', $options, __( 'Add File', 'pods' ) ) ); ?>",
             list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ),
-            frame_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>,
+            pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>,
             maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = <?php echo esc_js( $file_limit ); ?>;
 
         $element_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.on( 'click', '.pods-file-add', function( event ) {
@@ -159,13 +159,13 @@ else
             event.preventDefault();
 
             // if the frame already exists, open it
-            if ( frame_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> ) {
-                frame_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.open();
+            if ( pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> ) {
+                pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.open();
                 return;
             }
 
             // set our settings
-            frame_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = wp.media({
+            pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = wp.media({
                 title: title_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>,
 
                 <?php if( $file_limit !== 1 ) : ?>
@@ -186,9 +186,9 @@ else
             });
 
             // set up our select handler
-            frame_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.on( 'select', function() {
+            pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.on( 'select', function() {
 
-                selection = frame_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.state().get('selection');
+                selection = pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.state().get( 'selection' );
 
                 if ( ! selection )
                     return;
@@ -249,7 +249,7 @@ else
             });
 
             // open the frame
-            frame_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.open();
+            pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.open();
 
         });
 

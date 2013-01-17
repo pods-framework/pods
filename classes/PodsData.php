@@ -1989,6 +1989,10 @@ class PodsData {
         $traverse = pods_sanitize( $traverse );
 
         $traverse[ 'id' ] = (int) $traverse[ 'id' ];
+
+        if ( empty( $traverse[ 'id' ] ) )
+            $traverse[ 'id' ] = $field;
+
         $table_info = $traverse[ 'table_info' ];
 
         $this->traversal[ $traverse_recurse[ 'pod' ] ][ $field ] = $traverse;
@@ -2042,16 +2046,14 @@ class PodsData {
             else {
                 $the_join = "
                     LEFT JOIN `{$wpdb->term_relationships}` AS `{$rel_alias}` ON
-                        `{$rel_alias}`.`object_id` = '{$traverse[ 'name' ]}'
-                        AND `{$rel_alias}`.`object_id` = `{$traverse_recurse[ 'joined' ]}`.`ID`
+                        `{$rel_alias}`.`object_id` = `{$traverse_recurse[ 'joined' ]}`.`ID`
 
                     LEFT JOIN `{$wpdb->term_taxonomy}` AS `{$rel_tt_alias}` ON
                         `{$rel_tt_alias}`.`taxonomy` = '{$traverse[ 'name' ]}'
                         AND `{$rel_tt_alias}`.`term_taxonomy_id` = `{$rel_alias}`.`term_taxonomy_id`
 
                     LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
-                        `{$field_joined}`.`{$table_info[ 'field_index' ]}` = '{$traverse[ 'name' ]}'
-                        AND `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_tt_alias}`.`{$table_info[ 'field_id' ]}`, SIGNED )
+                        `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_tt_alias}`.`{$table_info[ 'field_id' ]}`, SIGNED )
                 ";
 
                 $joined_id = $table_info[ 'field_id' ];

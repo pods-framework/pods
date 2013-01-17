@@ -10,6 +10,11 @@ class PodsInit {
     static $no_conflict = array();
 
     /**
+     * @var array
+     */
+    static $content_types_registered = array();
+
+    /**
      * @var PodsComponents
      */
     static $components;
@@ -301,9 +306,22 @@ class PodsInit {
     /**
      * Register Post Types and Taxonomies
      */
-    public function setup_content_types () {
-        $post_types = PodsMeta::$post_types;
-        $taxonomies = PodsMeta::$taxonomies;
+    public function setup_content_types ( $post_types = array(), $taxonomies = array() ) {
+        $force = false;
+
+        if ( !empty( $post_types ) && is_array( $post_types ) ) {
+            $post_types = array_merge( PodsMeta::$post_types, $post_types );
+            $force = true;
+        }
+        else
+            $post_types = PodsMeta::$post_types;
+
+        if ( !empty( $taxonomies ) && is_array( $taxonomies ) ) {
+            $taxonomies = array_merge( PodsMeta::$taxonomies, $taxonomies );
+            $force = true;
+        }
+        else
+            $taxonomies = PodsMeta::$taxonomies;
 
         $existing_post_types = get_post_types();
         $existing_taxonomies = get_taxonomies();
@@ -312,16 +330,21 @@ class PodsInit {
 
         $cpt_positions = array();
 
-        if ( false === $pods_cpt_ct ) {
-            $pods_cpt_ct = array(
-                'post_types' => array(),
-                'taxonomies' => array()
-            );
+        if ( false === $pods_cpt_ct || $force ) {
+            if ( false === $pods_cpt_ct ) {
+                $pods_cpt_ct = array(
+                    'post_types' => array(),
+                    'taxonomies' => array()
+                );
+            }
 
             $pods_post_types = $pods_taxonomies = array();
             $supported_post_types = $supported_taxonomies = array();
 
             foreach ( $post_types as $post_type ) {
+                if ( in_array( $post_type[ 'name' ], $pods_cpt_ct[ 'post_types' ] ) )
+                    continue;
+
                 // Post Type exists already
                 if ( empty( $post_type[ 'object' ] ) && isset( $existing_post_types[ $post_type[ 'name' ] ] ) )
                     continue;
@@ -457,6 +480,9 @@ class PodsInit {
             }
 
             foreach ( $taxonomies as $taxonomy ) {
+                if ( in_array( $taxonomy[ 'name' ], $pods_cpt_ct[ 'taxonomies' ] ) )
+                    continue;
+
                 // Taxonomy exists already
                 if ( empty( $taxonomy[ 'object' ] ) && isset( $existing_taxonomies[ $taxonomy[ 'name' ] ] ) )
                     continue;
@@ -571,6 +597,9 @@ class PodsInit {
         }
 
         foreach ( $pods_cpt_ct[ 'taxonomies' ] as $taxonomy => $options ) {
+            if ( isset( self::$content_types_registered[ 'taxonomies' ] ) && in_array( $taxonomy, self::$content_types_registered[ 'taxonomies' ] ) )
+                continue;
+
             $ct_post_types = $options[ 'post_types' ];
             $options = $options[ 'options' ];
 
@@ -582,9 +611,17 @@ class PodsInit {
             $taxonomy = substr( $taxonomy, 0, 32 );
 
             register_taxonomy( $taxonomy, $ct_post_types, $options );
+
+            if ( !isset( self::$content_types_registered[ 'taxonomies' ] ) )
+                self::$content_types_registered[ 'taxonomies' ] = array();
+
+            self::$content_types_registered[ 'taxonomies' ][] = $taxonomy;
         }
 
         foreach ( $pods_cpt_ct[ 'post_types' ] as $post_type => $options ) {
+            if ( isset( self::$content_types_registered[ 'post_types' ] ) && in_array( $post_type, self::$content_types_registered[ 'post_types' ] ) )
+                continue;
+
             $options = apply_filters( 'pods_register_post_type_' . $post_type, $options );
 
             $options = self::object_label_fix( $options, 'post_type' );
@@ -593,6 +630,11 @@ class PodsInit {
             $post_type = substr( $post_type, 0, 20 );
 
             register_post_type( $post_type, $options );
+
+            if ( !isset( self::$content_types_registered[ 'post_types' ] ) )
+                self::$content_types_registered[ 'post_types' ] = array();
+
+            self::$content_types_registered[ 'post_types' ][] = $post_type;
         }
 
         $flush = pods_transient_get( 'pods_flush_rewrites' );

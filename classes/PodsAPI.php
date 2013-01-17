@@ -1545,6 +1545,28 @@ class PodsAPI {
 
         $this->cache_flush_pods( $pod );
 
+        // Register Post Types / Taxonomies post-registration from PodsInit
+        if ( !empty( PodsInit::$content_types_registered ) && in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && empty( $pod[ 'object' ] ) ) {
+            global $pods_init;
+
+            $post_types = $taxonomies = array();
+
+            if ( 'post_type' == $pod[ 'type' ] ) {
+                $load_pod = $this->load_pod( array( 'name' => $pod[ 'name' ] ), false );
+
+                if ( !empty( $load_pod ) )
+                    $post_types[] = $load_pod;
+            }
+            elseif ( 'taxonomy' == $pod[ 'type' ] ) {
+                $load_pod = $this->load_pod( array( 'name' => $pod[ 'name' ] ), false );
+
+                if ( !empty( $load_pod ) )
+                    $taxonomies[] = $load_pod;
+            }
+
+            $pods_init->setup_content_types( $post_types, $taxonomies );
+        }
+
         if ( !empty( $errors ) )
             return pods_error( $errors, $this );
 
@@ -5540,6 +5562,9 @@ class PodsAPI {
 
             // Loop through each field (use $fields so only valid fields get parsed)
             foreach ( $fields as $field_name => $field_data ) {
+                if ( !isset( $data_row[ $field_name ] ) )
+                    continue;
+
                 $field_id = $field_data[ 'id' ];
                 $type = $field_data[ 'type' ];
                 $pick_object = isset( $field_data[ 'pick_object' ] ) ? $field_data[ 'pick_object' ] : '';

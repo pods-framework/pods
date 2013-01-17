@@ -1957,8 +1957,18 @@ class PodsData {
                 $pod_data[ 'fields' ][ $field ] = $pod_data[ 'object_fields' ][ $field ];
             elseif ( in_array( $pod_data[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) && 'meta_value' == $last )
                 $pod_data[ 'fields' ][ $field ] = PodsForm::field_setup( array( 'name' => $field ) );
-            else
-                return $joins;
+            else {
+                if ( 'post_type' == $pod_data[ 'type' ] ) {
+                    $pod_data[ 'object_fields' ] = $this->api->get_wp_object_fields( 'post_type', $pod_data, true );
+
+                    if ( 'post_type' == $pod_data[ 'type' ] && isset( $pod_data[ 'object_fields' ][ $field ] ) && in_array( $pod_data[ 'object_fields' ][ $field ][ 'type' ], $tableless_field_types ) )
+                        $pod_data[ 'fields' ][ $field ] = $pod_data[ 'object_fields' ][ $field ];
+                    else
+                        return $joins;
+                }
+                else
+                    return $joins;
+            }
         }
 
         $traverse = $pod_data[ 'fields' ][ $field ];
@@ -2090,6 +2100,8 @@ class PodsData {
                     LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
                         `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_alias}`.`related_item_id`
                 ";
+
+                $table_info[ 'recurse' ] = true;
             }
         }
         elseif ( 'meta' == $pod_data[ 'storage' ] ) {

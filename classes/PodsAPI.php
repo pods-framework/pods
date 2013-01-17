@@ -514,15 +514,16 @@ class PodsAPI {
      *
      * @param string $object The post type to look for, possible values: post_type, user, comment, taxonomy
      * @param array $pod Array of Pod data
+     * @param boolean $refresh Whether to force refresh the information
      *
      * @return array Array of fields
      */
-    public function get_wp_object_fields ( $object = 'post_type', $pod = null ) {
+    public function get_wp_object_fields ( $object = 'post_type', $pod = null, $refresh = false ) {
         $pod_name = pods_var_raw( 'name', $pod );
 
         $fields = pods_transient_get( trim( 'pods_api_object_fields_' . $object . $pod_name . '_', '_' ) );
 
-        if ( false !== $fields )
+        if ( false !== $fields && !$refresh )
             return apply_filters( 'pods_api_get_wp_object_fields', $fields, $object, $pod );
 
         $fields = array();
@@ -727,8 +728,8 @@ class PodsAPI {
                 $taxonomies = get_object_taxonomies( pods_var_raw( 'name', $pod ), 'objects' );
 
                 foreach ( $taxonomies as $taxonomy ) {
-                    $fields[ $taxonomy ] = array(
-                        'name' => $taxonomy,
+                    $fields[ $taxonomy->name ] = array(
+                        'name' => $taxonomy->name,
                         'label' => $taxonomy->labels->name,
                         'type' => 'taxonomy',
                         'alias' => array(),
@@ -5163,7 +5164,8 @@ class PodsAPI {
                     if ( 0 === strpos( $object_type, $prefix ) )
                         $name = substr( $object_type, strlen( $prefix ), strlen( $object_type ) );
                 }
-                if ( !empty( $object ) )
+
+                if ( empty( $name ) && !empty( $object ) )
                     $name = $object;
 
                 $pod = $this->load_pod( array( 'name' => $name ), false );
@@ -5174,6 +5176,30 @@ class PodsAPI {
                     $object = $pod[ 'object' ];
 
                     $info[ 'pod' ] = $pod;
+                }
+            }
+            elseif ( null === $pod ) {
+                if ( empty( $name ) ) {
+                    $prefix = $object_type . '-';
+
+                    // Make sure we actually have the prefix before trying anything with the name
+                    if ( 0 === strpos( $object_type, $prefix ) )
+                        $name = substr( $object_type, strlen( $prefix ), strlen( $object_type ) );
+                }
+
+                if ( empty( $name ) && !empty( $object ) )
+                    $name = $object;
+
+                if ( !empty( $name ) ) {
+                    $pod = $this->load_pod( array( 'name' => $name ), false );
+
+                    if ( !empty( $pod ) && $object_type == $pod[ 'type' ] ) {
+                        $object_type = $pod[ 'type' ];
+                        $name = $pod[ 'name' ];
+                        $object = $pod[ 'object' ];
+
+                        $info[ 'pod' ] = $pod;
+                    }
                 }
             }
 

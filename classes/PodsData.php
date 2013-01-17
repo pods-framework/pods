@@ -2100,8 +2100,6 @@ class PodsData {
                     LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
                         `{$field_joined}`.`{$table_info[ 'field_id' ]}` = `{$rel_alias}`.`related_item_id`
                 ";
-
-                $table_info[ 'recurse' ] = true;
             }
         }
         elseif ( 'meta' == $pod_data[ 'storage' ] ) {

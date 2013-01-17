@@ -54,6 +54,11 @@
                         errors.push( "Field" );
                     }
                     break;
+                case 'field-current':
+                    if ( !field || !field.length ) {
+                        errors.push( "Field" );
+                    }
+                    break;
                 case 'form':
                     if ( !pod_select || !pod_select.length ) {
                         errors.push( "Pod" );
@@ -80,7 +85,8 @@
             label = ( label + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             thank_you = ( thank_you + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
 
-            shortcode += ' name="' + pod_select + '"';
+            if ( pod_select.length )
+                shortcode += ' name="' + pod_select + '"';
 
             if ( slug.length )
                 shortcode += ' slug="' + slug + '"';
@@ -147,6 +153,11 @@
                     break;
                 case 'field':
                     $( '#pod_select, #pod_slug, #pod_field, #pods_insert_shortcode' ).each( function () {
+                        $( this ).closest( '.pods-section' ).removeClass( 'hide' );
+                    } )
+                    break;
+                case 'field-current':
+                    $( '#pod_field, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
@@ -219,13 +230,14 @@
 
                     <select id="pods-use-case-selector">
                         <option value="single"><?php _e( 'Display a single Pod item', 'pods' ); ?></option>
-                        <option value="list" SELECTED><?php _e( 'List multiple Pod items', 'pods' ); ?></option>
+                        <option value="list"><?php _e( 'List multiple Pod items', 'pods' ); ?></option>
                         <option value="field"><?php _e( 'Display a field from a single Pod item', 'pods' ); ?></option>
+                        <option value="field-current" SELECTED><?php _e( 'Display a field from this item', 'pods' ); ?></option>
                         <option value="form"><?php _e( 'Display a form for creating and editing Pod items', 'pods' ); ?></option>
                     </select>
                 </div>
 
-                <div class="pods-section">
+                <div class="pods-section hide">
                     <?php
                         $api = pods_api();
                         $all_pods = $api->load_pods();
@@ -250,7 +262,7 @@
                 </div>
 
                 <?php if ( class_exists( 'Pods_Templates' ) ) { ?>
-                    <div class="pods-section">
+                    <div class="pods-section hide">
                         <?php
                             $templates = $api->load_templates();
                             $template_count = count( $templates );
@@ -269,7 +281,7 @@
                     </div>
                 <?php } ?>
 
-                <div class="pods-section">
+                <div class="pods-section hide">
                     <label for="pod_template_custom"><?php _e( 'Custom Template', 'pods' ); ?></label>
 
                     <textarea name="pod_template_custom" id="pod_template_custom" cols="10" rows="10" class="widefat"></textarea>
@@ -281,25 +293,25 @@
                     <input type="text" id="pod_slug" name="pod_slug" />
                 </div>
 
-                <div class="pods-section">
+                <div class="pods-section hide">
                     <label for="pod_limit"><?php _e( 'Limit', 'pods' ); ?></label>
 
                     <input type="text" id="pod_limit" name="pod_limit" />
                 </div>
 
-                <div class="pods-section">
+                <div class="pods-section hide">
                     <label for="pod_orderby"><?php _e( 'Order By', 'pods' ); ?></label>
 
                     <input type="text" id="pod_orderby" name="pod_orderby" />
                 </div>
 
-                <div class="pods-section">
+                <div class="pods-section hide">
                     <label for="pod_where"><?php _e( 'Where', 'pods' ); ?></label>
 
                     <input type="text" name="pod_where" id="pod_where" />
                 </div>
 
-                <div class="pods-section hide">
+                <div class="pods-section">
                     <label for="pod_field"><?php _e( 'Field', 'pods' ); ?></label>
 
                     <input type="text" name="pod_field" id="pod_field" />

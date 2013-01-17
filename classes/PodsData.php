@@ -616,7 +616,8 @@ class PodsData {
             'index' => null,
 
             'page' => 1,
-            'search' => null,
+            'pagination' => $this->pagination,
+            'search' => $this->search,
             'search_query' => null,
             'search_mode' => null,
             'search_across' => false,
@@ -640,7 +641,9 @@ class PodsData {
         // Validate
         $params->page = pods_absint( $params->page );
 
-        if ( 0 == $params->page )
+        $params->pagination = (boolean) $params->pagination;
+
+        if ( 0 == $params->page || !$params->pagination )
             $params->page = 1;
 
         $params->limit = (int) $params->limit;
@@ -656,6 +659,9 @@ class PodsData {
             $params->offset += $offset;
         else
             $params->offset = $offset;
+
+        if ( !$params->pagination || -1 == $params->limit )
+            $params->offset = 0;
 
         if ( ( empty( $params->fields ) || !is_array( $params->fields ) ) && is_object( $this->pod_data ) && isset( $this->fields ) && !empty( $this->fields ) )
             $params->fields = $this->fields;
@@ -712,6 +718,8 @@ class PodsData {
 
         if ( !empty( $params->search_mode ) && in_array( $params->search_mode, $allowed_search_modes ) )
             $this->search_mode = $params->search_mode;
+
+        $params->search = (boolean) $params->search;
 
         // Get Aliases for future reference
         $selectsfound = '';

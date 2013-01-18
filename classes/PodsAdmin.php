@@ -211,7 +211,7 @@ class PodsAdmin {
 
                 $submenu = apply_filters( 'pods_admin_menu_secondary_content', $submenu );
 
-                if ( !empty( $submenu ) && ( !defined( 'PODS_DISABLE_CONTENT_MENU' ) || PODS_DISABLE_CONTENT_MENU ) ) {
+                if ( !empty( $submenu ) && ( !defined( 'PODS_DISABLE_CONTENT_MENU' ) || !PODS_DISABLE_CONTENT_MENU ) ) {
                     $parent_page = null;
 
                     foreach ( $submenu as $item ) {

@@ -549,6 +549,14 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
             if ( !empty( $var ) )
                 $output = date_i18n( $var[ 0 ], ( isset( $var[ 1 ] ) ? strtotime( $var[ 1 ] ) : false ) );
         }
+        elseif ( 'pods' == $type ) {
+            if ( isset( $GLOBALS[ 'pods' ] ) && 'Pods' == get_class( $GLOBALS[ 'pods' ] ) ) {
+                $output = $GLOBALS[ 'pods' ]->field( $var );
+
+                if ( is_array( $output ) )
+                    $output = pods_serial_comma( $output, $var, $GLOBALS[ 'pods' ]->fields );
+            }
+        }
         else
             $output = apply_filters( 'pods_var_' . $type, $default, $var, $allowed, $strict, $casting, $context );
     }
@@ -1245,7 +1253,7 @@ function pods_shortcode ( $tags, $content = null ) {
             $params[ 'limit' ] = $tags[ 'limit' ];
 
         if ( 0 < strlen( $tags[ 'where' ] ) )
-            $params[ 'where' ] = $tags[ 'where' ];
+            $params[ 'where' ] = pods_evaluate_tags( $tags[ 'where' ] );
 
         if ( 0 < strlen( $tags[ 'select' ] ) )
             $params[ 'select' ] = $tags[ 'select' ];
@@ -1296,14 +1304,14 @@ function pods_shortcode ( $tags, $content = null ) {
  * @param array $value
  * @param string $field
  * @param array $fields
+ * @param string $and
+ * @param string $field_index
  *
  * @return string
  */
-function pods_serial_comma ( $value, $field = null, $fields = null ) {
+function pods_serial_comma ( $value, $field = null, $fields = null, $and = null, $field_index = null ) {
     if ( is_object( $value ) )
         $value = get_object_vars( $value );
-
-    $field_index = null;
 
     $simple = false;
 
@@ -1313,15 +1321,19 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
 
         if ( !empty( $field ) && is_array( $field ) && in_array( $field[ 'type' ], $tableless_field_types ) ) {
-            if ( in_array( $field[ 'type' ], apply_filters( 'pods_file_field_types', array( 'file', 'avatar' ) ) ) )
-                $field_index = 'guid';
+            if ( in_array( $field[ 'type' ], apply_filters( 'pods_file_field_types', array( 'file', 'avatar' ) ) ) ) {
+                if ( null === $field_index )
+                    $field_index = 'guid';
+            }
             elseif ( 'custom-simple' == $field[ 'pick_object' ] )
                 $simple = true;
             else {
                 $table = pods_api()->get_table_info( $field[ 'pick_object' ], $field[ 'pick_val' ] );
 
-                if ( !empty( $table ) )
-                    $field_index = $table[ 'field_index' ];
+                if ( !empty( $table ) ) {
+                    if ( null === $field_index )
+                        $field_index = $table[ 'field_index' ];
+                }
             }
         }
     }
@@ -1332,7 +1344,8 @@ function pods_serial_comma ( $value, $field = null, $fields = null ) {
     if ( !is_array( $value ) )
         return $value;
 
-    $and = ' ' . __( 'and', 'pods' ) . ' ';
+    if ( null === $and )
+        $and = ' ' . __( 'and', 'pods' ) . ' ';
 
     $last = '';
 

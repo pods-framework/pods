@@ -1166,7 +1166,10 @@ function pods_shortcode ( $tags, $content = null ) {
         'orderby' => null,
         'limit' => null,
         'where' => null,
+        'having' => null,
+        'groupby' => null,
         'search' => true,
+        'pagination' => true,
         'page' => null,
         'filters' => false,
         'filters_label' => null,
@@ -1255,6 +1258,12 @@ function pods_shortcode ( $tags, $content = null ) {
         if ( 0 < strlen( $tags[ 'where' ] ) )
             $params[ 'where' ] = pods_evaluate_tags( $tags[ 'where' ] );
 
+        if ( 0 < strlen( $tags[ 'having' ] ) )
+            $params[ 'having' ] = pods_evaluate_tags( $tags[ 'having' ] );
+
+        if ( 0 < strlen( $tags[ 'groupby' ] ) )
+            $params[ 'groupby' ] = $tags[ 'groupby' ];
+
         if ( 0 < strlen( $tags[ 'select' ] ) )
             $params[ 'select' ] = $tags[ 'select' ];
 
@@ -1263,6 +1272,9 @@ function pods_shortcode ( $tags, $content = null ) {
 
         if ( 0 < absint( $tags[ 'page' ] ) )
             $params[ 'page' ] = absint( $tags[ 'page' ] );
+
+        if ( empty( $tags[ 'pagination' ] ) )
+            $params[ 'pagination' ] = false;
 
         $params = apply_filters( 'pods_shortcode_findrecords_params', $params );
 

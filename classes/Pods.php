@@ -922,19 +922,22 @@ class Pods {
             'limit' => 1
         );
 
-        if ( empty( $id ) && ( !empty( $params_override ) || !empty( $this->params ) ) ) {
+        if ( !empty( $params_override ) || !empty( $this->params ) ) {
             if ( !empty( $params_override ) )
                 $params = $params_override;
             elseif ( !empty( $this->params ) )
                 $params = $this->params;
 
-            if ( isset( $params[ 'offset' ] ) && 0 < $params[ 'offset' ] )
+            if ( 0 < $id )
+                $params[ 'where' ] = "`t`.{$this->data->field_id}` < {$id}";
+            elseif ( isset( $params[ 'offset' ] ) && 0 < $params[ 'offset' ] )
                 $params[ 'offset' ] -= 1;
             elseif ( !isset( $params[ 'offset' ] ) && !empty( $this->params ) && 0 < $this->row )
                 $params[ 'offset' ] = $this->row - 1;
             else
                 return 0;
 
+            $params[ 'select' ] = "`t`.{$this->data->field_id}`";
             $params[ 'limit' ] = 1;
         }
 
@@ -968,21 +971,24 @@ class Pods {
             'limit' => 1
         );
 
-        if ( empty( $id ) && ( !empty( $params_override ) || !empty( $this->params ) ) ) {
+        if ( !empty( $params_override ) || !empty( $this->params ) ) {
             if ( !empty( $params_override ) )
                 $params = $params_override;
             elseif ( !empty( $this->params ) )
                 $params = $this->params;
 
-            if ( !isset( $params[ 'offset' ] ) ) {
+            if ( 0 < $id )
+                $params[ 'where' ] = "{$id} < `t`.{$this->data->field_id}`";
+            elseif ( !isset( $params[ 'offset' ] ) ) {
                 if ( !empty( $this->params ) && -1 < $this->row )
-                    $params[ 'offset' ] += $this->row;
+                    $params[ 'offset' ] = $this->row + 1;
                 else
-                    $params[ 'offset' ] = 0;
+                    $params[ 'offset' ] = 1;
             }
+            else
+                $params[ 'offset' ] += 1;
 
-            $params[ 'offset' ] += 1;
-
+            $params[ 'select' ] = "`t`.{$this->data->field_id}`";
             $params[ 'limit' ] = 1;
         }
 
@@ -1015,6 +1021,7 @@ class Pods {
             elseif ( !empty( $this->params ) )
                 $params = $this->params;
 
+            $params[ 'select' ] = "`t`.{$this->data->field_id}`";
             $params[ 'offset' ] = 0;
             $params[ 'limit' ] = 1;
         }
@@ -1053,6 +1060,7 @@ class Pods {
             else
                 $params[ 'offset' ] = $this->total_found() - 1;
 
+            $params[ 'select' ] = "`t`.{$this->data->field_id}`";
             $params[ 'limit' ] = 1;
         }
 

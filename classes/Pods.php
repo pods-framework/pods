@@ -896,6 +896,35 @@ class Pods {
     }
 
     /**
+     * Return the previous item ID, loops at the last id to return the first
+     *
+     * @param int $id
+     *
+     * @return int
+     * @since 2.0.0
+     */
+    public function prev_id ( $id = null ) {
+        if ( null === $id )
+            $id = $this->field( 'id' );
+
+        $id = (int) $id;
+
+        $params = array(
+            'select' => "`t`.{$this->data->field_id}`",
+            'where' => "`t`.{$this->data->field_id}` < {$id}",
+            'orderby' => "`t`.{$this->data->field_id}` DESC",
+            'limit' => 1
+        );
+
+        $pod = pods( $this->pod, $params );
+
+        if ( $pod->fetch() )
+            return $pod->id();
+
+        return 0;
+    }
+
+    /**
      * Return the next item ID, loops at the first id to return the last
      *
      * @param int $id
@@ -925,14 +954,14 @@ class Pods {
     }
 
     /**
-     * Return the previous item ID, loops at the last id to return the first
+     * Return the first item ID
      *
      * @param int $id
      *
      * @return int
-     * @since 2.0.0
+     * @since 2.3.0
      */
-    public function prev_id ( $id = null ) {
+    public function first_id ( $id = null ) {
         if ( null === $id )
             $id = $this->field( 'id' );
 
@@ -940,7 +969,34 @@ class Pods {
 
         $params = array(
             'select' => "`t`.{$this->data->field_id}`",
-            'where' => "`t`.{$this->data->field_id}` < {$id}",
+            'orderby' => "`t`.{$this->data->field_id}` ASC",
+            'limit' => 1
+        );
+
+        $pod = pods( $this->pod, $params );
+
+        if ( $pod->fetch() )
+            return $pod->id();
+
+        return 0;
+    }
+
+    /**
+     * Return the last item ID
+     *
+     * @param int $id
+     *
+     * @return int
+     * @since 2.3.0
+     */
+    public function last_id ( $id = null ) {
+        if ( null === $id )
+            $id = $this->field( 'id' );
+
+        $id = (int) $id;
+
+        $params = array(
+            'select' => "`t`.{$this->data->field_id}`",
             'orderby' => "`t`.{$this->data->field_id}` DESC",
             'limit' => 1
         );

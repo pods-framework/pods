@@ -35,6 +35,11 @@ class Pods {
     public $pod_data;
 
     /**
+     * @var array
+     */
+    public $params = array();
+
+    /**
      * @var
      */
     public $pod;
@@ -899,11 +904,12 @@ class Pods {
      * Return the previous item ID, loops at the last id to return the first
      *
      * @param int $id
+     * @param array $params_override
      *
      * @return int
      * @since 2.0.0
      */
-    public function prev_id ( $id = null ) {
+    public function prev_id ( $id = null, $params_override = null ) {
         if ( null === $id )
             $id = $this->field( 'id' );
 
@@ -915,6 +921,22 @@ class Pods {
             'orderby' => "`t`.{$this->data->field_id}` DESC",
             'limit' => 1
         );
+
+        if ( empty( $id ) && ( !empty( $params_override ) || !empty( $this->params ) ) ) {
+            if ( !empty( $params_override ) )
+                $params = $params_override;
+            elseif ( !empty( $this->params ) )
+                $params = $this->params;
+
+            if ( isset( $params[ 'offset' ] ) && 0 < $params[ 'offset' ] )
+                $params[ 'offset' ] -= 1;
+            elseif ( !isset( $params[ 'offset' ] ) && !empty( $this->params ) && 0 < $this->row )
+                $params[ 'offset' ] = $this->row - 1;
+            else
+                return 0;
+
+            $params[ 'limit' ] = 1;
+        }
 
         $pod = pods( $this->pod, $params );
 
@@ -928,11 +950,12 @@ class Pods {
      * Return the next item ID, loops at the first id to return the last
      *
      * @param int $id
+     * @param array $find_params
      *
      * @return int
      * @since 2.0.0
      */
-    public function next_id ( $id = null ) {
+    public function next_id ( $id = null, $params_override = null ) {
         if ( null === $id )
             $id = $this->field( 'id' );
 
@@ -945,6 +968,24 @@ class Pods {
             'limit' => 1
         );
 
+        if ( empty( $id ) && ( !empty( $params_override ) || !empty( $this->params ) ) ) {
+            if ( !empty( $params_override ) )
+                $params = $params_override;
+            elseif ( !empty( $this->params ) )
+                $params = $this->params;
+
+            if ( !isset( $params[ 'offset' ] ) ) {
+                if ( !empty( $this->params ) && -1 < $this->row )
+                    $params[ 'offset' ] += $this->row;
+                else
+                    $params[ 'offset' ] = 0;
+            }
+
+            $params[ 'offset' ] += 1;
+
+            $params[ 'limit' ] = 1;
+        }
+
         $pod = pods( $this->pod, $params );
 
         if ( $pod->fetch() )
@@ -956,22 +997,27 @@ class Pods {
     /**
      * Return the first item ID
      *
-     * @param int $id
+     * @param array $params_override
      *
      * @return int
      * @since 2.3.0
      */
-    public function first_id ( $id = null ) {
-        if ( null === $id )
-            $id = $this->field( 'id' );
-
-        $id = (int) $id;
-
+    public function first_id ( $params_override = null ) {
         $params = array(
             'select' => "`t`.{$this->data->field_id}`",
             'orderby' => "`t`.{$this->data->field_id}` ASC",
             'limit' => 1
         );
+
+        if ( !empty( $params_override ) || !empty( $this->params ) ) {
+            if ( !empty( $params_override ) )
+                $params = $params_override;
+            elseif ( !empty( $this->params ) )
+                $params = $this->params;
+
+            $params[ 'offset' ] = 0;
+            $params[ 'limit' ] = 1;
+        }
 
         $pod = pods( $this->pod, $params );
 
@@ -984,22 +1030,31 @@ class Pods {
     /**
      * Return the last item ID
      *
-     * @param int $id
+     * @param array $params_override
      *
      * @return int
      * @since 2.3.0
      */
-    public function last_id ( $id = null ) {
-        if ( null === $id )
-            $id = $this->field( 'id' );
-
-        $id = (int) $id;
-
+    public function last_id ( $params_override = null ) {
         $params = array(
             'select' => "`t`.{$this->data->field_id}`",
             'orderby' => "`t`.{$this->data->field_id}` DESC",
             'limit' => 1
         );
+
+        if ( !empty( $params_override ) || !empty( $this->params ) ) {
+            if ( !empty( $params_override ) )
+                $params = $params_override;
+            elseif ( !empty( $this->params ) )
+                $params = $this->params;
+
+            if ( isset( $params[ 'total_found' ] ) )
+                $params[ 'offset' ] = $params[ 'total_found' ] - 1;
+            else
+                $params[ 'offset' ] = $this->total_found() - 1;
+
+            $params[ 'limit' ] = 1;
+        }
 
         $pod = pods( $this->pod, $params );
 
@@ -1338,6 +1393,8 @@ class Pods {
             }
         }
 
+        $this->params = $params;
+
         $this->data->select( $params );
 
         $this->sql = $this->data->sql;
@@ -1362,6 +1419,9 @@ class Pods {
      */
     public function fetch ( $id = null ) {
         $this->do_hook( 'fetch', $id );
+
+        if ( !empty( $id ) )
+            $this->params = array();
 
         $this->data->fetch( $id );
 

@@ -2376,6 +2376,23 @@ function pods_is_plugin_active ( $plugin ) {
 }
 
 /**
+ * Check if Pods no conflict is on or not
+ *
+ * @param string $object_type
+ *
+ * @return bool
+ */
+function pods_no_conflict_check ( $object_type = 'post' ) {
+    if ( 'post_type' == $object_type )
+        $object_type = 'post';
+
+    if ( !empty( PodsInit::$no_conflict ) && isset( PodsInit::$no_conflict[ $object_type ] ) && !empty( PodsInit::$no_conflict[ $object_type ] ) )
+        return true;
+
+    return false;
+}
+
+/**
  * Turn off conflicting / recursive actions for an object type that Pods hooks into
  *
  * @param string $object_type

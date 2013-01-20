@@ -599,7 +599,10 @@ class Pods {
                             $params->single = false;
                     }
 
-                    pods_no_conflict_on( $this->pod_data[ 'type' ] );
+                    $no_conflict = pods_no_conflict_check( $this->pod_data[ 'type' ] );
+
+                    if ( !$no_conflict )
+                        pods_no_conflict_on( $this->pod_data[ 'type' ] );
 
                     if ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) {
                         $id = $this->id();
@@ -626,7 +629,8 @@ class Pods {
                         $value = PodsForm::field_method( 'pick', 'simple_value', $value, $this->fields[ $params->name ], true );
                     }
 
-                    pods_no_conflict_off( $this->pod_data[ 'type' ] );
+                    if ( !$no_conflict )
+                        pods_no_conflict_off( $this->pod_data[ 'type' ] );
                 }
                 else {
                     // Dot-traversal
@@ -818,8 +822,12 @@ class Pods {
                                 if ( in_array( $table[ 'type' ], array( 'post_type', 'attachment' ) ) )
                                     $object_type = 'post';
 
-                                if ( in_array( $object_type, array( 'post', 'user', 'comment' ) ) )
-                                    pods_no_conflict_on( $object_type );
+                                if ( in_array( $object_type, array( 'post', 'user', 'comment' ) ) ) {
+                                    $no_conflict = pods_no_conflict_check( $object_type );
+
+                                    if ( !$no_conflict )
+                                        pods_no_conflict_on( $object_type );
+                                }
 
                                 // Return entire array
                                 if ( false === $params->in_form && false !== $field_exists && in_array( $last_type, $tableless_field_types ) )
@@ -839,7 +847,7 @@ class Pods {
                                     }
                                 }
 
-                                if ( in_array( $object_type, array( 'post', 'user', 'comment' ) ) )
+                                if ( in_array( $object_type, array( 'post', 'user', 'comment' ) ) && !$no_conflict )
                                     pods_no_conflict_off( $object_type );
 
                                 // Handle Simple Relationships

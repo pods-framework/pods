@@ -2674,7 +2674,10 @@ class PodsAPI {
             }
         }
 
-        pods_no_conflict_on( 'post' );
+        $no_conflict = pods_no_conflict_check( 'post' );
+
+        if ( !$no_conflict )
+            pods_no_conflict_on( 'post' );
 
         // Save relational field data
         if ( !empty( $rel_fields ) ) {
@@ -2945,7 +2948,8 @@ class PodsAPI {
             }
         }
 
-        pods_no_conflict_off( 'post' );
+        if ( !$no_conflict )
+            pods_no_conflict_off( 'post' );
 
         if ( false === $bypass_helpers ) {
             $pieces = array( 'fields', 'params', 'pod', 'fields_active' );
@@ -5064,7 +5068,10 @@ class PodsAPI {
                 if ( in_array( $pod[ 'type' ], array( 'post_type', 'media' ) ) )
                     $meta_type = 'post';
 
-                pods_no_conflict_on( $meta_type );
+                $no_conflict = pods_no_conflict_check( $meta_type );
+
+                if ( !$no_conflict )
+                    pods_no_conflict_on( $meta_type );
 
                 foreach ( $ids as $id ) {
                     $related_id = get_metadata( $meta_type, $id, '_pods_' . $field[ 'name' ], true );
@@ -5085,7 +5092,8 @@ class PodsAPI {
                     }
                 }
 
-                pods_no_conflict_off( $meta_type );
+                if ( !$no_conflict )
+                    pods_no_conflict_off( $meta_type );
 
                 $related_ids = array_unique( array_filter( $related_ids ) );
 

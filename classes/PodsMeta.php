@@ -1746,7 +1746,10 @@ class PodsMeta {
         if ( empty( $object_id ) || empty( $field ) || empty( $object ) || ( !isset( $object[ 'fields' ][ $field ] ) && !isset( $object[ 'object_fields' ][ $field ] ) ) )
             return $_null;
 
-        pods_no_conflict_on( $meta_type );
+        $no_conflict = pods_no_conflict_check( $meta_type );
+
+        if ( !$no_conflict )
+            pods_no_conflict_on( $meta_type );
 
         $meta_cache = array();
 
@@ -1764,7 +1767,8 @@ class PodsMeta {
             if ( !empty( $pod ) )
                 $meta_cache[ $meta_key ] = $value = $pod->field( $meta_key, $single );
             else {
-                pods_no_conflict_off( $meta_type );
+                if ( !$no_conflict )
+                    pods_no_conflict_off( $meta_type );
 
                 return null;
             }
@@ -1773,7 +1777,8 @@ class PodsMeta {
         if ( !$single && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) )
             wp_cache_add( $object_id, $meta_cache, $meta_type . '_meta' );
 
-        pods_no_conflict_off( $meta_type );
+        if ( !$no_conflict )
+            pods_no_conflict_off( $meta_type );
 
         if ( !is_numeric( $value ) && empty( $value ) ) {
             if ( $single )

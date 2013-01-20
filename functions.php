@@ -1816,7 +1816,16 @@ function pods_var_user ( $anon = false, $user = true, $capability = null ) {
  *
  * @return mixed Field value
  */
-function pods_field ( $pod, $id, $name, $single = false ) {
+function pods_field ( $pod, $id = false, $name = null, $single = false ) {
+    // allow for pods_field( 'field_name' );
+    if ( null === $name ) {
+        $name = $pod;
+        $single = (boolean) $id;
+
+        $pod = get_post_type();
+        $id = get_the_ID();
+    }
+
     return pods( $pod, $id )->field( $name, $single );
 }
 
@@ -1830,7 +1839,16 @@ function pods_field ( $pod, $id, $name, $single = false ) {
  *
  * @return mixed Field value
  */
-function pods_field_display ( $pod, $id, $name, $single = false ) {
+function pods_field_display ( $pod, $id = false, $name = null, $single = false ) {
+    // allow for pods_field_display( 'field_name' );
+    if ( null === $name ) {
+        $name = $pod;
+        $single = (boolean) $id;
+
+        $pod = get_post_type();
+        $id = get_the_ID();
+    }
+
     return pods( $pod, $id )->display( $name, $single );
 }
 
@@ -1844,7 +1862,16 @@ function pods_field_display ( $pod, $id, $name, $single = false ) {
  *
  * @return mixed Field value
  */
-function pods_field_raw ( $pod, $id, $name, $single = false ) {
+function pods_field_raw ( $pod, $id = false, $name = null, $single = false ) {
+    // allow for pods_field_raw( 'field_name' );
+    if ( null === $name ) {
+        $name = $pod;
+        $single = (boolean) $id;
+
+        $pod = get_post_type();
+        $id = get_the_ID();
+    }
+
     return pods( $pod, $id )->raw( $name, $single );
 
 }

@@ -4,6 +4,75 @@
 if ( !defined( 'ABSPATH' ) )
     die( '-1' );
 
+/* // managewp.com GitHub Updater integration code, need to merge this in and clean up
+// mwp_premium_update_notification filter
+//
+// Hook to this filter to provide the new version of your plugin if available
+//
+add_filter( 'mwp_premium_update_notification', 'myplugin_mwp_update_notification' );
+if ( !function_exists( 'myplugin_mwp_update_notification' ) ) {
+    function myplugin_mwp_update_notification( $premium_updates ) {
+
+        if ( !function_exists( 'get_plugin_data' ) )
+            include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+
+        $myplugin = get_plugin_data( __FILE__ ); // or path to your main plugin file, we expect it to have standard header with plugin info
+        $myplugin[ 'type' ] = 'plugin';
+
+        // This is the only line you need to edit
+        $myplugin[ 'new_version' ] = '1.4'; // edit your plugin's new version
+
+        array_push( $premium_updates, $myplugin );
+        return $premium_updates;
+    }
+}
+
+// mwp_premium_perform_update filter
+//
+// Hook to this filter to return either the URL to the new version
+// or your callback function which will perform the update when called
+//
+add_filter( 'mwp_premium_perform_update', 'myplugin_mwp_perform_update' );
+if ( !function_exists( 'myplugin_mwp_perform_update' ) ) {
+    function myplugin_mwp_perform_update( $update ) {
+
+        if ( !function_exists( 'get_plugin_data' ) )
+            include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+
+        $my_addon = get_plugin_data( __FILE__ ); // or path to your main plugin file, we expect it to have standard header with plugin info
+
+        // This is the only line you need to edit
+        $my_addon[ 'url' ] = 'http://mysite.com/file.zip'; // provide URL to the archive file with the new version
+        $my_addon[ 'callback' ] = 'my_update_callback'; // OR provide your own callback function for managing the update
+
+        array_push( $update, $my_addon );
+
+        return $update;
+    }
+}
+
+// mwp_premium_update_check filter
+//
+// Hook to this filter to supply your function that handles the update check
+//
+add_filter( 'mwp_premium_update_check', 'myplugin_mwp_update_check' );
+if ( !function_exists( 'myplugin_mwp_update_check' ) ) {
+    function myplugin_mwp_update_check( $update ) {
+
+        if ( !function_exists( 'get_plugin_data' ) )
+            include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+
+        $my_addon = get_plugin_data( __FILE__ ); // or path to your main plugin file, we expect it to have standard header with plugin info
+
+        // This is the only line you need to edit
+        $my_addon[ 'callback' ] = 'my_update_callback'; // provide your callback function which will check for updates when called
+
+        array_push( $update, $my_addon );
+
+        return $update;
+    }
+}*/
+
 if ( !class_exists( 'WPGitHubUpdater' ) ) :
 
     /**

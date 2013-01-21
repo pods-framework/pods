@@ -1469,7 +1469,7 @@ class PodsAPI {
                 $weight = 0;
 
                 foreach ( $params->fields as $field ) {
-                    if ( !isset( $field[ 'name' ] ) )
+                    if ( !is_array( $field ) || !isset( $field[ 'name' ] ) )
                         continue;
 
                     if ( !isset( $field[ 'weight' ] ) ) {
@@ -1790,10 +1790,10 @@ class PodsAPI {
 
         // Add new field
         if ( !isset( $params->id ) || empty( $params->id ) || empty( $field ) ) {
-            if ( $table_operation && in_array( $field[ 'name' ], array( 'created', 'modified' ) ) && ( in_array( $field[ 'type' ], array( 'date', 'datetime' ) ) || !defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT ) )
+            if ( $table_operation && in_array( $field[ 'name' ], array( 'created', 'modified' ) ) && !in_array( $field[ 'type' ], array( 'date', 'datetime' ) ) && ( !defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT ) )
                 return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field[ 'name' ] ), $this );
 
-            if ( $table_operation && 'author' == $field[ 'name' ] && ( 'pick' == $field[ 'type' ] || !defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT ) )
+            if ( $table_operation && 'author' == $field[ 'name' ] && 'pick' == $field[ 'type' ] && ( !defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT ) )
                 return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field[ 'name' ] ), $this );
 
             if ( in_array( $field[ 'name' ], array( 'id', 'ID' ) ) )
@@ -1869,10 +1869,10 @@ class PodsAPI {
             if ( null !== $old_name && $field[ 'name' ] != $old_name && in_array( $field[ 'name' ], array( 'id', 'ID' ) ) )
                 return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field[ 'name' ] ), $this );
 
-            if ( null !== $old_name && $field[ 'name' ] != $old_name && in_array( $field[ 'name' ], array( 'created', 'modified' ) ) && !in_array( $field[ 'type' ], array( 'date', 'datetime' ) ) )
+            if ( null !== $old_name && $field[ 'name' ] != $old_name && in_array( $field[ 'name' ], array( 'created', 'modified' ) ) && !in_array( $field[ 'type' ], array( 'date', 'datetime' ) ) && ( !defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT ) )
                 return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field[ 'name' ] ), $this );
 
-            if ( null !== $old_name && $field[ 'name' ] != $old_name && 'author' == $field[ 'name' ] && 'pick' != $field[ 'type' ] )
+            if ( null !== $old_name && $field[ 'name' ] != $old_name && 'author' == $field[ 'name' ] && 'pick' != $field[ 'type' ] && ( !defined( 'PODS_FIELD_STRICT' ) || PODS_FIELD_STRICT ) )
                 return pods_error( sprintf( __( '%s is reserved for internal Pods usage, please try a different name', 'pods' ), $field[ 'name' ] ), $this );
 
             foreach ( $object_fields as $object_field => $object_field_opt ) {

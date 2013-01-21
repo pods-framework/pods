@@ -277,7 +277,7 @@ class Pods_Migrate_Packages extends PodsComponent {
                                 $new_field[ 'options' ][ 'text_max_length' ] = 128;
 
                             if ( isset( $pod[ 'fields' ][ $new_field[ 'name' ] ] ) )
-                                $new_field = array_merge_recursive( $pod[ 'fields' ][ $new_field[ 'name' ] ], $new_field );
+                                $new_field = array_merge( $pod[ 'fields' ][ $new_field[ 'name' ] ], $new_field );
 
                             $pod_data[ 'fields' ][ $k ] = $new_field;
                         }

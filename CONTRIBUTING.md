@@ -1,6 +1,6 @@
 # Contribute to the Pods Framework
 
-Community made patches, localizations, bug reports, and contributions are always welcome and are crucial to ensure that Pods Framework remains alive and .
+Community made patches, localizations, bug reports, and contributions are always welcome and are crucial to ensure that Pods Framework remains alive and strong.
 
 When contributing please ensure you follow the guidelines below so that we can keep on top of things.
 

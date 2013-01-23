@@ -954,8 +954,6 @@ class PodsForm {
         else
             self::$field_types = array_merge( $field_types, self::$field_types );
 
-        pods_debug( self::$field_types );
-
         return self::$field_types;
     }
 }

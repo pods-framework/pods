@@ -312,6 +312,7 @@ class Pods {
             'name' => $name,
             'orderby' => null,
             'single' => $single,
+            'args' => array(),
             'in_form' => false
         );
 
@@ -319,6 +320,11 @@ class Pods {
             $params = (object) array_merge( $defaults, (array) $name );
         else
             $params = (object) $defaults;
+
+        if ( is_array( $params->single ) ) {
+            $params->args = $params->single;
+            $params->single = null;
+        }
 
         $value = $this->field( $params );
 
@@ -332,7 +338,8 @@ class Pods {
                 $params->name,
                 array_merge( $this->fields[ $params->name ][ 'options' ], $this->fields[ $params->name ] ),
                 $this->pod_data,
-                $this->id()
+                $this->id(),
+                $params
             );
         }
 

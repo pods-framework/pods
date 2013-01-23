@@ -651,8 +651,8 @@
                     var $current = $el.closest( '.pods-dependency' );
                     var $field = $el;
 
-                    var dependent_flag = '.pods-depends-on-' + $el.data( 'name-clean' );
-                    var dependent_specific = dependent_flag + '-' + $el.val();
+                    var dependent_flag = '.pods-depends-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
+                    var dependent_specific = dependent_flag + '-' + $el.val().replace( /\_/gi, '-' );
 
                     $current.find( dependent_flag ).each( function () {
                         var $dependent_el = $( this );
@@ -715,8 +715,8 @@
                         }
                     } );
 
-                    var exclude_flag = '.pods-excludes-on-' + $el.data( 'name-clean' );
-                    var exclude_specific = exclude_flag + '-' + $el.val();
+                    var exclude_flag = '.pods-excludes-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
+                    var exclude_specific = exclude_flag + '-' + $el.val().replace( /\_/gi, '-' );
 
                     $current.find( exclude_flag ).each( function () {
                         var $dependent_el = $( this );
@@ -765,8 +765,8 @@
                         }
                     } );
 
-                    var wildcard_flag = '.pods-wildcard-on-' + $el.data( 'name-clean' );
-                    var wildcard_value = $el.val();
+                    var wildcard_flag = '.pods-wildcard-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
+                    var wildcard_value = $el.val().replace( /\_/gi, '-' );
 
                     $current.find( wildcard_flag ).each( function () {
                         var $dependent_el = $( this );
@@ -843,8 +843,8 @@
                     var $current = $el.closest( '.pods-dependency-tabs' );
                     var $field = $el;
 
-                    var dependent_flag = '.pods-depends-on-' + $el.data( 'name-clean' );
-                    var dependent_specific = dependent_flag + '-' + $el.val();
+                    var dependent_flag = '.pods-depends-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
+                    var dependent_specific = dependent_flag + '-' + $el.val().replace( /\_/gi, '-' );
 
                     $current.find( dependent_flag ).each( function () {
                         var $dependent_el = $( this );
@@ -907,8 +907,8 @@
                         }
                     } );
 
-                    var exclude_flag = '.pods-excludes-on-' + $el.data( 'name-clean' );
-                    var exclude_specific = exclude_flag + '-' + $el.val();
+                    var exclude_flag = '.pods-excludes-on-' + $el.data( 'name-clean' ).replace( /\_/gi, '-' );
+                    var exclude_specific = exclude_flag + '-' + $el.val().replace( /\_/gi, '-' );
 
                     $current.find( exclude_flag ).each( function () {
                         var $dependent_el = $( this );

@@ -64,7 +64,7 @@
             $type = 'Unknown';
 
             if ( isset( $field_types[ pods_var( 'type', $field ) ] ) )
-                $type = $field_types[ pods_var( 'type', $field ) ];
+                $type = $field_types[ pods_var( 'type', $field ) ][ 'label' ];
 
             echo esc_html( $type ) . ' <span class="pods-manage-row-more">[type: ' . pods_var( 'type', $field ) . ']</span>';
 

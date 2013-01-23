@@ -117,7 +117,7 @@ class PodsInit {
             if ( !defined( 'PODS_LIGHT' ) || !PODS_LIGHT )
                 add_action( 'plugins_loaded', array( $this, 'load_components' ) );
 
-            add_action( 'setup_theme', array( $this, 'load_meta' ) );
+            add_action( 'setup_theme', array( $this, 'load_meta' ), 14 );
 
             add_action( 'init', array( $this, 'init' ), 11 );
 

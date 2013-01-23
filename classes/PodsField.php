@@ -26,7 +26,7 @@ class PodsField {
      * @var string
      * @since 2.0.0
      */
-    public static $label = 'Text';
+    public static $label = 'Unknown';
 
     /**
      * Field Type Preparation

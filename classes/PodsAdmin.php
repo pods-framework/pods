@@ -700,7 +700,7 @@ class PodsAdmin {
         $view = pods_var( 'view', 'get', 'all', null, true );
 
         foreach ( $components as $component => &$component_data ) {
-            if ( 'all' != $view && ( !isset( $component_data[ 'Category' ] ) || $view != strtolower( $component_data[ 'Category' ] ) ) ) {
+            if ( 'all' != $view && ( !isset( $component_data[ 'Category' ] ) || $view != sanitize_title( $component_data[ 'Category' ] ) ) ) {
                 unset( $components[ $component ] );
 
                 continue;
@@ -736,11 +736,12 @@ class PodsAdmin {
                 'name' => $component_data[ 'Name' ],
                 'category' => $component_data[ 'Category' ],
                 'description' => $component_data[ 'Description' ],
-                'developermode' => (boolean) pods_var( 'DeveloperMode', $component_data, false ),
+                'developermode' => pods_var_raw( 'DeveloperMode', $component_data, false ),
+                'mustuse' => pods_var_raw( 'MustUse', $component_data, false ),
                 'toggle' => 0
             );
 
-            if ( true === $component_data[ 'developermode' ] ) {
+            if ( $component_data[ 'developermode' ] ) {
                 if ( !pods_developer() ) {
                     unset( $components[ $component ] );
 
@@ -751,6 +752,8 @@ class PodsAdmin {
             }
 
             if ( isset( PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] ) && 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] )
+                $component_data[ 'toggle' ] = 1;
+            elseif ( $component_data[ 'mustuse' ] )
                 $component_data[ 'toggle' ] = 1;
         }
 
@@ -787,6 +790,7 @@ class PodsAdmin {
             'filters_enhanced' => true,
             'views' => array(
                 'all' => __( 'All', 'pods' ),
+                'field-types' => __( 'Field Types', 'pods' ),
                 'tools' => __( 'Tools', 'pods' ),
                 'integration' => __( 'Integration', 'pods' ),
                 'migration' => __( 'Migration', 'pods' ),
@@ -803,15 +807,6 @@ class PodsAdmin {
         );
 
         pods_ui( $ui );
-    }
-
-    /**
-     * Runs component specific admin functions
-     */
-    public function admin_components_handler () {
-        $component = str_replace( 'pods-component-', '', $_GET[ 'page' ] );
-
-        PodsInit::$components->admin( $component );
     }
 
     /**
@@ -833,10 +828,46 @@ class PodsAdmin {
                 if ( isset( $dependency[ 2 ] ) )
                     $website = $dependency[ 2 ];
 
-                $message = sprintf( __( 'This component requires that you have the <strong>%s</strong> plugin installed and activated. You can find it at %s', 'pods' ), $dependency[ 0 ], '<a href="' . $website . '" target="_blank">' . $website . '</a>' );
+                if ( !empty( $website ) )
+                    $website = ' ' . sprintf( __( 'You can find it at %s', 'pods' ), '<a href="' . $website . '" target="_blank">' . $website . '</a>' );
 
-                return $ui->error( $message );
+                $message = sprintf( __( 'The %s component requires that you have the <strong>%s</strong> plugin installed and activated.', 'pods' ), PodsInit::$components->components[ $component ][ 'Name' ], $dependency[ 0 ] ) . $website;
+
+                $ui->error( $message );
+
+                $ui->manage();
+
+                return;
             }
+        }
+
+        if ( !empty( PodsInit::$components->components[ $component ][ 'ThemeDependency' ] ) ) {
+            $dependency = explode( '|', PodsInit::$components->components[ $component ][ 'ThemeDependency' ] );
+
+            if ( strtolower( $dependency[ 1 ] ) != strtolower( get_template() ) && strtolower( $dependency[ 1 ] ) != strtolower( get_stylesheet() ) ) {
+                $website = '';
+
+                if ( isset( $dependency[ 2 ] ) )
+                    $website = ' ' . sprintf( __( 'You can find it at %s', 'pods' ), '<a href="' . $dependency[ 2 ] . '" target="_blank">' . $dependency[ 2 ] . '</a>' );
+
+                $message = sprintf( __( 'The %s component requires that you have the <strong>%s</strong> theme installed and activated.', 'pods' ), PodsInit::$components->components[ $component ][ 'Name' ], $dependency[ 0 ] ) . $website;
+
+                $ui->error( $message );
+
+                $ui->manage();
+
+                return;
+            }
+        }
+
+        if ( !empty( PodsInit::$components->components[ $component ][ 'MustUse' ] ) ) {
+            $message = sprintf( __( 'The %s component can not be disabled from here. You must deactivate the plugin or theme that added it.', 'pods' ), PodsInit::$components->components[ $component ][ 'Name' ] );
+
+            $ui->error( $message );
+
+            $ui->manage();
+
+            return;
         }
 
         if ( 1 == pods_var( 'toggled' ) ) {
@@ -1086,7 +1117,11 @@ class PodsAdmin {
             'upload',
         );
 
-        if ( !isset( $params->method ) || !in_array( $params->method, $methods ) || !isset( $params->pod ) || !isset( $params->field ) || !isset( $params->uri ) || empty( $params->field ) || empty( $params->uri ) )
+        if ( !isset( $params->method ) || !in_array( $params->method, $methods ) || !isset( $params->pod ) || !isset( $params->field ) || !isset( $params->uri ) || empty( $params->uri ) )
+            pods_error( 'Invalid AJAX request', $this );
+        elseif ( !empty( $params->pod ) && empty( $params->field ) )
+            pods_error( 'Invalid AJAX request', $this );
+        elseif ( empty( $params->pod ) && !current_user_can( 'upload_files' ) )
             pods_error( 'Invalid AJAX request', $this );
 
         // Flash often fails to send cookies with the POST or upload, so we need to pass it in GET or POST instead
@@ -1123,14 +1158,22 @@ class PodsAdmin {
         if ( true === $upload_disabled || !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, $nonce_check ) )
             pods_error( __( 'Unauthorized request', 'pods' ), $this );
 
-        $pod = $this->api->load_pod( array( 'id' => (int) $params->pod ) );
-        $field = $this->api->load_field( array( 'id' => (int) $params->field ) );
+        $pod = array();
+        $field = array(
+            'type' => 'file',
+            'options' => array()
+        );
 
-        if ( empty( $pod ) || empty( $field ) || $pod[ 'id' ] != $field[ 'pod_id' ] || !isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) )
-            pods_error( __( 'Invalid field request', 'pods' ), $this );
+        if ( !empty( $params->pod ) ) {
+            $pod = $this->api->load_pod( array( 'id' => (int) $params->pod ) );
+            $field = $this->api->load_field( array( 'id' => (int) $params->field ) );
 
-        if ( !in_array( $field[ 'type' ], apply_filters( 'pods_file_field_types', array( 'file', 'avatar' ) ) ) )
-            pods_error( __( 'Invalid field', 'pods' ), $this );
+            if ( empty( $pod ) || empty( $field ) || $pod[ 'id' ] != $field[ 'pod_id' ] || !isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) )
+                pods_error( __( 'Invalid field request', 'pods' ), $this );
+
+            if ( !in_array( $field[ 'type' ], apply_filters( 'pods_file_field_types', array( 'file', 'avatar' ) ) ) )
+                pods_error( __( 'Invalid field', 'pods' ), $this );
+        }
 
         $method = $params->method;
 

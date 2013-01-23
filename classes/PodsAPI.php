@@ -4834,57 +4834,10 @@ class PodsAPI {
      * @uses PodsForm::field_loader
      *
      * @since 2.0.0
+     * @deprecated
      */
     public function get_field_types () {
-        $types = array(
-            'text',
-            'website',
-            'phone',
-            'email',
-            'password',
-            'paragraph',
-            'wysiwyg',
-            'code',
-            'datetime',
-            'date',
-            'time',
-            'number',
-            'currency',
-            'file',
-            'avatar',
-            'pick',
-            'boolean',
-            'color',
-            'slug'
-        );
-
-        if ( pods_developer() )
-            $types[] = 'loop';
-
-        $types = $this->do_hook( 'field_types', $types );
-
-        $field_types = pods_transient_get( 'pods_field_types' );
-
-        if ( false === $field_types || count( $types ) != count( $field_types ) ) {
-            $field_types = $types;
-
-            foreach ( $field_types as $k => $field_type ) {
-                unset( $field_types[ $k ] );
-
-                PodsForm::field_loader( $field_type );
-
-                $class_vars = get_class_vars( get_class( PodsForm::$loaded[ $field_type ] ) ); // PHP 5.2.x workaround
-
-                $field_type = $class_vars[ 'type' ];
-                $field_label = $class_vars[ 'label' ];
-
-                $field_types[ $field_type ] = $field_label;
-            }
-
-            pods_transient_set( 'pods_field_types', $field_types );
-        }
-
-        return $field_types;
+        return PodsForm::field_types();
     }
 
     /**

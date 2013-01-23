@@ -5,19 +5,24 @@
 class PodsForm {
 
     /**
-     * @var null
+     * @var string
      */
     static $field = null;
 
     /**
-     * @var null
+     * @var string
      */
     static $field_group = null;
 
     /**
-     * @var null
+     * @var string
      */
     static $field_type = null;
+
+    /**
+     * @var array
+     */
+    static $field_types = array();
 
     /**
      * @var array
@@ -364,7 +369,7 @@ class PodsForm {
      *
      * @return array|null
      */
-    public static function options_setup ( $type ) {
+    public static function options_setup ( $type = null ) {
         $core_defaults = array(
             'id' => 0,
             'name' => '',
@@ -766,20 +771,22 @@ class PodsForm {
      * Autoload a Field Type's class
      *
      * @param string $field_type Field Type indentifier
+     * @param string $file The Field Type class file location
      *
      * @return string
      * @access public
      * @static
      * @since 2.0.0
      */
-    public static function field_loader ( $field_type ) {
+    public static function field_loader ( $field_type, $file = '' ) {
         if ( isset( self::$loaded[ $field_type ] ) ) {
             $class_vars = get_class_vars( get_class( self::$loaded[ $field_type ] ) ); // PHP 5.2.x workaround
 
             self::$field_group = ( isset( $class_vars[ 'group' ] ) ? $class_vars[ 'group' ] : '' );
             self::$field_type = $class_vars[ 'type' ];
 
-            return self::$loaded[ $field_type ];
+            if ( 'Unknown' != $class_vars[ 'label' ] )
+                return self::$loaded[ $field_type ];
         }
 
         include_once PODS_DIR . 'classes/PodsField.php';
@@ -790,13 +797,20 @@ class PodsForm {
         $class_name = "PodsField_{$class_name}";
 
         if ( !class_exists( $class_name ) ) {
-            $file = str_replace( '../', '', apply_filters( 'pods_form_field_include', PODS_DIR . 'classes/fields/' . basename( $field_type ) . '.php', $field_type ) );
+            if ( isset( self::$field_types[ $field_type ] ) && !empty( self::$field_types[ $field_type ][ 'file' ] ) )
+                $file = self::$field_types[ $field_type ][ 'file' ];
 
-            if ( 0 < strlen( untrailingslashit( WP_CONTENT_DIR ) ) && 0 === strpos( $file, untrailingslashit( WP_CONTENT_DIR ) ) && file_exists( $file ) )
+            if ( !empty( $file ) && 0 < strlen( untrailingslashit( ABSPATH ) ) && 0 === strpos( $file, untrailingslashit( ABSPATH ) ) && file_exists( $file ) )
                 include_once $file;
+            else {
+                $file = str_replace( '../', '', apply_filters( 'pods_form_field_include', PODS_DIR . 'classes/fields/' . basename( $field_type ) . '.php', $field_type ) );
 
-            if ( 0 < strlen( untrailingslashit( ABSPATH ) ) && 0 === strpos( $file, untrailingslashit( ABSPATH ) ) && file_exists( $file ) )
-                include_once $file;
+                if ( 0 < strlen( untrailingslashit( WP_CONTENT_DIR ) ) && 0 === strpos( $file, untrailingslashit( WP_CONTENT_DIR ) ) && file_exists( $file ) )
+                    include_once $file;
+
+                if ( 0 < strlen( untrailingslashit( ABSPATH ) ) && 0 === strpos( $file, untrailingslashit( ABSPATH ) ) && file_exists( $file ) )
+                    include_once $file;
+            }
         }
 
         if ( class_exists( $class_name ) )
@@ -843,5 +857,105 @@ class PodsForm {
             return call_user_func_array( array( $class, $method ), $args );
 
         return false;
+    }
+
+    /**
+     * Add a new Pod field type
+     *
+     * @param string $type The new field type identifier
+     * @param string $file The new field type class file location
+     *
+     * @since 2.3.0
+     */
+    public static function register_field_type ( $type, $file = null ) {
+        $field_type = pods_transient_get( 'pods_field_type_' . $type );
+
+        if ( empty( $field_type ) || $field_type[ 'type' ] != $type || $field_type[ 'file' ] != $file ) {
+            PodsForm::field_loader( $type, $file );
+
+            $class_vars = get_class_vars( get_class( PodsForm::$loaded[ $type ] ) ); // PHP 5.2.x workaround
+
+            self::$field_types[ $type ] = $class_vars;
+            self::$field_types[ $type ][ 'file' ] = $file;
+
+            pods_transient_set( 'pods_field_type_' . $type, self::$field_types[ $type ] );
+        }
+        else
+            self::$field_types[ $type ] = $field_type;
+
+        return self::$field_types[ $type ];
+    }
+
+    /**
+     * Get a list of all available field types and include
+     *
+     * @return array
+     *
+     * @since 2.3.0
+     */
+    public static function field_types () {
+        $field_types = array(
+            'text',
+            'website',
+            'phone',
+            'email',
+            'password',
+            'paragraph',
+            'wysiwyg',
+            'code',
+            'datetime',
+            'date',
+            'time',
+            'number',
+            'currency',
+            'file',
+            'avatar',
+            'pick',
+            'boolean',
+            'color',
+            'slug'
+        );
+
+        if ( pods_developer() )
+            $field_types[] = 'loop';
+
+        $field_types = array_merge( $field_types, array_keys( self::$field_types ) );
+
+        $field_types = array_filter( array_unique( $field_types ) );
+
+        $types = apply_filters( 'pods_api_field_types', $field_types );
+
+        $field_types = pods_transient_get( 'pods_field_types' );
+
+        if ( empty( $field_types ) || count( $types ) != count( $field_types ) ) {
+            $field_types = array();
+
+            foreach ( $types as $field_type ) {
+                $file = null;
+
+                if ( isset( self::$field_types[ $field_type ] ) )
+                    $file = self::$field_types[ $field_type ][ 'file' ];
+
+                self::field_loader( $field_type, $file );
+
+                if ( !isset( self::$loaded[ $field_type ] ) || !is_object( self::$loaded[ $field_type ] ) )
+                    continue;
+
+                $class_vars = get_class_vars( get_class( self::$loaded[ $field_type ] ) ); // PHP 5.2.x workaround
+
+                $field_types[ $field_type ] = $class_vars;
+                $field_types[ $field_type ][ 'file' ] = $file;
+            }
+
+            self::$field_types = $field_types;
+
+            pods_transient_set( 'pods_field_types', self::$field_types );
+        }
+        else
+            self::$field_types = array_merge( $field_types, self::$field_types );
+
+        pods_debug( self::$field_types );
+
+        return self::$field_types;
     }
 }

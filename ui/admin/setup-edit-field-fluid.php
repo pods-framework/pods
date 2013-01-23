@@ -5,7 +5,7 @@ $no_advanced = array();
 
 $field_type_options = array();
 
-foreach ( $field_settings[ 'field_types' ] as $field_type => $field_label ) {
+foreach ( $field_settings[ 'field_types' ] as $field_type => $field_type_data ) {
     $field_type_options[ $field_type ] = PodsForm::options_setup( $field_type );
 
     if ( empty( $field_type_options[ $field_type ] ) )
@@ -99,7 +99,7 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
 
                         <div id="pods-additional-field-options-<?php echo $pods_i; ?>" class="pods-tab pods-additional-field-options">
                             <?php
-                                foreach ( $field_settings[ 'field_types' ] as $field_type => $field_label ) {
+                                foreach ( $field_settings[ 'field_types' ] as $field_type => $field_type_data ) {
                             ?>
                                 <div class="pods-depends-on pods-depends-on-field-data-type pods-depends-on-field-data-type-<?php echo PodsForm::clean( $field_type, true ); ?>">
                                     <?php
@@ -150,7 +150,7 @@ $pick_object = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_v
         $type = 'Unknown';
 
         if ( isset( $field_types[ pods_var( 'type', $field ) ] ) )
-            $type = $field_types[ pods_var( 'type', $field ) ];
+            $type = $field_types[ pods_var( 'type', $field ) ][ 'label' ];
 
         echo esc_html( $type ) . ' <span class="pods-manage-row-more">[type: ' . pods_var( 'type', $field ) . ']</span>';
 

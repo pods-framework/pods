@@ -46,7 +46,7 @@ $plupload_init = array(
         '_wpnonce' => $field_nonce,
         'action' => 'pods_upload',
         'method' => 'upload',
-        'pod' => $pod->pod_id,
+        'pod' => ( !is_object( $pod ) ? '0' : $pod->pod_id ),
         'field' => $options[ 'id' ],
         'uri' => $uri_hash
     ),

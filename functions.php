@@ -2329,11 +2329,25 @@ function pods_register_field ( $pod, $name, $field = null ) {
 }
 
 /**
+ * Add a new Pod field type
+ *
+ * @see PodsForm::register_field_type
+ *
+ * @param string $type The new field type identifier
+ * @param string $file The new field type class file location
+ *
+ * @since 2.3.0
+ */
+function pods_register_field_type ( $type, $file = null ) {
+    PodsForm::register_field_type( $type, $file );
+}
+
+/**
  * Add a meta group of fields to add/edit forms
  *
  * @see PodsMeta::group_add
  *
- * @param string|array $pod The pod or type of element to attach the group to.
+ * @param string|array $pod The pod or type of element to attach the group to.f
  * @param string $label Title of the edit screen section, visible to user.
  * @param string|array $fields Either a comma separated list of text fields or an associative array containing field information.
  * @param string $context (optional) The part of the page where the edit screen section should be shown ('normal', 'advanced', or 'side').

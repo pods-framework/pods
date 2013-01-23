@@ -312,7 +312,8 @@ tr.pods-toggled-off {
 .pods-manage-field .pods-field-option select,
 .pods-manage-field .pods-field-option textarea,
 .pods-manage-field .pods-field-option .pods-field.pods-boolean,
-.pods-manage-field .pods-pick-values {
+.pods-manage-field .pods-pick-values,
+.pods-manage-field .pods-field-option .pods-form-ui-field-type-file {
     display: block;
     float: left;
     margin-left: 22px;
@@ -320,6 +321,24 @@ tr.pods-toggled-off {
     max-width: 300px;
 }
 
+.pods-manage-field .pods-field-option .pods-form-ui-field-type-file {
+    padding-bottom: 8px;
+}
+
+.pods-manage-field .pods-field-option .pods-form-ui-field-type-file table.form-table tr.form-field td {
+    padding: 0;
+    border-bottom: none;
+}
+
+.pods-manage-field .pods-field-option .pods-form-ui-field-type-file ul.pods-files li.pods-file-name {
+    left: 46px;
+    right: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pods-manage-field .pods-field-option .pods-form-ui-field-type-file table.form-table,
 .pods-manage-field .pods-field-option-group p.pods-field-option-group-label {
     margin-top: 0;
 }

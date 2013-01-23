@@ -9,15 +9,15 @@ $pod = $_pods[ $obj->id ];
 
 $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
 
-$field_types = $api->get_field_types();
+$field_types = PodsForm::field_types();
 
 $field_types_select = array();
 
-foreach ( $field_types as $type => $label ) {
+foreach ( $field_types as $type => $field_type_data ) {
     /**
      * @var $field_type PodsField
      */
-    $field_type = PodsForm::field_loader( $type );
+    $field_type = PodsForm::field_loader( $type, $field_type_data[ 'file' ] );
 
     $field_type_vars = get_class_vars( get_class( $field_type ) );
 
@@ -38,13 +38,13 @@ foreach ( $field_types as $type => $label ) {
         if ( !isset( $field_types_select[ PodsForm::$field_group ] ) )
             $field_types_select[ PodsForm::$field_group ] = array();
 
-        $field_types_select[ PodsForm::$field_group ][ $type ] = $label;
+        $field_types_select[ PodsForm::$field_group ][ $type ] = $field_type_data[ 'label' ];
     }
     else {
         if ( !isset( $field_types_select[ __( 'Other', 'pods' ) ] ) )
             $field_types_select[ __( 'Other', 'pods' ) ] = array();
 
-        $field_types_select[ __( 'Other', 'pods' ) ][ $type ] = $label;
+        $field_types_select[ __( 'Other', 'pods' ) ][ $type ] = $field_type_data[ 'label' ];
     }
 }
 
@@ -1080,8 +1080,8 @@ elseif ( 'pod' == pods_var( 'type', $pod ) ) {
     <?php
     $pods_field_types = array();
 
-    foreach ( $field_settings[ 'field_types' ] as $field_type => $field_label ) {
-        $pods_field_types[] = "'" . esc_js( $field_type ) . "' : '" . esc_js( $field_label ) . "'";
+    foreach ( $field_settings[ 'field_types' ] as $field_type => $field_type_data ) {
+        $pods_field_types[] = "'" . esc_js( $field_type ) . "' : '" . esc_js( $field_type_data[ 'label' ] ) . "'";
     }
 
     $pods_pick_objects = array();

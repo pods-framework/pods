@@ -509,9 +509,6 @@ class PodsComponents {
         if ( !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, 'pods-component-' . $component . '-' . $method ) )
             pods_error( 'Unauthorized request', $this );
 
-        if ( !isset( $this->components[ $component ][ 'object' ] ) || !method_exists( $this->components[ $component ][ 'object' ], 'ajax_' . $method ) )
-            pods_error( 'API method does not exist', $this );
-
         // Cleaning up $params
         unset( $params->action );
         unset( $params->component );
@@ -520,15 +517,57 @@ class PodsComponents {
 
         $params = (object) apply_filters( 'pods_component_ajax_' . $component . '_' . $method, $params, $component, $method );
 
-        $method = 'ajax_' . $method;
+        $output = false;
 
+        // Handle internal methods
+        if ( isset( $this->components[ $component ][ 'object' ] ) && !method_exists( $this->components[ $component ][ 'object' ], 'ajax_' . $method ) && method_exists( $this, 'admin_ajax_' . $method ) )
+            $output = call_user_func( array( $this, 'admin_ajax_' . $method ), $component, $params );
+        // Make sure method exists
+        elseif ( !isset( $this->components[ $component ][ 'object' ] ) || !method_exists( $this->components[ $component ][ 'object' ], 'ajax_' . $method ) )
+            pods_error( 'API method does not exist', $this );
         // Dynamically call the component method
-        $output = call_user_func( array( $this->components[ $component ][ 'object' ], $method ), $params );
+        else
+            $output = call_user_func( array( $this->components[ $component ][ 'object' ], 'ajax_' . $method ), $params );
 
         if ( !is_bool( $output ) )
             echo $output;
 
         die(); // KBAI!
+    }
+
+    public function admin_ajax_settings ( $component, $params ) {
+        if ( !isset( $this->components[ $component ] ) )
+            wp_die( 'Invalid Component' );
+        elseif ( !method_exists( $this->components[ $component ][ 'object' ], 'options' ) )
+            pods_error( 'Component options method does not exist', $this );
+
+        $options = $this->components[ $component ][ 'object' ]->options( $this->settings[ 'components' ][ $component ] );
+
+        if ( empty( $this->settings[ 'components' ][ $component ] ) )
+            $this->settings[ 'components' ][ $component ] = array();
+
+        foreach ( $options as $field_name => $field_option ) {
+            $field_option = PodsForm::field_setup( $field_option, null, $field_option[ 'type' ] );
+
+            if ( !is_array( $field_option[ 'group' ] ) ) {
+                $field_value = pods_var_raw( 'pods_setting_' . $field_name, $params );
+
+                $this->settings[ 'components' ][ $component ][ $field_name ] = $field_value;
+            }
+            else {
+                foreach ( $field_option[ 'group' ] as $field_group_name => $field_group_option ) {
+                    $field_value = pods_var_raw( 'pods_setting_' . $field_group_name, $params );
+
+                    $this->settings[ 'components' ][ $component ][ $field_group_name ] = $field_value;
+                }
+            }
+        }
+
+        $settings = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $this->settings, JSON_UNESCAPED_UNICODE ) : json_encode( $this->settings );
+
+        update_option( 'pods_component_settings', $settings );
+
+        return '1';
     }
 }
 

@@ -7,7 +7,7 @@ class PodsWidgetView extends WP_Widget {
     /**
      * Register the widget
      */
-    public function PodsWidgetField () {
+    public function PodsWidgetView () {
         $this->WP_Widget(
             'pods_widget_view',
             'Pods - View',

@@ -379,6 +379,11 @@ class PodsUI {
     public $actions_bulk = array(); // enabled bulk actions
 
     /**
+     * @var bool|string
+     */
+    public $author_restrict = false;
+
+    /**
      * @var bool
      */
     public $save = false; // Allow custom save handling for tables that aren't Pod-based
@@ -1345,6 +1350,17 @@ class PodsUI {
             if ( empty( $this->row ) )
                 return $this->error( sprintf( __( '<strong>Error:</strong> %s not found.', 'pods' ), $this->item ) );
 
+            if ( !empty( $this->author_restrict ) && $this->restricted() ) {
+                if ( is_object( $this->pod ) && get_current_user_id() != $this->pod->field( $this->author_restrict . '.ID', true ) )
+                    return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to edit this %s.', 'pods' ), $this->item ) );
+                elseif ( isset( $this->row[ $this->author_restrict ] ) ) {
+                    if ( is_array( $this->row[ $this->author_restrict ] ) && isset( $this->row[ $this->author_restrict ][ 'ID' ] ) && get_current_user_id() != $this->row[ $this->author_restrict ][ 'ID' ] )
+                        return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to edit this %s.', 'pods' ), $this->item ) );
+                    elseif ( !is_array( $this->row[ $this->author_restrict ] ) && get_current_user_id() != $this->row[ $this->author_restrict ] )
+                        return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to edit this %s.', 'pods' ), $this->item ) );
+                }
+            }
+
             $label = $this->label[ 'edit' ];
             $id = $this->row[ $this->sql[ 'field_id' ] ];
             $vars = array(
@@ -1427,7 +1443,10 @@ class PodsUI {
         $singular_label = $this->item;
         $plural_label = $this->items;
 
-        pods_view( PODS_DIR . 'ui/admin/form.php', compact( array_keys( get_defined_vars() ) ) );
+        if ( is_object( $this->pod ) && 'settings' == $this->pod->pod_data[ 'type' ] )
+            pods_view( PODS_DIR . 'ui/admin/form-settings.php', compact( array_keys( get_defined_vars() ) ) );
+        else
+            pods_view( PODS_DIR . 'ui/admin/form.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**
@@ -1761,6 +1780,15 @@ class PodsUI {
                 'sql' => $sql
             );
 
+            if ( !empty( $this->author_restrict ) && $this->restricted() ) {
+                if ( empty( $params[ 'where' ] ) )
+                    $params[ 'where' ] = array();
+                elseif ( !is_array( $params[ 'where' ] ) )
+                    $params[ 'where' ] = (array) $params[ 'where' ];
+
+                $params[ 'where' ][] = pods_sanitize( $this->author_restrict ) . '.`ID` = ' . get_current_user_id();
+            }
+
             if ( $full )
                 $params[ 'limit' ] = -1;
 
@@ -1806,6 +1834,15 @@ class PodsUI {
                 'search_query' => $this->search,
                 'fields' => $this->fields[ 'search' ]
             );
+
+            if ( !empty( $this->author_restrict ) && $this->restricted() ) {
+                if ( empty( $params[ 'where' ] ) )
+                    $params[ 'where' ] = array();
+                elseif ( !is_array( $params[ 'where' ] ) )
+                    $params[ 'where' ] = (array) $params[ 'where' ];
+
+                $params[ 'where' ][] = pods_sanitize( $this->author_restrict ) . '.`ID` = ' . get_current_user_id();
+            }
 
             if ( $full )
                 $params[ 'limit' ] = -1;
@@ -3238,6 +3275,25 @@ class PodsUI {
         }
 
         return $exclusion;
+    }
+
+    public function restricted ( $action = 'edit' ) {
+        $restricted = false;
+
+        if ( is_object( $this->pod ) ) {
+            $restricted = true;
+
+            if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) )
+                $restricted = false;
+            elseif ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) )
+                $restricted = false;
+            elseif ( !empty( $this->author_restrict ) && current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) )
+                $restricted = false;
+        }
+
+        $restricted = $this->do_hook( 'restricted', $restricted, $action );
+
+        return $restricted;
     }
 
     /*

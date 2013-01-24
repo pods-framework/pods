@@ -1,20 +1,18 @@
+
 <div class="wrap pods-admin">
     <div id="icon-pods" class="icon32"><br /></div>
-    <form action="" method="post" class="pods-submittable">
+    <form action="" method="post" class="pods-submittable pods-form pods-form-pod-<?php echo $pod->pod; ?>">
         <div class="pods-submittable-fields">
-            <?php echo PodsForm::field( 'action', 'pods_admin_components', 'hidden' ); ?>
-            <?php echo PodsForm::field( 'component', $component, 'hidden' ); ?>
-            <?php echo PodsForm::field( 'method', 'settings', 'hidden' ); ?>
-            <?php echo PodsForm::field( '_wpnonce', wp_create_nonce( 'pods-component-' . $component . '-settings' ), 'hidden' ); ?>
+            <?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
+            <?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>
+            <?php echo PodsForm::field( 'do', $do, 'hidden' ); ?>
+            <?php echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' ); ?>
+            <?php echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' ); ?>
+            <?php echo PodsForm::field( '_pods_id', ( $duplicate ? 0 : $pod->id() ), 'hidden' ); ?>
+            <?php echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
+            <?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $fields ) ), 'hidden' ); ?>
 
-            <h2><?php _e( 'Settings', 'pods' ); ?>: <?php echo $component_label; ?></h2>
-
-            <?php
-                if ( isset( $_GET[ 'do' ] ) )
-                    pods_message( __( 'Settings saved successfully.', 'pods' ) );
-            ?>
-
-            <table class="form-table pods-manage-field">
+            <table class="form-table">
                 <?php
                     $depends_on = false;
 

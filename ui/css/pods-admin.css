@@ -263,30 +263,30 @@ tr.pods-toggled-off {
 /*
  * Pods Fields
  */
-.pods-manage-field div {
+div.pods-manage-field div {
     overflow: hidden;
     zoom: 1;
 }
 
-.pods-manage-field .pods-field-option,
-.pods-manage-field .pods-field-option-group {
+div.pods-manage-field .pods-field-option,
+div.pods-manage-field .pods-field-option-group {
     background: #fcfcfc;
     border-bottom: 1px solid #dfdfdf;
     padding: 10px;
 }
 
-.pods-manage-field .pods-pick-values li,
-.pods-manage-field .pods-field {
+div.pods-manage-field .pods-pick-values li,
+div.pods-manage-field .pods-field {
     position: relative;
 }
 
-.pods-manage-field .pods-field-option:nth-child(odd),
-.pods-manage-field .pods-field-option-group:nth-child(odd) {
+div.pods-manage-field .pods-field-option:nth-child(odd),
+div.pods-manage-field .pods-field-option-group:nth-child(odd) {
     background: #fff;
 }
 
-.pods-manage-field .pods-field-option label,
-.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
+div.pods-manage-field .pods-field-option label,
+div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
     padding-top: 4px;
     float: left;
     width: 30%;

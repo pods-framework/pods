@@ -1393,6 +1393,9 @@ class PodsUI {
 
         $object_fields = (array) pods_var_raw( 'object_fields', $this->pod->pod_data, array(), null, true );
 
+        if ( empty( $object_fields ) && in_array( $this->pod->pod_data[ 'type' ], array( 'post_type', 'taxonomy', 'media', 'user', 'comment' ) ) )
+            $object_fields = $this->pod->api->get_wp_object_fields( $this->pod->pod_data[ 'type' ], $this->pod->pod_data );
+
         if ( empty( $fields ) ) {
             // Add core object fields if $fields is empty
             $fields = array_merge( $object_fields, $this->pod->fields );

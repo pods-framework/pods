@@ -1184,7 +1184,10 @@ function pods_shortcode ( $tags, $content = null ) {
         'form' => null,
         'fields' => null,
         'label' => null,
-        'thank_you' => null
+        'thank_you' => null,
+        'view' => null,
+        'cache_type' => 'none',
+        'expires' => 0
     );
 
     if ( !empty( $tags ) )
@@ -1196,6 +1199,9 @@ function pods_shortcode ( $tags, $content = null ) {
 
     if ( empty( $content ) )
         $content = null;
+
+    if ( 0 < strlen( $tags[ 'view' ] ) )
+        return pods_view( $tags[ 'view' ], null, (int) $tags[ 'expires' ], $tags[ 'cache_mode' ] );
 
     if ( empty( $tags[ 'name' ] ) ) {
         if ( in_the_loop() || is_singular() ) {
@@ -1308,6 +1314,21 @@ function pods_shortcode ( $tags, $content = null ) {
         echo $pod->filters( $tags[ 'filters' ], $tags[ 'filters_label' ] );
 
     return ob_get_clean();
+}
+
+/**
+ * Form Shortcode support for use anywhere that support WP Shortcodes
+ *
+ * @param array $tags An associative array of shortcode properties
+ * @param string $content Not currently used
+ *
+ * @return string
+ * @since 2.3
+ */
+function pods_shortcode_form ( $tags, $content = null ) {
+    $tags[ 'form' ] = 1;
+
+    return pods_shortcode( $tags );
 }
 
 /**

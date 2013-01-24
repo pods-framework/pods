@@ -7,7 +7,7 @@ class PodsView {
     /**
      * @var array $cache_modes Array of available cache modes
      */
-    static $cache_modes = array( 'transient', 'site-transient', 'cache' );
+    static $cache_modes = array( 'none', 'transient', 'site-transient', 'cache' );
 
     /**
      *
@@ -36,6 +36,9 @@ class PodsView {
 
             $expires = pods_var_user( $anon, $user, $capability );
         }
+
+        if ( 'none' == $cache_mode )
+            $expires = false;
 
         if ( false !== $expires && empty( $expires ) )
             $expires = 0;
@@ -265,6 +268,17 @@ class PodsView {
      * @return bool|mixed|string|void
      */
     private static function get_template_part ( $_view, $_data = null ) {
+        if ( 0 === strpos( $_view, 'http://' ) || 0 === strpos( $_view, 'https://' ) ) {
+            $_view = apply_filters( 'pods_view_url_include', $_view );
+
+            if ( empty( $_view ) )
+                return '';
+
+            $response = wp_remote_get( $_view );
+
+            return wp_remote_retrieve_body( $response );
+        }
+
         $_view = self::locate_template( $_view );
 
         if ( empty( $_view ) )

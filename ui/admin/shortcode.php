@@ -18,6 +18,9 @@
                 fields = $( '#pod_fields' ).val(),
                 label = $( '#pod_label' ).val(),
                 thank_you = $( '#pod_thank_you' ).val(),
+                view = $( '#pod_view' ).val(),
+                cache_type = $( '#pod_cache_type' ).val(),
+                expires = $( '#pod_expires' ).val(),
                 shortcode = '[pods',
                 pods_shortcode_first = true;
 
@@ -64,6 +67,11 @@
                         errors.push( "Pod" );
                     }
                     break;
+                case 'view':
+                    if ( !view || !view.length ) {
+                        errors.push( "File to include" );
+                    }
+                    break;
             }
 
             if ( errors.length ) {
@@ -84,6 +92,9 @@
             fields = ( fields + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             label = ( label + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             thank_you = ( thank_you + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            view = ( view + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            cache_type = ( cache_type + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            expires = ( expires + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
 
             if ( pod_select.length )
                 shortcode += ' name="' + pod_select + '"';
@@ -119,6 +130,16 @@
 
             if ( thank_you.length )
                 shortcode += ' thank-you="' + thank_you + '"';
+
+            if ( view.length )
+                shortcode += ' view="' + view + '"';
+
+            if ( cache_type.length && 'none' != cache_type ) {
+                shortcode += ' cache_type="' + cache_type + '"';
+
+                if ( expires.length )
+                    shortcode += ' expires="' + expires + '"';
+            }
 
             shortcode += ']';
 
@@ -163,6 +184,11 @@
                     break;
                 case 'form':
                     $( '#pod_select, #pod_slug, #pod_fields, #pod_label, #pod_thank_you, #pods_insert_shortcode' ).each( function () {
+                        $( this ).closest( '.pods-section' ).removeClass( 'hide' );
+                    } )
+                    break;
+                case 'view':
+                    $( '#pod_view, #pod_cache_mode, #pod_expires, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
@@ -234,6 +260,7 @@
                         <option value="field"><?php _e( 'Display a field from a single Pod item', 'pods' ); ?></option>
                         <option value="field-current" SELECTED><?php _e( 'Display a field from this item', 'pods' ); ?></option>
                         <option value="form"><?php _e( 'Display a form for creating and editing Pod items', 'pods' ); ?></option>
+                        <option value="view"><?php _e( 'Include a file from a theme or another site, with caching options', 'pods' ); ?></option>
                     </select>
                 </div>
 
@@ -333,6 +360,38 @@
                     <label for="pod_thank_you"><?php _e( 'Thank You URL upon submission', 'pods' ); ?></label>
 
                     <input type="text" id="pod_thank_you" name="pod_thank_you" />
+                </div>
+
+                <div class="pods-section">
+                    <label for="pod_view"><?php _e( 'File to include', 'pods' ); ?></label>
+
+                    <input type="text" name="pod_view" id="pod_view" />
+                </div>
+
+                <div class="pods-section">
+                    <label for="pod_cache_type"><?php _e( 'Cache Type', 'pods' ); ?></label>
+
+                    <?php
+                        $cache_types = array(
+                            'none' => __( 'Disable Caching', 'pods' ),
+                            'cache' => __( 'Object Cache', 'pods' ),
+                            'transient' => __( 'Transient', 'pods' ),
+                            'site-transient' => __( 'Site Transient', 'pods' )
+                        );
+                    ?>
+                    <select id="pod_cache_type" name="pod_cache_type">
+                        <?php foreach ( $cache_types as $cache_type_option => $cache_type_label ): ?>
+                            <option value="<?php echo $cache_type_option; ?>">
+                                <?php echo esc_html( $cache_type_label ); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="pods-section">
+                    <label for="pod_expires"><?php _e( 'Cache Expiration (in seconds)', 'pods' ); ?></label>
+
+                    <input type="text" name="pod_expires" id="pod_expires" />
                 </div>
 
                 <div class="pods-section" style="text-align: right;">

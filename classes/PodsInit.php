@@ -173,6 +173,7 @@ class PodsInit {
             @session_start();
 
         add_shortcode( 'pods', 'pods_shortcode' );
+        add_shortcode( 'pods-form', 'pods_shortcode_form' );
 
         $security_settings = array(
             'pods_disable_file_browser' => 0,
@@ -1070,7 +1071,8 @@ class PodsInit {
             'PodsWidgetSingle',
             'PodsWidgetList',
             'PodsWidgetField',
-            'PodsWidgetForm'
+            'PodsWidgetForm',
+            'PodsWidgetView'
         );
 
         foreach ( $widgets as $widget ) {

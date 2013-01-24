@@ -71,7 +71,6 @@ class PodsField_File extends PodsField {
                 'data' => apply_filters(
                     'pods_form_ui_field_file_uploader_options',
                     array(
-                        'media' => __( 'Attachments Media Modal (WP Media Library)', 'pods' ),
                         'attachment' => __( 'Attachments (WP Media Library)', 'pods' ),
                         'plupload' => __( 'Plupload', 'pods' )
                     )
@@ -151,22 +150,24 @@ class PodsField_File extends PodsField {
             ),
             'file_modal_title' => array(
                 'label' => __( 'Modal Title', 'pods' ),
-                'depends-on' => array( 'file_uploader' => 'media' ),
+                'depends-on' => array( 'file_uploader' => 'attachment' ),
                 'default' => __( 'Attach a file', 'pods' ),
                 'type' => 'text'
             ),
             'file_modal_add_button' => array(
                 'label' => __( 'Modal Add Button Text', 'pods' ),
-                'depends-on' => array( 'file_uploader' => 'media' ),
+                'depends-on' => array( 'file_uploader' => 'attachment' ),
                 'default' => __( 'Add File', 'pods' ),
                 'type' => 'text'
             )
         );
 
-        if ( !pods_wp_version( '3.5' ) )
-            unset( $options[ 'file_uploader' ][ 'data' ][ 'media' ] );
-        /*else
-            unset( $options[ 'file_uploader' ][ 'data' ][ 'attachment' ] );*/
+        if ( !pods_wp_version( '3.5' ) ) {
+            unset( $options[ 'file_modal_add_button' ] );
+            unset( $options[ 'file_modal_add_button' ] );
+            unset( $options[ 'file_modal_title' ] );
+            unset( $options[ 'file_modal_add_button' ] );
+        }
 
         return $options;
     }
@@ -240,10 +241,12 @@ class PodsField_File extends PodsField {
             $field_type = 'plupload';
         elseif ( 'plupload' == pods_var( 'file_uploader', $options ) )
             $field_type = 'plupload';
-        elseif ( 'attachment' == pods_var( 'file_uploader', $options ) )
-            $field_type = 'attachment';
-        elseif ( 'media' == pods_var( 'file_uploader', $options ) )
-            $field_type = 'media';
+        elseif ( 'attachment' == pods_var( 'file_uploader', $options ) ) {
+            if ( !pods_wp_version( '3.5' ) || !is_admin() || !in_array( $GLOBALS[ 'pagenow' ], array( 'post.php', 'post-new.php' ) ) )
+                $field_type = 'attachment';
+            else
+                $field_type = 'media';
+        }
         else {
             // Support custom File Uploader integration
             do_action( 'pods_form_ui_field_file_uploader_' . pods_var( 'file_uploader', $options ), $name, $value, $options, $pod, $id );

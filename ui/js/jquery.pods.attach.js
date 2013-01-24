@@ -29,7 +29,9 @@ function pods_attachments ( src, file_limit ) {
                     item.remove(); }
                 );
 
-                item_parent.find( 'td.savesend input' ).trigger( 'click' );
+                var wp_media_meta = item_parent;
+
+                pods_thickbox_send( wp_media_meta, e );
 
                 item_parent.find( 'span.pods-attached a' ).on( 'click', function ( e ) {
                     parent.eval( 'tb_remove()' );
@@ -47,8 +49,13 @@ function pods_attachments ( src, file_limit ) {
     }
 
     pods_thickbox.find( 'td.savesend input' ).unbind( 'click' ).click( function ( e ) {
-        // grab our meta as per the Media library
         var wp_media_meta = jQuery( this ).parent().parent().parent();
+
+        pods_thickbox_send( wp_media_meta, e );
+    } );
+
+    function pods_thickbox_send ( wp_media_meta, e ) {
+        // grab our meta as per the Media library
         var wp_media_title = wp_media_meta.find( 'tr.post_title td.field input' ).val();
         var wp_media_caption = wp_media_meta.find( 'tr.post_excerpt td.field input' ).val();
         var wp_media_url = wp_media_meta.find( 'tr.url td.field input.urlfield' ).val();
@@ -98,7 +105,7 @@ function pods_attachments ( src, file_limit ) {
         }
 
         e.preventDefault();
-    } );
+    }
 
     // update button
     if ( pods_thickbox.find( '.media-item .savesend input[type=submit], #insertonlybutton' ).length ) {

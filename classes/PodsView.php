@@ -271,7 +271,7 @@ class PodsView {
         if ( 0 === strpos( $_view, 'http://' ) || 0 === strpos( $_view, 'https://' ) ) {
             $_view = apply_filters( 'pods_view_url_include', $_view );
 
-            if ( empty( $_view ) )
+            if ( empty( $_view ) || ( defined( 'PODS_REMOTE_VIEWS' ) && PODS_REMOTE_VIEWS ) )
                 return '';
 
             $response = wp_remote_get( $_view );

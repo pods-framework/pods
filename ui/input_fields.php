@@ -133,7 +133,7 @@ elseif ('desc' == $coltype) {
     if (is_admin()) {
         $coltype = 'desc_tinymce';
 
-        require_once(ABSPATH . '/wp-admin/includes/template.php');
+        require_once( ABSPATH . '/wp-admin/includes/template.php' );
 
         if (!function_exists('wp_editor') && (!isset($coltype_exists[$coltype]) || empty($coltype_exists[$coltype]))) {
             // New TinyMCE API by azaozz
@@ -234,7 +234,7 @@ elseif ('file' == $coltype) {
                 flash_swf_url: '<?php echo includes_url('js/plupload/plupload.flash.swf'); ?>',
                 silverlight_xap_url: '<?php echo includes_url('js/plupload/plupload.silverlight.xap'); ?>',
                 multipart: true,
-                urlstresm_upload: true,
+                urlstream_upload: true,
                 multipart_params: {
                     "_wpnonce": "<?php echo wp_create_nonce('pods-wp_handle_upload_advanced'); ?>",
                     "action": "wp_handle_upload_advanced",

@@ -3,7 +3,7 @@
 Plugin Name: Pods Framework
 Plugin URI: http://podsframework.org/
 Description: Pods is a framework for creating, managing, and deploying customized content types.
-Version: 1.14.4
+Version: 1.14.6
 Author: Pods Framework Team
 Author URI: http://podsframework.org/about/
 License: GPLv2 or later
@@ -23,9 +23,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-// Pods 2.0 beta tester compatibility
+// Pods 2.0 compatibility
 if ( !defined( 'PODS_VERSION' ) ) {
-    define( 'PODS_VERSION', '1.14.4' );
+    define( 'PODS_VERSION', '1.14.6' );
 
     if ( !defined( 'PODS_WP_VERSION_MINIMUM' ) )
         define( 'PODS_WP_VERSION_MINIMUM', '3.1' );

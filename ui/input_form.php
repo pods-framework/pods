@@ -30,6 +30,9 @@ jQuery(function() {
         jQuery(".rightside." + active_file + " .form").append('<div id="' + file_id + '" class="success"><div class="btn dropme"></div>' + file_name + '</div>');
         jQuery("#dialog").jqmHide();
     });
+    jQuery( '.button.fb_cxl' ).click( function () {
+        jQuery( "#dialog" ).jqmHide();
+    } );
 <?php
     }
 ?>
@@ -47,10 +50,10 @@ jQuery(function() {
 <?php
     if (!(defined('PODS_DISABLE_FILE_BROWSER') && true === PODS_DISABLE_FILE_BROWSER) && !(defined('PODS_FILES_REQUIRE_LOGIN') && is_bool(PODS_FILES_REQUIRE_LOGIN) && true === PODS_FILES_REQUIRE_LOGIN && !is_user_logged_in()) && !(defined('PODS_FILES_REQUIRE_LOGIN') && !is_bool(PODS_FILES_REQUIRE_LOGIN) && (!is_user_logged_in() || !current_user_can(PODS_FILES_REQUIRE_LOGIN)))) {
 ?>
-    jQuery( '#dialog' ).on( 'mouseenter', '.file_match', function () {
+    jQuery( '#dialog' ).delegate( '.file_match', 'mouseenter', function () {
         var src = jQuery( this ).data( 'source' );
         jQuery( ".pods_form .fb_preview, .pods_admin .fb_preview" ).css( "background-image", "url('" + src + "')" ).show();
-    } ).on( 'mouseout', '.file_match', function () {
+    } ).delegate( '.file_match', 'mouseout', function () {
         jQuery( ".pods_form .fb_preview, .pods_admin .fb_preview" ).css( "background-image", '' ).hide();
     } ).jqm();
 <?php
@@ -155,6 +158,7 @@ if (1 == $form_count && !(defined('PODS_DISABLE_FILE_BROWSER') && true === PODS_
 <div class="jqmWindow" id="dialog">
     <input type="text" id="file_search" value="" />
     <input type="button" class="button" value="Narrow results" onclick="fileBrowser()" />
+    <input type="button" class="button fb_cxl" value="Cancel" onclick="fileBrowser()" />
     <div class="filebox"></div>
     <div class='fb_preview'></div>
 </div>

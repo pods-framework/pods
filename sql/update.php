@@ -258,7 +258,7 @@ if (version_compare($installed, '1.7.6', '<')) {
             );
             $attach_id = wp_insert_attachment( $attachment, $file, 0 );
             if($attach_id>0) {
-                require_once(ABSPATH . "wp-admin" . '/includes/image.php');
+                require_once( ABSPATH . "wp-admin" . '/includes/image.php' );
                 $attach_data = wp_generate_attachment_metadata( $attach_id, $file );
                 wp_update_attachment_metadata( $attach_id,  $attach_data );
                 $sizes = array('thumb','medium','large');

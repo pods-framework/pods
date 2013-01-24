@@ -170,7 +170,7 @@ function loadPod() {
                     html += name+" ("+coltype+")"+required+"</li>";
                 }
                 jQuery("#podArea #column_list").html('<ul class="sortable">'+html+'</ul>');
-                jQuery(".sortable").sortable("destroy");
+                jQuery(".sortable:data(sortable)").sortable("destroy");
                 jQuery(".sortable").sortable({axis: "y", handle: ".dragme"});
 
                 jQuery("#podArea #column_list .btn").click(function() {

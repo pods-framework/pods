@@ -44,7 +44,9 @@ $method = 'datetimepicker';
 
 $args = array(
     'timeFormat' => $time_format[ pods_var( 'datetime_time_format', $options, 'h_mma', null, true ) ],
-    'dateFormat' => $date_format[ pods_var( 'datetime_format', $options, 'mdy', null, true ) ]
+    'dateFormat' => $date_format[ pods_var( 'datetime_format', $options, 'mdy', null, true ) ],
+    'changeMonth' => true,
+    'changeYear' => true
 );
 
 if ( false !== stripos( $args[ 'timeFormat' ], 'tt' ) )

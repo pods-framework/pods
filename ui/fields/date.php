@@ -29,7 +29,9 @@ $format = PodsForm::field_method( 'date', 'format', $options );
 $method = 'datepicker';
 
 $args = array(
-    'dateFormat' => $date_format[ pods_var( 'date_format', $options, 'mdy', null, true ) ]
+    'dateFormat' => $date_format[ pods_var( 'date_format', $options, 'mdy', null, true ) ],
+    'changeMonth' => true,
+    'changeYear' => true
 );
 
 $html5_format = 'Y-m-d';

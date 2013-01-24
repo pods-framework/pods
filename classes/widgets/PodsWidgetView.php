@@ -2,7 +2,7 @@
 /**
  * @package Pods\Widgets
  */
-class PodsWidgetField extends WP_Widget {
+class PodsWidgetView extends WP_Widget {
 
     /**
      * Register the widget

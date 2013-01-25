@@ -19,7 +19,7 @@
                 label = $( '#pod_label' ).val(),
                 thank_you = $( '#pod_thank_you' ).val(),
                 view = $( '#pod_view' ).val(),
-                cache_type = $( '#pod_cache_type' ).val(),
+                cache_mode = $( '#pod_cache_mode' ).val(),
                 expires = $( '#pod_expires' ).val(),
                 shortcode = '[pods',
                 pods_shortcode_first = true;
@@ -93,7 +93,7 @@
             label = ( label + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             thank_you = ( thank_you + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             view = ( view + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
-            cache_type = ( cache_type + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
+            cache_mode = ( cache_mode + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
             expires = ( expires + '' ).replace( /\\"/g, '\\$&' ).replace( /\u0000/g, '\\0' );
 
             if ( pod_select.length )
@@ -134,8 +134,8 @@
             if ( view.length )
                 shortcode += ' view="' + view + '"';
 
-            if ( cache_type.length && 'none' != cache_type ) {
-                shortcode += ' cache_type="' + cache_type + '"';
+            if ( cache_mode.length && 'none' != cache_mode ) {
+                shortcode += ' cache_mode="' + cache_mode + '"';
 
                 if ( expires.length )
                     shortcode += ' expires="' + expires + '"';
@@ -369,22 +369,22 @@
                 </div>
 
                 <div class="pods-section">
-                    <label for="pod_cache_type"><?php _e( 'Cache Type', 'pods' ); ?></label>
+                    <label for="pod_cache_mode"><?php _e( 'Cache Type', 'pods' ); ?></label>
 
                     <?php
-                        $cache_types = array(
+                        $cache_modes = array(
                             'none' => __( 'Disable Caching', 'pods' ),
                             'cache' => __( 'Object Cache', 'pods' ),
                             'transient' => __( 'Transient', 'pods' ),
                             'site-transient' => __( 'Site Transient', 'pods' )
                         );
 
-                        $default_cache_type = 'transient';
+                        $default_cache_mode = 'transient';
                     ?>
-                    <select id="pod_cache_type" name="pod_cache_type">
-                        <?php foreach ( $cache_types as $cache_type_option => $cache_type_label ): ?>
-                            <option value="<?php echo $cache_type_option; ?>"<?php echo ( $default_cache_type == $cache_type_option ? ' SELECTED' : '' ); ?>>
-                                <?php echo esc_html( $cache_type_label ); ?>
+                    <select id="pod_cache_mode" name="pod_cache_mode">
+                        <?php foreach ( $cache_modes as $cache_mode_option => $cache_mode_label ): ?>
+                            <option value="<?php echo $cache_mode_option; ?>"<?php echo ( $default_cache_mode == $cache_mode_option ? ' SELECTED' : '' ); ?>>
+                                <?php echo esc_html( $cache_mode_label ); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>

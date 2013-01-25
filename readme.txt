@@ -146,7 +146,7 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 = 2.0.3 - October 4th, 2012 =
 * We've fixed many more bugs, that means even more stability and backwards compatibility for those who have been holding off on upgrading
 * Added: 'expires' parameter to find() / findRecords() calls, defaults to null, but set it to 0 or above (in seconds) and it will cache the results for as long as you'd like.
-* Added: 'cache_type' parameter to find() / findRecords() calls, defaults to 'cache', additional options are 'transient' and 'site-transient' and it kicks in when 'expires' is 0 or above
+* Added: 'cache_mode' parameter to find() / findRecords() calls, defaults to 'cache', additional options are 'transient' and 'site-transient' and it kicks in when 'expires' is 0 or above
 * Added: 'search_across' parameter to find() / findRecords() calls, defaults to false, set it to true to have your searches search across all of the fields on your pod (excluding relationship / files)
 * Added: 'search_across_pick' parameter to find() / findRecords() calls, defaults to false, set it to true to have your searches search across all of the relationship fields on your pod
 * Added: 'search_across_file' parameter to find() / findRecords() calls, defaults to false, set it to true to have your searches search across all of the file fields on your pod

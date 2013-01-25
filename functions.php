@@ -1197,7 +1197,7 @@ function pods_shortcode ( $tags, $content = null ) {
         'label' => null,
         'thank_you' => null,
         'view' => null,
-        'cache_type' => 'none',
+        'cache_mode' => 'none',
         'expires' => 0
     );
 
@@ -1293,8 +1293,8 @@ function pods_shortcode ( $tags, $content = null ) {
         if ( empty( $tags[ 'pagination' ] ) )
             $params[ 'pagination' ] = false;
 
-        if ( !empty( $tags[ 'cache_type' ] ) && 'none' != $tags[ 'cache_type' ] ) {
-            $params[ 'cache_type' ] = $tags[ 'cache_type' ];
+        if ( !empty( $tags[ 'cache_mode' ] ) && 'none' != $tags[ 'cache_mode' ] ) {
+            $params[ 'cache_mode' ] = $tags[ 'cache_mode' ];
             $params[ 'expires' ] = (int) $tags[ 'expires' ];
         }
 

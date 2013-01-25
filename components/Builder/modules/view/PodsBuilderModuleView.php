@@ -73,18 +73,18 @@ if ( !class_exists( 'PodsBuilderModuleView' ) ) {
     </tr>
     <tr>
         <td valign="top">
-            <label for="cache_type"><?php _e( 'Cache Type', 'pods' ); ?></label>
+            <label for="cache_mode"><?php _e( 'Cache Type', 'pods' ); ?></label>
         </td>
         <td>
             <?php
-                $cache_types = array(
+                $cache_modes = array(
                     'none' => __( 'Disable Caching', 'pods' ),
                     'cache' => __( 'Object Cache', 'pods' ),
                     'transient' => __( 'Transient', 'pods' ),
                     'site-transient' => __( 'Site Transient', 'pods' )
                 );
 
-                $form->add_drop_down( 'cache_type', $cache_types );
+                $form->add_drop_down( 'cache_mode', $cache_modes );
             ?>
         </td>
     </tr>
@@ -106,7 +106,7 @@ if ( !class_exists( 'PodsBuilderModuleView' ) ) {
             $args = array(
                 'view' => trim( pods_var_raw( 'view', $fields[ 'data' ], '' ) ),
                 'expires' => (int) trim( pods_var_raw( 'expires', $fields[ 'data' ], ( 60 * 5 ) ) ),
-                'cache_type' => trim( pods_var_raw( 'cache_type', $fields[ 'data' ], 'transient', null, true ) )
+                'cache_mode' => trim( pods_var_raw( 'cache_mode', $fields[ 'data' ], 'transient', null, true ) )
             );
 
             if ( 0 < strlen( $args[ 'view' ] ) && 'none' != $args[ 'cache_mode' ] )

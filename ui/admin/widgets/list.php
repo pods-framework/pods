@@ -84,21 +84,21 @@
     </li>
 
     <li>
-        <label for="<?php echo $this->get_field_id( 'cache_type' ); ?>"><?php _e( 'Cache Type', 'pods' ); ?></label>
+        <label for="<?php echo $this->get_field_id( 'cache_mode' ); ?>"><?php _e( 'Cache Type', 'pods' ); ?></label>
 
         <?php
-            $cache_types = array(
+            $cache_modes = array(
                 'none' => __( 'Disable Caching', 'pods' ),
                 'cache' => __( 'Object Cache', 'pods' ),
                 'transient' => __( 'Transient', 'pods' ),
                 'site-transient' => __( 'Site Transient', 'pods' )
             );
         ?>
-        <select id="<?php echo $this->get_field_id( 'cache_type' ); ?>" name="<?php echo $this->get_field_name( 'cache_type' ); ?>">
-            <?php foreach ( $cache_types as $cache_type_option => $cache_type_label ): ?>
-            <?php $selected = ( $cache_type_option == $cache_type ) ? 'selected' : ''; ?>
-            <option value="<?php echo $cache_type_option; ?>" <?php echo $selected; ?>>
-                <?php echo esc_html( $cache_type_label ); ?>
+        <select id="<?php echo $this->get_field_id( 'cache_mode' ); ?>" name="<?php echo $this->get_field_name( 'cache_mode' ); ?>">
+            <?php foreach ( $cache_modes as $cache_mode_option => $cache_mode_label ): ?>
+            <?php $selected = ( $cache_mode_option == $cache_mode ) ? 'selected' : ''; ?>
+            <option value="<?php echo $cache_mode_option; ?>" <?php echo $selected; ?>>
+                <?php echo esc_html( $cache_mode_label ); ?>
             </option>
             <?php endforeach; ?>
         </select>

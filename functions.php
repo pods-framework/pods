@@ -723,8 +723,19 @@ function pods_var_update ( $array = null, $allowed = null, $excluded = null, $ur
             unset( $get[ $key ] );
         elseif ( !is_array( $val ) && strlen( $val ) < 1 )
             unset( $get[ $key ] );
-        elseif ( !empty( $allowed ) && !in_array( $key, $allowed ) )
-            unset( $get[ $key ] );
+        elseif ( !empty( $allowed ) ) {
+            $allow_it = false;
+
+            foreach ( $allowed as $allow ) {
+                if ( $allow == $key )
+                    $allow_it = true;
+                elseif ( false !== strpos( $allow, '*' ) && 0 === strpos( $key, trim( $allow, '*' ) ) )
+                    $allow_it = true;
+            }
+
+            if ( !$allow_it )
+                unset( $get[ $key ] );
+        }
     }
 
     if ( !empty( $excluded ) ) {

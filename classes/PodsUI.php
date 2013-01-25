@@ -60,6 +60,7 @@ class PodsUI {
         'id',
         'pg',
         'search',
+        'filter_*',
         'orderby',
         'orderby_dir',
         'limit',
@@ -3175,7 +3176,7 @@ class PodsUI {
             if ( $option == $this->limit )
                 echo " <span class=\"page-numbers current\">{$option}</span>";
             else
-                echo ' <a href="' . pods_var_update( array( 'limit' => $option ), array( 'orderby' . $this->num, 'orderby_dir' . $this->num, 'search' . $this->num, 'page' ), $this->exclusion() ) . '">' . $option . '</a>';
+                echo ' <a href="' . pods_var_update( array( 'limit' => $option ), array( 'orderby' . $this->num, 'orderby_dir' . $this->num, 'search' . $this->num, 'filter_*', 'page' . $this->num ), $this->exclusion() ) . '">' . $option . '</a>';
         }
     }
 

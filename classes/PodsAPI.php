@@ -3125,7 +3125,7 @@ class PodsAPI {
                 $field = $pod->fields[ $field[ 'name' ] ];
                 $field[ 'lookup_name' ] = $field[ 'name' ];
 
-                if ( in_array( $field[ 'type' ], $tableless_field_types ) ) {
+                if ( in_array( $field[ 'type' ], $tableless_field_types ) && 'custom-simple' != pods_var( 'pick_object', $field ) ) {
                     if ( 'pick' == $field[ 'type' ] ) {
                         if ( empty( $field[ 'table_info' ] ) )
                             $field[ 'table_info' ] = $this->get_table_info( pods_var_raw( 'pick_object', $field ), pods_var_raw( 'pick_val', $field ) );
@@ -3136,10 +3136,14 @@ class PodsAPI {
                     else
                         $field[ 'lookup_name' ] .= '.guid';
                 }
+
+                $fields[ $k ] = $field;
             }
             elseif ( isset( $object_fields[ $field[ 'name' ] ] ) ) {
                 $field = $object_fields[ $field[ 'name' ] ];
                 $field[ 'lookup_name' ] = $field[ 'name' ];
+
+                $fields[ $k ] = $field;
             }
             else
                 unset( $fields[ $k ] );

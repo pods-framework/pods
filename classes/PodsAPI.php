@@ -3824,11 +3824,20 @@ class PodsAPI {
          */
         global $sitepress, $icl_adjust_id_url_filter_off;
 
+        $current_language = false;
+
+        // WPML support
+        if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
+            $current_language = pods_sanitize( ICL_LANGUAGE_CODE );
+        // Polylang support
+        elseif ( function_exists( 'pll_current_language' ) )
+            $current_language = pll_current_language( 'slug' );
+
         if ( !is_array( $params ) && !is_object( $params ) )
             $params = array( 'name' => $params );
 
         if ( is_object( $params ) && isset( $params->post_name ) ) {
-            $pod = pods_transient_get( 'pods_pod_' . $params->post_name );
+            $pod = pods_transient_get( 'pods_pod_' . ( !empty( $current_language ) ? $current_language . '_' : '' ) . $params->post_name );
 
             if ( false !== $pod )
                 return $pod;
@@ -3842,7 +3851,7 @@ class PodsAPI {
                 return pods_error( 'Either Pod ID or Name are required', $this );
 
             if ( isset( $params->name ) ) {
-                $pod = pods_transient_get( 'pods_pod_' . $params->name );
+                $pod = pods_transient_get( 'pods_pod_' . ( !empty( $current_language ) ? $current_language . '_' : '' ) . $params->name );
 
                 if ( false !== $pod )
                     return $pod;
@@ -3871,7 +3880,9 @@ class PodsAPI {
             $_pod = get_object_vars( $pod );
         }
 
-        $pod = pods_transient_get( 'pods_pod_' . $_pod[ 'post_name' ] );
+        $transient = 'pods_pod_' . ( !empty( $current_language ) ? $current_language . '_' : '' ) . $_pod[ 'post_name' ];
+
+        $pod = pods_transient_get( $transient );
 
         if ( false !== $pod ) {
             if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
@@ -3948,7 +3959,7 @@ class PodsAPI {
             }
         }
 
-        pods_transient_set( 'pods_pod_' . $pod[ 'name' ], $pod );
+        pods_transient_set( $transient, $pod );
 
         return $pod;
     }
@@ -3973,6 +3984,20 @@ class PodsAPI {
      * @since 2.0.0
      */
     public function load_pods ( $params = null ) {
+        /**
+         * @var $sitepress SitePress
+         */
+        global $sitepress, $icl_adjust_id_url_filter_off;
+
+        $current_language = false;
+
+        // WPML support
+        if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
+            $current_language = pods_sanitize( ICL_LANGUAGE_CODE );
+        // Polylang support
+        elseif ( function_exists( 'pll_current_language' ) )
+            $current_language = pll_current_language( 'slug' );
+
         $params = (object) pods_sanitize( $params );
 
         $order = 'ASC';
@@ -4059,11 +4084,11 @@ class PodsAPI {
             $ids = false;
 
         if ( empty( $cache_key ) )
-            $cache_key = 'pods';
+            $cache_key = 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' );
         else
-            $cache_key = 'pods_get' . $cache_key;
+            $cache_key = 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) . '_get' . $cache_key;
 
-        if ( !empty( $cache_key ) && ( 'pods' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
+        if ( !empty( $cache_key ) && ( 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
             $the_pods = pods_transient_get( $cache_key );
 
             if ( false !== $the_pods )
@@ -5136,18 +5161,17 @@ class PodsAPI {
 
         $transient = 'pods_get_table_info_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name );
 
+        $current_language = false;
+
         // WPML support
-        if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off ) {
+        if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
             $current_language = pods_sanitize( ICL_LANGUAGE_CODE );
-
-            $transient .= 'pods_get_table_info_' . $current_language . '_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name );
-        }
         // Polylang support
-        elseif ( 1 == 0 ) {
-            $current_language = '';
+        elseif ( function_exists( 'pll_current_language' ) )
+            $current_language = pll_current_language( 'slug' );
 
-            $transient .= 'pods_get_table_info_' . $current_language . '_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name );
-        }
+        if ( !empty( $current_language ) )
+            $transient = 'pods_get_table_info_' . $current_language . '_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name );
 
         $_info = pods_transient_get( $transient );
 
@@ -5279,6 +5303,7 @@ class PodsAPI {
 
                 $info[ 'orderby' ] = '`t`.`menu_order`, `t`.`' . $info[ 'field_index' ] . '`, `t`.`post_date`';
 
+                // WPML support
                 if ( is_object( $sitepress ) && $sitepress->is_translated_post_type( $post_type ) && !$icl_adjust_id_url_filter_off ) {
                     $info[ 'join' ][ 'wpml_translations' ] = "
                         LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
@@ -5293,6 +5318,10 @@ class PodsAPI {
                     ";
 
                     $info[ 'where' ][ 'wpml_language_code' ] = "`wpml_languages`.`code` IS NOT NULL";
+                }
+                // Polylang support
+                elseif( function_exists( 'pll_current_language' ) ) {
+
                 }
 
                 $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type );

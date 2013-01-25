@@ -7,7 +7,7 @@ $attributes = array();
 $attributes[ 'type' ] = 'text';
 $attributes[ 'value' ] = $value;
 $attributes[ 'tabindex' ] = 2;
-$attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 
 $thousands = ',';
 $dot = '.';
@@ -23,7 +23,7 @@ elseif ( '9.999,99' == pods_var_raw( 'number_format', $options ) ) {
     $dot = ',';
 }
 ?>
-<input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?>/>
+<input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?>/>
 <script>
     jQuery( function ( $ ) {
         $( 'input#<?php echo $attributes[ 'id' ]; ?>' ).on( 'blur', function () {

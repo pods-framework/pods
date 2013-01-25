@@ -37,7 +37,7 @@ if ( 0 < $data_count ) {
         if ( 1 < $data_count && false === strpos( $primary_name, '[]' ) )
             $name = $primary_name . '[' . ( $counter - 1 ) . ']';
 
-        $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+        $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 
         if ( strlen( $label ) < 1 )
             $attributes[ 'class' ] .= ' pods-form-ui-no-label';
@@ -52,7 +52,7 @@ if ( 0 < $data_count ) {
         }
         ?>
         <div class="pods-field pods-boolean">
-            <input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
+            <input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
             <?php
             if ( 0 < strlen( $label ) ) {
                 $help = pods_var_raw( 'help', $options );

@@ -123,10 +123,11 @@ class PodsForm {
         if ( null === $value || ( !empty( $pod ) && empty( $id ) ) )
             $value = self::default_value( $value, $type, $name, $options, $pod, $id );
 
-        if ( false === PodsForm::permission( $type, $name, $options, null, $pod, $id ) )
+        if ( false === self::permission( $type, $name, $options, null, $pod, $id ) )
             return false;
 
         $value = apply_filters( 'pods_form_ui_field_' . $type . '_value', $value, $name, $options, $pod, $id );
+        $form_field_type = self::$field_type;
 
         ob_start();
 
@@ -160,6 +161,8 @@ class PodsForm {
      * @since 2.0.0
      */
     protected function field_db ( $name, $value = null, $options = null ) {
+        $form_field_type = self::$field_type;
+
         ob_start();
 
         pods_view( PODS_DIR . 'ui/fields/_db.php', compact( array_keys( get_defined_vars() ) ) );
@@ -173,6 +176,8 @@ class PodsForm {
      * Output a hidden field
      */
     protected function field_hidden ( $name, $value = null, $options = null ) {
+        $form_field_type = self::$field_type;
+
         ob_start();
 
         pods_view( PODS_DIR . 'ui/fields/_hidden.php', compact( array_keys( get_defined_vars() ) ) );
@@ -871,9 +876,9 @@ class PodsForm {
         $field_type = pods_transient_get( 'pods_field_type_' . $type );
 
         if ( empty( $field_type ) || $field_type[ 'type' ] != $type || $field_type[ 'file' ] != $file ) {
-            PodsForm::field_loader( $type, $file );
+            self::field_loader( $type, $file );
 
-            $class_vars = get_class_vars( get_class( PodsForm::$loaded[ $type ] ) ); // PHP 5.2.x workaround
+            $class_vars = get_class_vars( get_class( self::$loaded[ $type ] ) ); // PHP 5.2.x workaround
 
             self::$field_types[ $type ] = $class_vars;
             self::$field_types[ $type ][ 'file' ] = $file;

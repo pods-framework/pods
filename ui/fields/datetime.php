@@ -79,13 +79,13 @@ if ( 'text' != $type && ( 0 == pods_var( 'datetime_allow_empty', $options, 1 ) |
         $value = date_i18n( $html5_format );
 }
 
-$args = apply_filters( 'pods_form_ui_field_datetime_args', $args, $type, $options, $attributes, $name, PodsForm::$field_type );
+$args = apply_filters( 'pods_form_ui_field_datetime_args', $args, $type, $options, $attributes, $name, $form_field_type );
 
 $attributes[ 'value' ] = $value;
 
-$attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 ?>
-<input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
+<input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
 <script>
     jQuery( function () {
         var <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_args = <?php echo json_encode( $args ); ?>;

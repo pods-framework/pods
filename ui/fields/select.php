@@ -14,9 +14,9 @@ if ( !is_array( $options[ 'data' ] ) && false !== $options[ 'data' ] && 0 < strl
 else
     $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true );
 
-$attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 ?>
-<select<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?>>
+<select<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?>>
     <?php
     foreach ( $options[ 'data' ] as $option_value => $option_label ) {
         if ( is_array( $option_label ) && isset( $option_label[ 'label' ] ) )
@@ -43,7 +43,7 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_t
 
                     if ( is_array( $sub_option_label ) ) {
                         ?>
-                        <option<?php PodsForm::attributes( $sub_option_label, $name, PodsForm::$field_type . '_option', $options ); ?>><?php echo esc_html( $sub_option_label ); ?></option>
+                        <option<?php PodsForm::attributes( $sub_option_label, $name, $form_field_type . '_option', $options ); ?>><?php echo esc_html( $sub_option_label ); ?></option>
                         <?php
                     }
                     else {
@@ -66,7 +66,7 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_t
 
             if ( is_array( $option_value ) ) {
                 ?>
-                <option<?php PodsForm::attributes( $option_value, $name, PodsForm::$field_type . '_option', $options ); ?>><?php echo esc_html( $option_label ); ?></option>
+                <option<?php PodsForm::attributes( $option_value, $name, $form_field_type . '_option', $options ); ?>><?php echo esc_html( $option_label ); ?></option>
                 <?php
             }
             else {

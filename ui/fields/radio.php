@@ -32,7 +32,7 @@ foreach ( $options[ 'data' ] as $val => $label ) {
 
     $attributes[ 'value' ] = $val;
 
-    $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+    $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 
     if ( 1 < count( $options[ 'data' ] ) )
         $attributes[ 'id' ] = $primary_id . $counter;
@@ -44,7 +44,7 @@ foreach ( $options[ 'data' ] as $val => $label ) {
     }
     ?>
     <div class="pods-field pods-boolean">
-        <input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
+        <input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
         <?php
         if ( 0 < strlen( $label ) ) {
             $help = pods_var_raw( 'help', $options );

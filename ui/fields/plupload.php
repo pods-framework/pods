@@ -12,7 +12,7 @@ wp_enqueue_style( 'pods-attach' );
 $field_file = PodsForm::field_loader( 'file' );
 
 $attributes = array();
-$attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 
 $css_id = $attributes[ 'id' ];
 
@@ -27,8 +27,8 @@ $field_nonce = wp_create_nonce( 'pods_upload_' . ( !is_object( $pod ) ? '0' : $p
 
 $file_limit = 1;
 
-if ( 'multi' == pods_var( PodsForm::$field_type . '_format_type', $options, 'single' ) )
-    $file_limit = (int) pods_var( PodsForm::$field_type . '_limit', $options, 0 );
+if ( 'multi' == pods_var( $form_field_type . '_format_type', $options, 'single' ) )
+    $file_limit = (int) pods_var( $form_field_type . '_limit', $options, 0 );
 
 $plupload_init = array(
     'runtimes' => 'html5,silverlight,flash,html4',
@@ -52,9 +52,9 @@ $plupload_init = array(
     ),
 );
 
-$limit_file_type = pods_var( PodsForm::$field_type . '_type', $options, 'images' );
+$limit_file_type = pods_var( $form_field_type . '_type', $options, 'images' );
 
-$title_editable = pods_var( PodsForm::$field_type . '_edit_title', $options, 0 );
+$title_editable = pods_var( $form_field_type . '_edit_title', $options, 0 );
 
 if ( 'images' == $limit_file_type )
     $limit_types = 'jpg,png,gif';
@@ -67,7 +67,7 @@ elseif ( 'text' == $limit_file_type )
 elseif ( 'any' == $limit_file_type )
     $limit_types = '';
 else
-    $limit_types = pods_var( PodsForm::$field_type . '_allowed_extensions', $options, '', null, true );
+    $limit_types = pods_var( $form_field_type . '_allowed_extensions', $options, '', null, true );
 
 $limit_types = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_types ), ',' );
 
@@ -133,7 +133,7 @@ if ( empty( $value ) )
 else
     $value = (array) $value;
 ?>
-<div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ] ), $name, PodsForm::$field_type, $options ); ?>>
+<div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ] ), $name, $form_field_type, $options ); ?>>
     <table class="form-table pods-metabox" id="<?php echo $css_id; ?>">
         <tbody>
             <tr class="form-field">
@@ -156,7 +156,7 @@ else
                         }
                         ?></ul>
 
-                    <a class="button pods-file-add plupload-add" id="<?php echo $css_id; ?>-upload" href="" tabindex="2"><?php echo pods_var_raw( PodsForm::$field_type . '_add_button', $options, __( 'Add File', 'pods' ) ); ?></a>
+                    <a class="button pods-file-add plupload-add" id="<?php echo $css_id; ?>-upload" href="" tabindex="2"><?php echo pods_var_raw( $form_field_type . '_add_button', $options, __( 'Add File', 'pods' ) ); ?></a>
 
                     <ul class="pods-files pods-files-queue"></ul>
                 </td>

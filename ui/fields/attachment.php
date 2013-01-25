@@ -13,7 +13,7 @@ wp_enqueue_style( 'pods-attach' );
 $field_file = PodsForm::field_loader( 'file' );
 
 $attributes = array();
-$attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 
 $css_id = $attributes[ 'id' ];
 
@@ -26,9 +26,9 @@ if ( is_user_logged_in() )
 
 $field_nonce = wp_create_nonce( 'pods_upload_' . ( !is_object( $pod ) ? '0' : $pod->pod_id ) . '_' . $uid . '_' . $uri_hash . '_' . $options[ 'id' ] );
 
-$limit_file_type = pods_var( PodsForm::$field_type . '_type', $options, 'images' );
+$limit_file_type = pods_var( $form_field_type . '_type', $options, 'images' );
 
-$title_editable = pods_var( PodsForm::$field_type . '_edit_title', $options, 0 );
+$title_editable = pods_var( $form_field_type . '_edit_title', $options, 0 );
 
 if ( 'images' == $limit_file_type )
     $limit_types = 'jpg,png,gif';
@@ -37,11 +37,11 @@ elseif ( 'video' == $limit_file_type )
 elseif ( 'any' == $limit_file_type )
     $limit_types = '';
 else
-    $limit_types = pods_var( PodsForm::$field_type . '_allowed_extensions', $options, '' );
+    $limit_types = pods_var( $form_field_type . '_allowed_extensions', $options, '' );
 
 $limit_types = str_replace( ' ', '', $limit_types );
 
-$tab = pods_var( PodsForm::$field_type . '_attachment_tab', $options, 'type', null, true );
+$tab = pods_var( $form_field_type . '_attachment_tab', $options, 'type', null, true );
 
 if ( 'upload' == $tab )
     $tab = 'type';
@@ -50,8 +50,8 @@ elseif ( 'browse' == $tab )
 
 $file_limit = 1;
 
-if ( 'multi' == pods_var( PodsForm::$field_type . '_format_type', $options, 'single' ) )
-    $file_limit = (int) pods_var( PodsForm::$field_type . '_limit', $options, 0 );
+if ( 'multi' == pods_var( $form_field_type . '_format_type', $options, 'single' ) )
+    $file_limit = (int) pods_var( $form_field_type . '_limit', $options, 0 );
 
 $data = array(
     'limit-types' => $limit_types,
@@ -70,8 +70,8 @@ if ( empty( $value ) )
 else
     $value = (array) $value;
 ?>
-<div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ] ), $name, PodsForm::$field_type, $options ); ?>>
-    <table class="form-table pods-metabox" id="<?php echo $css_id; ?>"<?php PodsForm::data( $data, $name, PodsForm::$field_type, $options ); ?>>
+<div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ] ), $name, $form_field_type, $options ); ?>>
+    <table class="form-table pods-metabox" id="<?php echo $css_id; ?>"<?php PodsForm::data( $data, $name, $form_field_type, $options ); ?>>
         <tbody>
             <tr class="form-field">
                 <td>
@@ -90,7 +90,7 @@ else
                         }
                         ?></ul>
 
-                    <a class="button pods-file-add" href="<?php echo admin_url() ?>media-upload.php?inlineId=pods_media_attachment<?php echo $the_post_id; ?>&amp;tab=<?php echo $tab; ?>&amp;TB_iframe=1&amp;width=640&amp;height=1500&pods_pod=<?php echo $pod->pod; ?>&pods_pod_id=<?php echo $pod->pod; ?>&pods_field=<?php echo $options[ 'name' ]; ?>&pods_field_id=<?php echo $options[ 'id' ]; ?>&pods_uri_hash=<?php echo $uri_hash; ?>&pods_field_nonce=<?php echo $field_nonce; ?>"><?php echo pods_var_raw( PodsForm::$field_type . '_add_button', $options, __( 'Add File', 'pods' ) ); ?></a>
+                    <a class="button pods-file-add" href="<?php echo admin_url() ?>media-upload.php?inlineId=pods_media_attachment<?php echo $the_post_id; ?>&amp;tab=<?php echo $tab; ?>&amp;TB_iframe=1&amp;width=640&amp;height=1500&pods_pod=<?php echo $pod->pod; ?>&pods_pod_id=<?php echo $pod->pod; ?>&pods_field=<?php echo $options[ 'name' ]; ?>&pods_field_id=<?php echo $options[ 'id' ]; ?>&pods_uri_hash=<?php echo $uri_hash; ?>&pods_field_nonce=<?php echo $field_nonce; ?>"><?php echo pods_var_raw( $form_field_type . '_add_button', $options, __( 'Add File', 'pods' ) ); ?></a>
                 </td>
             </tr>
         </tbody>

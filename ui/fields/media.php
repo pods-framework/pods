@@ -11,21 +11,21 @@ wp_enqueue_media( array( 'post' => (int) $post_ID ) );
 $field_file = PodsForm::field_loader( 'file' );
 
 $attributes = array();
-$attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 
 $css_id = $attributes[ 'id' ];
 
-$router = pods_var( PodsForm::$field_type . '_attachment_tab', $options, 'browse' );
+$router = pods_var( $form_field_type . '_attachment_tab', $options, 'browse' );
 
 $file_limit = 1;
 
 // @todo: File limit not yet supported in the UI, it's either single or multiple
-if ( 'multi' == pods_var( PodsForm::$field_type . '_format_type', $options, 'single' ) )
-    $file_limit = (int) pods_var( PodsForm::$field_type . '_limit', $options, 0 );
+if ( 'multi' == pods_var( $form_field_type . '_format_type', $options, 'single' ) )
+    $file_limit = (int) pods_var( $form_field_type . '_limit', $options, 0 );
 
-$limit_file_type = pods_var( PodsForm::$field_type . '_type', $options, 'images' );
+$limit_file_type = pods_var( $form_field_type . '_type', $options, 'images' );
 
-$title_editable = pods_var( PodsForm::$field_type . '_edit_title', $options, 0 );
+$title_editable = pods_var( $form_field_type . '_edit_title', $options, 0 );
 
 if ( 'images' == $limit_file_type )
     $limit_types = 'image';
@@ -38,7 +38,7 @@ elseif ( 'text' == $limit_file_type )
 elseif ( 'any' == $limit_file_type )
     $limit_types = '';
 else
-    $limit_types = pods_var( PodsForm::$field_type . '_allowed_extensions', $options, '', null, true );
+    $limit_types = pods_var( $form_field_type . '_allowed_extensions', $options, '', null, true );
 
 $limit_types = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_types ), ',' );
 
@@ -87,7 +87,7 @@ if ( empty( $value ) )
 else
     $value = (array) $value;
 ?>
-<div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ] ), $name, PodsForm::$field_type, $options ); ?>>
+<div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ] ), $name, $form_field_type, $options ); ?>>
     <table class="form-table pods-metabox" id="<?php echo $css_id; ?>">
         <tbody>
             <tr class="form-field">
@@ -107,7 +107,7 @@ else
                         }
                         ?></ul>
 
-                    <a class="button pods-file-add pods-media-add" id="<?php echo $css_id; ?>-upload" href="#" tabindex="2"><?php echo pods_var_raw( PodsForm::$field_type . '_add_button', $options, __( 'Add File', 'pods' ) ); ?></a>
+                    <a class="button pods-file-add pods-media-add" id="<?php echo $css_id; ?>-upload" href="#" tabindex="2"><?php echo pods_var_raw( $form_field_type . '_add_button', $options, __( 'Add File', 'pods' ) ); ?></a>
                 </td>
             </tr>
         </tbody>
@@ -148,8 +148,8 @@ else
 
         // set up our modal
         var $element_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $('#<?php echo $css_id; ?>'),
-            title_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php echo esc_js( pods_var_raw( PodsForm::$field_type . '_modal_title', $options, __( 'Attach a file', 'pods' ) ) ); ?>",
-            button_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php echo esc_js( pods_var_raw( PodsForm::$field_type . '_modal_add_button', $options, __( 'Add File', 'pods' ) ) ); ?>",
+            title_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php echo esc_js( pods_var_raw( $form_field_type . '_modal_title', $options, __( 'Attach a file', 'pods' ) ) ); ?>",
+            button_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php echo esc_js( pods_var_raw( $form_field_type . '_modal_add_button', $options, __( 'Add File', 'pods' ) ) ); ?>",
             list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ),
             pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>,
             maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = <?php echo esc_js( $file_limit ); ?>;

@@ -123,6 +123,7 @@ class PodsField_Website extends PodsField {
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
+        $form_field_type = PodsForm::$field_type;
 
         if ( is_array( $value ) )
             $value = implode( ' ', $value );

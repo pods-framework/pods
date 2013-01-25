@@ -10,7 +10,7 @@ $attributes[ 'type' ] = 'hidden';
 $attributes[ 'value' ] = $value;
 $attributes[ 'data-field-type' ] = 'select2';
 $attributes[ 'tabindex' ] = 2;
-$attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_type, $options );
+$attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 $attributes[ 'class' ] .= ' pods-form-ui-field-type-select2';
 
 $uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
@@ -30,7 +30,7 @@ if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit )
 $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true );
 ?>
 <div class="pods-select2">
-    <input<?php PodsForm::attributes( $attributes, $name, PodsForm::$field_type, $options ); ?> />
+    <input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
 </div>
 
 <script type="text/javascript">

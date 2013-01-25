@@ -1151,7 +1151,7 @@ elseif ( 'pod' == pods_var( 'type', $pod ) ) {
 
         var related_pod_name = jQuery( '#pods-form-ui-field-data-' + id + '-pick-object' ).val();
 
-        if ( 'custom-simple' == related_pod_name ) {
+        if ( 'custom-simple' == related_pod_name || '' == related_pod_name ) {
             pods_sister_field_going = false;
 
             return;

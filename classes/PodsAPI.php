@@ -2312,8 +2312,8 @@ class PodsAPI {
         else
             $params->id = 0;
 
-        if ( !isset( $params->form ) )
-            $params->form = 'save';
+        if ( !isset( $params->from ) )
+            $params->from = 'save';
 
         // Support for bulk edit
         if ( isset( $params->id ) && !empty( $params->id ) && is_array( $params->id ) ) {
@@ -2373,7 +2373,7 @@ class PodsAPI {
                     $fields_active[] = $field;
                 }
                 elseif ( isset( $fields[ $field ] ) ) {
-                    if ( 'process_form' == $params->from && true === PodsForm::permission( $fields[ $field ][ 'type' ], $field, $fields[ $field ], $fields, $pod, $params->id, $params ) ) {
+                    if ( 'save' == $params->from || true === PodsForm::permission( $fields[ $field ][ 'type' ], $field, $fields[ $field ], $fields, $pod, $params->id, $params ) ) {
                         $fields[ $field ][ 'value' ] = $value;
                         $fields_active[] = $field;
                     }
@@ -2424,7 +2424,7 @@ class PodsAPI {
                 if ( in_array( $field, $fields_active ) )
                     continue;
 
-                if ( 'process_form' == $params->from && true === PodsForm::permission( $fields[ $field ][ 'type' ], $field, $fields[ $field ], $fields, $pod, $params->id, $params ) ) {
+                if ( 'save' == $params->from || true === PodsForm::permission( $fields[ $field ][ 'type' ], $field, $fields[ $field ], $fields, $pod, $params->id, $params ) ) {
                     $value = PodsForm::default_value( pods_var_raw( $field, 'post' ), $field_data[ 'type' ], $field, pods_var_raw( 'options', $field_data, $field_data, null, true ), $pod, $params->id );
 
                     if ( null !== $value && '' !== $value && false !== $value ) {

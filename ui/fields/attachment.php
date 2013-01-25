@@ -86,9 +86,6 @@ else
 
                             $title = $attachment->post_title;
 
-                            if ( 0 == pods_var( PodsForm::$field_type . '_edit_title', $options, 0 ) )
-                                $title = basename( $attachment->guid );
-
                             echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title );
                         }
                         ?></ul>

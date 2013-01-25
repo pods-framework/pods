@@ -2826,17 +2826,18 @@ class PodsAPI {
                         if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
                             if ( !empty( $values ) ) {
                                 $values_to_impode = array();
+
                                 foreach ( $values as $id ) {
                                     if ( is_array( $id ) )
                                         $values_to_impode[] = $id[ 'id' ];
                                     else
                                         $values_to_impode[] = $id;
                                 }
+
                                 $value_ids = implode( ',', $values_to_impode );
                             }
-                            else {
+                            else
                                 $value_ids = '0';
-                            }
 
                             // Remove relationships
                             $sql = "
@@ -2873,6 +2874,8 @@ class PodsAPI {
 
                                     if ( isset( $id[ 'id' ] ) )
                                         $id = $id[ 'id' ];
+                                    else
+                                        $id = 0;
                                 }
 
                                 if ( empty( $id ) )

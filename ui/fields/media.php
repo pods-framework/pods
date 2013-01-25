@@ -6,7 +6,7 @@ wp_enqueue_script( 'jquery-ui-core' );
 wp_enqueue_script( 'jquery-ui-sortable' );
 wp_enqueue_style( 'pods-attach' );
 
-wp_enqueue_media( array( 'post' => $post_ID ) );
+wp_enqueue_media( array( 'post' => (int) $post_ID ) );
 
 $field_file = PodsForm::field_loader( 'file' );
 
@@ -24,6 +24,8 @@ if ( 'multi' == pods_var( PodsForm::$field_type . '_format_type', $options, 'sin
     $file_limit = (int) pods_var( PodsForm::$field_type . '_limit', $options, 0 );
 
 $limit_file_type = pods_var( PodsForm::$field_type . '_type', $options, 'images' );
+
+$title_editable = pods_var( PodsForm::$field_type . '_edit_title', $options, 0 );
 
 if ( 'images' == $limit_file_type )
     $limit_types = 'image';
@@ -101,10 +103,7 @@ else
 
                             $title = $attachment->post_title;
 
-                            if ( 0 == pods_var( PodsForm::$field_type . '_edit_title', $options, 0 ) )
-                                $title = basename( $attachment->guid );
-
-                            echo $field_file->markup( $attributes, $file_limit, pods_var( PodsForm::$field_type . '_edit_title', $options, 0 ), $val, $thumb[ 0 ], $title );
+                            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title );
                         }
                         ?></ul>
 
@@ -116,7 +115,7 @@ else
 </div>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
-    <?php echo $field_file->markup( $attributes, $file_limit, pods_var( PodsForm::$field_type . '_edit_title', $options, 0 ) ); ?>
+    <?php echo $field_file->markup( $attributes, $file_limit, $title_editable ); ?>
 </script>
 
 <script type="text/javascript">

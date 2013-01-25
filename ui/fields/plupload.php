@@ -54,6 +54,8 @@ $plupload_init = array(
 
 $limit_file_type = pods_var( PodsForm::$field_type . '_type', $options, 'images' );
 
+$title_editable = pods_var( PodsForm::$field_type . '_edit_title', $options, 0 );
+
 if ( 'images' == $limit_file_type )
     $limit_types = 'jpg,png,gif';
 elseif ( 'video' == $limit_file_type )
@@ -147,10 +149,10 @@ else
 
                             $title = $attachment->post_title;
 
-                            if ( 0 == pods_var( PodsForm::$field_type . '_edit_title', $options, 0 ) )
+                            if ( 0 == $title_editable )
                                 $title = basename( $attachment->guid );
 
-                            echo $field_file->markup( $attributes, $file_limit, pods_var( PodsForm::$field_type . '_edit_title', $options, 0 ), $val, $thumb[ 0 ], $title );
+                            echo $field_file->markup( $attributes, $file_limit, $title_editable, $val, $thumb[ 0 ], $title );
                         }
                         ?></ul>
 
@@ -164,7 +166,7 @@ else
 </div>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-handlebars">
-    <?php echo $field_file->markup( $attributes, $file_limit, pods_var( PodsForm::$field_type . '_edit_title', $options, 0 ) ); ?>
+    <?php echo $field_file->markup( $attributes, $file_limit, $title_editable ); ?>
 </script>
 
 <script type="text/x-handlebars" id="<?php echo $css_id; ?>-progress-template">

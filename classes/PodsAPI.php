@@ -5648,7 +5648,7 @@ class PodsAPI {
                                     if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )
                                         $where = "`" . $related_pod[ 'field_id' ] . "` = " . pods_absint( $pick_value );
 
-                                    $result = pods_query( "SELECT `id` FROM `" . $related_pod[ 'table' ] . "` WHERE {$where} ORDER BY `" . $related_pod[ 'field_id' ] . "`", $this );
+                                    $result = pods_query( "SELECT `" . $related_pod[ 'field_id' ] . "` AS `id` FROM `" . $related_pod[ 'table' ] . "` WHERE {$where} ORDER BY `" . $related_pod[ 'field_id' ] . "`", $this );
 
                                     if ( !empty( $result ) )
                                         $pick_values[] = $result[ 0 ]->id;

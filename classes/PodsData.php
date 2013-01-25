@@ -1886,13 +1886,14 @@ class PodsData {
 
         $traverse_recurse = array_merge( $defaults, $traverse_recurse );
 
-        $table_mode = false;
         $joins = array();
 
         if ( empty( $traverse_recurse[ 'pod' ] ) ) {
             if ( !empty( $traverse_recurse[ 'params' ] ) && !empty( $traverse_recurse[ 'params' ]->table ) && 0 === strpos( $traverse_recurse[ 'params' ]->table, $wpdb->prefix ) ) {
                 if ( $wpdb->posts == $traverse_recurse[ 'params' ]->table )
                     $traverse_recurse[ 'pod' ] = 'post_type';
+                elseif ( $wpdb->terms == $traverse_recurse[ 'params' ]->table )
+                    $traverse_recurse[ 'pod' ] = 'taxonomy';
                 elseif ( $wpdb->users == $traverse_recurse[ 'params' ]->table )
                     $traverse_recurse[ 'pod' ] = 'user';
                 elseif ( $wpdb->comments == $traverse_recurse[ 'params' ]->table )
@@ -1901,7 +1902,6 @@ class PodsData {
                     return $joins;
 
                 $pod_data = array();
-                $table_mode = true;
 
                 if ( in_array( $traverse_recurse[ 'pod' ], array( 'user', 'comment' ) ) ) {
                     $pod = $this->api->load_pod( array( 'name' => $traverse_recurse[ 'pod' ] ) );
@@ -1915,14 +1915,20 @@ class PodsData {
                         'id' => 0,
                         'name' => '_table_' . $traverse_recurse[ 'pod' ],
                         'type' => $traverse_recurse[ 'pod' ],
-                        'storage' => 'meta',
+                        'storage' => ( 'taxonomy' == $traverse_recurse[ 'pod' ] ? 'none' : 'meta' ),
                         'fields' => $this->api->get_wp_object_fields( $traverse_recurse[ 'pod' ] )
                     );
-
-                    $traverse_recurse[ 'pod' ] = $pod_data[ 'name' ];
                 }
+
+                $traverse_recurse[ 'pod' ] = $pod_data[ 'name' ];
             }
             else
+                return $joins;
+        }
+        else {
+            $pod_data = $this->api->load_pod( array( 'name' => $traverse_recurse[ 'pod' ] ), false );
+
+            if ( empty( $pod_data ) )
                 return $joins;
         }
 
@@ -1931,19 +1937,18 @@ class PodsData {
         if ( !isset( $this->traversal[ $traverse_recurse[ 'pod' ] ] ) )
             $this->traversal[ $traverse_recurse[ 'pod' ] ] = array();
 
-        if ( !$table_mode ) {
-            $pod_data = $this->api->load_pod( array( 'name' => $traverse_recurse[ 'pod' ] ), false );
-
-            if ( empty( $pod_data ) )
-                return $joins;
-        }
-
         if ( empty( $traverse_recurse[ 'fields' ] ) || !isset( $traverse_recurse[ 'fields' ][ $traverse_recurse[ 'depth' ] ] ) || empty( $traverse_recurse[ 'fields' ][ $traverse_recurse[ 'depth' ] ] ) )
             return $joins;
 
         $field = $traverse_recurse[ 'fields' ][ $traverse_recurse[ 'depth' ] ];
 
-        if ( 'wpml_languages' == $field )
+        $ignore_aliases = array(
+            'wpml_languages'
+        );
+
+        $ignore_aliases = $this->do_hook( 'traverse_recurse_ignore_aliases', $ignore_aliases, $field, $traverse_recurse );
+
+        if ( in_array( $field, $ignore_aliases ) )
             return $joins;
 
         $meta_data_table = false;

@@ -524,7 +524,7 @@ class PodsAPI {
         $fields = pods_transient_get( trim( 'pods_api_object_fields_' . $object . $pod_name . '_', '_' ) );
 
         if ( false !== $fields && !$refresh )
-            return apply_filters( 'pods_api_get_wp_object_fields', $fields, $object, $pod );
+            return $this->do_hook( 'get_wp_object_fields', $fields, $object, $pod );
 
         $fields = array();
 
@@ -550,6 +550,7 @@ class PodsAPI {
                 ),
                 'post_excerpt' => array(
                     'name' => 'post_excerpt',
+                    'label' => 'Excerpt',
                     'label' => 'Excerpt',
                     'type' => 'paragraph',
                     'alias' => array( 'excerpt' ),
@@ -588,7 +589,7 @@ class PodsAPI {
                     'label' => 'Status',
                     'type' => 'pick',
                     'pick_object' => 'custom-simple',
-                    'default' => 'draft',
+                    'default' => $this->do_hook( 'default_status_' . pods_var_raw( 'name', $pod, $object, null, true ), pods_var( 'default_status', pods_var_raw( 'options', $pod ), 'draft', null, true ), $pod ),
                     'alias' => array( 'status' ),
                     'data' => $post_stati
                 ),
@@ -863,7 +864,7 @@ class PodsAPI {
             );
         }
 
-        $fields = apply_filters( 'pods_api_get_wp_object_fields', $fields, $object, $pod );
+        $fields = $this->do_hook( 'get_wp_object_fields', $fields, $object, $pod );
 
         foreach ( $fields as $field => $options ) {
             if ( !isset( $options[ 'alias' ] ) )
@@ -5355,7 +5356,7 @@ class PodsAPI {
                     $info[ 'where' ][ 'polylang_language_code' ] = "`polylang_languages`.`code` IS NOT NULL";
                 }
 
-                $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type );
+                $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type, $pod );
             }
             elseif ( 0 === strpos( $object_type, 'taxonomy' ) || in_array( $object_type, array( 'nav_menu', 'post_format' ) ) ) {
                 $info[ 'table' ] = $info[ 'meta_table' ] = $wpdb->terms;
@@ -5421,7 +5422,7 @@ class PodsAPI {
                     $info[ 'where' ][ 'polylang_language_code' ] = "`polylang_languages`.`code` IS NOT NULL";
                 }
 
-                $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type );
+                $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type, $pod );
             }
             elseif ( 'user' == $object_type ) {
                 $info[ 'table' ] = $wpdb->users;
@@ -5439,7 +5440,7 @@ class PodsAPI {
                     'user_status' => '`t`.`user_status` = 0'
                 );
 
-                $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type );
+                $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type, $pod );
             }
             elseif ( 'comment' == $object_type ) {
                 $info[ 'table' ] = $wpdb->comments;

@@ -1150,7 +1150,6 @@ elseif ( 'pod' == pods_var( 'type', $pod ) ) {
         default_select = default_select.replace( /\-\-1/g, id );
 
         var related_pod_name = jQuery( '#pods-form-ui-field-data-' + id + '-pick-object' ).val();
-        related_pod_name = related_pod_name.replace( 'pod-', '' );
 
         var selected_value = jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val();
 

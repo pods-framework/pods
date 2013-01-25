@@ -1693,7 +1693,7 @@ class PodsUI {
             $columns[ $field[ 'name' ] ] = $field[ 'label' ];
         }
 
-        $items = $this->get_data( true );
+        $items = $this->get_data( true, $this->fields[ 'export' ] );
 
         $data = array(
             'columns' => $columns,
@@ -1741,7 +1741,7 @@ class PodsUI {
      *
      * @return bool
      */
-    public function get_data ( $full = false ) {
+    public function get_data ( $full = false, $fields = null ) {
         if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
             $orderby = array();
 
@@ -1815,7 +1815,7 @@ class PodsUI {
                 $this->data_full = array();
 
                 while ( $this->pod->fetch() ) {
-                    $this->data_full[ $this->pod->id() ] = $this->pod->export();
+                    $this->data_full[ $this->pod->id() ] = $this->pod->export( $fields );
                 }
 
                 return $this->data_full;

@@ -15,6 +15,8 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, PodsForm::$field_t
 
 $css_id = $attributes[ 'id' ];
 
+$router = pods_var( PodsForm::$field_type . '_attachment_tab', $options, 'browse' );
+
 $file_limit = 1;
 
 // @todo: File limit not yet supported in the UI, it's either single or multiple
@@ -161,6 +163,7 @@ else
             // if the frame already exists, open it
             if ( pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> ) {
                 pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.open();
+                pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.content.mode('<?php echo $router; ?>');
                 return;
             }
 
@@ -250,6 +253,7 @@ else
 
             // open the frame
             pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.open();
+            pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.content.mode('<?php echo $router; ?>');
 
         });
 

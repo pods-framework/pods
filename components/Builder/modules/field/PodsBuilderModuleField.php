@@ -52,7 +52,7 @@ if ( !class_exists( 'PodsBuilderModuleField' ) ) {
          */
         function _before_table_edit ( $form, $results = true ) {
 ?>
-    <p><?php _e( "Display a single Pod item's field value", 'pods' ); ?></p>
+    <p><?php echo $this->_description; ?></p>
 <?php
         }
 

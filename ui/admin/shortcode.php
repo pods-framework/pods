@@ -168,7 +168,7 @@
                     } )
                     break;
                 case 'list':
-                    $( '#pod_select, #pod_limit, #pod_orderby, #pod_where, #pod_template, #pod_template_custom, #pods_insert_shortcode' ).each( function () {
+                    $( '#pod_select, #pod_limit, #pod_orderby, #pod_where, #pod_template, #pod_template_custom, #pod_cache_mode, #pod_expires, #pods_insert_shortcode' ).each( function () {
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
@@ -260,7 +260,7 @@
                         <option value="field"><?php _e( 'Display a field from a single Pod item', 'pods' ); ?></option>
                         <option value="field-current" SELECTED><?php _e( 'Display a field from this item', 'pods' ); ?></option>
                         <option value="form"><?php _e( 'Display a form for creating and editing Pod items', 'pods' ); ?></option>
-                        <option value="view"><?php _e( 'Include a file from a theme or another site, with caching options', 'pods' ); ?></option>
+                        <option value="view"><?php _e( 'Include a file from a theme, with caching options', 'pods' ); ?></option>
                     </select>
                 </div>
 
@@ -378,10 +378,12 @@
                             'transient' => __( 'Transient', 'pods' ),
                             'site-transient' => __( 'Site Transient', 'pods' )
                         );
+
+                        $default_cache_type = 'transient';
                     ?>
                     <select id="pod_cache_type" name="pod_cache_type">
                         <?php foreach ( $cache_types as $cache_type_option => $cache_type_label ): ?>
-                            <option value="<?php echo $cache_type_option; ?>">
+                            <option value="<?php echo $cache_type_option; ?>"<?php echo ( $default_cache_type == $cache_type_option ? ' SELECTED' : '' ); ?>>
                                 <?php echo esc_html( $cache_type_label ); ?>
                             </option>
                         <?php endforeach; ?>
@@ -391,7 +393,7 @@
                 <div class="pods-section">
                     <label for="pod_expires"><?php _e( 'Cache Expiration (in seconds)', 'pods' ); ?></label>
 
-                    <input type="text" name="pod_expires" id="pod_expires" />
+                    <input type="text" name="pod_expires" id="pod_expires" value="<?php echo ( 60 * 5 ); ?>" />
                 </div>
 
                 <div class="pods-section" style="text-align: right;">

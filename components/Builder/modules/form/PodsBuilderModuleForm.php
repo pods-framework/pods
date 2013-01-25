@@ -54,7 +54,7 @@ if ( !class_exists( 'PodsBuilderModuleForm' ) ) {
          */
         function _before_table_edit ( $form, $results = true ) {
 ?>
-    <p><?php _e( 'Display a form for creating and editing Pod items', 'pods' ); ?></p>
+    <p><?php echo $this->_description; ?></p>
 <?php
         }
 

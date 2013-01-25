@@ -268,6 +268,7 @@ class PodsView {
      * @return bool|mixed|string|void
      */
     private static function get_template_part ( $_view, $_data = null ) {
+        /* to be reviewed later, should have more checks and restrictions like a whitelist etc
         if ( 0 === strpos( $_view, 'http://' ) || 0 === strpos( $_view, 'https://' ) ) {
             $_view = apply_filters( 'pods_view_url_include', $_view );
 
@@ -277,7 +278,7 @@ class PodsView {
             $response = wp_remote_get( $_view );
 
             return wp_remote_retrieve_body( $response );
-        }
+        }*/
 
         $_view = self::locate_template( $_view );
 
@@ -332,7 +333,8 @@ class PodsView {
 
         if ( empty( $_view ) )
             return false;
-        elseif ( false === strpos( $_view, PODS_DIR . 'ui/' ) && false === strpos( $_view, PODS_DIR . 'components/' ) && false === strpos( $_view, WP_CONTENT_DIR ) && false === strpos( $_view, ABSPATH ) ) {
+        // Look for basic file includes
+        elseif ( false === strpos( $_view, WP_PLUGIN_DIR ) && false === strpos( $_view, WPMU_PLUGIN_DIR ) ) {
             $_view = rtrim( $_view, '/' );
 
             if ( empty( $_view ) )
@@ -343,6 +345,7 @@ class PodsView {
             elseif ( file_exists( TEMPLATEPATH . '/' . $_view ) )
                 $located = TEMPLATEPATH . '/' . $_view;
         }
+        // Allow includes within plugins directory too for plugins utilizing this
         elseif ( file_exists( $_view ) )
             $located = $_view;
         else

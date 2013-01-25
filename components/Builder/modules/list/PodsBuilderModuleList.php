@@ -41,6 +41,8 @@ if ( !class_exists( 'PodsBuilderModuleList' ) ) {
                 'limit' => 15,
                 'orderby' => '',
                 'where' => '',
+                'expires' => ( 60 * 5 ),
+                'cache_type' => 'transient',
                 'sidebar' => 'none'
             );
 
@@ -55,7 +57,7 @@ if ( !class_exists( 'PodsBuilderModuleList' ) ) {
          */
         function _before_table_edit ( $form, $results = true ) {
 ?>
-    <p><?php _e( 'Display multiple Pod items', 'pods' ); ?></p>
+    <p><?php echo $this->_description; ?></p>
 <?php
         }
 
@@ -150,6 +152,31 @@ if ( !class_exists( 'PodsBuilderModuleList' ) ) {
             <?php $form->add_text_box( 'where' ); ?>
         </td>
     </tr>
+    <tr>
+        <td valign="top">
+            <label for="cache_type"><?php _e( 'Cache Type', 'pods' ); ?></label>
+        </td>
+        <td>
+            <?php
+                $cache_types = array(
+                    'none' => __( 'Disable Caching', 'pods' ),
+                    'cache' => __( 'Object Cache', 'pods' ),
+                    'transient' => __( 'Transient', 'pods' ),
+                    'site-transient' => __( 'Site Transient', 'pods' )
+                );
+
+                $form->add_drop_down( 'cache_type', $cache_types );
+            ?>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">
+            <label for="expires"><?php _e( 'Cache Expiration (in seconds)', 'pods' ); ?></label>
+        </td>
+        <td>
+            <?php $form->add_text_box( 'expires' ); ?>
+        </td>
+    </tr>
 <?php
         }
 
@@ -162,7 +189,9 @@ if ( !class_exists( 'PodsBuilderModuleList' ) ) {
                 'template' => trim( pods_var_raw( 'template', $fields[ 'data' ], '' ) ),
                 'limit' => (int) pods_var_raw( 'limit', $fields[ 'data' ], 15, null, true ),
                 'orderby' => trim( pods_var_raw( 'orderby', $fields[ 'data' ], '' ) ),
-                'where' => trim( pods_var_raw( 'where', $fields[ 'data' ], '' ) )
+                'where' => trim( pods_var_raw( 'where', $fields[ 'data' ], '' ) ),
+                'expires' => (int) trim( pods_var_raw( 'expires', $fields[ 'data' ], ( 60 * 5 ) ) ),
+                'cache_type' => trim( pods_var_raw( 'cache_type', $fields[ 'data' ], 'transient', null, true ) )
             );
 
             $content = trim( pods_var_raw( 'template_custom', $fields[ 'data' ], '' ) );

@@ -1293,6 +1293,11 @@ function pods_shortcode ( $tags, $content = null ) {
         if ( empty( $tags[ 'pagination' ] ) )
             $params[ 'pagination' ] = false;
 
+        if ( !empty( $tags[ 'cache_type' ] ) && 'none' != $tags[ 'cache_type' ] ) {
+            $params[ 'cache_type' ] = $tags[ 'cache_type' ];
+            $params[ 'expires' ] = (int) $tags[ 'expires' ];
+        }
+
         $params = apply_filters( 'pods_shortcode_findrecords_params', $params );
 
         $pod->find( $params );

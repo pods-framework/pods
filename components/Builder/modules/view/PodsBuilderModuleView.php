@@ -20,7 +20,7 @@ if ( !class_exists( 'PodsBuilderModuleView' ) ) {
          */
         public function PodsBuilderModuleView () {
             $this->_name = __( 'Pods - View', 'pods' );
-            $this->_description = __( "Include a file from a theme or another site, with caching options", 'pods' );
+            $this->_description = __( "Include a file from a theme, with caching options", 'pods' );
             $this->module_path = dirname( __FILE__ );
 
             $this->LayoutModule();
@@ -51,7 +51,7 @@ if ( !class_exists( 'PodsBuilderModuleView' ) ) {
          */
         function _before_table_edit ( $form, $results = true ) {
 ?>
-    <p><?php _e( "Include a file from a theme or another site, with caching options", 'pods' ); ?></p>
+    <p><?php echo $this->_description; ?></p>
 <?php
         }
 
@@ -105,8 +105,8 @@ if ( !class_exists( 'PodsBuilderModuleView' ) ) {
         function _render ( $fields ) {
             $args = array(
                 'view' => trim( pods_var_raw( 'view', $fields[ 'data' ], '' ) ),
-                'expires' => (int) trim( pods_var_raw( 'expires', $fields[ 'data' ], 0 ) ),
-                'cache_type' => trim( pods_var_raw( 'cache_type', $fields[ 'data' ], 'none', null, true ) )
+                'expires' => (int) trim( pods_var_raw( 'expires', $fields[ 'data' ], ( 60 * 5 ) ) ),
+                'cache_type' => trim( pods_var_raw( 'cache_type', $fields[ 'data' ], 'transient', null, true ) )
             );
 
             if ( 0 < strlen( $args[ 'view' ] ) && 'none' != $args[ 'cache_mode' ] )

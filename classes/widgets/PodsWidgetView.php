@@ -11,7 +11,7 @@ class PodsWidgetView extends WP_Widget {
         $this->WP_Widget(
             'pods_widget_view',
             'Pods - View',
-            array( 'classname' => 'pods_widget_view', 'description' => "Include a file from a theme or another site, with caching options" ),
+            array( 'classname' => 'pods_widget_view', 'description' => "Include a file from a theme, with caching options" ),
             array( 'width' => 200 )
         );
     }
@@ -27,8 +27,8 @@ class PodsWidgetView extends WP_Widget {
 
         $args = array(
             'view' => trim( pods_var_raw( 'view', $instance, '' ) ),
-            'expires' => (int) pods_var_raw( 'expires', $instance, 0 ),
-            'cache_mode' => trim( pods_var_raw( 'cache_mode', $instance, 'none', null, true ) )
+            'expires' => (int) pods_var_raw( 'expires', $instance, ( 60 * 5 ) ),
+            'cache_mode' => trim( pods_var_raw( 'cache_mode', $instance, 'transient', null, true ) )
         );
 
         if ( 0 < strlen( $args[ 'view' ] ) )
@@ -44,8 +44,8 @@ class PodsWidgetView extends WP_Widget {
         $instance = $old_instance;
         $instance[ 'title' ] = pods_var_raw( 'title', $new_instance, '' );
         $instance[ 'view' ] = pods_var_raw( 'view', $new_instance, '' );
-        $instance[ 'expires' ] = (int) pods_var_raw( 'expires', $new_instance, 0 );
-        $instance[ 'cache_mode' ] = pods_var_raw( 'cache_mode', $new_instance, 'none', null, true );
+        $instance[ 'expires' ] = (int) pods_var_raw( 'expires', $new_instance, ( 60 * 5 ) );
+        $instance[ 'cache_mode' ] = pods_var_raw( 'cache_mode', $new_instance, 'transient', null, true );
 
         return $instance;
     }
@@ -56,8 +56,8 @@ class PodsWidgetView extends WP_Widget {
     public function form ( $instance ) {
         $title = pods_var_raw( 'title', $instance, '' );
         $view = pods_var_raw( 'view', $instance, '' );
-        $expires = (int) pods_var_raw( 'expires', $instance, 0 );
-        $cache_mode = pods_var_raw( 'cache_mode', $instance, 'none', null, true );
+        $expires = (int) pods_var_raw( 'expires', $instance, ( 60 * 5 ) );
+        $cache_mode = pods_var_raw( 'cache_mode', $instance, 'transient', null, true );
 
         require PODS_DIR . 'ui/admin/widgets/view.php';
     }

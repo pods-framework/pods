@@ -82,4 +82,31 @@
 
         <input class="widefat" type="text" id="<?php echo $this->get_field_id( 'where' ); ?>" name="<?php echo $this->get_field_name( 'where' ); ?>" value="<?php echo esc_attr( $where ); ?>" />
     </li>
+
+    <li>
+        <label for="<?php echo $this->get_field_id( 'cache_type' ); ?>"><?php _e( 'Cache Type', 'pods' ); ?></label>
+
+        <?php
+            $cache_types = array(
+                'none' => __( 'Disable Caching', 'pods' ),
+                'cache' => __( 'Object Cache', 'pods' ),
+                'transient' => __( 'Transient', 'pods' ),
+                'site-transient' => __( 'Site Transient', 'pods' )
+            );
+        ?>
+        <select id="<?php echo $this->get_field_id( 'cache_type' ); ?>" name="<?php echo $this->get_field_name( 'cache_type' ); ?>">
+            <?php foreach ( $cache_types as $cache_type_option => $cache_type_label ): ?>
+            <?php $selected = ( $cache_type_option == $cache_type ) ? 'selected' : ''; ?>
+            <option value="<?php echo $cache_type_option; ?>" <?php echo $selected; ?>>
+                <?php echo esc_html( $cache_type_label ); ?>
+            </option>
+            <?php endforeach; ?>
+        </select>
+    </li>
+
+    <li>
+        <label for="<?php $this->get_field_id( 'expires' ); ?>"><?php _e( 'Cache Expiration (in seconds)', 'pods' ); ?></label>
+
+        <input class="widefat" type="text" name="<?php echo $this->get_field_name( 'expires' ); ?>" id="<?php echo $this->get_field_id( 'expires' ); ?>" value="<?php echo esc_attr( $expires ); ?>" />
+    </li>
 </ol>

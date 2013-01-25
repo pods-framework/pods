@@ -120,6 +120,9 @@
                         }
                     } );
 
+                    if ( 'undefined' != typeof pods_admin_submit_validation )
+                        valid_form = pods_admin_submit_validation( valid_form, $submittable );
+
                     if ( false === valid_form ) {
                         $submittable.addClass( 'invalid-form' );
 
@@ -152,7 +155,7 @@
                         success : function ( d ) {
                             if ( -1 == d.indexOf( '<e>' ) && -1 == d.indexOf('</e>') && -1 != d ) {
                                 if ( 'undefined' != typeof pods_admin_submit_callback )
-                                    pods_admin_submit_callback( d );
+                                    pods_admin_submit_callback( d, $submittable );
                                 else if ( 'undefined' != typeof $submittable.data( 'location' ) )
                                     document.location.href = $submittable.data( 'location' ).replace( 'X_ID_X', parseInt( d ) );
                                 else
@@ -162,8 +165,9 @@
                                 document.location.href = $submittable.data( 'error-location' );
                             else {
                                 var err_msg = d.replace( '<e>', '' ).replace( '</e>', '' );
+
                                 if ( 'undefined' != typeof pods_admin_submit_error_callback )
-                                    pods_admin_submit_error_callback( err_msg );
+                                    pods_admin_submit_error_callback( err_msg, $submittable );
 
                                 $submitbutton.css( 'cursor', 'pointer' );
                                 $submitbutton.prop( 'disabled', false );
@@ -246,7 +250,7 @@
                         success : function ( d ) {
                             if ( -1 == d.indexOf( '<e>' ) && -1 != d ) {
                                 if ( 'undefined' != typeof pods_admin_submit_callback )
-                                    pods_admin_submit_callback( d );
+                                    pods_admin_submit_callback( d, $submittable );
                                 else if ( 'undefined' != typeof $submitbutton.data( 'location' ) )
                                     document.location.href = $submitbutton.data( 'location' ).replace( 'X_ID_X', parseInt( d ) );
                                 else
@@ -256,8 +260,9 @@
                                 document.location.href = $submitbutton.data( 'error-location' );
                             else {
                                 var err_msg = d.replace( '<e>', '' ).replace( '</e>', '' );
+
                                 if ( 'undefined' != typeof pods_admin_submit_error_callback )
-                                    pods_admin_submit_error_callback( err_msg );
+                                    pods_admin_submit_error_callback( err_msg, $submittable );
 
                                 $submitbutton.css( 'cursor', 'pointer' );
                                 $submitbutton.prop( 'disabled', false );

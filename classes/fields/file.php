@@ -83,8 +83,9 @@ class PodsField_File extends PodsField {
                 'default' => 'type',
                 'type' => 'pick',
                 'data' => array(
-                    'type' => __( 'Upload File', 'pods' ),
-                    'library' => __( 'Media Library', 'pods' )
+                    // keys MUST match WP's router names
+                    'upload' => __( 'Upload File', 'pods' ),
+                    'browse' => __( 'Media Library', 'pods' )
                 )
             ),
             'file_edit_title' => array(

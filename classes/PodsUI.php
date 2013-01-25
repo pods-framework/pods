@@ -1798,9 +1798,11 @@ class PodsUI {
 
             $params = array_merge( $params, (array) $this->params );
 
-            $data = $this->pod->find( $params )->data();
+            $this->pod->find( $params );
 
             if ( !$full ) {
+                $data = $this->pod->data();
+
                 $this->data = $data;
 
                 if ( !empty( $this->data ) )
@@ -1810,7 +1812,11 @@ class PodsUI {
                 $this->total_found = $this->pod->total_found();
             }
             else {
-                $this->data_full = $data;
+                $this->data_full = array();
+
+                while ( $this->pod->fetch() ) {
+                    $this->data_full[ $this->pod->id() ] = $this->pod->export();
+                }
 
                 return $this->data_full;
             }

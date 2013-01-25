@@ -544,12 +544,8 @@ class PodsAPI {
                     'type' => 'wysiwyg',
                     'alias' => array( 'content' ),
                     'options' => array(
-                        'wysiwyg_oembed' => 1,
-                        'wysiwyg_wptexturize' => 1,
-                        'wysiwyg_convert_chars' => 1,
-                        'wysiwyg_wpautop' => 1,
-                        'wysiwyg_allow_shortcode' => 1,
-                        'wysiwyg_allowed_html_tags' => ''
+                        'display_filter' => 'the_content',
+                        'pre_save' => 0
                     )
                 ),
                 'post_excerpt' => array(
@@ -558,13 +554,8 @@ class PodsAPI {
                     'type' => 'paragraph',
                     'alias' => array( 'excerpt' ),
                     'options' => array(
-                        'paragraph_allow_html' => 1,
-                        'paragraph_oembed' => 1,
-                        'paragraph_wptexturize' => 1,
-                        'paragraph_convert_chars' => 1,
-                        'paragraph_wpautop' => 1,
-                        'paragraph_allow_shortcode' => 1,
-                        'paragraph_allowed_html_tags' => ''
+                        'display_filter' => 'the_excerpt',
+                        'pre_save' => 0
                     )
                 ),
                 'post_author' => array(

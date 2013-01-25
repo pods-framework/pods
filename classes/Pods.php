@@ -332,15 +332,19 @@ class Pods {
             if ( 'pick' == $this->fields[ $params->name ][ 'type' ] && 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] )
                 $value = PodsForm::field_method( 'pick', 'simple_value', $value, $this->fields[ $params->name ] );
 
-            $value = PodsForm::display(
-                $this->fields[ $params->name ][ 'type' ],
-                $value,
-                $params->name,
-                array_merge( $this->fields[ $params->name ][ 'options' ], $this->fields[ $params->name ] ),
-                $this->pod_data,
-                $this->id(),
-                $params
-            );
+            if ( 0 < strlen( pods_var( 'display_filter', $this->fields[ $params->name ] ) ) )
+                $value = apply_filters( pods_var( 'display_filter', $this->fields[ $params->name ] ), $value );
+            else {
+                $value = PodsForm::display(
+                    $this->fields[ $params->name ][ 'type' ],
+                    $value,
+                    $params->name,
+                    array_merge( $this->fields[ $params->name ][ 'options' ], $this->fields[ $params->name ] ),
+                    $this->pod_data,
+                    $this->id(),
+                    $params
+                );
+            }
         }
 
         if ( is_array( $value ) )
@@ -890,14 +894,18 @@ class Pods {
 
         // @todo Expand this into traversed fields too
         if ( false === $params->raw && false === $params->in_form && isset( $this->fields[ $params->name ] ) ) {
-            $value = PodsForm::display(
-                $this->fields[ $params->name ][ 'type' ],
-                $value,
-                $params->name,
-                array_merge( $this->fields[ $params->name ][ 'options' ], $this->fields[ $params->name ] ),
-                $this->pod_data,
-                $this->id()
-            );
+            if ( 0 < strlen( pods_var( 'display_filter', $this->fields[ $params->name ] ) ) )
+                $value = apply_filters( pods_var( 'display_filter', $this->fields[ $params->name ] ), $value );
+            else {
+                $value = PodsForm::display(
+                    $this->fields[ $params->name ][ 'type' ],
+                    $value,
+                    $params->name,
+                    array_merge( $this->fields[ $params->name ][ 'options' ], $this->fields[ $params->name ] ),
+                    $this->pod_data,
+                    $this->id()
+                );
+            }
         }
 
         $value = $this->do_hook( 'field', $value, $this->row, $params );

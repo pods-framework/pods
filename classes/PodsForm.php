@@ -669,7 +669,7 @@ class PodsForm {
 
         $validate = true;
 
-        if ( method_exists( self::$loaded[ $type ], 'validate' ) )
+        if ( 1 == pods_var( 'pre_save', $options, 1 ) && method_exists( self::$loaded[ $type ], 'validate' ) )
             $validate = self::$loaded[ $type ]->validate( $value, $name, $options, $fields, $pod, $id, $params );
 
         $validate = apply_filters( 'pods_field_' . $type . '_validate', $validate, $value, $name, $options, $fields, $pod, $id, $type, $params );
@@ -695,7 +695,7 @@ class PodsForm {
     public static function pre_save ( $type, $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         self::field_loader( $type );
 
-        if ( method_exists( self::$loaded[ $type ], 'pre_save' ) )
+        if ( 1 == pods_var( 'pre_save', $options, 1 ) && method_exists( self::$loaded[ $type ], 'pre_save' ) )
             $value = self::$loaded[ $type ]->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
         return $value;

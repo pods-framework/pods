@@ -2685,10 +2685,10 @@ class PodsAPI {
             }
         }
 
-        $no_conflict = pods_no_conflict_check( 'post' );
+        $no_conflict = pods_no_conflict_check( $pod[ 'type' ] );
 
         if ( !$no_conflict )
-            pods_no_conflict_on( 'post' );
+            pods_no_conflict_on( $pod[ 'type' ] );
 
         // Save relational field data
         if ( !empty( $rel_fields ) ) {
@@ -2963,7 +2963,7 @@ class PodsAPI {
         }
 
         if ( !$no_conflict )
-            pods_no_conflict_off( 'post' );
+            pods_no_conflict_off( $pod[ 'type' ] );
 
         if ( false === $bypass_helpers ) {
             $pieces = array( 'fields', 'params', 'pod', 'fields_active' );

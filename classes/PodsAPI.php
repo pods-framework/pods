@@ -5339,8 +5339,20 @@ class PodsAPI {
                     $info[ 'where' ][ 'wpml_language_code' ] = "`wpml_languages`.`code` IS NOT NULL";
                 }
                 // Polylang support
-                elseif( function_exists( 'pll_current_language' ) ) {
+                elseif( function_exists( 'pll_is_translated_post_type' ) && pll_is_translated_post_type( $post_type ) ) {
+                    $info[ 'join' ][ 'polylang_translations' ] = "
+                        LEFT JOIN `{$wpdb->prefix}icl_translations` AS `polylang_translations`
+                            ON `polylang_translations`.`element_id` = `t`.`ID`
+                                AND `polylang_translations`.`element_type` = 'post_{$post_type}'
+                                AND `polylang_translations`.`language_code` = '{$current_language}'
+                    ";
 
+                    $info[ 'join' ][ 'polylang_languages' ] = "
+                        LEFT JOIN `{$wpdb->prefix}icl_languages` AS `polylang_languages`
+                            ON `polylang_languages`.`code` = `polylang_translations`.`language_code` AND `polylang_languages`.`active` = 1
+                    ";
+
+                    $info[ 'where' ][ 'polylang_language_code' ] = "`polylang_languages`.`code` IS NOT NULL";
                 }
 
                 $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type );
@@ -5376,6 +5388,7 @@ class PodsAPI {
                     'tt.taxonomy' => '`tt`.`taxonomy` = "' . $taxonomy . '"'
                 );
 
+                // WPML Support
                 if ( is_object( $sitepress ) && $sitepress->is_translated_taxonomy( $taxonomy ) && !$icl_adjust_id_url_filter_off ) {
                     $info[ 'join' ][ 'wpml_translations' ] = "
                         LEFT JOIN `{$wpdb->prefix}icl_translations` AS `wpml_translations`
@@ -5390,6 +5403,22 @@ class PodsAPI {
                     ";
 
                     $info[ 'where' ][ 'wpml_language_code' ] = "`wpml_languages`.`code` IS NOT NULL";
+                }
+                // Polylang support
+                elseif ( function_exists( 'pll_is_translated_taxonomy' ) && pll_is_translated_taxonomy( $taxonomy ) ) {
+                    $info[ 'join' ][ 'polylang_translations' ] = "
+                        LEFT JOIN `{$wpdb->prefix}icl_translations` AS `polylang_translations`
+                            ON `polylang_translations`.`element_id` = `tt`.`term_taxonomy_id`
+                                AND `polylang_translations`.`element_type` = 'tax_{$taxonomy}'
+                                AND `polylang_translations`.`language_code` = '{$current_language}'
+                    ";
+
+                    $info[ 'join' ][ 'polylang_languages' ] = "
+                        LEFT JOIN `{$wpdb->prefix}icl_languages` AS `polylang_languages`
+                            ON `polylang_languages`.`code` = `polylang_translations`.`language_code` AND `polylang_languages`.`active` = 1
+                    ";
+
+                    $info[ 'where' ][ 'polylang_language_code' ] = "`polylang_languages`.`code` IS NOT NULL";
                 }
 
                 $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type );

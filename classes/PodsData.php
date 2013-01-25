@@ -242,7 +242,7 @@ class PodsData {
 
         $this->api->display_errors =& self::$display_errors;
 
-        if ( null !== $pod ) {
+        if ( !empty( $pod ) ) {
             $this->pod_data =& $this->api->pod_data;
 
             if ( false === $this->pod_data ) {

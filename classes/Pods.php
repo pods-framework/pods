@@ -146,6 +146,13 @@ class Pods {
      * @link http://podsframework.org/docs/pods/
      */
     public function __construct ( $pod = null, $id = null ) {
+        if ( empty( $pod ) ) {
+            $pod = get_post_type();
+
+            if ( empty( $id ) )
+                $id = get_the_ID();
+        }
+
         $this->api = pods_api( $pod );
         $this->api->display_errors =& $this->display_errors;
 

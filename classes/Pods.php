@@ -146,10 +146,10 @@ class Pods {
      * @link http://podsframework.org/docs/pods/
      */
     public function __construct ( $pod = null, $id = null ) {
-        if ( empty( $pod ) ) {
+        if ( null === $pod  ) {
             $pod = get_post_type();
 
-            if ( empty( $id ) )
+            if ( null === $id )
                 $id = get_the_ID();
         }
 

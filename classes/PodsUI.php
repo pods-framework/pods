@@ -1693,7 +1693,7 @@ class PodsUI {
             $columns[ $field[ 'name' ] ] = $field[ 'label' ];
         }
 
-        $items = $this->get_data( true, $this->fields[ 'export' ] );
+        $items = $this->get_data( true, array_keys( $columns ) );
 
         $data = array(
             'columns' => $columns,

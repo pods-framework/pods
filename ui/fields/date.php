@@ -1,12 +1,16 @@
 <?php
 $date_format = array(
     'mdy' => 'mm/dd/yy',
+    'mdy_dash' => 'mm-dd-yy',
+    'mdy_dot' => 'mm.dd.yy',
     'dmy' => 'dd/mm/yy',
     'dmy_dash' => 'dd-mm-yy',
     'dmy_dot' => 'dd.mm.yy',
     'ymd_slash' => 'yy/mm/dd',
     'ymd_dash' => 'yy-mm-dd',
-    'ymd_dot' => 'yy.mm.dd'
+    'ymd_dot' => 'yy.mm.dd',
+    'dMy' => 'dd/mmm/yy',
+    'dMy_dash' => 'dd-mmm-yy'
 );
 
 wp_enqueue_script( 'jquery-ui-datepicker' );

@@ -59,13 +59,17 @@ class PodsField_Date extends PodsField {
                 'default' => 'mdy',
                 'type' => 'pick',
                 'data' => array(
-                    'mdy' => 'mm/dd/yyyy',
-                    'dmy' => 'dd/mm/yyyy',
-                    'dmy_dash' => 'dd-mm-yyyy',
-                    'dmy_dot' => 'dd.mm.yyyy',
-                    'ymd_slash' => 'yyyy/mm/dd',
-                    'ymd_dash' => 'yyyy-mm-dd',
-                    'ymd_dot' => 'yyyy.mm.dd'
+                    'mdy' => 'mm/dd/yyyy (ex. 12/31/1999)',
+                    'mdy_dash' => 'mm-dd-yyyy (ex. 12-31-1999)',
+                    'mdy_dot' => 'mm.dd.yyyy (ex. 12.31.1999)',
+                    'dmy' => 'dd/mm/yyyy (ex. 31/12/1999)',
+                    'dmy_dash' => 'dd-mm-yyyy (ex. 31-12-1999)',
+                    'dmy_dot' => 'dd.mm.yyyy (ex. 31.12.1999)',
+                    'ymd_slash' => 'yyyy/mm/dd (ex. 1999/12/31)',
+                    'ymd_dash' => 'yyyy-mm-dd (ex. 1999-12-31)',
+                    'ymd_dot' => 'yyyy.mm.dd (ex. 1999.12.31)',
+                    'dMd' => 'dd/mmm/yyyy (ex. 31/Dec/1999)',
+                    'dMd_dash' => 'dd-mmm-yyyy (ex. 31-Dec-1999)'
                 )
             ),
             'date_allow_empty' => array(
@@ -211,12 +215,16 @@ class PodsField_Date extends PodsField {
     public function format ( $options ) {
         $date_format = array(
             'mdy' => 'm/d/Y',
+            'mdy_dash' => 'm-d-Y',
+            'mdy_dot' => 'm.d.Y',
             'dmy' => 'd/m/Y',
             'dmy_dash' => 'd-m-Y',
             'dmy_dot' => 'd.m.Y',
             'ymd_slash' => 'Y/m/d',
             'ymd_dash' => 'Y-m-d',
-            'ymd_dot' => 'Y.m.d'
+            'ymd_dot' => 'Y.m.d',
+            'dMd' => 'd/M/Y',
+            'dMd_dash' => 'd-M-Y',
         );
 
         $format = $date_format[ pods_var( 'date_format', $options, 'ymd_dash', null, true ) ];

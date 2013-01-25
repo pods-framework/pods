@@ -168,6 +168,11 @@ class PodsField_File extends PodsField {
             unset( $options[ 'file_modal_add_button' ] );
             unset( $options[ 'file_modal_title' ] );
             unset( $options[ 'file_modal_add_button' ] );
+
+            $options[ 'file_attachment_tab' ][ 'data' ] = array(
+                'type' => __( 'Upload File', 'pods' ),
+                'library' => __( 'Media Library', 'pods' )
+            );
         }
 
         return $options;

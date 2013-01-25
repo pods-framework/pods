@@ -43,6 +43,11 @@ $limit_types = str_replace( ' ', '', $limit_types );
 
 $tab = pods_var( PodsForm::$field_type . '_attachment_tab', $options, 'type', null, true );
 
+if ( 'upload' == $tab )
+    $tab = 'type';
+elseif ( 'browse' == $tab )
+    $tab = 'library';
+
 $file_limit = 1;
 
 if ( 'multi' == pods_var( PodsForm::$field_type . '_format_type', $options, 'single' ) )

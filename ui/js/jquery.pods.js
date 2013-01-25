@@ -670,6 +670,14 @@
                                 $dependent_el.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
                                     $( this ).trigger( 'change' );
                                 } );
+
+                                if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
+                                    var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+
+                                    dependency_trigger = window[ dependency_trigger ];
+
+                                    dependency_trigger( $dependent_el );
+                                }
                             }
                             else if ( $dependent_el.is( dependent_specific ) ) {
                                 if ( $dependent_el.is( 'tr' ) )
@@ -683,6 +691,14 @@
                                 $dependent_el.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
                                     $( this ).trigger( 'change' );
                                 } );
+
+                                if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
+                                    var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+
+                                    dependency_trigger = window[ dependency_trigger ];
+
+                                    dependency_trigger( $dependent_el );
+                                }
                             }
                             else {
                                 if ( $dependent_el.is( 'tr' ) )
@@ -700,6 +716,14 @@
                                 $dependent_el.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
                                     $( this ).trigger( 'change' );
                                 } );
+
+                                if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
+                                    var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+
+                                    dependency_trigger = window[ dependency_trigger ];
+
+                                    dependency_trigger( $dependent_el );
+                                }
                             }
                             else if ( $dependent_el.is( dependent_specific ) ) {
                                 $dependent_el.show().addClass( 'pods-dependent-visible' );
@@ -709,6 +733,14 @@
                                 $dependent_el.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
                                     $( this ).trigger( 'change' );
                                 } );
+
+                                if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
+                                    var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+
+                                    dependency_trigger = window[ dependency_trigger ];
+
+                                    dependency_trigger( $dependent_el );
+                                }
                             }
                             else
                                 $dependent_el.hide().removeClass( 'pods-dependent-visible' );
@@ -746,6 +778,14 @@
                                 $dependent_el.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
                                     $( this ).trigger( 'change' );
                                 } );
+
+                                if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
+                                    var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+
+                                    dependency_trigger = window[ dependency_trigger ];
+
+                                    dependency_trigger( $dependent_el );
+                                }
                             }
                         }
                         else {
@@ -761,6 +801,14 @@
                                 $dependent_el.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
                                     $( this ).trigger( 'change' );
                                 } );
+
+                                if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
+                                    var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+
+                                    dependency_trigger = window[ dependency_trigger ];
+
+                                    dependency_trigger( $dependent_el );
+                                }
                             }
                         }
                     } );

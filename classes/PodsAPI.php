@@ -4831,7 +4831,7 @@ class PodsAPI {
 
         $related_pod = $this->load_pod( array( 'name' => $params->related_pod ), false );
 
-        if ( false === $related_pod || ( false !== $type && $type != $related_pod[ 'type' ] ) )
+        if ( false === $related_pod || ( false !== $type && 'pod' != $type && $type != $related_pod[ 'type' ] ) )
             return pods_error( __( 'Related Pod not found', 'pods' ), $this );
 
         $params->related_pod_id = $related_pod[ 'id' ];

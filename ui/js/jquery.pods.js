@@ -1166,7 +1166,7 @@
 
                             $row.removeClass( 'pods-field-init' );
 
-                            $( document ).Pods('qtip', $row);
+                            $( document ).Pods( 'qtip', $row );
                         }
                         else {
                            $row_content.find( 'input, select, textarea' ).each( function () {
@@ -1179,7 +1179,11 @@
 
                         $row.toggleClass( 'pods-manage-row-expanded' );
                         $row_label.prop( 'colspan', '3' );
+
+                        methods[ 'scroll' ]( $row );
+
                         $row_content.slideDown();
+
                         $row_content.find('.pods-dependency .pods-dependent-toggle' ).each( function () {
                            $( this ).trigger( 'change' );
                         } );
@@ -1359,6 +1363,8 @@
                 if ( 'undefined' != typeof new_row && null !== new_row ) {
                     // Handle 'Add' action
                     $( '.pods-manage-row-add' ).on( 'click', 'a', function ( e ) {
+                        e.preventDefault();
+
                         $( this ).css( 'cursor', 'default' );
                         $( this ).prop( 'disabled', true );
 
@@ -1411,11 +1417,13 @@
 
                         $( document ).Pods( 'qtip', $new_row );
 
-                        e.preventDefault();
+                        methods[ 'scroll' ]( $new_row );
                     } );
 
                     // Handle 'Duplicate' action
                     $( 'tbody.pods-manage-list' ).on( 'click', 'a.pods-manage-row-duplicate', function ( e ) {
+                        e.preventDefault();
+
                         $( this ).css( 'cursor', 'default' );
                         $( this ).prop( 'disabled', true );
 
@@ -1484,7 +1492,7 @@
 
                         $( document ).Pods( 'qtip', $new_row );
 
-                        e.preventDefault();
+                        methods[ 'scroll' ]( $new_row );
                     } );
                 }
 
@@ -1566,11 +1574,26 @@
                         }
                     }
                 } );
+            },
+            scroll : function ( selector, callback ) {
+                var offset = 10;
+
+                if ( $( '#wpadminbar' )[ 0 ] )
+                    offset += $( '#wpadminbar' ).height();
+
+                $( 'html, body' ).animate( { scrollTop : $( selector ).offset().top - offset }, 'slow', callback );
+            },
+            scroll_to : function () {
+                $( '.pods-admin' ).on( 'click', 'a.pods-scroll-to', function ( e ) {
+                    e.preventDefault();
+
+                    methods[ 'scroll' ]( '#' + this.hash );
+                } );
             }
         };
 
     $.fn.Pods = function ( method ) {
-        if ( methods[method] ) {
+        if ( methods[ method ] ) {
             return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ) );
         }
         // Don't need this part (yet)

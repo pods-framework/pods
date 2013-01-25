@@ -2877,7 +2877,7 @@ class PodsUI {
                                             }
                                         }
 
-                                        $actions = $this->do_hook( 'row_actions', $actions );
+                                        $actions = $this->do_hook( 'row_actions', $actions, $row[ $this->sql[ 'field_id' ] ] );
 
                                         if ( !empty( $actions ) ) {
                                             ?>
@@ -3193,19 +3193,22 @@ class PodsUI {
      * @return mixed
      */
     public function do_template ( $code, $row = false ) {
-        if ( isset( $this->ui[ 'pod' ] ) && false !== $this->ui[ 'pod' ] && is_object( $this->ui[ 'pod' ] ) )
-            return $this->ui[ 'pod' ]->do_magic_tags( $code );
+        if ( is_object( $this->pod ) && 0 < $this->pod->id() )
+            return $this->pod->do_magic_tags( $code );
         else {
             if ( false !== $row ) {
                 $this->temp_row = $this->row;
                 $this->row = $row;
             }
+
             $code = preg_replace_callback( "/({@(.*?)})/m", array( $this, "do_magic_tags" ), $code );
+
             if ( false !== $row ) {
                 $this->row = $this->temp_row;
                 unset( $this->temp_row );
             }
         }
+
         return $code;
     }
 

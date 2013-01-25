@@ -1905,7 +1905,10 @@ class PodsAPI {
         $simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field, $pod, $params );
 
         if ( !in_array( $field[ 'type' ], $tableless_field_types ) || $simple )
-            $definition = '`' . $field[ 'name' ] . '` ' . $this->get_field_definition( $field[ 'type' ], $field[ 'options' ] );
+            $definition = $this->get_field_definition( $field[ 'type' ], $field[ 'options' ] );
+
+        if ( 0 < strlen( $definition ) )
+            $definition = '`' . $field[ 'name' ] . '` ' . $definition;
 
         $sister_id = (int) pods_var( 'sister_id', $field[ 'options' ], 0 );
 
@@ -1914,27 +1917,31 @@ class PodsAPI {
                 if ( $field[ 'type' ] != $old_type ) {
                     if ( in_array( $field[ 'type' ], $tableless_field_types ) && !$simple && ( !in_array( $old_type, $tableless_field_types ) || $old_simple ) )
                         pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$old_name}`", false );
-                    elseif ( ( in_array( $old_type, $tableless_field_types ) && !$old_simple ) || ( in_array( $old_type, $tableless_field_types ) && $simple ) )
-                        pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
-                    elseif ( false !== $definition )
-                        pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `{$old_name}` {$definition}" );
+                    elseif ( 0 < strlen( $definition ) ) {
+                        if ( in_array( $old_type, $tableless_field_types ) && ( $simple || !$old_simple ) )
+                            pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+                        else
+                            pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `{$old_name}` {$definition}" );
+                    }
                 }
-                elseif ( $old_name != $field[ 'name' ] && false !== $definition ) {
-                    $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `{$old_name}` {$definition}", false );
+                elseif ( 0 < strlen( $definition ) ) {
+                    if ( $old_name != $field[ 'name' ] ) {
+                        $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `{$old_name}` {$definition}", false );
 
-                    // If the old field doesn't exist, continue to add a new field
-                    if ( false === $test )
-                        pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
-                }
-                elseif ( null !== $old_definition && false !== $definition && $definition != $old_definition ) {
-                    $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `" . $field[ 'name' ] . "` {$definition}", false );
+                        // If the old field doesn't exist, continue to add a new field
+                        if ( false === $test )
+                            pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+                    }
+                    elseif ( null !== $old_definition && $definition != $old_definition ) {
+                        $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `" . $field[ 'name' ] . "` {$definition}", false );
 
-                    // If the old field doesn't exist, continue to add a new field
-                    if ( false === $test )
-                        pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+                        // If the old field doesn't exist, continue to add a new field
+                        if ( false === $test )
+                            pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
+                    }
                 }
             }
-            elseif ( false !== $definition )
+            elseif ( 0 < strlen( $definition ) )
                 $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` ADD COLUMN {$definition}", __( 'Cannot create new field', 'pods' ) );
         }
 
@@ -1942,10 +1949,20 @@ class PodsAPI {
             delete_post_meta( $old_sister_id, 'sister_id' );
 
             if ( true === $db ) {
-                $wpdb->query( $wpdb->prepare( "DELETE pm FROM {$wpdb->postmeta} AS pm
-                    LEFT JOIN {$wpdb->posts} AS p
-                        ON p.post_type = '_pods_field' AND p.ID = pm.post_id
-                    WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_id' AND pm.meta_value = %d", $params->id ) );
+                pods_query( "
+                        DELETE pm
+                        FROM {$wpdb->postmeta} AS pm
+                        LEFT JOIN {$wpdb->posts} AS p
+                            ON p.post_type = '_pods_field'
+                            AND p.ID = pm.post_id
+                        WHERE
+                            p.ID IS NOT NULL
+                            AND pm.meta_key = 'sister_id'
+                            AND pm.meta_value = %d
+                    ", array(
+                        $params->id
+                    )
+                );
 
                 if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
                     pods_query( "DELETE FROM @wp_podsrel WHERE `field_id` = {$params->id}", false );

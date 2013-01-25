@@ -5593,8 +5593,21 @@ class PodsAPI {
                                 if ( !empty( $result ) )
                                     $pick_values[] = $result[ 0 ]->id;
                             }
+                            // @todo This could and should be abstracted better and simplified
                             elseif ( 'pick' == $type ) {
-                                if ( 'taxonomy' == $pick_object ) {
+                                $related_pod = false;
+
+                                if ( 'pod' == $pick_object )
+                                    $related_pod = $this->load_pod( array( 'name' => $pick_val ), false );
+
+                                if ( empty( $related_pod ) ) {
+                                    $related_pod = array(
+                                        'id' => 0,
+                                        'type' => $pick_object
+                                    );
+                                }
+
+                                if ( in_array( 'taxonomy', array( $pick_object, $related_pod[ 'type' ] ) ) ) {
                                     $where = "`t`.`name` = '" . pods_sanitize( $pick_value ) . "'";
 
                                     if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )
@@ -5605,7 +5618,7 @@ class PodsAPI {
                                     if ( !empty( $result ) )
                                         $pick_values[] = $result[ 0 ]->id;
                                 }
-                                elseif ( 'post_type' == $pick_object || 'media' == $pick_object ) {
+                                elseif ( in_array( 'post_type', array( $pick_object, $related_pod[ 'type' ] ) ) || in_array( 'media', array( $pick_object, $related_pod[ 'type' ] ) ) ) {
                                     $where = "`post_title` = '" . pods_sanitize( $pick_value ) . "'";
 
                                     if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )
@@ -5616,7 +5629,7 @@ class PodsAPI {
                                     if ( !empty( $result ) )
                                         $pick_values[] = $result[ 0 ]->id;
                                 }
-                                elseif ( 'user' == $pick_object ) {
+                                elseif ( in_array( 'user', array( $pick_object, $related_pod[ 'type' ] ) ) ) {
                                     $where = "`user_login` = '" . pods_sanitize( $pick_value ) . "'";
 
                                     if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )
@@ -5627,7 +5640,7 @@ class PodsAPI {
                                     if ( !empty( $result ) )
                                         $pick_values[] = $result[ 0 ]->id;
                                 }
-                                elseif ( 'comment' == $pick_object ) {
+                                elseif ( in_array( 'comment', array( $pick_object, $related_pod[ 'type' ] ) ) ) {
                                     $where = "`comment_ID` = " . pods_absint( $pick_value );
 
                                     $result = pods_query( "SELECT `comment_ID` AS `id` FROM `{$wpdb->comments}` WHERE {$where} ORDER BY `ID`", $this );
@@ -5637,12 +5650,7 @@ class PodsAPI {
                                 }
                                 elseif ( 'custom-simple' == $pick_object )
                                     $pick_values[] = $pick_value;
-                                else {
-                                    $related_pod = $this->load_pod( array( 'name' => $pick_val ), false );
-
-                                    if ( empty( $related_pod ) )
-                                        continue;
-
+                                elseif ( !empty( $related_pod[ 'id' ] ) ) {
                                     $where = "`" . $related_pod[ 'field_index' ] . "` = '" . pods_sanitize( $pick_value ) . "'";
 
                                     if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )

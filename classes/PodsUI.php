@@ -383,10 +383,12 @@ class PodsUI {
      * @var bool|string
      */
     public $restrict = array(
-        'edit' => false,
-        'duplicate' => false,
-        'delete' => false,
-        'author_restrict' => false
+        'manage' => null,
+        'edit' => null,
+        'duplicate' => null,
+        'delete' => null,
+        'reorder' => null,
+        'author_restrict' => null
     );
 
     /**
@@ -832,16 +834,26 @@ class PodsUI {
         $options->validate( 'restrict', $this->restrict, 'array_merge' );
 
         // handle author restrictions
-        if ( !empty( $options[ 'restrict' ][ 'author_restrict' ] ) && !is_array( $options[ 'restrict' ][ 'author_restrict' ] ) )
-            $options[ 'restrict' ][ 'author_restrict' ] = array( $options[ 'restrict' ][ 'author_restrict' ] => get_current_user_id() );
-
         if ( !empty( $options[ 'restrict' ][ 'author_restrict' ] ) ) {
-            if ( empty( $options[ 'restrict' ][ 'edit' ] ) )
+            if ( !is_array( $options[ 'restrict' ][ 'author_restrict' ] ) )
+                $options[ 'restrict' ][ 'author_restrict' ] = array( $options[ 'restrict' ][ 'author_restrict' ] => get_current_user_id() );
+
+            if ( null === $options[ 'restrict' ][ 'edit' ] )
                 $options[ 'restrict' ][ 'edit' ] = $options[ 'restrict' ][ 'author_restrict' ];
-            elseif ( empty( $options[ 'restrict' ][ 'duplicate' ] ) )
-                $options[ 'restrict' ][ 'duplicate' ] = $options[ 'restrict' ][ 'author_restrict' ];
-            elseif ( empty( $options[ 'restrict' ][ 'delete' ] ) )
-                $options[ 'restrict' ][ 'delete' ] = $options[ 'restrict' ][ 'author_restrict' ];
+        }
+
+        if ( null !== $options[ 'restrict' ][ 'edit' ] ) {
+            if ( null === $options[ 'restrict' ][ 'duplicate' ] )
+                $options[ 'restrict' ][ 'duplicate' ] = $options[ 'restrict' ][ 'edit' ];
+
+            if ( null === $options[ 'restrict' ][ 'delete' ] )
+                $options[ 'restrict' ][ 'delete' ] = $options[ 'restrict' ][ 'edit' ];
+
+            if ( null === $options[ 'restrict' ][ 'manage' ] )
+                $options[ 'restrict' ][ 'manage' ] = $options[ 'restrict' ][ 'edit' ];
+
+            if ( null === $options[ 'restrict' ][ 'reorder' ] )
+                $options[ 'restrict' ][ 'reorder' ] = $options[ 'restrict' ][ 'edit' ];
         }
 
         $item = __( 'Item', 'pods' );
@@ -3313,36 +3325,29 @@ class PodsUI {
         if ( isset( $this->restrict[ $action ] ) )
             $restrict = (array) $this->restrict[ $action ];
 
-        if ( 'duplicate' == $action && empty( $restrict ) )
-            $restrict = (array) $this->restrict[ 'edit' ];
-        elseif ( 'delete' == $action && empty( $restrict ) )
-            $restrict = (array) $this->restrict[ 'edit' ];
+        if ( !empty( $this->restrict[ 'author_restrict' ] ) && $restrict == $this->restrict[ 'author_restrict' ] ) {
+            if ( is_object( $this->pod ) ) {
+                $restricted = true;
 
-        if ( is_object( $this->pod ) ) {
-            $restricted = true;
-
-            if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) )
-                $restricted = false;
-            elseif ( !empty( $restrict ) ) {
-                if ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) )
+                if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) )
+                    $restricted = false;
+                elseif ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) )
                     $restricted = false;
                 elseif ( current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) )
                     $restricted = false;
             }
-        }
-        /* @todo determine proper logic for non-pods capabilities
-        else {
-            $restricted = true;
+            /* @todo determine proper logic for non-pods capabilities
+            else {
+                $restricted = true;
 
-            if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) )
-                $restricted = false;
-            elseif ( !empty( $restrict ) ) {
-                if ( current_user_can( 'pods_' . $action . '_' . $_tbd ) )
+                if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) )
+                    $restricted = false;
+                elseif ( current_user_can( 'pods_' . $action . '_' . $_tbd ) )
                     $restricted = false;
                 elseif ( current_user_can( 'pods_' . $action . '_others_' . $_tbd ) )
                     $restricted = false;
-            }
-        }*/
+            }*/
+        }
 
         if ( $restricted && !empty( $restrict ) ) {
             $relation = strtoupper( trim( pods_var( 'relation', $restrict, 'AND', null, true ) ) );
@@ -3492,11 +3497,6 @@ class PodsUI {
 
         if ( isset( $this->restrict[ $action ] ) )
             $restrict = (array) $this->restrict[ $action ];
-
-        if ( 'duplicate' == $action && empty( $restrict ) )
-            $restrict = (array) $this->restrict[ 'edit' ];
-        elseif ( 'delete' == $action && empty( $restrict ) )
-            $restrict = (array) $this->restrict[ 'edit' ];
 
         $relation = strtoupper( trim( pods_var( 'relation', $restrict, 'AND', null, true ) ) );
 

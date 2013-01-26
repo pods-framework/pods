@@ -382,7 +382,12 @@ class PodsUI {
     /**
      * @var bool|string
      */
-    public $author_restrict = false;
+    public $restrict = array(
+        'edit' => false,
+        'duplicate' => false,
+        'delete' => false,
+        'author_restrict' => false
+    );
 
     /**
      * @var bool
@@ -674,18 +679,33 @@ class PodsUI {
                 $options[ 'where' ][ 'edit' ] = $deprecated_options[ 'edit_where' ];
             else
                 $options[ 'where' ] = array( 'edit' => $deprecated_options[ 'edit_where' ] );
+
+            if ( isset( $options[ 'restrict' ] ) )
+                $options[ 'restrict' ][ 'edit' ] = (array) $deprecated_options[ 'edit_where' ];
+            else
+                $options[ 'restrict' ] = array( 'edit' => (array) $deprecated_options[ 'edit_where' ] );
         }
         if ( isset( $deprecated_options[ 'duplicate_where' ] ) ) {
             if ( isset( $options[ 'where' ] ) )
                 $options[ 'where' ][ 'duplicate' ] = $deprecated_options[ 'duplicate_where' ];
             else
                 $options[ 'where' ] = array( 'duplicate' => $deprecated_options[ 'duplicate_where' ] );
+
+            if ( isset( $options[ 'restrict' ] ) )
+                $options[ 'restrict' ][ 'duplicate' ] = (array) $deprecated_options[ 'duplicate_where' ];
+            else
+                $options[ 'restrict' ] = array( 'duplicate' => (array) $deprecated_options[ 'duplicate_where' ] );
         }
         if ( isset( $deprecated_options[ 'delete_where' ] ) ) {
             if ( isset( $options[ 'where' ] ) )
                 $options[ 'where' ][ 'delete' ] = $deprecated_options[ 'delete_where' ];
             else
                 $options[ 'where' ] = array( 'delete' => $deprecated_options[ 'delete_where' ] );
+
+            if ( isset( $options[ 'restrict' ] ) )
+                $options[ 'restrict' ][ 'delete' ] = (array) $deprecated_options[ 'delete_where' ];
+            else
+                $options[ 'restrict' ] = array( 'delete' => (array) $deprecated_options[ 'delete_where' ] );
         }
         if ( isset( $deprecated_options[ 'reorder_where' ] ) ) {
             if ( isset( $options[ 'where' ] ) )
@@ -808,6 +828,21 @@ class PodsUI {
         $options->validate( 'sortable', $this->sortable, 'boolean' );
 
         $options->validate( 'params', $this->params, 'array' );
+
+        $options->validate( 'restrict', $this->restrict, 'array_merge' );
+
+        // handle author restrictions
+        if ( !empty( $options[ 'restrict' ][ 'author_restrict' ] ) && !is_array( $options[ 'restrict' ][ 'author_restrict' ] ) )
+            $options[ 'restrict' ][ 'author_restrict' ] = array( $options[ 'restrict' ][ 'author_restrict' ] => get_current_user_id() );
+
+        if ( !empty( $options[ 'restrict' ][ 'author_restrict' ] ) ) {
+            if ( empty( $options[ 'restrict' ][ 'edit' ] ) )
+                $options[ 'restrict' ][ 'edit' ] = $options[ 'restrict' ][ 'author_restrict' ];
+            elseif ( empty( $options[ 'restrict' ][ 'duplicate' ] ) )
+                $options[ 'restrict' ][ 'duplicate' ] = $options[ 'restrict' ][ 'author_restrict' ];
+            elseif ( empty( $options[ 'restrict' ][ 'delete' ] ) )
+                $options[ 'restrict' ][ 'delete' ] = $options[ 'restrict' ][ 'author_restrict' ];
+        }
 
         $item = __( 'Item', 'pods' );
         $items = __( 'Items', 'pods' );
@@ -1351,16 +1386,8 @@ class PodsUI {
             if ( empty( $this->row ) )
                 return $this->error( sprintf( __( '<strong>Error:</strong> %s not found.', 'pods' ), $this->item ) );
 
-            if ( !empty( $this->author_restrict ) && $this->restricted() ) {
-                if ( is_object( $this->pod ) && get_current_user_id() != $this->pod->field( $this->author_restrict . '.ID', true ) )
-                    return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to edit this %s.', 'pods' ), $this->item ) );
-                elseif ( isset( $this->row[ $this->author_restrict ] ) ) {
-                    if ( is_array( $this->row[ $this->author_restrict ] ) && isset( $this->row[ $this->author_restrict ][ 'ID' ] ) && get_current_user_id() != $this->row[ $this->author_restrict ][ 'ID' ] )
-                        return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to edit this %s.', 'pods' ), $this->item ) );
-                    elseif ( !is_array( $this->row[ $this->author_restrict ] ) && get_current_user_id() != $this->row[ $this->author_restrict ] )
-                        return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to edit this %s.', 'pods' ), $this->item ) );
-                }
-            }
+            if ( $this->restricted( $this->action ) )
+                return $this->error( sprintf( __( '<strong>Error:</strong> You do not have access to this %s.', 'pods' ), $this->item ) );
 
             $label = $this->label[ 'edit' ];
             $id = $this->row[ $this->sql[ 'field_id' ] ];
@@ -1784,14 +1811,8 @@ class PodsUI {
                 'sql' => $sql
             );
 
-            if ( !empty( $this->author_restrict ) && $this->restricted() ) {
-                if ( empty( $params[ 'where' ] ) )
-                    $params[ 'where' ] = array();
-                elseif ( !is_array( $params[ 'where' ] ) )
-                    $params[ 'where' ] = (array) $params[ 'where' ];
-
-                $params[ 'where' ][] = pods_sanitize( $this->author_restrict ) . '.`ID` = ' . get_current_user_id();
-            }
+            if ( empty( $params[ 'where' ] ) && $this->restricted( $this->action ) )
+                $params[ 'where' ] = $this->restricted_where( $this->action );
 
             if ( $full )
                 $params[ 'limit' ] = -1;
@@ -1845,14 +1866,8 @@ class PodsUI {
                 'fields' => $this->fields[ 'search' ]
             );
 
-            if ( !empty( $this->author_restrict ) && $this->restricted() ) {
-                if ( empty( $params[ 'where' ] ) )
-                    $params[ 'where' ] = array();
-                elseif ( !is_array( $params[ 'where' ] ) )
-                    $params[ 'where' ] = (array) $params[ 'where' ];
-
-                $params[ 'where' ][] = pods_sanitize( $this->author_restrict ) . '.`ID` = ' . get_current_user_id();
-            }
+            if ( empty( $params[ 'where' ] ) && $this->restricted( $this->action ) )
+                $params[ 'where' ] = $this->restricted_where( $this->action );
 
             if ( $full )
                 $params[ 'limit' ] = -1;
@@ -3290,23 +3305,232 @@ class PodsUI {
         return $exclusion;
     }
 
-    public function restricted ( $action = 'edit' ) {
+    public function restricted ( $action = 'edit', $row = null ) {
         $restricted = false;
+
+        $restrict = array();
+
+        if ( isset( $this->restrict[ $action ] ) )
+            $restrict = (array) $this->restrict[ $action ];
+
+        if ( 'duplicate' == $action && empty( $restrict ) )
+            $restrict = (array) $this->restrict[ 'edit' ];
+        elseif ( 'delete' == $action && empty( $restrict ) )
+            $restrict = (array) $this->restrict[ 'edit' ];
 
         if ( is_object( $this->pod ) ) {
             $restricted = true;
 
             if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) )
                 $restricted = false;
-            elseif ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) )
+            elseif ( !empty( $restrict ) ) {
+                if ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) )
+                    $restricted = false;
+                elseif ( current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) )
+                    $restricted = false;
+            }
+        }
+        /* @todo determine proper logic for non-pods capabilities
+        else {
+            $restricted = true;
+
+            if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) )
                 $restricted = false;
-            elseif ( !empty( $this->author_restrict ) && current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) )
+            elseif ( !empty( $restrict ) ) {
+                if ( current_user_can( 'pods_' . $action . '_' . $_tbd ) )
+                    $restricted = false;
+                elseif ( current_user_can( 'pods_' . $action . '_others_' . $_tbd ) )
+                    $restricted = false;
+            }
+        }*/
+
+        if ( $restricted && !empty( $restrict ) ) {
+            $relation = strtoupper( trim( pods_var( 'relation', $restrict, 'AND', null, true ) ) );
+
+            if ( 'AND' != $relation )
+                $relation = 'OR';
+
+            $okay = true;
+
+            foreach ( $restrict as $field => $match ) {
+                if ( 'relation' == $field )
+                    continue;
+
+                if ( is_array( $match ) ) {
+                    $match_okay = true;
+
+                    $match_relation = strtoupper( trim( pods_var( 'relation', $match, 'OR', null, true ) ) );
+
+                    if ( 'AND' != $match_relation )
+                        $match_relation = 'OR';
+
+                    foreach ( $match as $the_field => $the_match ) {
+                        if ( 'relation' == $the_field )
+                            continue;
+
+                        $value = null;
+
+                        if ( is_object( $this->pod ) )
+                            $value = $this->pod->field( $the_match, true );
+                        else {
+                            if ( empty( $row ) )
+                                $row = $this->row;
+
+                            if ( isset( $row[ $the_match ] ) ) {
+                                if ( is_array( $row[ $the_match ] ) ) {
+                                    if ( false !== strpos( $the_match, '.' ) ) {
+                                        $the_matches = explode( '.', $the_match );
+
+                                        $value = $row[ $the_match ];
+
+                                        foreach ( $the_matches as $m ) {
+                                            if ( is_array( $value ) && isset( $value[ $m ] ) )
+                                                $value = $value[ $m ];
+                                            else {
+                                                $value = null;
+
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                    $value = $row[ $the_match ];
+                            }
+                        }
+
+                        if ( is_array( $value ) ) {
+                            if ( !in_array( $the_match, $value ) )
+                                $match_okay = false;
+                            elseif ( 'OR' == $match_relation ) {
+                                $match_okay = true;
+
+                                break;
+                            }
+                        }
+                        elseif ( $value == $the_match )
+                            $match_okay = false;
+                        elseif ( 'OR' == $match_relation ) {
+                            $match_okay = true;
+
+                            break;
+                        }
+                    }
+
+                    if ( !$match_okay )
+                        $okay = false;
+                    if ( 'OR' == $relation ) {
+                        $okay = true;
+
+                        break;
+                    }
+                }
+                else {
+                    $value = null;
+
+                    if ( is_object( $this->pod ) )
+                        $value = $this->pod->field( $match, true );
+                    else {
+                        if ( empty( $row ) )
+                            $row = $this->row;
+
+                        if ( isset( $row[ $match ] ) ) {
+                            if ( is_array( $row[ $match ] ) ) {
+                                if ( false !== strpos( $match, '.' ) ) {
+                                    $matches = explode( '.', $match );
+
+                                    $value = $row[ $match ];
+
+                                    foreach ( $matches as $m ) {
+                                        if ( is_array( $value ) && isset( $value[ $m ] ) )
+                                            $value = $value[ $m ];
+                                        else {
+                                            $value = null;
+
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                                $value = $row[ $match ];
+                        }
+                    }
+
+                    if ( is_array( $value ) ) {
+                        if ( !in_array( $match, $value ) )
+                            $okay = false;
+                        elseif ( 'OR' == $relation ) {
+                            $okay = true;
+
+                            break;
+                        }
+                    }
+                    elseif ( $value != $match )
+                        $okay = false;
+                    elseif ( 'OR' == $relation ) {
+                        $okay = true;
+
+                        break;
+                    }
+                }
+            }
+
+            if ( $okay )
                 $restricted = false;
         }
 
-        $restricted = $this->do_hook( 'restricted', $restricted, $action );
+        $restricted = $this->do_hook( 'restricted_' . $action, $restricted, $restrict, $action );
 
         return $restricted;
+    }
+
+    public function restricted_where ( $action ) {
+        $where = array();
+
+        $restrict = array();
+
+        if ( isset( $this->restrict[ $action ] ) )
+            $restrict = (array) $this->restrict[ $action ];
+
+        if ( 'duplicate' == $action && empty( $restrict ) )
+            $restrict = (array) $this->restrict[ 'edit' ];
+        elseif ( 'delete' == $action && empty( $restrict ) )
+            $restrict = (array) $this->restrict[ 'edit' ];
+
+        $relation = strtoupper( trim( pods_var( 'relation', $restrict, 'AND', null, true ) ) );
+
+        if ( 'AND' != $relation )
+            $relation = 'OR';
+
+        foreach ( $restrict as $field => $match ) {
+            if ( 'relation' == $field )
+                continue;
+
+            if ( is_array( $match ) ) {
+                $match_where = array();
+
+                $match_relation = strtoupper( trim( pods_var( 'relation', $match, 'OR', null, true ) ) );
+
+                if ( 'AND' != $match_relation )
+                    $match_relation = 'OR';
+
+                foreach ( $match as $the_field => $the_match ) {
+                    if ( 'relation' == $the_field )
+                        continue;
+
+                    $match_where[] = $field . ' = "' . pods_sanitize( $match ) . '"';
+                }
+
+                $where[] = '( ' . implode( ' ' . $match_relation . ' ', $match_where ) . ' )';
+            }
+            else
+                $where[] = $field . ' = "' . pods_sanitize( $match ) . '"';
+        }
+
+        $where = '( ' . implode( ' ' . $relation . ' ', $where ) . ' )';
+
+        return $where;
     }
 
     /*

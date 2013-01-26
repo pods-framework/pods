@@ -392,7 +392,7 @@ class PodsAdmin {
         $author_restrict = false;
 
         if ( isset( $pod->fields[ 'author' ] ) && 'pick' == $pod->fields[ 'author' ][ 'type' ] && 'user' == $pod->fields[ 'author' ][ 'pick_object' ] )
-            $author_restrict = 'author';
+            $author_restrict = 'author.ID';
 
         if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_content' ) ) {
             if ( !current_user_can( 'pods_add_' . $pod_name ) ) {
@@ -437,9 +437,11 @@ class PodsAdmin {
                 'edit' => $pod->pod_data[ 'fields' ],
                 'duplicate' => $pod->pod_data[ 'fields' ]
             ),
-            'actions_disabled' => $actions_disabled,
-            'author_restrict' => $author_restrict
+            'actions_disabled' => $actions_disabled
         );
+
+        if ( !empty( $author_restrict ) )
+            $ui[ 'restrict' ] = array( 'author_restrict' => $author_restrict );
 
         if ( !in_array( 'delete', $ui[ 'actions_disabled' ] ) ) {
             $ui[ 'actions_bulk' ] = array(

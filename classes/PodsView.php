@@ -331,10 +331,14 @@ class PodsView {
 
         $located = false;
 
+        $_view = '';
+        $_view = str_replace( '\\', '/', $_view ); // sanitize for Win32 installs
+        $_view = preg_replace( '|/+|', '/', $_view );
+
         if ( empty( $_view ) )
             return false;
         // Look for basic file includes
-        elseif ( false === strpos( $_view, WP_PLUGIN_DIR ) && false === strpos( $_view, WPMU_PLUGIN_DIR ) ) {
+        elseif ( false === strpos( $_view, realpath( WP_PLUGIN_DIR ) ) && false === strpos( $_view, realpath( WPMU_PLUGIN_DIR ) ) ) {
             $_view = rtrim( $_view, '/' );
 
             if ( empty( $_view ) )

@@ -327,13 +327,10 @@ class PodsView {
         }
 
         // Keep it safe
-        $_view = trim( str_replace( '../', '', (string) $_view ) );
+        $_view = trim( str_replace( array( '../', '\\' ), array( '', '/' ), (string) $_view ) );
+        $_view = preg_replace( '/\/+/', '/', $_view );
 
         $located = false;
-
-        $_view = '';
-        $_view = str_replace( '\\', '/', $_view ); // sanitize for Win32 installs
-        $_view = preg_replace( '|/+|', '/', $_view );
 
         if ( empty( $_view ) )
             return false;

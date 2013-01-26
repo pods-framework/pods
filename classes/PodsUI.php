@@ -3325,15 +3325,17 @@ class PodsUI {
         if ( isset( $this->restrict[ $action ] ) )
             $restrict = (array) $this->restrict[ $action ];
 
+        $author_restrict = false;
+
         if ( !empty( $this->restrict[ 'author_restrict' ] ) && $restrict == $this->restrict[ 'author_restrict' ] ) {
+            $author_restrict = true;
+
             if ( is_object( $this->pod ) ) {
                 $restricted = true;
 
                 if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) )
                     $restricted = false;
-                elseif ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) )
-                    $restricted = false;
-                elseif ( current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) )
+                elseif ( current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) && current_user_can( 'pods_' . $action . '_others_' . $this->pod->pod ) )
                     $restricted = false;
             }
             /* @todo determine proper logic for non-pods capabilities
@@ -3341,8 +3343,6 @@ class PodsUI {
                 $restricted = true;
 
                 if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) )
-                    $restricted = false;
-                elseif ( current_user_can( 'pods_' . $action . '_' . $_tbd ) )
                     $restricted = false;
                 elseif ( current_user_can( 'pods_' . $action . '_others_' . $_tbd ) )
                     $restricted = false;
@@ -3479,6 +3479,15 @@ class PodsUI {
                         break;
                     }
                 }
+            }
+
+            if ( $author_restrict ) {
+                if ( is_object( $this->pod ) && !current_user_can( 'pods_' . $action . '_' . $this->pod->pod ) )
+                    $okay = false;
+                /* @todo determine proper logic for non-pods capabilities
+                elseif ( !current_user_can( 'pods_' . $action . '_' . $_tbd ) )
+                    $okay = false;*/
+
             }
 
             if ( $okay )

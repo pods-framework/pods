@@ -400,10 +400,10 @@ class PodsAdmin {
                 $default = 'manage';
             }
 
-            if ( !$author_restrict && !current_user_can( 'pods_edit_' . $pod_name ) )
+            if ( !$author_restrict && !current_user_can( 'pods_edit_' . $pod_name ) && !current_user_can( 'pods_edit_others_' . $pod_name ) )
                 $actions_disabled[ 'edit' ] = 'edit';
 
-            if ( !$author_restrict && !current_user_can( 'pods_delete_' . $pod_name ) )
+            if ( !$author_restrict && !current_user_can( 'pods_delete_' . $pod_name ) && !current_user_can( 'pods_delete_others_' . $pod_name ) )
                 $actions_disabled[ 'delete' ] = 'delete';
 
             if ( !current_user_can( 'pods_export_' . $pod_name ) )

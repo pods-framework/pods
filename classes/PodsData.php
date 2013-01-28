@@ -1907,7 +1907,6 @@ class PodsData {
 
             if ( is_array( $q ) ) {
                 $new_q[ 'compare' ] = 'IN';
-                $new_q[ 'value' ] = array();
 
                 if ( is_array( $q ) && isset( $q[ 'compare' ] ) ) {
                     $new_q[ 'compare' ] = $q[ 'compare' ];

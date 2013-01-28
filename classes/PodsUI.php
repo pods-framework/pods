@@ -1824,7 +1824,7 @@ class PodsUI {
             );
 
             if ( empty( $params[ 'where' ] ) && $this->restricted( $this->action ) )
-                $params[ 'where' ] = $this->pods_data->query_fields( $this->restrict[ $this->action ] );
+                $params[ 'where' ] = $this->pods_data->query_fields( $this->restrict[ $this->action ], ( is_object( $this->pod ) ? $this->pod->pod_data : null ) );
 
             if ( $full )
                 $params[ 'limit' ] = -1;
@@ -1879,7 +1879,7 @@ class PodsUI {
             );
 
             if ( empty( $params[ 'where' ] ) && $this->restricted( $this->action ) )
-                $params[ 'where' ] = $this->pods_data->query_fields( $this->restrict[ $this->action ] );
+                $params[ 'where' ] = $this->pods_data->query_fields( $this->restrict[ $this->action ], ( is_object( $this->pod ) ? $this->pod->pod_data : null ) );
 
             if ( $full )
                 $params[ 'limit' ] = -1;

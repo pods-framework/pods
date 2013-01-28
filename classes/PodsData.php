@@ -663,7 +663,7 @@ class PodsData {
         if ( !$params->pagination || -1 == $params->limit )
             $params->offset = 0;
 
-        if ( ( empty( $params->fields ) || !is_array( $params->fields ) ) && is_object( $this->pod_data ) && isset( $this->fields ) && !empty( $this->fields ) )
+        if ( ( empty( $params->fields ) || !is_array( $params->fields ) ) && is_array( $this->pod_data ) && isset( $this->fields ) && !empty( $this->fields ) )
             $params->fields = $this->fields;
 
         if ( empty( $params->index ) )
@@ -672,7 +672,7 @@ class PodsData {
         if ( empty( $params->id ) )
             $params->id = $this->field_id;
 
-        if ( empty( $params->table ) && is_object( $this->pod_data ) && isset( $this->table ) && !empty( $this->table ) )
+        if ( empty( $params->table ) && is_array( $this->pod_data ) && isset( $this->table ) && !empty( $this->table ) )
             $params->table = $this->table;
 
         if ( empty( $params->table ) )
@@ -688,7 +688,7 @@ class PodsData {
 
         // Allow where array ( 'field' => 'value' ) and WP_Query meta_query syntax
         if ( !empty( $params->where ) )
-            $params->where = $this->query_fields( (array) $params->where );
+            $params->where = $this->query_fields( (array) $params->where, $this->pod_data );
         else
             $params->where = array();
 
@@ -701,7 +701,7 @@ class PodsData {
 
         // Allow having array ( 'field' => 'value' ) and WP_Query meta_query syntax
         if ( !empty( $params->having ) )
-            $params->having = $this->query_fields( (array) $params->having );
+            $params->having = $this->query_fields( (array) $params->having, $this->pod_data );
         else
             $params->having = array();
 
@@ -1840,13 +1840,14 @@ class PodsData {
      * Get the string to use in a query for WHERE/HAVING, uses WP_Query meta_query arguments
      *
      * @param array $fields Array of field matches for querying
+     * @param array $pod Related Pod
      *
      * @return string|null Query string for WHERE/HAVING
      *
      * @static
      * @since 2.3.0
      */
-    public static function query_fields ( $fields ) {
+    public static function query_fields ( $fields, $pod = null ) {
         $query_fields = array();
 
         $relation = 'AND';
@@ -1861,7 +1862,7 @@ class PodsData {
         }
 
         foreach ( $fields as $field => $match ) {
-            $query_field = self::query_field( $field, $match );
+            $query_field = self::query_field( $field, $match, $pod );
 
             if ( !empty( $query_field ) )
                 $query_fields[] = $query_field;
@@ -1880,6 +1881,7 @@ class PodsData {
      *
      * @param string|int $field Field name or array index
      * @param array|string $q Query array (meta_query) or string for matching
+     * @param array $pod Related Pod
      *
      * @return string|null Query field string
      *
@@ -1887,7 +1889,7 @@ class PodsData {
      * @static
      * @since 2.3.0
      */
-    public static function query_field ( $field, $q ) {
+    public static function query_field ( $field, $q, $pod = null ) {
         global $wpdb;
 
         $field_query = null;
@@ -1935,6 +1937,60 @@ class PodsData {
         // Restrict to supported types
         elseif ( !in_array( $field_type, array( 'BINARY', 'CHAR', 'DATE', 'DATETIME', 'DECIMAL', 'SIGNED', 'TIME', 'UNSIGNED' ) ) )
             $field_type = 'CHAR';
+
+        // Handle field naming if Pod-based
+        if ( !empty( $pod ) && false === strpos( $field, '`' ) && false === strpos( $field, '.' ) && false === strpos( $field, '(' ) && false === strpos( $field, ' ' ) ) {
+            $key = '';
+
+            $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+
+            if ( isset( $pod[ 'fields' ][ $field ] ) && in_array( $pod[ 'fields' ][ $field ][ 'type' ], $tableless_field_types ) ) {
+                if ( 'custom-simple' == $pod[ 'fields' ][ $field ][ 'pick_object' ] ) {
+                    if ( 'table' == $pod[ 'storage' ] )
+                        $key = "`t`.`{$field}`";
+                    else
+                        $key = "`{$field}`.`meta_value`";
+                }
+                else {
+                    $table = pods_api()->get_table_info( $pod[ 'fields' ][ $field ][ 'pick_object' ], $pod[ 'fields' ][ $field ][ 'pick_val' ] );
+
+                    if ( !empty( $table ) )
+                        $key = "`{$field}`.`" . $table[ 'field_index' ] . '`';
+                }
+            }
+
+            if ( empty( $key ) ) {
+                if ( !in_array( $pod[ 'type' ], array( 'pod', 'table' ) ) ) {
+                    if ( isset( $pod[ 'object_fields' ][ $field ] ) )
+                        $key = "`t`.`{$field}`";
+                    elseif ( isset( $pod[ 'fields' ][ $field ] ) ) {
+                        if ( 'table' == $pod[ 'storage' ] )
+                            $key = "`d`.`{$field}`";
+                        else
+                            $key = "`{$field}`.`meta_value`";
+                    }
+                    else {
+                        foreach ( $pod[ 'object_fields' ] as $object_field => $object_field_opt ) {
+                            if ( $object_field == $field || in_array( $field, $object_field_opt[ 'alias' ] ) )
+                                $key = "`t`.`{$object_field}`";
+                        }
+                    }
+                }
+                elseif ( isset( $pod[ 'fields' ][ $field ] ) ) {
+                    if ( 'table' == $pod[ 'storage' ] )
+                        $key = "`t`.`{$field}`";
+                    else
+                        $key = "`{$field}`.`meta_value`";
+                }
+
+                if ( empty( $key ) )
+                    $key = "`{$field}`";
+            }
+
+            $field = $key;
+        }
+        elseif ( false === strpos( $field, '`' ) && false === strpos( $field, '(' ) && false === strpos( $field, ' ' ) )
+            $field = '`' . str_replace( '.', '`.`', $field ) . '`';
 
         // Cast field if needed
         if ( 'CHAR' != $field_type )

@@ -1914,13 +1914,9 @@ class PodsData {
 
                     unset( $q[ 'compare' ] );
                 }
-
-                foreach ( $q as $the_q ) {
-                    $new_q[ 'value' ][] = $the_q;
-                }
             }
-            else
-                $new_q[ 'value' ] = $q;
+
+            $new_q[ 'value' ] = $q;
 
             $q = $new_q;
         }

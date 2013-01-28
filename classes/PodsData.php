@@ -686,8 +686,9 @@ class PodsData {
         elseif ( false === $params->strict )
             $params->join = $this->join;
 
+        // Allow where array ( 'field' => 'value' ) and WP_Query meta_query syntax
         if ( !empty( $params->where ) )
-            $params->where = (array) $params->where;
+            $params->where = $this->query_fields( (array) $params->where );
         else
             $params->where = array();
 
@@ -698,8 +699,9 @@ class PodsData {
             $params->where = array_merge( $params->where, (array) $this->where );
         }
 
+        // Allow having array ( 'field' => 'value' ) and WP_Query meta_query syntax
         if ( !empty( $params->having ) )
-            $params->having = (array) $params->having;
+            $params->having = $this->query_fields( (array) $params->having );
         else
             $params->having = array();
 
@@ -1832,6 +1834,168 @@ class PodsData {
         global $wpdb;
         list( $sql, $data ) = self::do_hook( 'prepare', array( $sql, $data ) );
         return $wpdb->prepare( $sql, $data );
+    }
+
+    /**
+     * Get the string to use in a query for WHERE/HAVING, uses WP_Query meta_query arguments
+     *
+     * @param array $fields Array of field matches for querying
+     *
+     * @return string|null Query string for WHERE/HAVING
+     *
+     * @static
+     * @since 2.3.0
+     */
+    public static function query_fields ( $fields ) {
+        $query_fields = array();
+
+        $relation = 'AND';
+
+        if ( isset( $fields[ 'relation' ] ) ) {
+            $relation = strtoupper( trim( pods_var( 'relation', $fields, 'AND', null, true ) ) );
+
+            if ( 'AND' != $relation )
+                $relation = 'OR';
+
+            unset( $fields[ 'relation' ] );
+        }
+
+        foreach ( $fields as $field => $match ) {
+            $query_field = self::query_field( $field, $match );
+
+            if ( !empty( $query_field ) )
+                $query_fields[] = $query_field;
+        }
+
+        if ( !empty( $query_fields ) )
+            $query_fields = '( ' . implode( ' ' . $relation . ' ', $query_fields ) . ' )';
+        else
+            $query_fields = null;
+
+        return $query_fields;
+    }
+
+    /**
+     * Get the string to use in a query for matching, uses WP_Query meta_query arguments
+     *
+     * @param string|int $field Field name or array index
+     * @param array|string $q Query array (meta_query) or string for matching
+     *
+     * @return string|null Query field string
+     *
+     * @see PodsData::query_fields
+     * @static
+     * @since 2.3.0
+     */
+    public static function query_field ( $field, $q ) {
+        global $wpdb;
+
+        $field_query = null;
+
+        // Plain queries
+        if ( is_numeric( $field ) && !is_array( $q ) )
+            return $q;
+        // key => value queries
+        if ( !is_numeric( $field ) && ( !is_array( $q ) || !isset( $q[ 'key' ] ) ) ) {
+            $new_q = array(
+                'key' => $field,
+                'value' => '',
+                'compare' => '='
+            );
+
+            if ( is_array( $q ) ) {
+                $new_q[ 'compare' ] = 'IN';
+                $new_q[ 'value' ] = array();
+
+                if ( is_array( $q ) && isset( $q[ 'compare' ] ) ) {
+                    $new_q[ 'compare' ] = $q[ 'compare' ];
+
+                    unset( $q[ 'compare' ] );
+                }
+
+                foreach ( $q as $the_q ) {
+                    $new_q[ 'value' ][] = $the_q;
+                }
+            }
+            else
+                $new_q[ 'value' ] = $q;
+
+            $q = $new_q;
+        }
+
+        $field = trim( pods_var_raw( 'key', $q, $field, null, true ) );
+        $field_type = strtoupper( trim( pods_var_raw( 'type', $q, 'CHAR', null, true ) ) );
+        $field_value = pods_var_raw( 'value', $q );
+        $field_compare = strtoupper( trim( pods_var_raw( 'compare', $q, ( is_array( $field_value ? 'IN' : '=' ) ), null, true ) ) );
+        $field_string = '%s';
+
+        // Deprecated WP type
+        if ( 'NUMERIC' == $field_type )
+            $field_type = 'SIGNED';
+        // Restrict to supported types
+        elseif ( !in_array( $field_type, array( 'BINARY', 'CHAR', 'DATE', 'DATETIME', 'DECIMAL', 'SIGNED', 'TIME', 'UNSIGNED' ) ) )
+            $field_type = 'CHAR';
+
+        // Cast field if needed
+        if ( 'CHAR' != $field_type )
+            $field = 'CAST( ' . $field . ' AS ' . $field_type .' )';
+
+        // Sanitize as integer if needed
+        if ( in_array( $field_type, array( 'UNSIGNED', 'SIGNED' ) ) )
+            $field_string = '%d';
+
+        // Restrict to supported comparisons
+        if ( !in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'NOT EXISTS' ) ) )
+            $field_compare = '=';
+
+        // Restrict to supported array comparisons
+        if ( is_array( $field_value ) && !in_array( $field_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) ) ) {
+            if ( in_array( $field_compare, array( '!=', 'NOT LIKE' ) ) )
+                $field_compare = 'NOT IN';
+            else
+                $field_compare = 'IN';
+        }
+        // Restrict to supported string comparisons
+        elseif ( !is_array( $field_value ) && in_array( $field_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) ) ) {
+            $check_value = preg_split( '/[,\s]+/', $field_value );
+
+            if ( 1 < count( $check_value ) )
+                $field_value = $check_value;
+            elseif ( in_array( $field_compare, array( 'NOT IN', 'NOT BETWEEN' ) ) )
+                $field_compare = '!=';
+            else
+                $field_compare = '=';
+        }
+
+        // Restrict to two values, force = and != if only one value provided
+        if ( in_array( $field_compare, array( 'BETWEEN', 'NOT BETWEEN' ) ) ) {
+            $field_value = array_slice( $field_value, 0, 2 );
+
+            if ( 1 == count( $field_value ) ) {
+                if ( 'NOT IN' == $field_compare )
+                    $field_compare = '!=';
+                else
+                    $field_compare = '=';
+            }
+        }
+
+        // Make the query
+        if ( in_array( $field_compare, array( '=', '!=', '>', '>=', '<', '<=' ) ) )
+            $field_query = $wpdb->prepare( $field . ' ' . $field_compare . ' ' . $field_string, $field_value );
+        elseif ( in_array( $field_compare, array( 'LIKE', 'NOT LIKE' ) ) )
+            $field_query = $wpdb->prepare( $field . ' ' . $field_compare . ' ' . $field_string, $field_value );
+        elseif ( in_array( $field_compare, array( 'IN', 'NOT IN' ) ) )
+            $field_query = $wpdb->prepare( $field . ' ' . $field_compare . ' ( ' . substr( str_repeat( ', ' . $field_string, count( $field_value ) ), 1 ) . ' )', $field_value );
+        elseif ( in_array( $field_compare, array( 'BETWEEN', 'NOT BETWEEN' ) ) )
+            $field_query = $wpdb->prepare( $field . ' ' . $field_compare . ' ' . $field_string . ' AND ' . $field_string, $field_value );
+        elseif ( 'EXISTS' == $field_compare )
+            $field_query = $field . ' IS NOT NULL';
+        elseif ( 'NOT EXISTS' == $field_compare )
+            $field_query = $field . ' IS NULL';
+
+        $field_query = apply_filters( 'pods_data_field_query', $field_query, $field, $field_compare, $field_string, $field_value, $q );
+
+        return $field_query;
     }
 
     /**

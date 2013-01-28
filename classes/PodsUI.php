@@ -836,24 +836,24 @@ class PodsUI {
         // handle author restrictions
         if ( !empty( $options[ 'restrict' ][ 'author_restrict' ] ) ) {
             if ( !is_array( $options[ 'restrict' ][ 'author_restrict' ] ) )
-                $options[ 'restrict' ][ 'author_restrict' ] = array( $options[ 'restrict' ][ 'author_restrict' ] => get_current_user_id() );
+                $options->restrict[ 'author_restrict' ] = array( $options[ 'restrict' ][ 'author_restrict' ] => get_current_user_id() );
 
             if ( null === $options[ 'restrict' ][ 'edit' ] )
-                $options[ 'restrict' ][ 'edit' ] = $options[ 'restrict' ][ 'author_restrict' ];
+                $options->restrict[ 'edit' ] = $options[ 'restrict' ][ 'author_restrict' ];
         }
 
         if ( null !== $options[ 'restrict' ][ 'edit' ] ) {
             if ( null === $options[ 'restrict' ][ 'duplicate' ] )
-                $options[ 'restrict' ][ 'duplicate' ] = $options[ 'restrict' ][ 'edit' ];
+                $options->restrict[ 'duplicate' ] = $options[ 'restrict' ][ 'edit' ];
 
             if ( null === $options[ 'restrict' ][ 'delete' ] )
-                $options[ 'restrict' ][ 'delete' ] = $options[ 'restrict' ][ 'edit' ];
+                $options->restrict[ 'delete' ] = $options[ 'restrict' ][ 'edit' ];
 
             if ( null === $options[ 'restrict' ][ 'manage' ] )
-                $options[ 'restrict' ][ 'manage' ] = $options[ 'restrict' ][ 'edit' ];
+                $options->restrict[ 'manage' ] = $options[ 'restrict' ][ 'edit' ];
 
             if ( null === $options[ 'restrict' ][ 'reorder' ] )
-                $options[ 'restrict' ][ 'reorder' ] = $options[ 'restrict' ][ 'edit' ];
+                $options->restrict[ 'reorder' ] = $options[ 'restrict' ][ 'edit' ];
         }
 
         $item = __( 'Item', 'pods' );
@@ -1824,7 +1824,7 @@ class PodsUI {
             );
 
             if ( empty( $params[ 'where' ] ) && $this->restricted( $this->action ) )
-                $params[ 'where' ] = $this->restricted_where( $this->action );
+                $params[ 'where' ] = $this->pods_data->query_fields( $this->restrict[ $this->action ] );
 
             if ( $full )
                 $params[ 'limit' ] = -1;
@@ -1879,7 +1879,7 @@ class PodsUI {
             );
 
             if ( empty( $params[ 'where' ] ) && $this->restricted( $this->action ) )
-                $params[ 'where' ] = $this->restricted_where( $this->action );
+                $params[ 'where' ] = $this->pods_data->query_fields( $this->restrict[ $this->action ] );
 
             if ( $full )
                 $params[ 'limit' ] = -1;
@@ -3497,49 +3497,6 @@ class PodsUI {
         $restricted = $this->do_hook( 'restricted_' . $action, $restricted, $restrict, $action );
 
         return $restricted;
-    }
-
-    public function restricted_where ( $action ) {
-        $where = array();
-
-        $restrict = array();
-
-        if ( isset( $this->restrict[ $action ] ) )
-            $restrict = (array) $this->restrict[ $action ];
-
-        $relation = strtoupper( trim( pods_var( 'relation', $restrict, 'AND', null, true ) ) );
-
-        if ( 'AND' != $relation )
-            $relation = 'OR';
-
-        foreach ( $restrict as $field => $match ) {
-            if ( 'relation' == $field )
-                continue;
-
-            if ( is_array( $match ) ) {
-                $match_where = array();
-
-                $match_relation = strtoupper( trim( pods_var( 'relation', $match, 'OR', null, true ) ) );
-
-                if ( 'AND' != $match_relation )
-                    $match_relation = 'OR';
-
-                foreach ( $match as $the_field => $the_match ) {
-                    if ( 'relation' == $the_field )
-                        continue;
-
-                    $match_where[] = $field . ' = "' . pods_sanitize( $match ) . '"';
-                }
-
-                $where[] = '( ' . implode( ' ' . $match_relation . ' ', $match_where ) . ' )';
-            }
-            else
-                $where[] = $field . ' = "' . pods_sanitize( $match ) . '"';
-        }
-
-        $where = '( ' . implode( ' ' . $relation . ' ', $where ) . ' )';
-
-        return $where;
     }
 
     /*

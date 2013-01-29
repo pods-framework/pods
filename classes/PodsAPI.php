@@ -2252,7 +2252,7 @@ class PodsAPI {
      * @since 1.7.9
      */
     public function save_pod_item ( $params ) {
-        $params = (object) str_replace( '@wp_', '{prefix}', $params );
+        $params = (object) pods_str_replace( '@wp_', '{prefix}', $params );
 
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
 

@@ -928,6 +928,11 @@ function pods_str_replace ( $find, $replace, $string, $occurrences = -1 ) {
             $f = '/' . preg_quote( $f, '/' ) . '/';
         }
     }
+    elseif ( is_object( $find ) ) {
+        $find = get_object_vars( $find );
+
+        return (object) pods_str_replace( $find, $replace, $string, $occurrences );
+    }
     else
         $find = '/' . preg_quote( $find, '/' ) . '/';
 

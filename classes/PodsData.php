@@ -686,24 +686,26 @@ class PodsData {
         elseif ( false === $params->strict )
             $params->join = $this->join;
 
-        // Allow where array ( 'field' => 'value' ) and WP_Query meta_query syntax
-        if ( !empty( $params->where ) )
-            $params->where = $this->query_fields( (array) $params->where, $this->pod_data );
-        else
-            $params->where = array();
-
         if ( false === $params->strict && !empty( $this->where ) ) {
             if ( empty( $params->where ) && !empty( $this->where_default ) )
-                $params->where = array_merge( $params->where, (array) $this->where_default );
+                $params->where = array_values( (array) $this->where_default );
 
-            $params->where = array_merge( $params->where, (array) $this->where );
+            $params->where = array_merge( (array) $params->where, array_values( (array) $this->where ) );
         }
 
+        // Allow where array ( 'field' => 'value' ) and WP_Query meta_query syntax
+        $params->where = $this->query_fields( (array) $params->where, $this->pod_data );
+
+        if ( empty( $params->where ) )
+            $params->where = array();
+
+
         // Allow having array ( 'field' => 'value' ) and WP_Query meta_query syntax
-        if ( !empty( $params->having ) )
-            $params->having = $this->query_fields( (array) $params->having, $this->pod_data );
-        else
+        $params->having = $this->query_fields( (array) $params->having, $this->pod_data );
+
+        if ( empty( $params->having ) )
             $params->having = array();
+
 
         if ( !empty( $params->orderby ) )
             $params->orderby = (array) $params->orderby;
@@ -1966,8 +1968,11 @@ class PodsData {
                     }
                     else {
                         foreach ( $pod[ 'object_fields' ] as $object_field => $object_field_opt ) {
-                            if ( $object_field == $field || in_array( $field, $object_field_opt[ 'alias' ] ) )
+                            if ( $object_field == $field || in_array( $field, $object_field_opt[ 'alias' ] ) ) {
                                 $key = "`t`.`{$object_field}`";
+
+                                break;
+                            }
                         }
                     }
                 }
@@ -2170,6 +2175,14 @@ class PodsData {
 
         if ( !isset( $pod_data[ 'fields' ][ $field ] ) && 'd' == $field && isset( $traverse_recurse[ 'fields' ][ $traverse_recurse[ 'depth' ] - 1 ] ) ) {
             $field = $traverse_recurse[ 'fields' ][ $traverse_recurse[ 'depth' ] - 1 ];
+
+            $pod_data[ 'fields' ][ $field ] = array(
+                'id' => 0,
+                'name' => $field,
+                'type' => 'pick',
+                'pick_object' => $traverse_recurse[ 'last_table_info' ][ 'pod' ][ 'type' ],
+                'pick_val' => $traverse_recurse[ 'last_table_info' ][ 'pod' ][ 'name' ]
+            );
 
             $meta_data_table = true;
         }

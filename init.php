@@ -58,7 +58,12 @@ if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) && !function_exists( '
 
     global $pods, $pods_init, $pods_form;
 
-    require_once( PODS_DIR . 'functions.php' );
+    require_once( PODS_DIR . 'includes/classes.php' );
+    require_once( PODS_DIR . 'includes/data.php' );
+    require_once( PODS_DIR . 'includes/general.php' );
+
+    if ( !defined( 'PODS_MEDIA' ) || PODS_MEDIA )
+        require_once( PODS_DIR . 'includes/media.php' );
 
     // @todo Allow user to opt-in to future betas easily
     if ( PODS_GITHUB_UPDATE ) {
@@ -81,7 +86,7 @@ if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) && !function_exists( '
 
             // GitHub Plugin Updater
             // https://github.com/jkudish/WordPress-GitHub-Plugin-Updater
-            require_once( PODS_DIR . 'updater.php' );
+            require_once( PODS_DIR . 'includes/updater.php' );
 
             $version = PODS_VERSION;
 

@@ -302,3 +302,97 @@ function pods_validate_key( $token, $datatype, $uri_hash, $columns = null, $form
         $success = $columns;
     return apply_filters( 'pods_validate_key', $success, $token, $datatype, $uri_hash, $columns, (int) $form_count );
 }
+
+/**
+ * Output a message in the WP Dashboard UI
+ *
+ * @param string $message
+ * @param bool $error Whether or not it is an error message
+ *
+ * @return bool
+ *
+ * @since 1.12
+ * @deprcated 2.3.0
+ */
+function pods_ui_message ( $message, $error = false ) {
+    pods_deprecated( "pods_message", '2.3.0' );
+
+    pods_message( $message, ( $error ? 'error' : 'notice' ) );
+}
+
+/**
+ * Output an error in the WP Dashboard UI
+ *
+ * @param string $message
+ *
+ * @return bool
+ *
+ * @since 1.12
+ * @deprcated 2.3.0
+ */
+function pods_ui_error ( $message ) {
+    pods_deprecated( "pods_message", '2.3.0' );
+
+    pods_message( $message, 'error' );
+}
+
+/**
+ * Get a Point value from a Pods Version number
+ *
+ * @since 1.10.1
+ * @deprcated 2.3.0
+ */
+function pods_point_to_version ( $point ) {
+    $version_tmp = explode( '.', $point );
+    $version = '';
+
+    for ( $x = 0; $x < 3; $x++ ) { // 3 points max - MAJOR.MINOR.PATCH
+        if ( !isset( $version_tmp[ $x ] ) || strlen( $version_tmp[ $x ] ) < 1 )
+            $version_tmp[ $x ] = '000';
+
+        $version_temp = str_split( $version_tmp[ $x ] );
+
+        if ( 3 == count( $version_temp ) )
+            $version .= $version_tmp[ $x ];
+        elseif ( 2 == count( $version_temp ) )
+            $version .= '0' . $version_tmp[ $x ];
+        elseif ( 1 == count( $version_temp ) )
+            $version .= '00' . $version_tmp[ $x ];
+    }
+
+    $version = (int) $version;
+
+    return $version;
+}
+
+/**
+ * Get a Point value from a Pods Version number
+ *
+ * @since 1.10
+ * @deprcated 2.3.0
+ */
+function pods_version_to_point ( $version ) {
+    $point_tmp = $version;
+
+    if ( strlen( $point_tmp ) < 9 ) {
+        if ( 8 == strlen( $point_tmp ) )
+            $point_tmp = '0' . $point_tmp;
+
+        if ( 7 == strlen( $point_tmp ) )
+            $point_tmp = '00' . $point_tmp;
+
+        if ( 3 == strlen( $version ) ) // older versions prior to 1.9.9
+            return implode( '.', str_split( $version ) );
+    }
+
+    $point_tmp = str_split( $point_tmp, 3 );
+    $point = array();
+
+    foreach ( $point_tmp as $the_point ) {
+        $point[] = (int) $the_point;
+    }
+
+    $point = implode( '.', $point );
+
+    return $point;
+}

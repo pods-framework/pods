@@ -8,6 +8,8 @@
  * @param array|int|string $image The image field array, ID, or guid
  *
  * @return int Attachment ID
+ *
+ * @since 2.0.5
  */
 function pods_image_id_from_field ( $image ) {
     $id = 0;
@@ -55,6 +57,8 @@ function pods_image_id_from_field ( $image ) {
  * @param string|array $attributes <img> Attributes array or string (passed to wp_get_attachment_image
  *
  * @return string <img> HTML or empty if image not found
+ *
+ * @since 2.0.5
  */
 function pods_image ( $image, $size = 'thumbnail', $default = 0, $attributes = '' ) {
     $html = '';
@@ -79,6 +83,8 @@ function pods_image ( $image, $size = 'thumbnail', $default = 0, $attributes = '
  * @param int $default Default image to show if image not found, can be field array, ID, or guid
  *
  * @return string Image URL or empty if image not found
+ *
+ * @since 2.0.5
  */
 function pods_image_url ( $image, $size = 'thumbnail', $default = 0 ) {
     $url = '';
@@ -101,4 +107,61 @@ function pods_image_url ( $image, $size = 'thumbnail', $default = 0 ) {
     }
 
     return $url;
+}
+
+/**
+ * Import media from a specific URL, saving as an attachment
+ *
+ * @param string $url URL to media for import
+ * @param int $post_parent ID of post parent, default none
+ * @param boolean $featured Whether to set it as the featured (post thumbnail) of the post parent
+ *
+ * @return int Attachment ID
+ *
+ * @since 2.3.0
+ */
+function pods_attachment_import ( $url, $post_parent = null, $featured = false ) {
+    $filename = substr( $url, ( strrpos( $url, '/' ) ) + 1 );
+
+    if ( !( ( $uploads = wp_upload_dir( current_time( 'mysql' ) ) ) && false === $uploads[ 'error' ] ) )
+        return;
+
+    $filename = wp_unique_filename( $uploads[ 'path' ], $filename );
+    $new_file = $uploads[ 'path' ] . '/' . $filename;
+
+    $file_data = @file_get_contents( $url );
+
+    if ( !$file_data )
+        return;
+
+    file_put_contents( $new_file, $file_data );
+
+    $stat = stat( dirname( $new_file ) );
+    $perms = $stat[ 'mode' ] & 0000666;
+    @chmod( $new_file, $perms );
+
+    $wp_filetype = wp_check_filetype( $filename );
+
+    if ( !$wp_filetype[ 'type' ] || !$wp_filetype[ 'ext' ] )
+        return;
+
+    $attachment = array(
+        'post_mime_type' => $wp_filetype[ 'type' ],
+        'guid' => $uploads[ 'url' ] . '/' . $wp_filetype[ 'filename' ],
+        'post_parent' => null,
+        'post_title' => '',
+        'post_content' => '',
+    );
+
+    $attachment_id = wp_insert_attachment( $attachment, $wp_filetype[ 'file' ], $post_parent );
+
+    if ( is_wp_error( $attachment_id ) )
+        return;
+
+    require_once( ABSPATH . 'wp-admin/includes/image.php' );
+
+    wp_update_attachment_metadata( $attachment_id, $meta_data = wp_generate_attachment_metadata( $attachment_id, $new_file ) );
+
+    if ( 0 < $post_parent && $featured )
+        update_post_meta( $post_parent, '_thumbnail_id', $attachment_id );
 }

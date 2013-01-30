@@ -779,7 +779,7 @@ if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod
                     </div>
                 </li>
 
-                <?php if ( 'genesis' == basename( get_template_directory() ) ) { ?>
+                <?php if ( function_exists( 'genesis' ) ) { ?>
                     <li>
                         <div class="pods-field pods-boolean">
                             <?php echo PodsForm::field( 'supports_genesis_seo', pods_var_raw( 'supports_genesis_seo', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Genesis: SEO', 'pods' ) ) ); ?>

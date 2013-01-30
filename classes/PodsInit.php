@@ -393,6 +393,18 @@ class PodsInit {
                     'post-formats' => (boolean) pods_var( 'supports_post_formats', $post_type, false )
                 );
 
+                // Custom Supported
+                $cpt_supported_custom = pods_var( 'supports_custom', $post_type, '' );
+
+                if ( !empty( $cpt_supported_custom ) ) {
+                    $cpt_supported_custom = explode( ',', $cpt_supported_custom );
+                    $cpt_supported_custom = array_filter( array_unique( $cpt_supported_custom ) );
+
+                    foreach ( $cpt_supported_custom as $cpt_support ) {
+                        $cpt_supported[ $cpt_support ] = true;
+                    }
+                }
+
                 // WP needs something, if this was empty and none were enabled, it would show title+editor pre 3.5 :(
                 $cpt_supports = array();
 

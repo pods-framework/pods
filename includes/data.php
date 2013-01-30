@@ -542,15 +542,27 @@ function pods_absint ( $maybeint, $strict = true, $allow_negative = false ) {
  * @version 2.0.0
  */
 function pods_str_replace ( $find, $replace, $string, $occurrences = -1 ) {
+    if ( is_array( $string ) ) {
+        foreach ( $string as $k => $v ) {
+            $string[ $k ] = pods_str_replace( $find, $replace, $v, $occurrences );
+        }
+
+        return $string;
+    }
+    elseif ( is_object( $string ) ) {
+        $string = get_object_vars( $string );
+
+        foreach ( $string as $k => $v ) {
+            $string[ $k ] = pods_str_replace( $find, $replace, $v, $occurrences );
+        }
+
+        return (object) $string;
+    }
+
     if ( is_array( $find ) ) {
         foreach ( $find as &$f ) {
             $f = '/' . preg_quote( $f, '/' ) . '/';
         }
-    }
-    elseif ( is_object( $find ) ) {
-        $find = get_object_vars( $find );
-
-        return (object) pods_str_replace( $find, $replace, $string, $occurrences );
     }
     else
         $find = '/' . preg_quote( $find, '/' ) . '/';

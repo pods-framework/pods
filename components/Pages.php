@@ -93,8 +93,8 @@ class Pods_Pages extends PodsComponent {
         }
     }
 
-    public function disable_builder_layout( $post_types ) {
-        $post_types[ ] = $this->object_type;
+    public function disable_builder_layout ( $post_types ) {
+        $post_types[] = $this->object_type;
 
         return $post_types;
     }

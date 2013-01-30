@@ -67,7 +67,7 @@ class PodsField_Currency extends PodsField {
         $options = array(
             'currency_format_sign' => array(
                 'label' => __( 'Currency Sign', 'pods' ),
-                'default' => 'usd',
+                'default' => apply_filters( 'pods_form_ui_field_number_currency_default', 'usd' ),
                 'type' => 'pick',
                 'data' => apply_filters( 'pods_form_ui_field_number_currency_options',
                     array(

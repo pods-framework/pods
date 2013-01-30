@@ -128,6 +128,8 @@ class PodsField_Date extends PodsField {
         }
         elseif ( 0 == pods_var( 'date_allow_empty', $options, 1 ) )
             $value = date_i18n( $format );
+        else
+            $value = '';
 
         return $value;
     }
@@ -199,7 +201,7 @@ class PodsField_Date extends PodsField {
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->display( $value, $name, $options, $pod, $id );
 
-        if ( 1 == pods_var( 'datetime_allow_empty', $options, 1 ) && in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
+        if ( 1 == pods_var( 'date_allow_empty', $options, 1 ) && ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
             $value = false;
 
         return $value;

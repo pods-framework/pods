@@ -393,7 +393,7 @@ class Pods_Templates extends PodsComponent {
                 $permission = (boolean) apply_filters( 'pods_templates_permission', $permission, $code, $template, $obj );
 
                 if ( !$permission ) {
-                    return apply_filters( 'pods_templates_permission_denied', __( 'You do not have access to view this content.' ), $code, $template, $obj );
+                    return apply_filters( 'pods_templates_permission_denied', __( 'You do not have access to view this content.', 'pods' ), $code, $template, $obj );
                 }
             }
         }

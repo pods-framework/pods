@@ -79,7 +79,7 @@ class PodsField_Currency extends PodsField {
             ),
             'currency_format_placement' => array(
                 'label' => __( 'Currency Placement', 'pods' ),
-                'default' => 'before',
+                'default' => apply_filters( 'pods_form_ui_field_number_currency_placement_default', 'before' ),
                 'type' => 'pick',
                 'data' => array(
                     'before' => __( 'Before (ex. $100)', 'pods' ),
@@ -90,7 +90,7 @@ class PodsField_Currency extends PodsField {
             ),
             'currency_format' => array(
                 'label' => __( 'Format', 'pods' ),
-                'default' => 'i18n',
+                'default' => apply_filters( 'pods_form_ui_field_number_currency_format_default', 'i18n' ),
                 'type' => 'pick',
                 'data' => array(
                     'i18n' => __( 'Localized Default', 'pods' ),

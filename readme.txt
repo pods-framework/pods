@@ -68,6 +68,7 @@ You can enable some of our included components to extend your WordPress site eve
 * Pages - Create custom pages that function off of your site's path, with wildcard support, and choose the Page Template to use
 * Templates - Use our template engine to create templates that can be handed off to clients for carefree management
 * Helpers - Customize how Pods works right from the admin area with simple to advanced reusable code snippets
+* Markdown Syntax - Parses Markdown Syntax for Paragraph Text / WYSIWYG fields
 * Builder theme integration - Use our tightly integrated modules for Builder in your layouts
 
 = Migrate to Pods, find out what you've been missing =
@@ -77,7 +78,7 @@ Using another solution? We've built additional components to help you transition
 * More coming soon including Importing from Custom Field Suite, Advanced Custom Fields, and Custom Tables
 
 = Plays well with others =
-We also do our best to integrate and play nicely with other projects
+We also do our best to integrate and play nicely with other projects:
 
 * Plugins
  * Tabify Edit Screen

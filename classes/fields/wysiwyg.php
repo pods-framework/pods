@@ -67,6 +67,17 @@ class PodsField_WYSIWYG extends PodsField {
                         )
                     )
             ),
+            'editor_options' => array(
+                'label' => __( 'Editor Options', 'pods' ),
+                'depends-on' => array( 'wysiwyg_editor' => 'tinymce' ),
+                'group' => array(
+                    'wysiwyg_media_buttons' => array(
+                        'label' => __( 'Enable Media Buttons?', 'pods' ),
+                        'default' => 1,
+                        'type' => 'boolean'
+                    )
+                )
+            ),
             'output_options' => array(
                 'label' => __( 'Output Options', 'pods' ),
                 'group' => array(

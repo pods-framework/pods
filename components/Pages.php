@@ -88,7 +88,15 @@ class Pods_Pages extends PodsComponent {
             add_action( 'delete_post', array( $this, 'clear_cache' ), 10, 1 );
             add_filter( 'post_row_actions', array( $this, 'remove_row_actions' ), 10, 2 );
             add_filter( 'bulk_actions-edit-' . $this->object_type, array( $this, 'remove_bulk_actions' ) );
+
+            add_filter( 'builder_layout_filter_non_layout_post_types', array( $this, 'disable_builder_layout' ) );
         }
+    }
+
+    public function disable_builder_layout( $post_types ) {
+        $post_types[ ] = $this->object_type;
+
+        return $post_types;
     }
 
     /**

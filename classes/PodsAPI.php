@@ -4265,7 +4265,7 @@ class PodsAPI {
             if ( empty( $params->name ) && empty( $params->pod ) && empty( $params->pod_id ) )
                 return pods_error( __( 'Either Field Name or Field ID / Pod ID are required', 'pods' ), $this );
 
-            $params->name = pods_clean_name( $params->name, true, false );
+            $params->name = pods_clean_name( $params->name, true, ( 'meta' == $pod[ 'storage' ] ? false : true ) );
 
             if ( isset( $pod[ 'fields' ][ $params->name ] ) && isset( $pod[ 'fields' ][ $params->name ][ 'id' ] ) )
                 return $pod[ 'fields' ][ $params->name ];
@@ -4278,32 +4278,10 @@ class PodsAPI {
             ) );
 
             if ( empty( $field ) ) {
-                if ( trim( $params->name, '_' ) != $params->name ) {
-                    $params->name = pods_clean_name( $params->name );
+                if ( $strict )
+                    return pods_error( __( 'Field not found', 'pods' ), $this );
 
-                    if ( isset( $pod[ 'fields' ][ $params->name ] ) && isset( $pod[ 'fields' ][ $params->name ][ 'id' ] ) )
-                        return $pod[ 'fields' ][ $params->name ];
-
-                    $field = get_posts( array(
-                        'name' => $params->name,
-                        'post_type' => '_pods_field',
-                        'posts_per_page' => 1,
-                        'post_parent' => $params->pod_id
-                    ) );
-
-                    if ( empty( $field ) ) {
-                        if ( $strict )
-                            return pods_error( __( 'Field not found', 'pods' ), $this );
-
-                        return false;
-                    }
-                }
-                else {
-                    if ( $strict )
-                        return pods_error( __( 'Field not found', 'pods' ), $this );
-
-                    return false;
-                }
+                return false;
             }
 
             $_field = $field[ 0 ];

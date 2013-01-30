@@ -1519,7 +1519,17 @@ class PodsAdmin {
         $items = array();
         $ids = array();
 
-        if ( !empty( $results ) ) {
+        $pick_data = apply_filters( 'pods_field_pick_data_ajax', array(), $field[ 'name' ], null, $field, $pod, 0 );
+
+        if ( !empty( $pick_data ) ) {
+            foreach ( $pick_data as $id => $text ) {
+                $items[] = array(
+                    'id' => $id,
+                    'text' => $text
+                );
+            }
+        }
+        elseif ( !empty( $results ) ) {
             foreach ( $results as $result ) {
                 $result = get_object_vars( $result );
 

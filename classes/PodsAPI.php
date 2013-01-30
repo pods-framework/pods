@@ -2970,7 +2970,7 @@ class PodsAPI {
             pods_no_conflict_off( $pod[ 'type' ] );
 
         if ( false === $bypass_helpers ) {
-            $pieces = array( 'fields', 'params', 'pod', 'fields_active' );
+            $pieces = array( 'fields', 'params', 'pod', 'fields_active', 'object_fields' );
 
             $pieces = compact( $pieces );
 

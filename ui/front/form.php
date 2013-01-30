@@ -45,6 +45,9 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
         <ul class="pods-form-fields">
             <?php
                 foreach ( $fields as $field ) {
+                    if ( 'hidden' == $field[ 'type' ] )
+                        continue;
+
                     do_action( 'pods_form_pre_field', $field, $fields, $pod );
             ?>
                 <li class="pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Podsform::clean( $field[ 'name' ], true ); ?>">
@@ -62,6 +65,15 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
                 }
             ?>
         </ul>
+
+        <?php
+            foreach ( $fields as $field ) {
+                if ( 'hidden' != $field[ 'type' ] )
+                    continue;
+
+                echo PodsForm::field( 'pods_field_' . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), 'hidden' );
+           }
+        ?>
 
         <p class="pods-submit">
             <img class="waiting" src="<?php echo admin_url() . '/images/wpspin_light.gif' ?>" alt="">

@@ -1732,8 +1732,9 @@ class Pods {
                 $field[ 'name' ] = trim( $field[ 'name' ] );
 
                 if ( pods_var_raw( 'hidden', $field, false, null, true ) )
-                    continue;
-                elseif ( isset( $object_fields[ $field[ 'name' ] ] ) )
+                    $field[ 'type' ] = 'hidden';
+
+                if ( isset( $object_fields[ $field[ 'name' ] ] ) )
                     $fields[ $field[ 'name' ] ] = array_merge( $object_fields[ $field[ 'name' ] ], $field );
                 elseif ( isset( $this->fields[ $field[ 'name' ] ] ) )
                     $fields[ $field[ 'name' ] ] = array_merge( $this->fields[ $field[ 'name' ] ], $field );

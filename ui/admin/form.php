@@ -96,6 +96,14 @@ if ( 0 < $pod->id() ) {
         <?php echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $fields ) ), 'hidden' ); ?>
 
+        <?php
+            foreach ( $fields as $field ) {
+                if ( 'hidden' != $field[ 'type' ] )
+                    continue;
+
+                echo PodsForm::field( 'pods_field_' . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), 'hidden' );
+           }
+        ?>
         <div id="poststuff" class="metabox-holder has-right-sidebar"> <!-- class "has-right-sidebar" preps for a sidebar... always present? -->
             <div id="side-info-column" class="inner-sidebar">
                 <div id="side-sortables" class="meta-box-sortables ui-sortable">
@@ -249,8 +257,10 @@ if ( 0 < $pod->id() ) {
                             <div class="inside">
                                 <table class="form-table pods-metabox">
                                     <?php
-                                    foreach ( $fields as $field ) {
-                                        ?>
+                                        foreach ( $fields as $field ) {
+                                            if ( 'hidden' == $field[ 'type' ] )
+                                                continue;
+                                    ?>
                                         <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Podsform::clean( $field[ 'name' ], true ); ?>">
                                             <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_field_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
                                             <td>
@@ -258,8 +268,8 @@ if ( 0 < $pod->id() ) {
                                                 <?php echo PodsForm::comment( 'pods_field_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
                                             </td>
                                         </tr>
-                                        <?php
-                                    }
+                                    <?php
+                                        }
                                     ?>
                                 </table>
                             </div>

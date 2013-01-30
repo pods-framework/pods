@@ -778,11 +778,29 @@ if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod
                         <?php echo PodsForm::field( 'supports_post_formats', pods_var_raw( 'supports_post_formats', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Post Formats', 'pods' ) ) ); ?>
                     </div>
                 </li>
+
+                <?php if ( 'genesis' == basename( get_template_directory() ) ) { ?>
+                    <li>
+                        <div class="pods-field pods-boolean">
+                            <?php echo PodsForm::field( 'supports_genesis_seo', pods_var_raw( 'supports_genesis_seo', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Genesis: SEO', 'pods' ) ) ); ?>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="pods-field pods-boolean">
+                            <?php echo PodsForm::field( 'supports_genesis_layouts', pods_var_raw( 'supports_genesis_layouts', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Genesis: Layouts', 'pods' ) ) ); ?>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="pods-field pods-boolean">
+                            <?php echo PodsForm::field( 'supports_genesis_simple_sidebars', pods_var_raw( 'supports_genesis_simple_sidebars', $pod, false ), 'boolean', array( 'boolean_yes_label' => __( 'Genesis: Simple Sidebars', 'pods' ) ) ); ?>
+                        </div>
+                    </li>
+                <?php } ?>
             </ul>
         </div>
     </div>
     <div class="pods-field-option">
-        <?php echo PodsForm::label( 'supports_custom', __( 'Custom Supports', 'pods' ), __( 'Comma-separated list of custom "supports" values to pass to register_post_type.', 'pods' ) ); ?>
+        <?php echo PodsForm::label( 'supports_custom', __( 'Advanced Supports', 'pods' ), __( 'Comma-separated list of custom "supports" values to pass to register_post_type.', 'pods' ) ); ?>
         <?php echo PodsForm::field( 'supports_custom', pods_var_raw( 'supports_custom', $pod, '' ), 'text' ); ?>
     </div>
     <div class="pods-field-option-group">

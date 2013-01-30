@@ -405,6 +405,13 @@ class PodsInit {
                     }
                 }
 
+                // Genesis Support
+                if ( 'genesis' == basename( get_template_directory() ) ) {
+                    $cpt_supported[ 'genesis-seo' ] = (boolean) pods_var( 'supports_genesis_seo', $post_type, false );
+                    $cpt_supported[ 'genesis-layouts' ] = (boolean) pods_var( 'supports_genesis_layouts', $post_type, false );
+                    $cpt_supported[ 'genesis-simple-sidebars' ] = (boolean) pods_var( 'supports_genesis_simple_sidebars', $post_type, false );
+                }
+
                 // WP needs something, if this was empty and none were enabled, it would show title+editor pre 3.5 :(
                 $cpt_supports = array();
 

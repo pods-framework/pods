@@ -34,6 +34,10 @@ if ( 'images' == $limit_file_type )
     $limit_types = 'jpg,png,gif';
 elseif ( 'video' == $limit_file_type )
     $limit_types = 'mpg,mov,flv,mp4';
+elseif ( 'audio' == $limit_file_type )
+    $limit_types = 'mp3,m4a,wav,wma';
+elseif ( 'text' == $limit_file_type )
+    $limit_types = 'txt,rtx,csv,tsv';
 elseif ( 'any' == $limit_file_type )
     $limit_types = '';
 else

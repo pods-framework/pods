@@ -1525,7 +1525,7 @@ class PodsAdmin {
 
                 // WPML integration for Post Types
                 if ( $wpdb->posts == $data->table && function_exists( 'icl_object_id' ) ) {
-                    $id = icl_object_id( $result[ $data->field_id ], $result[ 'post_type' ] );
+                    $id = icl_object_id( $result[ $data->field_id ], $result[ 'post_type' ], false );
 
                     if ( 0 < $id && !in_array( $id, $ids ) ) {
                         $text = trim( get_the_title( $id ) );

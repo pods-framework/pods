@@ -3110,6 +3110,7 @@ class PodsAPI {
      * $params['pod'] string The Pod name
      * $params['id'] int The item's ID from the wp_pods_* table
      * $params['fields'] array The fields to export
+     * $params['depth'] int How many levels deep to export data
      *
      * @param array $params An associative array of parameters
      *
@@ -3118,6 +3119,7 @@ class PodsAPI {
      */
     public function export_pod_item ( $params ) {
         $fields = array();
+        $depth = 2;
 
         if ( is_object( $params ) && 'Pods' == get_class( $params ) )
             $pod = $params;
@@ -3129,10 +3131,9 @@ class PodsAPI {
             if ( empty( $pod ) )
                 return false;
 
-            $fields = (array) pods_var_raw( 'fields', $params, array(), null, true );
+            $fields = (array) pods_var_raw( 'fields', $params, $fields, null, true );
+            $depth = (int) pods_var_raw( 'depth', $params, $depth, null, true );
         }
-
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
 
         $object_fields = (array) pods_var_raw( 'object_fields', $pod->pod_data, array(), null, true );
 
@@ -3140,6 +3141,26 @@ class PodsAPI {
             $fields = $pod->fields;
             $fields = array_merge( $fields, $object_fields );
         }
+
+        $data = $this->export_pod_item_level( $pod, $fields, $depth );
+
+        $data = $this->do_hook( 'export_pod_item', $data, $pod->pod, $pod->id(), $pod, $fields, $depth );
+
+        return $data;
+    }
+
+    /**
+     * Export a pod item by depth level
+     *
+     * @param Pods $pod Pods object
+     * @param array $fields Fields to export
+     * @param int $depth Depth limit
+     * @param int $current_depth Current depth level
+     *
+     * @return array Data array
+     */
+    private function export_pod_item_level ( $pod, $fields, $depth, $current_depth = 1 ) {
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
 
         foreach ( $fields as $k => $field ) {
             if ( !is_array( $field ) )
@@ -3157,7 +3178,7 @@ class PodsAPI {
                         if ( !empty( $field[ 'table_info' ] ) )
                             $field[ 'lookup_name' ] .= '.' . $field[ 'table_info' ][ 'field_id' ];
                     }
-                    else
+                    elseif ( in_array( $field[ 'type' ], array( 'file', 'avatar' ) ) )
                         $field[ 'lookup_name' ] .= '.guid';
                 }
 
@@ -3176,10 +3197,44 @@ class PodsAPI {
         $data = array();
 
         foreach ( $fields as $field ) {
-            $data[ $field[ 'name' ] ] = $pod->field( $field[ 'name' ] );
-        }
+            // Return IDs (or guid for files) if only one level deep
+            if ( 1 == $depth )
+                $data[ $field[ 'name' ] ] = $pod->field( $field[ 'lookup_name' ] );
+            // Recurse depth levels for pick fields if $depth allows
+            elseif ( ( -1 == $depth || $current_depth < $depth ) && 'pick' == $field[ 'type' ] && 'custom-simple' != pods_var( 'pick_object', $field ) ) {
+                $related_data = array();
 
-        $data = $this->do_hook( 'export_pod_item', $data, $pod->pod, $pod->id(), $pod, $fields, $object_fields );
+                $related_ids = $pod->field( $field[ 'lookup_name' ] );
+
+                if ( !empty( $related_ids ) ) {
+                    $related_ids = (array) $related_ids;
+
+                    $pick_object = pods_var_raw( 'pick_object', $field );
+
+                    $related_pod = pods( pods_var_raw( 'pick_val', $field ), null, false );
+
+                    // If this isn't a Pod, return data exactly as Pods does normally
+                    if ( empty( $related_pod ) || ( 'pod' != $pick_object && $pick_object != $related_pod->pod_data[ 'type' ] ) )
+                        $related_data = $pod->field( $field[ 'name' ] );
+                    else {
+                        foreach ( $related_ids as $related_id ) {
+                            $object_fields = (array) pods_var_raw( 'object_fields', $related_pod->pod_data, array(), null, true );
+
+                            $related_fields = array_merge( $pod->fields, $object_fields );
+
+                            $related_data = $this->export_pod_item_level( $related_pod, $related_fields, $depth, ( $current_depth + 1 ) );
+
+                            $related_data = $this->do_hook( 'export_pod_item_level', $related_data, $related_pod->pod, $related_pod->id(), $related_pod, $related_fields, $depth, ( $current_depth + 1 ) );
+                        }
+                    }
+                }
+
+                $data[ $field[ 'name' ] ] = $related_data;
+            }
+            // Return data exactly as Pods does normally
+            else
+                $data[ $field[ 'name' ] ] = $pod->field( $field[ 'name' ] );
+        }
 
         return $data;
     }

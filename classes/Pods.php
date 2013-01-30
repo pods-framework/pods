@@ -1586,19 +1586,23 @@ class Pods {
      * @link http://podsframework.org/docs/export/
      */
     public function export ( $fields = null, $id = null ) {
-        if ( null === $id )
-            $id = $this->id();
-
-        $fields = (array) $this->do_hook( 'export', $fields, $id );
-
-        if ( empty( $id ) )
-            return false;
-
         $params = array(
             'pod' => $this->pod,
             'id' => $id,
-            'fields' => $fields
+            'fields' => null,
+            'depth' => 2
         );
+
+        if ( !isset( $fields[ 'fields' ] ) && !isset( $fields[ 'depth' ] ) )
+            $params = array( 'fields' => $fields );
+
+        if ( null === $params[ 'id' ] )
+            $params[ 'id' ] = $this->id();
+
+        $params = (array) $this->do_hook( 'export', $params );
+
+        if ( empty( $params[ 'id' ] ) )
+            return false;
 
         return $this->api->export_pod_item( $params );
     }

@@ -544,6 +544,8 @@ class PodsAPI {
                     'type' => 'wysiwyg',
                     'alias' => array( 'content' ),
                     'options' => array(
+                        'wysiwyg_allow_html' => 1,
+                        'wysiwyg_allowed_html_tags' => '',
                         'display_filter' => 'the_content',
                         'pre_save' => 0
                     )
@@ -551,10 +553,11 @@ class PodsAPI {
                 'post_excerpt' => array(
                     'name' => 'post_excerpt',
                     'label' => 'Excerpt',
-                    'label' => 'Excerpt',
                     'type' => 'paragraph',
                     'alias' => array( 'excerpt' ),
                     'options' => array(
+                        'paragraph_allow_html' => 1,
+                        'paragraph_allowed_html_tags' => '',
                         'display_filter' => 'the_excerpt',
                         'pre_save' => 0
                     )

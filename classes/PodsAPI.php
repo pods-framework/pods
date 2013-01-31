@@ -5191,7 +5191,7 @@ class PodsAPI {
          * @var $sitepress SitePress
          * @var $icl_adjust_id_url_filter_off boolean
          */
-        global $wpdb, $sitepress, $icl_adjust_id_url_filter_off;
+        global $wpdb, $sitepress, $icl_adjust_id_url_filter_off, $polylang;
 
         $info = array(
             //'select' => '`t`.*',
@@ -5238,13 +5238,17 @@ class PodsAPI {
         $transient = 'pods_get_table_info_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name );
 
         $current_language = false;
+        $current_language_t_id = $current_language_tt_id = 0;
 
         // WPML support
         if ( is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
             $current_language = pods_sanitize( ICL_LANGUAGE_CODE );
         // Polylang support
-        elseif ( function_exists( 'pll_current_language' ) )
+        elseif ( is_object( $polylang ) && function_exists( 'pll_current_language' ) ) {
             $current_language = pll_current_language( 'slug' );
+            $current_language_t_id = $polylang->get_language( $current_language )->term_id;
+            $current_language_tt_id = $polylang->get_language( $current_language )->term_taxonomy_id;
+        }
 
         if ( !empty( $current_language ) )
             $transient = 'pods_get_table_info_' . $current_language . '_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name );
@@ -5393,23 +5397,17 @@ class PodsAPI {
                             ON `wpml_languages`.`code` = `wpml_translations`.`language_code` AND `wpml_languages`.`active` = 1
                     ";
 
-                    $info[ 'where' ][ 'wpml_language_code' ] = "`wpml_languages`.`code` IS NOT NULL";
+                    $info[ 'where' ][ 'wpml_languages' ] = "`wpml_languages`.`code` IS NOT NULL";
                 }
                 // Polylang support
-                elseif( function_exists( 'pll_is_translated_post_type' ) && pll_is_translated_post_type( $post_type ) ) {
-                    $info[ 'join' ][ 'polylang_translations' ] = "
-                        LEFT JOIN `{$wpdb->prefix}icl_translations` AS `polylang_translations`
-                            ON `polylang_translations`.`element_id` = `t`.`ID`
-                                AND `polylang_translations`.`element_type` = 'post_{$post_type}'
-                                AND `polylang_translations`.`language_code` = '{$current_language}'
-                    ";
-
+                elseif( is_object( $polylang ) && function_exists( 'pll_is_translated_post_type' ) && pll_is_translated_post_type( $post_type ) ) {
                     $info[ 'join' ][ 'polylang_languages' ] = "
-                        LEFT JOIN `{$wpdb->prefix}icl_languages` AS `polylang_languages`
-                            ON `polylang_languages`.`code` = `polylang_translations`.`language_code` AND `polylang_languages`.`active` = 1
+                        LEFT JOIN `{$wpdb->term_relationships}` AS `polylang_languages`
+                            ON `polylang_languages`.`object_id` = `t`.`ID`
+                                AND `polylang_languages`.`term_taxonomy_id` = {$current_language_tt_id}
                     ";
 
-                    $info[ 'where' ][ 'polylang_language_code' ] = "`polylang_languages`.`code` IS NOT NULL";
+                    $info[ 'where' ][ 'polylang_languages' ] = "`polylang_languages`.`object_id` IS NOT NULL";
                 }
 
                 $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type, $pod );
@@ -5459,23 +5457,17 @@ class PodsAPI {
                             ON `wpml_languages`.`code` = `wpml_translations`.`language_code` AND `wpml_languages`.`active` = 1
                     ";
 
-                    $info[ 'where' ][ 'wpml_language_code' ] = "`wpml_languages`.`code` IS NOT NULL";
+                    $info[ 'where' ][ 'wpml_languages' ] = "`wpml_languages`.`code` IS NOT NULL";
                 }
                 // Polylang support
-                elseif ( function_exists( 'pll_is_translated_taxonomy' ) && pll_is_translated_taxonomy( $taxonomy ) ) {
-                    $info[ 'join' ][ 'polylang_translations' ] = "
-                        LEFT JOIN `{$wpdb->prefix}icl_translations` AS `polylang_translations`
-                            ON `polylang_translations`.`element_id` = `tt`.`term_taxonomy_id`
-                                AND `polylang_translations`.`element_type` = 'tax_{$taxonomy}'
-                                AND `polylang_translations`.`language_code` = '{$current_language}'
-                    ";
-
+                elseif ( is_object( $polylang ) && function_exists( 'pll_is_translated_taxonomy' ) && pll_is_translated_taxonomy( $taxonomy ) ) {
                     $info[ 'join' ][ 'polylang_languages' ] = "
-                        LEFT JOIN `{$wpdb->prefix}icl_languages` AS `polylang_languages`
-                            ON `polylang_languages`.`code` = `polylang_translations`.`language_code` AND `polylang_languages`.`active` = 1
+                        LEFT JOIN `{$wpdb->termmeta}` AS `polylang_languages`
+                            ON `polylang_languages`.`term_id` = `t`.`term_id`
+                                AND `polylang_languages`.`meta_value` = {$current_language_t_id}
                     ";
 
-                    $info[ 'where' ][ 'polylang_language_code' ] = "`polylang_languages`.`code` IS NOT NULL";
+                    $info[ 'where' ][ 'polylang_languages' ] = "`polylang_languages`.`term_id` IS NOT NULL";
                 }
 
                 $info[ 'object_fields' ] = $this->get_wp_object_fields( $object_type, $pod );

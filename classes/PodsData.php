@@ -2163,7 +2163,8 @@ class PodsData {
         $field = $traverse_recurse[ 'fields' ][ $traverse_recurse[ 'depth' ] ];
 
         $ignore_aliases = array(
-            'wpml_languages'
+            'wpml_languages',
+            'polylang_languages'
         );
 
         $ignore_aliases = $this->do_hook( 'traverse_recurse_ignore_aliases', $ignore_aliases, $field, $traverse_recurse );

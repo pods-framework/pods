@@ -1355,7 +1355,7 @@ class PodsAdmin {
      * handle ajax relationship
      */
     public function admin_ajax_relationship () {
-        global $wpdb;
+        global $wpdb, $polylang;
 
         if ( false === headers_sent() ) {
             if ( '' == session_id() )
@@ -1490,8 +1490,10 @@ class PodsAdmin {
             $lookup_where[] = "`t`.`post_excerpt` LIKE '%" . like_escape( $params->query ) . "%'";
             $extra = ', `t`.`post_type`';
         }
-        elseif ( $wpdb->terms == $data->table )
+        elseif ( $wpdb->terms == $data->table ) {
             $lookup_where[] = "`t`.`slug` LIKE '%" . like_escape( $params->query ) . "%'";
+            $extra = ', `tt`.`taxonomy`';
+        }
         elseif ( $wpdb->comments == $data->table ) {
             $lookup_where[] = "`t`.`comment_content` LIKE '%" . like_escape( $params->query ) . "%'";
             $lookup_where[] = "`t`.`comment_author` LIKE '%" . like_escape( $params->query ) . "%'";
@@ -1533,12 +1535,58 @@ class PodsAdmin {
             foreach ( $results as $result ) {
                 $result = get_object_vars( $result );
 
-                // WPML integration for Post Types
-                if ( $wpdb->posts == $data->table && function_exists( 'icl_object_id' ) ) {
-                    $id = icl_object_id( $result[ $data->field_id ], $result[ 'post_type' ], false );
+                // WPML integration for Post Types and Taxonomies
+                if ( in_array( $data->table, array( $wpdb->posts, $wpdb->terms ) ) && function_exists( 'icl_object_id' ) ) {
+                    $object = '';
+
+                    if ( $wpdb->posts == $data->table )
+                        $object = $result[ 'post_type' ];
+                    elseif ( $wpdb->terms == $data->table )
+                        $object = $result[ 'taxonomy' ];
+
+                    $id = icl_object_id( $result[ $data->field_id ], $object, false );
 
                     if ( 0 < $id && !in_array( $id, $ids ) ) {
-                        $text = trim( get_the_title( $id ) );
+                        $text = trim( $result[ $data->field_index ] );
+
+                        if ( $result[ $data->field_id ] != $id ) {
+                            if ( $wpdb->posts == $data->table )
+                                $text = trim( get_the_title( $id ) );
+                            elseif ( $wpdb->terms == $data->table )
+                                $text = trim( get_term( $id, $object )->name );
+                        }
+
+                        if ( strlen( $text ) < 1 )
+                            $text = '(No Title)';
+
+                        $items[] = array(
+                            'id' => $id,
+                            'text' => $text
+                        );
+
+                        $ids[] = $id;
+                    }
+                }
+                // Polylang integration for Post Types and Taxonomies
+                if ( in_array( $data->table, array( $wpdb->posts, $wpdb->terms ) ) && is_object( $polylang ) && method_exists( $polylang, 'get_translation' ) ) {
+                    $object = '';
+
+                    if ( $wpdb->posts == $data->table )
+                        $object = $result[ 'post_type' ];
+                    elseif ( $wpdb->terms == $data->table )
+                        $object = $result[ 'taxonomy' ];
+
+                    $id = $polylang->get_translation( $object, $result[ $data->field_id ] );
+
+                    if ( 0 < $id && !in_array( $id, $ids ) ) {
+                        $text = trim( $result[ $data->field_index ] );
+
+                        if ( $result[ $data->field_id ] != $id ) {
+                            if ( $wpdb->posts == $data->table )
+                                $text = trim( get_the_title( $id ) );
+                            elseif ( $wpdb->terms == $data->table )
+                                $text = trim( get_term( $id, $object )->name );
+                        }
 
                         if ( strlen( $text ) < 1 )
                             $text = '(No Title)';

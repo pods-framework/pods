@@ -3113,28 +3113,26 @@ class PodsAPI {
      * $params['depth'] int How many levels deep to export data
      *
      * @param array $params An associative array of parameters
+     * @param object $pod (optional) Pods object
      *
      * @return int The table row ID
      * @since 1.12
      */
-    public function export_pod_item ( $params ) {
-        $fields = array();
-        $depth = 2;
+    public function export_pod_item ( $params, $pod = null ) {
+        if ( !is_object( $pod ) || 'Pods' != get_class( $pod ) ) {
+            if ( empty( $params ) )
+                return false;
 
-        if ( is_object( $params ) && 'Pods' == get_class( $params ) )
-            $pod = $params;
-        else {
             $params = (object) pods_sanitize( $params );
 
             $pod = pods( $params->pod, $params->id, false );
 
             if ( empty( $pod ) )
                 return false;
-
-            $fields = (array) pods_var_raw( 'fields', $params, $fields, null, true );
-            $depth = (int) pods_var_raw( 'depth', $params, $depth, null, true );
         }
 
+        $fields = (array) pods_var_raw( 'fields', $params, array(), null, true );
+        $depth = (int) pods_var_raw( 'depth', $params, 2, null, true );
         $object_fields = (array) pods_var_raw( 'object_fields', $pod->pod_data, array(), null, true );
 
         if ( empty( $fields ) ) {
@@ -5792,20 +5790,41 @@ class PodsAPI {
     }
 
     /**
-     * Export data
+     * Export data from a Pod
      *
+     * @param string|object $pod The pod name or Pods object
+     * @param array $params An associative array of parameters
+     *
+     * @return array Data arrays of all exported pod items
      * @since 1.7.1
      */
-    public function export () {
-        $pod = pods( $this->pod, array( 'limit' => -1, 'search' => false, 'pagination' => false ) );
+    public function export ( $pod = null, $params = null ) {
+        if ( empty( $pod ) )
+            $pod = $this->pod;
+
+        $find = array(
+            'limit' => -1,
+            'search' => false,
+            'pagination' => false
+        );
+
+        if ( !empty( $params ) && isset( $params[ 'params' ] ) ) {
+            $find = array_merge( $find, (array) $params[ 'params' ] );
+
+            unset( $params[ 'params' ] );
+
+            $pod = pods( $pod, $find );
+        }
+        elseif ( !is_object( $pod ) )
+            $pod = pods( $pod, $find );
 
         $data = array();
 
         while ( $pod->fetch() ) {
-            $data[ $pod->id() ] = $this->export_pod_item( $pod );
+            $data[ $pod->id() ] = $this->export_pod_item( $params, $pod );
         }
 
-        $data = $this->do_hook( 'export', $data, $this->pod, $pod );
+        $data = $this->do_hook( 'export', $data, $pod->pod, $pod );
 
         return $data;
     }

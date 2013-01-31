@@ -1575,7 +1575,7 @@ class Pods {
     /**
      * Export an item's data
      *
-     * @see PodsApi::export_pod_item
+     * @see PodsAPI::export_pod_item
      *
      * @param array $fields (optional) Fields to export
      * @param int $id (optional) ID of the pod item to export
@@ -1605,6 +1605,32 @@ class Pods {
             return false;
 
         return $this->api->export_pod_item( $params );
+    }
+
+    /**
+     * Export data from all items
+     *
+     * @see PodsAPI::export
+     *
+     * @param array $params An associative array of parameters
+     *
+     * @return array Data arrays of all exported pod items
+     *
+     * @since 2.3.0
+     */
+    public function export_data ( $params = null ) {
+        $defaults = array(
+            'fields' => null,
+            'depth' => 2,
+            'params' => null
+        );
+
+        if ( empty( $params ) )
+            $params = $defaults;
+        else
+            $params = array_merge( $defaults, (array) $params );
+
+        return $this->api->export( $this, $params );
     }
 
     /**

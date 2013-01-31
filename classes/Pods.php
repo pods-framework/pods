@@ -794,7 +794,8 @@ class Pods {
                                     'select' => '*, `t`.`' . $table[ 'field_id' ] . '` AS `pod_item_id`',
                                     'table' => $table[ 'table' ],
                                     'join' => $join,
-                                    'where' => $where
+                                    'where' => $where,
+                                    'orderby' => $params->orderby
                                 );
 
                                 $item_data = pods_data()->select( $sql );

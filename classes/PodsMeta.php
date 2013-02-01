@@ -1740,8 +1740,10 @@ class PodsMeta {
 
         $field = $meta_key;
 
-        if ( false !== strpos( '.', $field ) )
-            $field = @current( explode( '.', $field ) );
+        if ( false !== strpos( $field, '.' ) ) {
+            $field = explode( '.', $field );
+            $field = $field[ 0 ];
+        }
 
         if ( empty( $object_id ) || empty( $field ) || empty( $object ) || ( !isset( $object[ 'fields' ][ $field ] ) && !isset( $object[ 'object_fields' ][ $field ] ) ) )
             return $_null;
@@ -1759,8 +1761,8 @@ class PodsMeta {
         if ( !$single || empty( $meta_cache ) || !is_array( $meta_cache ) )
             $meta_cache = array();
 
-        if ( !empty( $meta_cache ) && isset( $meta_cache[ $meta_key ][ $field ] ) )
-            $value = $meta_cache[ $meta_key ][ $field ];
+        if ( !empty( $meta_cache ) && isset( $meta_cache[ $meta_key ] ) )
+            $value = $meta_cache[ $meta_key ];
         else {
             $pod = pods( $object[ 'name' ], $object_id );
 

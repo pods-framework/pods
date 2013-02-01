@@ -786,7 +786,7 @@ class Pods {
                                     $where = array( '( ' . implode( ' OR ', $where ) . ' )' );
 
                                 if ( !empty( $table[ 'where' ] ) )
-                                    $where = array_merge( $where, (array) $table[ 'where' ] );
+                                    $where = array_merge( $where, array_values( (array) $table[ 'where' ] ) );
                             }
 
                             if ( !empty( $table[ 'table' ] ) ) {
@@ -820,9 +820,11 @@ class Pods {
                                 unset( $item_data );
 
                                 // Return all of the data in the order expected
-                                foreach ( $ids as $id ) {
-                                    if ( isset( $items[ $id ] ) )
-                                        $data[] = $items[ $id ];
+                                if ( empty( $params->orderby ) ) {
+                                    foreach ( $ids as $id ) {
+                                        if ( isset( $items[ $id ] ) )
+                                            $data[] = $items[ $id ];
+                                    }
                                 }
                             }
 

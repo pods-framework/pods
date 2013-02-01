@@ -34,10 +34,8 @@ $attributes = array();
 
 $type = 'text';
 
-$date_type = 'datetime';
-
-if ( 1 == pods_var( 'datetime_html5', $options ) )
-    $type = $date_type;
+if ( 1 == pods_var( $form_field_type . '_html5', $options ) )
+    $type = $form_field_type;
 
 $attributes[ 'type' ] = $type;
 $attributes[ 'tabindex' ] = 2;
@@ -47,8 +45,8 @@ $format = PodsForm::field_method( 'datetime', 'format', $options );
 $method = 'datetimepicker';
 
 $args = array(
-    'timeFormat' => $time_format[ pods_var( 'datetime_time_format', $options, 'h_mma', null, true ) ],
-    'dateFormat' => $date_format[ pods_var( 'datetime_format', $options, 'mdy', null, true ) ],
+    'timeFormat' => $time_format[ pods_var( $form_field_type . '_time_format', $options, 'h_mma', null, true ) ],
+    'dateFormat' => $date_format[ pods_var( $form_field_type . '_format', $options, 'mdy', null, true ) ],
     'changeMonth' => true,
     'changeYear' => true
 );
@@ -58,7 +56,7 @@ if ( false !== stripos( $args[ 'timeFormat' ], 'tt' ) )
 
 $html5_format = 'Y-m-d\TH:i:s';
 
-if ( 24 == pods_var( 'datetime_time_type', $options, 12 ) ) {
+if ( 24 == pods_var( $form_field_type . '_time_type', $options, 12 ) ) {
     $args[ 'ampm' ] = false;
     $args[ 'timeFormat' ] = str_replace( 'h', 'H', $args[ 'timeFormat' ] );
 }
@@ -66,7 +64,11 @@ if ( 24 == pods_var( 'datetime_time_type', $options, 12 ) ) {
 $date = PodsForm::field_method( 'datetime', 'createFromFormat', $format, (string) $value );
 $date_default = PodsForm::field_method( 'datetime', 'createFromFormat', 'Y-m-d H:i:s', (string) $value );
 
-if ( 'text' != $type && ( 0 == pods_var( 'datetime_allow_empty', $options, 1 ) || !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) ) {
+$formatted_date = $value;
+
+if ( 1 == pods_var( $form_field_type . '_allow_empty', $options, 1 ) && in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
+    $formatted_date = $value = '';
+elseif ( 'text' != $type ) {
     $formatted_date = $value;
 
     if ( false !== $date )

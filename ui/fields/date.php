@@ -20,10 +20,8 @@ $attributes = array();
 
 $type = 'text';
 
-$date_type = 'date';
-
-if ( 1 == pods_var( 'date_html5', $options ) )
-    $type = $date_type;
+if ( 1 == pods_var( $form_field_type . '_html5', $options ) )
+    $type = $form_field_type;
 
 $attributes[ 'type' ] = $type;
 $attributes[ 'tabindex' ] = 2;
@@ -33,7 +31,7 @@ $format = PodsForm::field_method( 'date', 'format', $options );
 $method = 'datepicker';
 
 $args = array(
-    'dateFormat' => $date_format[ pods_var( 'date_format', $options, 'mdy', null, true ) ],
+    'dateFormat' => $date_format[ pods_var( $form_field_type . '_format', $options, 'mdy', null, true ) ],
     'changeMonth' => true,
     'changeYear' => true
 );
@@ -43,7 +41,11 @@ $html5_format = 'Y-m-d';
 $date = PodsForm::field_method( 'date', 'createFromFormat', $format, (string) $value );
 $date_default = PodsForm::field_method( 'date', 'createFromFormat', 'Y-m-d', (string) $value );
 
-if ( 'text' != $type && ( 0 == pods_var( 'date_allow_empty', $options, 1 ) || !in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) ) {
+$formatted_date = $value;
+
+if ( 1 == pods_var( $form_field_type . '_allow_empty', $options, 1 ) && in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
+    $formatted_date = $value = '';
+elseif ( 'text' != $type ) {
     $formatted_date = $value;
 
     if ( false !== $date )

@@ -747,8 +747,16 @@ class Pods {
                                 $ids = array_slice( $ids, 0, $last_limit );
 
                             // Get $pod if related to a Pod
-                            if ( !empty( $pick_object ) && 'pod' == $pick_object && !empty( $pick_val ) )
-                                $pod = $pick_val;
+                            if ( !empty( $pick_object ) && !empty( $pick_val ) ) {
+                                if ( 'pod' == $pick_object )
+                                    $pod = $pick_val;
+                                else {
+                                    $check = $this->api->get_table_info( $pick_object, $pick_val );
+
+                                    if ( !empty( $check ) && !empty( $check[ 'pod' ] ) )
+                                        $pod = $check[ 'pod' ][ 'name' ];
+                                }
+                            }
                         }
                         // Assume last iteration
                         else {
@@ -823,7 +831,7 @@ class Pods {
                                 if ( empty( $params->orderby ) ) {
                                     foreach ( $ids as $id ) {
                                         if ( isset( $items[ $id ] ) )
-                                            $data[] = $items[ $id ];
+                                            $data[ $id ] = $items[ $id ];
                                     }
                                 }
                             }

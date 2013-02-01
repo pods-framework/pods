@@ -1777,7 +1777,7 @@ class PodsMeta {
         }
 
         if ( !$single && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) )
-            wp_cache_add( $object_id, $meta_cache, $meta_type . '_meta' );
+            wp_cache_set( $object_id, $meta_cache, $meta_type . '_meta' );
 
         if ( !$no_conflict )
             pods_no_conflict_off( $meta_type );

@@ -60,23 +60,35 @@ class PodsField_Time extends PodsField {
                 'data' => array(
                     '12' => __( '12 hour', 'pods' ),
                     '24' => __( '24 hour', 'pods' )
-                )
+                ),
+                'dependency' => true
             ),
-            'time_format' => array(
+            'time_time_format' => array(
                 'label' => __( 'Time Format', 'pods' ),
+                'depends-on' => array( 'time_time_type' => '12' ),
                 'default' => 'h_mma',
                 'type' => 'pick',
                 'data' => array(
-                    'h_mm_A' => '1:25 PM',
-                    'h_mm_ss_A' => '1:25:00 PM',
-                    'hh_mm_A' => '01:25 PM',
-                    'hh_mm_ss_A' => '01:25:00 PM',
-                    'h_mma' => '1:25pm',
-                    'hh_mma' => '01:25pm',
-                    'h_mm' => '1:25',
-                    'h_mm_ss' => '1:25:00',
-                    'hh_mm' => '01:25',
-                    'hh_mm_ss' => '01:25:00'
+                    'h_mm_A' => date_i18n( 'g:i A' ),
+                    'h_mm_ss_A' => date_i18n( 'g:i:s A' ),
+                    'hh_mm_A' => date_i18n( 'h:i A' ),
+                    'hh_mm_ss_A' => date_i18n( 'h:i:s A' ),
+                    'h_mma' => date_i18n( 'g:ia' ),
+                    'hh_mma' => date_i18n( 'h:ia' ),
+                    'h_mm' => date_i18n( 'g:i' ),
+                    'h_mm_ss' => date_i18n( 'g:i:s' ),
+                    'hh_mm' => date_i18n( 'h:i' ),
+                    'hh_mm_ss' => date_i18n( 'h:i:s' )
+                )
+            ),
+            'time_time_format_24' => array(
+                'label' => __( 'Time Format', 'pods' ),
+                'depends-on' => array( 'datetime_time_type' => '24' ),
+                'default' => 'hh_mm',
+                'type' => 'pick',
+                'data' => array(
+                    'hh_mm' => date_i18n( 'H:i' ),
+                    'hh_mm_ss' => date_i18n( 'H:i:s' )
                 )
             ),
             'time_allow_empty' => array(

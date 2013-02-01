@@ -59,17 +59,19 @@ class PodsField_DateTime extends PodsField {
                 'default' => 'mdy',
                 'type' => 'pick',
                 'data' => array(
-                    'mdy' => 'mm/dd/yyyy (ex. 12/31/1999)',
-                    'mdy_dash' => 'mm-dd-yyyy (ex. 12-31-1999)',
-                    'mdy_dot' => 'mm.dd.yyyy (ex. 12.31.1999)',
-                    'dmy' => 'dd/mm/yyyy (ex. 31/12/1999)',
-                    'dmy_dash' => 'dd-mm-yyyy (ex. 31-12-1999)',
-                    'dmy_dot' => 'dd.mm.yyyy (ex. 31.12.1999)',
-                    'ymd_slash' => 'yyyy/mm/dd (ex. 1999/12/31)',
-                    'ymd_dash' => 'yyyy-mm-dd (ex. 1999-12-31)',
-                    'ymd_dot' => 'yyyy.mm.dd (ex. 1999.12.31)',
-                    'dMd' => 'dd/mmm/yyyy (ex. 31/Dec/1999)',
-                    'dMd_dash' => 'dd-mmm-yyyy (ex. 31-Dec-1999)'
+                    'mdy' => date_i18n( 'm/d/Y' ),
+                    'mdy_dash' => date_i18n( 'm-d-Y' ),
+                    'mdy_dot' => date_i18n( 'm.d.Y' ),
+                    'dmy' => date_i18n( 'd/m/Y' ),
+                    'dmy_dash' => date_i18n( 'd-m-Y' ),
+                    'dmy_dot' => date_i18n( 'd.m.Y' ),
+                    'ymd_slash' => date_i18n( 'Y/m/d' ),
+                    'ymd_dash' => date_i18n( 'Y-m-d' ),
+                    'ymd_dot' => date_i18n( 'Y.m.d' ),
+                    'dMd' => date_i18n( 'd/M/Y' ),
+                    'dMd_dash' => date_i18n( 'd-M-Y' ),
+                    'fjy' => date_i18n( 'F j, Y' ),
+                    'fjsy' => date_i18n( 'F jS, Y' )
                 )
             ),
             'datetime_time_type' => array(
@@ -79,23 +81,35 @@ class PodsField_DateTime extends PodsField {
                 'data' => array(
                     '12' => __( '12 hour', 'pods' ),
                     '24' => __( '24 hour', 'pods' )
-                )
+                ),
+                'dependency' => true
             ),
             'datetime_time_format' => array(
                 'label' => __( 'Time Format', 'pods' ),
+                'depends-on' => array( 'datetime_time_type' => '12' ),
                 'default' => 'h_mma',
                 'type' => 'pick',
                 'data' => array(
-                    'h_mm_A' => '1:25 PM',
-                    'h_mm_ss_A' => '1:25:00 PM',
-                    'hh_mm_A' => '01:25 PM',
-                    'hh_mm_ss_A' => '01:25:00 PM',
-                    'h_mma' => '1:25pm',
-                    'hh_mma' => '01:25pm',
-                    'h_mm' => '1:25',
-                    'h_mm_ss' => '1:25:00',
-                    'hh_mm' => '01:25',
-                    'hh_mm_ss' => '01:25:00'
+                    'h_mm_A' => date_i18n( 'g:i A' ),
+                    'h_mm_ss_A' => date_i18n( 'g:i:s A' ),
+                    'hh_mm_A' => date_i18n( 'h:i A' ),
+                    'hh_mm_ss_A' => date_i18n( 'h:i:s A' ),
+                    'h_mma' => date_i18n( 'g:ia' ),
+                    'hh_mma' => date_i18n( 'h:ia' ),
+                    'h_mm' => date_i18n( 'g:i' ),
+                    'h_mm_ss' => date_i18n( 'g:i:s' ),
+                    'hh_mm' => date_i18n( 'h:i' ),
+                    'hh_mm_ss' => date_i18n( 'h:i:s' )
+                )
+            ),
+            'datetime_time_format_24' => array(
+                'label' => __( 'Time Format', 'pods' ),
+                'depends-on' => array( 'datetime_time_type' => '24' ),
+                'default' => 'hh_mm',
+                'type' => 'pick',
+                'data' => array(
+                    'hh_mm' => date_i18n( 'H:i' ),
+                    'hh_mm_ss' => date_i18n( 'H:i:s' )
                 )
             ),
             'datetime_allow_empty' => array(
@@ -254,6 +268,8 @@ class PodsField_DateTime extends PodsField {
             'ymd_dot' => 'Y.m.d',
             'dMd' => 'd/M/Y',
             'dMd_dash' => 'd-M-Y',
+            'fjy' => 'F j, Y',
+            'fjsy' => 'F jS, Y'
         );
 
         $time_format = array(

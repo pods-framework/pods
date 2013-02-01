@@ -59,17 +59,19 @@ class PodsField_Date extends PodsField {
                 'default' => 'mdy',
                 'type' => 'pick',
                 'data' => array(
-                    'mdy' => 'mm/dd/yyyy (ex. 12/31/1999)',
-                    'mdy_dash' => 'mm-dd-yyyy (ex. 12-31-1999)',
-                    'mdy_dot' => 'mm.dd.yyyy (ex. 12.31.1999)',
-                    'dmy' => 'dd/mm/yyyy (ex. 31/12/1999)',
-                    'dmy_dash' => 'dd-mm-yyyy (ex. 31-12-1999)',
-                    'dmy_dot' => 'dd.mm.yyyy (ex. 31.12.1999)',
-                    'ymd_slash' => 'yyyy/mm/dd (ex. 1999/12/31)',
-                    'ymd_dash' => 'yyyy-mm-dd (ex. 1999-12-31)',
-                    'ymd_dot' => 'yyyy.mm.dd (ex. 1999.12.31)',
-                    'dMd' => 'dd/mmm/yyyy (ex. 31/Dec/1999)',
-                    'dMd_dash' => 'dd-mmm-yyyy (ex. 31-Dec-1999)'
+                    'mdy' => date_i18n( 'm/d/Y' ),
+                    'mdy_dash' => date_i18n( 'm-d-Y' ),
+                    'mdy_dot' => date_i18n( 'm.d.Y' ),
+                    'dmy' => date_i18n( 'd/m/Y' ),
+                    'dmy_dash' => date_i18n( 'd-m-Y' ),
+                    'dmy_dot' => date_i18n( 'd.m.Y' ),
+                    'ymd_slash' => date_i18n( 'Y/m/d' ),
+                    'ymd_dash' => date_i18n( 'Y-m-d' ),
+                    'ymd_dot' => date_i18n( 'Y.m.d' ),
+                    'dMd' => date_i18n( 'd/M/Y' ),
+                    'dMd_dash' => date_i18n( 'd-M-Y' ),
+                    'fjy' => date_i18n( 'F j, Y' ),
+                    'fjsy' => date_i18n( 'F jS, Y' )
                 )
             ),
             'date_allow_empty' => array(
@@ -228,6 +230,8 @@ class PodsField_Date extends PodsField {
             'ymd_dot' => 'Y.m.d',
             'dMd' => 'd/M/Y',
             'dMd_dash' => 'd-M-Y',
+            'fjy' => 'F j, Y',
+            'fjsy' => 'F jS, Y'
         );
 
         $format = $date_format[ pods_var( 'date_format', $options, 'ymd_dash', null, true ) ];

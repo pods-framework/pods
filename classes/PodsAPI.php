@@ -883,7 +883,8 @@ class PodsAPI {
 
         $fields = PodsForm::fields_setup( $fields );
 
-        pods_transient_set( trim( 'pods_api_object_fields_' . $object . $pod_name . '_', '_' ), $fields );
+        if ( did_action( 'init' ) )
+            pods_transient_set( trim( 'pods_api_object_fields_' . $object . $pod_name . '_', '_' ), $fields );
 
         return $fields;
     }
@@ -4030,7 +4031,8 @@ class PodsAPI {
             }
         }
 
-        pods_transient_set( $transient, $pod );
+        if ( did_action( 'init' ) )
+            pods_transient_set( $transient, $pod );
 
         return $pod;
     }
@@ -4184,7 +4186,7 @@ class PodsAPI {
             $the_pods[ $pod[ 'id' ] ] = $pod;
         }
 
-        if ( !empty( $cache_key ) && ( 'pods' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) )
+        if ( did_action( 'init' ) && !empty( $cache_key ) && ( 'pods' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) )
             pods_transient_set( $cache_key, $the_pods );
 
         return $the_pods;
@@ -5561,7 +5563,8 @@ class PodsAPI {
 
             $info[ 'type' ] = $object_type;
 
-            pods_transient_set( $transient, $info );
+            if ( did_action( 'init' ) )
+                pods_transient_set( $transient, $info );
         }
 
         $info = $this->do_hook( 'get_table_info', $info, $object_type, $object );

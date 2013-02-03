@@ -139,7 +139,9 @@ class PodsForm {
         if ( ( !isset( $options[ 'data' ] ) || empty( $options[ 'data' ] ) ) && is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'data' ) )
             $data = $options[ 'data' ] = self::$loaded[ $type ]->data( $name, $value, $options, $pod, $id );
 
-        if ( !empty( $helper ) && 0 < strlen( pods_var_raw( 'code', $helper ) ) && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) )
+        if ( true === apply_filters( 'pods_form_ui_field_' . $type . '_override', false, $name, $value, $options, $pod, $id ) )
+            do_action( 'pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id );
+        elseif ( !empty( $helper ) && 0 < strlen( pods_var_raw( 'code', $helper ) ) && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) )
             eval( '?>' . $helper[ 'code' ] );
         elseif ( method_exists( get_class(), 'field_' . $type ) )
             echo call_user_func( array( get_class(), 'field_' . $type ), $name, $value, $options );

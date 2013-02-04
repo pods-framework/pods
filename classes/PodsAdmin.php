@@ -157,6 +157,8 @@ class PodsAdmin {
             if ( false !== $results ) {
                 $submenu = array();
 
+                $pods_pages = 0;
+
                 foreach ( (array) $results as $item ) {
                     if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_content' ) && !current_user_can( 'pods_add_' . $item[ 'name' ] ) && !current_user_can( 'pods_edit_' . $item[ 'name' ] ) && !current_user_can( 'pods_delete_' . $item[ 'name' ] ) )
                         continue;
@@ -173,9 +175,11 @@ class PodsAdmin {
                         $parent_page = null;
 
                         if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) || current_user_can( 'pods_edit_' . $item[ 'name' ] ) || current_user_can( 'pods_delete_' . $item[ 'name' ] ) ) {
+                            $pods_pages++;
+
                             $parent_page = $page = 'pods-manage-' . $item[ 'name' ];
 
-                            add_object_page( $menu_label, $menu_label, 'read', $parent_page, '', $menu_icon );
+                            add_menu_page( $menu_label, $menu_label, 'read', $parent_page, '', $menu_icon, '57.' . ( 10 < count( $pods_pages ) ? $pods_pages : '0' . $pods_pages ) );
 
                             $all_title = $plural_label;
                             $all_label = __( 'All', 'pods' ) . ' ' . $plural_label;
@@ -194,9 +198,11 @@ class PodsAdmin {
                             $page = 'pods-add-new-' . $item[ 'name' ];
 
                             if ( null === $parent_page ) {
+                                $pods_pages++;
+
                                 $parent_page = $page;
 
-                                add_object_page( $menu_label, $menu_label, 'read', $parent_page, '', $menu_icon );
+                                add_menu_page( $menu_label, $menu_label, 'read', $parent_page, '', $menu_icon, '57.' . ( 10 < count( $pods_pages ) ? $pods_pages : '0' . $pods_pages ) );
                             }
 
                             $add_title = __( 'Add New', 'pods' ) . ' ' . $singular_label;
@@ -224,7 +230,7 @@ class PodsAdmin {
                             if ( null === $parent_page ) {
                                 $parent_page = $page;
 
-                                add_object_page( 'Pods', 'Pods', 'read', $parent_page, null, PODS_URL . 'ui/images/icon16.png' );
+                                add_menu_page( 'Pods', 'Pods', 'read', $parent_page, null, PODS_URL . 'ui/images/icon16.png', '58.5' );
                             }
 
                             $all_title = $plural_label;
@@ -245,7 +251,7 @@ class PodsAdmin {
                             if ( null === $parent_page ) {
                                 $parent_page = $page;
 
-                                add_object_page( 'Pods', 'Pods', 'read', $parent_page, null, PODS_URL . 'ui/images/icon16.png' );
+                                add_menu_page( 'Pods', 'Pods', 'read', $parent_page, null, PODS_URL . 'ui/images/icon16.png', '58.5' );
                             }
 
                             $add_title = __( 'Add New', 'pods' ) . ' ' . $singular_label;

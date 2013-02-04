@@ -331,6 +331,13 @@ class PodsInit {
 
         $cpt_positions = array();
 
+        if ( empty( $pods_cpt_ct ) && ( !empty( $post_types ) || !empty( $taxonomies ) ) )
+            $force = true;
+        elseif ( !empty( $pods_cpt_ct ) && empty( $pods_cpt_ct[ 'post_types' ] ) && !empty( $post_types ) )
+            $force = true;
+        elseif ( !empty( $pods_cpt_ct ) && empty( $pods_cpt_ct[ 'taxonomies' ] ) && !empty( $taxonomies ) )
+            $force = true;
+
         if ( false === $pods_cpt_ct || $force ) {
             if ( false === $pods_cpt_ct ) {
                 $pods_cpt_ct = array(
@@ -474,6 +481,11 @@ class PodsInit {
                     $cpt_positions[] = $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ];
                 else
                     $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ]++;
+
+                if ( 25 == $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] )
+                    $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ]++;
+
+                $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] = $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] . '.1';
 
                 // Taxonomies
                 $cpt_taxonomies = array();

@@ -150,7 +150,7 @@ class PodsField_Pick extends PodsField {
     public function schema ( $options = null ) {
         $schema = false;
 
-        if ( 'custom-simple' == pods_var( 'pick_object', $options ) )
+        if ( in_array( pods_var( 'pick_object', $options ), array( 'custom-simple', 'role', 'post-types', 'taxonomies' ) ) )
             $schema = 'LONGTEXT';
 
         return $schema;
@@ -307,7 +307,14 @@ class PodsField_Pick extends PodsField {
             }
         }
         elseif ( '' != pods_var( 'pick_object', $options, '' ) && array() == pods_var_raw( 'data', $options, array(), null, true ) ) {
-            if ( 'role' == $options[ 'pick_object' ] ) {
+            if ( 'post-status' == $options[ 'pick_object' ] ) {
+                $post_stati = get_post_stati( array(), 'objects' );
+
+                foreach ( $post_stati as $post_status ) {
+                    $data[ $post_status->name ] = $post_status->label;
+                }
+            }
+            elseif ( 'role' == $options[ 'pick_object' ] ) {
                 global $wp_roles;
 
                 foreach ( $wp_roles->role_objects as $key => $role ) {
@@ -494,35 +501,77 @@ class PodsField_Pick extends PodsField {
             unset( $options[ 'options' ] );
         }
 
-        if ( 'custom-simple' == pods_var( 'pick_object', $options ) ) {
-            $simple_data = array();
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'post-types', 'taxonomies' ) );
 
-            $custom = trim( pods_var_raw( 'pick_custom', $options, '' ) );
+        if ( in_array( pods_var( 'pick_object', $options ), $simple_tableless_objects ) ) {
+            $data = array();
 
-            $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, pods_var( 'name', $options ), $value, $options, null, null );
+            if ( 'custom-simple' == $options[ 'pick_object' ] ) {
+                $custom = trim( pods_var_raw( 'pick_custom', $options, '' ) );
 
-            if ( !empty( $custom ) ) {
-                if ( !is_array( $custom ) ) {
-                    $custom = explode( "\n", $custom );
+                $custom = apply_filters( 'pods_form_ui_field_pick_custom_values', $custom, pods_var( 'name', $options ), $value, $options, null, null );
 
-                    foreach ( $custom as $custom_value ) {
-                        $custom_label = explode( '|', $custom_value );
+                if ( !empty( $custom ) ) {
+                    if ( !is_array( $custom ) ) {
+                        $custom = explode( "\n", $custom );
 
-                        if ( empty( $custom_label ) )
-                            continue;
+                        foreach ( $custom as $custom_value ) {
+                            $custom_label = explode( '|', $custom_value );
 
-                        if ( 1 == count( $custom_label ) )
-                            $custom_label = $custom_value;
-                        else {
-                            $custom_value = $custom_label[ 0 ];
-                            $custom_label = $custom_label[ 1 ];
+                            if ( empty( $custom_label ) )
+                                continue;
+
+                            if ( 1 == count( $custom_label ) )
+                                $custom_label = $custom_value;
+                            else {
+                                $custom_value = $custom_label[ 0 ];
+                                $custom_label = $custom_label[ 1 ];
+                            }
+
+                            $data[ $custom_value ] = $custom_label;
                         }
-
-                        $simple_data[ $custom_value ] = $custom_label;
                     }
+                    else
+                        $data = $custom;
                 }
-                else
-                    $simple_data = $custom;
+            }
+            elseif ( 'post-status' == $options[ 'pick_object' ] ) {
+                $post_stati = get_post_stati( array(), 'objects' );
+
+                foreach ( $post_stati as $post_status ) {
+                    $data[ $post_status->name ] = $post_status->label;
+                }
+            }
+            elseif ( 'role' == $options[ 'pick_object' ] ) {
+                global $wp_roles;
+
+                foreach ( $wp_roles->role_objects as $key => $role ) {
+                    $data[ $key ] = $wp_roles->role_names[ $key ];
+                }
+            }
+            elseif ( 'post-types' == $options[ 'pick_object' ] ) {
+                $post_types = get_post_types( array(), 'objects' );
+
+                $ignore = array( 'revision', 'nav_menu_item' );
+
+                foreach ( $post_types as $post_type ) {
+                    if ( in_array( $post_type->name, $ignore ) || 0 === strpos( $post_type->name, '_pods_' ) )
+                        continue;
+
+                    $data[ $post_type->name ] = $post_type->label;
+                }
+            }
+            elseif ( 'taxonomies' == $options[ 'pick_object' ] ) {
+                $taxonomies = get_taxonomies( array(), 'objects' );
+
+                $ignore = array( 'nav_menu', 'post_format' );
+
+                foreach ( $taxonomies as $taxonomy ) {
+                    if ( in_array( $taxonomy->name, $ignore ) )
+                        continue;
+
+                    $data[ $taxonomy->name ] = $taxonomy->label;
+                }
             }
 
             $simple = false;
@@ -535,14 +584,14 @@ class PodsField_Pick extends PodsField {
                 $value = $simple;
 
             if ( is_array( $value ) ) {
-                if ( !empty( $simple_data ) ) {
+                if ( !empty( $data ) ) {
                     $val = array();
 
                     foreach ( $value as $k => $v ) {
-                        if ( isset( $simple_data[ $v ] ) ) {
+                        if ( isset( $data[ $v ] ) ) {
                             if ( false === $raw ) {
                                 $k = $v;
-                                $v = $simple_data[ $v ];
+                                $v = $data[ $v ];
                             }
 
                             $val[ $k ] = $v;
@@ -552,9 +601,9 @@ class PodsField_Pick extends PodsField {
                     $value = $val;
                 }
             }
-            elseif ( isset( $simple_data[ $value ] ) && false === $raw ) {
+            elseif ( isset( $data[ $value ] ) && false === $raw ) {
                 $key = $value;
-                $value = $simple_data[ $value ];
+                $value = $data[ $value ];
             }
 
             $single_multi = pods_var( 'pick_format_type', $options, 'single' );
@@ -649,7 +698,14 @@ class PodsField_Pick extends PodsField {
             }
         }
         elseif ( '' != pods_var( 'pick_object', $options, '' ) && empty( $data ) ) {
-            if ( 'role' == $options[ 'pick_object' ] ) {
+            if ( 'post-status' == $options[ 'pick_object' ] ) {
+                $post_stati = get_post_stati( array(), 'objects' );
+
+                foreach ( $post_stati as $post_status ) {
+                    $data[ $post_status->name ] = $post_status->label;
+                }
+            }
+            elseif ( 'role' == $options[ 'pick_object' ] ) {
                 global $wp_roles;
 
                 foreach ( $wp_roles->role_objects as $key => $role ) {

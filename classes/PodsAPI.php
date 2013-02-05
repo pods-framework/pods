@@ -529,8 +529,6 @@ class PodsAPI {
         $fields = array();
 
         if ( 'post_type' == $object ) {
-            $post_stati = get_post_stati();
-
             $fields = array(
                 'post_title' => array(
                     'name' => 'post_title',
@@ -591,10 +589,9 @@ class PodsAPI {
                     'name' => 'post_status',
                     'label' => 'Status',
                     'type' => 'pick',
-                    'pick_object' => 'custom-simple',
+                    'pick_object' => 'post-status',
                     'default' => $this->do_hook( 'default_status_' . pods_var_raw( 'name', $pod, $object, null, true ), pods_var( 'default_status', pods_var_raw( 'options', $pod ), 'draft', null, true ), $pod ),
-                    'alias' => array( 'status' ),
-                    'data' => $post_stati
+                    'alias' => array( 'status' )
                 ),
                 'comment_status' => array(
                     'name' => 'comment_status',
@@ -1616,6 +1613,7 @@ class PodsAPI {
             $table_operation = false;
 
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'post-types', 'taxonomies' ) );
 
         $params = (object) $params;
 
@@ -1681,7 +1679,7 @@ class PodsAPI {
             $old_options = $field[ 'options' ];
             $old_sister_id = (int) pods_var( 'sister_id', $old_options, 0 );
 
-            $old_simple = ( 'pick' == $old_type && 'custom-simple' == pods_var( 'pick_object', $field ) );
+            $old_simple = ( 'pick' == $old_type && in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects ) );
             $old_simple = (boolean) $this->do_hook( 'tableless_custom', $old_simple, $field, $pod, $params );
 
             if ( isset( $params->name ) && !empty( $params->name ) )
@@ -1917,7 +1915,7 @@ class PodsAPI {
 
         $definition = false;
 
-        $simple = ( 'pick' == $field[ 'type' ] && 'custom-simple' == pods_var( 'pick_object', $field[ 'options' ] ) );
+        $simple = ( 'pick' == $field[ 'type' ] && in_array( pods_var( 'pick_object', $field[ 'options' ] ), $simple_tableless_objects ) );
         $simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field, $pod, $params );
 
         if ( !in_array( $field[ 'type' ], $tableless_field_types ) || $simple )
@@ -2270,6 +2268,7 @@ class PodsAPI {
         $params = (object) pods_str_replace( '@wp_', '{prefix}', $params );
 
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'post-types', 'taxonomies' ) );
 
         // @deprecated 2.0.0
         if ( isset( $params->datatype ) ) {
@@ -2568,7 +2567,7 @@ class PodsAPI {
             if ( isset( $object_fields[ $field ] ) )
                 $object_data[ $field ] = $value;
             else {
-                $simple = ( 'pick' == $type && 'custom-simple' == pods_var( 'pick_object', $field_data ) );
+                $simple = ( 'pick' == $type && in_array( pods_var( 'pick_object', $field_data ), $simple_tableless_objects ) );
                 $simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field_data, $field, $fields, $pod, $params );
 
                 // Handle Simple Relationships
@@ -2725,7 +2724,7 @@ class PodsAPI {
                         $values = explode( ',', $values );
 
                     // Enforce integers / unique values for IDs
-                    if ( 'pick' != $type || 'custom-simple' != $fields[ $field ][ 'pick_object' ] ) {
+                    if ( 'pick' != $type || !in_array( $fields[ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
                         $new_values = array();
 
                         foreach ( $values as $k => $v ) {
@@ -2751,7 +2750,7 @@ class PodsAPI {
                         if ( 'post_type' == $object_type || 'media' == $object_type )
                             $object_type = 'post';
 
-                        if ( 'pick' != $type || 'custom-simple' != $fields[ $field ][ 'pick_object' ] ) {
+                        if ( 'pick' != $type || !in_array( $fields[ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
                             delete_metadata( $object_type, $params->id, $field, '', true );
 
                             if ( !empty( $values ) ) {
@@ -2774,7 +2773,7 @@ class PodsAPI {
 
                     $related_pod = $related_field = false;
 
-                    if ( 'pick' == $type && 'custom-simple' != $fields[ $field ][ 'pick_object' ] ) {
+                    if ( 'pick' == $type && !in_array( $fields[ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
                         $pick_object = pods_var( 'pick_object', $fields[ $field ], '' ); // pod, post_type, taxonomy, etc..
                         $pick_val = pods_var( 'pick_val', $fields[ $field ], '' ); // pod name, post type name, taxonomy name, etc..
                         $pick_sister_id = (int) pods_var( 'sister_id', $fields[ $field ], 0 );
@@ -2838,7 +2837,7 @@ class PodsAPI {
                         }
                     }
 
-                    if ( 'pick' != $type || 'custom-simple' != $fields[ $field ][ 'pick_object' ] ) {
+                    if ( 'pick' != $type || in_array( $fields[ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
                         if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
                             if ( !empty( $values ) ) {
                                 $values_to_impode = array();
@@ -3171,6 +3170,7 @@ class PodsAPI {
      */
     private function export_pod_item_level ( $pod, $fields, $depth, $current_depth = 1 ) {
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'post-types', 'taxonomies' ) );
 
         foreach ( $fields as $k => $field ) {
             if ( !is_array( $field ) )
@@ -3180,7 +3180,7 @@ class PodsAPI {
                 $field = $pod->fields[ $field[ 'name' ] ];
                 $field[ 'lookup_name' ] = $field[ 'name' ];
 
-                if ( in_array( $field[ 'type' ], $tableless_field_types ) && 'custom-simple' != pods_var( 'pick_object', $field ) ) {
+                if ( in_array( $field[ 'type' ], $tableless_field_types ) && !in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects ) ) {
                     if ( 'pick' == $field[ 'type' ] ) {
                         if ( empty( $field[ 'table_info' ] ) )
                             $field[ 'table_info' ] = $this->get_table_info( pods_var_raw( 'pick_object', $field ), pods_var_raw( 'pick_val', $field ) );
@@ -3211,7 +3211,7 @@ class PodsAPI {
             if ( 1 == $depth )
                 $data[ $field[ 'name' ] ] = $pod->field( $field[ 'lookup_name' ] );
             // Recurse depth levels for pick fields if $depth allows
-            elseif ( ( -1 == $depth || $current_depth < $depth ) && 'pick' == $field[ 'type' ] && 'custom-simple' != pods_var( 'pick_object', $field ) ) {
+            elseif ( ( -1 == $depth || $current_depth < $depth ) && 'pick' == $field[ 'type' ] && !in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects ) ) {
                 $related_data = array();
 
                 $related_ids = $pod->field( $field[ 'lookup_name' ] );
@@ -3538,6 +3538,7 @@ class PodsAPI {
         global $wpdb;
 
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'post-types', 'taxonomies' ) );
 
         $params = (object) pods_sanitize( $params );
 
@@ -3576,7 +3577,7 @@ class PodsAPI {
         $params->id = $field[ 'id' ];
         $params->name = $field[ 'name' ];
 
-        $simple = ( 'pick' == $field[ 'type' ] && 'custom-simple' == pods_var( 'pick_object', $field ) );
+        $simple = ( 'pick' == $field[ 'type' ] && in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects ) );
         $simple = (boolean) $this->do_hook( 'tableless_custom', $simple, $field, $pod, $params );
 
         if ( $table_operation && 'table' == $pod[ 'storage' ] && ( !in_array( $field[ 'type' ], $tableless_field_types ) || $simple ) )
@@ -5736,6 +5737,8 @@ class PodsAPI {
 
         $fields = array_merge( $pod[ 'fields' ], $pod[ 'object_fields' ] );
 
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'post-types', 'taxonomies' ) );
+
         foreach ( $import_data as $key => $data_row ) {
             $data = array();
 
@@ -5822,7 +5825,7 @@ class PodsAPI {
                                     if ( !empty( $result ) )
                                         $pick_values[] = $result[ 0 ]->id;
                                 }
-                                elseif ( 'custom-simple' == $pick_object )
+                                elseif ( in_array( $pick_object, $simple_tableless_objects ) )
                                     $pick_values[] = $pick_value;
                                 elseif ( !empty( $related_pod[ 'id' ] ) ) {
                                     $where = "`" . $related_pod[ 'field_index' ] . "` = '" . pods_sanitize( $pick_value ) . "'";

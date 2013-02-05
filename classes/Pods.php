@@ -315,6 +315,8 @@ class Pods {
      * @link http://podsframework.org/docs/display/
      */
     public function display ( $name, $single = null ) {
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'post-types', 'taxonomies' ) );
+
         $defaults = array(
             'name' => $name,
             'orderby' => null,
@@ -336,7 +338,7 @@ class Pods {
         $value = $this->field( $params );
 
         if ( false === $params->in_form && isset( $this->fields[ $params->name ] ) ) {
-            if ( 'pick' == $this->fields[ $params->name ][ 'type' ] && 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] )
+            if ( 'pick' == $this->fields[ $params->name ][ 'type' ] && in_array( $this->fields[ $params->name ][ 'pick_object' ], $simple_tableless_objects ) )
                 $value = PodsForm::field_method( 'pick', 'simple_value', $value, $this->fields[ $params->name ] );
 
             if ( 0 < strlen( pods_var( 'display_filter', $this->fields[ $params->name ] ) ) )
@@ -454,6 +456,7 @@ class Pods {
         $value = null;
 
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'post-types', 'taxonomies' ) );
 
         $params->traverse = array();
 
@@ -476,7 +479,7 @@ class Pods {
 
             $value = $this->row[ $params->name ];
 
-            if ( !is_array( $value ) && isset( $this->fields[ $params->name ] ) && 'pick' == $this->fields[ $params->name ][ 'type' ] && 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] )
+            if ( !is_array( $value ) && isset( $this->fields[ $params->name ] ) && 'pick' == $this->fields[ $params->name ][ 'type' ] && in_array( $this->fields[ $params->name ][ 'pick_object' ], $simple_tableless_objects ) )
                 $value = PodsForm::field_method( 'pick', 'simple_value', $value, $this->fields[ $params->name ], true );
         }
         elseif ( empty( $value ) ) {
@@ -600,7 +603,7 @@ class Pods {
                     if ( in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
                         $params->raw = true;
 
-                        if ( 'custom-simple' == $this->fields[ $params->name ][ 'pick_object' ] ) {
+                        if ( in_array( $this->fields[ $params->name ][ 'pick_object' ], $simple_tableless_objects ) ) {
                             $simple = true;
                             $params->single = true;
                         }
@@ -705,7 +708,7 @@ class Pods {
                         $simple = false;
                         $simple_options = array();
 
-                        if ( $field_exists && 'pick' == $all_fields[ $pod ][ $field ][ 'type' ] && 'custom-simple' == $all_fields[ $pod ][ $field ][ 'pick_object' ] ) {
+                        if ( $field_exists && 'pick' == $all_fields[ $pod ][ $field ][ 'type' ] && in_array( $all_fields[ $pod ][ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
                             $simple = true;
                             $simple_options = $all_fields[ $pod ][ $field ];
                         }
@@ -1137,6 +1140,7 @@ class Pods {
      */
     public function find ( $params = null, $limit = 15, $where = null, $sql = null ) {
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'post-types', 'taxonomies' ) );
 
         $select = '`t`.*';
         $pod_table_prefix = 't';
@@ -1219,7 +1223,7 @@ class Pods {
                         $order = 'DESC';
 
                     if ( isset( $this->fields[ $k ] ) && in_array( $this->fields[ $k ][ 'type' ], $tableless_field_types ) ) {
-                        if ( 'custom-simple' == $this->fields[ $k ][ 'pick_object' ] ) {
+                        if ( in_array( $this->fields[ $k ][ 'pick_object' ], $simple_tableless_objects ) ) {
                             if ( 'table' == $this->pod_data[ 'storage' ] )
                                 $key = "`t`.`{$k}`";
                             else

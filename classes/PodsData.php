@@ -600,6 +600,8 @@ class PodsData {
      * @since 2.0.0
      */
     public function build ( $params ) {
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'post-types', 'taxonomies' ) );
+
         $defaults = array(
             'select' => '*',
             'distinct' => true,
@@ -806,7 +808,7 @@ class PodsData {
 
                         $fieldfield = '`' . $field . '`';
 
-                        if ( 'pick' == $attributes[ 'type' ] && 'custom-simple' != pods_var( 'pick_object', $attributes ) ) {
+                        if ( 'pick' == $attributes[ 'type' ] && !in_array( pods_var( 'pick_object', $attributes ), $simple_tableless_objects ) ) {
                             if ( false === $params->search_across_picks )
                                 continue;
                             else {
@@ -876,7 +878,7 @@ class PodsData {
 
                 $filterfield = '`' . $field . '`';
 
-                if ( 'pick' == $attributes[ 'type' ] && 'custom-simple' != pods_var( 'pick_object', $attributes ) ) {
+                if ( 'pick' == $attributes[ 'type' ] && !in_array( pods_var( 'pick_object', $attributes ), $simple_tableless_objects ) ) {
                     if ( !isset( $attributes[ 'table_info' ] ) || empty( $attributes[ 'table_info' ] ) )
                         $attributes[ 'table_info' ] = $this->api->get_table_info( pods_var( 'pick_object', $attributes ), pods_var( 'pick_val', $attributes ) );
 
@@ -899,7 +901,7 @@ class PodsData {
                 if ( 'pick' == $attributes[ 'type' ] ) {
                     $filter_value = pods_var( 'filter_' . $field, 'get', false, null, true );
 
-                    if ( 'custom-simple' == pods_var( 'pick_object', $attributes ) ) {
+                    if ( in_array( pods_var( 'pick_object', $attributes ), $simple_tableless_objects ) ) {
                         if ( strlen( $filter_value ) < 1 )
                             continue;
 
@@ -1894,6 +1896,8 @@ class PodsData {
     public static function query_field ( $field, $q, $pod = null ) {
         global $wpdb;
 
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'post-types', 'taxonomies' ) );
+
         $field_query = null;
 
         // Plain queries
@@ -1942,7 +1946,7 @@ class PodsData {
             $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
 
             if ( isset( $pod[ 'fields' ][ $field ] ) && in_array( $pod[ 'fields' ][ $field ][ 'type' ], $tableless_field_types ) ) {
-                if ( 'custom-simple' == $pod[ 'fields' ][ $field ][ 'pick_object' ] ) {
+                if ( in_array( $pod[ 'fields' ][ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
                     if ( 'table' == $pod[ 'storage' ] )
                         $key = "`t`.`{$field}`";
                     else
@@ -2153,6 +2157,7 @@ class PodsData {
         }
 
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'post-types', 'taxonomies' ) );
 
         if ( !isset( $this->traversal[ $traverse_recurse[ 'pod' ] ] ) )
             $this->traversal[ $traverse_recurse[ 'pod' ] ] = array();
@@ -2220,7 +2225,7 @@ class PodsData {
         elseif ( !in_array( $traverse[ 'type' ], $tableless_field_types ) )
             $traverse[ 'table_info' ] = $this->api->get_table_info( $pod_data[ 'type' ], $pod_data[ 'name' ], $pod_data[ 'name' ], $pod_data );
         elseif ( empty( $traverse[ 'table_info' ] ) ) {
-            if ( 'custom-simple' == $traverse[ 'pick_object' ] && !empty( $traverse_recurse[ 'last_table_info' ] ) ) {
+            if ( in_array( $traverse[ 'pick_object' ], $simple_tableless_objects ) && !empty( $traverse_recurse[ 'last_table_info' ] ) ) {
                 $traverse[ 'table_info' ] = $traverse_recurse[ 'last_table_info' ];
 
                 if ( !empty( $traverse[ 'table_info' ][ 'meta_table' ] ) )
@@ -2252,7 +2257,7 @@ class PodsData {
         $field_joined = $field;
 
         if ( 0 < $traverse_recurse[ 'depth' ] && 't' != $traverse_recurse[ 'joined' ] ) {
-            if ( $meta_data_table && ( 'pick' != $traverse[ 'type' ] || 'custom-simple' != pods_var( 'pick_object', $traverse ) ) )
+            if ( $meta_data_table && ( 'pick' != $traverse[ 'type' ] || !in_array( pods_var( 'pick_object', $traverse ), $simple_tableless_objects ) ) )
                 $field_joined = $traverse_recurse[ 'joined' ] . '_d';
             else
                 $field_joined = $traverse_recurse[ 'joined' ] . '_' . $field;
@@ -2312,7 +2317,7 @@ class PodsData {
                 $joined_index = $table_info[ 'field_index' ];
             }
         }
-        elseif ( in_array( $traverse[ 'type' ], $tableless_field_types ) && ( 'pick' != $traverse[ 'type' ] || 'custom-simple' != pods_var( 'pick_object', $traverse ) ) ) {
+        elseif ( in_array( $traverse[ 'type' ], $tableless_field_types ) && ( 'pick' != $traverse[ 'type' ] || !in_array( pods_var( 'pick_object', $traverse ), $simple_tableless_objects ) ) ) {
             if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) {
                 $the_join = "
                     LEFT JOIN `{$table_info[ 'meta_table' ]}` AS `{$rel_alias}` ON
@@ -2345,7 +2350,7 @@ class PodsData {
             }
         }
         elseif ( 'meta' == $pod_data[ 'storage' ] ) {
-            if ( ( $traverse_recurse[ 'depth' ] + 2 ) == count( $traverse_recurse[ 'fields' ] ) && ( 'pick' != $traverse[ 'type' ] || 'custom-simple' != pods_var( 'pick_object', $traverse ) ) ) {
+            if ( ( $traverse_recurse[ 'depth' ] + 2 ) == count( $traverse_recurse[ 'fields' ] ) && ( 'pick' != $traverse[ 'type' ] || !in_array( pods_var( 'pick_object', $traverse ), $simple_tableless_objects ) ) ) {
                 $the_join = "
                     LEFT JOIN `{$table_info[ 'table' ]}` AS `{$field_joined}` ON
                         `{$field_joined}`.`{$table_info[ 'field_index' ]}` = '{$traverse[ 'name' ]}'

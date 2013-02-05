@@ -5396,7 +5396,7 @@ class PodsAPI {
 
                 $info[ 'where' ] = array(
                     //'post_status' => '`t`.`post_status` IN ( "inherit", "publish" )', // @todo Figure out what statuses Attachments can be
-                    'post_type' => '`t`.`post_type` = "' . $post_type . '"'
+                    'post_type' => '`t`.`' . $info[ 'field_type' ] . '` = "' . $post_type . '"'
                 );
 
                 if ( 'post_type' == $object_type )
@@ -5461,7 +5461,7 @@ class PodsAPI {
                 $taxonomy = ( empty( $object ) ? $name : $object );
 
                 $info[ 'where' ] = array(
-                    'tt.taxonomy' => '`tt`.`taxonomy` = "' . $taxonomy . '"'
+                    'tt.taxonomy' => '`tt`.`' . $info[ 'field_type' ] . '` = "' . $taxonomy . '"'
                 );
 
                 // WPML Support
@@ -5527,10 +5527,65 @@ class PodsAPI {
 
                 $info[ 'where' ] = array(
                     'comment_approved' => '`t`.`comment_approved` = 1',
-                    'comment_type' => '`t`.`comment_type` = "' . ( empty( $object ) ? $name : $object ) . '"'
+                    'comment_type' => '`t`.`' . $info[ 'field_type' ] . '` = "' . ( empty( $object ) ? $name : $object ) . '"'
                 );
 
                 $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '` DESC, `t`.`' . $info[ 'field_id' ] . '`';
+            }
+            elseif ( 'option' == $object_type ) {
+                $info[ 'table' ] = $wpdb->options;
+                $info[ 'meta_table' ] = $wpdb->options;
+
+                $info[ 'field_id' ] = 'option_id';
+                $info[ 'field_index' ] = 'option_name';
+
+                $info[ 'meta_field_id' ] = 'option_id';
+                $info[ 'meta_field_index' ] = 'option_name';
+                $info[ 'meta_field_value' ] = 'option_value';
+
+                $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '` ASC';
+            }
+            elseif ( is_multisite() && 'site_option' == $object_type ) {
+                $info[ 'table' ] = $wpdb->sitemeta;
+                $info[ 'meta_table' ] = $wpdb->sitemeta;
+
+                $info[ 'field_id' ] = 'site_id';
+                $info[ 'field_index' ] = 'meta_key';
+
+                $info[ 'meta_field_id' ] = 'site_id';
+                $info[ 'meta_field_index' ] = 'meta_key';
+                $info[ 'meta_field_value' ] = 'meta_value';
+
+                $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '` ASC';
+            }
+            elseif ( is_multisite() && 'network' == $object_type ) { // Network = Site
+                $info[ 'table' ] = $wpdb->site;
+                $info[ 'meta_table' ] = $wpdb->sitemeta;
+
+                $info[ 'field_id' ] = 'id';
+                $info[ 'field_index' ] = 'domain';
+
+                $info[ 'meta_field_id' ] = 'site_id';
+                $info[ 'meta_field_index' ] = 'meta_key';
+                $info[ 'meta_field_value' ] = 'meta_value';
+
+                $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '` ASC, `t`.`path` ASC, `t`.`' . $info[ 'field_id' ] . '`';
+            }
+            elseif ( is_multisite() && 'site' == $object_type ) { // Site = Blog
+                $info[ 'table' ] = $wpdb->blogs;
+
+                $info[ 'field_id' ] = 'blog_id';
+                $info[ 'field_index' ] = 'domain';
+                $info[ 'field_type' ] = 'site_id';
+
+                $info[ 'where' ] = array(
+                    'archived' => '`t`.`archived` = 0',
+                    'spam' => '`t`.`spam` = 0',
+                    'deleted' => '`t`.`deleted` = 0',
+                    'site_id' => '`t`.`' . $info[ 'field_type' ] . '` = ' . (int) get_current_site()->id;
+                );
+
+                $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '` ASC, `t`.`path` ASC, `t`.`' . $info[ 'field_id' ] . '`';
             }
             elseif ( 'table' == $object_type )
                 $info[ 'table' ] = ( empty( $object ) ? $name : $object );

@@ -182,6 +182,13 @@ $pick_object = array(
         'comment' => 'Comments',
         'nav_menu' => 'Navigation Menus',
         'post_format' => 'Post Formats'
+    ),
+    'Advanced Objects' => array(
+        'site' => 'Sites',
+        'network' => 'Networks',
+        'role' => 'User Roles'
+        //'post_types' => 'Post Types',
+        //'taxonomies' => 'Taxonomies'
     )
 );
 

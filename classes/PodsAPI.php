@@ -5582,7 +5582,7 @@ class PodsAPI {
                     'archived' => '`t`.`archived` = 0',
                     'spam' => '`t`.`spam` = 0',
                     'deleted' => '`t`.`deleted` = 0',
-                    'site_id' => '`t`.`' . $info[ 'field_type' ] . '` = ' . (int) get_current_site()->id;
+                    'site_id' => '`t`.`' . $info[ 'field_type' ] . '` = ' . (int) get_current_site()->id
                 );
 
                 $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '` ASC, `t`.`path` ASC, `t`.`' . $info[ 'field_id' ] . '`';

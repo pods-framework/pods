@@ -186,9 +186,9 @@ $pick_object = array(
     'Advanced Objects' => array(
         'site' => 'Sites',
         'network' => 'Networks',
-        'role' => 'User Roles'
-        //'post_types' => 'Post Types',
-        //'taxonomies' => 'Taxonomies'
+        'role' => 'User Roles',
+        'post-types' => 'Post Types',
+        'taxonomies' => 'Taxonomies'
     )
 );
 

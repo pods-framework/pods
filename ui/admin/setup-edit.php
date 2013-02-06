@@ -181,6 +181,7 @@ $pick_object = array(
         'user' => 'Users',
         'comment' => 'Comments',
         'nav_menu' => 'Navigation Menus',
+        'sidebar' => 'Sidebars',
         'post_format' => 'Post Formats'
     ),
     'Advanced Objects' => array(

@@ -315,7 +315,7 @@ class Pods {
      * @link http://podsframework.org/docs/display/
      */
     public function display ( $name, $single = null ) {
-        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'post-types', 'taxonomies' ) );
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'post-types', 'taxonomies' ) );
 
         $defaults = array(
             'name' => $name,
@@ -456,7 +456,7 @@ class Pods {
         $value = null;
 
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
-        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'post-types', 'taxonomies' ) );
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'post-types', 'taxonomies' ) );
 
         $params->traverse = array();
 
@@ -1140,7 +1140,7 @@ class Pods {
      */
     public function find ( $params = null, $limit = 15, $where = null, $sql = null ) {
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
-        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'post-types', 'taxonomies' ) );
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'post-types', 'taxonomies' ) );
 
         $select = '`t`.*';
         $pod_table_prefix = 't';

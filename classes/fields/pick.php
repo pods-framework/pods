@@ -321,6 +321,15 @@ class PodsField_Pick extends PodsField {
                     $data[ $key ] = $wp_roles->role_names[ $key ];
                 }
             }
+            elseif ( 'sidebar' == $options[ 'pick_object' ] ) {
+                global $wp_registered_sidebars;
+
+                if ( !empty( $wp_registered_sidebars ) ) {
+                    foreach ( $wp_registered_sidebars as $sidebar ) {
+                        $data[ $sidebar[ 'id' ] ] = $sidebar[ 'name' ];
+                    }
+                }
+            }
             elseif ( 'post-types' == $options[ 'pick_object' ] ) {
                 $post_types = get_post_types( array(), 'objects' );
 
@@ -501,7 +510,7 @@ class PodsField_Pick extends PodsField {
             unset( $options[ 'options' ] );
         }
 
-        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'post-types', 'taxonomies' ) );
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'post-types', 'taxonomies' ) );
 
         if ( in_array( pods_var( 'pick_object', $options ), $simple_tableless_objects ) ) {
             $data = array();
@@ -547,6 +556,15 @@ class PodsField_Pick extends PodsField {
 
                 foreach ( $wp_roles->role_objects as $key => $role ) {
                     $data[ $key ] = $wp_roles->role_names[ $key ];
+                }
+            }
+            elseif ( 'sidebar' == $options[ 'pick_object' ] ) {
+                global $wp_registered_sidebars;
+
+                if ( !empty( $wp_registered_sidebars ) ) {
+                    foreach ( $wp_registered_sidebars as $sidebar ) {
+                        $data[ $sidebar[ 'id' ] ] = $sidebar[ 'name' ];
+                    }
                 }
             }
             elseif ( 'post-types' == $options[ 'pick_object' ] ) {
@@ -710,6 +728,15 @@ class PodsField_Pick extends PodsField {
 
                 foreach ( $wp_roles->role_objects as $key => $role ) {
                     $data[ $key ] = $wp_roles->role_names[ $key ];
+                }
+            }
+            elseif ( 'sidebar' == $options[ 'pick_object' ] ) {
+                global $wp_registered_sidebars;
+
+                if ( !empty( $wp_registered_sidebars ) ) {
+                    foreach ( $wp_registered_sidebars as $sidebar ) {
+                        $data[ $sidebar[ 'id' ] ] = $sidebar[ 'name' ];
+                    }
                 }
             }
             elseif ( 'post-types' == $options[ 'pick_object' ] ) {

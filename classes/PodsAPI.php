@@ -2837,7 +2837,7 @@ class PodsAPI {
                         }
                     }
 
-                    if ( 'pick' != $type || in_array( $fields[ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
+                    if ( 'pick' != $type || !in_array( $fields[ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
                         if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
                             if ( !empty( $values ) ) {
                                 $values_to_impode = array();

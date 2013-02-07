@@ -1194,7 +1194,7 @@ function pods_register_related_object ( $name, $label, $options = null ) {
  * @param string $type (optional) Type of the post to attach to.
  *
  * @since 2.0.0
- * @link http://podsframework.org/docs/pods-group-add/
+ * @link http://pods.io/docs/pods-group-add/
  */
 function pods_group_add ( $pod, $label, $fields, $context = 'normal', $priority = 'default', $type = null ) {
     if ( !is_array( $pod ) && null !== $type ) {

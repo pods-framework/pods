@@ -143,7 +143,7 @@ class Pods {
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 1.0.0
-     * @link http://podsframework.org/docs/pods/
+     * @link http://pods.io/docs/pods/
      */
     public function __construct ( $pod = null, $id = null ) {
         if ( null === $pod  ) {
@@ -259,7 +259,7 @@ class Pods {
      * @return array|bool An array of all rows returned from a find() call, or false if no items returned
      *
      * @since 2.0.0
-     * @link http://podsframework.org/docs/data/
+     * @link http://pods.io/docs/data/
      */
     public function data () {
         $this->do_hook( 'data' );
@@ -312,7 +312,7 @@ class Pods {
      *
      * @return string|null|false The output from the field, null if the field doesn't exist, false if no value returned for tableless fields
      * @since 2.0.0
-     * @link http://podsframework.org/docs/display/
+     * @link http://pods.io/docs/display/
      */
     public function display ( $name, $single = null ) {
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
@@ -372,7 +372,7 @@ class Pods {
      *
      * @return string|null|false The output from the field, null if the field doesn't exist, false if no value returned for tableless fields
      * @since 2.0.0
-     * @link http://podsframework.org/docs/display/
+     * @link http://pods.io/docs/display/
      */
     public function raw ( $name, $single = null ) {
         $defaults = array(
@@ -406,7 +406,7 @@ class Pods {
      *
      * @return mixed|null Value returned depends on the field type, null if the field doesn't exist, false if no value returned for tableless fields
      * @since 2.0.0
-     * @link http://podsframework.org/docs/field/
+     * @link http://pods.io/docs/field/
      */
     public function field ( $name, $single = null, $raw = false ) {
         $defaults = array(
@@ -1136,7 +1136,7 @@ class Pods {
      *
      * @return \Pods The pod object
      * @since 2.0.0
-     * @link http://podsframework.org/docs/find/
+     * @link http://pods.io/docs/find/
      */
     public function find ( $params = null, $limit = 15, $where = null, $sql = null ) {
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
@@ -1345,7 +1345,7 @@ class Pods {
      * @return array An array of fields from the row
      *
      * @since 2.0.0
-     * @link http://podsframework.org/docs/fetch/
+     * @link http://pods.io/docs/fetch/
      */
     public function fetch ( $id = null ) {
         $this->do_hook( 'fetch', $id );
@@ -1370,7 +1370,7 @@ class Pods {
      * @return \Pods The pod object
      *
      * @since 2.0.0
-     * @link http://podsframework.org/docs/reset/
+     * @link http://pods.io/docs/reset/
      */
     public function reset ( $row = null ) {
         $this->do_hook( 'reset', $row );
@@ -1391,7 +1391,7 @@ class Pods {
      *
      * @return int Number of rows returned by find(), based on the 'limit' parameter set
      * @since 2.0.0
-     * @link http://podsframework.org/docs/total/
+     * @link http://pods.io/docs/total/
      */
     public function total () {
         $this->do_hook( 'total' );
@@ -1410,7 +1410,7 @@ class Pods {
      *
      * @return int Number of rows returned by find(), regardless of the 'limit' parameter
      * @since 2.0.0
-     * @link http://podsframework.org/docs/total-found/
+     * @link http://pods.io/docs/total-found/
      */
     public function total_found () {
         $this->do_hook( 'total_found' );
@@ -1448,7 +1448,7 @@ class Pods {
      * @return int The item ID
      *
      * @since 2.0.0
-     * @link http://podsframework.org/docs/add/
+     * @link http://pods.io/docs/add/
      */
     public function add ( $data = null, $value = null ) {
         if ( null !== $value )
@@ -1483,7 +1483,7 @@ class Pods {
      * @return int The item ID
      *
      * @since 2.0.0
-     * @link http://podsframework.org/docs/save/
+     * @link http://pods.io/docs/save/
      */
     public function save ( $data = null, $value = null, $id = null ) {
         if ( null !== $value )
@@ -1517,7 +1517,7 @@ class Pods {
      * @return bool Whether the item was successfully deleted
      *
      * @since 2.0.0
-     * @link http://podsframework.org/docs/delete/
+     * @link http://pods.io/docs/delete/
      */
     public function delete ( $id = null ) {
         if ( null === $id )
@@ -1568,7 +1568,7 @@ class Pods {
      * @return int|bool ID of the new pod item
      *
      * @since 2.0.0
-     * @link http://podsframework.org/docs/duplicate/
+     * @link http://pods.io/docs/duplicate/
      */
     public function duplicate ( $id = null ) {
         if ( null === $id )
@@ -1598,7 +1598,7 @@ class Pods {
      * @return array|bool Data array of the exported pod item
      *
      * @since 2.0.0
-     * @link http://podsframework.org/docs/export/
+     * @link http://pods.io/docs/export/
      */
     public function export ( $fields = null, $id = null ) {
         $params = array(
@@ -1657,7 +1657,7 @@ class Pods {
      *
      * @return string Pagination HTML
      * @since 2.0.0
-     * @link http://podsframework.org/docs/pagination/
+     * @link http://pods.io/docs/pagination/
      */
     public function pagination ( $params = null ) {
         if ( empty( $params ) )
@@ -1723,7 +1723,7 @@ class Pods {
      * @var array|string $params Comma-separated list of fields or array of parameters
      *
      * @since 2.0.0
-     * @link http://podsframework.org/docs/filters/
+     * @link http://pods.io/docs/filters/
      */
     public function filters ( $params = null ) {
         $defaults = array(
@@ -1849,7 +1849,7 @@ class Pods {
      * @return mixed Template output
      *
      * @since 2.0.0
-     * @link http://podsframework.org/docs/template/
+     * @link http://pods.io/docs/template/
      */
     public function template ( $template, $code = null, $deprecated = false ) {
         if ( !empty( $code ) ) {
@@ -1891,7 +1891,7 @@ class Pods {
      *
      * @return bool|mixed
      * @since 2.0.0
-     * @link http://podsframework.org/docs/form/
+     * @link http://pods.io/docs/form/
      */
     public function form ( $params = null, $label = null, $thank_you = null ) {
         $defaults = array(

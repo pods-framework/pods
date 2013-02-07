@@ -3134,8 +3134,8 @@ msgstr "Upgrade"
 #. translators: plugin header field 'PluginURI'
 #: init.php:0
 #@ pods
-msgid "http://podsframework.org/"
-msgstr "http://podsframework.org/"
+msgid "http://pods.io/"
+msgstr "http://pods.io/"
 
 #. translators: plugin header field 'Author'
 #: init.php:0
@@ -3146,8 +3146,8 @@ msgstr "Pods Framework Team"
 #. translators: plugin header field 'AuthorURI'
 #: init.php:0
 #@ pods
-msgid "http://podsframework.org/about/"
-msgstr "http://podsframework.org/about/"
+msgid "http://pods.io/about/"
+msgstr "http://pods.io/about/"
 
 #: classes/Pods.php:1942
 #@ pods
@@ -4195,7 +4195,7 @@ msgstr ""
 
 #: ui/admin/setup-add.php:50
 #@ pods
-msgid "Not sure what content type you should use? Check out our <a href=\"http://podsframework.org/docs/comparisons/compare-content-types/\" target=\"_blank\">Content Type Comparison</a> to help you decide."
+msgid "Not sure what content type you should use? Check out our <a href=\"http://pods.io/docs/comparisons/compare-content-types/\" target=\"_blank\">Content Type Comparison</a> to help you decide."
 msgstr ""
 
 #: ui/admin/setup-add.php:81

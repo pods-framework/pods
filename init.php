@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Pods - Custom Content Types and Fields
-Plugin URI: http://podsframework.org/
+Plugin URI: http://pods.io/
 Description: Pods is a framework for creating, managing, and deploying customized content types and fields
 Version: 2.3 Alpha 6
 Author: Pods Framework Team
-Author URI: http://podsframework.org/about/
+Author URI: http://pods.io/about/
 Text Domain: pods
 Domain Path: /languages/
 

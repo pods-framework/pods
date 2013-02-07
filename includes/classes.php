@@ -43,7 +43,7 @@ function pods_components () {
  *
  * @return bool|\Pods
  * @since 2.0.0
- * @link http://podsframework.org/docs/pods/
+ * @link http://pods.io/docs/pods/
  */
 function pods ( $type = null, $id = null, $strict = false ) {
     require_once( PODS_DIR . 'classes/Pods.php' );
@@ -68,7 +68,7 @@ function pods ( $type = null, $id = null, $strict = false ) {
  * @return PodsUI
  *
  * @since 2.0.0
- * @link http://podsframework.org/docs/pods-ui/
+ * @link http://pods.io/docs/pods-ui/
  */
 function pods_ui ( $obj, $deprecated = false ) {
     require_once( PODS_DIR . 'classes/PodsUI.php' );
@@ -87,7 +87,7 @@ function pods_ui ( $obj, $deprecated = false ) {
  * @return PodsAPI
  *
  * @since 2.0.0
- * @link http://podsframework.org/docs/pods-api/
+ * @link http://pods.io/docs/pods-api/
  */
 function pods_api ( $pod = null, $format = null ) {
     require_once( PODS_DIR . 'classes/PodsAPI.php' );
@@ -243,7 +243,7 @@ function pods_array ( $container ) {
  * @return string|bool The view output
  *
  * @since 2.0.0
- * @link http://podsframework.org/docs/pods-view/
+ * @link http://pods.io/docs/pods-view/
  */
 function pods_view ( $view, $data = null, $expires = false, $cache_mode = 'cache', $return = false ) {
     require_once( PODS_DIR . 'classes/PodsView.php' );

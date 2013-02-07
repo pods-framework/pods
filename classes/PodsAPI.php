@@ -948,9 +948,6 @@ class PodsAPI {
         );
 
         if ( 'create' == $params->create_extend ) {
-            if ( empty( $params->create_name ) )
-                return pods_error( 'Please enter a Name for this Pod', $this );
-
             $pod_params[ 'name' ] = $params->create_name;
             $pod_params[ 'label' ] = ( !empty( $params->create_label_plural ) ? $params->create_label_plural : ucwords( str_replace( '_', ' ', $params->create_name ) ) );
             $pod_params[ 'type' ] = $params->create_pod_type;
@@ -961,27 +958,41 @@ class PodsAPI {
             );
 
             if ( 'post_type' == $pod_params[ 'type' ] ) {
+                if ( empty( $params->create_name ) )
+                    return pods_error( 'Please enter a Name for this Pod', $this );
+
                 $pod_params[ 'storage' ] = $params->create_storage;
 
                 if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS )
                     $pod_params[ 'storage' ] = 'meta';
             }
             elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
+                if ( empty( $params->create_name ) )
+                    return pods_error( 'Please enter a Name for this Pod', $this );
+
                 $pod_params[ 'storage' ] = $params->create_storage_taxonomy;
 
                 if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS )
                     $pod_params[ 'storage' ] = 'none';
             }
+            elseif ( 'pod' == $pod_params[ 'type' ] ) {
+                if ( empty( $params->create_name ) )
+                    return pods_error( 'Please enter a Name for this Pod', $this );
+
+                if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) {
+                    $pod_params[ 'type' ] = 'post_type';
+                    $pod_params[ 'storage' ] = 'meta';
+                }
+            }
             elseif ( 'setting' == $pod_params[ 'type' ] ) {
+                if ( empty( $params->create_setting_name ) )
+                    return pods_error( 'Please enter a Name for this Pod', $this );
+
                 $pod_params[ 'name' ] = $params->create_setting_name;
                 $pod_params[ 'label' ] = ( !empty( $params->create_label_menu ) ? $params->create_label_menu : ucwords( str_replace( '_', ' ', $params->create_setting_name ) ) );
                 $pod_params[ 'options' ] = array(
                     'menu_location' => $params->create_menu_location
                 );
-            }
-            elseif ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) {
-                $pod_params[ 'type' ] = 'post_type';
-                $pod_params[ 'storage' ] = 'meta';
             }
         }
         elseif ( 'extend' == $params->create_extend ) {

@@ -47,6 +47,11 @@ class PodsMeta {
     /**
      * @var array
      */
+    public static $settings = array();
+
+    /**
+     * @var array
+     */
     public static $queue = array();
 
     /**
@@ -71,6 +76,7 @@ class PodsMeta {
         self::$media = $this->api->load_pods( array( 'type' => 'media' ) );
         self::$user = $this->api->load_pods( array( 'type' => 'user' ) );
         self::$comment = $this->api->load_pods( array( 'type' => 'comment' ) );
+        self::$settings = $this->api->load_pods( array( 'type' => 'setting' ) );
 
         // Handle Post Type Editor (needed for Pods core)
 
@@ -174,6 +180,17 @@ class PodsMeta {
             // Handle Delete
             add_action( 'delete_comment', array( $this, 'delete_comment' ), 10, 1 );
         }
+
+        // @todo Patch core to provide $option back in filters, patch core to add filter pre_add_option to add_option
+        /*if ( !empty( self::$settings ) ) {
+            foreach ( self::$settings as $setting_pod ) {
+                foreach ( $setting_pod[ 'fields' ] as $option ) {
+                    add_filter( 'pre_option_' . $setting_pod[ 'name' ] . '_' . $option[ 'name' ], array( $this, 'get_option' ), 10, 1 );
+                    add_action( 'add_option_' . $setting_pod[ 'name' ] . '_' . $option[ 'name' ], array( $this, 'add_option' ), 10, 2 );
+                    add_filter( 'pre_update_option_' . $setting_pod[ 'name' ] . '_' . $option[ 'name' ], array( $this, 'update_option' ), 10, 2 );
+                }
+            }
+        }*/
 
         if ( is_admin() )
             $this->integrations();
@@ -1502,6 +1519,40 @@ class PodsMeta {
     /**
      * @return mixed
      */
+    public function get_term_meta () {
+        $args = func_get_args();
+
+        array_unshift( $args, 'term' );
+
+        $_null = apply_filters( 'pods_meta_get_term_meta', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
+
+        return call_user_func_array( array( $this, 'get_meta' ), $args );
+    }
+
+    /**
+     * All *_*_meta filter handler aliases
+     *
+     * @return mixed
+     */
+    public function get_option () {
+        $args = func_get_args();
+
+        array_unshift( $args, 'setting' );
+
+        $_null = apply_filters( 'pods_meta_get_option', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
+
+        return call_user_func_array( array( $this, 'get_meta' ), $args );
+    }
+
+    /**
+     * @return mixed
+     */
     public function add_post_meta () {
         $args = func_get_args();
 
@@ -1540,6 +1591,38 @@ class PodsMeta {
         array_unshift( $args, 'comment' );
 
         $_null = apply_filters( 'pods_meta_add_comment_meta', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
+
+        return call_user_func_array( array( $this, 'add_meta' ), $args );
+    }
+
+    /**
+     * @return mixed
+     */
+    public function add_term_meta () {
+        $args = func_get_args();
+
+        array_unshift( $args, 'term' );
+
+        $_null = apply_filters( 'pods_meta_add_term_meta', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
+
+        return call_user_func_array( array( $this, 'add_meta' ), $args );
+    }
+
+    /**
+     * @return mixed
+     */
+    public function add_option () {
+        $args = func_get_args();
+
+        array_unshift( $args, 'setting' );
+
+        $_null = apply_filters( 'pods_meta_add_option', null, $args );
 
         if ( null !== $_null )
             return $_null;
@@ -1598,6 +1681,38 @@ class PodsMeta {
     /**
      * @return mixed
      */
+    public function update_term_meta () {
+        $args = func_get_args();
+
+        array_unshift( $args, 'term' );
+
+        $_null = apply_filters( 'pods_meta_update_term_meta', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
+
+        return call_user_func_array( array( $this, 'update_meta' ), $args );
+    }
+
+    /**
+     * @return mixed
+     */
+    public function update_option () {
+        $args = func_get_args();
+
+        array_unshift( $args, 'setting' );
+
+        $_null = apply_filters( 'pods_meta_update_option', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
+
+        return call_user_func_array( array( $this, 'update_meta' ), $args );
+    }
+
+    /**
+     * @return mixed
+     */
     public function delete_post_meta () {
         $args = func_get_args();
 
@@ -1643,6 +1758,38 @@ class PodsMeta {
         return call_user_func_array( array( $this, 'delete_meta' ), $args );
     }
 
+    /**
+     * @return mixed
+     */
+    public function delete_term_meta () {
+        $args = func_get_args();
+
+        array_unshift( $args, 'term' );
+
+        $_null = apply_filters( 'pods_meta_delete_term_meta', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
+
+        return call_user_func_array( array( $this, 'delete_meta' ), $args );
+    }
+
+    /**
+     * @return mixed
+     */
+    public function delete_option () {
+        $args = func_get_args();
+
+        array_unshift( $args, 'setting' );
+
+        $_null = apply_filters( 'pods_meta_delete_option', null, $args );
+
+        if ( null !== $_null )
+            return $_null;
+
+        return call_user_func_array( array( $this, 'delete_meta' ), $args );
+    }
+
     /*
      * The real meta functions
      */
@@ -1664,6 +1811,8 @@ class PodsMeta {
             $objects = self::$user;
         elseif ( 'comment' == $object_type )
             $objects = self::$comment;
+        elseif ( 'setting' == $object_type )
+            $objects = self::$settings;
         else
             return false;
 
@@ -1686,6 +1835,8 @@ class PodsMeta {
         }
         elseif ( 'taxonomy' == $object_type )
             $object_name = $aux;
+        elseif ( 'setting' == $object_type )
+            $object = $object_id;
         else
             return false;
 

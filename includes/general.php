@@ -1249,10 +1249,11 @@ function pods_no_conflict_check ( $object_type = 'post' ) {
  * Turn off conflicting / recursive actions for an object type that Pods hooks into
  *
  * @param string $object_type
+ * @param string $object
  *
  * @return bool
  */
-function pods_no_conflict_on ( $object_type = 'post' ) {
+function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
     if ( 'post_type' == $object_type )
         $object_type = 'post';
 
@@ -1319,6 +1320,25 @@ function pods_no_conflict_on ( $object_type = 'post' ) {
             array( 'comment_post', array( PodsInit::$meta, 'save_comment' ) ),
             array( 'edit_comment', array( PodsInit::$meta, 'save_comment' ) )
         );
+    }
+    elseif ( 'setting' == $object_type ) {
+        $no_conflict[ 'filter' ] = array();
+
+        // @todo Better handle settings conflicts apart from each other
+        /*if ( empty( $object ) ) {
+            foreach ( PodsMeta::$settings as $setting_pod ) {
+                foreach ( $setting_pod[ 'fields' ] as $option ) {
+                    $no_conflict[ 'filter' ][] = array( 'pre_option_' . $setting_pod[ 'name' ] . '_' . $option[ 'name' ], array( PodsInit::$meta, 'get_option' ), 10, 1 );
+                    $no_conflict[ 'filter' ][] = array( 'pre_update_option_' . $setting_pod[ 'name' ] . '_' . $option[ 'name' ], array( PodsInit::$meta, 'update_option' ), 10, 2 );
+                }
+            }
+        }
+        elseif ( isset( PodsMeta::$settings[ $object ] ) ) {
+            foreach ( PodsMeta::$settings[ $object ][ 'fields' ] as $option ) {
+                $no_conflict[ 'filter' ][] = array( 'pre_option_' . $object . '_' . $option[ 'name' ], array( PodsInit::$meta, 'get_option' ), 10, 1 );
+                $no_conflict[ 'filter' ][] = array( 'pre_update_option_' . $object . '_' . $option[ 'name' ], array( PodsInit::$meta, 'update_option' ), 10, 2 );
+            }
+        }*/
     }
 
     $conflicted = false;

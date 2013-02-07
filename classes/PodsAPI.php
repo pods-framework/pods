@@ -73,7 +73,7 @@ class PodsAPI {
     /**
      * Save a WP object and its meta
      *
-     * @param string $object_type Object type: post|user|comment
+     * @param string $object_type Object type: post|user|comment|setting
      * @param array $data All post data to be saved
      * @param array $meta (optional) Associative array of meta keys and values
      * @param bool $strict (optional) Decides whether the previous saved meta should be deleted or not
@@ -92,8 +92,10 @@ class PodsAPI {
             $meta = pods_unsanitize( $meta );
         }
 
-        if ( in_array( $object_type, array( 'post', 'user', 'comment' ) ) )
+        if ( in_array( $object_type, array( 'post', 'user', 'comment', 'setting' ) ) )
             return call_user_func( array( $this, 'save_' . $object_type ), $data, $meta, $strict, false );
+        elseif ( 'setting' == $object_type )
+            return $this->save_setting( $data, false );
 
         return false;
     }
@@ -468,9 +470,37 @@ class PodsAPI {
     }
 
     /**
+     * Save a set of options
+     *
+     * @param array $option_data All option data to be saved
+     * @param bool $sanitized (optional) Will unsanitize the data, should be passed if the data is sanitized before sending.
+     *
+     * @return bool
+     *
+     * @since 2.3.0
+     */
+    public function save_setting ( $option_data, $sanitized = false ) {
+        if ( !is_array( $option_data ) || empty( $option_data ) )
+            return pods_error( __( 'Setting data is required but is either invalid or empty', 'pods' ), $this );
+
+        pods_no_conflict_on( 'setting' );
+
+        if ( $sanitized )
+            $option_data = pods_unsanitize( $option_data );
+
+        foreach ( $option_data as $option => $value ) {
+            update_option( $option, $value );
+        }
+
+        pods_no_conflict_off( 'setting' );
+
+        return true;
+    }
+
+    /**
      * Rename a WP object's type
      *
-     * @param string $object_type Object type: post|taxonomy|comment
+     * @param string $object_type Object type: post|taxonomy|comment|setting
      * @param string $old_name The old name
      * @param string $new_name The new name
      *
@@ -503,6 +533,12 @@ class PodsAPI {
             pods_query( "UPDATE `{$wpdb->comments}` SET `comment_type` = %s WHERE `comment_type` = %s", array(
                 $new_name,
                 $old_name
+            ) );
+        }
+        elseif ( 'setting' == $object_type ) {
+            pods_query( "UPDATE `{$wpdb->options}` SET `option_name` = REPLACE( `option_name`, %s, %s ) WHERE `option_name` LIKE '" . like_escape( $old_name ) . "_%'", array(
+                $new_name . '_',
+                $old_name . '_'
             ) );
         }
 
@@ -2713,7 +2749,7 @@ class PodsAPI {
             $object_data[ 'post_type' ] = $post_type;
         }
 
-        if ( 'meta' == $pod[ 'storage' ] && !in_array( $pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) ) {
+        if ( ( 'meta' == $pod[ 'storage' ] || 'setting' == $pod[ 'type' ] ) && !in_array( $pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) ) {
             if ( $allow_custom_fields && !empty( $custom_data ) )
                 $object_meta = array_merge( $custom_data, $object_meta );
 
@@ -2755,6 +2791,11 @@ class PodsAPI {
                 }
             }
         }
+
+        $params->id = (int) $params->id;
+
+        if ( 'setting' == $pod[ 'type' ] )
+            $params->id = $pod[ 'id' ];
 
         $no_conflict = pods_no_conflict_check( $pod[ 'type' ] );
 
@@ -2824,6 +2865,18 @@ class PodsAPI {
                         else
                             delete_metadata( $object_type, $params->id, $field, '', true );
                     }
+                    elseif ( 'setting' == $pod[ 'type' ] ) {
+                        if ( 'pick' != $type || !in_array( $fields[ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
+                            if ( !empty( $values ) )
+                                update_option( $pod[ 'name' ] . '_' . $field[ 'name' ], $values );
+                            else
+                                delete_option( $pod[ 'name' ] . '_' . $field[ 'name' ] );
+                        }
+                        elseif ( !empty( $values ) )
+                            update_option( $pod[ 'name' ] . '_' . $field[ 'name' ], $values );
+                        else
+                            delete_option( $pod[ 'name' ] . '_' . $field[ 'name' ] );
+                    }
 
                     $related_pod_id = $related_field_id = 0;
 
@@ -2879,7 +2932,7 @@ class PodsAPI {
                                         delete_metadata( $object_type, $id, $related_field, '', true );
 
                                         if ( !empty( $ids ) ) {
-                                            update_metadata( $object_type, $id, '_pods_' . $related_field, $values );
+                                            update_metadata( $object_type, $id, '_pods_' . $related_field, $ids );
 
                                             foreach ( $ids as $rel_id ) {
                                                 add_metadata( $object_type, $id, $related_field, $rel_id );
@@ -2887,6 +2940,24 @@ class PodsAPI {
                                         }
                                         else
                                             delete_metadata( $object_type, $id, '_pods_' . $related_field, '', true );
+                                    }
+                                    elseif ( 'setting' == $pod[ 'type' ] ) {
+                                        $ids = get_option( $related_pod[ 'name' ] . '_' . $related_field );
+
+                                        if ( empty( $ids ) )
+                                            $ids = array( $params->id );
+                                        else {
+                                            if ( !is_array( $ids ) )
+                                                $ids = array( $ids );
+
+                                            if ( !in_array( $params->id, $ids ) )
+                                                $ids[] = $params->id;
+                                        }
+
+                                        if ( !empty( $ids ) )
+                                            update_option( $related_pod[ 'name' ] . '_' . $related_field, $ids );
+                                        else
+                                            delete_option( $related_pod[ 'name' ] . '_' . $related_field );
                                     }
                                 }
                             }

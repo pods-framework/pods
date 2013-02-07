@@ -29,12 +29,148 @@ class PodsField_Pick extends PodsField {
     public static $label = 'Relationship';
 
     /**
-     * Do things like register/enqueue scripts and stylesheets
+     * Available Related Objects
+     *
+     * @var array
+     * @since 2.3.0
+     */
+    private static $related_objects = array();
+
+    /**
+     * Setup related objects list
      *
      * @since 2.0.0
      */
     public function __construct () {
+        // Custom
+        self::$related_objects[ 'custom-simple' ] = array(
+            'label' => __( 'Simple (custom defined list)', 'pods' ),
+            'group' => __( 'Custom', 'pods' ),
+            'simple' => true
+        );
 
+        // Pods
+        // @todo Upgrade should convert to proper type selections (pods-pod_name >> post_type-pod_name
+        $_pods = pods_api()->load_pods( array( 'type' => 'pod' ) );
+
+        foreach ( $_pods as $k => $pod ) {
+            self::$related_objects[ 'pod-' . $pod[ 'name' ] ] = array(
+                'label' => $pod[ 'label' ] . ' (' . $pod[ 'name' ] . ')',
+                'group' => __( 'Pods', 'pods' )
+            );
+        }
+
+        // Post Types
+        $post_types = get_post_types();
+        asort( $post_types );
+
+        $ignore = array( 'attachment', 'revision', 'nav_menu_item' );
+
+        foreach ( $post_types as $post_type => $label ) {
+            if ( in_array( $post_type, $ignore ) || empty( $post_type ) || 0 === strpos( $post_type, '_pods_' ) ) {
+                unset( $post_types[ $post_type ] );
+
+                continue;
+            }
+
+            $post_type = get_post_type_object( $post_type );
+
+            self::$related_objects[ 'post_type-' . $post_type->name ] = array(
+                'label' => $post_type->label,
+                'group' => __( 'Post Types', 'pods' )
+            );
+        }
+
+        // Taxonomies
+        $taxonomies = get_taxonomies();
+        asort( $taxonomies );
+
+        $ignore = array( 'nav_menu', 'post_format' );
+
+        foreach ( $taxonomies as $taxonomy => $label ) {
+            if ( in_array( $taxonomy, $ignore ) || empty( $taxonomy ) )
+                continue;
+
+            $taxonomy = get_taxonomy( $taxonomy );
+
+            self::$related_objects[ 'taxonomy-' . $taxonomy->name ] = array(
+                'label' => $taxonomy->label,
+                'group' => __( 'Taxonomies', 'pods' )
+            );
+        }
+
+        // Other WP Objects
+        self::$related_objects[ 'user' ] = array(
+            'label' => __( 'Users', 'pods' ),
+            'group' => __( 'Other WP Objects', 'pods' )
+        );
+
+        self::$related_objects[ 'role' ] = array(
+            'label' => __( 'User Roles', 'pods' ),
+            'group' => __( 'Other WP Objects', 'pods' ),
+            'simple' => true
+        );
+
+        self::$related_objects[ 'comment' ] = array(
+            'label' => __( 'Comments', 'pods' ),
+            'group' => __( 'Other WP Objects', 'pods' )
+        );
+
+        self::$related_objects[ 'image-size' ] = array(
+            'label' => __( 'Image Sizes', 'pods' ),
+            'group' => __( 'Other WP Objects', 'pods' ),
+            'simple' => true
+        );
+
+        self::$related_objects[ 'nav_menu' ] = array(
+            'label' => __( 'Navigation Menus', 'pods' ),
+            'group' => __( 'Other WP Objects', 'pods' )
+        );
+
+        self::$related_objects[ 'post_format' ] = array(
+            'label' => __( 'Post Formats', 'pods' ),
+            'group' => __( 'Other WP Objects', 'pods' )
+        );
+
+        self::$related_objects[ 'post-status' ] = array(
+            'label' => __( 'Post Status', 'pods' ),
+            'group' => __( 'Other WP Objects', 'pods' ),
+            'simple' => true
+        );
+
+        self::$related_objects[ 'sidebar' ] = array(
+            'label' => __( 'Sidebars', 'pods' ),
+            'group' => __( 'Other WP Objects', 'pods' ),
+            'simple' => true
+        );
+
+        // Advanced Objects
+        self::$related_objects[ 'table' ] = array(
+            'label' => __( 'Database Table', 'pods' ),
+            'group' => __( 'Advanced Objects', 'pods' )
+        );
+
+        self::$related_objects[ 'site' ] = array(
+            'label' => __( 'Multisite Sites', 'pods' ),
+            'group' => __( 'Advanced Objects', 'pods' )
+        );
+
+        self::$related_objects[ 'network' ] = array(
+            'label' => __( 'Multisite Networks', 'pods' ),
+            'group' => __( 'Advanced Objects', 'pods' )
+        );
+
+        self::$related_objects[ 'post-types' ] = array(
+            'label' => __( 'Post Types', 'pods' ),
+            'group' => __( 'Advanced Objects', 'pods' ),
+            'simple' => true
+        );
+
+        self::$related_objects[ 'taxonomies' ] = array(
+            'label' => __( 'Taxonomies', 'pods' ),
+            'group' => __( 'Advanced Objects', 'pods' ),
+            'simple' => true
+        );
     }
 
     /**
@@ -45,8 +181,6 @@ class PodsField_Pick extends PodsField {
      * @since 2.0.0
      */
     public function options () {
-        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'image-size', 'post-types', 'taxonomies' ) );
-
         $options = array(
             'pick_format_type' => array(
                 'label' => __( 'Selection Type', 'pods' ),
@@ -120,7 +254,7 @@ class PodsField_Pick extends PodsField {
                 'excludes-on' => array(
                     'pick_object' => array_merge(
                         array( 'site', 'network' ),
-                        $simple_tableless_objects
+                        self::simple_objects()
                     )
                 ),
                 'default' => '',
@@ -132,7 +266,7 @@ class PodsField_Pick extends PodsField {
                 'excludes-on' => array(
                     'pick_object' => array_merge(
                         array( 'site', 'network' ),
-                        $simple_tableless_objects
+                        self::simple_objects()
                     )
                 ),
                 'default' => '',
@@ -144,7 +278,7 @@ class PodsField_Pick extends PodsField {
                 'excludes-on' => array(
                     'pick_object' => array_merge(
                         array( 'site', 'network' ),
-                        $simple_tableless_objects
+                        self::simple_objects()
                     )
                 ),
                 'default' => '',
@@ -156,7 +290,7 @@ class PodsField_Pick extends PodsField {
                 'excludes-on' => array(
                     'pick_object' => array_merge(
                         array( 'site', 'network' ),
-                        $simple_tableless_objects
+                        self::simple_objects()
                     )
                 ),
                 'default' => '',
@@ -175,6 +309,75 @@ class PodsField_Pick extends PodsField {
             )*/
         );
         return $options;
+    }
+
+    /**
+     * Register a related object
+     *
+     * @param string $name Object name
+     * @param string $label Object label
+     * @param array $options Object options
+     *
+     * @return array|boolean Object array or false if unsuccessful
+     * @since 2.3.0
+     */
+    public function register_related_object ( $name, $label, $options = null ) {
+        if ( empty( $name ) || empty( $label ) )
+            return false;
+
+        $related_object = array(
+            'label' => $label,
+            'group' => $label,
+            'simple' => false,
+            'data' => array()
+            //'data_callback' => false,
+            //'value_to_label_callback' => false,
+            //'simple_value_callback' => false
+        );
+
+        $related_object = array_merge( $related_object, $options );
+
+        self::$related_objects[ $name ] = $related_object;
+
+        return true;
+    }
+
+    /**
+     * Return available related objects
+     *
+     * @return array Field selection array
+     * @since 2.3.0
+     */
+    public function related_objects () {
+        $related_objects = array();
+
+        foreach ( self::$related_objects as $related_object ) {
+            if ( !isset( $related_objects[ $related_object[ 'group' ] ] ) )
+                $related_objects[ $related_object[ 'group' ] ] = array();
+
+            $related_objects[ $related_object[ 'group' ] ][] = $related_object[ 'label' ];
+        }
+
+        return (array) apply_filters( 'pods_form_ui_field_pick_related_objects', $related_objects );
+    }
+
+    /**
+     * Return available simple object names
+     *
+     * @return array Simple object names
+     * @since 2.3.0
+     */
+    public function simple_objects () {
+        $simple_objects = array();
+
+        foreach ( self::$related_objects as $object => $related_object ) {
+            if ( !isset( $related_object[ 'simple' ] ) || !$related_object[ 'simple' ] )
+                continue;
+
+            $simple_objects[] = $object;
+        }
+
+        return (array) apply_filters( 'pods_form_ui_field_pick_simple_objects', $simple_objects );
     }
 
     /**
@@ -399,6 +602,16 @@ class PodsField_Pick extends PodsField {
                     $data[ $taxonomy->name ] = $taxonomy->label;
                 }
             }
+            elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ] ) ) {
+                if ( !empty( self::$related_objects[ $options[ 'pick_object' ][ 'data' ] ] ) )
+                    $data = self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ];
+                elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'data_callback' ] ) && is_callable( self::$related_objects[ $options[ 'pick_object' ] ][ 'data_callback' ] ) ) {
+                    $data = call_user_func_array(
+                        self::$related_objects[ $options[ 'pick_object' ] ][ 'data_callback' ],
+                        array( compact( array( 'name', 'value', 'options', 'pod', 'id' ) ) )
+                    );
+                }
+            }
             else {
                 $pick_val = pods_var( 'pick_val', $options );
 
@@ -560,9 +773,7 @@ class PodsField_Pick extends PodsField {
             unset( $options[ 'options' ] );
         }
 
-        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'image-size', 'post-types', 'taxonomies' ) );
-
-        if ( in_array( pods_var( 'pick_object', $options ), $simple_tableless_objects ) ) {
+        if ( in_array( pods_var( 'pick_object', $options ), self::simple_objects() ) ) {
             $data = array();
 
             if ( 'custom-simple' == $options[ 'pick_object' ] ) {
@@ -646,6 +857,16 @@ class PodsField_Pick extends PodsField {
                         continue;
 
                     $data[ $taxonomy->name ] = $taxonomy->label;
+                }
+            }
+            elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ] ) ) {
+                if ( !empty( self::$related_objects[ $options[ 'pick_object' ][ 'data' ] ] ) )
+                    $data = self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ];
+                elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'simple_value_callback' ] ) && is_callable( self::$related_objects[ $options[ 'pick_object' ] ][ 'simple_value_callback' ] ) ) {
+                    $data = call_user_func_array(
+                        self::$related_objects[ $options[ 'pick_object' ] ][ 'simple_value_callback' ],
+                        array( compact( array( 'value', 'options', 'raw' ) ) )
+                    );
                 }
             }
 
@@ -825,6 +1046,16 @@ class PodsField_Pick extends PodsField {
                         continue;
 
                     $data[ $taxonomy->name ] = $taxonomy->label;
+                }
+            }
+            elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ] ) ) {
+                if ( !empty( self::$related_objects[ $options[ 'pick_object' ][ 'data' ] ] ) )
+                    $data = self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ];
+                elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'value_to_label_callback' ] ) && is_callable( self::$related_objects[ $options[ 'pick_object' ] ][ 'value_to_label_callback' ] ) ) {
+                    $data = call_user_func_array(
+                        self::$related_objects[ $options[ 'pick_object' ] ][ 'value_to_label_callback' ],
+                        array( compact( array( 'pod', 'field', 'value' ) ) )
+                    );
                 }
             }
             else {

@@ -1117,6 +1117,7 @@ function pods_transient_clear ( $key = true ) {
  * @param string $name The pod name
  * @param array $object (optional) Pod array, including any 'fields' arrays
  *
+ * @return array|boolean Pod data or false if unsuccessful
  * @since 2.1.0
  */
 function pods_register_type ( $type, $name, $object = null ) {
@@ -1126,7 +1127,7 @@ function pods_register_type ( $type, $name, $object = null ) {
     if ( !empty( $name ) )
         $object[ 'name' ] = $name;
 
-    pods_meta()->register( $type, $object );
+    return pods_meta()->register( $type, $object );
 }
 
 /**
@@ -1138,6 +1139,7 @@ function pods_register_type ( $type, $name, $object = null ) {
  * @param string $name The name of the Pod
  * @param array $object (optional) Pod array, including any 'fields' arrays
  *
+ * @return array|boolean Field data or false if unsuccessful
  * @since 2.1.0
  */
 function pods_register_field ( $pod, $name, $field = null ) {
@@ -1147,7 +1149,7 @@ function pods_register_field ( $pod, $name, $field = null ) {
     if ( !empty( $name ) )
         $field[ 'name' ] = $name;
 
-    pods_meta()->register_field( $pod, $field );
+    return pods_meta()->register_field( $pod, $field );
 }
 
 /**
@@ -1158,10 +1160,25 @@ function pods_register_field ( $pod, $name, $field = null ) {
  * @param string $type The new field type identifier
  * @param string $file The new field type class file location
  *
+ * @return array Field type array
  * @since 2.3.0
  */
 function pods_register_field_type ( $type, $file = null ) {
-    PodsForm::register_field_type( $type, $file );
+    return PodsForm::register_field_type( $type, $file );
+}
+
+/**
+ * Register a related object
+ *
+ * @param string $name Object name
+ * @param string $label Object label
+ * @param array $options Object options
+ *
+ * @return array|boolean Object array or false if unsuccessful
+ * @since 2.3.0
+ */
+function pods_register_related_object ( $name, $label, $options = null ) {
+    return PodsForm::field_method( 'pick', 'register_related_object', $name, $label, $options );
 }
 
 /**

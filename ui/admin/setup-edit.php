@@ -3,12 +3,7 @@ global $pods_i;
 
 $api = pods_api();
 
-$_pods = $api->load_pods();
-
-$pod = $_pods[ $obj->id ];
-
-$tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
-$simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'image-size', 'post-types', 'taxonomies' ) );
+$pod = $api->load_pod( array( 'id' => $obj->id ) );
 
 $field_types = PodsForm::field_types();
 
@@ -172,58 +167,9 @@ $field_defaults = array(
     'message_unique' => ''*/
 );
 
-$pick_object = array(
-    '' => '-- Select --',
-    'Custom' => array( 'custom-simple' => 'Simple (custom defined list)' ),
-    'Pods' => array(),
-    'Post Types' => array(),
-    'Taxonomies' => array(),
-    'Other WP Objects' => array(
-        'user' => 'Users',
-        'comment' => 'Comments',
-        'nav_menu' => 'Navigation Menus',
-        'sidebar' => 'Sidebars',
-        'image-size' => 'Image Sizes',
-        'post_format' => 'Post Formats',
-        'post-status' => 'Post Status',
-        'role' => 'User Roles'
-    ),
-    'Advanced Objects' => array(
-        'table' => 'Database Table',
-        'site' => 'Multisite Sites',
-        'network' => 'Multisite Networks',
-        'post-types' => 'Post Types',
-        'taxonomies' => 'Taxonomies'
-    )
-);
-
-foreach ( $_pods as $the_pod ) {
-    $pick_object[ 'Pods' ][ 'pod-' . $the_pod[ 'name' ] ] = $the_pod[ 'label' ] . ' (' . $the_pod[ 'name' ] . ')';
-}
-
-$post_types = get_post_types();
-$ignore = array( 'attachment', 'revision', 'nav_menu_item' );
-foreach ( $post_types as $post_type => $label ) {
-    if ( in_array( $post_type, $ignore ) || empty( $post_type ) || 0 === strpos( $post_type, '_pods_' ) ) {
-        unset( $post_types[ $post_type ] );
-
-        continue;
-    }
-
-    $post_type = get_post_type_object( $post_type );
-    $pick_object[ 'Post Types' ][ 'post_type-' . $post_type->name ] = $post_type->label;
-}
-
-$taxonomies = get_taxonomies();
-$ignore = array( 'nav_menu', 'post_format' );
-
-foreach ( $taxonomies as $taxonomy => $label ) {
-    if ( in_array( $taxonomy, $ignore ) || empty( $taxonomy ) )
-        continue;
-
-    $taxonomy = get_taxonomy( $taxonomy );
-    $pick_object[ 'Taxonomies' ][ 'taxonomy-' . $taxonomy->name ] = $taxonomy->label;
-}
+$tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+$simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+$pick_object = PodsForm::field_method( 'pick', 'related_objects' );
 
 foreach ( $pod[ 'options' ] as $_option => $_value ) {
     $pod[ $_option ] = $_value;

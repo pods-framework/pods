@@ -1613,7 +1613,7 @@ class PodsAPI {
             $table_operation = false;
 
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
-        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'image-size', 'post-types', 'taxonomies' ) );
+        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
         $params = (object) $params;
 
@@ -2272,7 +2272,7 @@ class PodsAPI {
         $params = (object) pods_str_replace( '@wp_', '{prefix}', $params );
 
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
-        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'image-size', 'post-types', 'taxonomies' ) );
+        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
         // @deprecated 2.0.0
         if ( isset( $params->datatype ) ) {
@@ -3174,7 +3174,7 @@ class PodsAPI {
      */
     private function export_pod_item_level ( $pod, $fields, $depth, $current_depth = 1 ) {
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
-        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'image-size', 'post-types', 'taxonomies' ) );
+        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
         foreach ( $fields as $k => $field ) {
             if ( !is_array( $field ) )
@@ -3542,7 +3542,7 @@ class PodsAPI {
         global $wpdb;
 
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
-        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'image-size', 'post-types', 'taxonomies' ) );
+        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
         $params = (object) pods_sanitize( $params );
 
@@ -5755,7 +5755,7 @@ class PodsAPI {
 
         $fields = array_merge( $pod[ 'fields' ], $pod[ 'object_fields' ] );
 
-        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'image-size', 'post-types', 'taxonomies' ) );
+        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
         foreach ( $import_data as $key => $data_row ) {
             $data = array();

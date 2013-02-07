@@ -42,135 +42,145 @@ class PodsField_Pick extends PodsField {
      * @since 2.0.0
      */
     public function __construct () {
-        // Custom
-        self::$related_objects[ 'custom-simple' ] = array(
-            'label' => __( 'Simple (custom defined list)', 'pods' ),
-            'group' => __( 'Custom', 'pods' ),
-            'simple' => true
-        );
+        if ( empty( self::$related_objects ) ) {
+            $related_objects = get_transient( 'pods_related_objects' );
 
-        // Pods
-        // @todo Upgrade should convert to proper type selections (pods-pod_name >> post_type-pod_name
-        $_pods = pods_api()->load_pods( array( 'type' => 'pod' ) );
+            if ( !empty( $related_objects ) )
+                self::$related_objects = $related_objects;
+            else {
+                // Custom
+                self::$related_objects[ 'custom-simple' ] = array(
+                    'label' => __( 'Simple (custom defined list)', 'pods' ),
+                    'group' => __( 'Custom', 'pods' ),
+                    'simple' => true
+                );
 
-        foreach ( $_pods as $k => $pod ) {
-            self::$related_objects[ 'pod-' . $pod[ 'name' ] ] = array(
-                'label' => $pod[ 'label' ] . ' (' . $pod[ 'name' ] . ')',
-                'group' => __( 'Pods', 'pods' )
-            );
-        }
+                // Pods
+                // @todo Upgrade should convert to proper type selections (pods-pod_name >> post_type-pod_name
+                $_pods = pods_api()->load_pods( array( 'type' => 'pod' ) );
 
-        // Post Types
-        $post_types = get_post_types();
-        asort( $post_types );
+                foreach ( $_pods as $k => $pod ) {
+                    self::$related_objects[ 'pod-' . $pod[ 'name' ] ] = array(
+                        'label' => $pod[ 'label' ] . ' (' . $pod[ 'name' ] . ')',
+                        'group' => __( 'Pods', 'pods' )
+                    );
+                }
 
-        $ignore = array( 'attachment', 'revision', 'nav_menu_item' );
+                // Post Types
+                $post_types = get_post_types();
+                asort( $post_types );
 
-        foreach ( $post_types as $post_type => $label ) {
-            if ( in_array( $post_type, $ignore ) || empty( $post_type ) || 0 === strpos( $post_type, '_pods_' ) ) {
-                unset( $post_types[ $post_type ] );
+                $ignore = array( 'attachment', 'revision', 'nav_menu_item' );
 
-                continue;
+                foreach ( $post_types as $post_type => $label ) {
+                    if ( in_array( $post_type, $ignore ) || empty( $post_type ) || 0 === strpos( $post_type, '_pods_' ) ) {
+                        unset( $post_types[ $post_type ] );
+
+                        continue;
+                    }
+
+                    $post_type = get_post_type_object( $post_type );
+
+                    self::$related_objects[ 'post_type-' . $post_type->name ] = array(
+                        'label' => $post_type->label,
+                        'group' => __( 'Post Types', 'pods' )
+                    );
+                }
+
+                // Taxonomies
+                $taxonomies = get_taxonomies();
+                asort( $taxonomies );
+
+                $ignore = array( 'nav_menu', 'post_format' );
+
+                foreach ( $taxonomies as $taxonomy => $label ) {
+                    if ( in_array( $taxonomy, $ignore ) || empty( $taxonomy ) )
+                        continue;
+
+                    $taxonomy = get_taxonomy( $taxonomy );
+
+                    self::$related_objects[ 'taxonomy-' . $taxonomy->name ] = array(
+                        'label' => $taxonomy->label,
+                        'group' => __( 'Taxonomies', 'pods' )
+                    );
+                }
+
+                // Other WP Objects
+                self::$related_objects[ 'user' ] = array(
+                    'label' => __( 'Users', 'pods' ),
+                    'group' => __( 'Other WP Objects', 'pods' )
+                );
+
+                self::$related_objects[ 'role' ] = array(
+                    'label' => __( 'User Roles', 'pods' ),
+                    'group' => __( 'Other WP Objects', 'pods' ),
+                    'simple' => true
+                );
+
+                self::$related_objects[ 'comment' ] = array(
+                    'label' => __( 'Comments', 'pods' ),
+                    'group' => __( 'Other WP Objects', 'pods' )
+                );
+
+                self::$related_objects[ 'image-size' ] = array(
+                    'label' => __( 'Image Sizes', 'pods' ),
+                    'group' => __( 'Other WP Objects', 'pods' ),
+                    'simple' => true
+                );
+
+                self::$related_objects[ 'nav_menu' ] = array(
+                    'label' => __( 'Navigation Menus', 'pods' ),
+                    'group' => __( 'Other WP Objects', 'pods' )
+                );
+
+                self::$related_objects[ 'post_format' ] = array(
+                    'label' => __( 'Post Formats', 'pods' ),
+                    'group' => __( 'Other WP Objects', 'pods' )
+                );
+
+                self::$related_objects[ 'post-status' ] = array(
+                    'label' => __( 'Post Status', 'pods' ),
+                    'group' => __( 'Other WP Objects', 'pods' ),
+                    'simple' => true
+                );
+
+                self::$related_objects[ 'sidebar' ] = array(
+                    'label' => __( 'Sidebars', 'pods' ),
+                    'group' => __( 'Other WP Objects', 'pods' ),
+                    'simple' => true
+                );
+
+                // Advanced Objects
+                self::$related_objects[ 'table' ] = array(
+                    'label' => __( 'Database Table', 'pods' ),
+                    'group' => __( 'Advanced Objects', 'pods' )
+                );
+
+                self::$related_objects[ 'site' ] = array(
+                    'label' => __( 'Multisite Sites', 'pods' ),
+                    'group' => __( 'Advanced Objects', 'pods' )
+                );
+
+                self::$related_objects[ 'network' ] = array(
+                    'label' => __( 'Multisite Networks', 'pods' ),
+                    'group' => __( 'Advanced Objects', 'pods' )
+                );
+
+                self::$related_objects[ 'post-types' ] = array(
+                    'label' => __( 'Post Types', 'pods' ),
+                    'group' => __( 'Advanced Objects', 'pods' ),
+                    'simple' => true
+                );
+
+                self::$related_objects[ 'taxonomies' ] = array(
+                    'label' => __( 'Taxonomies', 'pods' ),
+                    'group' => __( 'Advanced Objects', 'pods' ),
+                    'simple' => true
+                );
+
+                set_transient( 'pods_related_objects', self::$related_objects );
             }
-
-            $post_type = get_post_type_object( $post_type );
-
-            self::$related_objects[ 'post_type-' . $post_type->name ] = array(
-                'label' => $post_type->label,
-                'group' => __( 'Post Types', 'pods' )
-            );
         }
-
-        // Taxonomies
-        $taxonomies = get_taxonomies();
-        asort( $taxonomies );
-
-        $ignore = array( 'nav_menu', 'post_format' );
-
-        foreach ( $taxonomies as $taxonomy => $label ) {
-            if ( in_array( $taxonomy, $ignore ) || empty( $taxonomy ) )
-                continue;
-
-            $taxonomy = get_taxonomy( $taxonomy );
-
-            self::$related_objects[ 'taxonomy-' . $taxonomy->name ] = array(
-                'label' => $taxonomy->label,
-                'group' => __( 'Taxonomies', 'pods' )
-            );
-        }
-
-        // Other WP Objects
-        self::$related_objects[ 'user' ] = array(
-            'label' => __( 'Users', 'pods' ),
-            'group' => __( 'Other WP Objects', 'pods' )
-        );
-
-        self::$related_objects[ 'role' ] = array(
-            'label' => __( 'User Roles', 'pods' ),
-            'group' => __( 'Other WP Objects', 'pods' ),
-            'simple' => true
-        );
-
-        self::$related_objects[ 'comment' ] = array(
-            'label' => __( 'Comments', 'pods' ),
-            'group' => __( 'Other WP Objects', 'pods' )
-        );
-
-        self::$related_objects[ 'image-size' ] = array(
-            'label' => __( 'Image Sizes', 'pods' ),
-            'group' => __( 'Other WP Objects', 'pods' ),
-            'simple' => true
-        );
-
-        self::$related_objects[ 'nav_menu' ] = array(
-            'label' => __( 'Navigation Menus', 'pods' ),
-            'group' => __( 'Other WP Objects', 'pods' )
-        );
-
-        self::$related_objects[ 'post_format' ] = array(
-            'label' => __( 'Post Formats', 'pods' ),
-            'group' => __( 'Other WP Objects', 'pods' )
-        );
-
-        self::$related_objects[ 'post-status' ] = array(
-            'label' => __( 'Post Status', 'pods' ),
-            'group' => __( 'Other WP Objects', 'pods' ),
-            'simple' => true
-        );
-
-        self::$related_objects[ 'sidebar' ] = array(
-            'label' => __( 'Sidebars', 'pods' ),
-            'group' => __( 'Other WP Objects', 'pods' ),
-            'simple' => true
-        );
-
-        // Advanced Objects
-        self::$related_objects[ 'table' ] = array(
-            'label' => __( 'Database Table', 'pods' ),
-            'group' => __( 'Advanced Objects', 'pods' )
-        );
-
-        self::$related_objects[ 'site' ] = array(
-            'label' => __( 'Multisite Sites', 'pods' ),
-            'group' => __( 'Advanced Objects', 'pods' )
-        );
-
-        self::$related_objects[ 'network' ] = array(
-            'label' => __( 'Multisite Networks', 'pods' ),
-            'group' => __( 'Advanced Objects', 'pods' )
-        );
-
-        self::$related_objects[ 'post-types' ] = array(
-            'label' => __( 'Post Types', 'pods' ),
-            'group' => __( 'Advanced Objects', 'pods' ),
-            'simple' => true
-        );
-
-        self::$related_objects[ 'taxonomies' ] = array(
-            'label' => __( 'Taxonomies', 'pods' ),
-            'group' => __( 'Advanced Objects', 'pods' ),
-            'simple' => true
-        );
     }
 
     /**

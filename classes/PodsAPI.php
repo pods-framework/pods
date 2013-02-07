@@ -3963,7 +3963,7 @@ class PodsAPI {
 
         if ( false !== $pod ) {
             if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
-                $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod, $pod ) );
+                $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
 
             return $pod;
         }
@@ -4006,7 +4006,7 @@ class PodsAPI {
         unset( $pod[ 'options' ][ 'object' ] );
         unset( $pod[ 'options' ][ 'alias' ] );
 
-        $pod = array_merge( $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod, $pod ), $pod );
+        $pod = array_merge( $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ), $pod );
 
         $pod[ 'fields' ] = array();
 
@@ -4376,7 +4376,7 @@ class PodsAPI {
         $field[ 'table_info' ] = array();
 
         if ( 'pick' == $field[ 'type' ] && true === $params->table_info )
-            $field[ 'table_info' ] = $this->get_table_info( $field[ 'pick_object' ], $field[ 'pick_val' ], null, null, $pod );
+            $field[ 'table_info' ] = $this->get_table_info( $field[ 'pick_object' ], $field[ 'pick_val' ], null, null, $field );
 
         return $field;
     }
@@ -5270,11 +5270,6 @@ class PodsAPI {
         // Polylang support
         elseif ( is_object( $polylang ) && function_exists( 'pll_current_language' ) ) {
             $current_language = pods_sanitize( pll_current_language( 'slug' ) );
-
-            if ( !isset( $GLOBALS[ 'pods_debugged' ] ) ) {
-                $GLOBALS[ 'pods_debugged' ] = 1;
-                pods_debug( $current_language );
-            }
 
             if ( !empty( $current_language ) ) {
                 $current_language_t_id = (int) $polylang->get_language( $current_language )->term_id;

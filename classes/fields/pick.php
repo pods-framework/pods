@@ -101,7 +101,7 @@ class PodsField_Pick extends PodsField {
             'pick_table_id' => array(
                 'label' => __( 'Table ID Column', 'pods' ),
                 'help' => __( 'You must provide the ID column name for the table, this will be used to keep track of the relationship', 'pods' ),
-                'excludes-on' => array( 'pick_object' => 'table' ),
+                'depends-on' => array( 'pick_object' => 'table' ),
                 'required' => 1,
                 'default' => '',
                 'type' => 'text'
@@ -109,7 +109,7 @@ class PodsField_Pick extends PodsField {
             'pick_table_index' => array(
                 'label' => __( 'Table Index Column', 'pods' ),
                 'help' => __( 'You must provide the index column name for the table, this may optionally also be the ID column name', 'pods' ),
-                'excludes-on' => array( 'pick_object' => 'table' ),
+                'depends-on' => array( 'pick_object' => 'table' ),
                 'required' => 1,
                 'default' => '',
                 'type' => 'text'

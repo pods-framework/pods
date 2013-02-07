@@ -56,7 +56,7 @@
                                 <a href="#pods-wizard-create" data-opt="create">
                                     <h2><?php _e( 'Create New', 'pods' ); ?></h2>
 
-                                    <p><?php _e( 'Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, or <strong>Advanced Content Types</strong> with their own tables.', 'pods' ); ?></p>
+                                    <p><?php _e( 'Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, <strong>Advanced Content Types</strong> with their own tables, or <strong>Custom Settings Pages</strong> for site-specific data.', 'pods' ); ?></p>
                                 </a>
 
                                 <p><br /></p>

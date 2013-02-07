@@ -183,14 +183,14 @@ $pick_object = array(
         'comment' => 'Comments',
         'nav_menu' => 'Navigation Menus',
         'sidebar' => 'Sidebars',
-        'post_format' => 'Post Formats'
+        'post_format' => 'Post Formats',
+        'post-status' => 'Post Status',
+        'role' => 'User Roles',
     ),
     'Advanced Objects' => array(
         'table' => 'Database Table',
         'site' => 'Multisite Sites',
         'network' => 'Multisite Networks',
-        'role' => 'User Roles',
-        'post-status' => 'Post Status',
         'post-types' => 'Post Types',
         'taxonomies' => 'Taxonomies'
     )

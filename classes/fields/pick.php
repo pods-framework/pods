@@ -45,7 +45,7 @@ class PodsField_Pick extends PodsField {
      * @since 2.0.0
      */
     public function options () {
-        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'post-types', 'taxonomies' ) );
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'image-size', 'post-types', 'taxonomies' ) );
 
         $options = array(
             'pick_format_type' => array(
@@ -368,6 +368,13 @@ class PodsField_Pick extends PodsField {
                     }
                 }
             }
+            elseif ( 'image-size' == $options[ 'pick_object' ] ) {
+                $image_sizes = get_intermediate_image_sizes();
+
+                foreach ( $image_sizes as $image_size ) {
+                    $data[ $image_size ] = ucwords( str_replace( '-', ' ', $image_size ) );
+                }
+            }
             elseif ( 'post-types' == $options[ 'pick_object' ] ) {
                 $post_types = get_post_types( array(), 'objects' );
 
@@ -553,7 +560,7 @@ class PodsField_Pick extends PodsField {
             unset( $options[ 'options' ] );
         }
 
-        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'post-types', 'taxonomies' ) );
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'image-size', 'post-types', 'taxonomies' ) );
 
         if ( in_array( pods_var( 'pick_object', $options ), $simple_tableless_objects ) ) {
             $data = array();
@@ -608,6 +615,13 @@ class PodsField_Pick extends PodsField {
                     foreach ( $wp_registered_sidebars as $sidebar ) {
                         $data[ $sidebar[ 'id' ] ] = $sidebar[ 'name' ];
                     }
+                }
+            }
+            elseif ( 'image-size' == $options[ 'pick_object' ] ) {
+                $image_sizes = get_intermediate_image_sizes();
+
+                foreach ( $image_sizes as $image_size ) {
+                    $data[ $image_size ] = ucwords( str_replace( '-', ' ', $image_size ) );
                 }
             }
             elseif ( 'post-types' == $options[ 'pick_object' ] ) {
@@ -780,6 +794,13 @@ class PodsField_Pick extends PodsField {
                     foreach ( $wp_registered_sidebars as $sidebar ) {
                         $data[ $sidebar[ 'id' ] ] = $sidebar[ 'name' ];
                     }
+                }
+            }
+            elseif ( 'image-size' == $options[ 'pick_object' ] ) {
+                $image_sizes = get_intermediate_image_sizes();
+
+                foreach ( $image_sizes as $image_size ) {
+                    $data[ $image_size ] = ucwords( str_replace( '-', ' ', $image_size ) );
                 }
             }
             elseif ( 'post-types' == $options[ 'pick_object' ] ) {

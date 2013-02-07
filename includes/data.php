@@ -682,7 +682,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
         $field = $fields[ $field ];
 
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
-        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'post-types', 'taxonomies' ) );
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'image-size', 'post-types', 'taxonomies' ) );
 
         if ( !empty( $field ) && is_array( $field ) && in_array( $field[ 'type' ], $tableless_field_types ) ) {
             if ( in_array( $field[ 'type' ], apply_filters( 'pods_file_field_types', array( 'file', 'avatar' ) ) ) ) {

@@ -600,7 +600,7 @@ class PodsData {
      * @since 2.0.0
      */
     public function build ( $params ) {
-        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'post-types', 'taxonomies' ) );
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'image-size', 'post-types', 'taxonomies' ) );
 
         $defaults = array(
             'select' => '*',
@@ -1896,7 +1896,7 @@ class PodsData {
     public static function query_field ( $field, $q, $pod = null ) {
         global $wpdb;
 
-        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'post-types', 'taxonomies' ) );
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'image-size', 'post-types', 'taxonomies' ) );
 
         $field_query = null;
 
@@ -2157,7 +2157,7 @@ class PodsData {
         }
 
         $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
-        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'post-types', 'taxonomies' ) );
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'image-size', 'post-types', 'taxonomies' ) );
 
         if ( !isset( $this->traversal[ $traverse_recurse[ 'pod' ] ] ) )
             $this->traversal[ $traverse_recurse[ 'pod' ] ] = array();

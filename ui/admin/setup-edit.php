@@ -8,7 +8,7 @@ $_pods = $api->load_pods();
 $pod = $_pods[ $obj->id ];
 
 $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
-$simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'post-types', 'taxonomies' ) );
+$simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'image-size', 'post-types', 'taxonomies' ) );
 
 $field_types = PodsForm::field_types();
 
@@ -183,9 +183,10 @@ $pick_object = array(
         'comment' => 'Comments',
         'nav_menu' => 'Navigation Menus',
         'sidebar' => 'Sidebars',
+        'image-size' => 'Image Sizes',
         'post_format' => 'Post Formats',
         'post-status' => 'Post Status',
-        'role' => 'User Roles',
+        'role' => 'User Roles'
     ),
     'Advanced Objects' => array(
         'table' => 'Database Table',

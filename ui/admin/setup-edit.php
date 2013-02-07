@@ -8,6 +8,7 @@ $_pods = $api->load_pods();
 $pod = $_pods[ $obj->id ];
 
 $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+$simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'post-types', 'taxonomies' ) );
 
 $field_types = PodsForm::field_types();
 
@@ -185,8 +186,9 @@ $pick_object = array(
         'post_format' => 'Post Formats'
     ),
     'Advanced Objects' => array(
-        'site' => 'Sites',
-        'network' => 'Networks',
+        'table' => 'Database Table',
+        'site' => 'Multisite Sites',
+        'network' => 'Multisite Networks',
         'role' => 'User Roles',
         'post-status' => 'Post Status',
         'post-types' => 'Post Types',
@@ -236,12 +238,33 @@ foreach ( $pod[ 'fields' ] as $_field => $_data ) {
 
 $field_defaults = apply_filters( 'pods_field_defaults', apply_filters( 'pods_field_defaults_' . $pod[ 'name' ], $field_defaults, $pod ) );
 
+$pick_table = pods_transient_get( 'pods_tables' );
+
+if ( empty( $pick_table ) ) {
+    $pick_table = array(
+        '' => __( '-- Select Table --', 'pods' )
+    );
+
+    global $wpdb;
+
+    $tables = $wpdb->get_results( "SHOW TABLES", ARRAY_N );
+
+    if ( !empty( $tables ) ) {
+        foreach ( $tables as $table ) {
+            $pick_table[ $table[ 0 ] ] = $table[ 0 ];
+        }
+    }
+
+    pods_transient_set( 'pods_tables', $pick_table );
+}
+
 $field_settings = array(
     'field_types' => $field_types,
     'field_types_select' => $field_types_select,
     'field_defaults' => $field_defaults,
     'advanced_fields' => $advanced_fields,
     'pick_object' => $pick_object,
+    'pick_table' => $pick_table,
     'sister_id' => array( '' => __( 'No Related Fields Found', 'pods' ) )
 );
 

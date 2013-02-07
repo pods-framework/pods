@@ -45,6 +45,8 @@ class PodsField_Pick extends PodsField {
      * @since 2.0.0
      */
     public function options () {
+        $simple_tableless_objects = apply_filters( 'pods_simple_tableless_objects', array( 'custom-simple', 'post-status', 'role', 'sidebar', 'post-types', 'taxonomies' ) );
+
         $options = array(
             'pick_format_type' => array(
                 'label' => __( 'Selection Type', 'pods' ),
@@ -96,31 +98,67 @@ class PodsField_Pick extends PodsField {
                 'default' => 0,
                 'type' => 'number'
             ),
+            'pick_table_id' => array(
+                'label' => __( 'Table ID Column', 'pods' ),
+                'help' => __( 'You must provide the ID column name for the table, this will be used to keep track of the relationship', 'pods' ),
+                'excludes-on' => array( 'pick_object' => 'table' ),
+                'required' => 1,
+                'default' => '',
+                'type' => 'text'
+            ),
+            'pick_table_index' => array(
+                'label' => __( 'Table Index Column', 'pods' ),
+                'help' => __( 'You must provide the index column name for the table, this may optionally also be the ID column name', 'pods' ),
+                'excludes-on' => array( 'pick_object' => 'table' ),
+                'required' => 1,
+                'default' => '',
+                'type' => 'text'
+            ),
             'pick_display' => array(
                 'label' => __( 'Display Field in Selection List', 'pods' ),
                 'help' => __( 'Provide the name of a field on the related object to reference, example: {@post_title}', 'pods' ),
-                'excludes-on' => array( 'pick_object' => array( 'custom-simple', 'site', 'network', 'role', 'post-types', 'taxonomies' ) ),
+                'excludes-on' => array(
+                    'pick_object' => array_merge(
+                        array( 'site', 'network' ),
+                        $simple_tableless_objects
+                    )
+                ),
                 'default' => '',
                 'type' => 'text'
             ),
             'pick_where' => array(
                 'label' => __( 'Customized <em>WHERE</em>', 'pods' ),
                 'help' => __( 'help', 'pods' ),
-                'excludes-on' => array( 'pick_object' => array( 'custom-simple', 'site', 'network', 'role', 'post-types', 'taxonomies' ) ),
+                'excludes-on' => array(
+                    'pick_object' => array_merge(
+                        array( 'site', 'network' ),
+                        $simple_tableless_objects
+                    )
+                ),
                 'default' => '',
                 'type' => 'text'
             ),
             'pick_orderby' => array(
                 'label' => __( 'Customized <em>ORDER BY</em>', 'pods' ),
                 'help' => __( 'help', 'pods' ),
-                'excludes-on' => array( 'pick_object' => array( 'custom-simple', 'site', 'network', 'role', 'post-types', 'taxonomies' ) ),
+                'excludes-on' => array(
+                    'pick_object' => array_merge(
+                        array( 'site', 'network' ),
+                        $simple_tableless_objects
+                    )
+                ),
                 'default' => '',
                 'type' => 'text'
             ),
             'pick_groupby' => array(
                 'label' => __( 'Customized <em>GROUP BY</em>', 'pods' ),
                 'help' => __( 'help', 'pods' ),
-                'excludes-on' => array( 'pick_object' => array( 'custom-simple', 'site', 'network', 'role', 'post-types', 'taxonomies' ) ),
+                'excludes-on' => array(
+                    'pick_object' => array_merge(
+                        array( 'site', 'network' ),
+                        $simple_tableless_objects
+                    )
+                ),
                 'default' => '',
                 'type' => 'text'
             )
@@ -355,7 +393,12 @@ class PodsField_Pick extends PodsField {
                 }
             }
             else {
-                $options[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $options ), pods_var( 'pick_val', $options ) );
+                $pick_val = pods_var( 'pick_val', $options );
+
+                if ( 'table' == pods_var( 'pick_object', $options ) )
+                    $pick_val = pods_var( 'pick_table', $options, $pick_val, null, true );
+
+                $options[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $options ), $pick_val, null, null, $options );
 
                 $search_data = pods_data();
                 $search_data->table = $options[ 'table_info' ][ 'table' ];
@@ -764,7 +807,12 @@ class PodsField_Pick extends PodsField {
                 }
             }
             else {
-                $options[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $options ), pods_var( 'pick_val', $options ) );
+                $pick_val = pods_var( 'pick_val', $options );
+
+                if ( 'table' == pods_var( 'pick_object', $options ) )
+                    $pick_val = pods_var( 'pick_table', $options, $pick_val, null, true );
+
+                $options[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $options ), $pick_val, null, null, $options );
 
                 $search_data = pods_data();
                 $search_data->table = $options[ 'table_info' ][ 'table' ];

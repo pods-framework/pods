@@ -1772,6 +1772,10 @@ class PodsAPI {
                 $field[ 'pick_val' ] = pods_str_replace( 'taxonomy-', '', $field[ 'pick_object' ], 1 );
                 $field[ 'pick_object' ] = 'taxonomy';
             }
+            elseif ( 'table' == $field[ 'pick_object' ] && 0 < strlen( pods_var_raw( 'pick_table', $field[ 'options' ] ) ) ) {
+                $field[ 'pick_val' ] = $field[ 'options' ][ 'pick_table' ];
+                $field[ 'pick_object' ] = 'table';
+            }
             elseif ( false === strpos( $field[ 'pick_object' ], '-' ) && !in_array( $field[ 'pick_object' ], array( 'pod', 'post_type', 'taxonomy' ) ) )
                 $field[ 'pick_val' ] = '';
 
@@ -3183,7 +3187,7 @@ class PodsAPI {
                 if ( in_array( $field[ 'type' ], $tableless_field_types ) && !in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects ) ) {
                     if ( 'pick' == $field[ 'type' ] ) {
                         if ( empty( $field[ 'table_info' ] ) )
-                            $field[ 'table_info' ] = $this->get_table_info( pods_var_raw( 'pick_object', $field ), pods_var_raw( 'pick_val', $field ) );
+                            $field[ 'table_info' ] = $this->get_table_info( pods_var_raw( 'pick_object', $field ), pods_var_raw( 'pick_val', $field ), null, null, $field );
 
                         if ( !empty( $field[ 'table_info' ] ) )
                             $field[ 'lookup_name' ] .= '.' . $field[ 'table_info' ][ 'field_id' ];
@@ -3959,7 +3963,7 @@ class PodsAPI {
 
         if ( false !== $pod ) {
             if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
-                $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
+                $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod, $pod ) );
 
             return $pod;
         }
@@ -4002,7 +4006,7 @@ class PodsAPI {
         unset( $pod[ 'options' ][ 'object' ] );
         unset( $pod[ 'options' ][ 'alias' ] );
 
-        $pod = array_merge( $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ), $pod );
+        $pod = array_merge( $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod, $pod ), $pod );
 
         $pod[ 'fields' ] = array();
 
@@ -4372,7 +4376,7 @@ class PodsAPI {
         $field[ 'table_info' ] = array();
 
         if ( 'pick' == $field[ 'type' ] && true === $params->table_info )
-            $field[ 'table_info' ] = $this->get_table_info( $field[ 'pick_object' ], $field[ 'pick_val' ] );
+            $field[ 'table_info' ] = $this->get_table_info( $field[ 'pick_object' ], $field[ 'pick_val' ], null, null, $pod );
 
         return $field;
     }
@@ -5194,12 +5198,13 @@ class PodsAPI {
      * @param string $object The object to look for
      * @param null $name (optional) Name of the pod to load
      * @param array $pod (optional) Array with pod information
+     * @param array $field (optional) Array with field information
      *
      * @return array|bool
      *
      * @since 2.0.0
      */
-    public function get_table_info ( $object_type, $object, $name = null, $pod = null ) {
+    public function get_table_info ( $object_type, $object, $name = null, $pod = null, $field = null ) {
         /**
          * @var $wpdb wpdb
          * @var $sitepress SitePress
@@ -5249,7 +5254,12 @@ class PodsAPI {
         if ( is_array( $pod_name ) )
             $pod_name = pods_var_raw( 'name', $pod_name, ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $pod_name, JSON_UNESCAPED_UNICODE ) : json_encode( $pod_name ) ), null, true );
 
-        $transient = 'pods_get_table_info_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name );
+        $field_name = $field;
+
+        if ( is_array( $field_name ) )
+            $field_name = pods_var_raw( 'name', $field_name, ( version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $pod_name, JSON_UNESCAPED_UNICODE ) : json_encode( $field_name ) ), null, true );
+
+        $transient = 'pods_get_table_info_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name . '_field_' . $field_name );
 
         $current_language = false;
         $current_language_t_id = $current_language_tt_id = 0;
@@ -5273,7 +5283,7 @@ class PodsAPI {
         }
 
         if ( !empty( $current_language ) )
-            $transient = 'pods_get_table_info_' . $current_language . '_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name );
+            $transient = 'pods_get_table_info_' . $current_language . '_' . md5( $object_type . '_object_' . $object . '_name_' . $name . '_pod_' . $pod_name . '_field_' . $field_name );
 
         $_info = pods_transient_get( $transient );
 
@@ -5588,8 +5598,16 @@ class PodsAPI {
 
                 $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '` ASC, `t`.`path` ASC, `t`.`' . $info[ 'field_id' ] . '`';
             }
-            elseif ( 'table' == $object_type )
+            elseif ( 'table' == $object_type ) {
                 $info[ 'table' ] = ( empty( $object ) ? $name : $object );
+
+                if ( !empty( $field ) && is_array( $field ) ) {
+                    $info[ 'field_id' ] = pods_var_raw( 'pick_table_id', pods_var_raw( 'options', $field, $field ) );
+                    $info[ 'field_index' ] = $info[ 'meta_field_index' ] = $info[ 'meta_field_value' ] = pods_var_raw( 'pick_table_index', pods_var_raw( 'options', $field, $field ) );
+                }
+                elseif ( !empty( $pod ) && is_array( $pod ) && 'table' == pods_var( 'type', $pod ) )
+                    $info[ 'field_index' ] = $info[ 'meta_field_index' ] = $info[ 'meta_field_value' ] = pods_var( 'pod_index', $pod[ 'options' ], 'id', null, true );
+            }
 
             $info[ 'table' ] = pods_clean_name( $info[ 'table' ], false, false );
             $info[ 'meta_table' ] = pods_clean_name( $info[ 'meta_table' ], false, false );

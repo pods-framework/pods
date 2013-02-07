@@ -913,14 +913,22 @@ class PodsAPI {
         $defaults = array(
             'create_extend' => 'create',
             'create_pod_type' => 'post_type',
+
             'create_name' => '',
             'create_label_plural' => '',
             'create_label_singular' => '',
             'create_storage' => 'meta',
             'create_storage_taxonomy' => 'none',
+
+            'create_setting_name' => '',
+            'create_label_menu' => '',
+            'create_label_title' => '',
+            'create_menu_location' => 'settings',
+
             'extend_pod_type' => 'post_type',
             'extend_post_type' => 'post',
             'extend_taxonomy' => 'category',
+            'extend_table' => '',
             'extend_storage_taxonomy' => 'table',
             'extend_storage' => 'meta'
         );
@@ -964,6 +972,13 @@ class PodsAPI {
                 if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS )
                     $pod_params[ 'storage' ] = 'none';
             }
+            elseif ( 'setting' == $pod_params[ 'type' ] ) {
+                $pod_params[ 'name' ] = $params->create_setting_name;
+                $pod_params[ 'label' ] = ( !empty( $params->create_label_menu ) ? $params->create_label_menu : ucwords( str_replace( '_', ' ', $params->create_setting_name ) ) );
+                $pod_params[ 'options' ] = array(
+                    'menu_location' => $params->create_menu_location
+                );
+            }
             elseif ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) {
                 $pod_params[ 'type' ] = 'post_type';
                 $pod_params[ 'storage' ] = 'meta';
@@ -987,6 +1002,10 @@ class PodsAPI {
                     $pod_params[ 'storage' ] = 'none';
 
                 $pod_params[ 'name' ] = $params->extend_taxonomy;
+            }
+            elseif ( 'table' == $pod_params[ 'type' ] ) {
+                $pod_params[ 'storage' ] = 'table';
+                $pod_params[ 'name' ] = $params->extend_table;
             }
             else {
                 $pod_params[ 'storage' ] = $params->extend_storage;
@@ -1154,7 +1173,7 @@ class PodsAPI {
             }
         }
 
-        if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) {
+        if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS && !in_array( $pod[ 'type' ], array( 'setting', 'table' ) ) ) {
             if ( 'pod' == $pod[ 'type' ] )
                 $pod[ 'type' ] = 'post_type';
 
@@ -1299,7 +1318,7 @@ class PodsAPI {
         $pod[ 'id' ] = $params->id;
 
         // Setup / update tables
-        if ( 'table' == $pod[ 'storage' ] && $old_storage != $pod[ 'storage' ] && $db ) {
+        if ( 'table' != $pod[ 'type' ] && 'table' == $pod[ 'storage' ] && $old_storage != $pod[ 'storage' ] && $db ) {
             $definitions = array( "`id` BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY" );
 
             foreach ( $pod[ 'fields' ] as $field ) {
@@ -1315,7 +1334,7 @@ class PodsAPI {
                 return pods_error( __( 'Cannot add Database Table for Pod', 'pods' ), $this );
 
         }
-        elseif ( 'table' == $pod[ 'storage' ] && $pod[ 'storage' ] == $old_storage && null !== $old_name && $old_name != $params->name && $db ) {
+        elseif ( 'table' != $pod[ 'type' ] && 'table' == $pod[ 'storage' ] && $pod[ 'storage' ] == $old_storage && null !== $old_name && $old_name != $params->name && $db ) {
             $result = pods_query( "ALTER TABLE `@wp_pods_{$old_name}` RENAME `@wp_pods_{$params->name}`", $this );
 
             if ( empty( $result ) )
@@ -1333,6 +1352,8 @@ class PodsAPI {
             $this->rename_wp_object_type( 'taxonomy', $old_name, $params->name );
         elseif ( 'comment' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) && null !== $old_name && $old_name != $params->name && $db )
             $this->rename_wp_object_type( 'comment', $old_name, $params->name );
+        elseif ( 'setting' == $pod[ 'type' ] && null !== $old_name && $old_name != $params->name && $db )
+            $this->rename_wp_object_type( 'setting', $old_name, $params->name );
 
         // Sync any related fields if the name has changed
         if ( null !== $old_name && $old_name != $params->name && $db ) {
@@ -1369,6 +1390,25 @@ class PodsAPI {
                 foreach ( $fields as $field ) {
                     update_post_meta( $field->ID, 'pick_object', 'pod' );
                     update_post_meta( $field->ID, 'pick_val', $params->name );
+                }
+            }
+
+            if ( 'pod' != $pod[ 'type' ] ) {
+                $fields = pods_query( "
+                    SELECT `p`.`ID`
+                    FROM `{$wpdb->posts}` AS `p`
+                    LEFT JOIN `{$wpdb->postmeta}` AS `pm` ON `pm`.`post_id` = `p`.`ID`
+                    WHERE
+                        `p`.`post_type` = '_pods_field'
+                        AND `pm`.`meta_key` = 'pick_object'
+                        AND `pm`.`meta_value` = '{$pod['type']}-{$old_name}'
+                " );
+
+                if ( !empty( $fields ) ) {
+                    foreach ( $fields as $field ) {
+                        update_post_meta( $field->ID, 'pick_object', $pod[ 'type' ] );
+                        update_post_meta( $field->ID, 'pick_val', $params->name );
+                    }
                 }
             }
         }

@@ -91,6 +91,15 @@
                                                 'pod' => __( 'Advanced Content Type (separate from WP, blank slate, in its own table)', 'pods' )
                                             );
 
+                                            if ( pods_developer() ) {
+                                                $data = array(
+                                                    'post_type' => __( 'Custom Post Type (like Posts or Pages)', 'pods' ),
+                                                    'taxonomy' => __( 'Custom Taxonomy (like Categories or Tags)', 'pods' ),
+                                                    'pod' => __( 'Advanced Content Type (separate from WP, blank slate, in its own table)', 'pods' ),
+                                                    'setting' => __( 'Custom Settings Page', 'pods' )
+                                                );
+                                            }
+
                                             if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS )
                                                 unset( $data[ 'pod' ] );
 
@@ -112,17 +121,46 @@
                                             echo PodsForm::field( 'create_storage_taxonomy', pods_var_raw( 'create_storage_taxonomy', 'post', 'none', null, true ), 'pick', array( 'data' => $data ) );
                                         ?>
                                     </div>
-                                    <div class="pods-field-option">
-                                        <?php
-                                            echo PodsForm::label( 'create_label_plural', __( 'Plural Label', 'pods' ), __( '<h6>Plural Label</h6> This is the label for more than 1 item (Plural) that will appear throughout the WordPress admin area for managing the content.', 'pods' ) );
-                                            echo PodsForm::field( 'create_label_plural', pods_var_raw( 'create_label_plural', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required', 'text_max_length' => 30 ) );
-                                        ?>
+                                    <div class="pods-excludes-on pods-excludes-on-create-pod-type pods-excludes-on-create-pod-type-setting">
+                                        <div class="pods-field-option">
+                                            <?php
+                                                echo PodsForm::label( 'create_label_plural', __( 'Plural Label', 'pods' ), __( '<h6>Plural Label</h6> This is the label for more than 1 item (Plural) that will appear throughout the WordPress admin area for managing the content.', 'pods' ) );
+                                                echo PodsForm::field( 'create_label_plural', pods_var_raw( 'create_label_plural', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required', 'text_max_length' => 30 ) );
+                                            ?>
+                                        </div>
+                                        <div class="pods-field-option">
+                                            <?php
+                                                echo PodsForm::label( 'create_label_singular', __( 'Singular Label', 'pods' ), __( '<h6>Singular Label</h6> This is the label for 1 item (Singular) that will appear throughout the WordPress admin area for managing the content.', 'pods' ) );
+                                                echo PodsForm::field( 'create_label_singular', pods_var_raw( 'create_label_singular', 'post' ), 'text', array( 'text_max_length' => 30 ) );
+                                            ?>
+                                        </div>
                                     </div>
-                                    <div class="pods-field-option">
-                                        <?php
-                                            echo PodsForm::label( 'create_label_singular', __( 'Singular Label', 'pods' ), __( '<h6>Singular Label</h6> This is the label for 1 item (Singular) that will appear throughout the WordPress admin area for managing the content.', 'pods' ) );
-                                            echo PodsForm::field( 'create_label_singular', pods_var_raw( 'create_label_singular', 'post' ), 'text', array( 'text_max_length' => 30 ) );
-                                        ?>
+                                    <div class="pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-setting">
+                                        <div class="pods-field-option">
+                                            <?php
+                                                echo PodsForm::label( 'create_label_menu', __( 'Menu Label', 'pods' ), __( '<h6>Menu Label</h6> This is the label that will appear throughout the WordPress admin area for your settings.', 'pods' ) );
+                                                echo PodsForm::field( 'create_label_menu', pods_var_raw( 'create_label_menu', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required', 'text_max_length' => 30 ) );
+                                            ?>
+                                        </div>
+                                        <div class="pods-field-option">
+                                            <?php
+                                                echo PodsForm::label( 'create_label_title', __( 'Page Title', 'pods' ), __( '<h6>Page Title</h6> This is the text that will at the top of your settings page.', 'pods' ) );
+                                                echo PodsForm::field( 'create_label_title', pods_var_raw( 'create_label_title', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required', 'text_max_length' => 30 ) );
+                                            ?>
+                                        </div>
+                                        <div class="pods-field-option">
+                                            <?php
+                                                echo PodsForm::label( 'create_menu_location', __( 'Menu Location', 'pods' ), __( '<h6>Menu Location</h6> This is the location where the new settings page will be added in the WordPress Dashboard menu.', 'pods' ) );
+
+                                                $data = array(
+                                                    'settings' => 'Add to Settings menu',
+                                                    'appearances' => 'Add to Appearances menu',
+                                                    'top' => 'Make a new menu item below Settings'
+                                                );
+
+                                                echo PodsForm::field( 'create_menu_location', pods_var_raw( 'create_menu_location', 'post' ), 'pick', array( 'data' => $data ) );
+                                            ?>
+                                        </div>
                                     </div>
 
                                     <p>
@@ -130,7 +168,7 @@
                                     </p>
 
                                     <div class="pods-advanced">
-                                        <div class="pods-field-option">
+                                        <div class="pods-field-option pods-excludes-on pods-excludes-on-create-pod-type pods-excludes-on-create-pod-type-setting">
                                             <?php
                                                 global $wpdb;
                                                 $max_length_name = 64;
@@ -139,6 +177,17 @@
 
                                                 echo PodsForm::label( 'create_name', __( 'Identifier', 'pods' ), __( '<h6>Pod Indentifier</h6> This is different than the labels users will see in the WordPress admin areas, it is the name you will use to programatically reference this object throughout your theme, WordPress, and other PHP.', 'pods' ) );
                                                 echo PodsForm::field( 'create_name', pods_var_raw( 'create_name', 'post' ), 'db', array( 'attributes' => array( 'maxlength' => $max_length_name, 'size' => 25, 'data-sluggable' => 'create_label_plural' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
+                                            ?>
+                                        </div>
+                                        <div class="pods-field-option pods-depends-on-create-pod-type pods-depends-on-create-pod-type-setting">
+                                            <?php
+                                                global $wpdb;
+                                                $max_length_name = 64;
+                                                $max_length_name -= 10; // Allow for WP Multisite or prefix changes in the future
+                                                $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
+
+                                                echo PodsForm::label( 'create_setting_name', __( 'Identifier', 'pods' ), __( '<h6>Pod Indentifier</h6> This is different than the labels users will see in the WordPress admin areas, it is the name you will use to programatically reference this object throughout your theme, WordPress, and other PHP.', 'pods' ) );
+                                                echo PodsForm::field( 'create_setting_name', pods_var_raw( 'create_setting_name', 'post' ), 'db', array( 'attributes' => array( 'maxlength' => $max_length_name, 'size' => 25, 'data-sluggable' => 'create_label_menu' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
                                             ?>
                                         </div>
                                         <div class="<?php echo ( ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) ? 'hidden' : 'pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-post_type' ); ?>">

@@ -1608,8 +1608,10 @@ class Pods {
             'depth' => 2
         );
 
-        if ( !isset( $fields[ 'fields' ] ) && !isset( $fields[ 'depth' ] ) )
-            $params = array( 'fields' => $fields );
+        if ( is_array( $fields ) && ( isset( $fields[ 'fields' ] ) || isset( $fields[ 'depth' ] ) ) )
+            $params = array_merge( $params, $fields );
+        else
+            $params[ 'fields' ] = $fields;
 
         if ( null === $params[ 'id' ] )
             $params[ 'id' ] = $this->id();

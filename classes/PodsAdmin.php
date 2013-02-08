@@ -466,6 +466,9 @@ class PodsAdmin {
             if ( !$author_restrict && !current_user_can( 'pods_delete_' . $pod_name ) && !current_user_can( 'pods_delete_others_' . $pod_name ) )
                 $actions_disabled[ 'delete' ] = 'delete';
 
+            /*if ( !current_user_can( 'pods_reorder_' . $pod_name ) )
+                $actions_disabled[ 'reorder' ] = 'reorder';*/
+
             if ( !current_user_can( 'pods_export_' . $pod_name ) )
                 $actions_disabled[ 'export' ] = 'export';
         }
@@ -487,7 +490,34 @@ class PodsAdmin {
         if ( isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) )
             $manage[ 'modified' ] = $pod->pod_data[ 'fields' ][ 'modified' ][ 'label' ];
 
+        $manage = pods_var_raw( 'ui_fields_manage', $pod->pod_data[ 'options' ], $manage, null, true );
+
         $manage = apply_filters( 'pods_admin_ui_fields_' . $pod->pod, apply_filters( 'pods_admin_ui_fields', $manage, $pod->pod, $pod ), $pod->pod, $pod );
+
+        //pods_debug( pods_var_raw( 'ui_icon', $pod->pod_data[ 'options' ] ) );
+
+        $actions_enabled = pods_var_raw( 'ui_actions_enabled', $pod->pod_data[ 'options' ] );
+
+        if ( !empty( $actions_enabled ) )
+            $actions_enabled = (array) $actions_enabled;
+        else
+            $actions_enabled = array();
+
+        $available_actions = array(
+            'add',
+            'edit',
+            'duplicate',
+            'delete',
+            'reorder',
+            'export'
+        );
+
+        if ( !empty( $actions_enabled ) ) {
+            foreach ( $available_actions as $action ) {
+                if ( !in_array( $action, $actions_enabled ) )
+                    $actions_disabled[ $action ] = $action;
+            }
+        }
 
         $ui = array(
             'pod' => $pod,
@@ -497,9 +527,14 @@ class PodsAdmin {
                 'edit' => $pod->pod_data[ 'fields' ],
                 'duplicate' => $pod->pod_data[ 'fields' ]
             ),
-            'icon' => pods_var_raw( 'menu_icon', $pod->pod_data[ 'options' ] ),
+            'icon' => pods_var_raw( 'ui_icon', $pod->pod_data[ 'options' ] ),
             'actions_disabled' => $actions_disabled
         );
+
+        $reorder_field = pods_var_raw( 'ui_reorder_field', $pod->pod_data[ 'options' ] );
+
+        if ( in_array( 'reorder', $actions_enabled ) && !empty( $reorder_field ) && ( ( !empty( $pod->pod_data[ 'object_fields' ] ) && isset( $pod->pod_data[ 'object_fields' ][ $reorder_field ] ) ) || isset( $pod->pod_data[ 'fields' ][ $reorder_field ] ) ) )
+            $ui[ 'reorder' ] = array( 'on' => $reorder_field );
 
         if ( !empty( $author_restrict ) )
             $ui[ 'restrict' ] = array( 'author_restrict' => $author_restrict );

@@ -2157,7 +2157,7 @@ class PodsUI {
                 ?>
                 <div class="tablenav">
                     <?php
-                    if ( !empty( $this->actions_bulk ) ) {
+                    if ( !empty( $this->data ) && !empty( $this->actions_bulk ) ) {
                 ?>
                     <div class="alignleft actions">
                         <select name="action_bulk<?php echo $this->num; ?>">

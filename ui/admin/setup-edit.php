@@ -226,6 +226,7 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
 
 $advanced = false;
 $labels = false;
+$pods_ui = false;
 
 if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) < 1 ) ) {
     $advanced = true;
@@ -238,6 +239,7 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
 elseif ( 'pod' == pods_var( 'type', $pod ) ) {
     $advanced = true;
     $labels = true;
+    $pods_ui = true;
 }
 elseif ( 'settings' == pods_var( 'type', $pod ) ) {
     $advanced = true;
@@ -284,6 +286,9 @@ elseif ( 'settings' == pods_var( 'type', $pod ) ) {
 
             if ( $labels )
                 $tabs[ 'pods-labels' ] = __( 'Labels', 'pods' );
+
+            if ( $pods_ui )
+                $tabs[ 'pods-ui' ] = __( 'Admin UI', 'pods' );
 
             if ( $advanced )
                 $tabs[ 'pods-advanced' ] = __( 'Advanced Options', 'pods' );
@@ -760,8 +765,115 @@ $advanced_options = array(
             'default' => '',
             'depends-on' => array( 'menu_location' => 'top' )
         )
+    ),
+    'ui_options' => array(
+        'show_in_menu' => array(
+            'label' => __( 'Show Admin Menu in Dashboard', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'boolean',
+            'default' => false,
+            'boolean_yes_label' => '',
+            'dependency' => true
+        ),
+        'menu_location_custom' => array(
+            'label' => __( 'Parent Menu ID (optional)', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'depends-on' => array( 'show_in_menu' => true )
+        ),
+        'menu_position' => array(
+            'label' => __( 'Menu Position', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'number',
+            'default' => 0,
+            'depends-on' => array( 'show_in_menu' => true )
+        ),
+        'menu_icon' => array(
+            'label' => __( 'Menu Icon URL', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'default' => '',
+            'depends-on' => array( 'show_in_menu' => true )
+        ),
+        'ui_icon' => array(
+            'label' => __( 'Header Icon', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'file',
+            'default' => '',
+            'file_edit_title' => 0,
+            'depends-on' => array( 'show_in_menu' => true )
+        ),
+        'ui_fields_manage' => array(
+            'label' => __( 'Admin Table Columns', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'pick',
+            'default' => array(),
+            'data' => array(),
+            'pick_format_type' => 'multi'
+        ),
+        'ui_actions_enabled' => array(
+            'label' => __( 'Actions Available', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'pick',
+            'default' => ( 1 == pods_var( 'ui_export', $pod ) ? array( 'add', 'edit', 'duplicate', 'delete', 'export' ) : array( 'add', 'edit', 'duplicate', 'delete' ) ),
+            'data' => array(
+                'add' => __( 'Add New', 'pods' ),
+                'edit' => __( 'Edit', 'pods' ),
+                'duplicate' => __( 'Duplicate', 'pods' ),
+                'delete' => __( 'Delete', 'pods' ),
+                'reorder' => __( 'Reorder', 'pods' ),
+                'export' => __( 'Export', 'pods' )
+            ),
+            'pick_format_type' => 'multi',
+            'dependency' => true
+        ),
+        'ui_reorder_field' => array(
+            'label' => __( 'Reorder Field', 'pods' ),
+            'help' => __( 'This is the field that will be reordered on, it should be numeric.', 'pods' ),
+            'type' => 'text',
+            'default' => 'menu_order',
+            'depends-on' => array( 'ui_actions_enabled' => 'reorder' )
+        )
     )
 );
+
+if ( $pods_ui ) {
+    if ( isset( $pod[ 'fields' ][ pods_var_raw( 'pod_index', $pod ) ] ) )
+        $advanced_options[ 'ui_options' ][ 'ui_fields_manage' ][ 'default' ][] = pods_var_raw( 'pod_index', $pod );
+
+    if ( isset( $pod[ 'fields' ][ 'modified' ] ) )
+        $advanced_options[ 'ui_options' ][ 'ui_fields_manage' ][ 'default' ][] = 'modified';
+
+    foreach ( $pod[ 'fields' ] as $field ) {
+        $type = '';
+
+        if ( isset( $field_types[ $field[ 'type' ] ] ) )
+            $type = ' <small>(' . $field_types[ $field[ 'type' ] ][ 'label' ] . ')</small>';
+
+        $advanced_options[ 'ui_options' ][ 'ui_fields_manage' ][ 'data' ][ $field[ 'name' ] ] = $field[ 'label' ] . $type;
+    }
+}
+/*
+
+    <div class="pods-field-option">
+        <?php echo PodsForm::label( 'ui_export', __( 'Enable Export from Management UI?', 'pods' ), __( 'help', 'pods' ) ); ?>
+        <?php echo PodsForm::field( 'ui_export', pods_var_raw( 'ui_export', $pod ), 'boolean', array( 'dependency' => true, 'boolean_yes_label' => '' ) ); ?>
+    </div>
+    <div class="pods-field-option">
+        <?php echo PodsForm::label( 'show_in_menu', __( 'Show Admin Menu in Dashboard', 'pods' ), __( 'help', 'pods' ) ); ?>
+        <?php echo PodsForm::field( 'show_in_menu', pods_var_raw( 'show_in_menu', $pod ), 'boolean', array( 'dependency' => true, 'boolean_yes_label' => '' ) ); ?>
+    </div>
+    <div class="pods-field-option-container pods-depends-on pods-depends-on-show-in-menu">
+        <div class="pods-field-option">
+            <?php echo PodsForm::label( 'menu_name', __( 'Menu Name', 'pods' ), __( 'help', 'pods' ) ); ?>
+            <?php echo PodsForm::field( 'menu_name', pods_var_raw( 'menu_name', $pod ), 'text' ); ?>
+        </div>
+        <div class="pods-field-option">
+            <?php echo PodsForm::label( 'menu_icon', __( 'Menu Icon', 'pods' ), __( 'help', 'pods' ) ); ?>
+            <?php echo PodsForm::field( 'menu_icon', pods_var_raw( 'menu_icon', $pod ), 'text' ); ?>
+        </div>
+    </div>
+ */
 
 if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) ) < 1 ) {
     $fields = $advanced_options[ 'cpt_options' ];
@@ -1004,26 +1116,8 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
 elseif ( 'pod' == pods_var( 'type', $pod ) ) {
 ?>
     <div class="pods-field-option">
-        <?php echo PodsForm::label( 'ui_export', __( 'Enable Export from Management UI?', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'ui_export', pods_var_raw( 'ui_export', $pod ), 'boolean', array( 'dependency' => true, 'boolean_yes_label' => '' ) ); ?>
-    </div>
-    <div class="pods-field-option">
         <?php echo PodsForm::label( 'detail_url', __( 'Detail Page URL', 'pods' ), __( 'help', 'pods' ) ); ?>
         <?php echo PodsForm::field( 'detail_url', pods_var_raw( 'detail_url', $pod ), 'text' ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'show_in_menu', __( 'Show Admin Menu in Dashboard', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'show_in_menu', pods_var_raw( 'show_in_menu', $pod ), 'boolean', array( 'dependency' => true, 'boolean_yes_label' => '' ) ); ?>
-    </div>
-    <div class="pods-field-option-container pods-depends-on pods-depends-on-show-in-menu">
-        <div class="pods-field-option">
-            <?php echo PodsForm::label( 'menu_name', __( 'Menu Name', 'pods' ), __( 'help', 'pods' ) ); ?>
-            <?php echo PodsForm::field( 'menu_name', pods_var_raw( 'menu_name', $pod ), 'text' ); ?>
-        </div>
-        <div class="pods-field-option">
-            <?php echo PodsForm::label( 'menu_icon', __( 'Menu Icon', 'pods' ), __( 'help', 'pods' ) ); ?>
-            <?php echo PodsForm::field( 'menu_icon', pods_var_raw( 'menu_icon', $pod ), 'text' ); ?>
-        </div>
     </div>
 
     <?php
@@ -1111,7 +1205,23 @@ elseif ( 'settings' == pods_var( 'type', $pod ) ) {
 }
 ?>
 </div>
-<?php } ?>
+<?php
+}
+
+if ( $pods_ui ) {
+?>
+<div id="pods-ui" class="pods-nav-tab pods-manage-field pods-dependency">
+<?php
+    $fields = $advanced_options[ 'ui_options' ];
+    $field_options = PodsForm::fields_setup( $fields );
+    $field = $pod;
+
+    include PODS_DIR . 'ui/admin/field-option.php';
+?>
+</div>
+<?php
+}
+?>
 </div>
 <!-- /#post-body-content -->
 

@@ -721,25 +721,33 @@
                         var $dependent_el = $( this );
 
                         if ( $dependent_el.parent().is( ':visible' ) ) {
-                            if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) ) {
-                                if ( $dependent_el.is( 'tr' ) )
-                                    $dependent_el.show().addClass( 'pods-dependent-visible' );
-                                else
-                                    $dependent_el.slideDown().addClass( 'pods-dependent-visible' );
+                            if ( $field.is( 'input[type=checkbox]' ) ) {
+                                if ( $field.is( ':checked' ) && ( 1 == $field.val() || $dependent_el.is( dependent_specific ) ) ) {
+                                    if ( $dependent_el.is( 'tr' ) )
+                                        $dependent_el.show().addClass( 'pods-dependent-visible' );
+                                    else
+                                        $dependent_el.slideDown().addClass( 'pods-dependent-visible' );
 
-                                $dependent_el.find( '.pods-dependency .pods-depends-on' ).hide();
-                                $dependent_el.find( '.pods-dependency .pods-excludes-on' ).hide();
+                                    $dependent_el.find( '.pods-dependency .pods-depends-on' ).hide();
+                                    $dependent_el.find( '.pods-dependency .pods-excludes-on' ).hide();
 
-                                $dependent_el.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
-                                    $( this ).trigger( 'change' );
-                                } );
+                                    $dependent_el.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
+                                        $( this ).trigger( 'change' );
+                                    } );
 
-                                if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
-                                    var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+                                    if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
+                                        var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
 
-                                    dependency_trigger = window[ dependency_trigger ];
+                                        dependency_trigger = window[ dependency_trigger ];
 
-                                    dependency_trigger( $dependent_el );
+                                        dependency_trigger( $dependent_el );
+                                    }
+                                }
+                                else if ( !$field.is( ':checked' ) && ( !$field.is( '.pods-dependent-multi' ) || $dependent_el.is( dependent_specific ) ) ) {
+                                    if ( $dependent_el.is( 'tr' ) )
+                                        $dependent_el.hide().removeClass( 'pods-dependent-visible' );
+                                    else
+                                        $dependent_el.slideUp().removeClass( 'pods-dependent-visible' );
                                 }
                             }
                             else if ( $dependent_el.is( dependent_specific ) ) {
@@ -771,22 +779,26 @@
                             }
                         }
                         else {
-                            if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) ) {
-                                $dependent_el.show().addClass( 'pods-dependent-visible' );
-                                $dependent_el.find( '.pods-dependency .pods-depends-on' ).hide();
-                                $dependent_el.find( '.pods-dependency .pods-excludes-on' ).hide();
+                            if ( $field.is( 'input[type=checkbox]' ) ) {
+                                if ( $field.is( ':checked' ) && ( 1 == $field.val() || $dependent_el.is( dependent_specific ) ) ) {
+                                    $dependent_el.show().addClass( 'pods-dependent-visible' );
+                                    $dependent_el.find( '.pods-dependency .pods-depends-on' ).hide();
+                                    $dependent_el.find( '.pods-dependency .pods-excludes-on' ).hide();
 
-                                $dependent_el.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
-                                    $( this ).trigger( 'change' );
-                                } );
+                                    $dependent_el.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
+                                        $( this ).trigger( 'change' );
+                                    } );
 
-                                if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
-                                    var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+                                    if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
+                                        var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
 
-                                    dependency_trigger = window[ dependency_trigger ];
+                                        dependency_trigger = window[ dependency_trigger ];
 
-                                    dependency_trigger( $dependent_el );
+                                        dependency_trigger( $dependent_el );
+                                    }
                                 }
+                                else if ( !$field.is( ':checked' ) && ( !$field.is( '.pods-dependent-multi' ) || $dependent_el.is( dependent_specific ) ) )
+                                    $dependent_el.hide().removeClass( 'pods-dependent-visible' );
                             }
                             else if ( $dependent_el.is( dependent_specific ) ) {
                                 $dependent_el.show().addClass( 'pods-dependent-visible' );
@@ -817,11 +829,34 @@
                         var $dependent_el = $( this );
 
                         if ( $dependent_el.parent().is( ':visible' ) ) {
-                            if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) ) {
-                                if ( $dependent_el.is( 'tr' ) )
-                                    $dependent_el.hide().removeClass( 'pods-dependent-visible' );
-                                else
-                                    $dependent_el.slideUp().removeClass( 'pods-dependent-visible' );
+                            if ( $field.is( 'input[type=checkbox]' ) ) {
+                                if ( $field.is( ':checked' ) && ( 1 == $field.val() || $dependent_el.is( exclude_specific ) ) ) {
+                                    if ( $dependent_el.is( 'tr' ) )
+                                        $dependent_el.hide().removeClass( 'pods-dependent-visible' );
+                                    else
+                                        $dependent_el.slideUp().removeClass( 'pods-dependent-visible' );
+                                }
+                                else if ( !$field.is( ':checked' ) && ( !$field.is( '.pods-dependent-multi' ) || $dependent_el.is( exclude_specific ) ) ) {
+                                    if ( $dependent_el.is( 'tr' ) )
+                                        $dependent_el.show().addClass( 'pods-dependent-visible' );
+                                    else
+                                        $dependent_el.slideDown().addClass( 'pods-dependent-visible' );
+
+                                    $dependent_el.find( '.pods-dependency .pods-depends-on' ).hide();
+                                    $dependent_el.find( '.pods-dependency .pods-excludes-on' ).hide();
+
+                                    $dependent_el.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
+                                        $( this ).trigger( 'change' );
+                                    } );
+
+                                    if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
+                                        var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+
+                                        dependency_trigger = window[ dependency_trigger ];
+
+                                        dependency_trigger( $dependent_el );
+                                    }
+                                }
                             }
                             else if ( $dependent_el.is( exclude_specific ) ) {
                                 if ( $dependent_el.is( 'tr' ) )
@@ -852,8 +887,27 @@
                             }
                         }
                         else {
-                            if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) )
-                                $dependent_el.hide().removeClass( 'pods-dependent-visible' );
+                            if ( $field.is( 'input[type=checkbox]' ) ) {
+                                if ( $field.is( ':checked' ) && ( 1 == $field.val() || $dependent_el.is( exclude_specific ) ) )
+                                    $dependent_el.hide().removeClass( 'pods-dependent-visible' );
+                                else if ( !$field.is( ':checked' ) && ( !$field.is( '.pods-dependent-multi' ) || $dependent_el.is( exclude_specific ) ) ) {
+                                    $dependent_el.show().addClass( 'pods-dependent-visible' );
+                                    $dependent_el.find( '.pods-dependency .pods-depends-on' ).hide();
+                                    $dependent_el.find( '.pods-dependency .pods-excludes-on' ).hide();
+
+                                    $dependent_el.find( '.pods-dependency .pods-dependent-toggle' ).each( function () {
+                                        $( this ).trigger( 'change' );
+                                    } );
+
+                                    if ( $dependent_el.is( '[data-dependency-trigger]' ) ) {
+                                        var dependency_trigger = $dependent_el.data( 'dependency-trigger' );
+
+                                        dependency_trigger = window[ dependency_trigger ];
+
+                                        dependency_trigger( $dependent_el );
+                                    }
+                                }
+                            }
                             else if ( $dependent_el.is( exclude_specific ) )
                                 $dependent_el.hide().removeClass( 'pods-dependent-visible' );
                             else {
@@ -961,7 +1015,7 @@
                         var $dependent_el = $( this );
 
                         if ( $dependent_el.parent().is( ':visible' ) ) {
-                            if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) ) {
+                            if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) && 1 == $field.val() ) {
                                 if ( $dependent_el.is( 'tr' ) )
                                     $dependent_el.show().addClass( 'pods-dependent-visible' );
                                 else
@@ -995,7 +1049,7 @@
                             }
                         }
                         else {
-                            if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) ) {
+                            if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) && 1 == $field.val() ) {
                                 $dependent_el.show().addClass( 'pods-dependent-visible' );
                                 $dependent_el.find( '.pods-dependency-tabs .pods-depends-on' ).hide();
                                 $dependent_el.find( '.pods-dependency-tabs .pods-excludes-on' ).hide();
@@ -1025,7 +1079,7 @@
                         var $dependent_el = $( this );
 
                         if ( $dependent_el.parent().is( ':visible' ) ) {
-                            if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) ) {
+                            if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) && 1 == $field.val() ) {
                                 if ( $dependent_el.is( 'tr' ) )
                                     $dependent_el.hide().removeClass( 'pods-dependent-visible' );
                                 else
@@ -1052,7 +1106,7 @@
                             }
                         }
                         else {
-                            if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) )
+                            if ( $field.is( 'input[type=checkbox]' ) && $field.is( ':checked' ) && 1 == $field.val() )
                                 $dependent_el.hide().removeClass( 'pods-dependent-visible' );
                             else if ( $dependent_el.is( exclude_specific ) )
                                 $dependent_el.hide().removeClass( 'pods-dependent-visible' );

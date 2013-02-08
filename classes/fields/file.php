@@ -80,7 +80,7 @@ class PodsField_File extends PodsField {
             'file_attachment_tab' => array(
                 'label' => __( 'Attachments Default Tab', 'pods' ),
                 'depends-on' => array( 'file_uploader' => 'attachment' ),
-                'default' => 'type',
+                'default' => 'upload',
                 'type' => 'pick',
                 'data' => array(
                     // keys MUST match WP's router names
@@ -169,6 +169,7 @@ class PodsField_File extends PodsField {
             unset( $options[ 'file_modal_title' ] );
             unset( $options[ 'file_modal_add_button' ] );
 
+            $options[ 'file_attachment_tab' ][ 'default' ] = 'type';
             $options[ 'file_attachment_tab' ][ 'data' ] = array(
                 'type' => __( 'Upload File', 'pods' ),
                 'library' => __( 'Media Library', 'pods' )

@@ -39,6 +39,9 @@ if ( 0 < $data_count ) {
 
         $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 
+        if ( 1 < $data_count && false === strpos( $primary_name, '[]' ) )
+            $attributes[ 'class' ] .= ' pods-dependent-multi';
+
         if ( strlen( $label ) < 1 )
             $attributes[ 'class' ] .= ' pods-form-ui-no-label';
 

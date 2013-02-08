@@ -1,6 +1,22 @@
 <?php
     $field = array_merge( $field_settings[ 'field_defaults' ], $field );
 
+    // Migrate pick object when saving
+    if ( 'pod' == pods_var( 'pick_object', $field ) ) {
+        if ( isset( PodsMeta::$post_types[ $field[ 'pick_val' ] ] ) )
+            $field[ 'pick_object' ] = 'post_type';
+        elseif ( isset( PodsMeta::$taxonomies[ $field[ 'pick_val' ] ] ) )
+            $field[ 'pick_object' ] = 'taxonomy';
+        elseif ( 'user' == $field[ 'pick_val' ] && !empty( PodsMeta::$user ) ) {
+            $field[ 'pick_object' ] = 'user';
+            $field[ 'pick_val' ] = '';
+        }
+        elseif ( 'comment' == $field[ 'pick_val' ] && !empty( PodsMeta::$comment ) ) {
+            $field[ 'pick_object' ] = 'comment';
+            $field[ 'pick_val' ] = '';
+        }
+    }
+
     // Set pick object
     $field[ 'pick_object' ] = trim( pods_var( 'pick_object', $field ) . '-' . pods_var( 'pick_val', $field ), '-' );
 

@@ -92,9 +92,9 @@ class PodsAPI {
             $meta = pods_unsanitize( $meta );
         }
 
-        if ( in_array( $object_type, array( 'post', 'user', 'comment', 'setting' ) ) )
+        if ( in_array( $object_type, array( 'post', 'user', 'comment', 'settings' ) ) )
             return call_user_func( array( $this, 'save_' . $object_type ), $data, $meta, $strict, false );
-        elseif ( 'setting' == $object_type )
+        elseif ( 'settings' == $object_type )
             return $this->save_setting( $data, false );
 
         return false;
@@ -483,7 +483,7 @@ class PodsAPI {
         if ( !is_array( $option_data ) || empty( $option_data ) )
             return pods_error( __( 'Setting data is required but is either invalid or empty', 'pods' ), $this );
 
-        pods_no_conflict_on( 'setting' );
+        pods_no_conflict_on( 'settings' );
 
         if ( $sanitized )
             $option_data = pods_unsanitize( $option_data );
@@ -492,7 +492,7 @@ class PodsAPI {
             update_option( $option, $value );
         }
 
-        pods_no_conflict_off( 'setting' );
+        pods_no_conflict_off( 'settings' );
 
         return true;
     }
@@ -535,7 +535,7 @@ class PodsAPI {
                 $old_name
             ) );
         }
-        elseif ( 'setting' == $object_type ) {
+        elseif ( 'settings' == $object_type ) {
             pods_query( "UPDATE `{$wpdb->options}` SET `option_name` = REPLACE( `option_name`, %s, %s ) WHERE `option_name` LIKE '" . like_escape( $old_name ) . "_%'", array(
                 $new_name . '_',
                 $old_name . '_'
@@ -1020,7 +1020,7 @@ class PodsAPI {
                     $pod_params[ 'storage' ] = 'meta';
                 }
             }
-            elseif ( 'setting' == $pod_params[ 'type' ] ) {
+            elseif ( 'settings' == $pod_params[ 'type' ] ) {
                 if ( empty( $params->create_setting_name ) )
                     return pods_error( 'Please enter a Name for this Pod', $this );
 
@@ -1221,7 +1221,7 @@ class PodsAPI {
             }
         }
 
-        if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS && !in_array( $pod[ 'type' ], array( 'setting', 'table' ) ) ) {
+        if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS && !in_array( $pod[ 'type' ], array( 'settings', 'table' ) ) ) {
             if ( 'pod' == $pod[ 'type' ] )
                 $pod[ 'type' ] = 'post_type';
 
@@ -1400,8 +1400,8 @@ class PodsAPI {
             $this->rename_wp_object_type( 'taxonomy', $old_name, $params->name );
         elseif ( 'comment' == $pod[ 'type' ] && empty( $pod[ 'object' ] ) && null !== $old_name && $old_name != $params->name && $db )
             $this->rename_wp_object_type( 'comment', $old_name, $params->name );
-        elseif ( 'setting' == $pod[ 'type' ] && null !== $old_name && $old_name != $params->name && $db )
-            $this->rename_wp_object_type( 'setting', $old_name, $params->name );
+        elseif ( 'settings' == $pod[ 'type' ] && null !== $old_name && $old_name != $params->name && $db )
+            $this->rename_wp_object_type( 'settings', $old_name, $params->name );
 
         // Sync any related fields if the name has changed
         if ( null !== $old_name && $old_name != $params->name && $db ) {
@@ -2749,7 +2749,7 @@ class PodsAPI {
             $object_data[ 'post_type' ] = $post_type;
         }
 
-        if ( ( 'meta' == $pod[ 'storage' ] || 'setting' == $pod[ 'type' ] ) && !in_array( $pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) ) {
+        if ( ( 'meta' == $pod[ 'storage' ] || 'settings' == $pod[ 'type' ] ) && !in_array( $pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) ) {
             if ( $allow_custom_fields && !empty( $custom_data ) )
                 $object_meta = array_merge( $custom_data, $object_meta );
 
@@ -2794,7 +2794,7 @@ class PodsAPI {
 
         $params->id = (int) $params->id;
 
-        if ( 'setting' == $pod[ 'type' ] )
+        if ( 'settings' == $pod[ 'type' ] )
             $params->id = $pod[ 'id' ];
 
         $no_conflict = pods_no_conflict_check( $pod[ 'type' ] );
@@ -2865,7 +2865,7 @@ class PodsAPI {
                         else
                             delete_metadata( $object_type, $params->id, $field, '', true );
                     }
-                    elseif ( 'setting' == $pod[ 'type' ] ) {
+                    elseif ( 'settings' == $pod[ 'type' ] ) {
                         if ( 'pick' != $type || !in_array( $fields[ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
                             if ( !empty( $values ) )
                                 update_option( $pod[ 'name' ] . '_' . $field[ 'name' ], $values );
@@ -2941,7 +2941,7 @@ class PodsAPI {
                                         else
                                             delete_metadata( $object_type, $id, '_pods_' . $related_field, '', true );
                                     }
-                                    elseif ( 'setting' == $pod[ 'type' ] ) {
+                                    elseif ( 'settings' == $pod[ 'type' ] ) {
                                         $ids = get_option( $related_pod[ 'name' ] . '_' . $related_field );
 
                                         if ( empty( $ids ) )
@@ -4175,6 +4175,7 @@ class PodsAPI {
      * $params['limit'] string Number of Pods to return
      * $params['where'] string WHERE clause of query
      * $params['ids'] string|array IDs of Objects
+     * $params['count'] boolean Return only a count of Pods
      *
      * @param array $params An associative array of parameters
      *
@@ -4285,9 +4286,9 @@ class PodsAPI {
             $ids = false;
 
         if ( empty( $cache_key ) )
-            $cache_key = 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' );
+            $cache_key = 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) . ( ( isset( $params->count ) && $params->count ) ? '_count' : '' );
         else
-            $cache_key = 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) . '_get' . $cache_key;
+            $cache_key = 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) . ( ( isset( $params->count ) && $params->count ) ? '_count' : '' ) . '_get' . $cache_key;
 
         if ( !empty( $cache_key ) && ( 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
             $the_pods = pods_transient_get( $cache_key );
@@ -4308,10 +4309,14 @@ class PodsAPI {
             'post__in' => $ids
         ) );
 
-        foreach ( $pods as $pod ) {
-            $pod = $this->load_pod( $pod );
+        if ( isset( $params->count ) && $params->count )
+            $the_pods = count( $pods );
+        else {
+            foreach ( $pods as $pod ) {
+                $pod = $this->load_pod( $pod );
 
-            $the_pods[ $pod[ 'id' ] ] = $pod;
+                $the_pods[ $pod[ 'id' ] ] = $pod;
+            }
         }
 
         if ( did_action( 'init' ) && !empty( $cache_key ) && ( 'pods' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) )

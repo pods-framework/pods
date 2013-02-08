@@ -392,6 +392,11 @@ class PodsUI {
     );
 
     /**
+     * @var string
+     */
+    public $style = 'post_type';
+
+    /**
      * @var bool
      */
     public $save = false; // Allow custom save handling for tables that aren't Pod-based
@@ -927,6 +932,7 @@ class PodsUI {
         $options->validate( 'actions_hidden', $this->actions_hidden, 'array_merge' );
         $options->validate( 'actions_custom', $this->actions_custom, 'array_merge' );
 
+        $options->validate( 'style', $this->style );
         $options->validate( 'icon', $this->icon );
         $options->validate( 'css', $this->css );
         $options->validate( 'wpcss', $this->wpcss, 'boolean' );
@@ -1486,7 +1492,7 @@ class PodsUI {
         $singular_label = $this->item;
         $plural_label = $this->items;
 
-        if ( is_object( $this->pod ) && 'settings' == $this->pod->pod_data[ 'type' ] )
+        if ( is_object( $this->pod ) && 'settings' == $this->pod->pod_data[ 'type' ] && 'settings' == $this->style )
             pods_view( PODS_DIR . 'ui/admin/form-settings.php', compact( array_keys( get_defined_vars() ) ) );
         else
             pods_view( PODS_DIR . 'ui/admin/form.php', compact( array_keys( get_defined_vars() ) ) );

@@ -1321,7 +1321,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
             array( 'edit_comment', array( PodsInit::$meta, 'save_comment' ) )
         );
     }
-    elseif ( 'setting' == $object_type ) {
+    elseif ( 'settings' == $object_type ) {
         $no_conflict[ 'filter' ] = array();
 
         // @todo Better handle settings conflicts apart from each other

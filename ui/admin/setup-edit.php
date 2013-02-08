@@ -363,7 +363,7 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
     $advanced = true;
 elseif ( 'pod' == pods_var( 'type', $pod ) )
     $advanced = true;
-elseif ( 'setting' == pods_var( 'type', $pod ) )
+elseif ( 'settings' == pods_var( 'type', $pod ) )
     $advanced = true;
 
 if ( $advanced ) {
@@ -380,7 +380,7 @@ if ( $advanced ) {
 <div class="pods-tabbed">
 <ul class="pods-tabs">
     <?php
-    if ( strlen( pods_var( 'object', $pod ) ) < 1 && 'setting' != pods_var( 'type', $pod ) ) {
+    if ( strlen( pods_var( 'object', $pod ) ) < 1 && 'settings' != pods_var( 'type', $pod ) ) {
         ?>
         <li class="pods-tab"><a href="#pods-advanced-labels" class="pods-tab-link">Labels</a></li>
         <?php
@@ -401,10 +401,10 @@ if ( $advanced ) {
         <li class="pods-tab"><a href="#pods-advanced-options" class="pods-tab-link">Pod Options</a></li>
         <?php
     }
-    elseif ( 'setting' == pods_var( 'type', $pod ) ) {
+    elseif ( 'settings' == pods_var( 'type', $pod ) ) {
         ?>
-        <li class="pods-tab"><a href="#pods-advanced-setting-labels" class="pods-tab-link">Labels</a></li>
-        <li class="pods-tab"><a href="#pods-advanced-setting-options" class="pods-tab-link">Setting Options</a></li>
+        <li class="pods-tab"><a href="#pods-advanced-settings-labels" class="pods-tab-link">Labels</a></li>
+        <li class="pods-tab"><a href="#pods-advanced-settings-options" class="pods-tab-link">Setting Options</a></li>
         <?php
     }
     ?>
@@ -412,7 +412,7 @@ if ( $advanced ) {
 
 <div class="pods-tab-group">
 <?php
-if ( strlen( pods_var( 'object', $pod ) ) < 1 && 'setting' != pods_var( 'type', $pod ) ) {
+if ( strlen( pods_var( 'object', $pod ) ) < 1 && 'settings' != pods_var( 'type', $pod ) ) {
     ?>
 <div id="pods-advanced-labels" class="pods-tab">
     <div class="pods-field-option">
@@ -498,9 +498,9 @@ if ( strlen( pods_var( 'object', $pod ) ) < 1 && 'setting' != pods_var( 'type', 
 </div>
     <?php
 }
-elseif ( 'setting' == pods_var( 'type', $pod ) ) {
+elseif ( 'settings' == pods_var( 'type', $pod ) ) {
     ?>
-<div id="pods-advanced-setting-labels" class="pods-tab">
+<div id="pods-advanced-settings-labels" class="pods-tab">
     <div class="pods-field-option">
         <?php echo PodsForm::label( 'label', __( 'Menu Label', 'pods' ), __( 'help', 'pods' ) ); ?>
         <?php echo PodsForm::field( 'label', pods_var_raw( 'label', $pod ), 'text', array( 'text_max_length' => 30 ) ); ?>
@@ -713,7 +713,8 @@ $advanced_options = array(
             'default' => 'settings',
             'data' => array(
                 'settings' => 'Normal Settings Form',
-                'post_type' => 'Post Type UI'
+                'post_type' => 'Post Type UI',
+                'custom' => 'Custom (hook into pods_admin_ui_custom or pods_admin_ui_custom_{podname} action)'
             ),
             'dependency' => true
         ),
@@ -725,17 +726,18 @@ $advanced_options = array(
             'data' => array(
                 'settings' => 'Add to Settings menu',
                 'appearances' => 'Add to Appearances menu',
-                'top' => 'Make a new menu item below Settings'
+                'top' => 'Make a new menu item below Settings',
+                'submenu' => 'Add a submenu item to another menu'
             ),
             'dependency' => true
-        ),/*
+        ),
         'menu_position' => array(
             'label' => __( 'Menu Position', 'pods' ),
             'help' => __( 'help', 'pods' ),
             'type' => 'number',
             'default' => 0,
             'depends-on' => array( 'menu_location' => 'top' )
-        ),*/
+        ),
         'menu_icon' => array(
             'label' => __( 'Menu Icon URL', 'pods' ),
             'help' => __( 'help', 'pods' ),
@@ -1095,9 +1097,9 @@ elseif ( 'pod' == pods_var( 'type', $pod ) ) {
 </div>
 <?php
 }
-elseif ( 'setting' == pods_var( 'type', $pod ) ) {
+elseif ( 'settings' == pods_var( 'type', $pod ) ) {
     ?>
-<div id="pods-advanced-setting-options" class="pods-tab">
+<div id="pods-advanced-settings-options" class="pods-tab">
     <?php
     $fields = $advanced_options[ 'setting_options' ];
     $field_options = PodsForm::fields_setup( $fields );

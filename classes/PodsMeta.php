@@ -76,7 +76,7 @@ class PodsMeta {
         self::$media = $this->api->load_pods( array( 'type' => 'media' ) );
         self::$user = $this->api->load_pods( array( 'type' => 'user' ) );
         self::$comment = $this->api->load_pods( array( 'type' => 'comment' ) );
-        self::$settings = $this->api->load_pods( array( 'type' => 'setting' ) );
+        self::$settings = $this->api->load_pods( array( 'type' => 'settings' ) );
 
         // Handle Post Type Editor (needed for Pods core)
 
@@ -1540,7 +1540,7 @@ class PodsMeta {
     public function get_option () {
         $args = func_get_args();
 
-        array_unshift( $args, 'setting' );
+        array_unshift( $args, 'settings' );
 
         $_null = apply_filters( 'pods_meta_get_option', null, $args );
 
@@ -1620,7 +1620,7 @@ class PodsMeta {
     public function add_option () {
         $args = func_get_args();
 
-        array_unshift( $args, 'setting' );
+        array_unshift( $args, 'settings' );
 
         $_null = apply_filters( 'pods_meta_add_option', null, $args );
 
@@ -1700,7 +1700,7 @@ class PodsMeta {
     public function update_option () {
         $args = func_get_args();
 
-        array_unshift( $args, 'setting' );
+        array_unshift( $args, 'settings' );
 
         $_null = apply_filters( 'pods_meta_update_option', null, $args );
 
@@ -1780,7 +1780,7 @@ class PodsMeta {
     public function delete_option () {
         $args = func_get_args();
 
-        array_unshift( $args, 'setting' );
+        array_unshift( $args, 'settings' );
 
         $_null = apply_filters( 'pods_meta_delete_option', null, $args );
 
@@ -1811,7 +1811,7 @@ class PodsMeta {
             $objects = self::$user;
         elseif ( 'comment' == $object_type )
             $objects = self::$comment;
-        elseif ( 'setting' == $object_type )
+        elseif ( 'settings' == $object_type )
             $objects = self::$settings;
         else
             return false;
@@ -1835,7 +1835,7 @@ class PodsMeta {
         }
         elseif ( 'taxonomy' == $object_type )
             $object_name = $aux;
-        elseif ( 'setting' == $object_type )
+        elseif ( 'settings' == $object_type )
             $object = $object_id;
         else
             return false;

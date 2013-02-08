@@ -218,16 +218,16 @@ class PodsField_Boolean extends PodsField {
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         // Only allow 0 / 1
-        if ( 'no' == strtolower( $value ) )
-            $value = 0;
-        elseif ( 'yes' == strtolower( $value ) )
+        if ( 'yes' == strtolower( $value ) )
             $value = 1;
+        elseif ( 'no' == strtolower( $value ) )
+            $value = 0;
         elseif ( strtolower( pods_var_raw( 'boolean_yes_label', $options, __( 'Yes', 'pods' ), null, true ) ) == strtolower( $value ) )
-            $value = 0;
-        elseif ( strtolower( pods_var_raw( 'boolean_no_label', $options, __( 'No', 'pods' ), null, true ) ) == strtolower( $value ) )
             $value = 1;
+        elseif ( strtolower( pods_var_raw( 'boolean_no_label', $options, __( 'No', 'pods' ), null, true ) ) == strtolower( $value ) )
+            $value = 0;
         else
-            $value = ( 1 == (int) $value ? 1 : 0 );
+            $value = ( 0 == (int) $value ? 0 : 1 );
 
         return $value;
     }

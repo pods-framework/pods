@@ -637,10 +637,10 @@ class Pods {
 
                         $value = get_post_meta( $id, $params->name, $params->single );
                     }
-                    elseif ( 'user' == $this->pod_data[ 'type' ] )
-                        $value = get_user_meta( $this->id(), $params->name, $params->single );
-                    elseif ( 'comment' == $this->pod_data[ 'type' ] )
-                        $value = get_comment_meta( $this->id(), $params->name, $params->single );
+                    elseif ( in_array( $this->pod_data[ 'type' ], array( 'user', 'comment' ) ) )
+                        $value = get_metadata( $this->pod_data[ 'type' ], $this->id(), $params->name, $params->single );
+                    elseif ( 'settings' == $this->pod_data[ 'type' ] )
+                        $value = get_option( $this->pod_data[ 'name' ] . '_' . $params->name );
 
                     // Handle Simple Relationships
                     if ( $simple ) {
@@ -854,7 +854,7 @@ class Pods {
                                 if ( in_array( $table[ 'type' ], array( 'post_type', 'attachment' ) ) )
                                     $object_type = 'post';
 
-                                if ( in_array( $object_type, array( 'post', 'user', 'comment' ) ) ) {
+                                if ( in_array( $object_type, array( 'post', 'user', 'comment', 'settings' ) ) ) {
                                     $no_conflict = pods_no_conflict_check( $object_type );
 
                                     if ( !$no_conflict )
@@ -876,10 +876,12 @@ class Pods {
                                             $value[] = $item[ $field ];
                                         elseif ( in_array( $object_type, array( 'post', 'user', 'comment' ) ) )
                                             $value[] = get_metadata( $object_type, $item_id, $field, true );
+                                        elseif ( 'settings' == $object_type )
+                                            $value[] = get_option( $object . '_' . $field );
                                     }
                                 }
 
-                                if ( in_array( $object_type, array( 'post', 'user', 'comment' ) ) && !$no_conflict )
+                                if ( in_array( $object_type, array( 'post', 'user', 'comment', 'settings' ) ) && !$no_conflict )
                                     pods_no_conflict_off( $object_type );
 
                                 // Handle Simple Relationships

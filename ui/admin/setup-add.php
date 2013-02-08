@@ -96,7 +96,7 @@
                                                     'post_type' => __( 'Custom Post Type (like Posts or Pages)', 'pods' ),
                                                     'taxonomy' => __( 'Custom Taxonomy (like Categories or Tags)', 'pods' ),
                                                     'pod' => __( 'Advanced Content Type (separate from WP, blank slate, in its own table)', 'pods' ),
-                                                    'setting' => __( 'Custom Settings Page', 'pods' )
+                                                    'settings' => __( 'Custom Settings Page', 'pods' )
                                                 );
                                             }
 
@@ -121,7 +121,7 @@
                                             echo PodsForm::field( 'create_storage_taxonomy', pods_var_raw( 'create_storage_taxonomy', 'post', 'none', null, true ), 'pick', array( 'data' => $data ) );
                                         ?>
                                     </div>
-                                    <div class="pods-excludes-on pods-excludes-on-create-pod-type pods-excludes-on-create-pod-type-setting">
+                                    <div class="pods-excludes-on pods-excludes-on-create-pod-type pods-excludes-on-create-pod-type-settings">
                                         <div class="pods-field-option">
                                             <?php
                                                 echo PodsForm::label( 'create_label_plural', __( 'Plural Label', 'pods' ), __( '<h6>Plural Label</h6> This is the label for more than 1 item (Plural) that will appear throughout the WordPress admin area for managing the content.', 'pods' ) );
@@ -135,7 +135,7 @@
                                             ?>
                                         </div>
                                     </div>
-                                    <div class="pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-setting">
+                                    <div class="pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-settings">
                                         <div class="pods-field-option">
                                             <?php
                                                 echo PodsForm::label( 'create_label_menu', __( 'Menu Label', 'pods' ), __( '<h6>Menu Label</h6> This is the label that will appear throughout the WordPress admin area for your settings.', 'pods' ) );
@@ -168,7 +168,7 @@
                                     </p>
 
                                     <div class="pods-advanced">
-                                        <div class="pods-field-option pods-excludes-on pods-excludes-on-create-pod-type pods-excludes-on-create-pod-type-setting">
+                                        <div class="pods-field-option pods-excludes-on pods-excludes-on-create-pod-type pods-excludes-on-create-pod-type-settings">
                                             <?php
                                                 global $wpdb;
                                                 $max_length_name = 64;
@@ -179,7 +179,7 @@
                                                 echo PodsForm::field( 'create_name', pods_var_raw( 'create_name', 'post' ), 'db', array( 'attributes' => array( 'maxlength' => $max_length_name, 'size' => 25, 'data-sluggable' => 'create_label_plural' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
                                             ?>
                                         </div>
-                                        <div class="pods-field-option pods-depends-on-create-pod-type pods-depends-on-create-pod-type-setting">
+                                        <div class="pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-settings">
                                             <?php
                                                 global $wpdb;
                                                 $max_length_name = 64;
@@ -190,7 +190,7 @@
                                                 echo PodsForm::field( 'create_setting_name', pods_var_raw( 'create_setting_name', 'post' ), 'db', array( 'attributes' => array( 'maxlength' => $max_length_name, 'size' => 25, 'data-sluggable' => 'create_label_menu' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
                                             ?>
                                         </div>
-                                        <div class="<?php echo ( ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) ? 'hidden' : 'pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-post_type' ); ?>">
+                                        <div class="<?php echo ( ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) ? 'hidden' : 'pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-post-type' ); ?>">
                                             <?php
                                                 echo PodsForm::label( 'create_storage', __( 'Storage Type', 'pods' ), array( __( '<h6>Storage Types</h6> Table based storage will operate in a way where each field you create for your content type becomes a field in a table. Meta based storage relies upon the WordPress meta storage table for all field data.', 'pods' ), 'http://pods.io/docs/comparisons/compare-storage-types/' ) );
 
@@ -233,7 +233,7 @@
                                             echo PodsForm::field( 'extend_pod_type', pods_var_raw( 'extend_pod_type', 'post' ), 'pick', array( 'data' => $data, 'class' => 'pods-dependent-toggle' ) );
                                         ?>
                                     </div>
-                                    <div class="pods-field-option pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-post_type">
+                                    <div class="pods-field-option pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-post-type">
                                         <?php
                                             $post_types = get_post_types();
                                             $ignore = array( 'attachment', 'revision', 'nav_menu_item' );
@@ -288,7 +288,7 @@
                                         ?>
                                     </div>
 
-                                    <div class="<?php echo ( ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) ? 'hidden' : 'pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-post_type pods-depends-on-extend-pod-type-media pods-depends-on-extend-pod-type-user pods-depends-on-extend-pod-type-comment' ); ?>">
+                                    <div class="<?php echo ( ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) ? 'hidden' : 'pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-post-type pods-depends-on-extend-pod-type-media pods-depends-on-extend-pod-type-user pods-depends-on-extend-pod-type-comment' ); ?>">
                                         <p><a href="#pods-advanced" class="pods-advanced-toggle"><?php _e( 'Advanced', 'pods' ); ?> +</a></p>
 
                                         <div class="pods-advanced">

@@ -1,4 +1,3 @@
-
 <div class="wrap pods-admin">
     <div id="icon-pods" class="icon32"><br /></div>
     <form action="" method="post" class="pods-submittable pods-form pods-form-pod-<?php echo $pod->pod; ?>">
@@ -12,7 +11,7 @@
             <?php echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
             <?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $fields ) ), 'hidden' ); ?>
 
-            <table class="form-table">
+            <table class="form-table pods-manage-field">
                 <?php
                     $depends_on = false;
 

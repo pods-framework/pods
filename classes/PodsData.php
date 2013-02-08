@@ -286,7 +286,12 @@ class PodsData {
             if ( isset( $this->pod_data[ 'orderby' ] ) )
                 $this->orderby = $this->pod_data[ 'orderby' ];
 
-            if ( null !== $id && !is_array( $id ) && !is_object( $id ) ) {
+            if ( 'settings' == $this->pod_data[ 'type' ] ) {
+                $this->id = $pod;
+
+                $this->fetch( $this->id );
+            }
+            elseif ( null !== $id && !is_array( $id ) && !is_object( $id ) ) {
                 $this->id = $id;
 
                 $this->fetch( $this->id );
@@ -1541,6 +1546,16 @@ class PodsData {
 
                 $get_table_data = true;
             }
+            elseif ( 'settings' == $this->pod_data[ 'type' ] ) {
+                $this->row = array();
+
+                foreach ( $this->fields as $field ) {
+                    $this->row[ $field[ 'name' ] ] = get_option( $this->pod_data[ 'name' ] . '_' . $field[ 'name' ] );
+                }
+
+                if ( empty( $this->row ) )
+                    $this->row = false;
+            }
             else {
                 $params = array(
                     'table' => $this->table,
@@ -1564,7 +1579,7 @@ class PodsData {
                     $this->row = get_object_vars( (object) @current( (array) $this->row ) );
             }
 
-            if ( 'table' == $this->pod_data[ 'storage' ] && false !== $get_table_data && is_numeric($current_row_id)) {
+            if ( 'table' == $this->pod_data[ 'storage' ] && false !== $get_table_data && is_numeric( $current_row_id ) ) {
                 $params = array(
                     'table' => $wpdb->prefix . "pods_",
                     'where' => "`t`.`id` = {$current_row_id}",

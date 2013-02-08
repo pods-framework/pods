@@ -361,11 +361,11 @@ class PodsField_Pick extends PodsField {
     public function related_objects () {
         $related_objects = array();
 
-        foreach ( self::$related_objects as $related_object ) {
+        foreach ( self::$related_objects as $related_object_name => $related_object ) {
             if ( !isset( $related_objects[ $related_object[ 'group' ] ] ) )
                 $related_objects[ $related_object[ 'group' ] ] = array();
 
-            $related_objects[ $related_object[ 'group' ] ][] = $related_object[ 'label' ];
+            $related_objects[ $related_object[ 'group' ] ][ $related_object_name ] = $related_object[ 'label' ];
         }
 
         return (array) apply_filters( 'pods_form_ui_field_pick_related_objects', $related_objects );

@@ -223,10 +223,30 @@ global $wpdb;
 $max_length_name = 64;
 $max_length_name -= 10; // Allow for WP Multisite or prefix changes in the future
 $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
+
+$advanced = false;
+$labels = false;
+
+if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) < 1 ) ) {
+    $advanced = true;
+    $labels = true;
+}
+elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) ) < 1 ) {
+    $advanced = true;
+    $labels = true;
+}
+elseif ( 'pod' == pods_var( 'type', $pod ) ) {
+    $advanced = true;
+    $labels = true;
+}
+elseif ( 'settings' == pods_var( 'type', $pod ) ) {
+    $advanced = true;
+    $labels = true;
+}
 ?>
 <div class="wrap pods-admin">
 <div id="icon-pods" class="icon32"><br /></div>
-<form action="" method="post" class="pods-submittable">
+<form action="" method="post" class="pods-submittable pods-nav-tabbed">
 <div class="pods-submittable-fields">
     <input type="hidden" name="action" value="pods_admin" />
     <input type="hidden" name="method" value="save_pod" />
@@ -234,16 +254,7 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
     <input type="hidden" name="id" value="<?php echo (int) $pod[ 'id' ]; ?>" />
     <input type="hidden" name="old_name" value="<?php echo esc_attr( $pod[ 'name' ] ); ?>" />
 
-    <?php
-        $default = 'fields';
-
-        $tabs = array(
-            'fields' => __( 'Manage Fields', 'pods' ),
-            'advanced-options' => __( 'Advanced Options', 'pods' )
-        );
-    ?>
-
-    <h2<?php echo ( pods_developer() ? ' class="nav-tab-wrapper"' : '' ); ?>>
+    <h2>
         Edit Pod:
         <span class="pods-sluggable">
             <span class="pods-slug">
@@ -261,25 +272,43 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
                 <input type="button" class="save-button button" value="OK" /> <a class="cancel" href="#cancel-edit">Cancel</a>
             </span>
         </span>
+    </h2>
 
-        <?php
-            if ( pods_developer() ) {
+    <?php
+        if ( ( $labels || $advanced ) ) {
+            $default = 'fields';
+
+            $tabs = array(
+                'pods-manage-fields' => __( 'Manage Fields', 'pods' )
+            );
+
+            if ( $labels )
+                $tabs[ 'pods-labels' ] = __( 'Labels', 'pods' );
+
+            if ( $advanced )
+                $tabs[ 'pods-advanced' ] = __( 'Advanced Options', 'pods' );
+    ?>
+
+        <h2 class="nav-tab-wrapper pods-nav-tabs">
+            <?php
                 foreach ( $tabs as $tab => $label ) {
                     $class = '';
 
-                    if ( $tab == pods_var( 'tab', 'get', $default ) )
+                    if ( $tab == $default )
                         $class = ' nav-tab-active';
 
                     $url = pods_var_update( array( 'tab' => $tab ), array( 'page', 'id', 'action' ) );
-        ?>
-            <a href="<?php echo $url; ?>" class="nav-tab<?php echo $class; ?>">
-                <?php echo $label; ?>
-            </a>
-        <?php
+            ?>
+                <a href="#<?php echo $tab; ?>" class="nav-tab<?php echo $class; ?> pods-nav-tab-link">
+                    <?php echo $label; ?>
+                </a>
+            <?php
                 }
-            }
-        ?>
-    </h2>
+            ?>
+        </h2>
+    <?php
+        }
+    ?>
 </div>
 
 <?php
@@ -299,155 +328,98 @@ if ( isset( $_GET[ 'do' ] ) ) {
 <img src="<?php echo PODS_URL; ?>ui/images/pods-logo-notext-rgb-transparent.png" class="pods-leaf-watermark-right" />
 <!-- /inner-sidebar -->
 <div id="post-body" class="meta-box-holder columns-2">
-<div id="post-body-content">
+<div id="post-body-content" class="pods-nav-tab-group">
 <?php
 if ( 'none' != pods_var( 'storage', $pod, 'none', null, true ) || 'settings' == $pod[ 'type' ] ) {
     ?>
-<p class="pods-manage-row-add pods-float-right">
-    <a href="#add-field" class="button-primary"><?php _e( 'Add Field', 'pods' ); ?></a>
-</p>
+<div id="pods-manage-fields" class="pods-nav-tab">
+    <p class="pods-manage-row-add pods-float-right">
+        <a href="#add-field" class="button-primary"><?php _e( 'Add Field', 'pods' ); ?></a>
+    </p>
 
-<h2>Manage Fields</h2>
+    <!-- pods table -->
+    <table class="widefat fixed pages" cellspacing="0">
+        <thead>
+            <tr>
+                <th scope="col" id="cb" class="manage-column field-cb check-column">
+                    <span>&nbsp;</span>
+                </th>
+                <th scope="col" id="label" class="manage-column field-label">
+                    <span>Label<?php pods_help( __( "<h6>Label</h6>The label is the descriptive name to identify the Pod field.", 'pods' ) ); ?></span>
+                </th>
+                <th scope="col" id="machine-name" class="manage-column field-machine-name">
+                    <span>Name<?php pods_help( __( "<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically.", 'pods' ) ); ?></span>
+                </th>
+                <th scope="col" id="field-type" class="manage-column field-field-type">
+                    <span>Field Type<?php pods_help( __( "<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc.", 'pods' ) ); ?></span>
+                </th>
+                <!--
+                <th scope="col" id="comment" class="manage-column field-comment">
+                    <span>Comment</span>
+                </th>-->
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th scope="col" class="manage-column field-cb check-column">
+                    <span>&nbsp;</span>
+                </th>
+                <th scope="col" class="manage-column field-label">
+                    <span>Label<?php pods_help( __( "<h6>Label</h6>The label is the descriptive name to identify the Pod field.", 'pods' ) ); ?></span>
+                </th>
+                <th scope="col" class="manage-column field-machine-name">
+                    <span>Name<?php pods_help( __( "<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically.", 'pods' ) ); ?></span>
+                </th>
+                <th scope="col" class="manage-column field-field-type">
+                    <span>Field Type<?php pods_help( __( "<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc.", 'pods' ) ); ?></span>
+                </th>
+                <!--
+                <th scope="col" id="comment" class="manage-column field-comment">
+                    <span>Comment</span>
+                </th>-->
+            </tr>
+        </tfoot>
+        <tbody class="pods-manage-list">
+            <?php
+            // Empty Row for Flexible functionality
+            $pods_i = '--1';
 
-<!-- pods table -->
-<table class="widefat fixed pages" cellspacing="0">
-    <thead>
-        <tr>
-            <th scope="col" id="cb" class="manage-column field-cb check-column">
-                <span>&nbsp;</span>
-            </th>
-            <th scope="col" id="label" class="manage-column field-label">
-                <span>Label<?php pods_help( __( "<h6>Label</h6>The label is the descriptive name to identify the Pod field.", 'pods' ) ); ?></span>
-            </th>
-            <th scope="col" id="machine-name" class="manage-column field-machine-name">
-                <span>Name<?php pods_help( __( "<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically.", 'pods' ) ); ?></span>
-            </th>
-            <th scope="col" id="field-type" class="manage-column field-field-type">
-                <span>Field Type<?php pods_help( __( "<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc.", 'pods' ) ); ?></span>
-            </th>
-            <!--
-            <th scope="col" id="comment" class="manage-column field-comment">
-                <span>Comment</span>
-            </th>-->
-        </tr>
-    </thead>
-    <tfoot>
-        <tr>
-            <th scope="col" class="manage-column field-cb check-column">
-                <span>&nbsp;</span>
-            </th>
-            <th scope="col" class="manage-column field-label">
-                <span>Label<?php pods_help( __( "<h6>Label</h6>The label is the descriptive name to identify the Pod field.", 'pods' ) ); ?></span>
-            </th>
-            <th scope="col" class="manage-column field-machine-name">
-                <span>Name<?php pods_help( __( "<h6>Name</h6>The name attribute is what is used to identify and access the Pod field programatically.", 'pods' ) ); ?></span>
-            </th>
-            <th scope="col" class="manage-column field-field-type">
-                <span>Field Type<?php pods_help( __( "<h6>Field Types</h6>Field types are used to determine what kind of data will be stored in the Pod.  They can range from, dates, text, files, etc.", 'pods' ) ); ?></span>
-            </th>
-            <!--
-            <th scope="col" id="comment" class="manage-column field-comment">
-                <span>Comment</span>
-            </th>-->
-        </tr>
-    </tfoot>
-    <tbody class="pods-manage-list">
-        <?php
-        // Empty Row for Flexible functionality
-        $pods_i = '--1';
+            $field = array(
+                'id' => '__1',
+                'name' => '',
+                'label' => '',
+                'type' => 'text'
+            );
 
-        $field = array(
-            'id' => '__1',
-            'name' => '',
-            'label' => '',
-            'type' => 'text'
-        );
+            include PODS_DIR . 'ui/admin/setup-edit-field-fluid.php';
 
-        include PODS_DIR . 'ui/admin/setup-edit-field-fluid.php';
+            $pods_i = 1;
 
-        $pods_i = 1;
+            foreach ( $pod[ 'fields' ] as $field ) {
+                include PODS_DIR . 'ui/admin/setup-edit-field.php';
 
-        foreach ( $pod[ 'fields' ] as $field ) {
-            include PODS_DIR . 'ui/admin/setup-edit-field.php';
-
-            $pods_i++;
-        }
-        ?>
-        <tr class="no-items<?php echo ( 1 < $pods_i ? ' hidden' : '' ); ?>">
-            <td class="colspanchange" colspan="4">No fields have been added yet</td>
-        </tr>
-    </tbody>
-</table>
-<!-- /pods table -->
-<p class="pods-manage-row-add">
-    <a href="#add-field" class="button-primary"><?php _e( 'Add Field', 'pods' ); ?></a>
-</p>
-    <?php
-    $closed = ' closed';
-}
-else
-    $closed = ' pods-toggled-only';
-
-$advanced = false;
-
-if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) < 1 ) )
-    $advanced = true;
-elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) ) < 1 )
-    $advanced = true;
-elseif ( 'pod' == pods_var( 'type', $pod ) )
-    $advanced = true;
-elseif ( 'settings' == pods_var( 'type', $pod ) )
-    $advanced = true;
-
-if ( $advanced ) {
-?>
-
-<div id="pods-advanced" class="pods-toggled postbox pods-submittable-fields<?php echo $closed; ?>">
-<div class="handlediv" title="Click to toggle">
-    <br />
+                $pods_i++;
+            }
+            ?>
+            <tr class="no-items<?php echo ( 1 < $pods_i ? ' hidden' : '' ); ?>">
+                <td class="colspanchange" colspan="4">No fields have been added yet</td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- /pods table -->
+    <p class="pods-manage-row-add">
+        <a href="#add-field" class="button-primary"><?php _e( 'Add Field', 'pods' ); ?></a>
+    </p>
 </div>
-<h3><span>Advanced Options</span></h3>
-
-<div class="inside pods-form">
-<div class="pods-manage-field pods-dependency">
-<div class="pods-tabbed">
-<ul class="pods-tabs">
     <?php
-    if ( strlen( pods_var( 'object', $pod ) ) < 1 && 'settings' != pods_var( 'type', $pod ) ) {
-        ?>
-        <li class="pods-tab"><a href="#pods-advanced-labels" class="pods-tab-link">Labels</a></li>
-        <?php
-    }
+}
 
-    if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) ) < 1 ) {
-        ?>
-        <li class="pods-tab"><a href="#pods-advanced-post-type-options" class="pods-tab-link">Post Type Options</a></li>
-        <?php
-    }
-    elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) ) < 1 ) {
-        ?>
-        <li class="pods-tab"><a href="#pods-advanced-taxonomy-options" class="pods-tab-link">Taxonomy Options</a></li>
-        <?php
-    }
-    elseif ( 'pod' == pods_var( 'type', $pod ) ) {
-        ?>
-        <li class="pods-tab"><a href="#pods-advanced-options" class="pods-tab-link">Pod Options</a></li>
-        <?php
-    }
-    elseif ( 'settings' == pods_var( 'type', $pod ) ) {
-        ?>
-        <li class="pods-tab"><a href="#pods-advanced-settings-labels" class="pods-tab-link">Labels</a></li>
-        <li class="pods-tab"><a href="#pods-advanced-settings-options" class="pods-tab-link">Setting Options</a></li>
-        <?php
-    }
-    ?>
-</ul>
-
-<div class="pods-tab-group">
+if ( $labels ) {
+?>
+<div id="pods-labels" class="pods-nav-tab pods-manage-field pods-dependency">
 <?php
 if ( strlen( pods_var( 'object', $pod ) ) < 1 && 'settings' != pods_var( 'type', $pod ) ) {
     ?>
-<div id="pods-advanced-labels" class="pods-tab">
     <div class="pods-field-option">
         <?php echo PodsForm::label( 'label', __( 'Label', 'pods' ), __( 'help', 'pods' ) ); ?>
         <?php echo PodsForm::field( 'label', pods_var_raw( 'label', $pod ), 'text', array( 'text_max_length' => 30 ) ); ?>
@@ -528,12 +500,10 @@ if ( strlen( pods_var( 'object', $pod ) ) < 1 && 'settings' != pods_var( 'type',
         <?php echo PodsForm::label( 'label_choose_from_the_most_used', __( 'Choose from the most used', 'pods' ), __( 'help', 'pods' ) ); ?>
         <?php echo PodsForm::field( 'label_choose_from_the_most_used', pods_var_raw( 'label_choose_from_the_most_used', $pod ), 'text' ); ?>
     </div>
-</div>
     <?php
 }
 elseif ( 'settings' == pods_var( 'type', $pod ) ) {
     ?>
-<div id="pods-advanced-settings-labels" class="pods-tab">
     <div class="pods-field-option">
         <?php echo PodsForm::label( 'label', __( 'Page Title', 'pods' ), __( 'help', 'pods' ) ); ?>
         <?php echo PodsForm::field( 'label', pods_var_raw( 'label', $pod ), 'text', array( 'text_max_length' => 30 ) ); ?>
@@ -542,10 +512,16 @@ elseif ( 'settings' == pods_var( 'type', $pod ) ) {
         <?php echo PodsForm::label( 'menu_name', __( 'Menu Name', 'pods' ), __( 'help', 'pods' ) ); ?>
         <?php echo PodsForm::field( 'menu_name', pods_var_raw( 'menu_name', $pod, pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', pods_var_raw( 'name', $pod ) ) ) ) ), 'text', array( 'text_max_length' => 30 ) ); ?>
     </div>
-</div>
     <?php
 }
 ?>
+</div>
+<?php
+}
+
+if ( $advanced ) {
+?>
+<div id="pods-advanced" class="pods-nav-tab pods-manage-field pods-dependency">
 <?php
 $advanced_options = array(
     'cpt_options' => array(
@@ -788,9 +764,6 @@ $advanced_options = array(
 );
 
 if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) ) < 1 ) {
-    ?>
-<div id="pods-advanced-post-type-options" class="pods-tab">
-    <?php
     $fields = $advanced_options[ 'cpt_options' ];
     $field_options = PodsForm::fields_setup( $fields );
     $field = $pod;
@@ -906,12 +879,10 @@ if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod
             </ul>
         </div>
     </div>
-</div>
     <?php
 }
 elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) ) < 1 ) {
     ?>
-<div id="pods-advanced-taxonomy-options" class="pods-tab">
     <div class="pods-field-option">
         <?php echo PodsForm::label( 'public', __( 'Public', 'pods' ), __( 'help', 'pods' ) ); ?>
         <?php echo PodsForm::field( 'public', pods_var_raw( 'public', $pod, true ), 'boolean', array( 'boolean_yes_label' => '' ) ); ?>
@@ -1028,12 +999,10 @@ elseif ( 'taxonomy' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $
             </ul>
         </div>
     </div>
-</div>
     <?php
 }
 elseif ( 'pod' == pods_var( 'type', $pod ) ) {
 ?>
-<div id="pods-advanced-options" class="pods-tab">
     <div class="pods-field-option">
         <?php echo PodsForm::label( 'ui_export', __( 'Enable Export from Management UI?', 'pods' ), __( 'help', 'pods' ) ); ?>
         <?php echo PodsForm::field( 'ui_export', pods_var_raw( 'ui_export', $pod ), 'boolean', array( 'dependency' => true, 'boolean_yes_label' => '' ) ); ?>
@@ -1132,31 +1101,16 @@ elseif ( 'pod' == pods_var( 'type', $pod ) ) {
     </div>
     <?php
     }
-    ?>
-</div>
-<?php
 }
 elseif ( 'settings' == pods_var( 'type', $pod ) ) {
-    ?>
-<div id="pods-advanced-settings-options" class="pods-tab">
-    <?php
     $fields = $advanced_options[ 'setting_options' ];
     $field_options = PodsForm::fields_setup( $fields );
     $field = $pod;
 
     include PODS_DIR . 'ui/admin/field-option.php';
-    ?>
-</div>
-<?php
 }
 ?>
 </div>
-</div>
-</div>
-</div>
-<!-- /inside -->
-</div>
-<!-- /pods-pod-advanced-settings -->
 <?php } ?>
 </div>
 <!-- /#post-body-content -->
@@ -1239,6 +1193,7 @@ elseif ( 'settings' == pods_var( 'type', $pod ) ) {
         $( document ).Pods( 'collapsible', $( 'tbody.pods-manage-list tr.flexible-row div.pods-manage-field' ) );
         $( document ).Pods( 'toggled' );
         $( document ).Pods( 'tabbed' );
+        $( document ).Pods( 'nav_tabbed' );
         $( document ).Pods( 'dependency' );
         $( document ).Pods( 'flexible', $( 'tbody.pods-manage-list tr.flexible-row' ) );
         $( document ).Pods( 'confirm' );

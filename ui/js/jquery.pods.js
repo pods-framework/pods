@@ -450,6 +450,64 @@
                     } )
                 } );
             },
+            nav_tabbed : function () {
+                $( '.pods-admin' ).on( 'click', '.pods-nav-tabs a.pods-nav-tab-link', function ( e ) {
+                    $( this ).css( 'cursor', 'default' );
+                    $( this ).prop( 'disabled', true );
+
+                    var tab_class = '.pods-nav-tabbed';
+
+                    if ( 'undefined' != typeof $( this ).closest( '.pods-nav-tabs' ).data( 'tabbed' ) )
+                        tab_class = $( this ).closest( '.pods-nav-tabs' ).data( 'tabbed' );
+
+                    var $tabbed = $( this ).closest( tab_class );
+                    var tab_hash = this.hash;
+
+                    console.log( tab_hash );
+
+                    if ( $tabbed.find( '.pods-nav-tabs a.pods-nav-tab-link[data-tabs]' )[ 0 ] ) {
+                        $tabbed.find( '.pods-nav-tabs a.pods-nav-tab-link[data-tabs]' ).each( function () {
+                            var tabs = $( this ).data( 'tabs' ),
+                                this_tab_hash = this.hash;
+
+                            if ( tab_hash != this_tab_hash )
+                                $tabbed.find( tabs ).hide();
+                            else
+                                $tabbed.find( tabs ).show();
+                        } );
+                    }
+                    else {
+                        $tabbed.find( '.pods-nav-tab-group .pods-nav-tab' ).not( tab_hash ).each( function () {
+                            $( this ).hide();
+                        } );
+
+                        $tabbed.find( '.pods-nav-tab-group .pods-nav-tab' ).filter( tab_hash ).each( function () {
+                            $( '.pods-dependent-toggle', this ).trigger( 'change' );
+
+                            $( this ).show();
+                        } );
+                    }
+
+                    $tabbed.find( '.pods-nav-tabs a.pods-nav-tab-link' ).removeClass( 'nav-tab-active' );
+
+                    $( this ).addClass( 'nav-tab-active' );
+
+                    $( this ).css( 'cursor', 'pointer' );
+                    $( this ).prop( 'disabled', false );
+
+                    e.preventDefault();
+                } );
+
+                $( '.pods-nav-tabbed' ).each( function () {
+                    $nav_tabbed = $( this );
+                    $nav_tabbed.find( '.pods-nav-tabs a.pods-nav-tab-link:first' ).addClass( 'nav-tab-active' );
+                    $nav_tabbed.find( '.pods-nav-tab-group .pods-nav-tab:first' ).each( function () {
+                        console.log( $( this ).prop( 'id' ) );
+                        $( '.pods-dependent-toggle', this ).trigger( 'change' );
+                        $( this ).show();
+                    } )
+                } );
+            },
             wizard : function () {
                 var methods = {
                     setFinished : function () {

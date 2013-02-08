@@ -138,6 +138,10 @@
     border-bottom: 0;
 }
 
+.pods-nav-tabbed .pods-nav-tab-group .pods-nav-tab {
+    display: none;
+}
+
 /*
  * Pods Collapsible
  */
@@ -439,10 +443,6 @@ tbody.pods-manage-list tr.flexible-row {
 
 .pods-admin p.pods-manage-row-add {
     text-align: right;
-}
-
-.pods-admin p.pods-manage-row-add.pods-float-right {
-    margin-top: 36px;
 }
 
 /*

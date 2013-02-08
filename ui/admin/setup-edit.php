@@ -243,7 +243,7 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
         );
     ?>
 
-    <h2 class="nav-tab-wrapper">
+    <h2<?php echo ( pods_developer() ? ' class="nav-tab-wrapper"' : '' ); ?>>
         Edit Pod:
         <span class="pods-sluggable">
             <span class="pods-slug">

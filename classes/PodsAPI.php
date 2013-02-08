@@ -1125,6 +1125,8 @@ class PodsAPI {
         if ( isset( $load_params->old_name ) )
             $load_params->name = $load_params->old_name;
 
+        $load_params->table_info = false;
+
         $pod = $this->load_pod( $load_params, false );
 
         $params = (object) $params;
@@ -1738,11 +1740,11 @@ class PodsAPI {
             $save_pod = true;
         }
         elseif ( ( !isset( $params->pod_id ) || empty( $params->pod_id ) ) && ( true === $db || 0 < $db ) )
-            $pod = $this->load_pod( array( 'name' => $params->pod ) );
+            $pod = $this->load_pod( array( 'name' => $params->pod, 'table_info' => false ) );
         elseif ( !isset( $params->pod ) && ( true === $db || 0 < $db ) )
-            $pod = $this->load_pod( array( 'id' => $params->pod_id ) );
+            $pod = $this->load_pod( array( 'id' => $params->pod_id, 'table_info' => false ) );
         elseif ( true === $db || 0 < $db )
-            $pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod ) );
+            $pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod, 'table_info' => false ) );
 
         if ( empty( $pod ) && true === $db )
             return pods_error( __( 'Pod not found', 'pods' ), $this );
@@ -2460,7 +2462,7 @@ class PodsAPI {
             $allow_custom_fields = true;
 
         // Get array of Pods
-        $pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod ) );
+        $pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod, 'table_info' => false ) );
 
         if ( false === $pod )
             return pods_error( __( 'Pod not found', 'pods' ), $this );
@@ -2897,9 +2899,9 @@ class PodsAPI {
                         $pick_val = pods_var( 'pick_val', $fields[ $field ], '' ); // pod name, post type name, taxonomy name, etc..
                         $pick_sister_id = (int) pods_var( 'sister_id', $fields[ $field ], 0 );
 
-                        if ( 'pod' == $pick_object ) {
-                            $related_pod = $this->load_pod( array( 'name' => $pick_val ) );
+                        $related_pod = $this->load_pod( array( 'name' => $pick_val, 'table_info' => false ), false );
 
+                        if ( false !== $related_pod && ( 'pod' == $pick_object || $pick_object == $related_pod[ 'type' ] ) ) {
                             if ( false !== $related_pod )
                                 $related_pod_id = $related_pod[ 'id' ];
 
@@ -3216,7 +3218,7 @@ class PodsAPI {
     public function duplicate_pod_item ( $params ) {
         $params = (object) pods_sanitize( $params );
 
-        $pod = $this->load_pod( array( 'name' => $params->pod ) );
+        $pod = $this->load_pod( array( 'name' => $params->pod, 'table_info' => false ) );
 
         if ( false === $pod )
             return pods_error( __( 'Pod not found', 'pods' ), $this );
@@ -3424,7 +3426,7 @@ class PodsAPI {
         if ( !is_array( $params->order ) )
             $params->order = explode( ',', $params->order );
 
-        $pod = $this->load_pod( array( 'name' => $params->pod ) );
+        $pod = $this->load_pod( array( 'name' => $params->pod, 'table_info' => true ) );
 
         $params->name = $pod[ 'name' ];
 
@@ -3466,6 +3468,8 @@ class PodsAPI {
      */
     public function reset_pod ( $params, $pod = false ) {
         $params = (object) pods_sanitize( $params );
+
+        $params->table_info = false;
 
         if ( empty( $pod ) )
             $pod = $this->load_pod( $params );
@@ -3582,10 +3586,12 @@ class PodsAPI {
             else
                 $params = array( 'name' => $params );
 
-            $params = pods_sanitize( $params );
+            $params = (object) pods_sanitize( $params );
         }
         else
             $params = (object) pods_sanitize( $params );
+
+        $params->table_info = false;
 
         $pod = $this->load_pod( $params, $strict );
 
@@ -3697,7 +3703,7 @@ class PodsAPI {
         $save_pod = false;
 
         if ( !is_array( $pod ) )
-            $pod = $this->load_pod( array( 'name' => $pod, 'id' => $params->pod_id ) );
+            $pod = $this->load_pod( array( 'name' => $pod, 'id' => $params->pod_id, 'table_info' => false ) );
         else
             $save_pod = true;
 
@@ -3901,7 +3907,7 @@ class PodsAPI {
         if ( !isset( $params->pod_id ) )
             $params->pod_id = 0;
 
-        $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id ) );
+        $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id, 'table_info' => false ) );
 
         if ( false === $pod )
             return pods_error( __( 'Pod not found', 'pods' ), $this );
@@ -4146,7 +4152,8 @@ class PodsAPI {
         unset( $pod[ 'options' ][ 'object' ] );
         unset( $pod[ 'options' ][ 'alias' ] );
 
-        $pod = array_merge( $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ), $pod );
+        if ( false !== pods_var_raw( 'table_info', $params, true ) )
+            $pod = array_merge( $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ), $pod );
 
         $pod[ 'fields' ] = array();
 
@@ -4167,6 +4174,7 @@ class PodsAPI {
         if ( !empty( $fields ) ) {
             foreach ( $fields as $field ) {
                 $field->pod = $pod[ 'name' ];
+                $field->table_info = (boolean) pods_var_raw( 'table_info', $params, true );
 
                 $field = $this->load_field( $field );
 
@@ -4414,7 +4422,7 @@ class PodsAPI {
             if ( isset( $params->pod_data ) )
                 $pod = $params->pod_data;
             else {
-                $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id ) );
+                $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id, 'table_info' => false ) );
 
                 if ( false === $pod )
                     return pods_error( __( 'Pod not found', 'pods' ), $this );
@@ -4479,7 +4487,7 @@ class PodsAPI {
         elseif ( isset( $_field[ 'pod' ] ) )
             $field[ 'pod' ] = $_field[ 'pod' ];
         else {
-            $pod = $this->load_pod( array( 'id' => $field[ 'pod_id' ] ) );
+            $pod = $this->load_pod( array( 'id' => $field[ 'pod_id' ], 'table_info' => false ) );
 
             $field[ 'pod' ] = $pod[ 'name' ];
         }
@@ -4572,7 +4580,7 @@ class PodsAPI {
             $params->type = (array) $params->type;
 
         if ( !empty( $params->pod ) || !empty( $params->pod_id ) ) {
-            $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id ) );
+            $pod = $this->load_pod( array( 'name' => $params->pod, 'id' => $params->pod_id, 'table_info' => false ) );
 
             if ( false === $pod )
                 return pods_error( __( 'Pod not found', 'pods' ), $this );
@@ -5028,7 +5036,7 @@ class PodsAPI {
 
         if ( empty( $pod ) ) {
 
-            $pod = $this->load_pod( array( 'name' => $params->pod ), false );
+            $pod = $this->load_pod( array( 'name' => $params->pod, 'table_info' => false ), false );
 
             if ( false === $pod )
                 return pods_error( __( 'Pod not found', 'pods' ), $this );
@@ -5052,7 +5060,7 @@ class PodsAPI {
             $type = 'taxonomy';
         }
 
-        $related_pod = $this->load_pod( array( 'name' => $params->related_pod ), false );
+        $related_pod = $this->load_pod( array( 'name' => $params->related_pod, 'table_info' => false ), false );
 
         if ( false === $related_pod || ( false !== $type && 'pod' != $type && $type != $related_pod[ 'type' ] ) )
             return pods_error( __( 'Related Pod not found', 'pods' ), $this );
@@ -5290,7 +5298,7 @@ class PodsAPI {
         }
         else {
             if ( !is_array( $pod ) )
-                $pod = $this->load_pod( array( 'id' => $pod_id ), false );
+                $pod = $this->load_pod( array( 'id' => $pod_id, 'table_info' => false ), false );
 
             if ( !empty( $pod ) && in_array( $pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment', 'settings' ) ) ) {
                 $related_ids = array();
@@ -5462,7 +5470,7 @@ class PodsAPI {
                 if ( empty( $name ) && !empty( $object ) )
                     $name = $object;
 
-                $pod = $this->load_pod( array( 'name' => $name ), false );
+                $pod = $this->load_pod( array( 'name' => $name, 'table_info' => false ), false );
 
                 if ( !empty( $pod ) ) {
                     $object_type = $pod[ 'type' ];
@@ -5485,7 +5493,7 @@ class PodsAPI {
                     $name = $object;
 
                 if ( !empty( $name ) ) {
-                    $pod = $this->load_pod( array( 'name' => $name ), false );
+                    $pod = $this->load_pod( array( 'name' => $name, 'table_info' => false ), false );
 
                     if ( !empty( $pod ) && $object_type == $pod[ 'type' ] ) {
                         $object_type = $pod[ 'type' ];

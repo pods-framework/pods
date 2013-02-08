@@ -237,7 +237,7 @@ class PodsField_Pick extends PodsField {
 
             // Pods
             // @todo Upgrade should convert to proper type selections (pods-pod_name >> post_type-pod_name
-            $_pods = pods_api()->load_pods( array( 'type' => 'pod' ) );
+            $_pods = PodsMeta::$advanced_content_types;
 
             foreach ( $_pods as $k => $pod ) {
                 self::$related_objects[ 'pod-' . $pod[ 'name' ] ] = array(

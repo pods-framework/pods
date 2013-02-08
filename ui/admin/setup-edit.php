@@ -234,6 +234,35 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
     <input type="hidden" name="id" value="<?php echo (int) $pod[ 'id' ]; ?>" />
     <input type="hidden" name="old_name" value="<?php echo esc_attr( $pod[ 'name' ] ); ?>" />
 
+    <?php
+    $default = 'fields';
+
+    $tabs = array(
+        'fields' => __( 'Manage Fields', 'pods' ),
+        'advanced-options' => __( 'Advanced Options', 'pods' )
+    );
+    ?>
+
+    <h2 class="nav-tab-wrapper">
+        <?php
+            foreach ( $tabs as $tab => $label ) {
+                $class = '';
+
+                if ( $tab == pods_var( 'tab', 'get', $default ) ) {
+                    $class = ' nav-tab-active';
+
+                    $label = 'Pods ' . $label;
+                }
+
+                $url = pods_var_update( array( 'tab' => $tab ), array( 'page', 'id', 'action' ) );
+        ?>
+            <a href="<?php echo $url; ?>" class="nav-tab<?php echo $class; ?>">
+                <?php echo $label; ?>
+            </a>
+        <?php
+            }
+        ?>
+    </h2>
     <h2>
         Edit Pod:
                 <span class="pods-sluggable">

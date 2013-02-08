@@ -34,6 +34,15 @@ foreach ( $field_options as $field_name => $field_option ) {
             $value = $field_option[ 'value' ];
         else
             $value = pods_var_raw( $field_name, $field, $value );
+
+        if ( 'file' == $field_option[ 'type' ] ) {
+            if ( is_array( $value ) && !isset( $value[ 'id' ] ) ) {
+                foreach ( $value as $k => $v ) {
+                    if ( isset( $v[ 'id' ] ) )
+                        $value[ $k ] = $v[ 'id' ];
+                }
+            }
+        }
         ?>
         <div class="pods-field-option">
             <?php echo PodsForm::row( $row_name, $value, $field_option[ 'type' ], $field_option ); ?>

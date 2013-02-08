@@ -421,7 +421,7 @@ if ( 'none' != pods_var( 'storage', $pod, 'none', null, true ) || 'settings' == 
 
 if ( $labels ) {
 ?>
-<div id="pods-labels" class="pods-nav-tab pods-manage-field pods-dependency">
+<div id="pods-labels" class="pods-nav-tab pods-manage-field pods-dependency pods-submittable-fields">
 <?php
 if ( strlen( pods_var( 'object', $pod ) ) < 1 && 'settings' != pods_var( 'type', $pod ) ) {
     ?>
@@ -526,7 +526,7 @@ elseif ( 'settings' == pods_var( 'type', $pod ) ) {
 
 if ( $advanced ) {
 ?>
-<div id="pods-advanced" class="pods-nav-tab pods-manage-field pods-dependency">
+<div id="pods-advanced" class="pods-nav-tab pods-manage-field pods-dependency pods-submittable-fields">
 <?php
 $advanced_options = array(
     'cpt_options' => array(
@@ -1131,7 +1131,7 @@ elseif ( 'pod' == pods_var( 'type', $pod ) ) {
 
     <div class="pods-field-option">
         <?php echo PodsForm::label( 'pod_index', __( 'Title Field', 'pods' ), __( 'If you delete the "name" field, we need to specify the field to use as your primary title field. This field will serve as an index of your content. Most commonly this field represents the name of a person, place, thing, or a summary field.', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'pod_index', pods_var_raw( 'pod_index', $pod ), 'pick', array( 'data' => $index_fields ) ); ?>
+        <?php echo PodsForm::field( 'pod_index', pods_var_raw( 'pod_index', $pod, 'name' ), 'pick', array( 'data' => $index_fields ) ); ?>
     </div>
     <?php
     if ( class_exists( 'Pods_Helpers' ) ) {
@@ -1210,7 +1210,7 @@ elseif ( 'settings' == pods_var( 'type', $pod ) ) {
 
 if ( $pods_ui ) {
 ?>
-<div id="pods-ui" class="pods-nav-tab pods-manage-field pods-dependency">
+<div id="pods-ui" class="pods-nav-tab pods-manage-field pods-dependency pods-submittable-fields">
 <?php
     $fields = $advanced_options[ 'ui_options' ];
     $field_options = PodsForm::fields_setup( $fields );

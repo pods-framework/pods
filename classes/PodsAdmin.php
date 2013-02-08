@@ -179,27 +179,35 @@ class PodsAdmin {
                         $plural_label = pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true );
 
                         $menu_icon = pods_var_raw( 'menu_icon', $pod[ 'options' ], '', null, true );
+                        $menu_location_custom = pods_var( 'menu_location_custom', $pod[ 'options' ], '' );
 
                         $parent_page = null;
 
                         if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) || current_user_can( 'pods_edit_' . $pod[ 'name' ] ) || current_user_can( 'pods_delete_' . $pod[ 'name' ] ) ) {
-                            $pods_pages++;
+                            if ( !empty( $menu_location_custom ) ) {
+                                add_submenu_page( $menu_location_custom, $page_title, $menu_label, 'read', 'pods-manage-' . $pod[ 'name' ], array( $this, 'admin_content' ) );
 
-                            $parent_page = $page = 'pods-manage-' . $pod[ 'name' ];
-
-                            add_menu_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon, '57.' . ( 10 < count( $pods_pages ) ? $pods_pages : '0' . $pods_pages ) );
-
-                            $all_title = $plural_label;
-                            $all_label = __( 'All', 'pods' ) . ' ' . $plural_label;
-
-                            if ( $page == pods_var( 'page', 'get' ) ) {
-                                if ( 'edit' == pods_var( 'action', 'get', 'manage' ) )
-                                    $all_title = __( 'Edit', 'pods' ) . ' ' . $singular_label;
-                                elseif ( 'add' == pods_var( 'action', 'get', 'manage' ) )
-                                    $all_title = __( 'Add New', 'pods' ) . ' ' . $singular_label;
+                                continue;
                             }
+                            else {
+                                $pods_pages++;
 
-                            add_submenu_page( $parent_page, $all_title, $all_label, 'read', $page, array( $this, 'admin_content' ) );
+                                $parent_page = $page = 'pods-manage-' . $pod[ 'name' ];
+
+                                add_menu_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon, '57.' . ( 10 < count( $pods_pages ) ? $pods_pages : '0' . $pods_pages ) );
+
+                                $all_title = $plural_label;
+                                $all_label = __( 'All', 'pods' ) . ' ' . $plural_label;
+
+                                if ( $page == pods_var( 'page', 'get' ) ) {
+                                    if ( 'edit' == pods_var( 'action', 'get', 'manage' ) )
+                                        $all_title = __( 'Edit', 'pods' ) . ' ' . $singular_label;
+                                    elseif ( 'add' == pods_var( 'action', 'get', 'manage' ) )
+                                        $all_title = __( 'Add New', 'pods' ) . ' ' . $singular_label;
+                                }
+
+                                add_submenu_page( $parent_page, $all_title, $all_label, 'read', $page, array( $this, 'admin_content' ) );
+                            }
                         }
 
                         if ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) || current_user_can( 'pods_content' ) || current_user_can( 'pods_add_' . $pod[ 'name' ] ) ) {
@@ -494,8 +502,6 @@ class PodsAdmin {
 
         $manage = apply_filters( 'pods_admin_ui_fields_' . $pod->pod, apply_filters( 'pods_admin_ui_fields', $manage, $pod->pod, $pod ), $pod->pod, $pod );
 
-        //pods_debug( pods_var_raw( 'ui_icon', $pod->pod_data[ 'options' ] ) );
-
         $actions_enabled = pods_var_raw( 'ui_actions_enabled', $pod->pod_data[ 'options' ] );
 
         if ( !empty( $actions_enabled ) )
@@ -519,6 +525,11 @@ class PodsAdmin {
             }
         }
 
+        $icon = pods_var_raw( 'ui_icon', $pod->pod_data[ 'options' ] );
+
+        if ( !empty( $icon ) )
+            $icon = pods_image_url( $icon, '32x32' );
+
         $ui = array(
             'pod' => $pod,
             'fields' => array(
@@ -527,7 +538,7 @@ class PodsAdmin {
                 'edit' => $pod->pod_data[ 'fields' ],
                 'duplicate' => $pod->pod_data[ 'fields' ]
             ),
-            'icon' => pods_var_raw( 'ui_icon', $pod->pod_data[ 'options' ] ),
+            'icon' => $icon,
             'actions_disabled' => $actions_disabled
         );
 

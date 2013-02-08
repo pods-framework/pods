@@ -4138,6 +4138,8 @@ class PodsAPI {
         foreach ( $pod[ 'options' ] as $option => &$value ) {
             if ( is_array( $value ) && 1 == count( $value ) && isset( $value[ 0 ] ) )
                 $value = $value[ 0 ];
+
+            $value = maybe_unserialize( $value );
         }
 
         $pod[ 'options' ] = array_merge( $defaults, $pod[ 'options' ] );
@@ -4497,6 +4499,8 @@ class PodsAPI {
         foreach ( $field[ 'options' ] as $option => &$value ) {
             if ( is_array( $value ) && 1 == count( $value ) && isset( $value[ 0 ] ) )
                 $value = $value[ 0 ];
+
+            $value = maybe_unserialize( $value );
         }
 
         $field[ 'options' ] = array_merge( $defaults, $field[ 'options' ] );

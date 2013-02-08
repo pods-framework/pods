@@ -1442,7 +1442,29 @@ class PodsData {
 
             $this->row = false;
 
-            if ( isset( $this->data[ $this->row_number ] ) )
+            if ( 'settings' == $this->pod_data[ 'type' ] ) {
+                if ( !empty( $this->pod ) )
+                    $row = pods_cache_get( $this->pod, 'pods_items_' . $this->pod );
+
+                if ( false !== $row && is_array( $row ) )
+                    $this->row = $row;
+                else {
+                    $this->row = array();
+
+                    foreach ( $this->fields as $field ) {
+                        $this->row[ $field[ 'name' ] ] = get_option( $this->pod_data[ 'name' ] . '_' . $field[ 'name' ] );
+                    }
+
+                    if ( empty( $this->row ) )
+                        $this->row = false;
+                    elseif ( !empty( $this->pod ) ) {
+                        $this->row[ 'id' ] = $this->pod;
+
+                        pods_cache_set( $this->pod, $this->row, 0, 'pods_items_' . $this->pod );
+                    }
+                }
+            }
+            elseif ( isset( $this->data[ $this->row_number ] ) )
                 $this->row = get_object_vars( $this->data[ $this->row_number ] );
         }
         else {
@@ -1555,6 +1577,8 @@ class PodsData {
 
                 if ( empty( $this->row ) )
                     $this->row = false;
+                else
+                    $this->row[ 'id' ] = $this->pod;
             }
             else {
                 $params = array(

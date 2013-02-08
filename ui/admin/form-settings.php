@@ -1,104 +1,144 @@
-<div class="wrap pods-admin">
-    <div id="icon-pods" class="icon32"><br /></div>
-    <form action="" method="post" class="pods-submittable pods-form pods-form-pod-<?php echo $pod->pod; ?>">
-        <div class="pods-submittable-fields">
-            <?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
-            <?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>
-            <?php echo PodsForm::field( 'do', $do, 'hidden' ); ?>
-            <?php echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' ); ?>
-            <?php echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' ); ?>
-            <?php echo PodsForm::field( '_pods_id', ( $duplicate ? 0 : $pod->id() ), 'hidden' ); ?>
-            <?php echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
-            <?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $fields ) ), 'hidden' ); ?>
+<?php
+wp_enqueue_script( 'pods' );
+wp_enqueue_style( 'pods-form' );
 
-            <table class="form-table pods-manage-field">
-                <?php
-                    $depends_on = false;
+if ( empty( $fields ) || !is_array( $fields ) )
+    $fields = $obj->pod->fields;
 
-                    foreach ( $options as $field_name => $field_option ) {
-                        $field_option = PodsForm::field_setup( $field_option, null, $field_option[ 'type' ] );
+if ( !isset( $duplicate ) )
+    $duplicate = false;
+else
+    $duplicate = (boolean) $duplicate;
 
-                        $depends = PodsForm::dependencies( $field_option );
+// unset fields
+foreach ( $fields as $k => $field ) {
+    if ( in_array( $field[ 'name' ], array( 'created', 'modified' ) ) )
+        unset( $fields[ $k ] );
+    elseif ( false === PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field['options'], $fields, $pod, $pod->id() ) )
+        unset( $fields[ $k ] );
+}
 
-                        if ( ( !empty( $depends_on ) || !empty( $depends ) ) && $depends_on != $depends ) {
-                            if ( !empty( $depends_on ) ) {
-                ?>
-                    </tbody>
-                <?php
-                            }
+if ( !isset( $thank_you_alt ) )
+    $thank_you_alt = $thank_you;
 
-                            if ( !empty( $depends ) ) {
-                ?>
-                    <tbody class="pods-field-option-container <?php echo $depends; ?>">
-                <?php
-                            }
+$uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER[ 'REQUEST_URI' ] );
+$field_hash = wp_create_nonce( 'pods_fields_' . implode( ',', array_keys( $fields ) ) );
+
+$uid = @session_id();
+
+if ( is_user_logged_in() )
+    $uid = 'user_' . get_current_user_id();
+
+$nonce = wp_create_nonce( 'pods_form_' . $pod->pod . '_' . $uid . '_' . ( $duplicate ? 0 : $pod->id() ) . '_' . $uri_hash . '_' . $field_hash );
+
+if ( isset( $_POST[ '_pods_nonce' ] ) ) {
+    $action = __( 'saved', 'pods' );
+
+    try {
+        $params = stripslashes_deep( (array) $_POST );
+        $id = $pod->api->process_form( $params, $pod, $fields, $thank_you );
+
+        $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+        $error = sprintf( __( '<strong>Error:</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+
+        if ( 0 < $id )
+            echo $obj->message( $message );
+        else
+            echo $obj->error( $error );
+    }
+    catch ( Exception $e ) {
+        echo $obj->error( $e->getMessage() );
+    }
+}
+elseif ( isset( $_GET[ 'do' ] ) ) {
+    $action = __( 'saved', 'pods' );
+
+    $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+    $error = sprintf( __( '<strong>Error:</strong> %s not %s.', 'pods' ), $obj->item, $action );
+
+    if ( 0 < $pod->id() )
+        echo $obj->message( $message );
+    else
+        echo $obj->error( $error );
+}
+
+if ( !isset( $label ) )
+    $label = __( 'Save', 'pods' );
+
+$do = 'save';
+?>
+
+<form action="" method="post" class="pods-submittable pods-form pods-form-pod-<?php echo $pod->pod; ?>">
+    <div class="pods-submittable-fields">
+        <?php echo PodsForm::field( 'action', 'pods_admin', 'hidden' ); ?>
+        <?php echo PodsForm::field( 'method', 'process_form', 'hidden' ); ?>
+        <?php echo PodsForm::field( 'do', $do, 'hidden' ); ?>
+        <?php echo PodsForm::field( '_pods_nonce', $nonce, 'hidden' ); ?>
+        <?php echo PodsForm::field( '_pods_pod', $pod->pod, 'hidden' ); ?>
+        <?php echo PodsForm::field( '_pods_id', $pod->id(), 'hidden' ); ?>
+        <?php echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
+        <?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $fields ) ), 'hidden' ); ?>
+
+        <?php
+            foreach ( $fields as $field ) {
+                if ( 'hidden' != $field[ 'type' ] )
+                    continue;
+
+                echo PodsForm::field( 'pods_field_' . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), 'hidden' );
+            }
+        ?>
+        <table class="form-table pods-manage-field">
+            <?php
+                $depends_on = false;
+
+                foreach ( $fields as $field ) {
+                    if ( 'hidden' == $field[ 'type' ] )
+                        continue;
+
+                    $depends = PodsForm::dependencies( $field );
+
+                    if ( ( !empty( $depends_on ) || !empty( $depends ) ) && $depends_on != $depends ) {
+                        if ( !empty( $depends_on ) ) {
+            ?>
+                </tbody>
+            <?php
                         }
 
-                        if ( !is_array( $field_option[ 'group' ] ) ) {
-                            $value = pods_var_raw( $field_name, $settings, $field_option[ 'default' ] );
-                ?>
-                    <tr valign="top" class="pods-field-option" id="pods-setting-<?php echo $field_name; ?>">
-                        <th>
-                            <?php echo PodsForm::label( 'pods_setting_' . $field_name, $field_option[ 'label' ], $field_option[ 'help' ], $field_option ); ?>
-                        </th>
-                        <td>
-                            <?php echo PodsForm::field( 'pods_setting_' . $field_name, $value, $field_option[ 'type' ], $field_option ); ?>
-                        </td>
-                    </tr>
-                <?php
+                        if ( !empty( $depends ) ) {
+            ?>
+                <tbody class="pods-field-option-container <?php echo $depends; ?>">
+            <?php
                         }
-                        else {
-                ?>
-                    <tr valign="top" class="pods-field-option-group" id="pods-setting-<?php echo $field_name; ?>">
-                        <th class="pods-field-option-group-label">
-                            <?php echo $field_option[ 'label' ]; ?>
-                        </th>
-                        <td class="pods-pick-values pods-pick-checkbox">
-                            <ul>
-                                <?php
-                                    foreach ( $field_option[ 'group' ] as $field_group_name => $field_group_option ) {
-                                        $field_group_option = PodsForm::field_setup( $field_group_option, null, $field_group_option[ 'type' ] );
-
-                                        if ( 'boolean' != $field_group_option[ 'type' ] )
-                                            continue;
-
-                                        $field_group_option[ 'boolean_yes_label' ] = $field_group_option[ 'label' ];
-
-                                        $depends_option = PodsForm::dependencies( $field_group_option );
-
-                                        $value = pods_var_raw( $field_group_name, $settings, $field_group_option[ 'default' ] );
-                                ?>
-                                    <li class="<?php echo $depends_option; ?>">
-                                        <?php echo PodsForm::field( 'pods_setting_' . $field_group_name, $value, $field_group_option[ 'type' ], $field_group_option ); ?>
-                                    </li>
-                                <?php
-                                    }
-                                ?>
-                            </ul>
-                        </td>
-                    </tr>
-                <?php
-                        }
-
-                        if ( false !== $depends_on || !empty( $depends ) )
-                            $depends_on = $depends;
                     }
+            ?>
+                <tr valign="top" class="pods-field-option pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Podsform::clean( $field[ 'name' ], true ); ?>">
+                    <th>
+                        <?php echo PodsForm::label( 'pods_field_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?>
+                    </th>
+                    <td>
+                        <?php echo PodsForm::field( 'pods_field_' . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), $field[ 'type' ], $field, $pod, $pod->id() ); ?>
+                        <?php echo PodsForm::comment( 'pods_field_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
+                    </td>
+                </tr>
+            <?php
+                    if ( false !== $depends_on || !empty( $depends ) )
+                        $depends_on = $depends;
+                }
 
-                    if ( !empty( $depends_on ) ) {
-                ?>
-                    </tbody>
-                <?php
-                    }
-                ?>
-            </table>
+                if ( !empty( $depends_on ) ) {
+            ?>
+                </tbody>
+            <?php
+                }
+            ?>
+        </table>
 
-            <p class="submit">
-                <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php esc_attr_e( 'Save Changes', 'pods' ); ?>">
-                <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
-            </p>
-        </div>
-    </form>
-</div>
+        <p class="submit">
+            <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php esc_attr( $obj->label[ 'edit' ] ); ?>">
+            <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
+        </p>
+    </div>
+</form>
 
 <script type="text/javascript">
     jQuery( function ( $ ) {

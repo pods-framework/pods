@@ -840,25 +840,33 @@ class PodsUI {
 
         // handle author restrictions
         if ( !empty( $options[ 'restrict' ][ 'author_restrict' ] ) ) {
-            if ( !is_array( $options[ 'restrict' ][ 'author_restrict' ] ) )
-                $options->restrict[ 'author_restrict' ] = array( $options[ 'restrict' ][ 'author_restrict' ] => get_current_user_id() );
+            $restrict = $options[ 'restrict' ];
 
-            if ( null === $options[ 'restrict' ][ 'edit' ] )
-                $options->restrict[ 'edit' ] = $options[ 'restrict' ][ 'author_restrict' ];
+            if ( !is_array( $restrict[ 'author_restrict' ] ) )
+                $restrict[ 'author_restrict' ] = array( $restrict[ 'author_restrict' ] => get_current_user_id() );
+
+            if ( null === $restrict[ 'edit' ] )
+                $restrict[ 'edit' ] = $restrict[ 'author_restrict' ];
+
+            $options->restrict = $restrict;
         }
 
         if ( null !== $options[ 'restrict' ][ 'edit' ] ) {
-            if ( null === $options[ 'restrict' ][ 'duplicate' ] )
-                $options->restrict[ 'duplicate' ] = $options[ 'restrict' ][ 'edit' ];
+            $restrict = $options[ 'restrict' ];
 
-            if ( null === $options[ 'restrict' ][ 'delete' ] )
-                $options->restrict[ 'delete' ] = $options[ 'restrict' ][ 'edit' ];
+            if ( null === $restrict[ 'duplicate' ] )
+                $restrict[ 'duplicate' ] = $restrict[ 'edit' ];
 
-            if ( null === $options[ 'restrict' ][ 'manage' ] )
-                $options->restrict[ 'manage' ] = $options[ 'restrict' ][ 'edit' ];
+            if ( null === $restrict[ 'delete' ] )
+                $restrict[ 'delete' ] = $restrict[ 'edit' ];
 
-            if ( null === $options[ 'restrict' ][ 'reorder' ] )
-                $options->restrict[ 'reorder' ] = $options[ 'restrict' ][ 'edit' ];
+            if ( null === $restrict[ 'manage' ] )
+                $restrict[ 'manage' ] = $restrict[ 'edit' ];
+
+            if ( null === $restrict[ 'reorder' ] )
+                $restrict[ 'reorder' ] = $restrict[ 'edit' ];
+
+            $options->restrict = $restrict;
         }
 
         $item = __( 'Item', 'pods' );
@@ -1996,7 +2004,7 @@ class PodsUI {
         if ( true === $reorder )
             wp_enqueue_script( 'jquery-ui-sortable' );
         ?>
-    <div class="wrap">
+    <div class="wrap pods-admin">
         <div id="icon-edit-pages" class="icon32"<?php if ( false !== $this->icon ) { ?> style="background-position:0 0;background-image:url(<?php echo $this->icon; ?>);"<?php } ?>><br /></div>
         <h2>
             <?php

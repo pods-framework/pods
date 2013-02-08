@@ -731,6 +731,12 @@ $advanced_options = array(
             ),
             'dependency' => true
         ),
+        'menu_location_custom' => array(
+            'label' => __( 'Custom Menu Location', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'text',
+            'depends-on' => array( 'menu_location' => 'submenu' )
+        ),
         'menu_position' => array(
             'label' => __( 'Menu Position', 'pods' ),
             'help' => __( 'help', 'pods' ),

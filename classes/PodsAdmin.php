@@ -115,6 +115,10 @@ class PodsAdmin {
 
                 if ( 0 === strpos( $page, 'pods-manage-' ) || 0 === strpos( $page, 'pods-add-new-' ) )
                     wp_enqueue_script( 'post' );
+                elseif ( 0 === strpos( $page, 'pods-settings-' ) ) {
+                    wp_enqueue_script( 'post' );
+                    wp_enqueue_style( 'pods-admin' );
+                }
                 else
                     wp_enqueue_style( 'pods-admin' );
 
@@ -283,7 +287,7 @@ class PodsAdmin {
                     if ( empty( $menu_position ) )
                         $menu_position = null;
 
-                    $menu_slug = 'pods-manage-' . $pod[ 'name' ];
+                    $menu_slug = 'pods-settings-' . $pod[ 'name' ];
                     $menu_location = pods_var( 'menu_location', $pod[ 'options' ], 'settings' );
                     $menu_location_custom = pods_var( 'menu_location_custom', $pod[ 'options' ], '' );
 
@@ -515,9 +519,9 @@ class PodsAdmin {
      * Create PodsUI content for the settings administration pages
      */
     public function admin_content_settings () {
-        $pod_name = str_replace( 'pods-manage-', '', $_GET[ 'page' ] );
+        $pod_name = str_replace( 'pods-settings-', '', $_GET[ 'page' ] );
 
-        $pod = pods( $pod_name );
+        $pod = pods( $pod_name, $pod_name );
 
         if ( 'custom' != pods_var( 'ui_style', $pod->pod_data[ 'options' ], 'settings', null, true ) ) {
             $actions_disabled = array(
@@ -531,10 +535,18 @@ class PodsAdmin {
 
             $_GET[ 'action' ] = 'edit';
 
+            $page_title = pods_var_raw( 'label_title', $pod->pod_data[ 'options' ], pods_var_raw( 'label', $pod->pod_data, ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) ), null, true ), null, true );
+
             $ui = array(
                 'pod' => $pod,
                 'fields' => array(
                     'edit' => $pod->pod_data[ 'fields' ]
+                ),
+                'header' => array(
+                    'edit' => $page_title
+                ),
+                'label' => array(
+                    'edit' => __( 'Save Changes', 'pods' )
                 ),
                 'style' => pods_var( 'ui_style', $pod->pod_data[ 'options' ], 'settings', null, true ),
                 'icon' => pods_var_raw( 'menu_icon', $pod->pod_data[ 'options' ] ),

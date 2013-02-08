@@ -235,46 +235,50 @@ $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
     <input type="hidden" name="old_name" value="<?php echo esc_attr( $pod[ 'name' ] ); ?>" />
 
     <?php
-    $default = 'fields';
+        $default = 'fields';
 
-    $tabs = array(
-        'fields' => __( 'Manage Fields', 'pods' ),
-        'advanced-options' => __( 'Advanced Options', 'pods' )
-    );
+        $tabs = array(
+            'fields' => __( 'Manage Fields', 'pods' ),
+            'advanced-options' => __( 'Advanced Options', 'pods' )
+        );
     ?>
 
     <h2 class="nav-tab-wrapper">
+        Edit Pod:
+        <span class="pods-sluggable">
+            <span class="pods-slug">
+                <em><?php echo esc_html( $pod[ 'name' ] ); ?></em>
+                <input type="button" class="edit-slug-button button" value="Edit" />
+            </span>
+            <span class="pods-slug-edit">
+                <?php echo PodsForm::field( 'name', pods_var_raw( 'name', $pod ), 'db', array(
+                'attributes' => array(
+                    'maxlength' => $max_length_name,
+                    'size' => 25
+                ),
+                'class' => 'pods-validate pods-validate-required'
+            ) ); ?>
+                <input type="button" class="save-button button" value="OK" /> <a class="cancel" href="#cancel-edit">Cancel</a>
+            </span>
+        </span>
+
         <?php
-            foreach ( $tabs as $tab => $label ) {
-                $class = '';
+            if ( pods_developer() ) {
+                foreach ( $tabs as $tab => $label ) {
+                    $class = '';
 
-                if ( $tab == pods_var( 'tab', 'get', $default ) ) {
-                    $class = ' nav-tab-active';
+                    if ( $tab == pods_var( 'tab', 'get', $default ) )
+                        $class = ' nav-tab-active';
 
-                    $label = 'Pods ' . $label;
-                }
-
-                $url = pods_var_update( array( 'tab' => $tab ), array( 'page', 'id', 'action' ) );
+                    $url = pods_var_update( array( 'tab' => $tab ), array( 'page', 'id', 'action' ) );
         ?>
             <a href="<?php echo $url; ?>" class="nav-tab<?php echo $class; ?>">
                 <?php echo $label; ?>
             </a>
         <?php
+                }
             }
         ?>
-    </h2>
-    <h2>
-        Edit Pod:
-                <span class="pods-sluggable">
-                    <span class="pods-slug">
-                        <em><?php echo esc_html( $pod[ 'name' ] ); ?></em>
-                        <input type="button" class="edit-slug-button button" value="Edit" />
-                    </span>
-                    <span class="pods-slug-edit">
-                        <?php echo PodsForm::field( 'name', pods_var_raw( 'name', $pod ), 'db', array( 'attributes' => array( 'maxlength' => $max_length_name, 'size' => 25 ), 'class' => 'pods-validate pods-validate-required' ) ); ?>
-                        <input type="button" class="save-button button" value="OK" /> <a class="cancel" href="#cancel-edit">Cancel</a>
-                    </span>
-                </span>
     </h2>
 </div>
 

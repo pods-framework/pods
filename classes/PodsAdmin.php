@@ -637,7 +637,8 @@ class PodsAdmin {
             'user' => __( 'User (extended)', 'pods' ),
             'media' => __( 'Media (extended)', 'pods' ),
             'comment' => __( 'Comments (extended)', 'pods' ),
-            'pod' => __( 'Advanced Content Type', 'pods' )
+            'pod' => __( 'Advanced Content Type', 'pods' ),
+            'settings' => __( 'Custom Settings Page', 'pods' )
         );
 
         $row = false;

@@ -651,7 +651,7 @@
                 $( '.pods-dependency .pods-depends-on, .pods-dependency .pods-excludes-on, .pods-dependency .pods-wildcard-on' ).hide();
 
                 // Handle dependent toggle
-                $( '.pods-admin' ).on( 'change', '.pods-dependent-toggle', function ( e ) {
+                $( '.pods-admin' ).on( 'change', '.pods-dependent-toggle[data-name-clean]', function ( e ) {
                     var $el = $( this );
                     var $current = $el.closest( '.pods-dependency' );
                     var $field = $el;

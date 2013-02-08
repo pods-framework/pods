@@ -502,12 +502,12 @@ elseif ( 'settings' == pods_var( 'type', $pod ) ) {
     ?>
 <div id="pods-advanced-settings-labels" class="pods-tab">
     <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label', __( 'Menu Label', 'pods' ), __( 'help', 'pods' ) ); ?>
+        <?php echo PodsForm::label( 'label', __( 'Page Title', 'pods' ), __( 'help', 'pods' ) ); ?>
         <?php echo PodsForm::field( 'label', pods_var_raw( 'label', $pod ), 'text', array( 'text_max_length' => 30 ) ); ?>
     </div>
     <div class="pods-field-option">
-        <?php echo PodsForm::label( 'label_title', __( 'Page Title', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'label_title', pods_var_raw( 'label_title', $pod, pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', pods_var_raw( 'name', $pod ) ) ) ) ), 'text', array( 'text_max_length' => 30 ) ); ?>
+        <?php echo PodsForm::label( 'menu_name', __( 'Menu Name', 'pods' ), __( 'help', 'pods' ) ); ?>
+        <?php echo PodsForm::field( 'menu_name', pods_var_raw( 'menu_name', $pod, pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', pods_var_raw( 'name', $pod ) ) ) ) ), 'text', array( 'text_max_length' => 30 ) ); ?>
     </div>
 </div>
     <?php

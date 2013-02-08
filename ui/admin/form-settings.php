@@ -134,7 +134,7 @@ $do = 'save';
         </table>
 
         <p class="submit">
-            <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php esc_attr( $obj->label[ 'edit' ] ); ?>">
+            <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php echo esc_attr( $obj->label[ 'edit' ] ); ?>">
             <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
         </p>
     </div>

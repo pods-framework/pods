@@ -167,10 +167,11 @@ class PodsAdmin {
                         continue;
 
                     if ( 1 == pods_var( 'show_in_menu', $pod[ 'options' ], 0 ) ) {
-                        $menu_label = pods_var_raw( 'menu_name', $pod[ 'options' ], pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true ), null, true );
-                        $menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
+                        $page_title = pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true );
+                        $page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod );
 
-                        $page_title = apply_filters( 'pods_admin_menu_title', $menu_label, $pod );
+                        $menu_label = pods_var_raw( 'menu_name', $pod[ 'options' ], $page_title, null, true );
+                        $menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
 
                         $singular_label = pods_var_raw( 'label_singular', $pod[ 'options' ], pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true ), null, true );
                         $plural_label = pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true );
@@ -275,11 +276,11 @@ class PodsAdmin {
                     if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_content' ) && !current_user_can( 'pods_edit_' . $pod[ 'name' ] ) )
                         continue;
 
-                    $menu_label = pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true );
-                    $menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
+                    $page_title = pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true );
+                    $page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod );
 
-                    $page_title = pods_var_raw( 'label_title', $pod[ 'options' ], $menu_label, null, true );
-                    $page_title = apply_filters( 'pods_admin_menu_title', $page_title, $pod );
+                    $menu_label = pods_var_raw( 'menu_name', $pod[ 'options' ], $page_title, null, true );
+                    $menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
 
                     $menu_position = pods_var_raw( 'menu_position', $pod[ 'options' ], '', null, true );
                     $menu_icon = pods_var_raw( 'menu_icon', $pod[ 'options' ], '', null, true );
@@ -535,7 +536,7 @@ class PodsAdmin {
 
             $_GET[ 'action' ] = 'edit';
 
-            $page_title = pods_var_raw( 'label_title', $pod->pod_data[ 'options' ], pods_var_raw( 'label', $pod->pod_data, ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) ), null, true ), null, true );
+            $page_title = pods_var_raw( 'label', $pod->pod_data[ 'options' ], ucwords( str_replace( '_', ' ', $pod->pod_data[ 'name' ] ) ), null, true );
 
             $ui = array(
                 'pod' => $pod,

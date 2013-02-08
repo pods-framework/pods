@@ -256,7 +256,8 @@ tr.pods-toggled-off {
 .pods-tab.pods-basic-options {
     display: block;
 }
-.pods-tab#pods-advanced-labels {
+.pods-tab#pods-advanced-labels,
+.pods-tab#pods-advanced-settings-labels {
     display: block;
 }
 

@@ -957,8 +957,8 @@ class PodsAPI {
             'create_storage_taxonomy' => 'none',
 
             'create_setting_name' => '',
-            'create_label_menu' => '',
             'create_label_title' => '',
+            'create_label_menu' => '',
             'create_menu_location' => 'settings',
 
             'extend_pod_type' => 'post_type',
@@ -1025,9 +1025,9 @@ class PodsAPI {
                     return pods_error( 'Please enter a Name for this Pod', $this );
 
                 $pod_params[ 'name' ] = $params->create_setting_name;
-                $pod_params[ 'label' ] = ( !empty( $params->create_label_menu ) ? $params->create_label_menu : ucwords( str_replace( '_', ' ', $params->create_setting_name ) ) );
+                $pod_params[ 'label' ] = ( !empty( $params->create_label_title ) ? $params->create_label_title : ucwords( str_replace( '_', ' ', $params->create_setting_name ) ) );
                 $pod_params[ 'options' ] = array(
-                    'label_title' => ( !empty( $params->create_label_title ) ? $params->create_label_title : $pod_params[ 'label' ] ),
+                    'menu_name' => ( !empty( $params->create_label_menu ) ? $params->create_label_menu : $pod_params[ 'label' ] ),
                     'menu_location' => $params->create_menu_location
                 );
             }

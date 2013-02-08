@@ -138,14 +138,14 @@
                                     <div class="pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-settings">
                                         <div class="pods-field-option">
                                             <?php
-                                                echo PodsForm::label( 'create_label_menu', __( 'Menu Label', 'pods' ), __( '<h6>Menu Label</h6> This is the label that will appear throughout the WordPress admin area for your settings.', 'pods' ) );
-                                                echo PodsForm::field( 'create_label_menu', pods_var_raw( 'create_label_menu', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required', 'text_max_length' => 30 ) );
+                                                echo PodsForm::label( 'create_label_title', __( 'Page Title', 'pods' ), __( '<h6>Page Title</h6> This is the text that will at the top of your settings page.', 'pods' ) );
+                                                echo PodsForm::field( 'create_label_title', pods_var_raw( 'create_label_title', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required', 'text_max_length' => 30 ) );
                                             ?>
                                         </div>
                                         <div class="pods-field-option">
                                             <?php
-                                                echo PodsForm::label( 'create_label_title', __( 'Page Title', 'pods' ), __( '<h6>Page Title</h6> This is the text that will at the top of your settings page.', 'pods' ) );
-                                                echo PodsForm::field( 'create_label_title', pods_var_raw( 'create_label_title', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required', 'text_max_length' => 30 ) );
+                                                echo PodsForm::label( 'create_label_menu', __( 'Menu Label', 'pods' ), __( '<h6>Menu Label</h6> This is the label that will appear throughout the WordPress admin area for your settings.', 'pods' ) );
+                                                echo PodsForm::field( 'create_label_menu', pods_var_raw( 'create_label_menu', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required', 'text_max_length' => 30 ) );
                                             ?>
                                         </div>
                                         <div class="pods-field-option">
@@ -187,7 +187,7 @@
                                                 $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
 
                                                 echo PodsForm::label( 'create_setting_name', __( 'Identifier', 'pods' ), __( '<h6>Pod Indentifier</h6> This is different than the labels users will see in the WordPress admin areas, it is the name you will use to programatically reference this object throughout your theme, WordPress, and other PHP.', 'pods' ) );
-                                                echo PodsForm::field( 'create_setting_name', pods_var_raw( 'create_setting_name', 'post' ), 'db', array( 'attributes' => array( 'maxlength' => $max_length_name, 'size' => 25, 'data-sluggable' => 'create_label_menu' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
+                                                echo PodsForm::field( 'create_setting_name', pods_var_raw( 'create_setting_name', 'post' ), 'db', array( 'attributes' => array( 'maxlength' => $max_length_name, 'size' => 25, 'data-sluggable' => 'create_label_title' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
                                             ?>
                                         </div>
                                         <div class="<?php echo ( ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) ? 'hidden' : 'pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-post-type' ); ?>">

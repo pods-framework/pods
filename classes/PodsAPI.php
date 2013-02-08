@@ -1115,7 +1115,7 @@ class PodsAPI {
      * @since 1.7.9
      */
     public function save_pod ( $params, $sanitized = false, $db = true ) {
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $tableless_field_types = PodsForm::tableless_field_types();
 
         $load_params = (object) $params;
 
@@ -1705,7 +1705,7 @@ class PodsAPI {
         if ( true !== $db )
             $table_operation = false;
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $tableless_field_types = PodsForm::tableless_field_types();
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
         $params = (object) $params;
@@ -2364,7 +2364,7 @@ class PodsAPI {
     public function save_pod_item ( $params ) {
         $params = (object) pods_str_replace( '@wp_', '{prefix}', $params );
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $tableless_field_types = PodsForm::tableless_field_types();
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
         // @deprecated 2.0.0
@@ -3313,7 +3313,7 @@ class PodsAPI {
      * @return array Data array
      */
     private function export_pod_item_level ( $pod, $fields, $depth, $current_depth = 1 ) {
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $tableless_field_types = PodsForm::tableless_field_types();
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
         foreach ( $fields as $k => $field ) {
@@ -3681,7 +3681,7 @@ class PodsAPI {
          */
         global $wpdb;
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $tableless_field_types = PodsForm::tableless_field_types();
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
         $params = (object) pods_sanitize( $params );
@@ -5154,7 +5154,7 @@ class PodsAPI {
      * @since 2.0.0
      */
     public function handle_field_validation ( &$value, $field, $object_fields, $fields, $pod, $params ) {
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $tableless_field_types = PodsForm::tableless_field_types();
 
         $fields = array_merge( $fields, $object_fields );
 
@@ -5243,7 +5243,7 @@ class PodsAPI {
         if ( !is_array( $ids ) )
             $ids = explode( ',', $ids );
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $tableless_field_types = PodsForm::tableless_field_types();
 
         if ( empty( $ids ) || !in_array( pods_var( 'type', $field ), $tableless_field_types ) )
             return false;

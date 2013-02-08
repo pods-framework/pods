@@ -167,7 +167,7 @@ $field_defaults = array(
     'message_unique' => ''*/
 );
 
-$tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+$tableless_field_types = PodsForm::tableless_field_types();
 $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 $pick_object = PodsForm::field_method( 'pick', 'related_objects' );
 

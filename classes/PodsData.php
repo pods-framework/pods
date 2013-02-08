@@ -1437,7 +1437,7 @@ class PodsData {
 
         $id = $row;
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $tableless_field_types = PodsForm::tableless_field_types();
 
         if ( null === $row ) {
             $this->row_number++;
@@ -1987,7 +1987,7 @@ class PodsData {
         if ( !empty( $pod ) && false === strpos( $field, '`' ) && false === strpos( $field, '.' ) && false === strpos( $field, '(' ) && false === strpos( $field, ' ' ) ) {
             $key = '';
 
-            $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+            $tableless_field_types = PodsForm::tableless_field_types();
 
             if ( isset( $pod[ 'fields' ][ $field ] ) && in_array( $pod[ 'fields' ][ $field ][ 'type' ], $tableless_field_types ) ) {
                 if ( in_array( $pod[ 'fields' ][ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
@@ -2200,7 +2200,7 @@ class PodsData {
                 return $joins;
         }
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $tableless_field_types = PodsForm::tableless_field_types();
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
         if ( !isset( $this->traversal[ $traverse_recurse[ 'pod' ] ] ) )

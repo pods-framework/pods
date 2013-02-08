@@ -88,17 +88,9 @@
                                             $data = array(
                                                 'post_type' => __( 'Custom Post Type (like Posts or Pages)', 'pods' ),
                                                 'taxonomy' => __( 'Custom Taxonomy (like Categories or Tags)', 'pods' ),
-                                                'pod' => __( 'Advanced Content Type (separate from WP, blank slate, in its own table)', 'pods' )
+                                                'pod' => __( 'Advanced Content Type (separate from WP, blank slate, in its own table)', 'pods' ),
+                                                'settings' => __( 'Custom Settings Page', 'pods' )
                                             );
-
-                                            if ( pods_developer() ) {
-                                                $data = array(
-                                                    'post_type' => __( 'Custom Post Type (like Posts or Pages)', 'pods' ),
-                                                    'taxonomy' => __( 'Custom Taxonomy (like Categories or Tags)', 'pods' ),
-                                                    'pod' => __( 'Advanced Content Type (separate from WP, blank slate, in its own table)', 'pods' ),
-                                                    'settings' => __( 'Custom Settings Page', 'pods' )
-                                                );
-                                            }
 
                                             if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS )
                                                 unset( $data[ 'pod' ] );

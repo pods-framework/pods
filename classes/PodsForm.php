@@ -592,7 +592,7 @@ class PodsForm {
     public static function display ( $type, $value = null, $name = null, $options = null, $pod = null, $id = null, $traverse = null ) {
         self::field_loader( $type );
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $tableless_field_types = PodsForm::tableless_field_types();
 
         if ( method_exists( self::$loaded[ $type ], 'display' ) ) {
             if ( is_array( $value ) && in_array( $type, $tableless_field_types ) ) {
@@ -962,5 +962,11 @@ class PodsForm {
             self::$field_types = array_merge( $field_types, self::$field_types );
 
         return self::$field_types;
+    }
+
+    public static function tableless_field_types () {
+        $tableless_field_types = array( 'pick', 'file', 'avatar', 'taxonomy' );
+
+        return apply_filters( 'pods_tableless_field_types', $tableless_field_types );
     }
 }

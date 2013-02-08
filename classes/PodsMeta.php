@@ -322,7 +322,7 @@ class PodsMeta {
     }
 
     public function cpac_meta_values ( $meta, $fieldtype, $field, $type, $object_id ) {
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar' ) );
+        $tableless_field_types = PodsForm::tableless_field_types();
 
         $object = $type;
 

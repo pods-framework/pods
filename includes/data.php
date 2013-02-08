@@ -681,7 +681,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
     if ( !empty( $fields ) && is_array( $fields ) && isset( $fields[ $field ] ) ) {
         $field = $fields[ $field ];
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $tableless_field_types = PodsForm::tableless_field_types();
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
         if ( !empty( $field ) && is_array( $field ) && in_array( $field[ 'type' ], $tableless_field_types ) ) {

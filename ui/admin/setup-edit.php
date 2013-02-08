@@ -838,8 +838,8 @@ $advanced_options = array(
 );
 
 if ( $pods_ui ) {
-    if ( isset( $pod[ 'fields' ][ pods_var_raw( 'pod_index', $pod ) ] ) )
-        $advanced_options[ 'ui_options' ][ 'ui_fields_manage' ][ 'default' ][] = pods_var_raw( 'pod_index', $pod );
+    if ( isset( $pod[ 'fields' ][ pods_var_raw( 'pod_index', $pod, 'name' ) ] ) )
+        $advanced_options[ 'ui_options' ][ 'ui_fields_manage' ][ 'default' ][] = pods_var_raw( 'pod_index', $pod, 'name' );
 
     if ( isset( $pod[ 'fields' ][ 'modified' ] ) )
         $advanced_options[ 'ui_options' ][ 'ui_fields_manage' ][ 'default' ][] = 'modified';

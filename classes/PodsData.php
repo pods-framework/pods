@@ -287,7 +287,7 @@ class PodsData {
                 $this->orderby = $this->pod_data[ 'orderby' ];
 
             if ( 'settings' == $this->pod_data[ 'type' ] ) {
-                $this->id = $pod;
+                $this->id = $this->pod_data[ 'id' ];
 
                 $this->fetch( $this->id );
             }
@@ -1437,6 +1437,8 @@ class PodsData {
 
         $id = $row;
 
+        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+
         if ( null === $row ) {
             $this->row_number++;
 
@@ -1452,13 +1454,15 @@ class PodsData {
                     $this->row = array();
 
                     foreach ( $this->fields as $field ) {
-                        $this->row[ $field[ 'name' ] ] = get_option( $this->pod_data[ 'name' ] . '_' . $field[ 'name' ] );
+                        if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
+                            $this->row[ $field[ 'name' ] ] = get_option( $this->pod_data[ 'name' ] . '_' . $field[ 'name' ] );
                     }
 
                     if ( empty( $this->row ) )
                         $this->row = false;
                     elseif ( !empty( $this->pod ) ) {
-                        $this->row[ 'id' ] = $this->pod;
+                        $this->id = $this->pod_data[ 'id' ];
+                        $this->row[ 'option_id' ] = $this->id;
 
                         pods_cache_set( $this->pod, $this->row, 0, 'pods_items_' . $this->pod );
                     }
@@ -1572,13 +1576,14 @@ class PodsData {
                 $this->row = array();
 
                 foreach ( $this->fields as $field ) {
-                    $this->row[ $field[ 'name' ] ] = get_option( $this->pod_data[ 'name' ] . '_' . $field[ 'name' ] );
+                    if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
+                        $this->row[ $field[ 'name' ] ] = get_option( $this->pod_data[ 'name' ] . '_' . $field[ 'name' ] );
                 }
 
                 if ( empty( $this->row ) )
                     $this->row = false;
                 else
-                    $this->row[ 'id' ] = $this->pod;
+                    $this->row[ 'option_id' ] = $this->pod;
             }
             else {
                 $params = array(

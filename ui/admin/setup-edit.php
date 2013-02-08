@@ -268,7 +268,7 @@ if ( isset( $_GET[ 'do' ] ) ) {
 <div id="post-body" class="meta-box-holder columns-2">
 <div id="post-body-content">
 <?php
-if ( 'none' != pods_var( 'storage', $pod, 'none', null, true ) ) {
+if ( 'none' != pods_var( 'storage', $pod, 'none', null, true ) || 'settings' == $pod[ 'type' ] ) {
     ?>
 <p class="pods-manage-row-add pods-float-right">
     <a href="#add-field" class="button-primary"><?php _e( 'Add Field', 'pods' ); ?></a>

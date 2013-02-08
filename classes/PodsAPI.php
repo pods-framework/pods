@@ -92,10 +92,10 @@ class PodsAPI {
             $meta = pods_unsanitize( $meta );
         }
 
-        if ( in_array( $object_type, array( 'post', 'user', 'comment', 'settings' ) ) )
+        if ( in_array( $object_type, array( 'post', 'user', 'comment' ) ) )
             return call_user_func( array( $this, 'save_' . $object_type ), $data, $meta, $strict, false );
         elseif ( 'settings' == $object_type )
-            return $this->save_setting( $data, false );
+            return $this->save_setting( pods_var( 'option_id', $data ), $meta, false );
 
         return false;
     }
@@ -472,6 +472,7 @@ class PodsAPI {
     /**
      * Save a set of options
      *
+     * @param string $setting Setting group name
      * @param array $option_data All option data to be saved
      * @param bool $sanitized (optional) Will unsanitize the data, should be passed if the data is sanitized before sending.
      *
@@ -479,7 +480,7 @@ class PodsAPI {
      *
      * @since 2.3.0
      */
-    public function save_setting ( $option_data, $sanitized = false ) {
+    public function save_setting ( $setting, $option_data, $sanitized = false ) {
         if ( !is_array( $option_data ) || empty( $option_data ) )
             return pods_error( __( 'Setting data is required but is either invalid or empty', 'pods' ), $this );
 
@@ -489,6 +490,9 @@ class PodsAPI {
             $option_data = pods_unsanitize( $option_data );
 
         foreach ( $option_data as $option => $value ) {
+            if ( !empty( $setting ) )
+                $option = $setting . '_' . $option;
+
             update_option( $option, $value );
         }
 
@@ -1030,6 +1034,7 @@ class PodsAPI {
                     'menu_name' => ( !empty( $params->create_label_menu ) ? $params->create_label_menu : $pod_params[ 'label' ] ),
                     'menu_location' => $params->create_menu_location
                 );
+                $pod_params[ 'storage' ] = 'none';
             }
         }
         elseif ( 'extend' == $params->create_extend ) {
@@ -2463,6 +2468,9 @@ class PodsAPI {
         $params->pod = $pod[ 'name' ];
         $params->pod_id = $pod[ 'id' ];
 
+        if ( 'settings' == $pod[ 'type' ] )
+            $params->id = $pod[ 'id' ];
+
         $fields = $pod[ 'fields' ];
 
         $object_fields = (array) pods_var_raw( 'object_fields', $pod, array(), null, true );
@@ -2620,7 +2628,9 @@ class PodsAPI {
 
         $object_data = $object_meta = array();
 
-        if ( !empty( $params->id ) )
+        if ( 'settings' == $object_type )
+            $object_data[ 'option_id' ] = $pod[ 'name' ];
+        elseif ( !empty( $params->id ) )
             $object_data[ $object_ID ] = $params->id;
 
         $fields_active = array_unique( $fields_active );
@@ -2749,11 +2759,14 @@ class PodsAPI {
             $object_data[ 'post_type' ] = $post_type;
         }
 
-        if ( ( 'meta' == $pod[ 'storage' ] || 'settings' == $pod[ 'type' ] ) && !in_array( $pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) ) {
+        if ( ( 'meta' == $pod[ 'storage' ] || ( 'settings' == $pod[ 'type' ] ) && !in_array( $pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) ) ) {
             if ( $allow_custom_fields && !empty( $custom_data ) )
                 $object_meta = array_merge( $custom_data, $object_meta );
 
             $params->id = $this->save_wp_object( $object_type, $object_data, $object_meta, false, true );
+
+            if ( !empty( $params->id ) && 'settings' == $object_type )
+                $params->id = $pod[ 'id' ];
         }
         else {
             if ( !in_array( $pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) )
@@ -2793,9 +2806,6 @@ class PodsAPI {
         }
 
         $params->id = (int) $params->id;
-
-        if ( 'settings' == $pod[ 'type' ] )
-            $params->id = $pod[ 'id' ];
 
         $no_conflict = pods_no_conflict_check( $pod[ 'type' ] );
 
@@ -2868,14 +2878,14 @@ class PodsAPI {
                     elseif ( 'settings' == $pod[ 'type' ] ) {
                         if ( 'pick' != $type || !in_array( $fields[ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
                             if ( !empty( $values ) )
-                                update_option( $pod[ 'name' ] . '_' . $field[ 'name' ], $values );
+                                update_option( '_pods_' . $pod[ 'name' ] . '_' . $field, $values );
                             else
-                                delete_option( $pod[ 'name' ] . '_' . $field[ 'name' ] );
+                                update_option( '_pods_' . $pod[ 'name' ] . '_' . $field, '' );
                         }
                         elseif ( !empty( $values ) )
-                            update_option( $pod[ 'name' ] . '_' . $field[ 'name' ], $values );
+                            update_option( $pod[ 'name' ] . '_' . $field, $values );
                         else
-                            delete_option( $pod[ 'name' ] . '_' . $field[ 'name' ] );
+                            update_option( $pod[ 'name' ] . '_' . $field, '' );
                     }
 
                     $related_pod_id = $related_field_id = 0;
@@ -2941,8 +2951,11 @@ class PodsAPI {
                                         else
                                             delete_metadata( $object_type, $id, '_pods_' . $related_field, '', true );
                                     }
-                                    elseif ( 'settings' == $pod[ 'type' ] ) {
-                                        $ids = get_option( $related_pod[ 'name' ] . '_' . $related_field );
+                                    elseif ( 'settings' == $related_pod[ 'type' ] ) {
+                                        $ids = get_option( '_pods_' . $related_pod[ 'name' ] . '_' . $related_field );
+
+                                        if ( empty( $ids ) )
+                                            $ids = get_option( $related_pod[ 'name' ] . '_' . $related_field );
 
                                         if ( empty( $ids ) )
                                             $ids = array( $params->id );
@@ -2954,17 +2967,21 @@ class PodsAPI {
                                                 $ids[] = $params->id;
                                         }
 
-                                        if ( !empty( $ids ) )
+                                        if ( !empty( $ids ) ) {
+                                            update_option( '_pods_' . $related_pod[ 'name' ] . '_' . $related_field, $ids );
                                             update_option( $related_pod[ 'name' ] . '_' . $related_field, $ids );
-                                        else
-                                            delete_option( $related_pod[ 'name' ] . '_' . $related_field );
+                                        }
+                                        else {
+                                            update_option( '_pods_' . $related_pod[ 'name' ] . '_' . $related_field, '' );
+                                            update_option( $related_pod[ 'name' ] . '_' . $related_field, '' );
+                                        }
                                     }
                                 }
                             }
                         }
                     }
 
-                    if ( 'pick' != $type || !in_array( $fields[ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
+                    if ( 'settings' != $pod[ 'type' ] && ( 'pick' != $type || !in_array( $fields[ $field ][ 'pick_object' ], $simple_tableless_objects ) ) ) {
                         if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
                             if ( !empty( $values ) ) {
                                 $values_to_impode = array();
@@ -5275,7 +5292,7 @@ class PodsAPI {
             if ( !is_array( $pod ) )
                 $pod = $this->load_pod( array( 'id' => $pod_id ), false );
 
-            if ( !empty( $pod ) && in_array( $pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) ) {
+            if ( !empty( $pod ) && in_array( $pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment', 'settings' ) ) ) {
                 $related_ids = array();
 
                 $meta_type = $pod[ 'type' ];
@@ -5289,20 +5306,40 @@ class PodsAPI {
                     pods_no_conflict_on( $meta_type );
 
                 foreach ( $ids as $id ) {
-                    $related_id = get_metadata( $meta_type, $id, '_pods_' . $field[ 'name' ], true );
+                    if ( 'settings' == $meta_type ) {
+                        $related_id = get_option( '_pods_' . $pod[ 'name' ] . '_' . $field[ 'name' ] );
 
-                    if ( empty( $related_id ) )
-                        $related_id = get_metadata( $meta_type, $id, $field[ 'name' ], true );
+                        if ( empty( $related_id ) )
+                            $related_id = get_option( $pod[ 'name' ] . '_' . $field[ 'name' ] );
 
-                    if ( is_array( $related_id ) && !empty( $related_id ) ) {
-                        foreach ( $related_id as $related ) {
-                            if ( is_array( $related ) && !empty( $related ) ) {
-                                foreach ( $related as $r ) {
-                                    $related_ids[] = (int) $r;
+                        if ( is_array( $related_id ) && !empty( $related_id ) ) {
+                            foreach ( $related_id as $related ) {
+                                if ( is_array( $related ) && !empty( $related ) ) {
+                                    foreach ( $related as $r ) {
+                                        $related_ids[] = (int) $r;
+                                    }
                                 }
+                                else
+                                    $related_ids[] = (int) $related;
                             }
-                            else
-                                $related_ids[] = (int) $related;
+                        }
+                    }
+                    else {
+                        $related_id = get_metadata( $meta_type, $id, '_pods_' . $field[ 'name' ], true );
+
+                        if ( empty( $related_id ) )
+                            $related_id = get_metadata( $meta_type, $id, $field[ 'name' ], true );
+
+                        if ( is_array( $related_id ) && !empty( $related_id ) ) {
+                            foreach ( $related_id as $related ) {
+                                if ( is_array( $related ) && !empty( $related ) ) {
+                                    foreach ( $related as $r ) {
+                                        $related_ids[] = (int) $r;
+                                    }
+                                }
+                                else
+                                    $related_ids[] = (int) $related;
+                            }
                         }
                     }
                 }
@@ -5342,7 +5379,7 @@ class PodsAPI {
 
         $info = array(
             //'select' => '`t`.*',
-            'object_type' => null,
+            'object_type' => $object_type,
             'type' => null,
 
             'table' => $object,
@@ -5666,7 +5703,7 @@ class PodsAPI {
 
                 $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '` DESC, `t`.`' . $info[ 'field_id' ] . '`';
             }
-            elseif ( 'option' == $object_type ) {
+            elseif ( in_array( $object_type, array( 'option', 'settings' ) ) ) {
                 $info[ 'table' ] = $wpdb->options;
                 $info[ 'meta_table' ] = $wpdb->options;
 
@@ -5679,7 +5716,7 @@ class PodsAPI {
 
                 $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '` ASC';
             }
-            elseif ( is_multisite() && 'site_option' == $object_type ) {
+            elseif ( is_multisite() && in_array( $object_type, array( 'site_option', 'site_settings' ) ) ) {
                 $info[ 'table' ] = $wpdb->sitemeta;
                 $info[ 'meta_table' ] = $wpdb->sitemeta;
 

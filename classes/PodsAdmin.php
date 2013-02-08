@@ -163,7 +163,9 @@ class PodsAdmin {
                 $pods_pages = 0;
 
                 foreach ( (array) $advanced_content_types as $pod ) {
-                    if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_content' ) && !current_user_can( 'pods_add_' . $pod[ 'name' ] ) && !current_user_can( 'pods_edit_' . $pod[ 'name' ] ) && !current_user_can( 'pods_delete_' . $pod[ 'name' ] ) )
+                    if ( empty( $pod[ 'fields' ] ) )
+                        continue;
+                    elseif ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_content' ) && !current_user_can( 'pods_add_' . $pod[ 'name' ] ) && !current_user_can( 'pods_edit_' . $pod[ 'name' ] ) && !current_user_can( 'pods_delete_' . $pod[ 'name' ] ) )
                         continue;
 
                     if ( 1 == pods_var( 'show_in_menu', $pod[ 'options' ], 0 ) ) {
@@ -273,7 +275,9 @@ class PodsAdmin {
                 $settings_submenu = array();
 
                 foreach ( (array) $settings as $pod ) {
-                    if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_content' ) && !current_user_can( 'pods_edit_' . $pod[ 'name' ] ) )
+                    if ( empty( $pod[ 'fields' ] ) )
+                        continue;
+                    elseif ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_content' ) && !current_user_can( 'pods_edit_' . $pod[ 'name' ] ) )
                         continue;
 
                     $page_title = pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true );
@@ -522,7 +526,8 @@ class PodsAdmin {
     public function admin_content_settings () {
         $pod_name = str_replace( 'pods-settings-', '', $_GET[ 'page' ] );
 
-        $pod = pods( $pod_name, $pod_name );
+        $pod = pods( $pod_name );
+        $pod->fetch( $pod->pod_data[ 'id' ] );
 
         if ( 'custom' != pods_var( 'ui_style', $pod->pod_data[ 'options' ], 'settings', null, true ) ) {
             $actions_disabled = array(
@@ -707,7 +712,7 @@ class PodsAdmin {
                 'delete' => array( $this, 'admin_setup_delete' )
             ),
             'action_links' => array(
-                'add' => pods_var_update( array( 'page' => 'pods-add-new', 'action' => '' ) )
+                'add' => pods_var_update( array( 'page' => 'pods-add-new', 'action' => '', 'id' => '', 'do' => '' ) )
             ),
             'search' => false,
             'searchable' => false,

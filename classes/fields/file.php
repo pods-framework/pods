@@ -250,7 +250,7 @@ class PodsField_File extends PodsField {
             $field_type = 'plupload';
         elseif ( 'attachment' == pods_var( 'file_uploader', $options ) ) {
             if ( !pods_wp_version( '3.5' ) || !is_admin() || !in_array( $GLOBALS[ 'pagenow' ], array( 'post.php', 'post-new.php' ) ) )
-                $field_type = 'attachment';
+                $field_type = 'media';
             else
                 $field_type = 'media';
         }

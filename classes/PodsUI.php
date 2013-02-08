@@ -1356,7 +1356,7 @@ class PodsUI {
             echo ( $duplicate ? $this->header[ 'duplicate' ] : $this->header[ 'edit' ] );
 
             if ( !in_array( 'add', $this->actions_disabled ) && !in_array( 'add', $this->actions_hidden ) ) {
-                $link = pods_var_update( array( 'action' . $this->num => 'add', 'id' . $this->num => '' ), array( 'page' ), $this->exclusion() );
+                $link = pods_var_update( array( 'action' . $this->num => 'add', 'id' . $this->num => '', 'do' . $this->num = '' ), array( 'page' ), $this->exclusion() );
 
                 if ( !empty( $this->action_links[ 'add' ] ) )
                     $link = $this->action_links[ 'add' ];
@@ -2017,7 +2017,7 @@ class PodsUI {
             else
                 echo $this->header[ 'manage' ];
             if ( !in_array( 'add', $this->actions_disabled ) && !in_array( 'add', $this->actions_hidden ) ) {
-                $link = pods_var_update( array( 'action' . $this->num => 'add' ), array( 'page' ), $this->exclusion() );
+                $link = pods_var_update( array( 'action' . $this->num => 'add', 'id' . $this->num => '', 'do' . $this->num => '' ), array( 'page' ), $this->exclusion() );
 
                 if ( !empty( $this->action_links[ 'add' ] ) )
                     $link = $this->action_links[ 'add' ];

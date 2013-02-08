@@ -6,7 +6,12 @@ wp_enqueue_script( 'jquery-ui-core' );
 wp_enqueue_script( 'jquery-ui-sortable' );
 wp_enqueue_style( 'pods-attach' );
 
-wp_enqueue_media( array( 'post' => (int) $post_ID ) );
+$args = array();
+
+if ( !empty( $post_ID ) )
+    $args = array( 'post' => (int) $post_ID );
+
+wp_enqueue_media( $args );
 
 $field_file = PodsForm::field_loader( 'file' );
 

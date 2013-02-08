@@ -56,7 +56,7 @@
                                 <a href="#pods-wizard-create" data-opt="create">
                                     <h2><?php _e( 'Create New', 'pods' ); ?></h2>
 
-                                    <p><?php _e( 'Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, <strong>Advanced Content Types</strong> with their own tables, or <strong>Custom Settings Pages</strong> for site-specific data.', 'pods' ); ?></p>
+                                    <p><?php _e( 'Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, <strong>Advanced Content Types</strong> with their own tables, or <strong>Custom Settings Pages</strong>.', 'pods' ); ?></p>
                                 </a>
 
                                 <p><br /></p>
@@ -145,7 +145,7 @@
                                         <div class="pods-field-option">
                                             <?php
                                                 echo PodsForm::label( 'create_label_menu', __( 'Menu Label', 'pods' ), __( '<h6>Menu Label</h6> This is the label that will appear throughout the WordPress admin area for your settings.', 'pods' ) );
-                                                echo PodsForm::field( 'create_label_menu', pods_var_raw( 'create_label_menu', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required', 'text_max_length' => 30 ) );
+                                                echo PodsForm::field( 'create_label_menu', pods_var_raw( 'create_label_menu', 'post' ), 'text', array( 'text_max_length' => 30 ) );
                                             ?>
                                         </div>
                                         <div class="pods-field-option">

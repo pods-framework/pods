@@ -49,7 +49,7 @@ class PodsField_Boolean extends PodsField {
     public function options () {
         $options = array(
             'boolean_format_type' => array(
-                'label' => __( 'Format Type', 'pods' ),
+                'label' => __( 'Input Type', 'pods' ),
                 'default' => 'checkbox',
                 'type' => 'pick',
                 'data' => array(

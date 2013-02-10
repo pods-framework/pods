@@ -318,7 +318,8 @@ div.pods-manage-field .pods-field-option-group .pods-field-option-group-label {
 .pods-manage-field .pods-field-option textarea,
 .pods-manage-field .pods-field-option .pods-field.pods-boolean,
 .pods-manage-field .pods-pick-values,
-.pods-manage-field .pods-field-option .pods-form-ui-field-type-file {
+.pods-manage-field .pods-field-option .pods-form-ui-field-type-file,
+.pods-manage-field .pods-slider-field {
     display: block;
     float: left;
     margin-left: 22px;

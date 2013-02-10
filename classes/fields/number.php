@@ -54,6 +54,16 @@ class PodsField_Number extends PodsField {
      */
     public function options () {
         $options = array(
+            'number_format_type' => array(
+                'label' => __( 'Input Type', 'pods' ),
+                'default' => 'number',
+                'type' => 'pick',
+                'data' => array(
+                    'number' => __( 'Freeform Number', 'pods' ),
+                    'slider' => __( 'Slider', 'pods' )
+                ),
+                'dependency' => true
+            ),
             'number_format' => array(
                 'label' => __( 'Format', 'pods' ),
                 'default' => 'i18n',
@@ -70,6 +80,24 @@ class PodsField_Number extends PodsField {
                 'label' => __( 'Decimals', 'pods' ),
                 'default' => 0,
                 'type' => 'number'
+            ),
+            'number_step' => array(
+                'label' => __( 'Slider Increment (Step)', 'pods' ),
+                'depends-on' => array( 'number_format_type' => 'slider' ),
+                'default' => 1,
+                'type' => 'text'
+            ),
+            'number_min' => array(
+                'label' => __( 'Minimum Number', 'pods' ),
+                'depends-on' => array( 'number_format_type' => 'slider' ),
+                'default' => 0,
+                'type' => 'text'
+            ),
+            'number_max' => array(
+                'label' => __( 'Maximum Number', 'pods' ),
+                'depends-on' => array( 'number_format_type' => 'slider' ),
+                'default' => 100,
+                'type' => 'text'
             ),
             'number_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
@@ -167,7 +195,12 @@ class PodsField_Number extends PodsField {
         if ( is_array( $value ) )
             $value = implode( '', $value );
 
-        pods_view( PODS_DIR . 'ui/fields/number.php', compact( array_keys( get_defined_vars() ) ) );
+        if ( 'slider' == pods_var( 'number_format_type', $options, 'number' ) )
+            $field_type = 'slider';
+        else
+            $field_type = 'number';
+
+        pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }
 
     /**

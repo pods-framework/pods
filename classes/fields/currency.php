@@ -65,6 +65,16 @@ class PodsField_Currency extends PodsField {
      */
     public function options () {
         $options = array(
+            'currency_format_type' => array(
+                'label' => __( 'Input Type', 'pods' ),
+                'default' => 'number',
+                'type' => 'pick',
+                'data' => array(
+                    'number' => __( 'Freeform Number', 'pods' ),
+                    'slider' => __( 'Slider', 'pods' )
+                ),
+                'dependency' => true
+            ),
             'currency_format_sign' => array(
                 'label' => __( 'Currency Sign', 'pods' ),
                 'default' => apply_filters( 'pods_form_ui_field_number_currency_default', 'usd' ),
@@ -104,6 +114,24 @@ class PodsField_Currency extends PodsField {
                 'label' => __( 'Decimals', 'pods' ),
                 'default' => 2,
                 'type' => 'number'
+            ),
+            'currency_step' => array(
+                'label' => __( 'Slider Increment (Step)', 'pods' ),
+                'depends-on' => array( 'currency_format_type' => 'slider' ),
+                'default' => 1,
+                'type' => 'text'
+            ),
+            'currency_min' => array(
+                'label' => __( 'Minimum Number', 'pods' ),
+                'depends-on' => array( 'currency_format_type' => 'slider' ),
+                'default' => 0,
+                'type' => 'text'
+            ),
+            'currency_max' => array(
+                'label' => __( 'Maximum Number', 'pods' ),
+                'depends-on' => array( 'currency_format_type' => 'slider' ),
+                'default' => 1000,
+                'type' => 'text'
             ),
             'currency_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
@@ -219,7 +247,10 @@ class PodsField_Currency extends PodsField {
 
         $value = $this->pre_save( $value, $id, $name, $options, null, $pod );
 
-        $field_type = 'currency';
+        if ( 'slider' == pods_var( 'currency_format_type', $options, 'number' ) )
+            $field_type = 'slider';
+        else
+            $field_type = 'currency';
 
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
     }

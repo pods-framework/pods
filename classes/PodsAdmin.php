@@ -498,7 +498,21 @@ class PodsAdmin {
         if ( isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) )
             $manage[ 'modified' ] = $pod->pod_data[ 'fields' ][ 'modified' ][ 'label' ];
 
-        $manage = pods_var_raw( 'ui_fields_manage', $pod->pod_data[ 'options' ], $manage, null, true );
+        $manage_fields = pods_var_raw( 'ui_fields_manage', $pod->pod_data[ 'options' ] );
+
+        if ( !empty( $manage_fields ) ) {
+            $manage_new = array();
+
+            foreach ( $manage_fields as $manage_field ) {
+                if ( isset( $pod->pod_data[ 'fields' ][ $manage_field ] ) )
+                    $manage_new[ $manage_field ] = $pod->pod_data[ 'fields' ][ $manage_field ];
+                elseif ( isset( $pod->pod_data[ 'object_fields' ][ $manage_field ] ) )
+                    $manage_new[ $manage_field ] = $pod->pod_data[ 'object_fields' ][ $manage_field ];
+            }
+
+            if ( !empty( $manage_new ) )
+                $manage = $manage_new;
+        }
 
         $manage = apply_filters( 'pods_admin_ui_fields_' . $pod->pod, apply_filters( 'pods_admin_ui_fields', $manage, $pod->pod, $pod ), $pod->pod, $pod );
 

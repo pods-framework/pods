@@ -59,7 +59,7 @@ class PodsAPI {
 
             $pod = pods_clean_name( $pod );
 
-            $pod = $this->load_pod( array( 'name' => $pod ), false );
+            $pod = $this->load_pod( array( 'name' => $pod, 'table_info' => true ), false );
 
             if ( !empty( $pod ) ) {
                 $this->pod_data = $pod;
@@ -2896,7 +2896,7 @@ class PodsAPI {
 
                     if ( 'pick' == $type && !in_array( $fields[ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
                         $pick_object = pods_var( 'pick_object', $fields[ $field ], '' ); // pod, post_type, taxonomy, etc..
-                        $pick_val = pods_var( 'pick_val', $fields[ $field ], '' ); // pod name, post type name, taxonomy name, etc..
+                        $pick_val = pods_var( 'pick_val', $fields[ $field ], $pick_object, null, true ); // pod name, post type name, taxonomy name, etc..
                         $pick_sister_id = (int) pods_var( 'sister_id', $fields[ $field ], 0 );
 
                         $related_pod = $this->load_pod( array( 'name' => $pick_val, 'table_info' => false ), false );
@@ -4057,7 +4057,7 @@ class PodsAPI {
             $current_language = pll_current_language( 'slug' );
 
         if ( !is_array( $params ) && !is_object( $params ) )
-            $params = array( 'name' => $params );
+            $params = array( 'name' => $params, 'table_info' => false );
 
         if ( is_object( $params ) && isset( $params->post_name ) ) {
             $pod = pods_transient_get( 'pods_pod_' . ( !empty( $current_language ) ? $current_language . '_' : '' ) . $params->post_name );
@@ -4070,8 +4070,12 @@ class PodsAPI {
         else {
             $params = (object) pods_sanitize( $params );
 
-            if ( ( !isset( $params->id ) || empty( $params->id ) ) && ( !isset( $params->name ) || empty( $params->name ) ) )
-                return pods_error( 'Either Pod ID or Name are required', $this );
+            if ( ( !isset( $params->id ) || empty( $params->id ) ) && ( !isset( $params->name ) || empty( $params->name ) ) ) {
+                if ( $strict )
+                    return pods_error( 'Either Pod ID or Name are required', $this );
+
+                return false;
+            }
 
             if ( isset( $params->name ) ) {
                 $pod = pods_transient_get( 'pods_pod_' . ( !empty( $current_language ) ? $current_language . '_' : '' ) . $params->name );

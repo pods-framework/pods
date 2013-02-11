@@ -222,10 +222,17 @@ class PodsField_Pick extends PodsField {
         return true;
     }
 
-    public function setup_related_objects () {
+    /**
+     * Setup related objects
+     *
+     * @param boolean $force Whether to force refresh of related objects
+     *
+     * @since 2.3.0
+     */
+    public function setup_related_objects ( $force = false ) {
         $related_objects = get_transient( 'pods_related_objects' );
 
-        if ( !empty( $related_objects ) )
+        if ( !$force && !empty( $related_objects ) )
             self::$related_objects = $related_objects;
         else {
             // Custom
@@ -237,11 +244,27 @@ class PodsField_Pick extends PodsField {
 
             // Pods
             // @todo Upgrade should convert to proper type selections (pods-pod_name >> post_type-pod_name
+            $pod_options = array();
+
+            // Advanced Content Types
             $_pods = PodsMeta::$advanced_content_types;
 
-            foreach ( $_pods as $k => $pod ) {
-                self::$related_objects[ 'pod-' . $pod[ 'name' ] ] = array(
-                    'label' => $pod[ 'label' ] . ' (' . $pod[ 'name' ] . ')',
+            foreach ( $_pods as $pod ) {
+                $pod_options[ $pod[ 'name' ] ] = $pod[ 'label' ] . ' (' . $pod[ 'name' ] . ')';
+            }
+
+            // Settings
+            $_pods = PodsMeta::$settings;
+
+            foreach ( $_pods as $pod ) {
+                $pod_options[ $pod[ 'name' ] ] = $pod[ 'label' ] . ' (' . $pod[ 'name' ] . ')';
+            }
+
+            asort( $pod_options );
+
+            foreach ( $pod_options as $pod => $label ) {
+                self::$related_objects[ 'pod-' . $pod ] = array(
+                    'label' => $label,
                     'group' => __( 'Pods', 'pods' )
                 );
             }
@@ -370,11 +393,13 @@ class PodsField_Pick extends PodsField {
     /**
      * Return available related objects
      *
+     * @param boolean $force Whether to force refresh of related objects
+     *
      * @return array Field selection array
      * @since 2.3.0
      */
-    public function related_objects () {
-        $this->setup_related_objects();
+    public function related_objects ( $force = false ) {
+        $this->setup_related_objects( $force );
 
         $related_objects = array();
 

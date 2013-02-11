@@ -167,9 +167,10 @@ $field_defaults = array(
     'message_unique' => ''*/
 );
 
+$pick_object = PodsForm::field_method( 'pick', 'related_objects', true );
+
 $tableless_field_types = PodsForm::tableless_field_types();
 $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
-$pick_object = PodsForm::field_method( 'pick', 'related_objects' );
 
 foreach ( $pod[ 'options' ] as $_option => $_value ) {
     $pod[ $_option ] = $_value;

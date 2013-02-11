@@ -1450,6 +1450,8 @@ class PodsData {
 
                 if ( false !== $row && is_array( $row ) )
                     $this->row = $row;
+                elseif ( empty( $this->fields ) )
+                    $this->row = false;
                 else {
                     $this->row = array();
 
@@ -1458,14 +1460,10 @@ class PodsData {
                             $this->row[ $field[ 'name' ] ] = get_option( $this->pod_data[ 'name' ] . '_' . $field[ 'name' ] );
                     }
 
-                    if ( empty( $this->row ) )
-                        $this->row = false;
-                    elseif ( !empty( $this->pod ) ) {
-                        $this->id = $this->pod_data[ 'id' ];
-                        $this->row[ 'option_id' ] = $this->id;
+                    $this->id = $this->pod_data[ 'id' ];
+                    $this->row[ 'option_id' ] = $this->id;
 
-                        pods_cache_set( $this->pod, $this->row, 0, 'pods_items_' . $this->pod );
-                    }
+                    pods_cache_set( $this->pod, $this->row, 0, 'pods_items_' . $this->pod );
                 }
             }
             elseif ( isset( $this->data[ $this->row_number ] ) )
@@ -1575,15 +1573,17 @@ class PodsData {
             elseif ( 'settings' == $this->pod_data[ 'type' ] ) {
                 $this->row = array();
 
-                foreach ( $this->fields as $field ) {
-                    if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
-                        $this->row[ $field[ 'name' ] ] = get_option( $this->pod_data[ 'name' ] . '_' . $field[ 'name' ] );
-                }
-
-                if ( empty( $this->row ) )
+                if ( empty( $this->fields ) )
                     $this->row = false;
-                else
-                    $this->row[ 'option_id' ] = $this->pod;
+                else {
+                    foreach ( $this->fields as $field ) {
+                        if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
+                            $this->row[ $field[ 'name' ] ] = get_option( $this->pod_data[ 'name' ] . '_' . $field[ 'name' ] );
+                    }
+
+                    $this->id = $this->pod_data[ 'id' ];
+                    $this->row[ 'option_id' ] = $this->id;
+                }
             }
             else {
                 $params = array(

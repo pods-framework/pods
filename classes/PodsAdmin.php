@@ -587,7 +587,6 @@ class PodsAdmin {
         $pod_name = str_replace( 'pods-settings-', '', $_GET[ 'page' ] );
 
         $pod = pods( $pod_name );
-        $pod->fetch( $pod->pod_data[ 'id' ] );
 
         if ( 'custom' != pods_var( 'ui_style', $pod->pod_data[ 'options' ], 'settings', null, true ) ) {
             $actions_disabled = array(

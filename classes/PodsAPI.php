@@ -1198,6 +1198,34 @@ class PodsAPI {
         if ( isset( $options[ 'method' ] ) )
             unset( $options[ 'method' ] );
 
+        $options_ignore = array(
+            'object_type',
+            'table',
+            'meta_table',
+            'pod_table',
+            'field_id',
+            'field_index',
+            'field_slug',
+            'field_type',
+            'meta_field_id',
+            'meta_field_index',
+            'meta_field_value',
+            'pod_field_id',
+            'pod_field_index',
+            'join',
+            'where',
+            'where_default',
+            'orderby',
+            'pod',
+            'recurse',
+            'table_info'
+        );
+
+        foreach ( $options_ignore as $ignore ) {
+            if ( isset( $options[ $ignore ] ) )
+                unset( $options[ $ignore ] );
+        }
+
         $exclude = array(
             'id',
             'name',
@@ -1813,6 +1841,8 @@ class PodsAPI {
 
         if ( isset( $options[ 'method' ] ) )
             unset( $options[ 'method' ] );
+        elseif ( isset( $options[ 'table_info' ] ) )
+            unset( $options[ 'table_info' ] );
 
         $exclude = array(
             'id',
@@ -4062,8 +4092,12 @@ class PodsAPI {
         if ( is_object( $params ) && isset( $params->post_name ) ) {
             $pod = pods_transient_get( 'pods_pod_' . ( !empty( $current_language ) ? $current_language . '_' : '' ) . $params->post_name );
 
-            if ( false !== $pod )
+            if ( false !== $pod && isset( $pod[ 'table' ] ) ) {
+                if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
+                    $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
+
                 return $pod;
+            }
 
             $_pod = get_object_vars( $params );
         }
@@ -4080,8 +4114,12 @@ class PodsAPI {
             if ( isset( $params->name ) ) {
                 $pod = pods_transient_get( 'pods_pod_' . ( !empty( $current_language ) ? $current_language . '_' : '' ) . $params->name );
 
-                if ( false !== $pod )
+                if ( false !== $pod && ( !pods_var_raw( 'table_info', $params, true ) || isset( $pod[ 'table' ] ) ) ) {
+                    if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
+                        $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
+
                     return $pod;
+                }
             }
 
             if ( !isset( $params->name ) )
@@ -4111,7 +4149,7 @@ class PodsAPI {
 
         $pod = pods_transient_get( $transient );
 
-        if ( false !== $pod ) {
+        if ( false !== $pod && ( !pods_var_raw( 'table_info', $params, true ) || isset( $pod[ 'table' ] ) ) ) {
             if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && is_object( $sitepress ) && !$icl_adjust_id_url_filter_off )
                 $pod = array_merge( $pod, $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ) );
 
@@ -4340,11 +4378,47 @@ class PodsAPI {
             'post__in' => $ids
         ) );
 
+        $export_ignore = array(
+            'object_type',
+            'table',
+            'meta_table',
+            'pod_table',
+            'field_id',
+            'field_index',
+            'field_slug',
+            'field_type',
+            'meta_field_id',
+            'meta_field_index',
+            'meta_field_value',
+            'pod_field_id',
+            'pod_field_index',
+            'join',
+            'where',
+            'where_default',
+            'orderby',
+            'pod',
+            'recurse',
+            'table_info'
+        );
+
         if ( isset( $params->count ) && $params->count )
             $the_pods = count( $pods );
         else {
             foreach ( $pods as $pod ) {
                 $pod = $this->load_pod( $pod );
+
+                // Remove extra data not needed
+                if ( pods_var( 'export', $params, false ) ) {
+                    foreach ( $export_ignore as $ignore ) {
+                        if ( isset( $pod[ $ignore ] ) )
+                            unset( $pod[ $ignore ] );
+                    }
+
+                    foreach ( $pod[ 'fields' ] as $field => $field_data ) {
+                        if ( isset( $pod[ 'fields' ][ $field ][ 'table_info' ] ) )
+                            unset( $pod[ 'fields' ][ $field ][ 'table_info' ] );
+                    }
+                }
 
                 $the_pods[ $pod[ 'id' ] ] = $pod;
             }

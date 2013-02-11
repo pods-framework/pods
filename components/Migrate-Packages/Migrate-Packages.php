@@ -538,7 +538,7 @@ class Pods_Migrate_Packages extends PodsComponent {
         $helper_ids = pods_var_raw( 'helpers', $params );
 
         if ( !empty( $pod_ids ) ) {
-            $api_params = array();
+            $api_params = array( 'export' => true );
 
             if ( true !== $pod_ids )
                 $api_params[ 'ids' ] = (array) $pod_ids;

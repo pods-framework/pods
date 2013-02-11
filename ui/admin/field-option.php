@@ -35,7 +35,7 @@ foreach ( $field_options as $field_name => $field_option ) {
         else
             $value = pods_var_raw( $field_name, $field, $value );
 
-        if ( 'file' == $field_option[ 'type' ] ) {
+        if ( in_array( $field_option[ 'type' ], PodsForm::file_field_types() ) ) {
             if ( is_array( $value ) && !isset( $value[ 'id' ] ) ) {
                 foreach ( $value as $k => $v ) {
                     if ( isset( $v[ 'id' ] ) )

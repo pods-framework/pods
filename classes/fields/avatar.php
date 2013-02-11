@@ -78,20 +78,50 @@ class PodsField_Avatar extends PodsField {
             'avatar_attachment_tab' => array(
                 'label' => __( 'Attachments Default Tab', 'pods' ),
                 'depends-on' => array( 'avatar_uploader' => 'attachment' ),
-                'default' => 'type',
+                'default' => 'upload',
                 'type' => 'pick',
                 'data' => array(
-                    'type' => __( 'Upload File', 'pods' ),
-                    'library' => __( 'Media Library', 'pods' )
+                    // keys MUST match WP's router names
+                    'upload' => __( 'Upload File', 'pods' ),
+                    'browse' => __( 'Media Library', 'pods' )
                 )
             ),
             'avatar_restrict_filesize' => array(
                 'label' => __( 'Restrict File Size', 'pods' ),
-                'excludes-on' => array( 'avatar_uploader' => 'attachment' ),
+                'depends-on' => array( 'avatar_uploader' => 'plupload' ),
                 'default' => '10MB',
+                'type' => 'text'
+            ),
+            'avatar_add_button' => array(
+                'label' => __( 'Add Button Text', 'pods' ),
+                'default' => __( 'Add File', 'pods' ),
+                'type' => 'text'
+            ),
+            'avatar_modal_title' => array(
+                'label' => __( 'Modal Title', 'pods' ),
+                'depends-on' => array( 'avatar_uploader' => 'attachment' ),
+                'default' => __( 'Attach a file', 'pods' ),
+                'type' => 'text'
+            ),
+            'avatar_modal_add_button' => array(
+                'label' => __( 'Modal Add Button Text', 'pods' ),
+                'depends-on' => array( 'avatar_uploader' => 'attachment' ),
+                'default' => __( 'Add File', 'pods' ),
                 'type' => 'text'
             )
         );
+
+        if ( !pods_wp_version( '3.5' ) ) {
+            unset( $options[ 'avatar_modal_title' ] );
+            unset( $options[ 'avatar_modal_add_button' ] );
+
+            $options[ 'avatar_attachment_tab' ][ 'default' ] = 'type';
+            $options[ 'avatar_attachment_tab' ][ 'data' ] = array(
+                'type' => __( 'Upload File', 'pods' ),
+                'library' => __( 'Media Library', 'pods' )
+            );
+        }
+
         return $options;
     }
 
@@ -162,8 +192,12 @@ class PodsField_Avatar extends PodsField {
 
         if ( 'plupload' == pods_var( 'avatar_uploader', $options ) )
             $field_type = 'plupload';
-        elseif ( 'attachment' == pods_var( 'avatar_uploader', $options ) )
-            $field_type = 'attachment';
+        elseif ( 'attachment' == pods_var( 'avatar_uploader', $options ) ) {
+            if ( !pods_wp_version( '3.5' ) || !is_admin() ) // @todo test frontend media modal
+                $field_type = 'attachment';
+            else
+                $field_type = 'media';
+        }
         else {
             // Support custom File Uploader integration
             do_action( 'pods_form_ui_field_avatar_uploader_' . pods_var( 'avatar_uploader', $options ), $name, $value, $options, $pod, $id );

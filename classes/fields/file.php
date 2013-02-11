@@ -164,8 +164,6 @@ class PodsField_File extends PodsField {
         );
 
         if ( !pods_wp_version( '3.5' ) ) {
-            unset( $options[ 'file_modal_add_button' ] );
-            unset( $options[ 'file_modal_add_button' ] );
             unset( $options[ 'file_modal_title' ] );
             unset( $options[ 'file_modal_add_button' ] );
 

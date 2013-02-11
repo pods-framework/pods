@@ -2874,7 +2874,7 @@ class PodsAPI {
                                     if ( !empty( $v ) && !in_array( $v, $new_values ) )
                                         $new_values[] = $v;
                                 }
-                                elseif ( 'file' == $type )
+                                elseif ( in_array( $type, PodsForm::file_field_types() ) )
                                     $new_values[] = $v;
                             }
                         }
@@ -3053,7 +3053,7 @@ class PodsAPI {
                             continue;
 
                         // File relationships
-                        if ( 'file' == $type ) {
+                        if ( in_array( $type, PodsForm::file_field_types() ) ) {
                             $weight = 0;
 
                             foreach ( $values as $id ) {
@@ -3274,7 +3274,7 @@ class PodsAPI {
                     $field = $field . '.term_id';
             }
 
-            if ( 'file' == $field[ 'type' ] )
+            if ( in_array( $field[ 'type' ], PodsForm::file_field_types() ) )
                 $field = $field . '.ID';
 
             $value = $pod->field( $field );
@@ -3364,7 +3364,7 @@ class PodsAPI {
                         if ( !empty( $field[ 'table_info' ] ) )
                             $field[ 'lookup_name' ] .= '.' . $field[ 'table_info' ][ 'field_id' ];
                     }
-                    elseif ( in_array( $field[ 'type' ], array( 'file', 'avatar' ) ) )
+                    elseif ( in_array( $field[ 'type' ], PodsForm::file_field_types() ) )
                         $field[ 'lookup_name' ] .= '.guid';
                 }
 
@@ -6022,12 +6022,12 @@ class PodsAPI {
                 $field_value = $data_row[ $field_name ];
 
                 if ( null != $field_value && false !== $field_value ) {
-                    if ( 'pick' == $type || 'file' == $type ) {
+                    if ( 'pick' == $type || in_array( $type, PodsForm::file_field_types() ) ) {
                         $field_values = is_array( $field_value ) ? $field_value : array( $field_value );
                         $pick_values = array();
 
                         foreach ( $field_values as $pick_value ) {
-                            if ( 'file' == $type || 'media' == $pick_object ) {
+                            if ( in_array( $type, PodsForm::file_field_types() ) || 'media' == $pick_object ) {
                                 $where = "`guid` = '" . pods_sanitize( $pick_value ) . "'";
 
                                 if ( 0 < pods_absint( $pick_value ) && false !== $numeric_mode )

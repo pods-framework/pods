@@ -750,7 +750,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
         if ( !empty( $field ) && is_array( $field ) && in_array( $field[ 'type' ], $tableless_field_types ) ) {
-            if ( in_array( $field[ 'type' ], apply_filters( 'pods_file_field_types', array( 'file', 'avatar' ) ) ) ) {
+            if ( in_array( $field[ 'type' ], PodsForm::file_field_types() ) ) {
                 if ( null === $field_index )
                     $field_index = 'guid';
             }

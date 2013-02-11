@@ -114,28 +114,58 @@ if ( 0 < $pod->id() ) {
 
                         <div class="inside">
                             <div class="submitbox" id="submitpost">
-                                <div id="minor-publishing">
-                                    <div id="major-publishing-actions">
-                                        <?php
-                                            if ( ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods_delete_' . $pod->pod ) ) && null !== $pod->id() && !$duplicate && !in_array( 'delete', $obj->actions_disabled ) && !in_array( 'delete', $obj->actions_hidden ) ) {
-                                        ?>
-                                            <div id="delete-action">
-                                                <a class="submitdelete deletion" href="<?php echo pods_var_update( array( 'action' => 'delete' ) ) ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
-                                            </div>
-                                            <!-- /#delete-action -->
-                                        <?php } ?>
+                                <?php
+                                    if ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) || isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) ) {
+                                ?>
+                                    <div id="minor-publishing">
+                                        <div id="misc-publishing-actions">
+                                            <?php
+                                                $datef = __( 'M j, Y @ G:i' );
 
-                                        <div id="publishing-action">
-                                            <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
-                                            <input type="submit" name="publish" id="publish" class="button-primary" value="<?php echo esc_attr( $label ); ?>" accesskey="p" />
+                                                if ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) ) {
+                                                    $date = date_i18n( $datef, strtotime( $pod->field( 'created' ) ) );
+                                            ?>
+                                                <div class="misc-pub-section curtime">
+                                                    <span id="timestamp"><?php _e( 'Created on', 'pods' ); ?>: <b><?php echo $date; ?></b></span>
+                                                </div>
+                                            <?php
+                                                }
+
+                                                if ( isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) && $pod->display( 'created' ) != $pod->display( 'modified' ) ) {
+                                                    $date = date_i18n( $datef, strtotime( $pod->field( 'modified' ) ) );
+                                            ?>
+                                                <div class="misc-pub-section curtime">
+                                                    <span id="timestamp"><?php _e( 'Last Modified', 'pods' ); ?>: <b><?php echo $date; ?></b></span>
+                                                </div>
+                                            <?php
+                                                }
+                                            ?>
                                         </div>
-                                        <!-- /#publishing-action -->
-
-                                        <div class="clear"></div>
                                     </div>
-                                    <!-- /#major-publishing-actions -->
+                                    <!-- /#minor-publishing -->
+                                <?php
+                                    }
+                                ?>
+
+                                <div id="major-publishing-actions">
+                                    <?php
+                                        if ( ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods_delete_' . $pod->pod ) ) && null !== $pod->id() && !$duplicate && !in_array( 'delete', $obj->actions_disabled ) && !in_array( 'delete', $obj->actions_hidden ) ) {
+                                    ?>
+                                        <div id="delete-action">
+                                            <a class="submitdelete deletion" href="<?php echo pods_var_update( array( 'action' => 'delete' ) ) ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
+                                        </div>
+                                        <!-- /#delete-action -->
+                                    <?php } ?>
+
+                                    <div id="publishing-action">
+                                        <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
+                                        <input type="submit" name="publish" id="publish" class="button button-primary button-large" value="<?php echo esc_attr( $label ); ?>" accesskey="p" />
+                                    </div>
+                                    <!-- /#publishing-action -->
+
+                                    <div class="clear"></div>
                                 </div>
-                                <!-- /#minor-publishing -->
+                                <!-- /#major-publishing-actions -->
                             </div>
                             <!-- /#submitpost -->
                         </div>

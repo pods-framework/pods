@@ -774,7 +774,7 @@ class Pods {
                             $object_type = $last_object;
                             $object = $last_pick_val;
 
-                            if ( in_array( $last_type, apply_filters( 'pods_file_field_types', array( 'file', 'avatar' ) ) ) ) {
+                            if ( in_array( $last_type, PodsForm::file_field_types() ) ) {
                                 $object_type = 'media';
                                 $object = 'attachment';
                             }

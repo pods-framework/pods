@@ -1004,7 +1004,7 @@ class PodsInit {
 
         do_action( 'pods_delete_attachment', $_ID );
 
-        $file_types = "'" . implode( "', '", apply_filters( 'pods_file_field_types', array( 'file', 'avatar' ) ) ) . "'";
+        $file_types = "'" . implode( "', '", PodsForm::file_field_types() ) . "'";
 
         if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
             $sql = "

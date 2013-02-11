@@ -1352,7 +1352,7 @@ class PodsAdmin {
             if ( empty( $pod ) || empty( $field ) || $pod[ 'id' ] != $field[ 'pod_id' ] || !isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) )
                 pods_error( __( 'Invalid field request', 'pods' ), $this );
 
-            if ( !in_array( $field[ 'type' ], apply_filters( 'pods_file_field_types', array( 'file', 'avatar' ) ) ) )
+            if ( !in_array( $field[ 'type' ], PodsForm::file_field_types() ) )
                 pods_error( __( 'Invalid field', 'pods' ), $this );
         }
 

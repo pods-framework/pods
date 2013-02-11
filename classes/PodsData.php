@@ -826,7 +826,7 @@ class PodsData {
                                 $fieldfield = $fieldfield . '.`' . $attributes[ 'table_info' ][ 'field_index' ] . '`';
                             }
                         }
-                        elseif ( in_array( $attributes[ 'type' ], apply_filters( 'pods_file_field_types', array( 'file', 'avatar' ) ) ) ) {
+                        elseif ( in_array( $attributes[ 'type' ], PodsForm::file_field_types() ) ) {
                             if ( false === $params->search_across_files )
                                 continue;
                             else
@@ -892,7 +892,7 @@ class PodsData {
 
                     $filterfield = $filterfield . '.`' . $attributes[ 'table_info' ][ 'field_index' ] . '`';
                 }
-                elseif ( in_array( $attributes[ 'type' ], apply_filters( 'pods_file_field_types', array( 'file', 'avatar' ) ) ) )
+                elseif ( in_array( $attributes[ 'type' ], PodsForm::file_field_types() ) )
                     $filterfield = $filterfield . '.`post_title`';
                 else
                     $filterfield = '`t`.' . $filterfield;
@@ -1101,8 +1101,7 @@ class PodsData {
             ";
             $this->total_sql = "
                 SELECT
-                " . ( $params->distinct ? 'DISTINCT' : '' ) . "
-                COUNT(*)
+                COUNT( " . ( $params->distinct ? 'DISTINCT `t`.`' . $params->id . '`' : '*' ) . " )
                 FROM {$params->table} AS `t`
                 " . ( !empty( $params->join ) ? ( is_array( $params->join ) ? implode( "\n                ", $params->join ) : $params->join ) : '' ) . "
                 " . ( !empty( $params->where ) ? 'WHERE ' . ( is_array( $params->where ) ? implode( ' AND ', $params->where ) : $params->where ) : '' ) . "
@@ -1947,25 +1946,21 @@ class PodsData {
         // Plain queries
         if ( is_numeric( $field ) && !is_array( $q ) )
             return $q;
-        // key => value queries
+        // key => value queries (backwards compatibility)
         if ( !is_numeric( $field ) && ( !is_array( $q ) || !isset( $q[ 'key' ] ) ) ) {
             $new_q = array(
                 'key' => $field,
-                'value' => '',
-                'compare' => '='
+                'value' => pods_var_raw( 'value', $q, $q, null, true ),
+                'compare' => pods_var_raw( 'compare', $q, '=', null, true )
             );
 
-            if ( is_array( $q ) ) {
-                $new_q[ 'compare' ] = 'IN';
+            if ( is_array( $new_q[ 'value' ] ) ) {
+                if ( '=' == $new_q[ 'compare' ] )
+                    $new_q[ 'compare' ] = 'IN';
 
-                if ( is_array( $q ) && isset( $q[ 'compare' ] ) ) {
-                    $new_q[ 'compare' ] = $q[ 'compare' ];
-
-                    unset( $q[ 'compare' ] );
-                }
+                if ( isset( $new_q[ 'value' ][ 'compare' ] ) )
+                    unset( $new_q[ 'value' ][ 'compare' ] );
             }
-
-            $new_q[ 'value' ] = $q;
 
             $q = $new_q;
         }

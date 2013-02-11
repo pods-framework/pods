@@ -969,4 +969,10 @@ class PodsForm {
 
         return apply_filters( 'pods_tableless_field_types', $tableless_field_types );
     }
+
+    public static function file_field_types () {
+        $file_field_types = array( 'file', 'avatar' );
+
+        return apply_filters( 'pods_file_field_types', $file_field_types );
+    }
 }

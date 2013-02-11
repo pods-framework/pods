@@ -330,21 +330,23 @@ class PodsView {
         $_view = trim( str_replace( array( '../', '\\' ), array( '', '/' ), (string) $_view ) );
         $_view = preg_replace( '/\/+/', '/', $_view );
 
+        $_real_view = realpath( $_view );
+
         $located = false;
 
         if ( empty( $_view ) )
             return false;
         // Look for basic file includes
-        elseif ( false === strpos( $_view, realpath( WP_PLUGIN_DIR ) ) && false === strpos( $_view, realpath( WPMU_PLUGIN_DIR ) ) ) {
-            $_view = rtrim( $_view, '/' );
+        elseif ( false === strpos( $_real_view, realpath( WP_PLUGIN_DIR ) ) && false === strpos( $_real_view, realpath( WPMU_PLUGIN_DIR ) ) ) {
+            $_real_view = rtrim( $_real_view, '/' );
 
-            if ( empty( $_view ) )
+            if ( empty( $_real_view ) )
                 return false;
 
-            if ( file_exists( STYLESHEETPATH . '/' . $_view ) )
-                $located = STYLESHEETPATH . '/' . $_view;
-            elseif ( file_exists( TEMPLATEPATH . '/' . $_view ) )
-                $located = TEMPLATEPATH . '/' . $_view;
+            if ( file_exists( realpath( get_stylesheet_directory() . '/' . $_real_view ) ) )
+                $located = realpath( get_stylesheet_directory() . '/' . $_real_view );
+            elseif ( file_exists( realpath( get_template_directory() . '/' . $_real_view ) ) )
+                $located = realpath( get_template_directory() . '/' . $_real_view );
         }
         // Allow includes within plugins directory too for plugins utilizing this
         elseif ( file_exists( $_view ) )

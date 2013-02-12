@@ -52,25 +52,52 @@ function pods_image_id_from_field ( $image ) {
  * Get the <img> HTML for a specific image field
  *
  * @param array|int|string $image The image field array, ID, or guid
- * @param string $size Image size to use
+ * @param string|array $size Image size to use
  * @param int $default Default image to show if image not found, can be field array, ID, or guid
  * @param string|array $attributes <img> Attributes array or string (passed to wp_get_attachment_image
+ * @param boolean $force Force generation of image (if custom size array provided)
  *
  * @return string <img> HTML or empty if image not found
  *
  * @since 2.0.5
  */
-function pods_image ( $image, $size = 'thumbnail', $default = 0, $attributes = '' ) {
+function pods_image ( $image, $size = 'thumbnail', $default = 0, $attributes = '', $force = false ) {
     $html = '';
 
     $id = pods_image_id_from_field( $image );
     $default = pods_image_id_from_field( $default );
 
-    if ( 0 < $id )
-        $html = wp_get_attachment_image( $id, $size, false, $attributes );
+    if ( 0 < $id ) {
+        if ( $force && is_array( $size ) ) {
+            $size_check = $size;
+            $size_check[ 0 ]++;
+            $size_check[ 1 ]++;
 
-    if ( empty( $html ) && 0 < $default )
+            $check = wp_get_attachment_image_src( $id, $size_check );
+            $normal = wp_get_attachment_image_src( $id, $size );
+
+            if ( !empty( $check ) && !empty( $normal ) && $check[ 0 ] == $normal[ 0 ] )
+                pods_image_resize( $id, $size );
+        }
+
         $html = wp_get_attachment_image( $id, $size, false, $attributes );
+    }
+
+    if ( empty( $html ) && 0 < $default ) {
+        if ( $force && is_array( $size ) ) {
+            $size_check = $size;
+            $size_check[ 0 ]++;
+            $size_check[ 1 ]++;
+
+            $check = wp_get_attachment_image_src( $default, $size_check );
+            $normal = wp_get_attachment_image_src( $default, $size );
+
+            if ( !empty( $check ) && !empty( $normal ) && $check[ 0 ] == $normal[ 0 ] )
+                pods_image_resize( $default, $size );
+        }
+
+        $html = wp_get_attachment_image( $default, $size, false, $attributes );
+    }
 
     return $html;
 }
@@ -79,20 +106,33 @@ function pods_image ( $image, $size = 'thumbnail', $default = 0, $attributes = '
  * Get the Image URL for a specific image field
  *
  * @param array|int|string $image The image field array, ID, or guid
- * @param string $size Image size to use
+ * @param string|array $size Image size to use
  * @param int $default Default image to show if image not found, can be field array, ID, or guid
+ * @param boolean $force Force generation of image (if custom size array provided)
  *
  * @return string Image URL or empty if image not found
  *
  * @since 2.0.5
  */
-function pods_image_url ( $image, $size = 'thumbnail', $default = 0 ) {
+function pods_image_url ( $image, $size = 'thumbnail', $default = 0, $force = false ) {
     $url = '';
 
     $id = pods_image_id_from_field( $image );
     $default = pods_image_id_from_field( $default );
 
     if ( 0 < $id ) {
+        if ( $force && is_array( $size ) ) {
+            $size_check = $size;
+            $size_check[ 0 ]++;
+            $size_check[ 1 ]++;
+
+            $check = wp_get_attachment_image_src( $id, $size_check );
+            $normal = wp_get_attachment_image_src( $id, $size );
+
+            if ( !empty( $check ) && !empty( $normal ) && $check[ 0 ] == $normal[ 0 ] )
+                pods_image_resize( $id, $size );
+        }
+
         $src = wp_get_attachment_image_src( $id, $size );
 
         if ( !empty( $src ) )
@@ -100,6 +140,18 @@ function pods_image_url ( $image, $size = 'thumbnail', $default = 0 ) {
     }
 
     if ( empty( $url ) && 0 < $default ) {
+        if ( $force && is_array( $size ) ) {
+            $size_check = $size;
+            $size_check[ 0 ]++;
+            $size_check[ 1 ]++;
+
+            $check = wp_get_attachment_image_src( $default, $size_check );
+            $normal = wp_get_attachment_image_src( $default, $size );
+
+            if ( !empty( $check ) && !empty( $normal ) && $check[ 0 ] == $normal[ 0 ] )
+                pods_image_resize( $default, $size );
+        }
+
         $src = wp_get_attachment_image_src( $default, $size );
 
         if ( !empty( $src ) )
@@ -164,4 +216,59 @@ function pods_attachment_import ( $url, $post_parent = null, $featured = false )
 
     if ( 0 < $post_parent && $featured )
         update_post_meta( $post_parent, '_thumbnail_id', $attachment_id );
+}
+
+/**
+ * Resize an image on demand
+ *
+ * @param int $attachment_id Attachment ID
+ * @param string|array $size Size to be generated
+ *
+ * @return boolean Image generation result
+ *
+ * @since 2.3.0
+ */
+function pods_image_resize ( $attachment_id, $size ) {
+    $size_data = array();
+
+    if ( !is_array( $size ) ) {
+        global $wp_image_sizes;
+
+        if ( isset( $wp_image_sizes[ $size ] ) && !empty( $wp_image_sizes[ $size ] ) )
+            $size_data = $wp_image_sizes[ $size ];
+    }
+    elseif ( 2 <= count( $size ) ) {
+        if ( isset( $size[ 'width' ] ) )
+            $size_data = $size;
+        else {
+            $size_data = array(
+                'width' => (int) $size[ 0 ],
+                'height' => (int) $size[ 1 ],
+                'crop' => (int) ( isset( $size[ 2 ] ) ? $size[ 2 ] : 1 ),
+            );
+        }
+
+        $size = $size_data[ 'width' ] . 'x' . $size_data[ 'height' ];
+    }
+
+    if ( empty( $size_data ) )
+        return false;
+
+    $attachment = get_post( $attachment_id );
+    $file = get_attached_file( $attachment_id );
+
+    if ( $file && file_exists( $file ) ) {
+ 	    $metadata = wp_get_attachment_metadata( $attachment_id );
+        $editor = wp_get_image_editor( $file );
+
+        if ( !is_wp_error( $editor ) && !empty( $metadata ) && preg_match( '!^image/!', get_post_mime_type( $attachment ) ) && file_is_displayable_image( $file ) ) {
+ 	        $metadata[ 'sizes' ] = array_merge( $metadata[ 'sizes' ], $editor->multi_resize( array( $size => $size_data ) ) );
+
+            wp_update_attachment_metadata( $attachment_id, $metadata );
+
+            return true;
+        }
+    }
+
+    return false;
 }

@@ -42,7 +42,7 @@ class PodsField_Avatar extends PodsField {
      * @since 2.0.0
      */
     public function __construct () {
-        add_filter( 'get_avatar', array( $this, 'get_avatar' ), 10, 5 );
+
     }
 
     /**
@@ -373,11 +373,12 @@ class PodsField_Avatar extends PodsField {
                 $avatar_field = false;
 
             if ( !empty( $avatar_field ) ) {
-                $user_avatar = get_user_meta( $_user_ID, $avatar_field, true );
+                $user_avatar = get_user_meta( $_user_ID, $avatar_field . '.ID', true );
 
                 if ( !empty( $user_avatar ) ) {
                     $attributes = array(
-                        'alt' => ''
+                        'alt' => '',
+                        'class' => 'avatar avatar-' . $size . ' photo'
                     );
 
                     if ( !empty( $alt ) )

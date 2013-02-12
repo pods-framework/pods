@@ -210,6 +210,9 @@ class PodsInit {
         $this->register_assets();
 
         $this->register_pods();
+
+        $avatar = PodsForm::field_loader( 'avatar' );
+        add_filter( 'get_avatar', array( $avatar, 'get_avatar' ), 10, 5 );
     }
 
     /**

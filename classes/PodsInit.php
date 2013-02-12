@@ -373,7 +373,7 @@ class PodsInit {
                 $cpt_labels = array();
                 $cpt_labels[ 'name' ] = $cpt_label;
                 $cpt_labels[ 'singular_name' ] = $cpt_singular;
-                $cpt_labels[ 'menu_name' ] = pods_var_raw( 'label_menu_name', $post_type, '', null, true );
+                $cpt_labels[ 'menu_name' ] = pods_var_raw( 'menu_name', $post_type, '', null, true );
                 $cpt_labels[ 'add_new' ] = pods_var_raw( 'label_add_new', $post_type, '', null, true );
                 $cpt_labels[ 'add_new_item' ] = pods_var_raw( 'label_add_new_item', $post_type, '', null, true );
                 $cpt_labels[ 'new_item' ] = pods_var_raw( 'label_new_item', $post_type, '', null, true );
@@ -535,7 +535,7 @@ class PodsInit {
                 $ct_labels = array();
                 $ct_labels[ 'name' ] = $ct_label;
                 $ct_labels[ 'singular_name' ] = $ct_singular;
-                $ct_labels[ 'menu_name' ] = pods_var_raw( 'label_menu_name', $taxonomy, '', null, true );
+                $ct_labels[ 'menu_name' ] = pods_var_raw( 'menu_name', $taxonomy, '', null, true );
                 $ct_labels[ 'search_items' ] = pods_var_raw( 'label_search_items', $taxonomy, '', null, true );
                 $ct_labels[ 'popular_items' ] = pods_var_raw( 'label_popular_items', $taxonomy, '', null, true );
                 $ct_labels[ 'all_items' ] = pods_var_raw( 'label_all_items', $taxonomy, '', null, true );

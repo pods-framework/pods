@@ -178,7 +178,7 @@ class PodsAdmin {
                         $singular_label = pods_var_raw( 'label_singular', $pod[ 'options' ], pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true ), null, true );
                         $plural_label = pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true );
 
-                        $menu_icon = pods_var_raw( 'menu_icon', $pod[ 'options' ], '', null, true );
+                        $menu_icon = pods_evaluate_tags( pods_var_raw( 'menu_icon', $pod[ 'options' ], '', null, true ), true );
                         $menu_location_custom = pods_var( 'menu_location_custom', $pod[ 'options' ], '' );
 
                         $parent_page = null;
@@ -295,7 +295,7 @@ class PodsAdmin {
                     $menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
 
                     $menu_position = pods_var_raw( 'menu_position', $pod[ 'options' ], '', null, true );
-                    $menu_icon = pods_var_raw( 'menu_icon', $pod[ 'options' ], '', null, true );
+                    $menu_icon = pods_evaluate_tags( pods_var_raw( 'menu_icon', $pod[ 'options' ], '', null, true ), true );
 
                     if ( empty( $menu_position ) )
                         $menu_position = null;
@@ -614,7 +614,7 @@ class PodsAdmin {
                     'edit' => __( 'Save Changes', 'pods' )
                 ),
                 'style' => pods_var( 'ui_style', $pod->pod_data[ 'options' ], 'settings', null, true ),
-                'icon' => pods_var_raw( 'menu_icon', $pod->pod_data[ 'options' ] ),
+                'icon' => pods_evaluate_tags( pods_var_raw( 'menu_icon', $pod->pod_data[ 'options' ] ), true ),
                 'actions_disabled' => $actions_disabled
             );
 

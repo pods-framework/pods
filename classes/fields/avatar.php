@@ -337,7 +337,7 @@ class PodsField_Avatar extends PodsField {
      * Take over the avatar served from WordPress
      *
      * @param string $avatar Default Avatar Image output from WordPress
-     * @param int|string|object $id_or_email A user ID,  email address, or comment object
+     * @param int|string|object $id_or_email A user ID, email address, or comment object
      * @param int $size Size of the avatar image
      * @param string $default URL to a default image to use if no avatar is available
      * @param string $alt Alternate text to use in image tag. Defaults to blank
@@ -352,6 +352,12 @@ class PodsField_Avatar extends PodsField {
             $_user_ID = (int) $id_or_email->user_id;
         elseif ( is_object( $id_or_email ) && isset( $id_or_email->ID ) && isset( $id_or_email->user_login ) && 0 < $id_or_email->ID )
             $_user_ID = (int) $id_or_email->ID;
+        elseif ( !is_object( $id_or_email ) && false !== strpos( $id_or_email, '@' ) ) {
+            $_user = get_user_by( 'email', $id_or_email );
+
+            if ( !empty( $_user ) )
+                $_user_ID = (int) $_user->ID;
+        }
 
         if ( 0 < $_user_ID && !empty( PodsMeta::$user ) ) {
             $avatar_field = pods_transient_get( 'pods_avatar_field' );

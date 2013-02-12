@@ -177,13 +177,14 @@ function pods_debug ( $debug = '_null', $die = false, $prefix = '_null' ) {
 
     $debug = ob_get_clean();
 
-    if ( !defined( 'DOING_AJAX' ) || !DOING_AJAX )
-        $debug = esc_html( $debug );
+    if ( false === strpos( $debug, "<pre class='xdebug-var-dump'" ) && ( !ini_get( 'xdebug.overload_var_dump' ) && !ini_get( 'html_errors' ) ) ) {
+        if ( !defined( 'DOING_AJAX' ) || !DOING_AJAX )
+            $debug = esc_html( $debug );
 
-    if ( false === strpos( $debug, "<pre class='xdebug-var-dump' dir='ltr'>" ) )
-        $debug = '<e><pre>' . $debug . '</pre>';
-    else
-        $debug = '<e>' . $debug;
+        $debug = '<pre>' . $debug . '</pre>';
+    }
+
+    $debug = '<e>' . $debug;
 
     if ( 2 === $die )
         wp_die( $debug );

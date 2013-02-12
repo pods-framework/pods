@@ -320,6 +320,11 @@ class PodsField_Pick extends PodsField {
                 'simple' => true
             );
 
+            self::$related_objects[ 'media' ] = array(
+                'label' => __( 'Media', 'pods' ),
+                'group' => __( 'Other WP Objects', 'pods' )
+            );
+
             self::$related_objects[ 'comment' ] = array(
                 'label' => __( 'Comments', 'pods' ),
                 'group' => __( 'Other WP Objects', 'pods' )

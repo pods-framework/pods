@@ -15,6 +15,10 @@
             $field[ 'pick_object' ] = 'comment';
             $field[ 'pick_val' ] = '';
         }
+        elseif ( 'media' == $field[ 'pick_val' ] && !empty( PodsMeta::$media ) ) {
+            $field[ 'pick_object' ] = 'media';
+            $field[ 'pick_val' ] = '';
+        }
     }
 
     // Set pick object

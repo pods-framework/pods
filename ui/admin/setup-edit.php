@@ -1323,13 +1323,15 @@ if ( $pods_ui ) {
         document.location = thank_you.replace( 'X_ID_X', id );
     }
 
-    var pods_sister_field_going = false;
+    var pods_sister_field_going = {
+
+    };
 
     var pods_sister_field = function ( $el ) {
-        if ( pods_sister_field_going )
+        if ( 'undefined' != typeof pods_sister_field_going[ $el.prop( 'id' ) ] )
             return;
 
-        pods_sister_field_going = true;
+        pods_sister_field_going[ $el.prop( 'id' ) ] = true;
 
         var id = $el.closest( 'tr.pods-manage-row' ).data( 'row' );
 
@@ -1339,7 +1341,7 @@ if ( $pods_ui ) {
         var related_pod_name = jQuery( '#pods-form-ui-field-data-' + id + '-pick-object' ).val();
 
         if ( 'custom-simple' == related_pod_name || 'post-status' == related_pod_name || 'role' == related_pod_name || 'post-types' == related_pod_name || 'taxonomies' == related_pod_name || '' == related_pod_name ) {
-            pods_sister_field_going = false;
+            pods_sister_field_going[ $el.prop( 'id' ) ] = false;
 
             return;
         }
@@ -1383,20 +1385,20 @@ if ( $pods_ui ) {
 
                     jQuery( '#pods-form-ui-field-data-' + id + '-sister-id' ).val( selected_value );
 
-                    pods_sister_field_going = false;
+                    pods_sister_field_going[ $el.prop( 'id' ) ] = false;
                 }
                 else {
                     // None found
                     $el.find( '.pods-sister-field' ).html( default_select );
 
-                    pods_sister_field_going = false;
+                    pods_sister_field_going[ $el.prop( 'id' ) ] = false;
                 }
             },
             error : function () {
                 // None found
                 $el.find( '.pods-sister-field' ).html( default_select );
 
-                pods_sister_field_going = false;
+                pods_sister_field_going[ $el.prop( 'id' ) ] = false;
             }
         } );
     }

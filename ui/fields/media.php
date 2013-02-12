@@ -225,13 +225,13 @@ else
                         attachment_thumbnail = attachment.attributes.icon;
 
                         // only thumbnails have sizes which is what we're on the hunt for
-                        if(typeof attachment.attributes.sizes !== 'undefined'){
-                            if(typeof attachment.attributes.sizes.thumbnail !== 'undefined'){
-                                if(typeof attachment.attributes.sizes.thumbnail.url !== 'undefined'){
-                                    // use the thumbnail
-                                    attachment_thumbnail = attachment.attributes.sizes.thumbnail.url;
-                                }
-                            }
+                        if ( typeof attachment.attributes.sizes ) {
+                            // Get thumbnail if it exists
+                            if ( 'undefined' != typeof attachment.attributes.sizes.thumbnail && 'undefined' != typeof attachment.attributes.sizes.thumbnail.url )
+                                attachment_thumbnail = attachment.attributes.sizes.thumbnail.url;
+                            // If thumbnail doesn't exist, get full because this is a small image
+                            else if ( 'undefined' != typeof attachment.attributes.sizes.full && 'undefined' != typeof attachment.attributes.sizes.full.url )
+                                attachment_thumbnail = attachment.attributes.sizes.full.url;
                         }
 
                         <?php if ( !empty( $limit_types ) ) : ?>

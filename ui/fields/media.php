@@ -8,7 +8,7 @@ wp_enqueue_style( 'pods-attach' );
 
 $args = array();
 
-if ( !empty( $post_ID ) )
+if ( is_admin() && !empty( $post_ID ) )
     $args = array( 'post' => (int) $post_ID );
 
 wp_enqueue_media( $args );
@@ -96,7 +96,6 @@ if ( !in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'an
     if ( !empty( $new_limit_types ) )
         $limit_types = implode( ', ', $new_limit_types );
 }
-
 
 if ( empty( $value ) )
     $value = array();

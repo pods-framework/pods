@@ -229,7 +229,7 @@ $advanced = false;
 $labels = false;
 $pods_ui = false;
 
-if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) < 1 ) ) {
+if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) ) < 1 ) {
     $advanced = true;
     $labels = true;
 }
@@ -278,7 +278,7 @@ elseif ( 'settings' == pods_var( 'type', $pod ) ) {
     </h2>
 
     <?php
-        if ( ( $labels || $advanced ) ) {
+        if ( $labels || $pods_ui || $advanced ) {
             $default = 'fields';
 
             $tabs = array(
@@ -342,6 +342,11 @@ if ( 'none' != pods_var( 'storage', $pod, 'none', null, true ) || 'settings' == 
     <p class="pods-manage-row-add pods-float-right">
         <a href="#add-field" class="button-primary"><?php _e( 'Add Field', 'pods' ); ?></a>
     </p>
+
+    <?php
+        if ( !( $labels || $pods_ui || $advanced ) )
+            echo '<h2>' . __( 'Manage Fields', 'pods' ) . '</h2>';
+    ?>
 
     <!-- pods table -->
     <table class="widefat fixed pages" cellspacing="0">

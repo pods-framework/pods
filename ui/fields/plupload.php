@@ -121,9 +121,7 @@ if ( pods_wp_version( '3.5' ) ) {
 if ( !empty( $limit_types ) )
     $plupload_init[ 'filters' ][ 0 ][ 'extensions' ] = $limit_types;
 
-if ( is_admin() && false !== strpos( $_SERVER[ 'REQUEST_URI' ], '/post.php' ) && 0 < pods_var( 'post' ) && 'edit' == pods_var( 'action' ) )
-    $plupload_init[ 'multipart_params' ][ 'post_id' ] = (int) pods_var( 'post' );
-elseif ( is_admin() && false !== strpos( $_SERVER[ 'REQUEST_URI' ], '/post.php' ) && 0 < $post_ID )
+if ( is_admin() && !empty( $post_ID ) )
     $plupload_init[ 'multipart_params' ][ 'post_id' ] = (int) $post_ID;
 
 $plupload_init = apply_filters( 'plupload_init', $plupload_init );

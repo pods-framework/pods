@@ -906,31 +906,36 @@ class PodsData {
                 if ( 'pick' == $attributes[ 'type' ] ) {
                     $filter_value = pods_var( 'filter_' . $field, 'get', false, null, true );
 
-                    if ( in_array( pods_var( 'pick_object', $attributes ), $simple_tableless_objects ) ) {
-                        if ( strlen( $filter_value ) < 1 )
-                            continue;
+                    if ( !is_array( $filter_value ) )
+                        $filter_value = (array) $filter_value;
 
-                        if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] ) {
-                            $having[] = "( {$filterfield} = '" . $filter_value . "'"
-                                         . " OR {$filterfield} LIKE '%\"" . $filter_value . "\"%' )";
+                    foreach ( $filter_value as $filter_v ) {
+                        if ( in_array( pods_var( 'pick_object', $attributes ), $simple_tableless_objects ) ) {
+                            if ( strlen( $filter_v ) < 1 )
+                                continue;
+
+                            if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] ) {
+                                $having[] = "( {$filterfield} = '" . $filter_v . "'"
+                                             . " OR {$filterfield} LIKE '%\"" . $filter_v . "\"%' )";
+                            }
+                            else {
+                                $where[] = "( {$filterfield} = '" . $filter_v . "'"
+                                            . " OR {$filterfield} LIKE '%\"" . $filter_v . "\"%' )";
+                            }
                         }
                         else {
-                            $where[] = "( {$filterfield} = '" . $filter_value . "'"
-                                        . " OR {$filterfield} LIKE '%\"" . $filter_value . "\"%' )";
+                            $filter_v = (int) $filter_v;
+
+                            if ( empty( $filter_v ) || empty( $attributes[ 'table_info' ] ) || empty( $attributes[ 'table_info' ][ 'field_id' ] ) )
+                                continue;
+
+                            $filterfield = '`' . $field . '`.`' . $attributes[ 'table_info' ][ 'field_id' ] . '`';
+
+                            if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] )
+                                $having[] = "{$filterfield} = " . $filter_v;
+                            else
+                                $where[] = "{$filterfield} = " . $filter_v;
                         }
-                    }
-                    else {
-                        $filter_value = (int) $filter_value;
-
-                        if ( empty( $filter_value ) || empty( $attributes[ 'table_info' ][ 'field_id' ] ) )
-                            continue;
-
-                        $filterfield = '`' . $field . '`.`' . $attributes[ 'table_info' ][ 'field_id' ] . '`';
-
-                        if ( isset( $attributes[ 'group_related' ] ) && false !== $attributes[ 'group_related' ] )
-                            $having[] = "{$filterfield} = " . $filter_value;
-                        else
-                            $where[] = "{$filterfield} = " . $filter_value;
                     }
                 }
                 elseif ( in_array( $attributes[ 'type' ], array( 'date', 'datetime' ) ) ) {
@@ -2117,7 +2122,9 @@ class PodsData {
             if ( !is_array( $data ) )
                 $field = $data;
 
-            if ( 0 < strlen( pods_var( 'filter_' . $field ) ) )
+            $field_value = pods_var( 'filter_' . $field, 'get', false, null, true );
+
+            if ( !empty( $field_value ) || 0 < strlen( $field_value ) )
                 $feed[ 'traverse_' . $field ] = array( $field );
         }
 

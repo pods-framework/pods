@@ -798,7 +798,15 @@ class PodsUI {
         $options->validate( 'action', pods_var( 'action' . $options->num, 'get', $this->action, null, true ), 'in_array', $this->actions );
         $options->validate( 'actions_bulk', $this->actions_bulk, 'array_merge' );
         $options->validate( 'action_bulk', pods_var( 'action_bulk' . $options->num, 'get', $this->action_bulk, null, true ), 'isset', $this->actions_bulk );
-        $options->validate( 'bulk', pods_var( 'action_bulk_ids' . $options->num, 'get', array(), null, true ), 'array_merge', $this->bulk );
+
+        $bulk = pods_var( 'action_bulk_ids' . $options->num, 'get', array(), null, true );
+
+        if ( !empty( $bulk ) )
+            $bulk = (array) pods_var( 'action_bulk_ids' . $options->num, 'get', array(), null, true );
+        else
+            $bulk = array();
+
+        $options->validate( 'bulk', $bulk, 'array_merge', $this->bulk );
 
         $options->validate( 'views', $this->views, 'array' );
         $options->validate( 'view', pods_var( 'view' . $options->num, 'get', $this->view, null, true ), 'isset', $this->views );
@@ -1685,6 +1693,8 @@ class PodsUI {
             $success = false;
 
             if ( !empty( $ids ) ) {
+                $ids = (array) $ids;
+
                 foreach ( $ids as $id ) {
                     $id = pods_absint( $id );
 

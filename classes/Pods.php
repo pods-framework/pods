@@ -1607,13 +1607,17 @@ class Pods {
             'pod' => $this->pod,
             'id' => $id,
             'fields' => null,
-            'depth' => 2
+            'depth' => 2,
+            'flatten' => false
         );
 
         if ( is_array( $fields ) && ( isset( $fields[ 'fields' ] ) || isset( $fields[ 'depth' ] ) ) )
             $params = array_merge( $params, $fields );
         else
             $params[ 'fields' ] = $fields;
+
+        if ( !in_array( $this->pod_data[ 'field_id' ], $params[ 'fields' ] ) )
+            $params[ 'fields' ] = array_merge( array( $this->pod_data[ 'field_id' ] ), $params[ 'fields' ] );
 
         if ( null === $params[ 'id' ] )
             $params[ 'id' ] = $this->id();

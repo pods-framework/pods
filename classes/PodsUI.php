@@ -1776,7 +1776,9 @@ class PodsUI {
 
         $this->message( sprintf( __( '<strong>Success:</strong> Your export is ready, the download should begin in a few moments. If it doesn\'t, you can download it <a href="%s" target="_blank">here</a>', 'pods' ), $export_file ) );
 
-        echo '<script type="text/javascript">window.open("' . esc_js( $export_file ) . '");</script>';
+        //echo '<script type="text/javascript">window.open("' . esc_js( $export_file ) . '");</script>';
+
+        $this->get_data();
     }
 
     /**
@@ -1877,8 +1879,10 @@ class PodsUI {
                 $this->data_full = array();
 
                 while ( $this->pod->fetch() ) {
-                    $this->data_full[ $this->pod->id() ] = $this->pod->export( $fields );
+                    $this->data_full[ $this->pod->id() ] = $this->pod->export( array( 'fields' => $fields, 'flatten' => true ) );
                 }
+
+                $this->pod->reset();
 
                 return $this->data_full;
             }

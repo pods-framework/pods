@@ -755,9 +755,9 @@ class PodsField_Pick extends PodsField {
                     $hierarchy = false;
 
                     if ( !$autocomplete ) {
-                        if ( 'single' == pods_var( 'pick_format_type', $options ) && 'dropdown' == pods_var( 'pick_format_single', $options ) )
+                        if ( 'single' == pods_var( 'pick_format_type', $options ) && in_array( pods_var( 'pick_format_single', $options ), array( 'dropdown', 'radio' ) ) )
                             $hierarchy = true;
-                        elseif ( 'multi' == pods_var( 'pick_format_type', $options ) && 'multiselect' == pods_var( 'pick_format_multi', $options ) )
+                        elseif ( 'multi' == pods_var( 'pick_format_type', $options ) && in_array( pods_var( 'pick_format_multi', $options ), array( 'multiselect', 'checkbox' ) ) )
                             $hierarchy = true;
                     }
 

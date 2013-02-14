@@ -14,6 +14,9 @@
         pods_var( 1, $values, pods_var( $form_field_type . '_max', $options, 100, null, true ) )
     );
 
+    $values[ 0 ] = max( $values[ 0 ], pods_var( $form_field_type . '_min', $options, 0 ) );
+    $values[ 1 ] = min( $values[ 1 ], pods_var( $form_field_type . '_min', $options, 100 ) );
+
     if ( 0 == pods_var( $form_field_type . '_range', $options, 0 ) )
         $output_value = $value = $values[ 0 ];
     else {
@@ -39,9 +42,9 @@
     jQuery( function ( $ ) {
         $( "#<?php echo $attributes[ 'id' ]; ?>-range" ).slider( {
             orientation : '<?php echo pods_var( $form_field_type . '_orientation', $options, 'horizontal' ); ?>',
-            min : '<?php echo pods_var( $form_field_type . '_min', $options, 0 ); ?>',
-            max : '<?php echo pods_var( $form_field_type . '_max', $options, 100 ); ?>',
-            step : '<?php echo pods_var( $form_field_type . '_step', $options, 1 ); ?>',
+            min : <?php echo pods_var( $form_field_type . '_min', $options, 0 ); ?>,
+            max : <?php echo pods_var( $form_field_type . '_max', $options, 100 ); ?>,
+            step : <?php echo pods_var( $form_field_type . '_step', $options, 1 ); ?>,
 
             <?php
                 if ( 1 == pods_var( $form_field_type . '_range', $options, 0 ) ) {

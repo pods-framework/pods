@@ -762,7 +762,7 @@ class PodsField_Pick extends PodsField {
                     }
 
                     if ( $hierarchy && $options[ 'table_info' ][ 'object_hierarchical' ] && !empty( $options[ 'table_info' ][ 'field_parent' ] ) )
-                        $params[ 'select' ] .= ', `' . ( 'taxonomy' == $options[ 'table_info' ][ 'object_type' ] ? 'tt' : 't' ) . '`.`' . $options[ 'table_info' ][ 'field_parent' ] .'`';
+                        $params[ 'select' ] .= ', ' . $options[ 'table_info' ][ 'field_parent_select' ];
 
                     if ( $autocomplete )
                         $params[ 'limit' ] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', 30, $name, $value, $options, $pod, $id );

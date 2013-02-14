@@ -596,6 +596,15 @@ class PodsAdmin {
             );
         }
 
+        if ( strlen( pods_var( 'detail_url', $pod->pod_data ) ) < 1 ) {
+            $ui[ 'actions_custom' ] = array(
+                'view_url' => array(
+                    'label' => 'View',
+                    'link' => get_site_url() . '/' . pods_var( 'detail_url', $pod->pod_data[ 'options' ] )
+                )
+            );
+        }
+
         // @todo Customize the Add New / Manage links to point to their correct menu items
 
         $ui = apply_filters( 'pods_admin_ui_' . $pod->pod, apply_filters( 'pods_admin_ui', $ui, $pod->pod, $pod ), $pod->pod, $pod );

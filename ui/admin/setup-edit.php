@@ -1136,18 +1136,41 @@ elseif ( 'pod' == pods_var( 'type', $pod ) ) {
     </div>
 
     <?php
-    $index_fields = array( 'id' => 'ID' );
+        $index_fields = array( 'id' => 'ID' );
 
-    foreach ( $pod[ 'fields' ] as $field ) {
-        if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
-            $index_fields[ $field[ 'name' ] ] = $field[ 'label' ];
-    }
+        foreach ( $pod[ 'fields' ] as $field ) {
+            if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
+                $index_fields[ $field[ 'name' ] ] = $field[ 'label' ];
+        }
     ?>
 
     <div class="pods-field-option">
         <?php echo PodsForm::label( 'pod_index', __( 'Title Field', 'pods' ), __( 'If you delete the "name" field, we need to specify the field to use as your primary title field. This field will serve as an index of your content. Most commonly this field represents the name of a person, place, thing, or a summary field.', 'pods' ) ); ?>
         <?php echo PodsForm::field( 'pod_index', pods_var_raw( 'pod_index', $pod, 'name' ), 'pick', array( 'data' => $index_fields ) ); ?>
     </div>
+
+    <div class="pods-field-option">
+        <?php echo PodsForm::label( 'hierarchical', __( 'Hierarchical', 'pods' ), __( 'help', 'pods' ) ); ?>
+        <?php echo PodsForm::field( 'hierarchical', (int) pods_var_raw( 'hierarchical', $pod, 0 ), 'boolean', array( 'dependency' => true, 'boolean_yes_label' => '' ) ); ?>
+    </div>
+
+    <?php
+        $hierarchical_fields = array();
+
+        foreach ( $pod[ 'fields' ] as $field ) {
+            if ( 'pick' == $field[ 'type' ] && 'pod' == pods_var( 'pick_object', $field ) && $pod[ 'name' ] == pods_var( 'pick_val', $field ) && 1 == pods_var( 'pick_format_type', $field[ 'options' ] ) )
+                $hierarchical_fields[ $field[ 'name' ] ] = $field[ 'label' ];
+        }
+
+        if ( empty( $hierarchical_fields ) )
+            $hierarchical_fields = array( '' => __( 'No Hierarchical Fields found', 'pods' ) );
+    ?>
+
+    <div class="pods-field-option pods-depends-on pods-depends-on-hierarchical">
+        <?php echo PodsForm::label( 'pod_parent', __( 'Hierarchical Field', 'pods' ), __( 'help', 'pods' ) ); ?>
+        <?php echo PodsForm::field( 'pod_parent', pods_var_raw( 'pod_parent', $pod, 'name' ), 'pick', array( 'data' => $hierarchical_fields ) ); ?>
+    </div>
+
     <?php
     if ( class_exists( 'Pods_Helpers' ) ) {
     ?>

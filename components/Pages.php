@@ -324,6 +324,39 @@ class Pods_Pages extends PodsComponent {
 
         pods_group_add( $pod, __( 'Page', 'pods' ), $fields, 'normal', 'high' );
 
+        $associated_pods = array(
+            0 => __( '-- Select a Pod --', 'pods' )
+        );
+
+        $all_pods = pods_api()->load_pods();
+
+        if ( !empty( $all_pods ) ) {
+            foreach ( $all_pods as $the_pod ) {
+                $associated_pods[ $the_pod[ 'name' ] ] = $the_pod[ 'label' ] . ' (' . $the_pod[ 'name' ] . ')';
+            }
+        }
+        else
+            $associated_pods[ 0 ] = __( 'None Found', 'pods' );
+
+        $fields = array(
+            array(
+                'name' => 'pod',
+                'label' => __( 'Associated Pod', 'pods' ),
+                'default' => 0,
+                'type' => 'pick',
+                'data' => $associated_pods,
+                'dependency' => true
+            ),
+            array(
+                'name' => 'pod_slug',
+                'label' => __( 'Wildcard Slug', 'pods' ),
+                'type' => 'text',
+                'excludes-on' => array( 'pod' => 0 )
+            )
+        );
+
+        pods_group_add( $pod, __( 'Pod Association', 'pods' ), $fields, 'normal', 'high' );
+
         $fields = array(
             array(
                 'name' => 'admin_only',
@@ -502,7 +535,9 @@ class Pods_Pages extends PodsComponent {
                 'options' => array(
                     'admin_only' => (boolean) get_post_meta( $_object[ 'ID' ], 'admin_only', true ),
                     'restrict_capability' => (boolean) get_post_meta( $_object[ 'ID' ], 'restrict_capability', true ),
-                    'capability_allowed' => get_post_meta( $_object[ 'ID' ], 'capability_allowed', true )
+                    'capability_allowed' => get_post_meta( $_object[ 'ID' ], 'capability_allowed', true ),
+                    'pod' => get_post_meta( $_object[ 'ID' ], 'pod', true ),
+                    'pod_slug' => get_post_meta( $_object[ 'ID' ], 'pod_slug', true ),
                 )
             );
 
@@ -623,6 +658,9 @@ class Pods_Pages extends PodsComponent {
 
             if ( $permission ) {
                 $content = false;
+
+                if ( !is_object( $pods ) && 404 != $pods && 0 < strlen( pods_var( 'pod', self::$exists[ 'options' ] ) ) )
+                    $pods = pods( pods_var( 'pod', self::$exists[ 'options' ] ), pods_evaluate_tags( pods_var_raw( 'pod_slug', self::$exists[ 'options' ], null, null, true ), true ) );
 
                 if ( 0 < strlen( trim( self::$exists[ 'precode' ] ) ) )
                     $content = self::$exists[ 'precode' ];

@@ -4267,6 +4267,9 @@ class PodsAPI {
         if ( false !== pods_var_raw( 'table_info', $params, true ) )
             $pod = array_merge( $this->get_table_info( $pod[ 'type' ], $pod[ 'object' ], $pod[ 'name' ], $pod ), $pod );
 
+        if ( isset( $pod[ 'pod' ] ) )
+            unset( $pod[ 'pod' ] );
+
         $pod[ 'fields' ] = array();
 
         $pod[ 'object_fields' ] = array();
@@ -5549,6 +5552,7 @@ class PodsAPI {
             'field_slug' => null,
             'field_type' => null,
             'field_parent' => null,
+            'field_parent_select' => null,
 
             'meta_field_id' => 'id',
             'meta_field_index' => 'name',
@@ -5608,6 +5612,9 @@ class PodsAPI {
 
         $_info = pods_transient_get( $transient );
 
+        if ( false === $_info && !did_action( 'init' ) )
+            $_info = pods_transient_get( $transient . '_pre_init' );
+
         if ( false !== $_info )
             $info = $_info;
         else {
@@ -5648,7 +5655,7 @@ class PodsAPI {
                 if ( !empty( $name ) ) {
                     $pod = $this->load_pod( array( 'name' => $name, 'table_info' => false ), false );
 
-                    if ( !empty( $pod ) && $object_type == $pod[ 'type' ] ) {
+                    if ( !empty( $pod ) && ( null === $object_type || $object_type == $pod[ 'type' ] ) ) {
                         $object_type = $pod[ 'type' ];
                         $name = $pod[ 'name' ];
                         $object = $pod[ 'object' ];
@@ -5657,6 +5664,8 @@ class PodsAPI {
                     }
                 }
             }
+            elseif ( !empty( $pod ) )
+                $info[ 'pod' ] = $pod;
 
             if ( 0 === strpos( $object_type, 'pod' ) ) {
                 if ( empty( $name ) ) {
@@ -5672,7 +5681,7 @@ class PodsAPI {
                 $info[ 'table' ] = $info[ 'meta_table' ] = $info[ 'pod_table' ] = $wpdb->prefix . 'pods_' . ( empty( $object ) ? $name : $object );
 
                 if ( is_array( $info[ 'pod' ] ) && 'pod' == pods_var( 'type', $info[ 'pod' ] ) ) {
-                        $info[ 'pod_field_index' ] = $info[ 'field_index' ] = $info[ 'meta_field_index' ] = $info[ 'meta_field_value' ] = pods_var( 'pod_index', $info[ 'pod' ][ 'options' ], 'id', null, true );
+                    $info[ 'pod_field_index' ] = $info[ 'field_index' ] = $info[ 'meta_field_index' ] = $info[ 'meta_field_value' ] = pods_var( 'pod_index', $info[ 'pod' ][ 'options' ], 'id', null, true );
 
                     $slug_field = get_posts( array(
                         'post_type' => '_pods_field',
@@ -5694,6 +5703,17 @@ class PodsAPI {
 
                         $info[ 'field_slug' ] = $info[ 'pod_field_slug' ] = $slug_field->post_name;
                     }
+
+                    if ( 1 == pods_var( 'hierarchical', $info[ 'pod' ][ 'options' ], 0 ) ) {
+                        $parent_field = pods_var( 'pod_parent', $info[ 'pod' ][ 'options' ], 'id', null, true );
+
+                        if ( !empty( $parent_field ) && isset( $info[ 'pod' ][ 'fields' ][ $parent_field ] ) ) {
+                            $info[ 'object_hierarchical' ] = true;
+
+                            $info[ 'pod_field_parent' ] = $info[ 'field_parent' ] = $parent_field . '_select';
+                            $info[ 'field_parent_select' ] = '`' . $parent_field . '`.`id` AS `' . $info[ 'field_parent' ] . '`';
+                        }
+                    }
                 }
             }
 
@@ -5706,6 +5726,7 @@ class PodsAPI {
                 $info[ 'field_slug' ] = 'post_name';
                 $info[ 'field_type' ] = 'post_type';
                 $info[ 'field_parent' ] = 'post_parent';
+                $info[ 'field_parent_select' ] = '`t`.`' . $info[ 'field_parent' ] . '`';
 
                 $info[ 'meta_field_id' ] = 'post_id';
                 $info[ 'meta_field_index' ] = 'meta_key';
@@ -5780,6 +5801,7 @@ class PodsAPI {
                 $info[ 'field_slug' ] = 'slug';
                 $info[ 'field_type' ] = 'taxonomy';
                 $info[ 'field_parent' ] = 'parent';
+                $info[ 'field_parent_select' ] = '`tt`.`' . $info[ 'field_parent' ] . '`';
 
                 if ( 'nav_menu' == $object_type )
                     $object = 'nav_menu';
@@ -5865,6 +5887,7 @@ class PodsAPI {
                 $info[ 'field_index' ] = 'comment_date';
                 $info[ 'field_type' ] = 'comment_type';
                 $info[ 'field_parent' ] = 'comment_parent';
+                $info[ 'field_parent_select' ] = '`t`.`' . $info[ 'field_parent' ] . '`';
 
                 $info[ 'meta_field_id' ] = 'comment_id';
                 $info[ 'meta_field_index' ] = 'meta_key';
@@ -5969,6 +5992,8 @@ class PodsAPI {
 
             if ( did_action( 'init' ) )
                 pods_transient_set( $transient, $info );
+            else
+                pods_transient_set( $transient . '_pre_init', $info );
         }
 
         $info = $this->do_hook( 'get_table_info', $info, $object_type, $object );

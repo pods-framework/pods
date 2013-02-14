@@ -266,9 +266,11 @@ class PodsForm {
                 $_attributes[ 'class' ] .= ' pods-dependent-toggle';
 
             $attributes = array_merge( $_attributes, (array) $attributes );
-        }
 
-        if ( isset( $options[ 'attributes' ] ) && is_array( $options[ 'attributes' ] ) && !empty( $options[ 'attributes' ] ) )
+            if ( isset( $options[ $type . '_attributes' ] ) && is_array( $options[ $type . '_attributes' ] ) && !empty( $options[ $type . '_attributes' ] ) )
+                $attributes = array_merge( $attributes, $options[ $type . '_attributes' ] );
+        }
+        elseif ( isset( $options[ 'attributes' ] ) && is_array( $options[ 'attributes' ] ) && !empty( $options[ 'attributes' ] ) )
             $attributes = array_merge( $attributes, $options[ 'attributes' ] );
 
         if ( isset( $options[ 'class' ] ) && !empty( $options[ 'class' ] ) ) {
@@ -742,7 +744,7 @@ class PodsForm {
 
         $default_value = str_replace( array( '{@', '}' ), '', trim( $default ) );
 
-        if ( $default != $default_value )
+        if ( $default != $default_value && 1 == (int) pods_var_raw( 'default_evaluate_tags', $options, 1 ) )
             $default = pods_evaluate_tags( $default );
 
         $default = pods_var_raw( pods_var_raw( 'default_value_parameter', $options ), 'request', $default, null, true );

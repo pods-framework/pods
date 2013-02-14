@@ -567,7 +567,7 @@ class PodsField_Pick extends PodsField {
      *
      * @since 2.0.0
      */
-    public function data ( $name, $value = null, $options = null, $pod = null, $id = null ) {
+    public function data ( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
         $data = array( '' => pods_var_raw( 'pick_select_text', $options, __( '-- Select One --', 'pods' ), null, true ) );
 
         if ( 'single' != pods_var( 'pick_format_type', $options ) || 'dropdown' != pods_var( 'pick_format_single', $options ) )
@@ -752,10 +752,32 @@ class PodsField_Pick extends PodsField {
                     elseif ( 'multi' == pods_var( 'pick_format_type', $options ) && 'autocomplete' == pods_var( 'pick_format_multi', $options ) )
                         $autocomplete = true;
 
+                    $hierarchy = false;
+
+                    if ( !$autocomplete ) {
+                        if ( 'single' == pods_var( 'pick_format_type', $options ) && 'dropdown' == pods_var( 'pick_format_single', $options ) )
+                            $hierarchy = true;
+                        elseif ( 'multi' == pods_var( 'pick_format_type', $options ) && 'multiselect' == pods_var( 'pick_format_multi', $options ) )
+                            $hierarchy = true;
+                    }
+
+                    if ( $hierarchy && $options[ 'table_info' ][ 'object_hierarchical' ] && !empty( $options[ 'table_info' ][ 'field_parent' ] ) )
+                        $params[ 'select' ] .= ', `' . ( 'taxonomy' == $options[ 'table_info' ][ 'object_type' ] ? 'tt' : 't' ) . '`.`' . $options[ 'table_info' ][ 'field_parent' ] .'`';
+
                     if ( $autocomplete )
                         $params[ 'limit' ] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', 30, $name, $value, $options, $pod, $id );
 
                     $results = $search_data->select( $params );
+
+                    if ( !empty( $results ) && $hierarchy && $options[ 'table_info' ][ 'object_hierarchical' ] && !empty( $options[ 'table_info' ][ 'field_parent' ] ) ) {
+                        $args = array(
+                            'id' => $options[ 'table_info' ][ 'field_id' ],
+                            'index' => $options[ 'table_info' ][ 'field_index' ],
+                            'parent' => $options[ 'table_info' ][ 'field_parent' ],
+                        );
+
+                        $results = pods_hierarchical_select( $results, $args );
+                    }
 
                     if ( !empty( $results ) && ( !$autocomplete || $search_data->total_found() <= $params[ 'limit' ] ) ) {
                         foreach ( $results as $result ) {

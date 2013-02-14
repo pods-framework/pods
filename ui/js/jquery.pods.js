@@ -351,7 +351,7 @@
                         sluggables.push( $( this ).data( 'sluggable' ) );
                 } );
 
-                for ( var i in sluggables ) {
+                for ( var i = 0; i < sluggables.length; i++ ) {
                     var sluggable = sluggables[ i ];
 
                     methods[ 'sluggable_single' ]( sluggable );
@@ -1518,7 +1518,7 @@
                                 sluggables.push( $( this ).data( 'sluggable' ) );
                         } );
 
-                        for ( var i in sluggables ) {
+                        for ( var i = 0; i < sluggables.length; i++ ) {
                             var sluggable = sluggables[ i ];
 
                             methods[ 'sluggable_single' ]( sluggable );
@@ -1593,7 +1593,7 @@
                                 sluggables.push( $( this ).data( 'sluggable' ) );
                         } );
 
-                        for ( var i in sluggables ) {
+                        for ( var i = 0; i < sluggables.length; i++ ) {
                             var sluggable = sluggables[ i ];
 
                             methods[ 'sluggable_single' ]( sluggable );

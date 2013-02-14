@@ -1024,3 +1024,217 @@ function pods_var_user ( $anon = false, $user = true, $capability = null ) {
 
     return $value;
 }
+
+/**
+ * Take a one-level list of items and make it hierarchical
+ *
+ * @param array|object $list List of items
+ * @param array $args Array of parent, children, and id keys to use
+ *
+ * @return array|object
+ * @since 2.3.0
+ */
+function pods_hierarchical_list ( $list, $args = array() ) {
+    if ( empty( $args ) || ( !is_object( $list ) && !is_array( $list ) ) )
+        return $list;
+
+    $defaults = array(
+        'id' => 'id',
+        'parent' => 'parent',
+        'children' => 'children'
+    );
+
+    $args = array_merge( $defaults, (array) $args );
+
+    $list = pods_hierarchical_list_recurse( 0, $list, $args );
+
+    return $list;
+}
+
+/**
+ * Recurse list of items and make it hierarchical
+ *
+ * @param int $parent Parent ID
+ * @param array|object $list List of items
+ * @param array $args Array of parent, children, and id keys to use
+ *
+ * @return array|object
+ * @since 2.3.0
+ */
+function pods_hierarchical_list_recurse ( $parent, $list, $args = array() ) {
+    $new = array();
+
+    $object = false;
+
+    if ( is_object( $list ) ) {
+        $object = true;
+        $list = get_object_vars( $list );
+    }
+
+    foreach ( $list as $k => $list_item ) {
+        if ( is_object( $list_item ) && isset( $list_item->{$args[ 'id' ]} ) && isset( $list_item->{$args[ 'parent' ]} ) && $parent == $list_item->{$args[ 'parent' ]} )
+            $list_item->{$args[ 'children' ]} = pods_hierarchical_list_recurse( $list_item->{$args[ 'id' ]}, $list, $args );
+        elseif ( is_array( $list_item ) && isset( $list_item[ $args[ 'id' ] ] ) && isset( $list_item[ $args[ 'parent' ] ] ) && $parent == $list_item[ $args[ 'parent' ] ] )
+            $list_item[ $args[ 'children' ] ] = pods_hierarchical_list_recurse( $list_item[ $args[ 'id' ] ], $list, $args );
+        else
+            continue;
+
+        $new[ $k ] = $list_item;
+    }
+
+    if ( $object )
+        $new = (object) $new;
+
+    return $new;
+}
+
+/**
+ * Take a one-level list of items and make it hierarchical for <select>
+ *
+ * @param array|object $list List of items
+ * @param array $args Array of index, parent, children, id, and prefix keys to use
+ * @param string $children_key Key to recurse children into
+ *
+ * @return array|object
+ * @since 2.3.0
+ */
+function pods_hierarchical_select ( $list, $args = array() ) {
+    $object = false;
+
+    if ( is_object( $list ) ) {
+        $object = true;
+        $list = get_object_vars( $list );
+    }
+
+    $list = pods_hierarchical_list( $list, $args );
+
+    $defaults = array(
+        'index' => 'name',
+        'children' => 'children',
+        'prefix' => '&nbsp;&nbsp;&nbsp;'
+    );
+
+    $args = array_merge( $defaults, (array) $args );
+
+    $list = pods_hierarchical_select_recurse( $list, $args, 0 );
+
+    if ( $object )
+        $list = (object) $list;
+
+    return $list;
+}
+
+/**
+ * Recurse list of hierarchical data
+ *
+ * @param array|object $list List of items
+ * @param array $args Array of children and prefix keys to use
+ * @param string $children_key Key to recurse children into
+ *
+ * @see pods_hierarchical_select
+ * @return array
+ * @since 2.3.0
+ */
+function pods_hierarchical_select_recurse ( $items, $args, $depth = 0 ) {
+    $data = array();
+
+    foreach ( $items as $k => $v ) {
+        $object = false;
+
+        if ( is_object( $v ) ) {
+            $object = true;
+            $v = get_object_vars( $v );
+        }
+
+        if ( isset( $v[ $args[ 'index' ] ] ) )
+            $v[ $args[ 'index' ] ] = ( 0 < $depth ? str_repeat( $args[ 'prefix' ], $depth ) : '' ) . $v[ $args[ 'index' ] ];
+
+        $children = array();
+
+        if ( isset( $v[ $args[ 'children' ] ] ) ) {
+            if ( !empty( $v[ $args[ 'children' ] ] ) )
+                $children = pods_hierarchical_select_recurse( $v[ $args[ 'children' ] ], $args, ( $depth + 1 ) );
+
+            unset( $v[ $args[ 'children' ] ] );
+        }
+
+        if ( $object )
+            $v = (object) $v;
+
+        $data[ $k ] = $v;
+
+        if ( !empty( $children ) ) {
+            foreach ( $children as $ck => $cv ) {
+                $data[ $ck ] = $cv;
+            }
+        }
+    }
+
+    return $data;
+}
+
+/**
+ * Filters a list of objects or arrays, based on a set of key => value arguments.
+ *
+ * @param array|object $list An array or object, with objects/arrays to filter
+ * @param array $args An array of key => value arguments to match against each object
+ * @param string $operator The logical operation to perform:
+ *    'AND' means all elements from the array must match;
+ *    'OR' means only one element needs to match;
+ *    'NOT' means no elements may match.
+ *   The default is 'AND'.
+ *
+ * @see wp_list_filter
+ * @return array
+ * @since 2.3.0
+ */
+function pods_list_filter ( $list, $args = array(), $operator = 'AND' ) {
+    if ( empty( $args ) )
+        return $list;
+
+    $data = $list;
+
+    $object = false;
+
+    if ( is_object( $data ) ) {
+        $object = true;
+        $data = get_object_vars( $data );
+    }
+
+    $operator = strtoupper( $operator );
+    $count = count( $args );
+    $filtered = array();
+
+    foreach ( $data as $key => $obj ) {
+        $to_match = $obj;
+
+        if ( is_object( $to_match ) )
+            $to_match = get_object_vars( $to_match );
+        elseif ( !is_array( $to_match ) )
+            continue;
+
+        $matched = 0;
+
+        foreach ( $args as $m_key => $m_value ) {
+            if ( array_key_exists( $m_key, $to_match ) && $m_value == $to_match[ $m_key ] )
+                $matched++;
+        }
+
+        if ( 'AND' == $operator && $matched == $count )
+            $filtered[ $key ] = $obj;
+        elseif ( 'OR' == $operator && $matched > 0 )
+            $filtered[ $key ] = $obj;
+        elseif ( 'NOT' == $operator && 0 == $matched )
+            $filtered[ $key ] = $obj;
+        else
+            continue;
+
+        if ( $remove )
+            unset( $list[ $key ] );
+    }
+
+    if ( $object )
+        $filtered = (object) $filtered;
+
+    return $filtered;
+}

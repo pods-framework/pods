@@ -9,13 +9,15 @@
         $value = 0;
 
     $values = explode( ',', $value );
+
     $values = array(
-        pods_var( 0, $values, pods_var( $form_field_type . '_min', $options, 0, null, true ) ),
-        pods_var( 1, $values, pods_var( $form_field_type . '_max', $options, 100, null, true ) )
+        //pods_var( 0, $values, pods_var( $form_field_type . '_min', $options, 0, null, true ) ),
+        pods_var( $form_field_type . '_min', $options, 0 ),
+		pods_var( 1, $values, pods_var( $form_field_type . '_max', $options, 100, null, true ) )
     );
 
     if ( 0 == pods_var( $form_field_type . '_range', $options, 0 ) )
-        $output_value = $value = $values[ 0 ];
+        $output_value = $value = $value<$values[ 0 ] ? $values[ 0 ] : $value;
     else {
         $value = implode( ',', $values );
         $output_value = implode( ' - ', $values );
@@ -39,9 +41,9 @@
     jQuery( function ( $ ) {
         $( "#<?php echo $attributes[ 'id' ]; ?>-range" ).slider( {
             orientation : '<?php echo pods_var( $form_field_type . '_orientation', $options, 'horizontal' ); ?>',
-            min : '<?php echo pods_var( $form_field_type . '_min', $options, 0 ); ?>',
-            max : '<?php echo pods_var( $form_field_type . '_max', $options, 100 ); ?>',
-            step : '<?php echo pods_var( $form_field_type . '_step', $options, 1 ); ?>',
+            min : <?php echo pods_var( $form_field_type . '_min', $options, 0 ); ?>,
+            max : <?php echo pods_var( $form_field_type . '_max', $options, 100 ); ?>,
+            step : <?php echo pods_var( $form_field_type . '_step', $options, 1 ); ?>,
 
             <?php
                 if ( 1 == pods_var( $form_field_type . '_range', $options, 0 ) ) {
@@ -60,7 +62,7 @@
                 else {
             ?>
                 range : false,
-                value : <?php echo $value; ?>,
+                value : <?php echo $value >= pods_var( $form_field_type . '_min', $options, 0 ) ? $value : pods_var( $form_field_type . '_min', $options, 0 ); ?>,
                 slide : function ( event, ui ) {
                     $( "#<?php echo $attributes[ 'id' ]; ?>" ).val( ui.value );
                     $( "#<?php echo $attributes[ 'id' ]; ?>-amount-display" ).html( ui.value );

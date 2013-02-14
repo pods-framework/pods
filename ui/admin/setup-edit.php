@@ -809,14 +809,6 @@ $advanced_options = array(
             'file_edit_title' => 0,
             'depends-on' => array( 'show_in_menu' => true )
         ),
-        'ui_fields_manage' => array(
-            'label' => __( 'Admin Table Columns', 'pods' ),
-            'help' => __( 'help', 'pods' ),
-            'type' => 'pick',
-            'default' => array(),
-            'data' => array(),
-            'pick_format_type' => 'multi'
-        ),
         'ui_actions_enabled' => array(
             'label' => __( 'Actions Available', 'pods' ),
             'help' => __( 'help', 'pods' ),
@@ -839,6 +831,22 @@ $advanced_options = array(
             'type' => 'text',
             'default' => 'menu_order',
             'depends-on' => array( 'ui_actions_enabled' => 'reorder' )
+        ),
+        'ui_fields_manage' => array(
+            'label' => __( 'Admin Table Columns', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'pick',
+            'default' => array(),
+            'data' => array(),
+            'pick_format_type' => 'multi'
+        ),
+        'ui_filters' => array(
+            'label' => __( 'Search Filters', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'pick',
+            'default' => array(),
+            'data' => array(),
+            'pick_format_type' => 'multi'
         )
     )
 );
@@ -857,6 +865,7 @@ if ( $pods_ui ) {
             $type = ' <small>(' . $field_types[ $field[ 'type' ] ][ 'label' ] . ')</small>';
 
         $advanced_options[ 'ui_options' ][ 'ui_fields_manage' ][ 'data' ][ $field[ 'name' ] ] = $field[ 'label' ] . $type;
+        $advanced_options[ 'ui_options' ][ 'ui_filters' ][ 'data' ][ $field[ 'name' ] ] = $field[ 'label' ] . $type;
     }
 }
 /*

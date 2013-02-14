@@ -544,6 +544,22 @@ class PodsAdmin {
         if ( !empty( $icon ) )
             $icon = pods_image_url( $icon, '32x32' );
 
+        $filters = pods_var_raw( 'ui_filters', $pod->pod_data[ 'options' ] );
+
+        if ( !empty( $filters ) ) {
+            $filters_new = array();
+
+            foreach ( $filters as $filter_field ) {
+                if ( isset( $pod->pod_data[ 'fields' ][ $filter_field ] ) )
+                    $filters_new[ $filter_field ] = $pod->pod_data[ 'fields' ][ $filter_field ];
+                elseif ( isset( $pod->pod_data[ 'object_fields' ][ $filter_field ] ) )
+                    $filters_new[ $filter_field ] = $pod->pod_data[ 'object_fields' ][ $filter_field ];
+            }
+
+            if ( !empty( $filters_new ) )
+                $filters = $filters_new;
+        }
+
         $ui = array(
             'pod' => $pod,
             'fields' => array(
@@ -555,6 +571,12 @@ class PodsAdmin {
             'icon' => $icon,
             'actions_disabled' => $actions_disabled
         );
+
+        if ( !empty( $filters ) ) {
+            $ui[ 'fields' ][ 'search' ] = $filters;
+            $ui[ 'filters' ] = array_keys( $filters );
+            $ui[ 'filters_enhanced' ] = true;
+        }
 
         $reorder_field = pods_var_raw( 'ui_reorder_field', $pod->pod_data[ 'options' ] );
 

@@ -647,11 +647,12 @@ function pods_compatible ( $wp = null, $php = null, $mysql = null ) {
 
         if ( !function_exists( 'pods_version_notice_php' ) ) {
             function pods_version_notice_wp () {
+                global $wp_version;
 ?>
     <div class="error fade">
         <p><strong><?php _e( 'NOTICE', 'pods' ); ?>:</strong> Pods <?php echo PODS_VERSION_FULL; ?> <?php _e( 'requires a minimum of', 'pods' ); ?>
             <strong>WordPress <?php echo PODS_WP_VERSION_MINIMUM; ?>+</strong> <?php _e( 'to function. You are currently running', 'pods' ); ?>
-            <strong>WordPress <?php echo get_bloginfo( "version" ); ?></strong> - <?php _e( 'Please upgrade your WordPress to continue.', 'pods' ); ?>
+            <strong>WordPress <?php echo $wp_version; ?></strong> - <?php _e( 'Please upgrade your WordPress to continue.', 'pods' ); ?>
         </p>
     </div>
 <?php

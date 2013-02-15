@@ -276,12 +276,12 @@ if ( version_compare( $old_version, '1.7.6', '<' ) ) {
         foreach ( (array) $items as $item ) {
             $filename = $item->file;
 
-            if ( strpos( $filename, get_bloginfo( 'wpurl' ) ) !== false && strpos( $filename, get_bloginfo( 'wpurl' ) ) == 0 )
-                $filename = ltrim( $filename, get_bloginfo( 'wpurl' ) );
+            if ( strpos( $filename, get_site_url() ) !== false && strpos( $filename, get_site_url() ) == 0 )
+                $filename = ltrim( $filename, get_site_url() );
 
             $upload_dir = wp_upload_dir();
 
-            if ( strpos( $filename, str_replace( get_bloginfo( 'wpurl' ), '', $upload_dir[ 'baseurl' ] ) ) === false ) {
+            if ( strpos( $filename, str_replace( get_site_url(), '', $upload_dir[ 'baseurl' ] ) ) === false ) {
                 $success = false;
 
                 break;
@@ -294,7 +294,7 @@ if ( version_compare( $old_version, '1.7.6', '<' ) ) {
             $attachment = array(
                 'post_mime_type' => $wp_filetype[ 'type' ],
                 'post_title' => preg_replace( '/\.[^.]+$/', '', basename( $file ) ),
-                'guid' => str_replace( '//wp-content/', '/wp-content/', get_bloginfo( 'wpurl' ) . $filename ),
+                'guid' => str_replace( '//wp-content/', '/wp-content/', get_site_url() . $filename ),
                 'post_content' => '',
                 'post_status' => 'inherit'
             );

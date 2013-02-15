@@ -684,6 +684,15 @@ class PodsField_Pick extends PodsField {
                     if ( 'table' == pods_var( 'pick_object', $options ) )
                         $pick_val = pods_var( 'pick_table', $options, $pick_val, null, true );
 
+                    if ( '__current__' == $pick_val ) {
+                        if ( is_object( $pod ) )
+                            $pick_val = $pod->pod;
+                        elseif ( is_array( $pod ) )
+                            $pick_val = $pod[ 'name' ];
+                        elseif ( 0 < strlen( $pod ) )
+                            $pick_val = $pod;
+                    }
+
                     $options[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $options ), $pick_val, null, null, $options );
 
                     $search_data = pods_data();
@@ -1159,6 +1168,9 @@ class PodsField_Pick extends PodsField {
 
                     if ( 'table' == pods_var( 'pick_object', $options ) )
                         $pick_val = pods_var( 'pick_table', $options, $pick_val, null, true );
+
+                    if ( '__current__' == $pick_val )
+                        $pick_val = $pod[ 'name' ];
 
                     $options[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $options ), $pick_val, null, null, $options );
 

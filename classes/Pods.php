@@ -462,7 +462,7 @@ class Pods {
 
         if ( 'detail_url' == $params->name || ( in_array( $params->name, array( 'permalink', 'the_permalink' ) ) && in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) ) ) {
             if ( 0 < strlen( $this->detail_page ) )
-                $value = get_bloginfo( 'url' ) . '/' . $this->do_magic_tags( $this->detail_page );
+                $value = get_home_url() . '/' . $this->do_magic_tags( $this->detail_page );
             elseif ( in_array( $this->pod_data[ 'type' ], array( 'post_type', 'media' ) ) )
                 $value = get_permalink( $this->id() );
             elseif ( 'taxonomy' == $this->pod_data[ 'type' ] )
@@ -488,7 +488,6 @@ class Pods {
             $first_field = explode( '.', $params->name );
             $first_field = $first_field[ 0 ];
 
-            // @todo Handle Author WP object fields like they are pick fields
             foreach ( $this->pod_data[ 'object_fields' ] as $object_field => $object_field_opt ) {
                 if ( $object_field == $first_field || in_array( $first_field, $object_field_opt[ 'alias' ] ) ) {
                     if ( isset( $this->row[ $object_field ] ) ) {
@@ -534,45 +533,45 @@ class Pods {
                     $object_field_found = true;
                 }
             }
-            elseif ( 'image_attachment' == $params->name || 0 === strpos( $params->name, 'image_attachment.' ) ) {
+            elseif ( 0 === strpos( $params->name, 'image_attachment.' ) ) {
                 $size = 'thumbnail';
 
                 $image_id = 0;
 
-                if ( 0 === strpos( $params->name, 'image_attachment.' ) ) {
-                    $field_names = explode( '.', $params->name );
+                $field_names = explode( '.', $params->name );
 
-                    if ( isset( $field_names[ 1 ] ) )
-                        $image_id = $field_names[ 1 ];
+                if ( isset( $field_names[ 1 ] ) )
+                    $image_id = $field_names[ 1 ];
 
-                    if ( isset( $field_names[ 2 ] ) )
-                        $size = $field_names[ 2 ];
+                if ( isset( $field_names[ 2 ] ) )
+                    $size = $field_names[ 2 ];
+
+                if ( !empty( $image_id ) ) {
+                    $value = pods_image( $image_id, $size );
+
+                    if ( !empty( $value ) )
+                        $object_field_found = true;
                 }
-
-                if ( !empty( $image_id ) )
-                    $value = pods_image_url( $image_id, $size );
-
-                $object_field_found = true;
             }
-            elseif ( 'image_attachment_url' == $params->name || 0 === strpos( $params->name, 'image_attachment_url.' ) ) {
+            elseif ( 0 === strpos( $params->name, 'image_attachment_url.' ) ) {
                 $size = 'thumbnail';
 
                 $image_id = 0;
 
-                if ( 0 === strpos( $params->name, 'image_attachment_url.' ) ) {
-                    $field_names = explode( '.', $params->name );
+                $field_names = explode( '.', $params->name );
 
-                    if ( isset( $field_names[ 1 ] ) )
-                        $image_id = $field_names[ 1 ];
+                if ( isset( $field_names[ 1 ] ) )
+                    $image_id = $field_names[ 1 ];
 
-                    if ( isset( $field_names[ 2 ] ) )
-                        $size = $field_names[ 2 ];
-                }
+                if ( isset( $field_names[ 2 ] ) )
+                    $size = $field_names[ 2 ];
 
-                if ( !empty( $image_id ) )
+                if ( !empty( $image_id ) ) {
                     $value = pods_image_url( $image_id, $size );
 
-                $object_field_found = true;
+                    if ( !empty( $value ) )
+                        $object_field_found = true;
+                }
             }
 
             if ( false === $object_field_found ) {
@@ -718,6 +717,9 @@ class Pods {
                             $type = $all_fields[ $pod ][ $field ][ 'type' ];
                             $pick_object = $all_fields[ $pod ][ $field ][ 'pick_object' ];
                             $pick_val = $all_fields[ $pod ][ $field ][ 'pick_val' ];
+
+                            if ( '__current__' == $pick_val )
+                                $pick_val = $pod;
 
                             $last_limit = 0;
 
@@ -1232,7 +1234,12 @@ class Pods {
                                 $key = "`{$k}`.`meta_value`";
                         }
                         else {
-                            $table = $this->api->get_table_info( $this->fields[ $k ][ 'pick_object' ], $this->fields[ $k ][ 'pick_val' ] );
+                            $pick_val = $this->fields[ $k ][ 'pick_val' ];
+
+                            if ( '__current__' == $pick_val )
+                                $pick_val = $this->pod;
+
+                            $table = $this->api->get_table_info( $this->fields[ $k ][ 'pick_object' ], $pick_val );
 
                             if ( !empty( $table ) )
                                 $key = "`{$k}`.`" . $table[ 'field_index' ] . '`';

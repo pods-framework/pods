@@ -154,7 +154,7 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
         }
         elseif ( 'url-relative' == $type ) {
             $url_raw = get_current_url();
-            $prefix = get_bloginfo( 'wpurl' );
+            $prefix = get_site_url();
 
             if ( substr( $url_raw, 0, strlen( $prefix ) ) == $prefix )
                 $url_raw = substr( $url_raw, strlen( $prefix ) + 1, strlen( $url_raw ) );

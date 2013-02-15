@@ -8,8 +8,8 @@
  */
 
 // JSON support
-if (!function_exists('json_encode')) {
-    require_once(ABSPATH . '/wp-includes/js/tinymce/plugins/spellchecker/classes/utils/JSON.php');
+if ( !function_exists( 'json_encode' ) ) {
+    require_once( ABSPATH . '/wp-includes/js/tinymce/plugins/spellchecker/classes/utils/JSON.php' );
 
     function json_encode ($str) {
         $json = new Moxiecode_JSON();
@@ -19,6 +19,18 @@ if (!function_exists('json_encode')) {
     function json_decode ($str) {
         $json = new Moxiecode_JSON();
         return $json->decode($str);
+    }
+}
+
+// WP 3.4.x support
+if ( !function_exists( 'wp_send_json' ) ) {
+    function wp_send_json ( $response ) {
+        @header( 'Content-Type: application/json; charset=' . get_option( 'blog_charset' ) );
+        echo json_encode( $response );
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
+            wp_die();
+        else
+            die;
     }
 }
 

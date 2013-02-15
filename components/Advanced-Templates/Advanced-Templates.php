@@ -812,8 +812,7 @@ class Pods_Advanced_Templates extends PodsComponent {
                 break;
         }
 
-        header("ContentType:application/json charset=utf-8");
-        echo json_encode($out);
+        wp_send_json( json_encode( $out ) );
     }
 
 }

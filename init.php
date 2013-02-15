@@ -68,10 +68,10 @@ if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) && !function_exists( '
     // @todo Allow user to opt-in to future betas easily
     if ( PODS_GITHUB_UPDATE ) {
         $update = admin_url( 'update.php' );
-        $update = str_replace( get_bloginfo( 'wpurl' ), '', $update );
+        $update = str_replace( get_site_url(), '', $update );
 
         $update_network = network_admin_url( 'update.php' );
-        $update_network = str_replace( get_bloginfo( 'wpurl' ), '', $update_network );
+        $update_network = str_replace( get_site_url(), '', $update_network );
 
         if ( is_admin() &&
              ( isset( $_GET[ 'pods_force_refresh' ] ) ||

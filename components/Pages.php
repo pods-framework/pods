@@ -461,7 +461,7 @@ class Pods_Pages extends PodsComponent {
         if ( null === $uri ) {
             $uri = parse_url( get_current_url() );
             $uri = $uri[ 'path' ];
-            $home = parse_url( get_bloginfo( 'url' ) );
+            $home = parse_url( get_home_url() );
 
             if ( !empty( $home ) && isset( $home[ 'path' ] ) && '/' != $home[ 'path' ] )
                 $uri = substr( $uri, strlen( $home[ 'path' ] ) );

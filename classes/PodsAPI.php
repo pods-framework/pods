@@ -716,6 +716,7 @@ class PodsAPI {
                     'label' => 'Parent',
                     'type' => 'pick',
                     'pick_object' => 'post_type',
+                    'pick_val' => '__current__',
                     'alias' => array( 'parent' ),
                     'data' => array(),
                     'hidden' => true
@@ -900,6 +901,16 @@ class PodsAPI {
                     'label' => 'Taxonomy',
                     'type' => 'pick',
                     'alias' => array()
+                ),
+                'parent' => array(
+                    'name' => 'parent',
+                    'label' => 'Parent',
+                    'type' => 'pick',
+                    'pick_object' => 'taxonomy',
+                    'pick_val' => '__current__',
+                    'alias' => array( 'parent' ),
+                    'data' => array(),
+                    'hidden' => true
                 )
             );
         }

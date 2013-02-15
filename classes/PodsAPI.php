@@ -955,8 +955,8 @@ class PodsAPI {
             'create_pod_type' => 'post_type',
 
             'create_name' => '',
-            'create_label_plural' => '',
             'create_label_singular' => '',
+            'create_label_plural' => '',
             'create_storage' => 'meta',
             'create_storage_taxonomy' => 'none',
 
@@ -988,11 +988,16 @@ class PodsAPI {
         );
 
         if ( 'create' == $params->create_extend ) {
+            $label = ucwords( str_replace( '_', ' ', $params->create_name ) );
+
+            if ( !empty( $params->create_label_singular ) )
+                $label = $params->create_label_singular;
+
             $pod_params[ 'name' ] = $params->create_name;
-            $pod_params[ 'label' ] = ( !empty( $params->create_label_plural ) ? $params->create_label_plural : ucwords( str_replace( '_', ' ', $params->create_name ) ) );
+            $pod_params[ 'label' ] = ( !empty( $params->create_label_plural ) ? $params->create_label_plural : $label );
             $pod_params[ 'type' ] = $params->create_pod_type;
             $pod_params[ 'options' ] = array(
-                'label_singular' => ( !empty( $params->create_label_singular ) ? $params->create_label_singular : ucwords( str_replace( '_', ' ', $params->create_name ) ) ),
+                'label_singular' => ( !empty( $params->create_label_singular ) ? $params->create_label_singular : $pod_params[ 'label' ] ),
                 'public' => 1,
                 'show_ui' => 1
             );

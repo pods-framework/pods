@@ -116,14 +116,14 @@
                                     <div class="pods-excludes-on pods-excludes-on-create-pod-type pods-excludes-on-create-pod-type-settings">
                                         <div class="pods-field-option">
                                             <?php
-                                                echo PodsForm::label( 'create_label_plural', __( 'Plural Label', 'pods' ), __( '<h6>Plural Label</h6> This is the label for more than 1 item (Plural) that will appear throughout the WordPress admin area for managing the content.', 'pods' ) );
-                                                echo PodsForm::field( 'create_label_plural', pods_var_raw( 'create_label_plural', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required', 'text_max_length' => 30 ) );
+                                                echo PodsForm::label( 'create_label_singular', __( 'Singular Label', 'pods' ), __( '<h6>Singular Label</h6> This is the label for 1 item (Singular) that will appear throughout the WordPress admin area for managing the content.', 'pods' ) );
+                                                echo PodsForm::field( 'create_label_singular', pods_var_raw( 'create_label_singular', 'post' ), 'text', array( 'class' => 'pods-validate pods-validate-required', 'text_max_length' => 30 ) );
                                             ?>
                                         </div>
                                         <div class="pods-field-option">
                                             <?php
-                                                echo PodsForm::label( 'create_label_singular', __( 'Singular Label', 'pods' ), __( '<h6>Singular Label</h6> This is the label for 1 item (Singular) that will appear throughout the WordPress admin area for managing the content.', 'pods' ) );
-                                                echo PodsForm::field( 'create_label_singular', pods_var_raw( 'create_label_singular', 'post' ), 'text', array( 'text_max_length' => 30 ) );
+                                                echo PodsForm::label( 'create_label_plural', __( 'Plural Label', 'pods' ), __( '<h6>Plural Label</h6> This is the label for more than 1 item (Plural) that will appear throughout the WordPress admin area for managing the content.', 'pods' ) );
+                                                echo PodsForm::field( 'create_label_plural', pods_var_raw( 'create_label_plural', 'post' ), 'text', array( 'text_max_length' => 30 ) );
                                             ?>
                                         </div>
                                     </div>
@@ -168,7 +168,7 @@
                                                 $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
 
                                                 echo PodsForm::label( 'create_name', __( 'Identifier', 'pods' ), __( '<h6>Pod Indentifier</h6> This is different than the labels users will see in the WordPress admin areas, it is the name you will use to programatically reference this object throughout your theme, WordPress, and other PHP.', 'pods' ) );
-                                                echo PodsForm::field( 'create_name', pods_var_raw( 'create_name', 'post' ), 'db', array( 'attributes' => array( 'maxlength' => $max_length_name, 'size' => 25, 'data-sluggable' => 'create_label_plural' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
+                                                echo PodsForm::field( 'create_name', pods_var_raw( 'create_name', 'post' ), 'db', array( 'attributes' => array( 'maxlength' => $max_length_name, 'size' => 25, 'data-sluggable' => 'create_label_singular' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
                                             ?>
                                         </div>
                                         <div class="pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-settings">

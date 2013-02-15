@@ -796,14 +796,14 @@ $advanced_options = array(
         ),
         'menu_icon' => array(
             'label' => __( 'Menu Icon URL', 'pods' ),
-            'help' => __( 'help', 'pods' ),
+            'help' => __( 'This is the icon shown to the left of the menu text for this content type.', 'pods' ),
             'type' => 'text',
             'default' => '',
             'depends-on' => array( 'show_in_menu' => true )
         ),
         'ui_icon' => array(
             'label' => __( 'Header Icon', 'pods' ),
-            'help' => __( 'help', 'pods' ),
+            'help' => __( 'This is the icon shown to the left of the heading text at the top of the manage pages for this content type.', 'pods' ),
             'type' => 'file',
             'default' => '',
             'file_edit_title' => 0,
@@ -868,27 +868,6 @@ if ( $pods_ui ) {
         $advanced_options[ 'ui_options' ][ 'ui_filters' ][ 'data' ][ $field[ 'name' ] ] = $field[ 'label' ] . $type;
     }
 }
-/*
-
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'ui_export', __( 'Enable Export from Management UI?', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'ui_export', pods_var_raw( 'ui_export', $pod ), 'boolean', array( 'dependency' => true, 'boolean_yes_label' => '' ) ); ?>
-    </div>
-    <div class="pods-field-option">
-        <?php echo PodsForm::label( 'show_in_menu', __( 'Show Admin Menu in Dashboard', 'pods' ), __( 'help', 'pods' ) ); ?>
-        <?php echo PodsForm::field( 'show_in_menu', pods_var_raw( 'show_in_menu', $pod ), 'boolean', array( 'dependency' => true, 'boolean_yes_label' => '' ) ); ?>
-    </div>
-    <div class="pods-field-option-container pods-depends-on pods-depends-on-show-in-menu">
-        <div class="pods-field-option">
-            <?php echo PodsForm::label( 'menu_name', __( 'Menu Name', 'pods' ), __( 'help', 'pods' ) ); ?>
-            <?php echo PodsForm::field( 'menu_name', pods_var_raw( 'menu_name', $pod ), 'text' ); ?>
-        </div>
-        <div class="pods-field-option">
-            <?php echo PodsForm::label( 'menu_icon', __( 'Menu Icon', 'pods' ), __( 'help', 'pods' ) ); ?>
-            <?php echo PodsForm::field( 'menu_icon', pods_var_raw( 'menu_icon', $pod ), 'text' ); ?>
-        </div>
-    </div>
- */
 
 if ( 'post_type' == pods_var( 'type', $pod ) && strlen( pods_var( 'object', $pod ) ) < 1 ) {
     $fields = $advanced_options[ 'cpt_options' ];

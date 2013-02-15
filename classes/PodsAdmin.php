@@ -465,18 +465,25 @@ class PodsAdmin {
         );
 
         if ( !empty( $actions_enabled ) ) {
+            $actions_disabled = array(
+                'view' => 'view'
+            );
+
             foreach ( $available_actions as $action ) {
                 if ( !in_array( $action, $actions_enabled ) )
                     $actions_disabled[ $action ] = $action;
             }
         }
+        else {
+            $actions_disabled = array(
+                'duplicate' => 'duplicate',
+                'view' => 'view',
+                'export' => 'export'
+            );
 
-        $actions_disabled = array(
-            'view' => 'view'
-        );
-
-        if ( 1 == pods_var( 'ui_export', $pod->pod_data[ 'options' ], 0 ) )
-            unset( $actions_disabled[ 'export' ] );
+            if ( 1 == pods_var( 'ui_export', $pod->pod_data[ 'options' ], 0 ) )
+                unset( $actions_disabled[ 'export' ] );
+        }
 
         $author_restrict = false;
 
@@ -495,8 +502,8 @@ class PodsAdmin {
             if ( !$author_restrict && !current_user_can( 'pods_delete_' . $pod_name ) && !current_user_can( 'pods_delete_others_' . $pod_name ) )
                 $actions_disabled[ 'delete' ] = 'delete';
 
-            /*if ( !current_user_can( 'pods_reorder_' . $pod_name ) )
-                $actions_disabled[ 'reorder' ] = 'reorder';*/
+            if ( !current_user_can( 'pods_reorder_' . $pod_name ) )
+                $actions_disabled[ 'reorder' ] = 'reorder';
 
             if ( !current_user_can( 'pods_export_' . $pod_name ) )
                 $actions_disabled[ 'export' ] = 'export';
@@ -578,7 +585,7 @@ class PodsAdmin {
 
         $reorder_field = pods_var_raw( 'ui_reorder_field', $pod->pod_data[ 'options' ] );
 
-        if ( in_array( 'reorder', $actions_enabled ) && !empty( $reorder_field ) && ( ( !empty( $pod->pod_data[ 'object_fields' ] ) && isset( $pod->pod_data[ 'object_fields' ][ $reorder_field ] ) ) || isset( $pod->pod_data[ 'fields' ][ $reorder_field ] ) ) ) {
+        if ( in_array( 'reorder', $actions_enabled ) && !in_array( 'reorder', $actions_disabled ) && !empty( $reorder_field ) && ( ( !empty( $pod->pod_data[ 'object_fields' ] ) && isset( $pod->pod_data[ 'object_fields' ][ $reorder_field ] ) ) || isset( $pod->pod_data[ 'fields' ][ $reorder_field ] ) ) ) {
             $ui[ 'reorder' ] = array( 'on' => $reorder_field );
             $ui[ 'orderby' ] = $reorder_field;
             $ui[ 'orderby_dir' ] = 'ASC';
@@ -1185,7 +1192,39 @@ class PodsAdmin {
             if ( isset( $pod[ 'fields' ][ 'author' ] ) && 'pick' == $pod[ 'fields' ][ 'author' ][ 'type' ] && 'user' == $pod[ 'fields' ][ 'author' ][ 'pick_object' ] )
                 $capabilities[] = 'pods_delete_others_' . $pod[ 'name' ];
 
-            if ( 1 == pods_var( 'ui_export', $pod[ 'options' ], 0 ) )
+            $actions_enabled = pods_var_raw( 'ui_actions_enabled', $pod->pod_data[ 'options' ] );
+
+            if ( !empty( $actions_enabled ) )
+                $actions_enabled = (array) $actions_enabled;
+            else
+                $actions_enabled = array();
+
+            $available_actions = array(
+                'add',
+                'edit',
+                'duplicate',
+                'delete',
+                'reorder',
+                'export'
+            );
+
+            if ( !empty( $actions_enabled ) ) {
+                $actions_disabled = array(
+                    'view' => 'view'
+                );
+
+                foreach ( $available_actions as $action ) {
+                    if ( !in_array( $action, $actions_enabled ) )
+                        $actions_disabled[ $action ] = $action;
+                }
+
+                if ( !in_array( 'export', $actions_disabled ) )
+                    $capabilities[] = 'pods_export_' . $pod[ 'name' ];
+
+                if ( !in_array( 'reorder', $actions_disabled ) )
+                    $capabilities[] = 'pods_reorder_' . $pod[ 'name' ];
+            }
+            elseif ( 1 == pods_var( 'ui_export', $pod[ 'options' ], 0 ) )
                 $capabilities[] = 'pods_export_' . $pod[ 'name' ];
         }
 

@@ -22,6 +22,10 @@ function pods_image_id_from_field ( $image ) {
                 $id = $image[ 'ID' ];
             elseif ( isset( $image[ 'guid' ] ) )
                 $id = pods_image_id_from_field( $image[ 'guid' ] );
+            elseif ( isset( $image[ 'id' ] ) )
+                $id = $image[ 'id' ];
+            else
+                $id = pods_image_id_from_field( current( $image ) );
         }
         else {
             if ( false === strpos( $image, '.' ) && is_numeric( $image ) ) {

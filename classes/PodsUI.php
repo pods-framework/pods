@@ -2290,7 +2290,7 @@ class PodsUI {
         $filters = $this->filters;
 
         foreach ( $filters as $k => $filter ) {
-            if ( in_array( $this->pod->fields[ $filter ][ 'type' ], array( 'date', 'datetime', 'time' ) ) ) {
+            if ( isset( $this->pod->fields[ $filter ] ) && in_array( $this->pod->fields[ $filter ][ 'type' ], array( 'date', 'datetime', 'time' ) ) ) {
                 if ( '' == pods_var_raw( 'filter_' . $filter . '_start', 'get', '', null, true ) && '' == pods_var_raw( 'filter_' . $filter . '_end', 'get', '', null, true ) )
                     unset( $filters[ $k ] );
             }

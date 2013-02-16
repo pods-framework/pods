@@ -156,7 +156,7 @@ class PodsAdmin {
 
         $all_pods = $this->api->load_pods( array( 'count' => true ) );
 
-        if ( !PodsInit::$upgrade_needed ) {
+        if ( !PodsInit::$upgrade_needed || ( ( is_super_admin() || current_user_can( 'delete_users' ) ) && 1 == pods_var( 'pods_upgrade_bypass' ) ) ) {
             if ( !empty( $advanced_content_types ) ) {
                 $submenu = array();
 

@@ -81,9 +81,9 @@ Using another solution? We've built additional components to help you transition
 We also do our best to integrate and play nicely with other projects:
 
 * Plugins
- * Tabify Edit Screen
- * Polylang
- * WPML
+ * [Tabify Edit Screen](http://wordpress.org/extend/plugins/tabify-edit-screen/)
+ * [Polylang](http://wordpress.org/extend/plugins/polylang/)
+ * [WPML](http://wpml.org/)
 * Themes
  * [Builder](http://www.ithemes.com/) (iThemes)
  * [Genesis](http://www.studiopress.com/) (StudioPress)
@@ -112,13 +112,14 @@ OR you can just install it with WordPress by going to Plugins >> Add New >> and 
 
 Pods really wouldn't be where it is without all of the contributions both financially and through code / time. Check out our GitHub for a list of contributors, or search our GitHub issues to see everyone involved in adding features, fixing bugs, or reporting issues/testing.
 
-https://github.com/pods-framework/pods/graphs/contributors
+[github.com/pods-framework/pods/graphs/contributors](https://github.com/pods-framework/pods/graphs/contributors)
 
 == Translations ==
 
 Many thanks go out to the fine folks who have helped us translate Pods into other languages other than English!
 
 * sk_SK (Slovak) - Branco Radenovich ([WebHostingGeeks.com](http://webhostinggeeks.com/blog/))
+* nl_NL (Dutch) - [Ramon van Belzen](http://www.ramoonus.nl/)
 
 == Changelog ==
 

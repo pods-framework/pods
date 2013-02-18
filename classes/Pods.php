@@ -1444,6 +1444,20 @@ class Pods {
     }
 
     /**
+     * Fetch the zebra switch
+     *
+     * @see PodsData::zebra
+     *
+     * @return bool Zebra state
+     * @since 1.12
+     */
+    public function nth ( $nth = null ) {
+        $this->do_hook( 'nth', $nth );
+
+        return $this->data->nth( $nth );
+    }
+
+    /**
      * Add an item to a Pod by giving an array of field data or set a specific field to
      * a specific value if you're just wanting to add a new item but only set one field.
      *

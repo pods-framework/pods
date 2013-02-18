@@ -1272,16 +1272,62 @@ class PodsData {
     }
 
     /**
-     * Fetch the zebra switch
+     * Fetch the zebra state
      *
      * @return bool Zebra state
      * @since 1.12
+     * @see PodsData::nth
      */
     public function zebra () {
-        $zebra = true;
-        if ( 0 < ( $this->row_number % 2 ) ) // Odd numbers
-            $zebra = false;
-        return $zebra;
+        return $this->nth( 'odd' ); // Odd numbers
+    }
+
+    /**
+     * Fetch the nth state
+     *
+     * @param int|string $nth The $nth to match on the PodsData::row_number
+     *
+     * @return bool Whether $nth matches
+     * @since 2.3
+     */
+    public function nth ( $nth ) {
+        if ( empty( $nth ) )
+            $nth = 2;
+
+        $offset = 0;
+
+        if ( 'even' == $nth ) {
+            $negative = false;
+            $nth = 2;
+        }
+        elseif ( 'odd' == $nth ) {
+            $negative = true;
+            $nth = 2;
+        }
+        elseif ( false !== strpos( $nth, '+' ) ) {
+            $nth = explode( '+', $nth );
+
+            if ( isset( $nth[ 1 ] ) )
+                $offset += (int) trim( $nth[ 1 ] );
+
+            $nth = (int) trim( $nth[ 0 ], ' n' );
+        }
+        elseif ( false !== strpos( $nth, '-' ) ) {
+            $nth = explode( '-', $nth );
+
+            if ( isset( $nth[ 1 ] ) )
+                $offset -= (int) trim( $nth[ 1 ] );
+
+            $nth = (int) trim( $nth[ 0 ], ' n' );
+        }
+
+        $nth = (int) $nth;
+        $offset = (int) $offset;
+
+        if ( 0 == ( ( $this->row_number % $nth ) + $offset ) )
+            return ( $negative ? false: true );
+
+        return ( $negative ? true : false );
     }
 
     /**

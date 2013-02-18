@@ -44,6 +44,10 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
         $id = $pod->api->process_form( $params, $pod, $fields, $thank_you );
 
         $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+
+        if ( 0 < strlen( pods_var( 'detail_url', $pod->pod_data[ 'options' ] ) ) )
+            $message .= ' <a target="_blank" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
+
         $error = sprintf( __( '<strong>Error:</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
 
         if ( 0 < $id )
@@ -119,32 +123,49 @@ if ( 0 < $pod->id() ) {
                         <div class="inside">
                             <div class="submitbox" id="submitpost">
                                 <?php
-                                    if ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) || isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) ) {
+                                    if ( 0 < $pod->id() && ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) || isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) || 0 < strlen( pods_var( 'detail_url', $pod->pod_data[ 'options' ] ) ) ) ) {
                                 ?>
                                     <div id="minor-publishing">
-                                        <div id="misc-publishing-actions">
-                                            <?php
-                                                $datef = __( 'M j, Y @ G:i' );
-
-                                                if ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) ) {
-                                                    $date = date_i18n( $datef, strtotime( $pod->field( 'created' ) ) );
-                                            ?>
-                                                <div class="misc-pub-section curtime">
-                                                    <span id="timestamp"><?php _e( 'Created on', 'pods' ); ?>: <b><?php echo $date; ?></b></span>
+                                        <?php
+                                            if ( 0 < strlen( pods_var( 'detail_url', $pod->pod_data[ 'options' ] ) ) ) {
+                                        ?>
+                                            <div id="minor-publishing-actions">
+                                                <div id="preview-action">
+                                                    <a class="button" href="<?php echo $pod->field( 'detail_url' ); ?>" target="_blank"><?php echo sprintf( __( 'View %s', 'pods' ), $obj->item ); ?></a>
                                                 </div>
-                                            <?php
-                                                }
+                                                <div class="clear"></div>
+                                            </div>
+                                        <?php
+                                            }
 
-                                                if ( isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) && $pod->display( 'created' ) != $pod->display( 'modified' ) ) {
-                                                    $date = date_i18n( $datef, strtotime( $pod->field( 'modified' ) ) );
-                                            ?>
-                                                <div class="misc-pub-section curtime">
-                                                    <span id="timestamp"><?php _e( 'Last Modified', 'pods' ); ?>: <b><?php echo $date; ?></b></span>
-                                                </div>
-                                            <?php
-                                                }
-                                            ?>
-                                        </div>
+                                            if ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) || isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) ) {
+                                        ?>
+                                            <div id="misc-publishing-actions">
+                                                <?php
+                                                    $datef = __( 'M j, Y @ G:i' );
+
+                                                    if ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) ) {
+                                                        $date = date_i18n( $datef, strtotime( $pod->field( 'created' ) ) );
+                                                ?>
+                                                    <div class="misc-pub-section curtime">
+                                                        <span id="timestamp"><?php _e( 'Created on', 'pods' ); ?>: <b><?php echo $date; ?></b></span>
+                                                    </div>
+                                                <?php
+                                                    }
+
+                                                    if ( isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) && $pod->display( 'created' ) != $pod->display( 'modified' ) ) {
+                                                        $date = date_i18n( $datef, strtotime( $pod->field( 'modified' ) ) );
+                                                ?>
+                                                    <div class="misc-pub-section curtime">
+                                                        <span id="timestamp"><?php _e( 'Last Modified', 'pods' ); ?>: <b><?php echo $date; ?></b></span>
+                                                    </div>
+                                                <?php
+                                                    }
+                                                ?>
+                                            </div>
+                                        <?php
+                                            }
+                                        ?>
                                     </div>
                                     <!-- /#minor-publishing -->
                                 <?php

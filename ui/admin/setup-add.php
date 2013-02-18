@@ -15,9 +15,9 @@
                 <?php
                     _e( 'Add New Pod', 'pods' );
 
-                    $pods = pods_api()->load_pods();
+                    $all_pods = pods_api()->load_pods();
 
-                    if ( !empty( $pods ) ) {
+                    if ( !empty( $all_pods ) ) {
                         $link = pods_var_update( array( 'page' => 'pods', 'action' . $obj->num => 'manage' ) );
                 ?>
                     <a href="<?php echo $link; ?>" class="add-new-h2">&laquo; <?php _e( 'Back to Manage', 'pods' ); ?></a>
@@ -222,6 +222,15 @@
                                                 'comment' => __( 'Comments', 'pods' )
                                             );
 
+                                            if ( isset( $all_pods[ 'media' ] ) && 'media' == $all_pods[ 'media' ][ 'type' ] )
+                                                unset( $data[ 'media' ] );
+
+                                            if ( isset( $all_pods[ 'user' ] ) && 'user' == $all_pods[ 'user' ][ 'type' ] )
+                                                unset( $data[ 'user' ] );
+
+                                            if ( isset( $all_pods[ 'comment' ] ) && 'comment' == $all_pods[ 'comment' ][ 'type' ] )
+                                                unset( $data[ 'comment' ] );
+
                                             echo PodsForm::field( 'extend_pod_type', pods_var_raw( 'extend_pod_type', 'post' ), 'pick', array( 'data' => $data, 'class' => 'pods-dependent-toggle' ) );
                                         ?>
                                     </div>
@@ -232,6 +241,10 @@
 
                                             foreach ( $post_types as $post_type => $label ) {
                                                 if ( in_array( $post_type, $ignore ) || empty( $post_type ) || 0 === strpos( $post_type, '_pods_' ) ) {
+                                                    unset( $post_types[ $post_type ] );
+                                                    continue;
+                                                }
+                                                elseif ( isset( $all_pods[ $post_type ] ) && 'post_type' == $all_pods[ $post_type ][ 'type' ] ) {
                                                     unset( $post_types[ $post_type ] );
                                                     continue;
                                                 }
@@ -247,10 +260,14 @@
                                     <div class="pods-field-option pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-taxonomy">
                                         <?php
                                             $taxonomies = get_taxonomies();
-                                            $ignore = array( 'nav_menu', 'link_category', 'post_format' );
+                                            $ignore = array( 'link_category' );
 
                                             foreach ( $taxonomies as $taxonomy => $label ) {
                                                 if ( in_array( $taxonomy, $ignore ) ) {
+                                                    unset( $taxonomies[ $taxonomy ] );
+                                                    continue;
+                                                }
+                                                elseif ( isset( $all_pods[ $taxonomy ] ) && 'taxonomy' == $all_pods[ $taxonomy ][ 'type' ] ) {
                                                     unset( $taxonomies[ $taxonomy ] );
                                                     continue;
                                                 }

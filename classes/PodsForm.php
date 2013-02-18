@@ -267,11 +267,11 @@ class PodsForm {
 
             $attributes = array_merge( $_attributes, (array) $attributes );
 
-            if ( isset( $options[ $type . '_attributes' ] ) && is_array( $options[ $type . '_attributes' ] ) && !empty( $options[ $type . '_attributes' ] ) )
-                $attributes = array_merge( $attributes, $options[ $type . '_attributes' ] );
+            if ( isset( $options[ 'attributes' ] ) && is_array( $options[ 'attributes' ] ) && !empty( $options[ 'attributes' ] ) )
+                $attributes = array_merge( $attributes, $options[ 'attributes' ] );
         }
-        elseif ( isset( $options[ 'attributes' ] ) && is_array( $options[ 'attributes' ] ) && !empty( $options[ 'attributes' ] ) )
-            $attributes = array_merge( $attributes, $options[ 'attributes' ] );
+        elseif ( isset( $options[ $type . '_attributes' ] ) && is_array( $options[ $type . '_attributes' ] ) && !empty( $options[ $type . '_attributes' ] ) )
+            $attributes = array_merge( $attributes, $options[ $type . '_attributes' ] );
 
         if ( isset( $options[ 'class' ] ) && !empty( $options[ 'class' ] ) ) {
             if ( is_array( $options[ 'class' ] ) )

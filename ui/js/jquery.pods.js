@@ -344,18 +344,7 @@
                     $sluggable.find( '.pods-slug-edit' ).hide();
                 }
 
-                var sluggables = [];
-
-                $( '.pods-slugged[data-sluggable], .pods-slugged-lower[data-sluggable]' ).each( function () {
-                    if ( -1 == jQuery.inArray( $( this ).data( 'sluggable' ), sluggables ) )
-                        sluggables.push( $( this ).data( 'sluggable' ) );
-                } );
-
-                for ( var i = 0; i < sluggables.length; i++ ) {
-                    var sluggable = sluggables[ i ];
-
-                    methods[ 'sluggable_single' ]( sluggable );
-                }
+                methods[ 'sluggables' ]();
             },
             sluggable_single : function ( sluggable ) {
                 var $slug = $( 'input[name="' + sluggable.replace( '[', '\\[' ).replace( ']', '\\]' ) + '"]' );
@@ -396,6 +385,23 @@
                     if ( 0 < $slug.val().length ) {
                         $slug.trigger( 'change' );
                     }
+                }
+            },
+            sluggables : function ( parent ) {
+                var sluggables = [];
+
+                if ( 'undefined' == parent )
+                    parent = '.pods-admin';
+
+                $( parent ).find( '.pods-slugged[data-sluggable], .pods-slugged-lower[data-sluggable]' ).each( function () {
+                    if ( -1 == jQuery.inArray( $( this ).data( 'sluggable' ), sluggables ) )
+                        sluggables.push( $( this ).data( 'sluggable' ) );
+                } );
+
+                for ( var i = 0; i < sluggables.length; i++ ) {
+                    var sluggable = sluggables[ i ];
+
+                    methods[ 'sluggable_single' ]( sluggable );
                 }
             },
             tabbed : function () {
@@ -1511,18 +1517,7 @@
                         $( 'tr.pods-manage-row' ).removeClass( 'alternate' );
                         $( 'tr.pods-manage-row:even' ).addClass( 'alternate' );
 
-                        var sluggables = [];
-
-                        $new_row.find( '.pods-slugged[data-sluggable], .pods-slugged-lower[data-sluggable]' ).each( function () {
-                            if ( -1 == jQuery.inArray( $( this ).data( 'sluggable' ), sluggables ) )
-                                sluggables.push( $( this ).data( 'sluggable' ) );
-                        } );
-
-                        for ( var i = 0; i < sluggables.length; i++ ) {
-                            var sluggable = sluggables[ i ];
-
-                            methods[ 'sluggable_single' ]( sluggable );
-                        }
+                        methods[ 'sluggables' ]( $new_row );
 
                         $( this ).css( 'cursor', 'pointer' );
                         $( this ).prop( 'disabled', false );
@@ -1586,18 +1581,7 @@
                         $( 'tr.pods-manage-row' ).removeClass( 'alternate' );
                         $( 'tr.pods-manage-row:even' ).addClass( 'alternate' );
 
-                        var sluggables = [];
-
-                        $new_row.find( '.pods-slugged[data-sluggable], .pods-slugged-lower[data-sluggable]' ).each( function () {
-                            if ( -1 == jQuery.inArray( $( this ).data( 'sluggable' ), sluggables ) )
-                                sluggables.push( $( this ).data( 'sluggable' ) );
-                        } );
-
-                        for ( var i = 0; i < sluggables.length; i++ ) {
-                            var sluggable = sluggables[ i ];
-
-                            methods[ 'sluggable_single' ]( sluggable );
-                        }
+                        methods[ 'sluggables' ]( $new_row );
 
                         $( this ).css( 'cursor', 'pointer' );
                         $( this ).prop( 'disabled', false );

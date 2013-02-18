@@ -1295,11 +1295,10 @@ class PodsData {
             $nth = 2;
 
         $offset = 0;
+        $negative = false;
 
-        if ( 'even' == $nth ) {
-            $negative = false;
+        if ( 'even' == $nth )
             $nth = 2;
-        }
         elseif ( 'odd' == $nth ) {
             $negative = true;
             $nth = 2;

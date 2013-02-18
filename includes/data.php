@@ -130,6 +130,8 @@ function pods_trim ( $input, $charlist = null, $lr = null ) {
  * @since 1.10.6
  */
 function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false, $context = 'display' ) {
+    $output = null;
+
     if ( is_array( $type ) )
         $output = isset( $type[ $var ] ) ? $type[ $var ] : $default;
     elseif ( is_object( $type ) )

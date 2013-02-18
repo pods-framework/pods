@@ -225,6 +225,7 @@ $max_length_name = 64;
 $max_length_name -= 10; // Allow for WP Multisite or prefix changes in the future
 $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
 
+$manage_fields = true;
 $advanced = false;
 $labels = false;
 $pods_ui = false;
@@ -246,6 +247,9 @@ elseif ( 'settings' == pods_var( 'type', $pod ) ) {
     $advanced = true;
     $labels = true;
 }
+
+if ( 'none' == pods_var( 'storage', $pod, 'none', null, true ) && 'settings' != pods_var( 'type', $pod ) )
+    $manage_fields = false;
 ?>
 <div class="wrap pods-admin">
 <div id="icon-pods" class="icon32"><br /></div>
@@ -281,9 +285,10 @@ elseif ( 'settings' == pods_var( 'type', $pod ) ) {
         if ( $labels || $pods_ui || $advanced ) {
             $default = 'fields';
 
-            $tabs = array(
-                'pods-manage-fields' => __( 'Manage Fields', 'pods' )
-            );
+            $tabs = array();
+
+            if ( $manage_fields )
+                $tabs[ 'pods-manage-fields' ] = __( 'Manage Fields', 'pods' );
 
             if ( $labels )
                 $tabs[ 'pods-labels' ] = __( 'Labels', 'pods' );

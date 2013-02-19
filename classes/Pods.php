@@ -501,8 +501,8 @@ class Pods {
                 }
             }
 
-            if ( 'post_type' == $this->pod_data[ 'type' ] ) {
-                if ( 'post_thumbnail' == $params->name || 0 === strpos( $params->name, 'post_thumbnail.' ) ) {
+            if ( 'post_type' == $this->pod_data[ 'type' ] && !isset( $this->fields[ $params->name ] ) ) {
+                if ( !isset( $this->fields[ 'post_thumbnail' ] ) && ( 'post_thumbnail' == $params->name || 0 === strpos( $params->name, 'post_thumbnail.' ) ) ) {
                     $size = 'thumbnail';
 
                     if ( 0 === strpos( $params->name, 'post_thumbnail.' ) ) {
@@ -517,7 +517,7 @@ class Pods {
 
                     $object_field_found = true;
                 }
-                elseif ( 'post_thumbnail_url' == $params->name || 0 === strpos( $params->name, 'post_thumbnail_url.' ) ) {
+                elseif ( !isset( $this->fields[ 'post_thumbnail_url' ] ) && ( 'post_thumbnail_url' == $params->name || 0 === strpos( $params->name, 'post_thumbnail_url.' ) ) ) {
                     $size = 'thumbnail';
 
                     if ( 0 === strpos( $params->name, 'post_thumbnail_url.' ) ) {
@@ -529,6 +529,25 @@ class Pods {
 
                     // Pods will auto-get the thumbnail ID if this isn't an attachment
                     $value = pods_image_url( $this->id(), $size );
+
+                    $object_field_found = true;
+                }
+            }
+            elseif ( 'user' == $this->pod_data[ 'type' ] && !isset( $this->fields[ $params->name ] ) ) {
+                if ( !isset( $this->fields[ 'avatar' ] ) && ( 'avatar' == $params->name || 0 === strpos( $params->name, 'avatar.' ) ) ) {
+                    $size = null;
+
+                    if ( 0 === strpos( $params->name, 'avatar.' ) ) {
+                        $field_names = explode( '.', $params->name );
+
+                        if ( isset( $field_names[ 1 ] ) )
+                            $size = (int) $field_names[ 1 ];
+                    }
+
+                    if ( !empty( $size ) )
+                        $value = get_avatar( $this->id(), $size );
+                    else
+                        $value = get_avatar( $this->id() );
 
                     $object_field_found = true;
                 }
@@ -602,7 +621,7 @@ class Pods {
                     if ( in_array( $this->fields[ $params->name ][ 'type' ], $tableless_field_types ) ) {
                         $params->raw = true;
 
-                        if ( in_array( $this->fields[ $params->name ][ 'pick_object' ], $simple_tableless_objects ) ) {
+                        if ( 'pick' == $this->fields[ $params->name ][ 'type' ] && in_array( $this->fields[ $params->name ][ 'pick_object' ], $simple_tableless_objects ) ) {
                             $simple = true;
                             $params->single = true;
                         }

@@ -1177,7 +1177,7 @@ class PodsAPI {
             if ( $old_name != $params->name && in_array( $pod[ 'type' ], array( 'user', 'comment', 'media' ) ) && in_array( $pod[ 'object' ], array( 'user', 'comment', 'media' ) ) )
                 return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ), $this );
 
-            if ( $old_name != $params->name && in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && !empty( $pod[ 'object' ] ) && $pod[ 'object' ] != $old_name )
+            if ( $old_name != $params->name && in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && !empty( $pod[ 'object' ] ) && $pod[ 'object' ] == $old_name )
                 return pods_error( sprintf( __( 'Pod %s cannot be renamed, it extends an existing WP Object', 'pods' ), $old_name ), $this );
 
             if ( $old_id != $params->id ) {
@@ -3065,6 +3065,7 @@ class PodsAPI {
                                 $value_ids = '0';
 
                             // Remove relationships
+                            // @todo Use REPLACE INTO instead of deleting every time
                             $sql = "
                                 DELETE FROM `@wp_podsrel`
                                 WHERE
@@ -3116,11 +3117,14 @@ class PodsAPI {
                                     $this->save_wp_object( 'media', $attachment_data );
                                 }
 
+                                // @todo Use REPLACE INTO instead of inserting every time
                                 if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
-                                    pods_query( "INSERT INTO `@wp_podsrel` (`pod_id`, `field_id`, `item_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d)", array(
+                                    pods_query( "INSERT INTO `@wp_podsrel` (`pod_id`, `field_id`, `item_id`, `related_pod_id`, `related_field_id`, `related_item_id`, `weight`) VALUES (%d, %d, %d, %d, %d, %d, %d)", array(
                                         $params->pod_id,
                                         $field_id,
                                         $params->id,
+                                        0,
+                                        0,
                                         $id,
                                         $weight
                                     ) );

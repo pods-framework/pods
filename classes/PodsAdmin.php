@@ -1330,7 +1330,7 @@ class PodsAdmin {
         // Output in json format
         if ( false !== $output ) {
             if ( is_array( $output ) || is_object( $output ) )
-                wp_send_json( json_encode( $output ) );
+                wp_send_json( $output );
             else
                 echo $output;
         }
@@ -1587,7 +1587,7 @@ class PodsAdmin {
 
                     $attachment = apply_filters( 'pods_upload_attachment', $attachment, $params->post_id );
 
-                    wp_send_json( json_encode( $attachment ) );
+                    wp_send_json( $attachment );
                 }
             }
         }
@@ -1877,7 +1877,7 @@ class PodsAdmin {
             'results' => $items
         );
 
-        wp_send_json( json_encode( $items ) );
+        wp_send_json( $items );
 
         die(); // KBAI!
     }

@@ -964,9 +964,9 @@ class Pods {
         $id = (int) $id;
 
         $params = array(
-            'select' => "`t`.{$this->data->field_id}`",
-            'where' => "`t`.{$this->data->field_id}` < {$id}",
-            'orderby' => "`t`.{$this->data->field_id}` DESC",
+            'select' => "`t`.`{$this->data->field_id}`",
+            'where' => "`t`.`{$this->data->field_id}` < {$id}",
+            'orderby' => "`t`.`{$this->data->field_id}` DESC",
             'limit' => 1
         );
 
@@ -977,7 +977,7 @@ class Pods {
                 $params = $this->params;
 
             if ( 0 < $id )
-                $params[ 'where' ] = "`t`.{$this->data->field_id}` < {$id}";
+                $params[ 'where' ] = "`t`.`{$this->data->field_id}` < {$id}";
             elseif ( isset( $params[ 'offset' ] ) && 0 < $params[ 'offset' ] )
                 $params[ 'offset' ] -= 1;
             elseif ( !isset( $params[ 'offset' ] ) && !empty( $this->params ) && 0 < $this->row )
@@ -985,7 +985,7 @@ class Pods {
             else
                 return 0;
 
-            $params[ 'select' ] = "`t`.{$this->data->field_id}`";
+            $params[ 'select' ] = "`t`.`{$this->data->field_id}`";
             $params[ 'limit' ] = 1;
         }
 
@@ -1013,9 +1013,9 @@ class Pods {
         $id = (int) $id;
 
         $params = array(
-            'select' => "`t`.{$this->data->field_id}`",
-            'where' => "{$id} < `t`.{$this->data->field_id}`",
-            'orderby' => "`t`.{$this->data->field_id}` ASC",
+            'select' => "`t`.`{$this->data->field_id}`",
+            'where' => "{$id} < `t`.`{$this->data->field_id}`",
+            'orderby' => "`t`.`{$this->data->field_id}` ASC",
             'limit' => 1
         );
 
@@ -1026,7 +1026,7 @@ class Pods {
                 $params = $this->params;
 
             if ( 0 < $id )
-                $params[ 'where' ] = "{$id} < `t`.{$this->data->field_id}`";
+                $params[ 'where' ] = "{$id} < `t`.`{$this->data->field_id}`";
             elseif ( !isset( $params[ 'offset' ] ) ) {
                 if ( !empty( $this->params ) && -1 < $this->row )
                     $params[ 'offset' ] = $this->row + 1;
@@ -1036,7 +1036,7 @@ class Pods {
             else
                 $params[ 'offset' ] += 1;
 
-            $params[ 'select' ] = "`t`.{$this->data->field_id}`";
+            $params[ 'select' ] = "`t`.`{$this->data->field_id}`";
             $params[ 'limit' ] = 1;
         }
 
@@ -1058,8 +1058,8 @@ class Pods {
      */
     public function first_id ( $params_override = null ) {
         $params = array(
-            'select' => "`t`.{$this->data->field_id}`",
-            'orderby' => "`t`.{$this->data->field_id}` ASC",
+            'select' => "`t`.`{$this->data->field_id}`",
+            'orderby' => "`t`.`{$this->data->field_id}` ASC",
             'limit' => 1
         );
 
@@ -1069,7 +1069,7 @@ class Pods {
             elseif ( !empty( $this->params ) )
                 $params = $this->params;
 
-            $params[ 'select' ] = "`t`.{$this->data->field_id}`";
+            $params[ 'select' ] = "`t`.`{$this->data->field_id}`";
             $params[ 'offset' ] = 0;
             $params[ 'limit' ] = 1;
         }
@@ -1092,8 +1092,8 @@ class Pods {
      */
     public function last_id ( $params_override = null ) {
         $params = array(
-            'select' => "`t`.{$this->data->field_id}`",
-            'orderby' => "`t`.{$this->data->field_id}` DESC",
+            'select' => "`t`.`{$this->data->field_id}`",
+            'orderby' => "`t`.`{$this->data->field_id}` DESC",
             'limit' => 1
         );
 
@@ -1108,7 +1108,7 @@ class Pods {
             else
                 $params[ 'offset' ] = $this->total_found() - 1;
 
-            $params[ 'select' ] = "`t`.{$this->data->field_id}`";
+            $params[ 'select' ] = "`t`.`{$this->data->field_id}`";
             $params[ 'limit' ] = 1;
         }
 

@@ -190,7 +190,7 @@ class PodsField_Website extends PodsField {
                 $value = implode( '', $value );
         }
 
-        if ( false === strpos( $value, '://' ) )
+        if ( false === strpos( $value, '://' ) && 0 !== strpos( $value, '//' ) )
             $value = 'http://' . $value;
 
         $url = @parse_url( $value );
@@ -224,7 +224,7 @@ class PodsField_Website extends PodsField {
             }
             elseif ( 'no-http' == pods_var( 'website_format', $options ) ) {
                 $value = $this->build_url( $url );
-                $value = str_replace( $url[ 'scheme' ] . '://', '', $value );
+                $value = str_replace( trim( $url[ 'scheme' ] . '://', ':' ), '', $value );
 
                 if ( '/' == $url[ 'path' ] )
                     $value = trim( $value, '/' );
@@ -234,7 +234,7 @@ class PodsField_Website extends PodsField {
                     $url[ 'host' ] = substr( $url[ 'host' ], 4 );
 
                 $value = $this->build_url( $url );
-                $value = str_replace( $url[ 'scheme' ] . '://', '', $value );
+                $value = str_replace( trim( $url[ 'scheme' ] . '://', ':' ), '', $value );
 
                 if ( '/' == $url[ 'path' ] )
                     $value = trim( $value, '/' );
@@ -244,7 +244,7 @@ class PodsField_Website extends PodsField {
                     $url[ 'host' ] = 'www.' . $url[ 'host' ];
 
                 $value = $this->build_url( $url );
-                $value = str_replace( $url[ 'scheme' ] . '://', '', $value );
+                $value = str_replace( trim( $url[ 'scheme' ] . '://', ':' ), '', $value );
 
                 if ( '/' == $url[ 'path' ] )
                     $value = trim( $value, '/' );
@@ -294,7 +294,7 @@ class PodsField_Website extends PodsField {
 
         $url = array_merge( $defaults, (array) $url );
 
-        $new_url = $url[ 'scheme' ] . '://' . $url[ 'host' ] . '/' . ltrim( $url[ 'path' ], '/' );
+        $new_url = trim( $url[ 'scheme' ] . '://', ':' ) . $url[ 'host' ] . '/' . ltrim( $url[ 'path' ], '/' );
 
         if ( !empty( $url[ 'query' ] ) )
             $new_url .= '?' . ltrim( $url[ 'query' ], '?' );

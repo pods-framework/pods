@@ -1658,12 +1658,7 @@ class PodsAdmin {
             $field[ 'table_info' ] = $this->api->get_table_info( pods_var( 'pick_object', $field ), pods_var( 'pick_val', $field ) );
 
             $data = pods_data();
-            $data->table = $field[ 'table_info' ][ 'table' ];
-            $data->join = $field[ 'table_info' ][ 'join' ];
-            $data->field_id = $field[ 'table_info' ][ 'field_id' ];
-            $data->field_index = $field[ 'table_info' ][ 'field_index' ];
-            $data->where = $field[ 'table_info' ][ 'where' ];
-            $data->orderby = $field[ 'table_info' ][ 'orderby' ];
+            $data->table( $field[ 'table_info' ] );
 
             $where = pods_var_raw( 'pick_where', $field[ 'options' ], $field[ 'table_info' ][ 'where_default' ], null, true );
 
@@ -1744,7 +1739,8 @@ class PodsAdmin {
             $lookup_where[] = "`t`.`comment_author_email` LIKE '%" . like_escape( $params->query ) . "%'";
         }
 
-        $where[] = ' ( ' . implode( ' OR ', $lookup_where ) . ' ) ';
+        if ( !empty( $lookup_where ) )
+            $data_params[ 'where' ][] = ' ( ' . implode( ' OR ', $lookup_where ) . ' ) ';
 
         $orderby = array();
         $orderby[] = "(`t`.`{$data->field_index}` LIKE '%" . like_escape( $params->query ) . "%' ) DESC";
@@ -1759,6 +1755,24 @@ class PodsAdmin {
 
         $data_params[ 'select' ] .= $extra;
         $data_params[ 'orderby' ] = $orderby;
+
+        if ( 'user' == pods_var( 'pick_object', $field ) ) {
+            $roles = pods_var( 'pick_user_role', $field[ 'options' ] );
+
+            if ( !empty( $roles ) ) {
+                $where = array();
+
+                foreach ( (array) $roles as $role ) {
+                    if ( empty( $role ) )
+                        continue;
+
+                    $where[] = 'wp_' . ( is_multisite() ? get_current_blog_id() . '_' : '' ) . 'capabilities.meta_value LIKE "%\"' . $role . '\"%"';
+                }
+
+                if ( !empty( $where ) )
+                    $data_params[ 'where' ][] = '( ' . implode( ' OR ', $where ) . ' )';
+            }
+        }
 
         $results = $data->select( $data_params );
 

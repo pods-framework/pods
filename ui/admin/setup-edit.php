@@ -92,6 +92,12 @@ $advanced_fields = array(
                     'type' => 'boolean',
                     'dependency' => true
                 ),
+                'restrict_role' => array(
+                    'label' => __( 'Restrict access by Role?', 'pods' ),
+                    'default' => 0,
+                    'type' => 'boolean',
+                    'dependency' => true
+                ),
                 'restrict_capability' => array(
                     'label' => __( 'Restrict access by Capability?', 'pods' ),
                     'default' => 0,
@@ -99,6 +105,15 @@ $advanced_fields = array(
                     'dependency' => true
                 )
             )
+        ),
+        'roles_allowed' => array(
+            'label' => __( 'Role(s) Allowed', 'pods' ),
+            'help' => __( 'help', 'pods' ),
+            'type' => 'pick',
+            'pick_object' => 'role',
+            'pick_format_type' => 'multi',
+            'default' => '',
+            'depends-on' => array( 'restrict_role' => true )
         ),
         'capability_allowed' => array(
             'label' => __( 'Capability Allowed', 'pods' ),
@@ -159,7 +174,9 @@ $field_defaults = array(
     'default_value_parameter' => '',
     //'search' => 1,
     'admin_only' => 0,
+    'restrict_roles' => 0,
     'restrict_capability' => 0,
+    'roles_allowed' => 'administrator',
     'capability_allowed' => ''/*,
     'regex_validation' => '',
     'message_regex' => '',

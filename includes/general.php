@@ -781,6 +781,10 @@ function pods_redirect ( $location, $status = 302 ) {
  * @since 2.0.5
  */
 function pods_permission ( $options ) {
+    global $current_user;
+
+    get_currentuserinfo();
+
     $permission = false;
 
     if ( isset( $options[ 'options' ] ) )
@@ -788,33 +792,50 @@ function pods_permission ( $options ) {
 
     if ( is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'manage_options' ) ) )
         $permission = true;
-    elseif ( 1 == pods_var( 'restrict_capability', $options, 0 ) ) {
-        $capabilities = explode( ',', pods_var( 'capability_allowed', $options ) );
-        $capabilities = array_unique( array_filter( $capabilities ) );
+    else {
+        if ( 1 == pods_var( 'restrict_role', $options, 0 ) ) {
+            $roles = pods_var( 'roles_allowed', $options );
+            $roles = array_unique( array_filter( $roles ) );
 
-        foreach( $capabilities as $capability ) {
-            $must_have_capabilities = explode( '&&', $capability );
-            $must_have_capabilities = array_unique( array_filter( $must_have_capabilities ) );
 
-            $must_have_permission = true;
-
-            foreach ( $must_have_capabilities as $must_have_capability ) {
-                if ( !current_user_can( $must_have_capability ) ) {
-                    $must_have_permission = false;
+            foreach( $roles as $role ) {
+                if ( is_user_logged_in() && in_array( $role, $current_user->roles ) ) {
+                    $permission = true;
 
                     break;
                 }
             }
+        }
 
-            if ( $must_have_permission ) {
-                $permission = true;
+        if ( !$permission && 1 == pods_var( 'restrict_capability', $options, 0 ) ) {
+            $capabilities = explode( ',', pods_var( 'capability_allowed', $options ) );
+            $capabilities = array_unique( array_filter( $capabilities ) );
 
-                break;
+            foreach( $capabilities as $capability ) {
+                $must_have_capabilities = explode( '&&', $capability );
+                $must_have_capabilities = array_unique( array_filter( $must_have_capabilities ) );
+
+                $must_have_permission = true;
+
+                foreach ( $must_have_capabilities as $must_have_capability ) {
+                    if ( !current_user_can( $must_have_capability ) ) {
+                        $must_have_permission = false;
+
+                        break;
+                    }
+                }
+
+                if ( $must_have_permission && is_user_logged_in() ) {
+                    $permission = true;
+
+                    break;
+                }
             }
         }
+
+        if ( 0 == pods_var( 'restrict_role', $options, 0 ) && 0 == pods_var( 'restrict_capability', $options, 0 ) && 0 == pods_var( 'admin_only', $options, 0 ) )
+            $permission = true;
     }
-    elseif ( 0 == pods_var( 'admin_only', $options, 0 ) )
-        $permission = true;
 
     return $permission;
 }

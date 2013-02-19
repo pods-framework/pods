@@ -390,7 +390,7 @@
             sluggables : function ( parent ) {
                 var sluggables = [];
 
-                if ( 'undefined' == parent )
+                if ( 'undefined' == typeof parent )
                     parent = '.pods-admin';
 
                 $( parent ).find( '.pods-slugged[data-sluggable], .pods-slugged-lower[data-sluggable]' ).each( function () {
@@ -469,8 +469,6 @@
                     var $tabbed = $( this ).closest( tab_class );
                     var tab_hash = this.hash;
 
-                    console.log( tab_hash );
-
                     if ( $tabbed.find( '.pods-nav-tabs a.pods-nav-tab-link[data-tabs]' )[ 0 ] ) {
                         $tabbed.find( '.pods-nav-tabs a.pods-nav-tab-link[data-tabs]' ).each( function () {
                             var tabs = $( this ).data( 'tabs' ),
@@ -508,7 +506,6 @@
                     $nav_tabbed = $( this );
                     $nav_tabbed.find( '.pods-nav-tabs a.pods-nav-tab-link:first' ).addClass( 'nav-tab-active' );
                     $nav_tabbed.find( '.pods-nav-tab-group .pods-nav-tab:first' ).each( function () {
-                        console.log( $( this ).prop( 'id' ) );
                         $( '.pods-dependent-toggle', this ).trigger( 'change' );
                         $( this ).show();
                     } )
@@ -1343,9 +1340,30 @@
                                 $el.val( ed.getContent() );
                             }
 
-                            var val = $el.val();
+                            var val = $el.val(),
+                                field_array = $el.prop( 'name' ).match( /\[(\w*|)\]/gi ),
+                                field_name = ( 1 < field_array.length ? field_array[ 1 ].replace( '[', '' ).replace( ']', '' ) : '' ),
+                                field_found = -1;
 
-                            if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) )
+                            if ( '' == field_name )
+                                return;
+
+                            if ( $el.is( 'input[type=checkbox]' ) && $el.is( '.pods-form-ui-field-type-pick' ) ) {
+                                field_found = jQuery.inArray( val, field_data[ field_name ] );
+
+                                if ( !$el.is( ':checked' ) ) {
+                                    if ( 'object' == typeof field_data[ field_name ] || 'array' == typeof field_data[ field_name ] ) {
+                                        if ( -1 < field_found )
+                                            field_data[ field_name ].splice( field_found, 1 );
+
+                                    }
+                                    else
+                                        field_data[ field_name ] = [];
+
+                                    return;
+                                }
+                            }
+                            else if ( $el.is( 'input[type=checkbox]' ) && !$el.is( ':checked' ) )
                                 val = 0;
                             else if ( $el.is( 'input[type=radio]' ) && !$el.is( ':checked' ) )
                                 val = '';
@@ -1359,39 +1377,34 @@
                                 valid_form = false;
                             }
 
-                            field_name = $el.prop( 'name' );
+                            if ( $el.is( 'input[type=checkbox]' ) && $el.is( '.pods-form-ui-field-type-pick' ) ) {
+                                if ( -1 == field_found ) {
+                                    if ( 'object' != typeof field_data[ field_name ] && 'array' != typeof field_data[ field_name ] )
+                                        field_data[ field_name ] = [];
 
-                            var field_array = field_name.match( /\[(\w*|)\]/gi ),
-                                field_name = '';
-
-                            for ( var i in field_array ) {
-                                the_field = field_array[ i ].replace( '[', '' ).replace( ']', '' );
-
-                                if ( 1 == i ) {
-                                    field_name = the_field;
-
-                                    if ( 2 == field_array.length )
-                                        field_data[ field_name ] = val;
-                                }
-                                else if ( 2 == i ) {
-                                    the_field = parseInt( the_field );
-
-                                    if ( 'NaN' == the_field )
-                                        field_data[ field_name ] = val;
-                                    else {
-                                        if ( 'undefined' == typeof field_data[ field_name ] )
-                                            field_data[ field_name ] = {};
-
-                                        while ( 'undefined' != typeof( field_data[ field_name ][ the_field ] ) ) {
-                                            the_field++;
-                                        }
-
-                                        field_data[ field_name ][ the_field ] = val;
-                                    }
+                                    field_data[ field_name ].push( val );
                                 }
                             }
-                         }
-                     } );
+                            else if ( 2 == field_array.length )
+                                field_data[ field_name ] = val;
+                            else if ( 3 == field_array.length ) {
+                                the_field = parseInt( field_array[ 2 ].replace( '[', '' ).replace( ']', '' ) );
+
+                                if ( 'NaN' == the_field )
+                                    field_data[ field_name ] = val;
+                                else {
+                                    if ( 'undefined' == typeof field_data[ field_name ] )
+                                        field_data[ field_name ] = {};
+
+                                    while ( 'undefined' != typeof( field_data[ field_name ][ the_field ] ) ) {
+                                        the_field++;
+                                    }
+
+                                    field_data[ field_name ][ the_field ] = val;
+                                }
+                            }
+                        }
+                    } );
 
                     if ( valid_form ) {
                         $row_content.find( 'input.field_data' ).val( $.toJSON( field_data ) );

@@ -45,7 +45,7 @@
                     <div id="pods-wizard-panel-1" class="pods-wizard-panel">
                         <div class="pods-wizard-content">
                             <p>
-                                <?php _e( 'Pods are content types that you can customize and define fields for based on your needs. You can choose to create a Custom Post Type, Custom Taxonomy, a Custom Pod which operate completely seperate from normal WordPress Objects, or Custom Settings Pages for site-specific data. You can also extend existing content types like WP Objects such as Post Types, Taxonomies, Users, or Comments.', 'pods' ); ?>
+                                <?php _e( 'Pods are content types that you can customize and define fields for based on your needs. You can choose to create a Custom Post Type, Custom Taxonomy, or Custom Settings Pages for site-specific data. You can also extend existing content types like WP Objects such as Post Types, Taxonomies, Users, or Comments.', 'pods' ); ?>
                                 <br /><br />
                                 <?php _e( 'Not sure what content type you should use? Check out our <a href="http://pods.io/docs/comparisons/compare-content-types/" target="_blank">Content Type Comparison</a> to help you decide.', 'pods' ); ?>
                             </p>
@@ -56,7 +56,7 @@
                                 <a href="#pods-wizard-create" data-opt="create">
                                     <h2><?php _e( 'Create New', 'pods' ); ?></h2>
 
-                                    <p><?php _e( 'Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, <strong>Advanced Content Types</strong> with their own tables, or <strong>Custom Settings Pages</strong>.', 'pods' ); ?></p>
+                                    <p><?php _e( 'Create entirely new content types using <strong>Post Types</strong>, <strong>Taxonomies</strong>, or <strong>Custom Settings Pages</strong>.', 'pods' ); ?></p>
                                 </a>
 
                                 <p><br /></p>
@@ -88,11 +88,13 @@
                                             $data = array(
                                                 'post_type' => __( 'Custom Post Type (like Posts or Pages)', 'pods' ),
                                                 'taxonomy' => __( 'Custom Taxonomy (like Categories or Tags)', 'pods' ),
-                                                'pod' => __( 'Advanced Content Type (separate from WP, blank slate, in its own table)', 'pods' ),
+                                                'pod' => '', // component will fill this in if it's enabled
                                                 'settings' => __( 'Custom Settings Page', 'pods' )
                                             );
 
-                                            if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS )
+                                            $data = apply_filters( 'pods_admin_setup_add_create_pod_type', $data );
+
+                                            if ( empty( $data[ 'pod' ] ) )
                                                 unset( $data[ 'pod' ] );
 
                                             echo PodsForm::field( 'create_pod_type', pods_var_raw( 'create_pod_type', 'post' ), 'pick', array( 'data' => $data, 'class' => 'pods-dependent-toggle' ) );

@@ -33,6 +33,7 @@
 
     // Remove options, we don't need it in the JSON
     unset( $field[ 'options' ] );
+    unset( $field[ 'table_info' ] );
 
     $data = array(
         'row' => $pods_i

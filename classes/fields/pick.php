@@ -140,6 +140,24 @@ class PodsField_Pick extends PodsField {
                 'default' => '',
                 'type' => 'text'
             ),
+            'pick_user_role' => array(
+                'label' => __( 'Limit list to Role(s)', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'depends-on' => array( 'pick_object' => 'user' ),
+                'default' => '',
+                'type' => 'pick',
+                'pick_object' => 'role',
+                'pick_format_type' => 'multi'
+            ),/*
+            'pick_user_site' => array(
+                'label' => __( 'Limit list to Site(s)', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'depends-on' => array( 'pick_object' => 'user' ),
+                'default' => '',
+                'type' => 'pick',
+                'pick_object' => 'site',
+                'pick_format_type' => 'multi'
+            ),*/
             'pick_where' => array(
                 'label' => __( 'Customized <em>WHERE</em>', 'pods' ),
                 'help' => __( 'help', 'pods' ),
@@ -188,6 +206,10 @@ class PodsField_Pick extends PodsField {
                 )
             )*/
         );
+
+        /*if ( !is_multisite() )
+            unset( $options[ 'pick_user_site' ] );*/
+
         return $options;
     }
 
@@ -509,9 +531,9 @@ class PodsField_Pick extends PodsField {
         if ( ( 'custom-simple' != pods_var( 'pick_object', $options ) || empty( $custom ) ) && '' != pods_var( 'pick_object', $options, '', null, true ) ) {
             $autocomplete = false;
 
-            if ( 'single' == pods_var( 'pick_format_type', $options ) && 'autocomplete' == pods_var( 'pick_format_single', $options ) )
+            if ( 'single' == pods_var( 'pick_format_type', $options, 'single' ) && 'autocomplete' == pods_var( 'pick_format_single', $options, 'dropdown' ) )
                 $autocomplete = true;
-            elseif ( 'multi' == pods_var( 'pick_format_type', $options ) && 'autocomplete' == pods_var( 'pick_format_multi', $options ) )
+            elseif ( 'multi' == pods_var( 'pick_format_type', $options, 'single' ) && 'autocomplete' == pods_var( 'pick_format_multi', $options, 'checkbox' ) )
                 $autocomplete = true;
 
             $params[ 'limit' ] = -1;
@@ -522,33 +544,38 @@ class PodsField_Pick extends PodsField {
             $ajax = true;
         }
 
-        if ( 'single' == pods_var( 'pick_format_type', $options ) ) {
-            if ( 'dropdown' == pods_var( 'pick_format_single', $options ) )
+        if ( 'single' == pods_var( 'pick_format_type', $options, 'single' ) ) {
+            if ( 'dropdown' == pods_var( 'pick_format_single', $options, 'dropdown' ) )
                 $field_type = 'select';
-            elseif ( 'radio' == pods_var( 'pick_format_single', $options ) )
+            elseif ( 'radio' == pods_var( 'pick_format_single', $options, 'dropdown' ) )
                 $field_type = 'radio';
-            elseif ( 'autocomplete' == pods_var( 'pick_format_single', $options ) )
+            elseif ( 'autocomplete' == pods_var( 'pick_format_single', $options, 'dropdown' ) )
                 $field_type = 'select2';
             else {
                 // Support custom integration
-                do_action( 'pods_form_ui_field_pick_input_' . pods_var( 'pick_format_type', $options ) . '_' . pods_var( 'pick_format_single', $options ), $name, $value, $options, $pod, $id );
-                do_action( 'pods_form_ui_field_pick_input', pods_var( 'pick_format_type', $options ), $name, $value, $options, $pod, $id );
+                do_action( 'pods_form_ui_field_pick_input_' . pods_var( 'pick_format_type', $options, 'single' ) . '_' . pods_var( 'pick_format_single', $options, 'dropdown' ), $name, $value, $options, $pod, $id );
+                do_action( 'pods_form_ui_field_pick_input', pods_var( 'pick_format_type', $options, 'single' ), $name, $value, $options, $pod, $id );
                 return;
             }
         }
-        elseif ( 'multi' == pods_var( 'pick_format_type', $options ) ) {
-            if ( 'checkbox' == pods_var( 'pick_format_multi', $options ) )
+        elseif ( 'multi' == pods_var( 'pick_format_type', $options, 'single' ) ) {
+            if ( 'checkbox' == pods_var( 'pick_format_multi', $options, 'checkbox' ) )
                 $field_type = 'checkbox';
-            elseif ( 'multiselect' == pods_var( 'pick_format_multi', $options ) )
+            elseif ( 'multiselect' == pods_var( 'pick_format_multi', $options, 'checkbox' ) )
                 $field_type = 'select';
-            elseif ( 'autocomplete' == pods_var( 'pick_format_multi', $options ) )
+            elseif ( 'autocomplete' == pods_var( 'pick_format_multi', $options, 'checkbox' ) )
                 $field_type = 'select2';
             else {
                 // Support custom integration
-                do_action( 'pods_form_ui_field_pick_input_' . pods_var( 'pick_format_type', $options ) . '_' . pods_var( 'pick_format_multi', $options ), $name, $value, $options, $pod, $id );
-                do_action( 'pods_form_ui_field_pick_input', pods_var( 'pick_format_type', $options ), $name, $value, $options, $pod, $id );
+                do_action( 'pods_form_ui_field_pick_input_' . pods_var( 'pick_format_type', $options, 'single' ) . '_' . pods_var( 'pick_format_multi', $options, 'checkbox' ), $name, $value, $options, $pod, $id );
+                do_action( 'pods_form_ui_field_pick_input', pods_var( 'pick_format_type', $options, 'single' ), $name, $value, $options, $pod, $id );
                 return;
             }
+        }
+        else {
+            // Support custom integration
+            do_action( 'pods_form_ui_field_pick_input', pods_var( 'pick_format_type', $options, 'single' ), $name, $value, $options, $pod, $id );
+            return;
         }
 
         pods_view( PODS_DIR . 'ui/fields/' . $field_type . '.php', compact( array_keys( get_defined_vars() ) ) );
@@ -570,7 +597,7 @@ class PodsField_Pick extends PodsField {
     public function data ( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
         $data = array( '' => pods_var_raw( 'pick_select_text', $options, __( '-- Select One --', 'pods' ), null, true ) );
 
-        if ( 'single' != pods_var( 'pick_format_type', $options ) || 'dropdown' != pods_var( 'pick_format_single', $options ) )
+        if ( 'single' != pods_var( 'pick_format_type', $options, 'single' ) || 'dropdown' != pods_var( 'pick_format_single', $options, 'dropdown' ) )
             $data = array();
 
         if ( isset( $options[ 'data' ] ) && !empty( $options[ 'data' ] ) )
@@ -696,17 +723,7 @@ class PodsField_Pick extends PodsField {
                     $options[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $options ), $pick_val, null, null, $options );
 
                     $search_data = pods_data();
-                    $search_data->table = $options[ 'table_info' ][ 'table' ];
-                    $search_data->join = $options[ 'table_info' ][ 'join' ];
-                    $search_data->field_id = $options[ 'table_info' ][ 'field_id' ];
-                    $search_data->field_index = $options[ 'table_info' ][ 'field_index' ];
-                    $search_data->where = $options[ 'table_info' ][ 'where' ];
-                    $search_data->orderby = $options[ 'table_info' ][ 'orderby' ];
-
-                    if ( isset( $options[ 'table_info' ][ 'pod' ] ) && !empty( $options[ 'table_info' ][ 'pod' ] ) && isset( $options[ 'table_info' ][ 'pod' ][ 'name' ] ) ) {
-                        $search_data->pod = $options[ 'table_info' ][ 'pod' ][ 'name' ];
-                        $search_data->fields = $options[ 'table_info' ][ 'pod' ][ 'fields' ];
-                    }
+                    $search_data->table( $options[ 'table_info' ] );
 
                     $params = array(
                         'select' => "`t`.`{$search_data->field_id}`, `t`.`{$search_data->field_index}`",
@@ -756,17 +773,17 @@ class PodsField_Pick extends PodsField {
 
                     $autocomplete = false;
 
-                    if ( 'single' == pods_var( 'pick_format_type', $options ) && 'autocomplete' == pods_var( 'pick_format_single', $options ) )
+                    if ( 'single' == pods_var( 'pick_format_type', $options, 'single' ) && 'autocomplete' == pods_var( 'pick_format_single', $options, 'dropdown' ) )
                         $autocomplete = true;
-                    elseif ( 'multi' == pods_var( 'pick_format_type', $options ) && 'autocomplete' == pods_var( 'pick_format_multi', $options ) )
+                    elseif ( 'multi' == pods_var( 'pick_format_type', $options, 'single' ) && 'autocomplete' == pods_var( 'pick_format_multi', $options, 'checkbox' ) )
                         $autocomplete = true;
 
                     $hierarchy = false;
 
                     if ( !$autocomplete ) {
-                        if ( 'single' == pods_var( 'pick_format_type', $options ) && in_array( pods_var( 'pick_format_single', $options ), array( 'dropdown', 'radio' ) ) )
+                        if ( 'single' == pods_var( 'pick_format_type', $options, 'single' ) && in_array( pods_var( 'pick_format_single', $options, 'dropdown' ), array( 'dropdown', 'radio' ) ) )
                             $hierarchy = true;
-                        elseif ( 'multi' == pods_var( 'pick_format_type', $options ) && in_array( pods_var( 'pick_format_multi', $options ), array( 'multiselect', 'checkbox' ) ) )
+                        elseif ( 'multi' == pods_var( 'pick_format_type', $options, 'single' ) && in_array( pods_var( 'pick_format_multi', $options, 'checkbox' ), array( 'multiselect', 'checkbox' ) ) )
                             $hierarchy = true;
                     }
 
@@ -775,6 +792,24 @@ class PodsField_Pick extends PodsField {
 
                     if ( $autocomplete )
                         $params[ 'limit' ] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', 30, $name, $value, $options, $pod, $id );
+
+                    if ( 'user' == pods_var( 'pick_object', $options ) ) {
+                        $roles = pods_var( 'pick_user_role', $options );
+
+                        if ( !empty( $roles ) ) {
+                            $where = array();
+
+                            foreach ( (array) $roles as $role ) {
+                                if ( empty( $role ) )
+                                    continue;
+
+                                $where[] = 'wp_' . ( is_multisite() ? get_current_blog_id() . '_' : '' ) . 'capabilities.meta_value LIKE "%\"' . $role . '\"%"';
+                            }
+
+                            if ( !empty( $where ) )
+                                $params[ 'where' ][] = '( ' . implode( ' OR ', $where ) . ' )';
+                        }
+                    }
 
                     $results = $search_data->select( $params );
 
@@ -1175,12 +1210,7 @@ class PodsField_Pick extends PodsField {
                     $options[ 'table_info' ] = pods_api()->get_table_info( pods_var( 'pick_object', $options ), $pick_val, null, null, $options );
 
                     $search_data = pods_data();
-                    $search_data->table = $options[ 'table_info' ][ 'table' ];
-                    $search_data->join = $options[ 'table_info' ][ 'join' ];
-                    $search_data->field_id = $options[ 'table_info' ][ 'field_id' ];
-                    $search_data->field_index = $options[ 'table_info' ][ 'field_index' ];
-                    $search_data->where = $options[ 'table_info' ][ 'where' ];
-                    $search_data->orderby = $options[ 'table_info' ][ 'orderby' ];
+                    $search_data->table( $options[ 'table_info' ] );
 
                     if ( isset( $options[ 'table_info' ][ 'pod' ] ) && !empty( $options[ 'table_info' ][ 'pod' ] ) && isset( $options[ 'table_info' ][ 'pod' ][ 'name' ] ) ) {
                         $search_data->pod = $options[ 'table_info' ][ 'pod' ][ 'name' ];
@@ -1243,13 +1273,31 @@ class PodsField_Pick extends PodsField {
 
                     $autocomplete = false;
 
-                    if ( 'single' == pods_var( 'pick_format_type', $options ) && 'autocomplete' == pods_var( 'pick_format_single', $options ) )
+                    if ( 'single' == pods_var( 'pick_format_type', $options, 'single' ) && 'autocomplete' == pods_var( 'pick_format_single', $options, 'dropdown' ) )
                         $autocomplete = true;
-                    elseif ( 'multi' == pods_var( 'pick_format_type', $options ) && 'autocomplete' == pods_var( 'pick_format_multi', $options ) )
+                    elseif ( 'multi' == pods_var( 'pick_format_type', $options, 'single' ) && 'autocomplete' == pods_var( 'pick_format_multi', $options, 'checkbox' ) )
                         $autocomplete = true;
 
                     if ( $autocomplete )
                         $params[ 'limit' ] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', 30, $field[ 'name' ], $value, $options, $pod, 0 );
+
+                    if ( 'user' == pods_var( 'pick_object', $options ) ) {
+                        $roles = pods_var( 'pick_user_role', $options );
+
+                        if ( !empty( $roles ) ) {
+                            $where = array();
+
+                            foreach ( (array) $roles as $role ) {
+                                if ( empty( $role ) )
+                                    continue;
+
+                                $where[] = 'wp_' . ( is_multisite() ? get_current_blog_id() . '_' : '' ) . 'capabilities.meta_value LIKE "%\"' . $role . '\"%"';
+                            }
+
+                            if ( !empty( $where ) )
+                                $params[ 'where' ][] = '( ' . implode( ' OR ', $where ) . ' )';
+                        }
+                    }
 
                     $results = $search_data->select( $params );
 

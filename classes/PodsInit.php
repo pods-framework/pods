@@ -878,7 +878,8 @@ class PodsInit {
                     if ( version_compare( '2.0.0-a-1', $pods_version, '<=' ) && version_compare( $pods_version, '2.0.0-b-15', '<=' ) )
                         include( PODS_DIR . 'sql/update-2.0-beta.php' );
 
-                    include( PODS_DIR . 'sql/update.php' );
+                    if ( version_compare( $pods_version, PODS_DB_VERSION, '<=' ) )
+                        include( PODS_DIR . 'sql/update.php' );
 
                     do_action( 'pods_update_post', PODS_VERSION, $pods_version, $_blog_id );
                 }

@@ -1901,7 +1901,7 @@ class PodsMeta {
             $meta_type = 'post';
 
         if ( empty( $meta_key ) )
-            return $_null;
+            $single = false;
 
         $object = $this->get_object( $object_type, $object_id );
 
@@ -1922,19 +1922,28 @@ class PodsMeta {
 
         $meta_cache = array();
 
-        if ( !$single && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) )
+        if ( !$single && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) ) {
             $meta_cache = wp_cache_get( $object_id, $meta_type . '_meta' );
+
+            if ( empty( $meta_cache ) ) {
+                $meta_cache = update_meta_cache( $meta_type, array( $object_id ) );
+                $meta_cache = $meta_cache[ $object_id ];
+            }
+        }
 
         if ( !$single || empty( $meta_cache ) || !is_array( $meta_cache ) )
             $meta_cache = array();
 
-        if ( !empty( $meta_cache ) && isset( $meta_cache[ $meta_key ] ) )
-            $value = $meta_cache[ $meta_key ];
-        else {
-            $pod = pods( $object[ 'name' ], $object_id );
+        $pod = pods( $object[ 'name' ], $object_id );
 
+        $meta_keys = array( $meta_key );
+
+        if ( !$single )
+            $meta_keys = array_keys( $meta_cache );
+
+        foreach ( $meta_keys as $meta_k ) {
             if ( !empty( $pod ) )
-                $meta_cache[ $meta_key ] = $value = $pod->field( $meta_key, $single );
+                $meta_cache[ $meta_k ] = $pod->field( $meta_k, $single );
             else {
                 if ( !$no_conflict )
                     pods_no_conflict_off( $meta_type );
@@ -1948,6 +1957,15 @@ class PodsMeta {
 
         if ( !$no_conflict )
             pods_no_conflict_off( $meta_type );
+
+        if ( empty( $meta_key ) )
+            return $meta_cache;
+        elseif ( isset( $meta_cache[ $meta_key ] ) )
+            $value = $meta_cache[ $meta_key ];
+        elseif ( !$single )
+            $value = array();
+        else
+            $value = '';
 
         if ( !is_numeric( $value ) && empty( $value ) ) {
             if ( $single )

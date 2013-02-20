@@ -1359,7 +1359,13 @@ class PodsUI {
             $this->get_row();
 
         $this->do_hook( 'edit', $duplicate );
-        if ( isset( $this->actions_custom[ 'edit' ] ) && is_callable( $this->actions_custom[ 'edit' ] ) )
+
+        if ( $duplicate )
+            $this->do_hook( 'duplicate' );
+
+        if ( $duplicate && isset( $this->actions_custom[ 'duplicate' ] ) && is_callable( $this->actions_custom[ 'duplicate' ] ) )
+            return call_user_func_array( $this->actions_custom[ 'duplicate' ], array( &$this ) );
+        elseif ( isset( $this->actions_custom[ 'edit' ] ) && is_callable( $this->actions_custom[ 'edit' ] ) )
             return call_user_func_array( $this->actions_custom[ 'edit' ], array( $duplicate, &$this ) );
         ?>
     <div class="wrap">

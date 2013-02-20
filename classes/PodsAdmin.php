@@ -799,10 +799,11 @@ class PodsAdmin {
                     'storage' => array( 'label' => __( 'Storage Type', 'pods' ) )
                 )
             ),
-            'actions_disabled' => array( 'duplicate', 'view', 'export' ),
+            'actions_disabled' => array( 'view', 'export' ),
             'actions_custom' => array(
                 'add' => array( $this, 'admin_setup_add' ),
                 'edit' => array( $this, 'admin_setup_edit' ),
+                'duplicate' => array( $this, 'admin_setup_duplicate' ),
                 'reset' => array(
                     'label' => __( 'Delete All Items', 'pods' ),
                     'confirm' => __( 'Are you sure you want to delete all items from this Pod?', 'pods' ),
@@ -853,27 +854,18 @@ class PodsAdmin {
     }
 
     /**
-     * Delete a pod
+     * Duplicate a pod
      *
      * @param $id
      * @param $obj
      *
      * @return mixed
      */
-    public function admin_setup_delete ( $id, &$obj ) {
-        $pod = $this->api->load_pod( array( 'id' => $id ), false );
+    public function admin_setup_duplicate ( &$obj ) {
+        $new_id = $this->api->duplicate_pod( array( 'id' => $obj->id ) );
 
-        if ( empty( $pod ) )
-            return $obj->error( __( 'Pod not found.', 'pods' ) );
-
-        $this->api->delete_pod( array( 'id' => $id ) );
-
-        unset( $obj->data[ $pod[ 'id' ] ] );
-
-        $obj->total = count( $obj->data );
-        $obj->total_found = count( $obj->data );
-
-        $obj->message( __( 'Pod deleted successfully.', 'pods' ) );
+        if ( 0 < $new_id )
+            pods_redirect( pods_var_update( array( 'action' => 'edit', 'id' => $new_id, 'do' => 'duplicate' ) ) );
     }
 
     /**
@@ -895,6 +887,30 @@ class PodsAdmin {
         $obj->message( __( 'Pod reset successfully.', 'pods' ) );
 
         $obj->manage();
+    }
+
+    /**
+     * Delete a pod
+     *
+     * @param $id
+     * @param $obj
+     *
+     * @return mixed
+     */
+    public function admin_setup_delete ( $id, &$obj ) {
+        $pod = $this->api->load_pod( array( 'id' => $id ), false );
+
+        if ( empty( $pod ) )
+            return $obj->error( __( 'Pod not found.', 'pods' ) );
+
+        $this->api->delete_pod( array( 'id' => $id ) );
+
+        unset( $obj->data[ $pod[ 'id' ] ] );
+
+        $obj->total = count( $obj->data );
+        $obj->total_found = count( $obj->data );
+
+        $obj->message( __( 'Pod deleted successfully.', 'pods' ) );
     }
 
     /**

@@ -3306,6 +3306,77 @@ class PodsAPI {
     }
 
     /**
+     * Duplicate a Pod
+     *
+     * $params['id'] int The Pod ID
+     * $params['name'] string The Pod name
+     * $params['new_name'] string The new Pod name
+     *
+     * @param array $params An associative array of parameters
+     * @param bool $strict (optional) Makes sure a pod exists, if it doesn't throws an error
+     *
+     * @return int New Pod ID
+     * @since 2.3.0
+     */
+    public function duplicate_pod ( $params, $strict = false ) {
+        if ( !is_object( $params ) && !is_array( $params ) ) {
+            if ( is_numeric( $params ) )
+                $params = array( 'id' => $params );
+            else
+                $params = array( 'name' => $params );
+
+            $params = (object) pods_sanitize( $params );
+        }
+        else
+            $params = (object) pods_sanitize( $params );
+
+        $params->table_info = false;
+
+        $pod = $this->load_pod( $params, $strict );
+
+        if ( empty( $pod ) ) {
+            if ( false !== $strict )
+                return pods_error( __( 'Pod not found', 'pods' ), $this );
+
+            return false;
+        }
+        elseif ( in_array( $pod[ 'type' ], array( 'media', 'user', 'comment' ) ) ) {
+            if ( false !== $strict )
+                return pods_error( __( 'Pod not allowed to be duplicated', 'pods' ), $this );
+
+            return false;
+        }
+        elseif ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) && 0 < strlen( $pod[ 'object' ] ) ) {
+            if ( false !== $strict )
+                return pods_error( __( 'Pod not allowed to be duplicated', 'pods' ), $this );
+
+            return false;
+        }
+
+        unset( $pod[ 'id' ] );
+
+        if ( isset( $params->new_name ) )
+            $pod[ 'name' ] = $params->new_name;
+
+        $try = 1;
+
+        $check_name = $pod[ 'name' ];
+        $new_label = $pod[ 'label' ];
+
+        while ( $this->load_pod( array( 'name' => $check_name, 'table_info' => false ), false ) ) {
+            $try++;
+
+            $check_name = $pod[ 'name' ] . $try;
+            $new_label = $pod[ 'label' ] . $try;
+        }
+
+        $pod[ 'name' ] = $check_name;
+        $pod[ 'label' ] = $new_label;
+
+        return $this->save_pod( $pod );
+    }
+
+    /**
      * @see PodsAPI::save_pod_item
      *
      * Duplicate a pod item
@@ -4446,14 +4517,14 @@ class PodsAPI {
             $ids = false;
 
         if ( empty( $cache_key ) )
-            $cache_key = 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) . ( ( isset( $params->count ) && $params->count ) ? '_count' : '' );
+            $cache_key = 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) . ( ( isset( $params->count ) && $params->count ) ? '_count' : '' ) . '_get_all';
         else
             $cache_key = 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) . ( ( isset( $params->count ) && $params->count ) ? '_count' : '' ) . '_get' . $cache_key;
 
-        if ( !empty( $cache_key ) && ( 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
+        if ( !empty( $cache_key ) && ( 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) . '_get_all' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
             $the_pods = pods_transient_get( $cache_key );
 
-            if ( !is_array( $the_pods ) && 1 == $the_pods )
+            if ( !is_array( $the_pods ) && 'none' == $the_pods )
                 return array();
             elseif ( false !== $the_pods )
                 return $the_pods;
@@ -4461,7 +4532,7 @@ class PodsAPI {
 
         $the_pods = array();
 
-        $pods = get_posts( array(
+        $_pods = get_posts( array(
             'post_type' => '_pods_pod',
             'nopaging' => true,
             'posts_per_page' => $limit,
@@ -4495,9 +4566,9 @@ class PodsAPI {
         );
 
         if ( isset( $params->count ) && $params->count )
-            $the_pods = count( $pods );
+            $the_pods = count( $_pods );
         else {
-            foreach ( $pods as $pod ) {
+            foreach ( $_pods as $pod ) {
                 $pod = $this->load_pod( $pod );
 
                 // Remove extra data not needed
@@ -4518,8 +4589,8 @@ class PodsAPI {
         }
 
         if ( ( !function_exists( 'pll_current_language' ) || ( isset( $params->refresh ) && $params->refresh ) ) && !empty( $cache_key ) && ( 'pods' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
-            if ( empty( $the_pods ) )
-                pods_transient_set( $cache_key, 1 );
+            if ( empty( $the_pods ) && ( !isset( $params->count ) || !$params->count ) )
+                pods_transient_set( $cache_key, 'none' );
             else
                 pods_transient_set( $cache_key, $the_pods );
         }
@@ -6103,7 +6174,8 @@ class PodsAPI {
      * @param bool $numeric_mode Use IDs instead of the name field when matching
      * @param string $format Format of import data, options are php or csv
      *
-     * @return array
+     * @return array IDs of imported items
+     *
      * @since 1.7.1
      * @todo This needs some love and use of table_info etc for relationships
      */

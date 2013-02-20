@@ -345,6 +345,8 @@ if ( isset( $_GET[ 'do' ] ) ) {
 
     if ( 'create' == pods_var( 'do', 'get', 'save' ) )
         $action = __( 'created', 'pods' );
+    elseif ( 'duplicate' == pods_var( 'do', 'get', 'save' ) )
+        $action = __( 'duplicated', 'pods' );
 
     $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
 

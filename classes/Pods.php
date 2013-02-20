@@ -1630,6 +1630,23 @@ class Pods {
     }
 
     /**
+     * Import data / Save multiple rows of data at once
+     *
+     * @see PodsAPI::import
+     *
+     * @param mixed $import_data PHP associative array or CSV input
+     * @param bool $numeric_mode Use IDs instead of the name field when matching
+     * @param string $format Format of import data, options are php or csv
+     *
+     * @return array IDs of imported items
+     *
+     * @since 2.3.0
+     */
+    public function import ( $import_data, $numeric_mode = false, $format = null ) {
+        return $this->api->import( $import_data, $numeric_mode, $format );
+    }
+
+    /**
      * Export an item's data
      *
      * @see PodsAPI::export_pod_item
@@ -1642,7 +1659,7 @@ class Pods {
      * @since 2.0.0
      * @link http://pods.io/docs/export/
      */
-    public function export ( $fields = null, $id = null ) {
+    public function export ( $fields = null, $id = null, $format = null ) {
         $params = array(
             'pod' => $this->pod,
             'id' => $id,
@@ -1667,7 +1684,14 @@ class Pods {
         if ( empty( $params[ 'id' ] ) )
             return false;
 
-        return $this->api->export_pod_item( $params );
+        $data = $this->api->export_pod_item( $params );
+
+        if ( !empty( $format ) ) {
+            if ( 'json' == $format )
+                $data = json_encode( (array) $data );
+        }
+
+        return $data;
     }
 
     /**

@@ -1942,14 +1942,8 @@ class PodsMeta {
             $meta_keys = array_keys( $meta_cache );
 
         foreach ( $meta_keys as $meta_k ) {
-            if ( !empty( $pod ) )
+            if ( !empty( $pod ) && isset( $pod->fields[ $meta_k ] ) )
                 $meta_cache[ $meta_k ] = $pod->field( $meta_k, $single );
-            else {
-                if ( !$no_conflict )
-                    pods_no_conflict_off( $meta_type );
-
-                return null;
-            }
         }
 
         if ( !$single && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) )

@@ -4453,7 +4453,9 @@ class PodsAPI {
         if ( !empty( $cache_key ) && ( 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
             $the_pods = pods_transient_get( $cache_key );
 
-            if ( false !== $the_pods )
+            if ( 1 !== $the_pods )
+                return array();
+            elseif ( false !== $the_pods )
                 return $the_pods;
         }
 
@@ -4515,8 +4517,12 @@ class PodsAPI {
             }
         }
 
-        if ( did_action( 'init' ) && !empty( $cache_key ) && ( 'pods' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) )
-            pods_transient_set( $cache_key, $the_pods );
+        if ( ( !function_exists( 'pll_current_language' ) || ( isset( $params->refresh ) && $params->refresh ) ) && !empty( $cache_key ) && ( 'pods' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
+            if ( empty( $the_pods ) )
+                pods_transient_set( $cache_key, 1 );
+            else
+                pods_transient_set( $cache_key, $the_pods );
+        }
 
         return $the_pods;
     }

@@ -12,7 +12,7 @@ if ( version_compare( $pods_version, '2.0.3', '<' ) ) {
 }
 
 // Update to 2.3
-if ( version_compare( $pods_version, '2.3-a-12', '<' ) ) {
+if ( version_compare( $pods_version, '2.3-a-13', '<' ) ) {
     // Auto activate Advanced Content Types component
     $oldget = $_GET;
 
@@ -27,7 +27,7 @@ if ( version_compare( $pods_version, '2.3-a-12', '<' ) ) {
         'pods_framework_version' => '',
         'pods_framework_version_last' => '',
         'pods_framework_db_version' => '',
-        'pods_framework_upgraded_1_x' => '',
+        'pods_framework_upgraded_1_x' => 0,
         'pods_version' => '',
 
         'pods_component_settings' => '',
@@ -44,8 +44,6 @@ if ( version_compare( $pods_version, '2.3-a-12', '<' ) ) {
         $option_value = get_option( $option_name, $default );
 
         delete_option( $option_name );
-
-        if ( !in_array( $option_name, array( 'pods_version', 'pods_framework_upgraded_1_x' ) ) || 0 < strlen( $option_value ) )
-            add_option( $option_name, $option_value, '', 'yes' );
+        add_option( $option_name, $option_value, '', 'yes' );
     }
 }

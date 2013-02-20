@@ -197,6 +197,9 @@ class PodsMeta {
 
         add_action( 'init', array( $this, 'enqueue' ), 9 );
 
+        if ( function_exists( 'pll_current_language' ) )
+            add_action( 'init', array( $this, 'cache_pods' ), 101 );
+
         do_action( 'pods_meta_init' );
 
         return $this;
@@ -210,6 +213,19 @@ class PodsMeta {
 
             self::$$type = array_merge( self::$$type, $objects );
         }
+    }
+
+    /**
+     * Go back through and cache the Pods now that Polylang has loaded
+     */
+    public function cache_pods () {
+        self::$advanced_content_types = $this->api->load_pods( array( 'type' => 'pod', 'refresh' => true ) );
+        self::$post_types = $this->api->load_pods( array( 'type' => 'post_type', 'refresh' => true ) );
+        self::$taxonomies = $this->api->load_pods( array( 'type' => 'taxonomy', 'refresh' => true ) );
+        self::$media = $this->api->load_pods( array( 'type' => 'media', 'refresh' => true ) );
+        self::$user = $this->api->load_pods( array( 'type' => 'user', 'refresh' => true ) );
+        self::$comment = $this->api->load_pods( array( 'type' => 'comment', 'refresh' => true ) );
+        self::$settings = $this->api->load_pods( array( 'type' => 'settings', 'refresh' => true ) );
     }
 
     public function register ( $type, $pod ) {

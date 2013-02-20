@@ -4453,7 +4453,7 @@ class PodsAPI {
         if ( !empty( $cache_key ) && ( 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
             $the_pods = pods_transient_get( $cache_key );
 
-            if ( 1 === $the_pods )
+            if ( !is_array( $the_pods ) && 1 == $the_pods )
                 return array();
             elseif ( false !== $the_pods )
                 return $the_pods;

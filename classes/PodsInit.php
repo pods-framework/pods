@@ -884,7 +884,8 @@ class PodsInit {
                     do_action( 'pods_update_post', PODS_VERSION, $pods_version, $_blog_id );
                 }
 
-                update_option( 'pods_framework_version_last', $pods_version );
+                delete_option( 'pods_framework_version_last' );
+                add_option( 'pods_framework_version_last', $pods_version, '', 'yes' );
 
                 self::$version_last = $pods_version;
             }
@@ -899,14 +900,18 @@ class PodsInit {
                 if ( false === strpos( $old_version, '.' ) )
                     $old_version = pods_version_to_point( $old_version );
 
-                update_option( 'pods_framework_version_last', $old_version );
+                delete_option( 'pods_framework_version_last' );
+                add_option( 'pods_framework_version_last', $pods_version, '', 'yes' );
 
                 self::$version_last = $old_version;
             }
         }
 
-        update_option( 'pods_framework_version', PODS_VERSION );
-        update_option( 'pods_framework_db_version', PODS_DB_VERSION );
+        delete_option( 'pods_framework_version' );
+        add_option( 'pods_framework_version', PODS_VERSION, '', 'yes' );
+
+        delete_option( 'pods_framework_db_version' );
+        add_option( 'pods_framework_db_version', PODS_DB_VERSION, '', 'yes' );
 
         pods_api()->cache_flush_pods();
 

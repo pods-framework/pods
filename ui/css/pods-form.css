@@ -154,15 +154,26 @@ input.pods-form-ui-field-type-color {
 .pods-form-ui-field-type-select2 {
     min-width: 20%;
     width: auto;
+    height: 28px;
 }
 
 .pods-select2 .select2-container-multi .select2-choices .select2-search-field input {
     height: auto;
 }
 
-.form-table .pods-field td {
+.form-table tr.pods-field > td {
     line-height: inherit;
+    padding: 10px 0;
+}
+
+.form-table tr.pods-field.pods-form-ui-row-type-avatar > td,
+.form-table tr.pods-field.pods-form-ui-row-type-file > td {
     padding: 0;
+}
+
+.form-table.pods-form-ui-table-type-avatar tr.form-field > td,
+.form-table.pods-form-ui-table-type-file tr.form-field > td {
+    padding: 0 10px;
 }
 
 .pods-field .wp-editor-container {

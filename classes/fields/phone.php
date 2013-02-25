@@ -54,6 +54,14 @@ class PodsField_Phone extends PodsField {
      */
     public function options () {
         $options = array(
+            'phone_repeatable' => array(
+                'label' => __( 'Make Field Repeatable', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'help' => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
+                'dependency' => true,
+                'developer_mode' => true
+            ),
             'phone_format' => array(
                 'label' => __( 'Format', 'pods' ),
                 'default' => '999-999-9999 x999',

@@ -53,6 +53,14 @@ class PodsField_Time extends PodsField {
      */
     public function options () {
         $options = array(
+            'time_repeatable' => array(
+                'label' => __( 'Make Field Repeatable', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'help' => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
+                'dependency' => true,
+                'developer_mode' => true
+            ),
             'time_type' => array(
                 'label' => __( 'Time Format Type', 'pods' ),
                 'default' => '12',

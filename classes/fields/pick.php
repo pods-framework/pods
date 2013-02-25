@@ -85,7 +85,7 @@ class PodsField_Pick extends PodsField {
                         'dropdown' => __( 'Drop Down', 'pods' ),
                         'radio' => __( 'Radio Buttons', 'pods' ),
                         'autocomplete' => __( 'Autocomplete', 'pods' )
-                    ) + ( ( pods_developer() ) ? array( 'flexible' => __( 'Flexible', 'pods' ) ) : array() )
+                    ) + ( ( pods_developer() && 1 == 0 ) ? array( 'flexible' => __( 'Flexible', 'pods' ) ) : array() ) // Disable for now
                 ),
                 'dependency' => true
             ),

@@ -928,7 +928,7 @@ class PodsForm {
             'slug'
         );
 
-        if ( pods_developer() )
+        if ( pods_developer() && 1 == 0 ) // Disable for now
             $field_types[] = 'loop';
 
         $field_types = array_merge( $field_types, array_keys( self::$field_types ) );
@@ -979,5 +979,11 @@ class PodsForm {
         $file_field_types = array( 'file', 'avatar' );
 
         return apply_filters( 'pods_file_field_types', $file_field_types );
+    }
+
+    public static function repeatable_field_types () {
+        $repeatable_field_types = array( 'code', 'color', 'currency', 'date', 'datetime', 'email', 'number', 'paragraph', 'phone', 'text', 'time', 'website', 'wysiwyg' );
+
+        return apply_filters( 'pods_repeatable_field_types', $repeatable_field_types );
     }
 }

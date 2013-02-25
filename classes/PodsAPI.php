@@ -2413,6 +2413,7 @@ class PodsAPI {
         $params = (object) pods_str_replace( '@wp_', '{prefix}', $params );
 
         $tableless_field_types = PodsForm::tableless_field_types();
+        $repeatable_field_types = PodsForm::repeatable_field_types();
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
         // @deprecated 2.0.0
@@ -2785,6 +2786,20 @@ class PodsAPI {
 
                 // Prepare all table (non-relational) data
                 if ( !in_array( $type, $tableless_field_types ) || $simple ) {
+                    if ( in_array( $type, $repeatable_field_types ) && 1 == pods_var( $type . '_repeatable', $field_data ) ) {
+                        // Don't save an empty array, just make it an empty string
+                        if ( empty( $value ) )
+                            $value = '';
+                        elseif ( is_array( $value ) ) {
+                            // If there's just one item, don't save as an array, save the string
+                            if ( 1 == count( $value ) )
+                                $value = implode( '', $value );
+                            // If storage is set to table, json encode, otherwise WP will serialize automatically
+                            elseif ( 'table' == pods_var( 'storage', $pod ) )
+                                $value = version_compare( PHP_VERSION, '5.4.0', '>=' ) ? json_encode( $value, JSON_UNESCAPED_UNICODE ) : json_encode( $value );
+                        }
+                    }
+
                     $table_data[ $field ] = str_replace( array( '{prefix}', '@wp_' ), array( '{/prefix/}', '{prefix}' ), $value ); // Fix for pods_query
                     $table_formats[] = PodsForm::prepare( $type, $options );
 
@@ -5506,8 +5521,8 @@ class PodsAPI {
             return false;
 
         if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
-            foreach ( $ids as &$id ) {
-                $id = (int) $id;
+            foreach ( $ids as $k => $id ) {
+                $ids[ $k ] = (int) $id;
             }
 
             $ids = implode( ', ', $ids );

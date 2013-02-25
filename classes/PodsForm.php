@@ -600,13 +600,17 @@ class PodsForm {
         $tableless_field_types = self::tableless_field_types();
         $repeatable_field_types = self::repeatable_field_types();
 
-        if ( in_array( $type, $repeatable_field_types ) && 1 == pods_var( $type . '_repeatable', $options, 0 ) ) {
-            if ( !is_array( $value ) && !empty( $value ) ) {
+        if ( in_array( $type, $repeatable_field_types ) && 1 == pods_var( $type . '_repeatable', $options, 0 ) && !is_array( $value ) ) {
+            if ( 0 < strlen( $value ) ) {
                 $simple = @json_decode( $value, true );
 
                 if ( is_array( $simple ) )
                     $value = $simple;
+                else
+                    $value = (array) $value;
             }
+            else
+                $value = array();
         }
 
         if ( method_exists( self::$loaded[ $type ], 'value' ) ) {

@@ -692,7 +692,7 @@ class PodsField_Pick extends PodsField {
                 $db = true;
 
                 if ( isset( self::$related_objects[ $options[ 'pick_object' ] ] ) ) {
-                    if ( !empty( self::$related_objects[ $options[ 'pick_object' ][ 'data' ] ] ) ) {
+                    if ( isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) && !empty( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) ) {
                         $data = self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ];
                         $db = false;
                     }
@@ -993,7 +993,7 @@ class PodsField_Pick extends PodsField {
                 }
             }
             elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ] ) ) {
-                if ( !empty( self::$related_objects[ $options[ 'pick_object' ][ 'data' ] ] ) )
+                if ( isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) && !empty( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) )
                     $data = self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ];
                 elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'simple_value_callback' ] ) && is_callable( self::$related_objects[ $options[ 'pick_object' ] ][ 'simple_value_callback' ] ) ) {
                     $data = call_user_func_array(
@@ -1185,7 +1185,7 @@ class PodsField_Pick extends PodsField {
                 $db = true;
 
                 if ( isset( self::$related_objects[ $options[ 'pick_object' ] ] ) ) {
-                    if ( !empty( self::$related_objects[ $options[ 'pick_object' ][ 'data' ] ] ) ) {
+                    if ( isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) && !empty( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) ) {
                         $data = self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ];
                         $db = false;
                     }

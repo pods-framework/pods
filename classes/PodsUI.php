@@ -905,23 +905,23 @@ class PodsUI {
         ), 'array_merge' );
 
         $options->validate( 'header', array(
-            'manage' => $options->items,
-            'add' => $options->heading[ 'add' ] . " {$options->item}",
-            'edit' => $options->heading[ 'edit' ] . " {$options->item}",
-            'duplicate' => $options->heading[ 'duplicate' ] . " {$options->item}",
-            'view' => $options->heading[ 'view' ] . " {$options->item}",
-            'reorder' => $options->heading[ 'reorder' ] . " {$options->items}",
-            'search' => $options->heading[ 'search' ] . " {$options->items}"
+            'manage' => sprintf( __( 'Manage %s', 'pods' ), $options->items ),
+            'add' => sprintf( __( 'Add New %s', 'pods' ), $options->item ),
+            'edit' => sprintf( __( 'Edit %s', 'pods' ), $options->item ),
+            'duplicate' => sprintf( __( 'Duplicate %s', 'pods' ), $options->item ),
+            'view' => sprintf( __( 'View %s', 'pods' ), $options->item ),
+            'reorder' => sprintf( __( 'Reorder %s', 'pods' ), $options->items ),
+            'search' => sprintf( __( 'Search %s', 'pods' ), $options->items )
         ), 'array_merge' );
 
         $options->validate( 'label', array(
-            'add' => __( 'Save New', 'pods' ) . " {$options->item}",
+            'add' => sprintf( __( 'Save New %s', 'pods' ), $options->item ),
             'add_new' => __( 'Add New', 'pods' ),
-            'edit' => __( 'Save', 'pods' ) . " {$options->item}",
-            'duplicate' => __( 'Save New', 'pods' ) . " {$options->item}",
-            'delete' => __( 'Delete this', 'pods' ) . " {$options->item}",
-            'view' => __( 'View', 'pods' ) . " {$options->item}",
-            'reorder' => __( 'Reorder', 'pods' ) . " {$options->items}"
+            'edit' => sprintf( __( 'Save %s', 'pods' ), $options->item ),
+            'duplicate' => sprintf( __( 'Save New %s', 'pods' ), $options->item ),
+            'delete' => sprintf( __( 'Delete this %s', 'pods' ), $options->item ),
+            'view' => sprintf( __( 'View %s', 'pods' ), $options->item ),
+            'reorder' => sprintf( __( 'Reorder %s', 'pods' ), $options->items )
         ), 'array_merge' );
 
         $options->validate( 'fields', array(
@@ -1386,7 +1386,7 @@ class PodsUI {
             elseif ( !in_array( 'manage', $this->actions_disabled ) && !in_array( 'manage', $this->actions_hidden ) ) {
                 $link = pods_var_update( array( 'action' . $this->num => 'manage', 'id' . $this->num => '' ), self::$allowed, $this->exclusion() );
                 ?>
-                <a href="<?php echo $link; ?>" class="add-new-h2">&laquo; <?php _e( 'Back to', 'pods' ); ?> <?php echo $this->heading[ 'manage' ]; ?></a>
+                <a href="<?php echo $link; ?>" class="add-new-h2">&laquo; <?php echo sprintf( __( 'Back to %s', 'pods' ), $this->heading[ 'manage' ] ); ?></a>
                 <?php
             }
             ?>
@@ -3104,7 +3104,7 @@ class PodsUI {
                                 }
                                 $this->do_hook( 'screen_meta_screen_submit' );
                                 ?>
-                                <input type="submit" name="screen-options-apply" id="screen-options-apply" class="button" value="Apply">
+                                <input type="submit" name="screen-options-apply" id="screen-options-apply" class="button" value="<?php _e( 'Apply', 'pods' ); ?>">
                                 <input type="hidden" name="wp_screen_options[option]" value="<?php echo $this->unique_identifier; ?>_per_page">
                                 <?php wp_nonce_field( 'screen-options-nonce', 'screenoptionnonce', false ); ?>
                             </div>

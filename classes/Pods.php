@@ -316,6 +316,7 @@ class Pods {
      */
     public function display ( $name, $single = null ) {
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
+        $repeatable_field_types = PodsForm::repeatable_field_types();
 
         $defaults = array(
             'name' => $name,
@@ -340,6 +341,8 @@ class Pods {
         if ( false === $params->in_form && isset( $this->fields[ $params->name ] ) ) {
             if ( 'pick' == $this->fields[ $params->name ][ 'type' ] && in_array( $this->fields[ $params->name ][ 'pick_object' ], $simple_tableless_objects ) )
                 $value = PodsForm::field_method( 'pick', 'simple_value', $value, $this->fields[ $params->name ] );
+            elseif ( in_array( $this->fields[ $params->name ][ 'type' ], $repeatable_field_types ) && 1 == pods_var( $this->fields[ $params->name ][ 'type' ] . '_repeatable', $this->fields[ $params->name ][ 'options' ] ) )
+                $value = PodsForm::field_method( $this->fields[ $params->name ][ 'type' ], 'value', $value, $this->fields[ $params->name ] );
 
             if ( 0 < strlen( pods_var( 'display_filter', $this->fields[ $params->name ] ) ) )
                 $value = apply_filters( pods_var( 'display_filter', $this->fields[ $params->name ] ), $value );
@@ -950,6 +953,16 @@ class Pods {
                     $this->id()
                 );
             }
+        }
+        else {
+            $value = PodsForm::value(
+                $this->fields[ $params->name ][ 'type' ],
+                $value,
+                $params->name,
+                array_merge( $this->fields[ $params->name ][ 'options' ], $this->fields[ $params->name ] ),
+                $this->pod_data,
+                $this->id()
+            );
         }
 
         $value = $this->do_hook( 'field', $value, $this->row, $params );

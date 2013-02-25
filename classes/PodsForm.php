@@ -582,6 +582,47 @@ class PodsForm {
     }
 
     /**
+     * Change the value of the field
+     *
+     * @param mixed $value
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param int $id
+     * @param array $traverse
+     *
+     * @since 2.3.0
+     */
+    public static function value ( $type, $value = null, $name = null, $options = null, $pod = null, $id = null, $traverse = null ) {
+        self::field_loader( $type );
+
+        $tableless_field_types = self::tableless_field_types();
+        $repeatable_field_types = self::repeatable_field_types();
+
+        if ( in_array( $type, $repeatable_field_types ) && 1 == pods_var( $type . '_repeatable', $options, 0 ) ) {
+            if ( !is_array( $value ) && !empty( $value ) ) {
+                $simple = @json_decode( $value, true );
+
+                if ( is_array( $simple ) )
+                    $value = $simple;
+            }
+        }
+
+        if ( method_exists( self::$loaded[ $type ], 'value' ) ) {
+            if ( is_array( $value ) && in_array( $type, $tableless_field_types ) ) {
+                foreach ( $value as &$display_value ) {
+                    $display_value = call_user_func_array( array( self::$loaded[ $type ], 'value' ), array( $display_value, $name, $options, $pod, $id, $traverse ) );
+                }
+            }
+            else
+                $value = call_user_func_array( array( self::$loaded[ $type ], 'value' ), array( $value, $name, $options, $pod, $id, $traverse ) );
+        }
+
+        return $value;
+    }
+
+    /**
      * Change the way the value of the field is displayed with Pods::get
      *
      * @param mixed $value
@@ -597,7 +638,7 @@ class PodsForm {
     public static function display ( $type, $value = null, $name = null, $options = null, $pod = null, $id = null, $traverse = null ) {
         self::field_loader( $type );
 
-        $tableless_field_types = PodsForm::tableless_field_types();
+        $tableless_field_types = self::tableless_field_types();
 
         if ( method_exists( self::$loaded[ $type ], 'display' ) ) {
             if ( is_array( $value ) && in_array( $type, $tableless_field_types ) ) {

@@ -2786,7 +2786,7 @@ class PodsAPI {
 
                 // Prepare all table (non-relational) data
                 if ( !in_array( $type, $tableless_field_types ) || $simple ) {
-                    if ( in_array( $type, $repeatable_field_types ) && 1 == pods_var( $type . '_repeatable', $field_data ) ) {
+                    if ( in_array( $type, $repeatable_field_types ) && 1 == pods_var( $type . '_repeatable', $field_data, 0 ) ) {
                         // Don't save an empty array, just make it an empty string
                         if ( empty( $value ) )
                             $value = '';

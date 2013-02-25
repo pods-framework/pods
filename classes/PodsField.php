@@ -131,6 +131,22 @@ class PodsField {
     }
 
     /**
+     * Change the value of the field
+     *
+     * @param mixed $value
+     * @param string $name
+     * @param array $options
+     * @param array $pod
+     * @param int $id
+     *
+     * @return mixed|null|string
+     * @since 2.3.0
+     */
+    public function value ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
+        return $value;
+    }
+
+    /**
      * Change the way the value of the field is displayed with Pods::get
      *
      * @param mixed $value
@@ -139,7 +155,7 @@ class PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @return mixed|null
+     * @return mixed|null|string
      * @since 2.0.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {

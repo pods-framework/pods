@@ -1161,7 +1161,7 @@ elseif ( 'pod' == pods_var( 'type', $pod ) ) {
         $hierarchical_fields = array();
 
         foreach ( $pod[ 'fields' ] as $field ) {
-            if ( 'pick' == $field[ 'type' ] && 'pod' == pods_var( 'pick_object', $field ) && $pod[ 'name' ] == pods_var( 'pick_val', $field ) && 1 == pods_var( 'pick_format_type', $field[ 'options' ] ) )
+            if ( 'pick' == $field[ 'type' ] && 'pod' == pods_var( 'pick_object', $field ) && $pod[ 'name' ] == pods_var( 'pick_val', $field ) && 'single' == pods_var( 'pick_format_type', $field[ 'options' ] ) )
                 $hierarchical_fields[ $field[ 'name' ] ] = $field[ 'label' ];
         }
 

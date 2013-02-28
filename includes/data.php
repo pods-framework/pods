@@ -1074,7 +1074,9 @@ function pods_hierarchical_list_recurse ( $parent, $list, $args = array() ) {
     }
 
     foreach ( $list as $k => $list_item ) {
-        if ( is_object( $list_item ) && isset( $list_item->{$args[ 'id' ]} ) && isset( $list_item->{$args[ 'parent' ]} ) ) {
+        if ( is_object( $list_item ) && isset( $list_item->{$args[ 'id' ]} ) ) {
+            $list_item->{$args[ 'parent' ]} = (int) pods_var_raw( $args[ 'parent' ], $list_item );
+
             if ( is_array( $list_item->{$args[ 'parent' ]} ) && isset( $list_item->{$args[ 'parent' ]}[ $args[ 'id' ] ] ) && $parent == $list_item->{$args[ 'parent' ]}[ $args[ 'id' ] ] )
                 $list_item->{$args[ 'children' ]} = pods_hierarchical_list_recurse( $list_item->{$args[ 'id' ]}, $list, $args );
             elseif ( $parent == $list_item->{$args[ 'parent' ]} )
@@ -1082,7 +1084,9 @@ function pods_hierarchical_list_recurse ( $parent, $list, $args = array() ) {
             else
                 continue;
         }
-        elseif ( is_array( $list_item ) && isset( $list_item[ $args[ 'id' ] ] ) && isset( $list_item[ $args[ 'parent' ] ] ) && $parent == $list_item[ $args[ 'parent' ] ] ) {
+        elseif ( is_array( $list_item ) && isset( $list_item[ $args[ 'id' ] ] ) ) {
+            $list_item[ $args[ 'parent' ] ] = (int) pods_var_raw( $args[ 'parent' ], $list_item );
+
             if ( is_array( $list_item[ $args[ 'parent' ] ] ) && isset( $list_item[ $args[ 'parent' ] ][ $args[ 'id' ] ] ) && $parent == $list_item[ $args[ 'parent' ] ][ $args[ 'id' ] ] )
                 $list_item[ $args[ 'children' ] ] = pods_hierarchical_list_recurse( $list_item[ $args[ 'id' ] ], $list, $args );
             elseif ( $parent == $list_item[ $args[ 'parent' ] ] )

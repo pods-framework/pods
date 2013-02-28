@@ -4,7 +4,7 @@
  *
  * Description: Integration with Gravity Forms (http://www.gravityforms.com/); Provides a UI for mapping a Form's submissions into a Pod
  *
- * Version: 1.0
+ * Version: 1.0 Alpha
  *
  * Category: Integration
  *
@@ -525,93 +525,6 @@ class Pods_GravityForms extends PodsComponent {
         //Delete from lead
         $sql = $wpdb->prepare( "DELETE FROM $lead_table WHERE id=%d", $lead_id );
         $wpdb->query( $sql );
-    }
-
-    /**
-     * Switch the length or type out for another value during processing before user is sent to PayPal
-     *
-     * @static
-     *
-     * @param $form_id Form ID to switch out on
-     * @param int $length Length of recurring subscription
-     * @param string $type Type of recurring subscription
-     */
-    public static function paypal_switch_sub ( $form_id = null, $length = null, $type = null ) {
-        if ( empty( $form_id ) && is_array( self::$validation ) )
-            $form_id = self::$validation[ 'form_id' ];
-
-        if ( null !== $length ) {
-            self::$paypal_switch_length = max( 1, (int) $length );
-            add_filter( 'gform_paypal_query_' . $form_id, array( get_class(), 'paypal_switch_length' ), 10, 1 );
-        }
-
-        if ( null !== $type ) {
-            self::$paypal_switch_type = strtoupper( (string) $type );
-            if ( !in_array( self::$paypal_switch_type, array( 'D', 'W', 'M', 'Y' ) ) ) {
-                self::$paypal_switch_type = 'M';
-            }
-            add_filter( 'gform_paypal_query_' . $form_id, array( get_class(), 'paypal_switch_type' ), 10, 1 );
-        }
-    }
-
-    /**
-     * Switch the length out for another value during processing before user is sent to PayPal
-     *
-     * @static
-     *
-     * @param string $query PayPal Query from Gravity Forms
-     *
-     * @return string
-     */
-    public static function paypal_switch_length ( $query ) {
-        self::$paypal_switch_length = max( 1, (int) self::$paypal_switch_length );
-        return preg_replace( '/\&p3\=(\d*)\&/i', '&p3=' . self::$paypal_switch_length . '&', $query );
-    }
-
-    /**
-     * Switch the type out for another value during processing before user is sent to PayPal
-     *
-     * @static
-     *
-     * @param string $query PayPal Query from Gravity Forms
-     *
-     * @return string
-     */
-    public static function paypal_switch_type ( $query ) {
-        self::$paypal_switch_type = strtoupper( (string) self::$paypal_switch_type );
-        if ( !in_array( self::$paypal_switch_type, array( 'D', 'W', 'M', 'Y' ) ) )
-            self::$paypal_switch_type = 'M';
-        return preg_replace( '/\&t3\=(\w*)\&/i', '&t3=' . self::$paypal_switch_type . '&', $query );
-    }
-
-    /**
-     * Auto-login a user upon registration (using GF User Registration add-on)
-     *
-     * @static
-     */
-    public static function auto_login () {
-        add_action( 'gform_user_registered', array( get_class(), 'user_auto_login' ), 10, 4 );
-    }
-
-    /**
-     * Auto-login a user upon registration (using GF User Registration add-on)
-     *
-     * @static
-     *
-     * @param int $user_id User ID
-     * @param string $user_config
-     * @param array $entry
-     * @param string $password User password
-     *
-     * @return object
-     */
-    public static function user_auto_login ( $user_id, $user_config, $entry, $password ) {
-        $user = get_userdata( $user_id );
-        return wp_signon( array(
-            'user_login' => $user->user_login,
-            'user_password' => $password,
-            'remember' => false
-        ) );
     }
 
     /**

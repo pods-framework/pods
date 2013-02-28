@@ -107,7 +107,6 @@ class PodsField_File extends PodsField {
             ),
             'file_type' => array(
                 'label' => __( 'Restrict File Types', 'pods' ),
-                'excludes-on' => array( 'file_uploader' => 'attachment' ),
                 'default' => 'images',
                 'type' => 'pick',
                 'data' => apply_filters(
@@ -127,7 +126,6 @@ class PodsField_File extends PodsField {
                 'label' => __( 'Allowed File Extensions', 'pods' ),
                 'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov)', 'pods' ),
                 'depends-on' => array( 'file_type' => 'other' ),
-                'excludes-on' => array( 'file_uploader' => 'attachment' ),
                 'default' => '',
                 'type' => 'text'
             ),/*

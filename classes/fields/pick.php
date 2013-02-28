@@ -824,10 +824,15 @@ class PodsField_Pick extends PodsField {
                     }
 
                     if ( !empty( $results ) && ( !$autocomplete || $search_data->total_found() <= $params[ 'limit' ] ) ) {
+                        $display_filter = pods_var( 'display_filter', pods_var_raw( 'options', pods_var_raw( $search_data->field_index, $search_data->pod_data[ 'object_fields' ] ) ) );
+
                         foreach ( $results as $result ) {
                             $result = get_object_vars( $result );
 
                             $result[ $search_data->field_index ] = trim( $result[ $search_data->field_index ] );
+
+                            if ( 0 < strlen( $display_filter ) )
+                                $value = apply_filters( $display_filter, $value );
 
                             if ( in_array( $options[ 'pick_object' ], array( 'site', 'network' ) ) )
                                 $result[ $search_data->field_index ] = $result[ $search_data->field_index ] . $result[ 'path' ];
@@ -1302,10 +1307,15 @@ class PodsField_Pick extends PodsField {
                     $results = $search_data->select( $params );
 
                     if ( !empty( $results ) && ( !$autocomplete || $search_data->total_found() <= $params[ 'limit' ] ) ) {
+                        $display_filter = pods_var( 'display_filter', pods_var_raw( 'options', pods_var_raw( $search_data->field_index, $search_data->pod_data[ 'object_fields' ] ) ) );
+
                         foreach ( $results as $result ) {
                             $result = get_object_vars( $result );
 
                             $result[ $search_data->field_index ] = trim( $result[ $search_data->field_index ] );
+
+                            if ( 0 < strlen( $display_filter ) )
+                                $value = apply_filters( $display_filter, $value );
 
                             if ( in_array( $options[ 'pick_object' ], array( 'site', 'network' ) ) )
                                 $result[ $search_data->field_index ] = $result[ $search_data->field_index ] . $result[ 'path' ];

@@ -574,7 +574,10 @@ class PodsAPI {
                     'name' => 'post_title',
                     'label' => 'Title',
                     'type' => 'text',
-                    'alias' => array( 'title', 'name' )
+                    'alias' => array( 'title', 'name' ),
+                    'options' => array(
+                        'display_filter' => 'the_title'
+                    )
                 ),
                 'post_content' => array(
                     'name' => 'post_content',

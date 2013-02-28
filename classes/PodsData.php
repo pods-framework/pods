@@ -330,6 +330,7 @@ class PodsData {
             $table[ 'type' ] = pods_var_raw( 'type', $table[ 'pod' ], $table[ 'object_type' ] );
             $table[ 'storage' ] = pods_var_raw( 'storage', $table[ 'pod' ], ( 'taxonomy' == $table[ 'object_type' ] ? 'none' : 'meta' ) );
             $table[ 'fields' ] = pods_var_raw( 'fields', $table[ 'pod' ], array() );
+            $table[ 'object_fields' ] = pods_var_raw( 'fields', $table[ 'pod' ], $this->api->get_wp_object_fields( $table[ 'object_type' ] ) );
 
             $this->pod_data = $table;
             $this->pod_id = $this->pod_data[ 'id' ];

@@ -2422,7 +2422,7 @@ class PodsData {
 
         $rel_alias = 'rel_' . $field_joined;
 
-        /*if ( !empty( $this->search ) && 1 == 0 ) {
+        if ( pods_var( 'search', $traverse_recurse[ 'params' ], false ) && empty( $traverse_recurse[ 'params' ]->filters ) ) {
             if ( 0 < strlen( pods_var( 'filter_' . $field_joined, 'get' ) ) ) {
                 $val = absint( pods_var( 'filter_' . $field_joined, 'get' ) );
 
@@ -2441,7 +2441,7 @@ class PodsData {
 
                 $this->search_where[] = " {$search} ";
             }
-        }*/
+        }
 
         $the_join = null;
 

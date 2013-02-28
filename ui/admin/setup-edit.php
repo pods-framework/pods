@@ -709,7 +709,7 @@ $advanced_options = array(
         ),
         'rewrite_with_front' => array(
             'label' => __( 'Rewrite with Front', 'pods' ),
-            'help' => __( 'Allows permalinks to be prepended with front base (example: if your permalink structure is /blog/, then your links will be: Checked->/news/, Unchecked->/blog/news/)', 'pods' ),
+            'help' => __( 'Allows permalinks to be prepended with your front base (example: if your permalink structure is /blog/, then your links will be: Unchecked->/news/, Checked->/blog/news/)', 'pods' ),
             'type' => 'boolean',
             'default' => true,
             'depends-on' => array( 'rewrite' => true ),

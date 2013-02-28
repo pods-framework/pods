@@ -101,7 +101,7 @@ class PodsField_Pick extends PodsField {
                         'checkbox' => __( 'Checkboxes', 'pods' ),
                         'multiselect' => __( 'Multi Select', 'pods' ),
                         'autocomplete' => __( 'Autocomplete', 'pods' )
-                    ) + ( ( pods_developer() ) ? array( 'flexible' => __( 'Flexible', 'pods' ) ) : array() )
+                    ) + ( ( pods_developer() && 1 == 0 ) ? array( 'flexible' => __( 'Flexible', 'pods' ) ) : array() )
                 ),
                 'dependency' => true
             ),

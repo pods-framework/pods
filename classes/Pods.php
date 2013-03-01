@@ -707,6 +707,7 @@ class Pods {
                     }
 
                     $last_type = $last_object = $last_pick_val = '';
+                    $last_options = array();
 
                     $single_multi = pods_var( $this->fields[ $params->name ][ 'type' ] . '_format_type', $this->fields[ $params->name ][ 'options' ], 'single' );
 
@@ -739,6 +740,9 @@ class Pods {
                             $type = $all_fields[ $pod ][ $field ][ 'type' ];
                             $pick_object = $all_fields[ $pod ][ $field ][ 'pick_object' ];
                             $pick_val = $all_fields[ $pod ][ $field ][ 'pick_val' ];
+
+                            if ( 'table' == $pick_object )
+                                $pick_val = pods_var( 'pick_table', $all_fields[ $pod ][ $field ][ 'options' ], $pick_val, null, true );
 
                             if ( '__current__' == $pick_val )
                                 $pick_val = $pod;
@@ -805,7 +809,7 @@ class Pods {
 
                             $data = array();
 
-                            $table = $this->api->get_table_info( $object_type, $object );
+                            $table = $this->api->get_table_info( $object_type, $object, null, null, $last_options );
 
                             $join = $where = array();
 

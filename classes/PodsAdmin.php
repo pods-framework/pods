@@ -18,7 +18,7 @@ class PodsAdmin {
      * Setup and Handle Admin functionality
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
         $this->api = pods_api();
@@ -57,7 +57,7 @@ class PodsAdmin {
     /**
      * Init the admin area
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin_init () {
         // Fix for plugins that *don't do it right* so we don't cause issues for users
@@ -76,7 +76,7 @@ class PodsAdmin {
     /**
      * Attach requirements to admin header
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin_head () {
         wp_register_style( 'pods-admin', PODS_URL . 'ui/css/pods-admin.css', array(), PODS_VERSION );
@@ -148,7 +148,7 @@ class PodsAdmin {
     /**
      * Buld the admin menus
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin_menu () {
         $advanced_content_types = PodsMeta::$advanced_content_types;

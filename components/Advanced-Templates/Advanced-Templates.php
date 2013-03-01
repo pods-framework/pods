@@ -560,7 +560,7 @@ class Pods_Advanced_Templates extends PodsComponent {
     /**
      * Enqueue styles
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin_assets() {
 
@@ -693,7 +693,7 @@ class Pods_Advanced_Templates extends PodsComponent {
     /**
      * Clear cache on delete
      *Clean up used shortcode list
-     * @since 2.0.0
+     * @since 2.0
      */
     public function clear_cache($data, $pod = null, $id = null, $groups = null, $post = null) {
 
@@ -730,7 +730,7 @@ class Pods_Advanced_Templates extends PodsComponent {
      *
      * @param $options
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin($options, $component) {
 

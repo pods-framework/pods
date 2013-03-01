@@ -22,7 +22,7 @@ class Pods_Templates extends PodsComponent {
      *
      * @var object
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     static $obj = null;
 
@@ -31,7 +31,7 @@ class Pods_Templates extends PodsComponent {
      *
      * @var bool
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     static $deprecated = false;
 
@@ -40,14 +40,14 @@ class Pods_Templates extends PodsComponent {
      *
      * @var string
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     private $object_type = '_pods_template';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
         $args = array(
@@ -154,7 +154,7 @@ class Pods_Templates extends PodsComponent {
     /**
      * Enqueue styles
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin_assets () {
         wp_enqueue_style( 'pods-admin' );
@@ -208,7 +208,7 @@ class Pods_Templates extends PodsComponent {
     /**
      * Clear cache on save
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function clear_cache ( $data, $pod = null, $id = null, $groups = null, $post = null ) {
         if ( !is_array( $data ) && 0 < $data ) {
@@ -232,7 +232,7 @@ class Pods_Templates extends PodsComponent {
     /**
      * Change post title placeholder text
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function set_title_text ( $text, $post ) {
         return __( 'Enter template name here', 'pods' );
@@ -241,7 +241,7 @@ class Pods_Templates extends PodsComponent {
     /**
      * Edit page form
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function edit_page_form () {
         global $post_type;
@@ -255,7 +255,7 @@ class Pods_Templates extends PodsComponent {
     /**
      * Add meta boxes to the page
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function add_meta_boxes () {
         $pod = array(
@@ -376,7 +376,7 @@ class Pods_Templates extends PodsComponent {
      * @param bool $deprecated Whether to use deprecated functionality based on old function usage
      *
      * @return mixed|string|void
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function template ( $template, $code = null, $obj = null, $deprecated = false ) {
         if ( !empty( $obj ) )

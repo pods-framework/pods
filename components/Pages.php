@@ -22,7 +22,7 @@ class Pods_Pages extends PodsComponent {
      *
      * @var array
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     static $exists = null;
 
@@ -31,7 +31,7 @@ class Pods_Pages extends PodsComponent {
      *
      * @var string
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     private $object_type = '_pods_page';
 
@@ -40,14 +40,23 @@ class Pods_Pages extends PodsComponent {
      *
      * @var bool
      *
-     * @since 2.1.0
+     * @since 2.1
      */
     static $checked = false;
 
     /**
+     * Keep track of if pods_content has been called yet
+     *
+     * @var bool
+     *
+     * @since 2.3
+     */
+    static $content_called = false;
+
+    /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
         $args = array(
@@ -156,7 +165,7 @@ class Pods_Pages extends PodsComponent {
     /**
      * Enqueue styles
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin_assets () {
         wp_enqueue_style( 'pods-admin' );
@@ -210,7 +219,7 @@ class Pods_Pages extends PodsComponent {
     /**
      * Clear cache on save
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function clear_cache ( $data, $pod = null, $id = null, $groups = null, $post = null ) {
         if ( !is_array( $data ) && 0 < $data ) {
@@ -235,7 +244,7 @@ class Pods_Pages extends PodsComponent {
     /**
      * Change post title placeholder text
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function set_title_text ( $text, $post ) {
         return __( 'Enter URL here', 'pods' );
@@ -244,7 +253,7 @@ class Pods_Pages extends PodsComponent {
     /**
      * Edit page form
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function edit_page_form () {
         global $post_type;
@@ -258,7 +267,7 @@ class Pods_Pages extends PodsComponent {
     /**
      * Add meta boxes to the page
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function add_meta_boxes () {
         $pod = array(
@@ -583,6 +592,9 @@ class Pods_Pages extends PodsComponent {
                     add_filter( 'status_header', array( $this, 'status_header' ) );
                     add_action( 'after_setup_theme', array( $this, 'precode' ) );
                     add_action( 'wp', array( $this, 'silence_404' ) );
+
+                    // Genesis theme integration
+                    add_action( 'genesis_loop', 'pods_content', 11 );
                 }
             }
 
@@ -598,17 +610,20 @@ class Pods_Pages extends PodsComponent {
      * @return string
      */
     public static function content ( $return = false ) {
-        global $pods;
-
-        // Fix any global confusion wherever this runs
-        if ( isset( $pods ) && !isset( $GLOBALS[ 'pods' ] ) )
-            $GLOBALS[ 'pods' ] =& $pods;
-        elseif ( !isset( $pods ) && isset( $GLOBALS[ 'pods' ] ) )
-            $pods =& $GLOBALS[ 'pods' ];
-
         $content = false;
 
+        if ( self::$content_called )
+            return $content;
+
         if ( false !== self::$exists ) {
+            global $pods;
+
+            // Fix any global confusion wherever this runs
+            if ( isset( $pods ) && !isset( $GLOBALS[ 'pods' ] ) )
+                $GLOBALS[ 'pods' ] =& $pods;
+            elseif ( !isset( $pods ) && isset( $GLOBALS[ 'pods' ] ) )
+                $pods =& $GLOBALS[ 'pods' ];
+
             if ( 0 < strlen( trim( self::$exists[ 'code' ] ) ) )
                 $content = self::$exists[ 'code' ];
 
@@ -618,7 +633,7 @@ class Pods_Pages extends PodsComponent {
 
             if ( false !== $content ) {
                 if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) {
-                    pods_deprecated( 'Use WP Page Templates or hook into the pods_content filter instead of using Pod Page PHP code', '2.1.0' );
+                    pods_deprecated( 'Use WP Page Templates or hook into the pods_content filter instead of using Pod Page PHP code', '2.1' );
 
                     eval( "?>$content" );
                 }
@@ -629,6 +644,8 @@ class Pods_Pages extends PodsComponent {
             do_action( 'pods_content_post', self::$exists, $content );
 
             $content = ob_get_clean();
+
+            self::$content_called = true;
         }
 
         $content = apply_filters( 'pods_content', $content, self::$exists );
@@ -666,7 +683,7 @@ class Pods_Pages extends PodsComponent {
                     $content = self::$exists[ 'precode' ];
 
                 if ( false !== $content && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) ) {
-                    pods_deprecated( 'Use WP Page Templates or hook into the pods_page_precode action instead of using Pod Page Precode', '2.1.0' );
+                    pods_deprecated( 'Use WP Page Templates or hook into the pods_page_precode action instead of using Pod Page Precode', '2.1' );
 
                     eval( "?>$content" );
                 }

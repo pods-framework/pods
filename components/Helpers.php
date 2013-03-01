@@ -22,7 +22,7 @@ class Pods_Helpers extends PodsComponent {
      *
      * @var object
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     static $obj = null;
 
@@ -31,14 +31,14 @@ class Pods_Helpers extends PodsComponent {
      *
      * @var string
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     private $object_type = '_pods_helper';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
         $args = array(
@@ -145,7 +145,7 @@ class Pods_Helpers extends PodsComponent {
     /**
      * Enqueue styles
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin_assets () {
         wp_enqueue_style( 'pods-admin' );
@@ -199,7 +199,7 @@ class Pods_Helpers extends PodsComponent {
     /**
      * Clear cache on save
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function clear_cache ( $data, $pod = null, $id = null, $groups = null, $post = null ) {
         if ( !is_array( $data ) && 0 < $data ) {
@@ -223,7 +223,7 @@ class Pods_Helpers extends PodsComponent {
     /**
      * Change post title placeholder text
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function set_title_text ( $text, $post ) {
         return __( 'Enter helper name here', 'pods' );
@@ -232,7 +232,7 @@ class Pods_Helpers extends PodsComponent {
     /**
      * Edit page form
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function edit_page_form () {
         global $post_type;
@@ -246,7 +246,7 @@ class Pods_Helpers extends PodsComponent {
     /**
      * Add meta boxes to the page
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function add_meta_boxes () {
         $pod = array(
@@ -358,7 +358,7 @@ class Pods_Helpers extends PodsComponent {
      * @param null $obj
      *
      * @return mixed Anything returned by the helper
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function helper ( $params, $obj = null ) {
         /**

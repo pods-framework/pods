@@ -413,7 +413,7 @@ class PodsUI {
      * @param bool $deprecated Set to true to support old options array from Pods UI plugin
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct ( $options, $deprecated = false ) {
         $object = null;

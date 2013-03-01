@@ -371,7 +371,7 @@ class PodsMeta {
      * @param string $context (optional) The part of the page where the edit screen section should be shown ('normal', 'advanced', or 'side').
      * @param string $priority (optional) The priority within the context where the boxes should show ('high', 'core', 'default' or 'low').
      *
-     * @since 2.0.0
+     * @since 2.0
      *
      * @return mixed|void
      */

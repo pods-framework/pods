@@ -19,7 +19,7 @@ class Pods_Roles extends PodsComponent {
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
         add_filter( 'pods_roles_get_capabilities', array( $this, 'remove_deprecated_capabilities' ) );
@@ -28,7 +28,7 @@ class Pods_Roles extends PodsComponent {
     /**
      * Enqueue styles
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin_assets () {
         wp_enqueue_style( 'pods-wizard' );
@@ -41,7 +41,7 @@ class Pods_Roles extends PodsComponent {
      * @param $component
      *
      * @return void
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin ( $options, $component ) {
         global $wp_roles;

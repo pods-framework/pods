@@ -8,7 +8,7 @@ class PodsField {
      * Whether this field is running under 1.x deprecated forms
      *
      * @var bool
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $deprecated = false;
 
@@ -16,7 +16,7 @@ class PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'text';
 
@@ -24,7 +24,7 @@ class PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'Unknown';
 
@@ -32,7 +32,7 @@ class PodsField {
      * Field Type Preparation
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $prepare = '%s';
 
@@ -47,7 +47,7 @@ class PodsField {
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -58,7 +58,7 @@ class PodsField {
      *
      * @return array $options
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function options () {
         $options = array( /*
@@ -108,7 +108,7 @@ class PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function schema ( $options = null ) {
         $schema = 'VARCHAR(255)';
@@ -122,7 +122,7 @@ class PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function prepare ( $options = null ) {
         $format = self::$prepare;
@@ -156,7 +156,7 @@ class PodsField {
      * @param int $id
      *
      * @return mixed|null|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         return $value;
@@ -171,7 +171,7 @@ class PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
@@ -190,7 +190,7 @@ class PodsField {
      *
      * @return array Array of possible field data
      *
-     * @since 2.0.0
+     * @since 2.0
      */
 
     public function data ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
@@ -207,7 +207,7 @@ class PodsField {
      * @param int $id
      *
      * @return bool
-     * @since 2.0.0
+     * @since 2.0
      */
     public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         return false;
@@ -224,7 +224,7 @@ class PodsField {
      * @param int $id
      *
      * @return bool
-     * @since 2.0.0
+     * @since 2.0
      */
     public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null ) {
         return true;
@@ -242,7 +242,7 @@ class PodsField {
      * @param object $params
      *
      * @return mixed
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         return $value;
@@ -259,7 +259,7 @@ class PodsField {
      * @param array $pod
      * @param object $params
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function post_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
@@ -273,7 +273,7 @@ class PodsField {
      * @param null $options
      * @param string $pod
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_delete ( $id = null, $name = null, $options = null, $pod = null ) {
 
@@ -287,7 +287,7 @@ class PodsField {
      * @param array $options
      * @param array $pod
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function post_delete ( $id = null, $name = null, $options = null, $pod = null ) {
 
@@ -303,7 +303,7 @@ class PodsField {
      * @param array $fields
      * @param array $pod
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         return $value;

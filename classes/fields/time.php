@@ -8,7 +8,7 @@ class PodsField_Time extends PodsField {
      * Field Type Group
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $group = 'Date / Time';
 
@@ -16,7 +16,7 @@ class PodsField_Time extends PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'time';
 
@@ -24,7 +24,7 @@ class PodsField_Time extends PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'Time';
 
@@ -32,14 +32,14 @@ class PodsField_Time extends PodsField {
      * Field Type Preparation
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $prepare = '%s';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -49,7 +49,7 @@ class PodsField_Time extends PodsField {
      * Add options and set defaults to
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function options () {
         $options = array(
@@ -121,7 +121,7 @@ class PodsField_Time extends PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function schema ( $options = null ) {
         $schema = 'TIME NOT NULL default "00:00:00"';
@@ -139,7 +139,7 @@ class PodsField_Time extends PodsField {
      * @param int $id
      *
      * @return mixed|null|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $format = $this->format( $options );
@@ -172,7 +172,7 @@ class PodsField_Time extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
@@ -199,7 +199,7 @@ class PodsField_Time extends PodsField {
      * @param object $params
      *
      * @return mixed|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $format = $this->format( $options );
@@ -224,7 +224,7 @@ class PodsField_Time extends PodsField {
      * @param array $fields
      * @param array $pod
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->display( $value, $name, $options, $pod, $id );
@@ -241,7 +241,7 @@ class PodsField_Time extends PodsField {
      * @param $options
      *
      * @return string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function format ( $options ) {
         $time_format = array(

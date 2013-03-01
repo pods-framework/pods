@@ -8,7 +8,7 @@ class PodsField_Pick extends PodsField {
      * Field Type Group
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $group = 'Relationships / Media';
 
@@ -16,7 +16,7 @@ class PodsField_Pick extends PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'pick';
 
@@ -24,7 +24,7 @@ class PodsField_Pick extends PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'Relationship';
 
@@ -47,7 +47,7 @@ class PodsField_Pick extends PodsField {
     /**
      * Setup related objects list
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -58,7 +58,7 @@ class PodsField_Pick extends PodsField {
      *
      * @return array
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function options () {
         $options = array(
@@ -467,7 +467,7 @@ class PodsField_Pick extends PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function schema ( $options = null ) {
         $schema = false;
@@ -488,7 +488,7 @@ class PodsField_Pick extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $fields = null;
@@ -510,7 +510,7 @@ class PodsField_Pick extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         global $wpdb;
@@ -592,7 +592,7 @@ class PodsField_Pick extends PodsField {
      *
      * @return array Array of possible field data
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function data ( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
         $data = array( '' => pods_var_raw( 'pick_select_text', $options, __( '-- Select One --', 'pods' ), null, true ) );
@@ -889,7 +889,7 @@ class PodsField_Pick extends PodsField {
      * @param array $fields
      * @param array $pod
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->simple_value( $value, $options );

@@ -8,7 +8,7 @@ class PodsField_Currency extends PodsField {
      * Field Type Group
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $group = 'Number';
 
@@ -16,7 +16,7 @@ class PodsField_Currency extends PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'currency';
 
@@ -24,7 +24,7 @@ class PodsField_Currency extends PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'Currency';
 
@@ -32,7 +32,7 @@ class PodsField_Currency extends PodsField {
      * Field Type Preparation
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $prepare = '%d';
 
@@ -40,7 +40,7 @@ class PodsField_Currency extends PodsField {
      * Currency Formats
      *
      * @var array
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $currencies = array(
         'usd' => '$',
@@ -51,7 +51,7 @@ class PodsField_Currency extends PodsField {
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
         self::$currencies = apply_filters( 'pods_form_ui_field_currency_currencies', self::$currencies );
@@ -61,7 +61,7 @@ class PodsField_Currency extends PodsField {
      * Add options and set defaults to
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function options () {
         $options = array(
@@ -167,7 +167,7 @@ class PodsField_Currency extends PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function schema ( $options = null ) {
         $length = (int) pods_var( 'currency_max_length', $options, 12, null, true );
@@ -191,7 +191,7 @@ class PodsField_Currency extends PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function prepare ( $options = null ) {
         $format = self::$prepare;
@@ -212,7 +212,7 @@ class PodsField_Currency extends PodsField {
      * @param int $id
      *
      * @return mixed|null|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $value = $this->format( $value, $name, $options, $pod, $id );
@@ -245,7 +245,7 @@ class PodsField_Currency extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
@@ -274,7 +274,7 @@ class PodsField_Currency extends PodsField {
      * @param int $id
      *
      * @return bool|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $thousands = ',';
@@ -306,7 +306,7 @@ class PodsField_Currency extends PodsField {
      * @param null $params
      *
      * @return bool|mixed|void
-     * @since 2.0.0
+     * @since 2.0
      */
     public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         $label = pods_var( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
@@ -345,7 +345,7 @@ class PodsField_Currency extends PodsField {
      * @param object $params
      *
      * @return mixed|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $thousands = ',';
@@ -382,7 +382,7 @@ class PodsField_Currency extends PodsField {
      * @param array $pod
      *
      * @return mixed|null|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         return $this->display( $value, $name, $options, $pod, $id );
@@ -398,7 +398,7 @@ class PodsField_Currency extends PodsField {
      * @param int $id
      *
      * @return string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function format ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $thousands = ',';

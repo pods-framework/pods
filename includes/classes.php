@@ -9,7 +9,7 @@
  *
  * @return PodsInit
  *
- * @since 2.0.0
+ * @since 2.0
  */
 function pods_init () {
     require_once( PODS_DIR . 'classes/PodsInit.php' );
@@ -24,7 +24,7 @@ function pods_init () {
  *
  * @return PodsComponents
  *
- * @since 2.0.0
+ * @since 2.0
  */
 function pods_components () {
     require_once( PODS_DIR . 'classes/PodsComponents.php' );
@@ -42,7 +42,7 @@ function pods_components () {
  * @param bool $strict (optional) If set to true, return false instead of an object if the Pod doesn't exist
  *
  * @return bool|\Pods
- * @since 2.0.0
+ * @since 2.0
  * @link http://pods.io/docs/pods/
  */
 function pods ( $type = null, $id = null, $strict = false ) {
@@ -67,7 +67,7 @@ function pods ( $type = null, $id = null, $strict = false ) {
  *
  * @return PodsUI
  *
- * @since 2.0.0
+ * @since 2.0
  * @link http://pods.io/docs/pods-ui/
  */
 function pods_ui ( $obj, $deprecated = false ) {
@@ -86,7 +86,7 @@ function pods_ui ( $obj, $deprecated = false ) {
  *
  * @return PodsAPI
  *
- * @since 2.0.0
+ * @since 2.0
  * @link http://pods.io/docs/pods-api/
  */
 function pods_api ( $pod = null, $format = null ) {
@@ -106,7 +106,7 @@ function pods_api ( $pod = null, $format = null ) {
  *
  * @return PodsData
  *
- * @since 2.0.0
+ * @since 2.0
  */
 function pods_data ( $pod = null, $id = null, $strict = true ) {
     require_once( PODS_DIR . 'classes/PodsData.php' );
@@ -121,7 +121,7 @@ function pods_data ( $pod = null, $id = null, $strict = true ) {
  *
  * @return PodsForm
  *
- * @since 2.0.0
+ * @since 2.0
  */
 function pods_form () {
     require_once( PODS_DIR . 'classes/PodsForm.php' );
@@ -136,7 +136,7 @@ function pods_form () {
  *
  * @return PodsMeta
  *
- * @since 2.0.0
+ * @since 2.0
  */
 function pods_meta () {
     require_once( PODS_DIR . 'classes/PodsMeta.php' );
@@ -151,7 +151,7 @@ function pods_meta () {
  *
  * @return PodsAdmin
  *
- * @since 2.0.0
+ * @since 2.0
  */
 function pods_admin () {
     require_once( PODS_DIR . 'classes/PodsAdmin.php' );
@@ -187,7 +187,7 @@ function pods_migrate ( $type = null, $delimiter = null, $data = null ) {
  *
  * @return PodsUpgrade
  *
- * @since 2.1.0
+ * @since 2.1
  */
 function pods_upgrade ( $version = '' ) {
 		include_once PODS_DIR . 'sql/upgrade/PodsUpgrade.php';
@@ -221,7 +221,7 @@ function pods_upgrade ( $version = '' ) {
  *
  * @return PodsArray
  *
- * @since 2.0.0
+ * @since 2.0
  */
 function pods_array ( $container ) {
     require_once( PODS_DIR . 'classes/PodsArray.php' );
@@ -242,7 +242,7 @@ function pods_array ( $container ) {
  *
  * @return string|bool The view output
  *
- * @since 2.0.0
+ * @since 2.0
  * @link http://pods.io/docs/pods-view/
  */
 function pods_view ( $view, $data = null, $expires = false, $cache_mode = 'cache', $return = false ) {

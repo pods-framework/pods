@@ -8,7 +8,7 @@ class PodsField_Password extends PodsField {
      * Field Type Group
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $group = 'Text';
 
@@ -16,7 +16,7 @@ class PodsField_Password extends PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'password';
 
@@ -24,7 +24,7 @@ class PodsField_Password extends PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'Password';
 
@@ -32,14 +32,14 @@ class PodsField_Password extends PodsField {
      * Field Type Preparation
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $prepare = '%s';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -50,7 +50,7 @@ class PodsField_Password extends PodsField {
      *
      * @return array
      *
-     * @since 2.0.0
+     * @since 2.0
      * @return array
      */
     public function options () {
@@ -81,7 +81,7 @@ class PodsField_Password extends PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function schema ( $options = null ) {
         $length = (int) pods_var( 'password_max_length', $options, 255, null, true );
@@ -103,7 +103,7 @@ class PodsField_Password extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
@@ -127,7 +127,7 @@ class PodsField_Password extends PodsField {
      * @param null $params
      *
      * @return array|bool
-     * @since 2.0.0
+     * @since 2.0
      */
     public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         $errors = array();

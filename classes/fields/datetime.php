@@ -8,7 +8,7 @@ class PodsField_DateTime extends PodsField {
      * Field Type Group
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $group = 'Date / Time';
 
@@ -16,7 +16,7 @@ class PodsField_DateTime extends PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'datetime';
 
@@ -24,7 +24,7 @@ class PodsField_DateTime extends PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'Date / Time';
 
@@ -32,14 +32,14 @@ class PodsField_DateTime extends PodsField {
      * Field Type Preparation
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $prepare = '%s';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -50,7 +50,7 @@ class PodsField_DateTime extends PodsField {
      *
      * @return array
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function options () {
         $options = array(
@@ -141,7 +141,7 @@ class PodsField_DateTime extends PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function schema ( $options = null ) {
         $schema = 'DATETIME NOT NULL default "0000-00-00 00:00:00"';
@@ -159,7 +159,7 @@ class PodsField_DateTime extends PodsField {
      * @param int $id
      *
      * @return mixed|null|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $format = $this->format( $options );
@@ -192,7 +192,7 @@ class PodsField_DateTime extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
@@ -219,7 +219,7 @@ class PodsField_DateTime extends PodsField {
      * @param object $params
      *
      * @return mixed|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $format = $this->format( $options );
@@ -245,7 +245,7 @@ class PodsField_DateTime extends PodsField {
      * @param array $pod
      *
      * @return mixed|null|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->display( $value, $name, $options, $pod, $id );
@@ -262,7 +262,7 @@ class PodsField_DateTime extends PodsField {
      * @param $options
      *
      * @return string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function format ( $options ) {
         $date_format = array(

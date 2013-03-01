@@ -8,7 +8,7 @@ class PodsField_Avatar extends PodsField {
      * Field Type Group
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $group = 'Relationships / Media';
 
@@ -16,7 +16,7 @@ class PodsField_Avatar extends PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'avatar';
 
@@ -24,7 +24,7 @@ class PodsField_Avatar extends PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'Avatar';
 
@@ -39,7 +39,7 @@ class PodsField_Avatar extends PodsField {
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -50,7 +50,7 @@ class PodsField_Avatar extends PodsField {
      *
      * @param array $options
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function options () {
         $sizes = get_intermediate_image_sizes();
@@ -131,7 +131,7 @@ class PodsField_Avatar extends PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function schema ( $options = null ) {
         $schema = false;
@@ -149,7 +149,7 @@ class PodsField_Avatar extends PodsField {
      * @param int $id
      *
      * @return mixed|null
-     * @since 2.0.0
+     * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         return $value;
@@ -164,7 +164,7 @@ class PodsField_Avatar extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
@@ -218,7 +218,7 @@ class PodsField_Avatar extends PodsField {
      * @param int $id
      *
      * @return bool
-     * @since 2.0.0
+     * @since 2.0
      */
     public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         return false;
@@ -236,7 +236,7 @@ class PodsField_Avatar extends PodsField {
      * @param null $params
      *
      * @return bool
-     * @since 2.0.0
+     * @since 2.0
      */
     public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         // check file size
@@ -256,7 +256,7 @@ class PodsField_Avatar extends PodsField {
      * @param object $params
      *
      * @return mixed
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         return $value;
@@ -273,7 +273,7 @@ class PodsField_Avatar extends PodsField {
      * @param array $pod
      * @param object $params
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function post_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
@@ -288,7 +288,7 @@ class PodsField_Avatar extends PodsField {
      * @param string $pod
      * @return void
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_delete ( $id = null, $name = null, $options = null, $pod = null ) {
 
@@ -302,7 +302,7 @@ class PodsField_Avatar extends PodsField {
      * @param array $options
      * @param array $pod
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function post_delete ( $id = null, $name = null, $options = null, $pod = null ) {
 
@@ -319,7 +319,7 @@ class PodsField_Avatar extends PodsField {
      * @param array $pod
      *
      * @return mixed|void
-     * @since 2.0.0
+     * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         if ( empty( $value ) )

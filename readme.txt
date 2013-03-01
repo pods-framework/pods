@@ -191,7 +191,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Improved backwards compatibility
 * Fixed Pods UI reordering saving bug
 
-= 2.0.0 - September 21st, 2012 =
+= 2.0 - September 21st, 2012 =
 * An all new, fully revamped Pods has arrived! Check our plugin page for all the details
 * Please backup your site database before upgrading, even though we've tested migration it's never a bad idea to be safe
 * Create and extend WP objects like Post Types, Taxonomies, Media, Users, and Comments, plus everything you love about Pods from before

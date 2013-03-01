@@ -415,7 +415,7 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
  * @param bool $casting (optional) Whether to cast the value returned like provided in $default
  *
  * @return mixed The variable (if exists), or default value
- * @since 2.0.0
+ * @since 2.0
  */
 function pods_var_raw ( $var = 'last', $type = 'get', $default = null, $allowed = null, $strict = false, $casting = false ) {
     return pods_var( $var, $type, $default, $allowed, $strict, $casting, 'raw' );
@@ -522,7 +522,7 @@ function pods_var_set ( $value, $key = 'last', $type = 'url' ) {
  *
  * @return mixed
  *
- * @since 2.0.0
+ * @since 2.0
  */
 function pods_var_update ( $array = null, $allowed = null, $excluded = null, $url = null ) {
     $array = (array) $array;
@@ -720,7 +720,7 @@ function pods_clean_name ( $orig, $lower = true, $trim_underscores = true ) {
  * @param bool $allow_negative (optional)
  *
  * @return integer
- * @since 2.0.0
+ * @since 2.0
  */
 function pods_absint ( $maybeint, $strict = true, $allow_negative = false ) {
     if ( true === $strict && !is_numeric( trim( $maybeint ) ) )
@@ -741,7 +741,7 @@ function pods_absint ( $maybeint, $strict = true, $allow_negative = false ) {
  * @param int $occurrences (optional)
  *
  * @return mixed
- * @version 2.0.0
+ * @version 2.0
  */
 function pods_str_replace ( $find, $replace, $string, $occurrences = -1 ) {
     if ( is_array( $string ) ) {
@@ -779,7 +779,7 @@ function pods_str_replace ( $find, $replace, $string, $occurrences = -1 ) {
  * @param bool $sanitize Whether to sanitize tags
  *
  * @return string
- * @version 2.1.0
+ * @version 2.1
  */
 function pods_evaluate_tags ( $tags, $sanitize = false ) {
     if ( is_array( $tags ) ) {
@@ -802,7 +802,7 @@ function pods_evaluate_tags ( $tags, $sanitize = false ) {
  * @param string|array $tag
  *
  * @return string
- * @version 2.1.0
+ * @version 2.1
  * @see pods_evaluate_tag
  */
 function pods_evaluate_tag_sanitized ( $tag ) {
@@ -816,7 +816,7 @@ function pods_evaluate_tag_sanitized ( $tag ) {
  * @param bool $sanitize Whether to sanitize tags
  *
  * @return string
- * @version 2.1.0
+ * @version 2.1
  */
 function pods_evaluate_tag ( $tag, $sanitize = false ) {
     // Handle pods_evaluate_tags

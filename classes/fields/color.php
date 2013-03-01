@@ -8,7 +8,7 @@ class PodsField_Color extends PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'color';
 
@@ -16,7 +16,7 @@ class PodsField_Color extends PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'Color Picker';
 
@@ -24,14 +24,14 @@ class PodsField_Color extends PodsField {
      * Field Type Preparation
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $prepare = '%s';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -41,7 +41,7 @@ class PodsField_Color extends PodsField {
      * Add options and set defaults to
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function options () {
         $options = array(
@@ -65,7 +65,7 @@ class PodsField_Color extends PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function schema ( $options = null ) {
         $schema = 'VARCHAR(7)';
@@ -83,7 +83,7 @@ class PodsField_Color extends PodsField {
      * @param int $id
      *
      * @return mixed|null
-     * @since 2.0.0
+     * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         return $value;
@@ -98,7 +98,7 @@ class PodsField_Color extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
@@ -127,7 +127,7 @@ class PodsField_Color extends PodsField {
      * @param array $params
      *
      * @return array|bool
-     * @since 2.0.0
+     * @since 2.0
      */
     public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         $errors = array();
@@ -169,7 +169,7 @@ class PodsField_Color extends PodsField {
      * @param object $params
      *
      * @return mixed|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $options = (array) $options;
@@ -193,7 +193,7 @@ class PodsField_Color extends PodsField {
      * @param array $pod
      *
      * @return mixed|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         if ( !empty( $value ) )

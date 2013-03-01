@@ -38,10 +38,10 @@ if ( !function_exists( 'wp_send_json' ) ) {
  * Mapping function to new function name (following normalization of function names from pod_ to pods_)
  *
  * @since 1.x
- * @deprecated deprecated since version 2.0.0
+ * @deprecated deprecated since version 2.0
  */
 function pod_query ($sql, $error = 'SQL failed', $results_error = null, $no_results_error = null) {
-    pods_deprecated('pod_query', '2.0.0', 'pods_query');
+    pods_deprecated('pod_query', '2.0', 'pods_query');
     global $wpdb;
 
     $sql = trim($sql);
@@ -92,7 +92,7 @@ function pod_query ($sql, $error = 'SQL failed', $results_error = null, $no_resu
  * Include and Init the Pods class
  *
  * @since 1.x
- * @deprecated deprecated since version 2.0.0
+ * @deprecated deprecated since version 2.0
  * @package Pods\Deprecated
  */
 class Pod
@@ -110,7 +110,7 @@ class Pod
     public $meta_extra = '';
 
     function __construct ($type = null, $id = null) {
-        pods_deprecated('Pod (class)', '2.0.0', 'pods (function)');
+        pods_deprecated('Pod (class)', '2.0', 'pods (function)');
 
         $this->new = pods( $type, $id );
     }
@@ -118,30 +118,30 @@ class Pod
     /**
      * Handle variables that have been deprecated
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __get ( $name ) {
         $name = (string) $name;
 
         if ( 'data' == $name ) {
-            pods_deprecated( "Pods->{$name}", '2.0.0', "Pods->row()" );
+            pods_deprecated( "Pods->{$name}", '2.0', "Pods->row()" );
 
             $var = $this->new->row();
         }
         elseif ( '_data' == $name )
             $var = $this->new->data;
         elseif ( 'total' == $name ) {
-            pods_deprecated( "Pods->{$name}", '2.0.0', "Pods->total()" );
+            pods_deprecated( "Pods->{$name}", '2.0', "Pods->total()" );
 
             $var = $this->new->total();
         }
         elseif ( 'total_rows' == $name ) {
-            pods_deprecated( "Pods->{$name}", '2.0.0', "Pods->total_found()" );
+            pods_deprecated( "Pods->{$name}", '2.0', "Pods->total_found()" );
 
             $var = $this->new->total_found();
         }
         elseif ( 'zebra' == $name ) {
-            pods_deprecated( "Pods->{$name}", '2.0.0', "Pods->zebra()" );
+            pods_deprecated( "Pods->{$name}", '2.0', "Pods->zebra()" );
 
             $var = $this->new->zebra();
         }
@@ -154,7 +154,7 @@ class Pod
     /**
      * Handle variables that have been deprecated
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __set ( $name, $value ) {
         $name = (string) $name;
@@ -167,7 +167,7 @@ class Pod
     /**
      * Handle methods that have been deprecated
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __call ( $name, $args ) {
         $name = (string) $name;
@@ -178,7 +178,7 @@ class Pod
     /**
      * Handle variables that have been deprecated
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __isset ( $name ) {
         $name = (string) $name;
@@ -196,7 +196,7 @@ class Pod
  * Include and Init the PodsAPI class
  *
  * @since 1.x
- * @deprecated deprecated since version 2.0.0
+ * @deprecated deprecated since version 2.0
  * @package Pods\Deprecated
  */
 class PodAPI
@@ -204,7 +204,7 @@ class PodAPI
     private $new;
 
     function __construct ( $type = null, $format = null ) {
-        pods_deprecated( 'PodAPI (class)', '2.0.0', 'pods_api (function)' );
+        pods_deprecated( 'PodAPI (class)', '2.0', 'pods_api (function)' );
 
         $this->new = pods_api( $type, $format );
     }
@@ -212,7 +212,7 @@ class PodAPI
     /**
      * Handle variables that have been deprecated
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __get ( $name ) {
         $name = (string) $name;
@@ -225,7 +225,7 @@ class PodAPI
     /**
      * Handle methods that have been deprecated
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __call ( $name, $args ) {
         $name = (string) $name;
@@ -237,11 +237,11 @@ class PodAPI
 /**
  * Include and Init the PodsUI class
  *
- * @since 2.0.0
- * @deprecated deprecated since version 2.0.0
+ * @since 2.0
+ * @deprecated deprecated since version 2.0
  */
 function pods_ui_manage ($obj) {
-    pods_deprecated('pods_ui_manage', '2.0.0', 'pods_ui');
+    pods_deprecated('pods_ui_manage', '2.0', 'pods_ui');
 
     return pods_ui($obj, true);
 }
@@ -251,10 +251,10 @@ function pods_ui_manage ($obj) {
  * Limit Access based on Field Value
  *
  * @since 1.x
- * @deprecated deprecated since version 2.0.0
+ * @deprecated deprecated since version 2.0
  */
 function pods_ui_access ($object, $access, $what) {
-    pods_deprecated('pods_ui_access', '2.0.0');
+    pods_deprecated('pods_ui_access', '2.0');
     if (is_array($access)) {
         foreach ($access as $field => $match) {
             if (is_array($match)) {
@@ -280,7 +280,7 @@ function pods_ui_access ($object, $access, $what) {
  * @param string $type (optional) "uri", "get", "post", "request", "server", "session", or "cookie"
  * @return string The requested value, or null
  * @since 1.6.2
- * @deprecated deprecated since version 2.0.0
+ * @deprecated deprecated since version 2.0
  */
 function pods_url_variable ($key = 'last', $type = 'url') {
     $output = apply_filters('pods_url_variable', pods_var($key, $type), $key, $type);
@@ -291,7 +291,7 @@ function pods_url_variable ($key = 'last', $type = 'url') {
  * Generate form key - INTERNAL USE
  *
  * @since 1.2.0
- * @deprecated deprecated since version 2.0.0
+ * @deprecated deprecated since version 2.0
  */
 function pods_generate_key( $datatype, $uri_hash, $columns, $form_count = 1 ) {
     $token = wp_create_nonce( 'pods-form-' . $datatype . '-' . (int) $form_count . '-' . $uri_hash . '-' . json_encode( $columns ) );
@@ -304,7 +304,7 @@ function pods_generate_key( $datatype, $uri_hash, $columns, $form_count = 1 ) {
  * Validate form key - INTERNAL USE
  *
  * @since 1.2.0
- * @deprecated deprecated since version 2.0.0
+ * @deprecated deprecated since version 2.0
  */
 function pods_validate_key( $token, $datatype, $uri_hash, $columns = null, $form_count = 1 ) {
     if ( null === $columns && !empty( $_SESSION ) && isset( $_SESSION[ 'pods_form_' . $token ] ) )

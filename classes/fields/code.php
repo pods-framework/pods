@@ -10,7 +10,7 @@ class PodsField_Code extends PodsField {
      * Field Type Group
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $group = 'Paragraph';
 
@@ -18,7 +18,7 @@ class PodsField_Code extends PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'code';
 
@@ -26,7 +26,7 @@ class PodsField_Code extends PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'Code (Syntax Highlighting)';
 
@@ -34,14 +34,14 @@ class PodsField_Code extends PodsField {
      * Field Type Preparation
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $prepare = '%s';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -51,7 +51,7 @@ class PodsField_Code extends PodsField {
      * Add options and set defaults to
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function options () {
         $options = array(
@@ -101,7 +101,7 @@ class PodsField_Code extends PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function schema ( $options ) {
         $schema = 'LONGTEXT';
@@ -119,7 +119,7 @@ class PodsField_Code extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         if ( 1 == pods_var( 'code_allow_shortcode', $options, 0 ) )
@@ -137,7 +137,7 @@ class PodsField_Code extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
@@ -165,7 +165,7 @@ class PodsField_Code extends PodsField {
      * @param array $pod
      * @param object $params
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         return $value;

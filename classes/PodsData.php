@@ -228,7 +228,7 @@ class PodsData {
      * @param bool $strict If true throws an error if a pod is not found.
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct ( $pod = null, $id = 0, $strict = true ) {
         global $wpdb;
@@ -377,7 +377,7 @@ class PodsData {
      *
      * @uses wpdb::insert
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function insert ( $table, $data, $format = null ) {
         /**
@@ -429,7 +429,7 @@ class PodsData {
      *
      * @uses wpdb::prepare
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function insert_on_duplicate ( $table, $data, $formats = array() ) {
         /**
@@ -469,7 +469,7 @@ class PodsData {
      * @param array $where_format (optional) An array of formats to be mapped to each of the values in $where.
      *
      * @return bool
-     * @since 2.0.0
+     * @since 2.0
      */
     public function update ( $table, $data, $where, $format = null, $where_format = null ) {
         /**
@@ -538,7 +538,7 @@ class PodsData {
      * @uses PodsData::query
      * @uses PodsData::prepare
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function delete ( $table, $where, $where_format = null ) {
         /**
@@ -581,7 +581,7 @@ class PodsData {
      * @param array $params
      *
      * @return array|bool|mixed
-     * @since 2.0.0
+     * @since 2.0
      */
     public function select ( $params ) {
         $cache_key = $results = false;
@@ -669,7 +669,7 @@ class PodsData {
      * @param array $params
      *
      * @return bool|mixed|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function build ( $params ) {
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
@@ -1311,7 +1311,7 @@ class PodsData {
      * Fetch the total row count returned
      *
      * @return int Number of rows returned by select()
-     * @since 2.0.0
+     * @since 2.0
      */
     public function total () {
         return (int) $this->total;
@@ -1321,7 +1321,7 @@ class PodsData {
      * Fetch the total row count total
      *
      * @return int Number of rows found by select()
-     * @since 2.0.0
+     * @since 2.0
      */
     public function total_found () {
         if(false === $this->total_found_calculated)
@@ -1389,6 +1389,16 @@ class PodsData {
     }
 
     /**
+     * Fetch the current position in the loop (starting at 1)
+     *
+     * @return int Current row number (+1)
+     * @since 2.3
+     */
+    public function position () {
+        return $this->row_number + 1;
+    }
+
+    /**
      * Create a Table
      *
      * @param string $table Table name
@@ -1399,7 +1409,7 @@ class PodsData {
      *
      * @uses PodsData::query
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function table_create ( $table, $fields, $if_not_exists = false ) {
         /**
@@ -1433,7 +1443,7 @@ class PodsData {
      *
      * @uses PodsData::query
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function table_alter ( $table, $changes ) {
         /**
@@ -1455,7 +1465,7 @@ class PodsData {
      *
      * @uses PodsData::query
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function table_truncate ( $table ) {
         /**
@@ -1479,7 +1489,7 @@ class PodsData {
      *
      * @uses PodsData::query
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function table_drop ( $table ) {
         /**
@@ -1504,7 +1514,7 @@ class PodsData {
      *
      * @uses PodsData::update
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function reorder ( $table, $weight_field, $id_field, $ids ) {
         $success = false;
@@ -1538,7 +1548,7 @@ class PodsData {
      *
      * @return mixed
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function fetch ( $row = null ) {
         global $wpdb;
@@ -1760,7 +1770,7 @@ class PodsData {
      *
      * @return mixed
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function reset ( $row = null ) {
         $row = pods_absint( $row );
@@ -1790,7 +1800,7 @@ class PodsData {
      *
      * @return array|bool|mixed|null|void Result of the query
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function query ( $sql, $error = 'Database Error', $results_error = null, $no_results_error = null ) {
         /**
@@ -1880,7 +1890,7 @@ class PodsData {
      *
      * @return array
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function get_tables ( $wp_core = true, $pods_tables = true ) {
         global $wpdb;
@@ -1922,7 +1932,7 @@ class PodsData {
      *
      * @return array
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function get_table_columns ( $table ) {
         global $wpdb;
@@ -1954,7 +1964,7 @@ class PodsData {
      *
      * @return array
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function get_column_data ( $column_name, $table ) {
         $describe_data = mysql_query( 'DESCRIBE ' . $table );
@@ -1981,7 +1991,7 @@ class PodsData {
      *
      * @return bool|null|string
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function prepare ( $sql, $data ) {
         /**
@@ -2214,7 +2224,7 @@ class PodsData {
      * @return array Traverse feed
      * @param object $params (optional) Parameters from build()
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     function traverse_build ( $fields = null, $params = null ) {
         if ( null === $fields )
@@ -2242,7 +2252,7 @@ class PodsData {
      *
      * @return array Array of table joins
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     function traverse_recurse ( $traverse_recurse ) {
         global $wpdb;
@@ -2597,7 +2607,7 @@ class PodsData {
     /**
      * Handle filters / actions for the class
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     private static function do_hook () {
         $args = func_get_args();

@@ -227,7 +227,7 @@ class Pods {
      *
      * @return bool
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function valid () {
         if ( empty( $this->pod_id ) )
@@ -241,7 +241,7 @@ class Pods {
      *
      * @return bool
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function exists () {
         if ( empty( $this->row ) )
@@ -258,7 +258,7 @@ class Pods {
      *
      * @return array|bool An array of all rows returned from a find() call, or false if no items returned
      *
-     * @since 2.0.0
+     * @since 2.0
      * @link http://pods.io/docs/data/
      */
     public function data () {
@@ -275,7 +275,7 @@ class Pods {
      *
      * @return array
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function fields () {
         $this->do_hook( 'fields' );
@@ -291,7 +291,7 @@ class Pods {
      *
      * @return array
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function row () {
         $this->do_hook( 'row' );
@@ -311,7 +311,7 @@ class Pods {
      * @param boolean $single (optional) For tableless fields, to return an array or the first
      *
      * @return string|null|false The output from the field, null if the field doesn't exist, false if no value returned for tableless fields
-     * @since 2.0.0
+     * @since 2.0
      * @link http://pods.io/docs/display/
      */
     public function display ( $name, $single = null ) {
@@ -374,7 +374,7 @@ class Pods {
      * @param boolean $single (optional) For tableless fields, to return an array or the first
      *
      * @return string|null|false The output from the field, null if the field doesn't exist, false if no value returned for tableless fields
-     * @since 2.0.0
+     * @since 2.0
      * @link http://pods.io/docs/display/
      */
     public function raw ( $name, $single = null ) {
@@ -408,7 +408,7 @@ class Pods {
      * @param boolean $raw (optional) Whether to return the raw value, or to run through the field type's display method
      *
      * @return mixed|null Value returned depends on the field type, null if the field doesn't exist, false if no value returned for tableless fields
-     * @since 2.0.0
+     * @since 2.0
      * @link http://pods.io/docs/field/
      */
     public function field ( $name, $single = null, $raw = false ) {
@@ -428,7 +428,7 @@ class Pods {
 
         // Support old $orderby variable
         if ( null !== $params->single && !is_bool( $params->single ) && empty( $params->orderby ) ) {
-            pods_deprecated( 'Pods::field', '2.0.0', 'Use $params[ \'orderby\' ] instead' );
+            pods_deprecated( 'Pods::field', '2.0', 'Use $params[ \'orderby\' ] instead' );
 
             $params->orderby = $params->single;
             $params->single = false;
@@ -978,7 +978,7 @@ class Pods {
      * Return the item ID
      *
      * @return int
-     * @since 2.0.0
+     * @since 2.0
      */
     public function id () {
         return $this->field( $this->data->field_id );
@@ -991,7 +991,7 @@ class Pods {
      * @param array $params_override
      *
      * @return int
-     * @since 2.0.0
+     * @since 2.0
      */
     public function prev_id ( $id = null, $params_override = null ) {
         if ( null === $id )
@@ -1040,7 +1040,7 @@ class Pods {
      * @param array $find_params
      *
      * @return int
-     * @since 2.0.0
+     * @since 2.0
      */
     public function next_id ( $id = null, $params_override = null ) {
         if ( null === $id )
@@ -1160,7 +1160,7 @@ class Pods {
      * Return the item name
      *
      * @return string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function index () {
         return $this->field( $this->data->field_index );
@@ -1175,7 +1175,7 @@ class Pods {
      * @param string $sql (optional) (deprecated) For advanced use, a custom SQL query to run
      *
      * @return \Pods The pod object
-     * @since 2.0.0
+     * @since 2.0
      * @link http://pods.io/docs/find/
      */
     public function find ( $params = null, $limit = 15, $where = null, $sql = null ) {
@@ -1389,7 +1389,7 @@ class Pods {
      *
      * @return array An array of fields from the row
      *
-     * @since 2.0.0
+     * @since 2.0
      * @link http://pods.io/docs/fetch/
      */
     public function fetch ( $id = null ) {
@@ -1414,7 +1414,7 @@ class Pods {
      *
      * @return \Pods The pod object
      *
-     * @since 2.0.0
+     * @since 2.0
      * @link http://pods.io/docs/reset/
      */
     public function reset ( $row = null ) {
@@ -1435,7 +1435,7 @@ class Pods {
      * @see PodsData::total
      *
      * @return int Number of rows returned by find(), based on the 'limit' parameter set
-     * @since 2.0.0
+     * @since 2.0
      * @link http://pods.io/docs/total/
      */
     public function total () {
@@ -1454,7 +1454,7 @@ class Pods {
      * @see PodsData::total_found
      *
      * @return int Number of rows returned by find(), regardless of the 'limit' parameter
-     * @since 2.0.0
+     * @since 2.0
      * @link http://pods.io/docs/total-found/
      */
     public function total_found () {
@@ -1480,17 +1480,33 @@ class Pods {
     }
 
     /**
-     * Fetch the zebra switch
+     * Fetch the nth state
      *
-     * @see PodsData::zebra
+     * @see PodsData::nth
      *
-     * @return bool Zebra state
-     * @since 1.12
+     * @param int|string $nth The $nth to match on the PodsData::row_number
+     *
+     * @return bool Whether $nth matches
+     * @since 2.3
      */
     public function nth ( $nth = null ) {
         $this->do_hook( 'nth', $nth );
 
         return $this->data->nth( $nth );
+    }
+
+    /**
+     * Fetch the current position in the loop (starting at 1)
+     *
+     * @see PodsData::position
+     *
+     * @return int Current row number (+1)
+     * @since 2.3
+     */
+    public function position () {
+        $this->do_hook( 'position' );
+
+        return $this->data->position();
     }
 
     /**
@@ -1506,7 +1522,7 @@ class Pods {
      *
      * @return int The item ID
      *
-     * @since 2.0.0
+     * @since 2.0
      * @link http://pods.io/docs/add/
      */
     public function add ( $data = null, $value = null ) {
@@ -1541,7 +1557,7 @@ class Pods {
      *
      * @return int The item ID
      *
-     * @since 2.0.0
+     * @since 2.0
      * @link http://pods.io/docs/save/
      */
     public function save ( $data = null, $value = null, $id = null ) {
@@ -1575,7 +1591,7 @@ class Pods {
      *
      * @return bool Whether the item was successfully deleted
      *
-     * @since 2.0.0
+     * @since 2.0
      * @link http://pods.io/docs/delete/
      */
     public function delete ( $id = null ) {
@@ -1626,7 +1642,7 @@ class Pods {
      *
      * @return int|bool ID of the new pod item
      *
-     * @since 2.0.0
+     * @since 2.0
      * @link http://pods.io/docs/duplicate/
      */
     public function duplicate ( $id = null ) {
@@ -1673,7 +1689,7 @@ class Pods {
      *
      * @return array|bool Data array of the exported pod item
      *
-     * @since 2.0.0
+     * @since 2.0
      * @link http://pods.io/docs/export/
      */
     public function export ( $fields = null, $id = null, $format = null ) {
@@ -1745,7 +1761,7 @@ class Pods {
      * @var array $params Associative array of parameters
      *
      * @return string Pagination HTML
-     * @since 2.0.0
+     * @since 2.0
      * @link http://pods.io/docs/pagination/
      */
     public function pagination ( $params = null ) {
@@ -1811,7 +1827,7 @@ class Pods {
      *
      * @var array|string $params Comma-separated list of fields or array of parameters
      *
-     * @since 2.0.0
+     * @since 2.0
      * @link http://pods.io/docs/filters/
      */
     public function filters ( $params = null ) {
@@ -1909,7 +1925,7 @@ class Pods {
      * @internal param array $params An associative array of parameters
      *
      * @return mixed Anything returned by the helper
-     * @since 2.0.0
+     * @since 2.0
      */
     public function helper ( $helper, $value = null, $name = null ) {
         $params = array(
@@ -1937,7 +1953,7 @@ class Pods {
      *
      * @return mixed Template output
      *
-     * @since 2.0.0
+     * @since 2.0
      * @link http://pods.io/docs/template/
      */
     public function template ( $template, $code = null, $deprecated = false ) {
@@ -1979,7 +1995,7 @@ class Pods {
      * @param string $thank_you (optional) Thank you URL to send to upon success
      *
      * @return bool|mixed
-     * @since 2.0.0
+     * @since 2.0
      * @link http://pods.io/docs/form/
      */
     public function form ( $params = null, $label = null, $thank_you = null ) {
@@ -2086,7 +2102,7 @@ class Pods {
      * @param string $code The content to evaluate
      * @param object $obj The Pods object
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function do_magic_tags ( $code ) {
         return preg_replace_callback( '/({@(.*?)})/m', array( $this, 'process_magic_tags' ), $code );
@@ -2164,7 +2180,7 @@ class Pods {
      *
      * @see pods_do_hook
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     private function do_hook () {
         $args = func_get_args();
@@ -2184,7 +2200,7 @@ class Pods {
      *
      * @return mixed
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __get ( $name ) {
         $name = (string) $name;
@@ -2197,12 +2213,12 @@ class Pods {
         $var = null;
 
         if ( isset( $this->deprecated->{$name} ) ) {
-            pods_deprecated( "Pods->{$name}", '2.0.0' );
+            pods_deprecated( "Pods->{$name}", '2.0' );
 
             $var = $this->deprecated->{$name};
         }
         else
-            pods_deprecated( "Pods->{$name}", '2.0.0' );
+            pods_deprecated( "Pods->{$name}", '2.0' );
 
         return $var;
     }
@@ -2215,7 +2231,7 @@ class Pods {
      *
      * @return mixed
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __call ( $name, $args ) {
         $name = (string) $name;
@@ -2228,6 +2244,6 @@ class Pods {
         if ( method_exists( $this->deprecated, $name ) )
             return call_user_func_array( array( $this->deprecated, $name ), $args );
         else
-            pods_deprecated( "Pods::{$name}", '2.0.0' );
+            pods_deprecated( "Pods::{$name}", '2.0' );
     }
 }

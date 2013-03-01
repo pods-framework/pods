@@ -31,7 +31,7 @@ class PodsAPI {
 
     /**
      * @var
-     * @deprecated 2.0.0
+     * @deprecated 2.0
      */
     public $format = null;
 
@@ -54,7 +54,7 @@ class PodsAPI {
             if ( null !== $format ) {
                 $this->format = $format;
 
-                pods_deprecated( 'pods_api( $pod, $format )', '2.0.0', 'pods_api( $pod )' );
+                pods_deprecated( 'pods_api( $pod, $format )', '2.0', 'pods_api( $pod )' );
             }
 
             $pod = pods_clean_name( $pod );
@@ -81,7 +81,7 @@ class PodsAPI {
      *
      * @return bool|mixed
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function save_wp_object ( $object_type, $data, $meta = array(), $strict = false, $sanitized = false ) {
         if ( in_array( $object_type, array( 'post_type', 'media' ) ) )
@@ -109,7 +109,7 @@ class PodsAPI {
      *
      * @return bool|mixed
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function delete_wp_object ( $object_type, $id, $force_delete = true ) {
         if ( in_array( $object_type, array( 'post_type', 'media' ) ) )
@@ -182,7 +182,7 @@ class PodsAPI {
      *
      * @return int Id of the post with the meta
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function save_post_meta ( $id, $post_meta = null, $strict = false ) {
         pods_no_conflict_on( 'post' );
@@ -233,7 +233,7 @@ class PodsAPI {
      *
      * @return int Returns user id on success
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function save_user ( $user_data, $user_meta = null, $strict = false, $sanitized = false ) {
         if ( !is_array( $user_data ) || empty( $user_data ) )
@@ -281,7 +281,7 @@ class PodsAPI {
      *
      * @return int User ID
      *
-     * @since 2.0.0
+     * @since 2.0
      *
      */
     public function save_user_meta ( $id, $user_meta = null, $strict = false ) {
@@ -329,7 +329,7 @@ class PodsAPI {
      *
      * @return int Comment ID
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function save_comment ( $comment_data, $comment_meta = null, $strict = false, $sanitized = false ) {
         if ( !is_array( $comment_data ) || empty( $comment_data ) )
@@ -377,7 +377,7 @@ class PodsAPI {
      *
      * @return int Comment ID
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function save_comment_meta ( $id, $comment_meta = null, $strict = false ) {
         pods_no_conflict_on( 'comment' );
@@ -425,7 +425,7 @@ class PodsAPI {
      *
      * @return int Term ID
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function save_term ( $term_ID, $term, $taxonomy, $term_data, $sanitized = false ) {
         pods_no_conflict_on( 'taxonomy' );
@@ -510,7 +510,7 @@ class PodsAPI {
      *
      * @return bool
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function rename_wp_object_type ( $object_type, $old_name, $new_name ) {
         /**
@@ -961,7 +961,7 @@ class PodsAPI {
      * @param array $params An associative array of parameters
      *
      * @return bool|int Pod ID
-     * @since 2.0.0
+     * @since 2.0
      */
     public function add_pod ( $params ) {
         $defaults = array(
@@ -2217,7 +2217,7 @@ class PodsAPI {
      * @param bool $sanitized (optional) Decides whether the params have been sanitized before being passed, will sanitize them if false.
      *
      * @return int The Object ID
-     * @since 2.0.0
+     * @since 2.0
      */
     public function save_object ( $params, $sanitized = false ) {
         $params = (object) $params;
@@ -2419,16 +2419,16 @@ class PodsAPI {
         $repeatable_field_types = PodsForm::repeatable_field_types();
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
-        // @deprecated 2.0.0
+        // @deprecated 2.0
         if ( isset( $params->datatype ) ) {
-            pods_deprecated( '$params->pod instead of $params->datatype', '2.0.0' );
+            pods_deprecated( '$params->pod instead of $params->datatype', '2.0' );
 
             $params->pod = $params->datatype;
 
             unset( $params->datatype );
 
             if ( isset( $params->pod_id ) ) {
-                pods_deprecated( '$params->id instead of $params->pod_id', '2.0.0' );
+                pods_deprecated( '$params->id instead of $params->pod_id', '2.0' );
 
                 $params->id = $params->pod_id;
 
@@ -2439,25 +2439,25 @@ class PodsAPI {
                 $check = current( $params->data );
 
                 if ( is_array( $check ) ) {
-                    pods_deprecated( 'PodsAPI::save_pod_items', '2.0.0' );
+                    pods_deprecated( 'PodsAPI::save_pod_items', '2.0' );
 
                     return $this->save_pod_items( $params, $params->data );
                 }
             }
         }
 
-        // @deprecated 2.0.0
+        // @deprecated 2.0
         if ( isset( $params->tbl_row_id ) ) {
-            pods_deprecated( '$params->id instead of $params->tbl_row_id', '2.0.0' );
+            pods_deprecated( '$params->id instead of $params->tbl_row_id', '2.0' );
 
             $params->id = $params->tbl_row_id;
 
             unset( $params->tbl_row_id );
         }
 
-        // @deprecated 2.0.0
+        // @deprecated 2.0
         if ( isset( $params->columns ) ) {
-            pods_deprecated( '$params->data instead of $params->columns', '2.0.0' );
+            pods_deprecated( '$params->data instead of $params->columns', '2.0' );
 
             $params->data = $params->columns;
 
@@ -2602,8 +2602,8 @@ class PodsAPI {
             }
         }
 
-        $columns =& $fields; // @deprecated 2.0.0
-        $active_columns =& $fields_active; // @deprecated 2.0.0
+        $columns =& $fields; // @deprecated 2.0
+        $active_columns =& $fields_active; // @deprecated 2.0
         $params->tbl_row_id =& $params->id;
 
         $pre_save_helpers = $post_save_helpers = array();
@@ -2657,7 +2657,7 @@ class PodsAPI {
                 }
 
                 if ( !empty( $pre_save_helpers ) ) {
-                    pods_deprecated( sprintf( __( 'Pre-save helpers are deprecated, use the action pods_pre_save_pod_item_%s instead', 'pods' ), $params->pod ), '2.0.0' );
+                    pods_deprecated( sprintf( __( 'Pre-save helpers are deprecated, use the action pods_pre_save_pod_item_%s instead', 'pods' ), $params->pod ), '2.0' );
 
                     foreach ( $pre_save_helpers as $helper ) {
                         $helper = $this->load_helper( array( 'name' => $helper ) );
@@ -3268,7 +3268,7 @@ class PodsAPI {
             // Call any post-save helpers (if not bypassed)
             if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) {
                 if ( !empty( $post_save_helpers ) ) {
-                    pods_deprecated( sprintf( __( 'Post-save helpers are deprecated, use the action pods_post_save_pod_item_%s instead', 'pods' ), $params->pod ), '2.0.0' );
+                    pods_deprecated( sprintf( __( 'Post-save helpers are deprecated, use the action pods_post_save_pod_item_%s instead', 'pods' ), $params->pod ), '2.0' );
 
                     foreach ( $post_save_helpers as $helper ) {
                         $helper = $this->load_helper( array( 'name' => $helper ) );
@@ -3302,7 +3302,7 @@ class PodsAPI {
      * @param array $data An associative array of pod ids and field names + values (arrays of field data)
      *
      * @return int The item ID
-     * @since 2.0.0
+     * @since 2.0
      */
     public function save_pod_items ( $params, $data ) {
         $params = (object) $params;
@@ -3618,9 +3618,9 @@ class PodsAPI {
     public function reorder_pod_item ( $params ) {
         $params = (object) pods_sanitize( $params );
 
-        // @deprecated 2.0.0
+        // @deprecated 2.0
         if ( isset( $params->datatype ) ) {
-            pods_deprecated( __( '$params->pod instead of $params->datatype', 'pods' ), '2.0.0' );
+            pods_deprecated( __( '$params->pod instead of $params->datatype', 'pods' ), '2.0' );
 
             $params->pod = $params->datatype;
 
@@ -3974,7 +3974,7 @@ class PodsAPI {
      * @uses wp_delete_post
      *
      * @return bool
-     * @since 2.0.0
+     * @since 2.0
      */
     public function delete_object ( $params ) {
         $params = (object) $params;
@@ -4076,28 +4076,28 @@ class PodsAPI {
     public function delete_pod_item ( $params, $wp = true ) {
         $params = (object) pods_sanitize( $params );
 
-        // @deprecated 2.0.0
+        // @deprecated 2.0
         if ( isset( $params->datatype_id ) || isset( $params->datatype ) || isset( $params->tbl_row_id ) ) {
             if ( isset( $params->tbl_row_id ) ) {
-                pods_deprecated( __( '$params->id instead of $params->tbl_row_id', 'pods' ), '2.0.0' );
+                pods_deprecated( __( '$params->id instead of $params->tbl_row_id', 'pods' ), '2.0' );
                 $params->id = $params->tbl_row_id;
                 unset( $params->tbl_row_id );
             }
 
             if ( isset( $params->pod_id ) ) {
-                pods_deprecated( __( '$params->id instead of $params->pod_id', 'pods' ), '2.0.0' );
+                pods_deprecated( __( '$params->id instead of $params->pod_id', 'pods' ), '2.0' );
                 $params->id = $params->pod_id;
                 unset( $params->pod_id );
             }
 
             if ( isset( $params->dataype_id ) ) {
-                pods_deprecated( __( '$params->pod_id instead of $params->datatype_id', 'pods' ), '2.0.0' );
+                pods_deprecated( __( '$params->pod_id instead of $params->datatype_id', 'pods' ), '2.0' );
                 $params->pod_id = $params->dataype_id;
                 unset( $params->dataype_id );
             }
 
             if ( isset( $params->datatype ) ) {
-                pods_deprecated( __( '$params->pod instead of $params->datatype', 'pods' ), '2.0.0' );
+                pods_deprecated( __( '$params->pod instead of $params->datatype', 'pods' ), '2.0' );
                 $params->pod = $params->datatype;
                 unset( $params->datatype );
             }
@@ -4147,7 +4147,7 @@ class PodsAPI {
                 }
 
                 if ( !empty( $pre_delete_helpers ) ) {
-                    pods_deprecated( sprintf( __( 'Pre-delete helpers are deprecated, use the action pods_pre_delete_pod_item_%s instead', 'pods' ), $params->pod ), '2.0.0' );
+                    pods_deprecated( sprintf( __( 'Pre-delete helpers are deprecated, use the action pods_pre_delete_pod_item_%s instead', 'pods' ), $params->pod ), '2.0' );
 
                     foreach ( $pre_delete_helpers as $helper ) {
                         $helper = $this->load_helper( array( 'name' => $helper ) );
@@ -4186,7 +4186,7 @@ class PodsAPI {
             // Call any post-save helpers (if not bypassed)
             if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) {
                 if ( !empty( $post_delete_helpers ) ) {
-                    pods_deprecated( sprintf( __( 'Post-delete helpers are deprecated, use the action pods_post_delete_pod_item_%s instead', 'pods' ), $params->pod ), '2.0.0' );
+                    pods_deprecated( sprintf( __( 'Post-delete helpers are deprecated, use the action pods_post_delete_pod_item_%s instead', 'pods' ), $params->pod ), '2.0' );
 
                     foreach ( $post_delete_helpers as $helper ) {
                         $helper = $this->load_helper( array( 'name' => $helper ) );
@@ -4432,7 +4432,7 @@ class PodsAPI {
      *
      * @uses PodsAPI::load_pod
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function load_pods ( $params = null ) {
         /**
@@ -4922,7 +4922,7 @@ class PodsAPI {
      * @param bool $strict
      *
      * @return array|bool
-     * @since 2.0.0
+     * @since 2.0
      */
     public function load_object ( $params, $strict = false ) {
         if ( is_object( $params ) && isset( $params->post_name ) ) {
@@ -5022,7 +5022,7 @@ class PodsAPI {
      * @param array|object $params An associative array of parameters
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function load_objects ( $params ) {
         $params = (object) pods_sanitize( $params );
@@ -5263,7 +5263,7 @@ class PodsAPI {
      *
      * @uses pods()
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function load_pod_item ( $params ) {
         $params = (object) pods_sanitize( $params );
@@ -5352,7 +5352,7 @@ class PodsAPI {
      *
      * @return string The field type
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function detect_pod_field_from_sql_data_type ( $sql_field ) {
         $sql_field = strtolower( $sql_field );
@@ -5387,7 +5387,7 @@ class PodsAPI {
      *
      * @uses PodsForm::field_loader
      *
-     * @since 2.0.0
+     * @since 2.0
      * @deprecated
      */
     public function get_field_types () {
@@ -5402,7 +5402,7 @@ class PodsAPI {
      *
      * @return array|bool|mixed|null
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     private function get_field_definition ( $type, $options = null ) {
         $definition = PodsForm::field_method( $type, 'schema', $options );
@@ -5426,7 +5426,7 @@ class PodsAPI {
      *
      * @uses PodsForm::validate
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function handle_field_validation ( &$value, $field, $object_fields, $fields, $pod, $params ) {
         $tableless_field_types = PodsForm::tableless_field_types();
@@ -5510,7 +5510,7 @@ class PodsAPI {
      *
      * @return array|bool
      *
-     * @since 2.0.0
+     * @since 2.0
      *
      * @uses pods_query()
      */
@@ -5642,7 +5642,7 @@ class PodsAPI {
      *
      * @return array|bool
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function get_table_info ( $object_type, $object, $name = null, $pod = null, $field = null ) {
         /**
@@ -6129,7 +6129,7 @@ class PodsAPI {
      * @return array|bool
      *
      * @since 1.9.0
-     * @deprecated 2.0.0
+     * @deprecated 2.0
      */
     public function export_package ( $params ) {
         if ( class_exists( 'Pods_Migrate_Packages' ) )
@@ -6146,7 +6146,7 @@ class PodsAPI {
      * @return bool
      *
      * @since 1.9.8
-     * @deprecated 2.0.0
+     * @deprecated 2.0
      */
     public function replace_package ( $data = false ) {
         return $this->import_package( $data, true );
@@ -6161,7 +6161,7 @@ class PodsAPI {
      * @return bool
      *
      * @since 1.9.0
-     * @deprecated 2.0.0
+     * @deprecated 2.0
      */
     public function import_package ( $data = false, $replace = false ) {
         if ( class_exists( 'Pods_Migrate_Packages' ) )
@@ -6179,7 +6179,7 @@ class PodsAPI {
      * @return array|bool
      *
      * @since 1.9.0
-     * @deprecated 2.0.0
+     * @deprecated 2.0
      */
     public function validate_package ( $data = false, $output = false ) {
         return true;
@@ -6547,7 +6547,7 @@ class PodsAPI {
     /**
      * Handle filters / actions for the class
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     private function do_hook () {
         $args = func_get_args();
@@ -6560,7 +6560,7 @@ class PodsAPI {
     /**
      * Handle variables that have been deprecated
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __get ( $name ) {
         $name = (string) $name;
@@ -6573,12 +6573,12 @@ class PodsAPI {
         $var = null;
 
         if ( isset( $this->deprecated->{$name} ) ) {
-            pods_deprecated( "PodsAPI->{$name}", '2.0.0' );
+            pods_deprecated( "PodsAPI->{$name}", '2.0' );
 
             $var = $this->deprecated->{$name};
         }
         else
-            pods_deprecated( "PodsAPI->{$name}", '2.0.0' );
+            pods_deprecated( "PodsAPI->{$name}", '2.0' );
 
         return $var;
     }
@@ -6586,7 +6586,7 @@ class PodsAPI {
     /**
      * Handle methods that have been deprecated
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __call ( $name, $args ) {
         $name = (string) $name;
@@ -6599,6 +6599,6 @@ class PodsAPI {
         if ( method_exists( $this->deprecated, $name ) )
             return call_user_func_array( array( $this->deprecated, $name ), $args );
         else
-            pods_deprecated( "PodsAPI::{$name}", '2.0.0' );
+            pods_deprecated( "PodsAPI::{$name}", '2.0' );
     }
 }

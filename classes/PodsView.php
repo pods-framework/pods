@@ -25,7 +25,7 @@ class PodsView {
      *
      * @return bool|mixed|null|string|void
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function view ( $view, $data = null, $expires = false, $cache_mode = 'cache' ) {
         // Different $expires if user is anonymous or logged in or specific capability
@@ -94,7 +94,7 @@ class PodsView {
      *
      * @return bool|mixed|null|void
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function get ( $key, $cache_mode = 'cache', $group = '' ) {
         $object_cache = false;
@@ -147,7 +147,7 @@ class PodsView {
      *
      * @return bool|mixed|null|string|void
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function set ( $key, $value, $expires = 0, $cache_mode = null, $group = '' ) {
         $object_cache = false;
@@ -199,7 +199,7 @@ class PodsView {
      *
      * @return bool
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function clear ( $key = true, $cache_mode = null, $group = '' ) {
         $object_cache = false;

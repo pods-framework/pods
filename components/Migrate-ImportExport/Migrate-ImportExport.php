@@ -21,7 +21,7 @@ class Pods_Migrate_ImportExport extends PodsComponent {
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -30,7 +30,7 @@ class Pods_Migrate_ImportExport extends PodsComponent {
     /**
      * Enqueue styles
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin_assets () {
         wp_enqueue_style( 'pods-wizard' );
@@ -41,7 +41,7 @@ class Pods_Migrate_ImportExport extends PodsComponent {
      *
      * @param $options
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin ( $options, $component ) {
         $method = 'import_export'; // ajax_import_export

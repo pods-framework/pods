@@ -10,7 +10,7 @@ class PodsField_Boolean extends PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'boolean';
 
@@ -18,7 +18,7 @@ class PodsField_Boolean extends PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'Yes / No';
 
@@ -26,14 +26,14 @@ class PodsField_Boolean extends PodsField {
      * Field Type Preparation
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $prepare = '%s';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -44,7 +44,7 @@ class PodsField_Boolean extends PodsField {
      *
      * @return array Array of available options
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function options () {
         $options = array(
@@ -79,7 +79,7 @@ class PodsField_Boolean extends PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function schema ( $options = null ) {
         $schema = 'BOOL DEFAULT 0';
@@ -97,7 +97,7 @@ class PodsField_Boolean extends PodsField {
      * @param int $id
      *
      * @return mixed|null
-     * @since 2.0.0
+     * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $yesno = array(
@@ -121,7 +121,7 @@ class PodsField_Boolean extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
@@ -151,7 +151,7 @@ class PodsField_Boolean extends PodsField {
      *
      * @return array Array of possible field data
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function data ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         if ( 'checkbox' != pods_var( 'boolean_format_type', $options ) ) {
@@ -178,7 +178,7 @@ class PodsField_Boolean extends PodsField {
      * @param int $id
      *
      * @return bool
-     * @since 2.0.0
+     * @since 2.0
      */
     public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         return false;
@@ -196,7 +196,7 @@ class PodsField_Boolean extends PodsField {
      * @param null $params
      *
      * @return bool
-     * @since 2.0.0
+     * @since 2.0
      */
     public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         return true;
@@ -214,7 +214,7 @@ class PodsField_Boolean extends PodsField {
      * @param object $params
      *
      * @return int|mixed
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         // Only allow 0 / 1
@@ -243,7 +243,7 @@ class PodsField_Boolean extends PodsField {
      * @param array $pod
      * @param object $params
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function post_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
 
@@ -258,7 +258,7 @@ class PodsField_Boolean extends PodsField {
      * @param string $pod
      *
      * @return void
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_delete ( $id = null, $name = null, $options = null, $pod = null ) {
 
@@ -272,7 +272,7 @@ class PodsField_Boolean extends PodsField {
      * @param array $options
      * @param array $pod
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function post_delete ( $id = null, $name = null, $options = null, $pod = null ) {
 
@@ -288,7 +288,7 @@ class PodsField_Boolean extends PodsField {
      * @param array $fields
      * @param array $pod
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $yesno = array(

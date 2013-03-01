@@ -8,7 +8,7 @@ class PodsField_Phone extends PodsField {
      * Field Type Group
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $group = 'Text';
 
@@ -16,7 +16,7 @@ class PodsField_Phone extends PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'phone';
 
@@ -24,7 +24,7 @@ class PodsField_Phone extends PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'Phone';
 
@@ -32,14 +32,14 @@ class PodsField_Phone extends PodsField {
      * Field Type Preparation
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $prepare = '%s';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -50,7 +50,7 @@ class PodsField_Phone extends PodsField {
      *
      * @param array $options
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function options () {
         $options = array(
@@ -118,7 +118,7 @@ class PodsField_Phone extends PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function schema ( $options = null ) {
         $length = (int) pods_var( 'phone_max_length', $options, 25, null, true );
@@ -140,7 +140,7 @@ class PodsField_Phone extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
@@ -162,7 +162,7 @@ class PodsField_Phone extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         $errors = array();
@@ -199,7 +199,7 @@ class PodsField_Phone extends PodsField {
      * @param array $pod
      * @param object $params
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $options = (array) $options;

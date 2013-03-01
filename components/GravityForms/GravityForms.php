@@ -72,7 +72,7 @@ class Pods_GravityForms extends PodsComponent {
      *
      * @param $options
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin ( $options ) {
         $pods_forms = (array) get_option( 'pods_gravity_forms', array() );

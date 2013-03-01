@@ -12,7 +12,7 @@ class PodsComponents {
      * @var string
      *
      * @private
-     * @since 2.0.0
+     * @since 2.0
      */
     private $components_dir = null;
 
@@ -21,7 +21,7 @@ class PodsComponents {
      *
      * @var string
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public $components = array();
 
@@ -30,14 +30,14 @@ class PodsComponents {
      *
      * @var string
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public $settings = array();
 
     /**
      * Setup actions and get options
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
         $this->components_dir = realpath( apply_filters( 'pods_components_dir', PODS_DIR . 'components' ) ) . '/';
@@ -71,7 +71,7 @@ class PodsComponents {
      *
      * @param string $parent The parent slug.
      *
-     * @since 2.0.0
+     * @since 2.0
      *
      * @uses add_submenu_page
      */
@@ -164,7 +164,7 @@ class PodsComponents {
     /**
      * Load activated components and init component
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function load () {
         do_action( 'pods_components_load' );
@@ -230,7 +230,7 @@ class PodsComponents {
     /**
      * Get list of components available
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function get_components () {
         $components = pods_transient_get( 'pods_components' );
@@ -376,7 +376,7 @@ class PodsComponents {
      * @param $component
      * @param $options
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function options ( $component, $options ) {
         if ( !isset( $this->settings[ 'components' ][ $component ] ) || !is_array( $this->settings[ 'components' ][ $component ] ) )
@@ -391,7 +391,7 @@ class PodsComponents {
     /**
      * Call component specific admin functions
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin_handler () {
         $component = str_replace( 'pods-component-', '', $_GET[ 'page' ] );
@@ -420,7 +420,7 @@ class PodsComponents {
      *
      * @return bool
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function toggle ( $component ) {
         $toggle = null;
@@ -476,7 +476,7 @@ class PodsComponents {
     /**
      * Handle admin ajax
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin_ajax () {
         if ( false === headers_sent() ) {
@@ -581,7 +581,7 @@ class PodsComponent {
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -592,7 +592,7 @@ class PodsComponent {
      *
      * @return array $options
      *
-     * @since 2.0.0
+     * @since 2.0
     public function options () {
         $options = array(
             'option_name' => array(
@@ -641,7 +641,7 @@ class PodsComponent {
      *
      * @param $options
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function handler ( $options ) {
         // run code based on $options set
@@ -652,7 +652,7 @@ class PodsComponent {
      *
      * @param $options
      *
-     * @since 2.0.0
+     * @since 2.0
     public function admin ( $options ) {
     // run code based on $options set
     }

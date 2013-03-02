@@ -2413,7 +2413,7 @@ class PodsUI {
                                 $data_filter = 'filter_' . $filter . '_start';
                             }
                             elseif ( 'pick' == $this->pod->fields[ $filter ][ 'type' ] )
-                                $value_label = trim( PodsForm::field_method( 'pick', 'value_to_label', $this->pod->pod_data, $this->pod->fields[ $filter ], $value ) );
+                                $value_label = trim( PodsForm::field_method( 'pick', 'value_to_label', $filter, $value, $this->pod->fields[ $filter ], $this->pod->pod_data, $this->pod->id() ) );
 
                             if ( strlen( $value_label ) < 1 )
                                 $value_label = $value;

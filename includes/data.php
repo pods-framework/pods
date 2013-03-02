@@ -905,7 +905,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
     }
 
     if ( $simple && is_array( $field ) && !is_array( $value ) && !empty( $value ) )
-        $value = PodsForm::field_method( 'pick', 'simple_value', $value, $field );
+        $value = PodsForm::field_method( 'pick', 'simple_value', $field[ 'name' ], $value, $field );
 
     if ( !is_array( $value ) )
         return $value;
@@ -920,7 +920,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
         $last = array_pop( $value );
 
     if ( $simple && is_array( $field ) && !is_array( $last ) && !empty( $last ) )
-        $last = PodsForm::field_method( 'pick', 'simple_value', $last, $field );
+        $last = PodsForm::field_method( 'pick', 'simple_value', $field[ 'name' ], $last, $field );
 
     if ( is_array( $last ) ) {
         if ( null !== $field_index && isset( $last[ $field_index ] ) )
@@ -942,7 +942,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
                 $value = $value[ 0 ];
 
             if ( $simple && is_array( $field ) && !is_array( $value ) && !empty( $value ) )
-                $value = PodsForm::field_method( 'pick', 'simple_value', $value, $field );
+                $value = PodsForm::field_method( 'pick', 'simple_value', $field[ 'name' ], $value, $field );
 
             if ( is_array( $value ) ) {
                 if ( null !== $field_index && isset( $value[ $field_index ] ) )
@@ -963,7 +963,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
 
             foreach ( $value as $k => &$v ) {
                 if ( $simple && is_array( $field ) && !is_array( $v ) && !empty( $v ) )
-                    $v = PodsForm::field_method( 'pick', 'simple_value', $v, $field );
+                    $v = PodsForm::field_method( 'pick', 'simple_value', $field[ 'name' ], $v, $field );
 
                 if ( is_array( $v ) ) {
                     if ( null !== $field_index && isset( $v[ $field_index ] ) )

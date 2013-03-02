@@ -340,7 +340,7 @@ class Pods {
 
         if ( false === $params->in_form && isset( $this->fields[ $params->name ] ) ) {
             if ( 'pick' == $this->fields[ $params->name ][ 'type' ] && in_array( $this->fields[ $params->name ][ 'pick_object' ], $simple_tableless_objects ) )
-                $value = PodsForm::field_method( 'pick', 'simple_value', $value, $this->fields[ $params->name ] );
+                $value = PodsForm::field_method( 'pick', 'simple_value', $params->name, $value, $this->fields[ $params->name ], $this->pod_data, $this->id() );
             elseif ( in_array( $this->fields[ $params->name ][ 'type' ], $repeatable_field_types ) && 1 == pods_var( $this->fields[ $params->name ][ 'type' ] . '_repeatable', $this->fields[ $params->name ][ 'options' ] ) )
                 $value = PodsForm::field_method( $this->fields[ $params->name ][ 'type' ], 'value', $value, $this->fields[ $params->name ] );
 
@@ -483,7 +483,7 @@ class Pods {
             $value = $this->row[ $params->name ];
 
             if ( !is_array( $value ) && isset( $this->fields[ $params->name ] ) && 'pick' == $this->fields[ $params->name ][ 'type' ] && in_array( $this->fields[ $params->name ][ 'pick_object' ], $simple_tableless_objects ) )
-                $value = PodsForm::field_method( 'pick', 'simple_value', $value, $this->fields[ $params->name ], true );
+                $value = PodsForm::field_method( 'pick', 'simple_value', $params->name, $value, $this->fields[ $params->name ], $this->pod_data, $this->id(), true );
         }
         elseif ( empty( $value ) ) {
             $object_field_found = false;
@@ -668,7 +668,7 @@ class Pods {
                         if ( null === $single )
                             $params->single = false;
 
-                        $value = PodsForm::field_method( 'pick', 'simple_value', $value, $this->fields[ $params->name ], true );
+                        $value = PodsForm::field_method( 'pick', 'simple_value', $params->name, $value, $this->fields[ $params->name ], $this->pod_data, $this->id(), true );
                     }
 
                     if ( !$no_conflict )
@@ -728,11 +728,11 @@ class Pods {
                         $field_exists = isset( $all_fields[ $pod ][ $field ] );
 
                         $simple = false;
-                        $simple_options = array();
+                        $last_options = array();
 
                         if ( $field_exists && 'pick' == $all_fields[ $pod ][ $field ][ 'type' ] && in_array( $all_fields[ $pod ][ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
                             $simple = true;
-                            $simple_options = $all_fields[ $pod ][ $field ];
+                            $last_options = $all_fields[ $pod ][ $field ];
                         }
 
                         // Tableless handler
@@ -917,7 +917,7 @@ class Pods {
                                     if ( null === $single )
                                         $params->single = false;
 
-                                    $value = PodsForm::field_method( 'pick', 'simple_value', $value, $simple_options, true );
+                                    $value = PodsForm::field_method( 'pick', 'simple_value', $field, $value, $last_options, $all_fields[ $pod ], 0, true );
                                 }
 
                                 // Return a single column value

@@ -646,88 +646,9 @@ class PodsField_Pick extends PodsField {
             }
         }
         elseif ( '' != pods_var( 'pick_object', $options, '' ) && array() == pods_var_raw( 'data', $options, array(), null, true ) ) {
-            if ( 'post-status' == $options[ 'pick_object' ] ) {
-                $post_stati = get_post_stati( array(), 'objects' );
+            $data = $this->get_simple_data( $options );
 
-                foreach ( $post_stati as $post_status ) {
-                    $data[ $post_status->name ] = $post_status->label;
-                }
-            }
-            elseif ( 'role' == $options[ 'pick_object' ] ) {
-                global $wp_roles;
-
-                foreach ( $wp_roles->role_objects as $key => $role ) {
-                    $data[ $key ] = $wp_roles->role_names[ $key ];
-                }
-            }
-            elseif ( 'sidebar' == $options[ 'pick_object' ] ) {
-                global $wp_registered_sidebars;
-
-                if ( !empty( $wp_registered_sidebars ) ) {
-                    foreach ( $wp_registered_sidebars as $sidebar ) {
-                        $data[ $sidebar[ 'id' ] ] = $sidebar[ 'name' ];
-                    }
-                }
-            }
-            elseif ( 'image-size' == $options[ 'pick_object' ] ) {
-                $image_sizes = get_intermediate_image_sizes();
-
-                foreach ( $image_sizes as $image_size ) {
-                    $data[ $image_size ] = ucwords( str_replace( '-', ' ', $image_size ) );
-                }
-            }
-            elseif ( 'theme' == $options[ 'pick_object' ] ) {
-                $themes = wp_get_themes( array( 'allowed' => true ) );
-
-                foreach ( $themes as $theme ) {
-                    $data[ $theme->Template ] = $theme->Name;
-                }
-            }
-            elseif ( 'page-template' == $options[ 'pick_object' ] ) {
-                if ( !function_exists( 'get_page_templates' ) )
-                    include_once ABSPATH . 'wp-admin/includes/theme.php';
-
-                $page_templates = apply_filters( 'pods_page_templates', get_page_templates() );
-
-                if ( !in_array( 'page.php', $page_templates ) && locate_template( array( 'page.php', false ) ) )
-                    $page_templates[ 'Page (WP Default)' ] = 'page.php';
-
-                if ( !in_array( 'index.php', $page_templates ) && locate_template( array( 'index.php', false ) ) )
-                    $page_templates[ 'Index (WP Fallback)' ] = 'index.php';
-
-                ksort( $page_templates );
-
-                $page_templates = array_flip( $page_templates );
-
-                foreach ( $page_templates as $page_template_file => $page_template ) {
-                    $data[ $page_template_file ] = $page_template;
-                }
-            }
-            elseif ( 'post-types' == $options[ 'pick_object' ] ) {
-                $post_types = get_post_types( array(), 'objects' );
-
-                $ignore = array( 'revision', 'nav_menu_item' );
-
-                foreach ( $post_types as $post_type ) {
-                    if ( in_array( $post_type->name, $ignore ) || 0 === strpos( $post_type->name, '_pods_' ) )
-                        continue;
-
-                    $data[ $post_type->name ] = $post_type->label;
-                }
-            }
-            elseif ( 'taxonomies' == $options[ 'pick_object' ] ) {
-                $taxonomies = get_taxonomies( array(), 'objects' );
-
-                $ignore = array( 'nav_menu', 'post_format' );
-
-                foreach ( $taxonomies as $taxonomy ) {
-                    if ( in_array( $taxonomy->name, $ignore ) )
-                        continue;
-
-                    $data[ $taxonomy->name ] = $taxonomy->label;
-                }
-            }
-            else {
+            if ( false === $data ) {
                 $db = true;
 
                 if ( isset( self::$related_objects[ $options[ 'pick_object' ] ] ) ) {
@@ -982,88 +903,10 @@ class PodsField_Pick extends PodsField {
                         $data = $custom;
                 }
             }
-            elseif ( 'post-status' == $options[ 'pick_object' ] ) {
-                $post_stati = get_post_stati( array(), 'objects' );
+            else
+                $data = $this->get_simple_data( $options );
 
-                foreach ( $post_stati as $post_status ) {
-                    $data[ $post_status->name ] = $post_status->label;
-                }
-            }
-            elseif ( 'role' == $options[ 'pick_object' ] ) {
-                global $wp_roles;
-
-                foreach ( $wp_roles->role_objects as $key => $role ) {
-                    $data[ $key ] = $wp_roles->role_names[ $key ];
-                }
-            }
-            elseif ( 'sidebar' == $options[ 'pick_object' ] ) {
-                global $wp_registered_sidebars;
-
-                if ( !empty( $wp_registered_sidebars ) ) {
-                    foreach ( $wp_registered_sidebars as $sidebar ) {
-                        $data[ $sidebar[ 'id' ] ] = $sidebar[ 'name' ];
-                    }
-                }
-            }
-            elseif ( 'image-size' == $options[ 'pick_object' ] ) {
-                $image_sizes = get_intermediate_image_sizes();
-
-                foreach ( $image_sizes as $image_size ) {
-                    $data[ $image_size ] = ucwords( str_replace( '-', ' ', $image_size ) );
-                }
-            }
-            elseif ( 'theme' == $options[ 'pick_object' ] ) {
-                $themes = wp_get_themes( array( 'allowed' => true ) );
-
-                foreach ( $themes as $theme ) {
-                    $data[ $theme->Template ] = $theme->Name;
-                }
-            }
-            elseif ( 'page-template' == $options[ 'pick_object' ] ) {
-                if ( !function_exists( 'get_page_templates' ) )
-                    include_once ABSPATH . 'wp-admin/includes/theme.php';
-
-                $page_templates = apply_filters( 'pods_page_templates', get_page_templates() );
-
-                if ( !in_array( 'page.php', $page_templates ) && locate_template( array( 'page.php', false ) ) )
-                    $page_templates[ 'Page (WP Default)' ] = 'page.php';
-
-                if ( !in_array( 'index.php', $page_templates ) && locate_template( array( 'index.php', false ) ) )
-                    $page_templates[ 'Index (WP Fallback)' ] = 'index.php';
-
-                ksort( $page_templates );
-
-                $page_templates = array_flip( $page_templates );
-
-                foreach ( $page_templates as $page_template_file => $page_template ) {
-                    $data[ $page_template_file ] = $page_template;
-                }
-            }
-            elseif ( 'post-types' == $options[ 'pick_object' ] ) {
-                $post_types = get_post_types( array(), 'objects' );
-
-                $ignore = array( 'revision', 'nav_menu_item' );
-
-                foreach ( $post_types as $post_type ) {
-                    if ( in_array( $post_type->name, $ignore ) || 0 === strpos( $post_type->name, '_pods_' ) )
-                        continue;
-
-                    $data[ $post_type->name ] = $post_type->label;
-                }
-            }
-            elseif ( 'taxonomies' == $options[ 'pick_object' ] ) {
-                $taxonomies = get_taxonomies( array(), 'objects' );
-
-                $ignore = array( 'nav_menu', 'post_format' );
-
-                foreach ( $taxonomies as $taxonomy ) {
-                    if ( in_array( $taxonomy->name, $ignore ) )
-                        continue;
-
-                    $data[ $taxonomy->name ] = $taxonomy->label;
-                }
-            }
-            elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ] ) ) {
+            if ( false === $data && isset( self::$related_objects[ $options[ 'pick_object' ] ] ) ) {
                 if ( isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) && !empty( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) )
                     $data = self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ];
                 elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'simple_value_callback' ] ) && is_callable( self::$related_objects[ $options[ 'pick_object' ] ][ 'simple_value_callback' ] ) ) {
@@ -1198,88 +1041,9 @@ class PodsField_Pick extends PodsField {
             }
         }
         elseif ( '' != pods_var( 'pick_object', $options, '' ) && empty( $data ) ) {
-            if ( 'post-status' == $options[ 'pick_object' ] ) {
-                $post_stati = get_post_stati( array(), 'objects' );
+            $data = $this->get_simple_data( $options );
 
-                foreach ( $post_stati as $post_status ) {
-                    $data[ $post_status->name ] = $post_status->label;
-                }
-            }
-            elseif ( 'role' == $options[ 'pick_object' ] ) {
-                global $wp_roles;
-
-                foreach ( $wp_roles->role_objects as $key => $role ) {
-                    $data[ $key ] = $wp_roles->role_names[ $key ];
-                }
-            }
-            elseif ( 'sidebar' == $options[ 'pick_object' ] ) {
-                global $wp_registered_sidebars;
-
-                if ( !empty( $wp_registered_sidebars ) ) {
-                    foreach ( $wp_registered_sidebars as $sidebar ) {
-                        $data[ $sidebar[ 'id' ] ] = $sidebar[ 'name' ];
-                    }
-                }
-            }
-            elseif ( 'image-size' == $options[ 'pick_object' ] ) {
-                $image_sizes = get_intermediate_image_sizes();
-
-                foreach ( $image_sizes as $image_size ) {
-                    $data[ $image_size ] = ucwords( str_replace( '-', ' ', $image_size ) );
-                }
-            }
-            elseif ( 'theme' == $options[ 'pick_object' ] ) {
-                $themes = wp_get_themes( array( 'allowed' => true ) );
-
-                foreach ( $themes as $theme ) {
-                    $data[ $theme->Template ] = $theme->Name;
-                }
-            }
-            elseif ( 'page-template' == $options[ 'pick_object' ] ) {
-                if ( !function_exists( 'get_page_templates' ) )
-                    include_once ABSPATH . 'wp-admin/includes/theme.php';
-
-                $page_templates = apply_filters( 'pods_page_templates', get_page_templates() );
-
-                if ( !in_array( 'page.php', $page_templates ) && locate_template( array( 'page.php', false ) ) )
-                    $page_templates[ 'Page (WP Default)' ] = 'page.php';
-
-                if ( !in_array( 'index.php', $page_templates ) && locate_template( array( 'index.php', false ) ) )
-                    $page_templates[ 'Index (WP Fallback)' ] = 'index.php';
-
-                ksort( $page_templates );
-
-                $page_templates = array_flip( $page_templates );
-
-                foreach ( $page_templates as $page_template_file => $page_template ) {
-                    $data[ $page_template_file ] = $page_template;
-                }
-            }
-            elseif ( 'post-types' == $options[ 'pick_object' ] ) {
-                $post_types = get_post_types( array(), 'objects' );
-
-                $ignore = array( 'revision', 'nav_menu_item' );
-
-                foreach ( $post_types as $post_type ) {
-                    if ( in_array( $post_type->name, $ignore ) || 0 === strpos( $post_type->name, '_pods_' ) )
-                        continue;
-
-                    $data[ $post_type->name ] = $post_type->label;
-                }
-            }
-            elseif ( 'taxonomies' == $options[ 'pick_object' ] ) {
-                $taxonomies = get_taxonomies( array(), 'objects' );
-
-                $ignore = array( 'nav_menu', 'post_format' );
-
-                foreach ( $taxonomies as $taxonomy ) {
-                    if ( in_array( $taxonomy->name, $ignore ) )
-                        continue;
-
-                    $data[ $taxonomy->name ] = $taxonomy->label;
-                }
-            }
-            else {
+            if ( false === $data ) {
                 $db = true;
 
                 if ( isset( self::$related_objects[ $options[ 'pick_object' ] ] ) ) {
@@ -1453,6 +1217,103 @@ class PodsField_Pick extends PodsField {
         $data = apply_filters( 'pods_field_pick_value_data', $data, $pod, $field, $value );
 
         $data = pods_serial_comma( $data );
+
+        return $data;
+    }
+
+    /**
+     * Get data from simple relationship objects
+     *
+     * @param array $options Field Options
+     *
+     * @return array|bool Simple Data, or false if no match
+     */
+    private function get_simple_data ( $options ) {
+        $data = array();
+
+        if ( 'post-status' == $options[ 'pick_object' ] ) {
+            $post_stati = get_post_stati( array(), 'objects' );
+
+            foreach ( $post_stati as $post_status ) {
+                $data[ $post_status->name ] = $post_status->label;
+            }
+        }
+        elseif ( 'role' == $options[ 'pick_object' ] ) {
+            global $wp_roles;
+
+            foreach ( $wp_roles->role_objects as $key => $role ) {
+                $data[ $key ] = $wp_roles->role_names[ $key ];
+            }
+        }
+        elseif ( 'sidebar' == $options[ 'pick_object' ] ) {
+            global $wp_registered_sidebars;
+
+            if ( !empty( $wp_registered_sidebars ) ) {
+                foreach ( $wp_registered_sidebars as $sidebar ) {
+                    $data[ $sidebar[ 'id' ] ] = $sidebar[ 'name' ];
+                }
+            }
+        }
+        elseif ( 'image-size' == $options[ 'pick_object' ] ) {
+            $image_sizes = get_intermediate_image_sizes();
+
+            foreach ( $image_sizes as $image_size ) {
+                $data[ $image_size ] = ucwords( str_replace( '-', ' ', $image_size ) );
+            }
+        }
+        elseif ( 'theme' == $options[ 'pick_object' ] ) {
+            $themes = wp_get_themes( array( 'allowed' => true ) );
+
+            foreach ( $themes as $theme ) {
+                $data[ $theme->Template ] = $theme->Name;
+            }
+        }
+        elseif ( 'page-template' == $options[ 'pick_object' ] ) {
+            if ( !function_exists( 'get_page_templates' ) )
+                include_once ABSPATH . 'wp-admin/includes/theme.php';
+
+            $page_templates = apply_filters( 'pods_page_templates', get_page_templates() );
+
+            if ( !in_array( 'page.php', $page_templates ) && locate_template( array( 'page.php', false ) ) )
+                $page_templates[ 'Page (WP Default)' ] = 'page.php';
+
+            if ( !in_array( 'index.php', $page_templates ) && locate_template( array( 'index.php', false ) ) )
+                $page_templates[ 'Index (WP Fallback)' ] = 'index.php';
+
+            ksort( $page_templates );
+
+            $page_templates = array_flip( $page_templates );
+
+            foreach ( $page_templates as $page_template_file => $page_template ) {
+                $data[ $page_template_file ] = $page_template;
+            }
+        }
+        elseif ( 'post-types' == $options[ 'pick_object' ] ) {
+            $post_types = get_post_types( array(), 'objects' );
+
+            $ignore = array( 'revision', 'nav_menu_item' );
+
+            foreach ( $post_types as $post_type ) {
+                if ( in_array( $post_type->name, $ignore ) || 0 === strpos( $post_type->name, '_pods_' ) )
+                    continue;
+
+                $data[ $post_type->name ] = $post_type->label;
+            }
+        }
+        elseif ( 'taxonomies' == $options[ 'pick_object' ] ) {
+            $taxonomies = get_taxonomies( array(), 'objects' );
+
+            $ignore = array( 'nav_menu', 'post_format' );
+
+            foreach ( $taxonomies as $taxonomy ) {
+                if ( in_array( $taxonomy->name, $ignore ) )
+                    continue;
+
+                $data[ $taxonomy->name ] = $taxonomy->label;
+            }
+        }
+        else
+            $data = false;
 
         return $data;
     }

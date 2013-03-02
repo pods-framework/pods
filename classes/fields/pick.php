@@ -229,8 +229,8 @@ class PodsField_Pick extends PodsField {
 
         $related_object = array(
             'label' => $label,
-            'group' => $label,
-            'simple' => false,
+            'group' => 'Custom Relationships',
+            'simple' => true,
             'data' => array()
             //'data_callback' => false,
             //'value_to_label_callback' => false,

@@ -396,6 +396,18 @@ class PodsField_Pick extends PodsField {
                 'group' => __( 'Advanced Objects', 'pods' )
             );
 
+            self::$related_objects[ 'theme' ] = array(
+                'label' => __( 'Themes', 'pods' ),
+                'group' => __( 'Advanced Objects', 'pods' ),
+                'simple' => true
+            );
+
+            self::$related_objects[ 'page-template' ] = array(
+                'label' => __( 'Page Templates', 'pods' ),
+                'group' => __( 'Advanced Objects', 'pods' ),
+                'simple' => true
+            );
+
             self::$related_objects[ 'post-types' ] = array(
                 'label' => __( 'Post Types', 'pods' ),
                 'group' => __( 'Advanced Objects', 'pods' ),
@@ -662,6 +674,33 @@ class PodsField_Pick extends PodsField {
 
                 foreach ( $image_sizes as $image_size ) {
                     $data[ $image_size ] = ucwords( str_replace( '-', ' ', $image_size ) );
+                }
+            }
+            elseif ( 'theme' == $options[ 'pick_object' ] ) {
+                $themes = wp_get_themes( array( 'allowed' => true ) );
+
+                foreach ( $themes as $theme ) {
+                    $data[ $theme->Template ] = $theme->Name;
+                }
+            }
+            elseif ( 'page-template' == $options[ 'pick_object' ] ) {
+                if ( !function_exists( 'get_page_templates' ) )
+                    include_once ABSPATH . 'wp-admin/includes/theme.php';
+
+                $page_templates = apply_filters( 'pods_page_templates', get_page_templates() );
+
+                if ( !in_array( 'page.php', $page_templates ) && locate_template( array( 'page.php', false ) ) )
+                    $page_templates[ 'Page (WP Default)' ] = 'page.php';
+
+                if ( !in_array( 'index.php', $page_templates ) && locate_template( array( 'index.php', false ) ) )
+                    $page_templates[ 'Index (WP Fallback)' ] = 'index.php';
+
+                ksort( $page_templates );
+
+                $page_templates = array_flip( $page_templates );
+
+                foreach ( $page_templates as $page_template_file => $page_template ) {
+                    $data[ $page_template_file ] = $page_template;
                 }
             }
             elseif ( 'post-types' == $options[ 'pick_object' ] ) {
@@ -973,6 +1012,33 @@ class PodsField_Pick extends PodsField {
                     $data[ $image_size ] = ucwords( str_replace( '-', ' ', $image_size ) );
                 }
             }
+            elseif ( 'theme' == $options[ 'pick_object' ] ) {
+                $themes = wp_get_themes( array( 'allowed' => true ) );
+
+                foreach ( $themes as $theme ) {
+                    $data[ $theme->Template ] = $theme->Name;
+                }
+            }
+            elseif ( 'page-template' == $options[ 'pick_object' ] ) {
+                if ( !function_exists( 'get_page_templates' ) )
+                    include_once ABSPATH . 'wp-admin/includes/theme.php';
+
+                $page_templates = apply_filters( 'pods_page_templates', get_page_templates() );
+
+                if ( !in_array( 'page.php', $page_templates ) && locate_template( array( 'page.php', false ) ) )
+                    $page_templates[ 'Page (WP Default)' ] = 'page.php';
+
+                if ( !in_array( 'index.php', $page_templates ) && locate_template( array( 'index.php', false ) ) )
+                    $page_templates[ 'Index (WP Fallback)' ] = 'index.php';
+
+                ksort( $page_templates );
+
+                $page_templates = array_flip( $page_templates );
+
+                foreach ( $page_templates as $page_template_file => $page_template ) {
+                    $data[ $page_template_file ] = $page_template;
+                }
+            }
             elseif ( 'post-types' == $options[ 'pick_object' ] ) {
                 $post_types = get_post_types( array(), 'objects' );
 
@@ -1160,6 +1226,33 @@ class PodsField_Pick extends PodsField {
 
                 foreach ( $image_sizes as $image_size ) {
                     $data[ $image_size ] = ucwords( str_replace( '-', ' ', $image_size ) );
+                }
+            }
+            elseif ( 'theme' == $options[ 'pick_object' ] ) {
+                $themes = wp_get_themes( array( 'allowed' => true ) );
+
+                foreach ( $themes as $theme ) {
+                    $data[ $theme->Template ] = $theme->Name;
+                }
+            }
+            elseif ( 'page-template' == $options[ 'pick_object' ] ) {
+                if ( !function_exists( 'get_page_templates' ) )
+                    include_once ABSPATH . 'wp-admin/includes/theme.php';
+
+                $page_templates = apply_filters( 'pods_page_templates', get_page_templates() );
+
+                if ( !in_array( 'page.php', $page_templates ) && locate_template( array( 'page.php', false ) ) )
+                    $page_templates[ 'Page (WP Default)' ] = 'page.php';
+
+                if ( !in_array( 'index.php', $page_templates ) && locate_template( array( 'index.php', false ) ) )
+                    $page_templates[ 'Index (WP Fallback)' ] = 'index.php';
+
+                ksort( $page_templates );
+
+                $page_templates = array_flip( $page_templates );
+
+                foreach ( $page_templates as $page_template_file => $page_template ) {
+                    $data[ $page_template_file ] = $page_template;
                 }
             }
             elseif ( 'post-types' == $options[ 'pick_object' ] ) {

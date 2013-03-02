@@ -126,7 +126,7 @@ function pods_data ( $pod = null, $id = null, $strict = true ) {
 function pods_form () {
     require_once( PODS_DIR . 'classes/PodsForm.php' );
 
-    return new PodsForm();
+    return PodsForm::instance();
 }
 
 /**

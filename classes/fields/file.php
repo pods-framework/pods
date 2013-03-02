@@ -38,6 +38,17 @@ class PodsField_File extends PodsField {
     }
 
     /**
+     * Add admin_init actions
+     *
+     * @since 2.3
+     */
+    public function admin_init() {
+        // AJAX for Uploads
+        add_action( 'wp_ajax_pods_upload', array( $this, 'admin_ajax_upload' ) );
+        add_action( 'wp_ajax_nopriv_pods_upload', array( $this, 'admin_ajax_upload' ) );
+    }
+
+    /**
      * Add options and set defaults to
      *
      * @param array $options
@@ -444,5 +455,260 @@ class PodsField_File extends PodsField {
         PodsForm::$field_type = $field_type;
 
         return ob_get_clean();
+    }
+
+    /**
+     * Handle plupload AJAX
+     *
+     * @since 2.3
+     */
+    public function admin_ajax_upload () {
+        if ( false === headers_sent() ) {
+            if ( '' == session_id() )
+                @session_start();
+        }
+
+        // Sanitize input
+        $params = stripslashes_deep( (array) $_POST );
+
+        foreach ( $params as $key => $value ) {
+            if ( 'action' == $key )
+                continue;
+
+            unset( $params[ $key ] );
+
+            $params[ str_replace( '_podsfix_', '', $key ) ] = $value;
+        }
+
+        $params = (object) $params;
+
+        $methods = array(
+            'upload',
+        );
+
+        if ( !isset( $params->method ) || !in_array( $params->method, $methods ) || !isset( $params->pod ) || !isset( $params->field ) || !isset( $params->uri ) || empty( $params->uri ) )
+            pods_error( 'Invalid AJAX request', PodsInit::$admin );
+        elseif ( !empty( $params->pod ) && empty( $params->field ) )
+            pods_error( 'Invalid AJAX request', PodsInit::$admin );
+        elseif ( empty( $params->pod ) && !current_user_can( 'upload_files' ) )
+            pods_error( 'Invalid AJAX request', PodsInit::$admin );
+
+        // Flash often fails to send cookies with the POST or upload, so we need to pass it in GET or POST instead
+        if ( is_ssl() && empty( $_COOKIE[ SECURE_AUTH_COOKIE ] ) && !empty( $_REQUEST[ 'auth_cookie' ] ) )
+            $_COOKIE[ SECURE_AUTH_COOKIE ] = $_REQUEST[ 'auth_cookie' ];
+        elseif ( empty( $_COOKIE[ AUTH_COOKIE ] ) && !empty( $_REQUEST[ 'auth_cookie' ] ) )
+            $_COOKIE[ AUTH_COOKIE ] = $_REQUEST[ 'auth_cookie' ];
+
+        if ( empty( $_COOKIE[ LOGGED_IN_COOKIE ] ) && !empty( $_REQUEST[ 'logged_in_cookie' ] ) )
+            $_COOKIE[ LOGGED_IN_COOKIE ] = $_REQUEST[ 'logged_in_cookie' ];
+
+        global $current_user;
+        unset( $current_user );
+
+        /**
+         * Access Checking
+         */
+        $upload_disabled = false;
+
+        if ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD )
+            $upload_disabled = true;
+        elseif ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && true === PODS_UPLOAD_REQUIRE_LOGIN && !is_user_logged_in() )
+            $upload_disabled = true;
+        elseif ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && !is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && ( !is_user_logged_in() || !current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) )
+            $upload_disabled = true;
+
+        $uid = @session_id();
+
+        if ( is_user_logged_in() )
+            $uid = 'user_' . get_current_user_id();
+
+        $nonce_check = 'pods_upload_' . (int) $params->pod . '_' . $uid . '_' . $params->uri . '_' . (int) $params->field;
+
+        if ( true === $upload_disabled || !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, $nonce_check ) )
+            pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
+
+        $pod = array();
+        $field = array(
+            'type' => 'file',
+            'options' => array()
+        );
+
+        $api = pods_api();
+
+        if ( !empty( $params->pod ) ) {
+            $pod = $api->load_pod( array( 'id' => (int) $params->pod ) );
+            $field = $api->load_field( array( 'id' => (int) $params->field ) );
+
+            if ( empty( $pod ) || empty( $field ) || $pod[ 'id' ] != $field[ 'pod_id' ] || !isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) )
+                pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
+
+            if ( !in_array( $field[ 'type' ], PodsForm::file_field_types() ) )
+                pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
+        }
+
+        $method = $params->method;
+
+        // Cleaning up $params
+        unset( $params->action );
+        unset( $params->method );
+        unset( $params->_wpnonce );
+
+        $params->post_id = pods_var( 'post_id', $params, 0, null, true );
+
+        /**
+         * Upload a new file (advanced - returns URL and ID)
+         */
+        if ( 'upload' == $method ) {
+            $file = $_FILES[ 'Filedata' ];
+
+            $limit_size = pods_var( $field[ 'type' ] . '_restrict_filesize', $field[ 'options' ] );
+
+            if ( !empty( $limit_size ) ) {
+                if ( false !== stripos( $limit_size, 'MB' ) ) {
+                    $limit_size = (float) trim( str_ireplace( 'MB', '', $limit_size ) );
+                    $limit_size = $limit_size * 1025 * 1025; // convert to KB to B
+                }
+                elseif ( false !== stripos( $limit_size, 'KB' ) ) {
+                    $limit_size = (float) trim( str_ireplace( 'KB', '', $limit_size ) );
+                    $limit_size = $limit_size * 1025 * 1025; // convert to B
+                }
+                elseif ( false !== stripos( $limit_size, 'GB' ) ) {
+                    $limit_size = (float) trim( str_ireplace( 'GB', '', $limit_size ) );
+                    $limit_size = $limit_size * 1025 * 1025 * 1025; // convert to MB to KB to B
+                }
+                elseif ( false !== stripos( $limit_size, 'B' ) )
+                    $limit_size = (float) trim( str_ireplace( 'B', '', $limit_size ) );
+                else
+                    $limit_size = wp_max_upload_size();
+
+                if ( 0 < $limit_size && $limit_size < $file[ 'size' ] ) {
+                    $error = __( 'File size too large, max size is %s', 'pods' );
+                    $error = sprintf( $error, pods_var( $field[ 'type' ] . '_restrict_filesize', $field[ 'options' ] ) );
+
+                    pods_error( '<div style="color:#FF0000">Error: ' . $error . '</div>' );
+                }
+            }
+
+            $limit_file_type = pods_var( $field[ 'type' ] . '_type', $field[ 'options' ], 'images' );
+
+            if ( 'images' == $limit_file_type )
+                $limit_types = 'jpg,png,gif';
+            elseif ( 'video' == $limit_file_type )
+                $limit_types = 'mpg,mov,flv,mp4';
+            elseif ( 'audio' == $limit_file_type )
+                $limit_types = 'mp3,m4a,wav,wma';
+            elseif ( 'text' == $limit_file_type )
+                $limit_types = 'txt,rtx,csv,tsv';
+            elseif ( 'any' == $limit_file_type )
+                $limit_types = '';
+            else
+                $limit_types = pods_var( $field[ 'type' ] . '_allowed_extensions', $field[ 'options' ], '', null, true );
+
+            $limit_types = trim( str_replace( array( ' ', '.', "\n", "\t", ';' ), array( '', ',', ',', ',' ), $limit_types ), ',' );
+
+            if ( pods_wp_version( '3.5' ) ) {
+                $mime_types = wp_get_mime_types();
+
+                if ( in_array( $limit_file_type, array( 'images', 'audio', 'video' ) ) ) {
+                    $new_limit_types = array();
+
+                    foreach ( $mime_types as $type => $mime ) {
+                        if ( 0 === strpos( $mime, $limit_file_type ) ) {
+                            $type = explode( '|', $type );
+
+                            $new_limit_types = array_merge( $new_limit_types, $type );
+                        }
+                    }
+
+                    if ( !empty( $new_limit_types ) )
+                        $limit_types = implode( ',', $new_limit_types );
+                }
+                elseif ( 'any' != $limit_file_type ) {
+                    $new_limit_types = array();
+
+                    $limit_types = explode( ',', $limit_types );
+
+                    foreach ( $limit_types as $k => $limit_type ) {
+                        $found = false;
+
+                        foreach ( $mime_types as $type => $mime ) {
+                            if ( 0 === strpos( $mime, $limit_type ) ) {
+                                $type = explode( '|', $type );
+
+                                foreach ( $type as $t ) {
+                                    if ( !in_array( $t, $new_limit_types ) )
+                                        $new_limit_types[] = $t;
+                                }
+
+                                $found = true;
+                            }
+                        }
+
+                        if ( !$found )
+                            $new_limit_types[] = $limit_type;
+                    }
+
+                    if ( !empty( $new_limit_types ) )
+                        $limit_types = implode( ', ', $new_limit_types );
+                }
+            }
+
+            $limit_types = explode( ',', $limit_types );
+
+            $limit_types = array_filter( array_unique( $limit_types ) );
+
+            if ( !empty( $limit_types ) ) {
+                $ok = false;
+
+                foreach ( $limit_types as $limit_type ) {
+                    $limit_type = '.' . trim( $limit_type, ' .' );
+
+                    $pos = ( strlen( $file[ 'name' ] ) - strlen( $limit_type ) );
+
+                    if ( $pos === stripos( $file[ 'name' ], $limit_type ) ) {
+                        $ok = true;
+
+                        break;
+                    }
+                }
+
+                if ( false === $ok ) {
+                    $error = __( 'File type not allowed, please use one of the following: %s', 'pods' );
+                    $error = sprintf( $error, '.' . implode( ', .', $limit_types ) );
+
+                    pods_error( '<div style="color:#FF0000">Error: ' . $error . '</div>' );
+                }
+            }
+
+            $custom_handler = apply_filters( 'pods_upload_handle', null, 'Filedata', $params->post_id, $params );
+
+            if ( null === $custom_handler ) {
+                $attachment_id = media_handle_upload( 'Filedata', $params->post_id );
+
+                if ( is_object( $attachment_id ) ) {
+                    $errors = array();
+
+                    foreach ( $attachment_id->errors[ 'upload_error' ] as $error_code => $error_message ) {
+                        $errors[] = '[' . $error_code . '] ' . $error_message;
+                    }
+
+                    pods_error( '<div style="color:#FF0000">Error: ' . implode( '</div><div>', $errors ) . '</div>' );
+                }
+                else {
+                    $attachment = get_post( $attachment_id, ARRAY_A );
+
+                    $attachment[ 'filename' ] = basename( $attachment[ 'guid' ] );
+
+                    $thumb = wp_get_attachment_image_src( $attachment[ 'ID' ], 'thumbnail', true );
+                    $attachment[ 'thumbnail' ] = $thumb[ 0 ];
+
+                    $attachment = apply_filters( 'pods_upload_attachment', $attachment, $params->post_id );
+
+                    wp_send_json( $attachment );
+                }
+            }
+        }
+
+        die(); // KBAI!
     }
 }

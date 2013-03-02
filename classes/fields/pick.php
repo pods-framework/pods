@@ -54,6 +54,17 @@ class PodsField_Pick extends PodsField {
     }
 
     /**
+     * Add admin_init actions
+     *
+     * @since 2.3
+     */
+    public function admin_init () {
+        // AJAX for Relationship lookups
+        add_action( 'wp_ajax_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
+        add_action( 'wp_ajax_nopriv_pods_relationship', array( $this, 'admin_ajax_relationship' ) );
+    }
+
+    /**
      * Add options and set defaults to
      *
      * @return array
@@ -1081,5 +1092,306 @@ class PodsField_Pick extends PodsField {
         }
 
         return $data;
+    }
+
+    /**
+     * Handle autocomplete AJAX
+     *
+     * @since 2.3
+     */
+    public function admin_ajax_relationship () {
+        global $wpdb, $polylang;
+
+        if ( false === headers_sent() ) {
+            if ( '' == session_id() )
+                @session_start();
+        }
+
+        // Sanitize input
+        $params = stripslashes_deep( (array) $_POST );
+
+        foreach ( $params as $key => $value ) {
+            if ( 'action' == $key )
+                continue;
+
+            unset( $params[ $key ] );
+
+            $params[ str_replace( '_podsfix_', '', $key ) ] = $value;
+        }
+
+        $params = (object) $params;
+
+        $uid = @session_id();
+
+        if ( is_user_logged_in() )
+            $uid = 'user_' . get_current_user_id();
+
+        $nonce_check = 'pods_relationship_' . (int) $params->pod . '_' . $uid . '_' . $params->uri . '_' . (int) $params->field;
+
+        if ( !isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, $nonce_check ) )
+            pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
+
+        $api = pods_api();
+
+        $pod = $api->load_pod( array( 'id' => (int) $params->pod ) );
+        $field = $api->load_field( array( 'id' => (int) $params->field, 'table_info' => true ) );
+
+        if ( !isset( $params->query ) || strlen( trim( $params->query ) ) < 1 )
+            pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
+        elseif ( empty( $pod ) || empty( $field ) || $pod[ 'id' ] != $field[ 'pod_id' ] || !isset( $pod[ 'fields' ][ $field[ 'name' ] ] ) )
+            pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
+        elseif ( 'pick' != $field[ 'type' ] || empty( $field[ 'table_info' ] ) )
+            pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
+        elseif ( 'single' == pods_var( 'pick_format_type', $field ) && 'autocomplete' == pods_var( 'pick_format_single', $field ) )
+            pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
+        elseif ( 'multi' == pods_var( 'pick_format_type', $field ) && 'autocomplete' == pods_var( 'pick_format_multi', $field ) )
+            pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
+
+        if ( 'pod' == pods_var( 'pick_object', $field ) && 0 < strlen( pods_var( 'pick_val', $field ) ) ) {
+            $data = pods_data( pods_var( 'pick_val', $field ) );
+
+            $where = pods_var_raw( 'pick_where', $field[ 'options' ] );
+
+            if ( !empty( $where ) )
+                $where = pods_evaluate_tags( $where, true );
+        }
+        else {
+            $field[ 'table_info' ] = $api->get_table_info( pods_var( 'pick_object', $field ), pods_var( 'pick_val', $field ) );
+
+            $data = pods_data();
+            $data->table( $field[ 'table_info' ] );
+
+            $where = pods_var_raw( 'pick_where', $field[ 'options' ], $field[ 'table_info' ][ 'where_default' ], null, true );
+
+            if ( !empty( $where ) && $field[ 'table_info' ][ 'where_default' ] != $where )
+                $where = pods_evaluate_tags( $params[ 'where' ], true );
+
+            /* not needed yet
+            if ( !empty( $params[ 'orderby' ] ) )
+                $params[ 'orderby' ] = pods_evaluate_tags( $params[ 'orderby' ], true );
+
+            if ( !empty( $params[ 'groupby' ] ) )
+                $params[ 'groupby' ] = pods_evaluate_tags( $params[ 'groupby' ], true );*/
+        }
+
+        if ( empty( $where ) )
+            $where = array();
+        else
+            $where = (array) $where;
+
+        $data_params = array(
+            'select' => "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`",
+            'table' => $data->table,
+            'where' => $where,
+            'groupby' => pods_var_raw( 'pick_groupby', $field[ 'options' ], null, null, true ),
+            'limit' => 30
+        );
+
+        $display = trim( pods_var( 'pick_display', $field[ 'options' ] ), ' {@}' );
+
+        if ( 0 < strlen( $display ) ) {
+            if ( isset( $options[ 'table_info' ][ 'pod' ] ) && !empty( $options[ 'table_info' ][ 'pod' ] ) ) {
+                if ( isset( $options[ 'table_info' ][ 'pod' ][ 'object_fields' ] ) && isset( $options[ 'table_info' ][ 'pod' ][ 'object_fields' ][ $display ] ) ) {
+                    $data->field_index = $display;
+
+                    $data_params[ 'select' ] = "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`";
+                }
+                elseif ( isset( $options[ 'table_info' ][ 'pod' ][ 'fields' ][ $display ] ) ) {
+                    $data->field_index = $display;
+
+                    if ( 'table' == $options[ 'table_info' ][ 'pod' ][ 'storage' ] && !in_array( $options[ 'table_info' ][ 'pod' ][ 'type' ], array(
+                        'pod',
+                        'table'
+                    ) )
+                    )
+                        $data_params[ 'select' ] = "`t`.`{$data->field_id}`, `d`.`{$data->field_index}`";
+                    else
+                        $data_params[ 'select' ] = "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`";
+                }
+            }
+            elseif ( isset( $options[ 'table_info' ][ 'object_fields' ] ) && isset( $options[ 'table_info' ][ 'object_fields' ][ $display ] ) ) {
+                $data->field_index = $display;
+
+                $data_params[ 'select' ] = "`t`.`{$data->field_id}`, `t`.`{$data->field_index}`";
+            }
+        }
+
+        $lookup_where = array(
+            "`t`.`{$data->field_index}` LIKE '%" . like_escape( $params->query ) . "%'"
+        );
+
+        $extra = '';
+
+        // @todo Hook into WPML for each table
+        if ( $wpdb->users == $data->table ) {
+            $lookup_where[] = "`t`.`display_name` LIKE '%" . like_escape( $params->query ) . "%'";
+            $lookup_where[] = "`t`.`user_login` LIKE '%" . like_escape( $params->query ) . "%'";
+            $lookup_where[] = "`t`.`user_email` LIKE '%" . like_escape( $params->query ) . "%'";
+        }
+        elseif ( $wpdb->posts == $data->table ) {
+            $lookup_where[] = "`t`.`post_name` LIKE '%" . like_escape( $params->query ) . "%'";
+            $lookup_where[] = "`t`.`post_content` LIKE '%" . like_escape( $params->query ) . "%'";
+            $lookup_where[] = "`t`.`post_excerpt` LIKE '%" . like_escape( $params->query ) . "%'";
+            $extra = ', `t`.`post_type`';
+        }
+        elseif ( $wpdb->terms == $data->table ) {
+            $lookup_where[] = "`t`.`slug` LIKE '%" . like_escape( $params->query ) . "%'";
+            $extra = ', `tt`.`taxonomy`';
+        }
+        elseif ( $wpdb->comments == $data->table ) {
+            $lookup_where[] = "`t`.`comment_content` LIKE '%" . like_escape( $params->query ) . "%'";
+            $lookup_where[] = "`t`.`comment_author` LIKE '%" . like_escape( $params->query ) . "%'";
+            $lookup_where[] = "`t`.`comment_author_email` LIKE '%" . like_escape( $params->query ) . "%'";
+        }
+
+        if ( !empty( $lookup_where ) )
+            $data_params[ 'where' ][] = ' ( ' . implode( ' OR ', $lookup_where ) . ' ) ';
+
+        $orderby = array();
+        $orderby[] = "(`t`.`{$data->field_index}` LIKE '%" . like_escape( $params->query ) . "%' ) DESC";
+
+        $pick_orderby = pods_var_raw( 'pick_orderby', $field[ 'options' ], null, null, true );
+
+        if ( 0 < strlen( $pick_orderby ) )
+            $orderby[] = $pick_orderby;
+
+        $orderby[] = "`t`.`{$data->field_index}`";
+        $orderby[] = "`t`.`{$data->field_id}`";
+
+        $data_params[ 'select' ] .= $extra;
+        $data_params[ 'orderby' ] = $orderby;
+
+        if ( 'user' == pods_var( 'pick_object', $field ) ) {
+            $roles = pods_var( 'pick_user_role', $field[ 'options' ] );
+
+            if ( !empty( $roles ) ) {
+                $where = array();
+
+                foreach ( (array) $roles as $role ) {
+                    if ( empty( $role ) )
+                        continue;
+
+                    $where[] = 'wp_' . ( is_multisite() ? get_current_blog_id() . '_' : '' ) . 'capabilities.meta_value LIKE "%\"' . $role . '\"%"';
+                }
+
+                if ( !empty( $where ) )
+                    $data_params[ 'where' ][] = '( ' . implode( ' OR ', $where ) . ' )';
+            }
+        }
+
+        $results = $data->select( $data_params );
+
+        $items = array();
+        $ids = array();
+
+        $pick_data = apply_filters( 'pods_field_pick_data_ajax', array(), $field[ 'name' ], null, $field, $pod, 0, $data );
+
+        if ( !empty( $pick_data ) ) {
+            foreach ( $pick_data as $id => $text ) {
+                $items[] = array(
+                    'id' => $id,
+                    'text' => $text
+                );
+            }
+        }
+        elseif ( !empty( $results ) ) {
+            foreach ( $results as $result ) {
+                $result = get_object_vars( $result );
+
+                // WPML integration for Post Types and Taxonomies
+                if ( in_array( $data->table, array(
+                    $wpdb->posts,
+                    $wpdb->terms
+                ) ) && function_exists( 'icl_object_id' )
+                ) {
+                    $object = '';
+
+                    if ( $wpdb->posts == $data->table )
+                        $object = $result[ 'post_type' ];
+                    elseif ( $wpdb->terms == $data->table )
+                        $object = $result[ 'taxonomy' ];
+
+                    $id = icl_object_id( $result[ $data->field_id ], $object, false );
+
+                    if ( 0 < $id && !in_array( $id, $ids ) ) {
+                        $text = trim( $result[ $data->field_index ] );
+
+                        if ( $result[ $data->field_id ] != $id ) {
+                            if ( $wpdb->posts == $data->table )
+                                $text = trim( get_the_title( $id ) );
+                            elseif ( $wpdb->terms == $data->table )
+                                $text = trim( get_term( $id, $object )->name );
+                        }
+
+                        if ( strlen( $text ) < 1 )
+                            $text = '(No Title)';
+
+                        $items[] = array(
+                            'id' => $id,
+                            'text' => $text
+                        );
+
+                        $ids[] = $id;
+                    }
+                }
+                // Polylang integration for Post Types and Taxonomies
+                if ( in_array( $data->table, array(
+                    $wpdb->posts,
+                    $wpdb->terms
+                ) ) && is_object( $polylang ) && method_exists( $polylang, 'get_translation' )
+                ) {
+                    $object = '';
+
+                    if ( $wpdb->posts == $data->table )
+                        $object = $result[ 'post_type' ];
+                    elseif ( $wpdb->terms == $data->table )
+                        $object = $result[ 'taxonomy' ];
+
+                    $id = $polylang->get_translation( $object, $result[ $data->field_id ] );
+
+                    if ( 0 < $id && !in_array( $id, $ids ) ) {
+                        $text = trim( $result[ $data->field_index ] );
+
+                        if ( $result[ $data->field_id ] != $id ) {
+                            if ( $wpdb->posts == $data->table )
+                                $text = trim( get_the_title( $id ) );
+                            elseif ( $wpdb->terms == $data->table )
+                                $text = trim( get_term( $id, $object )->name );
+                        }
+
+                        if ( strlen( $text ) < 1 )
+                            $text = '(No Title)';
+
+                        $items[] = array(
+                            'id' => $id,
+                            'text' => $text
+                        );
+
+                        $ids[] = $id;
+                    }
+                }
+                elseif ( !in_array( $result[ $data->field_id ], $ids ) ) {
+                    $result[ $data->field_index ] = trim( $result[ $data->field_index ] );
+
+                    if ( strlen( $result[ $data->field_index ] ) < 1 )
+                        $result[ $data->field_index ] = '(No Title)';
+
+                    $items[] = array(
+                        'id' => $result[ $data->field_id ],
+                        'text' => $result[ $data->field_index ]
+                    );
+
+                    $ids[] = $result[ $data->field_id ];
+                }
+            }
+        }
+
+        $items = array(
+            'results' => $items
+        );
+
+        wp_send_json( $items );
+
+        die(); // KBAI!
     }
 }

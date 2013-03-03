@@ -643,7 +643,7 @@ class PodsField_Pick extends PodsField {
         $data = pods_var_raw( 'data', $options, array(), null, true );
 
         if ( empty( $data ) )
-            $data = $this->get_simple_data( $name, $value, $options, $pod, $id, 'data' );
+            $data = $this->get_object_data( $name, $value, $options, $pod, $id, 'data' );
 
         if ( 'single' == pods_var( 'pick_format_type', $options, 'single' ) && 'dropdown' == pods_var( 'pick_format_single', $options, 'dropdown' ) )
             $data = array_merge( array( '' => pods_var_raw( 'pick_select_text', $options, __( '-- Select One --', 'pods' ), null, true ) ), $data );
@@ -683,7 +683,7 @@ class PodsField_Pick extends PodsField {
             $data = pods_var_raw( 'data', $options, array(), null, true );
 
             if ( empty( $data ) )
-                $data = $this->get_simple_data( $name, $value, $options, $pod, $id, 'simple_value' );
+                $data = $this->get_object_data( $name, $value, $options, $pod, $id, 'simple_value' );
 
             $key = 0;
 
@@ -758,7 +758,7 @@ class PodsField_Pick extends PodsField {
         $data = pods_var_raw( 'data', $options, array(), null, true );
 
         if ( empty( $data ) )
-            $data = $this->get_simple_data( $name, $value, $options, $pod, $id, 'value_to_label' );
+            $data = $this->get_object_data( $name, $value, $options, $pod, $id, 'value_to_label' );
 
         $labels = array();
 
@@ -775,7 +775,7 @@ class PodsField_Pick extends PodsField {
     }
 
     /**
-     * Get data from simple relationship objects
+     * Get data from relationship objects
      *
      * @param string $name The name of the field
      * @param string|array $value The value of the field
@@ -784,9 +784,9 @@ class PodsField_Pick extends PodsField {
      * @param int $id Item ID
      * @param string $context Data context
      *
-     * @return array|bool Simple Data, or false if no match
+     * @return array|bool Object data
      */
-    private function get_simple_data ( $name, $value = null, $options = null, $pod = null, $id = null, $context = null ) {
+    private function get_object_data ( $name, $value = null, $options = null, $pod = null, $id = null, $context = null ) {
         $data = array();
 
         if ( 'post-status' == $options[ 'pick_object' ] ) {
@@ -1009,8 +1009,56 @@ class PodsField_Pick extends PodsField {
             if ( $hierarchy && $options[ 'table_info' ][ 'object_hierarchical' ] && !empty( $options[ 'table_info' ][ 'field_parent' ] ) )
                 $params[ 'select' ] .= ', ' . $options[ 'table_info' ][ 'field_parent_select' ];
 
-            if ( $autocomplete )
+            if ( $autocomplete ) {
                 $params[ 'limit' ] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', 30, $name, $value, $options, $pod, $id );
+
+                if ( 'admin_ajax_relationship' == $context ) {
+                    $lookup_where = array(
+                        "`t`.`{$data->field_index}` LIKE '%" . like_escape( $params->query ) . "%'"
+                    );
+
+                    $extra = '';
+
+                    // @todo Hook into WPML for each table
+                    if ( $wpdb->users == $data->table ) {
+                        $lookup_where[ ] = "`t`.`display_name` LIKE '%" . like_escape( $params->query ) . "%'";
+                        $lookup_where[ ] = "`t`.`user_login` LIKE '%" . like_escape( $params->query ) . "%'";
+                        $lookup_where[ ] = "`t`.`user_email` LIKE '%" . like_escape( $params->query ) . "%'";
+                    }
+                    elseif ( $wpdb->posts == $data->table ) {
+                        $lookup_where[ ] = "`t`.`post_name` LIKE '%" . like_escape( $params->query ) . "%'";
+                        $lookup_where[ ] = "`t`.`post_content` LIKE '%" . like_escape( $params->query ) . "%'";
+                        $lookup_where[ ] = "`t`.`post_excerpt` LIKE '%" . like_escape( $params->query ) . "%'";
+                        $extra = ', `t`.`post_type`';
+                    }
+                    elseif ( $wpdb->terms == $data->table ) {
+                        $lookup_where[ ] = "`t`.`slug` LIKE '%" . like_escape( $params->query ) . "%'";
+                        $extra = ', `tt`.`taxonomy`';
+                    }
+                    elseif ( $wpdb->comments == $data->table ) {
+                        $lookup_where[ ] = "`t`.`comment_content` LIKE '%" . like_escape( $params->query ) . "%'";
+                        $lookup_where[ ] = "`t`.`comment_author` LIKE '%" . like_escape( $params->query ) . "%'";
+                        $lookup_where[ ] = "`t`.`comment_author_email` LIKE '%" . like_escape( $params->query ) . "%'";
+                    }
+
+                    if ( !empty( $lookup_where ) )
+                        $data_params[ 'where' ][ ] = ' ( ' . implode( ' OR ', $lookup_where ) . ' ) ';
+
+                    $orderby = array();
+                    $orderby[ ] = "(`t`.`{$data->field_index}` LIKE '%" . like_escape( $params->query ) . "%' ) DESC";
+
+                    $pick_orderby = pods_var_raw( 'pick_orderby', $field[ 'options' ], null, null, true );
+
+                    if ( 0 < strlen( $pick_orderby ) )
+                        $orderby[ ] = $pick_orderby;
+
+                    $orderby[ ] = "`t`.`{$data->field_index}`";
+                    $orderby[ ] = "`t`.`{$data->field_id}`";
+
+                    $data_params[ 'select' ] .= $extra;
+                    $data_params[ 'orderby' ] = $orderby;
+                }
+            }
 
             if ( 'user' == pods_var( 'pick_object', $options ) ) {
                 $roles = pods_var( 'pick_user_role', $options );
@@ -1089,6 +1137,85 @@ class PodsField_Pick extends PodsField {
                     }
                 }
             }
+            /*
+                // WPML integration for Post Types and Taxonomies
+                if ( in_array( $data->table, array( $wpdb->posts, $wpdb->terms ) ) && function_exists( 'icl_object_id' ) ) {
+                    $object = '';
+
+                    if ( $wpdb->posts == $data->table )
+                        $object = $result[ 'post_type' ];
+                    elseif ( $wpdb->terms == $data->table )
+                        $object = $result[ 'taxonomy' ];
+
+                    $id = icl_object_id( $result[ $data->field_id ], $object, false );
+
+                    if ( 0 < $id && !in_array( $id, $ids ) ) {
+                        $text = trim( $result[ $data->field_index ] );
+
+                        if ( $result[ $data->field_id ] != $id ) {
+                            if ( $wpdb->posts == $data->table )
+                                $text = trim( get_the_title( $id ) );
+                            elseif ( $wpdb->terms == $data->table )
+                                $text = trim( get_term( $id, $object )->name );
+                        }
+
+                        if ( strlen( $text ) < 1 )
+                            $text = '(No Title)';
+
+                        $items[] = array(
+                            'id' => $id,
+                            'text' => $text
+                        );
+
+                        $ids[] = $id;
+                    }
+                }
+                // Polylang integration for Post Types and Taxonomies
+                if ( in_array( $data->table, array( $wpdb->posts, $wpdb->terms ) ) && is_object( $polylang ) && method_exists( $polylang, 'get_translation' ) ) {
+                    $object = '';
+
+                    if ( $wpdb->posts == $data->table )
+                        $object = $result[ 'post_type' ];
+                    elseif ( $wpdb->terms == $data->table )
+                        $object = $result[ 'taxonomy' ];
+
+                    $id = $polylang->get_translation( $object, $result[ $data->field_id ] );
+
+                    if ( 0 < $id && !in_array( $id, $ids ) ) {
+                        $text = trim( $result[ $data->field_index ] );
+
+                        if ( $result[ $data->field_id ] != $id ) {
+                            if ( $wpdb->posts == $data->table )
+                                $text = trim( get_the_title( $id ) );
+                            elseif ( $wpdb->terms == $data->table )
+                                $text = trim( get_term( $id, $object )->name );
+                        }
+
+                        if ( strlen( $text ) < 1 )
+                            $text = '(No Title)';
+
+                        $items[] = array(
+                            'id' => $id,
+                            'text' => $text
+                        );
+
+                        $ids[] = $id;
+                    }
+                }
+                elseif ( !in_array( $result[ $data->field_id ], $ids ) ) {
+                    $result[ $data->field_index ] = trim( $result[ $data->field_index ] );
+
+                    if ( strlen( $result[ $data->field_index ] ) < 1 )
+                        $result[ $data->field_index ] = '(No Title)';
+
+                    $items[] = array(
+                        'id' => $result[ $data->field_id ],
+                        'text' => $result[ $data->field_index ]
+                    );
+
+                    $ids[] = $result[ $data->field_id ];
+                }
+             */
         }
 
         return $data;

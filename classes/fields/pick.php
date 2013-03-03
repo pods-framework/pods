@@ -307,7 +307,12 @@ class PodsField_Pick extends PodsField {
             $ignore = array( 'attachment', 'revision', 'nav_menu_item' );
 
             foreach ( $post_types as $post_type => $label ) {
-                if ( in_array( $post_type, $ignore ) || empty( $post_type ) || 0 === strpos( $post_type, '_pods_' ) ) {
+                if ( in_array( $post_type, $ignore ) || empty( $post_type ) ) {
+                    unset( $post_types[ $post_type ] );
+
+                    continue;
+                }
+                elseif ( 0 === strpos( $post_type, '_pods_' ) && !in_array( $post_type, array( '_pods_page', '_pods_template' ) ) ) {
                     unset( $post_types[ $post_type ] );
 
                     continue;

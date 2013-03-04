@@ -225,11 +225,12 @@ class PodsField_Number extends PodsField {
      * @since 2.0
      */
     public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        $thousands = ',';
-        $dot = '.';
+        global $wp_locale;
 
-        if ( '9999.99' == pods_var( 'number_format', $options ) )
+        if ( '9999.99' == pods_var( 'number_format', $options ) ) {
             $thousands = '';
+            $dot = '.';
+        }
         elseif ( '9999,99' == pods_var( 'number_format', $options ) ) {
             $thousands = '';
             $dot = ',';
@@ -237,6 +238,10 @@ class PodsField_Number extends PodsField {
         elseif ( '9.999,99' == pods_var( 'number_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
+        }
+        else {
+            $thousands = $wp_locale->number_format[ 'thousands_sep' ];
+            $dot = $wp_locale->number_format[ 'decimal_point' ];
         }
 
         return '\-*[0-9\\' . implode( '\\', array_filter( array( $dot, $thousands ) ) ) . ']+';
@@ -257,12 +262,13 @@ class PodsField_Number extends PodsField {
      * @since 2.0
      */
     public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
-        $label = pods_var( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
+        global $wp_locale;
 
-        $thousands = ',';
-        $dot = '.';
-
-        if ( '9999,99' == pods_var( 'number_format', $options ) ) {
+        if ( '9999.99' == pods_var( 'number_format', $options ) ) {
+            $thousands = ',';
+            $dot = '.';
+        }
+        elseif ( '9999,99' == pods_var( 'number_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
         }
@@ -270,12 +276,18 @@ class PodsField_Number extends PodsField {
             $thousands = '.';
             $dot = ',';
         }
+        else {
+            $thousands = $wp_locale->number_format[ 'thousands_sep' ];
+            $dot = $wp_locale->number_format[ 'decimal_point' ];
+        }
 
         $check = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
 
-        $check = preg_replace( '/[^0-9\.\-]/', '', $check );
+        $check = preg_replace( '/[0-9\.\-]/', '', $check );
 
-        if ( 0 < strlen( $check ) && !is_numeric( $check ) )
+        $label = pods_var( 'label', $options, ucwords( str_replace( '_', ' ', $name ) ) );
+
+        if ( 0 < strlen( $check ) )
             return pods_error( sprintf( __( '%s is not numeric', 'pods' ), $label, $this ) );
 
         return true;
@@ -296,10 +308,13 @@ class PodsField_Number extends PodsField {
      * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-        $thousands = ',';
-        $dot = '.';
+        global $wp_locale;
 
-        if ( '9999,99' == pods_var( 'number_format', $options ) ) {
+        if ( '9999.99' == pods_var( 'number_format', $options ) ) {
+            $thousands = ',';
+            $dot = '.';
+        }
+        elseif ( '9999,99' == pods_var( 'number_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
         }
@@ -307,10 +322,14 @@ class PodsField_Number extends PodsField {
             $thousands = '.';
             $dot = ',';
         }
+        else {
+            $thousands = $wp_locale->number_format[ 'thousands_sep' ];
+            $dot = $wp_locale->number_format[ 'decimal_point' ];
+        }
 
         $value = str_replace( array( $thousands, $dot ), array( '', '.' ), $value );
 
-        $value = preg_replace( '/[^0-9\.\-]/', '', $value );
+        $value = preg_replace( '/[^0-9\.]/', '', $value );
 
         $decimals = pods_absint( (int) pods_var( 'number_decimals', $options, 0, null, true ) );
 
@@ -349,11 +368,12 @@ class PodsField_Number extends PodsField {
      * @since 2.0
      */
     public function format ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
-        $thousands = ',';
-        $dot = '.';
+        global $wp_locale;
 
-        if ( '9999.99' == pods_var( 'number_format', $options ) )
+        if ( '9999.99' == pods_var( 'number_format', $options ) ) {
             $thousands = '';
+            $dot = '.';
+        }
         elseif ( '9999,99' == pods_var( 'number_format', $options ) ) {
             $thousands = '';
             $dot = ',';
@@ -361,6 +381,10 @@ class PodsField_Number extends PodsField {
         elseif ( '9.999,99' == pods_var( 'number_format', $options ) ) {
             $thousands = '.';
             $dot = ',';
+        }
+        else {
+            $thousands = $wp_locale->number_format[ 'thousands_sep' ];
+            $dot = $wp_locale->number_format[ 'decimal_point' ];
         }
 
         if ( 'i18n' == pods_var( 'number_format', $options ) )

@@ -400,7 +400,7 @@ class PodsField_Currency extends PodsField {
 
         $currency_sign = self::$currencies[ $currency ];
 
-        $value = str_replace( array( $thousands, $dot ), array( '', '.', $currency_sign ), $value );
+        $value = str_replace( array( $thousands, $dot, $currency_sign ), array( '', '.', '' ), $value );
 
         $value = preg_replace( '/[^0-9\.]/', '', $value );
 

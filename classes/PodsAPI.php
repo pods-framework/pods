@@ -2924,7 +2924,7 @@ class PodsAPI {
                             $object_type = 'post';
 
                         if ( 'pick' != $type || !in_array( $fields[ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
-                            delete_metadata( $object_type, $params->id, $field, '', true );
+                            delete_metadata( $object_type, $params->id, $field, '', false );
 
                             if ( !empty( $values ) ) {
                                 update_metadata( $object_type, $params->id, '_pods_' . $field, $values );

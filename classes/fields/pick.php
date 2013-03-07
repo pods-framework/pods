@@ -1164,7 +1164,7 @@ class PodsField_Pick extends PodsField {
                         $result[ $search_data->field_index ] = trim( $result[ $search_data->field_index ] );
 
                         if ( 0 < strlen( $display_filter ) )
-                            $value = apply_filters( $display_filter, $value );
+                            $value = apply_filters( $display_filter, $value, $search_data->field_id );
 
                         if ( in_array( $options[ 'pick_object' ], array( 'site', 'network' ) ) )
                             $result[ $search_data->field_index ] = $result[ $search_data->field_index ] . $result[ 'path' ];

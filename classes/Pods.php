@@ -345,7 +345,7 @@ class Pods {
                 $value = PodsForm::field_method( $this->fields[ $params->name ][ 'type' ], 'value', $value, $this->fields[ $params->name ] );
 
             if ( 0 < strlen( pods_var( 'display_filter', $this->fields[ $params->name ] ) ) )
-                $value = apply_filters( pods_var( 'display_filter', $this->fields[ $params->name ] ), $value );
+                $value = apply_filters( pods_var( 'display_filter', $this->fields[ $params->name ] ), $value, $this->id() );
             else {
                 $value = PodsForm::display(
                     $this->fields[ $params->name ][ 'type' ],
@@ -946,7 +946,7 @@ class Pods {
         // @todo Expand this into traversed fields too
         if ( false === $params->raw && false === $params->in_form && isset( $this->fields[ $params->name ] ) ) {
             if ( 0 < strlen( pods_var( 'display_filter', $this->fields[ $params->name ][ 'options' ] ) ) )
-                $value = apply_filters( pods_var( 'display_filter', $this->fields[ $params->name ][ 'options' ] ), $value );
+                $value = apply_filters( pods_var( 'display_filter', $this->fields[ $params->name ][ 'options' ] ), $value, $this->id() );
             else {
                 $value = PodsForm::display(
                     $this->fields[ $params->name ][ 'type' ],

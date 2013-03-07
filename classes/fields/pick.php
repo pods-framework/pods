@@ -1190,6 +1190,8 @@ class PodsField_Pick extends PodsField {
                     $results = $search_data->select( $params );
 
                     if ( !empty( $results ) ) {
+                        $display_filter = pods_var( 'display_filter', pods_var_raw( 'options', pods_var_raw( $search_data->field_index, $search_data->pod_data[ 'object_fields' ] ) ) );
+
                         foreach ( $results as $result ) {
                             $result = get_object_vars( $result );
 
@@ -1207,6 +1209,8 @@ class PodsField_Pick extends PodsField {
                                 $id = icl_object_id( $result[ $search_data->field_id ], $object, false );
 
                                 if ( 0 < $id && !in_array( $id, $ids ) ) {
+                                    $search_data->field_id = $id;
+
                                     $text = $result[ $search_data->field_index ];
 
                                     if ( $result[ $search_data->field_id ] != $id ) {
@@ -1224,6 +1228,8 @@ class PodsField_Pick extends PodsField {
                                 $id = $polylang->get_translation( $object, $result[ $search_data->field_id ] );
 
                                 if ( 0 < $id && !in_array( $id, $ids ) ) {
+                                    $search_data->field_id = $id;
+
                                     $text = $result[ $search_data->field_index ];
 
                                     if ( $result[ $search_data->field_id ] != $id ) {
@@ -1236,6 +1242,9 @@ class PodsField_Pick extends PodsField {
                                     $result[ $search_data->field_index ] = $text;
                                 }
                             }
+
+                            if ( 0 < strlen( $display_filter ) )
+                                $value = apply_filters( $display_filter, $value, $search_data->field_id );
 
                             if ( strlen( $result[ $search_data->field_index ] ) < 1 )
                                 $result[ $search_data->field_index ] = '(No Title)';

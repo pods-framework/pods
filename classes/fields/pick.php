@@ -1232,8 +1232,24 @@ class PodsField_Pick extends PodsField {
                             }
                         }
 
-                        if ( 0 < strlen( $display_filter ) )
-                            $value = apply_filters( $display_filter, $value, $search_data->field_id );
+                        if ( 0 < strlen( $display_filter ) ) {
+                            $display_filter_args = pods_var( 'display_filter_args', pods_var_raw( 'options', pods_var_raw( $search_data->field_index, $search_data->pod_data[ 'object_fields' ] ) ) );
+
+                            $args = array(
+                                $display_filter,
+                                $result[ $search_data->field_index ]
+                            );
+
+                            if ( !empty( $display_filter_args ) ) {
+                                foreach ( (array) $display_filter_args as $display_filter_arg ) {
+                                    if ( isset( $result[ $display_filter_arg ] ) )
+                                        $args[] = $result[ $display_filter_arg ];
+                                }
+                            }
+
+                            $result[ $search_data->field_index ] = call_user_func_array( 'apply_filters', $args );
+
+                        }
 
                         if ( in_array( $options[ 'pick_object' ], array( 'site', 'network' ) ) )
                             $result[ $search_data->field_index ] = $result[ $search_data->field_index ] . $result[ 'path' ];

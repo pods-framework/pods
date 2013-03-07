@@ -325,12 +325,12 @@ class PodsData {
             $table = $this->api->get_table_info( $object_type, $object );
 
         if ( !empty( $table ) && is_array( $table ) ) {
-            $table[ 'id' ] = pods_var( 'id', $table[ 'pod' ], 0 );
+            $table[ 'id' ] = pods_var( 'id', $table[ 'pod' ], 0, null, true );
             $table[ 'name' ] = pods_var( 'name', $table[ 'pod' ], $table[ 'object_type' ], null, true );
-            $table[ 'type' ] = pods_var_raw( 'type', $table[ 'pod' ], $table[ 'object_type' ] );
-            $table[ 'storage' ] = pods_var_raw( 'storage', $table[ 'pod' ], ( 'taxonomy' == $table[ 'object_type' ] ? 'none' : 'meta' ) );
+            $table[ 'type' ] = pods_var_raw( 'type', $table[ 'pod' ], $table[ 'object_type' ], null, true );
+            $table[ 'storage' ] = pods_var_raw( 'storage', $table[ 'pod' ], ( 'taxonomy' == $table[ 'object_type' ] ? 'none' : 'meta' ), null, true );
             $table[ 'fields' ] = pods_var_raw( 'fields', $table[ 'pod' ], array() );
-            $table[ 'object_fields' ] = pods_var_raw( 'object_fields', $table[ 'pod' ], $this->api->get_wp_object_fields( $table[ 'object_type' ] ) );
+            $table[ 'object_fields' ] = pods_var_raw( 'object_fields', $table[ 'pod' ], $this->api->get_wp_object_fields( $table[ 'object_type' ] ), null, true );
 
             $this->pod_data = $table;
             $this->pod_id = $this->pod_data[ 'id' ];

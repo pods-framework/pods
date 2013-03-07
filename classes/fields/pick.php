@@ -1175,6 +1175,8 @@ class PodsField_Pick extends PodsField {
                 }
 
                 if ( !empty( $results ) ) {
+                    $ids = array();
+
                     $display_filter = pods_var( 'display_filter', pods_var_raw( 'options', pods_var_raw( $search_data->field_index, $search_data->pod_data[ 'object_fields' ] ) ) );
 
                     foreach ( $results as $result ) {
@@ -1248,6 +1250,9 @@ class PodsField_Pick extends PodsField {
                 }
             }
         }
+
+        if ( 'admin_ajax_relationship' == $context )
+            return $items;
 
         return $data;
     }

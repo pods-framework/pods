@@ -632,7 +632,7 @@ function pods_create_slug ( $orig, $strict = true ) {
  * @return string The unique slug name
  * @since 1.7.2
  */
-function pods_unique_slug( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj = null, $strict = true ) {
+function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $obj = null, $strict = true ) {
     $slug = pods_create_slug( $slug, $strict );
 
     $pod_data = array();

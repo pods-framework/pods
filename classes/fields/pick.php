@@ -852,6 +852,7 @@ class PodsField_Pick extends PodsField {
         }
 
         $data = apply_filters( 'pods_field_pick_object_data', null, $object_params );
+        $items = array();
 
         if ( null === $data ) {
             $data = array();
@@ -1079,26 +1080,29 @@ class PodsField_Pick extends PodsField {
 
                     if ( 'admin_ajax_relationship' == $context ) {
                         $lookup_where = array(
-                            "`t`.`{$search_data->field_index}` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'"
+                            $search_data->field_index => "`t`.`{$search_data->field_index}` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'"
                         );
 
                         // @todo Hook into WPML for each table
                         if ( $wpdb->users == $search_data->table ) {
-                            $lookup_where[] = "`t`.`display_name` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[] = "`t`.`user_login` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[] = "`t`.`user_email` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'display_name' ] = "`t`.`display_name` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'user_login' ] = "`t`.`user_login` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'user_email' ] = "`t`.`user_email` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
                         }
                         elseif ( $wpdb->posts == $search_data->table ) {
-                            $lookup_where[] = "`t`.`post_name` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[] = "`t`.`post_content` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[] = "`t`.`post_excerpt` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'post_title' ] = "`t`.`post_title` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'post_name' ] = "`t`.`post_name` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'post_content' ] = "`t`.`post_content` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'post_excerpt' ] = "`t`.`post_excerpt` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
                         }
-                        elseif ( $wpdb->terms == $search_data->table )
-                            $lookup_where[] = "`t`.`slug` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                        elseif ( $wpdb->terms == $search_data->table ) {
+                            $lookup_where[ 'name' ] = "`t`.`name` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'slug' ] = "`t`.`slug` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                        }
                         elseif ( $wpdb->comments == $search_data->table ) {
-                            $lookup_where[] = "`t`.`comment_content` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[] = "`t`.`comment_author` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[] = "`t`.`comment_author_email` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'comment_content' ] = "`t`.`comment_content` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'comment_author' ] = "`t`.`comment_author` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[ 'comment_author_email' ] = "`t`.`comment_author_email` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
                         }
 
                         if ( !empty( $lookup_where ) )
@@ -1137,7 +1141,7 @@ class PodsField_Pick extends PodsField {
                         $where = array();
 
                         foreach ( (array) $roles as $role ) {
-                            if ( empty( $role ) )
+                            if ( empty( $role ) || ( pods_clean_name( $role ) != $role && sanitize_title( $role ) != $role ) )
                                 continue;
 
                             $where[] = 'wp_' . ( is_multisite() ? get_current_blog_id() . '_' : '' ) . 'capabilities.meta_value LIKE "%\"' . $role . '\"%"';
@@ -1150,7 +1154,7 @@ class PodsField_Pick extends PodsField {
 
                 $results = $search_data->select( $params );
 
-                if ( $hierarchy && !empty( $results ) && $options[ 'table_info' ][ 'object_hierarchical' ] && !empty( $options[ 'table_info' ][ 'field_parent' ] ) ) {
+                if ( $hierarchy && !$autocomplete && !empty( $results ) && $options[ 'table_info' ][ 'object_hierarchical' ] && !empty( $options[ 'table_info' ][ 'field_parent' ] ) ) {
                     $args = array(
                         'id' => $options[ 'table_info' ][ 'field_id' ],
                         'index' => $options[ 'table_info' ][ 'field_index' ],
@@ -1176,9 +1180,9 @@ class PodsField_Pick extends PodsField {
                     $results = $search_data->select( $params );
                 }
 
-                if ( !empty( $results ) ) {
-                    $ids = array();
+                $ids = array();
 
+                if ( !empty( $results ) ) {
                     $display_filter = pods_var( 'display_filter', pods_var_raw( 'options', pods_var_raw( $search_data->field_index, $search_data->pod_data[ 'object_fields' ] ) ) );
 
                     foreach ( $results as $result ) {
@@ -1256,12 +1260,14 @@ class PodsField_Pick extends PodsField {
                         elseif ( strlen( $result[ $search_data->field_index ] ) < 1 )
                             $result[ $search_data->field_index ] = '(No Title)';
 
-                        $data[ $result[ $search_data->field_id ] ] = $result[ $search_data->field_index ];
-
-                        $items[] = array(
-                            'id' => $result[ $search_data->field_id ],
-                            'text' => $result[ $search_data->field_index ]
-                        );
+                        if ( 'admin_ajax_relationship' == $context ) {
+                            $items[] = array(
+                                'id' => $result[ $search_data->field_id ],
+                                'text' => $result[ $search_data->field_index ]
+                            );
+                        }
+                        else
+                            $data[ $result[ $search_data->field_id ] ] = $result[ $search_data->field_index ];
 
                         $ids[] = $result[ $search_data->field_id ];
                     }
@@ -1269,8 +1275,18 @@ class PodsField_Pick extends PodsField {
             }
         }
 
-        if ( 'admin_ajax_relationship' == $context )
+        if ( 'admin_ajax_relationship' == $context ) {
+            if ( empty( $items ) && !empty( $data ) ) {
+                foreach ( $data as $k => $v ) {
+                    $items[] = array(
+                        'id' => $k,
+                        'text' => $v
+                    );
+                }
+            }
+
             return $items;
+        }
 
         return $data;
     }

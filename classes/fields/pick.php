@@ -1125,6 +1125,8 @@ class PodsField_Pick extends PodsField {
                     $extra = ', `t`.`post_type`';
                 elseif ( $wpdb->terms == $search_data->table )
                     $extra = ', `tt`.`taxonomy`';
+                elseif ( $wpdb->comments == $search_data->table )
+                    $extra = ', `t`.`comment_type`';
 
                 $params[ 'select' ] .= $extra;
 
@@ -1182,7 +1184,7 @@ class PodsField_Pick extends PodsField {
                     foreach ( $results as $result ) {
                         $result = get_object_vars( $result );
 
-                        $result[ $search_data->field_id ] = trim( $result[ $search_data->field_index ] );
+                        $result[ $search_data->field_index ] = trim( $result[ $search_data->field_index ] );
 
                         $object = '';
 

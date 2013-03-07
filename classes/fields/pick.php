@@ -1082,48 +1082,51 @@ class PodsField_Pick extends PodsField {
                             "`t`.`{$search_data->field_index}` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'"
                         );
 
-                        $extra = '';
-
                         // @todo Hook into WPML for each table
                         if ( $wpdb->users == $search_data->table ) {
-                            $lookup_where[ ] = "`t`.`display_name` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[ ] = "`t`.`user_login` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[ ] = "`t`.`user_email` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[] = "`t`.`display_name` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[] = "`t`.`user_login` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[] = "`t`.`user_email` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
                         }
                         elseif ( $wpdb->posts == $search_data->table ) {
-                            $lookup_where[ ] = "`t`.`post_name` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[ ] = "`t`.`post_content` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[ ] = "`t`.`post_excerpt` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $extra = ', `t`.`post_type`';
+                            $lookup_where[] = "`t`.`post_name` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[] = "`t`.`post_content` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[] = "`t`.`post_excerpt` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
                         }
-                        elseif ( $wpdb->terms == $search_data->table ) {
-                            $lookup_where[ ] = "`t`.`slug` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $extra = ', `tt`.`taxonomy`';
-                        }
+                        elseif ( $wpdb->terms == $search_data->table )
+                            $lookup_where[] = "`t`.`slug` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
                         elseif ( $wpdb->comments == $search_data->table ) {
-                            $lookup_where[ ] = "`t`.`comment_content` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[ ] = "`t`.`comment_author` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
-                            $lookup_where[ ] = "`t`.`comment_author_email` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[] = "`t`.`comment_content` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[] = "`t`.`comment_author` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
+                            $lookup_where[] = "`t`.`comment_author_email` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%'";
                         }
 
                         if ( !empty( $lookup_where ) )
-                            $data_params[ 'where' ][ ] = ' ( ' . implode( ' OR ', $lookup_where ) . ' ) ';
+                            $params[ 'where' ][] = ' ( ' . implode( ' OR ', $lookup_where ) . ' ) ';
 
                         $orderby = array();
-                        $orderby[ ] = "(`t`.`{$search_data->field_index}` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%' ) DESC";
+                        $orderby[] = "(`t`.`{$search_data->field_index}` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%' ) DESC";
 
                         $pick_orderby = pods_var_raw( 'pick_orderby', $options, null, null, true );
 
                         if ( 0 < strlen( $pick_orderby ) )
-                            $orderby[ ] = $pick_orderby;
+                            $orderby[] = $pick_orderby;
 
-                        $orderby[ ] = "`t`.`{$search_data->field_index}`";
-                        $orderby[ ] = "`t`.`{$search_data->field_id}`";
+                        $orderby[] = "`t`.`{$search_data->field_index}`";
+                        $orderby[] = "`t`.`{$search_data->field_id}`";
 
-                        $data_params[ 'select' ] .= $extra;
-                        $data_params[ 'orderby' ] = $orderby;
+                        $params[ 'orderby' ] = $orderby;
                     }
                 }
+
+                $extra = '';
+
+                if ( $wpdb->posts == $search_data->table )
+                    $extra = ', `t`.`post_type`';
+                elseif ( $wpdb->terms == $search_data->table )
+                    $extra = ', `tt`.`taxonomy`';
+
+                $params[ 'select' ] .= $extra;
 
                 if ( 'user' == pods_var( 'pick_object', $options ) ) {
                     $roles = pods_var( 'pick_user_role', $options );
@@ -1155,26 +1158,7 @@ class PodsField_Pick extends PodsField {
                     $results = pods_hierarchical_select( $results, $args );
                 }
 
-                if ( !empty( $results ) && ( !$autocomplete || $search_data->total_found() <= $params[ 'limit' ] ) ) {
-                    $display_filter = pods_var( 'display_filter', pods_var_raw( 'options', pods_var_raw( $search_data->field_index, $search_data->pod_data[ 'object_fields' ] ) ) );
-
-                    foreach ( $results as $result ) {
-                        $result = get_object_vars( $result );
-
-                        $result[ $search_data->field_index ] = trim( $result[ $search_data->field_index ] );
-
-                        if ( 0 < strlen( $display_filter ) )
-                            $value = apply_filters( $display_filter, $value, $search_data->field_id );
-
-                        if ( in_array( $options[ 'pick_object' ], array( 'site', 'network' ) ) )
-                            $result[ $search_data->field_index ] = $result[ $search_data->field_index ] . $result[ 'path' ];
-                        elseif ( strlen( $result[ $search_data->field_index ] ) < 1 )
-                            $result[ $search_data->field_index ] = '(No Title)';
-
-                        $data[ $result[ $search_data->field_id ] ] = $result[ $search_data->field_index ];
-                    }
-                }
-                elseif ( !empty( $value ) && $autocomplete && $params[ 'limit' ] < $search_data->total_found() ) {
+                if ( !empty( $value ) && $autocomplete && $params[ 'limit' ] < $search_data->total_found() ) {
                     $ids = $value;
 
                     if ( is_array( $ids ) )
@@ -1188,76 +1172,78 @@ class PodsField_Pick extends PodsField {
                     $params[ 'where' ] .= "`t`.`{$search_data->field_id}` IN ( " . $ids . " )";
 
                     $results = $search_data->select( $params );
+                }
 
-                    if ( !empty( $results ) ) {
-                        $display_filter = pods_var( 'display_filter', pods_var_raw( 'options', pods_var_raw( $search_data->field_index, $search_data->pod_data[ 'object_fields' ] ) ) );
+                if ( !empty( $results ) ) {
+                    $display_filter = pods_var( 'display_filter', pods_var_raw( 'options', pods_var_raw( $search_data->field_index, $search_data->pod_data[ 'object_fields' ] ) ) );
 
-                        foreach ( $results as $result ) {
-                            $result = get_object_vars( $result );
+                    foreach ( $results as $result ) {
+                        $result = get_object_vars( $result );
 
-                            $result[ $search_data->field_index ] = trim( $result[ $search_data->field_index ] );
+                        $result[ $search_data->field_id ] = trim( $result[ $search_data->field_index ] );
 
-                            $object = '';
+                        $object = '';
 
-                            if ( $wpdb->posts == $search_data->table )
-                                $object = $result[ 'post_type' ];
-                            elseif ( $wpdb->terms == $search_data->table )
-                                $object = $result[ 'taxonomy' ];
+                        if ( $wpdb->posts == $search_data->table && isset( $result[ 'post_type' ] ) )
+                            $object = $result[ 'post_type' ];
+                        elseif ( $wpdb->terms == $search_data->table && isset( $result[ 'taxonomy' ] ) )
+                            $object = $result[ 'taxonomy' ];
 
-                            // WPML integration for Post Types and Taxonomies
-                            if ( in_array( $search_data->table, array( $wpdb->posts, $wpdb->terms ) ) && function_exists( 'icl_object_id' ) ) {
-                                $id = icl_object_id( $result[ $search_data->field_id ], $object, false );
+                        // WPML integration for Post Types and Taxonomies
+                        if ( in_array( $search_data->table, array( $wpdb->posts, $wpdb->terms ) ) && function_exists( 'icl_object_id' ) ) {
+                            $id = icl_object_id( $result[ $search_data->field_id ], $object, false );
 
-                                if ( 0 < $id && !in_array( $id, $ids ) ) {
-                                    $search_data->field_id = $id;
+                            if ( 0 < $id && !in_array( $id, $ids ) ) {
+                                $search_data->field_id = $id;
 
-                                    $text = $result[ $search_data->field_index ];
+                                $text = $result[ $search_data->field_index ];
 
-                                    if ( $result[ $search_data->field_id ] != $id ) {
-                                        if ( $wpdb->posts == $search_data->table )
-                                            $text = trim( get_the_title( $id ) );
-                                        elseif ( $wpdb->terms == $search_data->table )
-                                            $text = trim( get_term( $id, $object )->name );
-                                    }
-
-                                    $result[ $search_data->field_index ] = $text;
+                                if ( $result[ $search_data->field_id ] != $id ) {
+                                    if ( $wpdb->posts == $search_data->table )
+                                        $text = trim( get_the_title( $id ) );
+                                    elseif ( $wpdb->terms == $search_data->table )
+                                        $text = trim( get_term( $id, $object )->name );
                                 }
+
+                                $result[ $search_data->field_index ] = $text;
                             }
-                            // Polylang integration for Post Types and Taxonomies
-                            elseif ( in_array( $search_data->table, array( $wpdb->posts, $wpdb->terms ) ) && is_object( $polylang ) && method_exists( $polylang, 'get_translation' ) ) {
-                                $id = $polylang->get_translation( $object, $result[ $search_data->field_id ] );
-
-                                if ( 0 < $id && !in_array( $id, $ids ) ) {
-                                    $search_data->field_id = $id;
-
-                                    $text = $result[ $search_data->field_index ];
-
-                                    if ( $result[ $search_data->field_id ] != $id ) {
-                                        if ( $wpdb->posts == $search_data->table )
-                                            $text = trim( get_the_title( $id ) );
-                                        elseif ( $wpdb->terms == $search_data->table )
-                                            $text = trim( get_term( $id, $object )->name );
-                                    }
-
-                                    $result[ $search_data->field_index ] = $text;
-                                }
-                            }
-
-                            if ( 0 < strlen( $display_filter ) )
-                                $value = apply_filters( $display_filter, $value, $search_data->field_id );
-
-                            if ( strlen( $result[ $search_data->field_index ] ) < 1 )
-                                $result[ $search_data->field_index ] = '(No Title)';
-
-                            $data[ $result[ $search_data->field_id ] ] = $result[ $search_data->field_index ];
-
-                            $items[] = array(
-                                'id' => $result[ $search_data->field_id ],
-                                'text' => $result[ $search_data->field_index ]
-                            );
-
-                            $ids[] = $result[ $search_data->field_id ];
                         }
+                        // Polylang integration for Post Types and Taxonomies
+                        elseif ( in_array( $search_data->table, array( $wpdb->posts, $wpdb->terms ) ) && is_object( $polylang ) && method_exists( $polylang, 'get_translation' ) ) {
+                            $id = $polylang->get_translation( $object, $result[ $search_data->field_id ] );
+
+                            if ( 0 < $id && !in_array( $id, $ids ) ) {
+                                $search_data->field_id = $id;
+
+                                $text = $result[ $search_data->field_index ];
+
+                                if ( $result[ $search_data->field_id ] != $id ) {
+                                    if ( $wpdb->posts == $search_data->table )
+                                        $text = trim( get_the_title( $id ) );
+                                    elseif ( $wpdb->terms == $search_data->table )
+                                        $text = trim( get_term( $id, $object )->name );
+                                }
+
+                                $result[ $search_data->field_index ] = $text;
+                            }
+                        }
+
+                        if ( 0 < strlen( $display_filter ) )
+                            $value = apply_filters( $display_filter, $value, $search_data->field_id );
+
+                        if ( in_array( $options[ 'pick_object' ], array( 'site', 'network' ) ) )
+                            $result[ $search_data->field_index ] = $result[ $search_data->field_index ] . $result[ 'path' ];
+                        elseif ( strlen( $result[ $search_data->field_index ] ) < 1 )
+                            $result[ $search_data->field_index ] = '(No Title)';
+
+                        $data[ $result[ $search_data->field_id ] ] = $result[ $search_data->field_index ];
+
+                        $items[] = array(
+                            'id' => $result[ $search_data->field_id ],
+                            'text' => $result[ $search_data->field_index ]
+                        );
+
+                        $ids[] = $result[ $search_data->field_id ];
                     }
                 }
             }

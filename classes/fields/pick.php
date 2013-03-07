@@ -854,7 +854,7 @@ class PodsField_Pick extends PodsField {
         $data = apply_filters( 'pods_field_pick_object_data', null, $object_params );
 
         if ( null === $data ) {
-            $data = null;
+            $data = array();
 
             if ( 'post-status' == $options[ 'pick_object' ] ) {
                 $post_stati = get_post_stati( array(), 'objects' );

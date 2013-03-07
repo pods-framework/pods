@@ -2924,7 +2924,7 @@ class PodsAPI {
                             $object_type = 'post';
 
                         if ( 'pick' != $type || !in_array( $fields[ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
-                            delete_metadata( $object_type, $params->id, $field, '', false );
+                            delete_metadata( $object_type, $params->id, $field );
 
                             if ( !empty( $values ) ) {
                                 update_metadata( $object_type, $params->id, '_pods_' . $field, $values );
@@ -2934,12 +2934,12 @@ class PodsAPI {
                                 }
                             }
                             else
-                                delete_metadata( $object_type, $params->id, '_pods_' . $field, '', true );
+                                delete_metadata( $object_type, $params->id, '_pods_' . $field );
                         }
                         elseif ( !empty( $values ) )
                             update_metadata( $object_type, $params->id, $field, $values );
                         else
-                            delete_metadata( $object_type, $params->id, $field, '', true );
+                            delete_metadata( $object_type, $params->id, $field );
                     }
                     elseif ( 'settings' == $pod[ 'type' ] ) {
                         if ( 'pick' != $type || !in_array( $fields[ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
@@ -3014,7 +3014,7 @@ class PodsAPI {
                                                 $related_ids[] = $params->id;
                                         }
 
-                                        delete_metadata( $object_type, $id, $related_field[ 'name' ], '', true );
+                                        delete_metadata( $object_type, $id, $related_field[ 'name' ] );
 
                                         if ( !empty( $related_ids ) ) {
                                             update_metadata( $object_type, $id, '_pods_' . $related_field[ 'name' ], $related_ids );
@@ -3024,7 +3024,7 @@ class PodsAPI {
                                             }
                                         }
                                         else
-                                            delete_metadata( $object_type, $id, '_pods_' . $related_field[ 'name' ], '', true );
+                                            delete_metadata( $object_type, $id, '_pods_' . $related_field[ 'name' ] );
                                     }
                                     elseif ( 'settings' == $related_pod[ 'type' ] ) {
                                         $related_ids = get_option( '_pods_' . $related_pod[ 'name' ] . '_' . $related_field[ 'name' ] );

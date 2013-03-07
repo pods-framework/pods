@@ -937,15 +937,13 @@ class PodsField_Pick extends PodsField {
                     $data[ $taxonomy->name ] = $taxonomy->label;
                 }
             }
-            elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ] ) ) {
-                if ( isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) && !empty( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) )
-                    $data = self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ];
-                elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'data_callback' ] ) && is_callable( self::$related_objects[ $options[ 'pick_object' ] ][ 'data_callback' ] ) ) {
-                    $data = call_user_func_array(
-                        self::$related_objects[ $options[ 'pick_object' ] ][ 'data_callback' ],
-                        array( $name, $value, $options, $pod, $id )
-                    );
-                }
+            elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ] ) && isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) && !empty( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) )
+                $data = self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ];
+            elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ] ) && isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'data_callback' ] ) && is_callable( self::$related_objects[ $options[ 'pick_object' ] ][ 'data_callback' ] ) ) {
+                $data = call_user_func_array(
+                    self::$related_objects[ $options[ 'pick_object' ] ][ 'data_callback' ],
+                    array( $name, $value, $options, $pod, $id )
+                );
             }
             elseif ( 'custom-simple' == $options[ 'pick_object' ] ) {
                 $custom = trim( pods_var_raw( 'pick_custom', $options, '' ) );
@@ -1114,7 +1112,7 @@ class PodsField_Pick extends PodsField {
                         $orderby = array();
                         $orderby[ ] = "(`t`.`{$search_data->field_index}` LIKE '%" . like_escape( $data_params[ 'query' ] ) . "%' ) DESC";
 
-                        $pick_orderby = pods_var_raw( 'pick_orderby', $field[ 'options' ], null, null, true );
+                        $pick_orderby = pods_var_raw( 'pick_orderby', $options, null, null, true );
 
                         if ( 0 < strlen( $pick_orderby ) )
                             $orderby[ ] = $pick_orderby;

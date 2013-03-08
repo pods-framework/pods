@@ -4550,7 +4550,7 @@ class PodsAPI {
             $cache_key = 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) . ( ( isset( $params->count ) && $params->count ) ? '_count' : '' ) . '_get' . $cache_key;
 
         if ( !empty( $cache_key ) && ( 'pods' . ( !empty( $current_language ) ? '_' . $current_language : '' ) . '_get_all' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
-            $the_pods = pods_transient_get( $cache_key );
+            $the_pods = pods_cache_get( $cache_key, 'pods' );
 
             if ( !is_array( $the_pods ) && 'none' == $the_pods )
                 return array();
@@ -4618,9 +4618,9 @@ class PodsAPI {
 
         if ( ( !function_exists( 'pll_current_language' ) || ( isset( $params->refresh ) && $params->refresh ) ) && !empty( $cache_key ) && ( 'pods' != $cache_key || empty( $meta_query ) ) && $limit < 1 && ( empty( $orderby ) || 'menu_order title' == $orderby ) && empty( $ids ) ) {
             if ( empty( $the_pods ) && ( !isset( $params->count ) || !$params->count ) )
-                pods_transient_set( $cache_key, 'none' );
+                pods_cache_set( $cache_key, 'none', 'pods' );
             else
-                pods_transient_set( $cache_key, $the_pods );
+                pods_cache_set( $cache_key, $the_pods, 'pods' );
         }
 
         return $the_pods;

@@ -4355,11 +4355,20 @@ class PodsAPI {
 
         $pod[ 'options' ] = get_post_meta( $pod[ 'id' ] );
 
-        foreach ( $pod[ 'options' ] as $option => &$value ) {
-            if ( is_array( $value ) && 1 == count( $value ) && isset( $value[ 0 ] ) )
-                $value = $value[ 0 ];
+        foreach ( $pod[ 'options' ] as $option => $value ) {
+            if ( is_array( $value ) ) {
+                foreach ( $value as $k => $v ) {
+                    if ( !is_array( $v ) )
+                        $value[ $k ] = maybe_unserialize( $v );
+                }
 
-            $value = maybe_unserialize( $value );
+                if ( 1 == count( $value ) && isset( $value[ 0 ] ) )
+                    $value = $value[ 0 ];
+            }
+            else
+                $value = maybe_unserialize( $value );
+
+            $pod[ 'options' ][ $option ] = $value;
         }
 
         $pod[ 'options' ] = array_merge( $defaults, $pod[ 'options' ] );
@@ -4761,11 +4770,20 @@ class PodsAPI {
 
         $field[ 'options' ] = get_post_meta( $field[ 'id' ] );
 
-        foreach ( $field[ 'options' ] as $option => &$value ) {
-            if ( is_array( $value ) && 1 == count( $value ) && isset( $value[ 0 ] ) )
-                $value = $value[ 0 ];
+        foreach ( $field[ 'options' ] as $option => $value ) {
+            if ( is_array( $value ) ) {
+                foreach ( $value as $k => $v ) {
+                    if ( !is_array( $v ) )
+                        $value[ $k ] = maybe_unserialize( $v );
+                }
 
-            $value = maybe_unserialize( $value );
+                if ( 1 == count( $value ) && isset( $value[ 0 ] ) )
+                    $value = $value[ 0 ];
+            }
+            else
+                $value = maybe_unserialize( $value );
+
+            $field[ 'options' ][ $option ] = $value;
         }
 
         $field[ 'options' ] = array_merge( $defaults, $field[ 'options' ] );

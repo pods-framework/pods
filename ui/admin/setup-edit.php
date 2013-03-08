@@ -96,13 +96,15 @@ $advanced_fields = array(
                     'label' => __( 'Restrict access by Role?', 'pods' ),
                     'default' => 0,
                     'type' => 'boolean',
-                    'dependency' => true
+                    'dependency' => true,
+                    'depends-on' => array( 'admin_only' => false )
                 ),
                 'restrict_capability' => array(
                     'label' => __( 'Restrict access by Capability?', 'pods' ),
                     'default' => 0,
                     'type' => 'boolean',
-                    'dependency' => true
+                    'dependency' => true,
+                    'depends-on' => array( 'admin_only' => false )
                 )
             )
         ),
@@ -113,14 +115,20 @@ $advanced_fields = array(
             'pick_object' => 'role',
             'pick_format_type' => 'multi',
             'default' => '',
-            'depends-on' => array( 'restrict_role' => true )
+            'depends-on' => array(
+                'admin_only' => false,
+                'restrict_role' => true
+            )
         ),
         'capability_allowed' => array(
             'label' => __( 'Capability Allowed', 'pods' ),
             'help' => __( 'Comma-separated list of cababilities, for example add_podname_item, please see the Roles and Capabilities component for the complete list and a way to add your own.', 'pods' ),
             'type' => 'text',
             'default' => '',
-            'depends-on' => array( 'restrict_capability' => true )
+            'depends-on' => array(
+                'admin_only' => false,
+                'restrict_capability' => true
+            )
         )/*,
         'search' => array(
             'label' => __( 'Include in searches', 'pods' ),

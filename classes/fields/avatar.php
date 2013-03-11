@@ -379,7 +379,7 @@ class PodsField_Avatar extends PodsField {
                 $avatar_field = false;
 
             if ( !empty( $avatar_field ) ) {
-                $user_avatar = get_user_meta( $_user_ID, $avatar_field . '.ID', true );
+                $user_avatar = get_user_meta( $_user_ID, $avatar_field, true );
 
                 if ( !empty( $user_avatar ) ) {
                     $attributes = array(

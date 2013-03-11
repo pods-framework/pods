@@ -1942,8 +1942,16 @@ class PodsMeta {
             $meta_keys = array_keys( $meta_cache );
 
         foreach ( $meta_keys as $meta_k ) {
-            if ( !empty( $pod ) && isset( $pod->fields[ $meta_k ] ) )
-                $meta_cache[ $meta_k ] = $pod->field( $meta_k, $single );
+            if ( !empty( $pod ) ) {
+                if ( isset( $pod->fields[ $meta_k ] ) )
+                    $meta_cache[ $meta_k ] = $pod->field( $meta_k, $single );
+                elseif ( false !== strpos( $meta_k, '.' ) ) {
+                    $first = current( explode( '.', $meta_k ) );
+
+                    if ( isset( $pod->fields[ $first ] ) )
+                        $meta_cache[ $meta_k ] = $pod->field( $meta_k, $single );
+                }
+            }
         }
 
         if ( !$single && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) )

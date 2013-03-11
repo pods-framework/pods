@@ -15,6 +15,7 @@ else
     $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true );
 
 $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
+$selection_made = false;
 ?>
 <select<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?>>
     <?php
@@ -38,8 +39,10 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 
                     $selected = '';
 
-                    if ( $sub_option_value == $value || ( is_array( $value ) && in_array( $sub_option_value, $value ) ) )
+                    if ( !$selection_made && ( $sub_option_value == $value || ( is_array( $value ) && in_array( $sub_option_value, $value ) ) ) ) {
                         $selected = ' SELECTED';
+                        $selection_made = true;
+                    }
 
                     if ( is_array( $sub_option_label ) ) {
                         ?>
@@ -61,8 +64,10 @@ $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, 
 
             $selected = '';
 
-            if ( $option_value == $value || ( is_array( $value ) && in_array( $option_value, $value ) ) )
+            if ( !$selection_made && ( $option_value == $value || ( is_array( $value ) && in_array( $option_value, $value ) ) ) ) {
                 $selected = ' SELECTED';
+                $selection_made = true;
+            }
 
             if ( is_array( $option_value ) ) {
                 ?>

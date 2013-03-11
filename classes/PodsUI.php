@@ -19,7 +19,7 @@ class PodsUI {
         'edit',
         'duplicate',
         'save',
-        'view',
+        //'view',
         'delete',
         'reorder',
         'export'

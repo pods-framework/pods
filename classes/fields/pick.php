@@ -662,7 +662,7 @@ class PodsField_Pick extends PodsField {
             $data = $this->get_object_data( $object_params );
 
         if ( 'single' == pods_var( 'pick_format_type', $options, 'single' ) && 'dropdown' == pods_var( 'pick_format_single', $options, 'dropdown' ) )
-            $data = array_merge( array( '' => pods_var_raw( 'pick_select_text', $options, __( '-- Select One --', 'pods' ), null, true ) ), $data );
+            $data = array( '' => pods_var_raw( 'pick_select_text', $options, __( '-- Select One --', 'pods' ), null, true ) ) + $data;
 
         $data = apply_filters( 'pods_field_pick_data', $data, $name, $value, $options, $pod, $id );
 
@@ -938,14 +938,6 @@ class PodsField_Pick extends PodsField {
                     $data[ $taxonomy->name ] = $taxonomy->label;
                 }
             }
-            elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ] ) && isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) && !empty( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) )
-                $data = self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ];
-            elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ] ) && isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'data_callback' ] ) && is_callable( self::$related_objects[ $options[ 'pick_object' ] ][ 'data_callback' ] ) ) {
-                $data = call_user_func_array(
-                    self::$related_objects[ $options[ 'pick_object' ] ][ 'data_callback' ],
-                    array( $name, $value, $options, $pod, $id )
-                );
-            }
             elseif ( 'custom-simple' == $options[ 'pick_object' ] ) {
                 $custom = trim( pods_var_raw( 'pick_custom', $options, '' ) );
 
@@ -970,12 +962,20 @@ class PodsField_Pick extends PodsField {
                                 $custom_label = $custom_label[ 1 ];
                             }
 
-                            $data[ $custom_value ] = $custom_label;
+                            $data[ (string) $custom_value ] = (string) $custom_label;
                         }
                     }
                     else
                         $data = $custom;
                 }
+            }
+            elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ] ) && isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) && !empty( self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ] ) )
+                $data = self::$related_objects[ $options[ 'pick_object' ] ][ 'data' ];
+            elseif ( isset( self::$related_objects[ $options[ 'pick_object' ] ] ) && isset( self::$related_objects[ $options[ 'pick_object' ] ][ 'data_callback' ] ) && is_callable( self::$related_objects[ $options[ 'pick_object' ] ][ 'data_callback' ] ) ) {
+                $data = call_user_func_array(
+                    self::$related_objects[ $options[ 'pick_object' ] ][ 'data_callback' ],
+                    array( $name, $value, $options, $pod, $id )
+                );
             }
             elseif ( 'simple_value' != $context ) {
                 $pick_val = pods_var( 'pick_val', $options );

@@ -1186,54 +1186,75 @@ class PodsAdmin {
         $capabilities[] = 'pods_components';
 
         foreach ( $pods as $pod ) {
-            if ( !in_array( $pod[ 'type' ], array( 'pod', 'table' ) ) )
+            if ( !in_array( $pod[ 'type' ], array( 'pod', 'table', 'post_type' ) ) )
                 continue;
 
-            $capabilities[] = 'pods_add_' . $pod[ 'name' ];
-            $capabilities[] = 'pods_edit_' . $pod[ 'name' ];
+            if ( 'post_type' == $pod[ 'type' ] ) {
+                $capability_type = pods_var( 'capability_type_custom', $pod[ 'options' ], pods_var_raw( 'name', $pod ) );
 
-            if ( isset( $pod[ 'fields' ][ 'author' ] ) && 'pick' == $pod[ 'fields' ][ 'author' ][ 'type' ] && 'user' == $pod[ 'fields' ][ 'author' ][ 'pick_object' ] )
-                $capabilities[] = 'pods_edit_others_' . $pod[ 'name' ];
+                if ( 'custom' == pods_var( 'capability_type', $pod[ 'options' ] ) && 0 < strlen( $capability_type ) ) {
+                    $capabilities[] = 'read_' . $capability_type;
+                    $capabilities[] = 'read_private_' . $capability_type . 's';
+                    $capabilities[] = 'edit_' . $capability_type;
+                    $capabilities[] = 'edit_' . $capability_type . 's';
+                    $capabilities[] = 'edit_others_' . $capability_type . 's';
+                    $capabilities[] = 'edit_private_' . $capability_type . 's';
+                    $capabilities[] = 'edit_published_' . $capability_type . 's';
+                    $capabilities[] = 'publish_' . $capability_type . 's';
+                    $capabilities[] = 'delete_' . $capability_type;
+                    $capabilities[] = 'delete_' . $capability_type . 's';
+                    $capabilities[] = 'delete_private_' . $capability_type . 's';
+                    $capabilities[] = 'delete_published_' . $capability_type . 's';
+                    $capabilities[] = 'delete_others_' . $capability_type . 's';
+                }
+            }
+            else {
+                $capabilities[] = 'pods_add_' . $pod[ 'name' ];
+                $capabilities[] = 'pods_edit_' . $pod[ 'name' ];
 
-            $capabilities[] = 'pods_delete_' . $pod[ 'name' ];
+                if ( isset( $pod[ 'fields' ][ 'author' ] ) && 'pick' == $pod[ 'fields' ][ 'author' ][ 'type' ] && 'user' == $pod[ 'fields' ][ 'author' ][ 'pick_object' ] )
+                    $capabilities[] = 'pods_edit_others_' . $pod[ 'name' ];
 
-            if ( isset( $pod[ 'fields' ][ 'author' ] ) && 'pick' == $pod[ 'fields' ][ 'author' ][ 'type' ] && 'user' == $pod[ 'fields' ][ 'author' ][ 'pick_object' ] )
-                $capabilities[] = 'pods_delete_others_' . $pod[ 'name' ];
+                $capabilities[] = 'pods_delete_' . $pod[ 'name' ];
 
-            $actions_enabled = pods_var_raw( 'ui_actions_enabled', $pod->pod_data[ 'options' ] );
+                if ( isset( $pod[ 'fields' ][ 'author' ] ) && 'pick' == $pod[ 'fields' ][ 'author' ][ 'type' ] && 'user' == $pod[ 'fields' ][ 'author' ][ 'pick_object' ] )
+                    $capabilities[] = 'pods_delete_others_' . $pod[ 'name' ];
 
-            if ( !empty( $actions_enabled ) )
-                $actions_enabled = (array) $actions_enabled;
-            else
-                $actions_enabled = array();
+                $actions_enabled = pods_var_raw( 'ui_actions_enabled', $pod[ 'options' ] );
 
-            $available_actions = array(
-                'add',
-                'edit',
-                'duplicate',
-                'delete',
-                'reorder',
-                'export'
-            );
+                if ( !empty( $actions_enabled ) )
+                    $actions_enabled = (array) $actions_enabled;
+                else
+                    $actions_enabled = array();
 
-            if ( !empty( $actions_enabled ) ) {
-                $actions_disabled = array(
-                    'view' => 'view'
+                $available_actions = array(
+                    'add',
+                    'edit',
+                    'duplicate',
+                    'delete',
+                    'reorder',
+                    'export'
                 );
 
-                foreach ( $available_actions as $action ) {
-                    if ( !in_array( $action, $actions_enabled ) )
-                        $actions_disabled[ $action ] = $action;
+                if ( !empty( $actions_enabled ) ) {
+                    $actions_disabled = array(
+                        'view' => 'view'
+                    );
+
+                    foreach ( $available_actions as $action ) {
+                        if ( !in_array( $action, $actions_enabled ) )
+                            $actions_disabled[ $action ] = $action;
+                    }
+
+                    if ( !in_array( 'export', $actions_disabled ) )
+                        $capabilities[] = 'pods_export_' . $pod[ 'name' ];
+
+                    if ( !in_array( 'reorder', $actions_disabled ) )
+                        $capabilities[] = 'pods_reorder_' . $pod[ 'name' ];
                 }
-
-                if ( !in_array( 'export', $actions_disabled ) )
+                elseif ( 1 == pods_var( 'ui_export', $pod[ 'options' ], 0 ) )
                     $capabilities[] = 'pods_export_' . $pod[ 'name' ];
-
-                if ( !in_array( 'reorder', $actions_disabled ) )
-                    $capabilities[] = 'pods_reorder_' . $pod[ 'name' ];
             }
-            elseif ( 1 == pods_var( 'ui_export', $pod[ 'options' ], 0 ) )
-                $capabilities[] = 'pods_export_' . $pod[ 'name' ];
         }
 
         return $capabilities;

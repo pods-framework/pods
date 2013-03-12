@@ -3,7 +3,7 @@
 Plugin Name: Pods - Custom Content Types and Fields
 Plugin URI: http://pods.io/
 Description: Pods is a framework for creating, managing, and deploying customized content types and fields
-Version: 2.3 Alpha 15
+Version: 2.3 Beta 1
 Author: Pods Framework Team
 Author URI: http://pods.io/about/
 Text Domain: pods
@@ -32,10 +32,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // Prevent conflicts with Pods 1.x
 if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) && !function_exists( 'pods_ui_manage' ) ) {
-    define( 'PODS_VERSION', '2.3-a-15' );
+    define( 'PODS_VERSION', '2.3-b-1' );
 
     // Version tracking between DB updates themselves
-    define( 'PODS_DB_VERSION', '2.3-a-14' );
+    define( 'PODS_DB_VERSION', '2.3-a-14' ); // @todo Update this to 2.3 when it's released
 
     if ( !defined( 'PODS_GITHUB_UPDATE' ) )
         define( 'PODS_GITHUB_UPDATE', false );
@@ -113,13 +113,15 @@ if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) && !function_exists( '
         }
     }
 
-    if ( false !== pods_compatible() && ( !defined( 'SHORTINIT' ) || !SHORTINIT ) ) {
+    if ( !defined( 'SHORTINIT' ) || !SHORTINIT ) {
         if ( !defined( 'PODS_DEPRECATED' ) || PODS_DEPRECATED )
             require_once( PODS_DIR . 'deprecated/deprecated.php' );
 
-        $pods_form = pods_form();
+        if ( false !== pods_compatible() ) {
+            $pods_form = pods_form();
 
-        $pods_init = pods_init();
+            $pods_init = pods_init();
+        }
     }
 }
 // Deactivate old Pods / Pods UI plugins

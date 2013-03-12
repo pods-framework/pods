@@ -740,6 +740,11 @@ class PodsData {
         if ( ( empty( $params->fields ) || !is_array( $params->fields ) ) && is_array( $this->pod_data ) && isset( $this->fields ) && !empty( $this->fields ) )
             $params->fields = $this->fields;
 
+        if ( empty( $params->filters ) && $params->search )
+            $params->filters = array_keys( $params->fields );
+        elseif ( empty( $params->filters ) )
+            $params->filters = array();
+
         if ( empty( $params->index ) )
             $params->index = $this->field_index;
 
@@ -2235,6 +2240,9 @@ class PodsData {
         foreach ( $fields as $field => $data ) {
             if ( !is_array( $data ) )
                 $field = $data;
+
+            if ( !isset( $_GET[ 'filter_' . $field ] ) )
+                continue;
 
             $field_value = pods_var( 'filter_' . $field, 'get', false, null, true );
 

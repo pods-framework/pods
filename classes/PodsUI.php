@@ -2476,7 +2476,13 @@ class PodsUI {
 
             <div class="pods-ui-posts-filters">
                 <?php
-                    $excluded_filters = array( 'search' . $this->num, 'pg' . $this->num, 'action' . $this->num, 'action_bulk' . $this->num, 'action_bulk_ids' . $this->num  );
+                    $excluded_filters = array(
+                        'search' . $this->num,
+                        'pg' . $this->num,
+                        'action' . $this->num,
+                        'action_bulk' . $this->num,
+                        'action_bulk_ids' . $this->num
+                    );
 
                     foreach ( $filters as $filter ) {
                         $excluded_filters[] = 'filter_' . $filter . '_start';

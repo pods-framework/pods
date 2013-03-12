@@ -15,14 +15,14 @@ class Pods {
     public $data;
 
     /**
-     * @var Array of pod item arrays
+     * @var array Array of pod item arrays
      */
-    public $rows;
+    public $rows = array();
 
     /**
-     * @var Current pod item array
+     * @var array Current pod item array
      */
-    public $row;
+    public $row = array();
 
     /**
      * @var bool
@@ -40,29 +40,34 @@ class Pods {
     public $params = array();
 
     /**
-     * @var
+     * @var string
      */
-    public $pod;
+    public $pod = '';
 
     /**
-     * @var
+     * @var int
      */
-    public $pod_id;
+    public $pod_id = 0;
 
     /**
-     * @var
+     * @var array
      */
-    public $fields;
+    public $fields = array();
 
     /**
-     * @var
+     * @var array
+     */
+    public $filters = array();
+
+    /**
+     * @var string
      */
     public $detail_page;
 
     /**
      * @var int
      */
-    public $id;
+    public $id = 0;
 
     /**
      * @var int
@@ -110,9 +115,18 @@ class Pods {
     public $total_found = 0;
 
     /**
-     * @var
+     * @var array
      */
     public $ui = array();
+
+    /**
+     * @var mixed SEO related vars for Pod Pages
+     */
+    public $page_template;
+    public $body_classes;
+    public $meta = array();
+    public $meta_properties = array();
+    public $meta_extra = '';
 
     /**
      * @var
@@ -122,16 +136,6 @@ class Pods {
     public $datatype;
 
     public $datatype_id;
-
-    public $page_template;
-
-    public $body_classes;
-
-    public $meta = array();
-
-    public $meta_properties = array();
-
-    public $meta_extra = '';
 
     public $sql;
 
@@ -1218,6 +1222,7 @@ class Pods {
             'search_across_files' => false,
 
             'fields' => $this->fields,
+            'filters' => $this->filters,
             'sql' => $sql,
 
             'expires' => null,
@@ -1892,6 +1897,8 @@ class Pods {
 
             unset( $filter_fields ); // Cleanup
         }
+
+        $this->filters = array_keys( $fields );
 
         $label = $params[ 'label' ];
 

@@ -11,6 +11,7 @@ if ( 1 == pods_var( 'grouped', $options, 0, null, true ) ) {
 $counter = 1;
 $primary_name = $name;
 $primary_id = 'pods-form-ui-' . PodsForm::clean( $name );
+$selection_made = false;
 
 foreach ( $options[ 'data' ] as $val => $label ) {
     if ( is_array( $label ) ) {
@@ -27,8 +28,10 @@ foreach ( $options[ 'data' ] as $val => $label ) {
     $attributes[ 'checked' ] = null;
     $attributes[ 'tabindex' ] = 2;
 
-    if ( $val == $value || ( is_array( $value ) && in_array( $val, $value ) ) )
+    if ( !$selection_made && ( $val == $value || ( is_array( $value ) && in_array( $val, $value ) ) ) ) {
         $attributes[ 'checked' ] = 'CHECKED';
+        $selection_made = true;
+    }
 
     $attributes[ 'value' ] = $val;
 

@@ -5,6 +5,16 @@ $api = pods_api();
 
 $pod = $api->load_pod( array( 'id' => $obj->id ) );
 
+if ( 'taxonomy' == $pod[ 'type' ] && 'none' == $pod[ 'storage' ] && 1 == pods_var( 'enable_extra_fields', 'get' ) ) {
+    $api->save_pod( array( 'id' => $obj->id, 'storage' => 'table' ) );
+
+    $pod = $api->load_pod( array( 'id' => $obj->id ) );
+
+    unset( $_GET[ 'enable_extra_fields' ] );
+
+    pods_message( __( 'Extra fields were successfully enabled for this Custom Taxonomy.', 'pods' ) );
+}
+
 $field_types = PodsForm::field_types();
 
 $field_types_select = array();
@@ -323,12 +333,18 @@ if ( 'none' == pods_var( 'storage', $pod, 'none', null, true ) && 'settings' != 
 
             if ( $advanced )
                 $tabs[ 'pods-advanced' ] = __( 'Advanced Options', 'pods' );
+
+            if ( 'taxonomy' == pods_var( 'type', $pod ) && !$manage_fields )
+                $tabs[ 'pods-extra-fields' ] = __( 'Extra Fields', 'pods' );
     ?>
 
         <h2 class="nav-tab-wrapper pods-nav-tabs">
             <?php
                 foreach ( $tabs as $tab => $label ) {
                     $class = '';
+
+                    if ( !$manage_fields && 'fields' == $default )
+                        $default = $tab;
 
                     if ( $tab == $default )
                         $class = ' nav-tab-active';
@@ -1267,6 +1283,22 @@ if ( $pods_ui ) {
 
     include PODS_DIR . 'ui/admin/field-option.php';
 ?>
+</div>
+<?php
+}
+
+if ( 'taxonomy' == pods_var( 'type', $pod ) && !$manage_fields ) {
+?>
+<div id="pods-extra-fields" class="pods-nav-tab">
+    <p><?php _e( 'Taxonomies do not support extra fields natively, but Pods can add this feature for you easily. Table based storage will operate in a way where each field you create for your content type becomes a field in a table.', 'pods' ); ?></p>
+
+    <p><?php echo sprintf( __( 'Enabling extra fields for this taxonomy will add a custom table into your database as <em>%s</em>.', 'pods' ), $wpdb->prefix . 'pods_' . pods_var( 'name', $pod ) ); ?></p>
+
+    <p><a href="http://pods.io/docs/comparisons/compare-storage-types/" target="_blank"><?php _e( 'Find out more', 'pods' ); ?> &raquo;</a></p>
+
+    <p class="submit">
+        <a href="<?php echo pods_var_update( array( 'enable_extra_fields' => 1 ) ); ?>" class="button-primary"><?php _e( 'Enable Extra Fields', 'pods' ); ?></a>
+    </p>
 </div>
 <?php
 }

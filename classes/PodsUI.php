@@ -2413,7 +2413,7 @@ class PodsUI {
                                 $data_filter = 'filter_' . $filter . '_start';
                             }
                             elseif ( 'pick' == $this->pod->fields[ $filter ][ 'type' ] )
-                                $value_label = trim( PodsForm::field_method( 'pick', 'value_to_label', $filter, $value, $this->pod->fields[ $filter ], $this->pod->pod_data, $this->pod->id() ) );
+                                $value_label = trim( PodsForm::field_method( 'pick', 'value_to_label', $filter, $value, $this->pod->fields[ $filter ], $this->pod->pod_data, null ) );
 
                             if ( strlen( $value_label ) < 1 )
                                 $value_label = $value;
@@ -3259,7 +3259,7 @@ class PodsUI {
      * @return mixed
      */
     public function do_template ( $code, $row = false ) {
-        if ( is_object( $this->pod ) && 0 < $this->pod->id() )
+        if ( is_object( $this->pod ) && 0 < $this->id && 0 < $this->pod->id() )
             return $this->pod->do_magic_tags( $code );
         else {
             if ( false !== $row ) {

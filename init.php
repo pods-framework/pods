@@ -35,7 +35,7 @@ if ( !defined( 'PODS_VERSION' ) && !defined( 'PODS_DIR' ) && !function_exists( '
     define( 'PODS_VERSION', '2.3-b-1' );
 
     // Version tracking between DB updates themselves
-    define( 'PODS_DB_VERSION', '2.3-a-14' ); // @todo Update this to 2.3 when it's released
+    define( 'PODS_DB_VERSION', '2.3-b-1' ); // @todo Update this to 2.3 when it's released
 
     if ( !defined( 'PODS_GITHUB_UPDATE' ) )
         define( 'PODS_GITHUB_UPDATE', false );

@@ -12,7 +12,7 @@ if ( version_compare( $pods_version, '2.0.3', '<' ) ) {
 }
 
 // Update to 2.3
-if ( version_compare( $pods_version, '2.3-a-13', '<' ) ) {
+if ( version_compare( $pods_version, '2.3-b-1', '<' ) ) {
     // Auto activate Advanced Content Types component
     $oldget = $_GET;
 
@@ -27,7 +27,7 @@ if ( version_compare( $pods_version, '2.3-a-13', '<' ) ) {
         'pods_framework_version' => '',
         'pods_framework_version_last' => '',
         'pods_framework_db_version' => '',
-        'pods_framework_upgraded_1_x' => 0,
+        'pods_framework_upgraded_1_x' => '0',
         'pods_version' => '',
 
         'pods_component_settings' => '',

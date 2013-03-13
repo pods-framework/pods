@@ -154,10 +154,21 @@
                         data : postdata,
                         success : function ( d ) {
                             if ( -1 == d.indexOf( '<e>' ) && -1 == d.indexOf('</e>') && -1 != d ) {
+                                var id = d.match( /\d*$/, '' );
+
+                                if ( 0 < id.length ) {
+                                    id = parseInt( id[ 0 ] );
+
+                                    if ( 'NaN' == id )
+                                        id = 0;
+                                }
+                                else
+                                    id = 0;
+
                                 if ( 'undefined' != typeof pods_admin_submit_callback )
-                                    pods_admin_submit_callback( d, $submittable );
+                                    pods_admin_submit_callback( d, $submittable, id );
                                 else if ( 'undefined' != typeof $submittable.data( 'location' ) )
-                                    document.location.href = $submittable.data( 'location' ).replace( 'X_ID_X', parseInt( d ) );
+                                    document.location.href = $submittable.data( 'location' ).replace( 'X_ID_X', id );
                                 else
                                     document.location.reload( true );
                             }
@@ -248,11 +259,22 @@
                         cache : false,
                         data : postdata,
                         success : function ( d ) {
-                            if ( -1 == d.indexOf( '<e>' ) && -1 != d ) {
+                            if ( -1 == d.indexOf( '<e>' ) && -1 == d.indexOf( '</e>' ) && -1 != d ) {
+                                var id = d.match( /\d*$/, '' );
+
+                                if ( 0 < id.length ) {
+                                    id = parseInt( id[ 0 ] );
+
+                                    if ( 'NaN' == id )
+                                        id = 0;
+                                }
+                                else
+                                    id = 0;
+
                                 if ( 'undefined' != typeof pods_admin_submit_callback )
-                                    pods_admin_submit_callback( d, $submittable );
-                                else if ( 'undefined' != typeof $submitbutton.data( 'location' ) )
-                                    document.location.href = $submitbutton.data( 'location' ).replace( 'X_ID_X', parseInt( d ) );
+                                    pods_admin_submit_callback( d, $submittable, id );
+                                else if ( 'undefined' != typeof $submittable.data( 'location' ) )
+                                    document.location.href = $submittable.data( 'location' ).replace( 'X_ID_X', id );
                                 else
                                     document.location.reload( true );
                             }

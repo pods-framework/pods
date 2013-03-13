@@ -2889,9 +2889,6 @@ class PodsAPI {
                 if ( !in_array( $type, $tableless_field_types ) )
                     continue;
 
-                if ( !is_array( $data ) )
-                    $data = explode( ',', $data );
-
                 foreach ( $data as $field => $values ) {
                     $field_id = pods_absint( $fields[ $field ][ 'id' ] );
 
@@ -4701,6 +4698,7 @@ class PodsAPI {
             $params->table_info = false;
 
         $pod = array();
+        $field = array();
 
         if ( isset( $params->post_title ) )
             $_field = $params;
@@ -4733,21 +4731,27 @@ class PodsAPI {
             if ( isset( $pod[ 'fields' ][ $params->name ] ) && isset( $pod[ 'fields' ][ $params->name ][ 'id' ] ) )
                 return $pod[ 'fields' ][ $params->name ];
 
-            $field = get_posts( array(
-                'name' => $params->name,
-                'post_type' => '_pods_field',
-                'posts_per_page' => 1,
-                'post_parent' => $params->pod_id
-            ) );
+            $field = pods_transient_get( 'pods_field_' . $params->pod . '_' . $params->name );
 
-            if ( empty( $field ) ) {
-                if ( $strict )
-                    return pods_error( __( 'Field not found', 'pods' ), $this );
+            if ( !empty( $field ) ) {
+                $field = get_posts( array(
+                    'name' => $params->name,
+                    'post_type' => '_pods_field',
+                    'posts_per_page' => 1,
+                    'post_parent' => $params->pod_id
+                ) );
 
-                return false;
+                if ( empty( $field ) ) {
+                    if ( $strict )
+                        return pods_error( __( 'Field not found', 'pods' ), $this );
+
+                    return false;
+                }
+
+                $_field = $field[ 0 ];
+
+                $field = array();
             }
-
-            $_field = $field[ 0 ];
         }
 
         if ( empty( $_field ) ) {
@@ -4759,77 +4763,98 @@ class PodsAPI {
 
         $_field = get_object_vars( $_field );
 
-        $defaults = array(
-            'type' => 'text'
-        );
+        if ( !isset( $pod[ 'name' ] ) && !isset( $_field[ 'pod' ] ) && 0 < $_field[ 'post_parent' ] ) {
+            $pod = $this->load_pod( array( 'id' => $_field[ 'post_parent' ], 'table_info' => false ) );
 
-        $field = array(
-            'id' => $_field[ 'ID' ],
-            'name' => $_field[ 'post_name' ],
-            'label' => $_field[ 'post_title' ],
-            'description' => $_field[ 'post_content' ],
-            'weight' => $_field[ 'menu_order' ],
-            'pod_id' => $_field[ 'post_parent' ],
-            'pick_object' => '',
-            'pick_val' => '',
-            'sister_id' => '',
-            'table_info' => array()
-        );
+            if ( empty( $pod ) ) {
+                if ( $strict )
+                    return pods_error( __( 'Pod for field not found', 'pods' ), $this );
 
-        if ( isset( $pod[ 'name' ] ) )
-            $field[ 'pod' ] = $pod[ 'name' ];
-        elseif ( isset( $_field[ 'pod' ] ) )
-            $field[ 'pod' ] = $_field[ 'pod' ];
+                return false;
+            }
+        }
         else {
-            $pod = $this->load_pod( array( 'id' => $field[ 'pod_id' ], 'table_info' => false ) );
+            if ( $strict )
+                return pods_error( __( 'Pod for field not found', 'pods' ), $this );
 
-            $field[ 'pod' ] = $pod[ 'name' ];
+            return false;
         }
 
-        $field[ 'options' ] = get_post_meta( $field[ 'id' ] );
+        if ( empty( $field ) ) {
+            if ( isset( $pod[ 'name' ] ) || isset( $_field[ 'pod' ] ) )
+                $field = pods_transient_get( 'pods_field_' . pods_var( 'name', $pod, $_field[ 'pod' ], null, true ) . '_' . $_field[ 'post_name' ] );
 
-        foreach ( $field[ 'options' ] as $option => $value ) {
-            if ( is_array( $value ) ) {
-                foreach ( $value as $k => $v ) {
-                    if ( !is_array( $v ) )
-                        $value[ $k ] = maybe_unserialize( $v );
+            if ( empty( $field ) ) {
+                $defaults = array(
+                    'type' => 'text'
+                );
+
+                $field = array(
+                    'id' => $_field[ 'ID' ],
+                    'name' => $_field[ 'post_name' ],
+                    'label' => $_field[ 'post_title' ],
+                    'description' => $_field[ 'post_content' ],
+                    'weight' => $_field[ 'menu_order' ],
+                    'pod_id' => $_field[ 'post_parent' ],
+                    'pick_object' => '',
+                    'pick_val' => '',
+                    'sister_id' => '',
+                    'table_info' => array()
+                );
+
+                if ( isset( $pod[ 'name' ] ) )
+                    $field[ 'pod' ] = $pod[ 'name' ];
+                elseif ( isset( $_field[ 'pod' ] ) )
+                    $field[ 'pod' ] = $_field[ 'pod' ];
+
+                $field[ 'options' ] = get_post_meta( $field[ 'id' ] );
+
+                foreach ( $field[ 'options' ] as $option => $value ) {
+                    if ( is_array( $value ) ) {
+                        foreach ( $value as $k => $v ) {
+                            if ( !is_array( $v ) )
+                                $value[ $k ] = maybe_unserialize( $v );
+                        }
+
+                        if ( 1 == count( $value ) && isset( $value[ 0 ] ) )
+                            $value = $value[ 0 ];
+                    }
+                    else
+                        $value = maybe_unserialize( $value );
+
+                    $field[ 'options' ][ $option ] = $value;
                 }
 
-                if ( 1 == count( $value ) && isset( $value[ 0 ] ) )
-                    $value = $value[ 0 ];
+                $field[ 'options' ] = array_merge( $defaults, $field[ 'options' ] );
+
+                $field[ 'type' ] = $field[ 'options' ][ 'type' ];
+
+                unset( $field[ 'options' ][ 'type' ] );
+
+                if ( isset( $field[ 'options' ][ 'pick_object' ] ) ) {
+                    $field[ 'pick_object' ] = $field[ 'options' ][ 'pick_object' ];
+
+                    unset( $field[ 'options' ][ 'pick_object' ] );
+                }
+
+                if ( isset( $field[ 'options' ][ 'pick_val' ] ) ) {
+                    $field[ 'pick_val' ] = $field[ 'options' ][ 'pick_val' ];
+
+                    unset( $field[ 'options' ][ 'pick_val' ] );
+                }
+
+                if ( isset( $field[ 'options' ][ 'sister_id' ] ) ) {
+                    $field[ 'sister_id' ] = $field[ 'options' ][ 'sister_id' ];
+
+                    unset( $field[ 'options' ][ 'sister_id' ] );
+                }
+
+                if ( isset( $field[ 'options' ][ 'sister_field_id' ] ) )
+                    unset( $field[ 'options' ][ 'sister_field_id' ] );
+
+                pods_transient_set( 'pods_field_' . $pod[ 'name' ] . '_' . $field[ 'name' ], $field );
             }
-            else
-                $value = maybe_unserialize( $value );
-
-            $field[ 'options' ][ $option ] = $value;
         }
-
-        $field[ 'options' ] = array_merge( $defaults, $field[ 'options' ] );
-
-        $field[ 'type' ] = $field[ 'options' ][ 'type' ];
-
-        unset( $field[ 'options' ][ 'type' ] );
-
-        if ( isset( $field[ 'options' ][ 'pick_object' ] ) ) {
-            $field[ 'pick_object' ] = $field[ 'options' ][ 'pick_object' ];
-
-            unset( $field[ 'options' ][ 'pick_object' ] );
-        }
-
-        if ( isset( $field[ 'options' ][ 'pick_val' ] ) ) {
-            $field[ 'pick_val' ] = $field[ 'options' ][ 'pick_val' ];
-
-            unset( $field[ 'options' ][ 'pick_val' ] );
-        }
-
-        if ( isset( $field[ 'options' ][ 'sister_id' ] ) ) {
-            $field[ 'sister_id' ] = $field[ 'options' ][ 'sister_id' ];
-
-            unset( $field[ 'options' ][ 'sister_id' ] );
-        }
-
-        if ( isset( $field[ 'options' ][ 'sister_field_id' ] ) )
-            unset( $field[ 'options' ][ 'sister_field_id' ] );
 
         $field[ 'table_info' ] = array();
 

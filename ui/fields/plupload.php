@@ -259,11 +259,12 @@ else
                 file_div.append( response );
             }
             else {
-                var json = response.match( /\{(.*)\}/gi );
+                var json = response.match( /{.*}$/ );
 
-                if ( json[ 0 ] ) {
+                if ( 0 < json.length )
                     json = jQuery.parseJSON( json[ 0 ] );
-                }
+                else
+                    json = {};
 
                 if ( 'object' != typeof json || jQuery.isEmptyObject( json ) ) {
                     if ( window.console ) console.log( response );

@@ -1443,15 +1443,29 @@ if ( 'taxonomy' == pods_var( 'type', $pod ) && !$manage_fields ) {
             data : postdata,
             success : function ( d ) {
                 if ( -1 == d.indexOf( '<e>' ) && -1 == d.indexOf('</e>') && -1 != d && '[]' != d ) {
-                    d = jQuery.parseJSON( d );
+                    var json = d.match( /{.*}$/ );
+
+                    if ( 0 < json.length )
+                        json = jQuery.parseJSON( json[ 0 ] );
+                    else
+                        json = {};
 
                     var select_container = default_select.match( /<select[^<]*>/g );
-                    select_container += '<option value=""><?php esc_attr_e( '-- Select Related Field --', 'pods' ); ?></option>';
 
-                    for ( var field_id in d ) {
-                        var field_name = d[ field_id ];
+                    if ( 'object' != typeof json || jQuery.isEmptyObject( json ) ) {
+                        if ( window.console ) console.log( d );
+                        if ( window.console ) console.log( json );
 
-                        select_container += '<option value="' + field_id + '">' + field_name + '</option>';
+                        select_container += '<option value=""><?php esc_attr_e( 'There was a server error with your AJAX request.', 'pods' ); ?></option>';
+                    }
+                    else {
+                        select_container += '<option value=""><?php esc_attr_e( '-- Select Related Field --', 'pods' ); ?></option>';
+
+                        for ( var field_id in d ) {
+                            var field_name = d[ field_id ];
+
+                            select_container += '<option value="' + field_id + '">' + field_name + '</option>';
+                        }
                     }
 
                     select_container += '</select>';

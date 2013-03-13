@@ -190,7 +190,7 @@ class PodsForm {
      *
      * @since 2.0
      */
-    protected function field_db ( $name, $value = null, $options = null ) {
+    protected static function field_db ( $name, $value = null, $options = null ) {
         $form_field_type = self::$field_type;
 
         ob_start();
@@ -205,7 +205,7 @@ class PodsForm {
     /**
      * Output a hidden field
      */
-    protected function field_hidden ( $name, $value = null, $options = null ) {
+    protected static function field_hidden ( $name, $value = null, $options = null ) {
         $form_field_type = self::$field_type;
 
         ob_start();

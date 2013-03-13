@@ -991,7 +991,7 @@ class PodsAPI {
         $params = (object) array_merge( $defaults, (array) $params );
 
         if ( empty( $params->create_extend ) || !in_array( $params->create_extend, array( 'create', 'extend' ) ) )
-            return pods_error( __( 'Please choose whether to Create or Extend a Content Type', $this ) );
+            return pods_error( __( 'Please choose whether to Create or Extend a Content Type', 'pods' ), $this );
 
         $pod_params = array(
             'name' => '',
@@ -2710,6 +2710,8 @@ class PodsAPI {
 
                 if ( false === $validate )
                     $validate = sprintf( __( 'There was an issue validating the field %s', 'pods' ), $field_data[ 'label' ] );
+                elseif ( true !== $validate )
+                    $validate = (array) $validate;
 
                 if ( !is_bool( $validate ) && !empty( $validate ) )
                     return pods_error( $validate, $this );

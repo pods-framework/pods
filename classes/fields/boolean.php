@@ -148,12 +148,13 @@ class PodsField_Boolean extends PodsField {
      * @param array $options
      * @param array $pod
      * @param int $id
+     * @param boolean $in_form
      *
      * @return array Array of possible field data
      *
      * @since 2.0
      */
-    public function data ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+    public function data ( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
         if ( 'checkbox' != pods_var( 'boolean_format_type', $options ) ) {
             $data = array(
                 1 => pods_var_raw( 'boolean_yes_label', $options ),
@@ -165,6 +166,7 @@ class PodsField_Boolean extends PodsField {
                 1 => pods_var_raw( 'boolean_yes_label', $options )
             );
         }
+
         return $data;
     }
 
@@ -230,52 +232,6 @@ class PodsField_Boolean extends PodsField {
             $value = ( 0 == (int) $value ? 0 : 1 );
 
         return $value;
-    }
-
-    /**
-     * Perform actions after saving to the DB
-     *
-     * @param mixed $value
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param object $params
-     *
-     * @since 2.0
-     */
-    public function post_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-
-    }
-
-    /**
-     * Perform actions before deleting from the DB
-     *
-     * @param int $id
-     * @param string $name
-     * @param null $options
-     * @param string $pod
-     *
-     * @return void
-     * @since 2.0
-     */
-    public function pre_delete ( $id = null, $name = null, $options = null, $pod = null ) {
-
-    }
-
-    /**
-     * Perform actions after deleting from the DB
-     *
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $pod
-     *
-     * @since 2.0
-     */
-    public function post_delete ( $id = null, $name = null, $options = null, $pod = null ) {
-
     }
 
     /**

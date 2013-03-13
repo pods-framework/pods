@@ -168,10 +168,10 @@ class PodsField_WYSIWYG extends PodsField {
      *
      * @param array $options
      *
-     * @return array
+     * @return string
      * @since 2.0
      */
-    public function schema ( $options ) {
+    public function schema ( $options = null ) {
         $schema = 'LONGTEXT';
 
         return $schema;

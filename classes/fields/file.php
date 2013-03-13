@@ -327,52 +327,6 @@ class PodsField_File extends PodsField {
     }
 
     /**
-     * Perform actions after saving to the DB
-     *
-     * @param mixed $value
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param object $params
-     *
-     * @since 2.0
-     */
-    public function post_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-
-    }
-
-    /**
-     * Perform actions before deleting from the DB
-     *
-     * @param int $id
-     * @param string $name
-     * @param null $options
-     * @param string $pod
-     * @return void
-     *
-     * @since 2.0
-     */
-    public function pre_delete ( $id = null, $name = null, $options = null, $pod = null ) {
-
-    }
-
-    /**
-     * Perform actions after deleting from the DB
-     *
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $pod
-     *
-     * @since 2.0
-     */
-    public function post_delete ( $id = null, $name = null, $options = null, $pod = null ) {
-
-    }
-
-    /**
      * Customize the Pods UI manage table column output
      *
      * @param int $id

@@ -948,11 +948,25 @@ class Pods {
             $value = $value[ 0 ];
 
         // @todo Expand this into traversed fields too
-        if ( false === $params->raw && false === $params->in_form && isset( $this->fields[ $params->name ] ) ) {
-            if ( 0 < strlen( pods_var( 'display_filter', $this->fields[ $params->name ][ 'options' ] ) ) )
-                $value = apply_filters( pods_var( 'display_filter', $this->fields[ $params->name ][ 'options' ] ), $value );
+        if ( isset( $this->fields[ $params->name ] ) ) {
+            if ( false === $params->raw && false === $params->in_form ) {
+                $this->fields[ $params->name ][ 'options' ] = pods_var_raw( 'options', $this->fields[ $params->name ], array(), null, true );
+
+                if ( 0 < strlen( pods_var( 'display_filter', $this->fields[ $params->name ][ 'options' ] ) ) )
+                    $value = apply_filters( pods_var( 'display_filter', $this->fields[ $params->name ][ 'options' ] ), $value );
+                else {
+                    $value = PodsForm::display(
+                        $this->fields[ $params->name ][ 'type' ],
+                        $value,
+                        $params->name,
+                        array_merge( $this->fields[ $params->name ][ 'options' ], $this->fields[ $params->name ] ),
+                        $this->pod_data,
+                        $this->id()
+                    );
+                }
+            }
             else {
-                $value = PodsForm::display(
+                $value = PodsForm::value(
                     $this->fields[ $params->name ][ 'type' ],
                     $value,
                     $params->name,
@@ -961,16 +975,6 @@ class Pods {
                     $this->id()
                 );
             }
-        }
-        else {
-            $value = PodsForm::value(
-                $this->fields[ $params->name ][ 'type' ],
-                $value,
-                $params->name,
-                array_merge( $this->fields[ $params->name ][ 'options' ], $this->fields[ $params->name ] ),
-                $this->pod_data,
-                $this->id()
-            );
         }
 
         $value = $this->do_hook( 'field', $value, $this->row, $params );

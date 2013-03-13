@@ -103,7 +103,7 @@ class PodsField_Code extends PodsField {
      * @return array
      * @since 2.0
      */
-    public function schema ( $options ) {
+    public function schema ( $options = null ) {
         $schema = 'LONGTEXT';
 
         return $schema;

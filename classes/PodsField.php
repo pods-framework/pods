@@ -107,7 +107,7 @@ class PodsField {
      *
      * @param array $options
      *
-     * @return array
+     * @return string
      * @since 2.0
      */
     public function schema ( $options = null ) {
@@ -187,13 +187,13 @@ class PodsField {
      * @param array $options
      * @param array $pod
      * @param int $id
+     * @param boolean $in_form
      *
      * @return array Array of possible field data
      *
      * @since 2.0
      */
-
-    public function data ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+    public function data ( $name, $value = null, $options = null, $pod = null, $id = null, $in_form = true ) {
         return (array) $value;
     }
 
@@ -222,11 +222,12 @@ class PodsField {
      * @param array $fields
      * @param array $pod
      * @param int $id
+     * @param array $params
      *
      * @return bool
      * @since 2.0
      */
-    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null ) {
+    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         return true;
     }
 

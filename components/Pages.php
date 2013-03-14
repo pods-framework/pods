@@ -74,7 +74,7 @@ class Pods_Pages extends PodsComponent {
             'menu_icon' => PODS_URL . 'ui/images/icon16.png'
         );
 
-        if ( !is_super_admin() )
+        if ( !is_user_logged_in() || !is_super_admin() )
             $args[ 'capability_type' ] = 'pods_page';
 
         $args = PodsInit::object_label_fix( $args, 'post_type' );

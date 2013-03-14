@@ -4733,7 +4733,7 @@ class PodsAPI {
 
             $field = pods_transient_get( 'pods_field_' . $params->pod . '_' . $params->name );
 
-            if ( !empty( $field ) ) {
+            if ( empty( $field ) ) {
                 $field = get_posts( array(
                     'name' => $params->name,
                     'post_type' => '_pods_field',
@@ -4763,8 +4763,9 @@ class PodsAPI {
 
         $_field = get_object_vars( $_field );
 
-        if ( !isset( $pod[ 'name' ] ) && !isset( $_field[ 'pod' ] ) && 0 < $_field[ 'post_parent' ] ) {
-            $pod = $this->load_pod( array( 'id' => $_field[ 'post_parent' ], 'table_info' => false ) );
+        if ( !isset( $pod[ 'name' ] ) && !isset( $_field[ 'pod' ] ) ) {
+            if ( 0 < $_field[ 'post_parent' ] )
+                $pod = $this->load_pod( array( 'id' => $_field[ 'post_parent' ], 'table_info' => false ) );
 
             if ( empty( $pod ) ) {
                 if ( $strict )
@@ -4772,12 +4773,6 @@ class PodsAPI {
 
                 return false;
             }
-        }
-        else {
-            if ( $strict )
-                return pods_error( __( 'Pod for field not found', 'pods' ), $this );
-
-            return false;
         }
 
         if ( empty( $field ) ) {
@@ -4852,7 +4847,8 @@ class PodsAPI {
                 if ( isset( $field[ 'options' ][ 'sister_field_id' ] ) )
                     unset( $field[ 'options' ][ 'sister_field_id' ] );
 
-                pods_transient_set( 'pods_field_' . $pod[ 'name' ] . '_' . $field[ 'name' ], $field );
+                if ( isset( $pod[ 'name' ] ) || isset( $_field[ 'pod' ] ) )
+                    pods_transient_set( 'pods_field_' . pods_var( 'name', $pod, $_field[ 'pod' ], null, true ) . '_' . $field[ 'name' ], $field );
             }
         }
 

@@ -554,21 +554,8 @@ class PodsField_Pick extends PodsField {
 
         $ajax = false;
 
-        if ( ( 'custom-simple' != pods_var( 'pick_object', $options ) || empty( $custom ) ) && '' != pods_var( 'pick_object', $options, '', null, true ) ) {
-            $autocomplete = false;
-
-            if ( 'single' == pods_var( 'pick_format_type', $options, 'single' ) && 'autocomplete' == pods_var( 'pick_format_single', $options, 'dropdown' ) )
-                $autocomplete = true;
-            elseif ( 'multi' == pods_var( 'pick_format_type', $options, 'single' ) && 'autocomplete' == pods_var( 'pick_format_multi', $options, 'checkbox' ) )
-                $autocomplete = true;
-
-            $params[ 'limit' ] = -1;
-
-            if ( $autocomplete )
-                $params[ 'limit' ] = apply_filters( 'pods_form_ui_field_pick_autocomplete_limit', 30, $name, $value, $options, $pod, $id );
-
+        if ( ( 'custom-simple' != pods_var( 'pick_object', $options ) || empty( $custom ) ) && '' != pods_var( 'pick_object', $options, '', null, true ) )
             $ajax = true;
-        }
 
         if ( 'single' == pods_var( 'pick_format_type', $options, 'single' ) ) {
             if ( 'dropdown' == pods_var( 'pick_format_single', $options, 'dropdown' ) )

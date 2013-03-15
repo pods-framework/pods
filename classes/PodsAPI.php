@@ -4777,7 +4777,7 @@ class PodsAPI {
 
         if ( empty( $field ) ) {
             if ( isset( $pod[ 'name' ] ) || isset( $_field[ 'pod' ] ) )
-                $field = pods_transient_get( 'pods_field_' . pods_var( 'name', $pod, $_field[ 'pod' ], null, true ) . '_' . $_field[ 'post_name' ] );
+                $field = pods_transient_get( 'pods_field_' . pods_var( 'name', $pod, pods_var( 'pod', $_field ), null, true ) . '_' . $_field[ 'post_name' ] );
 
             if ( empty( $field ) ) {
                 $defaults = array(
@@ -4848,7 +4848,7 @@ class PodsAPI {
                     unset( $field[ 'options' ][ 'sister_field_id' ] );
 
                 if ( isset( $pod[ 'name' ] ) || isset( $_field[ 'pod' ] ) )
-                    pods_transient_set( 'pods_field_' . pods_var( 'name', $pod, $_field[ 'pod' ], null, true ) . '_' . $field[ 'name' ], $field );
+                    pods_transient_set( 'pods_field_' . pods_var( 'name', $pod, pods_var( 'pod', $_field ), null, true ) . '_' . $field[ 'name' ], $field );
             }
         }
 

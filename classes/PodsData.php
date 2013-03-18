@@ -777,14 +777,16 @@ class PodsData {
 
         if ( empty( $params->where ) )
             $params->where = array();
-
+        else
+            $params->where = (array) $params->where;
 
         // Allow having array ( 'field' => 'value' ) and WP_Query meta_query syntax
         $params->having = $this->query_fields( (array) $params->having, $this->pod_data );
 
         if ( empty( $params->having ) )
             $params->having = array();
-
+        else
+            $params->having = (array) $params->having;
 
         if ( !empty( $params->orderby ) )
             $params->orderby = (array) $params->orderby;

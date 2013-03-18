@@ -2191,7 +2191,7 @@ class PodsAPI {
         if ( !$save_pod )
             $this->cache_flush_pods( $pod );
         else {
-            pods_transient_clear( 'pods_field_' . $pod[ 'name' ] . '_' . $field[ ' name' ] );
+            pods_transient_clear( 'pods_field_' . $pod[ 'name' ] . '_' . $field[ 'name' ] );
 
             if ( !empty( $old_id ) && $old_name != $field[ 'name' ] )
                 pods_transient_clear( 'pods_field_' . $pod[ 'name' ] . '_' . $old_name );

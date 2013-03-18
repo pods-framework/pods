@@ -2190,6 +2190,12 @@ class PodsAPI {
 
         if ( !$save_pod )
             $this->cache_flush_pods( $pod );
+        else {
+            pods_transient_clear( 'pods_field_' . $pod[ 'name' ] . '_' . $field[ ' name' ] );
+
+            if ( !empty( $old_id ) && $old_name != $field[ 'name' ] )
+                pods_transient_clear( 'pods_field_' . $pod[ 'name' ] . '_' . $old_name );
+        }
 
         if ( true === $db )
             return $params->id;
@@ -6514,6 +6520,10 @@ class PodsAPI {
 
         if ( null !== $pod && is_array( $pod ) ) {
             pods_transient_clear( 'pods_pod_' . $pod[ 'name' ] );
+
+            foreach ( $pod[ 'fields' ] as $field ) {
+                pods_transient_clear( 'pods_field_' . $pod[ 'name' ] . '_' . $field[ 'name' ] );
+            }
 
             if ( in_array( $pod[ 'type' ], array( 'post_type', 'taxonomy' ) ) )
                 pods_transient_clear( 'pods_wp_cpt_ct' );

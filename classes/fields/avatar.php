@@ -314,40 +314,49 @@ class PodsField_Avatar extends PodsField {
         }
 
         if ( 0 < $_user_ID && !empty( PodsMeta::$user ) ) {
-            $avatar_field = pods_transient_get( 'pods_avatar_field' );
+            $avatar_cached = pods_cache_get( $_user_ID . '-' . $size, 'pods_avatars' );
 
-            $user = current( PodsMeta::$user );
+            if ( !empty( $avatar_cached ) )
+                $avatar = $avatar_cached;
+            else {
+                $avatar_field = pods_transient_get( 'pods_avatar_field' );
 
-            if ( empty( $avatar_field ) ) {
-                foreach ( $user[ 'fields' ] as $field ) {
-                    if ( 'avatar' == $field[ 'type' ] ) {
-                        $avatar_field = $field[ 'name' ];
+                $user = current( PodsMeta::$user );
 
-                        pods_transient_set( 'pods_avatar_field', $avatar_field );
+                if ( empty( $avatar_field ) ) {
+                    foreach ( $user[ 'fields' ] as $field ) {
+                        if ( 'avatar' == $field[ 'type' ] ) {
+                            $avatar_field = $field[ 'name' ];
 
-                        break;
+                            pods_transient_set( 'pods_avatar_field', $avatar_field );
+
+                            break;
+                        }
                     }
                 }
-            }
-            elseif ( !isset( $user[ 'fields' ][ $avatar_field ] ) )
-                $avatar_field = false;
+                elseif ( !isset( $user[ 'fields' ][ $avatar_field ] ) )
+                    $avatar_field = false;
 
-            if ( !empty( $avatar_field ) ) {
-                $user_avatar = get_user_meta( $_user_ID, $avatar_field . '.ID', true );
+                if ( !empty( $avatar_field ) ) {
+                    $user_avatar = get_user_meta( $_user_ID, $avatar_field . '.ID', true );
 
-                if ( !empty( $user_avatar ) ) {
-                    $attributes = array(
-                        'alt' => '',
-                        'class' => 'avatar avatar-' . $size . ' photo'
-                    );
+                    if ( !empty( $user_avatar ) ) {
+                        $attributes = array(
+                            'alt' => '',
+                            'class' => 'avatar avatar-' . $size . ' photo'
+                        );
 
-                    if ( !empty( $alt ) )
-                        $attributes[ 'alt' ] = $alt;
+                        if ( !empty( $alt ) )
+                            $attributes[ 'alt' ] = $alt;
 
-                    $user_avatar = pods_image( $user_avatar, array( $size, $size ), 0, $attributes );
+                        $user_avatar = pods_image( $user_avatar, array( $size, $size ), 0, $attributes );
 
-                    if ( !empty( $user_avatar ) )
-                        $avatar = $user_avatar;
+                        if ( !empty( $user_avatar ) ) {
+                            $avatar = $user_avatar;
+
+                            pods_cache_set( $_user_ID . '-' . $size, $avatar, 'pods_avatars' );
+                        }
+                    }
                 }
             }
         }

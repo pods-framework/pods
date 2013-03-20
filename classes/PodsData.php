@@ -2035,10 +2035,18 @@ class PodsData {
         }
 
         foreach ( $fields as $field => $match ) {
-            $query_field = self::query_field( $field, $match, $pod );
+            if ( is_array( $match ) && isset( $match[ 'relation' ] ) ) {
+                $query_field = self::query_fields( $match, $pod );
 
-            if ( !empty( $query_field ) )
-                $query_fields[] = $query_field;
+                if ( !empty( $query_field ) )
+                    $query_fields[] = $query_field;
+            }
+            else {
+                $query_field = self::query_field( $field, $match, $pod );
+
+                if ( !empty( $query_field ) )
+                    $query_fields[] = $query_field;
+            }
         }
 
         if ( !empty( $query_fields ) )
@@ -2073,7 +2081,7 @@ class PodsData {
         if ( is_numeric( $field ) && !is_array( $q ) )
             return $q;
         // key => value queries (backwards compatibility)
-        if ( !is_numeric( $field ) && ( !is_array( $q ) || !isset( $q[ 'key' ] ) ) ) {
+        elseif ( !is_numeric( $field ) && ( !is_array( $q ) || !isset( $q[ 'key' ] ) ) ) {
             $new_q = array(
                 'key' => $field,
                 'value' => pods_var_raw( 'value', $q, $q, null, true ),

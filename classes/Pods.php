@@ -275,19 +275,40 @@ class Pods {
     }
 
     /**
-     * Return field array from a Pod
+     * Return field array from a Pod, a field's data, or a field option
      *
-     * @return array
+     * @param null $field
+     * @param null $option
+     *
+     * @return bool|mixed
      *
      * @since 2.0
      */
-    public function fields () {
-        $this->do_hook( 'fields' );
+    public function fields ( $field = null, $option = null ) {
+        $field_data = null;
 
+        // No fields found
         if ( empty( $this->fields ) )
-            return false;
+            $field_data = false;
+        // Return all fields
+        elseif ( empty( $field ) )
+            $field_data = (array) $this->fields;
+        // Field not found
+        elseif ( !isset( $this->fields[ $field ] ) )
+            $field_data = false;
+        // Return all field data
+        elseif ( empty( $option ) )
+            $field_data = $this->fields[ $field ];
+        else {
+            // Merge options
+            $options = array_merge( $this->fields[ $field ], $this->Fields[ $field ][ 'options' ] );
 
-        return (array) $this->fields;
+            // Return option
+            if ( isset( $options[ $option ] ) )
+                $field_data = $options[ $option ];
+        }
+
+        return $this->do_hook( 'fields', $field_data, $field, $option );
     }
 
     /**

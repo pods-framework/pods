@@ -80,7 +80,8 @@ class PodsField_Date extends PodsField {
                     'dMd' => date_i18n( 'd/M/Y' ),
                     'dMd_dash' => date_i18n( 'd-M-Y' ),
                     'fjy' => date_i18n( 'F j, Y' ),
-                    'fjsy' => date_i18n( 'F jS, Y' )
+                    'fjsy' => date_i18n( 'F jS, Y' ),
+                    'y' => date_i18n( 'Y' )
                 )
             ),
             'date_allow_empty' => array(
@@ -240,7 +241,8 @@ class PodsField_Date extends PodsField {
             'dMd' => 'd/M/Y',
             'dMd_dash' => 'd-M-Y',
             'fjy' => 'F j, Y',
-            'fjsy' => 'F jS, Y'
+            'fjsy' => 'F jS, Y',
+            'y' => 'Y'
         );
 
         $format = $date_format[ pods_var( 'date_format', $options, 'ymd_dash', null, true ) ];

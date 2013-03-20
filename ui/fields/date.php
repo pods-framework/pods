@@ -12,7 +12,8 @@
         'dMy' => 'dd/M/yy',
         'dMy_dash' => 'dd-M-yy',
         'fjy' => 'MM d, yy',
-        'fjsy' => 'MM d, yy'
+        'fjsy' => 'MM d, yy',
+        'y' => 'yy'
     );
 
     wp_enqueue_script( 'jquery-ui-datepicker' );

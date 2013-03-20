@@ -5741,7 +5741,7 @@ class PodsAPI {
 
             'table' => $object,
             'meta_table' => $object,
-            'pod_table' => $object,
+            'pod_table' => $wpdb->prefix . 'pods_' . $object,
 
             'field_id' => 'id',
             'field_index' => 'name',
@@ -5874,7 +5874,7 @@ class PodsAPI {
 
                 $object_type = 'pod';
 
-                $info[ 'table' ] = $info[ 'meta_table' ] = $info[ 'pod_table' ] = $wpdb->prefix . 'pods_' . ( empty( $object ) ? $name : $object );
+                $info[ 'table' ] = $info[ 'meta_table' ] = $wpdb->prefix . 'pods_' . ( empty( $object ) ? $name : $object );
 
                 if ( is_array( $info[ 'pod' ] ) && 'pod' == pods_var( 'type', $info[ 'pod' ] ) ) {
                     $info[ 'pod_field_index' ] = $info[ 'field_index' ] = $info[ 'meta_field_index' ] = $info[ 'meta_field_value' ] = pods_var( 'pod_index', $info[ 'pod' ][ 'options' ], 'id', null, true );
@@ -6177,7 +6177,7 @@ class PodsAPI {
                 $info[ 'orderby' ] = '`t`.`' . $info[ 'field_index' ] . '`, `t`.`' . $info[ 'field_id' ] . '`';
 
             if ( 'table' == pods_var_raw( 'storage', $info[ 'pod' ] ) && !in_array( $object_type, array( 'pod', 'table' ) ) ) {
-                $info[ 'join' ][ 'd' ] = "LEFT JOIN `{$wpdb->prefix}pods_{$name}` AS `d` ON `d`.`id` = `t`.`" . $info[ 'field_id' ] . '`';
+                $info[ 'join' ][ 'd' ] = 'LEFT JOIN `' . $info[ 'pod_table' ] . '` AS `d` ON `d`.`id` = `t`.`' . $info[ 'field_id' ] . '`';
                 //$info[ 'select' ] .= ', `d`.*';
             }
 

@@ -1931,14 +1931,14 @@ class PodsMeta {
             }
         }
 
-        if ( !$single || empty( $meta_cache ) || !is_array( $meta_cache ) )
+        if ( !$single && ( empty( $meta_cache ) || !is_array( $meta_cache ) ) )
             $meta_cache = array();
 
         $pod = pods( $object[ 'name' ], $object_id );
 
         $meta_keys = array( $meta_key );
 
-        if ( !$single )
+        if ( empty( $meta_key ) )
             $meta_keys = array_keys( $meta_cache );
 
         foreach ( $meta_keys as $meta_k ) {
@@ -1953,6 +1953,8 @@ class PodsMeta {
                 }
             }
         }
+
+        unset( $pod ); // memory clear
 
         if ( !$single && isset( $GLOBALS[ 'wp_object_cache' ] ) && is_object( $GLOBALS[ 'wp_object_cache' ] ) )
             wp_cache_set( $object_id, $meta_cache, $meta_type . '_meta' );

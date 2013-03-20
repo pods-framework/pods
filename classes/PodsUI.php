@@ -1817,6 +1817,11 @@ class PodsUI {
      * @return bool
      */
     public function get_data ( $full = false, $fields = null ) {
+        $action = $this->action;
+
+        if ( !in_array( $action, array( 'manage', 'reorder' ) ) )
+            $action = 'manage';
+
         if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
             $orderby = array();
 
@@ -1847,7 +1852,7 @@ class PodsUI {
             }
 
             $params = array(
-                'where' => pods_var_raw( $this->action, $this->where, null, null, true ),
+                'where' => pods_var_raw( $action, $this->where, null, null, true ),
                 'orderby' => $orderby,
                 'page' => (int) $this->page,
                 'limit' => (int) $limit,
@@ -1907,7 +1912,7 @@ class PodsUI {
 
             $params = array(
                 'table' => $this->sql[ 'table' ],
-                'where' => pods_var_raw( $this->action, $this->where, null, null, true ),
+                'where' => pods_var_raw( $action, $this->where, null, null, true ),
                 'orderby' => $orderby,
                 'page' => (int) $this->page,
                 'limit' => (int) $this->limit,

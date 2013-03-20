@@ -94,8 +94,13 @@ class PodsAPI {
 
         if ( in_array( $object_type, array( 'post', 'user', 'comment' ) ) )
             return call_user_func( array( $this, 'save_' . $object_type ), $data, $meta, $strict, false );
-        elseif ( 'settings' == $object_type )
+        elseif ( 'settings' == $object_type ) {
+            // Nothing to save
+            if ( empty( $meta ) )
+                return true;
+
             return $this->save_setting( pods_var( 'option_id', $data ), $meta, false );
+        }
 
         return false;
     }
@@ -2834,7 +2839,7 @@ class PodsAPI {
             $object_data[ 'post_type' ] = $post_type;
         }
 
-        if ( ( 'meta' == $pod[ 'storage' ] || ( 'settings' == $pod[ 'type' ] ) && !in_array( $pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) ) ) {
+        if ( ( 'meta' == $pod[ 'storage' ] || 'settings' == $pod[ 'type' ] ) && !in_array( $pod[ 'type' ], array( 'taxonomy', 'pod', 'table', '' ) ) ) {
             if ( $allow_custom_fields && !empty( $custom_data ) )
                 $object_meta = array_merge( $custom_data, $object_meta );
 
@@ -2948,16 +2953,24 @@ class PodsAPI {
                             delete_metadata( $object_type, $params->id, $field );
                     }
                     elseif ( 'settings' == $pod[ 'type' ] ) {
-                        if ( 'pick' != $type || !in_array( $fields[ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
-                            if ( !empty( $values ) )
-                                update_option( '_pods_' . $pod[ 'name' ] . '_' . $field, $values );
-                            else
-                                update_option( '_pods_' . $pod[ 'name' ] . '_' . $field, '' );
+                        if ( !empty( $values ) ) {
+                            update_option( '_pods_' . $pod[ 'name' ] . '_' . $field, $values );
+
+                            $values_to_impode = array();
+
+                            foreach ( $values as $id ) {
+                                if ( is_array( $id ) )
+                                    $values_to_impode[] = $id[ 'id' ];
+                                else
+                                    $values_to_impode[] = $id;
+                            }
+
+                            update_option( $pod[ 'name' ] . '_' . $field, $values_to_impode );
                         }
-                        elseif ( !empty( $values ) )
-                            update_option( $pod[ 'name' ] . '_' . $field, $values );
-                        else
+                        else {
+                            update_option( '_pods_' . $pod[ 'name' ] . '_' . $field, '' );
                             update_option( $pod[ 'name' ] . '_' . $field, '' );
+                        }
                     }
 
                     $related_pod_id = $related_field_id = 0;
@@ -3071,6 +3084,7 @@ class PodsAPI {
                         }
                     }
 
+                    // Settings don't have IDs
                     if ( 'settings' != $pod[ 'type' ] && ( 'pick' != $type || !in_array( $fields[ $field ][ 'pick_object' ], $simple_tableless_objects ) ) ) {
                         if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
                             if ( !empty( $values ) ) {

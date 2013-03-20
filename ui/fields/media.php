@@ -225,7 +225,7 @@ else
                         attachment_thumbnail = attachment.attributes.icon;
 
                         // only thumbnails have sizes which is what we're on the hunt for
-                        if ( typeof attachment.attributes.sizes ) {
+                        if ( 'undefined' != typeof attachment.attributes.sizes ) {
                             // Get thumbnail if it exists
                             if ( 'undefined' != typeof attachment.attributes.sizes.thumbnail && 'undefined' != typeof attachment.attributes.sizes.thumbnail.url )
                                 attachment_thumbnail = attachment.attributes.sizes.thumbnail.url;

@@ -5524,7 +5524,7 @@ class PodsAPI {
 
         // Verify required fields
         if ( 1 == pods_var( 'required', $options[ 'options' ], 0 ) ) {
-            if ( '' == $value || null === $value )
+            if ( '' == $value || null === $value || array() === $value )
                 return pods_error( sprintf( __( '%s is empty', 'pods' ), $label ), $this );
 
             if ( 'multi' == pods_var( 'pick_format_type', $options[ 'options' ] ) && 'autocomplete' != pods_var( 'pick_format_multi', $options[ 'options' ] ) ) {
@@ -5533,8 +5533,11 @@ class PodsAPI {
                 $check_value = (array) $value;
 
                 foreach ( $check_value as $val ) {
-                    if ( '' != $val && null !== $val && 0 != $val )
+                    if ( '' != $val && null !== $val && 0 !== $val && '0' !== $val ) {
                         $has_value = true;
+
+                        continue;
+                    }
                 }
 
                 if ( !$has_value )

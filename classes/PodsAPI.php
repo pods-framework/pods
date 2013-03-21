@@ -1129,6 +1129,7 @@ class PodsAPI {
      * $params['name'] string The Pod name
      * $params['label'] string The Pod label
      * $params['type'] string The Pod type
+     * $params['object'] string The object being extended (if any)
      * $params['storage'] string The Pod storage
      * $params['options'] array Options
      *

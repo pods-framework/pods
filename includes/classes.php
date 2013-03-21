@@ -90,27 +90,31 @@ function pods_ui ( $obj, $deprecated = false ) {
 function pods_api ( $pod = null, $format = null ) {
     require_once( PODS_DIR . 'classes/PodsAPI.php' );
 
-    $identifier = (string) $pod . (string) $format;
-
-    if ( !isset( $GLOBALS[ 'pods_class_cache' ] ) )
-        $GLOBALS[ 'pods_class_cache' ] = array();
-
-    if ( !isset( $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ] ) )
-        $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ] = array();
-
-    if ( isset( $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ] ) && is_object( $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ] ) )
-        $api =& $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ];
-    else {
+    if ( is_object( $pod ) )
         $api = new PodsAPI( $pod, $format );
+    else {
+        $identifier = (string) $pod . (string) $format;
 
-        if ( !isset( $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ] ) )
-            $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ] = 1;
-        else
-            $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ]++;
+        if ( !isset( $GLOBALS[ 'pods_class_cache' ] ) )
+            $GLOBALS[ 'pods_class_cache' ] = array();
 
-        // Start caching if the calls become excessive (calling the same reference more than once)
-        if ( 1 < $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ] )
-            $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ] =& $api;
+        if ( !isset( $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ] ) )
+            $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ] = array();
+
+        if ( isset( $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ] ) && is_object( $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ] ) )
+            $api =& $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ];
+        else {
+            $api = new PodsAPI( $pod, $format );
+
+            if ( !isset( $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ] ) )
+                $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ] = 1;
+            else
+                $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ]++;
+
+            // Start caching if the calls become excessive (calling the same reference more than once)
+            if ( 1 < $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ] )
+                $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ] =& $api;
+        }
     }
 
     return $api;
@@ -132,27 +136,31 @@ function pods_api ( $pod = null, $format = null ) {
 function pods_data ( $pod = null, $id = null, $strict = true ) {
     require_once( PODS_DIR . 'classes/PodsData.php' );
 
-    $identifier = (string) $pod . (string) $id . (string) $strict;
-
-    if ( !isset( $GLOBALS[ 'pods_class_cache' ] ) )
-        $GLOBALS[ 'pods_class_cache' ] = array();
-
-    if ( !isset( $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ] ) )
-        $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ] = array();
-
-    if ( isset( $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ] ) && is_object( $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ] ) )
-        $data =& $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ];
-    else {
+    if ( is_object( $pod ) )
         $data = new PodsData( $pod, $id );
+    else {
+        $identifier = (string) $pod . (string) $id . (string) $strict;
 
-        if ( !isset( $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ] ) )
-            $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ] = 1;
-        else
-            $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ]++;
+        if ( !isset( $GLOBALS[ 'pods_class_cache' ] ) )
+            $GLOBALS[ 'pods_class_cache' ] = array();
 
-        // Start caching if the calls become excessive (calling the same reference more than once)
-        if ( 1 < $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ] )
-            $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ] =& $data;
+        if ( !isset( $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ] ) )
+            $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ] = array();
+
+        if ( isset( $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ] ) && is_object( $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ] ) )
+            $data =& $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ];
+        else {
+            $data = new PodsData( $pod, $id );
+
+            if ( !isset( $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ] ) )
+                $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ] = 1;
+            else
+                $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ]++;
+
+            // Start caching if the calls become excessive (calling the same reference more than once)
+            if ( 1 < $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ] )
+                $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ] =& $data;
+        }
     }
 
     return $data;

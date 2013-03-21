@@ -20,7 +20,7 @@ class Pods_Migrate_Table extends PodsComponent {
     /**
      * Do things like register scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -29,7 +29,7 @@ class Pods_Migrate_Table extends PodsComponent {
     /**
      * Enqueue styles
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin_assets () {
         wp_enqueue_style( 'pods-wizard' );

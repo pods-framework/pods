@@ -8,7 +8,7 @@ class PodsField_Avatar extends PodsField {
      * Field Type Group
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $group = 'Relationships / Media';
 
@@ -16,7 +16,7 @@ class PodsField_Avatar extends PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'avatar';
 
@@ -24,7 +24,7 @@ class PodsField_Avatar extends PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'Avatar';
 
@@ -39,10 +39,10 @@ class PodsField_Avatar extends PodsField {
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
-        add_filter( 'get_avatar', array( $this, 'get_avatar' ), 10, 5 );
+
     }
 
     /**
@@ -50,7 +50,7 @@ class PodsField_Avatar extends PodsField {
      *
      * @param array $options
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function options () {
         $sizes = get_intermediate_image_sizes();
@@ -78,20 +78,50 @@ class PodsField_Avatar extends PodsField {
             'avatar_attachment_tab' => array(
                 'label' => __( 'Attachments Default Tab', 'pods' ),
                 'depends-on' => array( 'avatar_uploader' => 'attachment' ),
-                'default' => 'type',
+                'default' => 'upload',
                 'type' => 'pick',
                 'data' => array(
-                    'type' => __( 'Upload File', 'pods' ),
-                    'library' => __( 'Media Library', 'pods' )
+                    // keys MUST match WP's router names
+                    'upload' => __( 'Upload File', 'pods' ),
+                    'browse' => __( 'Media Library', 'pods' )
                 )
             ),
             'avatar_restrict_filesize' => array(
                 'label' => __( 'Restrict File Size', 'pods' ),
-                'excludes-on' => array( 'avatar_uploader' => 'attachment' ),
+                'depends-on' => array( 'avatar_uploader' => 'plupload' ),
                 'default' => '10MB',
+                'type' => 'text'
+            ),
+            'avatar_add_button' => array(
+                'label' => __( 'Add Button Text', 'pods' ),
+                'default' => __( 'Add File', 'pods' ),
+                'type' => 'text'
+            ),
+            'avatar_modal_title' => array(
+                'label' => __( 'Modal Title', 'pods' ),
+                'depends-on' => array( 'avatar_uploader' => 'attachment' ),
+                'default' => __( 'Attach a file', 'pods' ),
+                'type' => 'text'
+            ),
+            'avatar_modal_add_button' => array(
+                'label' => __( 'Modal Add Button Text', 'pods' ),
+                'depends-on' => array( 'avatar_uploader' => 'attachment' ),
+                'default' => __( 'Add File', 'pods' ),
                 'type' => 'text'
             )
         );
+
+        if ( !pods_wp_version( '3.5' ) ) {
+            unset( $options[ 'avatar_modal_title' ] );
+            unset( $options[ 'avatar_modal_add_button' ] );
+
+            $options[ 'avatar_attachment_tab' ][ 'default' ] = 'type';
+            $options[ 'avatar_attachment_tab' ][ 'data' ] = array(
+                'type' => __( 'Upload File', 'pods' ),
+                'library' => __( 'Media Library', 'pods' )
+            );
+        }
+
         return $options;
     }
 
@@ -101,7 +131,7 @@ class PodsField_Avatar extends PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function schema ( $options = null ) {
         $schema = false;
@@ -119,7 +149,7 @@ class PodsField_Avatar extends PodsField {
      * @param int $id
      *
      * @return mixed|null
-     * @since 2.0.0
+     * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         return $value;
@@ -134,7 +164,7 @@ class PodsField_Avatar extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
@@ -162,8 +192,12 @@ class PodsField_Avatar extends PodsField {
 
         if ( 'plupload' == pods_var( 'avatar_uploader', $options ) )
             $field_type = 'plupload';
-        elseif ( 'attachment' == pods_var( 'avatar_uploader', $options ) )
-            $field_type = 'attachment';
+        elseif ( 'attachment' == pods_var( 'avatar_uploader', $options ) ) {
+            if ( !pods_wp_version( '3.5' ) || !is_admin() ) // @todo test frontend media modal
+                $field_type = 'attachment';
+            else
+                $field_type = 'media';
+        }
         else {
             // Support custom File Uploader integration
             do_action( 'pods_form_ui_field_avatar_uploader_' . pods_var( 'avatar_uploader', $options ), $name, $value, $options, $pod, $id );
@@ -184,7 +218,7 @@ class PodsField_Avatar extends PodsField {
      * @param int $id
      *
      * @return bool
-     * @since 2.0.0
+     * @since 2.0
      */
     public function regex ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         return false;
@@ -202,7 +236,7 @@ class PodsField_Avatar extends PodsField {
      * @param null $params
      *
      * @return bool
-     * @since 2.0.0
+     * @since 2.0
      */
     public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         // check file size
@@ -222,56 +256,10 @@ class PodsField_Avatar extends PodsField {
      * @param object $params
      *
      * @return mixed
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         return $value;
-    }
-
-    /**
-     * Perform actions after saving to the DB
-     *
-     * @param mixed $value
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $fields
-     * @param array $pod
-     * @param object $params
-     *
-     * @since 2.0.0
-     */
-    public function post_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
-
-    }
-
-    /**
-     * Perform actions before deleting from the DB
-     *
-     * @param int $id
-     * @param string $name
-     * @param null $options
-     * @param string $pod
-     * @return void
-     *
-     * @since 2.0.0
-     */
-    public function pre_delete ( $id = null, $name = null, $options = null, $pod = null ) {
-
-    }
-
-    /**
-     * Perform actions after deleting from the DB
-     *
-     * @param int $id
-     * @param string $name
-     * @param array $options
-     * @param array $pod
-     *
-     * @since 2.0.0
-     */
-    public function post_delete ( $id = null, $name = null, $options = null, $pod = null ) {
-
     }
 
     /**
@@ -285,7 +273,7 @@ class PodsField_Avatar extends PodsField {
      * @param array $pod
      *
      * @return mixed|void
-     * @since 2.0.0
+     * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         if ( empty( $value ) )
@@ -303,7 +291,7 @@ class PodsField_Avatar extends PodsField {
      * Take over the avatar served from WordPress
      *
      * @param string $avatar Default Avatar Image output from WordPress
-     * @param int|string|object $id_or_email A user ID,  email address, or comment object
+     * @param int|string|object $id_or_email A user ID, email address, or comment object
      * @param int $size Size of the avatar image
      * @param string $default URL to a default image to use if no avatar is available
      * @param string $alt Alternate text to use in image tag. Defaults to blank
@@ -318,41 +306,57 @@ class PodsField_Avatar extends PodsField {
             $_user_ID = (int) $id_or_email->user_id;
         elseif ( is_object( $id_or_email ) && isset( $id_or_email->ID ) && isset( $id_or_email->user_login ) && 0 < $id_or_email->ID )
             $_user_ID = (int) $id_or_email->ID;
+        elseif ( !is_object( $id_or_email ) && false !== strpos( $id_or_email, '@' ) ) {
+            $_user = get_user_by( 'email', $id_or_email );
+
+            if ( !empty( $_user ) )
+                $_user_ID = (int) $_user->ID;
+        }
 
         if ( 0 < $_user_ID && !empty( PodsMeta::$user ) ) {
-            $avatar_field = pods_transient_get( 'pods_avatar_field' );
+            $avatar_cached = pods_cache_get( $_user_ID . '-' . $size, 'pods_avatars' );
 
-            $user = current( PodsMeta::$user );
+            if ( !empty( $avatar_cached ) )
+                $avatar = $avatar_cached;
+            else {
+                $avatar_field = pods_transient_get( 'pods_avatar_field' );
 
-            if ( empty( $avatar_field ) ) {
-                foreach ( $user[ 'fields' ] as $field ) {
-                    if ( 'avatar' == $field[ 'type' ] ) {
-                        $avatar_field = $field[ 'name' ];
+                $user = current( PodsMeta::$user );
 
-                        pods_transient_set( 'pods_avatar_field', $avatar_field );
+                if ( empty( $avatar_field ) ) {
+                    foreach ( $user[ 'fields' ] as $field ) {
+                        if ( 'avatar' == $field[ 'type' ] ) {
+                            $avatar_field = $field[ 'name' ];
 
-                        break;
+                            pods_transient_set( 'pods_avatar_field', $avatar_field );
+
+                            break;
+                        }
                     }
                 }
-            }
-            elseif ( !isset( $user[ 'fields' ][ $avatar_field ] ) )
-                $avatar_field = false;
+                elseif ( !isset( $user[ 'fields' ][ $avatar_field ] ) )
+                    $avatar_field = false;
 
-            if ( !empty( $avatar_field ) ) {
-                $user_avatar = get_user_meta( $_user_ID, $avatar_field, true );
+                if ( !empty( $avatar_field ) ) {
+                    $user_avatar = get_user_meta( $_user_ID, $avatar_field . '.ID', true );
 
-                if ( !empty( $user_avatar ) ) {
-                    $attributes = array(
-                        'alt' => ''
-                    );
+                    if ( !empty( $user_avatar ) ) {
+                        $attributes = array(
+                            'alt' => '',
+                            'class' => 'avatar avatar-' . $size . ' photo'
+                        );
 
-                    if ( !empty( $alt ) )
-                        $attributes[ 'alt' ] = $alt;
+                        if ( !empty( $alt ) )
+                            $attributes[ 'alt' ] = $alt;
 
-                    $user_avatar = pods_image( $user_avatar, array( $size, $size ), 0, $attributes );
+                        $user_avatar = pods_image( $user_avatar, array( $size, $size ), 0, $attributes );
 
-                    if ( !empty( $user_avatar ) )
-                        $avatar = $user_avatar;
+                        if ( !empty( $user_avatar ) ) {
+                            $avatar = $user_avatar;
+
+                            pods_cache_set( $_user_ID . '-' . $size, $avatar, 'pods_avatars' );
+                        }
+                    }
                 }
             }
         }

@@ -158,11 +158,6 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                 minimumInputLength : 1
             <?php
                 }
-                else {
-            ?>
-                minimumInputLength : 0
-            <?php
-                }
             ?>
         } );
 

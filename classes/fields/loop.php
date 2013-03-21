@@ -8,7 +8,7 @@ class PodsField_Loop extends PodsField {
      * Field Type Group
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $group = 'Relationships / Media';
 
@@ -16,7 +16,7 @@ class PodsField_Loop extends PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'loop';
 
@@ -24,14 +24,14 @@ class PodsField_Loop extends PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'Loop (Repeatable)';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -42,7 +42,7 @@ class PodsField_Loop extends PodsField {
      *
      * @return array
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function options () {
         $options = array(
@@ -62,7 +62,7 @@ class PodsField_Loop extends PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function schema ( $options = null ) {
         $schema = 'LONGTEXT';
@@ -80,7 +80,7 @@ class PodsField_Loop extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $fields = null;
@@ -100,7 +100,7 @@ class PodsField_Loop extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
@@ -119,7 +119,7 @@ class PodsField_Loop extends PodsField {
      * @param array $fields
      * @param array $pod
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->simple_value( $value, $options );

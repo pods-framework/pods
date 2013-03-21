@@ -5,6 +5,11 @@
 class PodsForm {
 
     /**
+     * @var PodsForm
+     */
+    protected static $instance = null;
+
+    /**
      * @var string
      */
     static $field = null;
@@ -35,19 +40,42 @@ class PodsForm {
     static $form_counter = 0;
 
     /**
-     * Generate UI for a Form and it's Fields
+     * Master handler for all field / form methods
      *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
-     * @since 2.0.0
+     * @since 2.0
      */
-    public function __construct () {
+    private function __construct () {
+        add_action( 'admin_init', array( $this, 'admin_init' ), 14 );
+    }
 
+    /**
+     * Prevent clones
+     *
+     * @since 2.3
+     */
+    private function __clone () {
+        // Hulk smash
+    }
+
+    /**
+     * Setup / get PodsForm instance
+     *
+     * @return PodsForm
+     *
+     * @since 2.3
+     */
+    public static function instance () {
+        if ( empty( self::$instance ) )
+            self::$instance = new PodsForm;
+
+        return self::$instance;
     }
 
     /**
      * Output a field's label
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function label ( $name, $label, $help = '', $options = null ) {
         if ( is_array( $label ) ) {
@@ -115,12 +143,12 @@ class PodsForm {
     /**
      * Output a field
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function field ( $name, $value, $type = 'text', $options = null, $pod = null, $id = null ) {
         $options = self::options( $type, $options );
 
-        if ( null === $value || ( !empty( $pod ) && empty( $id ) ) )
+        if ( null === $value || ( '' === $value && 'boolean' == $type ) || ( !empty( $pod ) && empty( $id ) ) )
             $value = self::default_value( $value, $type, $name, $options, $pod, $id );
 
         if ( false === self::permission( $type, $name, $options, null, $pod, $id ) )
@@ -137,9 +165,11 @@ class PodsForm {
             $helper = pods_api()->load_helper( array( 'name' => $options[ 'input_helper' ] ) );
 
         if ( ( !isset( $options[ 'data' ] ) || empty( $options[ 'data' ] ) ) && is_object( self::$loaded[ $type ] ) && method_exists( self::$loaded[ $type ], 'data' ) )
-            $data = $options[ 'data' ] = self::$loaded[ $type ]->data( $name, $value, $options, $pod, $id );
+            $data = $options[ 'data' ] = self::$loaded[ $type ]->data( $name, $value, $options, $pod, $id, true );
 
-        if ( !empty( $helper ) && 0 < strlen( pods_var_raw( 'code', $helper ) ) && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) )
+        if ( true === apply_filters( 'pods_form_ui_field_' . $type . '_override', false, $name, $value, $options, $pod, $id ) )
+            do_action( 'pods_form_ui_field_' . $type, $name, $value, $options, $pod, $id );
+        elseif ( !empty( $helper ) && 0 < strlen( pods_var_raw( 'code', $helper ) ) && ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) )
             eval( '?>' . $helper[ 'code' ] );
         elseif ( method_exists( get_class(), 'field_' . $type ) )
             echo call_user_func( array( get_class(), 'field_' . $type ), $name, $value, $options );
@@ -158,9 +188,9 @@ class PodsForm {
      *
      * Used for field names and other places where only [a-z0-9_] is accepted
      *
-     * @since 2.0.0
+     * @since 2.0
      */
-    protected function field_db ( $name, $value = null, $options = null ) {
+    protected static function field_db ( $name, $value = null, $options = null ) {
         $form_field_type = self::$field_type;
 
         ob_start();
@@ -175,7 +205,7 @@ class PodsForm {
     /**
      * Output a hidden field
      */
-    protected function field_hidden ( $name, $value = null, $options = null ) {
+    protected static function field_hidden ( $name, $value = null, $options = null ) {
         $form_field_type = self::$field_type;
 
         ob_start();
@@ -205,7 +235,7 @@ class PodsForm {
     /**
      * Output a field's attributes
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function attributes ( $attributes, $name = null, $type = null, $options = null ) {
         $attributes = (array) apply_filters( 'pods_form_ui_field_' . $type . '_attributes', $attributes, $name, $options );
@@ -221,7 +251,7 @@ class PodsForm {
     /**
      * Output a field's data (for use with jQuery)
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function data ( $data, $name = null, $type = null, $options = null ) {
         $data = (array) apply_filters( 'pods_form_ui_field_' . $type . '_data', $data, $name, $options );
@@ -242,7 +272,7 @@ class PodsForm {
     /**
      * Merge attributes and handle classes
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function merge_attributes ( $attributes, $name = null, $type = null, $options = null, $classes = '' ) {
         $options = (array) $options;
@@ -264,10 +294,12 @@ class PodsForm {
                 $_attributes[ 'class' ] .= ' pods-dependent-toggle';
 
             $attributes = array_merge( $_attributes, (array) $attributes );
-        }
 
-        if ( isset( $options[ 'attributes' ] ) && is_array( $options[ 'attributes' ] ) && !empty( $options[ 'attributes' ] ) )
-            $attributes = array_merge( $attributes, $options[ 'attributes' ] );
+            if ( isset( $options[ 'attributes' ] ) && is_array( $options[ 'attributes' ] ) && !empty( $options[ 'attributes' ] ) )
+                $attributes = array_merge( $attributes, $options[ 'attributes' ] );
+        }
+        elseif ( isset( $options[ $type . '_attributes' ] ) && is_array( $options[ $type . '_attributes' ] ) && !empty( $options[ $type . '_attributes' ] ) )
+            $attributes = array_merge( $attributes, $options[ $type . '_attributes' ] );
 
         if ( isset( $options[ 'class' ] ) && !empty( $options[ 'class' ] ) ) {
             if ( is_array( $options[ 'class' ] ) )
@@ -304,7 +336,7 @@ class PodsForm {
     /*
      * Setup options for a field and store them for later use
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     /**
      * @static
@@ -365,7 +397,7 @@ class PodsForm {
     /*
      * Get options for a field type and setup defaults
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     /**
      * @static
@@ -387,6 +419,7 @@ class PodsForm {
             'type' => 'text',
             'group' => 0,
             'grouped' => 0,
+            'developer_mode' => false,
             'dependency' => false,
             'depends-on' => array(),
             'excludes-on' => array(),
@@ -406,7 +439,7 @@ class PodsForm {
     /*
      * Get options for a field and setup defaults
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     /**
      * @static
@@ -431,6 +464,7 @@ class PodsForm {
                 'type' => 'text',
                 'group' => 0,
                 'grouped' => 0,
+                'developer_mode' => false,
                 'dependency' => false,
                 'depends-on' => array(),
                 'excludes-on' => array(),
@@ -454,7 +488,7 @@ class PodsForm {
     /*
      * Get options for a field and setup defaults
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     /**
      * @static
@@ -481,6 +515,7 @@ class PodsForm {
                 'type' => 'text',
                 'group' => 0,
                 'grouped' => 0,
+                'developer_mode' => false,
                 'dependency' => false,
                 'depends-on' => array(),
                 'excludes-on' => array(),
@@ -527,7 +562,7 @@ class PodsForm {
      *
      * @return string
      * @static
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function dependencies ( $options, $prefix = '' ) {
         $options = (array) $options;
@@ -575,6 +610,51 @@ class PodsForm {
     }
 
     /**
+     * Change the value of the field
+     *
+     * @param mixed $value
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param int $id
+     * @param array $traverse
+     *
+     * @since 2.3.0
+     */
+    public static function value ( $type, $value = null, $name = null, $options = null, $pod = null, $id = null, $traverse = null ) {
+        self::field_loader( $type );
+
+        $tableless_field_types = self::tableless_field_types();
+        $repeatable_field_types = self::repeatable_field_types();
+
+        if ( in_array( $type, $repeatable_field_types ) && 1 == pods_var( $type . '_repeatable', $options, 0 ) && !is_array( $value ) ) {
+            if ( 0 < strlen( $value ) ) {
+                $simple = @json_decode( $value, true );
+
+                if ( is_array( $simple ) )
+                    $value = $simple;
+                else
+                    $value = (array) $value;
+            }
+            else
+                $value = array();
+        }
+
+        if ( method_exists( self::$loaded[ $type ], 'value' ) ) {
+            if ( is_array( $value ) && in_array( $type, $tableless_field_types ) ) {
+                foreach ( $value as &$display_value ) {
+                    $display_value = call_user_func_array( array( self::$loaded[ $type ], 'value' ), array( $display_value, $name, $options, $pod, $id, $traverse ) );
+                }
+            }
+            else
+                $value = call_user_func_array( array( self::$loaded[ $type ], 'value' ), array( $value, $name, $options, $pod, $id, $traverse ) );
+        }
+
+        return $value;
+    }
+
+    /**
      * Change the way the value of the field is displayed with Pods::get
      *
      * @param mixed $value
@@ -585,12 +665,12 @@ class PodsForm {
      * @param int $id
      * @param array $traverse
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function display ( $type, $value = null, $name = null, $options = null, $pod = null, $id = null, $traverse = null ) {
         self::field_loader( $type );
 
-        $tableless_field_types = apply_filters( 'pods_tableless_field_types', array( 'pick', 'file', 'avatar', 'taxonomy' ) );
+        $tableless_field_types = self::tableless_field_types();
 
         if ( method_exists( self::$loaded[ $type ], 'display' ) ) {
             if ( is_array( $value ) && in_array( $type, $tableless_field_types ) ) {
@@ -614,7 +694,7 @@ class PodsForm {
      * @param $options
      *
      * @return mixed|void
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function regex ( $type, $options ) {
         self::field_loader( $type );
@@ -638,7 +718,7 @@ class PodsForm {
      * @param $options
      *
      * @return mixed|void
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function prepare ( $type, $options ) {
         self::field_loader( $type );
@@ -667,7 +747,7 @@ class PodsForm {
      *
      * @static
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function validate ( $type, &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         self::field_loader( $type );
@@ -695,7 +775,7 @@ class PodsForm {
      *
      * @static
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function pre_save ( $type, $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         self::field_loader( $type );
@@ -719,7 +799,7 @@ class PodsForm {
      *
      * @static
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function permission ( $type, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         $permission = pods_permission( $options );
@@ -732,7 +812,7 @@ class PodsForm {
     /**
      * Parse the default the value
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function default_value ( $value, $type = 'text', $name = null, $options = null, $pod = null, $id = null ) {
         $default_value = pods_var_raw( 'default_value', $options, $value, null, true );
@@ -740,7 +820,7 @@ class PodsForm {
 
         $default_value = str_replace( array( '{@', '}' ), '', trim( $default ) );
 
-        if ( $default != $default_value )
+        if ( $default != $default_value && 1 == (int) pods_var_raw( 'default_evaluate_tags', $options, 1 ) )
             $default = pods_evaluate_tags( $default );
 
         $default = pods_var_raw( pods_var_raw( 'default_value_parameter', $options ), 'request', $default, null, true );
@@ -757,7 +837,7 @@ class PodsForm {
     /**
      * Clean a value for use in class / id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function clean ( $input, $noarray = false, $db_field = false ) {
         $input = str_replace( array( '--1', '__1' ), '00000', (string) $input );
@@ -773,6 +853,35 @@ class PodsForm {
     }
 
     /**
+     * Run admin_init methods for each field type
+     *
+     * @since 2.3
+     */
+    public function admin_init () {
+        $admin_field_types = pods_transient_get( 'pods_form_admin_init_field_types' );
+
+        if ( empty( $admin_field_types ) ) {
+            $admin_field_types = array();
+
+            $field_types = self::field_types();
+
+            foreach ( $field_types as $field_type => $field_type_data ) {
+                $has_ajax = self::field_method( $field_type_data[ 'type' ], 'admin_init' );
+
+                if ( false !== $has_ajax )
+                    $admin_field_types[] = $field_type;
+            }
+
+            pods_transient_set( 'pods_form_admin_init_field_types', $admin_field_types );
+        }
+        else {
+            foreach ( $admin_field_types as $field_type ) {
+                self::field_method( $field_type, 'admin_init' );
+            }
+        }
+    }
+
+    /**
      * Autoload a Field Type's class
      *
      * @param string $field_type Field Type indentifier
@@ -781,7 +890,7 @@ class PodsForm {
      * @return string
      * @access public
      * @static
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function field_loader ( $field_type, $file = '' ) {
         if ( isset( self::$loaded[ $field_type ] ) ) {
@@ -845,7 +954,7 @@ class PodsForm {
      * @return mixed
      * @access public
      * @static
-     * @since 2.0.0
+     * @since 2.0
      */
     public static function field_method () {
         $args = func_get_args();
@@ -921,7 +1030,7 @@ class PodsForm {
             'slug'
         );
 
-        if ( pods_developer() )
+        if ( pods_developer() && 1 == 0 ) // Disable for now
             $field_types[] = 'loop';
 
         $field_types = array_merge( $field_types, array_keys( self::$field_types ) );
@@ -960,5 +1069,23 @@ class PodsForm {
             self::$field_types = array_merge( $field_types, self::$field_types );
 
         return self::$field_types;
+    }
+
+    public static function tableless_field_types () {
+        $tableless_field_types = array( 'pick', 'file', 'avatar', 'taxonomy' );
+
+        return apply_filters( 'pods_tableless_field_types', $tableless_field_types );
+    }
+
+    public static function file_field_types () {
+        $file_field_types = array( 'file', 'avatar' );
+
+        return apply_filters( 'pods_file_field_types', $file_field_types );
+    }
+
+    public static function repeatable_field_types () {
+        $repeatable_field_types = array( 'code', 'color', 'currency', 'date', 'datetime', 'email', 'number', 'paragraph', 'phone', 'text', 'time', 'website', 'wysiwyg' );
+
+        return apply_filters( 'pods_repeatable_field_types', $repeatable_field_types );
     }
 }

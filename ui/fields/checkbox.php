@@ -39,6 +39,19 @@ if ( 0 < $data_count ) {
 
         $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
 
+        $indent = '';
+
+        $indent_count = substr_count( $label, '&nbsp;&nbsp;&nbsp;' );
+
+        if ( 0 < $indent_count ) {
+            $label = str_replace( '&nbsp;&nbsp;&nbsp;', '', $label );
+
+            $indent = ' style="margin-left:' . ( 18 * $indent_count ) . 'px;"';
+        }
+
+        if ( 1 < $data_count && false === strpos( $primary_name, '[]' ) )
+            $attributes[ 'class' ] .= ' pods-dependent-multi';
+
         if ( strlen( $label ) < 1 )
             $attributes[ 'class' ] .= ' pods-form-ui-no-label';
 
@@ -51,7 +64,7 @@ if ( 0 < $data_count ) {
 <?php
         }
         ?>
-        <div class="pods-field pods-boolean">
+        <div class="pods-field pods-boolean"<?php echo $indent; ?>>
             <input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
             <?php
             if ( 0 < strlen( $label ) ) {

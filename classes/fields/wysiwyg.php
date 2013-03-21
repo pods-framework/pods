@@ -8,7 +8,7 @@ class PodsField_WYSIWYG extends PodsField {
      * Field Type Group
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $group = 'Paragraph';
 
@@ -16,7 +16,7 @@ class PodsField_WYSIWYG extends PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'wysiwyg';
 
@@ -24,7 +24,7 @@ class PodsField_WYSIWYG extends PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'WYSIWYG (Visual Editor)';
 
@@ -32,14 +32,14 @@ class PodsField_WYSIWYG extends PodsField {
      * Field Type Preparation
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $prepare = '%s';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -50,10 +50,19 @@ class PodsField_WYSIWYG extends PodsField {
      *
      * @return array
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function options () {
         $options = array(
+            'wysiwyg_repeatable' => array(
+                'label' => __( 'Repeatable Field', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'help' => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
+                'boolean_yes_label' => '',
+                'dependency' => true,
+                'developer_mode' => true
+            ),
             'wysiwyg_editor' => array(
                 'label' => __( 'Editor', 'pods' ),
                 'default' => 'tinymce',
@@ -66,6 +75,17 @@ class PodsField_WYSIWYG extends PodsField {
                             'cleditor' => __( 'CLEditor', 'pods' )
                         )
                     )
+            ),
+            'editor_options' => array(
+                'label' => __( 'Editor Options', 'pods' ),
+                'depends-on' => array( 'wysiwyg_editor' => 'tinymce' ),
+                'group' => array(
+                    'wysiwyg_media_buttons' => array(
+                        'label' => __( 'Enable Media Buttons?', 'pods' ),
+                        'default' => 1,
+                        'type' => 'boolean'
+                    )
+                )
             ),
             'output_options' => array(
                 'label' => __( 'Output Options', 'pods' ),
@@ -122,12 +142,12 @@ class PodsField_WYSIWYG extends PodsField {
                 'label' => __( 'Allowed HTML Tags', 'pods' ),
                 'default' => '',
                 'type' => 'text'
-            ),
+            ),/*
             'wysiwyg_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 0,
                 'type' => 'number'
-            )/*,
+            ),
             'wysiwyg_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
@@ -148,10 +168,10 @@ class PodsField_WYSIWYG extends PodsField {
      *
      * @param array $options
      *
-     * @return array
-     * @since 2.0.0
+     * @return string
+     * @since 2.0
      */
-    public function schema ( $options ) {
+    public function schema ( $options = null ) {
         $schema = 'LONGTEXT';
 
         return $schema;
@@ -167,7 +187,7 @@ class PodsField_WYSIWYG extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $value = $this->strip_html( $value, $options );
@@ -206,7 +226,7 @@ class PodsField_WYSIWYG extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
@@ -241,7 +261,7 @@ class PodsField_WYSIWYG extends PodsField {
      * @param array $pod
      * @param object $params
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $value = $this->strip_html( $value, $options );
@@ -259,7 +279,7 @@ class PodsField_WYSIWYG extends PodsField {
      * @param array $fields
      * @param array $pod
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->strip_html( $value, $options );

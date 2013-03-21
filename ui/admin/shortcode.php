@@ -150,6 +150,7 @@
             evt.preventDefault();
 
         } );
+
         var $useCaseSelector = $( '#pods-use-case-selector' ),
                 $form = $( '#pods_shortcode_form_element' ),
                 $podSelector = $( '#pod_select' ),
@@ -196,7 +197,8 @@
 
             // Fix for TB ajaxContent not picking up the height on the first open
             if ( pods_shortcode_first ) {
-                $( '#TB_ajaxContent' ).css( { height: '91%' } );
+                $( '#TB_ajaxContent' ).css( { width: 'auto', height: '91%' } );
+
                 pods_shortcode_first = false;
             }
         } );
@@ -234,12 +236,6 @@
 
     .pods-shortcode strong.red {
         color: red;
-    }
-
-    /* Thickbox Inline content fix */
-    #TB_ajaxContent {
-        width: auto !important;
-        height: auto !important;
     }
 </style>
 

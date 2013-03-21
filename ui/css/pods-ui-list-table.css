@@ -113,6 +113,16 @@
     font-size: 11px;
 }
 
+body.branch-3-5 .pods-ui-filter-bar-primary p.search-box input[name="s"] {
+    float: none;
+    line-height: 24px;
+}
+
+body.branch-3-5 .pods-ui-filter-bar-primary p.search-box input.button {
+    float: none;
+    line-height: 23px;
+}
+
 .pods-ui-filter-bar-secondary {
     margin: 0 auto;
     width: 97%;
@@ -278,15 +288,23 @@
     border-bottom: none;
 }
 
+body.branch-3-5 .pods-ui-posts-filter-popup p.submit {
+    margin-top: 36px;
+}
+
 .pods-ui-posts-filter-popup p.submit.clear {
     clear: none;
     float: right;
     text-align: right;
 }
 
-.pods-ui-posts-filter-popup p.submit input.button {
+body.branch-3-4 .pods-ui-posts-filter-popup p.submit input.button {
     font-size: 13px !important;
     padding: 5px 32px;
+}
+
+body.branch-3-5 .pods-ui-posts-filter-popup p.submit input.button {
+    padding: 0 32px;
 }
 
 .pods-ui-posts-filter-popup p:after

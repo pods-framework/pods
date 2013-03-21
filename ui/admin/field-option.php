@@ -4,6 +4,8 @@ $depends_on = false;
 foreach ( $field_options as $field_name => $field_option ) {
     if ( false !== strpos( $field_name, 'helper' ) && !class_exists( 'Pods_Helpers' ) )
         continue;
+    elseif ( $field_option[ 'developer_mode' ] && !pods_developer() )
+        continue;
 
     $field_option = (array) $field_option;
 
@@ -34,6 +36,15 @@ foreach ( $field_options as $field_name => $field_option ) {
             $value = $field_option[ 'value' ];
         else
             $value = pods_var_raw( $field_name, $field, $value );
+
+        if ( in_array( $field_option[ 'type' ], PodsForm::file_field_types() ) ) {
+            if ( is_array( $value ) && !isset( $value[ 'id' ] ) ) {
+                foreach ( $value as $k => $v ) {
+                    if ( isset( $v[ 'id' ] ) )
+                        $value[ $k ] = $v[ 'id' ];
+                }
+            }
+        }
         ?>
         <div class="pods-field-option">
             <?php echo PodsForm::row( $row_name, $value, $field_option[ 'type' ], $field_option ); ?>

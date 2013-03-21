@@ -1,75 +1,76 @@
-<div id="pods-field-<?php echo $params[ 'name' ]; ?>" class="pods-slider-field"></div>
-<div id="pods-field-<?php echo $params[ 'name' ]; ?>-amount-display" class="pods-slider-field-display" /></div>
-<input name="pods-field-<?php echo $params[ 'name' ]; ?>-amount-hidden" id="pods-field-<?php echo $params[ 'name' ]; ?>-amount-hidden" type="hidden" value="" />
+<?php
+    wp_enqueue_script( 'jquery-ui-slider' );
+    wp_enqueue_style( 'jquery-ui' );
+
+    if ( is_array( $value ) )
+        $value = implode( ',', $value );
+
+    if ( strlen( $value ) < 1 )
+        $value = 0;
+
+    $values = explode( ',', $value );
+    $values = array(
+        pods_var( 0, $values, pods_var( $form_field_type . '_min', $options, 0, null, true ) ),
+        pods_var( 1, $values, pods_var( $form_field_type . '_max', $options, 100, null, true ) )
+    );
+
+    $values[ 0 ] = max( $values[ 0 ], pods_var( $form_field_type . '_min', $options, 0 ) );
+    $values[ 1 ] = min( $values[ 1 ], pods_var( $form_field_type . '_min', $options, 100 ) );
+
+    if ( 0 == pods_var( $form_field_type . '_range', $options, 0 ) )
+        $output_value = $value = $values[ 0 ];
+    else {
+        $value = implode( ',', $values );
+        $output_value = implode( ' - ', $values );
+    }
+
+    $attributes = array();
+    $attributes[ 'type' ] = 'hidden';
+    $attributes[ 'value' ] = $value;
+    $attributes = PodsForm::merge_attributes( $attributes, $name, $form_field_type, $options );
+?>
+<input<?php PodsForm::attributes( $attributes, $name, $form_field_type, $options ); ?> />
+
+<div class="pods-slider-field">
+    <div id="<?php echo $attributes[ 'id' ]; ?>-range" class="pods-slider-range"></div>
+    <div id="<?php echo $attributes[ 'id' ]; ?>-amount-display" class="pods-slider-field-display">
+        <?php echo $output_value; ?>
+    </div>
+</div>
+
 <script>
     jQuery( function ( $ ) {
-        $( "#pods-field-<?php echo $params[ 'name' ]; ?>" ).slider( {
-                                                                    <?php if ( !empty( $params[ 'options' ][ 'range' ] ) ) : ?>
-                                    range :<?php echo $params[ 'options' ][ 'range' ]; ?>,
-                                <?php else: ?>
-            range : false,
-            <?php endif; ?>
+        $( "#<?php echo $attributes[ 'id' ]; ?>-range" ).slider( {
+            orientation : '<?php echo pods_var( $form_field_type . '_orientation', $options, 'horizontal' ); ?>',
+            min : <?php echo pods_var( $form_field_type . '_min', $options, 0 ); ?>,
+            max : <?php echo pods_var( $form_field_type . '_max', $options, 100 ); ?>,
+            step : <?php echo pods_var( $form_field_type . '_step', $options, 1 ); ?>,
 
-                                                                    <?php if ( !empty( $params[ 'options' ][ 'value' ] ) ) : ?>
-                                    value :<?php echo $params[ 'options' ][ 'value' ]; ?>,
-                                <?php else: ?>
-            value : 0,
-            <?php endif; ?>
-
-                                                                    <?php if ( !empty( $params[ 'options' ][ 'range' ] ) ) : ?>
-            <?php if ( !empty( $params[ 'options' ][ 'values' ] ) ) : ?>
-                values : [<?php echo $params[ 'options' ][ 'values' ]; ?>],
-                <?php else: ?>
-                values : [0,
-                    <?php if ( !empty( $params[ 'options' ][ 'maxnumber' ] ) ) : ?>
-                        <?php echo $params[ 'options' ][ 'maxnumber' ]; ?>
-                        <?php else: ?>
-                          100
-                        <?php endif; ?>
+            <?php
+                if ( 1 == pods_var( $form_field_type . '_range', $options, 0 ) ) {
+            ?>
+                range : true,
+                values : [
+                    <?php echo $values[ 0 ]; ?>,
+                    <?php echo $values[ 1 ]; ?>
                 ],
-                <?php endif; ?>
-            <?php endif; ?>
-
-                                                                    <?php if ( !empty( $params[ 'options' ][ 'orientation' ] ) ): ?>
-            orientation : "<?php echo $params[ 'options' ][ 'orientation' ]; ?>",
-            <?php else : ?>
-            orientation : "horizontal",
-            <?php endif; ?>
-
-                                                                    <?php if ( !empty( $params[ 'options' ][ 'minnumber' ] ) ) : ?>
-                                    min :<?php echo $params[ 'options' ][ 'minnumber' ]; ?>,
-                                <?php else: ?>
-            min : 0,
-            <?php endif; ?>
-
-                                                                    <?php if ( !empty( $params[ 'options' ][ 'maxnumber' ] ) ) : ?>
-                                    max :<?php echo $params[ 'options' ][ 'maxnumber' ]; ?>,
-                                <?php else: ?>
-            max : 100,
-            <?php endif; ?>
-
-                                                                    <?php if ( !empty( $params[ 'options' ][ 'step' ] ) ) : ?>
-                                    step :<?php echo $params[ 'options' ][ 'step' ]; ?>,
-                                <?php else: ?>
-            step : 1,
-            <?php endif; ?>
-
-                                                                        slide : function ( event, ui ) {
-                                                                        <?php if ( !empty( $params[ 'options' ][ 'range' ] ) ) : ?>
-                                                                            $( "#pods-field-<?php echo $params[ 'name' ]; ?>-amount-hidden" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-                                                                            $( "#pods-field-<?php echo $params[ 'name' ]; ?>-amount-display" ).html( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-                                                                            <?php else : ?>
-                                                                            $( "#pods-field-<?php echo $params[ 'name' ]; ?>-amount-hidden" ).val( ui.value );
-                                                                            $( "#pods-field-<?php echo $params[ 'name' ]; ?>-amount-display" ).html( ui.value );
-                                                                            <?php endif; ?>
-                                                                        }
-                                                                    } );
-    <?php if ( !empty( $params[ 'options' ][ 'range' ] ) ) : ?>
-        $( "#pods-field-<?php echo $params[ 'name' ]; ?>-amount-hidden" ).val( $( "#pods-field-<?php echo $params[ 'name' ]; ?>" ).slider( "values", 0 ) + " - " + $( "#pods-field-<?php echo $params[ 'name' ]; ?>" ).slider( "values", 1 ) );
-        $( "#pods-field-<?php echo $params[ 'name' ]; ?>-amount-display" ).html( $( "#pods-field-<?php echo $params[ 'name' ]; ?>" ).slider( "values", 0 ) + " - " + $( "#pods-field-<?php echo $params[ 'name' ]; ?>" ).slider( "values", 1 ) );
-        <?php else : ?>
-        $( "#pods-field-<?php echo $params[ 'name' ]; ?>-amount-hidden" ).val( $( "#pods-field-<?php echo $params[ 'name' ]; ?>" ).slider( "value" ) );
-        $( "#pods-field-<?php echo $params[ 'name' ]; ?>-amount-display" ).html( $( "#pods-field-<?php echo $params[ 'name' ]; ?>" ).slider( "value" ) );
-        <?php endif; ?>
+                slide : function ( event, ui ) {
+                    $( "#<?php echo $attributes[ 'id' ]; ?>" ).val( ui.values[ 0 ] + ',' + ui.values[ 1 ] );
+                    $( "#<?php echo $attributes[ 'id' ]; ?>-amount-display" ).html( ui.values[ 0 ] + ' - ' + ui.values[ 1 ] );
+                }
+            <?php
+                }
+                else {
+            ?>
+                range : false,
+                value : <?php echo $value; ?>,
+                slide : function ( event, ui ) {
+                    $( "#<?php echo $attributes[ 'id' ]; ?>" ).val( ui.value );
+                    $( "#<?php echo $attributes[ 'id' ]; ?>-amount-display" ).html( ui.value );
+                }
+            <?php
+                }
+            ?>
+        } );
     } );
 </script>

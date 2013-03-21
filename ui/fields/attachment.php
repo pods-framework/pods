@@ -34,6 +34,10 @@ if ( 'images' == $limit_file_type )
     $limit_types = 'jpg,png,gif';
 elseif ( 'video' == $limit_file_type )
     $limit_types = 'mpg,mov,flv,mp4';
+elseif ( 'audio' == $limit_file_type )
+    $limit_types = 'mp3,m4a,wav,wma';
+elseif ( 'text' == $limit_file_type )
+    $limit_types = 'txt,rtx,csv,tsv';
 elseif ( 'any' == $limit_file_type )
     $limit_types = '';
 else
@@ -60,9 +64,7 @@ $data = array(
 
 $the_post_id = '';
 
-if ( is_admin() && false !== strpos( $_SERVER[ 'REQUEST_URI' ], '/post.php' ) && 0 < pods_var( 'post' ) && 'edit' == pods_var( 'action' ) )
-    $the_post_id = '&amp;post_id=' . (int) pods_var( 'post' );
-elseif ( is_admin() && false !== strpos( $_SERVER[ 'REQUEST_URI' ], '/post-new.php' ) && 0 < $post_ID )
+if ( is_admin() && !empty( $post_ID ) )
     $the_post_id = '&amp;post_id=' . (int) $post_ID;
 
 if ( empty( $value ) )
@@ -71,7 +73,7 @@ else
     $value = (array) $value;
 ?>
 <div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ] ), $name, $form_field_type, $options ); ?>>
-    <table class="form-table pods-metabox" id="<?php echo $css_id; ?>"<?php PodsForm::data( $data, $name, $form_field_type, $options ); ?>>
+    <table class="form-table pods-metabox pods-form-ui-table-type-<?php echo $form_field_type; ?>" id="<?php echo $css_id; ?>"<?php PodsForm::data( $data, $name, $form_field_type, $options ); ?>>
         <tbody>
             <tr class="form-field">
                 <td>

@@ -19,7 +19,7 @@ class Pods_Migrate_Packages extends PodsComponent {
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -28,7 +28,7 @@ class Pods_Migrate_Packages extends PodsComponent {
     /**
      * Enqueue styles
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin_assets () {
         wp_enqueue_style( 'pods-wizard' );
@@ -39,7 +39,7 @@ class Pods_Migrate_Packages extends PodsComponent {
      *
      * @param $options
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin ( $options, $component ) {
         $method = 'import_export'; // ajax_import
@@ -160,7 +160,7 @@ class Pods_Migrate_Packages extends PodsComponent {
                     $pod = array( 'fields' => array() );
 
                 // Backwards compatibility
-                if ( version_compare( $data[ 'meta' ][ 'version' ], '2.0.0', '<' ) ) {
+                if ( version_compare( $data[ 'meta' ][ 'version' ], '2.0', '<' ) ) {
                     $core_fields = array(
                         array(
                             'name' => 'created',
@@ -538,7 +538,7 @@ class Pods_Migrate_Packages extends PodsComponent {
         $helper_ids = pods_var_raw( 'helpers', $params );
 
         if ( !empty( $pod_ids ) ) {
-            $api_params = array();
+            $api_params = array( 'export' => true );
 
             if ( true !== $pod_ids )
                 $api_params[ 'ids' ] = (array) $pod_ids;

@@ -19,7 +19,7 @@ class Pods_Deprecated
      *
      * @param object $obj The Pods object
      * @license http://www.gnu.org/licenses/gpl-2.0.html
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct ( &$obj ) {
         // backwards-compatibility with references to $this->var_name
@@ -43,7 +43,7 @@ class Pods_Deprecated
      * @since 1.2.0
      */
     public function set_field ( $name, $data = null ) {
-        pods_deprecated( 'Pods::set_field', '2.0.0' );
+        pods_deprecated( 'Pods::set_field', '2.0' );
 
         $this->obj->row[ $name ] = $data;
 
@@ -53,10 +53,10 @@ class Pods_Deprecated
     /**
      * Display HTML for all datatype fields
      *
-     * @deprecated deprecated since 2.0.0
+     * @deprecated deprecated since 2.0
      */
     public function showform ( $id = null, $public_fields = null, $label = 'Save changes' ) {
-        pods_deprecated( 'Pods::showform', '2.0.0' );
+        pods_deprecated( 'Pods::showform', '2.0' );
 
         $public_columns =& $public_fields;
 
@@ -287,7 +287,7 @@ class Pods_Deprecated
      * @return array
      */
     public function get_dropdown_values ( $params ) {
-        pods_deprecated( 'Pods::get_dropdown_values', '2.0.0' );
+        pods_deprecated( 'Pods::get_dropdown_values', '2.0' );
 
         global $wpdb;
 
@@ -338,10 +338,10 @@ class Pods_Deprecated
     /**
      * Build public input form
      *
-     * @deprecated deprecated since 2.0.0
+     * @deprecated deprecated since 2.0
      */
     public function publicForm ( $fields = null, $label = 'Save Changes', $thankyou_url = null ) {
-        pods_deprecated( 'Pods::publicForm', '2.0.0', 'Pods::form' );
+        pods_deprecated( 'Pods::publicForm', '2.0', 'Pods::form' );
 
         if ( !empty( $fields ) ) {
             // Just update field name here, form() will handle the rest
@@ -370,10 +370,10 @@ class Pods_Deprecated
     /**
      * Build HTML for a single field
      *
-     * @deprecated deprecated since 2.0.0
+     * @deprecated deprecated since 2.0
      */
     public function build_field_html ( $field ) {
-        pods_deprecated( 'Pods::build_field_html', '2.0.0' );
+        pods_deprecated( 'Pods::build_field_html', '2.0' );
 
         include PODS_DIR . 'deprecated/input_fields.php';
     }
@@ -382,10 +382,10 @@ class Pods_Deprecated
      * Fetch a row of results from the DB
      *
      * @since 1.2.0
-     * @deprecated deprecated since 2.0.0
+     * @deprecated deprecated since 2.0
      */
     public function fetchRecord () {
-        pods_deprecated( 'Pods::fetchRecord', '2.0.0', 'Pods::fetch' );
+        pods_deprecated( 'Pods::fetchRecord', '2.0', 'Pods::fetch' );
 
         return $this->obj->fetch();
     }
@@ -397,10 +397,10 @@ class Pods_Deprecated
      * @param string $orderby (optional) The orderby string, for PICK fields
      *
      * @since 1.2.0
-     * @deprecated deprecated since version 2.0.0
+     * @deprecated deprecated since version 2.0
      */
     public function get_field ( $name, $orderby = null ) {
-        pods_deprecated( 'Pods::get_field', '2.0.0', 'Pods::field' );
+        pods_deprecated( 'Pods::get_field', '2.0', 'Pods::field' );
 
         $value = $this->obj->field( array( 'name' => $name, 'orderby' => $orderby, 'deprecated' => true ) );
 
@@ -419,10 +419,10 @@ class Pods_Deprecated
      *
      * @return int The ID from the wp_pod table
      * @since 1.2.0
-     * @deprecated deprecated since version 2.0.0
+     * @deprecated deprecated since version 2.0
      */
     public function get_pod_id () {
-        pods_deprecated( 'Pods::get_pod_id', '2.0.0' );
+        pods_deprecated( 'Pods::get_pod_id', '2.0' );
 
         if ( !empty( $this->obj->row ) )
             return $this->obj->row[ $this->obj->data->field_id ];
@@ -434,10 +434,10 @@ class Pods_Deprecated
      * Search and filter records
      *
      * @since 1.x
-     * @deprecated deprecated since version 2.0.0
+     * @deprecated deprecated since version 2.0
      */
     public function findRecords ( $orderby = null, $rows_per_page = 15, $where = null, $sql = null ) {
-        pods_deprecated( 'Pods::findRecords', '2.0.0', 'Pods::find' );
+        pods_deprecated( 'Pods::findRecords', '2.0', 'Pods::find' );
 
         $find = array(
             ' p.created',
@@ -509,10 +509,10 @@ class Pods_Deprecated
      * Return a single record
      *
      * @since 1.x
-     * @deprecated deprecated since version 2.0.0
+     * @deprecated deprecated since version 2.0
      */
     public function getRecordById ( $id ) {
-        pods_deprecated( 'Pods::getRecordById', '2.0.0', 'Pods::fetch_item' );
+        pods_deprecated( 'Pods::getRecordById', '2.0', 'Pods::fetch_item' );
 
         return $this->obj->fetch_item( $id );
     }
@@ -520,10 +520,10 @@ class Pods_Deprecated
     /**
      * Fetch the total row count
      *
-     * @deprecated deprecated since version 2.0.0
+     * @deprecated deprecated since version 2.0
      */
     public function getTotalRows () {
-        pods_deprecated( 'Pods::getTotalRows', '2.0.0', 'Pods::total_found' );
+        pods_deprecated( 'Pods::getTotalRows', '2.0', 'Pods::total_found' );
 
         return $this->obj->total_found();
     }
@@ -531,10 +531,10 @@ class Pods_Deprecated
     /**
      * (Re)set the MySQL result pointer
      *
-     * @deprecated deprecated since version 2.0.0
+     * @deprecated deprecated since version 2.0
      */
     public function resetPointer ( $row_number = 0 ) {
-        pods_deprecated( 'Pods::resetPointer', '2.0.0', 'Pods::reset' );
+        pods_deprecated( 'Pods::resetPointer', '2.0', 'Pods::reset' );
 
         return $this->obj->reset( $row_number );
     }
@@ -542,10 +542,10 @@ class Pods_Deprecated
     /**
      * Display the pagination controls
      *
-     * @deprecated deprecated since 2.0.0
+     * @deprecated deprecated since 2.0
      */
     public function getPagination ( $label = 'Go to page:' ) {
-        pods_deprecated( 'Pods::getPagination', '2.0.0', 'Pods::pagination' );
+        pods_deprecated( 'Pods::getPagination', '2.0', 'Pods::pagination' );
 
         echo $this->obj->pagination( array( 'type' => 'advanced', 'label' => $label ) );
     }
@@ -553,10 +553,10 @@ class Pods_Deprecated
     /**
      * Display the list filters
      *
-     * @deprecated deprecated since 2.0.0
+     * @deprecated deprecated since 2.0
      */
     public function getFilters ( $filters = null, $label = 'Filter', $action = '' ) {
-        pods_deprecated( 'Pods::getFilters', '2.0.0', 'Pods::filters' );
+        pods_deprecated( 'Pods::getFilters', '2.0', 'Pods::filters' );
 
         $params = array(
             'fields' => $filters,
@@ -577,10 +577,10 @@ class Pods_Deprecated
      *
      * @return mixed Anything returned by the helper
      * @since 1.2.0
-     * @deprecated deprecated since version 2.0.0
+     * @deprecated deprecated since version 2.0
      */
     public function pod_helper ( $helper_name, $value = null, $name = null ) {
-        pods_deprecated( 'Pods::pod_helper', '2.0.0', 'Pods::helper' );
+        pods_deprecated( 'Pods::pod_helper', '2.0', 'Pods::helper' );
 
         $params = array(
             'helper' => $helper_name,
@@ -595,10 +595,10 @@ class Pods_Deprecated
     /**
      * Display the page template
      *
-     * @deprecated deprecated since version 2.0.0
+     * @deprecated deprecated since version 2.0
      */
     public function showTemplate ( $template_name, $code = null ) {
-        pods_deprecated( 'Pods::showTemplate', '2.0.0', 'Pods::template' );
+        pods_deprecated( 'Pods::showTemplate', '2.0', 'Pods::template' );
 
         return $this->obj->template( $template_name, $code, true );
     }

@@ -24,7 +24,7 @@
     <?php
         include_once( ABSPATH . WPINC . '/feed.php' );
 
-        $feed = fetch_feed( 'http://podsframework.org/forums/forum/general-discussion/pods-2-x/feed/' );
+        $feed = fetch_feed( 'http://pods.io/forums/forum/general-discussion/pods-2-x/feed/' );
 
         if ( !is_wp_error( $feed ) ) {
             $max_items = $feed->get_item_quantity( 6 );
@@ -32,7 +32,7 @@
 
             if ( 0 < $max_items ) {
     ?>
-        <h3>Latest Forum Posts at <a href="http://podsframework.org/forums/forum/general-discussion/pods-2-x/" target="_blank">podsframework.org</a></h3>
+        <h3>Latest Forum Posts at <a href="http://pods.io/forums/forum/general-discussion/pods-2-x/" target="_blank">pods.io</a></h3>
 
         <ul class="ul-disc">
             <?php

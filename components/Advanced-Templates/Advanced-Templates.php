@@ -560,7 +560,7 @@ class Pods_Advanced_Templates extends PodsComponent {
     /**
      * Enqueue styles
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin_assets() {
 
@@ -693,7 +693,7 @@ class Pods_Advanced_Templates extends PodsComponent {
     /**
      * Clear cache on delete
      *Clean up used shortcode list
-     * @since 2.0.0
+     * @since 2.0
      */
     public function clear_cache($data, $pod = null, $id = null, $groups = null, $post = null) {
 
@@ -730,7 +730,7 @@ class Pods_Advanced_Templates extends PodsComponent {
      *
      * @param $options
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function admin($options, $component) {
 
@@ -783,37 +783,9 @@ class Pods_Advanced_Templates extends PodsComponent {
                 break;
             case 'apply_changes':
                 # Need to confirm things have been saved and updated..
-                parse_str(stripslashes($params->data), $predata);
-                if (get_magic_quotes_gpc()) {
-                    $predata = array_map('stripslashes_deep', $predata);
-                }
-                $data = $predata['data'];
-                $templateArgs = array(
-                    'post_name' => $data['slug'],
-                    'post_title' => $data['name'],
-                    'post_type' => '_pods_adv_template'
-                );
-
-                if (!empty($data['pod']))
-                    $templateArgs['post_status'] = 'publish';
-                else
-                    $templateArgs['post_status'] = 'draft';
-
-                if (!empty($data['ID'])) {
-                    $templateArgs['ID'] = $data['ID'];
-                    $lastPost = wp_update_post($templateArgs);
-                } else {
-                    $lastPost = wp_insert_post($templateArgs);
-                }
-                update_post_meta($lastPost, '_pods_adv_template', $data);
-
-                $out['title'] = $data['name'];
-                $out['id'] = $lastPost;
-                break;
         }
 
-        header("ContentType:application/json charset=utf-8");
-        echo json_encode($out);
+        wp_send_json( $out );
     }
 
 }

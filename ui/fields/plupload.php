@@ -121,9 +121,7 @@ if ( pods_wp_version( '3.5' ) ) {
 if ( !empty( $limit_types ) )
     $plupload_init[ 'filters' ][ 0 ][ 'extensions' ] = $limit_types;
 
-if ( is_admin() && false !== strpos( $_SERVER[ 'REQUEST_URI' ], '/post.php' ) && 0 < pods_var( 'post' ) && 'edit' == pods_var( 'action' ) )
-    $plupload_init[ 'multipart_params' ][ 'post_id' ] = (int) pods_var( 'post' );
-elseif ( is_admin() && false !== strpos( $_SERVER[ 'REQUEST_URI' ], '/post.php' ) && 0 < $post_ID )
+if ( is_admin() && !empty( $post_ID ) )
     $plupload_init[ 'multipart_params' ][ 'post_id' ] = (int) $post_ID;
 
 $plupload_init = apply_filters( 'plupload_init', $plupload_init );
@@ -134,7 +132,7 @@ else
     $value = (array) $value;
 ?>
 <div<?php PodsForm::attributes( array( 'class' => $attributes[ 'class' ] ), $name, $form_field_type, $options ); ?>>
-    <table class="form-table pods-metabox" id="<?php echo $css_id; ?>">
+    <table class="form-table pods-metabox pods-form-ui-table-type-<?php echo $form_field_type; ?>" id="<?php echo $css_id; ?>">
         <tbody>
             <tr class="form-field">
                 <td>
@@ -261,11 +259,12 @@ else
                 file_div.append( response );
             }
             else {
-                var json = response.match( /\{(.*)\}/gi );
+                var json = response.match( /{.*}$/ );
 
-                if ( json[ 0 ] ) {
+                if ( 0 < json.length )
                     json = jQuery.parseJSON( json[ 0 ] );
-                }
+                else
+                    json = {};
 
                 if ( 'object' != typeof json || jQuery.isEmptyObject( json ) ) {
                     if ( window.console ) console.log( response );

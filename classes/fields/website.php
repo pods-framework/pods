@@ -8,7 +8,7 @@ class PodsField_Website extends PodsField {
      * Field Type Group
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $group = 'Text';
 
@@ -16,7 +16,7 @@ class PodsField_Website extends PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'website';
 
@@ -24,7 +24,7 @@ class PodsField_Website extends PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'Website';
 
@@ -32,14 +32,14 @@ class PodsField_Website extends PodsField {
      * Field Type Preparation
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $prepare = '%s';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -50,10 +50,19 @@ class PodsField_Website extends PodsField {
      *
      * @param array $options
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function options () {
         $options = array(
+            'website_repeatable' => array(
+                'label' => __( 'Repeatable Field', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'help' => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
+                'boolean_yes_label' => '',
+                'dependency' => true,
+                'developer_mode' => true
+            ),
             'website_format' => array(
                 'label' => __( 'Format', 'pods' ),
                 'default' => 'normal',
@@ -70,7 +79,8 @@ class PodsField_Website extends PodsField {
             'website_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 255,
-                'type' => 'number'
+                'type' => 'number',
+                'help' => __( 'Set to 0 for no limit', 'pods' )
             ),
             'website_html5' => array(
                 'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
@@ -97,15 +107,15 @@ class PodsField_Website extends PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function schema ( $options = null ) {
         $length = (int) pods_var( 'website_max_length', $options, 255, null, true );
 
-        if ( $length < 1 )
-            $length = 255;
-
         $schema = 'VARCHAR(' . $length . ')';
+
+        if ( 255 < $length || $length < 1 )
+            $schema = 'LONGTEXT';
 
         return $schema;
     }
@@ -119,7 +129,7 @@ class PodsField_Website extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
@@ -141,7 +151,7 @@ class PodsField_Website extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
         $errors = array();
@@ -178,7 +188,7 @@ class PodsField_Website extends PodsField {
      * @param array $pod
      * @param object $params
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $options = (array) $options;
@@ -190,7 +200,7 @@ class PodsField_Website extends PodsField {
                 $value = implode( '', $value );
         }
 
-        if ( false === strpos( $value, '://' ) )
+        if ( false === strpos( $value, '://' ) && 0 !== strpos( $value, '//' ) )
             $value = 'http://' . $value;
 
         $url = @parse_url( $value );
@@ -224,7 +234,7 @@ class PodsField_Website extends PodsField {
             }
             elseif ( 'no-http' == pods_var( 'website_format', $options ) ) {
                 $value = $this->build_url( $url );
-                $value = str_replace( $url[ 'scheme' ] . '://', '', $value );
+                $value = str_replace( trim( $url[ 'scheme' ] . '://', ':' ), '', $value );
 
                 if ( '/' == $url[ 'path' ] )
                     $value = trim( $value, '/' );
@@ -234,7 +244,7 @@ class PodsField_Website extends PodsField {
                     $url[ 'host' ] = substr( $url[ 'host' ], 4 );
 
                 $value = $this->build_url( $url );
-                $value = str_replace( $url[ 'scheme' ] . '://', '', $value );
+                $value = str_replace( trim( $url[ 'scheme' ] . '://', ':' ), '', $value );
 
                 if ( '/' == $url[ 'path' ] )
                     $value = trim( $value, '/' );
@@ -244,7 +254,7 @@ class PodsField_Website extends PodsField {
                     $url[ 'host' ] = 'www.' . $url[ 'host' ];
 
                 $value = $this->build_url( $url );
-                $value = str_replace( $url[ 'scheme' ] . '://', '', $value );
+                $value = str_replace( trim( $url[ 'scheme' ] . '://', ':' ), '', $value );
 
                 if ( '/' == $url[ 'path' ] )
                     $value = trim( $value, '/' );
@@ -264,7 +274,7 @@ class PodsField_Website extends PodsField {
      * @param array $fields
      * @param array $pod
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         if ( 'website' == pods_var( 'website_format_type', $options ) && 0 < strlen( pods_var( 'website_format', $options ) ) )
@@ -294,7 +304,7 @@ class PodsField_Website extends PodsField {
 
         $url = array_merge( $defaults, (array) $url );
 
-        $new_url = $url[ 'scheme' ] . '://' . $url[ 'host' ] . '/' . ltrim( $url[ 'path' ], '/' );
+        $new_url = trim( $url[ 'scheme' ] . '://', ':' ) . $url[ 'host' ] . '/' . ltrim( $url[ 'path' ], '/' );
 
         if ( !empty( $url[ 'query' ] ) )
             $new_url .= '?' . ltrim( $url[ 'query' ], '?' );

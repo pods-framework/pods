@@ -8,7 +8,7 @@ class PodsField_Paragraph extends PodsField {
      * Field Type Group
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $group = 'Paragraph';
 
@@ -16,7 +16,7 @@ class PodsField_Paragraph extends PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'paragraph';
 
@@ -24,7 +24,7 @@ class PodsField_Paragraph extends PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'Plain Paragraph Text';
 
@@ -32,14 +32,14 @@ class PodsField_Paragraph extends PodsField {
      * Field Type Preparation
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $prepare = '%s';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -50,10 +50,19 @@ class PodsField_Paragraph extends PodsField {
      *
      * @return array
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function options () {
         $options = array(
+            'paragraph_repeatable' => array(
+                'label' => __( 'Repeatable Field', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'help' => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
+                'boolean_yes_label' => '',
+                'dependency' => true,
+                'developer_mode' => true
+            ),
             'output_options' => array(
                 'label' => __( 'Output Options', 'pods' ),
                 'group' => array(
@@ -116,12 +125,12 @@ class PodsField_Paragraph extends PodsField {
                 'depends-on' => array( 'paragraph_allow_html' => true ),
                 'default' => 'strong em a ul ol li b i',
                 'type' => 'text'
-            ),
+            )/*,
             'paragraph_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 0,
                 'type' => 'number'
-            )/*,
+            ),
             'paragraph_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',
@@ -143,9 +152,9 @@ class PodsField_Paragraph extends PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
-    public function schema ( $options ) {
+    public function schema ( $options = null ) {
         $schema = 'LONGTEXT';
 
         return $schema;
@@ -161,7 +170,7 @@ class PodsField_Paragraph extends PodsField {
      * @param int $id
      *
      * @return mixed|null|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $value = $this->strip_html( $value, $options );
@@ -200,7 +209,7 @@ class PodsField_Paragraph extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
@@ -224,7 +233,7 @@ class PodsField_Paragraph extends PodsField {
      * @param object $params
      *
      * @return mixed|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $value = $this->strip_html( $value, $options );
@@ -243,7 +252,7 @@ class PodsField_Paragraph extends PodsField {
      * @param array $pod
      *
      * @return mixed|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->strip_html( $value, $options );

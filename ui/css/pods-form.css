@@ -69,6 +69,14 @@
     padding: 2px 0;
 }
 
+select.pods-form-ui-field-type-pick[multiple] {
+    background: #fff;
+    border: 1px solid #dfdfdf;
+    border-radius: 3px;
+    width: 100%;
+    max-height: 200px;
+}
+
 .pods-pick-values ul {
     overflow: auto;
     margin: 0;
@@ -146,14 +154,26 @@ input.pods-form-ui-field-type-color {
 .pods-form-ui-field-type-select2 {
     min-width: 20%;
     width: auto;
+    height: 28px;
 }
 
 .pods-select2 .select2-container-multi .select2-choices .select2-search-field input {
     height: auto;
 }
 
-.form-table .pods-field td {
+.form-table tr.pods-field > td {
     line-height: inherit;
+    padding: 10px 0;
+}
+
+.form-table tr.pods-field.pods-form-ui-row-type-avatar > td,
+.form-table tr.pods-field.pods-form-ui-row-type-file > td {
+    padding: 0;
+}
+
+.form-table.pods-form-ui-table-type-avatar tr.form-field > td,
+.form-table.pods-form-ui-table-type-file tr.form-field > td {
+    padding: 0 10px;
 }
 
 .pods-field .wp-editor-container {
@@ -172,20 +192,6 @@ input.pods-form-ui-field-type-color {
     margin: 0;
 }
 
-.pods-form-front .pods-submittable-fields:after {
-    content: '.';
-    visibility: hidden;
-    clear: both;
-    display: block;
-}
-
-.pods-form-front li.pods-field:after {
-    content: '.';
-    visibility: hidden;
-    clear: both;
-    display: block;
-}
-
 .pods-form-front .pods-field-label {
     width: 20%;
     min-width: 150px;
@@ -199,7 +205,8 @@ input.pods-form-ui-field-type-color {
     float: left;
 }
 
-.pods-form-front .pods-field-input input {
+.pods-form-front .pods-field-input input,
+.pods-form .pods-field table.pods-metabox {
     width: 95%;
 }
 
@@ -276,4 +283,18 @@ input.pods-form-ui-field-type-color {
 .pods-form-ui-row-type-hidden {
     display: none;
     visibility: hidden;
+}
+
+.pods-form div.pods-form-ui-field-type-avatar:after,
+.pods-form div.pods-form-ui-field-type-file:after,
+.pods-form div.pods-form-ui-field-type-pick:after,
+.pods-meta div.pods-form-ui-field-type-avatar:after,
+.pods-meta div.pods-form-ui-field-type-file:after,
+.pods-meta div.pods-form-ui-field-type-pick:after,
+.pods-form-front .pods-submittable-fields:after,
+.pods-form-front li.pods-field:after {
+    content: '.';
+    visibility: hidden;
+    clear: both;
+    display: block;
 }

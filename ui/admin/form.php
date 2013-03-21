@@ -44,6 +44,10 @@ if ( isset( $_POST[ '_pods_nonce' ] ) ) {
         $id = $pod->api->process_form( $params, $pod, $fields, $thank_you );
 
         $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+
+        if ( 0 < strlen( pods_var( 'detail_url', $pod->pod_data[ 'options' ] ) ) )
+            $message .= ' <a target="_blank" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
+
         $error = sprintf( __( '<strong>Error:</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
 
         if ( 0 < $id )
@@ -64,6 +68,10 @@ elseif ( isset( $_GET[ 'do' ] ) ) {
         $action = __( 'duplicated', 'pods' );
 
     $message = sprintf( __( '<strong>Success!</strong> %s %s successfully.', 'pods' ), $obj->item, $action );
+
+    if ( 0 < strlen( pods_var( 'detail_url', $pod->pod_data[ 'options' ] ) ) )
+        $message .= ' <a target="_blank" href="' . $pod->field( 'detail_url' ) . '">' . sprintf( __( 'View %s', 'pods' ), $obj->item ) . '</a>';
+
     $error = sprintf( __( '<strong>Error:</strong> %s not %s.', 'pods' ), $obj->item, $action );
 
     if ( 0 < $pod->id() )
@@ -96,6 +104,14 @@ if ( 0 < $pod->id() ) {
         <?php echo PodsForm::field( '_pods_uri', $uri_hash, 'hidden' ); ?>
         <?php echo PodsForm::field( '_pods_form', implode( ',', array_keys( $fields ) ), 'hidden' ); ?>
 
+        <?php
+            foreach ( $fields as $field ) {
+                if ( 'hidden' != $field[ 'type' ] )
+                    continue;
+
+                echo PodsForm::field( 'pods_field_' . $field[ 'name' ], $pod->field( array( 'name' => $field[ 'name' ], 'in_form' => true ) ), 'hidden' );
+           }
+        ?>
         <div id="poststuff" class="metabox-holder has-right-sidebar"> <!-- class "has-right-sidebar" preps for a sidebar... always present? -->
             <div id="side-info-column" class="inner-sidebar">
                 <div id="side-sortables" class="meta-box-sortables ui-sortable">
@@ -106,28 +122,75 @@ if ( 0 < $pod->id() ) {
 
                         <div class="inside">
                             <div class="submitbox" id="submitpost">
-                                <div id="minor-publishing">
-                                    <div id="major-publishing-actions">
+                                <?php
+                                    if ( 0 < $pod->id() && ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) || isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) || 0 < strlen( pods_var( 'detail_url', $pod->pod_data[ 'options' ] ) ) ) ) {
+                                ?>
+                                    <div id="minor-publishing">
                                         <?php
-                                            if ( ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods_delete_' . $pod->pod ) ) && null !== $pod->id() && !$duplicate && !in_array( 'delete', $obj->actions_disabled ) && !in_array( 'delete', $obj->actions_hidden ) ) {
+                                            if ( 0 < strlen( pods_var( 'detail_url', $pod->pod_data[ 'options' ] ) ) ) {
                                         ?>
-                                            <div id="delete-action">
-                                                <a class="submitdelete deletion" href="<?php echo pods_var_update( array( 'action' => 'delete' ) ) ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
+                                            <div id="minor-publishing-actions">
+                                                <div id="preview-action">
+                                                    <a class="button" href="<?php echo $pod->field( 'detail_url' ); ?>" target="_blank"><?php echo sprintf( __( 'View %s', 'pods' ), $obj->item ); ?></a>
+                                                </div>
+                                                <div class="clear"></div>
                                             </div>
-                                            <!-- /#delete-action -->
-                                        <?php } ?>
+                                        <?php
+                                            }
 
-                                        <div id="publishing-action">
-                                            <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
-                                            <input type="submit" name="publish" id="publish" class="button-primary" value="<?php echo esc_attr( $label ); ?>" accesskey="p" />
-                                        </div>
-                                        <!-- /#publishing-action -->
+                                            if ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) || isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) ) {
+                                        ?>
+                                            <div id="misc-publishing-actions">
+                                                <?php
+                                                    $datef = __( 'M j, Y @ G:i' );
 
-                                        <div class="clear"></div>
+                                                    if ( isset( $pod->pod_data[ 'fields' ][ 'created' ] ) ) {
+                                                        $date = date_i18n( $datef, strtotime( $pod->field( 'created' ) ) );
+                                                ?>
+                                                    <div class="misc-pub-section curtime">
+                                                        <span id="timestamp"><?php _e( 'Created on', 'pods' ); ?>: <b><?php echo $date; ?></b></span>
+                                                    </div>
+                                                <?php
+                                                    }
+
+                                                    if ( isset( $pod->pod_data[ 'fields' ][ 'modified' ] ) && $pod->display( 'created' ) != $pod->display( 'modified' ) ) {
+                                                        $date = date_i18n( $datef, strtotime( $pod->field( 'modified' ) ) );
+                                                ?>
+                                                    <div class="misc-pub-section curtime">
+                                                        <span id="timestamp"><?php _e( 'Last Modified', 'pods' ); ?>: <b><?php echo $date; ?></b></span>
+                                                    </div>
+                                                <?php
+                                                    }
+                                                ?>
+                                            </div>
+                                        <?php
+                                            }
+                                        ?>
                                     </div>
-                                    <!-- /#major-publishing-actions -->
+                                    <!-- /#minor-publishing -->
+                                <?php
+                                    }
+                                ?>
+
+                                <div id="major-publishing-actions">
+                                    <?php
+                                        if ( ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods_delete_' . $pod->pod ) ) && null !== $pod->id() && !$duplicate && !in_array( 'delete', $obj->actions_disabled ) && !in_array( 'delete', $obj->actions_hidden ) ) {
+                                    ?>
+                                        <div id="delete-action">
+                                            <a class="submitdelete deletion" href="<?php echo pods_var_update( array( 'action' => 'delete' ) ) ?>" onclick="return confirm('You are about to permanently delete this item\n Choose \'Cancel\' to stop, \'OK\' to delete.');"><?php _e( 'Delete', 'pods' ); ?></a>
+                                        </div>
+                                        <!-- /#delete-action -->
+                                    <?php } ?>
+
+                                    <div id="publishing-action">
+                                        <img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
+                                        <input type="submit" name="publish" id="publish" class="button button-primary button-large" value="<?php echo esc_attr( $label ); ?>" accesskey="p" />
+                                    </div>
+                                    <!-- /#publishing-action -->
+
+                                    <div class="clear"></div>
                                 </div>
-                                <!-- /#minor-publishing -->
+                                <!-- /#major-publishing-actions -->
                             </div>
                             <!-- /#submitpost -->
                         </div>
@@ -249,8 +312,10 @@ if ( 0 < $pod->id() ) {
                             <div class="inside">
                                 <table class="form-table pods-metabox">
                                     <?php
-                                    foreach ( $fields as $field ) {
-                                        ?>
+                                        foreach ( $fields as $field ) {
+                                            if ( 'hidden' == $field[ 'type' ] )
+                                                continue;
+                                    ?>
                                         <tr class="form-field pods-field <?php echo 'pods-form-ui-row-type-' . $field[ 'type' ] . ' pods-form-ui-row-name-' . Podsform::clean( $field[ 'name' ], true ); ?>">
                                             <th scope="row" valign="top"><?php echo PodsForm::label( 'pods_field_' . $field[ 'name' ], $field[ 'label' ], $field[ 'help' ], $field ); ?></th>
                                             <td>
@@ -258,8 +323,8 @@ if ( 0 < $pod->id() ) {
                                                 <?php echo PodsForm::comment( 'pods_field_' . $field[ 'name' ], $field[ 'description' ], $field ); ?>
                                             </td>
                                         </tr>
-                                        <?php
-                                    }
+                                    <?php
+                                        }
                                     ?>
                                 </table>
                             </div>

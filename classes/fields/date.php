@@ -8,7 +8,7 @@ class PodsField_Date extends PodsField {
      * Field Type Group
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $group = 'Date / Time';
 
@@ -16,7 +16,7 @@ class PodsField_Date extends PodsField {
      * Field Type Identifier
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $type = 'date';
 
@@ -24,7 +24,7 @@ class PodsField_Date extends PodsField {
      * Field Type Label
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $label = 'Date';
 
@@ -32,14 +32,14 @@ class PodsField_Date extends PodsField {
      * Field Type Preparation
      *
      * @var string
-     * @since 2.0.0
+     * @since 2.0
      */
     public static $prepare = '%s';
 
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function __construct () {
 
@@ -50,26 +50,38 @@ class PodsField_Date extends PodsField {
      *
      * @return array
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function options () {
         $options = array(
+            'date_repeatable' => array(
+                'label' => __( 'Repeatable Field', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'help' => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
+                'boolean_yes_label' => '',
+                'dependency' => true,
+                'developer_mode' => true
+            ),
             'date_format' => array(
                 'label' => __( 'Date Format', 'pods' ),
                 'default' => 'mdy',
                 'type' => 'pick',
                 'data' => array(
-                    'mdy' => 'mm/dd/yyyy (ex. 12/31/1999)',
-                    'mdy_dash' => 'mm-dd-yyyy (ex. 12-31-1999)',
-                    'mdy_dot' => 'mm.dd.yyyy (ex. 12.31.1999)',
-                    'dmy' => 'dd/mm/yyyy (ex. 31/12/1999)',
-                    'dmy_dash' => 'dd-mm-yyyy (ex. 31-12-1999)',
-                    'dmy_dot' => 'dd.mm.yyyy (ex. 31.12.1999)',
-                    'ymd_slash' => 'yyyy/mm/dd (ex. 1999/12/31)',
-                    'ymd_dash' => 'yyyy-mm-dd (ex. 1999-12-31)',
-                    'ymd_dot' => 'yyyy.mm.dd (ex. 1999.12.31)',
-                    'dMd' => 'dd/mmm/yyyy (ex. 31/Dec/1999)',
-                    'dMd_dash' => 'dd-mmm-yyyy (ex. 31-Dec-1999)'
+                    'mdy' => date_i18n( 'm/d/Y' ),
+                    'mdy_dash' => date_i18n( 'm-d-Y' ),
+                    'mdy_dot' => date_i18n( 'm.d.Y' ),
+                    'dmy' => date_i18n( 'd/m/Y' ),
+                    'dmy_dash' => date_i18n( 'd-m-Y' ),
+                    'dmy_dot' => date_i18n( 'd.m.Y' ),
+                    'ymd_slash' => date_i18n( 'Y/m/d' ),
+                    'ymd_dash' => date_i18n( 'Y-m-d' ),
+                    'ymd_dot' => date_i18n( 'Y.m.d' ),
+                    'dMd' => date_i18n( 'd/M/Y' ),
+                    'dMd_dash' => date_i18n( 'd-M-Y' ),
+                    'fjy' => date_i18n( 'F j, Y' ),
+                    'fjsy' => date_i18n( 'F jS, Y' ),
+                    'y' => date_i18n( 'Y' )
                 )
             ),
             'date_allow_empty' => array(
@@ -92,7 +104,7 @@ class PodsField_Date extends PodsField {
      * @param array $options
      *
      * @return array
-     * @since 2.0.0
+     * @since 2.0
      */
     public function schema ( $options = null ) {
         $schema = 'DATE NOT NULL default "0000-00-00"';
@@ -110,7 +122,7 @@ class PodsField_Date extends PodsField {
      * @param int $id
      *
      * @return mixed|null|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function display ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         $format = $this->format( $options );
@@ -128,6 +140,8 @@ class PodsField_Date extends PodsField {
         }
         elseif ( 0 == pods_var( 'date_allow_empty', $options, 1 ) )
             $value = date_i18n( $format );
+        else
+            $value = '';
 
         return $value;
     }
@@ -141,7 +155,7 @@ class PodsField_Date extends PodsField {
      * @param array $pod
      * @param int $id
      *
-     * @since 2.0.0
+     * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
         $options = (array) $options;
@@ -168,7 +182,7 @@ class PodsField_Date extends PodsField {
      * @param object $params
      *
      * @return mixed|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         $format = $this->format( $options );
@@ -194,12 +208,12 @@ class PodsField_Date extends PodsField {
      * @param array $pod
      *
      * @return mixed|null|string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->display( $value, $name, $options, $pod, $id );
 
-        if ( 1 == pods_var( 'datetime_allow_empty', $options, 1 ) && in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) )
+        if ( 1 == pods_var( 'date_allow_empty', $options, 1 ) && ( empty( $value ) || in_array( $value, array( '0000-00-00', '0000-00-00 00:00:00', '00:00:00' ) ) ) )
             $value = false;
 
         return $value;
@@ -211,7 +225,7 @@ class PodsField_Date extends PodsField {
      * @param $options
      *
      * @return string
-     * @since 2.0.0
+     * @since 2.0
      */
     public function format ( $options ) {
         $date_format = array(
@@ -226,6 +240,9 @@ class PodsField_Date extends PodsField {
             'ymd_dot' => 'Y.m.d',
             'dMd' => 'd/M/Y',
             'dMd_dash' => 'd-M-Y',
+            'fjy' => 'F j, Y',
+            'fjsy' => 'F jS, Y',
+            'y' => 'Y'
         );
 
         $format = $date_format[ pods_var( 'date_format', $options, 'ymd_dash', null, true ) ];

@@ -169,7 +169,7 @@ class PodsInit {
      */
     public function init () {
         // Session start
-        if ( ( ( defined( 'WP_DEBUG' ) && WP_DEBUG ) || false === headers_sent() ) && '' == session_id() && ( !defined( 'PODS_SESSION_AUTO_START' ) || PODS_SESSION_AUTO_START ) )
+        if ( false === headers_sent() && '' == session_id() && ( !defined( 'PODS_SESSION_AUTO_START' ) || PODS_SESSION_AUTO_START ) )
             @session_start();
 
         add_shortcode( 'pods', 'pods_shortcode' );
@@ -210,6 +210,9 @@ class PodsInit {
         $this->register_assets();
 
         $this->register_pods();
+
+        $avatar = PodsForm::field_loader( 'avatar' );
+        add_filter( 'get_avatar', array( $avatar, 'get_avatar' ), 10, 5 );
     }
 
     /**
@@ -250,8 +253,8 @@ class PodsInit {
         wp_register_style( 'pods-attach', PODS_URL . 'ui/css/jquery.pods.attach.css', array(), PODS_VERSION );
         wp_register_script( 'pods-attach', PODS_URL . 'ui/js/jquery.pods.attach.js', array(), PODS_VERSION );
 
-        wp_register_style( 'pods-select2', PODS_URL . 'ui/css/select2.css', array(), '3.1' );
-        wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2.min.js', array( 'jquery' ), '3.1' );
+        wp_register_style( 'pods-select2', PODS_URL . 'ui/js/select2/select2.css', array(), '3.3.1' );
+        wp_register_script( 'pods-select2', PODS_URL . 'ui/js/select2/select2.min.js', array( 'jquery' ), '3.3.1' );
 
         wp_register_script( 'pods-handlebars', PODS_URL . 'ui/js/handlebars.js', array(), '1.0.0.beta.6' );
     }
@@ -331,6 +334,13 @@ class PodsInit {
 
         $cpt_positions = array();
 
+        if ( empty( $pods_cpt_ct ) && ( !empty( $post_types ) || !empty( $taxonomies ) ) )
+            $force = true;
+        elseif ( !empty( $pods_cpt_ct ) && empty( $pods_cpt_ct[ 'post_types' ] ) && !empty( $post_types ) )
+            $force = true;
+        elseif ( !empty( $pods_cpt_ct ) && empty( $pods_cpt_ct[ 'taxonomies' ] ) && !empty( $taxonomies ) )
+            $force = true;
+
         if ( false === $pods_cpt_ct || $force ) {
             if ( false === $pods_cpt_ct ) {
                 $pods_cpt_ct = array(
@@ -363,7 +373,7 @@ class PodsInit {
                 $cpt_labels = array();
                 $cpt_labels[ 'name' ] = $cpt_label;
                 $cpt_labels[ 'singular_name' ] = $cpt_singular;
-                $cpt_labels[ 'menu_name' ] = pods_var_raw( 'label_menu_name', $post_type, '', null, true );
+                $cpt_labels[ 'menu_name' ] = pods_var_raw( 'menu_name', $post_type, '', null, true );
                 $cpt_labels[ 'add_new' ] = pods_var_raw( 'label_add_new', $post_type, '', null, true );
                 $cpt_labels[ 'add_new_item' ] = pods_var_raw( 'label_add_new_item', $post_type, '', null, true );
                 $cpt_labels[ 'new_item' ] = pods_var_raw( 'label_new_item', $post_type, '', null, true );
@@ -393,6 +403,25 @@ class PodsInit {
                     'post-formats' => (boolean) pods_var( 'supports_post_formats', $post_type, false )
                 );
 
+                // Custom Supported
+                $cpt_supported_custom = pods_var( 'supports_custom', $post_type, '' );
+
+                if ( !empty( $cpt_supported_custom ) ) {
+                    $cpt_supported_custom = explode( ',', $cpt_supported_custom );
+                    $cpt_supported_custom = array_filter( array_unique( $cpt_supported_custom ) );
+
+                    foreach ( $cpt_supported_custom as $cpt_support ) {
+                        $cpt_supported[ $cpt_support ] = true;
+                    }
+                }
+
+                // Genesis Support
+                if ( function_exists( 'genesis' ) ) {
+                    $cpt_supported[ 'genesis-seo' ] = (boolean) pods_var( 'supports_genesis_seo', $post_type, false );
+                    $cpt_supported[ 'genesis-layouts' ] = (boolean) pods_var( 'supports_genesis_layouts', $post_type, false );
+                    $cpt_supported[ 'genesis-simple-sidebars' ] = (boolean) pods_var( 'supports_genesis_simple_sidebars', $post_type, false );
+                }
+
                 // WP needs something, if this was empty and none were enabled, it would show title+editor pre 3.5 :(
                 $cpt_supports = array();
 
@@ -404,7 +433,7 @@ class PodsInit {
                         $cpt_supports[] = $cpt_support;
                 }
 
-                if ( 1 == count( $cpt_supports ) && pods_wp_version( '3.5' ) )
+                if ( empty( $cpt_supports ) && pods_wp_version( '3.5' ) )
                     $cpt_supports = false;
 
                 // Rewrite
@@ -456,6 +485,11 @@ class PodsInit {
                 else
                     $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ]++;
 
+                if ( 25 == $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] )
+                    $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ]++;
+
+                $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] = $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] . '.1';
+
                 // Taxonomies
                 $cpt_taxonomies = array();
                 $_taxonomies = get_taxonomies();
@@ -501,7 +535,7 @@ class PodsInit {
                 $ct_labels = array();
                 $ct_labels[ 'name' ] = $ct_label;
                 $ct_labels[ 'singular_name' ] = $ct_singular;
-                $ct_labels[ 'menu_name' ] = pods_var_raw( 'label_menu_name', $taxonomy, '', null, true );
+                $ct_labels[ 'menu_name' ] = pods_var_raw( 'menu_name', $taxonomy, '', null, true );
                 $ct_labels[ 'search_items' ] = pods_var_raw( 'label_search_items', $taxonomy, '', null, true );
                 $ct_labels[ 'popular_items' ] = pods_var_raw( 'label_popular_items', $taxonomy, '', null, true );
                 $ct_labels[ 'all_items' ] = pods_var_raw( 'label_all_items', $taxonomy, '', null, true );
@@ -844,12 +878,14 @@ class PodsInit {
                     if ( version_compare( '2.0.0-a-1', $pods_version, '<=' ) && version_compare( $pods_version, '2.0.0-b-15', '<=' ) )
                         include( PODS_DIR . 'sql/update-2.0-beta.php' );
 
-                    include( PODS_DIR . 'sql/update.php' );
+                    if ( version_compare( $pods_version, PODS_DB_VERSION, '<=' ) )
+                        include( PODS_DIR . 'sql/update.php' );
 
                     do_action( 'pods_update_post', PODS_VERSION, $pods_version, $_blog_id );
                 }
 
-                update_option( 'pods_framework_version_last', $pods_version );
+                delete_option( 'pods_framework_version_last' );
+                add_option( 'pods_framework_version_last', $pods_version, '', 'yes' );
 
                 self::$version_last = $pods_version;
             }
@@ -864,14 +900,18 @@ class PodsInit {
                 if ( false === strpos( $old_version, '.' ) )
                     $old_version = pods_version_to_point( $old_version );
 
-                update_option( 'pods_framework_version_last', $old_version );
+                delete_option( 'pods_framework_version_last' );
+                add_option( 'pods_framework_version_last', $pods_version, '', 'yes' );
 
                 self::$version_last = $old_version;
             }
         }
 
-        update_option( 'pods_framework_version', PODS_VERSION );
-        update_option( 'pods_framework_db_version', PODS_DB_VERSION );
+        delete_option( 'pods_framework_version' );
+        add_option( 'pods_framework_version', PODS_VERSION, '', 'yes' );
+
+        delete_option( 'pods_framework_db_version' );
+        add_option( 'pods_framework_db_version', PODS_DB_VERSION, '', 'yes' );
 
         pods_api()->cache_flush_pods();
 
@@ -973,7 +1013,7 @@ class PodsInit {
 
         do_action( 'pods_delete_attachment', $_ID );
 
-        $file_types = "'" . implode( "', '", apply_filters( 'pods_file_field_types', array( 'file', 'avatar' ) ) ) . "'";
+        $file_types = "'" . implode( "', '", PodsForm::file_field_types() ) . "'";
 
         if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
             $sql = "

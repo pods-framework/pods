@@ -18,6 +18,14 @@
 function pods ( $type = null, $id = null, $strict = false ) {
     require_once( PODS_DIR . 'classes/Pods.php' );
 
+    $pod = new Pods( $type, $id );
+
+    if ( true === $strict && null !== $type && !$pod->valid() )
+        return false;
+
+    return $pod;
+
+    /* @todo instance caching
     $identifier = (string) $type . ( is_array( $id ) ? md5( serialize( $id ) ) : (string) $id ) . (string) $strict;
 
     if ( !isset( $GLOBALS[ 'pods_class_cache' ] ) )
@@ -30,6 +38,7 @@ function pods ( $type = null, $id = null, $strict = false ) {
         /**
          * @param $pod Pods The Pods object that was cached
          */
+         /*
         $pod =& $GLOBALS[ 'pods_class_cache' ][ 'pods' ][ $identifier ];
 
         if ( is_array( $id ) )
@@ -51,7 +60,7 @@ function pods ( $type = null, $id = null, $strict = false ) {
             $GLOBALS[ 'pods_class_cache' ][ 'pods' ][ $identifier ] =& $pod;
     }
 
-    return $pod;
+    return $pod;*/
 }
 
 /**
@@ -90,6 +99,9 @@ function pods_ui ( $obj, $deprecated = false ) {
 function pods_api ( $pod = null, $format = null ) {
     require_once( PODS_DIR . 'classes/PodsAPI.php' );
 
+    return new PodsAPI( $pod, $format );
+
+    /* @todo instance caching
     if ( is_object( $pod ) )
         $api = new PodsAPI( $pod, $format );
     else {
@@ -117,7 +129,7 @@ function pods_api ( $pod = null, $format = null ) {
         }
     }
 
-    return $api;
+    return $api;*/
 }
 
 /**
@@ -136,6 +148,9 @@ function pods_api ( $pod = null, $format = null ) {
 function pods_data ( $pod = null, $id = null, $strict = true ) {
     require_once( PODS_DIR . 'classes/PodsData.php' );
 
+    return new PodsData( $pod, $id );
+
+    /* @todo instance caching
     if ( is_object( $pod ) )
         $data = new PodsData( $pod, $id );
     else {
@@ -163,7 +178,7 @@ function pods_data ( $pod = null, $id = null, $strict = true ) {
         }
     }
 
-    return $data;
+    return $data;*/
 }
 
 /**

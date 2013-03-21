@@ -301,7 +301,7 @@ class Pods {
             $field_data = $this->fields[ $field ];
         else {
             // Merge options
-            $options = array_merge( $this->fields[ $field ], $this->Fields[ $field ][ 'options' ] );
+            $options = array_merge( $this->fields[ $field ], $this->fields[ $field ][ 'options' ] );
 
             // Return option
             if ( isset( $options[ $option ] ) )

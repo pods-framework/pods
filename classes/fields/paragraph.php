@@ -125,12 +125,12 @@ class PodsField_Paragraph extends PodsField {
                 'depends-on' => array( 'paragraph_allow_html' => true ),
                 'default' => 'strong em a ul ol li b i',
                 'type' => 'text'
-            ),
+            )/*,
             'paragraph_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 0,
                 'type' => 'number'
-            )/*,
+            ),
             'paragraph_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',

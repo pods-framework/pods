@@ -172,13 +172,18 @@ class PodsField_Currency extends PodsField {
     public function schema ( $options = null ) {
         $length = (int) pods_var( 'currency_max_length', $options, 12, null, true );
 
-        if ( $length < 1 )
-            $length = 12;
+        if ( $length < 1 || 64 < $length )
+            $length = 64;
 
         $decimals = (int) pods_var( 'currency_decimals', $options, 2, null, true );
 
         if ( $decimals < 1 )
             $decimals = 0;
+        elseif ( 30 < $decimals )
+            $decimals = 30;
+
+        if ( $length < $decimals )
+            $decimals = $length;
 
         $schema = 'DECIMAL(' . $length . ',' . $decimals . ')';
 

@@ -89,7 +89,8 @@ class PodsField_Text extends PodsField {
             'text_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 255,
-                'type' => 'number'
+                'type' => 'number',
+                'help' => __( 'Set to 0 for no limit', 'pods' )
             )/*,
             'text_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
@@ -117,10 +118,10 @@ class PodsField_Text extends PodsField {
     public function schema ( $options = null ) {
         $length = (int) pods_var( 'text_max_length', $options, 255, null, true );
 
-        if ( $length < 1 )
-            $length = 255;
-
         $schema = 'VARCHAR(' . $length . ')';
+
+        if ( 255 < $length || $length < 1 )
+            $schema = 'LONGTEXT';
 
         return $schema;
     }

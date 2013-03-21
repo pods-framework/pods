@@ -91,7 +91,8 @@ class PodsField_Phone extends PodsField {
             'phone_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 25,
-                'type' => 'number'
+                'type' => 'number',
+                'help' => __( 'Set to 0 for no limit', 'pods' )
             ),
             'phone_html5' => array(
                 'label' => __( 'Enable HTML5 Input Field?', 'pods' ),
@@ -123,10 +124,10 @@ class PodsField_Phone extends PodsField {
     public function schema ( $options = null ) {
         $length = (int) pods_var( 'phone_max_length', $options, 25, null, true );
 
-        if ( $length < 1 )
-            $length = 25;
-
         $schema = 'VARCHAR(' . $length . ')';
+
+        if ( 255 < $length || $length < 1 )
+            $schema = 'LONGTEXT';
 
         return $schema;
     }

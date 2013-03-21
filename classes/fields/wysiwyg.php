@@ -142,12 +142,12 @@ class PodsField_WYSIWYG extends PodsField {
                 'label' => __( 'Allowed HTML Tags', 'pods' ),
                 'default' => '',
                 'type' => 'text'
-            ),
+            ),/*
             'wysiwyg_max_length' => array(
                 'label' => __( 'Maximum Length', 'pods' ),
                 'default' => 0,
                 'type' => 'number'
-            )/*,
+            ),
             'wysiwyg_size' => array(
                 'label' => __( 'Field Size', 'pods' ),
                 'default' => 'medium',

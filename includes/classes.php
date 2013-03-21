@@ -5,36 +5,6 @@
 /**
  * Include and Init the Pods class
  *
- * @see PodsInit
- *
- * @return PodsInit
- *
- * @since 2.0
- */
-function pods_init () {
-    require_once( PODS_DIR . 'classes/PodsInit.php' );
-
-    return new PodsInit();
-}
-
-/**
- * Include and Init the Pods Components class
- *
- * @see PodsComponents
- *
- * @return PodsComponents
- *
- * @since 2.0
- */
-function pods_components () {
-    require_once( PODS_DIR . 'classes/PodsComponents.php' );
-
-    return new PodsComponents();
-}
-
-/**
- * Include and Init the Pods class
- *
  * @see Pods
  *
  * @param string $type The pod name
@@ -48,10 +18,38 @@ function pods_components () {
 function pods ( $type = null, $id = null, $strict = false ) {
     require_once( PODS_DIR . 'classes/Pods.php' );
 
-    $pod = new Pods( $type, $id );
+    $identifier = (string) $type . ( is_array( $id ) ? md5( serialize( $id ) ) : (string) $id ) . (string) $strict;
 
-    if ( true === $strict && null !== $type && !$pod->valid() )
-        return false;
+    if ( !isset( $GLOBALS[ 'pods_class_cache' ] ) )
+        $GLOBALS[ 'pods_class_cache' ] = array();
+
+    if ( !isset( $GLOBALS[ 'pods_class_cache' ][ 'pods' ] ) )
+        $GLOBALS[ 'pods_class_cache' ][ 'pods' ] = array();
+
+    if ( isset( $GLOBALS[ 'pods_class_cache' ][ 'pods' ][ $identifier ] ) && is_object( $GLOBALS[ 'pods_class_cache' ][ 'pods' ][ $identifier ] ) ) {
+        /**
+         * @param $pod Pods The Pods object that was cached
+         */
+        $pod =& $GLOBALS[ 'pods_class_cache' ][ 'pods' ][ $identifier ];
+
+        if ( is_array( $id ) )
+            $pod->find( $id );
+    }
+    else {
+        $pod = new Pods( $type, $id );
+
+        if ( true === $strict && null !== $type && !$pod->valid() )
+            return false;
+
+        if ( !isset( $GLOBALS[ 'pods_class_cache' ][ 'pods' ][ $identifier ] ) )
+            $GLOBALS[ 'pods_class_cache' ][ 'pods' ][ $identifier ] = 1;
+        else
+            $GLOBALS[ 'pods_class_cache' ][ 'pods' ][ $identifier ]++;
+
+        // Start caching if the calls become excessive (calling the same reference more than once)
+        if ( 1 < $GLOBALS[ 'pods_class_cache' ][ 'pods' ][ $identifier ] )
+            $GLOBALS[ 'pods_class_cache' ][ 'pods' ][ $identifier ] =& $pod;
+    }
 
     return $pod;
 }
@@ -92,7 +90,30 @@ function pods_ui ( $obj, $deprecated = false ) {
 function pods_api ( $pod = null, $format = null ) {
     require_once( PODS_DIR . 'classes/PodsAPI.php' );
 
-    return new PodsAPI( $pod, $format );
+    $identifier = (string) $pod . (string) $format;
+
+    if ( !isset( $GLOBALS[ 'pods_class_cache' ] ) )
+        $GLOBALS[ 'pods_class_cache' ] = array();
+
+    if ( !isset( $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ] ) )
+        $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ] = array();
+
+    if ( isset( $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ] ) && is_object( $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ] ) )
+        $api =& $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ];
+    else {
+        $api = new PodsAPI( $pod, $format );
+
+        if ( !isset( $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ] ) )
+            $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ] = 1;
+        else
+            $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ]++;
+
+        // Start caching if the calls become excessive (calling the same reference more than once)
+        if ( 1 < $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ] )
+            $GLOBALS[ 'pods_class_cache' ][ 'pods_api' ][ $identifier ] =& $api;
+    }
+
+    return $api;
 }
 
 /**
@@ -111,7 +132,30 @@ function pods_api ( $pod = null, $format = null ) {
 function pods_data ( $pod = null, $id = null, $strict = true ) {
     require_once( PODS_DIR . 'classes/PodsData.php' );
 
-    return new PodsData( $pod, $id );
+    $identifier = (string) $pod . (string) $id . (string) $strict;
+
+    if ( !isset( $GLOBALS[ 'pods_class_cache' ] ) )
+        $GLOBALS[ 'pods_class_cache' ] = array();
+
+    if ( !isset( $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ] ) )
+        $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ] = array();
+
+    if ( isset( $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ] ) && is_object( $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ] ) )
+        $data =& $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ];
+    else {
+        $data = new PodsData( $pod, $id );
+
+        if ( !isset( $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ] ) )
+            $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ] = 1;
+        else
+            $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ]++;
+
+        // Start caching if the calls become excessive (calling the same reference more than once)
+        if ( 1 < $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ] )
+            $GLOBALS[ 'pods_class_cache' ][ 'pods_data' ][ $identifier ] =& $data;
+    }
+
+    return $data;
 }
 
 /**
@@ -130,18 +174,33 @@ function pods_form () {
 }
 
 /**
- * Include and Init the PodsMeta class
+ * Include and Init the Pods class
  *
- * @see PodsMeta
+ * @see PodsInit
  *
- * @return PodsMeta
+ * @return PodsInit
  *
  * @since 2.0
  */
-function pods_meta () {
-    require_once( PODS_DIR . 'classes/PodsMeta.php' );
+function pods_init () {
+    require_once( PODS_DIR . 'classes/PodsInit.php' );
 
-    return new PodsMeta();
+    return new PodsInit();
+}
+
+/**
+ * Include and Init the Pods Components class
+ *
+ * @see PodsComponents
+ *
+ * @return PodsComponents
+ *
+ * @since 2.0
+ */
+function pods_components () {
+    require_once( PODS_DIR . 'classes/PodsComponents.php' );
+
+    return new PodsComponents();
 }
 
 /**
@@ -160,56 +219,18 @@ function pods_admin () {
 }
 
 /**
- * Include and Init the PodsMigrate class
+ * Include and Init the PodsMeta class
  *
- * @see PodsMigrate
+ * @see PodsMeta
  *
- * @param string $type Export Type (php, json, sv, xml)
- * @param string $delimiter Delimiter for export type 'sv'
- * @param array $data Array of data
+ * @return PodsMeta
  *
- * @return PodsMigrate
- *
- * @since 2.2
+ * @since 2.0
  */
-function pods_migrate ( $type = null, $delimiter = null, $data = null ) {
-    require_once( PODS_DIR . 'classes/PodsMigrate.php' );
+function pods_meta () {
+    require_once( PODS_DIR . 'classes/PodsMeta.php' );
 
-    return new PodsMigrate( $type, $delimiter, $data );
-}
-
-/**
- * Include and Init the PodsUpgrade class
- *
- * @param string $version Version number of upgrade to get
- *
- * @see PodsUpgrade
- *
- * @return PodsUpgrade
- *
- * @since 2.1
- */
-function pods_upgrade ( $version = '' ) {
-		include_once PODS_DIR . 'sql/upgrade/PodsUpgrade.php';
-
-    $class_name = str_replace( '.', '_', $version );
-    $class_name = "PodsUpgrade_{$class_name}";
-
-    $class_name = trim( $class_name, '_' );
-
-    if ( !class_exists( $class_name ) ) {
-        $file = PODS_DIR . 'sql/upgrade/' . basename( $class_name ) . '.php';
-
-        if ( file_exists( $file ) )
-            include_once $file;
-    }
-
-    $class = false;
-
-    if ( class_exists( $class_name ) )
-        $class = new $class_name();
-
-    return $class;
+    return new PodsMeta();
 }
 
 /**
@@ -254,4 +275,57 @@ function pods_view ( $view, $data = null, $expires = false, $cache_mode = 'cache
         return $view;
 
     echo $view;
+}
+
+/**
+ * Include and Init the PodsMigrate class
+ *
+ * @see PodsMigrate
+ *
+ * @param string $type Export Type (php, json, sv, xml)
+ * @param string $delimiter Delimiter for export type 'sv'
+ * @param array $data Array of data
+ *
+ * @return PodsMigrate
+ *
+ * @since 2.2
+ */
+function pods_migrate ( $type = null, $delimiter = null, $data = null ) {
+    require_once( PODS_DIR . 'classes/PodsMigrate.php' );
+
+    return new PodsMigrate( $type, $delimiter, $data );
+}
+
+/**
+ * Include and Init the PodsUpgrade class
+ *
+ * @param string $version Version number of upgrade to get
+ *
+ * @see PodsUpgrade
+ *
+ * @return PodsUpgrade
+ *
+ * @since 2.1
+ */
+function pods_upgrade ( $version = '' ) {
+    include_once PODS_DIR . 'sql/upgrade/PodsUpgrade.php';
+
+    $class_name = str_replace( '.', '_', $version );
+    $class_name = "PodsUpgrade_{$class_name}";
+
+    $class_name = trim( $class_name, '_' );
+
+    if ( !class_exists( $class_name ) ) {
+        $file = PODS_DIR . 'sql/upgrade/' . basename( $class_name ) . '.php';
+
+        if ( file_exists( $file ) )
+            include_once $file;
+    }
+
+    $class = false;
+
+    if ( class_exists( $class_name ) )
+        $class = new $class_name();
+
+    return $class;
 }

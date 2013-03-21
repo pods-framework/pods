@@ -2617,7 +2617,7 @@ class PodsAPI {
 
         $columns =& $fields; // @deprecated 2.0
         $active_columns =& $fields_active; // @deprecated 2.0
-        $params->tbl_row_id =& $params->id;
+        $params->tbl_row_id =& $params->id; // @deprecated 2.0
 
         $pre_save_helpers = $post_save_helpers = array();
 
@@ -2625,12 +2625,12 @@ class PodsAPI {
             $pieces = array( 'fields', 'params', 'pod', 'fields_active', 'object_fields' );
 
             // Plugin hooks
-            $hooked = $this->do_hook( 'pre_save_pod_item', compact( $pieces ), $is_new_item );
+            $hooked = $this->do_hook( 'pre_save_pod_item', compact( $pieces ), $is_new_item, $params->id );
 
             if ( is_array( $hooked ) && !empty( $hooked ) )
                 extract( $hooked );
 
-            $hooked = $this->do_hook( "pre_save_pod_item_{$params->pod}", compact( $pieces ), $is_new_item );
+            $hooked = $this->do_hook( "pre_save_pod_item_{$params->pod}", compact( $pieces ), $is_new_item, $params->id );
 
             if ( is_array( $hooked ) && !empty( $hooked ) )
                 extract( $hooked );
@@ -2647,12 +2647,12 @@ class PodsAPI {
                     extract( $hooked );
             }
             else {
-                $hooked = $this->do_hook( 'pre_edit_pod_item', compact( $pieces ) );
+                $hooked = $this->do_hook( 'pre_edit_pod_item', compact( $pieces ), $params->id );
 
                 if ( is_array( $hooked ) && !empty( $hooked ) )
                     extract( $hooked );
 
-                $hooked = $this->do_hook( "pre_edit_pod_item_{$params->pod}", compact( $pieces ) );
+                $hooked = $this->do_hook( "pre_edit_pod_item_{$params->pod}", compact( $pieces ), $params->id );
 
                 if ( is_array( $hooked ) && !empty( $hooked ) )
                     extract( $hooked );
@@ -3280,16 +3280,16 @@ class PodsAPI {
             $pieces = compact( $pieces );
 
             // Plugin hooks
-            $this->do_hook( 'post_save_pod_item', $pieces, $is_new_item );
-            $this->do_hook( "post_save_pod_item_{$params->pod}", $pieces, $is_new_item );
+            $this->do_hook( 'post_save_pod_item', $pieces, $is_new_item, $params->id );
+            $this->do_hook( "post_save_pod_item_{$params->pod}", $pieces, $is_new_item, $params->id );
 
             if ( false !== $is_new_item ) {
-                $this->do_hook( 'post_create_pod_item', $pieces );
-                $this->do_hook( "post_create_pod_item_{$params->pod}", $pieces );
+                $this->do_hook( 'post_create_pod_item', $pieces, $params->id );
+                $this->do_hook( "post_create_pod_item_{$params->pod}", $pieces, $params->id );
             }
             else {
-                $this->do_hook( 'post_edit_pod_item', $pieces );
-                $this->do_hook( "post_edit_pod_item_{$params->pod}", $pieces );
+                $this->do_hook( 'post_edit_pod_item', $pieces, $params->id );
+                $this->do_hook( "post_edit_pod_item_{$params->pod}", $pieces, $params->id );
             }
 
             // Call any post-save helpers (if not bypassed)
@@ -5748,7 +5748,7 @@ class PodsAPI {
 
             'table' => $object,
             'meta_table' => $object,
-            'pod_table' => $wpdb->prefix . 'pods_' . $object,
+            'pod_table' => $wpdb->prefix . 'pods_' . ( empty( $object ) ? $name : $object ),
 
             'field_id' => 'id',
             'field_index' => 'name',
@@ -5951,6 +5951,8 @@ class PodsAPI {
 
                 $post_type = pods_sanitize( ( empty( $object ) ? $name : $object ) );
 
+                $info[ 'pod_table' ] = $wpdb->prefix . 'pods_' . pods_clean_name( $post_type, true, false );
+
                 $post_type_object = get_post_type_object( $post_type );
 
                 if ( is_object( $post_type_object ) && $post_type_object->hierarchical )
@@ -6022,7 +6024,9 @@ class PodsAPI {
                 if ( !in_array( $object_type, array( 'nav_menu', 'post_format' ) ) )
                     $object_type = 'taxonomy';
 
-                $taxonomy = ( empty( $object ) ? $name : $object );
+                $taxonomy = pods_sanitize( ( empty( $object ) ? $name : $object ) );
+
+                $info[ 'pod_table' ] = $wpdb->prefix . 'pods_' . pods_clean_name( $taxonomy, true, false );
 
                 $taxonomy_object = get_taxonomy( $taxonomy );
 
@@ -6065,6 +6069,7 @@ class PodsAPI {
             elseif ( 'user' == $object_type || 'user' == pods_var_raw( 'type', $info[ 'pod' ] ) ) {
                 $info[ 'table' ] = $wpdb->users;
                 $info[ 'meta_table' ] = $wpdb->usermeta;
+                $info[ 'pod_table' ] = $wpdb->prefix . 'pods_user';
 
                 $info[ 'field_id' ] = 'ID';
                 $info[ 'field_index' ] = 'display_name';
@@ -6085,6 +6090,7 @@ class PodsAPI {
 
                 $info[ 'table' ] = $wpdb->comments;
                 $info[ 'meta_table' ] = $wpdb->commentmeta;
+                $info[ 'pod_table' ] = $wpdb->prefix . 'pods_comment';
 
                 $info[ 'field_id' ] = 'comment_ID';
                 $info[ 'field_index' ] = 'comment_date';
@@ -6162,6 +6168,7 @@ class PodsAPI {
             }
             elseif ( 'table' == $object_type || 'table' == pods_var_raw( 'type', $info[ 'pod' ] ) ) {
                 $info[ 'table' ] = ( empty( $object ) ? $name : $object );
+                $info[ 'pod_table' ] = $wpdb->prefix . 'pods_' . $info[ 'table' ];
 
                 if ( !empty( $field ) && is_array( $field ) ) {
                     $info[ 'field_id' ] = pods_var_raw( 'pick_table_id', pods_var_raw( 'options', $field, $field ) );
@@ -6171,6 +6178,7 @@ class PodsAPI {
 
             $info[ 'table' ] = pods_clean_name( $info[ 'table' ], false, false );
             $info[ 'meta_table' ] = pods_clean_name( $info[ 'meta_table' ], false, false );
+            $info[ 'pod_table' ] = pods_clean_name( $info[ 'pod_table' ], false, false );
 
             $info[ 'field_id' ] = pods_clean_name( $info[ 'field_id' ], false, false );
             $info[ 'field_index' ] = pods_clean_name( $info[ 'field_index' ], false, false );

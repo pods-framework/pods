@@ -586,7 +586,7 @@ class PodsField_Pick extends PodsField {
         $ajax = false;
 
         if ( ( 'custom-simple' != pods_var( 'pick_object', $options ) || empty( $custom ) ) && '' != pods_var( 'pick_object', $options, '', null, true ) )
-            $ajax = true;
+            $ajax = apply_filters( 'pods_form_ui_field_pick_ajax', true, $name, $value, $options, $pod, $id );
 
         if ( 'single' == pods_var( 'pick_format_type', $options, 'single' ) ) {
             if ( 'dropdown' == pods_var( 'pick_format_single', $options, 'dropdown' ) )

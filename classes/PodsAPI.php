@@ -6338,7 +6338,7 @@ class PodsAPI {
                 $pick_val = isset( $field_data[ 'pick_val' ] ) ?  $field_data[ 'pick_val' ] : '';
                 $field_value = $data_row[ $field_name ];
 
-                if ( null !== $field_value && false !== $field_value && '' !== trim( $field_value ) ) {
+                if ( null !== $field_value && false !== $field_value && '' !== $field_value ) {
                     if ( 'pick' == $type || in_array( $type, PodsForm::file_field_types() ) ) {
                         $field_values = is_array( $field_value ) ? $field_value : array( $field_value );
                         $pick_values = array();

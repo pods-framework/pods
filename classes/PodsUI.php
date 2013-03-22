@@ -970,6 +970,9 @@ class PodsUI {
 
         $options = $options->dump();
 
+        if ( is_object( $this->pod ) )
+            $options = $this->do_hook( $this->pod->pod . '_setup_options', $options );
+
         $options = $this->do_hook( 'setup_options', $options );
 
         if ( false !== $options && !empty( $options ) ) {
@@ -2822,7 +2825,7 @@ class PodsUI {
 
                                 if ( !empty( $attributes[ 'custom_display' ] ) ) {
                                     if ( is_callable( $attributes[ 'custom_display' ] ) )
-                                        $row[ $field ] = call_user_func_array( $attributes[ 'custom_display' ], array( $row, &$this ) );
+                                        $row[ $field ] = call_user_func_array( $attributes[ 'custom_display' ], array( $row, &$this, $row[ $field ], $field, $attributes ) );
                                     elseif ( is_object( $this->pod ) && class_exists( 'Pods_Helpers' ) )
                                         $row[ $field ] = $this->pod->helper( $attributes[ 'custom_display' ], $row[ $field ], $field );
                                 }
@@ -2882,6 +2885,12 @@ class PodsUI {
                                             $row[ $field ] = implode( ' ', $val );
                                     }
                                 }
+
+                                if ( is_object( $this->pod ) )
+                                    $row[ $field ] = $this->do_hook( $this->pod->pod . '_field_value', $row[ $field ], $field, $attributes, $row );
+
+                                $row[ $field ] = $this->do_hook( 'field_value', $row[ $field ], $field, $attributes, $row );
+
                                 if ( 'title' == $attributes[ 'field_id' ] ) {
                                     if ( !in_array( 'edit', $this->actions_disabled ) && ( false === $reorder || in_array( 'reorder', $this->actions_disabled ) || false === $this->reorder[ 'on' ] ) ) {
                                         ?>

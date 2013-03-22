@@ -346,8 +346,10 @@ class PodsField_File extends PodsField {
         if ( !empty( $value ) && isset( $value[ 'ID' ] ) )
             $value = array( $value );
 
+        $image_size = apply_filters( 'pods_form_ui_field_file_display_image_size', 'thumbnail', $id, $value, $name, $options, $fields, $pod );
+
         foreach ( $value as $v ) {
-            echo pods_image( $v, 'thumbnail' );
+            echo pods_image( $v, $image_size );
         }
     }
 

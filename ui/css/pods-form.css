@@ -285,6 +285,10 @@ input.pods-form-ui-field-type-color {
     visibility: hidden;
 }
 
+.pods-slider-field {
+    max-width: 300px;
+}
+
 .pods-form div.pods-form-ui-field-type-avatar:after,
 .pods-form div.pods-form-ui-field-type-file:after,
 .pods-form div.pods-form-ui-field-type-pick:after,

@@ -136,7 +136,7 @@ else
 <script type="text/javascript">
     jQuery( function( $ ){
 
-        var $element_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $('#<?php echo $css_id; ?>'),
+        var $element_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $( '#<?php echo $css_id; ?>' ),
             $list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ),
             title_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php echo esc_js( pods_var_raw( $form_field_type . '_modal_title', $options, __( 'Attach a file', 'pods' ) ) ); ?>",
             button_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php echo esc_js( pods_var_raw( $form_field_type . '_modal_add_button', $options, __( 'Add File', 'pods' ) ) ); ?>",

@@ -134,11 +134,18 @@ else
 </script>
 
 <script type="text/javascript">
-    jQuery(document).ready(function($){
+    jQuery( function( $ ){
+
+        var $element_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $('#<?php echo $css_id; ?>'),
+            $list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ),
+            title_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php echo esc_js( pods_var_raw( $form_field_type . '_modal_title', $options, __( 'Attach a file', 'pods' ) ) ); ?>",
+            button_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php echo esc_js( pods_var_raw( $form_field_type . '_modal_add_button', $options, __( 'Add File', 'pods' ) ) ); ?>",
+            pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>,
+            maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = <?php echo esc_js( $file_limit ); ?>;
 
         <?php if ( 1 != $file_limit ) { ?>
             // init sortable
-            $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ).sortable( {
+            $list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.sortable( {
                 containment : 'parent',
                 axis: 'y',
                 scrollSensitivity : 40,
@@ -148,7 +155,7 @@ else
         <?php } ?>
 
         // hook delete links
-        $( '#<?php echo esc_js( $css_id ); ?>' ).on( 'click', 'li.pods-file-delete', function () {
+        $element_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.on( 'click', 'li.pods-file-delete', function () {
             var podsfile = $( this ).parent().parent();
             podsfile.slideUp( function () {
                 // check to see if this was the only entry
@@ -159,15 +166,6 @@ else
                 $(this).remove();
             } );
         } );
-
-
-        // set up our modal
-        var $element_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $('#<?php echo $css_id; ?>'),
-            title_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php echo esc_js( pods_var_raw( $form_field_type . '_modal_title', $options, __( 'Attach a file', 'pods' ) ) ); ?>",
-            button_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = "<?php echo esc_js( pods_var_raw( $form_field_type . '_modal_add_button', $options, __( 'Add File', 'pods' ) ) ); ?>",
-            list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = $( '#<?php echo esc_js( $css_id ); ?> ul.pods-files-list' ),
-            pods_media_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>,
-            maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> = <?php echo esc_js( $file_limit ); ?>;
 
         $element_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.on( 'click', '.pods-file-add', function( event ) {
             var options, attachment;
@@ -251,10 +249,14 @@ else
 
                         var html = tmpl( binding );
 
-                        list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.prepend( html );
-                        list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.find( 'li.pods-file:first' ).slideDown( 'fast' );
+                        $list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.prepend( html );
 
-                        var items = list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.find( 'li.pods-file' ),
+                        if ( !$list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.is( ':visible' ) )
+                            $list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.show().removeClass( 'hidden' );
+
+                        $list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.find( 'li.pods-file:first' ).slideDown( 'fast' );
+
+                        var items = $list_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?>.find( 'li.pods-file' ),
                             itemCount = items.size();
 
                         if ( 0 < maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> && itemCount > maxFiles_<?php echo pods_clean_name( $attributes[ 'name' ] ); ?> ) {

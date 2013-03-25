@@ -1461,8 +1461,8 @@ if ( 'taxonomy' == pods_var( 'type', $pod ) && !$manage_fields ) {
                     else {
                         select_container += '<option value=""><?php esc_attr_e( '-- Select Related Field --', 'pods' ); ?></option>';
 
-                        for ( var field_id in d ) {
-                            var field_name = d[ field_id ];
+                        for ( var field_id in json ) {
+                            var field_name = json[ field_id ];
 
                             select_container += '<option value="' + field_id + '">' + field_name + '</option>';
                         }

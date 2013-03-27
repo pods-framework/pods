@@ -2983,7 +2983,7 @@ class PodsAPI {
 
                     $related_pod_id = $related_field_id = 0;
 
-                    $related_pod = $related_field = false;
+                    $related_field = false;
 
                     if ( 'pick' == $type && !in_array( $fields[ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
                         $pick_object = pods_var( 'pick_object', $fields[ $field ], '' ); // pod, post_type, taxonomy, etc..
@@ -3008,12 +3008,13 @@ class PodsAPI {
                             }
 
                             if ( !empty( $related_pod_id ) && !empty( $related_field_id ) && in_array( $related_pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment', 'settings' ) ) ) {
+                                $related_required = (boolean) pods_var_raw( 'required', $related_field[ 'options' ], false );
+                                $related_pick_limit = (int) pods_var_raw( 'pick_limit', $related_field[ 'options' ], 0 );
+
+                                if ( 'single' == pods_var_raw( 'pick_format_type', $related_field[ 'options' ] ) )
+                                    $related_pick_limit = 1;
+
                                 foreach ( $values as $id ) {
-                                    $related_pick_limit = (int) pods_var_raw( 'pick_limit', $related_field[ 'options' ], 0 );
-
-                                    if ( 'single' == pods_var_raw( 'pick_format_type', $related_field[ 'options' ] ) )
-                                        $related_pick_limit = 1;
-
                                     if ( in_array( $related_pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) ) {
                                         $object_type = $related_pod[ 'type' ];
 
@@ -3041,17 +3042,21 @@ class PodsAPI {
                                                 $related_ids[] = $params->id;
                                         }
 
-                                        delete_metadata( $object_type, $id, $related_field[ 'name' ] );
-
                                         if ( !empty( $related_ids ) ) {
                                             update_metadata( $object_type, $id, '_pods_' . $related_field[ 'name' ], $related_ids );
+
+                                            delete_metadata( $object_type, $id, $related_field[ 'name' ] );
 
                                             foreach ( $related_ids as $rel_id ) {
                                                 add_metadata( $object_type, $id, $related_field[ 'name' ], $rel_id );
                                             }
                                         }
-                                        else
+                                        elseif ( !$related_required ) {
+                                            delete_metadata( $object_type, $id, $related_field[ 'name' ] );
                                             delete_metadata( $object_type, $id, '_pods_' . $related_field[ 'name' ] );
+                                        }
+                                        else
+                                            return pods_error( sprintf( __( 'The %s field is required and cannot be removed by the %s field', 'pods' ), $related_field[ 'label' ], $fields[ $field ][ 'label' ] ), $this );
                                     }
                                     elseif ( 'settings' == $related_pod[ 'type' ] ) {
                                         $related_ids = get_option( '_pods_' . $related_pod[ 'name' ] . '_' . $related_field[ 'name' ] );
@@ -3082,10 +3087,12 @@ class PodsAPI {
                                             update_option( '_pods_' . $related_pod[ 'name' ] . '_' . $related_field[ 'name' ], $related_ids );
                                             update_option( $related_pod[ 'name' ] . '_' . $related_field[ 'name' ], $related_ids );
                                         }
-                                        else {
+                                        elseif ( !$related_required ) {
                                             update_option( '_pods_' . $related_pod[ 'name' ] . '_' . $related_field[ 'name' ], '' );
                                             update_option( $related_pod[ 'name' ] . '_' . $related_field[ 'name' ], '' );
                                         }
+                                        else
+                                            return pods_error( sprintf( __( 'The %s field is required and cannot be removed by the %s field', 'pods' ), $related_field[ 'label' ], $fields[ $field ][ 'label' ] ), $this );
                                     }
                                 }
                             }
@@ -3094,20 +3101,26 @@ class PodsAPI {
 
                     if ( 'pick' != $type || !in_array( $fields[ $field ][ 'pick_object' ], $simple_tableless_objects ) ) {
                         if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
+                            $value_ids = '0';
+
                             if ( !empty( $values ) ) {
                                 $values_to_impode = array();
 
                                 foreach ( $values as $id ) {
                                     if ( is_array( $id ) )
-                                        $values_to_impode[] = $id[ 'id' ];
+                                        $values_to_impode[] = (int) $id[ 'id' ];
                                     else
-                                        $values_to_impode[] = $id;
+                                        $values_to_impode[] = (int) $id;
                                 }
 
                                 $value_ids = implode( ',', $values_to_impode );
                             }
-                            else
-                                $value_ids = '0';
+                            elseif ( !empty( $related_pod_id ) && !empty( $related_field_id ) ) {
+                                $related_required = (boolean) pods_var_raw( 'required', $related_field[ 'options' ], false );
+
+                                if ( $related_required )
+                                    return pods_error( sprintf( __( 'The %s field is required and cannot be removed by the %s field', 'pods' ), $related_field[ 'label' ], $fields[ $field ][ 'label' ] ), $this );
+                            }
 
                             // Remove relationships
                             // @todo Use REPLACE INTO instead of deleting every time
@@ -3144,7 +3157,7 @@ class PodsAPI {
                                         $title = trim( $id[ 'title' ] );
 
                                     if ( isset( $id[ 'id' ] ) )
-                                        $id = $id[ 'id' ];
+                                        $id = (int) $id[ 'id' ];
                                     else
                                         $id = 0;
                                 }

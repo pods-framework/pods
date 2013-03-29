@@ -112,12 +112,15 @@ function pods_error ( $error, $obj = null ) {
     }
 
     if ( is_array( $error ) ) {
-        if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
-            $error = __( 'The following issues occurred:', 'pods' ) . "\n\n- " . implode( "\n- ", $error );
+        if ( 1 == count( $error ) )
+            $error = current( $error );
+        elseif ( defined( 'DOING_AJAX' ) && DOING_AJAX )
+            $error = __( 'The following issue occurred:', 'pods' ) . "\n\n- " . implode( "\n- ", $error );
         else
             $error = __( 'The following issues occurred:', 'pods' ) . "\n<ul><li>" . implode( "</li>\n<li>", $error ) . "</li></ul>";
     }
-    elseif ( is_object( $error ) )
+
+    if ( is_object( $error ) )
         $error = __( 'An unknown error has occurred', 'pods' );
 
     // log error in WP

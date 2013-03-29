@@ -45,6 +45,14 @@ class PodsField {
     public static $pod_types = true;
 
     /**
+     * API caching for fields that need it during validate/save
+     *
+     * @var \PodsAPI
+     * @since 2.3.0
+     */
+    private static $api = false;
+
+    /**
      * Do things like register/enqueue scripts and stylesheets
      *
      * @since 2.0
@@ -247,6 +255,23 @@ class PodsField {
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         return $value;
+    }
+
+    /**
+     * Save the value to the DB
+     *
+     * @param mixed $value
+     * @param int $id
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param object $params
+     *
+     * @since 2.3
+     */
+    public function save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+        return null;
     }
 
     /**

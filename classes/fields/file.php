@@ -29,6 +29,14 @@ class PodsField_File extends PodsField {
     public static $label = 'File / Image / Video';
 
     /**
+     * API caching for fields that need it during validate/save
+     *
+     * @var \PodsAPI
+     * @since 2.3.0
+     */
+    private static $api = false;
+
+    /**
      * Do things like register/enqueue scripts and stylesheets
      *
      * @since 2.0
@@ -324,6 +332,52 @@ class PodsField_File extends PodsField {
      */
     public function pre_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         return $value;
+    }
+
+    /**
+     * Save the value to the DB
+     *
+     * @param mixed $value
+     * @param int $id
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param object $params
+     *
+     * @since 2.3
+     */
+    public function save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+        if ( empty( self::$api ) )
+            self::$api = pods_api();
+
+        // File title / field handling
+        foreach ( $value as $id ) {
+            $title = false;
+
+            if ( is_array( $id ) ) {
+                if ( isset( $id[ 'title' ] ) && 0 < strlen( trim( $id[ 'title' ] ) ) )
+                    $title = trim( $id[ 'title' ] );
+
+                if ( isset( $id[ 'id' ] ) )
+                    $id = (int) $id[ 'id' ];
+                else
+                    $id = 0;
+            }
+
+            if ( empty( $id ) )
+                continue;
+
+            // Update the title if set
+            if ( false !== $title && 1 == pods_var( self::$type . '_edit_title', $options, 0 ) ) {
+                $attachment_data = array(
+                    'ID' => $id,
+                    'post_title' => $title
+                );
+
+                self::$api->save_wp_object( 'media', $attachment_data );
+            }
+        }
     }
 
     /**

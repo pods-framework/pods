@@ -765,6 +765,7 @@ class PodsForm {
     /**
      * Change the value or perform actions after validation but before saving to the DB
      *
+     * @param string $type
      * @param mixed $value
      * @param int $id
      * @param string $name
@@ -784,6 +785,33 @@ class PodsForm {
             $value = self::$loaded[ $type ]->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
         return $value;
+    }
+
+    /**
+     * Save the value to the DB
+     *
+     * @param string $type
+     * @param mixed $value
+     * @param int $id
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param object $params
+     *
+     * @static
+     *
+     * @since 2.3
+     */
+    public static function save ( $type, $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+        self::field_loader( $type );
+
+        $saved = null;
+
+        if ( 1 == pods_var( 'save', $options, 1 ) && method_exists( self::$loaded[ $type ], 'save' ) )
+            $saved = self::$loaded[ $type ]->save( $value, $id, $name, $options, $fields, $pod, $params );
+
+        return $saved;
     }
 
     /**

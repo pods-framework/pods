@@ -45,6 +45,22 @@ class PodsField_Pick extends PodsField {
     private static $custom_related_objects = array();
 
     /**
+     * Data used during validate / save to avoid extra queries
+     *
+     * @var array
+     * @since 2.3.0
+     */
+    public static $related_data = array();
+
+    /**
+     * API caching for fields that need it during validate/save
+     *
+     * @var \PodsAPI
+     * @since 2.3.0
+     */
+    private static $api = false;
+
+    /**
      * Setup related objects list
      *
      * @since 2.0
@@ -626,6 +642,312 @@ class PodsField_Pick extends PodsField {
     }
 
     /**
+     * Validate a value before it's saved
+     *
+     * @param mixed $value
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param int $id
+     *
+     * @param null $params
+     * @return array|bool
+     * @since 2.0
+     */
+    public function validate ( &$value, $name = null, $options = null, $fields = null, $pod = null, $id = null, $params = null ) {
+        if ( empty( self::$api ) )
+            self::$api = pods_api();
+
+        $simple_tableless_objects = $this->simple_objects();
+
+        $related_pick_limit = 0;
+        $related_field = $related_pod = $current_related_ids = false;
+
+        // Bidirectional relationship requirement checks
+        $related_object = pods_var( 'pick_object', $options, '' ); // pod, post_type, taxonomy, etc..
+        $related_val = pods_var( 'pick_val', $options, $related_object, null, true ); // pod name, post type name, taxonomy name, etc..
+        $related_sister_id = (int) pods_var( 'sister_id', $options, 0 );
+
+        if ( !empty( $related_sister_id ) && !in_array( $related_object, $simple_tableless_objects ) ) {
+            $related_pod = self::$api->load_pod( array( 'name' => $related_val, 'table_info' => false ), false );
+
+            if ( false !== $related_pod && ( 'pod' == $related_object || $related_object == $related_pod[ 'type' ] ) ) {
+                $related_field = false;
+
+                // Ensure sister_id exists on related Pod
+                foreach ( $related_pod[ 'fields' ] as $related_pod_field ) {
+                    if ( 'pick' == $related_pod_field[ 'type' ] && $related_sister_id == $related_pod_field[ 'id' ] ) {
+                        $related_field = $related_pod_field;
+
+                        break;
+                    }
+                }
+
+                if ( !empty( $related_field ) ) {
+                    $current_related_ids = self::$api->lookup_related_items( $fields[ $name ][ 'id' ], $pod[ 'id' ], $id, $fields[ $name ], $pod );
+
+                    self::$related_data[ $name ][ 'related_ids_' . $id ] = $current_related_ids;
+
+                    $values = $value;
+
+                    // Convert values from a comma-separated string into an array
+                    if ( !is_array( $values ) )
+                        $values = explode( ',', $values );
+
+                    $values = array_unique( array_filter( $values ) );
+
+                    $related_required = pods_var( 'required', $related_field[ 'options' ], 0 );
+                    $related_pick_limit = (int) pods_var( 'pick_limit', $related_field[ 'options' ], 0 );
+
+                    if ( 'single' == pods_var_raw( 'pick_format_type', $related_field[ 'options' ] ) )
+                        $related_pick_limit = 1;
+
+                    if ( !empty( $values ) ) {
+                        foreach ( $values as $related_id ) {
+                            $related_ids = self::$api->lookup_related_items( $related_field[ 'id' ], $related_pod[ 'id' ], $related_id, $related_field, $related_pod );
+
+                            self::$related_data[ $name ][ 'related_ids_' . $related_id ] = $related_ids;
+
+                            $remove_ids = array();
+
+                            if ( 0 < $related_pick_limit && !empty( $related_ids ) && !in_array( $id, $related_ids ) ) {
+                                while ( $related_pick_limit <= count( $related_ids ) ) {
+                                    $remove_ids[] = (int) array_pop( $related_ids );
+                                }
+                            }
+
+                            if ( !empty( $remove_ids ) && in_array( $id, $related_ids ) && 1 == $related_pick_limit && $related_required )
+                                return sprintf( __( 'The %s field is required and cannot be removed by the %s field', 'pods' ), $related_field[ 'label' ], $options[ 'label' ] );
+                        }
+                    }
+                    elseif ( !empty( $current_related_ids ) ) {
+                        foreach ( $current_related_ids as $related_id ) {
+                            $related_ids = self::$api->lookup_related_items( $related_field[ 'id' ], $related_pod[ 'id' ], $related_id, $related_field, $related_pod );
+
+                            self::$related_data[ $name ][ 'related_ids_' . $related_id ] = $related_ids;
+
+                            if ( !empty( $related_ids ) && in_array( $id, $related_ids ) && 1 == count( $related_ids ) && 1 == $related_pick_limit && $related_required )
+                                return sprintf( __( 'The %s field is required and cannot be removed by the %s field', 'pods' ), $related_field[ 'label' ], $options[ 'label' ] );
+                        }
+                    }
+                }
+            }
+        }
+
+        self::$related_data[ $name ] = array(
+            'related_pod' => $related_pod,
+            'related_field' => $related_field,
+            'related_pick_limit' => $related_pick_limit
+        );
+
+        return true;
+    }
+
+    /**
+     * Save the value to the DB
+     *
+     * @param mixed $value
+     * @param int $id
+     * @param string $name
+     * @param array $options
+     * @param array $fields
+     * @param array $pod
+     * @param object $params
+     *
+     * @since 2.3
+     */
+    public function save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
+        if ( empty( self::$api ) )
+            self::$api = pods_api();
+
+        if ( !isset( self::$related_data[ $name ] ) )
+            return;
+
+        $related_pod = self::$related_data[ $name ][ 'related_pod' ];
+        $related_field = self::$related_data[ $name ][ 'related_field' ];
+        $related_pick_limit = self::$related_data[ $name ][ 'related_pick_limit' ];
+
+        $remove_ids = $params->remove_ids;
+
+        // Bidirectional relationship updates
+        if ( !empty( $related_field ) ) {
+            foreach ( $value as $related_id ) {
+                if ( isset( self::$related_data[ $name ][ 'related_ids_' . $related_id ] ) )
+                    $related_ids = self::$related_data[ $name ][ 'related_ids_' . $related_id ];
+                else
+                    $related_ids = self::$api->lookup_related_items( $related_field[ 'id' ], $related_pod[ 'id' ], $related_id, $related_field, $related_pod );
+
+                if ( empty( $related_ids ) )
+                    $related_ids = array();
+
+                if ( 0 < $related_pick_limit && !empty( $related_ids ) && !in_array( $id, $related_ids ) ) {
+                    while ( $related_pick_limit <= count( $related_ids ) ) {
+                        $remove_ids[] = (int) array_pop( $related_ids );
+                    }
+                }
+
+                // Post Types, Media, Users, and Comments (meta-based)
+                if ( in_array( $related_pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) ) {
+                    if ( !in_array( $id, $related_ids ) )
+                        $related_ids[] = $id;
+
+                    $object_type = $related_pod[ 'type' ];
+
+                    if ( 'post_type' == $object_type || 'media' == $object_type )
+                        $object_type = 'post';
+
+                    update_metadata( $object_type, $related_id, '_pods_' . $related_field[ 'name' ], $related_ids );
+
+                    delete_metadata( $object_type, $related_id, $related_field[ 'name' ] );
+
+                    foreach ( $related_ids as $rel_id ) {
+                        add_metadata( $object_type, $related_id, $related_field[ 'name' ], $rel_id );
+                    }
+                }
+                // Custom Settings Pages (options-based)
+                elseif ( 'settings' == $related_pod[ 'type' ] ) {
+                    if ( !in_array( $id, $related_ids ) )
+                        $related_ids[] = $id;
+
+                    update_option( '_pods_' . $related_pod[ 'name' ] . '_' . $related_field[ 'name' ], $related_ids );
+                    update_option( $related_pod[ 'name' ] . '_' . $related_field[ 'name' ], $related_ids );
+                }
+
+                // Relationships table
+                if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
+                    if ( !in_array( $id, $related_ids ) ) {
+                        $related_weight = 0;
+
+                        $weight = pods_query( "
+                            SELECT `weight`
+                            FROM `@wp_podsrel`
+                            WHERE
+                                `pod_id` = %d
+                                AND `field_id` = %d
+                                AND `item_id` = %d
+                            ORDER BY `weight` DESC
+                            LIMIT 1
+                        ", array(
+                            $related_pod[ 'id' ],
+                            $related_field[ 'id' ],
+                            $related_id
+                        ) );
+
+                        if ( !empty( $weight ) ) {
+                            $related_weight = (int) current( $weight->weight );
+
+                            $related_weight++;
+                        }
+
+                        pods_query( "
+                            INSERT INTO `@wp_podsrel`
+                                (
+                                    `pod_id`,
+                                    `field_id`,
+                                    `item_id`,
+                                    `related_pod_id`,
+                                    `related_field_id`,
+                                    `related_item_id`,
+                                    `weight`
+                                )
+                            VALUES ( %d, %d, %d, %d, %d, %d, %d )
+                        ", array(
+                            $related_pod[ 'id' ],
+                            $related_field[ 'id' ],
+                            $related_id,
+                            $params->pod_id,
+                            $options[ 'id' ],
+                            $id,
+                            $related_weight
+                        ) );
+                    }
+                }
+
+                $remove_ids = array_unique( array_filter( $remove_ids ) );
+
+                // Remove this item from related items no longer related to
+                foreach ( $remove_ids as $remove_id ) {
+                    if ( isset( self::$related_data[ $name ][ 'related_ids_' . $remove_id ] ) )
+                        $related_ids = self::$related_data[ $name ][ 'related_ids_' . $remove_id ];
+                    else
+                        $related_ids = self::$api->lookup_related_items( $related_field[ 'id' ], $related_pod[ 'id' ], $remove_id, $related_field, $related_pod );
+
+                    if ( empty( $related_ids ) )
+                        continue;
+                    elseif ( !in_array( $id, $related_ids ) )
+                        continue;
+
+                    unset( $related_ids[ array_search( $id, $related_ids ) ] );
+
+                    $related_ids = array_values( $related_ids );
+
+                    // Post Types, Media, Users, and Comments (meta-based)
+                    if ( in_array( $related_pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) ) {
+                        $object_type = $related_pod[ 'type' ];
+
+                        if ( 'post_type' == $object_type || 'media' == $object_type )
+                            $object_type = 'post';
+
+                        delete_metadata( $object_type, $remove_id, $related_field[ 'name' ] );
+
+                        if ( !empty ( $related_ids ) ) {
+                            update_metadata( $object_type, $remove_id, '_pods_' . $related_field[ 'name' ], $related_ids );
+
+                            foreach ( $related_ids as $rel_id ) {
+                                add_metadata( $object_type, $remove_id, $related_field[ 'name' ], $rel_id );
+                            }
+                        }
+                        else
+                            delete_metadata( $object_type, $remove_id, '_pods_' . $related_field[ 'name' ] );
+                    }
+                    // Custom Settings Pages (options-based)
+                    elseif ( 'settings' == $related_pod[ 'type' ] ) {
+                        if ( !empty( $related_ids ) ) {
+                            update_option( '_pods_' . $related_pod[ 'name' ] . '_' . $related_field[ 'name' ], $related_ids );
+                            update_option( $related_pod[ 'name' ] . '_' . $related_field[ 'name' ], $related_ids );
+                        }
+                        else {
+                            delete_option( '_pods_' . $related_pod[ 'name' ] . '_' . $related_field[ 'name' ] );
+                            delete_option( $related_pod[ 'name' ] . '_' . $related_field[ 'name' ] );
+                        }
+                    }
+
+                    // Relationships table
+                    if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
+                        pods_query( "
+                            DELETE FROM `@wp_podsrel`
+                            WHERE
+                            (
+                                `pod_id` = %d
+                                AND `field_id` = %d
+                                AND `item_id` = %d
+                                AND `related_item_id` = %d
+                            )
+                            OR (
+                                `related_pod_id` = %d
+                                AND `related_field_id` = %d
+                                AND `related_item_id` = %d
+                                AND `item_id` = %d
+                            )
+                        ", array(
+                            $related_pod[ 'id' ],
+                            $related_field[ 'id' ],
+                            $remove_id,
+                            $id,
+
+                            $related_pod[ 'id' ],
+                            $related_field[ 'id' ],
+                            $remove_id,
+                            $id
+                        ) );
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Customize the Pods UI manage table column output
      *
      * @param int $id
@@ -637,7 +959,7 @@ class PodsField_Pick extends PodsField {
      *
      * @since 2.0
      */
-    public function ui( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
+    public function ui ( $id, $value, $name = null, $options = null, $fields = null, $pod = null ) {
         $value = $this->simple_value( $name, $value, $options, $pod, $id );
 
         return $this->display( $value, $name, $options, $pod, $id );

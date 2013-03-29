@@ -81,6 +81,8 @@ class PodsComponents {
         $custom_component_menus = array();
 
         foreach ( $this->components as $component => $component_data ) {
+            $component_data[ 'MustUse' ] = apply_filters( 'pods_component_require_' . $component_data[ 'ID' ], $component_data[ 'MustUse' ], $component_data );
+
             if ( empty( $component_data[ 'MustUse' ] ) && ( !isset( $this->settings[ 'components' ][ $component ] ) || 0 == $this->settings[ 'components' ][ $component ] ) )
                 continue;
 
@@ -173,6 +175,8 @@ class PodsComponents {
         do_action( 'pods_components_load' );
 
         foreach ( (array) $this->components as $component => $component_data ) {
+            $component_data[ 'MustUse' ] = apply_filters( 'pods_component_require_' . $component_data[ 'ID' ], $component_data[ 'MustUse' ], $component_data );
+
             if ( false === $component_data[ 'MustUse' ] && ( !isset( $this->settings[ 'components' ][ $component ] ) || 0 == $this->settings[ 'components' ][ $component ] ) )
                 continue;
 
@@ -359,8 +363,6 @@ class PodsComponents {
                     $component_data[ 'MustUse' ] = false;
                 else
                     $component_data[ 'MustUse' ] = $component_data[ 'External' ];
-
-                $component_data[ 'MustUse' ] = apply_filters( 'pods_component_require_' . $component_data[ 'ID' ], $component_data[ 'MustUse' ], $component_data );
 
                 $component_data[ 'File' ] = $component_file;
 

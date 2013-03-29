@@ -212,6 +212,20 @@ function pods_developer () {
 }
 
 /**
+ * Determine if Tableless Mode is enabled
+ *
+ * @return bool Whether Tableless Mode is enabled
+ *
+ * @since 2.3
+ */
+function pods_tableless () {
+    if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS )
+        return true;
+
+    return false;
+}
+
+/**
  * Marks a function as deprecated and informs when it has been used.
  *
  * There is a hook deprecated_function_run that will be called that can be used
@@ -1139,6 +1153,17 @@ function pods_register_field_type ( $type, $file = null ) {
  */
 function pods_register_related_object ( $name, $label, $options = null ) {
     return PodsForm::field_method( 'pick', 'register_related_object', $name, $label, $options );
+}
+
+/**
+ * Require a component (always-on)
+ *
+ * @param string $component Component ID
+ *
+ * @since 2.3.0
+ */
+function pods_require_component ( $component ) {
+    add_filter( 'pods_component_require_' . $component, '__return_true' );
 }
 
 /**

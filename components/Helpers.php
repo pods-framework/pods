@@ -4,7 +4,7 @@
  *
  * Description: A holdover from Pods 1.x, you most likely don't need these and we recommend you use our WP filters and actions instead.
  *
- * Version: 2.0
+ * Version: 2.3
  *
  * Category: Advanced
  *

@@ -591,7 +591,6 @@ class PodsAPI {
                     'type' => 'wysiwyg',
                     'alias' => array( 'content' ),
                     'options' => array(
-                        'wysiwyg_allow_html' => 1,
                         'wysiwyg_allowed_html_tags' => '',
                         'display_filter' => 'the_content',
                         'pre_save' => 0

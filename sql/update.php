@@ -12,13 +12,14 @@ if ( version_compare( $pods_version, '2.0.3', '<' ) ) {
 }
 
 // Update to 2.3
-if ( version_compare( $pods_version, '2.3-b-1', '<' ) ) {
+if ( version_compare( $pods_version, '2.3-b-4', '<' ) ) {
     // Auto activate Advanced Content Types component
     $oldget = $_GET;
 
     $_GET[ 'toggle' ] = 1;
 
     PodsInit::$components->toggle( 'advanced-content-types' );
+    PodsInit::$components->toggle( 'table-storage' );
 
     $_GET = $oldget;
 

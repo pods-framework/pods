@@ -90,6 +90,9 @@ class PodsComponents {
             if ( !empty( $component_data[ 'DeveloperMode' ] ) && !pods_developer() )
                 continue;
 
+            if ( empty( $component_data[ 'TablelessMode' ] ) && pods_tableless() )
+                continue;
+
             if ( empty( $component_data[ 'MenuPage' ] ) ) {
                 if ( !isset( $component_data[ 'object' ] ) )
                     continue;
@@ -290,6 +293,7 @@ class PodsComponents {
                 'PluginDependency' => 'Plugin Dependency',
                 'ThemeDependency' => 'Theme Dependency',
                 'DeveloperMode' => 'Developer Mode',
+                'TablelessMode' => 'Tableless Mode',
                 'Capability' => 'Capability'
             );
 
@@ -333,12 +337,19 @@ class PodsComponents {
                     $component_data[ 'Class' ] = 'Pods_' . pods_clean_name( basename( $component, '.php' ), false );
 
                 if ( empty( $component_data[ 'ID' ] ) )
-                    $component_data[ 'ID' ] = sanitize_title( $component_data[ 'Name' ] );
+                    $component_data[ 'ID' ] = $component_data[ 'Name' ];
+
+                $component_data[ 'ID' ] = sanitize_title( $component_data[ 'ID' ] );
 
                 if ( 'on' == strtolower( $component_data[ 'DeveloperMode' ] ) || 1 == $component_data[ 'DeveloperMode' ] )
                     $component_data[ 'DeveloperMode' ] = true;
                 else
                     $component_data[ 'DeveloperMode' ] = false;
+
+                if ( 'on' == strtolower( $component_data[ 'TablelessMode' ] ) || 1 == $component_data[ 'TablelessMode' ] )
+                    $component_data[ 'TablelessMode' ] = true;
+                else
+                    $component_data[ 'TablelessMode' ] = false;
 
                 $component_data[ 'External' ] = (boolean) $external;
 
@@ -349,6 +360,7 @@ class PodsComponents {
                 else
                     $component_data[ 'MustUse' ] = $component_data[ 'External' ];
 
+                $component_data[ 'MustUse' ] = apply_filters( 'pods_component_require_' . $component_data[ 'ID' ], $component_data[ 'MustUse' ], $component_data );
 
                 $component_data[ 'File' ] = $component_file;
 
@@ -455,7 +467,10 @@ class PodsComponents {
             if ( !empty( $component_data[ 'Hide' ] ) )
                 continue;
 
-            if ( true === (boolean) pods_var( 'DeveloperMode', $component_data, false ) && ( !pods_developer() ) )
+            if ( true === (boolean) pods_var( 'DeveloperMode', $component_data, false ) && !pods_developer() )
+                continue;
+
+            if ( true === (boolean) pods_var( 'TablelessMode', $component_data, false ) && !pods_developer() )
                 continue;
 
             if ( empty( $component_data[ 'MenuPage' ] ) && ( !isset( $component_data[ 'object' ] ) || !method_exists( $component_data[ 'object' ], 'admin' ) ) )

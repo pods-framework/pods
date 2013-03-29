@@ -925,14 +925,46 @@ class PodsAdmin {
 
         $view = pods_var( 'view', 'get', 'all', null, true );
 
+        $recommended = array(
+            'advanced-content-types',
+            'migrate-packages',
+            'roles-and-capabilities',
+            'pages',
+            'table-storage',
+            'templates'
+        );
+
         foreach ( $components as $component => &$component_data ) {
-            if ( 'all' != $view && ( !isset( $component_data[ 'Category' ] ) || $view != sanitize_title( $component_data[ 'Category' ] ) ) ) {
+            if ( !in_array( $view, array( 'all', 'recommended', 'dev' ) ) && ( !isset( $component_data[ 'Category' ] ) || $view != sanitize_title( $component_data[ 'Category' ] ) ) ) {
+                unset( $components[ $component ] );
+
+                continue;
+            }
+            elseif ( 'recommended' == $view && !in_array( $component_data[ 'ID' ], $recommended ) ) {
+                unset( $components[ $component ] );
+
+                continue;
+            }
+            elseif ( 'dev' == $view && pods_developer() && !pods_var_raw( 'DeveloperMode', $component_data, false ) ) {
+                unset( $components[ $component ] );
+
+                continue;
+            }
+            elseif ( pods_var_raw( 'DeveloperMode', $component_data, false ) && !pods_developer() ) {
+                unset( $components[ $component ] );
+
+                continue;
+            }
+            elseif ( !pods_var_raw( 'TablelessMode', $component_data, false ) && pods_tableless() ) {
                 unset( $components[ $component ] );
 
                 continue;
             }
 
             $component_data[ 'Name' ] = strip_tags( $component_data[ 'Name' ] );
+
+            if ( pods_var_raw( 'DeveloperMode', $component_data, false ) )
+                $component_data[ 'Name' ] .= ' <em style="font-weight: normal; color:#333;">(Developer Preview)</em>';
 
             $meta = array();
 
@@ -952,29 +984,25 @@ class PodsAdmin {
             if ( !empty( $component_data[ 'URI' ] ) )
                 $meta[] = '<a href="' . $component_data[ 'URI' ] . '">' . __( 'Visit component site', 'pods' ) . '</a>';
 
-            $component_data[ 'Description' ] = wpautop( make_clickable( strip_tags( $component_data[ 'Description' ], 'em,strong' ) ) );
+            $component_data[ 'Description' ] = wpautop( trim( make_clickable( strip_tags( $component_data[ 'Description' ], 'em,strong' ) ) ) );
 
             if ( !empty( $meta ) )
-                $component_data[ 'Description' ] .= '<div class="pods-component-version-author-uri">' . implode( ' | ', $meta ) . '</div>';
+                $component_data[ 'Description' ] .= '<div class="pods-component-meta" ' . ( !empty( $component_data[ 'Description' ] ) ? ' style="padding:8px 0 4px;"' : '' ) . '>' . implode( '&nbsp;&nbsp;|&nbsp;&nbsp;', $meta ) . '</div>';
 
             $component_data = array(
                 'id' => $component_data[ 'ID' ],
                 'name' => $component_data[ 'Name' ],
                 'category' => $component_data[ 'Category' ],
+                'version' => '',
                 'description' => $component_data[ 'Description' ],
-                'developermode' => pods_var_raw( 'DeveloperMode', $component_data, false ),
                 'mustuse' => pods_var_raw( 'MustUse', $component_data, false ),
                 'toggle' => 0
             );
 
-            if ( $component_data[ 'developermode' ] ) {
-                if ( !pods_developer() ) {
-                    unset( $components[ $component ] );
+            if ( !empty( $component_data[ 'category' ] ) ) {
+                $category_url = pods_var_update( array( 'view' => sanitize_title( $component_data[ 'category' ] ), 'pg' => '', 'page' => $_GET[ 'page' ] ) );
 
-                    continue;
-                }
-
-                $component_data[ 'name' ] .= ' <em style="font-weight: normal;">(Developer Preview)</em>';
+                $component_data[ 'category' ] = '<a href="' . $category_url . '">' . $component_data[ 'category' ] . '</a>';
             }
 
             if ( isset( PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] ) && 0 != PodsInit::$components->settings[ 'components' ][ $component_data[ 'id' ] ] )
@@ -995,17 +1023,27 @@ class PodsAdmin {
                     'name' => array(
                         'label' => __( 'Name', 'pods' ),
                         'width' => '30%',
-                        'type' => 'text'
+                        'type' => 'text',
+                        'options' => array(
+                            'text_allow_html' => true
+                        )
                     ),
                     'category' => array(
                         'label' => __( 'Category', 'pods' ),
                         'width' => '10%',
-                        'type' => 'text'
+                        'type' => 'text',
+                        'options' => array(
+                            'text_allow_html' => true
+                        )
                     ),
                     'description' => array(
                         'label' => __( 'Description', 'pods' ),
                         'width' => '60%',
-                        'type' => 'text'
+                        'type' => 'text',
+                        'options' => array(
+                            'text_allow_html' => true,
+                            'text_allowed_html_tags' => 'strong em a ul ol li b i br div'
+                        )
                     )
                 )
             ),
@@ -1016,6 +1054,7 @@ class PodsAdmin {
             'filters_enhanced' => true,
             'views' => array(
                 'all' => __( 'All', 'pods' ),
+                //'recommended' => __( 'Recommended', 'pods' ),
                 'field-types' => __( 'Field Types', 'pods' ),
                 'tools' => __( 'Tools', 'pods' ),
                 'integration' => __( 'Integration', 'pods' ),
@@ -1031,6 +1070,9 @@ class PodsAdmin {
             'sortable' => false,
             'pagination' => false
         );
+
+        if ( pods_developer() )
+            $ui[ 'views' ][ 'dev' ] = __( 'Developer Preview', 'pods' );
 
         pods_ui( $ui );
     }

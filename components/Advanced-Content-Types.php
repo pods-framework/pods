@@ -8,6 +8,8 @@
  *
  * Category: Advanced
  *
+ * Tableless Mode: No
+ *
  * @package Pods\Components
  * @subpackage Advanced Content Types
  */

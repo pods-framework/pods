@@ -1,6 +1,8 @@
 <?php
 /**
- * Name: Markdown Syntax
+ * ID: markdown-syntax
+ *
+ * Name: Markdown Syntax for Paragraph / WYSIWYG fields
  *
  * Description: Integration with Markdown (http://michelf.com/projects/php-markdown/); Adds an option to enable Markdown syntax for Paragraph text fields.
  *

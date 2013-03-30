@@ -1056,10 +1056,14 @@ class Pods {
 
         $pod = pods( $this->pod, $params );
 
-        if ( $pod->fetch() )
-            return $pod->id();
+        $new_id = 0;
 
-        return 0;
+        if ( $pod->fetch() )
+            $new_id = $pod->id();
+
+        $new_id = $this->do_hook( 'prev_id', $new_id, $id, $pod, $params_override );
+
+        return $new_id;
     }
 
     /**
@@ -1107,10 +1111,14 @@ class Pods {
 
         $pod = pods( $this->pod, $params );
 
-        if ( $pod->fetch() )
-            return $pod->id();
+        $new_id = 0;
 
-        return 0;
+        if ( $pod->fetch() )
+            $new_id = $pod->id();
+
+        $new_id = $this->do_hook( 'next_id', $new_id, $id, $pod, $params_override );
+
+        return $new_id;
     }
 
     /**
@@ -1141,10 +1149,14 @@ class Pods {
 
         $pod = pods( $this->pod, $params );
 
-        if ( $pod->fetch() )
-            return $pod->id();
+        $new_id = 0;
 
-        return 0;
+        if ( $pod->fetch() )
+            $new_id = $pod->id();
+
+        $new_id = $this->do_hook( 'first_id', $new_id, $pod, $params_override );
+
+        return $new_id;
     }
 
     /**
@@ -1179,10 +1191,12 @@ class Pods {
 
         $pod = pods( $this->pod, $params );
 
-        if ( $pod->fetch() )
-            return $pod->id();
+        $new_id = 0;
 
-        return 0;
+        if ( $pod->fetch() )
+            $new_id = $pod->id();
+
+        $new_id = $this->do_hook( 'last_id', $new_id, $pod, $params_override );
     }
 
     /**

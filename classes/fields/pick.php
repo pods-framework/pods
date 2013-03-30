@@ -732,7 +732,11 @@ class PodsField_Pick extends PodsField {
                         }
                     }
                 }
+                else
+                    $related_pod = false;
             }
+            else
+                $related_pod = false;
         }
 
         self::$related_data[ $name ] = array(

@@ -5821,7 +5821,10 @@ class PodsAPI {
 
                 $post_type = pods_sanitize( ( empty( $object ) ? $name : $object ) );
 
-                $info[ 'pod_table' ] = $wpdb->prefix . 'pods_' . pods_clean_name( $post_type, true, false );
+                if ( 'attachment' == $post_type || 'media' == $object_type )
+                    $info[ 'pod_table' ] = $wpdb->prefix . 'pods_media';
+                else
+                    $info[ 'pod_table' ] = $wpdb->prefix . 'pods_' . pods_clean_name( $post_type, true, false );
 
                 $post_type_object = get_post_type_object( $post_type );
 

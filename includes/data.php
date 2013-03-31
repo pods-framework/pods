@@ -1043,7 +1043,11 @@ function pods_hierarchical_list ( $list, $args = array() ) {
     $defaults = array(
         'id' => 'id',
         'parent' => 'parent',
-        'children' => 'children'
+        'children' => 'children',
+        'orphans' => true,
+        'found' => array(),
+        'list' => array(),
+        'current_depth' => -1
     );
 
     $args = array_merge( $defaults, (array) $args );
@@ -1063,7 +1067,7 @@ function pods_hierarchical_list ( $list, $args = array() ) {
  * @return array|object
  * @since 2.3.0
  */
-function pods_hierarchical_list_recurse ( $parent, $list, $args = array() ) {
+function pods_hierarchical_list_recurse ( $parent, $list, &$args ) {
     $new = array();
 
     $object = false;
@@ -1073,31 +1077,75 @@ function pods_hierarchical_list_recurse ( $parent, $list, $args = array() ) {
         $list = get_object_vars( $list );
     }
 
+    $args[ 'current_depth' ]++;
+
+    $depth = $args[ 'current_depth' ];
+
+    if ( 0 == $depth )
+        $args[ 'list' ] = $list;
+
     foreach ( $list as $k => $list_item ) {
         if ( is_object( $list_item ) && isset( $list_item->{$args[ 'id' ]} ) ) {
             $list_item->{$args[ 'parent' ]} = (int) pods_var_raw( $args[ 'parent' ], $list_item );
 
             if ( is_array( $list_item->{$args[ 'parent' ]} ) && isset( $list_item->{$args[ 'parent' ]}[ $args[ 'id' ] ] ) && $parent == $list_item->{$args[ 'parent' ]}[ $args[ 'id' ] ] )
                 $list_item->{$args[ 'children' ]} = pods_hierarchical_list_recurse( $list_item->{$args[ 'id' ]}, $list, $args );
-            elseif ( $parent == $list_item->{$args[ 'parent' ]} )
+            elseif ( $parent == $list_item->{$args[ 'parent' ]} || ( 0 == $depth && $parent == $list_item->{$args[ 'id' ]} ) )
                 $list_item->{$args[ 'children' ]} = pods_hierarchical_list_recurse( $list_item->{$args[ 'id' ]}, $list, $args );
             else
                 continue;
+
+            $args[ 'found' ][ $k ] = $list_item;
         }
         elseif ( is_array( $list_item ) && isset( $list_item[ $args[ 'id' ] ] ) ) {
             $list_item[ $args[ 'parent' ] ] = (int) pods_var_raw( $args[ 'parent' ], $list_item );
 
             if ( is_array( $list_item[ $args[ 'parent' ] ] ) && isset( $list_item[ $args[ 'parent' ] ][ $args[ 'id' ] ] ) && $parent == $list_item[ $args[ 'parent' ] ][ $args[ 'id' ] ] )
                 $list_item[ $args[ 'children' ] ] = pods_hierarchical_list_recurse( $list_item[ $args[ 'id' ] ], $list, $args );
-            elseif ( $parent == $list_item[ $args[ 'parent' ] ] )
+            elseif ( $parent == $list_item[ $args[ 'parent' ] ] || ( 0 == $depth && $parent == $list_item[ $args[ 'id' ] ] ) )
                 $list_item[ $args[ 'children' ] ] = pods_hierarchical_list_recurse( $list_item[ $args[ 'id' ] ], $list, $args );
             else
                 continue;
+
+            $args[ 'found' ][ $k ] = $list_item;
         }
         else
             continue;
 
         $new[ $k ] = $list_item;
+
+        $args[ 'current_depth' ] = $depth;
+    }
+
+    if ( 0 == $depth && empty( $new ) && !empty( $list ) ) {
+        $first = current( array_slice( $list, 0, 1 ) );
+
+        $new_parent = 0;
+
+        $args[ 'current_depth' ] = -1;
+
+        if ( is_object( $first ) && isset( $first->{$args[ 'parent' ]} ) )
+            $new_parent = (int) $first->{$args[ 'parent' ]};
+        elseif ( is_array( $first ) && isset( $first[ $args[ 'parent' ] ] ) )
+            $new_parent = (int) $first[ $args[ 'parent' ] ];
+
+        if ( !empty( $new_parent ) )
+            $new = pods_hierarchical_list_recurse( $new_parent, $list, $args );
+    }
+
+    if ( 0 == $depth ) {
+        $orphans = array();
+
+        foreach ( $args[ 'list' ] as $k => $list_item ) {
+            if ( !isset( $args[ 'found' ][ $k ] ) )
+                $orphans[ $k ] = $list_item;
+        }
+
+        if ( !empty( $orphans ) ) {
+            foreach ( $orphans as $orphan ) {
+                $new[] = $orphan;
+            }
+        }
     }
 
     if ( $object )
@@ -1246,9 +1294,6 @@ function pods_list_filter ( $list, $args = array(), $operator = 'AND' ) {
             $filtered[ $key ] = $obj;
         else
             continue;
-
-        if ( $remove )
-            unset( $list[ $key ] );
     }
 
     if ( $object )

@@ -2068,14 +2068,13 @@ class PodsUI {
             }
             ?>
         </h2>
-        <?php if ( true !== $reorder ) { ?>
-        <form id="posts-filter" action="<?php echo pods_var_update( array( 'pg' . $this->num => '' ), self::$allowed, $this->exclusion() ); ?>" method="get">
-            <?php
-                if ( 0 < strlen( pods_var( 'page' ) ) ) {
-            ?>
-                <input type="hidden" name="page" value="<?php echo esc_attr( pods_var( 'page' ) ); ?>" />
-            <?php } } ?>
-            <?php
+        <?php
+            if ( true !== $reorder ) {
+        ?>
+            <form id="posts-filter" action="<?php echo pods_var_update( array( 'pg' . $this->num => '' ), self::$allowed, $this->exclusion() ); ?>" method="get">
+        <?php
+            }
+
             if ( isset( $this->actions_custom[ 'header' ] ) && is_callable( $this->actions_custom[ 'header' ] ) )
                 return call_user_func_array( $this->actions_custom[ 'header' ], array( $reorder, &$this ) );
 

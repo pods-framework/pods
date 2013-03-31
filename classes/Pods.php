@@ -1226,12 +1226,9 @@ class Pods {
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
         $select = '`t`.*';
-        $pod_table_prefix = 't';
 
-        if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) && 'table' == $this->pod_data[ 'storage' ] ) {
+        if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) && 'table' == $this->pod_data[ 'storage' ] )
             $select .= ', `d`.*';
-            $pod_table_prefix = 'd';
-        }
 
         if ( empty( $this->data->table ) )
             return $this;
@@ -1260,7 +1257,6 @@ class Pods {
             'search_across_picks' => false,
             'search_across_files' => false,
 
-            'fields' => $this->fields,
             'filters' => $this->filters,
             'sql' => $sql,
 

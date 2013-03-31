@@ -700,6 +700,8 @@ class PodsData {
             'filters' => array(),
 
             'fields' => array(),
+            'pod_table_prefix' => null,
+
             'traverse' => array(),
 
             'sql' => null,
@@ -754,6 +756,13 @@ class PodsData {
         if ( empty( $params->table ) && is_array( $this->pod_data ) && isset( $this->table ) && !empty( $this->table ) )
             $params->table = $this->table;
 
+        if ( empty( $params->pod_table_prefix ) && is_array( $this->pod_data ) ) {
+            $params->pod_table_prefix = 't';
+
+            if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) && 'table' == $this->pod_data[ 'storage' ] )
+                $params->pod_table_prefix = 'd';
+        }
+
         if ( empty( $params->table ) )
             return false;
 
@@ -805,6 +814,8 @@ class PodsData {
             $this->search_mode = $params->search_mode;
 
         $params->search = (boolean) $params->search;
+
+        $params->field_table_alias = 't';
 
         // Get Aliases for future reference
         $selectsfound = '';
@@ -906,6 +917,8 @@ class PodsData {
                             else
                                 $fieldfield = $fieldfield . '.`post_title`';
                         }
+                        elseif ( isset( $params->fields[ $field ] ) )
+                            $fieldfield = '`' . $params->pod_table_prefix . '`.' . $fieldfield;
                         else
                             $fieldfield = '`t`.' . $fieldfield;
 

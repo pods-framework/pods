@@ -488,7 +488,8 @@ class PodsInit {
                 if ( 25 == $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] )
                     $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ]++;
 
-                $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] = $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] . '.1';
+                // This would be nice if WP supported floats in menu_position
+                // $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] = $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] . '.1';
 
                 // Taxonomies
                 $cpt_taxonomies = array();

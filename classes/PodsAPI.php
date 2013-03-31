@@ -4031,6 +4031,11 @@ class PodsAPI {
             }
         }
 
+        // Run any delete operations
+        foreach ( $pod[ 'fields' ] as $field ) {
+            PodsForm::delete( $field[ 'type' ], $params->id, $field[ 'name' ], array_merge( $field, $field[ 'options' ] ), $pod );
+        }
+
         if ( 'table' == $pod[ 'storage' ] )
             pods_query( "DELETE FROM `@wp_pods_{$params->pod}` WHERE `id` = {$params->id} LIMIT 1" );
 
@@ -4045,10 +4050,26 @@ class PodsAPI {
         elseif ( $wp && !in_array( $pod[ 'type' ], array( 'pod', 'table', '', 'taxonomy' ) ) )
             $this->delete_wp_object( $pod[ 'type' ], $params->id );
 
-        if ( !pods_tableless() )
-            pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `item_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_item_id` = {$params->id})", false );
+        if ( !pods_tableless() ) {
+            pods_query( "
+                DELETE FROM `@wp_podsrel`
+                WHERE
+                (
+                    `pod_id` = %d
+                    AND `item_id` = %d
+                )
+                OR (
+                    `related_pod_id` = %d
+                    AND `related_item_id` = %d
+                )
+            ", array(
+                $params->pod_id,
+                $params->id,
 
-        // @todo Delete tableless relationship meta where related
+                $params->pod_id,
+                $params->id
+            ) );
+        }
 
         if ( false === $bypass_helpers ) {
             // Plugin hook
@@ -5440,7 +5461,6 @@ class PodsAPI {
      * @param mixed $ids A comma-separated string (or array) of item IDs
      * @param array $field Field data array
      * @param array $pod Pod data array
-     * @param bool $bidirectional Include bidirectional relationships
      *
      * @return array|bool
      *
@@ -5448,7 +5468,7 @@ class PodsAPI {
      *
      * @uses pods_query()
      */
-    public function lookup_related_items ( $field_id, $pod_id, $ids, $field = null, $pod = null, $bidirectional = true ) {
+    public function lookup_related_items ( $field_id, $pod_id, $ids, $field = null, $pod = null ) {
         $related_ids = false;
 
         if ( !is_array( $ids ) )

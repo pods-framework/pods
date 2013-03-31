@@ -306,6 +306,20 @@ class PodsField {
     }
 
     /**
+     * Delete the value from the DB
+     *
+     * @param int $id
+     * @param string $name
+     * @param array $options
+     * @param array $pod
+     *
+     * @since 2.3
+     */
+    public function delete ( $id = null, $name = null, $options = null, $pod = null ) {
+
+    }
+
+    /**
      * Perform actions after deleting from the DB
      *
      * @param int $id

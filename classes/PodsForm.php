@@ -781,7 +781,7 @@ class PodsForm {
     public static function pre_save ( $type, $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
         self::field_loader( $type );
 
-        if ( 1 == pods_var( 'pre_save', $options, 1 ) && method_exists( self::$loaded[ $type ], 'pre_save' ) )
+        if ( 1 == pods_var( 'field_pre_save', $options, 1 ) && method_exists( self::$loaded[ $type ], 'pre_save' ) )
             $value = self::$loaded[ $type ]->pre_save( $value, $id, $name, $options, $fields, $pod, $params );
 
         return $value;
@@ -808,10 +808,34 @@ class PodsForm {
 
         $saved = null;
 
-        if ( 1 == pods_var( 'save', $options, 1 ) && method_exists( self::$loaded[ $type ], 'save' ) )
+        if ( 1 == pods_var( 'field_save', $options, 1 ) && method_exists( self::$loaded[ $type ], 'save' ) )
             $saved = self::$loaded[ $type ]->save( $value, $id, $name, $options, $fields, $pod, $params );
 
         return $saved;
+    }
+
+    /**
+     * Delete the value from the DB
+     *
+     * @param string $type
+     * @param int $id
+     * @param string $name
+     * @param array $options
+     * @param array $pod
+     *
+     * @static
+     *
+     * @since 2.3
+     */
+    public static function delete ( $type, $id = null, $name = null, $options = null, $pod = null ) {
+        self::field_loader( $type );
+
+        $deleted = null;
+
+        if ( 1 == pods_var( 'field_delete', $options, 1 ) && method_exists( self::$loaded[ $type ], 'delete' ) )
+            $deleted = self::$loaded[ $type ]->delete( $id, $name, $options, $pod );
+
+        return $deleted;
     }
 
     /**

@@ -15,7 +15,7 @@
                 <?php
                     _e( 'Add New Pod', 'pods' );
 
-                    $all_pods = pods_api()->load_pods();
+                    $all_pods = pods_api()->load_pods( array( 'key_names' => true ) );
 
                     if ( !empty( $all_pods ) ) {
                         $link = pods_var_update( array( 'page' => 'pods', 'action' . $obj->num => 'manage' ) );

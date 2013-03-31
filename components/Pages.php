@@ -337,11 +337,11 @@ class Pods_Pages extends PodsComponent {
             0 => __( '-- Select a Pod --', 'pods' )
         );
 
-        $all_pods = pods_api()->load_pods();
+        $all_pods = pods_api()->load_pods( array( 'names' => true ) );
 
         if ( !empty( $all_pods ) ) {
-            foreach ( $all_pods as $the_pod ) {
-                $associated_pods[ $the_pod[ 'name' ] ] = $the_pod[ 'label' ] . ' (' . $the_pod[ 'name' ] . ')';
+            foreach ( $all_pods as $pod_name => $pod_label ) {
+                $associated_pods[ $pod_name ] = $pod_label . ' (' . $pod_name . ')';
             }
         }
         else

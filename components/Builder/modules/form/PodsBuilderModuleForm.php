@@ -66,12 +66,12 @@ if ( !class_exists( 'PodsBuilderModuleForm' ) ) {
          */
         function _start_table_edit ( $form, $results = true ) {
             $api = pods_api();
-            $all_pods = $api->load_pods();
+            $all_pods = $api->load_pods( array( 'names' => true ) );
 
             $pod_types = array();
 
-            foreach ( $all_pods as $pod ) {
-                $pod_types[ $pod[ 'name' ] ] = $pod[ 'label' ];
+            foreach ( $all_pods as $pod_name => $pod_label ) {
+                $pod_types[ $pod_name ] = $pod_label . ' (' . $pod_name . ')';
             }
 ?>
     <tr>

@@ -34,7 +34,7 @@
                     <?php
                         $api = pods_api();
 
-                        $pods = $api->load_pods();
+                        $pods = $api->load_pods( array( 'fields' => false ) );
                         $pod_templates = $api->load_templates();
                         $pod_pages = $api->load_pages();
                         $pod_helpers = $api->load_helpers();

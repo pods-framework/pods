@@ -935,10 +935,10 @@ class PodsInit {
 
         $api = pods_api();
 
-        $pods = $api->load_pods();
+        $pods = $api->load_pods( array( 'ids' => true ) );
 
-        foreach ( $pods as $pod ) {
-            $api->delete_pod( array( 'id' => $pod[ 'id' ] ) );
+        foreach ( $pods as $pod_id => $pod_label ) {
+            $api->delete_pod( array( 'id' => $pod_id ) );
         }
 
         $templates = $api->load_templates();
@@ -1135,7 +1135,7 @@ class PodsInit {
         if ( !is_user_logged_in() || !is_admin_bar_showing() )
             return;
 
-        $all_pods = pods_api()->load_pods( array( 'type' => 'pod' ) );
+        $all_pods = pods_api()->load_pods( array( 'type' => 'pod', 'fields' => false ) );
 
         // Add New item links for all pods
         foreach ( $all_pods as $pod ) {

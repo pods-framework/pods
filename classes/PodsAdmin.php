@@ -701,7 +701,7 @@ class PodsAdmin {
      * Handle main Pods Setup area for managing Pods and Fields
      */
     public function admin_setup () {
-        $pods = $this->api->load_pods();
+        $pods = $this->api->load_pods( array( 'fields' => false ) );
 
         $view = pods_var( 'view', 'get', 'all', null, true );
 
@@ -1218,7 +1218,7 @@ class PodsAdmin {
      * @return array
      */
     public function admin_capabilities ( $capabilities ) {
-        $pods = $this->api->load_pods();
+        $pods = $this->api->load_pods( array( 'type' => array( 'pod', 'table', 'post_type' ) ) );
 
         $capabilities[] = 'pods';
         $capabilities[] = 'pods_content';
@@ -1226,9 +1226,6 @@ class PodsAdmin {
         $capabilities[] = 'pods_components';
 
         foreach ( $pods as $pod ) {
-            if ( !in_array( $pod[ 'type' ], array( 'pod', 'table', 'post_type' ) ) )
-                continue;
-
             if ( 'post_type' == $pod[ 'type' ] ) {
                 $capability_type = pods_var( 'capability_type_custom', $pod[ 'options' ], pods_var_raw( 'name', $pod ) );
 

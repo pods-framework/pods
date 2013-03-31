@@ -263,16 +263,16 @@
                 <div class="pods-section hide">
                     <?php
                         $api = pods_api();
-                        $all_pods = $api->load_pods();
+                        $all_pods = $api->load_pods( array( 'names' => true ) );
                         $pod_count = count( $all_pods );
                     ?>
                     <label for="pod_select"><?php _e( 'Choose a Pod', 'pods' ); ?></label>
 
                     <?php if ( $pod_count > 0 ) { ?>
                         <select id="pod_select" name="pod_select">
-                            <?php foreach ( $all_pods as $pod ) { ?>
-                                <option value="<?php echo $pod[ 'name' ]; ?>">
-                                    <?php echo $pod[ 'label' ]; ?>
+                            <?php foreach ( $all_pods as $pod_name => $pod_label ) { ?>
+                                <option value="<?php echo $pod_name; ?>">
+                                    <?php echo $pod_label . ' (' . $pod_name . ')'; ?>
                                 </option>
                             <?php } ?>
                         </select>

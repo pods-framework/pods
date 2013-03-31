@@ -22,7 +22,7 @@ class Pods_Table_Storage extends PodsComponent {
      * @since 2.3.0
      */
     public function __construct () {
-        if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
+        if ( !pods_tableless() ) {
             add_filter( 'pods_admin_setup_add_create_storage', '__return_true' );
             add_filter( 'pods_admin_setup_add_create_taxonomy_storage', '__return_true' );
 

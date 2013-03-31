@@ -22,7 +22,7 @@ class Pods_Advanced_Content_Types extends PodsComponent {
      * @since 2.3.0
      */
     public function __construct () {
-        if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS )
+        if ( !pods_tableless() )
             add_filter( 'pods_admin_setup_add_create_pod_type', array( $this, 'add_pod_type' ) );
     }
 

@@ -102,7 +102,7 @@
                                     </div>
 
                                     <?php
-                                        if ( ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) && apply_filters( 'pods_admin_setup_add_create_taxonomy_storage', false ) ) {
+                                        if ( ( !pods_tableless() ) && apply_filters( 'pods_admin_setup_add_create_taxonomy_storage', false ) ) {
                                     ?>
                                         <div class="pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-taxonomy">
                                             <?php
@@ -191,7 +191,7 @@
                                         </div>
 
                                         <?php
-                                            if ( ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) && apply_filters( 'pods_admin_setup_add_create_storage', false ) ) {
+                                            if ( ( !pods_tableless() ) && apply_filters( 'pods_admin_setup_add_create_storage', false ) ) {
                                         ?>
                                             <div class="pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-post-type">
                                                 <?php
@@ -298,7 +298,7 @@
                                     </div>
 
                                     <?php
-                                        if ( ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) && apply_filters( 'pods_admin_setup_add_extend_taxonomy_storage', false ) ) {
+                                        if ( ( !pods_tableless() ) && apply_filters( 'pods_admin_setup_add_extend_taxonomy_storage', false ) ) {
                                     ?>
                                         <div class="pods-field-option pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-taxonomy">
                                             <?php
@@ -317,7 +317,7 @@
                                     ?>
 
                                     <?php
-                                        if ( ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) && apply_filters( 'pods_admin_setup_add_extend_storage', false ) ) {
+                                        if ( ( !pods_tableless() ) && apply_filters( 'pods_admin_setup_add_extend_storage', false ) ) {
                                     ?>
                                         <div class="pods-depends-on pods-depends-on-extend-pod-type pods-depends-on-extend-pod-type-post-type pods-depends-on-extend-pod-type-media pods-depends-on-extend-pod-type-user pods-depends-on-extend-pod-type-comment">
                                             <p><a href="#pods-advanced" class="pods-advanced-toggle"><?php _e( 'Advanced', 'pods' ); ?> +</a></p>

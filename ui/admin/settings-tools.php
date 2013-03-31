@@ -73,7 +73,7 @@
         'WP Memory Limit' => WP_MEMORY_LIMIT,
         'Pods Network-Wide Activated' => ( is_plugin_active_for_network( basename( PODS_DIR ) . '/init.php' ) ? 'Yes' : 'No' ),
         'Pods Install Location' => PODS_DIR,
-        'Pods Tableless Mode Activated' => ( ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) ? 'Yes' : 'No' ),
+        'Pods Tableless Mode Activated' => ( ( pods_tableless() ) ? 'Yes' : 'No' ),
         'Pods Light Mode Activated' => ( ( defined( 'PODS_LIGHT' ) && PODS_LIGHT ) ? 'Yes' : 'No' ),
         'Currently Active Plugins' => $plugins
     );

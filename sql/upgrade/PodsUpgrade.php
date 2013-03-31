@@ -53,7 +53,7 @@ class PodsUpgrade {
 
         do_action( 'pods_install', PODS_VERSION, $pods_version, $_blog_id );
 
-        if ( ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) && false !== apply_filters( 'pods_install_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_install' ] ) ) {
+        if ( ( !pods_tableless() ) && false !== apply_filters( 'pods_install_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_install' ] ) ) {
             $sql = file_get_contents( PODS_DIR . 'sql/dump.sql' );
             $sql = apply_filters( 'pods_install_sql', $sql, PODS_VERSION, $pods_version, $_blog_id );
 

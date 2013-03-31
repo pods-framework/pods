@@ -532,7 +532,7 @@ function pods_shortcode ( $tags, $content = null ) {
         // id > slug (if both exist)
         $id = empty( $tags[ 'slug' ] ) ? null : pods_evaluate_tags( $tags[ 'slug' ] );
 
-        if ( !empty ( $tags[ 'id' ] ) ) {
+        if ( !empty( $tags[ 'id' ] ) ) {
             $id = $tags[ 'id' ];
 
             if ( is_numeric( $id ) )

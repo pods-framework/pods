@@ -426,10 +426,10 @@ class PodsField_File extends PodsField {
 
         ob_start();
 
-        if ( empty ( $id ) )
+        if ( empty( $id ) )
             $id = '{{id}}';
 
-        if ( empty ( $icon ) )
+        if ( empty( $icon ) )
             $icon = '{{icon}}';
 
         if ( empty( $name ) )

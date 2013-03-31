@@ -1027,7 +1027,7 @@ class PodsAPI {
 
                 $pod_params[ 'storage' ] = $params->create_storage;
 
-                if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS )
+                if ( pods_tableless() )
                     $pod_params[ 'storage' ] = 'meta';
             }
             elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
@@ -1036,14 +1036,14 @@ class PodsAPI {
 
                 $pod_params[ 'storage' ] = $params->create_storage_taxonomy;
 
-                if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS )
+                if ( pods_tableless() )
                     $pod_params[ 'storage' ] = 'none';
             }
             elseif ( 'pod' == $pod_params[ 'type' ] ) {
                 if ( empty( $params->create_name ) )
                     return pods_error( 'Please enter a Name for this Pod', $this );
 
-                if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS ) {
+                if ( pods_tableless() ) {
                     $pod_params[ 'type' ] = 'post_type';
                     $pod_params[ 'storage' ] = 'meta';
                 }
@@ -1067,7 +1067,7 @@ class PodsAPI {
             if ( 'post_type' == $pod_params[ 'type' ] ) {
                 $pod_params[ 'storage' ] = $params->extend_storage;
 
-                if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS )
+                if ( pods_tableless() )
                     $pod_params[ 'storage' ] = 'meta';
 
                 $pod_params[ 'name' ] = $params->extend_post_type;
@@ -1075,7 +1075,7 @@ class PodsAPI {
             elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
                 $pod_params[ 'storage' ] = $params->extend_storage_taxonomy;
 
-                if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS )
+                if ( pods_tableless() )
                     $pod_params[ 'storage' ] = 'none';
 
                 $pod_params[ 'name' ] = $params->extend_taxonomy;
@@ -1087,7 +1087,7 @@ class PodsAPI {
             else {
                 $pod_params[ 'storage' ] = $params->extend_storage;
 
-                if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS )
+                if ( pods_tableless() )
                     $pod_params[ 'storage' ] = 'meta';
 
                 $pod_params[ 'name' ] = $params->extend_pod_type;
@@ -1281,7 +1281,7 @@ class PodsAPI {
             }
         }
 
-        if ( defined( 'PODS_TABLELESS' ) && PODS_TABLELESS && !in_array( $pod[ 'type' ], array( 'settings', 'table' ) ) ) {
+        if ( pods_tableless() && !in_array( $pod[ 'type' ], array( 'settings', 'table' ) ) ) {
             if ( 'pod' == $pod[ 'type' ] )
                 $pod[ 'type' ] = 'post_type';
 
@@ -2132,7 +2132,7 @@ class PodsAPI {
                     )
                 );
 
-                if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
+                if ( !pods_tableless() ) {
                     pods_query( "DELETE FROM @wp_podsrel WHERE `field_id` = {$params->id}", false );
 
                     pods_query( "
@@ -2149,7 +2149,7 @@ class PodsAPI {
         elseif ( 0 < $sister_id ) {
             update_post_meta( $sister_id, 'sister_id', $params->id );
 
-            if ( true === $db && ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) ) {
+            if ( true === $db && ( !pods_tableless() ) ) {
                 pods_query( "
                         UPDATE `@wp_podsrel`
                         SET `related_field_id` = %d
@@ -2165,7 +2165,7 @@ class PodsAPI {
         elseif ( 0 < $old_sister_id ) {
             delete_post_meta( $old_sister_id, 'sister_id' );
 
-            if ( true === $db && ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) ) {
+            if ( true === $db && ( !pods_tableless() ) ) {
                 pods_query( "
                         UPDATE `@wp_podsrel`
                         SET `related_field_id` = 0
@@ -2937,7 +2937,7 @@ class PodsAPI {
 
                     // Get current values
                     if ( 'pick' == $type && isset( PodsField_Pick::$related_data[ $field ] ) && isset( PodsField_Pick::$related_data[ $field ][ 'related_ids_' . $params->id ] ) )
-                        $related_ids = PodsField_Pick::$related_data[ $field ][ 'related_ids_' . $params->id ];
+                        $related_ids = PodsField_Pick::$related_data[ $field ][ 'current_ids' ];
                     else
                         $related_ids = $this->lookup_related_items( $fields[ $field ][ 'id' ], $pod[ 'id' ], $params->id, $fields[ $field ], $pod );
 
@@ -3010,7 +3010,7 @@ class PodsAPI {
                     }
 
                     // Relationships table
-                    if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
+                    if ( !pods_tableless() ) {
                         if ( !in_array( $params->id, $related_ids ) ) {
                             $related_weight = 0;
 
@@ -3514,7 +3514,7 @@ class PodsAPI {
 
         foreach ( $params->order as $order => $id ) {
             if ( isset( $pod[ 'fields' ][ $params->field ] ) || isset( $pod[ 'object_fields' ][ $params->field ] ) ) {
-                if ( 'table' == $pod[ 'storage' ] && ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) ) {
+                if ( 'table' == $pod[ 'storage' ] && ( !pods_tableless() ) ) {
                     if ( isset( $pod[ 'fields' ][ $params->field ] ) )
                         pods_query( "UPDATE `@wp_pods_{$params->name}` SET `{$params->field}` = " . pods_absint( $order ) . " WHERE `id` = " . pods_absint( $id ) . " LIMIT 1" );
                     else
@@ -3559,7 +3559,7 @@ class PodsAPI {
         $params->id = $pod[ 'id' ];
         $params->name = $pod[ 'name' ];
 
-        if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
+        if ( !pods_tableless() ) {
             if ( 'table' == $pod[ 'storage' ] ) {
                 try {
                     pods_query( "TRUNCATE `@wp_pods_{$params->name}`", false );
@@ -3700,7 +3700,7 @@ class PodsAPI {
         if ( $delete_all )
             $this->reset_pod( $params, $pod );
 
-        if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
+        if ( !pods_tableless() ) {
             if ( 'table' == $pod[ 'storage' ] ) {
                 try {
                     pods_query( "DROP TABLE IF EXISTS `@wp_pods_{$params->name}`", false );
@@ -3822,7 +3822,7 @@ class PodsAPI {
                 ON p.post_type = '_pods_field' AND p.ID = pm.post_id
             WHERE p.ID IS NOT NULL AND pm.meta_key = 'sister_id' AND pm.meta_value = %d", $params->id ) );
 
-        if ( ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) && $table_operation ) {
+        if ( ( !pods_tableless() ) && $table_operation ) {
             pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `field_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_field_id` = {$params->id})", false );
         }
 
@@ -4045,7 +4045,7 @@ class PodsAPI {
         elseif ( $wp && !in_array( $pod[ 'type' ], array( 'pod', 'table', '', 'taxonomy' ) ) )
             $this->delete_wp_object( $pod[ 'type' ], $params->id );
 
-        if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS )
+        if ( !pods_tableless() )
             pods_query( "DELETE FROM `@wp_podsrel` WHERE (`pod_id` = {$params->pod_id} AND `item_id` = {$params->id}) OR (`related_pod_id` = {$params->pod_id} AND `related_item_id` = {$params->id})", false );
 
         // @todo Delete tableless relationship meta where related
@@ -5440,6 +5440,7 @@ class PodsAPI {
      * @param mixed $ids A comma-separated string (or array) of item IDs
      * @param array $field Field data array
      * @param array $pod Pod data array
+     * @param bool $bidirectional Include bidirectional relationships
      *
      * @return array|bool
      *
@@ -5447,7 +5448,7 @@ class PodsAPI {
      *
      * @uses pods_query()
      */
-    public function lookup_related_items ( $field_id, $pod_id, $ids, $field = null, $pod = null ) {
+    public function lookup_related_items ( $field_id, $pod_id, $ids, $field = null, $pod = null, $bidirectional = true ) {
         $related_ids = false;
 
         if ( !is_array( $ids ) )
@@ -5475,7 +5476,7 @@ class PodsAPI {
                 $related_pick_limit = 1;
         }
 
-        if ( !defined( 'PODS_TABLELESS' ) || !PODS_TABLELESS ) {
+        if ( !pods_tableless() ) {
             $ids = implode( ', ', $ids );
 
             $field_id = (int) $field_id;

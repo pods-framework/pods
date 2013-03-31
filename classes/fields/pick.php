@@ -849,11 +849,11 @@ class PodsField_Pick extends PodsField {
                     }
                 }
 
+                if ( !in_array( $id, $related_ids ) )
+                    $related_ids[] = $id;
+
                 // Post Types, Media, Users, and Comments (meta-based)
                 if ( in_array( $related_pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) ) {
-                    if ( !in_array( $id, $related_ids ) )
-                        $related_ids[] = $id;
-
                     $object_type = $related_pod[ 'type' ];
 
                     if ( 'post_type' == $object_type || 'media' == $object_type )
@@ -869,9 +869,6 @@ class PodsField_Pick extends PodsField {
                 }
                 // Custom Settings Pages (options-based)
                 elseif ( 'settings' == $related_pod[ 'type' ] ) {
-                    if ( !in_array( $id, $related_ids ) )
-                        $related_ids[] = $id;
-
                     update_option( '_pods_' . $related_pod[ 'name' ] . '_' . $related_field[ 'name' ], $related_ids );
                     update_option( $related_pod[ 'name' ] . '_' . $related_field[ 'name' ], $related_ids );
                 }

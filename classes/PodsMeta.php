@@ -2092,15 +2092,17 @@ class PodsMeta {
          */
         global $wpdb;
 
-        $term = $wpdb->get_row( "SELECT `term_id`, `taxonomy` FROM `{$wpdb->term_taxonomy}` WHERE `term_taxonomy_id` = {$id}" );
+        $terms = $wpdb->get_results( "SELECT `term_id`, `taxonomy` FROM `{$wpdb->term_taxonomy}` WHERE `term_taxonomy_id` = {$id}" );
 
-        if ( empty( $term ) )
+        if ( empty( $terms ) )
             return;
 
-        $id = $term->term_id;
-        $taxonomy = $term->taxonomy;
+        foreach ( $terms as $term ) {
+            $id = $term->term_id;
+            $taxonomy = $term->taxonomy;
 
-        return $this->delete_object( 'taxonomy', $id, $taxonomy );
+            $this->delete_object( 'taxonomy', $id, $taxonomy );
+        }
     }
 
     public function delete_user ( $id ) {

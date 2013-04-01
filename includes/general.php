@@ -475,6 +475,7 @@ function pods_shortcode ( $tags, $content = null ) {
         'field' => null,
         'col' => null,
         'template' => null,
+        'pods_page' => null,
         'helper' => null,
         'form' => null,
         'fields' => null,
@@ -524,7 +525,7 @@ function pods_shortcode ( $tags, $content = null ) {
         unset( $tags[ 'order' ] );
     }
 
-    if ( empty( $content ) && empty( $tags[ 'template' ] ) && empty( $tags[ 'field' ] ) && empty( $tags[ 'form' ] ) ) {
+    if ( empty( $content ) && empty( $tags[ 'pods_page' ] ) && empty( $tags[ 'template' ] ) && empty( $tags[ 'field' ] ) && empty( $tags[ 'form' ] ) ) {
         return '<p>Please provide either a template or field name</p>';
     }
 
@@ -595,6 +596,14 @@ function pods_shortcode ( $tags, $content = null ) {
             $val = $pod->helper( $tags[ 'helper' ], $pod->field( $tags[ 'field' ] ), $tags[ 'field' ] );
 
         return $val;
+    }
+    elseif ( !empty( $tags[ 'pods_page' ] ) && class_exists( 'Pods_Pages' ) ) {
+        $pods_page = Pods_Pages::exists( $tags[ 'pods_page' ] );
+
+        if ( empty( $pods_page ) )
+            return '<p>Pods Page not found</p>';
+
+        return Pods_Pages::content( true, $pods_page );
     }
 
     ob_start();

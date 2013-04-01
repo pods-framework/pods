@@ -12,6 +12,13 @@
                     template = $( '#pod_template' ).val(),
                 <?php } else { ?>
                     template = '',
+                <?php
+                    }
+                    if ( class_exists( 'Pods_Pages' ) ) {
+                ?>
+                    pods_page = $( '#pods_page' ).val(),
+                <?php } else { ?>
+                    pods_page = '',
                 <?php } ?>
                 template_custom = $( '#pod_template_custom' ).val(),
                 field = $( '#pod_field' ).val(),
@@ -116,6 +123,11 @@
                     shortcode += ' template="' + template + '"';
             <?php } ?>
 
+            <?php if ( class_exists( 'Pods_Pages' ) ) { ?>
+                if ( pods_page.length )
+                    shortcode += ' pods_page="' + pods_page + '"';
+            <?php } ?>
+
             if ( field.length )
                 shortcode += ' field="' + field + '"';
 
@@ -193,6 +205,13 @@
                         $( this ).closest( '.pods-section' ).removeClass( 'hide' );
                     } )
                     break;
+                <?php if ( class_exists( 'Pods_Pages' ) ) { ?>
+                case 'page':
+                    $( '#pods_page, #pods_insert_shortcode' ).each( function () {
+                        $( this ).closest( '.pods-section' ).removeClass( 'hide' );
+                    } )
+                    break;
+                <?php } ?>
             }
 
             // Fix for TB ajaxContent not picking up the height on the first open
@@ -257,6 +276,9 @@
                         <option value="field-current" SELECTED><?php _e( 'Display a field from this item', 'pods' ); ?></option>
                         <option value="form"><?php _e( 'Display a form for creating and editing Pod items', 'pods' ); ?></option>
                         <option value="view"><?php _e( 'Include a file from a theme, with caching options', 'pods' ); ?></option>
+                        <?php if ( class_exists( 'Pods_Pages' ) ) { ?>
+                            <option value="page"><?php _e( 'Embed content from a Pods Page', 'pods' ); ?></option>
+                        <?php } ?>
                     </select>
                 </div>
 
@@ -287,8 +309,8 @@
                 <?php if ( class_exists( 'Pods_Templates' ) ) { ?>
                     <div class="pods-section hide">
                         <?php
-                            $templates = $api->load_templates();
-                            $template_count = count( $templates );
+                        $templates = $api->load_templates();
+                        $template_count = count( $templates );
                         ?>
                         <label for="pod_template"><?php _e( 'Template', 'pods' ); ?></label>
 
@@ -309,6 +331,24 @@
 
                     <textarea name="pod_template_custom" id="pod_template_custom" cols="10" rows="10" class="widefat"></textarea>
                 </div>
+
+                <?php if ( class_exists( 'Pods_Pages' ) ) { ?>
+                    <div class="pods-section hide">
+                        <?php
+                        $pages = $api->load_pages();
+                        $page_count = count( $pages );
+                        ?>
+                        <label for="pods_page"><?php _e( 'Pods Page', 'pods' ); ?></label>
+
+                        <select id="pods_page" name="pods_page">
+                            <?php foreach ( $pages as $tmpl ) { ?>
+                                <option value="<?php echo $tmpl[ 'name' ]; ?>">
+                                    <?php echo $tmpl[ 'name' ]; ?>
+                                </option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                <?php } ?>
 
                 <div class="pods-section hide">
                     <label for="pod_slug"><?php _e( 'ID or Slug', 'pods' ); ?></label>

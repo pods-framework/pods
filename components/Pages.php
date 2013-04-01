@@ -609,13 +609,19 @@ class Pods_Pages extends PodsComponent {
      *
      * @return string
      */
-    public static function content ( $return = false ) {
+    public static function content ( $return = false, $pods_page = false ) {
+        if ( empty( $pods_page ) )
+            $pods_page = self::$exists;
+
         $content = false;
 
-        if ( self::$content_called )
+        if ( $pods_page == self::$exists && self::$content_called )
             return $content;
 
-        if ( false !== self::$exists ) {
+        if ( !empty( $pods_page ) ) {
+            /**
+             * @var $pods \Pods
+             */
             global $pods;
 
             // Fix any global confusion wherever this runs
@@ -624,14 +630,14 @@ class Pods_Pages extends PodsComponent {
             elseif ( !isset( $pods ) && isset( $GLOBALS[ 'pods' ] ) )
                 $pods =& $GLOBALS[ 'pods' ];
 
-            if ( 0 < strlen( trim( self::$exists[ 'code' ] ) ) )
-                $content = self::$exists[ 'code' ];
+            if ( 0 < strlen( trim( $pods_page[ 'code' ] ) ) )
+                $content = $pods_page[ 'code' ];
 
             ob_start();
 
-            do_action( 'pods_content_pre', self::$exists, $content );
+            do_action( 'pods_content_pre', $pods_page, $content );
 
-            if ( false !== $content ) {
+            if ( 0 < strlen( $content ) ) {
                 if ( !defined( 'PODS_DISABLE_EVAL' ) || !PODS_DISABLE_EVAL ) {
                     pods_deprecated( 'Use WP Page Templates or hook into the pods_content filter instead of using Pod Page PHP code', '2.1' );
 
@@ -641,14 +647,15 @@ class Pods_Pages extends PodsComponent {
                     echo $content;
             }
 
-            do_action( 'pods_content_post', self::$exists, $content );
+            do_action( 'pods_content_post', $pods_page, $content );
 
             $content = ob_get_clean();
 
-            self::$content_called = true;
+            if ( $pods_page == self::$exists )
+                self::$content_called = true;
         }
 
-        $content = apply_filters( 'pods_content', $content, self::$exists );
+        $content = apply_filters( 'pods_content', $content, $pods_page );
 
         if ( $return )
             return $content;
@@ -943,8 +950,8 @@ function pod_page_exists ( $uri = null ) {
  *
  * @return string
  */
-function pods_content ( $return = false ) {
-    return Pods_Pages::content( $return );
+function pods_content ( $return = false, $pods_page = false ) {
+    return Pods_Pages::content( $return, $pods_page );
 }
 
 /*

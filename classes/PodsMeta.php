@@ -2004,7 +2004,7 @@ class PodsMeta {
         if ( empty( $object_id ) || empty( $object ) || !isset( $object[ 'fields' ][ $meta_key ] ) )
             return $_null;
 
-        if ( 'meta' == $object[ 'storage' ] )
+        if ( pods_tableless() )
             return $_null;
 
         $id = pods( $object[ 'name' ], $object_id )->save( $meta_key, $meta_value );
@@ -2033,7 +2033,7 @@ class PodsMeta {
         if ( empty( $object_id ) || empty( $object ) || !isset( $object[ 'fields' ][ $meta_key ] ) )
             return $_null;
 
-        if ( 'meta' == $object[ 'storage' ] )
+        if ( pods_tableless() )
             return $_null;
 
         $id = pods( $object[ 'name' ], $object_id )->save( $meta_key, $meta_value );
@@ -2062,7 +2062,7 @@ class PodsMeta {
         if ( empty( $object_id ) || empty( $object ) || !isset( $object[ 'fields' ][ $meta_key ] ) )
             return $_null;
 
-        if ( 'meta' == $object[ 'storage' ] )
+        if ( pods_tableless() )
             return $_null;
 
         $fields = array(

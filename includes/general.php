@@ -1255,10 +1255,15 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
     if ( 'post' == $object_type ) {
         $no_conflict[ 'filter' ] = array(
             array( 'get_post_metadata', array( PodsInit::$meta, 'get_post_meta' ), 10, 4 ),
-            array( 'add_post_metadata', array( PodsInit::$meta, 'add_post_meta' ), 10, 5 ),
-            array( 'update_post_metadata', array( PodsInit::$meta, 'update_post_meta' ), 10, 5 ),
-            array( 'delete_post_metadata', array( PodsInit::$meta, 'delete_post_meta' ), 10, 5 )
         );
+
+        if ( !pods_tableless() ) {
+            $no_conflict[ 'filter' ] = array_combine( $no_conflict[ 'filter' ], array(
+                array( 'add_post_metadata', array( PodsInit::$meta, 'add_post_meta' ), 10, 5 ),
+                array( 'update_post_metadata', array( PodsInit::$meta, 'update_post_meta' ), 10, 5 ),
+                array( 'delete_post_metadata', array( PodsInit::$meta, 'delete_post_meta' ), 10, 5 )
+            ) );
+        }
 
         $no_conflict[ 'action' ] = array(
             array( 'save_post', array( PodsInit::$meta, 'save_post' ), 10, 2 )
@@ -1274,18 +1279,32 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
     }
     elseif ( 'media' == $object_type ) {
         $no_conflict[ 'filter' ] = array(
-            array( 'wp_update_attachment_metadata', array( PodsInit::$meta, 'save_media' ), 10, 2 )
+            array( 'wp_update_attachment_metadata', array( PodsInit::$meta, 'save_media' ), 10, 2 ),
+            array( 'get_post_metadata', array( PodsInit::$meta, 'get_post_meta' ), 10, 4 )
         );
+
+        if ( !pods_tableless() ) {
+            $no_conflict[ 'filter' ] = array_combine( $no_conflict[ 'filter' ], array(
+                array( 'add_post_metadata', array( PodsInit::$meta, 'add_post_meta' ), 10, 5 ),
+                array( 'update_post_metadata', array( PodsInit::$meta, 'update_post_meta' ), 10, 5 ),
+                array( 'delete_post_metadata', array( PodsInit::$meta, 'delete_post_meta' ), 10, 5 )
+            ) );
+        }
 
         $no_conflict[ 'action' ] = array();
     }
     elseif ( 'user' == $object_type ) {
         $no_conflict[ 'filter' ] = array(
             array( 'get_user_metadata', array( PodsInit::$meta, 'get_user_meta' ), 10, 4 ),
-            array( 'add_user_metadata', array( PodsInit::$meta, 'add_user_meta' ), 10, 5 ),
-            array( 'update_user_metadata', array( PodsInit::$meta, 'update_user_meta' ), 10, 5 ),
-            array( 'delete_user_metadata', array( PodsInit::$meta, 'delete_user_meta' ), 10, 5 )
         );
+
+        if ( !pods_tableless() ) {
+            $no_conflict[ 'filter' ] = array_combine( $no_conflict[ 'filter' ], array(
+                array( 'add_user_metadata', array( PodsInit::$meta, 'add_user_meta' ), 10, 5 ),
+                array( 'update_user_metadata', array( PodsInit::$meta, 'update_user_meta' ), 10, 5 ),
+                array( 'delete_user_metadata', array( PodsInit::$meta, 'delete_user_meta' ), 10, 5 )
+            ) );
+        }
 
         $no_conflict[ 'action' ] = array(
             array( 'personal_options_update', array( PodsInit::$meta, 'save_user' ) ),
@@ -1295,10 +1314,15 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
     elseif ( 'comment' == $object_type ) {
         $no_conflict[ 'filter' ] = array(
             array( 'get_comment_metadata', array( PodsInit::$meta, 'get_comment_meta' ), 10, 4 ),
-            array( 'add_comment_metadata', array( PodsInit::$meta, 'add_comment_meta' ), 10, 5 ),
-            array( 'update_comment_metadata', array( PodsInit::$meta, 'update_comment_meta' ), 10, 5 ),
-            array( 'delete_comment_metadata', array( PodsInit::$meta, 'delete_comment_meta' ), 10, 5 )
         );
+
+        if ( !pods_tableless() ) {
+            $no_conflict[ 'filter' ] = array_combine( $no_conflict[ 'filter' ], array(
+                array( 'add_comment_metadata', array( PodsInit::$meta, 'add_comment_meta' ), 10, 5 ),
+                array( 'update_comment_metadata', array( PodsInit::$meta, 'update_comment_meta' ), 10, 5 ),
+                array( 'delete_comment_metadata', array( PodsInit::$meta, 'delete_comment_meta' ), 10, 5 )
+            ) );
+        }
 
         $no_conflict[ 'action' ] = array(
             array( 'pre_comment_approved', array( PodsInit::$meta, 'validate_comment' ), 10, 2 ),

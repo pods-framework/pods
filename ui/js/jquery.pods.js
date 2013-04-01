@@ -1262,20 +1262,21 @@
                             var field_array_counter = 0;
 
                             $field_wrapper.find( 'input, select, textarea' ).each( function () {
-                                json_name = $( this ).prop( 'name' ).replace( 'field_data[' + row_counter + '][', '' ).replace( '[', '' ).replace( ']', '' );
+                                json_name = $( this ).prop( 'name' ).replace( 'field_data[' + row_counter + '][', '' ).replace( /\[\d*\]/gi, '' ).replace( '[', '' ).replace( ']', '' );
 
-                                if ( 0 < $( this ).prop( 'name' ).indexOf( '[]' ) ) {
-                                    if ( 'undefined' != typeof field_data[ json_name ] && 'undefined' != typeof field_data[ json_name ][ field_array_counter ] ) {
-                                        if ( $( this ).is( 'input[type=checkbox]' ) ) {
-                                            $( this ).prop( 'checked', ( $( this ).val() == field_data[ json_name ][ field_array_counter ] ) );
+                                if ( 'undefined' == typeof field_data[ json_name ] )
+                                    return;
 
-                                            orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).prop( 'checked' );
-                                        }
-                                        else {
-                                            $( this ).val( field_data[ json_name ][ field_array_counter ] );
+                                if ( 0 < $( this ).prop( 'name' ).indexOf( '[]' ) || $( this ).prop( 'name' ).replace( 'field_data[' + row_counter + ']', '' ).match( /\[\d*\]/ ) ) {
+                                    if ( $( this ).is( 'input[type=checkbox]' ) ) {
+                                        $( this ).prop( 'checked', ( -1 < jQuery.inArray( $( this ).val(), field_data[ json_name ] ) ) );
 
-                                            orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).val();
-                                        }
+                                        orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).prop( 'checked' );
+                                    }
+                                    else if ( 'undefined' != typeof field_data[ json_name ][ field_array_counter ] ) {
+                                        $( this ).val( field_data[ json_name ][ field_array_counter ] );
+
+                                        orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).val();
                                     }
 
                                     field_array_counter++;
@@ -1283,17 +1284,15 @@
                                 else {
                                     field_array_counter = 0;
 
-                                    if ( 'undefined' != typeof field_data[ json_name ] ) {
-                                        if ( $( this ).is( 'input[type=checkbox]' ) ) {
-                                            $( this ).prop( 'checked', ( $( this ).val() == field_data[ json_name ] ) );
+                                    if ( $( this ).is( 'input[type=checkbox]' ) ) {
+                                        $( this ).prop( 'checked', ( $( this ).val() == field_data[ json_name ] ) );
 
-                                            orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).prop( 'checked' );
-                                        }
-                                        else {
-                                            $( this ).val( field_data[ json_name ] );
+                                        orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).prop( 'checked' );
+                                    }
+                                    else {
+                                        $( this ).val( field_data[ json_name ] );
 
-                                            orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).val();
-                                        }
+                                        orig_fields[ $row.data( 'id' ) ][ $( this ).prop( 'name' ) ] = $( this ).val();
                                     }
                                 }
                             } );

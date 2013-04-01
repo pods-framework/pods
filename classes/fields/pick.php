@@ -996,89 +996,19 @@ class PodsField_Pick extends PodsField {
                 }
 
                 if ( !empty( $related_field ) ) {
-                    $no_conflict = pods_no_conflict_check( $related_pod[ 'type' ] );
+                    $values = self::$api->lookup_related_items( $related_field[ 'id' ], $related_pod[ 'id' ], $id, $related_field, $related_pod );
 
-                    if ( !$no_conflict )
-                        pods_no_conflict_on( $related_pod[ 'type' ] );
+                    if ( !empty( $values ) ) {
+                        $no_conflict = pods_no_conflict_check( $related_pod[ 'type' ] );
 
-                    $values = self::$api->lookup_related_items( $options[ 'id' ], $pod[ 'id' ], $id, $related_field, $related_pod );
+                        if ( !$no_conflict )
+                            pods_no_conflict_on( $related_pod[ 'type' ] );
 
-                    foreach ( $values as $related_id ) {
-                        $related_ids = self::$api->lookup_related_items( $related_field[ 'id' ], $related_pod[ 'id' ], $related_id, $related_field, $related_pod );
+                        self::$api->delete_relationships( $id, $values, $related_pod, $related_field );
 
-                        if ( empty( $related_ids ) )
-                            continue;
-                        elseif ( !in_array( $id, $related_ids ) )
-                            continue;
-
-                        unset( $related_ids[ array_search( $id, $related_ids ) ] );
-
-                        $related_ids = array_values( $related_ids );
-
-                        // Post Types, Media, Users, and Comments (meta-based)
-                        if ( in_array( $related_pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) ) {
-                            $object_type = $related_pod[ 'type' ];
-
-                            if ( 'post_type' == $object_type || 'media' == $object_type )
-                                $object_type = 'post';
-
-                            delete_metadata( $object_type, $related_id, $related_field[ 'name' ] );
-
-                            if ( !empty( $related_ids ) ) {
-                                update_metadata( $object_type, $related_id, '_pods_' . $related_field[ 'name' ], $related_ids );
-
-                                foreach ( $related_ids as $rel_id ) {
-                                    add_metadata( $object_type, $related_id, $related_field[ 'name' ], $rel_id );
-                                }
-                            }
-                            else
-                                delete_metadata( $object_type, $related_id, '_pods_' . $related_field[ 'name' ] );
-                        }
-                        // Custom Settings Pages (options-based)
-                        elseif ( 'settings' == $related_pod[ 'type' ] ) {
-                            if ( !empty( $related_ids ) ) {
-                                update_option( '_pods_' . $related_pod[ 'name' ] . '_' . $related_field[ 'name' ], $related_ids );
-                                update_option( $related_pod[ 'name' ] . '_' . $related_field[ 'name' ], $related_ids );
-                            }
-                            else {
-                                delete_option( '_pods_' . $related_pod[ 'name' ] . '_' . $related_field[ 'name' ] );
-                                delete_option( $related_pod[ 'name' ] . '_' . $related_field[ 'name' ] );
-                            }
-                        }
-
-                        // Relationships table
-                        if ( !pods_tableless() ) {
-                            pods_query( "
-                                DELETE FROM `@wp_podsrel`
-                                WHERE
-                                (
-                                    `pod_id` = %d
-                                    AND `field_id` = %d
-                                    AND `item_id` = %d
-                                    AND `related_item_id` = %d
-                                )
-                                OR (
-                                    `related_pod_id` = %d
-                                    AND `related_field_id` = %d
-                                    AND `related_item_id` = %d
-                                    AND `item_id` = %d
-                                )
-                            ", array(
-                                $related_pod[ 'id' ],
-                                $related_field[ 'id' ],
-                                $related_id,
-                                $id,
-
-                                $related_pod[ 'id' ],
-                                $related_field[ 'id' ],
-                                $related_id,
-                                $id
-                            ) );
-                        }
+                        if ( !$no_conflict )
+                            pods_no_conflict_off( $related_pod[ 'type' ] );
                     }
-
-                    if ( !$no_conflict )
-                        pods_no_conflict_off( $related_pod[ 'type' ] );
                 }
             }
         }

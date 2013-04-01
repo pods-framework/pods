@@ -2123,15 +2123,16 @@ class PodsMeta {
 
         $object = $this->object_get( $type, $name );
 
-        if ( empty( $object ) )
-            return false;
+        if ( !empty( $object ) ) {
+            $params = array(
+                'pod' => pods_var( 'name', $object ),
+                'pod_id' => pods_var( 'id', $object ),
+                'id' => $id
+            );
 
-        $params = array(
-            'pod' => pods_var( 'name', $object ),
-            'pod_id' => pods_var( 'id', $object ),
-            'id' => $id
-        );
-
-        return $this->api->delete_pod_item( $params, false );
+            return $this->api->delete_pod_item( $params, false );
+        }
+        else
+            return $this->api->delete_object_from_relationships( $id, $type, $name );
     }
 }

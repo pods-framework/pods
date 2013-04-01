@@ -1135,7 +1135,7 @@ function pods_register_field ( $pod, $name, $field = null ) {
  * @param string $file The new field type class file location
  *
  * @return array Field type array
- * @since 2.3.0
+ * @since 2.3
  */
 function pods_register_field_type ( $type, $file = null ) {
     return PodsForm::register_field_type( $type, $file );
@@ -1149,7 +1149,7 @@ function pods_register_field_type ( $type, $file = null ) {
  * @param array $options Object options
  *
  * @return array|boolean Object array or false if unsuccessful
- * @since 2.3.0
+ * @since 2.3
  */
 function pods_register_related_object ( $name, $label, $options = null ) {
     return PodsForm::field_method( 'pick', 'register_related_object', $name, $label, $options );
@@ -1160,7 +1160,7 @@ function pods_register_related_object ( $name, $label, $options = null ) {
  *
  * @param string $component Component ID
  *
- * @since 2.3.0
+ * @since 2.3
  */
 function pods_require_component ( $component ) {
     add_filter( 'pods_component_require_' . $component, '__return_true' );
@@ -1171,7 +1171,7 @@ function pods_require_component ( $component ) {
  *
  * @see PodsMeta::group_add
  *
- * @param string|array $pod The pod or type of element to attach the group to.f
+ * @param string|array $pod The pod or type of element to attach the group to.
  * @param string $label Title of the edit screen section, visible to user.
  * @param string|array $fields Either a comma separated list of text fields or an associative array containing field information.
  * @param string $context (optional) The part of the page where the edit screen section should be shown ('normal', 'advanced', or 'side').
@@ -1258,7 +1258,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
         );
 
         if ( !pods_tableless() ) {
-            $no_conflict[ 'filter' ] = array_combine( $no_conflict[ 'filter' ], array(
+            $no_conflict[ 'filter' ] = array_merge( $no_conflict[ 'filter' ], array(
                 array( 'add_post_metadata', array( PodsInit::$meta, 'add_post_meta' ), 10, 5 ),
                 array( 'update_post_metadata', array( PodsInit::$meta, 'update_post_meta' ), 10, 5 ),
                 array( 'delete_post_metadata', array( PodsInit::$meta, 'delete_post_meta' ), 10, 5 )
@@ -1284,7 +1284,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
         );
 
         if ( !pods_tableless() ) {
-            $no_conflict[ 'filter' ] = array_combine( $no_conflict[ 'filter' ], array(
+            $no_conflict[ 'filter' ] = array_merge( $no_conflict[ 'filter' ], array(
                 array( 'add_post_metadata', array( PodsInit::$meta, 'add_post_meta' ), 10, 5 ),
                 array( 'update_post_metadata', array( PodsInit::$meta, 'update_post_meta' ), 10, 5 ),
                 array( 'delete_post_metadata', array( PodsInit::$meta, 'delete_post_meta' ), 10, 5 )
@@ -1299,7 +1299,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
         );
 
         if ( !pods_tableless() ) {
-            $no_conflict[ 'filter' ] = array_combine( $no_conflict[ 'filter' ], array(
+            $no_conflict[ 'filter' ] = array_merge( $no_conflict[ 'filter' ], array(
                 array( 'add_user_metadata', array( PodsInit::$meta, 'add_user_meta' ), 10, 5 ),
                 array( 'update_user_metadata', array( PodsInit::$meta, 'update_user_meta' ), 10, 5 ),
                 array( 'delete_user_metadata', array( PodsInit::$meta, 'delete_user_meta' ), 10, 5 )
@@ -1317,7 +1317,7 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
         );
 
         if ( !pods_tableless() ) {
-            $no_conflict[ 'filter' ] = array_combine( $no_conflict[ 'filter' ], array(
+            $no_conflict[ 'filter' ] = array_merge( $no_conflict[ 'filter' ], array(
                 array( 'add_comment_metadata', array( PodsInit::$meta, 'add_comment_meta' ), 10, 5 ),
                 array( 'update_comment_metadata', array( PodsInit::$meta, 'update_comment_meta' ), 10, 5 ),
                 array( 'delete_comment_metadata', array( PodsInit::$meta, 'delete_comment_meta' ), 10, 5 )

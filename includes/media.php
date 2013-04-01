@@ -190,7 +190,7 @@ function pods_image_url ( $image, $size = 'thumbnail', $default = 0, $force = fa
  *
  * @return int Attachment ID
  *
- * @since 2.3.0
+ * @since 2.3
  */
 function pods_attachment_import ( $url, $post_parent = null, $featured = false ) {
     $filename = substr( $url, ( strrpos( $url, '/' ) ) + 1 );
@@ -246,7 +246,7 @@ function pods_attachment_import ( $url, $post_parent = null, $featured = false )
  *
  * @return boolean Image generation result
  *
- * @since 2.3.0
+ * @since 2.3
  */
 function pods_image_resize ( $attachment_id, $size ) {
     $size_data = array();

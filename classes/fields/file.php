@@ -32,7 +32,7 @@ class PodsField_File extends PodsField {
      * API caching for fields that need it during validate/save
      *
      * @var \PodsAPI
-     * @since 2.3.0
+     * @since 2.3
      */
     private static $api = false;
 

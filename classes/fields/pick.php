@@ -32,7 +32,7 @@ class PodsField_Pick extends PodsField {
      * Available Related Objects
      *
      * @var array
-     * @since 2.3.0
+     * @since 2.3
      */
     private static $related_objects = array();
 
@@ -40,7 +40,7 @@ class PodsField_Pick extends PodsField {
      * Custom Related Objects
      *
      * @var array
-     * @since 2.3.0
+     * @since 2.3
      */
     private static $custom_related_objects = array();
 
@@ -48,7 +48,7 @@ class PodsField_Pick extends PodsField {
      * Data used during validate / save to avoid extra queries
      *
      * @var array
-     * @since 2.3.0
+     * @since 2.3
      */
     public static $related_data = array();
 
@@ -56,7 +56,7 @@ class PodsField_Pick extends PodsField {
      * API caching for fields that need it during validate/save
      *
      * @var \PodsAPI
-     * @since 2.3.0
+     * @since 2.3
      */
     private static $api = false;
 
@@ -248,7 +248,7 @@ class PodsField_Pick extends PodsField {
      * @param array $options Object options
      *
      * @return array|boolean Object array or false if unsuccessful
-     * @since 2.3.0
+     * @since 2.3
      */
     public function register_related_object ( $name, $label, $options = null ) {
         if ( empty( $name ) || empty( $label ) )
@@ -274,7 +274,7 @@ class PodsField_Pick extends PodsField {
      *
      * @param boolean $force Whether to force refresh of related objects
      *
-     * @since 2.3.0
+     * @since 2.3
      */
     public function setup_related_objects ( $force = false ) {
         $related_objects = get_transient( 'pods_related_objects' );
@@ -496,7 +496,7 @@ class PodsField_Pick extends PodsField {
      * @param boolean $force Whether to force refresh of related objects
      *
      * @return array Field selection array
-     * @since 2.3.0
+     * @since 2.3
      */
     public function related_objects ( $force = false ) {
         $this->setup_related_objects( $force );
@@ -517,7 +517,7 @@ class PodsField_Pick extends PodsField {
      * Return available simple object names
      *
      * @return array Simple object names
-     * @since 2.3.0
+     * @since 2.3
      */
     public function simple_objects () {
         $this->setup_related_objects();
@@ -1723,7 +1723,7 @@ class PodsField_Pick extends PodsField {
      *
      * @return array
      *
-     * @since 2.3.0
+     * @since 2.3
      */
     public function data_post_stati ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array();
@@ -1748,7 +1748,7 @@ class PodsField_Pick extends PodsField {
      *
      * @return array
      *
-     * @since 2.3.0
+     * @since 2.3
      */
     public function data_roles ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array();
@@ -1773,7 +1773,7 @@ class PodsField_Pick extends PodsField {
      *
      * @return array
      *
-     * @since 2.3.0
+     * @since 2.3
      */
     public function data_sidebars ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array();
@@ -1800,7 +1800,7 @@ class PodsField_Pick extends PodsField {
      *
      * @return array
      *
-     * @since 2.3.0
+     * @since 2.3
      */
     public function data_image_sizes ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array();
@@ -1825,7 +1825,7 @@ class PodsField_Pick extends PodsField {
      *
      * @return array
      *
-     * @since 2.3.0
+     * @since 2.3
      */
     public function data_themes ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array();
@@ -1850,7 +1850,7 @@ class PodsField_Pick extends PodsField {
      *
      * @return array
      *
-     * @since 2.3.0
+     * @since 2.3
      */
     public function data_page_templates ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array();
@@ -1888,7 +1888,7 @@ class PodsField_Pick extends PodsField {
      *
      * @return array
      *
-     * @since 2.3.0
+     * @since 2.3
      */
     public function data_post_types ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array();
@@ -1918,7 +1918,7 @@ class PodsField_Pick extends PodsField {
      *
      * @return array
      *
-     * @since 2.3.0
+     * @since 2.3
      */
     public function data_taxonomies ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array();
@@ -1948,7 +1948,7 @@ class PodsField_Pick extends PodsField {
      *
      * @return array
      *
-     * @since 2.3.0
+     * @since 2.3
      */
     public function data_countries ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array(
@@ -2232,7 +2232,7 @@ class PodsField_Pick extends PodsField {
      *
      * @return array
      *
-     * @since 2.3.0
+     * @since 2.3
      */
     public function data_us_states ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
         $data = array(

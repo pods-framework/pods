@@ -1034,7 +1034,7 @@ function pods_var_user ( $anon = false, $user = true, $capability = null ) {
  * @param array $args Array of parent, children, and id keys to use
  *
  * @return array|object
- * @since 2.3.0
+ * @since 2.3
  */
 function pods_hierarchical_list ( $list, $args = array() ) {
     if ( empty( $args ) || ( !is_object( $list ) && !is_array( $list ) ) )
@@ -1065,7 +1065,7 @@ function pods_hierarchical_list ( $list, $args = array() ) {
  * @param array $args Array of parent, children, and id keys to use
  *
  * @return array|object
- * @since 2.3.0
+ * @since 2.3
  */
 function pods_hierarchical_list_recurse ( $parent, $list, &$args ) {
     $new = array();
@@ -1162,7 +1162,7 @@ function pods_hierarchical_list_recurse ( $parent, $list, &$args ) {
  * @param string $children_key Key to recurse children into
  *
  * @return array|object
- * @since 2.3.0
+ * @since 2.3
  */
 function pods_hierarchical_select ( $list, $args = array() ) {
     $object = false;
@@ -1199,7 +1199,7 @@ function pods_hierarchical_select ( $list, $args = array() ) {
  *
  * @see pods_hierarchical_select
  * @return array
- * @since 2.3.0
+ * @since 2.3
  */
 function pods_hierarchical_select_recurse ( $items, $args, $depth = 0 ) {
     $data = array();
@@ -1252,7 +1252,7 @@ function pods_hierarchical_select_recurse ( $items, $args, $depth = 0 ) {
  *
  * @see wp_list_filter
  * @return array
- * @since 2.3.0
+ * @since 2.3
  */
 function pods_list_filter ( $list, $args = array(), $operator = 'AND' ) {
     if ( empty( $args ) )

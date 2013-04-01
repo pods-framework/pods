@@ -324,10 +324,10 @@ function pods_validate_key( $token, $datatype, $uri_hash, $columns = null, $form
  * @return bool
  *
  * @since 1.12
- * @deprcated 2.3.0
+ * @deprcated 2.3
  */
 function pods_ui_message ( $message, $error = false ) {
-    pods_deprecated( "pods_message", '2.3.0' );
+    pods_deprecated( "pods_message", '2.3' );
 
     pods_message( $message, ( $error ? 'error' : 'notice' ) );
 }
@@ -340,10 +340,10 @@ function pods_ui_message ( $message, $error = false ) {
  * @return bool
  *
  * @since 1.12
- * @deprcated 2.3.0
+ * @deprcated 2.3
  */
 function pods_ui_error ( $message ) {
-    pods_deprecated( "pods_message", '2.3.0' );
+    pods_deprecated( "pods_message", '2.3' );
 
     pods_message( $message, 'error' );
 }
@@ -352,7 +352,7 @@ function pods_ui_error ( $message ) {
  * Get a Point value from a Pods Version number
  *
  * @since 1.10.1
- * @deprcated 2.3.0
+ * @deprcated 2.3
  */
 function pods_point_to_version ( $point ) {
     $version_tmp = explode( '.', $point );
@@ -381,7 +381,7 @@ function pods_point_to_version ( $point ) {
  * Get a Point value from a Pods Version number
  *
  * @since 1.10
- * @deprcated 2.3.0
+ * @deprcated 2.3
  */
 function pods_version_to_point ( $version ) {
     $point_tmp = $version;

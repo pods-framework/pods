@@ -483,7 +483,7 @@ class PodsAPI {
      *
      * @return bool
      *
-     * @since 2.3.0
+     * @since 2.3
      */
     public function save_setting ( $setting, $option_data, $sanitized = false ) {
         if ( !is_array( $option_data ) || empty( $option_data ) )
@@ -3206,7 +3206,7 @@ class PodsAPI {
      * @param bool $strict (optional) Makes sure a pod exists, if it doesn't throws an error
      *
      * @return int New Pod ID
-     * @since 2.3.0
+     * @since 2.3
      */
     public function duplicate_pod ( $params, $strict = false ) {
         if ( !is_object( $params ) && !is_array( $params ) ) {
@@ -4133,7 +4133,7 @@ class PodsAPI {
                 )
             );
 
-            $fields = array_combine( $fields, $this->load_fields( $params, false ) );
+            $fields = array_merge( $fields, $this->load_fields( $params, false ) );
         }
 
         foreach ( $fields[ 'fields' ] as $related_field ) {
@@ -4602,7 +4602,7 @@ class PodsAPI {
         }
 
         if ( isset( $params->where ) && is_array( $params->where ) )
-            $meta_query = array_combine( $meta_query, (array) $params->where );
+            $meta_query = array_merge( $meta_query, (array) $params->where );
 
         if ( isset( $params->order ) && !empty( $params->order ) && in_array( strtoupper( $params->order ), array( 'ASC', 'DESC' ) ) )
             $order = strtoupper( $params->order );
@@ -5062,7 +5062,7 @@ class PodsAPI {
             }
 
             if ( isset( $params->where ) && is_array( $params->where ) )
-                $meta_query = array_combine( $meta_query, (array) $params->where );
+                $meta_query = array_merge( $meta_query, (array) $params->where );
 
             $args = array(
                 'post_type' => '_pods_field',
@@ -5284,7 +5284,7 @@ class PodsAPI {
         }
 
         if ( isset( $params->where ) && is_array( $params->where ) )
-            $meta_query = array_combine( $meta_query, (array) $params->where );
+            $meta_query = array_merge( $meta_query, (array) $params->where );
 
         if ( isset( $params->order ) && !empty( $params->order ) && in_array( strtoupper( $params->order ), array( 'ASC', 'DESC' ) ) )
             $order = strtoupper( $params->order );
@@ -5896,7 +5896,7 @@ class PodsAPI {
      *
      * @return array|bool
      *
-     * @since 2.3.0
+     * @since 2.3
      *
      * @uses pods_query()
      */

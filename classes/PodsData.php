@@ -2031,7 +2031,7 @@ class PodsData {
      * @return string|null Query string for WHERE/HAVING
      *
      * @static
-     * @since 2.3.0
+     * @since 2.3
      */
     public static function query_fields ( $fields, $pod = null ) {
         $query_fields = array();
@@ -2081,7 +2081,7 @@ class PodsData {
      *
      * @see PodsData::query_fields
      * @static
-     * @since 2.3.0
+     * @since 2.3
      */
     public static function query_field ( $field, $q, $pod = null ) {
         global $wpdb;

@@ -19,7 +19,7 @@ class Pods_Advanced_Content_Types extends PodsComponent {
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
-     * @since 2.3.0
+     * @since 2.3
      */
     public function __construct () {
         if ( !pods_tableless() )

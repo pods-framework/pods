@@ -620,7 +620,7 @@ class PodsForm {
      * @param int $id
      * @param array $traverse
      *
-     * @since 2.3.0
+     * @since 2.3
      */
     public static function value ( $type, $value = null, $name = null, $options = null, $pod = null, $id = null, $traverse = null ) {
         self::field_loader( $type );
@@ -1031,7 +1031,7 @@ class PodsForm {
      * @param string $type The new field type identifier
      * @param string $file The new field type class file location
      *
-     * @since 2.3.0
+     * @since 2.3
      */
     public static function register_field_type ( $type, $file = null ) {
         $field_type = pods_transient_get( 'pods_field_type_' . $type );
@@ -1057,7 +1057,7 @@ class PodsForm {
      *
      * @return array
      *
-     * @since 2.3.0
+     * @since 2.3
      */
     public static function field_types () {
         $field_types = array(

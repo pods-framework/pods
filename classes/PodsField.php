@@ -48,7 +48,7 @@ class PodsField {
      * API caching for fields that need it during validate/save
      *
      * @var \PodsAPI
-     * @since 2.3.0
+     * @since 2.3
      */
     private static $api = false;
 
@@ -148,7 +148,7 @@ class PodsField {
      * @param int $id
      *
      * @return mixed|null|string
-     * @since 2.3.0
+     * @since 2.3
      */
     public function value ( $value = null, $name = null, $options = null, $pod = null, $id = null ) {
         return $value;

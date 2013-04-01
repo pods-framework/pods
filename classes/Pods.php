@@ -1127,7 +1127,7 @@ class Pods {
      * @param array $params_override
      *
      * @return int
-     * @since 2.3.0
+     * @since 2.3
      */
     public function first_id ( $params_override = null ) {
         $params = array(
@@ -1165,7 +1165,7 @@ class Pods {
      * @param array $params_override
      *
      * @return int
-     * @since 2.3.0
+     * @since 2.3
      */
     public function last_id ( $params_override = null ) {
         $params = array(
@@ -1713,7 +1713,7 @@ class Pods {
      *
      * @return array IDs of imported items
      *
-     * @since 2.3.0
+     * @since 2.3
      */
     public function import ( $import_data, $numeric_mode = false, $format = null ) {
         return $this->api->import( $import_data, $numeric_mode, $format );
@@ -1776,7 +1776,7 @@ class Pods {
      *
      * @return array Data arrays of all exported pod items
      *
-     * @since 2.3.0
+     * @since 2.3
      */
     public function export_data ( $params = null ) {
         $defaults = array(

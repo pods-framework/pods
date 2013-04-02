@@ -4159,15 +4159,17 @@ class PodsAPI {
             $fields = array_merge( $fields, $this->load_fields( $params, false ) );
         }
 
-        foreach ( $fields[ 'fields' ] as $related_field ) {
-            $related_pod = $this->load_pod( array( 'id' => $related_field[ 'pod_id' ], 'fields' => false ), false );
+        if ( is_array( $fields ) && !empty( $fields ) ) {
+            foreach ( $fields as $related_field ) {
+                $related_pod = $this->load_pod( array( 'id' => $related_field[ 'pod_id' ], 'fields' => false ), false );
 
-            if ( empty( $related_pod ) )
-                continue;
+                if ( empty( $related_pod ) )
+                    continue;
 
-            $related_from = $this->lookup_related_items_from( $related_field[ 'id' ], $related_pod[ 'id' ], $id, $related_field, $related_pod );
+                $related_from = $this->lookup_related_items_from( $related_field[ 'id' ], $related_pod[ 'id' ], $id, $related_field, $related_pod );
 
-            $this->delete_relationships( $id, $related_from, $related_pod, $related_field );
+                $this->delete_relationships( $id, $related_from, $related_pod, $related_field );
+            }
         }
 
         if ( !pods_tableless() ) {
@@ -5061,7 +5063,7 @@ class PodsAPI {
                     $fields[ $field[ 'name' ] ] = $field;
             }
         }
-        elseif ( isset( $params->options ) && !empty( $params->options ) && is_array( $params->options ) ) {
+        elseif ( ( isset( $params->options ) && !empty( $params->options ) && is_array( $params->options ) ) || ( isset( $params->where ) && !empty( $params->where ) && is_array( $params->where ) ) ) {
             $order = 'ASC';
             $orderby = 'menu_order title';
             $limit = -1;
@@ -5069,22 +5071,24 @@ class PodsAPI {
 
             $meta_query = array();
 
-            foreach ( $params->options as $option => $value ) {
-                if ( !is_array( $value ) )
-                    $value = array( $value );
+            if ( isset( $params->options ) && !empty( $params->options ) && is_array( $params->options ) ) {
+                foreach ( $params->options as $option => $value ) {
+                    if ( !is_array( $value ) )
+                        $value = array( $value );
 
-                $value = pods_trim( $value );
+                    $value = pods_trim( $value );
 
-                sort( $value );
+                    sort( $value );
 
-                $meta_query[] = array(
-                    'key' => $option,
-                    'value' => pods_sanitize( $value ),
-                    'compare' => 'IN'
-                );
+                    $meta_query[] = array(
+                        'key' => $option,
+                        'value' => pods_sanitize( $value ),
+                        'compare' => 'IN'
+                    );
+                }
             }
 
-            if ( isset( $params->where ) && is_array( $params->where ) )
+            if ( isset( $params->where ) && !empty( $params->where ) && is_array( $params->where ) )
                 $meta_query = array_merge( $meta_query, (array) $params->where );
 
             $args = array(
@@ -5954,7 +5958,7 @@ class PodsAPI {
             ";
 
             $sql = "
-                SELECT `item_id`
+                SELECT *
                 FROM `@wp_podsrel`
                 WHERE
                     {$related_where}

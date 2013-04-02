@@ -1415,7 +1415,10 @@ class PodsAPI {
         }
 
         if ( true === $db ) {
-            $params->id = $this->save_post( $post_data, $pod[ 'options' ], true, true );
+            if ( !has_filter( 'wp_unique_post_slug', array( $this, 'save_field_slug_fix' ) ) )
+                add_filter( 'wp_unique_post_slug', array( $this, 'save_field_slug_fix' ), 100, 6 );
+
+            $params->id = $this->save_wp_object( 'post', $post_data, $pod[ 'options' ], true, true );
 
             if ( false === $params->id )
                 return pods_error( __( 'Cannot save Pod', 'pods' ), $this );

@@ -2586,10 +2586,12 @@ class PodsData {
         if ( empty( $the_join ) )
             return $joins;
 
-        $joins[ $traverse_recurse[ 'pod' ] . '_' . $traverse_recurse[ 'depth' ] . '_' . $traverse[ 'id' ] ] = $the_join;
+        if ( !isset( $joins[ $traverse_recurse[ 'pod' ] . '_' . $traverse_recurse[ 'depth' ] . '_' . $traverse[ 'id' ] ] ) ) {
+            $joins[ $traverse_recurse[ 'pod' ] . '_' . $traverse_recurse[ 'depth' ] . '_' . $traverse[ 'id' ] ] = $the_join;
 
-        if ( ( $traverse_recurse[ 'depth' ] + 1 ) < count( $traverse_recurse[ 'fields' ] ) && null !== $table_info[ 'pod' ] && false !== $table_info[ 'recurse' ] )
-            $joins = array_merge( $joins, $this->traverse_recurse( $traverse_recursive ) );
+            if ( ( $traverse_recurse[ 'depth' ] + 1 ) < count( $traverse_recurse[ 'fields' ] ) && null !== $table_info[ 'pod' ] && false !== $table_info[ 'recurse' ] )
+                $joins = array_merge( $joins, $this->traverse_recurse( $traverse_recursive ) );
+        }
 
         return $joins;
     }

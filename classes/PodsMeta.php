@@ -678,7 +678,7 @@ class PodsMeta {
                 $group[ 'label' ] = get_post_type_object( $post_type )->labels->label;
 
             add_meta_box(
-                $post_type . '-pods-meta-' . sanitize_title( $group[ 'label' ] ),
+                'pods-meta-' . sanitize_title( $group[ 'label' ] ),
                 $group[ 'label' ],
                 array( $this, 'meta_post' ),
                 $post_type,
@@ -1355,7 +1355,7 @@ class PodsMeta {
                 continue;
 
             add_meta_box(
-                $comment_type . '-pods-meta-' . sanitize_title( $group[ 'label' ] ),
+                'pods-meta-' . sanitize_title( $group[ 'label' ] ),
                 $group[ 'label' ],
                 array( $this, 'meta_comment' ),
                 $comment_type,

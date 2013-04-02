@@ -1231,18 +1231,21 @@ class PodsAdmin {
 
                 if ( 'custom' == pods_var( 'capability_type', $pod[ 'options' ] ) && 0 < strlen( $capability_type ) ) {
                     $capabilities[] = 'read_' . $capability_type;
-                    $capabilities[] = 'read_private_' . $capability_type . 's';
                     $capabilities[] = 'edit_' . $capability_type;
-                    $capabilities[] = 'edit_' . $capability_type . 's';
-                    $capabilities[] = 'edit_others_' . $capability_type . 's';
-                    $capabilities[] = 'edit_private_' . $capability_type . 's';
-                    $capabilities[] = 'edit_published_' . $capability_type . 's';
-                    $capabilities[] = 'publish_' . $capability_type . 's';
                     $capabilities[] = 'delete_' . $capability_type;
-                    $capabilities[] = 'delete_' . $capability_type . 's';
-                    $capabilities[] = 'delete_private_' . $capability_type . 's';
-                    $capabilities[] = 'delete_published_' . $capability_type . 's';
-                    $capabilities[] = 'delete_others_' . $capability_type . 's';
+
+                    if ( 1 == pods_var( 'capability_type_extra', $pod[ 'options' ], 1 ) ) {
+                        $capabilities[] = 'read_private_' . $capability_type . 's';
+                        $capabilities[] = 'edit_' . $capability_type . 's';
+                        $capabilities[] = 'edit_others_' . $capability_type . 's';
+                        $capabilities[] = 'edit_private_' . $capability_type . 's';
+                        $capabilities[] = 'edit_published_' . $capability_type . 's';
+                        $capabilities[] = 'publish_' . $capability_type . 's';
+                        $capabilities[] = 'delete_' . $capability_type . 's';
+                        $capabilities[] = 'delete_private_' . $capability_type . 's';
+                        $capabilities[] = 'delete_published_' . $capability_type . 's';
+                        $capabilities[] = 'delete_others_' . $capability_type . 's';
+                    }
                 }
             }
             else {

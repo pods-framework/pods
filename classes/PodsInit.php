@@ -468,7 +468,7 @@ class PodsInit {
                     'menu_icon' => pods_var( 'menu_icon', $post_type, null, null, true ),
                     'capability_type' => $capability_type,
                     //'capabilities' => $cpt_capabilities,
-                    'map_meta_cap' => (boolean) pods_var( 'map_meta_cap', $post_type, true ),
+                    'map_meta_cap' => (boolean) pods_var( 'capability_type_extra', $post_type, true ),
                     'hierarchical' => (boolean) pods_var( 'hierarchical', $post_type, false ),
                     'supports' => $cpt_supports,
                     //'register_meta_box_cb' => array($this, 'manage_meta_box'),

@@ -669,23 +669,30 @@ $advanced_options = array(
             'boolean_yes_label' => ''
         ),
         'capability_type' => array(
-            'label' => __( 'Capability Type', 'pods' ),
-            'help' => __( 'help', 'pods' ),
+            'label' => __( 'User Capability', 'pods' ),
+            'help' => __( 'Uses these capabilties for access to this post type: edit_{capability}, read_{capability}, and delete_{capability}', 'pods' ),
             'type' => 'pick',
             'default' => 'post',
             'data' => array(
-                'post' => __( 'Post', 'pods' ),
-                'page' => __( 'Page', 'pods' ),
-                'custom' => __( 'Custom', 'pods' )
+                'post' => 'post',
+                'page' => 'page',
+                'custom' => __( 'Custom Capability', 'pods' )
             ),
             'dependency' => true
         ),
         'capability_type_custom' => array(
-            'label' => __( 'Custom Capability Type', 'pods' ),
+            'label' => __( 'Custom User Capability', 'pods' ),
             'help' => __( 'help', 'pods' ),
             'type' => 'text',
             'default' => pods_var_raw( 'name', $pod ),
             'depends-on' => array( 'capability_type' => 'custom' )
+        ),
+        'capability_type_extra' => array(
+            'label' => __( 'Additional User Capabilities', 'pods' ),
+            'help' => __( 'Enables additional capabilities for this Post Type including: delete_{capability}s, delete_private_{capability}s, delete_published_{capability}s, delete_others_{capability}s, edit_private_{capability}s, and edit_published_{capability}s', 'pods' ),
+            'type' => 'boolean',
+            'default' => true,
+            'boolean_yes_label' => ''
         ),
         'has_archive' => array(
             'label' => __( 'Has Archive', 'pods' ),

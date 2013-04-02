@@ -2080,7 +2080,7 @@ class PodsAPI {
 
         $sister_id = (int) pods_var( 'sister_id', $field[ 'options' ], 0 );
 
-        if ( $table_operation && 'table' == $pod[ 'storage' ] && pods_tableless() ) {
+        if ( $table_operation && 'table' == $pod[ 'storage' ] && !pods_tableless() ) {
             if ( !empty( $old_id ) ) {
                 if ( $field[ 'type' ] != $old_type ) {
                     if ( in_array( $field[ 'type' ], $tableless_field_types ) && !$simple && ( !in_array( $old_type, $tableless_field_types ) || $old_simple ) )

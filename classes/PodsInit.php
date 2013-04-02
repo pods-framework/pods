@@ -439,7 +439,7 @@ class PodsInit {
                 // Rewrite
                 $cpt_rewrite = (boolean) pods_var( 'rewrite', $post_type, true );
                 $cpt_rewrite_array = array(
-                    'slug' => pods_var( 'rewrite_custom_slug', $post_type, str_replace( '_', '-', pods_var( 'name', $post_type ) ), null, true ),
+                    'slug' => _x( pods_var( 'rewrite_custom_slug', $post_type, str_replace( '_', '-', pods_var( 'name', $post_type ) ), null, true ), 'URL slug', 'pods' ), // WPML support
                     'with_front' => (boolean) pods_var( 'rewrite_with_front', $post_type, true ),
                     'feeds' => (boolean) pods_var( 'rewrite_feeds', $post_type, (boolean) pods_var( 'has_archive', $post_type, false ) ),
                     'pages' => (boolean) pods_var( 'rewrite_pages', $post_type, true )
@@ -553,7 +553,7 @@ class PodsInit {
                 // Rewrite
                 $ct_rewrite = (boolean) pods_var( 'rewrite', $taxonomy, true );
                 $ct_rewrite_array = array(
-                    'slug' => pods_var( 'rewrite_custom_slug', $taxonomy, str_replace( '_', '-', pods_var( 'name', $taxonomy ) ), null, true ),
+                    'slug' => _x( pods_var( 'rewrite_custom_slug', $taxonomy, str_replace( '_', '-', pods_var( 'name', $taxonomy ) ), null, true ), 'URL taxonomy slug', 'pods' ), // WPML support
                     'with_front' => (boolean) pods_var( 'rewrite_with_front', $taxonomy, true ),
                     'hierarchical' => (boolean) pods_var( 'rewrite_hierarchical', $taxonomy, (boolean) pods_var( 'hierarchical', $taxonomy, false ) )
                 );

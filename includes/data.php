@@ -915,7 +915,8 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
 
     $last = '';
 
-		$original_value = $value;
+    $original_value = $value;
+
     if ( !empty( $value ) )
         $last = array_pop( $value );
 
@@ -953,7 +954,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
                     $value = '';
             }
 
-            $value = trim( $value, ', ' ) . ', ';
+            $value = trim( $value, ', ' ) . apply_filters( 'pods_serial_comma', ', ', $value, $original_value, $field, $fields, $and, $field_index );
         }
         else {
             if ( null !== $field_index && isset( $value[ $field_index ] ) )
@@ -975,7 +976,7 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
                 }
             }
 
-            $value = trim( implode( ', ', $value ), ', ' ) . ', ';
+            $value = trim( implode( ', ', $value ), ', ' ) . apply_filters( 'pods_serial_comma', ', ', $value, $original_value, $field, $fields, $and, $field_index );
         }
 
         $value = trim( $value );
@@ -992,6 +993,8 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
         $value = $last;
 
     $value = trim( $value, ', ' );
+
+    $value = apply_filters( 'pods_serial_comma_value', $value, $original_value, $field, $fields, $and, $field_index );
 
     return (string) $value;
 }

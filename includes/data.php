@@ -142,7 +142,7 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
         if ( 'get' == $type && isset( $_GET[ $var ] ) )
             $output = stripslashes_deep( $_GET[ $var ] );
         elseif ( in_array( $type, array( 'url', 'uri' ) ) ) {
-            $url = parse_url( get_current_url() );
+            $url = parse_url( pods_current_url() );
             $uri = trim( $url[ 'path' ], '/' );
             $uri = array_filter( explode( '/', $uri ) );
 
@@ -155,7 +155,7 @@ function pods_var ( $var = 'last', $type = 'get', $default = null, $allowed = nu
                 $output = ( $var < 0 ) ? pods_var_raw( count( $uri ) + $var, $uri ) : pods_var_raw( $var, $uri );
         }
         elseif ( 'url-relative' == $type ) {
-            $url_raw = get_current_url();
+            $url_raw = pods_current_url();
             $prefix = get_site_url();
 
             if ( substr( $url_raw, 0, strlen( $prefix ) ) == $prefix )
@@ -428,6 +428,8 @@ function pods_var_raw ( $var = 'last', $type = 'get', $default = null, $allowed 
  * @param null $default
  *
  * @return bool
+ *
+ * @since 2.0
  */
 function pods_cast ( $var, $default = null ) {
     if ( is_object( $var ) && is_array( $default ) )
@@ -461,7 +463,7 @@ function pods_var_set ( $value, $key = 'last', $type = 'url' ) {
         $ret = $type;
     }
     elseif ( 'url' == $type ) {
-        $url = parse_url( get_current_url() );
+        $url = parse_url( pods_current_url() );
         $uri = trim( $url[ 'path' ], '/' );
         $uri = array_filter( explode( '/', $uri ) );
 
@@ -600,7 +602,7 @@ function pods_var_update ( $array = null, $allowed = null, $excluded = null, $ur
  *
  * @param $orig
  *
- * @return mixed|void
+ * @return string Sanitized slug
  *
  * @since 1.8.9
  */
@@ -691,7 +693,8 @@ function pods_unique_slug ( $slug, $column_name, $pod, $pod_id = 0, $id = 0, $ob
  * @param boolean $lower Force lowercase
  * @param boolean $trim_underscores Whether to trim off underscores
  *
- * @return mixed|void
+ * @return string Sanitized name
+ *
  * @since 1.2.0
  */
 function pods_clean_name ( $orig, $lower = true, $trim_underscores = true ) {
@@ -873,6 +876,8 @@ function pods_evaluate_tag ( $tag, $sanitize = false ) {
  * @param string $field_index
  *
  * @return string
+ *
+ * @since 2.0
  */
 function pods_serial_comma ( $value, $field = null, $fields = null, $and = null, $field_index = null ) {
     if ( is_object( $value ) )
@@ -1005,6 +1010,8 @@ function pods_serial_comma ( $value, $field = null, $fields = null, $and = null,
  * @param mixed $anon Variable to return if user is anonymous (not logged in)
  * @param mixed $user Variable to return if user is logged in
  * @param string|array $capability Capability or array of Capabilities to check to return $user on
+ *
+ * @return mixed $user Variable to return if user is logged in (if logged in), otherwise $anon
  *
  * @since 2.0.5
  */

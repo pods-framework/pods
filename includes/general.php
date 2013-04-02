@@ -74,6 +74,8 @@ function pods_do_hook ( $scope, $name, $args = null, &$obj = null ) {
  *
  * @param string $message The notice / error message shown
  * @param string $type Message type
+ *
+ * @return void
  */
 function pods_message ( $message, $type = null ) {
     if ( empty( $type ) || !in_array( $type, array( 'notice', 'error' ) ) )
@@ -95,8 +97,12 @@ function pods_message ( $message, $type = null ) {
  * @param string $error The error message to be thrown / displayed
  * @param object / boolean $obj If object, if $obj->display_errors is set, and is set to true: display errors;
  *                              If boolean, and is set to true: display errors
+ *
  * @throws Exception
+ *
  * @return mixed|void
+ *
+ * @since 2.0
  */
 function pods_error ( $error, $obj = null ) {
     $display_errors = false;
@@ -162,6 +168,10 @@ $pods_debug = 0;
  * @param boolean $die If set to true, a die() will occur, if set to (int) 2 then a wp_die() will occur
  * @param string $prefix
  * @internal param bool $identifier If set to true, an identifying # will be output
+ *
+ * @return void
+ *
+ * @since 2.0
  */
 function pods_debug ( $debug = '_null', $die = false, $prefix = '_null' ) {
     global $pods_debug;
@@ -270,6 +280,8 @@ function pods_deprecated ( $function, $version, $replacement = null ) {
  * @param string $text Help text
  * @param string $url Documentation URL
  *
+ * @return void
+ *
  * @since 2.0
  */
 function pods_help ( $text, $url = null ) {
@@ -343,25 +355,39 @@ function pods_helper ( $helper_name, $value = null, $name = null ) {
 }
 
 /**
- * Get current URL of any page
+ * Get the full URL of the current page
  *
  * @return string
  * @since 1.9.6
+ *
+ * @deprecated 2.3
  */
 if ( !function_exists( 'get_current_url' ) ) {
     /**
      * @return mixed|void
      */
     function get_current_url () {
-        $url = 'http';
-
-        if ( isset( $_SERVER[ 'HTTPS' ] ) && 'off' != $_SERVER[ 'HTTPS' ] && 0 != $_SERVER[ 'HTTPS' ] )
-            $url = 'https';
-
-        $url .= '://' . $_SERVER[ 'HTTP_HOST' ] . $_SERVER[ 'REQUEST_URI' ];
+        $url = pods_current_url();
 
         return apply_filters( 'get_current_url', $url );
     }
+}
+
+/**
+ * Get the full URL of the current page
+ *
+ * @return string Full URL of the current page
+ * @since 2.3
+ */
+function pods_current_url () {
+    $url = 'http';
+
+    if ( isset( $_SERVER[ 'HTTPS' ] ) && 'off' != $_SERVER[ 'HTTPS' ] && 0 != $_SERVER[ 'HTTPS' ] )
+        $url = 'https';
+
+    $url .= '://' . $_SERVER[ 'HTTP_HOST' ] . $_SERVER[ 'REQUEST_URI' ];
+
+    return apply_filters( 'pods_current_url', $url );
 }
 
 /**

@@ -1586,6 +1586,54 @@ class Pods {
     }
 
     /**
+     * Add an item to the values of a relationship field.
+     *
+     * @see PodsAPI::save_pod_item
+     *
+     * @param string $field Field name
+     * @param mixed $value ID(s) to add
+     *
+     * @return int The item ID
+     *
+     * @since 2.3
+     */
+    public function add_to ( $field, $value ) {
+        $this->do_hook( 'add_to', $field, $value );
+
+        if ( empty( $value ) || !isset( $this->fields[ $field ] ) || !in_array( $this->fields[ $field ], PodsForm::tableless_field_types() ) )
+            return false;
+
+        if ( !is_array( $value ) )
+            $value = explode( ',', $value );
+
+        if ( in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) ) {
+            $current_value = $this->raw( $field );
+
+            if ( !empty( $current_value ) )
+                $current_value = (array) $current_value;
+
+            $value = array_merge( $current_value, $value );
+        }
+        else {
+            $related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $this->id(), $this->fields[ $field ], $this->pod_data );
+
+            $value = array_merge( $related_ids, $value );
+        }
+
+        $value = array_filter( array_unique( $value ) );
+
+        $params = array(
+            'pod' => $this->pod,
+            'id' => $this->id(),
+            'data' => array(
+                $field => $value
+            )
+        );
+
+        return $this->api->save_pod_item( $params );
+    }
+
+    /**
      * Save an item by giving an array of field data or set a specific field to a specific value.
      *
      * Though this function has the capacity to add new items, best practice should direct you

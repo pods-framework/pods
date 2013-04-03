@@ -5778,7 +5778,7 @@ class PodsAPI {
      * @param array $field Field data array
      * @param array $pod Pod data array
      *
-     * @return array|bool
+     * @return array
      *
      * @since 2.0
      *
@@ -5799,7 +5799,7 @@ class PodsAPI {
         $tableless_field_types = PodsForm::tableless_field_types();
 
         if ( empty( $ids ) || !in_array( pods_var( 'type', $field ), $tableless_field_types ) )
-            return false;
+            return array();
 
         $related_pick_limit = 0;
 

@@ -2050,9 +2050,14 @@ class PodsMeta {
         if ( empty( $object_id ) || empty( $object ) || !isset( $object[ 'fields' ][ $meta_key ] ) )
             return $_null;
 
-        $id = pods( $object[ 'name' ], $object_id )->save( $meta_key, $meta_value );
+        $pod = pods( $object[ 'name' ], $object_id );
 
-        return $id;
+        if ( in_array( $object[ 'fields' ][ $meta_key ], PodsForm::tableless_field_types() ) )
+            $pod->add_to( $meta_key, $meta_value );
+        else
+            $pod->save( $meta_key, $meta_value );
+
+        return $object_id;
     }
 
     /**
@@ -2079,9 +2084,9 @@ class PodsMeta {
         if ( empty( $object_id ) || empty( $object ) || !isset( $object[ 'fields' ][ $meta_key ] ) )
             return $_null;
 
-        $id = pods( $object[ 'name' ], $object_id )->save( $meta_key, $meta_value );
+        pods( $object[ 'name' ], $object_id )->save( $meta_key, $meta_value );
 
-        return $id;
+        return $object_id;
     }
 
     /**
@@ -2112,7 +2117,7 @@ class PodsMeta {
             $meta_key => null
         );
 
-        $id = pods( $object[ 'name' ], $object_id )->save( $fields );
+        pods( $object[ 'name' ], $object_id )->save( $fields );
 
         return $_null;
     }

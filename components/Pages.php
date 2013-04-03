@@ -377,6 +377,10 @@ class Pods_Pages extends PodsComponent {
             array(
                 'name' => 'restrict_role',
                 'label' => __( 'Restrict access by Role?', 'pods' ),
+                'help' => array(
+                    __( '<h6>Roles</h6> Roles are assigned to users to provide them access to specific functionality in WordPress. Please see the Roles and Capabilities component in Pods for an easy tool to add your own roles and edit existing ones.', 'pods' ),
+                    'http://codex.wordpress.org/Roles_and_Capabilities'
+                ),
                 'default' => 0,
                 'type' => 'boolean',
                 'dependency' => true
@@ -384,10 +388,6 @@ class Pods_Pages extends PodsComponent {
             array(
                 'name' => 'roles_allowed',
                 'label' => __( 'Role(s) Allowed', 'pods' ),
-                'help' => array(
-                    __( '<h6>Roles</h6> Roles are assigned to users to provide them access to specific functionality in WordPress. Please see the Roles and Capabilities component in Pods for an easy tool to add your own roles and edit existing ones.', 'pods' ),
-                    'http://codex.wordpress.org/Roles_and_Capabilities'
-                ),
                 'type' => 'pick',
                 'pick_object' => 'role',
                 'pick_format_type' => 'multi',
@@ -401,6 +401,10 @@ class Pods_Pages extends PodsComponent {
             array(
                 'name' => 'restrict_capability',
                 'label' => __( 'Restrict access by Capability?', 'pods' ),
+                'help' => array(
+                    __( '<h6>Capabilities</h6> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles.', 'pods' ),
+                    'http://codex.wordpress.org/Roles_and_Capabilities'
+                ),
                 'default' => 0,
                 'type' => 'boolean',
                 'dependency' => true
@@ -408,10 +412,6 @@ class Pods_Pages extends PodsComponent {
             array(
                 'name' => 'capability_allowed',
                 'label' => __( 'Capability Allowed', 'pods' ),
-                'help' => array(
-                    __( '<h6>Capabilities</h6> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles.', 'pods' ),
-                    'http://codex.wordpress.org/Roles_and_Capabilities'
-                ),
                 'type' => 'pick',
                 'pick_object' => 'capability',
                 'pick_format_type' => 'multi',

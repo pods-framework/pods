@@ -97,7 +97,7 @@ $advanced_fields = array(
             'label' => __( 'Restrict Access', 'pods' ),
             'group' => array(
                 'admin_only' => array(
-                    'label' => __( 'Show to Admins Only?', 'pods' ),
+                    'label' => __( 'Restrict access to Admins?', 'pods' ),
                     'default' => 0,
                     'type' => 'boolean',
                     'dependency' => true
@@ -106,15 +106,13 @@ $advanced_fields = array(
                     'label' => __( 'Restrict access by Role?', 'pods' ),
                     'default' => 0,
                     'type' => 'boolean',
-                    'dependency' => true,
-                    'depends-on' => array( 'admin_only' => false )
+                    'dependency' => true
                 ),
                 'restrict_capability' => array(
                     'label' => __( 'Restrict access by Capability?', 'pods' ),
                     'default' => 0,
                     'type' => 'boolean',
-                    'dependency' => true,
-                    'depends-on' => array( 'admin_only' => false )
+                    'dependency' => true
                 )
             )
         ),
@@ -126,7 +124,6 @@ $advanced_fields = array(
             'pick_format_type' => 'multi',
             'default' => '',
             'depends-on' => array(
-                'admin_only' => false,
                 'restrict_role' => true
             )
         ),
@@ -136,7 +133,6 @@ $advanced_fields = array(
             'type' => 'text',
             'default' => '',
             'depends-on' => array(
-                'admin_only' => false,
                 'restrict_capability' => true
             )
         )/*,

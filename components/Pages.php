@@ -369,7 +369,14 @@ class Pods_Pages extends PodsComponent {
         $fields = array(
             array(
                 'name' => 'admin_only',
-                'label' => __( 'Show to Admins Only?', 'pods' ),
+                'label' => __( 'Restrict access to Admins?', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'dependency' => true
+            ),
+            array(
+                'name' => 'restrict_role',
+                'label' => __( 'Restrict access by Role?', 'pods' ),
                 'default' => 0,
                 'type' => 'boolean',
                 'dependency' => true
@@ -382,12 +389,26 @@ class Pods_Pages extends PodsComponent {
                 'dependency' => true
             ),
             array(
+                'name' => 'roles_allowed',
+                'label' => __( 'Role(s) Allowed', 'pods' ),
+                'help' => __( 'help', 'pods' ),
+                'type' => 'pick',
+                'pick_object' => 'role',
+                'pick_format_type' => 'multi',
+                'default' => '',
+                'depends-on' => array(
+                    'restrict_role' => true
+                )
+            ),
+            array(
                 'name' => 'capability_allowed',
                 'label' => __( 'Capability Allowed', 'pods' ),
                 'help' => __( 'Comma-separated list of cababilities, for example add_podname_item, please see the Roles and Capabilities component for the complete list and a way to add your own.', 'pods' ),
                 'type' => 'text',
                 'default' => '',
-                'depends-on' => array( 'restrict_capability' => true )
+                'depends-on' => array(
+                    'restrict_capability' => true
+                )
             )
         );
 
@@ -543,7 +564,9 @@ class Pods_Pages extends PodsComponent {
                 'title' => get_post_meta( $_object[ 'ID' ], 'page_title', true ),
                 'options' => array(
                     'admin_only' => (boolean) get_post_meta( $_object[ 'ID' ], 'admin_only', true ),
+                    'restrict_role' => (boolean) get_post_meta( $_object[ 'ID' ], 'restrict_role', true ),
                     'restrict_capability' => (boolean) get_post_meta( $_object[ 'ID' ], 'restrict_capability', true ),
+                    'roles_allowed' => get_post_meta( $_object[ 'ID' ], 'roles_allowed', true ),
                     'capability_allowed' => get_post_meta( $_object[ 'ID' ], 'capability_allowed', true ),
                     'pod' => get_post_meta( $_object[ 'ID' ], 'pod', true ),
                     'pod_slug' => get_post_meta( $_object[ 'ID' ], 'pod_slug', true ),

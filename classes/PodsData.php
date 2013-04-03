@@ -700,6 +700,7 @@ class PodsData {
             'filters' => array(),
 
             'fields' => array(),
+            'object_fields' => array(),
             'pod_table_prefix' => null,
 
             'traverse' => array(),
@@ -741,6 +742,9 @@ class PodsData {
 
         if ( ( empty( $params->fields ) || !is_array( $params->fields ) ) && is_array( $this->pod_data ) && isset( $this->fields ) && !empty( $this->fields ) )
             $params->fields = $this->fields;
+
+        if ( ( empty( $params->object_fields ) || !is_array( $params->object_fields ) ) && is_array( $this->pod_data ) && isset( $this->pod_data[ 'object_fields' ] ) && !empty( $this->pod_data[ 'object_fields' ] ) )
+            $params->object_fields = $this->pod_data[ 'object_fields' ];
 
         if ( empty( $params->filters ) && $params->search )
             $params->filters = array_keys( $params->fields );
@@ -927,6 +931,8 @@ class PodsData {
                             else
                                 $fieldfield = '`' . $params->pod_table_prefix . '`.' . $fieldfield;
                         }
+                        elseif ( !empty( $params->object_fields ) && !isset( $params->object_fields[ $field ] ) )
+                            $fieldfield = $fieldfield . '.`meta_value`';
                         else
                             $fieldfield = '`t`.' . $fieldfield;
 
@@ -949,10 +955,12 @@ class PodsData {
 
                     if ( isset( $params->fields[ $params->index ] ) ) {
                         if ( $params->meta_fields )
-                            $fieldfield = $params->index . '.`' . $params->pod_table_prefix . '`';
+                            $fieldfield = '`' . $params->index . '`.`' . $params->pod_table_prefix . '`';
                         else
-                            $fieldfield = '`' . $params->pod_table_prefix . '`.' . $params->index;
+                            $fieldfield = '`' . $params->pod_table_prefix . '`.' . $params->index . '`';
                     }
+                    elseif ( !empty( $params->object_fields ) && !isset( $params->object_fields[ $params->index ] ) )
+                        $fieldfield = '`' . $params->index . '`.`meta_value`';
 
                     if ( isset( $attributes[ 'real_name' ] ) && false !== $attributes[ 'real_name' ] && !empty( $attributes[ 'real_name' ] ) )
                         $fieldfield = $attributes[ 'real_name' ];
@@ -993,12 +1001,14 @@ class PodsData {
                 }
                 elseif ( in_array( $attributes[ 'type' ], PodsForm::file_field_types() ) )
                     $filterfield = $filterfield . '.`post_title`';
-                elseif ( isset( $params->fields[ $filterfield ] ) ) {
+                elseif ( isset( $params->fields[ $field ] ) ) {
                     if ( $params->meta_fields )
-                        $filterfield = $filterfield . '.`' . $params->pod_table_prefix . '`';
+                        $filterfield = $filterfield . '.`meta_value`';
                     else
                         $filterfield = '`' . $params->pod_table_prefix . '`.' . $filterfield;
                 }
+                elseif ( !empty( $params->object_fields ) && !isset( $params->object_fields[ $field ] ) )
+                    $filterfield = $filterfield . '.`meta_value`';
                 else
                     $filterfield = '`t`.' . $filterfield;
 

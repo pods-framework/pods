@@ -674,18 +674,28 @@ class PodsMeta {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
+            $field_found = false;
+
+            foreach ( $group[ 'fields' ] as $field ) {
+                if ( false !== PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ] ) )
+                    $field_found = true;
+            }
+
             if ( empty( $group[ 'label' ] ) )
                 $group[ 'label' ] = get_post_type_object( $post_type )->labels->label;
 
-            add_meta_box(
-                'pods-meta-' . sanitize_title( $group[ 'label' ] ),
-                $group[ 'label' ],
-                array( $this, 'meta_post' ),
-                $post_type,
-                $group[ 'context' ],
-                $group[ 'priority' ],
-                array( 'group' => $group )
-            );
+            if ( $field_found ) {
+                add_meta_box(
+                    'pods-meta-' . sanitize_title( $group[ 'label' ] ),
+                    $group[ 'label' ],
+                    array( $this, 'meta_post' ),
+                    $post_type,
+                    $group[ 'context' ],
+                    $group[ 'priority' ],
+                    array( 'group' => $group )
+                );
+
+            }
         }
     }
 
@@ -1354,15 +1364,24 @@ class PodsMeta {
             if ( empty( $group[ 'fields' ] ) )
                 continue;
 
-            add_meta_box(
-                'pods-meta-' . sanitize_title( $group[ 'label' ] ),
-                $group[ 'label' ],
-                array( $this, 'meta_comment' ),
-                $comment_type,
-                $group[ 'context' ],
-                $group[ 'priority' ],
-                array( 'group' => $group )
-            );
+            $field_found = false;
+
+            foreach ( $group[ 'fields' ] as $field ) {
+                if ( false !== PodsForm::permission( $field[ 'type' ], $field[ 'name' ], $field, $group[ 'fields' ] ) )
+                    $field_found = true;
+            }
+
+            if ( $field_found ) {
+                add_meta_box(
+                    'pods-meta-' . sanitize_title( $group[ 'label' ] ),
+                    $group[ 'label' ],
+                    array( $this, 'meta_comment' ),
+                    $comment_type,
+                    $group[ 'context' ],
+                    $group[ 'priority' ],
+                    array( 'group' => $group )
+                );
+            }
         }
     }
 

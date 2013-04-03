@@ -756,12 +756,11 @@ class PodsData {
         if ( empty( $params->table ) && is_array( $this->pod_data ) && isset( $this->table ) && !empty( $this->table ) )
             $params->table = $this->table;
 
-        if ( empty( $params->pod_table_prefix ) && is_array( $this->pod_data ) ) {
+        if ( empty( $params->pod_table_prefix ) )
             $params->pod_table_prefix = 't';
 
-            if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) && 'table' == $this->pod_data[ 'storage' ] )
-                $params->pod_table_prefix = 'd';
-        }
+        if ( is_array( $this->pod_data ) && !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) && 'table' == $this->pod_data[ 'storage' ] )
+            $params->pod_table_prefix = 'd';
 
         if ( empty( $params->table ) )
             return false;
@@ -937,10 +936,10 @@ class PodsData {
                 elseif ( !empty( $params->index ) ) {
                     $attributes = array();
 
-                    if ( isset( $params->fields[ $params->index ] ) )
-                        $attributes = $params->fields[ $params->index ];
-
                     $fieldfield = '`t`.`' . $params->index . '`';
+
+                    if ( isset( $params->fields[ $params->index ] ) )
+                        $attributes = '`' . $params->pod_table_prefix . '`.' . $params->fields[ $params->index ];
 
                     if ( isset( $attributes[ 'real_name' ] ) && false !== $attributes[ 'real_name' ] && !empty( $attributes[ 'real_name' ] ) )
                         $fieldfield = $attributes[ 'real_name' ];
@@ -981,6 +980,8 @@ class PodsData {
                 }
                 elseif ( in_array( $attributes[ 'type' ], PodsForm::file_field_types() ) )
                     $filterfield = $filterfield . '.`post_title`';
+                elseif ( isset( $params->fields[ $field ] ) )
+                    $filterfield = '`' . $params->pod_table_prefix . '`.' . $filterfield;
                 else
                     $filterfield = '`t`.' . $filterfield;
 

@@ -861,7 +861,11 @@ function pods_permission ( $options ) {
     }
 
     if ( !$permission && 1 == pods_var( 'restrict_capability', $options, 0 ) ) {
-        $capabilities = explode( ',', pods_var( 'capability_allowed', $options ) );
+        $capabilities = pods_var( 'capability_allowed', $options );
+
+        if ( !is_array( $capabilities ) )
+            $capabilities = explode( ',', $capabilities );
+
         $capabilities = array_unique( array_filter( $capabilities ) );
 
         foreach( $capabilities as $capability ) {

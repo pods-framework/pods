@@ -796,7 +796,7 @@ class PodsAdmin {
                 'duplicate' => array( $this, 'admin_setup_duplicate' ),
                 'reset' => array(
                     'label' => __( 'Delete All Items', 'pods' ),
-                    'confirm' => __( 'Are you sure you want to delete all items from this Pod?', 'pods' ),
+                    'confirm' => __( 'Are you sure you want to delete all items from this Pod? If this is an extended Pod, it will remove the original items extended too.', 'pods' ),
                     'callback' => array( $this, 'admin_setup_reset' )
                 ),
                 'delete' => array( $this, 'admin_setup_delete' )

@@ -377,11 +377,9 @@ class Pods_Roles extends PodsComponent {
         $role_caps = array_unique( $role_caps );
 
         $plugin_caps = array(
-            'pods_roles_list',
             'pods_roles_add',
             'pods_roles_delete',
-            'pods_roles_edit',
-            'restrict_content'
+            'pods_roles_edit'
         );
 
         $capabilities = array_merge( $default_caps, $role_caps, $plugin_caps );

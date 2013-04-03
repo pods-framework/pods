@@ -384,10 +384,15 @@ class Pods_Pages extends PodsComponent {
             array(
                 'name' => 'roles_allowed',
                 'label' => __( 'Role(s) Allowed', 'pods' ),
-                'help' => __( 'help', 'pods' ),
+                'help' => array(
+                    __( '<h6>Roles</h6> Roles are assigned to users to provide them access to specific functionality in WordPress. Please see the Roles and Capabilities component in Pods for an easy tool to add your own roles and edit existing ones.', 'pods' ),
+                    'http://codex.wordpress.org/Roles_and_Capabilities'
+                ),
                 'type' => 'pick',
                 'pick_object' => 'role',
                 'pick_format_type' => 'multi',
+                'pick_format_multi' => 'autocomplete',
+                'pick_ajax' => false,
                 'default' => '',
                 'depends-on' => array(
                     'restrict_role' => true
@@ -403,8 +408,15 @@ class Pods_Pages extends PodsComponent {
             array(
                 'name' => 'capability_allowed',
                 'label' => __( 'Capability Allowed', 'pods' ),
-                'help' => __( 'Comma-separated list of cababilities, for example add_podname_item, please see the Roles and Capabilities component for the complete list and a way to add your own.', 'pods' ),
-                'type' => 'text',
+                'help' => array(
+                    __( '<h6>Capabilities</h6> Capabilities denote access to specific functionality in WordPress, and are assigned to specific User Roles. Please see the Roles and Capabilities component in Pods for an easy tool to add your own capabilities and roles.', 'pods' ),
+                    'http://codex.wordpress.org/Roles_and_Capabilities'
+                ),
+                'type' => 'pick',
+                'pick_object' => 'capability',
+                'pick_format_type' => 'multi',
+                'pick_format_multi' => 'autocomplete',
+                'pick_ajax' => false,
                 'default' => '',
                 'depends-on' => array(
                     'restrict_capability' => true

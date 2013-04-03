@@ -372,6 +372,13 @@ class PodsField_Pick extends PodsField {
                 'data_callback' => array( $this, 'data_roles' )
             );
 
+            self::$related_objects[ 'capability' ] = array(
+                'label' => __( 'User Capabilities', 'pods' ),
+                'group' => __( 'Other WP Objects', 'pods' ),
+                'simple' => true,
+                'data_callback' => array( $this, 'data_capabilities' )
+            );
+
             self::$related_objects[ 'media' ] = array(
                 'label' => __( 'Media', 'pods' ),
                 'group' => __( 'Other WP Objects', 'pods' )
@@ -602,7 +609,12 @@ class PodsField_Pick extends PodsField {
         $ajax = false;
 
         if ( ( 'custom-simple' != pods_var( 'pick_object', $options ) || empty( $custom ) ) && '' != pods_var( 'pick_object', $options, '', null, true ) )
-            $ajax = apply_filters( 'pods_form_ui_field_pick_ajax', true, $name, $value, $options, $pod, $id );
+            $ajax = true;
+
+        $ajax = apply_filters( 'pods_form_ui_field_pick_ajax', $ajax, $name, $value, $options, $pod, $id );
+
+        if ( 0 == pods_var( 'pick_ajax', $options, 1 ) )
+            $ajax = false;
 
         if ( 'single' == pods_var( 'pick_format_type', $options, 'single' ) ) {
             if ( 'dropdown' == pods_var( 'pick_format_single', $options, 'dropdown' ) )
@@ -1757,6 +1769,108 @@ class PodsField_Pick extends PodsField {
 
         foreach ( $wp_roles->role_objects as $key => $role ) {
             $data[ $key ] = $wp_roles->role_names[ $key ];
+        }
+
+        return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );
+    }
+
+    /**
+     * Data callback for User Capabilities
+     *
+     * @param string $name The name of the field
+     * @param string|array $value The value of the field
+     * @param array $options Field options
+     * @param array $pod Pod data
+     * @param int $id Item ID
+     *
+     * @return array
+     *
+     * @since 2.3
+     */
+    public function data_capabilities ( $name = null, $value = null, $options = null, $pod = null, $id = null ) {
+        $data = array();
+
+        global $wp_roles;
+
+        $default_caps = array(
+            'activate_plugins',
+            'add_users',
+            'create_users',
+            'delete_others_pages',
+            'delete_others_posts',
+            'delete_pages',
+            'delete_plugins',
+            'delete_posts',
+            'delete_private_pages',
+            'delete_private_posts',
+            'delete_published_pages',
+            'delete_published_posts',
+            'delete_users',
+            'edit_dashboard',
+            'edit_files',
+            'edit_others_pages',
+            'edit_others_posts',
+            'edit_pages',
+            'edit_plugins',
+            'edit_posts',
+            'edit_private_pages',
+            'edit_private_posts',
+            'edit_published_pages',
+            'edit_published_posts',
+            'edit_theme_options',
+            'edit_themes',
+            'edit_users',
+            'import',
+            'install_plugins',
+            'install_themes',
+            'list_users',
+            'manage_categories',
+            'manage_links',
+            'manage_options',
+            'moderate_comments',
+            'promote_users',
+            'publish_pages',
+            'publish_posts',
+            'read',
+            'read_private_pages',
+            'read_private_posts',
+            'remove_users',
+            'switch_themes',
+            'unfiltered_html',
+            'unfiltered_upload',
+            'update_core',
+            'update_plugins',
+            'update_themes',
+            'upload_files'
+        );
+
+        $role_caps = array();
+
+        foreach ( $wp_roles->role_objects as $key => $role ) {
+            if ( is_array( $role->capabilities ) ) {
+                foreach ( $role->capabilities as $cap => $grant ) {
+                    $role_caps[ $cap ] = $cap;
+                }
+            }
+        }
+
+        $role_caps = array_unique( $role_caps );
+
+        $capabilities = array_merge( $default_caps, $role_caps );
+
+        // To support Members filters
+        $capabilities = apply_filters( 'members_get_capabilities', $capabilities );
+
+        $capabilities = apply_filters( 'pods_roles_get_capabilities', $capabilities );
+
+        sort( $capabilities );
+
+        $capabilities = array_unique( $capabilities );
+
+        global $wp_roles;
+
+        foreach ( $capabilities as $capability ) {
+            $data[ $capability ] = $capability;
         }
 
         return apply_filters( 'pods_form_ui_field_pick_' . __FUNCTION__, $data, $name, $value, $options, $pod, $id );

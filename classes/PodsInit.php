@@ -439,7 +439,7 @@ class PodsInit {
                 // Rewrite
                 $cpt_rewrite = (boolean) pods_var( 'rewrite', $post_type, true );
                 $cpt_rewrite_array = array(
-                    'slug' => _x( pods_var( 'rewrite_custom_slug', $post_type, str_replace( '_', '-', pods_var( 'name', $post_type ) ), null, true ), 'URL slug', 'pods' ), // WPML support
+                    'slug' => pods_var( 'rewrite_custom_slug', $post_type, str_replace( '_', '-', pods_var( 'name', $post_type ) ), null, true ),
                     'with_front' => (boolean) pods_var( 'rewrite_with_front', $post_type, true ),
                     'feeds' => (boolean) pods_var( 'rewrite_feeds', $post_type, (boolean) pods_var( 'has_archive', $post_type, false ) ),
                     'pages' => (boolean) pods_var( 'rewrite_pages', $post_type, true )
@@ -553,7 +553,7 @@ class PodsInit {
                 // Rewrite
                 $ct_rewrite = (boolean) pods_var( 'rewrite', $taxonomy, true );
                 $ct_rewrite_array = array(
-                    'slug' => _x( pods_var( 'rewrite_custom_slug', $taxonomy, str_replace( '_', '-', pods_var( 'name', $taxonomy ) ), null, true ), 'URL taxonomy slug', 'pods' ), // WPML support
+                    'slug' => pods_var( 'rewrite_custom_slug', $taxonomy, str_replace( '_', '-', pods_var( 'name', $taxonomy ) ), null, true ),
                     'with_front' => (boolean) pods_var( 'rewrite_with_front', $taxonomy, true ),
                     'hierarchical' => (boolean) pods_var( 'rewrite_hierarchical', $taxonomy, (boolean) pods_var( 'hierarchical', $taxonomy, false ) )
                 );
@@ -646,6 +646,10 @@ class PodsInit {
             // Max length for taxonomies are 32 characters
             $taxonomy = substr( $taxonomy, 0, 32 );
 
+            // i18n compatibility for plugins that override it
+            if ( is_array( $options[ 'rewrite' ] ) && isset( $options[ 'rewrite' ][ 'slug' ] ) && !empty( $options[ 'rewrite' ][ 'slug' ] ) )
+                $options[ 'rewrite' ][ 'slug' ] = _x( $options[ 'rewrite' ][ 'slug' ], 'URL taxonomy slug', 'pods' );
+
             register_taxonomy( $taxonomy, $ct_post_types, $options );
 
             if ( !isset( self::$content_types_registered[ 'taxonomies' ] ) )
@@ -664,6 +668,10 @@ class PodsInit {
 
             // Max length for post types are 20 characters
             $post_type = substr( $post_type, 0, 20 );
+
+            // i18n compatibility for plugins that override it
+            if ( is_array( $options[ 'rewrite' ] ) && isset( $options[ 'rewrite' ][ 'slug' ] ) && !empty( $options[ 'rewrite' ][ 'slug' ] ) )
+                $options[ 'rewrite' ][ 'slug' ] = _x( $options[ 'rewrite' ][ 'slug' ], 'URL slug', 'pods' );
 
             register_post_type( $post_type, $options );
 

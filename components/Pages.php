@@ -382,13 +382,6 @@ class Pods_Pages extends PodsComponent {
                 'dependency' => true
             ),
             array(
-                'name' => 'restrict_capability',
-                'label' => __( 'Restrict access by Capability?', 'pods' ),
-                'default' => 0,
-                'type' => 'boolean',
-                'dependency' => true
-            ),
-            array(
                 'name' => 'roles_allowed',
                 'label' => __( 'Role(s) Allowed', 'pods' ),
                 'help' => __( 'help', 'pods' ),
@@ -399,6 +392,13 @@ class Pods_Pages extends PodsComponent {
                 'depends-on' => array(
                     'restrict_role' => true
                 )
+            ),
+            array(
+                'name' => 'restrict_capability',
+                'label' => __( 'Restrict access by Capability?', 'pods' ),
+                'default' => 0,
+                'type' => 'boolean',
+                'dependency' => true
             ),
             array(
                 'name' => 'capability_allowed',

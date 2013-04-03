@@ -1854,7 +1854,7 @@ class PodsMeta {
         else
             return false;
 
-        if ( empty( $objects ) )
+        if ( empty( $objects ) || !is_array( $objects ) )
             return false;
 
         if ( 'media' == $object_type )

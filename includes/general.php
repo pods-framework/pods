@@ -810,6 +810,8 @@ function pods_function_or_file ( $function_or_file, $function_name = null, $file
  * @param string $location The path to redirect to
  * @param int $status Status code to use
  *
+ * @return void
+ *
  * @since 2.0
  */
 function pods_redirect ( $location, $status = 302 ) {
@@ -828,6 +830,8 @@ function pods_redirect ( $location, $status = 302 ) {
  * Check if a user has permission to be doing something based on standard permission options
  *
  * @param array $options
+ *
+ * @return bool Whether the user has permissions
  *
  * @since 2.0.5
  */
@@ -902,6 +906,8 @@ function pods_permission ( $options ) {
  * @param boolean $single (optional) For tableless fields, to return the whole array or the just the first item
  *
  * @return mixed Field value
+ *
+ * @since 2.1
  */
 function pods_field ( $pod, $id = false, $name = null, $single = false ) {
     // allow for pods_field( 'field_name' );
@@ -925,6 +931,8 @@ function pods_field ( $pod, $id = false, $name = null, $single = false ) {
  * @param boolean $single (optional) For tableless fields, to return the whole array or the just the first item
  *
  * @return mixed Field value
+ *
+ * @since 2.1
  */
 function pods_field_display ( $pod, $id = false, $name = null, $single = false ) {
     // allow for pods_field_display( 'field_name' );
@@ -948,6 +956,8 @@ function pods_field_display ( $pod, $id = false, $name = null, $single = false )
  * @param boolean $single (optional) For tableless fields, to return the whole array or the just the first item
  *
  * @return mixed Field value
+ *
+ * @since 2.1
  */
 function pods_field_raw ( $pod, $id = false, $name = null, $single = false ) {
     // allow for pods_field_raw( 'field_name' );
@@ -1197,6 +1207,8 @@ function pods_register_related_object ( $name, $label, $options = null ) {
  *
  * @param string $component Component ID
  *
+ * @return void
+ *
  * @since 2.3
  */
 function pods_require_component ( $component ) {
@@ -1214,6 +1226,8 @@ function pods_require_component ( $component ) {
  * @param string $context (optional) The part of the page where the edit screen section should be shown ('normal', 'advanced', or 'side').
  * @param string $priority (optional) The priority within the context where the boxes should show ('high', 'core', 'default' or 'low').
  * @param string $type (optional) Type of the post to attach to.
+ *
+ * @return void
  *
  * @since 2.0
  * @link http://pods.io/docs/pods-group-add/
@@ -1256,6 +1270,8 @@ function pods_is_plugin_active ( $plugin ) {
  * @param string $object_type
  *
  * @return bool
+ *
+ * @since 2.3
  */
 function pods_no_conflict_check ( $object_type = 'post' ) {
     if ( 'post_type' == $object_type )
@@ -1274,6 +1290,8 @@ function pods_no_conflict_check ( $object_type = 'post' ) {
  * @param string $object
  *
  * @return bool
+ *
+ * @since 2.0
  */
 function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
     if ( 'post_type' == $object_type )
@@ -1414,6 +1432,8 @@ function pods_no_conflict_on ( $object_type = 'post', $object = null ) {
  * @param string $object_type
  *
  * @return bool
+ *
+ * @since 2.0
  */
 function pods_no_conflict_off ( $object_type = 'post' ) {
     if ( 'post_type' == $object_type )

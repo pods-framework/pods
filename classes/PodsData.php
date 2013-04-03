@@ -227,6 +227,8 @@ class PodsData {
      * @param integer $id Pod Item ID
      * @param bool $strict If true throws an error if a pod is not found.
      *
+     * @return \PodsData
+     *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0
      */

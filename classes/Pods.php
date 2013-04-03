@@ -145,6 +145,8 @@ class Pods {
      * @param string $pod The pod name
      * @param mixed $id (optional) The ID or slug, to load a single record; Provide array of $params to run 'find'
      *
+     * @return \Pods
+     *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 1.0.0
      * @link http://pods.io/docs/pods/
@@ -1863,9 +1865,11 @@ class Pods {
     }
 
     /**
-     * Output a filter form for searching a Pod
+     * Return a filter form for searching a Pod
      *
      * @var array|string $params Comma-separated list of fields or array of parameters
+     *
+     * @return string Filters HTML
      *
      * @since 2.0
      * @link http://pods.io/docs/filters/
@@ -2144,6 +2148,8 @@ class Pods {
      * @param string $code The content to evaluate
      * @param object $obj The Pods object
      *
+     * @return string Code with Magic Tags evaluated
+     *
      * @since 2.0
      */
     public function do_magic_tags ( $code ) {
@@ -2156,12 +2162,14 @@ class Pods {
      * @param string $tag The magic tag to process
      * @param object $obj The Pods object
      *
+     * @return string Code with Magic Tags evaluated
+     *
      * @since 2.0.2
      */
     private function process_magic_tags ( $tag ) {
         if ( is_array( $tag ) ) {
             if ( !isset( $tag[ 2 ] ) && strlen( trim( $tag[ 2 ] ) ) < 1 )
-                return;
+                return '';
 
             $tag = $tag[ 2 ];
         }
@@ -2170,7 +2178,7 @@ class Pods {
         $tag = explode( ',', $tag );
 
         if ( empty( $tag ) || !isset( $tag[ 0 ] ) || strlen( trim( $tag[ 0 ] ) ) < 1 )
-            return;
+            return '';
 
         foreach ( $tag as $k => $v ) {
             $tag[ $k ] = trim( $v );
@@ -2214,13 +2222,15 @@ class Pods {
         if ( null !== $value && false !== $value )
             return $before . $value . $after;
 
-        return;
+        return '';
     }
 
     /**
      * Handle filters / actions for the class
      *
      * @see pods_do_hook
+     *
+     * @return mixed Value filtered
      *
      * @since 2.0
      */

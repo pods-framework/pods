@@ -17,6 +17,8 @@ class PodsAdmin {
     /**
      * Setup and Handle Admin functionality
      *
+     * @return \PodsAdmin
+     *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0
      */

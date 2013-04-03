@@ -222,23 +222,28 @@ class Pods_Pages extends PodsComponent {
      * @since 2.0
      */
     public function clear_cache ( $data, $pod = null, $id = null, $groups = null, $post = null ) {
+        $old_post = $id;
+
+        if ( !is_object( $id ) )
+            $old_post = null;
+
+        if ( is_object( $post ) && $this->object_type != $post->post_type )
+            return;
+
         if ( !is_array( $data ) && 0 < $data ) {
             $post = $data;
             $post = get_post( $post );
+        }
 
-            if ( is_object( $id ) ) {
-                $old_post = $id;
-
+        if ( $this->object_type == $post->post_type ) {
+            if ( is_object( $old_post ) && $this->object_type == $old_post->post_type ) {
                 pods_transient_clear( 'pods_object_page_' . $old_post->post_title );
                 pods_cache_clear( $old_post->post_title, 'pods_object_page_wildcard' );
             }
+
+            pods_transient_clear( 'pods_object_page_' . $post->post_title );
+            pods_cache_clear( $post->post_title, 'pods_object_page_wildcard' );
         }
-
-        if ( $this->object_type != $post->post_type )
-            return;
-
-        pods_transient_clear( 'pods_object_page_' . $post->post_title );
-        pods_cache_clear( $post->post_title, 'pods_object_page_wildcard' );
     }
 
     /**
@@ -517,7 +522,7 @@ class Pods_Pages extends PodsComponent {
 
         $object = pods_transient_get( 'pods_object_page_' . $uri );
 
-        if ( false !== $object )
+        if ( false !== $object && $object[ 'name' ] == $uri )
             return $object;
 
         // See if the custom template exists

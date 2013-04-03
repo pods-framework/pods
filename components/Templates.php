@@ -211,22 +211,26 @@ class Pods_Templates extends PodsComponent {
      * @since 2.0
      */
     public function clear_cache ( $data, $pod = null, $id = null, $groups = null, $post = null ) {
+        $old_post = $id;
+
+        if ( !is_object( $id ) )
+            $old_post = null;
+
+        if ( is_object( $post ) && $this->object_type != $post->post_type )
+            return;
+
         if ( !is_array( $data ) && 0 < $data ) {
             $post = $data;
             $post = get_post( $post );
-
-            if ( is_object( $id ) ) {
-                $old_post = $id;
-
-                pods_transient_clear( 'pods_object_template_' . $old_post->post_name );
-            }
         }
 
-        if ( $this->object_type != $post->post_type )
-            return;
+        if ( $this->object_type == $post->object_type ) {
+            if ( is_object( $old_post ) && $this->object_type == $old_post->object_type ) {
+                pods_transient_clear( 'pods_object_template_' . $old_post->post_name );
+            }
 
-        pods_transient_clear( 'pods_object_template' );
-        pods_transient_clear( 'pods_object_template_' . $post->post_name );
+            pods_transient_clear( 'pods_object_template_' . $post->post_name );
+        }
     }
 
     /**

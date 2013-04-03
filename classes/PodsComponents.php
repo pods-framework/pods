@@ -37,6 +37,8 @@ class PodsComponents {
     /**
      * Setup actions and get options
      *
+     * @return \PodsComponents
+     *
      * @since 2.0
      */
     public function __construct () {
@@ -597,6 +599,8 @@ class PodsComponent {
 
     /**
      * Do things like register/enqueue scripts and stylesheets
+     *
+     * @return \PodsComponent
      *
      * @since 2.0
      */

@@ -60,14 +60,16 @@ class PodsMeta {
     public static $groups = array();
 
     /**
+     * @return \PodsMeta
      *
+     * @since 2.0
      */
     function __construct () {
         $this->api = pods_api();
     }
 
     /**
-     * @return PodsMeta
+     * @return \PodsMeta
      */
     public function init () {
         self::$advanced_content_types = $this->api->load_pods( array( 'type' => 'pod' ) );

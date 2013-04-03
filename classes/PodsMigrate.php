@@ -51,6 +51,8 @@ class PodsMigrate {
      * @param string $delimiter Delimiter for export type 'sv'
      * @param array $data Array of data
      *
+     * @return \PodsMigrate
+     *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0
      */

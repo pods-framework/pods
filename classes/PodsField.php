@@ -55,6 +55,8 @@ class PodsField {
     /**
      * Do things like register/enqueue scripts and stylesheets
      *
+     * @return \PodsField
+     *
      * @since 2.0
      */
     public function __construct () {
@@ -179,6 +181,8 @@ class PodsField {
      * @param array $pod
      * @param int $id
      *
+     * @return void
+     *
      * @since 2.0
      */
     public function input ( $name, $value = null, $options = null, $pod = null, $id = null ) {
@@ -268,6 +272,8 @@ class PodsField {
      * @param array $pod
      * @param object $params
      *
+     * @return bool|void Whether the value was saved
+     *
      * @since 2.3
      */
     public function save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
@@ -285,6 +291,8 @@ class PodsField {
      * @param array $pod
      * @param object $params
      *
+     * @since void
+     *
      * @since 2.0
      */
     public function post_save ( $value, $id = null, $name = null, $options = null, $fields = null, $pod = null, $params = null ) {
@@ -298,6 +306,8 @@ class PodsField {
      * @param string $name
      * @param null $options
      * @param string $pod
+     *
+     * @since void
      *
      * @since 2.0
      */
@@ -313,6 +323,8 @@ class PodsField {
      * @param array $options
      * @param array $pod
      *
+     * @since void
+     *
      * @since 2.3
      */
     public function delete ( $id = null, $name = null, $options = null, $pod = null ) {
@@ -326,6 +338,8 @@ class PodsField {
      * @param string $name
      * @param array $options
      * @param array $pod
+     *
+     * @since void
      *
      * @since 2.0
      */
@@ -342,6 +356,8 @@ class PodsField {
      * @param array $options
      * @param array $fields
      * @param array $pod
+     *
+     * @since string Value to be shown in the UI
      *
      * @since 2.0
      */

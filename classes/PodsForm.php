@@ -42,6 +42,8 @@ class PodsForm {
     /**
      * Master handler for all field / form methods
      *
+     * @return \PodsForm
+     *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0
      */

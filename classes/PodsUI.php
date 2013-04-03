@@ -411,6 +411,8 @@ class PodsUI {
      * @param mixed $options Object, Array, or String containing Pod or Options to be used
      * @param bool $deprecated Set to true to support old options array from Pods UI plugin
      *
+     * @return \PodsUI
+     *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0
      */

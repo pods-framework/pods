@@ -71,6 +71,8 @@ class PodsInit {
     /**
      * Setup and Initiate Pods
      *
+     * @return \PodsInit
+     *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 1.8.9
      */

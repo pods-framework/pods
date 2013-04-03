@@ -10,7 +10,7 @@ class PodsView {
     static $cache_modes = array( 'none', 'transient', 'site-transient', 'cache' );
 
     /**
-     *
+     * @return \PodsView
      */
     private function __construct () {
     }

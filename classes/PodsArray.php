@@ -15,6 +15,8 @@ class PodsArray implements ArrayAccess {
      *
      * @param mixed $container Object (or existing Array)
      *
+     * @return \PodsArray
+     *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 2.0
      */

@@ -46,6 +46,8 @@ class PodsAPI {
      * @param string $pod (optional) The pod name
      * @param string $format (deprecated) Format for import/export, "php" or "csv"
      *
+     * @return \PodsAPI
+     *
      * @license http://www.gnu.org/licenses/gpl-2.0.html
      * @since 1.7.1
      */
@@ -5184,7 +5186,10 @@ class PodsAPI {
         if ( is_object( $params ) && isset( $params->post_name ) ) {
             $type = str_replace( '_pods_', '', $params->post_type );
 
-            $object = pods_transient_get( 'pods_object_' . $type . '_' . $params->post_name );
+            if ( 'page' == $type )
+                $object = pods_transient_get( 'pods_object_' . $type . '_' . $params->post_title );
+            else
+                $object = pods_transient_get( 'pods_object_' . $type . '_' . $params->post_name );
 
             if ( false !== $object )
                 return $object;
@@ -5206,7 +5211,10 @@ class PodsAPI {
             global $wpdb;
 
             if ( isset( $params->name ) ) {
-                $object = pods_transient_get( 'pods_object_' . $params->type . '_' . pods_clean_name( $params->name, true ) );
+                if ( 'page' == $params->type )
+                    $object = pods_transient_get( 'pods_object_' . $params->type . '_' . $params->name );
+                else
+                    $object = pods_transient_get( 'pods_object_' . $params->type . '_' . pods_clean_name( $params->name, true ) );
 
                 if ( false !== $object )
                     return $object;
@@ -5260,7 +5268,10 @@ class PodsAPI {
                 $value = $value[ 0 ];
         }
 
-        pods_transient_set( 'pods_object_' . $object[ 'type' ] . '_' . $object[ 'slug' ], $object );
+        if ( 'page' == $object[ 'type' ] )
+            pods_transient_set( 'pods_object_' . $object[ 'type' ] . '_' . $object[ 'name' ], $object );
+        else
+            pods_transient_set( 'pods_object_' . $object[ 'type' ] . '_' . $object[ 'slug' ], $object );
 
         return $object;
     }

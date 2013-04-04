@@ -242,7 +242,7 @@
                                             if ( isset( $all_pods[ 'comment' ] ) && 'comment' == $all_pods[ 'comment' ][ 'type' ] )
                                                 unset( $data[ 'comment' ] );
 
-                                            $data = apply_filters( 'pods_admin_setup_add_create_pod_type', $data );
+                                            $data = apply_filters( 'pods_admin_setup_add_extend_pod_type', $data );
 
                                             if ( empty( $data[ 'taxonomy' ] ) )
                                                 unset( $data[ 'taxonomy' ] );

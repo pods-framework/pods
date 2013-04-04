@@ -2552,7 +2552,7 @@ class PodsAPI {
             $allow_custom_fields = true;
 
         // Get array of Pods
-        $pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod, 'table_info' => false ) );
+        $pod = $this->load_pod( array( 'id' => $params->pod_id, 'name' => $params->pod, 'table_info' => true ) );
 
         if ( false === $pod )
             return pods_error( __( 'Pod not found', 'pods' ), $this );
@@ -2622,6 +2622,11 @@ class PodsAPI {
             if ( !in_array( 'modified', $fields_active ) && isset( $fields[ 'modified' ] ) ) {
                 $fields[ 'modified' ][ 'value' ] = date_i18n( 'Y-m-d H:i:s' );
                 $fields_active[] = 'modified';
+            }
+
+            if ( empty( $params->id ) && !empty( $pod[ 'pod_field_index' ] ) && in_array( $pod[ 'pod_field_index' ], $fields_active ) && !in_array( $pod[ 'pod_field_slug' ], $fields_active ) && isset( $fields[ $pod[ 'pod_field_slug' ] ] ) ) {
+                $fields[ $pod[ 'pod_field_slug' ] ][ 'value' ] = ''; // this will get picked up by slug pre_save method
+                $fields_active[] = $pod[ 'pod_field_slug' ];
             }
         }
 

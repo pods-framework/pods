@@ -945,7 +945,7 @@ class PodsInit {
 
         $api = pods_api();
 
-        $pods = $api->load_pods( array( 'ids' => true ) );
+        $pods = $api->load_pods( array( 'names_ids' => true ) );
 
         foreach ( $pods as $pod_id => $pod_label ) {
             $api->delete_pod( array( 'id' => $pod_id ) );

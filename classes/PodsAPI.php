@@ -4658,10 +4658,13 @@ class PodsAPI {
         if ( isset( $params->count ) && $params->count )
             $pre_key .= '_count';
 
+        if ( isset( $params->ids ) && $params->ids && !empty( $ids ) )
+            $pre_key .= '_ids_' . implode( '_', $ids );
+
         if ( isset( $params->names ) && $params->names )
             $pre_key .= '_names';
-        elseif ( isset( $params->ids ) && $params->ids )
-            $pre_key .= '_ids';
+        elseif ( isset( $params->names_ids ) && $params->names_ids )
+            $pre_key .= '_names_ids';
 
         if ( isset( $params->key_names ) && $params->key_names )
             $pre_key .= '_namekeys';
@@ -4727,12 +4730,10 @@ class PodsAPI {
             $the_pods = count( $_pods );
         else {
             foreach ( $_pods as $pod ) {
-                if ( isset( $params->names ) && $params->names ) {
+                if ( isset( $params->names ) && $params->names )
                     $the_pods[ $pod->post_name ] = $pod->post_title;
-                }
-                elseif ( isset( $params->ids ) && $params->ids ) {
-                    $the_pods[ $pod->ID ] = $pod->post_title;
-                }
+                elseif ( isset( $params->names_ids ) && $params->names_ids )
+                    $the_pods[ $pod->ID ] = $pod->post_name;
                 else {
                     if ( isset( $params->fields ) && !$params->fields )
                         $pod->fields = false;

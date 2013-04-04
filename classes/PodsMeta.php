@@ -132,10 +132,10 @@ class PodsMeta {
                 add_filter( 'delete_term_metadata', array( $this, 'delete_term_meta' ), 10, 5 );
             }
             */
-
-            // Handle Delete
-            add_action( 'delete_term_taxonomy', array( $this, 'delete_taxonomy' ), 10, 1 );
         }
+
+        // Handle Delete
+        add_action( 'delete_term_taxonomy', array( $this, 'delete_taxonomy' ), 10, 1 );
 
         if ( !empty( self::$media ) ) {
             if ( pods_wp_version( '3.5' ) ) {
@@ -158,10 +158,10 @@ class PodsMeta {
                     add_filter( 'delete_post_metadata', array( $this, 'delete_post_meta' ), 10, 5 );
                 }
             }
-
-            // Handle Delete
-            add_action( 'delete_attachment', array( $this, 'delete_media' ), 10, 1 );
         }
+
+        // Handle Delete
+        add_action( 'delete_attachment', array( $this, 'delete_media' ), 10, 1 );
 
         if ( !empty( self::$user ) ) {
             // Handle User Editor
@@ -178,10 +178,10 @@ class PodsMeta {
                 add_filter( 'update_user_metadata', array( $this, 'update_user_meta' ), 10, 5 );
                 add_filter( 'delete_user_metadata', array( $this, 'delete_user_meta' ), 10, 5 );
             }
-
-            // Handle Delete
-            add_action( 'delete_user', array( $this, 'delete_user' ), 10, 1 );
         }
+
+        // Handle Delete
+        add_action( 'delete_user', array( $this, 'delete_user' ), 10, 1 );
 
         if ( !empty( self::$comment ) ) {
             // Handle Comment Form / Editor
@@ -200,10 +200,10 @@ class PodsMeta {
                 add_filter( 'update_comment_metadata', array( $this, 'update_comment_meta' ), 10, 5 );
                 add_filter( 'delete_comment_metadata', array( $this, 'delete_comment_meta' ), 10, 5 );
             }
-
-            // Handle Delete
-            add_action( 'delete_comment', array( $this, 'delete_comment' ), 10, 1 );
         }
+
+        // Handle Delete
+        add_action( 'delete_comment', array( $this, 'delete_comment' ), 10, 1 );
 
         // @todo Patch core to provide $option back in filters, patch core to add filter pre_add_option to add_option
         /*if ( !empty( self::$settings ) ) {

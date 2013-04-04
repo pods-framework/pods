@@ -2934,8 +2934,6 @@ class PodsAPI {
                     continue;
 
                 foreach ( $data as $field => $values ) {
-                    $field_id = pods_absint( $fields[ $field ][ 'id' ] );
-
                     $related_limit = (int) pods_var_raw( $type . '_limit', $fields[ $field ][ 'options' ], 0 );
 
                     if ( 'single' == pods_var_raw( $type . '_format_type', $fields[ $field ][ 'options' ] ) )
@@ -2960,186 +2958,43 @@ class PodsAPI {
                     $values = array_unique( array_filter( $new_values ) );
 
                     // Limit values
-                    if ( 0 < $related_limit && !empty( $related_ids ) )
+                    if ( 0 < $related_limit && !empty( $values ) )
                         $values = array_slice( $values, 0, $related_limit );
 
                     // Get current values
-                    if ( 'pick' == $type && isset( PodsField_Pick::$related_data[ $field ] ) && isset( PodsField_Pick::$related_data[ $field ][ 'related_ids_' . $params->id ] ) )
-                        $related_ids = PodsField_Pick::$related_data[ $field ][ 'current_ids' ];
+                    if ( 'pick' == $type && isset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ] ) && isset( PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ][ 'current_ids' ] ) )
+                        $related_ids = PodsField_Pick::$related_data[ $fields[ $field ][ 'id' ] ][ 'current_ids' ];
                     else
                         $related_ids = $this->lookup_related_items( $fields[ $field ][ 'id' ], $pod[ 'id' ], $params->id, $fields[ $field ], $pod );
 
-                    if ( empty( $related_ids ) )
-                        $related_ids = array();
-
                     // Get values removed
-                    $check_values = $values;
+                    $value_ids = $values;
 
                     if ( 'pick' != $type ) {
-                        foreach ( $check_values as $k => $id ) {
+                        foreach ( $value_ids as $k => $id ) {
                             if ( is_array( $id ) && isset( $id[ 'id' ] ) )
                                 $id = (int) $id[ 'id' ];
 
-                            $check_values[ $k ] = $id;
+                            $value_ids[ $k ] = $id;
                         }
                     }
 
-                    $remove_ids = array_diff( $related_ids, $check_values );
+                    // Get ids to remove
+                    $remove_ids = array_diff( $related_ids, $value_ids );
 
-                    // Post Types, Media, Users, and Comments (meta-based)
-                    if ( in_array( $pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) ) {
-                        $object_type = $pod[ 'type' ];
+                    // Delete relationships
+                    $this->delete_relationships( $params->id, $remove_ids, $pod, $fields[ $field ] );
 
-                        if ( 'post_type' == $object_type || 'media' == $object_type )
-                            $object_type = 'post';
+                    // Save relationships
+                    $this->save_relationships( $params->id, $value_ids, $pod, $fields[ $field ] );
 
-                        delete_metadata( $object_type, $params->id, $field );
-
-                        if ( !empty( $values ) ) {
-                            update_metadata( $object_type, $params->id, '_pods_' . $field, $values );
-
-                            foreach ( $values as $v ) {
-                                if ( is_array( $v ) && isset( $v[ 'id' ] ) )
-                                    $v = $v[ 'id' ];
-
-                                add_metadata( $object_type, $params->id, $field, (int) $v );
-                            }
-                        }
-                        else
-                            delete_metadata( $object_type, $params->id, '_pods_' . $field );
-                    }
-                    // Custom Settings Pages (options-based)
-                    elseif ( 'settings' == $pod[ 'type' ] ) {
-                        if ( !empty( $values ) ) {
-                            update_option( '_pods_' . $pod[ 'name' ] . '_' . $field, $values );
-
-                            $values_to_impode = array();
-
-                            foreach ( $values as $id ) {
-                                if ( is_array( $id ) && isset( $id[ 'id' ] ) )
-                                    $id = $id[ 'id' ];
-
-                                $values_to_impode[] = (int) $id;
-                            }
-
-                            update_option( $pod[ 'name' ] . '_' . $field, $values_to_impode );
-                        }
-                        else {
-                            delete_option( '_pods_' . $pod[ 'name' ] . '_' . $field );
-                            delete_option( $pod[ 'name' ] . '_' . $field );
-                        }
-                    }
-
-                    $related_pod_id = $related_field_id = 0;
-
-                    if ( 'pick' == $type && isset( PodsField_Pick::$related_data[ $field ] ) && !empty( PodsField_Pick::$related_data[ $field ][ 'related_field' ] ) ) {
-                        $related_pod_id = PodsField_Pick::$related_data[ $field ][ 'related_pod' ][ 'id' ];
-                        $related_field_id = PodsField_Pick::$related_data[ $field ][ 'related_field' ][ 'id' ];
-                    }
-
-                    // Relationships table
-                    if ( !pods_tableless() ) {
-                        if ( !in_array( $params->id, $related_ids ) ) {
-                            $related_weight = 0;
-
-                            foreach ( $values as $id ) {
-                                if ( is_array( $id ) && isset( $id[ 'id' ] ) )
-                                    $id = $id[ 'id' ];
-
-                                $id = (int) $id;
-
-                                if ( in_array( $id, $related_ids ) ) {
-                                    pods_query( "
-                                        UPDATE `@wp_podsrel`
-                                        SET
-                                            `pod_id` = %d,
-                                            `field_id` = %d,
-                                            `item_id` = %d,
-                                            `related_pod_id` = %d,
-                                            `related_field_id` = %d,
-                                            `related_item_id` = %d,
-                                            `weight` = %d
-                                        WHERE
-                                            `pod_id` = %d
-                                            AND `field_id` = %d
-                                            AND `item_id` = %d
-                                            AND `related_item_id` = %d
-                                    ", array(
-                                        $params->pod_id,
-                                        $field_id,
-                                        $params->id,
-                                        $related_pod_id,
-                                        $related_field_id,
-                                        $id,
-                                        $related_weight,
-
-                                        $params->pod_id,
-                                        $field_id,
-                                        $params->id,
-                                        $id,
-                                    ) );
-                                }
-                                else {
-                                    pods_query( "
-                                        INSERT INTO `@wp_podsrel`
-                                            (
-                                                `pod_id`,
-                                                `field_id`,
-                                                `item_id`,
-                                                `related_pod_id`,
-                                                `related_field_id`,
-                                                `related_item_id`,
-                                                `weight`
-                                            )
-                                        VALUES ( %d, %d, %d, %d, %d, %d, %d )
-                                    ", array(
-                                        $params->pod_id,
-                                        $field_id,
-                                        $params->id,
-                                        $related_pod_id,
-                                        $related_field_id,
-                                        $id,
-                                        $related_weight
-                                    ) );
-                                }
-
-                                $related_weight++;
-                            }
-                        }
-
-                        if ( !empty( $remove_ids ) ) {
-                            $remove_ids = implode( ', ', $remove_ids );
-
-                            pods_query( "
-                                DELETE FROM `@wp_podsrel`
-                                WHERE
-                                (
-                                    `pod_id` = %d
-                                    AND `field_id` = %d
-                                    AND `item_id` = %d
-                                    AND `related_item_id` IN ( {$remove_ids} )
-                                )
-                                OR (
-                                    `related_pod_id` = %d
-                                    AND `related_field_id` = %d
-                                    AND `related_item_id` = %d
-                                    AND `item_id` IN ( {$remove_ids} )
-                                )
-                            ", array(
-                                $params->pod_id,
-                                $field_id,
-                                $params->id,
-
-                                $params->pod_id,
-                                $field_id,
-                                $params->id
-                            ) );
-                        }
-                    }
-
-                    $params->remove_ids = $remove_ids;
-
+                    // Run save function for field type (where needed)
                     PodsForm::save( $type, $values, $params->id, $field, array_merge( $fields[ $field ], $fields[ $field ][ 'options' ] ), array_merge( $fields, $object_fields ), $pod, $params );
+
+                    if ( 'pick' == $field[ 'type' ] && isset( PodsField_Pick::$related_data[ $field[ 'id' ] ] ) ) {
+                        unset( PodsField_Pick::$related_data[ PodsField_Pick::$related_data[ $field[ 'id' ] ][ 'related_field' ][ 'id' ] ] );
+                        unset( PodsField_Pick::$related_data[ $field[ 'id' ] ] );
+                    }
                 }
             }
         }
@@ -3221,6 +3076,138 @@ class PodsAPI {
         }
 
         return $ids;
+    }
+
+    /**
+     * Save relationships
+     *
+     * @param int $id ID of item
+     * @param int|array $related_id ID or IDs to save
+     * @param array $pod Pod data
+     * @param array $field Field data
+     */
+    public function save_relationships ( $id, $related_ids, $pod, $field ) {
+        // Get current values
+        if ( 'pick' == $field[ 'type' ] && isset( PodsField_Pick::$related_data[ $field[ 'id' ] ] ) && isset( PodsField_Pick::$related_data[ $field[ 'id' ] ][ 'current_ids' ] ) )
+            $current_ids = PodsField_Pick::$related_data[ $field[ 'id' ] ][ 'current_ids' ];
+        else
+            $current_ids = $this->lookup_related_items( $field[ 'id' ], $pod[ 'id' ], $id, $field, $pod );
+
+        if ( !is_array( $related_ids ) )
+            $related_ids = implode( ',', $related_ids );
+
+        foreach ( $related_ids as $k => $related_id ) {
+            $related_ids[ $k ] = (int) $related_id;
+        }
+
+        $related_ids = array_unique( array_filter( $related_ids ) );
+
+        $related_limit = (int) pods_var_raw( $field[ 'type' ] . '_limit', $field[ 'options' ], 0 );
+
+        if ( 'single' == pods_var_raw( $field[ 'type' ] . '_format_type', $field[ 'options' ] ) )
+            $related_limit = 1;
+
+        // Limit values
+        if ( 0 < $related_limit && !empty( $related_ids ) )
+            $related_ids = array_slice( $related_ids, 0, $related_limit );
+
+        // Post Types, Media, Users, and Comments (meta-based)
+        if ( in_array( $pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) ) {
+            $object_type = $pod[ 'type' ];
+
+            if ( 'post_type' == $object_type || 'media' == $object_type )
+                $object_type = 'post';
+
+            delete_metadata( $object_type, $id, $field[ 'name' ] );
+
+            if ( !empty( $related_ids ) ) {
+                update_metadata( $object_type, $id, '_pods_' . $field[ 'name' ], $related_ids );
+
+                foreach ( $related_ids as $related_id ) {
+                    add_metadata( $object_type, $id, $field[ 'name' ], $related_id );
+                }
+            }
+            else
+                delete_metadata( $object_type, $id, '_pods_' . $field[ 'name' ] );
+        }
+        // Custom Settings Pages (options-based)
+        elseif ( 'settings' == $pod[ 'type' ] ) {
+            if ( !empty( $related_ids ) )
+                update_option( $pod[ 'name' ] . '_' . $field[ 'name' ], $related_ids );
+            else
+                delete_option( $pod[ 'name' ] . '_' . $field[ 'name' ] );
+        }
+
+        $related_pod_id = $related_field_id = 0;
+
+        if ( 'pick' == $field[ 'type' ] && isset( PodsField_Pick::$related_data[ $field[ 'id' ] ] ) && !empty( PodsField_Pick::$related_data[ $field[ 'id' ] ][ 'related_field' ] ) ) {
+            $related_pod_id = PodsField_Pick::$related_data[ $field[ 'id' ] ][ 'related_pod' ][ 'id' ];
+            $related_field_id = PodsField_Pick::$related_data[ $field[ 'id' ] ][ 'related_field' ][ 'id' ];
+        }
+
+        // Relationships table
+        if ( !pods_tableless() ) {
+            $related_weight = 0;
+
+            foreach ( $related_ids as $related_id ) {
+                if ( in_array( $related_id, $current_ids ) ) {
+                    pods_query( "
+                        UPDATE `@wp_podsrel`
+                        SET
+                            `pod_id` = %d,
+                            `field_id` = %d,
+                            `item_id` = %d,
+                            `related_pod_id` = %d,
+                            `related_field_id` = %d,
+                            `related_item_id` = %d,
+                            `weight` = %d
+                        WHERE
+                            `pod_id` = %d
+                            AND `field_id` = %d
+                            AND `item_id` = %d
+                            AND `related_item_id` = %d
+                    ", array(
+                        $pod[ 'id' ],
+                        $field[ 'id' ],
+                        $id,
+                        $related_pod_id,
+                        $related_field_id,
+                        $related_id,
+                        $related_weight,
+
+                        $pod[ 'id' ],
+                        $field[ 'id' ],
+                        $id,
+                        $related_id,
+                    ) );
+                }
+                else {
+                    pods_query( "
+                        INSERT INTO `@wp_podsrel`
+                            (
+                                `pod_id`,
+                                `field_id`,
+                                `item_id`,
+                                `related_pod_id`,
+                                `related_field_id`,
+                                `related_item_id`,
+                                `weight`
+                            )
+                        VALUES ( %d, %d, %d, %d, %d, %d, %d )
+                    ", array(
+                        $pod[ 'id' ],
+                        $field[ 'id' ],
+                        $id,
+                        $related_pod_id,
+                        $related_field_id,
+                        $related_id,
+                        $related_weight
+                    ) );
+                }
+
+                $related_weight++;
+            }
+        }
     }
 
     /**
@@ -4143,17 +4130,20 @@ class PodsAPI {
                 array(
                     'key' => 'pick_object',
                     'value' => $object
-                ),
-                array(
-                    'key' => 'pick_val',
-                    'value' => $name
                 )
             )
         );
 
+        if ( !empty( $name ) && $name != $object ) {
+            $params[ 'where' ][] = array(
+                'key' => 'pick_val',
+                'value' => $name
+            );
+        }
+
         $fields = $this->load_fields( $params, false );
 
-        if ( 'media' == $pod[ 'type' ] ) {
+        if ( !empty( $pod ) && 'media' == $pod[ 'type' ] ) {
             $params[ 'where' ] = array(
                 array(
                     'key' => 'type',
@@ -4173,11 +4163,11 @@ class PodsAPI {
 
                 $related_from = $this->lookup_related_items_from( $related_field[ 'id' ], $related_pod[ 'id' ], $id, $related_field, $related_pod );
 
-                $this->delete_relationships( $id, $related_from, $related_pod, $related_field );
+                $this->delete_relationships( $related_from, $id, $related_pod, $related_field );
             }
         }
 
-        if ( !pods_tableless() ) {
+        if ( !empty( $pod ) && !pods_tableless() ) {
             pods_query( "
                 DELETE FROM `@wp_podsrel`
                 WHERE
@@ -4204,12 +4194,12 @@ class PodsAPI {
     /**
      * Delete relationships
      *
-     * @param int $id ID to remove
-     * @param int|array $related_id ID or IDs to remove $id from
+     * @param int|array $related_id IDs for items to save
+     * @param int|array $id ID or IDs to remove
      * @param array $related_pod Pod data
      * @param array $related_field Field data
      */
-    public function delete_relationships ( $id, $related_id, $related_pod, $related_field ) {
+    public function delete_relationships ( $related_id, $id, $related_pod, $related_field ) {
         $id = (int) $id;
 
         if ( empty( $id ) )
@@ -4217,7 +4207,7 @@ class PodsAPI {
 
         if ( is_array( $related_id ) ) {
             foreach ( $related_id as $rid ) {
-                $this->delete_relationships( $id, $rid, $related_pod, $related_field );
+                $this->delete_relationships( $rid, $id, $related_pod, $related_field );
             }
 
             return;
@@ -4232,7 +4222,10 @@ class PodsAPI {
 
         unset( $related_ids[ array_search( $id, $related_ids ) ] );
 
-        $related_ids = array_values( $related_ids );
+        $no_conflict = pods_no_conflict_check( $related_pod[ 'type' ] );
+
+        if ( !$no_conflict )
+            pods_no_conflict_on( $related_pod[ 'type' ] );
 
         // Post Types, Media, Users, and Comments (meta-based)
         if ( in_array( $related_pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment' ) ) ) {
@@ -4255,14 +4248,10 @@ class PodsAPI {
         }
         // Custom Settings Pages (options-based)
         elseif ( 'settings' == $related_pod[ 'type' ] ) {
-            if ( !empty( $related_ids ) ) {
-                update_option( '_pods_' . $related_pod[ 'name' ] . '_' . $related_field[ 'name' ], $related_ids );
+            if ( !empty( $related_ids ) )
                 update_option( $related_pod[ 'name' ] . '_' . $related_field[ 'name' ], $related_ids );
-            }
-            else {
-                delete_option( '_pods_' . $related_pod[ 'name' ] . '_' . $related_field[ 'name' ] );
+            else
                 delete_option( $related_pod[ 'name' ] . '_' . $related_field[ 'name' ] );
-            }
         }
 
         // Relationships table
@@ -4294,6 +4283,9 @@ class PodsAPI {
                 $id
             ) );
         }
+
+        if ( !$no_conflict )
+            pods_no_conflict_off( $related_pod[ 'type' ] );
     }
 
     /**
@@ -5111,6 +5103,8 @@ class PodsAPI {
             if ( false !== $fields )
                 return $fields;
 
+            $fields = array();
+
             $_fields = get_posts( $args );
 
             foreach ( $_fields as $field ) {
@@ -5785,7 +5779,7 @@ class PodsAPI {
      * @uses pods_query()
      */
     public function lookup_related_items ( $field_id, $pod_id, $ids, $field = null, $pod = null ) {
-        $related_ids = false;
+        $related_ids = array();
 
         if ( !is_array( $ids ) )
             $ids = explode( ',', $ids );
@@ -5834,8 +5828,6 @@ class PodsAPI {
             $relationships = pods_query( $sql );
 
             if ( !empty( $relationships ) ) {
-                $related_ids = array();
-
                 foreach ( $relationships as $relation ) {
                     if ( $field_id == $relation->field_id && !in_array( $relation->related_item_id, $related_ids ) )
                         $related_ids[] = (int) $relation->related_item_id;
@@ -5849,8 +5841,6 @@ class PodsAPI {
                 $pod = $this->load_pod( array( 'id' => $pod_id, 'table_info' => false ), false );
 
             if ( !empty( $pod ) && in_array( $pod[ 'type' ], array( 'post_type', 'media', 'user', 'comment', 'settings' ) ) ) {
-                $related_ids = array();
-
                 $meta_type = $pod[ 'type' ];
 
                 if ( in_array( $pod[ 'type' ], array( 'post_type', 'media' ) ) )
@@ -5919,7 +5909,7 @@ class PodsAPI {
         if ( is_array( $related_ids ) ) {
             $related_ids = array_unique( array_filter( $related_ids ) );
 
-            if ( 0 < $related_pick_limit )
+            if ( 0 < $related_pick_limit && !empty( $related_ids ) )
                 $related_ids = array_slice( $related_ids, 0, $related_pick_limit );
         }
 

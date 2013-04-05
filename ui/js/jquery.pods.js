@@ -612,7 +612,7 @@
 
                             // Allow for override
                             if ( 'undefined' != typeof pods_admin_wizard_callback )
-                                check = pods_admin_wizard_callback( step );
+                                check = pods_admin_wizard_callback( step, false );
 
                             if ( false === check )
                                 return check;
@@ -623,6 +623,13 @@
                             $( '#pods-wizard-next' ).css( 'cursor', 'default' );
                             $( '#pods-wizard-next' ).prop( 'disabled', true );
                             $( '#pods-wizard-next' ).text( $( '#pods-wizard-next' ).data( 'processing' ) );
+
+                            // Allow for override
+                            if ( 'undefined' != typeof pods_admin_wizard_callback )
+                                check = pods_admin_wizard_callback( step, true );
+
+                            if ( false === check )
+                                return check;
 
                             $( '#pods-wizard-box' ).closest( 'form' ).submit();
 
@@ -640,7 +647,7 @@
                         else {
                             // Allow for override
                             if ( 'undefined' != typeof pods_admin_wizard_callback )
-                                check = pods_admin_wizard_callback( step );
+                                check = pods_admin_wizard_callback( step, true );
 
                             if ( false === check )
                                 return check;
@@ -686,18 +693,19 @@
 
                 // Next button event binding
                 $( '#pods-wizard-next' ).on( 'click', function ( e ) {
+                    if ( $( this ).is( ':disabled' ) )
+                        return;
+
                     e.preventDefault();
 
                     methods.stepForward();
                 } );
 
                 // Start over button event binding
-                $( '#pods-wizard-start' )
-                    .hide()
-                    .on( 'click', function ( e ) {
-                            e.preventDefault();
-                            methods.startOver();
-                         } );
+                $( '#pods-wizard-start' ).hide().on( 'click', function ( e ) {
+                    e.preventDefault();
+                    methods.startOver();
+                } );
 
                 // Upgrade choice button event binding
                 $( '.pods-choice-button' ).on( 'click', function ( e ) {

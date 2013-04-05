@@ -1246,7 +1246,14 @@ class PodsAPI {
             'orderby',
             'pod',
             'recurse',
-            'table_info'
+            'table_info',
+            'attributes',
+            'group',
+            'grouped',
+            'developer_mode',
+            'dependency',
+            'depends-on',
+            'excludes-on'
         );
 
         foreach ( $options_ignore as $ignore ) {
@@ -1436,7 +1443,7 @@ class PodsAPI {
             $definitions = array( "`id` BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY" );
 
             foreach ( $pod[ 'fields' ] as $field ) {
-                if ( !in_array( $field[ 'type' ], $tableless_field_types ) || in_array( pods_var( 'pick_object' ), $simple_tableless_objects ) )
+                if ( !in_array( $field[ 'type' ], $tableless_field_types ) || ( 'pick' == $field[ 'type' ] && in_array( pods_var( 'pick_object' ), $simple_tableless_objects ) ) )
                     $definitions[] = "`{$field['name']}` " . $this->get_field_definition( $field[ 'type' ], $field[ 'options' ] );
             }
 
@@ -1848,7 +1855,7 @@ class PodsAPI {
             if ( empty( $params->id ) )
                 $params->id = $old_id;
 
-            if ( !in_array( $old_type, $tableless_field_types ) || $old_simple )
+            if ( !in_array( $old_type, $tableless_field_types ) || ( 'pick' == $old_type && in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects ) ) )
                 $old_definition = '`' . $old_name . '` ' . $this->get_field_definition( $old_type, $old_options );
         }
         else {
@@ -1869,6 +1876,23 @@ class PodsAPI {
 
         // Setup options
         $options = get_object_vars( $params );
+
+        $options_ignore = array(
+            'method',
+            'table_info',
+            'attributes',
+            'group',
+            'grouped',
+            'developer_mode',
+            'dependency',
+            'depends-on',
+            'excludes-on'
+        );
+
+        foreach ( $options_ignore as $ignore ) {
+            if ( isset( $options[ $ignore ] ) )
+                unset( $options[ $ignore ] );
+        }
 
         if ( isset( $options[ 'method' ] ) )
             unset( $options[ 'method' ] );
@@ -4724,7 +4748,14 @@ class PodsAPI {
             'orderby',
             'pod',
             'recurse',
-            'table_info'
+            'table_info',
+            'attributes',
+            'group',
+            'grouped',
+            'developer_mode',
+            'dependency',
+            'depends-on',
+            'excludes-on'
         );
 
         if ( isset( $params->count ) && $params->count )
@@ -4947,6 +4978,23 @@ class PodsAPI {
                     $field[ 'pod' ] = $_field[ 'pod' ];
 
                 $field[ 'options' ] = get_post_meta( $field[ 'id' ] );
+
+                $options_ignore = array(
+                    'method',
+                    'table_info',
+                    'attributes',
+                    'group',
+                    'grouped',
+                    'developer_mode',
+                    'dependency',
+                    'depends-on',
+                    'excludes-on'
+                );
+
+                foreach ( $options_ignore as $ignore ) {
+                    if ( isset( $field[ 'options' ][ $ignore ] ) )
+                        unset( $field[ 'options' ][ $ignore ] );
+                }
 
                 foreach ( $field[ 'options' ] as $option => $value ) {
                     if ( is_array( $value ) ) {

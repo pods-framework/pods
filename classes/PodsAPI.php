@@ -1143,6 +1143,7 @@ class PodsAPI {
      */
     public function save_pod ( $params, $sanitized = false, $db = true ) {
         $tableless_field_types = PodsForm::tableless_field_types();
+        $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
 
         $load_params = (object) $params;
 
@@ -1435,7 +1436,7 @@ class PodsAPI {
             $definitions = array( "`id` BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY" );
 
             foreach ( $pod[ 'fields' ] as $field ) {
-                if ( !in_array( $field[ 'type' ], $tableless_field_types ) )
+                if ( !in_array( $field[ 'type' ], $tableless_field_types ) || in_array( pods_var( 'pick_object' ), $simple_tableless_objects ) )
                     $definitions[] = "`{$field['name']}` " . $this->get_field_definition( $field[ 'type' ], $field[ 'options' ] );
             }
 

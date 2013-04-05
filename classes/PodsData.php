@@ -1021,7 +1021,7 @@ class PodsData {
                     $filterfield = $attributes[ 'real_name' ];
 
                 if ( 'pick' == $attributes[ 'type' ] ) {
-                    $filter_value = pods_var( 'filter_' . $field, 'get', false, null, true );
+                    $filter_value = pods_var( 'filter_' . $field, 'get' );
 
                     if ( !is_array( $filter_value ) )
                         $filter_value = (array) $filter_value;

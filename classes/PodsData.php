@@ -2457,7 +2457,7 @@ class PodsData {
                 if ( !empty( $traverse[ 'table_info' ][ 'meta_table' ] ) )
                     $meta_data_table = true;
             }
-            elseif ( isset( $traverse_recurse[ 'last_table_info' ] ) && 0 == $traverse_recurse[ 'depth' ] )
+            elseif ( !in_array( $traverse[ 'type' ], $tableless_field_types ) && isset( $traverse_recurse[ 'last_table_info' ] ) && !empty( $traverse_recurse[ 'last_table_info' ] )  && 0 == $traverse_recurse[ 'depth' ] )
                 $traverse[ 'table_info' ] = $traverse_recurse[ 'last_table_info' ];
             else
                 $traverse[ 'table_info' ] = $this->api->get_table_info( $traverse[ 'pick_object' ], $traverse[ 'pick_val' ] );

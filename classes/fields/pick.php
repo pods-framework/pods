@@ -552,7 +552,9 @@ class PodsField_Pick extends PodsField {
     public function schema ( $options = null ) {
         $schema = false;
 
-        if ( in_array( pods_var( 'pick_object', $options ), array( 'custom-simple', 'role', 'post-types', 'taxonomies' ) ) )
+        $simple_tableless_objects = $this->simple_objects();
+
+        if ( in_array( pods_var( 'pick_object', $options ), $simple_tableless_objects ) )
             $schema = 'LONGTEXT';
 
         return $schema;

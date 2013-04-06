@@ -25,7 +25,7 @@ class PodsInit {
     static $meta;
 
     /**
-     * @var
+     * @var PodsAdmin
      */
     static $admin;
 
@@ -455,6 +455,11 @@ class PodsInit {
                 if ( 'custom' == $capability_type )
                     $capability_type = pods_var( 'capability_type_custom', $post_type, 'post' );
 
+                $show_in_menu = (boolean) pods_var( 'show_in_menu', $post_type, true );
+
+                if ( $show_in_menu && 0 < strlen( pods_var_raw( 'menu_location_custom', $post_type ) ) )
+                    $show_in_menu = pods_var_raw( 'menu_location_custom', $post_type );
+
                 // Register Post Type
                 $pods_post_types[ pods_var( 'name', $post_type ) ] = array(
                     'label' => $cpt_label,
@@ -464,7 +469,7 @@ class PodsInit {
                     'publicly_queryable' => (boolean) pods_var( 'publicly_queryable', $post_type, (boolean) pods_var( 'public', $post_type, true ) ),
                     'exclude_from_search' => (boolean) pods_var( 'exclude_from_search', $post_type, ( (boolean) pods_var( 'public', $post_type, true ) ? false : true ) ),
                     'show_ui' => (boolean) pods_var( 'show_ui', $post_type, (boolean) pods_var( 'public', $post_type, true ) ),
-                    'show_in_menu' => (boolean) pods_var( 'show_in_menu', $post_type, true ),
+                    'show_in_menu' => $show_in_menu,
                     'show_in_admin_bar' => (boolean) pods_var( 'show_in_admin_bar', $post_type, (boolean) pods_var( 'show_in_menu', $post_type, true ) ),
                     'menu_position' => (int) pods_var( 'menu_position', $post_type, 20, null, true ),
                     'menu_icon' => pods_var( 'menu_icon', $post_type, null, null, true ),

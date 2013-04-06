@@ -2117,6 +2117,8 @@ class PodsMeta {
             $meta_key => null
         );
 
+        // @todo handle $meta_value (delete the field value only if it matches)
+        // @todo handle $delete_all (delete the field values from all pod items)
         pods( $object[ 'name' ], $object_id )->save( $fields );
 
         return $_null;

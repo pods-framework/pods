@@ -1596,13 +1596,17 @@ class Pods {
      *
      * @param string $field Field name
      * @param mixed $value ID(s) to add, int|float to add to number field, string for dates (+1 week), or string for text
+     * @param int $id (optional) ID of the pod item to update
      *
      * @return int The item ID
      *
      * @since 2.3
      */
-    public function add_to ( $field, $value ) {
-        $this->do_hook( 'add_to', $field, $value );
+    public function add_to ( $field, $value, $id = null ) {
+        if ( null === $id )
+            $id = $this->id();
+
+        $this->do_hook( 'add_to', $field, $value, $id );
 
         $id = $this->id();
 

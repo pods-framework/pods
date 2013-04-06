@@ -3023,10 +3023,12 @@ class PodsAPI {
                     $remove_ids = array_diff( $related_ids, $value_ids );
 
                     // Delete relationships
-                    $this->delete_relationships( $params->id, $remove_ids, $pod, $fields[ $field ] );
+                    if ( !empty( $remove_ids ) )
+                        $this->delete_relationships( $params->id, $remove_ids, $pod, $fields[ $field ] );
 
                     // Save relationships
-                    $this->save_relationships( $params->id, $value_ids, $pod, $fields[ $field ] );
+                    if ( !empty( $value_ids ) )
+                        $this->save_relationships( $params->id, $value_ids, $pod, $fields[ $field ] );
 
                     // Run save function for field type (where needed)
                     PodsForm::save( $type, $values, $params->id, $field, array_merge( $fields[ $field ], $fields[ $field ][ 'options' ] ), array_merge( $fields, $object_fields ), $pod, $params );
@@ -4240,11 +4242,6 @@ class PodsAPI {
      * @param array $related_field Field data
      */
     public function delete_relationships ( $related_id, $id, $related_pod, $related_field ) {
-        $id = (int) $id;
-
-        if ( empty( $id ) )
-            return;
-
         if ( is_array( $related_id ) ) {
             foreach ( $related_id as $rid ) {
                 $this->delete_relationships( $rid, $id, $related_pod, $related_field );
@@ -4252,6 +4249,19 @@ class PodsAPI {
 
             return;
         }
+
+        if ( is_array( $id ) ) {
+            foreach ( $id as $rid ) {
+                $this->delete_relationships( $related_id, $rid, $related_pod, $related_field );
+            }
+
+            return;
+        }
+
+        $id = (int) $id;
+
+        if ( empty( $id ) )
+            return;
 
         $related_ids = $this->lookup_related_items( $related_field[ 'id' ], $related_pod[ 'id' ], $related_id, $related_field, $related_pod );
 

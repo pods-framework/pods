@@ -1306,8 +1306,12 @@ class Pods {
 
                     if ( isset( $this->fields[ $k ] ) && in_array( $this->fields[ $k ][ 'type' ], $tableless_field_types ) ) {
                         if ( in_array( $this->fields[ $k ][ 'pick_object' ], $simple_tableless_objects ) ) {
-                            if ( 'table' == $this->pod_data[ 'storage' ] )
-                                $key = "`t`.`{$k}`";
+                            if ( 'table' == $this->pod_data[ 'storage' ] ) {
+                                if ( !in_array( $this->pod_data[ 'type' ], array( 'pod', 'table' ) ) )
+                                    $key = "`d`.`{$k}`";
+                                else
+                                    $key = "`t`.`{$k}`";
+                            }
                             else
                                 $key = "`{$k}`.`meta_value`";
                         }

@@ -2123,7 +2123,10 @@ class PodsAPI {
                     pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` DROP COLUMN `{$old_name}`", false );
                 elseif ( 0 < strlen( $definition ) ) {
                     if ( $old_name != $field[ 'name' ] ) {
-                        $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `{$old_name}` {$definition}", false );
+                        $test = false;
+
+                        if ( 0 < strlen( $old_definition ) )
+                            $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `" . $field[ 'name' ] . "` {$definition}", false );
 
                         // If the old field doesn't exist, continue to add a new field
                         if ( false === $test )
@@ -2139,7 +2142,10 @@ class PodsAPI {
                 }
             }
             elseif ( 0 < strlen( $definition ) ) {
-                $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `" . $field[ 'name' ] . "` {$definition}", false );
+                $test = false;
+
+                if ( 0 < strlen( $old_definition ) )
+                    $test = pods_query( "ALTER TABLE `@wp_pods_{$params->pod}` CHANGE `" . $field[ 'name' ] . "` {$definition}", false );
 
                 // If the old field doesn't exist, continue to add a new field
                 if ( false === $test )

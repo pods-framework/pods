@@ -1877,6 +1877,10 @@ class PodsUI {
 
             $params = array_merge( $params, (array) $this->params );
 
+            // Debug purposes
+            if ( 1 == pods_var( 'pods_debug_params', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
+                pods_debug( $params );
+
             $this->pod->find( $params );
 
             if ( !$full ) {
@@ -1931,6 +1935,10 @@ class PodsUI {
 
             if ( $full )
                 $params[ 'limit' ] = -1;
+
+            // Debug purposes
+            if ( 1 == pods_var( 'pods_debug_params', 'get', 0 ) && is_user_logged_in() && ( is_super_admin() || current_user_can( 'delete_users' ) || current_user_can( 'pods' ) ) )
+                pods_debug( $params );
 
             $this->pods_data->select( $params );
 

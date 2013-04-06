@@ -1126,20 +1126,38 @@ class PodsForm {
     }
 
     public static function tableless_field_types () {
-        $tableless_field_types = array( 'pick', 'file', 'avatar', 'taxonomy' );
+        $field_types = array( 'pick', 'file', 'avatar', 'taxonomy' );
 
-        return apply_filters( 'pods_tableless_field_types', $tableless_field_types );
+        return apply_filters( 'pods_tableless_field_types', $field_types );
     }
 
     public static function file_field_types () {
-        $file_field_types = array( 'file', 'avatar' );
+        $field_types = array( 'file', 'avatar' );
 
-        return apply_filters( 'pods_file_field_types', $file_field_types );
+        return apply_filters( 'pods_file_field_types', $field_types );
     }
 
     public static function repeatable_field_types () {
-        $repeatable_field_types = array( 'code', 'color', 'currency', 'date', 'datetime', 'email', 'number', 'paragraph', 'phone', 'text', 'time', 'website', 'wysiwyg' );
+        $field_types = array( 'code', 'color', 'currency', 'date', 'datetime', 'email', 'number', 'paragraph', 'phone', 'text', 'time', 'website', 'wysiwyg' );
 
-        return apply_filters( 'pods_repeatable_field_types', $repeatable_field_types );
+        return apply_filters( 'pods_repeatable_field_types', $field_types );
+    }
+
+    public static function number_field_types () {
+        $field_types = array( 'currency', 'number' );
+
+        return apply_filters( 'pods_tableless_field_types', $field_types );
+    }
+
+    public static function date_field_types () {
+        $field_types = array( 'date', 'datetime', 'time' );
+
+        return apply_filters( 'pods_tableless_field_types', $field_types );
+    }
+
+    public static function text_field_types () {
+        $field_types = array( 'code', 'paragraph', 'slug','password', 'text', 'wysiwyg' );
+
+        return apply_filters( 'pods_text_field_types', $field_types );
     }
 }

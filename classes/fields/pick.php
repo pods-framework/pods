@@ -53,6 +53,14 @@ class PodsField_Pick extends PodsField {
     public static $related_data = array();
 
     /**
+     * Data used during input method (mainly for autocomplete)
+     *
+     * @var array
+     * @since 2.3
+     */
+    public static $field_data = array();
+
+    /**
      * API caching for fields that need it during validate/save
      *
      * @var \PodsAPI
@@ -613,6 +621,10 @@ class PodsField_Pick extends PodsField {
         if ( ( 'custom-simple' != pods_var( 'pick_object', $options ) || empty( $custom ) ) && '' != pods_var( 'pick_object', $options, '', null, true ) )
             $ajax = true;
 
+        if ( !empty( self::$field_data ) && self::$field_data[ 'id' ] == $options[ 'id' ] ) {
+            $ajax = (boolean) self::$field_data[ 'autocomplete' ];
+        }
+
         $ajax = apply_filters( 'pods_form_ui_field_pick_ajax', $ajax, $name, $value, $options, $pod, $id );
 
         if ( 0 == pods_var( 'pick_ajax', $options, 1 ) )
@@ -974,7 +986,7 @@ class PodsField_Pick extends PodsField {
                 unset( $options[ 'options' ] );
             }
 
-            if ( !is_array( $value ) && !empty( $value ) ) {
+            if ( !is_array( $value ) && 0 < strlen( $value ) ) {
                 $simple = @json_decode( $value, true );
 
                 if ( is_array( $simple ) )
@@ -1387,6 +1399,16 @@ class PodsField_Pick extends PodsField {
 
                     $results = $search_data->select( $params );
                 }
+                else
+                    $autocomplete = false;
+
+                if ( 'data' == $context ) {
+                    self::$field_data = array(
+                        'field' => $name,
+                        'id' => $options[ 'id' ],
+                        'autocomplete' => $autocomplete
+                    );
+                }
 
                 $ids = array();
 
@@ -1407,18 +1429,18 @@ class PodsField_Pick extends PodsField {
 
                         // WPML integration for Post Types and Taxonomies
                         if ( in_array( $search_data->table, array( $wpdb->posts, $wpdb->terms ) ) && function_exists( 'icl_object_id' ) ) {
-                            $id = icl_object_id( $result[ $search_data->field_id ], $object, false );
+                            $object_id = icl_object_id( $result[ $search_data->field_id ], $object, false );
 
-                            if ( 0 < $id && !in_array( $id, $ids ) ) {
-                                $search_data->field_id = $id;
+                            if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {
+                                $search_data->field_id = $object_id;
 
                                 $text = $result[ $search_data->field_index ];
 
-                                if ( $result[ $search_data->field_id ] != $id ) {
+                                if ( $result[ $search_data->field_id ] != $object_id ) {
                                     if ( $wpdb->posts == $search_data->table )
-                                        $text = trim( get_the_title( $id ) );
+                                        $text = trim( get_the_title( $object_id ) );
                                     elseif ( $wpdb->terms == $search_data->table )
-                                        $text = trim( get_term( $id, $object )->name );
+                                        $text = trim( get_term( $object_id, $object )->name );
                                 }
 
                                 $result[ $search_data->field_index ] = $text;
@@ -1426,18 +1448,18 @@ class PodsField_Pick extends PodsField {
                         }
                         // Polylang integration for Post Types and Taxonomies
                         elseif ( in_array( $search_data->table, array( $wpdb->posts, $wpdb->terms ) ) && is_object( $polylang ) && method_exists( $polylang, 'get_translation' ) ) {
-                            $id = $polylang->get_translation( $object, $result[ $search_data->field_id ] );
+                            $object_id = $polylang->get_translation( $object, $result[ $search_data->field_id ] );
 
-                            if ( 0 < $id && !in_array( $id, $ids ) ) {
-                                $search_data->field_id = $id;
+                            if ( 0 < $object_id && !in_array( $object_id, $ids ) ) {
+                                $search_data->field_id = $object_id;
 
                                 $text = $result[ $search_data->field_index ];
 
-                                if ( $result[ $search_data->field_id ] != $id ) {
+                                if ( $result[ $search_data->field_id ] != $object_id ) {
                                     if ( $wpdb->posts == $search_data->table )
-                                        $text = trim( get_the_title( $id ) );
+                                        $text = trim( get_the_title( $object_id ) );
                                     elseif ( $wpdb->terms == $search_data->table )
-                                        $text = trim( get_term( $id, $object )->name );
+                                        $text = trim( get_term( $object_id, $object )->name );
                                 }
 
                                 $result[ $search_data->field_index ] = $text;

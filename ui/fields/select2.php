@@ -35,7 +35,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
 
 <script type="text/javascript">
     jQuery( function ( $ ) {
-        if ( typeof pods_ajaxurl === "undefined" ) {
+        if ( 'undefined' == typeof pods_ajaxurl ) {
             var pods_ajaxurl = "<?php echo admin_url( 'admin-ajax.php?pods_ajax=1' ); ?>";
         }
 
@@ -58,6 +58,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
                     echo implode( ",\n", $data );
                 }
             ?>};
+
         var $element = $('#<?php echo $attributes[ 'id' ] ?>' );
 
         $element.select2( {
@@ -162,11 +163,11 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
         } );
 
         <?php if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit ) { ?>
-            $element.select2("container").find("ul.select2-choices").sortable({
+            $element.select2( 'container' ).find( 'ul.select2-choices' ).sortable( {
                 containment: 'parent',
-                start: function() { $element.select2("onSortStart"); },
-                update: function() { $element.select2("onSortEnd"); }
-            });
+                start: function() { $element.select2( 'onSortStart' ); },
+                update: function() { $element.select2( 'onSortEnd' ); }
+            } );
         <?php } ?>
     } );
 </script>

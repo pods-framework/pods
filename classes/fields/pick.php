@@ -1460,7 +1460,6 @@ class PodsField_Pick extends PodsField {
                             }
 
                             $result[ $search_data->field_index ] = call_user_func_array( 'apply_filters', $args );
-
                         }
 
                         if ( in_array( $options[ 'pick_object' ], array( 'site', 'network' ) ) )

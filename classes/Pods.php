@@ -1604,13 +1604,13 @@ class Pods {
     public function add_to ( $field, $value ) {
         $this->do_hook( 'add_to', $field, $value );
 
-        if ( empty( $value ) || !isset( $this->fields[ $field ] ) || !in_array( $this->fields[ $field ], PodsForm::tableless_field_types() ) )
+        if ( empty( $value ) || !isset( $this->fields[ $field ] ) || !in_array( $this->fields[ $field ][ 'type' ], PodsForm::tableless_field_types() ) )
             return false;
 
         if ( !is_array( $value ) )
             $value = explode( ',', $value );
 
-        if ( in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) ) {
+        if ( 'pick' == $this->fields[ $field ][ 'type' ] && in_array( $this->fields[ $field ][ 'pick_object' ], PodsForm::field_method( 'pick', 'simple_objects' ) ) ) {
             $current_value = $this->raw( $field );
 
             if ( !empty( $current_value ) )

@@ -174,6 +174,7 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 * Added: New shortcode option for including a field value from the current post/page
 * Added: New WordPress 3.5 Media Library integration, more on the way soon!
 * Added: New shortcode option for including Pod Page content
+* Added: New Pod Page option to associate a Pod and choose the slug {@url.2} to use for populating the pod
 * Added: New translations! Join us in further translating the Pods interface at: http://translate.rocksta.rs/projects/pods-framework
 * Revamped: Admin interface for editing Pods has been updated with tabs and better organization, includes the new ability to add your own tabs and options using the pods_admin_setup_edit_tabs and pods_admin_setup_edit_options filters
 * Revamped: Relationships saving has been revamped to provide better abstraction (less code, more reusable)

@@ -1646,10 +1646,9 @@ class Pods {
         }
         // Number fields
         elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::number_field_types() ) ) {
-            $current_value = $this->raw( $field );
+            $current_value = (float) $this->raw( $field );
 
-            if ( 0 != $current_value )
-                $value = ( $current_value + $value );
+            $value = ( $current_value + (float) $value );
         }
         // Date fields
         elseif ( in_array( $this->fields[ $field ][ 'type' ], PodsForm::date_field_types() ) ) {

@@ -905,7 +905,9 @@ class PodsAdmin {
         $options = array();
 
         // @todo fill this in
-        $options[ 'labels' ] = array();
+        $options[ 'labels' ] = array(
+            'temporary' => 'This has the fields hardcoded' // :(
+        );
 
         if ( 'post_type' == $pod[ 'type' ] ) {
             $options[ 'admin-ui' ] = array(

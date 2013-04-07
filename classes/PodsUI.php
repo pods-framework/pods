@@ -2854,7 +2854,7 @@ class PodsUI {
                                 else {
                                     ob_start();
 
-                                    $field_value = PodsForm::field_method( $attributes[ 'type' ], 'ui', $this->id, $row[ $field ], $field, $attributes[ 'options' ], $fields, $this->pod );
+                                    $field_value = PodsForm::field_method( $attributes[ 'type' ], 'ui', $this->id, $row[ $field ], $field, $attributes, $fields, $this->pod );
 
                                     $field_output = trim( (string) ob_get_clean() );
 
@@ -2864,9 +2864,6 @@ class PodsUI {
                                         $row[ $field ] = trim( (string) $field_value );
                                     elseif ( 0 < strlen( $field_output ) )
                                         $row[ $field ] = $field_output;
-                                    else {
-                                        // run formats
-                                    }
                                 }
 
                                 if ( false !== $attributes[ 'custom_relate' ] ) {

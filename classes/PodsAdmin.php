@@ -1404,6 +1404,7 @@ class PodsAdmin {
         $view = pods_var( 'view', 'get', 'all', null, true );
 
         $recommended = array(
+            'advanced-relationships',
             'advanced-content-types',
             'migrate-packages',
             'roles-and-capabilities',

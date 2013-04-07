@@ -146,15 +146,45 @@ Many thanks go out to the fine folks who have helped us translate Pods into othe
 
 * sk_SK (Slovak) - Branco Radenovich ([WebHostingGeeks.com](http://webhostinggeeks.com/blog/))
 * nl_NL (Dutch) - [Ramon van Belzen](http://www.ramoonus.nl/)
+* And more in progress! Join us in further translating the Pods interface at: http://translate.rocksta.rs/projects/pods-framework
 
 == Changelog ==
 
 = 2.3 - April 7th, 2013 =
+* Added: Custom Settings Pages - now you can add new settings pages with their own custom fields!
+* Added: Pods find() 'where' / 'having' parameters now accepts the standard WP_Query meta_query format! With the added ability to nest AND/OR 'relation' too!
 * Added: When using pods() function and `[pods]` shortcode, Pod and ID will be auto-detected from current post type and ID if on singular post page or in the loop
 * Added: Pods fields() method now takes two new arguments, $field and $option to get an option from a specific field
 * Added: `{@detail_url}` handling for taxonomies, users, and comments
 * Added: New find() traversal capabilities https://github.com/pods-framework/pods/issues/972
 * Added: New field() value and traversal capabilities https://github.com/pods-framework/pods/issues/971
+* Added: When saving a relationship field that's bidirectional, and the related field is required - if the save would cause that field to be empty a warning will now be shown on save
+* Added: New Pods first_id/last_id methods for getting the first/last ID of find()
+* Added: New Pods nth( $pos ) method for when in a fetch() loop, works like CSS nth-child and accepts the same format `5`, `3n+3`, etc: http://css-tricks.com/how-nth-child-works/
+* Added: New Pods position() method for when in a fetch() loop, returns current row number (1+)
+* Added: New Pods add_to() method to add a value to relationship (add ID), file (add ID), number (add/subtract), and text (append) fields to their existing values and saves
+* Added: New Pods import() method maps to PodsAPI import() method
+* Added: New Pods export() method maps to PodsAPI export() and accepts find $params and the ability to choose depth level
+* Added: Advanced Content Types now have Admin UI settings available which expose the most popular PodsUI options
+* Added: Advanced Content Types now have the ability to be Hierarchical, by selecting a relationship field to itself
+* Added: Now you can Duplicate Pods themselves!
+* Added: Pods now automatically adds Post Type capabilities (based on the Post Type options) for each Custom Post Type you create in Pods, works with Members capabilities filter
+* Added: Additional support in the Pods API for (eventually) extending WP Multisite Sites / Networks, and Custom Tables
+* Added: New shortcode / widget / Builder module for including a file from the theme (using PodsView)
+* Added: New shortcode option for including a field value from the current post/page
+* Added: New WordPress 3.5 Media Library integration, more on the way soon!
+* Added: New shortcode option for including Pod Page content
+* Added: New translations! Join us in further translating the Pods interface at: http://translate.rocksta.rs/projects/pods-framework
+* Revamped: Admin interface for editing Pods has been updated with tabs and better organization, includes the new ability to add your own tabs and options using the pods_admin_setup_edit_tabs and pods_admin_setup_edit_options filters
+* Revamped: Relationships saving has been revamped to provide better abstraction (less code, more reusable)
+* Updated: Additional Polylang and WPML support throughout the Pods API
+* Updated: Pods Edit list now separated by Pod Type for easier management on large sites
+* Updated: Pods Components list now separated by Category, getting us ready for many new components that will be separately available soon
+* Updated: Pods export() method now exports to JSON and you can choose the depth of the export (whether to include relationships and their related items, etc)
+* Updated: Better handling for Pods prev/next methods, detecting if there's a find() already on that page
+* Updated: More phpDoc updates
+* Updated: More refined caching and optimization of specific calls to get only what they need
+* Updated: Now enforcing maximum post type (20 chars) / taxonomy (32 chars) naming
 * Changed: Advanced Content Types have been split off into their own component which you can enable to be able to add new Advanced Content Types
 * Changed: Table-based storage for WordPress objects (Post Types, Taxonomies, Media, Users, and Comments) has been split off into it's own component which you can enable to add the table-based storage option to the Pods Add New interface
 * And many more bug fixes and enhancements, nearly 253 in total

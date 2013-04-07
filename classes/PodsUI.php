@@ -3353,6 +3353,13 @@ class PodsUI {
      * @return string
      */
     public function do_magic_tags ( $tag ) {
+        if ( is_array( $tag ) ) {
+            if ( !isset( $tag[ 2 ] ) && strlen( trim( $tag[ 2 ] ) ) < 1 )
+                return '';
+
+            $tag = $tag[ 2 ];
+        }
+
         $tag = trim( $tag, ' {@}' );
         $tag = explode( ',', $tag );
 

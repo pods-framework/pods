@@ -9,7 +9,7 @@ foreach ( $field_options as $field_name => $field_option ) {
 
     $field_option = (array) $field_option;
 
-    $depends = PodsForm::dependencies( $field_option, ( !isset( $advanced_options ) ? 'field-data-' : '' ) );
+    $depends = PodsForm::dependencies( $field_option, ( !isset( $pods_tab_form ) ? 'field-data-' : '' ) );
 
     if ( ( !empty( $depends_on ) || !empty( $depends ) ) && $depends_on != $depends ) {
         if ( !empty( $depends_on ) ) {
@@ -27,7 +27,7 @@ foreach ( $field_options as $field_name => $field_option ) {
     if ( !is_array( $field_option[ 'group' ] ) ) {
         $row_name = $field_name;
 
-        if ( !isset( $advanced_options ) )
+        if ( !isset( $pods_tab_form ) )
             $row_name = 'field_data[' . $pods_i . '][' . $field_name . ']';
 
         $value = $field_option[ 'default' ];
@@ -69,11 +69,11 @@ foreach ( $field_options as $field_name => $field_option ) {
 
                         $field_group_option[ 'boolean_yes_label' ] = $field_group_option[ 'label' ];
 
-                        $depends_option = PodsForm::dependencies( $field_group_option, ( !isset( $advanced_options ) ? 'field-data-' : '' ) );
+                        $depends_option = PodsForm::dependencies( $field_group_option, ( !isset( $pods_tab_form ) ? 'field-data-' : '' ) );
 
                         $row_name = $field_group_name;
 
-                        if ( !isset( $advanced_options ) )
+                        if ( !isset( $pods_tab_form ) )
                             $row_name = 'field_data[' . $pods_i . '][' . $field_group_name . ']';
 
                         $value = $field_group_option[ 'default' ];

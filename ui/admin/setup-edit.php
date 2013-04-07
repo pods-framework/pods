@@ -429,6 +429,8 @@ if ( isset( $_GET[ 'do' ] ) ) {
 <?php
     }
 
+    $pods_tab_form = true;
+
     if ( isset( $tabs[ 'labels' ] ) ) {
 ?>
 <div id="pods-labels" class="pods-nav-tab pods-manage-field pods-dependency pods-submittable-fields">

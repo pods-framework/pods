@@ -2052,7 +2052,7 @@ class PodsMeta {
 
         $pod = pods( $object[ 'name' ], $object_id );
 
-        if ( in_array( $object[ 'fields' ][ $meta_key ], PodsForm::tableless_field_types() ) )
+        if ( in_array( $object[ 'fields' ][ $meta_key ][ 'type' ], PodsForm::tableless_field_types() ) )
             $pod->add_to( $meta_key, $meta_value );
         else
             $pod->save( $meta_key, $meta_value );

@@ -3080,6 +3080,16 @@ class PodsAPI {
         // Clear cache
         pods_cache_clear( $params->id, 'pods_items_' . $params->pod );
 
+        // Clear WP meta cache
+        if ( in_array( $pod[ 'type' ], array( 'post_type', 'user', 'comment', 'taxonomy' ) ) ) {
+            $meta_type = $pod[ 'type' ];
+
+            if ( 'post_type' == $meta_type )
+                $meta_type = 'post';
+
+            wp_cache_delete( $params->id, $meta_type . '_meta' );
+        }
+
         // Success! Return the id
         return $params->id;
     }
@@ -5879,6 +5889,9 @@ class PodsAPI {
 
             if ( 'single' == pods_var_raw( 'pick_format_type', $options ) )
                 $related_pick_limit = 1;
+
+            // Temporary hack until there's some better handling here
+            $related_pick_limit = $related_pick_limit * count( $ids );
         }
 
         if ( !pods_tableless() ) {

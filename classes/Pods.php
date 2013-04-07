@@ -790,6 +790,9 @@ class Pods {
                             $last_pick_val = $pick_val;
                             $last_options = $all_fields[ $pod ][ $field ];
 
+                            // Temporary hack until there's some better handling here
+                            $last_limit = $last_limit * count( $ids );
+
                             // Get related IDs
                             $ids = $this->api->lookup_related_items(
                                 $all_fields[ $pod ][ $field ][ 'id' ],
@@ -1629,6 +1632,10 @@ class Pods {
             else {
                 $related_ids = $this->api->lookup_related_items( $this->fields[ $field ][ 'id' ], $this->pod_data[ 'id' ], $this->id(), $this->fields[ $field ], $this->pod_data );
 
+                foreach ( $value as $k => $v ) {
+                    $value[ $k ] = (int) $v;
+                }
+
                 $value = array_merge( $related_ids, $value );
             }
 
@@ -1669,7 +1676,12 @@ class Pods {
             )
         );
 
-        return $this->api->save_pod_item( $params );
+        $id = $this->api->save_pod_item( $params );
+
+        if ( 0 < $id )
+            $this->fetch( $id );
+
+        return $id;
     }
 
     /**
@@ -1708,7 +1720,12 @@ class Pods {
             'allow_custom_fields' => true
         );
 
-        return $this->api->save_pod_item( $params );
+        $id = $this->api->save_pod_item( $params );
+
+        if ( 0 < $id )
+            $this->fetch( $id );
+
+        return $id;
     }
 
     /**

@@ -903,8 +903,8 @@ class Pods {
                             if ( empty( $data ) )
                                 $value = false;
                             else {
-                                foreach ( $data as &$item_value ) {
-                                    $item_value = get_object_vars( (object) $item_value );
+                                foreach ( $data as $k => $item_value ) {
+                                    $data[ $k ] = get_object_vars( (object) $item_value );
                                 }
 
                                 $object_type = $table[ 'type' ];
@@ -951,8 +951,8 @@ class Pods {
                                 }
 
                                 // Return a single column value
-                                if ( false === $params->in_form && 1 == $limit && !empty( $value ) && is_array( $value ) && isset( $value[ 0 ] ) )
-                                    $value = $value[ 0 ];
+                                if ( false === $params->in_form && 1 == $limit && !empty( $value ) && is_array( $value ) && 1 == count( $value ) )
+                                    $value = current( $value );
                             }
 
                             break;

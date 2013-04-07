@@ -36,7 +36,7 @@ $options[ 'data' ] = (array) pods_var_raw( 'data', $options, array(), null, true
 <script type="text/javascript">
     jQuery( function ( $ ) {
         if ( 'undefined' == typeof pods_ajaxurl ) {
-            var pods_ajaxurl = "<?php echo admin_url( 'admin-ajax.php?pods_ajax=1' ); ?>";
+            var pods_ajaxurl = '<?php echo admin_url( 'admin-ajax.php?pods_ajax=1' ); ?>';
         }
 
         function <?php echo pods_clean_name( $attributes[ 'id' ] ); ?>_podsFormatResult ( item ) {

@@ -353,6 +353,10 @@ if ( 0 < $pod->id() ) {
 <!-- /#pods-record -->
 
 <script type="text/javascript">
+    if ( 'undefined' == typeof pods_ajaxurl ) {
+        var pods_ajaxurl = '<?php echo admin_url( 'admin-ajax.php?pods_ajax=1' ); ?>';
+    }
+
     jQuery( function ( $ ) {
         $( document ).Pods( 'validate' );
         $( document ).Pods( 'submit' );

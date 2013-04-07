@@ -2081,8 +2081,44 @@ class PodsUI {
         <?php
             if ( true !== $reorder ) {
         ?>
-            <form id="posts-filter" action="<?php echo pods_var_update( array( 'pg' . $this->num => '' ), self::$allowed, $this->exclusion() ); ?>" method="get">
+            <form id="posts-filter" action="" method="get">
         <?php
+                $excluded_filters = array(
+                    'search' . $this->num,
+                    'pg' . $this->num,
+                    'action' . $this->num,
+                    'action_bulk' . $this->num,
+                    'action_bulk_ids' . $this->num
+                );
+
+                $filters = $this->filters;
+
+                foreach ( $filters as $k => $filter ) {
+                    if ( isset( $this->pod->fields[ $filter ] ) && in_array( $this->pod->fields[ $filter ][ 'type' ], array( 'date', 'datetime', 'time' ) ) ) {
+                        if ( '' == pods_var_raw( 'filter_' . $filter . '_start', 'get', '', null, true ) && '' == pods_var_raw( 'filter_' . $filter . '_end', 'get', '', null, true ) ) {
+                            unset( $filters[ $k ] );
+                            continue;
+                        }
+                    }
+                    elseif ( '' == pods_var_raw( 'filter_' . $filter, 'get', '', null, true ) ) {
+                        unset( $filters[ $k ] );
+                        continue;
+                    }
+
+                    $excluded_filters[] = 'filter_' . $filter . '_start';
+                    $excluded_filters[] = 'filter_' . $filter . '_end';
+                    $excluded_filters[] = 'filter_' . $filter;
+                }
+
+                $get = $_GET;
+
+                foreach ( $get as $k => $v ) {
+                    if ( in_array( $k, $excluded_filters ) || strlen( $v ) < 1 )
+                        continue;
+                    ?>
+                    <input type="hidden" name="<?php echo esc_attr( $k ); ?>" value="<?php echo esc_attr( $v ); ?>" />
+                <?php
+                }
             }
 
             if ( isset( $this->actions_custom[ 'header' ] ) && is_callable( $this->actions_custom[ 'header' ] ) )
@@ -2520,7 +2556,7 @@ class PodsUI {
                     $get = $_GET;
 
                     foreach ( $get as $k => $v ) {
-                        if ( in_array( $k, $excluded_filters ) || empty( $v ) )
+                        if ( in_array( $k, $excluded_filters ) || strlen( $v ) < 1 )
                             continue;
                 ?>
                     <input type="hidden" name="<?php echo esc_attr( $k ); ?>" value="<?php echo esc_attr( $v ); ?>" />
@@ -2694,7 +2730,7 @@ class PodsUI {
                 margin-left: 30px;
             }
         </style>
-<form action="<?php echo pods_var_update( array( 'action' . $this->num => 'reorder', 'do' . $this->num => 'save' ), self::$allowed, $this->exclusion() ); ?>" method="post" class="admin_ui_reorder_form">
+<form action="<?php echo pods_var_update( array( 'action' . $this->num => 'reorder', 'do' . $this->num => 'save', 'page' => pods_var_raw( 'page' ) ), self::$allowed, $this->exclusion() ); ?>" method="post" class="admin_ui_reorder_form">
 <?php
         }
         $table_fields = $this->fields[ 'manage' ];
@@ -3307,12 +3343,16 @@ class PodsUI {
      */
     public function limit ( $options = false ) {
         $this->do_hook( 'limit', $options );
+
         if ( isset( $this->actions_custom[ 'limit' ] ) && is_callable( $this->actions_custom[ 'limit' ] ) )
             return call_user_func_array( $this->actions_custom[ 'limit' ], array( $options, &$this ) );
+
         if ( false === $options || !is_array( $options ) || empty( $options ) )
             $options = array( 10, 25, 50, 100, 200 );
+
         if ( !in_array( $this->limit, $options ) && -1 != $this->limit )
             $this->limit = $options[ 1 ];
+
         foreach ( $options as $option ) {
             if ( $option == $this->limit )
                 echo " <span class=\"page-numbers current\">{$option}</span>";

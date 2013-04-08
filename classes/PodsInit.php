@@ -487,7 +487,7 @@ class PodsInit {
                     'show_in_nav_menus' => (boolean) pods_var( 'show_in_nav_menus', $post_type, (boolean) pods_var( 'public', $post_type, true ) )
                 );
 
-                if ( empty( $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] ) )
+                if ( $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] < 1 )
                     unset( $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] );
                 else {
                     if ( !in_array( $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ], $cpt_positions ) )

@@ -2020,8 +2020,17 @@ class PodsMeta {
             else
                 $value = array();
         }
+        // get_metadata requires $meta[ 0 ] to be set for first value to be retreived
         elseif ( !is_array( $value ) )
             $value = array( $value );
+        elseif ( is_array( $value ) && !empty( $value ) ) {
+            $current = current( $value );
+
+            if ( !is_array( $current ) )
+                $value = array( $value );
+            else
+                $value = array_values( $value );
+        }
 
         return $value;
     }

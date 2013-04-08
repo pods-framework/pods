@@ -88,8 +88,8 @@
                                             $data = array(
                                                 'post_type' => __( 'Custom Post Type (like Posts or Pages)', 'pods' ),
                                                 'taxonomy' => __( 'Custom Taxonomy (like Categories or Tags)', 'pods' ),
-                                                'pod' => '', // component will fill this in if it's enabled (this exists for placement)
-                                                'settings' => __( 'Custom Settings Page', 'pods' )
+                                                'settings' => __( 'Custom Settings Page', 'pods' ),
+                                                'pod' => '' // component will fill this in if it's enabled (this exists for placement)
                                             );
 
                                             $data = apply_filters( 'pods_admin_setup_add_create_pod_type', $data );
@@ -175,7 +175,7 @@
                                                 $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
 
                                                 echo PodsForm::label( 'create_name', __( 'Identifier', 'pods' ), __( '<h6>Pod Indentifier</h6> This is different than the labels users will see in the WordPress admin areas, it is the name you will use to programatically reference this object throughout your theme, WordPress, and other PHP.', 'pods' ) );
-                                                echo PodsForm::field( 'create_name', pods_var_raw( 'create_name', 'post' ), 'db', array( 'attributes' => array( 'maxlength' => $max_length_name, 'size' => 25, 'data-sluggable' => 'create_label_singular' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
+                                                echo PodsForm::field( 'create_name', pods_var_raw( 'create_name', 'post' ), 'db', array( 'attributes' => array( 'maxlength' => $max_length_name, 'size' => 25 ) ) );
                                             ?>
                                         </div>
                                         <div class="pods-field-option pods-depends-on pods-depends-on-create-pod-type pods-depends-on-create-pod-type-settings">
@@ -186,7 +186,7 @@
                                                 $max_length_name -= strlen( $wpdb->prefix . 'pods_' );
 
                                                 echo PodsForm::label( 'create_setting_name', __( 'Identifier', 'pods' ), __( '<h6>Pod Indentifier</h6> This is different than the labels users will see in the WordPress admin areas, it is the name you will use to programatically reference this object throughout your theme, WordPress, and other PHP.', 'pods' ) );
-                                                echo PodsForm::field( 'create_setting_name', pods_var_raw( 'create_setting_name', 'post' ), 'db', array( 'attributes' => array( 'maxlength' => $max_length_name, 'size' => 25, 'data-sluggable' => 'create_label_title' ), 'class' => 'pods-validate pods-validate-required pods-slugged-lower' ) );
+                                                echo PodsForm::field( 'create_setting_name', pods_var_raw( 'create_setting_name', 'post' ), 'db', array( 'attributes' => array( 'maxlength' => $max_length_name, 'size' => 25 ) ) );
                                             ?>
                                         </div>
 

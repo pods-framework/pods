@@ -1023,8 +1023,12 @@ class PodsAPI {
                 'show_ui' => 1
             );
 
+            // Auto-generate name if not provided
+            if ( empty( $pod_params[ 'name' ] ) && !empty( $pod_params[ 'options' ][ 'label_singular' ] ) )
+                $pod_params[ 'name' ] = pods_clean_name( $pod_params[ 'options' ][ 'label_singular' ] );
+
             if ( 'post_type' == $pod_params[ 'type' ] ) {
-                if ( empty( $params->create_name ) )
+                if ( empty(  $pod_params[ 'name' ] ) )
                     return pods_error( 'Please enter a Name for this Pod', $this );
 
                 $pod_params[ 'storage' ] = $params->create_storage;
@@ -1033,7 +1037,7 @@ class PodsAPI {
                     $pod_params[ 'storage' ] = 'meta';
             }
             elseif ( 'taxonomy' == $pod_params[ 'type' ] ) {
-                if ( empty( $params->create_name ) )
+                if ( empty(  $pod_params[ 'name' ] ) )
                     return pods_error( 'Please enter a Name for this Pod', $this );
 
                 $pod_params[ 'storage' ] = $params->create_storage_taxonomy;
@@ -1042,7 +1046,7 @@ class PodsAPI {
                     $pod_params[ 'storage' ] = 'none';
             }
             elseif ( 'pod' == $pod_params[ 'type' ] ) {
-                if ( empty( $params->create_name ) )
+                if ( empty(  $pod_params[ 'name' ] ) )
                     return pods_error( 'Please enter a Name for this Pod', $this );
 
                 if ( pods_tableless() ) {
@@ -1051,9 +1055,6 @@ class PodsAPI {
                 }
             }
             elseif ( 'settings' == $pod_params[ 'type' ] ) {
-                if ( empty( $params->create_setting_name ) )
-                    return pods_error( 'Please enter a Name for this Pod', $this );
-
                 $pod_params[ 'name' ] = $params->create_setting_name;
                 $pod_params[ 'label' ] = ( !empty( $params->create_label_title ) ? $params->create_label_title : ucwords( str_replace( '_', ' ', $params->create_setting_name ) ) );
                 $pod_params[ 'options' ] = array(
@@ -1061,6 +1062,13 @@ class PodsAPI {
                     'menu_location' => $params->create_menu_location
                 );
                 $pod_params[ 'storage' ] = 'none';
+
+                // Auto-generate name if not provided
+                if ( empty( $pod_params[ 'name' ] ) && !empty( $pod_params[ 'options' ][ 'label' ] ) )
+                    $pod_params[ 'name' ] = pods_clean_name( $pod_params[ 'options' ][ 'label' ] );
+
+                if ( empty( $pod_params[ 'name' ] ) )
+                    return pods_error( 'Please enter a Name for this Pod', $this );
             }
         }
         elseif ( 'extend' == $params->create_extend ) {

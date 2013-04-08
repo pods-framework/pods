@@ -523,7 +523,7 @@ class Pods_Pages extends PodsComponent {
 
         $object = pods_transient_get( 'pods_object_page_' . $uri );
 
-        if ( false !== $object && $object[ 'name' ] == $uri )
+        if ( false !== $object && $uri == pods_var( 'uri', $object ) )
             return $object;
 
         // See if the custom template exists

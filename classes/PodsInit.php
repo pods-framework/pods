@@ -471,7 +471,7 @@ class PodsInit {
                     'show_ui' => (boolean) pods_var( 'show_ui', $post_type, (boolean) pods_var( 'public', $post_type, true ) ),
                     'show_in_menu' => $show_in_menu,
                     'show_in_admin_bar' => (boolean) pods_var( 'show_in_admin_bar', $post_type, (boolean) pods_var( 'show_in_menu', $post_type, true ) ),
-                    'menu_position' => (int) pods_var( 'menu_position', $post_type, 20, null, true ),
+                    'menu_position' => (int) pods_var( 'menu_position', $post_type, 0, null, true ),
                     'menu_icon' => pods_var( 'menu_icon', $post_type, null, null, true ),
                     'capability_type' => $capability_type,
                     //'capabilities' => $cpt_capabilities,
@@ -487,16 +487,20 @@ class PodsInit {
                     'show_in_nav_menus' => (boolean) pods_var( 'show_in_nav_menus', $post_type, (boolean) pods_var( 'public', $post_type, true ) )
                 );
 
-                if ( !in_array( $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ], $cpt_positions ) )
-                    $cpt_positions[] = $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ];
-                else
-                    $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ]++;
+                if ( empty( $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] ) )
+                    unset( $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] );
+                else {
+                    if ( !in_array( $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ], $cpt_positions ) )
+                        $cpt_positions[] = $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ];
+                    else
+                        $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ]++;
 
-                if ( 25 == $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] )
-                    $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ]++;
+                    if ( 25 == $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] )
+                        $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ]++;
 
-                // This would be nice if WP supported floats in menu_position
-                // $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] = $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] . '.1';
+                    // This would be nice if WP supported floats in menu_position
+                    // $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] = $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] . '.1';
+                }
 
                 // Taxonomies
                 $cpt_taxonomies = array();
@@ -884,30 +888,8 @@ class PodsInit {
         // Setup DB tables
         $pods_version = get_option( 'pods_framework_version' );
 
-        // Update Pods and run any required DB updates
-        if ( 0 < strlen( $pods_version ) ) {
-            if ( !self::$upgrade_needed ) {
-                if ( PODS_VERSION != $pods_version && false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] )) {
-                    do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
-
-                    // Update 2.0 alpha / beta sites
-                    if ( version_compare( '2.0.0-a-1', $pods_version, '<=' ) && version_compare( $pods_version, '2.0.0-b-15', '<=' ) )
-                        include( PODS_DIR . 'sql/update-2.0-beta.php' );
-
-                    if ( version_compare( $pods_version, PODS_DB_VERSION, '<=' ) )
-                        include( PODS_DIR . 'sql/update.php' );
-
-                    do_action( 'pods_update_post', PODS_VERSION, $pods_version, $_blog_id );
-                }
-
-                delete_option( 'pods_framework_version_last' );
-                add_option( 'pods_framework_version_last', $pods_version, '', 'yes' );
-
-                self::$version_last = $pods_version;
-            }
-        }
         // Install Pods
-        else {
+        if ( empty( $pods_version ) ) {
             pods_upgrade()->install( $_blog_id );
 
             $old_version = get_option( 'pods_version' );
@@ -921,6 +903,26 @@ class PodsInit {
 
                 self::$version_last = $old_version;
             }
+        }
+        // Update Pods and run any required DB updates
+        elseif ( !self::$upgrade_needed ) {
+            if ( PODS_VERSION != $pods_version && false !== apply_filters( 'pods_update_run', null, PODS_VERSION, $pods_version, $_blog_id ) && !isset( $_GET[ 'pods_bypass_update' ] ) ) {
+                do_action( 'pods_update', PODS_VERSION, $pods_version, $_blog_id );
+
+                // Update 2.0 alpha / beta sites
+                if ( version_compare( '2.0.0-a-1', $pods_version, '<=' ) && version_compare( $pods_version, '2.0.0-b-15', '<=' ) )
+                    include( PODS_DIR . 'sql/update-2.0-beta.php' );
+
+                if ( version_compare( $pods_version, PODS_DB_VERSION, '<=' ) )
+                    include( PODS_DIR . 'sql/update.php' );
+
+                do_action( 'pods_update_post', PODS_VERSION, $pods_version, $_blog_id );
+            }
+
+            delete_option( 'pods_framework_version_last' );
+            add_option( 'pods_framework_version_last', $pods_version, '', 'yes' );
+
+            self::$version_last = $pods_version;
         }
 
         delete_option( 'pods_framework_version' );

@@ -949,7 +949,7 @@ class PodsAdmin {
                     'label' => __( 'Menu Position', 'pods' ),
                     'help' => __( 'help', 'pods' ),
                     'type' => 'number',
-                    'default' => 20,
+                    'default' => 0,
                     'depends-on' => array( 'show_in_menu' => true )
                 ),
                 'menu_icon' => array(

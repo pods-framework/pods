@@ -141,7 +141,7 @@ class PodsField_Number extends PodsField {
         if ( $length < 1 || 64 < $length )
             $length = 64;
 
-        $decimals = (int) pods_var( 'number_decimals', $options, 2, null, true );
+        $decimals = (int) pods_var( 'number_decimals', $options, 0, null, true );
 
         if ( $decimals < 1 )
             $decimals = 0;
@@ -167,8 +167,23 @@ class PodsField_Number extends PodsField {
     public function prepare ( $options = null ) {
         $format = self::$prepare;
 
-        if ( 0 < (int) pods_var( 'number_decimals', $options, 0 ) )
-            $format = '%01.' . (int) pods_var( 'number_decimals', $options ) . 'f';
+        $length = (int) pods_var( 'number_max_length', $options, 12, null, true );
+
+        if ( $length < 1 || 64 < $length )
+            $length = 64;
+
+        $decimals = (int) pods_var( 'number_decimals', $options, 0, null, true );
+
+        if ( $decimals < 1 )
+            $decimals = 0;
+        elseif ( 30 < $decimals )
+            $decimals = 30;
+
+        if ( $length < $decimals )
+            $decimals = $length;
+
+        if ( 0 < $decimals )
+            $format = '%01.' . $decimals . 'f';
 
         return $format;
     }
@@ -336,7 +351,20 @@ class PodsField_Number extends PodsField {
 
         $value = preg_replace( '/[^0-9\.]/', '', $value );
 
-        $decimals = pods_absint( (int) pods_var( 'number_decimals', $options, 0, null, true ) );
+        $length = (int) pods_var( 'number_max_length', $options, 12, null, true );
+
+        if ( $length < 1 || 64 < $length )
+            $length = 64;
+
+        $decimals = (int) pods_var( 'number_decimals', $options, 0, null, true );
+
+        if ( $decimals < 1 )
+            $decimals = 0;
+        elseif ( 30 < $decimals )
+            $decimals = 30;
+
+        if ( $length < $decimals )
+            $decimals = $length;
 
         $value = number_format( (float) $value, $decimals, '.', '' );
 
@@ -392,10 +420,25 @@ class PodsField_Number extends PodsField {
             $dot = $wp_locale->number_format[ 'decimal_point' ];
         }
 
+        $length = (int) pods_var( 'number_max_length', $options, 12, null, true );
+
+        if ( $length < 1 || 64 < $length )
+            $length = 64;
+
+        $decimals = (int) pods_var( 'number_decimals', $options, 0, null, true );
+
+        if ( $decimals < 1 )
+            $decimals = 0;
+        elseif ( 30 < $decimals )
+            $decimals = 30;
+
+        if ( $length < $decimals )
+            $decimals = $length;
+
         if ( 'i18n' == pods_var( 'number_format', $options ) )
-            $value = number_format_i18n( (float) $value, (int) pods_var( 'number_decimals', $options ) );
+            $value = number_format_i18n( (float) $value, $decimals );
         else
-            $value = number_format( (float) $value, (int) pods_var( 'number_decimals', $options ), $dot, $thousands );
+            $value = number_format( (float) $value, $decimals, $dot, $thousands );
 
         return $value;
     }

@@ -1064,8 +1064,8 @@ class PodsAPI {
                 $pod_params[ 'storage' ] = 'none';
 
                 // Auto-generate name if not provided
-                if ( empty( $pod_params[ 'name' ] ) && !empty( $pod_params[ 'options' ][ 'label' ] ) )
-                    $pod_params[ 'name' ] = pods_clean_name( $pod_params[ 'options' ][ 'label' ] );
+                if ( empty( $pod_params[ 'name' ] ) && !empty( $pod_params[ 'label' ] ) )
+                    $pod_params[ 'name' ] = pods_clean_name( $pod_params[ 'label' ] );
 
                 if ( empty( $pod_params[ 'name' ] ) )
                     return pods_error( 'Please enter a Name for this Pod', $this );

@@ -857,13 +857,6 @@ elseif ( 'pod' == pods_var( 'type', $pod ) ) {
     <?php
     }
 }
-elseif ( 'settings' == pods_var( 'type', $pod ) ) {
-    $fields = $tab_options[ 'advanced' ];
-    $field_options = PodsForm::fields_setup( $fields );
-    $field = $pod;
-
-    include PODS_DIR . 'ui/admin/field-option.php';
-}
 ?>
 </div>
 <?php

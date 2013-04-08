@@ -879,7 +879,7 @@ class PodsAdmin {
         }
         elseif ( 'settings' == pods_var( 'type', $pod ) ) {
             $labels = true;
-            $advanced = true;
+            $admin_ui = true;
         }
 
         if ( 'none' == pods_var( 'storage', $pod, 'none', null, true ) && 'settings' != pods_var( 'type', $pod ) )
@@ -1172,7 +1172,7 @@ class PodsAdmin {
                 'temporary' => 'This type has the fields hardcoded' // :(
             );
         }
-        elseif ( 'setting' == $pod[ 'type' ] ) {
+        elseif ( 'settings' == $pod[ 'type' ] ) {
             $options[ 'admin-ui' ] = array(
                 'ui_style' => array(
                     'label' => __( 'Admin UI Style', 'pods' ),
@@ -1320,11 +1320,6 @@ class PodsAdmin {
                 $options[ 'admin-ui' ][ 'ui_fields_manage' ][ 'data' ][ $field[ 'name' ] ] = $field[ 'label' ] . $type;
                 $options[ 'admin-ui' ][ 'ui_filters' ][ 'data' ][ $field[ 'name' ] ] = $field[ 'label' ] . $type;
             }
-
-            // @todo fill this in
-            $options[ 'advanced' ] = array(
-                'temporary' => 'This type has the fields hardcoded' // :(
-            );
         }
 
         $options = apply_filters( 'pods_admin_setup_edit_options', $options );

@@ -2896,8 +2896,6 @@ class PodsAPI {
                     if ( !is_array( $value ) )
                         $value = explode( ',', $value );
 
-                    $value = array_unique( array_filter( $value ) );
-
                     $rel_fields[ $type ][ $field ] = $value;
                     $rel_field_ids[] = $field_data[ 'id' ];
                 }

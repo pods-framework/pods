@@ -970,8 +970,8 @@ class Pods {
         else
             $this->row[ $params->name ] = $value;
 
-        if ( true === $params->single && is_array( $value ) && isset( $value[ 0 ] ) )
-            $value = $value[ 0 ];
+        if ( true === $params->single && is_array( $value ) && 1 == count( $value ) )
+            $value = current( $value );
 
         // @todo Expand this into traversed fields too
         if ( isset( $this->fields[ $params->name ] ) ) {

@@ -201,9 +201,9 @@ class PodsAPI {
 
         $meta = get_post_meta( $id );
 
-        foreach ( $meta as &$value ) {
-            if ( is_array( $value ) && 1 == count( $value ) && isset( $value[ 0 ] ) )
-                $value = $value[ 0 ];
+        foreach ( $meta as $k => $value ) {
+            if ( is_array( $value ) && 1 == count( $value ) )
+                $meta[ $k ] = current( $value );
         }
 
         foreach ( $post_meta as $meta_key => $meta_value ) {
@@ -4519,8 +4519,8 @@ class PodsAPI {
                         $value[ $k ] = maybe_unserialize( $v );
                 }
 
-                if ( 1 == count( $value ) && isset( $value[ 0 ] ) )
-                    $value = $value[ 0 ];
+                if ( 1 == count( $value ) )
+                    $value = current( $value );
             }
             else
                 $value = maybe_unserialize( $value );
@@ -5033,8 +5033,8 @@ class PodsAPI {
                                 $value[ $k ] = maybe_unserialize( $v );
                         }
 
-                        if ( 1 == count( $value ) && isset( $value[ 0 ] ) )
-                            $value = $value[ 0 ];
+                        if ( 1 == count( $value ) )
+                            $value = current( $value );
                     }
                     else
                         $value = maybe_unserialize( $value );
@@ -5343,8 +5343,8 @@ class PodsAPI {
         $object[ 'options' ] = get_post_meta( $object[ 'id' ] );
 
         foreach ( $object[ 'options' ] as $option => &$value ) {
-            if ( is_array( $value ) && 1 == count( $value ) && isset( $value[ 0 ] ) )
-                $value = $value[ 0 ];
+            if ( is_array( $value ) && 1 == count( $value ) )
+                $value = current( $value );
         }
 
         if ( 'page' == $object[ 'type' ] )

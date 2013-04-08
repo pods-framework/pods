@@ -1317,16 +1317,6 @@ class PodsField_Pick extends PodsField {
 
                 $results = $search_data->select( $params );
 
-                if ( $hierarchy && !$autocomplete && !empty( $results ) && $options[ 'table_info' ][ 'object_hierarchical' ] && !empty( $options[ 'table_info' ][ 'field_parent' ] ) ) {
-                    $args = array(
-                        'id' => $options[ 'table_info' ][ 'field_id' ],
-                        'index' => $options[ 'table_info' ][ 'field_index' ],
-                        'parent' => $options[ 'table_info' ][ 'field_parent' ],
-                    );
-
-                    $results = pods_hierarchical_select( $results, $args );
-                }
-
                 if ( !empty( $value ) && $autocomplete && $params[ 'limit' ] < $search_data->total_found() ) {
                     $ids = $value;
 
@@ -1351,6 +1341,16 @@ class PodsField_Pick extends PodsField {
                         'id' => $options[ 'id' ],
                         'autocomplete' => $autocomplete
                     );
+                }
+
+                if ( $hierarchy && !$autocomplete && !empty( $results ) && $options[ 'table_info' ][ 'object_hierarchical' ] && !empty( $options[ 'table_info' ][ 'field_parent' ] ) ) {
+                    $args = array(
+                        'id' => $options[ 'table_info' ][ 'field_id' ],
+                        'index' => $options[ 'table_info' ][ 'field_index' ],
+                        'parent' => $options[ 'table_info' ][ 'field_parent' ],
+                    );
+
+                    $results = pods_hierarchical_select( $results, $args );
                 }
 
                 $ids = array();

@@ -2020,7 +2020,7 @@ class PodsMeta {
             else
                 $value = array();
         }
-        elseif ( !is_array( $value ) || !isset( $value[ 0 ] ) )
+        elseif ( !is_array( $value ) )
             $value = array( $value );
 
         return $value;

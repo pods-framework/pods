@@ -3188,8 +3188,6 @@ class PodsAPI {
         if ( !pods_tableless() ) {
             $related_weight = 0;
 
-            pods_debug( $current_ids );
-
             foreach ( $related_ids as $related_id ) {
                 if ( in_array( $related_id, $current_ids ) ) {
                     pods_query( "
@@ -3223,7 +3221,7 @@ class PodsAPI {
                     ) );
                 }
                 else {
-                    pods_debug( pods_query( "
+                    pods_query( "
                         INSERT INTO `@wp_podsrel`
                             (
                                 `pod_id`,
@@ -3243,7 +3241,7 @@ class PodsAPI {
                         $related_field_id,
                         $related_id,
                         $related_weight
-                    ) ) );
+                    ) );
                 }
 
                 $related_weight++;

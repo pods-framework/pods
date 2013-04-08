@@ -487,16 +487,13 @@ class PodsInit {
                     'show_in_nav_menus' => (boolean) pods_var( 'show_in_nav_menus', $post_type, (boolean) pods_var( 'public', $post_type, true ) )
                 );
 
-                if ( $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] < 1 )
+                if ( 25 == $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] )
+                    $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ]++;
+
+                if ( $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] < 1 || in_array( $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ], $cpt_positions ) )
                     unset( $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] );
                 else {
-                    if ( !in_array( $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ], $cpt_positions ) )
-                        $cpt_positions[] = $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ];
-                    else
-                        $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ]++;
-
-                    if ( 25 == $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] )
-                        $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ]++;
+                    $cpt_positions[] = $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ];
 
                     // This would be nice if WP supported floats in menu_position
                     // $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] = $pods_post_types[ pods_var( 'name', $post_type ) ][ 'menu_position' ] . '.1';

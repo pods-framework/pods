@@ -157,7 +157,7 @@ class PodsAdmin {
                 $pods_pages = 0;
 
                 foreach ( (array) $advanced_content_types as $pod ) {
-                    if ( empty( $pod[ 'fields' ] ) )
+                    if ( !isset( $pod[ 'name' ] ) || !isset( $pod[ 'options' ] ) || empty( $pod[ 'fields' ] ) )
                         continue;
                     elseif ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_content' ) && !current_user_can( 'pods_add_' . $pod[ 'name' ] ) && !current_user_can( 'pods_edit_' . $pod[ 'name' ] ) && !current_user_can( 'pods_delete_' . $pod[ 'name' ] ) )
                         continue;

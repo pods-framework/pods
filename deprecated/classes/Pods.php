@@ -407,8 +407,8 @@ class Pods_Deprecated
         if ( is_array( $value ) && !empty( $value ) ) {
             if ( false === strpos( $name, '.' ) && !isset( $value[ 0 ] ) )
                 $value = array( $value ); // fix for single tableless fields
-            elseif ( false !== strpos( $name, '.' ) && 1 == count( $value ) && isset( $value[ 0 ] ) )
-                $value = $value[ 0 ];
+            elseif ( false !== strpos( $name, '.' ) && 1 == count( $value ) )
+                $value = current( $value );
         }
 
         return $value;

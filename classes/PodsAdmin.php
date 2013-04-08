@@ -172,8 +172,13 @@ class PodsAdmin {
                         $singular_label = pods_var_raw( 'label_singular', $pod[ 'options' ], pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true ), null, true );
                         $plural_label = pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true );
 
-                        $menu_icon = pods_evaluate_tags( pods_var_raw( 'menu_icon', $pod[ 'options' ], '', null, true ), true );
                         $menu_location_custom = pods_var( 'menu_location_custom', $pod[ 'options' ], '' );
+
+                        $menu_position = pods_var_raw( 'menu_position', $pod[ 'options' ], '', null, true );
+                        $menu_icon = pods_evaluate_tags( pods_var_raw( 'menu_icon', $pod[ 'options' ], '', null, true ), true );
+
+                        if ( empty( $menu_position ) )
+                            $menu_position = null;
 
                         $parent_page = null;
 
@@ -188,7 +193,10 @@ class PodsAdmin {
 
                                 $parent_page = $page = 'pods-manage-' . $pod[ 'name' ];
 
-                                add_menu_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon, '57.' . ( 10 < count( $pods_pages ) ? $pods_pages : '0' . $pods_pages ) );
+                                if ( empty( $menu_position ) )
+                                    add_object_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon );
+                                else
+                                    add_menu_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon, $menu_position );
 
                                 $all_title = $plural_label;
                                 $all_label = __( 'All', 'pods' ) . ' ' . $plural_label;
@@ -212,7 +220,10 @@ class PodsAdmin {
 
                                 $parent_page = $page;
 
-                                add_menu_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon, '57.' . ( 10 < count( $pods_pages ) ? $pods_pages : '0' . $pods_pages ) );
+                                if ( empty( $menu_position ) )
+                                    add_object_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon );
+                                else
+                                    add_menu_page( $page_title, $menu_label, 'read', $parent_page, '', $menu_icon, $menu_position );
                             }
 
                             $add_title = __( 'Add New', 'pods' ) . ' ' . $singular_label;

@@ -1804,7 +1804,7 @@ class PodsUI {
         if ( isset( $this->actions_custom[ 'get_field' ] ) && is_callable( $this->actions_custom[ 'get_field' ] ) )
             return call_user_func_array( $this->actions_custom[ 'get_field' ], array( $field, &$this ) );
 
-        if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
+        if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) && 0 < $this->pod->id ) {
             if ( 'Pod' == get_class( $this->pod ) )
                 $value = $this->pod->get_field( $field );
             else
@@ -3368,7 +3368,7 @@ class PodsUI {
      * @return mixed
      */
     public function do_template ( $code, $row = false ) {
-        if ( is_object( $this->pod ) && 0 < $this->id && 0 < $this->pod->id() )
+        if ( is_object( $this->pod ) && 1 == 0 && 0 < $this->pod->id() )
             return $this->pod->do_magic_tags( $code );
         else {
             if ( false !== $row ) {
@@ -3403,7 +3403,7 @@ class PodsUI {
         $tag = trim( $tag, ' {@}' );
         $tag = explode( ',', $tag );
 
-        if ( empty( $tag ) || !isset( $tag[ 0 ] ) || 0 < strlen( trim( $tag[ 0 ] ) ) )
+        if ( empty( $tag ) || !isset( $tag[ 0 ] ) || strlen( trim( $tag[ 0 ] ) ) < 1 )
             return;
 
         foreach ( $tag as $k => $v ) {

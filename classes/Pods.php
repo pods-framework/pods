@@ -25,6 +25,11 @@ class Pods {
     public $row = array();
 
     /**
+     * @var array Override pod item array
+     */
+    public $row_override = array();
+
+    /**
      * @var bool
      */
     public $display_errors = false;
@@ -469,21 +474,26 @@ class Pods {
         if ( is_array( $params->name ) || strlen( $params->name ) < 1 )
             return null;
 
+        $value = null;
+
+        if ( isset( $this->row_override[ $params->name ] ) )
+            $value = $this->row_override[ $params->name ];
+
         if ( false === $this->row() ) {
             if ( false !== $this->data() )
                 $this->fetch();
             else
-                return null;
+                return $value;
         }
 
         if ( $this->data->field_id == $params->name ) {
             if ( isset( $this->row[ $params->name ] ) )
                 return $this->row[ $params->name ];
+            elseif ( null !== $value )
+                return $value;
 
             return 0;
         }
-
-        $value = null;
 
         $tableless_field_types = PodsForm::tableless_field_types();
         $simple_tableless_objects = PodsForm::field_method( 'pick', 'simple_objects' );
@@ -2198,6 +2208,8 @@ class Pods {
 
             $field[ 'name' ] = trim( $field[ 'name' ] );
 
+            $value = pods_var_raw( 'default', $field );
+
             if ( empty( $field[ 'name' ] ) )
                 $field[ 'name' ] = trim( $name );
 
@@ -2207,6 +2219,9 @@ class Pods {
                 $fields[ $field[ 'name' ] ] = array_merge( $object_fields[ $field[ 'name' ] ], $field );
             elseif ( isset( $this->fields[ $field[ 'name' ] ] ) )
                 $fields[ $field[ 'name' ] ] = array_merge( $this->fields[ $field[ 'name' ] ], $field );
+
+            if ( empty( $this->id ) && null !== $value )
+                $this->row_override[ $field[ 'name' ] ] = $value;
         }
 
         unset( $form_fields ); // Cleanup
@@ -2241,6 +2256,9 @@ class Pods {
         pods_view( PODS_DIR . 'ui/front/form.php', compact( array_keys( get_defined_vars() ) ) );
 
         $output = ob_get_clean();
+
+        if ( empty( $this->id ) )
+            $this->row_override = array();
 
         return $this->do_hook( 'form', $output, $fields, $label, $thank_you, $this, $this->id() );
     }

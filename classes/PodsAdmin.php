@@ -618,8 +618,7 @@ class PodsAdmin {
                     $filters_new[ $filter_field ] = $pod->pod_data[ 'object_fields' ][ $filter_field ];
             }
 
-            if ( !empty( $filters_new ) )
-                $filters = $filters_new;
+            $filters = $filters_new;
         }
 
         $ui = array(

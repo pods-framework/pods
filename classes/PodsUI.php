@@ -1804,14 +1804,14 @@ class PodsUI {
         if ( isset( $this->actions_custom[ 'get_field' ] ) && is_callable( $this->actions_custom[ 'get_field' ] ) )
             return call_user_func_array( $this->actions_custom[ 'get_field' ], array( $field, &$this ) );
 
-        if ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) && 0 < $this->pod->id ) {
+        if ( isset( $this->row[ $field ] ) )
+            $value = $this->row[ $field ];
+        elseif ( false !== $this->pod && is_object( $this->pod ) && ( 'Pods' == get_class( $this->pod ) || 'Pod' == get_class( $this->pod ) ) ) {
             if ( 'Pod' == get_class( $this->pod ) )
                 $value = $this->pod->get_field( $field );
             else
                 $value = $this->pod->field( $field );
         }
-        elseif ( isset( $this->row[ $field ] ) )
-            $value = $this->row[ $field ];
 
         return $this->do_hook( 'get_field', $value, $field );
     }
@@ -2430,6 +2430,7 @@ class PodsUI {
         </div>
 
         <?php
+        pods_debug( $this->filters );
             if ( !empty( $this->filters ) ) {
         ?>
             <div class="pods-ui-filter-bar-secondary">
@@ -2566,6 +2567,8 @@ class PodsUI {
                     $zebra = true;
 
                     foreach ( $filters as $filter ) {
+                        if ( empty( $filter ) || !isset( $this->pod->fields[ $filter ] ) )
+                            continue;
                 ?>
                     <p class="pods-ui-posts-filter-toggled pods-ui-posts-filter-<?php echo $filter . ( $zebra ? ' clear' : '' ); ?>">
                         <?php

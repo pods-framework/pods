@@ -193,9 +193,25 @@ class PodsField_WYSIWYG extends PodsField {
         $value = $this->strip_html( $value, $options );
 
         if ( 1 == pods_var( 'wysiwyg_oembed', $options, 0 ) ) {
+            $post_temp = false;
+
+            // Workaround for WP_Embed since it needs a $post to work from
+            if ( 'post_type' == pods_var( 'type', $pod ) && 0 < $id && ( !isset( $GLOBALS[ 'post' ] ) || empty( $GLOBALS[ 'post' ] ) ) ) {
+                $post_temp = true;
+
+                $GLOBALS[ 'post' ] = get_post( $id );
+            }
+
+            /**
+             * @var $embed WP_Embed
+             */
             $embed = $GLOBALS[ 'wp_embed' ];
             $value = $embed->run_shortcode( $value );
             $value = $embed->autoembed( $value );
+
+            // Cleanup after ourselves
+            if ( $post_temp )
+                $GLOBALS[ 'post' ] = null;
         }
 
         if ( 1 == pods_var( 'wysiwyg_wptexturize', $options, 1 ) )

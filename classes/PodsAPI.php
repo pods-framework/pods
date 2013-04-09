@@ -2112,7 +2112,7 @@ class PodsAPI {
 
         $field[ 'id' ] = $params->id;
 
-        $simple = ( 'pick' == $field[ 'type' ] && in_array( pods_var( 'pick_object', $field ), $simple_tableless_objects ) );
+        $simple = ( 'pick' == $field[ 'type' ] && in_array( pods_var( 'pick_object', $field[ 'options' ] ), $simple_tableless_objects ) );
 
         $definition = false;
 

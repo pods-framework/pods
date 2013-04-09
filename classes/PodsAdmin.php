@@ -146,6 +146,7 @@ class PodsAdmin {
      */
     public function admin_menu () {
         $advanced_content_types = PodsMeta::$advanced_content_types;
+        $taxonomies = PodsMeta::$taxonomies;
         $settings = PodsMeta::$settings;
 
         $all_pods = $this->api->load_pods( array( 'count' => true ) );
@@ -172,6 +173,7 @@ class PodsAdmin {
                         $singular_label = pods_var_raw( 'label_singular', $pod[ 'options' ], pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true ), null, true );
                         $plural_label = pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true );
 
+                        $menu_location = pods_var( 'menu_location', $pod[ 'options' ], 'objects' );
                         $menu_location_custom = pods_var( 'menu_location_custom', $pod[ 'options' ], '' );
 
                         $menu_position = pods_var_raw( 'menu_position', $pod[ 'options' ], '', null, true );
@@ -284,9 +286,61 @@ class PodsAdmin {
                 }
             }
 
-            if ( !empty( $settings ) ) {
-                $settings_submenu = array();
+            $submenu_items = array();
 
+            if ( !empty( $taxonomies ) ) {
+                foreach ( (array) $taxonomies as $pod ) {
+                    if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_content' ) && !current_user_can( 'pods_edit_' . $pod[ 'name' ] ) )
+                        continue;
+
+                    $page_title = pods_var_raw( 'label', $pod, ucwords( str_replace( '_', ' ', $pod[ 'name' ] ) ), null, true );
+                    $page_title = apply_filters( 'pods_admin_menu_page_title', $page_title, $pod );
+
+                    $menu_label = pods_var_raw( 'menu_name', $pod[ 'options' ], $page_title, null, true );
+                    $menu_label = apply_filters( 'pods_admin_menu_label', $menu_label, $pod );
+
+                    $menu_position = pods_var_raw( 'menu_position', $pod[ 'options' ], '', null, true );
+                    $menu_icon = pods_evaluate_tags( pods_var_raw( 'menu_icon', $pod[ 'options' ], '', null, true ), true );
+
+                    if ( empty( $menu_position ) )
+                        $menu_position = null;
+
+                    $menu_slug = 'edit-tags.php?taxonomy=' . $pod[ 'name' ];
+                    $menu_location = pods_var( 'menu_location', $pod[ 'options' ], 'default' );
+                    $menu_location_custom = pods_var( 'menu_location_custom', $pod[ 'options' ], '' );
+
+                    if ( 'default' == $menu_location )
+                        continue;
+
+                    $taxonomy_data = get_taxonomy( $pod[ 'name' ] );
+
+                    foreach ( (array) $taxonomy_data->object_type as $post_type ) {
+                        if ( 'post' == $post_type )
+                            remove_submenu_page( 'edit.php', 'edit-tags.php?taxonomy=' . $pod[ 'name' ] );
+                        elseif ( 'attachment' == $post_type )
+                            remove_submenu_page( 'upload.php', 'edit-tags.php?taxonomy=' . $pod[ 'name' ] . '&amp;post_type=' . $post_type );
+                        else
+                            remove_submenu_page( 'edit.php?post_type=' . $post_type, 'edit-tags.php?taxonomy=' . $pod[ 'name' ] . '&amp;post_type=' . $post_type );
+                    }
+
+                    if ( 'settings' == $menu_location )
+                        add_options_page( $page_title, $menu_label, 'read', $menu_slug );
+                    elseif ( 'appearances' == $menu_location )
+                        add_theme_page( $page_title, $menu_label, 'read', $menu_slug );
+                    elseif ( 'objects' == $menu_location ) {
+                        if ( empty( $menu_position ) )
+                            add_object_page( $page_title, $menu_label, 'read', $menu_slug, '', $menu_icon );
+                        else
+                            add_menu_page( $page_title, $menu_label, 'read', $menu_slug, '', $menu_icon, $menu_position );
+                    }
+                    elseif ( 'top' == $menu_location )
+                        add_menu_page( $page_title, $menu_label, 'read', $menu_slug, '', $menu_icon, $menu_position );
+                    elseif ( 'submenu' == $menu_location && !empty( $menu_location_custom ) )
+                        $submenu_items[ $menu_location_custom ] = array( $menu_location_custom, $page_title, $menu_label, 'read', $menu_slug, '' );
+                }
+            }
+
+            if ( !empty( $settings ) ) {
                 foreach ( (array) $settings as $pod ) {
                     if ( !is_super_admin() && !current_user_can( 'delete_users' ) && !current_user_can( 'pods' ) && !current_user_can( 'pods_content' ) && !current_user_can( 'pods_edit_' . $pod[ 'name' ] ) )
                         continue;
@@ -320,12 +374,12 @@ class PodsAdmin {
                     elseif ( 'top' == $menu_location )
                         add_menu_page( $page_title, $menu_label, 'read', $menu_slug, array( $this, 'admin_content_settings' ), $menu_icon, $menu_position );
                     elseif ( 'submenu' == $menu_location && !empty( $menu_location_custom ) )
-                        $settings_submenu[ $menu_location_custom ] = array( $menu_location_custom, $page_title, $menu_label, 'read', $menu_slug, array( $this, 'admin_content_settings' ) );
+                        $submenu_items[ $menu_location_custom ] = array( $menu_location_custom, $page_title, $menu_label, 'read', $menu_slug, array( $this, 'admin_content_settings' ) );
                 }
+            }
 
-                foreach ( $settings_submenu as $item ) {
-                    call_user_func_array( 'add_submenu_page', $item );
-                }
+            foreach ( $submenu_items as $item ) {
+                call_user_func_array( 'add_submenu_page', $item );
             }
 
             $admin_menus = array(
@@ -1141,6 +1195,41 @@ class PodsAdmin {
                     'default' => '',
                     'depends-on' => array( 'show_ui' => true )
                 ),
+                'menu_location' => array(
+                    'label' => __( 'Menu Location', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'pick',
+                    'default' => 'default',
+                    'depends-on' => array( 'show_ui' => true ),
+                    'data' => array(
+                        'default' => __( 'Default - Add to associated Post Type(s) menus', 'pods' ),
+                        'settings' => __( 'Add to Settings menu', 'pods' ),
+                        'appearances' => __( 'Add to Appearances menu', 'pods' ),
+                        'objects' => __( 'Make a menu item', 'pods' ),
+                        'submenu' => __( 'Add a submenu item to another menu', 'pods' )
+                    ),
+                    'dependency' => true
+                ),
+                'menu_location_custom' => array(
+                    'label' => __( 'Custom Menu Location', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'text',
+                    'depends-on' => array( 'menu_location' => 'submenu' )
+                ),
+                'menu_position' => array(
+                    'label' => __( 'Menu Position', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'number',
+                    'default' => 0,
+                    'depends-on' => array( 'menu_location' => 'top' )
+                ),
+                'menu_icon' => array(
+                    'label' => __( 'Menu Icon URL', 'pods' ),
+                    'help' => __( 'help', 'pods' ),
+                    'type' => 'text',
+                    'default' => '',
+                    'depends-on' => array( 'menu_location' => 'top' )
+                ),
                 'show_in_nav_menus' => array(
                     'label' => __( 'Show in Navigation Menus', 'pods' ),
                     'help' => __( 'help', 'pods' ),
@@ -1180,9 +1269,9 @@ class PodsAdmin {
                     'type' => 'pick',
                     'default' => 'settings',
                     'data' => array(
-                        'settings' => 'Normal Settings Form',
-                        'post_type' => 'Post Type UI',
-                        'custom' => 'Custom (hook into pods_admin_ui_custom or pods_admin_ui_custom_{podname} action)'
+                        'settings' => __( 'Normal Settings Form', 'pods' ),
+                        'post_type' => __( 'Post Type UI', 'pods' ),
+                        'custom' => __( 'Custom (hook into pods_admin_ui_custom or pods_admin_ui_custom_{podname} action)', 'pods' )
                     ),
                     'dependency' => true
                 ),
@@ -1192,10 +1281,10 @@ class PodsAdmin {
                     'type' => 'pick',
                     'default' => 'settings',
                     'data' => array(
-                        'settings' => 'Add to Settings menu',
-                        'appearances' => 'Add to Appearances menu',
-                        'top' => 'Make a new menu item below Settings',
-                        'submenu' => 'Add a submenu item to another menu'
+                        'settings' => __( 'Add to Settings menu', 'pods' ),
+                        'appearances' => __( 'Add to Appearances menu', 'pods' ),
+                        'top' => __( 'Make a new menu item below Settings', 'pods' ),
+                        'submenu' => __( 'Add a submenu item to another menu', 'pods' )
                     ),
                     'dependency' => true
                 ),

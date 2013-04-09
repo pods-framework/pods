@@ -335,7 +335,7 @@ class PodsField_Pick extends PodsField {
 
                     continue;
                 }
-                elseif ( 0 === strpos( $post_type, '_pods_' ) && !in_array( $post_type, array( '_pods_page', '_pods_template' ) ) ) {
+                elseif ( 0 === strpos( $post_type, '_pods_' ) ) {
                     unset( $post_types[ $post_type ] );
 
                     continue;

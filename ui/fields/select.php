@@ -2,9 +2,9 @@
 $attributes = array();
 $attributes[ 'tabindex' ] = 2;
 
-$pick_limit = (int) pods_var( 'pick_limit', $options, 0 );
+$pick_limit = (int) pods_var( $form_field_type . '_limit', $options, 0 );
 
-if ( 'multi' == pods_var( 'pick_format_type', $options ) && 1 != $pick_limit ) {
+if ( 'multi' == pods_var( $form_field_type . '_format_type', $options ) && 1 != $pick_limit ) {
     $name .= '[]';
     $attributes[ 'multiple' ] = 'multiple';
 }
@@ -39,7 +39,7 @@ $selection_made = false;
 
                     $selected = '';
 
-                    if ( !$selection_made && ( $sub_option_value == $value || ( is_array( $value ) && in_array( $sub_option_value, $value ) ) ) ) {
+                    if ( !$selection_made && ( ( !is_array( $value ) && (string) $sub_option_value === (string) $value ) || ( is_array( $value ) && in_array( $sub_option_value, $value ) ) ) ) {
                         $selected = ' SELECTED';
                         $selection_made = true;
                     }
@@ -64,7 +64,7 @@ $selection_made = false;
 
             $selected = '';
 
-            if ( !$selection_made && ( $option_value == $value || ( is_array( $value ) && in_array( $option_value, $value ) ) ) ) {
+            if ( !$selection_made && ( ( !is_array( $value ) && (string) $option_value === (string) $value ) || ( is_array( $value ) && in_array( $option_value, $value ) ) ) ) {
                 $selected = ' SELECTED';
                 $selection_made = true;
             }

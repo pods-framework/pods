@@ -684,6 +684,8 @@ class PodsForm {
                 $value = call_user_func_array( array( self::$loaded[ $type ], 'display' ), array( $value, $name, $options, $pod, $id, $traverse ) );
         }
 
+        $value = apply_filters( 'pods_form_display_' . $type, $value, $name, $options, $pod, $id, $traverse );
+
         return $value;
     }
 
